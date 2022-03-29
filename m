@@ -2,282 +2,171 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6893EC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Mar 2022 23:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 587B1C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Mar 2022 23:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240254AbiC2X1l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Mar 2022 19:27:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59238 "EHLO
+        id S240975AbiC2XuF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Mar 2022 19:50:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239989AbiC2X1j (ORCPT
+        with ESMTP id S240992AbiC2XuC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Mar 2022 19:27:39 -0400
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E189C186166;
-        Tue, 29 Mar 2022 16:25:55 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id 12so20527358oix.12;
-        Tue, 29 Mar 2022 16:25:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=i3uM0pHbtDDVFGxWD9G96SIrY94otn0Eu2ug6AvRCzM=;
-        b=ZaXNSAjBFeZqpmkS941OqWEobXLwIE2quRifxYbv/bZoOtw5DnAVBSpsePz+W/01KL
-         08mLgXHsmTKTjEv94WtbPtHD34rkaf3mi7CKEa+vALnxfuUPwMwXsiW1hfUJdhwyA+Qe
-         fwOa+JqVb2MRFoZRWdnLCdcAi6cSMiaOmDeTP6cMNwbSBmUVBaACVj8PLSqHrwi1okUX
-         rVQZ/vpg6eU8pgSj3Fzj8opvvf7PAEt8Z23YehfGkxM+ul6DE+bvVdO3vQqFnvUXUJj4
-         2Hayg5YgCDHID5Cxt4AtUMc8LAJCEXG7Jkg/lNBGQyE0FVDRGMJsgsxWsHWyNfmBuvg3
-         mIUg==
-X-Gm-Message-State: AOAM531SR/xmL6DUfiyDwd5uQiGi3SLqMh4Kzkyn2mKeicCfV6QMq9R8
-        5s0q8xxmY5/RunBXALoQ7Q==
-X-Google-Smtp-Source: ABdhPJzTFEmfAeacXqDkEiRReji+ZZWVsiht7GJMbos8sjEIydcV+4YyPcEw4tkbeIJVLkAGcs2vJw==
-X-Received: by 2002:a05:6808:13ca:b0:2d0:6e82:6983 with SMTP id d10-20020a05680813ca00b002d06e826983mr715308oiw.5.1648596355043;
-        Tue, 29 Mar 2022 16:25:55 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id m16-20020a9d4c90000000b005cb214bef81sm9735902otf.43.2022.03.29.16.25.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 16:25:54 -0700 (PDT)
-Received: (nullmailer pid 1551617 invoked by uid 1000);
-        Tue, 29 Mar 2022 23:25:53 -0000
-Date:   Tue, 29 Mar 2022 18:25:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        smangipudi@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        warthog618@gmail.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 04/11] dt-bindings: Add HTE bindings
-Message-ID: <YkOVgRBtXX0k9zr1@robh.at.kernel.org>
-References: <20220329054521.14420-1-dipenp@nvidia.com>
- <20220329054521.14420-5-dipenp@nvidia.com>
+        Tue, 29 Mar 2022 19:50:02 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3431E9BBB6;
+        Tue, 29 Mar 2022 16:48:16 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id EC0281F40F3A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1648597694;
+        bh=5RCxnQpK5I7Y2zWLKGLxBiVPTh/yCn+uO0KyYdxQQQ8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=a9w3F/vzA0sFlOCcLd85ycKnYywA+CP5LeOCfthZ1gDdaKR6rF7wb+pGb1w3Lzsxb
+         8sKZMKFgzrGhqWiKyZhCBP7uOCaZF2rASpfVv1lDWpm/C6Xt7K67TGxiMUSg6S+/he
+         PK40aipOdT3Am2PfAWvr/S08mVe9IdvC++qY7+BIm/X12tiJMw6OB/8oo7mM9H0cB8
+         /4+gpdn+u+thh9lB0dL8yVtGxPULDQDas6PMYX53E5B4ZV6nBFBxbiaP0ygVJ9Vvx8
+         xXAcf1mdKKJGAbgf+K4GQw+GjQ+yMA46G0hGGJoeI0furZEDcXIJNvh9CWQMRe19+w
+         UF73voLivci6A==
+Message-ID: <22eb6b37-3bcd-71ab-f99f-dc059043b56b@collabora.com>
+Date:   Wed, 30 Mar 2022 02:48:11 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220329054521.14420-5-dipenp@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [Patch v5 1/4] memory: tegra: Add memory controller channels
+ support
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        krzysztof.kozlowski@canonical.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220316092525.4554-1-amhetre@nvidia.com>
+ <20220316092525.4554-2-amhetre@nvidia.com>
+ <83bc4c12-13e3-d239-3845-a3541b1fbb2a@gmail.com>
+ <981610f0-374a-b18f-8e3a-445b20edb257@nvidia.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <981610f0-374a-b18f-8e3a-445b20edb257@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 28, 2022 at 10:45:14PM -0700, Dipen Patel wrote:
-> Introduces HTE devicetree binding details for the HTE subsystem. It
-> includes examples for the consumers, binding details for the providers
-> and specific binding details for the Tegra194 based HTE providers.
-> 
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Changes in v2:
-> - Replace hte with hardware-timestamp for property names
-> - Renamed file
-> - Removed example from the common dt binding file.
-> 
-> Changes in v3:
-> - Addressed grammatical errors.
-> - Removed double plural from the respective properties.
-> - Added dual license.
-> - Prefixed "nvidia" in nvidia specific properties.
-> 
-> Changes in v4:
-> - Corrected make dt_binding_check error.
-> 
-> Changes in v5:
-> - Addressed review comments.
-> 
->  .../hte/hardware-timestamps-common.yaml       | 29 +++++++
->  .../devicetree/bindings/hte/hte-consumer.yaml | 43 ++++++++++
->  .../bindings/hte/nvidia,tegra194-hte.yaml     | 82 +++++++++++++++++++
->  3 files changed, 154 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
->  create mode 100644 Documentation/devicetree/bindings/hte/hte-consumer.yaml
->  create mode 100644 Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
-> new file mode 100644
-> index 000000000000..e8a69ceccd56
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
-> @@ -0,0 +1,29 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hte/hardware-timestamps-common.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Hardware timestamp providers
-> +
-> +maintainers:
-> +  - Dipen Patel <dipenp@nvidia.com>
-> +
-> +description:
-> +  Some devices/SoCs have hardware time stamping engines which can use hardware
-> +  means to timestamp entity in realtime. The entity could be anything from
-> +  GPIOs, IRQs, Bus and so on. The hardware timestamp engine (HTE) present
-> +  itself as a provider with the bindings described in this document.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^hardware-timestamp(@.*|-[0-9a-f])?$"
-> +
-> +  "#hardware-timestamp-cells":
-> +    description:
-> +      Number of cells in a HTE specifier.
-> +
-> +required:
-> +  - "#hardware-timestamp-cells"
-> +
-> +additionalProperties: true
-> diff --git a/Documentation/devicetree/bindings/hte/hte-consumer.yaml b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
-> new file mode 100644
-> index 000000000000..be69f63aa8c3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hte/hte-consumer.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: HTE Consumer Device Tree Bindings
-> +
-> +maintainers:
-> +  - Dipen Patel <dipenp@nvidia.com>
-> +
-> +select: true
-> +
-> +description:
-> +  HTE properties should be named "hardware-timestamps". The exact meaning of
-> +  each hardware-timestamps property must be documented in the device tree
-
-The meaning of the cells needs to be documented. You are documenting the 
-meaning of 'hardware-timestamps' here.
-
-> +  binding for each device. An optional property "hardware-timestamp-names" may
-> +  contain a list of strings to label each of the HTE devices listed in the
-> +  "hardware-timestamps" property.
-> +
-> +properties:
-> +  hardware-timestamps:
-
-I'm wondering if we should just drop 'hardware'. What other kind of 
-timestamps are we going to have in DT? software-timestamps? No.
-
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      The list of HTE provider phandle. The provider must document the number
-> +      of cell that must be passed in this property along with phandle.
-> +
-> +  hardware-timestamp-names:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    description:
-> +      An optional string property.
-> +
-> +dependencies:
-> +  hardware-timestamp-names: [ hardware-timestamps ]
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    hte_irq_consumer {
-> +              hardware-timestamps = <&tegra_hte_lic 0x19>;
-> +              hardware-timestamp-names = "hte-irq";
-> +    };
-> diff --git a/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
-> new file mode 100644
-> index 000000000000..ce6f1313f52d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
-> @@ -0,0 +1,82 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hte/nvidia,tegra194-hte.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Tegra194 on chip generic hardware timestamping engine (HTE)
-> +
-> +maintainers:
-> +  - Dipen Patel <dipenp@nvidia.com>
-> +
-> +description:
-> +  Tegra194 SoC has multiple generic hardware timestamping engines (GTE) which
-> +  can monitor subset of GPIO and on chip IRQ lines for the state change, upon
-> +  detection it will record timestamp (taken from system counter) in its
-> +  internal hardware FIFO. It has a bitmap array arranged in 32bit slices where
-> +  each bit represent signal/line to enable or disable for the hardware
-> +  timestamping.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nvidia,tegra194-gte-aon
-> +      - nvidia,tegra194-gte-lic
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  nvidia,int-threshold:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      HTE device generates its interrupt based on this u32 FIFO threshold
-> +      value. The recommended value is 1.
-> +    minimum: 1
-> +    maximum: 256
-> +
-> +  nvidia,slices:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      HTE lines are arranged in 32 bit slice where each bit represents different
-> +      line/signal that it can enable/configure for the timestamp. It is u32
-> +      property and depends on the HTE instance in the chip. The value 3 is for
-> +      GPIO GTE and 11 for IRQ GTE.
-> +    enum: [3, 11]
-> +
-> +  '#hardware-timestamp-cells':
-> +    const: 1
-
-Need to describe what the cell represents.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - nvidia,slices
-> +  - "#hardware-timestamp-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    tegra_hte_aon: hardware-timestamp@c1e0000 {
-> +              compatible = "nvidia,tegra194-gte-aon";
-> +              reg = <0xc1e0000 0x10000>;
-> +              interrupts = <0 13 0x4>;
-> +              nvidia,int-threshold = <1>;
-> +              nvidia,slices = <3>;
-> +              #hardware-timestamp-cells = <1>;
-> +    };
-> +
-> +  - |
-> +    tegra_hte_lic: hardware-timestamp@3aa0000 {
-> +              compatible = "nvidia,tegra194-gte-lic";
-> +              reg = <0x3aa0000 0x10000>;
-> +              interrupts = <0 11 0x4>;
-> +              nvidia,int-threshold = <1>;
-> +              nvidia,slices = <11>;
-> +              #hardware-timestamp-cells = <1>;
-> +    };
-> +
-> +...
-> -- 
-> 2.17.1
+On 3/25/22 07:50, Ashish Mhetre wrote:
 > 
 > 
+> On 3/19/2022 9:12 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 16.03.2022 12:25, Ashish Mhetre пишет:
+>>>  From tegra186 onwards, memory controller support multiple channels.
+>>> Add support for mapping address spaces of these channels.
+>>> Make sure that number of channels are as expected on each SOC.
+>>> During error interrupts from memory controller, appropriate registers
+>>> from these channels need to be accessed for logging error info.
+>>>
+>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>> ---
+>>>   drivers/memory/tegra/mc.c       |  6 ++++
+>>>   drivers/memory/tegra/tegra186.c | 52 +++++++++++++++++++++++++++++++++
+>>>   drivers/memory/tegra/tegra194.c |  1 +
+>>>   drivers/memory/tegra/tegra234.c |  1 +
+>>>   include/soc/tegra/mc.h          |  7 +++++
+>>>   5 files changed, 67 insertions(+)
+>>>
+>>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>>> index bf3abb6d8354..3cda1d9ad32a 100644
+>>> --- a/drivers/memory/tegra/mc.c
+>>> +++ b/drivers/memory/tegra/mc.c
+>>> @@ -749,6 +749,12 @@ static int tegra_mc_probe(struct platform_device
+>>> *pdev)
+>>>        if (IS_ERR(mc->regs))
+>>>                return PTR_ERR(mc->regs);
+>>>
+>>> +     if (mc->soc->ops && mc->soc->ops->map_regs) {
+>>> +             err = mc->soc->ops->map_regs(mc, pdev);
+>>> +             if (err < 0)
+>>> +                     return err;
+>>> +     }
+>>> +
+>>>        mc->debugfs.root = debugfs_create_dir("mc", NULL);
+>>>
+>>>        if (mc->soc->ops && mc->soc->ops->probe) {
+>>> diff --git a/drivers/memory/tegra/tegra186.c
+>>> b/drivers/memory/tegra/tegra186.c
+>>> index 3d153881abc1..a8a45e6ff1f1 100644
+>>> --- a/drivers/memory/tegra/tegra186.c
+>>> +++ b/drivers/memory/tegra/tegra186.c
+>>> @@ -139,11 +139,62 @@ static int tegra186_mc_probe_device(struct
+>>> tegra_mc *mc, struct device *dev)
+>>>        return 0;
+>>>   }
+>>>
+>>> +static int tegra186_mc_map_regs(struct tegra_mc *mc,
+>>> +                             struct platform_device *pdev)
+>>> +{
+>>> +     struct device_node *np = pdev->dev.parent->of_node;
+>>> +     int num_dt_channels, reg_cells = 0;
+>>> +     struct resource *res;
+>>> +     int i, ret;
+>>> +     u32 val;
+>>> +
+>>> +     ret = of_property_read_u32(np, "#address-cells", &val);
+>>> +     if (ret) {
+>>> +             dev_err(&pdev->dev, "missing #address-cells property\n");
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     reg_cells = val;
+>>> +
+>>> +     ret = of_property_read_u32(np, "#size-cells", &val);
+>>> +     if (ret) {
+>>> +             dev_err(&pdev->dev, "missing #size-cells property\n");
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     reg_cells += val;
+>>> +
+>>> +     num_dt_channels =
+>>> of_property_count_elems_of_size(pdev->dev.of_node, "reg",
+>>> +                                                       reg_cells *
+>>> sizeof(u32));
+>>> +     /*
+>>> +      * On tegra186 onwards, memory controller support multiple
+>>> channels.
+>>> +      * Apart from regular memory controller channels, there is one
+>>> broadcast
+>>> +      * channel and one for stream-id registers.
+>>> +      */
+>>> +     if (num_dt_channels < mc->soc->num_channels + 2) {
+>>> +             dev_warn(&pdev->dev, "MC channels are missing, please
+>>> update\n");
+>>
+>> Update what?
+>>
+>>> +             return 0;
+>>> +     }
+>>> +
+>>> +     mc->mcb_regs = devm_platform_get_and_ioremap_resource(pdev, 1,
+>>> &res);
+>>
+>> Can't we name each reg bank individually in the DT and then use
+>> devm_platform_ioremap_resource_byname()?
+>>
+> That can be done but I think current logic will be better as we can
+> simply ioremap them by running in loop and assigning the mc_regs array.
+> Otherwise there will be like 17 ioremap_byname() individual calls for
+> Tegra194 and Tegra234.
+> Will it be fine having that many ioremap_byname() calls?
+> Also, Tegra186 has 5 channels which are less than Tegra194 and Tegra234.
+> If we go with ioremap_byname() then we'll have to differentiate number
+> of ioremap_byname() calls.
+for (i = 0; i < mc->soc->num_channels; i++) {
+	sprintf(name, "mc%u", i);
+	err = devm_platform_ioremap_resource_byname(dev, name);
+	...
+}
