@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FD9C4321E
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 11:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3215CC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 11:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244956AbiC3L47 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Mar 2022 07:56:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56270 "EHLO
+        id S1344424AbiC3L7I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Mar 2022 07:59:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345890AbiC3LzI (ORCPT
+        with ESMTP id S1344749AbiC3L43 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Mar 2022 07:55:08 -0400
+        Wed, 30 Mar 2022 07:56:29 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39D3425EC9D;
-        Wed, 30 Mar 2022 04:52:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5687D31538;
+        Wed, 30 Mar 2022 04:54:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CA15D616DA;
-        Wed, 30 Mar 2022 11:52:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56B6C34111;
-        Wed, 30 Mar 2022 11:52:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 297F7616E3;
+        Wed, 30 Mar 2022 11:54:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C13C36AE3;
+        Wed, 30 Mar 2022 11:54:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648641131;
-        bh=8ZFmnqlSEMxKjuWziuwkhdq48STdoQ3qVnRC30Htjlg=;
+        s=k20201202; t=1648641268;
+        bh=ovHc4eVfLIwPzgDupeP7xqTAvr7qsXez6cVtCEg6mOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ubGd8FF7QhLDXrxASeA+gcqSIFiHwhiZEYqLmdM+lwJ79+i3dNVxqohNXqkSeDvxK
-         enIYDOqrYm5ntXhL8qgXX03VeKuMBnqA1OHLZ0j57YaZcK+VXY2druT0Y8dVC0rBsQ
-         ustOz5Crwpwr/HMwNxGCXWJEYEBjlcrtem8rukwe80Bf0ToVWgpHkT6yXesYaS+xcC
-         3M14O9xKvnEql57lHhZk92h4KgkRHwa7+4fCCjtpvbj7EPBmJzSLES6X3dfzxWtrvS
-         PRRM8iLvtITDZcM/7T7WNDtZNs1Bx4BWSTwnVliGbgKYrIYIGVKxT5BAr5csqm9sRA
-         zUNlyovntM55Q==
+        b=CKoNuB/KB1V/NUx3uIhHDn0utlSGqfbZT7vrDk0Io7U8rbOwxSCV300UXruSKAfMJ
+         UpbIaSMx2gDgFvvoppgblowEYjb8oinTHpBBGR4yqzsY2kTl3Pss3uvJ923uZxMi84
+         ue023U1ge0YIE+s0rFVludJ8A9Bk+wbkEhFI/f1NHkTwtu8zlaYJCKjIz+GJtgmiKu
+         RHiMbTqkrTlSr95yiTXT5OqKvvguKM1yDBZZhczTD024zZNhy4SP+IlYUjq87AhpAW
+         6M5Q8LiqrR8SKZrejSnGok49eD9mf21cqXkgrEUGyUX1x87QYN4UsQkdVSiGSZlFok
+         9QVP/m8ZFAVrA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Richard Leitner <richard.leitner@skidata.com>,
@@ -41,12 +41,12 @@ Cc:     Richard Leitner <richard.leitner@skidata.com>,
         thierry.reding@gmail.com, gnurou@gmail.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 28/37] ARM: tegra: tamonten: Fix I2C3 pad setting
-Date:   Wed, 30 Mar 2022 07:51:13 -0400
-Message-Id: <20220330115122.1671763-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 12/17] ARM: tegra: tamonten: Fix I2C3 pad setting
+Date:   Wed, 30 Mar 2022 07:54:01 -0400
+Message-Id: <20220330115407.1673214-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220330115122.1671763-1-sashal@kernel.org>
-References: <20220330115122.1671763-1-sashal@kernel.org>
+In-Reply-To: <20220330115407.1673214-1-sashal@kernel.org>
+References: <20220330115407.1673214-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -70,10 +70,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index dd4d506683de..7f14f0d005c3 100644
+index a613e3b85b45..29769bf7a11a 100644
 --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
 +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -183,8 +183,8 @@
+@@ -182,8 +182,8 @@
  			};
  			conf_ata {
  				nvidia,pins = "ata", "atb", "atc", "atd", "ate",
@@ -84,7 +84,7 @@ index dd4d506683de..7f14f0d005c3 100644
  					"gpv", "i2cp", "irrx", "irtx", "pta",
  					"rm", "slxa", "slxk", "spia", "spib",
  					"uac";
-@@ -203,7 +203,7 @@
+@@ -202,7 +202,7 @@
  			};
  			conf_crtp {
  				nvidia,pins = "crtp", "dap2", "dap3", "dap4",
