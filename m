@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53ACC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 05:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9A6C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 05:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242686AbiC3FE5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Mar 2022 01:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48218 "EHLO
+        id S242727AbiC3FJN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Mar 2022 01:09:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239629AbiC3FEz (ORCPT
+        with ESMTP id S240719AbiC3FJM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Mar 2022 01:04:55 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2054.outbound.protection.outlook.com [40.107.243.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B2526BDCE;
-        Tue, 29 Mar 2022 22:03:10 -0700 (PDT)
+        Wed, 30 Mar 2022 01:09:12 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51736F2138;
+        Tue, 29 Mar 2022 22:07:28 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JKy53V8+RCT3dH/9CLroordQIvrw5TI4Spf+Z+WT0epKR0qx9isiqjWtzL8kKZ8b1Z4AjhE9j1xuL1sqE24eSBSPapGZg8VLoDgYKgiTUvmkWaztVCLdhI5S+wP2pWv4v1DDlf98hupJV3BAIHMhM88Td6scP529TYdyYWIcDqKS4yPy/gEZXsEY81oESy2tsOJydpvFRlZGGctnLdlng/pwkH2tICK8CcGUdXJqK/JrMsgJsbVKPLqN4S8MLUTH7QowzH/adqUrxeA7R8r1J+snUl6ZYzlpo4YdlZaAPLDaRM6w0YZ9k/neGGaSTDqUNKnWh76bgOtX+1Ga4/H1DQ==
+ b=kL3zbeDPimeSbySZ2JnJmZN9aUktTMn6nTyW8/9t1bEx316lr3LnwHuzIDDq3LJlinr43bL8/JYaNstafA1E6xBdwTeSmH/HzJWU3aRgvlVjLSZbUYBw8ZO1HG+VkqtUmxTKDyoXb1eyfq/LeGio/eKO8SrMHfk44OLTgiqfhweVq/RU/LaQOEARXzppbXVRPzYmnazQkVqO7soQ90Fa6/Y+sLTqkW2VNCo86nj+HiDwth7Mztmw2qZ4TUH2FnjDwtk7QBjHy74p1mfe9HC0v2ZOOhk2zIh4zLe6kf3cb2l66b6woyoXUFuKExc2fMN/qsJ5cjGv1fNCygOq3k+7rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iwDZDktnBePH0jHW34nCDgOIOrLSGCjHELtPTxQ6JG0=;
- b=csibH5sdSoB7DYAj3hDq3hQQBHJ/XzR7MUzHLuNxlIiP1aQFR3AcS2T7pe/xRCHDDEbp2jHhsvHWVBpPTxix+AB3ffmO31M8zhhfPIIzecu5kx5Z+38mHFXy2CySKeFpI2UstuG+xokPM+hU/UuqlsXlGxwv7mHxvsanfb1rSBLkIknkLWMmhamWGZ+Uo8dMWTa9tUDNltA6kmgNtkJMwMayAkLZY4M3swDTlIHVl3WeCm/AzSzLu/fhhHKM4qJ+vCQ9voSVhX5h5HlNvzEQX8ISdVGmOPhrXqxDvWoRu6NCczpdarhTZWBycF11VQkh932fpqxGLtPOVma1VBU+2w==
+ bh=c4+RvlehFAIcVUVHJ4wKFMXpcpYasO558cTuaGV+qWc=;
+ b=PY4Zt8mKMZmc/ttzt9T/7XWAvP4rfoOv59zOzDxHxgP5/+72gDfH6IB2SIbgFg0l4wh/YbO7OBkAI9QRTndj4Oq4IT4mlflG8Dw3FpN3pRna9Tr+231spI7PiiRt+TsZ6GwyEtPrGqwEccV575BHq1FO6K1RPugAJlqBaqA9cNrRyG3K83wJ24SMwstoqteRrxGaqwN95FA+RO9cQvAvJYJkhL/sNZ9gGwck+80m938waOY4/AA/O68YeEaksuA2zmT7cyjUc/BMdqu1s+WcX9mJCBTthlRIds3ZIp4LuMGgLmzPub7weNNVyaJjlndJe2IAlBkiGo0ikbOir7ZQyA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iwDZDktnBePH0jHW34nCDgOIOrLSGCjHELtPTxQ6JG0=;
- b=e8qvdf5HrcUpRsd+JvumwnAiXdEK0Tc14rXMukYDGtXYCgJuUH0rTj+PbGw36HNdpdXfFffjbS7WV2BS2vht7fC5iPwYgNAbNkxrV6Qw1yN8IWBOpMCwg/ss4bZkaS6cBFTWxpSW6vzeuZWsXJiBmJlAeStCqmaUJc/17LB9UJDIxoo6eZrZJXeU8zHDEuZVFKJgkh35x0LmxIXnElxhfJc8z4BmXkKZjNUIxy++/BkwJhD/Xb6UxT7bja1kvChNaTDinKBaxVVDVlL5caBlLVEY5PXuynskKVS5RjNwH+owG3SiCU+P2MIdDZeYkIBwPpaqDnyvquCuz5VGw4q+wA==
+ bh=c4+RvlehFAIcVUVHJ4wKFMXpcpYasO558cTuaGV+qWc=;
+ b=CR2MYwS+rfqt8Ki5yRaK+ZnoXfKKV8eNMxAZoi1iGaxEXjRp/P3Xdm5KDAgpHRjws16/9uMe7KnLkxGZeIu9Gi9qBU9S4i8K3NNFtUov795aQXWG0c+6V9tHyj2QKNfflQAHIK9QEFXJPTwqMXFEWNYEx6zqHK+Eol7/2Bi4ZC6A9jbN8X4wgX6UFyla0TMN+1Ujypu6F+quqkAkkp/sIfe2gHpJhPrwPInLx0N+jwHBmuDUvOLjaH7szGIoMilx6RngmFpVYTU7/ySENxcEgcN2xpd062vF6zlBeKogwZWEQhjSiK2tEyE8eR34LCcnEbwzxBjq5zuqgf9IZ5e1Jw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21)
- by BY5PR12MB3860.namprd12.prod.outlook.com (2603:10b6:a03:1ac::25) with
+ by PH7PR12MB5832.namprd12.prod.outlook.com (2603:10b6:510:1d7::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.16; Wed, 30 Mar
- 2022 05:03:06 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.17; Wed, 30 Mar
+ 2022 05:07:21 +0000
 Received: from SA0PR12MB4349.namprd12.prod.outlook.com
  ([fe80::e15c:41ca:1c76:2ef]) by SA0PR12MB4349.namprd12.prod.outlook.com
  ([fe80::e15c:41ca:1c76:2ef%3]) with mapi id 15.20.5102.023; Wed, 30 Mar 2022
- 05:03:06 +0000
-Message-ID: <1b447612-25d7-77a3-2c27-26d7441dc15e@nvidia.com>
-Date:   Wed, 30 Mar 2022 10:32:52 +0530
+ 05:07:21 +0000
+Message-ID: <349166ad-7bcc-c550-8636-8342eb098333@nvidia.com>
+Date:   Wed, 30 Mar 2022 10:37:07 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [Patch v5 2/4] memory: tegra: Add MC error logging on tegra186
- onward
+Subject: Re: [Patch v5 1/4] memory: tegra: Add memory controller channels
+ support
 Content-Language: en-US
 To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
         Dmitry Osipenko <digetx@gmail.com>,
@@ -56,131 +56,203 @@ To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
         linux-tegra@vger.kernel.org
 Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
 References: <20220316092525.4554-1-amhetre@nvidia.com>
- <20220316092525.4554-3-amhetre@nvidia.com>
- <168cf065-bc17-1ffc-8cc0-75775c7f3bcb@gmail.com>
- <ecdc86b4-c207-de89-a094-6923a5573ac6@nvidia.com>
- <dacf1be8-f20c-de41-5ae5-9dba5e351881@collabora.com>
+ <20220316092525.4554-2-amhetre@nvidia.com>
+ <83bc4c12-13e3-d239-3845-a3541b1fbb2a@gmail.com>
+ <981610f0-374a-b18f-8e3a-445b20edb257@nvidia.com>
+ <22eb6b37-3bcd-71ab-f99f-dc059043b56b@collabora.com>
 From:   Ashish Mhetre <amhetre@nvidia.com>
-In-Reply-To: <dacf1be8-f20c-de41-5ae5-9dba5e351881@collabora.com>
+In-Reply-To: <22eb6b37-3bcd-71ab-f99f-dc059043b56b@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MAXPR01CA0113.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:5d::31) To SA0PR12MB4349.namprd12.prod.outlook.com
+X-ClientProxiedBy: MA1PR0101CA0021.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:21::31) To SA0PR12MB4349.namprd12.prod.outlook.com
  (2603:10b6:806:98::21)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2e6ea454-f020-4228-2fa8-08da120a9379
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3860:EE_
-X-Microsoft-Antispam-PRVS: <BY5PR12MB3860815B65E98552A00BC732CA1F9@BY5PR12MB3860.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: ff37fa3a-7d56-4dfc-a28f-08da120b2b9e
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5832:EE_
+X-Microsoft-Antispam-PRVS: <PH7PR12MB5832B8F4119946CF98BE7159CA1F9@PH7PR12MB5832.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JcXQddJgYEQMbc7raOFEVbfZCsbr9RkXzpyIJ93kE9rnNU+WNmC7+JkgpA+yWNLKoi0LZnO9uVi7ZASGRdbnBuKfiJSEQIF9+4KDqEbaMl1X7CxFbS3XVvfZAy601RKHHl6M+0iP4EfvED0XQR1U606PrjMgvbF8xK/T6YiRuDkHEvsD2HH+V8cKCdmFvBdrh0ccVP55HBHK1zJZzMFe/3SgNZMfcIrGNgTUo6Z4e3hsjudSQRdSqoyitBqZYKab9IvZgBoOwVgaiXOfk5WH661qNNTKU2+jh2IZlN+/aNjI9mSObzNXMWv7TzqiJ2X2fB0nqhowwTVP/ch1BrIgKdZJieMmnhb23OyiMR3UsX0rY3ZrXYF5y/M3GKPLOBUZ/dW8QGwM+Q+PetV8HdagleXsFtn8rlPHxoZmhe/2/8qnA2Lw9k1s5HwIlcIitwuyATU7uhMBerzoNcPQuErlPM53VP1LVC5NabD8/AvDSiE4Mcp90j0VSv3P1izjQeIMZKCmXf52hE8FkIYdS2Bxj4N2pzy4apq47QdOlo0YKJishjaiQorhEybzooVoKIum69yzLjbPEga9sZHPYGHJSklvMgz/N8KhmJ3kwTGdItPJNhYqhbcBO+0fu6wxoETOh7zEg35DvhnEfwnajq+QBgUid8xx75qtdjwoC/Z8EVDagCbD0qn5OUbrBEXtv1l9w5kvWD1OzHDVfY3lA04X3O4/aM98SODM379rrpb3xhI=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6506007)(53546011)(55236004)(26005)(186003)(6666004)(107886003)(508600001)(36756003)(6486002)(31686004)(6512007)(83380400001)(316002)(2906002)(4326008)(8676002)(66556008)(66476007)(66946007)(110136005)(38100700002)(2616005)(5660300002)(31696002)(86362001)(8936002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: CUFsezB19r/7XaQImHfc9221W+UPKsRc3yTA/OHqmyO2p4X90NqDlikgMOxRn5ztoaLAbXSJ4lV5pLHJobRq3lXzHUDgQw8tBTHw/Y9EtmOoRylOzpiqcWz6cFPhy3jaO5shs+A+JlICLDKxpwJRgZY9nYN7xbU6rd3XrF/k8MRvmm57aTNQUtBRngkuwUacA3WP5Vx5njnvvAv2Am+RFCT+oIG5qWc2POEbIEwOYgFkyU/PJSXeUAPq+F/UAOwJ/w1r3gYY4UPac+OUoDNXpe8kZ3IBdHMJ9zVwEhoE8qs3S1POOhwiTVTEkwE8h45gvuMKHTcCJHMRQ5Z/Gk5dTSE8Z8p/t4ICNwHFIt5rWegS8+p+dqVqJaEUtZ9UWbRLCJ0sd0HFZIbbDlm6XpRKeBiEl3w1k/585maoRuVVF5tT2awTjPRWWg0vEUUXn1gpBnwqglDjAIY8bDFYw9ybwApCwb2PK2mB5oLqFCQxFnNMyutVG186q/i2JUOVODI9ruWuIMGOS5WcCCGf/5z2V9G7KVUCu1VL/91QUiDDynzcr8DCoZ8GsElVKerBbaTDwjm58WYmHZAx4YCXBecV4n/VmQFCNgKxDoJ8qzjvdou9dw1UqbLOnlP65bG3FLNC355XF6YDFKhxWVFU0GhOWj06+180Q2b8D0caDhSnXJnt7szY2FfKpK6W1cq6jTKnPLFAPxvX1gg3xVrV4vTG28O79TBiNtM12ITObIpF5Lk=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(86362001)(5660300002)(31696002)(2616005)(6512007)(36756003)(55236004)(186003)(107886003)(53546011)(83380400001)(508600001)(6666004)(2906002)(6506007)(6486002)(31686004)(26005)(38100700002)(316002)(110136005)(66556008)(66476007)(4326008)(66946007)(8676002)(8936002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TTR5aGlJdWN1Y09RdUY1TW1Sd0dVdkxxYmVDQWRMZ01rbUlUeWJmRjZqdjBX?=
- =?utf-8?B?cXhwektKeEs0Wjh0bEVTSnpOU1grOEd0d1h0c1JnN1QyQUtKeTArRE41ODUz?=
- =?utf-8?B?RUZ2MUYrSDdzU1U1VXVQaDdmUktxcG1GeXQ4b3Vsb3RGeW5yVzVsRUt0MVFj?=
- =?utf-8?B?S21kTWIvbWo0VnZsSFU3ajNCY1pDM3YxczJjV2FQZXVmcG5XVUx2bUY2YzVj?=
- =?utf-8?B?QTMxMzVYM2dVWk9rZ242eGVGR05OemxCZ0RJNGNnQmcydGQySDJYOFhEZDM3?=
- =?utf-8?B?OXZ0YmgwcGRGMnQ2SVFnTjVzZklnQVN5bEg5ZDlEYXZ1QkptYkNWaS8zK254?=
- =?utf-8?B?cjFDeDJDbkxpRDB4SVJIV2NOQ1pYQW5xQUhhT1ptYUYrb0NpS05pZHFrY2Iv?=
- =?utf-8?B?c25va0xOaHJmaWxHMFp6RFVnbDNiK3dHcDNhYzlIanB0cGJ2T1RWR0VFekRs?=
- =?utf-8?B?OVIwMU1uSW8xVHRYcGhZamlIdEdGSVVwcmp0RmVjd2hvM1R6WXpaYUx5SzRu?=
- =?utf-8?B?RnhhbEVPanFxMUhTY2pWR0FHTVhjVCs3SEUwWCtCQ216d1NvNkZGbHZ3TU11?=
- =?utf-8?B?WDZ1UnlxaFFTWDdUR051N0YxZEYxZTAxYWpOaDU0b2daZlQzaUtQYy9sY2lQ?=
- =?utf-8?B?WURRcmdnNDFaYVZUb2lIb21WM0g1V2l2NllDRUwxZklQZDZEcHFvNFBwNzZV?=
- =?utf-8?B?SEV4dEJNS2Y1aGhkS0E1UUxvblVIa1hIaUdUeWhtT3laV0tUS05Zd2hsVnZ3?=
- =?utf-8?B?WEpacEoyb05FZ3U1bHh0d24rQXIwVTRidUtqVkRXOTkrM2hvS0UrdU51RExn?=
- =?utf-8?B?T2VZQy9VRk5FL242WjJIdHpWR1FVNVdkTTdZS2wrUXd1TEE5dUF1NG1EVm4y?=
- =?utf-8?B?R0s1V3Mwckl5UjBtSHNYdjl0eExOMVM1a0JiRndiSEh0bjdlYUlQbWJXc290?=
- =?utf-8?B?dkI1RnlSbUpjd3NnM2sxand1Nk5CMk1BbTBJZi9LbFlpYkY0V0FsUnZqUXlp?=
- =?utf-8?B?OVlPK0ZxTW1WM0R5ZytnbHZQMUJMQWRuazArYmNnTU8zWGIvSHE3amdQMWZs?=
- =?utf-8?B?Z0dlMkNMOVFlem1BZ2F0bzE2TDhZcEJ2WVRPZ3JzOXUvZFZEZ1d0NFRNTHRJ?=
- =?utf-8?B?M1VTdSsyUnV3bVJDek1GeUxjdHQzRFpUN2JyWnBQV2RFTTJycGx2bXVPeHhj?=
- =?utf-8?B?YWdKaHY0Y0Q5L05JRUMyV2oxMjk0ZXF4QVczUEtYMWYzZUloWU9naDNKeW04?=
- =?utf-8?B?OTJJR3orOXppYmNZcytqdWdraGQxejlJeENBWXRXaExnWWFGQ0ZSSHpFU1VJ?=
- =?utf-8?B?MERlcFRFMEpJMFh6eVRuY0dueEI3M2l0cUg1c3ZwUTc2R3hsM2FOeVNxVklX?=
- =?utf-8?B?eEpyRzdjRWRZNzFsTUtmYXAwalhzOUFxdUxGTGpWcERWeDFnVUI2SUNLaGp5?=
- =?utf-8?B?a1BXYU1wMFdzNjA3dXo3K25tSFJaMS82VDl2QlczT0E2emZXcW1IRzhxLzVh?=
- =?utf-8?B?UjBDUjFibTk3WHlobGxmWm5XN1UwUDRwWE5ld1FpdlcraWNYbHJNeVNZQldF?=
- =?utf-8?B?Mms0RWpIOEZIVnlmOUJRN200SDltSXArM3FBWGFHL1lzWFdKV25IVTFpRUdK?=
- =?utf-8?B?bGV6WFlXbGswYnpLRHB6WjVSaXpnZlFSLzkrbEZpNUwwNzlTcXJwU2ZoSHhD?=
- =?utf-8?B?MUJFa2VSRGVaREJRZFpSVzJwOWR1OEtOR3RSL0lrZElUNHZnelNwRkZaUS9j?=
- =?utf-8?B?UTIvTVdOV2dhOU5MandDUDRNSmNBZ0NMOFR2NDN2eURCdXk1blZQZTFVN002?=
- =?utf-8?B?K051K0NONHBMc1lYWG9kWHdBRHRqa1VySlJQYUNsYWcyU25EdHNNL0lyclJZ?=
- =?utf-8?B?UnhWY2RYTVJjbVRkVVlITFR1Ui9MTE41TUFSWXZSZDUyUFpDUXN5WEp4Nmty?=
- =?utf-8?B?UW1kY0VqaWllU2hjOFEzakdCd0ZKVmdabWlkOERkS1hkM1pZYkNKWjVUTTBv?=
- =?utf-8?B?ejdoM3M4a3lHa3VzOUFOSDJ4bzZubnBSNVNEUDlLdEQ3MlRtdjlPcHpydlNz?=
- =?utf-8?B?aWplZ0dQOVZIbGMyNC9WaEQza2FWRVN3d1VCSFp3TlNjYmNkOXJ0b2VQeG15?=
- =?utf-8?B?Q3VweDVlNjBOUHF2a3pabWkzb3JqREx2Z0thOVZBci9ObEQwZGFKVEtCSHRK?=
- =?utf-8?B?cy8rMW52YUh0S3J1WDh6Y01iemtSdG5PUTk0YlowOEtGSHl4a3Qvd2UrOXdN?=
- =?utf-8?B?RzdPSVZuTVlnQ1RhRzBxSVltNVJvRXNZUnZKWTZtVWFNamQ2VHpxcXZVSmI3?=
- =?utf-8?B?MmNIc29YVk10ek5QcGM5ZE5BYy8xMkNnUkYyV3FPQ3FNa0NERU92QT09?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TGhqcTRHenU5M1pWb25vRS9LdEsvUzlpSEdaT3FCcWlyMGpzY296TzJFVDdM?=
+ =?utf-8?B?bkI3R2l3ZjRQM1ljbE5ndm9mejExaStnd1FIK05WSVBKcW1pR3U1NU0xUGsw?=
+ =?utf-8?B?dGU5L1hWcE5xUmNiUmxwenRGbWp5VWVESlMydWF0L3hzbFR3U1NBdzNFVXpX?=
+ =?utf-8?B?SDcyejlQWnkyMm5sdXBpQTBKVXpiYWIyMUJUVWM3eDgvd0VzNmJTWG01dk1L?=
+ =?utf-8?B?ejV2Z2Y2UkVHZkRsaDc3ZnZCTGw5MlViL2F0T0cwSWZZS0RtQ1p4MzRrVDcz?=
+ =?utf-8?B?TmJtZFhIRWJpZThzVlhWendPYVArTlZKelZ3K3o0Nmx1YkVIS3N1WTQwMXpj?=
+ =?utf-8?B?Zm9zUlRNd3BEcUVXOFZadWNqbTF1anB2Nk5ER1NCVlFxeXpjTk13b2N2OEtK?=
+ =?utf-8?B?bGRYMzBXdE14dy95Y1Jaald5OG1JS2t0RDA5blVlRVNoSHNCbVVJRExOUjQ3?=
+ =?utf-8?B?MStvdVNxRXBnUWFZTmxHMkh3bjZoVGtQZkZxemtDQ282b3IzVVB5UHgzMG1y?=
+ =?utf-8?B?V3B2UlZ0d0pUNzJrQzV3TGIrUVpvbzViMi9ZWnBEbnlvLzVzRFFPeExjZWpz?=
+ =?utf-8?B?RXZTNDloZlJqRUt4MU1vTTl3V01JMyt1RXBFWkoyTlcvTHVHNnFpQlJ5V3VR?=
+ =?utf-8?B?bUgwSkxJSmphclRpdlVRTy9kaStBZC9GTXJ0T2ZUbHVSRkZFQWRkZHFMaUti?=
+ =?utf-8?B?MXNadjRyK0puMlhPOXAzelNaSmQ3RlVxQjVDbFMrcGtlbEh4VE1kL2ViZERN?=
+ =?utf-8?B?OEhrQnZ0azFrdVFEOUkwWEhxTmxXTTRIY2grblA3MTU1aXB6TGo3UTNGMHll?=
+ =?utf-8?B?QURNaklBS1MxdVdtYWZwOFpQUEFtb1NKOHNoejJqQ3R5cnRDV2M5ZkpDa1Zk?=
+ =?utf-8?B?MVIwTkMvcW9STVQxRHNlNVlpUTR1MytSZ0JmOE5TQWk1Q29Dam9qVmthTWow?=
+ =?utf-8?B?M3FDeE8wSkFkTTRvc2dEMU94L3d0ZTBMVis1ajE1MmdMdnRxVTUwNWZhYjI0?=
+ =?utf-8?B?MHRwTVVBVlhadDdXOW9kSHROaFpydlhlUE9URVN3ZHpTNmNGYWVXTzJ2RUFu?=
+ =?utf-8?B?S2c5YWtnbTVxNGs2dEJUVFE0K1BoNVYzVFppWjNIUWwvaG9EQ0hjR3E5UHdk?=
+ =?utf-8?B?dXRBMVQ1V2k1ODY2Yk5WQS9lckV6ZDYyZ3FSM0ZRRk43RUJXaU5OWGwySFN6?=
+ =?utf-8?B?S2ZBYStTUW5IRUIyTnAzUmlQQ2lXUGZsSThNRmMzbkJOYU1xMDBreWg0OXJ1?=
+ =?utf-8?B?QmRyaEVTdThHbWhYTjE1SVFpNWh5SW8rOStZbk9IcFdESG1DbDRHb0c1dzl2?=
+ =?utf-8?B?amhOcm9oL3phaURWdDRrWDhIeXJGUEpENkNQTU5RazhYV1J3N2NTcTBObXBN?=
+ =?utf-8?B?WWUxWDljZCtVRzNRMTdBN0FzOHkzazlaSHdVRGk4YmpYTjZwUVp0NVJLelVq?=
+ =?utf-8?B?bnB6TjJUYk9ua1BJZWhkSjNCR0hXS090U3BWd3Y3ZW9sYzlFN0xIajZ4VHJS?=
+ =?utf-8?B?U0ExcitTalVRUkJIMjBzUWwvOGg2dnhScVA0RUNZaVd4SjBmRnVySFl5OWtQ?=
+ =?utf-8?B?d0JKTlFzTjM3TlIvZTRsNmdwYUhhb3ZGdmoyV2I5MWp5TEFaR0hKSUcyZUVn?=
+ =?utf-8?B?bFZCVGVRY0g1UmdsaE1hTEQvdjdrNHM4TXZvbjFPS3BnWWlmdVdrdkVNRG84?=
+ =?utf-8?B?Z0JXUm9NWmxIYkFEQXpFU3U5UEhCUWt6aWE0QVFiRE14cENMM1Fna0dRNXZw?=
+ =?utf-8?B?c3pEaFd5VjhCcVJOYmk2cDIvZFA0ZUxaYVQ5NWlHdzVSbEh5engvSk5xVURn?=
+ =?utf-8?B?cTF2ZlhXZ3FUV25XQVRZeDd1RGxMZnFIeTczWE1waFdPQy9BbnM5UVZ6Tjg4?=
+ =?utf-8?B?OHJjWm81U0gvbXFKN3lNUFBWY0dUUUxSa3VJYjBTSkhMZWc4UFZNVVVtK0RN?=
+ =?utf-8?B?YUludWtiQThWVmMzUjFyRlRyT0dXbHkzRUFnRnprVzNiU1IyamFaNGVvb2to?=
+ =?utf-8?B?UkJ5M1Y0bG1OTHlwdVFhdXowZEFqeDBDWkZURkFOcGViNmJ2enBzOUw4SHpk?=
+ =?utf-8?B?SzNhcTk0bWE1VFlHRUs5cDhVa0lra3RtNTNlNHNzUU5nS2x5bHBlQzRGY1ht?=
+ =?utf-8?B?c25TTmRONFlEaGw4QkZsSnhVOGJvYjQ5eFNqRk9aTFV3emxNb01BbXE3QmFC?=
+ =?utf-8?B?UEVBZTM1Rm4wQ3FvYkFNaEUyTlVtVHBVK2drUFZqYks1cXdlZjdSVzNPMys3?=
+ =?utf-8?B?QktzMUVCWG44dGd4U2ZCVjUxd2FEUjhPd0xIUU9JTWJBNlYrRGhUckk1a3NG?=
+ =?utf-8?B?T0hCRWtWWHVFRDY5MEE3QkwzUlFxZ1BTbGI2TVNHQW5aMHRTR0I2Zz09?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e6ea454-f020-4228-2fa8-08da120a9379
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff37fa3a-7d56-4dfc-a28f-08da120b2b9e
 X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4349.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2022 05:03:06.3261
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2022 05:07:21.5831
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ahl1vxzj2KiqeBjZHtvHZNjXmSow4b8m9n9hBx5NNiYFYltx2/3sf3jCr3kXymICYzEmoWwbF1ebPRmNbFzxPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3860
+X-MS-Exchange-CrossTenant-UserPrincipalName: D4Nr+F3f2m2Xvy1bcZ6MhLyTjqIzjFtZ/npUE1VxWQAii9vYrNipRdtzt/UCsgv4moAK03ZoFIN8qwuSHgDRPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5832
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
 
-On 3/30/2022 5:21 AM, Dmitry Osipenko wrote:
+On 3/30/2022 5:18 AM, Dmitry Osipenko wrote:
 > External email: Use caution opening links or attachments
 > 
 > 
-> On 3/22/22 20:23, Ashish Mhetre wrote:
+> On 3/25/22 07:50, Ashish Mhetre wrote:
 >>
 >>
->> On 3/19/2022 9:29 PM, Dmitry Osipenko wrote:
+>> On 3/19/2022 9:12 PM, Dmitry Osipenko wrote:
 >>> External email: Use caution opening links or attachments
 >>>
 >>>
 >>> 16.03.2022 12:25, Ashish Mhetre пишет:
->>>> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
->>>> index 92f810c55b43..6f115436e344 100644
->>>> --- a/include/soc/tegra/mc.h
->>>> +++ b/include/soc/tegra/mc.h
->>>> @@ -203,6 +203,8 @@ struct tegra_mc_soc {
->>>>         const struct tegra_smmu_soc *smmu;
+>>>>   From tegra186 onwards, memory controller support multiple channels.
+>>>> Add support for mapping address spaces of these channels.
+>>>> Make sure that number of channels are as expected on each SOC.
+>>>> During error interrupts from memory controller, appropriate registers
+>>>> from these channels need to be accessed for logging error info.
 >>>>
->>>>         u32 intmask;
->>>> +     u32 int_channel_mask;
->>>
->>> ch_intmask
->>>
->> Okay, I will update,
->>
->>>> +     bool has_addr_hi_reg;
+>>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>>> ---
+>>>>    drivers/memory/tegra/mc.c       |  6 ++++
+>>>>    drivers/memory/tegra/tegra186.c | 52 +++++++++++++++++++++++++++++++++
+>>>>    drivers/memory/tegra/tegra194.c |  1 +
+>>>>    drivers/memory/tegra/tegra234.c |  1 +
+>>>>    include/soc/tegra/mc.h          |  7 +++++
+>>>>    5 files changed, 67 insertions(+)
 >>>>
->>>>         const struct tegra_mc_reset_ops *reset_ops;
->>>>         const struct tegra_mc_reset *resets;
->>>> @@ -210,6 +212,8 @@ struct tegra_mc_soc {
+>>>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>>>> index bf3abb6d8354..3cda1d9ad32a 100644
+>>>> --- a/drivers/memory/tegra/mc.c
+>>>> +++ b/drivers/memory/tegra/mc.c
+>>>> @@ -749,6 +749,12 @@ static int tegra_mc_probe(struct platform_device
+>>>> *pdev)
+>>>>         if (IS_ERR(mc->regs))
+>>>>                 return PTR_ERR(mc->regs);
 >>>>
->>>>         const struct tegra_mc_icc_ops *icc_ops;
->>>>         const struct tegra_mc_ops *ops;
+>>>> +     if (mc->soc->ops && mc->soc->ops->map_regs) {
+>>>> +             err = mc->soc->ops->map_regs(mc, pdev);
+>>>> +             if (err < 0)
+>>>> +                     return err;
+>>>> +     }
 >>>> +
->>>> +     int (*get_int_channel)(const struct tegra_mc *mc, int
->>>> *mc_channel);
+>>>>         mc->debugfs.root = debugfs_create_dir("mc", NULL);
+>>>>
+>>>>         if (mc->soc->ops && mc->soc->ops->probe) {
+>>>> diff --git a/drivers/memory/tegra/tegra186.c
+>>>> b/drivers/memory/tegra/tegra186.c
+>>>> index 3d153881abc1..a8a45e6ff1f1 100644
+>>>> --- a/drivers/memory/tegra/tegra186.c
+>>>> +++ b/drivers/memory/tegra/tegra186.c
+>>>> @@ -139,11 +139,62 @@ static int tegra186_mc_probe_device(struct
+>>>> tegra_mc *mc, struct device *dev)
+>>>>         return 0;
+>>>>    }
+>>>>
+>>>> +static int tegra186_mc_map_regs(struct tegra_mc *mc,
+>>>> +                             struct platform_device *pdev)
+>>>> +{
+>>>> +     struct device_node *np = pdev->dev.parent->of_node;
+>>>> +     int num_dt_channels, reg_cells = 0;
+>>>> +     struct resource *res;
+>>>> +     int i, ret;
+>>>> +     u32 val;
+>>>> +
+>>>> +     ret = of_property_read_u32(np, "#address-cells", &val);
+>>>> +     if (ret) {
+>>>> +             dev_err(&pdev->dev, "missing #address-cells property\n");
+>>>> +             return ret;
+>>>> +     }
+>>>> +
+>>>> +     reg_cells = val;
+>>>> +
+>>>> +     ret = of_property_read_u32(np, "#size-cells", &val);
+>>>> +     if (ret) {
+>>>> +             dev_err(&pdev->dev, "missing #size-cells property\n");
+>>>> +             return ret;
+>>>> +     }
+>>>> +
+>>>> +     reg_cells += val;
+>>>> +
+>>>> +     num_dt_channels =
+>>>> of_property_count_elems_of_size(pdev->dev.of_node, "reg",
+>>>> +                                                       reg_cells *
+>>>> sizeof(u32));
+>>>> +     /*
+>>>> +      * On tegra186 onwards, memory controller support multiple
+>>>> channels.
+>>>> +      * Apart from regular memory controller channels, there is one
+>>>> broadcast
+>>>> +      * channel and one for stream-id registers.
+>>>> +      */
+>>>> +     if (num_dt_channels < mc->soc->num_channels + 2) {
+>>>> +             dev_warn(&pdev->dev, "MC channels are missing, please
+>>>> update\n");
 >>>
->>> This should be a part of tegra_mc_ops.
->>
->> tegra_mc_ops is common for T186, T194 and T234 i.e. all of them use
->> tegra186_mc_ops. get_int_channel function has to be differently
->> implemented for all of these SOCs. So I had put it in tegra_mc_soc.
-> 
-> Then tegra_mc_ops shouldn't be common anymore?
+>>> Update what?
+>>>
+>>>> +             return 0;
+>>>> +     }
+>>>> +
+>>>> +     mc->mcb_regs = devm_platform_get_and_ioremap_resource(pdev, 1,
+>>>> &res);
+>>>
+>>> Can't we name each reg bank individually in the DT and then use
+>>> devm_platform_ioremap_resource_byname()?
+>>>
+>> That can be done but I think current logic will be better as we can
+>> simply ioremap them by running in loop and assigning the mc_regs array.
+>> Otherwise there will be like 17 ioremap_byname() individual calls for
+>> Tegra194 and Tegra234.
+>> Will it be fine having that many ioremap_byname() calls?
+>> Also, Tegra186 has 5 channels which are less than Tegra194 and Tegra234.
+>> If we go with ioremap_byname() then we'll have to differentiate number
+>> of ioremap_byname() calls.
+> for (i = 0; i < mc->soc->num_channels; i++) {
+>          sprintf(name, "mc%u", i);
+>          err = devm_platform_ioremap_resource_byname(dev, name);
+>          ...
+> }
 
-Yes, that can be done. But the tegra186_mc_ops functions are common for
-Tegra186, Tegra194 and Tegra234.
-We can separate tegra_mc_ops and keep the callbacks to same tegra186
-functions by removing static from them.
+Okay, for this reg banks should be named "mc0", "mc1", and so on.
+I will update this in v6.
