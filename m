@@ -2,263 +2,191 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEECC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 14:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074D0C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 14:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244757AbiC3Oln (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Mar 2022 10:41:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42902 "EHLO
+        id S1347185AbiC3Oue (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Mar 2022 10:50:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237914AbiC3Olm (ORCPT
+        with ESMTP id S1347179AbiC3Oud (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Mar 2022 10:41:42 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2080.outbound.protection.outlook.com [40.107.92.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F81F53B54;
-        Wed, 30 Mar 2022 07:39:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cVuNKVccDao4KKLJj81mcJnOZEknM6xw0xcWblWc7FENj/jBs64mHEf/dbYKEOGzcmvYJwz1erYMlcGyENCtlS4+5XDuOjlUeaOGPYpx9qxchanHMFkhlTVr4vxbawp0aNORkdWhJrKMlrbAdWgeUFo3SKnzml3qgJdCFeTj6pyiCwFKpm1ncay6+ZiIky8KDqGPPnnKDtMQgBHFOkssSM6/MED4ReDkyYP/gSmUSbG5jKJp1wM6XA51tQPoSiJI5ra83Hl/Ve0YNblKulEDRN7LH+TO59x1HkO19w425FOIQ5JVsNsGzfLNqaou8w8/fBAwY2Ad7FUmFJKMQGmfBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qc4iAL8TXxvbp7/DyB/nsLSUrz912sWCvcI8+//F0VU=;
- b=leViL+OzNtprXi9TISdZl2a8p1rEk6aC0KZIxnuUvctQhMSXMJtG3YPOD+5S6j6eRezjci1m6fgOAC/2jVDuBcIkK5RQ/oSwEDX8pH6LzDUOtkK6iddUFGAqLlhHMp4Mtb7EMS5FFRG88vQ/F/Pk5BAVIeljAD9WovqjROzCetyWYBi221G6RHhn+EpeARF50p4kR2mWpPljT5ygv783BXyaxg0Z9/9NBhdnw1STR9uba+jUzxn8iHWeC/onkta5vZOPS7SMdnleHr4tvbbOMdnfPgqNjWbVI8pgVmlgZpdvRdD+lFiAFcZY5dGa8J0Sho3AGtQnzZagm/jaHxgtlQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qc4iAL8TXxvbp7/DyB/nsLSUrz912sWCvcI8+//F0VU=;
- b=s7hIqWY8NC2tHLWA88xkdeqosAamlZewdNV3jrElNnCrUN1pRK6YpHKt/K2uze0wcy0TrR2yiCmUsqPb6DFJ76OO0uWlDWh3i8jOMXg2mHVxnwzOZGGARUSUnPDu0yVtm8cY6m/rFUdRydYTUrLOuDvGJwOmZz2vLZNDXT5qGp+9DR5l3Z6+kRA4uESFztapo7hgZqvjj4gA4RI3uR4u1FImNWzgoCTJqTLbFc4l7a3yX0h0ZlHQIxVB2FdXfb6foKifjtV75xCk/kwV2x4I9/AP7yRXuDJm9BEhubEeCA85pNbOre3P3IEi176Wzl5SExtTMy8Ds+A/azFgbBrQTA==
-Received: from DS7PR03CA0297.namprd03.prod.outlook.com (2603:10b6:5:3ad::32)
- by BL0PR12MB2481.namprd12.prod.outlook.com (2603:10b6:207:40::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.17; Wed, 30 Mar
- 2022 14:38:55 +0000
-Received: from DM6NAM11FT047.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3ad:cafe::35) by DS7PR03CA0297.outlook.office365.com
- (2603:10b6:5:3ad::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.13 via Frontend
- Transport; Wed, 30 Mar 2022 14:38:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- DM6NAM11FT047.mail.protection.outlook.com (10.13.172.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5123.19 via Frontend Transport; Wed, 30 Mar 2022 14:38:54 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 30 Mar
- 2022 14:38:54 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 30 Mar
- 2022 07:38:53 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Wed, 30 Mar 2022 07:38:49 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>, <treding@nvidia.com>,
-        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <bbasu@nvidia.com>,
-        <sumitg@nvidia.com>
-Subject: [Patch v2 4/4] cpufreq: tegra194: Add support for Tegra234
-Date:   Wed, 30 Mar 2022 20:08:19 +0530
-Message-ID: <20220330143819.27476-5-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220330143819.27476-1-sumitg@nvidia.com>
-References: <20220330143819.27476-1-sumitg@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 30 Mar 2022 10:50:33 -0400
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FFEA28789F;
+        Wed, 30 Mar 2022 07:48:46 -0700 (PDT)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-dee0378ce7so11912453fac.4;
+        Wed, 30 Mar 2022 07:48:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=skMSCIAgLPl78nzvZXYE2JT7zIrztjobvz7dNziQYsE=;
+        b=YOLKtBaxxUSDjvtn8tEoN4QvogVSwfN4xVEiBqCaxzmZNE+eBzWJpPkgZVliBB79XY
+         xAvqy+3UJx0kvJlVUh5wjTVVHWuNjJmkEZfufEq+Lgen6UE1Yta1o/JVozzA278Pb4Ha
+         ZpWwX5boiLEiZM11qF70OJXN/vFiM/sFigtI29BAjyfOhdwUHdMiT4uLq7oRQ/SU8n9z
+         hLg/PUA2eIgx0p9zkhjUc71q1bRH418A49HBES0c4MVVq0u7EkAlzyPlW2Vnl7YCvb9S
+         fxigA5WRlKIm42AFOa3Zy0iVwUO2whKg0ifZ6CijM3MB7PQITIxphqAtrddKcedftlSi
+         xENw==
+X-Gm-Message-State: AOAM532FqYma72fGHAnA4X6VGf0YzNLnFqY0vc4jwGhULIZgAFLEvacb
+        s2cy5wWANFonS6BPV2FtYg==
+X-Google-Smtp-Source: ABdhPJxHdqfLBB2pgsxMf+I94z/WzW9slneVMU6+szkaMjJonYmkhtJIm3/o7LP/h/LoYE1YrqgzLw==
+X-Received: by 2002:a05:6870:ec92:b0:dd:b5b5:75d5 with SMTP id eo18-20020a056870ec9200b000ddb5b575d5mr2330636oab.61.1648651725568;
+        Wed, 30 Mar 2022 07:48:45 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id t11-20020a4ae40b000000b0031cc933b418sm10019954oov.40.2022.03.30.07.48.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Mar 2022 07:48:45 -0700 (PDT)
+Received: (nullmailer pid 3029818 invoked by uid 1000);
+        Wed, 30 Mar 2022 14:48:44 -0000
+Date:   Wed, 30 Mar 2022 09:48:44 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        smangipudi@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        warthog618@gmail.com, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v5 04/11] dt-bindings: Add HTE bindings
+Message-ID: <YkRtzJjHQvmYNlK8@robh.at.kernel.org>
+References: <20220329054521.14420-1-dipenp@nvidia.com>
+ <20220329054521.14420-5-dipenp@nvidia.com>
+ <YkOVgRBtXX0k9zr1@robh.at.kernel.org>
+ <3b0f3430-bc1c-26df-c93f-517ba395d9e3@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7ee475d2-38b3-462b-7e52-08da125b044e
-X-MS-TrafficTypeDiagnostic: BL0PR12MB2481:EE_
-X-Microsoft-Antispam-PRVS: <BL0PR12MB2481DDAC2768C257EFA439C7B91F9@BL0PR12MB2481.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nBUaeK0jUv42I0674uzDX/aXQZw2ksn2sTwr1xOA8tJMo/dMsr06d7izQTV+LoEXUAgJ+49KFFu+8+qDpYbfkrjitEUIezi4Bk/ByVbmsWy0jaQ4VYL80IHMhsRhA6omKtklFDCHt6eeeQK/oTYTmU+kQyuj/4FbmoZShfnxeK0M/jwNWIvpxnRQ8RDEClJpxz9TuUa4HCsaWyBOUyUeN8L5gItNejdXa2y/mo8rjQA2tUqn+3VJ3AYxgKp1zgj45ESxb5QDXlCuwH10doczrRNjIitNq0BLgyj1+voa03HPe6cuUZXWOBsq9u3cRcvfaetRYw6LQJcA+qTqV7zlxhslb1R9AIWNSUgoc560xngd3tktbXRRcBCnoFG8vLEiM0QH2e8DvJ8E8N6x0TC+NrKpkd+jedzBFydYQDoKD13TJdxIgD3jilGLKJLlx7WXjTlIr/RkFSLF9+wifHYuZz9lDP/7nK9rIDb7FNxo2NQDCesYJqkQ/OUVrJaHbaRRlKB6KhyCM9O2HB9y0WQbXaWYIJmgHJoJw2Cq893SuMF7kEnR3lKRWp4+6gt8OPDaTL+DpuuG1zJ75pfJpaDIvnhAuZ1bAWJwVQ1wefcYnng4GgQq5troUpuo7K0XN/QK96tDxEuqi14vPngQ5+cDoQ96zd0pcLuvBiPqhbuvqOyBKHK51OWhNGzx1/dR10B2hFqFHdYEkJnsq0112YzyXYPTTr7xD6GI7CiY+F5Sm5I=
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(508600001)(70206006)(2616005)(921005)(107886003)(82310400004)(70586007)(356005)(8676002)(1076003)(47076005)(6666004)(81166007)(7696005)(4326008)(2906002)(83380400001)(40460700003)(110136005)(186003)(316002)(36756003)(26005)(336012)(86362001)(5660300002)(54906003)(36860700001)(426003)(8936002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2022 14:38:54.8673
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ee475d2-38b3-462b-7e52-08da125b044e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT047.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2481
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b0f3430-bc1c-26df-c93f-517ba395d9e3@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds driver support for Tegra234 cpufreq.
-Tegra234 has per core MMIO registers instead of system registers for
-cpu frequency requests and to read the counters for re-constructing
-the cpu frequency. Also, MPIDR affinity info in Tegra234 is different
-from Tegra194.
-Added ops hooks  and soc data for Tegra234. This will help to easily
-add variants of Tegra234 and future SoC's which use similar logic to
-{get|set} the cpu frequency.
+On Tue, Mar 29, 2022 at 05:19:10PM -0700, Dipen Patel wrote:
+> Hi,
+> 
+> On 3/29/22 4:25 PM, Rob Herring wrote:
+> > On Mon, Mar 28, 2022 at 10:45:14PM -0700, Dipen Patel wrote:
+> >> Introduces HTE devicetree binding details for the HTE subsystem. It
+> >> includes examples for the consumers, binding details for the providers
+> >> and specific binding details for the Tegra194 based HTE providers.
+> >>
+> >> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> >> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> >> ---
+> >> Changes in v2:
+> >> - Replace hte with hardware-timestamp for property names
+> >> - Renamed file
+> >> - Removed example from the common dt binding file.
+> >>
+> >> Changes in v3:
+> >> - Addressed grammatical errors.
+> >> - Removed double plural from the respective properties.
+> >> - Added dual license.
+> >> - Prefixed "nvidia" in nvidia specific properties.
+> >>
+> >> Changes in v4:
+> >> - Corrected make dt_binding_check error.
+> >>
+> >> Changes in v5:
+> >> - Addressed review comments.
+> >>
+> >>  .../hte/hardware-timestamps-common.yaml       | 29 +++++++
+> >>  .../devicetree/bindings/hte/hte-consumer.yaml | 43 ++++++++++
+> >>  .../bindings/hte/nvidia,tegra194-hte.yaml     | 82 +++++++++++++++++++
+> >>  3 files changed, 154 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
+> >>  create mode 100644 Documentation/devicetree/bindings/hte/hte-consumer.yaml
+> >>  create mode 100644 Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
+> >> new file mode 100644
+> >> index 000000000000..e8a69ceccd56
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
+> >> @@ -0,0 +1,29 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fhte%2Fhardware-timestamps-common.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589163420%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=oyeG06oNMukYew%2Bkji%2FlXsDyGwIIrIvwxLHKxaiFBto%3D&amp;reserved=0
+> >> +$schema: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589163420%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=JOY3MmZlMo6Mopr5dwjUky%2BaQX4b0QSiDt8zo3mSu1k%3D&amp;reserved=0
+> >> +
+> >> +title: Hardware timestamp providers
+> >> +
+> >> +maintainers:
+> >> +  - Dipen Patel <dipenp@nvidia.com>
+> >> +
+> >> +description:
+> >> +  Some devices/SoCs have hardware time stamping engines which can use hardware
+> >> +  means to timestamp entity in realtime. The entity could be anything from
+> >> +  GPIOs, IRQs, Bus and so on. The hardware timestamp engine (HTE) present
+> >> +  itself as a provider with the bindings described in this document.
+> >> +
+> >> +properties:
+> >> +  $nodename:
+> >> +    pattern: "^hardware-timestamp(@.*|-[0-9a-f])?$"
+> >> +
+> >> +  "#hardware-timestamp-cells":
+> >> +    description:
+> >> +      Number of cells in a HTE specifier.
+> >> +
+> >> +required:
+> >> +  - "#hardware-timestamp-cells"
+> >> +
+> >> +additionalProperties: true
+> >> diff --git a/Documentation/devicetree/bindings/hte/hte-consumer.yaml b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
+> >> new file mode 100644
+> >> index 000000000000..be69f63aa8c3
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
+> >> @@ -0,0 +1,43 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fhte%2Fhte-consumer.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589319655%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=0f1FFB1IotZESaxDlXX5mo9YyMN25BlFAyq%2FOQJtVoE%3D&amp;reserved=0
+> >> +$schema: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589319655%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=B%2FvVGGwp9JghUpT33cGk0EZHDRlaOAzCbtv93Z%2Fa9YY%3D&amp;reserved=0
+> >> +
+> >> +title: HTE Consumer Device Tree Bindings
+> >> +
+> >> +maintainers:
+> >> +  - Dipen Patel <dipenp@nvidia.com>
+> >> +
+> >> +select: true
+> >> +
+> >> +description:
+> >> +  HTE properties should be named "hardware-timestamps". The exact meaning of
+> >> +  each hardware-timestamps property must be documented in the device tree
+> > The meaning of the cells needs to be documented. You are documenting the 
+> > meaning of 'hardware-timestamps' here.
+> 
+> This is for the consumer side, meaning of the cells will be documented in the provider
+> 
+> binding document.
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/cpufreq/tegra194-cpufreq.c | 104 +++++++++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
+Right cells are opaque to the consumer. What bothered me is 
+hardware-timestamps already has an 'exact meaning'. You need to me more 
+exact as to what should be documented. We don't want what 
+'hardware-timestamps' is described again. What needs to be documented is 
+how many entries, what each entry is (for the consumer), and the order.
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 2d59b2bd0e1d..2a6a98764a8c 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -24,6 +24,17 @@
- #define CPUFREQ_TBL_STEP_HZ     (50 * KHZ * KHZ)
- #define MAX_CNT                 ~0U
- 
-+#define NDIV_MASK              0x1FF
-+
-+#define CORE_OFFSET(cpu)			(cpu * 8)
-+#define CMU_CLKS_BASE				0x2000
-+#define SCRATCH_FREQ_CORE_REG(data, cpu)	(data->regs + CMU_CLKS_BASE + CORE_OFFSET(cpu))
-+
-+#define MMCRAB_CLUSTER_BASE(cl)			(0x30000 + (cl * 0x10000))
-+#define CLUSTER_ACTMON_BASE(data, cl) \
-+			(data->regs + (MMCRAB_CLUSTER_BASE(cl) + data->soc->actmon_cntr_base))
-+#define CORE_ACTMON_CNTR_REG(data, cl, cpu)	(CLUSTER_ACTMON_BASE(data, cl) + CORE_OFFSET(cpu))
-+
- /* cpufreq transisition latency */
- #define TEGRA_CPUFREQ_TRANSITION_LATENCY (300 * 1000) /* unit in nanoseconds */
- 
-@@ -56,6 +67,7 @@ struct tegra_cpufreq_ops {
- struct tegra_cpufreq_soc {
- 	struct tegra_cpufreq_ops *ops;
- 	int maxcpus_per_cluster;
-+	phys_addr_t actmon_cntr_base;
- };
- 
- struct tegra194_cpufreq_data {
-@@ -72,6 +84,90 @@ static void tegra_get_cpu_mpidr(void *mpidr)
- 	*((u64 *)mpidr) = read_cpuid_mpidr() & MPIDR_HWID_BITMASK;
- }
- 
-+static void tegra234_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *clusterid)
-+{
-+	u64 mpidr;
-+
-+	smp_call_function_single(cpu, tegra_get_cpu_mpidr, &mpidr, true);
-+
-+	if (cpuid)
-+		*cpuid = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-+	if (clusterid)
-+		*clusterid = MPIDR_AFFINITY_LEVEL(mpidr, 2);
-+}
-+
-+static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
-+{
-+	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
-+	void __iomem *freq_core_reg;
-+	u64 mpidr_id;
-+
-+	/* use physical id to get address of per core frequency register */
-+	mpidr_id = (clusterid * data->soc->maxcpus_per_cluster) + cpuid;
-+	freq_core_reg = SCRATCH_FREQ_CORE_REG(data, mpidr_id);
-+
-+	*ndiv = readl(freq_core_reg) & NDIV_MASK;
-+
-+	return 0;
-+}
-+
-+static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
-+{
-+	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
-+	void __iomem *freq_core_reg;
-+	u32 cpu, cpuid, clusterid;
-+	u64 mpidr_id;
-+
-+	for_each_cpu_and(cpu, policy->cpus, cpu_online_mask) {
-+		data->soc->ops->get_cpu_cluster_id(cpu, &cpuid, &clusterid);
-+
-+		/* use physical id to get address of per core frequency register */
-+		mpidr_id = (clusterid * data->soc->maxcpus_per_cluster) + cpuid;
-+		freq_core_reg = SCRATCH_FREQ_CORE_REG(data, mpidr_id);
-+
-+		writel(ndiv, freq_core_reg);
-+	}
-+}
-+
-+/*
-+ * This register provides access to two counter values with a single
-+ * 64-bit read. The counter values are used to determine the average
-+ * actual frequency a core has run at over a period of time.
-+ *     [63:32] PLLP counter: Counts at fixed frequency (408 MHz)
-+ *     [31:0] Core clock counter: Counts on every core clock cycle
-+ */
-+static void tegra234_read_counters(struct tegra_cpu_ctr *c)
-+{
-+	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
-+	void __iomem *actmon_reg;
-+	u32 cpuid, clusterid;
-+	u64 val;
-+
-+	data->soc->ops->get_cpu_cluster_id(c->cpu, &cpuid, &clusterid);
-+	actmon_reg = CORE_ACTMON_CNTR_REG(data, clusterid, cpuid);
-+
-+	val = readq(actmon_reg);
-+	c->last_refclk_cnt = upper_32_bits(val);
-+	c->last_coreclk_cnt = lower_32_bits(val);
-+	udelay(US_DELAY);
-+	val = readq(actmon_reg);
-+	c->refclk_cnt = upper_32_bits(val);
-+	c->coreclk_cnt = lower_32_bits(val);
-+}
-+
-+static struct tegra_cpufreq_ops tegra234_cpufreq_ops = {
-+	.read_counters = tegra234_read_counters,
-+	.get_cpu_cluster_id = tegra234_get_cpu_cluster_id,
-+	.get_cpu_ndiv = tegra234_get_cpu_ndiv,
-+	.set_cpu_ndiv = tegra234_set_cpu_ndiv,
-+};
-+
-+const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
-+	.ops = &tegra234_cpufreq_ops,
-+	.actmon_cntr_base = 0x9000,
-+	.maxcpus_per_cluster = 4,
-+};
-+
- static void tegra194_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *clusterid)
- {
- 	u64 mpidr;
-@@ -442,6 +538,13 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 	if (!data->tables)
- 		return -ENOMEM;
- 
-+	if (soc->actmon_cntr_base) {
-+		/* mmio registers are used for frequency request and re-construction */
-+		data->regs = devm_platform_ioremap_resource(pdev, 0);
-+		if (IS_ERR(data->regs))
-+			return PTR_ERR(data->regs);
-+	}
-+
- 	platform_set_drvdata(pdev, data);
- 
- 	bpmp = tegra_bpmp_get(&pdev->dev);
-@@ -486,6 +589,7 @@ static int tegra194_cpufreq_remove(struct platform_device *pdev)
- 
- static const struct of_device_id tegra194_cpufreq_of_match[] = {
- 	{ .compatible = "nvidia,tegra194-ccplex", .data = &tegra194_cpufreq_soc },
-+	{ .compatible = "nvidia,tegra234-ccplex-cluster", .data = &tegra234_cpufreq_soc },
- 	{ /* sentinel */ }
- };
- 
--- 
-2.17.1
 
+> >> +  binding for each device. An optional property "hardware-timestamp-names" may
+> >> +  contain a list of strings to label each of the HTE devices listed in the
+> >> +  "hardware-timestamps" property.
+> >> +
+> >> +properties:
+> >> +  hardware-timestamps:
+> > I'm wondering if we should just drop 'hardware'. What other kind of 
+> > timestamps are we going to have in DT? software-timestamps? No.
+> 
+> I believe this makes it explicit and leaves no room for second guess. If
+> 
+> only timestamps, ambiguity then will be which timestamp it is i.e. through hardware
+> 
+> engine, pps, ptp and so on...
+
+Those aren't hardware timestamps, too? If those needed a similar 
+binding, couldn't they use this binding? PTP at least is sometimes an 
+separate, external chip IIRC.
+
+Rob
