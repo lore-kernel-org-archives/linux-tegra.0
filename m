@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2823AC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 11:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD09AC43219
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 11:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344238AbiC3L46 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Mar 2022 07:56:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57724 "EHLO
+        id S1345055AbiC3L5B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Mar 2022 07:57:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345933AbiC3LzN (ORCPT
+        with ESMTP id S1345404AbiC3Ly2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Mar 2022 07:55:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F33D02CE04;
-        Wed, 30 Mar 2022 04:52:52 -0700 (PDT)
+        Wed, 30 Mar 2022 07:54:28 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C06282573;
+        Wed, 30 Mar 2022 04:51:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E3786137A;
-        Wed, 30 Mar 2022 11:52:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9871EC36AE2;
-        Wed, 30 Mar 2022 11:52:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D0550B81C35;
+        Wed, 30 Mar 2022 11:51:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BFFCC3410F;
+        Wed, 30 Mar 2022 11:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648641172;
-        bh=tZLkmdGLd3BRCcgyFFRiPY+tkNgl+dRTZ9QJcTbaIMA=;
+        s=k20201202; t=1648641064;
+        bh=8ZFmnqlSEMxKjuWziuwkhdq48STdoQ3qVnRC30Htjlg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nt54OQVpfNCE0dSn2EvQECYsre+Oo7zYo9IcklSc9vOJDE8pVXR/xxO50/vutdtiU
-         c4Y8Uo69f/+e+Dn3RKyTbsS9dVFro1Gl7IFidJ21oXAHqwMaegYed4p5hZpdoMpbsl
-         Ktv6qG1LpKpXTLJDDs9NFQKliiGTvmlBM1Mwr8dno5qJjgWD7Su3K3+tr4Xuv4OaiV
-         sfBwABf2LjpjehUNVGs0Uhm0Ur6sDl8x2/IWmNXiJDj3FPOHjkTVQms6EXyFa/VgsP
-         NZohrIH9Dh5ApFJ+FRfrl5DiB+GlHypPIyjAKy/zIvl/9v/p6ckyOC+6nhDodx3Xeh
-         mkaWCF+kP0IKg==
+        b=BFIxcIjrcDDBKnDw0iY6uwU2y8SvZ0VXZQxnxBDxvN+3OaJ0PJ01QNUndUJ5L7udv
+         tR9rPgka6brxh1Fxn/pm+zI6mtmhmAxwkN31wmJ6biOq7VOelCGwTgVfTmMjBMHhS/
+         ljoB/N5vcgDFCid9aA4fmU1EPpfrcd7ysdGnCUwgJbZ01HgFBSI8XPqI+pH0qhMWEx
+         Nm133P83Ff3v4x9JBgui5SMhnM5ku/IIWWTzVrNE1/UMnfVPQfsSsuqZBI9z95en+g
+         KKfi3eHf1BVE/NingGr4mT2L+7exPejCiNDlivzHMEkTDsUvBsm+Vfxl5rpAQMky8/
+         sC2vaQAIG8BwQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Richard Leitner <richard.leitner@skidata.com>,
@@ -41,12 +41,12 @@ Cc:     Richard Leitner <richard.leitner@skidata.com>,
         thierry.reding@gmail.com, gnurou@gmail.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 17/25] ARM: tegra: tamonten: Fix I2C3 pad setting
-Date:   Wed, 30 Mar 2022 07:52:17 -0400
-Message-Id: <20220330115225.1672278-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 38/50] ARM: tegra: tamonten: Fix I2C3 pad setting
+Date:   Wed, 30 Mar 2022 07:49:52 -0400
+Message-Id: <20220330115005.1671090-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220330115225.1672278-1-sashal@kernel.org>
-References: <20220330115225.1672278-1-sashal@kernel.org>
+In-Reply-To: <20220330115005.1671090-1-sashal@kernel.org>
+References: <20220330115005.1671090-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -70,7 +70,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index 394a6b4dc69d..69cb65d86c46 100644
+index dd4d506683de..7f14f0d005c3 100644
 --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
 +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
 @@ -183,8 +183,8 @@
