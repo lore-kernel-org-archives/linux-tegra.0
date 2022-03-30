@@ -2,365 +2,185 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E75F3C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 00:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A53ACC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 05:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240517AbiC3AU6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Mar 2022 20:20:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38650 "EHLO
+        id S242686AbiC3FE5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Mar 2022 01:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235006AbiC3AU5 (ORCPT
+        with ESMTP id S239629AbiC3FEz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Mar 2022 20:20:57 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2078.outbound.protection.outlook.com [40.107.223.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C261B53EA;
-        Tue, 29 Mar 2022 17:19:13 -0700 (PDT)
+        Wed, 30 Mar 2022 01:04:55 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2054.outbound.protection.outlook.com [40.107.243.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B2526BDCE;
+        Tue, 29 Mar 2022 22:03:10 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iB6QMX8jEXMVNLMXVGcCvW9xLpPaUr4MR8a/zzrFFttcC/YQyIGUXPY7bt4FfnRIfdHC6lWIG6RL6JIzVwf0Ijf7uCVq0IHKJdCLIEh86iAWbKNFqE3D1uCGzI9JB799IhRzhZUP2FbEDH8Yy/9pivi1zl10vMj2xKgRc24zjik3znzTgQsCLgfkhWVCQSkNUW9mknSiN3uRt42W0HuRItPAZiAPKBePGwI2RdyDW9+dVgoNkpp3n2oA2K44J6MXX1YH/fhgmEH6saJCzaSAESOrMktDCJTU3cFqIHdn3zhWldDB8MGrkPbK9rfrKCGZ9ld5emthJUi4HUdX1sqJfg==
+ b=JKy53V8+RCT3dH/9CLroordQIvrw5TI4Spf+Z+WT0epKR0qx9isiqjWtzL8kKZ8b1Z4AjhE9j1xuL1sqE24eSBSPapGZg8VLoDgYKgiTUvmkWaztVCLdhI5S+wP2pWv4v1DDlf98hupJV3BAIHMhM88Td6scP529TYdyYWIcDqKS4yPy/gEZXsEY81oESy2tsOJydpvFRlZGGctnLdlng/pwkH2tICK8CcGUdXJqK/JrMsgJsbVKPLqN4S8MLUTH7QowzH/adqUrxeA7R8r1J+snUl6ZYzlpo4YdlZaAPLDaRM6w0YZ9k/neGGaSTDqUNKnWh76bgOtX+1Ga4/H1DQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GBjTgPbxvtsDU/4JexbBZuUD2AJk939MkzlM5YzHcS8=;
- b=ERmWNGNE1AQbzYSAH5Sh2fFdI+/COg+TzSNYI3zyLExAehzP4tNT1To33zewirB1jTz+1mYvwZiCMRhX0bWFHHUqs/KV3ngKFDuliVnsrurwovncuvb60V0Vp7iKHJ/9sTmT0JeIhqwAVaSgmZN6uZplGIcOniOdirGckCnFi1tSSkTXOU/V+yszs29mBPCMulwUlwCx1VT7IZQ3pAFTxaOclELNw6zXh+WJtsjAatRhYJ3C5C6QIEesjyf72XD0GXBtGXBN+MbNhyQ7VqZvUNzs205rL8lm3MNk69NXJutINfs1VaoOB6lPYbF7lBXU78jTqhKKzEtuMT9JGibx3w==
+ bh=iwDZDktnBePH0jHW34nCDgOIOrLSGCjHELtPTxQ6JG0=;
+ b=csibH5sdSoB7DYAj3hDq3hQQBHJ/XzR7MUzHLuNxlIiP1aQFR3AcS2T7pe/xRCHDDEbp2jHhsvHWVBpPTxix+AB3ffmO31M8zhhfPIIzecu5kx5Z+38mHFXy2CySKeFpI2UstuG+xokPM+hU/UuqlsXlGxwv7mHxvsanfb1rSBLkIknkLWMmhamWGZ+Uo8dMWTa9tUDNltA6kmgNtkJMwMayAkLZY4M3swDTlIHVl3WeCm/AzSzLu/fhhHKM4qJ+vCQ9voSVhX5h5HlNvzEQX8ISdVGmOPhrXqxDvWoRu6NCczpdarhTZWBycF11VQkh932fpqxGLtPOVma1VBU+2w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GBjTgPbxvtsDU/4JexbBZuUD2AJk939MkzlM5YzHcS8=;
- b=DStm5JwN80qs/KMKjI0uKEjFdJ0Uh0spZfICu32NLLzQqqICu0kzjvvflHgrsQiPb+hhNBiJ/1STSwqRYuzfk3y+jgccJsAAj47pDQiGuMKA/uNb1QlZwE9kD3LT9BHwVcDMaylllX9YK4W7ZU7okDU9gLFn0LAuL1VI0izAD1LNhA+AAuDbzCNqFB3/yPRdZTJf/dvM064jdKkTywjQH1TNXpRov59vVrkBMcheLExWM6VkxgMUdW/+mfKGA3I9BYRh8Ema0IelDOFvkwPTZWrNw8EnMYrvxqkyFbgUPiY1gzGvW7X/jrtlAK7e7A6Kjf+o4mft2F0PhfrQi8Tr2w==
+ bh=iwDZDktnBePH0jHW34nCDgOIOrLSGCjHELtPTxQ6JG0=;
+ b=e8qvdf5HrcUpRsd+JvumwnAiXdEK0Tc14rXMukYDGtXYCgJuUH0rTj+PbGw36HNdpdXfFffjbS7WV2BS2vht7fC5iPwYgNAbNkxrV6Qw1yN8IWBOpMCwg/ss4bZkaS6cBFTWxpSW6vzeuZWsXJiBmJlAeStCqmaUJc/17LB9UJDIxoo6eZrZJXeU8zHDEuZVFKJgkh35x0LmxIXnElxhfJc8z4BmXkKZjNUIxy++/BkwJhD/Xb6UxT7bja1kvChNaTDinKBaxVVDVlL5caBlLVEY5PXuynskKVS5RjNwH+owG3SiCU+P2MIdDZeYkIBwPpaqDnyvquCuz5VGw4q+wA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by MN2PR12MB4472.namprd12.prod.outlook.com (2603:10b6:208:267::11) with
+Received: from SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21)
+ by BY5PR12MB3860.namprd12.prod.outlook.com (2603:10b6:a03:1ac::25) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.17; Wed, 30 Mar
- 2022 00:19:08 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::8940:4e31:b98a:c02b]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::8940:4e31:b98a:c02b%6]) with mapi id 15.20.5123.019; Wed, 30 Mar 2022
- 00:19:08 +0000
-Message-ID: <3b0f3430-bc1c-26df-c93f-517ba395d9e3@nvidia.com>
-Date:   Tue, 29 Mar 2022 17:19:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v5 04/11] dt-bindings: Add HTE bindings
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.16; Wed, 30 Mar
+ 2022 05:03:06 +0000
+Received: from SA0PR12MB4349.namprd12.prod.outlook.com
+ ([fe80::e15c:41ca:1c76:2ef]) by SA0PR12MB4349.namprd12.prod.outlook.com
+ ([fe80::e15c:41ca:1c76:2ef%3]) with mapi id 15.20.5102.023; Wed, 30 Mar 2022
+ 05:03:06 +0000
+Message-ID: <1b447612-25d7-77a3-2c27-26d7441dc15e@nvidia.com>
+Date:   Wed, 30 Mar 2022 10:32:52 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [Patch v5 2/4] memory: tegra: Add MC error logging on tegra186
+ onward
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        smangipudi@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        warthog618@gmail.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20220329054521.14420-1-dipenp@nvidia.com>
- <20220329054521.14420-5-dipenp@nvidia.com>
- <YkOVgRBtXX0k9zr1@robh.at.kernel.org>
-X-Nvconfidentiality: public
-From:   Dipen Patel <dipenp@nvidia.com>
-In-Reply-To: <YkOVgRBtXX0k9zr1@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR04CA0023.namprd04.prod.outlook.com
- (2603:10b6:a03:40::36) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        krzysztof.kozlowski@canonical.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220316092525.4554-1-amhetre@nvidia.com>
+ <20220316092525.4554-3-amhetre@nvidia.com>
+ <168cf065-bc17-1ffc-8cc0-75775c7f3bcb@gmail.com>
+ <ecdc86b4-c207-de89-a094-6923a5573ac6@nvidia.com>
+ <dacf1be8-f20c-de41-5ae5-9dba5e351881@collabora.com>
+From:   Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <dacf1be8-f20c-de41-5ae5-9dba5e351881@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MAXPR01CA0113.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:5d::31) To SA0PR12MB4349.namprd12.prod.outlook.com
+ (2603:10b6:806:98::21)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7adab102-51d9-4358-dfc8-08da11e2e85a
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4472:EE_
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4472A2E31DE0349C45CB9C7CAE1F9@MN2PR12MB4472.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 2e6ea454-f020-4228-2fa8-08da120a9379
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3860:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR12MB3860815B65E98552A00BC732CA1F9@BY5PR12MB3860.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9HsDm7vnNxjsXlRXAFIVOwfomdqfsaRzg1YrDG2m6IcW/t1cEnO1jKHKlnWyasBFGUbHQVE+6Om1pK3y3lDKr7bxyoNw7dMO//gtSXR3ms5D02hsptp9+JHmbLPdTGQVWgHQ68pHB9KY/LkUskReFFtYVf3Z+Uabq4uLuXmweJE2/K4mD4/IL/fFJFBu69BKqzrNoZlLmJUIWupFuh5vdTL/c0TplOGcs4i0HNorTF7JegMIf0FTAbKmba8eLOBBgi2Tpl7PhJK7NvYIDrCXG6z+fdq6v7gphBOTLfhzNzIzJTYXFkJOc365iqUx/RAYv9JC62h7STz4felwzNdeDC2kKIKqtfxxzWuAjbL+f5SRISGReoMcotHBS/tYP6FJ9ORHatL9FvzOleueWr1Z3F8dh4/D4cbFWfVMNCUt4ObxQmsFOVn2veBinzOLBlkdAOxeCq7j+OshZrPXNbf5iYnLR0zqe+RN/i+TnILT4snfquHmKRlIYcN+xdJahDVFp+e4Hn17+ECwYtXnaLrNPuJWMqTF0B9xTu3o52WDYKBzHcQobla3o5H79AERoxFD8wamWIWGKX/TeF9/XT3y8gZUgzx1S2oOHf0IbCERs5EpVqa0y1vadyI9NoIaKyY4XBbRT4eVuHAtEdtGKj9Lb3HV0NiVFSUeaei6aj1uFY9ArA34+SsBW9bZtWWdn+lvilDQSOHS1TodnbKJwSYSHcjI6MZ5zy9qLs+HriLMyDhQWtB0m2ZOFiLQyXWRTW8GdLSncByY7QQzBKQ2wSK2UA0VR3ETxCGynvu6qvah8E+8NlRiQ90823WDfEOtrj1xSvMU30T22fsXJkeRKf2FsL08X0wWwWlWR9gMk9RRnTeBcJpHZwv5wvJ1Hks5EwZo
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8676002)(4326008)(31696002)(83380400001)(66476007)(316002)(31686004)(66556008)(66946007)(966005)(6916009)(86362001)(508600001)(36756003)(6486002)(2906002)(38100700002)(6666004)(6512007)(7416002)(5660300002)(26005)(186003)(2616005)(45080400002)(8936002)(6506007)(53546011)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: JcXQddJgYEQMbc7raOFEVbfZCsbr9RkXzpyIJ93kE9rnNU+WNmC7+JkgpA+yWNLKoi0LZnO9uVi7ZASGRdbnBuKfiJSEQIF9+4KDqEbaMl1X7CxFbS3XVvfZAy601RKHHl6M+0iP4EfvED0XQR1U606PrjMgvbF8xK/T6YiRuDkHEvsD2HH+V8cKCdmFvBdrh0ccVP55HBHK1zJZzMFe/3SgNZMfcIrGNgTUo6Z4e3hsjudSQRdSqoyitBqZYKab9IvZgBoOwVgaiXOfk5WH661qNNTKU2+jh2IZlN+/aNjI9mSObzNXMWv7TzqiJ2X2fB0nqhowwTVP/ch1BrIgKdZJieMmnhb23OyiMR3UsX0rY3ZrXYF5y/M3GKPLOBUZ/dW8QGwM+Q+PetV8HdagleXsFtn8rlPHxoZmhe/2/8qnA2Lw9k1s5HwIlcIitwuyATU7uhMBerzoNcPQuErlPM53VP1LVC5NabD8/AvDSiE4Mcp90j0VSv3P1izjQeIMZKCmXf52hE8FkIYdS2Bxj4N2pzy4apq47QdOlo0YKJishjaiQorhEybzooVoKIum69yzLjbPEga9sZHPYGHJSklvMgz/N8KhmJ3kwTGdItPJNhYqhbcBO+0fu6wxoETOh7zEg35DvhnEfwnajq+QBgUid8xx75qtdjwoC/Z8EVDagCbD0qn5OUbrBEXtv1l9w5kvWD1OzHDVfY3lA04X3O4/aM98SODM379rrpb3xhI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6506007)(53546011)(55236004)(26005)(186003)(6666004)(107886003)(508600001)(36756003)(6486002)(31686004)(6512007)(83380400001)(316002)(2906002)(4326008)(8676002)(66556008)(66476007)(66946007)(110136005)(38100700002)(2616005)(5660300002)(31696002)(86362001)(8936002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NXBVbnNxdUd0MXJYV0JoYTlCRFZsTFM4OXY2S0ZmYTYvVHRNOXVseXVoTG83?=
- =?utf-8?B?M29RekxSblk5MmFvUjhvV2FHVmtXTEN5Ym4rVkxYZ3RhS0I1eHhqS0RyNkx3?=
- =?utf-8?B?WFpTTENmVXVacEtTWEJTMjgyRXNGaXdwSG5acWUxOGZpcjZrQS8vSHNTaklr?=
- =?utf-8?B?S0RiYVc0VTB4VmZSWitjd1MyMzBNZTFqa3RjSk45WUZlWnRBM3JTWTFEZjVx?=
- =?utf-8?B?eEZzYkNDeE9uc3dKNVNDU0s4dDVUUGJ3V3hTUlcya2c2dFQxS2hxcFJ6b244?=
- =?utf-8?B?N0EyOU5JVEtvbUZqbENla1plZGVlclBHRUlndGowUXBQcXhCcmwvS0VIV0pD?=
- =?utf-8?B?RlloVU93RnJZNzA4aDRNNWdBS3pQUS85R2pKeHhleGhyVk5STHg4RzgyckZo?=
- =?utf-8?B?c1pKbUJKK2NhZXF2allDQ2xXV1M5b3ZzVTFhR0tSQXVUY0RvMzdZRnVZbGkz?=
- =?utf-8?B?dDA2YzFBSUZGNW0yMjhjVjZQOG9ZK0xRR3lkS05HR2Z2ZmcybElCeVgrRDlE?=
- =?utf-8?B?WTQ1NHRRcFF3UmREYUhVQTI4bFZUeVlpYzQrdFY0MS9pOUZFSzdjb3Y4N2JB?=
- =?utf-8?B?ZWJIb2EzNVkrc0tnVmQwbHRKU3V2V242RjBwWW5EbTVYdjR0NFJ0Y1lTMHhV?=
- =?utf-8?B?dERqVkg0TkxoV2FEdnNSV0JHUGV1Q2FrTFRXR25raHd0QzRTYWRuRFh5eVNq?=
- =?utf-8?B?aXcybDNvRHpCNUxDTmllWjc1STlEZVZyZ3hDa0g1YXYzSVQ4emc3dHAzYmIz?=
- =?utf-8?B?Z0EwMFFjOVJaNjZOeWFReDVDQVNGZXF0UENjY3FCYUsxV1ZRU2dVYzRZV0tx?=
- =?utf-8?B?MWNqU243dkZJZmhtNHdnam8xVWFqdlFmeUpWU3JNODRUVHBLcUM1Y1oyY0J1?=
- =?utf-8?B?d2l5bnNUdHRmRk83UzlzalRVVG0yVTZGNUQ4N0QvejB3OVVkMElHWGlCSEFi?=
- =?utf-8?B?QXMxMzNvR2g0ZE5kQTBqK1hoTGtXOXorb09RSWJOZHpKYUI5UkFnQnIzWUxz?=
- =?utf-8?B?NUc4WjFxWlZXNWNhbkFwS0RXVldwcW11Yk5iSDE5eDlPbGUyQ0xXMFlweFlO?=
- =?utf-8?B?RVN6YVgwM3FzZmt3c3lQWkoyZG84dWNNU2szUFZNc3BDUnBuZ1pjNTRpcFZv?=
- =?utf-8?B?MVprU3UxbkN2ZTh1WW5kdjlBUVJvOXVZRmNZOXM5VUtaM25ZajV5YlFoY2l5?=
- =?utf-8?B?VWRvbjRlTEE4Z3N6UFJpT1NQYWJsTzNHRFo5TUEyRXJ2NDhyM2pEazN5ZkI0?=
- =?utf-8?B?alB2RlZQMzduVUNXMUZKVGFNeXJHaDRkSGl3Ui94NnEwOTQ3emU2cks2K0hw?=
- =?utf-8?B?VXZXcDRmSmJkYnFQVmJhRFBMOGZiM0JxWWlzTU5mSHoxbW1BMitmNG5uYUxU?=
- =?utf-8?B?dHJQVmd0TDVjcUJIOHhNRDVzSmw3ekpZeWJPYTlVank5K1lSKzZxNGp5ZVVI?=
- =?utf-8?B?b2NxQXQxVjRtY3loeUROOG9pUWN3Y1FiM3VDMExwTDdlTDIrRldOMlpGbGhP?=
- =?utf-8?B?cWJNNlhwRnpHVlZNRXhSdFFPVGM5aUcrUnBCUHpNc0ppajlBVklxQ0hYaEdp?=
- =?utf-8?B?YUJ2dHd2SlBFdkpIazd6S3pEODZpUEEzV1pVWU4yTzAyeUJTU085MlpyK0c0?=
- =?utf-8?B?UUlRRjFhZ1VlOTVHR2xGK2dySlBnVDM0aEh0SHBNNlNkc1p3b3hITys4ZTMw?=
- =?utf-8?B?VlJ2dDdPdEZtNHVUSkxVOW54QUNsRXVjd1ZWb3VYNDZ6OE1qcWMwaUpYY3Vt?=
- =?utf-8?B?QVcvdkhKQjRmSm9KNUFOTkNMMzFmQzNOdEV5VjAwV2FySHdUNUNzYlYvTUJB?=
- =?utf-8?B?RHdWZVFOblROcDJMQ0tIMHRIVklSbjI2bHoyN2JRQVNBWVM0MWl3dDFaUldH?=
- =?utf-8?B?MEtjSytoNUkwTWI5UDNPd01TdDBzbEgzb3k3SDZ6LzZiVENNaXRnZUJXVE5h?=
- =?utf-8?B?MnF0M3lHM0IxZFFhNzlURU1kU2tha3RUU24rZUtZVTBEYXhUS0d3OHFKdFBR?=
- =?utf-8?B?ZzNFbXM0ekcwVTd5Z2xTL2dhY1Byc3czL2VSbUp2c0JRdXBHci9Uc2RJT3FS?=
- =?utf-8?B?R3N0OEs5QVkrd1NPSENtWFg2L0ZTQ1FTc25lSktjdHF5K1NzVnAwVHZua3hV?=
- =?utf-8?B?SlhzSEJ3a3N1SWdEQ1NpRU43OC9tWVdEa2dpakxDVldrbnh2TFEyRkZiaEZ0?=
- =?utf-8?B?ZGlCcGdYN0hkdEh2MEczWmplQlRadG9nQkk2TEpDWENDOGhVUlFBR1V1cEph?=
- =?utf-8?B?NkFvdXhEWW5DdVZIN0xSQUtvSVE2dmVPc3JRNnhybGMzZFRFNkhQV3FJaG1l?=
- =?utf-8?B?S1FNeGlZYWNOcFJkOGczR29OUSsrcVJzVVhBQzVGVmZNcTJIbmlnQT09?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TTR5aGlJdWN1Y09RdUY1TW1Sd0dVdkxxYmVDQWRMZ01rbUlUeWJmRjZqdjBX?=
+ =?utf-8?B?cXhwektKeEs0Wjh0bEVTSnpOU1grOEd0d1h0c1JnN1QyQUtKeTArRE41ODUz?=
+ =?utf-8?B?RUZ2MUYrSDdzU1U1VXVQaDdmUktxcG1GeXQ4b3Vsb3RGeW5yVzVsRUt0MVFj?=
+ =?utf-8?B?S21kTWIvbWo0VnZsSFU3ajNCY1pDM3YxczJjV2FQZXVmcG5XVUx2bUY2YzVj?=
+ =?utf-8?B?QTMxMzVYM2dVWk9rZ242eGVGR05OemxCZ0RJNGNnQmcydGQySDJYOFhEZDM3?=
+ =?utf-8?B?OXZ0YmgwcGRGMnQ2SVFnTjVzZklnQVN5bEg5ZDlEYXZ1QkptYkNWaS8zK254?=
+ =?utf-8?B?cjFDeDJDbkxpRDB4SVJIV2NOQ1pYQW5xQUhhT1ptYUYrb0NpS05pZHFrY2Iv?=
+ =?utf-8?B?c25va0xOaHJmaWxHMFp6RFVnbDNiK3dHcDNhYzlIanB0cGJ2T1RWR0VFekRs?=
+ =?utf-8?B?OVIwMU1uSW8xVHRYcGhZamlIdEdGSVVwcmp0RmVjd2hvM1R6WXpaYUx5SzRu?=
+ =?utf-8?B?RnhhbEVPanFxMUhTY2pWR0FHTVhjVCs3SEUwWCtCQ216d1NvNkZGbHZ3TU11?=
+ =?utf-8?B?WDZ1UnlxaFFTWDdUR051N0YxZEYxZTAxYWpOaDU0b2daZlQzaUtQYy9sY2lQ?=
+ =?utf-8?B?WURRcmdnNDFaYVZUb2lIb21WM0g1V2l2NllDRUwxZklQZDZEcHFvNFBwNzZV?=
+ =?utf-8?B?SEV4dEJNS2Y1aGhkS0E1UUxvblVIa1hIaUdUeWhtT3laV0tUS05Zd2hsVnZ3?=
+ =?utf-8?B?WEpacEoyb05FZ3U1bHh0d24rQXIwVTRidUtqVkRXOTkrM2hvS0UrdU51RExn?=
+ =?utf-8?B?T2VZQy9VRk5FL242WjJIdHpWR1FVNVdkTTdZS2wrUXd1TEE5dUF1NG1EVm4y?=
+ =?utf-8?B?R0s1V3Mwckl5UjBtSHNYdjl0eExOMVM1a0JiRndiSEh0bjdlYUlQbWJXc290?=
+ =?utf-8?B?dkI1RnlSbUpjd3NnM2sxand1Nk5CMk1BbTBJZi9LbFlpYkY0V0FsUnZqUXlp?=
+ =?utf-8?B?OVlPK0ZxTW1WM0R5ZytnbHZQMUJMQWRuazArYmNnTU8zWGIvSHE3amdQMWZs?=
+ =?utf-8?B?Z0dlMkNMOVFlem1BZ2F0bzE2TDhZcEJ2WVRPZ3JzOXUvZFZEZ1d0NFRNTHRJ?=
+ =?utf-8?B?M1VTdSsyUnV3bVJDek1GeUxjdHQzRFpUN2JyWnBQV2RFTTJycGx2bXVPeHhj?=
+ =?utf-8?B?YWdKaHY0Y0Q5L05JRUMyV2oxMjk0ZXF4QVczUEtYMWYzZUloWU9naDNKeW04?=
+ =?utf-8?B?OTJJR3orOXppYmNZcytqdWdraGQxejlJeENBWXRXaExnWWFGQ0ZSSHpFU1VJ?=
+ =?utf-8?B?MERlcFRFMEpJMFh6eVRuY0dueEI3M2l0cUg1c3ZwUTc2R3hsM2FOeVNxVklX?=
+ =?utf-8?B?eEpyRzdjRWRZNzFsTUtmYXAwalhzOUFxdUxGTGpWcERWeDFnVUI2SUNLaGp5?=
+ =?utf-8?B?a1BXYU1wMFdzNjA3dXo3K25tSFJaMS82VDl2QlczT0E2emZXcW1IRzhxLzVh?=
+ =?utf-8?B?UjBDUjFibTk3WHlobGxmWm5XN1UwUDRwWE5ld1FpdlcraWNYbHJNeVNZQldF?=
+ =?utf-8?B?Mms0RWpIOEZIVnlmOUJRN200SDltSXArM3FBWGFHL1lzWFdKV25IVTFpRUdK?=
+ =?utf-8?B?bGV6WFlXbGswYnpLRHB6WjVSaXpnZlFSLzkrbEZpNUwwNzlTcXJwU2ZoSHhD?=
+ =?utf-8?B?MUJFa2VSRGVaREJRZFpSVzJwOWR1OEtOR3RSL0lrZElUNHZnelNwRkZaUS9j?=
+ =?utf-8?B?UTIvTVdOV2dhOU5MandDUDRNSmNBZ0NMOFR2NDN2eURCdXk1blZQZTFVN002?=
+ =?utf-8?B?K051K0NONHBMc1lYWG9kWHdBRHRqa1VySlJQYUNsYWcyU25EdHNNL0lyclJZ?=
+ =?utf-8?B?UnhWY2RYTVJjbVRkVVlITFR1Ui9MTE41TUFSWXZSZDUyUFpDUXN5WEp4Nmty?=
+ =?utf-8?B?UW1kY0VqaWllU2hjOFEzakdCd0ZKVmdabWlkOERkS1hkM1pZYkNKWjVUTTBv?=
+ =?utf-8?B?ejdoM3M4a3lHa3VzOUFOSDJ4bzZubnBSNVNEUDlLdEQ3MlRtdjlPcHpydlNz?=
+ =?utf-8?B?aWplZ0dQOVZIbGMyNC9WaEQza2FWRVN3d1VCSFp3TlNjYmNkOXJ0b2VQeG15?=
+ =?utf-8?B?Q3VweDVlNjBOUHF2a3pabWkzb3JqREx2Z0thOVZBci9ObEQwZGFKVEtCSHRK?=
+ =?utf-8?B?cy8rMW52YUh0S3J1WDh6Y01iemtSdG5PUTk0YlowOEtGSHl4a3Qvd2UrOXdN?=
+ =?utf-8?B?RzdPSVZuTVlnQ1RhRzBxSVltNVJvRXNZUnZKWTZtVWFNamQ2VHpxcXZVSmI3?=
+ =?utf-8?B?MmNIc29YVk10ek5QcGM5ZE5BYy8xMkNnUkYyV3FPQ3FNa0NERU92QT09?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7adab102-51d9-4358-dfc8-08da11e2e85a
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e6ea454-f020-4228-2fa8-08da120a9379
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4349.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2022 00:19:08.6928
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2022 05:03:06.3261
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8nnthhgQpiSIwIqOOfc9rX3WUemQZI5UBVXX75faM3wqU6p/LfbTJ2SX/FTiAzWTUVaaBXFbyT6rGOmTKqf3iQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4472
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ahl1vxzj2KiqeBjZHtvHZNjXmSow4b8m9n9hBx5NNiYFYltx2/3sf3jCr3kXymICYzEmoWwbF1ebPRmNbFzxPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3860
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
 
-On 3/29/22 4:25 PM, Rob Herring wrote:
-> On Mon, Mar 28, 2022 at 10:45:14PM -0700, Dipen Patel wrote:
->> Introduces HTE devicetree binding details for the HTE subsystem. It
->> includes examples for the consumers, binding details for the providers
->> and specific binding details for the Tegra194 based HTE providers.
->>
->> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> Changes in v2:
->> - Replace hte with hardware-timestamp for property names
->> - Renamed file
->> - Removed example from the common dt binding file.
->>
->> Changes in v3:
->> - Addressed grammatical errors.
->> - Removed double plural from the respective properties.
->> - Added dual license.
->> - Prefixed "nvidia" in nvidia specific properties.
->>
->> Changes in v4:
->> - Corrected make dt_binding_check error.
->>
->> Changes in v5:
->> - Addressed review comments.
->>
->>  .../hte/hardware-timestamps-common.yaml       | 29 +++++++
->>  .../devicetree/bindings/hte/hte-consumer.yaml | 43 ++++++++++
->>  .../bindings/hte/nvidia,tegra194-hte.yaml     | 82 +++++++++++++++++++
->>  3 files changed, 154 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
->>  create mode 100644 Documentation/devicetree/bindings/hte/hte-consumer.yaml
->>  create mode 100644 Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
->> new file mode 100644
->> index 000000000000..e8a69ceccd56
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/hte/hardware-timestamps-common.yaml
->> @@ -0,0 +1,29 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fhte%2Fhardware-timestamps-common.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589163420%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=oyeG06oNMukYew%2Bkji%2FlXsDyGwIIrIvwxLHKxaiFBto%3D&amp;reserved=0
->> +$schema: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589163420%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=JOY3MmZlMo6Mopr5dwjUky%2BaQX4b0QSiDt8zo3mSu1k%3D&amp;reserved=0
->> +
->> +title: Hardware timestamp providers
->> +
->> +maintainers:
->> +  - Dipen Patel <dipenp@nvidia.com>
->> +
->> +description:
->> +  Some devices/SoCs have hardware time stamping engines which can use hardware
->> +  means to timestamp entity in realtime. The entity could be anything from
->> +  GPIOs, IRQs, Bus and so on. The hardware timestamp engine (HTE) present
->> +  itself as a provider with the bindings described in this document.
->> +
->> +properties:
->> +  $nodename:
->> +    pattern: "^hardware-timestamp(@.*|-[0-9a-f])?$"
->> +
->> +  "#hardware-timestamp-cells":
->> +    description:
->> +      Number of cells in a HTE specifier.
->> +
->> +required:
->> +  - "#hardware-timestamp-cells"
->> +
->> +additionalProperties: true
->> diff --git a/Documentation/devicetree/bindings/hte/hte-consumer.yaml b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
->> new file mode 100644
->> index 000000000000..be69f63aa8c3
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
->> @@ -0,0 +1,43 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fhte%2Fhte-consumer.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589319655%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=0f1FFB1IotZESaxDlXX5mo9YyMN25BlFAyq%2FOQJtVoE%3D&amp;reserved=0
->> +$schema: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589319655%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=B%2FvVGGwp9JghUpT33cGk0EZHDRlaOAzCbtv93Z%2Fa9YY%3D&amp;reserved=0
->> +
->> +title: HTE Consumer Device Tree Bindings
->> +
->> +maintainers:
->> +  - Dipen Patel <dipenp@nvidia.com>
->> +
->> +select: true
->> +
->> +description:
->> +  HTE properties should be named "hardware-timestamps". The exact meaning of
->> +  each hardware-timestamps property must be documented in the device tree
-> The meaning of the cells needs to be documented. You are documenting the 
-> meaning of 'hardware-timestamps' here.
 
-This is for the consumer side, meaning of the cells will be documented in the provider
-
-binding document.
-
->
->> +  binding for each device. An optional property "hardware-timestamp-names" may
->> +  contain a list of strings to label each of the HTE devices listed in the
->> +  "hardware-timestamps" property.
->> +
->> +properties:
->> +  hardware-timestamps:
-> I'm wondering if we should just drop 'hardware'. What other kind of 
-> timestamps are we going to have in DT? software-timestamps? No.
-
-I believe this makes it explicit and leaves no room for second guess. If
-
-only timestamps, ambiguity then will be which timestamp it is i.e. through hardware
-
-engine, pps, ptp and so on...
-
->
->
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description:
->> +      The list of HTE provider phandle. The provider must document the number
->> +      of cell that must be passed in this property along with phandle.
->> +
->> +  hardware-timestamp-names:
->> +    $ref: /schemas/types.yaml#/definitions/string-array
->> +    description:
->> +      An optional string property.
->> +
->> +dependencies:
->> +  hardware-timestamp-names: [ hardware-timestamps ]
->> +
->> +additionalProperties: true
->> +
->> +examples:
->> +  - |
->> +    hte_irq_consumer {
->> +              hardware-timestamps = <&tegra_hte_lic 0x19>;
->> +              hardware-timestamp-names = "hte-irq";
->> +    };
->> diff --git a/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
->> new file mode 100644
->> index 000000000000..ce6f1313f52d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
->> @@ -0,0 +1,82 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fhte%2Fnvidia%2Ctegra194-hte.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589319655%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=op7oS69fzQyvxJjQkPq8ScLuEEd32eCRjL%2BuCOPIKko%3D&amp;reserved=0
->> +$schema: https://nam11.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=04%7C01%7Cdipenp%40nvidia.com%7C5793b3be05fd48a97ad108da11db79a7%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637841931589319655%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=B%2FvVGGwp9JghUpT33cGk0EZHDRlaOAzCbtv93Z%2Fa9YY%3D&amp;reserved=0
->> +
->> +title: Tegra194 on chip generic hardware timestamping engine (HTE)
->> +
->> +maintainers:
->> +  - Dipen Patel <dipenp@nvidia.com>
->> +
->> +description:
->> +  Tegra194 SoC has multiple generic hardware timestamping engines (GTE) which
->> +  can monitor subset of GPIO and on chip IRQ lines for the state change, upon
->> +  detection it will record timestamp (taken from system counter) in its
->> +  internal hardware FIFO. It has a bitmap array arranged in 32bit slices where
->> +  each bit represent signal/line to enable or disable for the hardware
->> +  timestamping.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - nvidia,tegra194-gte-aon
->> +      - nvidia,tegra194-gte-lic
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  nvidia,int-threshold:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description:
->> +      HTE device generates its interrupt based on this u32 FIFO threshold
->> +      value. The recommended value is 1.
->> +    minimum: 1
->> +    maximum: 256
->> +
->> +  nvidia,slices:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description:
->> +      HTE lines are arranged in 32 bit slice where each bit represents different
->> +      line/signal that it can enable/configure for the timestamp. It is u32
->> +      property and depends on the HTE instance in the chip. The value 3 is for
->> +      GPIO GTE and 11 for IRQ GTE.
->> +    enum: [3, 11]
->> +
->> +  '#hardware-timestamp-cells':
->> +    const: 1
-> Need to describe what the cell represents.
-Agree...
->
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - nvidia,slices
->> +  - "#hardware-timestamp-cells"
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    tegra_hte_aon: hardware-timestamp@c1e0000 {
->> +              compatible = "nvidia,tegra194-gte-aon";
->> +              reg = <0xc1e0000 0x10000>;
->> +              interrupts = <0 13 0x4>;
->> +              nvidia,int-threshold = <1>;
->> +              nvidia,slices = <3>;
->> +              #hardware-timestamp-cells = <1>;
->> +    };
->> +
->> +  - |
->> +    tegra_hte_lic: hardware-timestamp@3aa0000 {
->> +              compatible = "nvidia,tegra194-gte-lic";
->> +              reg = <0x3aa0000 0x10000>;
->> +              interrupts = <0 11 0x4>;
->> +              nvidia,int-threshold = <1>;
->> +              nvidia,slices = <11>;
->> +              #hardware-timestamp-cells = <1>;
->> +    };
->> +
->> +...
->> -- 
->> 2.17.1
+On 3/30/2022 5:21 AM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 3/22/22 20:23, Ashish Mhetre wrote:
 >>
 >>
+>> On 3/19/2022 9:29 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 16.03.2022 12:25, Ashish Mhetre пишет:
+>>>> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+>>>> index 92f810c55b43..6f115436e344 100644
+>>>> --- a/include/soc/tegra/mc.h
+>>>> +++ b/include/soc/tegra/mc.h
+>>>> @@ -203,6 +203,8 @@ struct tegra_mc_soc {
+>>>>         const struct tegra_smmu_soc *smmu;
+>>>>
+>>>>         u32 intmask;
+>>>> +     u32 int_channel_mask;
+>>>
+>>> ch_intmask
+>>>
+>> Okay, I will update,
+>>
+>>>> +     bool has_addr_hi_reg;
+>>>>
+>>>>         const struct tegra_mc_reset_ops *reset_ops;
+>>>>         const struct tegra_mc_reset *resets;
+>>>> @@ -210,6 +212,8 @@ struct tegra_mc_soc {
+>>>>
+>>>>         const struct tegra_mc_icc_ops *icc_ops;
+>>>>         const struct tegra_mc_ops *ops;
+>>>> +
+>>>> +     int (*get_int_channel)(const struct tegra_mc *mc, int
+>>>> *mc_channel);
+>>>
+>>> This should be a part of tegra_mc_ops.
+>>
+>> tegra_mc_ops is common for T186, T194 and T234 i.e. all of them use
+>> tegra186_mc_ops. get_int_channel function has to be differently
+>> implemented for all of these SOCs. So I had put it in tegra_mc_soc.
+> 
+> Then tegra_mc_ops shouldn't be common anymore?
+
+Yes, that can be done. But the tegra186_mc_ops functions are common for
+Tegra186, Tegra194 and Tegra234.
+We can separate tegra_mc_ops and keep the callbacks to same tegra186
+functions by removing static from them.
