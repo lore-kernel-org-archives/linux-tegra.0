@@ -2,145 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB8BC4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Mar 2022 16:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F306C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 31 Mar 2022 00:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349103AbiC3Q6y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Mar 2022 12:58:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33624 "EHLO
+        id S1352146AbiCaAwl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Mar 2022 20:52:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349099AbiC3Q6w (ORCPT
+        with ESMTP id S1352142AbiCaAwl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Mar 2022 12:58:52 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA1E4AE11
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Mar 2022 09:57:03 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id r23so25203330edb.0
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Mar 2022 09:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=fEzld4oIJa86hl09sRy64K2e8LGIGCRfWuc+U0PWYOs=;
-        b=pz8Axq5e3iFbz7Jw0eIdKg+hWyV0eg5X/OrzwVODe4qALsVNW5P6XCIffz7jZBls1S
-         Ay8G4ifJkD57k5cn7sKOqZqcX8jZz7AiV0A+xfY0usJu+I228VzlXlRNwtFfpvWDYChT
-         tCTa4NX0jot2hZU9MZto6acQS6j1L5ezvPVFwjTq5mozRXGJ/05EDtzB/X0fdtun30yf
-         E7wrNN00iG4bycxxZuXuO6Zu97SotlzoyB98sU++D3zFCPA3T7stPpKNzWvbRrSL+Hzq
-         CLmsL7H9fVbfmMMXR72/C2K+zdLRiND4Sk71buZAy/vXVdCalN6MK04NuIfO07hJu1FF
-         XYsQ==
+        Wed, 30 Mar 2022 20:52:41 -0400
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C66059A64;
+        Wed, 30 Mar 2022 17:50:55 -0700 (PDT)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-df0940c4eeso10355981fac.8;
+        Wed, 30 Mar 2022 17:50:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=fEzld4oIJa86hl09sRy64K2e8LGIGCRfWuc+U0PWYOs=;
-        b=7XLSVrTaGP0Z1X+SjPXi/XG5CwpOs8TH1g3P7A2bSksUSHcKvhL37Fr3HWV6+SMqGR
-         x/tre0iEagvUoTLiDXIgMVwcY1SWvdbft3FbfK+7lGYu5M2ZTLl1fRsgSEpLvzm9+PlQ
-         eLuadTGX7FjaZtWWa2iecNsVOPsNLTCug44m8PVLK8/q7YeovTFJw0uOOnMUxb45hYri
-         OcffGMgv2AkyXA8opYySe65KOi4odSfyIwpehlhyf0FgrfFnGuolV47t3pTNiuoN1WbS
-         L1Kz6igMomAiuZA1zRSUevRvJRZ63peOMwG51KkvW1VUHYCMY+YbajoURV0t4ov811ej
-         hPcQ==
-X-Gm-Message-State: AOAM531I59Sve09sE3DtTlSSqNJa/PkVRWqJgS3faH+PbqqW+r7VKWk7
-        w3zl0swKrgmtozGxz3S9CGpU6A==
-X-Google-Smtp-Source: ABdhPJyCpxyw7R6T+pFO1zsX01vbrvk5lvAApJ9RbFPs/LdEa4c5G+bltActTe6FNicQwS1ouiR2cg==
-X-Received: by 2002:a05:6402:d67:b0:419:48b:a762 with SMTP id ec39-20020a0564020d6700b00419048ba762mr11695300edb.291.1648659422507;
-        Wed, 30 Mar 2022 09:57:02 -0700 (PDT)
-Received: from [192.168.0.164] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id q15-20020a1709060e4f00b006cdf4535cf2sm8394201eji.67.2022.03.30.09.57.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Mar 2022 09:57:01 -0700 (PDT)
-Message-ID: <e13ceaad-d5f7-3c50-774e-28cabb2e1fe6@linaro.org>
-Date:   Wed, 30 Mar 2022 18:57:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] dt-bindings: Fix incomplete if/then/else schemas
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Dmitry Osipenko <digetx@gmail.com>, linux-iio@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, netdev@vger.kernel.org,
-        linux-phy@lists.infradead.org
-References: <20220330145741.3044896-1-robh@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220330145741.3044896-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=A66b4EUBSg5Uy8yfSHgRx+FsA0tOVWffGvkQxaTSXa4=;
+        b=WmRm68LeHN10i8196Y/jNuk251oR07iYWyACCbDS3j4GKdDBhduUb7DvcbA4DEQ3Zb
+         plZoyiWe2vterHZUZqxWeW600442easL6+IWX2WXsP9B/vHpfb7K8i8bqGuW74zEibGQ
+         8SVS7aLRagDtM6kW5WfnxwGmMfi8vHrID3c3LnTdOyESbJ5io6PmrqdeqNyQjZ+Hkv8c
+         q+nu+8q+r4Ml4JkW0Ml8FlRmS4FGRghfnz6Ea2OtB4DpFT9Y9Ti+kGn8kOUP+FNR1Tro
+         80wvXwvW518peULjj8/rpxbnG8boXZ0E2gJ0xb/2JjKNRrXPmIRSzZZPW3eQQlOCSl8h
+         YOAw==
+X-Gm-Message-State: AOAM532RsCpl5bk3s1H0QJNvkpdeGrbA5mWl2oUcJcqa2NlSdQbpB0h7
+        akQSYfBZuZuZ8PcLtOGVKvKYNB5yHQ==
+X-Google-Smtp-Source: ABdhPJy+MIlGWczbPgmzwI4IOf+RWSip/f9hsK3bXG7yz7sjaQp7VehJM3ItEfIvE3um0TqWR73I2A==
+X-Received: by 2002:a05:6870:c58f:b0:da:b3f:2b69 with SMTP id ba15-20020a056870c58f00b000da0b3f2b69mr1386894oab.264.1648687854353;
+        Wed, 30 Mar 2022 17:50:54 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id a15-20020a056870000f00b000de1ab6364dsm10660771oaa.49.2022.03.30.17.50.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Mar 2022 17:50:53 -0700 (PDT)
+Received: (nullmailer pid 3984300 invoked by uid 1000);
+        Thu, 31 Mar 2022 00:50:53 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     sanjayc@nvidia.com, devicetree@vger.kernel.org,
+        ksitaraman@nvidia.com, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, linux-tegra@vger.kernel.org,
+        krzk+dt@kernel.org, rafael@kernel.org, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, bbasu@nvidia.com, treding@nvidia.com,
+        viresh.kumar@linaro.org
+In-Reply-To: <20220330143819.27476-3-sumitg@nvidia.com>
+References: <20220330143819.27476-1-sumitg@nvidia.com> <20220330143819.27476-3-sumitg@nvidia.com>
+Subject: Re: [Patch v2 2/4] dt-bindings: arm: tegra: Add bindins for nvidia,tegra-ccplex-cluster
+Date:   Wed, 30 Mar 2022 19:50:53 -0500
+Message-Id: <1648687853.036468.3984299.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 30/03/2022 16:57, Rob Herring wrote:
-> A recent review highlighted that the json-schema meta-schema allows any
-> combination of if/then/else schema keywords even though if, then or else
-> by themselves makes little sense. With an added meta-schema to only
-> allow valid combinations, there's a handful of schemas found which need
-> fixing in a variety of ways. Incorrect indentation is the most common
-> issue.
+On Wed, 30 Mar 2022 20:08:17 +0530, Sumit Gupta wrote:
+> The Tegra CCPLEX_CLUSTER area contains memory-mapped
+> registers that initiate CPU frequency/voltage transitions.
 > 
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Michael Hennerich <Michael.Hennerich@analog.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
-> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Georgi Djakov <djakov@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Dmitry Osipenko <digetx@gmail.com>
-> Cc: linux-iio@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-mmc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-phy@lists.infradead.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
->  .../bindings/iio/adc/adi,ad7476.yaml          |  1 +
->  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  |  8 +-
->  .../bindings/iio/dac/adi,ad5360.yaml          |  6 +-
->  .../bindings/interconnect/qcom,rpm.yaml       | 84 +++++++++----------
->  .../bindings/mmc/nvidia,tegra20-sdhci.yaml    |  2 +
->  .../bindings/net/ti,davinci-mdio.yaml         |  1 +
->  .../bindings/phy/nvidia,tegra20-usb-phy.yaml  | 20 ++---
->  .../bindings/phy/qcom,usb-hs-phy.yaml         | 36 ++++----
->  .../bindings/regulator/fixed-regulator.yaml   | 34 ++++----
->  .../bindings/sound/st,stm32-sai.yaml          |  6 +-
->  .../devicetree/bindings/sram/sram.yaml        | 16 ++--
->  11 files changed, 108 insertions(+), 106 deletions(-)
+>  .../tegra/nvidia,tegra-ccplex-cluster.yaml    | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
+> 
 
-Looks good:
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+yamllint warnings/errors:
 
-Best regards,
-Krzysztof
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.example.dt.yaml: example-0: ccplex@e000000:reg:0: [0, 234881024, 0, 393215] is too long
+	From schema: /usr/local/lib/python3.8/dist-packages/dtschema/schemas/reg.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
