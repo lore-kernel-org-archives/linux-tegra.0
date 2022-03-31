@@ -2,117 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6970FC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 31 Mar 2022 19:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975D7C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 31 Mar 2022 20:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234759AbiCaTvb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 31 Mar 2022 15:51:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59062 "EHLO
+        id S241457AbiCaUgz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 31 Mar 2022 16:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232587AbiCaTva (ORCPT
+        with ESMTP id S241456AbiCaUgy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 31 Mar 2022 15:51:30 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1DA31369;
-        Thu, 31 Mar 2022 12:49:43 -0700 (PDT)
-Received: from [IPV6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1] (unknown [IPv6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 43A991F4724B;
-        Thu, 31 Mar 2022 20:49:41 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1648756182;
-        bh=0Oz4uyGn6BcSHSRmcqDFLjru1xWqtFKeFoT+J5B44JY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=mkWL9XCh5w3HkxbcjX3x/hWKrGoLd7b+8U7J3IwwmUtmUdZoN26J47I5+pxtrFgU+
-         VO3AOQtBtif+3n1b+H323sB3kT3o03LgKmglY2r+d94IaOV8bGFWULTxlME15C73p4
-         cV6aK8ayKbkSvx2z5ClFobxjNuFtiyVqFWkVftH2tLqcXnIep9RnrDbVBokSw3R9Fi
-         19Esy3IhNVesNM4y7aeHkg83drrB4QULqDBwHC/TCbsAMaNNHujo4Fx+vAsATFc/B6
-         7umlB+Wj9loa7aQDcuijB/y8QM29Emn3nDVT1S23/IAl0SSUUCjtzKU8/qsZzX50xP
-         5XLY7ZQ2c/C+w==
-Message-ID: <bf8bee92-0d0e-453b-5ff1-1829a4406fd1@collabora.com>
-Date:   Thu, 31 Mar 2022 22:49:38 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [Patch v5 2/4] memory: tegra: Add MC error logging on tegra186
- onward
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>,
+        Thu, 31 Mar 2022 16:36:54 -0400
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F27AD4470;
+        Thu, 31 Mar 2022 13:35:03 -0700 (PDT)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-deb9295679so529437fac.6;
+        Thu, 31 Mar 2022 13:35:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7o8q97xCtSsryTgEf+sdFsnMX0/U036sQhYghPoefl4=;
+        b=iPJMIel6KouTEDry7C1kbBk8yMK/XG0f8n5a/xdpTicgN470n1MAIZqq0O9XIQkTQT
+         1iAELBGJ99xBVFuBGbsK66w77QlYA4Y9z7bSbwe064IL8vRgvZQGNIJOgb8klFDl6yyb
+         mOTYM2AgQPuSVzZ0xUp2PqQIGS2vA9vKOIKyuLChLPNuVD2d6h297HDDKQy/4P+BDFyA
+         VG8AbLUNJK1Nr0BKgwjIuypNESUa7lk7vmMryzHIdlI6sY9ljUtvrxBCA7f+oC07LQSF
+         Qs3PqTOguNnRiVdnhVMTWUcZXWhU8sJ5a5FIKPQCLvWnl3ZMEQG6C0We+GGB/XGJEPWR
+         P2/Q==
+X-Gm-Message-State: AOAM532BTv+JLmhPhYRdJu1nFGVk2U16AQRXbCyCqXhV/q7iFgS1ZSWI
+        WVaDs2lxCAejO6OyUHA4LQ==
+X-Google-Smtp-Source: ABdhPJyOtg9v8M3rgMoWnDenrT80lRaoyYQt7XKsnQHhmcrqEG9E/JNZKDO/sxj1EcCQH8b9oxX0lA==
+X-Received: by 2002:a05:6870:79d:b0:da:56e3:fe99 with SMTP id en29-20020a056870079d00b000da56e3fe99mr3441337oab.95.1648758902507;
+        Thu, 31 Mar 2022 13:35:02 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id r35-20020a056870582300b000df0dc42ff5sm219227oap.0.2022.03.31.13.34.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Mar 2022 13:35:00 -0700 (PDT)
+Received: (nullmailer pid 1446207 invoked by uid 1000);
+        Thu, 31 Mar 2022 20:34:59 -0000
+Date:   Thu, 31 Mar 2022 15:34:59 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org,
+        Georgi Djakov <djakov@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-tegra@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Dmitry Osipenko <digetx@gmail.com>,
-        krzysztof.kozlowski@canonical.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <20220316092525.4554-1-amhetre@nvidia.com>
- <20220316092525.4554-3-amhetre@nvidia.com>
- <9ab1a77c-82e6-39be-9b90-b394037fb574@gmail.com>
- <a62bb479-fed4-ada0-ac61-fb67a663a998@nvidia.com>
- <4ea801f4-7929-148d-4e69-d4126a9dfbf7@collabora.com>
- <44235c65-160c-04c7-294d-16b13d25605c@nvidia.com>
- <bf851834-7812-13f1-a382-1f64078ff2a5@collabora.com>
- <06174428-edb1-6478-1b2c-ede83c4bfa87@nvidia.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <06174428-edb1-6478-1b2c-ede83c4bfa87@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: Re: [PATCH] dt-bindings: Fix incomplete if/then/else schemas
+Message-ID: <YkYQc/r8P5LYI6dt@robh.at.kernel.org>
+References: <20220330145741.3044896-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220330145741.3044896-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/30/22 14:22, Ashish Mhetre wrote:
-...
->>> If we are to remove this callback then how to handle unknown interrupt
->>> channel error?
->>
->> Create a common helper function that returns ID of the raised channel or
->> errorno if not bits are set.
->>
-> So something like this:
+On Wed, 30 Mar 2022 09:57:41 -0500, Rob Herring wrote:
+> A recent review highlighted that the json-schema meta-schema allows any
+> combination of if/then/else schema keywords even though if, then or else
+> by themselves makes little sense. With an added meta-schema to only
+> allow valid combinations, there's a handful of schemas found which need
+> fixing in a variety of ways. Incorrect indentation is the most common
+> issue.
 > 
-> int status_to_channel(const struct tegra_mc *mc, u32 status,
->               unsigned int *mc_channel)
-> {
->     if ((status & mc->soc->ch_intmask) == 0)
->         return -EINVAL;
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Michael Hennerich <Michael.Hennerich@analog.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
+> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Georgi Djakov <djakov@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Dmitry Osipenko <digetx@gmail.com>
+> Cc: linux-iio@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-phy@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/iio/adc/adi,ad7476.yaml          |  1 +
+>  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  |  8 +-
+>  .../bindings/iio/dac/adi,ad5360.yaml          |  6 +-
+>  .../bindings/interconnect/qcom,rpm.yaml       | 84 +++++++++----------
+>  .../bindings/mmc/nvidia,tegra20-sdhci.yaml    |  2 +
+>  .../bindings/net/ti,davinci-mdio.yaml         |  1 +
+>  .../bindings/phy/nvidia,tegra20-usb-phy.yaml  | 20 ++---
+>  .../bindings/phy/qcom,usb-hs-phy.yaml         | 36 ++++----
+>  .../bindings/regulator/fixed-regulator.yaml   | 34 ++++----
+>  .../bindings/sound/st,stm32-sai.yaml          |  6 +-
+>  .../devicetree/bindings/sram/sram.yaml        | 16 ++--
+>  11 files changed, 108 insertions(+), 106 deletions(-)
 > 
->     *mc_channel = __ffs((status & mc->soc->ch_intmask) >>
->                  mc->soc->status_reg_chan_shift);
-> 
->     return 0;
-> }
-> 
-> Correct?
 
-Yes
-
->>> Also we want to handle interrupts on one channel at a time and then
->>> clear it from status register. There can be interrupts on multiple
->>> channel. So multiple bits from status will be set. Hence it will be
->>> hard to parameterize shift such that it gives appropriate channel.
->>> So I think current approach is fine. Please correct me if I am wrong
->>> somewhere.
->>
->> You may do the following:
->>
->> 1. find the first channel bit set in the status reg
->> 2. handle that channel
->> 3. clear only the handled status bit, don't clear the other bits
->> 4. return from interrupt
->>
->> If there are other bits set, then interrupt handler will fire again and
->> next channel will be handled.
-> 
-> For clearing status bit after handling, we can retrieve channel bit by
-> something like this:
-> 
-> ch_bit = BIT(*mc_channel) << mc->soc->status_reg_chan_shift;
-> 
-> Correct?
-
-Yes
-
-Perhaps using FIELD_PREP() and alike helpers could make it look nice in
-the code.
+Applied, thanks!
