@@ -2,50 +2,50 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BEFC43219
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Apr 2022 15:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D976C48BE5
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Apr 2022 15:13:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348254AbiDAPPH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Apr 2022 11:15:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60490 "EHLO
+        id S237935AbiDAPPX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Apr 2022 11:15:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350748AbiDAOsA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Apr 2022 10:48:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D4D43ED2;
-        Fri,  1 Apr 2022 07:38:28 -0700 (PDT)
+        with ESMTP id S1348340AbiDAOwR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Apr 2022 10:52:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3D592B4A76;
+        Fri,  1 Apr 2022 07:42:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8757660A53;
-        Fri,  1 Apr 2022 14:38:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7274AC36AEF;
-        Fri,  1 Apr 2022 14:38:17 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 78FCAB82500;
+        Fri,  1 Apr 2022 14:42:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0D84C3410F;
+        Fri,  1 Apr 2022 14:42:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648823899;
-        bh=tiS/AMbghCKUJCgtbDBDwXBAJjMpILpG1ZtoPCEFpz4=;
+        s=k20201202; t=1648824151;
+        bh=K6FeWVmXG3xj/jlF00WeWCIZWm/+qO1HLrMEDR0Tuiw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fo0Mj+e7cmYEkvFoHqabBqBopzaC1107hQKpmxgaAnLMSg1GBaeh7AmhPoK/JyBQv
-         T5V4adnrNeX+EN0eiJz8aV9ozr6ce5HSvbRCG93ryvu/ASgePfMtxKSEQVwRSWCoCN
-         TrKg3IuDxpCGHGb5FLl0AQH4ffLo35tV1siyfd20sje4pEqPVgpDIUBXsnA8QqqkFK
-         98PcftWJbl10K1rKI62KFpZAJtkO1SXa5q/yhl6jw9T5BO+0FpI60R+9nh4Jfb2WrZ
-         5RSc2aN4FeacOBUHDn07WyEtyHZpqwOcWnFjAjx1ebTQ6uTASfNO4le4/mjoGFj+z4
-         wfhfEmkfeYRZQ==
+        b=eAAebSeTQE6bOzHvG74nLXeG6f4eGq4EyxC7OHCLdFFQ0Dy6oIDsfACb5jS4/0jlC
+         /PA9IKu7H8T0Gk1iVFEPqY81gmNCl9P+1kTtdCcyAYy/IyB9NGV8hpulfBcy/uJFw8
+         niiPIxLKgtTO0MOYFFrKQfcFkW8Th5xSuNKCyemJHHgGeoc0AmPOJSSGbPrMq/DDZa
+         z3P83foyDeSluw7HNf76G7CzdFk8vMibctVSDiYZkNTxlTatcn+zVk71P6OclLRA2h
+         5kGkxD/po81yCsmFTWyPWkKnZCLpDZtJwdKtFUjG7SzCprv4Pvo5ZxM9o038NoebWx
+         ZOnSiy0gyCo8A==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wayne Chang <waynec@nvidia.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>, balbi@kernel.org,
         thierry.reding@gmail.com, jonathanh@nvidia.com,
-        zhangqilong3@huawei.com, rikard.falkeborn@gmail.com,
-        chunfeng.yun@mediatek.com, jakobkoschel@gmail.com,
+        yangyingliang@huawei.com, chunfeng.yun@mediatek.com,
+        rikard.falkeborn@gmail.com, jakobkoschel@gmail.com,
         linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 08/98] usb: gadget: tegra-xudc: Fix control endpoint's definitions
-Date:   Fri,  1 Apr 2022 10:36:12 -0400
-Message-Id: <20220401143742.1952163-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 06/65] usb: gadget: tegra-xudc: Fix control endpoint's definitions
+Date:   Fri,  1 Apr 2022 10:41:07 -0400
+Message-Id: <20220401144206.1953700-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220401143742.1952163-1-sashal@kernel.org>
-References: <20220401143742.1952163-1-sashal@kernel.org>
+In-Reply-To: <20220401144206.1953700-1-sashal@kernel.org>
+References: <20220401144206.1953700-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -73,7 +73,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index 716d9ab2d2ff..be76f891b9c5 100644
+index 1dd0d50c6b56..de178bf264c2 100644
 --- a/drivers/usb/gadget/udc/tegra-xudc.c
 +++ b/drivers/usb/gadget/udc/tegra-xudc.c
 @@ -272,8 +272,10 @@ BUILD_EP_CONTEXT_RW(deq_hi, deq_hi, 0, 0xffffffff)
