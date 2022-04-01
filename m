@@ -2,50 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EE3C48BDF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A745C48BE6
 	for <linux-tegra@archiver.kernel.org>; Fri,  1 Apr 2022 15:13:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243384AbiDAPP1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Apr 2022 11:15:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55162 "EHLO
+        id S240676AbiDAPPZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Apr 2022 11:15:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351077AbiDAOsX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Apr 2022 10:48:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E323F53A65;
-        Fri,  1 Apr 2022 07:38:50 -0700 (PDT)
+        with ESMTP id S1348869AbiDAOw7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Apr 2022 10:52:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F922B5187;
+        Fri,  1 Apr 2022 07:42:35 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 419DB60E9A;
-        Fri,  1 Apr 2022 14:38:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48C57C340F2;
-        Fri,  1 Apr 2022 14:38:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C3D1A60AC0;
+        Fri,  1 Apr 2022 14:42:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69D4C2BBE4;
+        Fri,  1 Apr 2022 14:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648823894;
-        bh=SyTOn7y6nyPh5CZweMHgg1YlsPXWzamM40RkWEELlmY=;
+        s=k20201202; t=1648824147;
+        bh=QsLGF1AfyUMyqSOnet8s4XlUWwiSjJOJzE+S82WR1sM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gt2jCrElkE84zA750pU7JCuyEhWvpZFAkBpt9+Zn5rr8YWsQ2XVsvtj089iYETYct
-         ZYTLwmmKXy8N8YnFZM/4nzigjIpdB2Tbl2h5PESj6SMaFTzMh1k+Vv/IL6Zu8jPMbz
-         QtWQovoSxp0zlSrlPIM03bltdY78mWDXnKrB0aJPhmwv0LAgbvMQqmpllWrVRSmI8d
-         EuToyUDFI0NEfoTy5eR5BsdZuJvvmCvvhiNQ+/wQl42vI40mvaNgUa6oCd5gXGQhRv
-         cd0Dua4paZUteJ6Xxia0Qs+5ddqFYAV4PV3l19eiHLoI3SFUO6MVfgGu1N1ODSFdtI
-         hPZ+XL9wTx/7g==
+        b=Jk7buF+y2hA5sGfZ7CpoYNT8paj93IGGEhY6e9fQmL88TYjzaBPsfYl/g9W5Yn61J
+         xOk0JhKQ8AVRZA3ieKRkC3I0D3omOqZptFtfSDTp0mwQGK0Jva5WW1tCr9S2Juse/d
+         JGGzjNm+J1LGDmDBR162Kw2OfJTemUsKO0f6RNvkk4I8rA3Pv2SW8fxnMK2G6BEynF
+         ZyJMNayAT3FuvHq1kJF9JfqFZwupYlalRnbgOKnTwgUM22kK5kkxXIHq7rzf+UF6rb
+         YH69D6rCX3ZN3MXmxutiwths78pfIQnu/Fgtm+8803Ft8J6ysJYFYPkFBcGSSYgxyi
+         JeIX9GcJKeExg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wayne Chang <waynec@nvidia.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>, balbi@kernel.org,
         thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jakobkoschel@gmail.com, rikard.falkeborn@gmail.com,
+        zhangqilong3@huawei.com, rikard.falkeborn@gmail.com,
+        yangyingliang@huawei.com, jakobkoschel@gmail.com,
         chunfeng.yun@mediatek.com, linux-usb@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 07/98] usb: gadget: tegra-xudc: Do not program SPARAM
-Date:   Fri,  1 Apr 2022 10:36:11 -0400
-Message-Id: <20220401143742.1952163-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 05/65] usb: gadget: tegra-xudc: Do not program SPARAM
+Date:   Fri,  1 Apr 2022 10:41:06 -0400
+Message-Id: <20220401144206.1953700-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220401143742.1952163-1-sashal@kernel.org>
-References: <20220401143742.1952163-1-sashal@kernel.org>
+In-Reply-To: <20220401144206.1953700-1-sashal@kernel.org>
+References: <20220401144206.1953700-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -73,7 +74,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 deletions(-)
 
 diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index 43f1b0d461c1..716d9ab2d2ff 100644
+index 57ee72fead45..1dd0d50c6b56 100644
 --- a/drivers/usb/gadget/udc/tegra-xudc.c
 +++ b/drivers/usb/gadget/udc/tegra-xudc.c
 @@ -32,9 +32,6 @@
