@@ -2,83 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AD6C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Apr 2022 13:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B727AC433FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Apr 2022 14:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345016AbiDANqt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Apr 2022 09:46:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37092 "EHLO
+        id S1346902AbiDAO2a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Apr 2022 10:28:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231720AbiDANqt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Apr 2022 09:46:49 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4BA519C59E;
-        Fri,  1 Apr 2022 06:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648820698; x=1680356698;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JlYdFx2enj00VmPSl9W4WEDFs5d1WTq+ViO4q/DcnM0=;
-  b=JdVC733b71w5eovdEhieN3J+2cJ9obBprhj4xzWeoc4iUQDul4ENYYuF
-   C/qzCmGHVtiP0aFxKFwnohvaKQ57Mh8XZZcXuaq+/ua8JwFOCafnGhYKh
-   0qS7IEUq88sianc6HFGZwKhok6Iajp8RyQS+MQ88JFG7rBfYyatBoozM9
-   lEe+KIEPiKm0xjJxeTGtLLM1qvO5DYwxhdWK0ZwBDpUQHsr/z1lPElbcj
-   qMIlKTpDHZk7UiSBmx6S6tBWmEgVA7FFfJq/DFqnXYxA0P8kZ8uwlzENe
-   pAhWKrPSHVKTuEN1+qY2dqOY02i0iS+DLR/qjQtwo70hoVNNWXSOzPD6K
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10304"; a="260317504"
-X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
-   d="scan'208";a="260317504"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2022 06:44:58 -0700
-X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
-   d="scan'208";a="521405783"
-Received: from smile.fi.intel.com ([10.237.72.59])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2022 06:44:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1naHZf-00AiLH-H6;
-        Fri, 01 Apr 2022 16:44:23 +0300
-Date:   Fri, 1 Apr 2022 16:44:23 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Sandipan Patra <spatra@nvidia.com>
-Cc:     treding@nvidia.com, jonathanh@nvidia.com, digetx@gmail.com,
-        ulf.hansson@linaro.org, cai.huoqing@linux.dev, bbasu@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch V2] soc/tegra: pmc: update Tegra234 reset sources
-Message-ID: <YkcBt74odxdoBlQ3@smile.fi.intel.com>
-References: <20220401104935.9149-1-spatra@nvidia.com>
+        with ESMTP id S1346965AbiDAO2U (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Apr 2022 10:28:20 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1281E1105;
+        Fri,  1 Apr 2022 07:26:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 015ACB82500;
+        Fri,  1 Apr 2022 14:26:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 059ACC3410F;
+        Fri,  1 Apr 2022 14:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648823187;
+        bh=SyTOn7y6nyPh5CZweMHgg1YlsPXWzamM40RkWEELlmY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pylCjjYQAH5egynesWfl4aTGWNCCsUAOQfND58X+wMA5QpIY2feWPZDmfj+OGCaVD
+         8O0a4Irp489tJlsQD8Ihmu6EtN0rg9XjA9uaFD0siTP/O4CNc7Bj1b6kX1b0mlzwDl
+         rooEOljNbzLPQKzleir9mOq85zl91lGQBByXKc6963pieyzwBzxpT/i47ZnqK96hNI
+         JGdQIY9cNMJ/5eK7hVtaIkehPASup0CsB+iGza2M3zbHbKydDimPm7UvxHt7uXTnBk
+         k052Pq77sV5llhT2923e5fP/LcCv5DY67HK3Aosuwq07YAFo+3bTMy2V66isPY/Tfm
+         YNUlB3D5S3bLw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Wayne Chang <waynec@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, balbi@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        chunfeng.yun@mediatek.com, zhangqilong3@huawei.com,
+        yangyingliang@huawei.com, jakobkoschel@gmail.com,
+        rikard.falkeborn@gmail.com, linux-usb@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.17 014/149] usb: gadget: tegra-xudc: Do not program SPARAM
+Date:   Fri,  1 Apr 2022 10:23:21 -0400
+Message-Id: <20220401142536.1948161-14-sashal@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220401142536.1948161-1-sashal@kernel.org>
+References: <20220401142536.1948161-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220401104935.9149-1-spatra@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Apr 01, 2022 at 04:19:35PM +0530, Sandipan Patra wrote:
-> Reset_sources list is updated to add all reset sources
-> and removing ones that do not actually exist.
+From: Wayne Chang <waynec@nvidia.com>
 
-...
+[ Upstream commit 62fb61580eb48fc890b7bc9fb5fd263367baeca8 ]
 
-> +	NULL,		/* 0x10 */
+According to the Tegra Technical Reference Manual, SPARAM
+is a read-only register and should not be programmed in
+the driver.
 
-I would suggest to add the comments more often, like every 8 entries.
+The change removes the wrong SPARAM usage.
 
-...
+Signed-off-by: Wayne Chang <waynec@nvidia.com>
+Link: https://lore.kernel.org/r/20220107090443.149021-1-waynec@nvidia.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/usb/gadget/udc/tegra-xudc.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-> +	"FSI_VMON"	/* 0x25 */
-
-It would be good to have comma here as if this ever getting expanded
-the additional churn may be avoided.
-
->  };
-
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 43f1b0d461c1..716d9ab2d2ff 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -32,9 +32,6 @@
+ #include <linux/workqueue.h>
+ 
+ /* XUSB_DEV registers */
+-#define SPARAM 0x000
+-#define  SPARAM_ERSTMAX_MASK GENMASK(20, 16)
+-#define  SPARAM_ERSTMAX(x) (((x) << 16) & SPARAM_ERSTMAX_MASK)
+ #define DB 0x004
+ #define  DB_TARGET_MASK GENMASK(15, 8)
+ #define  DB_TARGET(x) (((x) << 8) & DB_TARGET_MASK)
+@@ -3295,11 +3292,6 @@ static void tegra_xudc_init_event_ring(struct tegra_xudc *xudc)
+ 	unsigned int i;
+ 	u32 val;
+ 
+-	val = xudc_readl(xudc, SPARAM);
+-	val &= ~(SPARAM_ERSTMAX_MASK);
+-	val |= SPARAM_ERSTMAX(XUDC_NR_EVENT_RINGS);
+-	xudc_writel(xudc, val, SPARAM);
+-
+ 	for (i = 0; i < ARRAY_SIZE(xudc->event_ring); i++) {
+ 		memset(xudc->event_ring[i], 0, XUDC_EVENT_RING_SIZE *
+ 		       sizeof(*xudc->event_ring[i]));
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
