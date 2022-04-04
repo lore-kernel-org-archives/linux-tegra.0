@@ -2,152 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1EEC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Apr 2022 12:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C48C352AA
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Apr 2022 21:17:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239483AbiDDMft (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Apr 2022 08:35:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33312 "EHLO
+        id S1353362AbiDDVTB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236450AbiDDMft (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Apr 2022 08:35:49 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2051.outbound.protection.outlook.com [40.107.92.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C3FB2717F
-        for <linux-tegra@vger.kernel.org>; Mon,  4 Apr 2022 05:33:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C44NoCQNjl7gFV7OkFDWJvnxjYDGdMiSza78l5ZExOpevQhPXR7L500FmTkirB4Ou54dOsSflCsRh3aD0LAZ6ukq9/iiss6cfyeB4Ip8ZP8/rHxLT1iBKSKHBc3KvQETB3e0s5L8NmJI0cX6zzHJYZU1MaG4bPkxhbBOANb9pvlOAAwrup3v2aiSBqsANHhnHANHTjf895HMJ4tZ6yNpys5xlI/lE8FpKaaeKRlaXRNfrZNUC3JNDXwfYCr0Nxjpq/XozNpNwOeyAzlusS5U5ZW+4awS5XBGbEvfvHad5CIQjFz4QmrAfwUsbFEPapp4oYXaWVz3kKinr3YaCYORLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lCTKbJiEurIi9X3FKKn+rKWjGiI8VcMNseJtVKWN5Xk=;
- b=jkVI8Z8Iggl6RtVv3N7M2WxIWMi4BqgXKklj6szURWrO7dfHNKQNB9wNYgRox/Tx6Xr7/en9eiJai7m0x0AMJs3TZcyNFNxOJISv6v7dM4cD4OHzZAgdkP36Y6HEd6Ag9Ch77m2vBv77I1cAg5k8BygzDq6IBINV1nBFqf4uhi/jpeChTpCd3DpoC3HjdwDu4qI782WSc05I3TaZqazZovYKxOxr+Tb8We4HpvqZtv46/phFU03rCbPqPtBeTNXuzaIckFNX4sxSEg4Yk+yo1TfS3BNj18Vv0jlaFdrKkpwgoTXwnCutJJpZtnuySMmpK541Z1TCL0lcw5t8wamg5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lCTKbJiEurIi9X3FKKn+rKWjGiI8VcMNseJtVKWN5Xk=;
- b=NJnIklQFdgS0s3JlfaKI4+2mOCMu9IaEOQm+hJTtsRewFfpVT+Mr/SbdUge7dAdADAkloZC15L7QNdOr730EeqtAAU0sksWEy0iBxh2MHNYbj8MNY0VMBjw20MDLwO5Yv0WBQciRppcvIgIUwUCnrKYrrKVAis1wWhYqFNwYfcTLfAkglCxE3ACyVJm1MAfrBQFxQDuSv6+KXVScOKiUzOeNs/MyfAJhnS+eelGyUwJWYV+QklDzbI9JIcjPA9p67DoyzvlN1PA+iGqS5rYtlgEH6v1vsQ6nvhT71rg0ms6U260bvj764spuquDBMzEV2YzabCUhff7kfCcyBZpInQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- BN8PR12MB3235.namprd12.prod.outlook.com (2603:10b6:408:6e::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5123.31; Mon, 4 Apr 2022 12:33:50 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::10ef:dc56:bb21:76f6]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::10ef:dc56:bb21:76f6%4]) with mapi id 15.20.5123.031; Mon, 4 Apr 2022
- 12:33:50 +0000
-Message-ID: <3781875f-dfb0-a00c-0ee3-6ae70c3220e5@nvidia.com>
-Date:   Mon, 4 Apr 2022 13:33:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] gpu: host1x: Do not use mapping cache for job submissions
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20220324103025.2660775-1-thierry.reding@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20220324103025.2660775-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS9PR06CA0396.eurprd06.prod.outlook.com
- (2603:10a6:20b:461::9) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        with ESMTP id S1379186AbiDDQmv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Apr 2022 12:42:51 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF0DB3585A
+        for <linux-tegra@vger.kernel.org>; Mon,  4 Apr 2022 09:40:53 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id q26so4184268edc.7
+        for <linux-tegra@vger.kernel.org>; Mon, 04 Apr 2022 09:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=9ZqvkPw3Hjyi4guP02Qxx6l3xEam/WU15QhmnpKxTbA=;
+        b=giIzCO1vBg7bdLXYJ0jHXWpMyuBAPdR/crAo7hdQl76bbonFJ/KpJa9sqrQeG+eShV
+         OSuWw3bVC1JBb4raXTUMtkkpWZBqnJYUJI9NE9Fs6suiXNBgGFTIm1vm0Szyo2N7NPAs
+         m09XFd0REdtCLingfc8O1k2ipntxCAdK5Xwi6IwoUoAzfAT1RqtlTNZW73pWLXpMYgM1
+         872n72c2L2sD+Fq/W26z6S97OQfrdpdAX/AwW8z1kVB+fi0AfvECnStJ6m+y4T7wKlHC
+         Aa5rImUCWKsC76cOaOfqEZnww1whGheyVEMa9S9pQtIlIGZJiLwul8ocoDo6Z9i/4uV2
+         eokA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9ZqvkPw3Hjyi4guP02Qxx6l3xEam/WU15QhmnpKxTbA=;
+        b=8Rp7KJ+yPb/EWhyhPIViuCuDIEFC+YEao1BuWtXGQqueBtoFio2aE92jKglrhyJc4T
+         TZBSnSjfA4CcNfJdj4y/nyakZyH39sbeQaBT5XOQH+MtAw3BeMPsG0EK4Q/0h0FJDfM1
+         W6HsmXLrX6/AUURRlgx9SGX0qqb1lH37CMAYJ+IQOvxuD/7Z4FULfqUiwMnAEmhlnrY8
+         R+Pcc2jYUfiwbyK317dGel1UvNkyylM6ppj4i5+LY552APLlAw/Z0+M8xqV6Qv8aN47o
+         TEKDzsw9CUTqvL3VYDzRTs5vldT332nhXMun0qtlggNUbeWBE2ANCI2CP4PcX+6wQhRj
+         ns8A==
+X-Gm-Message-State: AOAM533sA9rq6smvpi+VtH/3azOflQETUqEyjWPuwYs6ajZfP1qfTzB1
+        b24eL2QtISBrmap2QcRl6jVWlg==
+X-Google-Smtp-Source: ABdhPJygljYbgi62MuSIHPxfZNrGxKsv/yrrADdG2l5X1N2m213B0uch95wM9MHAqG+Z9mZJYOs6Dw==
+X-Received: by 2002:a50:9358:0:b0:41c:bcf0:3a95 with SMTP id n24-20020a509358000000b0041cbcf03a95mr1086251eda.20.1649090451998;
+        Mon, 04 Apr 2022 09:40:51 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id pk9-20020a170906d7a900b006e05b7ce40csm4548231ejb.221.2022.04.04.09.40.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Apr 2022 09:40:51 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Scott Branden <sbranden@broadcom.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        kernel@pengutronix.de, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org
+Subject: Re: (subset) [PATCH v5 5/9] ARM: dts: exynos: fix ethernet node name for different odroid boards
+Date:   Mon,  4 Apr 2022 18:40:47 +0200
+Message-Id: <164909044624.1097466.11264335549854460793.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220216074927.3619425-6-o.rempel@pengutronix.de>
+References: <20220216074927.3619425-1-o.rempel@pengutronix.de> <20220216074927.3619425-6-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2e410955-84c1-43a6-13b8-08da16375efe
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3235:EE_
-X-Microsoft-Antispam-PRVS: <BN8PR12MB323522E69C2802E4184E903BD9E59@BN8PR12MB3235.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: DkCypCgzh+EUReRLzOS0bW3oStXK7CWqhkjZcgMM8tgpIHJhC4RUehlQJGnMpJhfDqXZPc9m+OCc0ja6JF1HGrEVWB4l37KGf+qV1loXt9YBYN9E7GzD2mvehF+NDql8GaiRC5p6GV20x322xWvXtDlNF0IH3mtYX+9jeaAo69pepUlxeG2chRj6OWp9gmKdEFuxlLAejrdFXdHjpBqDMYisG1/Bg9pvTr81uSvF3dHo/nQkVu/wmfkhc6/utzS4PPQ5ylCytnt2oMUXDcUJsBq9bLzj6dd2MOp//qTeQpekAkgb/OF8xmUUvph5NUy3R/1m7YCxAnnIaWd1P30c4UylidCyqVEig6eMXNnLKvcEHAoX5GmmtGAgChuLOZNqlSsQymnO5UWwBqy3l5bZXEAP8H43fQiipTrAz5FD4ceNRHIueODn4xB/k/xX1la/aB+j3B8iQSzw0gSwRh0aExbakfDX/dlwdSFo727SFnQkJBw5H+rZB3MDDWK9NIHJR5OKIASbAaMJyqxREDhKUxqczqrUC4H8lC2kcUbS+x6RkFmKq8H7J8zRWXvC/4M7W+hYae3bWHh9pShmVT5qhoEtGgItU3D+hZle5CIg93f4u5cNlbpulp0bF5btO/ArYoavS1205V+cFv8gS3vugJ742aGktAsLeUl1rBi6JOhUyQVYqwR+LkOMASOKopUt9dL5aI/vZt4Fm/vz1SJ+DTPBIK2f0UvQNEnIIgnCRz3T4eJYDA3WqJhFew2MQyG0sfRYFuYfy7BldCe12obQPA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(38100700002)(4744005)(2616005)(5660300002)(508600001)(6486002)(53546011)(6506007)(6666004)(6916009)(2906002)(6512007)(31696002)(316002)(55236004)(83380400001)(66556008)(8676002)(86362001)(66946007)(4326008)(31686004)(186003)(36756003)(8936002)(26005)(66476007)(32563001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cEc5YUswL1JYMjVmOVdCY3JScTZVMjk2TFc0U0J4am1ETDNYOUR3SnF5blUx?=
- =?utf-8?B?L3NxZlpvUjllNW8zTjlhZUNScTRucjhXQ0NkS0I2VmlDd1RPZjMxemwzKzd0?=
- =?utf-8?B?d05pbWIzTDBtbCtCeXBRS243T1hEcjh3ZTB3WG4rdytyOHQrQitneXZmcDNa?=
- =?utf-8?B?ckdBblVQT2oxS3dNMmZGUk85R0hPQi9GcTM4d1VML2xuY1Q5YzdFbU1ucDlo?=
- =?utf-8?B?YjF0T0RpbTlsS2JKWVdGN2JRM0pCUmRtcVVvZXFWR3h0Y01ucHVSMURUNkNB?=
- =?utf-8?B?ZVJDNitoblFmdEpQVXV3K3ZKbnU5b3k1SzE3ejg3WUFndWQ1TXVqVGRIMlI0?=
- =?utf-8?B?OUF2TzJ6Mk1RVUJMZk02bW53VkZOMnVRcnhaMW92Z2NJUTVUVm5HT3liYW9V?=
- =?utf-8?B?M1BBVGtFOWhZRzNPNjVlZ1JFTUk2YW81emdyVGsyeHNyczhIYnRoWlFYaWEv?=
- =?utf-8?B?b3VBT25JM0xLeXdqTnVIenpRTWxteEYyYnVraElYUkRSRlRpS01WTDFBdy9W?=
- =?utf-8?B?Qlk0K0JKZG5MV1JDeFVRanNTcWZ2S1FHUGt2WTQ1SjhVcEJCMWR2b3Q1R1NU?=
- =?utf-8?B?dlpPUXRJTWdiRXFmMENPdStOb1BJQ04xQSthdElSTFhBbS9TNDcyNm92MStS?=
- =?utf-8?B?SGYyV3QwdUladTN6eTdSYWUwVkUxY0kyaFBydU9zUUpjYlBmUVJlSjdFNXZw?=
- =?utf-8?B?MkNkVnNCQmFTMjVtTTNTOW9pVWtrZENMMERyUEhOT1FldDEzN0F3anZ6ejRU?=
- =?utf-8?B?ZnErVXJ5eUx5RmZrUkpQRGZUQXVPV001dzJUZlFqc2xHb2dsYmgydllPQ1E2?=
- =?utf-8?B?cmdHckZxeFo3R2Z4b05yU29zZmw2NHJSQ1VXeWdzeUFwU1NUUC9nOVNlbTln?=
- =?utf-8?B?TzJWTlFCYXI3TDVhdi8zamczNEJQRVdhakZncDBiMC9aLzBBQWdzU1VnTW1Z?=
- =?utf-8?B?Yk1aUFM3SVhmY25tOG5kWGhBMitKSEN3eHllYWN5M1FiVlJZK2dHVkRmR0xQ?=
- =?utf-8?B?aUJkRFgvcEUwZDlpRENDd2UxS1BnV3dmZmMvbThnU2NneUdUZ2hYdEFtenV2?=
- =?utf-8?B?SVBQR1QyOXdKeUE1S3dmMG5pa20rZzJ0THRwUGtUbnhlaU1NNnZZMDh3dnVr?=
- =?utf-8?B?cWtTU01vcTRCaHVZUzJnb0xSN3dyZTVlRUQvV0pCbS9lTk5JS3MzZEpsTTNu?=
- =?utf-8?B?UzVGR1Rtd3ducnY2cWcrZWN0ZmlUeVpTZERPUDZQMUlkU0IvRHVJcWxTaWZO?=
- =?utf-8?B?N01HZ3ZwNWtOOGhvS3k3dGNsU1Jyam51eHM0V1ZaK0VwWWxaTnRXVEhTWURi?=
- =?utf-8?B?VnFjR0VtSm1uamZZdWJyQ1V5ODFaakRPU2JOZWtqclRqSHRETWdwclNaN0lB?=
- =?utf-8?B?SVFEMkZvZUhhQVg1cktiNUlsUHZ3RDJOa0xFb2pVL1FaZlIyY1hEaGh4S0dO?=
- =?utf-8?B?OEtDZTNlbk9Fd1NkTFduUjVpVjdGSTd4cUdBSWc2ZmpQdGpENGxWdGFod2Ri?=
- =?utf-8?B?ektPcmIyU3RNakxTMDBsWlQwWUdyWGU0THppSlErMS9qbmREK2FMQzlFRmlz?=
- =?utf-8?B?dmxsL2ZtVEZOSHVwak94TFVHb2RCMkxvRVNnQmdtbXEwdFNlaGxpOTBOUWVy?=
- =?utf-8?B?cmdtQmFZek1tcHR5MWgwWlVNUE9KRWhSYStpNzFReFJ6cndRY0ZjUENQdFlF?=
- =?utf-8?B?MElDOUhGa09MQXcxL3cranhCYWtTZG02dDhjMkRZSVlwdEFVZHlKcHZ2Rlp1?=
- =?utf-8?B?RXljM3NYWVEyOUJScTJGaitKTmRXYjd2WTI1UUhJNjZGZmlHTE41UWUzM1lZ?=
- =?utf-8?B?TGdWb0FkSzM5a2xwbktMR1VRbUt6UTE4YTI2Q0VXaXlRUVBiN0xnNGJQLzlZ?=
- =?utf-8?B?Yk1rZUhtNlpPLzRHVVRhUE85YUczamxYY3RQMmhGZGxiaUU4NnBoUWNMSW1V?=
- =?utf-8?B?OUFib1h2VllhcFAra2M1MUM0ZG94bEptZEphbkN1NXNmTjVjelJZYm9OU1JV?=
- =?utf-8?B?TFdtMk1SZnZjQy9QV1ovK3dqbk5CYnorKzZjMDY4cFJYZmw3Q1pBVHQ4Tmhh?=
- =?utf-8?B?eE1nZkpzdGxUcENuWHlOMDk3K0tYY0xIUVpnc2ZXRlAxc0FLc1B1MkFyektQ?=
- =?utf-8?B?a1lrdldTV1pmTG0rV3Z6Y3h5RHNFNEIyRmNqVVZLVmlwSmcyY0VidWk2cTV5?=
- =?utf-8?B?SHNTZEV3TmJKc0c5eWFVbFdtMWYybWw0c1RpM3hYRWJ3eGVxOFZVR3dHNDAy?=
- =?utf-8?B?Si8xOTFwSGFSaW8vcy9IQzZmVkw5VGpFalF5bG5YQ050clByT0ROcFBxcWww?=
- =?utf-8?B?a2czQjFORWJqMUFJbWttRE9TYkhiRDFjNDZDUHhTMGN2YVVrczRFRHpWRFpt?=
- =?utf-8?Q?kxl2EyWXYRjbM8bA=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e410955-84c1-43a6-13b8-08da16375efe
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Apr 2022 12:33:50.1568
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l4yAmYwrxvb5yJnF0x4JkKRxAkSIkPtX5HC5AxF0HslN8EjjMYu1kFGM6vwVdyv0xPUMQXmAOFkdsamXfoJ6yQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3235
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 24/03/2022 10:30, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Wed, 16 Feb 2022 08:49:23 +0100, Oleksij Rempel wrote:
+> The node name of Ethernet controller should be "ethernet" instead of
+> "usbether" as required by Ethernet controller devicetree schema:
+>  Documentation/devicetree/bindings/net/ethernet-controller.yaml
 > 
-> Buffer mappings used in job submissions are usually small and not
-> rapidly reused as opposed to framebuffers (which are usually large and
-> rapidly reused, for example when page-flipping between double-buffered
-> framebuffers). Avoid going through the mapping cache for these buffers
-> since the cache would also lead to leaks if nobody is ever releasing
-> the cache's last reference. For DRM/KMS these last references are
-> dropped when the framebuffers are removed and therefore no longer
-> needed.
+> This patch can potentially affect boot loaders patching against full
+> node path instead of using device aliases.
 > 
-> While at it, also add a note about the need to explicitly remove the
-> final reference to the mapping in the cache.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> [...]
 
+Applied, thanks!
 
-I have tested this and verified that it is working well.
+[5/9] ARM: dts: exynos: fix ethernet node name for different odroid boards
+      commit: c1ed0f41032f54e47c03088f096f8b37cae40d8e
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks
-Jon
-
+Best regards,
 -- 
-nvpublic
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
