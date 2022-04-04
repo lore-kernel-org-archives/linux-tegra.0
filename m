@@ -2,99 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C48C352AA
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Apr 2022 21:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0638C38162
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Apr 2022 21:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353362AbiDDVTB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:19:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58086 "EHLO
+        id S237004AbiDDVTD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:19:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379186AbiDDQmv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Apr 2022 12:42:51 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF0DB3585A
-        for <linux-tegra@vger.kernel.org>; Mon,  4 Apr 2022 09:40:53 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id q26so4184268edc.7
-        for <linux-tegra@vger.kernel.org>; Mon, 04 Apr 2022 09:40:53 -0700 (PDT)
+        with ESMTP id S1379220AbiDDQqH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Apr 2022 12:46:07 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB7425C62;
+        Mon,  4 Apr 2022 09:44:11 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id 2so2102420pjw.2;
+        Mon, 04 Apr 2022 09:44:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9ZqvkPw3Hjyi4guP02Qxx6l3xEam/WU15QhmnpKxTbA=;
-        b=giIzCO1vBg7bdLXYJ0jHXWpMyuBAPdR/crAo7hdQl76bbonFJ/KpJa9sqrQeG+eShV
-         OSuWw3bVC1JBb4raXTUMtkkpWZBqnJYUJI9NE9Fs6suiXNBgGFTIm1vm0Szyo2N7NPAs
-         m09XFd0REdtCLingfc8O1k2ipntxCAdK5Xwi6IwoUoAzfAT1RqtlTNZW73pWLXpMYgM1
-         872n72c2L2sD+Fq/W26z6S97OQfrdpdAX/AwW8z1kVB+fi0AfvECnStJ6m+y4T7wKlHC
-         Aa5rImUCWKsC76cOaOfqEZnww1whGheyVEMa9S9pQtIlIGZJiLwul8ocoDo6Z9i/4uV2
-         eokA==
+        bh=VidJpygdWDhsPO2PnGTUorRul6XI2t/vnWn1jdgufK8=;
+        b=YHcYrPZoBx3AIEnPLlkIjp4d+DhFHUBAZNEMptQgbnoekAnP6pN4qvNlBBwE++iiC4
+         5YZoEAxeSMPeIvZiA7urwvcAsay7jJzAMNJ5cEqxUA32iSJKDxWfJhsPU9SYx2ZXKm51
+         NDi5IkEKmmb3DmthmBj+qAVdgYaZFrqGX37FotMqcTY7Gb0em6W5eSvuWM7AC0hZYt8O
+         OkQqHYAkpGFvGZOgo2FY6dNmpHAqT4o/tBw//AQZCvg2JX79HxLkJQLVY5W1rjz7NCod
+         154PV3TU1cgwzRWqbSIYIW963s70jiuYjwV8vHyoHKFkrt0B2SJgeEfaMmZgKo8Ydo8h
+         r+bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9ZqvkPw3Hjyi4guP02Qxx6l3xEam/WU15QhmnpKxTbA=;
-        b=8Rp7KJ+yPb/EWhyhPIViuCuDIEFC+YEao1BuWtXGQqueBtoFio2aE92jKglrhyJc4T
-         TZBSnSjfA4CcNfJdj4y/nyakZyH39sbeQaBT5XOQH+MtAw3BeMPsG0EK4Q/0h0FJDfM1
-         W6HsmXLrX6/AUURRlgx9SGX0qqb1lH37CMAYJ+IQOvxuD/7Z4FULfqUiwMnAEmhlnrY8
-         R+Pcc2jYUfiwbyK317dGel1UvNkyylM6ppj4i5+LY552APLlAw/Z0+M8xqV6Qv8aN47o
-         TEKDzsw9CUTqvL3VYDzRTs5vldT332nhXMun0qtlggNUbeWBE2ANCI2CP4PcX+6wQhRj
-         ns8A==
-X-Gm-Message-State: AOAM533sA9rq6smvpi+VtH/3azOflQETUqEyjWPuwYs6ajZfP1qfTzB1
-        b24eL2QtISBrmap2QcRl6jVWlg==
-X-Google-Smtp-Source: ABdhPJygljYbgi62MuSIHPxfZNrGxKsv/yrrADdG2l5X1N2m213B0uch95wM9MHAqG+Z9mZJYOs6Dw==
-X-Received: by 2002:a50:9358:0:b0:41c:bcf0:3a95 with SMTP id n24-20020a509358000000b0041cbcf03a95mr1086251eda.20.1649090451998;
-        Mon, 04 Apr 2022 09:40:51 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id pk9-20020a170906d7a900b006e05b7ce40csm4548231ejb.221.2022.04.04.09.40.50
+        bh=VidJpygdWDhsPO2PnGTUorRul6XI2t/vnWn1jdgufK8=;
+        b=EJl9CCSPLiS09/Fj0DxUA7VOxwRi5uKuuidIsduqHbC8OWA3nJDekbX2JB1TtbIu/F
+         TIwaeVJaR9B/y/U4wO33CEvN6z4MPhSarsPdV2+hP2or58GQ0YGqlSUokqiT7p7T5XoZ
+         VJHCt7q0B8svQNoZSD/NSYUvDZR4JPegBPtpxrWFUODiNhSfQUTj8bXjc+EhvwoeFyvK
+         BZZVsy46Gb5U2IOmxCiySkt5OHEV50QEt6FC/Hcg99Uad0wX23rp235rE0AoiSWD+tUT
+         2gXW6XWPdpxC2uj8CKmehTRzOViJcDxAYMk8BoYXGAfOI0JMX+/hDLowkJch+GavKpVo
+         iF5A==
+X-Gm-Message-State: AOAM532BaIEpXbN42w33xRfket9R5GOcjZZD1D2uEWG4497o9ofdgSOF
+        qpb0amc/dLHqHz5hwGsYd+A=
+X-Google-Smtp-Source: ABdhPJwe7KWOFaQYr15fxkjseF+MIDSOIPq0cWUdmxxhYqC3/S001kgGbB66UaX+2wPv1A0IJWw3LA==
+X-Received: by 2002:a17:902:bd95:b0:14f:40ab:270e with SMTP id q21-20020a170902bd9500b0014f40ab270emr684770pls.101.1649090650679;
+        Mon, 04 Apr 2022 09:44:10 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id s22-20020a056a00179600b004fb28a97abdsm14300835pfg.12.2022.04.04.09.44.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 09:40:51 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mon, 04 Apr 2022 09:44:09 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     bcm-kernel-feedback-list@broadcom.com,
         Oleksij Rempel <o.rempel@pengutronix.de>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        =?iso-8859-1?q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        kernel@pengutronix.de, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH v5 5/9] ARM: dts: exynos: fix ethernet node name for different odroid boards
-Date:   Mon,  4 Apr 2022 18:40:47 +0200
-Message-Id: <164909044624.1097466.11264335549854460793.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220216074927.3619425-6-o.rempel@pengutronix.de>
-References: <20220216074927.3619425-1-o.rempel@pengutronix.de> <20220216074927.3619425-6-o.rempel@pengutronix.de>
+        Tony Lindgren <tony@atomide.com>
+Cc:     kernel@pengutronix.de, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 4/9] ARM: dts: bcm283x: fix ethernet node name
+Date:   Mon,  4 Apr 2022 09:44:07 -0700
+Message-Id: <20220404164407.2291341-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220216074927.3619425-5-o.rempel@pengutronix.de>
+References: <20220216074927.3619425-1-o.rempel@pengutronix.de> <20220216074927.3619425-5-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 16 Feb 2022 08:49:23 +0100, Oleksij Rempel wrote:
-> The node name of Ethernet controller should be "ethernet" instead of
-> "usbether" as required by Ethernet controller devicetree schema:
+On Wed, 16 Feb 2022 08:49:22 +0100, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> It should be "ethernet@x" instead of "usbether@x" as required by Ethernet
+> controller devicetree schema:
 >  Documentation/devicetree/bindings/net/ethernet-controller.yaml
 > 
 > This patch can potentially affect boot loaders patching against full
 > node path instead of using device aliases.
 > 
-> [...]
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
 
-Applied, thanks!
-
-[5/9] ARM: dts: exynos: fix ethernet node name for different odroid boards
-      commit: c1ed0f41032f54e47c03088f096f8b37cae40d8e
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree/next, thanks!
+--
+Florian
