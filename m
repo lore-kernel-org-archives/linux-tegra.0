@@ -2,102 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8DAC47080
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Apr 2022 21:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE087C54EC4
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Apr 2022 21:23:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379244AbiDDVTD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58206 "EHLO
+        id S1379192AbiDDVTE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379192AbiDDQmw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Apr 2022 12:42:52 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EBAC35853
-        for <linux-tegra@vger.kernel.org>; Mon,  4 Apr 2022 09:40:55 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id g20so11804792edw.6
-        for <linux-tegra@vger.kernel.org>; Mon, 04 Apr 2022 09:40:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Qq86fHdQFBYDGBq4SciqKEleN++5Ao+l5cvatAfZpnA=;
-        b=MXcyu0hReAsgYMSnOPJYIwUQWZ+3yaoTlqnh+LuV6Fi1mAfTSP42uaWZF28tQVEAlU
-         GSa6/hkTgO3rM1JWDk6g+ZlIdIkGZpg7Kpho90bDt11+csYhNfKCR+vo39ykmdiA6PoQ
-         HV8TcpEEkS86UgNzgEXZ+dbwt5FIshl2ChSa94xcqmUv9jtMEc0qMLDpWhUXV19zUdq5
-         gD2gf6XTGYn5kuItDPRm13k498YiGMwk7g0459TO4MXsT6qsDBiVakN6H0n/dj23jOfY
-         C9rr2hOkGPARNCvviaH9FVLETToBl6hrsCTj7Q3hkzr9It/69X4hUnC2IpB69sR6N/hk
-         P1+w==
+        with ESMTP id S1378965AbiDDQLA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Apr 2022 12:11:00 -0400
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F79DF52;
+        Mon,  4 Apr 2022 09:09:02 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id x8-20020a9d6288000000b005b22c373759so7539862otk.8;
+        Mon, 04 Apr 2022 09:09:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Qq86fHdQFBYDGBq4SciqKEleN++5Ao+l5cvatAfZpnA=;
-        b=QhImUSX6D9a6nXhgfpwESBbXF+8SI0qJ68D1xMsM4DNqXnUyT4LPMXS9/YAjn4B5nN
-         fZEFx884lHF0oYD0zDObkOydfWDTYMK9gkfR7tGui4dC1QP1o1di6sGaROT7BJ62tDLB
-         ggaxzBZj55TyQmy2T3YjtcXpGHKPzbkvuG73+i4tWsJfFx8osxQIgkCREagKpHqlDPxx
-         ylrijLojftCDPGGhi7XddMHW5yS8P9WUz+2EvrNJHKe8tHRTq/6xwh8KCiU8P5U/h22F
-         Qyo69qaTh4OmKmCu1hR8o5LSon/lVACI4Hni/7qU32DsvVpZ51T18sRa+Gmy/W1HaCA4
-         fUKQ==
-X-Gm-Message-State: AOAM530LS5AQyaaEXqGybyhWTVPnJZWElAoZpzFJ0Ej7NzCdSo655rtg
-        bZDzGb3JGQeOcUqjDgUvfMwUVA==
-X-Google-Smtp-Source: ABdhPJxHomFt3udU8S52vNGunIJyDLh/iYqz7kTEBI2R9HydWYKbYF9COBXDA3ZXdy99PRqnekRhYQ==
-X-Received: by 2002:a05:6402:438b:b0:41b:5212:1de1 with SMTP id o11-20020a056402438b00b0041b52121de1mr1080487edc.384.1649090453480;
-        Mon, 04 Apr 2022 09:40:53 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id pk9-20020a170906d7a900b006e05b7ce40csm4548231ejb.221.2022.04.04.09.40.52
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=cJKsE7JJ9CtwSVyO3do4jJEmXMn0p28LOdCOaIAoMXE=;
+        b=nOw+CJxlMvhPfjyQtCIpHW/XSgAJUvp6RFo2YTOWMFGnZxhs4baTcWsTajFSxjW/HR
+         oyWbmznw3b8c7POgVPUoN+B/PeJ0kKwvaLWgZt2MLMVAjH4VDlSKMsHJRMERppW/deUs
+         9BKJaS/gyjB3FG29AxEeeuBi78rXxbDUXblxCS0ak4N0yetJ5jyZ0GF9Vwdh0Eg4VOIl
+         1XAhdHD0IhtVofhyOa2bhTRINV1v//E0szvOtej8S9hX6Z+p0p1q3gvQBYHC1VNqYFRP
+         n/xhfoodkY+G/H/GvC5BhVXTFsLe0A5nmVb45oDCUaQevyI6EwVslK4Sjd8IYRAVm/4f
+         p3Rg==
+X-Gm-Message-State: AOAM533Dh6QNh1xgEGG4BmKVPuQUe6W//AMcPWZpQpmJoq2BGTwABBA9
+        jO3ciB8zijGFpp+ILXhJ4Q==
+X-Google-Smtp-Source: ABdhPJwLfX+tD9cyTfa2GD8KrJbLwA7u4qe+vnD2aFBYxhzwS3ADjJn1XIw9pR+zvQnZxZYH8flVsA==
+X-Received: by 2002:a05:6830:2010:b0:5b2:38da:6c24 with SMTP id e16-20020a056830201000b005b238da6c24mr93175otp.158.1649088542261;
+        Mon, 04 Apr 2022 09:09:02 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id p22-20020a056870831600b000ccfbea4f23sm4633163oae.33.2022.04.04.09.09.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 09:40:52 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        kernel@pengutronix.de, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH v5 6/9] ARM: dts: exynos: fix compatible strings for Ethernet USB devices
-Date:   Mon,  4 Apr 2022 18:40:48 +0200
-Message-Id: <164909044624.1097466.6376427362225722252.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220216074927.3619425-7-o.rempel@pengutronix.de>
-References: <20220216074927.3619425-1-o.rempel@pengutronix.de> <20220216074927.3619425-7-o.rempel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 04 Apr 2022 09:09:01 -0700 (PDT)
+Received: (nullmailer pid 1436948 invoked by uid 1000);
+        Mon, 04 Apr 2022 16:08:58 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        ksitaraman@nvidia.com, bbasu@nvidia.com,
+        linux-kernel@vger.kernel.org, treding@nvidia.com,
+        sanjayc@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, robh+dt@kernel.org,
+        viresh.kumar@linaro.org, rafael@kernel.org, krzk+dt@kernel.org
+In-Reply-To: <20220404121713.22461-2-sumitg@nvidia.com>
+References: <20220404121713.22461-1-sumitg@nvidia.com> <20220404121713.22461-2-sumitg@nvidia.com>
+Subject: Re: [Patch v3 1/4] dt-bindings: Document Tegra CCPLEX Cluster
+Date:   Mon, 04 Apr 2022 11:08:58 -0500
+Message-Id: <1649088538.036927.1436947.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 16 Feb 2022 08:49:24 +0100, Oleksij Rempel wrote:
-> Fix compatible string for Ethernet USB device as required by USB device schema:
->  Documentation/devicetree/bindings/usb/usb-device.yaml
->   The textual representation of VID and PID shall be in lower case hexadecimal
->   with leading zeroes suppressed.
+On Mon, 04 Apr 2022 17:47:10 +0530, Sumit Gupta wrote:
+> The Tegra CPU COMPLEX CLUSTER area contains memory-mapped
+> registers that initiate CPU frequency/voltage transitions.
 > 
-> Since there are no kernel driver matching against this compatibles, I
-> expect no regressions with this patch. At the same time, without this fix, we
-> are not be able to validate this device nodes with newly provided DT
-> schema.
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  .../tegra/nvidia,tegra-ccplex-cluster.yaml    | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
 > 
-> [...]
 
-Applied, thanks!
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-[6/9] ARM: dts: exynos: fix compatible strings for Ethernet USB devices
-      commit: 2e33a7b5fdb3930a9b1051bc792dbdc6a7490aae
+yamllint warnings/errors:
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.example.dt.yaml: example-0: ccplex@e000000:reg:0: [0, 234881024, 0, 393215] is too long
+	From schema: /usr/local/lib/python3.8/dist-packages/dtschema/schemas/reg.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
