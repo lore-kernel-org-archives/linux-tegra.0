@@ -2,91 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE087C54EC4
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Apr 2022 21:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49843C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Apr 2022 00:27:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379192AbiDDVTE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:19:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49220 "EHLO
+        id S229454AbiDEA27 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Apr 2022 20:28:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378965AbiDDQLA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Apr 2022 12:11:00 -0400
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F79DF52;
-        Mon,  4 Apr 2022 09:09:02 -0700 (PDT)
-Received: by mail-ot1-f41.google.com with SMTP id x8-20020a9d6288000000b005b22c373759so7539862otk.8;
-        Mon, 04 Apr 2022 09:09:02 -0700 (PDT)
+        with ESMTP id S229446AbiDEA27 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Apr 2022 20:28:59 -0400
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2F16D962;
+        Mon,  4 Apr 2022 17:14:11 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id bo5so10524517pfb.4;
+        Mon, 04 Apr 2022 17:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=s770C6klEms02pbWlMqZ7qzWEPI+Uww/MfxHY8uG4vE=;
+        b=k6QcTH5OFElnFZB5ywOcznLOBAhe2hCrgDB/1CE9hopXUamRctF7xzupaTGyjie+bU
+         Dn1y4oT8iUNpCoz3f8ztUeKckAYsnOH0QxV2g98T2m1mDZ1q3AOfLyP281XJA2WLMWHo
+         InfWaovMViHpeXzr5o2J+xGzUH95AOmFSgkSkgsTFVmb/F6kt/D+/pbRujyJbUKzrFdI
+         QnTW8ZY3MbjUGDl2G6VJQagpZubmmTgHYgxAGPicE7OChrIognxcaiBJsL8vdAj33rQx
+         D64RlwiAfYxJJm8gvmDF6yejWg8ArZDQ5ifmoeeGQj+lrQKGkEKRwh3qHV5//qg+hgKz
+         Ftdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=cJKsE7JJ9CtwSVyO3do4jJEmXMn0p28LOdCOaIAoMXE=;
-        b=nOw+CJxlMvhPfjyQtCIpHW/XSgAJUvp6RFo2YTOWMFGnZxhs4baTcWsTajFSxjW/HR
-         oyWbmznw3b8c7POgVPUoN+B/PeJ0kKwvaLWgZt2MLMVAjH4VDlSKMsHJRMERppW/deUs
-         9BKJaS/gyjB3FG29AxEeeuBi78rXxbDUXblxCS0ak4N0yetJ5jyZ0GF9Vwdh0Eg4VOIl
-         1XAhdHD0IhtVofhyOa2bhTRINV1v//E0szvOtej8S9hX6Z+p0p1q3gvQBYHC1VNqYFRP
-         n/xhfoodkY+G/H/GvC5BhVXTFsLe0A5nmVb45oDCUaQevyI6EwVslK4Sjd8IYRAVm/4f
-         p3Rg==
-X-Gm-Message-State: AOAM533Dh6QNh1xgEGG4BmKVPuQUe6W//AMcPWZpQpmJoq2BGTwABBA9
-        jO3ciB8zijGFpp+ILXhJ4Q==
-X-Google-Smtp-Source: ABdhPJwLfX+tD9cyTfa2GD8KrJbLwA7u4qe+vnD2aFBYxhzwS3ADjJn1XIw9pR+zvQnZxZYH8flVsA==
-X-Received: by 2002:a05:6830:2010:b0:5b2:38da:6c24 with SMTP id e16-20020a056830201000b005b238da6c24mr93175otp.158.1649088542261;
-        Mon, 04 Apr 2022 09:09:02 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id p22-20020a056870831600b000ccfbea4f23sm4633163oae.33.2022.04.04.09.09.01
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s770C6klEms02pbWlMqZ7qzWEPI+Uww/MfxHY8uG4vE=;
+        b=nYZgtDi4LelkKJzxyt1hF/CMkLJ4OIUT3zWF6dYpsMQkMz4okUvHr4aMnPhAvSCKjm
+         BEvbxkn4JNevgRXEA0vgLtlZlp0aDrHlmdrBTj/PIOSsnCnqMif+EZvUDPc01mz/dKVF
+         U2FRP46Z6NBKVckofxqsd/nC/+9Bjv9K4JF3f0MSiFR4iEkmDgKLU9BzEFaDb8G+ndHS
+         rUtiwPpdWLONmKY5aw8XialqbQVkFVh/5lEsD1o0ZoDOxS7jT2/B2d4bdado74KRHIuJ
+         v2c453su20mWHEFobsP2eADiQI8zk08oZJTFp+vOMlWFMcH1Yph1hZ+I9l+Noys/ydJo
+         DXsg==
+X-Gm-Message-State: AOAM533x82+XT6u5yovJ9NgJo53drMyWdDSRXtdY3Tcrt7cWlEsB6xb2
+        yCofICyIKN8aCGaVjrJprxw=
+X-Google-Smtp-Source: ABdhPJz/5mA1GYh+pRA7EsKULzQ3fpI3iy6RmHB1NtwIOZzyJvWaAc1pyBf/CpYdeq2hSsCw7Z1g1A==
+X-Received: by 2002:a63:f147:0:b0:399:2b1f:7aff with SMTP id o7-20020a63f147000000b003992b1f7affmr594620pgk.341.1649117580338;
+        Mon, 04 Apr 2022 17:13:00 -0700 (PDT)
+Received: from localhost.localdomain ([183.156.181.188])
+        by smtp.googlemail.com with ESMTPSA id q9-20020a056a00088900b004fe1a045e97sm3140138pfj.118.2022.04.04.17.12.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 09:09:01 -0700 (PDT)
-Received: (nullmailer pid 1436948 invoked by uid 1000);
-        Mon, 04 Apr 2022 16:08:58 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     devicetree@vger.kernel.org, jonathanh@nvidia.com,
-        ksitaraman@nvidia.com, bbasu@nvidia.com,
-        linux-kernel@vger.kernel.org, treding@nvidia.com,
-        sanjayc@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, robh+dt@kernel.org,
-        viresh.kumar@linaro.org, rafael@kernel.org, krzk+dt@kernel.org
-In-Reply-To: <20220404121713.22461-2-sumitg@nvidia.com>
-References: <20220404121713.22461-1-sumitg@nvidia.com> <20220404121713.22461-2-sumitg@nvidia.com>
-Subject: Re: [Patch v3 1/4] dt-bindings: Document Tegra CCPLEX Cluster
-Date:   Mon, 04 Apr 2022 11:08:58 -0500
-Message-Id: <1649088538.036927.1436947.nullmailer@robh.at.kernel.org>
+        Mon, 04 Apr 2022 17:12:59 -0700 (PDT)
+From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
+To:     jassisinghbrar@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Xiaomeng Tong <xiam0nd.tong@gmail.com>
+Subject: [RESEND][PATCH v2] myri10ge: remove an unneeded NULL check
+Date:   Tue,  5 Apr 2022 08:12:53 +0800
+Message-Id: <20220405001253.22120-1-xiam0nd.tong@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 04 Apr 2022 17:47:10 +0530, Sumit Gupta wrote:
-> The Tegra CPU COMPLEX CLUSTER area contains memory-mapped
-> registers that initiate CPU frequency/voltage transitions.
-> 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../tegra/nvidia,tegra-ccplex-cluster.yaml    | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
-> 
+The define of skb_list_walk_safe(first, skb, next_skb) is:
+  for ((skb) = (first), (next_skb) = (skb) ? (skb)->next : NULL; (skb);  \
+     (skb) = (next_skb), (next_skb) = (skb) ? (skb)->next : NULL)
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Thus, if the 'segs' passed as 'first' into the skb_list_walk_safe is NULL,
+the loop will exit immediately. In other words, it can be sure the 'segs'
+is non-NULL when we run inside the loop. So just remove the unnecessary
+NULL check. Also remove the unneeded assignmnets.
 
-yamllint warnings/errors:
+Signed-off-by: Xiaomeng Tong <xiam0nd.tong@gmail.com>
+---
+changes since v1:
+ - remove the unneeded assignmnets.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.example.dt.yaml: example-0: ccplex@e000000:reg:0: [0, 234881024, 0, 393215] is too long
-	From schema: /usr/local/lib/python3.8/dist-packages/dtschema/schemas/reg.yaml
+v1: https://lore.kernel.org/lkml/20220319052350.26535-1-xiam0nd.tong@gmail.com/
+---
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+index 50ac3ee2577a..071657e3dba8 100644
+--- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
++++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+@@ -2903,12 +2903,8 @@ static netdev_tx_t myri10ge_sw_tso(struct sk_buff *skb,
+ 		status = myri10ge_xmit(curr, dev);
+ 		if (status != 0) {
+ 			dev_kfree_skb_any(curr);
+-			if (segs != NULL) {
+-				curr = segs;
+-				segs = next;
+-				curr->next = NULL;
+-				dev_kfree_skb_any(segs);
+-			}
++			segs->next = NULL;
++			dev_kfree_skb_any(next);
+ 			goto drop;
+ 		}
+ 	}
+-- 
+2.17.1
 
