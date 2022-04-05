@@ -2,158 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29EEC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3556C4332F
 	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 00:40:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345545AbiDFATx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Apr 2022 20:19:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43820 "EHLO
+        id S242065AbiDFATs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Apr 2022 20:19:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443206AbiDEPjK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Apr 2022 11:39:10 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CBD147ADE;
-        Tue,  5 Apr 2022 06:55:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E23F1B81BA9;
-        Tue,  5 Apr 2022 13:55:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9451DC385A6;
-        Tue,  5 Apr 2022 13:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649166902;
-        bh=3tagcrRVOAEqHsMgZjnh8ALbmm4rYGMwZCoIbUkDEbM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gZNOYElhjmkUG0PJZWCKdlDkrf/6lNHkAAO62+/oa6OpMH3VBbta1E506jUT4bG5B
-         qt1NHrzn+zmnkFrdisUhabRT82DMuUunITuXO5FWjLvGl/ph1SpWr6AKuSymUUiDEN
-         BKb97DaTBQjWQBEquti4atNyK9Wf+NCFFdfZltgW+V7M5Q+668xbObakETFmDKUUgU
-         NOvdZiepERfP0wfugc5SILfM2O0eiiY+vgP/flWM9deagyf5DO0kaguLpolW5M3YZL
-         MrwOTiDLVYQQRcqR25t1pxnCiU38Lxh2nOHseyjbsDP0NxpFldkxHi6PDC9QyE8j4I
-         JRedflZi8v9bw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nbje8-001q4g-Ix; Tue, 05 Apr 2022 14:55:00 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v2 04/10] gpio: tegra186: Make the irqchip immutable
-Date:   Tue,  5 Apr 2022 14:54:38 +0100
-Message-Id: <20220405135444.199295-5-maz@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220405135444.199295-1-maz@kernel.org>
-References: <20220405135444.199295-1-maz@kernel.org>
+        with ESMTP id S1447488AbiDEPqf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Apr 2022 11:46:35 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B2442A66DF
+        for <linux-tegra@vger.kernel.org>; Tue,  5 Apr 2022 07:21:39 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 626B81474;
+        Tue,  5 Apr 2022 07:21:39 -0700 (PDT)
+Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 27BF73F5A1;
+        Tue,  5 Apr 2022 07:21:38 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     bskeggs@redhat.com, kherbst@redhat.com, lyude@redhat.com
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [PATCH] drm/nouveau/tegra: Stop using iommu_present()
+Date:   Tue,  5 Apr 2022 15:21:34 +0100
+Message-Id: <70d40ea441da3663c2824d54102b471e9a621f8a.1649168494.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.28.0.dirty
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, jeffrey.l.hugo@gmail.com, tglx@linutronix.de, Basavaraj.Natikar@amd.com, Shyam-sundar.S-k@amd.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com, treding@nvidia.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Prevent gpiolib from messing with the irqchip by advertising
-the irq_chip structure as immutable, making it const, and adding
-the various calls that gpiolib relies upon.
+Even if some IOMMU has registered itself on the platform "bus", that
+doesn't necessarily mean it provides translation for the device we
+care about. Replace iommu_present() with a more appropriate check.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/gpio/gpio-tegra186.c | 32 +++++++++++++++++++++++---------
- 1 file changed, 23 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 031fe105b58e..84c4f1e9fb0c 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -80,7 +80,6 @@ struct tegra_gpio_soc {
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 992cc285f2fe..2ed528c065fa 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -123,7 +123,7 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
  
- struct tegra_gpio {
- 	struct gpio_chip gpio;
--	struct irq_chip intc;
- 	unsigned int num_irq;
- 	unsigned int *irq;
+ 	mutex_init(&tdev->iommu.mutex);
  
-@@ -372,6 +371,8 @@ static void tegra186_irq_mask(struct irq_data *data)
- 	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
- 	value &= ~TEGRA186_GPIO_ENABLE_CONFIG_INTERRUPT;
- 	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-+
-+	gpiochip_disable_irq(&gpio->gpio, data->hwirq);
- }
- 
- static void tegra186_irq_unmask(struct irq_data *data)
-@@ -385,6 +386,8 @@ static void tegra186_irq_unmask(struct irq_data *data)
- 	if (WARN_ON(base == NULL))
- 		return;
- 
-+	gpiochip_enable_irq(&gpio->gpio, data->hwirq);
-+
- 	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
- 	value |= TEGRA186_GPIO_ENABLE_CONFIG_INTERRUPT;
- 	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-@@ -456,6 +459,24 @@ static int tegra186_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
- }
- 
-+static void tegra186_irq_print_chip(struct irq_data *data, struct seq_file *p)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+
-+	seq_printf(p, dev_name(gc->parent));
-+}
-+
-+static const struct irq_chip tegra186_gpio_irq_chip = {
-+	.irq_ack		= tegra186_irq_ack,
-+	.irq_mask		= tegra186_irq_mask,
-+	.irq_unmask		= tegra186_irq_unmask,
-+	.irq_set_type		= tegra186_irq_set_type,
-+	.irq_set_wake		= tegra186_irq_set_wake,
-+	.irq_print_chip		= tegra186_irq_print_chip,
-+	.flags			= IRQCHIP_IMMUTABLE,
-+	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-+};
-+
- static void tegra186_gpio_irq(struct irq_desc *desc)
- {
- 	struct tegra_gpio *gpio = irq_desc_get_handler_data(desc);
-@@ -760,15 +781,8 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 	gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
- #endif /* CONFIG_OF_GPIO */
- 
--	gpio->intc.name = dev_name(&pdev->dev);
--	gpio->intc.irq_ack = tegra186_irq_ack;
--	gpio->intc.irq_mask = tegra186_irq_mask;
--	gpio->intc.irq_unmask = tegra186_irq_unmask;
--	gpio->intc.irq_set_type = tegra186_irq_set_type;
--	gpio->intc.irq_set_wake = tegra186_irq_set_wake;
--
- 	irq = &gpio->gpio.irq;
--	irq->chip = &gpio->intc;
-+	gpio_irq_chip_set_chip(irq, &tegra186_gpio_irq_chip);
- 	irq->fwnode = of_node_to_fwnode(pdev->dev.of_node);
- 	irq->child_to_parent_hwirq = tegra186_gpio_child_to_parent_hwirq;
- 	irq->populate_parent_alloc_arg = tegra186_gpio_populate_parent_fwspec;
+-	if (iommu_present(&platform_bus_type)) {
++	if (device_iommu_mapped(dev)) {
+ 		tdev->iommu.domain = iommu_domain_alloc(&platform_bus_type);
+ 		if (!tdev->iommu.domain)
+ 			goto error;
 -- 
-2.34.1
+2.28.0.dirty
 
