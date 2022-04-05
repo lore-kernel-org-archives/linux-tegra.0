@@ -2,96 +2,172 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C702C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Apr 2022 10:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB39C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Apr 2022 15:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241058AbiDEKzc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Apr 2022 06:55:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39466 "EHLO
+        id S233510AbiDEPDM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Apr 2022 11:03:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346735AbiDEJpY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Apr 2022 05:45:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC4A8DB499;
-        Tue,  5 Apr 2022 02:31:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 48A37616C1;
-        Tue,  5 Apr 2022 09:31:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C23C385A7;
-        Tue,  5 Apr 2022 09:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649151097;
-        bh=PTjivoyGXs/CkRZCvvCX+908n0DKoSEzUrbI2LgEOkc=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=QLoRWQ7gd5z5sVQg4LVS16yj6W4zJt94Y1TN9AEsL3E9/j73G4vHGYcYX/FH1v/F7
-         lFL3Oc/XpMBV1ulsVuHownh37cniGuzMtbPfXZqdeEiNh1EsCuxbew0E+lEpQCsRKO
-         ywZ3zPExKGLFm2JDJshIRcjUNv9gtEv/2UCwFOf7gf/5XUajfZYKJaXg4vZfxWKS3r
-         vbX7wf/taWf+UF9H/TVSuQarThNOpxLNVtM4zfYsYQEUfd3rfT/BytvnEu3fOx8gok
-         V6AyV19s71iP64BMt01EzT4sOkMcv8g+yTWIBY4xcAnrSdTtPZ8KJg87RVEu5IQAgz
-         Zffd90+4cW5Yw==
-From:   Mark Brown <broonie@kernel.org>
-To:     spujar@nvidia.com, lgirdwood@gmail.com, robh+dt@kernel.org,
-        tiwai@suse.com, thierry.reding@gmail.com, krzk+dt@kernel.org,
-        perex@perex.cz
-Cc:     linux-tegra@vger.kernel.org, jonathanh@nvidia.com, will@kernel.org,
-        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org
-In-Reply-To: <1648735412-32220-1-git-send-email-spujar@nvidia.com>
-References: <1648735412-32220-1-git-send-email-spujar@nvidia.com>
-Subject: Re: (subset) [PATCH v2 0/6] ASRC support on Tegra186 and later
-Message-Id: <164915109452.276574.5258971838741299202.b4-ty@kernel.org>
-Date:   Tue, 05 Apr 2022 10:31:34 +0100
+        with ESMTP id S1382116AbiDEORO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Apr 2022 10:17:14 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2042.outbound.protection.outlook.com [40.107.223.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 830A5160C17;
+        Tue,  5 Apr 2022 06:01:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i28ISAFOCCx0/+cUsremgSY/kxc8nCtOXYFm6X8bCJefiOpXVEuSPlVqvtFZQEamViFkyah67sfYhhLFiVeyx186T7fKrxn8yZ4c5y22vBNhkNpDmIJYWjFEaowUuDAQSJKbRYj856C3zl6OT89i2j7Sv6Q8udkIMXBAFf2oG79QoKQLuxkTQyfmvl6bH9jW1vAYOS0kfYQNQKJqpdNBzUvt6SxvYOkClL28Dypp+9kt6vS9esLPSVJrPFDielOnIlIESbtkSNU3y9vF8TVgqyAc+K8DRN2lNe8iB2UsE7QnPqqbrYwfBydcd7Wcwy21vB9sTKOdUHvqjs7PYri8EA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h8i85DJwZtncqEQZ7TEeTjmCCy1RYwOdgyHXoXJi82s=;
+ b=VG9oXDRQCBqK3LE9IC1xiFkuW9rXSQbj8iFd9jJmEzK8qVtaLe695PwLfA8z73VIJfQhKrALEZZRhmwSIVPCBew/Uvhu9XdT2V3XTfbRMSvuzTm6/gk9kOAapCT4YYP4j2TxG4t1PrBWgese4At9WUcYBKbrOVYJ31Ay9kvXdp2+CGM2pULd5yWz+xLjv/c/QVAIu7/sToRsofTQtno+ccmGqWFsOjHgLCMYxfPOkFOHSpA1886DtPhV2iMaOwQR84QiimWNBJq5DladsjmQzuIDB8DwjENqoQfZwNqmIF4yGus4duHMHe0YQZCnY2cU0utbkcpliIvy5aS0Bj2JTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h8i85DJwZtncqEQZ7TEeTjmCCy1RYwOdgyHXoXJi82s=;
+ b=RE+g2f83Tb2ESmhK+Rs7D4bbXOpX2h2XtBh5rUtKYkmLaD8HCvtZoZ2NE9XJkJq9n8AC1CH3lK+sDsDMOiqDpU7BuILz4uZVyM6BaIth+++ZMxC/BEqATLJLT+rKrNjTR5QBd/iGK/r4SuEV94oFGxyy02Btp6b+Di5UC8aFP6elWnWMtcqqbIf1P5gZxXAd4BSMAPWodIwdOIKFNhSTLIVjv/9vq1Mqj73tGc/On/Ab3HA+c/smZ/X4+b8Cf24/nst07Lhe/YlcDdXvQHpK+E4HTsRGpwpduqlJ8PFD6PJoeNdSQA3PBK7weErhsMeHAqjLjsNguruasbPHo+NtWA==
+Received: from BN0PR04CA0081.namprd04.prod.outlook.com (2603:10b6:408:ea::26)
+ by DM6PR12MB4975.namprd12.prod.outlook.com (2603:10b6:5:1bd::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Tue, 5 Apr
+ 2022 13:01:34 +0000
+Received: from BN8NAM11FT065.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ea:cafe::46) by BN0PR04CA0081.outlook.office365.com
+ (2603:10b6:408:ea::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31 via Frontend
+ Transport; Tue, 5 Apr 2022 13:01:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.236) by
+ BN8NAM11FT065.mail.protection.outlook.com (10.13.177.63) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5123.19 via Frontend Transport; Tue, 5 Apr 2022 13:01:33 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Tue, 5 Apr
+ 2022 13:01:32 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 5 Apr 2022
+ 06:01:32 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.22 via Frontend
+ Transport; Tue, 5 Apr 2022 06:01:28 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <robh+dt@kernel.org>, <krzk+dt@kernel.org>, <treding@nvidia.com>,
+        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <bbasu@nvidia.com>,
+        <sumitg@nvidia.com>
+Subject: [Patch v4 1/4] dt-bindings: Document Tegra CCPLEX Cluster
+Date:   Tue, 5 Apr 2022 18:31:16 +0530
+Message-ID: <20220405130119.4697-2-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220405130119.4697-1-sumitg@nvidia.com>
+References: <20220405130119.4697-1-sumitg@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1b993c35-5d0e-4316-149b-08da17046932
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4975:EE_
+X-Microsoft-Antispam-PRVS: <DM6PR12MB4975BEE00401C0AD6347F8A6B9E49@DM6PR12MB4975.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: zarHcOz+f+dF4Jx70JmICFPCYnnvo2AmENjgPszZoBD0f5ne09e4WXfRfOU+C1cfFJWbERrGFTA6djkkxOXr1n6VEmkaaBhALNwdO71w7hqz/ZnR0NHSWVFaljvG8Xz2nc4ZrJQYLApTwRTVIyoDWqBa8pWGBRhdQ4YCSG7dRfyn/n67VY6gBMu+W/rRJ2uGM1HPDidvR1FuBH+EoJ9J+DEYbi716kKu+eK71hOXSdbljNY7fxY/pyoKzRz2dQayfbmvOfZy9mzazNbhTCCeYmFUkR0tfoVgzJ7OMPI+QhErN2nrZCRF0rUNymxftKWppD1dDNhhsQaaR1o9ntBrL2ebyFPYd3FMIeiCBzc4DQ1v9yMVvGyh0NqAxXGGyySMGweluK1gXzJ+oW3+3W7RCsPBv6Q1HgPyKRMlB+VMwgkC7e+y2/STZnPXS41oJqb9aGmxdkToMBVDQjUTRlcy9v6i1E8dJ3jrXKn0RlNgoVbzYtO/0P3yUKRlHGFiTvj5zRrt3mdZt3AgqutUurX52x8NjPx396dQ7MLntaQF2dphVRz5hemdWmtL4c/dujsyGnjfQrx+N6+TwaMKRIuAjvn1u7zQ3Nk4/nRXEr0wBZDmzwisoyJOLX3OUx3txMBMILR7+rMmw8tcBB2waK7tdn570GsKy/pH/i3G84JGzP79rebVigDyootXpYwYHddQiaH654v6UX7GaxH7xZFUu2tlq4V0i9YFiYds5Rb/lc5awCkU4v0x2HKwnA5MG3droXv8VdOK/th7LFVf8VPjjOTUHgRgXHULB4jye5BzChudPcceR/V2jguzm6e61Uv+e4nRctpGO13uSl8KZ2bV9mi9jBAFm2m8vkKUKNnMLqc=
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(4326008)(110136005)(70206006)(70586007)(40460700003)(81166007)(426003)(336012)(82310400005)(8676002)(107886003)(2616005)(356005)(8936002)(86362001)(921005)(2906002)(54906003)(508600001)(36860700001)(316002)(7696005)(5660300002)(1076003)(36756003)(6666004)(47076005)(186003)(26005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2022 13:01:33.6981
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b993c35-5d0e-4316-149b-08da17046932
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT065.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4975
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 31 Mar 2022 19:33:26 +0530, Sameer Pujar wrote:
-> This series adds support for Asynchronous Sample Rate Converter (ASRC)
-> module on Tegra186 and later generations of SoCs. ASRC is a client of
-> AHUB. The driver and DT support is added to make it work with Tegra
-> audio graph card. The module can be plugged into audio path using ALSA
-> mixer controls.
-> 
-> ASRC supports two modes of operation, where it gets the ratio info
-> from SW and ratio detector module. Presently the support is added for
-> SW mode.
-> 
-> [...]
+The Tegra CPU COMPLEX CLUSTER area contains memory-mapped
+registers that initiate CPU frequency/voltage transitions.
 
-Applied to
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ .../tegra/nvidia,tegra-ccplex-cluster.yaml    | 52 +++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
+new file mode 100644
+index 000000000000..8c6543b5c0dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/arm/tegra/nvidia,tegra-ccplex-cluster.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: NVIDIA Tegra CPU COMPLEX CLUSTER area device tree bindings
++
++maintainers:
++  - Sumit Gupta <sumitg@nvidia.com>
++  - Mikko Perttunen <mperttunen@nvidia.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++  - Thierry Reding <thierry.reding@gmail.com>
++
++description: |+
++  The Tegra CPU COMPLEX CLUSTER area contains memory-mapped
++  registers that initiate CPU frequency/voltage transitions.
++
++properties:
++  $nodename:
++    pattern: "ccplex@([0-9a-f]+)$"
++
++  compatible:
++    enum:
++      - nvidia,tegra186-ccplex-cluster
++      - nvidia,tegra234-ccplex-cluster
++
++  reg:
++    maxItems: 1
++
++  nvidia,bpmp:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    description: |
++      Specifies the BPMP node that needs to be queried to get
++      operating point data for all CPUs.
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - nvidia,bpmp
++  - status
++
++examples:
++  - |
++    ccplex@e000000 {
++      compatible = "nvidia,tegra234-ccplex-cluster";
++      reg = <0x0e000000 0x5ffff>;
++      nvidia,bpmp = <&bpmp>;
++      status = "okay";
++    };
+-- 
+2.17.1
 
-Thanks!
-
-[1/6] ASoC: tegra: Add binding doc for ASRC module
-      commit: c54ce1a17232215c4a518149292b41835992eee8
-[2/6] ASoC: tegra: Add Tegra186 based ASRC driver
-      commit: a2df8c2d5b36fc66b9a6e674f3e0c87c0b9d0a48
-[3/6] ASoC: tegra: AHUB routes for ASRC module
-      commit: 76821c139d7e0429845e7c0798747e7eec16ec83
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
