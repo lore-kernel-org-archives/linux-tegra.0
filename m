@@ -2,138 +2,326 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF88C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Apr 2022 15:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBEDC4167D
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 00:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234131AbiDEPDt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Apr 2022 11:03:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36708 "EHLO
+        id S229842AbiDFALV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Apr 2022 20:11:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382329AbiDEORP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Apr 2022 10:17:15 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2076.outbound.protection.outlook.com [40.107.92.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E45C160FC0;
-        Tue,  5 Apr 2022 06:01:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HfqsIMMfeC26reLatD9MokTwYecrPrj1vG/HCvzSOO2HrguiZh34GFZ0IWf5zdNDuR7+nGy5t5zpgv/qZmSnT8d/nsAYjzB9+fUTKTywZy9lX6nlAMjw0/cy5FDAjmuBO/oyawRjW8R0Q8OR9ejNZghJ/wocQ1QjQTgyuVDF8I/rfeI17JcbzaqL7hY8Q5obWj5sUz1a7dZKv+YKpcETCCJBhEZXHiWMGjojboTJLyX4ZC7kAQk0oYhgVJkekqdDh7m5nJZ08OBG/4LWYBqbmYfud8k0jPyx+wR/Y6jj7KmrSh2KHaA2XT6edoaFSAEYINcPcyohzKEHfSdgThDE+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G3P71ftXVbLa28033q3i+TL9rdfyovrIovSeQLq6P2A=;
- b=luBZZ6wkeYLJfT2ZdX4bNfMVm47U7nVaXT2WnshIU0AscnZGC1UrFDrB9vW1clci1GaeIQN5z6FYYymRbbFWzktkurPgLmotPJOi7Zs8YOFyoCI55VmY9ay5hhCF+ksaXJM9V2zCPzsM0Bve7r5Rqqdx2mWAJVE7GNamAsrtaSJaes2+Ik7CCT0u9V4RXRGSTBWHTB+OCQXGxRnhMwInBk5/pYZ302u9qYaZxMZCLwA7rbvMzH6yxIBGaKBV3s7NrUPegB2wDCrmPRzpwb0nP0bJEvpQMe4OtBU9fMn3MuDKzc93JSd+TokWt+GW42+03qlhcVaXECYCKpNQoVOEDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G3P71ftXVbLa28033q3i+TL9rdfyovrIovSeQLq6P2A=;
- b=J8REqfiQWsqQOhOwsZm+6N0lKqrM1ZeQSQJcJZ/Wi9UtAz2MJPrSAYmUtH6GEv3xBOiRjoH9YVgYOxdGwETwq9G1a9K/odhGWeGrnMQoW6LroGuCe/D6f74gqiEJ/Yx3TGDFzG4iIPrn3Gp6R48U4JekQ4u7LHPTROMNpJLUKZ1wqMTow2BtS0my8qDoj7RuXRLPsS2RKUDPeCXtakY4WdS+zHYy09w/8e5rMIaZ5PqkjcPDhdHo6b4KzPWj73+Sndb2j9ldSE0VrOlbJan9EIuiToJAtFe/7dEaksnwnkFULqOgeZz3ESNiXqjIKdfsNOaepJMHSp8ZuADijbxreg==
-Received: from MW4PR04CA0371.namprd04.prod.outlook.com (2603:10b6:303:81::16)
- by DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Tue, 5 Apr
- 2022 13:01:43 +0000
-Received: from CO1NAM11FT038.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:81:cafe::5) by MW4PR04CA0371.outlook.office365.com
- (2603:10b6:303:81::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31 via Frontend
- Transport; Tue, 5 Apr 2022 13:01:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT038.mail.protection.outlook.com (10.13.174.231) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5123.19 via Frontend Transport; Tue, 5 Apr 2022 13:01:43 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Tue, 5 Apr
- 2022 13:01:27 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 5 Apr 2022
- 06:01:27 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Tue, 5 Apr 2022 06:01:23 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>, <treding@nvidia.com>,
-        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <bbasu@nvidia.com>,
-        <sumitg@nvidia.com>
-Subject: [Patch v4 0/4] Tegra234 cpufreq driver support 
-Date:   Tue, 5 Apr 2022 18:31:15 +0530
-Message-ID: <20220405130119.4697-1-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+        with ESMTP id S1447085AbiDEPpp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Apr 2022 11:45:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1178D7E583;
+        Tue,  5 Apr 2022 07:20:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 73F9BB81E3D;
+        Tue,  5 Apr 2022 14:20:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9FB7C385A0;
+        Tue,  5 Apr 2022 14:20:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649168402;
+        bh=dc45WnQh0XkwaqeGUyTJ67z7YNeqRTjfgC0FPHFrHso=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MRGWno1cU58iqjN429BjD9E+uM/lLD15OlF3SPmpxxGquaHaRzXhXdVaLcBgbYxsr
+         tOCdfTjIE8Gu1mQTkzqPOsrypjTcrejI5FvWccefvcMdogpeFtHWcemsr2WWtn6k+c
+         x4NUDhx9iHux5PPQHirACc1I/JcuGdzFl9eLmUjEsPWGR1Wn1U1Xk9chXGVTbFn+zz
+         i8BJjosrU02/ABpipgWUuu8XzdH6aECeHZ5HPOHfYUHx3zSAYbDV9PDSFwjJsUrejA
+         bSrJTcVryg+ajrcxt3jhc9JVtpmSYF3uSzuYKx2y9JG/kAFWh99t88nq0Uw6/5Izmn
+         dRJqjM+0XhdnQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nbjeA-001q4g-AF; Tue, 05 Apr 2022 14:55:02 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Joey Gouly <joey.gouly@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, kernel-team@android.com
+Subject: [PATCH v2 10/10] Documentation: Update the recommended pattern for GPIO irqchips
+Date:   Tue,  5 Apr 2022 14:54:44 +0100
+Message-Id: <20220405135444.199295-11-maz@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220405135444.199295-1-maz@kernel.org>
+References: <20220405135444.199295-1-maz@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dd9903c4-f605-4ea8-7a23-08da17046ec7
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_
-X-Microsoft-Antispam-PRVS: <DS7PR12MB574482380735D416182509C9B9E49@DS7PR12MB5744.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: npBzCHpycYkXM61lBIOplqHuVkOoYDAHDyPUZdJbwLBySHEagV4TEia0kB44lyHl3npfwJBtahYP5pLcjYZopvjlwYnyETM+I71fhXDlDK1wnDWlxsJMXRrcOUrDhUozLyTGeLuT6QG0EW7CBgHT3I2/CmlOxjKg/CVNJViHoMeNy5bvMxeAT6t7z865DGHb/28ajsqcRHWVB/RI1hyPe2pbqjd+69oyOuFmE/vQWdcXW326rMclFte7J1wwOQT4MiE9oZ2TReoNfpW8FiBmlMLjfb4gLiAx3gODnNF/eM5OrYkDK6xP8AeCYfQ0pqLFcx9hJbWy6T4Dg76L4SehiactXCIk6sEhklNmIz8dsI0ks3ptPWKf8qKXKGDebtEmBKyeReZK3VJcKy0ZL9mfOuhzbWUt9MMF8UBbH6lO6SMSnNcLI8ztJRjolJNET20JyAChKFmeAOy2wwj18N1VAW8V7wlD4fhYUeOcVheLW9m74jRFbZk3Ro+dQjamfaRx0vFwUk4x1Xb28d9C+hXP6qzZu4Tgca3LsxB8P60OaZOF3Xeb1wIDQ1I1ZJDZWv//UrE5dj6rcbrGr4Z4m2lg3IxVkLgvJuDKULb9VGiArqhOvLy4us4gu3PAufhRpqtQMx56FBl/tAApyqdgHldMyGqDPBNF+04eXCNSN0xywQfCGJlZHapynRCn5x+lSY8D0dsn2r2vKLDL8K2AIF+4AHIdNguP2Ip3JDfquREl4yo=
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(8936002)(36860700001)(40460700003)(2616005)(356005)(921005)(82310400005)(83380400001)(4743002)(54906003)(1076003)(81166007)(26005)(36756003)(2906002)(336012)(426003)(110136005)(5660300002)(86362001)(508600001)(8676002)(70586007)(107886003)(4326008)(47076005)(70206006)(7696005)(6666004)(316002)(186003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2022 13:01:43.1127
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd9903c4-f605-4ea8-7a23-08da17046ec7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT038.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5744
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, jeffrey.l.hugo@gmail.com, tglx@linutronix.de, Basavaraj.Natikar@amd.com, Shyam-sundar.S-k@amd.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patchset adds driver support for Tegra234 cpufreq.
-Also, added soc data and ops to support multiple SoC's and variants
-which have similar logic to {get|set} cpu frequency as Tegra194 in
-the same driver.
-From cpufreq point, main difference between Tegra194 and Tegra234 are:
- 1) Tegra234 uses MMIO for frequency requests and not sysreg like T194.
- 2) MPIDR affinity info in Tegra234 is different from Tegra194.
- 3) Register bits of pllp_clk_count and core_clk_count are swapped.
-So, added ops hooks for Tegra234.
+Update the documentation to get rid of the per-gpio_irq_chip
+irq_chip structure, and give examples of the new pattern.
 
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
-v3-> v4:
-- fixed reg property too long error and set additionalProperties to
-  false in the binding document.
+ Documentation/driver-api/gpio/driver.rst | 175 ++++++++++++++++++-----
+ 1 file changed, 142 insertions(+), 33 deletions(-)
 
-v2 -> v3:
-- used CPU COMPLEX CLUSTER name in binding document.
-- reordered the patches.
-
-v1 -> v2:
-- added nvidia,tegra-ccplex-cluster.yaml binding doc
-- changed compatible check to 'soc->actmon_cntr_base' field of soc data
-
-Sumit Gupta (4):
-  dt-bindings: Document Tegra CCPLEX Cluster
-  cpufreq: tegra194: add soc data to support multiple soc
-  cpufreq: tegra194: Add support for Tegra234
-  arm64: tegra: add node for tegra234 cpufreq
-
- .../tegra/nvidia,tegra-ccplex-cluster.yaml    |  52 ++++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      |   7 +
- drivers/cpufreq/tegra194-cpufreq.c            | 246 +++++++++++++++---
- 3 files changed, 268 insertions(+), 37 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
-
+diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
+index bbc53920d4dd..7e9f1167ea7d 100644
+--- a/Documentation/driver-api/gpio/driver.rst
++++ b/Documentation/driver-api/gpio/driver.rst
+@@ -417,30 +417,66 @@ struct gpio_irq_chip inside struct gpio_chip before adding the gpio_chip.
+ If you do this, the additional irq_chip will be set up by gpiolib at the
+ same time as setting up the rest of the GPIO functionality. The following
+ is a typical example of a chained cascaded interrupt handler using
+-the gpio_irq_chip:
++the gpio_irq_chip. Note how the mask/unmask (or disable/enable) functions
++call into the core gpiolib code:
+ 
+ .. code-block:: c
+ 
+-  /* Typical state container with dynamic irqchip */
++  /* Typical state container */
+   struct my_gpio {
+       struct gpio_chip gc;
+-      struct irq_chip irq;
++  };
++
++  static void my_gpio_mask_irq(struct irq_data *d)
++  {
++      struct gpio_chip *gc = irq_desc_get_handler_data(d);
++
++      /*
++       * Perform any necessary action to mask the interrupt,
++       * and then call into the core code to synchronise the
++       * state.
++       */
++
++      gpiochip_disable_irq(gc, d->hwirq);
++  }
++
++  static void my_gpio_unmask_irq(struct irq_data *d)
++  {
++      struct gpio_chip *gc = irq_desc_get_handler_data(d);
++
++      gpiochip_disable_irq(gc, d->hwirq);
++
++      /*
++       * Perform any necessary action to unmask the interrupt,
++       * after having called into the core code to synchronise
++       * the state.
++       */
++  }
++
++  /*
++   * Statically populate the irqchip. Note that it is made const
++   * (further indicated by the IRQCHIP_IMMUTABLE flag), and that
++   * the GPIOCHIP_IRQ_RESOURCE_HELPER macro adds some extra
++   * callbacks to the structure.
++   */
++  static const struct irq_chip my_gpio_irq_chip = {
++      .name		= "my_gpio_irq",
++      .irq_ack		= my_gpio_ack_irq,
++      .irq_mask		= my_gpio_mask_irq,
++      .irq_unmask	= my_gpio_unmask_irq,
++      .irq_set_type	= my_gpio_set_irq_type,
++      .flags		= IRQCHIP_IMMUTABLE,
++      /* Provide the gpio resource callbacks */
++      GPIOCHIP_IRQ_RESOURCE_HELPERS,
+   };
+ 
+   int irq; /* from platform etc */
+   struct my_gpio *g;
+   struct gpio_irq_chip *girq;
+ 
+-  /* Set up the irqchip dynamically */
+-  g->irq.name = "my_gpio_irq";
+-  g->irq.irq_ack = my_gpio_ack_irq;
+-  g->irq.irq_mask = my_gpio_mask_irq;
+-  g->irq.irq_unmask = my_gpio_unmask_irq;
+-  g->irq.irq_set_type = my_gpio_set_irq_type;
+-
+   /* Get a pointer to the gpio_irq_chip */
+   girq = &g->gc.irq;
+-  girq->chip = &g->irq;
++  gpio_irq_chip_set_chip(girq, &my_gpio_irq_chip);
+   girq->parent_handler = ftgpio_gpio_irq_handler;
+   girq->num_parents = 1;
+   girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
+@@ -458,23 +494,58 @@ the interrupt separately and go with it:
+ 
+ .. code-block:: c
+ 
+-  /* Typical state container with dynamic irqchip */
++  /* Typical state container */
+   struct my_gpio {
+       struct gpio_chip gc;
+-      struct irq_chip irq;
++  };
++
++  static void my_gpio_mask_irq(struct irq_data *d)
++  {
++      struct gpio_chip *gc = irq_desc_get_handler_data(d);
++
++      /*
++       * Perform any necessary action to mask the interrupt,
++       * and then call into the core code to synchronise the
++       * state.
++       */
++
++      gpiochip_disable_irq(gc, d->hwirq);
++  }
++
++  static void my_gpio_unmask_irq(struct irq_data *d)
++  {
++      struct gpio_chip *gc = irq_desc_get_handler_data(d);
++
++      gpiochip_disable_irq(gc, d->hwirq);
++
++      /*
++       * Perform any necessary action to unmask the interrupt,
++       * after having called into the core code to synchronise
++       * the state.
++       */
++  }
++
++  /*
++   * Statically populate the irqchip. Note that it is made const
++   * (further indicated by the IRQCHIP_IMMUTABLE flag), and that
++   * the GPIOCHIP_IRQ_RESOURCE_HELPER macro adds some extra
++   * callbacks to the structure.
++   */
++  static const struct irq_chip my_gpio_irq_chip = {
++      .name		= "my_gpio_irq",
++      .irq_ack		= my_gpio_ack_irq,
++      .irq_mask		= my_gpio_mask_irq,
++      .irq_unmask	= my_gpio_unmask_irq,
++      .irq_set_type	= my_gpio_set_irq_type,
++      .flags		= IRQCHIP_IMMUTABLE,
++      /* Provide the gpio resource callbacks */
++      GPIOCHIP_IRQ_RESOURCE_HELPERS,
+   };
+ 
+   int irq; /* from platform etc */
+   struct my_gpio *g;
+   struct gpio_irq_chip *girq;
+ 
+-  /* Set up the irqchip dynamically */
+-  g->irq.name = "my_gpio_irq";
+-  g->irq.irq_ack = my_gpio_ack_irq;
+-  g->irq.irq_mask = my_gpio_mask_irq;
+-  g->irq.irq_unmask = my_gpio_unmask_irq;
+-  g->irq.irq_set_type = my_gpio_set_irq_type;
+-
+   ret = devm_request_threaded_irq(dev, irq, NULL,
+ 		irq_thread_fn, IRQF_ONESHOT, "my-chip", g);
+   if (ret < 0)
+@@ -482,7 +553,7 @@ the interrupt separately and go with it:
+ 
+   /* Get a pointer to the gpio_irq_chip */
+   girq = &g->gc.irq;
+-  girq->chip = &g->irq;
++  gpio_irq_chip_set_chip(girq, &my_gpio_irq_chip);
+   /* This will let us handle the parent IRQ in the driver */
+   girq->parent_handler = NULL;
+   girq->num_parents = 0;
+@@ -500,24 +571,61 @@ In this case the typical set-up will look like this:
+   /* Typical state container with dynamic irqchip */
+   struct my_gpio {
+       struct gpio_chip gc;
+-      struct irq_chip irq;
+       struct fwnode_handle *fwnode;
+   };
+ 
+-  int irq; /* from platform etc */
++  static void my_gpio_mask_irq(struct irq_data *d)
++  {
++      struct gpio_chip *gc = irq_desc_get_handler_data(d);
++
++      /*
++       * Perform any necessary action to mask the interrupt,
++       * and then call into the core code to synchronise the
++       * state.
++       */
++
++      gpiochip_disable_irq(gc, d->hwirq);
++      irq_mask_mask_parent(d);
++  }
++
++  static void my_gpio_unmask_irq(struct irq_data *d)
++  {
++      struct gpio_chip *gc = irq_desc_get_handler_data(d);
++
++      gpiochip_disable_irq(gc, d->hwirq);
++
++      /*
++       * Perform any necessary action to unmask the interrupt,
++       * after having called into the core code to synchronise
++       * the state.
++       */
++
++      irq_mask_unmask_parent(d);
++  }
++
++  /*
++   * Statically populate the irqchip. Note that it is made const
++   * (further indicated by the IRQCHIP_IMMUTABLE flag), and that
++   * the GPIOCHIP_IRQ_RESOURCE_HELPER macro adds some extra
++   * callbacks to the structure.
++   */
++  static const struct irq_chip my_gpio_irq_chip = {
++      .name		= "my_gpio_irq",
++      .irq_ack		= my_gpio_ack_irq,
++      .irq_mask		= my_gpio_mask_irq,
++      .irq_unmask	= my_gpio_unmask_irq,
++      .irq_set_type	= my_gpio_set_irq_type,
++      .flags		= IRQCHIP_IMMUTABLE,
++      /* Provide the gpio resource callbacks */
++      GPIOCHIP_IRQ_RESOURCE_HELPERS,
++  };
++
+   struct my_gpio *g;
+   struct gpio_irq_chip *girq;
+ 
+-  /* Set up the irqchip dynamically */
+-  g->irq.name = "my_gpio_irq";
+-  g->irq.irq_ack = my_gpio_ack_irq;
+-  g->irq.irq_mask = my_gpio_mask_irq;
+-  g->irq.irq_unmask = my_gpio_unmask_irq;
+-  g->irq.irq_set_type = my_gpio_set_irq_type;
+-
+   /* Get a pointer to the gpio_irq_chip */
+   girq = &g->gc.irq;
+-  girq->chip = &g->irq;
++  gpio_irq_chip_set_chip(girq, &my_gpio_irq_chip);
+   girq->default_type = IRQ_TYPE_NONE;
+   girq->handler = handle_bad_irq;
+   girq->fwnode = g->fwnode;
+@@ -605,8 +713,9 @@ When implementing an irqchip inside a GPIO driver, these two functions should
+ typically be called in the .irq_disable() and .irq_enable() callbacks from the
+ irqchip.
+ 
+-When using the gpiolib irqchip helpers, these callbacks are automatically
+-assigned.
++When IRQCHIP_IMMUTABLE is not advertised by the irqchip, these callbacks
++are automatically assigned. This behaviour is deprecated and on its way
++to be removed from the kernel.
+ 
+ 
+ Real-Time compliance for GPIO IRQ chips
 -- 
-2.17.1
+2.34.1
 
