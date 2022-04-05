@@ -2,394 +2,222 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7946EC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF71BC433FE
 	for <linux-tegra@archiver.kernel.org>; Tue,  5 Apr 2022 15:01:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239502AbiDEPD2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Apr 2022 11:03:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36674 "EHLO
+        id S239687AbiDEPDk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Apr 2022 11:03:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382321AbiDEORP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Apr 2022 10:17:15 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60901160C2F;
-        Tue,  5 Apr 2022 06:01:40 -0700 (PDT)
+        with ESMTP id S1391133AbiDENrS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Apr 2022 09:47:18 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam08on2081.outbound.protection.outlook.com [40.107.101.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02DB19F3B9;
+        Tue,  5 Apr 2022 05:44:15 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IaVtuKZxcTOU/q4fAtJtao/vXfTPs4HHHAuyXR0XZvutVqh4Q9vlIMw0NpqiRf9YXzgsyZEWQFsWfZDtOaS/ySJBFYy4u9lUnn2cox8hlZE6gwd9MjwNr+pvWp4QQiJauRq2PJQuyWBBpRZMENNfTs/12PiRKsfOLV75PhJVxkYiaZ4dTm2zuwItapE5hZmRn5Vmn6YipocXy4pglUIpmxP/d+wOJADMCSnLiDTJz2EYIuOc352E1dkNEC58SuHvU0LFMwep5wSmcvokrCYmnECwRuL4EoWqHLWFOfXtY5Ed5nrWm9oXBCur1uddDCb7K6Hf9aqAd6gbwVa5RtXaJQ==
+ b=isFscoz7YDPmJeWihwxAWzgqHNtZtXLUcCwz0G/F5RCIRPOJluPgCB9QMR9tA2k4C5MG4b54dZd1CyZJFEucWJ9LMtCQZuhiXwmT/VMaBYA3vzkhVnnbQ2mbr/PQ6/VgUQo3LkHLmN6uq8kk8dRI0yHAkGR/Ea3QJOwcUBrPwrsMbaqgA+Nrsgj4VQkwTvS1pkOJzwQbKTdUwtFWfntnr582cHIidNrMYcc6lOOb2oqmAtTDpVd4J9olwKORsrYiyLUgiJeANefxZRUX03p5gfZg52S4mQljHZzLmviFiTLKJILnnyEHzRgF8EJ+ReChWs+zsiyrLKHAaKarrhITTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vaSt2YuyCgTMOz8xoVKQnbq/RKA9LOyWJI5LPUGvaFQ=;
- b=O1hmIz3eguoK4bgRSGuFbBucik5ThYSDoHQtKJrhUYpw+te+5HCB/gzo0cRBOuFcBrkhSf9sWpI6+dUPKSlgXk+WJVeO9mukTrpRz+nzeqjn042lBAbofJG56CkN+wmN9NeX8r+XLtG255SBKbQHy5n6ckh0aEtlGYEv622tZP+NfLskVjY0zdMmLG/UhG9gKI/wvCApLANIeYY0nyzbl5qbpeAX0fB+QiMuNhtqYpNLgHD9obIioMTVu5aRV1q50AwlWQgbcXpEVj2a8bZvmtBLacuNCg2zfPbowoVJ0Nr30hUhwV2g28EBi+SmCMHhJBH64z9XdhSdA4W0Q5p8Og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=cTf/+FTG+3n9OUxcNBvDMXAzBTLyqGP4sOosI1NRoc4=;
+ b=B64LksyjdrTnVjCvCnBPp43kE7cZl013MtaYd3nX8C4lBzkxgT80K1ZAjHtUZtERBCAUjPWqPzNovCI7hK2Xx09Ddi6Nm5+5JjtdadhqSDs/8tTov7gJ+4SvZkb1mrdTic8/NKav+PZVcbsYr5n8+hYRYNJnXDh0/ZAaKGb/EiiMkTcERL1He98BUDswBlg8G6u+NnvT0U4tvjRBb/l9WqMvEU83REUNFNfpVeJ2bifG+PX+P8gFi5QyaVLCWGrIcQGHBrD1KpWh66g/PMOkqhP5ZVFE0yDS4I4/G+7F56j1awq3InI6AvcKesI27o+WjiDwVw8HGBUjM+BxFUSnRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vaSt2YuyCgTMOz8xoVKQnbq/RKA9LOyWJI5LPUGvaFQ=;
- b=PsNOuyRejyU0dvlTTStzi034LlyfuoWkUwbgB4yDi3pFTUg0szfPB9fZDPsoYDgzW6mU9xm38KvxPPo1XfwCnCkauzhHdHLkYueQgdLvPDN4RaOukU1voEdH1cvsWBjuOJLrbzM2mNvwyEyTX9D8B2HptngRqQQYspCE6MKOyugly+fd8b/arMSHcdd+2CfEuBToIZo6fwYCFpAorE/Ds3hL9rTjQ+NJlmqFwhnSvJDjz0HgWypvKdYUird2iH7kd+CcJpBoXeE0bDUoDytuHMoIIZWxDvhe0sALb/PPbIbFeWEh6kJrUdzDDP/5emaZsVVkH1vCQ4+jqyjvWfOcnw==
-Received: from DS7PR03CA0310.namprd03.prod.outlook.com (2603:10b6:8:2b::9) by
- CY4PR1201MB0216.namprd12.prod.outlook.com (2603:10b6:910:18::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Tue, 5 Apr
- 2022 13:01:38 +0000
-Received: from DM6NAM11FT004.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:2b:cafe::6) by DS7PR03CA0310.outlook.office365.com
- (2603:10b6:8:2b::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31 via Frontend
- Transport; Tue, 5 Apr 2022 13:01:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.234) by
- DM6NAM11FT004.mail.protection.outlook.com (10.13.172.217) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5123.19 via Frontend Transport; Tue, 5 Apr 2022 13:01:38 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Tue, 5 Apr
- 2022 13:01:37 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 5 Apr 2022
- 06:01:37 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Tue, 5 Apr 2022 06:01:33 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>, <treding@nvidia.com>,
-        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <bbasu@nvidia.com>,
-        <sumitg@nvidia.com>
-Subject: [Patch v4 2/4] cpufreq: tegra194: add soc data to support multiple soc
-Date:   Tue, 5 Apr 2022 18:31:17 +0530
-Message-ID: <20220405130119.4697-3-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220405130119.4697-1-sumitg@nvidia.com>
-References: <20220405130119.4697-1-sumitg@nvidia.com>
-X-NVConfidentiality: public
+ bh=cTf/+FTG+3n9OUxcNBvDMXAzBTLyqGP4sOosI1NRoc4=;
+ b=dNNzmnt3TH1cs4b03RNDydW9NBzRp63MNqItc/08CDe6BFxk7vOeMRY+cRYvCllEKK8aS3DuFfuZdYEOghrDi/Z5M1dCO826+VBcDza24T08aIp9v+eOH+SNyjISIid/tpqikHlv5UqTiaDYDY1DJou+AUl/VabP/tp/Ry3ymfsua3r2CToQfwjWGIqvDUL6AE2HYRvc/riDx+WfAeS1DhsX1lvf3oZAuDT/pKBSf2f3ojcY1BLFz5VUD7YUJTHmzyFfVZq3ZmhzGiEnIOUVDn/A0rNpm/SpcrxJb3KdqF7kKRvLYlgNpBIctARtDUzYQcvMjCtre0TeuoVvgkUTRw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ DM8PR12MB5464.namprd12.prod.outlook.com (2603:10b6:8:3d::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5123.31; Tue, 5 Apr 2022 12:44:14 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::10ef:dc56:bb21:76f6]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::10ef:dc56:bb21:76f6%4]) with mapi id 15.20.5123.031; Tue, 5 Apr 2022
+ 12:44:13 +0000
+Message-ID: <a31d9fe6-3052-d09d-c012-3e141a4ffde3@nvidia.com>
+Date:   Tue, 5 Apr 2022 13:44:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 1/1] soc/tegra: fuse: Add nvmem cell lookup entries for
+ tegra194
+Content-Language: en-US
+To:     Sagar Kamble <skamble@nvidia.com>, thierry.reding@gmail.com,
+        digetx@gmail.com, yangyingliang@huawei.com,
+        ndesaulniers@google.com, pshete@nvidia.com, nathan@kernel.org,
+        kkartik@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1648123728-16737-1-git-send-email-skamble@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <1648123728-16737-1-git-send-email-skamble@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM6PR04CA0067.eurprd04.prod.outlook.com
+ (2603:10a6:20b:f0::44) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c317fe48-f2bc-4447-8f1e-08da17046c0e
-X-MS-TrafficTypeDiagnostic: CY4PR1201MB0216:EE_
-X-Microsoft-Antispam-PRVS: <CY4PR1201MB0216A27A340AA9465D330D98B9E49@CY4PR1201MB0216.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: fe367682-3bed-43cd-0808-08da1701fd2b
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5464:EE_
+X-Microsoft-Antispam-PRVS: <DM8PR12MB5464F56E3B9DEAC781A61F2BD9E49@DM8PR12MB5464.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kvyt1DvwzapVVZ0pWasgYYgpq3pCbxfeJ0qIm8IX/3zj1hhMub6Wil0aaivGkSyvPMW404v7Jfg7nOpt3ZvfvAWTuU+RTBPIV5GPEWi6Av8sTvB8ymYvoG2IxqUZCPEQKlGqRKtpKbhv/HMvUxdeKKz8K6jJIR5Q2EqWMDXYelkZzFj10YGbfCCpiRlnaZPTo8T9JKQnfldNAy/+kiXKf1kMDDSZxWr9AJ4hCIJaIRFDl5LycIQaoMwNVrIFPBBIaxuVA3N6tJkvrehYSeVQXlpY/LqEolSrXRpiK9Za7LiihY/Xv2VjUanUW4VTqht07S8toVhNV5sXAuKo0H1YN2IumiaobSwJ+IdAMhEdy6jRJJfEU9PhGe52qkq+aIhrS8KwFgBfOuOhTgqe1fX9OEwJwUT/+Cfd1NoMjAfk17oX6qyJPkDUbF9DXUiLlThoUTKewAfkKHDQYCvlmsCueQoF8SnZcDx0Urcpocj9x5l25wM724Olu/lhocO6zmcoLNg9jWCVsFsb3hlI9IBmSzIbmocvdewqW4FsI7YN/f8b08IcBGtm81zIVwnJlasc8isv4IWVmJOg9Ju0S8Fk5/ittjqgBdrOdp0XgTh9KNb5um4HesuMRMW2negEBbKrZUJcO2Jo1j5TNxM8LoBN3u7zHWQTmZEWOKcp1MbDjTjPTAjrB1Oq94vFWsrC6sv6D0qRybmWIIJG/Wa46w8KnAr0nT7idU4n8jf4qnlx3Kc=
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(26005)(186003)(82310400005)(356005)(47076005)(83380400001)(81166007)(86362001)(40460700003)(426003)(336012)(921005)(36860700001)(36756003)(1076003)(8936002)(107886003)(508600001)(2616005)(70586007)(4326008)(8676002)(54906003)(110136005)(316002)(5660300002)(70206006)(2906002)(6666004)(7696005)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 0Kra9c0v8PhBJENxk8Q7DfIsCEup9pMfjugp36FUt2d3/e0otRNDCmH8ihANOkV9NcWGc9TfZ28KlruZLiPZaAINJxusaisNlB7HkMbw4ka0Xsq2DeDZ0RSXSuuC2LW2xLFN5oU/pSTFQVZT9TgWbuxPNpLhwFdCuYx/9XDJiAA87CM2Z2nLwsnfDo+kCHBHxBoBZp31p2vlWuuULb7N3wabBcJ/JcDUfhdBNnO0NoyHfOdKYIoyyazI607VooGfuMID2ZT13C5lqUmv2fFsCbYwrYcqrihqeT1K76E66uS/9lUNPS+mNvdIN0RRyhjDNrPS8RgW5Q/InzvhM6HCnrdhkU32NG4F5K5pASpNl5zQoP5zoQXFUCzcJV2gzZth8VOrVGwRMI8a2TvI6I7DwTGyUitN0GUWaO1z9q+fvvw8HWHPs1BiEAX60Q5biwjyUJDS2IGOxottZNWal5tCZU/FOJ58q7m1ITpKmV23Z5pCjkXqwzptPaE55r9If+VlqWKRL4oF63UAWMWsh2BTuuK+P+4R4czKYYzHShDuzZFSKKaUsy8sk8Nx0xxtMPdERV0rjVZw5PaFINSRI3v67QpP5pwcRSswfNbpMIujaXievnrzTP8SQWqFqGPN/3OzSmtz8qUcAKA2AYuuNBK2+/IJYOS6K7V+IoHzSTJ/vr2PWdnXx+24B2TGTV8y78V4LarqEpIchuiMkP1DOAQ9apHvVTtD3zx1R5E7MfRXvGSJQ3JIifE/OjrfGgQl5yVU
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(66556008)(26005)(186003)(53546011)(66946007)(83380400001)(36756003)(55236004)(31696002)(8936002)(2906002)(38100700002)(86362001)(2616005)(5660300002)(8676002)(921005)(66476007)(508600001)(316002)(6512007)(6666004)(6506007)(6486002)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YVZZVlBxb3RSVDRsbUdrbEdwTG9Ud3V1Wk9uNlFZRWcyV284Rm5pOU56Y0lR?=
+ =?utf-8?B?TE1TYUIzVHdZb0ErQW5JL3hoL3h0SElKTEloeVdkT2M5clByQS9BclVuaWNv?=
+ =?utf-8?B?c1lGZWs2MEE1cGVCUitjbkpGNExYaFhHa29yb1loM3dacTBXTXFuWWhmLzdH?=
+ =?utf-8?B?WFE5OFFCT2Z1aXZ1Y1loY1JxOXBhMFZzTTNKUDQ5WktwVyt2bG5PbWJEUWF5?=
+ =?utf-8?B?R0h3SjBUZGhUUEdXSTNONHc3cDltN2lFT3lpa1RPdXRXY3lKZnJZSlM5eXgw?=
+ =?utf-8?B?OU1XdjM3ZXk0TWRRM09RV214UFBSek5SbkhyZ2FsVTh3MDl1eVFuWkZyZWI3?=
+ =?utf-8?B?V1R5K1VtYTRBekprK2U0c2JGVkNyZkxtZ01hWnloN2dOd2MyZUQxMkFpRHdi?=
+ =?utf-8?B?NTIyRzJ1UVlWS0Y2dlJ1UExsd04veUNxSTkxaWxVNnBsYUlFdFYyMnE2bW52?=
+ =?utf-8?B?WDE1dkM4SmJvdmRBSnlUMVZSZWZ6TkdDY2lPU1lUOFBHM0lzWHVJbGRYbHJP?=
+ =?utf-8?B?VC9jVkJXM0ZIUlliVU15THJZdTZ1QUdNQVE3WFRSWVpnSFBDM1duVTB0bUNp?=
+ =?utf-8?B?cDNENjJnbEpMUE1acUxYaXNsS0dYRlZjTkR0dEdjdVVkWGdkRUpXS2o5anc4?=
+ =?utf-8?B?RGNHc1RnWFRRVkxzR0hySWM1S0d1NE1PYXZjZzBiWFEvS2UzZitta2hIM2RE?=
+ =?utf-8?B?aHJ4TWZHTWozVDNQby9CWkQ3aDM4aWRxeWNpWmpUTGZ2UmFObVhZYXJrWlhu?=
+ =?utf-8?B?ajJkT3dtaG1JNW9ka1JKNTdlbE9YRS9qZ0NtQ25Dc05MeW5kdUJsTjVYaFlz?=
+ =?utf-8?B?Q1ptQ2ZRRDBHSzVhOGgyVE1NMzN3UGhQcklOZFcyUWYxMlgrSit0cU4vQS9r?=
+ =?utf-8?B?N2F3c3A0TlQ1NTkzUmhyV0ZGUitZbmRQb25QNzhLK3dtemRXYVFSbTRPTDJI?=
+ =?utf-8?B?anY3TEVtbVF4TnZMZ3h6aGlOVnh4SmJsVnB3S0kzMlo0dkJ6WEdFQ0p1aVJp?=
+ =?utf-8?B?UXBHVUdyTmQ0aWdMbjd0VXFuWHhvNUJlVm52K3dKNFhCRDY5U2ZJVHJTYXho?=
+ =?utf-8?B?NmFZUzBUOWxYZzFhZGlVQmVCK3BqZmpwbGhLTWV3dzJoYzlLbDNYUmg1ajV6?=
+ =?utf-8?B?YWRiYmR6eVhuV1c1NGM1Q0lqb3FWUVlpNTlCQ3ZjUHVGS3pQeEFNUThsTVdG?=
+ =?utf-8?B?ZXRlVjdWRUg3ZFdRR1dMU2dTNWliL09kSCtZd1dDZm5HT3NBUEpMTHE1dmVP?=
+ =?utf-8?B?Mzl5WWc2eXlrbVRmcEU5VEpGdW5Kb3JrZWN1N1hmdW9vVjVQdXNCVTVlUmoz?=
+ =?utf-8?B?QjdsbEJvdm9aajU4bHFPTXVkOXZ6dmozeG5zRzNXOVJnRnJJVTV6UE1TNHFY?=
+ =?utf-8?B?Y3p5Y0s4VTBVRG5FV00rODZDbmlmd1hGOW5xc21jNGN2RWxxUWo1OThHY09u?=
+ =?utf-8?B?cnp1bEN4RUhhRmIwbHdyME9BSGlza0pJbVNJMThreVZJUGdzRGNXaktaTHR1?=
+ =?utf-8?B?OHN3ZGhEU2kyR3poaDg2TnZBc3drN3VabEVXNW8xeFZUL3FKcXozSVFkNU1j?=
+ =?utf-8?B?R2N6R2Uxb0VacGoxWEFMMjJHSENQcy9rYW8yWnNRUWUxclNad0M1UXFYZWdB?=
+ =?utf-8?B?OFVMTEdONytFYjY1Yy9wMW83REdXWlBCNnY2ZUtOaXdnb21pcUcxWGNKUFJM?=
+ =?utf-8?B?aEJ6MjhvYlRxbGlrZzRhUTY4ZDVhemdUVnZIbENxSmc1bytNK0daT3I1aWdY?=
+ =?utf-8?B?OU5aRjU1Z0hBR29OZ1hSMENaWWhuRmtGUWpqamdISVVqWkwwTHJabnlFYkdn?=
+ =?utf-8?B?bUtZWkI2eGlCTzVPLzR6OEVlbHkzYnFGdkNpQzZsU2JZOW5wYm1BR1pQRmZy?=
+ =?utf-8?B?TEtCQnNqQUF4NUNPZ2RMbHRnQWlQK0IvbTduQXIwZzZkU2p4eFJLeUc3SlB0?=
+ =?utf-8?B?U0pFcVZkdGZJbWVZV0xVN1J4eTJMZjc5a09kdVorMVpQZElOZUQvWnF3T3lj?=
+ =?utf-8?B?M2d6K2lmaG12VElwOGhBaVNUZXEram5sVTdPN1BpcDdkbkg0bTN1Z2pOZ1o3?=
+ =?utf-8?B?QjFwak5EUzAwZUNWbGFld3NZWlpkME1XZTFKY2pVMWZCeUxCR2xpYXlIVCtq?=
+ =?utf-8?B?eU5RY0FURjN1UzhDOFNCUmFPSEozdkRyRzFCOTdyc3dJek5IRC9QdTFpTy91?=
+ =?utf-8?B?Ukx4NGF2UnhIWmZUOWtyemphNFErekgrYWg3NWdCNFB1TUJjS2pMRU8vbXpt?=
+ =?utf-8?B?d0pBelRoMDNrSTErTTZlSWZnWWE5a0ZBWWY5N3hIaE9hSlg2ODZmcXJNTW9r?=
+ =?utf-8?B?cHBqZWM5OHpTK1cxS05vUENFSlhVbTFLVXR1WmZqcUxGL0JhaGVtVTZ0ck5F?=
+ =?utf-8?Q?3883p9IVLfnMk/FQ=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2022 13:01:38.4672
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe367682-3bed-43cd-0808-08da1701fd2b
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2022 12:44:13.9020
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c317fe48-f2bc-4447-8f1e-08da17046c0e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT004.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0216
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s4gSP6/xIMNxu8Bh9zYeyo20z15DQgI7+2MH6HCpcOZHeH6K9aib0kzPqmgYxZyHJvNX1vJFbdk3mqowsY4tXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5464
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Adding SoC data and ops to support multiple SoC's in same driver.
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/cpufreq/tegra194-cpufreq.c | 142 +++++++++++++++++++++--------
- 1 file changed, 105 insertions(+), 37 deletions(-)
+On 24/03/2022 12:08, Sagar Kamble wrote:
+> Add nvmem cell lookup entries for below fuse cells:
+>   - gcplex-config-fuse
+>   - pdi0
+>   - pdi1
+> 
+> Also include the device name prefix "gpu-" in the names of the gpu fuse
+> cells in nvmem_cell_info.
+> 
+> Signed-off-by: Sagar Kamble <skamble@nvidia.com>
+> ---
+>   drivers/soc/tegra/fuse/fuse-tegra.c   |  8 ++++----
+>   drivers/soc/tegra/fuse/fuse-tegra30.c | 17 ++++++++++++++++-
+>   2 files changed, 20 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+> index aa94fda282f4..b0a8405dbdb1 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> @@ -1,6 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0-only
+>   /*
+> - * Copyright (c) 2013-2021, NVIDIA CORPORATION.  All rights reserved.
+> + * Copyright (c) 2013-2022, NVIDIA CORPORATION.  All rights reserved.
+>    */
+>   
+>   #include <linux/clk.h>
+> @@ -162,7 +162,7 @@ static const struct nvmem_cell_info tegra_fuse_cells[] = {
+>   		.bit_offset = 0,
+>   		.nbits = 32,
+>   	}, {
+> -		.name = "gcplex-config-fuse",
+> +		.name = "gpu-gcplex-config-fuse",
+>   		.offset = 0x1c8,
+>   		.bytes = 4,
+>   		.bit_offset = 0,
+> @@ -186,13 +186,13 @@ static const struct nvmem_cell_info tegra_fuse_cells[] = {
+>   		.bit_offset = 0,
+>   		.nbits = 32,
+>   	}, {
+> -		.name = "pdi0",
+> +		.name = "gpu-pdi0",
+>   		.offset = 0x300,
+>   		.bytes = 4,
+>   		.bit_offset = 0,
+>   		.nbits = 32,
+>   	}, {
+> -		.name = "pdi1",
+> +		.name = "gpu-pdi1",
+>   		.offset = 0x304,
+>   		.bytes = 4,
+>   		.bit_offset = 0,
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+> index b071d433d74f..f01d8a2547b6 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra30.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+> @@ -1,6 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0-only
+>   /*
+> - * Copyright (c) 2013-2014, NVIDIA CORPORATION.  All rights reserved.
+> + * Copyright (c) 2013-2022, NVIDIA CORPORATION.  All rights reserved.
+>    */
+>   
+>   #include <linux/device.h>
+> @@ -344,6 +344,21 @@ static const struct nvmem_cell_lookup tegra194_fuse_lookups[] = {
+>   		.cell_name = "xusb-pad-calibration-ext",
+>   		.dev_id = "3520000.padctl",
+>   		.con_id = "calibration-ext",
+> +	}, {
+> +		.nvmem_name = "fuse",
+> +		.cell_name = "gpu-gcplex-config-fuse",
+> +		.dev_id = "17000000.gpu",
+> +		.con_id = "gcplex-config-fuse",
+> +	}, {
+> +		.nvmem_name = "fuse",
+> +		.cell_name = "gpu-pdi0",
+> +		.dev_id = "17000000.gpu",
+> +		.con_id = "pdi0",
+> +	}, {
+> +		.nvmem_name = "fuse",
+> +		.cell_name = "gpu-pdi1",
+> +		.dev_id = "17000000.gpu",
+> +		.con_id = "pdi1",
+>   	},
+>   };
+>   
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index ac381db25dbe..2d59b2bd0e1d 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2020, NVIDIA CORPORATION. All rights reserved
-+ * Copyright (c) 2020 - 2022, NVIDIA CORPORATION. All rights reserved
-  */
- 
- #include <linux/cpu.h>
-@@ -35,12 +35,6 @@ enum cluster {
- 	MAX_CLUSTERS,
- };
- 
--struct tegra194_cpufreq_data {
--	void __iomem *regs;
--	size_t num_clusters;
--	struct cpufreq_frequency_table **tables;
--};
--
- struct tegra_cpu_ctr {
- 	u32 cpu;
- 	u32 coreclk_cnt, last_coreclk_cnt;
-@@ -52,13 +46,42 @@ struct read_counters_work {
- 	struct tegra_cpu_ctr c;
- };
- 
-+struct tegra_cpufreq_ops {
-+	void (*read_counters)(struct tegra_cpu_ctr *c);
-+	void (*set_cpu_ndiv)(struct cpufreq_policy *policy, u64 ndiv);
-+	void (*get_cpu_cluster_id)(u32 cpu, u32 *cpuid, u32 *clusterid);
-+	int (*get_cpu_ndiv)(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv);
-+};
-+
-+struct tegra_cpufreq_soc {
-+	struct tegra_cpufreq_ops *ops;
-+	int maxcpus_per_cluster;
-+};
-+
-+struct tegra194_cpufreq_data {
-+	void __iomem *regs;
-+	size_t num_clusters;
-+	struct cpufreq_frequency_table **tables;
-+	const struct tegra_cpufreq_soc *soc;
-+};
-+
- static struct workqueue_struct *read_counters_wq;
- 
--static void get_cpu_cluster(void *cluster)
-+static void tegra_get_cpu_mpidr(void *mpidr)
- {
--	u64 mpidr = read_cpuid_mpidr() & MPIDR_HWID_BITMASK;
-+	*((u64 *)mpidr) = read_cpuid_mpidr() & MPIDR_HWID_BITMASK;
-+}
-+
-+static void tegra194_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *clusterid)
-+{
-+	u64 mpidr;
-+
-+	smp_call_function_single(cpu, tegra_get_cpu_mpidr, &mpidr, true);
- 
--	*((uint32_t *)cluster) = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-+	if (cpuid)
-+		*cpuid = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-+	if (clusterid)
-+		*clusterid = MPIDR_AFFINITY_LEVEL(mpidr, 1);
- }
- 
- /*
-@@ -85,11 +108,24 @@ static inline u32 map_ndiv_to_freq(struct mrq_cpu_ndiv_limits_response
- 	return nltbl->ref_clk_hz / KHZ * ndiv / (nltbl->pdiv * nltbl->mdiv);
- }
- 
-+static void tegra194_read_counters(struct tegra_cpu_ctr *c)
-+{
-+	u64 val;
-+
-+	val = read_freq_feedback();
-+	c->last_refclk_cnt = lower_32_bits(val);
-+	c->last_coreclk_cnt = upper_32_bits(val);
-+	udelay(US_DELAY);
-+	val = read_freq_feedback();
-+	c->refclk_cnt = lower_32_bits(val);
-+	c->coreclk_cnt = upper_32_bits(val);
-+}
-+
- static void tegra_read_counters(struct work_struct *work)
- {
-+	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
- 	struct read_counters_work *read_counters_work;
- 	struct tegra_cpu_ctr *c;
--	u64 val;
- 
- 	/*
- 	 * ref_clk_counter(32 bit counter) runs on constant clk,
-@@ -107,13 +143,7 @@ static void tegra_read_counters(struct work_struct *work)
- 					  work);
- 	c = &read_counters_work->c;
- 
--	val = read_freq_feedback();
--	c->last_refclk_cnt = lower_32_bits(val);
--	c->last_coreclk_cnt = upper_32_bits(val);
--	udelay(US_DELAY);
--	val = read_freq_feedback();
--	c->refclk_cnt = lower_32_bits(val);
--	c->coreclk_cnt = upper_32_bits(val);
-+	data->soc->ops->read_counters(c);
- }
- 
- /*
-@@ -177,7 +207,7 @@ static unsigned int tegra194_calculate_speed(u32 cpu)
- 	return (rate_mhz * KHZ); /* in KHz */
- }
- 
--static void get_cpu_ndiv(void *ndiv)
-+static void tegra194_get_cpu_ndiv_sysreg(void *ndiv)
- {
- 	u64 ndiv_val;
- 
-@@ -186,30 +216,43 @@ static void get_cpu_ndiv(void *ndiv)
- 	*(u64 *)ndiv = ndiv_val;
- }
- 
--static void set_cpu_ndiv(void *data)
-+static int tegra194_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
-+{
-+	int ret;
-+
-+	ret = smp_call_function_single(cpu, tegra194_get_cpu_ndiv_sysreg, &ndiv, true);
-+
-+	return ret;
-+}
-+
-+static void tegra194_set_cpu_ndiv_sysreg(void *data)
- {
--	struct cpufreq_frequency_table *tbl = data;
--	u64 ndiv_val = (u64)tbl->driver_data;
-+	u64 ndiv_val = *(u64 *)data;
- 
- 	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
- }
- 
-+static void tegra194_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
-+{
-+	on_each_cpu_mask(policy->cpus, tegra194_set_cpu_ndiv_sysreg, &ndiv, true);
-+}
-+
- static unsigned int tegra194_get_speed(u32 cpu)
- {
- 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
- 	struct cpufreq_frequency_table *pos;
-+	u32 cpuid, clusterid;
- 	unsigned int rate;
- 	u64 ndiv;
- 	int ret;
--	u32 cl;
- 
--	smp_call_function_single(cpu, get_cpu_cluster, &cl, true);
-+	data->soc->ops->get_cpu_cluster_id(cpu, &cpuid, &clusterid);
- 
- 	/* reconstruct actual cpu freq using counters */
- 	rate = tegra194_calculate_speed(cpu);
- 
- 	/* get last written ndiv value */
--	ret = smp_call_function_single(cpu, get_cpu_ndiv, &ndiv, true);
-+	ret = data->soc->ops->get_cpu_ndiv(cpu, cpuid, clusterid, &ndiv);
- 	if (WARN_ON_ONCE(ret))
- 		return rate;
- 
-@@ -219,7 +262,7 @@ static unsigned int tegra194_get_speed(u32 cpu)
- 	 * to the last written ndiv value from freq_table. This is
- 	 * done to return consistent value.
- 	 */
--	cpufreq_for_each_valid_entry(pos, data->tables[cl]) {
-+	cpufreq_for_each_valid_entry(pos, data->tables[clusterid]) {
- 		if (pos->driver_data != ndiv)
- 			continue;
- 
-@@ -237,19 +280,22 @@ static unsigned int tegra194_get_speed(u32 cpu)
- static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
--	u32 cpu;
--	u32 cl;
-+	int maxcpus_per_cluster = data->soc->maxcpus_per_cluster;
-+	u32 start_cpu, cpu;
-+	u32 clusterid;
- 
--	smp_call_function_single(policy->cpu, get_cpu_cluster, &cl, true);
-+	data->soc->ops->get_cpu_cluster_id(policy->cpu, NULL, &clusterid);
- 
--	if (cl >= data->num_clusters || !data->tables[cl])
-+	if (clusterid >= data->num_clusters || !data->tables[clusterid])
- 		return -EINVAL;
- 
-+	start_cpu = rounddown(policy->cpu, maxcpus_per_cluster);
- 	/* set same policy for all cpus in a cluster */
--	for (cpu = (cl * 2); cpu < ((cl + 1) * 2); cpu++)
--		cpumask_set_cpu(cpu, policy->cpus);
--
--	policy->freq_table = data->tables[cl];
-+	for (cpu = start_cpu; cpu < (start_cpu + maxcpus_per_cluster); cpu++) {
-+		if (cpu_possible(cpu))
-+			cpumask_set_cpu(cpu, policy->cpus);
-+	}
-+	policy->freq_table = data->tables[clusterid];
- 	policy->cpuinfo.transition_latency = TEGRA_CPUFREQ_TRANSITION_LATENCY;
- 
- 	return 0;
-@@ -259,13 +305,14 @@ static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
- 				       unsigned int index)
- {
- 	struct cpufreq_frequency_table *tbl = policy->freq_table + index;
-+	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
- 
- 	/*
- 	 * Each core writes frequency in per core register. Then both cores
- 	 * in a cluster run at same frequency which is the maximum frequency
- 	 * request out of the values requested by both cores in that cluster.
- 	 */
--	on_each_cpu_mask(policy->cpus, set_cpu_ndiv, tbl, true);
-+	data->soc->ops->set_cpu_ndiv(policy, (u64)tbl->driver_data);
- 
- 	return 0;
- }
-@@ -280,6 +327,18 @@ static struct cpufreq_driver tegra194_cpufreq_driver = {
- 	.attr = cpufreq_generic_attr,
- };
- 
-+static struct tegra_cpufreq_ops tegra194_cpufreq_ops = {
-+	.read_counters = tegra194_read_counters,
-+	.get_cpu_cluster_id = tegra194_get_cpu_cluster_id,
-+	.get_cpu_ndiv = tegra194_get_cpu_ndiv,
-+	.set_cpu_ndiv = tegra194_set_cpu_ndiv,
-+};
-+
-+const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
-+	.ops = &tegra194_cpufreq_ops,
-+	.maxcpus_per_cluster = 2,
-+};
-+
- static void tegra194_cpufreq_free_resources(void)
- {
- 	destroy_workqueue(read_counters_wq);
-@@ -359,6 +418,7 @@ init_freq_table(struct platform_device *pdev, struct tegra_bpmp *bpmp,
- 
- static int tegra194_cpufreq_probe(struct platform_device *pdev)
- {
-+	const struct tegra_cpufreq_soc *soc;
- 	struct tegra194_cpufreq_data *data;
- 	struct tegra_bpmp *bpmp;
- 	int err, i;
-@@ -367,6 +427,15 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	soc = of_device_get_match_data(&pdev->dev);
-+
-+	if (soc->ops && soc->maxcpus_per_cluster) {
-+		data->soc = soc;
-+	} else {
-+		dev_err(&pdev->dev, "soc data missing\n");
-+		return -EINVAL;
-+	}
-+
- 	data->num_clusters = MAX_CLUSTERS;
- 	data->tables = devm_kcalloc(&pdev->dev, data->num_clusters,
- 				    sizeof(*data->tables), GFP_KERNEL);
-@@ -416,10 +485,9 @@ static int tegra194_cpufreq_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id tegra194_cpufreq_of_match[] = {
--	{ .compatible = "nvidia,tegra194-ccplex", },
-+	{ .compatible = "nvidia,tegra194-ccplex", .data = &tegra194_cpufreq_soc },
- 	{ /* sentinel */ }
- };
--MODULE_DEVICE_TABLE(of, tegra194_cpufreq_of_match);
- 
- static struct platform_driver tegra194_ccplex_driver = {
- 	.driver = {
+Thanks! Looks good to me.
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
+
 -- 
-2.17.1
-
+nvpublic
