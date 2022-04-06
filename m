@@ -2,84 +2,71 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FD3C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 20:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759E3C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 20:28:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234034AbiDFUPc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Apr 2022 16:15:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47992 "EHLO
+        id S234629AbiDFU35 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Apr 2022 16:29:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234060AbiDFUOe (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 16:14:34 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1667A10A7E7
-        for <linux-tegra@vger.kernel.org>; Wed,  6 Apr 2022 11:07:03 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CDC912FC;
-        Wed,  6 Apr 2022 11:07:03 -0700 (PDT)
-Received: from [10.57.41.19] (unknown [10.57.41.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A4A23F718;
-        Wed,  6 Apr 2022 11:07:01 -0700 (PDT)
-Message-ID: <0f7bf1c2-7a21-13a0-8734-c53f624e1edd@arm.com>
-Date:   Wed, 6 Apr 2022 19:06:39 +0100
+        with ESMTP id S234732AbiDFU3t (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 16:29:49 -0400
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A47D35917D;
+        Wed,  6 Apr 2022 11:51:39 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id q129so3369668oif.4;
+        Wed, 06 Apr 2022 11:51:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Gozy76Oz1wSXA73FeGE7SmqQLAsoVOY+2sTGF1aa6Zw=;
+        b=fE7TexvMuLOaLXKK6EJNxA2vmmayp5QSrYZI/MnurdJ55hJ+Py0CVtE6dZvcUps7rV
+         fzk0Cd/zGQrRsqlA+F+vsiTIoK6GcYCm9BTVEzC4htL7PNQU9ji+WW0AGV1w6VyOEyxm
+         1eoNmFFgbAA1Yorn38Mq1jvnBWAML+UlRTJy9F8WikrFOF91Hm2M+hYjkZ9k9yndWG8c
+         Rf75OiifImh0lYOP4vQljoTpJsDxJeMayool18TBqC9qiBtc6g+Ez1WGflos+FftI19y
+         hmtpJw9GLvO0AhU0W3b5KHKwoTiKxE3roc5qFDRrWOt76/c8lw/YanvANIrw57O/VpHR
+         j0pQ==
+X-Gm-Message-State: AOAM530pEjf1hXo46Tm7rJqxtE+xFCP2BrYotBmtTP+g1lCbzAebCOc0
+        NPkL1N4pE91RpqlU60MKJw==
+X-Google-Smtp-Source: ABdhPJx7UbafJNQyyivVdWkXjR46A1bh1Oaa+gC8ZwvqpNeu9q5dFGeK8oeuLmNIra2NA7b2IOOAYA==
+X-Received: by 2002:a05:6808:2386:b0:2f9:a7fb:54f5 with SMTP id bp6-20020a056808238600b002f9a7fb54f5mr396861oib.33.1649271098704;
+        Wed, 06 Apr 2022 11:51:38 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id p11-20020acabf0b000000b002ef93581a46sm6655340oif.2.2022.04.06.11.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Apr 2022 11:51:38 -0700 (PDT)
+Received: (nullmailer pid 2576022 invoked by uid 1000);
+        Wed, 06 Apr 2022 18:51:37 -0000
+Date:   Wed, 6 Apr 2022 13:51:37 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     sanjayc@nvidia.com, bbasu@nvidia.com, linux-tegra@vger.kernel.org,
+        ksitaraman@nvidia.com, treding@nvidia.com, jonathanh@nvidia.com,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, viresh.kumar@linaro.org, krzk+dt@kernel.org
+Subject: Re: [Patch v4 1/4] dt-bindings: Document Tegra CCPLEX Cluster
+Message-ID: <Yk3hOafGDk/W1qPA@robh.at.kernel.org>
+References: <20220405130119.4697-1-sumitg@nvidia.com>
+ <20220405130119.4697-2-sumitg@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] drm/tegra: Stop using iommu_present()
-Content-Language: en-GB
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        thierry.reding@gmail.com
-Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
-References: <25247f43672df0aa58c1952bf3df2bf948e9f8ae.1649168393.git.robin.murphy@arm.com>
- <49165024-5f33-b6e6-7ec9-1ede6f562748@collabora.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <49165024-5f33-b6e6-7ec9-1ede6f562748@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220405130119.4697-2-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-04-06 15:32, Dmitry Osipenko wrote:
-> On 4/5/22 17:19, Robin Murphy wrote:
->> Remove the pointless check. host1x_drm_wants_iommu() cannot return true
->> unless an IOMMU exists for the host1x platform device, which at the moment
->> means the iommu_present() test could never fail.
->>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->> ---
->>   drivers/gpu/drm/tegra/drm.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->> index 9464f522e257..bc4321561400 100644
->> --- a/drivers/gpu/drm/tegra/drm.c
->> +++ b/drivers/gpu/drm/tegra/drm.c
->> @@ -1149,7 +1149,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
->>   		goto put;
->>   	}
->>   
->> -	if (host1x_drm_wants_iommu(dev) && iommu_present(&platform_bus_type)) {
->> +	if (host1x_drm_wants_iommu(dev)) {
->>   		tegra->domain = iommu_domain_alloc(&platform_bus_type);
->>   		if (!tegra->domain) {
->>   			err = -ENOMEM;
+On Tue, 05 Apr 2022 18:31:16 +0530, Sumit Gupta wrote:
+> The Tegra CPU COMPLEX CLUSTER area contains memory-mapped
+> registers that initiate CPU frequency/voltage transitions.
 > 
-> host1x_drm_wants_iommu() returns true if there is no IOMMU for the
-> host1x platform device of Tegra20/30 SoCs.
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  .../tegra/nvidia,tegra-ccplex-cluster.yaml    | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
+> 
 
-Ah, apparently this is another example of what happens when I write 
-patches late on a Friday night...
-
-So on second look, what we want to ascertain here is whether dev has an 
-IOMMU, but only if the host1x parent is not addressing-limited, either 
-because it can also use the IOMMU, or because all possible addresses are 
-small enough anyway, right? Are we specifically looking for the host1x 
-having a DMA-API-managed domain, or can that also end up using the 
-tegra->domain or another unmanaged domain too? I can't quite figure out 
-from the comments whether it's physical addresses, IOVAs, or both that 
-we're concerned with here.
-
-Thanks,
-Robin.
+Reviewed-by: Rob Herring <robh@kernel.org>
