@@ -2,476 +2,186 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D686CC43219
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 07:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF93C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 10:47:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239143AbiDFHc3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Apr 2022 03:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44422 "EHLO
+        id S1346105AbiDFKtW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Apr 2022 06:49:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239897AbiDFG5T (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 02:57:19 -0400
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2074.outbound.protection.outlook.com [40.107.96.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97DB24A62C6;
-        Tue,  5 Apr 2022 22:25:24 -0700 (PDT)
+        with ESMTP id S1350873AbiDFKrw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 06:47:52 -0400
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-eopbgr60123.outbound.protection.outlook.com [40.107.6.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11ED0502836;
+        Wed,  6 Apr 2022 00:11:21 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nFtog8bGBi8M2bUDRkFLKEWi9Hb55d5vqJz2WHX1hsN4T/8IBhQmG3odPf6jRcOFQKR7z3bMgQ6sBRg+S0VDlWqw6rDTbkQY/GQcOMCXhZ5bnKHWVH+oDsHnaFFLMTjNFJCkLzHpX2aLHiXtObA2TLgzm+9uiqGLUrv8TSCzWzmJT5ect1mbMe4yeclpuE+OzFMTYp7XrVX6CFLA/E6ccWBx67CQ8uD74TNUKITbCeTms6Rn0QrXGBReIiovP9dx97FgH7s7kNOj87RB7J9z66Rj2xflzJeAodJlK2+ZBr2CWD1V+JFkWt9ihQgsVaqK+WyF+HW+A3QTVWvd2vy5Ag==
+ b=Qlsm+6E0FG/k8/3Kg5t570/dYsDS2Vc50FLIVVhvgzDfO0Cttjdf58paW9XczgEspBX9XJzzQgw2YHoBhdqnuhNyQvaHjtXwbijIgBruRE6ksRmcR2X7SD1ZsoVHpb5GN+mBVcT0qqz1RhEcZhFLftjpXsh0F0WDtBS27KX+Sc6ZtDHL2gGSLWh7fa8C8Em9mGFSJKl4QdAPKjPAw3iNsyueafDpQ91cR3bZDsqntTxZrx5XMTylqclAXTX4idcJVbCFkOFck9b/uEN6w5S4zfYCrHAtiasQF1xKkfqf7KDy7wDeI4hg25Pf61KV01xeWEHehyq29rWomnKQSollfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nwvEEuJ6rLaI0wHAmB3u5L173A3DpSS9OlzEYbgDie8=;
- b=JVaHsgqy+WlSCD7zSkdAKtEq+tMQ6Emr/jN+hH/Zl2GOgXKGBHmIQ1L/t1seG+zPTpaMAsXYPZSiO7L8yC9WWDwgiekuGW67zM7y8jA4KCzjS6a6t2Cl2TnfQr0kmuIjkDQcjHk8E2EQZZzX16CYHAuGfQQGjYMl8wOKObG9opTvnCC/oOnhEZc1xrO1Rwcovfnb+5FVJhPSJWIaMotcYwPVEkc/X/6jdTdUSw6VmTWvaECZoG+7BznhvTdDxN12oeFuWuwAtXNKpKQxN74ZIpyg9TwHm9mqn3GKt+IUdcxowRBH1lufiUOPpHqx8H0RhtcH10iZrnPrrvIeUrLNPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=WAKaDrqBPQu8KA9BFDTRMDsdo9K98EkJaTG2m9eb3GY=;
+ b=VWiqha1DU05pZatYjcCE+trg9hzUJzSH87V4JxdMRaEKBOO9d4vd6rcnFa2SpDgp+DKgVCdzhPNQ6phDRE5wm6S9DNBtuO6Z65zYI09vauwcqfUuhiQlh6zUeX7f3ghYHXiQ/1t7nkpj+bnHEPjs8RZ3zyLnbrJlLk2pD/+Jwyu19Ikj22KvCDOliAeu5Wv4Hh7EZncDebFUxfrEyTSO9MvVPluuXEdwNHY52nVFrl6u5+L8qh4IXxqWNGeyh6zRbOV4UikpBOiWsBb2gkh4pO8nXAOdJ2oDd79cYD81fmfmTju52BLzMOwOaOt9ry5uHwSn8ANRPpCN0KdU+qu1Sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nwvEEuJ6rLaI0wHAmB3u5L173A3DpSS9OlzEYbgDie8=;
- b=t/hZMVoVFjwApXrYUSXyJZ0NV3crhxTWFO8NcTHIrgMgnlLwS2XcAp13cp0lDfnpSn05Mq1dv6hwlTVO2JLz4gtYomgv6z6+kkkIMcaFrkvUHWD9W8ulyIXMHdgb480P5oTaarYMRHaRmSJ6RCiZPd9kS9wSbVeUESxCmtJ9H5foCZjI2nWkbMbIr64+keA+qR5LmFicF8oD59KflhRrQEbESqIn3lFoPF3w8fyuml1y763R+wAT+DvR7R/tF33t7lmrS/UpWakgCNMot5ZhiswYrLqqym125B6q5yg7zAyRHznHf/bTTpb3sTuL9LRrY63M5AuOqOqXv0mluWW2oQ==
-Received: from MW2PR16CA0043.namprd16.prod.outlook.com (2603:10b6:907:1::20)
- by MWHPR12MB1215.namprd12.prod.outlook.com (2603:10b6:300:d::17) with
+ bh=WAKaDrqBPQu8KA9BFDTRMDsdo9K98EkJaTG2m9eb3GY=;
+ b=XV09DW1OKiKvGlJA0ZuSOhX3vuVzZjEIn50mpjYvvGJnOG5c9V4UFcp+dNt+77QpmDW1vpMhQs4V4oPDSpLMjSFZxkrtrcrxiqrQrTIFCV53Ou1WdznAXZVwxYMBlOoElsOiTq6Ha+v0YnJI+jHmxq0UahQNHCg8Hr+4D1gQfF8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:157::14)
+ by DU2PR10MB5093.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:2d6::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Wed, 6 Apr
- 2022 05:25:21 +0000
-Received: from CO1NAM11FT063.eop-nam11.prod.protection.outlook.com
- (2603:10b6:907:1:cafe::5c) by MW2PR16CA0043.outlook.office365.com
- (2603:10b6:907:1::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.19 via Frontend
- Transport; Wed, 6 Apr 2022 05:25:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT063.mail.protection.outlook.com (10.13.175.37) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5144.20 via Frontend Transport; Wed, 6 Apr 2022 05:25:21 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 6 Apr
- 2022 05:25:21 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 5 Apr 2022
- 22:25:20 -0700
-Received: from amhetre.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Tue, 5 Apr 2022 22:25:16 -0700
-From:   Ashish Mhetre <amhetre@nvidia.com>
-To:     <krzysztof.kozlowski@linaro.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <digetx@gmail.com>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <krzysztof.kozlowski+dt@linaro.org>
-CC:     <vdumpa@nvidia.com>, <Snikam@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>
-Subject: [Patch v6 2/4] memory: tegra: Add MC error logging on tegra186 onward
-Date:   Wed, 6 Apr 2022 10:54:57 +0530
-Message-ID: <20220406052459.10438-3-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220406052459.10438-1-amhetre@nvidia.com>
-References: <20220406052459.10438-1-amhetre@nvidia.com>
-X-NVConfidentiality: public
+ 2022 07:11:19 +0000
+Received: from AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ac3d:2f31:c9d8:75bc]) by AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ac3d:2f31:c9d8:75bc%7]) with mapi id 15.20.5123.031; Wed, 6 Apr 2022
+ 07:11:19 +0000
+Message-ID: <961fd021-3391-da16-1ebe-508110a5d173@kontron.de>
+Date:   Wed, 6 Apr 2022 09:11:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v5 9/9] arm64: dts: imx8mm-kontron: fix ethernet node name
+Content-Language: en-US
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Tony Lindgren <tony@atomide.com>, kernel@pengutronix.de,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
+ <20220216074927.3619425-10-o.rempel@pengutronix.de>
+ <20220406011310.GC129381@dragon>
+From:   Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <20220406011310.GC129381@dragon>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS8PR07CA0024.eurprd07.prod.outlook.com
+ (2603:10a6:20b:451::7) To AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:157::14)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 227ce230-11d1-4197-5596-08da178dd866
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1215:EE_
-X-Microsoft-Antispam-PRVS: <MWHPR12MB121541B9D1C0273441DB1F48CAE79@MWHPR12MB1215.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 379e5acf-52d8-4ce7-6d54-08da179ca5bc
+X-MS-TrafficTypeDiagnostic: DU2PR10MB5093:EE_
+X-Microsoft-Antispam-PRVS: <DU2PR10MB50930D5D1B1BED4536215770E9E79@DU2PR10MB5093.EURPRD10.PROD.OUTLOOK.COM>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: PFieehUKTFna0l4njagbYmNF6MZg5wQQXc3sZQu3yKvHZrPz6DUnq/4uHGAPoeCNpIe8voZR/YwWUFAMCOpybg8oxCua9M+i/2BSR9mnmzsxTxWV2TO1tBUuAjCDqt1Gj+1rvmTUQpbL8dFVmY+Kfhv0TGTh4IMD4c5YfdgVNSbkr6S8udn6cnpMGAd0XptneVe/kHjuIFPPkv1o0eBwHswlvXZoKiRtHrsosHeWx5eWXZ9QYL2P4+oM4tvZ+LvzXS0l5zaY9zdlLyGSFy2oeBPJRS4Eo7h5ljZMb7TixDX2xXjZwpWkOTHXJwX7KdIelbTsaz6ltSVsQ81d06xq4QB+xdkj/mh4SxbfMnJKBuzyAkN/W1bbd27qexR8S6LU8UGBno6ik+N2aUzh6jjM3LYn2QJMNEt7Z7tctPdemId57DBPEur/To1lDWkMMgoEjes2NGuiq2PjCsVWP8Z+TARdqn8QavcGphKGlOq6uNxGSHxmUft+55AfDPTDF78cvfRPyiqoGPgw+WkW9XqoYU7Ba/ls51ScHlORSvXHBysLB/Xo77U7gELZoX+CI49bYvIlMdzpOfYKBBQATIZO4J/68aVpuOGJYTlVVqUq0TmhMUSbAf6IgknrJpRJAFRwqilJPrUCr8ojzX807ojMf0PibZxzXveqFOwpkKjPDWWDIDeOYD1bQgG7qebEUpjfXAiE/zWk0VV7QvYZEOsBKg==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(336012)(426003)(86362001)(8936002)(4326008)(2906002)(26005)(47076005)(186003)(8676002)(36860700001)(36756003)(70206006)(70586007)(83380400001)(40460700003)(30864003)(82310400005)(110136005)(81166007)(54906003)(356005)(2616005)(316002)(7696005)(508600001)(5660300002)(1076003)(6666004)(107886003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 05:25:21.3196
+X-Microsoft-Antispam-Message-Info: k4bdsBXOJltwiGVzRCp6Axt5T+xMCYvqCdRWsr82l98lXDb/X/iDiw2ZcWz5BNbSx/G0plUxy6jCeRMeTE6k49lqBlXr7pqJQsPtu642TBBIe6Dz+dO5CP+NUCLXV+fUmM1TvWG5F7NZ5TarvjYav3B1rGsqCa6Rr8DdznpTXCH5CT/KNd/H/etBqqPdVm+DF4LPgGnvFJ/Qa8Lm/MjtUUdZWLhiksFkrmUYcHABJPD7c5BC7/YwMcZPGduOPjiIaxnwhMCTHbSr/5ZA/yJOq/R0l5NXmoeTLLKq3L2gGx5fNNZPswXVjxkPxuISFb5Q80D3FS3hpUb2iz/a6EZIXbs1C4X+zn8sJfnHY5U9M4YCUMn3HetCBi9q8jtoVtAcEfDRmfYEDgZ2Tu0L5FHCFwR5FA25cCZCtzxdhgL7xrg8k1sHfn0cq3NretE7X4xXWRsXgfMHM5of8IqC0tV+b08HPlomO5cdL7znUAOXDz8gTzdQ3KLKYoX2OesYzRO7+NjNHyi1P8HdapG+5PmCOFLZcvpvM7kLXrOG8T6rKVZtuFpfNQb8FrLXKiOxhZu83MR1mf2g790mijuG4Uk89McQdp1ag3XbzMo/KtfsNDLrH/fuFqoFQHpezfzWKrv9VVZ9NNBz/R3fVwvloaxyRu26EsC7igPqp+VfRI3TO73foOgwD5T3ND+79y7CeXOFbPx2p1TG+FiQ631sTbBGL5oyNSq0mcqT84h1raYxfAis12R7qdsG1jEAiRSEZQd6
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(66556008)(7416002)(5660300002)(66476007)(36756003)(38100700002)(508600001)(31686004)(8936002)(44832011)(66946007)(316002)(2906002)(8676002)(4326008)(6512007)(6666004)(83380400001)(6486002)(110136005)(31696002)(54906003)(86362001)(2616005)(186003)(26005)(6506007)(32563001)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aGdxRXhZRW03OGFJbGtwSXUxL3hQUE8xS0U3WVU0TzZVY0k4RUZKYW1BekNz?=
+ =?utf-8?B?aFlHaEZra2tzbllTcDNueGY2RFRqeTBuSDZFRWplMTZTRjh0cHZsOEJEOUsr?=
+ =?utf-8?B?NkFoVFk2cVA2Z3dsODlXTW02aTRmUWlaMmxweGNKSm45YkM0SmZLVDZsRFZL?=
+ =?utf-8?B?Y1hjYmUrTldIVzR4NkRyMzFEYkIrdXVVdXlmeUdTcVF1S1pXOHhEYjh3ckRL?=
+ =?utf-8?B?SDRRZGdOVDNsM0pPRi85N25vM044ZEdwT2dzb05FSEd3a2tqNFdKcGdXOGhu?=
+ =?utf-8?B?UTUrRUJnaEhhYjFzUXN2KzUyRzBqeW9haHBES2RnWjRlRXBITEVVV1k3VE1i?=
+ =?utf-8?B?OWxxS2JvQmRFZVR3eGpYTEhRRnRFWkVqZDBiaHFnVFp3OHlnYzEzK2d4M0Uw?=
+ =?utf-8?B?Ty9tR3d2UG9nU1RoOW5aQ0tIZWpwK0l6RUN1Uy9WS0NKMDB5bFV5RkJSeURB?=
+ =?utf-8?B?d0t2MDRzUExQWU9xUW1SM3dlb3VBMnF6clhXVVhwclVVU3oxdTU4bG5UU0d5?=
+ =?utf-8?B?c0xxN2VMMDRTWlVzazNnU0RYY0ZvenNhcXFSUUhQSTlZZEpueHNzcnp3b3hT?=
+ =?utf-8?B?WjlyNDkzQmtTZzNtWG1TOGlRUnZNOFRkb3N6c3hlTVZIUUZZS25rN2xhZ0Np?=
+ =?utf-8?B?K2pURFYzZXdic3BKWFdZaU83c0dFNTA3NVMzQnFQTGF2N3dyM1YwcTZjSVBX?=
+ =?utf-8?B?QmFqa1owcXVmMFVXZ1hqUiszSFRLSDBwbVVjOHhwblUzVWM2d2RzQVZUWk8v?=
+ =?utf-8?B?UCsxWkFHU3VTc3gzNllISjdidW5tL0NhTERWMzRqODhxYVBCVzJ0ZVh2QlVi?=
+ =?utf-8?B?bjUzeGJqZTlTTTN4c3pLTFZaOFhPY002ellVOXdzSkxpRUFsNXVRbXlFRFRh?=
+ =?utf-8?B?enJkemxUSFNLaXJFUWNVenVzU1lxN2hwTHVrYk42bks4UW9seVpxMXhzNDFT?=
+ =?utf-8?B?ZjlsSE9VaFZHL2lmTmRPRkJBQmU1S3MrbHRTM1JBRzdoNlh2STdoS3IrYkV4?=
+ =?utf-8?B?ZWtDQ2JDeGlYZmZOMnZzZ2ZPdSthWUFkdVVTRS9Uc1YyeFZoWjJkOGRmTnVl?=
+ =?utf-8?B?OVdwSkRaNVVJazNNTkF2U1Z2R3EzTUd2RVVaeXl3d2FHSFNEZG5RZUlUYmVm?=
+ =?utf-8?B?ZDU4UDVacUpjdXUzaFpWeUdIRWRZSVZEamJ4bUJ3RVlSbzFxc09QMlptbmxt?=
+ =?utf-8?B?aHhFeHZVK2xQSjZ3ZTZSOTVFWW9Pci85c3hWUXdrc1pNalVETGJRc1pvR0VJ?=
+ =?utf-8?B?VWUvTzZ0RTQwK3hwV05zUnpWcVNNVGhpOVMrREJGYzZwcW5iZGdVWVJJRVcx?=
+ =?utf-8?B?L2lSd1Jacmp3MU9DdGRKWWRjTUVIbkwxTjlwRVhZMUpTZmxUV2RKRUhrS1ZH?=
+ =?utf-8?B?Z2NFcWV3Qm4wSHhYZmNLaHczKzBOUFpUa0RJbUNrK2QzZ05oaGlYRjVyeURI?=
+ =?utf-8?B?MnZtdEZVYkpROGdXNTlGU29RTUtsRXpFUUVHZ3RSTnNUQ2JrMkdZWEJ1bWR4?=
+ =?utf-8?B?ai8vUjExZVNnSUZGaFZhR0k0cFZHUjdlN3N3dzgvWHBXZkF4QlVpNk56UjR4?=
+ =?utf-8?B?NXE4VDVHVWd6dGIwT0drT2g4dGE3b1l0SmFoVUlDNC92Z3JaL1hRdmRrR1VV?=
+ =?utf-8?B?YXZGTmdtNDBPbTdUZ0RvNjcvaGNiMEFmc0ZMSFk2OFNCbTh5TVB1cjVNbGZY?=
+ =?utf-8?B?OXlRMXFucWE5UUovTU16dnU1S0M3eVVBaElML2NZU1NWNFNSY0VTbnI0dytk?=
+ =?utf-8?B?ZStjNFR0QVZIaWo4algvb2xtZllLTE5mdXRhdHd1ZitoY0JYa2NQb0Vpb2pk?=
+ =?utf-8?B?ZFA1THhlcmxnZnhEbzJabWFGNGFwcmd4QWpRMU1WbmlDNjFQWmkyYjQ2aVpP?=
+ =?utf-8?B?bXJrMTFlRmwrY0V5U1l2YU9UYUtvRVVVZzFiNDI1YjNkWGhsSytYSFJ5UU9M?=
+ =?utf-8?B?czVIR2d3dWVpc25jbnpBVFVCT1lEVjdDUGtKZDRlOVFrR2h5bUxFTFhtc2ky?=
+ =?utf-8?B?VGg1TnQ2Y1Z4R0VjcU43TmdXaEJrOVI0eWRuZDVncDZidWlpMHIrb0RNTDNE?=
+ =?utf-8?B?dW4yckluVnVOWG5sdXFOQU5XMTczc2FWV1pXaTJlQThXSTBGRjlmQnllQXkv?=
+ =?utf-8?B?angrc2FBVVB4N0FuTlpIQzdacEVyNnpXNkhkc1pWcEZqWnY3OUc2U1NsQ2Ja?=
+ =?utf-8?B?YWJnTUxMdmlPSWtOVTg0Y09BYjlJWDZKYnlWRHA2WXI1YkJYT2xnaG1yVVNE?=
+ =?utf-8?B?dXBjWnh4U005QTRzbHBpTTh0VUJCcDFRSUpUVjMyYkltZ3RYSlhWRUhyYkF3?=
+ =?utf-8?B?WlpieFI2UDBSNzFiRUpKVi80eDQzUENJZDhpa05RbjViOEIrWWZDSVRoMklE?=
+ =?utf-8?Q?r4/1NQMvYQqKk11Y=3D?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 379e5acf-52d8-4ce7-6d54-08da179ca5bc
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 07:11:19.0522
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 227ce230-11d1-4197-5596-08da178dd866
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT063.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1215
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g0kHuSKE9jkfvJs/pi607v1OcbVLjR8Ku05bAwrLdRSz9a0KsQ1jZJfK7rTNjLD+wRNqtH3DBZNE67yanFnJD7cu7ThLn6d7WxR36EWqYuw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR10MB5093
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add support for reading MC_GLOBAL_INTSTATUS register which points to the
-memory controller channels on which interrupts have occurred.
-Add new function 'global_intstatus_to_channel' which returns the channel
-which should be used to get the information of interrupts.
-Remove static from tegra30_mc_handle_irq and use it as interrupt handler
-for MC interrupts on tegra186, tegra194 and tegra234 to log the errors.
-Add error specific MC status and address register bits and use them on
-tegra186, tegra194 and tegra234.
-Add error logging for generalized carveout interrupt on tegra186, tegra194
-and tegra234.
-Add error logging for route sanity interrupt on tegra194 an tegra234.
-Add register for higher bits of error address which is available on
-tegra194 and tegra234.
-Add a boolean variable 'has_addr_hi_reg' in tegra_mc_soc struture which
-will be true if soc has register for higher bits of memory controller
-error address. Set it true for tegra194 and tegra234.
-Clear the global_intstatus bit corresponding to channel of which
-interrupts are logged.
+Am 06.04.22 um 03:13 schrieb Shawn Guo:
+> + Frieder Schrempf who is the board owner.
+> 
+> On Wed, Feb 16, 2022 at 08:49:27AM +0100, Oleksij Rempel wrote:
+>> The node name of Ethernet controller should be "ethernet" instead of
+>> "usbether" as required by Ethernet controller devicetree schema:
+>>  Documentation/devicetree/bindings/net/ethernet-controller.yaml
+>>
+>> This patch can potentially affect boot loaders patching against full
+>> node path instead of using device aliases.
+> 
+> Frieder,
+> 
+> Are you okay with that?
 
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- drivers/memory/tegra/mc.c       | 128 ++++++++++++++++++++++++++++----
- drivers/memory/tegra/mc.h       |  37 ++++++++-
- drivers/memory/tegra/tegra186.c |   9 +++
- drivers/memory/tegra/tegra194.c |   8 ++
- drivers/memory/tegra/tegra234.c |   7 ++
- include/soc/tegra/mc.h          |   3 +
- 6 files changed, 175 insertions(+), 17 deletions(-)
+Yes!
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 3cda1d9ad32a..6f4e29d4bd33 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -508,14 +508,48 @@ int tegra30_mc_probe(struct tegra_mc *mc)
- 	return 0;
- }
- 
--static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
-+const struct tegra_mc_ops tegra30_mc_ops = {
-+	.probe = tegra30_mc_probe,
-+	.handle_irq = tegra30_mc_handle_irq,
-+};
-+#endif
-+
-+static int global_intstatus_to_channel(const struct tegra_mc *mc, u32 status,
-+				       unsigned int *mc_channel)
-+{
-+	if ((status & mc->soc->ch_intmask) == 0)
-+		return -EINVAL;
-+
-+	*mc_channel = __ffs((status & mc->soc->ch_intmask) >>
-+			    mc->soc->status_reg_chan_shift);
-+
-+	return 0;
-+}
-+
-+irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
- {
- 	struct tegra_mc *mc = data;
-+	unsigned int bit, channel;
- 	unsigned long status;
--	unsigned int bit;
- 
--	/* mask all interrupts to avoid flooding */
--	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
-+	if (mc->soc->num_channels) {
-+		u32 global_status;
-+		int err;
-+
-+		global_status = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, MC_GLOBAL_INTSTATUS);
-+		err = global_intstatus_to_channel(mc, global_status, &channel);
-+		if (err < 0) {
-+			dev_err_ratelimited(mc->dev, "unknown interrupt channel 0x%08x\n",
-+					    global_status);
-+			return IRQ_NONE;
-+		}
-+
-+		/* mask all interrupts to avoid flooding */
-+		status = mc_ch_readl(mc, channel, MC_INTSTATUS) & mc->soc->intmask;
-+	} else {
-+		status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
-+	}
-+
- 	if (!status)
- 		return IRQ_NONE;
- 
-@@ -523,18 +557,70 @@ static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
- 		const char *error = tegra_mc_status_names[bit] ?: "unknown";
- 		const char *client = "unknown", *desc;
- 		const char *direction, *secure;
-+		u32 status_reg, addr_reg;
-+		u32 intmask = BIT(bit);
- 		phys_addr_t addr = 0;
-+#ifdef CONFIG_PHYS_ADDR_T_64BIT
-+		u32 addr_hi_reg = 0;
-+#endif
- 		unsigned int i;
- 		char perm[7];
- 		u8 id, type;
- 		u32 value;
- 
--		value = mc_readl(mc, MC_ERR_STATUS);
-+		switch (intmask) {
-+		case MC_INT_DECERR_VPR:
-+			status_reg = MC_ERR_VPR_STATUS;
-+			addr_reg = MC_ERR_VPR_ADR;
-+			break;
-+
-+		case MC_INT_SECERR_SEC:
-+			status_reg = MC_ERR_SEC_STATUS;
-+			addr_reg = MC_ERR_SEC_ADR;
-+			break;
-+
-+		case MC_INT_DECERR_MTS:
-+			status_reg = MC_ERR_MTS_STATUS;
-+			addr_reg = MC_ERR_MTS_ADR;
-+			break;
-+
-+		case MC_INT_DECERR_GENERALIZED_CARVEOUT:
-+			status_reg = MC_ERR_GENERALIZED_CARVEOUT_STATUS;
-+			addr_reg = MC_ERR_GENERALIZED_CARVEOUT_ADR;
-+			break;
-+
-+		case MC_INT_DECERR_ROUTE_SANITY:
-+			status_reg = MC_ERR_ROUTE_SANITY_STATUS;
-+			addr_reg = MC_ERR_ROUTE_SANITY_ADR;
-+			break;
-+
-+		default:
-+			status_reg = MC_ERR_STATUS;
-+			addr_reg = MC_ERR_ADR;
-+
-+#ifdef CONFIG_PHYS_ADDR_T_64BIT
-+			if (mc->soc->has_addr_hi_reg)
-+				addr_hi_reg = MC_ERR_ADR_HI;
-+#endif
-+			break;
-+		}
-+
-+		if (mc->soc->num_channels)
-+			value = mc_ch_readl(mc, channel, status_reg);
-+		else
-+			value = mc_readl(mc, status_reg);
- 
- #ifdef CONFIG_PHYS_ADDR_T_64BIT
- 		if (mc->soc->num_address_bits > 32) {
--			addr = ((value >> MC_ERR_STATUS_ADR_HI_SHIFT) &
--				MC_ERR_STATUS_ADR_HI_MASK);
-+			if (addr_hi_reg) {
-+				if (mc->soc->num_channels)
-+					addr = mc_ch_readl(mc, channel, addr_hi_reg);
-+				else
-+					addr = mc_readl(mc, addr_hi_reg);
-+			} else {
-+				addr = ((value >> MC_ERR_STATUS_ADR_HI_SHIFT) &
-+					MC_ERR_STATUS_ADR_HI_MASK);
-+			}
- 			addr <<= 32;
- 		}
- #endif
-@@ -591,7 +677,10 @@ static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
- 			break;
- 		}
- 
--		value = mc_readl(mc, MC_ERR_ADR);
-+		if (mc->soc->num_channels)
-+			value = mc_ch_readl(mc, channel, addr_reg);
-+		else
-+			value = mc_readl(mc, addr_reg);
- 		addr |= value;
- 
- 		dev_err_ratelimited(mc->dev, "%s: %s%s @%pa: %s (%s%s)\n",
-@@ -600,17 +689,18 @@ static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
- 	}
- 
- 	/* clear interrupts */
--	mc_writel(mc, status, MC_INTSTATUS);
-+	if (mc->soc->num_channels) {
-+		u32 status_chan_bit;
-+
-+		mc_ch_writel(mc, channel, status, MC_INTSTATUS);
-+		status_chan_bit = BIT(channel) << mc->soc->status_reg_chan_shift;
-+		mc_ch_writel(mc, MC_BROADCAST_CHANNEL, status_chan_bit, MC_GLOBAL_INTSTATUS);
-+	} else
-+		mc_writel(mc, status, MC_INTSTATUS);
- 
- 	return IRQ_HANDLED;
- }
- 
--const struct tegra_mc_ops tegra30_mc_ops = {
--	.probe = tegra30_mc_probe,
--	.handle_irq = tegra30_mc_handle_irq,
--};
--#endif
--
- const char *const tegra_mc_status_names[32] = {
- 	[ 1] = "External interrupt",
- 	[ 6] = "EMEM address decode error",
-@@ -622,6 +712,8 @@ const char *const tegra_mc_status_names[32] = {
- 	[12] = "VPR violation",
- 	[13] = "Secure carveout violation",
- 	[16] = "MTS carveout violation",
-+	[17] = "Generalized carveout violation",
-+	[20] = "Route Sanity error",
- };
- 
- const char *const tegra_mc_error_names[8] = {
-@@ -770,7 +862,11 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 
- 		WARN(!mc->soc->client_id_mask, "missing client ID mask for this SoC\n");
- 
--		mc_writel(mc, mc->soc->intmask, MC_INTMASK);
-+		if (mc->soc->num_channels && mc->bcast_ch_regs)
-+			mc_ch_writel(mc, MC_BROADCAST_CHANNEL, mc->soc->intmask,
-+				     MC_INTMASK);
-+		else
-+			mc_writel(mc, mc->soc->intmask, MC_INTMASK);
- 
- 		err = devm_request_irq(&pdev->dev, mc->irq, mc->soc->ops->handle_irq, 0,
- 				       dev_name(&pdev->dev), mc);
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index 062886e94c04..77b3873e245c 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -43,7 +43,21 @@
- #define MC_EMEM_ARB_OVERRIDE				0xe8
- #define MC_TIMING_CONTROL_DBG				0xf8
- #define MC_TIMING_CONTROL				0xfc
--
-+#define MC_ERR_VPR_STATUS				0x654
-+#define MC_ERR_VPR_ADR					0x658
-+#define MC_ERR_SEC_STATUS				0x67c
-+#define MC_ERR_SEC_ADR					0x680
-+#define MC_ERR_MTS_STATUS				0x9b0
-+#define MC_ERR_MTS_ADR					0x9b4
-+#define MC_ERR_ROUTE_SANITY_STATUS			0x9c0
-+#define MC_ERR_ROUTE_SANITY_ADR				0x9c4
-+#define MC_ERR_GENERALIZED_CARVEOUT_STATUS		0xc00
-+#define MC_ERR_GENERALIZED_CARVEOUT_ADR			0xc04
-+#define MC_GLOBAL_INTSTATUS				0xf24
-+#define MC_ERR_ADR_HI					0x11fc
-+
-+#define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
-+#define MC_INT_DECERR_GENERALIZED_CARVEOUT		BIT(17)
- #define MC_INT_DECERR_MTS				BIT(16)
- #define MC_INT_SECERR_SEC				BIT(13)
- #define MC_INT_DECERR_VPR				BIT(12)
-@@ -78,6 +92,8 @@
- 
- #define MC_TIMING_UPDATE				BIT(0)
- 
-+#define MC_BROADCAST_CHANNEL				~0
-+
- static inline u32 tegra_mc_scale_percents(u64 val, unsigned int percents)
- {
- 	val = val * percents;
-@@ -92,6 +108,24 @@ icc_provider_to_tegra_mc(struct icc_provider *provider)
- 	return container_of(provider, struct tegra_mc, provider);
- }
- 
-+static inline u32 mc_ch_readl(const struct tegra_mc *mc, int ch,
-+			       unsigned long offset)
-+{
-+	if (ch == MC_BROADCAST_CHANNEL)
-+		return readl_relaxed(mc->bcast_ch_regs + offset);
-+
-+	return readl_relaxed(mc->ch_regs[ch] + offset);
-+}
-+
-+static inline void mc_ch_writel(const struct tegra_mc *mc, int ch,
-+				u32 value, unsigned long offset)
-+{
-+	if (ch == MC_BROADCAST_CHANNEL)
-+		writel_relaxed(value, mc->bcast_ch_regs + offset);
-+	else
-+		writel_relaxed(value, mc->ch_regs[ch] + offset);
-+}
-+
- static inline u32 mc_readl(const struct tegra_mc *mc, unsigned long offset)
- {
- 	return readl_relaxed(mc->regs + offset);
-@@ -156,6 +190,7 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
- extern const struct tegra_mc_ops tegra186_mc_ops;
- #endif
- 
-+irqreturn_t tegra30_mc_handle_irq(int irq, void *data);
- extern const char * const tegra_mc_status_names[32];
- extern const char * const tegra_mc_error_names[8];
- 
-diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index 2ca8ce349188..bb2cc405eb20 100644
---- a/drivers/memory/tegra/tegra186.c
-+++ b/drivers/memory/tegra/tegra186.c
-@@ -16,6 +16,8 @@
- #include <dt-bindings/memory/tegra186-mc.h>
- #endif
- 
-+#include "mc.h"
-+
- #define MC_SID_STREAMID_OVERRIDE_MASK GENMASK(7, 0)
- #define MC_SID_STREAMID_SECURITY_WRITE_ACCESS_DISABLED BIT(16)
- #define MC_SID_STREAMID_SECURITY_OVERRIDE BIT(8)
-@@ -197,6 +199,7 @@ const struct tegra_mc_ops tegra186_mc_ops = {
- 	.resume = tegra186_mc_resume,
- 	.probe_device = tegra186_mc_probe_device,
- 	.map_regs = tegra186_mc_map_regs,
-+	.handle_irq = tegra30_mc_handle_irq,
- };
- 
- #if defined(CONFIG_ARCH_TEGRA_186_SOC)
-@@ -929,6 +932,12 @@ const struct tegra_mc_soc tegra186_mc_soc = {
- 	.clients = tegra186_mc_clients,
- 	.num_address_bits = 40,
- 	.num_channels = 4,
-+	.client_id_mask = 0xff,
-+	.intmask = MC_INT_DECERR_GENERALIZED_CARVEOUT | MC_INT_DECERR_MTS |
-+		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
- 	.ops = &tegra186_mc_ops,
-+	.ch_intmask = 0x0000000f,
-+	.status_reg_chan_shift = 0,
- };
- #endif
-diff --git a/drivers/memory/tegra/tegra194.c b/drivers/memory/tegra/tegra194.c
-index 94001174deaf..963d6085a247 100644
---- a/drivers/memory/tegra/tegra194.c
-+++ b/drivers/memory/tegra/tegra194.c
-@@ -1348,5 +1348,13 @@ const struct tegra_mc_soc tegra194_mc_soc = {
- 	.clients = tegra194_mc_clients,
- 	.num_address_bits = 40,
- 	.num_channels = 16,
-+	.client_id_mask = 0xff,
-+	.intmask = MC_INT_DECERR_ROUTE_SANITY |
-+		   MC_INT_DECERR_GENERALIZED_CARVEOUT | MC_INT_DECERR_MTS |
-+		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-+	.has_addr_hi_reg = true,
- 	.ops = &tegra186_mc_ops,
-+	.ch_intmask = 0x00000f00,
-+	.status_reg_chan_shift = 8,
- };
-diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
-index 6335a132be2d..44884fb78b5c 100644
---- a/drivers/memory/tegra/tegra234.c
-+++ b/drivers/memory/tegra/tegra234.c
-@@ -98,5 +98,12 @@ const struct tegra_mc_soc tegra234_mc_soc = {
- 	.clients = tegra234_mc_clients,
- 	.num_address_bits = 40,
- 	.num_channels = 16,
-+	.intmask = MC_INT_DECERR_ROUTE_SANITY |
-+		   MC_INT_DECERR_GENERALIZED_CARVEOUT | MC_INT_DECERR_MTS |
-+		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-+	.has_addr_hi_reg = true,
- 	.ops = &tegra186_mc_ops,
-+	.ch_intmask = 0x0000ff00,
-+	.status_reg_chan_shift = 8,
- };
-diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-index c3c121fbfbb7..284ad5988d10 100644
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -203,6 +203,9 @@ struct tegra_mc_soc {
- 	const struct tegra_smmu_soc *smmu;
- 
- 	u32 intmask;
-+	u32 ch_intmask;
-+	u32 status_reg_chan_shift;
-+	bool has_addr_hi_reg;
- 
- 	const struct tegra_mc_reset_ops *reset_ops;
- 	const struct tegra_mc_reset *resets;
--- 
-2.17.1
+> 
+> Shawn
+> 
+>>
+>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
+Acked-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+
+>> ---
+>>  arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts b/arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts
+>> index d40caf14ac4a..23be1ec538ba 100644
+>> --- a/arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts
+>> @@ -182,7 +182,7 @@ usb1@1 {
+>>  		#address-cells = <1>;
+>>  		#size-cells = <0>;
+>>  
+>> -		usbnet: usbether@1 {
+>> +		usbnet: ethernet@1 {
+>>  			compatible = "usb424,ec00";
+>>  			reg = <1>;
+>>  			local-mac-address = [ 00 00 00 00 00 00 ];
+>> -- 
+>> 2.30.2
+>>
