@@ -2,140 +2,334 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC108C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 20:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DAEC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 20:53:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232949AbiDFUyO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Apr 2022 16:54:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41206 "EHLO
+        id S232657AbiDFUzp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Apr 2022 16:55:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233448AbiDFUxz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 16:53:55 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2073.outbound.protection.outlook.com [40.107.212.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFF25C36C;
-        Wed,  6 Apr 2022 12:11:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b5zXX6NHTA+ut4n+FXrOMxuaSYxdElPhEsjvjhv3PYl40qWhWpxkzMIys1fMiNZHRKsei9YRtDDaKYPI48JrYrUzK6jtDDVBmuGvozDUdpbUo/gf4IJkqABTmrnihO5zJilnSU+75K+j8SNTOgSDJ8Vf7lQS5QMQNKdMBOyg0yzmi16x9rT2KNCm2rcSdG0DBM1IyqtgscZUpxeHHX3ebH0hGS71Anydpsosi2DhZCEpPqnAVcGfNWbea8sE7GvsmhGBs971z6iFMQo9I7YGbclEE7R/kV6qRgeTLrqCAbZDv9F/d6Af0tsV0y8RSI71+QsNFzje1B0IvYo17mVB5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hlka//4Mxl2tm5IJKIoD9ZpJxDxaTzSsoZObSYyr5iA=;
- b=Wase/AbSX3WfQ7Be0lOcbm5CF8RBnlAhPDd1PAzNJL6LWsjuKTvadTrpxTyfReQftFS+QjhbL2crIRQnlKncZhPeSVXD15XEYzpwTpx0wJEIpveOMX2Jmfi4jUHW0HSZX7mH/dni1OUFEulngQeYanZNfQp2myyudB+BgYppNOzgcCpnCB0nd1RwHtS6fS4aetDwObZsklb2PLAIplP6SYPMUHte4NbtTFGpTuDgk70qrfkQx8OBGfF/OHZ4JFHKVNyho1Bf5abvV3k4LMVXOyEwlierJrAZMXwwIQxO2hQ15CoTi96XHQKSLnnjM4G1tZdt+zv4qGHq9Jzrp84fzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hlka//4Mxl2tm5IJKIoD9ZpJxDxaTzSsoZObSYyr5iA=;
- b=qEMThgpd1jT0GbFxRbj470//U7LXkfxsRcZy/tr5YSbstMqiUqC65Yp3xLH3lqPh3z7OqHlFTdUpXDjPo95Lo8M7BcFdwNgP9ROHwHoqR3jpz0pE+cMS8xusL5DNKvosNY6KHjQRqgCKw9RhbBzHvuUudysTWHX1YuoC/rwfBSpp2Um4pqdPbxuA0SlY/xVNroxIFzLpyWAeySe0rb/YHlq1hJ1kKBxNQ5Te0LRY96t9WO3W7tMX1mo3e1vT51JLQc0AugZOjaVG9IdDdL65oASSbZflmXWjaL4ljdlgRKweWp8aL/Fit55O6+L2PEDgScU+6Kfi3f226kU7mBzL+w==
-Received: from MW4PR04CA0253.namprd04.prod.outlook.com (2603:10b6:303:88::18)
- by BN7PR12MB2642.namprd12.prod.outlook.com (2603:10b6:408:26::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Wed, 6 Apr
- 2022 19:11:47 +0000
-Received: from CO1NAM11FT041.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:88:cafe::41) by MW4PR04CA0253.outlook.office365.com
- (2603:10b6:303:88::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.19 via Frontend
- Transport; Wed, 6 Apr 2022 19:11:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT041.mail.protection.outlook.com (10.13.174.217) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5144.20 via Frontend Transport; Wed, 6 Apr 2022 19:11:47 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 6 Apr
- 2022 19:11:46 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 6 Apr 2022
- 12:11:45 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
- Transport; Wed, 6 Apr 2022 12:11:45 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/597] 5.10.110-rc2 review
-In-Reply-To: <20220406133013.264188813@linuxfoundation.org>
-References: <20220406133013.264188813@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S234611AbiDFUzR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 16:55:17 -0400
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C383E3D5194;
+        Wed,  6 Apr 2022 12:17:32 -0700 (PDT)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-e2442907a1so3633166fac.8;
+        Wed, 06 Apr 2022 12:17:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=+elv5nUcYO+9KxIPsGLm8mW7Otl7wTZ4tdEnucwBh/c=;
+        b=sLmennbdlBWZSwfIzISplH5XthZ61aHvz+6WZnd83vyqTRRWt1Pbkp/O/a851/RO8C
+         q2SgGyiGkBBCftm7FAd84G2yV432bSUITj/2fdlZ1ZuIlntVKv62b8l10UHFYAcfbtPx
+         s40EWiDhejKLwf+DSdBpbqAMXNMsLRpMSbaJn1yh6rjcHlbJDRy69hq0sKIzl1T5kMpL
+         Wn5XIfyFKVcpyLhZKY0ZKc4lkhwbln410YOYY6hyCJTW9iuDGWDhk7h0HliQwRJ0aIiA
+         TAxBDKo5w+0L1CTH7M7SgnWhIhQjURDcGc9BeI641owdWwZaqJqASz7hFQdJRWU/Hyck
+         S/2Q==
+X-Gm-Message-State: AOAM533uN4la/lF/WRHLyGLom3JOA73Yhc5wIm87erPjzlPtOruXHEGI
+        pzNUK2665wryGvA+TKmHEg==
+X-Google-Smtp-Source: ABdhPJzWUypFFpBzMufl7IKO2Huhe7Ol7N6/hBhhXxa5wzfiiHRzIVxOp8s5NaDTX2ceV8BZrbhv6g==
+X-Received: by 2002:a05:6870:9628:b0:e1:c420:af75 with SMTP id d40-20020a056870962800b000e1c420af75mr4617093oaq.246.1649272652036;
+        Wed, 06 Apr 2022 12:17:32 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id k30-20020a056870819e00b000e18ee342c0sm7171247oae.18.2022.04.06.12.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Apr 2022 12:17:31 -0700 (PDT)
+Received: (nullmailer pid 2614465 invoked by uid 1000);
+        Wed, 06 Apr 2022 19:17:30 -0000
+Date:   Wed, 6 Apr 2022 14:17:30 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, soc@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] arm64: dts: tegra: Fix boolean properties with values
+Message-ID: <Yk3nShkFzNJaI3/Z@robh.at.kernel.org>
 MIME-Version: 1.0
-Message-ID: <d412ded5-7d3a-4e02-837f-95a7b0885de4@rnnvmail203.nvidia.com>
-Date:   Wed, 6 Apr 2022 12:11:45 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3ed6dc6e-35cb-45bf-4f8a-08da18014bc4
-X-MS-TrafficTypeDiagnostic: BN7PR12MB2642:EE_
-X-Microsoft-Antispam-PRVS: <BN7PR12MB26425F7796CDCB0F83CAD1E6D9E79@BN7PR12MB2642.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2H5Y+LsTd2ilr8hfyONUvApGOjYJUnF8yabTZutgWQoJVH+ycwLePO070hp4mWzVdU/IdYx7kDX7q4o/Ujh6GaN2gCocrrxKkzb5AAzI7oSli/DKpvNXlP57NvItYr+qqJ7Ky7pS9PZkj0b9/yNPoBv2FcIKOaLBubjfAm/mYNzedJf8CRN2zXtjqajZ8QSM/8deU31V4P0t7FH+KDKm7KD7i+4JoIQqdnuq5sN6Ah75lB0wxHK4R1RwDsWbQnqvoSsk9F8HIMCCWmNTbViHNYv0aZ4ySmpPwCD/EVGrDNy4LBWJtQr40MoM9q2OATTXVq8Ob2U0SvgV7aOk6jvPcfPSJIzGVkiHH5Efddo5sEfZAaNkqsVLpIcYofO36iEo0U4ahDm90k03HNvu5NY8Prp1VR+JqPPbwp+FLmnxb8VlnBl0AG7rHyk93xabxew4mhcBocDOaNNh9zy8RFvyrg3QZ8DBtW9++VfwcEROoCLLH3YKjSbiZFp5oQ0lXWSg4d5SGgVaMG/UMgBjAxOy6WAk1JxAXyRXEpztY/qR0ZyIVpFpWDDDsnaoFJgehgP/ApnnRYyhSLVfMPN+qCmZhCyrRLP6hoFqdpxXwviXFhz/xtXfxQa+wpoOTKARVdFTddQgoUva3vSWgDNGkz2KpZD+fmrS6R8OsC6lkBUJJaALsJvq+U2nlHq7UjtByRNBz3UMFRi1S/mkZJqKUJwfAi83+nK7aEsyCXtzlu9VbCvKnZxYFoD3xnXkaAebb3qcfbevUvhBjzlg6SL3lxcD0AAU5BuBcntpeOZYBdz3jIQ=
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(82310400005)(47076005)(2906002)(336012)(426003)(186003)(26005)(40460700003)(316002)(81166007)(70586007)(4326008)(86362001)(8676002)(356005)(5660300002)(508600001)(966005)(31686004)(8936002)(70206006)(36860700001)(54906003)(31696002)(7416002)(6916009)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 19:11:47.0599
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ed6dc6e-35cb-45bf-4f8a-08da18014bc4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT041.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2642
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 06 Apr 2022 15:43:51 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.110 release.
-> There are 597 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 08 Apr 2022 13:27:53 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.110-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Boolean properties in DT are present or not present and don't take a value.
+A property such as 'foo = <0>;' evaluated to true. IOW, the value doesn't
+matter.
 
-All tests passing for Tegra ...
+It may have been intended that 0 values are false, but there is no change
+in behavior with this patch.
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    75 tests:	75 pass, 0 fail
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+Can someone apply this for 5.18.
 
-Linux version:	5.10.110-rc2-gf8a7d8111f45
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi            | 8 ++++----
+ .../boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts    | 8 ++++----
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi            | 6 +++---
+ arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi            | 6 +++---
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi            | 6 +++---
+ arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi            | 8 ++++----
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts        | 8 ++++----
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts             | 4 ++--
+ 8 files changed, 27 insertions(+), 27 deletions(-)
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+index aff857df25cf..1df84335925b 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -262,25 +262,25 @@ gpio3 {
+ 					gpio4 {
+ 						pins = "gpio4";
+ 						function = "32k-out1";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio5 {
+ 						pins = "gpio5";
+ 						function = "gpio";
+-						drive-push-pull = <0>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio6 {
+ 						pins = "gpio6";
+ 						function = "gpio";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio7 {
+ 						pins = "gpio7";
+ 						function = "gpio";
+-						drive-push-pull = <0>;
++						drive-push-pull;
+ 					};
+ 				};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+index 4631504c3c7a..1ab132c152bb 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+@@ -462,25 +462,25 @@ gpio3 {
+ 					gpio4 {
+ 						pins = "gpio4";
+ 						function = "32k-out1";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio5 {
+ 						pins = "gpio5";
+ 						function = "gpio";
+-						drive-push-pull = <0>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio6 {
+ 						pins = "gpio6";
+ 						function = "gpio";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio7 {
+ 						pins = "gpio7";
+ 						function = "gpio";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 				};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+index a7d7cfd66379..634d0f493c2e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+@@ -174,19 +174,19 @@ gpio3 {
+ 					gpio4 {
+ 						pins = "gpio4";
+ 						function = "32k-out1";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio6 {
+ 						pins = "gpio6";
+ 						function = "gpio";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio7 {
+ 						pins = "gpio7";
+ 						function = "gpio";
+-						drive-push-pull = <0>;
++						drive-push-pull;
+ 					};
+ 				};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
+index 0bd66f9c620b..0b219e72765e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
+@@ -148,19 +148,19 @@ gpio3 {
+ 					gpio4 {
+ 						pins = "gpio4";
+ 						function = "32k-out1";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio6 {
+ 						pins = "gpio6";
+ 						function = "gpio";
+-						drive-push-pull = <1>;
++						drive-push-pull;
+ 					};
+ 
+ 					gpio7 {
+ 						pins = "gpio7";
+ 						function = "gpio";
+-						drive-push-pull = <0>;
++						drive-push-pull;
+ 					};
+ 				};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 75eb743a7242..0fe772b04bd0 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -59,7 +59,7 @@ gpio0 {
+ 				gpio1 {
+ 					pins = "gpio1";
+ 					function = "fps-out";
+-					drive-push-pull = <1>;
++					drive-push-pull;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+ 					maxim,active-fps-power-up-slot = <7>;
+ 					maxim,active-fps-power-down-slot = <0>;
+@@ -68,7 +68,7 @@ gpio1 {
+ 				gpio2_3 {
+ 					pins = "gpio2", "gpio3";
+ 					function = "fps-out";
+-					drive-open-drain = <1>;
++					drive-open-drain;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+ 				};
+ 
+@@ -80,7 +80,7 @@ gpio4 {
+ 				gpio5_6_7 {
+ 					pins = "gpio5", "gpio6", "gpio7";
+ 					function = "gpio";
+-					drive-push-pull = <1>;
++					drive-push-pull;
+ 				};
+ 			};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+index 10347b6e6e84..936a309e288c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+@@ -1351,7 +1351,7 @@ gpio0 {
+ 				gpio1 {
+ 					pins = "gpio1";
+ 					function = "fps-out";
+-					drive-push-pull = <1>;
++					drive-push-pull;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+ 					maxim,active-fps-power-up-slot = <7>;
+ 					maxim,active-fps-power-down-slot = <0>;
+@@ -1360,14 +1360,14 @@ gpio1 {
+ 				gpio2 {
+ 					pins = "gpio2";
+ 					function = "fps-out";
+-					drive-open-drain = <1>;
++					drive-open-drain;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+ 				};
+ 
+ 				gpio3 {
+ 					pins = "gpio3";
+ 					function = "fps-out";
+-					drive-open-drain = <1>;
++					drive-open-drain;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+ 				};
+ 
+@@ -1379,7 +1379,7 @@ gpio4 {
+ 				gpio5_6_7 {
+ 					pins = "gpio5", "gpio6", "gpio7";
+ 					function = "gpio";
+-					drive-push-pull = <1>;
++					drive-push-pull;
+ 				};
+ 			};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index 72c2dc3c14ea..f6446120c267 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -195,7 +195,7 @@ gpio0 {
+ 				gpio1 {
+ 					pins = "gpio1";
+ 					function = "fps-out";
+-					drive-push-pull = <1>;
++					drive-push-pull;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
+ 					maxim,active-fps-power-up-slot = <0>;
+ 					maxim,active-fps-power-down-slot = <7>;
+@@ -204,7 +204,7 @@ gpio1 {
+ 				gpio2 {
+ 					pins = "gpio2";
+ 					function = "fps-out";
+-					drive-open-drain = <1>;
++					drive-open-drain;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+ 					maxim,active-fps-power-up-slot = <0>;
+ 					maxim,active-fps-power-down-slot = <7>;
+@@ -213,7 +213,7 @@ gpio2 {
+ 				gpio3 {
+ 					pins = "gpio3";
+ 					function = "fps-out";
+-					drive-open-drain = <1>;
++					drive-open-drain;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+ 					maxim,active-fps-power-up-slot = <4>;
+ 					maxim,active-fps-power-down-slot = <3>;
+@@ -227,7 +227,7 @@ gpio4 {
+ 				gpio5_6_7 {
+ 					pins = "gpio5", "gpio6", "gpio7";
+ 					function = "gpio";
+-					drive-push-pull = <1>;
++					drive-push-pull;
+ 				};
+ 			};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index a263d51882ee..e42384f097d6 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1386,7 +1386,7 @@ gpio0_1_2_7 {
+ 				gpio3 {
+ 					pins = "gpio3";
+ 					function = "fps-out";
+-					drive-open-drain = <1>;
++					drive-open-drain;
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+ 					maxim,active-fps-power-up-slot = <4>;
+ 					maxim,active-fps-power-down-slot = <2>;
+@@ -1395,7 +1395,7 @@ gpio3 {
+ 				gpio5_6 {
+ 					pins = "gpio5", "gpio6";
+ 					function = "gpio";
+-					drive-push-pull = <1>;
++					drive-push-pull;
+ 				};
+ 
+ 				gpio4 {
+-- 
+2.32.0
 
-Jon
