@@ -2,178 +2,232 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC56C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 17:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CEEC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 17:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238694AbiDFRTJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Apr 2022 13:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34408 "EHLO
+        id S238459AbiDFRUM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Apr 2022 13:20:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238708AbiDFRSx (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 13:18:53 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2082.outbound.protection.outlook.com [40.107.92.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2484488BCF;
-        Wed,  6 Apr 2022 08:17:22 -0700 (PDT)
+        with ESMTP id S238768AbiDFRUD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 13:20:03 -0400
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2079.outbound.protection.outlook.com [40.107.96.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA2A4882DC;
+        Wed,  6 Apr 2022 08:17:19 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FlHKO2IAU/kjkDu0AIfQKr05R/zEBTAIWZ20zS0Io3gPJQq0MT2pf6TnN5QYNWu+m7ow2HWH99hjKnKlvZWcIfNH0c1JUXufx0XawSKC/8ojjrMt7J0Ovs6aT1OUmoNt0nFLnGikYjuFK1wnisVBYSHqByVDkGn92nh6/1pirFCHGe+u9DtXju3scbLLVcRttMmVdKYUfyvWtI1cjvpdGx8kyjfV9qqAmokaikMauW6zi13dSigaw6NKhVaiKcBNl9FeKSPPMklJv5Z0N9KZWlllsDVzdV03CaFjiPjV8thoOPOxZiSkyfRlXj6/Pxxf1d0t8RuG/ntECeQCrclWsw==
+ b=FPRfY7tyUuFs7sSeqUWSyUlEsq+1bAGc5mGdWiTnBrfoRxkAP/Zo7T8zBVfki19kj3uuhCFyUn8Nv0OMY5A0SSF7hTxKCGEucGl8Sg56Gx/yse2QlCIV1hexNAOukmg5bcXUUyqDMH2TZys7A8ZLNx0ypLo5vDXCKKy1v2aQTkzQYJhRe79XA46l4CHUkymJnosw1nn2N1U0UXYHDUvQ55H8RrdrD4TFH3N62VkQ7z4sr1ao1s/b54iESovoW340Hk1vvjgQvDvVL1NBnj6KcXoBzUOilcGtWXkKhUq0B8QXZcrmtyaSxODcsKUVMhSSq2sUdDNRJj+r2ju1z+dFtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SsyXstWOKckViiNhj7eFuSiWnjNgv1uq0BjNnqJ0iWg=;
- b=bhR9z/61Ycmrv5m4ebR3a6if35Op4lUbM2sni4TX7BwFKNh7IGTChAPPORdKr0KIPaiCddJCWosiuGgLrNXNiQXNEBlBiqkxvdZ+bgUe3fW+qjVvDoOueaUwe2U+KQ1tTNiYvl7xERcf45jtEBtsuUFerDd6BjjlV8aLPfuYbGDwfSBoCOs5Ov6a3/O8RZMWrsDDONsqrHLO4XKeqOo7SkWLxO3pIS7tIeg4L1yuc4Oi0BEGpVOdb+BdofJMJAX16sJdyhkdR+ZCOnEtv4V+p8d5oiwYtOmZoG2yyrfow11VXjxzJbiNpwBFkvu6Cz8flTDSNBooetQpd6e3wZE2lw==
+ bh=4rDetAeciMhROcRyHawzT9aK2XpubFP+V9F0our3jak=;
+ b=JxjiN7l724ny8YXjMLAzSe1Yd6I2+TPe5tCFkxoB6Ao1WtFKd3QGTHImpv0bOMtJsvdeHjMlQ5kfN7vXKloZGb5pkxhabaJ/WvUB+Rr8lrl0i3ZJzivXibyNfqRB3UvZNzzcdDHwHbprYfjZvOxiYFfDKP82nPgOurqKrOAAwLLc7IKxRVlk/j6J7+UiKnEqqmeIO+L+MGulPQyLku3RHtM2fHK+6V4les36NeIXW+mYK4nRqEeOlR+N3x2xvUjyMuALhLgfbkUVchGL+kyqTZRJdyhNGEp5br39nSNr051cnoOa8eZG/sU49t2O76jH+DwLA9452JaFIpjmtQ04Eg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SsyXstWOKckViiNhj7eFuSiWnjNgv1uq0BjNnqJ0iWg=;
- b=UVIVevQgP3wvzpkQ+GV6Dghgn/6nkYThQz7LzeV5yExhGsQ2ryNeU7t6WxX6OTDjvYiX5NZSMsjv18fIEbYKGso4yzyUtDUqMyeZ6iiBQ7CvsGPOMnNq9R8OkxQcPtroxE9a2xqoR8jFclAkMkZoJ7yH5ZQoPue+QBuqDL1l0CsuBjmCXQM8Y3QMAP9RHG/6iiy3ssn41FNqS6oCHNvLw5aJMsWSoJRCVBX6JROBN6uUP1m2C9vSwLFWY6BnE8Qcs/5D/Os40yM8CxQFM3+ZJQ2ThrmDJWdo+2MhQHmgUGgQ5GAhUwxSW0qzIeu7cAcFHJj19Jy8rOMCGVApxHoLOA==
-Received: from DM6PR17CA0032.namprd17.prod.outlook.com (2603:10b6:5:1b3::45)
- by DM4PR12MB5215.namprd12.prod.outlook.com (2603:10b6:5:397::21) with
+ bh=4rDetAeciMhROcRyHawzT9aK2XpubFP+V9F0our3jak=;
+ b=icTMgYU5CveDmoL37yM2Cy0FnToNQF/LJT4nk85bbIfi26HN+V/sx0tortxsR0rE8EeabKLHKLOoHJH7UXlG9zYZQMs5Dxn5ZiKVK2SigHws+mTMjpcISnFHiNw+9KtJc0VZNRC1NpigfvdEXg8WLUwyzWc3s0clJs/nKRhXsP8e51JcdTcgzouNbdmwS5piqkFUTItmDOmCm1XpzD4wgW9ioGn8ocHV4RnHzgIM2q/x/viLk2e1FtwvqVD+MBUSp33+QqXOHJOuz8hZNmdsZfepJZN41GW2chSu9jM2dlaqZeU+GtdrJK220q9QLRBsvYs+LdCNijK8ps+Bf0+ssA==
+Received: from DM6PR08CA0040.namprd08.prod.outlook.com (2603:10b6:5:1e0::14)
+ by CH2PR12MB4149.namprd12.prod.outlook.com (2603:10b6:610:7c::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.21; Wed, 6 Apr
- 2022 15:17:19 +0000
-Received: from DM6NAM11FT015.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:1b3:cafe::d0) by DM6PR17CA0032.outlook.office365.com
- (2603:10b6:5:1b3::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Wed, 6 Apr
+ 2022 15:17:17 +0000
+Received: from DM6NAM11FT019.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:1e0:cafe::fd) by DM6PR08CA0040.outlook.office365.com
+ (2603:10b6:5:1e0::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31 via Frontend
- Transport; Wed, 6 Apr 2022 15:17:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ Transport; Wed, 6 Apr 2022 15:17:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- DM6NAM11FT015.mail.protection.outlook.com (10.13.172.133) with Microsoft SMTP
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.235) by
+ DM6NAM11FT019.mail.protection.outlook.com (10.13.172.172) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5144.20 via Frontend Transport; Wed, 6 Apr 2022 15:17:19 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 6 Apr
- 2022 15:17:19 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.5144.20 via Frontend Transport; Wed, 6 Apr 2022 15:17:17 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 6 Apr
+ 2022 15:17:16 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 6 Apr 2022
- 08:17:18 -0700
+ 08:17:15 -0700
 Received: from moonraker.nvidia.com (10.127.8.9) by mail.nvidia.com
  (10.129.68.7) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Wed, 6 Apr 2022 08:17:16 -0700
+ Transport; Wed, 6 Apr 2022 08:17:14 -0700
 From:   Jon Hunter <jonathanh@nvidia.com>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>
 CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        "Rajkumar Kasirajan" <rkasirajan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 2/2] clk: tegra: replace round_rate with determine_rate
-Date:   Wed, 6 Apr 2022 16:17:01 +0100
-Message-ID: <20220406151701.262056-2-jonathanh@nvidia.com>
+        Timo Alho <talho@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 1/2] clk: tegra: register clocks from root to leaf
+Date:   Wed, 6 Apr 2022 16:17:00 +0100
+Message-ID: <20220406151701.262056-1-jonathanh@nvidia.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220406151701.262056-1-jonathanh@nvidia.com>
-References: <20220406151701.262056-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a79d8e25-3ca5-466d-714d-08da17e08aea
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5215:EE_
-X-Microsoft-Antispam-PRVS: <DM4PR12MB521584C43769367C8D818C3FD9E79@DM4PR12MB5215.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 234cff5e-0043-42a0-8cc6-08da17e089ca
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4149:EE_
+X-Microsoft-Antispam-PRVS: <CH2PR12MB4149907868F0339EBE86EAA6D9E79@CH2PR12MB4149.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ruPZPppnWF4J8mKbDeJb6cbEdIv1+0ghz4OVk8avHG2SC0I6hWj1rwPxVfSWSpmDhnqoXkG1sTVzbHkeK/XqQsdbAVS1NImBHgY9+daRpCulb9MVcNRM6LEURn2Buy8vTPKC9bY+a0eAJvAKvIVBaCua8oFoPv1ZCkG0QHqa80lBgIKF34XEsHGj5DYKxsfYlZ+cU76XpS27Tomkdc/xbsaIt93Ko2i9dCHta6ODQnoq2L2jLaCwoXTAkz83NWwRxKeROkav6hFh6iDXQIzdv0p/7LHYqN2xQg0lLJ9p+CEgsY0B95NhnmUQDQfk0JxHWfJrwRkdY7f4Zc0tsQ/hFCwmH1o/q/Sw4QnV9Mm1ca/Bthz2oLfzDfOqIoPVacFNITA+XZjtzWCOm6XGmj9Urv69eujpYeTpmeDFrgZidPqcQskgwohjQo6CNdQey5upPqv/NrVzJIuHlM/cfUfde9U2XShtQmWsDZBMTcyUs/9EuRU9ghzqBfgfGc7FTFTCxOpGQB/cr+Z7p3xVn3VkQEXFYuDxB+3wdkHInH/NtKaGcv7tD5TJyKoWrsqiMWgLWXomBXEwfJbMcxMAkyHlmmuSHUq1GHtaoPKWZm+0mzVtxSLqTSuKKwUS+ipsOTVG9guuS0obm/W8yzDIX3+yOrvg8Lb2bO/McHCFIlgYI+oA7N7Swz37n/Npn8AHar3moABYg46I+lFbnrprLwkv7g==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(4326008)(8676002)(70206006)(70586007)(316002)(54906003)(110136005)(36860700001)(36756003)(81166007)(86362001)(356005)(40460700003)(82310400005)(83380400001)(2616005)(1076003)(26005)(186003)(508600001)(6666004)(7696005)(8936002)(47076005)(336012)(426003)(2906002)(5660300002)(107886003)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: JqykxryV/GkK+NA82cMra0wszPQAt0zXbRYDWG2u55thoJDLojCfFNhYliLMihHfdOSMAV5faFEEBgaNoRY53BvHvdQVr5xPGOieY6ORo7s4rCkqMwN9y7F8TmCjNvVJaFBiiDMIuDW3pdjL6KmXaXxGqRJro2gRrTl+AdrywLYfamULeOsFFN3+qU742CdHdc11rScVV+9/mCUeieeYdu4mg1gCfFMF2Q/D7gpTNT7aMrpAD7ArUXaTbZhzn2rdMWwDuB970JrbOkmMtZkGgD5mH6C3F358QQrYhQ4neHog3S1qPeke7Zrjz48vvDZ+4o/JOv99gmJbwqlyd3C4w7f/3MdIPyoCI+swE/9BZZSsVWuYr3V9KgsiF3EfDnTEw7qKB/VERdubMZ2r8awAyyCYOYF6dbuoK4gHD5VuuOJYe72GSBY2HkyqQDxTpo7nzw8Kvg/SIn8OUPZXYDdTj3C8yHj2r2Yk+gOuHsiJGF/C0cLO+ldHeAw5wuiIolnI3qq2F42430HrMSjQwALGvlZA/+pjwuYd4Kokz4JsurQCFqH1eiNbOAkAjSbXM4fcyDmZZTdL+HzTS8e+agomGjelhbxd1T07iwXCzo5i3wSsb2ID3lPEhzJsiVgcf4qFMg8Dz1EjB7lDShqwbskN5NJOMTQWoh8/UqhKKQ/a5z6s1FDBDNZjwHPahxY7Pfm3NaCVRcJhvR33PyWRAsuQVg==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(82310400005)(110136005)(40460700003)(316002)(508600001)(8936002)(36756003)(6666004)(54906003)(7696005)(5660300002)(81166007)(2906002)(356005)(70206006)(107886003)(47076005)(36860700001)(70586007)(83380400001)(86362001)(186003)(26005)(2616005)(426003)(336012)(8676002)(4326008)(1076003)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 15:17:19.5986
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 15:17:17.6962
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a79d8e25-3ca5-466d-714d-08da17e08aea
+X-MS-Exchange-CrossTenant-Network-Message-Id: 234cff5e-0043-42a0-8cc6-08da17e089ca
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT015.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT019.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5215
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4149
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Rajkumar Kasirajan <rkasirajan@nvidia.com>
+From: Timo Alho <talho@nvidia.com>
 
-Replace round_rate callback with determine_rate which can consider
-max_rate imposed by clk_set_max_rate while rounding clock rate.
+Current clock initialization causes intermediate registering of orphan
+clocks (i.e. a clock without a parent registered). CCF keeps track of
+orphan clocks and any time a new clock is registered, it will loop
+through the list of orphan and queries if the parent is now
+available. This operation triggers a clk operation(s), which is an IPC
+with BPMP-FW. Hence, due to the order of which the clock appear
+currently, this causes >5000 IPC messages to be sent to BPMP-FW during
+clock initialization.
 
-Note that if the determine_rate callback is defined it will be called
-instead of the round_rate callback when calling clk_round_rate(). By
-using determine_rate, the max rate returned when calling
-clk_round_rate() is now limited by the current max_rate.
+Optimize the clock probing by registering clocks hierarchically from
+root clock towards leafs.
 
-Signed-off-by: Rajkumar Kasirajan <rkasirajan@nvidia.com>
-[ Checkpatch warning fixed and commit message updated by
-  Jon Hunter <jonathanh@nvidia.com> ]
+Signed-off-by: Timo Alho <talho@nvidia.com>
+[ Checkpatch warnings fixed by Jon Hunter <jonathanh@nvidia.com> ]
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/clk/tegra/clk-bpmp.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-bpmp.c | 72 ++++++++++++++++++++++++++++--------
+ 1 file changed, 56 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index bacaa468e114..3748a39dae7c 100644
+index 6ecf18f71c32..bacaa468e114 100644
 --- a/drivers/clk/tegra/clk-bpmp.c
 +++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -164,15 +164,18 @@ static unsigned long tegra_bpmp_clk_recalc_rate(struct clk_hw *hw,
- 	return response.rate;
+@@ -448,15 +448,29 @@ static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
+ 	return count;
  }
  
--static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
--				      unsigned long *parent_rate)
-+static int tegra_bpmp_clk_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *rate_req)
++static unsigned int
++tegra_bpmp_clk_id_to_index(const struct tegra_bpmp_clk_info *clocks,
++			   unsigned int num_clocks, unsigned int id)
++{
++	unsigned int i;
++
++	for (i = 0; i < num_clocks; i++)
++		if (clocks[i].id == id)
++			return i;
++
++	return UINT_MAX;
++}
++
+ static const struct tegra_bpmp_clk_info *
+ tegra_bpmp_clk_find(const struct tegra_bpmp_clk_info *clocks,
+ 		    unsigned int num_clocks, unsigned int id)
  {
- 	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
- 	struct cmd_clk_round_rate_response response;
- 	struct cmd_clk_round_rate_request request;
- 	struct tegra_bpmp_clk_message msg;
-+	unsigned long rate;
- 	int err;
+ 	unsigned int i;
  
-+	rate = min(max(rate_req->rate, rate_req->min_rate), rate_req->max_rate);
+-	for (i = 0; i < num_clocks; i++)
+-		if (clocks[i].id == id)
+-			return &clocks[i];
++	i = tegra_bpmp_clk_id_to_index(clocks, num_clocks, id);
 +
- 	memset(&request, 0, sizeof(request));
- 	request.rate = min_t(u64, rate, S64_MAX);
++	if (i < num_clocks)
++		return &clocks[i];
  
-@@ -188,7 +191,9 @@ static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (err < 0)
- 		return err;
- 
--	return response.rate;
-+	rate_req->rate = (unsigned long)response.rate;
-+
-+	return 0;
+ 	return NULL;
+ }
+@@ -539,31 +553,57 @@ tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
+ 	return clk;
  }
  
- static int tegra_bpmp_clk_set_parent(struct clk_hw *hw, u8 index)
-@@ -290,7 +295,7 @@ static const struct clk_ops tegra_bpmp_clk_rate_ops = {
- 	.unprepare = tegra_bpmp_clk_unprepare,
- 	.is_prepared = tegra_bpmp_clk_is_prepared,
- 	.recalc_rate = tegra_bpmp_clk_recalc_rate,
--	.round_rate = tegra_bpmp_clk_round_rate,
-+	.determine_rate = tegra_bpmp_clk_determine_rate,
- 	.set_rate = tegra_bpmp_clk_set_rate,
- };
++static void tegra_bpmp_register_clocks_one(struct tegra_bpmp *bpmp,
++					   struct tegra_bpmp_clk_info *infos,
++					   unsigned int i,
++					   unsigned int count)
++{
++	unsigned int j;
++	struct tegra_bpmp_clk_info *info;
++	struct tegra_bpmp_clk *clk;
++
++	if (bpmp->clocks[i]) {
++		/* already registered */
++		return;
++	}
++
++	info = &infos[i];
++	for (j = 0; j < info->num_parents; ++j) {
++		unsigned int p_id = info->parents[j];
++		unsigned int p_i = tegra_bpmp_clk_id_to_index(infos, count,
++							      p_id);
++		if (p_i < count)
++			tegra_bpmp_register_clocks_one(bpmp, infos, p_i, count);
++	}
++
++	clk = tegra_bpmp_clk_register(bpmp, info, infos, count);
++	if (IS_ERR(clk)) {
++		dev_err(bpmp->dev,
++			"failed to register clock %u (%s): %ld\n",
++			info->id, info->name, PTR_ERR(clk));
++		/* intentionally store the error pointer to
++		 * bpmp->clocks[i] to avoid re-attempting the
++		 * registration later
++		 */
++	}
++
++	bpmp->clocks[i] = clk;
++}
++
+ static int tegra_bpmp_register_clocks(struct tegra_bpmp *bpmp,
+ 				      struct tegra_bpmp_clk_info *infos,
+ 				      unsigned int count)
+ {
+-	struct tegra_bpmp_clk *clk;
+ 	unsigned int i;
  
-@@ -299,7 +304,7 @@ static const struct clk_ops tegra_bpmp_clk_mux_rate_ops = {
- 	.unprepare = tegra_bpmp_clk_unprepare,
- 	.is_prepared = tegra_bpmp_clk_is_prepared,
- 	.recalc_rate = tegra_bpmp_clk_recalc_rate,
--	.round_rate = tegra_bpmp_clk_round_rate,
-+	.determine_rate = tegra_bpmp_clk_determine_rate,
- 	.set_parent = tegra_bpmp_clk_set_parent,
- 	.get_parent = tegra_bpmp_clk_get_parent,
- 	.set_rate = tegra_bpmp_clk_set_rate,
+ 	bpmp->num_clocks = count;
+ 
+-	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(clk), GFP_KERNEL);
++	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(struct tegra_bpmp_clk), GFP_KERNEL);
+ 	if (!bpmp->clocks)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < count; i++) {
+-		struct tegra_bpmp_clk_info *info = &infos[i];
+-
+-		clk = tegra_bpmp_clk_register(bpmp, info, infos, count);
+-		if (IS_ERR(clk)) {
+-			dev_err(bpmp->dev,
+-				"failed to register clock %u (%s): %ld\n",
+-				info->id, info->name, PTR_ERR(clk));
+-			continue;
+-		}
+-
+-		bpmp->clocks[i] = clk;
++		tegra_bpmp_register_clocks_one(bpmp, infos, i, count);
+ 	}
+ 
+ 	return 0;
 -- 
 2.25.1
 
