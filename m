@@ -2,110 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C364C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 16:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEFFC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 16:02:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236748AbiDFQCI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Apr 2022 12:02:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34548 "EHLO
+        id S236454AbiDFQEA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Apr 2022 12:04:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236933AbiDFQCC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 12:02:02 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F0F348A67;
-        Wed,  6 Apr 2022 06:32:19 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id yy13so4343466ejb.2;
-        Wed, 06 Apr 2022 06:32:19 -0700 (PDT)
+        with ESMTP id S236933AbiDFQDw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 12:03:52 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193D11F95CC
+        for <linux-tegra@vger.kernel.org>; Wed,  6 Apr 2022 06:34:46 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id s13so3244159ljd.5
+        for <linux-tegra@vger.kernel.org>; Wed, 06 Apr 2022 06:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=niunOJ3MaXUFHbr4lbaS6D1TbU9QBsWRT6UXQMa2ITQ=;
-        b=nkXV47q3wTX2IKhRobhX9k0wlO78UWo3Pu1cGioH8EzA5XNkKBINxeIcA6qNduJWCa
-         fdcbIZE2tAhplyS7K4DkNZc7pXz+ba22d/7OPtvHVcO8ha3afT9O8+Nb6qYgNVkUO9xS
-         Sr5MmOo8w1shDyK/prx9VliBS+wbmCPkNdjRgf04BlemlcmS5jDoyBQh6Olfqwe8lsLL
-         pz3NQHK4TIYz9T6ArCbIxNJjrEdEFKuf66ctnNgOGxwEkJUXAwencqQi4OZr0Pju/o51
-         YZy5feqpqgIeSXJhtsL/inBW/VXSW6jDf6pOZDA0vX0ceDeyH/ok5EHxGQO2lYte+COn
-         8glA==
+        bh=V90PxnafyyyrLitDFx01gCjLqvEmPMg8reBbGv3nzX8=;
+        b=dMC8KZhee89xqoNHh/xcEB6gtyP/V48ohjRqKkPVPBDt86eHLnV2oeNCSnaZIS/URP
+         rP+sZU2HaeQGP29hYMnVRUSeMpfPklicHiGNbu8xoCpsoi8NORi1UGoot2//zeUE9pN9
+         BFNF/L01Cqg6VvorM6pEngWN44uhFEKXbAAyTG89GfRRhPNVu4gZBlCZt7lmsGeVUZrh
+         TLzMvdtz/zw7OFNwyAfCB1RoVBQx8TzjemPHlBZz4ndhjskPnGvCVTmN0dB7TVbM/gQo
+         g2FcZOAEFytAyorf13tzXKWGKA6fwUSDIHmogftlU2gUYdaffctCObAaB/UQ6mWzqLm3
+         UKAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=niunOJ3MaXUFHbr4lbaS6D1TbU9QBsWRT6UXQMa2ITQ=;
-        b=LOZusQmECm8lRpSieExeNFBvPVLziJ1ZHlwSh4VyN1Uni/1Vd/fdVRRTdOnFkdQIvV
-         zgI5aIkotgUTT73zYoGcrQagLLNBwAl7iqpDIYOeQ/3/YsuQgXjY/RFu9rHQqDsTfyhj
-         mn0IqE3qkGNhF8VNN1fsnawJjVb3tsYUZ+RoL9+y/iDO+Ul88JESKz7Vz/x4QmbTceqK
-         PeNA3H3OsuvAclpUXsDlCuSbTYMTHve8OlbkFpAfk2zC9XJYubLcJ6c2OQKtZ8IK2IbD
-         ViYvSVj4g/ea3JQbvXRjoSdIdk0M3fji9rPmonVOMo4plRJGUjJ2Il1nci5jxJxZQ78m
-         O1Ng==
-X-Gm-Message-State: AOAM53180/iBi4Haci3uZWhgAKtMoh093x21GXsHVmVL0UIKm2LGRUTI
-        ltqyoW6jslhAvbhMm1N0iig=
-X-Google-Smtp-Source: ABdhPJyg/OBIlUh7EMNy4f0TXHsNiCHCCBnWiWJ/r6XOCH2Fjigs+ZL4f8/vPP3nFsOzBdCi0E1d+A==
-X-Received: by 2002:a17:907:7206:b0:6e6:d0b7:fd88 with SMTP id dr6-20020a170907720600b006e6d0b7fd88mr8074540ejc.121.1649251938297;
-        Wed, 06 Apr 2022 06:32:18 -0700 (PDT)
+        bh=V90PxnafyyyrLitDFx01gCjLqvEmPMg8reBbGv3nzX8=;
+        b=JvwmcF21JJa9GQwJsSyKqP7aQrWNuKhFdjhyd8LyR6U5GMbvR/ANbvBXy4hERjlJgF
+         k3PIt7pDQB3jzMxsojS7P9WyGeKqNtjqzEbjdWbapKlnIvUE3ePNBLZGf9fIN0jKDmHC
+         vJ/yCvkOO6/w7Rz+mTdgY4DEfvJajxYx947wm3R5H4VCx5C28m4A5ayx4u+piOlW9Srk
+         y61Jx8+zbr+PhMZj2rdtKMHvuywxGLuIeCI6JEvu9k5rqGJLLIDK4NcG8RPUpZMuWQ7a
+         qoke8Y/5AZv/TTkYx8rph1t1E3hn3vb5ynuWEGjh613iaKZCytwA5hbnBZKH04hxYeOZ
+         zm7A==
+X-Gm-Message-State: AOAM532tGgUPMu/4KIZlQ5Sa1SSxUN1oBmD8C3z9bsFqDMEPTGAaz2aZ
+        FbrFmp3pSxC1c9om7BarqqRwN7aSuik=
+X-Google-Smtp-Source: ABdhPJx/x6lyQdnpIRycXKcuk4GYHH8nwLJZrsbtHGG5dDG1zDXXnufRnzCG62cI8rElvOLOISaPQQ==
+X-Received: by 2002:a2e:a275:0:b0:24a:fe62:5e8d with SMTP id k21-20020a2ea275000000b0024afe625e8dmr5593201ljm.416.1649252084224;
+        Wed, 06 Apr 2022 06:34:44 -0700 (PDT)
 Received: from orome (pd9e518f7.dip0.t-ipconnect.de. [217.229.24.247])
-        by smtp.gmail.com with ESMTPSA id jt8-20020a170906ca0800b006df9b29eaf1sm6535874ejb.8.2022.04.06.06.32.16
+        by smtp.gmail.com with ESMTPSA id d13-20020a19384d000000b0044a20646b2bsm1836476lfj.205.2022.04.06.06.34.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 06:32:16 -0700 (PDT)
-Date:   Wed, 6 Apr 2022 15:32:14 +0200
+        Wed, 06 Apr 2022 06:34:42 -0700 (PDT)
+Date:   Wed, 6 Apr 2022 15:34:41 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        kernel-janitors@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: tegra: fix typos in comments
-Message-ID: <Yk2WXutks478t7MJ@orome>
-References: <20220318103729.157574-8-Julia.Lawall@inria.fr>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] gpu: host1x: Show all allocated syncpts via debugfs
+Message-ID: <Yk2W8XBRFmYdlitz@orome>
+References: <20220114140453.83863-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Yd0gt/eyj0AUzh/G"
+        protocol="application/pgp-signature"; boundary="WT2Xb/X6kQ2JXyny"
 Content-Disposition: inline
-In-Reply-To: <20220318103729.157574-8-Julia.Lawall@inria.fr>
+In-Reply-To: <20220114140453.83863-1-jonathanh@nvidia.com>
 User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Yd0gt/eyj0AUzh/G
+--WT2Xb/X6kQ2JXyny
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 18, 2022 at 11:37:03AM +0100, Julia Lawall wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
+On Fri, Jan 14, 2022 at 02:04:53PM +0000, Jon Hunter wrote:
+> When the host1x syncpts status is dumped via the debugfs, syncpts that
+> have been allocated but not yet used are not shown and so currently it
+> is not possible to see all the allocated syncpts. Update the path for
+> dumping the syncpt status via the debugfs to show all allocated syncpts
+> even if they have not been used yet. Note that when the syncpt status
+> is dumped by the kernel itself for debugging only the active syncpt are
+> shown.
 >=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  arch/arm/mach-tegra/platsmp.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/host1x/debug.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---Yd0gt/eyj0AUzh/G
+--WT2Xb/X6kQ2JXyny
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJNll4ACgkQ3SOs138+
-s6H3AA/8ChdHj0sdYCc2sTyKoZSt78iMAJsOzE65Xmc7eeU51exdcOjPG6EysgRb
-Lgp/iu4ViEw4u6P9pvsA/buET898qfi96cHeoCESqrDza4NEqSwL6+8vr+I3l+ZV
-YySgT6FbybCt6jmxo0BTg5Lw9Q/ytHl3RUtsS+CJCbmHd6jjzbXOoKdwCsyZZ/jh
-dz4Ht6iW9k+1xg2kgr1KCPiVN5INHBSfqKuS1l9OYSUme3vfjEPt+XlqkKms9L4c
-KNk1J5QQ/tujKhvUNNtjNstuVPAbNSue/FyTRPsoMH0ha8esJ9kZmA3UCEP/n3mY
-gYzaRpk1CNrUxdIhmry6evmKnmnybcKtYZaLnc3VAJaSPrUu3ewuF1bm9Qdpi8XH
-Ks4UsSDkrjUuPs+blRz5XKt/+AlQj9mnkAT4cUf/No9edP6oza0qyJXYcWRcYVRx
-bxthehCUCeJLtb5nnKZ0I7jTBPN/vBlS7rZkzbUtyKJRp0Kspamgy/aNqDu0ynjR
-IUaqFbe3r507xZP0za5BVEbOmdXy/+QwP3YvIdpj5/8i1JqBfRkeCMGDtWdu7/zC
-t0f5rRfJswHx1DtYxbzWI8ULphiYrV4bHFVklhmduOAYWwJ1uLgYFgLzb/MlcgK7
-quS3WEWN11kTWHlwm+BHv+3PCvxzIuiiNH5LbcKA1toTRlMWEwo=
-=Cw0h
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJNlvAACgkQ3SOs138+
+s6EFQxAAvtSZ2jDT2wJjYpay3l9DAsHVlTbhmo9HQ3mHj7Cw2QszY40waIe12TS1
+yRWgfL6U0XVfH1yC2uVKwDeA1HroRUuxJEcL6vcvNoZvhtwKIehgAeTbgonxcZWn
+bSlGymkAc1TWVbwcAM2EAo7JLN5Q0pABJ12/TUvOcmX/BZTapQmpJYrgGtGwQYnk
+6pUmCzxdvXq5U57rdkngklXAHtbXS4q9C4WXCRTFb0JWmuIndboBaEYdawqdx6r3
+gfJwnbCqAdHFMauIxcPHOvQXPVcX8u4wGygOkdMGI3brAX3X3x4yMJby/AdJHXYZ
+ma36sqKLsPAS2RXulo6ELWKQDeYuQ5DFiOwwbyte5RdNeADncHQX3e7rvBkBHKTB
+rlxAKltTAvLGABEdFxQXXASRiQcEbLxTmfNLgbpK+FFZPbYCWoKPcx+o9bngrZVh
+QL4oR8cQwDtiqTUlE9QeOGDsNSplkQAFRtF6ekN9gQph/yACRs3F4JDhjtavsuIp
+KCIdDpR7SGOc2GWpYTuiXEm9GOS6Cg2kuVB4Lk2GqRSd/mp5OBTglXZXQ1Ol6WED
+GKkhEPz8eXaFD68bI0EW1ZFQRKVIW2amjAwV8yjRHyeQx0vHvhyCYdCoj05tIVZ7
+ospSYxX39rBSW1jrCG3P3UBg/3IqVZUaPGJsSebOsQwlwgQE8TI=
+=FtrS
 -----END PGP SIGNATURE-----
 
---Yd0gt/eyj0AUzh/G--
+--WT2Xb/X6kQ2JXyny--
