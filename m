@@ -2,118 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D390C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 15:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D16CC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 15:41:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235838AbiDFPnL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Apr 2022 11:43:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39596 "EHLO
+        id S235964AbiDFPnf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Apr 2022 11:43:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236348AbiDFPm2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 11:42:28 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E37F554DECF
-        for <linux-tegra@vger.kernel.org>; Wed,  6 Apr 2022 06:13:23 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l62-20020a1c2541000000b0038e4570af2fso1588792wml.5
-        for <linux-tegra@vger.kernel.org>; Wed, 06 Apr 2022 06:13:23 -0700 (PDT)
+        with ESMTP id S236794AbiDFPnK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 11:43:10 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D74281C3164;
+        Wed,  6 Apr 2022 05:59:59 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id h4so3046045wrc.13;
+        Wed, 06 Apr 2022 05:59:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:subject:message-id:references:mime-version
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=45i/CvfTddvxblmcHvQsxR/rIMn4CHfVmtuYXswnVdA=;
-        b=ZcNkS8zLmzW0LMlBUGAKpiIBoOGt7ErwgWPdn3INTlgoe/0elFOEZYsKtZV4gRFKyB
-         6AIczeW0IlCpEi94avR1IPizDVjFUA8CwEzmQBio9r0djW5S7zS2AmmcxUmRWCkPPPto
-         CSEcun40J4Q7v9OPKfxUDDLT+/1bYTMUmPZaH7NK4GuiQwDSX4+jzcedM/ds6ZGNp9BM
-         EAcSETKjAQcqAseWTNdwV5l7I6tZiqH4fhP4QetU435FO5uCfhnTIB1AzdNefABplo8l
-         eGc3lfvWcp5PvWsTWzWJuETr1L3Tnt3KYpkuU5PLH3a418ASTOSFTx6LaHjQd9YD6+uu
-         Xm9A==
+        bh=cKbluJ9oRbV4IzOTY69trizh7tqvmPKxd4J/L2rG+nI=;
+        b=P0x6pqt8WbboX3Y1Pi4vFYM/6OKvCijMRDM3Vwkq89j9xj8QTT3R/NjqayAG1zJbo2
+         HfzSfxnjsLtQS9RpsQEGJ3ovGq8rXMsYhbRIMx/kQNcToNnQ5PLh5kQLKWH30Wj3/iZO
+         O1X13b5X/RyHM6JCoEWpTDimQzZQPtLbUC0H7wKKJwq/sXnZIlV+uFASPf6bbupKe0S+
+         /dDursx8MZUdNBBmh9+6WynHA1HwE3ixFFXwU3K0MZFL8yK4xZ86NcS3GZb8Sw+Rgtwd
+         gCgFiWae41xfCOcRJ1VJQANeZoraD2/sStgFY2zOsG8XBmGv3GeO01wvdMi8KBL8WsLn
+         ZXrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=45i/CvfTddvxblmcHvQsxR/rIMn4CHfVmtuYXswnVdA=;
-        b=EFwMKfPDNk0BQJZVBxj0xWDveaOX2rsUF37nmW+2c46wu7dSSgfILUfUNJlRFvfGjw
-         E/QlbG5bqVIigiAJo1PMiPdva2feeOb+t8X0dBoY4LAJ8BIsZEuVbw+KKEknUT606tHn
-         gyBTQeFi85E9oQwSWNPxVrpnb4WJGjFPr2SZLxvS2vSSFWtj3WQV5Pss/Z+Xi6mrMl0O
-         BxBJwg5kriVX/V/IrZruisNRhYN1uttl73JG6nuAwq4opY3vIaREfPRx1J6DO4sKnAFe
-         Vt3Cg5JyOIqh6eRVMJJSs+zPdDXnf0QQyg4wDIcuIgcY0duUrVFgcB0MoQihY+0gcSZm
-         fvUQ==
-X-Gm-Message-State: AOAM530aaz6Mds1i8Dg0so0XqesU53bAmQyzMYO5Yb+vohGu+pVcmVLG
-        V+G7w+IkCMEU9BaSL71B4jI=
-X-Google-Smtp-Source: ABdhPJyoPGoFFi1IQASTHhSfsn93F7IYsEEwkYxbqGGCWaBV5Gvcee+lcG3JeAihYRzWLP/t5HC1oA==
-X-Received: by 2002:a1c:7c0a:0:b0:38e:7c61:eb9c with SMTP id x10-20020a1c7c0a000000b0038e7c61eb9cmr7292405wmc.69.1649250801727;
-        Wed, 06 Apr 2022 06:13:21 -0700 (PDT)
+        bh=cKbluJ9oRbV4IzOTY69trizh7tqvmPKxd4J/L2rG+nI=;
+        b=lDFn7xjdODTFgRdQsJWufR+L9Kd7UND58R24Gu8V7xnsgOC9SzenBXYPGgo9fPGoev
+         g6HNTIXE/KQLwW8me8oCXsC98Tk4W0Oc2h3YgpJfnEOL9SgB1aLQWBHC+afyKJA75igh
+         C18AmPvi3UCA6z9QYWTSzXgGFJPmwXJMKSpZUP8G2LimUtQSBvpVX6TfOoAp/Q1AMKZn
+         2jz9yp71Ec77zujPLWeANt2qGbNm0qy40jFUVtQCpBspy6v4jfSawiZrnj2Pbldv29I3
+         KoIeT+mrmEU4U09v+rl/KhvJ7egr++zV1lFtRz4ZJkZE0ClplFerbpyyd4SG3X7aR5Jn
+         +10Q==
+X-Gm-Message-State: AOAM533YmXNDPZqUH4WAOiGl19hQPFttcfsqwQDX1b3Y9I1Btf6YONib
+        0jTDUpnXLWpy0RqDJZeeKLU=
+X-Google-Smtp-Source: ABdhPJyoXsbMi9rvSVSNemi3NQF4PH7yNOVWoEhFZN9luwp5ynOblzVSGl2nh+NtaZRzWvWsr84eFQ==
+X-Received: by 2002:a5d:628c:0:b0:206:e8b:d4ea with SMTP id k12-20020a5d628c000000b002060e8bd4eamr6533204wru.675.1649249998233;
+        Wed, 06 Apr 2022 05:59:58 -0700 (PDT)
 Received: from orome (pd9e518f7.dip0.t-ipconnect.de. [217.229.24.247])
-        by smtp.gmail.com with ESMTPSA id h8-20020a05600c350800b0038cc9096507sm5412067wmq.3.2022.04.06.06.13.20
+        by smtp.gmail.com with ESMTPSA id v13-20020adfe28d000000b0020375f27a5asm15175843wri.4.2022.04.06.05.59.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 06:13:20 -0700 (PDT)
-Date:   Wed, 6 Apr 2022 15:13:17 +0200
+        Wed, 06 Apr 2022 05:59:56 -0700 (PDT)
+Date:   Wed, 6 Apr 2022 14:59:54 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <mperttunen@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] gpu: host1x: Do not use mapping cache for job submissions
-Message-ID: <Yk2R7SBLy7ZnQJNR@orome>
-References: <20220324103025.2660775-1-thierry.reding@gmail.com>
+To:     Sagar Kamble <skamble@nvidia.com>
+Cc:     jonathanh@nvidia.com, digetx@gmail.com, yangyingliang@huawei.com,
+        ndesaulniers@google.com, pshete@nvidia.com, nathan@kernel.org,
+        kkartik@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] soc/tegra: fuse: Add nvmem cell lookup entries for
+ tegra194
+Message-ID: <Yk2Oyt/8nyIiXAUp@orome>
+References: <1648123728-16737-1-git-send-email-skamble@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HxpSELrC68ALoLx1"
+        protocol="application/pgp-signature"; boundary="fb8UKwPtxs0r3Jfw"
 Content-Disposition: inline
-In-Reply-To: <20220324103025.2660775-1-thierry.reding@gmail.com>
+In-Reply-To: <1648123728-16737-1-git-send-email-skamble@nvidia.com>
 User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---HxpSELrC68ALoLx1
+--fb8UKwPtxs0r3Jfw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 24, 2022 at 11:30:25AM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Thu, Mar 24, 2022 at 05:38:48PM +0530, Sagar Kamble wrote:
+> Add nvmem cell lookup entries for below fuse cells:
+>  - gcplex-config-fuse
+>  - pdi0
+>  - pdi1
 >=20
-> Buffer mappings used in job submissions are usually small and not
-> rapidly reused as opposed to framebuffers (which are usually large and
-> rapidly reused, for example when page-flipping between double-buffered
-> framebuffers). Avoid going through the mapping cache for these buffers
-> since the cache would also lead to leaks if nobody is ever releasing
-> the cache's last reference. For DRM/KMS these last references are
-> dropped when the framebuffers are removed and therefore no longer
-> needed.
+> Also include the device name prefix "gpu-" in the names of the gpu fuse
+> cells in nvmem_cell_info.
 >=20
-> While at it, also add a note about the need to explicitly remove the
-> final reference to the mapping in the cache.
->=20
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sagar Kamble <skamble@nvidia.com>
 > ---
->  drivers/gpu/host1x/job.c | 4 ++--
->  include/linux/host1x.h   | 5 +++++
->  2 files changed, 7 insertions(+), 2 deletions(-)
+>  drivers/soc/tegra/fuse/fuse-tegra.c   |  8 ++++----
+>  drivers/soc/tegra/fuse/fuse-tegra30.c | 17 ++++++++++++++++-
+>  2 files changed, 20 insertions(+), 5 deletions(-)
 
-Applied.
+Applied, thanks.
 
 Thierry
 
---HxpSELrC68ALoLx1
+--fb8UKwPtxs0r3Jfw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJNke0ACgkQ3SOs138+
-s6Gj6BAAm6+AEy/Yny+Uvy+JcDhdeZbr22dLQqGgQ+pkczQP97N3tG1pncFny09M
-+c8WGxZeqCpIxA+ddWgZ/JS4NskknWSDi6GHCeT3/8X5eEZ/bOhfnSnUP5zYAIB/
-yCRm2vJMzmhDUjsl7gie8R6wLaEL2yXpdKEFPBXrYYNym6wTfpOCdiLgkqW3MN1i
-8g8qOIZTpXKdKBMrlkHi2JSYAhKy9cT42lt0woiDEWiHS89C43Jok44piLPYNPhY
-iVZbm0jjdBOg1SUO4v0TDCXStx/zIPxMg1S7Y7Ip+flPzRhBFnIZZrbFPTPwF/u1
-G900plqSHoREcSX7nCTJCpf5xUZoUA6JM75rVtynBxEYXeuPiUjhA5mgCxQOCPbJ
-lDkncLImc3nOwWX/a2Ch5r65NCwHyF/pqturpXbFrM6RIAJBfVcvMRjjGUMSUeGd
-mZFwnwAQnwUT+3IGYqEo8kQhT1Qwhns+5wgrXzwuqVLqzxkb7GZBzf4VHR23vUzK
-HzPeZpKVVFPdJyiR7YgHCo5Wey+jyyNahgF4vEZEpdSV44xhgXYhNO2dxt2O1fmR
-3SEVUktaENFAjTi0l0buQxCCfbv7LjSXmHALdjG/XX3Bf0t2mUjnyYZR8SazMLa3
-ex8whYuqnHv0TIB9C7ptDhXS7NlpXFyp4Ikzx3Si7CEOuU2ZRI8=
-=vUAo
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJNjsoACgkQ3SOs138+
+s6F1sxAAhIJvgEn1IJfP6Zem11DQRMrS9o6IzvY0fCXHQlnL9j3laM0YQGUbPkvv
+rnahGW7J/Sh7qBNy7+g2VpxowWz9qTuW+73zD+dRu6aQLZe6gWgqSLXKhw9hLfcj
+kAbc2qirNTqEki/JjMBwyh9XgrH+5pS7eholS03+aW8qZx4S3wPFl1V2YBLELp46
+iPiiboF/7C8SqUgfdHUO5kC5Ac+BWpqcopBk2Xuh7+scO1VgGck5Hdja1tWoidoZ
+QZ/9oG++hQP8yqFCGzneIiHaGHyofwT9i4SWlyiOfO+iiIPm5mm4Gd/34/4+6Lnp
+5PiRH+qUMi+WBTU6enS99KIpPwu6DTStbSvGyEppapqJu3JiIoUMxGsN3o4SedEu
+R2bcrOqXzP4Oa1kegaWsFE13NKDFLODMDdDKYg7PUuGj4s8NSDL6mCTsC/XqvVXe
+TenKO5d1y3VEIYWKWYRfMYBJGGZT4qLofF695TqOE6NJ7L5eEVU8yg2Qdx25x58W
+/5P5Kpbnsqa1h1SN1yL77XTgJroehXzD+vOkRqp5XZ0/FbRzmU2z758I0WZuDkyd
+Vr8K2QRVZF1bROaVWAgoNC358Pe7N7eqjN6kz1Mz99WP7ENm6Yo8dRjvQpsMiBA8
+pgdvfj8Uu9UhX+PgsoDeNe77q4UK5wlPqbzT4yI2KP4IYPggPy0=
+=b689
 -----END PGP SIGNATURE-----
 
---HxpSELrC68ALoLx1--
+--fb8UKwPtxs0r3Jfw--
