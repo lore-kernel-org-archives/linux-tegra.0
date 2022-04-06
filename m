@@ -2,158 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1E9C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 15:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9EBC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 15:58:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234527AbiDFP5P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Apr 2022 11:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42024 "EHLO
+        id S236918AbiDFQAP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Apr 2022 12:00:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236677AbiDFP4v (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 11:56:51 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 655F136E2D;
-        Wed,  6 Apr 2022 06:21:12 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id k23so4254365ejd.3;
-        Wed, 06 Apr 2022 06:21:12 -0700 (PDT)
+        with ESMTP id S236889AbiDFP7q (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 11:59:46 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28B52264821;
+        Wed,  6 Apr 2022 06:28:45 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id p15so4259470ejc.7;
+        Wed, 06 Apr 2022 06:28:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=yESXEe0+6GUCQQAygJIy9zdNmWQoteoBqsLlYT+U3Pw=;
-        b=m4zu2aWGPii7y+HdtTFFDusKRn2vRLX86QvtKNwqf/ThhEGKyRuzHj2bLxziNYlJz7
-         LXOouEGWEHMBixmGR2izzkw8ifx/0WpBgQXwWgg+QYGZX/xpdNM3akrfO1KvVzkBn79g
-         hn3j8aIvqON4ybc6BCvU3FV6ziqo2ZvqjyYcgOhqBwk7vnVscLY6CdFEWd6ZpkwxpJU6
-         wxw55Ez89y7FsCfmDBxJjKXAortyZPOdA7I1/tkZ+ReKnQyNj0Fcw4o35m3jlPECi765
-         QLkDphzZiHVeXUtEmMT/INAICP80pYKLUEdEq6cyvUOK8SQRHRQkfq4pYQl/bsxCG4YV
-         z61w==
+        bh=Y+tMzJEriSaWDDcS/F97k/mKlm0p04jeY+Q3bPtBnbk=;
+        b=iJVjuq+iWz3a2mcUFxIo/n1DF1fY3FekGsrCqZYTm1GZ/mjgZ/KSlZprH2CpSqCKaT
+         F1NDl4m8Qven6W/xgwoEMrRrEppoiQI7UF+Qmgxa0wOO4CxhN/G+DPe1RgLKxXoCrf+0
+         ThxzXGl81Ab+IIMu8i8EnIBvA49M4tychCTE6VGDLdHGm5nZnay86zRR4AWymdkxR0tB
+         tlAfFZ3JfUbiI2f3x1cuKk5ohFfdz7Yaf02OzdJ/nzRP+UijrouGxYIrgleJ1jdomQrU
+         /RhVfsg5CtCoQ2xvUNzzJPORQvKqUFifcj6qvJ8Ypub5UCtn7BB3m8QIgIy4roENN/24
+         TFQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yESXEe0+6GUCQQAygJIy9zdNmWQoteoBqsLlYT+U3Pw=;
-        b=l7rA8AolElADzU7D98vaLK9D94Me6rnCwstmKkfNzSC/2JwmzzxIpcrHpnS8sVGbrj
-         vaFpVZZ+31xvAosal8iiYiDKXrj3sbogMqIq2mnNlSjPYebTCQDqy2env34p3vsiAA7l
-         g0vN0w7y8Nv16w0nWBt9bmi5uP5uEuiEN7dZxN/U+aOqQ3pnwApL1Cy1HJF4ptqQsaYi
-         44IyhRgBgxdNVi1o1DHN1aPwcjt5K8FRaA/D/1Dm2lfgSEGIwT1L8OdLoVnXQNDDiA0a
-         mJjmjJs4YW9mnpdHYE3NAznNf2o0bY1gxs0TVX+bNLWKdQEBYLjhfaOsb31XoytYgs0q
-         83lA==
-X-Gm-Message-State: AOAM532I7Q5toCYpSVWnLaFY4jAb5Fn/EY2kUw9b5mKYWLsoo6O7oEwO
-        KbfijPdym9UU/GNIeZLCpfQ=
-X-Google-Smtp-Source: ABdhPJyEt5Heruqfz5ekAxEIum+qU1DdZN/P4WNLsqph1vg/dCXgqNAQ/v26Wow97WmVAOa/yKEaHg==
-X-Received: by 2002:a17:906:4793:b0:6e8:289d:c13e with SMTP id cw19-20020a170906479300b006e8289dc13emr1351726ejc.489.1649251270789;
-        Wed, 06 Apr 2022 06:21:10 -0700 (PDT)
+        bh=Y+tMzJEriSaWDDcS/F97k/mKlm0p04jeY+Q3bPtBnbk=;
+        b=KCiTvIpqJI6q5zcQkOE3h+5ZxWqNzq6OtXdNGTx3i29hYKnAxvX0NMQVhm50xjVZ9z
+         sQeoL+Dgm2KPR5w1WLpo6mJBsWLpImV6+P5244WGVR91JjXJdJsiZeaa4FfaBv1NHOnS
+         iKJD7UUuw6medDrW/emBrZxLmS6n4DpGeLMEL6lqSwZhwDroq6MdumGzJzk8pbPNv3IJ
+         +2ndbjwHwF8TLqvtIKPkvhv/b20rhB3wcp1VaPGAAFdGt0+cgMSZLsVpSuKo0X0XKkDo
+         leasBeDRGIvDcOXLo9ev0MuaUidC86pe3ZMovgJUfP/uH687VnSlHMFu1AYKGEbHXzeX
+         1sJw==
+X-Gm-Message-State: AOAM530zxTB4eTkxBP9+W0ndxX6BFeeFo3HKgCbF4MtcRn9+c8VnkZGh
+        MqOfdq0dxW7n7AmskD1GKXS0X9rHShM=
+X-Google-Smtp-Source: ABdhPJwvZypJzouKpw2/wIKDrN9EweIIWpIu2XksEb6Oidd5j1g7WZrjsw/FptflpTIzTNh8q8X91g==
+X-Received: by 2002:a17:906:6a17:b0:6e1:13c3:e35c with SMTP id qw23-20020a1709066a1700b006e113c3e35cmr8577584ejc.760.1649251723343;
+        Wed, 06 Apr 2022 06:28:43 -0700 (PDT)
 Received: from orome (pd9e518f7.dip0.t-ipconnect.de. [217.229.24.247])
-        by smtp.gmail.com with ESMTPSA id j8-20020aa7c0c8000000b0041934547989sm8012684edp.55.2022.04.06.06.21.09
+        by smtp.gmail.com with ESMTPSA id rl16-20020a170907217000b006e4c1027beasm6485248ejb.55.2022.04.06.06.28.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 06:21:09 -0700 (PDT)
-Date:   Wed, 6 Apr 2022 15:21:07 +0200
+        Wed, 06 Apr 2022 06:28:42 -0700 (PDT)
+Date:   Wed, 6 Apr 2022 15:28:39 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: vic: fix unused-function warnings
-Message-ID: <Yk2TwyteFgeqkZE1@orome>
-References: <20220316183708.1505846-1-arnd@kernel.org>
- <20220316183708.1505846-2-arnd@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     broonie@kernel.org, jonathanh@nvidia.com,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        ashishsingha@nvidia.com, skomatineni@nvidia.com,
+        ldewangan@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de
+Subject: Re: [PATCH v4] arm64: tegra: Add QSPI controllers on Tegra234
+Message-ID: <Yk2VhxRrGfc1iSna@orome>
+References: <20220308183026.66394-1-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HP/3wNqKzbcc9NYj"
+        protocol="application/pgp-signature"; boundary="Qe6MpwpcFGIU3aX3"
 Content-Disposition: inline
-In-Reply-To: <20220316183708.1505846-2-arnd@kernel.org>
+In-Reply-To: <20220308183026.66394-1-kyarlagadda@nvidia.com>
 User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---HP/3wNqKzbcc9NYj
+--Qe6MpwpcFGIU3aX3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 16, 2022 at 07:36:47PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Mar 09, 2022 at 12:00:26AM +0530, Krishna Yarlagadda wrote:
+> From: Ashish Singhal <ashishsingha@nvidia.com>
 >=20
-> The use of the old-style SET_RUNTIME_PM_OPS() and
-> SET_SYSTEM_SLEEP_PM_OPS() macros requires function definitions
-> to be hidden to avoid
+> This adds the QSPI controllers on the Tegra234 SoC and populates the
+> SPI NOR flash device for the Jetson AGX Orin platform.
 >=20
-> drivers/gpu/drm/tegra/vic.c:326:12: error: 'vic_runtime_suspend' defined =
-but not used [-Werror=3Dunused-function]
->   326 | static int vic_runtime_suspend(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/tegra/vic.c:292:12: error: 'vic_runtime_resume' defined b=
-ut not used [-Werror=3Dunused-function]
->   292 | static int vic_runtime_resume(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~
->=20
-> Use the new-style SYSTEM_SLEEP_PM_OPS() and RUNTIME_PM_OPS() instead.
->=20
-> Fixes: 1e15f5b911d6 ("drm/tegra: vic: Stop channel on suspend")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Ashish Singhal <ashishsingha@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 > ---
->  drivers/gpu/drm/tegra/vic.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> v4:
+> sort definitions in include and dt files
 >=20
-> I see this warning on 5.17-rc8, but did not test it on linux-next,
-> which may already have a fix.
->=20
-> diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-> index 1e342fa3d27b..f56f5921a8c2 100644
-> --- a/drivers/gpu/drm/tegra/vic.c
-> +++ b/drivers/gpu/drm/tegra/vic.c
-> @@ -513,9 +513,8 @@ static int vic_remove(struct platform_device *pdev)
->  }
-> =20
->  static const struct dev_pm_ops vic_pm_ops =3D {
-> -	SET_RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
-> -	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> -				pm_runtime_force_resume)
-> +	RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
-> +	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
->  };
-> =20
->  struct platform_driver tegra_vic_driver =3D {
+>  .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  | 12 ++++++++
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 28 +++++++++++++++++++
+>  include/dt-bindings/clock/tegra234-clock.h    |  8 ++++++
+>  include/dt-bindings/reset/tegra234-reset.h    |  2 ++
+>  4 files changed, 50 insertions(+)
 
-Hi Arnd,
-
-is this a replacement for __maybe_unused annotations that we would
-typically use to address these? Is the ternary operator in PTR_IF enough
-to eliminate the warning? Does that work the same way for structure
-definitions as it does for conditionals where we use IS_ENABLED() to use
-the compiler's DCE for improved coverage?
-
-It looks like it, but just making sure because there's another patch
-that fixes this warning by adding __maybe_unused.
+Applied, thanks. I may need to split this up at a later point if there
+are conflicts in those include/dt-bindings files. Next time, please send
+these kinds of changes as two separate patches: 1) dt-bindings include
+changes and 2) DT changes.
 
 Thierry
 
---HP/3wNqKzbcc9NYj
+--Qe6MpwpcFGIU3aX3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJNk8MACgkQ3SOs138+
-s6EfghAAwTnmOPtrfC5Qjzo6Gd2YHQVRPrJ3nq4VQNddX2aPY7mHpsaQgU8pmrSH
-bt8kUlPsGkh8lEJ2B4b1/MlIxUrhoYj+XOjzHBl3McdHJMKTzhnyV45HU/nWUXtB
-rptRs0Bz5eekensRZTtklgjxmS/cdxeje8reyKe4aE809Mx8AhseYV9aHuB/jFkM
-QiqEcacQIJR+W5y+3AUrGjr6wBqaSt/69d5h9u0C25CD5mHygMMKu38+AMGFlvsL
-mhJktcKigjKSoUj3L5RKQKX6ZWqsEIHDjJbboiFcuFkGliwmaR6GZGIp1APCOnzW
-TOvxkgatv2gQsp4T1ymDr323n07eNYXzBq14uXu6tBkfaqaIQ23AwSHGjJIcKrER
-qAe67DgH8OKHUksMuLzHelPM52WeBsO/FkzPIkdD5srB6jZBaexwIsj15nT3Y9rc
-4vDM9/M3g7rISfa2WBfRrdSfx5Uf4bMpRedrpBowbC2I+DUgyQ1SlZIgktzr3r4k
-pj+2xeBTKfb0UjsgRYv6XA/nQ0zOiwgMio65gcOBwJIm4qxlcpbBW+KbtNiZz1qE
-0yYYfIx0IEiPyn5GJqVeS0vhvq0nfqAsbadY/hiB08xoPPqPPqjPSWKdgUxvxEzl
-Nyf6UNmidSSQzfiyR9xjdBMasYFYlFNuMiDKmNCGQqP/uslwIrA=
-=itVd
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJNlYcACgkQ3SOs138+
+s6FUxQ//eIRRaT4pW8HjD9kPvjwpFobCTv4eNE/psSq5/aZyWVuTATTVuIoPWMbr
+i13/VAY4S5SiQxjP8XkVFT0wqu5gm66acKjN1aAdA5NUiU9Za5J0TSTCY+cRdi9r
+TqM9m7RXJt3kyzd2XKPXVEwIF7kn1BrRmpXt+31+Mi49xjXRBREWdrfhXgDGs4vg
+bJly/l+JRI4FqwUf1gPUV0GtS/tJV/xDW3YlOt11vbbc+8L52yjl7ug8rLA0y2S0
+c4KAT1F6EUVvjR9uAVtuI+5wiT9r7dAkF3G0anbys7aACWoPsb2VI+3eRVjZkd8p
+8GNlcBoFlxUiQyIA3uqVD/SDVEZbzQkenTyajihS50ZmZ4VNR0M/JlEIubOXn57j
+Jzuwr8oizILXDotRoZS0UpXCN8upMyH2cKZzlegUzsH6Xur0Tg/LJO8oCrnNgiX6
+u8liE2k3zW3yFty+7uSEwIhGclmx+/5jyCkxTX219fdF9Kr/rGk5Hs5D1vyQpSFS
+HvA5fCBtR091I5e1lNzj3IvwCL5ghwSKBqsBG59kajHLadbc627j855De8hOL48n
+e+82ur15D7iVU6aIsOelnulkBHmlhkzmIBk37jyQwQChQnB0FrU03Mmel0Jjabb4
+pztgygMS8M3RkxP2Zhg0ZIjs6dKsCpurjVneHokuYJF51uTlgMk=
+=LOcs
 -----END PGP SIGNATURE-----
 
---HP/3wNqKzbcc9NYj--
+--Qe6MpwpcFGIU3aX3--
