@@ -2,232 +2,227 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CEEC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 17:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA76AC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Apr 2022 17:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238459AbiDFRUM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Apr 2022 13:20:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34516 "EHLO
+        id S238734AbiDFRUu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Apr 2022 13:20:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238768AbiDFRUD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 13:20:03 -0400
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2079.outbound.protection.outlook.com [40.107.96.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA2A4882DC;
-        Wed,  6 Apr 2022 08:17:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FPRfY7tyUuFs7sSeqUWSyUlEsq+1bAGc5mGdWiTnBrfoRxkAP/Zo7T8zBVfki19kj3uuhCFyUn8Nv0OMY5A0SSF7hTxKCGEucGl8Sg56Gx/yse2QlCIV1hexNAOukmg5bcXUUyqDMH2TZys7A8ZLNx0ypLo5vDXCKKy1v2aQTkzQYJhRe79XA46l4CHUkymJnosw1nn2N1U0UXYHDUvQ55H8RrdrD4TFH3N62VkQ7z4sr1ao1s/b54iESovoW340Hk1vvjgQvDvVL1NBnj6KcXoBzUOilcGtWXkKhUq0B8QXZcrmtyaSxODcsKUVMhSSq2sUdDNRJj+r2ju1z+dFtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4rDetAeciMhROcRyHawzT9aK2XpubFP+V9F0our3jak=;
- b=JxjiN7l724ny8YXjMLAzSe1Yd6I2+TPe5tCFkxoB6Ao1WtFKd3QGTHImpv0bOMtJsvdeHjMlQ5kfN7vXKloZGb5pkxhabaJ/WvUB+Rr8lrl0i3ZJzivXibyNfqRB3UvZNzzcdDHwHbprYfjZvOxiYFfDKP82nPgOurqKrOAAwLLc7IKxRVlk/j6J7+UiKnEqqmeIO+L+MGulPQyLku3RHtM2fHK+6V4les36NeIXW+mYK4nRqEeOlR+N3x2xvUjyMuALhLgfbkUVchGL+kyqTZRJdyhNGEp5br39nSNr051cnoOa8eZG/sU49t2O76jH+DwLA9452JaFIpjmtQ04Eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4rDetAeciMhROcRyHawzT9aK2XpubFP+V9F0our3jak=;
- b=icTMgYU5CveDmoL37yM2Cy0FnToNQF/LJT4nk85bbIfi26HN+V/sx0tortxsR0rE8EeabKLHKLOoHJH7UXlG9zYZQMs5Dxn5ZiKVK2SigHws+mTMjpcISnFHiNw+9KtJc0VZNRC1NpigfvdEXg8WLUwyzWc3s0clJs/nKRhXsP8e51JcdTcgzouNbdmwS5piqkFUTItmDOmCm1XpzD4wgW9ioGn8ocHV4RnHzgIM2q/x/viLk2e1FtwvqVD+MBUSp33+QqXOHJOuz8hZNmdsZfepJZN41GW2chSu9jM2dlaqZeU+GtdrJK220q9QLRBsvYs+LdCNijK8ps+Bf0+ssA==
-Received: from DM6PR08CA0040.namprd08.prod.outlook.com (2603:10b6:5:1e0::14)
- by CH2PR12MB4149.namprd12.prod.outlook.com (2603:10b6:610:7c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Wed, 6 Apr
- 2022 15:17:17 +0000
-Received: from DM6NAM11FT019.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:1e0:cafe::fd) by DM6PR08CA0040.outlook.office365.com
- (2603:10b6:5:1e0::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31 via Frontend
- Transport; Wed, 6 Apr 2022 15:17:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.235) by
- DM6NAM11FT019.mail.protection.outlook.com (10.13.172.172) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5144.20 via Frontend Transport; Wed, 6 Apr 2022 15:17:17 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 6 Apr
- 2022 15:17:16 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 6 Apr 2022
- 08:17:15 -0700
-Received: from moonraker.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Wed, 6 Apr 2022 08:17:14 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Timo Alho <talho@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/2] clk: tegra: register clocks from root to leaf
-Date:   Wed, 6 Apr 2022 16:17:00 +0100
-Message-ID: <20220406151701.262056-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S238834AbiDFRUZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Apr 2022 13:20:25 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1CB2320DB6;
+        Wed,  6 Apr 2022 08:18:23 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id k23so3728567wrd.8;
+        Wed, 06 Apr 2022 08:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U40qc6GQ+SYodTIzBOdqOZLwZjwjzDI8PPMpjuLO23M=;
+        b=qGKYV5W384zdQNQ8zw1aGodGOdwK21gS5pz/8yEd9vW0X5PoY6zkvso/jy0OD2ZpMl
+         R6cGMhidVv1PRHXyAaPP34WONoy9IJuyWOY3emvm4Pc+Qa0/ymhjs+k0p3UAMRjQ+bYP
+         S1Rbh1ffDrpxOH/N0luR86LQVoWz3wpcez7Eu7PpGXY4HjxsXBn136wgErywTkxrbtL4
+         gr0iQDR4xH6CCvfaUACbfC311BeaKXYn8VbIodSo173OK9I7wfNVegD4wBes3R2AfHCU
+         AvEfr4/J7RLiLGyHmQC0ixgvXmzLB1h6SNh2w4lY9ytIRlqnH6/1n3XGymYCLzEFLco+
+         GXAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U40qc6GQ+SYodTIzBOdqOZLwZjwjzDI8PPMpjuLO23M=;
+        b=O98jNvcPlf7gYGZn8jtRWy616QyxSuFE2WOM1fblkpojeVW9qBZZwnqas7P2hsOiAI
+         DLD720cCJOsmSDbtBxbUa15osxmroKvigjrEO+a+j3qT6DyxMnOB4djwspzeEkLi6Gn9
+         pG6UReDoTWR2thMae9YtEhfVQllFPakFnAcjccJfS4VgWWhdh/hfhRh7kBQl9si59LXu
+         iuf2rCj4uf9+kdDuYg4XCRBrzXRFgJqM8e1Sgp7HdiCXe0ozCOPffqCzU0wxaVFZS0Gh
+         QCx7bJLuv/5Ed1x3Fvr3jNYaFpZOpOy6dzq+zMtK7vwr7PxpacOcS35pkqH9Xgokzkk4
+         VB4g==
+X-Gm-Message-State: AOAM533hY4AvpUGioLtHhQjh1p/FIeu1gQ2HnSukaa7CfpRWhQX4CLVG
+        pNQuZ9rjXTtSmLc6uCnGrJs=
+X-Google-Smtp-Source: ABdhPJyCYjrUpOXRKUOMNlOKspcPqmHHJD1TpshBOnLqE/8upHaCgOAE57aqeMsyScW3cblgtmrGfw==
+X-Received: by 2002:a5d:528b:0:b0:203:d928:834c with SMTP id c11-20020a5d528b000000b00203d928834cmr7312065wrv.500.1649258302003;
+        Wed, 06 Apr 2022 08:18:22 -0700 (PDT)
+Received: from orome (pd9e518f7.dip0.t-ipconnect.de. [217.229.24.247])
+        by smtp.gmail.com with ESMTPSA id s10-20020adf978a000000b002060c258514sm10062623wrb.23.2022.04.06.08.18.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Apr 2022 08:18:20 -0700 (PDT)
+Date:   Wed, 6 Apr 2022 17:18:18 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Brian Silverman <bsilver16384@gmail.com>
+Cc:     Brian Silverman <brian.silverman@bluerivertech.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dan Murphy <dmurphy@ti.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>,
+        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Subject: Re: [RFC PATCH] can: m_can: Add driver for M_CAN hardware in NVIDIA
+ devices
+Message-ID: <Yk2vOj8wKi4FdPg2@orome>
+References: <20220106002514.24589-1-brian.silverman@bluerivertech.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 234cff5e-0043-42a0-8cc6-08da17e089ca
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4149:EE_
-X-Microsoft-Antispam-PRVS: <CH2PR12MB4149907868F0339EBE86EAA6D9E79@CH2PR12MB4149.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JqykxryV/GkK+NA82cMra0wszPQAt0zXbRYDWG2u55thoJDLojCfFNhYliLMihHfdOSMAV5faFEEBgaNoRY53BvHvdQVr5xPGOieY6ORo7s4rCkqMwN9y7F8TmCjNvVJaFBiiDMIuDW3pdjL6KmXaXxGqRJro2gRrTl+AdrywLYfamULeOsFFN3+qU742CdHdc11rScVV+9/mCUeieeYdu4mg1gCfFMF2Q/D7gpTNT7aMrpAD7ArUXaTbZhzn2rdMWwDuB970JrbOkmMtZkGgD5mH6C3F358QQrYhQ4neHog3S1qPeke7Zrjz48vvDZ+4o/JOv99gmJbwqlyd3C4w7f/3MdIPyoCI+swE/9BZZSsVWuYr3V9KgsiF3EfDnTEw7qKB/VERdubMZ2r8awAyyCYOYF6dbuoK4gHD5VuuOJYe72GSBY2HkyqQDxTpo7nzw8Kvg/SIn8OUPZXYDdTj3C8yHj2r2Yk+gOuHsiJGF/C0cLO+ldHeAw5wuiIolnI3qq2F42430HrMSjQwALGvlZA/+pjwuYd4Kokz4JsurQCFqH1eiNbOAkAjSbXM4fcyDmZZTdL+HzTS8e+agomGjelhbxd1T07iwXCzo5i3wSsb2ID3lPEhzJsiVgcf4qFMg8Dz1EjB7lDShqwbskN5NJOMTQWoh8/UqhKKQ/a5z6s1FDBDNZjwHPahxY7Pfm3NaCVRcJhvR33PyWRAsuQVg==
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(82310400005)(110136005)(40460700003)(316002)(508600001)(8936002)(36756003)(6666004)(54906003)(7696005)(5660300002)(81166007)(2906002)(356005)(70206006)(107886003)(47076005)(36860700001)(70586007)(83380400001)(86362001)(186003)(26005)(2616005)(426003)(336012)(8676002)(4326008)(1076003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 15:17:17.6962
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 234cff5e-0043-42a0-8cc6-08da17e089ca
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT019.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4149
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="BsOhgM1lSoA88Bvi"
+Content-Disposition: inline
+In-Reply-To: <20220106002514.24589-1-brian.silverman@bluerivertech.com>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Timo Alho <talho@nvidia.com>
 
-Current clock initialization causes intermediate registering of orphan
-clocks (i.e. a clock without a parent registered). CCF keeps track of
-orphan clocks and any time a new clock is registered, it will loop
-through the list of orphan and queries if the parent is now
-available. This operation triggers a clk operation(s), which is an IPC
-with BPMP-FW. Hence, due to the order of which the clock appear
-currently, this causes >5000 IPC messages to be sent to BPMP-FW during
-clock initialization.
+--BsOhgM1lSoA88Bvi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Optimize the clock probing by registering clocks hierarchically from
-root clock towards leafs.
+On Wed, Jan 05, 2022 at 04:25:09PM -0800, Brian Silverman wrote:
+> It's a M_TTCAN with some NVIDIA-specific glue logic and clocks. The
+> existing m_can driver works with it after handling the glue logic.
+>=20
+> The code is a combination of pieces from m_can_platform and NVIDIA's
+> driver [1].
+>=20
+> [1] https://github.com/hartkopp/nvidia-t18x-can/blob/master/r32.2.1/nvidi=
+a/drivers/net/can/mttcan/hal/m_ttcan.c
+>=20
+> Signed-off-by: Brian Silverman <brian.silverman@bluerivertech.com>
+> ---
+> I ran into bugs with the error handling in NVIDIA's m_ttcan driver, so I
+> switched to m_can which has been much better. I'm looking for feedback
+> on whether I should ensure rebasing hasn't broken anything, write up DT
+> documentation, and submit this patch for real. The driver works great,
+> but I've got some questions about submitting it.
+>=20
+> question: This has liberal copying of GPL code from NVIDIA's
+> non-upstreamed m_ttcan driver. Is that OK?
+>=20
+> corollary: I don't know what any of this glue logic does. I do know the
+> device doesn't work without it. I can't find any documentation of what
+> these addresses do.
+>=20
+> question: There is some duplication between this and m_can_platform. It
+> doesn't seem too bad to me, but is this the preferred way to do it or is
+> there another alternative?
+>=20
+> question: Do new DT bindings need to be in the YAML format, or is the
+> .txt one OK?
+>=20
+>  drivers/net/can/m_can/Kconfig       |  10 +
+>  drivers/net/can/m_can/Makefile      |   1 +
+>  drivers/net/can/m_can/m_can_tegra.c | 362 ++++++++++++++++++++++++++++
+>  3 files changed, 373 insertions(+)
+>  create mode 100644 drivers/net/can/m_can/m_can_tegra.c
 
-Signed-off-by: Timo Alho <talho@nvidia.com>
-[ Checkpatch warnings fixed by Jon Hunter <jonathanh@nvidia.com> ]
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/clk/tegra/clk-bpmp.c | 72 ++++++++++++++++++++++++++++--------
- 1 file changed, 56 insertions(+), 16 deletions(-)
+Sorry for the late reply, I completely missed this. I think along with
+the DT bindings it'd be great if you could provide DT updates for the
+platform that you tested this on so we can get that upstream as well.
 
-diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index 6ecf18f71c32..bacaa468e114 100644
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -448,15 +448,29 @@ static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
- 	return count;
- }
- 
-+static unsigned int
-+tegra_bpmp_clk_id_to_index(const struct tegra_bpmp_clk_info *clocks,
-+			   unsigned int num_clocks, unsigned int id)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < num_clocks; i++)
-+		if (clocks[i].id == id)
-+			return i;
-+
-+	return UINT_MAX;
-+}
-+
- static const struct tegra_bpmp_clk_info *
- tegra_bpmp_clk_find(const struct tegra_bpmp_clk_info *clocks,
- 		    unsigned int num_clocks, unsigned int id)
- {
- 	unsigned int i;
- 
--	for (i = 0; i < num_clocks; i++)
--		if (clocks[i].id == id)
--			return &clocks[i];
-+	i = tegra_bpmp_clk_id_to_index(clocks, num_clocks, id);
-+
-+	if (i < num_clocks)
-+		return &clocks[i];
- 
- 	return NULL;
- }
-@@ -539,31 +553,57 @@ tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
- 	return clk;
- }
- 
-+static void tegra_bpmp_register_clocks_one(struct tegra_bpmp *bpmp,
-+					   struct tegra_bpmp_clk_info *infos,
-+					   unsigned int i,
-+					   unsigned int count)
-+{
-+	unsigned int j;
-+	struct tegra_bpmp_clk_info *info;
-+	struct tegra_bpmp_clk *clk;
-+
-+	if (bpmp->clocks[i]) {
-+		/* already registered */
-+		return;
-+	}
-+
-+	info = &infos[i];
-+	for (j = 0; j < info->num_parents; ++j) {
-+		unsigned int p_id = info->parents[j];
-+		unsigned int p_i = tegra_bpmp_clk_id_to_index(infos, count,
-+							      p_id);
-+		if (p_i < count)
-+			tegra_bpmp_register_clocks_one(bpmp, infos, p_i, count);
-+	}
-+
-+	clk = tegra_bpmp_clk_register(bpmp, info, infos, count);
-+	if (IS_ERR(clk)) {
-+		dev_err(bpmp->dev,
-+			"failed to register clock %u (%s): %ld\n",
-+			info->id, info->name, PTR_ERR(clk));
-+		/* intentionally store the error pointer to
-+		 * bpmp->clocks[i] to avoid re-attempting the
-+		 * registration later
-+		 */
-+	}
-+
-+	bpmp->clocks[i] = clk;
-+}
-+
- static int tegra_bpmp_register_clocks(struct tegra_bpmp *bpmp,
- 				      struct tegra_bpmp_clk_info *infos,
- 				      unsigned int count)
- {
--	struct tegra_bpmp_clk *clk;
- 	unsigned int i;
- 
- 	bpmp->num_clocks = count;
- 
--	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(clk), GFP_KERNEL);
-+	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(struct tegra_bpmp_clk), GFP_KERNEL);
- 	if (!bpmp->clocks)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < count; i++) {
--		struct tegra_bpmp_clk_info *info = &infos[i];
--
--		clk = tegra_bpmp_clk_register(bpmp, info, infos, count);
--		if (IS_ERR(clk)) {
--			dev_err(bpmp->dev,
--				"failed to register clock %u (%s): %ld\n",
--				info->id, info->name, PTR_ERR(clk));
--			continue;
--		}
--
--		bpmp->clocks[i] = clk;
-+		tegra_bpmp_register_clocks_one(bpmp, infos, i, count);
- 	}
- 
- 	return 0;
--- 
-2.25.1
+I don't know much about CAN so I can't comment on those pieces, so just
+a few thoughts on the integration bits.
 
+> diff --git a/drivers/net/can/m_can/m_can_tegra.c b/drivers/net/can/m_can/=
+m_can_tegra.c
+[...]
+> +static int m_can_tegra_probe(struct platform_device *pdev)
+> +{
+[...]
+> +	ret =3D clk_set_parent(can_clk, pclk);
+> +	if (ret) {
+> +		goto probe_fail;
+> +	}
+> +
+> +	ret =3D fwnode_property_read_u32(dev_fwnode(&pdev->dev), "can-clk-rate"=
+, &rate);
+> +	if (ret) {
+> +		goto probe_fail;
+> +	}
+> +
+> +	new_rate =3D clk_round_rate(can_clk, rate);
+> +	if (!new_rate)
+> +		dev_warn(&pdev->dev, "incorrect CAN clock rate\n");
+> +
+> +	ret =3D clk_set_rate(can_clk, new_rate > 0 ? new_rate : rate);
+> +	if (ret) {
+> +		goto probe_fail;
+> +	}
+> +
+> +	ret =3D clk_set_rate(host_clk, new_rate > 0 ? new_rate : rate);
+> +	if (ret) {
+> +		goto probe_fail;
+> +	}
+> +
+> +	if (core_clk) {
+> +		ret =3D fwnode_property_read_u32(dev_fwnode(&pdev->dev), "core-clk-rat=
+e", &rate);
+> +		if (ret) {
+> +			goto probe_fail;
+> +		}
+> +		new_rate =3D clk_round_rate(core_clk, rate);
+> +		if (!new_rate)
+> +			dev_warn(&pdev->dev, "incorrect CAN_CORE clock rate\n");
+> +
+> +		ret =3D clk_set_rate(core_clk, new_rate > 0 ? new_rate : rate);
+> +		if (ret) {
+> +			goto probe_fail;
+> +		}
+> +	}
+
+Can all of this clock setup not be simplified by using the standard
+assigned-clocks, assigned-clock-parent and assigned-clock-rates DT
+properties?
+
+> +
+> +	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "m_can");
+> +	addr =3D devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(addr)) {
+> +		ret =3D PTR_ERR(addr);
+> +		goto probe_fail;
+> +	}
+> +
+> +	irq =3D platform_get_irq_byname(pdev, "int0");
+> +	if (irq < 0) {
+> +		ret =3D -ENODEV;
+> +		goto probe_fail;
+> +	}
+
+If there's only one of these, it doesn't make much sense to name them.
+But perhaps this can be discussed when reviewing the DT bindings.
+
+[...]
+> +static const struct of_device_id m_can_of_table[] =3D {
+> +	{ .compatible =3D "nvidia,tegra194-m_can", .data =3D NULL },
+
+We typically name the compatible string after the IP block name. The TRM
+references this as simply "CAN", so I think "nvidia,tegra194-can" would
+be more in line with what we use for existing Tegra hardware.
+
+Thierry
+
+--BsOhgM1lSoA88Bvi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJNrzgACgkQ3SOs138+
+s6H85hAAjpQPOGIqFtsZNbZ6ZNiio0A9LQhmCQTjcW2fIixt0g7Yqk4Hn8Df1FAg
+fJibRWvhio+Yor4JWUIP9NsntbgywoKoUSO1rX+LX66KP0Q23laOft/oYZc3soAu
+kVBeL4JsvcwJOKY1K/smty4OY2zC6G4fojBdYnc6kQhoFyTKxER9Tx6/RTRgDz/n
+8vbWejOjxEgrAJpJ+a/xKPCDf8N0qfXLITcdT2v29HAorgL8QmTnYZ3ky2ROMEKn
+BD08Dw14Fe45NCm98H/ACd4sFBuLKmaB2B9P+XlZVO4z8LDxAvpdHPoghD/nfGTa
+IV0RlDYgwpsq+hfwkucjNaznaQxK7uIYobCp8jqZXdqkxNELRCa+W/4Fk64b3oHQ
+f0r9HJWDFRkU/8XWFP2fxNvP52HhM1bAJIgoO/F2xLprgIjcniQCT1wbuGBkICxM
+g0mf7W0pbzHT2drCnaolNNTB2Zugey5ulbf0pFe88x9taFr2H0P3anEVJyasMJM/
+u0PFhTxcSd4osAV/eWNDYv4qE2pVASHt7TssKpPfiNdcu8+7BT0zKqqZfSG+NoLC
+Buh5kX8GP+hFpj1E8eQZfTztaL1R3dsJRCRB0i/V7do2KpSnTxUoC0XVVNBdevJZ
+OXzSVUXyfKhEnAsmp5It1Eso1iVTmMA5iO80O4T+ynxbK0DYfbw=
+=Nf/A
+-----END PGP SIGNATURE-----
+
+--BsOhgM1lSoA88Bvi--
