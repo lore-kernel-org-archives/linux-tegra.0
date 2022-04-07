@@ -2,134 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE53C46467
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Apr 2022 13:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B79C43217
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Apr 2022 17:51:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245708AbiDGNDg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Apr 2022 09:03:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37582 "EHLO
+        id S1346624AbiDGRxS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Apr 2022 13:53:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245664AbiDGNDc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Apr 2022 09:03:32 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA08822FDBF
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Apr 2022 06:01:32 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1ncRlI-0002Av-JA; Thu, 07 Apr 2022 15:01:20 +0200
-Received: from pengutronix.de (2a03-f580-87bc-d400-b17e-6ba8-60fd-ca2d.ip6.dokom21.de [IPv6:2a03:f580:87bc:d400:b17e:6ba8:60fd:ca2d])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id AAA2B5D40C;
-        Thu,  7 Apr 2022 13:01:18 +0000 (UTC)
-Date:   Thu, 7 Apr 2022 15:01:18 +0200
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Brian Silverman <bsilver16384@gmail.com>,
-        Brian Silverman <brian.silverman@bluerivertech.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dan Murphy <dmurphy@ti.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>,
-        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-Subject: Re: [RFC PATCH] can: m_can: Add driver for M_CAN hardware in NVIDIA
- devices
-Message-ID: <20220407130118.hp5szzhg4v6szmbq@pengutronix.de>
-References: <20220106002514.24589-1-brian.silverman@bluerivertech.com>
- <Yk2vOj8wKi4FdPg2@orome>
+        with ESMTP id S1346632AbiDGRxQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Apr 2022 13:53:16 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4714222EBE0
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Apr 2022 10:51:14 -0700 (PDT)
+Received: from [IPV6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1] (unknown [IPv6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id A72D61F45BED;
+        Thu,  7 Apr 2022 18:51:10 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1649353871;
+        bh=BM8w1p30B0kfQHenmrawFgD3CQMDeil5XCYiCXhxmj0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ZkLc9cMqzHTOxOGUTmrKf6vegatQR09XbK2itRSvnEyM2PLisAHaf91EjRvUxfpw5
+         RyBMCJC2kH/xgVJpC2EHUvIq9O9gx4evaixair/ggQ1t++qR4qQuMOUnJbNoI5YQIl
+         fFtvGdFAp5mOV4poUmnwETAVMu6dvqZCmShRL2dJsFXDrqUBpxxgWUDPpm0b5PuXnd
+         NUCGXX/k9v5vd81tQtBm3H7DkoPC8+CHjO15t2AA2UdCDa2FcSsEl7NQQnndZFqpfd
+         TtueGYKsUCrWPzc2f5scziU0i70NjH5/UceR57b6BQeoXRit6sbkKwGJ65rxegJ/67
+         HSYeEPtuvp3dg==
+Message-ID: <4cbc5418-b92b-1eed-44cc-82030616cb02@collabora.com>
+Date:   Thu, 7 Apr 2022 20:51:07 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="n7sqxwpygc2d6wn2"
-Content-Disposition: inline
-In-Reply-To: <Yk2vOj8wKi4FdPg2@orome>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] drm/tegra: Stop using iommu_present()
+Content-Language: en-US
+To:     Robin Murphy <robin.murphy@arm.com>, thierry.reding@gmail.com
+Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
+References: <25247f43672df0aa58c1952bf3df2bf948e9f8ae.1649168393.git.robin.murphy@arm.com>
+ <49165024-5f33-b6e6-7ec9-1ede6f562748@collabora.com>
+ <0f7bf1c2-7a21-13a0-8734-c53f624e1edd@arm.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <0f7bf1c2-7a21-13a0-8734-c53f624e1edd@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 4/6/22 21:06, Robin Murphy wrote:
+> On 2022-04-06 15:32, Dmitry Osipenko wrote:
+>> On 4/5/22 17:19, Robin Murphy wrote:
+>>> Remove the pointless check. host1x_drm_wants_iommu() cannot return true
+>>> unless an IOMMU exists for the host1x platform device, which at the
+>>> moment
+>>> means the iommu_present() test could never fail.
+>>>
+>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>>> ---
+>>>   drivers/gpu/drm/tegra/drm.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+>>> index 9464f522e257..bc4321561400 100644
+>>> --- a/drivers/gpu/drm/tegra/drm.c
+>>> +++ b/drivers/gpu/drm/tegra/drm.c
+>>> @@ -1149,7 +1149,7 @@ static int host1x_drm_probe(struct
+>>> host1x_device *dev)
+>>>           goto put;
+>>>       }
+>>>   -    if (host1x_drm_wants_iommu(dev) &&
+>>> iommu_present(&platform_bus_type)) {
+>>> +    if (host1x_drm_wants_iommu(dev)) {
+>>>           tegra->domain = iommu_domain_alloc(&platform_bus_type);
+>>>           if (!tegra->domain) {
+>>>               err = -ENOMEM;
+>>
+>> host1x_drm_wants_iommu() returns true if there is no IOMMU for the
+>> host1x platform device of Tegra20/30 SoCs.
+> 
+> Ah, apparently this is another example of what happens when I write
+> patches late on a Friday night...
+> 
+> So on second look, what we want to ascertain here is whether dev has an
+> IOMMU, but only if the host1x parent is not addressing-limited, either
+> because it can also use the IOMMU, or because all possible addresses are
+> small enough anyway, right? 
 
---n7sqxwpygc2d6wn2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes
 
-On 06.04.2022 17:18:18, Thierry Reding wrote:
-> On Wed, Jan 05, 2022 at 04:25:09PM -0800, Brian Silverman wrote:
-> > It's a M_TTCAN with some NVIDIA-specific glue logic and clocks. The
-> > existing m_can driver works with it after handling the glue logic.
-> >=20
-> > The code is a combination of pieces from m_can_platform and NVIDIA's
-> > driver [1].
-> >=20
-> > [1] https://github.com/hartkopp/nvidia-t18x-can/blob/master/r32.2.1/nvi=
-dia/drivers/net/can/mttcan/hal/m_ttcan.c
-> >=20
-> > Signed-off-by: Brian Silverman <brian.silverman@bluerivertech.com>
-> > ---
-> > I ran into bugs with the error handling in NVIDIA's m_ttcan driver, so I
-> > switched to m_can which has been much better. I'm looking for feedback
-> > on whether I should ensure rebasing hasn't broken anything, write up DT
-> > documentation, and submit this patch for real. The driver works great,
-> > but I've got some questions about submitting it.
-> >=20
-> > question: This has liberal copying of GPL code from NVIDIA's
-> > non-upstreamed m_ttcan driver. Is that OK?
-> >=20
-> > corollary: I don't know what any of this glue logic does. I do know the
-> > device doesn't work without it. I can't find any documentation of what
-> > these addresses do.
-> >=20
-> > question: There is some duplication between this and m_can_platform. It
-> > doesn't seem too bad to me, but is this the preferred way to do it or is
-> > there another alternative?
-> >=20
-> > question: Do new DT bindings need to be in the YAML format, or is the
-> > .txt one OK?
-> >=20
-> >  drivers/net/can/m_can/Kconfig       |  10 +
-> >  drivers/net/can/m_can/Makefile      |   1 +
-> >  drivers/net/can/m_can/m_can_tegra.c | 362 ++++++++++++++++++++++++++++
-> >  3 files changed, 373 insertions(+)
-> >  create mode 100644 drivers/net/can/m_can/m_can_tegra.c
->=20
-> Sorry for the late reply, I completely missed this.
+> Are we specifically looking for the host1x
+> having a DMA-API-managed domain, or can that also end up using the
+> tegra->domain or another unmanaged domain too?
 
-Brian Silverman left the company bluerivertech, I think there'll be no
-progress on the tegra glue code. :/
+We have host1x DMA that could have:
 
-Marc
+1. No IOMMU domain, depending on kernel/DT config
+2. Managed domain, on newer SoCs
+3. Unmanaged domain, on older SoCs
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+We have Tegra DRM devices which can:
 
---n7sqxwpygc2d6wn2
-Content-Type: application/pgp-signature; name="signature.asc"
+1. Be attached to a shared unmanaged tegra->domain, on older SoCs
+2. Have own managed domains, on newer SoCs
 
------BEGIN PGP SIGNATURE-----
+> I can't quite figure out
+> from the comments whether it's physical addresses, IOVAs, or both that
+> we're concerned with here.
 
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmJO4JsACgkQrX5LkNig
-0118nQf/R+gaw3X7zD28Ee0fb5e4rcIIsxL2d1wmxWL6jkgQ/kbNmDx+nKY12dBx
-pBsA69d5mP9I1RfXVOTaH6XFZd+iD2lcCrglXNaNyoo8O+p5y+nTKrVJr3yMEcHr
-8asGp052fHln6FPSNTV8mvQYadWVYxBjEQVBrHJNp8nl5dZAn6uvW/V9AzWKMLWf
-JOHv/Wu6229FlBnIcjHinPPHQFId5QaPS8sCZzGNefGZg3x1s9872bgvmBhqsQI+
-/HxHDGtSCbrYcpKT7ykpcW5hkuYO+0+kqJZ7gMAzznxnDuKZ40hVXY9x+EVudwMn
-dlYpGqn4jnFxYzDWJOr/tc1lKQF4JQ==
-=wQkw
------END PGP SIGNATURE-----
+Tegra DRM allocates buffers and submits jobs to h/w using host1x's
+channel DMA. DRM framebuffers' addresses are inserted into host1x
+command buffers by kernel driver and addresses beyond 32bit space need
+to be treated specially, we don't support such addresses in upstream.
 
---n7sqxwpygc2d6wn2--
+IOMMU AS is limited to 32bits on Tegra in upstream kernel for pre-T186
+SoCs, it hides 64bit addresses from host1x. Post-T186 SoCs have extra
+features that allow kernel driver not to bother about addresses.
+
+For newer ARM64 SoCs there is assumption in the Tegra drivers that IOMMU
+always presents, to simplify things.
