@@ -2,222 +2,134 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB41C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Apr 2022 06:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE53C46467
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Apr 2022 13:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241033AbiDGG03 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Apr 2022 02:26:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58134 "EHLO
+        id S245708AbiDGNDg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Apr 2022 09:03:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235849AbiDGG00 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Apr 2022 02:26:26 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2383E1F6865;
-        Wed,  6 Apr 2022 23:24:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RruoSiMT6Ddm9nsTdeCxci/ofhDnjD4Veppt6qmZl7iX8nvf9E631ascD6K837XGXlLZeGlAWITNBV43n8RBmds7Q9pD2lRldaUqYjuK56d8DJqcAcpi+8JDcj982uI4EbGtrukZK5jAW1ZTRbdZkoBHDrEchTdkM5XKfqepGB2zj+Wln7rjU3A+8Z0rlsx5Z3CvegDiGLwWKFP7gpC6O0MnHZJJBu4CK8Fi3JvMGwtH2MF5Br+QF2wt5eSot08XLZAC8aK8FIQltZuPhnEP3RJXV5/sMI+eGwpUnrr8PFIwCy9QORLXMeAplpaq4efVvH/fYgYRrQ3NqJ1O2t/3Ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aUrLqvG3KVidhzyqRBKsU5mvwUhfUkGRFkYeXSJLwQk=;
- b=D9AOwNCrcD9a62xPQC6yn/3UA4BTfxYMIT3+NnsL5oOaixFfDmQZq//8Zo5B91EubmJlsmdjNzceDfG5ImCa1vJ1PtekeAHBcSAW15Bxgz2UvX5HYUT/Ce06Fy5hBP+8sAXbanfmcyzKBdVAK0aoOFhe0Q+3a9kLg+YIVl6KBWniNlCHQheR1zUTGmcJtrbZRB4wgwCe9TA1adhT+a/bd2PoVLoC77tWd+e9iCYp9q5Zwg4nohFuZTOuRbD/aDXG+njxIHwxaEixVJ2bISe0GYyguydBjcpvgW+4bDsSGvXf2VFUAxMRqUo1iPFmyNUevPSpiLrtaD/5zJ7BIXinjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aUrLqvG3KVidhzyqRBKsU5mvwUhfUkGRFkYeXSJLwQk=;
- b=pIU1OjjcwDJOMFmfBzcwZ2yP1qf1WnbvChViEcKCakDQ/oCIuNb1VLRRKnFgUzVBSiSLfrr6kx+EFUDvz3sX0Gjunx4covzzgsY+VwrqtvanuZ7KeT0uGxhs21MdYu9AMVC0Kelh9LUF4RXb0m97u5zf+Pua8oFpUZeOtq3suAhn/BiFBBdsmBsqskzEg+Dm96FHgB7qzOnhyTteGOlB9U7GEvhwXmCLC2IjB16PlsQR7aEAnOBoGNyCkzIiV+jh7YHFKroSXZop+xf7Pa8IZ2aYNjI422vs+SQOe4GUd4ymUzk+q+JvbNsLI2jOARza+VfOoqvBkqXiJmLosOYdkw==
-Received: from MW4P221CA0001.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::6) by
- DM6PR12MB3626.namprd12.prod.outlook.com (2603:10b6:5:11f::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5144.22; Thu, 7 Apr 2022 06:24:25 +0000
-Received: from CO1NAM11FT034.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8b:cafe::b1) by MW4P221CA0001.outlook.office365.com
- (2603:10b6:303:8b::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.22 via Frontend
- Transport; Thu, 7 Apr 2022 06:24:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.234) by
- CO1NAM11FT034.mail.protection.outlook.com (10.13.174.248) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5144.20 via Frontend Transport; Thu, 7 Apr 2022 06:24:25 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Thu, 7 Apr
- 2022 06:24:23 +0000
-Received: from [10.41.21.79] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 6 Apr 2022
- 23:24:19 -0700
-Message-ID: <2713db35-927b-c3de-20ba-fb9c613c9291@nvidia.com>
-Date:   Thu, 7 Apr 2022 11:54:16 +0530
+        with ESMTP id S245664AbiDGNDc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Apr 2022 09:03:32 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA08822FDBF
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Apr 2022 06:01:32 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1ncRlI-0002Av-JA; Thu, 07 Apr 2022 15:01:20 +0200
+Received: from pengutronix.de (2a03-f580-87bc-d400-b17e-6ba8-60fd-ca2d.ip6.dokom21.de [IPv6:2a03:f580:87bc:d400:b17e:6ba8:60fd:ca2d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id AAA2B5D40C;
+        Thu,  7 Apr 2022 13:01:18 +0000 (UTC)
+Date:   Thu, 7 Apr 2022 15:01:18 +0200
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Brian Silverman <bsilver16384@gmail.com>,
+        Brian Silverman <brian.silverman@bluerivertech.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dan Murphy <dmurphy@ti.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>,
+        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Subject: Re: [RFC PATCH] can: m_can: Add driver for M_CAN hardware in NVIDIA
+ devices
+Message-ID: <20220407130118.hp5szzhg4v6szmbq@pengutronix.de>
+References: <20220106002514.24589-1-brian.silverman@bluerivertech.com>
+ <Yk2vOj8wKi4FdPg2@orome>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [Patch v3 3/9] dt-bindings: arm: tegra: Add NVIDIA Tegra194
- axi2apb binding
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh@kernel.org>
-CC:     linux-tegra <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-        <kbuild-all@lists.01.org>, <bbasu@nvidia.com>, <vsethi@nvidia.com>,
-        <jsequeira@nvidia.com>, Thierry Reding <treding@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>
-References: <20211221125117.6545-1-sumitg@nvidia.com>
- <20211221125117.6545-4-sumitg@nvidia.com>
- <YcNv7xm19sFTlfjW@robh.at.kernel.org>
- <226fd57c-2631-ec7a-fc48-d6547d557681@nvidia.com>
- <CAL_Jsq+=hGG-cMwvM0sKFW=Rwa56=fqS379jL4ZjSyDKOia-RA@mail.gmail.com>
- <YhY1Hhgz/O724oYL@orome> <e1d484b5-b755-e406-8711-62f3756759f3@nvidia.com>
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <e1d484b5-b755-e406-8711-62f3756759f3@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 68f14d72-93bc-4b50-4c16-08da185f4311
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3626:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB3626F150622449457B5CD7B8B9E69@DM6PR12MB3626.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OQRX9GrheTdA/W+rhsHDPV5JhKAt9wynkmAuYi63J1A/2UZUFvN92bJlwisnd6V7bUi9phkAayOPn6C4+NkIcc2Sey6BYa62mFGQ364PBIScoObBmqbhgdFMNoaSmutVLJ5EAiNpjhF2J4wFlA0vgD3qgjwdgfnuB8uWcdB52MoKYUZyQWVqrmpNNH1qr6dCb76CoTT22BvNYeGTAkuVa22Qm6gQ9DGmTEWhoJuv/oPxlwGyFONYs6j/ZDPWsoKyo61cYSQkW8fG/A7pApWKX/EFL3gnkoFPuHL6CjpEUXA1hs06n2S6bFyA1oG+pUFO32iuB2c2vn5FuNaI7AdZJOOg63tF0URR6zx9kCozoumRr88J584lqHf7z9SetLIi5oYW3TkXwT6KqkqoZpH0W1nL9NjebONh7uFgc7gN4OHhhU03borYbft23F0uG5txJ+jiyp5pFD9qnGPUaYnaKnp1meeKXSyIKGXCA6XuGONHzAy6sJ/5+VhIXMnPHdl4jrgKStRdVoO6ZOxVY1/tJH2DNv3jWHhEQllSu9/TOc/HL0nHsLCnRUhjRUFGmCY+UzgwwyzTIvbH/5dlEiAbNOgpcMnvlr+RLWnFnn/sEXaFL8XvOVS2ibMb5hS2gZOn/98VqABC7R9QdTa1GmdOHB0J1FC+KWbXSgfAcpjXGCWwcJ3m4KmP5I/sgTzRgyQt5wxmnagNIzhfVIAApsNaOinzrL/ePk3F1tUx8vmE3qvGFR2qDX0QwwjWIEOYtAZPfxdD7KFjbFfPPYAiTOaX0BV7d3jUODDj4xlXjwuxLyDgUbaH6fSGfvGSk9RcxPpPXRWTgEZYchu7fUl+U19MNoad2CoXpauVs25QS6l94UZu0jESF1XYSnJZt22VC9V3
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(2906002)(186003)(16526019)(336012)(26005)(5660300002)(82310400005)(426003)(316002)(36756003)(40460700003)(31686004)(31696002)(8936002)(16576012)(36860700001)(8676002)(4326008)(70586007)(70206006)(2616005)(107886003)(356005)(47076005)(54906003)(6666004)(110136005)(508600001)(86362001)(81166007)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2022 06:24:25.1263
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68f14d72-93bc-4b50-4c16-08da185f4311
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT034.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3626
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="n7sqxwpygc2d6wn2"
+Content-Disposition: inline
+In-Reply-To: <Yk2vOj8wKi4FdPg2@orome>
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-> 
->>>>>> Add device-tree binding documentation to represent the axi2apb 
->>>>>> bridges
->>>>>> used by Control Backbone (CBB) 1.0 in Tegra194 SOC. All errors for 
->>>>>> APB
->>>>>> slaves are reported as slave error because APB bas single bit to 
->>>>>> report
->>>>>> error. So, CBB driver needs to further check error status 
->>>>>> registers of
->>>>>> all the axi2apb bridges to find error type.
->>>>>>
->>>>>> Signed-off-by: Sumit Gupta<sumitg@nvidia.com>
->>>>>> Signed-off-by: Thierry Reding<treding@nvidia.com>
->>>>>> ---
->>>>>>    .../arm/tegra/nvidia,tegra194-axi2apb.yaml    | 40 
->>>>>> +++++++++++++++++++
->>>>>>    1 file changed, 40 insertions(+)
->>>>>>    create mode 100644 
->>>>>> Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml 
->>>>>>
->>>>>>
->>>>>> diff --git 
->>>>>> a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml 
->>>>>> b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml 
->>>>>>
->>>>>> new file mode 100644
->>>>>> index 000000000000..788a13f8aa93
->>>>>> --- /dev/null
->>>>>> +++ 
->>>>>> b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml 
->>>>>>
->>>>>> @@ -0,0 +1,40 @@
->>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>>> +%YAML 1.2
->>>>>> +---
->>>>>> +$id:"http://devicetree.org/schemas/arm/tegra/nvidia,tegra194-axi2apb.yaml#" 
->>>>>>
->>>>>> +$schema:"http://devicetree.org/meta-schemas/core.yaml#"
->>>>>> +
->>>>>> +title: NVIDIA Tegra194 AXI2APB bridge
->>>>>> +
->>>>>> +maintainers:
->>>>>> +  - Sumit Gupta<sumitg@nvidia.com>
->>>>>> +
->>>>>> +properties:
->>>>>> +  $nodename:
->>>>>> +    pattern: "^axi2apb@([0-9a-f]+)$"
->>>>>> +
->>>>>> +  compatible:
->>>>>> +    enum:
->>>>>> +      - nvidia,tegra194-axi2apb
->>>>>> +
->>>>>> +  reg:
->>>>>> +    maxItems: 6
->>>>>> +    description: Physical base address and length of registers 
->>>>>> for all bridges
->>>>>> +
->>>>>> +additionalProperties: false
->>>>>> +
->>>>>> +required:
->>>>>> +  - compatible
->>>>>> +  - reg
->>>>>> +
->>>>>> +examples:
->>>>>> +  - |
->>>>>> +    axi2apb: axi2apb@2390000 {
->>>>> As axi2apb appears to be a bus, then all the child nodes (APB devices)
->>>>> should be under this node.
->>>> axi2apb is a bridge which coverts an AXI to APB interface and not a 
->>>> bus.
->>> A bus and bridge node are pretty much one and the same in DT
->>> representation. A PCI host bridge has a PCI bus beneath it for
->>> example.
->> Sorry for taking so long to reply, this fell through the cracks.
->>
->> These aren't really bridges as such. CBB (which we call /bus@0 in DT) is
->> a sort of large container for all IP. Within that there are various shim
->> layers that connect these "legacy" interfaces to CBB. I suppose you
->> could call them bridges, but it's a bit of a stretch. From a software
->> point of view there is no observable translation happening. The only
->> reason why we need this is for improved error reporting.
->>
->> The TRM also doesn't make a distinction between the various bridges. The
->> devices are all just mapped into a single address space via the CBB.
->>
->> My understanding is that this is also gone in newer chips, so matters
->> become a bit simpler there.
->>
->> Reorganizing /bus@0 into multiple bridges and busses would be a lot of
->> churn and likely confuse people that want to correlate what's in the TRM
->> to what's in DT, so I don't think it's worth it.
->>
->> For newer chips we may want to keep this in mind so we structure the DT
->> more accurately from the beginning, though as I said, things have been
->> simplified a bit, so this may not be an issue anymore.
->>
->> Thierry
-> 
-> Hi Thierry,
-> Thank you for answering the concern.
-> 
-> Hi Rob,
-> Can you please ACK to help queue the patch series for next.
-> 
-> Regards,
-> Sumit
+--n7sqxwpygc2d6wn2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ping.
+On 06.04.2022 17:18:18, Thierry Reding wrote:
+> On Wed, Jan 05, 2022 at 04:25:09PM -0800, Brian Silverman wrote:
+> > It's a M_TTCAN with some NVIDIA-specific glue logic and clocks. The
+> > existing m_can driver works with it after handling the glue logic.
+> >=20
+> > The code is a combination of pieces from m_can_platform and NVIDIA's
+> > driver [1].
+> >=20
+> > [1] https://github.com/hartkopp/nvidia-t18x-can/blob/master/r32.2.1/nvi=
+dia/drivers/net/can/mttcan/hal/m_ttcan.c
+> >=20
+> > Signed-off-by: Brian Silverman <brian.silverman@bluerivertech.com>
+> > ---
+> > I ran into bugs with the error handling in NVIDIA's m_ttcan driver, so I
+> > switched to m_can which has been much better. I'm looking for feedback
+> > on whether I should ensure rebasing hasn't broken anything, write up DT
+> > documentation, and submit this patch for real. The driver works great,
+> > but I've got some questions about submitting it.
+> >=20
+> > question: This has liberal copying of GPL code from NVIDIA's
+> > non-upstreamed m_ttcan driver. Is that OK?
+> >=20
+> > corollary: I don't know what any of this glue logic does. I do know the
+> > device doesn't work without it. I can't find any documentation of what
+> > these addresses do.
+> >=20
+> > question: There is some duplication between this and m_can_platform. It
+> > doesn't seem too bad to me, but is this the preferred way to do it or is
+> > there another alternative?
+> >=20
+> > question: Do new DT bindings need to be in the YAML format, or is the
+> > .txt one OK?
+> >=20
+> >  drivers/net/can/m_can/Kconfig       |  10 +
+> >  drivers/net/can/m_can/Makefile      |   1 +
+> >  drivers/net/can/m_can/m_can_tegra.c | 362 ++++++++++++++++++++++++++++
+> >  3 files changed, 373 insertions(+)
+> >  create mode 100644 drivers/net/can/m_can/m_can_tegra.c
+>=20
+> Sorry for the late reply, I completely missed this.
 
-Regards,
-Sumit
+Brian Silverman left the company bluerivertech, I think there'll be no
+progress on the tegra glue code. :/
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+--n7sqxwpygc2d6wn2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmJO4JsACgkQrX5LkNig
+0118nQf/R+gaw3X7zD28Ee0fb5e4rcIIsxL2d1wmxWL6jkgQ/kbNmDx+nKY12dBx
+pBsA69d5mP9I1RfXVOTaH6XFZd+iD2lcCrglXNaNyoo8O+p5y+nTKrVJr3yMEcHr
+8asGp052fHln6FPSNTV8mvQYadWVYxBjEQVBrHJNp8nl5dZAn6uvW/V9AzWKMLWf
+JOHv/Wu6229FlBnIcjHinPPHQFId5QaPS8sCZzGNefGZg3x1s9872bgvmBhqsQI+
+/HxHDGtSCbrYcpKT7ykpcW5hkuYO+0+kqJZ7gMAzznxnDuKZ40hVXY9x+EVudwMn
+dlYpGqn4jnFxYzDWJOr/tc1lKQF4JQ==
+=wQkw
+-----END PGP SIGNATURE-----
+
+--n7sqxwpygc2d6wn2--
