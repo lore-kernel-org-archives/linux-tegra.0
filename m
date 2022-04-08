@@ -2,123 +2,196 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B79C43217
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Apr 2022 17:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9D3C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Apr 2022 11:38:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346624AbiDGRxS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Apr 2022 13:53:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34990 "EHLO
+        id S234870AbiDHLkP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Apr 2022 07:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346632AbiDGRxQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Apr 2022 13:53:16 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4714222EBE0
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Apr 2022 10:51:14 -0700 (PDT)
-Received: from [IPV6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1] (unknown [IPv6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id A72D61F45BED;
-        Thu,  7 Apr 2022 18:51:10 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1649353871;
-        bh=BM8w1p30B0kfQHenmrawFgD3CQMDeil5XCYiCXhxmj0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ZkLc9cMqzHTOxOGUTmrKf6vegatQR09XbK2itRSvnEyM2PLisAHaf91EjRvUxfpw5
-         RyBMCJC2kH/xgVJpC2EHUvIq9O9gx4evaixair/ggQ1t++qR4qQuMOUnJbNoI5YQIl
-         fFtvGdFAp5mOV4poUmnwETAVMu6dvqZCmShRL2dJsFXDrqUBpxxgWUDPpm0b5PuXnd
-         NUCGXX/k9v5vd81tQtBm3H7DkoPC8+CHjO15t2AA2UdCDa2FcSsEl7NQQnndZFqpfd
-         TtueGYKsUCrWPzc2f5scziU0i70NjH5/UceR57b6BQeoXRit6sbkKwGJ65rxegJ/67
-         HSYeEPtuvp3dg==
-Message-ID: <4cbc5418-b92b-1eed-44cc-82030616cb02@collabora.com>
-Date:   Thu, 7 Apr 2022 20:51:07 +0300
+        with ESMTP id S230312AbiDHLkP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Apr 2022 07:40:15 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 093FB3EF0F;
+        Fri,  8 Apr 2022 04:38:12 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id i27so16726876ejd.9;
+        Fri, 08 Apr 2022 04:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aQTMkqSfFhl91Cc0GUZ1r40OnFQa6gJ5Xa9eGXPe3QY=;
+        b=ay22Mzf7xEG4Xo6lXaOF5bzT6fbmSM7LljcZeltTGhjVGqTp0+GhNQBQWNiOksmy1Z
+         0dECOKMK53lDKH4LXjY8F2YWN1YPml4hzRccRepsMw0FZkypuf/vBfwiH1hd/Ncw7bHN
+         rYNw9plPjJhn2AIHbxARkkXQP5f7ux+pm2bQjGq4g7KyNUabsvLnOQa85Ksn3L2nFxC8
+         eToU8uqYqBecK99X32eGYvcmBe42Kk6VtDHXnLZojqYRYj6198nODbWbSunP5PBlZKPu
+         j1pyYi6hJWlnlBcDcQnxzkxOkrzz0I4OjshpGH1WVtaAjrhBDVn2bnS1WTNkIjY8fe04
+         pJ+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aQTMkqSfFhl91Cc0GUZ1r40OnFQa6gJ5Xa9eGXPe3QY=;
+        b=HrDCYUYZenl3XNlQBPMtd75LEaK84tmaCR7Rb9w6jI7zmW4AGPxoewydQCol9r+UqV
+         rB4vHPpTEgvNy1nkWwDyJ5Uc+ETxwzxvLhDv6ImOh6KplTi/OZ2pmIsrGlVc/e7hzT0c
+         n5BIfE2msQ+eII28XnRpUvWWGElCoTA4Y9ZKW/Kr0dSdW2uyraRTsBuigKytTA5Jy9Sq
+         GMfYvkz7qGUPTAOIv4gWfPLMk4dIPQ72YqJXgnT1eTe6GDS6iPSMNkcAcNiIt5jX4pMs
+         83E8vgtaruKbaiKY01hWyItDZwIgAshCuRROzOxZmkFanf5IAmmE3kZfC4FGtH7Re5ut
+         fY6Q==
+X-Gm-Message-State: AOAM531s0HLADWz5eRuebI/axcdjDIIOHPr73XpPNeytPeRWhWw2YWWD
+        PXmiC2JBOT/ZUXhwey+WHW1ZyDcuhMc0qcVKSH0=
+X-Google-Smtp-Source: ABdhPJzfswmEDudd532KIvJjC3KNAd22CqiWCt9MqgTK7JU06acMZpBdYDNh1a6YlRxJJaqA4bX5LVjm6tPgCUOuB2I=
+X-Received: by 2002:a17:907:a411:b0:6e1:2084:99d2 with SMTP id
+ sg17-20020a170907a41100b006e1208499d2mr1045774ejc.639.1649417890559; Fri, 08
+ Apr 2022 04:38:10 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] drm/tegra: Stop using iommu_present()
-Content-Language: en-US
-To:     Robin Murphy <robin.murphy@arm.com>, thierry.reding@gmail.com
-Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
-References: <25247f43672df0aa58c1952bf3df2bf948e9f8ae.1649168393.git.robin.murphy@arm.com>
- <49165024-5f33-b6e6-7ec9-1ede6f562748@collabora.com>
- <0f7bf1c2-7a21-13a0-8734-c53f624e1edd@arm.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <0f7bf1c2-7a21-13a0-8734-c53f624e1edd@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220405135444.199295-1-maz@kernel.org> <20220405135444.199295-11-maz@kernel.org>
+In-Reply-To: <20220405135444.199295-11-maz@kernel.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 8 Apr 2022 14:33:56 +0300
+Message-ID: <CAHp75Ve5tMyUdj-cYV0pzL4zvVitTwC_gGv50-ZHTETiiQSbeA@mail.gmail.com>
+Subject: Re: [PATCH v2 10/10] Documentation: Update the recommended pattern
+ for GPIO irqchips
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Joey Gouly <joey.gouly@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/6/22 21:06, Robin Murphy wrote:
-> On 2022-04-06 15:32, Dmitry Osipenko wrote:
->> On 4/5/22 17:19, Robin Murphy wrote:
->>> Remove the pointless check. host1x_drm_wants_iommu() cannot return true
->>> unless an IOMMU exists for the host1x platform device, which at the
->>> moment
->>> means the iommu_present() test could never fail.
->>>
->>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>> ---
->>>   drivers/gpu/drm/tegra/drm.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->>> index 9464f522e257..bc4321561400 100644
->>> --- a/drivers/gpu/drm/tegra/drm.c
->>> +++ b/drivers/gpu/drm/tegra/drm.c
->>> @@ -1149,7 +1149,7 @@ static int host1x_drm_probe(struct
->>> host1x_device *dev)
->>>           goto put;
->>>       }
->>>   -    if (host1x_drm_wants_iommu(dev) &&
->>> iommu_present(&platform_bus_type)) {
->>> +    if (host1x_drm_wants_iommu(dev)) {
->>>           tegra->domain = iommu_domain_alloc(&platform_bus_type);
->>>           if (!tegra->domain) {
->>>               err = -ENOMEM;
->>
->> host1x_drm_wants_iommu() returns true if there is no IOMMU for the
->> host1x platform device of Tegra20/30 SoCs.
-> 
-> Ah, apparently this is another example of what happens when I write
-> patches late on a Friday night...
-> 
-> So on second look, what we want to ascertain here is whether dev has an
-> IOMMU, but only if the host1x parent is not addressing-limited, either
-> because it can also use the IOMMU, or because all possible addresses are
-> small enough anyway, right? 
+On Wed, Apr 6, 2022 at 1:57 PM Marc Zyngier <maz@kernel.org> wrote:
+>
+> Update the documentation to get rid of the per-gpio_irq_chip
+> irq_chip structure, and give examples of the new pattern.
 
-Yes
+...
 
-> Are we specifically looking for the host1x
-> having a DMA-API-managed domain, or can that also end up using the
-> tegra->domain or another unmanaged domain too?
+> +  static void my_gpio_mask_irq(struct irq_data *d)
+> +  {
+> +      struct gpio_chip *gc = irq_desc_get_handler_data(d);
+> +
+> +      /*
+> +       * Perform any necessary action to mask the interrupt,
+> +       * and then call into the core code to synchronise the
+> +       * state.
+> +       */
+> +
+> +      gpiochip_disable_irq(gc, d->hwirq);
 
-We have host1x DMA that could have:
+(1)
 
-1. No IOMMU domain, depending on kernel/DT config
-2. Managed domain, on newer SoCs
-3. Unmanaged domain, on older SoCs
+> +  }
+> +
+> +  static void my_gpio_unmask_irq(struct irq_data *d)
+> +  {
+> +      struct gpio_chip *gc = irq_desc_get_handler_data(d);
 
-We have Tegra DRM devices which can:
+> +      gpiochip_disable_irq(gc, d->hwirq);
 
-1. Be attached to a shared unmanaged tegra->domain, on older SoCs
-2. Have own managed domains, on newer SoCs
+(2)
 
-> I can't quite figure out
-> from the comments whether it's physical addresses, IOVAs, or both that
-> we're concerned with here.
+> +      /*
+> +       * Perform any necessary action to unmask the interrupt,
+> +       * after having called into the core code to synchronise
+> +       * the state.
+> +       */
+> +  }
 
-Tegra DRM allocates buffers and submits jobs to h/w using host1x's
-channel DMA. DRM framebuffers' addresses are inserted into host1x
-command buffers by kernel driver and addresses beyond 32bit space need
-to be treated specially, we don't support such addresses in upstream.
+If (1) and (2) being the same is not a mistake (typo) it probably
+needs additional explanation.
 
-IOMMU AS is limited to 32bits on Tegra in upstream kernel for pre-T186
-SoCs, it hides 64bit addresses from host1x. Post-T186 SoCs have extra
-features that allow kernel driver not to bother about addresses.
+...
 
-For newer ARM64 SoCs there is assumption in the Tegra drivers that IOMMU
-always presents, to simplify things.
+> +  static void my_gpio_mask_irq(struct irq_data *d)
+> +  {
+> +      struct gpio_chip *gc = irq_desc_get_handler_data(d);
+> +
+> +      /*
+> +       * Perform any necessary action to mask the interrupt,
+> +       * and then call into the core code to synchronise the
+> +       * state.
+> +       */
+
+> +      gpiochip_disable_irq(gc, d->hwirq);
+
+(3)
+
+> +  }
+> +
+> +  static void my_gpio_unmask_irq(struct irq_data *d)
+> +  {
+> +      struct gpio_chip *gc = irq_desc_get_handler_data(d);
+
+> +      gpiochip_disable_irq(gc, d->hwirq);
+
+(4)
+
+> +      /*
+> +       * Perform any necessary action to unmask the interrupt,
+> +       * after having called into the core code to synchronise
+> +       * the state.
+> +       */
+> +  }
+
+Ditto for (3) & (4).
+
+...
+
+> +  static void my_gpio_mask_irq(struct irq_data *d)
+> +  {
+> +      struct gpio_chip *gc = irq_desc_get_handler_data(d);
+> +
+> +      /*
+> +       * Perform any necessary action to mask the interrupt,
+> +       * and then call into the core code to synchronise the
+> +       * state.
+> +       */
+> +
+> +      gpiochip_disable_irq(gc, d->hwirq);
+
+(5)
+
+> +      irq_mask_mask_parent(d);
+> +  }
+> +
+> +  static void my_gpio_unmask_irq(struct irq_data *d)
+> +  {
+> +      struct gpio_chip *gc = irq_desc_get_handler_data(d);
+
+> +      gpiochip_disable_irq(gc, d->hwirq);
+
+(6)
+
+> +      /*
+> +       * Perform any necessary action to unmask the interrupt,
+> +       * after having called into the core code to synchronise
+> +       * the state.
+> +       */
+> +
+> +      irq_mask_unmask_parent(d);
+> +  }
+
+Ditto for (5) & (6).
+
+--
+With Best Regards,
+Andy Shevchenko
