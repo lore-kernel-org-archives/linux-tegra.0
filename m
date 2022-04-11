@@ -2,108 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D1BC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 13:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30626C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 14:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234985AbiDKNtS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Apr 2022 09:49:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58136 "EHLO
+        id S1346881AbiDKOEx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Apr 2022 10:04:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346738AbiDKNtH (ORCPT
+        with ESMTP id S1346877AbiDKOEw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Apr 2022 09:49:07 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0A62B3BBDB
-        for <linux-tegra@vger.kernel.org>; Mon, 11 Apr 2022 06:46:47 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A365E1570;
-        Mon, 11 Apr 2022 06:46:47 -0700 (PDT)
-Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BC3083F73B;
-        Mon, 11 Apr 2022 06:46:46 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     thierry.reding@gmail.com
-Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        dmitry.osipenko@collabora.com
-Subject: [PATCH v2] drm/tegra: Stop using iommu_present()
-Date:   Mon, 11 Apr 2022 14:46:43 +0100
-Message-Id: <1f7c304a79b8b8dd5d4716786cae7502a0cc31f5.1649684782.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.28.0.dirty
+        Mon, 11 Apr 2022 10:04:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7B6C32059;
+        Mon, 11 Apr 2022 07:02:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7084361261;
+        Mon, 11 Apr 2022 14:02:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4651EC385A5;
+        Mon, 11 Apr 2022 14:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649685757;
+        bh=07v+3z10ECX0r1m3v8M8SiEwG2zIj0iVaYdwykpznMs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JlA5SCAWYzQbSMHBj/qK5KVN3+Q+ZHhtCKmkBoLfvrTT6CR8ID+SNwq9B6ddfozrx
+         MXaUI4kRm+NZHeByktiT+TjlnYes5kxyBJKa1/+Vsangc0YwzELM3FSYeHvzX17I38
+         IrYUcTvUIwz8ZtTMLySJiRVsC02nl3Dmke220ftbbo0Tz4/W24+uWfAO4gmPhwL8tJ
+         OV5AuiCY+Hk243rtFPJl5aXeN4mJJ+z6Uokd7O9WAnrmtL31ZxyMmaMRWQjEpNL6UH
+         Jyxuv7DnpKDcRLKjdbfiD55c2zOIhZYPf+ykUVRz6JCVeBVw3WG2ciMmTCGd4FDv9H
+         g9pM4XL08wUzg==
+Date:   Mon, 11 Apr 2022 19:32:33 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        p.zabel@pengutronix.de, rgumasta@nvidia.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, nathan@kernel.org
+Subject: Re: [PATCH v22 0/2] Add NVIDIA Tegra GPC-DMA driver
+Message-ID: <YlQ0+fMIaoWJoi6p@matsya>
+References: <20220225132044.14478-1-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220225132044.14478-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Refactor the confusing logic to make it both clearer and more robust. If
-the host1x parent device does have an IOMMU domain then iommu_present()
-is redundantly true, while otherwise for the 32-bit DMA mask case it
-still doesn't say whether the IOMMU driver actually knows about the DRM
-device or not.
+On 25-02-22, 18:50, Akhil R wrote:
+> Add support for NVIDIA Tegra general purpose DMA driver for
+> Tegra186 and Tegra194 platform.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+Applied, thanks
 
-v2: Fix logic for older SoCs and clarify.
-
- drivers/gpu/drm/tegra/drm.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 9464f522e257..4f2bdab31064 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1092,6 +1092,19 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
- 	struct host1x *host1x = dev_get_drvdata(dev->dev.parent);
- 	struct iommu_domain *domain;
- 
-+	/* For starters, this is moot if no IOMMU is available */
-+	if (!device_iommu_mapped(&dev->dev))
-+		return false;
-+
-+	/*
-+	 * Tegra20 and Tegra30 don't support addressing memory beyond the
-+	 * 32-bit boundary, so the regular GATHER opcodes will always be
-+	 * sufficient and whether or not the host1x is attached to an IOMMU
-+	 * doesn't matter.
-+	 */
-+	if (host1x_get_dma_mask(host1x) <= DMA_BIT_MASK(32))
-+		return true;
-+
- 	/*
- 	 * If the Tegra DRM clients are backed by an IOMMU, push buffers are
- 	 * likely to be allocated beyond the 32-bit boundary if sufficient
-@@ -1122,14 +1135,13 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
- 	domain = iommu_get_domain_for_dev(dev->dev.parent);
- 
- 	/*
--	 * Tegra20 and Tegra30 don't support addressing memory beyond the
--	 * 32-bit boundary, so the regular GATHER opcodes will always be
--	 * sufficient and whether or not the host1x is attached to an IOMMU
--	 * doesn't matter.
-+	 * At the moment, the exact type of domain doesn't actually matter.
-+	 * Only for 64-bit kernels might this be a managed DMA API domain, and
-+	 * then only on newer SoCs using arm-smmu, since tegra-smmu doesn't
-+	 * support default domains at all, and since those SoCs are the same
-+	 * ones with extended GATHER support, even if it's a passthrough domain
-+	 * it can still work out OK.
- 	 */
--	if (!domain && host1x_get_dma_mask(host1x) <= DMA_BIT_MASK(32))
--		return true;
--
- 	return domain != NULL;
- }
- 
-@@ -1149,7 +1161,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 		goto put;
- 	}
- 
--	if (host1x_drm_wants_iommu(dev) && iommu_present(&platform_bus_type)) {
-+	if (host1x_drm_wants_iommu(dev)) {
- 		tegra->domain = iommu_domain_alloc(&platform_bus_type);
- 		if (!tegra->domain) {
- 			err = -ENOMEM;
 -- 
-2.28.0.dirty
-
+~Vinod
