@@ -2,84 +2,170 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE013C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 03:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9D9C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 06:05:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239522AbiDKDCu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 10 Apr 2022 23:02:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51682 "EHLO
+        id S244829AbiDKGIC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Apr 2022 02:08:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbiDKDCt (ORCPT
+        with ESMTP id S229731AbiDKGIA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 10 Apr 2022 23:02:49 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 879865FB5
-        for <linux-tegra@vger.kernel.org>; Sun, 10 Apr 2022 20:00:33 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d15so12692631pll.10
-        for <linux-tegra@vger.kernel.org>; Sun, 10 Apr 2022 20:00:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NsvfzGeEol9JMCZvR8qAUpetZ3eFv1g/vaks5It4CXI=;
-        b=FeiONeMfEmPzhMQUNqHY3YPc7caljS+ajmTS1XxQZu85GJQMTY3yM238/EGGfsNhpy
-         yWWv5IvrCLmmJJaOcYIpnIW7S/iRCZvKd7mP43qMxtacteESLPrr0/jS/TtzjJ1228mh
-         +n+DWkbXxjKkUiOGTNOcb+fDpo8mUyM1Zk2zccAi5qYgJjlkmFT4JZPoFYu9U7IazGxK
-         rDZcTcXLCrjJH2SfZPnvO6ri01ql5B7fyeuHWHGVUBuxZgkTtppiuopCqkK/dMovhILT
-         rc8Jai0TCPJSfrQ9RHsRFPsepMnfCSSUYt5cplUUdUPUMzN9P95JjqIVwAepLHlP8HyG
-         vIDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NsvfzGeEol9JMCZvR8qAUpetZ3eFv1g/vaks5It4CXI=;
-        b=4Z80J7hROf+F6V9Mg5qLWtgDafT2AeX7Qf5RrfcfD6wt678f3avyPLz+hzwvmOwm2a
-         BziypX33quRg9vgMduNeqbUmSSHLKo4ny9V6+cxLMu8Z3zOdA88iazyaZYEcXfdw3Is2
-         x63t+KdjP0+y8cD99QUgAYQ+cDDPeJUYi3e1Rzn6iLvU2XBzNzvzWGa7KpHD3Eu/8/vD
-         aIoM7K8tGlZvER+tO3b6384Pis5FbIyqStW5HfALuyrLmrVDLdXIq/RKfTOH6I4AJPKW
-         xHpNqvrFfSo4T7upWmYasZu8V1cNZCycWRSrxAFiAGBb7sPV4NQQO3nFYnEATghwxXTz
-         l6xQ==
-X-Gm-Message-State: AOAM530rqeWl5UAK5RACULlCsc6sJF3PEVJPJpRmx/vQbG0trGdkiiwu
-        yUNEfbPbfu1wvUaYKDMc8VakNw==
-X-Google-Smtp-Source: ABdhPJyn0uAbcnzlSZQYk17M60n6PnmWB/qODT42/eYir2XUp+Rm9EXWzkmA8vcNpN+lNI+FHiKbKA==
-X-Received: by 2002:a17:90a:430d:b0:1bc:f340:8096 with SMTP id q13-20020a17090a430d00b001bcf3408096mr33747085pjg.93.1649646033047;
-        Sun, 10 Apr 2022 20:00:33 -0700 (PDT)
-Received: from localhost ([223.184.83.228])
-        by smtp.gmail.com with ESMTPSA id o32-20020a635d60000000b0039cd48c7f6asm10016236pgm.32.2022.04.10.20.00.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Apr 2022 20:00:32 -0700 (PDT)
-Date:   Mon, 11 Apr 2022 08:30:30 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     rafael@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
-        treding@nvidia.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ksitaraman@nvidia.com,
-        sanjayc@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v4 0/4] Tegra234 cpufreq driver support
-Message-ID: <20220411030030.eqq4a2xgidexowzq@vireshk-i7>
-References: <20220405130119.4697-1-sumitg@nvidia.com>
+        Mon, 11 Apr 2022 02:08:00 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1909C13DFD;
+        Sun, 10 Apr 2022 23:05:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=e4SKBAT9f9xrtWql39sdO5UeESu9y5d8e/szC8Llomd572wdW8HlE6v08YbnFZy3x4+HVenckV1URlWUROMVDkRDrs+iMbacZRCkSyM1goE3gmjOuKoKoHDm/JaS64q6lxIJWh7aHAqsCg2XVe4o01mP3m930SGxphdLKN0M9ij1vBCGKw9vmptwICNISSE7O3Cmuj9SAugaDkrdoH/dsKes5fYvbBNrC2gESslde6MjOJqotyKUmsv8483cfhHV5gVQxcKXb79LJzjCTtRuJVzvOKRDxFpUILvQUncUNhpYQ6lI3vHuBAk96ksYtCqSwBJ76jsH/lVPe/D2ofRFcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YQRqjw6Rk3EwhDySR80ELGscjrUe7GXLDk702NsBp6w=;
+ b=cuQXTD821DRRSLfChmIRP3fjL/LACSAEL+uxYRvGAyCqNwFVs5prlMtSTg5kY8zMBORaBnPmA6n8LXtRZiRB/Rq1g7xknvNw0qfEBQOjMzvH5QvCuPDSixrmRy+O3Vfrv6k9dt4tix71CB8NNMAOnfyWcw4ipa2JGp708YDkNJnXmdn60I6Qb/kMpujZ+Ax2eJDUnW10z6jtNLWtJP81/cOSCtTR1cfIVPYOVIFb7APYMI/1pAA53Sw21at21DrfLgY3+vs/lbLouzu2AovghvEAV5GUzPsggXFm5zuFSGRQ4tFbd++NEEZAzRh3BGU+ZekLF/n4q1ke/pHBViYF5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YQRqjw6Rk3EwhDySR80ELGscjrUe7GXLDk702NsBp6w=;
+ b=nlaS0PAgXYwGIeAS4pTpSV0VNfH5fBTPYmUgMNJ3yBkne8O7homsROBYeiAt1kpCvdC2nA/JxfQJc8zauikPxFU+mh1ecvrVNVh8zoumec/nmCx5/F6oj9k3rnfR/jieBKAIKUlNvd/iUirW2zdja+QfXxmV5nSghTATG9qCF0UwMyDW6VSTr7aaHvV7u4f+bjA1sfdnARpjRsdg08obZzOnX/2YkaEclKWr20zM0aKdhNChbJIEgXgvd8qX52mIwDBNJJWn+hwqjTFVNJFrf0fG+NiYYvEFgOsWl0oq+bNB9VvW+8RWaMmYWwoy76xZW2hY0NYD57+3cCSvrOx7sg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21)
+ by MN2PR12MB4358.namprd12.prod.outlook.com (2603:10b6:208:24f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Mon, 11 Apr
+ 2022 06:05:45 +0000
+Received: from SA0PR12MB4349.namprd12.prod.outlook.com
+ ([fe80::e15c:41ca:1c76:2ef]) by SA0PR12MB4349.namprd12.prod.outlook.com
+ ([fe80::e15c:41ca:1c76:2ef%4]) with mapi id 15.20.5144.029; Mon, 11 Apr 2022
+ 06:05:45 +0000
+Message-ID: <ba28886f-be5d-9ab2-41d0-942609934263@nvidia.com>
+Date:   Mon, 11 Apr 2022 11:35:30 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [Patch v6 1/4] memory: tegra: Add memory controller channels
+ support
+Content-Language: en-US
+To:     Dmitry Osipenko <digetx@gmail.com>, krzysztof.kozlowski@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220406052459.10438-1-amhetre@nvidia.com>
+ <20220406052459.10438-2-amhetre@nvidia.com>
+ <3bbbffff-6aa3-7068-6f0c-4372d53daf94@gmail.com>
+From:   Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <3bbbffff-6aa3-7068-6f0c-4372d53daf94@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA1PR0101CA0040.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:22::26) To SA0PR12MB4349.namprd12.prod.outlook.com
+ (2603:10b6:806:98::21)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220405130119.4697-1-sumitg@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6827353d-b4f4-405f-9fe8-08da1b8150d9
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4358:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB43587316FA4ADB419D93CB0BCAEA9@MN2PR12MB4358.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: XWoFUp78Xf3jipx3CiWDUFTbut3+nP9998FIa2IpzoY4JeSnw6mNmP/z4TSO7tAatQH5yzlNTOEI9RrVLfWCtRBxq+zpoTjKv68R0qrr+9uyp+Fr2CgrIKvGKPwTxizoWsm9mstci5EUSj5Gn1yG6Zrq7dFwGBHyNpmzCRR0MNuR8XYld++i96tS0VcQZb9+s7VB8BrczqHaTp2GXCbB7pUj1CQRlDVgqGq6ojX1Njkl3X4xeBLNRn08cemIjCPXpb0hArP4xMWqrulce8UOXMRIW0uzkNlRKrUw48bW3vyQmWz/XiIVlGW/kbN1aeeAXe7UKHmclv+7/8Gn65brEnVc3ZMYAKjsqbHyxpTdnR1OtmzMBABBEvPl8FzSDCCqkCnaWJDLCUeWyrzb7CHPBOyIBvUZ3FLiAav64tSWXdlRGxlL2EojmjCU57Ub0wo4ptUu0CKl2oNXbB+fetgP17A4Fjl6h0zqG985Y3ncUKLctFT+SB2mJhHZDl2ALMbdWvC32OWOBuefhW1AVOHrkA0V1Q0GRkSOsUytZ+Am1yOIdmQHtv3ycOFNmqvSf1g0lSTAR5MZ2u+8upnRUYMya9qT9iO2KIMqpIAZuZ0/Qk47ov+EtDOE67ZSWGcw4EVunZV6KVBi4sDW2XTdh6Hqxy86kBXXATz5NA4ZtRw5UHBEjwM7dThGw1DO5CKeeYFqzAeXlelVW1icTzB/7NdITpOm4VCU+tkEXaJHSuY4oRg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(31696002)(107886003)(8676002)(2616005)(4326008)(66946007)(86362001)(66476007)(66556008)(316002)(38100700002)(6666004)(55236004)(6512007)(6506007)(53546011)(6486002)(8936002)(83380400001)(36756003)(2906002)(31686004)(186003)(26005)(5660300002)(508600001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?b0VNS05vY1Y1SmNGZnN1Zjl2UStRN3VvT3NBRWxneVF2Y0xyK0VHa09OZXlr?=
+ =?utf-8?B?VmpJT1NHTERhbHc1eDZ4RXEyUXVzdmVseTUrdXJ4UEZYcGM4cExwMlR6eUM5?=
+ =?utf-8?B?cDdhZVlISGIzT2ZwNW9OcFQ1YTlFdGVNQXdzbmZ6QzFRbEdlM21LeFdsOWxY?=
+ =?utf-8?B?ajdkNGJCVkNYeDllTWtGdzhROWJROVU5N3owaWJUTEYzZlU1Z3lPeENKOEQ5?=
+ =?utf-8?B?MDYzNEo4SURTanRwQ0JGd0dVKytjQkNPbEJ1ckVBWGc1Z0RXeitsakZTbXFa?=
+ =?utf-8?B?UDRSc1JRUlpOaVpSOVBtSThqSnFvTWp0REZMbGM3S3dqOVc4RlFFY3ZjN1Fu?=
+ =?utf-8?B?U09WSEJMOVFsWVdjMytyS2YvdmN5eElBcG1nTERwaWI1NXh6ZGVPYUFyb00x?=
+ =?utf-8?B?T0xmQWlvcWdWWFFYK29mYlkwdU9tVVB4U2h2QkZSV3pVZUlIdkE4QkUwdnUv?=
+ =?utf-8?B?UmFYNDlrN2h2dlE3TGtjdzVtUU9NKzg4cVpPczRnYkY4NDdrVTVoY2tQWElQ?=
+ =?utf-8?B?cldRblA0U3RYbXh5a2N4NUVic1RPTktVNGQrK1k1eDNZajM2N2ZzNTNlQnho?=
+ =?utf-8?B?Q05IUWxac0ZIZWdqeFIxR0toczU0Zk5kNCt5MzJQTkFQOWVXK3psVXhGUUxW?=
+ =?utf-8?B?SFlWOWpHNGpRcUw0MkhxMjRyVld0cFdPS2NIeTRYUUZZRytBbTZBTG9CbnRQ?=
+ =?utf-8?B?b1hkeklnREtMbCtPYU5DUXZrdTFJT1JIdSswM3VnQUxneDNBM2NYL2J5VHlP?=
+ =?utf-8?B?ZUdwNnBYaVAxSUZ6dHRqK3BCL2JCZ1BUUmhKWDk4NjcyUDRCYWlGSWR1blQr?=
+ =?utf-8?B?N2tmdGRJblpCU21uTjRpZ05tUUNpS3VqZ1VlWFpBVGk5YzVOQUMzZUtHcnJr?=
+ =?utf-8?B?OTM2MWdVamlGN0pYUzdiOHZLT1dXbGFjd25YdURSUkRseXFwQU42eC9rYlk1?=
+ =?utf-8?B?ZkRQTXFZbnY1RlR2Yno1RGszV3IrZGdYaSsxd1gxZFlJbXJZdDF0aCtYYm1J?=
+ =?utf-8?B?d1FNODFqWHpXZDJTTmdiNU9tVVlPN1BjbXdZYzhvNnJKRUFOZ0F5ZXhnK0kw?=
+ =?utf-8?B?TitqT3h1Z0d5WFJGK21JSEVGVUdDMHA1L1g2ZUw1bEI2SW5WS1d0Y0xLaVds?=
+ =?utf-8?B?UFBnZ2lMUnlleWVFN3NSay9WNmZpdDJaQmRnVXZ1MldVQ0E2R1A5V0dwV2tC?=
+ =?utf-8?B?aXV3bXdZYyttSkRkL2xnek1mMldrNlVST2pkTHg5VEZvNmZldGNGR2FGRm1Z?=
+ =?utf-8?B?ZHgxUWtSTENvVkVqclNXdjgrN05SWW5ybmt1SWZPVi9yY2VIZ0ozTWFHYzgz?=
+ =?utf-8?B?L2hyR2wyc1ZMTmg4d3lHS1k5V2Jva1FieXdxQkpTcHlhcml2aEZmN0ZybW1O?=
+ =?utf-8?B?a0VkQ09mZjRjek9tdFZzZnpOZTRSZm5QZ2hRRTBnZjZoSjdSWU5pMnJMaCs1?=
+ =?utf-8?B?WVVmMEpCb1RPVkwxN3dnM1FybzRTMXdSdFJhdzkzemZHSUVKWkRWazJpcXFl?=
+ =?utf-8?B?MDVuUEkvRUx2Sy9qeGd6cWI3amN3Y0lrV25BRXVrenJBeXpIOVIxRjAyalZz?=
+ =?utf-8?B?SDRodVgxaXJWM2ZBZy9CWnBuZFRoM0s4RXZUeGtDanVsY2RPZVpNSnplN2xz?=
+ =?utf-8?B?c2pmVDUyWWtId3pRbGJDazQ0azQyTnczeDFyUVJjS0h6ZVIwSE1mU1Z0RTIz?=
+ =?utf-8?B?U0RzMlR0b043cEJBVFRLL2dQY1J6VVNwMWE1Y2YrL2h6TXRudGFZS3ZhVGdU?=
+ =?utf-8?B?bEZlckFoN2cyeGpuK0FWTXd1ak9iY0Y0T2xwWjR0UVA1cG1yN2VQUkZFZmhx?=
+ =?utf-8?B?bGpwNU5LSnArenNvVWxkVUtKa0x2eXJoMFBPa3BtclhXbUw4amFmNFZqQUlP?=
+ =?utf-8?B?NTI5MnZvUmlENm51Szc0M3IzOEE5ZXJ6cTFhblQ0UzNMYXgzK2FFVU5IN1Qx?=
+ =?utf-8?B?RVZ3QzJkMk9mUDlpdFU5SjhyNksvSklrNmNYbklBbjV0bmVtTTkvYjZJZ2l5?=
+ =?utf-8?B?VlZ4RjNkdXhVZXppbWplcHZkUWk1cmhzQk9KaWgvVXdVM3hlOWU4Q0N3NEtU?=
+ =?utf-8?B?SGRHYXZDRTcxZEREZUJTS2piWmpCMW9PZmFERHVKcVlKNHdsWmYrU01XS1Fm?=
+ =?utf-8?B?dVd6NDdhN0tkS2hRVW1XZmsvSENYVVUwc3E4MFpGWjRoRitqaDhiSS81c1pM?=
+ =?utf-8?B?bFBRWGdkS2Y3Y1BqbVorNzlkak1ZT0NEUGRpV2hhdEVpdXd5bFcrRWQ4TjRr?=
+ =?utf-8?B?bERDZG4rWDNPaWpmbkErMm9VaDJGN28ySll6WU1EWTNIVHh0aUpIaFBhcUxt?=
+ =?utf-8?B?Z2poaUNFd0l0eGZQb201dmh4blBvVGVGV3ZRbE5DV0pXSW02MTNPZz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6827353d-b4f4-405f-9fe8-08da1b8150d9
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4349.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2022 06:05:45.2373
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /wfyIIXh70Gh8U446f2AENCa4mXXShOVKPprSu+YvfN4T6nH+1y3/2atK/rjVujquWb8XtF/Vm/+TCKHxgOaBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4358
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 05-04-22, 18:31, Sumit Gupta wrote:
-> This patchset adds driver support for Tegra234 cpufreq.
-> Also, added soc data and ops to support multiple SoC's and variants
-> which have similar logic to {get|set} cpu frequency as Tegra194 in
-> the same driver.
-> >From cpufreq point, main difference between Tegra194 and Tegra234 are:
->  1) Tegra234 uses MMIO for frequency requests and not sysreg like T194.
->  2) MPIDR affinity info in Tegra234 is different from Tegra194.
->  3) Register bits of pllp_clk_count and core_clk_count are swapped.
-> So, added ops hooks for Tegra234.
 
-Applied. Thanks.
 
--- 
-viresh
+On 4/10/2022 7:48 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> 06.04.2022 08:24, Ashish Mhetre пишет:
+>> +     num_dt_channels = of_property_count_elems_of_size(pdev->dev.of_node, "reg",
+>> +                                                       reg_cells * sizeof(u32));
+>> +     /*
+>> +      * On tegra186 onwards, memory controller support multiple channels.
+>> +      * Apart from regular memory controller channels, there is one broadcast
+>> +      * channel and one for stream-id registers.
+>> +      */
+>> +     if (num_dt_channels < mc->soc->num_channels + 2) {
+>> +             dev_warn(&pdev->dev, "MC channels are missing, please update memory controller DT node with MC channels\n");
+>> +             return 0;
+>> +     }
+>> +
+>> +     mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "mc-broadcast");
+>> +     if (IS_ERR(mc->bcast_ch_regs))
+>> +             return PTR_ERR(mc->bcast_ch_regs);
+> 
+> Looks to me that you don't need to use of_property_count_elems_of_size()
+> and could only check the "mc-broadcast" presence to decide whether this
+> is an older DT.
+> 
+Now that we are using reg-names in new DT, yes it'd be fine to just
+check mc-broadcast to decide it's a new or old DT.
+
+> mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev,
+> "broadcast");
+> if (IS_ERR(mc->bcast_ch_regs)) {
+>          dev_warn(&pdev->dev, "Broadcast channel is missing, please update your
+> device-tree\n");
+>          return PTR_ERR(mc->bcast_ch_regs);
+> }
+
+return 0;
+
+to avoid DT ABI break, right?
