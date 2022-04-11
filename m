@@ -2,112 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A56C433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 10 Apr 2022 15:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1335C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 02:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235269AbiDJPGs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 10 Apr 2022 11:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49308 "EHLO
+        id S243490AbiDKCLa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 10 Apr 2022 22:11:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235249AbiDJPGs (ORCPT
+        with ESMTP id S239877AbiDKCLa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 10 Apr 2022 11:06:48 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 705D056775;
-        Sun, 10 Apr 2022 08:04:37 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id o2so907623lfu.13;
-        Sun, 10 Apr 2022 08:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=uOwN9vBmQdLiAiop5qvqolDSzn0EbScB1TJ3qvgyKP4=;
-        b=N/EAxeksoGcR25P1cO+rRBnnWJeh954SB9clCW8JYB7mC/p8FbN8llnTZCR14ZBTwp
-         e3IZn6kQ/YGF1mmrUyBhAFyn9/cPSC8f2wiJBjhd8OXrYwz7qyhTZGLz+vjUfkhAGeo7
-         7K9YJPggY72uhbhDdPUHR95VaFicvncBeLwtROWM6ULrrMohcokHfdtR86MQZTd+vonf
-         ohAvLJ/Tw6wLSAcIgqZdumhaxIRewDBDhkZTZUKkRFTootnGUEnxXyky8jmKKCB1CZIA
-         BMXEpjbdGJ8A5hU6pQwfJR9TmN2nc3sg5V7FGiLnzzZfCG3YL8PAvIb0KyN6nLkdLARU
-         WCrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=uOwN9vBmQdLiAiop5qvqolDSzn0EbScB1TJ3qvgyKP4=;
-        b=WOLqdLbktL54BbtkHh3ZJZ6JfC7LW5VKH0QuG8Z/EZbLgxVFb2PjBw5mK/jDa9RW6J
-         xiz6K62agL6+aSvTWszW8IBSGa5/t4WwHZe7/LkYUnquxR6cxdjOdY32mb5VaTqfwscM
-         R0H89UxbCbb+Pakxrd/nQFR7M5JZtL4TltHeEMYIm/VFdSq/5f1ngA7vjqg/1jlAEFMp
-         IPb2NuTw2dPzLz6XIyHBIQeltBBZC1OyjDJ+cwrQoOOi/Q/gtGDtN/TDx3HOXQJZAMZE
-         JYFwiW4gaERVP35tI+Qu3NjVsJy0bjsD7HvODFDXBuMnL4Eo5cfllr1ykq+QuGpuVfdm
-         Z8Mg==
-X-Gm-Message-State: AOAM532GPX0ZdLA0JpzUkmXqNIQ2npvMwxjQ2+VzI6ss0qFfEqFDcNsz
-        FatE2mO3VAfD4COxe93CJk4=
-X-Google-Smtp-Source: ABdhPJw8OMY3Ri0SfS4Q6JJrZLFioLRzz+diX3CAjHnsMo1KRWVVUJ1ANDt81caOOte3RkO0sN+JTw==
-X-Received: by 2002:ac2:4194:0:b0:442:ed9e:4a25 with SMTP id z20-20020ac24194000000b00442ed9e4a25mr17987613lfh.629.1649603075677;
-        Sun, 10 Apr 2022 08:04:35 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-138-167.dynamic.spd-mgts.ru. [109.252.138.167])
-        by smtp.googlemail.com with ESMTPSA id f4-20020ac24e44000000b0044b07e39d75sm2217435lfr.74.2022.04.10.08.04.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Apr 2022 08:04:34 -0700 (PDT)
-Message-ID: <bf23e357-1e74-6bbe-7f37-11147654e5fc@gmail.com>
-Date:   Sun, 10 Apr 2022 18:04:34 +0300
+        Sun, 10 Apr 2022 22:11:30 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDB521ADAE;
+        Sun, 10 Apr 2022 19:09:14 -0700 (PDT)
+Received: from canpemm500007.china.huawei.com (unknown [172.30.72.53])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4KcC2H6qNyz1HBJm;
+        Mon, 11 Apr 2022 10:08:39 +0800 (CST)
+Received: from localhost (10.174.179.215) by canpemm500007.china.huawei.com
+ (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Mon, 11 Apr
+ 2022 10:09:12 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <spujar@nvidia.com>,
+        <yuehaibing@huawei.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] ASoC: tegra186_asrc: mark runtime-pm functions as __maybe_unused
+Date:   Mon, 11 Apr 2022 10:09:08 +0800
+Message-ID: <20220411020908.580-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [Patch v6 1/4] memory: tegra: Add memory controller channels
- support
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>, krzysztof.kozlowski@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <20220406052459.10438-1-amhetre@nvidia.com>
- <20220406052459.10438-2-amhetre@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220406052459.10438-2-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.179.215]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ canpemm500007.china.huawei.com (7.192.104.62)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-06.04.2022 08:24, Ashish Mhetre пишет:
-> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-> index 1066b1194a5a..c3c121fbfbb7 100644
-> --- a/include/soc/tegra/mc.h
-> +++ b/include/soc/tegra/mc.h
-> @@ -13,6 +13,9 @@
->  #include <linux/irq.h>
->  #include <linux/reset-controller.h>
->  #include <linux/types.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define MC_MAX_CHANNELS 16
->  
->  struct clk;
->  struct device;
-> @@ -181,6 +184,7 @@ struct tegra_mc_ops {
->  	int (*resume)(struct tegra_mc *mc);
->  	irqreturn_t (*handle_irq)(int irq, void *data);
->  	int (*probe_device)(struct tegra_mc *mc, struct device *dev);
-> +	int (*map_regs)(struct tegra_mc *mc, struct platform_device *pdev);
->  };
->  
->  struct tegra_mc_soc {
-> @@ -194,6 +198,7 @@ struct tegra_mc_soc {
->  	unsigned int atom_size;
->  
->  	u8 client_id_mask;
-> +	u8 num_channels;
->  
->  	const struct tegra_smmu_soc *smmu;
->  
-> @@ -212,6 +217,8 @@ struct tegra_mc {
->  	struct tegra_smmu *smmu;
->  	struct gart_device *gart;
->  	void __iomem *regs;
-> +	void __iomem *bcast_ch_regs;
-> +	void __iomem *ch_regs[MC_MAX_CHANNELS];
+sound/soc/tegra/tegra186_asrc.c:90:12: error: ‘tegra186_asrc_runtime_resume’ defined but not used [-Werror=unused-function]
+ static int tegra186_asrc_runtime_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/soc/tegra/tegra186_asrc.c:80:12: error: ‘tegra186_asrc_runtime_suspend’ defined but not used [-Werror=unused-function]
+ static int tegra186_asrc_runtime_suspend(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Why not to allocate ch_regs at runtime?
+Mark these functions as __maybe_unused to avoid this kind of warning.
+
+Fixes: a2df8c2d5b36 ("ASoC: tegra: Add Tegra186 based ASRC driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/tegra/tegra186_asrc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra186_asrc.c b/sound/soc/tegra/tegra186_asrc.c
+index 3c1e20cbb319..9f12faaa609d 100644
+--- a/sound/soc/tegra/tegra186_asrc.c
++++ b/sound/soc/tegra/tegra186_asrc.c
+@@ -77,7 +77,7 @@ static void tegra186_asrc_lock_stream(struct tegra186_asrc *asrc,
+ 		     1);
+ }
+ 
+-static int tegra186_asrc_runtime_suspend(struct device *dev)
++static int __maybe_unused tegra186_asrc_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra186_asrc *asrc = dev_get_drvdata(dev);
+ 
+@@ -87,7 +87,7 @@ static int tegra186_asrc_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra186_asrc_runtime_resume(struct device *dev)
++static int __maybe_unused tegra186_asrc_runtime_resume(struct device *dev)
+ {
+ 	struct tegra186_asrc *asrc = dev_get_drvdata(dev);
+ 	int id;
+-- 
+2.17.1
+
