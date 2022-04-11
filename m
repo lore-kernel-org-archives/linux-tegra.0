@@ -2,102 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63064C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 19:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24471C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 22:28:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241473AbiDKTve (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Apr 2022 15:51:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36194 "EHLO
+        id S1346026AbiDKWbC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Apr 2022 18:31:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349729AbiDKTvc (ORCPT
+        with ESMTP id S245082AbiDKWbB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Apr 2022 15:51:32 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 69BD6245A2
-        for <linux-tegra@vger.kernel.org>; Mon, 11 Apr 2022 12:49:17 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33D1D1570;
-        Mon, 11 Apr 2022 12:49:17 -0700 (PDT)
-Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6BC0C3F70D;
-        Mon, 11 Apr 2022 12:49:16 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     thierry.reding@gmail.com
-Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [PATCH v2] drm: tegra: Include DMA API header where used
-Date:   Mon, 11 Apr 2022 20:49:10 +0100
-Message-Id: <9043e2c18728f99fc6b025a8f59437fc05a3c2be.1649706479.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.28.0.dirty
+        Mon, 11 Apr 2022 18:31:01 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783C01EEC9;
+        Mon, 11 Apr 2022 15:28:46 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id 6D9F51F42D86
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1649716125;
+        bh=j5s2z2+QvxX8/0HiqGbGTalMGZgMNOaInzlk8sVuvvM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=VSTxe5yFQejREqnCxyn4xGFXtinl0bR2ufB4zz1SZaJ7usao6xS3L9wJHaZi3U2be
+         B4He3EWlN9+YA6N1fUAxEk47YLZ7Xe1kdkqvnaWuHnD+xYl05xH/GEOKFxGviNmEFx
+         L3WlaYw81uQSL/OG3BikLy6vE/SfxdHTJj+71yDfFw8yWpmHLmZOReEPFmEPxzk/tH
+         Vg62v3DLlk+b19XtRR9d1se5Lhr34X7aiCI2MQ5UsTSCsbIZkh3xnjPrjuvKnTrx2W
+         +q9CJ4HKiIH9ddHCukgLctCERfXuGWhBJBtObN9sVgk1YA8fkg7bokj3r854VdsYYO
+         n9uWKar0Gs93Q==
+Message-ID: <3c80282b-0d63-1e1f-1036-1c8e79f1cbbc@collabora.com>
+Date:   Tue, 12 Apr 2022 01:28:41 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [Patch v6 3/4] dt-bindings: memory: Update reg maxitems for
+ tegra186
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        krzysztof.kozlowski@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220406052459.10438-1-amhetre@nvidia.com>
+ <20220406052459.10438-4-amhetre@nvidia.com>
+ <3e044f9e-3200-bb26-897d-1977e3825c92@gmail.com>
+ <81686bc4-c580-862b-1c29-51b34e419154@nvidia.com>
+ <57825f4a-8cfa-ef00-6462-fea37cd4d7be@collabora.com>
+ <8930bbfe-2c33-ea90-c48d-c6a00005b6a5@nvidia.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <8930bbfe-2c33-ea90-c48d-c6a00005b6a5@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Even though the IOVA API never actually needed it, iova.h is still
-carrying an include of dma-mapping.h, now solely for the sake of not
-breaking tegra-drm. Fix that properly.
+On 4/11/22 18:41, Ashish Mhetre wrote:
+> 
+> 
+> On 4/11/2022 8:59 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 4/11/22 18:02, Ashish Mhetre wrote:
+>>>
+>>>
+>>> On 4/10/2022 7:51 PM, Dmitry Osipenko wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> 06.04.2022 08:24, Ashish Mhetre пишет:
+>>>>>            memory-controller@2c00000 {
+>>>>>                compatible = "nvidia,tegra186-mc";
+>>>>> -            reg = <0x0 0x02c00000 0x0 0xb0000>;
+>>>>> +            reg = <0x0 0x02c00000 0x0 0x10000>,    /* MC-SID */
+>>>>> +                  <0x0 0x02c10000 0x0 0x10000>,    /* Broadcast
+>>>>> channel */
+>>>>> +                  <0x0 0x02c20000 0x0 0x10000>,    /* MC0 */
+>>>>> +                  <0x0 0x02c30000 0x0 0x10000>,    /* MC1 */
+>>>>> +                  <0x0 0x02c40000 0x0 0x10000>,    /* MC2 */
+>>>>> +                  <0x0 0x02c50000 0x0 0x10000>;    /* MC3 */
+>>>>> +            reg-names = "mc-sid", "mc-broadcast", "mc0", "mc1",
+>>>>> "mc2", "mc3";
+>>>>
+>>>> The "mc-" prefix feels redundant to me, I'd name the regs like this:
+>>>>
+>>>>     "sid", "broadcast", "ch0", "ch1", "ch2", "ch3"
+>>>>
+>>>>
+>>>> You should also add validation of the regs/reg-names to the yaml based
+>>>> on SoC version. I.e. it's not enough to only bump the maxItems.
+>>>
+>>> Okay, I will add validation of reg-names as following:
+>>>
+>>>    reg-names:
+>>>      minItems: 0
+>>>      maxItems: 6
+>>>      items:
+>>>        - const: sid
+>>>        - const: broadcast
+>>>        - const: ch0
+>>>        - const: ch1
+>>>        - const: ch2
+>>>        - const: ch3
+>>>
+>>>
+>>> We will have to keep minItems to 0 in order to make it compatible with
+>>> old DT, right?
+>>
+>> Bindings are about the latest DTs. In general older dtbs must be updated
+>> and you must get error from the schema checker for older DTs. It's only
+>> drivers that should care about older dtbs.
+> 
+> On v5 Krzysztof mentioned that old DTS will start failing with new
+> bindings https://lkml.org/lkml/2022/3/22/907.
+> So I just wanted to confirm whether it's fine if updated bindings
+> start to fail with old DTS?
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
-
-v2: Apparently nvdec.c needs one now too.
-
- drivers/gpu/drm/tegra/dc.c    | 1 +
- drivers/gpu/drm/tegra/hub.c   | 1 +
- drivers/gpu/drm/tegra/nvdec.c | 1 +
- drivers/gpu/drm/tegra/plane.c | 1 +
- 4 files changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index c6951cf5d2ca..bfc79c61bca6 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -7,6 +7,7 @@
- #include <linux/clk.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
-+#include <linux/dma-mapping.h>
- #include <linux/iommu.h>
- #include <linux/interconnect.h>
- #include <linux/module.h>
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index b8d3174c04c9..5f9b85959fae 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/dma-mapping.h>
- #include <linux/host1x.h>
- #include <linux/module.h>
- #include <linux/of.h>
-diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
-index 79e1e88203cf..b412cc5c6db2 100644
---- a/drivers/gpu/drm/tegra/nvdec.c
-+++ b/drivers/gpu/drm/tegra/nvdec.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/dma-mapping.h>
- #include <linux/host1x.h>
- #include <linux/iommu.h>
- #include <linux/module.h>
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index e0e6938c6200..e46adb107f77 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2017 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
-+#include <linux/dma-mapping.h>
- #include <linux/iommu.h>
- #include <linux/interconnect.h>
- 
--- 
-2.28.0.dirty
-
+Since the older DT was incorrect, it's fine that the DT check will fail
+for it.
