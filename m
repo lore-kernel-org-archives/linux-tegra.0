@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDACC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C21C4321E
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 23:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237908AbiDKXnz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Apr 2022 19:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51726 "EHLO
+        id S238597AbiDKXns (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Apr 2022 19:43:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242368AbiDKXnJ (ORCPT
+        with ESMTP id S239481AbiDKXmM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Apr 2022 19:43:09 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B9A27FD2;
-        Mon, 11 Apr 2022 16:40:09 -0700 (PDT)
+        Mon, 11 Apr 2022 19:42:12 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B097124F36;
+        Mon, 11 Apr 2022 16:39:49 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id D94721F43D51
+        with ESMTPSA id AD56B1F43D26
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1649720408;
-        bh=V6K3csETbdRArqsU2lL0TyRBTq4S5S8aBxupwY5Jatg=;
+        s=mail; t=1649720388;
+        bh=GqegTH1d3tMqHPbUQWr88cV7jN0COVH27sIz9pT1gAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CMftO839VRrr32eH+lZu8ZOi1NbjfZFjDzrNLUXRDkPyP58z3IRG10vfZMM6I9C8p
-         837TKvbg42S+mJzZ0uqaB5Oc/1UA2hTbm5a8+rijfOJ+FIh/HPSjO05Hjo6b3xxoAW
-         lGvmRtC0fqPRPy2WlJd7rY0wK6gtLSVUfLBjC2jTcnF0w0W/A+IVqaNMQoQAZT4LDr
-         fQD0e+x43OZ7oZHP69IKlJDfA9+eXZHghwfPSfEIWkZPLn6n64VRF+szOOv/b5UQWx
-         6IVYXyx9++XM4pGMzqLsaonRUXt6Cwbeq6xKoRpIunoIcqWqnYG2rytrpY3Qp3f0bg
-         YaW5hzU2YodEA==
+        b=oNiifi7dKhRBJqlGqEGJN6kAbfl8D4gCFwyVEi2cbtQeDKacFGHrwrDqFrDieN4wA
+         WhU41Hw3FPE2AYgfpN+3OIBTLyDM6SATFLFgianFO+wlHnAZJ7DQGXWLQfkL9dJkaT
+         mB39pfoWli1fA81DJ8zLGK9wjZabPOgGwSSryJ+aE2QaqRXwuzGuq7Z1JX90KJJAAn
+         BKO/88PeAen8MwGhUWEcBs8eDaefezxNcymSAruqMCHCNlKwOD7WTRW6jTC+W8qLzu
+         ZDQ/PYjaYqEgi+LYSYEmG3SZyxk7xquxfA6vSz5KC0WdP1SUt4TzNPONt3aIqIrOCj
+         2bJE2XBftWM2g==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -79,9 +79,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v7 18/20] ACPI: power: Switch to sys-off handler API
-Date:   Tue, 12 Apr 2022 02:38:30 +0300
-Message-Id: <20220411233832.391817-19-dmitry.osipenko@collabora.com>
+Subject: [PATCH v7 13/20] sh: Use do_kernel_power_off()
+Date:   Tue, 12 Apr 2022 02:38:25 +0300
+Message-Id: <20220411233832.391817-14-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
 References: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
@@ -91,87 +91,30 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Switch to sys-off API that replaces legacy pm_power_off callbacks.
+Kernel now supports chained power-off handlers. Use do_kernel_power_off()
+that invokes chained power-off handlers. It also invokes legacy
+pm_power_off() for now, which will be removed once all drivers will
+be converted to the new power-off API.
 
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/acpi/sleep.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ arch/sh/kernel/reboot.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index c992e57b2c79..426297258e26 100644
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -47,19 +47,11 @@ static void acpi_sleep_tts_switch(u32 acpi_state)
- 	}
+diff --git a/arch/sh/kernel/reboot.c b/arch/sh/kernel/reboot.c
+index 5c33f036418b..e8eeedc9b182 100644
+--- a/arch/sh/kernel/reboot.c
++++ b/arch/sh/kernel/reboot.c
+@@ -46,8 +46,7 @@ static void native_machine_shutdown(void)
+ 
+ static void native_machine_power_off(void)
+ {
+-	if (pm_power_off)
+-		pm_power_off();
++	do_kernel_power_off();
  }
  
--static int tts_notify_reboot(struct notifier_block *this,
--			unsigned long code, void *x)
-+static void tts_reboot_prepare(struct reboot_prep_data *data)
- {
- 	acpi_sleep_tts_switch(ACPI_STATE_S5);
--	return NOTIFY_DONE;
- }
- 
--static struct notifier_block tts_notifier = {
--	.notifier_call	= tts_notify_reboot,
--	.next		= NULL,
--	.priority	= 0,
--};
--
- static int acpi_sleep_prepare(u32 acpi_state)
- {
- #ifdef CONFIG_ACPI_SLEEP
-@@ -1023,7 +1015,7 @@ static void acpi_sleep_hibernate_setup(void)
- static inline void acpi_sleep_hibernate_setup(void) {}
- #endif /* !CONFIG_HIBERNATION */
- 
--static void acpi_power_off_prepare(void)
-+static void acpi_power_off_prepare(struct power_off_prep_data *data)
- {
- 	/* Prepare to power off the system */
- 	acpi_sleep_prepare(ACPI_STATE_S5);
-@@ -1031,7 +1023,7 @@ static void acpi_power_off_prepare(void)
- 	acpi_os_wait_events_complete();
- }
- 
--static void acpi_power_off(void)
-+static void acpi_power_off(struct power_off_data *data)
- {
- 	/* acpi_sleep_prepare(ACPI_STATE_S5) should have already been called */
- 	pr_debug("%s called\n", __func__);
-@@ -1039,6 +1031,11 @@ static void acpi_power_off(void)
- 	acpi_enter_sleep_state(ACPI_STATE_S5);
- }
- 
-+static struct sys_off_handler acpi_sys_off_handler = {
-+	.power_off_priority = POWEROFF_PRIO_FIRMWARE,
-+	.reboot_prepare_cb = tts_reboot_prepare,
-+};
-+
- int __init acpi_sleep_init(void)
- {
- 	char supported[ACPI_S_STATE_COUNT * 3 + 1];
-@@ -1055,8 +1052,8 @@ int __init acpi_sleep_init(void)
- 
- 	if (acpi_sleep_state_supported(ACPI_STATE_S5)) {
- 		sleep_states[ACPI_STATE_S5] = 1;
--		pm_power_off_prepare = acpi_power_off_prepare;
--		pm_power_off = acpi_power_off;
-+		acpi_sys_off_handler.power_off_cb = acpi_power_off;
-+		acpi_sys_off_handler.power_off_prepare_cb = acpi_power_off_prepare;
- 	} else {
- 		acpi_no_s5 = true;
- 	}
-@@ -1072,6 +1069,6 @@ int __init acpi_sleep_init(void)
- 	 * Register the tts_notifier to reboot notifier list so that the _TTS
- 	 * object can also be evaluated when the system enters S5.
- 	 */
--	register_reboot_notifier(&tts_notifier);
-+	register_sys_off_handler(&acpi_sys_off_handler);
- 	return 0;
- }
+ static void native_machine_halt(void)
 -- 
 2.35.1
 
