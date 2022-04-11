@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C50DC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDACC43217
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 23:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233269AbiDKXnr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Apr 2022 19:43:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53740 "EHLO
+        id S237908AbiDKXnz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Apr 2022 19:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239027AbiDKXmI (ORCPT
+        with ESMTP id S242368AbiDKXnJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Apr 2022 19:42:08 -0400
+        Mon, 11 Apr 2022 19:43:09 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AFA22316F;
-        Mon, 11 Apr 2022 16:39:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B9A27FD2;
+        Mon, 11 Apr 2022 16:40:09 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id A8ED81F43D21
+        with ESMTPSA id D94721F43D51
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1649720384;
-        bh=3jxNCr50hXMiuQKPY6aSTyDwgW9MB8tpZKXxC2xIhis=;
+        s=mail; t=1649720408;
+        bh=V6K3csETbdRArqsU2lL0TyRBTq4S5S8aBxupwY5Jatg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R6Pz+NW8C1nY5ThJ2I8cAwEUAIBn3TF8sggu7KSDpBA2Ut/0exz6Xps+3/DnVgwBN
-         qp6Lqyx7CPyAYk+qZkUxz2KCm7SnCRJ4eOYnawabjYhGt6nRnQa9Y02z/Ytkv2jXpZ
-         wEcsyt2MDHlC1WX/nw52J0c857HvVJOhLeDrY7yRKznEzlbGj2ZC8hDBsKt1V+pZeP
-         zbdktiCEBi99v8s5+GasfGckA5YJsjqZH0zL18RDx2s4TE9tXf9pP/XNP1Ahm7vU8u
-         u3DSr1rfrTs/d19jgQcujhTQ+xjiQHnAYsKAqXTDcAVEVHrQCWORpLx/uihf64AFFO
-         sfXLGACDgXMIg==
+        b=CMftO839VRrr32eH+lZu8ZOi1NbjfZFjDzrNLUXRDkPyP58z3IRG10vfZMM6I9C8p
+         837TKvbg42S+mJzZ0uqaB5Oc/1UA2hTbm5a8+rijfOJ+FIh/HPSjO05Hjo6b3xxoAW
+         lGvmRtC0fqPRPy2WlJd7rY0wK6gtLSVUfLBjC2jTcnF0w0W/A+IVqaNMQoQAZT4LDr
+         fQD0e+x43OZ7oZHP69IKlJDfA9+eXZHghwfPSfEIWkZPLn6n64VRF+szOOv/b5UQWx
+         6IVYXyx9++XM4pGMzqLsaonRUXt6Cwbeq6xKoRpIunoIcqWqnYG2rytrpY3Qp3f0bg
+         YaW5hzU2YodEA==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -79,9 +79,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v7 12/20] m68k: Switch to new sys-off handler API
-Date:   Tue, 12 Apr 2022 02:38:24 +0300
-Message-Id: <20220411233832.391817-13-dmitry.osipenko@collabora.com>
+Subject: [PATCH v7 18/20] ACPI: power: Switch to sys-off handler API
+Date:   Tue, 12 Apr 2022 02:38:30 +0300
+Message-Id: <20220411233832.391817-19-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
 References: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
@@ -91,133 +91,87 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Kernel now supports chained power-off handlers. Use
-register_power_off_handler() that registers power-off handlers and
-do_kernel_power_off() that invokes chained power-off handlers. Legacy
-pm_power_off() will be removed once all drivers will be converted to
-the new power-off API.
+Switch to sys-off API that replaces legacy pm_power_off callbacks.
 
-Normally arch code should adopt only the do_kernel_power_off() at first,
-but m68k is a special case because it uses pm_power_off() "inside out",
-i.e. pm_power_off() invokes machine_power_off() [in fact it does nothing],
-while it's machine_power_off() that should invoke the pm_power_off(), and
-thus, we can't convert platforms to the new API separately. There are only
-two platforms changed here, so it's not a big deal.
-
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- arch/m68k/emu/natfeat.c         | 3 ++-
- arch/m68k/include/asm/machdep.h | 1 -
- arch/m68k/kernel/process.c      | 5 ++---
- arch/m68k/kernel/setup_mm.c     | 1 -
- arch/m68k/kernel/setup_no.c     | 1 -
- arch/m68k/mac/config.c          | 4 +++-
- 6 files changed, 7 insertions(+), 8 deletions(-)
+ drivers/acpi/sleep.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/arch/m68k/emu/natfeat.c b/arch/m68k/emu/natfeat.c
-index 71b78ecee75c..b19dc00026d9 100644
---- a/arch/m68k/emu/natfeat.c
-+++ b/arch/m68k/emu/natfeat.c
-@@ -15,6 +15,7 @@
- #include <linux/string.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/reboot.h>
- #include <linux/io.h>
- #include <asm/machdep.h>
- #include <asm/natfeat.h>
-@@ -90,5 +91,5 @@ void __init nf_init(void)
- 	pr_info("NatFeats found (%s, %lu.%lu)\n", buf, version >> 16,
- 		version & 0xffff);
- 
--	mach_power_off = nf_poweroff;
-+	register_platform_power_off(nf_poweroff);
+diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+index c992e57b2c79..426297258e26 100644
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -47,19 +47,11 @@ static void acpi_sleep_tts_switch(u32 acpi_state)
+ 	}
  }
-diff --git a/arch/m68k/include/asm/machdep.h b/arch/m68k/include/asm/machdep.h
-index 8fd80ef1b77e..8d8c3ee2069f 100644
---- a/arch/m68k/include/asm/machdep.h
-+++ b/arch/m68k/include/asm/machdep.h
-@@ -24,7 +24,6 @@ extern int (*mach_get_rtc_pll)(struct rtc_pll_info *);
- extern int (*mach_set_rtc_pll)(struct rtc_pll_info *);
- extern void (*mach_reset)( void );
- extern void (*mach_halt)( void );
--extern void (*mach_power_off)( void );
- extern unsigned long (*mach_hd_init) (unsigned long, unsigned long);
- extern void (*mach_hd_setup)(char *, int *);
- extern void (*mach_heartbeat) (int);
-diff --git a/arch/m68k/kernel/process.c b/arch/m68k/kernel/process.c
-index a6030dbaa089..e160a7c57bd3 100644
---- a/arch/m68k/kernel/process.c
-+++ b/arch/m68k/kernel/process.c
-@@ -67,12 +67,11 @@ void machine_halt(void)
  
- void machine_power_off(void)
+-static int tts_notify_reboot(struct notifier_block *this,
+-			unsigned long code, void *x)
++static void tts_reboot_prepare(struct reboot_prep_data *data)
  {
--	if (mach_power_off)
--		mach_power_off();
-+	do_kernel_power_off();
- 	for (;;);
+ 	acpi_sleep_tts_switch(ACPI_STATE_S5);
+-	return NOTIFY_DONE;
  }
  
--void (*pm_power_off)(void) = machine_power_off;
-+void (*pm_power_off)(void);
- EXPORT_SYMBOL(pm_power_off);
+-static struct notifier_block tts_notifier = {
+-	.notifier_call	= tts_notify_reboot,
+-	.next		= NULL,
+-	.priority	= 0,
+-};
+-
+ static int acpi_sleep_prepare(u32 acpi_state)
+ {
+ #ifdef CONFIG_ACPI_SLEEP
+@@ -1023,7 +1015,7 @@ static void acpi_sleep_hibernate_setup(void)
+ static inline void acpi_sleep_hibernate_setup(void) {}
+ #endif /* !CONFIG_HIBERNATION */
  
- void show_regs(struct pt_regs * regs)
-diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
-index 8f94feed969c..47d55541612f 100644
---- a/arch/m68k/kernel/setup_mm.c
-+++ b/arch/m68k/kernel/setup_mm.c
-@@ -98,7 +98,6 @@ EXPORT_SYMBOL(mach_get_rtc_pll);
- EXPORT_SYMBOL(mach_set_rtc_pll);
- void (*mach_reset)( void );
- void (*mach_halt)( void );
--void (*mach_power_off)( void );
- #ifdef CONFIG_HEARTBEAT
- void (*mach_heartbeat) (int);
- EXPORT_SYMBOL(mach_heartbeat);
-diff --git a/arch/m68k/kernel/setup_no.c b/arch/m68k/kernel/setup_no.c
-index 5e4104f07a44..00bf82258233 100644
---- a/arch/m68k/kernel/setup_no.c
-+++ b/arch/m68k/kernel/setup_no.c
-@@ -55,7 +55,6 @@ int (*mach_hwclk) (int, struct rtc_time*);
- /* machine dependent reboot functions */
- void (*mach_reset)(void);
- void (*mach_halt)(void);
--void (*mach_power_off)(void);
+-static void acpi_power_off_prepare(void)
++static void acpi_power_off_prepare(struct power_off_prep_data *data)
+ {
+ 	/* Prepare to power off the system */
+ 	acpi_sleep_prepare(ACPI_STATE_S5);
+@@ -1031,7 +1023,7 @@ static void acpi_power_off_prepare(void)
+ 	acpi_os_wait_events_complete();
+ }
  
- #ifdef CONFIG_M68000
- #if defined(CONFIG_M68328)
-diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
-index 65d124ec80bb..382f656c29ea 100644
---- a/arch/m68k/mac/config.c
-+++ b/arch/m68k/mac/config.c
-@@ -12,6 +12,7 @@
+-static void acpi_power_off(void)
++static void acpi_power_off(struct power_off_data *data)
+ {
+ 	/* acpi_sleep_prepare(ACPI_STATE_S5) should have already been called */
+ 	pr_debug("%s called\n", __func__);
+@@ -1039,6 +1031,11 @@ static void acpi_power_off(void)
+ 	acpi_enter_sleep_state(ACPI_STATE_S5);
+ }
  
- #include <linux/errno.h>
- #include <linux/module.h>
-+#include <linux/reboot.h>
- #include <linux/types.h>
- #include <linux/mm.h>
- #include <linux/tty.h>
-@@ -140,7 +141,6 @@ void __init config_mac(void)
- 	mach_hwclk = mac_hwclk;
- 	mach_reset = mac_reset;
- 	mach_halt = mac_poweroff;
--	mach_power_off = mac_poweroff;
- #if IS_ENABLED(CONFIG_INPUT_M68K_BEEP)
- 	mach_beep = mac_mksound;
- #endif
-@@ -160,6 +160,8 @@ void __init config_mac(void)
- 
- 	if (macintosh_config->ident == MAC_MODEL_IICI)
- 		mach_l2_flush = via_l2_flush;
++static struct sys_off_handler acpi_sys_off_handler = {
++	.power_off_priority = POWEROFF_PRIO_FIRMWARE,
++	.reboot_prepare_cb = tts_reboot_prepare,
++};
 +
-+	register_platform_power_off(mac_poweroff);
+ int __init acpi_sleep_init(void)
+ {
+ 	char supported[ACPI_S_STATE_COUNT * 3 + 1];
+@@ -1055,8 +1052,8 @@ int __init acpi_sleep_init(void)
+ 
+ 	if (acpi_sleep_state_supported(ACPI_STATE_S5)) {
+ 		sleep_states[ACPI_STATE_S5] = 1;
+-		pm_power_off_prepare = acpi_power_off_prepare;
+-		pm_power_off = acpi_power_off;
++		acpi_sys_off_handler.power_off_cb = acpi_power_off;
++		acpi_sys_off_handler.power_off_prepare_cb = acpi_power_off_prepare;
+ 	} else {
+ 		acpi_no_s5 = true;
+ 	}
+@@ -1072,6 +1069,6 @@ int __init acpi_sleep_init(void)
+ 	 * Register the tts_notifier to reboot notifier list so that the _TTS
+ 	 * object can also be evaluated when the system enters S5.
+ 	 */
+-	register_reboot_notifier(&tts_notifier);
++	register_sys_off_handler(&acpi_sys_off_handler);
+ 	return 0;
  }
- 
- 
 -- 
 2.35.1
 
