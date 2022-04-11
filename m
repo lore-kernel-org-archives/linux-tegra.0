@@ -2,122 +2,306 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24471C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 22:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECE9C4167D
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Apr 2022 23:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346026AbiDKWbC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Apr 2022 18:31:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59548 "EHLO
+        id S234282AbiDKXlQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Apr 2022 19:41:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245082AbiDKWbB (ORCPT
+        with ESMTP id S232902AbiDKXlN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Apr 2022 18:31:01 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783C01EEC9;
-        Mon, 11 Apr 2022 15:28:46 -0700 (PDT)
+        Mon, 11 Apr 2022 19:41:13 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C481EAEB;
+        Mon, 11 Apr 2022 16:38:57 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id 6D9F51F42D86
+        with ESMTPSA id 503051F4028B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1649716125;
-        bh=j5s2z2+QvxX8/0HiqGbGTalMGZgMNOaInzlk8sVuvvM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=VSTxe5yFQejREqnCxyn4xGFXtinl0bR2ufB4zz1SZaJ7usao6xS3L9wJHaZi3U2be
-         B4He3EWlN9+YA6N1fUAxEk47YLZ7Xe1kdkqvnaWuHnD+xYl05xH/GEOKFxGviNmEFx
-         L3WlaYw81uQSL/OG3BikLy6vE/SfxdHTJj+71yDfFw8yWpmHLmZOReEPFmEPxzk/tH
-         Vg62v3DLlk+b19XtRR9d1se5Lhr34X7aiCI2MQ5UsTSCsbIZkh3xnjPrjuvKnTrx2W
-         +q9CJ4HKiIH9ddHCukgLctCERfXuGWhBJBtObN9sVgk1YA8fkg7bokj3r854VdsYYO
-         n9uWKar0Gs93Q==
-Message-ID: <3c80282b-0d63-1e1f-1036-1c8e79f1cbbc@collabora.com>
-Date:   Tue, 12 Apr 2022 01:28:41 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [Patch v6 3/4] dt-bindings: memory: Update reg maxitems for
- tegra186
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        krzysztof.kozlowski@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <20220406052459.10438-1-amhetre@nvidia.com>
- <20220406052459.10438-4-amhetre@nvidia.com>
- <3e044f9e-3200-bb26-897d-1977e3825c92@gmail.com>
- <81686bc4-c580-862b-1c29-51b34e419154@nvidia.com>
- <57825f4a-8cfa-ef00-6462-fea37cd4d7be@collabora.com>
- <8930bbfe-2c33-ea90-c48d-c6a00005b6a5@nvidia.com>
+        s=mail; t=1649720335;
+        bh=FlE6aXeklkCK/AI2WoLzbfUrvXlLcjuPO9lE+MlTmGY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j+6DZIwJdleyULy9bYi7IIrtEan9CdcwksRYcm5h8cT0CGnytw+oY1GsbHra8+mo7
+         WAj0RfHgJkhRuYgUcWavGMh9E1Hhu+tKsgei/htxQ+qjIqGrCN6t2+bWVHjWjj1Qpq
+         7b+zsXRmKixDrhr9fCidfruuyuPRyVyxJhbdKz2yHpOMugsFgMbuhM965aXmnaRDE+
+         LTiAdSCP8Lzw70g2GfuLwtuRh9M1mRUkgyo7Hnx1qgsL3EUKjP743t0hBs1pOf8lsU
+         zcikwcJL0GUjlp2ni/qBTGHc6jdc3APJ62532Pu4lcn3EW1rST4jSFE9stwZof/GVv
+         U1VMzfHvk+aag==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <8930bbfe-2c33-ea90-c48d-c6a00005b6a5@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v7 00/20] Introduce power-off+restart call chain API
+Date:   Tue, 12 Apr 2022 02:38:12 +0300
+Message-Id: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/11/22 18:41, Ashish Mhetre wrote:
-> 
-> 
-> On 4/11/2022 8:59 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 4/11/22 18:02, Ashish Mhetre wrote:
->>>
->>>
->>> On 4/10/2022 7:51 PM, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 06.04.2022 08:24, Ashish Mhetre пишет:
->>>>>            memory-controller@2c00000 {
->>>>>                compatible = "nvidia,tegra186-mc";
->>>>> -            reg = <0x0 0x02c00000 0x0 0xb0000>;
->>>>> +            reg = <0x0 0x02c00000 0x0 0x10000>,    /* MC-SID */
->>>>> +                  <0x0 0x02c10000 0x0 0x10000>,    /* Broadcast
->>>>> channel */
->>>>> +                  <0x0 0x02c20000 0x0 0x10000>,    /* MC0 */
->>>>> +                  <0x0 0x02c30000 0x0 0x10000>,    /* MC1 */
->>>>> +                  <0x0 0x02c40000 0x0 0x10000>,    /* MC2 */
->>>>> +                  <0x0 0x02c50000 0x0 0x10000>;    /* MC3 */
->>>>> +            reg-names = "mc-sid", "mc-broadcast", "mc0", "mc1",
->>>>> "mc2", "mc3";
->>>>
->>>> The "mc-" prefix feels redundant to me, I'd name the regs like this:
->>>>
->>>>     "sid", "broadcast", "ch0", "ch1", "ch2", "ch3"
->>>>
->>>>
->>>> You should also add validation of the regs/reg-names to the yaml based
->>>> on SoC version. I.e. it's not enough to only bump the maxItems.
->>>
->>> Okay, I will add validation of reg-names as following:
->>>
->>>    reg-names:
->>>      minItems: 0
->>>      maxItems: 6
->>>      items:
->>>        - const: sid
->>>        - const: broadcast
->>>        - const: ch0
->>>        - const: ch1
->>>        - const: ch2
->>>        - const: ch3
->>>
->>>
->>> We will have to keep minItems to 0 in order to make it compatible with
->>> old DT, right?
->>
->> Bindings are about the latest DTs. In general older dtbs must be updated
->> and you must get error from the schema checker for older DTs. It's only
->> drivers that should care about older dtbs.
-> 
-> On v5 Krzysztof mentioned that old DTS will start failing with new
-> bindings https://lkml.org/lkml/2022/3/22/907.
-> So I just wanted to confirm whether it's fine if updated bindings
-> start to fail with old DTS?
+Problem
+-------
 
-Since the older DT was incorrect, it's fine that the DT check will fail
-for it.
+SoC devices require power-off call chaining functionality from kernel.
+We have a widely used restart chaining provided by restart notifier API,
+but nothing for power-off.
+
+Solution
+--------
+
+Introduce new API that provides both restart and power-off call chains.
+
+Why combine restart with power-off? Because drivers often do both.
+More practical to have API that provides both under the same roof.
+
+The new API is designed with simplicity and extensibility in mind.
+It's built upon the existing restart and reboot APIs. The simplicity
+is in new helper functions that are convenient for drivers. The
+extensibility is in the design that doesn't hardcode callback
+arguments, making easy to add new parameters and remove old.
+
+This is a third attempt to introduce the new API. First was made by
+Guenter Roeck back in 2014, second was made by Thierry Reding in 2017.
+In fact the work didn't stop and recently arm_pm_restart() was removed
+from v5.14 kernel, which was a part of preparatory work started by
+Guenter Roeck. I took into account experience and ideas from the
+previous attempts, extended and polished them.
+
+Adoption plan
+-------------
+
+This patchset introduces the new API. It also converts multiple drivers
+and arch code to the new API to demonstrate how it all looks in practice.
+
+The plan is:
+
+1. Merge the new API and convert arch code to use do_kernel_power_off().
+   For now the new API will co-exist with the older API.
+
+2. Convert all drivers and platform code to the new API.
+
+3. Remove obsoleted pm_power_off and pm_power_off_prepare variables.
+
+4. Make restart-notifier API private to kernel/reboot.c once no users left.
+
+5. Make unique-priority of the handlers' a mandatory requirement in the
+   new API.
+
+The plan is fully implemented here:
+
+[1] https://gitlab.collabora.com/dmitry.osipenko/linux-kernel-rd/-/commits/sys-off-handler
+
+For now I'm sending the first 20 base patches out of ~180.
+Majority of drivers and platform patches depend on the base patches,
+hence the rest will come later on, once base will land.
+
+All [1] patches are compile-tested. Tegra, Rockchip and x86 ACPI patches
+are tested on hardware.
+
+Results
+-------
+
+1. Devices can be powered off properly.
+
+2. Global variables are removed from drivers.
+
+3. Global pm_power_off and pm_power_off_prepare callback variables are
+removed once all users are converted to the new API. The latter callback
+is removed by patch #25 of this series.
+
+4. Ambiguous call chain ordering is prohibited. See patch #4 which adds
+verification of restart handlers priorities, ensuring that they are unique.
+
+Changelog:
+
+v7: - Rebased on a recent linux-next. Dropped the recently removed
+      NDS32 architecture. Only SH and x86 arches left un-acked.
+
+    - Added acks from Thomas Bogendoerfer and Krzysztof Kozlowski
+      to the MIPS and memory/emif patches respectively.
+
+    - Made couple minor cosmetic improvements to the new API.
+
+    - A month ago I joined Collabora and continuing to work on this series
+      on the company's time, so changed my email address to collabora.com
+
+v6: - Rebased on a recent linux-next.
+
+    - Made minor couple cosmetic changes.
+
+v5: - Dropped patches which cleaned up notifier/reboot headers, as was
+      requested by Rafael Wysocki.
+
+    - Dropped WARN_ON() from the code, as was requested by Rafael Wysocki.
+      Replaced it with pr_err() appropriately.
+
+    - Dropped *_notifier_has_unique_priority() functions and added
+      *_notifier_chain_register_unique_prio() instead, as was suggested
+      by Michał Mirosław and Rafael Wysocki.
+
+    - Dropped export of blocking_notifier_call_chain_is_empty() symbol,
+      as was suggested by Rafael Wysocki.
+
+    - Michał Mirosław suggested that will be better to split up patch
+      that adds the new API to ease reviewing, but Rafael Wysocki asked
+      not add more patches, so I kept it as a single patch.
+
+    - Added temporary "weak" stub for pm_power_off() which fixes linkage
+      failure once symbol is removed from arch/* code. Previously I missed
+      this problem because was only compile-testing object files.
+
+v4: - Made a very minor improvement to doc comments, clarifying couple
+      default values.
+
+    - Corrected list of emails recipient by adding Linus, Sebastian,
+      Philipp and more NDS people. Removed bouncing emails.
+
+    - Added acks that were given to v3.
+
+v3: - Renamed power_handler to sys_off_handler as was suggested by
+      Rafael Wysocki.
+
+    - Improved doc-comments as was suggested by Rafael Wysocki. Added more
+      doc-comments.
+
+    - Implemented full set of 180 patches which convert whole kernel in
+      accordance to the plan, see link [1] above. Slightly adjusted API to
+      better suit for the remaining converted drivers.
+
+      * Added unregister_sys_off_handler() that is handy for a couple old
+        platform drivers.
+
+      * Dropped devm_register_trivial_restart_handler(), 'simple' variant
+        is enough to have.
+
+    - Improved "Add atomic/blocking_notifier_has_unique_priority()" patch,
+      as was suggested by Andy Shevchenko. Also replaced down_write() with
+      down_read() and factored out common notifier_has_unique_priority().
+
+    - Added stop_chain field to struct restart_data and reboot_prep_data
+      after discovering couple drivers wanting that feature.
+
+    - Added acks that were given to v2.
+
+v2: - Replaced standalone power-off call chain demo-API with the combined
+      power-off+restart API because this is what drivers want. It's a more
+      comprehensive solution.
+
+    - Converted multiple drivers and arch code to the new API. Suggested by
+      Andy Shevchenko. I skimmed through the rest of drivers, verifying that
+      new API suits them. The rest of the drivers will be converted once we
+      will settle on the new API, otherwise will be too many patches here.
+
+    - v2 API doesn't expose notifier to users and require handlers to
+      have unique priority. Suggested by Guenter Roeck.
+
+    - v2 API has power-off chaining disabled by default and require
+      drivers to explicitly opt-in to the chaining. This preserves old
+      behaviour for existing drivers once they are converted to the new
+      API.
+
+Dmitry Osipenko (20):
+  notifier: Add blocking_notifier_call_chain_is_empty()
+  notifier: Add atomic/blocking_notifier_chain_register_unique_prio()
+  reboot: Print error message if restart handler has duplicated priority
+  kernel: Add combined power-off+restart handler call chain API
+  ARM: Use do_kernel_power_off()
+  csky: Use do_kernel_power_off()
+  riscv: Use do_kernel_power_off()
+  arm64: Use do_kernel_power_off()
+  parisc: Use do_kernel_power_off()
+  xen/x86: Use do_kernel_power_off()
+  powerpc: Use do_kernel_power_off()
+  m68k: Switch to new sys-off handler API
+  sh: Use do_kernel_power_off()
+  x86: Use do_kernel_power_off()
+  ia64: Use do_kernel_power_off()
+  mips: Use do_kernel_power_off()
+  memory: emif: Use kernel_can_power_off()
+  ACPI: power: Switch to sys-off handler API
+  regulator: pfuze100: Use devm_register_sys_off_handler()
+  reboot: Remove pm_power_off_prepare()
+
+ arch/arm/kernel/reboot.c               |   4 +-
+ arch/arm64/kernel/process.c            |   3 +-
+ arch/csky/kernel/power.c               |   6 +-
+ arch/ia64/kernel/process.c             |   4 +-
+ arch/m68k/emu/natfeat.c                |   3 +-
+ arch/m68k/include/asm/machdep.h        |   1 -
+ arch/m68k/kernel/process.c             |   5 +-
+ arch/m68k/kernel/setup_mm.c            |   1 -
+ arch/m68k/kernel/setup_no.c            |   1 -
+ arch/m68k/mac/config.c                 |   4 +-
+ arch/mips/kernel/reset.c               |   3 +-
+ arch/parisc/kernel/process.c           |   4 +-
+ arch/powerpc/kernel/setup-common.c     |   4 +-
+ arch/powerpc/xmon/xmon.c               |   3 +-
+ arch/riscv/kernel/reset.c              |  12 +-
+ arch/sh/kernel/reboot.c                |   3 +-
+ arch/x86/kernel/reboot.c               |   4 +-
+ arch/x86/xen/enlighten_pv.c            |   4 +-
+ drivers/acpi/sleep.c                   |  25 +-
+ drivers/memory/emif.c                  |   2 +-
+ drivers/regulator/pfuze100-regulator.c |  38 +-
+ include/linux/notifier.h               |   7 +
+ include/linux/pm.h                     |   1 -
+ include/linux/reboot.h                 | 229 ++++++++-
+ kernel/notifier.c                      | 101 +++-
+ kernel/power/hibernate.c               |   2 +-
+ kernel/reboot.c                        | 622 ++++++++++++++++++++++++-
+ 27 files changed, 980 insertions(+), 116 deletions(-)
+
+-- 
+2.35.1
+
