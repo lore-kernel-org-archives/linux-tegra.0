@@ -2,144 +2,154 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF4EC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Apr 2022 09:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F9FC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Apr 2022 10:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235776AbiDLJvV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Apr 2022 05:51:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42860 "EHLO
+        id S1344030AbiDLKP5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Apr 2022 06:15:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355164AbiDLH1M (ORCPT
+        with ESMTP id S1378009AbiDLJ7c (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Apr 2022 03:27:12 -0400
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A0A48310;
-        Tue, 12 Apr 2022 00:07:07 -0700 (PDT)
-Received: by mail-oi1-f170.google.com with SMTP id q129so18154845oif.4;
-        Tue, 12 Apr 2022 00:07:07 -0700 (PDT)
+        Tue, 12 Apr 2022 05:59:32 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B268205D4;
+        Tue, 12 Apr 2022 02:05:21 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id b15so21563186edn.4;
+        Tue, 12 Apr 2022 02:05:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JvUzj4eJQSW6VlbLUjMSITUiq97FPtxDr7ncwYmoRZw=;
+        b=PQN4pGhpOlIZoayWPrUBzGowazBqMXrd4jRr1snIyitef4NjsLhheTAe0qQ4xxS53b
+         3Bt6MF+gTSAJvT6Dr3An/eqtqMwA/5zAkSdx9c7loYNVNFh9WM+LFbECAWMLVRdG5mYk
+         EHaD8+YmvSfCswWysoOwVBSMt1FW0TYI80ssVuaKlsX40TIA1HRDORT8I2xQLJg1MiMs
+         Yx/pt7YehaJjEiMKaTBxBkXZNXuWm38BnB890ruRydAj6g6KeFCaBmrdhEULfmwVXtvW
+         JuXDdKRrxlc7wpyYmrYqigcamJk84SaFG6J8AQDlYbDZrY894fzLN+jF/gyZI2J22cJA
+         G+3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G5mglcYZA42FcZWexfT//Na3N8U+QShWNDx9HhSMVxo=;
-        b=kKJ3nUEWMsvrLSEjjffpnmiZNTAKv4on5YariZdK09oUTFOOJbZgu5tA8vQBAtZ18r
-         E6+Qe32az2p2EwxkK9oA6ePWtoGjE9TH4px3ydOd0WeV+0op0Bd5IGPncnasrC2wKODI
-         XAVk01tIA0D4Nf6u79H0lCf8YKJLt4ka3SqsukAN5aBC6LlNhYZYF8EQNWa2+HxY1EV8
-         cyQmoiJUPBvSfAp1f93p+HrJEHl3CPPt/YpcmaEwE8NROh4cxi7nTZYnY2NdvgO4eQBW
-         EwBgsDhtUy0/k+Oqkn6ck6Nes7LsIXLcms7SD81Cl41lekQ+RqseMzrcZRKQi3GL7BLY
-         UBNA==
-X-Gm-Message-State: AOAM532Gum91u170rACXcmlIBzrzy9KmXNpCRz3aU0vGcRwzZEMgiOSG
-        z2ER9oFvaFzXpGSJ43yLVTvkqZpwxi9zAxu9
-X-Google-Smtp-Source: ABdhPJyY2799smUiwIFdgvJoeCM6WpcXcNi2SOOE90czIXyqPS95bARZpvHXARvzQOeftsWIVQC/BQ==
-X-Received: by 2002:a05:6808:bc2:b0:2ec:e1c2:bd3f with SMTP id o2-20020a0568080bc200b002ece1c2bd3fmr1212821oik.161.1649747226236;
-        Tue, 12 Apr 2022 00:07:06 -0700 (PDT)
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
-        by smtp.gmail.com with ESMTPSA id p16-20020a05680811d000b002d72ec3a921sm12272220oiv.21.2022.04.12.00.07.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 00:07:05 -0700 (PDT)
-Received: by mail-ot1-f50.google.com with SMTP id a17-20020a9d3e11000000b005cb483c500dso12828738otd.6;
-        Tue, 12 Apr 2022 00:07:05 -0700 (PDT)
-X-Received: by 2002:a25:c049:0:b0:634:6751:e8d2 with SMTP id
- c70-20020a25c049000000b006346751e8d2mr25945732ybf.6.1649747214062; Tue, 12
- Apr 2022 00:06:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
-In-Reply-To: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Apr 2022 09:06:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVfOpGvF5FR6vFD-3a1h-7Kc_yAKQzWV71PD6mDy6BmZw@mail.gmail.com>
-Message-ID: <CAMuHMdVfOpGvF5FR6vFD-3a1h-7Kc_yAKQzWV71PD6mDy6BmZw@mail.gmail.com>
-Subject: Re: [PATCH v7 00/20] Introduce power-off+restart call chain API
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JvUzj4eJQSW6VlbLUjMSITUiq97FPtxDr7ncwYmoRZw=;
+        b=apipqC5iq8qGmSdZFgX7WK8tmdHuIHRk8IzpIu6qFqkTKLsHzlVxoo5Fq7f6oq7upL
+         qqlFFiABi33laX9LmL4Bg5AwNT/OKMyyJ8G2HUjNFhEX2+AiObGv7z5UutbIB/ap0GOD
+         4daMLZMq8VIjWXUs+gYvFEIGwX7ABy/ezDHDJzXKbHidlhe7w3aZwezfVZrAsl7eUN3S
+         F86jKysoOT5+E41CWIMzQpBFCSp4mXOZjEpPIPn33mkuoYwciyuhtUVMYgHL1e+iYSMB
+         f3TZ8efmMxMR8lOdgHhiAIVgsXfneL3Dlbm1zXidw9zbJ6FMEM1n2uURWBbY7KI1yVe3
+         corg==
+X-Gm-Message-State: AOAM531lq5w84URxPGf8nDBU4uHxBAwcEVwri+wNPlh3JMus3uQjVExT
+        27BURn0Kk0AB8oAu0rs5pFs=
+X-Google-Smtp-Source: ABdhPJy7UIlkAw90AvWa8CNYC9UtMZpU5M8mz2CPjgf62C2T/CEb2v4+GAYAJGpj0vByS1chiMtK+A==
+X-Received: by 2002:a05:6402:27d1:b0:419:1b02:4a04 with SMTP id c17-20020a05640227d100b004191b024a04mr37474442ede.218.1649754319553;
+        Tue, 12 Apr 2022 02:05:19 -0700 (PDT)
+Received: from orome (pd9e518f7.dip0.t-ipconnect.de. [217.229.24.247])
+        by smtp.gmail.com with ESMTPSA id d26-20020a1709064c5a00b006e89debe3f4sm1595260ejw.9.2022.04.12.02.05.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Apr 2022 02:05:18 -0700 (PDT)
+Date:   Tue, 12 Apr 2022 11:05:15 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-stm32@st-md-mailman.stormreply.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] arm64: dts: tegra: Fix boolean properties with
+ values
+Message-ID: <YlVAy95eF/9b1nmu@orome>
+References: <Yk3nShkFzNJaI3/Z@robh.at.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NBsBIpgqCfiMExLJ"
+Content-Disposition: inline
+In-Reply-To: <Yk3nShkFzNJaI3/Z@robh.at.kernel.org>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
 
-On Tue, Apr 12, 2022 at 1:38 AM Dmitry Osipenko
-<dmitry.osipenko@collabora.com> wrote:
-> Problem
-> -------
->
-> SoC devices require power-off call chaining functionality from kernel.
-> We have a widely used restart chaining provided by restart notifier API,
-> but nothing for power-off.
+--NBsBIpgqCfiMExLJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Changelog:
->
-> v7: - Rebased on a recent linux-next. Dropped the recently removed
->       NDS32 architecture. Only SH and x86 arches left un-acked.
->
->     - Added acks from Thomas Bogendoerfer and Krzysztof Kozlowski
->       to the MIPS and memory/emif patches respectively.
+On Wed, Apr 06, 2022 at 02:17:30PM -0500, Rob Herring wrote:
+> Boolean properties in DT are present or not present and don't take a valu=
+e.
+> A property such as 'foo =3D <0>;' evaluated to true. IOW, the value doesn=
+'t
+> matter.
+>=20
+> It may have been intended that 0 values are false, but there is no change
+> in behavior with this patch.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> Can someone apply this for 5.18.
+>=20
+>  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi            | 8 ++++----
+>  .../boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts    | 8 ++++----
+>  arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi            | 6 +++---
+>  arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi            | 6 +++---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi            | 6 +++---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi            | 8 ++++----
+>  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts        | 8 ++++----
+>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts             | 4 ++--
+>  8 files changed, 27 insertions(+), 27 deletions(-)
 
-Looks like you forgot to add the actual acks?
+This causes multiple regressions on Tegra boards. The reason for this is
+that these properties are not in fact boolean, despite what the DT
+bindings say. If you look at the code that handles these, you'll notice
+that they are single-cell properties, typically with <0> and <1> values.
+What may have led to the conclusion that these are boolean is that there
+is also a special case where these can be left out, but the meaning of
+that is not the "false" (<0>) value. Instead, leaving these out means
+that the values should be left at whatever is currently in the register.
 
-Gr{oetje,eeting}s,
+See pinconf_generic_parse_dt_config() and parse_dt_cfg() specifically in
+drivers/pinctrl/pinconf-generic.c.
 
-                        Geert
+Arnd, can you please revert this so that these boards can be unbroken?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+It's a bit unfortunate because there seem to be other platforms that
+also employ these in the boolean form that Rob mentioned, but I think it
+is those that probably need fixing instead. Not sure what the intentions
+were for those.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Adding Bjorn for MSM, the Nuvoton and STM32 folks.
+
+Thierry
+
+--NBsBIpgqCfiMExLJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJVQMgACgkQ3SOs138+
+s6FAcQ//f9+PoHjpquYwfy+qc69MSz549E+MT1SBelK6GGDpNc7CWrtmujpeiTP/
+bgA1e0TzCagra2528fAUyOtyAaVKPHS8BVt6OxptgyEgvwP2fygn83+2BIQsVar1
+Ls092mvWt1GeHYri19DRt3L43JH1RlcYxaPsUbgWU2tucetEtEDndOVUki87oclX
+se/tsVqGRA5B1FMFHPiVgJyTaFzJtiwkCZnH31BN3DRXSsOnkJr33fV5bQM4Ylg5
+vxWmwURr1T7+vTgUSCxi2RNzYGAuveI/IGFs1QD/jddo8MEHqF/EHmGmPWHF5fta
+iP3T6u7bSb0y433imp3GDtLFch/cJ4BZ9sIWfLqPXP06sVVMfbLq2joo0p26XEZ1
+q7hxFhNrpWBpmEna+RtNQWLCbcW7BBI+v0f4VYml+xNVpYehqUfHwrOqLdURucPO
+WbriU9+nODw81tLTJbSr2EGGvYi4uiGBZw302ZuApk2pOhF+Az9WnlxUHiM3Q64D
+WFubEG7Ezq1lEFO4hD4zZs9bMhSycTi6LMIJRTz7HHH/qPubJ8DWRi/Npn7WjN5S
+uzQyjmD9ei7E/jLb28Sa0TCk4zAKiZiSVWZF/ONXhJ4aGzkgLhebFgMlGOihj4Gj
+4J3cLi4fOm2o4qU7axaSMb8yd6hAD93kKRIylehK0Lfdmt9pM4I=
+=kKPk
+-----END PGP SIGNATURE-----
+
+--NBsBIpgqCfiMExLJ--
