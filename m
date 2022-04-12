@@ -2,124 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC6FC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Apr 2022 16:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892ADC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Apr 2022 17:38:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355407AbiDLQPR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Apr 2022 12:15:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60558 "EHLO
+        id S1354304AbiDLRkk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Apr 2022 13:40:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238419AbiDLQPR (ORCPT
+        with ESMTP id S1358338AbiDLRkc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Apr 2022 12:15:17 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1D2074EA24;
-        Tue, 12 Apr 2022 09:12:59 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF6421424;
-        Tue, 12 Apr 2022 09:12:58 -0700 (PDT)
-Received: from lpieralisi (unknown [10.57.8.134])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23AE93F5A1;
-        Tue, 12 Apr 2022 09:12:54 -0700 (PDT)
-Date:   Tue, 12 Apr 2022 17:12:59 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Baruch Siach <baruch@tkos.co.il>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] PCI: IPQ6018 platform support
-Message-ID: <20220412161259.GA7109@lpieralisi>
-References: <cover.1644234441.git.baruch@tkos.co.il>
+        Tue, 12 Apr 2022 13:40:32 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 789F362A25;
+        Tue, 12 Apr 2022 10:38:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2FFF8B81F61;
+        Tue, 12 Apr 2022 17:38:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32F1C385A1;
+        Tue, 12 Apr 2022 17:38:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649785090;
+        bh=zZkQCYesF/sm5DoAVfI8r+QbjE7oMDeDYotH3+XpDaU=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=s0NFGWHc5QAgTBSymp29uk7oQhEMqGisqfHn4x1/xF9xqYlm5JMsTxRA89yI00uPL
+         rHvTifL97r26jNMjXlDwvsFUTNbPcbknnhm16iVxHcEgAfc2KC/i93gS+XOx7TdEnh
+         z/0t6h9hCb/uHkNDg4LQnfipwYVRxQUApuf3A6SRs03Qpxba5eKIAOWFeez3PyWUVg
+         iQThjtzcxRxMbIH8mY9QnYLF0tUCm3RHdgf96vkJeSnrcKvnOIRWRf4T7fJXHFp2RH
+         euZQUtMZWgA+85Fd/DpOI0l3476J+qCfb3gv4F1ql4QtBktXYvVuBgF67rvxBOoUPC
+         nFC9C4o9CRRtg==
+From:   Mark Brown <broonie@kernel.org>
+To:     thierry.reding@gmail.com, lgirdwood@gmail.com,
+        jonathanh@nvidia.com, perex@perex.cz, tiwai@suse.com,
+        spujar@nvidia.com, yuehaibing@huawei.com
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org
+In-Reply-To: <20220411020908.580-1-yuehaibing@huawei.com>
+References: <20220411020908.580-1-yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] ASoC: tegra186_asrc: mark runtime-pm functions as __maybe_unused
+Message-Id: <164978508863.404572.4357231774639790524.b4-ty@kernel.org>
+Date:   Tue, 12 Apr 2022 18:38:08 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1644234441.git.baruch@tkos.co.il>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Feb 07, 2022 at 04:51:23PM +0200, Baruch Siach wrote:
-> This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is 
-> ported from downstream Codeaurora v5.4 kernel. The main difference from 
-> downstream code is the split of PCIe registers configuration from .init to 
-> .post_init, since it requires phy_power_on().
+On Mon, 11 Apr 2022 10:09:08 +0800, YueHaibing wrote:
+> sound/soc/tegra/tegra186_asrc.c:90:12: error: ‘tegra186_asrc_runtime_resume’ defined but not used [-Werror=unused-function]
+>  static int tegra186_asrc_runtime_resume(struct device *dev)
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> sound/soc/tegra/tegra186_asrc.c:80:12: error: ‘tegra186_asrc_runtime_suspend’ defined but not used [-Werror=unused-function]
+>  static int tegra186_asrc_runtime_suspend(struct device *dev)
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 > 
-> Tested on IPQ6010 based hardware.
-> 
-> Changes in v6:
-> 
->   * Drop DT patch applied to the qcom tree
-> 
->   * Normalize driver changes subject line
-> 
->   * Add a preparatory patch to rename PCIE_CAP_LINK1_VAL to PCIE_CAP_SLOT_VAL,
->     and define it using PCI_EXP_SLTCAP_* macros
-> 
->   * Drop a vague comment about ASPM configuration
-> 
->   * Add a comment about the source of delay periods
-> 
-> Changes in v5:
-> 
->   * Remove comments from qcom_pcie_init_2_9_0() (Bjorn Andersson)
-> 
-> Changes in v4:
-> 
->   * Drop applied DT bits
-> 
->   * Add max-link-speed that was missing from the applied v2 patch
-> 
->   * Rebase the driver on v5.16-rc3
-> 
-> Changes in v3:
-> 
->   * Drop applied patches
-> 
->   * Rely on generic code for speed setup
-> 
->   * Drop unused macros
-> 
->   * Formatting fixes
-> 
-> Changes in v2:
-> 
->   * Add patch moving GEN3_RELATED macros to a common header
-> 
->   * Drop ATU configuration from pcie-qcom
-> 
->   * Remove local definition of common registers
-> 
->   * Use bulk clk and reset APIs
-> 
->   * Remove msi-parent from device-tree
-> 
-> Baruch Siach (2):
->   PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
->   PCI: qcom: Define slot capabilities using PCI_EXP_SLTCAP_*
-> 
-> Selvam Sathappan Periakaruppan (1):
->   PCI: qcom: Add IPQ60xx support
-> 
->  drivers/pci/controller/dwc/pcie-designware.h |   7 +
->  drivers/pci/controller/dwc/pcie-qcom.c       | 155 ++++++++++++++++++-
->  drivers/pci/controller/dwc/pcie-tegra194.c   |   6 -
->  3 files changed, 160 insertions(+), 8 deletions(-)
+> [...]
 
-Hi Bjorn, Andy,
+Applied to
 
-any feedback on this series please ?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: tegra186_asrc: mark runtime-pm functions as __maybe_unused
+      commit: dc7680ca7ac6c32b8c18aff36bca728a2f83e2a0
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Lorenzo
+Mark
