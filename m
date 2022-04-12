@@ -2,118 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A25C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Apr 2022 09:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF4EC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Apr 2022 09:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbiDLJvS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Apr 2022 05:51:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50170 "EHLO
+        id S235776AbiDLJvV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Apr 2022 05:51:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356678AbiDLHjN (ORCPT
+        with ESMTP id S1355164AbiDLH1M (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Apr 2022 03:39:13 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91937527D7;
-        Tue, 12 Apr 2022 00:09:59 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id x20so6206857qvl.10;
-        Tue, 12 Apr 2022 00:09:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YYsKfoGqtSHG7ncqqXsmjssryH5B9bgQ3YJHMg/wmuE=;
-        b=QwBDdndai0tHYI8OV/Ip9QYF6T4RV900qy1HIIeJzWQNOf8+SSUQGhtUdJC1ZhkXn/
-         PKIqCEKeJ9PSo/gMIYsj1AMK+l3XvGfdG5JVPtMEC9ehRqStvb3iyPJQtq7mscCUg7Ly
-         seZ68CyLmRp0Bf9hQGi8QMDLMpWTa4EoznfeGzSX/fChsLWaoY1+tjlzhoRxSYOtcgOn
-         bL6vDdOE5b9u8VvD04vAPkJQ3Dq+HMFSikrmGAwemVEDsIxek9lFVGHe/IvKIymk+b93
-         ZEiRMXLsAm/M00k7TbMYXGHMbhIdYrmsSsfrpjAkFVY15T+2VK4SImqlVnwoCTK7Dbxp
-         eLoA==
+        Tue, 12 Apr 2022 03:27:12 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A0A48310;
+        Tue, 12 Apr 2022 00:07:07 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id q129so18154845oif.4;
+        Tue, 12 Apr 2022 00:07:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YYsKfoGqtSHG7ncqqXsmjssryH5B9bgQ3YJHMg/wmuE=;
-        b=KxOpgrIqWrlde4w6rh/KNB6CE79BOq6BFbzswe8A7Qbht3MzzMERyc7UFyme6v4e9N
-         JOco/Mt/qqroPyLnPfPY4hpbwH/rH/gzOsmQ9d5jHoKngmKjT2z1J6gqLrBUtvppuwqr
-         5DRLYxg1IG82D7QhTCoWgxLKoV6/jFDe2bUd574Pt2KmEB5qJj+NeXt7PaPP/kGnLGoA
-         rQgq05MupMjIBigwd5cxaqrKQkIDDKEXeEFx5kpEQpFszA+QVGukdrPTW+Spf260hcAr
-         5kq9Cm14IWyCXhopYBYxGW338kY4IB29oJOeoH9njDR5NiEY2X5Dtw9skB8synBIXXci
-         v4fg==
-X-Gm-Message-State: AOAM5318iC+LxTonk2b6oN3YuqfyA4RtpyTLO4D/6TxMth8ykGFmTYuR
-        N6ydE1Ogm2B8uQtyl+RAukY=
-X-Google-Smtp-Source: ABdhPJxD82QyXzIXC49kCu0uQhNuZRAkgzW0/Y+DmjAjzd5Op7VFc9g/56donMlX6v9f4IhUqwGMdQ==
-X-Received: by 2002:a05:6214:2301:b0:435:38af:2f87 with SMTP id gc1-20020a056214230100b0043538af2f87mr30014186qvb.83.1649747398424;
-        Tue, 12 Apr 2022 00:09:58 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id t3-20020a05622a148300b002ef8ff7afa1sm2317660qtx.21.2022.04.12.00.09.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 00:09:58 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     ldewangan@nvidia.com
-Cc:     broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] spi: spi-tegra114: using pm_runtime_resume_and_get instead of pm_runtime_get_sync
-Date:   Tue, 12 Apr 2022 07:09:51 +0000
-Message-Id: <20220412070951.2532157-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G5mglcYZA42FcZWexfT//Na3N8U+QShWNDx9HhSMVxo=;
+        b=kKJ3nUEWMsvrLSEjjffpnmiZNTAKv4on5YariZdK09oUTFOOJbZgu5tA8vQBAtZ18r
+         E6+Qe32az2p2EwxkK9oA6ePWtoGjE9TH4px3ydOd0WeV+0op0Bd5IGPncnasrC2wKODI
+         XAVk01tIA0D4Nf6u79H0lCf8YKJLt4ka3SqsukAN5aBC6LlNhYZYF8EQNWa2+HxY1EV8
+         cyQmoiJUPBvSfAp1f93p+HrJEHl3CPPt/YpcmaEwE8NROh4cxi7nTZYnY2NdvgO4eQBW
+         EwBgsDhtUy0/k+Oqkn6ck6Nes7LsIXLcms7SD81Cl41lekQ+RqseMzrcZRKQi3GL7BLY
+         UBNA==
+X-Gm-Message-State: AOAM532Gum91u170rACXcmlIBzrzy9KmXNpCRz3aU0vGcRwzZEMgiOSG
+        z2ER9oFvaFzXpGSJ43yLVTvkqZpwxi9zAxu9
+X-Google-Smtp-Source: ABdhPJyY2799smUiwIFdgvJoeCM6WpcXcNi2SOOE90czIXyqPS95bARZpvHXARvzQOeftsWIVQC/BQ==
+X-Received: by 2002:a05:6808:bc2:b0:2ec:e1c2:bd3f with SMTP id o2-20020a0568080bc200b002ece1c2bd3fmr1212821oik.161.1649747226236;
+        Tue, 12 Apr 2022 00:07:06 -0700 (PDT)
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
+        by smtp.gmail.com with ESMTPSA id p16-20020a05680811d000b002d72ec3a921sm12272220oiv.21.2022.04.12.00.07.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Apr 2022 00:07:05 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id a17-20020a9d3e11000000b005cb483c500dso12828738otd.6;
+        Tue, 12 Apr 2022 00:07:05 -0700 (PDT)
+X-Received: by 2002:a25:c049:0:b0:634:6751:e8d2 with SMTP id
+ c70-20020a25c049000000b006346751e8d2mr25945732ybf.6.1649747214062; Tue, 12
+ Apr 2022 00:06:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
+In-Reply-To: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 12 Apr 2022 09:06:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVfOpGvF5FR6vFD-3a1h-7Kc_yAKQzWV71PD6mDy6BmZw@mail.gmail.com>
+Message-ID: <CAMuHMdVfOpGvF5FR6vFD-3a1h-7Kc_yAKQzWV71PD6mDy6BmZw@mail.gmail.com>
+Subject: Re: [PATCH v7 00/20] Introduce power-off+restart call chain API
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-csky@vger.kernel.org,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+Hi Dmitry,
 
-Using pm_runtime_resume_and_get is more appropriate
-for simplifing code
+On Tue, Apr 12, 2022 at 1:38 AM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
+> Problem
+> -------
+>
+> SoC devices require power-off call chaining functionality from kernel.
+> We have a widely used restart chaining provided by restart notifier API,
+> but nothing for power-off.
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
----
- drivers/spi/spi-tegra114.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+> Changelog:
+>
+> v7: - Rebased on a recent linux-next. Dropped the recently removed
+>       NDS32 architecture. Only SH and x86 arches left un-acked.
+>
+>     - Added acks from Thomas Bogendoerfer and Krzysztof Kozlowski
+>       to the MIPS and memory/emif patches respectively.
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 8f345247a8c3..d9be80e3e1bc 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -964,9 +964,8 @@ static int tegra_spi_setup(struct spi_device *spi)
- 		spi->controller_data = cdata;
- 	}
- 
--	ret = pm_runtime_get_sync(tspi->dev);
-+	ret = pm_runtime_resume_and_get(tspi->dev);
- 	if (ret < 0) {
--		pm_runtime_put_noidle(tspi->dev);
- 		dev_err(tspi->dev, "pm runtime failed, e = %d\n", ret);
- 		if (cdata)
- 			tegra_spi_cleanup(spi);
-@@ -1394,10 +1393,9 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 			goto exit_pm_disable;
- 	}
- 
--	ret = pm_runtime_get_sync(&pdev->dev);
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
--		pm_runtime_put_noidle(&pdev->dev);
- 		goto exit_pm_disable;
- 	}
- 
-@@ -1476,9 +1474,8 @@ static int tegra_spi_resume(struct device *dev)
- 	struct tegra_spi_data *tspi = spi_master_get_devdata(master);
- 	int ret;
- 
--	ret = pm_runtime_get_sync(dev);
-+	ret = pm_runtime_resume_and_get(dev);
- 	if (ret < 0) {
--		pm_runtime_put_noidle(dev);
- 		dev_err(dev, "pm runtime failed, e = %d\n", ret);
- 		return ret;
- 	}
--- 
-2.25.1
+Looks like you forgot to add the actual acks?
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
