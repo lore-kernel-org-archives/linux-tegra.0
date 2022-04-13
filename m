@@ -2,151 +2,258 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED30C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 18:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE632C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 21:09:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237818AbiDMSuz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Apr 2022 14:50:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35890 "EHLO
+        id S234858AbiDMVMQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Apr 2022 17:12:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231590AbiDMSuy (ORCPT
+        with ESMTP id S229646AbiDMVMP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Apr 2022 14:50:54 -0400
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B50A75DA0F;
-        Wed, 13 Apr 2022 11:48:32 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-2ec04a2ebadso32319057b3.12;
-        Wed, 13 Apr 2022 11:48:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J1rErWVySlUxlEFN2u18NGS5Qm0qvXYHGlMsYpGhhEY=;
-        b=o889vKxSZtxv8BEV2OoNHeUSIVSxACJe8n0x+KvpxDr0kg3lDSg1g8LoUE9Bu4dAAe
-         I0iUyDRgqQM+YxT7ev9JMk18DB7xCsm0NBYY0yKziHMpPBVYhoEIuHPE0y3+tOiIghU0
-         QHrGU+pFLYAbtd6x535V+cs7nmE3stGixEEx91f8SUrxCGmEZ0B4NPXCTsEfdbCexJso
-         vN1rL0p+hRNdjj6uBwjtVnohxcEFxd7GQNFhlNHOO2UF1hIvohxjUdbrpOBY+8T8/y0d
-         BY3aa+4w9VV3v6CY9Vt8NvvoNMllq5JBLzAtEZiZR4w9pAAAbivq/5mzW1QjjZn3A3Ob
-         eqpg==
-X-Gm-Message-State: AOAM532UuvfMXcYmQn930+JWT3B73Q7VMEmbT5Qiq10V4IGHVmHDg4AO
-        YQUeiVjdulu07zQKtE0HLZsgtYUCjcWXGlEgZG4=
-X-Google-Smtp-Source: ABdhPJz9BfsA7QIGi43YRDlzzrWhVjbeGEMJOs01j9nA3vXXWXOOPKhq5d8EhdtGHqqQ5dYXQmK91VGL/RQnfnI1jKs=
-X-Received: by 2002:a81:7c45:0:b0:2eb:4759:cc32 with SMTP id
- x66-20020a817c45000000b002eb4759cc32mr224284ywc.515.1649875711933; Wed, 13
- Apr 2022 11:48:31 -0700 (PDT)
+        Wed, 13 Apr 2022 17:12:15 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CD68396AF;
+        Wed, 13 Apr 2022 14:09:53 -0700 (PDT)
+Received: from [IPV6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1] (unknown [IPv6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 4EAD71F473D2;
+        Wed, 13 Apr 2022 22:09:50 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1649884191;
+        bh=NXfE3m0blQYAD216srx6k3KFQ3FlsjslFM9iENtE754=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=mCiS9x/nrN+iDb4jLyyUkpSwyw9Uf4yjAlK3Y/EeQfwteUPpNKKrJAsVDuNnrtbNB
+         EKNQqyqcAK2IQu9n3xq1nUChJc1lAdxU2qFI6J/kQs6tZJyR0aY2BIzmPoYDdyjSCj
+         D0xq4MqsCSQVmUt+Qyptlxhw1lCHABoCpnlRBl/auehQQLAJaItT7NSoKGQgLBN2GU
+         8egbvpU3+vACEA4ROoOxja74Mq120XqN2Gscb3/bn3Z00+WnzXFo7ZfPSbQ45OQct8
+         QMwzr6UOO0LHHv+pzqpoikcwYkHXdl2bsRrhw8Zdynfxwy9oNsAhAoSlRWy8p29kn6
+         6O/TPiq1nrVPA==
+Message-ID: <ae1d1098-f8b5-f41a-c33b-0f4863a43d5e@collabora.com>
+Date:   Thu, 14 Apr 2022 00:09:47 +0300
 MIME-Version: 1.0
-References: <20220411233832.391817-1-dmitry.osipenko@collabora.com> <20220411233832.391817-4-dmitry.osipenko@collabora.com>
-In-Reply-To: <20220411233832.391817-4-dmitry.osipenko@collabora.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 13 Apr 2022 20:48:20 +0200
-Message-ID: <CAJZ5v0gf1J+yPW14TAdLGLGfO+-2s=r0DDP7d+Rgop3=dB0gaQ@mail.gmail.com>
-Subject: Re: [PATCH v7 03/20] reboot: Print error message if restart handler
- has duplicated priority
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [Patch v7 3/4] dt-bindings: memory: Update reg/reg-names
+ validation
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>, Rob Herring <robh@kernel.org>
+Cc:     digetx@gmail.com, krzysztof.kozlowski@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220413094012.13589-1-amhetre@nvidia.com>
+ <20220413094012.13589-4-amhetre@nvidia.com>
+ <YlbSGEBKgpVC51dZ@robh.at.kernel.org>
+ <b050247d-a62c-62e7-7750-24cefcc93506@collabora.com>
+ <71fc3efb-5110-287e-0422-10c1ae90139c@nvidia.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <71fc3efb-5110-287e-0422-10c1ae90139c@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 12, 2022 at 1:39 AM Dmitry Osipenko
-<dmitry.osipenko@collabora.com> wrote:
->
-> Add sanity check which ensures that there are no two restart handlers
-> registered using the same priority. This requirement will become mandatory
-> once all drivers will be converted to the new API and such errors will be
-> fixed.
->
-> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+On 4/13/22 19:17, Ashish Mhetre wrote:
+> 
+> 
+> On 4/13/2022 7:34 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 4/13/22 16:37, Rob Herring wrote:
+>>> On Wed, Apr 13, 2022 at 03:10:11PM +0530, Ashish Mhetre wrote:
+>>>>  From tegra186 onwards, memory controller support multiple channels.
+>>>> Reg items are updated with address and size of these channels.
+>>>> Tegra186 has overall 5 memory controller channels. Tegra194 and
+>>>> tegra234
+>>>> have overall 17 memory controller channels each.
+>>>> There is 1 reg item for memory controller stream-id registers.
+>>>> So update the reg maxItems to 18 in tegra186 devicetree documentation.
+>>>> Also update validation for reg-names added for these corresponding reg
+>>>> items.
+>>>
+>>> Somehow your subject should indicate this is for Tegra.
+>>>
+>>>>
+>>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>>> ---
+>>>>   .../nvidia,tegra186-mc.yaml                   | 80
+>>>> +++++++++++++++++--
+>>>>   1 file changed, 74 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>> b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>
+>>>> index 13c4c82fd0d3..c7cfa6c2cd81 100644
+>>>> ---
+>>>> a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>
+>>>> +++
+>>>> b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>
+>>>> @@ -34,8 +34,12 @@ properties:
+>>>>             - nvidia,tegra234-mc
+>>>>
+>>>>     reg:
+>>>> -    minItems: 1
+>>>> -    maxItems: 3
+>>>> +    minItems: 6
+>>>
+>>> You just broke current users.
+>>>
+>>>> +    maxItems: 18
+>>>> +
+>>>> +  reg-names:
+>>>> +    minItems: 6
+>>>> +    maxItems: 18
+>>>>
+>>>>     interrupts:
+>>>>       items:
+>>>> @@ -142,7 +146,18 @@ allOf:
+>>>>       then:
+>>>>         properties:
+>>>>           reg:
+>>>> -          maxItems: 1
+>>>> +          maxItems: 6
+>>>> +          description: 5 memory controller channels and 1 for
+>>>> stream-id registers
+>>>> +
+>>>> +        reg-names:
+>>>> +          maxItems: 6
+>>>> +          items:
+>>>> +            - const: sid
+>>>> +            - const: broadcast
+>>>> +            - const: ch0
+>>>> +            - const: ch1
+>>>> +            - const: ch2
+>>>> +            - const: ch3
+>>>>
+>>>>     - if:
+>>>>         properties:
+>>>> @@ -151,7 +166,30 @@ allOf:
+>>>>       then:
+>>>>         properties:
+>>>>           reg:
+>>>> -          minItems: 3
+>>>> +          minItems: 18
+>>>> +          description: 17 memory controller channels and 1 for
+>>>> stream-id registers
+>>>> +
+>>>> +        reg-names:
+>>>> +          minItems: 18
+>>>> +          items:
+>>>> +            - const: sid
+>>>> +            - const: broadcast
+>>>> +            - const: ch0
+>>>> +            - const: ch1
+>>>> +            - const: ch2
+>>>> +            - const: ch3
+>>>> +            - const: ch4
+>>>> +            - const: ch5
+>>>> +            - const: ch6
+>>>> +            - const: ch7
+>>>> +            - const: ch8
+>>>> +            - const: ch9
+>>>> +            - const: ch10
+>>>> +            - const: ch11
+>>>> +            - const: ch12
+>>>> +            - const: ch13
+>>>> +            - const: ch14
+>>>> +            - const: ch15
+>>>>
+>>>>     - if:
+>>>>         properties:
+>>>> @@ -160,13 +198,37 @@ allOf:
+>>>>       then:
+>>>>         properties:
+>>>>           reg:
+>>>> -          minItems: 3
+>>>> +          minItems: 18
+>>>> +          description: 17 memory controller channels and 1 for
+>>>> stream-id registers
+>>>> +
+>>>> +        reg-names:
+>>>> +          minItems: 18
+>>>> +          items:
+>>>> +            - const: sid
+>>>> +            - const: broadcast
+>>>> +            - const: ch0
+>>>> +            - const: ch1
+>>>> +            - const: ch2
+>>>> +            - const: ch3
+>>>> +            - const: ch4
+>>>> +            - const: ch5
+>>>> +            - const: ch6
+>>>> +            - const: ch7
+>>>> +            - const: ch8
+>>>> +            - const: ch9
+>>>> +            - const: ch10
+>>>> +            - const: ch11
+>>>> +            - const: ch12
+>>>> +            - const: ch13
+>>>> +            - const: ch14
+>>>> +            - const: ch15
+>>>>
+>>>>   additionalProperties: false
+>>>>
+>>>>   required:
+>>>>     - compatible
+>>>>     - reg
+>>>> +  - reg-names
+>>>
+>>> New, added properties cannot be required. That's an ABI break.
+>>>
+>>>>     - interrupts
+>>>>     - "#address-cells"
+>>>>     - "#size-cells"
+>>>> @@ -182,7 +244,13 @@ examples:
+>>>>
+>>>>           memory-controller@2c00000 {
+>>>>               compatible = "nvidia,tegra186-mc";
+>>>> -            reg = <0x0 0x02c00000 0x0 0xb0000>;
+>>>> +            reg = <0x0 0x02c00000 0x0 0x10000>,    /* MC-SID */
+>>>> +                  <0x0 0x02c10000 0x0 0x10000>,    /* Broadcast
+>>>> channel */
+>>>> +                  <0x0 0x02c20000 0x0 0x10000>,    /* MC0 */
+>>>> +                  <0x0 0x02c30000 0x0 0x10000>,    /* MC1 */
+>>>> +                  <0x0 0x02c40000 0x0 0x10000>,    /* MC2 */
+>>>> +                  <0x0 0x02c50000 0x0 0x10000>;    /* MC3 */
+>>>> +            reg-names = "sid", "broadcast", "ch0", "ch1", "ch2",
+>>>> "ch3";
+>>>>               interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+>>>>
+>>>>               #address-cells = <2>;
+>>>> -- 
+>>>> 2.17.1
+>>>>
+>>
+>> Oh, wait.. I didn't notice that the new reg ranges are only splitting up
+>> the old ranges. Previously it appeared to me that these are the new
+>> ranges.
+>>  > Ashish, in this case you don't need to change the regs in the DT at
+>> all.
+>> Instead, you need to specify the per-channel reg-base offsets in the
+>> driver code.
+> 
+> Yes, it's kind of splitting up the old ranges and straight forward for
+> Tegra186. But on Tegra194 and Tegra234 the old address is not in single
+> range. It's already split across 3 ranges. We have to choose right range
+> and add channel offsets to that range in order to read interrupts.
+> So I went with the approach of splitting the regs in DT itself as per
+> the channels because that way they can be mapped in a single loop and
+> used easily.
+> If we want to specify per-channel reg-base offsets then that would be
+> per-SOC. Also we would need to choose correct reg-range for Tegra194 and
+> Tegra234 and have a way to maintain offsets of channels from those
+> respective reg-ranges.
 
-The first two patches in the series are fine with me and there's only
-one minor nit regarding this one (below).
-
-> ---
->  kernel/reboot.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/kernel/reboot.c b/kernel/reboot.c
-> index ed4e6dfb7d44..acdae4e95061 100644
-> --- a/kernel/reboot.c
-> +++ b/kernel/reboot.c
-> @@ -182,6 +182,21 @@ static ATOMIC_NOTIFIER_HEAD(restart_handler_list);
->   */
->  int register_restart_handler(struct notifier_block *nb)
->  {
-> +       int ret;
-> +
-> +       ret = atomic_notifier_chain_register_unique_prio(&restart_handler_list, nb);
-> +       if (ret != -EBUSY)
-> +               return ret;
-> +
-> +       /*
-> +        * Handler must have unique priority. Otherwise call order is
-> +        * determined by registration order, which is unreliable.
-> +        *
-> +        * This requirement will become mandatory once all drivers
-> +        * will be converted to use new sys-off API.
-> +        */
-> +       pr_err("failed to register restart handler using unique priority\n");
-
-I would use pr_info() here, because this is not a substantial error AFAICS.
-
-> +
->         return atomic_notifier_chain_register(&restart_handler_list, nb);
->  }
->  EXPORT_SYMBOL(register_restart_handler);
-> --
+That is not nice too. Should be better to switch to the new DT scheme,
+since those channels weren't used by older kernels. It's okay to change
+the binding ABI in this case then, driver will continue to work for the
+older dtbs. Have you tested driver using the older dtbs?
