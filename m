@@ -2,97 +2,214 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A424BC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 12:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E69BC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 13:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235515AbiDMM2d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Apr 2022 08:28:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35094 "EHLO
+        id S233820AbiDMNjv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Apr 2022 09:39:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235513AbiDMM2c (ORCPT
+        with ESMTP id S233742AbiDMNjv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Apr 2022 08:28:32 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 434745D66F;
-        Wed, 13 Apr 2022 05:26:11 -0700 (PDT)
-Received: by mail-ot1-f46.google.com with SMTP id z9-20020a05683020c900b005b22bf41872so1030921otq.13;
-        Wed, 13 Apr 2022 05:26:11 -0700 (PDT)
+        Wed, 13 Apr 2022 09:39:51 -0400
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210EA5F240;
+        Wed, 13 Apr 2022 06:37:30 -0700 (PDT)
+Received: by mail-ot1-f48.google.com with SMTP id i11-20020a9d4a8b000000b005cda3b9754aso1165458otf.12;
+        Wed, 13 Apr 2022 06:37:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=1dqPCxWjCSCf7mIDEYW2fcPrVISdU4rxrKI4YSiKcVE=;
-        b=QPWD8w+aOu046kP5QL1fjqryzkfNI3OEWAmADqXB/La7VQbv042SM2FSg0FnkJxEoB
-         Fp1fp4OtG7zu8LNfp6A9a1+ahRL8C6E7sVV21bKei+08wazA7EEcrkz06ftCzQqvGDaY
-         tSXng3v4V570UCy/K9Ki1D3IR0yC/4IajnJi6LTcd9ZVzoUvJzEj3whoiaV0DIUEuj+M
-         SifhhhS7L3/gHvSFDoKKn1TgvgCoRctISs1dz0pQBiAzRCmfKkhbPSlqGIkZZ5u4n2OR
-         DmWza3iX6MWiUE5BA1IpBRwua2+lDrUIY5BIbV8JGFKf3xxOr1A2jz5O/xlt4fersdUb
-         duHQ==
-X-Gm-Message-State: AOAM532nxExlcU9TLCnbmGfWdnxaxrPENhYavEMxWa0xs/8DHTvtWNK4
-        PcvsrWNDno5MTx09CZOmeA==
-X-Google-Smtp-Source: ABdhPJzEFsbH95qUqpxqG9001AF8MB5wGgK10fURpb/sMRsYZjupsRufyJVjqe+tH507Ko2NEaQt1A==
-X-Received: by 2002:a9d:1702:0:b0:5e8:c77f:513 with SMTP id i2-20020a9d1702000000b005e8c77f0513mr1768522ota.140.1649852770439;
-        Wed, 13 Apr 2022 05:26:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vVwMNhUUHsY7dc6d0f9n1lAM7yT9lwBnJKe7WLSKID0=;
+        b=x/FHyw0rE/htNaw3RQlQCoPAzoDMtxpVc5uAjzxUIQiOTXqoHujV0vSnZYK8ztgJr2
+         klWAZcitRCJy2WBdlPT4DjwMGicqxI80O/z++Yk9p2JCvpwAw1BptZtnwcbaJnLl020a
+         xxXwTRJfsP7cP3u2CwOWfkIPbxGUKAxwdVSXRVperDSboNqMnF0otbgB+zoGFQ7uuY2Y
+         9p/W4VOn08ovMO2e+Dd6HsQFsC+CcrTvvKdFuTHqxQGWeau5K835Li1MDFSu7Kszq1fy
+         55DIfnxPGlIEy608ca/v1MtMXzsB5+n0HvswMP3DKyryMuPVIkBJvYNRqDaeUKWAQORz
+         iZ4Q==
+X-Gm-Message-State: AOAM531m007qZPzwZR65lFPp9fE59oAylJeqVqhYSIL/Xap0qPyJ6MXY
+        aDXofbVpjQ7CDC2FLvOBAA==
+X-Google-Smtp-Source: ABdhPJzRayVPW0NrvFDebGFBcCiJJloeTKmG0BgRIxF3CbY/VeL30ky6BKkSiYuxU0EUXIqIZeSAWA==
+X-Received: by 2002:a05:6830:2055:b0:5b2:5659:542f with SMTP id f21-20020a056830205500b005b25659542fmr15031191otp.189.1649857049323;
+        Wed, 13 Apr 2022 06:37:29 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id u14-20020a4aae8e000000b003332a47de0bsm221931oon.20.2022.04.13.05.26.09
+        by smtp.gmail.com with ESMTPSA id h8-20020a056830400800b005cdceb42261sm14584614ots.66.2022.04.13.06.37.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Apr 2022 05:26:10 -0700 (PDT)
-Received: (nullmailer pid 2930034 invoked by uid 1000);
-        Wed, 13 Apr 2022 12:26:08 -0000
+        Wed, 13 Apr 2022 06:37:29 -0700 (PDT)
+Received: (nullmailer pid 3097465 invoked by uid 1000);
+        Wed, 13 Apr 2022 13:37:28 -0000
+Date:   Wed, 13 Apr 2022 08:37:28 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Ashish Mhetre <amhetre@nvidia.com>
-Cc:     dmitry.osipenko@collabora.com, thierry.reding@gmail.com,
-        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Snikam@nvidia.com,
-        krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com,
-        krzysztof.kozlowski@linaro.org, vdumpa@nvidia.com
+Cc:     dmitry.osipenko@collabora.com, digetx@gmail.com,
+        krzysztof.kozlowski@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, vdumpa@nvidia.com,
+        Snikam@nvidia.com
+Subject: Re: [Patch v7 3/4] dt-bindings: memory: Update reg/reg-names
+ validation
+Message-ID: <YlbSGEBKgpVC51dZ@robh.at.kernel.org>
+References: <20220413094012.13589-1-amhetre@nvidia.com>
+ <20220413094012.13589-4-amhetre@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20220413094012.13589-4-amhetre@nvidia.com>
-References: <20220413094012.13589-1-amhetre@nvidia.com> <20220413094012.13589-4-amhetre@nvidia.com>
-Subject: Re: [Patch v7 3/4] dt-bindings: memory: Update reg/reg-names validation
-Date:   Wed, 13 Apr 2022 07:26:08 -0500
-Message-Id: <1649852768.330323.2930033.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 13 Apr 2022 15:10:11 +0530, Ashish Mhetre wrote:
+On Wed, Apr 13, 2022 at 03:10:11PM +0530, Ashish Mhetre wrote:
+> From tegra186 onwards, memory controller support multiple channels.
+> Reg items are updated with address and size of these channels.
+> Tegra186 has overall 5 memory controller channels. Tegra194 and tegra234
+> have overall 17 memory controller channels each.
+> There is 1 reg item for memory controller stream-id registers.
+> So update the reg maxItems to 18 in tegra186 devicetree documentation.
+> Also update validation for reg-names added for these corresponding reg
+> items.
+
+Somehow your subject should indicate this is for Tegra.
+
 > 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>  .../nvidia,tegra186-mc.yaml                   | 80 +++++++++++++++++--
+>  1 file changed, 74 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> index 13c4c82fd0d3..c7cfa6c2cd81 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> @@ -34,8 +34,12 @@ properties:
+>            - nvidia,tegra234-mc
+>  
+>    reg:
+> -    minItems: 1
+> -    maxItems: 3
+> +    minItems: 6
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+You just broke current users.
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+> +    maxItems: 18
+> +
+> +  reg-names:
+> +    minItems: 6
+> +    maxItems: 18
+>  
+>    interrupts:
+>      items:
+> @@ -142,7 +146,18 @@ allOf:
+>      then:
+>        properties:
+>          reg:
+> -          maxItems: 1
+> +          maxItems: 6
+> +          description: 5 memory controller channels and 1 for stream-id registers
+> +
+> +        reg-names:
+> +          maxItems: 6
+> +          items:
+> +            - const: sid
+> +            - const: broadcast
+> +            - const: ch0
+> +            - const: ch1
+> +            - const: ch2
+> +            - const: ch3
+>  
+>    - if:
+>        properties:
+> @@ -151,7 +166,30 @@ allOf:
+>      then:
+>        properties:
+>          reg:
+> -          minItems: 3
+> +          minItems: 18
+> +          description: 17 memory controller channels and 1 for stream-id registers
+> +
+> +        reg-names:
+> +          minItems: 18
+> +          items:
+> +            - const: sid
+> +            - const: broadcast
+> +            - const: ch0
+> +            - const: ch1
+> +            - const: ch2
+> +            - const: ch3
+> +            - const: ch4
+> +            - const: ch5
+> +            - const: ch6
+> +            - const: ch7
+> +            - const: ch8
+> +            - const: ch9
+> +            - const: ch10
+> +            - const: ch11
+> +            - const: ch12
+> +            - const: ch13
+> +            - const: ch14
+> +            - const: ch15
+>  
+>    - if:
+>        properties:
+> @@ -160,13 +198,37 @@ allOf:
+>      then:
+>        properties:
+>          reg:
+> -          minItems: 3
+> +          minItems: 18
+> +          description: 17 memory controller channels and 1 for stream-id registers
+> +
+> +        reg-names:
+> +          minItems: 18
+> +          items:
+> +            - const: sid
+> +            - const: broadcast
+> +            - const: ch0
+> +            - const: ch1
+> +            - const: ch2
+> +            - const: ch3
+> +            - const: ch4
+> +            - const: ch5
+> +            - const: ch6
+> +            - const: ch7
+> +            - const: ch8
+> +            - const: ch9
+> +            - const: ch10
+> +            - const: ch11
+> +            - const: ch12
+> +            - const: ch13
+> +            - const: ch14
+> +            - const: ch15
+>  
+>  additionalProperties: false
+>  
+>  required:
+>    - compatible
+>    - reg
+> +  - reg-names
 
-Full log is available here: https://patchwork.ozlabs.org/patch/
+New, added properties cannot be required. That's an ABI break.
 
-
-memory-controller@2c00000: reg: [[0, 46137344, 0, 720896]] is too short
-	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
-
-memory-controller@2c00000: reg: [[46137344, 1048576], [45613056, 262144], [24117248, 1048576]] is too short
-	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
-
-memory-controller@2c00000: 'reg-names' is a required property
-	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
-
+>    - interrupts
+>    - "#address-cells"
+>    - "#size-cells"
+> @@ -182,7 +244,13 @@ examples:
+>  
+>          memory-controller@2c00000 {
+>              compatible = "nvidia,tegra186-mc";
+> -            reg = <0x0 0x02c00000 0x0 0xb0000>;
+> +            reg = <0x0 0x02c00000 0x0 0x10000>,    /* MC-SID */
+> +                  <0x0 0x02c10000 0x0 0x10000>,    /* Broadcast channel */
+> +                  <0x0 0x02c20000 0x0 0x10000>,    /* MC0 */
+> +                  <0x0 0x02c30000 0x0 0x10000>,    /* MC1 */
+> +                  <0x0 0x02c40000 0x0 0x10000>,    /* MC2 */
+> +                  <0x0 0x02c50000 0x0 0x10000>;    /* MC3 */
+> +            reg-names = "sid", "broadcast", "ch0", "ch1", "ch2", "ch3";
+>              interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+>  
+>              #address-cells = <2>;
+> -- 
+> 2.17.1
+> 
