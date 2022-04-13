@@ -2,152 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF13DC433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 22:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F2CC433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 22:34:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236417AbiDMW00 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Apr 2022 18:26:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43848 "EHLO
+        id S235864AbiDMWgy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Apr 2022 18:36:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230070AbiDMW0X (ORCPT
+        with ESMTP id S229772AbiDMWgy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Apr 2022 18:26:23 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09BA220BC0;
-        Wed, 13 Apr 2022 15:24:01 -0700 (PDT)
+        Wed, 13 Apr 2022 18:36:54 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92CBF3467E
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Apr 2022 15:34:31 -0700 (PDT)
 Received: from [IPV6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1] (unknown [IPv6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: dmitry.osipenko)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 16B2A1F47620;
-        Wed, 13 Apr 2022 23:23:55 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 982E31F4762C;
+        Wed, 13 Apr 2022 23:34:29 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1649888639;
-        bh=EkR5aP9YXjDV++4Mm3vdM0ntQFHoUFn8du5hNEWzcVU=;
+        s=mail; t=1649889270;
+        bh=YG/XPhnWizXt3303tJt/IxDGAZVOLwxkOEcrQ7Z9X1I=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=j1A1c0tVlfMHwkO7ph7+BXecjl3zjCSCuFY4mjDRsMmEMUiSRn2BdhdRX28bqNwRd
-         0kArRjhlR3IJGzxnsIsIV55CLgmFFI2NSRANmlAgGh9kCXVIhjheVEf98HAY8hRICr
-         de+NRfs0/E1u09npw7AvIBnHJ1RV4t8z84ccFmlq2rh+QRMZrOxIOsnFLQ8+zt1Kd4
-         qKUl7Umpny+Mkmr77FYSLFjlQUix00R1aWWELoW4IA9Fdi4ygNsJKyHTTDcHL21FER
-         5mHsl6TGS0ii5K5AIMCobu3OluHXcov5Vb4ZmIfOFm8YTbDv+QPwuKnXvhZ8Xql3Cd
-         iLKh0vklwzMtQ==
-Message-ID: <af51d9d0-26ba-fc66-05f1-d92ef7172730@collabora.com>
-Date:   Thu, 14 Apr 2022 01:23:52 +0300
+        b=WuInoSFqyOdJAlFL2xvC3Fd06QpZKkwfuYrjwHkZTkD3PIQmFEM6al0EmXS+wSFGn
+         JZoeP7y+9bvcUjK4SH7oYB9OEMOqkZTMeDzVxNGmHqkgDa0QqmsiVLGnrJ+zRtX1C9
+         MUV82xVcb7MhPRF/M/j7O56roc/EOLNaJoQERHg6lx1P5tE8M0+rZDp7etRC029xfg
+         MyoxvhheqezqCf0zOF5inflSCSTNOoB7aeRKetuaBlY7nhTNK9cIHW9vowIHJy0odE
+         Bd4L9c6oS5vzxekRzWMhDNn/jwlaq7YcrmLPUn7Nmrj6LLiYUOvXQzQnQBs9KBmAG9
+         2EMXQRqKGBMYA==
+Message-ID: <9bb76a5b-d5d7-6f43-ed8a-e6782dda8568@collabora.com>
+Date:   Thu, 14 Apr 2022 01:34:26 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH v7 03/20] reboot: Print error message if restart handler
- has duplicated priority
+Subject: Re: [PATCH v2] drm/tegra: Stop using iommu_present()
 Content-Language: en-US
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
- <20220411233832.391817-4-dmitry.osipenko@collabora.com>
- <CAJZ5v0gf1J+yPW14TAdLGLGfO+-2s=r0DDP7d+Rgop3=dB0gaQ@mail.gmail.com>
+To:     Robin Murphy <robin.murphy@arm.com>, thierry.reding@gmail.com
+Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
+References: <1f7c304a79b8b8dd5d4716786cae7502a0cc31f5.1649684782.git.robin.murphy@arm.com>
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <CAJZ5v0gf1J+yPW14TAdLGLGfO+-2s=r0DDP7d+Rgop3=dB0gaQ@mail.gmail.com>
+In-Reply-To: <1f7c304a79b8b8dd5d4716786cae7502a0cc31f5.1649684782.git.robin.murphy@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/13/22 21:48, Rafael J. Wysocki wrote:
-> On Tue, Apr 12, 2022 at 1:39 AM Dmitry Osipenko
-> <dmitry.osipenko@collabora.com> wrote:
->>
->> Add sanity check which ensures that there are no two restart handlers
->> registered using the same priority. This requirement will become mandatory
->> once all drivers will be converted to the new API and such errors will be
->> fixed.
->>
->> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+On 4/11/22 16:46, Robin Murphy wrote:
+> Refactor the confusing logic to make it both clearer and more robust. If
+> the host1x parent device does have an IOMMU domain then iommu_present()
+> is redundantly true, while otherwise for the 32-bit DMA mask case it
+> still doesn't say whether the IOMMU driver actually knows about the DRM
+> device or not.
 > 
-> The first two patches in the series are fine with me and there's only
-> one minor nit regarding this one (below).
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
 > 
->> ---
->>  kernel/reboot.c | 15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
->>
->> diff --git a/kernel/reboot.c b/kernel/reboot.c
->> index ed4e6dfb7d44..acdae4e95061 100644
->> --- a/kernel/reboot.c
->> +++ b/kernel/reboot.c
->> @@ -182,6 +182,21 @@ static ATOMIC_NOTIFIER_HEAD(restart_handler_list);
->>   */
->>  int register_restart_handler(struct notifier_block *nb)
->>  {
->> +       int ret;
->> +
->> +       ret = atomic_notifier_chain_register_unique_prio(&restart_handler_list, nb);
->> +       if (ret != -EBUSY)
->> +               return ret;
->> +
->> +       /*
->> +        * Handler must have unique priority. Otherwise call order is
->> +        * determined by registration order, which is unreliable.
->> +        *
->> +        * This requirement will become mandatory once all drivers
->> +        * will be converted to use new sys-off API.
->> +        */
->> +       pr_err("failed to register restart handler using unique priority\n");
+> v2: Fix logic for older SoCs and clarify.
 > 
-> I would use pr_info() here, because this is not a substantial error AFAICS.
+>  drivers/gpu/drm/tegra/drm.c | 28 ++++++++++++++++++++--------
+>  1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index 9464f522e257..4f2bdab31064 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -1092,6 +1092,19 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
+>  	struct host1x *host1x = dev_get_drvdata(dev->dev.parent);
+>  	struct iommu_domain *domain;
+>  
+> +	/* For starters, this is moot if no IOMMU is available */
+> +	if (!device_iommu_mapped(&dev->dev))
+> +		return false;
+> +
+> +	/*
+> +	 * Tegra20 and Tegra30 don't support addressing memory beyond the
+> +	 * 32-bit boundary, so the regular GATHER opcodes will always be
+> +	 * sufficient and whether or not the host1x is attached to an IOMMU
+> +	 * doesn't matter.
+> +	 */
+> +	if (host1x_get_dma_mask(host1x) <= DMA_BIT_MASK(32))
+> +		return true;
+> +
+>  	/*
+>  	 * If the Tegra DRM clients are backed by an IOMMU, push buffers are
+>  	 * likely to be allocated beyond the 32-bit boundary if sufficient
+> @@ -1122,14 +1135,13 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
+>  	domain = iommu_get_domain_for_dev(dev->dev.parent);
+>  
+>  	/*
+> -	 * Tegra20 and Tegra30 don't support addressing memory beyond the
+> -	 * 32-bit boundary, so the regular GATHER opcodes will always be
+> -	 * sufficient and whether or not the host1x is attached to an IOMMU
+> -	 * doesn't matter.
+> +	 * At the moment, the exact type of domain doesn't actually matter.
+> +	 * Only for 64-bit kernels might this be a managed DMA API domain, and
+> +	 * then only on newer SoCs using arm-smmu, since tegra-smmu doesn't
+> +	 * support default domains at all, and since those SoCs are the same
+> +	 * ones with extended GATHER support, even if it's a passthrough domain
+> +	 * it can still work out OK.
+>  	 */
+> -	if (!domain && host1x_get_dma_mask(host1x) <= DMA_BIT_MASK(32))
+> -		return true;
+> -
+>  	return domain != NULL;
+>  }
+>  
+> @@ -1149,7 +1161,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+>  		goto put;
+>  	}
+>  
+> -	if (host1x_drm_wants_iommu(dev) && iommu_present(&platform_bus_type)) {
+> +	if (host1x_drm_wants_iommu(dev)) {
+>  		tegra->domain = iommu_domain_alloc(&platform_bus_type);
+>  		if (!tegra->domain) {
+>  			err = -ENOMEM;
 
-It's indeed not a substantial error so far, but it will become
-substantial later on once only unique priorities will be allowed. The
-pr_warn() could be a good compromise here, pr_info() is too mild, IMO.
+Robin, thank you for the updated version. The patch looks okay to me.
+
+Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+
+A bit later I'll also will give it a test, just to be sure because we
+had problems with that function in the past.
