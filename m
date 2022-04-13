@@ -2,73 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE192C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 07:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBB8C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 07:20:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232646AbiDMHT0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Apr 2022 03:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38134 "EHLO
+        id S233255AbiDMHXR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Apr 2022 03:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbiDMHTZ (ORCPT
+        with ESMTP id S231905AbiDMHXQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Apr 2022 03:19:25 -0400
-Received: from m15111.mail.126.com (m15111.mail.126.com [220.181.15.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B5C5BE39;
-        Wed, 13 Apr 2022 00:17:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=IPpag
-        3+972R44s++fbd4ZAcZ5wlqRJ02VxB1aGKpffw=; b=nEdXCtMrzOZ/zONktw5jg
-        1I09nJfdWLc33D9fu4tR5TH6vmjjL10DqtJS9HSLlbGPhEu2/zLYK8ZaIdcQwIAp
-        3lT1Sui3EmoDWNwM4loA5wVd3I+nL3blvsJBCcEIqrNLcdFRcsfXuXZIH8R3GBI1
-        4362rJv8MdczpkWAwIpCWI=
-Received: from ubuntu.localdomain (unknown [58.213.83.157])
-        by smtp1 (Coremail) with SMTP id C8mowACXpycocFZimRLWAQ--.47686S4;
-        Wed, 13 Apr 2022 14:39:38 +0800 (CST)
-From:   Bernard Zhao <zhaojunkui2008@126.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        Wed, 13 Apr 2022 03:23:16 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FD8E192BA;
+        Wed, 13 Apr 2022 00:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=SsucQ7nmn7o3XX8IffWSB3JEjgB0jcdkwzAiY6kF2ec=; b=unmLUqce1/2h2GtG3P5xPxfgMb
+        29bBzJeutu7zmgnSMoVqlQWV6kgI5O884c8KbUyvzK0Ph6dmKwpmdFfkGlUwcEmZ5MlnenC0SYa2z
+        W/P3w9Mv5e9u0AMjsEa626MkRji6gmSWNyfuZGfoseqpd6YQ1NHJZRLNFxSb1avF8C+A45OePxGKZ
+        Uw+YgiemDJFU5bfT/tYMFtyA8hjf+db5udHAn1H+hR/Aco5HIaV4jYYQbeJxMEDDGnQKeekoFCXe4
+        jaqWy77xXJYfodv7AuLSlfPO60dKorZnEy7X/CC5iUed8vNwQXIFWBJRNmAQtJny0ORZdkq5DfADH
+        CBlg7Frg==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1neXIv-0007di-Gw; Wed, 13 Apr 2022 10:20:41 +0300
+Message-ID: <6afbd04c-9847-a62c-12bf-f49314ae2664@kapsi.fi>
+Date:   Wed, 13 Apr 2022 10:20:41 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH] gpu/host1x: remove useless if(ptr) check to kfree
+Content-Language: en-US
+To:     Bernard Zhao <zhaojunkui2008@126.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     bernard@vivo.com, Bernard Zhao <zhaojunkui2008@126.com>
-Subject: [PATCH] gpu/host1x: remove useless if(ptr) check to kfree
-Date:   Tue, 12 Apr 2022 23:39:34 -0700
-Message-Id: <20220413063934.23571-1-zhaojunkui2008@126.com>
-X-Mailer: git-send-email 2.33.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C8mowACXpycocFZimRLWAQ--.47686S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW5KrWxZr1UAw1xWFyfXr48Crg_yoWxXwb_ur
-        1kJr1kW3yrGFnYqa17ArnxZrW0yFZ8uaykZryIga4rtryUCrn8Jw17ur1fu3WrWa1rGFyD
-        A3WxtrW5Jw17KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRpwZzPUUUUU==
-X-Originating-IP: [58.213.83.157]
-X-CM-SenderInfo: p2kd0y5xqn3xasqqmqqrswhudrp/1tbiYArhqlpEG2eDWwAAsb
+Cc:     bernard@vivo.com
+References: <20220413063934.23571-1-zhaojunkui2008@126.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <20220413063934.23571-1-zhaojunkui2008@126.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch remove useless if(ptr) check to kfree.
+On 4/13/22 09:39, Bernard Zhao wrote:
+> This patch remove useless if(ptr) check to kfree.
+> 
+> Signed-off-by: Bernard Zhao <zhaojunkui2008@126.com>
+> ---
+>   drivers/gpu/host1x/fence.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
+> index ecab72882192..05b36bfc8b74 100644
+> --- a/drivers/gpu/host1x/fence.c
+> +++ b/drivers/gpu/host1x/fence.c
+> @@ -93,8 +93,7 @@ static void host1x_syncpt_fence_release(struct dma_fence *f)
+>   {
+>   	struct host1x_syncpt_fence *sf = to_host1x_fence(f);
+>   
+> -	if (sf->waiter)
+> -		kfree(sf->waiter);
+> +	kfree(sf->waiter);
+>   
+>   	dma_fence_free(f);
+>   }
 
-Signed-off-by: Bernard Zhao <zhaojunkui2008@126.com>
----
- drivers/gpu/host1x/fence.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I personally dislike leaving the NULL checks off with calls to kfree. 
+With the NULL check there, while reading the code it is obvious that the 
+intention is that the value can be either a valid pointer or NULL. IMHO 
+with C's type system/conventions we need this kind of contextual 
+information to understand the code easily and avoid bugs.
 
-diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
-index ecab72882192..05b36bfc8b74 100644
---- a/drivers/gpu/host1x/fence.c
-+++ b/drivers/gpu/host1x/fence.c
-@@ -93,8 +93,7 @@ static void host1x_syncpt_fence_release(struct dma_fence *f)
- {
- 	struct host1x_syncpt_fence *sf = to_host1x_fence(f);
- 
--	if (sf->waiter)
--		kfree(sf->waiter);
-+	kfree(sf->waiter);
- 
- 	dma_fence_free(f);
- }
--- 
-2.33.1
-
+Mikko
