@@ -2,58 +2,62 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66308C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 08:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A61C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Apr 2022 08:39:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231952AbiDMIfL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Apr 2022 04:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39016 "EHLO
+        id S230308AbiDMImP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Apr 2022 04:42:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233855AbiDMIfK (ORCPT
+        with ESMTP id S233875AbiDMIl5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Apr 2022 04:35:10 -0400
-X-Greylist: delayed 86413 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Apr 2022 01:32:40 PDT
-Received: from mail.growthmindset24.pl (mail.growthmindset24.pl [212.237.36.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E2914EA30
-        for <linux-tegra@vger.kernel.org>; Wed, 13 Apr 2022 01:32:38 -0700 (PDT)
-Received: by mail.growthmindset24.pl (Postfix, from userid 1001)
-        id AA17E87218; Tue, 12 Apr 2022 08:56:12 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=growthmindset24.pl;
-        s=mail; t=1649750175;
-        bh=FDuFY3XQoq0gMX1b2gxgT7Py2p4Sxl0PJZYZ4NVaPho=;
-        h=Date:From:To:Subject:From;
-        b=sfOdAemwtOBNYAUdwMC14a+xj8Go+/2Orlz1uGsWVxlLhfqSnE2++5+rqVXe7IlRn
-         KfVF9PE2H/qk2L6c2UAykDQm4dKwDdRnYMZlmh7CVkpqYC3s4eN4nq43JtSeWBCE30
-         lwyjjRk3RdXAXwNHl3tKC4mSvtoYLzUF6XjkAvwTmzhoGeWuf5O6VIQkplAwASRaFI
-         f06a54+OGx4jFAXGrV663L/VSCv/5d7LtjycDcStq+Os+0x/n2BF0B4D+/gAoLtLYB
-         lqgCmr9C6SSPVHFg42PqbVTv74YpmVWGq+DqoIkozKrwnrhpv+2DJoV3QKIYDRX6Zs
-         SIAnTlGD58new==
-Received: by mail.growthmindset24.pl for <linux-tegra@vger.kernel.org>; Tue, 12 Apr 2022 07:56:00 GMT
-Message-ID: <20220412073001-0.1.2w.d7yh.0.scl689e2c4@growthmindset24.pl>
-Date:   Tue, 12 Apr 2022 07:56:00 GMT
-From:   =?UTF-8?Q? "Przemys=C5=82aw_Wr=C3=B3blewski" ?= 
-        <przemyslaw.wroblewski@growthmindset24.pl>
-To:     <linux-tegra@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.growthmindset24.pl
+        Wed, 13 Apr 2022 04:41:57 -0400
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F29A2522CD;
+        Wed, 13 Apr 2022 01:38:54 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0V9z3P0l_1649839125;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0V9z3P0l_1649839125)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 13 Apr 2022 16:38:51 +0800
+From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To:     ldewangan@nvidia.com
+Cc:     jonathanh@nvidia.com, vkoul@kernel.org, thierry.reding@gmail.com,
+        p.zabel@pengutronix.de, dmaengine@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] dmaengine: tegra: Remove unused including <linux/version.h>
+Date:   Wed, 13 Apr 2022 16:38:42 +0800
+Message-Id: <20220413083842.69845-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Eliminate the follow versioncheck warning:
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+./drivers/dma/tegra186-gpc-dma.c: 21 linux/version.h not needed.
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ drivers/dma/tegra186-gpc-dma.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
+diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
+index f12327732041..97fe0e9e9b83 100644
+--- a/drivers/dma/tegra186-gpc-dma.c
++++ b/drivers/dma/tegra186-gpc-dma.c
+@@ -18,7 +18,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
+ #include <linux/slab.h>
+-#include <linux/version.h>
+ #include <dt-bindings/memory/tegra186-mc.h>
+ #include "virt-dma.h"
+ 
+-- 
+2.20.1.7.g153144c
 
-
-Pozdrawiam,
-Przemys=C5=82aw Wr=C3=B3blewski
