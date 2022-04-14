@@ -2,149 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A14C43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Apr 2022 08:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FB0C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Apr 2022 11:19:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240941AbiDNI2s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Apr 2022 04:28:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
+        id S242617AbiDNLWM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Apr 2022 07:22:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240943AbiDNI2m (ORCPT
+        with ESMTP id S242597AbiDNLWJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Apr 2022 04:28:42 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam08on2073.outbound.protection.outlook.com [40.107.101.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D29962A0B;
-        Thu, 14 Apr 2022 01:26:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Jd27uU3JHtXrylViL/yQ6xyK55chlE5QS4326wQ+6W1nSYgKOn8olK8l4lPlw/HCRvg3lqAM3Oh5TIljODgsOqby0Z8hrft7HR797+eC5kivLjkPAvbwkm2Il4SDXXY5oDPnDGBxLtReFG6RpfZqgNUcd2YJPGOe8TJc6oKereqWdzANYjAUfz2iaMWnBll21T0tFWzf8M46hh/GS19HyFx+f/GCS49/XhBYTsBNcSavIfi+IM/JaOzEbQsyBjRSATWhWLImArk3EkDwR8CM4nNtCYL9L5x9wVHLwvYamDLheELV0+AvKrJ5d+CGibSaeFlirAPRtoWOoRE/BT+YLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9mnb8JimGRtHYkhbofNSnWHiAzSYjtmeLFuBWyg4h8c=;
- b=VboUP5JNR8rS+03Ml49MHBSp+XDUsbcNrBrC/o8uxN5MJ8JG7akeoaAWrvgmswshVYx+s6+y2f8vLVt3oChK4ylmmMuCzNitXpq3ZQviwoWkGUWbMonpGEaWPs4HIgL4Czl9YtVmJdTpZWNZYPsq/0nUKZ3SPpcKqw34751KjBttACWLUj1FfSW2NdpoPN1/HlOOIqQ4Fp1wyhqUX/Zym3ikupkYNxh7zl9oCH0GcKoHoElQk722ZlcjDjaUqe0aOa7mYIT3IygfuyhwZAwoSRQTyFkMf4hfErk72z3/Q3PaM0zScOA6ENd2PV4GnUVBebbbbrNfcLjlP4933LJrdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9mnb8JimGRtHYkhbofNSnWHiAzSYjtmeLFuBWyg4h8c=;
- b=N3C2RZrf3ACb5rPJu2TQ9jQ2k0eHzjVaKtmzEbAN4kRfbx5Q5P9atsJ3ljiqaBNHxdemTzjp0stBk/0g7xR4FJUPAm62ZpaLX05RtMlW6mNIA+DKCmh0yQTaeKjjSwSN0NrubrevhlKrz+Vxp7UpERMlasBKlil323lEn9LjLcQOPrlNyci2NXuFq6Ho2ou5bm1Fm7PGID2A6cLZ19HhFaGTfriSZks37o3Ct5JlhCWAtj4X/NBPI90hQoqKgvdk2ncJhm7M6euk8ZPWK2V4uTsW1+IK+NOXOdgUlbZdixWaR7OwTZFO1u7tu0uSpQGX2BZZQyugy103uutTys66jw==
-Received: from BN6PR22CA0027.namprd22.prod.outlook.com (2603:10b6:404:37::13)
- by DM6PR12MB2697.namprd12.prod.outlook.com (2603:10b6:5:49::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.18; Thu, 14 Apr
- 2022 08:26:15 +0000
-Received: from BN8NAM11FT031.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:37:cafe::63) by BN6PR22CA0027.outlook.office365.com
- (2603:10b6:404:37::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.18 via Frontend
- Transport; Thu, 14 Apr 2022 08:26:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- BN8NAM11FT031.mail.protection.outlook.com (10.13.177.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5164.19 via Frontend Transport; Thu, 14 Apr 2022 08:26:15 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL109.nvidia.com
- (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Thu, 14 Apr
- 2022 08:26:14 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 14 Apr
- 2022 01:26:13 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Thu, 14 Apr 2022 01:26:09 -0700
-From:   Kartik <kkartik@nvidia.com>
-To:     <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <spujar@nvidia.com>, <akhilrajeev@nvidia.com>,
-        <rgumasta@nvidia.com>, <pshete@nvidia.com>, <vidyas@nvidia.com>,
-        <mperttunen@nvidia.com>, <mkumard@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <kkartik@nvidia.com>
-Subject: [PATCH 6/6] arm64: tegra: Enable native timers on Tegra234
-Date:   Thu, 14 Apr 2022 13:55:38 +0530
-Message-ID: <1649924738-17990-7-git-send-email-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1649924738-17990-1-git-send-email-kkartik@nvidia.com>
-References: <1649924738-17990-1-git-send-email-kkartik@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 14 Apr 2022 07:22:09 -0400
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A841FCE5;
+        Thu, 14 Apr 2022 04:19:44 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id j2so8883136ybu.0;
+        Thu, 14 Apr 2022 04:19:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dY83H0aPEfDTdUo23MndvBRZZwuNuwRYnVKAWx3MFcc=;
+        b=hTLRdySs3CnpaoymfFiM0y+PetDtOzg8joG6JeTvcOymw/WDpAF5uzwknJ8t0LRBVT
+         I+kcuzIn9LHA4QMYkgS/A+mCY0jUBayfLSo+EgS2HECKTepTptyEdA7DCjIuMujFBvth
+         h6DI7Mv4D2wnOc7xe0cCa2NOPDRYjH4MvwDAHO9Eoe9QPeFLUBmvjLWEduB1VwuQ4qML
+         xRJUP6xAKE1Ydo/qwllNsbCj3Q9D5xUUiUe4zDWillfZfEUHsV4efvowMqqlArMOJnh+
+         8kOex9vW9o7n0FVP+InF2nbmwQo0UHWvtMfQiGghY5VpaPT3mgullEHZfsNRWODIqQnA
+         P5gA==
+X-Gm-Message-State: AOAM530oo9GlqneVIjgHSjGfNsZkw70uXNGYqI9O/wtyNwppNCSte/dV
+        ssEsNqqPvNRMFPyjXj4KDxjmR06F+u8Wu2REZEE=
+X-Google-Smtp-Source: ABdhPJyXV07maZap62IutTg/mwVDj/CfiQiLME5IwIFkAJnTY85PIrUap0WcF7eity1wAkpRDD0UVobPG71n48VtbjA=
+X-Received: by 2002:a05:6902:187:b0:63d:9c95:edca with SMTP id
+ t7-20020a056902018700b0063d9c95edcamr1246534ybh.81.1649935183962; Thu, 14 Apr
+ 2022 04:19:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1258e399-e489-4589-77b1-08da1df07137
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2697:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB26976B3DC25E79B66D717EBECDEF9@DM6PR12MB2697.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ezRIoqVitdA5MqNVUyAOxpCrMJDktqD9s9dQNlDdxrD6YqABqCl8DEI2r4dD0F7rfTDCCTPHvJIQyz7r4ZZuXiDIOzwVfpEnIzTZQRUsE6J9h6c79LcMw/+GWeF53ccTT7bu4ydbBKgJC4W8AhLbAk05TzgDoipqgzuCXLNg3B/dQI878QdPeDeWuy76XTDWJgg4D1dqsGQMVLPDMHd1yIjBUHoXvcGCZWZDARWs1GBu7wWBWLxpO0qYiBNrk7rcbq14BzNHiGD+zqkcZrZKiAZFzIhV2PVDzCo9Q2TRJsm2efVBGCmjK02eicC7DBH8ZF/xsYdSTq5DQUQK3kJtEvOWa7ZMxt+phKkO8X4+1EGWESsXqi+HgszCdchTglYIBFvFDQLNqmeUlhD5e3xNvFRB3Po/svKeG5kRSdNJjc7upBEarVra27VL/hznlzHOc6bv7jwl1SFVKto3xp8HDa8tSzHRD50X0rmffhQSH0bDd9hssMEmAjczHssLEPxy30ASn022mxX+z8ClxU4jtqWAXSgGWHBhBKv9H0bhlYPFzK+5JbGADfFA+tQpjhtJlyqLQiVnX63pxAtAkGAWLeaCo3wDzKiqH2xJTF6mNtT80oh5LemYxSWPM759bWwEL8GYzM5WD94VBuXxeEqPGVku83uIre+F9I5itEYx/3rR5kR3DFdnFX/iRFINuPXcCW/THQqorAjEmcWktLw/BIiJUTOjNlWSkcT1sccJJnU=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(316002)(7696005)(47076005)(426003)(336012)(40460700003)(6666004)(82310400005)(86362001)(36756003)(83380400001)(5660300002)(26005)(186003)(8676002)(7049001)(508600001)(36860700001)(2616005)(70206006)(70586007)(356005)(2906002)(110136005)(81166007)(8936002)(921005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2022 08:26:15.3444
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1258e399-e489-4589-77b1-08da1df07137
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT031.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2697
+References: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
+ <20220411233832.391817-4-dmitry.osipenko@collabora.com> <CAJZ5v0gf1J+yPW14TAdLGLGfO+-2s=r0DDP7d+Rgop3=dB0gaQ@mail.gmail.com>
+ <af51d9d0-26ba-fc66-05f1-d92ef7172730@collabora.com>
+In-Reply-To: <af51d9d0-26ba-fc66-05f1-d92ef7172730@collabora.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 14 Apr 2022 13:19:32 +0200
+Message-ID: <CAJZ5v0jFQi1x1Fnfk04n+HTTirz19-_xW2NgJtpOYyPgVh3Afw@mail.gmail.com>
+Subject: Re: [PATCH v7 03/20] reboot: Print error message if restart handler
+ has duplicated priority
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The native timers IP block found on NVIDIA Tegra SoCs implements a
-watchdog timer that can be used to recover from system hangs. Add and
-enable the device tree node on Tegra234.
+On Thu, Apr 14, 2022 at 12:24 AM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
+>
+> On 4/13/22 21:48, Rafael J. Wysocki wrote:
+> > On Tue, Apr 12, 2022 at 1:39 AM Dmitry Osipenko
+> > <dmitry.osipenko@collabora.com> wrote:
+> >>
+> >> Add sanity check which ensures that there are no two restart handlers
+> >> registered using the same priority. This requirement will become mandatory
+> >> once all drivers will be converted to the new API and such errors will be
+> >> fixed.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> >
+> > The first two patches in the series are fine with me and there's only
+> > one minor nit regarding this one (below).
+> >
+> >> ---
+> >>  kernel/reboot.c | 15 +++++++++++++++
+> >>  1 file changed, 15 insertions(+)
+> >>
+> >> diff --git a/kernel/reboot.c b/kernel/reboot.c
+> >> index ed4e6dfb7d44..acdae4e95061 100644
+> >> --- a/kernel/reboot.c
+> >> +++ b/kernel/reboot.c
+> >> @@ -182,6 +182,21 @@ static ATOMIC_NOTIFIER_HEAD(restart_handler_list);
+> >>   */
+> >>  int register_restart_handler(struct notifier_block *nb)
+> >>  {
+> >> +       int ret;
+> >> +
+> >> +       ret = atomic_notifier_chain_register_unique_prio(&restart_handler_list, nb);
+> >> +       if (ret != -EBUSY)
+> >> +               return ret;
+> >> +
+> >> +       /*
+> >> +        * Handler must have unique priority. Otherwise call order is
+> >> +        * determined by registration order, which is unreliable.
+> >> +        *
+> >> +        * This requirement will become mandatory once all drivers
+> >> +        * will be converted to use new sys-off API.
+> >> +        */
+> >> +       pr_err("failed to register restart handler using unique priority\n");
+> >
+> > I would use pr_info() here, because this is not a substantial error AFAICS.
+>
+> It's indeed not a substantial error so far, but it will become
+> substantial later on once only unique priorities will be allowed. The
+> pr_warn() could be a good compromise here, pr_info() is too mild, IMO.
 
-Signed-off-by: Kartik <kkartik@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Well, I'm still unconvinced about requiring all of the users of this
+interface to use unique priorities.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 8767dbe2d066..47e0500a3838 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -446,6 +446,28 @@
- 			status = "okay";
- 		};
- 
-+		timer@2080000 {
-+			compatible = "nvidia,tegra234-timer";
-+			reg = <0x02080000 0x00121000>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "okay";
-+		};
-+
- 		gpio: gpio@2200000 {
- 			compatible = "nvidia,tegra234-gpio";
- 			reg-names = "security", "gpio";
--- 
-2.17.1
+Arguably, there are some of them who don't really care about the
+ordering, so could there be an option for them to specify the lack of
+care by, say, passing 0 as the priority that would be regarded as a
+special case?
 
+IOW, if you pass 0, you'll be run along the others who've also passed
+0, but if you pass anything different from 0, it must be unique.  What
+do you think?
