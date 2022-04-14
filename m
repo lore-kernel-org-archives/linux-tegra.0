@@ -2,217 +2,286 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10B2C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Apr 2022 18:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BAEC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Apr 2022 20:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239674AbiDNSXR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Apr 2022 14:23:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54368 "EHLO
+        id S238342AbiDNUiD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Apr 2022 16:38:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233542AbiDNSXR (ORCPT
+        with ESMTP id S1346712AbiDNUiA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Apr 2022 14:23:17 -0400
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1122AE14;
-        Thu, 14 Apr 2022 11:20:51 -0700 (PDT)
-Received: by mail-oi1-f178.google.com with SMTP id bj24so820856oib.11;
-        Thu, 14 Apr 2022 11:20:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=49UHAT4bvClctyO7SpH/kHuczcmJC7fg1AX1Ne+NSKs=;
-        b=louQMAhSiZ6+bYH5XpZgNy43WUkiJ8G8FeM+H5CjvulKDpV9uBeWI/OICaN8GhXo2O
-         bPhodlbjTgmka9dXNP349xYSNG5zZ4mfhoymHhXmmvEcslM9iOYlmYTnA1DUlFC2cAik
-         GriX0uP6hlox0DVPsS2TGXBboMz7mSQZ9DWGarzWonBBYilwo1rq7Hcn5kmIvuuntiqf
-         osO75NTdOW3jZEkutFQDmyI0pyg1JIyXzVB84Uks4vz7uKVGac/Mtc9AMDQ4nFNY+AZJ
-         Xjjtz6WLDbVu/NNSuzpEsFUkDucn4dmgCJjUAFAaZkugJqDYXPVbLpJl0cHRhBVnbEzR
-         K2eg==
-X-Gm-Message-State: AOAM5321atf2H/2lhpINuONFocpDoeKIwCrrcwEjopjv+ACsR+hbj7Mc
-        8osMmn8jTduCoo0F7RYuoA==
-X-Google-Smtp-Source: ABdhPJwzj6DFzVeRUBf1hovvcj7QNX6k5X5/sLRvxQeN7WjUJKTm7auxmKoXlTJv9NKEkAyhHH6mVg==
-X-Received: by 2002:aca:1817:0:b0:2ec:f542:c96c with SMTP id h23-20020aca1817000000b002ecf542c96cmr2023781oih.36.1649960450795;
-        Thu, 14 Apr 2022 11:20:50 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r19-20020a056830121300b005cdb11a7b85sm301131otp.29.2022.04.14.11.20.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 11:20:50 -0700 (PDT)
-Received: (nullmailer pid 2387691 invoked by uid 1000);
-        Thu, 14 Apr 2022 18:20:49 -0000
-Date:   Thu, 14 Apr 2022 13:20:49 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Kartik <kkartik@nvidia.com>
-Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de, krzk+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, spujar@nvidia.com,
-        akhilrajeev@nvidia.com, rgumasta@nvidia.com, pshete@nvidia.com,
-        vidyas@nvidia.com, mperttunen@nvidia.com, mkumard@nvidia.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: timer: Add Tegra186 & Tegra234 Timer
-Message-ID: <YlhmAQsZVU92OZ3W@robh.at.kernel.org>
-References: <1649924738-17990-1-git-send-email-kkartik@nvidia.com>
- <1649924738-17990-2-git-send-email-kkartik@nvidia.com>
+        Thu, 14 Apr 2022 16:38:00 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B85D76FE;
+        Thu, 14 Apr 2022 13:35:33 -0700 (PDT)
+Received: from [IPV6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1] (unknown [IPv6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 8B4C81F47BB7;
+        Thu, 14 Apr 2022 21:35:31 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1649968532;
+        bh=qrJuq+TdBPOPEgxeXMIXpPq14MtpTaIIqGv7fMzG5N0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=KEy3Jfazo178h+z/RcU4grXOmPu8axeJ8ZF+U54D6fCrNr5G3sXQtBGIUhsS4PUZC
+         baGS/JB99l8PxMYJk2P7b7dG4jAp7xYGuHznHLt7Bv3WxvyAEV11oKWY3HhBik3SPT
+         QJE5xn0vI8zBGgCMgTOINpluymHHTkts+sERPsOeaBrGVv5xu5CP/81udK+YoPxzRK
+         i0Yuv2PX4jpaVgsYJSoAoQvMKzviYUHZ00mHw7q8ORAkrxZ6a3icGRMyXmLqof8BO9
+         YD8hxRqtoq3XYlxJozl9K5J+iZHAaly9rLZ/t0GEFzsv5DIjTzrWj1mcyf9L15A9M0
+         fDlY2OiOtMYNw==
+Message-ID: <49b6c8f6-7c77-b503-7d1a-f0edf89dadac@collabora.com>
+Date:   Thu, 14 Apr 2022 23:35:28 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1649924738-17990-2-git-send-email-kkartik@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [Patch v7 3/4] dt-bindings: memory: Update reg/reg-names
+ validation
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>, Rob Herring <robh@kernel.org>
+Cc:     digetx@gmail.com, krzysztof.kozlowski@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220413094012.13589-1-amhetre@nvidia.com>
+ <20220413094012.13589-4-amhetre@nvidia.com>
+ <YlbSGEBKgpVC51dZ@robh.at.kernel.org>
+ <b050247d-a62c-62e7-7750-24cefcc93506@collabora.com>
+ <71fc3efb-5110-287e-0422-10c1ae90139c@nvidia.com>
+ <ae1d1098-f8b5-f41a-c33b-0f4863a43d5e@collabora.com>
+ <e0faf79f-99e6-a0b6-0842-ec9de644f7f3@nvidia.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <e0faf79f-99e6-a0b6-0842-ec9de644f7f3@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 01:55:33PM +0530, Kartik wrote:
-> The Tegra186 timer provides ten 29-bit timer counters and one 32-bit
-> timestamp counter. The Tegra234 timer provides sixteen 29-bit timer
-> counters and one 32-bit timestamp counter. Each NV timer selects its
-> timing reference signal from the 1 MHz reference generated by USEC,
-> TSC or either clk_m or OSC. Each TMR can be programmed to generate
-> one-shot, periodic, or watchdog interrupts.
-> 
-> Signed-off-by: Kartik <kkartik@nvidia.com>
 
-Full name please.
-
-> ---
->  .../bindings/timer/nvidia,tegra186-timer.yaml | 116 ++++++++++++++++++
->  1 file changed, 116 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-> new file mode 100644
-> index 000000000000..7841a68d19f3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-> @@ -0,0 +1,116 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: NVIDIA Tegra186 timer
-> +
-> +maintainers:
-> +  - Thierry Reding <treding@nvidia.com>
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra186-timer
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          # Either a single combined interrupt or up to 14 individual interrupts
-
-This can be part of 'description'
-
-> +          minItems: 1
-> +          maxItems: 10
-> +          description: >
-> +            A list of 10 interrupts; one per each timer channels 0 through 9.
-
-Is it 10 or 14? I'm confused.
-
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra234-timer
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          # Either a single combined interrupt or up to 16 individual interrupts
-> +          minItems: 1
-> +          maxItems: 16
-> +          description: >
-> +            A list of 16 interrupts; one per each timer channels 0 through 15.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: nvidia,tegra186-timer
-> +        description: >
-> +          The Tegra186 timer provides ten 29-bit timer counters and one 32-bit
-> +          timestamp counter. Each NV timer selects its timing reference signal
-> +          from the 1 MHz reference generated by USEC, TSC or either clk_m or
-> +          OSC. Each TMR can be programmed to generate one-shot, periodic, or
-> +          watchdog interrupts.
-> +      - const: nvidia,tegra234-timer
-> +        description: >
-> +          The Tegra234 timer provides sixteen 29-bit timer counters and one 32-bit
-> +          timestamp counter. Each NV timer selects its timing reference signal
-> +          from the 1 MHz reference generated by USEC, TSC or either clk_m or
-> +          OSC. Each TMR can be programmed to generate one-shot, periodic, or
-> +          watchdog interrupts.
-
-Move all this description to top-level description leaving out the exact 
-number of counters (as the schema defines that).
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    timer@3010000 {
-> +        compatible = "nvidia,tegra186-timer";
-> +        reg = <0x03010000 0x000e0000>;
-> +        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +        status = "disabled";
-
-Drop status.
-
-> +    };
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    timer@2080000 {
-> +        compatible = "nvidia,tegra234-timer";
-> +        reg = <0x02080000 0x00121000>;
-> +        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-> +        status = "disabled";
-> +    };
-> -- 
-> 2.17.1
+On 4/14/22 07:07, Ashish Mhetre wrote:
 > 
 > 
+> On 4/14/2022 2:39 AM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 4/13/22 19:17, Ashish Mhetre wrote:
+>>>
+>>>
+>>> On 4/13/2022 7:34 PM, Dmitry Osipenko wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> On 4/13/22 16:37, Rob Herring wrote:
+>>>>> On Wed, Apr 13, 2022 at 03:10:11PM +0530, Ashish Mhetre wrote:
+>>>>>>   From tegra186 onwards, memory controller support multiple channels.
+>>>>>> Reg items are updated with address and size of these channels.
+>>>>>> Tegra186 has overall 5 memory controller channels. Tegra194 and
+>>>>>> tegra234
+>>>>>> have overall 17 memory controller channels each.
+>>>>>> There is 1 reg item for memory controller stream-id registers.
+>>>>>> So update the reg maxItems to 18 in tegra186 devicetree
+>>>>>> documentation.
+>>>>>> Also update validation for reg-names added for these corresponding
+>>>>>> reg
+>>>>>> items.
+>>>>>
+>>>>> Somehow your subject should indicate this is for Tegra.
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>>>>> ---
+>>>>>>    .../nvidia,tegra186-mc.yaml                   | 80
+>>>>>> +++++++++++++++++--
+>>>>>>    1 file changed, 74 insertions(+), 6 deletions(-)
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>>>
+>>>>>> b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>>>
+>>>>>>
+>>>>>> index 13c4c82fd0d3..c7cfa6c2cd81 100644
+>>>>>> ---
+>>>>>> a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>>>
+>>>>>>
+>>>>>> +++
+>>>>>> b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>>>
+>>>>>>
+>>>>>> @@ -34,8 +34,12 @@ properties:
+>>>>>>              - nvidia,tegra234-mc
+>>>>>>
+>>>>>>      reg:
+>>>>>> -    minItems: 1
+>>>>>> -    maxItems: 3
+>>>>>> +    minItems: 6
+>>>>>
+>>>>> You just broke current users.
+>>>>>
+>>>>>> +    maxItems: 18
+>>>>>> +
+>>>>>> +  reg-names:
+>>>>>> +    minItems: 6
+>>>>>> +    maxItems: 18
+>>>>>>
+>>>>>>      interrupts:
+>>>>>>        items:
+>>>>>> @@ -142,7 +146,18 @@ allOf:
+>>>>>>        then:
+>>>>>>          properties:
+>>>>>>            reg:
+>>>>>> -          maxItems: 1
+>>>>>> +          maxItems: 6
+>>>>>> +          description: 5 memory controller channels and 1 for
+>>>>>> stream-id registers
+>>>>>> +
+>>>>>> +        reg-names:
+>>>>>> +          maxItems: 6
+>>>>>> +          items:
+>>>>>> +            - const: sid
+>>>>>> +            - const: broadcast
+>>>>>> +            - const: ch0
+>>>>>> +            - const: ch1
+>>>>>> +            - const: ch2
+>>>>>> +            - const: ch3
+>>>>>>
+>>>>>>      - if:
+>>>>>>          properties:
+>>>>>> @@ -151,7 +166,30 @@ allOf:
+>>>>>>        then:
+>>>>>>          properties:
+>>>>>>            reg:
+>>>>>> -          minItems: 3
+>>>>>> +          minItems: 18
+>>>>>> +          description: 17 memory controller channels and 1 for
+>>>>>> stream-id registers
+>>>>>> +
+>>>>>> +        reg-names:
+>>>>>> +          minItems: 18
+>>>>>> +          items:
+>>>>>> +            - const: sid
+>>>>>> +            - const: broadcast
+>>>>>> +            - const: ch0
+>>>>>> +            - const: ch1
+>>>>>> +            - const: ch2
+>>>>>> +            - const: ch3
+>>>>>> +            - const: ch4
+>>>>>> +            - const: ch5
+>>>>>> +            - const: ch6
+>>>>>> +            - const: ch7
+>>>>>> +            - const: ch8
+>>>>>> +            - const: ch9
+>>>>>> +            - const: ch10
+>>>>>> +            - const: ch11
+>>>>>> +            - const: ch12
+>>>>>> +            - const: ch13
+>>>>>> +            - const: ch14
+>>>>>> +            - const: ch15
+>>>>>>
+>>>>>>      - if:
+>>>>>>          properties:
+>>>>>> @@ -160,13 +198,37 @@ allOf:
+>>>>>>        then:
+>>>>>>          properties:
+>>>>>>            reg:
+>>>>>> -          minItems: 3
+>>>>>> +          minItems: 18
+>>>>>> +          description: 17 memory controller channels and 1 for
+>>>>>> stream-id registers
+>>>>>> +
+>>>>>> +        reg-names:
+>>>>>> +          minItems: 18
+>>>>>> +          items:
+>>>>>> +            - const: sid
+>>>>>> +            - const: broadcast
+>>>>>> +            - const: ch0
+>>>>>> +            - const: ch1
+>>>>>> +            - const: ch2
+>>>>>> +            - const: ch3
+>>>>>> +            - const: ch4
+>>>>>> +            - const: ch5
+>>>>>> +            - const: ch6
+>>>>>> +            - const: ch7
+>>>>>> +            - const: ch8
+>>>>>> +            - const: ch9
+>>>>>> +            - const: ch10
+>>>>>> +            - const: ch11
+>>>>>> +            - const: ch12
+>>>>>> +            - const: ch13
+>>>>>> +            - const: ch14
+>>>>>> +            - const: ch15
+>>>>>>
+>>>>>>    additionalProperties: false
+>>>>>>
+>>>>>>    required:
+>>>>>>      - compatible
+>>>>>>      - reg
+>>>>>> +  - reg-names
+>>>>>
+>>>>> New, added properties cannot be required. That's an ABI break.
+>>>>>
+>>>>>>      - interrupts
+>>>>>>      - "#address-cells"
+>>>>>>      - "#size-cells"
+>>>>>> @@ -182,7 +244,13 @@ examples:
+>>>>>>
+>>>>>>            memory-controller@2c00000 {
+>>>>>>                compatible = "nvidia,tegra186-mc";
+>>>>>> -            reg = <0x0 0x02c00000 0x0 0xb0000>;
+>>>>>> +            reg = <0x0 0x02c00000 0x0 0x10000>,    /* MC-SID */
+>>>>>> +                  <0x0 0x02c10000 0x0 0x10000>,    /* Broadcast
+>>>>>> channel */
+>>>>>> +                  <0x0 0x02c20000 0x0 0x10000>,    /* MC0 */
+>>>>>> +                  <0x0 0x02c30000 0x0 0x10000>,    /* MC1 */
+>>>>>> +                  <0x0 0x02c40000 0x0 0x10000>,    /* MC2 */
+>>>>>> +                  <0x0 0x02c50000 0x0 0x10000>;    /* MC3 */
+>>>>>> +            reg-names = "sid", "broadcast", "ch0", "ch1", "ch2",
+>>>>>> "ch3";
+>>>>>>                interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>>
+>>>>>>                #address-cells = <2>;
+>>>>>> -- 
+>>>>>> 2.17.1
+>>>>>>
+>>>>
+>>>> Oh, wait.. I didn't notice that the new reg ranges are only
+>>>> splitting up
+>>>> the old ranges. Previously it appeared to me that these are the new
+>>>> ranges.
+>>>>   > Ashish, in this case you don't need to change the regs in the DT at
+>>>> all.
+>>>> Instead, you need to specify the per-channel reg-base offsets in the
+>>>> driver code.
+>>>
+>>> Yes, it's kind of splitting up the old ranges and straight forward for
+>>> Tegra186. But on Tegra194 and Tegra234 the old address is not in single
+>>> range. It's already split across 3 ranges. We have to choose right range
+>>> and add channel offsets to that range in order to read interrupts.
+>>> So I went with the approach of splitting the regs in DT itself as per
+>>> the channels because that way they can be mapped in a single loop and
+>>> used easily.
+>>> If we want to specify per-channel reg-base offsets then that would be
+>>> per-SOC. Also we would need to choose correct reg-range for Tegra194 and
+>>> Tegra234 and have a way to maintain offsets of channels from those
+>>> respective reg-ranges.
+>>
+>> That is not nice too. Should be better to switch to the new DT scheme,
+>> since those channels weren't used by older kernels. It's okay to change
+>> the binding ABI in this case then, driver will continue to work for the
+>> older dtbs.
+> 
+> So the current DTS and binding changes are fine?
+
+It's fine to me. Doesn't hurt to explain in the commit message that the
+ABI change is intended and it's compatible with the previous ABI.
+
+>> Have you tested driver using the older dtbs?
+> 
+> Yes, the driver is tested with old dtb and it's working fine.
+
+Ok
