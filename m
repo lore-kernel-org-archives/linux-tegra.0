@@ -2,112 +2,217 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBB8C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Apr 2022 18:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10B2C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Apr 2022 18:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344479AbiDNSUl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Apr 2022 14:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47320 "EHLO
+        id S239674AbiDNSXR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Apr 2022 14:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240694AbiDNSUk (ORCPT
+        with ESMTP id S233542AbiDNSXR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Apr 2022 14:20:40 -0400
-X-Greylist: delayed 509 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Apr 2022 11:18:14 PDT
-Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B23EA370;
-        Thu, 14 Apr 2022 11:18:14 -0700 (PDT)
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4KfSCW69gWz4X;
-        Thu, 14 Apr 2022 20:09:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1649959782; bh=dFgq80ZhVmCzh8EszsBqFZFG3IVVYvOIEvlGI0Tq4bM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M6meHZrwxDyeU2pD3ZmxqrGIOzrLBQXdCeqnbtwDtUq7d8NQ4FnteJZa5YFykZ6e+
-         X355Jw6iEC8xz5YVcTjA7IGBOIrhJJnO2gyLkF37nJHv3MgLZmJqPn2G0I5dDKnrg4
-         F4lkBza7OIX6WAPVjLgmrFFU3bI2WDyTsmq3yRNaX+0PJysAXwkYCJl0nPOwBhBgob
-         8slrsU1NRKlCWPtWM49DA1EczNJlhcfy1OC/YVXW0ILmdWA2Y4HIWMLSnQstsdxWpp
-         LxCcPEO0wf/x0jtEuJ4NrLpxwq+b047xHqknUEqc50McWrzi2dQf66NZb5+xCwTgL8
-         LJAaOowB2v/uQ==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.5 at mail
-Date:   Thu, 14 Apr 2022 20:09:26 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 00/20] Introduce power-off+restart call chain API
-Message-ID: <YlhjVqStJJoL01v9@qmqm.qmqm.pl>
-References: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
+        Thu, 14 Apr 2022 14:23:17 -0400
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1122AE14;
+        Thu, 14 Apr 2022 11:20:51 -0700 (PDT)
+Received: by mail-oi1-f178.google.com with SMTP id bj24so820856oib.11;
+        Thu, 14 Apr 2022 11:20:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=49UHAT4bvClctyO7SpH/kHuczcmJC7fg1AX1Ne+NSKs=;
+        b=louQMAhSiZ6+bYH5XpZgNy43WUkiJ8G8FeM+H5CjvulKDpV9uBeWI/OICaN8GhXo2O
+         bPhodlbjTgmka9dXNP349xYSNG5zZ4mfhoymHhXmmvEcslM9iOYlmYTnA1DUlFC2cAik
+         GriX0uP6hlox0DVPsS2TGXBboMz7mSQZ9DWGarzWonBBYilwo1rq7Hcn5kmIvuuntiqf
+         osO75NTdOW3jZEkutFQDmyI0pyg1JIyXzVB84Uks4vz7uKVGac/Mtc9AMDQ4nFNY+AZJ
+         Xjjtz6WLDbVu/NNSuzpEsFUkDucn4dmgCJjUAFAaZkugJqDYXPVbLpJl0cHRhBVnbEzR
+         K2eg==
+X-Gm-Message-State: AOAM5321atf2H/2lhpINuONFocpDoeKIwCrrcwEjopjv+ACsR+hbj7Mc
+        8osMmn8jTduCoo0F7RYuoA==
+X-Google-Smtp-Source: ABdhPJwzj6DFzVeRUBf1hovvcj7QNX6k5X5/sLRvxQeN7WjUJKTm7auxmKoXlTJv9NKEkAyhHH6mVg==
+X-Received: by 2002:aca:1817:0:b0:2ec:f542:c96c with SMTP id h23-20020aca1817000000b002ecf542c96cmr2023781oih.36.1649960450795;
+        Thu, 14 Apr 2022 11:20:50 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id r19-20020a056830121300b005cdb11a7b85sm301131otp.29.2022.04.14.11.20.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Apr 2022 11:20:50 -0700 (PDT)
+Received: (nullmailer pid 2387691 invoked by uid 1000);
+        Thu, 14 Apr 2022 18:20:49 -0000
+Date:   Thu, 14 Apr 2022 13:20:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de, krzk+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, spujar@nvidia.com,
+        akhilrajeev@nvidia.com, rgumasta@nvidia.com, pshete@nvidia.com,
+        vidyas@nvidia.com, mperttunen@nvidia.com, mkumard@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: timer: Add Tegra186 & Tegra234 Timer
+Message-ID: <YlhmAQsZVU92OZ3W@robh.at.kernel.org>
+References: <1649924738-17990-1-git-send-email-kkartik@nvidia.com>
+ <1649924738-17990-2-git-send-email-kkartik@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
+In-Reply-To: <1649924738-17990-2-git-send-email-kkartik@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 12, 2022 at 02:38:12AM +0300, Dmitry Osipenko wrote:
-> Problem
-> -------
+On Thu, Apr 14, 2022 at 01:55:33PM +0530, Kartik wrote:
+> The Tegra186 timer provides ten 29-bit timer counters and one 32-bit
+> timestamp counter. The Tegra234 timer provides sixteen 29-bit timer
+> counters and one 32-bit timestamp counter. Each NV timer selects its
+> timing reference signal from the 1 MHz reference generated by USEC,
+> TSC or either clk_m or OSC. Each TMR can be programmed to generate
+> one-shot, periodic, or watchdog interrupts.
 > 
-> SoC devices require power-off call chaining functionality from kernel.
-> We have a widely used restart chaining provided by restart notifier API,
-> but nothing for power-off.
-> 
-> Solution
-> --------
-> 
-> Introduce new API that provides both restart and power-off call chains.
-[...]
+> Signed-off-by: Kartik <kkartik@nvidia.com>
 
-For the series:
+Full name please.
 
-Reviewed-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
+> ---
+>  .../bindings/timer/nvidia,tegra186-timer.yaml | 116 ++++++++++++++++++
+>  1 file changed, 116 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> new file mode 100644
+> index 000000000000..7841a68d19f3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> @@ -0,0 +1,116 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: NVIDIA Tegra186 timer
+> +
+> +maintainers:
+> +  - Thierry Reding <treding@nvidia.com>
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra186-timer
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          # Either a single combined interrupt or up to 14 individual interrupts
+
+This can be part of 'description'
+
+> +          minItems: 1
+> +          maxItems: 10
+> +          description: >
+> +            A list of 10 interrupts; one per each timer channels 0 through 9.
+
+Is it 10 or 14? I'm confused.
+
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra234-timer
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          # Either a single combined interrupt or up to 16 individual interrupts
+> +          minItems: 1
+> +          maxItems: 16
+> +          description: >
+> +            A list of 16 interrupts; one per each timer channels 0 through 15.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra186-timer
+> +        description: >
+> +          The Tegra186 timer provides ten 29-bit timer counters and one 32-bit
+> +          timestamp counter. Each NV timer selects its timing reference signal
+> +          from the 1 MHz reference generated by USEC, TSC or either clk_m or
+> +          OSC. Each TMR can be programmed to generate one-shot, periodic, or
+> +          watchdog interrupts.
+> +      - const: nvidia,tegra234-timer
+> +        description: >
+> +          The Tegra234 timer provides sixteen 29-bit timer counters and one 32-bit
+> +          timestamp counter. Each NV timer selects its timing reference signal
+> +          from the 1 MHz reference generated by USEC, TSC or either clk_m or
+> +          OSC. Each TMR can be programmed to generate one-shot, periodic, or
+> +          watchdog interrupts.
+
+Move all this description to top-level description leaving out the exact 
+number of counters (as the schema defines that).
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    timer@3010000 {
+> +        compatible = "nvidia,tegra186-timer";
+> +        reg = <0x03010000 0x000e0000>;
+> +        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +        status = "disabled";
+
+Drop status.
+
+> +    };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    timer@2080000 {
+> +        compatible = "nvidia,tegra234-timer";
+> +        reg = <0x02080000 0x00121000>;
+> +        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+> +        status = "disabled";
+> +    };
+> -- 
+> 2.17.1
+> 
+> 
