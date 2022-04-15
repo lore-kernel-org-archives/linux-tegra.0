@@ -2,95 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5975DC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Apr 2022 21:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 129C5C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Apr 2022 06:41:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343832AbiDNVRW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Apr 2022 17:17:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40214 "EHLO
+        id S1350549AbiDOGoB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Apr 2022 02:44:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237304AbiDNVRV (ORCPT
+        with ESMTP id S243518AbiDOGoA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Apr 2022 17:17:21 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D2A1C6EE9;
-        Thu, 14 Apr 2022 14:14:55 -0700 (PDT)
-Received: from [IPV6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1] (unknown [IPv6:2a00:5f00:102:0:10b3:10ff:fe5d:4ec1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 15 Apr 2022 02:44:00 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C59D8AFADD;
+        Thu, 14 Apr 2022 23:41:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 54D001F47CE5;
-        Thu, 14 Apr 2022 22:14:51 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1649970894;
-        bh=45lr61m9iGCAZVul+Bks15jmw1Puw71mKHjjKMgF/kM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Z1NujI6mIKhUzAdDTLgfe8GrUrwpKOSR6x8xb5pLrzSROOZ3WVyixGEZewDfcBvnD
-         P063OzaVG/nS32pSgW2G+PASJqmH+kkKOxtrga3gqPlpZuj7dKiJ2pJPGTzVbEhgl3
-         iq6LpeR7t/3zcsxh9OvEpdEj1mPR7VIUUS3Bc8vYvVxGCmrG1R+sZpqRNCxU5h69lh
-         z2zqC2s4wGNkyrcZNtZ8nxNAMls04YXtSQhrjpyjLEwfcmvXr/KciGv62UvQoqwd3z
-         qxReZqmSGaVfC9deQI+E8mU2/q/bO2G2vPP2w4iVrZukDQ1WtTTV3hKVDfHJp0ABwm
-         +3QvheM+aNOAA==
-Message-ID: <274d09f6-2d07-920b-661b-95d899262c9b@collabora.com>
-Date:   Fri, 15 Apr 2022 00:14:47 +0300
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8867AB82BF0;
+        Fri, 15 Apr 2022 06:41:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA977C385A5;
+        Fri, 15 Apr 2022 06:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1650004890;
+        bh=+L/HFWzltw7KDYz0FALc3guFX9clLm9cFM07Zin4qws=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U2xoJV98ppVR4dwd0IrPUHQTzHUazzXZ+C+DgBpQQR75KPLW4WYFNd6JDZEL6JCBc
+         w2nWV1/4a5WEGt99YbBCAtfxzoyk6NScThAh/KJNUtF5wp7GUw4Xa/uFGbluJTO1IG
+         Xsxs6pLSdShzdF+FyDC66IJsu1Ft7gBf1C/pPWGo=
+Date:   Fri, 15 Apr 2022 08:41:27 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     ldewangan@nvidia.com, jirislaby@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] serial: tegra: Correct error handling sequence
+Message-ID: <YlkTl/hyNDr9Nlwj@kroah.com>
+References: <1648112644-16950-1-git-send-email-kkartik@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [Patch v7 2/4] memory: tegra: Add MC error logging on tegra186
- onward
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>, digetx@gmail.com,
-        krzysztof.kozlowski@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <20220413094012.13589-1-amhetre@nvidia.com>
- <20220413094012.13589-3-amhetre@nvidia.com>
- <eeb513c9-f010-c45b-bca6-a10c96691147@collabora.com>
- <534dbd19-b43b-63e6-69e0-3441dd224ef0@nvidia.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <534dbd19-b43b-63e6-69e0-3441dd224ef0@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1648112644-16950-1-git-send-email-kkartik@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/14/22 08:31, Ashish Mhetre wrote:
+On Thu, Mar 24, 2022 at 02:34:04PM +0530, Kartik wrote:
+> From: kartik <kkartik@nvidia.com>
 > 
+> In the current error handling sequence the driver checks for break
+> error at the end.
 > 
-> On 4/14/2022 2:43 AM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 4/13/22 12:40, Ashish Mhetre wrote:
->>> +irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
->>>   {
->>>        struct tegra_mc *mc = data;
->>> +     unsigned int bit, channel;
->>>        unsigned long status;
->>> -     unsigned int bit;
->>>
->>> -     /* mask all interrupts to avoid flooding */
->>> -     status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
->>> +     if (mc->soc->num_channels) {
->>> +             u32 global_status;
->>> +             int err;
->>> +
->>> +             global_status = mc_ch_readl(mc, MC_BROADCAST_CHANNEL,
->>> MC_GLOBAL_INTSTATUS);
->>
->> This will crash if mc->bcast_ch_regs = ERR_PTR(-EINVAL) for older dtbs.
+> By handling the break error first, we can avoid a situation where the
+> driver keeps processing the errors which can be caused by an unhandled
+> break error.
 > 
-> Actually interrupts won't occur till we write MC_INTMASK register from
-> broadcast channel with appropriate intmask value. I have added check in
-> tegra_mc_probe() while registering irq which will write MC_INTMASK from
-> broadcast only when mc->bcast_ch_regs is initialized i.e.
-> !IS_ERR(mc->bcast_ch_regs).
-> So interrupt handler won't be triggered at all if
-> mc->bcast_ch_regs = ERR_PTR(-EINVAL).
-> 
+> Signed-off-by: kartik <kkartik@nvidia.com>
 
-Should be cleaner to set mc->bcast_ch_regs to NULL anyways. The ERR_PTR
-doesn't add much value and only makes code less readable.
+I need a full, legal name that you use to sign documents with.  Is that
+this name?
+
+> ---
+>  drivers/tty/serial/serial-tegra.c | 26 +++++++++++++-------------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+> index b6223fa..ba78a02 100644
+> --- a/drivers/tty/serial/serial-tegra.c
+> +++ b/drivers/tty/serial/serial-tegra.c
+> @@ -440,7 +440,19 @@ static char tegra_uart_decode_rx_error(struct tegra_uart_port *tup,
+>  	char flag = TTY_NORMAL;
+>  
+>  	if (unlikely(lsr & TEGRA_UART_LSR_ANY)) {
+> -		if (lsr & UART_LSR_OE) {
+> +		if (lsr & UART_LSR_BI) {
+> +			/*
+> +			 * Break error
+> +			 * If FIFO read error without any data, reset Rx FIFO
+> +			 */
+> +			if (!(lsr & UART_LSR_DR) && (lsr & UART_LSR_FIFOE))
+> +				tegra_uart_fifo_reset(tup, UART_FCR_CLEAR_RCVR);
+> +			if (tup->uport.ignore_status_mask & UART_LSR_BI)
+> +				return TTY_BREAK;
+> +			flag = TTY_BREAK;
+> +			tup->uport.icount.brk++;
+> +			dev_dbg(tup->uport.dev, "Got Break\n");
+> +		} else if (lsr & UART_LSR_OE) {
+>  			/* Overrrun error */
+>  			flag = TTY_OVERRUN;
+>  			tup->uport.icount.overrun++;
+> @@ -454,18 +466,6 @@ static char tegra_uart_decode_rx_error(struct tegra_uart_port *tup,
+>  			flag = TTY_FRAME;
+>  			tup->uport.icount.frame++;
+>  			dev_dbg(tup->uport.dev, "Got frame errors\n");
+> -		} else if (lsr & UART_LSR_BI) {
+> -			/*
+> -			 * Break error
+> -			 * If FIFO read error without any data, reset Rx FIFO
+> -			 */
+> -			if (!(lsr & UART_LSR_DR) && (lsr & UART_LSR_FIFOE))
+> -				tegra_uart_fifo_reset(tup, UART_FCR_CLEAR_RCVR);
+> -			if (tup->uport.ignore_status_mask & UART_LSR_BI)
+> -				return TTY_BREAK;
+> -			flag = TTY_BREAK;
+> -			tup->uport.icount.brk++;
+> -			dev_dbg(tup->uport.dev, "Got Break\n");
+>  		}
+>  		uart_insert_char(&tup->uport, lsr, UART_LSR_OE, 0, flag);
+>  	}
+
+What commit does this fix?
+
+thanks,
+
+greg k-h
