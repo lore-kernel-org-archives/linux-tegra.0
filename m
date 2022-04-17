@@ -2,118 +2,196 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5984AC433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 17 Apr 2022 00:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B383C433F5
+	for <linux-tegra@archiver.kernel.org>; Sun, 17 Apr 2022 09:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231506AbiDQAi7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 16 Apr 2022 20:38:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58868 "EHLO
+        id S231579AbiDQJHY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 17 Apr 2022 05:07:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231964AbiDQAi6 (ORCPT
+        with ESMTP id S233750AbiDQJHX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 16 Apr 2022 20:38:58 -0400
-Received: from relay4.hostedemail.com (relay4.hostedemail.com [64.99.140.36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A310A329BA;
-        Sat, 16 Apr 2022 17:36:22 -0700 (PDT)
-Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay09.hostedemail.com (Postfix) with ESMTP id BC1D923E29;
-        Sun, 17 Apr 2022 00:36:20 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf11.hostedemail.com (Postfix) with ESMTPA id 951B12002D;
-        Sun, 17 Apr 2022 00:36:18 +0000 (UTC)
-Message-ID: <817a2890f5483e9a4b51ff6cc3eaab966e4f0537.camel@perches.com>
-Subject: Re: [PATCH] usb: gadget: tegra-xudc: clean up comments
-From:   Joe Perches <joe@perches.com>
-To:     Tom Rix <trix@redhat.com>, balbi@kernel.org,
-        gregkh@linuxfoundation.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, waynec@nvidia.com,
-        rikard.falkeborn@gmail.com, zhangqilong3@huawei.com,
-        jakobkoschel@gmail.com
-Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 16 Apr 2022 17:36:17 -0700
-In-Reply-To: <20220416223921.2881719-1-trix@redhat.com>
-References: <20220416223921.2881719-1-trix@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1ubuntu2 
+        Sun, 17 Apr 2022 05:07:23 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2052.outbound.protection.outlook.com [40.107.220.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 940F36456;
+        Sun, 17 Apr 2022 02:04:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dlgYq5q7114vEK+dSmQAwtzczD3Jis9PlwAqytXA9G31rauc3HpsGLgmnesuAx9a21P/qFbbdOHDGvzC7kxAAIMd7F0UX3m/AGX0Hd30bNbgHB0+0oBpgDTignM1lTLsHRKslFbNNovbX/JVcV8zgfLWVl2VE/yRW3ac5J50FUV6BFS7db87MQqo0QZGy2wig2cxAlbZMzcFYl4Iy2gCcHpLQddeGNSHCQQDskWbaZlMQ+mmbNiJP2pK6kIdtei4dn47adf9r4OGwjd1O3z+alIuKbrEcBTdnLnoprNUgV83b2c7QxBcPObxVuitvnZh7CkEg2fGXPyiCKZx2DHbpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SG8YOrOqHAJwqMSZB7DKkcZxWNAjqunFBhBOe8/6NAk=;
+ b=kL63PD81ozh+I9x91rRmNH7qHhlUxfq8FO9XLgadS9wZ3I+mSBuz9UnIGHVMVW1EAupbn1W4wMoi76pmZ/x2J8ElaOa7H9nWxwGUsNO3cC1mgLjjBs1frFh3qx1pR+ZRNwb3PdvfukVKdjTxLuY6mG0nTQ0AZV70wtdolG6aVFnhaYPr42NqCpVFQyqBmLliy7jWuLJwThkuYjL712lpt/cuoEjpOmZIdGMjsy44S4UnrIpU4/YkWBxWCn2Sq4XPnvSoRyzfN9MIQeOtmMfll/Z0TPsouC9dEo+iJudh08HhlUvVTPNS6/rzqeXNKXfBZ0GH1IOk1c/3oFDr4T0WKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SG8YOrOqHAJwqMSZB7DKkcZxWNAjqunFBhBOe8/6NAk=;
+ b=jJrn2VHuJGgd+h1csYVU50j3ZP/dSeFBgUjKQ55g6fS1j1vMsxHTigHR+Emvqt7ecyminwH2ve6ax5JSP7725xtxOBTskilBWBg4zioNqAAg+djX4Z8Tgeul9vknZqFZWj1qCRugBlHorQVYfvsvlrXCBomt1kbzP4j1ASMrFSjxmoL/GLyzPMtvx5WIxKDt9J3oD31XfIH+F4uarWrtWCmcx6FTTQOnkSJVAlBrtVXB0mE9XAKSYEb5zOjnsNmFMeWELl08BzT8w5oKBEsjcvemwDW9J0zG6mhWHxvXIAaVvHcex3zOVtMbAAmFMhIVIHcgpE6ANfMe6iaFaEtKlw==
+Received: from BN8PR03CA0006.namprd03.prod.outlook.com (2603:10b6:408:94::19)
+ by BYAPR12MB3013.namprd12.prod.outlook.com (2603:10b6:a03:a9::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.25; Sun, 17 Apr
+ 2022 09:04:45 +0000
+Received: from BN8NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:94:cafe::6d) by BN8PR03CA0006.outlook.office365.com
+ (2603:10b6:408:94::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.18 via Frontend
+ Transport; Sun, 17 Apr 2022 09:04:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.236) by
+ BN8NAM11FT008.mail.protection.outlook.com (10.13.177.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5164.19 via Frontend Transport; Sun, 17 Apr 2022 09:04:44 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.32; Sun, 17 Apr 2022 09:04:43 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Sun, 17 Apr 2022 02:04:43 -0700
+Received: from amhetre.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.22 via Frontend
+ Transport; Sun, 17 Apr 2022 02:04:39 -0700
+From:   Ashish Mhetre <amhetre@nvidia.com>
+To:     <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <will@kernel.org>,
+        <robin.murphy@arm.com>, <joro@8bytes.org>, <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+CC:     <nicolinc@nvidia.com>, <Snikam@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Pritesh Raithatha <praithatha@nvidia.com>
+Subject: [Patch v1] iommu: arm-smmu: disable large page mappings for Nvidia arm-smmu
+Date:   Sun, 17 Apr 2022 14:34:32 +0530
+Message-ID: <20220417090432.21110-1-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: wuornyiqc99zd7iwgpzr4a7oge57cej1
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 951B12002D
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18BKswQqLwj8nM6sM5bfVkhWxaiS5zBNx0=
-X-HE-Tag: 1650155778-741580
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6d50f2d1-80a0-4563-9e9c-08da205150ac
+X-MS-TrafficTypeDiagnostic: BYAPR12MB3013:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR12MB30131E940283962994FA4469CAF09@BYAPR12MB3013.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5Io9RGGAZ58PUas1nqdxPxVxRcExHcCXilmNPKFtiam8cIZo2X52oO2Wm8uFEpgbIzX6PS23dhKla0PgI44tlR33M0kp/Z2wopAQ84VGbsF3C8vHpUgRHok0cLgWozdtY/NOECbgw0PhU2/a85dV58L7sTqkSBpZwcnv9uLPJbEEWHPK8IXh8/4JE4w6Ad/Lkd35gKfdDeiN6b0U6eueeKPkjUOMsnWqy7M/pKJ+TOWzqeIuzD0XTtbkOeU4P0gVuRS+4cEbnYmG1vEZPheYfJCqije0BMlXowoB9FHUHb1q6IK1Jtix8CRFz0msQNTzvlV8+YJFP7eNwLE2LyJgac2l9ZFi/S+bJx8w8n9ExQp5IEsMgWBVIq5ziMU+4cXfLFPNxAML1gl7onrBv5pRsdhs3LzPm4xMknYm1QFEGzjygk3/0DdtB3z1GLSEARbadF0uv+LN25/mDN6DC9KgnTkPUgA3amKFeeEyH/S01dUhQVSMtcZXuONWhR4rQcnwSu4T4U2xHeKsc6WrJeIsgTscXWEi+vVEubMeRkS0c6lpRvQr4O6XT9phsQtHzXuZfECnpyQE9vzOHkNdfWyUnOyagBuBkufKz4f++pCeQ0PjSXRqkBKZ3woR4zvhLoJ1gAqQHxCHcY8gytXtA2gA4g6je8BcEsRg+ud+B4HbGtjIrJseBe9SFEiNsYfdB4vRb4ACUucGjFpiBg84dZsSv06p07LGuDrwFi8wTilU7xrr6JFaRsKKVATkPskm/+uWwYifiMGpxFZgkzLKe+KO2g==
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(8676002)(70206006)(70586007)(86362001)(4326008)(7696005)(82310400005)(83380400001)(2906002)(26005)(356005)(40460700003)(921005)(508600001)(81166007)(36860700001)(2616005)(110136005)(107886003)(1076003)(6666004)(36756003)(54906003)(316002)(426003)(336012)(186003)(47076005)(5660300002)(8936002)(2101003)(83996005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2022 09:04:44.2557
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d50f2d1-80a0-4563-9e9c-08da205150ac
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT008.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3013
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, 2022-04-16 at 18:39 -0400, Tom Rix wrote:
-> Spelling replacements
-> cancelled to canceled
+Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
+entries to not be invalidated correctly. The problem is that the walk
+cache index generated for IOVA is not same across translation and
+invalidation requests. This is leading to page faults when PMD entry is
+released during unmap and populated with new PTE table during subsequent
+map request. Disabling large page mappings avoids the release of PMD
+entry and avoid translations seeing stale PMD entry in walk cache.
+Fix this by limiting the page mappings to PAGE_SIZE for Tegra194 and
+Tegra234 devices. This is recommended fix from Tegra hardware design
+team.
 
-cancelled is a generally accepted variant.
+Co-developed-by: Pritesh Raithatha <praithatha@nvidia.com>
+Signed-off-by: Pritesh Raithatha <praithatha@nvidia.com>
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+ drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 23 ++++++++++++++++++++
+ drivers/iommu/arm/arm-smmu/arm-smmu.c        |  3 +++
+ drivers/iommu/arm/arm-smmu/arm-smmu.h        |  1 +
+ 3 files changed, 27 insertions(+)
 
-https://www.dictionary.com/browse/cancelled
-
-> endpiont to endpoint
-
-ok.
-
-> Compliance to Compliance
-
-huh?  a == a
-
-
-> 
-> Signed-off-by: Tom Rix <trix@redhat.com>
-> ---
->  drivers/usb/gadget/udc/tegra-xudc.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-> index d9c406bdb680..0aaf01e1551f 100644
-> --- a/drivers/usb/gadget/udc/tegra-xudc.c
-> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
-> @@ -1330,7 +1330,7 @@ static void squeeze_transfer_ring(struct tegra_xudc_ep *ep,
->  	bool pcs;
->  
->  	/*
-> -	 * Clear out all the TRBs part of or after the cancelled request,
-> +	 * Clear out all the TRBs part of or after the canceled request,
->  	 * and must correct trb cycle bit to the last un-enqueued state.
->  	 */
->  	while (trb != &ep->transfer_ring[ep->enq_ptr]) {
-> @@ -1343,11 +1343,11 @@ static void squeeze_transfer_ring(struct tegra_xudc_ep *ep,
->  			trb = ep->transfer_ring;
->  	}
->  
-> -	/* Requests will be re-queued at the start of the cancelled request. */
-> +	/* Requests will be re-queued at the start of the canceled request. */
->  	ep->enq_ptr = req->first_trb - ep->transfer_ring;
->  	/*
->  	 * Retrieve the correct cycle bit state from the first trb of
-> -	 * the cancelled request.
-> +	 * the canceled request.
->  	 */
->  	ep->pcs = pcs_enq;
->  	ep->ring_full = false;
-> @@ -1434,7 +1434,7 @@ __tegra_xudc_ep_dequeue(struct tegra_xudc_ep *ep,
->  		return 0;
->  	}
->  
-> -	/* Halt DMA for this endpiont. */
-> +	/* Halt DMA for this endpoint. */
->  	if (ep_ctx_read_state(ep->context) == EP_STATE_RUNNING) {
->  		ep_pause(xudc, ep->index);
->  		ep_wait_for_inactive(xudc, ep->index);
-> @@ -3423,7 +3423,7 @@ static void tegra_xudc_device_params_init(struct tegra_xudc *xudc)
->  	}
->  
->  	/*
-> -	 * Compliacne suite appears to be violating polling LFPS tBurst max
-> +	 * Compliance suite appears to be violating polling LFPS tBurst max
->  	 * of 1.4us.  Send 1.45us instead.
->  	 */
->  	val = xudc_readl(xudc, SSPX_CORE_CNT32);
-
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+index 01e9b50b10a1..b7a3d06da2f4 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+@@ -258,6 +258,27 @@ static void nvidia_smmu_probe_finalize(struct arm_smmu_device *smmu, struct devi
+ 			dev_name(dev), err);
+ }
+ 
++static void nvidia_smmu_cfg_pgsize_bitmap(struct arm_smmu_device *smmu)
++{
++	const struct device_node *np = smmu->dev->of_node;
++
++	/*
++	 * Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
++	 * entries to not be invalidated correctly. The problem is that the walk
++	 * cache index generated for IOVA is not same across translation and
++	 * invalidation requests. This is leading to page faults when PMD entry
++	 * is released during unmap and populated with new PTE table during
++	 * subsequent map request. Disabling large page mappings avoids the
++	 * release of PMD entry and avoid translations seeing stale PMD entry in
++	 * walk cache.
++	 * Fix this by limiting the page mappings to PAGE_SIZE on Tegra194 and
++	 * Tegra234.
++	 */
++	if (of_device_is_compatible(np, "nvidia,tegra234-smmu") ||
++	    of_device_is_compatible(np, "nvidia,tegra194-smmu"))
++		smmu->pgsize_bitmap = PAGE_SIZE;
++}
++
+ static const struct arm_smmu_impl nvidia_smmu_impl = {
+ 	.read_reg = nvidia_smmu_read_reg,
+ 	.write_reg = nvidia_smmu_write_reg,
+@@ -268,10 +289,12 @@ static const struct arm_smmu_impl nvidia_smmu_impl = {
+ 	.global_fault = nvidia_smmu_global_fault,
+ 	.context_fault = nvidia_smmu_context_fault,
+ 	.probe_finalize = nvidia_smmu_probe_finalize,
++	.cfg_pgsize_bitmap = nvidia_smmu_cfg_pgsize_bitmap,
+ };
+ 
+ static const struct arm_smmu_impl nvidia_smmu_single_impl = {
+ 	.probe_finalize = nvidia_smmu_probe_finalize,
++	.cfg_pgsize_bitmap = nvidia_smmu_cfg_pgsize_bitmap,
+ };
+ 
+ struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index 568cce590ccc..3692a19a588a 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -1872,6 +1872,9 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
+ 	if (smmu->features & ARM_SMMU_FEAT_FMT_AARCH64_64K)
+ 		smmu->pgsize_bitmap |= SZ_64K | SZ_512M;
+ 
++	if (smmu->impl && smmu->impl->cfg_pgsize_bitmap)
++		smmu->impl->cfg_pgsize_bitmap(smmu);
++
+ 	if (arm_smmu_ops.pgsize_bitmap == -1UL)
+ 		arm_smmu_ops.pgsize_bitmap = smmu->pgsize_bitmap;
+ 	else
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+index 2b9b42fb6f30..5d9b03024969 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+@@ -442,6 +442,7 @@ struct arm_smmu_impl {
+ 	void (*write_s2cr)(struct arm_smmu_device *smmu, int idx);
+ 	void (*write_sctlr)(struct arm_smmu_device *smmu, int idx, u32 reg);
+ 	void (*probe_finalize)(struct arm_smmu_device *smmu, struct device *dev);
++	void (*cfg_pgsize_bitmap)(struct arm_smmu_device *smmu);
+ };
+ 
+ #define INVALID_SMENDX			-1
+-- 
+2.17.1
 
