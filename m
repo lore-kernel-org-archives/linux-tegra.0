@@ -2,196 +2,301 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B383C433F5
-	for <linux-tegra@archiver.kernel.org>; Sun, 17 Apr 2022 09:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CA4C433F5
+	for <linux-tegra@archiver.kernel.org>; Sun, 17 Apr 2022 09:27:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231579AbiDQJHY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 17 Apr 2022 05:07:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49538 "EHLO
+        id S233804AbiDQJaE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 17 Apr 2022 05:30:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233750AbiDQJHX (ORCPT
+        with ESMTP id S233795AbiDQJaD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 17 Apr 2022 05:07:23 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2052.outbound.protection.outlook.com [40.107.220.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 940F36456;
-        Sun, 17 Apr 2022 02:04:48 -0700 (PDT)
+        Sun, 17 Apr 2022 05:30:03 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam08on2055.outbound.protection.outlook.com [40.107.100.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB6B387A0;
+        Sun, 17 Apr 2022 02:27:28 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dlgYq5q7114vEK+dSmQAwtzczD3Jis9PlwAqytXA9G31rauc3HpsGLgmnesuAx9a21P/qFbbdOHDGvzC7kxAAIMd7F0UX3m/AGX0Hd30bNbgHB0+0oBpgDTignM1lTLsHRKslFbNNovbX/JVcV8zgfLWVl2VE/yRW3ac5J50FUV6BFS7db87MQqo0QZGy2wig2cxAlbZMzcFYl4Iy2gCcHpLQddeGNSHCQQDskWbaZlMQ+mmbNiJP2pK6kIdtei4dn47adf9r4OGwjd1O3z+alIuKbrEcBTdnLnoprNUgV83b2c7QxBcPObxVuitvnZh7CkEg2fGXPyiCKZx2DHbpQ==
+ b=YNkj9b7piBuKnBZGYM7wV+x0pGuoOSHUtX/frjLoQlSyS6j7RtFOYuoS+9AURTeJv+IXlgjovXS1X4hHhRruLI5TkZxWGteVoVYenTE4hFKTGWboSduCMjHOaaZnqnNqCTpJxkYAzWyW84w6tcpqByfmt1wIDxQyiT4uFOBe/bzFNwDd73TMy+VkyBZi/2ND6ckjPi4cu9eNMUHaD8hUhqUrK9Rs/fT77l3bLhIV6XY/2TXsL+F1neGHgh/YyrTZbQd6L7xLyjmyA40B5ln3Ul5ihz34HfA+cME4v/to+uEm5MfQomEtpdIpcBqswbLpZvw3aC6H0Y9jYhTN5HnGMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SG8YOrOqHAJwqMSZB7DKkcZxWNAjqunFBhBOe8/6NAk=;
- b=kL63PD81ozh+I9x91rRmNH7qHhlUxfq8FO9XLgadS9wZ3I+mSBuz9UnIGHVMVW1EAupbn1W4wMoi76pmZ/x2J8ElaOa7H9nWxwGUsNO3cC1mgLjjBs1frFh3qx1pR+ZRNwb3PdvfukVKdjTxLuY6mG0nTQ0AZV70wtdolG6aVFnhaYPr42NqCpVFQyqBmLliy7jWuLJwThkuYjL712lpt/cuoEjpOmZIdGMjsy44S4UnrIpU4/YkWBxWCn2Sq4XPnvSoRyzfN9MIQeOtmMfll/Z0TPsouC9dEo+iJudh08HhlUvVTPNS6/rzqeXNKXfBZ0GH1IOk1c/3oFDr4T0WKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=tIwpaS9adKtMQYMFAcQcfd4GSUBHga/RX4nWNU+ugDQ=;
+ b=WqEt6EYQMspZzeG3wNMtY6MTGmnHp8mZT18yAmQw+DiApds0/9expIZckx1KOtxawoUR8CEeQbfvVL7GO1K0r1qYBIo+ogPPJYFbEbmbDA6W6nmryS4dJkEIe93e7zxlozQLMGPvikAbWry5CQ6b90bUNHnZkL5xHHvbZzRQKCTED+mzctIhsHlfr16R+CGSQIYfSZnaFIp02VH8+MM0bIb6L/BzRGwAOz/8s7qK6QoVzQ/7CDWknnGSOGRb9+JE9TvE7gLuVHu/13bow3AKieVz8v2ZkpIxxe9vcZj0EUo5AokPGYMk5NEY1fVliAddNVbhOmns/DpL7M4rmxmZcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SG8YOrOqHAJwqMSZB7DKkcZxWNAjqunFBhBOe8/6NAk=;
- b=jJrn2VHuJGgd+h1csYVU50j3ZP/dSeFBgUjKQ55g6fS1j1vMsxHTigHR+Emvqt7ecyminwH2ve6ax5JSP7725xtxOBTskilBWBg4zioNqAAg+djX4Z8Tgeul9vknZqFZWj1qCRugBlHorQVYfvsvlrXCBomt1kbzP4j1ASMrFSjxmoL/GLyzPMtvx5WIxKDt9J3oD31XfIH+F4uarWrtWCmcx6FTTQOnkSJVAlBrtVXB0mE9XAKSYEb5zOjnsNmFMeWELl08BzT8w5oKBEsjcvemwDW9J0zG6mhWHxvXIAaVvHcex3zOVtMbAAmFMhIVIHcgpE6ANfMe6iaFaEtKlw==
-Received: from BN8PR03CA0006.namprd03.prod.outlook.com (2603:10b6:408:94::19)
- by BYAPR12MB3013.namprd12.prod.outlook.com (2603:10b6:a03:a9::27) with
+ bh=tIwpaS9adKtMQYMFAcQcfd4GSUBHga/RX4nWNU+ugDQ=;
+ b=ZoIeb05a9ufjS+pwcq7sCsSpQgOVIZpovsnCI8MQYYdEyX16uUzIlWGEfBtLqmZ+m2FCw7x1cIwacPNYLWVt1V12mJF+HJbSMsDvKq/dq0zQO0NlMBEYi09ck5IZidRVjtLIDWKgZWBWm3InfHxsf0eym4gYQiRpVV/NipmW21W+0PRc4Fc1E323Dp7+2o2UFYCLlSZBxXkxXqv48UYS5K/b9EGVEMaifkUNYOno/goVu/xZK3LHHTiDzUDBEpyReKGUuu93h8qvVBvK+RTiBL4rDjNZHh1cw52CEVlhFQ37BVTJ+nqt1TrBLS6tNwF0c8AkL12TGqLPduwVqwqiLA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21)
+ by MN2PR12MB4190.namprd12.prod.outlook.com (2603:10b6:208:1dd::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.25; Sun, 17 Apr
- 2022 09:04:45 +0000
-Received: from BN8NAM11FT008.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:94:cafe::6d) by BN8PR03CA0006.outlook.office365.com
- (2603:10b6:408:94::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.18 via Frontend
- Transport; Sun, 17 Apr 2022 09:04:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- BN8NAM11FT008.mail.protection.outlook.com (10.13.177.95) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5164.19 via Frontend Transport; Sun, 17 Apr 2022 09:04:44 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
- 15.0.1497.32; Sun, 17 Apr 2022 09:04:43 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 17 Apr 2022 02:04:43 -0700
-Received: from amhetre.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Sun, 17 Apr 2022 02:04:39 -0700
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.20; Sun, 17 Apr
+ 2022 09:27:25 +0000
+Received: from SA0PR12MB4349.namprd12.prod.outlook.com
+ ([fe80::e15c:41ca:1c76:2ef]) by SA0PR12MB4349.namprd12.prod.outlook.com
+ ([fe80::e15c:41ca:1c76:2ef%3]) with mapi id 15.20.5164.025; Sun, 17 Apr 2022
+ 09:27:25 +0000
+Message-ID: <60db2153-2d78-646c-1e5e-e89346991b0c@nvidia.com>
+Date:   Sun, 17 Apr 2022 14:57:11 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [Patch v7 3/4] dt-bindings: memory: Update reg/reg-names
+ validation
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+Cc:     dmitry.osipenko@collabora.com, digetx@gmail.com,
+        krzysztof.kozlowski@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, vdumpa@nvidia.com,
+        Snikam@nvidia.com
+References: <20220413094012.13589-1-amhetre@nvidia.com>
+ <20220413094012.13589-4-amhetre@nvidia.com>
+ <YlbSGEBKgpVC51dZ@robh.at.kernel.org>
 From:   Ashish Mhetre <amhetre@nvidia.com>
-To:     <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <will@kernel.org>,
-        <robin.murphy@arm.com>, <joro@8bytes.org>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
-CC:     <nicolinc@nvidia.com>, <Snikam@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Pritesh Raithatha <praithatha@nvidia.com>
-Subject: [Patch v1] iommu: arm-smmu: disable large page mappings for Nvidia arm-smmu
-Date:   Sun, 17 Apr 2022 14:34:32 +0530
-Message-ID: <20220417090432.21110-1-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+In-Reply-To: <YlbSGEBKgpVC51dZ@robh.at.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA1PR01CA0079.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::19)
+ To SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6d50f2d1-80a0-4563-9e9c-08da205150ac
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3013:EE_
-X-Microsoft-Antispam-PRVS: <BYAPR12MB30131E940283962994FA4469CAF09@BYAPR12MB3013.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 67e0c4a5-24ac-4664-eabe-08da20547bde
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4190:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB41902002045D29440A8D2EE5CAF09@MN2PR12MB4190.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5Io9RGGAZ58PUas1nqdxPxVxRcExHcCXilmNPKFtiam8cIZo2X52oO2Wm8uFEpgbIzX6PS23dhKla0PgI44tlR33M0kp/Z2wopAQ84VGbsF3C8vHpUgRHok0cLgWozdtY/NOECbgw0PhU2/a85dV58L7sTqkSBpZwcnv9uLPJbEEWHPK8IXh8/4JE4w6Ad/Lkd35gKfdDeiN6b0U6eueeKPkjUOMsnWqy7M/pKJ+TOWzqeIuzD0XTtbkOeU4P0gVuRS+4cEbnYmG1vEZPheYfJCqije0BMlXowoB9FHUHb1q6IK1Jtix8CRFz0msQNTzvlV8+YJFP7eNwLE2LyJgac2l9ZFi/S+bJx8w8n9ExQp5IEsMgWBVIq5ziMU+4cXfLFPNxAML1gl7onrBv5pRsdhs3LzPm4xMknYm1QFEGzjygk3/0DdtB3z1GLSEARbadF0uv+LN25/mDN6DC9KgnTkPUgA3amKFeeEyH/S01dUhQVSMtcZXuONWhR4rQcnwSu4T4U2xHeKsc6WrJeIsgTscXWEi+vVEubMeRkS0c6lpRvQr4O6XT9phsQtHzXuZfECnpyQE9vzOHkNdfWyUnOyagBuBkufKz4f++pCeQ0PjSXRqkBKZ3woR4zvhLoJ1gAqQHxCHcY8gytXtA2gA4g6je8BcEsRg+ud+B4HbGtjIrJseBe9SFEiNsYfdB4vRb4ACUucGjFpiBg84dZsSv06p07LGuDrwFi8wTilU7xrr6JFaRsKKVATkPskm/+uWwYifiMGpxFZgkzLKe+KO2g==
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(8676002)(70206006)(70586007)(86362001)(4326008)(7696005)(82310400005)(83380400001)(2906002)(26005)(356005)(40460700003)(921005)(508600001)(81166007)(36860700001)(2616005)(110136005)(107886003)(1076003)(6666004)(36756003)(54906003)(316002)(426003)(336012)(186003)(47076005)(5660300002)(8936002)(2101003)(83996005)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 3QKUkywkyNrDH95TUZ/iq8i2tIgDltS7gRsWikpepMGCI6zTbQcrnOZnpt/BwKlP/1XeUAbLDpd/uDI7qk09DTHlRytijLSiqwVw0w+563vQeEzHF1Uofid5Tqbu7oLDylkmJfmKPE3LbkEUH6tUsAbCXwS03rPexUqlxReJqGF7jvHe1x4hPpyfewffag9YVMjrG3u8Ua03vP0n5mwu73BL6IfFT+nPoS4r79LAybEIoSG+qzK4x+pP4PBs86yfQnrB0UYQ3JMCyK/2rAY0jZ+IGnA9Vu/dFHECBsZsU9ngooUiALIptHi3nq8wpiNWBAZSRtwxBpNbLQso3WXXLwq1/3L9nzHZXc7xFB4yHQD7evNuMNScCZBglaOX3nkeK3l43AUUCFfLqr7isx/zN6EvYCiUyUtygsXV9/kAkPLQELbCtypeHekOQuDkpP2d/Qnur1T0eT9n9Ce6li7zUmRI145son3fSJSgfM1K6VlQCwhsxChjm+gVrE31vffubSx6YO3gNF6hpMwtmtVYxUs25QZ6NLHORQu/0P9VsiVbcyziGYaysw/zEVOyg3KZwzozQPZnlyqLP4G2If7SMfW8CpZOvF/8VUM6RhlNXwXag8wiG1cYpwpBSmtgxlsA2jSKPobPY8IbJ1gRMQrsgbLPiw8VqkLmtXI214XRb21P/0Tn03u/C00JcNTcF0QEnTxZQ8AL2DGXOSUFEadRLwfxMGNgxA4KhM8qlW3YiX4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(15650500001)(186003)(83380400001)(2616005)(55236004)(26005)(5660300002)(31686004)(38100700002)(2906002)(508600001)(6666004)(6512007)(6506007)(53546011)(107886003)(36756003)(6916009)(316002)(6486002)(66556008)(8676002)(4326008)(66946007)(66476007)(86362001)(31696002)(8936002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OXdtU0I2ZGdIdVA4bVlTTEpLeEZ6bGtObmZzWXUvZXdBNUJWZG1oMmtHalpQ?=
+ =?utf-8?B?c0QxYkZVdjBKSWt2dFZEa1ZKNFliVXNxelFCdDM0RnJWaHRsaXNBdlNLTVU4?=
+ =?utf-8?B?ZzJpNk5yT3VQS2tRNnRrZDR1ek8vSFdXdyttTHVYL2MvZUE2MDZOZUFOcmpT?=
+ =?utf-8?B?Y0FiS2tjN090K0gxSUQ5NXBKZCtyWFd6YjRJY3B4ZUVGcFlKU3oyRlN3bFE2?=
+ =?utf-8?B?bDF5dW1sTlM4NCtFZVkrcmhPUmlYSFhRdkg5K2huZ3lGbWUyc1UxeE9ra2xp?=
+ =?utf-8?B?eHo4VU5GK29GQWhFWDdwYkJYOTlxVzVuN0tNK3JxbEpmd1d3cEhNbXQ3WE11?=
+ =?utf-8?B?S1JJMHl4RDZvb3ZSS1VxaUJMeklyY1ZPWDQvTjM3WXdjL2gvWmQ4U1lobWVH?=
+ =?utf-8?B?b2gvbDNxSW9yWWd6alFwVDNXdWRxNHk5MzJDYjlmYXBRd1pVeUxPNUdVang4?=
+ =?utf-8?B?YklsNlRrQnRZZStTdHZuQXZFNk80dlFuckVOOWZZQ2lhbTltTnRiTHByZWFS?=
+ =?utf-8?B?dkJ0c095OS9RSkw2L3lwaFQrYnN6V3QzWXVzY2JJa3N0UFBldWdScVh5TElN?=
+ =?utf-8?B?T2xjN0J5TnVwV1pNWmFmZWxKYUJzQWs3TyswNFhibnkycTdkOUZmNWwrVXlQ?=
+ =?utf-8?B?RXFuOHVlWnFTS2dTZ1dTN3dSanYwQkhxUVgremxrTmM2QVhDYTcrdkk3d0p6?=
+ =?utf-8?B?Y3pJT1hlb2puZ3pZL0hMMHk2MzA1S0NLTUZBUkJmcGRWTTYwdDRaeXU1SUt3?=
+ =?utf-8?B?UDlwaDJZZ1ZkZFd0cVlkRTNvaHJUYnc1T2l2U09hbFRLb3dUU3JMT1FYYzBn?=
+ =?utf-8?B?c0VMRVZvaXM5Tlk5U3c2RHlJVkd1cVZrTkdDcldTN01UU045UEVyeWpVbXZB?=
+ =?utf-8?B?a0x0ZVlaRFJVZFZpSlMxUXI5WUJCMW9xSm51Zjk1enIwcm5uR055NUdZTzVL?=
+ =?utf-8?B?NGNlS2E5b2hCSEd4bDZaTm43WGlONWdFZTlJNHRaWXFRZ0RMVGJaUm12d1p6?=
+ =?utf-8?B?RjUvL3RxaUhtSjl6czFuRXFWdlNaNVUvS2pHV0dselFoZ09rTWUxSkhwTlRE?=
+ =?utf-8?B?WVh2WVBHK2ZWTjR6RldmRlFaWjEzRWJmdXQxODNMWmdSV0tJUmdiSDZ6Vk1a?=
+ =?utf-8?B?WjI1bVZZa291ZXZpQnNzWHJQMnJNaVcrVGFTU2dCR00zSHBvMENQSEZHWmpV?=
+ =?utf-8?B?UU9BYmcyV1dsUGVZeU40M1h5RDFpWGpUU1l6KzU2aVpzaXpYZ1dTVm5UOVVK?=
+ =?utf-8?B?a0RxOFd2UGplWHFoRXlhenFuR00yNDlmbEhYczU2Z3Rpbm5hQUt3aEU5Y0Jh?=
+ =?utf-8?B?SlFoNDlPcFVCcEgyNnFkNGc3Nkt5UGg4RGxiNU8vR1VKbEJ2aHVKdldjUHpC?=
+ =?utf-8?B?SzRvU2JteEQxOTlNUDN0aEZ6aWFYSUZqQURhZ0RJWXR1UGdzclJGTThkSTBp?=
+ =?utf-8?B?MHQzUXcxUVFOSEkzMFhQS1ZCaVgvblpmT0dwVm55cU1RUTRvTVFpSXdQY0Fx?=
+ =?utf-8?B?bVJHclcrMlV6Y3FrbHR2SlhacUJhS3BoVStwRytnR1g3ZmNCUFRmSkgvbGRp?=
+ =?utf-8?B?U0cydzFNZkcwcTZiZGI2MkhRLzhRZlVtUHl0Qzg0V1pXclEzcmlCTGl2WXBJ?=
+ =?utf-8?B?c2FyNjJES2gwQzMrc21uY2RYS3JoL2ZsZk9lbWN1UmJyTGQ5Z1hrdFdYb04r?=
+ =?utf-8?B?L252ampPZjlhTlV0NERLQ1N0NXRnSVk1c09MUms1VjJHNVdmV3RicDNHbGwv?=
+ =?utf-8?B?RWQzenFDYVBoYXNBT0c2SHE5eThQZFR6MGJaNWxBMDlnVXJjWFNVR081MnQy?=
+ =?utf-8?B?VWdiTEExYzZlM01Qdi81cnpIcER4cStYeit0LytZdVkxSDlNY1lxZXJxOGNh?=
+ =?utf-8?B?YzJzTXpwcFNYVEROZEVWZllNOUVqTjg0MzlDZUJNQnk0ek96amNrVUxvYTQz?=
+ =?utf-8?B?bi8vTjVCYTdmNFo3dlV4NEYrVHZXMUUyUFNLRWRRRjgrQ1JEajdWZVIvNGpx?=
+ =?utf-8?B?VnZFSTRDSXZWNnpBTmRjZ0NaSEUzUTJmeTBVWGVLNkc3UGJxTnR5SU5NeFRE?=
+ =?utf-8?B?R0V1cnFvcWNrdFNLeVBhSHZDYjk2d1FuUVBpcFVrSGpjNlJEOWlLVElTWlpm?=
+ =?utf-8?B?eHV6SDBCRDl6NXpEWldmRmlzTVZmVXJuemJJQktMd3JnUllJQzFFekNqQmtu?=
+ =?utf-8?B?bml1Tmx4eFRmdjBaOFdxVVc1cThOOUVBRGx5cURkNWpwZ0o2VGQ4T2MxMU9w?=
+ =?utf-8?B?MFhUV3FPVHRTYmRDWEF2eTVWU2ZPT1ZMVWVUT2EvZEExV21uZEhHUCtMMDRR?=
+ =?utf-8?B?UmJJY1ZIUmtBN1ZERzZ5TkR5c0Vua1Z4UlVJTDdnMitHT3FGNTVBZz09?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2022 09:04:44.2557
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67e0c4a5-24ac-4664-eabe-08da20547bde
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4349.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2022 09:27:25.7631
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d50f2d1-80a0-4563-9e9c-08da205150ac
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT008.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3013
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fRYwqj+0DWvEfyVpQUHOAb5zMdPRP1todc2kyaLaGo4roC4d1SlP6dCnHggTZW2eD051x3BDtM2OPVBPvyK+zQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4190
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
-entries to not be invalidated correctly. The problem is that the walk
-cache index generated for IOVA is not same across translation and
-invalidation requests. This is leading to page faults when PMD entry is
-released during unmap and populated with new PTE table during subsequent
-map request. Disabling large page mappings avoids the release of PMD
-entry and avoid translations seeing stale PMD entry in walk cache.
-Fix this by limiting the page mappings to PAGE_SIZE for Tegra194 and
-Tegra234 devices. This is recommended fix from Tegra hardware design
-team.
 
-Co-developed-by: Pritesh Raithatha <praithatha@nvidia.com>
-Signed-off-by: Pritesh Raithatha <praithatha@nvidia.com>
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 23 ++++++++++++++++++++
- drivers/iommu/arm/arm-smmu/arm-smmu.c        |  3 +++
- drivers/iommu/arm/arm-smmu/arm-smmu.h        |  1 +
- 3 files changed, 27 insertions(+)
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-index 01e9b50b10a1..b7a3d06da2f4 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-@@ -258,6 +258,27 @@ static void nvidia_smmu_probe_finalize(struct arm_smmu_device *smmu, struct devi
- 			dev_name(dev), err);
- }
- 
-+static void nvidia_smmu_cfg_pgsize_bitmap(struct arm_smmu_device *smmu)
-+{
-+	const struct device_node *np = smmu->dev->of_node;
-+
-+	/*
-+	 * Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
-+	 * entries to not be invalidated correctly. The problem is that the walk
-+	 * cache index generated for IOVA is not same across translation and
-+	 * invalidation requests. This is leading to page faults when PMD entry
-+	 * is released during unmap and populated with new PTE table during
-+	 * subsequent map request. Disabling large page mappings avoids the
-+	 * release of PMD entry and avoid translations seeing stale PMD entry in
-+	 * walk cache.
-+	 * Fix this by limiting the page mappings to PAGE_SIZE on Tegra194 and
-+	 * Tegra234.
-+	 */
-+	if (of_device_is_compatible(np, "nvidia,tegra234-smmu") ||
-+	    of_device_is_compatible(np, "nvidia,tegra194-smmu"))
-+		smmu->pgsize_bitmap = PAGE_SIZE;
-+}
-+
- static const struct arm_smmu_impl nvidia_smmu_impl = {
- 	.read_reg = nvidia_smmu_read_reg,
- 	.write_reg = nvidia_smmu_write_reg,
-@@ -268,10 +289,12 @@ static const struct arm_smmu_impl nvidia_smmu_impl = {
- 	.global_fault = nvidia_smmu_global_fault,
- 	.context_fault = nvidia_smmu_context_fault,
- 	.probe_finalize = nvidia_smmu_probe_finalize,
-+	.cfg_pgsize_bitmap = nvidia_smmu_cfg_pgsize_bitmap,
- };
- 
- static const struct arm_smmu_impl nvidia_smmu_single_impl = {
- 	.probe_finalize = nvidia_smmu_probe_finalize,
-+	.cfg_pgsize_bitmap = nvidia_smmu_cfg_pgsize_bitmap,
- };
- 
- struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-index 568cce590ccc..3692a19a588a 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-@@ -1872,6 +1872,9 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
- 	if (smmu->features & ARM_SMMU_FEAT_FMT_AARCH64_64K)
- 		smmu->pgsize_bitmap |= SZ_64K | SZ_512M;
- 
-+	if (smmu->impl && smmu->impl->cfg_pgsize_bitmap)
-+		smmu->impl->cfg_pgsize_bitmap(smmu);
-+
- 	if (arm_smmu_ops.pgsize_bitmap == -1UL)
- 		arm_smmu_ops.pgsize_bitmap = smmu->pgsize_bitmap;
- 	else
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-index 2b9b42fb6f30..5d9b03024969 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-@@ -442,6 +442,7 @@ struct arm_smmu_impl {
- 	void (*write_s2cr)(struct arm_smmu_device *smmu, int idx);
- 	void (*write_sctlr)(struct arm_smmu_device *smmu, int idx, u32 reg);
- 	void (*probe_finalize)(struct arm_smmu_device *smmu, struct device *dev);
-+	void (*cfg_pgsize_bitmap)(struct arm_smmu_device *smmu);
- };
- 
- #define INVALID_SMENDX			-1
--- 
-2.17.1
+On 4/13/2022 7:07 PM, Rob Herring wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On Wed, Apr 13, 2022 at 03:10:11PM +0530, Ashish Mhetre wrote:
+>>  From tegra186 onwards, memory controller support multiple channels.
+>> Reg items are updated with address and size of these channels.
+>> Tegra186 has overall 5 memory controller channels. Tegra194 and tegra234
+>> have overall 17 memory controller channels each.
+>> There is 1 reg item for memory controller stream-id registers.
+>> So update the reg maxItems to 18 in tegra186 devicetree documentation.
+>> Also update validation for reg-names added for these corresponding reg
+>> items.
+> 
+> Somehow your subject should indicate this is for Tegra.
+> 
+Okay, I'll update the subject.
 
+>>
+>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>> ---
+>>   .../nvidia,tegra186-mc.yaml                   | 80 +++++++++++++++++--
+>>   1 file changed, 74 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>> index 13c4c82fd0d3..c7cfa6c2cd81 100644
+>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>> @@ -34,8 +34,12 @@ properties:
+>>             - nvidia,tegra234-mc
+>>
+>>     reg:
+>> -    minItems: 1
+>> -    maxItems: 3
+>> +    minItems: 6
+> 
+> You just broke current users.
+> 
+The DTS changes are handled in driver. The driver is compatible with
+older DTS as well. dt bindings check will fail but that will request
+the users to switch to new DTS. Will that be fine?
+
+>> +    maxItems: 18
+>> +
+>> +  reg-names:
+>> +    minItems: 6
+>> +    maxItems: 18
+>>
+>>     interrupts:
+>>       items:
+>> @@ -142,7 +146,18 @@ allOf:
+>>       then:
+>>         properties:
+>>           reg:
+>> -          maxItems: 1
+>> +          maxItems: 6
+>> +          description: 5 memory controller channels and 1 for stream-id registers
+>> +
+>> +        reg-names:
+>> +          maxItems: 6
+>> +          items:
+>> +            - const: sid
+>> +            - const: broadcast
+>> +            - const: ch0
+>> +            - const: ch1
+>> +            - const: ch2
+>> +            - const: ch3
+>>
+>>     - if:
+>>         properties:
+>> @@ -151,7 +166,30 @@ allOf:
+>>       then:
+>>         properties:
+>>           reg:
+>> -          minItems: 3
+>> +          minItems: 18
+>> +          description: 17 memory controller channels and 1 for stream-id registers
+>> +
+>> +        reg-names:
+>> +          minItems: 18
+>> +          items:
+>> +            - const: sid
+>> +            - const: broadcast
+>> +            - const: ch0
+>> +            - const: ch1
+>> +            - const: ch2
+>> +            - const: ch3
+>> +            - const: ch4
+>> +            - const: ch5
+>> +            - const: ch6
+>> +            - const: ch7
+>> +            - const: ch8
+>> +            - const: ch9
+>> +            - const: ch10
+>> +            - const: ch11
+>> +            - const: ch12
+>> +            - const: ch13
+>> +            - const: ch14
+>> +            - const: ch15
+>>
+>>     - if:
+>>         properties:
+>> @@ -160,13 +198,37 @@ allOf:
+>>       then:
+>>         properties:
+>>           reg:
+>> -          minItems: 3
+>> +          minItems: 18
+>> +          description: 17 memory controller channels and 1 for stream-id registers
+>> +
+>> +        reg-names:
+>> +          minItems: 18
+>> +          items:
+>> +            - const: sid
+>> +            - const: broadcast
+>> +            - const: ch0
+>> +            - const: ch1
+>> +            - const: ch2
+>> +            - const: ch3
+>> +            - const: ch4
+>> +            - const: ch5
+>> +            - const: ch6
+>> +            - const: ch7
+>> +            - const: ch8
+>> +            - const: ch9
+>> +            - const: ch10
+>> +            - const: ch11
+>> +            - const: ch12
+>> +            - const: ch13
+>> +            - const: ch14
+>> +            - const: ch15
+>>
+>>   additionalProperties: false
+>>
+>>   required:
+>>     - compatible
+>>     - reg
+>> +  - reg-names
+> 
+> New, added properties cannot be required. That's an ABI break.
+> 
+This is handled in driver code to make sure driver works with old dts
+as well. So is this bindings change fine or shall I change it such that
+dt bindings check shall pass with older dts as well?
+Or as mentioned by Dmitry, I can update the commit message to reflect
+that ABI change is intended and driver is compatible with older DTBs as
+well.
+
+>>     - interrupts
+>>     - "#address-cells"
+>>     - "#size-cells"
+>> @@ -182,7 +244,13 @@ examples:
+>>
+>>           memory-controller@2c00000 {
+>>               compatible = "nvidia,tegra186-mc";
+>> -            reg = <0x0 0x02c00000 0x0 0xb0000>;
+>> +            reg = <0x0 0x02c00000 0x0 0x10000>,    /* MC-SID */
+>> +                  <0x0 0x02c10000 0x0 0x10000>,    /* Broadcast channel */
+>> +                  <0x0 0x02c20000 0x0 0x10000>,    /* MC0 */
+>> +                  <0x0 0x02c30000 0x0 0x10000>,    /* MC1 */
+>> +                  <0x0 0x02c40000 0x0 0x10000>,    /* MC2 */
+>> +                  <0x0 0x02c50000 0x0 0x10000>;    /* MC3 */
+>> +            reg-names = "sid", "broadcast", "ch0", "ch1", "ch2", "ch3";
+>>               interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+>>
+>>               #address-cells = <2>;
+>> --
+>> 2.17.1
+>>
