@@ -2,107 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61CB5C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Apr 2022 11:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C4AC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Apr 2022 19:38:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237832AbiDRLEe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Apr 2022 07:04:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36006 "EHLO
+        id S238152AbiDRTlI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Apr 2022 15:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237808AbiDRLEd (ORCPT
+        with ESMTP id S238066AbiDRTlH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Apr 2022 07:04:33 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77331A04F;
-        Mon, 18 Apr 2022 04:01:55 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id q75so2220774qke.6;
-        Mon, 18 Apr 2022 04:01:55 -0700 (PDT)
+        Mon, 18 Apr 2022 15:41:07 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A57822B19
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Apr 2022 12:38:27 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id t11so28625315eju.13
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Apr 2022 12:38:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MR4XEfbq0g3i3GdpRwVqEKqpyQByj0l2iP24PNQRGxM=;
-        b=IzyRlBNFlXcYwJ0AedNUdgtWrX7PK1n2WGgiNRQNsgfpMEpBd9MFe0lnImQRZucIUg
-         aMihG21XzUFM4SF0iJvrQRE/IAe8wQoNtGc+VilqfppF7MfWSBiGMQPFp9ANlTcVOQQZ
-         KFB9DkLYa57nppe+5cArRptLtNckEpcQcYwuDn3tSOZI8OLP0OpeWqC0tD+JBbMiOFLD
-         8wcR5lio0k7OwwCaUDqAF5vWwSCSuHseD9k0l94X4vuw7Az1bDN6/Sxalu/ebWQzomNC
-         p8Y575ThG5A+qX8HcWnCBVqG20VXEi9PUq/B9OeGz699wygBSfabRnrJ6OpXC9EpZr3w
-         VmZw==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0voP44fyY7XGXFGcJkasfgBTf6x1VqclP4C49VR3XuM=;
+        b=QKLUw+3071xERftQyKvPl2WNNRY6O+4SZPC6715pcJO5SigVoGnGoWm61a1ET3u+20
+         uUW1QJ5rxlmh8o5Eb4EDED1D4tQG0GF0iGxvCCpHIzWXRgO+aH0uvsAdNFVAsWAcwna6
+         yr154rP1eJ47akx9Ri1IJV76X+Zkgyc8I3MvVBj4CKWTHjpeXch9JyCtb+heoqPaw7DI
+         j754EFIMjXuDQz9QQh99f/7kc4MunCF5uGT4uSIAf7TqQcCrq8Uu2Ft+vxEhdwty2uCG
+         i7YGf+ZxGRymBPZtuwpdRDy59gjUVnN2VyTRi4YloCP7bgC5jw2L5wfjhgY39BAfo+rG
+         rFwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MR4XEfbq0g3i3GdpRwVqEKqpyQByj0l2iP24PNQRGxM=;
-        b=IZEinpAkypNuRmVfxVJ1D2keFXg/aCfE7HrYICyuOjFGfR6AvQe/7abZ1kBQ4VGaQ5
-         yK4SsaPoMJ+dtsgJ+cazMHq8SrQmeKBzwpGd63ht+0hxoiGX56iB+NXGhS4E8JP3M1Jd
-         NETDnPJraLNNR3Bk4tI95LKNRKB2/HBljrP6ioU+ZI3MYYrsARbi8ZiZe5iZOROdvaR9
-         FKjqSVUM4ZLXSEJGDPIpkk/RCpfqS/XE071xjOsz8GW1bU1WLuYbLWXl/UmkIikmxCqs
-         ubK4x5H9wmV4I90czFHcuaq+av1iBSn+7iu4shHcRAEuu+rXlQJEcQj4maCmJkRD7wJh
-         FcEg==
-X-Gm-Message-State: AOAM532+VYLwOIr2HRH/qEn8ctFm4tNDGj4KNNOGkM+exHQ4xMG+cMcC
-        rWlv3/OlkwW/Bz5LDROX6bM=
-X-Google-Smtp-Source: ABdhPJw/y/I+JyfBP/0bm8GE8o3iVm9bTOhtC6PncXm71NvTDTXarYdLBClGa/3tqnMMi6ah5LRAPA==
-X-Received: by 2002:a37:8e04:0:b0:69e:6b49:412f with SMTP id q4-20020a378e04000000b0069e6b49412fmr6127791qkd.608.1650279714851;
-        Mon, 18 Apr 2022 04:01:54 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id c17-20020ac85a91000000b002e1dd8ae44bsm7476522qtc.29.2022.04.18.04.01.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 04:01:54 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     ldewangan@nvidia.com
-Cc:     broonie@kernel.org, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] spi: spi-tegra20-slink: using pm_runtime_resume_and_get instead of pm_runtime_get_sync
-Date:   Mon, 18 Apr 2022 11:01:41 +0000
-Message-Id: <20220418110141.2559019-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0voP44fyY7XGXFGcJkasfgBTf6x1VqclP4C49VR3XuM=;
+        b=F+obQWKPNN+n89hTQBoFWgNKL3A8YcHCtWvJPqcKACmoFuzXkQJJRz61/VcnQzqfYL
+         DPUaoxDGPAWOOgh1bCbJwPTC4Jq5rBZD8hDIm1Zk82ZH61tVuyyyFnjLI7cBRKrOsFH6
+         WK8tO3JpiBJiGosHGf2aWSoeUsvxwIUWVP0BQO+ELE7U2gIQcO/XRM+flvpSV7ssFXxd
+         wzxtdGwUaxBM0dNQLpmDcJii+gQC4jMMltcWI+6tIIR8vbvJeYA/RR+UVN8/azpB2iYT
+         nZTpGN2+iUk4Fllzaco7vOA+ue2AF2ziKnDger3Qf7O2eV88APndeZu/pjKavcqbLGTJ
+         gfCg==
+X-Gm-Message-State: AOAM532HWhyJQyh9vTVAxCImNcUUMdrwA5LwUMoUNz+WMJfrnvDfSHZ6
+        x+o7JhMRqVsl8LKLqtEMIPJpywBMLs4CUPnvwXcdnA==
+X-Google-Smtp-Source: ABdhPJzJFyOQr+32fWgDUc7K4tqLymuKG4FRwWqKBsFUMkY8P1sAYrl3abF8tYGoymgSkD4+g8CsO+ZJy+UfvKicuYs=
+X-Received: by 2002:a17:906:360d:b0:6e8:7f57:2d4d with SMTP id
+ q13-20020a170906360d00b006e87f572d4dmr10750809ejb.736.1650310705836; Mon, 18
+ Apr 2022 12:38:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220405135444.199295-1-maz@kernel.org>
+In-Reply-To: <20220405135444.199295-1-maz@kernel.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 18 Apr 2022 21:38:15 +0200
+Message-ID: <CAMRc=MfbpLPtx46pYSOt3X+EobHnwj-8aQzmyw+srVChkxbr7g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] gpiolib: Handle immutable irq_chip structures
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Joey Gouly <joey.gouly@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+On Tue, Apr 5, 2022 at 3:55 PM Marc Zyngier <maz@kernel.org> wrote:
+>
+> This is a followup from [1].
+>
+> I recently realised that the gpiolib play ugly tricks on the
+> unsuspecting irq_chip structures by patching the callbacks.
+>
+> Not only this breaks when an irq_chip structure is made const (which
+> really should be the default case), but it also forces this structure
+> to be copied at nauseam for each instance of the GPIO block, which is
+> a waste of memory.
+>
+> My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
+> which does what it says on the tin: don't you dare writing to them.
+> Gpiolib is further updated not to install its own callbacks, and it
+> becomes the responsibility of the driver to call into the gpiolib when
+> required. This is similar to what we do for other subsystems such as
+> PCI-MSI.
+>
+> 5 drivers are updated to this new model: M1, QC, Tegra, pl061 and AMD
+> (as I actively use them) keeping a single irq_chip structure, marking
+> it const, and exposing the new flag.
+>
+> Nothing breaks, the volume of change is small, the memory usage goes
+> down and we have fewer callbacks that can be used as attack vectors.
+> What's not to love?
+>
+> * From v1 [1]:
+>   - pl061 and AMD drivers converted
+>   - New helpers to keep the changes small
+>   - New warning for non-converted drivers
+>   - Documentation and TODO updates
+>
+> [1] https://lore.kernel.org/r/20220223154405.54912-1-maz@kernel.org
+>
+> Marc Zyngier (10):
+>   gpio: Don't fiddle with irqchips marked as immutable
+>   gpio: Expose the gpiochip_irq_re[ql]res helpers
+>   gpio: Add helpers to ease the transition towards immutable irq_chip
+>   gpio: tegra186: Make the irqchip immutable
+>   gpio: pl061: Make the irqchip immutable
+>   pinctrl: apple-gpio: Make the irqchip immutable
+>   pinctrl: msmgpio: Make the irqchip immutable
+>   pinctrl: amd: Make the irqchip immutable
+>   gpio: Update TODO to mention immutable irq_chip structures
+>   Documentation: Update the recommended pattern for GPIO irqchips
+>
+>  Documentation/driver-api/gpio/driver.rst | 175 ++++++++++++++++++-----
+>  drivers/gpio/TODO                        |  19 +++
+>  drivers/gpio/gpio-pl061.c                |  32 +++--
+>  drivers/gpio/gpio-tegra186.c             |  32 +++--
+>  drivers/gpio/gpiolib.c                   |  13 +-
+>  drivers/pinctrl/pinctrl-amd.c            |  11 +-
+>  drivers/pinctrl/pinctrl-apple-gpio.c     |  29 ++--
+>  drivers/pinctrl/qcom/pinctrl-msm.c       |  53 ++++---
+>  include/linux/gpio/driver.h              |  16 +++
+>  include/linux/irq.h                      |   2 +
+>  kernel/irq/debugfs.c                     |   1 +
+>  11 files changed, 293 insertions(+), 90 deletions(-)
+>
+> --
+> 2.34.1
+>
 
-Using pm_runtime_resume_and_get is more appropriate
-for simplifing code
+This may be coming too late but for the GPIO part:
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
----
- drivers/spi/spi-tegra20-slink.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 80c3787deea9..38360434d6e9 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -749,9 +749,8 @@ static int tegra_slink_setup(struct spi_device *spi)
- 		spi->mode & SPI_CPHA ? "" : "~",
- 		spi->max_speed_hz);
- 
--	ret = pm_runtime_get_sync(tspi->dev);
-+	ret = pm_runtime_resume_and_get(tspi->dev);
- 	if (ret < 0) {
--		pm_runtime_put_noidle(tspi->dev);
- 		dev_err(tspi->dev, "pm runtime failed, e = %d\n", ret);
- 		return ret;
- 	}
-@@ -1169,9 +1168,8 @@ static int tegra_slink_resume(struct device *dev)
- 	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
- 	int ret;
- 
--	ret = pm_runtime_get_sync(dev);
-+	ret = pm_runtime_resume_and_get(dev);
- 	if (ret < 0) {
--		pm_runtime_put_noidle(dev);
- 		dev_err(dev, "pm runtime failed, e = %d\n", ret);
- 		return ret;
- 	}
--- 
-2.25.1
-
-
+Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
