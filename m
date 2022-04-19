@@ -2,124 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2432C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 01:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EE8C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 10:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240777AbiDSBjk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Apr 2022 21:39:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46896 "EHLO
+        id S240381AbiDSKQq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Apr 2022 06:16:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235649AbiDSBji (ORCPT
+        with ESMTP id S236981AbiDSKQo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Apr 2022 21:39:38 -0400
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A00BC114B;
-        Mon, 18 Apr 2022 18:36:55 -0700 (PDT)
-Received: by mail-qt1-x829.google.com with SMTP id fu34so2568501qtb.8;
-        Mon, 18 Apr 2022 18:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8Yke2vGYLiJCkGyPInhuyijxDy/0Qofixn5QpzPB3vE=;
-        b=SPotxyjOGfWKjyMPXrZnOr4NDXjDwDApnR8cEMXKr8thRc6yq5NbLU1E6NOQTyqGeh
-         yfFKF3UREESAOKrL5+rSIMr7H/cLy7phTZF8Z9cjAd1o3pcIAggfFHRBdw0JYHU2IoVU
-         Dx7mXwsQlaW5TLgOCjrH/HiuA0uxMYZ29aokmWZlGkymVjJKvFc3pNjRhZZtcRuveY0g
-         caUleBHm+4l49hWYlHXG9VuNJppiAI7vFw1SY9LtrYhr8bA3qz94fNBfcgMn4I7F5h+R
-         lj7uUNcgZ2+arw1gxQusZ/qRRPQmVCnq11wLf8dhqw7/UWmhy316/afshQ9Ql5L75Agx
-         A8WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8Yke2vGYLiJCkGyPInhuyijxDy/0Qofixn5QpzPB3vE=;
-        b=zA01VfwHrkb3ocqdBok/0RtH+4zmRrtr7i0M4jO/5O3Sq1+q6P1Rau6pxVOjeDo0uZ
-         OyKE3BsJnhA0wi6TAjLsP8MbN754//LBOkORZPAYQSH3aDS3nDGqeyfcNr88M4rUuCnC
-         2AMq0zCUykf9peL8fXccCzmWcB0ZsI4yFfi3xllGIWvErBTekSOCwtxw9qVaHn5xzaIz
-         pzYUrZDpATc2IVg54k84Jk9AYY+sACpPoNYxF++ZRP07LJojtuv3TOyICHJXvSkB/+w4
-         6KEqbSpsdCO+RA0xbEtsc0F3jb147VScQlBRt4cZMaOUwXBRlNrBi9G/lLtWtx8JUg/W
-         DtKw==
-X-Gm-Message-State: AOAM533WKEJMsa7yD5hzn6xDcuwtIBh2bxsZ9vQG1zZjl4ZcGcv4SuBE
-        IVhmzdwrwysivv4KSUNqs+H7nTXCvIM=
-X-Google-Smtp-Source: ABdhPJwMRCGCo3HARt+3j2n2sZQvmTy2+f5n7dQhR+8gvAubs8e3baodz2uTlQKzSgoxR5u1Atf1+w==
-X-Received: by 2002:ac8:5743:0:b0:2e1:cee6:f15 with SMTP id 3-20020ac85743000000b002e1cee60f15mr8911648qtx.634.1650332214801;
-        Mon, 18 Apr 2022 18:36:54 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id q139-20020a37a791000000b0069e88513517sm3664391qke.91.2022.04.18.18.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 18:36:54 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: lv.ruyi@zte.com.cn
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     lv.ruyi@zte.com.cn, arnd@arndb.de, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] firmware: tegra: fix error check return value of debugfs_create_file()
-Date:   Tue, 19 Apr 2022 01:36:48 +0000
-Message-Id: <20220419013648.2561533-1-lv.ruyi@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Tue, 19 Apr 2022 06:16:44 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D63255AD;
+        Tue, 19 Apr 2022 03:14:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=F0mo9pOzCF729klFgnqAF9cC1YqijvbadbBojN2KR3vx6/fDP3WowVdYkKNVAdHfhgo0tp/7lAuyNfCBbOHaY1eeWinG8hup9RSUCiH3V+xOzOx9QWRPm+VRALXIJnSvi9VZD5I9vn9qSm5elHLe5FPJTujQhJMQmdB/1dSGKZLsf4dJbA6JbUuL2FNjRkrun9hVqfcsADPihjnOaGyaachnG+QluLzIhPDMazO2iCwFEHTRbL17sViq3W4fDeyZvm89ZgQ1VFQ6IaDFUBnMxx1dDeZWgZRdfz9BhmMacgIxL4lIADcBdMPmile75F9fhdyyjPoGQ/VkFm0AGcsmUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qE2AClQI1EVGQMaF8J2X3KgcMuUVbIXZxCUlj62/dzk=;
+ b=XzWZLaldLJyZUQyzR+WAZ6cWOzjMkOrk2oKq5aZojXTq9XPdoK7neNH2j/ZzxQ3dmPrbV2vmUfMbetxsMmRb50cPMlvP/BzHK9mDGcApS8dWxwLqhZkInWMIFaIRLMSHr8vkG3ANy2L304YTpt82TyuTZyK2XxgPX9y0HAuLn2QZJoPiQJ7yiknXFh1K3ZGNGODN2srhTuMEav6pF9IQQkFCrfXmwE09V8TLiEU6nlZPQqd2/PT0KP7GDin/jBdymiky7HMKh+w5yo8GJLHes7yk8K0EOAAsij0v3Oj3HkFsTjak8d1edw+0WO+ezIsVmyBsmC0gFxkQAlbsc6eF6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qE2AClQI1EVGQMaF8J2X3KgcMuUVbIXZxCUlj62/dzk=;
+ b=VazJpprnj6cruKBQaKmKcRFXZo8PImO6GLUqYC46mGM+BKl0pUFH3QjnJu7+JNlzBEolyVQgklmDQszJwo2K6waeahADkq83ESIrWWsnYgxNPlfX3PtqhOYOjJUg03pA5qB+EhHDR4bDwS+eReyiCgq3aUgiXARs6YlKFmsh0gGLm2uq6kOsaqVcv6u3ZFA6PkZ8XtWewzN37qJUaRYoefPENNZB0Xs+jPao5VCEFyTAtsnTC4ziBFDezl/CH/cliZ4k8NbhKVAHzdqpy1Kgav/v+VNes112l9IOMxpbEhwnoFLltZiKV+FsFnmlptXfobhE0ntNpSJQxbsybWYaig==
+Received: from DS7PR03CA0014.namprd03.prod.outlook.com (2603:10b6:5:3b8::19)
+ by BY5PR12MB4051.namprd12.prod.outlook.com (2603:10b6:a03:20c::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.13; Tue, 19 Apr
+ 2022 10:13:59 +0000
+Received: from DM6NAM11FT027.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b8:cafe::e) by DS7PR03CA0014.outlook.office365.com
+ (2603:10b6:5:3b8::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.13 via Frontend
+ Transport; Tue, 19 Apr 2022 10:13:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.235) by
+ DM6NAM11FT027.mail.protection.outlook.com (10.13.172.205) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5164.19 via Frontend Transport; Tue, 19 Apr 2022 10:13:59 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.32; Tue, 19 Apr 2022 10:13:59 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 19 Apr 2022 03:13:58 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
+ Transport; Tue, 19 Apr 2022 03:13:58 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 000/218] 4.9.311-rc1 review
+In-Reply-To: <20220418121158.636999985@linuxfoundation.org>
+References: <20220418121158.636999985@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <325255f1-5e76-4a52-bca3-422e7bf15f24@drhqmail203.nvidia.com>
+Date:   Tue, 19 Apr 2022 03:13:58 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0478cb6b-73a4-4172-a97c-08da21ed524f
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4051:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR12MB4051131F44B45F9C4020100CD9F29@BY5PR12MB4051.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PNp/lBgf5DaeBBzApoysdMO4MuuFQUraKHwcHb+zG21LiQvbBMOoZPjFchpkiPagLIhTG30/iJytjEULXrrTKK4QqE1LjXvlYUFMzPRyS5IHZfVvbWcRwTHfHyJ+hThrohNwfK/L+qpnCPaTiRfqT1+wbmtegBSbagVSqZw5NqbLFm5RNQjJfPbr0wJErMVg9ipya5rNEMM/ltb4TeZvoa/7bXtnPeTL19BJ24WDShch3UUwGiq0kJrlnwKv1I6jYtTL7glGZ9zDOwAkWuaKoVy16M1I1H4/AhxZoVshSj1Df24Wl/GV78O0kt1dPcgjXDGXMNFEGOaUG0hieCbXvhWpSPj6RWMAoTND4zKfX3UnvTvbdfYSuVavaF5xXb+9d4FCiQvTyApfWJKnVK5WVMcN2DAuquGyuf1rg4UluLqbbFO72fAT9WPRPRm7eVSJz9Ri1Mhf2U47MflfbGs+H+m7D9Rz7mZi+0YL4+pb3VKqtEn9ur27N9FZY06ZbxOykmXasDaaGsYTI2mbQL1wcaH2J/I1/VkPqwkHV2NZGDwyiJJXqJ1LXgDOzMyknkI07bWlwbXqlm4zJYJ2oDUB84KuzrwMJ76hE+WEq77YN+u49haeERKIu+yQVR8vtrz/XNZ6THzU99HEe8Uvtl7Hc59uN1haLeMGFZpTHpGVsGCJswq86ods3N9ss8SLZbwuqPcFAE/cjEzsEG01kpXxrdWH2e8QyJ3EvL0Tbwhk0tdRBGHhhzNj8ZGBqqwNmgLN4mZSwwGPNcUgq9MVYBTcxpXmiyqXwB8c8OSL65mHY+4=
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(36860700001)(966005)(508600001)(86362001)(7416002)(5660300002)(31696002)(2906002)(40460700003)(8936002)(356005)(316002)(82310400005)(81166007)(31686004)(186003)(336012)(26005)(47076005)(6916009)(54906003)(426003)(8676002)(4326008)(70206006)(70586007)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2022 10:13:59.7014
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0478cb6b-73a4-4172-a97c-08da21ed524f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT027.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4051
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Lv Ruyi <lv.ruyi@zte.com.cn>
+On Mon, 18 Apr 2022 14:11:06 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.311 release.
+> There are 218 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 20 Apr 2022 12:11:14 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.311-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-If an error occurs, debugfs_create_file() will return ERR_PTR(-ERROR),
-so use IS_ERR() to check it.
+All tests passing for Tegra ...
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
----
- drivers/firmware/tegra/bpmp-debugfs.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
-index fd89899aeeed..0c440afd5224 100644
---- a/drivers/firmware/tegra/bpmp-debugfs.c
-+++ b/drivers/firmware/tegra/bpmp-debugfs.c
-@@ -474,7 +474,7 @@ static int bpmp_populate_debugfs_inband(struct tegra_bpmp *bpmp,
- 			mode |= attrs & DEBUGFS_S_IWUSR ? 0200 : 0;
- 			dentry = debugfs_create_file(name, mode, parent, bpmp,
- 						     &bpmp_debug_fops);
--			if (!dentry) {
-+			if (IS_ERR(dentry)) {
- 				err = -ENOMEM;
- 				goto out;
- 			}
-@@ -725,7 +725,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
- 
- 		if (t & DEBUGFS_S_ISDIR) {
- 			dentry = debugfs_create_dir(name, parent);
--			if (!dentry)
-+			if (IS_ERR(dentry))
- 				return -ENOMEM;
- 			err = bpmp_populate_dir(bpmp, seqbuf, dentry, depth+1);
- 			if (err < 0)
-@@ -738,7 +738,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
- 			dentry = debugfs_create_file(name, mode,
- 						     parent, bpmp,
- 						     &debugfs_fops);
--			if (!dentry)
-+			if (IS_ERR(dentry))
- 				return -ENOMEM;
- 		}
- 	}
-@@ -788,11 +788,11 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
- 		return 0;
- 
- 	root = debugfs_create_dir("bpmp", NULL);
--	if (!root)
-+	if (IS_ERR(root))
- 		return -ENOMEM;
- 
- 	bpmp->debugfs_mirror = debugfs_create_dir("debug", root);
--	if (!bpmp->debugfs_mirror) {
-+	if (IS_ERR(bpmp->debugfs_mirror)) {
- 		err = -ENOMEM;
- 		goto out;
- 	}
--- 
-2.25.1
+Linux version:	4.9.311-rc1-g3c9d972c8d8f
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
+Jon
