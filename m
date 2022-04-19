@@ -2,121 +2,86 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCACC4332F
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 21:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A26C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 22:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358104AbiDSV7P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Apr 2022 17:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49124 "EHLO
+        id S1358298AbiDSWs3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Apr 2022 18:48:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353379AbiDSV7O (ORCPT
+        with ESMTP id S1358283AbiDSWs2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Apr 2022 17:59:14 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C52940A2B
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Apr 2022 14:56:29 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-2ec04a2ebadso187397307b3.12
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Apr 2022 14:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o5U1cn6+o5nTDbwZR88CUNrm0hxDesFUSzgqVEiUi5k=;
-        b=Rgs08pIBuoNzE/5T67y5y27kHtxOzCdiKXIXfbLP1qlmASEYTIEu/XjHcO/rDO14A6
-         GQofJtAwB0/xUZLDKRcnIEIXp2FsW1WwyL7vydwDc0dU8fbMhwh8hBmxz6STE937cn9Y
-         q2wjhmuR4iVMC9hCbZvSiEDPnjzDEO/nDjs153YTLRSBVAhoAqw65EqVZfN28Kkxyobj
-         khYzChEq1we63DZSaHCfxzxQG4wjqi+tM4F/RZDXbUcfs0nyU7WRkd+vyTJaweEv1IJT
-         35X+lqw214/+wupT0lHG8hOkDdMPQkm/VkaSnzhZ39CvUL0swNgKVlFkhcusk9FLuMlX
-         IKGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o5U1cn6+o5nTDbwZR88CUNrm0hxDesFUSzgqVEiUi5k=;
-        b=uOT0nyS5jNq3DjftuKJ4nMu0J6HxO3uJXLIAnx6n14aqRm/FSuf5c9+/r8exWiuHz4
-         f0c+twJlFvsVKOldWtmPH0/k0qjtofFP5QEyjpMU2HUrlJEdMK65NVbHjloXIUX8RsAx
-         HNRaXYjl8kyHmK8qR8+1noWT6I2E1RsuOEt/OaEAsjhwyO+5oNN8PDW06yTWvy3y8XYb
-         5pOB30GFU0db0tLNRzvBacOKh55s3H4g3qMFUQUlHg3XBSS+YaVIo+kBkTWTsEbVIcwJ
-         umE6NaneNx+uxJeq4+EaNImU8+7rQw/ussqNWfs3wcn8/0Vg3ka4oRL7kpSvllh/P0lV
-         NF+A==
-X-Gm-Message-State: AOAM532L9hh/oOGUZIvRIrxO9bQyiB4Ico9roFm0QPVFKrufi/yptxzT
-        8dxX2IJ9PhcY+liPxE03+UMA285y7ezJDf0mupab1w==
-X-Google-Smtp-Source: ABdhPJxFEHSE/pis5LX657I4YxyA6XvsGZ/n2P/4VzVlx4ahwA45KoXz1mcjGguqs6qs5VDzjUIJdwSIBd9PekozwM0=
-X-Received: by 2002:a81:b50d:0:b0:2e5:b653:7e97 with SMTP id
- t13-20020a81b50d000000b002e5b6537e97mr19299462ywh.140.1650405388892; Tue, 19
- Apr 2022 14:56:28 -0700 (PDT)
+        Tue, 19 Apr 2022 18:48:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02BBF245A2;
+        Tue, 19 Apr 2022 15:45:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 94F13617F2;
+        Tue, 19 Apr 2022 22:45:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D0ABC385A7;
+        Tue, 19 Apr 2022 22:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650408344;
+        bh=vinjbCr2cqAUFbMYRfTjkaWIL6tzOCUsHeU/5hr0Oq0=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=Tgoe9dvqctmAAxtku0c8okp065Y7+Via8jNZqziMGYOO+mvl3kWd7XkW+Bntd5tVl
+         MK0bWI0ExTfncjSoCmjvbA5MOSSQb11BhsJ53KfrxfCSlokKhLfLrWC5Sf74+pzOfI
+         LTZfLuXrgaSe8EKtTZJr8VUgRY/cvx1dJ+n3//KrSffCka9jmo+zWCckmtJFNYelq2
+         0bvlrh2Cz95cMPVzHXyyDTLuKDnimbi9cIusnYSyZc209ZEVFJcxA0duy7HyPQPHmG
+         CpmWXHKX2QJdmOqOKSe5QDtMna6huw16GVccFvieg68sRjM8e1l7OgpgtJP8nllHq0
+         W8lX1OTqGRt9Q==
+From:   Mark Brown <broonie@kernel.org>
+To:     cgel.zte@gmail.com, ldewangan@nvidia.com
+Cc:     chi.minghao@zte.com.cn, linux-spi@vger.kernel.org,
+        jonathanh@nvidia.com, thierry.reding@gmail.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zealci@zte.com.cn
+In-Reply-To: <20220412070951.2532157-1-chi.minghao@zte.com.cn>
+References: <20220412070951.2532157-1-chi.minghao@zte.com.cn>
+Subject: Re: [PATCH] spi: spi-tegra114: using pm_runtime_resume_and_get instead of pm_runtime_get_sync
+Message-Id: <165040834196.1910395.6477833304505061712.b4-ty@kernel.org>
+Date:   Tue, 19 Apr 2022 23:45:41 +0100
 MIME-Version: 1.0
-References: <20220405135444.199295-1-maz@kernel.org>
-In-Reply-To: <20220405135444.199295-1-maz@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 19 Apr 2022 23:56:17 +0200
-Message-ID: <CACRpkdbdo=Es8VU_td6S3LCVCsYpcWC=pW1SGDXEAe2Gp8uZcA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] gpiolib: Handle immutable irq_chip structures
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 5, 2022 at 3:55 PM Marc Zyngier <maz@kernel.org> wrote:
+On Tue, 12 Apr 2022 07:09:51 +0000, cgel.zte@gmail.com wrote:
+> From: Minghao Chi <chi.minghao@zte.com.cn>
+> 
+> Using pm_runtime_resume_and_get is more appropriate
+> for simplifing code
+> 
+> 
 
-> Not only this breaks when an irq_chip structure is made const (which
-> really should be the default case), but it also forces this structure
-> to be copied at nauseam for each instance of the GPIO block, which is
-> a waste of memory.
->
-> My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
-> which does what it says on the tin: don't you dare writing to them.
-> Gpiolib is further updated not to install its own callbacks, and it
-> becomes the responsibility of the driver to call into the gpiolib when
-> required. This is similar to what we do for other subsystems such as
-> PCI-MSI.
->
-> 5 drivers are updated to this new model: M1, QC, Tegra, pl061 and AMD
-> (as I actively use them) keeping a single irq_chip structure, marking
-> it const, and exposing the new flag.
->
-> Nothing breaks, the volume of change is small, the memory usage goes
-> down and we have fewer callbacks that can be used as attack vectors.
-> What's not to love?
->
-> * From v1 [1]:
->   - pl061 and AMD drivers converted
->   - New helpers to keep the changes small
->   - New warning for non-converted drivers
->   - Documentation and TODO updates
->
-> [1] https://lore.kernel.org/r/20220223154405.54912-1-maz@kernel.org
->
-> Marc Zyngier (10):
->   gpio: Don't fiddle with irqchips marked as immutable
->   gpio: Expose the gpiochip_irq_re[ql]res helpers
->   gpio: Add helpers to ease the transition towards immutable irq_chip
->   gpio: tegra186: Make the irqchip immutable
->   gpio: pl061: Make the irqchip immutable
->   pinctrl: apple-gpio: Make the irqchip immutable
->   pinctrl: msmgpio: Make the irqchip immutable
->   pinctrl: amd: Make the irqchip immutable
->   gpio: Update TODO to mention immutable irq_chip structures
->   Documentation: Update the recommended pattern for GPIO irqchips
+Applied to
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Yours,
-Linus Walleij
+Thanks!
+
+[1/1] spi: spi-tegra114: using pm_runtime_resume_and_get instead of pm_runtime_get_sync
+      commit: 58b1efe2c1722cb47e5b1f49b79a50338428acbf
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
