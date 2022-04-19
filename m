@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B25CC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 18:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD4BC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 18:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235955AbiDSSOO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Apr 2022 14:14:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50934 "EHLO
+        id S1356482AbiDSSR5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Apr 2022 14:17:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356229AbiDSSOK (ORCPT
+        with ESMTP id S1356584AbiDSSRI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Apr 2022 14:14:10 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FDE13D1C6;
-        Tue, 19 Apr 2022 11:11:23 -0700 (PDT)
+        Tue, 19 Apr 2022 14:17:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 408673EBAA;
+        Tue, 19 Apr 2022 11:12:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ECD22B81185;
-        Tue, 19 Apr 2022 18:11:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DC6C385A5;
-        Tue, 19 Apr 2022 18:11:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B640E60C34;
+        Tue, 19 Apr 2022 18:12:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FA21C385A9;
+        Tue, 19 Apr 2022 18:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650391880;
+        s=k20201202; t=1650391970;
         bh=PppC3vam2C5Yu3j4i8ueQKhK2ayOhbdqrydENy51b+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KRJZODLh6nLMIGrx8mtvLHE36/9CmM+KX5pxfSaaV5NP5V0dlYLh4JNqxQ+mfsZES
-         FKOzJL9pXYK6n5eFUeLSfHn3lWiDEt/Ctx4VKrbWS5Q552goQdSCxTTImQ3aTnOl0Y
-         G07p7qU9zEfh3TVXF5VP1nw36xXS++IZbdkFr0s2sipaLe+MKmgWw1w1qUjy+tb1LN
-         FpiwLqZzczsCkEcuhivvoSSiEk4r8318qLuEydVIxlBPBsplsLxvAIcqQL99JOSBMV
-         gnoFEUFfaC4MOMJGbX8kcUD68ih9u8h7d1vVFPJ8oAVMjFKVilrQnGt2C1NxIaQuKK
-         A94UOQN08qQCg==
+        b=PcIHGFjPpZhJA3r9x7OQAYayl6j1JJ/p6x6qHdo7ktsulkBAwftfP0v325zDlorO8
+         W6/muLQ6jZhUPiTVt2xRFGkQ2+FyO3cwz9al18c+t55Ss+8x+zefKCXeSTms7WeVas
+         JHtqtQADazBT74YXsZD+Bj00NFye3N9T3p28hc59sjch8MctmG0BqyHSG/StTQqbW+
+         q7NcAKL1pyN5xfPY6rYFermsTfKD1wn4dFfAaxynZxivglUqt9TKe1V8DeKdB1OIww
+         ppOb34OaqJC8srTpJK5kX8zlsV2l4LBvD9sYUTdRKphJoz8FU6d6d8iCvywUvTw3Hv
+         YAPbYrBHNfDtQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sameer Pujar <spujar@nvidia.com>,
@@ -40,12 +40,12 @@ Cc:     Sameer Pujar <spujar@nvidia.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
         mperttunen@nvidia.com, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.17 05/34] reset: tegra-bpmp: Restore Handle errors in BPMP response
-Date:   Tue, 19 Apr 2022 14:10:32 -0400
-Message-Id: <20220419181104.484667-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 03/27] reset: tegra-bpmp: Restore Handle errors in BPMP response
+Date:   Tue, 19 Apr 2022 14:12:18 -0400
+Message-Id: <20220419181242.485308-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220419181104.484667-1-sashal@kernel.org>
-References: <20220419181104.484667-1-sashal@kernel.org>
+In-Reply-To: <20220419181242.485308-1-sashal@kernel.org>
+References: <20220419181242.485308-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
