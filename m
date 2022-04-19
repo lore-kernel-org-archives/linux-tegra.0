@@ -2,120 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A717CC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 14:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B25CC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 18:11:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353385AbiDSOcF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Apr 2022 10:32:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46674 "EHLO
+        id S235955AbiDSSOO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Apr 2022 14:14:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353388AbiDSOb6 (ORCPT
+        with ESMTP id S1356229AbiDSSOK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Apr 2022 10:31:58 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A263969D
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Apr 2022 07:29:15 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id c6so21504663edn.8
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Apr 2022 07:29:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=3Xaf32XQyDZ8QYQCnwiTlgKZWDM1IMpdpv//PRxZMXk=;
-        b=GCARkzT4fK+7wMOJVBhua/HKDHTNgwFfSq/EVlETHWevvSHOMUtFII2DjrorFPHzNL
-         EIrUhZ1xOkrwVikMFQ5ks5VnUyV3coqSMGUqVAifke8DNXsNn+01UlsyKNpXmPA0DyOE
-         ru2H2ki/wyCzK7bOvECWsdwHPOz3zkWudNZt0VQF7keQaLd0jkSTf/mmbWpG+1typVSh
-         kLYX9v5GvTTGjTY4X7XdY0LPiOHGtoEcNaHCjrWNZarjF2TYn2j/tC1yJ+Z5AW7m87Ig
-         +VpAhR4jmMxs1ammvXynVTavkuA/ASm2nvHKXryHqn8KSuszW85Psp8J43nsJEjW7tkf
-         5xuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3Xaf32XQyDZ8QYQCnwiTlgKZWDM1IMpdpv//PRxZMXk=;
-        b=IqfRkui4qRdZ/zbY9aQ4ubdJq1IJGzf9OLMl4rXCoD/nwkcSvBCWUnjnRzczIt9ttA
-         FIVm8qO1PAbhtrYXdL7yIpR+782l7tBWgmX0Y2wj1b4qHcwjiQAWpEGy2yGgi7lSEv9I
-         53amIqoz97ujHc9UEnHYk/ueB0hXWqoI6LTtYWqt0oFUFUlkcN8K5dfizVjTRX5W43Bs
-         27n8pMvM71GOPbkITzeCWRwxJVO+2nmGTcc/5YCk+80ci6VPhX38u8LDfs7/ybquCsba
-         vwUGcDIQCPNithG92KO7X+h6b9HMOSoCDx/QS41deZp9Go0kCQs3tvuhyJ2dV8VYdiAv
-         OknA==
-X-Gm-Message-State: AOAM531Jucyc8GTyf/pVekfWNTEtepPflBqj5EeZuCZGSzLsd5l9dYsg
-        eH3SFnRWLyuPf8bQkxGGxwhoNw==
-X-Google-Smtp-Source: ABdhPJxhoR39yBkgFdAmsTZlfj1q7CBAj5277XMOoRYvTDCepjkbTVC3aYKFRBXGkw4xOpDRtV/Ygw==
-X-Received: by 2002:aa7:c789:0:b0:413:605d:8d17 with SMTP id n9-20020aa7c789000000b00413605d8d17mr17766287eds.100.1650378553673;
-        Tue, 19 Apr 2022 07:29:13 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id u10-20020a170906b10a00b006e1004406easm5761884ejy.93.2022.04.19.07.29.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Apr 2022 07:29:13 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Markus Mayer <mmayer@broadcom.com>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 6/7] memory: brcmstb_dpfe: simplify platform_get_resource_byname()
-Date:   Tue, 19 Apr 2022 16:28:58 +0200
-Message-Id: <20220419142859.380566-6-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220419142859.380566-1-krzysztof.kozlowski@linaro.org>
-References: <20220419142859.380566-1-krzysztof.kozlowski@linaro.org>
+        Tue, 19 Apr 2022 14:14:10 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FDE13D1C6;
+        Tue, 19 Apr 2022 11:11:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ECD22B81185;
+        Tue, 19 Apr 2022 18:11:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DC6C385A5;
+        Tue, 19 Apr 2022 18:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650391880;
+        bh=PppC3vam2C5Yu3j4i8ueQKhK2ayOhbdqrydENy51b+I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KRJZODLh6nLMIGrx8mtvLHE36/9CmM+KX5pxfSaaV5NP5V0dlYLh4JNqxQ+mfsZES
+         FKOzJL9pXYK6n5eFUeLSfHn3lWiDEt/Ctx4VKrbWS5Q552goQdSCxTTImQ3aTnOl0Y
+         G07p7qU9zEfh3TVXF5VP1nw36xXS++IZbdkFr0s2sipaLe+MKmgWw1w1qUjy+tb1LN
+         FpiwLqZzczsCkEcuhivvoSSiEk4r8318qLuEydVIxlBPBsplsLxvAIcqQL99JOSBMV
+         gnoFEUFfaC4MOMJGbX8kcUD68ih9u8h7d1vVFPJ8oAVMjFKVilrQnGt2C1NxIaQuKK
+         A94UOQN08qQCg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sameer Pujar <spujar@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
+        mperttunen@nvidia.com, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.17 05/34] reset: tegra-bpmp: Restore Handle errors in BPMP response
+Date:   Tue, 19 Apr 2022 14:10:32 -0400
+Message-Id: <20220419181104.484667-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220419181104.484667-1-sashal@kernel.org>
+References: <20220419181104.484667-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource_byname() instead of
-platform_get_resource_byname() and devm_ioremap_resource().
+From: Sameer Pujar <spujar@nvidia.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+[ Upstream commit d1da1052ffad63aa5181b69f20a6952e31f339c2 ]
+
+This reverts following commit 69125b4b9440 ("reset: tegra-bpmp: Revert
+Handle errors in BPMP response").
+
+The Tegra194 HDA reset failure is fixed by commit d278dc9151a0 ("ALSA:
+hda/tegra: Fix Tegra194 HDA reset failure"). The temporary revert of
+original commit c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP
+response") can be removed now.
+
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Link: https://lore.kernel.org/r/1641995806-15245-1-git-send-email-spujar@nvidia.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memory/brcmstb_dpfe.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/reset/tegra/reset-bpmp.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
-index 14412002775d..76c82e9c8fce 100644
---- a/drivers/memory/brcmstb_dpfe.c
-+++ b/drivers/memory/brcmstb_dpfe.c
-@@ -857,7 +857,6 @@ static int brcmstb_dpfe_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct brcmstb_dpfe_priv *priv;
--	struct resource *res;
- 	int ret;
+diff --git a/drivers/reset/tegra/reset-bpmp.c b/drivers/reset/tegra/reset-bpmp.c
+index 24d3395964cc..4c5bba52b105 100644
+--- a/drivers/reset/tegra/reset-bpmp.c
++++ b/drivers/reset/tegra/reset-bpmp.c
+@@ -20,6 +20,7 @@ static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
+ 	struct tegra_bpmp *bpmp = to_tegra_bpmp(rstc);
+ 	struct mrq_reset_request request;
+ 	struct tegra_bpmp_message msg;
++	int err;
  
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -869,22 +868,19 @@ static int brcmstb_dpfe_probe(struct platform_device *pdev)
- 	mutex_init(&priv->lock);
- 	platform_set_drvdata(pdev, priv);
+ 	memset(&request, 0, sizeof(request));
+ 	request.cmd = command;
+@@ -30,7 +31,13 @@ static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
+ 	msg.tx.data = &request;
+ 	msg.tx.size = sizeof(request);
  
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-cpu");
--	priv->regs = devm_ioremap_resource(dev, res);
-+	priv->regs = devm_platform_ioremap_resource_byname(pdev, "dpfe-cpu");
- 	if (IS_ERR(priv->regs)) {
- 		dev_err(dev, "couldn't map DCPU registers\n");
- 		return -ENODEV;
- 	}
+-	return tegra_bpmp_transfer(bpmp, &msg);
++	err = tegra_bpmp_transfer(bpmp, &msg);
++	if (err)
++		return err;
++	if (msg.rx.ret)
++		return -EINVAL;
++
++	return 0;
+ }
  
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-dmem");
--	priv->dmem = devm_ioremap_resource(dev, res);
-+	priv->dmem = devm_platform_ioremap_resource_byname(pdev, "dpfe-dmem");
- 	if (IS_ERR(priv->dmem)) {
- 		dev_err(dev, "Couldn't map DCPU data memory\n");
- 		return -ENOENT;
- 	}
- 
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-imem");
--	priv->imem = devm_ioremap_resource(dev, res);
-+	priv->imem = devm_platform_ioremap_resource_byname(pdev, "dpfe-imem");
- 	if (IS_ERR(priv->imem)) {
- 		dev_err(dev, "Couldn't map DCPU instruction memory\n");
- 		return -ENOENT;
+ static int tegra_bpmp_reset_module(struct reset_controller_dev *rstc,
 -- 
-2.32.0
+2.35.1
 
