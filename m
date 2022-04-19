@@ -2,41 +2,41 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC725C4167E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2FEC35280
 	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 14:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353161AbiDSOV5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1353154AbiDSOV5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 19 Apr 2022 10:21:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36132 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353076AbiDSOVt (ORCPT
+        with ESMTP id S1353067AbiDSOVt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Tue, 19 Apr 2022 10:21:49 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3821900C;
-        Tue, 19 Apr 2022 07:19:05 -0700 (PDT)
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D058B18E36;
+        Tue, 19 Apr 2022 07:19:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 69AB7B819EB;
-        Tue, 19 Apr 2022 14:19:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ACF6C385AD;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6EB39B819DC;
         Tue, 19 Apr 2022 14:19:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B9C0C385AE;
+        Tue, 19 Apr 2022 14:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650377943;
-        bh=tJvSyYshW26j5siNkBNgQg3cRVt6d+7DxHaeBiQOvXo=;
+        s=k20201202; t=1650377942;
+        bh=1Lyc0F69I2lTgc07K8PNXBtgq5ZxZexR0c9/GBl8S6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FfY5L0VOuX+LVyyGtaVjdNIa515Lqxx3f69/HqI0Fdt5M6zqySwTGRYePfyqFJe2O
-         26H5WPR6j9j8CJ+GK+eeVkd8ecMci/yalwvtp1hd+W7299YJNuzTX3AxOq4wV7VU29
-         cV0gRRMGfrTvqkh31KZF339f2xGKzUA1sp9a9k/eVe+XUN0S0qcxNWQnJoth57U67V
-         y6wAFoVOGobG7tr0StxiuB8fgmGs9z46ZE3vPo7YMxZFxswGzORIW6hX5d7Z1eCv/i
-         M6Q1emDXjN21j4VVrHLvsnnZT01cguWqMowtD9/M/eVEn4GFjKtXlPYnqGTz5PUqbf
-         LfU3oNhc8HOSg==
+        b=u4ZiQuPICESDVDJpxmeYxCVrgPjJWuqeu1IbMITxGFrm76OKezfS+l7Cp6I08SOZt
+         9BZw/FKXfw4zzLyydFBLiyeKDxVwWQF/pdkolAC1J/q1RnmgWKU0Fgu1eUBKRzOKbG
+         LYdyq9HgL8/J6IVzrweVyZ2qiJgQ3vt3yyHkkmCFkZMI+ChLCWFe3Q7zzKQfi1k50d
+         YgLuGlKW/4p2eCv4yg1ICHa/7BbzXQr6jynTZDDAN/McRikcpvc2IF3JiXhjkWindK
+         MDMQT9HaKfijzdnF1+IvikTPLDYJLTpMoMMBodtV9WHKnkd4PRmTd17VPWKkEXYVXI
+         6o6/EuE4eCsAA==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <maz@kernel.org>)
-        id 1ngoh3-005MFS-4m; Tue, 19 Apr 2022 15:19:01 +0100
+        id 1ngoh1-005MFS-Uo; Tue, 19 Apr 2022 15:19:00 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -57,9 +57,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH v3 09/10] gpio: Update TODO to mention immutable irq_chip structures
-Date:   Tue, 19 Apr 2022 15:18:45 +0100
-Message-Id: <20220419141846.598305-10-maz@kernel.org>
+Subject: [PATCH v3 05/10] gpio: pl061: Make the irqchip immutable
+Date:   Tue, 19 Apr 2022 15:18:41 +0100
+Message-Id: <20220419141846.598305-6-maz@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220419141846.598305-1-maz@kernel.org>
 References: <20220419141846.598305-1-maz@kernel.org>
@@ -73,44 +73,94 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-5 drivers are converted, a few hundred to go. Definitely worth of
-a TODO entry, in the hope that someone will notice it and do
-a bulk update.
+Prevent gpiolib from messing with the irqchip by advertising
+the irq_chip structure as immutable, making it const, and adding
+the various calls that gpiolib relies upon.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/gpio/TODO | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/gpio/gpio-pl061.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/TODO b/drivers/gpio/TODO
-index b8b1473a5b1e..f87ff3fa8a53 100644
---- a/drivers/gpio/TODO
-+++ b/drivers/gpio/TODO
-@@ -178,3 +178,22 @@ discussed but the idea is to provide a low-level access point
- for debugging and hacking and to expose all lines without the
- need of any exporting. Also provide ample ammunition to shoot
- oneself in the foot, because this is debugfs after all.
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 4ecab700f23f..6464056cb6ae 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -52,7 +52,6 @@ struct pl061 {
+ 
+ 	void __iomem		*base;
+ 	struct gpio_chip	gc;
+-	struct irq_chip		irq_chip;
+ 	int			parent_irq;
+ 
+ #ifdef CONFIG_PM
+@@ -241,6 +240,8 @@ static void pl061_irq_mask(struct irq_data *d)
+ 	gpioie = readb(pl061->base + GPIOIE) & ~mask;
+ 	writeb(gpioie, pl061->base + GPIOIE);
+ 	raw_spin_unlock(&pl061->lock);
 +
++	gpiochip_disable_irq(gc, d->hwirq);
+ }
+ 
+ static void pl061_irq_unmask(struct irq_data *d)
+@@ -250,6 +251,8 @@ static void pl061_irq_unmask(struct irq_data *d)
+ 	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
+ 	u8 gpioie;
+ 
++	gpiochip_enable_irq(gc, d->hwirq);
 +
-+Moving over to immutable irq_chip structures
+ 	raw_spin_lock(&pl061->lock);
+ 	gpioie = readb(pl061->base + GPIOIE) | mask;
+ 	writeb(gpioie, pl061->base + GPIOIE);
+@@ -283,6 +286,24 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
+ 	return irq_set_irq_wake(pl061->parent_irq, state);
+ }
+ 
++static void pl061_irq_print_chip(struct irq_data *data, struct seq_file *p)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
 +
-+Most of the gpio chips implementing interrupt support rely on gpiolib
-+intercepting some of the irq_chip callbacks, preventing the structures
-+from being made read-only and forcing duplication of structures that
-+should otherwise be unique.
++	seq_printf(p, dev_name(gc->parent));
++}
 +
-+The solution is to call into the gpiolib code when needed (resource
-+management, enable/disable or unmask/mask callbacks), and to let the
-+core code know about that by exposing a flag (IRQCHIP_IMMUTABLE) in
-+the irq_chip structure. The irq_chip structure can then be made unique
-+and const.
++static const struct irq_chip pl061_irq_chip = {
++	.irq_ack		= pl061_irq_ack,
++	.irq_mask		= pl061_irq_mask,
++	.irq_unmask		= pl061_irq_unmask,
++	.irq_set_type		= pl061_irq_type,
++	.irq_set_wake		= pl061_irq_set_wake,
++	.irq_print_chip		= pl061_irq_print_chip,
++	.flags			= IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
 +
-+A small number of drivers have been converted (pl061, tegra186, msm,
-+amd, apple), and can be used as examples of how to proceed with this
-+conversion. Note that drivers using the generic irqchip framework
-+cannot be converted yet, but watch this space!
+ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+ 	struct device *dev = &adev->dev;
+@@ -315,13 +336,6 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	/*
+ 	 * irq_chip support
+ 	 */
+-	pl061->irq_chip.name = dev_name(dev);
+-	pl061->irq_chip.irq_ack	= pl061_irq_ack;
+-	pl061->irq_chip.irq_mask = pl061_irq_mask;
+-	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
+-	pl061->irq_chip.irq_set_type = pl061_irq_type;
+-	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
+-
+ 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
+ 	irq = adev->irq[0];
+ 	if (!irq)
+@@ -329,7 +343,7 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	pl061->parent_irq = irq;
+ 
+ 	girq = &pl061->gc.irq;
+-	girq->chip = &pl061->irq_chip;
++	gpio_irq_chip_set_chip(girq, &pl061_irq_chip);
+ 	girq->parent_handler = pl061_irq_handler;
+ 	girq->num_parents = 1;
+ 	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
 -- 
 2.34.1
 
