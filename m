@@ -2,144 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C4AC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Apr 2022 19:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2432C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Apr 2022 01:37:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238152AbiDRTlI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Apr 2022 15:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59984 "EHLO
+        id S240777AbiDSBjk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Apr 2022 21:39:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238066AbiDRTlH (ORCPT
+        with ESMTP id S235649AbiDSBji (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Apr 2022 15:41:07 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A57822B19
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Apr 2022 12:38:27 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id t11so28625315eju.13
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Apr 2022 12:38:27 -0700 (PDT)
+        Mon, 18 Apr 2022 21:39:38 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A00BC114B;
+        Mon, 18 Apr 2022 18:36:55 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id fu34so2568501qtb.8;
+        Mon, 18 Apr 2022 18:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0voP44fyY7XGXFGcJkasfgBTf6x1VqclP4C49VR3XuM=;
-        b=QKLUw+3071xERftQyKvPl2WNNRY6O+4SZPC6715pcJO5SigVoGnGoWm61a1ET3u+20
-         uUW1QJ5rxlmh8o5Eb4EDED1D4tQG0GF0iGxvCCpHIzWXRgO+aH0uvsAdNFVAsWAcwna6
-         yr154rP1eJ47akx9Ri1IJV76X+Zkgyc8I3MvVBj4CKWTHjpeXch9JyCtb+heoqPaw7DI
-         j754EFIMjXuDQz9QQh99f/7kc4MunCF5uGT4uSIAf7TqQcCrq8Uu2Ft+vxEhdwty2uCG
-         i7YGf+ZxGRymBPZtuwpdRDy59gjUVnN2VyTRi4YloCP7bgC5jw2L5wfjhgY39BAfo+rG
-         rFwA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8Yke2vGYLiJCkGyPInhuyijxDy/0Qofixn5QpzPB3vE=;
+        b=SPotxyjOGfWKjyMPXrZnOr4NDXjDwDApnR8cEMXKr8thRc6yq5NbLU1E6NOQTyqGeh
+         yfFKF3UREESAOKrL5+rSIMr7H/cLy7phTZF8Z9cjAd1o3pcIAggfFHRBdw0JYHU2IoVU
+         Dx7mXwsQlaW5TLgOCjrH/HiuA0uxMYZ29aokmWZlGkymVjJKvFc3pNjRhZZtcRuveY0g
+         caUleBHm+4l49hWYlHXG9VuNJppiAI7vFw1SY9LtrYhr8bA3qz94fNBfcgMn4I7F5h+R
+         lj7uUNcgZ2+arw1gxQusZ/qRRPQmVCnq11wLf8dhqw7/UWmhy316/afshQ9Ql5L75Agx
+         A8WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0voP44fyY7XGXFGcJkasfgBTf6x1VqclP4C49VR3XuM=;
-        b=F+obQWKPNN+n89hTQBoFWgNKL3A8YcHCtWvJPqcKACmoFuzXkQJJRz61/VcnQzqfYL
-         DPUaoxDGPAWOOgh1bCbJwPTC4Jq5rBZD8hDIm1Zk82ZH61tVuyyyFnjLI7cBRKrOsFH6
-         WK8tO3JpiBJiGosHGf2aWSoeUsvxwIUWVP0BQO+ELE7U2gIQcO/XRM+flvpSV7ssFXxd
-         wzxtdGwUaxBM0dNQLpmDcJii+gQC4jMMltcWI+6tIIR8vbvJeYA/RR+UVN8/azpB2iYT
-         nZTpGN2+iUk4Fllzaco7vOA+ue2AF2ziKnDger3Qf7O2eV88APndeZu/pjKavcqbLGTJ
-         gfCg==
-X-Gm-Message-State: AOAM532HWhyJQyh9vTVAxCImNcUUMdrwA5LwUMoUNz+WMJfrnvDfSHZ6
-        x+o7JhMRqVsl8LKLqtEMIPJpywBMLs4CUPnvwXcdnA==
-X-Google-Smtp-Source: ABdhPJzJFyOQr+32fWgDUc7K4tqLymuKG4FRwWqKBsFUMkY8P1sAYrl3abF8tYGoymgSkD4+g8CsO+ZJy+UfvKicuYs=
-X-Received: by 2002:a17:906:360d:b0:6e8:7f57:2d4d with SMTP id
- q13-20020a170906360d00b006e87f572d4dmr10750809ejb.736.1650310705836; Mon, 18
- Apr 2022 12:38:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8Yke2vGYLiJCkGyPInhuyijxDy/0Qofixn5QpzPB3vE=;
+        b=zA01VfwHrkb3ocqdBok/0RtH+4zmRrtr7i0M4jO/5O3Sq1+q6P1Rau6pxVOjeDo0uZ
+         OyKE3BsJnhA0wi6TAjLsP8MbN754//LBOkORZPAYQSH3aDS3nDGqeyfcNr88M4rUuCnC
+         2AMq0zCUykf9peL8fXccCzmWcB0ZsI4yFfi3xllGIWvErBTekSOCwtxw9qVaHn5xzaIz
+         pzYUrZDpATc2IVg54k84Jk9AYY+sACpPoNYxF++ZRP07LJojtuv3TOyICHJXvSkB/+w4
+         6KEqbSpsdCO+RA0xbEtsc0F3jb147VScQlBRt4cZMaOUwXBRlNrBi9G/lLtWtx8JUg/W
+         DtKw==
+X-Gm-Message-State: AOAM533WKEJMsa7yD5hzn6xDcuwtIBh2bxsZ9vQG1zZjl4ZcGcv4SuBE
+        IVhmzdwrwysivv4KSUNqs+H7nTXCvIM=
+X-Google-Smtp-Source: ABdhPJwMRCGCo3HARt+3j2n2sZQvmTy2+f5n7dQhR+8gvAubs8e3baodz2uTlQKzSgoxR5u1Atf1+w==
+X-Received: by 2002:ac8:5743:0:b0:2e1:cee6:f15 with SMTP id 3-20020ac85743000000b002e1cee60f15mr8911648qtx.634.1650332214801;
+        Mon, 18 Apr 2022 18:36:54 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id q139-20020a37a791000000b0069e88513517sm3664391qke.91.2022.04.18.18.36.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Apr 2022 18:36:54 -0700 (PDT)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: lv.ruyi@zte.com.cn
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     lv.ruyi@zte.com.cn, arnd@arndb.de, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH] firmware: tegra: fix error check return value of debugfs_create_file()
+Date:   Tue, 19 Apr 2022 01:36:48 +0000
+Message-Id: <20220419013648.2561533-1-lv.ruyi@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20220405135444.199295-1-maz@kernel.org>
-In-Reply-To: <20220405135444.199295-1-maz@kernel.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 18 Apr 2022 21:38:15 +0200
-Message-ID: <CAMRc=MfbpLPtx46pYSOt3X+EobHnwj-8aQzmyw+srVChkxbr7g@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] gpiolib: Handle immutable irq_chip structures
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 5, 2022 at 3:55 PM Marc Zyngier <maz@kernel.org> wrote:
->
-> This is a followup from [1].
->
-> I recently realised that the gpiolib play ugly tricks on the
-> unsuspecting irq_chip structures by patching the callbacks.
->
-> Not only this breaks when an irq_chip structure is made const (which
-> really should be the default case), but it also forces this structure
-> to be copied at nauseam for each instance of the GPIO block, which is
-> a waste of memory.
->
-> My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
-> which does what it says on the tin: don't you dare writing to them.
-> Gpiolib is further updated not to install its own callbacks, and it
-> becomes the responsibility of the driver to call into the gpiolib when
-> required. This is similar to what we do for other subsystems such as
-> PCI-MSI.
->
-> 5 drivers are updated to this new model: M1, QC, Tegra, pl061 and AMD
-> (as I actively use them) keeping a single irq_chip structure, marking
-> it const, and exposing the new flag.
->
-> Nothing breaks, the volume of change is small, the memory usage goes
-> down and we have fewer callbacks that can be used as attack vectors.
-> What's not to love?
->
-> * From v1 [1]:
->   - pl061 and AMD drivers converted
->   - New helpers to keep the changes small
->   - New warning for non-converted drivers
->   - Documentation and TODO updates
->
-> [1] https://lore.kernel.org/r/20220223154405.54912-1-maz@kernel.org
->
-> Marc Zyngier (10):
->   gpio: Don't fiddle with irqchips marked as immutable
->   gpio: Expose the gpiochip_irq_re[ql]res helpers
->   gpio: Add helpers to ease the transition towards immutable irq_chip
->   gpio: tegra186: Make the irqchip immutable
->   gpio: pl061: Make the irqchip immutable
->   pinctrl: apple-gpio: Make the irqchip immutable
->   pinctrl: msmgpio: Make the irqchip immutable
->   pinctrl: amd: Make the irqchip immutable
->   gpio: Update TODO to mention immutable irq_chip structures
->   Documentation: Update the recommended pattern for GPIO irqchips
->
->  Documentation/driver-api/gpio/driver.rst | 175 ++++++++++++++++++-----
->  drivers/gpio/TODO                        |  19 +++
->  drivers/gpio/gpio-pl061.c                |  32 +++--
->  drivers/gpio/gpio-tegra186.c             |  32 +++--
->  drivers/gpio/gpiolib.c                   |  13 +-
->  drivers/pinctrl/pinctrl-amd.c            |  11 +-
->  drivers/pinctrl/pinctrl-apple-gpio.c     |  29 ++--
->  drivers/pinctrl/qcom/pinctrl-msm.c       |  53 ++++---
->  include/linux/gpio/driver.h              |  16 +++
->  include/linux/irq.h                      |   2 +
->  kernel/irq/debugfs.c                     |   1 +
->  11 files changed, 293 insertions(+), 90 deletions(-)
->
-> --
-> 2.34.1
->
+From: Lv Ruyi <lv.ruyi@zte.com.cn>
 
-This may be coming too late but for the GPIO part:
+If an error occurs, debugfs_create_file() will return ERR_PTR(-ERROR),
+so use IS_ERR() to check it.
 
-Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
+---
+ drivers/firmware/tegra/bpmp-debugfs.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
+index fd89899aeeed..0c440afd5224 100644
+--- a/drivers/firmware/tegra/bpmp-debugfs.c
++++ b/drivers/firmware/tegra/bpmp-debugfs.c
+@@ -474,7 +474,7 @@ static int bpmp_populate_debugfs_inband(struct tegra_bpmp *bpmp,
+ 			mode |= attrs & DEBUGFS_S_IWUSR ? 0200 : 0;
+ 			dentry = debugfs_create_file(name, mode, parent, bpmp,
+ 						     &bpmp_debug_fops);
+-			if (!dentry) {
++			if (IS_ERR(dentry)) {
+ 				err = -ENOMEM;
+ 				goto out;
+ 			}
+@@ -725,7 +725,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
+ 
+ 		if (t & DEBUGFS_S_ISDIR) {
+ 			dentry = debugfs_create_dir(name, parent);
+-			if (!dentry)
++			if (IS_ERR(dentry))
+ 				return -ENOMEM;
+ 			err = bpmp_populate_dir(bpmp, seqbuf, dentry, depth+1);
+ 			if (err < 0)
+@@ -738,7 +738,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
+ 			dentry = debugfs_create_file(name, mode,
+ 						     parent, bpmp,
+ 						     &debugfs_fops);
+-			if (!dentry)
++			if (IS_ERR(dentry))
+ 				return -ENOMEM;
+ 		}
+ 	}
+@@ -788,11 +788,11 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
+ 		return 0;
+ 
+ 	root = debugfs_create_dir("bpmp", NULL);
+-	if (!root)
++	if (IS_ERR(root))
+ 		return -ENOMEM;
+ 
+ 	bpmp->debugfs_mirror = debugfs_create_dir("debug", root);
+-	if (!bpmp->debugfs_mirror) {
++	if (IS_ERR(bpmp->debugfs_mirror)) {
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
+-- 
+2.25.1
+
+
