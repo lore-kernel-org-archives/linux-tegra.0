@@ -2,130 +2,195 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D97C4C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Apr 2022 13:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5E1C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Apr 2022 15:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379172AbiDTNum (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Apr 2022 09:50:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40040 "EHLO
+        id S1379306AbiDTPeo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Apr 2022 11:34:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379167AbiDTNuk (ORCPT
+        with ESMTP id S1380112AbiDTPel (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Apr 2022 09:50:40 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7738427F8;
-        Wed, 20 Apr 2022 06:47:53 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id y32so3090950lfa.6;
-        Wed, 20 Apr 2022 06:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EUDkuHiiE3jOGgT4dcOAN2NtXeesxDjziWFKWNdMwMc=;
-        b=BKC/1S9Ee+T0NGL/P7YfvoKT+dmJL4wsNBQAfXHnjRNWR4dwf21aZ1dvxTCL8+/rcK
-         wx/7Kdgs3LG3kiYeC7s42fviwXf3HkU73FmyIFTVGdfAIL086e4Lr6rt9FUpes8npNuo
-         YqgxyBj+SQQbyGF5V/0aCcIS9T+WgmDGmbshBePWkv7J0HxB+hhY8vMGHV8D6sP4ueZS
-         izBzCYnT8lfxOagMVj1412yYX1K4GQu510euYsM1uLWS1SW5IYazfIjJC9454mfBB1Kc
-         DPHpXL1UznW8q/9oMBAAhXrIejAT7LgRQfykFkrKJe73x8IeMmjqEsfLs5X3c38b7vpK
-         0JXQ==
+        Wed, 20 Apr 2022 11:34:41 -0400
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1E13CA40;
+        Wed, 20 Apr 2022 08:31:54 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-2ef5380669cso22043487b3.9;
+        Wed, 20 Apr 2022 08:31:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EUDkuHiiE3jOGgT4dcOAN2NtXeesxDjziWFKWNdMwMc=;
-        b=QpioY95bY3SYCHkPc4KDr2aiocKhvsvG9NLvI71N7dEwMFWGZBRQnwwsbsfISk33bU
-         Yrx4d6oNjE9L8QMYLfTEGylolItqhpUzNN0H6FoAK8L7TGmkmWlrwvPR9rZGXX4N2Q9E
-         /ouhzezW3YjabVHnbQBys/1WhNJu1vphV4g4kzyiJ1SV+APNp8TjAV4OHPkSfmnG/XPA
-         jdz7WDXXR8UNZfN/o7llXRfG2RJy6W/p/YM2nYPymFMxEExqSQ8Wg3ssCgy+nCaTXOaJ
-         cqrvWFK7vppVtZNtUa1dQgltgaEYQR4lwrmhqJe+TNsJA7RozwIzo5HqKvchrAuuPnGi
-         /+YA==
-X-Gm-Message-State: AOAM530nQ+iF00PwP3DnlCNyjaURy0Xmxo+kEI+wTL7HcHG35hPJcMsi
-        fHxRRj5XJ3z6TYAJNGnJlHA=
-X-Google-Smtp-Source: ABdhPJzZGRiSwSAqvgCP5AOIeyD7C70dmObSjXexKMSthWVgviMeZ0vUc/6O4elYeHnoz70VHTMwag==
-X-Received: by 2002:a05:6512:2613:b0:448:5164:689d with SMTP id bt19-20020a056512261300b004485164689dmr14645349lfb.526.1650462471947;
-        Wed, 20 Apr 2022 06:47:51 -0700 (PDT)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id f20-20020a056512229400b0044a6ac1af69sm1826081lfu.181.2022.04.20.06.47.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Apr 2022 06:47:50 -0700 (PDT)
-Date:   Wed, 20 Apr 2022 15:47:48 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Dipen Patel <dipenp@nvidia.com>, jonathanh@nvidia.com,
-        smangipudi@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bgolaszewski@baylibre.com, warthog618@gmail.com,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        robh+dt@kernel.org
-Subject: Re: [PATCH v5 00/11] Intro to Hardware timestamping engine
-Message-ID: <YmAPBG6IknkLotJp@orome>
-References: <20220329054521.14420-1-dipenp@nvidia.com>
- <CACRpkdbGyrRU9DDTmNDpU52rECAKY3wfi2y3jo9FMypDG=pmJQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BX4DYIsh9shdL0wVWNesEbyhwwCB5uGYwoFJu/5ZDOA=;
+        b=eFGAteg8FIXSzuyiBTJXzdufzug4fX/YNtM8ZJNm8qFZpXhKi3PLhxa8I7zDofBNM6
+         JnsTve2hr3exZcuXUCAPSUHhqgKl2Lur/tmQql1ar4qH9llqq+iFJzpzOk2F9SCmtknm
+         IcwYX28QsCCxQ+qSTCmmMnx4+/sDOX6eQP2XDXXppEm/3N1PetVrFBrjP8bNdhqeCPv8
+         7synREt5+bc5YxAFHeVn8/Il0a+V1bImkmUC50WNw+kIFfwz8EOp+Il154jfIbMOgBvM
+         rtvrwwItvfyhPeejOD3DcovFZxkVA66u+BW95Kv+zldTuXbhuZsjadDfdBKu2Uo9eOVj
+         Uvig==
+X-Gm-Message-State: AOAM533ywHNKIHEtndzy99qQImPUtS/iURzbKU1ADOpSrNwDbHLT3Wem
+        SgNctbzQcir7gF4a+rDDuAHUb4dXRDHHkxZ+s6Hqz1X+zyg=
+X-Google-Smtp-Source: ABdhPJx/esx+nly4Faz952uAqt/+ztWg0bemjimUpNFF9AVlh6yAb7iPTGu7hoW4PeNdbXsPUA7GPhieyCZyDrNQu/s=
+X-Received: by 2002:a81:b89:0:b0:2eb:e9e6:470a with SMTP id
+ 131-20020a810b89000000b002ebe9e6470amr21757661ywl.7.1650468713921; Wed, 20
+ Apr 2022 08:31:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aQT/Tnz8hJhvHE9O"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbGyrRU9DDTmNDpU52rECAKY3wfi2y3jo9FMypDG=pmJQ@mail.gmail.com>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+References: <20220419205432.46021-1-bwicaksono@nvidia.com> <20220419205432.46021-2-bwicaksono@nvidia.com>
+In-Reply-To: <20220419205432.46021-2-bwicaksono@nvidia.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 20 Apr 2022 17:31:43 +0200
+Message-ID: <CAJZ5v0jUZSSvMGYhu44rSnEXmVve-wKXkUf-U_qy0ojn4v6kXA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ACPICA: Add support for ARM Performance Monitoring
+ Unit Table.
+To:     Besar Wicaksono <bwicaksono@nvidia.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Tue, Apr 19, 2022 at 10:55 PM Besar Wicaksono <bwicaksono@nvidia.com> wrote:
+>
+> ACPICA commit 002165ecc0a3dc703bb24c789aaa02fdada01675
+>
+> The specification of this table is described in
+> "ARM Performance Monitoring Unit Architecture 1.0 Platform Design Document"
+> ARM DEN0117.
+>
+> This patch adds the necessary types and support for
+> compiling/disassembling APMT.
+>
+> Link: https://github.com/acpica/acpica/commit/002165ec
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 
---aQT/Tnz8hJhvHE9O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It should be equivalent to this patch:
 
-On Wed, Apr 20, 2022 at 12:46:43AM +0200, Linus Walleij wrote:
-> On Tue, Mar 29, 2022 at 7:45 AM Dipen Patel <dipenp@nvidia.com> wrote:
->=20
-> > This patch series introduces new subsystem called hardware timestamping
-> > engine (HTE). It offers functionality such as timestamping through hard=
-ware
-> > means in realtime. The HTE subsystem centralizes HTE provider and consu=
-mers
-> > where providers can register themselves and the consumers can request
-> > interested entity which could be lines, GPIO, signals or buses. The
-> > HTE subsystem provides timestamp in nano seconds, having said that the =
-provider
-> > need to convert the timestamp if its not in that unit. There was upstre=
-am
-> > discussion about the HTE at
-> > https://lore.kernel.org/lkml/4c46726d-fa35-1a95-4295-bca37c8b6fe3@nvidi=
-a.com/
->=20
-> I like this.
->=20
-> Can you put it in a public git and make it eligible for Stephen Rothwell =
-to
-> pull into linux-next and ask him to do so, as we intend to merge this for
-> v5.19?
+https://patchwork.kernel.org/project/linux-acpi/patch/3370028.QJadu78ljV@kreacher/
 
-Do you intend to maintain this as part of the pinctrl or GPIO trees with
-Dipen as a sub-maintainer? Or would you prefer for this to be a separate
-tree?
+present in linux-next.
 
-Thierry
+If the other patch in the series is ACKed by the ARM64 ACPi people, I
+can take it too.
 
---aQT/Tnz8hJhvHE9O
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks!
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJgDwQACgkQ3SOs138+
-s6GBVBAAoIufX261GXCPhjjv2Vpcv/Fcq66w2zBD79G3dM6msz72AoX/qFRt0ppr
-G/6umVXxICTcvt+pCbtorBpAWfb8B38Z5Qr8isBHzhFL8lNRBBvF2PB2Tx1IAMrZ
-CXL3pRfxv99bDxy9ScdHenFDzbASlLVPcRIRGJ2AWZipxx6+jg1BFqKti5RQl12H
-bFYJo2G/FG2jSCCz9LEAgjzW/rWEMNDnoacyq7dvf9vUp9tjc2on9YY+MH6vPzmD
-aM8LX5fZYyvarFJ0bZJoPXSlnzIZJkzj8QF/w/mUyipFPVubOWtFxcp+D9NdIkuh
-4ZlXS4W2lLLvmQMWP/zn6fpKWl+I0buHPLF8rT89YgAGwA1fQqPNQmGUSs9Rjctd
-Sw76IxkuTY7xwazAps29WUYc1hzDkA9ovt78DbyMRmoxT1naiLzzHwIinPr4X0Pm
-0MwXUYQwrQ8jwm0WkgFND74GmaPQ3UZ8aBD+cGp3zQn6YLcttR0xzfdBBUmYE2ZV
-Ygh+Mv5tUmz6theIk66+37qtKONoLjZZXoLcvBCzo4a/Tv95N6xRWeN/i6qIV8vc
-myDSa2bkJ/NisM8kxYdUkW+kdZTfY22SXchL7dKDbdf1dkxvl8m1Apu2sLyzY6by
-+hFVfp0+aNaP8/KP+KEAQFAGVae6of0GLiDOSppaSDqB/6Vry1U=
-=EMoF
------END PGP SIGNATURE-----
-
---aQT/Tnz8hJhvHE9O--
+> ---
+>  include/acpi/actbl2.h | 81 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>
+> diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
+> index 16847c8d9d5f..8fc5cf318c15 100644
+> --- a/include/acpi/actbl2.h
+> +++ b/include/acpi/actbl2.h
+> @@ -25,6 +25,7 @@
+>   * the wrong signature.
+>   */
+>  #define ACPI_SIG_AGDI           "AGDI" /* Arm Generic Diagnostic Dump and Reset Device Interface */
+> +#define ACPI_SIG_APMT           "APMT" /* Arm Performance Monitoring Unit table */
+>  #define ACPI_SIG_BDAT           "BDAT" /* BIOS Data ACPI Table */
+>  #define ACPI_SIG_IORT           "IORT" /* IO Remapping Table */
+>  #define ACPI_SIG_IVRS           "IVRS" /* I/O Virtualization Reporting Structure */
+> @@ -258,6 +259,86 @@ struct acpi_table_agdi {
+>
+>  #define ACPI_AGDI_SIGNALING_MODE (1)
+>
+> +/*******************************************************************************
+> + *
+> + * APMT - ARM Performance Monitoring Unit Table
+> + *
+> + * Conforms to:
+> + * ARM Performance Monitoring Unit Architecture 1.0 Platform Design Document
+> + * ARM DEN0117 v1.0 November 25, 2021
+> + *
+> + ******************************************************************************/
+> +
+> +struct acpi_table_apmt {
+> +       struct acpi_table_header header;    /* Common ACPI table header */
+> +};
+> +
+> +#define ACPI_APMT_NODE_ID_LENGTH                4
+> +
+> +/*
+> + * APMT subtables
+> + */
+> +struct acpi_apmt_node {
+> +       u16                                  length;
+> +       u8                                   flags;
+> +       u8                                   type;
+> +       u32                                  id;
+> +       u64                                  inst_primary;
+> +       u32                                  inst_secondary;
+> +       u64                                  base_address0;
+> +       u64                                  base_address1;
+> +       u32                                  ovflw_irq;
+> +       u32                                  reserved;
+> +       u32                                  ovflw_irq_flags;
+> +       u32                                  proc_affinity;
+> +       u32                                  impl_id;
+> +};
+> +
+> +/* Masks for Flags field above */
+> +
+> +#define ACPI_APMT_FLAGS_DUAL_PAGE               (1<<0)
+> +#define ACPI_APMT_FLAGS_AFFINITY                (1<<1)
+> +#define ACPI_APMT_FLAGS_ATOMIC                  (1<<2)
+> +
+> +/* Values for Flags dual page field above */
+> +
+> +#define ACPI_APMT_FLAGS_DUAL_PAGE_NSUPP         (0<<0)
+> +#define ACPI_APMT_FLAGS_DUAL_PAGE_SUPP          (1<<0)
+> +
+> +/* Values for Flags processor affinity field above */
+> +#define ACPI_APMT_FLAGS_AFFINITY_PROC           (0<<1)
+> +#define ACPI_APMT_FLAGS_AFFINITY_PROC_CONTAINER (1<<1)
+> +
+> +/* Values for Flags 64-bit atomic field above */
+> +#define ACPI_APMT_FLAGS_ATOMIC_NSUPP            (0<<2)
+> +#define ACPI_APMT_FLAGS_ATOMIC_SUPP             (1<<2)
+> +
+> +/* Values for Type field above */
+> +
+> +enum acpi_apmt_node_type {
+> +       ACPI_APMT_NODE_TYPE_MC                      = 0x00,
+> +       ACPI_APMT_NODE_TYPE_SMMU                    = 0x01,
+> +       ACPI_APMT_NODE_TYPE_PCIE_ROOT               = 0x02,
+> +       ACPI_APMT_NODE_TYPE_ACPI                    = 0x03,
+> +       ACPI_APMT_NODE_TYPE_CACHE                   = 0x04,
+> +       ACPI_APMT_NODE_TYPE_COUNT
+> +};
+> +
+> +/* Masks for ovflw_irq_flags field above */
+> +
+> +#define ACPI_APMT_OVFLW_IRQ_FLAGS_MODE          (1<<0)
+> +#define ACPI_APMT_OVFLW_IRQ_FLAGS_TYPE          (1<<1)
+> +
+> +/* Values for ovflw_irq_flags mode field above */
+> +
+> +#define ACPI_APMT_OVFLW_IRQ_FLAGS_MODE_LEVEL    (0<<0)
+> +#define ACPI_APMT_OVFLW_IRQ_FLAGS_MODE_EDGE     (1<<0)
+> +
+> +/* Values for ovflw_irq_flags type field above */
+> +
+> +#define ACPI_APMT_OVFLW_IRQ_FLAGS_TYPE_WIRED    (0<<1)
+> +
+> +
+>  /*******************************************************************************
+>   *
+>   * BDAT - BIOS Data ACPI Table
+> --
+> 2.17.1
+>
