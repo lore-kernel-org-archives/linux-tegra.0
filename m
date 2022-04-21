@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A00A8C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Apr 2022 23:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775A1C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Apr 2022 23:50:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442902AbiDUXxi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Apr 2022 19:53:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49906 "EHLO
+        id S1442874AbiDUXxj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Apr 2022 19:53:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442779AbiDUXwW (ORCPT
+        with ESMTP id S1442776AbiDUXvu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Apr 2022 19:52:22 -0400
-Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 163C047385;
-        Thu, 21 Apr 2022 16:49:02 -0700 (PDT)
-Received: by mail-qv1-xf2c.google.com with SMTP id n11so4906889qvl.0;
-        Thu, 21 Apr 2022 16:49:02 -0700 (PDT)
+        Thu, 21 Apr 2022 19:51:50 -0400
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 222B2434A5;
+        Thu, 21 Apr 2022 16:48:59 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id hu11so4859464qvb.7;
+        Thu, 21 Apr 2022 16:48:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FeM5bqJiQrm2rh3JILkdt+BZf3iQXt3DndJ5kJUH6VM=;
-        b=n/KPNGWJXcs0GJJTYwzELGdDRU26YZeN+AFBdrfivcUmDTFgoEKIyrauqulst14dH0
-         VIawqwx2mO79s0OxciEEIzbn1FvG1bH8bG3uS1fw7LT5ALzrMm7yM+uw93vItLfT2nW0
-         6vW0ixWFbUjKGZzE54v1t/I3Bb56898l1K1XBAcQabLQzanStxI9UkxPRziU7gkhloaO
-         BPYvgr1vJyyfoY4JXraylWH6PYW9y9v+u6E5dvL1U4gTfbVtPd5b01hz0ZuIgSBkAYal
-         2vHqlPuenxkKGGJ237DRh/3jonP/A8fdnfy/nV7yUnNdSgA4uOcGoslhIzZ4kevfjAKu
-         LBBA==
+        bh=PF/Z8BQ8fxOBlrER2fv/400ai3CQSf3kzChsoC/3ncM=;
+        b=Fmg9GchsDQjutgHrWM/IG+EZhv+HiZ+dEvnMEDFKb+T+r+Q/Xm1YYliGP71kb6HN+W
+         GLqoDr61dXwsDzPdRECJYcQarmk+T6H4rug3ZFdmtLaQYy7lzYaMsCU6dX3rUj64pGr7
+         difeOIk+oQYdWGlmXufNianxRUrB5l5qg89ze9Jteco8L9yFCLmSBz6753W5U7GVkTFf
+         KV2WBL3T5cbnVEjKBJAhLxSEDGc8wbP1WK3nKE6ceGRyVxh4RU72LEeojkTBoTQAuVll
+         0zLDqezyxdzSEYDpBh/5eBMG/x+TQe220iuYVtOgctc18dzhEdeyciNQwMdPaIo0yI2x
+         DdwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FeM5bqJiQrm2rh3JILkdt+BZf3iQXt3DndJ5kJUH6VM=;
-        b=nOAPxG8xFKfc88RtTdPQ1SPFgF2adwipG9fL2+cI3+G2jrJ5mLdFyvE5GdxI62CAyD
-         ldLwHngqJUTsDDh8otfdcKrIH6tphDBANDtcgpVNLLaTaMkmC7cbP+3etELttkaQ5/Iz
-         8E9m2u0f11rn7hZFaIh8xdZG3g2ONbcVizl3vc1UnzhFTew/QH9g22ylLG7VQyxSYsWu
-         s3/wuxoNZk5R1+/9y3rXySVq4HAP+ig0MxmsAXS91/S8vSl3Ny4/i57/9gW6hdkZT1Pd
-         D8kYxwQCwrewL0pIl1nH7g29LHXkMXGcdcDMWUIBZ0fZkossO3sH74G77eq8AwLYL5lu
-         3uKg==
-X-Gm-Message-State: AOAM530EKcXeKhcShHjP2rVI9zKP+uEYnwlc1kPd9qDWo6YQ5CsZDqUJ
-        qgarRLmTkHoYPGIf9GesEzJI0neeXczI
-X-Google-Smtp-Source: ABdhPJwIwwSIi9BX9ueYR8W3xLzPDKzGU08fb3TSCEvxc7eNfeoVsUdKsvEsHwvgXeKxMCM8QFg4Jg==
-X-Received: by 2002:a05:6214:3006:b0:444:2fa9:9849 with SMTP id ke6-20020a056214300600b004442fa99849mr1462717qvb.101.1650584940771;
-        Thu, 21 Apr 2022 16:49:00 -0700 (PDT)
+        bh=PF/Z8BQ8fxOBlrER2fv/400ai3CQSf3kzChsoC/3ncM=;
+        b=P6i+gA/DsL+XmEyamtFY0jBIIrN9d/kl+qiz2uyV9VCwfCe/xNOeG8YgU4n4nTf1Xa
+         JRbxqcuLGqAC1wIrNEU+SW7KmBimKFoCxbCBN37paIJoDmsA3SskzygGTRIxSoT7tQQm
+         6serWAq3j8c6aCID7x8cr//OLzx88IImOnckVMlkc1dTD6caljaX3GgHK0hcVpcX/A6R
+         xi/Oa4jekRBgIRvbpFFrmB4RY3bleooJAlY9HWbW5hMJdhvI8zNONzHfXULKKrRzqa3p
+         D55xzESMxviBxVBNZ3hil/UmnjfejmeG709wyVbzB2c+XZYHvSZWDQRmnZMy1s9fSHh8
+         vOsA==
+X-Gm-Message-State: AOAM533GR4sKfLgLxU1pZavK/8APAiGi3ROe6u2cggbwrJsDdHcmxsPz
+        Jz9qjlWVBMrn0OGPai209rZdhviLkHGb
+X-Google-Smtp-Source: ABdhPJwDhIK3eHTLsewAwF5FpbZ4NbS8mVZfkNqfhh2q7YLtu3tIrgjsNLqW2nO1uAxRcg8T77R/yw==
+X-Received: by 2002:ad4:5caa:0:b0:446:54ef:60d4 with SMTP id q10-20020ad45caa000000b0044654ef60d4mr1790926qvh.86.1650584937815;
+        Thu, 21 Apr 2022 16:48:57 -0700 (PDT)
 Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id a1-20020a05622a02c100b002f342ccc1c5sm287372qtx.72.2022.04.21.16.48.59
+        by smtp.gmail.com with ESMTPSA id a1-20020a05622a02c100b002f342ccc1c5sm287372qtx.72.2022.04.21.16.48.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 16:49:00 -0700 (PDT)
+        Thu, 21 Apr 2022 16:48:56 -0700 (PDT)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
@@ -55,9 +55,9 @@ Cc:     Kent Overstreet <kent.overstreet@gmail.com>, hch@lst.de,
         hannes@cmpxchg.org, akpm@linux-foundation.org,
         linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-input@vger.kernel.org, roman.gushchin@linux.dev
-Subject: [PATCH v2 6/8] mm: Count requests to free & nr freed per shrinker
-Date:   Thu, 21 Apr 2022 19:48:35 -0400
-Message-Id: <20220421234837.3629927-12-kent.overstreet@gmail.com>
+Subject: [PATCH v2 4/8] clk: tegra: bpmp: Convert to printbuf
+Date:   Thu, 21 Apr 2022 19:48:33 -0400
+Message-Id: <20220421234837.3629927-10-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <20220421234837.3629927-1-kent.overstreet@gmail.com>
 References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
@@ -67,81 +67,85 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The next step in this patch series for improving debugging of shrinker
-related issues: keep counts of number of objects we request to free vs.
-actually freed, and prints them in shrinker_to_text().
+This converts from seq_buf to printbuf, which is similar but heap
+allocates the string buffer.
 
-Shrinkers won't necessarily free all objects requested for a variety of
-reasons, but if the two counts are wildly different something is likely
-amiss.
+Previously in this code the string buffer was allocated on the stack;
+this means we've added a new potential memory allocation failure. This
+is fine though since it's only for a dev_printk() message.
+
+Memory allocation context: printbuf doesn't take gfp flags, instead we
+prefer the new memalloc_no*_(save|restore) interfaces to be used. Here
+the surrounding code is already allocating with GFP_KERNEL, so
+everything is fine.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- include/linux/shrinker.h |  3 +++
- mm/vmscan.c              | 16 +++++++++++++---
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ drivers/clk/tegra/clk-bpmp.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index b5f411768b..12967748f9 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -79,6 +79,9 @@ struct shrinker {
- #endif
- 	/* objs pending delete, per node */
- 	atomic_long_t *nr_deferred;
-+
-+	atomic_long_t objects_requested_to_free;
-+	atomic_long_t objects_freed;
- };
- #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index 6ecf18f71c..77a8c47806 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -5,7 +5,7 @@
  
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 905bc23800..12562546a7 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -711,16 +711,22 @@ void shrinker_to_text(struct printbuf *out, struct shrinker *shrinker)
- 		pr_buf(out, "%s", shrinker->name);
- 	else
- 		pr_buf(out, "%ps:", shrinker->scan_objects);
-+	pr_newline(out);
-+	pr_indent_push(out, 2);
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+-#include <linux/seq_buf.h>
++#include <linux/printbuf.h>
+ #include <linux/slab.h>
  
--	pr_buf(out, " objects: %lu", shrinker->count_objects(shrinker, &sc));
-+	pr_buf(out, "objects:           %lu", shrinker->count_objects(shrinker, &sc));
-+	pr_newline(out);
-+	pr_buf(out, "requested to free: %lu", atomic_long_read(&shrinker->objects_requested_to_free));
-+	pr_newline(out);
-+	pr_buf(out, "objects freed:     %lu", atomic_long_read(&shrinker->objects_freed));
- 	pr_newline(out);
+ #include <soc/tegra/bpmp.h>
+@@ -360,39 +360,38 @@ static void tegra_bpmp_clk_info_dump(struct tegra_bpmp *bpmp,
+ 				     const struct tegra_bpmp_clk_info *info)
+ {
+ 	const char *prefix = "";
+-	struct seq_buf buf;
++	struct printbuf buf = PRINTBUF;
+ 	unsigned int i;
+-	char flags[64];
+-
+-	seq_buf_init(&buf, flags, sizeof(flags));
  
- 	if (shrinker->to_text) {
--		pr_indent_push(out, 2);
- 		shrinker->to_text(out, shrinker);
--		pr_indent_pop(out, 2);
- 		pr_newline(out);
+ 	if (info->flags)
+-		seq_buf_printf(&buf, "(");
++		pr_buf(&buf, "(");
+ 
+ 	if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
+-		seq_buf_printf(&buf, "%smux", prefix);
++		pr_buf(&buf, "%smux", prefix);
+ 		prefix = ", ";
  	}
+ 
+ 	if ((info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE) == 0) {
+-		seq_buf_printf(&buf, "%sfixed", prefix);
++		pr_buf(&buf, "%sfixed", prefix);
+ 		prefix = ", ";
+ 	}
+ 
+ 	if (info->flags & TEGRA_BPMP_CLK_IS_ROOT) {
+-		seq_buf_printf(&buf, "%sroot", prefix);
++		pr_buf(&buf, "%sroot", prefix);
+ 		prefix = ", ";
+ 	}
+ 
+ 	if (info->flags)
+-		seq_buf_printf(&buf, ")");
++		pr_buf(&buf, ")");
+ 
+ 	dev_printk(level, bpmp->dev, "%03u: %s\n", info->id, info->name);
+-	dev_printk(level, bpmp->dev, "  flags: %lx %s\n", info->flags, flags);
++	dev_printk(level, bpmp->dev, "  flags: %lx %s\n", info->flags, printbuf_str(&buf));
+ 	dev_printk(level, bpmp->dev, "  parents: %u\n", info->num_parents);
+ 
+ 	for (i = 0; i < info->num_parents; i++)
+ 		dev_printk(level, bpmp->dev, "    %03u\n", info->parents[i]);
 +
-+	pr_indent_pop(out, 2);
++	printbuf_exit(&buf);
  }
  
- /**
-@@ -846,12 +852,16 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 		unsigned long ret;
- 		unsigned long nr_to_scan = min(batch_size, total_scan);
- 
-+		atomic_long_add(nr_to_scan, &shrinker->objects_requested_to_free);
-+
- 		shrinkctl->nr_to_scan = nr_to_scan;
- 		shrinkctl->nr_scanned = nr_to_scan;
- 		ret = shrinker->scan_objects(shrinker, shrinkctl);
- 		if (ret == SHRINK_STOP)
- 			break;
-+
- 		freed += ret;
-+		atomic_long_add(ret, &shrinker->objects_freed);
- 
- 		count_vm_events(SLABS_SCANNED, shrinkctl->nr_scanned);
- 		total_scan -= shrinkctl->nr_scanned;
+ static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
 -- 
 2.35.2
 
