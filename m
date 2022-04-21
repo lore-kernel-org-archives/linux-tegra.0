@@ -2,64 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13D2C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Apr 2022 10:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B67C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Apr 2022 11:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235881AbiDUKuE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Apr 2022 06:50:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36214 "EHLO
+        id S229453AbiDULwK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Apr 2022 07:52:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231758AbiDUKuD (ORCPT
+        with ESMTP id S1382358AbiDULwJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Apr 2022 06:50:03 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 76F8B2BC9;
-        Thu, 21 Apr 2022 03:47:14 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 31C8B8106;
-        Thu, 21 Apr 2022 10:44:22 +0000 (UTC)
-Date:   Thu, 21 Apr 2022 13:47:12 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Scott Branden <sbranden@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>, kernel@pengutronix.de,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v5 7/9] ARM: dts: omap3/4/5: fix ethernet node name for
- different OMAP boards
-Message-ID: <YmE2MJfvMHH7BKCD@atomide.com>
-References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
- <20220216074927.3619425-8-o.rempel@pengutronix.de>
+        Thu, 21 Apr 2022 07:52:09 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7157C2A265;
+        Thu, 21 Apr 2022 04:49:19 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F2B21FB;
+        Thu, 21 Apr 2022 04:49:19 -0700 (PDT)
+Received: from [10.57.41.251] (unknown [10.57.41.251])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ACB8A3F5A1;
+        Thu, 21 Apr 2022 04:49:16 -0700 (PDT)
+Message-ID: <9cc46406-0f78-de27-fa0c-65d86ff05561@arm.com>
+Date:   Thu, 21 Apr 2022 12:49:11 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220216074927.3619425-8-o.rempel@pengutronix.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [Patch v2] iommu: arm-smmu: disable large page mappings for
+ Nvidia arm-smmu
+Content-Language: en-GB
+To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
+        vdumpa@nvidia.com, will@kernel.org, joro@8bytes.org,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc:     Snikam@nvidia.com, nicolinc@nvidia.com,
+        Pritesh Raithatha <praithatha@nvidia.com>
+References: <20220421081504.24678-1-amhetre@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20220421081504.24678-1-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-* Oleksij Rempel <o.rempel@pengutronix.de> [220216 09:49]:
-> The node name of Ethernet controller should be "ethernet" instead of
-> "usbether" as required by Ethernet controller devicetree schema:
->  Documentation/devicetree/bindings/net/ethernet-controller.yaml
+On 2022-04-21 09:15, Ashish Mhetre wrote:
+> Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
+> entries to not be invalidated correctly. The problem is that the walk
+> cache index generated for IOVA is not same across translation and
+> invalidation requests. This is leading to page faults when PMD entry is
+> released during unmap and populated with new PTE table during subsequent
+> map request. Disabling large page mappings avoids the release of PMD
+> entry and avoid translations seeing stale PMD entry in walk cache.
+> Fix this by limiting the page mappings to PAGE_SIZE for Tegra194 and
+> Tegra234 devices. This is recommended fix from Tegra hardware design
+> team.
+
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+
+> Co-developed-by: Pritesh Raithatha <praithatha@nvidia.com>
+> Signed-off-by: Pritesh Raithatha <praithatha@nvidia.com>
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+> Changes in v2:
+> - Using init_context() to override pgsize_bitmap instead of new function
 > 
-> This patch can potentially affect boot loaders patching against full
-> node path instead of using device aliases.
-
-Picking up this patch into omap-for-v5.19/dt branch.
-
-Thanks,
-
-Tony
+>   drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 30 ++++++++++++++++++++
+>   1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+> index 01e9b50b10a1..87bf522b9d2e 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+> @@ -258,6 +258,34 @@ static void nvidia_smmu_probe_finalize(struct arm_smmu_device *smmu, struct devi
+>   			dev_name(dev), err);
+>   }
+>   
+> +static int nvidia_smmu_init_context(struct arm_smmu_domain *smmu_domain,
+> +				    struct io_pgtable_cfg *pgtbl_cfg,
+> +				    struct device *dev)
+> +{
+> +	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> +	const struct device_node *np = smmu->dev->of_node;
+> +
+> +	/*
+> +	 * Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
+> +	 * entries to not be invalidated correctly. The problem is that the walk
+> +	 * cache index generated for IOVA is not same across translation and
+> +	 * invalidation requests. This is leading to page faults when PMD entry
+> +	 * is released during unmap and populated with new PTE table during
+> +	 * subsequent map request. Disabling large page mappings avoids the
+> +	 * release of PMD entry and avoid translations seeing stale PMD entry in
+> +	 * walk cache.
+> +	 * Fix this by limiting the page mappings to PAGE_SIZE on Tegra194 and
+> +	 * Tegra234.
+> +	 */
+> +	if (of_device_is_compatible(np, "nvidia,tegra234-smmu") ||
+> +	    of_device_is_compatible(np, "nvidia,tegra194-smmu")) {
+> +		smmu->pgsize_bitmap = PAGE_SIZE;
+> +		pgtbl_cfg->pgsize_bitmap = smmu->pgsize_bitmap;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static const struct arm_smmu_impl nvidia_smmu_impl = {
+>   	.read_reg = nvidia_smmu_read_reg,
+>   	.write_reg = nvidia_smmu_write_reg,
+> @@ -268,10 +296,12 @@ static const struct arm_smmu_impl nvidia_smmu_impl = {
+>   	.global_fault = nvidia_smmu_global_fault,
+>   	.context_fault = nvidia_smmu_context_fault,
+>   	.probe_finalize = nvidia_smmu_probe_finalize,
+> +	.init_context = nvidia_smmu_init_context,
+>   };
+>   
+>   static const struct arm_smmu_impl nvidia_smmu_single_impl = {
+>   	.probe_finalize = nvidia_smmu_probe_finalize,
+> +	.init_context = nvidia_smmu_init_context,
+>   };
+>   
+>   struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
