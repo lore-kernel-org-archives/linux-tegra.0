@@ -2,95 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0605C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Apr 2022 21:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63618C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Apr 2022 08:15:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350014AbiDTV00 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Apr 2022 17:26:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35392 "EHLO
+        id S1386531AbiDUISU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Apr 2022 04:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381910AbiDTV0Z (ORCPT
+        with ESMTP id S1385907AbiDUIST (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Apr 2022 17:26:25 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5790048881
-        for <linux-tegra@vger.kernel.org>; Wed, 20 Apr 2022 14:23:37 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id x200so5193709ybe.13
-        for <linux-tegra@vger.kernel.org>; Wed, 20 Apr 2022 14:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kNoFOy4a3bgPkQVqzY9jvHwandHXVY61/sg4Zfz5i3w=;
-        b=Seo2bThqdCMjzWqjYXZ0xLFOhHtVm9bLdX6O0DJ3+v0DymcUaqJLYUJHsrSy7ma5N/
-         JlVJ0OZTTGsMCajqR1C1ddy1D4vS+VEeKR/c9a5WUnkg0ZXm03NLiKP7YuhrHQubTSej
-         JkIQfWxFY8vFlSnuAiJlRc7WgvOZLOIRtOVTYjgNsNSRM0KoADLyAgDS9bZZpVXMOcdl
-         v7cCprLixK+YvYKgcKX5ezBFGGa9ak++pc79Hs4qO9dJpJxwzjJwxLF+RaFm62gtNZXb
-         um/uwTJpGhmkQ1Mt75SuC6yIm0m4r0uxD7tUnrYpwWE+GINkJy6pGCdzcWi2oBhV0Cx2
-         2R0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kNoFOy4a3bgPkQVqzY9jvHwandHXVY61/sg4Zfz5i3w=;
-        b=rOnGHzP1zia0pyNNzOv1e80+tZ8MS08IrOhKxTnAYSTh43fBC9RJb/KE5T8QnNARFi
-         LvSp3xTpvBUTqL4maucIHAah4Ous5McFuNAhKKbMSCDWabdscvUYZLVS6gJXy/GUsAXA
-         2NBLJblaHjd04o0hHHUaB1MMUJPWFEUpLMIpk4qoApCZ9AkhK53H/0WmzAMH2UJf93/F
-         mo3xiYaW5R3ztPY4Lq+pgM/IB1rddRz3ICepa+0ZmfqN+Do97uD+YMvX/bZrmuIyHBv1
-         SNk8CDc8uvOtJsNI2W8ZptRgyD+4OS2JLaCwrdigd/lJgzAg9YRgxD6uqeggHdV8j9sO
-         5SYw==
-X-Gm-Message-State: AOAM530SpwGY1j81WV88TcWoXlWFW2DofOk8CTsE7Ru+j6F8qW6Z7x3z
-        RGagN1ym06IoVno75H5aIQmjAFiqTYEN6we1RWZxvQ==
-X-Google-Smtp-Source: ABdhPJxiHDq05p9pdRKqWJQxsx5s+4OOdYxBG0GepwCxgjP4lZMjN5+fEEckXfW9Nwt6Rn8+Qcb9CqFq5moxgaXyirU=
-X-Received: by 2002:a5b:8c8:0:b0:641:e8de:a6f4 with SMTP id
- w8-20020a5b08c8000000b00641e8dea6f4mr21879860ybq.533.1650489816614; Wed, 20
- Apr 2022 14:23:36 -0700 (PDT)
+        Thu, 21 Apr 2022 04:18:19 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2061.outbound.protection.outlook.com [40.107.223.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 171BD2BCD;
+        Thu, 21 Apr 2022 01:15:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HEzqmHz120kC0FDJR/ic1P0KDXnc3kL/Qepu/x/nELypoP/zOVAaxjq5MNk1BK5DO/EVOpN5inVisdbMicsPTDlF9HQVgwamA9xud3pWD3Vq0RSP774tRzmjestrRfevC1op87GxGXRdD9XHscYMsOEBI7z/B/764bt8wj6CP+uTslk0va4BXLNF+1Y1MgptOmEHkAzsqohDZ478en0V4reGCJ835K7WL7olYDmKigRmHJnLHsL8uFAoZmN9TD+h8TUpVH+HXyT0I0USu+NfezqRuxrP53wnPR0oSr6YBXaddAIEZJ4EEpSCAd83XBXBu/D5W539PqupnZipmKvOpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B43xn0XriVShkZc3gHBGqcwtiLj4diWTnChKvsTKsME=;
+ b=aZJgNEKJcdC3uTuYz0GNahA30dlA9nO+KjI4AhxwLW+uo8weVKoOhi4JKItZrV3ZjQYEsd+u9KB4r4lVvlfF5ajPPdRV5FWl9JuPu8T2DsS+bZCTmL1FU23nAEvbK46ODWQKxGp8chNjeGVg4VUctlpmE1d9Of6CUL4ZqNMAS6jbSyJYuitTaxKznkZCF95gq4A68WMoPcaNq6IBQm6PUEsGh5kdlcILYCAMGuOUZnWMFjWI8qyu2R45RcWASVHh387rcSUBeoBWWADFUmRE5m5V85Ex0zDmCiftjAxTQrGSblPbx+IF10anxO5OU8s5CGJjByS83an2NZQr6e/UnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B43xn0XriVShkZc3gHBGqcwtiLj4diWTnChKvsTKsME=;
+ b=CAeWxcVltkC9cHbyYP8NdowEUJ7Rf12HR1T5zbpnIBY4CiOLLkDqTH5JJn67yqGJ86dp0PdUpyi3g/tD0xco7K52NA7TSAtCfGZ6rms6Sk+ISKNUIwxI+GeYtDjeCAGpex5zRFjUKdiQihZDdY47bJsnCuph6+uWkyU/C5wU0or4x347egvBxfdUjgu2tw2uDNBimhlAzvF9LsyRNvrUkG3ziXRbx7qbuYk/0VrWWQ6U98d7zEMl9YwE4yENT8gGXa/b3R9KvOq9jyyerIrkpFasYG+jpFqRnPP3goBzYtRyiCNQlc8Vd91j5mpMIxxuQVSu/jVLon7a7wgdtG/bfw==
+Received: from MW4PR04CA0088.namprd04.prod.outlook.com (2603:10b6:303:6b::33)
+ by MN0PR12MB5737.namprd12.prod.outlook.com (2603:10b6:208:370::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Thu, 21 Apr
+ 2022 08:15:29 +0000
+Received: from CO1NAM11FT026.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:6b:cafe::62) by MW4PR04CA0088.outlook.office365.com
+ (2603:10b6:303:6b::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.14 via Frontend
+ Transport; Thu, 21 Apr 2022 08:15:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.238) by
+ CO1NAM11FT026.mail.protection.outlook.com (10.13.175.67) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5186.14 via Frontend Transport; Thu, 21 Apr 2022 08:15:28 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL105.nvidia.com
+ (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Thu, 21 Apr
+ 2022 08:15:28 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 21 Apr
+ 2022 01:15:27 -0700
+Received: from amhetre.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.986.22 via Frontend
+ Transport; Thu, 21 Apr 2022 01:15:23 -0700
+From:   Ashish Mhetre <amhetre@nvidia.com>
+To:     <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <will@kernel.org>,
+        <robin.murphy@arm.com>, <joro@8bytes.org>, <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+CC:     <Snikam@nvidia.com>, <nicolinc@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Pritesh Raithatha <praithatha@nvidia.com>
+Subject: [Patch v2] iommu: arm-smmu: disable large page mappings for Nvidia arm-smmu
+Date:   Thu, 21 Apr 2022 13:45:04 +0530
+Message-ID: <20220421081504.24678-1-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20220329054521.14420-1-dipenp@nvidia.com> <CACRpkdbGyrRU9DDTmNDpU52rECAKY3wfi2y3jo9FMypDG=pmJQ@mail.gmail.com>
- <YmAPBG6IknkLotJp@orome>
-In-Reply-To: <YmAPBG6IknkLotJp@orome>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 20 Apr 2022 23:23:25 +0200
-Message-ID: <CACRpkdY_R+kJr9KppVBENzav_tJ_XToubs8mvtHmvCz9HokeUA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/11] Intro to Hardware timestamping engine
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dipen Patel <dipenp@nvidia.com>, jonathanh@nvidia.com,
-        smangipudi@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bgolaszewski@baylibre.com, warthog618@gmail.com,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        robh+dt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f229e9ca-aa37-440e-28d8-08da236f18b2
+X-MS-TrafficTypeDiagnostic: MN0PR12MB5737:EE_
+X-Microsoft-Antispam-PRVS: <MN0PR12MB5737ABBC55BAC50D23983932CAF49@MN0PR12MB5737.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vNNbKsEoceNrD9EzmMl77KYLYgJbrqFuLOMhAUIt6SV4WE8rjStTfwSQbzFg2cG6DKoUktfonkIwj7bdEYmJ8rp64pPUFgkTb3ui/4ictjBYb3liW4kwPQ/c4LQmRP4d3jRRvJG18YgIH/7m2D2TyP9BMeYyf/23x9MKi5bVVkI/KgHnKc0CCDsI4aQ3qMOewB6Qv6AU4kMl0tF6fIpLW8w0+AUZ1NcJJ4tzWqwRhAYbpCEsutdsbFO+A6k7aUIaVDg80ds/1AgwtIC8iARS6HDxTo/ds7Onog7fXwB0xKLrvFK7HxXkA6RUdIdkxy5EPXZ1UubLbQYlsZkBqh+6UDIe66gAcBulew/GKjF9YaZgUj3MLh6WLxhGquBEPonBUuPm7saMKK/8hEESATTYtQDFyi5bWT2UNOe17YfgjM9tCh7iN0kBTNF23EDQQujz35jzKb+pvaorB0Fyto48744sxnBk1rUfVPwLUy2P+0eBI4kAO+o7vMYlAYqNS9XMryrXqfK7sftKo2Mx8FKa1Suz8gI+WcETEDRzl/OzQ5v60XY9Cr/pzrBaWAW77wYd1dM5wnPuUGD2oQdGoM7Q0NTnEyzQ1DNgLuHqk+9IqohuYdR9YHZo5PNwVrPZ/VnkgaWfpebw4t5LzbbZQ8zxENJwgx2xzF7LoQZdSu9RcV7jHAFQstTFhHOcpdM+I56ehSMsCPXWBTYfFrbjBasXl8odLVqeUJzJtwe/fz65IPIOblO1XBJjBX+MMZnYyxoOpHaqANDu25IgjsxI2nfzLg==
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(70586007)(70206006)(8936002)(110136005)(4326008)(8676002)(508600001)(921005)(356005)(82310400005)(36756003)(40460700003)(83380400001)(81166007)(36860700001)(54906003)(86362001)(5660300002)(107886003)(47076005)(186003)(2616005)(1076003)(426003)(336012)(2906002)(26005)(6666004)(7696005)(316002)(2101003)(83996005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2022 08:15:28.7923
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f229e9ca-aa37-440e-28d8-08da236f18b2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT026.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5737
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Apr 20, 2022 at 3:47 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Wed, Apr 20, 2022 at 12:46:43AM +0200, Linus Walleij wrote:
-> > On Tue, Mar 29, 2022 at 7:45 AM Dipen Patel <dipenp@nvidia.com> wrote:
-> >
-> > > This patch series introduces new subsystem called hardware timestamping
-> > > engine (HTE). It offers functionality such as timestamping through hardware
-> > > means in realtime. The HTE subsystem centralizes HTE provider and consumers
-> > > where providers can register themselves and the consumers can request
-> > > interested entity which could be lines, GPIO, signals or buses. The
-> > > HTE subsystem provides timestamp in nano seconds, having said that the provider
-> > > need to convert the timestamp if its not in that unit. There was upstream
-> > > discussion about the HTE at
-> > > https://lore.kernel.org/lkml/4c46726d-fa35-1a95-4295-bca37c8b6fe3@nvidia.com/
-> >
-> > I like this.
-> >
-> > Can you put it in a public git and make it eligible for Stephen Rothwell to
-> > pull into linux-next and ask him to do so, as we intend to merge this for
-> > v5.19?
->
-> Do you intend to maintain this as part of the pinctrl or GPIO trees with
-> Dipen as a sub-maintainer? Or would you prefer for this to be a separate
-> tree?
+Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
+entries to not be invalidated correctly. The problem is that the walk
+cache index generated for IOVA is not same across translation and
+invalidation requests. This is leading to page faults when PMD entry is
+released during unmap and populated with new PTE table during subsequent
+map request. Disabling large page mappings avoids the release of PMD
+entry and avoid translations seeing stale PMD entry in walk cache.
+Fix this by limiting the page mappings to PAGE_SIZE for Tegra194 and
+Tegra234 devices. This is recommended fix from Tegra hardware design
+team.
 
-It has nothing to do with pin control but a bit to do with GPIO and IIO.
-I think it needs to be its own tree just like regulators or clocks.
+Co-developed-by: Pritesh Raithatha <praithatha@nvidia.com>
+Signed-off-by: Pritesh Raithatha <praithatha@nvidia.com>
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+Changes in v2:
+- Using init_context() to override pgsize_bitmap instead of new function
 
-Yours,
-Linus Walleij
+ drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 30 ++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+index 01e9b50b10a1..87bf522b9d2e 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+@@ -258,6 +258,34 @@ static void nvidia_smmu_probe_finalize(struct arm_smmu_device *smmu, struct devi
+ 			dev_name(dev), err);
+ }
+ 
++static int nvidia_smmu_init_context(struct arm_smmu_domain *smmu_domain,
++				    struct io_pgtable_cfg *pgtbl_cfg,
++				    struct device *dev)
++{
++	struct arm_smmu_device *smmu = smmu_domain->smmu;
++	const struct device_node *np = smmu->dev->of_node;
++
++	/*
++	 * Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
++	 * entries to not be invalidated correctly. The problem is that the walk
++	 * cache index generated for IOVA is not same across translation and
++	 * invalidation requests. This is leading to page faults when PMD entry
++	 * is released during unmap and populated with new PTE table during
++	 * subsequent map request. Disabling large page mappings avoids the
++	 * release of PMD entry and avoid translations seeing stale PMD entry in
++	 * walk cache.
++	 * Fix this by limiting the page mappings to PAGE_SIZE on Tegra194 and
++	 * Tegra234.
++	 */
++	if (of_device_is_compatible(np, "nvidia,tegra234-smmu") ||
++	    of_device_is_compatible(np, "nvidia,tegra194-smmu")) {
++		smmu->pgsize_bitmap = PAGE_SIZE;
++		pgtbl_cfg->pgsize_bitmap = smmu->pgsize_bitmap;
++	}
++
++	return 0;
++}
++
+ static const struct arm_smmu_impl nvidia_smmu_impl = {
+ 	.read_reg = nvidia_smmu_read_reg,
+ 	.write_reg = nvidia_smmu_write_reg,
+@@ -268,10 +296,12 @@ static const struct arm_smmu_impl nvidia_smmu_impl = {
+ 	.global_fault = nvidia_smmu_global_fault,
+ 	.context_fault = nvidia_smmu_context_fault,
+ 	.probe_finalize = nvidia_smmu_probe_finalize,
++	.init_context = nvidia_smmu_init_context,
+ };
+ 
+ static const struct arm_smmu_impl nvidia_smmu_single_impl = {
+ 	.probe_finalize = nvidia_smmu_probe_finalize,
++	.init_context = nvidia_smmu_init_context,
+ };
+ 
+ struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
+-- 
+2.17.1
+
