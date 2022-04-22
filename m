@@ -2,116 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3BDC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Apr 2022 22:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A35C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Apr 2022 22:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233065AbiDVWbk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Apr 2022 18:31:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36752 "EHLO
+        id S233241AbiDVWgW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Apr 2022 18:36:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233062AbiDVWb0 (ORCPT
+        with ESMTP id S233258AbiDVWgJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Apr 2022 18:31:26 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A222B97F8
-        for <linux-tegra@vger.kernel.org>; Fri, 22 Apr 2022 14:24:34 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id x9so9624101ybe.11
-        for <linux-tegra@vger.kernel.org>; Fri, 22 Apr 2022 14:24:34 -0700 (PDT)
+        Fri, 22 Apr 2022 18:36:09 -0400
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F3022C3C5;
+        Fri, 22 Apr 2022 14:51:49 -0700 (PDT)
+Received: by mail-qt1-x835.google.com with SMTP id fu34so6463120qtb.8;
+        Fri, 22 Apr 2022 14:51:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SOU4gw2OndPAHlyb0Yx1jIvLcwnBW7WU3bDm4X/+Fi4=;
-        b=YfsZ4tU3PuYgqcdjIDeQeP3YRzUO5ivIGgFF1ltC/6cArnKzaw0zeJWVYikoKwMjOE
-         OdEykxqICO7B5JcdxEsqUmyHPybbUs/wGZaO8WggpZlsChK/8OwwojOgf1BsBMku+PLG
-         MAtb2fgJpkzrfqNAIEezByuUWj1P12+quEESjC9NqSMK3lSlcD47ha1lp12du7h/IiM9
-         FDye+1z8JpkXsYNIIFUjATBQPXD1WBJ6fAmgYdNWG36EvLkWWB5Iqb8FzcwT3TpPcJGv
-         ntzQ1/nuCBAT00gA8Shal5DE+qEmWahWgq3yXj3gk7VaHYOto1+FcB+rijHPlvSV+dM8
-         TjcA==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RZMfk42e8wN88X1x4Oc4ckY2xJ8vXIPWfHgWdfKTn9M=;
+        b=OSzfMYbMeDyu2ee3SkdVdwdxHDs6Jzcx2Ft5LhsurqKR50qJ8HRKBjD3f87T0XNmxR
+         qPnidw8ZJGlkLY4hMiMsUUqST228rD37ocmfljP7rOdrbzZs3xADUHms29i9T65N5q9E
+         clMgoBeG13AcWf9ZZfieqatqAf8Yj3w3rxiAT2PbzEXyVNfRiReGT+XgQbJekBqIWe5q
+         P/XFEhR+21IEscdN+hf34slbakBnAe7UATNkKqG4TVmxXH+UjyXh7SddnQ7HDYvfH9Nt
+         OEqb8324QrpnTlQriByF9ZcZf/Go3TvUITwT8PsNgo2rtCmUHHWiuk1BEArJwiB3TjTB
+         bExQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SOU4gw2OndPAHlyb0Yx1jIvLcwnBW7WU3bDm4X/+Fi4=;
-        b=C3geUJIpp2e+7gInsgW2UaeJQuaHPXIPVxmT+EbpxdX9AThuPd7/MUiS28hM/6wPHY
-         gouKWxsGd2IoxGhdBaQ+watJhbbfUT1r3hqevzmP74VASuSXebNHs8dqPENu/ScAPXWy
-         3I/v/bNQj5EFuYsgdibeDbAGnPWwOdPHUC+8xhA7HpEB/9znPTZqzA8n5zrDOK7MrwBW
-         vBdq8wuV5ktMGk8w+tMuoUf7XCVNbNYDiy87OXJeYqZ2+2sQwGbsuOuAwiGU0EWmH0fI
-         Fuvx14jhb2JYBMXn7CBliDTBaX6IamgByBs9an/C+FqF4vQN9WBJyFslkc210zkxRYKw
-         9+Qw==
-X-Gm-Message-State: AOAM533DPvMdAV+EWBvA1gh9QJ2rwiHWC0vpPnVMVSNAb2JQg+n1lXL0
-        2afGML9e4M3NJ7b/+k3c9RmCQFQGHMfc8b7t2MVVog==
-X-Google-Smtp-Source: ABdhPJxsXcP45rrTkuqz2IOlfWfxSn7HO8ecvoT5emKdoiPaqAi9KObKULKewKrgsbOq2XjWVK/mAr4bUvR0dK/u9is=
-X-Received: by 2002:a5b:dc5:0:b0:624:f16d:7069 with SMTP id
- t5-20020a5b0dc5000000b00624f16d7069mr6530719ybr.295.1650662673435; Fri, 22
- Apr 2022 14:24:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RZMfk42e8wN88X1x4Oc4ckY2xJ8vXIPWfHgWdfKTn9M=;
+        b=5Qycu7xY6XTw1/MlnTnSvQQ+h8U81dPsVKgvdUmzkEHLOZx6HFCQMB3oEh7upWR+tU
+         SHIijXfzsIG1JMXPj+TKUCodQbAwb13uNkKJqueK5ZjXizHvZPobsLhARckIXmE9pSzZ
+         B1p8CV8D5XJ1nfQHb3nYGhw93qqdmcJmTEqnh5mk+zlb/l/iYwNGuZdWKKCcfYdaBgE0
+         utxGDwOo9nY0F7nZ8odrhE++tKuCXatN/cc7A8QLhcy/ME2hq5Uiwm5caDhCkrfEvlSg
+         G7JX19otKVyoDed7mvpa/YvBXnupS78fMvH3HOw/bEABgxFXpdgUcEqZG4p8XU2FBhLX
+         wJZA==
+X-Gm-Message-State: AOAM530d/h1v3j9q0NZdJah39aNaQ/q9DL9NPoF8JA0YHhEMr7p1/Sll
+        meTv1Rb43x6c8qReQaLxOw==
+X-Google-Smtp-Source: ABdhPJxyyCkFj9u8Z2ocvKIb99chaQNgfvpROYCjFGnjIdmRADHMMNVhTGFRGUajfZ+aBtu4TsJEvA==
+X-Received: by 2002:a05:622a:1a86:b0:2f3:4be4:42dd with SMTP id s6-20020a05622a1a8600b002f34be442ddmr4854803qtc.55.1650664308682;
+        Fri, 22 Apr 2022 14:51:48 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id y20-20020a05622a121400b002eefd7bf5basm2080434qtx.63.2022.04.22.14.51.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Apr 2022 14:51:48 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 17:51:46 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        hannes@cmpxchg.org, akpm@linux-foundation.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-input@vger.kernel.org, roman.gushchin@linux.dev
+Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
+ heap-allocated strings
+Message-ID: <20220422215146.i663tn6zzn6blzo3@moria.home.lan>
+References: <20220421234837.3629927-7-kent.overstreet@gmail.com>
+ <20220422042017.GA9946@lst.de>
+ <YmI5yA1LrYrTg8pB@moria.home.lan>
+ <20220422052208.GA10745@lst.de>
+ <YmI/v35IvxhOZpXJ@moria.home.lan>
+ <20220422113736.460058cc@gandalf.local.home>
+ <20220422193015.2rs2wvqwdlczreh3@moria.home.lan>
+ <20220422153916.7ebf20c3@gandalf.local.home>
+ <20220422203057.iscsmurtrmwkpwnq@moria.home.lan>
+ <20220422164744.6500ca06@gandalf.local.home>
 MIME-Version: 1.0
-References: <20220419141846.598305-1-maz@kernel.org>
-In-Reply-To: <20220419141846.598305-1-maz@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Apr 2022 23:24:22 +0200
-Message-ID: <CACRpkda3L_itpqcnPq6xDoJtNHt8NuvE1MZk1bCNR+u2KKUpBA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] gpiolib: Handle immutable irq_chip structures
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220422164744.6500ca06@gandalf.local.home>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 19, 2022 at 4:19 PM Marc Zyngier <maz@kernel.org> wrote:
+On Fri, Apr 22, 2022 at 04:47:44PM -0400, Steven Rostedt wrote:
+> Which is something you could do on top of seq_buf. Point being, you do not
+> need to re-implement printbuf, and I have not looked at the code, but
+> instead, implement printbuf on top of seq_buf, and extend seq_buf where
+> needed. Like trace_seq does, and the patches I have for seq_file would do.
+> It would leave the string processing and buffer space management to
+> seq_buf, as there's ways to see "oh, we need more space, let's allocate
+> more" and then increase the heap.
 
-> This is a followup from [2].
->
-> I recently realised that the gpiolib play ugly tricks on the
-> unsuspecting irq_chip structures by patching the callbacks.
->
-> Not only this breaks when an irq_chip structure is made const (which
-> really should be the default case), but it also forces this structure
-> to be copied at nauseam for each instance of the GPIO block, which is
-> a waste of memory.
->
-> My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
-> which does what it says on the tin: don't you dare writing to them.
-> Gpiolib is further updated not to install its own callbacks, and it
-> becomes the responsibility of the driver to call into the gpiolib when
-> required. This is similar to what we do for other subsystems such as
-> PCI-MSI.
->
-> 5 drivers are updated to this new model: M1, QC, Tegra, pl061 and AMD
-> (as I actively use them) keeping a single irq_chip structure, marking
-> it const, and exposing the new flag.
->
-> Nothing breaks, the volume of change is small, the memory usage goes
-> down and we have fewer callbacks that can be used as attack vectors.
-> What's not to love?
->
-> Since there wasn't any objection in the previous round of review, I'm
-> going to take this series into -next to see if anything breaks at
-> scale.
+That sounds like it could work. 
 
-The series:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> I would be more willing to accept a printbuf, if it was built on top of
+> seq_buf. That is, you don't need to change all your user cases, you just
+> need to make printbuf an extension of seq_buf by using it underneath, like
+> trace_seq does. Then it would not be re-inventing the wheel, but just
+> building on top of it.
 
-Bartosz: if you're happy with this can you apply it to an immutable branch
-from v5.18-rc1 and merge that into the GPIO for-next and then I can also
-pull that into pinctrl?
+Hmm... At first glance, redoing printbuf on top of seq_buf looks like it would
+save a pretty trivial amount of code - and my engineering taste these days leans
+more toward less layering if it's only slightly more code; I think I might like
+printbuf and seq_buf to stay separate things (and both of them are pretty
+small).
 
-Yours,
-Linus Walleij
+But it's definitely not an unreasonable idea - I can try it out and see how it
+turns out. Would you have any objections to making some changes to seq_buf?
+
+ - You've got size and len as size_t, I've got them as unsigned. Given that we
+   need to be checking for overflow anyways for correctens, I like having them
+   as u32s.
+ - seq_buf->readpos - it looks like this is only used by seq_buf_to_user(), does
+   it need to be in seq_buf?
+ - in printbufs, I make sure the buffer is always nul-terminated - seems
+   simplest, given that we need to make sure there's always room for the
+   terminating nul anyways.
+
+A downside of having printbuf on top of seq_buf is that now we've got two apis
+that functions can output to - vs. if we modified printbuf by adding a flag for
+"this is an external buffer, don't reallocate it". That approach would be less
+code overall, for sure.
+
+Could I get you to look over printbuf and share your thoughts on the different
+approaches?
