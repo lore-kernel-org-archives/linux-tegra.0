@@ -2,146 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E4FC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 13:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2220BC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 13:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235470AbiDYN0Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Apr 2022 09:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56116 "EHLO
+        id S242037AbiDYNe2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Apr 2022 09:34:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242013AbiDYN0E (ORCPT
+        with ESMTP id S242048AbiDYNe1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Apr 2022 09:26:04 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A808537AA9
-        for <linux-tegra@vger.kernel.org>; Mon, 25 Apr 2022 06:22:56 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1niyg2-0001O4-AD; Mon, 25 Apr 2022 15:22:54 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1niyg2-0059pC-6i; Mon, 25 Apr 2022 15:22:52 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1niyfz-005Wxi-WA; Mon, 25 Apr 2022 15:22:52 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH v2] pwm: tegra: Optimize period calculation
-Date:   Mon, 25 Apr 2022 15:22:44 +0200
-Message-Id: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3241; h=from:subject; bh=S4+1ZoALLU+8TDV+bW3oBGSo04bXxSRkdgy0lyQIbkA=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiZqARIhor3MC1ppcD5nm1hTCuPmB9iuB2NpBxuFjG vWvdpluJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYmagEQAKCRDB/BR4rcrsCWDCB/ 404T/ChaTD8h0P3A9yzpgid+K/37AMar2HOYkBMICH8NudJV51rm3SkB49f03Ujbf0xov2XlqoVqeM 2xZlWH43GcmSwtvKE5hnxERNwqule8Cbx2NAIfWQpGsNBgplM0kTRmP06PDdQAjtBAdU3wdNDDyMP8 SBxJwPHdYD7njfBeliJK4Kj6Y+3KhO62L2d+MjqTChTnYWcR8GLkoMlnheMBW4kwZyywOEpKNmBpuL HV/TJ3z2eFslpGuY8JD5WGAyEplA/MkLuaAEfskYA/kHUlwqBPJOg3f6wzvr8R2HvZykk7jEtSBU+E iaRDOdBP6QLHXy9/4DbSKE/ZCnD/hd
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+        Mon, 25 Apr 2022 09:34:27 -0400
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CE2F2B1;
+        Mon, 25 Apr 2022 06:31:23 -0700 (PDT)
+Received: by mail-oi1-f173.google.com with SMTP id 12so17038166oix.12;
+        Mon, 25 Apr 2022 06:31:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=Axyt9xLWwnpfr+htuIM2/g7D3vysIvMnk+0DJEac8Rg=;
+        b=0/n53HuI1/ClFQlYtQ6E8FngtWdd27krB/6K5hHNae9wsWHaszIT+7vffsh7tOxktL
+         b84KMHfb1jMhx5NP1CfmFbRiKUVC1W/TSarDz0IN7FFH4vDyt/Kjbhwb9SESJl/QmZA8
+         UOWoRjX3QlrTBtTEOXrs+nj9iJ9BkWSPKds6E9OvcH2TIPZe41Sb0jcqldsKOar3mts/
+         ySApG0qcv6wYKYWgA4HoQxQNkRn1mVTCjXixby6n1d79m6ccJd2V1xzQdcVkzbdfRBLz
+         BKizikU4JLWtf2VVCoKjCOKyYlU+PSg52OgitWCA8PTvYCt28syf62MUVQyP7DIw/UnL
+         VIow==
+X-Gm-Message-State: AOAM531NSuABgjp6Seoe7sJmcckl1k/cGP6oqwa9jeelwk09X5qUTsHr
+        eEqm/EUJouTaR7coZY68fg==
+X-Google-Smtp-Source: ABdhPJyVjn+HTDw2xumFtgvqDomRgaw07jqy9n+QJpvWG9J0fVtbmDg5NYHNy4qZ3JPmObwI1qJBVQ==
+X-Received: by 2002:a05:6808:f06:b0:324:f7bd:c3a with SMTP id m6-20020a0568080f0600b00324f7bd0c3amr6214113oiw.25.1650893482373;
+        Mon, 25 Apr 2022 06:31:22 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id j126-20020acab984000000b002da77222b7dsm3717265oif.22.2022.04.25.06.31.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Apr 2022 06:31:21 -0700 (PDT)
+Received: (nullmailer pid 3715965 invoked by uid 1000);
+        Mon, 25 Apr 2022 13:31:19 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Ashish Mhetre <amhetre@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, krzysztof.kozlowski@linaro.org,
+        vdumpa@nvidia.com, Snikam@nvidia.com, thierry.reding@gmail.com,
+        dmitry.osipenko@collabora.com, digetx@gmail.com,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
+        devicetree@vger.kernel.org
+In-Reply-To: <20220425075036.30098-4-amhetre@nvidia.com>
+References: <20220425075036.30098-1-amhetre@nvidia.com> <20220425075036.30098-4-amhetre@nvidia.com>
+Subject: Re: [Patch v8 3/4] dt-bindings: memory: tegra: Update validation for reg and reg-names
+Date:   Mon, 25 Apr 2022 08:31:19 -0500
+Message-Id: <1650893479.258020.3715964.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dividing by the result of a division looses precision because the result is
-rounded twice. E.g. with clk_rate = 48000000 and period = 32760033 the
-following numbers result:
+On Mon, 25 Apr 2022 13:20:35 +0530, Ashish Mhetre wrote:
+> 
 
-	rate = pc->clk_rate >> PWM_DUTY_WIDTH = 187500
-	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) = 3052
-	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) = 6144
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-The exact result would be 6142.5061875 and (apart from rounding) this is
-found by using a single division. As a side effect is also a tad
-cheaper to calculate.
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
 
-Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
-example clk_rate = 47999999 and period = 106667:
+Full log is available here: https://patchwork.ozlabs.org/patch/
 
-	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
-			    NSEC_PER_SEC) = 19
 
-	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-			    NSEC_PER_SEC << PWM_DUTY_WIDTH) = 20
+memory-controller@2c00000: reg: [[0, 46137344, 0, 720896]] is too short
+	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
+	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
 
-(The exact result is 20.000062083332033.)
+memory-controller@2c00000: reg: [[46137344, 1048576], [45613056, 262144], [24117248, 1048576]] is too short
+	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
+	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
+	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
 
-With this optimizations also switch from round-closest to round-down for
-the period calculation. Given that the calculations were non-optimal for
-quite some time now with variations in both directions which nobody
-reported as a problem, this is the opportunity to align the driver's
-behavior to the requirements of new drivers. This has several upsides:
-
- - Implementation is easier as there are no round-nearest variants of
-   mul_u64_u64_div_u64().
- - Requests for too small periods are now consistently refused. This was
-   kind of arbitrary before, where period_ns < min_period_ns was
-   refused, but in some cases min_period_ns isn't actually implementable
-   and then values between min_period_ns and the actual minimum were
-   rounded up to the actual minimum.
-
-Note that the duty_cycle calculation isn't using the usual round-down
-approach yet.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-Hello,
-
-changes since (implicit) v1: Updated changelog to explain why rate = 0
-is refused now.
-
-Best regards
-Uwe
-
- drivers/pwm/pwm-tegra.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index e5a9ffef4a71..7fc03a9ec154 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -99,7 +99,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			    int duty_ns, int period_ns)
- {
- 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
--	unsigned long long c = duty_ns, hz;
-+	unsigned long long c = duty_ns;
- 	unsigned long rate, required_clk_rate;
- 	u32 val = 0;
- 	int err;
-@@ -156,11 +156,9 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		pc->clk_rate = clk_get_rate(pc->clk);
- 	}
- 
--	rate = pc->clk_rate >> PWM_DUTY_WIDTH;
--
- 	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
--	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
--	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
-+	rate = mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-+				   (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH);
- 
- 	/*
- 	 * Since the actual PWM divider is the register's frequency divider
-@@ -169,6 +167,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	 */
- 	if (rate > 0)
- 		rate--;
-+	else
-+		return -EINVAL;
- 
- 	/*
- 	 * Make sure that the rate will fit in the register's frequency
-
-base-commit: 2bf8ee0faa988b5cec3503ebf2f970a0e84d24ee
--- 
-2.35.1
+memory-controller@2c00000: 'reg-names' is a required property
+	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
+	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
+	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
+	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
 
