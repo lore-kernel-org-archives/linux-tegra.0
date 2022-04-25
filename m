@@ -2,85 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825CFC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 17:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F4C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 19:25:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243963AbiDYR2E (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Apr 2022 13:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46682 "EHLO
+        id S244922AbiDYT2z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Apr 2022 15:28:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244031AbiDYR1p (ORCPT
+        with ESMTP id S229566AbiDYT2x (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Apr 2022 13:27:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59CD640E74;
-        Mon, 25 Apr 2022 10:24:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E8DEA614C1;
-        Mon, 25 Apr 2022 17:24:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8FFAC385A4;
-        Mon, 25 Apr 2022 17:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650907480;
-        bh=sNyDRtC/7/edG4192DhXS564IG/X3PivmYbS6UpIYEQ=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=EUy5Nv080XeCEJFw4WsNs4RwqIWWvY5luB24XrYXKLfbkesQhPpGaXggEthklP5Ox
-         sLs2Iyb/WFjnKEzwI2b1tMsaKMfGvtHAjVwWX3YLgNE01IPyoel5moxNfj/jglYLCj
-         CbpYc0ocuyt0Ltl8DlKRvrnRZuCPK/ReBas3jn977nOyHlLd4PklRZjriVrxG6Fc6C
-         3bUIKhsKSw8RFkAkWl8RciWhfU7bMA0STMLIr/hqOkLKj1SDLSsMEG27Poq9YIaddU
-         gsCvDzZb3LiYAyWs/+C8p7NrXJ9WSVX6r32+8pa8oBeFRGnnu3M5s/MGranwOIMc68
-         IVyJ71XasD0Qw==
-From:   Mark Brown <broonie@kernel.org>
-To:     cgel.zte@gmail.com, ldewangan@nvidia.com
-Cc:     linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chi.minghao@zte.com.cn,
-        zealci@zte.com.cn
-In-Reply-To: <20220418110103.2558955-1-chi.minghao@zte.com.cn>
-References: <20220418110103.2558955-1-chi.minghao@zte.com.cn>
-Subject: Re: [PATCH] spi: spi-tegra20-sflash: using pm_runtime_resume_and_get instead of pm_runtime_get_sync
-Message-Id: <165090747866.584172.3375277625417533425.b4-ty@kernel.org>
-Date:   Mon, 25 Apr 2022 18:24:38 +0100
+        Mon, 25 Apr 2022 15:28:53 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32CA3A734;
+        Mon, 25 Apr 2022 12:25:47 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id 7FA761F433C4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1650914745;
+        bh=4H8Tfxb/3HJv6jwhxuDK6+J5KJ7dxxiuti0TYw1hEQU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ooUjr6rItVPGVXDDyvwTK/dgopIHGw+ney8faEy327qHUHQOjUtf/k+cRyuRjv+1D
+         skhxbu4RRsQbOFTBKHELhnBnMCJDIs1tGifySGd1UsT9eusiUJTNlSkw2RSt+JaRXP
+         UUA6hxeYFqy4d/N5tKF9O3erEPcdJlgD0VUazz1PDdlgxX7tNcowj6IdXqKsjSbVdv
+         JwBFP2rNCNnGmZ2vztvcyH73H3siH3HQj34R34QaSOXXuVWCZuLRoYT55rDit0nB8X
+         JtU53YwJbqauSVR2/9LC+8isohL2n5hw/vlsrGw0PlPKCgsJWBIBNW9VvoqN5OpBNF
+         YsY830QxEVvCg==
+Message-ID: <5ddaf113-c8f6-7c9c-5bf6-27f2f7855d24@collabora.com>
+Date:   Mon, 25 Apr 2022 22:25:40 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [Patch v8 1/4] memory: tegra: Add memory controller channels
+ support
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>, krzysztof.kozlowski@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220425075036.30098-1-amhetre@nvidia.com>
+ <20220425075036.30098-2-amhetre@nvidia.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20220425075036.30098-2-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 18 Apr 2022 11:01:03 +0000, cgel.zte@gmail.com wrote:
-> From: Minghao Chi <chi.minghao@zte.com.cn>
-> 
-> Using pm_runtime_resume_and_get is more appropriate
-> for simplifing code
-> 
-> 
+On 4/25/22 10:50, Ashish Mhetre wrote:
+> +static int tegra186_mc_map_regs(struct tegra_mc *mc)
+> +{
+> +	struct platform_device *pdev = to_platform_device(mc->dev);
+> +	int i;
+> +
+> +	mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
+> +	if (IS_ERR(mc->bcast_ch_regs)) {
+> +		if (PTR_ERR(mc->bcast_ch_regs) == -EINVAL) {
+> +			dev_warn(&pdev->dev, "Broadcast channel is missing, please update your device-tree\n");
+> +			mc->bcast_ch_regs = NULL;
+> +			return 0;
+> +		}
+> +		return PTR_ERR(mc->bcast_ch_regs);
+> +	}
+> +
+> +	mc->ch_regs = devm_kcalloc(mc->dev, mc->soc->num_channels,
+> +				   sizeof(void __iomem *), GFP_KERNEL);
 
-Applied to
+You should use sizeof(*mc->ch_regs) in general to prevent mistakes.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> +	if (!mc->ch_regs)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < mc->soc->num_channels; i++) {
+> +		char name[5];
+> +
+> +		snprintf(name, sizeof(name), "ch%u", i);
 
-Thanks!
+The type of "i" variable is int, change it to unsigned int.
 
-[1/1] spi: spi-tegra20-sflash: using pm_runtime_resume_and_get instead of pm_runtime_get_sync
-      commit: 2b8070840e6f48b5406ebe1630a0335843109799
+With that:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
