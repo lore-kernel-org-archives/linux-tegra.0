@@ -2,97 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2220BC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 13:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55121C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 15:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242037AbiDYNe2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Apr 2022 09:34:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53174 "EHLO
+        id S242844AbiDYPbT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Apr 2022 11:31:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242048AbiDYNe1 (ORCPT
+        with ESMTP id S231351AbiDYPbT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Apr 2022 09:34:27 -0400
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CE2F2B1;
-        Mon, 25 Apr 2022 06:31:23 -0700 (PDT)
-Received: by mail-oi1-f173.google.com with SMTP id 12so17038166oix.12;
-        Mon, 25 Apr 2022 06:31:23 -0700 (PDT)
+        Mon, 25 Apr 2022 11:31:19 -0400
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3806210F3AC;
+        Mon, 25 Apr 2022 08:28:15 -0700 (PDT)
+Received: by mail-qt1-x82b.google.com with SMTP id f22so10503874qtp.13;
+        Mon, 25 Apr 2022 08:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=pYyv8u6TK+HNnCO2dEZ8rytiI/LivMuIT6ek4UyKCZU=;
+        b=By74vmVJQ/MnB36Y7p6UwVteaImK9ZjGLjA9uBcyypNXMkNwHVqIYGK4LLUcjyQtwV
+         gCml6JlzZPU91AeAqZVjwtBCd+WwrZU4BVZsBjzlpPumMon3lVhe0cPKfjc3T5oxKnVu
+         HJ5Owst1glYb9C6e5TXhR3fTu3L1w8PXstENMx4mPrtVGsmT1tseZ/NvR5iK5LJTXNZg
+         qaxWBUpARNbeAAWobmN/fHMcJmydLk2qbVbiAKVv9qIChHO4FvS64QyRqN8zBVicu+LX
+         1maxLaF5CMblXanXaZ6cfZOWpA4usEyZSVoq02wkcfGtCBDTvc54kVTcu/Wq0NKsMOmU
+         ntgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=Axyt9xLWwnpfr+htuIM2/g7D3vysIvMnk+0DJEac8Rg=;
-        b=0/n53HuI1/ClFQlYtQ6E8FngtWdd27krB/6K5hHNae9wsWHaszIT+7vffsh7tOxktL
-         b84KMHfb1jMhx5NP1CfmFbRiKUVC1W/TSarDz0IN7FFH4vDyt/Kjbhwb9SESJl/QmZA8
-         UOWoRjX3QlrTBtTEOXrs+nj9iJ9BkWSPKds6E9OvcH2TIPZe41Sb0jcqldsKOar3mts/
-         ySApG0qcv6wYKYWgA4HoQxQNkRn1mVTCjXixby6n1d79m6ccJd2V1xzQdcVkzbdfRBLz
-         BKizikU4JLWtf2VVCoKjCOKyYlU+PSg52OgitWCA8PTvYCt28syf62MUVQyP7DIw/UnL
-         VIow==
-X-Gm-Message-State: AOAM531NSuABgjp6Seoe7sJmcckl1k/cGP6oqwa9jeelwk09X5qUTsHr
-        eEqm/EUJouTaR7coZY68fg==
-X-Google-Smtp-Source: ABdhPJyVjn+HTDw2xumFtgvqDomRgaw07jqy9n+QJpvWG9J0fVtbmDg5NYHNy4qZ3JPmObwI1qJBVQ==
-X-Received: by 2002:a05:6808:f06:b0:324:f7bd:c3a with SMTP id m6-20020a0568080f0600b00324f7bd0c3amr6214113oiw.25.1650893482373;
-        Mon, 25 Apr 2022 06:31:22 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id j126-20020acab984000000b002da77222b7dsm3717265oif.22.2022.04.25.06.31.21
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pYyv8u6TK+HNnCO2dEZ8rytiI/LivMuIT6ek4UyKCZU=;
+        b=5lU8nCz2nwBrbkPDAcr/afoqETh1U4g3ZxKqLCLYoE/qmAOIxegp6CPWoHvjUSfy1L
+         5M7rqM8WbL7sxnhxxI9d0XGG3dqqp6tpWxvbJvMaYXR6hBILf26JWYqo5dSZeoh4C/GC
+         EIpgq/T7QsHlxCmOaeOBUq9MNUAqlP7S2letKZI+wWCxbaT0FPe8CliXK+9rdTgn5suX
+         7ih6ll4u9beBCmFtBk/WQKw3GW40nkKW7r/HjL5FRMoLlqnp/UipfFfdEbPWxZZb6k4E
+         Ik61TqP9wIZOAZ1NgRDi4nlChidhpwoaCTsGDFBJ+f6C2vbJg4XKVWDAOVFDjZcm4kiv
+         CitA==
+X-Gm-Message-State: AOAM530FyiD1pdoeAGd/Ej5s1FSrvXbbjaB8bz7R45o+rdRYn2VmTqvp
+        0EVrTe5D3t1Qg65SvCkGQQ==
+X-Google-Smtp-Source: ABdhPJyn1L63ig8CXlJylyOHi+tBOKG6YcgedNBUKOf6xBOnteBc+GTPyVacwZlkcADPpljIaz9lmQ==
+X-Received: by 2002:a05:622a:1314:b0:2f3:5726:e034 with SMTP id v20-20020a05622a131400b002f35726e034mr12185089qtk.297.1650900494382;
+        Mon, 25 Apr 2022 08:28:14 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id 128-20020a370486000000b0069e9d72b45fsm5193739qke.13.2022.04.25.08.28.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 06:31:21 -0700 (PDT)
-Received: (nullmailer pid 3715965 invoked by uid 1000);
-        Mon, 25 Apr 2022 13:31:19 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Ashish Mhetre <amhetre@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, krzysztof.kozlowski@linaro.org,
-        vdumpa@nvidia.com, Snikam@nvidia.com, thierry.reding@gmail.com,
-        dmitry.osipenko@collabora.com, digetx@gmail.com,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
-        devicetree@vger.kernel.org
-In-Reply-To: <20220425075036.30098-4-amhetre@nvidia.com>
-References: <20220425075036.30098-1-amhetre@nvidia.com> <20220425075036.30098-4-amhetre@nvidia.com>
-Subject: Re: [Patch v8 3/4] dt-bindings: memory: tegra: Update validation for reg and reg-names
-Date:   Mon, 25 Apr 2022 08:31:19 -0500
-Message-Id: <1650893479.258020.3715964.nullmailer@robh.at.kernel.org>
+        Mon, 25 Apr 2022 08:28:13 -0700 (PDT)
+Date:   Mon, 25 Apr 2022 11:28:11 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
+        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
+        rostedt@goodmis.org
+Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
+ show_mem.c
+Message-ID: <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+ <20220421234837.3629927-14-kent.overstreet@gmail.com>
+ <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
+ <YmLFPJTyoE4GYWp4@carbon>
+ <20220422234820.plusgyixgybebfmi@moria.home.lan>
+ <YmNH/fh8OwTJ6ASC@carbon>
+ <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan>
+ <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 25 Apr 2022 13:20:35 +0530, Ashish Mhetre wrote:
+On Mon, Apr 25, 2022 at 11:28:26AM +0200, Michal Hocko wrote:
 > 
+> > Do you know if using memalloc_noreclaim_(save|restore) is sufficient for that,
+> > or do we want GFP_ATOMIC? I'm already using GFP_ATOMIC for allocations when we
+> > generate the report on slabs, since we're taking the slab mutex there.
+> 
+> No it's not. You simply _cannot_ allocate from the oom context.
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
-
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
-
-Full log is available here: https://patchwork.ozlabs.org/patch/
-
-
-memory-controller@2c00000: reg: [[0, 46137344, 0, 720896]] is too short
-	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
-
-memory-controller@2c00000: reg: [[46137344, 1048576], [45613056, 262144], [24117248, 1048576]] is too short
-	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
-
-memory-controller@2c00000: 'reg-names' is a required property
-	arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb
-
+Hmm, no, that can't be right. I've been using the patch set and it definitely
+works, at least in my testing. Do you mean to say that we shouldn't? Can you
+explain why?
