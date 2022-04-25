@@ -2,39 +2,39 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F4C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 19:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEDBC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 19:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244922AbiDYT2z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Apr 2022 15:28:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60388 "EHLO
+        id S239218AbiDYTm6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Apr 2022 15:42:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbiDYT2x (ORCPT
+        with ESMTP id S234957AbiDYTm6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Apr 2022 15:28:53 -0400
+        Mon, 25 Apr 2022 15:42:58 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32CA3A734;
-        Mon, 25 Apr 2022 12:25:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220F012C43C;
+        Mon, 25 Apr 2022 12:39:53 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id 7FA761F433C4
+        with ESMTPSA id 17B6A1F41B18
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650914745;
-        bh=4H8Tfxb/3HJv6jwhxuDK6+J5KJ7dxxiuti0TYw1hEQU=;
+        s=mail; t=1650915592;
+        bh=qinDi2GBBW9kGnMhrPxn4h6KUQhZ0ca8SpwjSyGHrKY=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ooUjr6rItVPGVXDDyvwTK/dgopIHGw+ney8faEy327qHUHQOjUtf/k+cRyuRjv+1D
-         skhxbu4RRsQbOFTBKHELhnBnMCJDIs1tGifySGd1UsT9eusiUJTNlSkw2RSt+JaRXP
-         UUA6hxeYFqy4d/N5tKF9O3erEPcdJlgD0VUazz1PDdlgxX7tNcowj6IdXqKsjSbVdv
-         JwBFP2rNCNnGmZ2vztvcyH73H3siH3HQj34R34QaSOXXuVWCZuLRoYT55rDit0nB8X
-         JtU53YwJbqauSVR2/9LC+8isohL2n5hw/vlsrGw0PlPKCgsJWBIBNW9VvoqN5OpBNF
-         YsY830QxEVvCg==
-Message-ID: <5ddaf113-c8f6-7c9c-5bf6-27f2f7855d24@collabora.com>
-Date:   Mon, 25 Apr 2022 22:25:40 +0300
+        b=HNiWF1Iib5nowoR6mXKLlQwEvt428mh1OjWFHuz+msveQpU9DOaY90fH6FZqRJr3L
+         fElhUu3Nv3bM+Jh34/IuOxzo++KSgC3/fvGOMXXTwDoBR+BTChK/26mfmszu0Gqhyt
+         jvfRtQIYpJeklo+p8++/m8rorfsdMgYKyFjNJcMDsfV6d7LoxSVOdxGoOZ5uAeBr8h
+         jC30yK6oZi5CDV9RXyi9jvNg9irPfET8xI3DyOFc65EZQbHyfHqOzv/4/8IZsTD/Re
+         Qe8PqDDqbPhZ6N7iO4JyGHYJGYjdBgBieygdJbWXKOfV14oyHiY5PTYuHpiVa8P0za
+         PE6b1aJSOqSEQ==
+Message-ID: <777b30fd-59ba-56ec-4f66-4d82118ca921@collabora.com>
+Date:   Mon, 25 Apr 2022 22:39:48 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [Patch v8 1/4] memory: tegra: Add memory controller channels
- support
+Subject: Re: [Patch v8 2/4] memory: tegra: Add MC error logging on tegra186
+ onward
 Content-Language: en-US
 To:     Ashish Mhetre <amhetre@nvidia.com>, krzysztof.kozlowski@linaro.org,
         thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
@@ -43,9 +43,9 @@ To:     Ashish Mhetre <amhetre@nvidia.com>, krzysztof.kozlowski@linaro.org,
         devicetree@vger.kernel.org
 Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
 References: <20220425075036.30098-1-amhetre@nvidia.com>
- <20220425075036.30098-2-amhetre@nvidia.com>
+ <20220425075036.30098-3-amhetre@nvidia.com>
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20220425075036.30098-2-amhetre@nvidia.com>
+In-Reply-To: <20220425075036.30098-3-amhetre@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -53,36 +53,48 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 On 4/25/22 10:50, Ashish Mhetre wrote:
-> +static int tegra186_mc_map_regs(struct tegra_mc *mc)
-> +{
-> +	struct platform_device *pdev = to_platform_device(mc->dev);
-> +	int i;
-> +
-> +	mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
-> +	if (IS_ERR(mc->bcast_ch_regs)) {
-> +		if (PTR_ERR(mc->bcast_ch_regs) == -EINVAL) {
-> +			dev_warn(&pdev->dev, "Broadcast channel is missing, please update your device-tree\n");
-> +			mc->bcast_ch_regs = NULL;
-> +			return 0;
-> +		}
-> +		return PTR_ERR(mc->bcast_ch_regs);
-> +	}
-> +
-> +	mc->ch_regs = devm_kcalloc(mc->dev, mc->soc->num_channels,
-> +				   sizeof(void __iomem *), GFP_KERNEL);
+> Add support for reading MC_GLOBAL_INTSTATUS register which points to the
+> memory controller channels on which interrupts have occurred.
+> Add helper function 'mc_global_intstatus_to_channel' which returns the
+> channel which should be used to get the information of interrupts.
+> Remove static from tegra30_mc_handle_irq and use it as interrupt handler
+> for MC interrupts on tegra186, tegra194 and tegra234 to log the errors.
+> Add error specific MC status and address register bits and use them on
+> tegra186, tegra194 and tegra234.
+> Add error logging for generalized carveout interrupt on tegra186, tegra194
+> and tegra234.
+> Add error logging for route sanity interrupt on tegra194 an tegra234.
+> Add register for higher bits of error address which is available on
+> tegra194 and tegra234.
+> Add a boolean variable 'has_addr_hi_reg' in tegra_mc_soc struture which
+> will be true if soc has register for higher bits of memory controller
+> error address. Set it true for tegra194 and tegra234.
+> Add helper function 'mc_channel_to_global_intstatus' which returns the
+> bit of MC_GLOBAL_INSTATUS corresponding to channel of which interrupts
+> are logged and use it to clear that interrupt channel.
+> Update variable type of client_id_mask from u8 to u16 and add it for
+> tegra186, tegra194 and tegra234.
 
-You should use sizeof(*mc->ch_regs) in general to prevent mistakes.
+The formatting of the message could be improved. At minimum adding
+newlines will help readability. For upstream patches it's very important
+to make a good commit message that is readable and concise.
 
-> +	if (!mc->ch_regs)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < mc->soc->num_channels; i++) {
-> +		char name[5];
-> +
-> +		snprintf(name, sizeof(name), "ch%u", i);
+The commit message should contain:
 
-The type of "i" variable is int, change it to unsigned int.
+1. A rationale for the change, i.e. you should explain why it is needed.
+2. A brief description of what patch does, explaining only difficult
+parts in a more details.
 
-With that:
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>  drivers/memory/tegra/mc.c       | 134 ++++++++++++++++++++++++++++----
+>  drivers/memory/tegra/mc.h       |  43 +++++++++-
+>  drivers/memory/tegra/tegra186.c |   9 +++
+>  drivers/memory/tegra/tegra194.c |   8 ++
+>  drivers/memory/tegra/tegra234.c |   8 ++
+>  include/soc/tegra/mc.h          |   5 +-
+>  6 files changed, 189 insertions(+), 18 deletions(-)
+
+Otherwise looks okay:
 
 Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
