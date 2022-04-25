@@ -2,124 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FB0C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 11:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E4FC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Apr 2022 13:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230189AbiDYL7J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Apr 2022 07:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34606 "EHLO
+        id S235470AbiDYN0Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Apr 2022 09:26:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229917AbiDYL7I (ORCPT
+        with ESMTP id S242013AbiDYN0E (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Apr 2022 07:59:08 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 994B6C2E;
-        Mon, 25 Apr 2022 04:55:54 -0700 (PDT)
-Received: from mail-wr1-f52.google.com ([209.85.221.52]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1N6bHC-1nwg3r1hcc-01822M; Mon, 25 Apr 2022 13:55:53 +0200
-Received: by mail-wr1-f52.google.com with SMTP id w4so20423599wrg.12;
-        Mon, 25 Apr 2022 04:55:53 -0700 (PDT)
-X-Gm-Message-State: AOAM531ApSC2VSFZrxMs/0HkxfyveZ0V63JDnUI//tVuapV+4jJno3yD
-        bBpZWd8ppKru3/DwWHbPqv8GtTTR+cqBr2zpNEc=
-X-Google-Smtp-Source: ABdhPJy6G1KFbKHEzOAredhlniFlHgR99fdfjjNVGzWiR1NENqqdvyAlm9QrDNMIfUNAfKR7gKHmCTAe8oiy/GkxXHY=
-X-Received: by 2002:a5d:6da5:0:b0:20a:8805:6988 with SMTP id
- u5-20020a5d6da5000000b0020a88056988mr13310843wrs.317.1650887753050; Mon, 25
- Apr 2022 04:55:53 -0700 (PDT)
+        Mon, 25 Apr 2022 09:26:04 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A808537AA9
+        for <linux-tegra@vger.kernel.org>; Mon, 25 Apr 2022 06:22:56 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1niyg2-0001O4-AD; Mon, 25 Apr 2022 15:22:54 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1niyg2-0059pC-6i; Mon, 25 Apr 2022 15:22:52 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1niyfz-005Wxi-WA; Mon, 25 Apr 2022 15:22:52 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH v2] pwm: tegra: Optimize period calculation
+Date:   Mon, 25 Apr 2022 15:22:44 +0200
+Message-Id: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-References: <Yk3nShkFzNJaI3/Z@robh.at.kernel.org> <YlVAy95eF/9b1nmu@orome> <c5fad2c0-598d-a90c-5272-398ce48399fe@nvidia.com>
-In-Reply-To: <c5fad2c0-598d-a90c-5272-398ce48399fe@nvidia.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 25 Apr 2022 13:55:37 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1fyibqtkNMXDA6JXFWc2856B40C6oD8hBaieR8jTD-Ng@mail.gmail.com>
-Message-ID: <CAK8P3a1fyibqtkNMXDA6JXFWc2856B40C6oD8hBaieR8jTD-Ng@mail.gmail.com>
-Subject: Re: [RESEND PATCH] arm64: dts: tegra: Fix boolean properties with values
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        SoC Team <soc@kernel.org>, DTML <devicetree@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:TJThzSquOMPhjy725+dgA9ErMyiOQCUXXxl9RgLyzQjdDishMWN
- P8o71btqoX6QO9FSNR/iVp/Rb1TfaX4Sdiri8chrFtf8bQCBHZ1vrbVboKHOB2Py+F/cNhy
- CU/22OAgrG6UALd921r0domb2peA3zkHSO4axZ8YGchJenCJD4pHMonLMMcQj7PqTKl81Ie
- n/HOMvdkVkGI0QqjWW+6A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tR5UHx9sUtI=:OLmXCofZgbaTPosvGTFV4q
- 5/WsyUg6ZLU3YwheZChd/Vf5JY0BQQoVTFS6KfgZvu4c1pT9S4pa9G/vcze2EizLfCrVDqDDv
- 8ljBRvnkMk3NDec/zm8pb9XRyugbmij1wEq4fMwNHP0N6oq9yUGC33J/5yjm4snN81gPSrNey
- M0fm0vdUxWCONA/rIqBdmfiZm7mxbleRmphKXYGLP06lRAs4c0ASYjuzhE0rB/wsptTMQ4BhK
- lCmFmC5wuqs4GuWJ6vFdirTo3iazexRdw5ufJRh8vb46oHbGZFFLgEaTdaUTeped1/LxIj4y2
- tiEgM3AK21k3c2vz6KxPvVNDoRsXpZ09G9k6G0ELLIhNNZVf5M2a82eJS09Xaq7nKcoW2W3QS
- donbKm5929wyYUFRZRc5sZpLIc8u00GPxSRzcMPlU7ARDWQrZWCgl+kyXI0Dbc9eQUxkDFsnS
- drnCmZMsu0NwpqaBZmDpWhFoTuj2eCXujCHbK/MibbVhYGHRFiCAf4RwxXZWA7MuBLUUoNvSK
- MTxGqh20DJHqzyrns5LCpETLDF2t6YRfJOmIsQjoMOKbEE3BGwtEBr4qi3TwBhFxubrtYBp/i
- saJfQVvPMk+AeX12eimOV0edW3d0UYWDuaAmvecb+8xPCy8SJFUy3KoAOvtipoR+IMOsIlypD
- 7iWIMPOlpDvLIl7NtWy67T73iqhv/c9esY2RvSUXhOKIbDEjjC4i/tQPYgz36+2s7pP4=
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3241; h=from:subject; bh=S4+1ZoALLU+8TDV+bW3oBGSo04bXxSRkdgy0lyQIbkA=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiZqARIhor3MC1ppcD5nm1hTCuPmB9iuB2NpBxuFjG vWvdpluJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYmagEQAKCRDB/BR4rcrsCWDCB/ 404T/ChaTD8h0P3A9yzpgid+K/37AMar2HOYkBMICH8NudJV51rm3SkB49f03Ujbf0xov2XlqoVqeM 2xZlWH43GcmSwtvKE5hnxERNwqule8Cbx2NAIfWQpGsNBgplM0kTRmP06PDdQAjtBAdU3wdNDDyMP8 SBxJwPHdYD7njfBeliJK4Kj6Y+3KhO62L2d+MjqTChTnYWcR8GLkoMlnheMBW4kwZyywOEpKNmBpuL HV/TJ3z2eFslpGuY8JD5WGAyEplA/MkLuaAEfskYA/kHUlwqBPJOg3f6wzvr8R2HvZykk7jEtSBU+E iaRDOdBP6QLHXy9/4DbSKE/ZCnD/hd
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Apr 25, 2022 at 1:20 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> On 12/04/2022 10:05, Thierry Reding wrote:
-> > On Wed, Apr 06, 2022 at 02:17:30PM -0500, Rob Herring wrote:
-> >> Boolean properties in DT are present or not present and don't take a value.
-> >> A property such as 'foo = <0>;' evaluated to true. IOW, the value doesn't
-> >> matter.
-> >>
-> >> It may have been intended that 0 values are false, but there is no change
-> >> in behavior with this patch.
-> >>
-> >> Signed-off-by: Rob Herring <robh@kernel.org>
-> >> ---
-> >> Can someone apply this for 5.18.
-> >>
-> >>   arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi            | 8 ++++----
-> >>   .../boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts    | 8 ++++----
-> >>   arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi            | 6 +++---
-> >>   arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi            | 6 +++---
-> >>   arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi            | 6 +++---
-> >>   arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi            | 8 ++++----
-> >>   arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts        | 8 ++++----
-> >>   arch/arm64/boot/dts/nvidia/tegra210-smaug.dts             | 4 ++--
-> >>   8 files changed, 27 insertions(+), 27 deletions(-)
-> >
-> > This causes multiple regressions on Tegra boards. The reason for this is
-> > that these properties are not in fact boolean, despite what the DT
-> > bindings say. If you look at the code that handles these, you'll notice
-> > that they are single-cell properties, typically with <0> and <1> values.
-> > What may have led to the conclusion that these are boolean is that there
-> > is also a special case where these can be left out, but the meaning of
-> > that is not the "false" (<0>) value. Instead, leaving these out means
-> > that the values should be left at whatever is currently in the register.
-> >
-> > See pinconf_generic_parse_dt_config() and parse_dt_cfg() specifically in
-> > drivers/pinctrl/pinconf-generic.c.
-> >
-> > Arnd, can you please revert this so that these boards can be unbroken?
->
->
-> Arnd, any feedback on this? A lot of Tegra boards are still not booting
-> with v5.18-rc4.
+Dividing by the result of a division looses precision because the result is
+rounded twice. E.g. with clk_rate = 48000000 and period = 32760033 the
+following numbers result:
 
-I have reverted this commit now, sorry for missing the earlier report.
-https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/?h=arm/fixes
+	rate = pc->clk_rate >> PWM_DUTY_WIDTH = 187500
+	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) = 3052
+	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) = 6144
 
-> > Adding Bjorn for MSM, the Nuvoton and STM32 folks.
+The exact result would be 6142.5061875 and (apart from rounding) this is
+found by using a single division. As a side effect is also a tad
+cheaper to calculate.
 
-I'll wait for the others to reply, but I do agree that these are likely broken
-as well. Could one of you propose a patch to make the binding
-describe what the kernel code actually expects here?
+Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
+example clk_rate = 47999999 and period = 106667:
 
-       Arnd
+	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
+			    NSEC_PER_SEC) = 19
+
+	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
+			    NSEC_PER_SEC << PWM_DUTY_WIDTH) = 20
+
+(The exact result is 20.000062083332033.)
+
+With this optimizations also switch from round-closest to round-down for
+the period calculation. Given that the calculations were non-optimal for
+quite some time now with variations in both directions which nobody
+reported as a problem, this is the opportunity to align the driver's
+behavior to the requirements of new drivers. This has several upsides:
+
+ - Implementation is easier as there are no round-nearest variants of
+   mul_u64_u64_div_u64().
+ - Requests for too small periods are now consistently refused. This was
+   kind of arbitrary before, where period_ns < min_period_ns was
+   refused, but in some cases min_period_ns isn't actually implementable
+   and then values between min_period_ns and the actual minimum were
+   rounded up to the actual minimum.
+
+Note that the duty_cycle calculation isn't using the usual round-down
+approach yet.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+Hello,
+
+changes since (implicit) v1: Updated changelog to explain why rate = 0
+is refused now.
+
+Best regards
+Uwe
+
+ drivers/pwm/pwm-tegra.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index e5a9ffef4a71..7fc03a9ec154 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -99,7 +99,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			    int duty_ns, int period_ns)
+ {
+ 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
+-	unsigned long long c = duty_ns, hz;
++	unsigned long long c = duty_ns;
+ 	unsigned long rate, required_clk_rate;
+ 	u32 val = 0;
+ 	int err;
+@@ -156,11 +156,9 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		pc->clk_rate = clk_get_rate(pc->clk);
+ 	}
+ 
+-	rate = pc->clk_rate >> PWM_DUTY_WIDTH;
+-
+ 	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
+-	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
+-	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
++	rate = mul_u64_u64_div_u64(pc->clk_rate, period_ns,
++				   (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH);
+ 
+ 	/*
+ 	 * Since the actual PWM divider is the register's frequency divider
+@@ -169,6 +167,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	 */
+ 	if (rate > 0)
+ 		rate--;
++	else
++		return -EINVAL;
+ 
+ 	/*
+ 	 * Make sure that the rate will fit in the register's frequency
+
+base-commit: 2bf8ee0faa988b5cec3503ebf2f970a0e84d24ee
+-- 
+2.35.1
+
