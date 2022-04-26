@@ -2,124 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A18B0C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Apr 2022 16:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C456C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Apr 2022 21:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245620AbiDZQ4O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Apr 2022 12:56:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34846 "EHLO
+        id S1355620AbiDZWCp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Apr 2022 18:02:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353344AbiDZQz4 (ORCPT
+        with ESMTP id S1355605AbiDZWCo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Apr 2022 12:55:56 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AFFA427CD
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Apr 2022 09:52:17 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id z126so1973601qkb.2
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Apr 2022 09:52:17 -0700 (PDT)
+        Tue, 26 Apr 2022 18:02:44 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224AD18A1A7
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Apr 2022 14:59:35 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id e12so88512ybc.11
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Apr 2022 14:59:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kqUR0c7kIfOD/vD/YKkVpkdvcyQWCmE0JRAtCDl4Ovs=;
-        b=C8hwhh7uEC6m2zOD/nAcUGPqgF3WeHql9lkeJRc6BmxkPieL3Kyc8v4RNJ/vt+iUpN
-         +IgZPwvK7gwiayFEj2jURS6zF080FYWzVTPXDRsSl5OIIhMuckxYGoG2j6euIscZYCye
-         KXkxUy1MgIh++h0q0cQAtPkg4BT/7yNYt4S98=
+        bh=3bpxs3BwsRsNVGR8rV+H1S/A34takD9t6PW/tK7Nuns=;
+        b=rQrWMCWuHFbF3fA9np1al/NM6sLB/JVBaqI3xHXuG6+nPXC8BDAdkBeT6D19OTXrq0
+         NSc/OxVS+gT1SCyw5YAOZDlwIrOtbf+Q78CkXJB7hF2B/2A4eFvhie2pcoQPpLxVW4ib
+         mhKgvVfOJ+UgrJcHisKxEQPTZ9v0Lwt3NB6/N4O9I1U+0rQiESSjJaGx5Iu+TKa2E1Fg
+         9VCX+hWONIn782AUxluTfo/LPp+PeiLA3NSBA6uCSNzwyvaVLuTV3BMHNjzqpcBAi1nn
+         rB0cH1p4qIaWAd7LAyMJhfbKrmYqRx6e4wgzQgHXqFrN5zibWycWzHr0OFUsWplKJ7zh
+         4bpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kqUR0c7kIfOD/vD/YKkVpkdvcyQWCmE0JRAtCDl4Ovs=;
-        b=pCeyL6ImEf2pIioke7fvCven45o3lzXuYiGNpBLy4+Gne4k3jF/5uQMs22I8DfUIWx
-         sxJeWp338843xVEOELL029XLq2JUy8rdpSFXtNkch0QoHKD2t+3U7oICkrCtocnhukpK
-         5tP51w6KNZvUqLTa9FbD3OshW+5qekSVy/MdKKKkAPBoKzz2n1MuHx2bHDW+fEp5Mg3w
-         V/d0dLbpZ8VaLMt+gneV0bgD0y4xCJp2qo4j2+KVaGGSsXXpwMKUXNAZLw3C+hktdbVY
-         DLOTzDUqb9I5ql50D9pc9rdMGzTLgYK4GPehK+C9ZHZ0gFOj/tLyzmqDE/dOtn8b6VW2
-         rt+g==
-X-Gm-Message-State: AOAM533w/BsyzETd9IoQ8CHqn7vDHXfs4fM3ryAmlBmwZb+8BEfv/3ti
-        AGD4krcPdYUbuJdKF3eKKefv6nPBxkNYOnf0jiH2mw==
-X-Google-Smtp-Source: ABdhPJx1o2mJSh4zS7CrbcgNcsvrnRgihUn9uVOHoVGxS3Rk8p6EoavtaO4OBtVkqYcrSA6ToxZ+4CDS2ZXUCHDL0N4=
-X-Received: by 2002:a37:b4d:0:b0:69f:7742:9778 with SMTP id
- 74-20020a370b4d000000b0069f77429778mr2486350qkl.109.1650991936058; Tue, 26
- Apr 2022 09:52:16 -0700 (PDT)
+        bh=3bpxs3BwsRsNVGR8rV+H1S/A34takD9t6PW/tK7Nuns=;
+        b=F8nW9eeE37eN9aQsHd7vr7beqTOSgsoEVLfXemg4behONAhDBd6zPKXkjUcB3byXau
+         DNGbTAcLfQYvxoaDe8Zri5utPz7V9juEa76lPsqrp5/dcdc8ox/kFXuVOcPRo+3fCkEZ
+         M/jnRpnx/v3bO4Tifii/AK4G8nv4blYpPLrq1a1AOTv38qPRafjSauRY3EB0K0A/t3Ru
+         OaiXpefrhSVG9MMNCmzhA6MT8igXKFX5ZNeE1DjQ3/lJytJc1/lEKK+GectuACHzuVEV
+         3jmQew7T7+P4ToFJqnwXAg+azO04GSdkNSNUGHDYWfHa+NYJgvSCvwcEjuHPsijszbrZ
+         2HGQ==
+X-Gm-Message-State: AOAM533MkC7zMgv1Rpw3aHE4MXCPLhpftIU4JxPm4nv6V4WTLm17lxA+
+        uyXGyKmRhK8r1izILa5Iwju9U2yYZ6Wa2VRO4ACqVQ==
+X-Google-Smtp-Source: ABdhPJxmNWf2WAOTBOGYlwqgY2kNnoEeFKfKMFvD28pKOaD0KFUI3oAtcgVaqXsBmJf+wSb/F3TYdyLteg2ZEsK/pP4=
+X-Received: by 2002:a25:a12a:0:b0:644:e94e:5844 with SMTP id
+ z39-20020a25a12a000000b00644e94e5844mr22727605ybh.492.1651010374328; Tue, 26
+ Apr 2022 14:59:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220419142859.380566-1-krzysztof.kozlowski@linaro.org> <20220419142859.380566-6-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220419142859.380566-6-krzysztof.kozlowski@linaro.org>
-From:   Markus Mayer <mmayer@broadcom.com>
-Date:   Tue, 26 Apr 2022 09:52:05 -0700
-Message-ID: <CAGt4E5tyGQStKT3S=tUg8CLchzS3S3g8Byh2Kap9oids=jF-UQ@mail.gmail.com>
-Subject: Re: [PATCH 6/7] memory: brcmstb_dpfe: simplify platform_get_resource_byname()
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
+References: <20220419141846.598305-1-maz@kernel.org> <CACRpkda3L_itpqcnPq6xDoJtNHt8NuvE1MZk1bCNR+u2KKUpBA@mail.gmail.com>
+ <874k2kccse.wl-maz@kernel.org> <CAHp75VcKNurETpNtrZM7SN2XEtLM6ZYFrS-gKr6r55Lc37gKQQ@mail.gmail.com>
+In-Reply-To: <CAHp75VcKNurETpNtrZM7SN2XEtLM6ZYFrS-gKr6r55Lc37gKQQ@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 26 Apr 2022 23:59:22 +0200
+Message-ID: <CACRpkdaO+KTb+jJQ0qY59TP8f7gyY2mTUtNEt5+KUHNQAYU1bA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] gpiolib: Handle immutable irq_chip structures
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Thierry Reding <thierry.reding@gmail.com>,
+        Joey Gouly <joey.gouly@arm.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Android Kernel Team <kernel-team@android.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 19 Apr 2022 at 07:29, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Use devm_platform_ioremap_resource_byname() instead of
-> platform_get_resource_byname() and devm_ioremap_resource().
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Tue, Apr 26, 2022 at 12:25 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Sat, Apr 23, 2022 at 12:30 PM Marc Zyngier <maz@kernel.org> wrote:
 
-Thanks for the change.
+> > You can pick it up from:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/gpio-immutable
+> >
+> > but I can also drop it from the irqchip tree.
+> >
+> > Just let me know.
 
-Acked-by: Markus Mayer <mmayer@broadcom.com>
+Pulling that looks good to me.
 
-Regards,
--Markus
+If Bartosz pulls this to the GPIO tree I will also pull it to pin control,
+I just want him to decide, because the impact is biggest on GPIO.
 
-> ---
->  drivers/memory/brcmstb_dpfe.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
-> index 14412002775d..76c82e9c8fce 100644
-> --- a/drivers/memory/brcmstb_dpfe.c
-> +++ b/drivers/memory/brcmstb_dpfe.c
-> @@ -857,7 +857,6 @@ static int brcmstb_dpfe_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
->         struct brcmstb_dpfe_priv *priv;
-> -       struct resource *res;
->         int ret;
->
->         priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> @@ -869,22 +868,19 @@ static int brcmstb_dpfe_probe(struct platform_device *pdev)
->         mutex_init(&priv->lock);
->         platform_set_drvdata(pdev, priv);
->
-> -       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-cpu");
-> -       priv->regs = devm_ioremap_resource(dev, res);
-> +       priv->regs = devm_platform_ioremap_resource_byname(pdev, "dpfe-cpu");
->         if (IS_ERR(priv->regs)) {
->                 dev_err(dev, "couldn't map DCPU registers\n");
->                 return -ENODEV;
->         }
->
-> -       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-dmem");
-> -       priv->dmem = devm_ioremap_resource(dev, res);
-> +       priv->dmem = devm_platform_ioremap_resource_byname(pdev, "dpfe-dmem");
->         if (IS_ERR(priv->dmem)) {
->                 dev_err(dev, "Couldn't map DCPU data memory\n");
->                 return -ENOENT;
->         }
->
-> -       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-imem");
-> -       priv->imem = devm_ioremap_resource(dev, res);
-> +       priv->imem = devm_platform_ioremap_resource_byname(pdev, "dpfe-imem");
->         if (IS_ERR(priv->imem)) {
->                 dev_err(dev, "Couldn't map DCPU instruction memory\n");
->                 return -ENOENT;
-> --
-> 2.32.0
->
+> I would prefer it if it goes as is now and every stakeholder can just
+> pull it. As far as my drivers are concerned I also want to convert
+> them sooner than later, meaning I want to pull this into my little
+> tree as well. Bart, Linus, would it be also preferable for you?
+
+I'd say let's all three pull this branch, Bart?
+
+Yours,
+Linus Walleij
