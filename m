@@ -2,141 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BFAC4167E
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Apr 2022 16:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18B0C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Apr 2022 16:53:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352947AbiDZQYO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Apr 2022 12:24:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34386 "EHLO
+        id S245620AbiDZQ4O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Apr 2022 12:56:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352941AbiDZQYN (ORCPT
+        with ESMTP id S1353344AbiDZQz4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Apr 2022 12:24:13 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2089.outbound.protection.outlook.com [40.107.236.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26CD51171EA;
-        Tue, 26 Apr 2022 09:21:06 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JsVPOnKyJQKXFPnl7qk9oJ6IX0ft8wMxdW7eb8dNoCnq49Y8QVQ8IiqyISZr+ME1f0Fzxk3pWWtl3vSyWVy9DQdfHFB2Nqhp+jX8jCoRfsQoPHrB628kLyBIG3EGwOG4CsNw3tmO044Nq66WmKPCx0ggLzpCv5YXGm0lb6du4AP6hJ3HElM9bOmUoMUdPEz4x7MFFhnwmAdynE2aU1Lp5w/rvwVWvCV+IcQ5gxmWD63nSp9e9KueRr+D89z/fMkLCtahkMSP5cJ/q7nDeQeTfyClz8WtpF6p53gx0Hjo5BqCTA6gRVgMky8Vpa4Zv6rvXbFtpz7jcp5Q7uZPdBWNlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sRwhdA2qEXN4jEF59kgnRW6c0oxJr3GRdu4nfk79c1o=;
- b=Bx3TZ8ScnZtJc1VlBgMd1H0pcshj2PpxDwoRZjkNpXQls+w4XZ971b8FCsbgYe2SRkE2d4XxGAUuNeJA/8e0U/JnEkz1e4+hY/ou3vYYysbm+F92HevJHvDx0w65KTMR6LVCld+22ABlLS8HtDNb7vxm2cvF/W6DAu4hUYRPHlI84BsFSfQctHH/he2TdTbn2okd05brIbhj4+58lEr1J7eMFAg2D/+TyoS1pwB3h2eZETOLOrxvJ7W1haYb/vzWJDFLTdFU199rvJuJxmIwjU4JGHOtncu8EG/JThhr2v6GIAzoQYxnHdi2WPdyNs+7uzbvSbyemaYzZ/j4SsOLZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sRwhdA2qEXN4jEF59kgnRW6c0oxJr3GRdu4nfk79c1o=;
- b=Ek/F07zR9h5dyZ0kADMV7YPv8GkGYwYNU0vn3vQCOSMVG15D36RuEhZP5t83eyRqzJtND0U8cJZuG7z8YthxwwiRJB8UJ99EhTLE/7SaotNN3xwLL8FB6JD+VVnZw5n0hffcN1Jrg/CeIiDHx71Uv62tJQiarqLE+xHaiIIq8Wo9BxS6qYbCImqjko5njuyLmZTqqKfpkXVXTjh1Sac6/8n27gO3b9+7OrwSmlzYXFIc8DfGdpwwSxS7oW6O95k2kK7M1mNqtZgdtX+h8b+ei8ost64UReofs4dKyRi9cCXaqXJQwlAfmtpeGGxkNyGF0akhhG4qTfb8zCOmL+kVhA==
-Received: from MW4PR04CA0115.namprd04.prod.outlook.com (2603:10b6:303:83::30)
- by CY4PR12MB1511.namprd12.prod.outlook.com (2603:10b6:910:4::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.19; Tue, 26 Apr
- 2022 16:21:04 +0000
-Received: from CO1NAM11FT027.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:83:cafe::84) by MW4PR04CA0115.outlook.office365.com
- (2603:10b6:303:83::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15 via Frontend
- Transport; Tue, 26 Apr 2022 16:21:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- CO1NAM11FT027.mail.protection.outlook.com (10.13.174.224) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5186.14 via Frontend Transport; Tue, 26 Apr 2022 16:21:04 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL109.nvidia.com
- (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Tue, 26 Apr
- 2022 16:21:03 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 26 Apr
- 2022 09:21:02 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
- Transport; Tue, 26 Apr 2022 09:21:02 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.17 000/146] 5.17.5-rc1 review
-In-Reply-To: <20220426081750.051179617@linuxfoundation.org>
-References: <20220426081750.051179617@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Tue, 26 Apr 2022 12:55:56 -0400
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AFFA427CD
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Apr 2022 09:52:17 -0700 (PDT)
+Received: by mail-qk1-x72d.google.com with SMTP id z126so1973601qkb.2
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Apr 2022 09:52:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kqUR0c7kIfOD/vD/YKkVpkdvcyQWCmE0JRAtCDl4Ovs=;
+        b=C8hwhh7uEC6m2zOD/nAcUGPqgF3WeHql9lkeJRc6BmxkPieL3Kyc8v4RNJ/vt+iUpN
+         +IgZPwvK7gwiayFEj2jURS6zF080FYWzVTPXDRsSl5OIIhMuckxYGoG2j6euIscZYCye
+         KXkxUy1MgIh++h0q0cQAtPkg4BT/7yNYt4S98=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kqUR0c7kIfOD/vD/YKkVpkdvcyQWCmE0JRAtCDl4Ovs=;
+        b=pCeyL6ImEf2pIioke7fvCven45o3lzXuYiGNpBLy4+Gne4k3jF/5uQMs22I8DfUIWx
+         sxJeWp338843xVEOELL029XLq2JUy8rdpSFXtNkch0QoHKD2t+3U7oICkrCtocnhukpK
+         5tP51w6KNZvUqLTa9FbD3OshW+5qekSVy/MdKKKkAPBoKzz2n1MuHx2bHDW+fEp5Mg3w
+         V/d0dLbpZ8VaLMt+gneV0bgD0y4xCJp2qo4j2+KVaGGSsXXpwMKUXNAZLw3C+hktdbVY
+         DLOTzDUqb9I5ql50D9pc9rdMGzTLgYK4GPehK+C9ZHZ0gFOj/tLyzmqDE/dOtn8b6VW2
+         rt+g==
+X-Gm-Message-State: AOAM533w/BsyzETd9IoQ8CHqn7vDHXfs4fM3ryAmlBmwZb+8BEfv/3ti
+        AGD4krcPdYUbuJdKF3eKKefv6nPBxkNYOnf0jiH2mw==
+X-Google-Smtp-Source: ABdhPJx1o2mJSh4zS7CrbcgNcsvrnRgihUn9uVOHoVGxS3Rk8p6EoavtaO4OBtVkqYcrSA6ToxZ+4CDS2ZXUCHDL0N4=
+X-Received: by 2002:a37:b4d:0:b0:69f:7742:9778 with SMTP id
+ 74-20020a370b4d000000b0069f77429778mr2486350qkl.109.1650991936058; Tue, 26
+ Apr 2022 09:52:16 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <4e9edf61-f780-46b9-b91a-813701fb2483@rnnvmail201.nvidia.com>
-Date:   Tue, 26 Apr 2022 09:21:02 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a4b4c458-edd6-4809-da2f-08da27a0c2bc
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1511:EE_
-X-Microsoft-Antispam-PRVS: <CY4PR12MB1511AA039840734722158E54D9FB9@CY4PR12MB1511.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: EyAPMdKPZwYC0u+tMOEPc3DL5WGl++2u0roiou/z5jKabH4rRe5myGPO55fSzRGmfoO86qTUjbDMSL55+P2wZEaRSGB5Nx/GfL/VTHSDbO0p+dCkqlu93kzvBjn2A0VmItfe9li903vJ15TEnqIkJI/Myg+W0pYFllr4ifASmJ4LjCHs5e8pIwvUQaghw/2K7aY6VekcnCvkF5ZAUfTE0XTazktLPTG3U5U6qg0m4RdFPMk5A/u1CEMP5oDTpZtq4+QssWX25Fp8lEuSoH/zobdq2WEwXyyzh1ow5f68Aet2ElyJckp3pw214b+weu+JuFYJzo6G8rbzx+D5xIo+F9YVbRroP7RR4C4y9s3Rzl5jd9vhkddtKpU85mpiu24xv8F80oNI9K4G+g8uqWJ0cpsYddsZVe0Wt8of9VeSuRNPZClTxXTytjYkEEyg2kok+anSxaf9e0YB7dZ99zuCUWf6Q6uWz3Fuu22rBQmZvIejFvtjXAb++mqtY9Wbzx3iVxDSltTOGmRNxwI2oFFPqpQI+35c6NENTUsgzAgk+5s0NYZuhX+QPbq269CXC3HHhBqlG8oofShXz58qXNzTMyM07FOCS3oOROe0g42iNYcCwPVBmNwXCAoWWSFct1tViC3CIUf7guRqy9VCsV+7ZQXR2mdJEYv62EX7/aKjMmPrpvpLqL+wmDBNS6MbwmgE0O1AyUQduruEzoo41LykIflwnWae5u0M3ARHTF7uUNRXsktmFHmNGuaWBKswxi/kTqU0alRhKitgl81aSZdZ30GrSD+2XYaKMpZ0pGGx/r4=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(356005)(316002)(7416002)(31696002)(8936002)(186003)(86362001)(426003)(336012)(47076005)(81166007)(54906003)(5660300002)(966005)(6916009)(40460700003)(2906002)(508600001)(82310400005)(8676002)(26005)(36860700001)(31686004)(4326008)(70586007)(70206006)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2022 16:21:04.0659
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4b4c458-edd6-4809-da2f-08da27a0c2bc
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT027.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1511
+References: <20220419142859.380566-1-krzysztof.kozlowski@linaro.org> <20220419142859.380566-6-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220419142859.380566-6-krzysztof.kozlowski@linaro.org>
+From:   Markus Mayer <mmayer@broadcom.com>
+Date:   Tue, 26 Apr 2022 09:52:05 -0700
+Message-ID: <CAGt4E5tyGQStKT3S=tUg8CLchzS3S3g8Byh2Kap9oids=jF-UQ@mail.gmail.com>
+Subject: Re: [PATCH 6/7] memory: brcmstb_dpfe: simplify platform_get_resource_byname()
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 26 Apr 2022 10:19:55 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.17.5 release.
-> There are 146 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 28 Apr 2022 08:17:22 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.17.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.17.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Tue, 19 Apr 2022 at 07:29, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Use devm_platform_ioremap_resource_byname() instead of
+> platform_get_resource_byname() and devm_ioremap_resource().
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-All tests passing for Tegra ...
+Thanks for the change.
 
-Test results for stable-v5.17:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+Acked-by: Markus Mayer <mmayer@broadcom.com>
 
-Linux version:	5.17.5-rc1-g97b613308515
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Regards,
+-Markus
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+> ---
+>  drivers/memory/brcmstb_dpfe.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
+> index 14412002775d..76c82e9c8fce 100644
+> --- a/drivers/memory/brcmstb_dpfe.c
+> +++ b/drivers/memory/brcmstb_dpfe.c
+> @@ -857,7 +857,6 @@ static int brcmstb_dpfe_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+>         struct brcmstb_dpfe_priv *priv;
+> -       struct resource *res;
+>         int ret;
+>
+>         priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> @@ -869,22 +868,19 @@ static int brcmstb_dpfe_probe(struct platform_device *pdev)
+>         mutex_init(&priv->lock);
+>         platform_set_drvdata(pdev, priv);
+>
+> -       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-cpu");
+> -       priv->regs = devm_ioremap_resource(dev, res);
+> +       priv->regs = devm_platform_ioremap_resource_byname(pdev, "dpfe-cpu");
+>         if (IS_ERR(priv->regs)) {
+>                 dev_err(dev, "couldn't map DCPU registers\n");
+>                 return -ENODEV;
+>         }
+>
+> -       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-dmem");
+> -       priv->dmem = devm_ioremap_resource(dev, res);
+> +       priv->dmem = devm_platform_ioremap_resource_byname(pdev, "dpfe-dmem");
+>         if (IS_ERR(priv->dmem)) {
+>                 dev_err(dev, "Couldn't map DCPU data memory\n");
+>                 return -ENOENT;
+>         }
+>
+> -       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dpfe-imem");
+> -       priv->imem = devm_ioremap_resource(dev, res);
+> +       priv->imem = devm_platform_ioremap_resource_byname(pdev, "dpfe-imem");
+>         if (IS_ERR(priv->imem)) {
+>                 dev_err(dev, "Couldn't map DCPU instruction memory\n");
+>                 return -ENOENT;
+> --
+> 2.32.0
+>
