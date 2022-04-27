@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 895FBC35295
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Apr 2022 23:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7657C3527C
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Apr 2022 23:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241877AbiD0XFE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Apr 2022 19:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35456 "EHLO
+        id S241969AbiD0XFH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Apr 2022 19:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240319AbiD0XEH (ORCPT
+        with ESMTP id S241328AbiD0XEo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Apr 2022 19:04:07 -0400
+        Wed, 27 Apr 2022 19:04:44 -0400
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8AC692D24;
-        Wed, 27 Apr 2022 15:57:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C099B53C2;
+        Wed, 27 Apr 2022 15:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
         s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=Vlo9T2/mvIa7VmsgTZAplfpKcY639xSpi9Lsc7QD2sA=; b=ZiYAT8sJyiBNaHzrk2673FL4+8
-        1oiyWalKP6LGmKEc9hZJWoXC6cS5nMMrcCw5Iicmmfaanay2XW+Ea9CLz93XJRZPptEPdWhd8bk0b
-        rKw9muPDbsgcmhx+6dtX/C/iDyONNGYxGodf7FR5gZ6gaCx9CBSOMyg/WgkwloH6LwMYOPDHwMc9i
-        DlZzPF1Rmfq/gUUioCECpXAnYQMmNjWP7xmmSjqLdHZxdMlvMlgrtO3h+d5FTnJJbisLeLao1OJx/
-        z7mwY9pmIo/3ja9SO2+rtPXIxKaESObUyZjm7eg6MS41mJJ7ZAlwRmPdpw93iK7tmvwyFHIvecdrE
-        ZFlVRrJg==;
+        bh=1b6nDa/yJFcG5pUH/mG+iUzFXWwemhBkCT22/YaOiO0=; b=IjS2asgso9SNyNWZZrj9YMv/6F
+        3eZOrVvzgLxKKIoWELAWIZ9Y/f7MmYlHtb0XsZyDOudfDUF9WfHu+qH6xY14Mwj7EyQY5AwmQNe6v
+        QY9uiwZxhZ2WIvN3bSO5hXV0+d77+K43N8ixpf942Orfv5mroywKkDY+GQFZJrgwqxcot4GD1q5St
+        xIFh8Z0iJkBMhioashEH7Fwugdlgq5hENhZTnH6U/1cjnuHRdJ6m3FerTWr+GWqdP086mvnqcs/YS
+        tVMBMJxDz0U3rAU8T7vP+Z25rbMa7jiyVQO7/s07AaONn+Kin25YyTFL/3tub+/wmWut7UZN8xzJW
+        BauGVfjA==;
 Received: from [179.113.53.197] (helo=localhost)
         by fanzine2.igalia.com with esmtpsa 
         (Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-        id 1njqb3-0002Tm-Pi; Thu, 28 Apr 2022 00:57:22 +0200
+        id 1njqcA-0002Wy-Ov; Thu, 28 Apr 2022 00:58:31 +0200
 From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
 To:     akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
         kexec@lists.infradead.org
@@ -58,17 +58,14 @@ Cc:     linux-kernel@vger.kernel.org,
         paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
         senozhatsky@chromium.org, stern@rowland.harvard.edu,
         tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org, Andrea Parri <parri.andrea@gmail.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Stephen Brennan <stephen.s.brennan@oracle.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>
-Subject: [PATCH 26/30] Drivers: hv: Do not force all panic notifiers to execute before kdump
-Date:   Wed, 27 Apr 2022 19:49:20 -0300
-Message-Id: <20220427224924.592546-27-gpiccoli@igalia.com>
+        will@kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>
+Subject: [PATCH 29/30] powerpc: ps3, pseries: Avoid duplicate call to kmsg_dump() on panic
+Date:   Wed, 27 Apr 2022 19:49:23 -0300
+Message-Id: <20220427224924.592546-30-gpiccoli@igalia.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220427224924.592546-1-gpiccoli@igalia.com>
 References: <20220427224924.592546-1-gpiccoli@igalia.com>
@@ -78,75 +75,120 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Since commit a11589563e96 ("x86/Hyper-V: Report crash register
-data or kmsg before running crash kernel") Hyper-V forcibly sets
-the kernel parameter "crash_kexec_post_notifiers"; with that, it
-did enforce the execution of *all* panic notifiers before kdump.
-The main reason behind that is that Hyper-V has an hypervisor
-notification mechanism that has the ability of warning the
-hypervisor when the guest panics.
+Currently both pseries and ps3 are platforms that define special
+panic notifiers that run as callbacks inside powerpc generic panic
+notifier. In both cases kmsg_dump() is called, and the reason seems
+to be that both of these callbacks aims to effectively stop the
+machine, so nothing would execute after that - hence, both force
+a series of console flushing related operations, after calling
+the kmsg dumpers.
 
-Happens that after the panic notifiers refactor, we now have 3 lists
-and a level mechanism that defines the ordering of the notifiers
-execution with regards to kdump. And for Hyper-V, the specific
-notifier to inform the hypervisor about a panic lies in the first
-list, which *by default* is set to execute before kdump. Hence,
-this patch removes the hardcoded setting, effectively reverting
-the aforementioned commit.
+Happens that recently the panic path was refactored, and now
+kmsg_dump() is *certainly* called before the pre_reboot panic
+notifiers, category in which both pseries/ps3 callbacks belong.
+In other words: kmsg_dump() will execute twice in both platforms,
+on panic path.
 
-One of the problems with the forced approach was greatly exposed by
-commit d57d6fe5bf34 ("drivers: hv: log when enabling crash_kexec_post_notifiers")
-which ended-up confusing the user that didn't expect the notifiers
-to execute before kdump, since it's a user setting and wasn't
-enabled by such user. With the patch hereby proposed, that kind
-of issue doesn't happen anymore, the panic notifiers level is
-well-documented and users can expect a predictable behavior.
+This patch prevents that by disabling the kmsg_dump() for both
+platform's notifiers. But worth to notice that PowerNV still
+has a legit use for executing kmsg_dump() in its unrecoverable
+error path, so we rely in parameter passing to differentiate
+both cases. Also, since the pre_reboot notifiers still run
+earlier than console flushing routines, we kept that for
+both pseries and ps3 platforms, only skipping kmsg_dump().
 
-Fixes: a11589563e96 ("x86/Hyper-V: Report crash register data or kmsg before running crash kernel")
-Fixes: d57d6fe5bf34 ("drivers: hv: log when enabling crash_kexec_post_notifiers"
-Cc: Andrea Parri (Microsoft) <parri.andrea@gmail.com>
-Cc: Dexuan Cui <decui@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Michael Kelley <mikelley@microsoft.com>
-Cc: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Tianyu Lan <Tianyu.Lan@microsoft.com>
-Cc: Wei Liu <wei.liu@kernel.org>
-Tested-by: Fabio A M Martins <fabiomirmar@gmail.com>
+Fixes: 35adacd6fc48 ("powerpc/pseries, ps3: panic flush kernel messages before halting system")
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Hari Bathini <hbathini@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Paul Mackerras <paulus@samba.org>
 Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 ---
 
-Special thanks to Michael Kelley for the good information about the Hyper-V
-panic path in email threads some months ago, and to Fabio for the testing
-performed.
+We'd like to thanks specially the MiniCloud infrastructure [0] maintainers,
+that allow us to test PowerPC code in a very complete, functional and FREE
+environment.
 
- drivers/hv/hv_common.c | 12 ------------
- 1 file changed, 12 deletions(-)
+[0] https://openpower.ic.unicamp.br/minicloud
 
-diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-index ae68298c0dca..af59793de523 100644
---- a/drivers/hv/hv_common.c
-+++ b/drivers/hv/hv_common.c
-@@ -73,18 +73,6 @@ int __init hv_common_init(void)
- {
- 	int i;
+ arch/powerpc/include/asm/bug.h         | 2 +-
+ arch/powerpc/kernel/traps.c            | 6 ++++--
+ arch/powerpc/platforms/powernv/opal.c  | 2 +-
+ arch/powerpc/platforms/ps3/setup.c     | 2 +-
+ arch/powerpc/platforms/pseries/setup.c | 2 +-
+ 5 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/bug.h b/arch/powerpc/include/asm/bug.h
+index ecbae1832de3..49e5f6f86869 100644
+--- a/arch/powerpc/include/asm/bug.h
++++ b/arch/powerpc/include/asm/bug.h
+@@ -166,7 +166,7 @@ extern void die(const char *, struct pt_regs *, long);
+ void die_mce(const char *str, struct pt_regs *regs, long err);
+ extern bool die_will_crash(void);
+ extern void panic_flush_kmsg_start(void);
+-extern void panic_flush_kmsg_end(void);
++extern void panic_flush_kmsg_end(bool dump);
+ #endif /* !__ASSEMBLY__ */
  
--	/*
--	 * Hyper-V expects to get crash register data or kmsg when
--	 * crash enlightment is available and system crashes. Set
--	 * crash_kexec_post_notifiers to be true to make sure that
--	 * calling crash enlightment interface before running kdump
--	 * kernel.
--	 */
--	if (ms_hyperv.misc_features & HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE) {
--		crash_kexec_post_notifiers = true;
--		pr_info("Hyper-V: enabling crash_kexec_post_notifiers\n");
--	}
--
+ #endif /* __KERNEL__ */
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index a08bb7cefdc5..837a5ed98d62 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -169,9 +169,11 @@ extern void panic_flush_kmsg_start(void)
+ 	bust_spinlocks(1);
+ }
+ 
+-extern void panic_flush_kmsg_end(void)
++extern void panic_flush_kmsg_end(bool dump)
+ {
+-	kmsg_dump(KMSG_DUMP_PANIC);
++	if (dump)
++		kmsg_dump(KMSG_DUMP_PANIC);
++
+ 	bust_spinlocks(0);
+ 	debug_locks_off();
+ 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
+index 55a8fbfdb5b2..d172ceedece2 100644
+--- a/arch/powerpc/platforms/powernv/opal.c
++++ b/arch/powerpc/platforms/powernv/opal.c
+@@ -641,7 +641,7 @@ void __noreturn pnv_platform_error_reboot(struct pt_regs *regs, const char *msg)
+ 		show_regs(regs);
+ 	smp_send_stop();
+ 
+-	panic_flush_kmsg_end();
++	panic_flush_kmsg_end(true);
+ 
  	/*
- 	 * Allocate the per-CPU state for the hypercall input arg.
- 	 * If this allocation fails, we will not be able to setup
+ 	 * Don't bother to shut things down because this will
+diff --git a/arch/powerpc/platforms/ps3/setup.c b/arch/powerpc/platforms/ps3/setup.c
+index 3de9145c20bc..7cb78e508fb3 100644
+--- a/arch/powerpc/platforms/ps3/setup.c
++++ b/arch/powerpc/platforms/ps3/setup.c
+@@ -102,7 +102,7 @@ static void ps3_panic(char *str)
+ 	printk("   System does not reboot automatically.\n");
+ 	printk("   Please press POWER button.\n");
+ 	printk("\n");
+-	panic_flush_kmsg_end();
++	panic_flush_kmsg_end(false);
+ 
+ 	while(1)
+ 		lv1_pause(1);
+diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
+index 955ff8aa1644..d6eea473eafd 100644
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -856,7 +856,7 @@ static void __init pSeries_setup_arch(void)
+ 
+ static void pseries_panic(char *str)
+ {
+-	panic_flush_kmsg_end();
++	panic_flush_kmsg_end(false);
+ 	rtas_os_term(str);
+ }
+ 
 -- 
 2.36.0
 
