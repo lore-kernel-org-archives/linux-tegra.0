@@ -2,93 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC41C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Apr 2022 07:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA0CC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Apr 2022 08:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244767AbiD1Hel (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Apr 2022 03:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58310 "EHLO
+        id S244662AbiD1IOz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Apr 2022 04:14:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231146AbiD1Hei (ORCPT
+        with ESMTP id S244874AbiD1IOg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Apr 2022 03:34:38 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35481737B1;
-        Thu, 28 Apr 2022 00:31:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A83B2CE290F;
-        Thu, 28 Apr 2022 07:31:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390FAC385A9;
-        Thu, 28 Apr 2022 07:31:17 +0000 (UTC)
-Message-ID: <e46146ad-7aa8-8b39-536b-0525de9140cc@xs4all.nl>
-Date:   Thu, 28 Apr 2022 09:31:15 +0200
+        Thu, 28 Apr 2022 04:14:36 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 364F776282;
+        Thu, 28 Apr 2022 01:11:21 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C4C213D5;
+        Thu, 28 Apr 2022 01:11:21 -0700 (PDT)
+Received: from [10.57.12.231] (unknown [10.57.12.231])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E93F3F774;
+        Thu, 28 Apr 2022 01:11:11 -0700 (PDT)
+Message-ID: <3cafe4fd-8a0b-2633-44a3-2995abd6c38c@arm.com>
+Date:   Thu, 28 Apr 2022 09:11:10 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 34/49] media: tegra-video: replace bitmap_weight with
- bitmap_weight_le
-Content-Language: en-US
-To:     Yury Norov <yury.norov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Laight <David.Laight@aculab.com>,
-        Joe Perches <joe@perches.com>, Dennis Zhou <dennis@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Alexey Klimov <aklimov@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-staging@lists.linux.dev
-References: <20220210224933.379149-1-yury.norov@gmail.com>
- <20220210224933.379149-35-yury.norov@gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20220210224933.379149-35-yury.norov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH 09/30] coresight: cpu-debug: Replace mutex with
+ mutex_trylock on panic notifier
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
+        kexec@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org, Leo Yan <leo.yan@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-10-gpiccoli@igalia.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20220427224924.592546-10-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/02/2022 23:49, Yury Norov wrote:
-> tegra_channel_enum_format() calls bitmap_weight() to compare the weight
-> of bitmap with a given number. We can do it more efficiently with
-> bitmap_weight_le() because conditional bitmap_weight may stop traversing
-> the bitmap earlier, as soon as condition is (or can't be) met.
+Hi Guilherme,
+
+On 27/04/2022 23:49, Guilherme G. Piccoli wrote:
+> The panic notifier infrastructure executes registered callbacks when
+> a panic event happens - such callbacks are executed in atomic context,
+> with interrupts and preemption disabled in the running CPU and all other
+> CPUs disabled. That said, mutexes in such context are not a good idea.
 > 
-> Signed-off-by: Yury Norov <yury.norov@gmail.com>
-
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-
-Regards,
-
-	Hans
-
-> ---
->  drivers/staging/media/tegra-video/vi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch replaces a regular mutex with a mutex_trylock safer approach;
+> given the nature of the mutex used in the driver, it should be pretty
+> uncommon being unable to acquire such mutex in the panic path, hence
+> no functional change should be observed (and if it is, that would be
+> likely a deadlock with the regular mutex).
 > 
-> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-> index d1f43f465c22..4e79a80e9307 100644
-> --- a/drivers/staging/media/tegra-video/vi.c
-> +++ b/drivers/staging/media/tegra-video/vi.c
-> @@ -436,7 +436,7 @@ static int tegra_channel_enum_format(struct file *file, void *fh,
->  	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
->  		fmts_bitmap = chan->fmts_bitmap;
->  
-> -	if (f->index >= bitmap_weight(fmts_bitmap, MAX_FORMAT_NUM))
-> +	if (bitmap_weight_le(fmts_bitmap, MAX_FORMAT_NUM, f->index))
->  		return -EINVAL;
->  
->  	for (i = 0; i < f->index + 1; i++, index++)
+> Fixes: 2227b7c74634 ("coresight: add support for CPU debug module")
+> Cc: Leo Yan <leo.yan@linaro.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Mike Leach <mike.leach@linaro.org>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 
+How would you like to proceed with queuing this ? I am happy
+either way. In case you plan to push this as part of this
+series (I don't see any potential conflicts) :
+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
