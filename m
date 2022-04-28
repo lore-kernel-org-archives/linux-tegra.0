@@ -2,227 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F176C4321E
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Apr 2022 01:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC41C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Apr 2022 07:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240021AbiD1BEj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Apr 2022 21:04:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60562 "EHLO
+        id S244767AbiD1Hel (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Apr 2022 03:34:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbiD1BEd (ORCPT
+        with ESMTP id S231146AbiD1Hei (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Apr 2022 21:04:33 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3747A13DC0;
-        Wed, 27 Apr 2022 18:01:18 -0700 (PDT)
-Received: from canpemm500006.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Kpcgf1MZfzGpMl;
-        Thu, 28 Apr 2022 08:58:38 +0800 (CST)
-Received: from [10.67.110.83] (10.67.110.83) by canpemm500006.china.huawei.com
- (7.192.105.130) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 28 Apr
- 2022 09:01:14 +0800
-Subject: Re: [PATCH 18/30] notifier: Show function names on notifier routines
- if DEBUG_NOTIFIERS is set
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        <akpm@linux-foundation.org>, <bhe@redhat.com>, <pmladek@suse.com>,
-        <kexec@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        <coresight@lists.linaro.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-alpha@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-edac@vger.kernel.org>, <linux-hyperv@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-        <linux-parisc@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-s390@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-um@lists.infradead.org>,
-        <linux-xtensa@linux-xtensa.org>, <netdev@vger.kernel.org>,
-        <openipmi-developer@lists.sourceforge.net>, <rcu@vger.kernel.org>,
-        <sparclinux@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-        <x86@kernel.org>, <kernel-dev@igalia.com>, <kernel@gpiccoli.net>,
-        <halves@canonical.com>, <fabiomirmar@gmail.com>,
-        <alejandro.j.jimenez@oracle.com>,
-        <andriy.shevchenko@linux.intel.com>, <arnd@arndb.de>,
-        <bp@alien8.de>, <corbet@lwn.net>, <d.hatayama@jp.fujitsu.com>,
-        <dave.hansen@linux.intel.com>, <dyoung@redhat.com>,
-        <feng.tang@intel.com>, <gregkh@linuxfoundation.org>,
-        <mikelley@microsoft.com>, <hidehiro.kawai.ez@hitachi.com>,
-        <jgross@suse.com>, <john.ogness@linutronix.de>,
-        <keescook@chromium.org>, <luto@kernel.org>, <mhiramat@kernel.org>,
-        <mingo@redhat.com>, <paulmck@kernel.org>, <peterz@infradead.org>,
-        <rostedt@goodmis.org>, <senozhatsky@chromium.org>,
-        <stern@rowland.harvard.edu>, <tglx@linutronix.de>,
-        <vgoyal@redhat.com>, <vkuznets@redhat.com>, <will@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Valentin Schneider <valentin.schneider@arm.com>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-19-gpiccoli@igalia.com>
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-Message-ID: <9f44aae6-ec00-7ede-ec19-6e67ceb74510@huawei.com>
-Date:   Thu, 28 Apr 2022 09:01:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.0.1
+        Thu, 28 Apr 2022 03:34:38 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35481737B1;
+        Thu, 28 Apr 2022 00:31:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A83B2CE290F;
+        Thu, 28 Apr 2022 07:31:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390FAC385A9;
+        Thu, 28 Apr 2022 07:31:17 +0000 (UTC)
+Message-ID: <e46146ad-7aa8-8b39-536b-0525de9140cc@xs4all.nl>
+Date:   Thu, 28 Apr 2022 09:31:15 +0200
 MIME-Version: 1.0
-In-Reply-To: <20220427224924.592546-19-gpiccoli@igalia.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 34/49] media: tegra-video: replace bitmap_weight with
+ bitmap_weight_le
+Content-Language: en-US
+To:     Yury Norov <yury.norov@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Laight <David.Laight@aculab.com>,
+        Joe Perches <joe@perches.com>, Dennis Zhou <dennis@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Alexey Klimov <aklimov@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev
+References: <20220210224933.379149-1-yury.norov@gmail.com>
+ <20220210224933.379149-35-yury.norov@gmail.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20220210224933.379149-35-yury.norov@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.83]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- canpemm500006.china.huawei.com (7.192.105.130)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022/4/28 6:49, Guilherme G. Piccoli wrote:
-> Currently we have a debug infrastructure in the notifiers file, but
-> it's very simple/limited. This patch extends it by:
+On 10/02/2022 23:49, Yury Norov wrote:
+> tegra_channel_enum_format() calls bitmap_weight() to compare the weight
+> of bitmap with a given number. We can do it more efficiently with
+> bitmap_weight_le() because conditional bitmap_weight may stop traversing
+> the bitmap earlier, as soon as condition is (or can't be) met.
 > 
-> (a) Showing all registered/unregistered notifiers' callback names;
-> 
-> (b) Adding a dynamic debug tuning to allow showing called notifiers'
-> function names. Notice that this should be guarded as a tunable since
-> it can flood the kernel log buffer.
-> 
-> Cc: Arjan van de Ven <arjan@linux.intel.com>
-> Cc: Cong Wang <xiyou.wangcong@gmail.com>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: Valentin Schneider <valentin.schneider@arm.com>
-> Cc: Xiaoming Ni <nixiaoming@huawei.com>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> Signed-off-by: Yury Norov <yury.norov@gmail.com>
+
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+
+Regards,
+
+	Hans
+
 > ---
+>  drivers/staging/media/tegra-video/vi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> We have some design decisions that worth discussing here:
-> 
-> (a) First of call, using C99 helps a lot to write clear and concise code, but
-> due to commit 4d94f910e79a ("Kbuild: use -Wdeclaration-after-statement") we
-> have a warning if mixing variable declarations with code. For this patch though,
-> doing that makes the code way clear, so decision was to add the debug code
-> inside brackets whenever this warning pops up. We can change that, but that'll
-> cause more ifdefs in the same function.
-> 
-> (b) In the symbol lookup helper function, we modify the parameter passed but
-> even more, we return it as well! This is unusual and seems unnecessary, but was
-> the strategy taken to allow embedding such function in the pr_debug() call.
-> 
-> Not doing that would likely requiring 3 symbol_name variables to avoid
-> concurrency (registering notifier A while calling notifier B) - we rely in
-> local variables as a serialization mechanism.
-> 
-> We're open for suggestions in case this design is not appropriate;
-> thanks in advance!
-> 
->   kernel/notifier.c | 48 +++++++++++++++++++++++++++++++++++++++++++++--
->   1 file changed, 46 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/notifier.c b/kernel/notifier.c
-> index ba005ebf4730..21032ebcde57 100644
-> --- a/kernel/notifier.c
-> +++ b/kernel/notifier.c
-> @@ -7,6 +7,22 @@
->   #include <linux/vmalloc.h>
->   #include <linux/reboot.h>
->   
-> +#ifdef CONFIG_DEBUG_NOTIFIERS
-> +#include <linux/kallsyms.h>
-> +
-> +/*
-> + *	Helper to get symbol names in case DEBUG_NOTIFIERS is set.
-> + *	Return the modified parameter is a strategy used to achieve
-> + *	the pr_debug() functionality - with this, function is only
-> + *	executed if the dynamic debug tuning is effectively set.
-> + */
-> +static inline char *notifier_name(struct notifier_block *nb, char *sym_name)
-> +{
-> +	lookup_symbol_name((unsigned long)(nb->notifier_call), sym_name);
-> +	return sym_name;
-> +}
-> +#endif
-> +
->   /*
->    *	Notifier list for kernel code which wants to be called
->    *	at shutdown. This is used to stop any idling DMA operations
-> @@ -34,20 +50,41 @@ static int notifier_chain_register(struct notifier_block **nl,
->   	}
->   	n->next = *nl;
->   	rcu_assign_pointer(*nl, n);
-> +
-> +#ifdef CONFIG_DEBUG_NOTIFIERS
-> +	{
-> +		char sym_name[KSYM_NAME_LEN];
-> +
-> +		pr_info("notifiers: registered %s()\n",
-> +			notifier_name(n, sym_name));
-> +	}
+> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+> index d1f43f465c22..4e79a80e9307 100644
+> --- a/drivers/staging/media/tegra-video/vi.c
+> +++ b/drivers/staging/media/tegra-video/vi.c
+> @@ -436,7 +436,7 @@ static int tegra_channel_enum_format(struct file *file, void *fh,
+>  	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>  		fmts_bitmap = chan->fmts_bitmap;
+>  
+> -	if (f->index >= bitmap_weight(fmts_bitmap, MAX_FORMAT_NUM))
+> +	if (bitmap_weight_le(fmts_bitmap, MAX_FORMAT_NUM, f->index))
+>  		return -EINVAL;
+>  
+>  	for (i = 0; i < f->index + 1; i++, index++)
 
-Duplicate Code.
-
-Is it better to use __func__ and %pS?
-
-pr_info("%s: %pS\n", __func__, n->notifier_call);
-
-
-> +#endif
->   	return 0;
->   }
->   
->   static int notifier_chain_unregister(struct notifier_block **nl,
->   		struct notifier_block *n)
->   {
-> +	int ret = -ENOENT;
-> +
->   	while ((*nl) != NULL) {
->   		if ((*nl) == n) {
->   			rcu_assign_pointer(*nl, n->next);
-> -			return 0;
-> +			ret = 0;
-> +			break;
->   		}
->   		nl = &((*nl)->next);
->   	}
-> -	return -ENOENT;
-> +
-> +#ifdef CONFIG_DEBUG_NOTIFIERS
-> +	if (!ret) {
-> +		char sym_name[KSYM_NAME_LEN];
-> +
-> +		pr_info("notifiers: unregistered %s()\n",
-> +			notifier_name(n, sym_name));
-> +	}
-Duplicate Code.
-
-Is it better to use __func__ and %pS?
-
-pr_info("%s: %pS\n", __func__, n->notifier_call);
-> +#endif
-> +	return ret;
->   }
->   
->   /**
-> @@ -80,6 +117,13 @@ static int notifier_call_chain(struct notifier_block **nl,
->   			nb = next_nb;
->   			continue;
->   		}
-> +
-Is the "#ifdef" missing here?
-> +		{
-> +			char sym_name[KSYM_NAME_LEN];
-> +
-> +			pr_debug("notifiers: calling %s()\n",
-> +				 notifier_name(nb, sym_name));
-Duplicate Code.
-
-Is it better to use __func__ and %pS?
-
-pr_info("%s: %pS\n", __func__, n->notifier_call);
-> +		}
->   #endif
->   		ret = nb->notifier_call(nb, val, v);
->   
-> 
-
-Thanks
-Xiaoming Ni
