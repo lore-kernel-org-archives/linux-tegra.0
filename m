@@ -2,188 +2,176 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA7FC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Apr 2022 14:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D30C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Apr 2022 15:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348215AbiD1OQ6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Apr 2022 10:16:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39874 "EHLO
+        id S1348580AbiD1P7c (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Apr 2022 11:59:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242833AbiD1OQm (ORCPT
+        with ESMTP id S232991AbiD1P7b (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Apr 2022 10:16:42 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAA50B7148
-        for <linux-tegra@vger.kernel.org>; Thu, 28 Apr 2022 07:13:24 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id y16so2050259ilc.7
-        for <linux-tegra@vger.kernel.org>; Thu, 28 Apr 2022 07:13:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=bCT2JlxzOcDaE6ycYVbjB0p6hzfQxFS5OmPVl0XHT4A=;
-        b=ByPVeKDwQRcuSB47O0Zefv/dFt5S0aRWMNs2oJF7maE4wXnsormuysnBE3KE+1D9p9
-         PB3FB3BjkOR/97x+74MBqA5RA9WqHK53ukE6KnmiwNvHyxwXKz6iLxoZSM4bciItAhHz
-         gddQYhhdQpsolBOdwDYZPGvNMFMyqb4ql/QD0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=bCT2JlxzOcDaE6ycYVbjB0p6hzfQxFS5OmPVl0XHT4A=;
-        b=gACThKW+G6H0E2IPjaSrkJki84490k+slmsp1iiPANsSnEVugCT0DW7dhHKeJuLYhE
-         elPoDFKeMutG+kwAtUTTEuvrVKqYJp8tWCcVuKn1cvBCNZPQp7r9Mwl38IhXDeJNAxf1
-         FnlcOtmv9YAMndeogNsy4pb+2kFMjQrA8xZ1srX45pTDw4cksMQ20Ysl+IWt6Pmh2DHz
-         rnMbL5PGOZSeTMk/PUIaLQqMShNN3Qc+OvqksN27aKYfndXtNFt4BBwmlKhbD7jaYYnd
-         F7zGRBp4sn5i9+mlnVNHaBD8rVekQ9iwz5VsVuzqx5fI+eKrSXg+hasVejDjSJTxrbDi
-         LQ5w==
-X-Gm-Message-State: AOAM530AinAcvRRTN20GUfLMcX2dpzrqfCUlyl9Gc0MJS2hrIBp8MKAp
-        COZb5sBXXGSCHhw58BV1Kq7vJQ==
-X-Google-Smtp-Source: ABdhPJw448TngRonNTsTASYhGkruvfda4Cqi/x7py0vOs1UkbxiFSjNKZ9c5oG5pi/4oeINikW5dJA==
-X-Received: by 2002:a92:cac3:0:b0:2c9:a265:4cab with SMTP id m3-20020a92cac3000000b002c9a2654cabmr13504351ilq.241.1651155203895;
-        Thu, 28 Apr 2022 07:13:23 -0700 (PDT)
-Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id y21-20020a6bc415000000b00648da092c8esm4431ioa.14.2022.04.28.07.13.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Apr 2022 07:13:23 -0700 (PDT)
-Message-ID: <4cae140c-982a-6b9f-661c-4e0fdfa3297b@ieee.org>
-Date:   Thu, 28 Apr 2022 09:13:19 -0500
+        Thu, 28 Apr 2022 11:59:31 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B3DE33893;
+        Thu, 28 Apr 2022 08:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=NAVO6GO4V+BR9ZQy4hKCv3Ayu8fcDUtPDQrlXbpnU30=; b=nVX3OfNi4kwA5p+zj/iITV1MvQ
+        n601hRkrAGw4XDX7cNUhiQdh6gSRIRbvMweM3MBDkXEI1AL3nOOQvYHahQNp6cymX4gK/UFmSGEp7
+        SGc9K7YDDG+qzW2a8kq/1zxQ+ns6W8x4WKEHIX8yVSIpTqihFUsDFTFJwl29teCJ1OgpW4egxMTM9
+        BH8nlwR/75GNzqXESRFrqDVujjytOt7ohbihDQx9Biawd0gGLTi7bh2YWTvhU7Y8ouD81XSAfAosh
+        uZhEwtzmVGOszJ8HlyDrWj6xTxqnuiasjIU2gETISv2yBJnyN0WDVIjdCe6BJSeXJZN7VGq1vdrhA
+        ovbt71Cg==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1nk6Ux-00015p-Vz; Thu, 28 Apr 2022 18:56:08 +0300
+Message-ID: <beacfd71-ebd0-7fde-187f-34b7a42a47de@kapsi.fi>
+Date:   Thu, 28 Apr 2022 18:56:07 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 21/30] panic: Introduce the panic pre-reboot notifier list
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v2 0/4] drm/nvdla: Add driver support for NVDLA
 Content-Language: en-US
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
-        kexec@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
-        dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org, Alex Elder <elder@kernel.org>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Chris Zankel <chris@zankel.net>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Corey Minyard <minyard@acm.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        James Morse <james.morse@arm.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
-        Richard Henderson <rth@twiddle.net>,
-        Richard Weinberger <richard@nod.at>,
-        Robert Richter <rric@kernel.org>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, Wei Liu <wei.liu@kernel.org>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-22-gpiccoli@igalia.com>
-From:   Alex Elder <elder@ieee.org>
-In-Reply-To: <20220427224924.592546-22-gpiccoli@igalia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Cai Huoqing <cai.huoqing@linux.dev>
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Jon Hunter <jonathanh@nvidia.com>
+References: <20220426060808.78225-1-cai.huoqing@linux.dev>
+ <YmqgailZKIuY7zTZ@orome>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <YmqgailZKIuY7zTZ@orome>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/27/22 5:49 PM, Guilherme G. Piccoli wrote:
-> This patch renames the panic_notifier_list to panic_pre_reboot_list;
-> the idea is that a subsequent patch will refactor the panic path
-> in order to better split the notifiers, running some of them very
-> early, some of them not so early [but still before kmsg_dump()] and
-> finally, the rest should execute late, after kdump. The latter ones
-> are now in the panic pre-reboot list - the name comes from the idea
-> that these notifiers execute before panic() attempts rebooting the
-> machine (if that option is set).
+On 4/28/22 17:10, Thierry Reding wrote:
+> On Tue, Apr 26, 2022 at 02:07:57PM +0800, Cai Huoqing wrote:
+>> The NVIDIA Deep Learning Accelerator (NVDLA) is an open source IP
+>> which is integrated into NVIDIA Jetson AGX Xavier,
+>> so add driver support for this accelerator."
 > 
-> We also took the opportunity to clean-up useless header inclusions,
-> improve some notifier block declarations (e.g. in ibmasm/heartbeat.c)
-> and more important, change some priorities - we hereby set 2 notifiers
-> to run late in the list [iss_panic_event() and the IPMI panic_event()]
-> due to the risks they offer (may not return, for example).
-> Proper documentation is going to be provided in a subsequent patch,
-> that effectively refactors the panic path.
+> Hi,
 > 
-> Cc: Alex Elder <elder@kernel.org>
-
-For "drivers/net/ipa/ipa_smp2p.c":
-
-Acked-by: Alex Elder <elder@kernel.org>
-
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: Chris Zankel <chris@zankel.net>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Corey Minyard <minyard@acm.org>
-> Cc: Dexuan Cui <decui@microsoft.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Haiyang Zhang <haiyangz@microsoft.com>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Helge Deller <deller@gmx.de>
-> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Johannes Berg <johannes@sipsolutions.net>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Matt Turner <mattst88@gmail.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Richard Henderson <rth@twiddle.net>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Robert Richter <rric@kernel.org>
-> Cc: Stefano Stabellini <sstabellini@kernel.org>
-> Cc: Stephen Hemminger <sthemmin@microsoft.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Wei Liu <wei.liu@kernel.org>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> ---
+> nice to see this work going on. For subsequent revisions, can you please
+> also Cc the Tegra mailing list (linux-tegra@vger.kernel.org) as well as
+> the Tegra platform maintainers (that's Jon Hunter and myself). This will
+> make sure that more people with an interest in this will see your work.
+> Not everyone follows dri-devel, linaro-mm-sig or linux-media.
 > 
+> Thanks,
+> Thierry
 
-. . .
+ From a quick glance it looks like this driver pokes DLA hardware 
+directly which is not the intended programming model on Tegra hardware 
+(there are Falcon microcontrollers that offload task scheduling and 
+synchronization from the CPU). The hardware is also behind the Host1x 
+bus so a simple platform device is not sufficient.
+
+Was this driver developed against some platform with OpenDLA hardware 
+(i.e. not Tegra)?
+
+If so, we'd need to verify if the hardware matches the hardware in 
+Tegra194. Also, this driver may not be ideal for Tegra platforms since 
+we would lack the hardware scheduling and synchronization facilities. It 
+is likely necessary to have separate drivers for OpenDLA and Tegra's DLA 
+integration.
+
+Thanks,
+Mikko
+
+> 
+>>
+>> v1->v2:
+>> *Rename nvdla_drm.[ch] to nvdla_drv.[ch] and rename nvdla_ioctl.h to nvdla_drm.h,
+>>   move it to uapi.
+>>   comments link: https://lore.kernel.org/lkml/20bac605-97e6-e5cd-c4e4-83a8121645d8@amd.com/
+>> *Remove the  onexistent filename  in Makefile
+>>   comments link: https://lore.kernel.org/lkml/202204201512.pp20MXT5-lkp@intel.com/
+>> *Sort file names alphabetically in Makefile.
+>> *Rearrange the error messages, and use drm_err/_dbg() instead of pr_err/_dbg().
+>> *Replace  "dla_" prefix with "nvdla_"
+>> *Check the iosys_map by iosys_map_is_null(), and check "ret" directly.
+>> *Using iosys_map_memcpy_to/_from() for iosys_map instead of memcpy()
+>> *Fix parameter error "dma_buf_vunmap(buf, ptr)", use "&map" instead of "ptr"
+>> *Use iosys_map instead of kvaddr and use "iosys_map_set_vaddr()" to initialize iosys_map
+>> *Using "vma->vm_pgoff -= drm_vma_node_start(&obj->vma_node)" to update vm_pgoff is cleaner
+>> *Remove the unused nvdla_drm_gem_mmap, register drm_gem_mmap to file_operations directly.
+>> *Use DEFINE_DRM_GEM_FOPS() to define nvdla_drm_fops.
+>> *Remove the unused nvdla_drm_gem_mmap_buf, register drm_gem_prime_mmap to drm_driver directly.
+>>   comments link: https://lore.kernel.org/lkml/7fa19996-5830-af3d-ab24-08c76e1d5604@suse.de/
+>> *Fix typo and some code style
+>> *Remove unused function nvdla_get_time_us()
+>>   comments link: https://lore.kernel.org/lkml/0fa9ab41-c18e-a569-e6fe-a0e9d965905e@stargateuniverse.net/
+>>
+>> Cai Huoqing (4):
+>>    MAINTAINERS: Add the driver info of the NVDLA
+>>    drm/nvdla: Add driver support for NVDLA
+>>    drm/nvdla: Add register head file of NVDLA
+>>    drm/nvdla/uapi: Add UAPI of NVDLA driver
+>>
+>>   MAINTAINERS                             |    7 +
+>>   drivers/gpu/drm/Kconfig                 |    2 +
+>>   drivers/gpu/drm/Makefile                |    1 +
+>>   drivers/gpu/drm/nvdla/Kconfig           |    8 +
+>>   drivers/gpu/drm/nvdla/Makefile          |   17 +
+>>   drivers/gpu/drm/nvdla/nvdla_bdma.c      |  198 +
+>>   drivers/gpu/drm/nvdla/nvdla_cache.c     |  202 +
+>>   drivers/gpu/drm/nvdla/nvdla_cdp.c       |  299 ++
+>>   drivers/gpu/drm/nvdla/nvdla_common.c    |  293 ++
+>>   drivers/gpu/drm/nvdla/nvdla_common.h    |  835 +++
+>>   drivers/gpu/drm/nvdla/nvdla_conv.c      |  684 +++
+>>   drivers/gpu/drm/nvdla/nvdla_drv.c       |  694 +++
+>>   drivers/gpu/drm/nvdla/nvdla_drv.h       |  129 +
+>>   drivers/gpu/drm/nvdla/nvdla_engine.c    |  233 +
+>>   drivers/gpu/drm/nvdla/nvdla_engine.h    |  272 +
+>>   drivers/gpu/drm/nvdla/nvdla_gem.c       |  358 ++
+>>   drivers/gpu/drm/nvdla/nvdla_pdp.c       |  448 ++
+>>   drivers/gpu/drm/nvdla/nvdla_reg.h       | 6411 +++++++++++++++++++++++
+>>   drivers/gpu/drm/nvdla/nvdla_rubik.c     |  214 +
+>>   drivers/gpu/drm/nvdla/nvdla_sched.h     |   37 +
+>>   drivers/gpu/drm/nvdla/nvdla_scheduler.c | 1012 ++++
+>>   drivers/gpu/drm/nvdla/nvdla_sdp.c       |  723 +++
+>>   include/uapi/drm/nvdla_drm.h            |   99 +
+>>   23 files changed, 13176 insertions(+)
+>>   create mode 100644 drivers/gpu/drm/nvdla/Kconfig
+>>   create mode 100644 drivers/gpu/drm/nvdla/Makefile
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_bdma.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_cache.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_cdp.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_common.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_common.h
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_conv.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_drv.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_drv.h
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_engine.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_engine.h
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_gem.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_pdp.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_reg.h
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_rubik.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_sched.h
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_scheduler.c
+>>   create mode 100644 drivers/gpu/drm/nvdla/nvdla_sdp.c
+>>   create mode 100644 include/uapi/drm/nvdla_drm.h
+>>
+>> -- 
+>> 2.25.1
+>>
+
