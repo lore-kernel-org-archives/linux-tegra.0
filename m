@@ -2,178 +2,204 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A618EC43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Apr 2022 08:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94766C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Apr 2022 14:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343921AbiD1IRm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Apr 2022 04:17:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34802 "EHLO
+        id S1348057AbiD1OOV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Apr 2022 10:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232726AbiD1IRi (ORCPT
+        with ESMTP id S1348255AbiD1OOL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Apr 2022 04:17:38 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4BCF0771CD;
-        Thu, 28 Apr 2022 01:14:24 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB9C31474;
-        Thu, 28 Apr 2022 01:14:23 -0700 (PDT)
-Received: from [10.57.12.231] (unknown [10.57.12.231])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 801DE3F774;
-        Thu, 28 Apr 2022 01:14:12 -0700 (PDT)
-Message-ID: <7956ab00-66b6-bd89-dcc0-f10cf2741e4d@arm.com>
-Date:   Thu, 28 Apr 2022 09:14:11 +0100
+        Thu, 28 Apr 2022 10:14:11 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8021B6EB19;
+        Thu, 28 Apr 2022 07:10:56 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id l18so9805973ejc.7;
+        Thu, 28 Apr 2022 07:10:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QxSG4Sd3IymNaxaJ3Xg8F5gIsq3DmAwu7vuavbFZaMg=;
+        b=ORkanYNmpnu63KyRsvxxOLwz3lEzdfjk90GGqWi2fdpTkH+SY86023v6itTIfBNiFY
+         UnPmkw8FdwWvStglh97thBHInKzj4ERKVKILvh4iTgQadS9tlwO9v1wzg2lAsHXgVkF0
+         UxE5fw9/KzXo6oB8ftj6OO1zvNqoioJF5ARnw1q+pA91LxYH15SL24NhTL6+UqiB5Zgb
+         BBj8iXWujucD5ttip/Xeym2Sb+XlcNgUKcJZmHdTd9XoTexnB0bmQAvXdwbIDcnAg/Wy
+         aogC+5ehQeMQHRpLby0fjso+iQf1IiiCdSsPcuZUqXxEAUIEDIFGgQD8RoIRNwfRw07a
+         sk9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QxSG4Sd3IymNaxaJ3Xg8F5gIsq3DmAwu7vuavbFZaMg=;
+        b=bgJ1b3LH4Y6dyqQ2sh/BeqRCvdv6c1lWiXsHAlmL7BXasRGMHz1XJHxysToI00kTfT
+         GVl+VwN8YpjKf+S49nL2H640ekSukTMEdOuhTLjLEVOKIm0PFMTrwdVcMP7Hm9etKcxP
+         l7nxaHTshnqU5xPepOZMdWDbu179iRk2YzXI7ueI3aa0ev2eRlJptDOdemYGbVm7883e
+         SdlyD/vZ4lVXraUnoYRdc730XhlQxvd15UXO4molm4bRkLHlYYKdlA2eOhd+E76v87Dq
+         0wijXVIQveudPYs+qmm1TuUzwEDmM+retuueLNcVAOifIk3Pgmh9IAUj6cDmfARcsDi0
+         WUDw==
+X-Gm-Message-State: AOAM531b/qXwiBwaV1XU+CHL8EcvuvXD8wxFpZ/tgoXUfvqqIXXzDXFL
+        TbyV9xQD1UfSlCeuqQVV0x0=
+X-Google-Smtp-Source: ABdhPJx3J4dvQuPuHjaTxcppg6VcxaE3of/lLOZlPfmcax4nJpfPyk7R5GsC8XD36BYzRS5MxmR5AA==
+X-Received: by 2002:a17:907:7b9d:b0:6df:fb8f:fe82 with SMTP id ne29-20020a1709077b9d00b006dffb8ffe82mr31613789ejc.652.1651155054921;
+        Thu, 28 Apr 2022 07:10:54 -0700 (PDT)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id t25-20020aa7db19000000b0042617ba63besm1655031eds.72.2022.04.28.07.10.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Apr 2022 07:10:53 -0700 (PDT)
+Date:   Thu, 28 Apr 2022 16:10:50 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Cai Huoqing <cai.huoqing@linux.dev>
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 0/4] drm/nvdla: Add driver support for NVDLA
+Message-ID: <YmqgailZKIuY7zTZ@orome>
+References: <20220426060808.78225-1-cai.huoqing@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH 20/30] panic: Add the panic informational notifier list
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
-        kexec@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
-        dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Leach <mike.leach@linaro.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-21-gpiccoli@igalia.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20220427224924.592546-21-gpiccoli@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y1M+iRkITIfHNcm8"
+Content-Disposition: inline
+In-Reply-To: <20220426060808.78225-1-cai.huoqing@linux.dev>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27/04/2022 23:49, Guilherme G. Piccoli wrote:
-> The goal of this new panic notifier is to allow its users to
-> register callbacks to run earlier in the panic path than they
-> currently do. This aims at informational mechanisms, like dumping
-> kernel offsets and showing device error data (in case it's simple
-> registers reading, for example) as well as mechanisms to disable
-> log flooding (like hung_task detector / RCU warnings) and the
-> tracing dump_on_oops (when enabled).
-> 
-> Any (non-invasive) information that should be provided before
-> kmsg_dump() as well as log flooding preventing code should fit
-> here, as long it offers relatively low risk for kdump.
-> 
-> For now, the patch is almost a no-op, although it changes a bit
-> the ordering in which some panic notifiers are executed - specially
-> affected by this are the notifiers responsible for disabling the
-> hung_task detector / RCU warnings, which now run first. In a
-> subsequent patch, the panic path will be refactored, then the
-> panic informational notifiers will effectively run earlier,
-> before ksmg_dump() (and usually before kdump as well).
-> 
-> We also defer documenting it all properly in the subsequent
-> refactor patch. Finally, while at it, we removed some useless
-> header inclusions too.
-> 
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Hari Bathini <hbathini@linux.ibm.com>
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Josh Triplett <josh@joshtriplett.org>
-> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> Cc: Leo Yan <leo.yan@linaro.org>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Mike Leach <mike.leach@linaro.org>
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> Cc: Neeraj Upadhyay <quic_neeraju@quicinc.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> ---
->   arch/arm64/kernel/setup.c                         | 2 +-
->   arch/mips/kernel/relocate.c                       | 2 +-
->   arch/powerpc/kernel/setup-common.c                | 2 +-
->   arch/x86/kernel/setup.c                           | 2 +-
->   drivers/bus/brcmstb_gisb.c                        | 2 +-
->   drivers/hwtracing/coresight/coresight-cpu-debug.c | 4 ++--
->   drivers/soc/tegra/ari-tegra186.c                  | 3 ++-
->   include/linux/panic_notifier.h                    | 1 +
->   kernel/hung_task.c                                | 3 ++-
->   kernel/panic.c                                    | 4 ++++
->   kernel/rcu/tree.c                                 | 1 -
->   kernel/rcu/tree_stall.h                           | 3 ++-
->   kernel/trace/trace.c                              | 2 +-
->   13 files changed, 19 insertions(+), 12 deletions(-)
-> 
 
-...
+--y1M+iRkITIfHNcm8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> index 1874df7c6a73..7b1012454525 100644
-> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> @@ -535,7 +535,7 @@ static int debug_func_init(void)
->   			    &debug_func_knob_fops);
->   
->   	/* Register function to be called for panic */
-> -	ret = atomic_notifier_chain_register(&panic_notifier_list,
-> +	ret = atomic_notifier_chain_register(&panic_info_list,
->   					     &debug_notifier);
->   	if (ret) {
->   		pr_err("%s: unable to register notifier: %d\n",
-> @@ -552,7 +552,7 @@ static int debug_func_init(void)
->   
->   static void debug_func_exit(void)
->   {
-> -	atomic_notifier_chain_unregister(&panic_notifier_list,
-> +	atomic_notifier_chain_unregister(&panic_info_list,
->   					 &debug_notifier);
->   	debugfs_remove_recursive(debug_debugfs_dir);
->   }
+On Tue, Apr 26, 2022 at 02:07:57PM +0800, Cai Huoqing wrote:
+> The NVIDIA Deep Learning Accelerator (NVDLA) is an open source IP
+> which is integrated into NVIDIA Jetson AGX Xavier,
+> so add driver support for this accelerator."
 
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Hi,
 
+nice to see this work going on. For subsequent revisions, can you please
+also Cc the Tegra mailing list (linux-tegra@vger.kernel.org) as well as
+the Tegra platform maintainers (that's Jon Hunter and myself). This will
+make sure that more people with an interest in this will see your work.
+Not everyone follows dri-devel, linaro-mm-sig or linux-media.
+
+Thanks,
+Thierry
+
+>=20
+> v1->v2:
+> *Rename nvdla_drm.[ch] to nvdla_drv.[ch] and rename nvdla_ioctl.h to nvdl=
+a_drm.h,
+>  move it to uapi.
+>  comments link: https://lore.kernel.org/lkml/20bac605-97e6-e5cd-c4e4-83a8=
+121645d8@amd.com/
+> *Remove the  onexistent filename  in Makefile
+>  comments link: https://lore.kernel.org/lkml/202204201512.pp20MXT5-lkp@in=
+tel.com/
+> *Sort file names alphabetically in Makefile.
+> *Rearrange the error messages, and use drm_err/_dbg() instead of pr_err/_=
+dbg().
+> *Replace  "dla_" prefix with "nvdla_"
+> *Check the iosys_map by iosys_map_is_null(), and check "ret" directly.
+> *Using iosys_map_memcpy_to/_from() for iosys_map instead of memcpy()
+> *Fix parameter error "dma_buf_vunmap(buf, ptr)", use "&map" instead of "p=
+tr"
+> *Use iosys_map instead of kvaddr and use "iosys_map_set_vaddr()" to initi=
+alize iosys_map
+> *Using "vma->vm_pgoff -=3D drm_vma_node_start(&obj->vma_node)" to update =
+vm_pgoff is cleaner
+> *Remove the unused nvdla_drm_gem_mmap, register drm_gem_mmap to file_oper=
+ations directly.
+> *Use DEFINE_DRM_GEM_FOPS() to define nvdla_drm_fops.
+> *Remove the unused nvdla_drm_gem_mmap_buf, register drm_gem_prime_mmap to=
+ drm_driver directly.
+>  comments link: https://lore.kernel.org/lkml/7fa19996-5830-af3d-ab24-08c7=
+6e1d5604@suse.de/
+> *Fix typo and some code style
+> *Remove unused function nvdla_get_time_us()
+>  comments link: https://lore.kernel.org/lkml/0fa9ab41-c18e-a569-e6fe-a0e9=
+d965905e@stargateuniverse.net/
+>=20
+> Cai Huoqing (4):
+>   MAINTAINERS: Add the driver info of the NVDLA
+>   drm/nvdla: Add driver support for NVDLA
+>   drm/nvdla: Add register head file of NVDLA
+>   drm/nvdla/uapi: Add UAPI of NVDLA driver
+>=20
+>  MAINTAINERS                             |    7 +
+>  drivers/gpu/drm/Kconfig                 |    2 +
+>  drivers/gpu/drm/Makefile                |    1 +
+>  drivers/gpu/drm/nvdla/Kconfig           |    8 +
+>  drivers/gpu/drm/nvdla/Makefile          |   17 +
+>  drivers/gpu/drm/nvdla/nvdla_bdma.c      |  198 +
+>  drivers/gpu/drm/nvdla/nvdla_cache.c     |  202 +
+>  drivers/gpu/drm/nvdla/nvdla_cdp.c       |  299 ++
+>  drivers/gpu/drm/nvdla/nvdla_common.c    |  293 ++
+>  drivers/gpu/drm/nvdla/nvdla_common.h    |  835 +++
+>  drivers/gpu/drm/nvdla/nvdla_conv.c      |  684 +++
+>  drivers/gpu/drm/nvdla/nvdla_drv.c       |  694 +++
+>  drivers/gpu/drm/nvdla/nvdla_drv.h       |  129 +
+>  drivers/gpu/drm/nvdla/nvdla_engine.c    |  233 +
+>  drivers/gpu/drm/nvdla/nvdla_engine.h    |  272 +
+>  drivers/gpu/drm/nvdla/nvdla_gem.c       |  358 ++
+>  drivers/gpu/drm/nvdla/nvdla_pdp.c       |  448 ++
+>  drivers/gpu/drm/nvdla/nvdla_reg.h       | 6411 +++++++++++++++++++++++
+>  drivers/gpu/drm/nvdla/nvdla_rubik.c     |  214 +
+>  drivers/gpu/drm/nvdla/nvdla_sched.h     |   37 +
+>  drivers/gpu/drm/nvdla/nvdla_scheduler.c | 1012 ++++
+>  drivers/gpu/drm/nvdla/nvdla_sdp.c       |  723 +++
+>  include/uapi/drm/nvdla_drm.h            |   99 +
+>  23 files changed, 13176 insertions(+)
+>  create mode 100644 drivers/gpu/drm/nvdla/Kconfig
+>  create mode 100644 drivers/gpu/drm/nvdla/Makefile
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_bdma.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_cache.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_cdp.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_common.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_common.h
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_conv.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_drv.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_drv.h
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_engine.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_engine.h
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_gem.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_pdp.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_reg.h
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_rubik.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_sched.h
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_scheduler.c
+>  create mode 100644 drivers/gpu/drm/nvdla/nvdla_sdp.c
+>  create mode 100644 include/uapi/drm/nvdla_drm.h
+>=20
+> --=20
+> 2.25.1
+>=20
+
+--y1M+iRkITIfHNcm8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJqoGgACgkQ3SOs138+
+s6HuyQ/7Bw5Z8vEp5nsysa1IpVH2TULmTaNHb13DzH8FPR82Hq1NShOY5bXc9u8J
+KlwcdiJrqTc9dT5ihUzd02DWp1U60axkO4xxFK7XcX7HnAlsICz+hriTYS/tLiON
+U0OAIgSvQox38C+FAVt11QMT7+4rTjG7tzhhgUjyWrLvadkGf9bhLgEVMMW6lEuG
+kTGrFzUdmva3xC572zKf6GqlZ39WyLgVNh/FxXbcfquXPoiD2EQ+6IMchxGFAD4B
+8Urjz47P6tzNFTUNnlB6Y4rnzauxNyT4cH0tJnbDWTWcm2wQNkVj2gMQw1nf3Nqr
+RdVDklCSV7TKp8yoLskTyrg7nTLpnl5ImgaqJ4uXpGUkLGWnOIrc8MmiVUinr3fa
+o1jQczamvTMxqbTtx8SsMMCQkDQ8CQW6LzaIzDE/eOJr7BOOcTWX5C1QdBkZ9nD1
++juHCXMAQciQB6gBqTjPdBy3mNrT5nPHMc/RF2oQzJT2vPTeBLfCtAYRrqkVmafN
+kwPo0RsBy1Q+rFtuNWQKfJI7C4U3gA5uMHDkYax2AiyIccnZHNnuSJGW+tbNYIca
+UOG/gXfRhpvQy+NHQ4EZKrlBIGWGGttjmhQABZy8V4zybKtFSFSOeFA2l+MQZNQU
+iDkHquw3wmJ2nLAh7dQ65ygdA1I3frg4dnxt1N2S1Bcj85zmJpE=
+=SRlt
+-----END PGP SIGNATURE-----
+
+--y1M+iRkITIfHNcm8--
