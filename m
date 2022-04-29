@@ -2,116 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0157C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Apr 2022 06:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D29EC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Apr 2022 07:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354443AbiD2GRF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Apr 2022 02:17:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45108 "EHLO
+        id S1354982AbiD2HPV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Apr 2022 03:15:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354446AbiD2GRF (ORCPT
+        with ESMTP id S1354983AbiD2HPU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Apr 2022 02:17:05 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4420FA94C4
-        for <linux-tegra@vger.kernel.org>; Thu, 28 Apr 2022 23:13:47 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id bv19so13501052ejb.6
-        for <linux-tegra@vger.kernel.org>; Thu, 28 Apr 2022 23:13:46 -0700 (PDT)
+        Fri, 29 Apr 2022 03:15:20 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABA319C1C
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Apr 2022 00:12:02 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id y3so13661998ejo.12
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Apr 2022 00:12:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=viXcLhXltMgVR3wPsqIa9KtMGQ0jNk7lgpVp7rd3Rfw=;
-        b=c4S2DE6YQasUz7KtVf9WKicc51SIwdA4vtns/C0gbrBKxX752dqlpGq5nrrdu9ttDG
-         4AS0XIWR+DiDf+gl78G23wL4MALcaanxjf2qcQu+68jJWlJYo6/iMHObdtVx++NDK0L0
-         aEYJfH3j74coSi8uP/iUjGUNNfBZTvWqoZLhEWjayN4MkCBjZOLKaO0VBEVEvbN4DDkW
-         wFlm6Cxodm0nnoPafgK3SJnO6vopQvJw3QouDMfIw8osaUj6tAuxwxp2BdToIKWmVC/T
-         LYNHmLEu50NLl+W2N7QxA1R2T4/jUrqQ4yYkK/oqIQzo7YkKlMglHbhXDJNvGx5t8X6D
-         bVqA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Edd8ZLYtYb/gwlpyDZkQOxSq27PsRFpIp30d8SMER+g=;
+        b=tqpFpORB+WKNr57yBie6HkLBpEWBDwutFEby7Q21Gz862pVw5QVxAdeiQt7SQzvXsg
+         d8XFA7qTsBmWwXDwR1qPiiw8lpFCyNNrNjfJ+0azA3SAMJCyg2COrurBTlmlKkDzzlJP
+         tE9854dsAw5C4y/dCJ2T7ttXIyHf0PzgHqNBzPWYGmaWqYevybj22Sj9Cf2A1CFR8b+1
+         EnILFy5/3CtF8TN/JjKOBAar+YMpFdIJpaH4guyFPc37dhUnqygvIHpEJrr6afnaa8Km
+         FbfDP4X7LgxAISo1exzuxi/G+/IZKX/TtB9EW/N2AXGqQl9Avp2eer/OxELapy9qMjD+
+         P0FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=viXcLhXltMgVR3wPsqIa9KtMGQ0jNk7lgpVp7rd3Rfw=;
-        b=eMGqsOeJ9ftphoVOZWAQII2sRU+siWexlcuA6b8b06eo1v9AcyJQ15GzLFvClXQUJy
-         GHkP7g/Yf/IbYszKQMDQXfxu9r0xlZ5FBf/Qmvfkt0hN3iQX6BBRlIjkuI26aewoFr7z
-         fQOlAq5YheRKmvPCdlmF9NKzfdyGEr8bQ+ZroJeXuu/grGJUD+uqmqf5aQWyf0UL6qD3
-         qtizUPq6P4ptikSHd3UbOTe/pyj9iUDoMFOeqG8H9UUJ2NcDqi1761u+yNsdywdW6sHc
-         QLHKLuSy1A+kpSvAjZlifrVdZSZc6434IVdyVnaLSNAOObYCdlBOHygac6t/6fG6Q1Nk
-         VhZw==
-X-Gm-Message-State: AOAM532eEXFVuSfvv15tK6hCcsadQzpOfhWOCItRxNMIt7mFb9brhdc9
-        7jI0m73ulp1VYtZ9x5fg2fRlMg==
-X-Google-Smtp-Source: ABdhPJzibRTftl8rRIfJFXNZNDkzUnH8FJ1U5QhJrp0S97Px3s2qSHl6zZovZaiIRGJ1vbejJA19rw==
-X-Received: by 2002:a17:907:e88:b0:6ef:bce9:ff6a with SMTP id ho8-20020a1709070e8800b006efbce9ff6amr36798968ejc.275.1651212825606;
-        Thu, 28 Apr 2022 23:13:45 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id t25-20020aa7db19000000b0042617ba63besm2532191eds.72.2022.04.28.23.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Apr 2022 23:13:45 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] pinctrl: tegra: tegra194: drop unused pin groups
-Date:   Fri, 29 Apr 2022 08:13:32 +0200
-Message-Id: <20220429061332.25135-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
+        bh=Edd8ZLYtYb/gwlpyDZkQOxSq27PsRFpIp30d8SMER+g=;
+        b=gn0hWHyddDFiJYZnFxcm0/CDaSjQiYGnDRTpsOTM77pGgvHX4JB6bhTJjOzsK2acn3
+         9H2pCWz48e9xCL07YtVHc9MlT41/sqO96vRqMKfmMp3KXN7lX4mKi8eC++WHIhs+Zk4c
+         v/Uxawee9vpU1WgFx7Vljfp+dBsZvyxn3M4H35dDmqIIMmWUfjSfsd6pgMBQd3vFLoz/
+         k1OYBJ/iK3OHqwYP0MJh1IW4OFGILTw5zLkWg+FIffWkCEozFTxm/mpDldz1tuosd2zS
+         5BBEQ0vZjd4UB6CcuKlK4zVZf50Ugrc6R59b+6dGaiF4ZZDm3EydDERiCCFIACvWE+n1
+         HdZw==
+X-Gm-Message-State: AOAM532YCOmYO4KxV64fLxyrXl7Yytex9yEKGnqlcCIcGxZR7oSOBQ/v
+        SipKdBFy0N+Tq6Oetu6VmfNO4A==
+X-Google-Smtp-Source: ABdhPJzt/5R7YhS1n1/Tl1fP5rjgP1BaMd1p1mgvE1MTVa32BuX2e89s7ed/ZnNEEjG7z8VMDAwWCQ==
+X-Received: by 2002:a17:906:5597:b0:6ce:f3cc:14e8 with SMTP id y23-20020a170906559700b006cef3cc14e8mr34343226ejp.426.1651216321471;
+        Fri, 29 Apr 2022 00:12:01 -0700 (PDT)
+Received: from [192.168.0.169] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id jl25-20020a17090775d900b006f3ef214dc5sm365463ejc.43.2022.04.29.00.12.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Apr 2022 00:12:00 -0700 (PDT)
+Message-ID: <2f600411-d40e-c4e7-fd54-bd15546bf71f@linaro.org>
+Date:   Fri, 29 Apr 2022 09:11:59 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [Patch v9 1/4] memory: tegra: Add memory controller channels
+ support
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, digetx@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, dmitry.osipenko@collabora.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220426073827.25506-1-amhetre@nvidia.com>
+ <20220426073827.25506-2-amhetre@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220426073827.25506-2-amhetre@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The sdmmc1_hv_trim_pins, sdmmc3_hv_trim_pins and sys_reset_n_pins are
-not defined as pin groups:
+On 26/04/2022 09:38, Ashish Mhetre wrote:
+> From tegra186 onwards, memory controller support multiple channels.
+> Add support for mapping address spaces of these channels.
+> Add number of channels supported by tegra186, tegra194 and tegra234.
+> In case of old bindings, channels won't be present. If channels are not
+> present then print warning and continue so that backward compatibility
+> will be preserved in driver.
+> During error interrupts from memory controller, appropriate registers
+> from these channels need to be accessed for logging error info.
+> 
+> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>  drivers/memory/tegra/mc.c       |  6 ++++++
+>  drivers/memory/tegra/tegra186.c | 34 +++++++++++++++++++++++++++++++++
+>  drivers/memory/tegra/tegra194.c |  1 +
+>  drivers/memory/tegra/tegra234.c |  1 +
 
-  drivers/pinctrl/tegra/pinctrl-tegra194.c:1119:27: error: ‘sdmmc3_hv_trim_pins’ defined but not used [-Werror=unused-const-variable=]
-   1119 | static const unsigned int sdmmc3_hv_trim_pins[] = {
+This does not apply, neither on my mem-ctrl-next, nor on master.
+Probably because tegra234 is somewhere else (Thierry?). Either you send
+it without tegra234 or it goes via Thierry's tree.
 
-Proper fix would be to define them, but this requires knowledge from
-datasheet.  Removal should not cause any harm and at least it silences
-the warnings.
-
-Fixes: 613c0826081b ("pinctrl: tegra: Add pinmux support for Tegra194")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/pinctrl/tegra/pinctrl-tegra194.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra194.c b/drivers/pinctrl/tegra/pinctrl-tegra194.c
-index 5c1dfcb46749..f6c5d5e6dbb6 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra194.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra194.c
-@@ -1110,24 +1110,15 @@ static const unsigned int sdmmc4_dat0_pins[] = {
- static const unsigned int sdmmc1_comp_pins[] = {
- 	TEGRA_PIN_SDMMC1_COMP,
- };
--static const unsigned int sdmmc1_hv_trim_pins[] = {
--	TEGRA_PIN_SDMMC1_HV_TRIM,
--};
- static const unsigned int sdmmc3_comp_pins[] = {
- 	TEGRA_PIN_SDMMC3_COMP,
- };
--static const unsigned int sdmmc3_hv_trim_pins[] = {
--	TEGRA_PIN_SDMMC3_HV_TRIM,
--};
- static const unsigned int eqos_comp_pins[] = {
- 	TEGRA_PIN_EQOS_COMP,
- };
- static const unsigned int qspi_comp_pins[] = {
- 	TEGRA_PIN_QSPI_COMP,
- };
--static const unsigned int sys_reset_n_pins[] = {
--	TEGRA_PIN_SYS_RESET_N,
--};
- static const unsigned int shutdown_n_pins[] = {
- 	TEGRA_PIN_SHUTDOWN_N,
- };
--- 
-2.32.0
-
+Best regards,
+Krzysztof
