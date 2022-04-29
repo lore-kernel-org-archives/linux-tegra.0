@@ -2,92 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0928C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Apr 2022 14:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE90AC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Apr 2022 15:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378048AbiD2PAQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Apr 2022 11:00:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50018 "EHLO
+        id S1377866AbiD2PWA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Apr 2022 11:22:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359135AbiD2PAP (ORCPT
+        with ESMTP id S1378272AbiD2PWA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Apr 2022 11:00:15 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0486AD11A;
-        Fri, 29 Apr 2022 07:56:56 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id C2C671F466DF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651244214;
-        bh=z9AR4wgc26TG7iya9Kky9QmyE15COjI5k6NO1aUr9nM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=B/o+15Qp5XwlYcfwYE4cvYJnt0OqXlhOnnLsVBpctIVKIBBQF1Y0ge8+TDDW8u9w+
-         CdvsBd7//mvviofvJIPFRwZksdC8WRcGvTlKZgIA1Fn+oNtTrEEuiaaODTX1TbOWlw
-         FlxkIIsE3NJI1NqThewT/+h9/AVB+laxO0pajoj1cSppFTa9uDnq0OVG9SNCtLQfPC
-         NtThfNp+cESYTKrQ3f/tpP8TrwIPOUp2tuiHL6v8WljdI1W10uXJg/QT2jRGESUP8P
-         taidYj5OEO3fTFm+48cNGGAV41RvEdnHly/JOnSn6XGedl5HwzaGiPecUPwQRwGPj7
-         Y+LzyxI6kfxyQ==
-Message-ID: <2e0df511-f9fa-2905-f381-fc1158774ab4@collabora.com>
-Date:   Fri, 29 Apr 2022 17:56:50 +0300
+        Fri, 29 Apr 2022 11:22:00 -0400
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D33D4C98;
+        Fri, 29 Apr 2022 08:18:39 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id e189so8814455oia.8;
+        Fri, 29 Apr 2022 08:18:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=h5I147M5SAG5aKSeTFIpJ9Fdg0GC9tCoery/v4BvAoc=;
+        b=3solqmbv4YB5OQq5XpMZs3Gtf6LO8tSB3cjdWlvkY6bU9bQeyTOfEQrW4SBHoKMdKx
+         A2P0n/jMOj4aepVP+DS3cqdzggpQqrnIHump7m2usrKCPrRztO/MQjfj+zxcQ3I2/Z3G
+         MLfFT0YZNmOBrmLaUXrQjPqmDm0UwYQ6qZ9dassZi8jt93oONnLNqZwo1Vs0IBN3KHzT
+         RpNYQVjTNeoZUp9QGFYtow2EHT5IhN3OQBEwo/nJCSjaaoie8nUup+iGp+YeBDcy3K9v
+         kcgVAv9RKm467h8gg4BlA86tT+XLoohBuyNn3HkolctVU8N672lAqC+Mv82lpv85WYK5
+         +1zQ==
+X-Gm-Message-State: AOAM530onG9E8ElKWia90dc3qG2FmbhAEJztm6Jz7U+k5woF6JnkFaMf
+        ZmhARP3uYhgNKV0B6ygg1pBK+W/LKw==
+X-Google-Smtp-Source: ABdhPJw1fKhbwx6lx70lrdW0UswFjeYAMQ8BdI+q1NecOx0z8DU6TRguS9yHIi1JzMEh2mVexnvGug==
+X-Received: by 2002:a05:6808:1886:b0:322:f55c:133d with SMTP id bi6-20020a056808188600b00322f55c133dmr1691725oib.217.1651245518636;
+        Fri, 29 Apr 2022 08:18:38 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m18-20020a4add12000000b0035eb4e5a6d3sm852822oou.41.2022.04.29.08.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Apr 2022 08:18:38 -0700 (PDT)
+Received: (nullmailer pid 2284027 invoked by uid 1000);
+        Fri, 29 Apr 2022 15:18:36 -0000
+Date:   Fri, 29 Apr 2022 10:18:36 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-stm32@st-md-mailman.stormreply.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] arm64: dts: tegra: Fix boolean properties with
+ values
+Message-ID: <YmwBzLrTilOPdX5m@robh.at.kernel.org>
+References: <Yk3nShkFzNJaI3/Z@robh.at.kernel.org>
+ <YlVAy95eF/9b1nmu@orome>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [Patch v10 1/4] memory: tegra: Add memory controller channels
- support
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>, krzysztof.kozlowski@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <20220429113438.13988-1-amhetre@nvidia.com>
- <20220429113438.13988-2-amhetre@nvidia.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20220429113438.13988-2-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YlVAy95eF/9b1nmu@orome>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Tue, Apr 12, 2022 at 11:05:15AM +0200, Thierry Reding wrote:
+> On Wed, Apr 06, 2022 at 02:17:30PM -0500, Rob Herring wrote:
+> > Boolean properties in DT are present or not present and don't take a value.
+> > A property such as 'foo = <0>;' evaluated to true. IOW, the value doesn't
+> > matter.
+> > 
+> > It may have been intended that 0 values are false, but there is no change
+> > in behavior with this patch.
+> > 
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> > Can someone apply this for 5.18.
+> > 
+> >  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi            | 8 ++++----
+> >  .../boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts    | 8 ++++----
+> >  arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi            | 6 +++---
+> >  arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi            | 6 +++---
+> >  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi            | 6 +++---
+> >  arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi            | 8 ++++----
+> >  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts        | 8 ++++----
+> >  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts             | 4 ++--
+> >  8 files changed, 27 insertions(+), 27 deletions(-)
+> 
+> This causes multiple regressions on Tegra boards. The reason for this is
+> that these properties are not in fact boolean, despite what the DT
+> bindings say. If you look at the code that handles these, you'll notice
+> that they are single-cell properties, typically with <0> and <1> values.
+> What may have led to the conclusion that these are boolean is that there
+> is also a special case where these can be left out, but the meaning of
+> that is not the "false" (<0>) value. Instead, leaving these out means
+> that the values should be left at whatever is currently in the register.
 
-On 4/29/22 14:34, Ashish Mhetre wrote:
->  static int tegra186_mc_probe(struct tegra_mc *mc)
->  {
-> +	struct platform_device *pdev = to_platform_device(mc->dev);
-> +	unsigned int i;
->  	int err;
->  
-> +	mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
-> +	if (IS_ERR(mc->bcast_ch_regs)) {
-> +		if (PTR_ERR(mc->bcast_ch_regs) == -EINVAL) {
-> +			dev_warn(&pdev->dev, "Broadcast channel is missing, please update your device-tree\n");
-> +			mc->bcast_ch_regs = NULL;
-> +			goto skip_map_regs;
-> +		}
-> +		return PTR_ERR(mc->bcast_ch_regs);
-> +	}
-> +
-> +	mc->ch_regs = devm_kcalloc(mc->dev, mc->soc->num_channels,
-> +				   sizeof(*mc->ch_regs), GFP_KERNEL);
-> +	if (!mc->ch_regs)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < mc->soc->num_channels; i++) {
-> +		char name[5];
-> +
-> +		snprintf(name, sizeof(name), "ch%u", i);
-> +		mc->ch_regs[i] = devm_platform_ioremap_resource_byname(pdev, name);
-> +		if (IS_ERR(mc->ch_regs[i]))
-> +			return PTR_ERR(mc->ch_regs[i]);
-> +	}
-> +
-> +skip_map_regs:
->  	err = of_platform_populate(mc->dev->of_node, NULL, NULL, mc->dev);
+The majority of users do use boolean in their DT.
 
-More common to name labels by the action pointed by label, like
-"populate:" in this case. No need to make v11 because of that.
+Treating these as tri-state doesn't make much sense because what does 
+setting the pin to !push-pull mean? Isn't that just open-drain or 
+open-source for which also have boolean values? Allowing these to have 
+values is unnecessary and enables more invalid combinations.
 
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> See pinconf_generic_parse_dt_config() and parse_dt_cfg() specifically in
+> drivers/pinctrl/pinconf-generic.c.
+
+of_property_read_u32() will return -EOVERFLOW on a boolean value and 
+then the default value (0) is used. However, at least for QCom the value 
+is ignored.
+
+Looking at max77620, the value is used. However, it is clear that 
+push-pull and open-drain operate on the same register bit.
+
+> Arnd, can you please revert this so that these boards can be unbroken?
+
+That's fine for now...
+
+> It's a bit unfortunate because there seem to be other platforms that
+> also employ these in the boolean form that Rob mentioned, but I think it
+> is those that probably need fixing instead. Not sure what the intentions
+> were for those.
+
+I still think it's Tegra that needs fixing. The question is to what 
+extent forwards and backwards compatibity is needed on these platforms? 
+I'm not sure if we can fix new dtb with old kernel. A new dtb with a 
+stable kernel update would be plausible. It may work just replacing 
+'drive-push-pull = <0>' cases with 'drive-open-drain'.
+
+Rob
