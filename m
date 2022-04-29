@@ -2,98 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D29EC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Apr 2022 07:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04383C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Apr 2022 08:06:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354982AbiD2HPV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Apr 2022 03:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34386 "EHLO
+        id S1355362AbiD2IJx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Apr 2022 04:09:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354983AbiD2HPU (ORCPT
+        with ESMTP id S1355373AbiD2IJu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Apr 2022 03:15:20 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABA319C1C
-        for <linux-tegra@vger.kernel.org>; Fri, 29 Apr 2022 00:12:02 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id y3so13661998ejo.12
-        for <linux-tegra@vger.kernel.org>; Fri, 29 Apr 2022 00:12:02 -0700 (PDT)
+        Fri, 29 Apr 2022 04:09:50 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A435A1479
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Apr 2022 01:06:32 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id i27so13928624ejd.9
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Apr 2022 01:06:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Edd8ZLYtYb/gwlpyDZkQOxSq27PsRFpIp30d8SMER+g=;
-        b=tqpFpORB+WKNr57yBie6HkLBpEWBDwutFEby7Q21Gz862pVw5QVxAdeiQt7SQzvXsg
-         d8XFA7qTsBmWwXDwR1qPiiw8lpFCyNNrNjfJ+0azA3SAMJCyg2COrurBTlmlKkDzzlJP
-         tE9854dsAw5C4y/dCJ2T7ttXIyHf0PzgHqNBzPWYGmaWqYevybj22Sj9Cf2A1CFR8b+1
-         EnILFy5/3CtF8TN/JjKOBAar+YMpFdIJpaH4guyFPc37dhUnqygvIHpEJrr6afnaa8Km
-         FbfDP4X7LgxAISo1exzuxi/G+/IZKX/TtB9EW/N2AXGqQl9Avp2eer/OxELapy9qMjD+
-         P0FA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xxUzI1oJheU9knTzW0wnYUCOLKxTgcApqGuAyosALCE=;
+        b=Jpytbh+2CPm+A4u61C1hWqZZDgIqu3GS9jdGpHp8WZmt09RjOv0Ej+hl4rJvBqeJUg
+         R499Ek1yTZlyMrl+Hjikb321HLNKFh/bFgPA99Cd6LkfrGBNk4UUEPgVQ+qu99lWKzGL
+         McN1P36MTeSgatkeEXbC5r9bhEuWtrxIodHkM4dLIXh5lzwsLxapOTt856TQf2DKshDQ
+         t6ub4E4jUCBPWMcpEgzRANzr2xumXEQZDXOJDGbzXXCquAHV7pyggMkSBSTeafKai+uZ
+         pqbfEjfF/JP1D9OiIxtxNi5helcKBO/mIjZ1WxXhzBjTziXBAXKlWyuk6cUKV9ziy0+d
+         BT5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Edd8ZLYtYb/gwlpyDZkQOxSq27PsRFpIp30d8SMER+g=;
-        b=gn0hWHyddDFiJYZnFxcm0/CDaSjQiYGnDRTpsOTM77pGgvHX4JB6bhTJjOzsK2acn3
-         9H2pCWz48e9xCL07YtVHc9MlT41/sqO96vRqMKfmMp3KXN7lX4mKi8eC++WHIhs+Zk4c
-         v/Uxawee9vpU1WgFx7Vljfp+dBsZvyxn3M4H35dDmqIIMmWUfjSfsd6pgMBQd3vFLoz/
-         k1OYBJ/iK3OHqwYP0MJh1IW4OFGILTw5zLkWg+FIffWkCEozFTxm/mpDldz1tuosd2zS
-         5BBEQ0vZjd4UB6CcuKlK4zVZf50Ugrc6R59b+6dGaiF4ZZDm3EydDERiCCFIACvWE+n1
-         HdZw==
-X-Gm-Message-State: AOAM532YCOmYO4KxV64fLxyrXl7Yytex9yEKGnqlcCIcGxZR7oSOBQ/v
-        SipKdBFy0N+Tq6Oetu6VmfNO4A==
-X-Google-Smtp-Source: ABdhPJzt/5R7YhS1n1/Tl1fP5rjgP1BaMd1p1mgvE1MTVa32BuX2e89s7ed/ZnNEEjG7z8VMDAwWCQ==
-X-Received: by 2002:a17:906:5597:b0:6ce:f3cc:14e8 with SMTP id y23-20020a170906559700b006cef3cc14e8mr34343226ejp.426.1651216321471;
-        Fri, 29 Apr 2022 00:12:01 -0700 (PDT)
-Received: from [192.168.0.169] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id jl25-20020a17090775d900b006f3ef214dc5sm365463ejc.43.2022.04.29.00.12.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Apr 2022 00:12:00 -0700 (PDT)
-Message-ID: <2f600411-d40e-c4e7-fd54-bd15546bf71f@linaro.org>
-Date:   Fri, 29 Apr 2022 09:11:59 +0200
+        bh=xxUzI1oJheU9knTzW0wnYUCOLKxTgcApqGuAyosALCE=;
+        b=VSnpRcgqt1ddfLUuqKCMqAlB5iCXA5QUpcz1U8XvQrnqIFSJNi/zXLCH3QvFpWf7tt
+         YeI4XCnEvMUeguzCbN79lq6Av2XZIJla40BQkbnMbTrc4x8zTLEu65tlJrILCHEOZ85s
+         MEfSebB9s8FN6giwmBiY25QWf66jn+IO4WDSvtHZtKhDOLZOOpiwA9QKJzEX6sDLDW+A
+         Yt4JqmA4/lGpCrRbX3l5CXSXk0ZaMgcMyap3NtQCBp95Yge04K7Ta3PHUBpLWbnSNQux
+         nBavrI52JzQDXwdADWW5EmKY+YjaZmtJUxEKiSpvbXYn9LPMmsx8099yZXw6MWpAAcoc
+         jW/g==
+X-Gm-Message-State: AOAM531QaWpazs8Imfs5GxR9ZKKmedwTN4H5bGC/ohPvTLR4jEg+7pFE
+        7DvxQsJmn2QrJslrjZb6pso=
+X-Google-Smtp-Source: ABdhPJzUKEirgE7x/5Mk2iXnFUh0bCskDs+XcoEuf84DQsh58WlUFGnqA/6cnGLnejLFacbSqCbkIQ==
+X-Received: by 2002:a17:906:5d15:b0:6f3:77e6:2126 with SMTP id g21-20020a1709065d1500b006f377e62126mr27353283ejt.707.1651219590998;
+        Fri, 29 Apr 2022 01:06:30 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id i12-20020a056402054c00b0042617ba6385sm2620506edx.15.2022.04.29.01.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Apr 2022 01:06:30 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] ARM: tegra: Default configuration fixes for v5.18
+Date:   Fri, 29 Apr 2022 10:06:26 +0200
+Message-Id: <20220429080626.494150-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.35.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [Patch v9 1/4] memory: tegra: Add memory controller channels
- support
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, digetx@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, dmitry.osipenko@collabora.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <20220426073827.25506-1-amhetre@nvidia.com>
- <20220426073827.25506-2-amhetre@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220426073827.25506-2-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 26/04/2022 09:38, Ashish Mhetre wrote:
-> From tegra186 onwards, memory controller support multiple channels.
-> Add support for mapping address spaces of these channels.
-> Add number of channels supported by tegra186, tegra194 and tegra234.
-> In case of old bindings, channels won't be present. If channels are not
-> present then print warning and continue so that backward compatibility
-> will be preserved in driver.
-> During error interrupts from memory controller, appropriate registers
-> from these channels need to be accessed for logging error info.
-> 
-> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->  drivers/memory/tegra/mc.c       |  6 ++++++
->  drivers/memory/tegra/tegra186.c | 34 +++++++++++++++++++++++++++++++++
->  drivers/memory/tegra/tegra194.c |  1 +
->  drivers/memory/tegra/tegra234.c |  1 +
+Hi ARM SoC maintainers,
 
-This does not apply, neither on my mem-ctrl-next, nor on master.
-Probably because tegra234 is somewhere else (Thierry?). Either you send
-it without tegra234 or it goes via Thierry's tree.
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
 
-Best regards,
-Krzysztof
+  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.18-arm-defconfig-fixes
+
+for you to fetch changes up to 39ad93d280506f4953a9d0c545cfffa581889326:
+
+  ARM: config: multi v7: Enable NVIDIA Tegra video decoder driver (2022-04-06 17:03:30 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+ARM: tegra: Default configuration fixes for v5.18
+
+This contains two updates to the default configuration needed because of
+a Kconfig symbol name change. This fixes a failure that was detected in
+the NVIDIA automated test farm.
+
+----------------------------------------------------------------
+Dmitry Osipenko (2):
+      ARM: tegra_defconfig: Update CONFIG_TEGRA_VDE option
+      ARM: config: multi v7: Enable NVIDIA Tegra video decoder driver
+
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ arch/arm/configs/tegra_defconfig    | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
