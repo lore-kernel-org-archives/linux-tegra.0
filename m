@@ -2,106 +2,116 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D7EC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Apr 2022 03:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0157C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Apr 2022 06:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236525AbiD2DlS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Apr 2022 23:41:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54598 "EHLO
+        id S1354443AbiD2GRF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Apr 2022 02:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236224AbiD2DlQ (ORCPT
+        with ESMTP id S1354446AbiD2GRF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Apr 2022 23:41:16 -0400
-Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704814FC64;
-        Thu, 28 Apr 2022 20:37:59 -0700 (PDT)
-Date:   Fri, 29 Apr 2022 11:37:33 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1651203477;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TeqiwakqteIi2ux9lGt03PezpQ4Ym4Vpg4af5bUrfCk=;
-        b=A8RwEq/r9EAn+Oa7cpOExaCcnom40vxxnKfIQHrrTjJISw1kLb22sEDC7KLr9k5NEQYFBI
-        gYWc2ur/A2f5zaV+GQ6X49tdJGex9XeU5NsE7t1L3F3elKVKi6LoEUr2y4hjHIpNrCuUJU
-        U/DzOkxM0LsiKRuoLwjq2gG4YkyU++o=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Cai Huoqing <cai.huoqing@linux.dev>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Fri, 29 Apr 2022 02:17:05 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4420FA94C4
+        for <linux-tegra@vger.kernel.org>; Thu, 28 Apr 2022 23:13:47 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id bv19so13501052ejb.6
+        for <linux-tegra@vger.kernel.org>; Thu, 28 Apr 2022 23:13:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=viXcLhXltMgVR3wPsqIa9KtMGQ0jNk7lgpVp7rd3Rfw=;
+        b=c4S2DE6YQasUz7KtVf9WKicc51SIwdA4vtns/C0gbrBKxX752dqlpGq5nrrdu9ttDG
+         4AS0XIWR+DiDf+gl78G23wL4MALcaanxjf2qcQu+68jJWlJYo6/iMHObdtVx++NDK0L0
+         aEYJfH3j74coSi8uP/iUjGUNNfBZTvWqoZLhEWjayN4MkCBjZOLKaO0VBEVEvbN4DDkW
+         wFlm6Cxodm0nnoPafgK3SJnO6vopQvJw3QouDMfIw8osaUj6tAuxwxp2BdToIKWmVC/T
+         LYNHmLEu50NLl+W2N7QxA1R2T4/jUrqQ4yYkK/oqIQzo7YkKlMglHbhXDJNvGx5t8X6D
+         bVqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=viXcLhXltMgVR3wPsqIa9KtMGQ0jNk7lgpVp7rd3Rfw=;
+        b=eMGqsOeJ9ftphoVOZWAQII2sRU+siWexlcuA6b8b06eo1v9AcyJQ15GzLFvClXQUJy
+         GHkP7g/Yf/IbYszKQMDQXfxu9r0xlZ5FBf/Qmvfkt0hN3iQX6BBRlIjkuI26aewoFr7z
+         fQOlAq5YheRKmvPCdlmF9NKzfdyGEr8bQ+ZroJeXuu/grGJUD+uqmqf5aQWyf0UL6qD3
+         qtizUPq6P4ptikSHd3UbOTe/pyj9iUDoMFOeqG8H9UUJ2NcDqi1761u+yNsdywdW6sHc
+         QLHKLuSy1A+kpSvAjZlifrVdZSZc6434IVdyVnaLSNAOObYCdlBOHygac6t/6fG6Q1Nk
+         VhZw==
+X-Gm-Message-State: AOAM532eEXFVuSfvv15tK6hCcsadQzpOfhWOCItRxNMIt7mFb9brhdc9
+        7jI0m73ulp1VYtZ9x5fg2fRlMg==
+X-Google-Smtp-Source: ABdhPJzibRTftl8rRIfJFXNZNDkzUnH8FJ1U5QhJrp0S97Px3s2qSHl6zZovZaiIRGJ1vbejJA19rw==
+X-Received: by 2002:a17:907:e88:b0:6ef:bce9:ff6a with SMTP id ho8-20020a1709070e8800b006efbce9ff6amr36798968ejc.275.1651212825606;
+        Thu, 28 Apr 2022 23:13:45 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id t25-20020aa7db19000000b0042617ba63besm2532191eds.72.2022.04.28.23.13.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Apr 2022 23:13:45 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] drm/nvdla: Add driver support for NVDLA
-Message-ID: <20220429033733.GA15753@chq-T47>
-References: <20220426060808.78225-1-cai.huoqing@linux.dev>
- <YmqgailZKIuY7zTZ@orome>
- <beacfd71-ebd0-7fde-187f-34b7a42a47de@kapsi.fi>
- <aa55c03c-6d22-9718-a2a5-28d9ce114954@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] pinctrl: tegra: tegra194: drop unused pin groups
+Date:   Fri, 29 Apr 2022 08:13:32 +0200
+Message-Id: <20220429061332.25135-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa55c03c-6d22-9718-a2a5-28d9ce114954@nvidia.com>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 28 4月 22 17:35:56, Jon Hunter wrote:
-> 
-> On 28/04/2022 16:56, Mikko Perttunen wrote:
-> > On 4/28/22 17:10, Thierry Reding wrote:
-> > > On Tue, Apr 26, 2022 at 02:07:57PM +0800, Cai Huoqing wrote:
-> > > > The NVIDIA Deep Learning Accelerator (NVDLA) is an open source IP
-> > > > which is integrated into NVIDIA Jetson AGX Xavier,
-> > > > so add driver support for this accelerator."
-> > > 
-> > > Hi,
-> > > 
-> > > nice to see this work going on. For subsequent revisions, can you please
-> > > also Cc the Tegra mailing list (linux-tegra@vger.kernel.org) as well as
-> > > the Tegra platform maintainers (that's Jon Hunter and myself). This will
-> > > make sure that more people with an interest in this will see your work.
-> > > Not everyone follows dri-devel, linaro-mm-sig or linux-media.
-> > > 
-> > > Thanks,
-> > > Thierry
-> > 
-> >  From a quick glance it looks like this driver pokes DLA hardware
-> > directly which is not the intended programming model on Tegra hardware
-> > (there are Falcon microcontrollers that offload task scheduling and
-> > synchronization from the CPU). The hardware is also behind the Host1x
-> > bus so a simple platform device is not sufficient.
-> > 
-> > Was this driver developed against some platform with OpenDLA hardware
-> > (i.e. not Tegra)?
-> > 
-> > If so, we'd need to verify if the hardware matches the hardware in
-> > Tegra194. Also, this driver may not be ideal for Tegra platforms since
-> > we would lack the hardware scheduling and synchronization facilities. It
-> > is likely necessary to have separate drivers for OpenDLA and Tegra's DLA
-> > integration.
-> 
-> 
-> I believe that this is derived from the following github project ...
-> 
-> https://github.com/nvdla/sw
-> 
-Sure, based on https://github.com/nvdla/sw
+The sdmmc1_hv_trim_pins, sdmmc3_hv_trim_pins and sys_reset_n_pins are
+not defined as pin groups:
 
-The copyright retain in this driver,
-like "Copyright (C) 2017-2018 NVIDIA CORPORATION"
+  drivers/pinctrl/tegra/pinctrl-tegra194.c:1119:27: error: ‘sdmmc3_hv_trim_pins’ defined but not used [-Werror=unused-const-variable=]
+   1119 | static const unsigned int sdmmc3_hv_trim_pins[] = {
 
-Thanks
-Cai
-> Jon
-> 
-> -- 
-> nvpublic
+Proper fix would be to define them, but this requires knowledge from
+datasheet.  Removal should not cause any harm and at least it silences
+the warnings.
+
+Fixes: 613c0826081b ("pinctrl: tegra: Add pinmux support for Tegra194")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra194.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra194.c b/drivers/pinctrl/tegra/pinctrl-tegra194.c
+index 5c1dfcb46749..f6c5d5e6dbb6 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra194.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra194.c
+@@ -1110,24 +1110,15 @@ static const unsigned int sdmmc4_dat0_pins[] = {
+ static const unsigned int sdmmc1_comp_pins[] = {
+ 	TEGRA_PIN_SDMMC1_COMP,
+ };
+-static const unsigned int sdmmc1_hv_trim_pins[] = {
+-	TEGRA_PIN_SDMMC1_HV_TRIM,
+-};
+ static const unsigned int sdmmc3_comp_pins[] = {
+ 	TEGRA_PIN_SDMMC3_COMP,
+ };
+-static const unsigned int sdmmc3_hv_trim_pins[] = {
+-	TEGRA_PIN_SDMMC3_HV_TRIM,
+-};
+ static const unsigned int eqos_comp_pins[] = {
+ 	TEGRA_PIN_EQOS_COMP,
+ };
+ static const unsigned int qspi_comp_pins[] = {
+ 	TEGRA_PIN_QSPI_COMP,
+ };
+-static const unsigned int sys_reset_n_pins[] = {
+-	TEGRA_PIN_SYS_RESET_N,
+-};
+ static const unsigned int shutdown_n_pins[] = {
+ 	TEGRA_PIN_SHUTDOWN_N,
+ };
+-- 
+2.32.0
+
