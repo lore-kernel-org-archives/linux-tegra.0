@@ -2,165 +2,243 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD85CC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 May 2022 20:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EC3C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 May 2022 21:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235761AbiECUWC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 May 2022 16:22:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35104 "EHLO
+        id S243322AbiECV70 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 May 2022 17:59:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236271AbiECUWB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 May 2022 16:22:01 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B5002CE0F
-        for <linux-tegra@vger.kernel.org>; Tue,  3 May 2022 13:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651609106; x=1683145106;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/DmKAqhcBCwyk+W58kHF9vgs2kME3Fop4ErwDfmo6zI=;
-  b=kQ3qVkJaNrF4XTRkIVFOjcjIYljL6HwE3GrF4Y15TaI7GqrBITY3tKIp
-   /BUSNa+8vuF7BjEvyKfcy29NpUTM4wCilxxZFXvy5ZurTBr1PH20hM+xG
-   7fKt2ryF/HSkU1DC93dEO+Jb6akK/0CPg01Xq+27El3Kv1fanAvK4f0c7
-   RPkZQjc4iH+5M3KVAmJ1rpFWJu7Y2xanOBJRqi/QUHyzbRzK/NK7kARn1
-   Vts1sGkSGmJ8NleTHxQtUIFSjRp2xGLIFR6mxpwYxAVGlM3oV2woF8Ce5
-   Z2u9WY1Jhji45h2GdgBLCfM51jRYsw2LhK11j1n+bbbr8nJVlaaw1KIXf
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10336"; a="267170281"
-X-IronPort-AV: E=Sophos;i="5.91,196,1647327600"; 
-   d="scan'208";a="267170281"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2022 13:18:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,196,1647327600"; 
-   d="scan'208";a="620488390"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 03 May 2022 13:18:24 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nlyyV-000AlZ-P5;
-        Tue, 03 May 2022 20:18:23 +0000
-Date:   Wed, 4 May 2022 04:17:57 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: [arm-tegra:hte/for-next 7/10] drivers/gpio/gpiolib-cdev.c:851:34:
- error: incompatible function pointer types passing 'irqreturn_t (struct
- hte_ts_data *, void *)' (aka 'enum irqreturn (struct hte_ts_data *, void
- *)') to parameter of type 'hte_ts_cb_t' (aka 'enum hte_return (*)(struct
- h...
-Message-ID: <202205040454.CGWxoTt3-lkp@intel.com>
+        with ESMTP id S243376AbiECV7D (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 May 2022 17:59:03 -0400
+X-Greylist: delayed 503 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 03 May 2022 14:55:28 PDT
+Received: from mail.baikalelectronics.ru (mail.baikalelectronics.com [87.245.175.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8AF25419A3;
+        Tue,  3 May 2022 14:55:25 -0700 (PDT)
+Received: from mail.baikalelectronics.ru (unknown [192.168.51.25])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 6DA6B16A9;
+        Wed,  4 May 2022 00:47:38 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.ru 6DA6B16A9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baikalelectronics.ru; s=mail; t=1651614458;
+        bh=/NNqKlGrE9DdGtQaaw/RHMV8Tm/RE5jwPHgm8fD0EGo=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=SoXcHgoEL5pP+dw4Lh5stuLMCN/rvxY81a4H257iJUW5UhhT533nudJMnVDZ+U4fg
+         LhkLy/3jKYtbKxsMYiPJADpA4MABaaqnk/L3GSxuBfWP9IlwXprZ1kPext4puvq/8f
+         EEvBIcZbP9koMXoSxrSSuICmmh6chsJElWw6b0UA=
+Received: from localhost (192.168.53.207) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 4 May 2022 00:47:04 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Rahul Tanwar <rtanwar@maxlinear.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Frank Li <Frank.Li@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+Subject: [PATCH v2 05/17] PCI: dwc: Convert to using native IP-core versions representation
+Date:   Wed, 4 May 2022 00:46:26 +0300
+Message-ID: <20220503214638.1895-6-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20220503214638.1895-1-Sergey.Semin@baikalelectronics.ru>
+References: <20220503214638.1895-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git hte/for-next
-head:   cedbe14082d169f4c1136c70c5170a76bd9a076a
-commit: 98935236600d4e179b664ffcfcd54e0ec3a1b4e3 [7/10] gpiolib: cdev: Add hardware timestamp clock type
-config: arm-ep93xx_defconfig (https://download.01.org/0day-ci/archive/20220504/202205040454.CGWxoTt3-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 363b3a645a1e30011cc8da624f13dac5fd915628)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm cross compiling tool for clang build
-        # apt-get install binutils-arm-linux-gnueabi
-        # https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git/commit/?id=98935236600d4e179b664ffcfcd54e0ec3a1b4e3
-        git remote add arm-tegra https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
-        git fetch --no-tags arm-tegra hte/for-next
-        git checkout 98935236600d4e179b664ffcfcd54e0ec3a1b4e3
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
+Since DWC PCIe v4.70a the controller version can be read from the
+PORT_LOGIC.PCIE_VERSION_OFF register. Version is represented in the FourCC
+format [1]. It's standard versioning approach for the Synopsys DWC
+IP-cores. Moreover some of the DWC kernel drivers already make use of it
+to fixup version-dependent functionality (See DWC USB3, Stmicro STMMAC or
+recent DW SPI driver). In order to preserve the standard version
+representation and prevent the data conversion back and forth, we suggest
+to preserve the native version representation in the DWC PCIe driver too
+in the same way as it has already been done in the rest of the DWC
+drivers. IP-core version reading from the CSR will be introduced in the
+next commit together with a simple macro-based API to use it.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+[1] https://en.wikipedia.org/wiki/FourCC
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+---
+ drivers/pci/controller/dwc/pci-keystone.c    | 12 ++++++------
+ drivers/pci/controller/dwc/pcie-designware.c |  8 ++++----
+ drivers/pci/controller/dwc/pcie-designware.h | 10 +++++++++-
+ drivers/pci/controller/dwc/pcie-intel-gw.c   |  4 ++--
+ drivers/pci/controller/dwc/pcie-tegra194.c   |  2 +-
+ 5 files changed, 22 insertions(+), 14 deletions(-)
 
-   drivers/gpio/gpiolib-cdev.c:572:8: error: unknown type name 'hte_return_t'; did you mean 'irqreturn_t'?
-   static hte_return_t process_hw_ts_thread(void *p)
-          ^~~~~~~~~~~~
-          irqreturn_t
-   include/linux/irqreturn.h:17:24: note: 'irqreturn_t' declared here
-   typedef enum irqreturn irqreturn_t;
-                          ^
-   drivers/gpio/gpiolib-cdev.c:581:10: warning: implicit conversion from enumeration type 'enum hte_return' to different enumeration type 'irqreturn_t' (aka 'enum irqreturn') [-Wenum-conversion]
-                   return HTE_CB_HANDLED;
-                   ~~~~~~ ^~~~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:612:10: warning: implicit conversion from enumeration type 'enum hte_return' to different enumeration type 'irqreturn_t' (aka 'enum irqreturn') [-Wenum-conversion]
-                   return HTE_CB_HANDLED;
-                   ~~~~~~ ^~~~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:620:9: warning: implicit conversion from enumeration type 'enum hte_return' to different enumeration type 'irqreturn_t' (aka 'enum irqreturn') [-Wenum-conversion]
-           return HTE_CB_HANDLED;
-           ~~~~~~ ^~~~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:623:8: error: unknown type name 'hte_return_t'; did you mean 'irqreturn_t'?
-   static hte_return_t process_hw_ts(struct hte_ts_data *ts, void *p)
-          ^~~~~~~~~~~~
-          irqreturn_t
-   include/linux/irqreturn.h:17:24: note: 'irqreturn_t' declared here
-   typedef enum irqreturn irqreturn_t;
-                          ^
-   drivers/gpio/gpiolib-cdev.c:630:10: warning: implicit conversion from enumeration type 'enum hte_return' to different enumeration type 'irqreturn_t' (aka 'enum irqreturn') [-Wenum-conversion]
-                   return HTE_CB_HANDLED;
-                   ~~~~~~ ^~~~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:644:11: warning: implicit conversion from enumeration type 'enum hte_return' to different enumeration type 'irqreturn_t' (aka 'enum irqreturn') [-Wenum-conversion]
-                           return HTE_CB_HANDLED;
-                           ~~~~~~ ^~~~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:652:10: warning: implicit conversion from enumeration type 'enum hte_return' to different enumeration type 'irqreturn_t' (aka 'enum irqreturn') [-Wenum-conversion]
-                   return HTE_RUN_SECOND_CB;
-                   ~~~~~~ ^~~~~~~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:655:9: warning: implicit conversion from enumeration type 'enum hte_return' to different enumeration type 'irqreturn_t' (aka 'enum irqreturn') [-Wenum-conversion]
-           return HTE_CB_HANDLED;
-           ~~~~~~ ^~~~~~~~~~~~~~
->> drivers/gpio/gpiolib-cdev.c:851:34: error: incompatible function pointer types passing 'irqreturn_t (struct hte_ts_data *, void *)' (aka 'enum irqreturn (struct hte_ts_data *, void *)') to parameter of type 'hte_ts_cb_t' (aka 'enum hte_return (*)(struct hte_ts_data *, void *)') [-Werror,-Wincompatible-function-pointer-types]
-           return hte_request_ts_ns(hdesc, process_hw_ts,
-                                           ^~~~~~~~~~~~~
-   include/linux/hte.h:234:75: note: passing argument to parameter 'cb' here
-   static inline int hte_request_ts_ns(struct hte_ts_desc *desc, hte_ts_cb_t cb,
-                                                                             ^
->> drivers/gpio/gpiolib-cdev.c:852:6: error: incompatible function pointer types passing 'irqreturn_t (void *)' (aka 'enum irqreturn (void *)') to parameter of type 'hte_ts_sec_cb_t' (aka 'enum hte_return (*)(void *)') [-Werror,-Wincompatible-function-pointer-types]
-                                    process_hw_ts_thread, line);
-                                    ^~~~~~~~~~~~~~~~~~~~
-   include/linux/hte.h:235:25: note: passing argument to parameter 'tcb' here
-                                       hte_ts_sec_cb_t tcb, void *data)
-                                                       ^
-   7 warnings and 4 errors generated.
-
-
-vim +851 drivers/gpio/gpiolib-cdev.c
-
-   828	
-   829	static int hte_edge_setup(struct line *line, u64 eflags)
-   830	{
-   831		int ret;
-   832		unsigned long flags = 0;
-   833		struct hte_ts_desc *hdesc = &line->hdesc;
-   834	
-   835		if (eflags & GPIO_V2_LINE_FLAG_EDGE_RISING)
-   836			flags |= test_bit(FLAG_ACTIVE_LOW, &line->desc->flags) ?
-   837					  HTE_FALLING_EDGE_TS : HTE_RISING_EDGE_TS;
-   838		if (eflags & GPIO_V2_LINE_FLAG_EDGE_FALLING)
-   839			flags |= test_bit(FLAG_ACTIVE_LOW, &line->desc->flags) ?
-   840					  HTE_RISING_EDGE_TS : HTE_FALLING_EDGE_TS;
-   841	
-   842		line->total_discard_seq = 0;
-   843	
-   844		hte_init_line_attr(hdesc, desc_to_gpio(line->desc), flags,
-   845				   NULL, line->desc);
-   846	
-   847		ret = hte_ts_get(NULL, hdesc, 0);
-   848		if (ret)
-   849			return ret;
-   850	
- > 851		return hte_request_ts_ns(hdesc, process_hw_ts,
- > 852					 process_hw_ts_thread, line);
-   853	}
-   854	
-
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index d10e5fd0f83c..c51018c68b56 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -109,7 +109,7 @@ struct ks_pcie_of_data {
+ 	enum dw_pcie_device_mode mode;
+ 	const struct dw_pcie_host_ops *host_ops;
+ 	const struct dw_pcie_ep_ops *ep_ops;
+-	unsigned int version;
++	u32 version;
+ };
+ 
+ struct keystone_pcie {
+@@ -1069,19 +1069,19 @@ static int ks_pcie_am654_set_mode(struct device *dev,
+ 
+ static const struct ks_pcie_of_data ks_pcie_rc_of_data = {
+ 	.host_ops = &ks_pcie_host_ops,
+-	.version = 0x365A,
++	.version = DW_PCIE_VER_365A,
+ };
+ 
+ static const struct ks_pcie_of_data ks_pcie_am654_rc_of_data = {
+ 	.host_ops = &ks_pcie_am654_host_ops,
+ 	.mode = DW_PCIE_RC_TYPE,
+-	.version = 0x490A,
++	.version = DW_PCIE_VER_490A,
+ };
+ 
+ static const struct ks_pcie_of_data ks_pcie_am654_ep_of_data = {
+ 	.ep_ops = &ks_pcie_am654_ep_ops,
+ 	.mode = DW_PCIE_EP_TYPE,
+-	.version = 0x490A,
++	.version = DW_PCIE_VER_490A,
+ };
+ 
+ static const struct of_device_id ks_pcie_of_match[] = {
+@@ -1114,12 +1114,12 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+ 	struct device_link **link;
+ 	struct gpio_desc *gpiod;
+ 	struct resource *res;
+-	unsigned int version;
+ 	void __iomem *base;
+ 	u32 num_viewport;
+ 	struct phy **phy;
+ 	u32 num_lanes;
+ 	char name[10];
++	u32 version;
+ 	int ret;
+ 	int irq;
+ 	int i;
+@@ -1233,7 +1233,7 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+ 		goto err_get_sync;
+ 	}
+ 
+-	if (pci->version >= 0x480A)
++	if (pci->version >= DW_PCIE_VER_480A)
+ 		ret = ks_pcie_am654_set_mode(dev, mode);
+ 	else
+ 		ret = ks_pcie_set_mode(dev);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 1682f477bf20..3ebb7bfee10f 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -289,7 +289,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, u8 func_no,
+ 	val = type | PCIE_ATU_FUNC_NUM(func_no);
+ 	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr))
+ 		val |= PCIE_ATU_INCREASE_REGION_SIZE;
+-	if (pci->version == 0x490A)
++	if (pci->version == DW_PCIE_VER_490A)
+ 		val = dw_pcie_enable_ecrc(val);
+ 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL1, val);
+ 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
+@@ -336,7 +336,7 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
+ 			   upper_32_bits(cpu_addr));
+ 	dw_pcie_writel_dbi(pci, PCIE_ATU_LIMIT,
+ 			   lower_32_bits(limit_addr));
+-	if (pci->version >= 0x460A)
++	if (pci->version >= DW_PCIE_VER_460A)
+ 		dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_LIMIT,
+ 				   upper_32_bits(limit_addr));
+ 	dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET,
+@@ -345,9 +345,9 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
+ 			   upper_32_bits(pci_addr));
+ 	val = type | PCIE_ATU_FUNC_NUM(func_no);
+ 	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr) &&
+-	    pci->version >= 0x460A)
++	    pci->version >= DW_PCIE_VER_460A)
+ 		val |= PCIE_ATU_INCREASE_REGION_SIZE;
+-	if (pci->version == 0x490A)
++	if (pci->version == DW_PCIE_VER_490A)
+ 		val = dw_pcie_enable_ecrc(val);
+ 	dw_pcie_writel_dbi(pci, PCIE_ATU_CR1, val);
+ 	dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 7d6e9b7576be..5be43c662176 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -20,6 +20,14 @@
+ #include <linux/pci-epc.h>
+ #include <linux/pci-epf.h>
+ 
++/* DWC PCIe IP-core versions (native support since v4.70a) */
++#define DW_PCIE_VER_365A		0x3336352a
++#define DW_PCIE_VER_460A		0x3436302a
++#define DW_PCIE_VER_470A		0x3437302a
++#define DW_PCIE_VER_480A		0x3438302a
++#define DW_PCIE_VER_490A		0x3439302a
++#define DW_PCIE_VER_520A		0x3532302a
++
+ /* Parameters for the waiting for link up routine */
+ #define LINK_WAIT_MAX_RETRIES		10
+ #define LINK_WAIT_USLEEP_MIN		90000
+@@ -269,7 +277,7 @@ struct dw_pcie {
+ 	struct pcie_port	pp;
+ 	struct dw_pcie_ep	ep;
+ 	const struct dw_pcie_ops *ops;
+-	unsigned int		version;
++	u32			version;
+ 	int			num_lanes;
+ 	int			link_gen;
+ 	u8			n_fts[2];
+diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+index 5ba144924ff8..786af2ba379f 100644
+--- a/drivers/pci/controller/dwc/pcie-intel-gw.c
++++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+@@ -59,7 +59,7 @@
+ #define RESET_INTERVAL_MS		100
+ 
+ struct intel_pcie_soc {
+-	unsigned int	pcie_ver;
++	u32	pcie_ver;
+ };
+ 
+ struct intel_pcie {
+@@ -395,7 +395,7 @@ static const struct dw_pcie_host_ops intel_pcie_dw_ops = {
+ };
+ 
+ static const struct intel_pcie_soc pcie_data = {
+-	.pcie_ver =		0x520A,
++	.pcie_ver =		DW_PCIE_VER_520A,
+ };
+ 
+ static int intel_pcie_probe(struct platform_device *pdev)
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index b1b5f836a806..6f1330ed63e5 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1981,7 +1981,7 @@ static int tegra194_pcie_probe(struct platform_device *pdev)
+ 	pci->ops = &tegra_dw_pcie_ops;
+ 	pci->n_fts[0] = N_FTS_VAL;
+ 	pci->n_fts[1] = FTS_VAL;
+-	pci->version = 0x490A;
++	pci->version = DW_PCIE_VER_490A;
+ 
+ 	pp = &pci->pp;
+ 	pp->num_vectors = MAX_MSI_IRQS;
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.35.1
+
