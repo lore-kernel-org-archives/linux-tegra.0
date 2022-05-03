@@ -2,186 +2,193 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF4FC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 May 2022 21:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67660C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 May 2022 23:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233952AbiECWBK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 May 2022 18:01:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44682 "EHLO
+        id S244384AbiECXvH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 May 2022 19:51:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236064AbiECWBJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 May 2022 18:01:09 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD6641FA1
-        for <linux-tegra@vger.kernel.org>; Tue,  3 May 2022 14:57:36 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-e656032735so18612981fac.0
-        for <linux-tegra@vger.kernel.org>; Tue, 03 May 2022 14:57:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=czLZHU7MG6H1spBLHXY5jaZbzV59tXkMuN+Ck8Z7wc4=;
-        b=hhWjsHnmVba6J3iaRJaO09nZL4LxjIq8C9W91LOfNC4XgTIwgTHymewopsSR7xhrbE
-         wJfMPDofFT9Orm5X1Xmnq6csdeG70AmAjQHsJ6oidSvnu+c5NqT0zTpfwvGt6c7imJaY
-         Yx4JIofQGY7s+yKOtcqFuF1p2zpjcELmsl0YE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=czLZHU7MG6H1spBLHXY5jaZbzV59tXkMuN+Ck8Z7wc4=;
-        b=uF3K/JTyBpFYaOzZKm321jxot+LK7GQinmIfO+1Zpe7+7JuwbN5MneR371h2tsjT3D
-         BPG5nbYutNV7zoA0qLqUbVMwHr5NO4c/xDEcuNy4UOyxHA0kJBUC8GwVcsXMPo7Ln/r3
-         /6AzHi9l7f3DSY9ACKvZPkusJwjpLSegwbDtHgJmkte/+BOnjGEI6Tw/AOqDYv6JQBt/
-         7xcI+3SVAHYyMfrxX6zcJvBgZDdYRC6nK5TDQ5Z9KGhy8Qz8ck+woI9hsTHL83EUhPa0
-         k9y+7aj1eqPWry/+fiSf157HmTdHDPimcO2xiCtIVHg449w99eJwoKskH6wK0XDj8ocC
-         VjMg==
-X-Gm-Message-State: AOAM533mU+Xfp4jsPLUucJ0XH/t+ajhBvoDkrXrMNevHL0B8N8+4ILHW
-        UzAqBPjDA/Zq0lruFOVjgt26t2kqOORGZQ==
-X-Google-Smtp-Source: ABdhPJzuqugMCDa36PxRFkphQg7paCJB/WpZMPDKigNQ8pABgujP5oBYxO+xybNW7mPvVysSdrjlUw==
-X-Received: by 2002:a05:6870:d184:b0:ed:d1b9:5838 with SMTP id a4-20020a056870d18400b000edd1b95838mr1463412oac.263.1651615055533;
-        Tue, 03 May 2022 14:57:35 -0700 (PDT)
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com. [209.85.167.178])
-        by smtp.gmail.com with ESMTPSA id bd29-20020a056808221d00b003264e122a9asm67131oib.54.2022.05.03.14.57.34
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 May 2022 14:57:35 -0700 (PDT)
-Received: by mail-oi1-f178.google.com with SMTP id m25so5682488oih.2
-        for <linux-tegra@vger.kernel.org>; Tue, 03 May 2022 14:57:34 -0700 (PDT)
-X-Received: by 2002:a05:6808:219a:b0:325:93fc:e0fd with SMTP id
- be26-20020a056808219a00b0032593fce0fdmr2775646oib.241.1651615054192; Tue, 03
- May 2022 14:57:34 -0700 (PDT)
+        with ESMTP id S244385AbiECXvH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 May 2022 19:51:07 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3326142EE8
+        for <linux-tegra@vger.kernel.org>; Tue,  3 May 2022 16:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651621653; x=1683157653;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=/hX5NeeBdLMGWUILQNv60Zwp3g5arz4ofV+yCSsZZlM=;
+  b=hxdTlMDN8HP1gt/5FmeiRxnm6smGpS+IbK/EGfgPj/IF2X2iPbOWTjFj
+   A4P0fldpAvJJTqCVkKbgyjvA9qeRgrxbtNC8vWomRGqQElAvH742tYst4
+   0Cz2dkjAjtyLJ1OGVew5qegTxlrJ6QK7+FC2s515so5HWKvAI9z7YDGQQ
+   rTf3JQfTEE0ZbkRXeC9EKNAqVJ4CUe6ZYjgQ1dIcVH/Us/obbxH4dP1De
+   d0s8oonUPPf2JrwWSn05bi0e2/12MLjgXMisQoQSpTEpN4UDEjj/rfIxv
+   p9P2wMeT4mIgwvjostpBdgAhrYO2EmrihN0PNR1WPHDbG+rGOIRcnf9I6
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10336"; a="267501307"
+X-IronPort-AV: E=Sophos;i="5.91,196,1647327600"; 
+   d="scan'208";a="267501307"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2022 16:47:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,196,1647327600"; 
+   d="scan'208";a="547969506"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 03 May 2022 16:47:30 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nm2Er-000At6-TR;
+        Tue, 03 May 2022 23:47:29 +0000
+Date:   Wed, 4 May 2022 07:47:28 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Subject: [arm-tegra:hte/for-next 2/10] drivers/hte/hte.c:616:6: warning:
+ variable 'ei' is used uninitialized whenever 'if' condition is true
+Message-ID: <202205040735.Qhz7Bads-lkp@intel.com>
 MIME-Version: 1.0
-References: <20220427224924.592546-1-gpiccoli@igalia.com> <20220427224924.592546-5-gpiccoli@igalia.com>
- <CAE=gft5Pq25L4KFoPWbftkPF-JN1ex2yws77mMJ4GQnn9W0L2g@mail.gmail.com> <adcf6d0e-c37c-6ede-479e-29959d03d8c0@igalia.com>
-In-Reply-To: <adcf6d0e-c37c-6ede-479e-29959d03d8c0@igalia.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 3 May 2022 14:56:58 -0700
-X-Gmail-Original-Message-ID: <CAE=gft623NxqetRssrZnaRmJLSP4BT5=-sVVwtYoHuspO_gULQ@mail.gmail.com>
-Message-ID: <CAE=gft623NxqetRssrZnaRmJLSP4BT5=-sVVwtYoHuspO_gULQ@mail.gmail.com>
-Subject: Re: [PATCH 04/30] firmware: google: Convert regular spinlock into
- trylock on panic path
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
-        pmladek@suse.com, kexec@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
-        halves@canonical.com, fabiomirmar@gmail.com,
-        alejandro.j.jimenez@oracle.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Jonathan Corbet <corbet@lwn.net>, d.hatayama@jp.fujitsu.com,
-        dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de,
-        Kees Cook <keescook@chromium.org>, luto@kernel.org,
-        mhiramat@kernel.org, mingo@redhat.com, paulmck@kernel.org,
-        peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, Alan Stern <stern@rowland.harvard.edu>,
-        Thomas Gleixner <tglx@linutronix.de>, vgoyal@redhat.com,
-        vkuznets@redhat.com, Will Deacon <will@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        David Gow <davidgow@google.com>,
-        Julius Werner <jwerner@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Guilherme,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git hte/for-next
+head:   cedbe14082d169f4c1136c70c5170a76bd9a076a
+commit: a15a6cd5adac70f8ea9188b55ff0b2899cc34e0f [2/10] drivers: Add hardware timestamp engine (HTE)
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20220504/202205040735.Qhz7Bads-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 363b3a645a1e30011cc8da624f13dac5fd915628)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git/commit/?id=a15a6cd5adac70f8ea9188b55ff0b2899cc34e0f
+        git remote add arm-tegra https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
+        git fetch --no-tags arm-tegra hte/for-next
+        git checkout a15a6cd5adac70f8ea9188b55ff0b2899cc34e0f
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/hte/
 
-On Tue, May 3, 2022 at 12:12 PM Guilherme G. Piccoli
-<gpiccoli@igalia.com> wrote:
->
-> On 03/05/2022 15:03, Evan Green wrote:
-> > [...]
-> > gsmi_shutdown_reason() is a common function called in other scenarios
-> > as well, like reboot and thermal trip, where it may still make sense
-> > to wait to acquire a spinlock. Maybe we should add a parameter to
-> > gsmi_shutdown_reason() so that you can get your change on panic, but
-> > we don't convert other callbacks into try-fail scenarios causing us to
-> > miss logs.
-> >
->
-> Hi Evan, thanks for your feedback, much appreciated!
-> What I've done in other cases like this was to have a helper checking
-> the spinlock in the panic notifier - if we can acquire that, go ahead
-> but if not, bail out. For a proper example of an implementation, check
-> patch 13 of the series:
-> https://lore.kernel.org/lkml/20220427224924.592546-14-gpiccoli@igalia.com/ .
->
-> Do you agree with that, or prefer really a parameter in
-> gsmi_shutdown_reason() ? I'll follow your choice =)
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-I'm fine with either, thanks for the link. Mostly I want to make sure
-other paths to gsmi_shutdown_reason() aren't also converted to a try.
+All warnings (new ones prefixed by >>):
 
->
->
-> > Though thinking more about it, is this really a Good Change (TM)? The
-> > spinlock itself already disables interrupts, meaning the only case
-> > where this change makes a difference is if the panic happens from
-> > within the function that grabbed the spinlock (in which case the
-> > callback is also likely to panic), or in an NMI that panics within
-> > that window. The downside of this change is that if one core was
-> > politely working through an event with the lock held, and another core
-> > panics, we now might lose the panic log, even though it probably would
-> > have gone through fine assuming the other core has a chance to
-> > continue.
->
-> My feeling is that this is a good change, indeed - a lot of places are
-> getting changed like this, in this series.
->
-> Reasoning: the problem with your example is that, by default, secondary
-> CPUs are disabled in the panic path, through an IPI mechanism. IPIs take
-> precedence and interrupt the work in these CPUs, effectively
-> interrupting the "polite work" with the lock held heh
+>> drivers/hte/hte.c:616:6: warning: variable 'ei' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+           if (ret < 0)
+               ^~~~~~~
+   drivers/hte/hte.c:630:13: note: uninitialized use occurs here
+           module_put(ei->gdev->owner);
+                      ^~
+   drivers/hte/hte.c:616:2: note: remove the 'if' if its condition is always false
+           if (ret < 0)
+           ^~~~~~~~~~~~
+   drivers/hte/hte.c:595:6: warning: variable 'ei' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+           if (!gdev->chip) {
+               ^~~~~~~~~~~
+   drivers/hte/hte.c:630:13: note: uninitialized use occurs here
+           module_put(ei->gdev->owner);
+                      ^~
+   drivers/hte/hte.c:595:2: note: remove the 'if' if its condition is always false
+           if (!gdev->chip) {
+           ^~~~~~~~~~~~~~~~~~
+   drivers/hte/hte.c:570:24: note: initialize the variable 'ei' to silence this warning
+           struct hte_ts_info *ei;
+                                 ^
+                                  = NULL
+   2 warnings generated.
 
-The IPI can only interrupt a CPU with irqs disabled if the IPI is an
-NMI. I haven't looked before to see if we use NMI IPIs to corral the
-other CPUs on panic. On x86, I grepped my way down to
-native_stop_other_cpus(), which looks like it does a normal IPI, waits
-1 second, then does an NMI IPI. So, if a secondary CPU has the lock
-held, on x86 it has roughly 1s to finish what it's doing and re-enable
-interrupts before smp_send_stop() brings the NMI hammer down. I think
-this should be more than enough time for the secondary CPU to get out
-and release the lock.
 
-So then it makes sense to me that you're fixing cases where we
-panicked with the lock held, or hung with the lock held. Given the 1
-second grace period x86 gives us, I'm on board, as that helps mitigate
-the risk that we bailed out early with the try and should have spun a
-bit longer instead. Thanks.
+vim +616 drivers/hte/hte.c
 
--Evan
+   551	
+   552	/**
+   553	 * hte_ts_get() - The function to initialize and obtain HTE desc.
+   554	 *
+   555	 * The function initializes the consumer provided HTE descriptor. If consumer
+   556	 * has device tree node, index is used to parse the line id and other details.
+   557	 * The function needs to be called before using any request APIs.
+   558	 *
+   559	 * @dev: HTE consumer/client device, used in case of parsing device tree node.
+   560	 * @desc: Pre-allocated timestamp descriptor.
+   561	 * @index: The index will be used as an index to parse line_id from the
+   562	 * device tree node if node is present.
+   563	 *
+   564	 * Context: Holds mutex lock.
+   565	 * Returns: Returns 0 on success or negative error code on failure.
+   566	 */
+   567	int hte_ts_get(struct device *dev, struct hte_ts_desc *desc, int index)
+   568	{
+   569		struct hte_device *gdev;
+   570		struct hte_ts_info *ei;
+   571		const struct fwnode_handle *fwnode;
+   572		struct of_phandle_args args;
+   573		u32 xlated_id;
+   574		int ret;
+   575		bool free_name;
+   576	
+   577		if (!desc)
+   578			return -EINVAL;
+   579	
+   580		fwnode = dev ? dev_fwnode(dev) : NULL;
+   581	
+   582		if (is_of_node(fwnode))
+   583			gdev = hte_of_get_dev(dev, desc, index, &args, &free_name);
+   584		else
+   585			gdev = hte_get_dev(desc);
+   586	
+   587		if (IS_ERR(gdev)) {
+   588			pr_err("%s() no hte dev found\n", __func__);
+   589			return PTR_ERR(gdev);
+   590		}
+   591	
+   592		if (!try_module_get(gdev->owner))
+   593			return -ENODEV;
+   594	
+   595		if (!gdev->chip) {
+   596			pr_err("%s(): requested id does not have provider\n",
+   597			       __func__);
+   598			ret = -ENODEV;
+   599			goto out;
+   600		}
+   601	
+   602		if (is_of_node(fwnode)) {
+   603			if (!gdev->chip->xlate_of)
+   604				ret = -EINVAL;
+   605			else
+   606				ret = gdev->chip->xlate_of(gdev->chip, &args,
+   607							   desc, &xlated_id);
+   608		} else {
+   609			if (!gdev->chip->xlate_plat)
+   610				ret = -EINVAL;
+   611			else
+   612				ret = gdev->chip->xlate_plat(gdev->chip, desc,
+   613							     &xlated_id);
+   614		}
+   615	
+ > 616		if (ret < 0)
+   617			goto out;
+   618	
+   619		ei = &gdev->ei[xlated_id];
+   620	
+   621		ret = hte_bind_ts_info_locked(ei, desc, xlated_id);
+   622		if (ret)
+   623			goto out;
+   624	
+   625		ei->free_attr_name = free_name;
+   626	
+   627		return 0;
+   628	
+   629	out:
+   630		module_put(ei->gdev->owner);
+   631	
+   632		return ret;
+   633	}
+   634	EXPORT_SYMBOL_GPL(hte_ts_get);
+   635	
 
->
-> Then, such CPU is put to sleep and we finally reach the panic notifier
-> hereby discussed, in the main CPU. If the other CPU was shut-off *with
-> the lock held*, it's never finishing such work, so the lock is never to
-> be released. Conclusion: the spinlock can't be acquired, hence we broke
-> the machine (which is already broken, given it's panic) in the path of
-> this notifier.
-> This should be really rare, but..possible. So I think we should protect
-> against this scenario.
->
-> We can grab others' feedback if you prefer, and of course you have the
-> rights to refuse this change in the gsmi code, but from my
-> point-of-view, I don't see any advantage in just assume the risk,
-> specially since the change is very very simple.
->
-> Cheers,
->
->
-> Guilherme
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
