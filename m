@@ -2,161 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BECC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 May 2022 07:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE7EC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 May 2022 09:12:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237883AbiEDH0e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 May 2022 03:26:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47490 "EHLO
+        id S1346734AbiEDJQB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 May 2022 05:16:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241181AbiEDH0e (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 May 2022 03:26:34 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E17417045
-        for <linux-tegra@vger.kernel.org>; Wed,  4 May 2022 00:22:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651648977; x=1683184977;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=BwLeIk3BnJud4clTeNUa2jr8qafqRq+oCd/QpnB6Xk0=;
-  b=mLrUPfsagvFUh7fMo1ur7qmKoStkOxmvWJtV3HKpt7EyekznuZj3S2o3
-   jCHCMM9DV38tLn56CkQix4iwN3gYzaH28SUf7sZUcyWDEZQyd1c0YNIRM
-   wKwyj1bXTGxsU02XKHC5eIU/y+O1F0wgsCzUoqEADKQ7v6q38/edEZjMb
-   Uu46HD8TbHRI+CC3+2CCw6/VRna3m8V4hW6dbjwWADfTBrFdJ627VWqjG
-   1r6t7w5EjyMTEmfn7ePJsLNOUo1DmZxpPrUfuel18EvqlpMJZBXPeRFm3
-   p5S7NRmn5SrRKI/eqo2vZdKqYT15pE12VKgT2O9D9ki6jZy1YR6Lhltp7
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10336"; a="267568053"
-X-IronPort-AV: E=Sophos;i="5.91,197,1647327600"; 
-   d="scan'208";a="267568053"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2022 00:22:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,197,1647327600"; 
-   d="scan'208";a="693452983"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 04 May 2022 00:22:55 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nm9Lb-000BAh-8b;
-        Wed, 04 May 2022 07:22:55 +0000
-Date:   Wed, 4 May 2022 15:22:05 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     kbuild-all@lists.01.org, linux-tegra@vger.kernel.org,
-        Thierry Reding <treding@nvidia.com>
-Subject: [arm-tegra:hte/for-next 7/10] drivers/gpio/gpiolib-cdev.c:572:8:
- error: unknown type name 'hte_return_t'
-Message-ID: <202205041541.7ij2aoYa-lkp@intel.com>
+        with ESMTP id S237301AbiEDJQA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 May 2022 05:16:00 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B69D186C2
+        for <linux-tegra@vger.kernel.org>; Wed,  4 May 2022 02:12:24 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id gh6so1713597ejb.0
+        for <linux-tegra@vger.kernel.org>; Wed, 04 May 2022 02:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y10/WtRB7HPahgpaB6GkcIayz4hLOHPe/WbMNVnpmvQ=;
+        b=CpV7Paif+/qJ9FXs9pcjTbh2qzW0fD1m6nqyPF/PFW4M2m20wfBa4x2qfJ2wzV5TJr
+         U3UcVJf2NpO81WvrIyihTNZlEFeayhRnrxspiChLswrnHUToWpPwIOeFDTbdSvMWvKZz
+         BYvpMvGNZN9lbAbZox0j5+hIvMr2S2dLIq6xqJt+7juuwhKZSvzlwwCJ0+sR2HXAw9r7
+         6cDrjT10jfsAWe1TzJCAcUz1Obenc8qVHwOIeJMsI2P57sopAKSX2qvtjB6WSfaXhVeX
+         18XXePkw0WvOi7wmBQtyRRNFaibdl1vH7vT2CNuHXnTAOXmBlZEOirOd11XcteKnwQAt
+         gMWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y10/WtRB7HPahgpaB6GkcIayz4hLOHPe/WbMNVnpmvQ=;
+        b=LrpVcqwK1vR0YPiMZrY4/kF0IndFS3DcpYMZuD6VA5TpImIBHDqx+0yDUQc5FGSSq1
+         U1c+wCcy8Ud5ROVfrtKXicMlkwP8gAk77Hv148KRAW2ZURxQ9OVgiP1H1SwTFYjq0mQ5
+         jmrJr17FE4x55mLji9YFFPaK6e8t+JoKkkOr+V2L4FmEZVmeHuefgcxyFOHUWTo063iy
+         7d21BAW9NvsCvphzrah38a2mN1Jgg6P30pXhFOeHY7R6bFvcvQOK+WaIOV9nO6rwY8Zw
+         aouNLJYIsle/RyRV4EWzVudKNVr9wY2bCtTQARkbeVxWggthV6FL1ZV5H8MT80LbqPXm
+         Fx2A==
+X-Gm-Message-State: AOAM530idt+amfFDN0S0cxSsQwadAbB4fRiIKJHGRA0w/jDKyVXNlpnr
+        w8LOo9dwoI6T3eSls78J8v4=
+X-Google-Smtp-Source: ABdhPJyFbgBFga3HzXYNDeO7nlMta2dk+vgTxv/HV3AcrPQM/N9u7y9YwdjA/iRZgR+nvwWI4Y/dkg==
+X-Received: by 2002:a17:907:6d26:b0:6f4:bba2:ebbb with SMTP id sa38-20020a1709076d2600b006f4bba2ebbbmr2188723ejc.699.1651655543034;
+        Wed, 04 May 2022 02:12:23 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id hf27-20020a1709072c5b00b006f3ef214e31sm5493626ejc.151.2022.05.04.02.12.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 May 2022 02:12:21 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: [PATCH] soc/tegra: pmc: Select REGMAP
+Date:   Wed,  4 May 2022 11:12:18 +0200
+Message-Id: <20220504091218.3187685-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git hte/for-next
-head:   cedbe14082d169f4c1136c70c5170a76bd9a076a
-commit: 98935236600d4e179b664ffcfcd54e0ec3a1b4e3 [7/10] gpiolib: cdev: Add hardware timestamp clock type
-config: i386-debian-10.3-kselftests (https://download.01.org/0day-ci/archive/20220504/202205041541.7ij2aoYa-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.2.0-20) 11.2.0
-reproduce (this is a W=1 build):
-        # https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git/commit/?id=98935236600d4e179b664ffcfcd54e0ec3a1b4e3
-        git remote add arm-tegra https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
-        git fetch --no-tags arm-tegra hte/for-next
-        git checkout 98935236600d4e179b664ffcfcd54e0ec3a1b4e3
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/gpio/
+From: Thierry Reding <treding@nvidia.com>
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Commit 9d5e7c3e36eb ("soc/tegra: pmc: Provide USB sleepwalk register
+map") introduced a dependency on the regmap infrastructure, so select
+the corresponding Kconfig entry. This avoids failures in random builds
+that may otherwise end up having SOC_TEGRA_PMC enabled but not REGMAP.
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/soc/tegra/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
->> drivers/gpio/gpiolib-cdev.c:572:8: error: unknown type name 'hte_return_t'
-     572 | static hte_return_t process_hw_ts_thread(void *p)
-         |        ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:623:8: error: unknown type name 'hte_return_t'
-     623 | static hte_return_t process_hw_ts(struct hte_ts_data *ts, void *p)
-         |        ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c: In function 'hte_edge_setup':
->> drivers/gpio/gpiolib-cdev.c:851:41: error: passing argument 2 of 'hte_request_ts_ns' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     851 |         return hte_request_ts_ns(hdesc, process_hw_ts,
-         |                                         ^~~~~~~~~~~~~
-         |                                         |
-         |                                         int (*)(struct hte_ts_data *, void *)
-   In file included from drivers/gpio/gpiolib-cdev.c:27:
-   include/linux/hte.h:234:75: note: expected 'hte_ts_cb_t' {aka 'enum hte_return (*)(struct hte_ts_data *, void *)'} but argument is of type 'int (*)(struct hte_ts_data *, void *)'
-     234 | static inline int hte_request_ts_ns(struct hte_ts_desc *desc, hte_ts_cb_t cb,
-         |                                                               ~~~~~~~~~~~~^~
-   drivers/gpio/gpiolib-cdev.c:852:34: error: passing argument 3 of 'hte_request_ts_ns' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     852 |                                  process_hw_ts_thread, line);
-         |                                  ^~~~~~~~~~~~~~~~~~~~
-         |                                  |
-         |                                  int (*)(void *)
-   In file included from drivers/gpio/gpiolib-cdev.c:27:
-   include/linux/hte.h:235:53: note: expected 'hte_ts_sec_cb_t' {aka 'enum hte_return (*)(void *)'} but argument is of type 'int (*)(void *)'
-     235 |                                     hte_ts_sec_cb_t tcb, void *data)
-         |                                     ~~~~~~~~~~~~~~~~^~~
-   cc1: some warnings being treated as errors
-
-
-vim +/hte_return_t +572 drivers/gpio/gpiolib-cdev.c
-
-   571	
- > 572	static hte_return_t process_hw_ts_thread(void *p)
-   573	{
-   574		struct line *line;
-   575		struct linereq *lr;
-   576		struct gpio_v2_line_event le;
-   577		int level;
-   578		u64 eflags;
-   579	
-   580		if (!p)
-   581			return HTE_CB_HANDLED;
-   582	
-   583		line = p;
-   584		lr = line->req;
-   585	
-   586		memset(&le, 0, sizeof(le));
-   587	
-   588		le.timestamp_ns = line->timestamp_ns;
-   589		eflags = READ_ONCE(line->eflags);
-   590	
-   591		if (eflags == GPIO_V2_LINE_FLAG_EDGE_BOTH) {
-   592			if (line->raw_level >= 0) {
-   593				if (test_bit(FLAG_ACTIVE_LOW, &line->desc->flags))
-   594					level = !line->raw_level;
-   595				else
-   596					level = line->raw_level;
-   597			} else {
-   598				level = gpiod_get_value_cansleep(line->desc);
-   599			}
-   600	
-   601			if (level)
-   602				le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-   603			else
-   604				le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
-   605		} else if (eflags == GPIO_V2_LINE_FLAG_EDGE_RISING) {
-   606			/* Emit low-to-high event */
-   607			le.id = GPIO_V2_LINE_EVENT_RISING_EDGE;
-   608		} else if (eflags == GPIO_V2_LINE_FLAG_EDGE_FALLING) {
-   609			/* Emit high-to-low event */
-   610			le.id = GPIO_V2_LINE_EVENT_FALLING_EDGE;
-   611		} else {
-   612			return HTE_CB_HANDLED;
-   613		}
-   614		le.line_seqno = line->line_seqno;
-   615		le.seqno = (lr->num_lines == 1) ? le.line_seqno : line->req_seqno;
-   616		le.offset = gpio_chip_hwgpio(line->desc);
-   617	
-   618		linereq_put_event(lr, &le);
-   619	
-   620		return HTE_CB_HANDLED;
-   621	}
-   622	
-
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 8b53ed1cc67e..5725c8ef0406 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -146,6 +146,7 @@ config SOC_TEGRA_PMC
+ 	select GENERIC_PINCONF
+ 	select PM_OPP
+ 	select PM_GENERIC_DOMAINS
++	select REGMAP
+ 
+ config SOC_TEGRA_POWERGATE_BPMP
+ 	def_bool y
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.35.1
+
