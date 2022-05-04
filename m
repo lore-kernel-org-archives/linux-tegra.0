@@ -2,142 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FE5C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 May 2022 18:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E27BC4167B
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 May 2022 20:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377235AbiEDSiF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 May 2022 14:38:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34886 "EHLO
+        id S1378054AbiEDUgd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 May 2022 16:36:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377034AbiEDSh7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 May 2022 14:37:59 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F017825D;
-        Wed,  4 May 2022 11:26:41 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 794BE1042;
-        Wed,  4 May 2022 11:26:41 -0700 (PDT)
-Received: from bogus (unknown [10.57.1.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22B433FA35;
-        Wed,  4 May 2022 11:26:38 -0700 (PDT)
-Date:   Wed, 4 May 2022 19:26:33 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, rafael@kernel.org
-Cc:     lenb@kernel.org, robert.moore@intel.com, catalin.marinas@arm.com,
-        will@kernel.org, lorenzo.pieralisi@arm.com, guohanjun@huawei.com,
-        linux-tegra@vger.kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, linux-acpi@vger.kernel.org, devel@acpica.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] ACPI: ARM Performance Monitoring Unit Table (APMT)
- initial support
-Message-ID: <20220504182633.a3mwuiohfqtjvpep@bogus>
-References: <20220419205432.46021-1-bwicaksono@nvidia.com>
- <20220419205432.46021-3-bwicaksono@nvidia.com>
+        with ESMTP id S1353874AbiEDUgb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 May 2022 16:36:31 -0400
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 367574F448;
+        Wed,  4 May 2022 13:32:53 -0700 (PDT)
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1nmLg4-0003MI-02; Wed, 04 May 2022 22:32:52 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id B9C09C01D0; Wed,  4 May 2022 22:32:24 +0200 (CEST)
+Date:   Wed, 4 May 2022 22:32:24 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+Subject: Re: [PATCH 07/30] mips: ip22: Reword PANICED to PANICKED and remove
+ useless header
+Message-ID: <20220504203224.GA23475@alpha.franken.de>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-8-gpiccoli@igalia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220419205432.46021-3-bwicaksono@nvidia.com>
+In-Reply-To: <20220427224924.592546-8-gpiccoli@igalia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Besar, Rafael,
-
-Sorry for the delayed response.
-
-On Tue, Apr 19, 2022 at 03:54:32PM -0500, Besar Wicaksono wrote:
-> ARM Performance Monitoring Unit Table describes the properties of PMU
-> support in ARM-based system. The APMT table contains a list of nodes,
-> each represents a PMU in the system that conforms to ARM CoreSight PMU
-> architecture. The properties of each node include information required
-> to access the PMU (e.g. MMIO base address, interrupt number) and also
-> identification. For more detailed information, please refer to the
-> specification below:
->  * APMT: https://developer.arm.com/documentation/den0117/latest
->  * ARM Coresight PMU:
->         https://developer.arm.com/documentation/ihi0091/latest
+On Wed, Apr 27, 2022 at 07:49:01PM -0300, Guilherme G. Piccoli wrote:
+> Many other place in the kernel prefer the latter, so let's keep
+> it consistent in MIPS code as well. Also, removes a useless header.
 > 
-> The initial support adds the detection of APMT table and generic
-> infrastructure to create platform devices for ARM CoreSight PMUs.
-> Similar to IORT the root pointer of APMT is preserved during runtime
-> and each PMU platform device is given a pointer to the corresponding
-> APMT node.
->
-
-Hi Besar,
-
-This patch on its own looks fine and happy to ack. However I would like
-to know general process on such changes that add platform or any bus
-device but the driver itself is not upstream.
-
-Any particular reason why you would like to rush and push this without
-the actual driver to probe the device being added here ?
-
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 > ---
->  arch/arm64/Kconfig          |   1 +
->  drivers/acpi/arm64/Kconfig  |   3 +
->  drivers/acpi/arm64/Makefile |   1 +
->  drivers/acpi/arm64/apmt.c   | 176 ++++++++++++++++++++++++++++++++++++
->  drivers/acpi/bus.c          |   2 +
->  include/linux/acpi_apmt.h   |  19 ++++
->  6 files changed, 202 insertions(+)
->  create mode 100644 drivers/acpi/arm64/apmt.c
->  create mode 100644 include/linux/acpi_apmt.h
->
+>  arch/mips/sgi-ip22/ip22-reset.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
 
-[...]
+applied to mips-next.
 
-> diff --git a/drivers/acpi/arm64/apmt.c b/drivers/acpi/arm64/apmt.c
-> new file mode 100644
-> index 000000000000..8b8b9f480548
-> --- /dev/null
-> +++ b/drivers/acpi/arm64/apmt.c
-> @@ -0,0 +1,176 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * ARM APMT table support.
-> + * Design document number: ARM DEN0117.
-> + *
-> + * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> + *
-> + */
-> +
-> +#define pr_fmt(fmt)	"ACPI: APMT: " fmt
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define DEV_NAME "arm-csite-pmu"
-> +
-
-I really don't prefer this name:
-1. arm-coresight-pmu is much better than "csite". I see the short form
-   used elsewhere in the kernel is just "cs" as in cs_etm,...etc
-2. Since APMT is more generic than just coresight(I understand coresight
-   was the initial motivation for the generic specification) and also
-   the type list seem to cover memory controller, SMMU,..etc, does
-   it make sense to call it "arm-generic-pmu" or something similar.
-
-Anyways, it can be part of the driver discussion as people might have
-opinion based on what and how the driver covers the variety of PMU
-types possible as described in APMT.
-
-Not sure if the same device name will be re-used or PMUs can be registered
-with different name under perf subsystem, but the name matters for the user
-space tools and decoders. They may use the name or type information to analyse
-the data samples.
-
-So it is better to wait for all those discussion as part of the driver
-upstreaming before you use this device name unless we are absolutely sure
-the PMUs can be registered with different names in the driver(which could
-be possible, I just don't know)
-
-Apart from this name, I am OK with the changes here and happy to ack if it
-is OK to merge this without any driver to probe this device yet.
+Thomas.
 
 -- 
-Regards,
-Sudeep
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
