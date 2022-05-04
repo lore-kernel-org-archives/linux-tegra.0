@@ -2,73 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD590C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 May 2022 11:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6414C4321E
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 May 2022 12:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236294AbiEDLzq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 May 2022 07:55:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35148 "EHLO
+        id S1349963AbiEDMuL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 May 2022 08:50:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235325AbiEDLzp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 May 2022 07:55:45 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5ABD62CCA5
-        for <linux-tegra@vger.kernel.org>; Wed,  4 May 2022 04:52:10 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D8121042;
-        Wed,  4 May 2022 04:52:10 -0700 (PDT)
-Received: from [10.57.80.111] (unknown [10.57.80.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E39163FA50;
-        Wed,  4 May 2022 04:52:08 -0700 (PDT)
-Message-ID: <63c021c4-57de-38fe-e48f-a308088d235b@arm.com>
-Date:   Wed, 4 May 2022 12:52:03 +0100
+        with ESMTP id S235732AbiEDMuI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 May 2022 08:50:08 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 447452CE37;
+        Wed,  4 May 2022 05:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UDxTzr/LbFPHIhZF1U36kLmGFtpbBGYhm6tD7CfQBjM=; b=KDrxDW8Mnr1qToRh0yGaDv25Fu
+        TWpgQRScRF3dRjjU3pakegMZLqUHmycIdjATA6DbY60uPfya2zQOAwJ0e5erFJc5BJn7o3eV3sQ41
+        Tox4yunn4/jA8a3IjyUJT/sI3KcoYtb2p2FNUwcMM3f1g/ex9W0DrY0odKixjZjudGtrtbA3G1JPw
+        m7Nny7DVsQFLh+HpvU/q7Yc8/k1hRGwJeSWIAUBYmqnc5ZdThCMVxiKgVNOsyAMWZdrNHmIgXn40c
+        w6AF2HzVr+D+OvvIusg4XzuOUWHoF2AYp44ZOOo2CAb1BDljEp1qf8qc23J8WoJ9sqhtbxFJxmFVB
+        8aeUFBag==;
+Received: from [179.113.53.197] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nmEOH-0003Ke-Oi; Wed, 04 May 2022 14:46:02 +0200
+Message-ID: <9581851d-6c61-a2ef-a3c4-6e2ce05eab12@igalia.com>
+Date:   Wed, 4 May 2022 09:45:31 -0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v2] drm/tegra: Stop using iommu_present()
-Content-Language: en-GB
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        thierry.reding@gmail.com
-Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
-References: <1f7c304a79b8b8dd5d4716786cae7502a0cc31f5.1649684782.git.robin.murphy@arm.com>
- <add31812-50d5-6cb0-3908-143c523abd37@collabora.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <add31812-50d5-6cb0-3908-143c523abd37@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 04/30] firmware: google: Convert regular spinlock into
+ trylock on panic path
+Content-Language: en-US
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
+        pmladek@suse.com, kexec@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de,
+        Kees Cook <keescook@chromium.org>, luto@kernel.org,
+        mhiramat@kernel.org, mingo@redhat.com, paulmck@kernel.org,
+        peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, Alan Stern <stern@rowland.harvard.edu>,
+        Thomas Gleixner <tglx@linutronix.de>, vgoyal@redhat.com,
+        vkuznets@redhat.com, Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        David Gow <davidgow@google.com>,
+        Julius Werner <jwerner@chromium.org>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-5-gpiccoli@igalia.com>
+ <CAE=gft5Pq25L4KFoPWbftkPF-JN1ex2yws77mMJ4GQnn9W0L2g@mail.gmail.com>
+ <adcf6d0e-c37c-6ede-479e-29959d03d8c0@igalia.com>
+ <CAE=gft623NxqetRssrZnaRmJLSP4BT5=-sVVwtYoHuspO_gULQ@mail.gmail.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <CAE=gft623NxqetRssrZnaRmJLSP4BT5=-sVVwtYoHuspO_gULQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-05-04 01:52, Dmitry Osipenko wrote:
-> On 4/11/22 16:46, Robin Murphy wrote:
->> @@ -1092,6 +1092,19 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
->>   	struct host1x *host1x = dev_get_drvdata(dev->dev.parent);
->>   	struct iommu_domain *domain;
->>   
->> +	/* For starters, this is moot if no IOMMU is available */
->> +	if (!device_iommu_mapped(&dev->dev))
->> +		return false;
+On 03/05/2022 18:56, Evan Green wrote:
+> Hi Guilherme,
+> [...] 
+>> Do you agree with that, or prefer really a parameter in
+>> gsmi_shutdown_reason() ? I'll follow your choice =)
 > 
-> Unfortunately this returns false on T30 with enabled IOMMU because we
-> don't use IOMMU for Host1x on T30 [1] to optimize performance. We can't
-> change it until we will update drivers to support Host1x-dedicated buffers.
+> I'm fine with either, thanks for the link. Mostly I want to make sure
+> other paths to gsmi_shutdown_reason() aren't also converted to a try.
 
-Huh, so is dev->dev here not the DRM device? If it is, and 
-device_iommu_mapped() returns false, then the later iommu_attach_group() 
-call is going to fail anyway, so there's not much point allocating a 
-domain. If it's not, then what the heck is host1x_drm_wants_iommu() 
-actually testing for?
+Hi Evan, thanks for the prompt response! So, I'll proceed like I did in
+s390, for consistency.
 
-In the not-too-distant future we'll need to pass an appropriate IOMMU 
-client device to iommu_domain_alloc() as well, so the sooner we can get 
-this code straight the better.
-
-Thanks,
-Robin.
-
+> [...]
+>> Reasoning: the problem with your example is that, by default, secondary
+>> CPUs are disabled in the panic path, through an IPI mechanism. IPIs take
+>> precedence and interrupt the work in these CPUs, effectively
+>> interrupting the "polite work" with the lock held heh
 > 
-> [1]
-> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/host1x/dev.c#L258
+> The IPI can only interrupt a CPU with irqs disabled if the IPI is an
+> NMI. I haven't looked before to see if we use NMI IPIs to corral the
+> other CPUs on panic. On x86, I grepped my way down to
+> native_stop_other_cpus(), which looks like it does a normal IPI, waits
+> 1 second, then does an NMI IPI. So, if a secondary CPU has the lock
+> held, on x86 it has roughly 1s to finish what it's doing and re-enable
+> interrupts before smp_send_stop() brings the NMI hammer down. I think
+> this should be more than enough time for the secondary CPU to get out
+> and release the lock.
 > 
+> So then it makes sense to me that you're fixing cases where we
+> panicked with the lock held, or hung with the lock held. Given the 1
+> second grace period x86 gives us, I'm on board, as that helps mitigate
+> the risk that we bailed out early with the try and should have spun a
+> bit longer instead. Thanks.
+> 
+> -Evan
+
+Well, in the old path without "crash_kexec_post_notifiers", we indeed
+end-up relying on native_stop_other_cpus() for x86 as you said, and the
+"1s rule" makes sense. But after this series (or even before, if the
+kernel parameter "crash_kexec_post_notifiers" was used) the function
+used to stop CPUs in the panic path is crash_smp_send_stop(), and the
+call chain is like:
+
+Main CPU:
+crash_smp_send_stop()
+--kdump_nmi_shootdown_cpus()
+----nmi_shootdown_cpus()
+
+Then, in each CPU (except the main one, running panic() path),
+we execute kdump_nmi_callback() in NMI context.
+
+So, we seem to indeed interrupt any context (even with IRQs disabled),
+increasing the likelihood of the potential lockups due to stopped CPUs
+holding the locks heheh
+
+Thanks again for the good discussion, let me know if anything I'm saying
+doesn't make sense - this crash path is a bit convoluted, specially in
+x86, I might have understood something wrongly =)
+Cheers,
+
+
+Guilherme
