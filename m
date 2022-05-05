@@ -2,180 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B87C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 14:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03990C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 14:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234915AbiEEOHn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 May 2022 10:07:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57356 "EHLO
+        id S1380495AbiEEOTT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 May 2022 10:19:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233206AbiEEOHm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 10:07:42 -0400
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A61B58E7A;
-        Thu,  5 May 2022 07:04:03 -0700 (PDT)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-deb9295679so4289165fac.6;
-        Thu, 05 May 2022 07:04:03 -0700 (PDT)
+        with ESMTP id S1380579AbiEEOTS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 10:19:18 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57311572D
+        for <linux-tegra@vger.kernel.org>; Thu,  5 May 2022 07:15:34 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id i27so8992301ejd.9
+        for <linux-tegra@vger.kernel.org>; Thu, 05 May 2022 07:15:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G0r63EWJGrRILahj/sz+EJV3EOcaqYNjGWpoFKqbQ90=;
+        b=jgomm+QM9e2YtsSnghfam7Jo2Vy9nk+MzyosB8qkB7Q4XTv6CFUSq5Qchwh5bqndFo
+         kcWYcsCLhG9W/XOKLjWtrhw0wvPv83ih8E4EX7PQ/kBVG+i8Zk8eRRV6DBEcvGV2GU7a
+         GjasK1Z7nDvuyQeZFErKNACv+iSX/xV5rgl6RllK0WI9RYt4D8/xl2BXYpDjrhbpgLHh
+         tnmCzixQEvlJbxc9xeqYJV8kNDh2OAN2RsOYxPxIVIAiDsuTaXsoIPI9MNUZwaM21fyS
+         xWVcTdt7I1s+Z/RVl61LdFZDpgic3tDrbd1GCdPItXLD7p4kpy+lPW4z3ZQ3xv0iAvXu
+         TDOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=09d4ImqgAZ5KVmnRazMqFwoFkQlwJHi+fBPthXtLfiM=;
-        b=nB7dApo8qKwaT1O7A0oVXU9Fg+I3c3xhM4OgXjgACed7Ea4g0hmqypeOtXctNf5tJS
-         PX29tmPnZa1adi5Cl9V7X/XLOt5aQoc3fTsgDdiNTbgTm0e+XcQZEoid0MqT1Wn7TXcv
-         dBNGmCIxmY6o2o7K7dOBzBuA+bq+Bine/+v0B8EhchYAzE5lM7Hg1x9rNWqShdSIgVhH
-         NU9is1yJ2ZX87l7hfiO/CtvLD7vU1JHZ7faWiCHj2pxGeQk/SgViOgG8/875sABuCSjO
-         mE4aJtl3my2YryET2QpbIfiqobZ/MejQjDzCHa0utjL04eJ/+rVfAcrkQhJSqJOZlnG9
-         +dnQ==
-X-Gm-Message-State: AOAM532hrOWtauBAp84rlt0E8gATqIgm/1xS/Y+kcMPPj3rx2ICwBaD4
-        iHXsK9L5imne4/XaN1dBJBuA4x27KA==
-X-Google-Smtp-Source: ABdhPJxVnE7BVFNkJXfE9Z3JizfB5JmvCdmhkLTiODPojXNDqWINY/2OUfdNdk6qhlkMhWoZJxO4PQ==
-X-Received: by 2002:a05:6870:1709:b0:ed:331a:c3cc with SMTP id h9-20020a056870170900b000ed331ac3ccmr2351299oae.31.1651759442436;
-        Thu, 05 May 2022 07:04:02 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id j28-20020a056830241c00b0060603221264sm609424ots.52.2022.05.05.07.04.01
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G0r63EWJGrRILahj/sz+EJV3EOcaqYNjGWpoFKqbQ90=;
+        b=yatWmcmwKmtGViBcRXnVj/NqI4DB3utjjLOgtAWFgcfqhnrAPxCbEbWSkh5zuFt/Xh
+         n5v8miG5jXkl3z1FDa4X+5IEIXYmqFxMLZdQv4hqGvtU5tsp0Ykxt2+l4So2DbfyOVX4
+         AfJsWFM9+GsfZ8qT5AaFaFKB+rv114pOtJ/6sBrvEjp8nFPP19NSxOwOXGSlV/jcO16+
+         SyuiEidVDLOALAfOePemg3+rv9Vz9uYu80bh8VdRxCsVTqwnjFzqMiQXyDk1Z8hHTKpF
+         htriZ+5pdo0pVE/5EZGkvjkKephTN/X8cJ2wp3vRjAgKtnGP8dysmQzNmiUAUaommLIe
+         0Kxg==
+X-Gm-Message-State: AOAM532uf2Bx5RtdbffnwOPKHta5iyR0/671W2/kmksd0D3uEbX28U6C
+        PWGCcBerh50xGD67BWfxIdLq7u0cekU=
+X-Google-Smtp-Source: ABdhPJxeMIlUXQL1s7qEc469SokpB+SnGYy3DObLLLvhCHkHuF4PeB6ZEUpydG7tZafDSLBy0Nqfyw==
+X-Received: by 2002:a17:906:5d11:b0:6f4:a04:6b44 with SMTP id g17-20020a1709065d1100b006f40a046b44mr26261272ejt.167.1651760133375;
+        Thu, 05 May 2022 07:15:33 -0700 (PDT)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id p4-20020a50cd84000000b0042617ba6398sm911046edi.34.2022.05.05.07.15.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 May 2022 07:04:01 -0700 (PDT)
-Received: (nullmailer pid 3795326 invoked by uid 1000);
-        Thu, 05 May 2022 14:04:00 -0000
-Date:   Thu, 5 May 2022 09:04:00 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        kbuild-all@lists.01.org, bbasu@nvidia.com, vsethi@nvidia.com,
-        jsequeira@nvidia.com, Thierry Reding <treding@nvidia.com>
-Subject: Re: [Patch v3 3/9] dt-bindings: arm: tegra: Add NVIDIA Tegra194
- axi2apb binding
-Message-ID: <YnPZUFgZHJ9mFe0D@robh.at.kernel.org>
-References: <20211221125117.6545-1-sumitg@nvidia.com>
- <20211221125117.6545-4-sumitg@nvidia.com>
- <YcNv7xm19sFTlfjW@robh.at.kernel.org>
- <226fd57c-2631-ec7a-fc48-d6547d557681@nvidia.com>
- <CAL_Jsq+=hGG-cMwvM0sKFW=Rwa56=fqS379jL4ZjSyDKOia-RA@mail.gmail.com>
- <YhY1Hhgz/O724oYL@orome>
- <e1d484b5-b755-e406-8711-62f3756759f3@nvidia.com>
- <2713db35-927b-c3de-20ba-fb9c613c9291@nvidia.com>
+        Thu, 05 May 2022 07:15:31 -0700 (PDT)
+Date:   Thu, 5 May 2022 16:15:29 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] iommu/arm-smmu: Support Tegra234 SMMU
+Message-ID: <YnPcAaQTMRsNEQYJ@orome>
+References: <20220429082243.496000-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YYtfX2oWqzAJVJlB"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2713db35-927b-c3de-20ba-fb9c613c9291@nvidia.com>
+In-Reply-To: <20220429082243.496000-1-thierry.reding@gmail.com>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Apr 07, 2022 at 11:54:16AM +0530, Sumit Gupta wrote:
-> 
-> > 
-> > > > > > > Add device-tree binding documentation to represent
-> > > > > > > the axi2apb bridges
-> > > > > > > used by Control Backbone (CBB) 1.0 in Tegra194 SOC.
-> > > > > > > All errors for APB
-> > > > > > > slaves are reported as slave error because APB bas
-> > > > > > > single bit to report
-> > > > > > > error. So, CBB driver needs to further check error
-> > > > > > > status registers of
-> > > > > > > all the axi2apb bridges to find error type.
-> > > > > > > 
-> > > > > > > Signed-off-by: Sumit Gupta<sumitg@nvidia.com>
-> > > > > > > Signed-off-by: Thierry Reding<treding@nvidia.com>
-> > > > > > > ---
-> > > > > > >    .../arm/tegra/nvidia,tegra194-axi2apb.yaml    |
-> > > > > > > 40 +++++++++++++++++++
-> > > > > > >    1 file changed, 40 insertions(+)
-> > > > > > >    create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
-> > > > > > > 
-> > > > > > > 
-> > > > > > > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
-> > > > > > > 
-> > > > > > > new file mode 100644
-> > > > > > > index 000000000000..788a13f8aa93
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
-> > > > > > > 
-> > > > > > > @@ -0,0 +1,40 @@
-> > > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > > > +%YAML 1.2
-> > > > > > > +---
-> > > > > > > +$id:"http://devicetree.org/schemas/arm/tegra/nvidia,tegra194-axi2apb.yaml#"
-> > > > > > > 
-> > > > > > > +$schema:"http://devicetree.org/meta-schemas/core.yaml#"
-> > > > > > > +
-> > > > > > > +title: NVIDIA Tegra194 AXI2APB bridge
-> > > > > > > +
-> > > > > > > +maintainers:
-> > > > > > > +  - Sumit Gupta<sumitg@nvidia.com>
-> > > > > > > +
-> > > > > > > +properties:
-> > > > > > > +  $nodename:
-> > > > > > > +    pattern: "^axi2apb@([0-9a-f]+)$"
-> > > > > > > +
-> > > > > > > +  compatible:
-> > > > > > > +    enum:
-> > > > > > > +      - nvidia,tegra194-axi2apb
-> > > > > > > +
-> > > > > > > +  reg:
-> > > > > > > +    maxItems: 6
-> > > > > > > +    description: Physical base address and length
-> > > > > > > of registers for all bridges
-> > > > > > > +
-> > > > > > > +additionalProperties: false
-> > > > > > > +
-> > > > > > > +required:
-> > > > > > > +  - compatible
-> > > > > > > +  - reg
-> > > > > > > +
-> > > > > > > +examples:
-> > > > > > > +  - |
-> > > > > > > +    axi2apb: axi2apb@2390000 {
-> > > > > > As axi2apb appears to be a bus, then all the child nodes (APB devices)
-> > > > > > should be under this node.
-> > > > > axi2apb is a bridge which coverts an AXI to APB interface
-> > > > > and not a bus.
-> > > > A bus and bridge node are pretty much one and the same in DT
-> > > > representation. A PCI host bridge has a PCI bus beneath it for
-> > > > example.
-> > > Sorry for taking so long to reply, this fell through the cracks.
-> > > 
-> > > These aren't really bridges as such. CBB (which we call /bus@0 in DT) is
-> > > a sort of large container for all IP. Within that there are various shim
-> > > layers that connect these "legacy" interfaces to CBB. I suppose you
-> > > could call them bridges, but it's a bit of a stretch. From a software
-> > > point of view there is no observable translation happening. The only
-> > > reason why we need this is for improved error reporting.
-> > > 
-> > > The TRM also doesn't make a distinction between the various bridges. The
-> > > devices are all just mapped into a single address space via the CBB.
-> > > 
-> > > My understanding is that this is also gone in newer chips, so matters
-> > > become a bit simpler there.
-> > > 
-> > > Reorganizing /bus@0 into multiple bridges and busses would be a lot of
-> > > churn and likely confuse people that want to correlate what's in the TRM
-> > > to what's in DT, so I don't think it's worth it.
-> > > 
-> > > For newer chips we may want to keep this in mind so we structure the DT
-> > > more accurately from the beginning, though as I said, things have been
-> > > simplified a bit, so this may not be an issue anymore.
-> > > 
-> > > Thierry
-> > 
-> > Hi Thierry,
-> > Thank you for answering the concern.
-> > 
-> > Hi Rob,
-> > Can you please ACK to help queue the patch series for next.
-> > 
-> > Regards,
-> > Sumit
-> 
-> Ping.
 
-No one is going to apply a 4 month old patch. For starters, the DT 
-meta-schema evolves and this could now have errors. Please resend.
+--YYtfX2oWqzAJVJlB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Rob
+On Fri, Apr 29, 2022 at 10:22:40AM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Hi Joerg,
+>=20
+> this is essentially a resend of v2 with a Acked-by:s from Robin and Will
+> added. These have been on the list for quite a while now, but apparently
+> there was a misunderstanding, so neither you nor Will picked this up.
+>=20
+> Since Will acked these, I think it's probably best for you to pick these
+> up directly. If not, let me know and I'll work with Will to merge via
+> the ARM SMMU tree.
+>=20
+> Thanks,
+> Thierry
+>=20
+> Thierry Reding (3):
+>   dt-bindings: arm-smmu: Document nvidia,memory-controller property
+>   dt-bindings: arm-smmu: Add compatible for Tegra234 SOC
+>   iommu/arm-smmu: Support Tegra234 SMMU
+>=20
+>  .../devicetree/bindings/iommu/arm,smmu.yaml   | 23 +++++++++++++++++--
+>  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c    |  3 ++-
+>  2 files changed, 23 insertions(+), 3 deletions(-)
+
+Joerg,
+
+anything left to do on this from your perspective, or can this go into
+v5.19?
+
+Thanks,
+Thierry
+
+--YYtfX2oWqzAJVJlB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJz2/4ACgkQ3SOs138+
+s6HP/g//eeY9Yqwe2/A5JdXXX9QKOjJ6MRJ1VKXus3HLEWVYfWJWEbOb1SFLtfof
+9gJam7J1Wf8zPGHCJs4J+v4X2vasY4JQcfGaJRkmXocoVbzScYX9T8YwNzH5vaWQ
+DGQRmTOdRyZys/fVmr/8CYHPMS00uSxQrcp83drjSdh7Lpb7Cl3wfUQ9KXwsSW70
+FIXZ0OCNi/NotlkKnkHKV71kX8B5GYTWv5RvJYVUPK8NielahkV4ZxjpZaYVHUQU
+mDfTTlzJ1yLfUSPOibffiKdO2pIsPGwYvpzsQ8nq10I2H9W/34NpYhBzRNy/GLfW
+tgDbqhUO9x3Ap96fD5AyZvQjJloVM+xPiQWh7qb5n1kgkBcnF3YGK5MM97FrhuDo
+2NbTUnZM9y1e66Y/+VDrnhYzTvma4NDtsi5hWjzwmnaUP6Vr8vnYUYyQg3UvEbXi
+Go+BJIUl4wfobVqNYHnV+7I0ngXVW/upnrmcoC4gaMwxtV4WdAiiYR0YfJXVwWTw
+VTRFSmErt/hZ+QW6WZzyDoe5kv45sMHQHx2SlcmOzrx387pBZasqGL8YLzmFF4ZZ
+auvNOH1FekCoR+MfP/U30eBWb0sgXrBVA6CWC2jOtS5VuCPm8TP3B7kn4Kidvaj6
+Va8Hwp2T0Fh45nG4+eeibkwCnoSc/8XeW7+hQ5rz6v2koorR56k=
+=DXYz
+-----END PGP SIGNATURE-----
+
+--YYtfX2oWqzAJVJlB--
