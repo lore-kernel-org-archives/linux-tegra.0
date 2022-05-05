@@ -2,81 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E31C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 12:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C03C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 12:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377375AbiEEMqA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 May 2022 08:46:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51396 "EHLO
+        id S1378257AbiEEM6H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 May 2022 08:58:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238474AbiEEMp6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 08:45:58 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C1F35535E
-        for <linux-tegra@vger.kernel.org>; Thu,  5 May 2022 05:42:19 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id p18so5053853edr.7
-        for <linux-tegra@vger.kernel.org>; Thu, 05 May 2022 05:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nToHf9Yxrt+r3K1vMdQKligyD+NhWuMXaR0L1laGIcQ=;
-        b=MIGeaU48Hxcr0gAk/0JUERKudMJ+2VgGvtXQOyQR2FUEQeC8eFnEf5W06jJVA9iQfU
-         +IG5oyZaIHvk1wNlDTpmYhOH8uLeDZPV4etYWxHGMqd7p28h9+iY0E03t+Z58hHrTiHZ
-         Gqvid7MFQkRM2KTWd8vs1lxMo6aVE3S83f3+qzfkkL2LzrOwKU/YoJgs49dHnyOt6n2j
-         piYz00xlNGfUgi78mOiyQ31sAwWJuqxkjm+KxvB42oQSXZPiFZfrtXhS68YI2hANPBQ9
-         cMhT6NwUeHuY62ICFtRx9YBHEpchMriV7lpMAkoiUuZrCsFFtmbFFfH9rVp5pH5VwyeZ
-         wWRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nToHf9Yxrt+r3K1vMdQKligyD+NhWuMXaR0L1laGIcQ=;
-        b=Pw0NH8D/xkZ5b04qGPs18D6gXODrv/p38356ITcka+Ayzq9Vlvly0Ab/OL2IQ4Wd0I
-         oYica0bitHFvyZguZdbBTVvGLS+rtjzRp7HizpxyNRmX8Q6sXUdtgU9Wj+wC0U25Z2aZ
-         PAtgaTUd98llq0r8/oM5L+Hd7np+5jTtRgYowpst3fMoOvo6CrdtEyf/prVfzgACtBkS
-         vy/TZwSVBfcs5OtDu1DIoIYyBFnsNgPcEOTcI8m9OQI5Mg9HaRvcaosjEQnKeE0Smv+9
-         Xw490NRHTjz/dakf1nSIoXCOk1nruRT1R4/YYGLvtuu7vV4xdhWC43DZYVNU8jd1DJVR
-         yZRg==
-X-Gm-Message-State: AOAM531GeiE1vPUKXONYYQHqVt9SaQ4cO8xB9aJgScN/5YcNgtLYs+sM
-        X2ot+dT+bGQd7hrGhwdIxH1RoK28IcDjowV/JOZ2Kg==
-X-Google-Smtp-Source: ABdhPJy+UBUQ27FMN0Soniwr9i5FVjEAqUBJaKMZp7kF/Zi2oKeANJCiph04E/neh8RBlyNRknfzqdKMu9O4zIR2y1s=
-X-Received: by 2002:a05:6402:d4c:b0:410:a415:fd95 with SMTP id
- ec12-20020a0564020d4c00b00410a415fd95mr29329998edb.288.1651754537667; Thu, 05
- May 2022 05:42:17 -0700 (PDT)
+        with ESMTP id S1378418AbiEEM6E (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 08:58:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F775674C;
+        Thu,  5 May 2022 05:54:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D2DC261E0C;
+        Thu,  5 May 2022 12:54:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3489BC385A8;
+        Thu,  5 May 2022 12:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651755259;
+        bh=6lsmH0CxgqYKBOcML9+EDkwriT9FTWy1+KKvkIcEEc0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=c8RxOr9faMCBiRtMQ5zYMH4HMGNtFnSpywnsWHCaLmRJ32wDcwkkYuSbGcQeFmthK
+         /fe3QHQCQaDHRJKWSuA4EMgP5Sz/aSteyeVk7veahmLe4ulzVRxmNbBux6tCivlfTz
+         oOiYMUEpf+Vr7hGbc7tm8SHP3ogwJ84S7gQvzVKjdX/WvpSmBtav/LSI+xBiyMV5iX
+         95nd+Ai6d5wAwH5HdcJZYOsjhmn8s+/w145K3ESSk91/ysHnAMLft+KY/8u1KJwwAm
+         tS28s56PJRveoEubU+hTlrlEuyXuCsnkWi0TOpU0G9JluMovwtjhjnV2mZBYcg4gd0
+         dGczW2ilWeqbA==
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nmazo-009Cyd-PY; Thu, 05 May 2022 13:54:16 +0100
 MIME-Version: 1.0
-References: <20220504144406.36744-1-jonathanh@nvidia.com>
-In-Reply-To: <20220504144406.36744-1-jonathanh@nvidia.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 5 May 2022 14:42:07 +0200
-Message-ID: <CAMRc=MeXUN6P8kWxB75GsXdKD7Owz9mX5HpgfQoMGeJh-z3=Rw@mail.gmail.com>
-Subject: Re: [PATCH V2] gpio: max77620: Make the irqchip immutable
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
+Date:   Thu, 05 May 2022 13:54:16 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH V2] gpio: max77620: Make the irqchip immutable
+In-Reply-To: <CAMRc=MeXUN6P8kWxB75GsXdKD7Owz9mX5HpgfQoMGeJh-z3=Rw@mail.gmail.com>
+References: <20220504144406.36744-1-jonathanh@nvidia.com>
+ <CAMRc=MeXUN6P8kWxB75GsXdKD7Owz9mX5HpgfQoMGeJh-z3=Rw@mail.gmail.com>
+User-Agent: Roundcube Webmail/1.4.13
+Message-ID: <6629e06d06f647923c04502ce3133f76@kernel.org>
+X-Sender: maz@kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: brgl@bgdev.pl, jonathanh@nvidia.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, May 4, 2022 at 4:44 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> Commit 6c846d026d49 ("gpio: Don't fiddle with irqchips marked as
-> immutable") added a warning to indicate if the gpiolib is altering the
-> internals of irqchips. Following this change the following warning is
-> now observed for the max77620 gpio driver ...
->
->  WARNING KERN gpio gpiochip0: (max77620-gpio): not an immutable chip,
->         please consider fixing it!
->
-> Fix the above warning by making the max77620 gpio driver immutable.
->
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
+On 2022-05-05 13:42, Bartosz Golaszewski wrote:
+> On Wed, May 4, 2022 at 4:44 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>> 
+>> Commit 6c846d026d49 ("gpio: Don't fiddle with irqchips marked as
+>> immutable") added a warning to indicate if the gpiolib is altering the
+>> internals of irqchips. Following this change the following warning is
+>> now observed for the max77620 gpio driver ...
+>> 
+>>  WARNING KERN gpio gpiochip0: (max77620-gpio): not an immutable chip,
+>>         please consider fixing it!
+>> 
+>> Fix the above warning by making the max77620 gpio driver immutable.
+>> 
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+> 
+> Queued for fixes, thanks!
 
-Queued for fixes, thanks!
+You mean fixes for *5.19*, right?
 
-Bart
+Thanks,
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
