@@ -2,97 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B123C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 00:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6BCC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 08:09:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232698AbiEEApr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 May 2022 20:45:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35560 "EHLO
+        id S236869AbiEEINQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 May 2022 04:13:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231466AbiEEApq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 May 2022 20:45:46 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 588851D0F0;
-        Wed,  4 May 2022 17:42:09 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id 5D6FE1F40A4D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651711327;
-        bh=MyOm9L9WGRdUCHRglVPQ6r+0Az2kPrdmLi4U0cgQB+M=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=OzGMoesSvl76vDw/rGqLDlidJ30q+2p8JVEemntpZj/HiFybMjDA64LAQlAuBXCDv
-         ddHuD/R0AiRd0qGdMOQU3IKMpL6cUYyiB31hXaFcPGYOYx15QobmdbztD8c/AXll9M
-         lYER4eSv4WHNv/f/509FCX0O9Ua8VzNlrO6VQRjlHwPvWSWIsgIebs3WMHvGbp8N7o
-         0lFvG17/neKrcP9HzEJoUMcWLxIwEsnUcmqyLhU9MLmB+usJiGbxRms1is1I5UqkFm
-         jgzYyWq1GtDPthuLF7d3zG6wxigGxTqKdnuXjSx809hL8eBmphREbxwV2r+4VMyHZx
-         Q8lrF5JxdXuTw==
-Message-ID: <dfda7666-7325-f4a1-69b1-6b3cb9701b62@collabora.com>
-Date:   Thu, 5 May 2022 03:42:03 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v4 05/24] media: h264: Use v4l2_h264_reference for reflist
-Content-Language: en-US
-To:     Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
+        with ESMTP id S235053AbiEEINO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 04:13:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F4A83A19C;
+        Thu,  5 May 2022 01:09:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F5A561D4D;
+        Thu,  5 May 2022 08:09:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D57BC385A8;
+        Thu,  5 May 2022 08:09:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651738175;
+        bh=AxkyhWsY0UHLjBXjb82tMurMjw8wJrl0qgnK1/vTnuc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dcsZoR/C2yudiaDq/2t8TpOhuKv/LqvbG6v9dDjDvenLYUQCJuKp99ebMfwb504nU
+         QN1pKCkszu1h342LDPq6+R3zbKw+jj4CuDstMZdFLOgLmRbLcV9QO+A7pnFzL8yLtr
+         TlybH2TGe/OBc1vSiy1B1SGnDSyQRxijfFqgrqpKAjIVT2avyyHbh9/XlB0nNQPylg
+         WCtcjIoPzrYg4/PLGZytfFJwRXX8jNb14QnMB/AHvgkEv5GsDkXdhMx2z5R6/YsCXr
+         MnbA1C6CuPb+PRRAC8WZ8oxGacS7GRlVZg7CCM66CH7IwO7gpR3aWP3XFSAcJG89sv
+         ag6TmTrCaHk1g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nmWYG-0098wB-OL; Thu, 05 May 2022 09:09:32 +0100
+Date:   Thu, 05 May 2022 09:09:32 +0100
+Message-ID: <8735ho8koz.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
+        Joey Gouly <joey.gouly@arm.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     nicolas@ndufresne.ca, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20220426125751.108293-1-nicolas.dufresne@collabora.com>
- <20220426125751.108293-6-nicolas.dufresne@collabora.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20220426125751.108293-6-nicolas.dufresne@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-arm-msm@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 00/10] gpiolib: Handle immutable irq_chip structures
+In-Reply-To: <CACRpkdb32NuJ8jdsk6ox7ViVjK=9WWWavS=aYcoWTCbaO3WkTg@mail.gmail.com>
+References: <20220419141846.598305-1-maz@kernel.org>
+        <CACRpkda3L_itpqcnPq6xDoJtNHt8NuvE1MZk1bCNR+u2KKUpBA@mail.gmail.com>
+        <874k2kccse.wl-maz@kernel.org>
+        <CACRpkdb32NuJ8jdsk6ox7ViVjK=9WWWavS=aYcoWTCbaO3WkTg@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, jeffrey.l.hugo@gmail.com, tglx@linutronix.de, Basavaraj.Natikar@amd.com, Shyam-sundar.S-k@amd.com, andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/26/22 15:57, Nicolas Dufresne wrote:
->  static int tegra_vde_wait_mbe(struct tegra_vde *vde)
-> @@ -768,7 +768,7 @@ static int tegra_vde_h264_setup_frames(struct tegra_ctx *ctx,
->  	struct h264_reflists reflists;
->  	struct vb2_buffer *ref;
->  	unsigned int i;
-> -	u8 *dpb_id;
-> +	struct v4l2_h264_reference *dpb_id;
+On Wed, 04 May 2022 22:21:51 +0100,
+Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+> On Sat, Apr 23, 2022 at 12:30 PM Marc Zyngier <maz@kernel.org> wrote:
+> 
+> > > Bartosz: if you're happy with this can you apply it to an immutable branch
+> > > from v5.18-rc1 and merge that into the GPIO for-next and then I can also
+> > > pull that into pinctrl?
+> >
+> > For what it is worth, I've pushed this branch into irqchip-next.
+> >
+> > You can pick it up from:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/gpio-immutable
+> 
+> Bartosz are you pulling this? Most of the changes are in GPIO.
+> Patches have started to arrive that go on top of these changes
+> so would be nice to have it in both GPIO and pin control as a
+> baseline.
 
-nit: will be nice to preserve to reverse Xmas coding style, but only if
-you'll need to make v5 with more important changes
+I'm happy to queue things on top of my series if that helps.
 
->  	int err;
->  
->  	/*
-> @@ -811,14 +811,16 @@ static int tegra_vde_h264_setup_frames(struct tegra_ctx *ctx,
->  	}
->  
->  	for (i = 0; i < b.num_valid; i++) {
-> -		ref = get_ref_buf(ctx, dst, dpb_id[i]);
-> +		int dpb_idx = dpb_id[i].index;
->  
-> -		err = tegra_vde_h264_setup_frame(ctx, h264, &b, ref, dpb_id[i],
-> +		ref = get_ref_buf(ctx, dst, dpb_idx);
-> +
-> +		err = tegra_vde_h264_setup_frame(ctx, h264, &b, ref, dpb_idx,
->  						 h264->dpb_frames_nb++);
->  		if (err)
->  			return err;
->  
-> -		if (b.refs[dpb_id[i]].pic_order_count < b.cur_pic_order_count)
-> +		if (b.refs[dpb_idx].top_field_order_cnt < b.cur_pic_order_count)
->  			h264->dpb_ref_frames_with_earlier_poc_nb++;
+	M.
 
-Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+-- 
+Without deviation from the norm, progress is not possible.
