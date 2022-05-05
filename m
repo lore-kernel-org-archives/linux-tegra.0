@@ -2,188 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A17DC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 09:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B65AC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 10:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346546AbiEEJpz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 May 2022 05:45:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59164 "EHLO
+        id S235397AbiEEKDv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 May 2022 06:03:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346224AbiEEJpy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 05:45:54 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5D6425C61
-        for <linux-tegra@vger.kernel.org>; Thu,  5 May 2022 02:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=CIlyG+cynvgGzlk1qW4NeJ8fCaTnwWTo6QPfEG60rcs=; b=MISXOGQwiIjeWTXLNW1cz7o1/C
-        xxiXO/ZP7twFsZrLH9NxGHCCYnR/refNCZNimxM3HapH7GXsG9TGRmGuaHUF2g1MBU77JE0yyDyWH
-        jv7GrWhpX5nYbq3BFrGem9KgAWmhWYy5b2MF5gmX8QFh1GasqH5XCdvoq9cyvdqr0f9u8YviokqCG
-        dOr4wJdy8Ph6rA0kxDZRARSayKTUiIcRvcjVwMNw2OVbZqSCKRtrSSnk7HNBW0xIddNmqITf9qOwU
-        RjT3gdr8hoQYbyDmXkf6p2JCLdQmSw4oA8eJcEHN+pvrEcVwXLkanFLZMgjMGut12LkwvEblgJjqD
-        zbvNUY0w==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1nmXzs-0008Uv-Na; Thu, 05 May 2022 12:42:08 +0300
-Message-ID: <c13fe2a2-19df-0a61-9acf-3100202f238d@kapsi.fi>
-Date:   Thu, 5 May 2022 12:42:08 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: Tegra20 parallel video capture driver
-Content-Language: en-US
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        linux-tegra@vger.kernel.org
-Cc:     thierry.reding@gmail.com, dmitry.osipenko@collabora.com,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-References: <20220429184931.69591698@melee>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <20220429184931.69591698@melee>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        with ESMTP id S1354963AbiEEKDr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 06:03:47 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97E2515A2;
+        Thu,  5 May 2022 03:00:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TlY5447S8oF0s9F00HjQ2wekUvmNVT55w55e/LaC7psRya9BxpeLGBUQV4y2oKMkJVlNzXLwxCc83ofC/YYTXCamzyCm+dEbP9RJ5BECIeJftNLR5tvHdyixg0AjVMbvjfilh1uhdI6C6uOzfpmhSqakxr+mv2zOwlXy/FuhHRuVHZopW4cQg4rUE/Uh4SzD0JwoPEkl3Exe40t3sy9TZ6ixV9LiV4+J2GW4DvmE72M/sY+itr28k5d2P/3qVKijguBbRDAFR8A+aF5eeMuYga3HNq2Ok7peWW4yHBdib3YSmbG04Gsq6LjCDxGSuHFGzBFIodvxt6+MX66lbIy4uw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fh5ZJSSAxFnRMt/HG5QeoT/GVIr7qv07t17V/hv7tMY=;
+ b=dGQ3OC5Na7LlrO/MlhJWpAoLlnnU2Iq7P64THdbOKu4LCXrdS2vPCbWMKpKRGbT8sKzWjxoLehY82TbALTy5zCQ75PZfU6Kqc8eF57fagf6uE8PGdccOGShKZ8K0k8IqMcntidubjGOPO0l7dBeI5DhU3Xt5xhKT6QHZONUUcH7LI5ctdlxqNJ8vHPebZo3cLQLTaVbydVdOsclP7e2Eyfl0FSas7WimsWZv9k2DEscuKnCWzLVj7iRbkhEIbMEfNe/eQLLER2ALzOA7AcsswoApMq6FX6CLyC85nvmoIDlxGkWxsrD7BJTp2G+PWEXfLo0VFO0ONuCXe4GT+fbM8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fh5ZJSSAxFnRMt/HG5QeoT/GVIr7qv07t17V/hv7tMY=;
+ b=bxKX58/at+oh+Mn1X6P3RtzEQH22+IHj4UikVREBvogCmyoq4++N+ua7rryiAu7bI3rC+hZueecLqMxTZoiHblq7BL8dhqqxFtMZuhd5EKKT1qE/Afx3DYmPytq8c5Xnn4U8ere3wY3+02oXFkerkpfkxM7tXPi1fu+tnecE8duYbSwDIM/bnRvzzuEkL7kATU1PwdtOYii+r0P//YMhjQv2eVJhIUj/+xbkY9T8UlV7TaYXKBxnCpc0td4WBGAmMxVtVAp0Orsypx6SmPjBjb4imPkcgftRUmKr5TiN98vfUp+2FhyCfVy9pZtu5ovOdnG7q4WxZgkffITMoNG7ZA==
+Received: from MW4PR04CA0219.namprd04.prod.outlook.com (2603:10b6:303:87::14)
+ by BL1PR12MB5970.namprd12.prod.outlook.com (2603:10b6:208:399::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.24; Thu, 5 May
+ 2022 09:59:59 +0000
+Received: from CO1NAM11FT017.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:87:cafe::6f) by MW4PR04CA0219.outlook.office365.com
+ (2603:10b6:303:87::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.24 via Frontend
+ Transport; Thu, 5 May 2022 09:59:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.236) by
+ CO1NAM11FT017.mail.protection.outlook.com (10.13.175.108) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5227.15 via Frontend Transport; Thu, 5 May 2022 09:59:58 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Thu, 5 May
+ 2022 09:59:57 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 5 May 2022
+ 02:59:57 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
+ Transport; Thu, 5 May 2022 02:59:57 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/84] 5.4.192-rc1 review
+In-Reply-To: <20220504152927.744120418@linuxfoundation.org>
+References: <20220504152927.744120418@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Message-ID: <578f802a-9072-42ea-94a2-e9b26c0a0477@rnnvmail205.nvidia.com>
+Date:   Thu, 5 May 2022 02:59:57 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1d1082a4-ed94-4d5c-8643-08da2e7e0368
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5970:EE_
+X-Microsoft-Antispam-PRVS: <BL1PR12MB5970F9EF5DA92E4F2A7D5D55D9C29@BL1PR12MB5970.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: y0cZ23979r8q3+lAYa4/AQObyt5Z9Q7ymcbsbw/oXjoLJ36ceFxEn8yPS00QKAoJPYv+1FJ68l0xDVqJwEnvFXlagtYejJfXriHfY+a2cr/gJz8+xN5KW/hKVzgsLyJaMmKyaGifoCWUcQPDorNb6TXL51IH1gTcH4JI3CH+dHmFBROQJCqi51Q9r0nm4aS+DP3Eu7wPKLk5rL/Xs8BQljfZlBT520qrzkVgg4Cq4xKOISD3bGlP+t60dh36w9Dth1gn93f0l2LzA8GUhnjaiUCUrSKhkanF9a7w10ZhiPjZgf5KNaVBZQ+iCwZpBWwvc0ydKIAEZAx6YaOOVP+vP4bNMMIDDoplxsD5O2l90iIYOb5/EfUl6XWP6EJaBXG0BHLaL7f+/AMulm7xu5YoH3UgSJP3BG/NYpBdMqTY5V5z6mMt7Mn+jg5JTOapO35RH+xVqYbTmi7s0xXu0Nbkjsr+jcHHkvS8MHwLlYp7jxJGGnt8RI8UFCqVAjwmq68tsXHRGVSqMfiefxsM1FS45dfHFYBzjW3C62CD/Q+IRHNxvpzBrfZxL9e3hk5S/bhP93adFL1UdjCAerFJ16t9ToL0ei7IRFpvykW9LbqpuZApPjONq+3rb4o+sJItKy2/vp6sp6vKRRjS0lwaySEpnmCI+Vl5hM+v9w2ftLOHJE5XUmJjUDGRJT8vKNrO0JYy8WDwnNZiOjFDzUfUqtrKEi4PEvICPWXdYpjx6DfwYlIZBnjuUr49oNMc4d0vPmbKefYwv5GxJVrZNKt+8Je5jR6uhxrIpp+EZVRibjPayQM=
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(70586007)(8676002)(47076005)(31686004)(40460700003)(336012)(426003)(82310400005)(4326008)(70206006)(81166007)(7416002)(6916009)(36860700001)(54906003)(186003)(316002)(26005)(86362001)(2906002)(31696002)(356005)(5660300002)(8936002)(508600001)(966005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2022 09:59:58.3347
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d1082a4-ed94-4d5c-8643-08da2e7e0368
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT017.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5970
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/29/22 19:49, Luca Ceresoli wrote:
-> Hello,
+On Wed, 04 May 2022 18:43:41 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.192 release.
+> There are 84 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 06 May 2022 15:25:19 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.192-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Hi!
+All tests passing for Tegra ...
 
-> 
-> I am working to implement a driver for the Tegra20 camera
-> interface (VI) and have it merged in mainline Linux. I have already
-> done part of the work, but now I'm facing some difficulties, especially
-> with respect to interaction with the syncpt feature of host1x. I have a
-> few questions that hopefully someone here can reply to, but first let
-> me lay some background.
-> 
-> First, the good news.
-> 
-> A good thing is I have an old reference image using a vendor kernel
-> based on 3.1 which works and I can capture video from a parallel smart
-> sensor in YUV. This is on a custom hardware.
-> 
-> Second, there is a (staging) video capture driver in mainline [0], but
-> the huge delta between 3.1 and mainline makes the two drivers not
-> trivial to compare.
-> 
-> Now to the bad news.
-> 
-> First, that the mainline driver only implements CSI input for
-> tegra210 and I only have a parallel camera and a tegra20. The
-> tegra20 documentation I have does not document parallel parallel video
-> at all.
-> 
-> Second, the VI is heavily based on the host1x peripheral, and
-> especially the Synchronization Point (syncpt) feature. Syncpts are also
-> barely documented and I don't have any previous experience with this
-> kind of device. And the syncpt (and perhaps host1x too) implementation
-> in the vendor kernel vs mainline is very different.
-> 
-> And here's my status.
-> 
-> The mainline staging driver is already structured to support different
-> SoCs, so I added tegra20 there, initially as a copy of tegra210. I did
-> the same to add VIP (parallel input) support in addition to CSI. Then I
-> filled the gaps as far as I could and now I have register access in the
-> mainline driver that produces pretty much the same writes as the vendor
-> kernel does, but it does so using the same driver structure that is in
-> mainline, quite cleanly.
-> 
-> Now I am stuck at trying to understand how to make syncpt code work. As
-> said the syncpt APIs are very different from what I see in the old
-> vendor kernel. Thus I cannot try to do make the mainline driver behave
-> like the old one. Moreover the mainline driver does many more calls to
-> syncpt code than the old one does.
-> 
-> And finally here are some questions.
-> 
-> 1. Is there any good documentation on host1x, especially syncpt?
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
 
-There isn't much documentation, apart from what exists in the TRMs. But 
-basically, syncpoints are an array of 32-bit unsigned integers in 
-hardware, with each 32-bit value having the following fundamental 
-operations:
+Linux version:	5.4.192-rc1-ga4a4cbb41380
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-* Increment by one, wrapping (i.e. mod 2^32)
-* Wait for value to reach threshold, such that if you consider the 32 
-bit unsigned integers a circle, then the half-circle preceding 
-(integer-wise) the threshold value are considered to be in the past and 
-the half-circle succeeding are considered to be in the future. For 
-example, if we specify threshold 0xffffffff then 0x0 is considered to be 
-one increment in the future. Waits can be done either by HW stalling 
-host1x channels (similar to DMA) or CPU interrupts.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> 
-> 2. Is the VIP (parallel input) section of VI (video capture) for
->     Tegra20 documented anywhere?
-
-If not in the TRM, then no.
-
-> 
-> 3. The old driver accesses the syncpt using fixed IDs from #defines (15
->     for VI, 16 for CSI), while the mainline driver uses IDs obtained at
->     runtime from host1x_syncpt_request(). Is it correct that one can use
->     any of the 32 available syncpts, and the old driver using fixed
->     values is just an implementation choice?
-
-The old code used to have hard-coded syncpoint IDs for each use, but now 
-we allocate dynamically. This is a global namespace so you need to call 
-host1x_syncpt_request to get an ID that is not colliding with anyone else.
-
-> 
-> 4. I am currently working on a version of tegra_channel_capture_frame()
->     [1] for tegra20 VIP and other code involving syncpt. The mainline
->     driver calls many different host1x_syncpt_*() functions, while the
->     old driver does call very few of them. Can anybody clarify the
->     meaning of the various syncpt calls?
-
-- request/put -- allocate and free syncpoint
-- incr/wait -- as described before
-- incr_max -- when syncpoint is used with host1x channels, used to 
-indicate to job tracking code how many times the job will increment the 
-syncpoint. when not using channels, should not be used -- looks like the 
-tegra210 code calls this a couple of times but it probably shouldn't be 
-doing that.
-
-> 
-> 5. In tegra_channel_capture_frame() the call to host1x_syncpt_wait()
->     always returns -EAGAIN. Where would you start to investigate the
->     reason of this timeout?
-
-This means that the syncpoint's value did not reach the specified 
-threshold. Either the specified threshold is incorrect, or the engine 
-did not increment the syncpoint (or did not increment sufficient number 
-of times), either because the syncpoint increment was not programmed 
-correctly, or the condition for the increment was not fulfilled (i.e. 
-the engine got stuck for whatever reason).
-
-Apart from the wait, you can use /sys/kernel/debug/tegra-host1x/status 
-to track syncpoint value. Apart from that, if you're not using channels, 
-you'll just have to look at engine registers to see why it's not processing.
-
-Cheers,
-Mikko
-
-> 
-> I think it is enough for today, thank you in advance for any feedback!
-> 
-> [0]
-> https://elixir.bootlin.com/linux/latest/source/drivers/staging/media/tegra-video
-> 
-> [1]
-> https://elixir.bootlin.com/linux/v5.17.5/source/drivers/staging/media/tegra-video/tegra210.c#L325
-> 
-> Best regards.
-
+Jon
