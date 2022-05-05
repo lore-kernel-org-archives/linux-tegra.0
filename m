@@ -2,92 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7A5C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 12:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39887C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 May 2022 12:58:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378325AbiEENB0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 May 2022 09:01:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42432 "EHLO
+        id S1376315AbiEENC0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 May 2022 09:02:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378330AbiEENBY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 09:01:24 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9E1853E25
-        for <linux-tegra@vger.kernel.org>; Thu,  5 May 2022 05:57:43 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id y3so8514179ejo.12
-        for <linux-tegra@vger.kernel.org>; Thu, 05 May 2022 05:57:43 -0700 (PDT)
+        with ESMTP id S240388AbiEENC0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 May 2022 09:02:26 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2E44B1C6
+        for <linux-tegra@vger.kernel.org>; Thu,  5 May 2022 05:58:46 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id bv19so8569882ejb.6
+        for <linux-tegra@vger.kernel.org>; Thu, 05 May 2022 05:58:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RybWbrXcj8zBS10i0C/9NHfeL8tGwcNcqo6inv4EpAI=;
-        b=d7ws1vmB8TNasv2lYZpKICd2vTQXUueLbTwFXYGVqHpQ8H7SyvH2fl6/g62DCgDWaA
-         fRW66tJ5nWbqkYv2F+uwnoUBQ0VhC7V40TrefZW2K7wY5hhgHFI0bMpqYtJsxDlk/IP8
-         AQFbrHBEVLvgQHq3gyz3ga5LiF8TDzDBKFzBq/3CLCP+nEXz1UNTy7EM8Pj2M6D7/bXx
-         rVmyxES41BJeedBgaQs82ycRHSuZpGNQHb+HIHtYs19eNWBu0xI6aA5uVIsoFPKxMdhv
-         jcdEBeWv/1d59lQKC+eLFIb73JCKOYx1yiBelaxx/HkTPjtP+53zYjRczjThZJQLBaYP
-         beUQ==
+        bh=22a0aEe/UHOud0IxgtpbxI9XkgviWAY8z8RMp+dcuwQ=;
+        b=1XRpN+uo+kP9aG9wT4n4cKnAZn7JO6V4622+J8wG4BXRaqAGxbs5Dd/NSV2hfai1nm
+         JIp4TtzEX6agoxnoZmsxVJlw+O75peinbaq5ddt4q6oYYwi3vfUA1mxPmu3FgGQ7drrO
+         E4BSHtDOF6F8bHQZSWIWQaqmrlmUbOVQ1Wfkedc2AzzdP2jwo007Yui7Uns5qUEqY3rf
+         WlfiyqSgCpLLAJEwbGn5DWUM0UlydXH7IFdl+g/RyoaJZYyhKJb2OZxDztCeOtJqDTif
+         2huGVEanDK0Zjiv18nCNYDQQC59OaujFBzOmxafpwYZjTniReZh7M9vCYAX3zyR88fe3
+         s+zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RybWbrXcj8zBS10i0C/9NHfeL8tGwcNcqo6inv4EpAI=;
-        b=ZiPUiUhjcwK3eDdCPQoAbc6G61Fb9H0n7uKZwbh1tJpS6TxWovx3BepDWlr3HXuzr/
-         rJW6Rp+37yEI38L0czBUUnYm+7KzFvd53J+KsKLKhG8cd8YuQJJ9tc5UUOrQJKYov7p+
-         S0VAAfiVMZSwdmC7PhZeHkmK4gS3Bx6iFYKzosWKSUvlUfCckq9hzl55pAnc8/Wee42m
-         hYH+c1BL7FlueqDwFVukqSBrahmbqZ+nWVTJ2tL6dvjbVLf0elsqJOfFxujPpb9NWEjr
-         YaWM9gkYsmSKsWCNJVZMrazDxK2IHimrn7Xf6O7LUzRxZxvs8NAoxOYTm2kDlFpvy+xt
-         kJ/A==
-X-Gm-Message-State: AOAM532OZFJLY3CFOxynQqXca4PYgm2SrQJub2BHXO6hie1EeRovBwjV
-        G9TWR+MC3SKLc4RSY8luyHgHIQ6rQ33ii3HbJMiNLZhrqMtrMg==
-X-Google-Smtp-Source: ABdhPJzm7DvuddhoB6IlDfOb7PG3Zm7dp7T7j+cXQJ/VMgHGfFkalZ86UDm1bktcuRSPyzrSERhqQrQnGfs2PDceCNc=
-X-Received: by 2002:a17:907:3e28:b0:6f4:3900:78f8 with SMTP id
- hp40-20020a1709073e2800b006f4390078f8mr21669903ejc.736.1651755462487; Thu, 05
- May 2022 05:57:42 -0700 (PDT)
+        bh=22a0aEe/UHOud0IxgtpbxI9XkgviWAY8z8RMp+dcuwQ=;
+        b=609pcyt8/1zGXdUBG0lcpkijKbyKPw4+HMvQooI9hGBDOFQuRDjXM4qb2LnahJxIfm
+         khXSlVJhWZB29QGNcFRyjfcgeRRknFbqw8LZr3PPwJ0p40pGQSufoXwUC1EgybOCnfjX
+         lQRyytPMYVGG+RhNFlRe6N44VHXwPiZAhsQI955hXcwJ/zAWWwCdq+/WpePAtKz83wFQ
+         OmMvO8qoStWMJF8Q8BouuvmA5SEQKeC1Md5ujYh/QmjidFTRmz/4cwAN6Z9OtYUMm64j
+         LfX5a5vkk7UuQBEDGJJE6zwRu4LFcvZKRU1Ma6hp22fSnhsGlsxeJJv6C9jEoRGW+l3A
+         dHPg==
+X-Gm-Message-State: AOAM531aKt/JgTWdICotbgUxaGRne4CJT88VkXC8sBmYgnuyRiV0PN3q
+        0QiSDCqwiC9tgajBKlcC6txSDomPHqRj0Jle9P7BEw==
+X-Google-Smtp-Source: ABdhPJy9F/3TMLwB/gxgUg1zQckteUkdzDetKT5ae+EhzlpwYypnDRimt8G0RZmsnzLZkknum7KcgQukcAOiLvOSRzQ=
+X-Received: by 2002:a17:907:c28:b0:6f4:2a80:f355 with SMTP id
+ ga40-20020a1709070c2800b006f42a80f355mr22968073ejc.101.1651755525314; Thu, 05
+ May 2022 05:58:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220504144406.36744-1-jonathanh@nvidia.com> <CAMRc=MeXUN6P8kWxB75GsXdKD7Owz9mX5HpgfQoMGeJh-z3=Rw@mail.gmail.com>
- <6629e06d06f647923c04502ce3133f76@kernel.org>
-In-Reply-To: <6629e06d06f647923c04502ce3133f76@kernel.org>
+References: <20220419141846.598305-1-maz@kernel.org> <CACRpkda3L_itpqcnPq6xDoJtNHt8NuvE1MZk1bCNR+u2KKUpBA@mail.gmail.com>
+ <874k2kccse.wl-maz@kernel.org> <CACRpkdb32NuJ8jdsk6ox7ViVjK=9WWWavS=aYcoWTCbaO3WkTg@mail.gmail.com>
+In-Reply-To: <CACRpkdb32NuJ8jdsk6ox7ViVjK=9WWWavS=aYcoWTCbaO3WkTg@mail.gmail.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 5 May 2022 14:57:31 +0200
-Message-ID: <CAMRc=Me=10YmTMQVWtBe6gUQxUSAL9fe_X7qq_F-mFGbWvrGtw@mail.gmail.com>
-Subject: Re: [PATCH V2] gpio: max77620: Make the irqchip immutable
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Date:   Thu, 5 May 2022 14:58:34 +0200
+Message-ID: <CAMRc=MdwbzkpL5Vm2aEXVPKzj78GsFStk+3uZexyrJMB468U4g@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] gpiolib: Handle immutable irq_chip structures
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Marc Zyngier <maz@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org
+        Thierry Reding <thierry.reding@gmail.com>,
+        Joey Gouly <joey.gouly@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, May 5, 2022 at 2:54 PM Marc Zyngier <maz@kernel.org> wrote:
+On Wed, May 4, 2022 at 11:22 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> On 2022-05-05 13:42, Bartosz Golaszewski wrote:
-> > On Wed, May 4, 2022 at 4:44 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>
-> >> Commit 6c846d026d49 ("gpio: Don't fiddle with irqchips marked as
-> >> immutable") added a warning to indicate if the gpiolib is altering the
-> >> internals of irqchips. Following this change the following warning is
-> >> now observed for the max77620 gpio driver ...
-> >>
-> >>  WARNING KERN gpio gpiochip0: (max77620-gpio): not an immutable chip,
-> >>         please consider fixing it!
-> >>
-> >> Fix the above warning by making the max77620 gpio driver immutable.
-> >>
-> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> >> ---
+> On Sat, Apr 23, 2022 at 12:30 PM Marc Zyngier <maz@kernel.org> wrote:
+>
+> > > Bartosz: if you're happy with this can you apply it to an immutable branch
+> > > from v5.18-rc1 and merge that into the GPIO for-next and then I can also
+> > > pull that into pinctrl?
 > >
-> > Queued for fixes, thanks!
+> > For what it is worth, I've pushed this branch into irqchip-next.
+> >
+> > You can pick it up from:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/gpio-immutable
 >
-> You mean fixes for *5.19*, right?
+> Bartosz are you pulling this? Most of the changes are in GPIO.
+> Patches have started to arrive that go on top of these changes
+> so would be nice to have it in both GPIO and pin control as a
+> baseline.
 >
+> Yours,
+> Linus Walleij
 
-Of course I did. 100%. And I'll stick to this version. :)
-
-(Thanks for the heads-up!)
+Yes! Sorry for the delay. Pulling now.
 
 Bart
