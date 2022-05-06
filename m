@@ -2,98 +2,121 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37153C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 May 2022 13:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 380FDC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 May 2022 13:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1392456AbiEFN1E (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 May 2022 09:27:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
+        id S1346517AbiEFN1G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 May 2022 09:27:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1392458AbiEFN07 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 May 2022 09:26:59 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B293C6973A;
-        Fri,  6 May 2022 06:23:15 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id u3so10050748wrg.3;
-        Fri, 06 May 2022 06:23:15 -0700 (PDT)
+        with ESMTP id S1392443AbiEFN1C (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 May 2022 09:27:02 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A6FB6973F;
+        Fri,  6 May 2022 06:23:19 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id w4so10001380wrg.12;
+        Fri, 06 May 2022 06:23:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xnE/wFgLIRN0jlfgB48rKqRGVy1eNhP4yxVMqJbknj0=;
-        b=JiF3DAhzYm7/e7L1DaQyfoR7G2O1K6ozv6mNyT+HSHJd52YZZNMQDimtYXTm1omRFh
-         UhwQ9JgC6MDWkqY7Xaik4IyKN9RyJ63HhtXiLQq9Abh1D7Hf/JW5JtpRZprN7PkPEUSc
-         L4pqL+GccB4tOMHmVtDOHneuHecPNzEHU71AlxtH0wGuVR3QGClbL+ndGK3ebUrVD0rv
-         RkoXxi7j7WERluTegqxPL6Z1PysYtd5CCYJPuI3W+retnSeSTKT7Rwp6kHFsd8Jo+KCp
-         hI77jkAcVWzSomgL2g1kBcKYoFdNdPPdGcB3BM13Hqx1D+seYe1GYsmGlUq3hndI0GFu
-         nR8A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HrHJifezRBbBXBz1Br8ccGMZFPK/Rrov+5oYjaCH9Gk=;
+        b=L/PJa/H5NuN1TWiAxR+lSyYUntdgdxyzaUxLMhhzQU1uEZxUKGqrUAQndyv2+9tT7L
+         fglq80K+GeWokMSbJsFYHozUf2PZMjiR8VoLxInGrN703h+M4NI6eTodBSyLJ0d8ITO1
+         5moKaTWnFgDiSztySget/rUjUBCgUzDJLczKJhs9Jc3EmqgAVhj+zSvSC5NS551slsq8
+         AYTb1x/Hr6SfWr1vDBfHTGHObcGAx5NelgESDu4wggbpFFfu2VNXrDkGMzCdJ9BYiiXN
+         Scz8wPLNDlm9xi6aQByFpzrLFJB4DSyYdRRdEJetwBpzbDwxlsc08r75PAaOOc5aoLi2
+         9vfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xnE/wFgLIRN0jlfgB48rKqRGVy1eNhP4yxVMqJbknj0=;
-        b=xX6LT+Yxn/WbzOqiLNaAg7tahGv0eFNks7F56UuBspGJbFtwVFDn2s6koEBseTC5rW
-         d1nYtlMBrYKOPo2sVO6r00vd/69Aoq4kiMoStepu1sKD6Wbp++fxRlxz8YMLOBrp1N6q
-         cC8ImMm1LL+b+23RtD2aomkf83zJFFkrvaoDGmJ1cE6h3fjqyccRSoT+slQ05/ESTX4v
-         r1F2cZNbKoaRTIsCrRJexNdd10goqbpNZim+lwthf985F71hCZuPSN0QIQLwSHmm79e1
-         TQY0i6vMSTbuRi9WNEcUc9Vb1WpdkB/XaE0SLaZo2am8mi/UgZRHXJY4gIbMRajKNw2c
-         MVTA==
-X-Gm-Message-State: AOAM5326B7MG47EW7Pw40qECaOjxlbvEEiFUBWHSfyMptg7+VSl8qgVh
-        d9Tv5LNx+Aa1xQ9MG6HpTT8=
-X-Google-Smtp-Source: ABdhPJxDIOo/91MLqpkkLWtm4F1e8Lt9PbrlPfZcykME1tNBYeHX7KBGqZZUF5aPu4mh0z+/0Wgrfw==
-X-Received: by 2002:adf:d4c6:0:b0:20a:deab:ec2c with SMTP id w6-20020adfd4c6000000b0020adeabec2cmr2691483wrk.359.1651843394195;
-        Fri, 06 May 2022 06:23:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HrHJifezRBbBXBz1Br8ccGMZFPK/Rrov+5oYjaCH9Gk=;
+        b=EmuebqjRz4QLyCKNwL4EmHY+Znii+rNrD0SFWFKdr9Kf/SBMU/IZDqpnO258+t8KBi
+         DRy1pfR8pH4oN6E+DBdT97XVZe/UEK5Egn1B5exX1RE6Qol/nVY+VTGhKBGKOh/Ty9zW
+         vijvU84QbKVoq6LyXnX0Bx8ZeBuP5OljcAIYIOsdrYXxELKKwDAyvrYDWZSL36/VlCXF
+         BjHOi3o3zCbFRPfW8TKl4YJ8W1XB8cjb7aHjBjzBCS9+EFZ6oL9WwuaSzTQlm9D0Zi4u
+         OhX/qUXXt2m0dPlwaC7MkB8/KLUGuG78hEdayQv3RHm+93bzeLhB9xMQP4vir/n1eINS
+         51CQ==
+X-Gm-Message-State: AOAM533TE4HH242ko/tH4at2mFKmlwN2Xan504NoL8uXqVoSQn3AsMJc
+        uVO8gpCKD6zmmkFoGPdP+JY=
+X-Google-Smtp-Source: ABdhPJyJxXuIKz19SlZeK1n89joxjE9EVSe0sZHYzY/a5EnolYlYwooSgT9CYN+A0Nh2O2S/EbvMYQ==
+X-Received: by 2002:adf:f187:0:b0:20a:dfb0:766a with SMTP id h7-20020adff187000000b0020adfb0766amr2826121wro.517.1651843397932;
+        Fri, 06 May 2022 06:23:17 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id s11-20020a5d510b000000b0020c5253d8c9sm3556349wrt.21.2022.05.06.06.23.13
+        by smtp.gmail.com with ESMTPSA id o9-20020a5d4089000000b0020c5253d8d2sm3669451wrp.30.2022.05.06.06.23.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 May 2022 06:23:13 -0700 (PDT)
+        Fri, 06 May 2022 06:23:17 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>,
         Ashish Mhetre <amhetre@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] memory: tegra: Tegra234 and error logging support
-Date:   Fri,  6 May 2022 15:23:08 +0200
-Message-Id: <20220506132312.3910637-1-thierry.reding@gmail.com>
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 2/4] memory: tegra: Add APE memory clients for Tegra234
+Date:   Fri,  6 May 2022 15:23:10 +0200
+Message-Id: <20220506132312.3910637-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220506132312.3910637-1-thierry.reding@gmail.com>
+References: <20220506132312.3910637-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Sameer Pujar <spujar@nvidia.com>
 
-Hi Krzysztof,
+Add the memory clients on Tegra234 which are needed for APE
+DMA to properly use the SMMU.
 
-here's the set of patches that add the initial Tegra234 support with
-Ashish's error logging support applied on top. This should all apply
-cleanly onto v5.18-rc1 (and consequently to your tree).
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/memory/tegra/tegra234.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-Thierry
-
-Ashish Mhetre (2):
-  memory: tegra: Add memory controller channels support
-  memory: tegra: Add MC error logging on Tegra186 onward
-
-Sameer Pujar (1):
-  memory: tegra: Add APE memory clients for Tegra234
-
-Thierry Reding (1):
-  memory: tegra: Add Tegra234 support
-
- drivers/memory/tegra/Makefile       |   2 +
- drivers/memory/tegra/mc.c           | 137 ++++++++++++++++++++++++----
- drivers/memory/tegra/mc.h           |  50 +++++++++-
- drivers/memory/tegra/tegra186-emc.c |   3 +
- drivers/memory/tegra/tegra186.c     |  39 ++++++++
- drivers/memory/tegra/tegra194.c     |   9 ++
- drivers/memory/tegra/tegra234.c     | 110 ++++++++++++++++++++++
- include/soc/tegra/mc.h              |   8 +-
- 8 files changed, 339 insertions(+), 19 deletions(-)
- create mode 100644 drivers/memory/tegra/tegra234.c
-
+diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
+index 45efc5139960..e22824a79f45 100644
+--- a/drivers/memory/tegra/tegra234.c
++++ b/drivers/memory/tegra/tegra234.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2021 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2021-2022, NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #include <soc/tegra/mc.h>
+@@ -70,6 +70,26 @@ static const struct tegra_mc_client tegra234_mc_clients[] = {
+ 				.security = 0x4b4,
+ 			},
+ 		},
++	}, {
++		.id = TEGRA234_MEMORY_CLIENT_APEDMAR,
++		.name = "apedmar",
++		.sid = TEGRA234_SID_APE,
++		.regs = {
++			.sid = {
++				.override = 0x4f8,
++				.security = 0x4fc,
++			},
++		},
++	}, {
++		.id = TEGRA234_MEMORY_CLIENT_APEDMAW,
++		.name = "apedmaw",
++		.sid = TEGRA234_SID_APE,
++		.regs = {
++			.sid = {
++				.override = 0x500,
++				.security = 0x504,
++			},
++		},
+ 	},
+ };
+ 
 -- 
 2.35.1
 
