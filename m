@@ -2,139 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3411C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 May 2022 14:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08649C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 May 2022 14:47:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355189AbiEFOhg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 May 2022 10:37:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57564 "EHLO
+        id S1442442AbiEFOvB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 May 2022 10:51:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343536AbiEFOhf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 May 2022 10:37:35 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3417F69291
-        for <linux-tegra@vger.kernel.org>; Fri,  6 May 2022 07:33:52 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id v12so10262297wrv.10
-        for <linux-tegra@vger.kernel.org>; Fri, 06 May 2022 07:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y33Xj9lfrhQCQVz3ZtJ2FhWyC2SIErwnhGhTjgcM4sk=;
-        b=mb/oTBoKx5F7B+hWw+q9fw3TJn58oRsN7hJ+nH+prHCKuB5wPUt58N2dV+/DKeDUrc
-         pIwIgeDBzZhC8geyWxyTow7ISiDYtbMrSNg4gWCCQ8x5a8WQhsrOt9k92TJ84JIpQQWD
-         pNUreQseajprjJxCih51fKUJwHYPuSIr5zLPcULAmYqM0buk53ucDcb8duQNfQG2OtZk
-         JCLJ6wk50WRD6UuwURqLTUxYTxMovQ7vbCOCoaNO4IEnSpmvoKcvpi0YrlNuYvdUMKcn
-         exw6pC/qgWed3O4WuLcB3WvwrvTvmVLu4NuL3/fkC0fe86GBoSGAg97LKk0hAMJXtIjr
-         PG+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y33Xj9lfrhQCQVz3ZtJ2FhWyC2SIErwnhGhTjgcM4sk=;
-        b=E4jOGl4TbuwNkpOkAh2owRWygaEbOFyW8wFzDLp9qauCbApxUoGEFu15+cd1LgdBNY
-         6cpLptWqzunBBOn1klcfXG4bqQmIr7qWTBay9QaxSLZDbCOZFQl0SYhFNWXspiGgt2sr
-         /O2nzAunVDbrI4pAf3MjFmAVSNVcaj8XQ/XIhenvUUoI9BjLNRAOlpA9wBmfERu46nsh
-         QxlzyXJxDZ7pGI+cVnWXH3sI2UhKee3G71DnQZC/WSbZomgOxJM/d/I1B8pGjcaItHPq
-         6MXB5JcDAj/C5H3V/smHNDWvG0GddF3x9FFzmWttHOguwz0PuFdPXxoaYk5ugiCMddGS
-         Ww7Q==
-X-Gm-Message-State: AOAM533wgIGeU5di7ShcC8nqT7VvxfZLVO2lribFG2Dbfnt7GdlA1RlX
-        LVwmgmPkSYAHhd6f0oYsRUaY0MDu+7Y=
-X-Google-Smtp-Source: ABdhPJwQmjpC1HaW8wxx3Oi4kTprDgWcs6sV9lnZKHXXh387eAWIRIOd3VajBPGX5Oy+zybyIBwwUw==
-X-Received: by 2002:a5d:66c8:0:b0:20a:c807:6061 with SMTP id k8-20020a5d66c8000000b0020ac8076061mr2840840wrw.399.1651847630684;
-        Fri, 06 May 2022 07:33:50 -0700 (PDT)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id z25-20020a7bc159000000b0039466988f6csm4441031wmi.31.2022.05.06.07.33.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 May 2022 07:33:49 -0700 (PDT)
-Date:   Fri, 6 May 2022 16:33:47 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     arm@kernel.org, soc@kernel.org
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL 4/6] ARM: tegra: Default configuration fixes for v5.18
-Message-ID: <YnUxy4Gr7kUuWr7/@orome>
-References: <20220506143005.3916655-1-thierry.reding@gmail.com>
- <20220506143005.3916655-4-thierry.reding@gmail.com>
+        with ESMTP id S237385AbiEFOuy (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 May 2022 10:50:54 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D21496AA5C;
+        Fri,  6 May 2022 07:47:11 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id C32391F468F5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1651848427;
+        bh=utol468ApKu3UfEFy7x8r+aU8cRRwOmqk4bK/1Di3gM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=jBE3ytwUGToW06KmZyXbQlLMQh11EfcrZ6bdwLxbmA9KbTMiYuuNn3kvbqh632rH2
+         Jgx0CZHq1E9lNHGEsuRz21D8kAvAh8rFaR8jds1ArktyMwvqKLxX4GAkX19BTWUmPP
+         b1quvNeRnJpwzsGfRULjPmqW94UBaLvY+SdyGZ2o/bAt8UYAzh00sKV0zWBnlAl37N
+         VELNP3WacCdMrm2dk8Vabl3yhZXLesCAV/s6oeDX+kpR+1yBykPgcYSQODD7Vr7gKd
+         V7A6zoiXfzrqEzkhyai26Ys6RbYpjgl9Ni5GI2/IasHsLcZOIHlsySI8JROUyGnbmg
+         dahigOUrcy3KA==
+Message-ID: <f8075f97-4cc7-b802-97af-c0ef5a969624@collabora.com>
+Date:   Fri, 6 May 2022 17:46:57 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="f7wcx2TOfZPtxqKM"
-Content-Disposition: inline
-In-Reply-To: <20220506143005.3916655-4-thierry.reding@gmail.com>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v7 04/20] kernel: Add combined power-off+restart handler
+ call chain API
+Content-Language: en-US
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20220411233832.391817-1-dmitry.osipenko@collabora.com>
+ <20220411233832.391817-5-dmitry.osipenko@collabora.com>
+ <CAJZ5v0gnTSoeNP+QXwrZ45FQY4howVkJMuCjM=j+_-2BngJdQg@mail.gmail.com>
+ <990621e7-9f8a-8b4a-02ec-fd6c1e1f48ff@collabora.com>
+ <CAJZ5v0jxXtwot0qpib4UG8Tz8Hd1dEbgo58tEdPFboU8xwKHNw@mail.gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <CAJZ5v0jxXtwot0qpib4UG8Tz8Hd1dEbgo58tEdPFboU8xwKHNw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 4/20/22 21:47, Rafael J. Wysocki wrote:
+>>>> +/**
+>>>> + *     devm_register_prioritized_power_off_handler - Register prioritized power-off callback
+>>>> + *     @dev: Device that registers callback
+>>>> + *     @priority: Callback's priority
+>>>> + *     @callback: Callback function
+>>>> + *     @cb_data: Callback's argument
+>>>> + *
+>>>> + *     Registers resource-managed power-off callback with a given priority.
+>>>> + *     It will be called as last step of the power-off sequence. Callbacks
+>>>> + *     chaining is disabled, i.e. further lower priority callbacks won't
+>>>> + *     be executed if this @callback will fail to execute.
+>>>> + *
+>>>> + *     Returns zero on success, or error code on failure.
+>>> What's the case in which this should be used instead of registering a
+>>> full sys_off handler?
+>> There are a lot of drivers that just want to register power-off handler
+>> with a non-default priority and don't need to stop the chain or do
+>> anything else special. This is a convinient helper for them.
+>>
+>> Please note that the callback here takes only the cb_data for the
+>> argument, while sys_off uses "struct power_off_data".
+>>
+>> Similar for the reset of the convinient helpers.
+> So if there is a way to do this, why would anyone prefer to use the
+> full sys_off handler at all?
 
---f7wcx2TOfZPtxqKM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are couple occurrences around kernel where there is no device
+available for the devm_ functions, like this for example [1].
 
-On Fri, May 06, 2022 at 04:30:03PM +0200, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
->=20
-> The following changes since commit 3123109284176b1532874591f7c81f3837bbdc=
-17:
->=20
->   Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-5.19-arm-defconfig
->=20
-> for you to fetch changes up to 39ad93d280506f4953a9d0c545cfffa581889326:
->=20
->   ARM: config: multi v7: Enable NVIDIA Tegra video decoder driver (2022-0=
-4-06 17:03:30 +0200)
->=20
-> Thanks,
-> Thierry
->=20
-> ----------------------------------------------------------------
-> ARM: tegra: Default configuration fixes for v5.18
->=20
-> This contains two updates to the default configuration needed because of
-> a Kconfig symbol name change. This fixes a failure that was detected in
-> the NVIDIA automated test farm.
->=20
-> ----------------------------------------------------------------
-> Dmitry Osipenko (2):
->       ARM: tegra_defconfig: Update CONFIG_TEGRA_VDE option
->       ARM: config: multi v7: Enable NVIDIA Tegra video decoder driver
->=20
->  arch/arm/configs/multi_v7_defconfig | 1 +
->  arch/arm/configs/tegra_defconfig    | 3 ++-
->  2 files changed, 3 insertions(+), 1 deletion(-)
+[1]
+https://gitlab.collabora.com/dmitry.osipenko/linux-kernel-rd/-/commit/184dfd3983e774d3cf9050dc5b4ec23a662a9551
 
-Hi ARM SoC maintainers,
-
-I just noticed as these were coming into my inbox that I had already
-sent this out as fixes for v5.18 and you've already pulled this one in,
-so feel free to ignore this GIT PULL 4/6.
-
-Thierry
-
---f7wcx2TOfZPtxqKM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJ1McsACgkQ3SOs138+
-s6FTuQ/+K66b5evRZqwUUv3W+kP1tPD1mCgN8wbMwyBHewVMRLB9lNHMqqCWX+df
-kwczhOVx68t/tJDEf/c55AomeflE5/4sZni4V0GEXHj8xoBoXg88kORQ8KLBErTs
-k4D7xfshcGN6kFkpC8iPy5qKQpZqSqq/Kypw2UHyYrLT/S7CwlZw7apCShkrZZqw
-ZU+CeN+DFY8afSwtHB8idqGlHsdT3sEHUBUMbytUE307zOOvbMZQuOjcNJ4Bozf3
-VHt9cWG8OYhuq5QCjCFQj48/E5jR8Rb0VacqdoJkQjSbwCcx9pJ99GxPeccpGtmC
-5YxS0Kf79a2VTOmu4NgU+reB54aMlzmbT9hRlwfB4WO2D7dI2gK97+vlNWNl5K9Y
-IoIFDeMwjfAm5kBI1/Q/TFX80oN3wQcYFySs2Up6V5oxBgVAbCQ3Uy23MMDXP9ob
-ausTYTztLzpLrgkmHNHoSqeCRwFaJ1eXmdCYlN0VWGXBfwudRjM1dzKLFUee1Mw0
-p2bmLej1udVBE7vM9hslrwjOmTuvTbwwoGhkGT9kH01HqpWQyuGiXMjaJedar3g8
-IL8nFE1Wp9Fc/KJj3yWaQcvHR7j284Rs83eoZXLbzSeDDq92LG55GXx81c1MA4O+
-4vSw04xu0tMJofhWZ+JDhuU8j0BEm5FzZb2Xbfe/JzQQpH26q0g=
-=jky/
------END PGP SIGNATURE-----
-
---f7wcx2TOfZPtxqKM--
+-- 
+Best regards,
+Dmitry
