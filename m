@@ -2,505 +2,173 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F1CC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 May 2022 15:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA42C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 May 2022 15:56:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238807AbiEIP4z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 May 2022 11:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47654 "EHLO
+        id S238635AbiEIQAQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 May 2022 12:00:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238717AbiEIP4v (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 May 2022 11:56:51 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 281A920130C
-        for <linux-tegra@vger.kernel.org>; Mon,  9 May 2022 08:52:55 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id iq2-20020a17090afb4200b001d93cf33ae9so17345105pjb.5
-        for <linux-tegra@vger.kernel.org>; Mon, 09 May 2022 08:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CAxFYwx9au8ndjamrxPXEwi/2awSLBgQaCrWU0hhgV8=;
-        b=sFEfltNQCVk2gKdSF95eO+6o5Oi9iHPAu9XMn5y7AVrB1PpZKrmSauv2vxy2epRHmZ
-         NSr62ka7zLG3Gl54pw2fv1HHOqJzmWG+qcYMGudJBID58EtUah//Q/zwiMX8Beifo5Lh
-         iXK5FpZRJsooYlIrPkKyk6xy3QQYJz/0u49tSn3qe+yDBvjo3SSASrt46ZFrb6+hHFvW
-         H7/yN/ph8EWKTn0C9heTUB8cdpuCpaAeBHKYWIuDAIJkN6Hj0/oODbz/oRPz+ovRDe/T
-         g9WoeDulJNTK3wKvSf95Pd6PuXhjpO0IWRLXy6yWL9wRfFaZ8a0IDJZWtt84gKIK5eWZ
-         z7iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CAxFYwx9au8ndjamrxPXEwi/2awSLBgQaCrWU0hhgV8=;
-        b=x0QzDEEcu5bEK9jSlqgEwMCuNoogQOU5thSEOUYQ8aB3d4Gc8MXDfchFMAmnACtV6t
-         Nn7xx+rHyK9N0GbupbixjmQpUAMI/6KrOd0QDgiM6h0OGB5grHeoST5J6TbmIvhG3LRz
-         vg4C9qjADY7j3R0K6/aQvpjrewgjSNih2AaM7l+1PAp+S2VWw9NuNj293aCaYC1Co7tf
-         cHOuGv6azEXF7EIc9ZRkVO2cS5OkghSWnAbK6nUShtD4EcN6w6t379PcArLVXF2FcDyn
-         ZASxIvCiWF5SSvMeRnR1sS1jRcCQgsl47AIggQLIHUrsQiUOy+ZTwj+ZYikdXGa5G3jB
-         JP/A==
-X-Gm-Message-State: AOAM531Bl1WOnPYDmJWm2d0E4B0pqnfTRy1nhHQQmCdLmkuTbLUOqs4/
-        p6mQTtbJ6kfItJmeBuI5Zx7llw==
-X-Google-Smtp-Source: ABdhPJysrIMHQqC/1OMD5SyWpentMn8Vwv24RP/WWPrWWVvg2aHHDob94JmsHZxC4PVEzZOqPXHCmA==
-X-Received: by 2002:a17:90b:1091:b0:1d8:b371:4b29 with SMTP id gj17-20020a17090b109100b001d8b3714b29mr26584916pjb.234.1652111574246;
-        Mon, 09 May 2022 08:52:54 -0700 (PDT)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id c2-20020aa79522000000b0050dc7628164sm8941672pfp.62.2022.05.09.08.52.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 May 2022 08:52:53 -0700 (PDT)
-Date:   Mon, 9 May 2022 15:52:49 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
-        dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org, "David P . Reed" <dpreed@deepplum.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 01/30] x86/crash,reboot: Avoid re-disabling VMX in all
- CPUs on crash/restart
-Message-ID: <Ynk40U/KA+hLBZRC@google.com>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-2-gpiccoli@igalia.com>
+        with ESMTP id S238698AbiEIQAL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 May 2022 12:00:11 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E3D1F8C47
+        for <linux-tegra@vger.kernel.org>; Mon,  9 May 2022 08:56:15 -0700 (PDT)
+Received: (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id C7645100009;
+        Mon,  9 May 2022 15:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1652111773;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yAMAFi0FHRmHLtyYDK80duRA+mQU4mhgvhpT8ZJkgg8=;
+        b=h/FYDNCNa3X5ObbSQUrINZaV09qsJ1ucS+74RklEh0ApC+1T0W6vGo7KEau8WAMm/45xGL
+        KyUMIEk4ms8FpKT1tnXfrgAqbhPxfOkSZe/vA/hJYbh6lDUIAxSd2Hs6yemtNN4pRmyh4L
+        aScXboHiaF/SotpzKTBreJMp1b6gXXlWG2/IGyDvQHtuQQcCJXGLXvKBIZHKIMdNDfmAef
+        OiVLVRH4HhYO/2vUQOLhthZXFO564ScgPQuiq4o3Y/44JktwGQMkvokjupY+W/ITv0Az9K
+        7gwSy1/nn1fdC1ge15zCJO1JJiUurT+LDg6w6IHDHwm8Rd6Tlfz7YC4AEsUXbQ==
+Date:   Mon, 9 May 2022 17:56:10 +0200
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     linux-tegra@vger.kernel.org, thierry.reding@gmail.com,
+        dmitry.osipenko@collabora.com,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: Tegra20 parallel video capture driver
+Message-ID: <20220509175610.797f8505@melee>
+In-Reply-To: <c13fe2a2-19df-0a61-9acf-3100202f238d@kapsi.fi>
+References: <20220429184931.69591698@melee>
+        <c13fe2a2-19df-0a61-9acf-3100202f238d@kapsi.fi>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="J4vquNhda08TmTtV"
-Content-Disposition: inline
-In-Reply-To: <20220427224924.592546-2-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Mikko, All,
 
---J4vquNhda08TmTtV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+as anticipated, here is another batch of questions that arose after the
+(very appreciated!) feedback from Mikko.
 
-I find the shortlog to be very confusing, the bug has nothing to do with disabling
-VMX and I distinctly remember wrapping VMXOFF with exception fixup to prevent doom
-if VMX is already disabled :-).  The issue is really that nmi_shootdown_cpus() doesn't
-play nice with being called twice.
-
-On Wed, Apr 27, 2022, Guilherme G. Piccoli wrote:
-> In the panic path we have a list of functions to be called, the panic
-> notifiers - such callbacks perform various actions in the machine's
-> last breath, and sometimes users want them to run before kdump. We
-> have the parameter "crash_kexec_post_notifiers" for that. When such
-> parameter is used, the function "crash_smp_send_stop()" is executed
-> to poweroff all secondary CPUs through the NMI-shootdown mechanism;
-> part of this process involves disabling virtualization features in
-> all CPUs (except the main one).
+Il giorno Thu, 5 May 2022 12:42:08 +0300
+Mikko Perttunen <cyndis@kapsi.fi> ha scritto:
+[...]
+> > 1. Is there any good documentation on host1x, especially syncpt?  
 > 
-> Now, in the emergency restart procedure we have also a way of
-> disabling VMX in all CPUs, using the same NMI-shootdown mechanism;
-> what happens though is that in case we already NMI-disabled all CPUs,
-> the emergency restart fails due to a second addition of the same items
-> in the NMI list, as per the following log output:
+> There isn't much documentation, apart from what exists in the TRMs.
+> But basically, syncpoints are an array of 32-bit unsigned integers in 
+> hardware, with each 32-bit value having the following fundamental 
+> operations:
 > 
-> sysrq: Trigger a crash
-> Kernel panic - not syncing: sysrq triggered crash
-> [...]
-> Rebooting in 2 seconds..
-> list_add double add: new=<addr1>, prev=<addr2>, next=<addr1>.
-> ------------[ cut here ]------------
-> kernel BUG at lib/list_debug.c:29!
-> invalid opcode: 0000 [#1] PREEMPT SMP PTI
+> * Increment by one, wrapping (i.e. mod 2^32)
+> * Wait for value to reach threshold, such that if you consider the 32 
+> bit unsigned integers a circle, then the half-circle preceding 
+> (integer-wise) the threshold value are considered to be in the past
+> and the half-circle succeeding are considered to be in the future.
+> For example, if we specify threshold 0xffffffff then 0x0 is
+> considered to be one increment in the future. Waits can be done
+> either by HW stalling host1x channels (similar to DMA) or CPU
+> interrupts.
 
-Call stacks for the two callers would be very, very helpful.
+Do you think the mainline host1x implementation is 100% compatible with
+tegra20? So far I have been assuming that it is, but since my code flow
+is now pretty much equal to the old 3.1 driver and I am not receiving
+any syncpt events, I started wondering whether the syncpt calls with an
+equivalent name really do the same thing or not. Specifically the 
+nvhost_syncpt_wait_timeout_ext() in 3.1 looks to have the same
+structure as host1x_syncpt_wait() in mainline, but I still haven't dung
+into the very details to see if there is any subtle difference.
 
-> In order to reproduce the problem, users just need to set the kernel
-> parameter "crash_kexec_post_notifiers" *without* kdump set in any
-> system with the VMX feature present.
+> > 4. I am currently working on a version of
+> > tegra_channel_capture_frame() [1] for tegra20 VIP and other code
+> > involving syncpt. The mainline driver calls many different
+> > host1x_syncpt_*() functions, while the old driver does call very
+> > few of them. Can anybody clarify the meaning of the various syncpt
+> > calls?  
 > 
-> Since there is no benefit in re-disabling VMX in all CPUs in case
-> it was already done, this patch prevents that by guarding the restart
-> routine against doubly issuing NMIs unnecessarily. Notice we still
-> need to disable VMX locally in the emergency restart.
+> - request/put -- allocate and free syncpoint
+> - incr/wait -- as described before
+> - incr_max -- when syncpoint is used with host1x channels, used to 
+> indicate to job tracking code how many times the job will increment
+> the syncpoint. when not using channels, should not be used -- looks
+> like the tegra210 code calls this a couple of times but it probably
+> shouldn't be doing that.
+
+As I understand it, for my own use case I should never call _incr as it
+is what the VI hardware is supposed to do, and rather i should call
+_wait to wait for that increment to happen. Coherently, this is what
+the 3.1 driver does: it reads the syncpt value into a plain variable,
+increments the variable, then calls _wait to wait the syncpt to reach
+the same value as the variable.
+
+But the mainline code the the tegra210 VI does many more syncpt calls
+and it does not use a variable in the same way. It rather calls
+host1x_syncpt_incr() and host1x_syncpt_incr_max() (which it shouldn't
+call as you said) but I am not sure these calls achieve the same result.
+
+Do you think the calls that exist in
+drivers/staging/media/tegra-video/tegra210.c do make sense for tegra20
+too?
+
+> > 5. In tegra_channel_capture_frame() the call to host1x_syncpt_wait()
+> >     always returns -EAGAIN. Where would you start to investigate the
+> >     reason of this timeout?  
 > 
-> Fixes: ed72736183c4 ("x86/reboot: Force all cpus to exit VMX root if VMX is supported)
-> Fixes: 0ee59413c967 ("x86/panic: replace smp_send_stop() with kdump friendly version in panic path")
-> Cc: David P. Reed <dpreed@deepplum.com>
-> Cc: Hidehiro Kawai <hidehiro.kawai.ez@hitachi.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> ---
->  arch/x86/include/asm/cpu.h |  1 +
->  arch/x86/kernel/crash.c    |  8 ++++----
->  arch/x86/kernel/reboot.c   | 14 ++++++++++++--
->  3 files changed, 17 insertions(+), 6 deletions(-)
+> This means that the syncpoint's value did not reach the specified 
+> threshold. Either the specified threshold is incorrect, or the engine 
+> did not increment the syncpoint (or did not increment sufficient
+> number of times), either because the syncpoint increment was not
+> programmed correctly, or the condition for the increment was not
+> fulfilled (i.e. the engine got stuck for whatever reason).
 > 
-> diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-> index 86e5e4e26fcb..b6a9062d387f 100644
-> --- a/arch/x86/include/asm/cpu.h
-> +++ b/arch/x86/include/asm/cpu.h
-> @@ -36,6 +36,7 @@ extern int _debug_hotplug_cpu(int cpu, int action);
->  #endif
->  #endif
->  
-> +extern bool crash_cpus_stopped;
->  int mwait_usable(const struct cpuinfo_x86 *);
->  
->  unsigned int x86_family(unsigned int sig);
-> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-> index e8326a8d1c5d..71dd1a990e8d 100644
-> --- a/arch/x86/kernel/crash.c
-> +++ b/arch/x86/kernel/crash.c
-> @@ -42,6 +42,8 @@
->  #include <asm/crash.h>
->  #include <asm/cmdline.h>
->  
-> +bool crash_cpus_stopped;
-> +
->  /* Used while preparing memory map entries for second kernel */
->  struct crash_memmap_data {
->  	struct boot_params *params;
-> @@ -108,9 +110,7 @@ void kdump_nmi_shootdown_cpus(void)
->  /* Override the weak function in kernel/panic.c */
->  void crash_smp_send_stop(void)
->  {
-> -	static int cpus_stopped;
-> -
-> -	if (cpus_stopped)
-> +	if (crash_cpus_stopped)
->  		return;
->  
->  	if (smp_ops.crash_stop_other_cpus)
-> @@ -118,7 +118,7 @@ void crash_smp_send_stop(void)
->  	else
->  		smp_send_stop();
->  
-> -	cpus_stopped = 1;
-> +	crash_cpus_stopped = true;
+> Apart from the wait, you can use
+> /sys/kernel/debug/tegra-host1x/status to track syncpoint value. Apart
+> from that, if you're not using channels, you'll just have to look at
+> engine registers to see why it's not processing.
 
-This feels like were just adding more duct tape to the mess.  nmi_shootdown() is
-still unsafe for more than one caller, and it takes a _lot_ of staring and searching
-to understand that crash_smp_send_stop() is invoked iff CONFIG_KEXEC_CORE=y, i.e.
-that it will call smp_ops.crash_stop_other_cpus() and not just smp_send_stop().
+About the latest suggestion, which status register are you referring
+to? Unfortunately the TRM I have does not document the VIP registers at
+all, and the 3.1 driver does not use of them so it's impossible to
+infer the bit meanings. Can you suggest any specific register that I
+should check?
 
-Rather than shared a flag between two relatively unrelated functions, what if we
-instead disabling virtualization in crash_nmi_callback() and then turn the reboot
-call into a nop if an NMI shootdown has already occurred?  That will also add a
-bit of documentation about multiple shootdowns not working.
 
-And I believe there's also a lurking bug in native_machine_emergency_restart() that
-can be fixed with cleanup.  SVM can also block INIT and so should be disabled during
-an emergency reboot.
+Another question is about the clocks. I tried to set them up as
+similarly as possible to the working 3.1 code, but couldn't have them
+identical.
 
-The attached patches are compile tested only.  If they seem sane, I'll post an
-official mini series.
+The 3.1 kernel configures this way: 
 
->  }
->  
->  #else
-> diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-> index fa700b46588e..2fc42b8402ac 100644
-> --- a/arch/x86/kernel/reboot.c
-> +++ b/arch/x86/kernel/reboot.c
-> @@ -589,8 +589,18 @@ static void native_machine_emergency_restart(void)
->  	int orig_reboot_type = reboot_type;
->  	unsigned short mode;
->  
-> -	if (reboot_emergency)
-> -		emergency_vmx_disable_all();
-> +	/*
-> +	 * We can reach this point in the end of panic path, having
-> +	 * NMI-disabled all secondary CPUs. This process involves
-> +	 * disabling the CPU virtualization technologies, so if that
-> +	 * is the case, we only miss disabling the local CPU VMX...
-> +	 */
-> +	if (reboot_emergency) {
-> +		if (!crash_cpus_stopped)
-> +			emergency_vmx_disable_all();
-> +		else
-> +			cpu_emergency_vmxoff();
-> +	}
->  
->  	tboot_shutdown(TB_SHUTDOWN_REBOOT);
->  
-> -- 
-> 2.36.0
-> 
+  pll_c @ 600 MHZ --->     VI @ 150 MHz (/ 4)
+  pll_p @ 216 MHZ ---> HOST1X @ 144 MHz (x 2 / 3) 
 
---J4vquNhda08TmTtV
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-x86-crash-Disable-virt-in-core-NMI-crash-handler-to-.patch"
+Mainline does not seem to be able to use a fractional divider for pll_p
+to get 144 MHz from 216 MHz (if I ask for 144 i get 108), thus I
+currently configured this way:
 
-From 8a4573b7cf3a3e49b409ba3a504934de181c259d Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Mon, 9 May 2022 07:36:34 -0700
-Subject: [PATCH 1/2] x86/crash: Disable virt in core NMI crash handler to
- avoid double list_add
+  pll_c @ 600 MHZ -+->     VI @ 150 MHz (/ 4)
+                   `-> HOST1X @ 150 MHz (/ 4)
 
-Disable virtualization in crash_nmi_callback() and skip the requested NMI
-shootdown if a shootdown has already occurred, i.e. a callback has been
-registered.  The NMI crash shootdown path doesn't play nice with multiple
-invocations, e.g. attempting to register the NMI handler multiple times
-will trigger a double list_add() and hang the sytem (in addition to
-multiple other issues).  If "crash_kexec_post_notifiers" is specified on
-the kernel command line, panic() will invoke crash_smp_send_stop() and
-result in a second call to nmi_shootdown_cpus() during
-native_machine_emergency_restart().
+Do you think there would be any issues in clocking host1x at 150 MHz
+instead of 144? 
 
-Invoke the callback _before_ disabling virtualization, as the current
-VMCS needs to be cleared before doing VMXOFF.  Note, this results in a
-subtle change in ordering between disabling virtualization and stopping
-Intel PT on the responding CPUs.  While VMX and Intel PT do interact,
-VMXOFF and writes to MSR_IA32_RTIT_CTL do not induce faults between one
-another, which is all that matters when panicking.
 
-WARN if nmi_shootdown_cpus() is called a second time with anything other
-than the reboot path's "nop" handler, as bailing means the requested
-isn't being invoked.  Punt true handling of multiple shootdown callbacks
-until there's an actual use case for doing so (beyond disabling
-virtualization).
+One last quetion. About the VI configuration, in an attempt to getting
+it working with the simplest possible setup I tried using an
+interleaved format instead of multiplanar. This results in writing
+format 3 instead of 6 in the low bits of
+TEGRA_VI_VI_FIRST_OUTPUT_CONTROL. Do you think this may be a problem?
 
-Extract the disabling logic to a common helper to deduplicate code, and
-to prepare for doing the shootdown in the emergency reboot path if SVM
-is supported.
 
-Note, prior to commit ed72736183c4 ("x86/reboot: Force all cpus to exit
-VMX root if VMX is supported), nmi_shootdown_cpus() was subtly protected
-against a second invocation by a cpu_vmx_enabled() check as the kdump
-handler would disable VMX if it ran first.
+Kind regards,
+Luca
 
-Fixes: ed72736183c4 ("x86/reboot: Force all cpus to exit VMX root if VMX is supported)
-Cc: stable@vger.kernel.org
-Reported-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/reboot.h |  1 +
- arch/x86/kernel/crash.c       | 16 +--------------
- arch/x86/kernel/reboot.c      | 38 ++++++++++++++++++++++++++++++++---
- 3 files changed, 37 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/include/asm/reboot.h b/arch/x86/include/asm/reboot.h
-index 04c17be9b5fd..8f2da36435a6 100644
---- a/arch/x86/include/asm/reboot.h
-+++ b/arch/x86/include/asm/reboot.h
-@@ -25,6 +25,7 @@ void __noreturn machine_real_restart(unsigned int type);
- #define MRR_BIOS	0
- #define MRR_APM		1
- 
-+void cpu_crash_disable_virtualization(void);
- typedef void (*nmi_shootdown_cb)(int, struct pt_regs*);
- void nmi_panic_self_stop(struct pt_regs *regs);
- void nmi_shootdown_cpus(nmi_shootdown_cb callback);
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index e8326a8d1c5d..fe0cf83843ba 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -81,15 +81,6 @@ static void kdump_nmi_callback(int cpu, struct pt_regs *regs)
- 	 */
- 	cpu_crash_vmclear_loaded_vmcss();
- 
--	/* Disable VMX or SVM if needed.
--	 *
--	 * We need to disable virtualization on all CPUs.
--	 * Having VMX or SVM enabled on any CPU may break rebooting
--	 * after the kdump kernel has finished its task.
--	 */
--	cpu_emergency_vmxoff();
--	cpu_emergency_svm_disable();
--
- 	/*
- 	 * Disable Intel PT to stop its logging
- 	 */
-@@ -148,12 +139,7 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
- 	 */
- 	cpu_crash_vmclear_loaded_vmcss();
- 
--	/* Booting kdump kernel with VMX or SVM enabled won't work,
--	 * because (among other limitations) we can't disable paging
--	 * with the virt flags.
--	 */
--	cpu_emergency_vmxoff();
--	cpu_emergency_svm_disable();
-+	cpu_crash_disable_virtualization();
- 
- 	/*
- 	 * Disable Intel PT to stop its logging
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index fa700b46588e..f9543a4e9b09 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -528,9 +528,9 @@ static inline void kb_wait(void)
- 	}
- }
- 
--static void vmxoff_nmi(int cpu, struct pt_regs *regs)
-+static void nmi_shootdown_nop(int cpu, struct pt_regs *regs)
- {
--	cpu_emergency_vmxoff();
-+	/* Nothing to do, the NMI shootdown handler disables virtualization. */
- }
- 
- /* Use NMIs as IPIs to tell all CPUs to disable virtualization */
-@@ -554,7 +554,7 @@ static void emergency_vmx_disable_all(void)
- 		__cpu_emergency_vmxoff();
- 
- 		/* Halt and exit VMX root operation on the other CPUs. */
--		nmi_shootdown_cpus(vmxoff_nmi);
-+		nmi_shootdown_cpus(nmi_shootdown_nop);
- 	}
- }
- 
-@@ -802,6 +802,18 @@ static nmi_shootdown_cb shootdown_callback;
- static atomic_t waiting_for_crash_ipi;
- static int crash_ipi_issued;
- 
-+void cpu_crash_disable_virtualization(void)
-+{
-+	/*
-+	 * Disable virtualization, i.e. VMX or SVM, so that INIT is recognized
-+	 * during reboot.  VMX blocks INIT if the CPU is post-VMXON, and SVM
-+	 * blocks INIT if GIF=0.  Note, CLGI #UDs if SVM isn't enabled, so it's
-+	 * easier to just disable SVM unconditionally.
-+	 */
-+	cpu_emergency_vmxoff();
-+	cpu_emergency_svm_disable();
-+}
-+
- static int crash_nmi_callback(unsigned int val, struct pt_regs *regs)
- {
- 	int cpu;
-@@ -819,6 +831,12 @@ static int crash_nmi_callback(unsigned int val, struct pt_regs *regs)
- 
- 	shootdown_callback(cpu, regs);
- 
-+	/*
-+	 * Prepare the CPU for reboot _after_ invoking the callback so that the
-+	 * callback can safely use virtualization instructions, e.g. VMCLEAR.
-+	 */
-+	cpu_crash_disable_virtualization();
-+
- 	atomic_dec(&waiting_for_crash_ipi);
- 	/* Assume hlt works */
- 	halt();
-@@ -840,6 +858,20 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	unsigned long msecs;
- 	local_irq_disable();
- 
-+	/*
-+	 * Invoking multiple callbacks is not currently supported, registering
-+	 * the NMI handler twice will cause a list_add() double add BUG().
-+	 * The exception is the "nop" handler in the emergency reboot path,
-+	 * which can run after e.g. kdump's shootdown.  Do nothing if the crash
-+	 * handler has already run, i.e. has already prepared other CPUs, the
-+	 * reboot path doesn't have any work of its to do, it just needs to
-+	 * ensure all CPUs have prepared for reboot.
-+	 */
-+	if (shootdown_callback) {
-+		WARN_ON_ONCE(callback != nmi_shootdown_nop);
-+		return;
-+	}
-+
- 	/* Make a note of crashing cpu. Will be used in NMI callback. */
- 	crashing_cpu = safe_smp_processor_id();
- 
-
-base-commit: 2764011106d0436cb44702cfb0981339d68c3509
 -- 
-2.36.0.512.ge40c2bad7a-goog
-
-
---J4vquNhda08TmTtV
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0002-x86-reboot-Disable-virtualization-in-an-emergency-if.patch"
-
-From ce4b8fb50962c00a9bb29663e96501e90d68bd8b Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Mon, 9 May 2022 08:28:14 -0700
-Subject: [PATCH 2/2] x86/reboot: Disable virtualization in an emergency if SVM
- is supported
-
-Disable SVM on all CPUs via NMI shootdown during an emergency reboot.
-Like VMX, SVM can block INIT and thus prevent bringing up other CPUs via
-INIT-SIPI-SIPI.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kernel/reboot.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index f9543a4e9b09..33c1f4883b27 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -533,27 +533,29 @@ static void nmi_shootdown_nop(int cpu, struct pt_regs *regs)
- 	/* Nothing to do, the NMI shootdown handler disables virtualization. */
- }
- 
--/* Use NMIs as IPIs to tell all CPUs to disable virtualization */
--static void emergency_vmx_disable_all(void)
-+static void emergency_reboot_disable_virtualization(void)
- {
- 	/* Just make sure we won't change CPUs while doing this */
- 	local_irq_disable();
- 
- 	/*
--	 * Disable VMX on all CPUs before rebooting, otherwise we risk hanging
--	 * the machine, because the CPU blocks INIT when it's in VMX root.
-+	 * Disable virtualization on all CPUs before rebooting to avoid hanging
-+	 * the system, as VMX and SVM block INIT when running in the host
- 	 *
- 	 * We can't take any locks and we may be on an inconsistent state, so
--	 * use NMIs as IPIs to tell the other CPUs to exit VMX root and halt.
-+	 * use NMIs as IPIs to tell the other CPUs to disable VMX/SVM and halt.
- 	 *
--	 * Do the NMI shootdown even if VMX if off on _this_ CPU, as that
--	 * doesn't prevent a different CPU from being in VMX root operation.
-+	 * Do the NMI shootdown even if virtualization is off on _this_ CPU, as
-+	 * other CPUs may have virtualization enabled.
- 	 */
--	if (cpu_has_vmx()) {
--		/* Safely force _this_ CPU out of VMX root operation. */
--		__cpu_emergency_vmxoff();
-+	if (cpu_has_vmx() || cpu_has_svm(NULL)) {
-+		/* Safely force _this_ CPU out of VMX/SVM operation. */
-+		if (cpu_has_vmx())
-+			__cpu_emergency_vmxoff();
-+		else
-+			cpu_emergency_svm_disable();
- 
--		/* Halt and exit VMX root operation on the other CPUs. */
-+		/* Disable VMX/SVM and halt on other CPUs. */
- 		nmi_shootdown_cpus(nmi_shootdown_nop);
- 	}
- }
-@@ -590,7 +592,7 @@ static void native_machine_emergency_restart(void)
- 	unsigned short mode;
- 
- 	if (reboot_emergency)
--		emergency_vmx_disable_all();
-+		emergency_reboot_disable_virtualization();
- 
- 	tboot_shutdown(TB_SHUTDOWN_REBOOT);
- 
--- 
-2.36.0.512.ge40c2bad7a-goog
-
-
---J4vquNhda08TmTtV--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
