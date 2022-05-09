@@ -2,255 +2,211 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFF8C4167E
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 May 2022 16:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BBEC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 May 2022 22:07:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239230AbiEIQoL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 May 2022 12:44:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39814 "EHLO
+        id S231226AbiEIWLf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 May 2022 18:11:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239113AbiEIQoJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 May 2022 12:44:09 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA0F54022;
-        Mon,  9 May 2022 09:40:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=48dgNwNPuCnyD3VVOBf09xe2NjnTaXdW0ldox8dhrAY=; b=eLWL69Jp3Hs5nKIC07c/DVmIhZ
-        tbuXXOS52wa7kstrEszNfv7tW4JmReP+jwvf/WSB2LnPtAjsR79TSRqPXDYlR/UhgTYs3JxE63TxY
-        WFAF2HLKU7kQDGOjOij/SccvoodNoUy/77Q7Rw1bHNyMkUGePOlK3tPiGlMKv0HFeJaDvBKfB5C4T
-        7/g7A8xShBgXvVATUWH+9aEVvFCEwhRR4Tyt7Zyibz7aNPTHMnncwalkA+46VUbkJ44ERvwAtMmTs
-        hWWtwgYVptx9ug9t6aPZQ1zrU+TA/lel56oNayZ3d7me/ZMI8w2lxg28JbHkciwHu/jkRujv3gimI
-        sEcDvBWQ==;
-Received: from [177.183.162.244] (helo=[192.168.0.5])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1no6QL-0009Bp-09; Mon, 09 May 2022 18:39:53 +0200
-Message-ID: <92e03ebf-6a64-69dc-bf16-9552b9fedad8@igalia.com>
-Date:   Mon, 9 May 2022 13:39:21 -0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
-Content-Language: en-US
-To:     "d.hatayama@fujitsu.com" <d.hatayama@fujitsu.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "pmladek@suse.com" <pmladek@suse.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        "mikelley@microsoft.com" <mikelley@microsoft.com>,
-        Hari Bathini <hbathini@linux.ibm.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        with ESMTP id S229652AbiEIWLe (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 May 2022 18:11:34 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2049.outbound.protection.outlook.com [40.107.243.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBAF024310D;
+        Mon,  9 May 2022 15:07:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NF1d6FSKv5UNRYDfVJDU/F9sp+zsHRFkLfGpukMrdUjLk5exAWOf4yqXSDKpWbByCaZac/NW/oAtK3GCnGR9Fu0m8/BW57+mfc/8s21QbaHzayI5YUz5qSBszuNZiepG9Dc6kfIY0O7SBj41dbxo09knTkocSZnyS0CsGNh7kxULHlHxrk3P1NJ+oyerdSJNcuMj0Ua8uEJDr6UeUdRiiMT5oHGaRg7sTJGTfnqxrXP1duHmhCxu+WxJfOqduOpSevKTDODVduioRlk0D4NKuYcTTEcxWR6UFEK3J/urOSK1Ja/MDdTVNxfYkq+uZv07icpRN0Trrppnfo9q816R/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PgtX/8P7dsUQ8vC2uTYi6Biavj3LKX+8kwuYiNazBBg=;
+ b=RtxXc5UsWXOXBS5K9YojFA8kQPiNP0roG1LLy+XbaE9aLgmrlxuNAqmWnu5MDOHY1Yp3uxoXgUYgZtXgCeXFlNNpdmjx6OleT/35cEDhc4HpLa32sl+VQ6vCLQiu/wX8xGTTWNTtf5Mf3MLlfnkAiAZuf5lGfdYyfKgVgixvVskfAsiqyXRxQumJZUVxfdXanktjM+lKe1XrDMe3FJd6BQIQ0rfkoMf1F8+uEFybu/yEASss/pbcJs29nMQ2Dwc4uqt17nb/ID9BMjOTojFJkwVaH2q54KBvjU/j9UiYCODwWymNesNGKHiBlHGfQHjqEsLxFZChZaROA6manOWi9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PgtX/8P7dsUQ8vC2uTYi6Biavj3LKX+8kwuYiNazBBg=;
+ b=bOfJtMra7ZzVInN2y1B/DryPAo+P3PiratGCT2hIK50RGHHT4Z3VS+0Uhrpoi/5O68UqekwKQp512OsN6xxEwAmcaGJ10YfDexbNxW0mZWDcss7a6N39FKqCEqJ+r/PzYuhRre55VF9zwtwkauh4ofAPZubbUBt5FVTp1gtGDxVBx0ZsizTKxKzMWYNcj2mn0ceiFjvJmDs4men93oM5ZdSA+PFx1TaoC3B2miJP7csa9M2I2+PGIqhjAzOjhB+9tslX2gDeZnR2Nj7M5TbH7X+3Rw5dhqMnYxPbIiyZ+xfNV3mSIWRuk5ThVcjzgoGGe7rFtCmKfQHTCU5eWUdzJA==
+Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
+ by BN7PR12MB2787.namprd12.prod.outlook.com (2603:10b6:408:2b::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.23; Mon, 9 May
+ 2022 22:07:37 +0000
+Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
+ ([fe80::7526:b8f5:b10:1c4c]) by SJ0PR12MB5676.namprd12.prod.outlook.com
+ ([fe80::7526:b8f5:b10:1c4c%7]) with mapi id 15.20.5227.021; Mon, 9 May 2022
+ 22:07:36 +0000
+From:   Besar Wicaksono <bwicaksono@nvidia.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will@kernel.org>
+CC:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "openipmi-developer@lists.sourceforge.net" 
-        <openipmi-developer@lists.sourceforge.net>,
-        "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
-        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
-        "halves@canonical.com" <halves@canonical.com>,
-        "fabiomirmar@gmail.com" <fabiomirmar@gmail.com>,
-        "alejandro.j.jimenez@oracle.com" <alejandro.j.jimenez@oracle.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "hidehiro.kawai.ez@hitachi.com" <hidehiro.kawai.ez@hitachi.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "john.ogness@linutronix.de" <john.ogness@linutronix.de>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "paulmck@kernel.org" <paulmck@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "vgoyal@redhat.com" <vgoyal@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "will@kernel.org" <will@kernel.org>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com>
- <TYAPR01MB6507D01F5694BC33628BB7DB95C69@TYAPR01MB6507.jpnprd01.prod.outlook.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <TYAPR01MB6507D01F5694BC33628BB7DB95C69@TYAPR01MB6507.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
+        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vikram Sethi <vsethi@nvidia.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Michael Williams (ATG)" <Michael.Williams@arm.com>
+Subject: RE: [PATCH 0/2] perf: ARM CoreSight PMU support
+Thread-Topic: [PATCH 0/2] perf: ARM CoreSight PMU support
+Thread-Index: AQHYYzu4AtKVUSpJ7k+AnLFkxMXOCq0WR+MAgAAJZ4CAAMQDMA==
+Date:   Mon, 9 May 2022 22:07:36 +0000
+Message-ID: <SJ0PR12MB5676B1231F10477AFC96D7BEA0C69@SJ0PR12MB5676.namprd12.prod.outlook.com>
+References: <20220509002810.12412-1-bwicaksono@nvidia.com>
+ <20220509092843.GB26264@willie-the-truck>
+ <2e5e09f9-b71b-d936-e291-db8f94554b18@arm.com>
+In-Reply-To: <2e5e09f9-b71b-d936-e291-db8f94554b18@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 617d6e5b-c241-446f-f298-08da32085379
+x-ms-traffictypediagnostic: BN7PR12MB2787:EE_
+x-microsoft-antispam-prvs: <BN7PR12MB278730FE9AD617A44502F3D8A0C69@BN7PR12MB2787.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 64yN9uFX1szQC4riDNaqgx+h/mjhKpLWE2DjBcOM2bFDtTz6lWWaDRRdJbqJLq5Q/jNNzchW9rEy/BY2UuLqp4c8gzN7NSqxi5XLIBoVHkPe8Gm5iS8QIojB+rKHrxeBeRu6pAgghZQGFXY7W5ykX8RB58HL5CkjOqLWqASLXEbojqiVqyccEHo6ANnk1SEhwGWJnv/BEup8NP6AA51pOiLq1APWAXHZxR4Hw/R4pL+t1KFV/weRt2CBJ+QMvKLl3FEcJoBYuJDbo++AEVRn7rPGrWIAT/VQQvvt0fWyxOuc+TtXrrwelLb11E6jOULW+EwBt0G/2GPs38n0AWoe5vvlbAATa4M0vC1FbqheBSPvEjLBzPt3k7kQvbsyHmegcbcXUaeLAdqXNU1RkH9AlIJZQFyuoxQ9Kyr82ukGgoHkFc10sf7IJ+Oz7HYfBUzW+zNHBu8PcpQQ4bcB7xZ/xSI3rQY941ePjdYBaRZK1ClBRevqBJ/tB4Bn7XAwWKsLu/V8NBnirj9qXbdabApSKvsXThJnVx0JiiIrYx6qy2JG5Jdb+vvU7ShgFvKzBBDne/WLD4n28Gh1L+pwdj/TndzSVa/UWnkd991rICS95PVoaJFlTkX9HU05xcIO/mRktgQk1Dpm1XSq36x/6iO0acxErb1CLlls1cmyJQKYtgwZmo+1OmihtCOfySqk+KL9W/6nUS4fODksS13OsqHxFy7Q8jeulkdQGgrYDxAp8eY3RbqatNtiM0dGWoZTu12xirfWnNols6tBSLkPG8+j6R2gKh1rOw9OyCycTmBBj/5MpREw90vI/gGDKKZle3N2rgaIX4KyjAr7KOZBBDALpQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8936002)(71200400001)(38100700002)(38070700005)(122000001)(7416002)(966005)(86362001)(5660300002)(53546011)(110136005)(7696005)(316002)(6506007)(66556008)(66946007)(54906003)(76116006)(66446008)(66476007)(64756008)(4326008)(52536014)(8676002)(9686003)(33656002)(186003)(83380400001)(55016003)(2906002)(26005)(508600001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZVFXU3l5ZHhnUDZleFBtdW9uOVV2SlJTdU9MeFdkdjZGT0dhWWFWSEwvd3My?=
+ =?utf-8?B?c3oyMXVpblVFekVzWmd0Z0xVWlRYTTBqenlpRS9oRVNIUEdVbUhUc3VBN2pS?=
+ =?utf-8?B?TzVuak1FM1ZCN2t2STJNQkZwbXlOOHZwUW5uQS9iUVg3dGE4UnB3VEtBdTVm?=
+ =?utf-8?B?QWpSeEJVMFFWb1FyU29IK2Fab3ZxMHIxaThlNHFzRmRxbFRUOTZOTUZzQi9x?=
+ =?utf-8?B?WkdxUXZUUGdBRm5Ld1NXTkFyajkxMWxrWGhjRE5nWUozQ0JtYjVBSk9UU09w?=
+ =?utf-8?B?NlNadVJZa2hvOEFjclNGcEI0dVNCTjVkRDNzZzRtTFJWTm00RXJudkZlajZ3?=
+ =?utf-8?B?RUxOREYzZDFlcXR5N29veHFRelpHbmVuZm1LaXZqNExqZmd5bGtGTU5BclZp?=
+ =?utf-8?B?NXlCY3FIMFhGNVU1SjBoR296MzMwbFlGYzAwM2ZZZ3dSMWl4alZtVHgzRmR2?=
+ =?utf-8?B?YVVLUUkrNkVEZVMxeFhMWmpTWjRHL2pwMnpTelBnbWVkemtBcU9mYk5SV3Iw?=
+ =?utf-8?B?ZlRXcGdkamxUVlpucDNDOW5xTmlJSll0UldhOGo3N2NzQnVQWGllQTAwRG82?=
+ =?utf-8?B?UEhFKzM2aGRIUHJjTHA2YVk4My9KQzVncmkwUDh6OE1nWkQ5bGw2L1VmZFhx?=
+ =?utf-8?B?a2w5KzlGcGlRTlRFZkZqYmltSzFWWUpQWTB5K1FGVmNnR0p3UnlaekVoSVZv?=
+ =?utf-8?B?c29FOUhocFQzNEZ0c2R0dTFkS2o5SS95MzRCUzFJc2pobEk4RklBY0FYdzRq?=
+ =?utf-8?B?c2VIKys1NnFpdktkbCtJMVQva2VPeW1iRDB0U0NhWGs4MXdwcVo5VXArb01F?=
+ =?utf-8?B?OW9PQ0NVb1FXaHVldlhCN0tyajJ5alBRUGU0eDAwMTBLNWVIYVpjYTFlMTJW?=
+ =?utf-8?B?WnNEczFLOFp4TGZNRHdXcm5KUjUxOWJpS1B4UXdtblNSVkVMWm5NUzh1TUZX?=
+ =?utf-8?B?dG45emJFcTMzQVJjcld0VC92VjdzdUtpeW9XMlhTVnd6SVpaaXZ6WFFsaXhT?=
+ =?utf-8?B?U0kvUjV1UEhueStjOGZsYlUvcis3MnZTR2ZmTVFtNHlaODU4VFJMS2drY1pE?=
+ =?utf-8?B?UkM1SFVydGNvdCtKN29CYTBkWHcvbEFScVVFT3VTamVOMkZQU1FQUldQU05T?=
+ =?utf-8?B?UkVqWENwZ1VmaGpsUUJtRFdFcjl2dkNoZDJrSC9CMExsRkN5VkVMaWRzeVRV?=
+ =?utf-8?B?SDZZaXVMTG9nRkNVUlQwVmpMYmRSRHBwNlF5M2hHdldHMmhzaWp2UXlOTUov?=
+ =?utf-8?B?NFdhQlhxTXo3SWdzd1BUd1NyVXpwZEpGa1J3RzhzUGgwZjlGVHBCRUNab1lk?=
+ =?utf-8?B?VGNNY01CVHlJRXptL1FXK2ZPZEpEWHkyWEp0WnBYZ2tiU2FVMGZ1ZnQ3d0FE?=
+ =?utf-8?B?djk3Y1lCeXBZenhhVkFZK3oyRmpOWkd3Y1BtZXVibU5hNVk5d0dOMVhCajBx?=
+ =?utf-8?B?RlBIZ2NnbTdJd0o0TW5ld0ptR1grNTZiZlVEa3BBVjhLOFVPamttT0xnVUh5?=
+ =?utf-8?B?cXIvY2FOMk9aS3Byck1Qemp4Q1V0Lzc2SU0ramRCUkF1OGVDNEdnd1FtNDNN?=
+ =?utf-8?B?MEZ4cE0xalcrU0ZsbHJJdmJkaFNPMDhVT0NidkVtdVhVb3hzWTVHKzVteFZX?=
+ =?utf-8?B?bmt4TWdOOWs5Rnl4eTloN2IwQnZxcGNRc1dKR25YdnM4TzBMZGFmeXRnQ0pm?=
+ =?utf-8?B?UGFwYkFOZnRFWHlBOE44SFdQSEErWFNaZDVHNHZJNWFqeDdER3BMYmdDRHB6?=
+ =?utf-8?B?ZmxkU1N6c2VPdjVXbWhhUGR0Nkgzb0lvRGRETWJhZ0t5OEt2ZU5pb1hNS1JJ?=
+ =?utf-8?B?SUFNSXNBYmVYcHpqVGZpR2VMM2F1TmVLTmhMd3dXZUJwcFFPTnRKNzU2QWVB?=
+ =?utf-8?B?a1FmRWpnRnlpanZNd3hFNE0ybCtxSmpmQ2VNQ29hdGM3WkVjTUNINlZBTTJn?=
+ =?utf-8?B?U25OaXVwK0o2WnRQQ2FRMTdvc0MwTVZQZW1hSUV3bXo4U0Ntd3pHSlI5V2I2?=
+ =?utf-8?B?ZWFWdWk4dzJqcWZieEIxalU0Z0p1OE53aytjUHVmZGZqeE1kaVRUN01zS1U0?=
+ =?utf-8?B?OUpWcXhaSzE4MVVReEJXWGJpTWtjRis4MnZSYXZaYzJmTlBGenNrVXBnVnR5?=
+ =?utf-8?B?aE85ZmhrR1VSbDVtVG92SkFueTlvVEFVY0V3MEdZLzZBV0tnZG9ya3VibTBQ?=
+ =?utf-8?B?WXNKUmxZTGZQUGtVakpiMWt2M2x0WCtvSkF1SFlFc3lFNzc2bmxCUi8xQitO?=
+ =?utf-8?B?bW9CZW1hVFlWMHhaWGhjellQZFg5cnJxUTJ2Q1hSVWNncTI5VFpaMWQ0WFlt?=
+ =?utf-8?B?L0c5Q3k0b3kxM2VPY3dZRksyN2FGQ05Sa0dZZm0zRUxuYS9mUXpiUT09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 617d6e5b-c241-446f-f298-08da32085379
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2022 22:07:36.7349
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 74I1SDH3as8oV7JTH0nyvK+tEvk6yERAuvbjQ6MKb7ab+aYf2z/e7o0E5wroi1iu9pIdf4jO8+flfdCmLqMJtQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2787
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hey Hatayma, thanks for your great analysis and no need for apologies!
-
-I'll comment/respond properly inline below, just noticing here that I've
-CCed Mark and Marc (from the ARM64 perspective), Michael (Hyper-V
-perspective) and Hari (PowerPC perspective), besides the usual suspects
-as Petr, Baoquan, etc.
-
-On 09/05/2022 12:16, d.hatayama@fujitsu.com wrote:
-> Sorry for the delayed response. Unfortunately, I had 10 days holidays
-> until yesterday...
-> [...] 
->> +                       We currently have 4 lists of panic notifiers; based
->> +                       on the functionality and risk (for panic success) the
->> +                       callbacks are added in a given list. The lists are:
->> +                       - hypervisor/FW notification list (low risk);
->> +                       - informational list (low/medium risk);
->> +                       - pre_reboot list (higher risk);
->> +                       - post_reboot list (only run late in panic and after
->> +                       kdump, not configurable for now).
->> +                       This parameter defines the ordering of the first 3
->> +                       lists with regards to kdump; the levels determine
->> +                       which set of notifiers execute before kdump. The
->> +                       accepted levels are:
->> +                       0: kdump is the first thing to run, NO list is
->> +                       executed before kdump.
->> +                       1: only the hypervisor list is executed before kdump.
->> +                       2 (default level): the hypervisor list and (*if*
-> 
-> Hmmm, why are you trying to change default setting?
-> 
-> Based on the current design of kdump, it's natural to put what the
-> handlers for these level 1 and level 2 handlers do in
-> machine_crash_shutdown(), as these are necessary by default, right?
-> 
-> Or have you already tried that and figured out it's difficult in some
-> reason and reached the current design? If so, why is that difficult?
-> Could you point to if there is already such discussion online?
-> 
-> kdump is designed to perform as little things as possible before
-> transferring the execution to the 2nd kernel in order to increase
-> reliability. Just detour to panic() increases risks of kdump failure
-> in the sense of increasing the executed codes in the abnormal
-> situation, which is very the note in the explanation of
-> crash_kexec_post_notifiers.
-> 
-> Also, the current implementation of crash_kexec_post_notifiers uses
-> the panic notifier, but this is not from the technical
-> reason. Ideally, it should have been implemented in the context of
-> crash_kexec() independently of panic().
-> 
-> That is, it looks to me that, in addition to changing design of panic
-> notifier, you are trying to integrate shutdown code of the crash kexec
-> and the panic paths. If so, this is a big design change for kdump.
-> I'm concerned about increase of reliability. I'd like you to discuss
-> them carefully.
-
-From my understanding (specially based on both these threads [0] and
-[1]), 3 facts are clear and quite complex in nature:
-
-(a) Currently, the panic notifier list is a "no man's land" - it's a
-mess, all sort of callbacks are added there, some of them are extremely
-risk for breaking kdump, others are quite safe (like setting a
-variable). Petr's details in thread [0] are really clear and express in
-great way how confusing and conflicting the panic notifiers goals are.
-
-(b) In order to "address" problems in the antagonistic goals of
-notifiers (see point (a) above and thread [0]), we have this
-quirk/workaround called "crash_kexec_post_notifiers". This is useful,
-but (almost as for attesting how this is working as band-aid over
-complex and fundamental issues) see the following commits:
-
-a11589563e96 ("x86/Hyper-V: Report crash register data or kmsg before
-running crash kernel")
-
-06e629c25daa ("powerpc/fadump: Fix inaccurate CPU state info in vmcore
-generated with panic")
-
-They hardcode such workaround, because they *need* some notifiers'
-callbacks. But notice they *don't need all of them*, only some important
-ones (that usually are good considering the risk, it's a good
-cost/benefit). Since we currently have an all-or-nothing behavior for
-the panic notifiers, both PowerPC and Hyper-V end-up bringing all of
-them to run before kdump due to the lack of flexibility, increasing a
-lot the risk of failure for kdump.
-
-(c) To add on top of all such complexity, we don't have a custom
-machine_crash_shutdown() handler for some architectures like ARM64, and
-the feeling is that's not right to add a bunch of callbacks / complexity
-in such architecture code, specially since we have the notifiers
-infrastructure in the kernel. I've recently started a discussion about
-that with ARM64 community, please take a look in [1].
-
-With that said, we can use (a) + (b) + (c) to justify our argument here:
-the panic notifiers should be refactored! We need to try to encompass
-the antagonistic goals of kdump (wants to be the first thing to run,
-early as possible) VS. the notifiers that are necessary, even before
-kdump (like Hyper-V / PowerPC fadump ones, but there are more of these,
-the FW/hypervisors notifiers).
-
-I guarantee to you we cannot make 100% of people happy - the
-panic-related areas like kdump, etc are full of trade-offs. We improve
-something, other stuff breaks. This series attempts to clearly
-distribute the notifiers in 3 buckets, and introduces a level setting
-that tunes such buckets to run before or after the kdump in a highly
-flexible way, trying to make the most users happy and capable of tuning
-their systems.
-
-I understand that likely setting the notifiers to 0 would make kdump
-maintainers happy, because we'd keep the same behavior as before.
-But..then we make PPC / Hyper-V and some other users unsatisfied. Level
-2 seems to me a good compromise. I'm willing to add a KConfig option to
-allow distros to hard set their defaults - that might make sense to
-legacy distros as older RHEL / CentOS or server-only distros.
-
-Finally, you mention about integrating the crash shutdown and the panic
-paths - I'm not officially doing that, but I see that they are very
-related and all cases I've ever seen in the last 3-4 years I've been
-working with kdump, it was triggered from panic, from settings "panic_on_X".
-
-I understand we have the regular kexec path (!kdump), some notifiers
-might make sense in both paths, and in this case we could duplicate them
-(one callback, 2 notifier lists) and control against double execution. I
-tried doing that in patch 16 of this series (Hyper-V stuff), but due to
-the lack of ARM64 custom crash shutdown handler, I couldn't. We can
-think in some alternatives, and improve these (naturally)
-connected/related paths, but this is not the goal of this specific
-series. I'm hereby trying to improve/clarify the panic (and kdump) path,
-not the pure kexec path.
-
-Let me know if I can clarify more specific points you have or if there
-are flaws in my logic - I appreciate the discussions/reviews.
-Cheers,
-
-
-Guilherme
-
-
-
-[0] "notifier/panic: Introduce panic_notifier_filter" -
-https://lore.kernel.org/lkml/YfPxvzSzDLjO5ldp@alley/
-
-[1] "Should arm64 have a custom crash shutdown handler?" -
-https://lore.kernel.org/lkml/427a8277-49f0-4317-d6c3-4a15d7070e55@igalia.com/
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3V6dWtpIEsgUG91bG9z
+ZSA8c3V6dWtpLnBvdWxvc2VAYXJtLmNvbT4NCj4gU2VudDogTW9uZGF5LCBNYXkgOSwgMjAyMiA1
+OjAyIEFNDQo+IFRvOiBXaWxsIERlYWNvbiA8d2lsbEBrZXJuZWwub3JnPjsgQmVzYXIgV2ljYWtz
+b25vDQo+IDxid2ljYWtzb25vQG52aWRpYS5jb20+DQo+IENjOiBjYXRhbGluLm1hcmluYXNAYXJt
+LmNvbTsgbWFyay5ydXRsYW5kQGFybS5jb207IGxpbnV4LWFybS0NCj4ga2VybmVsQGxpc3RzLmlu
+ZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiB0ZWdy
+YUB2Z2VyLmtlcm5lbC5vcmc7IHN1ZGVlcC5ob2xsYUBhcm0uY29tOw0KPiB0aGFudS5yYW5nYXJh
+amFuQGFybS5jb207IE1pY2hhZWwuV2lsbGlhbXNAYXJtLmNvbTsgVGhpZXJyeSBSZWRpbmcNCj4g
+PHRyZWRpbmdAbnZpZGlhLmNvbT47IEpvbmF0aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5j
+b20+OyBWaWtyYW0NCj4gU2V0aGkgPHZzZXRoaUBudmlkaWEuY29tPjsgTWF0aGlldSBQb2lyaWVy
+IDxtYXRoaWV1LnBvaXJpZXJAbGluYXJvLm9yZz47DQo+IE1pY2hhZWwgV2lsbGlhbXMgKEFURykg
+PE1pY2hhZWwuV2lsbGlhbXNAYXJtLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCAwLzJdIHBl
+cmY6IEFSTSBDb3JlU2lnaHQgUE1VIHN1cHBvcnQNCj4gDQo+IEV4dGVybmFsIGVtYWlsOiBVc2Ug
+Y2F1dGlvbiBvcGVuaW5nIGxpbmtzIG9yIGF0dGFjaG1lbnRzDQo+IA0KPiANCj4gQ2M6IE1pa2Ug
+V2lsbGlhbXMsIE1hdGhpZXUgUG9pcmllcg0KPiANCj4gT24gMDkvMDUvMjAyMiAxMDoyOCwgV2ls
+bCBEZWFjb24gd3JvdGU6DQo+ID4gT24gU3VuLCBNYXkgMDgsIDIwMjIgYXQgMDc6Mjg6MDhQTSAt
+MDUwMCwgQmVzYXIgV2ljYWtzb25vIHdyb3RlOg0KPiA+PiBBZGQgZHJpdmVyIHN1cHBvcnQgZm9y
+IEFSTSBDb3JlU2lnaHQgUE1VIGRldmljZSBhbmQgZXZlbnQgYXR0cmlidXRlcw0KPiBmb3IgTlZJ
+RElBDQo+ID4+IGltcGxlbWVudGF0aW9uLiBUaGUgY29kZSBpcyBiYXNlZCBvbiBBUk0gQ29yZXNp
+Z2h0IFBNVSBhcmNoaXRlY3R1cmUNCj4gYW5kIEFDUEkgQVJNDQo+ID4+IFBlcmZvcm1hbmNlIE1v
+bml0b3JpbmcgVW5pdCB0YWJsZSAoQVBNVCkgc3BlY2lmaWNhdGlvbiBiZWxvdzoNCj4gPj4gICAq
+IEFSTSBDb3Jlc2lnaHQgUE1VOg0KPiA+PiAgICAgICAgICBodHRwczovL2RldmVsb3Blci5hcm0u
+Y29tL2RvY3VtZW50YXRpb24vaWhpMDA5MS9sYXRlc3QNCj4gPj4gICAqIEFQTVQ6IGh0dHBzOi8v
+ZGV2ZWxvcGVyLmFybS5jb20vZG9jdW1lbnRhdGlvbi9kZW4wMTE3L2xhdGVzdA0KPiA+Pg0KPiA+
+PiBOb3RlczoNCj4gPj4gICAqIFRoZXJlIGlzIGEgY29uY2VybiBvbiB0aGUgbmFtaW5nIG9mIHRo
+ZSBQTVUgZGV2aWNlLg0KPiA+PiAgICAgQ3VycmVudGx5IHRoZSBkcml2ZXIgaXMgcHJvYmluZyAi
+YXJtLWNvcmVzaWdodC1wbXUiIGRldmljZSwgaG93ZXZlcg0KPiB0aGUgQVBNVA0KPiA+PiAgICAg
+c3BlYyBzdXBwb3J0cyBkaWZmZXJlbnQga2luZHMgb2YgQ29yZVNpZ2h0IFBNVSBiYXNlZCBpbXBs
+ZW1lbnRhdGlvbi4NCj4gU28gaXQgaXMNCj4gPj4gICAgIG9wZW4gZm9yIGRpc2N1c3Npb24gaWYg
+dGhlIG5hbWUgY2FuIHN0YXkgb3IgYSAiZ2VuZXJpYyIgbmFtZSBpcyByZXF1aXJlZC4NCj4gPj4g
+ICAgIFBsZWFzZSBzZWUgdGhlIGZvbGxvd2luZyB0aHJlYWQ6DQo+ID4+ICAgICBodHRwOi8vbGlz
+dHMuaW5mcmFkZWFkLm9yZy9waXBlcm1haWwvbGludXgtYXJtLWtlcm5lbC8yMDIyLQ0KPiBNYXkv
+NzQwNDg1Lmh0bWwNCj4gPj4NCj4gPj4gQmVzYXIgV2ljYWtzb25vICgyKToNCj4gPj4gICAgcGVy
+ZjogY29yZXNpZ2h0X3BtdTogQWRkIHN1cHBvcnQgZm9yIEFSTSBDb3JlU2lnaHQgUE1VIGRyaXZl
+cg0KPiA+PiAgICBwZXJmOiBjb3Jlc2lnaHRfcG11OiBBZGQgc3VwcG9ydCBmb3IgTlZJRElBIFND
+RiBhbmQgTUNGIGF0dHJpYnV0ZQ0KPiA+Pg0KPiA+PiAgIGFyY2gvYXJtNjQvY29uZmlncy9kZWZj
+b25maWcgICAgICAgICAgICAgICAgICB8ICAgIDEgKw0KPiA+PiAgIGRyaXZlcnMvcGVyZi9LY29u
+ZmlnICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgIDIgKw0KPiA+PiAgIGRyaXZlcnMvcGVy
+Zi9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgIDEgKw0KPiA+PiAgIGRyaXZl
+cnMvcGVyZi9jb3Jlc2lnaHRfcG11L0tjb25maWcgICAgICAgICAgICB8ICAgMTAgKw0KPiA+PiAg
+IGRyaXZlcnMvcGVyZi9jb3Jlc2lnaHRfcG11L01ha2VmaWxlICAgICAgICAgICB8ICAgIDcgKw0K
+PiA+PiAgIC4uLi9wZXJmL2NvcmVzaWdodF9wbXUvYXJtX2NvcmVzaWdodF9wbXUuYyAgICB8IDEz
+MTcNCj4gKysrKysrKysrKysrKysrKysNCj4gPj4gICAuLi4vcGVyZi9jb3Jlc2lnaHRfcG11L2Fy
+bV9jb3Jlc2lnaHRfcG11LmggICAgfCAgMTQ3ICsrDQo+ID4+ICAgLi4uL2NvcmVzaWdodF9wbXUv
+YXJtX2NvcmVzaWdodF9wbXVfbnZpZGlhLmMgIHwgIDMwMCArKysrDQo+ID4+ICAgLi4uL2NvcmVz
+aWdodF9wbXUvYXJtX2NvcmVzaWdodF9wbXVfbnZpZGlhLmggIHwgICAxNyArDQo+ID4+ICAgOSBm
+aWxlcyBjaGFuZ2VkLCAxODAyIGluc2VydGlvbnMoKykNCj4gPg0KPiA+IEhvdyBkb2VzIHRoaXMg
+aW50ZXJhY3Qgd2l0aCBhbGwgdGhlIHN0dWZmIHdlIGhhdmUgdW5kZXINCj4gPiBkcml2ZXJzL2h3
+dHJhY2luZy9jb3Jlc2lnaHQvPw0KPiANCj4gQWJzb2x1dGVseSB6ZXJvLCBleGNlcHQgZm9yIHRo
+ZSBuYW1lLiBUaGUgc3RhbmRhcmQNCj4gaXMgbmFtZWQgIkNvcmVTaWdodCBQTVUiIHdoaWNoIGlz
+IGEgYml0IHVuZm9ydHVuYXRlLA0KPiBnaXZlbiB0aGUgb25seSBsaW5rLCBBRkFJVSwgd2l0aCB0
+aGUgIkNvcmVTaWdodCIgYXJjaGl0ZWN0dXJlDQo+IGlzIHRoZSBMb2NrIEFjY2VzcyBSZWdpc3Rl
+cihMQVIpLiBGb3IgcmVmZXJlbmNlLCB0aGUNCj4gZHJpdmVycy9od3RyYWNpbmcvY29yZXNpZ2h0
+LyBpcyBwdXJlbHkgIkNvcmVTaWdodCIgc2VsZi1ob3N0ZWQNCj4gdHJhY2luZyBhbmQgdGhlIFBN
+VSBpcyBjYWxsZWQgImNzX2V0bSIgKGV4cGFuZHMgdG8gY29yZXNpZ2h0IGV0bSkuDQo+IE90aGVy
+d2lzZSB0aGUgc3RhbmRhcmQgZG9lc24ndCBoYXZlIGFueXRoaW5nIHRvIGRvIHdpdGggd2hhdA0K
+PiBleGlzdHMgYWxyZWFkeSBpbiB0aGUga2VybmVsLg0KDQpZZXMsIHRoZXJlIGlzIG5vIGNvcnJl
+bGF0aW9uIG9yIGludGVyYWN0aW9uIHdpdGggZXhpc3RpbmcgZHJpdmVyIGZvciBFVE0vU1RNIHRy
+YWNpbmcuDQpJdCBtaWdodCBzaGFyZSBzYW1lIGF1dGhlbnRpY2F0aW9uIGludGVyZmFjZSAoTklE
+RU4sIERCR0VOLCBTUElERU4sIFNQTklERU4pDQpmb3IgZXh0ZXJuYWwgZGVidWcuIEJ1dCB0aGVz
+ZSBhcmUgbm90IHVzZWQgaW4gdGhlIGRyaXZlci4NCg0KPiANCj4gVGhhdCBzYWlkLCBJIGFtIGNv
+bmNlcm5lZCB0aGF0IHRoZSAiY29yZXNpZ2h0X3BtdSIgaXMgZWFzaWx5IGNvbmZ1c2VkDQo+IHdp
+dGggd2hhdCBleGlzdHMgdG9kYXkuIEdpdmVuIHRoYXQgdGhpcyBpcyBtb3JlIG9mIGEgIlBNVSIg
+c3RhbmRhcmQNCj4gZm9yIHRoZSBJUHMgaW4gdGhlIEFybSB3b3JsZCwgaXQgd291bGQgYmUgYmV0
+dGVyIHRvIG5hbWUgaXQgYXMgc3VjaA0KPiBhdm9pZGluZyBhbnkgY29uZnVzaW9uIHdpdGggdGhl
+IGV4aXN0aW5nIFBNVXMuDQo+IA0KPiBPbmUgcG90ZW50aWFsIHJlY29tbWVuZGF0aW9uIGZvciB0
+aGUgbmFtZSBpcywgIkFybSBQTVUiICAoVGhlIEFDUEkgdGFibGUNCj4gaXMgbmFtZWQgQXJtIFBN
+VSBUYWJsZSkuIEJ1dCB0aGVuIHRoYXQgY291bGQgYmUgY2xhc2hpbmcgd2l0aCB0aGUNCj4gYXJt
+djhfcG11IDotKC4NCj4gDQo+IFNvbWUgb2YgdGhlIG90aGVyIG9wdGlvbnMgYXJlIDoNCj4gDQo+
+ICJBcm0gR2VuZXJpYyBQTVUiDQo+ICJBcm0gVW5jb3JlIFBNVSINCj4gIkFybSBQTVUiDQoNCkFz
+IGZhciBhcyBJIHVuZGVyc3RhbmQsIHRoZSBBUE1UIGRvZXMgbm90IGNvdmVyIFBNVSBpbiBBcm0g
+UEUuDQpJIHRoaW5rICJBcm0gVW5jb3JlIFBNVSIgd291bGQgZml0Lg0KDQpSZWdhcmRzLA0KQmVz
+YXINCg0KPiANCj4gU3V6dWtpDQo+IA0KPiA+DQo+ID4gV2lsbA0KDQo=
