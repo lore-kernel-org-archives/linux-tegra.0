@@ -2,136 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CE1C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 May 2022 12:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D02C43217
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 May 2022 12:33:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234242AbiEIMYr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 May 2022 08:24:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54954 "EHLO
+        id S234633AbiEIMhl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 May 2022 08:37:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234227AbiEIMYp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 May 2022 08:24:45 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6052C676;
-        Mon,  9 May 2022 05:20:49 -0700 (PDT)
-Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KxgGK363Vzfb9J;
-        Mon,  9 May 2022 20:19:37 +0800 (CST)
-Received: from [10.67.77.175] (10.67.77.175) by dggpeml500023.china.huawei.com
- (7.185.36.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Mon, 9 May
- 2022 20:20:47 +0800
-Subject: Re: [PATCH 0/2] perf: ARM CoreSight PMU support
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Besar Wicaksono <bwicaksono@nvidia.com>
-CC:     <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <sudeep.holla@arm.com>, <thanu.rangarajan@arm.com>,
-        <Michael.Williams@arm.com>, <treding@nvidia.com>,
-        <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20220509002810.12412-1-bwicaksono@nvidia.com>
- <20220509092843.GB26264@willie-the-truck>
- <2e5e09f9-b71b-d936-e291-db8f94554b18@arm.com>
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-Message-ID: <2f3000b9-6c31-7ef7-46c2-6b7a42fe893b@hisilicon.com>
-Date:   Mon, 9 May 2022 20:20:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        with ESMTP id S234488AbiEIMhi (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 May 2022 08:37:38 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21BD28BDC9;
+        Mon,  9 May 2022 05:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=L3p0/83L4yDVyZoegOtsQfWmJV/6wtv6TZoOXChWFJg=; b=Gm1PabHNS+/VMjWNpRDgN0q7Gz
+        okgDM+2WHp5z93ZUGeQzJtlj40ch1Djul+F9LKvzWURwbafLBOoP/NgGu9GSmPuuE28KOgN2Dlog/
+        GHXl8dWWFH9IUIBQmU28gspF2npPpEWaJ19eWl8SzxR3mk4Q/F4kmhrZuCV0rVMHSE4nkq5aDi9ss
+        tskoNSlPr3h/0gKp/FmRCE42MZtPYeJf36WeID1+imZk2dUy5vrTX2Nb6oqUW3HqWx20YRVV7+Jqn
+        2U5xO3lqX+ogULZEqtYM74LQ/XjYNOdW70A5rw6LBK7UHwdRlT2URD08Y6BIbm5BwJqTO8MAols4i
+        vbgjN92g==;
+Received: from [177.183.162.244] (helo=[192.168.0.5])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1no2ZO-0002Vw-CD; Mon, 09 May 2022 14:32:58 +0200
+Message-ID: <b5a1370c-1319-24d1-6b2a-629e5c8915ed@igalia.com>
+Date:   Mon, 9 May 2022 09:32:27 -0300
 MIME-Version: 1.0
-In-Reply-To: <2e5e09f9-b71b-d936-e291-db8f94554b18@arm.com>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 01/30] x86/crash,reboot: Avoid re-disabling VMX in all
+ CPUs on crash/restart
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.77.175]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>, vkuznets@redhat.com
+Cc:     kexec@lists.infradead.org, pmladek@suse.com, bhe@redhat.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, will@kernel.org,
+        "David P . Reed" <dpreed@deepplum.com>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-2-gpiccoli@igalia.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20220427224924.592546-2-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+On 27/04/2022 19:48, Guilherme G. Piccoli wrote:
+> In the panic path we have a list of functions to be called, the panic
+> notifiers - such callbacks perform various actions in the machine's
+> last breath, and sometimes users want them to run before kdump. We
+> have the parameter "crash_kexec_post_notifiers" for that. When such
+> parameter is used, the function "crash_smp_send_stop()" is executed
+> to poweroff all secondary CPUs through the NMI-shootdown mechanism;
+> part of this process involves disabling virtualization features in
+> all CPUs (except the main one).
+> 
+> Now, in the emergency restart procedure we have also a way of
+> disabling VMX in all CPUs, using the same NMI-shootdown mechanism;
+> what happens though is that in case we already NMI-disabled all CPUs,
+> the emergency restart fails due to a second addition of the same items
+> in the NMI list, as per the following log output:
+> 
+> sysrq: Trigger a crash
+> Kernel panic - not syncing: sysrq triggered crash
+> [...]
+> Rebooting in 2 seconds..
+> list_add double add: new=<addr1>, prev=<addr2>, next=<addr1>.
+> ------------[ cut here ]------------
+> kernel BUG at lib/list_debug.c:29!
+> invalid opcode: 0000 [#1] PREEMPT SMP PTI
+> 
+> In order to reproduce the problem, users just need to set the kernel
+> parameter "crash_kexec_post_notifiers" *without* kdump set in any
+> system with the VMX feature present.
+> 
+> Since there is no benefit in re-disabling VMX in all CPUs in case
+> it was already done, this patch prevents that by guarding the restart
+> routine against doubly issuing NMIs unnecessarily. Notice we still
+> need to disable VMX locally in the emergency restart.
+> 
+> Fixes: ed72736183c4 ("x86/reboot: Force all cpus to exit VMX root if VMX is supported)
+> Fixes: 0ee59413c967 ("x86/panic: replace smp_send_stop() with kdump friendly version in panic path")
+> Cc: David P. Reed <dpreed@deepplum.com>
+> Cc: Hidehiro Kawai <hidehiro.kawai.ez@hitachi.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> ---
+>  arch/x86/include/asm/cpu.h |  1 +
+>  arch/x86/kernel/crash.c    |  8 ++++----
+>  arch/x86/kernel/reboot.c   | 14 ++++++++++++--
+>  3 files changed, 17 insertions(+), 6 deletions(-)
+> 
 
-On 2022/5/9 18:02, Suzuki K Poulose wrote:
-> Cc: Mike Williams, Mathieu Poirier
-> 
-> On 09/05/2022 10:28, Will Deacon wrote:
->> On Sun, May 08, 2022 at 07:28:08PM -0500, Besar Wicaksono wrote:
->>> Add driver support for ARM CoreSight PMU device and event attributes for NVIDIA
->>> implementation. The code is based on ARM Coresight PMU architecture and ACPI ARM
->>> Performance Monitoring Unit table (APMT) specification below:
->>>   * ARM Coresight PMU:
->>>          https://developer.arm.com/documentation/ihi0091/latest
->>>   * APMT: https://developer.arm.com/documentation/den0117/latest
->>>
->>> Notes:
->>>   * There is a concern on the naming of the PMU device.
->>>     Currently the driver is probing "arm-coresight-pmu" device, however the APMT
->>>     spec supports different kinds of CoreSight PMU based implementation. So it is
->>>     open for discussion if the name can stay or a "generic" name is required.
->>>     Please see the following thread:
->>>     http://lists.infradead.org/pipermail/linux-arm-kernel/2022-May/740485.html
->>>
->>> Besar Wicaksono (2):
->>>    perf: coresight_pmu: Add support for ARM CoreSight PMU driver
->>>    perf: coresight_pmu: Add support for NVIDIA SCF and MCF attribute
->>>
->>>   arch/arm64/configs/defconfig                  |    1 +
->>>   drivers/perf/Kconfig                          |    2 +
->>>   drivers/perf/Makefile                         |    1 +
->>>   drivers/perf/coresight_pmu/Kconfig            |   10 +
->>>   drivers/perf/coresight_pmu/Makefile           |    7 +
->>>   .../perf/coresight_pmu/arm_coresight_pmu.c    | 1317 +++++++++++++++++
->>>   .../perf/coresight_pmu/arm_coresight_pmu.h    |  147 ++
->>>   .../coresight_pmu/arm_coresight_pmu_nvidia.c  |  300 ++++
->>>   .../coresight_pmu/arm_coresight_pmu_nvidia.h  |   17 +
->>>   9 files changed, 1802 insertions(+)
->>
->> How does this interact with all the stuff we have under
->> drivers/hwtracing/coresight/?
-> 
-> Absolutely zero, except for the name. The standard
-> is named "CoreSight PMU" which is a bit unfortunate,
-> given the only link, AFAIU, with the "CoreSight" architecture
-> is the Lock Access Register(LAR). For reference, the
-> drivers/hwtracing/coresight/ is purely "CoreSight" self-hosted
-> tracing and the PMU is called "cs_etm" (expands to coresight etm).
-> Otherwise the standard doesn't have anything to do with what
-> exists already in the kernel.
-> 
-> That said, I am concerned that the "coresight_pmu" is easily confused
-> with what exists today. Given that this is more of a "PMU" standard
-> for the IPs in the Arm world, it would be better to name it as such
-> avoiding any confusion with the existing PMUs.
-> 
-> One potential recommendation for the name is, "Arm PMU"  (The ACPI table is named Arm PMU Table).
-> But then that could be clashing with the armv8_pmu :-(.
-> 
-> Some of the other options are :
-> 
-> "Arm Generic PMU"
-> "Arm Uncore PMU"
+Hi Paolo / Sean / Vitaly, sorry for the ping.
+But do you think this fix is OK from the VMX point-of-view?
 
-To be honest, if wants to distinguish from Arm core PMU, the "Uncore PMU" is a
-better choice just in my opinion. The x86 including Intel and AMD also do the
-uncore PMU driver and with "uncore_" prefix.
+I'd like to send a V2 of this set soon, so any review here is highly
+appreciated!
 
-Thanks,
-Shaokun
+Cheers,
 
-> "Arm PMU"
-> 
-> Suzuki
-> 
->>
->> Will
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> .
+
+Guilherme
+
