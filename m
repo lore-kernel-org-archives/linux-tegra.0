@@ -2,192 +2,289 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD2EC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 May 2022 14:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE67EC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 May 2022 15:48:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237417AbiEIOlL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 May 2022 10:41:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43598 "EHLO
+        id S238625AbiEIPwE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 May 2022 11:52:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237567AbiEIOlG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 May 2022 10:41:06 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2058.outbound.protection.outlook.com [40.107.237.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42031245638;
-        Mon,  9 May 2022 07:37:11 -0700 (PDT)
+        with ESMTP id S238573AbiEIPv7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 May 2022 11:51:59 -0400
+X-Greylist: delayed 969 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 09 May 2022 08:48:01 PDT
+Received: from esa5.fujitsucc.c3s2.iphmx.com (esa5.fujitsucc.c3s2.iphmx.com [68.232.159.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0032D625C;
+        Mon,  9 May 2022 08:48:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1652111282; x=1683647282;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=xS2ZDM92CvkpLSnJq7Jznk26/ZMDw29ra/drEifi+4M=;
+  b=A01Nn02TFZe93b5X40CTfscAHQPo77sP9Tww3T1eRYx5mfKWSlpxRGEq
+   hk2cdIed4TDw1GoePNGrRxNnJQDcT1CAQczzXhru4ccjJIDbLfzpWRX+f
+   rmd1nzqAm5uZgxCJwFAB+k6WrFP/moVS6imyMo9/nD2FPh4A+pEi4PoH8
+   8wtPmgGrkkcB4njhQEMPzjpr1Oif9o+KE5hkATR6LMRN4sj/Iup4sfmvj
+   15O9parrZ4iayKnpdnxkhW46v+8vA1HtNbOL4JF6bnkFqHrYYW1Kr+879
+   giGqKb+YrF3osjBvEknFQRJuxxkMyAyaus1KeqWGH7JpeKuLIRkkPoJd2
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="55509155"
+X-IronPort-AV: E=Sophos;i="5.91,211,1647270000"; 
+   d="scan'208";a="55509155"
+Received: from mail-os0jpn01lp2110.outbound.protection.outlook.com (HELO JPN01-OS0-obe.outbound.protection.outlook.com) ([104.47.23.110])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 00:16:12 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oKpdH2Nkl3NgWTAYeGs6LabDHgEk701+fPekg4zK0M6zJF6c3akFlMyvu9IvGUaJefOarN/MWltbnV+ZEg7npw4vi9yIimkpzmbvMQeXh5VrAQCtYSbVXOZusaKdmCdamz02w9X6ET19jjWbO/N7NF+EbmCVKBxoPFxJfAPLRhQKpagm6DjcK4iN9uhtWgi+f+snNgsofOmRum9UKioo6MLjdzYO+G/7foWoIVEDnscEWv6MPn619R94XWiEJZ+EHExemmyRuoWI/HjM1PH3pwYBHJo5lx4JTFjD0XhzF3jsGOUAKJscBlxZWdhbfasdf1WVDL+QidYRZqD+ntS3/w==
+ b=KP0CFKYRNmTXTmwL9JG0oC4GQgkB/pl4TAXCxaquTQi2mpfikgwQYy0i8q2i6vPeVpaH2GuK7gBuR63t1JW1LUNFxAjNVersbC9h8TdiBjflezHpU53Q82lnXPLv4wirYyJRKEuA73ZQCrb57ZakIuUVwqcJ+JrPKcYeATrnxhN28xpHXiJO2rffSK1Jw5uxRkQfFPudZpwdXRfmJr8fD9Fp4hSxcYDf9d2dYPWTHymwX3/ZrvUs3NQQnno5t2u1Tkf53IqwaAxjVtkhkHSIHVvIL8BkcyVOYUH1NXbXYQQxKeT5PLbIV2LxAq3TnGTE4TncUGKkynpMGLIjrmygdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XkC+VzgdumU5dSl7Nt/T31Z5MWHml6GWbpzHm5TyOC8=;
- b=ak2D1H5n89SDZiMLt3/YiGnKcGFkTC3VZMaAJGlSXEVCOUVCCgpgZ2KDV6KeZKZ1LIGCccmgYoPE20DWcp0Nc4xNatUyEg6Kdj/z8MKHSEkK1u/VLcED0j365NfdJPNeSDMlyYgUOYkmiK6poSIbvNZNa2VsH3Iyk9owJvDxsIwBx3QqLBSb3WmuqoyYq8Yu/rVWVUMHb/uXPOrlGZe8HT4U0ZrGvyywaGJXdiMyX5g8X8Tqr9VFgk1Vncv3v/HljXbkKmojWYkmrfR/pT6jbvckew2id+f4BElMCOjymkT2zQfB1V/1oiSskL9alf5L7ZXwUypv7/GCfxmoyqJSqQ==
+ bh=MlXVxI2FnzGbvIu/CWm8gKBJ3ZWwolqRQs9xSfL0o60=;
+ b=H+1Tk6iUFRaot1orKC1GRgl1SqDJXk5D2hXPcq48LhPh7gXvRwAju3ZJFbMzj6OjqSUOxrUqwP5QxUHlUtIwQf9Sbv11I8FuhMTDnHm9jTlJ8XnYR8eRZuGiGabL9xVnbfLrXmvTitKevsolEAyiCz8BKyZgayo7SIJbDtYciudVYTh5smc2WUV4/Xf5hw9rGx7ax2cfKXWimUANarDTZNV/KntgpM+JGW52DuY0ow3ik4XUuMIis57FWFq1Ij/VGkKE6W9VYUcyujJ6hW+y+zp3dDojEsR4nIytU/riRvA36esOaKgCTxTbJmvx932z0jUkCFfaf4RSuOsaN4+Itg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XkC+VzgdumU5dSl7Nt/T31Z5MWHml6GWbpzHm5TyOC8=;
- b=qson5gfO5iH1HHqn1CMSnkjBodg/qTDeIt5FpWp7ZOQggShwJVTEqejTzOt2y0S8+NYwcDKtYXHTV4truJcZ2VLdfRQLqSVVa8MLe3dxHBjoWvhUoZMezdCxpq8REu5RgDui1cJPPU/+v4G1RuwrQmOl5gMCcwcciHroUviWyecGJmAR9UE2nJcYVB8XTPlo3weY+PU7Y/E3JcHQaFxMCBoe4grBc0ovnZG7UdjMvCv2SEwWQ8wmDlsIZ2F8Yy9c1QC+xvVonxzcSeW0ktJpTk3IMx+tQORPhR1ni+8GL1qxMgMLjvayyNGIgtOwLmX4YqU4h3FvQyUZsAKEcBA1SA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- CH2PR12MB4645.namprd12.prod.outlook.com (2603:10b6:610:2::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5227.23; Mon, 9 May 2022 14:37:09 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::a4b2:cd18:51b1:57e0]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::a4b2:cd18:51b1:57e0%4]) with mapi id 15.20.5227.023; Mon, 9 May 2022
- 14:37:09 +0000
-Message-ID: <00a2d03e-945d-dc1b-9d87-accf0b0e91b4@nvidia.com>
-Date:   Mon, 9 May 2022 15:37:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 5.15 000/177] 5.15.38-rc1 review
+ bh=MlXVxI2FnzGbvIu/CWm8gKBJ3ZWwolqRQs9xSfL0o60=;
+ b=h3jSOTQ/49e3CdAkGQmnT0kRfsZxVeHwnmHFjQIrg5SEwgadX6SIM218KZ4TTXnCicgDCVAuNJ5K36tGTV1PjiR6VVO4vPyaEXnMWkJYWxSMBENMBLbvoa90+8Vm3enWQ2GtCp7sSMFxA1XVsdggp5hIBlPRt0gWqyL7U6Qy1YM=
+Received: from TYAPR01MB6507.jpnprd01.prod.outlook.com (2603:1096:400:a2::7)
+ by TYCPR01MB7578.jpnprd01.prod.outlook.com (2603:1096:400:f3::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.18; Mon, 9 May
+ 2022 15:16:09 +0000
+Received: from TYAPR01MB6507.jpnprd01.prod.outlook.com
+ ([fe80::dd9:8ea4:f7a3:bba1]) by TYAPR01MB6507.jpnprd01.prod.outlook.com
+ ([fe80::dd9:8ea4:f7a3:bba1%5]) with mapi id 15.20.5227.023; Mon, 9 May 2022
+ 15:16:09 +0000
+From:   "d.hatayama@fujitsu.com" <d.hatayama@fujitsu.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "pmladek@suse.com" <pmladek@suse.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "coresight@lists.linaro.org" <coresight@lists.linaro.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "openipmi-developer@lists.sourceforge.net" 
+        <openipmi-developer@lists.sourceforge.net>,
+        "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
+        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
+        "halves@canonical.com" <halves@canonical.com>,
+        "fabiomirmar@gmail.com" <fabiomirmar@gmail.com>,
+        "alejandro.j.jimenez@oracle.com" <alejandro.j.jimenez@oracle.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "dyoung@redhat.com" <dyoung@redhat.com>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mikelley@microsoft.com" <mikelley@microsoft.com>,
+        "hidehiro.kawai.ez@hitachi.com" <hidehiro.kawai.ez@hitachi.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "john.ogness@linutronix.de" <john.ogness@linutronix.de>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "paulmck@kernel.org" <paulmck@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "vgoyal@redhat.com" <vgoyal@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "d.hatayama@fujitsu.com" <d.hatayama@fujitsu.com>
+Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+Thread-Topic: [PATCH 24/30] panic: Refactor the panic path
+Thread-Index: AQHYWooYRc5K2GmPwUyqsvUuWmK42q0WuNLD
+Date:   Mon, 9 May 2022 15:16:08 +0000
+Message-ID: <TYAPR01MB6507D01F5694BC33628BB7DB95C69@TYAPR01MB6507.jpnprd01.prod.outlook.com>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-25-gpiccoli@igalia.com>
+In-Reply-To: <20220427224924.592546-25-gpiccoli@igalia.com>
+Accept-Language: en-US, ja-JP
 Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     stable@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-        slade@sladewatkins.com, linux-tegra@vger.kernel.org
-References: <20220504153053.873100034@linuxfoundation.org>
- <3b2c2d62-1e05-4a41-9d73-7bec2e63f8e7@rnnvmail202.nvidia.com>
- <Yni/Rj0b0IBiXtMi@kroah.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <Yni/Rj0b0IBiXtMi@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0042.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:61::30) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=True;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2022-05-09T15:16:07.522Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;
+suggested_attachment_session_id: 7401546d-aea9-ffcc-3451-b3d59ad5888b
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cb59992a-950f-4d9b-bb1c-08da31ced84d
+x-ms-traffictypediagnostic: TYCPR01MB7578:EE_
+x-microsoft-antispam-prvs: <TYCPR01MB75785B3922D747397677C56195C69@TYCPR01MB7578.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: /EPiPQ1iE6MAZZ3/WceQFfMaYOr3hQFI/B3njzUVTDpd2qqrdleVcVSpf2FVTxNNtbalFncurAfPSJh1TGekcVWhzGdngBQ1+1y4fpWxXGD4YbqP27hsV7t4f7edAJIa9NqvJ6n7aibYfCzJx3iCrgiakRvsQh+iG5l9bKWYIK9lR7U4sye5Ffr14bJM2DpODKZvgppK8wyMgyMnjj9zz9lKGpjtILIclyn9Cfxq7iI638lUEA+mX4g4zSn1iKbKIJuWOJ3wgQ4jYqCBsSjpaxF1HlO5mWp7q0WJMtlCD0BjB0ch6tZlY4AQFxnYjeUGNuxeoCOm1YjAXRB9jem+BLs2lLj2CUbfNKym9+HxzC2Pv6xmsq0K3lYUsZZPcvE6+2d0lcxXWKVWm7YLPqOKlRiwnw4OI2vDsNJI4/8LrtAiqLYsnmqIlUTgnHPK7io6xN9jXchkeV3Q9sjEe4hhdahLh1dwAB8LYIGr617lu+R8whOHRJa4M5tWuF2EvZ62teL7MYNxzCHbmiACl3mgo5ShSQ0DDxRTasN1jxNptwPdxEF7mHZIjH/caTRYuN3gomF2nisqKzgGg4spIBbsN2pZXB2htS0vpAAc+pFjcEK/Tyjvjsahu/O5fdELQCKYR+Lwd1Bwj2cvdOJquN0ygm/3FOS0+8mAEr4IZfbABNALU/lSCwrulCmPjai/zOTT7PqtftdxjvSq3wSowSe8pQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB6507.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(38100700002)(5660300002)(52536014)(85182001)(86362001)(38070700005)(83380400001)(82960400001)(122000001)(508600001)(186003)(6506007)(7416002)(8936002)(2906002)(107886003)(55016003)(71200400001)(7366002)(26005)(110136005)(8676002)(4326008)(9686003)(54906003)(33656002)(64756008)(66446008)(66476007)(66556008)(66946007)(76116006)(316002)(7406005)(7696005);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?Q2ZoaFpvc0xSMVIydW9vRDUvemw1eXFIbUlmTmRuc0dEdVEwZzdFcTlC?=
+ =?iso-2022-jp?B?MnBtd2NvZ2tkTVRnYzZHdDRGSi85MXhRNGhoV2hSb2daYm1hTm94RXJx?=
+ =?iso-2022-jp?B?THdsTjhIUDg4c21tTzdSYzZ0c2l3VTFtdTRmWTZyM3pMV1BZV1E4YnF5?=
+ =?iso-2022-jp?B?KzNibHMwSGUrQ3RTK2tXemw5VEZQN1FaUXhONTRHSTBWU2FqSEJwLzRQ?=
+ =?iso-2022-jp?B?N29OTmV1bkIrR1huOVN6L3hBaURRRm9Wb21vMXlwNjJiSnRzbFNBbDJS?=
+ =?iso-2022-jp?B?Kzgrd1p5bXBESGdrakpDUFdIa1pyNTdRRFp6RnE0YWpEcG4zL1RtY2tk?=
+ =?iso-2022-jp?B?amlvbUpJNTZOcTlkWVdsb2dFdk94OXdRbHM1WDF6Wkd2Zk5zb09rTlRD?=
+ =?iso-2022-jp?B?M0YyOEVaaSt6dUdwTldNRU00am4relFSbm4wSVNuYktiMWszMTRGUU5k?=
+ =?iso-2022-jp?B?bWJ3bWJqMVA3TE9kWENrdE5QQUp2aDZ6SjhaRFRQd2tQUVVQUXI5V3po?=
+ =?iso-2022-jp?B?dGQzdGFTQkxXRy8yRW5RK2IwR3l5RHo1M1I0bmdYa1dhcS9NQ3luV013?=
+ =?iso-2022-jp?B?TTlXYmgzSXl1ZnVVMGlOc3dMTTFFbXhkYzJldmZRL3NOZVVzU2RucDFU?=
+ =?iso-2022-jp?B?TjNXengxZ3I5UFY3amdYeDN0ZDhlTnFpYkVpUXRLaTlNaGNKc2JsZGlz?=
+ =?iso-2022-jp?B?S0tSQ2NKMkdqQzlud0hUSEJ5OXM2TkJnN3A3NG1TKzJCdG9NWWhPQ0pl?=
+ =?iso-2022-jp?B?ZlRQSDBjdU1WWW5QOEdkbTlDYjF5YkhrVmMwcnNoMndIemRXZnRRNm1O?=
+ =?iso-2022-jp?B?aW45cWFXVDZLSHRKVm9JVU5ROWJYNFV3aHlvNFFXTkVla013NTN1c3Zy?=
+ =?iso-2022-jp?B?NTZsbEhFRE1BY1NQdnQreVU3dGlmMm1MN3ZYQUIzRTMrSG9CaC9rMm03?=
+ =?iso-2022-jp?B?UHpJN0k2Nk0wWkcrZEJkZTJ1czZoK1JNZEY4VGdPWmEzQ1JJSDV1Q0xa?=
+ =?iso-2022-jp?B?QzNveU5nWmIwc1IyR0dRcDZmb2VESHY0MWw0VjBvRnJRNG84WGpnbmRp?=
+ =?iso-2022-jp?B?NWpwSUR2WXljdVA3OGpyNHZGcW10WjdFdUlFYWI5dlN1ZnhPZncrNGNw?=
+ =?iso-2022-jp?B?NVhDNW1NbU1iQjZxRU1sQktJMjNrZ09rMWRmbWo0eWd1Y21Pd3FUcGlU?=
+ =?iso-2022-jp?B?TzhWNmlTbUI5djY4eTRNSStjekdqcjc2QlRPSGp6bzY2LzdKRXkxOUVN?=
+ =?iso-2022-jp?B?clJRRjhsbWFKT3F0TjY2cEJqMWl1aTdnOGZPOU8rN1d4VnIza2wxOHpw?=
+ =?iso-2022-jp?B?YUJscjlYOTRjSVE0VXVqUUNiSHVYRE44QmRSUGV3WjJxT1JOSkxjeVVR?=
+ =?iso-2022-jp?B?SDVDc1ZlL2VKb2xxUFAvR05SVC9oOVZVUVYrU1BTUlhLb0p2VEN6WG0x?=
+ =?iso-2022-jp?B?dHcycEVHVmEzRmpjQldpWHd5dXdnTFBUbi9FQkd6NTg5VTJuMGJDQnZ2?=
+ =?iso-2022-jp?B?NlBKb3hrQThvTkpoK2xPU1kwSUg1MDhvbVlHOWpIamR4OXJhQmxEdDBx?=
+ =?iso-2022-jp?B?MEdFdXJXYkpCaGwrMmJBaUNaUnFVL2xKY2lpY0p6cHhpNFdTNG9MUVIv?=
+ =?iso-2022-jp?B?Q0RMUTZJTmVKWEVmMDNrYnFOT3l2aUFzTmFxV09kQSs5eCthQXkwdmsw?=
+ =?iso-2022-jp?B?SGRsSnkzK3c3V3N1V0FaYVFFMGFKTG5FUU8rTmFVT3N1ekx0cDBVbDlv?=
+ =?iso-2022-jp?B?QXV3UTRCTlN1WGo2MWQwSVo4c2VGUnk0aVNNNFJzd3BNOVB2ZCtMWmxP?=
+ =?iso-2022-jp?B?dGlzVjVNQnQ2b01aWXhRdXJtRGVJWGZsSXBJZ1VGMWlFR2NESjFTcVlw?=
+ =?iso-2022-jp?B?M1JELzNUd013T1ByVGF1Ykh0Nm91MW5xai9ZUU5lRjFsdHdEQ0NtUnNR?=
+ =?iso-2022-jp?B?L00xTkhpaithV1pYY1krR05zUTZYTFZPUk9RU0xtSkhhRmhpdFc4RGNX?=
+ =?iso-2022-jp?B?eTFpMnd0QlloT0plSm9NdjBuakFweWUwRGtqUjVsNVovRkRob0c0TDQr?=
+ =?iso-2022-jp?B?cW1PZ3FYRHBtc3Q2c1FwOFR1Lzk5czhMenVER01OZm9Xa2VwSjM4a1Vm?=
+ =?iso-2022-jp?B?OUFBTFpRdTBiY3lqTXIvVHNhN2JWZHVra2dTTFhaTzRFSmh1c0taRERB?=
+ =?iso-2022-jp?B?YTdqeGI3dWRDYTYzR1lYcTF1T3dHZ1RGWXYza1cvM0lxUGtldDhmUVZv?=
+ =?iso-2022-jp?B?c1dJelE5d1hSV3hybS9VUVN4aEh0aTRPSDd3OElVZVdaSUlxY2wwd2lR?=
+ =?iso-2022-jp?B?Slh6TFJjMXMrN25OaG9ibS9hQWZkYmNVb0RFZ1d0aFZLcU5lNUpzV1lX?=
+ =?iso-2022-jp?B?YjBEZlRDZE1CeGMyaWRMa1dvT05rVW9RUG1WOUl4aHRkenoyTjFXaitY?=
+ =?iso-2022-jp?B?YW1oQ001bUIyRFJYdUJTdzlKekt0WndWSEJpaXU5dzhkVEpOb3p4TzIr?=
+ =?iso-2022-jp?B?MUdoTXV6ZVIycy9nblliVHY4clRkRTNlcVNwdWhhQWM4UlBFTDZBYmw0?=
+ =?iso-2022-jp?B?ME5aQThQQT0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2cc2a073-389b-40a4-9aab-08da31c9656f
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4645:EE_
-X-Microsoft-Antispam-PRVS: <CH2PR12MB4645A94CDB4E5DFD180D69A2D9C69@CH2PR12MB4645.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: p+ebZdBA0Dlel73sTNDvrelRAUuVEz4yX5+XcgXUbMFqFW68HjWIow1bsQ3lfIfR/VzX0ZlOOOs6tx+f8Wu3oaxfp6DbQdFoDeXAbt+OqGZ9devqm8We+lLzdIRqi/KoVLRjPjzTrUB/5mgkN0n/gr2Hp5TQS1OLNUey/o9W/8zzJ16tr2EbuPhJgpLMnnoQLuQ0ueXU8GWgQjiGXE4PTpqtFGpYUyatgnK2QVt9vompOU8rKMiVg+B1mpI2uY8gija1LvHtCMsSPsALxbBFJJSRh5VG0KGPdQqWdQt5a78axH4X9bIFfP5dlOtLHXwaVkAlDX2CP9/FjUd6Z9YIV1iWvjbDVfVamadv5HpxPEc4xnkxDHTWtCwAOjm+UVg6L+jmkkunL0C62n44Q4rlj0l2eoEFNJAwPyq1iLthjL4mRDX0Ln/t/39CRpK4LdEtQWb4wbQVgI5J9nPd87NQO80N6rLqULpWgfxnH7GM6so7LVkeypwiPT4g9ybEnjh8iOPt5OCnW/xpoTeGyhW6XAlPRdtbGlZSHTQFAS5Mye6PNv+MfGvfvFMX1llePRQQ11n9ZnyGZhPOXssReENeY35atQddIP/q9m/MhAXWLRdd1v3oR+VZvtRrBiE99P2LeJM1qGIUgNhENbzkCeFmU2mUKqV0zLelmZY5t2tH78w4ZybD52nlbzplWXf3IcpCm83wWXpJIRE0MWGw2wLg4XIwK38SjJROJ1aS3VRl1uJb7ZZfwiVbGeiit2/1km7KR8dR0kypu9FnsoNeF1WvyRID+UchRmxldoVaSNoDw3aN/L1Z7hgLVO+asJ6PaAoKujuWE2JEwn8YmYk410VLNA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(86362001)(2616005)(4326008)(8676002)(6512007)(31696002)(53546011)(6506007)(966005)(2906002)(6666004)(83380400001)(6486002)(8936002)(38100700002)(316002)(7416002)(5660300002)(6916009)(508600001)(186003)(31686004)(36756003)(66946007)(66476007)(66556008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dmdXR0VqSkIrWG81eE9hakdwQkFvSGg1b0htM1grV1lXRHE3NS80WXpZTkcz?=
- =?utf-8?B?eTNWeXVGY0FNbjBlckxCb2VZc2RlYk91dFJ2MHYvMHRQdWVUM2hSb1VSWkRk?=
- =?utf-8?B?RXZoWWxSMHEyNkhIR2Jydy9NZEpka2FadS8ySnozTzhuSUhBMzBIeUpBRTl1?=
- =?utf-8?B?dHhEMHhNVFFiM1NTMFJLNVJLR2ppVjAwQnlRc0l1UjdJdmdmS3hVTmZJTExk?=
- =?utf-8?B?eHZMNFU5eVI4a0FFUDFvMnBXbmE5QzQ1cmo5UDZOaWJNbHF2aGxRTXR0MFFI?=
- =?utf-8?B?NHVKQXRnUWx1cjlLRU16aDZiZ01TTEpNeHNWcnNDOXZaUUpHWEZENTgvSk9K?=
- =?utf-8?B?WTM1RUU1blVtTThPNzRobzNBMS90Rlp0MGNyL01nUUcxYjh3Q1FrRkdZOFJQ?=
- =?utf-8?B?VUtIMDBadmxtdkp4eklTZ3ZmdDgrb1BHYzA0eVdWeW1yNUNEVmtzaUZVSGdz?=
- =?utf-8?B?N2JHd1BtR3lVWkJzbDgzNWF2cXRHSlluZklFOHBkdC9iTDlMbVRvMkpoY2F2?=
- =?utf-8?B?VXhEcERJdTNsc3lhbkx1R1lNRnlxL0hneE54RWR4NVlHcHRCdWVUbmcxMlFi?=
- =?utf-8?B?NndkUzhKZUYxMTZBQ0JTaHJwK2FVTlBUcEk4bnljN0FvaGRiOGJ3aTEzRlRE?=
- =?utf-8?B?NGNkL1VUVGxCSldQdXA2cUJMaGJER1l3L1VMaW9scVJKb1JVUE40ek1BajdR?=
- =?utf-8?B?RkI3RzF5NUdOQUg1QjArSE50YWVuZGhhTXVBS0k2WGRhQlNpMkZUelZGemxl?=
- =?utf-8?B?NWg4ZmMxYTR2NEpyMDlZeDNBaXhoWXQ0Zlo1czd4Q3Jrb21YRFRNT1hWVVp0?=
- =?utf-8?B?emE0T0RkbGE3bkt1bi9kT1NyS1FTdUZlVkVkd2J3OTVZTmRrRlZ1L0FLK1Nh?=
- =?utf-8?B?TG9DNkw1bXFPVHNmWDFYdEJVMFdaQ2oyYWFGSlhxbWJSY0Z2YjNneXN4Z24x?=
- =?utf-8?B?QUtBZGxxS0h3WFp6RHRCQk5qV00rNWU1OXBYWVAzNFpmTVlkZkkxVTRMVkFP?=
- =?utf-8?B?NTFCLzlVb2pRb1NZVlVVL0FJVS8xU3JqQm0vZWtOVGZPVllvdW1vckhYWVRQ?=
- =?utf-8?B?dkdLNGpQYjRDRENkUUh4U3ZyVXNnQnFEVHZDUlRGT0x4d3dLUUQ4Y1F2YTc1?=
- =?utf-8?B?R0U0Z2w2aEpDZmp3RXlpb0xpcFhpdk1WNkFXa3k1MExnTTU0WW0vb0pQVnho?=
- =?utf-8?B?LzI5bU1JS01xUDZ4UU5OU1JJb2F5Y0hIb2VtS0ZZUEsxTFQ5TklFVFhzNzhZ?=
- =?utf-8?B?YVRvUDJ6eElaTzFqdjkxV3MxSHdtY0JKaU94RW82UFNtY0pOT0V2SkRrc1VR?=
- =?utf-8?B?S3M1bWRNMTdiUGd4cU94U0QwOWpJemZiM2FsdEZaM1IzbkxpR1VWK3JwMDIx?=
- =?utf-8?B?SHo5QkZ5T3N5RStudGtaZEJ4em9BSjhDQWhnTGNQekRoVlRBR1E1TDYvSGRt?=
- =?utf-8?B?QzFNYkR6NittRFhuTnE0L3FWa2d1SjlYT2dYQ3BUTE5LdVJWTkRXRlp4dnl0?=
- =?utf-8?B?SEhzZ2h2VlMxRDZsNG5WRFRNRlU4ellTMlh5T0s1VHhsU0FJeHUxeldMamo2?=
- =?utf-8?B?Mm8zUmIwc1ZoN3AyNnNGRFo0MDR0c0FEeUdnditPdVByNS9WR2t6QTJKUkhx?=
- =?utf-8?B?QlFzeUVpRkVhUVpDT3pZUDdMUVRhaE5iSk1rMmRwYUN0VmIxT2QrY3lCUndN?=
- =?utf-8?B?NDRKTkcxanMyUUgydXdxd1Nlb3pMVXV1NUw4QW0yWXJDZWEzNU8waEl3MFlq?=
- =?utf-8?B?Q2NVVjhWTlkvL0NpSVZNS3V4ZkhxSWU5YzFCTnBhWlY5UzFtbUdBc2k4YVM5?=
- =?utf-8?B?YVdHT045MmFJNFZ5UlgrSkFldU5jcXZiSzFwSTZxV2p6UHdNSWlQaHB5RkR5?=
- =?utf-8?B?bFNJbGtyZmlBWUZSV3JpTjIxSkt0dFJQZXh6cDIrWTZrL2xXNVpXcGNLY1Jo?=
- =?utf-8?B?b1JhV1JVLy9Ob1AxK2hKVTV1bDJRempBRTRBSFZkNFdpWDZUdXVxcnlFN3RM?=
- =?utf-8?B?djBCMVcrNkliOGQ4QlNLMEpHRHJqV3JxN1ZVM05XM3FVODkrWk9QazNmN2wr?=
- =?utf-8?B?Z1NMNXFWb1YrdFVQZHdFOTFoUWNiR0RwNGhBSCt5dmZwbkl5SzQrWVFRSWpF?=
- =?utf-8?B?M0dDeDFHK0dNcGhFS3A5NEVQVVhHV1Nha1UwYnA3YjZHWEZQMFNEakZmOG12?=
- =?utf-8?B?UFpVaWlKM0RSNGwwV3IvWWl0UmVrTlNyRVJaQTBrR2pSWkpkNnE5VTJENEQr?=
- =?utf-8?B?OVNmWmltTWtCSWtzTlZBc0N3VkNQcHFmRHdNc0JGdWlybmRndUtuN0FBVVFF?=
- =?utf-8?B?clR5Z1B2Ky9ndC9xTHpiZXpyWlAvMGR1cnIrUDN1ODVCcTcvNWxqcVIvTGUr?=
- =?utf-8?Q?LnAeUykSV3A7txAAYCtuWOS7xu8MQS5Ke35yWUcKwE5fv?=
-X-MS-Exchange-AntiSpam-MessageData-1: AmfUGNvZ9SqsPXO11hK+3/LRyFaGPb2rdBQ=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cc2a073-389b-40a4-9aab-08da31c9656f
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-OriginatorOrg: fujitsu.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2022 14:37:08.9158
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6507.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb59992a-950f-4d9b-bb1c-08da31ced84d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2022 15:16:08.8030
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D+XrYdhdYzgKfvgTusuYEDEnggtVh04b6Wl6eeReUikp1vkl1pxsTowbdUx0pZRvoVdSdPrLdtorKZS9x+QRUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4645
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: q5IRFdj2tV7IAxoGvUQ3KW79KqhlLrLxHCiqQH9LHk/aZve0Mz95uDPlSCWwe/uJV5hchYymXmHVnJXclB022HSy1r9hKQtbFufztomtIsU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7578
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 09/05/2022 08:14, Greg Kroah-Hartman wrote:
-> On Thu, May 05, 2022 at 02:59:59AM -0700, Jon Hunter wrote:
->> On Wed, 04 May 2022 18:43:13 +0200, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 5.15.38 release.
->>> There are 177 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Fri, 06 May 2022 15:25:19 +0000.
->>> Anything received after that time might be too late.
->>>
->>> The whole patch series can be found in one patch at:
->>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.38-rc1.gz
->>> or in the git tree and branch at:
->>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
->>> and the diffstat can be found below.
->>>
->>> thanks,
->>>
->>> greg k-h
->>
->> Failures detected for Tegra ...
->>
->> Test results for stable-v5.15:
->>      10 builds:	10 pass, 0 fail
->>      28 boots:	28 pass, 0 fail
->>      114 tests:	110 pass, 4 fail
->>
->> Linux version:	5.15.38-rc1-gc8851235b4b7
->> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->>                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
->>                  tegra20-ventana, tegra210-p2371-2180,
->>                  tegra210-p3450-0000, tegra30-cardhu-a04
->>
->> Test failures:	tegra194-p2972-0000: boot.py
->>                  tegra194-p2972-0000: pm-system-suspend.sh
->>                  tegra20-ventana: pm-system-suspend.sh
-> 
-> Odd, any ideas why things failed here?
-
-
-Odd, indeed. Usually, if something fails I catch it and check to see if 
-this is a proper failure. Looks like something went awry and we got a 
-false-positive. I have checked again and all seems to be passing fine ...
-
-Test results for stable-v5.15:
-     10 builds:	10 pass, 0 fail
-     28 boots:	28 pass, 0 fail
-     114 tests:	114 pass, 0 fail
-
-Linux version:	5.15.39-rc1-gab77581473a3
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                 tegra20-ventana, tegra210-p2371-2180,
-                 tegra210-p3450-0000, tegra30-cardhu-a04
-
-Sorry for the noise here.
-
-Jon
-
--- 
-nvpublic
+Sorry for the delayed response. Unfortunately, I had 10 days holidays=0A=
+until yesterday...=0A=
+=0A=
+>  .../admin-guide/kernel-parameters.txt         |  42 ++-=0A=
+>  include/linux/panic_notifier.h                |   1 +=0A=
+>  kernel/kexec_core.c                           |   8 +-=0A=
+>  kernel/panic.c                                | 292 +++++++++++++-----=
+=0A=
+>  .../selftests/pstore/pstore_crash_test        |   5 +-=0A=
+>  5 files changed, 252 insertions(+), 96 deletions(-)=0A=
+> =0A=
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt=0A=
+> index 3f1cc5e317ed..8d3524060ce3 100644=0A=
+> --- a/Documentation/admin-guide/kernel-parameters.txt=0A=
+> +++ b/Documentation/admin-guide/kernel-parameters.txt=0A=
+...snip...=0A=
+> @@ -3784,6 +3791,33 @@=0A=
+>                         timeout < 0: reboot immediately=0A=
+>                         Format: <timeout>=0A=
+> =0A=
+> +       panic_notifiers_level=3D=0A=
+> +                       [KNL] Set the panic notifiers execution order.=0A=
+> +                       Format: <unsigned int>=0A=
+> +                       We currently have 4 lists of panic notifiers; bas=
+ed=0A=
+> +                       on the functionality and risk (for panic success)=
+ the=0A=
+> +                       callbacks are added in a given list. The lists ar=
+e:=0A=
+> +                       - hypervisor/FW notification list (low risk);=0A=
+> +                       - informational list (low/medium risk);=0A=
+> +                       - pre_reboot list (higher risk);=0A=
+> +                       - post_reboot list (only run late in panic and af=
+ter=0A=
+> +                       kdump, not configurable for now).=0A=
+> +                       This parameter defines the ordering of the first =
+3=0A=
+> +                       lists with regards to kdump; the levels determine=
+=0A=
+> +                       which set of notifiers execute before kdump. The=
+=0A=
+> +                       accepted levels are:=0A=
+> +                       0: kdump is the first thing to run, NO list is=0A=
+> +                       executed before kdump.=0A=
+> +                       1: only the hypervisor list is executed before kd=
+ump.=0A=
+> +                       2 (default level): the hypervisor list and (*if*=
+=0A=
+=0A=
+Hmmm, why are you trying to change default setting?=0A=
+=0A=
+Based on the current design of kdump, it's natural to put what the=0A=
+handlers for these level 1 and level 2 handlers do in=0A=
+machine_crash_shutdown(), as these are necessary by default, right?=0A=
+=0A=
+Or have you already tried that and figured out it's difficult in some=0A=
+reason and reached the current design? If so, why is that difficult?=0A=
+Could you point to if there is already such discussion online?=0A=
+=0A=
+kdump is designed to perform as little things as possible before=0A=
+transferring the execution to the 2nd kernel in order to increase=0A=
+reliability. Just detour to panic() increases risks of kdump failure=0A=
+in the sense of increasing the executed codes in the abnormal=0A=
+situation, which is very the note in the explanation of=0A=
+crash_kexec_post_notifiers.=0A=
+=0A=
+Also, the current implementation of crash_kexec_post_notifiers uses=0A=
+the panic notifier, but this is not from the technical=0A=
+reason. Ideally, it should have been implemented in the context of=0A=
+crash_kexec() independently of panic().=0A=
+=0A=
+That is, it looks to me that, in addition to changing design of panic=0A=
+notifier, you are trying to integrate shutdown code of the crash kexec=0A=
+and the panic paths. If so, this is a big design change for kdump.=0A=
+I'm concerned about increase of reliability. I'd like you to discuss=0A=
+them carefully.=0A=
+=0A=
+Thanks.=0A=
+HATAYAMA, Daisuke=0A=
+=0A=
