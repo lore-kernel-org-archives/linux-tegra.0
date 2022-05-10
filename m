@@ -2,139 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F30DAC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 May 2022 15:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11356C4321E
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 May 2022 16:18:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346254AbiEJPuw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 May 2022 11:50:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33168 "EHLO
+        id S1347249AbiEJQV6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 May 2022 12:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346376AbiEJPtZ (ORCPT
+        with ESMTP id S1347193AbiEJQVr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 May 2022 11:49:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 340122854A5;
-        Tue, 10 May 2022 08:44:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6A109B81D0D;
-        Tue, 10 May 2022 15:44:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D421BC385C9;
-        Tue, 10 May 2022 15:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652197475;
-        bh=EdXBI+t7Z+CJBmYfgvbfu0giiu3XH2CkqB+Azf5RDVQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FhgVLwiWX3Zw+Cz/naVTbyrGDbD9nH7rBAEtt+UDu7w1JJ0kP+wDsXLIN7zVDOcEQ
-         fZFJlsskN7pAxtRBHqfhjPQQRzNyzx2DZmy0ErHbvBUOLsyg6TPbl3m/di2EV5SMUR
-         7429xNfoY6vd+OnSIkWJ+ULDCOYSOnj5xg+HQque5eDiTWLFWhDFkbuhlBCnPgDOao
-         atBN6B+4nBxq9or5BJlbqCm5nWiP2lUyeYb37PwHWAg/3oOpdYy2zEjIw0vriIqOhN
-         YDKNr/rlJ9kxY4+82LdfxwXpRIr+EX6CLXxqqnE1bnck4ZugpqRw4/W0ZxwSTiHOFC
-         2B+WDMFB1vpdg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ashish Mhetre <amhetre@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Pritesh Raithatha <praithatha@nvidia.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        thierry.reding@gmail.com, joro@8bytes.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 5.15 03/19] iommu: arm-smmu: disable large page mappings for Nvidia arm-smmu
-Date:   Tue, 10 May 2022 11:44:13 -0400
-Message-Id: <20220510154429.153677-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220510154429.153677-1-sashal@kernel.org>
-References: <20220510154429.153677-1-sashal@kernel.org>
+        Tue, 10 May 2022 12:21:47 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21D428ED28;
+        Tue, 10 May 2022 09:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=DG+kC/U+ySej5D6tfV4OCa8YH0d8ESpuNC4bFJt4RU8=; b=C2KkFYKUIxmXZpa9w2+Tc0j2Ea
+        RFFr76ch465vsOUiMZW1uqZNDnhRYy0QqpFeaougTFG9GOX2EvcKO8NnFtvJdvaTDSvmTGm5I6bLE
+        gx/SYLZAEuVfjx7NJeu1tB8cieKdzixVjql/phg2ZRqRsu9xZgqdP1nbzw6Nv7UUXN3Dua0weQYl6
+        +N3ACyNpHY020LPMtgokauBK3/rzBv0qIzP0VJEueNDPsJdk0Noe60ugWXyfyRTapgsSXBPVXAg4/
+        oobDhrEfQYteiYAwrodL1TGkVGLJREzPqDYfYYN3sh0JBT6vnlq6trf1vxZCJI19NPJiA+YiSFKJe
+        qkMs6K7A==;
+Received: from [177.183.162.244] (helo=[192.168.0.5])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1noSY8-0008UD-Jz; Tue, 10 May 2022 18:17:24 +0200
+Message-ID: <244a412c-4589-28d1-bb77-d3648d4f0b12@igalia.com>
+Date:   Tue, 10 May 2022 13:16:54 -0300
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 14/30] panic: Properly identify the panic event to the
+ notifiers' callbacks
+Content-Language: en-US
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     akpm@linux-foundation.org, bhe@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
+        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
+        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-15-gpiccoli@igalia.com> <YnqBsXBImU64PAOL@alley>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <YnqBsXBImU64PAOL@alley>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Ashish Mhetre <amhetre@nvidia.com>
+On 10/05/2022 12:16, Petr Mladek wrote:
+> [...]
+> Hmm, this looks like a hack. PANIC_UNUSED will never be used.
+> All notifiers will be always called with PANIC_NOTIFIER.
+> 
+> The @val parameter is normally used when the same notifier_list
+> is used in different situations.
+> 
+> But you are going to use it when the same notifier is used
+> in more lists. This is normally distinguished by the @nh
+> (atomic_notifier_head) parameter.
+> 
+> IMHO, it is a bad idea. First, it would confuse people because
+> it does not follow the original design of the parameters.
+> Second, the related code must be touched anyway when
+> the notifier is moved into another list so it does not
+> help much.
+> 
+> Or do I miss anything, please?
+> 
+> Best Regards,
+> Petr
 
-[ Upstream commit 4a25f2ea0e030b2fc852c4059a50181bfc5b2f57 ]
+Hi Petr, thanks for the review.
 
-Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
-entries to not be invalidated correctly. The problem is that the walk
-cache index generated for IOVA is not same across translation and
-invalidation requests. This is leading to page faults when PMD entry is
-released during unmap and populated with new PTE table during subsequent
-map request. Disabling large page mappings avoids the release of PMD
-entry and avoid translations seeing stale PMD entry in walk cache.
-Fix this by limiting the page mappings to PAGE_SIZE for Tegra194 and
-Tegra234 devices. This is recommended fix from Tegra hardware design
-team.
+I'm not strong attached to this patch, so we could drop it and refactor
+the code of next patches to use the @nh as identification - but
+personally, I feel this parameter could be used to identify the list
+that called such function, in other words, what is the event that
+triggered the callback. Some notifiers are even declared with this
+parameter called "ev", like the event that triggers the notifier.
 
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-Reviewed-by: Krishna Reddy <vdumpa@nvidia.com>
-Co-developed-by: Pritesh Raithatha <praithatha@nvidia.com>
-Signed-off-by: Pritesh Raithatha <praithatha@nvidia.com>
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-Link: https://lore.kernel.org/r/20220421081504.24678-1-amhetre@nvidia.com
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 30 ++++++++++++++++++++
- 1 file changed, 30 insertions(+)
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-index 01e9b50b10a1..87bf522b9d2e 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-@@ -258,6 +258,34 @@ static void nvidia_smmu_probe_finalize(struct arm_smmu_device *smmu, struct devi
- 			dev_name(dev), err);
- }
- 
-+static int nvidia_smmu_init_context(struct arm_smmu_domain *smmu_domain,
-+				    struct io_pgtable_cfg *pgtbl_cfg,
-+				    struct device *dev)
-+{
-+	struct arm_smmu_device *smmu = smmu_domain->smmu;
-+	const struct device_node *np = smmu->dev->of_node;
-+
-+	/*
-+	 * Tegra194 and Tegra234 SoCs have the erratum that causes walk cache
-+	 * entries to not be invalidated correctly. The problem is that the walk
-+	 * cache index generated for IOVA is not same across translation and
-+	 * invalidation requests. This is leading to page faults when PMD entry
-+	 * is released during unmap and populated with new PTE table during
-+	 * subsequent map request. Disabling large page mappings avoids the
-+	 * release of PMD entry and avoid translations seeing stale PMD entry in
-+	 * walk cache.
-+	 * Fix this by limiting the page mappings to PAGE_SIZE on Tegra194 and
-+	 * Tegra234.
-+	 */
-+	if (of_device_is_compatible(np, "nvidia,tegra234-smmu") ||
-+	    of_device_is_compatible(np, "nvidia,tegra194-smmu")) {
-+		smmu->pgsize_bitmap = PAGE_SIZE;
-+		pgtbl_cfg->pgsize_bitmap = smmu->pgsize_bitmap;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct arm_smmu_impl nvidia_smmu_impl = {
- 	.read_reg = nvidia_smmu_read_reg,
- 	.write_reg = nvidia_smmu_write_reg,
-@@ -268,10 +296,12 @@ static const struct arm_smmu_impl nvidia_smmu_impl = {
- 	.global_fault = nvidia_smmu_global_fault,
- 	.context_fault = nvidia_smmu_context_fault,
- 	.probe_finalize = nvidia_smmu_probe_finalize,
-+	.init_context = nvidia_smmu_init_context,
- };
- 
- static const struct arm_smmu_impl nvidia_smmu_single_impl = {
- 	.probe_finalize = nvidia_smmu_probe_finalize,
-+	.init_context = nvidia_smmu_init_context,
- };
- 
- struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
--- 
-2.35.1
+You mentioned 2 cases:
 
+(a) Same notifier_list used in different situations;
+
+(b) Same *notifier callback* used in different lists;
+
+Mine is case (b), right? Can you show me an example of case (a)? You can
+see in the following patches (or grep the kernel) that people are using
+this identification parameter to determine which kind of OOPS trigger
+the callback to condition the execution of the function to specific
+cases. IIUIC, this is more or less what I'm doing, but extending the
+idea for panic notifiers.
+
+Again, as a personal preference, it makes sense to me using id's VS
+comparing pointers to differentiate events/callers.
+
+Cheers,
+
+
+Guilherme
