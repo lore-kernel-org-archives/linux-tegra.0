@@ -2,98 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19581C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 May 2022 18:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FC7C4167B
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 May 2022 19:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242566AbiEJSkf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 May 2022 14:40:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35744 "EHLO
+        id S232461AbiEJTks (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 May 2022 15:40:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344053AbiEJSkf (ORCPT
+        with ESMTP id S229635AbiEJTko (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 May 2022 14:40:35 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 37B532A1500;
-        Tue, 10 May 2022 11:40:33 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AFFDE12FC;
-        Tue, 10 May 2022 11:40:33 -0700 (PDT)
-Received: from bogus (unknown [10.57.0.250])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F202A3F5A1;
-        Tue, 10 May 2022 11:40:30 -0700 (PDT)
-Date:   Tue, 10 May 2022 19:40:25 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Besar Wicaksono <bwicaksono@nvidia.com>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>, catalin.marinas@arm.com,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        thanu.rangarajan@arm.com, Michael.Williams@arm.com,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH 0/2] perf: ARM CoreSight PMU support
-Message-ID: <20220510184025.iwgknfqe5ygz4jwn@bogus>
-References: <20220509002810.12412-1-bwicaksono@nvidia.com>
- <20220509092843.GB26264@willie-the-truck>
- <2e5e09f9-b71b-d936-e291-db8f94554b18@arm.com>
- <20220510110742.ievkihggndpms3fn@bogus>
- <20220510111318.GD27557@willie-the-truck>
+        Tue, 10 May 2022 15:40:44 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FE9111163;
+        Tue, 10 May 2022 12:40:42 -0700 (PDT)
+From:   John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1652211640;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OEDxfxfGB0zzvmyrmmb19QrPenmgyOx+wB7aMTpPY14=;
+        b=s9qpTYE/3WJU4N3KJVSOdyb7xWHt1vkR4fCuQ5J8Zkt0v0hhGnmBmJdDRvMzx7U23g78AD
+        5x0GWGYOK6up5rJgLjlqAJ0oKWgxSuZArLqIZD7/93+m719asCNv2npDv0K4E3pzaf0TU1
+        QT3fxi7rAkTN0NzY7sIU3W6vHFJAKmFF1D5WFGFp25IVzQ1U2GLRWaAA15JzW4DMVMPiln
+        C4PlGutDHid0b5MW+yz4Oad3VH/9G9wKQ7qYFzrw5pmS2R8UQ108RRuRC1xOe7QqhudZaN
+        toooF05flVTdgRJ8Mw90Ti/8UtTs7R3lmx6LjRAd0TtWQNVsyqtk/eFe4jDJKA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1652211640;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OEDxfxfGB0zzvmyrmmb19QrPenmgyOx+wB7aMTpPY14=;
+        b=vLCouTuSreEprlIyaHBdxRuhj0utQMxldxJLsrUVX2CbalgS135YGbpGNA0WSY+j9euZdD
+        GTFEAV97omDLmGAg==
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>
+Cc:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Evan Green <evgreen@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
+        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, Kees Cook <keescook@chromium.org>,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, senozhatsky@chromium.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Thomas Gleixner <tglx@linutronix.de>, vgoyal@redhat.com,
+        vkuznets@redhat.com, Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        David Gow <davidgow@google.com>,
+        Julius Werner <jwerner@chromium.org>
+Subject: Re: [PATCH 04/30] firmware: google: Convert regular spinlock into
+ trylock on panic path
+In-Reply-To: <20220510132015.38923cb2@gandalf.local.home>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-5-gpiccoli@igalia.com>
+ <CAE=gft5Pq25L4KFoPWbftkPF-JN1ex2yws77mMJ4GQnn9W0L2g@mail.gmail.com>
+ <adcf6d0e-c37c-6ede-479e-29959d03d8c0@igalia.com> <YnpOv4hAPV4b+6v4@alley>
+ <20220510132015.38923cb2@gandalf.local.home>
+Date:   Tue, 10 May 2022 21:46:38 +0206
+Message-ID: <87h75xkwg9.fsf@jogness.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220510111318.GD27557@willie-the-truck>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, May 10, 2022 at 12:13:19PM +0100, Will Deacon wrote:
-> On Tue, May 10, 2022 at 12:07:42PM +0100, Sudeep Holla wrote:
-> > On Mon, May 09, 2022 at 11:02:23AM +0100, Suzuki K Poulose wrote:
-> > > Cc: Mike Williams, Mathieu Poirier
-> > > On 09/05/2022 10:28, Will Deacon wrote:
-> > > > On Sun, May 08, 2022 at 07:28:08PM -0500, Besar Wicaksono wrote:
-> > > > >   arch/arm64/configs/defconfig                  |    1 +
-> > > > >   drivers/perf/Kconfig                          |    2 +
-> > > > >   drivers/perf/Makefile                         |    1 +
-> > > > >   drivers/perf/coresight_pmu/Kconfig            |   10 +
-> > > > >   drivers/perf/coresight_pmu/Makefile           |    7 +
-> > > > >   .../perf/coresight_pmu/arm_coresight_pmu.c    | 1317 +++++++++++++++++
-> > > > >   .../perf/coresight_pmu/arm_coresight_pmu.h    |  147 ++
-> > > > >   .../coresight_pmu/arm_coresight_pmu_nvidia.c  |  300 ++++
-> > > > >   .../coresight_pmu/arm_coresight_pmu_nvidia.h  |   17 +
-> > > > >   9 files changed, 1802 insertions(+)
-> > > > 
-> > > > How does this interact with all the stuff we have under
-> > > > drivers/hwtracing/coresight/?
-> > > 
-> > > Absolutely zero, except for the name. The standard
-> > > is named "CoreSight PMU" which is a bit unfortunate,
-> > > given the only link, AFAIU, with the "CoreSight" architecture
-> > > is the Lock Access Register(LAR). For reference, the
-> > > drivers/hwtracing/coresight/ is purely "CoreSight" self-hosted
-> > > tracing and the PMU is called "cs_etm" (expands to coresight etm).
-> > > Otherwise the standard doesn't have anything to do with what
-> > > exists already in the kernel.
+On 2022-05-10, Steven Rostedt <rostedt@goodmis.org> wrote:
+>> As already mentioned in the other reply, panic() sometimes stops the
+>> other CPUs using NMI, for example, see kdump_nmi_shootdown_cpus().
+>> 
+>> Another situation is when the CPU using the lock ends in some
+>> infinite loop because something went wrong. The system is in
+>> an unpredictable state during panic().
+>> 
+>> I am not sure if this is possible with the code under gsmi_dev.lock
+>> but such things really happen during panic() in other subsystems.
+>> Using trylock in the panic() code path is a good practice.
 >
-> That's... a poor naming choice! But good, if it's entirely separate then I
-> don't have to worry about that. Just wanted to make sure we're not going to
-> get tangled up in things like ROM tables and Coresight power domains for
-> these things.
->
+> I believe that Peter Zijlstra had a special spin lock for NMIs or
+> early printk, where it would not block if the lock was held on the
+> same CPU. That is, if an NMI happened and paniced while this lock was
+> held on the same CPU, it would not deadlock. But it would block if the
+> lock was held on another CPU.
 
-OK, now that triggered another question/thought.
+Yes. And starting with 5.19 it will be carrying the name that _you_ came
+up with (cpu_sync):
 
-1. Do you need to do active power management for these PMUs ? Or like
-   CPU PMUs, do you reject entering low power states if there is active
-   session in progress. If there is active session, runtime PM won't get
-   triggered but if there is system wide suspend, how is that dealt with ?
+printk_cpu_sync_get_irqsave()
+printk_cpu_sync_put_irqrestore()
 
-2. Assuming you need some sort of PM, and since this is static table(which
-   I really don't like/prefer but it is out there 🙁), how do you plan to
-   get the power domain related information.
-
--- 
-Regards,
-Sudeep
+John
