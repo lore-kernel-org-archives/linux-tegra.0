@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFFDC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 May 2022 15:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F30DAC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 May 2022 15:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346142AbiEJPrt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 May 2022 11:47:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58562 "EHLO
+        id S1346254AbiEJPuw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 May 2022 11:50:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346138AbiEJPrs (ORCPT
+        with ESMTP id S1346376AbiEJPtZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 May 2022 11:47:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3955627BC6C;
-        Tue, 10 May 2022 08:43:49 -0700 (PDT)
+        Tue, 10 May 2022 11:49:25 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 340122854A5;
+        Tue, 10 May 2022 08:44:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AA52C61373;
-        Tue, 10 May 2022 15:43:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1C27C385C2;
-        Tue, 10 May 2022 15:43:46 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6A109B81D0D;
+        Tue, 10 May 2022 15:44:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D421BC385C9;
+        Tue, 10 May 2022 15:44:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652197428;
+        s=k20201202; t=1652197475;
         bh=EdXBI+t7Z+CJBmYfgvbfu0giiu3XH2CkqB+Azf5RDVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KVcRv+FL9wW265Vw51lIR2fjD3+rsRgj7RrmIjHeUYaT0KJb5rRyDnsi/Y3+VRiCE
-         bu5zirEw5Oss/qfIlr/J5Y3qUO/pbeCZHBM0k3+sfsws7xTekRnuezkjrS820+BfLI
-         Lui71NVLu+fDNAn5hlP0CTyrYo0pw+r/gnv5ydRUSYka1MvdBr1Hhav61jtjyFaG3i
-         Q+z7zKBdA8hUjmzsk1TXNj70RyUT+QX9UYpkudlTRWH/7YOVpWMdCINPH0bI0KiQ4k
-         NI+pel3ebimtdJbHyrIdH3ZJ1sdg9XEzcdt/ZtTY8pdOUl1OuuyMdpZ+DkCjzdUPZ5
-         UevIcrBvzm7tA==
+        b=FhgVLwiWX3Zw+Cz/naVTbyrGDbD9nH7rBAEtt+UDu7w1JJ0kP+wDsXLIN7zVDOcEQ
+         fZFJlsskN7pAxtRBHqfhjPQQRzNyzx2DZmy0ErHbvBUOLsyg6TPbl3m/di2EV5SMUR
+         7429xNfoY6vd+OnSIkWJ+ULDCOYSOnj5xg+HQque5eDiTWLFWhDFkbuhlBCnPgDOao
+         atBN6B+4nBxq9or5BJlbqCm5nWiP2lUyeYb37PwHWAg/3oOpdYy2zEjIw0vriIqOhN
+         YDKNr/rlJ9kxY4+82LdfxwXpRIr+EX6CLXxqqnE1bnck4ZugpqRw4/W0ZxwSTiHOFC
+         2B+WDMFB1vpdg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Ashish Mhetre <amhetre@nvidia.com>,
@@ -42,12 +42,12 @@ Cc:     Ashish Mhetre <amhetre@nvidia.com>,
         thierry.reding@gmail.com, joro@8bytes.org,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 5.17 04/21] iommu: arm-smmu: disable large page mappings for Nvidia arm-smmu
-Date:   Tue, 10 May 2022 11:43:23 -0400
-Message-Id: <20220510154340.153400-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 03/19] iommu: arm-smmu: disable large page mappings for Nvidia arm-smmu
+Date:   Tue, 10 May 2022 11:44:13 -0400
+Message-Id: <20220510154429.153677-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220510154340.153400-1-sashal@kernel.org>
-References: <20220510154340.153400-1-sashal@kernel.org>
+In-Reply-To: <20220510154429.153677-1-sashal@kernel.org>
+References: <20220510154429.153677-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
