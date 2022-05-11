@@ -2,65 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71663C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 20:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15ECDC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 20:19:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347679AbiEKUSt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 May 2022 16:18:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41842 "EHLO
+        id S1347735AbiEKUTN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 May 2022 16:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347709AbiEKUSq (ORCPT
+        with ESMTP id S1347724AbiEKUS6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 May 2022 16:18:46 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D20C6D4D5;
-        Wed, 11 May 2022 13:18:32 -0700 (PDT)
+        Wed, 11 May 2022 16:18:58 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08E96D4D5;
+        Wed, 11 May 2022 13:18:53 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qh/TcG85ZMrkKY2jaCKuyAQK3NCkYSgYBhZc8rLSVoU1EwANsxDEP8Sjjr3EyNSPcjl0tzbphz9R0P3OXuna54eDUYTiAVbOF8UEeKTF9LE5TZ50FlYFa8uUwUox/5MRIN7/FjEYeVn25wkFUVWWhOrIsyDMMOP7KR7Uou0ep6pUM2Y8sI1h8e24KPbhitWwlLJ6s9jY31CeMPtbj+VC/LFPFvLNfNiHeT4KMeglLebDRWtKnaKh/JzQOPNhGZStxt88KBwrePw/NMRwzWIR2Gpnb2PEHmcWOPfss/v57dEK66AxI8A/f+IdqLbJ0jJ4mlkG+qeM3t3I9qRXSJo6TQ==
+ b=Zfmf26JhbpGYH7Q9fTwGCgXvm8L1qNnn0NiX7ZdRyxG2QAbM6wp7z+wuyAwnhTDq+1WuDvtLAx0VWxHQh4lKW0H1V3cWCisbUaT433L+jkH43Z912KuZF//2Fecnc02JFtotzZXkmZpbkl2kpzSqS9r58mis9lpKrhJtRB6m8KYPsqZ/rF9z7Thjm6cEaxwflxM6RSYmfIGG509++3C0tvdu8yV20WjicqXBFkS89ZOFYVRlnzMSjRg2VpWy0aCShcUJOhgolULr8WumA2236/qC/MuBq/feqlKfamIkmUtzFpd1YArZ5BTixVYMt7XFrrRHmZEAgK2HjUbvN1E5mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5qKwtvhieY0KcWMSvpqLpwBMndYeB2YgTP3vZk+1ppY=;
- b=fA9zXSVxLNVh5tX4qH5qftn8qRy5bqqh8iCg93pyJa5VBRTqEe/pUG8BSZvQaqZnIIFL+4mXOaQe/5HjCcR/dH0qSrAuoy/To1xT0pHt3aD3438EuSQfxYIBj6RVEcd+1jIdqer5Ie0FU/8LXttfBLmvUXBFhIcVRl3XhoPBCZ3vBgTuuunOpiKUCQIEqJyo5hdJnHWML52OD36CA4gLI4rAT3vKUL0+251b0nsFECrnq2kIAFNnYv+P4Kvz71USasBak3ZxwVSnN46gxNk0QSQ/dyBb4t6DlcvjfoSUscx0vQhWNBz0euS/kkGdhIoub/mb5vAMg9AhlhHYX8d0vg==
+ bh=ahtGO6n1U7WOvbB5+UjFweK8/UuwCgEzm+l5QTo1Lpw=;
+ b=Nf0gL0sAgIW0FD6vwZOs9gzGDiRqJdUUKQ2mMOL9+LwA+abWeKM9frHtE39j0RDKB9ROKBZNKJezs1Y0j9XPMS2oez8Z8BBOvZM4NoMIXFPG6t/KkNKx9DGA9J23bDEYZ9oJnOyhJf5zTCtfMTeLTpwE7szghcUzbGlw+Wc2jnBnmqjSOfuoNnADjO46Eio30GUAb3AypWm48FzAWUSwfwK7i6Q2kCWA1nbH3dfKnOKSdca47qnp0vMW0sDaw9hdlgAWUN4j7xe2KktAMN7IhXFXu7ZZLrpQna+P3X17uLbFkOscnK8gjGdLxS9wBOcymmF3vTwYgR8eHQKAk+2FQQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ 12.22.5.238) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5qKwtvhieY0KcWMSvpqLpwBMndYeB2YgTP3vZk+1ppY=;
- b=MVkVcs+CeC8X5cfUMXIjwsZExscPiZ6GnQkUOyXaFggoRmzHZ1ar74dYKQwoNull9MiOJs7gCK8wZzwrYXzp9dU9hWkR6huqhAtYyyvO0RoJ85azvr2dtJRs5ZCGECmNOzhtW4DNqo0mua12+tCNrlUO9FQ5Eli8Tk0rjJP8Mo+57VpaQ5p/Mx0qjIdIs0xpslxmGlffEAsZ4tsRSr5O4AuV6DkoHMktW2naPz+ZyH3rd8x06q9oaHLd7vPfFAfVMTW0NNijgPxVJgtx2ywq7Ekhfh7xiqSXz1QhtOQu7Zh9E4H7xZGNCWFkTkvGWGwEPuqMPBYr9gzEbg+wU8yMvQ==
-Received: from BN8PR16CA0009.namprd16.prod.outlook.com (2603:10b6:408:4c::22)
- by BYAPR12MB5703.namprd12.prod.outlook.com (2603:10b6:a03:a5::32) with
+ bh=ahtGO6n1U7WOvbB5+UjFweK8/UuwCgEzm+l5QTo1Lpw=;
+ b=bMtdp+31jGD152E7SSRm/Kg33qFCdYT8XIPAIw5GbRKyXWZnrixie4g8laRr2w2RoEU2Xnq4my3FQnc+5evVE8Xy5Pt+owhHF9IaEeWw8G9nfY5li90T0fy7rnX19Wfo2txJXHad90CETIeiSkoJs9uRQ8BNJ7voXduBBweUfYTOqjqgRK6IdEc7Eiika+k9zWhnPOCpVPXRxFqEwVRiergkzV0D1Qyal7JZS7fBY5lDOm7ARFlQpl/VkLPjkGguIN1y5LdeBXcVSkaPghEOHXcJUWpTVyFsuI9/L4rRhInRwFTq8b8a1q/lA4OP29ycJSGU9yYovoQmslBFsqx9gA==
+Received: from DM6PR02CA0112.namprd02.prod.outlook.com (2603:10b6:5:1b4::14)
+ by MN2PR12MB4470.namprd12.prod.outlook.com (2603:10b6:208:260::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.13; Wed, 11 May
- 2022 20:18:31 +0000
-Received: from BN8NAM11FT004.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:4c:cafe::1d) by BN8PR16CA0009.outlook.office365.com
- (2603:10b6:408:4c::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.13 via Frontend
- Transport; Wed, 11 May 2022 20:18:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.21; Wed, 11 May
+ 2022 20:18:51 +0000
+Received: from DM6NAM11FT012.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:1b4:cafe::44) by DM6PR02CA0112.outlook.office365.com
+ (2603:10b6:5:1b4::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.22 via Frontend
+ Transport; Wed, 11 May 2022 20:18:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.235) by
- BN8NAM11FT004.mail.protection.outlook.com (10.13.176.164) with Microsoft SMTP
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.238) by
+ DM6NAM11FT012.mail.protection.outlook.com (10.13.173.109) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5250.13 via Frontend Transport; Wed, 11 May 2022 20:18:30 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.32; Wed, 11 May 2022 20:18:29 +0000
+ 15.20.5250.13 via Frontend Transport; Wed, 11 May 2022 20:18:51 +0000
 Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ DRHQMAIL105.nvidia.com (10.27.9.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.32; Wed, 11 May 2022 20:18:50 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 11 May 2022 13:18:29 -0700
+ 15.2.986.22; Wed, 11 May 2022 13:18:50 -0700
 Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
  (10.126.190.182) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Wed, 11 May 2022 13:18:26 -0700
+ Transport; Wed, 11 May 2022 13:18:47 -0700
 From:   Sumit Gupta <sumitg@nvidia.com>
 To:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <thierry.reding@gmail.com>,
@@ -68,9 +68,9 @@ To:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <kbuild-all@lists.01.org>
 CC:     <sumitg@nvidia.com>, <bbasu@nvidia.com>, <vsethi@nvidia.com>,
         <jsequeira@nvidia.com>
-Subject: [Patch v6 6/9] dt-bindings: arm: tegra: Add NVIDIA Tegra234 CBB2.0 binding
-Date:   Thu, 12 May 2022 01:46:48 +0530
-Message-ID: <20220511201651.30695-8-sumitg@nvidia.com>
+Subject: [Patch v6 8/9] soc: tegra: cbb: Add driver for Tegra234 CBB2.0
+Date:   Thu, 12 May 2022 01:46:50 +0530
+Message-ID: <20220511201651.30695-10-sumitg@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220511201651.30695-1-sumitg@nvidia.com>
 References: <20220511201651.30695-1-sumitg@nvidia.com>
@@ -79,117 +79,1171 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a95bbbd4-bb6e-43eb-c162-08da338b6a73
-X-MS-TrafficTypeDiagnostic: BYAPR12MB5703:EE_
-X-Microsoft-Antispam-PRVS: <BYAPR12MB57032EA693D423017C974A1DB9C89@BYAPR12MB5703.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 3f47183d-a40c-491e-63c5-08da338b76df
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4470:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB44707237A00220CA79244CC1B9C89@MN2PR12MB4470.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OYUJNHayVcBFTfhdHbzTpMfnIoAuMKAcKcCvDvi07HUJMuvAy8vVsaogXMGKA/OVOYRQuRDr6kyq6Mj8VzPiJ6IrtpMd47e5uIC3CzwLds0G5QDIQ0YFJ+Y2w7A3/FVxdFLLFVyzns63FzbDf2aId73Ls7NhYXu9t3PEhKCF27b4sRbuiyHFELyDOF3AjfL0j0Zanv/rAUa8QFShROJJOBYSnXNLpaaQ/9ocvO3oOp7zSKsnKojHmF9PLnCdGUTQWXT96m1qQ79xhqQ47OI+r6omvjsQBBTVW4QPFiq6Fl1ccDLmGuCfSM9ddWEv1YtAOXCXrhpmcHS7kMoa0WzJcm+wQNNBdGRz3OfDCVNyUvjM9TSuPLij+YEyl1iPNp7pJBkz/z9w85J+yJmP1BleZwtPYKFesr/SA4Di1kY/2LrSa5P3rrUGRJv6MOxoxE8jnu0pAseqIhWePPSucrjiHNqiee9RLFEWpZedjajnn7MNPSSpU0PYR3qaLsytsByfsunDROnX7pOkB+mlgWyfdTkoA4ipUs9xJ3839+fsPbybc2F1+jdmd7mjZ9SEpe91Op1NC5tHl56kpnWQ8pF2nI7rMFEJCTm0OfAse1ufJD6x117zyELn8c33Ekf3+2MDIiHOU8VktvUe27+fa1G/x/1gkFpgOimtVov7tbh4ZmxUxlksWYgpwn/rMtPmqGg8xORaYWgns43153weG4rH/xtcA8HdYLnIlwksFXitXNg4DYhz9dr/L65hKIPfn9ZWx/t5M5PWfABtWS8uqJBDNpwuUIi0QGcTtTjrvIjomtX67hYODelZB3vBE0dP+l6K64sTwMpWKkMLK882rk/nMg==
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(36860700001)(82310400005)(26005)(36756003)(2906002)(6666004)(8676002)(47076005)(8936002)(508600001)(70206006)(356005)(81166007)(426003)(86362001)(186003)(40460700003)(1076003)(4326008)(336012)(110136005)(54906003)(7696005)(83380400001)(107886003)(5660300002)(2616005)(316002)(70586007)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: mDXHiMx6uP1k+GS9EvpviqZWNm4xHPAqypgHFPVib5er9VbAeL59RNSGLva+taz9SOosJAohR9K4MqvatAri8gU4CVwQNWeShsJ8Inw5J7xbrqnq2Sg8rbiimG2XRFmbKieA+6d0Mvr/D7ryDkM+9g5Iiwpm0XBMNt73wbgkPSUdlkb6ATfvBRoE5MndzISx1JhmGqEn48ypyXY0QKoHaGTzr9EAxonTJ7x7asNZnPQWpxCDSU99A0ncHLtS5qUrbiWYWTkI4qfv6rZ52NE8IIl1c4BRXme5KsGAvoseHGvmElAuVIa1M0fUxYxRfSSWr6rfwt4MUvQmGbr6I5lB7qlW1iXyCoY9EXa6gzPD3DvlvqyGBz8NikTE5TdgI5bIfZGFTJIfZ/VCZ/q75cBVtNjZagPyg4urBzo4elSWiEciLnBDLeXj0YxLT6mGAHJ+1WeUGfe4GR29ceh+G7EvESoD/sWhjMUyUMWCyAMGHRYB9RN/CU+2jIlt9JsBBbU2O5epWUS9NKF6AZ5tdbLtLr4ErYqLRqZOO1qt9FOUEF9I2MhPbgMoB2AWdwQBOrU+yOmJXPkT8lMM+jTFFYaHMfHHax2apNG/yKjTQzfjfHPDNVkH5M1uj0eJAkQyG14tBI3zQQMkVqckY9k5EIU+XghGBteA5A9RtbDsazoKI3RJeCyl/JuA+GPgMScbS2yudi8FE3DIWXxvb49ZaP/wEQ==
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(356005)(86362001)(82310400005)(2616005)(5660300002)(36756003)(1076003)(8936002)(83380400001)(107886003)(26005)(508600001)(6666004)(70586007)(316002)(70206006)(30864003)(110136005)(426003)(47076005)(8676002)(4326008)(54906003)(336012)(81166007)(7696005)(40460700003)(186003)(2906002)(36860700001)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2022 20:18:30.4069
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2022 20:18:51.2450
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a95bbbd4-bb6e-43eb-c162-08da338b6a73
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f47183d-a40c-491e-63c5-08da338b76df
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT004.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT012.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB5703
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4470
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device-tree binding documentation to represent
-the Control Backbone (CBB) version 2.0 used in T234 SoC.
+Adding driver to handle errors from CBB version 2.0 which is
+used in Tegra234 SOC. The driver prints debug information about
+failed transaction on receiving interrupt from Error Notifier.
+Error notifier collates the interrupts from various Error
+Monitor blocks and presents a single interrupt to the SOC
+Interrupt Controller.
+For timeout errors, the driver also does the lookup to find
+timedout clients and prints client id. The IP's who want to
+reset if there is a timeout will have to call BPMP from the
+client IP's driver. BPMP firmware will also clear the timeout
+bit after resetting the IP so that next transactions are send
+to them after reset.
 
 Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 ---
- .../arm/tegra/nvidia,tegra234-cbb.yaml        | 74 +++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
+ drivers/soc/tegra/Kconfig            |   2 +-
+ drivers/soc/tegra/cbb/Makefile       |   1 +
+ drivers/soc/tegra/cbb/tegra234-cbb.c | 743 +++++++++++++++++++++++++++
+ include/soc/tegra/tegra234-cbb.h     | 342 ++++++++++++
+ 4 files changed, 1087 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/soc/tegra/cbb/tegra234-cbb.c
+ create mode 100644 include/soc/tegra/tegra234-cbb.h
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 65283a93e78f..bd360488cd82 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -165,7 +165,7 @@ config SOC_TEGRA30_VOLTAGE_COUPLER
+ 
+ config SOC_TEGRA_CBB
+ 	tristate "Tegra driver to handle error from CBB"
+-	depends on ARCH_TEGRA_194_SOC
++	depends on ARCH_TEGRA_194_SOC || ARCH_TEGRA_234_SOC
+ 	default y
+ 	help
+ 	  Support for handling error from Tegra Control Backbone(CBB).
+diff --git a/drivers/soc/tegra/cbb/Makefile b/drivers/soc/tegra/cbb/Makefile
+index 3f9ff6575628..71877d20651f 100644
+--- a/drivers/soc/tegra/cbb/Makefile
++++ b/drivers/soc/tegra/cbb/Makefile
+@@ -5,4 +5,5 @@
+ ifdef CONFIG_SOC_TEGRA_CBB
+ obj-y += tegra-cbb.o
+ obj-$(CONFIG_ARCH_TEGRA_194_SOC)        += tegra194-cbb.o
++obj-$(CONFIG_ARCH_TEGRA_234_SOC)        += tegra234-cbb.o
+ endif
+diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
 new file mode 100644
-index 000000000000..7b1fe50ffbe0
+index 000000000000..1f6c0f05b5e4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/arm/tegra/nvidia,tegra234-cbb.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
+@@ -0,0 +1,743 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved
++ *
++ * The driver handles Error's from Control Backbone(CBB) version 2.0.
++ * generated due to illegal accesses. The driver prints debug information
++ * about failed transaction on receiving interrupt from Error Notifier.
++ * Error types supported by CBB2.0 are:
++ *   UNSUPPORTED_ERR, PWRDOWN_ERR, TIMEOUT_ERR, FIREWALL_ERR, DECODE_ERR,
++ *   SLAVE_ERR
++ */
 +
-+title: NVIDIA Tegra CBB 2.0 bindings
++#include <asm/cpufeature.h>
++#include <linux/clk.h>
++#include <linux/debugfs.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/of_irq.h>
++#include <linux/of_address.h>
++#include <linux/interrupt.h>
++#include <linux/ioport.h>
++#include <linux/version.h>
++#include <soc/tegra/fuse.h>
++#include <soc/tegra/tegra-cbb.h>
++#include <soc/tegra/tegra234-cbb.h>
 +
-+maintainers:
-+  - Sumit Gupta <sumitg@nvidia.com>
++static LIST_HEAD(cbb_errmon_list);
++static DEFINE_SPINLOCK(cbb_errmon_lock);
 +
-+description: |+
-+  The Control Backbone (CBB) is comprised of the physical path from an
-+  initiator to a target's register configuration space. CBB 2.0 consists
-+  of multiple sub-blocks connected to each other to create a topology.
-+  The Tegra234 SoC has different fabrics based on CBB 2.0 architecture
-+  which include cluster fabrics BPMP, AON, PSC, SCE, RCE, DCE, FSI and
-+  "CBB central fabric".
++static void tegra234_cbb_errmon_faulten(struct tegra_cbb *cbb)
++{
++	struct tegra_cbb_errmon_record *errmon;
++	void __iomem *addr;
 +
-+  In CBB 2.0, each initiator which can issue transactions connects to a
-+  Root Master Node (MN) before it connects to any other element of the
-+  fabric. Each Root MN contains a Error Monitor (EM) which detects and
-+  logs error. Interrupts from various EM blocks are collated by Error
-+  Notifier (EN) which is per fabric and presents a single interrupt from
-+  fabric to the SoC interrupt controller.
++	errmon = (struct tegra_cbb_errmon_record *)cbb->err_rec;
 +
-+  The driver handles errors from CBB due to illegal register accesses
-+  and prints debug information about failed transaction on receiving
-+  the interrupt from EN. Debug information includes Error Code, Error
-+  Description, MasterID, Fabric, SlaveID, Address, Cache, Protection,
-+  Security Group etc on receiving error notification.
++	addr = errmon->vaddr + errmon->err_notifier_base;
++	writel(0x1FF, addr + FABRIC_EN_CFG_INTERRUPT_ENABLE_0_0);
++	dsb(sy);
++}
 +
-+  If the Error Response Disable (ERD) is set/enabled for an initiator,
-+  then SError or Data abort exception error response is masked and an
-+  interrupt is used for reporting errors due to illegal accesses from
-+  that initiator. The value returned on read failures is '0xFFFFFFFF'
-+  for compatibility with PCIE.
++static void tegra234_cbb_errmon_errclr(struct tegra_cbb *cbb)
++{
++	void __iomem *addr;
 +
-+properties:
-+  $nodename:
-+    pattern: "^[a-z]+-fabric@[0-9a-f]+$"
++	addr = ((struct tegra_cbb_errmon_record *)cbb->err_rec)->addr_errmon;
 +
-+  compatible:
-+    enum:
-+      - nvidia,tegra234-aon-fabric
-+      - nvidia,tegra234-bpmp-fabric
-+      - nvidia,tegra234-cbb-fabric
-+      - nvidia,tegra234-dce-fabric
-+      - nvidia,tegra234-rce-fabric
-+      - nvidia,tegra234-sce-fabric
++	writel(0x3F, addr + FABRIC_MN_MASTER_ERR_STATUS_0);
++	dsb(sy);
++}
 +
-+  reg:
-+    maxItems: 1
++static u32 tegra234_cbb_errmon_errvld(struct tegra_cbb *cbb)
++{
++	struct tegra_cbb_errmon_record *errmon;
++	void __iomem *addr;
++	u32 errvld;
 +
-+  interrupts:
-+    items:
-+      - description: secure interrupt from error notifier
++	errmon = (struct tegra_cbb_errmon_record *)cbb->err_rec;
 +
-+additionalProperties: false
++	addr = errmon->vaddr + errmon->err_notifier_base;
++	errvld = readl(addr + FABRIC_EN_CFG_STATUS_0_0);
++	dsb(sy);
 +
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
++	return errvld;
++}
 +
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
++static void tegra234_cbb_mn_mask_serror(struct tegra_cbb *cbb)
++{
++	struct tegra_cbb_errmon_record *errmon;
++	void __iomem *erd_mask;
 +
-+    cbb-fabric@1300000 {
-+      compatible = "nvidia,tegra234-cbb-fabric";
-+      reg = <0x13a00000 0x400000>;
-+      interrupts = <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>;
-+    };
++	errmon = (struct tegra_cbb_errmon_record *)cbb->err_rec;
++
++	erd_mask = errmon->vaddr + errmon->off_mask_erd;
++	writel(0x1, erd_mask);
++	dsb(sy);
++}
++
++u32 tegra234_cbb_readl(unsigned long offset)
++{
++	struct tegra_cbb_errmon_record *errmon;
++	bool flag = 0;
++	u32 val = 0;
++
++	if (offset > 0x3FFFFF) {
++		pr_err("%s: wrong offset value\n", __func__);
++		return 0;
++	}
++
++	list_for_each_entry(errmon, &cbb_errmon_list, node) {
++		if (strstr(errmon->name, "cbb")) {
++			val = readl(errmon->vaddr + offset);
++			flag = true;
++			break;
++		}
++	}
++	if (!flag)
++		pr_err("%s: cbb fabric not initialized\n", __func__);
++
++	return val;
++}
++EXPORT_SYMBOL(tegra234_cbb_readl);
++
++void tegra234_cbb_writel(unsigned long offset, u32 val)
++{
++	struct tegra_cbb_errmon_record *errmon;
++	bool flag = 0;
++
++	if (offset > 0x3FFFFF) {
++		pr_err("%s: wrong offset value\n", __func__);
++		return;
++	}
++
++	list_for_each_entry(errmon, &cbb_errmon_list, node) {
++		if (strstr(errmon->name, "cbb")) {
++			writel(val, errmon->vaddr + offset);
++			flag = true;
++			break;
++		}
++	}
++	if (!flag)
++		pr_err("%s: cbb fabric not initialized\n", __func__);
++}
++EXPORT_SYMBOL(tegra234_cbb_writel);
++
++static u32 tegra234_cbb_get_tmo_slv(void __iomem *addr)
++{
++	u32 timeout;
++
++	timeout = readl(addr);
++	return timeout;
++}
++
++static void tegra234_cbb_tmo_slv(struct seq_file *file, char *slv_name,
++				 void __iomem *addr, u32 tmo_status)
++{
++	tegra_cbb_print_err(file, "\t  %s : 0x%x\n", slv_name, tmo_status);
++}
++
++static void tegra234_cbb_lookup_apbslv(struct seq_file *file, char *slave_name, u64 addr)
++{
++	unsigned int blkno_tmo_status, tmo_status;
++	unsigned int reset_client, client_id;
++	char slv_name[40];
++	int block_num = 0;
++
++	tmo_status = tegra234_cbb_get_tmo_slv((void __iomem *)addr);
++	if (tmo_status)
++		tegra_cbb_print_err(file, "\t  %s_BLOCK_TMO_STATUS : 0x%x\n",
++				    slave_name, tmo_status);
++
++	while (tmo_status) {
++		if (!(tmo_status & BIT(0)))
++			goto next_iter;
++
++		addr =  addr + APB_BLOCK_NUM_TMO_OFFSET + (block_num * 4);
++		blkno_tmo_status = tegra234_cbb_get_tmo_slv((void __iomem *)addr);
++		reset_client = blkno_tmo_status;
++
++		if (blkno_tmo_status) {
++			client_id = 1;
++			while (blkno_tmo_status) {
++				if (blkno_tmo_status & 0x1) {
++					if (reset_client != 0xffffffff)
++						reset_client &= client_id;
++
++					sprintf(slv_name, "%s_BLOCK%d_TMO", slave_name, block_num);
++
++					tegra234_cbb_tmo_slv(file, slv_name, (void __iomem *)addr,
++							     reset_client);
++				}
++				blkno_tmo_status >>= 1;
++				client_id <<= 1;
++			}
++		}
++next_iter:
++		tmo_status >>= 1;
++		block_num++;
++	}
++}
++
++static void tegra234_lookup_slave_timeout(struct seq_file *file,
++					  struct tegra_cbb_errmon_record *errmon,
++					  u8 slave_id, u8 fab_id)
++{
++	struct tegra_sn_addr_map *sn_lookup = errmon->sn_addr_map;
++	void __iomem *base_addr = errmon->vaddr;
++	unsigned int tmo_status;
++	char slv_name[40];
++	int i = slave_id;
++	u64 addr = 0;
++
++	/*
++	 * 1) Get slave node name and address mapping using slave_id.
++	 * 2) Check if the timed out slave node is APB or AXI.
++	 * 3) If AXI, then print timeout register and reset axi slave
++	 *    using <FABRIC>_SN_<>_SLV_TIMEOUT_STATUS_0_0 register.
++	 * 4) If APB, then perform an additional lookup to find the client
++	 *    which timed out.
++	 *	a) Get block number from the index of set bit in
++	 *	   <FABRIC>_SN_AXI2APB_<>_BLOCK_TMO_STATUS_0 register.
++	 *	b) Get address of register repective to block number i.e.
++	 *	   <FABRIC>_SN_AXI2APB_<>_BLOCK<index-set-bit>_TMO_0.
++	 *	c) Read the register in above step to get client_id which
++	 *	   timed out as per the set bits.
++	 *      d) Reset the timedout client and print details.
++	 *	e) Goto step-a till all bits are set.
++	 */
++
++	addr = (u64)base_addr + sn_lookup[i].off_slave;
++
++	if (strstr(sn_lookup[i].slave_name, "AXI2APB")) {
++		addr = addr + APB_BLOCK_TMO_STATUS_0;
++		tegra234_cbb_lookup_apbslv(file, sn_lookup[i].slave_name, addr);
++	} else {
++		addr = addr + AXI_SLV_TIMEOUT_STATUS_0_0;
++
++		tmo_status = tegra234_cbb_get_tmo_slv((void __iomem *)addr);
++		if (tmo_status) {
++			sprintf(slv_name, "%s_SLV_TIMEOUT_STATUS", sn_lookup[i].slave_name);
++			tegra234_cbb_tmo_slv(file, slv_name, (void __iomem *)addr, tmo_status);
++		}
++	}
++}
++
++static void print_errmon_err(struct seq_file *file, struct tegra_cbb_errmon_record *errmon,
++			     unsigned int em_err_status, unsigned int em_overflow_status)
++{
++	int err_type = 0;
++
++	if (em_err_status & (em_err_status - 1))
++		tegra_cbb_print_err(file, "\t  Multiple type of errors reported\n");
++
++	while (em_err_status) {
++		if (em_err_status & 0x1)
++			tegra_cbb_print_err(file, "\t  Error Code\t\t: %s\n",
++					    t234_errmon_errors[err_type].errcode);
++		em_err_status >>= 1;
++		err_type++;
++	}
++
++	err_type = 0;
++	while (em_overflow_status) {
++		if (em_overflow_status & 0x1)
++			tegra_cbb_print_err(file, "\t  Overflow\t\t: Multiple %s\n",
++					    t234_errmon_errors[err_type].errcode);
++		em_overflow_status >>= 1;
++		err_type++;
++	}
++}
++
++static void print_errlog_err(struct seq_file *file, struct tegra_cbb_errmon_record *errmon)
++{
++	u8 cache_type = 0, prot_type = 0, burst_length = 0;
++	u8 mstr_id = 0, grpsec = 0, vqc = 0, falconsec = 0;
++	u8 beat_size = 0, access_type = 0, access_id = 0;
++	u8 slave_id = 0, fab_id = 0, burst_type = 0;
++	char fabric_name[20];
++
++	mstr_id   = FIELD_GET(FAB_EM_EL_MSTRID, errmon->mn_user_bits);
++	vqc	  = FIELD_GET(FAB_EM_EL_VQC, errmon->mn_user_bits);
++	grpsec	  = FIELD_GET(FAB_EM_EL_GRPSEC, errmon->mn_user_bits);
++	falconsec = FIELD_GET(FAB_EM_EL_FALCONSEC, errmon->mn_user_bits);
++
++	fab_id	   = FIELD_GET(FAB_EM_EL_FABID, errmon->mn_attr2);
++	slave_id   = FIELD_GET(FAB_EM_EL_SLAVEID, errmon->mn_attr2);
++
++	access_id  = FIELD_GET(FAB_EM_EL_ACCESSID, errmon->mn_attr1);
++
++	cache_type   = FIELD_GET(FAB_EM_EL_AXCACHE, errmon->mn_attr0);
++	prot_type    = FIELD_GET(FAB_EM_EL_AXPROT, errmon->mn_attr0);
++	burst_length = FIELD_GET(FAB_EM_EL_BURSTLENGTH, errmon->mn_attr0);
++	burst_type   = FIELD_GET(FAB_EM_EL_BURSTTYPE, errmon->mn_attr0);
++	beat_size    = FIELD_GET(FAB_EM_EL_BEATSIZE, errmon->mn_attr0);
++	access_type  = FIELD_GET(FAB_EM_EL_ACCESSTYPE, errmon->mn_attr0);
++
++	tegra_cbb_print_err(file, "\n");
++	tegra_cbb_print_err(file, "\t  Error Code\t\t: %s\n",
++			    t234_errmon_errors[errmon->err_type].errcode);
++
++	tegra_cbb_print_err(file, "\t  MASTER_ID\t\t: %s\n", errmon->tegra_cbb_master_id[mstr_id]);
++	tegra_cbb_print_err(file, "\t  Address\t\t: 0x%llx\n", (u64)errmon->addr_access);
++
++	tegra_cbb_print_cache(file, cache_type);
++	tegra_cbb_print_prot(file, prot_type);
++
++	tegra_cbb_print_err(file, "\t  Access_Type\t\t: %s", (access_type) ? "Write\n" : "Read\n");
++	tegra_cbb_print_err(file, "\t  Access_ID\t\t: 0x%x", access_id);
++
++	if (fab_id == PSC_FAB_ID)
++		strcpy(fabric_name, "psc-fabric");
++	else if (fab_id == FSI_FAB_ID)
++		strcpy(fabric_name, "fsi-fabric");
++	else
++		strcpy(fabric_name, errmon->name);
++
++	tegra_cbb_print_err(file, "\t  Fabric\t\t: %s\n", fabric_name);
++	tegra_cbb_print_err(file, "\t  Slave_Id\t\t: 0x%x\n", slave_id);
++	tegra_cbb_print_err(file, "\t  Burst_length\t\t: 0x%x\n", burst_length);
++	tegra_cbb_print_err(file, "\t  Burst_type\t\t: 0x%x\n", burst_type);
++	tegra_cbb_print_err(file, "\t  Beat_size\t\t: 0x%x\n", beat_size);
++	tegra_cbb_print_err(file, "\t  VQC\t\t\t: 0x%x\n", vqc);
++	tegra_cbb_print_err(file, "\t  GRPSEC\t\t: 0x%x\n", grpsec);
++	tegra_cbb_print_err(file, "\t  FALCONSEC\t\t: 0x%x\n", falconsec);
++
++	if ((fab_id == PSC_FAB_ID) || (fab_id == FSI_FAB_ID))
++		return;
++
++	if (!strcmp(errmon->noc_errors[errmon->err_type].errcode, "TIMEOUT_ERR")) {
++		tegra234_lookup_slave_timeout(file, errmon, slave_id, fab_id);
++		return;
++	}
++	tegra_cbb_print_err(file, "\t  Slave\t\t\t: %s\n",
++			    errmon->sn_addr_map[slave_id].slave_name);
++}
++
++static int print_errmonX_info(struct seq_file *file, struct tegra_cbb_errmon_record *errmon)
++{
++	unsigned int em_overflow_status = 0;
++	unsigned int em_err_status = 0;
++	unsigned int el_err_status = 0;
++	u64 addr = 0;
++
++	errmon->err_type = 0;
++
++	em_err_status = readl(errmon->addr_errmon +
++					FABRIC_MN_MASTER_ERR_STATUS_0);
++	if (!em_err_status) {
++		pr_err("Error Notifier received a spurious notification\n");
++		BUG();
++	}
++
++	if (em_err_status == 0xFFFFFFFF) {
++		pr_err("CBB registers returning all 1's which is invalid\n");
++		return -EINVAL;
++	}
++
++	/*get overflow flag*/
++	em_overflow_status = readl(errmon->addr_errmon +
++				   FABRIC_MN_MASTER_ERR_OVERFLOW_STATUS_0);
++
++	print_errmon_err(file, errmon, em_err_status, em_overflow_status);
++
++	el_err_status = readl(errmon->addr_errmon + FABRIC_MN_MASTER_LOG_ERR_STATUS_0);
++	if (!el_err_status) {
++		pr_info("Error Monitor doesn't have Error Logger\n");
++		return -EINVAL;
++	}
++
++	while (el_err_status) {
++		if (el_err_status & BIT(0)) {
++			addr = readl(errmon->addr_errmon +
++				     FABRIC_MN_MASTER_LOG_ADDR_HIGH_0);
++			addr = (addr << 32) |
++				readl(errmon->addr_errmon +
++				      FABRIC_MN_MASTER_LOG_ADDR_LOW_0);
++			errmon->addr_access = (void __iomem *)addr;
++
++			errmon->mn_attr0 = readl(errmon->addr_errmon +
++						 FABRIC_MN_MASTER_LOG_ATTRIBUTES0_0);
++
++			errmon->mn_attr1 = readl(errmon->addr_errmon +
++						 FABRIC_MN_MASTER_LOG_ATTRIBUTES1_0);
++
++			errmon->mn_attr2 = readl(errmon->addr_errmon +
++						 FABRIC_MN_MASTER_LOG_ATTRIBUTES2_0);
++
++			errmon->mn_user_bits = readl(errmon->addr_errmon +
++						     FABRIC_MN_MASTER_LOG_USER_BITS0_0);
++
++			print_errlog_err(file, errmon);
++		}
++		errmon->err_type++;
++		el_err_status >>= 1;
++	}
++	return 0;
++}
++
++static int print_err_notifier(struct seq_file *file, struct tegra_cbb *cbb,
++			      struct tegra_cbb_errmon_record *errmon, int err_notifier_sts)
++{
++	u64 em_addr_offset = 0;
++	u64 em_phys_addr = 0;
++	int errmon_no = 1;
++	int ret = 0;
++
++	pr_crit("**************************************\n");
++	pr_crit("CPU:%d, Error:%s, Errmon:%d\n", smp_processor_id(),
++		errmon->name, err_notifier_sts);
++
++	while (err_notifier_sts) {
++		if (err_notifier_sts & BIT(0)) {
++			writel(errmon_no, errmon->vaddr + errmon->err_notifier_base +
++			       FABRIC_EN_CFG_ADDR_INDEX_0_0);
++
++			em_phys_addr = readl(errmon->vaddr + errmon->err_notifier_base +
++					     FABRIC_EN_CFG_ADDR_HI_0);
++			em_phys_addr = (em_phys_addr << 32) |
++					    readl(errmon->vaddr + errmon->err_notifier_base +
++						  FABRIC_EN_CFG_ADDR_LOW_0);
++
++			em_addr_offset = em_phys_addr - errmon->start;
++			errmon->addr_errmon = (void __iomem *)(errmon->vaddr + em_addr_offset);
++
++			errmon->errmon_no = errmon_no;
++
++			ret = print_errmonX_info(file, errmon);
++			tegra234_cbb_errmon_errclr(cbb);
++			if (ret)
++				return ret;
++		}
++		err_notifier_sts >>= 1;
++		errmon_no <<= 1;
++	}
++
++	tegra_cbb_print_err(file, "\t**************************************\n");
++	return 0;
++}
++
++#ifdef CONFIG_DEBUG_FS
++static DEFINE_MUTEX(cbb_err_mutex);
++
++static int tegra234_cbb_err_show(struct tegra_cbb *cbb, struct seq_file *file, void *data)
++{
++	struct tegra_cbb_errmon_record *errmon;
++	unsigned int errvld = 0;
++	int ret = 0;
++
++	mutex_lock(&cbb_err_mutex);
++
++	list_for_each_entry(errmon, &cbb_errmon_list, node) {
++		cbb = errmon->cbb;
++		errvld = tegra_cbb_errvld(cbb);
++		if (errvld) {
++			ret = print_err_notifier(file, cbb, errmon, errvld);
++			if (ret)
++				goto en_show_exit;
++		}
++	}
++
++en_show_exit:
++	mutex_unlock(&cbb_err_mutex);
++	return ret;
++}
++#endif
++
++/*
++ * Handler for CBB errors
++ */
++static irqreturn_t tegra234_cbb_err_isr(int irq, void *data)
++{
++	struct tegra_cbb_errmon_record *errmon;
++	struct tegra_cbb *cbb = data;
++	bool is_inband_err = 0;
++	unsigned long flags;
++	u32 errvld = 0;
++	u8 mstr_id = 0;
++	int ret = 0;
++
++	spin_lock_irqsave(&cbb_errmon_lock, flags);
++
++	list_for_each_entry(errmon, &cbb_errmon_list, node) {
++		errvld = tegra_cbb_errvld(cbb);
++
++		if (errvld && (irq == errmon->sec_irq)) {
++			tegra_cbb_print_err(NULL, "CPU:%d, Error:%s@0x%llx, irq=%d\n",
++					    smp_processor_id(), errmon->name,
++					    errmon->start, irq);
++
++			ret = print_err_notifier(NULL, cbb, errmon, errvld);
++			if (ret)
++				goto en_isr_exit;
++
++			mstr_id =  FIELD_GET(USRBITS_MSTR_ID, errmon->mn_user_bits);
++
++			/* If illegal request is from CCPLEX(id:0x1)
++			 * master then call BUG() to crash system.
++			 */
++			if ((mstr_id == 0x1) && errmon->erd_mask_inband_err)
++				is_inband_err = 1;
++		}
++	}
++en_isr_exit:
++	spin_unlock_irqrestore(&cbb_errmon_lock, flags);
++
++	WARN_ON(is_inband_err);
++
++	return IRQ_HANDLED;
++}
++
++/*
++ * Register handler for CBB_SECURE interrupt for reporting errors
++ */
++static int tegra234_cbb_intr_en(struct tegra_cbb *cbb)
++{
++	struct platform_device *pdev = cbb->pdev;
++	int sec_irq;
++	int err = 0;
++
++	sec_irq = ((struct tegra_cbb_errmon_record *)cbb->err_rec)->sec_irq;
++
++	if (sec_irq) {
++		err = devm_request_irq(&pdev->dev, sec_irq, tegra234_cbb_err_isr,
++				       0, dev_name(&pdev->dev), cbb);
++		if (err) {
++			dev_err(&pdev->dev, "%s: Unable to register (%d) interrupt\n",
++				__func__, sec_irq);
++			goto isr_err_free_sec_irq;
++		}
++	}
++	return 0;
++
++isr_err_free_sec_irq:
++	free_irq(sec_irq, pdev);
++
++	return err;
++}
++
++static void tegra234_cbb_err_en(struct tegra_cbb *cbb)
++{
++	tegra_cbb_faulten(cbb);
++}
++
++static struct tegra_cbb_err_ops tegra234_cbb_errmon_ops = {
++	.errvld	 = tegra234_cbb_errmon_errvld,
++	.errclr	 = tegra234_cbb_errmon_errclr,
++	.faulten = tegra234_cbb_errmon_faulten,
++	.cbb_err_enable = tegra234_cbb_err_en,
++	.cbb_intr_enable = tegra234_cbb_intr_en,
++#ifdef CONFIG_DEBUG_FS
++	.cbb_err_debugfs_show = tegra234_cbb_err_show
++#endif
++};
++
++static struct tegra_cbb_fabric_data tegra234_aon_fab_data = {
++	.name   = "aon-fabric",
++	.tegra_cbb_master_id = t234_master_id,
++	.sn_addr_map = t234_aon_sn_lookup,
++	.noc_errors = t234_errmon_errors,
++	.err_notifier_base = 0x17000
++};
++
++static struct tegra_cbb_fabric_data tegra234_bpmp_fab_data = {
++	.name   = "bpmp-fabric",
++	.tegra_cbb_master_id = t234_master_id,
++	.sn_addr_map = t234_bpmp_sn_lookup,
++	.noc_errors = t234_errmon_errors,
++	.err_notifier_base = 0x19000
++};
++
++static struct tegra_cbb_fabric_data tegra234_cbb_fab_data = {
++	.name   = "cbb-fabric",
++	.tegra_cbb_master_id = t234_master_id,
++	.sn_addr_map = t234_cbb_sn_lookup,
++	.noc_errors = t234_errmon_errors,
++	.err_notifier_base = 0x60000,
++	.off_mask_erd = 0x3a004
++};
++
++static struct tegra_cbb_fabric_data tegra234_dce_fab_data = {
++	.name   = "dce-fabric",
++	.tegra_cbb_master_id = t234_master_id,
++	.sn_addr_map = t234_dce_sn_lookup,
++	.noc_errors = t234_errmon_errors,
++	.err_notifier_base = 0x19000
++};
++
++static struct tegra_cbb_fabric_data tegra234_rce_fab_data = {
++	.name   = "rce-fabric",
++	.tegra_cbb_master_id = t234_master_id,
++	.sn_addr_map = t234_rce_sn_lookup,
++	.noc_errors = t234_errmon_errors,
++	.err_notifier_base = 0x19000
++};
++
++static struct tegra_cbb_fabric_data tegra234_sce_fab_data = {
++	.name   = "sce-fabric",
++	.tegra_cbb_master_id = t234_master_id,
++	.sn_addr_map = t234_sce_sn_lookup,
++	.noc_errors = t234_errmon_errors,
++	.err_notifier_base = 0x19000
++};
++
++static const struct of_device_id tegra234_cbb_dt_ids[] = {
++	{.compatible    = "nvidia,tegra234-cbb-fabric",
++		.data = &tegra234_cbb_fab_data},
++	{.compatible    = "nvidia,tegra234-aon-fabric",
++		.data = &tegra234_aon_fab_data},
++	{.compatible    = "nvidia,tegra234-bpmp-fabric",
++		.data = &tegra234_bpmp_fab_data},
++	{.compatible    = "nvidia,tegra234-dce-fabric",
++		.data = &tegra234_dce_fab_data},
++	{.compatible    = "nvidia,tegra234-rce-fabric",
++		.data = &tegra234_rce_fab_data},
++	{.compatible    = "nvidia,tegra234-sce-fabric",
++		.data = &tegra234_sce_fab_data},
++	{},
++};
++MODULE_DEVICE_TABLE(of, tegra234_cbb_dt_ids);
++
++static int
++tegra234_cbb_errmon_init(const struct tegra_cbb_fabric_data *pdata,
++			 struct tegra_cbb *cbb, struct resource *res_base)
++{
++	struct platform_device *pdev = cbb->pdev;
++	struct tegra_cbb_errmon_record *errmon;
++	unsigned long flags = 0;
++	int err = 0;
++
++	errmon = (struct tegra_cbb_errmon_record *)cbb->err_rec;
++	errmon->vaddr = devm_ioremap_resource(&pdev->dev, res_base);
++	if (IS_ERR(errmon->vaddr))
++		return -EINVAL;
++
++	errmon->name = pdata->name;
++	errmon->start = res_base->start;
++	errmon->tegra_cbb_master_id = pdata->tegra_cbb_master_id;
++	errmon->err_notifier_base = pdata->err_notifier_base;
++	errmon->off_mask_erd = pdata->off_mask_erd;
++	errmon->sn_addr_map = pdata->sn_addr_map;
++	errmon->noc_errors = pdata->noc_errors;
++	errmon->cbb = cbb;
++
++	if (errmon->off_mask_erd)
++		errmon->erd_mask_inband_err = 1;
++
++	err = tegra_cbb_err_getirq(pdev, NULL, &errmon->sec_irq);
++	if (err)
++		return err;
++
++	cbb->ops = &tegra234_cbb_errmon_ops;
++
++	spin_lock_irqsave(&cbb_errmon_lock, flags);
++	list_add(&errmon->node, &cbb_errmon_list);
++	spin_unlock_irqrestore(&cbb_errmon_lock, flags);
++
++	return 0;
++};
++
++static int tegra234_cbb_probe(struct platform_device *pdev)
++{
++	struct tegra_cbb_errmon_record *errmon = NULL;
++	const struct tegra_cbb_fabric_data *pdata = NULL;
++	struct resource *res_base = NULL;
++	struct tegra_cbb *cbb;
++	int err = 0;
++
++	pdata = of_device_get_match_data(&pdev->dev);
++	if (!pdata) {
++		dev_err(&pdev->dev, "No device match found\n");
++		return -EINVAL;
++	}
++
++	res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res_base) {
++		dev_err(&pdev->dev, "Could not find base address");
++		return -ENOENT;
++	}
++
++	cbb = devm_kzalloc(&pdev->dev, sizeof(*cbb), GFP_KERNEL);
++	if (!cbb)
++		return -ENOMEM;
++
++	errmon = devm_kzalloc(&pdev->dev, sizeof(*errmon), GFP_KERNEL);
++	if (!errmon)
++		return -ENOMEM;
++
++	cbb->err_rec = errmon;
++	cbb->pdev = pdev;
++	err = tegra234_cbb_errmon_init(pdata, cbb, res_base);
++	if (err) {
++		dev_err(&pdev->dev, "cbberr init for soc failing\n");
++		return err;
++	}
++
++	/* set ERD bit to mask SError and generate interrupt to report error */
++	if (errmon->erd_mask_inband_err)
++		tegra234_cbb_mn_mask_serror(cbb);
++
++	platform_set_drvdata(pdev, cbb);
++
++	return tegra_cbb_register_isr_enaberr(cbb);
++}
++
++static int tegra234_cbb_remove(struct platform_device *pdev)
++{
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int tegra234_cbb_resume_noirq(struct device *dev)
++{
++	struct tegra_cbb *cbb = dev_get_drvdata(dev);
++	struct tegra_cbb_errmon_record *errmon;
++
++	errmon = (struct tegra_cbb_errmon_record *)cbb->err_rec;
++
++	if (!errmon)
++		return -EINVAL;
++
++	tegra234_cbb_err_en(cbb);
++
++	dev_info(dev, "%s resumed\n", errmon->name);
++	return 0;
++}
++
++static const struct dev_pm_ops tegra234_cbb_pm = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, tegra234_cbb_resume_noirq)
++};
++#endif
++
++static struct platform_driver tegra234_cbb_driver = {
++	.probe          = tegra234_cbb_probe,
++	.remove         = tegra234_cbb_remove,
++	.driver = {
++		.owner  = THIS_MODULE,
++		.name   = "tegra234-cbb",
++		.of_match_table = of_match_ptr(tegra234_cbb_dt_ids),
++#ifdef CONFIG_PM_SLEEP
++		.pm     = &tegra234_cbb_pm,
++#endif
++	},
++};
++
++static int __init tegra234_cbb_init(void)
++{
++	return platform_driver_register(&tegra234_cbb_driver);
++}
++
++static void __exit tegra234_cbb_exit(void)
++{
++	platform_driver_unregister(&tegra234_cbb_driver);
++}
++
++pure_initcall(tegra234_cbb_init);
++module_exit(tegra234_cbb_exit);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Control Backbone 2.0 error handling driver for Tegra234");
+diff --git a/include/soc/tegra/tegra234-cbb.h b/include/soc/tegra/tegra234-cbb.h
+new file mode 100644
+index 000000000000..c8e7cf3ffda3
+--- /dev/null
++++ b/include/soc/tegra/tegra234-cbb.h
+@@ -0,0 +1,342 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved
++ */
++
++#define FABRIC_EN_CFG_INTERRUPT_ENABLE_0_0	0x0
++#define FABRIC_EN_CFG_STATUS_0_0		0x40
++#define FABRIC_EN_CFG_ADDR_INDEX_0_0		0x60
++#define FABRIC_EN_CFG_ADDR_LOW_0		0x80
++#define FABRIC_EN_CFG_ADDR_HI_0			0x84
++
++#define FABRIC_MN_MASTER_ERR_EN_0		0x200
++#define FABRIC_MN_MASTER_ERR_FORCE_0		0x204
++#define FABRIC_MN_MASTER_ERR_STATUS_0		0x208
++#define FABRIC_MN_MASTER_ERR_OVERFLOW_STATUS_0	0x20c
++
++#define FABRIC_MN_MASTER_LOG_ERR_STATUS_0	0x300
++#define FABRIC_MN_MASTER_LOG_ADDR_LOW_0		0x304
++#define FABRIC_MN_MASTER_LOG_ADDR_HIGH_0	0x308
++#define FABRIC_MN_MASTER_LOG_ATTRIBUTES0_0	0x30c
++#define FABRIC_MN_MASTER_LOG_ATTRIBUTES1_0	0x310
++#define FABRIC_MN_MASTER_LOG_ATTRIBUTES2_0	0x314
++#define FABRIC_MN_MASTER_LOG_USER_BITS0_0	0x318
++
++#define AXI_SLV_TIMEOUT_STATUS_0_0		0x8
++#define APB_BLOCK_TMO_STATUS_0			0xC00
++#define APB_BLOCK_NUM_TMO_OFFSET		0x20
++
++#define FAB_EM_EL_MSTRID		GENMASK(29, 24)
++#define FAB_EM_EL_VQC			GENMASK(17, 16)
++#define FAB_EM_EL_GRPSEC		GENMASK(14, 8)
++#define FAB_EM_EL_FALCONSEC		GENMASK(1, 0)
++
++#define FAB_EM_EL_FABID			GENMASK(20, 16)
++#define FAB_EM_EL_SLAVEID		GENMASK(7, 0)
++
++#define FAB_EM_EL_ACCESSID		GENMASK(7, 0)
++
++#define FAB_EM_EL_AXCACHE		GENMASK(27, 24)
++#define FAB_EM_EL_AXPROT		GENMASK(22, 20)
++#define FAB_EM_EL_BURSTLENGTH		GENMASK(19, 12)
++#define FAB_EM_EL_BURSTTYPE		GENMASK(9, 8)
++#define FAB_EM_EL_BEATSIZE		GENMASK(6, 4)
++#define FAB_EM_EL_ACCESSTYPE		GENMASK(0, 0)
++
++#define USRBITS_MSTR_ID GENMASK(29, 24)
++
++enum tegra_cbb_fabric_ids {
++	CBB_FAB_ID,
++	SCE_FAB_ID,
++	RCE_FAB_ID,
++	DCE_FAB_ID,
++	AON_FAB_ID,
++	PSC_FAB_ID,
++	BPMP_FAB_ID,
++	FSI_FAB_ID,
++	MAX_FAB_ID,
++};
++
++struct tegra_sn_addr_map {
++	char *slave_name;
++	u32 off_slave;
++};
++
++struct tegra_cbb_fabric_data {
++	char *name;
++	phys_addr_t off_mask_erd;
++	bool erd_mask_inband_err;
++	char **tegra_cbb_master_id;
++	phys_addr_t err_notifier_base;
++	struct tegra_noc_errors *noc_errors;
++	struct tegra_sn_addr_map *sn_addr_map;
++};
++
++struct tegra_cbb_errmon_record {
++	struct list_head node;
++	char *name;
++	int errmon_no;
++	int err_type;
++	phys_addr_t start;
++	phys_addr_t err_notifier_base;
++	int num_intr;
++	int sec_irq;
++	void __iomem *vaddr;
++	void __iomem *addr_errmon;
++	void __iomem *addr_access;
++	u32 mn_attr0;
++	u32 mn_attr1;
++	u32 mn_attr2;
++	u32 mn_user_bits;
++	phys_addr_t off_mask_erd;
++	bool erd_mask_inband_err;
++	struct tegra_cbb *cbb;
++	char **tegra_cbb_master_id;
++	struct tegra_noc_errors *noc_errors;
++	struct tegra_sn_addr_map *sn_addr_map;
++};
++
++u32 tegra234_cbb_readl(unsigned long offset);
++void tegra234_cbb_writel(unsigned long offset, u32 val);
++
++static char *t234_master_id[] = {
++	"TZ",				/* 0x0  */
++	"CCPLEX",			/* 0x1  */
++	"CCPMU",			/* 0x2  */
++	"BPMP_FW",			/* 0x3  */
++	"AON",				/* 0x4  */
++	"SCE",				/* 0x5  */
++	"GPCDMA_P",			/* 0x6  */
++	"TSECA_NONSECURE",		/* 0x7  */
++	"TSECA_LIGHTSECURE",		/* 0x8  */
++	"TSECA_HEAVYSECURE",		/* 0x9  */
++	"CORESIGHT",			/* 0xA  */
++	"APE",				/* 0xB  */
++	"PEATRANS",			/* 0xC  */
++	"JTAGM_DFT",			/* 0xD  */
++	"RCE",				/* 0xE  */
++	"DCE",				/* 0xF  */
++	"PSC_FW_USER",			/* 0x10 */
++	"PSC_FW_SUPERVISOR",		/* 0x11 */
++	"PSC_FW_MACHINE",		/* 0x12 */
++	"PSC_BOOT",			/* 0x13 */
++	"BPMP_BOOT",			/* 0x14 */
++	"NVDEC_NONSECURE",		/* 0x15 */
++	"NVDEC_LIGHTSECURE",		/* 0x16 */
++	"NVDEC_HEAVYSECURE",		/* 0x17 */
++	"CBB_INTERNAL",			/* 0x18 */
++	"RSVD"				/* 0x3F */
++};
++
++static struct tegra_noc_errors t234_errmon_errors[] = {
++	{.errcode = "SLAVE_ERR",
++	 .type = "Slave being accessed responded with an error"
++	},
++	{.errcode = "DECODE_ERR",
++	 .type = "Attempt to access an address hole"
++	},
++	{.errcode = "FIREWALL_ERR",
++	 .type = "Attempt to access a region which is firewall protected"
++	},
++	{.errcode = "TIMEOUT_ERR",
++	 .type = "No response returned by slave"
++	},
++	{.errcode = "PWRDOWN_ERR",
++	 .type = "Attempt to access a portion of fabric that is powered down"
++	},
++	{.errcode = "UNSUPPORTED_ERR",
++	 .type = "Attempt to access a slave through an unsupported access"
++	}
++};
++
++#define AON_SN_AXI2APB_1	0x00000
++#define AON_SN_AST1_T		0x14000
++#define AON_SN_CBB_T		0x15000
++#define AON_SN_CPU_T		0x16000
++
++#define BPMP_SN_AXI2APB_1	0x00000
++#define BPMP_SN_AST0_T		0x15000
++#define BPMP_SN_AST1_T		0x16000
++#define BPMP_SN_CBB_T		0x17000
++#define BPMP_SN_CPU_T		0x18000
++
++#define DCE_SN_AXI2APB_1	0x00000
++#define DCE_SN_AST0_T		0x15000
++#define DCE_SN_AST1_T		0x16000
++#define DCE_SN_CPU_T		0x18000
++
++#define RCE_SN_AXI2APB_1	0x00000
++#define RCE_SN_AST0_T		0x15000
++#define RCE_SN_AST1_T		0x16000
++#define RCE_SN_CPU_T		0x18000
++
++#define SCE_SN_AXI2APB_1	0x00000
++#define SCE_SN_AST0_T		0x15000
++#define SCE_SN_AST1_T		0x16000
++#define SCE_SN_CBB_T		0x17000
++#define SCE_SN_CPU_T		0x18000
++
++#define CBB_SN_AON_SLAVE	0x40000
++#define CBB_SN_BPMP_SLAVE	0x41000
++#define CBB_SN_CBB_CENTRAL	0x42000
++#define CBB_SN_HOST1X		0x43000
++#define CBB_SN_STM		0x44000
++#define CBB_SN_FSI_SLAVE	0x45000
++#define CBB_SN_PSC_SLAVE	0x46000
++#define CBB_SN_PCIE_C1		0x47000
++#define CBB_SN_PCIE_C2		0x48000
++#define CBB_SN_PCIE_C3		0x49000
++#define CBB_SN_PCIE_C0		0x4A000
++#define CBB_SN_PCIE_C4		0x4B000
++#define CBB_SN_GPU		0x4C000
++#define CBB_SN_SMMU0		0x4D000
++#define CBB_SN_SMMU1		0x4E000
++#define CBB_SN_SMMU2		0x4F000
++#define CBB_SN_SMMU3		0x50000
++#define CBB_SN_SMMU4		0x51000
++#define CBB_SN_PCIE_C10		0x52000
++#define CBB_SN_PCIE_C7		0x53000
++#define CBB_SN_PCIE_C8		0x54000
++#define CBB_SN_PCIE_C9		0x55000
++#define CBB_SN_PCIE_C5		0x56000
++#define CBB_SN_PCIE_C6		0x57000
++#define CBB_SN_DCE_SLAVE	0x58000
++#define CBB_SN_RCE_SLAVE	0x59000
++#define CBB_SN_SCE_SLAVE	0x5A000
++#define CBB_SN_AXI2APB_1	0x70000
++#define CBB_SN_AXI2APB_10	0x71000
++#define CBB_SN_AXI2APB_11	0x72000
++#define CBB_SN_AXI2APB_12	0x73000
++#define CBB_SN_AXI2APB_13	0x74000
++#define CBB_SN_AXI2APB_14	0x75000
++#define CBB_SN_AXI2APB_15	0x76000
++#define CBB_SN_AXI2APB_16	0x77000
++#define CBB_SN_AXI2APB_17	0x78000
++#define CBB_SN_AXI2APB_18	0x79000
++#define CBB_SN_AXI2APB_19	0x7A000
++#define CBB_SN_AXI2APB_2	0x7B000
++#define CBB_SN_AXI2APB_20	0x7C000
++#define CBB_SN_AXI2APB_21	0x7D000
++#define CBB_SN_AXI2APB_22	0x7E000
++#define CBB_SN_AXI2APB_23	0x7F000
++#define CBB_SN_AXI2APB_25	0x80000
++#define CBB_SN_AXI2APB_26	0x81000
++#define CBB_SN_AXI2APB_27	0x82000
++#define CBB_SN_AXI2APB_28	0x83000
++#define CBB_SN_AXI2APB_29	0x84000
++#define CBB_SN_AXI2APB_30	0x85000
++#define CBB_SN_AXI2APB_31	0x86000
++#define CBB_SN_AXI2APB_32	0x87000
++#define CBB_SN_AXI2APB_33	0x88000
++#define CBB_SN_AXI2APB_34	0x89000
++#define CBB_SN_AXI2APB_35	0x92000
++#define CBB_SN_AXI2APB_4	0x8B000
++#define CBB_SN_AXI2APB_5	0x8C000
++#define CBB_SN_AXI2APB_6	0x8D000
++#define CBB_SN_AXI2APB_7	0x8E000
++#define CBB_SN_AXI2APB_8	0x8F000
++#define CBB_SN_AXI2APB_9	0x90000
++#define CBB_SN_AXI2APB_3	0x91000
++
++#define SLAVE_LOOKUP(sn) #sn, sn
++
++static struct tegra_sn_addr_map t234_aon_sn_lookup[] = {
++	{ SLAVE_LOOKUP(AON_SN_AXI2APB_1) },
++	{ SLAVE_LOOKUP(AON_SN_AST1_T) },
++	{ SLAVE_LOOKUP(AON_SN_CBB_T) },
++	{ SLAVE_LOOKUP(AON_SN_CPU_T) }
++};
++
++static struct tegra_sn_addr_map t234_bpmp_sn_lookup[] = {
++	{ SLAVE_LOOKUP(BPMP_SN_AXI2APB_1) },
++	{ SLAVE_LOOKUP(BPMP_SN_AST0_T) },
++	{ SLAVE_LOOKUP(BPMP_SN_AST1_T) },
++	{ SLAVE_LOOKUP(BPMP_SN_CBB_T) },
++	{ SLAVE_LOOKUP(BPMP_SN_CPU_T) },
++};
++
++static struct tegra_sn_addr_map t234_sce_sn_lookup[] = {
++	{ SLAVE_LOOKUP(SCE_SN_AXI2APB_1) },
++	{ SLAVE_LOOKUP(SCE_SN_AST0_T) },
++	{ SLAVE_LOOKUP(SCE_SN_AST1_T) },
++	{ SLAVE_LOOKUP(SCE_SN_CBB_T) },
++	{ SLAVE_LOOKUP(SCE_SN_CPU_T) }
++};
++
++static struct tegra_sn_addr_map t234_dce_sn_lookup[] = {
++	{ SLAVE_LOOKUP(DCE_SN_AXI2APB_1) },
++	{ SLAVE_LOOKUP(DCE_SN_AST0_T) },
++	{ SLAVE_LOOKUP(DCE_SN_AST1_T) },
++	{ SLAVE_LOOKUP(DCE_SN_CPU_T) }
++};
++
++static struct tegra_sn_addr_map t234_rce_sn_lookup[] = {
++	{ SLAVE_LOOKUP(RCE_SN_AXI2APB_1) },
++	{ SLAVE_LOOKUP(RCE_SN_AST0_T) },
++	{ SLAVE_LOOKUP(RCE_SN_AST1_T) },
++	{ SLAVE_LOOKUP(RCE_SN_CPU_T) }
++};
++
++static struct tegra_sn_addr_map t234_cbb_sn_lookup[] = {
++	{ SLAVE_LOOKUP(CBB_SN_AON_SLAVE) },
++	{ SLAVE_LOOKUP(CBB_SN_BPMP_SLAVE) },
++	{ SLAVE_LOOKUP(CBB_SN_CBB_CENTRAL) },
++	{ SLAVE_LOOKUP(CBB_SN_HOST1X) },
++	{ SLAVE_LOOKUP(CBB_SN_STM) },
++	{ SLAVE_LOOKUP(CBB_SN_FSI_SLAVE) },
++	{ SLAVE_LOOKUP(CBB_SN_PSC_SLAVE) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C1) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C2) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C3) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C0) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C4) },
++	{ SLAVE_LOOKUP(CBB_SN_GPU) },
++	{ SLAVE_LOOKUP(CBB_SN_SMMU0) },
++	{ SLAVE_LOOKUP(CBB_SN_SMMU1) },
++	{ SLAVE_LOOKUP(CBB_SN_SMMU2) },
++	{ SLAVE_LOOKUP(CBB_SN_SMMU3) },
++	{ SLAVE_LOOKUP(CBB_SN_SMMU4) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C10) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C7) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C8) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C9) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C5) },
++	{ SLAVE_LOOKUP(CBB_SN_PCIE_C6) },
++	{ SLAVE_LOOKUP(CBB_SN_DCE_SLAVE) },
++	{ SLAVE_LOOKUP(CBB_SN_RCE_SLAVE) },
++	{ SLAVE_LOOKUP(CBB_SN_SCE_SLAVE) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_1) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_10) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_11) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_12) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_13) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_14) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_15) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_16) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_17) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_18) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_19) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_2) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_20) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_21) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_22) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_23) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_25) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_26) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_27) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_28) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_29) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_30) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_31) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_32) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_33) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_34) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_35) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_4) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_5) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_6) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_7) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_8) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_9) },
++	{ SLAVE_LOOKUP(CBB_SN_AXI2APB_3) }
++};
 -- 
 2.17.1
 
