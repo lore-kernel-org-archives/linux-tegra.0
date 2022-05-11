@@ -2,127 +2,188 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2219C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 14:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E44C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 14:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244167AbiEKODO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 May 2022 10:03:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
+        id S232336AbiEKOqo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 May 2022 10:46:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244331AbiEKODN (ORCPT
+        with ESMTP id S245053AbiEKOqh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 May 2022 10:03:13 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DEC8B62230;
-        Wed, 11 May 2022 07:03:10 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACB54ED1;
-        Wed, 11 May 2022 07:03:10 -0700 (PDT)
-Received: from lpieralisi (unknown [10.57.1.148])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 423BE3F66F;
-        Wed, 11 May 2022 07:03:08 -0700 (PDT)
-Date:   Wed, 11 May 2022 15:03:04 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Baruch Siach <baruch@tkos.co.il>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] PCI: IPQ6018 platform support
-Message-ID: <YnvCGD4RwuyPkTfK@lpieralisi>
-References: <cover.1644234441.git.baruch@tkos.co.il>
- <20220412161259.GA7109@lpieralisi>
+        Wed, 11 May 2022 10:46:37 -0400
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A20EBA;
+        Wed, 11 May 2022 07:46:33 -0700 (PDT)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-d6e29fb3d7so3065774fac.7;
+        Wed, 11 May 2022 07:46:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kfuehUssF8wu6LG3RnYdg+lZQPY12BDtvzgK0Zdpdx0=;
+        b=wOK4dWIocgR1rwbEKAnuTBdSCX/qTtvEDcMtx1cjQwsA1SZ3WMvEBm634lQRFb6swI
+         aS3ic8KPGhbqvjYLOKJ4sAk9bMz9XMDgAohmAajuu8y73annoJUmGvbpodQFCFhtzPF6
+         XnXBuAptzorfXR6cQP2ZSuP7PtLw8EFlcFv6t7Byzkg35yI0/EqC5Csi+yrWje5w6t8F
+         Zb+48vJS2Mr0SLfdg1b2m0GN/EM0HJexI9GL928ldJ8ikiAv4x2mctcU0minfLsduu+4
+         gbzPhNcaiOK9HU6BVGFIkVgqfLRSYXivVuNqZCv/2pih7o53CKXI8MRXWNq4KONQRYUG
+         ksPw==
+X-Gm-Message-State: AOAM532iyf67SCnsmjDpv3Et7jTiarDj6xeHMWj1HGp47gr3m3NOT+R3
+        UUQde8UR6EgCLjXbxYKSHbGw/twjwQ==
+X-Google-Smtp-Source: ABdhPJwQ6FVOdvVGJwNLOcsZAf2TDK642Er/IkyYDEfsDMwwC8KKHolJ5JWYjnJAjlRRvEJwuoo1Qg==
+X-Received: by 2002:a05:6870:3c1b:b0:ee:1585:7a58 with SMTP id gk27-20020a0568703c1b00b000ee15857a58mr2995725oab.110.1652280392928;
+        Wed, 11 May 2022 07:46:32 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id r2-20020a4a9642000000b0035eb4e5a6d2sm952107ooi.40.2022.05.11.07.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 May 2022 07:46:32 -0700 (PDT)
+Received: (nullmailer pid 285281 invoked by uid 1000);
+        Wed, 11 May 2022 14:46:31 -0000
+Date:   Wed, 11 May 2022 09:46:31 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, kbuild-all@lists.01.org, bbasu@nvidia.com,
+        vsethi@nvidia.com, jsequeira@nvidia.com
+Subject: Re: [Patch v5 2/9] dt-bindings: arm: tegra: Add NVIDIA Tegra194
+ CBB1.0 binding
+Message-ID: <20220511144631.GA272915-robh@kernel.org>
+References: <20220506111217.8833-1-sumitg@nvidia.com>
+ <20220506111217.8833-3-sumitg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220412161259.GA7109@lpieralisi>
+In-Reply-To: <20220506111217.8833-3-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 12, 2022 at 05:12:59PM +0100, Lorenzo Pieralisi wrote:
-> On Mon, Feb 07, 2022 at 04:51:23PM +0200, Baruch Siach wrote:
-> > This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is 
-> > ported from downstream Codeaurora v5.4 kernel. The main difference from 
-> > downstream code is the split of PCIe registers configuration from .init to 
-> > .post_init, since it requires phy_power_on().
-> > 
-> > Tested on IPQ6010 based hardware.
-> > 
-> > Changes in v6:
-> > 
-> >   * Drop DT patch applied to the qcom tree
-> > 
-> >   * Normalize driver changes subject line
-> > 
-> >   * Add a preparatory patch to rename PCIE_CAP_LINK1_VAL to PCIE_CAP_SLOT_VAL,
-> >     and define it using PCI_EXP_SLTCAP_* macros
-> > 
-> >   * Drop a vague comment about ASPM configuration
-> > 
-> >   * Add a comment about the source of delay periods
-> > 
-> > Changes in v5:
-> > 
-> >   * Remove comments from qcom_pcie_init_2_9_0() (Bjorn Andersson)
-> > 
-> > Changes in v4:
-> > 
-> >   * Drop applied DT bits
-> > 
-> >   * Add max-link-speed that was missing from the applied v2 patch
-> > 
-> >   * Rebase the driver on v5.16-rc3
-> > 
-> > Changes in v3:
-> > 
-> >   * Drop applied patches
-> > 
-> >   * Rely on generic code for speed setup
-> > 
-> >   * Drop unused macros
-> > 
-> >   * Formatting fixes
-> > 
-> > Changes in v2:
-> > 
-> >   * Add patch moving GEN3_RELATED macros to a common header
-> > 
-> >   * Drop ATU configuration from pcie-qcom
-> > 
-> >   * Remove local definition of common registers
-> > 
-> >   * Use bulk clk and reset APIs
-> > 
-> >   * Remove msi-parent from device-tree
-> > 
-> > Baruch Siach (2):
-> >   PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
-> >   PCI: qcom: Define slot capabilities using PCI_EXP_SLTCAP_*
-> > 
-> > Selvam Sathappan Periakaruppan (1):
-> >   PCI: qcom: Add IPQ60xx support
-> > 
-> >  drivers/pci/controller/dwc/pcie-designware.h |   7 +
-> >  drivers/pci/controller/dwc/pcie-qcom.c       | 155 ++++++++++++++++++-
-> >  drivers/pci/controller/dwc/pcie-tegra194.c   |   6 -
-> >  3 files changed, 160 insertions(+), 8 deletions(-)
-> 
-> Hi Bjorn, Andy,
-> 
-> any feedback on this series please ?
+On Fri, May 06, 2022 at 04:42:10PM +0530, Sumit Gupta wrote:
+> Add device-tree binding documentation to represent the error handling
+> driver for Control Backbone (CBB) version 1.0 used in Tegra194 SOC.
 
-Any feedback on these patches please ?
+Bindings are for h/w not drivers.
 
-Thanks,
-Lorenzo
+> The driver prints debug information about failed transactions due to
+> illegal register accesses on receiving interrupt from CBB.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  .../arm/tegra/nvidia,tegra194-cbb.yaml        | 93 +++++++++++++++++++
+>  1 file changed, 93 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml
+> new file mode 100644
+> index 000000000000..3167f0450298
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml
+> @@ -0,0 +1,93 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/tegra/nvidia,tegra194-cbb.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: NVIDIA Tegra194 CBB 1.0 device tree bindings
+
+'device tree bindings' is redundant
+
+> +
+> +maintainers:
+> +  - Sumit Gupta <sumitg@nvidia.com>
+> +
+> +description: |+
+> +  The Control Backbone (CBB) is comprised of the physical path from an initiator to a target's
+> +  register configuration space. CBB 1.0 has multiple hierarchical sub-NOCs (Network-on-Chip) and
+> +  connects various initiators and targets using different bridges like AXIP2P, AXI2APB.
+> +
+> +  This driver handles errors due to illegal register accesses reported by the NOCs inside the CBB.
+> +  NOCs reporting errors are cluster NOCs "AON-NOC, SCE-NOC, RCE-NOC, BPMP-NOC, CV-NOC" and "CBB
+> +  Central NOC" which is the main NOC.
+> +
+> +  By default, the access issuing initiator is informed about the error using SError or Data Abort
+> +  exception unless the ERD (Error Response Disable) is enabled/set for that initiator. If the ERD
+> +  is enabled, then SError or Data Abort is masked and the error is reported with interrupt.
+> +
+> +  - For CCPLEX (CPU Complex) initiator, the driver sets ERD bit. So, the errors due to illegal
+> +    accesses from CCPLEX are reported by interrupts. If ERD is not set, then error is reported by
+> +    SError.
+> +  - For other initiators, the ERD is disabled. So, the access issuing initiator is informed about
+> +    the illegal access by Data Abort exception. In addition, an interrupt is also generated to
+> +    CCPLEX. These initiators include all engines using Cortex-R5 (which is ARMv7 CPU cluster) and
+> +    engines like TSEC (Security co-processor), NVDEC (NVIDIA Video Decoder engine) etc which can
+> +    initiate transactions.
+> +
+> +  The driver prints relevant debug information like Error Code, Error Description, Master, Address,
+> +  AXI ID, Cache, Protection, Security Group etc on receiving error notification.
+
+Please wrap at 80. Longer is allowed, but should still be the exception.
+
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^[a-z]+-noc@[0-9a-f]+$"
+> +
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra194-cbb-noc
+> +      - nvidia,tegra194-aon-noc
+> +      - nvidia,tegra194-bpmp-noc
+> +      - nvidia,tegra194-rce-noc
+> +      - nvidia,tegra194-sce-noc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description:
+> +      CCPLEX receives secure or nonsecure interrupt depending on error type. A secure interrupt is
+> +      received for SEC(firewall) & SLV errors and a non-secure interrupt is received for TMO & DEC
+> +      errors.
+> +    items:
+> +      - description: non-secure interrupt
+> +      - description: secure interrupt
+> +
+> +  nvidia,axi2apb:
+> +    $ref: '/schemas/types.yaml#/definitions/phandle'
+> +    description:
+> +      Specifies the node having all axi2apb bridges which need to be checked for any error logged
+> +      in their status register.
+> +
+> +  nvidia,apbmisc:
+> +    $ref: '/schemas/types.yaml#/definitions/phandle'
+> +    description:
+> +      Specifies the apbmisc node which need to be used for reading ERD register.
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - nvidia,axi2apb
+> +  - nvidia,apbmisc
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    cbb-noc@2300000 {
+> +        compatible = "nvidia,tegra194-cbb-noc";
+> +        reg = <0x02300000 0x1000>;
+> +        interrupts = <GIC_SPI 230 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>;
+> +        nvidia,axi2apb = <&axi2apb>;
+> +        nvidia,apbmisc = <&apbmisc>;
+> +        status = "okay";
+
+Don't need status in examples.
+
+
+> +    };
+> -- 
+> 2.17.1
+> 
+> 
