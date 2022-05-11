@@ -2,61 +2,44 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CD5C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 16:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A25C4167B
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 20:00:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345003AbiEKQsF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 May 2022 12:48:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38230 "EHLO
+        id S1347460AbiEKUAf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 May 2022 16:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbiEKQsA (ORCPT
+        with ESMTP id S233767AbiEKUAd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 May 2022 12:48:00 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DCDE6B7DB;
-        Wed, 11 May 2022 09:47:58 -0700 (PDT)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24BESoKr028080;
-        Wed, 11 May 2022 16:46:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=tjIW4ViQYza/lnoDnWyOhboEO5kjiPdt7taCyynzKFw=;
- b=lxUbqAEO3GqUpU+Tuw2IWXF1fzXIGSDn1j9FVHjMmFIPrrH/+bQrVN9PaaYcbEJhBJIr
- 7d0t++ZFM6UKMdcnwcUF0YasHW2SP51KwmfPJnRgOou9+kRarIXLa3hIMjmu5cX5t3FO
- 6rItwaIor28IfP+e6c0HY1HIerMLLjGg06tg70umpoMhCUKjDu0piWYCrZz/VisJ+s0b
- 0DuyX+X+ttOZsVNhvwPdzqfPCbp/RA3MDqZWBEVZBj0PN/wvhGTqQYzQ4imgN+k8TjhU
- NC3v9IrNMZOoN56TSdKZo20ktYuMVwJV19grssXUZ/JxpGndCu9D0HmYa5fO310s9Ten QA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g0etx3406-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 May 2022 16:46:00 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 24BGebih023228;
-        Wed, 11 May 2022 16:45:59 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g0etx33y1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 May 2022 16:45:59 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24BGgY6p030999;
-        Wed, 11 May 2022 16:45:56 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 3fwgd8wsc9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 May 2022 16:45:55 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24BGjqsM27197764
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 May 2022 16:45:52 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA0B35204E;
-        Wed, 11 May 2022 16:45:52 +0000 (GMT)
-Received: from osiris (unknown [9.145.80.86])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id B9FCE52050;
-        Wed, 11 May 2022 16:45:50 +0000 (GMT)
-Date:   Wed, 11 May 2022 18:45:49 +0200
-From:   Heiko Carstens <hca@linux.ibm.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+        Wed, 11 May 2022 16:00:33 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056A2231098;
+        Wed, 11 May 2022 13:00:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=gDHQr/46Ll+YF5RXidB7bzodWcAOTgjTzZrI+em3L64=; b=g39PxeAmrsyeqF7oG7t83UmsmK
+        q+jHGkHAbmWvohxv26/jw0X2fC5ZQGAB+1t+RR3Dc/QcY0t/UuqqV0Rw0e0vNKpR3Ghg3EjPFEyRu
+        xmyuTU8VIa0JckQ1LnJMbsmPzyPVIePtyYzY2GC02et+W2URhxptR9GwDO/JS6MpbzrCHGb/n2EjF
+        MPTZc218MFC/xIv1c3Q0VBsXMBQNsxYCCeLWiYkZzdC6cvR08qY5ppLv8+FOFZTVkTAZbUvYrBQWZ
+        fyGL7frjV8v7tGHHjzO9nQTkj7crGcqaoQ0KxvgjDlDQp5VOe0vE/nPeGF7YvXLizE8zXvpcRYVIg
+        fCPXiI+Q==;
+Received: from [177.183.162.244] (helo=[192.168.0.5])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nosV8-0008ee-V8; Wed, 11 May 2022 22:00:04 +0200
+Message-ID: <1c7dfe73-6691-1ca5-7555-27e81dff4dcd@igalia.com>
+Date:   Wed, 11 May 2022 16:58:43 -0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 22/30] panic: Introduce the panic post-reboot notifier
+ list
+Content-Language: en-US
+To:     Heiko Carstens <hca@linux.ibm.com>
 Cc:     Alexander Gordeev <agordeev@linux.ibm.com>,
         Christian Borntraeger <borntraeger@linux.ibm.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -88,62 +71,36 @@ Cc:     Alexander Gordeev <agordeev@linux.ibm.com>,
         senozhatsky@chromium.org, stern@rowland.harvard.edu,
         tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
         will@kernel.org
-Subject: Re: [PATCH 22/30] panic: Introduce the panic post-reboot notifier
- list
-Message-ID: <YnvoPe2cTS31qbjb@osiris>
 References: <20220427224924.592546-1-gpiccoli@igalia.com>
  <20220427224924.592546-23-gpiccoli@igalia.com>
- <7017c234-7c73-524a-11b6-fefdd5646f59@igalia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7017c234-7c73-524a-11b6-fefdd5646f59@igalia.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: P8jYmW-Xe3lS0Lxn9LfjJuLQx8-pWyu5
-X-Proofpoint-ORIG-GUID: 3EoVOe4XNkWaSjwGnBLNECSOqY142ccD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-11_07,2022-05-11_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 phishscore=0 mlxscore=0 adultscore=0
- suspectscore=0 mlxlogscore=429 bulkscore=0 impostorscore=0
- priorityscore=1501 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2202240000 definitions=main-2205110076
+ <7017c234-7c73-524a-11b6-fefdd5646f59@igalia.com> <YnvoPe2cTS31qbjb@osiris>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <YnvoPe2cTS31qbjb@osiris>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, May 09, 2022 at 11:16:10AM -0300, Guilherme G. Piccoli wrote:
-> On 27/04/2022 19:49, Guilherme G. Piccoli wrote:
-> > Currently we have 3 notifier lists in the panic path, which will
-> > be wired in a way to allow the notifier callbacks to run in
-> > different moments at panic time, in a subsequent patch.
-> > 
-> > But there is also an odd set of architecture calls hardcoded in
-> > the end of panic path, after the restart machinery. They're
-> > responsible for late time tunings / events, like enabling a stop
-> > button (Sparc) or effectively stopping the machine (s390).
-> > 
-> > This patch introduces yet another notifier list to offer the
-> > architectures a way to add callbacks in such late moment on
-> > panic path without the need of ifdefs / hardcoded approaches.
-> > 
-> > Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> > Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: Heiko Carstens <hca@linux.ibm.com>
-> > Cc: Sven Schnelle <svens@linux.ibm.com>
-> > Cc: Vasily Gorbik <gor@linux.ibm.com>
-> > Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+On 11/05/2022 13:45, Heiko Carstens wrote:
+> [...]
+>>
+>> Hey S390/SPARC folks, sorry for the ping!
+>>
+>> Any reviews on this V1 would be greatly appreciated, I'm working on V2
+>> and seeking feedback in the non-reviewed patches.
 > 
-> Hey S390/SPARC folks, sorry for the ping!
+> Sorry, missed that this is quite s390 specific. So, yes, this looks
+> good to me and nice to see that one of the remaining CONFIG_S390 in
+> common code will be removed!
 > 
-> Any reviews on this V1 would be greatly appreciated, I'm working on V2
-> and seeking feedback in the non-reviewed patches.
+> For the s390 bits:
+> Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
-Sorry, missed that this is quite s390 specific. So, yes, this looks
-good to me and nice to see that one of the remaining CONFIG_S390 in
-common code will be removed!
+No need for apologies, I really appreciate your review!
+Will add your Ack for V2 =)
 
-For the s390 bits:
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Cheers,
+
+
+Guilherme
