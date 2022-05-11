@@ -2,141 +2,186 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54D6C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 09:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8B6C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 10:04:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237904AbiEKJUJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 May 2022 05:20:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54714 "EHLO
+        id S239160AbiEKKEJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 May 2022 06:04:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236591AbiEKJUH (ORCPT
+        with ESMTP id S239697AbiEKKEC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 May 2022 05:20:07 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2060.outbound.protection.outlook.com [40.107.92.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 620629BAD2;
-        Wed, 11 May 2022 02:20:06 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NhBDgQjMLEOvQVfgQwm7h+sKgF8tmJcbMNdSSTkhVb8xVpIiH6o6WyGuQy9BGjP6KVbZHrEXc46WN8Co0mZBE5g82wHTZl+v56C29Li49B+EDat8wzMAEKtkDIRQ49eON1M+PwS8gqjCnI+QUOhHlFcHL45IjCTyJFkqClTv1+I6Czcj9nGgGfmNXBaa8YTPSIaWbyjpRrhncaprmrMrOoNTxfAB32zUdoVrv5nDlK7yhapGgisOlYTQg9OL12bm7t7xKV3lFZi/KgMQqjkxw6+IRY/PCvGgoJT+f5xZfAGjRFzmYes3oZ+RZpaLuiSURbqz/BUp6Fv+sDSUAA23VA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x5EEldC6doy3f6K4Zc1H4vEFIiF7pn3C3PD+RSf4oA4=;
- b=D0cE9yt8zLBii4OxBXrqmLbwD5GC2G7hSii0Q7GaZkLt/CqdAQNyLlGyHs7tMnV2Rcix5nfdJ7mEc7WNC/xd2Dnx5qKJkOrD3sE82ILWuN/1mquxXlhaK1wOn9xV3zonqaRp/TOMMMJBn2rqcldDC3WT5gYxDkPmbMBGdnHtI49frgdRf1m1L2deajLdOlAz1zmv94mA2Hz7S3lh8/2AsQ75ta4PbgG4vTdSdm/Nch4kd7LxI+Zv3K8fV4SNdFRYhEs+Kd8AkACa/E8hiXqHphn2a8nZYrMBJ+IwynkFbCOZ9a8TfRw3n9I5AMKDBO2h0lXfJFyLwo0/k0G13GIDlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x5EEldC6doy3f6K4Zc1H4vEFIiF7pn3C3PD+RSf4oA4=;
- b=n4mNK/ThNqLOOaXU/jcTkKWYq84ndDmAbPKeQYXVk7OD1AHTeVKrzDZ4TDSzl3w9cOgkTia/128VCh5qCaMu9Rk9i1WDe+FnlO1CZLGyJ6N1I1xOYZhV6ZLfs92aAEUIX7nfwoXbTjcxIBri0uPCdBSXpSVv/PqYLA6B1tOFb8KcEj37mljtd9m7mRnw38k9cKDbsZfAPgF5qypiexXoVQMYQ0c5oeRO+baDit6EuczCbtAbcCPl50oRFrMIuA1cfFVvgmFwpD5qwBiQQrlT903pzkJaiomp0fF+l2HVruJXwFSI/OjRj0mIbxFzLnlsBLLoYFqe6Xm8c5kjAzmj0Q==
-Received: from BN9PR03CA0446.namprd03.prod.outlook.com (2603:10b6:408:113::31)
- by CY4PR1201MB2549.namprd12.prod.outlook.com (2603:10b6:903:da::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.22; Wed, 11 May
- 2022 09:20:04 +0000
-Received: from BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:113:cafe::c5) by BN9PR03CA0446.outlook.office365.com
- (2603:10b6:408:113::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.20 via Frontend
- Transport; Wed, 11 May 2022 09:20:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- BN8NAM11FT015.mail.protection.outlook.com (10.13.176.90) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5250.13 via Frontend Transport; Wed, 11 May 2022 09:20:03 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL109.nvidia.com
- (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 11 May
- 2022 09:20:02 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 11 May
- 2022 02:20:01 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
- Transport; Wed, 11 May 2022 02:20:01 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.17 000/140] 5.17.7-rc1 review
-In-Reply-To: <20220510130741.600270947@linuxfoundation.org>
-References: <20220510130741.600270947@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Wed, 11 May 2022 06:04:02 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E45FA6162C;
+        Wed, 11 May 2022 03:03:45 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB7FE1042;
+        Wed, 11 May 2022 03:03:45 -0700 (PDT)
+Received: from [10.57.80.111] (unknown [10.57.80.111])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B30B3F73D;
+        Wed, 11 May 2022 03:03:43 -0700 (PDT)
+Message-ID: <657d2bba-23af-fa74-3efe-cd7558b47ff7@arm.com>
+Date:   Wed, 11 May 2022 11:03:38 +0100
 MIME-Version: 1.0
-Message-ID: <0f7f65c7-3bcd-474c-b845-639c545fc3f9@rnnvmail201.nvidia.com>
-Date:   Wed, 11 May 2022 02:20:01 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 353188ea-9c69-443b-bf61-08da332f6e73
-X-MS-TrafficTypeDiagnostic: CY4PR1201MB2549:EE_
-X-Microsoft-Antispam-PRVS: <CY4PR1201MB2549B884075A2C1A7D9C425AD9C89@CY4PR1201MB2549.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: q/ZuFiLz/t+puOpaXnze/V7sg259TJeS94TkBaYnTtuRoFMMBBoCtRf5lBJg1voZAnamCb4N5pjW0d1BHUMbmVrbrMf47cegqhwVDCKLD7CFeW2jQLqh5u15WmwSFeZp46ilIoueHiHMimb6zMpLAUZ5HZzHumtwmaGQlTJ1pUMnQgkg/6QSqEHtmQo/tNvZ6S78DgQSlc48mzQO6AwttbCFfYarzn7YlgeSB54F0bFL984ORGvb6Yx/FLSgQXPwbLLZvenQ8equf3HRJzlO6Ezf4ZT4ViWxlj039L+li674h/62lg/Re+Cc6evl2CmTG+1aiHBI4cgAiwPsP2CcFOPfg+EwCu6ATrgkG6fXBORCAb9dzQ4Odb0x6eAQpRLmUwxw4v1Djuxp/miyXGKyErMAilRiMw3mouW/eZBFTmD+orLFAwsfjp/u5Q4EEFyWr7rXX9M/Hq2qTrQuVGy4jluVe8auTOU5ySMARZJsxEN0NBHv/qSxC82QNnnUvLHoN52YD8qt1TXwqPKxeJahmpofMIV0g8x7SxYh7UBwU+idcUmGxt0Ia711mbYzzUwjojUaT5gX6K9CVaux+q3i4NERzLv1ZO7plHdEAdYU5cxMll+RtBGDCCDX11GuzOO2k9csln+HCoZBFWpNTTB/C8RVHFxZcsriPMRfHoKPJnNNGb6K65SvDJhYF+gpuaG0+rlOwK4/R1Gw4tXFCaEaAUM1CS9394ba9T+A+ilhi9YDyyMd7+9CwFXDiS9nDTeidBRYiE0AZPgWhX7jX1adyuUDTKrQc+/LNL9zISS/60w=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(86362001)(6916009)(8676002)(81166007)(36860700001)(4326008)(31686004)(54906003)(70586007)(70206006)(31696002)(316002)(356005)(82310400005)(966005)(2906002)(336012)(7416002)(426003)(47076005)(508600001)(186003)(5660300002)(40460700003)(8936002)(26005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2022 09:20:03.4030
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 353188ea-9c69-443b-bf61-08da332f6e73
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB2549
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 1/2] perf: coresight_pmu: Add support for ARM CoreSight
+ PMU driver
+Content-Language: en-GB
+To:     Besar Wicaksono <bwicaksono@nvidia.com>
+Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
+        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
+        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vikram Sethi <vsethi@nvidia.com>
+References: <20220509002810.12412-1-bwicaksono@nvidia.com>
+ <20220509002810.12412-2-bwicaksono@nvidia.com>
+ <756ac2c8-6530-03b0-53d3-ee7493509579@arm.com>
+ <SJ0PR12MB5676443AE9A331A962276EB4A0C89@SJ0PR12MB5676.namprd12.prod.outlook.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <SJ0PR12MB5676443AE9A331A962276EB4A0C89@SJ0PR12MB5676.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 10 May 2022 15:06:30 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.17.7 release.
-> There are 140 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2022-05-11 03:46, Besar Wicaksono wrote:
+[...]
+>>> +config ARM_CORESIGHT_PMU
+>>> +     tristate "ARM Coresight PMU"
+>>> +     depends on ARM64 && ACPI_APMT
+>>
+>> There shouldn't be any functional dependency on any CPU architecture here.
 > 
-> Responses should be made by Thu, 12 May 2022 13:07:16 +0000.
-> Anything received after that time might be too late.
+> The spec is targeted towards ARM based system, shouldn't we explicitly limit it to ARM?
+
+I wouldn't say so. The PMU spec does occasionally make reference to the 
+Armv8-A and Armv8-M PMU architectures for comparison, but ultimately 
+it's specifying an MMIO register interface for a system component. If 
+3rd-party system IP vendors adopt it, who knows what kind of systems 
+these PMUs might end up in? (And of course a DT binding will inevitably 
+come along once the rest of the market catches up with the ACPI-focused 
+early adopters)
+
+In terms of functional dependency plus scope of practical usefulness, I 
+think something like:
+
+	depends on ACPI
+	depends on ACPI_APMT || COMPILE_TEST
+
+would probably fit the bill until DT support comes along.
+
+[...]
+>>> +/*
+>>> + * Write to 64-bit register as a pair of 32-bit registers.
+>>> + *
+>>> + * @val     : 64-bit value to write.
+>>> + * @base    : base address of page-0 or page-1 if dual-page ext. is enabled.
+>>> + * @offset  : register offset.
+>>> + *
+>>> + */
+>>> +static void write_reg64_lohi(u64 val, void __iomem *base, u32 offset)
+>>> +{
+>>> +     u32 val_lo, val_hi;
+>>> +
+>>> +     val_hi = upper_32_bits(val);
+>>> +     val_lo = lower_32_bits(val);
+>>> +
+>>> +     write_reg32(val_lo, base, offset);
+>>> +     write_reg32(val_hi, base, offset + 4);
+>>> +}
+>>
+>> #include <linux/io-64-nonatomic-lo-hi.h>
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.17.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.17.y
-> and the diffstat can be found below.
+> Thanks for pointing this out. We will replace it with lo_hi_writeq.
+
+The point is more that you can just use writeq() (and readq() where 
+atomicity isn't important), and the header will make sure it works wherever.
+
+The significance of not having 64-bit single-copy atomicity should be 
+that if the processor issues a 64-bit access, the system may 
+*automatically* split it into a pair of 32-bit accesses, e.g. at an 
+AXI-to-APB bridge. If making a 64-bit access to a 64-bit register would 
+actually fail, that's just broken.
+
+[...]
+>>> +static inline bool is_cycle_cntr_idx(const struct perf_event *event)
+>>> +{
+>>> +     struct coresight_pmu *coresight_pmu = to_coresight_pmu(event-
+>>> pmu);
+>>> +     int idx = event->hw.idx;
+>>> +
+>>> +     return (support_cc(coresight_pmu) && idx ==
+>> CORESIGHT_PMU_IDX_CCNTR);
+>>
+>> If we don't support cycle counting, cycles count events should have been
+>> rejected in event_init. If they're able to propagate further than that
+
+[apologies for an editing mishap here, this should have continued "then 
+something is fundamentally broken."]
+
+> Not sure I understand, do you mean the check for cycle counter support is unnecessary ?
+> This function is actually called by coresight_pmu_start, which is after event_init had passed.
+> coresight_pmu_start is not aware if cycle counter is supported or not, so we need to keep checking it.
+
+I mean that the support_cc(coresight_pmu) check should only ever need to 
+happen *once* in event_init, so if standard cycles events are not 
+supported then they are correctly rejected there and then. After that, 
+if we see one in event_add and later, then we can simply infer that we 
+*do* have a standard cycle counter and go ahead and allocate it.
+
+>>> +}
+>>> +
+>>> +bool coresight_pmu_is_cc_event(const struct perf_event *event)
+>>> +{
+>>> +     struct coresight_pmu *coresight_pmu = to_coresight_pmu(event-
+>>> pmu);
+>>> +     u32 evtype = coresight_pmu->impl.ops->event_type(event);
+>>> +
+>>> +     return (support_cc(coresight_pmu) &&
+>>
+>> Ditto.
 > 
-> thanks,
+> This function is called by event_init to validate the event and find available counters.
+
+Right, but it also ends up getting called from other places like 
+event_add as well. Like I say, if we're still checking whether an event 
+is supported or not by that point, we're doing something wrong.
+
+[...]>>> +/**
+>>> + * This is the default event number for cycle count, if supported, since the
+>>> + * ARM Coresight PMU specification does not define a standard event
+>> code
+>>> + * for cycle count.
+>>> + */
+>>> +#define CORESIGHT_PMU_EVT_CYCLES_DEFAULT (0x1ULL << 31)
+>>
+>> And what do we do when an implementation defines 0x80000000 as one of
+>> its own event specifiers? The standard cycle count is independent of any
+>> other events, so it needs to be encoded in a manner which is distinct
+>> from *any* potentially-valid PMEVTYPER value.
 > 
-> greg k-h
+> We were thinking that in such case, the implementor would provide coresight_pmu_impl_ops.
+> To avoid it, I guess we can use config[32] for the default cycle count event id.
+> The filter value will need to be moved to config1[31:0].
+> Does it sound reasonable ?
 
-All tests passing for Tegra ...
+Sure, you can lay out the config fields however you fancy, but since the 
+architecture leaves the standard cycles event independent from the 
+32-bit IMP-DEF PMEVTYPER specifier, logically we need at least 33 bits 
+in some form or other to encode all possible event types in our 
+perf_event config.
 
-Test results for stable-v5.17:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
-
-Linux version:	5.17.7-rc1-g34d85184d6b8
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Thanks,
+Robin.
