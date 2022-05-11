@@ -2,88 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4F2C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 11:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8608C4167D
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 11:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbiEKLJH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 May 2022 07:09:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58342 "EHLO
+        id S241097AbiEKLNb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 May 2022 07:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbiEKLJG (ORCPT
+        with ESMTP id S238907AbiEKLN3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 May 2022 07:09:06 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287B6FFA90
-        for <linux-tegra@vger.kernel.org>; Wed, 11 May 2022 04:09:04 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id A7E7B1F44DCB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1652267343;
-        bh=F9aAPWfKvLN/c3HoUZUVVOQ9jz//gwR/ofGKu2nHses=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=W12X3oJhsrpQE2DhSrbaWvWpfAdag8EHWZTe0B4BjVG5fVofba5zM6AwqURgE2xit
-         G9sJQhKpL5Lyo4YWhOxwOG8SRrENRfkKeEihosn8zGLLwzAInYCBTg24pri6K5Wkzm
-         ROAc6s6qMvVe35i0rWFGctTEGVUhwszS5KdKNRtZWe7E9AaDTDa/gaiIbsp2T604vi
-         lQtYbkGWo0zS/4XtbXV/VbB7Ud2LSjWRexmYPIToQz+WYbzOkE/vFnAUFWc0AHLsUW
-         NAPHxYUaNdksd30zWcFIl6/+Xto1CdT5o8GmtPsk9k2BN0C2KpYvYXG1TSVRc+KZj6
-         n8r2YQnQOZf1w==
-Message-ID: <a0c7e954-ee3f-74fd-cfea-9b6dbce924dc@collabora.com>
-Date:   Wed, 11 May 2022 14:08:59 +0300
+        Wed, 11 May 2022 07:13:29 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E031B1ED29C;
+        Wed, 11 May 2022 04:13:23 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 983B121B32;
+        Wed, 11 May 2022 11:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1652267602; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FC1sflG6Id2SKeEdl4FJxU/B3titx078hgJ9iLge96M=;
+        b=PzdYpVjDm9GZjow/EUq37H7ookCOkOdew3j+O3sWtMh70hNVOnxtZzKqOPpZDQnacwtKh8
+        hTKee3j+Sl0MntfBuf4Onekv+PULsWjOAIitLyhS1jfqtNLxp3KL+emXCY3ZW29THEdaU3
+        +LT7bZxhID8yMwqQ2reWXTGMidRsh/s=
+Received: from suse.cz (pathway.suse.cz [10.100.12.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id BC7822C141;
+        Wed, 11 May 2022 11:13:20 +0000 (UTC)
+Date:   Wed, 11 May 2022 13:13:20 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Evan Green <evgreen@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
+        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, Kees Cook <keescook@chromium.org>,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, senozhatsky@chromium.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Thomas Gleixner <tglx@linutronix.de>, vgoyal@redhat.com,
+        vkuznets@redhat.com, Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        David Gow <davidgow@google.com>,
+        Julius Werner <jwerner@chromium.org>
+Subject: Re: [PATCH 04/30] firmware: google: Convert regular spinlock into
+ trylock on panic path
+Message-ID: <20220511111320.GB26047@pathway.suse.cz>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-5-gpiccoli@igalia.com>
+ <CAE=gft5Pq25L4KFoPWbftkPF-JN1ex2yws77mMJ4GQnn9W0L2g@mail.gmail.com>
+ <adcf6d0e-c37c-6ede-479e-29959d03d8c0@igalia.com>
+ <YnpOv4hAPV4b+6v4@alley>
+ <20220510132015.38923cb2@gandalf.local.home>
+ <87h75xkwg9.fsf@jogness.linutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v2] drm/tegra: Stop using iommu_present()
-Content-Language: en-US
-To:     Robin Murphy <robin.murphy@arm.com>, thierry.reding@gmail.com
-Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
-References: <1f7c304a79b8b8dd5d4716786cae7502a0cc31f5.1649684782.git.robin.murphy@arm.com>
- <add31812-50d5-6cb0-3908-143c523abd37@collabora.com>
- <63c021c4-57de-38fe-e48f-a308088d235b@arm.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <63c021c4-57de-38fe-e48f-a308088d235b@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h75xkwg9.fsf@jogness.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/4/22 14:52, Robin Murphy wrote:
-> On 2022-05-04 01:52, Dmitry Osipenko wrote:
->> On 4/11/22 16:46, Robin Murphy wrote:
->>> @@ -1092,6 +1092,19 @@ static bool host1x_drm_wants_iommu(struct
->>> host1x_device *dev)
->>>       struct host1x *host1x = dev_get_drvdata(dev->dev.parent);
->>>       struct iommu_domain *domain;
->>>   +    /* For starters, this is moot if no IOMMU is available */
->>> +    if (!device_iommu_mapped(&dev->dev))
->>> +        return false;
->>
->> Unfortunately this returns false on T30 with enabled IOMMU because we
->> don't use IOMMU for Host1x on T30 [1] to optimize performance. We can't
->> change it until we will update drivers to support Host1x-dedicated
->> buffers.
+On Tue 2022-05-10 21:46:38, John Ogness wrote:
+> On 2022-05-10, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >> As already mentioned in the other reply, panic() sometimes stops the
+> >> other CPUs using NMI, for example, see kdump_nmi_shootdown_cpus().
+> >> 
+> >> Another situation is when the CPU using the lock ends in some
+> >> infinite loop because something went wrong. The system is in
+> >> an unpredictable state during panic().
+> >> 
+> >> I am not sure if this is possible with the code under gsmi_dev.lock
+> >> but such things really happen during panic() in other subsystems.
+> >> Using trylock in the panic() code path is a good practice.
+> >
+> > I believe that Peter Zijlstra had a special spin lock for NMIs or
+> > early printk, where it would not block if the lock was held on the
+> > same CPU. That is, if an NMI happened and paniced while this lock was
+> > held on the same CPU, it would not deadlock. But it would block if the
+> > lock was held on another CPU.
 > 
-> Huh, so is dev->dev here not the DRM device? If it is, and
-> device_iommu_mapped() returns false, then the later iommu_attach_group()
-> call is going to fail anyway, so there's not much point allocating a
-> domain. If it's not, then what the heck is host1x_drm_wants_iommu()
-> actually testing for?
+> Yes. And starting with 5.19 it will be carrying the name that _you_ came
+> up with (cpu_sync):
+> 
+> printk_cpu_sync_get_irqsave()
+> printk_cpu_sync_put_irqrestore()
 
-The dev->dev is the host1x device and it's the DRM device.
+There is a risk that this lock might become a big kernel lock.
 
-The iommu_attach_group() is called for the DRM sub-devices (clients in
-the Tegra driver), which are the devices sitting on the host1x bus.
+This special lock would need to be used even during normal
+system operation. It does not make sense to suddenly start using
+another lock during panic.
 
-There is no single GPU device on Tegra, instead it's composed of
-independent GPU engines and display controllers that are connected to
-the host1x bus.
+So I think that we should think twice before using it.
+I would prefer using trylock of the original lock when
+possible during panic.
 
-Host1x also has channel DMA engines that are used by DRM driver. We
-don't have dedicated devices for the host1x DMA, there is single host1x
-driver that manages host1x bus and DMA.
+It is possible that I miss something.
 
--- 
-Best regards,
-Dmitry
+Best Regards,
+Petr
