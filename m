@@ -2,186 +2,116 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8B6C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 10:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC05C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 10:12:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239160AbiEKKEJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 May 2022 06:04:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60598 "EHLO
+        id S241360AbiEKKMr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 May 2022 06:12:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239697AbiEKKEC (ORCPT
+        with ESMTP id S241418AbiEKKMd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 May 2022 06:04:02 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E45FA6162C;
-        Wed, 11 May 2022 03:03:45 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB7FE1042;
-        Wed, 11 May 2022 03:03:45 -0700 (PDT)
-Received: from [10.57.80.111] (unknown [10.57.80.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B30B3F73D;
-        Wed, 11 May 2022 03:03:43 -0700 (PDT)
-Message-ID: <657d2bba-23af-fa74-3efe-cd7558b47ff7@arm.com>
-Date:   Wed, 11 May 2022 11:03:38 +0100
+        Wed, 11 May 2022 06:12:33 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D63021AA8E;
+        Wed, 11 May 2022 03:12:19 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id 6482B1F44D36
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1652263934;
+        bh=qcj+acMxU0ciOKBaVy6pJbQiEuRN08dsxaJseG6RfwE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ALAQu/eEe04LAruPgoaxZO/rAmAmbVl+HcocVYpgGrXIRB8C3EP1FAmUZXjQFjUKn
+         wfogK/QUTiSxNChIDNBZqO/aeRmGclTu4TrSdSdMO/cmWfEIqdry6AZOEiAP2fouZ6
+         Ze5K+g3wOPlOW2v6pMuegjSC6cihNNChKdrphdfE2ltP+RE0LEmom809Y8+fvE6J4/
+         Ahs2yVkxSRw3aK+Wy1uhxbsXzAskjDUGhwcgP9S4/r1ElfK42qDIjASJs4PEUZO9GN
+         V4ie/nhjCksrQsC7KjRypS3JpnKPKwmWfZcBd1V4WsAwj2K9BvhnPx92oDSMYGMk4e
+         Jp2S214QNnEnQ==
+Message-ID: <5894c310-fe50-8037-fc9c-cbedb0d8e71f@collabora.com>
+Date:   Wed, 11 May 2022 13:12:07 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 1/2] perf: coresight_pmu: Add support for ARM CoreSight
- PMU driver
-Content-Language: en-GB
-To:     Besar Wicaksono <bwicaksono@nvidia.com>
-Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
-        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
-        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        Thierry Reding <treding@nvidia.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v8 01/27] notifier: Add
+ atomic_notifier_call_chain_is_empty()
+Content-Language: en-US
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>
-References: <20220509002810.12412-1-bwicaksono@nvidia.com>
- <20220509002810.12412-2-bwicaksono@nvidia.com>
- <756ac2c8-6530-03b0-53d3-ee7493509579@arm.com>
- <SJ0PR12MB5676443AE9A331A962276EB4A0C89@SJ0PR12MB5676.namprd12.prod.outlook.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <SJ0PR12MB5676443AE9A331A962276EB4A0C89@SJ0PR12MB5676.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20220509233235.995021-1-dmitry.osipenko@collabora.com>
+ <20220509233235.995021-2-dmitry.osipenko@collabora.com>
+ <CAJZ5v0gApRhc9+jZLxgNXC2B2tmz450=8+mFZUjTFF1iU7C-gw@mail.gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <CAJZ5v0gApRhc9+jZLxgNXC2B2tmz450=8+mFZUjTFF1iU7C-gw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-05-11 03:46, Besar Wicaksono wrote:
-[...]
->>> +config ARM_CORESIGHT_PMU
->>> +     tristate "ARM Coresight PMU"
->>> +     depends on ARM64 && ACPI_APMT
->>
->> There shouldn't be any functional dependency on any CPU architecture here.
+On 5/10/22 21:14, Rafael J. Wysocki wrote:
+> On Tue, May 10, 2022 at 1:33 AM Dmitry Osipenko
+> <dmitry.osipenko@collabora.com> wrote:
+>> Add atomic_notifier_call_chain_is_empty() that returns true if given
+>> atomic call chain is empty.
+> It would be good to mention a use case for it.
 > 
-> The spec is targeted towards ARM based system, shouldn't we explicitly limit it to ARM?
 
-I wouldn't say so. The PMU spec does occasionally make reference to the 
-Armv8-A and Armv8-M PMU architectures for comparison, but ultimately 
-it's specifying an MMIO register interface for a system component. If 
-3rd-party system IP vendors adopt it, who knows what kind of systems 
-these PMUs might end up in? (And of course a DT binding will inevitably 
-come along once the rest of the market catches up with the ACPI-focused 
-early adopters)
+I'll update this patch for v9.
 
-In terms of functional dependency plus scope of practical usefulness, I 
-think something like:
-
-	depends on ACPI
-	depends on ACPI_APMT || COMPILE_TEST
-
-would probably fit the bill until DT support comes along.
-
-[...]
->>> +/*
->>> + * Write to 64-bit register as a pair of 32-bit registers.
->>> + *
->>> + * @val     : 64-bit value to write.
->>> + * @base    : base address of page-0 or page-1 if dual-page ext. is enabled.
->>> + * @offset  : register offset.
->>> + *
->>> + */
->>> +static void write_reg64_lohi(u64 val, void __iomem *base, u32 offset)
->>> +{
->>> +     u32 val_lo, val_hi;
->>> +
->>> +     val_hi = upper_32_bits(val);
->>> +     val_lo = lower_32_bits(val);
->>> +
->>> +     write_reg32(val_lo, base, offset);
->>> +     write_reg32(val_hi, base, offset + 4);
->>> +}
->>
->> #include <linux/io-64-nonatomic-lo-hi.h>
-> 
-> Thanks for pointing this out. We will replace it with lo_hi_writeq.
-
-The point is more that you can just use writeq() (and readq() where 
-atomicity isn't important), and the header will make sure it works wherever.
-
-The significance of not having 64-bit single-copy atomicity should be 
-that if the processor issues a 64-bit access, the system may 
-*automatically* split it into a pair of 32-bit accesses, e.g. at an 
-AXI-to-APB bridge. If making a 64-bit access to a 64-bit register would 
-actually fail, that's just broken.
-
-[...]
->>> +static inline bool is_cycle_cntr_idx(const struct perf_event *event)
->>> +{
->>> +     struct coresight_pmu *coresight_pmu = to_coresight_pmu(event-
->>> pmu);
->>> +     int idx = event->hw.idx;
->>> +
->>> +     return (support_cc(coresight_pmu) && idx ==
->> CORESIGHT_PMU_IDX_CCNTR);
->>
->> If we don't support cycle counting, cycles count events should have been
->> rejected in event_init. If they're able to propagate further than that
-
-[apologies for an editing mishap here, this should have continued "then 
-something is fundamentally broken."]
-
-> Not sure I understand, do you mean the check for cycle counter support is unnecessary ?
-> This function is actually called by coresight_pmu_start, which is after event_init had passed.
-> coresight_pmu_start is not aware if cycle counter is supported or not, so we need to keep checking it.
-
-I mean that the support_cc(coresight_pmu) check should only ever need to 
-happen *once* in event_init, so if standard cycles events are not 
-supported then they are correctly rejected there and then. After that, 
-if we see one in event_add and later, then we can simply infer that we 
-*do* have a standard cycle counter and go ahead and allocate it.
-
->>> +}
->>> +
->>> +bool coresight_pmu_is_cc_event(const struct perf_event *event)
->>> +{
->>> +     struct coresight_pmu *coresight_pmu = to_coresight_pmu(event-
->>> pmu);
->>> +     u32 evtype = coresight_pmu->impl.ops->event_type(event);
->>> +
->>> +     return (support_cc(coresight_pmu) &&
->>
->> Ditto.
-> 
-> This function is called by event_init to validate the event and find available counters.
-
-Right, but it also ends up getting called from other places like 
-event_add as well. Like I say, if we're still checking whether an event 
-is supported or not by that point, we're doing something wrong.
-
-[...]>>> +/**
->>> + * This is the default event number for cycle count, if supported, since the
->>> + * ARM Coresight PMU specification does not define a standard event
->> code
->>> + * for cycle count.
->>> + */
->>> +#define CORESIGHT_PMU_EVT_CYCLES_DEFAULT (0x1ULL << 31)
->>
->> And what do we do when an implementation defines 0x80000000 as one of
->> its own event specifiers? The standard cycle count is independent of any
->> other events, so it needs to be encoded in a manner which is distinct
->> from *any* potentially-valid PMEVTYPER value.
-> 
-> We were thinking that in such case, the implementor would provide coresight_pmu_impl_ops.
-> To avoid it, I guess we can use config[32] for the default cycle count event id.
-> The filter value will need to be moved to config1[31:0].
-> Does it sound reasonable ?
-
-Sure, you can lay out the config fields however you fancy, but since the 
-architecture leaves the standard cycles event independent from the 
-32-bit IMP-DEF PMEVTYPER specifier, logically we need at least 33 bits 
-in some form or other to encode all possible event types in our 
-perf_event config.
-
-Thanks,
-Robin.
+-- 
+Best regards,
+Dmitry
