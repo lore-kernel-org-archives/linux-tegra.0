@@ -2,148 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BE3C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 12:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2219C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 May 2022 14:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232860AbiEKMmR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 May 2022 08:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53088 "EHLO
+        id S244167AbiEKODO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 May 2022 10:03:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231299AbiEKMmO (ORCPT
+        with ESMTP id S244331AbiEKODN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 May 2022 08:42:14 -0400
+        Wed, 11 May 2022 10:03:13 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9A4173F311;
-        Wed, 11 May 2022 05:42:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DEC8B62230;
+        Wed, 11 May 2022 07:03:10 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72402ED1;
-        Wed, 11 May 2022 05:42:12 -0700 (PDT)
-Received: from [10.57.80.111] (unknown [10.57.80.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8555C3F66F;
-        Wed, 11 May 2022 05:42:09 -0700 (PDT)
-Message-ID: <b0b92bdd-9ebe-8ce9-abe3-1f4d05a838dc@arm.com>
-Date:   Wed, 11 May 2022 13:42:02 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 0/2] perf: ARM CoreSight PMU support
-Content-Language: en-GB
-To:     Besar Wicaksono <bwicaksono@nvidia.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will@kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
-        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
-        Thierry Reding <treding@nvidia.com>,
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACB54ED1;
+        Wed, 11 May 2022 07:03:10 -0700 (PDT)
+Received: from lpieralisi (unknown [10.57.1.148])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 423BE3F66F;
+        Wed, 11 May 2022 07:03:08 -0700 (PDT)
+Date:   Wed, 11 May 2022 15:03:04 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Baruch Siach <baruch@tkos.co.il>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>
+Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20220509002810.12412-1-bwicaksono@nvidia.com>
- <20220509092843.GB26264@willie-the-truck>
- <2e5e09f9-b71b-d936-e291-db8f94554b18@arm.com>
- <20220510110742.ievkihggndpms3fn@bogus>
- <20220510111318.GD27557@willie-the-truck>
- <20220510184025.iwgknfqe5ygz4jwn@bogus>
- <SJ0PR12MB5676E68453A977F1220FF7AFA0C89@SJ0PR12MB5676.namprd12.prod.outlook.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <SJ0PR12MB5676E68453A977F1220FF7AFA0C89@SJ0PR12MB5676.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] PCI: IPQ6018 platform support
+Message-ID: <YnvCGD4RwuyPkTfK@lpieralisi>
+References: <cover.1644234441.git.baruch@tkos.co.il>
+ <20220412161259.GA7109@lpieralisi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220412161259.GA7109@lpieralisi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-05-11 02:29, Besar Wicaksono wrote:
+On Tue, Apr 12, 2022 at 05:12:59PM +0100, Lorenzo Pieralisi wrote:
+> On Mon, Feb 07, 2022 at 04:51:23PM +0200, Baruch Siach wrote:
+> > This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is 
+> > ported from downstream Codeaurora v5.4 kernel. The main difference from 
+> > downstream code is the split of PCIe registers configuration from .init to 
+> > .post_init, since it requires phy_power_on().
+> > 
+> > Tested on IPQ6010 based hardware.
+> > 
+> > Changes in v6:
+> > 
+> >   * Drop DT patch applied to the qcom tree
+> > 
+> >   * Normalize driver changes subject line
+> > 
+> >   * Add a preparatory patch to rename PCIE_CAP_LINK1_VAL to PCIE_CAP_SLOT_VAL,
+> >     and define it using PCI_EXP_SLTCAP_* macros
+> > 
+> >   * Drop a vague comment about ASPM configuration
+> > 
+> >   * Add a comment about the source of delay periods
+> > 
+> > Changes in v5:
+> > 
+> >   * Remove comments from qcom_pcie_init_2_9_0() (Bjorn Andersson)
+> > 
+> > Changes in v4:
+> > 
+> >   * Drop applied DT bits
+> > 
+> >   * Add max-link-speed that was missing from the applied v2 patch
+> > 
+> >   * Rebase the driver on v5.16-rc3
+> > 
+> > Changes in v3:
+> > 
+> >   * Drop applied patches
+> > 
+> >   * Rely on generic code for speed setup
+> > 
+> >   * Drop unused macros
+> > 
+> >   * Formatting fixes
+> > 
+> > Changes in v2:
+> > 
+> >   * Add patch moving GEN3_RELATED macros to a common header
+> > 
+> >   * Drop ATU configuration from pcie-qcom
+> > 
+> >   * Remove local definition of common registers
+> > 
+> >   * Use bulk clk and reset APIs
+> > 
+> >   * Remove msi-parent from device-tree
+> > 
+> > Baruch Siach (2):
+> >   PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
+> >   PCI: qcom: Define slot capabilities using PCI_EXP_SLTCAP_*
+> > 
+> > Selvam Sathappan Periakaruppan (1):
+> >   PCI: qcom: Add IPQ60xx support
+> > 
+> >  drivers/pci/controller/dwc/pcie-designware.h |   7 +
+> >  drivers/pci/controller/dwc/pcie-qcom.c       | 155 ++++++++++++++++++-
+> >  drivers/pci/controller/dwc/pcie-tegra194.c   |   6 -
+> >  3 files changed, 160 insertions(+), 8 deletions(-)
 > 
+> Hi Bjorn, Andy,
 > 
->> -----Original Message-----
->> From: Sudeep Holla <sudeep.holla@arm.com>
->> Sent: Tuesday, May 10, 2022 1:40 PM
->> To: Besar Wicaksono <bwicaksono@nvidia.com>
->> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>; Will Deacon
->> <will@kernel.org>; Sudeep Holla <sudeep.holla@arm.com>;
->> catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
->> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
->> tegra@vger.kernel.org; thanu.rangarajan@arm.com;
->> Michael.Williams@arm.com; Thierry Reding <treding@nvidia.com>; Jonathan
->> Hunter <jonathanh@nvidia.com>; Vikram Sethi <vsethi@nvidia.com>;
->> Mathieu Poirier <mathieu.poirier@linaro.org>
->> Subject: Re: [PATCH 0/2] perf: ARM CoreSight PMU support
->>
->> External email: Use caution opening links or attachments
->>
->>
->> On Tue, May 10, 2022 at 12:13:19PM +0100, Will Deacon wrote:
->>> On Tue, May 10, 2022 at 12:07:42PM +0100, Sudeep Holla wrote:
->>>> On Mon, May 09, 2022 at 11:02:23AM +0100, Suzuki K Poulose wrote:
->>>>> Cc: Mike Williams, Mathieu Poirier
->>>>> On 09/05/2022 10:28, Will Deacon wrote:
->>>>>> On Sun, May 08, 2022 at 07:28:08PM -0500, Besar Wicaksono wrote:
->>>>>>>    arch/arm64/configs/defconfig                  |    1 +
->>>>>>>    drivers/perf/Kconfig                          |    2 +
->>>>>>>    drivers/perf/Makefile                         |    1 +
->>>>>>>    drivers/perf/coresight_pmu/Kconfig            |   10 +
->>>>>>>    drivers/perf/coresight_pmu/Makefile           |    7 +
->>>>>>>    .../perf/coresight_pmu/arm_coresight_pmu.c    | 1317
->> +++++++++++++++++
->>>>>>>    .../perf/coresight_pmu/arm_coresight_pmu.h    |  147 ++
->>>>>>>    .../coresight_pmu/arm_coresight_pmu_nvidia.c  |  300 ++++
->>>>>>>    .../coresight_pmu/arm_coresight_pmu_nvidia.h  |   17 +
->>>>>>>    9 files changed, 1802 insertions(+)
->>>>>>
->>>>>> How does this interact with all the stuff we have under
->>>>>> drivers/hwtracing/coresight/?
->>>>>
->>>>> Absolutely zero, except for the name. The standard
->>>>> is named "CoreSight PMU" which is a bit unfortunate,
->>>>> given the only link, AFAIU, with the "CoreSight" architecture
->>>>> is the Lock Access Register(LAR). For reference, the
->>>>> drivers/hwtracing/coresight/ is purely "CoreSight" self-hosted
->>>>> tracing and the PMU is called "cs_etm" (expands to coresight etm).
->>>>> Otherwise the standard doesn't have anything to do with what
->>>>> exists already in the kernel.
->>>
->>> That's... a poor naming choice! But good, if it's entirely separate then I
->>> don't have to worry about that. Just wanted to make sure we're not going
->> to
->>> get tangled up in things like ROM tables and Coresight power domains for
->>> these things.
->>>
->>
->> OK, now that triggered another question/thought.
->>
->> 1. Do you need to do active power management for these PMUs ? Or like
->>     CPU PMUs, do you reject entering low power states if there is active
->>     session in progress. If there is active session, runtime PM won't get
->>     triggered but if there is system wide suspend, how is that dealt with ?
->>
-> 
-> Looking at the other uncore/system PMUs, none of the drivers support PM ops.
-> NVIDIA system PMU also does not get power gated and system suspend is not
-> supported. But just like other uncore PMU driver, this driver supports CPU hotplug.
-> If PM is needed, the required info should have been expressed in ACPI.
-> 
->> 2. Assuming you need some sort of PM, and since this is static table(which
->>     I really don't like/prefer but it is out there 🙁), how do you plan to
->>     get the power domain related information.
->>
-> 
-> I guess the APMT spec in section 2.2 may cover this. If a PMU implementation has
-> properties beyond what is defined in the spec, these properties can be described in DSDT.
-> The driver doesn’t take care of this currently, so this is a room for future improvement.
+> any feedback on this series please ?
 
-Yes, I assume it's essentially the same story as for MPAM MSCs in this 
-respect. Plus it means that MSI support will be similarly fun, where 
-we'll need to have a corresponding DSDT device via which we can request 
-the interrupt, because that needs to further correlate to an IORT Named 
-Component node describing the ITS mapping. Hopefully we can abstract 
-some of that in the APMT code rather than expose it all to the PMU 
-driver...
+Any feedback on these patches please ?
 
-Robin.
+Thanks,
+Lorenzo
