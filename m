@@ -2,169 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1729EC4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 May 2022 19:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA15C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 May 2022 22:15:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357833AbiELTBW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 May 2022 15:01:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35760 "EHLO
+        id S1359072AbiELWPW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 May 2022 18:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355699AbiELTBV (ORCPT
+        with ESMTP id S1354300AbiELWPW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 May 2022 15:01:21 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77A3590AC;
-        Thu, 12 May 2022 12:01:19 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id p26so10693692lfh.10;
-        Thu, 12 May 2022 12:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mt2U9a7tnFLCX9wgkrM1HMmN66TcXqkkVi2NC46P4ZM=;
-        b=Gv0Vwl9woZEQrxqNpxwQhwdxKoqNldJwYczn072anBC7urXp/rB7lJUw6WcauN+MH0
-         p0bGBg6cgf/AwYfhwuXjP/0AwzfHfXn5c/gqLlmrOXq/LJ6ptnvHyK2Ska48lxoMZp0U
-         2jozZ2fY5+EujB+GJYzyJc2cSDF6h04MQuZNiVxU5IEkW6adR5PUFhbehHxf2awcpHSD
-         Wkn+2Ylm8od7qxSYbpPul0v5HXuR4cjvALioAQZwc3L9qylXi9ppAAcKByOOap/hpwZF
-         ngLLxHSOJWGez4lyaD6WllzMLlMzt9T/jy1iVgDrSuhBQjjXqQlDxlqoA9h1/xRiY0Vr
-         fa9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mt2U9a7tnFLCX9wgkrM1HMmN66TcXqkkVi2NC46P4ZM=;
-        b=dgPtiHZfYRtsbhupaxzGsZVla284FqEQ0G6PzFrpcECxTN/+/peSrRWeLQ+jHF0O5H
-         Hzx/PlWRHznrgDGYQEfAq5H2MVMTBNCuL+3GLMUk83NW4EsKDVYPQfV41f0ZPul/Xec3
-         eovgerujtNXD+RoHXs5t7/d06QGPOmrUTA93EL6GLRz6gr7VPRu+MW9p1CjBcIoUDOTU
-         jW+XzoyfmqucnZ+IihABRGho/BgEptFRKxH80UgBV+QmcAKthy6JQpkNnWUE9DEJ0L/0
-         D4xHgXgilExBAOfkXh7vygBQOtyZenz+yIXy/Vr8gtqwO7jzM9nK5+6xdrNMOZq7hpVx
-         GysQ==
-X-Gm-Message-State: AOAM533+4scPN1LUUMDVjTkD6M+HpeWlXTVOQJ2Ut7DsuiocGbwdRsm5
-        q4JzssTnBQquTZDn912x/tM=
-X-Google-Smtp-Source: ABdhPJywkioOthRkNJKuhIGBnwy5wL2iI/mmTX+U90oMWFMfZ8hE+LZm8XsnwkIgxjq19/qLP4Hvow==
-X-Received: by 2002:a05:6512:33c8:b0:473:9d8f:a01b with SMTP id d8-20020a05651233c800b004739d8fa01bmr805048lfg.619.1652382077969;
-        Thu, 12 May 2022 12:01:17 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id z25-20020a2e9b99000000b0024f3d1daef2sm39660lji.122.2022.05.12.12.01.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 May 2022 12:01:16 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v5 5/5] iommu/tegra-smmu: Support managed domains
-Date:   Thu, 12 May 2022 21:00:52 +0200
-Message-Id: <20220512190052.1152377-6-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220512190052.1152377-1-thierry.reding@gmail.com>
-References: <20220512190052.1152377-1-thierry.reding@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 12 May 2022 18:15:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA816254730;
+        Thu, 12 May 2022 15:15:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 70549B82B63;
+        Thu, 12 May 2022 22:15:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A6FDC385B8;
+        Thu, 12 May 2022 22:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652393717;
+        bh=fc0UztyX51O5K/1Ek3Why80En4eNCFKQYWY/tu8LjnA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nIyMOfR1ehCwgryDuutkkX34eSooJenNfM00EH6PipdBVTeaTRJ1WYbl+1WJ98OPs
+         dl1saOtU9ksXmx2RbXKsKmaNZod7+03vGDJbmznmblHnri5urVflxkxXCLpQQrNFrI
+         S/FwT82WG3idnThLWphcvYqQEMHXSq07WE8Hm+RaQRN92GoFvIfXtLtKU3anTlfeHV
+         O1UoQnz3NIpHY37LaTzfVHxYROyNAL/hdOsudWAw5YynDIKgT6yGzSJi+ayWW6Bbfo
+         SP7uymQ16GkXlDhI1nzvy39YwEl2GcNfkhe29Cb/JApYUPKaA65BsHVL/6YHdzpmAg
+         E4vZIL72XFqnA==
+Received: from ip-185-104-136-29.ptr.icomera.net ([185.104.136.29] helo=wait-a-minute.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1npH5W-00AzV7-85; Thu, 12 May 2022 23:15:14 +0100
+Date:   Thu, 12 May 2022 23:15:11 +0100
+Message-ID: <87v8uamm8g.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Joey Gouly <joey.gouly@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 00/10] gpiolib: Handle immutable irq_chip structures
+In-Reply-To: <Yn0/DIl3+i/heRH6@smile.fi.intel.com>
+References: <20220419141846.598305-1-maz@kernel.org>
+        <Yn0/DIl3+i/heRH6@smile.fi.intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.104.136.29
+X-SA-Exim-Rcpt-To: andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, jeffrey.l.hugo@gmail.com, tglx@linutronix.de, Basavaraj.Natikar@amd.com, Shyam-sundar.S-k@amd.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Navneet Kumar <navneetk@nvidia.com>
+On Thu, 12 May 2022 18:08:28 +0100,
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> 
+> On Tue, Apr 19, 2022 at 03:18:36PM +0100, Marc Zyngier wrote:
+> > This is a followup from [2].
+> > 
+> > I recently realised that the gpiolib play ugly tricks on the
+> > unsuspecting irq_chip structures by patching the callbacks.
+> > 
+> > Not only this breaks when an irq_chip structure is made const (which
+> > really should be the default case), but it also forces this structure
+> > to be copied at nauseam for each instance of the GPIO block, which is
+> > a waste of memory.
+> 
+> Is this brings us to the issue with IRQ chip name?
+> 
+> The use case in my mind is the following:
+> 1) we have two or more GPIO chips that supports IRQ;
+> 2) the user registers two IRQs of the same (by number) pin on different chips;
+> 3) cat /proc/interrupt will show 'my_gpio_chip XX', where XX is the number.
 
-Allow creating identity and DMA API compatible IOMMU domains. When
-creating a DMA API compatible domain, make sure to also create the
-required cookie.
+/proc/interrupts isn't a dumping ground for debug information. Yes,
+some irqchips do that, and they have been fixed by providing the
+irq_print_chip callback, thus ensuring that the irq_chip structure is
+never written to. I would have loved to simply get rid of the variable
+string, but this is obviously ABI, and we can't break that.
 
-Signed-off-by: Navneet Kumar <navneetk@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v5:
-- remove DMA cookie initialization that's now no longer needed
+> So, do I understand correct current state of affairs?
+> 
+> If so, we have to fix this to have any kind of ID added to the chip name that
+> we can map /proc/interrupts output correctly.
 
- drivers/iommu/tegra-smmu.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+This is already done.
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 93879c40056c..f8b2b863c111 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -16,6 +16,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/dma-mapping.h>
-+#include <linux/dma-iommu.h>
- 
- #include <soc/tegra/ahb.h>
- #include <soc/tegra/mc.h>
-@@ -277,7 +278,9 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
- {
- 	struct tegra_smmu_as *as;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
-+	if (type != IOMMU_DOMAIN_UNMANAGED &&
-+	    type != IOMMU_DOMAIN_DMA &&
-+	    type != IOMMU_DOMAIN_IDENTITY)
- 		return NULL;
- 
- 	as = kzalloc(sizeof(*as), GFP_KERNEL);
-@@ -287,25 +290,16 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
- 	as->attr = SMMU_PD_READABLE | SMMU_PD_WRITABLE | SMMU_PD_NONSECURE;
- 
- 	as->pd = alloc_page(GFP_KERNEL | __GFP_DMA | __GFP_ZERO);
--	if (!as->pd) {
--		kfree(as);
--		return NULL;
--	}
-+	if (!as->pd)
-+		goto free_as;
- 
- 	as->count = kcalloc(SMMU_NUM_PDE, sizeof(u32), GFP_KERNEL);
--	if (!as->count) {
--		__free_page(as->pd);
--		kfree(as);
--		return NULL;
--	}
-+	if (!as->count)
-+		goto free_pd_range;
- 
- 	as->pts = kcalloc(SMMU_NUM_PDE, sizeof(*as->pts), GFP_KERNEL);
--	if (!as->pts) {
--		kfree(as->count);
--		__free_page(as->pd);
--		kfree(as);
--		return NULL;
--	}
-+	if (!as->pts)
-+		goto free_pts;
- 
- 	spin_lock_init(&as->lock);
- 
-@@ -315,6 +309,15 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
- 	as->domain.geometry.force_aperture = true;
- 
- 	return &as->domain;
-+
-+free_pts:
-+	kfree(as->pts);
-+free_pd_range:
-+	__free_page(as->pd);
-+free_as:
-+	kfree(as);
-+
-+	return NULL;
- }
- 
- static void tegra_smmu_domain_free(struct iommu_domain *domain)
-@@ -1009,7 +1012,7 @@ static const struct iommu_ops tegra_smmu_ops = {
- 	.probe_device = tegra_smmu_probe_device,
- 	.release_device = tegra_smmu_release_device,
- 	.device_group = tegra_smmu_device_group,
--	.get_resv_regions = of_iommu_get_resv_regions,
-+	.get_resv_regions = iommu_dma_get_resv_regions,
- 	.put_resv_regions = generic_iommu_put_resv_regions,
- 	.of_xlate = tegra_smmu_of_xlate,
- 	.pgsize_bitmap = SZ_4K,
+That's not an excuse to add more of those though. We already have the
+required infrastructure in debugfs, and that's where this sort of
+thing should happen.
+
+	M.
+
 -- 
-2.36.1
-
+Without deviation from the norm, progress is not possible.
