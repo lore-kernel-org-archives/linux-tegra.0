@@ -2,454 +2,484 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0D8C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 May 2022 14:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF69DC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 May 2022 16:23:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354955AbiELODZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 May 2022 10:03:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
+        id S1348145AbiELQXc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 May 2022 12:23:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354935AbiELODW (ORCPT
+        with ESMTP id S1356435AbiELQXb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 May 2022 10:03:22 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E219F55206;
-        Thu, 12 May 2022 07:03:17 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 5FD141F908;
-        Thu, 12 May 2022 14:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1652364196; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LqB96ySSQJ4ly+3J+rYGGuH/Fd7fkvILEbloF31pDTM=;
-        b=q3SRuDuz1bsrtNT6AQbijhKvd/E1pyV5ISS04f4B5Eo/MpxJkThlvlpzsrdXZrusqFVq1r
-        7s+CTa1eDnSZSlcSzDLMEjhXIjmmjm5vpsFw4wJd/0EtFszB2sl8NlJGjykorM6dG2+lpF
-        5FiP1kelHffEWxoWnmRZqh37k1tv6Lg=
-Received: from suse.cz (unknown [10.100.208.146])
+        Thu, 12 May 2022 12:23:31 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E1671E5EF6;
+        Thu, 12 May 2022 09:23:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 5C2702C141;
-        Thu, 12 May 2022 14:03:13 +0000 (UTC)
-Date:   Thu, 12 May 2022 16:03:10 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     akpm@linux-foundation.org, bhe@redhat.com,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
-        dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
-Message-ID: <Yn0TnsWVxCcdB2yO@alley>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id BB91EB82910;
+        Thu, 12 May 2022 16:23:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33602C385B8;
+        Thu, 12 May 2022 16:23:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652372606;
+        bh=ayDGTSbvOD0tdrbfv4NKgk8mgGeMGHbuLc4H/PqcZjQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JE+rxu5jRBMrizoydjSF8Uh73G48X0pYfddSBcucZekWgGiw05GhmDs69PoBQ2RR6
+         CUSAf9XTY2D2/KGxc268qYRv1cdAHUjOkEZd7T0crsmOP3UIDCliQbVBVOJB/NNSdr
+         oGWKqVF68iSGVnbOaDTIZc1OM4iT9OijXrRWQmdhsBDScDcQ6KGRLsiZXK8c0OsHdA
+         0NrI5uocM9UuEtVVBsqwTEvTHBDSga60Ju6GTAdehCl6lzHBI0FoEu7AVq/lSSMFtA
+         YNe8Rz0uSLD//QGLHgXSV7dtgtunjjDqTtFh4+WuIZnzXsZNZC9aWcKu2PhbWG2PHq
+         YmpEMj20zpcEA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=hot-poop.lan)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1npBb1-00AvqB-Ix; Thu, 12 May 2022 17:23:23 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Cc:     kernel-team@android.com, Daniel Palmer <daniel@thingy.jp>,
+        Romain Perier <romain.perier@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Robert Richter <rric@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] gpio: Remove dynamic allocation from populate_parent_alloc_arg()
+Date:   Thu, 12 May 2022 17:23:20 +0100
+Message-Id: <20220512162320.2213488-1-maz@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220427224924.592546-25-gpiccoli@igalia.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com, daniel@thingy.jp, romain.perier@gmail.com, linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com, jonathanh@nvidia.com, rric@kernel.org, nobuhiro1.iwamatsu@toshiba.co.jp, agross@kernel.org, bjorn.andersson@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+The gpiolib is unique in the way it uses intermediate fwspecs
+when feeding an interrupt specifier to the parent domain, as it
+relies on the populate_parent_alloc_arg() callback to perform
+a dynamic allocation.
+
+THis is pretty inefficient (we free the structure almost immediately),
+and the only reason this isn't a stack allocation is that our
+ThunderX friend uses MSIs rather than a FW-constructed structure.
+
+Let's solve it by providing a new type composed of the union
+of a struct irq_fwspec and a msi_info_t, which satisfies both
+requirements. This allows us to use a stack allocation, and we
+can move the handful of users to this new scheme.
+
+Also perform some additional cleanup, such as getting rid of the
+stub versions of the irq_domain_translate_*cell helpers, which
+are never used when CONFIG_IRQ_DOMAIN_HIERARCHY isn't selected.
+
+Tested on a Tegra186.
+
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: Daniel Palmer <daniel@thingy.jp>
+Cc: Romain Perier <romain.perier@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Robert Richter <rric@kernel.org>
+Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/gpio/gpio-msc313.c               | 15 ++++-----
+ drivers/gpio/gpio-tegra.c                | 15 ++++-----
+ drivers/gpio/gpio-tegra186.c             | 15 ++++-----
+ drivers/gpio/gpio-thunderx.c             | 15 ++++-----
+ drivers/gpio/gpio-visconti.c             | 15 ++++-----
+ drivers/gpio/gpiolib.c                   | 42 ++++++++++--------------
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 15 ++++-----
+ include/linux/gpio/driver.h              | 42 +++++++++++-------------
+ 8 files changed, 73 insertions(+), 101 deletions(-)
+
+diff --git a/drivers/gpio/gpio-msc313.c b/drivers/gpio/gpio-msc313.c
+index b2c90bdd39d0..52d7b8d99170 100644
+--- a/drivers/gpio/gpio-msc313.c
++++ b/drivers/gpio/gpio-msc313.c
+@@ -550,15 +550,12 @@ static struct irq_chip msc313_gpio_irqchip = {
+  * so we need to provide the fwspec. Essentially gpiochip_populate_parent_fwspec_twocell
+  * that puts GIC_SPI into the first cell.
+  */
+-static void *msc313_gpio_populate_parent_fwspec(struct gpio_chip *gc,
+-					     unsigned int parent_hwirq,
+-					     unsigned int parent_type)
++static int msc313_gpio_populate_parent_fwspec(struct gpio_chip *gc,
++					      union gpio_irq_fwspec *gfwspec,
++					      unsigned int parent_hwirq,
++					      unsigned int parent_type)
+ {
+-	struct irq_fwspec *fwspec;
+-
+-	fwspec = kmalloc(sizeof(*fwspec), GFP_KERNEL);
+-	if (!fwspec)
+-		return NULL;
++	struct irq_fwspec *fwspec = &gfwspec->fwspec;
+ 
+ 	fwspec->fwnode = gc->irq.parent_domain->fwnode;
+ 	fwspec->param_count = 3;
+@@ -566,7 +563,7 @@ static void *msc313_gpio_populate_parent_fwspec(struct gpio_chip *gc,
+ 	fwspec->param[1] = parent_hwirq;
+ 	fwspec->param[2] = parent_type;
+ 
+-	return fwspec;
++	return 0;
+ }
+ 
+ static int msc313e_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index ff2d2a1f9c73..e4fb4cb38a0f 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -443,15 +443,12 @@ static int tegra_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
+-static void *tegra_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+-					       unsigned int parent_hwirq,
+-					       unsigned int parent_type)
++static int tegra_gpio_populate_parent_fwspec(struct gpio_chip *chip,
++					     union gpio_irq_fwspec *gfwspec,
++					     unsigned int parent_hwirq,
++					     unsigned int parent_type)
+ {
+-	struct irq_fwspec *fwspec;
+-
+-	fwspec = kmalloc(sizeof(*fwspec), GFP_KERNEL);
+-	if (!fwspec)
+-		return NULL;
++	struct irq_fwspec *fwspec = &gfwspec->fwspec;
+ 
+ 	fwspec->fwnode = chip->irq.parent_domain->fwnode;
+ 	fwspec->param_count = 3;
+@@ -459,7 +456,7 @@ static void *tegra_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+ 	fwspec->param[1] = parent_hwirq;
+ 	fwspec->param[2] = parent_type;
+ 
+-	return fwspec;
++	return 0;
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 84c4f1e9fb0c..9beb689cffbc 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -547,16 +547,13 @@ static int tegra186_gpio_irq_domain_translate(struct irq_domain *domain,
+ 	return 0;
+ }
+ 
+-static void *tegra186_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+-						 unsigned int parent_hwirq,
+-						 unsigned int parent_type)
++static int tegra186_gpio_populate_parent_fwspec(struct gpio_chip *chip,
++						union gpio_irq_fwspec *gfwspec,
++						unsigned int parent_hwirq,
++						unsigned int parent_type)
+ {
+ 	struct tegra_gpio *gpio = gpiochip_get_data(chip);
+-	struct irq_fwspec *fwspec;
+-
+-	fwspec = kmalloc(sizeof(*fwspec), GFP_KERNEL);
+-	if (!fwspec)
+-		return NULL;
++	struct irq_fwspec *fwspec = &gfwspec->fwspec;
+ 
+ 	fwspec->fwnode = chip->irq.parent_domain->fwnode;
+ 	fwspec->param_count = 3;
+@@ -564,7 +561,7 @@ static void *tegra186_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+ 	fwspec->param[1] = parent_hwirq;
+ 	fwspec->param[2] = parent_type;
+ 
+-	return fwspec;
++	return 0;
+ }
+ 
+ static int tegra186_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
+diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
+index 9f66deab46ea..e1dedbca0c85 100644
+--- a/drivers/gpio/gpio-thunderx.c
++++ b/drivers/gpio/gpio-thunderx.c
+@@ -408,18 +408,15 @@ static int thunderx_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
+ 	return 0;
+ }
+ 
+-static void *thunderx_gpio_populate_parent_alloc_info(struct gpio_chip *chip,
+-						      unsigned int parent_hwirq,
+-						      unsigned int parent_type)
++static int thunderx_gpio_populate_parent_alloc_info(struct gpio_chip *chip,
++						    union gpio_irq_fwspec *gfwspec,
++						    unsigned int parent_hwirq,
++						    unsigned int parent_type)
+ {
+-	msi_alloc_info_t *info;
+-
+-	info = kmalloc(sizeof(*info), GFP_KERNEL);
+-	if (!info)
+-		return NULL;
++	msi_alloc_info_t *info = &gfwspec->msiinfo;
+ 
+ 	info->hwirq = parent_hwirq;
+-	return info;
++	return 0;
+ }
+ 
+ static int thunderx_gpio_probe(struct pci_dev *pdev,
+diff --git a/drivers/gpio/gpio-visconti.c b/drivers/gpio/gpio-visconti.c
+index 47455810bdb9..1d281156ca2a 100644
+--- a/drivers/gpio/gpio-visconti.c
++++ b/drivers/gpio/gpio-visconti.c
+@@ -103,15 +103,12 @@ static int visconti_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
+ 	return -EINVAL;
+ }
+ 
+-static void *visconti_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+-						  unsigned int parent_hwirq,
+-						  unsigned int parent_type)
++static int visconti_gpio_populate_parent_fwspec(struct gpio_chip *chip,
++						union gpio_irq_fwspec *gfwspec,
++						unsigned int parent_hwirq,
++						unsigned int parent_type)
+ {
+-	struct irq_fwspec *fwspec;
+-
+-	fwspec = kmalloc(sizeof(*fwspec), GFP_KERNEL);
+-	if (!fwspec)
+-		return NULL;
++	struct irq_fwspec *fwspec = &gfwspec->fwspec;
+ 
+ 	fwspec->fwnode = chip->irq.parent_domain->fwnode;
+ 	fwspec->param_count = 3;
+@@ -119,7 +116,7 @@ static void *visconti_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+ 	fwspec->param[1] = parent_hwirq;
+ 	fwspec->param[2] = parent_type;
+ 
+-	return fwspec;
++	return 0;
+ }
+ 
+ static int visconti_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index c813a6adbb6e..ed26608fc93a 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1113,7 +1113,7 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
+ 	irq_hw_number_t hwirq;
+ 	unsigned int type = IRQ_TYPE_NONE;
+ 	struct irq_fwspec *fwspec = data;
+-	void *parent_arg;
++	union gpio_irq_fwspec gpio_parent_fwspec = {};
+ 	unsigned int parent_hwirq;
+ 	unsigned int parent_type;
+ 	struct gpio_irq_chip *girq = &gc->irq;
+@@ -1153,14 +1153,15 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
+ 	irq_set_probe(irq);
+ 
+ 	/* This parent only handles asserted level IRQs */
+-	parent_arg = girq->populate_parent_alloc_arg(gc, parent_hwirq, parent_type);
+-	if (!parent_arg)
+-		return -ENOMEM;
++	ret = girq->populate_parent_alloc_arg(gc, &gpio_parent_fwspec,
++					      parent_hwirq, parent_type);
++	if (ret)
++		return ret;
+ 
+ 	chip_dbg(gc, "alloc_irqs_parent for %d parent hwirq %d\n",
+ 		  irq, parent_hwirq);
+ 	irq_set_lockdep_class(irq, gc->irq.lock_key, gc->irq.request_key);
+-	ret = irq_domain_alloc_irqs_parent(d, irq, 1, parent_arg);
++	ret = irq_domain_alloc_irqs_parent(d, irq, 1, &gpio_parent_fwspec);
+ 	/*
+ 	 * If the parent irqdomain is msi, the interrupts have already
+ 	 * been allocated, so the EEXIST is good.
+@@ -1172,7 +1173,6 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
+ 			 "failed to allocate parent hwirq %d for hwirq %lu\n",
+ 			 parent_hwirq, hwirq);
+ 
+-	kfree(parent_arg);
+ 	return ret;
+ }
+ 
+@@ -1236,34 +1236,28 @@ static bool gpiochip_hierarchy_is_hierarchical(struct gpio_chip *gc)
+ 	return !!gc->irq.parent_domain;
+ }
+ 
+-void *gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *gc,
+-					     unsigned int parent_hwirq,
+-					     unsigned int parent_type)
++int gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *gc,
++					    union gpio_irq_fwspec *gfwspec,
++					    unsigned int parent_hwirq,
++					    unsigned int parent_type)
+ {
+-	struct irq_fwspec *fwspec;
+-
+-	fwspec = kmalloc(sizeof(*fwspec), GFP_KERNEL);
+-	if (!fwspec)
+-		return NULL;
++	struct irq_fwspec *fwspec = &gfwspec->fwspec;
+ 
+ 	fwspec->fwnode = gc->irq.parent_domain->fwnode;
+ 	fwspec->param_count = 2;
+ 	fwspec->param[0] = parent_hwirq;
+ 	fwspec->param[1] = parent_type;
+ 
+-	return fwspec;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_populate_parent_fwspec_twocell);
+ 
+-void *gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *gc,
+-					      unsigned int parent_hwirq,
+-					      unsigned int parent_type)
++int gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *gc,
++					     union gpio_irq_fwspec *gfwspec,
++					     unsigned int parent_hwirq,
++					     unsigned int parent_type)
+ {
+-	struct irq_fwspec *fwspec;
+-
+-	fwspec = kmalloc(sizeof(*fwspec), GFP_KERNEL);
+-	if (!fwspec)
+-		return NULL;
++	struct irq_fwspec *fwspec = &gfwspec->fwspec;
+ 
+ 	fwspec->fwnode = gc->irq.parent_domain->fwnode;
+ 	fwspec->param_count = 4;
+@@ -1272,7 +1266,7 @@ void *gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *gc,
+ 	fwspec->param[2] = 0;
+ 	fwspec->param[3] = parent_type;
+ 
+-	return fwspec;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_populate_parent_fwspec_fourcell);
+ 
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index 4fbf8d3938ef..6d27d1b00ddf 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -966,16 +966,13 @@ static int pmic_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
+-static void *pmic_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+-					     unsigned int parent_hwirq,
+-					     unsigned int parent_type)
++static int pmic_gpio_populate_parent_fwspec(struct gpio_chip *chip,
++					    union gpio_irq_fwspec *gfwspec,
++					    unsigned int parent_hwirq,
++					    unsigned int parent_type)
+ {
+ 	struct pmic_gpio_state *state = gpiochip_get_data(chip);
+-	struct irq_fwspec *fwspec;
+-
+-	fwspec = kzalloc(sizeof(*fwspec), GFP_KERNEL);
+-	if (!fwspec)
+-		return NULL;
++	struct irq_fwspec *fwspec = &gfwspec->fwspec;
+ 
+ 	fwspec->fwnode = chip->irq.parent_domain->fwnode;
+ 
+@@ -985,7 +982,7 @@ static void *pmic_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+ 	/* param[2] must be left as 0 */
+ 	fwspec->param[3] = parent_type;
+ 
+-	return fwspec;
++	return 0;
+ }
+ 
+ static int pmic_gpio_probe(struct platform_device *pdev)
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index cb689264f3e9..600b3af1320f 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -11,6 +11,8 @@
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+ 
++#include <asm/msi.h>
++
+ struct gpio_desc;
+ struct of_phandle_args;
+ struct device_node;
+@@ -22,6 +24,13 @@ enum gpio_lookup_flags;
+ 
+ struct gpio_chip;
+ 
++union gpio_irq_fwspec {
++	struct irq_fwspec	fwspec;
++#ifdef CONFIG_GENERIC_MSI_IRQ_DOMAIN
++	msi_alloc_info_t	msiinfo;
++#endif
++};
++
+ #define GPIO_LINE_DIRECTION_IN	1
+ #define GPIO_LINE_DIRECTION_OUT	0
+ 
+@@ -102,9 +111,10 @@ struct gpio_irq_chip {
+ 	 * variant named &gpiochip_populate_parent_fwspec_fourcell is also
+ 	 * available.
+ 	 */
+-	void *(*populate_parent_alloc_arg)(struct gpio_chip *gc,
+-				       unsigned int parent_hwirq,
+-				       unsigned int parent_type);
++	int (*populate_parent_alloc_arg)(struct gpio_chip *gc,
++					 union gpio_irq_fwspec *fwspec,
++					 unsigned int parent_hwirq,
++					 unsigned int parent_type);
+ 
+ 	/**
+ 	 * @child_offset_to_irq:
+@@ -623,28 +633,14 @@ struct bgpio_pdata {
+ 
+ #ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+ 
+-void *gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *gc,
++int gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *gc,
++					    union gpio_irq_fwspec *gfwspec,
++					    unsigned int parent_hwirq,
++					    unsigned int parent_type);
++int gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *gc,
++					     union gpio_irq_fwspec *gfwspec,
+ 					     unsigned int parent_hwirq,
+ 					     unsigned int parent_type);
+-void *gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *gc,
+-					      unsigned int parent_hwirq,
+-					      unsigned int parent_type);
+-
+-#else
+-
+-static inline void *gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *gc,
+-						    unsigned int parent_hwirq,
+-						    unsigned int parent_type)
+-{
+-	return NULL;
+-}
+-
+-static inline void *gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *gc,
+-						     unsigned int parent_hwirq,
+-						     unsigned int parent_type)
+-{
+-	return NULL;
+-}
+ 
+ #endif /* CONFIG_IRQ_DOMAIN_HIERARCHY */
+ 
+-- 
+2.34.1
 
-first, I am sorry for stepping into the discussion so late.
-I was busy with some other stuff and this patchset is far
-from trivial.
-
-Second, thanks a lot for putting so much effort into it.
-Most of the changes look pretty good, especially all
-the fixes of particular notifiers and split into
-four lists.
-
-Though this patch will need some more love. See below
-for more details.
-
-
-On Wed 2022-04-27 19:49:18, Guilherme G. Piccoli wrote:
-> The panic() function is somewhat convoluted - a lot of changes were
-> made over the years, adding comments that might be misleading/outdated
-> now, it has a code structure that is a bit complex to follow, with
-> lots of conditionals, for example. The panic notifier list is something
-> else - a single list, with multiple callbacks of different purposes,
-> that run in a non-deterministic order and may affect hardly kdump
-> reliability - see the "crash_kexec_post_notifiers" workaround-ish flag.
-> 
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3784,6 +3791,33 @@
->  			timeout < 0: reboot immediately
->  			Format: <timeout>
->  
-> +	panic_notifiers_level=
-> +			[KNL] Set the panic notifiers execution order.
-> +			Format: <unsigned int>
-> +			We currently have 4 lists of panic notifiers; based
-> +			on the functionality and risk (for panic success) the
-> +			callbacks are added in a given list. The lists are:
-> +			- hypervisor/FW notification list (low risk);
-> +			- informational list (low/medium risk);
-> +			- pre_reboot list (higher risk);
-> +			- post_reboot list (only run late in panic and after
-> +			kdump, not configurable for now).
-> +			This parameter defines the ordering of the first 3
-> +			lists with regards to kdump; the levels determine
-> +			which set of notifiers execute before kdump. The
-> +			accepted levels are:
-
-This talks only about kdump. The reality is much more complicated.
-The level affect the order of:
-
-    + notifiers vs. kdump
-    + notifiers vs. crash_dump
-    + crash_dump vs. kdump
-
-There might theoretically many variants of the ordering of kdump,
-crash_dump, and the 4 notifier list. Some variants do not make
-much sense. You choose 5 variants and tried to select them by
-a level number.
-
-The question is if we really could easily describe the meaning this
-way. It is not only about a "level" of notifiers before kdump. It is
-also about the ordering of crash_dump vs. kdump. IMHO, "level"
-semantic does not fit there.
-
-Maybe more parameters might be easier to understand the effect.
-Anyway, we first need to agree on the chosen variants.
-I am going to discuss it more in the code, see below.
-
-
-
-> +			0: kdump is the first thing to run, NO list is
-> +			executed before kdump.
-> +			1: only the hypervisor list is executed before kdump.
-> +			2 (default level): the hypervisor list and (*if*
-> +			there's any kmsg_dumper defined) the informational
-> +			list are executed before kdump.
-> +			3: both the hypervisor and the informational lists
-> +			(always) execute before kdump.
-> +			4: the 3 lists (hypervisor, info and pre_reboot)
-> +			execute before kdump - this behavior is analog to the
-> +			deprecated parameter "crash_kexec_post_notifiers".
-> +
->  	panic_print=	Bitmask for printing system info when panic happens.
->  			User can chose combination of the following bits:
->  			bit 0: print all tasks info
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -183,6 +195,112 @@ static void panic_print_sys_info(bool console_flush)
->  		ftrace_dump(DUMP_ALL);
->  }
->  
-> +/*
-> + * Helper that accumulates all console flushing routines executed on panic.
-> + */
-> +static void console_flushing(void)
-> +{
-> +#ifdef CONFIG_VT
-> +	unblank_screen();
-> +#endif
-> +	console_unblank();
-> +
-> +	/*
-> +	 * In this point, we may have disabled other CPUs, hence stopping the
-> +	 * CPU holding the lock while still having some valuable data in the
-> +	 * console buffer.
-> +	 *
-> +	 * Try to acquire the lock then release it regardless of the result.
-> +	 * The release will also print the buffers out. Locks debug should
-> +	 * be disabled to avoid reporting bad unlock balance when panic()
-> +	 * is not being called from OOPS.
-> +	 */
-> +	debug_locks_off();
-> +	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
-> +
-> +	panic_print_sys_info(true);
-> +}
-> +
-> +#define PN_HYPERVISOR_BIT	0
-> +#define PN_INFO_BIT		1
-> +#define PN_PRE_REBOOT_BIT	2
-> +#define PN_POST_REBOOT_BIT	3
-> +
-> +/*
-> + * Determine the order of panic notifiers with regards to kdump.
-> + *
-> + * This function relies in the "panic_notifiers_level" kernel parameter
-> + * to determine how to order the notifiers with regards to kdump. We
-> + * have currently 5 levels. For details, please check the kernel docs for
-> + * "panic_notifiers_level" at Documentation/admin-guide/kernel-parameters.txt.
-> + *
-> + * Default level is 2, which means the panic hypervisor and informational
-> + * (unless we don't have any kmsg_dumper) lists will execute before kdump.
-> + */
-> +static void order_panic_notifiers_and_kdump(void)
-> +{
-> +	/*
-> +	 * The parameter "crash_kexec_post_notifiers" is deprecated, but
-> +	 * valid. Users that set it want really all panic notifiers to
-> +	 * execute before kdump, so it's effectively the same as setting
-> +	 * the panic notifiers level to 4.
-> +	 */
-> +	if (panic_notifiers_level >= 4 || crash_kexec_post_notifiers)
-> +		return;
-> +
-> +	/*
-> +	 * Based on the level configured (smaller than 4), we clear the
-> +	 * proper bits in "panic_notifiers_bits". Notice that this bitfield
-> +	 * is initialized with all notifiers set.
-> +	 */
-> +	switch (panic_notifiers_level) {
-> +	case 3:
-> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
-> +		break;
-> +	case 2:
-> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
-> +
-> +		if (!kmsg_has_dumpers())
-> +			clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
-> +		break;
-> +	case 1:
-> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
-> +		clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
-> +		break;
-> +	case 0:
-> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
-> +		clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
-> +		clear_bit(PN_HYPERVISOR_BIT, &panic_notifiers_bits);
-> +		break;
-> +	}
-> +}
->
-> +/*
-> + * Set of helpers to execute the panic notifiers only once.
-> + * Just the informational notifier cares about the return.
-> + */
-> +static inline bool notifier_run_once(struct atomic_notifier_head head,
-> +				     char *buf, long bit)
-> +{
-> +	if (test_and_change_bit(bit, &panic_notifiers_bits)) {
-> +		atomic_notifier_call_chain(&head, PANIC_NOTIFIER, buf);
-> +		return true;
-> +	}
-> +	return false;
-> +}
-
-Here is the code using the above functions. It helps to discuss
-the design and logic.
-
-<kernel/panic.c>
-	order_panic_notifiers_and_kdump();
-
-	/* If no level, we should kdump ASAP. */
-	if (!panic_notifiers_level)
-		__crash_kexec(NULL);
-
-	crash_smp_send_stop();
-	panic_notifier_hypervisor_once(buf);
-
-	if (panic_notifier_info_once(buf))
-		kmsg_dump(KMSG_DUMP_PANIC);
-
-	panic_notifier_pre_reboot_once(buf);
-
-	__crash_kexec(NULL);
-
-	panic_notifier_hypervisor_once(buf);
-
-	if (panic_notifier_info_once(buf))
-		kmsg_dump(KMSG_DUMP_PANIC);
-
-	panic_notifier_pre_reboot_once(buf);
-</kernel/panic.c>
-
-I have to say that the logic is very unclear. Almost all
-functions are called twice:
-
-   + __crash_kexec()
-   + kmsg_dump()
-   + panic_notifier_hypervisor_once()
-   + panic_notifier_pre_reboot_once()
-   + panic_notifier_info_once()
-
-It is pretty hard to find what functions are always called in the same
-order and where the order can be inverted.
-
-The really used code path is defined by order_panic_notifiers_and_kdump()
-that encodes "level" into "bits". The bits are then flipped in
-panic_notifier_*_once() calls that either do something or not.
-kmsg_dump() is called according to the bit flip.
-
-It is an interesting approach. I guess that you wanted to avoid too
-many if/then/else levels in panic(). But honestly, it looks like
-a black magic to me.
-
-IMHO, it is always easier to follow if/then/else logic than using
-a translation table that requires additional bit flips when
-a value is used more times.
-
-Also I guess that it is good proof that "level" abstraction does
-not fit here. Normal levels would not need this kind of magic.
-
-
-OK, the question is how to make it better. Let's start with
-a clear picture of the problem:
-
-1. panic() has basically two funtions:
-
-      + show/store debug information (optional ways and amount)
-      + do something with the system (reboot, stay hanged)
-
-
-2. There are 4 ways how to show/store the information:
-
-      + tell hypervisor to store what it is interested about
-      + crash_dump
-      + kmsg_dump()
-      + consoles
-
-  , where crash_dump and consoles are special:
-
-     + crash_dump does not return. Instead it ends up with reboot.
-
-     + Consoles work transparently. They just need an extra flush
-       before reboot or staying hanged.
-
-
-3. The various notifiers do things like:
-
-     + tell hypervisor about the crash
-     + print more information (also stop watchdogs)
-     + prepare system for reboot (touch some interfaces)
-     + prepare system for staying hanged (blinking)
-
-   Note that it pretty nicely matches the 4 notifier lists.
-
-
-Now, we need to decide about the ordering. The main area is how
-to store the debug information. Consoles are transparent so
-the quesition is about:
-
-     + hypervisor
-     + crash_dump
-     + kmsg_dump
-
-Some people need none and some people want all. There is a
-risk that system might hung at any stage. This why people want to
-make the order configurable.
-
-But crash_dump() does not return when it succeeds. And kmsg_dump()
-users havn't complained about hypervisor problems yet. So, that
-two variants might be enough:
-
-    + crash_dump (hypervisor, kmsg_dump as fallback)
-    + hypervisor, kmsg_dump, crash_dump
-
-One option "panic_prefer_crash_dump" should be enough.
-And the code might look like:
-
-void panic()
-{
-[...]
-	dump_stack();
-	kgdb_panic(buf);
-
-	< ---  here starts the reworked code --- >
-
-	/* crash dump is enough when enabled and preferred. */
-	if (panic_prefer_crash_dump)
-		__crash_kexec(NULL);
-
-	/* Stop other CPUs and focus on handling the panic state. */
-	if (has_kexec_crash_image)
-		crash_smp_send_stop();
-	else
-		smp_send_stop()
-
-	/* Notify hypervisor about the system panic. */
-	atomic_notifier_call_chain(&panic_hypervisor_list, 0, NULL);
-
-	/*
-	 * No need to risk extra info when there is no kmsg dumper
-	 * registered.
-	 */
-	if (!has_kmsg_dumper())
-		__crash_kexec(NULL);
-
-	/* Add extra info from different subsystems. */
-	atomic_notifier_call_chain(&panic_info_list, 0, NULL);
-
-	kmsg_dump(KMSG_DUMP_PANIC);
-	__crash_kexec(NULL);
-
-	/* Flush console */
-	unblank_screen();
-	console_unblank();
-	debug_locks_off();
-	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
-
-	if (panic_timeout > 0) {
-		delay()
-	}
-
-	/*
-	 * Prepare system for eventual reboot and allow custom
-	 * reboot handling.
-	 */
-	atomic_notifier_call_chain(&panic_reboot_list, 0, NULL);
-
-	if (panic_timeout != 0) {
-		reboot();
-	}
-
-	/*
-	 * Prepare system for the infinite waiting, for example,
-	 * setup blinking.
-	 */
-	atomic_notifier_call_chain(&panic_loop_list, 0, NULL);
-
-	infinite_loop();
-}
-
-
-__crash_kexec() is there 3 times but otherwise the code looks
-quite straight forward.
-
-Note 1: I renamed the two last notifier list. The name 'post-reboot'
-	did sound strange from the logical POV ;-)
-
-Note 2: We have to avoid the possibility to call "reboot" list
-	before kmsg_dump(). All callbacks providing info
-	have to be in the info list. It a callback combines
-	info and reboot functionality then it should be split.
-
-	There must be another way to calm down problematic
-	info callbacks. And it has to be solved when such
-	a problem is reported. Is there any known issue, please?
-
-It is possible that I have missed something important.
-But I would really like to make the logic as simple as possible.
-
-Best Regards,
-Petr
