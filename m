@@ -2,45 +2,58 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44059C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 14 May 2022 10:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2011AC433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 14 May 2022 16:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231819AbiENKgW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 14 May 2022 06:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54752 "EHLO
+        id S233181AbiENQ0y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 14 May 2022 12:26:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbiENKgV (ORCPT
+        with ESMTP id S229645AbiENQ0x (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 14 May 2022 06:36:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28856BFA;
-        Sat, 14 May 2022 03:36:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0F211B80159;
-        Sat, 14 May 2022 10:36:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7A87C340EE;
-        Sat, 14 May 2022 10:36:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652524576;
-        bh=IZ20DnElaUQpGD9AQjF+GTf8KlNtO0jZ4I5fpkzKRAg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RI2Iyaydzs9i8l3W1mZ9L/zOUjwA5u5KH186hWT5zJbULe1YO1bWudVvVFZOqRLDt
-         KwBOczHvrcdEwYj76PwBAiAfn2VswtiBq9sl7UU4e9R4fyTlrhHwQP4hg8pR9oUKGI
-         6xkv4bOa2cX2e3RecGYMh7tb8Eg6XlV5412ulgD8uVHmZ2bxYPDvnmo7qlPDG4AVAB
-         nvobTo4sxzGS5HLo1T4KX9S93N/TlINZzmC2c12yifBKH7U8hjOl33HhVIzMkp9TQE
-         oTvYuTFxUNBEeIaQOfBKCW1RLsX9LSn5kl6hZ6jWHyhVnGUZUQUqvhJ+L/aBlO/2Is
-         EGLO+6vuzsGbg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1npp8A-00BIKM-4A; Sat, 14 May 2022 11:36:14 +0100
-Date:   Sat, 14 May 2022 11:36:13 +0100
-Message-ID: <87r14wmmea.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
+        Sat, 14 May 2022 12:26:53 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36A601A804
+        for <linux-tegra@vger.kernel.org>; Sat, 14 May 2022 09:26:50 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id d137so1125091ybc.13
+        for <linux-tegra@vger.kernel.org>; Sat, 14 May 2022 09:26:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uAAN2W54G48k9hRqje/cdaPTrbIW4YAQoF/hPdMAfD4=;
+        b=NgAhjgFHi90HV2GORZIQ4dktxh+umurffW9MJr9ugCzFo3AOyZIR0rtZtnqis+BXgt
+         9/PWQLorLuUj5ssBcR9dpOyZVGb5tVBRVn5WtjTfhxWqd0b+/Aps6LaqJmS0T96MyoSi
+         fNKs2ZaugB33/LC0VPxjyXgzry5NFeye6XHzsnc07WCW3mwLf+UlSSwm9QdH9tC6jMSI
+         +jLlBGIvB68JmdxHLvk32ZBmv+Z2TfWXLUWmS5rSP+Ml5vLcXb+/VQ5/XxS+ihnLXUK9
+         gVCTZ1T8qJDhNpUYxKMUYjO7VCU7hqJDBTcngG8EixlAiT8Q5vWGETNept85pD/VbnN3
+         QZfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uAAN2W54G48k9hRqje/cdaPTrbIW4YAQoF/hPdMAfD4=;
+        b=UfbHh/TpBghXG9UW1LpETSlFkkhlidFvrtlearOB4NwaKggrsJ5Tk3g/oeue4yIOy3
+         5PuearBnXPdM0gGs6t1hxYpUob4vjpwbUcUjJ5CG2MGTTng9/nyVS5GFlZlSiNMdT0IO
+         4+08Honz+QBkFwEpBIdtr1eiJ3qgMqira2K+/+WOULrnuosJF+rkSygP5qirbfVzAjvi
+         vAD+D/mGFOCFU+Ts+ufA+su2AVxq8oRMx4KJS+zgEPvY37THEeYacTD+ZSpM+MN9yBsq
+         XrgnGp9bFqwPUYpWaDuyMMoGAehkf/L0OyiAmxqNnnj/R5tMqxjzYdFj1vifHnZl2c8I
+         N9WQ==
+X-Gm-Message-State: AOAM530wSSgn6riOBzp21ENBqfpuEoomqRls8I69wO6l9kGyZ2lM4z3E
+        d5oAqPNp+D/y/VfTptyUQzvZwvYyvD4XXBg4xDb6RA==
+X-Google-Smtp-Source: ABdhPJw4dvOEMBqoKApaz3M52UhSyBHJuFPFbVJOsBzfkjuUCL4abpY/zc7w1I7zX/avexmLj1yiVR9myg0teR7uhb0=
+X-Received: by 2002:a5b:302:0:b0:64b:a20a:fcd9 with SMTP id
+ j2-20020a5b0302000000b0064ba20afcd9mr7045834ybp.492.1652545609490; Sat, 14
+ May 2022 09:26:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220512162320.2213488-1-maz@kernel.org> <CACRpkdajTCS5CmQLY8hffVe1x4WzWuC_myQVGZNKV3sRzLPa=w@mail.gmail.com>
+ <87r14wmmea.wl-maz@kernel.org>
+In-Reply-To: <87r14wmmea.wl-maz@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 14 May 2022 18:26:38 +0200
+Message-ID: <CACRpkdZ9NgATS-C0EqLVcxNf1CejwsRMV+NCCVhqrKQ=3c346A@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Remove dynamic allocation from populate_parent_alloc_arg()
+To:     Marc Zyngier <maz@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, kernel-team@android.com,
@@ -53,87 +66,63 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] gpio: Remove dynamic allocation from populate_parent_alloc_arg()
-In-Reply-To: <CACRpkdajTCS5CmQLY8hffVe1x4WzWuC_myQVGZNKV3sRzLPa=w@mail.gmail.com>
-References: <20220512162320.2213488-1-maz@kernel.org>
-        <CACRpkdajTCS5CmQLY8hffVe1x4WzWuC_myQVGZNKV3sRzLPa=w@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com, daniel@thingy.jp, romain.perier@gmail.com, brgl@bgdev.pl, thierry.reding@gmail.com, jonathanh@nvidia.com, rric@kernel.org, nobuhiro1.iwamatsu@toshiba.co.jp, agross@kernel.org, bjorn.andersson@linaro.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hey Linus,
-
-On Fri, 13 May 2022 22:24:40 +0100,
-Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> On Thu, May 12, 2022 at 6:23 PM Marc Zyngier <maz@kernel.org> wrote:
-> 
-> > The gpiolib is unique in the way it uses intermediate fwspecs
-> > when feeding an interrupt specifier to the parent domain, as it
-> > relies on the populate_parent_alloc_arg() callback to perform
-> > a dynamic allocation.
+On Sat, May 14, 2022 at 12:36 PM Marc Zyngier <maz@kernel.org> wrote:
+> On Fri, 13 May 2022 22:24:40 +0100,
+> Linus Walleij <linus.walleij@linaro.org> wrote:
 > >
-> > THis is pretty inefficient (we free the structure almost immediately),
-> > and the only reason this isn't a stack allocation is that our
-> > ThunderX friend uses MSIs rather than a FW-constructed structure.
+> > On Thu, May 12, 2022 at 6:23 PM Marc Zyngier <maz@kernel.org> wrote:
 > >
-> > Let's solve it by providing a new type composed of the union
-> > of a struct irq_fwspec and a msi_info_t, which satisfies both
-> > requirements. This allows us to use a stack allocation, and we
-> > can move the handful of users to this new scheme.
+> > > The gpiolib is unique in the way it uses intermediate fwspecs
+> > > when feeding an interrupt specifier to the parent domain, as it
+> > > relies on the populate_parent_alloc_arg() callback to perform
+> > > a dynamic allocation.
+> > >
+> > > THis is pretty inefficient (we free the structure almost immediately),
+> > > and the only reason this isn't a stack allocation is that our
+> > > ThunderX friend uses MSIs rather than a FW-constructed structure.
+> > >
+> > > Let's solve it by providing a new type composed of the union
+> > > of a struct irq_fwspec and a msi_info_t, which satisfies both
+> > > requirements. This allows us to use a stack allocation, and we
+> > > can move the handful of users to this new scheme.
+> > >
+> > > Also perform some additional cleanup, such as getting rid of the
+> > > stub versions of the irq_domain_translate_*cell helpers, which
+> > > are never used when CONFIG_IRQ_DOMAIN_HIERARCHY isn't selected.
+> > >
+> > > Tested on a Tegra186.
+> > >
+> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > > Cc: Daniel Palmer <daniel@thingy.jp>
+> > > Cc: Romain Perier <romain.perier@gmail.com>
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> > > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > > Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> > > Cc: Robert Richter <rric@kernel.org>
+> > > Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > > Cc: Andy Gross <agross@kernel.org>
+> > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 > >
-> > Also perform some additional cleanup, such as getting rid of the
-> > stub versions of the irq_domain_translate_*cell helpers, which
-> > are never used when CONFIG_IRQ_DOMAIN_HIERARCHY isn't selected.
+> > This looks very appetizing to me but:
 > >
-> > Tested on a Tegra186.
+> > drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 15 ++++-----
 > >
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > Cc: Daniel Palmer <daniel@thingy.jp>
-> > Cc: Romain Perier <romain.perier@gmail.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > Cc: Robert Richter <rric@kernel.org>
-> > Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > Cc: Andy Gross <agross@kernel.org>
-> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> This looks very appetizing to me but:
-> 
-> drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 15 ++++-----
-> 
-> This seems to have some changes to
-> ->populate_parent_alloc_arg not even in linux-next,
-> so I get confused, what are the prerequisites? (Probably
-> something I already reviewed, but...)
+> > This seems to have some changes to
+> > ->populate_parent_alloc_arg not even in linux-next,
+> > so I get confused, what are the prerequisites? (Probably
+> > something I already reviewed, but...)
+>
+> Odd. This patch is on top of irqchip-next, which is itself already in
+> -next (you got me worried and I just pulled everything to check).
 
-Odd. This patch is on top of irqchip-next, which is itself already in
--next (you got me worried and I just pulled everything to check).
+I confused it with pinctrl-ssbi-gpio.c. Simple beginners mistake.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> Also: don't you also need to fix something in
-> drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c?
-> the way I remember it it was quite similar to spmi-gpio
-> but I may be mistaken.
-
-No, this one is graceful enough to use
-gpiochip_populate_parent_fwspec_twocell(), which is directly provided
-by gpiolib and thus addressed directly by this patch. Same thing for
-the spmi-mpp version, which uses the fourcell variant.
-
-HTH,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Yours,
+Linus Walleij
