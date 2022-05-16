@@ -2,119 +2,324 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D56C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FA6C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238906AbiEPKNk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 06:13:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44448 "EHLO
+        id S233185AbiEPKV6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 06:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238546AbiEPKNj (ORCPT
+        with ESMTP id S232831AbiEPKVy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 May 2022 06:13:39 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A73B7C8;
-        Mon, 16 May 2022 03:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=fWkwQsmctjZuzNgYxnAKr5+YEBZD6Vnzh24HSXGD4s4=; b=PyvF5wt/y7YPONshkgm9QvVDBg
-        ofst1pJP0Wz+jy0MpOKmeONA+ui5V0E/rUyTSJz5lluFvjphLQUOW4m1TGTcb8rZizQ+fbHYWLWew
-        /xQ9G4Psi7BDZQKEb4Zb39YdHsYSq0ksZ7L5J8D4EnKoSu4jl0vWKeCQyJdNgVu95mq5GeMNGHw0h
-        nR+FiSXWtwr57cFQ5zPIPUbnAIEyV2xkoYwqpCgENWf13AKUlbX9cCwb3iku5748UtSaRtn/7+A5m
-        E296JSCsnKVU5cbYlofpOk9K7Pdq6V9+++V2vUUERzQpS/IhCSKIn0a0MczNTBD+9xjWeWDoBglda
-        6ZW8LDuA==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1nqXjD-0000OD-HN; Mon, 16 May 2022 13:13:27 +0300
-Message-ID: <4a170997-c893-1788-dcaa-8ed2193146ae@kapsi.fi>
-Date:   Mon, 16 May 2022 13:13:27 +0300
+        Mon, 16 May 2022 06:21:54 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8420ADECC;
+        Mon, 16 May 2022 03:21:52 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 02CB721F36;
+        Mon, 16 May 2022 10:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1652696511; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9SKwT5B95E5YN9xa81VvHUpO+QGR+zcfCsbhuV2Jgp4=;
+        b=LWTnDo04g2ZIMR91v0c2MAsYmxaUOl80sz+tTo9fRyqmuLzfAZ1jmcmhBu1F/2SwEKbidr
+        AAgP6W9p9YHXuK9IdMK0VKJ5T49DYuwEAzjkXZlkWl2knT/MPCmRsL91fAF4WZ26S0Lq+5
+        GaIq0ymGLcl5C1bryaGKOpn3k9Ph6bU=
+Received: from suse.cz (unknown [10.100.208.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 89FB92C141;
+        Mon, 16 May 2022 10:21:48 +0000 (UTC)
+Date:   Mon, 16 May 2022 12:21:48 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     "michael Kelley (LINUX)" <mikelley@microsoft.com>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        d.hatayama@jp.fujitsu.com, akpm@linux-foundation.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, dave.hansen@linux.intel.com, feng.tang@intel.com,
+        gregkh@linuxfoundation.org, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+Message-ID: <YoIlvFxbqoiDsD1l@alley>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-25-gpiccoli@igalia.com>
+ <Yn0TnsWVxCcdB2yO@alley>
+ <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v5 5/9] iommu/arm-smmu: Attach to host1x context device
- bus
-Content-Language: en-US
-To:     Will Deacon <will@kernel.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        robin.murphy@arm.com, robh+dt@kernel.org,
-        krzysztof.kozlowski@canonical.com, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-References: <20220516085258.1227691-1-cyndis@kapsi.fi>
- <20220516085258.1227691-6-cyndis@kapsi.fi>
- <20220516100721.GA1927@willie-the-truck>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <20220516100721.GA1927@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/16/22 13:07, Will Deacon wrote:
-> On Mon, May 16, 2022 at 11:52:54AM +0300, cyndis@kapsi.fi wrote:
->> From: Mikko Perttunen <mperttunen@nvidia.com>
->>
->> Set itself as the IOMMU for the host1x context device bus, containing
->> "dummy" devices used for Host1x context isolation.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/iommu/arm/arm-smmu/arm-smmu.c | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
->>
->> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> index 568cce590ccc..9ff54eaecf81 100644
->> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> @@ -39,6 +39,7 @@
->>   
->>   #include <linux/amba/bus.h>
->>   #include <linux/fsl/mc.h>
->> +#include <linux/host1x_context_bus.h>
->>   
->>   #include "arm-smmu.h"
->>   
->> @@ -2053,8 +2054,20 @@ static int arm_smmu_bus_init(struct iommu_ops *ops)
->>   			goto err_reset_pci_ops;
->>   	}
->>   #endif
->> +#ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
->> +	if (!iommu_present(&host1x_context_device_bus_type)) {
->> +		err = bus_set_iommu(&host1x_context_device_bus_type, ops);
->> +		if (err)
->> +			goto err_reset_fsl_mc_ops;
->> +	}
->> +#endif
->> +
->>   	return 0;
->>   
->> +err_reset_fsl_mc_ops: __maybe_unused;
->> +#ifdef CONFIG_FSL_MC_BUS
->> +	bus_set_iommu(&fsl_mc_bus_type, NULL);
->> +#endif
+On Sun 2022-05-15 19:47:39, Guilherme G. Piccoli wrote:
+> On 12/05/2022 11:03, Petr Mladek wrote:
+> > This talks only about kdump. The reality is much more complicated.
+> > The level affect the order of:
+> > 
+> >     + notifiers vs. kdump
+> >     + notifiers vs. crash_dump
+> >     + crash_dump vs. kdump
 > 
-> bus_set_iommu() is going away:
+> First of all, I'd like to ask you please to clarify to me *exactly* what
+> are the differences between "crash_dump" and "kdump". I'm sorry if
+> that's a silly question, I need to be 100% sure I understand the
+> concepts the same way you do.
+
+Ah, it should have been:
+
+     + notifiers vs. kmsg_dump
+     + notifiers vs. crash_dump
+     + crash_dump vs. kmsg_dump
+
+I am sorry for the confusion. Even "crash_dump" is slightly
+misleading because there is no function with this name.
+But it seems to be easier to understand than __crash_kexec().
+
+
+> > There might theoretically many variants of the ordering of kdump,
+> > crash_dump, and the 4 notifier list. Some variants do not make
+> > much sense. You choose 5 variants and tried to select them by
+> > a level number.
+> > 
+> > The question is if we really could easily describe the meaning this
+> > way. It is not only about a "level" of notifiers before kdump. It is
+> > also about the ordering of crash_dump vs. kdump. IMHO, "level"
+> > semantic does not fit there.
+> > 
+> > Maybe more parameters might be easier to understand the effect.
+> > Anyway, we first need to agree on the chosen variants.
+> > I am going to discuss it more in the code, see below.
+> > 
+> > 
+> > [...] 
+> > Here is the code using the above functions. It helps to discuss
+> > the design and logic.
+> > 
+> > I have to say that the logic is very unclear. Almost all
+> > functions are called twice:
+> > 
+> > The really used code path is defined by order_panic_notifiers_and_kdump()
+> > that encodes "level" into "bits". The bits are then flipped in
+> > panic_notifier_*_once() calls that either do something or not.
+> > kmsg_dump() is called according to the bit flip.
+> > 
+> > Also I guess that it is good proof that "level" abstraction does
+> > not fit here. Normal levels would not need this kind of magic.
 > 
-> https://lore.kernel.org/r/cover.1650890638.git.robin.murphy@arm.com
+> Heheh OK, I appreciate your opinion, but I guess we'll need to agree in
+> disagree here - I'm much more fond to this kind of code than a bunch of
+> if/else blocks that almost give headaches. Encoding such "level" logic
+> in the if/else scheme is very convoluted, generates a very big code. And
+> the functions aren't so black magic - they map a level in bits, and the
+> functions _once() are called...once! Although we switch the position in
+> the code, so there are 2 calls, one of them is called and the other not.
+
+I see. Well, I would consider this as a warning that the approach is
+too complex. If the code, using if/then/else, would cause headaches
+then also understanding of the behavior would cause headaches for
+both users and programmers.
+
+
+> But that's totally fine to change - especially if we're moving away from
+> the "level" logic. I see below you propose a much simpler approach - if
+> we follow that, definitely we won't need the "black magic" approach heheh
+
+I do not say that my proposal is fully correct. But we really need
+this kind of simpler approach.
+
+
+> > OK, the question is how to make it better.
+
+> > One option "panic_prefer_crash_dump" should be enough.
+> > And the code might look like:
+> > 
+> > void panic()
+> > {
+> > [...]
+> > 	dump_stack();
+> > 	kgdb_panic(buf);
+> > 
+> > 	< ---  here starts the reworked code --- >
+> > 
+> > 	/* crash dump is enough when enabled and preferred. */
+> > 	if (panic_prefer_crash_dump)
+> > 		__crash_kexec(NULL);
+> > 
+> > 	/* Stop other CPUs and focus on handling the panic state. */
+> > 	if (has_kexec_crash_image)
+> > 		crash_smp_send_stop();
+> > 	else
+> > 		smp_send_stop()
+> > 
 > 
-> Will
+> Here we have a very important point. Why do we need 2 variants of SMP
+> CPU stopping functions? I disagree with that - my understanding of this
+> after some study in architectures is that the crash_() variant is
+> "stronger", should work in all cases and if not, we should fix that -
+> that'd be a bug.
+> 
+> Such variant either maps to smp_send_stop() (in various architectures,
+> including XEN/x86) or overrides the basic function with more proper
+> handling for panic() case...I don't see why we still need such
+> distinction, if you / others have some insight about that, I'd like to
+> hear =)
 
-Thanks for the heads-up. Robin had pointed out that this work was 
-ongoing but I hadn't seen the patches yet. I'll look into it.
+The two variants were introduced by the commit 0ee59413c967c35a6dd
+("x86/panic: replace smp_send_stop() with kdump friendly version in
+panic path")
 
-Mikko
+It points to https://lkml.org/lkml/2015/6/24/44 that talks about
+still running watchdogs.
 
->>
+It is possible that the problem could be fixed another way. It is
+even possible that it has already been fixed by the notifiers
+that disable the watchdogs.
 
+Anyway, any change of the smp_send_stop() behavior should be done
+in a separate patch. It will help with bisection of possible
+regression. Also it would require a good explanation in
+the commit message. I would personally do it in a separate
+patch(set).
+
+
+> > 	/* Notify hypervisor about the system panic. */
+> > 	atomic_notifier_call_chain(&panic_hypervisor_list, 0, NULL);
+> > 
+> > 	/*
+> > 	 * No need to risk extra info when there is no kmsg dumper
+> > 	 * registered.
+> > 	 */
+> > 	if (!has_kmsg_dumper())
+> > 		__crash_kexec(NULL);
+> > 
+> > 	/* Add extra info from different subsystems. */
+> > 	atomic_notifier_call_chain(&panic_info_list, 0, NULL);
+> > 
+> > 	kmsg_dump(KMSG_DUMP_PANIC);
+> > 	__crash_kexec(NULL);
+> > 
+> > 	/* Flush console */
+> > 	unblank_screen();
+> > 	console_unblank();
+> > 	debug_locks_off();
+> > 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+> > 
+> > 	if (panic_timeout > 0) {
+> > 		delay()
+> > 	}
+> > 
+> > 	/*
+> > 	 * Prepare system for eventual reboot and allow custom
+> > 	 * reboot handling.
+> > 	 */
+> > 	atomic_notifier_call_chain(&panic_reboot_list, 0, NULL);
+> 
+> You had the order of panic_reboot_list VS. consoles flushing inverted.
+> It might make sense, although I didn't do that in V1...
+
+IMHO, it makes sense:
+
+  1. panic_reboot_list contains notifiers that do the reboot
+     immediately, for example, xen_panic_event, alpha_panic_event.
+     The consoles have to be flushed earlier.
+
+  2. console_flush_on_panic() ignores the result of console_trylock()
+     and always calls console_unlock(). As a result the lock should
+     be unlocked at the end. And any further printk() should be able
+     to printk the messages to the console immediately. It means
+     that any messages printed by the reboot notifiers should appear
+     on the console as well.
+
+> Are you OK in having a helper for console flushing, as I did in V1? It
+> makes code of panic() a bit less polluted / more focused I feel.
+
+Yes, it makes sense. Well, it would better to do it in a separate
+patch. The patch patch reworking the logic should be as small
+as possible. It will simplify the review.
+
+
+> > 	if (panic_timeout != 0) {
+> > 		reboot();
+> > 	}
+> > 
+> > 	/*
+> > 	 * Prepare system for the infinite waiting, for example,
+> > 	 * setup blinking.
+> > 	 */
+> > 	atomic_notifier_call_chain(&panic_loop_list, 0, NULL);
+> > 
+> > 	infinite_loop();
+> > }
+> > 
+> > 
+> > __crash_kexec() is there 3 times but otherwise the code looks
+> > quite straight forward.
+> > 
+> > Note 1: I renamed the two last notifier list. The name 'post-reboot'
+> > 	did sound strange from the logical POV ;-)
+> > 
+> > Note 2: We have to avoid the possibility to call "reboot" list
+> > 	before kmsg_dump(). All callbacks providing info
+> > 	have to be in the info list. It a callback combines
+> > 	info and reboot functionality then it should be split.
+> > 
+> > 	There must be another way to calm down problematic
+> > 	info callbacks. And it has to be solved when such
+> > 	a problem is reported. Is there any known issue, please?
+> > 
+> > It is possible that I have missed something important.
+> > But I would really like to make the logic as simple as possible.
+> 
+> OK, I agree with you! It's indeed simpler and if others agree, I can
+> happily change the logic to what you proposed. Although...currently the
+> "crash_kexec_post_notifiers" allows to call _all_ panic_reboot_list
+> callbacks _before kdump_.
+>
+> We need to mention this change in the commit messages, but I really
+> would like to hear the opinions of heavy users of notifiers (as
+> Michael/Hyper-V) and the kdump interested parties (like Baoquan / Dave
+> Young / Hayatama). If we all agree on such approach, will change that
+> for V2 =)
+
+Sure, we need to make sure that we call everything that is needed.
+And it should be documented.
+
+I believe that this is the right way because:
+
+  + It was actually the motivation for this patchset. We split
+    the notifiers into separate lists because we want to call
+    only the really needed ones before kmsg_dump and crash_dump.
+
+  + If anything is needed for crash_dump that it should be called
+    even when crash_dump is called first. It should be either
+    hardcoded into crash_dump() or we would need another notifier
+    list that will be always called before crash_dump.
+
+
+Thanks a lot for working on this.
+
+Best Regards,
+Petr
