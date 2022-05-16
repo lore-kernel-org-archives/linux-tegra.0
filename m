@@ -2,376 +2,194 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C961AC433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 15 May 2022 22:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3719C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 08:42:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237223AbiEOWsl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 15 May 2022 18:48:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45100 "EHLO
+        id S232023AbiEPImY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 04:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234031AbiEOWsh (ORCPT
+        with ESMTP id S232524AbiEPImS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 15 May 2022 18:48:37 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF83E0EA;
-        Sun, 15 May 2022 15:48:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=93lwEQzS5IXDyIA/NgwVVg/rNYgBX/Ekc2xpjleQYUs=; b=kTFBpmweCVBGzCiXcny/Ei9sEB
-        uLvI0D7aJyCY9gW4MGXg7URDXPxUenVwWXA89vT+j9BRtrs1EQfNeJ4qB6gH1x3WL3JnCBSUAhoXN
-        1INIRQN5V3AcrCr4dPVHFH/5EtxkbxYQW14SNMurRWenslQKNiT8uXf6mSEvQOr2XsmvD7L3cVekK
-        G4ucrnvqt1/qzfQAz5Rre/uP6rIw96QRGg/Ntwc578rmZP+ob6saFKUKA0qaw+P9NiH2QNSqjbmfS
-        xeJNCdUwDvi5QchOtqGvFJPXe/AnKHhlIFK8hoqIAjFEroOQ6KccSYTKVhehD92Fv+lP928LorOpQ
-        iXFJTFmg==;
-Received: from [177.183.162.244] (helo=[192.168.0.5])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1nqN22-005kj2-70; Mon, 16 May 2022 00:48:10 +0200
-Message-ID: <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
-Date:   Sun, 15 May 2022 19:47:39 -0300
-MIME-Version: 1.0
+        Mon, 16 May 2022 04:42:18 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2088.outbound.protection.outlook.com [40.107.92.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50328B870;
+        Mon, 16 May 2022 01:42:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D9fsn18YtIAKopMjtmz7i0M6omISPpAGk/oA8Siz8Ncmdjp+OlvGrg/sRO9eXgqE2zNVeIGw5hdXM72A5qg5ELLvyuBrC99AcNubKpNVD/GgzIhdgMMVbVZCj3oQM1Xd9hITf4C/E0VTlkeeLCYXucAV8U2ydUXLg8vxw43GYbOwt4iF3RKa5bpO30q3tjv7NhqwKNIZ0K/DXte9xjanAntwDBQt+WpvkI0ZnuxrtkSqSJkyx4oNo9YvaeZHnybFkp/ym1mHUTuJB3xDoVoEmCwadziJUicVNLnHsJi6YxUDlnZXLzsWBmn5ayKK6tP1xjRcFMwvuxQZJOqzKw0NXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TXETIpPl1NQbqEYcz+Y2wILUPrndXaW9Aw+cg4Ip+y4=;
+ b=hvqIW9Go5DhxVnmYz1Os8xEsuzDaOz8idousex5M54lTkhCQejvxMBuq2mRX2vYkpfu255d74qWfuD5Bpu3PTnR+/Gronmg+WFJ0qlhRHglfkZi3JMZUqFXc0njSDeWZ6zpgG9BgEBA7qQahK4+6vv875qHTjT71gy9Yc3JXSbuPcSprWO13yZMsCmeENFtldSENYm5xmCOhU+Iq9mFyxktgGheptisTpk5oAH5tSS+wgy/Gx2oCw5X3Lif7r89okejU2ubtcDqwQEJUHDlAYMYiRAKTdT32zfhQYiN/vG/1QnjSbMSN6kUcAduuFyFMmfEG/z+BWkWwnRoAY0JC6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TXETIpPl1NQbqEYcz+Y2wILUPrndXaW9Aw+cg4Ip+y4=;
+ b=tB8krMIZ51QPusLudCC2fRpZPYUB9pAvDY1Zn9AMa0UGmrRnpsv4I5XwWcZyTtpWm/EzBGnaBT6Vuq2ZDXzWAm/EjrUmI6lpAnNCoqwBx7DXSZMhYChVm6Th4eDS90EaF/KnHCNZ6ffBpvRr/aZCi+TxYsO+2AHLgvnfz1fGkEOHko0KR49VYxzQq4U9rWqG6Y2YHDNMWMa3VNvvI4wFxHnsTzRd2QjchBrxk2s15UWhA1NztwU9w0zxrmKGEdMVOlVqp3wOiOKlkqdNfdvoyo0kJ5z6BBvRmH0cnwF19X/pjZxZTsQU9nP+hBrFCT93+JKQxYrLAqFgx/KJC7fDRw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ SN6PR12MB2767.namprd12.prod.outlook.com (2603:10b6:805:75::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5250.14; Mon, 16 May 2022 08:42:14 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::a4b2:cd18:51b1:57e0]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::a4b2:cd18:51b1:57e0%4]) with mapi id 15.20.5250.018; Mon, 16 May 2022
+ 08:42:14 +0000
+Message-ID: <9539ac65-0e3e-9a2b-c21e-5602d6fbbe3e@nvidia.com>
+Date:   Mon, 16 May 2022 09:42:07 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+ Thunderbird/91.8.1
+Subject: Re: [PATCH] dmaengine: tegra: Use platform_get_irq() to get IRQ
+ resource
 Content-Language: en-US
-To:     Petr Mladek <pmladek@suse.com>,
-        "michael Kelley (LINUX)" <mikelley@microsoft.com>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        d.hatayama@jp.fujitsu.com
-Cc:     akpm@linux-foundation.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, dave.hansen@linux.intel.com, feng.tang@intel.com,
-        gregkh@linuxfoundation.org, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com> <Yn0TnsWVxCcdB2yO@alley>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <Yn0TnsWVxCcdB2yO@alley>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Akhil R <akhilrajeev@nvidia.com>, dmaengine@vger.kernel.org,
+        ldewangan@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, p.zabel@pengutronix.de,
+        thierry.reding@gmail.com, vkoul@kernel.org
+References: <20220505091440.12981-1-akhilrajeev@nvidia.com>
+ <7673dbb7-6a85-6ab6-f1a4-a6f4724c0b90@nvidia.com>
+In-Reply-To: <7673dbb7-6a85-6ab6-f1a4-a6f4724c0b90@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FRYP281CA0010.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::20)
+ To CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8123ad11-a6d3-466d-f2a0-08da3717f9b1
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2767:EE_
+X-Microsoft-Antispam-PRVS: <SN6PR12MB276768ABA21837C9DDB7B43AD9CF9@SN6PR12MB2767.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ZxKtdngZF5+bkCAkGv6vZohguHuU7MpFolzfSawXbqfHi010lAvEU3rY4Kq8DKngUqBPiCq8p0tLYHLCLc1sdf4GaMEbcZwK2RWlRH58abSt0Nf7SfWW/KJU6prIoj49zXwjh95EZxPsbjiJ6pbW55G0uEqG5/ZwmPbeQlylcRQxoCu6xZ3qtOw+VndseyI7jzmO2yob8Qszty6HPrw0s7B+ZAvBzOZW0Soz7tqCQabbZZ66UAjoYiPwaNoiTW/G0qVYq6oVaeHhk5EFgg50x5v7FBlNOMTQGA+8alNLJE5sRPRsM6WCR/YhRJr9kfdWaBt75TAUYhzIASn8QodqQwdYCX7/KgK1khfMLZ1Kf3QrP59q6sk1uLPhJiWe5w9rxgk5otisH9FgZTnu4dNL2HLolv7FWM6mABKl7rDjF5g5kIr52hS8Hzd+PL1Q6cjTL3tMKhX6GR0NRGENjM3b7wvwzHt0nmPDDCIFIqyniY9n7DUgj5363evXdOoe65aSF839lsYGqTwudNErSFicj4S2YwMYck2AJ/axxCVMCxlcZQAn/HEfUjVWT5bIhTGF96B5z54KNDLRQWffhHr14l6GHMaNoE5nHeMxLzvqkdaz5BVq45+qRNTptsAgehgryKwgO/RCWqz8y35WBpboqYrFQakmEVkuMuT4okBY2lQZKaT1jy4j8Qa2dL5q/THd64DXZBW3tTjxWg+w0WaHXtPjUOxxomYnzWv8lM8kkkgP1W4dwIAfhqQDp/kPthY3
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(53546011)(55236004)(31686004)(83380400001)(31696002)(36756003)(186003)(66556008)(66476007)(66946007)(6506007)(6666004)(6486002)(8676002)(2906002)(2616005)(26005)(6512007)(86362001)(508600001)(8936002)(38100700002)(316002)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QTlYR2c2bWFHVVNvVG16emR6M1U0d1dhVFVtaHNLMVdzZVJZSElUUFllTi9x?=
+ =?utf-8?B?WlBtMU9qUEJ4SVZwKzVadi9wYVRKNklremF1VmFxSEkvN29XOVJkQ2NXUGRt?=
+ =?utf-8?B?RmhnMXJDY3NPc2FTWGVWdWlxV3NENjFKRDdERS9OKzQxVzkwZzV0SG45bXNY?=
+ =?utf-8?B?MW83VlZTaVVDYThYK3ZYZk9HSWplTmpvNFlkM2hUbFF3SlVXeEVoTFhaeXdv?=
+ =?utf-8?B?VGlBRnZuQUsrekVSUnl6ZnJyR0NGRVR1Vlg4emYvdGQxMDdPcG9QcElYUUxG?=
+ =?utf-8?B?V1JQS1JMdDJ2WFlONkZ3Yml3RDNSZ2tpdUtIYldHck4xYW1GL0dKZ0VET0Ir?=
+ =?utf-8?B?YmJTc1pRTXU5QWhJWkxnVU5ZVTdNdTExbE9BdDRUTlBhNDB3bFJLYnRFdEFU?=
+ =?utf-8?B?ZWpWalhFVUVqamtGM1drTDZWalVReVdGWjhRZ21NSjJZVzZnYkU2elBybXgz?=
+ =?utf-8?B?bVQzdjB5VE51b29qVzVWbWdFbU05MFI1VVUrNVhac1orWVZpMVV0VjQ1Nmdw?=
+ =?utf-8?B?RmNJRHE0Q2J4czJEYm5yZWdENlFsZCtBRXd5c2U1bWVJcVg1Q1I1aDFKTTNm?=
+ =?utf-8?B?aDlOVi9KREI4cmdPSzlPWFFkV0o1dm5ETmNRRW1DbVpneTRid3VSc0V0QU5U?=
+ =?utf-8?B?NnFJTU4zeE5VcEZxL1hXeS9vNUxXQXJVd3VXSzVtbzBaYkthTjVWRi9oTElh?=
+ =?utf-8?B?OXFVN1gza2NVcWFVb1g1cExiWm0zRExrdnZsTlpDRXlrQ3RoNU0zVUVKMlVp?=
+ =?utf-8?B?a1Fqb0V3T2psaW82SmdocW9ydTFGY2RkLzJKYldhVDJYS1o3WlFVZFNpb1c5?=
+ =?utf-8?B?ZEtYMzlYTGRDWHRQWDZmT0oyNlVTa0xyOWx5VUtFVEU1MzJTYTFlSU9xZUNq?=
+ =?utf-8?B?cTFsenIwT08xa29zczBJYldsVkoranMrYTFOcVJ2czk3RXhGQTVLYk5ZVDF6?=
+ =?utf-8?B?REZBVjZ6d1NHR210b0l3Vzh0Z1RZQnhCbWxNOE1hcldWdDBOeUdKTlErZHI4?=
+ =?utf-8?B?d1FhaERJZHk1NEx0d3V5dDVqWHpCZFVLbU5xLzVsUVlaQnhUUC9hczdkeEs4?=
+ =?utf-8?B?eEVmeHlId0Y3djdQSUdPNmw4c3BvV2Ftck4xQWVzeWhQU1U0ZGtGUGdUWkUz?=
+ =?utf-8?B?ck9mOUxGNHV2YitMU2MvT0pEaUZOWFZGOWFQeXMwVUNuLzA1L2ZrTGJ6d3FM?=
+ =?utf-8?B?aWc5ZDV2UzlsSW43T21rOUF2VzJQZWlaelFja1ZrRUtwWUFvd0lPL2VBVUFM?=
+ =?utf-8?B?dDNBVnVqYitLMFROVmQxMnM2dFFjYk80WXFwQlIzK25MY3ZNcmlyai9VUUh4?=
+ =?utf-8?B?Y1grUWVUUUFZL2R5Yk0xTlNNTHFtei9SS3BCaHBpc0paV3hHWTlqdmw4bmJY?=
+ =?utf-8?B?Vlg4R1VrTnc0MFVWaFpNTnNhQkRxelJ0cE5VN203Mk1jc2FRUUZKREo5OEZE?=
+ =?utf-8?B?bStHNUEwUGRxSzErbEdlOFM5UnZoY2ZLOWtsMkdJSThJVi9Hcjh2cWxRdzVp?=
+ =?utf-8?B?VTcyV2lNUm5Wd3RqUU1FQ2JoNjFsQVFaSFU4czZUOGp4T1VFb3BrdVQrQUVD?=
+ =?utf-8?B?SldvYlBTa041cUh4eFExZ0lwNHZ0MjBjRWFoYUZJUlN2K1gwZlkvN2RIMzBN?=
+ =?utf-8?B?VXRrRFBVVHJrck53dkI0U0dqcjJySU04TG5ONTJBY2tZMmZsSy9OeStWM2Nv?=
+ =?utf-8?B?cVhjZ2djT1Z2bTcwRDFMMWsyc251MmtYY1kyRkFtUUFXZS9EWHRTRjRDeHFx?=
+ =?utf-8?B?b1FUWWE1UmlDSHpkSmllbzYvckFYZmY3Q1VmVlpnVU1vMEd0NVpQd3RTV0pY?=
+ =?utf-8?B?RlJ6Wk9TaWZWa1pKczRZVEJmZEhKOFErczZMVGJFVXdHRkNkVXYvMjVURzU4?=
+ =?utf-8?B?TGtCb011YzI3ZndWVXFwUmEzdzBVTkx5dTRrckNZTGNIMHVqem9JbFNHK2lz?=
+ =?utf-8?B?Z2dqSGMxeTNaOFdtYUQ3RUxxd01FZ2pwcnRrS0EvbHBBN21RcU03ZWFvT0c3?=
+ =?utf-8?B?MmpZQkUxZU4rU3J1NGZEa1RRcHp3NmhKeTRtcm41N0xERzM2akxwTVYwMHZM?=
+ =?utf-8?B?NjROVlVkRjUwVGpnZFhubHZ5SzN6Z2pyelkweGpkYkh6RDB6QWhWYnNFVTN2?=
+ =?utf-8?B?Z0hRRXhWQWxnTS9tMVNDSXpIRUtraE9XSnRTYTR1b25ZZ2wwaGlhUmptbWtM?=
+ =?utf-8?B?NXBZMXVtaFBIYkVWRFNYeFpneUtodms0aUloUmZ2bkxKTW1RUDJqWGZvWXlm?=
+ =?utf-8?B?RFBWOE1nd3Z3NU5GSTFMb0g2d3RXTjRGR2dHZ09DNEptZTg0amJ2V1I5RExJ?=
+ =?utf-8?B?UWk3d2dxYlJMYWpsMWZBcTlnYXRoM2NqSnlNZFF1cUtYd0FoQzVOS3VDcWk3?=
+ =?utf-8?Q?kTxBUwI0jfh+3DQQ=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8123ad11-a6d3-466d-f2a0-08da3717f9b1
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2022 08:42:14.2919
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: u7fdHqEY0G9fmeu1Uaiqe37pR82f2my1Xux4RZVr17vV0Te6I48jdEcQS5YaRWVOyKw5/OQOKqJWE9FUnlp5qQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2767
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 12/05/2022 11:03, Petr Mladek wrote:
-> Hello,
-> 
-> first, I am sorry for stepping into the discussion so late.
-> I was busy with some other stuff and this patchset is far
-> from trivial.
-> 
-> Second, thanks a lot for putting so much effort into it.
-> Most of the changes look pretty good, especially all
-> the fixes of particular notifiers and split into
-> four lists.
-> 
-> Though this patch will need some more love. See below
-> for more details.
+Vinod,
 
-Thanks a lot for your review Petr, it is much appreciated! No need for
-apologies, there is no urgency here =)
-
-
-> [...] 
-> This talks only about kdump. The reality is much more complicated.
-> The level affect the order of:
+On 05/05/2022 10:18, Jon Hunter wrote:
 > 
->     + notifiers vs. kdump
->     + notifiers vs. crash_dump
->     + crash_dump vs. kdump
-
-First of all, I'd like to ask you please to clarify to me *exactly* what
-are the differences between "crash_dump" and "kdump". I'm sorry if
-that's a silly question, I need to be 100% sure I understand the
-concepts the same way you do.
-
-
-> There might theoretically many variants of the ordering of kdump,
-> crash_dump, and the 4 notifier list. Some variants do not make
-> much sense. You choose 5 variants and tried to select them by
-> a level number.
+> On 05/05/2022 10:14, Akhil R wrote:
+>> Use platform_irq_get() instead platform_get_resource() for IRQ resource
+>> to fix the probe failure. platform_get_resource() fails to fetch the IRQ
+>> resource as it might not be ready at that time.
+>>
+>> platform_irq_get() is also the recommended way to get interrupt as it
+>> directly gives the IRQ number and no conversion from resource is
+>> required.
+>>
+>> Fixes: ee17028009d4 ("dmaengine: tegra: Add tegra gpcdma driver")
+>> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+>> ---
+>>   drivers/dma/tegra186-gpc-dma.c | 12 ++++--------
+>>   1 file changed, 4 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/dma/tegra186-gpc-dma.c 
+>> b/drivers/dma/tegra186-gpc-dma.c
+>> index 97fe0e9e9b83..3951db527dec 100644
+>> --- a/drivers/dma/tegra186-gpc-dma.c
+>> +++ b/drivers/dma/tegra186-gpc-dma.c
+>> @@ -1328,7 +1328,6 @@ static int tegra_dma_probe(struct 
+>> platform_device *pdev)
+>>       struct iommu_fwspec *iommu_spec;
+>>       unsigned int stream_id, i;
+>>       struct tegra_dma *tdma;
+>> -    struct resource    *res;
+>>       int ret;
+>>       cdata = of_device_get_match_data(&pdev->dev);
+>> @@ -1367,16 +1366,13 @@ static int tegra_dma_probe(struct 
+>> platform_device *pdev)
+>>       for (i = 0; i < cdata->nr_channels; i++) {
+>>           struct tegra_dma_channel *tdc = &tdma->channels[i];
+>> +        tdc->irq = platform_get_irq(pdev, i);
+>> +        if (tdc->irq < 0)
+>> +            return tdc->irq;
+>> +
+>>           tdc->chan_base_offset = TEGRA_GPCDMA_CHANNEL_BASE_ADD_OFFSET +
+>>                       i * cdata->channel_reg_size;
+>> -        res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+>> -        if (!res) {
+>> -            dev_err(&pdev->dev, "No irq resource for chan %d\n", i);
+>> -            return -EINVAL;
+>> -        }
+>> -        tdc->irq = res->start;
+>>           snprintf(tdc->name, sizeof(tdc->name), "gpcdma.%d", i);
+>> -
+>>           tdc->tdma = tdma;
+>>           tdc->id = i;
+>>           tdc->slave_id = -1;
 > 
-> The question is if we really could easily describe the meaning this
-> way. It is not only about a "level" of notifiers before kdump. It is
-> also about the ordering of crash_dump vs. kdump. IMHO, "level"
-> semantic does not fit there.
 > 
-> Maybe more parameters might be easier to understand the effect.
-> Anyway, we first need to agree on the chosen variants.
-> I am going to discuss it more in the code, see below.
+> Thanks!
 > 
-> 
-> [...] 
-> Here is the code using the above functions. It helps to discuss
-> the design and logic.
-> 
-> <kernel/panic.c>
-> 	order_panic_notifiers_and_kdump();
-> 
-> 	/* If no level, we should kdump ASAP. */
-> 	if (!panic_notifiers_level)
-> 		__crash_kexec(NULL);
-> 
-> 	crash_smp_send_stop();
-> 	panic_notifier_hypervisor_once(buf);
-> 
-> 	if (panic_notifier_info_once(buf))
-> 		kmsg_dump(KMSG_DUMP_PANIC);
-> 
-> 	panic_notifier_pre_reboot_once(buf);
-> 
-> 	__crash_kexec(NULL);
-> 
-> 	panic_notifier_hypervisor_once(buf);
-> 
-> 	if (panic_notifier_info_once(buf))
-> 		kmsg_dump(KMSG_DUMP_PANIC);
-> 
-> 	panic_notifier_pre_reboot_once(buf);
-> </kernel/panic.c>
-> 
-> I have to say that the logic is very unclear. Almost all
-> functions are called twice:
-> 
->    + __crash_kexec()
->    + kmsg_dump()
->    + panic_notifier_hypervisor_once()
->    + panic_notifier_pre_reboot_once()
->    + panic_notifier_info_once()
-> 
-> It is pretty hard to find what functions are always called in the same
-> order and where the order can be inverted.
-> 
-> The really used code path is defined by order_panic_notifiers_and_kdump()
-> that encodes "level" into "bits". The bits are then flipped in
-> panic_notifier_*_once() calls that either do something or not.
-> kmsg_dump() is called according to the bit flip.
-> 
-> It is an interesting approach. I guess that you wanted to avoid too
-> many if/then/else levels in panic(). But honestly, it looks like
-> a black magic to me.
-> 
-> IMHO, it is always easier to follow if/then/else logic than using
-> a translation table that requires additional bit flips when
-> a value is used more times.
-> 
-> Also I guess that it is good proof that "level" abstraction does
-> not fit here. Normal levels would not need this kind of magic.
-
-Heheh OK, I appreciate your opinion, but I guess we'll need to agree in
-disagree here - I'm much more fond to this kind of code than a bunch of
-if/else blocks that almost give headaches. Encoding such "level" logic
-in the if/else scheme is very convoluted, generates a very big code. And
-the functions aren't so black magic - they map a level in bits, and the
-functions _once() are called...once! Although we switch the position in
-the code, so there are 2 calls, one of them is called and the other not.
-
-But that's totally fine to change - especially if we're moving away from
-the "level" logic. I see below you propose a much simpler approach - if
-we follow that, definitely we won't need the "black magic" approach heheh
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
 
-> 
-> OK, the question is how to make it better. Let's start with
-> a clear picture of the problem:
-> 
-> 1. panic() has basically two funtions:
-> 
->       + show/store debug information (optional ways and amount)
->       + do something with the system (reboot, stay hanged)
-> 
-> 
-> 2. There are 4 ways how to show/store the information:
-> 
->       + tell hypervisor to store what it is interested about
->       + crash_dump
->       + kmsg_dump()
->       + consoles
-> 
->   , where crash_dump and consoles are special:
-> 
->      + crash_dump does not return. Instead it ends up with reboot.
-> 
->      + Consoles work transparently. They just need an extra flush
->        before reboot or staying hanged.
-> 
-> 
-> 3. The various notifiers do things like:
-> 
->      + tell hypervisor about the crash
->      + print more information (also stop watchdogs)
->      + prepare system for reboot (touch some interfaces)
->      + prepare system for staying hanged (blinking)
-> 
->    Note that it pretty nicely matches the 4 notifier lists.
-> 
+OK to pick this up for -next/5.19? This is preventing the GPC DMA driver 
+from working.
 
-I really appreciate the summary skill you have, to convert complex
-problems in very clear and concise ideas. Thanks for that, very useful!
-I agree with what was summarized above.
+Jon
 
-
-> Now, we need to decide about the ordering. The main area is how
-> to store the debug information. Consoles are transparent so
-> the quesition is about:
-> 
->      + hypervisor
->      + crash_dump
->      + kmsg_dump
-> 
-> Some people need none and some people want all. There is a
-> risk that system might hung at any stage. This why people want to
-> make the order configurable.
-> 
-> But crash_dump() does not return when it succeeds. And kmsg_dump()
-> users havn't complained about hypervisor problems yet. So, that
-> two variants might be enough:
-> 
->     + crash_dump (hypervisor, kmsg_dump as fallback)
->     + hypervisor, kmsg_dump, crash_dump
-> 
-> One option "panic_prefer_crash_dump" should be enough.
-> And the code might look like:
-> 
-> void panic()
-> {
-> [...]
-> 	dump_stack();
-> 	kgdb_panic(buf);
-> 
-> 	< ---  here starts the reworked code --- >
-> 
-> 	/* crash dump is enough when enabled and preferred. */
-> 	if (panic_prefer_crash_dump)
-> 		__crash_kexec(NULL);
-> 
-> 	/* Stop other CPUs and focus on handling the panic state. */
-> 	if (has_kexec_crash_image)
-> 		crash_smp_send_stop();
-> 	else
-> 		smp_send_stop()
-> 
-
-Here we have a very important point. Why do we need 2 variants of SMP
-CPU stopping functions? I disagree with that - my understanding of this
-after some study in architectures is that the crash_() variant is
-"stronger", should work in all cases and if not, we should fix that -
-that'd be a bug.
-
-Such variant either maps to smp_send_stop() (in various architectures,
-including XEN/x86) or overrides the basic function with more proper
-handling for panic() case...I don't see why we still need such
-distinction, if you / others have some insight about that, I'd like to
-hear =)
-
-
-> 	/* Notify hypervisor about the system panic. */
-> 	atomic_notifier_call_chain(&panic_hypervisor_list, 0, NULL);
-> 
-> 	/*
-> 	 * No need to risk extra info when there is no kmsg dumper
-> 	 * registered.
-> 	 */
-> 	if (!has_kmsg_dumper())
-> 		__crash_kexec(NULL);
-> 
-> 	/* Add extra info from different subsystems. */
-> 	atomic_notifier_call_chain(&panic_info_list, 0, NULL);
-> 
-> 	kmsg_dump(KMSG_DUMP_PANIC);
-> 	__crash_kexec(NULL);
-> 
-> 	/* Flush console */
-> 	unblank_screen();
-> 	console_unblank();
-> 	debug_locks_off();
-> 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
-> 
-> 	if (panic_timeout > 0) {
-> 		delay()
-> 	}
-> 
-> 	/*
-> 	 * Prepare system for eventual reboot and allow custom
-> 	 * reboot handling.
-> 	 */
-> 	atomic_notifier_call_chain(&panic_reboot_list, 0, NULL);
-
-You had the order of panic_reboot_list VS. consoles flushing inverted.
-It might make sense, although I didn't do that in V1...
-Are you OK in having a helper for console flushing, as I did in V1? It
-makes code of panic() a bit less polluted / more focused I feel.
-
-
-> 
-> 	if (panic_timeout != 0) {
-> 		reboot();
-> 	}
-> 
-> 	/*
-> 	 * Prepare system for the infinite waiting, for example,
-> 	 * setup blinking.
-> 	 */
-> 	atomic_notifier_call_chain(&panic_loop_list, 0, NULL);
-> 
-> 	infinite_loop();
-> }
-> 
-> 
-> __crash_kexec() is there 3 times but otherwise the code looks
-> quite straight forward.
-> 
-> Note 1: I renamed the two last notifier list. The name 'post-reboot'
-> 	did sound strange from the logical POV ;-)
-> 
-> Note 2: We have to avoid the possibility to call "reboot" list
-> 	before kmsg_dump(). All callbacks providing info
-> 	have to be in the info list. It a callback combines
-> 	info and reboot functionality then it should be split.
-> 
-> 	There must be another way to calm down problematic
-> 	info callbacks. And it has to be solved when such
-> 	a problem is reported. Is there any known issue, please?
-> 
-> It is possible that I have missed something important.
-> But I would really like to make the logic as simple as possible.
-
-OK, I agree with you! It's indeed simpler and if others agree, I can
-happily change the logic to what you proposed. Although...currently the
-"crash_kexec_post_notifiers" allows to call _all_ panic_reboot_list
-callbacks _before kdump_.
-
-We need to mention this change in the commit messages, but I really
-would like to hear the opinions of heavy users of notifiers (as
-Michael/Hyper-V) and the kdump interested parties (like Baoquan / Dave
-Young / Hayatama). If we all agree on such approach, will change that
-for V2 =)
-
-Thanks again Petr, for the time spent in such detailed review!
-Cheers,
-
-
-Guilherme
+-- 
+nvpublic
