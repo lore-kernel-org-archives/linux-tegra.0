@@ -2,274 +2,157 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D38C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 16:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE860C4321E
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 16:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343839AbiEPQeA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 12:34:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36114 "EHLO
+        id S1343664AbiEPQez (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 12:34:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343774AbiEPQd5 (ORCPT
+        with ESMTP id S231615AbiEPQev (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 May 2022 12:33:57 -0400
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E783B3F0;
-        Mon, 16 May 2022 09:33:27 -0700 (PDT)
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-f189b07f57so7325463fac.1;
-        Mon, 16 May 2022 09:33:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CiuDSc5jE/tQy9qIvLJu2MZL0HMNt8pDPacw0cghyhk=;
-        b=2/1iP//mSuINH/jJ//thfVZ6C863CPO9zN/iilpFucZNfI7xINcREvrvgDTNElWnC5
-         DGQ1U1vFu94sT+om4OAH8DafK2cz6jMbE8wNcwJ5YHtTbhS2fTXXJobcbit6nYGVF5G8
-         mjzcPrsUXvQdBNQABHEBOkYqrIdt5G0bktSmF8rwCZOlW9dqqEbnxE9kbqan+CwKnH45
-         VxX2c1DgRxugaR08NP9qsqsoOgJZco512TpR/Xr+VJiJnEU0iNnowgah4huOLgfoe2mK
-         gQTLl3fg5yvGqEgI/HVgVxQ9ANrIN9JgcdIJmMvVkakQ99ybAWFqBRwGGs/2c1IuuC5W
-         PhMA==
-X-Gm-Message-State: AOAM533koe6sT7LeXcPyYaoK4UwIOlrasNlBzwO16bK8SbTp5FEz7xfG
-        TCq3ExJLCcWyCz3HFrLUhA==
-X-Google-Smtp-Source: ABdhPJycQNzePEJAzWR0E4hHkTqbdk/jDS1QEhfnLSWiGpLOPMe8c1wY+jAIc2jwGk3JGr3sEYpwMg==
-X-Received: by 2002:a05:6870:a1a0:b0:d9:b198:4cfa with SMTP id a32-20020a056870a1a000b000d9b1984cfamr10022635oaf.159.1652718806864;
-        Mon, 16 May 2022 09:33:26 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id d8-20020a056870e24800b000eb0e40b4b8sm5829199oac.48.2022.05.16.09.33.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 09:33:26 -0700 (PDT)
-Received: (nullmailer pid 2801600 invoked by uid 1000);
-        Mon, 16 May 2022 16:33:25 -0000
-Date:   Mon, 16 May 2022 11:33:25 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     cyndis@kapsi.fi
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v1 01/13] dt-bindings: Add bindings for Tegra234 Host1x
- and VIC
-Message-ID: <20220516163325.GA2793304-robh@kernel.org>
-References: <20220516100213.1536571-1-cyndis@kapsi.fi>
- <20220516100213.1536571-2-cyndis@kapsi.fi>
+        Mon, 16 May 2022 12:34:51 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C763B3CD;
+        Mon, 16 May 2022 09:34:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=XzoH5iutkh5O9t0pH+ypA1lIfMmiHtlRHdYp+UCsrGU=; b=WepOMKgEKhpR+t0vOgpE/YwZDW
+        g57IfgGh3nzpJ2ZtHEZUcsTnwsDP6I2/FDZ4vnLGZ0Qw7F/Mn84yHkJf4BXJ/OpxzJ1p70t/N3EaQ
+        3PmdLprDUfYS48zPyb3blZ6UPVVkXH0bl8D3dn+A0vPKMKqgzgV2PkJylwkbN3xzE2jIxJLk5t9Xh
+        Ean6ag10EMxBmLMIVJGXD8wgUW7usVSQYiFjIPvG61RcLN+veFIRifMeScPdiuTNjKo2kRxG2B83U
+        8p8XJXLR0CD8m0oqdI8PKIctIPo5el7u/X3BJM63/kcmCM4vsP6tEoNCn+7qkwfuh6KJplRNa4LRS
+        5jGHUhPQ==;
+Received: from [177.183.162.244] (helo=[192.168.0.5])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nqdg0-006uIN-Pp; Mon, 16 May 2022 18:34:32 +0200
+Message-ID: <e895ce94-e6b9-caf6-e5d3-06bf0149445c@igalia.com>
+Date:   Mon, 16 May 2022 13:33:51 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220516100213.1536571-2-cyndis@kapsi.fi>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 21/30] panic: Introduce the panic pre-reboot notifier list
+Content-Language: en-US
+To:     "Luck, Tony" <tony.luck@intel.com>, Petr Mladek <pmladek@suse.com>,
+        Dinh Nguyen <dinguyen@kernel.org>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "openipmi-developer@lists.sourceforge.net" 
+        <openipmi-developer@lists.sourceforge.net>,
+        "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
+        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
+        "halves@canonical.com" <halves@canonical.com>,
+        "fabiomirmar@gmail.com" <fabiomirmar@gmail.com>,
+        "alejandro.j.jimenez@oracle.com" <alejandro.j.jimenez@oracle.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "d.hatayama@jp.fujitsu.com" <d.hatayama@jp.fujitsu.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "dyoung@redhat.com" <dyoung@redhat.com>,
+        "Tang, Feng" <feng.tang@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mikelley@microsoft.com" <mikelley@microsoft.com>,
+        "hidehiro.kawai.ez@hitachi.com" <hidehiro.kawai.ez@hitachi.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "john.ogness@linutronix.de" <john.ogness@linutronix.de>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "paulmck@kernel.org" <paulmck@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "vgoyal@redhat.com" <vgoyal@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "will@kernel.org" <will@kernel.org>, Alex Elder <elder@kernel.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Chris Zankel <chris@zankel.net>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Corey Minyard <minyard@acm.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        James Morse <james.morse@arm.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
+        Richard Weinberger <richard@nod.at>,
+        Robert Richter <rric@kernel.org>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, Wei Liu <wei.liu@kernel.org>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-22-gpiccoli@igalia.com> <YoJgcC8c6LaKADZV@alley>
+ <63a74b56-89ef-8d1f-d487-cdb986aab798@igalia.com>
+ <bed66b9467254a5a8bafc1983dad643a@intel.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <bed66b9467254a5a8bafc1983dad643a@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, May 16, 2022 at 01:02:01PM +0300, cyndis@kapsi.fi wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+On 16/05/2022 13:18, Luck, Tony wrote:
+>> [...]
+> Would it be possible to have some global "kdump is configured + enabled" flag?
 > 
-> Update VIC and Host1x bindings for changes in Tegra234.
+> Then notifiers could make an informed choice on whether to deep dive to
+> get all the possible details (when there is no kdump) or just skim the high
+> level stuff (to maximize chance of getting a successful kdump).
 > 
-> Namely,
-> - New compatible strings
-> - Sharded syncpoint interrupts
-> - Optional reset.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  .../display/tegra/nvidia,tegra124-vic.yaml    |   1 +
->  .../display/tegra/nvidia,tegra20-host1x.yaml  | 108 +++++++++++++++---
->  2 files changed, 95 insertions(+), 14 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-> index 37bb5ddc1963..7200095ef19e 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-> @@ -21,6 +21,7 @@ properties:
->            - nvidia,tegra210-vic
->            - nvidia,tegra186-vic
->            - nvidia,tegra194-vic
-> +          - nvidia,tegra234-vic
->  
->        - items:
->            - const: nvidia,tegra132-vic
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-> index 0adeb03b9e3a..83c58b7dae98 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-> @@ -24,6 +24,7 @@ properties:
->            - nvidia,tegra210-host1x
->            - nvidia,tegra186-host1x
->            - nvidia,tegra194-host1x
-> +          - nvidia,tegra234-host1x
->  
->        - items:
->            - const: nvidia,tegra132-host1x
-> @@ -31,23 +32,19 @@ properties:
->  
->    reg:
->      minItems: 1
-> -    maxItems: 2
-> +    maxItems: 3
->  
->    reg-names:
->      minItems: 1
-> -    maxItems: 2
-> +    maxItems: 3
->  
->    interrupts:
-> -    items:
-> -      - description: host1x syncpoint interrupt
-> -      - description: host1x general interrupt
->      minItems: 1
-> +    maxItems: 9
->  
->    interrupt-names:
-> -    items:
-> -      - const: syncpt
-> -      - const: host1x
->      minItems: 1
-> +    maxItems: 9
->  
->    '#address-cells':
->      description: The number of cells used to represent physical base addresses
-> @@ -110,13 +107,32 @@ required:
->    - reg
->    - clocks
->    - clock-names
-> -  - resets
-> -  - reset-names
+> -Tony
 
-Shouldn't these still be required on some platforms?
+Good idea Tony! What if I wire a kexec_crash_loaded() in the notifier?
 
->  
->  additionalProperties:
->    type: object
->  
->  allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra20-host1x
-> +              - nvidia,tegra30-host1x
-> +              - nvidia,tegra114-host1x
-> +              - nvidia,tegra124-host1x
-> +              - nvidia,tegra210-host1x
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          items:
-> +            - description: host1x syncpoint interrupt
-> +            - description: host1x general interrupt
-> +
-> +        interrupt-names:
-> +          items:
-> +            - const: syncpt
-> +            - const: host1x
->    - if:
->        properties:
->          compatible:
-> @@ -133,10 +149,10 @@ allOf:
->  
->          reg:
->            items:
-> -            - description: physical base address and length of the register
-> -                region assigned to the VM
->              - description: physical base address and length of the register
->                  region used by the hypervisor
-> +            - description: physical base address and length of the register
-> +                region assigned to the VM
+With that, are you/Petr/Dinh OK in moving it for the info list?
+Cheers,
 
-You can't just change the order at least without a good explanation why 
-in the commit message. It's an ABI.
 
->  
->          resets:
->            maxItems: 1
-> @@ -144,6 +160,70 @@ allOf:
->          reset-names:
->            maxItems: 1
->  
-> +        interrupts:
-> +          items:
-> +            - description: host1x syncpoint interrupt
-> +            - description: host1x general interrupt
-> +
-> +        interrupt-names:
-> +          items:
-> +            - const: syncpt
-> +            - const: host1x
-> +
-> +        iommu-map:
-> +          description: Specification of stream IDs available for memory context device
-> +            use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
-> +            usable stream IDs.
-> +
-> +      required:
-> +        - reg-names
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra234-host1x
-> +    then:
-> +      properties:
-> +        reg-names:
-> +          items:
-> +            - const: common
-> +            - const: hypervisor
-> +            - const: vm
-> +
-> +        reg:
-> +          items:
-> +            - description: physical base address and length of the register
-> +                region used by host1x server
-> +            - description: physical base address and length of the register
-> +                region used by the hypervisor
-> +            - description: physical base address and length of the register
-> +                region assigned to the VM
-
-I guess this is just copied, but 'physical base address and length of 
-the ' is redundant. That's every 'reg'.
-
-> +
-> +        interrupts:
-> +          items:
-> +            - description: host1x syncpoint interrupt 0
-> +            - description: host1x syncpoint interrupt 1
-> +            - description: host1x syncpoint interrupt 2
-> +            - description: host1x syncpoint interrupt 3
-> +            - description: host1x syncpoint interrupt 4
-> +            - description: host1x syncpoint interrupt 5
-> +            - description: host1x syncpoint interrupt 6
-> +            - description: host1x syncpoint interrupt 7
-> +            - description: host1x general interrupt
-> +
-> +        interrupt-names:
-> +          items:
-> +            - const: syncpt0
-> +            - const: syncpt1
-> +            - const: syncpt2
-> +            - const: syncpt3
-> +            - const: syncpt4
-> +            - const: syncpt5
-> +            - const: syncpt6
-> +            - const: syncpt7
-> +            - const: host1x
-> +
->          iommu-map:
->            description: Specification of stream IDs available for memory context device
->              use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
-> @@ -160,8 +240,8 @@ examples:
->      host1x@50000000 {
->          compatible = "nvidia,tegra20-host1x";
->          reg = <0x50000000 0x00024000>;
-> -        interrupts = <0 65 0x04   /* mpcore syncpt */
-> -                      0 67 0x04>; /* mpcore general */
-> +        interrupts = <0 65 0x04>, /* mpcore syncpt */
-> +                     <0 67 0x04>; /* mpcore general */
->          interrupt-names = "syncpt", "host1x";
->          clocks = <&tegra_car TEGRA20_CLK_HOST1X>;
->          clock-names = "host1x";
-> -- 
-> 2.36.1
-> 
-> 
+Guilherme
