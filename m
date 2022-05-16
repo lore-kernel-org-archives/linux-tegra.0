@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A81AC4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7736C433F5
 	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:02:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241514AbiEPKCo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 06:02:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50332 "EHLO
+        id S241564AbiEPKCp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 06:02:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234655AbiEPKCm (ORCPT
+        with ESMTP id S234487AbiEPKCm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 16 May 2022 06:02:42 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD54D559B;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA02B5596;
         Mon, 16 May 2022 03:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,26 +21,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=hAGGcw/SOg7X5CrJwFzinyDfIvPa2up8kxxxfJmr9MY=; b=qOt+T+P5wmygdCoxphRDyfzQCL
-        c0xe5FTwZyOST9xCZ8UPwzYRB2ePCIQtrLZDouUokUuZE/QISokHuz/h1cqUZxsbNeRTmVHZ9aqyy
-        HSo3y5ZfL/u+qQPsDS8H6NNc9gzrElD75IDUWz16aM3365RmUIMdJY637aA/aoU1EWwh9uNPV9+Xz
-        JJQdyfVKvX2/VpmF30JYxXgkeO01HT1aZs5swYBIsLo2Ab9ykNCVk16Wg09KeRe4mT0eBlLDJjnYA
-        aog8/c5rfLedihVgOk4fklrKiW5OgsH/CqyfktGH6bUscmI36xGX50zUkYDa8N0gLnbef95pbjtft
-        CSQoonIQ==;
+        bh=dC/cTQo/MJ767nLnh5GC42ACRkqVvW3EbSSHwsx8exs=; b=eWpIEKWn4b6F9NYXDMKPoozdTz
+        iYbtZk7lvve0PKLiXxgCOSdtABK1nUYLq2VNvVx2tsPU6ssdoT6NZBykMoqEpBHXHMoeKR4YKWCUw
+        Xac3P7g+Q2iUKqUWiOCrtT3aKQgWvU4fTheD+6TsaM7G7r3e4NCbQKO5Q3dfbBrSR5IRRzqhzAhJK
+        zed2XtB2SC9hs21ijIry5O7IxtshMX1Baz+2o1vAIRKDOYSPVo7Q7sf5o6hNLzQHjnx6iei0pUNim
+        EivaIwxq0e7p/1bTXiXDN788XM7XSCbXVXE5yVZSK9KBrg53zcFqMZTAXyBU6uJsG5aOhLIcx+HmA
+        O1t3GZWA==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nqXYf-0005yU-So; Mon, 16 May 2022 13:02:33 +0300
+        id 1nqXYf-0005yU-CT; Mon, 16 May 2022 13:02:33 +0300
 From:   cyndis@kapsi.fi
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v1 08/13] gpu: host1x: Program interrupt destinations on Tegra234
-Date:   Mon, 16 May 2022 13:02:08 +0300
-Message-Id: <20220516100213.1536571-9-cyndis@kapsi.fi>
+Subject: [PATCH v1 05/13] gpu: host1x: Simplify register mapping and add common aperture
+Date:   Mon, 16 May 2022 13:02:05 +0300
+Message-Id: <20220516100213.1536571-6-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220516100213.1536571-1-cyndis@kapsi.fi>
 References: <20220516100213.1536571-1-cyndis@kapsi.fi>
@@ -55,40 +55,124 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-On Tegra234, each Host1x VM has 8 interrupt lines. Each syncpoint
-can be configured with which interrupt line should be used for
-threshold interrupt, allowing for load balancing.
-
-For now, to keep backwards compatibility, just set all syncpoints
-to the first interrupt.
+Refactor 'regs' property loading using devm_platform_ioremap_*
+and add loading of the 'common' region found on Tegra234.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/host1x/hw/intr_hw.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpu/host1x/dev.c | 46 +++++++++++++++++-----------------------
+ drivers/gpu/host1x/dev.h |  3 +++
+ 2 files changed, 22 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
-index f56375ee6e71..9acccdb139e6 100644
---- a/drivers/gpu/host1x/hw/intr_hw.c
-+++ b/drivers/gpu/host1x/hw/intr_hw.c
-@@ -76,6 +76,17 @@ static void intr_hw_init(struct host1x *host, u32 cpm)
- 	/* update host clocks per usec */
- 	host1x_sync_writel(host, cpm, HOST1X_SYNC_USEC_CLK);
- #endif
-+#if HOST1X_HW >= 8
-+	u32 id;
-+
-+	/*
-+	 * Program threshold interrupt destination among 8 lines per VM,
-+	 * per syncpoint. For now, just direct all to the first interrupt
-+	 * line.
-+	 */
-+	for (id = 0; id < host->info->nb_pts; id++)
-+		host1x_sync_writel(host, 0, HOST1X_SYNC_SYNCPT_INTR_DEST(id));
-+#endif
- }
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 89cc79a48eab..8c6ce8014c09 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -40,6 +40,11 @@
+ #include "hw/host1x06.h"
+ #include "hw/host1x07.h"
  
- static int
++void host1x_common_writel(struct host1x *host1x, u32 v, u32 r)
++{
++	writel(v, host1x->common_regs + r);
++}
++
+ void host1x_hypervisor_writel(struct host1x *host1x, u32 v, u32 r)
+ {
+ 	writel(v, host1x->hv_regs + r);
+@@ -412,7 +417,6 @@ static int host1x_get_resets(struct host1x *host)
+ static int host1x_probe(struct platform_device *pdev)
+ {
+ 	struct host1x *host;
+-	struct resource *regs, *hv_regs = NULL;
+ 	int syncpt_irq;
+ 	int err;
+ 
+@@ -423,25 +427,23 @@ static int host1x_probe(struct platform_device *pdev)
+ 	host->info = of_device_get_match_data(&pdev->dev);
+ 
+ 	if (host->info->has_hypervisor) {
+-		regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "vm");
+-		if (!regs) {
+-			dev_err(&pdev->dev, "failed to get vm registers\n");
+-			return -ENXIO;
+-		}
++		host->regs = devm_platform_ioremap_resource_byname(pdev, "vm");
++		if (IS_ERR(host->regs))
++			return PTR_ERR(host->regs);
++
++		host->hv_regs = devm_platform_ioremap_resource_byname(pdev, "hypervisor");
++		if (IS_ERR(host->hv_regs))
++			return PTR_ERR(host->hv_regs);
+ 
+-		hv_regs = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-						       "hypervisor");
+-		if (!hv_regs) {
+-			dev_err(&pdev->dev,
+-				"failed to get hypervisor registers\n");
+-			return -ENXIO;
++		if (host->info->has_common) {
++			host->common_regs = devm_platform_ioremap_resource_byname(pdev, "common");
++			if (IS_ERR(host->common_regs))
++				return PTR_ERR(host->common_regs);
+ 		}
+ 	} else {
+-		regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		if (!regs) {
+-			dev_err(&pdev->dev, "failed to get registers\n");
+-			return -ENXIO;
+-		}
++		host->regs = devm_platform_ioremap_resource(pdev, 0);
++		if (IS_ERR(host->regs))
++			return PTR_ERR(host->regs);
+ 	}
+ 
+ 	syncpt_irq = platform_get_irq(pdev, 0);
+@@ -456,16 +458,6 @@ static int host1x_probe(struct platform_device *pdev)
+ 	/* set common host1x device data */
+ 	platform_set_drvdata(pdev, host);
+ 
+-	host->regs = devm_ioremap_resource(&pdev->dev, regs);
+-	if (IS_ERR(host->regs))
+-		return PTR_ERR(host->regs);
+-
+-	if (host->info->has_hypervisor) {
+-		host->hv_regs = devm_ioremap_resource(&pdev->dev, hv_regs);
+-		if (IS_ERR(host->hv_regs))
+-			return PTR_ERR(host->hv_regs);
+-	}
+-
+ 	host->dev->dma_parms = &host->dma_parms;
+ 	dma_set_max_seg_size(host->dev, UINT_MAX);
+ 
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index 7552a4554534..85edcc6e0fc7 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -100,6 +100,7 @@ struct host1x_info {
+ 	u64 dma_mask; /* mask of addressable memory */
+ 	bool has_wide_gather; /* supports GATHER_W opcode */
+ 	bool has_hypervisor; /* has hypervisor registers */
++	bool has_common; /* has common registers separate from hypervisor */
+ 	unsigned int num_sid_entries;
+ 	const struct host1x_sid_entry *sid_table;
+ 	/*
+@@ -115,6 +116,7 @@ struct host1x {
+ 
+ 	void __iomem *regs;
+ 	void __iomem *hv_regs; /* hypervisor region */
++	void __iomem *common_regs;
+ 	struct host1x_syncpt *syncpt;
+ 	struct host1x_syncpt_base *bases;
+ 	struct device *dev;
+@@ -156,6 +158,7 @@ struct host1x {
+ 	struct host1x_bo_cache cache;
+ };
+ 
++void host1x_common_writel(struct host1x *host1x, u32 v, u32 r);
+ void host1x_hypervisor_writel(struct host1x *host1x, u32 r, u32 v);
+ u32 host1x_hypervisor_readl(struct host1x *host1x, u32 r);
+ void host1x_sync_writel(struct host1x *host1x, u32 r, u32 v);
 -- 
 2.36.1
 
