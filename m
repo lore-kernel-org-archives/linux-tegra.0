@@ -2,133 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D1FC4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 11:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD12C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 11:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238842AbiEPLUh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 07:20:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35432 "EHLO
+        id S230292AbiEPL3P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 07:29:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbiEPLUg (ORCPT
+        with ESMTP id S229693AbiEPL3O (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 May 2022 07:20:36 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F2534BBE;
-        Mon, 16 May 2022 04:20:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LUKhFyWGsJws4jt1m41drcAy5kgxr8adnAp720eLM7Y=; b=KlbgSdflonmdW6hPspTw/oFJYR
-        yLr4OzBTS5jTqa88i7yjnmsG6GpnO3VrGHQvwpaLGB2sica6hBO1nPPepUxvCjDJ/qMSWv2bqHO+b
-        ZmAAhzszkvaGdABMHDNLbFKBA/0X2cZLpA26IbwG1J+/WKn3BSeYHWPzAy1E2IXsArxpSxY1jKaNf
-        G7qksyN1vqqi7dVGF3f0eawRTnGOVi0UUGB2fOyVmQ+Pmj57atz5AZx29cjIHEp8OKaSWq9LTUTaz
-        ANu8h4V4ZNvvD3woDjGX8sWZqSmMJ69f3GKZYxGyFvG3KOEc3VaTNtMLpx3ov/1arKmls2ipz2Eax
-        IJtGDvbg==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1nqYlv-0001Dw-4J; Mon, 16 May 2022 14:20:19 +0300
-Message-ID: <020a8244-760e-fe7c-594a-1d85e5645dbe@kapsi.fi>
-Date:   Mon, 16 May 2022 14:20:18 +0300
+        Mon, 16 May 2022 07:29:14 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9605D139;
+        Mon, 16 May 2022 04:29:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 50D3EB81057;
+        Mon, 16 May 2022 11:29:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8817CC385B8;
+        Mon, 16 May 2022 11:29:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652700550;
+        bh=nJB+Oj+EMaiHtJGEgHUqqIU2EC9RoBWL+Nd8eq8yAy4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uMvfOMT98aHFxjccQ5rOtC4U6FS3lYCkZPilv2PAi7sDGVkVlP5lOfv/i99hMFTam
+         OOdCc7Vhr3wLoYxmuj/G1uJQkwB1LNkUfNWS+b1Aa5Y+pHozEkZO384IvnpiB1QBch
+         eDYqXTKamIlbLWtvuSPKOjf2opE5U2DRhtXQ/fC1EiQnZuwM6PRinF2ajbhP7EiTBp
+         f12AKwjP96M3aM1cyhRqLZmxF4xVT19O+k8GYofJEk/N5gR4yjlKdCuuLFKMPYoc0y
+         KCuoP/bzkF3xlHxw55strt/+EL+WJwnQV83Dj7p5d0FfXo9OH0ljmkDKesO4WbnM+K
+         phBZuSpZheIgg==
+Date:   Mon, 16 May 2022 16:59:05 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     dmaengine@vger.kernel.org, jonathanh@nvidia.com,
+        ldewangan@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, p.zabel@pengutronix.de,
+        thierry.reding@gmail.com
+Subject: Re: [PATCH] dmaengine: tegra: Use platform_get_irq() to get IRQ
+ resource
+Message-ID: <YoI1gchpEUcqC6fY@matsya>
+References: <20220505091440.12981-1-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v5 5/9] iommu/arm-smmu: Attach to host1x context device
- bus
-Content-Language: en-US
-To:     Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
-        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-References: <20220516085258.1227691-1-cyndis@kapsi.fi>
- <20220516085258.1227691-6-cyndis@kapsi.fi>
- <20220516100721.GA1927@willie-the-truck>
- <4a170997-c893-1788-dcaa-8ed2193146ae@kapsi.fi>
- <099cf0f9-5c27-0247-7c5e-6704a9527b11@arm.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <099cf0f9-5c27-0247-7c5e-6704a9527b11@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220505091440.12981-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/16/22 13:44, Robin Murphy wrote:
-> On 2022-05-16 11:13, Mikko Perttunen wrote:
->> On 5/16/22 13:07, Will Deacon wrote:
->>> On Mon, May 16, 2022 at 11:52:54AM +0300, cyndis@kapsi.fi wrote:
->>>> From: Mikko Perttunen <mperttunen@nvidia.com>
->>>>
->>>> Set itself as the IOMMU for the host1x context device bus, containing
->>>> "dummy" devices used for Host1x context isolation.
->>>>
->>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>>> ---
->>>>   drivers/iommu/arm/arm-smmu/arm-smmu.c | 13 +++++++++++++
->>>>   1 file changed, 13 insertions(+)
->>>>
->>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c 
->>>> b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>>> index 568cce590ccc..9ff54eaecf81 100644
->>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>>> @@ -39,6 +39,7 @@
->>>>   #include <linux/amba/bus.h>
->>>>   #include <linux/fsl/mc.h>
->>>> +#include <linux/host1x_context_bus.h>
->>>>   #include "arm-smmu.h"
->>>> @@ -2053,8 +2054,20 @@ static int arm_smmu_bus_init(struct iommu_ops 
->>>> *ops)
->>>>               goto err_reset_pci_ops;
->>>>       }
->>>>   #endif
->>>> +#ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
->>>> +    if (!iommu_present(&host1x_context_device_bus_type)) {
->>>> +        err = bus_set_iommu(&host1x_context_device_bus_type, ops);
->>>> +        if (err)
->>>> +            goto err_reset_fsl_mc_ops;
->>>> +    }
->>>> +#endif
->>>> +
->>>>       return 0;
->>>> +err_reset_fsl_mc_ops: __maybe_unused;
->>>> +#ifdef CONFIG_FSL_MC_BUS
->>>> +    bus_set_iommu(&fsl_mc_bus_type, NULL);
->>>> +#endif
->>>
->>> bus_set_iommu() is going away:
->>>
->>> https://lore.kernel.org/r/cover.1650890638.git.robin.murphy@arm.com
->>>
->>> Will
->>
->> Thanks for the heads-up. Robin had pointed out that this work was 
->> ongoing but I hadn't seen the patches yet. I'll look into it.
+On 05-05-22, 14:44, Akhil R wrote:
+> Use platform_irq_get() instead platform_get_resource() for IRQ resource
+> to fix the probe failure. platform_get_resource() fails to fetch the IRQ
+> resource as it might not be ready at that time.
 > 
-> Although that *is* currently blocked on the mystery intel-iommu problem 
-> that I can't reproduce... If this series is ready to land right now for 
-> 5.19 then in principle that might be the easiest option overall. 
-> Hopefully at least patch #2 could sneak in so that the compile-time 
-> dependencies are ready for me to roll up host1x into the next rebase of 
-> "iommu: Always register bus notifiers".
-> 
-> Cheers,
-> Robin.
+> platform_irq_get() is also the recommended way to get interrupt as it
+> directly gives the IRQ number and no conversion from resource is
+> required.
 
-My guess is that the series as a whole is not ready to land in the 5.19 
-timeframe, but #2 could be possible.
+Applied, thanks
 
-Thierry, any opinion?
-
-Thanks,
-Mikko
+-- 
+~Vinod
