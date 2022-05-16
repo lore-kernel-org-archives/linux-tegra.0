@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F4EC43219
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32C5C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:02:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241681AbiEPKCq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S241707AbiEPKCq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 16 May 2022 06:02:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236490AbiEPKCm (ORCPT
+        with ESMTP id S238025AbiEPKCn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 May 2022 06:02:42 -0400
+        Mon, 16 May 2022 06:02:43 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AACE55599;
-        Mon, 16 May 2022 03:02:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8925755A5;
+        Mon, 16 May 2022 03:02:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=8VhFQH5Q1ygwgbFioaFYlr73TBFA4fN7hoa82H2H+kA=; b=aISonTHEiE6GorNGZp5kHY+f86
-        eYvaU9lhuoxrg+S6RjoR5Kxn6PfK0/Lefn57jhjQjSEbQ9Kc/Aq3HQxxrJVwnCarD55Qc3pqYR9HU
-        fmJyFoeuc8rG+8PgD+lK+j10Gs69Di/tmbiG/bQxXXxpXBjG3363efNiO/oRgPbERDcgiG5EK5tIG
-        9J6siA+FKDluUXX/QvUeZwUprLgLdQTFOzjmNogfGpUJVGgjPKBrmoz2r/4s8fD5Xo5VAnas2R7Po
-        rFeAXYan7tj4R6b+ofAoIEegPlVxxGKQDQuteB/adPXp/9MzGlSCglD5t9APXa4Ch5TxXuh0sz/QC
-        1z01bJbw==;
+        bh=pGQX1JKxanPmqedEue8d2htEoS8AyrUnifwuz1TiUYY=; b=stj2aNYDMNKtVVFXkAJyNwiVwE
+        5jmjneZb5CXQlIaAfydH3UNASfeBHXJcLNzbvqYwsBt2IrRd9XfI+1teMYw5QlVX5eqDFFjnFJeXO
+        QTdBoeSqgSkHaJzS3Pz2gQPsDt7oGbRlvvMOFUF8dP8ZqOD0ul8dfjg2JmQu91KrDV9VHotNsjAbI
+        QTJYH9rOwmmOZ5V3l0OXeu4AluaJosZCBME2vLXAKa+bmjW4pVVpIR7H/6gt/dVZel1Svrb0Xk39P
+        rup9+leHFKAvzB912bBW6/1wYRtxqRgmgHyyz6pB+gj+cDkEuAbntk1l8rP3GMvxuyRaBRQWh1dEW
+        xZSey3CQ==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nqXYe-0005yU-Vk; Mon, 16 May 2022 13:02:33 +0300
+        id 1nqXYg-0005yU-O8; Mon, 16 May 2022 13:02:34 +0300
 From:   cyndis@kapsi.fi
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v1 03/13] arm64: tegra: Add Host1x and VIC on Tegra234
-Date:   Mon, 16 May 2022 13:02:03 +0300
-Message-Id: <20220516100213.1536571-4-cyndis@kapsi.fi>
+Subject: [PATCH v1 12/13] gpu: host1x: Use RESTART_W to skip timed out jobs on Tegra186+
+Date:   Mon, 16 May 2022 13:02:12 +0300
+Message-Id: <20220516100213.1536571-13-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220516100213.1536571-1-cyndis@kapsi.fi>
 References: <20220516100213.1536571-1-cyndis@kapsi.fi>
@@ -55,70 +55,47 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add device tree nodes for Host1x and VIC on Tegra234.
+When MLOCK enforcement is enabled, the 0-word write currently done
+is rejected by the hardware outside of an MLOCK region. As such,
+on these chips, which also have the newer, more convenient RESTART_W
+opcode, use that instead to skip over the timed out job.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 46 ++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/gpu/host1x/cdma.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index cb3af539e477..cae68e59580c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -454,6 +454,52 @@ misc@100000 {
- 			status = "okay";
- 		};
+diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+index 765e5aa64eb6..bb1f3c746be4 100644
+--- a/drivers/gpu/host1x/cdma.c
++++ b/drivers/gpu/host1x/cdma.c
+@@ -457,9 +457,24 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
+ 				 * to offset 0xbad. This does nothing but
+ 				 * has a easily detected signature in debug
+ 				 * traces.
++				 *
++				 * On systems with MLOCK enforcement enabled,
++				 * the above 0 word writes would fall foul of
++				 * the enforcement. As such, in the first slot
++				 * put a RESTART_W opcode to the beginning
++				 * of the next job. We don't use this for older
++				 * chips since those only support the RESTART
++				 * opcode with inconvenient alignment requirements.
+ 				 */
+-				mapped[2*slot+0] = 0x1bad0000;
+-				mapped[2*slot+1] = 0x1bad0000;
++				if (i == 0 && host1x->info->has_wide_gather) {
++					unsigned int next_job = (job->first_get/8 + job->num_slots)
++						% HOST1X_PUSHBUFFER_SLOTS;
++					mapped[2*slot+0] = (0xd << 28) | (next_job * 2);
++					mapped[2*slot+1] = 0x0;
++				} else {
++					mapped[2*slot+0] = 0x1bad0000;
++					mapped[2*slot+1] = 0x1bad0000;
++				}
+ 			}
  
-+		host1x@13e00000 {
-+			compatible = "nvidia,tegra234-host1x";
-+			reg = <0x13e00000 0x10000>,
-+			      <0x13e10000 0x10000>,
-+			      <0x13e40000 0x10000>;
-+			reg-names = "common", "hypervisor", "vm";
-+			interrupts = <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "syncpt0", "syncpt1", "syncpt2", "syncpt3", "syncpt4",
-+			                  "syncpt5", "syncpt6", "syncpt7", "host1x";
-+			clocks = <&bpmp TEGRA234_CLK_HOST1X>;
-+			clock-names = "host1x";
-+
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			ranges = <0x15000000 0x15000000 0x01000000>;
-+			interconnects = <&mc TEGRA234_MEMORY_CLIENT_HOST1XDMAR &emc>;
-+			interconnect-names = "dma-mem";
-+			iommus = <&smmu_niso1 TEGRA234_SID_HOST1X>;
-+
-+			vic@15340000 {
-+				compatible = "nvidia,tegra234-vic";
-+				reg = <0x15340000 0x00040000>;
-+				interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&bpmp TEGRA234_CLK_VIC>;
-+				clock-names = "vic";
-+				resets = <&bpmp TEGRA234_RESET_VIC>;
-+				reset-names = "vic";
-+
-+				power-domains = <&bpmp TEGRA234_POWER_DOMAIN_VIC>;
-+				interconnects = <&mc TEGRA234_MEMORY_CLIENT_VICSRD &emc>,
-+						<&mc TEGRA234_MEMORY_CLIENT_VICSWR &emc>;
-+				interconnect-names = "dma-mem", "write";
-+				iommus = <&smmu_niso1 TEGRA234_SID_VIC>;
-+				dma-coherent;
-+			};
-+		};
-+
- 		gpio: gpio@2200000 {
- 			compatible = "nvidia,tegra234-gpio";
- 			reg-names = "security", "gpio";
+ 			job->cancelled = true;
 -- 
 2.36.1
 
