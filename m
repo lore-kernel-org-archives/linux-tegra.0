@@ -2,48 +2,48 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3713BC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 08:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5690C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242118AbiEPIx7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 04:53:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39158 "EHLO
+        id S237290AbiEPKCn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 06:02:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242063AbiEPIxk (ORCPT
+        with ESMTP id S229759AbiEPKCm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 May 2022 04:53:40 -0400
+        Mon, 16 May 2022 06:02:42 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835A613F59;
-        Mon, 16 May 2022 01:53:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A67335594;
+        Mon, 16 May 2022 03:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=qKpPhT1htxysCkfhUBMj0egXSA7Qs36rOou4SsdTvzc=; b=ucBrZJUJvlRXO4xI6OWeHwflSr
-        mydycarxlKbIlFjzY7g54S9/Fjx69PYzx7dAFmDfumzHjRMDHV7sy23ARjYz48sGywEs3AWq/R0fr
-        Xz4iAfx3VQ4ySf8X11UqaN0IBXSoym6lsUs70OzZmMZoUtHnHYG7pCIRBkD1JtR6Pu97TLnpxGKk2
-        cSVo1F3AXoJHJofM4zOZRSZJFceZ8nbfj/FdhXo97N4A+836KtyhWx7wfKBUB/8A372Py2fpy8vy2
-        fmlKWYTo8gOYECI63IW28yCIO7st++BqZO3Jg5iIMv9LZZnUVfadwDHQOETViZu7yqFg6A59uwHVA
-        qkHD5Glw==;
+        bh=mTP9JKWbQi5X9Aiy3D3CFclT8K0qf8xcDbui6f15aq4=; b=tYWuzJTPm570yErOrshkxq+qSU
+        qhC4yrbZSy+ywVt2mL+GJ/d5HBSjMmWIovQmSzwey85qWTqCLe1VPWox+yoS0y6MtWlGfc4o90X9P
+        KoXzkwzsi0qWUnsgdc22S9w0D6i5CFiVytZukOzAswGzt3MSo2PVClTUvnO4KtJVg96D59mwt9b4o
+        2XIAzlNkhh8zMdxLNtmHTlUM1Vz0YGp/ffr3IX/6H1j7ZjaTrc/+o/2DcUulUiYUF1aSZjxsS7meV
+        lPyYh3NVuQlpfW/XqQeJdcSxjiEtOdNpoRd8wLqx05r9DvhTBUUvxBc26//2EBTfHkA4Bh3sKJHmY
+        j6WM/h9w==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nqWTe-0005fd-Ba; Mon, 16 May 2022 11:53:18 +0300
+        id 1nqXYf-0005yU-NX; Mon, 16 May 2022 13:02:33 +0300
 From:   cyndis@kapsi.fi
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        will@kernel.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        krzysztof.kozlowski@canonical.com
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 0/9] Host1x context isolation support
-Date:   Mon, 16 May 2022 11:52:49 +0300
-Message-Id: <20220516085258.1227691-1-cyndis@kapsi.fi>
+Subject: [PATCH v1 07/13] gpu: host1x: Allow reset to be missing
+Date:   Mon, 16 May 2022 13:02:07 +0300
+Message-Id: <20220516100213.1536571-8-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220516100213.1536571-1-cyndis@kapsi.fi>
+References: <20220516100213.1536571-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 91.158.25.70
@@ -55,113 +55,28 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-***
-New in v5:
+Host1x on Tegra234 does not have a software-controllable reset line.
+As such, don't bail out if we don't find one in the device tree.
 
-Rebased
-Renamed host1x_context to host1x_memory_context
-Small change in DRM side client driver ops to reduce churn with some
-  upcoming changes
-Add NVDEC support
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/dev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-***
-
-***
-New in v4:
-
-Addressed review comments. See individual patches.
-***
-
-***
-New in v3:
-
-Added device tree bindings for new property.
-***
-
-***
-New in v2:
-
-Added support for Tegra194
-Use standard iommu-map property instead of custom mechanism
-***
-
-This series adds support for Host1x 'context isolation'. Since
-when programming engines through Host1x, userspace can program in
-any addresses it wants, we need some way to isolate the engines'
-memory spaces. Traditionally this has either been done imperfectly
-with a single shared IOMMU domain, or by copying and verifying the
-programming command stream at submit time (Host1x firewall).
-
-Since Tegra186 there is a privileged (only usable by kernel)
-Host1x opcode that allows setting the stream ID sent by the engine
-to the SMMU. So, by allocating a number of context banks and stream
-IDs for this purpose, and using this opcode at the beginning of
-each job, we can implement isolation. Due to the limited number of
-context banks only each process gets its own context, and not
-each channel.
-
-This feature also allows sharing engines among multiple VMs when
-used with Host1x's hardware virtualization support - up to 8 VMs
-can be configured with a subset of allowed stream IDs, enforced
-at hardware level.
-
-To implement this, this series adds a new host1x context bus, which
-will contain the 'struct device's corresponding to each context
-bank / stream ID, changes to device tree and SMMU code to allow
-registering the devices and using the bus, as well as the Host1x
-stream ID programming code and support in TegraDRM.
-
--------------
-Merging notes
--------------
-
-The changes to DT bindings should be applied on top of Thierry's patch
-'dt-bindings: display: tegra: Convert to json-schema'.
-
-Thanks,
-Mikko
-
-Mikko Perttunen (9):
-  dt-bindings: host1x: Add iommu-map property
-  gpu: host1x: Add context bus
-  gpu: host1x: Add context device management code
-  gpu: host1x: Program context stream ID on submission
-  iommu/arm-smmu: Attach to host1x context device bus
-  arm64: tegra: Add Host1x context stream IDs on Tegra186+
-  drm/tegra: falcon: Set DMACTX field on DMA transactions
-  drm/tegra: Support context isolation
-  drm/tegra: Implement stream ID related callbacks on engines
-
- .../display/tegra/nvidia,tegra20-host1x.yaml  |   5 +
- arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  11 ++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  11 ++
- drivers/gpu/Makefile                          |   3 +-
- drivers/gpu/drm/tegra/drm.h                   |  11 ++
- drivers/gpu/drm/tegra/falcon.c                |   8 +
- drivers/gpu/drm/tegra/falcon.h                |   1 +
- drivers/gpu/drm/tegra/nvdec.c                 |   9 +
- drivers/gpu/drm/tegra/submit.c                |  48 +++++-
- drivers/gpu/drm/tegra/uapi.c                  |  43 ++++-
- drivers/gpu/drm/tegra/vic.c                   |  67 +++++++-
- drivers/gpu/host1x/Kconfig                    |   5 +
- drivers/gpu/host1x/Makefile                   |   2 +
- drivers/gpu/host1x/context.c                  | 160 ++++++++++++++++++
- drivers/gpu/host1x/context.h                  |  27 +++
- drivers/gpu/host1x/context_bus.c              |  31 ++++
- drivers/gpu/host1x/dev.c                      |  12 +-
- drivers/gpu/host1x/dev.h                      |   2 +
- drivers/gpu/host1x/hw/channel_hw.c            |  52 +++++-
- drivers/gpu/host1x/hw/host1x06_hardware.h     |  10 ++
- drivers/gpu/host1x/hw/host1x07_hardware.h     |  10 ++
- drivers/iommu/arm/arm-smmu/arm-smmu.c         |  13 ++
- include/linux/host1x.h                        |  26 +++
- include/linux/host1x_context_bus.h            |  15 ++
- 24 files changed, 564 insertions(+), 18 deletions(-)
- create mode 100644 drivers/gpu/host1x/context.c
- create mode 100644 drivers/gpu/host1x/context.h
- create mode 100644 drivers/gpu/host1x/context_bus.c
- create mode 100644 include/linux/host1x_context_bus.h
-
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 5a57165ab0f6..c28939850bf6 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -423,9 +423,6 @@ static int host1x_get_resets(struct host1x *host)
+ 		return err;
+ 	}
+ 
+-	if (WARN_ON(!host->resets[1].rstc))
+-		return -ENOENT;
+-
+ 	return 0;
+ }
+ 
 -- 
 2.36.1
 
