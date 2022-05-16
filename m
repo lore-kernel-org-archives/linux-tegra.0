@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE787C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA74C4167B
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:03:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231663AbiEPKDC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 06:03:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
+        id S242129AbiEPKDA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 06:03:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236677AbiEPKCm (ORCPT
+        with ESMTP id S241535AbiEPKCo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 May 2022 06:02:42 -0400
+        Mon, 16 May 2022 06:02:44 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3A3B559C;
-        Mon, 16 May 2022 03:02:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 454C955A2;
+        Mon, 16 May 2022 03:02:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=K6UXL4UsLa1v8rXgrch6vkZbmkdDyz5XZet88hhfmp8=; b=GtzQvmOkIxgGpNQbForScR8FQz
-        z1fe/m1d7z3HE81ITIPABU+5ivMJ8Q8CauYZNFC62Do6BI31NSnco8cVwpqtfU97NwVNJWlhlkOut
-        eiVfog7n5nFiwEN2EJa7ZhgYAxLz6jwG5IVLGLXsD+76I0k9ga6tyJk7+FLizMygWnprOCCLIKmpf
-        zASS3+l3t/6ldjBfuMHYsi3N3aebW9rWAhYK/0HX4ik/PiXihfl9liNdKgC8HR0Rw9VvrbovHAUNL
-        Suozdqwqc0A1O+PPv9getTzd4tkLsTzzo7CrfbJfSTwwHgugSqxZyCm89/oBagV66Z/+kOvO2Pwmq
-        j6cL9glg==;
+        bh=kANBTyjo8cVvUxUMXvtoZL5Cy0kO7CpDsfY6ScJagNY=; b=HBiFvnWyIGoAv5LtYBSJKGsn+L
+        l4PNHwbPBzhuabmCazlon5tUudTsBc/lqitRv16wvtyg38NHBRMiUWy4QmMQfIrW+Cp1uXlc2Eljv
+        Y09OwOdb8Y5KKDpiQz3exWXrkfvVe0jcDQL/wn309K4TeGnDQu2s1VbElZdnkw/oFg87sO4AC3VxH
+        2wM0Im5jr2QvkhGhtB4Wj3iUL7y77Uw54ar4mMDPgF1KiX2gX4Z+5FTyLVJSkukZZLzQaLpbgn6GS
+        vUmFIzaS/2gRRMEBPGQi+z74dgQHXbLQuXDZfIWOgfIx28du3Yi4F7ydUxXMrAqNVZyCxkqoTYetM
+        fc/HZXHw==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nqXYe-0005yU-Lt; Mon, 16 May 2022 13:02:32 +0300
+        id 1nqXYf-0005yU-3n; Mon, 16 May 2022 13:02:33 +0300
 From:   cyndis@kapsi.fi
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v1 01/13] dt-bindings: Add bindings for Tegra234 Host1x and VIC
-Date:   Mon, 16 May 2022 13:02:01 +0300
-Message-Id: <20220516100213.1536571-2-cyndis@kapsi.fi>
+Subject: [PATCH v1 04/13] gpu: host1x: Deduplicate hardware headers
+Date:   Mon, 16 May 2022 13:02:04 +0300
+Message-Id: <20220516100213.1536571-5-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220516100213.1536571-1-cyndis@kapsi.fi>
 References: <20220516100213.1536571-1-cyndis@kapsi.fi>
@@ -55,201 +55,949 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Update VIC and Host1x bindings for changes in Tegra234.
+Host1x class information and opcodes are unchanged or backwards
+compatible across SoCs so let's not duplicate them for each one
+but have them in a shared header file.
 
-Namely,
-- New compatible strings
-- Sharded syncpoint interrupts
-- Optional reset.
+At the same time, add opcode functions for acquire/release_mlock.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- .../display/tegra/nvidia,tegra124-vic.yaml    |   1 +
- .../display/tegra/nvidia,tegra20-host1x.yaml  | 108 +++++++++++++++---
- 2 files changed, 95 insertions(+), 14 deletions(-)
+ drivers/gpu/host1x/hw/host1x01_hardware.h | 114 +---------------
+ drivers/gpu/host1x/hw/host1x02_hardware.h | 113 +---------------
+ drivers/gpu/host1x/hw/host1x04_hardware.h | 113 +---------------
+ drivers/gpu/host1x/hw/host1x05_hardware.h | 113 +---------------
+ drivers/gpu/host1x/hw/host1x06_hardware.h | 128 +-----------------
+ drivers/gpu/host1x/hw/host1x07_hardware.h | 128 +-----------------
+ drivers/gpu/host1x/hw/opcodes.h           | 150 ++++++++++++++++++++++
+ 7 files changed, 156 insertions(+), 703 deletions(-)
+ create mode 100644 drivers/gpu/host1x/hw/opcodes.h
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-index 37bb5ddc1963..7200095ef19e 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-@@ -21,6 +21,7 @@ properties:
-           - nvidia,tegra210-vic
-           - nvidia,tegra186-vic
-           - nvidia,tegra194-vic
-+          - nvidia,tegra234-vic
+diff --git a/drivers/gpu/host1x/hw/host1x01_hardware.h b/drivers/gpu/host1x/hw/host1x01_hardware.h
+index fe59df1d3dc3..cb93d7c1808c 100644
+--- a/drivers/gpu/host1x/hw/host1x01_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x01_hardware.h
+@@ -15,118 +15,6 @@
+ #include "hw_host1x01_sync.h"
+ #include "hw_host1x01_uclass.h"
  
-       - items:
-           - const: nvidia,tegra132-vic
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-index 0adeb03b9e3a..83c58b7dae98 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-@@ -24,6 +24,7 @@ properties:
-           - nvidia,tegra210-host1x
-           - nvidia,tegra186-host1x
-           - nvidia,tegra194-host1x
-+          - nvidia,tegra234-host1x
+-static inline u32 host1x_class_host_wait_syncpt(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_wait_syncpt_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_thresh_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_load_syncpt_base(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_load_syncpt_base_base_indx_f(indx)
+-		| host1x_uclass_load_syncpt_base_value_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_wait_syncpt_base(
+-	unsigned indx, unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_wait_syncpt_base_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_wait_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt_base(
+-	unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_incr_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_incr_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt(
+-	unsigned cond, unsigned indx)
+-{
+-	return host1x_uclass_incr_syncpt_cond_f(cond)
+-		| host1x_uclass_incr_syncpt_indx_f(indx);
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_write(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indbe_f(0xf)
+-		| host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset);
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_read(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset)
+-		| host1x_uclass_indoff_rwn_read_v();
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-
+-/* cdma opcodes */
+-static inline u32 host1x_opcode_setclass(
+-	unsigned class_id, unsigned offset, unsigned mask)
+-{
+-	return (0 << 28) | (offset << 16) | (class_id << 6) | mask;
+-}
+-
+-static inline u32 host1x_opcode_incr(unsigned offset, unsigned count)
+-{
+-	return (1 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_nonincr(unsigned offset, unsigned count)
+-{
+-	return (2 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_mask(unsigned offset, unsigned mask)
+-{
+-	return (3 << 28) | (offset << 16) | mask;
+-}
+-
+-static inline u32 host1x_opcode_imm(unsigned offset, unsigned value)
+-{
+-	return (4 << 28) | (offset << 16) | value;
+-}
+-
+-static inline u32 host1x_opcode_imm_incr_syncpt(unsigned cond, unsigned indx)
+-{
+-	return host1x_opcode_imm(host1x_uclass_incr_syncpt_r(),
+-		host1x_class_host_incr_syncpt(cond, indx));
+-}
+-
+-static inline u32 host1x_opcode_restart(unsigned address)
+-{
+-	return (5 << 28) | (address >> 4);
+-}
+-
+-static inline u32 host1x_opcode_gather(unsigned count)
+-{
+-	return (6 << 28) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_nonincr(unsigned offset,	unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+-}
+-
+-#define HOST1X_OPCODE_NOP host1x_opcode_nonincr(0, 0)
++#include "opcodes.h"
  
-       - items:
-           - const: nvidia,tegra132-host1x
-@@ -31,23 +32,19 @@ properties:
+ #endif
+diff --git a/drivers/gpu/host1x/hw/host1x02_hardware.h b/drivers/gpu/host1x/hw/host1x02_hardware.h
+index af60d7fb016d..2d1282b9bc33 100644
+--- a/drivers/gpu/host1x/hw/host1x02_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x02_hardware.h
+@@ -15,117 +15,6 @@
+ #include "hw_host1x02_sync.h"
+ #include "hw_host1x02_uclass.h"
  
-   reg:
-     minItems: 1
--    maxItems: 2
-+    maxItems: 3
+-static inline u32 host1x_class_host_wait_syncpt(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_wait_syncpt_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_thresh_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_load_syncpt_base(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_load_syncpt_base_base_indx_f(indx)
+-		| host1x_uclass_load_syncpt_base_value_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_wait_syncpt_base(
+-	unsigned indx, unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_wait_syncpt_base_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_wait_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt_base(
+-	unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_incr_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_incr_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt(
+-	unsigned cond, unsigned indx)
+-{
+-	return host1x_uclass_incr_syncpt_cond_f(cond)
+-		| host1x_uclass_incr_syncpt_indx_f(indx);
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_write(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indbe_f(0xf)
+-		| host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset);
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_read(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset)
+-		| host1x_uclass_indoff_rwn_read_v();
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-/* cdma opcodes */
+-static inline u32 host1x_opcode_setclass(
+-	unsigned class_id, unsigned offset, unsigned mask)
+-{
+-	return (0 << 28) | (offset << 16) | (class_id << 6) | mask;
+-}
+-
+-static inline u32 host1x_opcode_incr(unsigned offset, unsigned count)
+-{
+-	return (1 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_nonincr(unsigned offset, unsigned count)
+-{
+-	return (2 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_mask(unsigned offset, unsigned mask)
+-{
+-	return (3 << 28) | (offset << 16) | mask;
+-}
+-
+-static inline u32 host1x_opcode_imm(unsigned offset, unsigned value)
+-{
+-	return (4 << 28) | (offset << 16) | value;
+-}
+-
+-static inline u32 host1x_opcode_imm_incr_syncpt(unsigned cond, unsigned indx)
+-{
+-	return host1x_opcode_imm(host1x_uclass_incr_syncpt_r(),
+-		host1x_class_host_incr_syncpt(cond, indx));
+-}
+-
+-static inline u32 host1x_opcode_restart(unsigned address)
+-{
+-	return (5 << 28) | (address >> 4);
+-}
+-
+-static inline u32 host1x_opcode_gather(unsigned count)
+-{
+-	return (6 << 28) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_nonincr(unsigned offset,	unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+-}
+-
+-#define HOST1X_OPCODE_NOP host1x_opcode_nonincr(0, 0)
++#include "opcodes.h"
  
-   reg-names:
-     minItems: 1
--    maxItems: 2
-+    maxItems: 3
+ #endif
+diff --git a/drivers/gpu/host1x/hw/host1x04_hardware.h b/drivers/gpu/host1x/hw/host1x04_hardware.h
+index 4f9bcddf27e3..84d244e8af30 100644
+--- a/drivers/gpu/host1x/hw/host1x04_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x04_hardware.h
+@@ -15,117 +15,6 @@
+ #include "hw_host1x04_sync.h"
+ #include "hw_host1x04_uclass.h"
  
-   interrupts:
--    items:
--      - description: host1x syncpoint interrupt
--      - description: host1x general interrupt
-     minItems: 1
-+    maxItems: 9
+-static inline u32 host1x_class_host_wait_syncpt(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_wait_syncpt_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_thresh_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_load_syncpt_base(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_load_syncpt_base_base_indx_f(indx)
+-		| host1x_uclass_load_syncpt_base_value_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_wait_syncpt_base(
+-	unsigned indx, unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_wait_syncpt_base_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_wait_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt_base(
+-	unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_incr_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_incr_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt(
+-	unsigned cond, unsigned indx)
+-{
+-	return host1x_uclass_incr_syncpt_cond_f(cond)
+-		| host1x_uclass_incr_syncpt_indx_f(indx);
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_write(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indbe_f(0xf)
+-		| host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset);
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_read(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset)
+-		| host1x_uclass_indoff_rwn_read_v();
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-/* cdma opcodes */
+-static inline u32 host1x_opcode_setclass(
+-	unsigned class_id, unsigned offset, unsigned mask)
+-{
+-	return (0 << 28) | (offset << 16) | (class_id << 6) | mask;
+-}
+-
+-static inline u32 host1x_opcode_incr(unsigned offset, unsigned count)
+-{
+-	return (1 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_nonincr(unsigned offset, unsigned count)
+-{
+-	return (2 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_mask(unsigned offset, unsigned mask)
+-{
+-	return (3 << 28) | (offset << 16) | mask;
+-}
+-
+-static inline u32 host1x_opcode_imm(unsigned offset, unsigned value)
+-{
+-	return (4 << 28) | (offset << 16) | value;
+-}
+-
+-static inline u32 host1x_opcode_imm_incr_syncpt(unsigned cond, unsigned indx)
+-{
+-	return host1x_opcode_imm(host1x_uclass_incr_syncpt_r(),
+-		host1x_class_host_incr_syncpt(cond, indx));
+-}
+-
+-static inline u32 host1x_opcode_restart(unsigned address)
+-{
+-	return (5 << 28) | (address >> 4);
+-}
+-
+-static inline u32 host1x_opcode_gather(unsigned count)
+-{
+-	return (6 << 28) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_nonincr(unsigned offset,	unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+-}
+-
+-#define HOST1X_OPCODE_NOP host1x_opcode_nonincr(0, 0)
++#include "opcodes.h"
  
-   interrupt-names:
--    items:
--      - const: syncpt
--      - const: host1x
-     minItems: 1
-+    maxItems: 9
+ #endif
+diff --git a/drivers/gpu/host1x/hw/host1x05_hardware.h b/drivers/gpu/host1x/hw/host1x05_hardware.h
+index af3ab4b7f010..1dcde6ec7909 100644
+--- a/drivers/gpu/host1x/hw/host1x05_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x05_hardware.h
+@@ -15,117 +15,6 @@
+ #include "hw_host1x05_sync.h"
+ #include "hw_host1x05_uclass.h"
  
-   '#address-cells':
-     description: The number of cells used to represent physical base addresses
-@@ -110,13 +107,32 @@ required:
-   - reg
-   - clocks
-   - clock-names
--  - resets
--  - reset-names
+-static inline u32 host1x_class_host_wait_syncpt(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_wait_syncpt_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_thresh_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_load_syncpt_base(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_load_syncpt_base_base_indx_f(indx)
+-		| host1x_uclass_load_syncpt_base_value_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_wait_syncpt_base(
+-	unsigned indx, unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_wait_syncpt_base_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_wait_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt_base(
+-	unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_incr_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_incr_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt(
+-	unsigned cond, unsigned indx)
+-{
+-	return host1x_uclass_incr_syncpt_cond_f(cond)
+-		| host1x_uclass_incr_syncpt_indx_f(indx);
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_write(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indbe_f(0xf)
+-		| host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset);
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_read(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset)
+-		| host1x_uclass_indoff_rwn_read_v();
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-/* cdma opcodes */
+-static inline u32 host1x_opcode_setclass(
+-	unsigned class_id, unsigned offset, unsigned mask)
+-{
+-	return (0 << 28) | (offset << 16) | (class_id << 6) | mask;
+-}
+-
+-static inline u32 host1x_opcode_incr(unsigned offset, unsigned count)
+-{
+-	return (1 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_nonincr(unsigned offset, unsigned count)
+-{
+-	return (2 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_mask(unsigned offset, unsigned mask)
+-{
+-	return (3 << 28) | (offset << 16) | mask;
+-}
+-
+-static inline u32 host1x_opcode_imm(unsigned offset, unsigned value)
+-{
+-	return (4 << 28) | (offset << 16) | value;
+-}
+-
+-static inline u32 host1x_opcode_imm_incr_syncpt(unsigned cond, unsigned indx)
+-{
+-	return host1x_opcode_imm(host1x_uclass_incr_syncpt_r(),
+-		host1x_class_host_incr_syncpt(cond, indx));
+-}
+-
+-static inline u32 host1x_opcode_restart(unsigned address)
+-{
+-	return (5 << 28) | (address >> 4);
+-}
+-
+-static inline u32 host1x_opcode_gather(unsigned count)
+-{
+-	return (6 << 28) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_nonincr(unsigned offset,	unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+-}
+-
+-#define HOST1X_OPCODE_NOP host1x_opcode_nonincr(0, 0)
++#include "opcodes.h"
  
- additionalProperties:
-   type: object
+ #endif
+diff --git a/drivers/gpu/host1x/hw/host1x06_hardware.h b/drivers/gpu/host1x/hw/host1x06_hardware.h
+index 5d515745eee7..c05cfa7e3090 100644
+--- a/drivers/gpu/host1x/hw/host1x06_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x06_hardware.h
+@@ -16,132 +16,6 @@
+ #include "hw_host1x06_vm.h"
+ #include "hw_host1x06_hypervisor.h"
  
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra20-host1x
-+              - nvidia,tegra30-host1x
-+              - nvidia,tegra114-host1x
-+              - nvidia,tegra124-host1x
-+              - nvidia,tegra210-host1x
-+    then:
-+      properties:
-+        interrupts:
-+          items:
-+            - description: host1x syncpoint interrupt
-+            - description: host1x general interrupt
+-static inline u32 host1x_class_host_wait_syncpt(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_wait_syncpt_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_thresh_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_load_syncpt_base(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_load_syncpt_base_base_indx_f(indx)
+-		| host1x_uclass_load_syncpt_base_value_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_wait_syncpt_base(
+-	unsigned indx, unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_wait_syncpt_base_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_wait_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt_base(
+-	unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_incr_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_incr_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt(
+-	unsigned cond, unsigned indx)
+-{
+-	return host1x_uclass_incr_syncpt_cond_f(cond)
+-		| host1x_uclass_incr_syncpt_indx_f(indx);
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_write(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indbe_f(0xf)
+-		| host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset);
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_read(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset)
+-		| host1x_uclass_indoff_rwn_read_v();
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-/* cdma opcodes */
+-static inline u32 host1x_opcode_setclass(
+-	unsigned class_id, unsigned offset, unsigned mask)
+-{
+-	return (0 << 28) | (offset << 16) | (class_id << 6) | mask;
+-}
+-
+-static inline u32 host1x_opcode_incr(unsigned offset, unsigned count)
+-{
+-	return (1 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_nonincr(unsigned offset, unsigned count)
+-{
+-	return (2 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_mask(unsigned offset, unsigned mask)
+-{
+-	return (3 << 28) | (offset << 16) | mask;
+-}
+-
+-static inline u32 host1x_opcode_imm(unsigned offset, unsigned value)
+-{
+-	return (4 << 28) | (offset << 16) | value;
+-}
+-
+-static inline u32 host1x_opcode_imm_incr_syncpt(unsigned cond, unsigned indx)
+-{
+-	return host1x_opcode_imm(host1x_uclass_incr_syncpt_r(),
+-		host1x_class_host_incr_syncpt(cond, indx));
+-}
+-
+-static inline u32 host1x_opcode_restart(unsigned address)
+-{
+-	return (5 << 28) | (address >> 4);
+-}
+-
+-static inline u32 host1x_opcode_gather(unsigned count)
+-{
+-	return (6 << 28) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_nonincr(unsigned offset,	unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+-}
+-
+-static inline u32 host1x_opcode_setstreamid(unsigned streamid)
+-{
+-	return (7 << 28) | streamid;
+-}
+-
+-static inline u32 host1x_opcode_setpayload(unsigned payload)
+-{
+-	return (9 << 28) | payload;
+-}
+-
+-static inline u32 host1x_opcode_gather_wide(unsigned count)
+-{
+-	return (12 << 28) | count;
+-}
+-
+-#define HOST1X_OPCODE_NOP host1x_opcode_nonincr(0, 0)
++#include "opcodes.h"
+ 
+ #endif
+diff --git a/drivers/gpu/host1x/hw/host1x07_hardware.h b/drivers/gpu/host1x/hw/host1x07_hardware.h
+index 82c0cc9bb0b5..d67364e03956 100644
+--- a/drivers/gpu/host1x/hw/host1x07_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x07_hardware.h
+@@ -16,132 +16,6 @@
+ #include "hw_host1x07_vm.h"
+ #include "hw_host1x07_hypervisor.h"
+ 
+-static inline u32 host1x_class_host_wait_syncpt(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_wait_syncpt_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_thresh_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_load_syncpt_base(
+-	unsigned indx, unsigned threshold)
+-{
+-	return host1x_uclass_load_syncpt_base_base_indx_f(indx)
+-		| host1x_uclass_load_syncpt_base_value_f(threshold);
+-}
+-
+-static inline u32 host1x_class_host_wait_syncpt_base(
+-	unsigned indx, unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_wait_syncpt_base_indx_f(indx)
+-		| host1x_uclass_wait_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_wait_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt_base(
+-	unsigned base_indx, unsigned offset)
+-{
+-	return host1x_uclass_incr_syncpt_base_base_indx_f(base_indx)
+-		| host1x_uclass_incr_syncpt_base_offset_f(offset);
+-}
+-
+-static inline u32 host1x_class_host_incr_syncpt(
+-	unsigned cond, unsigned indx)
+-{
+-	return host1x_uclass_incr_syncpt_cond_f(cond)
+-		| host1x_uclass_incr_syncpt_indx_f(indx);
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_write(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indbe_f(0xf)
+-		| host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset);
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-static inline u32 host1x_class_host_indoff_reg_read(
+-	unsigned mod_id, unsigned offset, bool auto_inc)
+-{
+-	u32 v = host1x_uclass_indoff_indmodid_f(mod_id)
+-		| host1x_uclass_indoff_indroffset_f(offset)
+-		| host1x_uclass_indoff_rwn_read_v();
+-	if (auto_inc)
+-		v |= host1x_uclass_indoff_autoinc_f(1);
+-	return v;
+-}
+-
+-/* cdma opcodes */
+-static inline u32 host1x_opcode_setclass(
+-	unsigned class_id, unsigned offset, unsigned mask)
+-{
+-	return (0 << 28) | (offset << 16) | (class_id << 6) | mask;
+-}
+-
+-static inline u32 host1x_opcode_incr(unsigned offset, unsigned count)
+-{
+-	return (1 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_nonincr(unsigned offset, unsigned count)
+-{
+-	return (2 << 28) | (offset << 16) | count;
+-}
+-
+-static inline u32 host1x_opcode_mask(unsigned offset, unsigned mask)
+-{
+-	return (3 << 28) | (offset << 16) | mask;
+-}
+-
+-static inline u32 host1x_opcode_imm(unsigned offset, unsigned value)
+-{
+-	return (4 << 28) | (offset << 16) | value;
+-}
+-
+-static inline u32 host1x_opcode_imm_incr_syncpt(unsigned cond, unsigned indx)
+-{
+-	return host1x_opcode_imm(host1x_uclass_incr_syncpt_r(),
+-		host1x_class_host_incr_syncpt(cond, indx));
+-}
+-
+-static inline u32 host1x_opcode_restart(unsigned address)
+-{
+-	return (5 << 28) | (address >> 4);
+-}
+-
+-static inline u32 host1x_opcode_gather(unsigned count)
+-{
+-	return (6 << 28) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_nonincr(unsigned offset,	unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | count;
+-}
+-
+-static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+-{
+-	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+-}
+-
+-static inline u32 host1x_opcode_setstreamid(unsigned streamid)
+-{
+-	return (7 << 28) | streamid;
+-}
+-
+-static inline u32 host1x_opcode_setpayload(unsigned payload)
+-{
+-	return (9 << 28) | payload;
+-}
+-
+-static inline u32 host1x_opcode_gather_wide(unsigned count)
+-{
+-	return (12 << 28) | count;
+-}
+-
+-#define HOST1X_OPCODE_NOP host1x_opcode_nonincr(0, 0)
++#include "opcodes.h"
+ 
+ #endif
+diff --git a/drivers/gpu/host1x/hw/opcodes.h b/drivers/gpu/host1x/hw/opcodes.h
+new file mode 100644
+index 000000000000..649614499b04
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/opcodes.h
+@@ -0,0 +1,150 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Tegra host1x opcodes
++ *
++ * Copyright (c) 2022 NVIDIA Corporation.
++ */
 +
-+        interrupt-names:
-+          items:
-+            - const: syncpt
-+            - const: host1x
-   - if:
-       properties:
-         compatible:
-@@ -133,10 +149,10 @@ allOf:
- 
-         reg:
-           items:
--            - description: physical base address and length of the register
--                region assigned to the VM
-             - description: physical base address and length of the register
-                 region used by the hypervisor
-+            - description: physical base address and length of the register
-+                region assigned to the VM
- 
-         resets:
-           maxItems: 1
-@@ -144,6 +160,70 @@ allOf:
-         reset-names:
-           maxItems: 1
- 
-+        interrupts:
-+          items:
-+            - description: host1x syncpoint interrupt
-+            - description: host1x general interrupt
++#ifndef __HOST1X_OPCODES_H
++#define __HOST1X_OPCODES_H
 +
-+        interrupt-names:
-+          items:
-+            - const: syncpt
-+            - const: host1x
++#include <linux/types.h>
 +
-+        iommu-map:
-+          description: Specification of stream IDs available for memory context device
-+            use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
-+            usable stream IDs.
++static inline u32 host1x_class_host_wait_syncpt(
++	unsigned indx, unsigned threshold)
++{
++	return host1x_uclass_wait_syncpt_indx_f(indx)
++		| host1x_uclass_wait_syncpt_thresh_f(threshold);
++}
 +
-+      required:
-+        - reg-names
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra234-host1x
-+    then:
-+      properties:
-+        reg-names:
-+          items:
-+            - const: common
-+            - const: hypervisor
-+            - const: vm
++static inline u32 host1x_class_host_load_syncpt_base(
++	unsigned indx, unsigned threshold)
++{
++	return host1x_uclass_load_syncpt_base_base_indx_f(indx)
++		| host1x_uclass_load_syncpt_base_value_f(threshold);
++}
 +
-+        reg:
-+          items:
-+            - description: physical base address and length of the register
-+                region used by host1x server
-+            - description: physical base address and length of the register
-+                region used by the hypervisor
-+            - description: physical base address and length of the register
-+                region assigned to the VM
++static inline u32 host1x_class_host_wait_syncpt_base(
++	unsigned indx, unsigned base_indx, unsigned offset)
++{
++	return host1x_uclass_wait_syncpt_base_indx_f(indx)
++		| host1x_uclass_wait_syncpt_base_base_indx_f(base_indx)
++		| host1x_uclass_wait_syncpt_base_offset_f(offset);
++}
 +
-+        interrupts:
-+          items:
-+            - description: host1x syncpoint interrupt 0
-+            - description: host1x syncpoint interrupt 1
-+            - description: host1x syncpoint interrupt 2
-+            - description: host1x syncpoint interrupt 3
-+            - description: host1x syncpoint interrupt 4
-+            - description: host1x syncpoint interrupt 5
-+            - description: host1x syncpoint interrupt 6
-+            - description: host1x syncpoint interrupt 7
-+            - description: host1x general interrupt
++static inline u32 host1x_class_host_incr_syncpt_base(
++	unsigned base_indx, unsigned offset)
++{
++	return host1x_uclass_incr_syncpt_base_base_indx_f(base_indx)
++		| host1x_uclass_incr_syncpt_base_offset_f(offset);
++}
 +
-+        interrupt-names:
-+          items:
-+            - const: syncpt0
-+            - const: syncpt1
-+            - const: syncpt2
-+            - const: syncpt3
-+            - const: syncpt4
-+            - const: syncpt5
-+            - const: syncpt6
-+            - const: syncpt7
-+            - const: host1x
++static inline u32 host1x_class_host_incr_syncpt(
++	unsigned cond, unsigned indx)
++{
++	return host1x_uclass_incr_syncpt_cond_f(cond)
++		| host1x_uclass_incr_syncpt_indx_f(indx);
++}
 +
-         iommu-map:
-           description: Specification of stream IDs available for memory context device
-             use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
-@@ -160,8 +240,8 @@ examples:
-     host1x@50000000 {
-         compatible = "nvidia,tegra20-host1x";
-         reg = <0x50000000 0x00024000>;
--        interrupts = <0 65 0x04   /* mpcore syncpt */
--                      0 67 0x04>; /* mpcore general */
-+        interrupts = <0 65 0x04>, /* mpcore syncpt */
-+                     <0 67 0x04>; /* mpcore general */
-         interrupt-names = "syncpt", "host1x";
-         clocks = <&tegra_car TEGRA20_CLK_HOST1X>;
-         clock-names = "host1x";
++static inline u32 host1x_class_host_indoff_reg_write(
++	unsigned mod_id, unsigned offset, bool auto_inc)
++{
++	u32 v = host1x_uclass_indoff_indbe_f(0xf)
++		| host1x_uclass_indoff_indmodid_f(mod_id)
++		| host1x_uclass_indoff_indroffset_f(offset);
++	if (auto_inc)
++		v |= host1x_uclass_indoff_autoinc_f(1);
++	return v;
++}
++
++static inline u32 host1x_class_host_indoff_reg_read(
++	unsigned mod_id, unsigned offset, bool auto_inc)
++{
++	u32 v = host1x_uclass_indoff_indmodid_f(mod_id)
++		| host1x_uclass_indoff_indroffset_f(offset)
++		| host1x_uclass_indoff_rwn_read_v();
++	if (auto_inc)
++		v |= host1x_uclass_indoff_autoinc_f(1);
++	return v;
++}
++
++static inline u32 host1x_opcode_setclass(
++	unsigned class_id, unsigned offset, unsigned mask)
++{
++	return (0 << 28) | (offset << 16) | (class_id << 6) | mask;
++}
++
++static inline u32 host1x_opcode_incr(unsigned offset, unsigned count)
++{
++	return (1 << 28) | (offset << 16) | count;
++}
++
++static inline u32 host1x_opcode_nonincr(unsigned offset, unsigned count)
++{
++	return (2 << 28) | (offset << 16) | count;
++}
++
++static inline u32 host1x_opcode_mask(unsigned offset, unsigned mask)
++{
++	return (3 << 28) | (offset << 16) | mask;
++}
++
++static inline u32 host1x_opcode_imm(unsigned offset, unsigned value)
++{
++	return (4 << 28) | (offset << 16) | value;
++}
++
++static inline u32 host1x_opcode_imm_incr_syncpt(unsigned cond, unsigned indx)
++{
++	return host1x_opcode_imm(host1x_uclass_incr_syncpt_r(),
++		host1x_class_host_incr_syncpt(cond, indx));
++}
++
++static inline u32 host1x_opcode_restart(unsigned address)
++{
++	return (5 << 28) | (address >> 4);
++}
++
++static inline u32 host1x_opcode_gather(unsigned count)
++{
++	return (6 << 28) | count;
++}
++
++static inline u32 host1x_opcode_gather_nonincr(unsigned offset,	unsigned count)
++{
++	return (6 << 28) | (offset << 16) | BIT(15) | count;
++}
++
++static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
++{
++	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
++}
++
++static inline u32 host1x_opcode_setstreamid(unsigned streamid)
++{
++	return (7 << 28) | streamid;
++}
++
++static inline u32 host1x_opcode_setpayload(unsigned payload)
++{
++	return (9 << 28) | payload;
++}
++
++static inline u32 host1x_opcode_gather_wide(unsigned count)
++{
++	return (12 << 28) | count;
++}
++
++static inline u32 host1x_opcode_acquire_mlock(unsigned mlock)
++{
++	return (14 << 28) | (0 << 24) | mlock;
++}
++
++static inline u32 host1x_opcode_release_mlock(unsigned mlock)
++{
++	return (14 << 28) | (1 << 24) | mlock;
++}
++
++#define HOST1X_OPCODE_NOP host1x_opcode_nonincr(0, 0)
++
++#endif
 -- 
 2.36.1
 
