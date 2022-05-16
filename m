@@ -2,151 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9738C46467
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883D6C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233237AbiEPKDD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 06:03:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50326 "EHLO
+        id S240636AbiEPKIh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 06:08:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236182AbiEPKCm (ORCPT
+        with ESMTP id S242337AbiEPKH5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 May 2022 06:02:42 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A61BE38BC;
-        Mon, 16 May 2022 03:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=jqNVkhlKQgqXtLeAWprMxZosE+nkqym2SEmCMhLQNlc=; b=mNaPe7wMpoDuhyDl8pFtEmAHLc
-        5J/HSv3E0VvYnoDCN1P3XTBb5uq4aR6ZPr13BkMXXmOsoQfwEHaqXkpF+tOIZWPnoSLePfm/y6k9U
-        J1xafUOOrq9H3tH4ynmj9JGeGTRl0cV/KvdSqWCKsPcM7PJS4aQXDlapvZ3ES5R7PVJcG32zUsgP4
-        KFgfXFkb4NGM1/8tc+v4PJk4Cql9acA5S0FMpErqt+EA+2bM2njcc+S8jV5CttDOWNPnDNhjT3+qj
-        QsXTP0lU/ncQYyqJGmCfhpM2U75TY/v2s9VNsDI29I1UF78woFEIpE1qiUtTZmCktSW1+/m1XqNat
-        taXN6dOw==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1nqXYf-0005yU-I6; Mon, 16 May 2022 13:02:33 +0300
-From:   cyndis@kapsi.fi
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mon, 16 May 2022 06:07:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C865DB7F5;
+        Mon, 16 May 2022 03:07:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 89EE5B81059;
+        Mon, 16 May 2022 10:07:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A17C385AA;
+        Mon, 16 May 2022 10:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652695648;
+        bh=mJA6rH2uOwpy6kEmoE1DbK00kFgB/tAwaaqw91pYlkA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eE4yaugpdDHU0zxrfSNyKk/ili8tz80jdULz7A/ZOJ9UI0NGfn7Uwt5KhEo/K/oDy
+         xg5dGH/ys6lWSfczp9YDF8FhYD5gUaluWSDAuem1uyzEHQ6Dn3smDXQlC7Jgu7Ex9+
+         7cm3P3psGx34ta0T4ZlLQQzUncEVj7p8JmGOhwsM1yH668wjXxI4V/WvJUpeA/WceH
+         VLYp26GHftdCVu7epf9xBTf/VMqtVkMwexcS0cGDqCCsKg/y514NowmtBdr2L5+5mG
+         8lvqDLI4+bjaXObb1A2eR9fDtMATQrMAZAfxpQB6ELCSRpRpm0d/dPtq6bSUl8pErq
+         nkhwFrw4D/TJw==
+Date:   Mon, 16 May 2022 11:07:21 +0100
+From:   Will Deacon <will@kernel.org>
+To:     cyndis@kapsi.fi
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        robin.murphy@arm.com, robh+dt@kernel.org,
+        krzysztof.kozlowski@canonical.com, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v1 06/13] gpu: host1x: Program virtualization tables
-Date:   Mon, 16 May 2022 13:02:06 +0300
-Message-Id: <20220516100213.1536571-7-cyndis@kapsi.fi>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220516100213.1536571-1-cyndis@kapsi.fi>
-References: <20220516100213.1536571-1-cyndis@kapsi.fi>
+Subject: Re: [PATCH v5 5/9] iommu/arm-smmu: Attach to host1x context device
+ bus
+Message-ID: <20220516100721.GA1927@willie-the-truck>
+References: <20220516085258.1227691-1-cyndis@kapsi.fi>
+ <20220516085258.1227691-6-cyndis@kapsi.fi>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220516085258.1227691-6-cyndis@kapsi.fi>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+On Mon, May 16, 2022 at 11:52:54AM +0300, cyndis@kapsi.fi wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> Set itself as the IOMMU for the host1x context device bus, containing
+> "dummy" devices used for Host1x context isolation.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu/arm-smmu.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> index 568cce590ccc..9ff54eaecf81 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> @@ -39,6 +39,7 @@
+>  
+>  #include <linux/amba/bus.h>
+>  #include <linux/fsl/mc.h>
+> +#include <linux/host1x_context_bus.h>
+>  
+>  #include "arm-smmu.h"
+>  
+> @@ -2053,8 +2054,20 @@ static int arm_smmu_bus_init(struct iommu_ops *ops)
+>  			goto err_reset_pci_ops;
+>  	}
+>  #endif
+> +#ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
+> +	if (!iommu_present(&host1x_context_device_bus_type)) {
+> +		err = bus_set_iommu(&host1x_context_device_bus_type, ops);
+> +		if (err)
+> +			goto err_reset_fsl_mc_ops;
+> +	}
+> +#endif
+> +
+>  	return 0;
+>  
+> +err_reset_fsl_mc_ops: __maybe_unused;
+> +#ifdef CONFIG_FSL_MC_BUS
+> +	bus_set_iommu(&fsl_mc_bus_type, NULL);
+> +#endif
 
-Program virtualization tables specifying which VMs have access to which
-Host1x hardware resources. Programming these has become mandatory in
-Tegra234.
+bus_set_iommu() is going away:
 
-For now, since the driver does not operate as a Host1x hypervisor, we
-basically allow access to everything to everyone.
+https://lore.kernel.org/r/cover.1650890638.git.robin.murphy@arm.com
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/dev.c | 21 ++++++++++++++++++---
- drivers/gpu/host1x/dev.h |  8 ++++++++
- 2 files changed, 26 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 8c6ce8014c09..5a57165ab0f6 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -217,7 +217,7 @@ static const struct of_device_id host1x_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, host1x_of_match);
- 
--static void host1x_setup_sid_table(struct host1x *host)
-+static void host1x_setup_virtualization_tables(struct host1x *host)
- {
- 	const struct host1x_info *info = host->info;
- 	unsigned int i;
-@@ -231,6 +231,21 @@ static void host1x_setup_sid_table(struct host1x *host)
- 		host1x_hypervisor_writel(host, entry->offset, entry->base);
- 		host1x_hypervisor_writel(host, entry->limit, entry->base + 4);
- 	}
-+
-+	for (i = 0; i < info->streamid_vm_table.count; i++) {
-+		/* Allow access to all stream IDs to all VMs. */
-+		host1x_hypervisor_writel(host, 0xff, info->streamid_vm_table.base + 4 * i);
-+	}
-+
-+	for (i = 0; i < info->classid_vm_table.count; i++) {
-+		/* Allow access to all classes to all VMs. */
-+		host1x_hypervisor_writel(host, 0xff, info->classid_vm_table.base + 4 * i);
-+	}
-+
-+	for (i = 0; i < info->mmio_vm_table.count; i++) {
-+		/* Use VM1 (that's us) as originator VMID for engine MMIO accesses. */
-+		host1x_hypervisor_writel(host, 0x1, info->mmio_vm_table.base + 4 * i);
-+	}
- }
- 
- static bool host1x_wants_iommu(struct host1x *host1x)
-@@ -602,7 +617,7 @@ static int __maybe_unused host1x_runtime_suspend(struct device *dev)
- 	return 0;
- 
- resume_host1x:
--	host1x_setup_sid_table(host);
-+	host1x_setup_virtualization_tables(host);
- 	host1x_syncpt_restore(host);
- 	host1x_intr_start(host);
- 
-@@ -632,7 +647,7 @@ static int __maybe_unused host1x_runtime_resume(struct device *dev)
- 		goto disable_clk;
- 	}
- 
--	host1x_setup_sid_table(host);
-+	host1x_setup_virtualization_tables(host);
- 	host1x_syncpt_restore(host);
- 	host1x_intr_start(host);
- 
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index 85edcc6e0fc7..920e5548cfbc 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -90,6 +90,11 @@ struct host1x_sid_entry {
- 	unsigned int limit;
- };
- 
-+struct host1x_table_desc {
-+	unsigned int base;
-+	unsigned int count;
-+};
-+
- struct host1x_info {
- 	unsigned int nb_channels; /* host1x: number of channels supported */
- 	unsigned int nb_pts; /* host1x: number of syncpoints supported */
-@@ -103,6 +108,9 @@ struct host1x_info {
- 	bool has_common; /* has common registers separate from hypervisor */
- 	unsigned int num_sid_entries;
- 	const struct host1x_sid_entry *sid_table;
-+	struct host1x_table_desc streamid_vm_table;
-+	struct host1x_table_desc classid_vm_table;
-+	struct host1x_table_desc mmio_vm_table;
- 	/*
- 	 * On T20-T148, the boot chain may setup DC to increment syncpoints
- 	 * 26/27 on VBLANK. As such we cannot use these syncpoints until
--- 
-2.36.1
-
+Will
+> 
