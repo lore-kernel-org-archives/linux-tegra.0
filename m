@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7736C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F4EC43219
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 10:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241564AbiEPKCp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 06:02:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
+        id S241681AbiEPKCq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 06:02:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234487AbiEPKCm (ORCPT
+        with ESMTP id S236490AbiEPKCm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 16 May 2022 06:02:42 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA02B5596;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AACE55599;
         Mon, 16 May 2022 03:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,26 +21,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=dC/cTQo/MJ767nLnh5GC42ACRkqVvW3EbSSHwsx8exs=; b=eWpIEKWn4b6F9NYXDMKPoozdTz
-        iYbtZk7lvve0PKLiXxgCOSdtABK1nUYLq2VNvVx2tsPU6ssdoT6NZBykMoqEpBHXHMoeKR4YKWCUw
-        Xac3P7g+Q2iUKqUWiOCrtT3aKQgWvU4fTheD+6TsaM7G7r3e4NCbQKO5Q3dfbBrSR5IRRzqhzAhJK
-        zed2XtB2SC9hs21ijIry5O7IxtshMX1Baz+2o1vAIRKDOYSPVo7Q7sf5o6hNLzQHjnx6iei0pUNim
-        EivaIwxq0e7p/1bTXiXDN788XM7XSCbXVXE5yVZSK9KBrg53zcFqMZTAXyBU6uJsG5aOhLIcx+HmA
-        O1t3GZWA==;
+        bh=8VhFQH5Q1ygwgbFioaFYlr73TBFA4fN7hoa82H2H+kA=; b=aISonTHEiE6GorNGZp5kHY+f86
+        eYvaU9lhuoxrg+S6RjoR5Kxn6PfK0/Lefn57jhjQjSEbQ9Kc/Aq3HQxxrJVwnCarD55Qc3pqYR9HU
+        fmJyFoeuc8rG+8PgD+lK+j10Gs69Di/tmbiG/bQxXXxpXBjG3363efNiO/oRgPbERDcgiG5EK5tIG
+        9J6siA+FKDluUXX/QvUeZwUprLgLdQTFOzjmNogfGpUJVGgjPKBrmoz2r/4s8fD5Xo5VAnas2R7Po
+        rFeAXYan7tj4R6b+ofAoIEegPlVxxGKQDQuteB/adPXp/9MzGlSCglD5t9APXa4Ch5TxXuh0sz/QC
+        1z01bJbw==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nqXYf-0005yU-CT; Mon, 16 May 2022 13:02:33 +0300
+        id 1nqXYe-0005yU-Vk; Mon, 16 May 2022 13:02:33 +0300
 From:   cyndis@kapsi.fi
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v1 05/13] gpu: host1x: Simplify register mapping and add common aperture
-Date:   Mon, 16 May 2022 13:02:05 +0300
-Message-Id: <20220516100213.1536571-6-cyndis@kapsi.fi>
+Subject: [PATCH v1 03/13] arm64: tegra: Add Host1x and VIC on Tegra234
+Date:   Mon, 16 May 2022 13:02:03 +0300
+Message-Id: <20220516100213.1536571-4-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220516100213.1536571-1-cyndis@kapsi.fi>
 References: <20220516100213.1536571-1-cyndis@kapsi.fi>
@@ -55,124 +55,70 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Refactor 'regs' property loading using devm_platform_ioremap_*
-and add loading of the 'common' region found on Tegra234.
+Add device tree nodes for Host1x and VIC on Tegra234.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/host1x/dev.c | 46 +++++++++++++++++-----------------------
- drivers/gpu/host1x/dev.h |  3 +++
- 2 files changed, 22 insertions(+), 27 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 46 ++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 89cc79a48eab..8c6ce8014c09 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -40,6 +40,11 @@
- #include "hw/host1x06.h"
- #include "hw/host1x07.h"
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index cb3af539e477..cae68e59580c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -454,6 +454,52 @@ misc@100000 {
+ 			status = "okay";
+ 		};
  
-+void host1x_common_writel(struct host1x *host1x, u32 v, u32 r)
-+{
-+	writel(v, host1x->common_regs + r);
-+}
++		host1x@13e00000 {
++			compatible = "nvidia,tegra234-host1x";
++			reg = <0x13e00000 0x10000>,
++			      <0x13e10000 0x10000>,
++			      <0x13e40000 0x10000>;
++			reg-names = "common", "hypervisor", "vm";
++			interrupts = <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
++			             <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "syncpt0", "syncpt1", "syncpt2", "syncpt3", "syncpt4",
++			                  "syncpt5", "syncpt6", "syncpt7", "host1x";
++			clocks = <&bpmp TEGRA234_CLK_HOST1X>;
++			clock-names = "host1x";
 +
- void host1x_hypervisor_writel(struct host1x *host1x, u32 v, u32 r)
- {
- 	writel(v, host1x->hv_regs + r);
-@@ -412,7 +417,6 @@ static int host1x_get_resets(struct host1x *host)
- static int host1x_probe(struct platform_device *pdev)
- {
- 	struct host1x *host;
--	struct resource *regs, *hv_regs = NULL;
- 	int syncpt_irq;
- 	int err;
- 
-@@ -423,25 +427,23 @@ static int host1x_probe(struct platform_device *pdev)
- 	host->info = of_device_get_match_data(&pdev->dev);
- 
- 	if (host->info->has_hypervisor) {
--		regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "vm");
--		if (!regs) {
--			dev_err(&pdev->dev, "failed to get vm registers\n");
--			return -ENXIO;
--		}
-+		host->regs = devm_platform_ioremap_resource_byname(pdev, "vm");
-+		if (IS_ERR(host->regs))
-+			return PTR_ERR(host->regs);
++			#address-cells = <1>;
++			#size-cells = <1>;
 +
-+		host->hv_regs = devm_platform_ioremap_resource_byname(pdev, "hypervisor");
-+		if (IS_ERR(host->hv_regs))
-+			return PTR_ERR(host->hv_regs);
- 
--		hv_regs = platform_get_resource_byname(pdev, IORESOURCE_MEM,
--						       "hypervisor");
--		if (!hv_regs) {
--			dev_err(&pdev->dev,
--				"failed to get hypervisor registers\n");
--			return -ENXIO;
-+		if (host->info->has_common) {
-+			host->common_regs = devm_platform_ioremap_resource_byname(pdev, "common");
-+			if (IS_ERR(host->common_regs))
-+				return PTR_ERR(host->common_regs);
- 		}
- 	} else {
--		regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--		if (!regs) {
--			dev_err(&pdev->dev, "failed to get registers\n");
--			return -ENXIO;
--		}
-+		host->regs = devm_platform_ioremap_resource(pdev, 0);
-+		if (IS_ERR(host->regs))
-+			return PTR_ERR(host->regs);
- 	}
- 
- 	syncpt_irq = platform_get_irq(pdev, 0);
-@@ -456,16 +458,6 @@ static int host1x_probe(struct platform_device *pdev)
- 	/* set common host1x device data */
- 	platform_set_drvdata(pdev, host);
- 
--	host->regs = devm_ioremap_resource(&pdev->dev, regs);
--	if (IS_ERR(host->regs))
--		return PTR_ERR(host->regs);
--
--	if (host->info->has_hypervisor) {
--		host->hv_regs = devm_ioremap_resource(&pdev->dev, hv_regs);
--		if (IS_ERR(host->hv_regs))
--			return PTR_ERR(host->hv_regs);
--	}
--
- 	host->dev->dma_parms = &host->dma_parms;
- 	dma_set_max_seg_size(host->dev, UINT_MAX);
- 
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index 7552a4554534..85edcc6e0fc7 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -100,6 +100,7 @@ struct host1x_info {
- 	u64 dma_mask; /* mask of addressable memory */
- 	bool has_wide_gather; /* supports GATHER_W opcode */
- 	bool has_hypervisor; /* has hypervisor registers */
-+	bool has_common; /* has common registers separate from hypervisor */
- 	unsigned int num_sid_entries;
- 	const struct host1x_sid_entry *sid_table;
- 	/*
-@@ -115,6 +116,7 @@ struct host1x {
- 
- 	void __iomem *regs;
- 	void __iomem *hv_regs; /* hypervisor region */
-+	void __iomem *common_regs;
- 	struct host1x_syncpt *syncpt;
- 	struct host1x_syncpt_base *bases;
- 	struct device *dev;
-@@ -156,6 +158,7 @@ struct host1x {
- 	struct host1x_bo_cache cache;
- };
- 
-+void host1x_common_writel(struct host1x *host1x, u32 v, u32 r);
- void host1x_hypervisor_writel(struct host1x *host1x, u32 r, u32 v);
- u32 host1x_hypervisor_readl(struct host1x *host1x, u32 r);
- void host1x_sync_writel(struct host1x *host1x, u32 r, u32 v);
++			ranges = <0x15000000 0x15000000 0x01000000>;
++			interconnects = <&mc TEGRA234_MEMORY_CLIENT_HOST1XDMAR &emc>;
++			interconnect-names = "dma-mem";
++			iommus = <&smmu_niso1 TEGRA234_SID_HOST1X>;
++
++			vic@15340000 {
++				compatible = "nvidia,tegra234-vic";
++				reg = <0x15340000 0x00040000>;
++				interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&bpmp TEGRA234_CLK_VIC>;
++				clock-names = "vic";
++				resets = <&bpmp TEGRA234_RESET_VIC>;
++				reset-names = "vic";
++
++				power-domains = <&bpmp TEGRA234_POWER_DOMAIN_VIC>;
++				interconnects = <&mc TEGRA234_MEMORY_CLIENT_VICSRD &emc>,
++						<&mc TEGRA234_MEMORY_CLIENT_VICSWR &emc>;
++				interconnect-names = "dma-mem", "write";
++				iommus = <&smmu_niso1 TEGRA234_SID_VIC>;
++				dma-coherent;
++			};
++		};
++
+ 		gpio: gpio@2200000 {
+ 			compatible = "nvidia,tegra234-gpio";
+ 			reg-names = "security", "gpio";
 -- 
 2.36.1
 
