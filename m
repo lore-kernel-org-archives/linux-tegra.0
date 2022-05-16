@@ -2,157 +2,207 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE860C4321E
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 16:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C13C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 May 2022 17:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343664AbiEPQez (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 May 2022 12:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36926 "EHLO
+        id S1344244AbiEPR0H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 May 2022 13:26:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231615AbiEPQev (ORCPT
+        with ESMTP id S1344306AbiEPRZ7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 May 2022 12:34:51 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C763B3CD;
-        Mon, 16 May 2022 09:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XzoH5iutkh5O9t0pH+ypA1lIfMmiHtlRHdYp+UCsrGU=; b=WepOMKgEKhpR+t0vOgpE/YwZDW
-        g57IfgGh3nzpJ2ZtHEZUcsTnwsDP6I2/FDZ4vnLGZ0Qw7F/Mn84yHkJf4BXJ/OpxzJ1p70t/N3EaQ
-        3PmdLprDUfYS48zPyb3blZ6UPVVkXH0bl8D3dn+A0vPKMKqgzgV2PkJylwkbN3xzE2jIxJLk5t9Xh
-        Ean6ag10EMxBmLMIVJGXD8wgUW7usVSQYiFjIPvG61RcLN+veFIRifMeScPdiuTNjKo2kRxG2B83U
-        8p8XJXLR0CD8m0oqdI8PKIctIPo5el7u/X3BJM63/kcmCM4vsP6tEoNCn+7qkwfuh6KJplRNa4LRS
-        5jGHUhPQ==;
-Received: from [177.183.162.244] (helo=[192.168.0.5])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1nqdg0-006uIN-Pp; Mon, 16 May 2022 18:34:32 +0200
-Message-ID: <e895ce94-e6b9-caf6-e5d3-06bf0149445c@igalia.com>
-Date:   Mon, 16 May 2022 13:33:51 -0300
+        Mon, 16 May 2022 13:25:59 -0400
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7459611A2D;
+        Mon, 16 May 2022 10:25:54 -0700 (PDT)
+Received: by mail-ot1-f45.google.com with SMTP id s18-20020a056830149200b006063fef3e17so10515835otq.12;
+        Mon, 16 May 2022 10:25:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qfjQzYp/WrL/NK/r+Txlv4AaF13T+UXlFuPShMgiU48=;
+        b=1dIN1LKMjJjqenxBJms+nhD6ri5AtOIr56TTwKti87UKvw7VbKxZZCFcq1dy4PqFnb
+         KP4CwSJz6r70vzYTHEJv5MqExKmuQvZYSEa+LLvn0uAhjPiFJK4njn5qkJzm1og2c1WX
+         cLSkUYOQjWTZXeKaxcTeDsxbOxxTWvQxlcWdGqLFY1A8FyAkUZ1RfSKNMv0YlcLlWg6C
+         i4JREoHTXmlUxAC8v1L906kx84/I1c1aqvN27J3OLSspAyZTUJNtD+RMTI1dHRu5jf8Z
+         XfatYCx8zMme3ygvTtutR+sCEPi3Uko+b8p08AzWn19UD0+hrlnvXWC+EuZqIThbArfd
+         CuiA==
+X-Gm-Message-State: AOAM533nTw7AgKuO6gYIW4Ai8Z3tue2Dbh0JErJSrciULeCca6yqCaI1
+        7nozOQeRBGsRLbefozFdNv3gO6+diQ==
+X-Google-Smtp-Source: ABdhPJzhTJqGyBvs2pZ1JSDSIbt59GyBbmh6Qup3TBKLc+utfDgb1H3bsDczKq5/WUzpidio12EJlg==
+X-Received: by 2002:a9d:5ccb:0:b0:606:944c:f9dd with SMTP id r11-20020a9d5ccb000000b00606944cf9ddmr6578409oti.195.1652721953665;
+        Mon, 16 May 2022 10:25:53 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id h26-20020a9d799a000000b0060603221236sm4042865otm.6.2022.05.16.10.25.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 May 2022 10:25:53 -0700 (PDT)
+Received: (nullmailer pid 2937863 invoked by uid 1000);
+        Mon, 16 May 2022 17:25:52 -0000
+Date:   Mon, 16 May 2022 12:25:52 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        ashishsingha@nvidia.com, skomatineni@nvidia.com,
+        ldewangan@nvidia.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch V2 2/3] spi: dt-bindings: split peripheral prods
+Message-ID: <20220516172552.GA2928615-robh@kernel.org>
+References: <20220513080828.22079-1-kyarlagadda@nvidia.com>
+ <20220513080828.22079-3-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 21/30] panic: Introduce the panic pre-reboot notifier list
-Content-Language: en-US
-To:     "Luck, Tony" <tony.luck@intel.com>, Petr Mladek <pmladek@suse.com>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "openipmi-developer@lists.sourceforge.net" 
-        <openipmi-developer@lists.sourceforge.net>,
-        "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
-        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
-        "halves@canonical.com" <halves@canonical.com>,
-        "fabiomirmar@gmail.com" <fabiomirmar@gmail.com>,
-        "alejandro.j.jimenez@oracle.com" <alejandro.j.jimenez@oracle.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "d.hatayama@jp.fujitsu.com" <d.hatayama@jp.fujitsu.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "Tang, Feng" <feng.tang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mikelley@microsoft.com" <mikelley@microsoft.com>,
-        "hidehiro.kawai.ez@hitachi.com" <hidehiro.kawai.ez@hitachi.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "john.ogness@linutronix.de" <john.ogness@linutronix.de>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "paulmck@kernel.org" <paulmck@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "vgoyal@redhat.com" <vgoyal@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "will@kernel.org" <will@kernel.org>, Alex Elder <elder@kernel.org>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Chris Zankel <chris@zankel.net>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Corey Minyard <minyard@acm.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        James Morse <james.morse@arm.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Robert Richter <rric@kernel.org>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, Wei Liu <wei.liu@kernel.org>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-22-gpiccoli@igalia.com> <YoJgcC8c6LaKADZV@alley>
- <63a74b56-89ef-8d1f-d487-cdb986aab798@igalia.com>
- <bed66b9467254a5a8bafc1983dad643a@intel.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <bed66b9467254a5a8bafc1983dad643a@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220513080828.22079-3-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16/05/2022 13:18, Luck, Tony wrote:
->> [...]
-> Would it be possible to have some global "kdump is configured + enabled" flag?
+On Fri, May 13, 2022 at 01:38:27PM +0530, Krishna Yarlagadda wrote:
+> Move peripheral properties for Tegra QSPI controller to
+> nvidia,tegra210-quad-peripheral-props.yaml and add reference
+> to spi-peripheral-props.yaml file.
 > 
-> Then notifiers could make an informed choice on whether to deep dive to
-> get all the possible details (when there is no kdump) or just skim the high
-> level stuff (to maximize chance of getting a successful kdump).
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  ...nvidia,tegra210-quad-peripheral-props.yaml | 45 +++++++++++++++++++
+>  .../bindings/spi/nvidia,tegra210-quad.yaml    | 32 -------------
+>  .../bindings/spi/spi-peripheral-props.yaml    |  1 +
+>  3 files changed, 46 insertions(+), 32 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml
 > 
-> -Tony
+> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml
+> new file mode 100644
+> index 000000000000..f91347759c65
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/nvidia,tegra210-quad-peripheral-props.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Peripheral properties for Tegra Quad SPI Controller
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jonathan Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-rx-bus-width:
+> +    enum: [1, 2, 4]
+> +
+> +  spi-tx-bus-width:
+> +    enum: [1, 2, 4]
 
-Good idea Tony! What if I wire a kexec_crash_loaded() in the notifier?
+You've just set the constraints for everyone. This needs to stay in your 
+controller schema as it's an additional constraint on your controller.
 
-With that, are you/Petr/Dinh OK in moving it for the info list?
-Cheers,
+> +
+> +  nvidia,tx-clk-tap-delay:
+> +    description:
+> +      Delays the clock going out to device with this tap value.
+> +      Tap value varies based on platform design trace lengths from Tegra
+> +      QSPI to corresponding slave device.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 31
+> +
+> +  nvidia,rx-clk-tap-delay:
+> +    description:
+> +      Delays the clock coming in from the device with this tap value.
+> +      Tap value varies based on platform design trace lengths from Tegra
+> +      QSPI to corresponding slave device.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 255
+> +
+> +required:
+> +      - reg
+
+Pretty sure we captured that elsewhere.
+
+> +
+> +unevaluatedProperties: false
+
+This is why this patch makes everything fail. This means the only 
+properties allowed for any SPI child are the above ones. You need 
+'additionalProperties: true' here.
 
 
-Guilherme
+> +
+> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+> index 0296edd1de22..7d60bb1af047 100644
+> --- a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+> @@ -21,9 +21,6 @@ properties:
+>        - nvidia,tegra194-qspi
+>        - nvidia,tegra234-qspi
+>  
+> -  reg:
+> -    maxItems: 1
+
+Umm, this is for your controller registers. I think you need them.
+
+> -
+>    interrupts:
+>      maxItems: 1
+>  
+> @@ -50,37 +47,8 @@ patternProperties:
+>    "@[0-9a-f]+":
+>      type: object
+>  
+> -    properties:
+> -      spi-rx-bus-width:
+> -        enum: [1, 2, 4]
+> -
+> -      spi-tx-bus-width:
+> -        enum: [1, 2, 4]
+> -
+> -      nvidia,tx-clk-tap-delay:
+> -        description:
+> -          Delays the clock going out to device with this tap value.
+> -          Tap value varies based on platform design trace lengths from Tegra
+> -          QSPI to corresponding slave device.
+> -        $ref: /schemas/types.yaml#/definitions/uint32
+> -        minimum: 0
+> -        maximum: 31
+> -
+> -      nvidia,rx-clk-tap-delay:
+> -        description:
+> -          Delays the clock coming in from the device with this tap value.
+> -          Tap value varies based on platform design trace lengths from Tegra
+> -          QSPI to corresponding slave device.
+> -        $ref: /schemas/types.yaml#/definitions/uint32
+> -        minimum: 0
+> -        maximum: 255
+> -
+> -    required:
+> -      - reg
+> -
+>  required:
+>    - compatible
+> -  - reg
+>    - interrupts
+>    - clock-names
+>    - clocks
+> diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> index 5e32928c4fc3..cf589d17b0f5 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> +++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> @@ -112,5 +112,6 @@ properties:
+>  allOf:
+>    - $ref: cdns,qspi-nor-peripheral-props.yaml#
+>    - $ref: samsung,spi-peripheral-props.yaml#
+> +  - $ref: nvidia,tegra210-quad-peripheral-props.yaml#
+>  
+>  additionalProperties: true
+> -- 
+> 2.17.1
+> 
+> 
