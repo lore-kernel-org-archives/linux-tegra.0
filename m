@@ -2,164 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C26C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 May 2022 07:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD28C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 May 2022 08:01:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235790AbiEQHmD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 May 2022 03:42:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53100 "EHLO
+        id S242149AbiEQIBr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 May 2022 04:01:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242808AbiEQHlg (ORCPT
+        with ESMTP id S242151AbiEQIBp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 May 2022 03:41:36 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73837186;
-        Tue, 17 May 2022 00:41:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=N35ofyLx6hhX9rl6Bppzb5DfoQxuGM8bE3ZW5ojNELQUUQv+k9Y5a/uQrfxcZ5G7WiGqM5DQSxrx6tAiIWC3B7WXHj8O3n51hB7SWFfIm08w8qnfksbOrZ0CS6IMgdtVi2esZg58Zyc6lfs3+nek57x9sue/vxfaAOKZoLF1gZqIE0cXaZbTajzPdimETMMsnt6PKHDuLOhkM0o1a1HNsHq9HgzaNlNMECCKna/GkHOUo+1FjU4TIOEMwz13v6+7VHa55Vk6MNxnbD3np4JwjDywgZgVgV3xiJphAVUw3rGpYs2pR3UCTHom+1+SPnYigObFdAL0rZS6YXid1SXcUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GTlQjqishUd6hpbR03IRHh8CxyKCvM7330RlHgw2fXI=;
- b=eLMUgBBgkg1KpCQb+/RDyE/bhGiV5O3y39ddso07daSSc7Grt4bZ9xnifTUaPzUslblROt0NjSrUXik0xAaZH+UwQXTy2+643Mun7lAn/FqhMc2dz/CcM+zOUwMFbOuZaKCl3WxtJHw3aos3D1qPYywlL2yD5G9FHNem6GM3UagKQ5HM+yXVCOA4Mi+AH187ksAiXeIxoeirkbVTMD8lp0F2QTKr3f5wNiMlW/zNI3w36Yq+j3AO1+9CrmxjLWizobJGoURukvpL+zu0MEfgznFCzEPtyeiLlUHHo55NibD+zeti7MtF0bPqxDZaENkZvlfiTnTdrSxqhE+BG7SklQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GTlQjqishUd6hpbR03IRHh8CxyKCvM7330RlHgw2fXI=;
- b=A8Kk6OW64a1s8y7OMwKVPIAP6dqZhjfIMOb3AFFHLx81u4ZnTBlYJMC0o5FPFwN2JEJuQkKuDiUMzt1ly0kzYexpNp2aCpV7Jz21HNxZp3t5inGk08mo6h/nENr5UbpG80WLddQhQ5vOkSkB4/wyQWLaPINB3dzm5oQalN7IKBFpiroN4IoDhtv5hQ0DK50wdBK31CPB0P9xOZaW7wf9BCFWs7Fl3+on1Vu1IN/XyZNEK4hbvEnOngMjevHoWd1sHieZwZsJsaGV0zyX9g6kp0mradE5IUW4XZ9NLwnIZXWPEKpLS0SHnAnDcpG//T5OvtMMtn1sQxcvfn9o1VZsHg==
-Received: from MW4PR04CA0100.namprd04.prod.outlook.com (2603:10b6:303:83::15)
- by CY5PR12MB6252.namprd12.prod.outlook.com (2603:10b6:930:20::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.13; Tue, 17 May
- 2022 07:41:33 +0000
-Received: from CO1NAM11FT008.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:83:cafe::d4) by MW4PR04CA0100.outlook.office365.com
- (2603:10b6:303:83::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.18 via Frontend
- Transport; Tue, 17 May 2022 07:41:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT008.mail.protection.outlook.com (10.13.175.191) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5250.13 via Frontend Transport; Tue, 17 May 2022 07:41:33 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- DRHQMAIL105.nvidia.com (10.27.9.14) with Microsoft SMTP Server (TLS) id
- 15.0.1497.32; Tue, 17 May 2022 07:41:32 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 17 May 2022 00:41:31 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Tue, 17 May 2022 00:41:29 -0700
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v2 2/2] arm64: tegra: Add Tegra234 GPCDMA device tree node
-Date:   Tue, 17 May 2022 13:10:48 +0530
-Message-ID: <20220517074048.54347-3-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220517074048.54347-1-akhilrajeev@nvidia.com>
-References: <20220517074048.54347-1-akhilrajeev@nvidia.com>
+        Tue, 17 May 2022 04:01:45 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D443EABF
+        for <linux-tegra@vger.kernel.org>; Tue, 17 May 2022 01:01:42 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id i19so33047443eja.11
+        for <linux-tegra@vger.kernel.org>; Tue, 17 May 2022 01:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=bUC5qooCkXEBvM8/KC7BA0VGv7TO8mNCzaiXDokrDsQ=;
+        b=EiE/bxLhEziHG2s/bDv6Lxoin3dlIGvWYbTUlK+vE1vKxmN1tNhtKoWu2pYQ5KR3nZ
+         AUX1yhsr5/lcbUt4t+RDDSWs2fD1fCVSz8+95Z6D2zEp/Y35e7YZYHSCt++gE9h0yhZ4
+         7aPf/N60wlDY45FyVafs4cYpG/1HuUkkPc1XJnoSSXYXZmby6ShGNZWQLKs1OVThOasO
+         yLmQKe3miMu0nKknPcsK/jfM/xUhMBrUDJd+bRj5lfnSlNjZW35NNyawyPB8jPpGLFl2
+         kpKKqe27ag1IEVm27tT8pzAOLoGgcFG4mBGWAjvw8oqxvndr4S3sJokMmRYXaqMsFLfa
+         PQRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=bUC5qooCkXEBvM8/KC7BA0VGv7TO8mNCzaiXDokrDsQ=;
+        b=ZHSWgFv3Be1HQQ68n/SKVGXAVbYGvZaUCChZXovCoRnf7N9Q1O1funT9FxfHbJ5HF7
+         P/FZTOmlPv0GlFucjdJFaQVY3uZJc4QdmiqiPE42IpTI/dHBUXzabAPxGRnM5SGQqAgP
+         PX78b8HK6tVqBKGdHklFlRAVub04855NJPcIEm5CRLDPlRinXkEQEp2sbcrl5x+r+62g
+         OSwn5G8+zJD9lsEZqYiDStcafyRAeX3z5fJqI2NNj/k8OZxPOrzmvJjNo82ySFzG4ux3
+         8ZJGiUxHFPrDkx27+5zDTpnAq7/31+uxbF9kCyA6HG6M0N467yjF37wbqFCsygus+sM0
+         tHVw==
+X-Gm-Message-State: AOAM530HXQ1U1KvOkEtxB2s1NRDxBDr5P6EJpuOFko4J4U0btO49PZqw
+        xN4ScWhAIsfyMgRFns5IvTOknA==
+X-Google-Smtp-Source: ABdhPJzyl8icDf8IgeEBFf6+3TEG9rkINLpv/OlZb6E4YCi4ETBNhQvDM95JnxmiJF6TXJMlTCEwgw==
+X-Received: by 2002:a17:907:7b9b:b0:6fe:22cb:3adb with SMTP id ne27-20020a1709077b9b00b006fe22cb3adbmr11583841ejc.560.1652774501551;
+        Tue, 17 May 2022 01:01:41 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id gz15-20020a170907a04f00b006f5294986besm721119ejc.111.2022.05.17.01.01.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 May 2022 01:01:41 -0700 (PDT)
+Message-ID: <424b02f3-eb53-68d0-bfee-5488dbcefa71@linaro.org>
+Date:   Tue, 17 May 2022 10:01:40 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 16db16c8-1d4d-4714-fe8d-08da37d8aa0a
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6252:EE_
-X-Microsoft-Antispam-PRVS: <CY5PR12MB6252D61764410120F8100570C0CE9@CY5PR12MB6252.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Cb7kcifnszMtQ+03n1rC/buFzztD3+Uha9bLDFKGobir1xytcdwFayeRN7RkpA1trzZ2Q6eEKHkcAZvcvz+wHghRWBJ2POaw6ytORXB1bm07yMCkQsZLCGKpBtJWc3T6FZLeob5A1AQzr8ajdN7OvDEIM99O7Zg0qnnNCw7jJdCJ3pWsy2KzhkA2MVXfCjTMrUAiRMzBtBuO37E7c1jP1UgYap7xYjU+2h0y88Dpg+qloizwFqjgV6oVIo+mZr7z/e7l4nAdzEqMaJBPCsCCvicdghXYc9Kwywyac8egU5GBqNHftxmp3IHvaQeEeymmnuyKwlqVG97Pj5ivrSyaB03baLIwUY0ipkRF3ecyEzMUnqy+GA60ko8Uibc95osxBm0BNeVZi91JquwQatmfxa5by32al23VZMYmuwiO+NccfTo+kF7ktT9fymQLofGjM5JzT/bQ1ePJVhKJDoZ41aoHHUZyRtKs5t7dbq9pX8+4k+uPmQpUBgPXrx0N+tkFFvIqB17ZROoPSkn7RSMRFO6KiW3FardZm02PZbV9FEvVDJriMPkzrDE+1U85zh6y0DYHCSYhJ6E9jezFShXXJGweIHWJ8+7Uy9sMsfrdz+JenxT/HXi7ck886pZPu6KCMBbBUIBj9YDfWZh9RhN8pDU9I5CSGO3MJFTmw8CH5IoCUbmLmW4yf+oIN9zdzSs3cOFvB/O2xA5pbZ2YTI6I+Q==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(508600001)(2906002)(36756003)(316002)(81166007)(82310400005)(6666004)(36860700001)(7696005)(110136005)(26005)(1076003)(107886003)(186003)(2616005)(70586007)(5660300002)(356005)(70206006)(8936002)(8676002)(4326008)(86362001)(47076005)(40460700003)(426003)(336012)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2022 07:41:33.0563
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16db16c8-1d4d-4714-fe8d-08da37d8aa0a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT008.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6252
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v1 03/13] arm64: tegra: Add Host1x and VIC on Tegra234
+Content-Language: en-US
+To:     cyndis@kapsi.fi, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        digetx@gmail.com
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>
+References: <20220516100213.1536571-1-cyndis@kapsi.fi>
+ <20220516100213.1536571-4-cyndis@kapsi.fi>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220516100213.1536571-4-cyndis@kapsi.fi>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device tree nodes for Tegra234 GPCDMA
+On 16/05/2022 12:02, cyndis@kapsi.fi wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> Add device tree nodes for Host1x and VIC on Tegra234.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 46 ++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> index cb3af539e477..cae68e59580c 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> @@ -454,6 +454,52 @@ misc@100000 {
+>  			status = "okay";
+>  		};
+>  
+> +		host1x@13e00000 {
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 42 ++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Generic node names, if that possible. Since the bindings do not exist in
+the next, I actually cannot figure out what's host1x...
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index cb3af539e477..d54167845d04 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -21,6 +21,48 @@
- 
- 		ranges = <0x0 0x0 0x0 0x40000000>;
- 
-+		gpcdma: dma-controller@2600000 {
-+			compatible = "nvidia,tegra194-gpcdma",
-+				      "nvidia,tegra186-gpcdma";
-+			reg = <0x2600000 0x210000>;
-+			resets = <&bpmp TEGRA234_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
-+		};
-+
- 		aconnect@2900000 {
- 			compatible = "nvidia,tegra234-aconnect",
- 				     "nvidia,tegra210-aconnect";
--- 
-2.17.1
+> +			compatible = "nvidia,tegra234-host1x";
+> +			reg = <0x13e00000 0x10000>,
+> +			      <0x13e10000 0x10000>,
+> +			      <0x13e40000 0x10000>;
+> +			reg-names = "common", "hypervisor", "vm";
+> +			interrupts = <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
+> +			             <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "syncpt0", "syncpt1", "syncpt2", "syncpt3", "syncpt4",
+> +			                  "syncpt5", "syncpt6", "syncpt7", "host1x";
+> +			clocks = <&bpmp TEGRA234_CLK_HOST1X>;
+> +			clock-names = "host1x";
+> +
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			ranges = <0x15000000 0x15000000 0x01000000>;
+> +			interconnects = <&mc TEGRA234_MEMORY_CLIENT_HOST1XDMAR &emc>;
+> +			interconnect-names = "dma-mem";
+> +			iommus = <&smmu_niso1 TEGRA234_SID_HOST1X>;
+> +
+> +			vic@15340000 {
 
+The same... vic is usually a vectored interrupt controller, so this
+should be interrupt-controller. Unless it is something entirely else, so
+then you need to come with a generic name.
+
+
+Best regards,
+Krzysztof
