@@ -2,103 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9CDC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 May 2022 08:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF40C4167B
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 May 2022 10:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231463AbiEQIso (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 May 2022 04:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48724 "EHLO
+        id S1344775AbiEQK6X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 May 2022 06:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235248AbiEQIsn (ORCPT
+        with ESMTP id S1344691AbiEQK6U (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 May 2022 04:48:43 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8476043ADE;
-        Tue, 17 May 2022 01:48:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XpPlQoFkEA14izG0/3owwVuWJtisit8G2XM/kloA1D0=; b=YPvloaBhaF9ZBDhNcnSM4a/vxg
-        P6y9T4Qz0pBvqEBE7H/Yr32K6LmCZmH/YQVfuA/mrN5iupQPmDe8JsLc9PY05Yax2JOVqoWgjJKTy
-        WZW7Sm4CCcxc3KXtZ+qNTgMJ5XIpgodC6X7Dp102SU9d67c1N6mGPcmMs11RgJeehYudmnGOsRHNa
-        bQt5WkXXLLro1PxmO23FJRUljSfJKXXNoyMv/LPnQJki2QH21JgDbO7Oa9hlq+gQ+vqFON3XF+a/D
-        V0w9BzerUg08oOJXrxdazXmuRPJ5ebpGjGjLpeuLwA65FprteaCWSponhfOL0UpkjMK1Wa//Q81im
-        UXyXDT7w==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1nqsse-00027X-86; Tue, 17 May 2022 11:48:36 +0300
-Message-ID: <9ee48521-c853-e07e-1f0b-90e9a46af728@kapsi.fi>
-Date:   Tue, 17 May 2022 11:48:35 +0300
+        Tue, 17 May 2022 06:58:20 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13820483AA;
+        Tue, 17 May 2022 03:58:18 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 97F9F21CB7;
+        Tue, 17 May 2022 10:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1652785097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UpU3PwW0+vEopHT6mwlEtKZnt5vjcj6K5z6p2RvwFDI=;
+        b=A62HHwy96rt3Peh/2oQoJb/W5OQ8Z85j1RGtcSopCMAn7XlytDk/24zuEW9Tpga7/Yq/ue
+        yQKQnkJYG61eGpGqLTfCCGX/srVGllxHF23XScgduJU8Byym34HyS4Bk1MWh3Z8Rwo0Y9Q
+        s5hDkQjh35sYKTX8Zcjp7xwrzg3RpvU=
+Received: from suse.cz (unknown [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 5CD572C141;
+        Tue, 17 May 2022 10:58:15 +0000 (UTC)
+Date:   Tue, 17 May 2022 12:58:15 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     akpm@linux-foundation.org, bhe@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Wang ShaoBo <bobo.shaobowang@huawei.com>,
+        zhenwei pi <pizhenwei@bytedance.com>
+Subject: Re: [PATCH 05/30] misc/pvpanic: Convert regular spinlock into
+ trylock on panic path
+Message-ID: <YoN/x2fpdDU4+nSB@alley>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-6-gpiccoli@igalia.com>
+ <YnpXGOXicwdy1E6n@alley>
+ <0a20dd06-f459-638e-cb4d-8255ab1a1f23@igalia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v1 02/13] dt-bindings: Add headers for Host1x and VIC on
- Tegra234
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-References: <20220516100213.1536571-1-cyndis@kapsi.fi>
- <20220516100213.1536571-3-cyndis@kapsi.fi>
- <20a7087d-dddd-134b-4cef-0ebcbc5115f3@linaro.org>
- <3b1e22cf-a439-2d84-a1fc-dd352a3f1b2c@kapsi.fi>
- <e77d83ee-c045-26a6-15bc-df49a3b880ae@linaro.org>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <e77d83ee-c045-26a6-15bc-df49a3b880ae@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a20dd06-f459-638e-cb4d-8255ab1a1f23@igalia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/17/22 11:43, Krzysztof Kozlowski wrote:
-> On 17/05/2022 10:41, Mikko Perttunen wrote:
->> On 5/17/22 11:02, Krzysztof Kozlowski wrote:
->>> On 16/05/2022 12:02, cyndis@kapsi.fi wrote:
->>>> From: Mikko Perttunen <mperttunen@nvidia.com>
->>>>
->>>> Add clock, memory controller, powergate and reset dt-binding headers
->>>> for Host1x and VIC on Tegra234.
->>>>
->>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>>
->>> All your patches are send from wrong email address and the SoB chain is
->>> not correct. Please add respective SoB.
->>>
->>> This applies to entire patchset.
->>>
->>>
->>> Best regards,
->>> Krzysztof
->>
->> I can do
->>
->>     Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>     Signed-off-by: Mikko Perttunen <cyndis@kapsi.fi>
->>
->> if that is better.
+On Tue 2022-05-10 10:00:58, Guilherme G. Piccoli wrote:
+> On 10/05/2022 09:14, Petr Mladek wrote:
+> > [...]
+> >> With that said, it's dangerous to use regular spinlocks in such path,
+> >> as introduced by commit b3c0f8774668 ("misc/pvpanic: probe multiple instances").
+> >> This patch fixes that by replacing regular spinlocks with the trylock
+> >> safer approach.
+> > 
+> > It seems that the lock is used just to manipulating a list. A super
+> > safe solution would be to use the rcu API: rcu_add_rcu() and
+> > list_del_rcu() under rcu_read_lock(). The spin lock will not be
+> > needed and the list will always be valid.
+> > 
+> > The advantage would be that it will always call members that
+> > were successfully added earlier. That said, I am not familiar
+> > with pvpanic and am not sure if it is worth it.
+> > 
+> >> It also fixes an old comment (about a long gone framebuffer code) and
+> >> the notifier priority - we should execute hypervisor notifiers early,
+> >> deferring this way the panic action to the hypervisor, as expected by
+> >> the users that are setting up pvpanic.
+> > 
+> > This should be done in a separate patch. It changes the behavior.
+> > Also there might be a discussion whether it really should be
+> > the maximal priority.
+> > 
+> > Best Regards,
+> > Petr
 > 
-> That's not needed, if your name was in the sender field. The trouble is
-> that your name was not there and I have no clue who is cyndis@kapsi.fi.
+> Thanks for the review Petr. Patch was already merged - my goal was to be
+> concise, i.e., a patch per driver / module, so the patch kinda fixes
+> whatever I think is wrong with the driver with regards panic handling.
 > 
-> 
-> Best regards,
-> Krzysztof
+> Do you think it worth to remove this patch from Greg's branch just to
+> split it in 2? Personally I think it's not worth, but opinions are welcome.
 
-I see, that makes sense. Looks like when I did the above From field 
-change I must have messed up my configuration somehow since it looks 
-like older patches I've sent do have the full name.
+No problem. It is not worth the effort.
 
-Thanks, I'll try to fix it for next version.
-Mikko
+
+> About the RCU part, this one really could be a new patch, a good
+> improvement patch - it makes sense to me, we can think about that after
+> the fixes I guess.
+
+Yup.
+
+Best Regards,
+Petr
