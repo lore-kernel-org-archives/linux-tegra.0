@@ -2,90 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF35C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 May 2022 08:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D4FC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 May 2022 08:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236922AbiEQIDN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 May 2022 04:03:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42612 "EHLO
+        id S237419AbiEQIjQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 May 2022 04:39:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242292AbiEQICh (ORCPT
+        with ESMTP id S243558AbiEQIjK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 May 2022 04:02:37 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F217246659
-        for <linux-tegra@vger.kernel.org>; Tue, 17 May 2022 01:02:32 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id p26so5100108eds.5
-        for <linux-tegra@vger.kernel.org>; Tue, 17 May 2022 01:02:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=xtfFxNQ4kXjnMowlOhtuczG/jVCPXMAxYap4G9Z9g4o=;
-        b=HnPwwtmGhHal34IN62BohKnesTIAiJhZH/Mea1AjY9eivo9Z4ZXNv451zmhJn2bU6r
-         G5PtXi9/vxmwNwW9cz/BanVwTkhxLUZ9j4NGk3TWyDI+atyps9zyk7SVj4CwbHlIV2UY
-         KphPuli3AQw+8UE+yenQWPNpZGrAFvWsgcV5tMB5Wt0vk6WwRUoZQ/Ienfv3dQd12QAD
-         pUzYH8gNLOwNtEO70chtu0cgEOMl7ZE417fud+dIciRDMGLg2anL0BKRhz2X67Me75cZ
-         UNtZlLMwUbRhQhWp9UlWNcOkLtVZ2acOeyMHzKKQfkip7CcTf58qLYrt9qFUk63uItn2
-         nElA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=xtfFxNQ4kXjnMowlOhtuczG/jVCPXMAxYap4G9Z9g4o=;
-        b=buvVu1RAahMnx/rUgGUFgHWmPPyNPMcgAC1oBbQIoUU1YTqfFLniB6T5y1m/Tjl4Q2
-         SHq9VmNx/yTGV7Me2dHybmhSCSSR+i0OZJqxLuLYMEP1MyqppOs3OL+ioPdWskoN4aOc
-         bQ63mPk5GPiIU3TRM2bFJ03mvWy87qnXopdQ7HvQhF5dj/taGmWy7mA7A8TNR8AbScTC
-         vyuYIv1wCRwFFBipZtmjTjjozQFbmmwsBqa723tdLIPuXukxzwEdzjPp2i+kkKLX4fZd
-         wlRqIj49TRV9o9mMl3D5uHPVH3n6gNVoUaCXLMH8c2P3Sc9jKqxmk7eNX4Sg5pQ5JPSh
-         RWEQ==
-X-Gm-Message-State: AOAM5304nNvjK/jzi7XTPBLW6zJCaO1vhv+/EfuTHP66/RHymYwKfVwB
-        J1P/zA/5Bp0ub9/4rw6yULYc5A==
-X-Google-Smtp-Source: ABdhPJy2xVmqaMW2+SK5q/96Y2Kc8dHmYLGF5OSaHiqk3OvCVkn1VCaUxDtmUCtWcrd9LTtbI/cLvQ==
-X-Received: by 2002:a05:6402:84c:b0:428:4cc4:8212 with SMTP id b12-20020a056402084c00b004284cc48212mr17530588edz.171.1652774551112;
-        Tue, 17 May 2022 01:02:31 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id md14-20020a170906ae8e00b006f3ef214dccsm737988ejb.50.2022.05.17.01.02.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 01:02:30 -0700 (PDT)
-Message-ID: <20a7087d-dddd-134b-4cef-0ebcbc5115f3@linaro.org>
-Date:   Tue, 17 May 2022 10:02:29 +0200
+        Tue, 17 May 2022 04:39:10 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1E143AED;
+        Tue, 17 May 2022 01:39:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4VukSR4SHYzNRbj8Se/6nK2j2N2wZe6dlFD0wZxtWkE=; b=QpSNtWwev4f6WmROZ/65USyGPP
+        7Vt3YD/nXn0k3AkUBRq9FsFnSnBqhooH+AK2Wa8ORFNFBcROwIfI4Uox/4C9aoh4DILVKVGju2WZr
+        p6uKrQQd7eOtGvoszGNxryeBR6bJNcSc0B4EW4F3wLz5jyfymVPEUeETzM0KyqgeUVFBcsr0bN2u/
+        6JTDFchqmUtdUTQ8Bv4ViCpEiZRmnwbQhBoPLUXJiSjXinnTAsPGm1umZ1T1xvaDW/CWBzoqaEbc4
+        EcYfvflpLku30iKzmrO+jgHF1UatseYFsCWki0Bf3+L1efkJA1CORXg24Zx1EiGbT7qa5x4PoFX4M
+        hjtvGVeA==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1nqsjF-0007u3-KW; Tue, 17 May 2022 11:38:53 +0300
+Message-ID: <1fccdfe8-d44c-2d56-e572-628998efc985@kapsi.fi>
+Date:   Tue, 17 May 2022 11:38:52 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v1 02/13] dt-bindings: Add headers for Host1x and VIC on
- Tegra234
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v1 03/13] arm64: tegra: Add Host1x and VIC on Tegra234
 Content-Language: en-US
-To:     cyndis@kapsi.fi, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        digetx@gmail.com
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
 References: <20220516100213.1536571-1-cyndis@kapsi.fi>
- <20220516100213.1536571-3-cyndis@kapsi.fi>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220516100213.1536571-3-cyndis@kapsi.fi>
-Content-Type: text/plain; charset=UTF-8
+ <20220516100213.1536571-4-cyndis@kapsi.fi>
+ <424b02f3-eb53-68d0-bfee-5488dbcefa71@linaro.org>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <424b02f3-eb53-68d0-bfee-5488dbcefa71@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16/05/2022 12:02, cyndis@kapsi.fi wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+On 5/17/22 11:01, Krzysztof Kozlowski wrote:
+> On 16/05/2022 12:02, cyndis@kapsi.fi wrote:
+>> From: Mikko Perttunen <mperttunen@nvidia.com>
+>>
+>> Add device tree nodes for Host1x and VIC on Tegra234.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra234.dtsi | 46 ++++++++++++++++++++++++
+>>   1 file changed, 46 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> index cb3af539e477..cae68e59580c 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> @@ -454,6 +454,52 @@ misc@100000 {
+>>   			status = "okay";
+>>   		};
+>>   
+>> +		host1x@13e00000 {
 > 
-> Add clock, memory controller, powergate and reset dt-binding headers
-> for Host1x and VIC on Tegra234.
+> Generic node names, if that possible. Since the bindings do not exist in
+> the next, I actually cannot figure out what's host1x...
+
+Host1x is a hardware block that provides programmable DMA channels, HW 
+synchronization primitives, and virtualization support for IP blocks 
+connected to its "host1x bus". So far I haven't found a one or two word 
+way to describe it despite efforts. In any case, considering all the 
+existing documentation and device trees that use this name, I'd prefer 
+not changing it (especially as I don't know what else it could be called).
+
 > 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> +			compatible = "nvidia,tegra234-host1x";
+>> +			reg = <0x13e00000 0x10000>,
+>> +			      <0x13e10000 0x10000>,
+>> +			      <0x13e40000 0x10000>;
+>> +			reg-names = "common", "hypervisor", "vm";
+>> +			interrupts = <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
+>> +			             <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "syncpt0", "syncpt1", "syncpt2", "syncpt3", "syncpt4",
+>> +			                  "syncpt5", "syncpt6", "syncpt7", "host1x";
+>> +			clocks = <&bpmp TEGRA234_CLK_HOST1X>;
+>> +			clock-names = "host1x";
+>> +
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +
+>> +			ranges = <0x15000000 0x15000000 0x01000000>;
+>> +			interconnects = <&mc TEGRA234_MEMORY_CLIENT_HOST1XDMAR &emc>;
+>> +			interconnect-names = "dma-mem";
+>> +			iommus = <&smmu_niso1 TEGRA234_SID_HOST1X>;
+>> +
+>> +			vic@15340000 {
+> 
+> The same... vic is usually a vectored interrupt controller, so this
+> should be interrupt-controller. Unless it is something entirely else, so
+> then you need to come with a generic name.
 
-All your patches are send from wrong email address and the SoB chain is
-not correct. Please add respective SoB.
+VIC here is video image compositor (with various other 2d operations). I 
+suppose I can invent some generic name. Any thoughts, Thierry?
 
-This applies to entire patchset.
+Mikko
 
+> 
+> 
+> Best regards,
+> Krzysztof
 
-Best regards,
-Krzysztof
