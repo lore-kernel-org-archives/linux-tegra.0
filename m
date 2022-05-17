@@ -2,72 +2,174 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83188C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 May 2022 17:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA66C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 May 2022 18:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351691AbiEQR5C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 May 2022 13:57:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51154 "EHLO
+        id S1352131AbiEQSOg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 May 2022 14:14:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350016AbiEQR46 (ORCPT
+        with ESMTP id S1351992AbiEQSN4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 May 2022 13:56:58 -0400
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D72F5007F;
-        Tue, 17 May 2022 10:56:48 -0700 (PDT)
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-f17f1acffeso12597619fac.4;
-        Tue, 17 May 2022 10:56:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=L1sqOLzWzpsiBSGnA++a9tfQA6CMCv9r3qkf2l/yADM=;
-        b=NSsarO4rPqozavbYz3Fks/6gdIW6b0Rr9+yoB3Wb7nGrUvzteQ6Zd5y9npeZuRuQz0
-         mv9EBiWh7b+p3wnft+hHT6wDlCTDuBhNEGYuy3mejpwrfHkGAPMBOD8Yr+LlpB1UxNqf
-         he2zCzIXnh+XJQ/+MTcfnWGM74/DgAyewG+PQCZ9MVJeoifO34Y87DmXLCXGwl2lHRfA
-         JBwfQR/Q33Q3y/SYe+Hic2qSgbHRWwH7BnQnGmCydNX1FA19uPyLM0jHSsvqiEAoxcME
-         sIqyNDAGABWvghlgogVGSHOy3Tgn2AyH7Z55vrvXcbulAwcZqvkUtLK3jNLn0IwLFN/X
-         4zUg==
-X-Gm-Message-State: AOAM5314ULv3k4oOw8r5oS6F5VNttsvAhijhf0OHe4UjbiMqT/74VzAb
-        0Pf0U+e433TK7KIEOko4IQ==
-X-Google-Smtp-Source: ABdhPJyQ0yRfa/115zZ1LMiFdRblJkKEdDow7ouxhH/iPe14psEKoBNOiL/yZkDVQ9plvrPtJvmilg==
-X-Received: by 2002:a05:6870:8315:b0:e9:c1a:a1e0 with SMTP id p21-20020a056870831500b000e90c1aa1e0mr13051512oae.153.1652810207862;
-        Tue, 17 May 2022 10:56:47 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id w62-20020acaad41000000b00328a1be5c3asm78864oie.25.2022.05.17.10.56.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 May 2022 10:56:47 -0700 (PDT)
-Received: (nullmailer pid 1321569 invoked by uid 1000);
-        Tue, 17 May 2022 17:56:46 -0000
-Date:   Tue, 17 May 2022 12:56:46 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, jsequeira@nvidia.com,
-        linux-tegra@vger.kernel.org, bbasu@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, kbuild-all@lists.01.org,
-        thierry.reding@gmail.com, vsethi@nvidia.com, jonathanh@nvidia.com
-Subject: Re: [Patch v6 6/9] dt-bindings: arm: tegra: Add NVIDIA Tegra234
- CBB2.0 binding
-Message-ID: <20220517175646.GA1321507-robh@kernel.org>
-References: <20220511201651.30695-1-sumitg@nvidia.com>
- <20220511201651.30695-8-sumitg@nvidia.com>
+        Tue, 17 May 2022 14:13:56 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05D2E50E0D;
+        Tue, 17 May 2022 11:13:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6MSK1Z4Nv/e1GFKFinCP8P3dIYao0CoLyUe3quXpDhY=; b=cRMrVSVTR+3cn6FVG65SC4Au0y
+        UkLE3SVfqGk36g/jG1E9IomGRvED5Awi+eOSCTntuGE0jPXl5+kfHlbKsvhvVjaCNf8y4mBWXGPlT
+        8r/o/CMKhbUaIdrKhLkt446cgXa07HTSiorku/w0xJvIn3aE4uqi2qj8QGi7eb4Kmsg0/Wh5BR8Vi
+        YCGb8f9djqv6fWXVwjRpFQtg+9b6W6H4TQisr9ZwQKSIB4SsmfEWL196/jrcNQFL2lm66S4LfYE8s
+        uZ+fz2jSIIuBy2Np//l8BP/gbXHu+JyZVeJsb8IAXoZSlvi3RYMR9sSIMXj8sSzR7kYxeP4KKKokk
+        nGGtp5Zg==;
+Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nr1gv-008nSU-6m; Tue, 17 May 2022 20:13:05 +0200
+Message-ID: <62a63fc2-346f-f375-043a-fa21385279df@igalia.com>
+Date:   Tue, 17 May 2022 15:12:25 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220511201651.30695-8-sumitg@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 21/30] panic: Introduce the panic pre-reboot notifier list
+Content-Language: en-US
+To:     "Luck, Tony" <tony.luck@intel.com>, Petr Mladek <pmladek@suse.com>,
+        Dinh Nguyen <dinguyen@kernel.org>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "openipmi-developer@lists.sourceforge.net" 
+        <openipmi-developer@lists.sourceforge.net>,
+        "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
+        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
+        "halves@canonical.com" <halves@canonical.com>,
+        "fabiomirmar@gmail.com" <fabiomirmar@gmail.com>,
+        "alejandro.j.jimenez@oracle.com" <alejandro.j.jimenez@oracle.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "d.hatayama@jp.fujitsu.com" <d.hatayama@jp.fujitsu.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "dyoung@redhat.com" <dyoung@redhat.com>,
+        "Tang, Feng" <feng.tang@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mikelley@microsoft.com" <mikelley@microsoft.com>,
+        "hidehiro.kawai.ez@hitachi.com" <hidehiro.kawai.ez@hitachi.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "john.ogness@linutronix.de" <john.ogness@linutronix.de>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "paulmck@kernel.org" <paulmck@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "vgoyal@redhat.com" <vgoyal@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "will@kernel.org" <will@kernel.org>, Alex Elder <elder@kernel.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Chris Zankel <chris@zankel.net>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Corey Minyard <minyard@acm.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        James Morse <james.morse@arm.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
+        Richard Weinberger <richard@nod.at>,
+        Robert Richter <rric@kernel.org>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, Wei Liu <wei.liu@kernel.org>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-22-gpiccoli@igalia.com> <YoJgcC8c6LaKADZV@alley>
+ <63a74b56-89ef-8d1f-d487-cdb986aab798@igalia.com>
+ <bed66b9467254a5a8bafc1983dad643a@intel.com>
+ <e895ce94-e6b9-caf6-e5d3-06bf0149445c@igalia.com> <YoOs9GJ5Ovq63u5Q@alley>
+ <599b72f6-76a4-8e6d-5432-56fb1ffd7e0b@igalia.com>
+ <06d85642fef24bc482642d669242654b@intel.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <06d85642fef24bc482642d669242654b@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 12 May 2022 01:46:48 +0530, Sumit Gupta wrote:
-> Add device-tree binding documentation to represent
-> the Control Backbone (CBB) version 2.0 used in T234 SoC.
+On 17/05/2022 14:02, Luck, Tony wrote:
+>> Tony / Dinh - can I just *skip* this notifier *if kdump* is set or else
+>> we run the code as-is? Does that make sense to you?
 > 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../arm/tegra/nvidia,tegra234-cbb.yaml        | 74 +++++++++++++++++++
->  1 file changed, 74 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
+> The "skip" option sounds like it needs some special flag associated with
+> an entry on the notifier chain. But there are other notifier chains ... so that
+> sounds messy to me.
 > 
+> Just all the notifiers in priority order. If any want to take different actions
+> based on kdump status, change the code. That seems more flexible than
+> an "all or nothing" approach by skipping.
+> 
+> -Tony
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I guess I've expressed myself in a poor way - sorry!
+
+What I'm planning to do in the altera_edac notifier is:
+
+if (kdump_is_set)
+ return;
+
+/* regular code */
+
+In other words: if the kdump is set, this notifier will be effectively a
+nop (although it's gonna be called).
+
+Lemme know your thoughts Tony, if that makes sense.
+Thanks,
+
+
+Guilherme
