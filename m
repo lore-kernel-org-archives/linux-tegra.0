@@ -2,65 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B12C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 May 2022 17:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A29C43219
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 May 2022 17:38:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241041AbiERRi0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 May 2022 13:38:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41122 "EHLO
+        id S241055AbiERRia (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 May 2022 13:38:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241013AbiERRiT (ORCPT
+        with ESMTP id S241026AbiERRi2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 May 2022 13:38:19 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2063.outbound.protection.outlook.com [40.107.212.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE331FC2FC;
-        Wed, 18 May 2022 10:38:17 -0700 (PDT)
+        Wed, 18 May 2022 13:38:28 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08on2058.outbound.protection.outlook.com [40.107.102.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8891FC2F2;
+        Wed, 18 May 2022 10:38:27 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ER51z/XtdI91TWJ5eyedIFzzOfAabuRjXuPHxj8mikcIvctFAYIIY/zGvCE16QS/vwESI1MM5OIPJo8DSqYfUNf3VwClX9sLgTW0nBxj1261HxuWkcXACO4NX9DaDoCw6r84xp59VVhd1eTeempbGg+Adk/x4AQKjny+Hw+LxzOtlNnva39r7G2PAuZluFBEvIwnSe6HPPh0l5JNUjA2t+H81pWqLGulH+ogCGT2mPxftVYULPCeKW/sWGn7rsVw7mcbiQIehfw0YpaYjUwthe6QVV8Yd0FQLAbeVFXmH1a1xIUR8Keq3v32na+VwdZGrNGEd6mFmdvjceE4mLh5zA==
+ b=PplIjlESgKIkKcYLX6tyRfREmivGLs90u8IY6XNJdmmE6ynRLKPbvNwMoGRVq5zlTQN9/C0AljHnvZ+M5KIhcbvPD0UxSr7pi/OQWr2TvHZt72AgZ2w37rLuYT5GpHBgC8MLH808zOHXVkQgoJPyXb3HzZnPHfqSuyGAIDeSCpl0gL1S7cNbU5dxCMNF00/oAlyCxy7jkKaWufJlnYfOIn67B7HMv+6wqzYHJ9Dhlt3BsL/PUu6WUSUJoxBFnxNHCe0vEoh48PVs2VcB08hXtwXJxo3ap2ExBY6pjrKX80cyQj4CmORYAxdzhoXJITyK/pOkUq6W5EnwYiETU3bLgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rWviY0WluoQQo/oALU5u7URdWEH12VU+/MSn9IQDLQk=;
- b=NfpHUTe0jPspeBJ/dzf7jl8fNlO8dKUaZTE8qylLS42vjKEvz05v+zSQFkByXDIXKDK0hbtvz08KglACmT8JtiDmOMqe1gWHf/k/14CgPRhavQEdxxo3QCiTKSHQGmyF2JRYm/03n+c2Kncv4kEVnh1ttY+fdq12ffUBAmo+XsmQs1wawEuhDbNQEFHkXmO6ZQjrJdYzm2PexVyXOEFAxGB8PBCgiu490cfAXcVFd84qb/cZdRTI/yySF7JlX+GMrYCuB3je2wKUYlC/eQXssWajFc06P593Dd9hxuYsQHBZibU6+ykXH6uThF0aIPbl/6D8yXxtxqDpLywX9wrwBw==
+ bh=jOgkGPe+rsHRKSb3hINYvKSJ43nq8Ug95+p5z9XDVYo=;
+ b=WSlNnK8bPOau3Yp/m5VTPUXgTk6NHFllYA0N9Hi6P5n214d0DjGwEulgiF4iD7YEtRZu3WtUzBLh12j1SiZ87EuCmqkRb1I5u5i+IRabxIZh8ENPruJBdUIe+eE3XhQSQozSSKfyhYd53FafwaPmH7LWkrwIbfUh98+zq2F5Ua7lgVJ5SLdIQeCX5HzL27kXIOi7lNR20MZq7tcACcRgE5oMNBaze7lmskccDH9cQnABmsJVEIrZsOkjFSWcjPsrvodzkbTkPmiXTEWEXoQ5sUkzuqTQ6LgS7RRlDGB7ZiKMkP0DiOQQOfGA4z4Gdp5blUDSp8pl1WdLVRJvpQznmw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rWviY0WluoQQo/oALU5u7URdWEH12VU+/MSn9IQDLQk=;
- b=N2txcc80+DY9IZ6BADr0aNmaWuT4c+3WOdqzkC7x8umo24uVUTOPeI70CgWx2CERRbcQbFPkumCrfdY5Bl3HiI79v+IvwTZKvCk4AQcoUXmWPVdcaGwPfOUuVYz/VYwPgSdoSE29qDYF6hhfQQBU8Hz4rHvNezGe3ennaxbGTuYTTYDkrNmFmfy1PCX2c/BRzU9OG/f9tsmU+2v3NonnAd0HRCPgQIyERpeAdCF2EhkkgvGVLI4/U6ev7i0k0WDYTj8HJIoYgM3BCHXsah4kfAClq3HobkGMC3T+oNuMriZ4ujnvnEZB1fKDDAHsYV17G/4kJY6/YWV8yze2rzAsSg==
-Received: from DS7PR03CA0097.namprd03.prod.outlook.com (2603:10b6:5:3b7::12)
- by CY5PR12MB6179.namprd12.prod.outlook.com (2603:10b6:930:24::22) with
+ bh=jOgkGPe+rsHRKSb3hINYvKSJ43nq8Ug95+p5z9XDVYo=;
+ b=DlnAfl+3os8Y7iJnyWuyre3a0jgihJ+SxUd2zfcqNHPsxB2mDbBTIEfQo4YMvTGUcB5LMa10eRTEx9V4NU4TKHHnAR57AL4BPeXI+U3a3NsEbw5MLFuLgpNeQqNmiUXW57MwvAXfiptfZUTSgGcotaWlWjuC5MWkWl9X+y/qALfYOez/Fdg+e4hFXq0Nt8JI3dHjcx+VFEJINB7XUiMoHZvR7xlvdvaX5OmdoP4xGqIrG4b9f/B5tcU462lhwrrIBGiGX+2JjXGnNVH7JGMUmxvkKOqXckM6LqO/DfoVq0bCMhzD50I2xGfHyTJQxO6GmKvZUApVZgLhRIO7nP5wug==
+Received: from DM6PR21CA0020.namprd21.prod.outlook.com (2603:10b6:5:174::30)
+ by DM5PR1201MB0156.namprd12.prod.outlook.com (2603:10b6:4:59::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.14; Wed, 18 May
- 2022 17:38:16 +0000
-Received: from DM6NAM11FT003.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3b7:cafe::8d) by DS7PR03CA0097.outlook.office365.com
- (2603:10b6:5:3b7::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.18 via Frontend
- Transport; Wed, 18 May 2022 17:38:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.13; Wed, 18 May
+ 2022 17:38:25 +0000
+Received: from DM6NAM11FT063.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:174:cafe::e0) by DM6PR21CA0020.outlook.office365.com
+ (2603:10b6:5:174::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.3 via Frontend
+ Transport; Wed, 18 May 2022 17:38:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.234) by
- DM6NAM11FT003.mail.protection.outlook.com (10.13.173.162) with Microsoft SMTP
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ DM6NAM11FT063.mail.protection.outlook.com (10.13.172.219) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5273.14 via Frontend Transport; Wed, 18 May 2022 17:38:16 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 18 May
- 2022 17:38:15 +0000
+ 15.20.5273.14 via Frontend Transport; Wed, 18 May 2022 17:38:25 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 18 May
+ 2022 17:38:24 +0000
 Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
  (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 18 May
- 2022 10:38:14 -0700
+ 2022 10:38:24 -0700
 Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.9)
  with Microsoft SMTP Server id 15.2.986.22 via Frontend Transport; Wed, 18 May
- 2022 10:38:10 -0700
+ 2022 10:38:20 -0700
 From:   Sameer Pujar <spujar@nvidia.com>
 To:     <broonie@kernel.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <thierry.reding@gmail.com>,
@@ -71,9 +71,9 @@ CC:     <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 1/6] ASoC: tegra: Add binding doc for OPE module
-Date:   Wed, 18 May 2022 23:06:07 +0530
-Message-ID: <1652895372-29885-2-git-send-email-spujar@nvidia.com>
+Subject: [PATCH 3/6] ASoC: tegra: AHUB routes for OPE module
+Date:   Wed, 18 May 2022 23:06:09 +0530
+Message-ID: <1652895372-29885-4-git-send-email-spujar@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1652895372-29885-1-git-send-email-spujar@nvidia.com>
 References: <1652895372-29885-1-git-send-email-spujar@nvidia.com>
@@ -81,274 +81,187 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fe669ecb-7f73-4e7a-0df1-08da38f530b4
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6179:EE_
-X-Microsoft-Antispam-PRVS: <CY5PR12MB617922AB63D059E96979691CA7D19@CY5PR12MB6179.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: e5a95ab2-448d-445b-c909-08da38f53668
+X-MS-TrafficTypeDiagnostic: DM5PR1201MB0156:EE_
+X-Microsoft-Antispam-PRVS: <DM5PR1201MB0156CEAE98497AEE10ADE407A7D19@DM5PR1201MB0156.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WmGAURSPJHb3S1neKHW8kX+EGHFWbeeJ/QvPcUr5Uh1mGPudpyGyEGCm9C7YTfn8v1QikgNuIdbCRL16BAEZncM8OLdwbsjiiL/E1QaOG0kVxjJeRHg/QEDQHD0GGL8Jz32a73hiXg8+9Wgt9VWyyl9YRjoxQlj+1+NQ/KPZyCCTsDyzOiyVm8Rd26HqgLUDmANQajGjG1gjNKLV7duvaspTpcFUYqubUdQqwmxupp0LZsCm7YreO9fn+NlULs+NftT4wbWsmrLGjCfJP50yIoUfLZeSQ3U7Vpy+JVbx7oCsKxSDWvslOy0y7jQTjojaBgCe1eDV0JROzCUg+FMenVlihLa4lSA3n3YCpDz2IMggDSSL7rb13xHR29nYQoudPsuBKSkmuT+jgJ0Fej8emeMH+npYxEUSMbn93yrh7GcKu0QyvolLcKQMLP16662v4FJgxaiiH8kRKOanvxBLkkev41PwonSo78bjBGcW4oxVdIGaCrd/0cEbzpSP3URJF+Am/wWG1QbQMNEEJWDJv9tjeIvifCQ3AuriAN1i9WTuxYDUAL6JGBHKRRRXYSQdA9+tD+HQmQHBQTDKFlTahqhmWWN1anh7Dd0MZziTBM29/Bijmd66BUJU74xrit3Bh4elChJwJl8C25mLXD3McRBLM1j7U5VS/xE3qQ+uqNZJN3qpfJieu3Ytuv3poXm3Emq9W7FHiklIhIOxxqdujYVywBgnxD2K0x2L66CBRTZ7tHFn2gJuO2nZEnCrv4pHgTQnv6/CsYvwntUMYK4v/5YycIN5D24HmRmwoGPfh0Req/MKSFR25cz4OkhYlX6iytXNPKnXthcTmOhzKyAm0Q==
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(36756003)(336012)(426003)(2616005)(107886003)(47076005)(186003)(7416002)(6666004)(2906002)(83380400001)(508600001)(7696005)(26005)(966005)(82310400005)(70586007)(8676002)(356005)(4326008)(86362001)(40460700003)(70206006)(81166007)(54906003)(5660300002)(316002)(36860700001)(8936002)(110136005)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: FVMtQq4ZVRCqfDZrcy8F5cnf7WrNOnkj11oePYV4GSCrijyV0YLZp9k6twuOClXMHEamMtVxeEP2tt72zrDBOW7TMbM+VizeAJJ58+A6jYrcvfPcGkyHSLkTPxlPLup6yKcT1Wp9yeJZ+G0hFoljYu2zMqFVb6xdtNYqfSoD/YYk2xNhHzDF4bGHNtmdOknyJhJJmdgsydR8dGDqn1yK4h50i3wzXjuF7If6ZdcVRWlP4UWbNPtM3MwHK1vmYRXtJBGjEVvcli0yry9i0byLNhy/aWABKj9iI/duOVRdw57CJGulIK5wXiUrlGQ8Coz+KHHCi95D986yg48ntYtLKRTPjivtks9eLav556Ovks05PwErSxyHqyVWB68nyiyxBYMuh/KJs4Clzln4x4khs1swX4lbZIQocODpE7s3YHPEAxt06Auw+cr9boNbE9ivlm2+2z+xhpWK5OtSJCRjs3QyB3Hh/oa2dYHh+mUR+W8VyUla8nMwIK1heU6U8SgnNCscBcX8ksWOuxpPRu4wDGxAcBFt1Ch0s5YkC4tMOctFNMps8ktq+g7OrgabGJ9YE4S9juq0Qs7EwUYV5Dw8nUQ+1KbPqT+rTwZpcFTzJuqSWT4sRDWkf4AhJBovdbzQcu5hCDo3YV/ZYOiQqsir2Dc1TKtdnI1vOzQxPeeEJRA5+iRB4DB5wRmF7kypvR2pFOYOOjjoRJTpI4CilDYIgA==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(508600001)(2906002)(316002)(54906003)(110136005)(70206006)(81166007)(6666004)(356005)(8676002)(86362001)(7696005)(4326008)(40460700003)(47076005)(2616005)(186003)(36860700001)(336012)(82310400005)(426003)(36756003)(107886003)(7416002)(8936002)(26005)(5660300002)(70586007)(83380400001)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2022 17:38:16.0345
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2022 17:38:25.6232
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe669ecb-7f73-4e7a-0df1-08da38f530b4
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5a95ab2-448d-445b-c909-08da38f53668
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT003.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT063.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6179
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0156
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds YAML schema for DT bindings of Output Processing
-Engine (OPE) module. It consists of Parametric Equalizer (PEQ)
-and Multi Band Dynamic Range Compressor (MBDRC) sub blocks and
-binding doc for these blocks are added as well. The OPE will be
-registered as an ASoC component and can be plugged into an audio
-path as per need via ALSA mixer controls. The DT bindings are
-applicable on Tegra210 and later SoCs where OPE module is present.
+Add AHUB routes for OPE module. The OPE module can be plugged into audio
+path as per the need. The routing controls can be used to setup the audio
+path with OPE similar to the already existing routes. The support is added
+on Tegra210 and later Tegra SoCs where OPE module is present.
 
 Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 ---
- .../bindings/sound/nvidia,tegra210-ahub.yaml       |  4 +
- .../bindings/sound/nvidia,tegra210-mbdrc.yaml      | 51 ++++++++++++
- .../bindings/sound/nvidia,tegra210-ope.yaml        | 91 ++++++++++++++++++++++
- .../bindings/sound/nvidia,tegra210-peq.yaml        | 52 +++++++++++++
- 4 files changed, 198 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
+ sound/soc/tegra/tegra210_ahub.c | 39 +++++++++++++++++++++++++++++++++++----
+ 1 file changed, 35 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
-index 6df6f85..1fb93d9 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
-@@ -110,6 +110,10 @@ patternProperties:
-     type: object
-     $ref: nvidia,tegra186-asrc.yaml#
+diff --git a/sound/soc/tegra/tegra210_ahub.c b/sound/soc/tegra/tegra210_ahub.c
+index 8980571..e429ffc 100644
+--- a/sound/soc/tegra/tegra210_ahub.c
++++ b/sound/soc/tegra/tegra210_ahub.c
+@@ -170,6 +170,11 @@ static struct snd_soc_dai_driver tegra210_ahub_dais[] = {
+ 	DAI(MIXER1 TX3),
+ 	DAI(MIXER1 TX4),
+ 	DAI(MIXER1 TX5),
++	/* XBAR -> OPE -> XBAR */
++	DAI(OPE1 RX),
++	DAI(OPE1 TX),
++	DAI(OPE2 RX),
++	DAI(OPE2 TX),
+ };
  
-+  '^ope@[0-9a-f]+$':
-+    type: object
-+    $ref: nvidia,tegra210-ope.yaml#
+ static struct snd_soc_dai_driver tegra186_ahub_dais[] = {
+@@ -294,6 +299,9 @@ static struct snd_soc_dai_driver tegra186_ahub_dais[] = {
+ 	DAI(ASRC1 RX6),
+ 	DAI(ASRC1 TX6),
+ 	DAI(ASRC1 RX7),
++	/* XBAR -> OPE -> XBAR */
++	DAI(OPE1 RX),
++	DAI(OPE1 TX),
+ };
+ 
+ static const char * const tegra210_ahub_mux_texts[] = {
+@@ -337,6 +345,8 @@ static const char * const tegra210_ahub_mux_texts[] = {
+ 	"MIXER1 TX3",
+ 	"MIXER1 TX4",
+ 	"MIXER1 TX5",
++	"OPE1",
++	"OPE2",
+ };
+ 
+ static const char * const tegra186_ahub_mux_texts[] = {
+@@ -408,6 +418,7 @@ static const char * const tegra186_ahub_mux_texts[] = {
+ 	"ASRC1 TX4",
+ 	"ASRC1 TX5",
+ 	"ASRC1 TX6",
++	"OPE1",
+ };
+ 
+ static const unsigned int tegra210_ahub_mux_values[] = {
+@@ -459,6 +470,9 @@ static const unsigned int tegra210_ahub_mux_values[] = {
+ 	MUX_VALUE(1, 2),
+ 	MUX_VALUE(1, 3),
+ 	MUX_VALUE(1, 4),
++	/* OPE */
++	MUX_VALUE(2, 0),
++	MUX_VALUE(2, 1),
+ };
+ 
+ static const unsigned int tegra186_ahub_mux_values[] = {
+@@ -540,6 +554,8 @@ static const unsigned int tegra186_ahub_mux_values[] = {
+ 	MUX_VALUE(3, 27),
+ 	MUX_VALUE(3, 28),
+ 	MUX_VALUE(3, 29),
++	/* OPE */
++	MUX_VALUE(2, 0),
+ };
+ 
+ /* Controls for t210 */
+@@ -584,6 +600,8 @@ MUX_ENUM_CTRL_DECL(t210_mixer17_tx, 0x26);
+ MUX_ENUM_CTRL_DECL(t210_mixer18_tx, 0x27);
+ MUX_ENUM_CTRL_DECL(t210_mixer19_tx, 0x28);
+ MUX_ENUM_CTRL_DECL(t210_mixer110_tx, 0x29);
++MUX_ENUM_CTRL_DECL(t210_ope1_tx, 0x40);
++MUX_ENUM_CTRL_DECL(t210_ope2_tx, 0x41);
+ 
+ /* Controls for t186 */
+ MUX_ENUM_CTRL_DECL_186(t186_admaif1_tx, 0x00);
+@@ -657,6 +675,7 @@ MUX_ENUM_CTRL_DECL_186(t186_asrc14_tx, 0x6f);
+ MUX_ENUM_CTRL_DECL_186(t186_asrc15_tx, 0x70);
+ MUX_ENUM_CTRL_DECL_186(t186_asrc16_tx, 0x71);
+ MUX_ENUM_CTRL_DECL_186(t186_asrc17_tx, 0x72);
++MUX_ENUM_CTRL_DECL_186(t186_ope1_tx, 0x40);
+ 
+ /* Controls for t234 */
+ MUX_ENUM_CTRL_DECL_234(t234_mvc1_tx, 0x44);
+@@ -753,6 +772,8 @@ static const struct snd_soc_dapm_widget tegra210_ahub_widgets[] = {
+ 	TX_WIDGETS("MIXER1 TX3"),
+ 	TX_WIDGETS("MIXER1 TX4"),
+ 	TX_WIDGETS("MIXER1 TX5"),
++	WIDGETS("OPE1", t210_ope1_tx),
++	WIDGETS("OPE2", t210_ope2_tx),
+ };
+ 
+ static const struct snd_soc_dapm_widget tegra186_ahub_widgets[] = {
+@@ -862,6 +883,7 @@ static const struct snd_soc_dapm_widget tegra186_ahub_widgets[] = {
+ 	TX_WIDGETS("ASRC1 TX4"),
+ 	TX_WIDGETS("ASRC1 TX5"),
+ 	TX_WIDGETS("ASRC1 TX6"),
++	WIDGETS("OPE1", t186_ope1_tx),
+ };
+ 
+ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+@@ -971,6 +993,7 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	TX_WIDGETS("ASRC1 TX4"),
+ 	TX_WIDGETS("ASRC1 TX5"),
+ 	TX_WIDGETS("ASRC1 TX6"),
++	WIDGETS("OPE1", t186_ope1_tx),
+ };
+ 
+ #define TEGRA_COMMON_MUX_ROUTES(name)					\
+@@ -1013,7 +1036,11 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	{ name " Mux",		"MIXER1 TX2",	"MIXER1 TX2 XBAR-RX" },	\
+ 	{ name " Mux",		"MIXER1 TX3",	"MIXER1 TX3 XBAR-RX" },	\
+ 	{ name " Mux",		"MIXER1 TX4",	"MIXER1 TX4 XBAR-RX" },	\
+-	{ name " Mux",		"MIXER1 TX5",	"MIXER1 TX5 XBAR-RX" },
++	{ name " Mux",		"MIXER1 TX5",	"MIXER1 TX5 XBAR-RX" }, \
++	{ name " Mux",		"OPE1",		"OPE1 XBAR-RX" },
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
-new file mode 100644
-index 00000000..199712ed
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra210-mbdrc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Tegra210 MBDRC Device Tree Bindings
-+
-+description: |
-+  The Multi Band Dynamic Range Compressor (MBDRC) is part of Output
-+  Processing Engine (OPE) which interfaces with Audio Hub (AHUB) via
-+  Audio Client Interface (ACIF). MBDRC can be used as a traditional
-+  single full band or a dual band or a multi band dynamic processor.
-+
-+maintainers:
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Mohan Kumar <mkumard@nvidia.com>
-+  - Sameer Pujar <spujar@nvidia.com>
-+
-+properties:
-+  $nodename:
-+    pattern: "^mbdrc@[0-9a-f]*$"
-+
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra210-mbdrc
-+      - items:
-+          - enum:
-+              - nvidia,tegra234-mbdrc
-+              - nvidia,tegra194-mbdrc
-+              - nvidia,tegra186-mbdrc
-+          - const: nvidia,tegra210-mbdrc
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+
-+    mbdrc@702d8200 {
-+        compatible = "nvidia,tegra210-mbdrc";
-+        reg = <0x702d8200 0x200>;
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
-new file mode 100644
-index 00000000..92488fd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
-@@ -0,0 +1,91 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra210-ope.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Tegra210 OPE Device Tree Bindings
-+
-+description: |
-+  The Output Processing Engine (OPE) is one of the AHUB client. It has
-+  PEQ (Parametric Equalizer) and MBDRC (Multi Band Dynamic Range Compressor)
-+  sub blocks for data processing.
-+
-+maintainers:
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Mohan Kumar <mkumard@nvidia.com>
-+  - Sameer Pujar <spujar@nvidia.com>
-+
-+allOf:
-+  - $ref: name-prefix.yaml#
-+
-+properties:
-+  $nodename:
-+    pattern: "^ope@[0-9a-f]*$"
-+
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra210-ope
-+      - items:
-+          - enum:
-+              - nvidia,tegra234-ope
-+              - nvidia,tegra194-ope
-+              - nvidia,tegra186-ope
-+          - const: nvidia,tegra210-ope
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 1
-+
-+  ranges: true
-+
-+  sound-name-prefix:
-+    pattern: "^OPE[1-9]$"
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+    properties:
-+      port@0:
-+        $ref: audio-graph-port.yaml#
-+        unevaluatedProperties: false
-+        description: |
-+          OPE ACIF (Audio Client Interface) input port. This is connected
-+          to corresponding ACIF output port on AHUB (Audio Hub).
-+
-+      port@1:
-+        $ref: audio-graph-port.yaml#
-+        unevaluatedProperties: false
-+        description: |
-+          OPE ACIF output port. This is connected to corresponding ACIF
-+          input port on AHUB.
-+
-+patternProperties:
-+  '^peq@[0-9a-f]+$':
-+    type: object
-+    $ref: nvidia,tegra210-peq.yaml#
-+
-+  '^mbdrc@[0-9a-f]+$':
-+    type: object
-+    $ref: nvidia,tegra210-mbdrc.yaml#
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+
-+    ope@702d8000 {
-+        compatible = "nvidia,tegra210-ope";
-+        reg = <0x702d8000 0x100>;
-+        sound-name-prefix = "OPE1";
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
-new file mode 100644
-index 00000000..0f78746
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
-@@ -0,0 +1,52 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra210-peq.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Tegra210 PEQ Device Tree Bindings
-+
-+description: |
-+  The Parametric Equalizer (PEQ) is a cascade of biquad filters with
-+  each filter tuned based on certain parameters. It can be used to
-+  equalize the irregularities in the speaker frequency response.
-+  PEQ sits inside Output Processing Engine (OPE) which interfaces
-+  with Audio Hub (AHUB) via Audio Client Interface (ACIF).
-+
-+maintainers:
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Mohan Kumar <mkumard@nvidia.com>
-+  - Sameer Pujar <spujar@nvidia.com>
-+
-+properties:
-+  $nodename:
-+    pattern: "^peq@[0-9a-f]*$"
-+
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra210-peq
-+      - items:
-+          - enum:
-+              - nvidia,tegra234-peq
-+              - nvidia,tegra194-peq
-+              - nvidia,tegra186-peq
-+          - const: nvidia,tegra210-peq
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+
-+    peq@702d8100 {
-+        compatible = "nvidia,tegra210-peq";
-+        reg = <0x702d8100 0x100>;
-+    };
-+
-+...
++#define TEGRA210_ONLY_MUX_ROUTES(name)					\
++	{ name " Mux",          "OPE2",         "OPE2 XBAR-RX" },
+ 
+ #define TEGRA186_ONLY_MUX_ROUTES(name)					\
+ 	{ name " Mux",		"ADMAIF11",	"ADMAIF11 XBAR-RX" },	\
+@@ -1045,10 +1072,11 @@ static const struct snd_soc_dapm_widget tegra234_ahub_widgets[] = {
+ 	{ name " Mux",		"ASRC1 TX5",	"ASRC1 TX5 XBAR-RX" },	\
+ 	{ name " Mux",		"ASRC1 TX6",	"ASRC1 TX6 XBAR-RX" },
+ 
+-#define TEGRA210_MUX_ROUTES(name)						\
+-	TEGRA_COMMON_MUX_ROUTES(name)
++#define TEGRA210_MUX_ROUTES(name)					\
++	TEGRA_COMMON_MUX_ROUTES(name)					\
++	TEGRA210_ONLY_MUX_ROUTES(name)
+ 
+-#define TEGRA186_MUX_ROUTES(name)						\
++#define TEGRA186_MUX_ROUTES(name)					\
+ 	TEGRA_COMMON_MUX_ROUTES(name)					\
+ 	TEGRA186_ONLY_MUX_ROUTES(name)
+ 
+@@ -1111,6 +1139,8 @@ static const struct snd_soc_dapm_route tegra210_ahub_routes[] = {
+ 	TEGRA210_MUX_ROUTES("MIXER1 RX8")
+ 	TEGRA210_MUX_ROUTES("MIXER1 RX9")
+ 	TEGRA210_MUX_ROUTES("MIXER1 RX10")
++	TEGRA210_MUX_ROUTES("OPE1")
++	TEGRA210_MUX_ROUTES("OPE2")
+ };
+ 
+ static const struct snd_soc_dapm_route tegra186_ahub_routes[] = {
+@@ -1205,6 +1235,7 @@ static const struct snd_soc_dapm_route tegra186_ahub_routes[] = {
+ 	TEGRA186_MUX_ROUTES("ASRC1 RX5")
+ 	TEGRA186_MUX_ROUTES("ASRC1 RX6")
+ 	TEGRA186_MUX_ROUTES("ASRC1 RX7")
++	TEGRA186_MUX_ROUTES("OPE1")
+ };
+ 
+ static const struct snd_soc_component_driver tegra210_ahub_component = {
 -- 
 2.7.4
 
