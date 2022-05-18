@@ -2,228 +2,157 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A2FC433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 May 2022 15:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C910DC433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 May 2022 17:38:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbiERP3a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 May 2022 11:29:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33240 "EHLO
+        id S241021AbiERRiQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 May 2022 13:38:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239283AbiERP32 (ORCPT
+        with ESMTP id S241013AbiERRiP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 May 2022 11:29:28 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C481BE972;
-        Wed, 18 May 2022 08:29:26 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id h14so3229630wrc.6;
-        Wed, 18 May 2022 08:29:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=L9LLbTJecM2+Gol/XKLTvu9gjYd8YO6104B2zHq2tR8=;
-        b=ltUs138Bdx3d66Ugiw+/V53Zi29vH+2z11EU5nuF+tYbIPOm04PRN3WFguQYw4YjwQ
-         Azn4YmzIS32VsEs7zLtmsxKfapNIm3f0o/Ga6GQtu8rl1NOsXzt41knSkK/jiY/NdYpB
-         CTYUGFUssWTTxD2jSU0ag+CwgCXpvAJ4mnDsgL6RYRHk1ilsfYkTktS4WvibXK71Xl9N
-         P/5pVAjE5k/d4VxFwAnZUokWb4fREaoNQ1qxbOE401peIDrqvDHVsXSlLFdxKCTYX9Sh
-         WzofBGEuSGp1l8AMWhqRLm8EaFMYHgFFdXSuQRq98rYTEXDrdclIsyBq7lxw1LWSnGaE
-         lpfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L9LLbTJecM2+Gol/XKLTvu9gjYd8YO6104B2zHq2tR8=;
-        b=l6Dkbt/kjuCr6VRWVLKQJpf+ljmFMx3euv0A22OUiuHT9pI+ICFb+iF4bwLNOltMbK
-         V72xVjulr6A4RFylrnUjA3rFmGpnrqfgTFFDG8DRj9jUtnL8zAmYX6DfNZe/6M0prLmN
-         lQqaJvu911LUf1eMLtaZ21EVKshe+BIHq13Ai2AY7BBSc81Ol0onFZZfyLMw5JKUFIeh
-         lbXxLcKtj1NjJqjZN/zFRQ9zHgHvY52Toc4IsRM6HRajB+Vjmrjy98j1MBQtLi2LKLYf
-         eQyoNVelKXL4g1jzc9ksTonWuv1MqPxmCW+FMumWHNmGBCcRidhYAI91x9LpbFCo0YGD
-         e5bQ==
-X-Gm-Message-State: AOAM533t9P9MY8nLaKFc1HOZmpnViPiIctrRPh9/ZxQTHsa1I4gs7QPC
-        gwc6lzrkzJaaMA7Ua6HozNM=
-X-Google-Smtp-Source: ABdhPJyNBVv6hgk0mSbEMs8PC438YDcloF/c3bcW5X/NP/lgqjAY83XT59kEsZDMtpdWf3kBkE58lg==
-X-Received: by 2002:adf:f90d:0:b0:20c:de32:4d35 with SMTP id b13-20020adff90d000000b0020cde324d35mr179613wrr.583.1652887764738;
-        Wed, 18 May 2022 08:29:24 -0700 (PDT)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id l16-20020a05600c1d1000b0039444973258sm6173377wms.0.2022.05.18.08.29.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 08:29:23 -0700 (PDT)
-Date:   Wed, 18 May 2022 17:29:20 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Janne Grunau <j@jannau.net>
-Cc:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Sameer Pujar <spujar@nvidia.com>, devicetree@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        asahi@lists.linux.dev
-Subject: Re: [PATCH v5 0/5] iommu: Support mappings/reservations in
- reserved-memory regions
-Message-ID: <YoUQ0HlhwGiFPUrz@orome>
-References: <20220512190052.1152377-1-thierry.reding@gmail.com>
- <20220515103544.GC26732@jannau.net>
+        Wed, 18 May 2022 13:38:15 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2052.outbound.protection.outlook.com [40.107.237.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2DC91F0DCF;
+        Wed, 18 May 2022 10:38:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EV3o6abbYWD7CwcPoOdyiItBpxRhQ2ButSo9TJ95Ug1gHEzPR8K2Yu3p9xyjMfu/M9qiolGXYec0eT4c/6RduUkJV/CFDB/mtFHy+DIYvP9xM7W+DBDHW5c6w1R21h/A811/XYOPkh7Si7HTCSk1DaY0fWjwN3pH/ETwHcMVZleBJ+7IdzKThJjcYlW64mlCdhBRqUI9OrNVGQFsHOOOo7t9nxcoV7yKxLixOJo3onQZS9xfYKNcjiOfAO75CsfskTL7QCSWChqtq8Zt6MTQfH2AKNbWrOrIFLTcarY8/wZ0H9TmDgVESKXNxVKDeRd05qRqkaZF5IJwTY046Q4QQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e1A2hNy9E98SvlA6Wzsr37Lzh6ZVajuFic7X+cU6E4M=;
+ b=Wmt06Iqx+WEIB3jhh0WwWx5I/m9w9Acv+XS+0J7Lulw2ij5Lq1RF8CpP3PrC753xo5M4hPFUawnY6S/dM8L8+s+b08DFq0AzJEImz1aUsKV792hIrnKk1pdFdsd9NdRKf0ODAjARAgtQkCOYgLhB9FhT6lSY4FTSaN16YuHk/sfUZ6pTnNIv62v7QB8s6nroyNE62PU4rvvzv/UJD0fM+WILbY/rOQ1GqKSpurHxlVe/9Di7Ux2ITEE9NmTvKh5ptR8Kbeo5EJrHCT4WI5Nxha33klq8DCM6QYzpEuCO3NCu5sYGni4J/6amz0p72X2kTsQ2HRUVpE4S0WgQBF867w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e1A2hNy9E98SvlA6Wzsr37Lzh6ZVajuFic7X+cU6E4M=;
+ b=I8eQ9w9X3Hs5Z+J3JP384sZ6+gnqmUJCuHVS5FPMxWR3DILaELk+JW9K/n7lpUQgSs98eo+dILI4WT1wAYEv9WjfDXo4pPL3mS9lfEI+02Y4vuJaaUasM5LP9UTwHbwNPaFwx25p9RMd/rOLoqpW+Sm578BfC079cugRfjzT473hzgEL1ZNS7hqwnNDRBpO4rKGh2c8zObgkS3+B0VH+CSrrAWUy7E1ecOS/DFAFL8oIpAhm9s7BnNXLgi9ee2Uquri9+pX+Ut10KE+z5wWRRsyONx6f1kT7HIoKw2ScqBKN4G6BoxkzMTaNEzGMqP/vBzcj4FY3N7uwk2OLUm3XFA==
+Received: from DM6PR03CA0025.namprd03.prod.outlook.com (2603:10b6:5:40::38) by
+ BYAPR12MB3462.namprd12.prod.outlook.com (2603:10b6:a03:ad::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5273.14; Wed, 18 May 2022 17:38:11 +0000
+Received: from DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:40:cafe::d2) by DM6PR03CA0025.outlook.office365.com
+ (2603:10b6:5:40::38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.15 via Frontend
+ Transport; Wed, 18 May 2022 17:38:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ DM6NAM11FT041.mail.protection.outlook.com (10.13.172.98) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5273.14 via Frontend Transport; Wed, 18 May 2022 17:38:11 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 18 May
+ 2022 17:38:10 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 18 May
+ 2022 10:38:09 -0700
+Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server id 15.2.986.22 via Frontend Transport; Wed, 18 May
+ 2022 10:38:06 -0700
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <thierry.reding@gmail.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH 0/6] OPE support on Tegra210 and later
+Date:   Wed, 18 May 2022 23:06:06 +0530
+Message-ID: <1652895372-29885-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JWsdxCgDOF9zoQXr"
-Content-Disposition: inline
-In-Reply-To: <20220515103544.GC26732@jannau.net>
-User-Agent: Mutt/2.2.4 (c3baa83e) (2022-04-30)
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a37d564a-5be1-4908-5258-08da38f52dd5
+X-MS-TrafficTypeDiagnostic: BYAPR12MB3462:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR12MB3462C1A7866BC9FAEB906FD0A7D19@BYAPR12MB3462.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tSJ7mkmed8ReRJoJBCvWn0HrNBdujDvffrLNKpFId4DdrT8mkLDrF+xUeL0/Y8MuDKzeczHwANPPo/1I1hmw4LuGiGG6mO+AnlFCP870Wp9jqiWbTikaIeamWYkBWSSRsj3pKsLPf6INeUnj1O4zuk5gNtfbcKQQF3KoUxOEEbWwybxVda/FbTdZ7qfJohRjGix+JcYwNOwmoW4ToWzlZUfBAt44C9+0glaMsUp+yivKrXfAmQloqROe/tI3pqcdP4dHhVryh92lLne1u+m2UF23qSlcVUxOAhRJ5oo473TaNOIDCFo3Top0rfnZlNkN/Us2C7MLhA6Q7uYCIdyTWsnY2qU0gP1c/DRoMDJHqHRkIi8pahDd32U7cek6x91/KNRWGYB++D5rD4oSDRHz1aGr7l6ta65MS+SLKDG44rwFclqCfI0dsjdhbskO2n+OCmiU6/pTjOFf6cTerJBL8yTkRVJAv1cl6TkbPTx7Of7PM5dwtmREQnBBBzgrjT9YOK6tY12sM8ddGYbCbluIx2rtmBN3Q9aG+xWnvsfJUcA7dCNhFvTiz3M1LBV9S5GFdTX1kBqHsAkDw+tmAZDB4umFgPf0DfsPPoSz84+jS95WDXmX9viqTBEDOo0hAa2LX0rbxucbxoZC5f+pGa8qnOYvK7tTbLl86R6AussFdkkPZwUrAJtucFmwh0dqUBFbSX2DtlXXUZtHDQkoGnA9Jg==
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(82310400005)(7416002)(316002)(8676002)(70586007)(70206006)(4326008)(40460700003)(5660300002)(110136005)(54906003)(7696005)(508600001)(81166007)(2906002)(26005)(356005)(336012)(83380400001)(86362001)(36756003)(186003)(426003)(47076005)(8936002)(36860700001)(107886003)(2616005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2022 17:38:11.1725
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a37d564a-5be1-4908-5258-08da38f52dd5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3462
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This series adds support for Output Prcoessing Module (OPE) module on
+Tegra210 and later generations of SoCs. OPE is a client of AHUB and it
+has sub blocks of PEQ (Parametric Equalizer) and MBDRC (Multi Band
+Dynamic Range Compressor) for data processing.
 
---JWsdxCgDOF9zoQXr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+An ASoC component is registered for OPE, which includes PEQ and MBDRC
+functions as well. This can be plugged in audio path using ALSA mixer
+controls. The series adds necessary binding documentaion, driver and
+DT binding patches to enable OPE module on Jetson platforms.
 
-On Sun, May 15, 2022 at 12:35:44PM +0200, Janne Grunau wrote:
-> Hej,
->=20
-> I'm working on the display controller for Apple silicon SoCs and will=20
-> add some comments with support for it in mind.
->=20
-> added asahi@lists.linux.dev to CC for the Apple silicon related aspects
->=20
-> On 2022-05-12 21:00:47 +0200, Thierry Reding wrote:
-> >=20
-> > this is another attempt at solving the problem of passing IOMMU
-> > configuration via device tree. It has significantly evolved since the
-> > last attempt, based on the discussion that followed. The discussion can
-> > be found here:
-> >=20
-> >   https://lore.kernel.org/all/20210423163234.3651547-1-thierry.reding@g=
-mail.com/
-> >=20
-> > Rather than using a memory-region specifier, this new version introduces
-> > a new "iommu-addresses" property for the reserved-memory regions
-> > themselves.
->=20
-> If experimented with both proposed bindings for dcp and I think this=20
-> binding is easer to understand and to work with.
->=20
-> > These are used to describe either a static mapping or
-> > reservation that should be created for a given device. If both "reg" and
-> > "iommu-addresses" properties are given, a mapping will be created
-> > (typically this would be an identity mapping)
->=20
-> dcp on Apple silicon will not use identity mappings. The IOMMU supports=
-=20
-> identity mapping but the pre-configured mappings setup by Apple's system=
-=20
-> firmware will not work with identity mapping. It maps multiple regions=20
-> which are incompatible with a linear identity mapping. In addition the=20
-> embbeded aarch64 micro controllers used in the display subsystem appears=
-=20
-> to use a heap mapped at low IOVA space starting at 0.
->=20
-> > whereas if only an "iommu-addresses" property is specified, a=20
-> > reservation for the specified range will be installed.
-> >=20
-> > An example is included in the DT bindings, but here is an extract of
-> > what I've used to test this:
-> >=20
-> > 	reserved-memory {
-> > 		#address-cells =3D <2>;
-> > 		#size-cells =3D <2>;
-> > 		ranges;
-> >=20
-> > 		/*
-> > 		 * Creates an identity mapping for the framebuffer that
-> > 		 * the firmware has setup to scan out a bootsplash from.
-> > 		 */
-> > 		fb: framebuffer@92cb2000 {
-> > 			reg =3D <0x0 0x92cb2000 0x0 0x00800000>;
-> > 			iommu-addresses =3D <&dc0 0x0 0x92cb2000 0x0 0x00800000>;
-> > 		};
->=20
-> The binding supports mapping the same region to multiple devices. The=20
-> code supports that and it will be used on Apple silicon. Not necessary=20
-> to extend and complicate the example for I wanted to mention it=20
-> explicitly.
->=20
-> >=20
-> > 		/*
-> > 		 * Creates a reservation in the IOVA space to prevent
-> > 		 * any buffers from being mapped to that region. Note
-> > 		 * that on Tegra the range is actually quite different
-> > 		 * from this, but it would conflict with the display
-> > 		 * driver that I tested this against, so this is just
-> > 		 * a dummy region for testing.
-> > 		 */
-> > 		adsp: reservation-adsp {
-> > 			iommu-addresses =3D <&dc0 0x0 0x90000000 0x0 0x00010000>;
-> > 		};
-> > 	};
-> >=20
-> > 	host1x@50000000 {
-> > 		dc@54200000 {
-> > 			memory-region =3D <&fb>, <&adsp>;
-> > 		};
-> > 	};
-> >=20
-> > This is abbreviated a little to focus on the essentials. Note also that
-> > the ADSP reservation is not actually used on this device and the driver
-> > for this doesn't exist yet, but I wanted to include this variant for
-> > testing, because we'll want to use these bindings for the reservation
-> > use-case as well at some point.
-> >=20
-> > Adding Alyssa and Janne who have in the past tried to make these
-> > bindings work on Apple M1. Also adding Sameer from the Tegra audio team
-> > to look at the ADSP reservation and double-check that this is suitable
-> > for our needs.
->=20
-> The binding itself is sufficient for the needs of the display subsystem=
-=20
-> on Apple silicon. The device tree parsing code for reserved regions is=20
-> of limited use in it's current form. We will have either to extend or=20
-> duplicate it to retrieve the non-identity mappings. That's our problem=20
-> to solve.
+Sameer Pujar (6):
+  ASoC: tegra: Add binding doc for OPE module
+  ASoC: tegra: Add Tegra210 based OPE driver
+  ASoC: tegra: AHUB routes for OPE module
+  arm64: defconfig: Build Tegra OPE module
+  arm64: tegra: Add OPE device on Tegra210 and later
+  arm64: tegra: Enable OPE on various platforms
 
-I had looked at it a bit to see if I could easily implement that, but
-the direct mapping support in the IOMMU subsystem currently only
-supports either reservations or identity mappings, so arbitrary mappings
-would either have to be added to that code, or it would have to take a
-different code path that basically goes through the same steps, except
-that it uses different physical and I/O virtual addresses.
+ .../bindings/sound/nvidia,tegra210-ahub.yaml       |    4 +
+ .../bindings/sound/nvidia,tegra210-mbdrc.yaml      |   51 +
+ .../bindings/sound/nvidia,tegra210-ope.yaml        |   91 ++
+ .../bindings/sound/nvidia,tegra210-peq.yaml        |   52 +
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |   43 +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   23 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |   43 +
+ .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi |   43 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   23 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |   84 ++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |   84 ++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   40 +
+ .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts  |   43 +
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi           |   23 +
+ arch/arm64/configs/defconfig                       |    1 +
+ sound/soc/tegra/Kconfig                            |    9 +
+ sound/soc/tegra/Makefile                           |    2 +
+ sound/soc/tegra/tegra210_ahub.c                    |   39 +-
+ sound/soc/tegra/tegra210_mbdrc.c                   | 1012 ++++++++++++++++++++
+ sound/soc/tegra/tegra210_mbdrc.h                   |  215 +++++
+ sound/soc/tegra/tegra210_ope.c                     |  419 ++++++++
+ sound/soc/tegra/tegra210_ope.h                     |   90 ++
+ sound/soc/tegra/tegra210_peq.c                     |  434 +++++++++
+ sound/soc/tegra/tegra210_peq.h                     |   56 ++
+ 24 files changed, 2920 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
+ create mode 100644 sound/soc/tegra/tegra210_mbdrc.c
+ create mode 100644 sound/soc/tegra/tegra210_mbdrc.h
+ create mode 100644 sound/soc/tegra/tegra210_ope.c
+ create mode 100644 sound/soc/tegra/tegra210_ope.h
+ create mode 100644 sound/soc/tegra/tegra210_peq.c
+ create mode 100644 sound/soc/tegra/tegra210_peq.h
 
-The easiest, I think, would be for struct iommu_resv_region to be
-extended with a pair of start/length fields for the I/O virtual address
-and then the rest of the code should mostly work. This shouldn't even be
-very invasive, maybe just adding a version of iommu_alloc_resv_region()
-that takes the I/O virtual addresses as additional parameters.
+-- 
+2.7.4
 
-Come to think of it, the current code could probably be improved a bit
-by checking if the addresses in the reg and iommu-addresses properties
-match. Currently the code just ignores the reserved memory region's
-"reg" property, so one could technically set up a mapping that points to
-physical memory that the device doesn't "own".
-
-Thierry
-
---JWsdxCgDOF9zoQXr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmKFEM4ACgkQ3SOs138+
-s6FH5hAAltE4HtuVrS9ClCWOHTJmFHhrFtlbv9trGdfDlv3UdPT41oShZt9bt0gh
-0daHxlzSmUsMU0YTDmUx3CQQK7ec9z+DktHV9n9eU6HyehBWTjttJzJf1L4CaUTc
-MjNCm1R1O8ytiH3H5mcPIVpiw17X3cKYeuwS0TcUgEmEknPVAHViHFvW01toaZSN
-0L6PBANJsZjJ2sGFxNQs+Hj6xcwxdlq8Ub+AKxz0zcV/Z7IHclr/+yNNzUbQC67R
-gZMkGkWm665ucqA3sFXuDM+gaR7bfCsDYDpP/M62yM3MwKL/CR8ALk6t5/dFIsRj
-47hhFH0znXng1+KmSISQ1UWA2LUpJz4IwR+JCXob2z7cJOjzC8RY/8tSGfNsJRs6
-cgaBoa+i1ApCnkX6PvnDWcgGB/tG+GDQgI0O955XOGaskNjy5jNcJWk04++gAQbz
-ZrSMIxi2rBTQZLaxzc5s+MKInI2o0VTWQqkTw5ClW1uXNNqBpqV+D62uSc70GW1H
-jOrbZ3RkhmVRvXr5iWKMnne7XBGky7J4gc4UpA/7iUdi0qYRd4ju+8KpsRfeWhq6
-nP6vLONYS5IXgGxR3zvEhWqrtjQTWUrW8EUCbwylo2Lm0pmlCDAadoTWMHq/wry6
-2c/MYkpNS8jJNtJoLkIhr+rIloUpci6apBVn3HM+2vicQYVYnEc=
-=2ao1
------END PGP SIGNATURE-----
-
---JWsdxCgDOF9zoQXr--
