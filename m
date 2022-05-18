@@ -2,232 +2,214 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E81C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 May 2022 07:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D673C4167D
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 May 2022 07:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231949AbiERHQr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 May 2022 03:16:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58848 "EHLO
+        id S232231AbiERHeM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 May 2022 03:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232011AbiERHQn (ORCPT
+        with ESMTP id S232127AbiERHeH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 May 2022 03:16:43 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D688FD7A;
-        Wed, 18 May 2022 00:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652858199; x=1684394199;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0IL0WsCd3/HrKBEhnZxB/UtqoL3AiE13Ig/YdXaNECc=;
-  b=eFQDZfadVSk4x17IA06xFmftv8weyNNCUQ6ymjTKMoaZJ01iwuQC4uza
-   HUFQzDw0iyWjtVG16ndwvJCeSFgkoQ713Q0So0mJR+z8g0ZbkxTym63JI
-   e5EE9BKE2xypVWaI4fYTSMTQOXwCCxs4zpdfDEQXgeNqTBQMoklqFKSqM
-   PS+u1HlMSilA+adW6rjj23Q2Kop8Yl8O8wTkfABOi8S1GquOoLz72uSy6
-   mVIOK82OT72fArfdO4I6e7YvTOdUELDRalAVrGCH7Njwgrqw4gmN4m8Gj
-   HIhU9N/Sn4j1ptq0siWsldYUBoJQ2DM81/Wmsj/xpk1ok2uKprQFmMCI6
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10350"; a="357931708"
-X-IronPort-AV: E=Sophos;i="5.91,234,1647327600"; 
-   d="scan'208";a="357931708"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2022 00:16:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,234,1647327600"; 
-   d="scan'208";a="898089195"
-Received: from lkp-server02.sh.intel.com (HELO 242b25809ac7) ([10.239.97.151])
-  by fmsmga005.fm.intel.com with ESMTP; 18 May 2022 00:16:22 -0700
-Received: from kbuild by 242b25809ac7 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nrDuw-0001v6-6S;
-        Wed, 18 May 2022 07:16:22 +0000
-Date:   Wed, 18 May 2022 15:16:15 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, robin.murphy@arm.com,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sudeep.holla@arm.com,
-        thanu.rangarajan@arm.com, Michael.Williams@arm.com,
-        suzuki.poulose@arm.com, treding@nvidia.com, jonathanh@nvidia.com,
-        vsethi@nvidia.com, Besar Wicaksono <bwicaksono@nvidia.com>
-Subject: Re: [PATCH v2 1/2] perf: coresight_pmu: Add support for ARM
- CoreSight PMU driver
-Message-ID: <202205181534.wuyBFt9d-lkp@intel.com>
-References: <20220515163044.50055-2-bwicaksono@nvidia.com>
+        Wed, 18 May 2022 03:34:07 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D294CC5E55;
+        Wed, 18 May 2022 00:34:04 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 8990E1F9A4;
+        Wed, 18 May 2022 07:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1652859243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YR5rOhmSURb4d/IKXy5VZg8z1ImD01Us4xBpVFtyoqU=;
+        b=apiSUoAwUbqeAccPNQ19K+RPeAfjpiC+Kw09kP9gYD08Bjqn9sy6l8W4iwyq6IQeI6Aplp
+        +YIfJeRJqbcdQptzveOcUb8Q0R7nuJcbMiyUrGxQWxZdDf/W1Ubmr612J8Zmj7lPwrkx5l
+        wG1cTFsW35nAwzkY9hs+1GgrMVmINpw=
+Received: from suse.cz (unknown [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id AA6042C142;
+        Wed, 18 May 2022 07:33:59 +0000 (UTC)
+Date:   Wed, 18 May 2022 09:33:57 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     Evan Green <evgreen@chromium.org>, David Gow <davidgow@google.com>,
+        Julius Werner <jwerner@chromium.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sebastian Reichel <sre@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
+        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de,
+        Kees Cook <keescook@chromium.org>, luto@kernel.org,
+        mhiramat@kernel.org, mingo@redhat.com, paulmck@kernel.org,
+        peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, Alan Stern <stern@rowland.harvard.edu>,
+        Thomas Gleixner <tglx@linutronix.de>, vgoyal@redhat.com,
+        vkuznets@redhat.com, Will Deacon <will@kernel.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dexuan Cui <decui@microsoft.com>,
+        Doug Berger <opendmb@gmail.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Wang ShaoBo <bobo.shaobowang@huawei.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        zhenwei pi <pizhenwei@bytedance.com>,
+        Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH 19/30] panic: Add the panic hypervisor notifier list
+Message-ID: <YoShZVYNAdvvjb7z@alley>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-20-gpiccoli@igalia.com>
+ <YoJZVZl/MH0KiE/J@alley>
+ <ad082ce7-db50-13bb-3dbb-9b595dfa78be@igalia.com>
+ <CAE=gft7ds+dHfEkRz8rnSH1EbTpGTpKbi5Wxj9DW0Jr5mX_j4w@mail.gmail.com>
+ <YoOi9PFK/JnNwH+D@alley>
+ <b9ec2fc8-216f-f261-8417-77b6dd95e25c@igalia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220515163044.50055-2-bwicaksono@nvidia.com>
+In-Reply-To: <b9ec2fc8-216f-f261-8417-77b6dd95e25c@igalia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Besar,
+On Tue 2022-05-17 13:37:58, Guilherme G. Piccoli wrote:
+> On 17/05/2022 10:28, Petr Mladek wrote:
+> > [...]
+> >>> Disagree here. I'm looping Google maintainers, so they can comment.
+> >>> (CCed Evan, David, Julius)
+> >>>
+> >>> This notifier is clearly a hypervisor notification mechanism. I've fixed
+> >>> a locking stuff there (in previous patch), I feel it's low-risk but even
+> >>> if it's mid-risk, the class of such callback remains a perfect fit with
+> >>> the hypervisor list IMHO.
+> >>
+> >> This logs a panic to our "eventlog", a tiny logging area in SPI flash
+> >> for critical and power-related events. In some cases this ends up
+ > >> being the only clue we get in a Chromebook feedback report that a
+> >> panic occurred, so from my perspective moving it to the front of the
+> >> line seems like a good idea.
+> > 
+> > IMHO, this would really better fit into the pre-reboot notifier list:
+> > 
+> >    + the callback stores the log so it is similar to kmsg_dump()
+> >      or console_flush_on_panic()
+> > 
+> >    + the callback should be proceed after "info" notifiers
+> >      that might add some other useful information.
+> > 
+> > Honestly, I am not sure what exactly hypervisor callbacks do. But I
+> > think that they do not try to extract the kernel log because they
+> > would need to handle the internal format.
+> > 
+> 
+> I guess the main point in your response is : "I am not sure what exactly
+> hypervisor callbacks do". We need to be sure about the semantics of such
+> list, and agree on that.
+> 
+> So, my opinion about this first list, that we call "hypervisor list",
+> is: it contains callbacks that
+> 
+> (1) should run early, preferably before kdump (or even if kdump isn't
+> set, should run ASAP);
+> 
+> (2) these callbacks perform some communication with an abstraction that
+> runs "below" the kernel, like a firmware or hypervisor. Classic example:
+> pvpanic, that communicates with VMM (usually qemu) and allow such VMM to
+> snapshot the full guest memory, for example.
+> 
+> (3) Should be low-risk. What defines risk is the level of reliability of
+> subsequent operations - if the callback have 50% of chance of "bricking"
+> the system totally and prevent kdump / kmsg_dump() / reboot , this is
+> high risk one for example.
+> 
+> Some good fits IMO: pvpanic, sstate_panic_event() [sparc], fadump in
+> powerpc, etc.
+> 
+> So, this is a good case for the Google notifier as well - it's not
+> collecting data like the dmesg (hence your second bullet seems to not
+> apply here, info notifiers won't add info to be collected by gsmi). It
+> is a firmware/hypervisor/whatever-gsmi-is notification mechanism, that
+> tells such "lower" abstraction a panic occurred. It seems low risk and
+> we want it to run ASAP, if possible.
 
-Thank you for the patch! Perhaps something to improve:
+" 
+> >> This logs a panic to our "eventlog", a tiny logging area in SPI flash
+> >> for critical and power-related events. In some cases this ends up
 
-[auto build test WARNING on arm64/for-next/core]
-[also build test WARNING on soc/for-next linus/master v5.18-rc7 next-20220517]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+I see. I somehow assumed that it was about the kernel log because
+Evans wrote:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Besar-Wicaksono/perf-coresight_pmu-Add-support-for-ARM-CoreSight-PMU-driver/20220516-013131
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
-config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20220518/202205181534.wuyBFt9d-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 853fa8ee225edf2d0de94b0dcbd31bea916e825e)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/79f30980a7a91e6bbe7430206e4e46fa8134cfa9
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Besar-Wicaksono/perf-coresight_pmu-Add-support-for-ARM-CoreSight-PMU-driver/20220516-013131
-        git checkout 79f30980a7a91e6bbe7430206e4e46fa8134cfa9
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/media/platform/qcom/venus/ drivers/perf/coresight_pmu/ drivers/rtc/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:165:49: error: incomplete definition of type 'struct acpi_apmt_node'
-           return CHECK_APMT_FLAG(coresight_pmu->apmt_node->flags, ATOMIC, SUPP);
-                                  ~~~~~~~~~~~~~~~~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:129:4: note: expanded from macro 'CHECK_APMT_FLAG'
-           ((flags & (ACPI_APMT_FLAGS_ ## f)) == (ACPI_APMT_FLAGS_ ## f ## _ ## v))
-             ^~~~~
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:165:9: error: use of undeclared identifier 'ACPI_APMT_FLAGS_ATOMIC'
-           return CHECK_APMT_FLAG(coresight_pmu->apmt_node->flags, ATOMIC, SUPP);
-                  ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:129:13: note: expanded from macro 'CHECK_APMT_FLAG'
-           ((flags & (ACPI_APMT_FLAGS_ ## f)) == (ACPI_APMT_FLAGS_ ## f ## _ ## v))
-                      ^
-   <scratch space>:61:1: note: expanded from here
-   ACPI_APMT_FLAGS_ATOMIC
-   ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:165:9: error: use of undeclared identifier 'ACPI_APMT_FLAGS_ATOMIC_SUPP'
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:129:41: note: expanded from macro 'CHECK_APMT_FLAG'
-           ((flags & (ACPI_APMT_FLAGS_ ## f)) == (ACPI_APMT_FLAGS_ ## f ## _ ## v))
-                                                  ^
-   <scratch space>:64:1: note: expanded from here
-   ACPI_APMT_FLAGS_ATOMIC_SUPP
-   ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:369:13: error: incomplete definition of type 'struct acpi_apmt_node'
-                   (apmt_node->impl_id) ? apmt_node->impl_id :
-                    ~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:369:35: error: incomplete definition of type 'struct acpi_apmt_node'
-                   (apmt_node->impl_id) ? apmt_node->impl_id :
-                                          ~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:894:58: error: incomplete definition of type 'struct acpi_apmt_node'
-                   devm_kasprintf(dev, GFP_KERNEL, PMUNAME "%u", apmt_node->id);
-                                                                 ~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:920:31: error: incomplete definition of type 'struct acpi_apmt_node'
-           if (CHECK_APMT_FLAG(apmt_node->flags, DUAL_PAGE, SUPP)) {
-                               ~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:129:4: note: expanded from macro 'CHECK_APMT_FLAG'
-           ((flags & (ACPI_APMT_FLAGS_ ## f)) == (ACPI_APMT_FLAGS_ ## f ## _ ## v))
-             ^~~~~
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:920:6: error: use of undeclared identifier 'ACPI_APMT_FLAGS_DUAL_PAGE'
-           if (CHECK_APMT_FLAG(apmt_node->flags, DUAL_PAGE, SUPP)) {
-               ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:129:13: note: expanded from macro 'CHECK_APMT_FLAG'
-           ((flags & (ACPI_APMT_FLAGS_ ## f)) == (ACPI_APMT_FLAGS_ ## f ## _ ## v))
-                      ^
-   <scratch space>:60:1: note: expanded from here
-   ACPI_APMT_FLAGS_DUAL_PAGE
-   ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:920:6: error: use of undeclared identifier 'ACPI_APMT_FLAGS_DUAL_PAGE_SUPP'
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:129:41: note: expanded from macro 'CHECK_APMT_FLAG'
-           ((flags & (ACPI_APMT_FLAGS_ ## f)) == (ACPI_APMT_FLAGS_ ## f ## _ ## v))
-                                                  ^
-   <scratch space>:63:1: note: expanded from here
-   ACPI_APMT_FLAGS_DUAL_PAGE_SUPP
-   ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:1028:15: error: incomplete definition of type 'struct acpi_apmt_node'
-           if (apmt_node->ovflw_irq == 0)
-               ~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
->> drivers/perf/coresight_pmu/arm_coresight_pmu.c:1053:6: warning: variable 'level' set but not used [-Wunused-but-set-variable]
-           int level = 0;
-               ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:1079:27: error: incomplete definition of type 'struct acpi_apmt_node'
-           affinity_flag = apmt_node->flags & ACPI_APMT_FLAGS_AFFINITY;
-                           ~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:1079:37: error: use of undeclared identifier 'ACPI_APMT_FLAGS_AFFINITY'
-           affinity_flag = apmt_node->flags & ACPI_APMT_FLAGS_AFFINITY;
-                                              ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:1081:23: error: use of undeclared identifier 'ACPI_APMT_FLAGS_AFFINITY_PROC'
-           if (affinity_flag == ACPI_APMT_FLAGS_AFFINITY_PROC) {
-                                ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:1083:17: error: incomplete definition of type 'struct acpi_apmt_node'
-                           if (apmt_node->proc_affinity ==
-                               ~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.c:1093:23: error: incomplete definition of type 'struct acpi_apmt_node'
-                                       cpu, apmt_node->proc_affinity))
-                                            ~~~~~~~~~^
-   drivers/perf/coresight_pmu/arm_coresight_pmu.h:116:9: note: forward declaration of 'struct acpi_apmt_node'
-           struct acpi_apmt_node *apmt_node;
-                  ^
-   1 warning and 15 errors generated.
+  "This logs a panic to our "eventlog", a tiny logging area in SPI flash
+   for critical and power-related events. In some cases this ends up"
 
 
-vim +/level +1053 drivers/perf/coresight_pmu/arm_coresight_pmu.c
+Anyway, I would distinguish it the following way.
 
-  1047	
-  1048	static inline int coresight_pmu_find_cpu_container(int cpu, u32 container_uid)
-  1049	{
-  1050		u32 acpi_uid;
-  1051		struct device *cpu_dev = get_cpu_device(cpu);
-  1052		struct acpi_device *acpi_dev = ACPI_COMPANION(cpu_dev);
-> 1053		int level = 0;
-  1054	
-  1055		if (!cpu_dev)
-  1056			return -ENODEV;
-  1057	
-  1058		while (acpi_dev) {
-  1059			if (!strcmp(acpi_device_hid(acpi_dev),
-  1060				    ACPI_PROCESSOR_CONTAINER_HID) &&
-  1061			    !kstrtouint(acpi_device_uid(acpi_dev), 0, &acpi_uid) &&
-  1062			    acpi_uid == container_uid)
-  1063				return 0;
-  1064	
-  1065			acpi_dev = acpi_dev->parent;
-  1066			level++;
-  1067		}
-  1068	
-  1069		return -ENODEV;
-  1070	}
-  1071	
+  + If the notifier is preserving kernel log then it should be ideally
+    treated as kmsg_dump().
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+  + It the notifier is saving another debugging data then it better
+    fits into the "hypervisor" notifier list.
+
+
+Regarding the reliability. From my POV, any panic notifier enabled
+in a generic kernel should be reliable with more than 99,9%.
+Otherwise, they should not be in the notifier list at all.
+
+An exception would be a platform-specific notifier that is
+called only on some specific platform and developers maintaining
+this platform agree on this.
+
+The value "99,9%" is arbitrary. I am not sure if it is realistic
+even in the other code, for example, console_flush_on_panic()
+or emergency_restart(). I just want to point out that the border
+should be rather high. Otherwise we would back in the situation
+where people would want to disable particular notifiers.
+
+Best Regards,
+Petr
