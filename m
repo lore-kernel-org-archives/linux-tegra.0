@@ -2,242 +2,278 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCD3C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 18:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF983C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 19:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235971AbiESSoD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 14:44:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52984 "EHLO
+        id S237545AbiESTV6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 15:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232411AbiESSoD (ORCPT
+        with ESMTP id S244392AbiESTVr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 May 2022 14:44:03 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81915C84B;
-        Thu, 19 May 2022 11:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652985841; x=1684521841;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=R6wPRFuxi1lyRSKNjtJtOfNrBIGNiVRk0AM8VBBZpvQ=;
-  b=L47uAz7Qb9QlpwvPMT1cts35oWm2oeyqhMjDtK1ijx1Q6d76e2L0p8Kh
-   0FnmrseTTG31lHvp1sS3VB+6OoUdsJru59PW6IXTnQhWadnvzNWUfLbVd
-   sUCfXFQ69xTWz1AOeIwef4JSZhtr4f2To3rot0bep8dqAVIOF8uAC5LqB
-   uZ3LwO9F7U36KLuMmmqGn3C6sV5RMD9ctm45Gap2uju005gMvhfb3t6qv
-   7g7Hz2NC3cLSB5I6wUkVD4bdrehdGl4OIoIN4EI74EoJsMHc21D7TF3cx
-   xC4Miai6fA7IFwSDKf1BjDGw1X9+mk/e66wvjBcD5H85zmsjSE/Pdyxkl
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10352"; a="272291433"
-X-IronPort-AV: E=Sophos;i="5.91,237,1647327600"; 
-   d="scan'208";a="272291433"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2022 11:44:01 -0700
-X-IronPort-AV: E=Sophos;i="5.91,237,1647327600"; 
-   d="scan'208";a="639936525"
-Received: from vrgokulr-mobl1.amr.corp.intel.com (HELO [10.251.4.170]) ([10.251.4.170])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2022 11:43:56 -0700
-Message-ID: <935f76f2-c4cf-d66f-e1e1-8acf5a643f92@linux.intel.com>
-Date:   Thu, 19 May 2022 13:43:55 -0500
+        Thu, 19 May 2022 15:21:47 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5506257B29
+        for <linux-tegra@vger.kernel.org>; Thu, 19 May 2022 12:21:38 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id t11-20020a17090a6a0b00b001df6f318a8bso9587098pjj.4
+        for <linux-tegra@vger.kernel.org>; Thu, 19 May 2022 12:21:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=message-id:date:mime-version:user-agent:subject:to:cc:references
+         :from:in-reply-to;
+        bh=hBN+L1ANhGrshLQUtGexPK6qNhZMpibfFai1iwtJr7I=;
+        b=ep4CkZ1x72DOXqgvfjQiiNedYTUZRBSmh1zEVFZ8WjK7uLdqzbbk9rPoKSAsQliFNb
+         zr7XhEMhp0pMDj+4Xw5RUxzLLR43pyPwmJ7+VjqqtqJprp5L53nxkd/vU1rx/ceLrQnB
+         P11wSxowmOALR2TTY12o/tGv79Lf5FU7OZaqg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :to:cc:references:from:in-reply-to;
+        bh=hBN+L1ANhGrshLQUtGexPK6qNhZMpibfFai1iwtJr7I=;
+        b=Azdiw4QaSAG/AvDPHUHsfgr9x61+Yk3ERBCiTr/O+5dLrmNFoqLQeXE+XOD4K+mL11
+         P32gJ7QpoR3u8Wo9nctiHuYUt7GKnVlkwJlH3Nz60M9+h8N0Dki/hWsorD3JdTIr341v
+         y/9kiPvbqT5t+R3W/2bLjjcUUGaYCkZRLqM9UTia+hSzDpDPk3U0rDhZ4YTZpQgMcz+b
+         WCf0iicJC9X1nARMs0Guzty62dB7FyDEVC3qFkp/sxPO0cW461bKhYhjNxMTUi+3QQeA
+         LVFkK5zUw6qJDW/N4hKWD9WQxzlNPidGAWion6GQLHRA95pPYCjk+1HJaqdIZx1ynIl2
+         FlgQ==
+X-Gm-Message-State: AOAM530m62iLLE/AUeZ/AcKLyrWu0pUhATxDt6EyGy06BWBvRjSTCq1h
+        v/zAS21Y9jU9SFO0mtymaVI+pQ==
+X-Google-Smtp-Source: ABdhPJy10NyoQgp6RBZKGliXG8eNodnAGbYEZ6SUYrfrdh7Px/LOSRK6yXAE0oXiUJBwAYB6KTRkcw==
+X-Received: by 2002:a17:902:8644:b0:153:9f01:2090 with SMTP id y4-20020a170902864400b001539f012090mr5952326plt.101.1652988097307;
+        Thu, 19 May 2022 12:21:37 -0700 (PDT)
+Received: from [10.136.13.180] ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id s13-20020a17090302cd00b0015e8d4eb244sm4097873plk.142.2022.05.19.12.20.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 May 2022 12:21:36 -0700 (PDT)
+Message-ID: <d1cc0bee-2a98-0c2e-8796-6fb7fae6b803@broadcom.com>
+Date:   Thu, 19 May 2022 12:20:54 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.5.0
-Subject: Re: [PATCH 00/56] Specify clock provider directly to CPU DAIs
-Content-Language: en-US
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org
-Cc:     lgirdwood@gmail.com, kuninori.morimoto.gx@renesas.com,
-        nicolas.ferre@microchip.com, nsaenz@kernel.org,
-        shawnguo@kernel.org, linux-imx@nxp.com, cezary.rojewski@intel.com,
-        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, daniel@zonque.org,
-        srinivas.kandagatla@linaro.org, linux-rockchip@lists.infradead.org,
-        krzk@kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        peter.ujfalusi@gmail.com, jarkko.nikula@bitmer.com,
-        heiko@sntech.de, jbrunet@baylibre.com, kernel@pengutronix.de,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com
-References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 19/30] panic: Add the panic hypervisor notifier list
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Desmond yan <desmond.yan@broadcom.com>
+Cc:     David Gow <davidgow@google.com>, Evan Green <evgreen@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
+        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
+        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dexuan Cui <decui@microsoft.com>,
+        Doug Berger <opendmb@gmail.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Wang ShaoBo <bobo.shaobowang@huawei.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        zhenwei pi <pizhenwei@bytedance.com>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-20-gpiccoli@igalia.com> <YoJZVZl/MH0KiE/J@alley>
+ <ad082ce7-db50-13bb-3dbb-9b595dfa78be@igalia.com> <YoOpyW1+q+Z5as78@alley>
+ <d72b9aab-675c-ac89-b73a-b1de4a0b722d@igalia.com>
+ <81878a67-21f1-fee8-1add-f381bc8b05df@broadcom.com>
+ <edbaa4fa-561c-6f5e-f2ab-43ae68acaede@igalia.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+In-Reply-To: <edbaa4fa-561c-6f5e-f2ab-43ae68acaede@igalia.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="000000000000623ef705df6248e3"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+--000000000000623ef705df6248e3
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-On 5/19/22 10:42, Charles Keepax wrote:
-> Currently the set_fmt callback always passes clock provider/consumer
-> with respect to the CODEC. This made sense when the framework was
-> directly broken down into platforms and CODECs. However, as things
-> are now broken down into components which can be connected as either
-> the CPU or CODEC side of a DAI link it simplifies things if each
-> side of the link is just told if it is provider or consumer of the
-> clocks. Making this change allows us to remove one of the last parts
-> of the ASoC core that needs to know if a driver is a CODEC driver,
-> where it flips the clock format specifier if a CODEC driver is used on
-> the CPU side of a DAI link, as well as just being conceptually more
-> consistent with componentisation.
-> 
-> The basic idea of this patch chain is to change the set_fmt callback
-> from specifying if the CODEC is provider/consumer into directly
-> specifying if the component is provider/consumer. To do this we add
-> some new defines, and then to preserve bisectability, the migration is
-> done by adding a new callback, converting over all existing CPU side
-> drivers, converting the core, and then finally reverting back to the
-> old callback.
-> 
-> Converting the platform drivers makes sense as the existing defines
-> are from the perspective of the CODEC and there are more CODEC drivers
-> than platform drivers.
-> 
-> Obviously a fair amount of this patch chain I was only able to build
-> test, so any testing that can be done would be greatly appreciated.
 
-All good for the SOF CI (small subset tested for Intel platforms).
+On 2022-05-19 05:19, Guilherme G. Piccoli wrote:
+> On 18/05/2022 19:17, Scott Branden wrote:
+>> Hi Guilherme,
+>>
+>> +Desmond
+>> [...]
+>>>>> I'm afraid it breaks kdump if this device is not reset beforehand - it's
+>>>>> a doorbell write, so not high risk I think...
+>>>>>
+>>>>> But in case the not-reset device can be probed normally in kdump kernel,
+>>>>> then I'm fine in moving this to the reboot list! I don't have the HW to
+>>>>> test myself.
+>>>>
+>>>> Good question. Well, it if has to be called before kdump then
+>>>> even "hypervisor" list is a wrong place because is not always
+>>>> called before kdump.
+>>> [...]
+>> We register to the panic notifier so that we can kill the VK card ASAP
+>> to stop DMAing things over to the host side.  If it is not notified then
+>> memory may not be frozen when kdump is occurring.
+>> Notifying the card on panic is also needed to allow for any type of
+>> reset to occur.
+>>
+>> So, the only thing preventing moving the notifier later is the chance
+>> that memory is modified while kdump is occurring.  Or, if DMA is
+>> disabled before kdump already then this wouldn't be an issue and the
+>> notification to the card (to allow for clean resets) can be done later.
+> 
+> Hi Scott / Desmond, thanks for the detailed answer! Is this adapter
+> designed to run in x86 only or you have other architectures' use cases?
+The adapter may be used in any PCIe design that supports DMA.
+So it may be possible to run in arm64 servers.
+> 
+> I'm not expert on that, but I guess whether DMA is "kept" or not depends
+> a bit if IOMMU is used. IIRC, there was a copy of the DMAR table in
+> kdump (at least for Intel IOMMU). Also, devices are not properly
+> quiesced on kdump IIUC, we don't call shutdown/reset handlers, they're
+> skip due to the crash nature - so there is a risk of devices doing bad
+> things in the new kernel.
+> 
+> With that said, and given this is a lightweight notifier that ideally
+> should run ASAP, I'd keep this one in the hypervisor list. We can
+> "adjust" the semantic of this list to include lightweight notifiers that
+> reset adapters.
+Sounds the best to keep system operating as tested today.
+> 
+> With that said, Petr has a point - not always such list is going to be
+> called before kdump. So, that makes me think in another idea: what if we
+> have another list, but not on panic path, but instead in the custom
+> crash_shutdown()? Drivers could add callbacks there that must execute
+> before kexec/kdump, no matter what.
+It may be beneficial for some other drivers but for our use we would 
+then need to register for the panic path and the crash_shutdown path. 
+We notify the VK card for 2 purposes: one to stop DMA so memory stop 
+changing during a kdump.  And also to get the card into a good state so 
+resets happen cleanly.
+> 
+> Let me know your thoughts Scott / Desmond / Petr and all interested parties.
+> Cheers,
+> 
+> 
+> Guilherme
 
-https://github.com/thesofproject/linux/pull/3660
+--000000000000623ef705df6248e3
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-> 
-> Thanks,
-> Charles
-> 
-> Charles Keepax (56):
->   ASoC: core: Add set_fmt_new callback that directly specifies provider
->   ASoC: amd: vangogh: Update to use set_fmt_new callback
->   ASoC: atmel: Update to use set_fmt_new callback
->   ASoC: au1x: Update to use set_fmt_new callback
->   ASoC: bcm: Update to use set_fmt_new callback
->   ASoC: ep93xx: Update to use set_fmt_new callback
->   ASoC: dwc: Update to use set_fmt_new callback
->   ASoC: fsl: Update to use set_fmt_new callback
->   ASoC: hisilicon: Update to use set_fmt_new callback
->   ASoC: img: Update to use set_fmt_new callback
->   ASoC: Intel: Update to use set_fmt_new callback
->   ASoC: js4740-i2s: Update to use set_fmt_new callback
->   ASoC: mediatek: Update to use set_fmt_new callback
->   ASoC: meson: Update to use set_fmt_new callback
->   ASoC: mxs-saif: Update to use set_fmt_new callback
->   ASoC: pxa: Update to use set_fmt_new callback
->   ASoC: qcom: Update to use set_fmt_new callback
->   ASoC: rockchip: Update to use set_fmt_new callback
->   ASoC: samsung: Update to use set_fmt_new callback
->   ASoC: sh: Update to use set_fmt_new callback
->   ASoC: stm: Update to use set_fmt_new callback
->   ASoC: sunxi: Update to use set_fmt_new callback
->   ASoC: tegra: Update to use set_fmt_new callback
->   ASoC: test-component: Update to use set_fmt_new callback
->   ASoC: ti: Update to use set_fmt_new callback
->   ASoC: ux500: Update to use set_fmt_new callback
->   ASoC: xtensa: Update to use set_fmt_new callback
->   ASoC: core: Always send the CPU DAI a direct clock specifier
->   ASoC: amd: vangogh: Rename set_fmt_new back to set_fmt
->   ASoC: atmel: Rename set_fmt_new back to set_fmt
->   ASoC: au1x: Rename set_fmt_new back to set_fmt
->   ASoC: bcm: Rename set_fmt_new back to set_fmt
->   ASoC: ep93xx: Rename set_fmt_new back to set_fmt
->   ASoC: dwc: Rename set_fmt_new back to set_fmt
->   ASoC: fsl: Rename set_fmt_new back to set_fmt
->   ASoC: hisilicon: Rename set_fmt_new back to set_fmt
->   ASoC: img: Rename set_fmt_new back to set_fmt
->   ASoC: Intel: Rename set_fmt_new back to set_fmt
->   ASoC: jz4740-i2s: Rename set_fmt_new back to set_fmt
->   ASoC: mediatek: Rename set_fmt_new back to set_fmt
->   ASoC: meson: Rename set_fmt_new back to set_fmt
->   ASoC: mxs-saif: Rename set_fmt_new back to set_fmt
->   ASoC: pxa: Rename set_fmt_new back to set_fmt
->   ASoC: qcom: Rename set_fmt_new back to set_fmt
->   ASoC: rockchip: Rename set_fmt_new back to set_fmt
->   ASoC: samsung: Rename set_fmt_new back to set_fmt
->   ASoC: sh: Rename set_fmt_new back to set_fmt
->   ASoC: stm: Rename set_fmt_new back to set_fmt
->   ASoC: sunxi: Rename set_fmt_new back to set_fmt
->   ASoC: tegra: Rename set_fmt_new back to set_fmt
->   ASoC: test-component: Rename set_fmt_new back to set_fmt
->   ASoC: ti: Rename set_fmt_new back to set_fmt
->   ASoC: ux500: Rename set_fmt_new back to set_fmt
->   ASoC: xtensa: Rename set_fmt_new back to set_fmt
->   ASoC: soc-dai: Remove set_fmt_new callback
->   ASoC: simple-card-utils: Move snd_soc_component_is_codec to be local
-> 
->  include/sound/soc-component.h                |  5 ---
->  include/sound/soc-dai.h                      |  6 ++++
->  sound/soc/amd/vangogh/acp5x-i2s.c            |  4 +--
->  sound/soc/atmel/atmel-i2s.c                  |  4 +--
->  sound/soc/atmel/atmel_ssc_dai.c              | 18 +++++-----
->  sound/soc/atmel/mchp-i2s-mcc.c               |  8 ++---
->  sound/soc/atmel/mchp-pdmc.c                  |  4 +--
->  sound/soc/au1x/i2sc.c                        |  2 +-
->  sound/soc/au1x/psc-i2s.c                     |  4 +--
->  sound/soc/bcm/bcm2835-i2s.c                  | 20 +++++------
->  sound/soc/bcm/cygnus-ssp.c                   |  4 +--
->  sound/soc/cirrus/ep93xx-i2s.c                |  4 +--
->  sound/soc/dwc/dwc-i2s.c                      |  8 ++---
->  sound/soc/fsl/fsl_audmix.c                   |  6 ++--
->  sound/soc/fsl/fsl_esai.c                     |  8 ++---
->  sound/soc/fsl/fsl_mqs.c                      |  2 +-
->  sound/soc/fsl/fsl_sai.c                      |  8 ++---
->  sound/soc/fsl/fsl_ssi.c                      | 22 ++++++------
->  sound/soc/fsl/imx-audmix.c                   |  4 +--
->  sound/soc/fsl/imx-card.c                     |  2 +-
->  sound/soc/generic/simple-card-utils.c        |  7 +++-
->  sound/soc/generic/test-component.c           | 18 +++++-----
->  sound/soc/hisilicon/hi6210-i2s.c             | 18 +++++-----
->  sound/soc/img/img-i2s-in.c                   |  4 +--
->  sound/soc/img/img-i2s-out.c                  |  6 ++--
->  sound/soc/intel/atom/sst-atom-controls.c     |  4 +--
->  sound/soc/intel/boards/bytcht_cx2072x.c      |  2 +-
->  sound/soc/intel/boards/bytcht_da7213.c       |  2 +-
->  sound/soc/intel/boards/bytcht_es8316.c       |  2 +-
->  sound/soc/intel/boards/bytcht_nocodec.c      |  2 +-
->  sound/soc/intel/boards/bytcr_rt5640.c        |  2 +-
->  sound/soc/intel/boards/bytcr_rt5651.c        |  2 +-
->  sound/soc/intel/boards/bytcr_wm5102.c        |  2 +-
->  sound/soc/intel/boards/cht_bsw_max98090_ti.c |  3 +-
->  sound/soc/intel/boards/cht_bsw_rt5645.c      |  6 ++--
->  sound/soc/intel/boards/cht_bsw_rt5672.c      |  2 +-
->  sound/soc/intel/keembay/kmb_platform.c       |  4 +--
->  sound/soc/jz4740/jz4740-i2s.c                | 10 +++---
->  sound/soc/mediatek/mt8195/mt8195-dai-etdm.c  |  6 ++--
->  sound/soc/mediatek/mt8195/mt8195-dai-pcm.c   |  6 ++--
->  sound/soc/meson/aiu-encoder-i2s.c            |  2 +-
->  sound/soc/meson/axg-tdm-interface.c          | 14 ++++----
->  sound/soc/mxs/mxs-saif.c                     |  4 +--
->  sound/soc/pxa/magician.c                     |  8 ++---
->  sound/soc/pxa/mmp-sspa.c                     |  6 ++--
->  sound/soc/pxa/pxa-ssp.c                      | 22 ++++++------
->  sound/soc/pxa/pxa2xx-i2s.c                   |  6 ++--
->  sound/soc/qcom/apq8016_sbc.c                 |  2 +-
->  sound/soc/qcom/qdsp6/audioreach.c            |  4 +--
->  sound/soc/qcom/qdsp6/q6afe.c                 |  6 ++--
->  sound/soc/qcom/sc7180.c                      |  2 +-
->  sound/soc/qcom/sdm845.c                      |  6 ++--
->  sound/soc/qcom/sm8250.c                      |  4 +--
->  sound/soc/rockchip/rockchip_i2s.c            |  6 ++--
->  sound/soc/rockchip/rockchip_i2s_tdm.c        |  6 ++--
->  sound/soc/samsung/i2s.c                      |  6 ++--
->  sound/soc/samsung/pcm.c                      |  4 +--
->  sound/soc/samsung/s3c-i2s-v2.c               |  6 ++--
->  sound/soc/samsung/s3c24xx-i2s.c              |  6 ++--
->  sound/soc/sh/fsi.c                           |  6 ++--
->  sound/soc/sh/rcar/core.c                     |  4 +--
->  sound/soc/sh/rz-ssi.c                        |  2 +-
->  sound/soc/sh/ssi.c                           | 10 +++---
->  sound/soc/soc-core.c                         | 14 ++------
->  sound/soc/soc-dai.c                          |  3 +-
->  sound/soc/stm/stm32_i2s.c                    |  8 ++---
->  sound/soc/stm/stm32_sai_sub.c                |  8 ++---
->  sound/soc/sunxi/sun4i-i2s.c                  | 18 +++++-----
->  sound/soc/sunxi/sun8i-codec.c                |  6 ++--
->  sound/soc/tegra/tegra20_i2s.c                |  6 ++--
->  sound/soc/tegra/tegra210_i2s.c               |  6 ++--
->  sound/soc/tegra/tegra30_i2s.c                |  6 ++--
->  sound/soc/ti/davinci-i2s.c                   | 32 ++++++++---------
->  sound/soc/ti/davinci-mcasp.c                 | 10 +++---
->  sound/soc/ti/omap-mcbsp.c                    | 12 +++----
->  sound/soc/ux500/ux500_msp_dai.c              | 36 ++++++++++----------
->  sound/soc/xtensa/xtfpga-i2s.c                |  4 +--
->  77 files changed, 279 insertions(+), 283 deletions(-)
-> 
+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
+cRe0CRXA7ypOJSgxO/nOOyQoaJxT7CGg1npOeSpPjEuc3fE4xum3l0nvU85hj6MlKZu43hokdBh0
+D0nLyyhEwlR3AC/msdff/UGbM/JR9vk812RP4m/aNWZFJwIDAQABo4IB2zCCAdcwDgYDVR0PAQH/
+BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9i
+YWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUF
+BzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
+MDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xv
+YmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRw
+Oi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAlBgNV
+HREEHjAcgRpzY290dC5icmFuZGVuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAf
+BgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUOhjEpl04Sz9dh5MI82E1
+V39lM/owDQYJKoZIhvcNAQELBQADggEBAA7Rlypx/esz/iq1yA4+KW7uwV/aBY344BWcXt6I+SNK
+VwFBgFWfLj5vaEud9TVv2fPSiaHJo0umemOJk+43QD+bsoqmgcFXd21PrOt7Jjs+jjVED9VC5kJq
+S4NNKUkS+BqijJwSegtVygrc/atrIlJbjI21q4qpemUo5fgwqCNm++BmBGTI8yA09vtGSNDRN42k
+lLX9hl3iEj5SBgkQqCbbnoE+ZjjKfqt7ED166WhgyQWNrl39yLcvLj+JRUB3RuvXKZjH0NQEEBII
+wZBDSkyneykLt3CBNIhSCTxKM6OWxVp936ALSa5K9FNy00TeWSpokR6NmzaW8VD/EjTgvqAxggJt
+MIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYD
+VQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgx9oXSJpKniO4dS
+Gk8wDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEILXYB80rvGoONbSrKccJNuW/yt4P
+RwosxTdX9/zqPyCuMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIy
+MDUxOTE5MjEzN1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+CWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFl
+AwQCATANBgkqhkiG9w0BAQEFAASCAQBsqFeeADkOUmIUQkOFTz4+tbTbcu1kJOu0o2LxolE41ACQ
+Jjl4mG3AxFObAA/vLQRFL2LzmM7+OQ1nUaL/1rIXCVF7a9/kONy4oIc1uslvIVE6XRS3TrWAZyJ1
+KXT1lLM7MUhCe5EkzcZxuapBiKdpmxfhxDzt27vOsC3LpZXW8YbnYGANBVAG0RYROLCIzpGsRUeh
+vHZtk9Zj5ppQPXoMCjx9Nah3XO3Uhnp0i0UbRd2dsZj60JkDxx2H+iX54btyjpq60IUp5n2ulZMN
+latE6tPUnpMceZbDhq45QMDYde9jGlCoU4/7lo4RwQhU+Kl7xsUECNDbTk4UszM1uyGJ
+--000000000000623ef705df6248e3--
