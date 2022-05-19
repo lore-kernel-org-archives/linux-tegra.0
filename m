@@ -2,104 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13660C43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 10:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6546C4167B
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 10:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235775AbiESKIE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 06:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36972 "EHLO
+        id S237077AbiESK5m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 06:57:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232667AbiESKID (ORCPT
+        with ESMTP id S236134AbiESK5k (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 May 2022 06:08:03 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D36DA7740;
-        Thu, 19 May 2022 03:08:02 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id f9so9039622ejc.0;
-        Thu, 19 May 2022 03:08:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EZvPkAeujwgNKCH5EMvSfalxGi18lEkG+bj2iAM0yAs=;
-        b=jLOnF0e7IvKq0dViMCad++sS/fMzl1uvK8JrCKAnJ8R/TGlg3fdAeTxdFfmrkYDg7I
-         KZ/MY7YpSK86SmKcjAJ8Hepr8OoTq3DoJ1tlflZmNQ3+8mtkpTpKjvxp5H9JkadBoWTM
-         F3TKYyy1q83krbp92fH28aMfL7MhgnFiQVIQgHsSPiP8J6X8kvEE+ingczbeOz7Oy+g/
-         x472XDt1dNPEqSoQo5dGfGevS/JIsxg4Ac5NRg88wGRY02FmWhy5ci9mCXC1Hct5mcuX
-         DivoBjJmvk4KGKIgUvevNHnWKrfdrvrl9oc8u+wev/CDk+fs1gJLS0B9yfEWYqmcD/yj
-         t9dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EZvPkAeujwgNKCH5EMvSfalxGi18lEkG+bj2iAM0yAs=;
-        b=h7J7bnM8u/P0hTKvf2DgsDzxGheBaaHIA9FO98YqNqKROvo9t8s/IQU1IoCMYxi6uJ
-         Ybbf8B9zghzbdwLaScJQCiWA1O3Pdk+e64mU4xWVgxhuPT97sJDP5z0/0ejBNjFoVK7h
-         rjIL6QiEMQ9elz+1fu4plxlZ6kwROrNp5o4o96xPrJfqFRmaRy1tj057b/PLWZ2oNHDv
-         7uDnH0TWfu2riSOvJLrpxf4EhStaxs1nQ1IYSk3e38J1uqowrTPDLA07yGOCzCR3NZiA
-         EGKrI+Uql2P9GVimZ4AVGRZrkL5khagKsS/YTCoEA9vOtABHNKMTJtNQ8EjcjgmpCn9V
-         TrkQ==
-X-Gm-Message-State: AOAM532us8p0P4bXmBN3k1/4jFAqwagttCwp4zReaeDFAIAq8dm6EdSB
-        32951UPxB9p70e5Ytyoa1fD8iK5xZ06ecgrA6IM=
-X-Google-Smtp-Source: ABdhPJzJayPSTOH8apl4X7mFph72vPHSGtbxYNMETu8oPZt5Ra6jCHh52C93NfRy/hJ4wplCEVFMXJnKsXs6wcDGcMw=
-X-Received: by 2002:a17:907:a088:b0:6f4:f661:f77a with SMTP id
- hu8-20020a170907a08800b006f4f661f77amr3494449ejc.77.1652954880656; Thu, 19
- May 2022 03:08:00 -0700 (PDT)
+        Thu, 19 May 2022 06:57:40 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CE10AF31D;
+        Thu, 19 May 2022 03:57:39 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id A064E1F41C26
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1652957857;
+        bh=n5xuyUTKwTtfK1E3KUXlguxQHbXpNAqOc2gndpqI8jA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=JodT7xtJhuDdpRliWmuR69V68cdLgMXYC8d7buT+z/skOa4D3K2ioz+upZrBg2HUI
+         fFJ9Rn8C3zYLSF4itEkiZf4lAf9mhOFGsXHiH+NvNHs2flmyQC/4D/NcGC8PSQsOSO
+         GcqoxRa4TTV0C4aYYrl2y+kEE4aiAR0BuXE3s+rTbSRmruSUiKG/62QN94HtkxPd8h
+         5hZsoL+SJmGw8nEPAF5+YZtOZrPZ6NRg8hcTQlgW4L/qyI+I5dRn80ayHZZC1Hf8GO
+         mkG9ultCG+PShiWcqnTz48Dvqc3PWYvBoJFQUeF+LqJAZWbjIhdXyvsG+uqjGWPers
+         YX5xODM5B4tmA==
+Message-ID: <43133a4d-8bad-93ba-c376-21d30d039b15@collabora.com>
+Date:   Thu, 19 May 2022 13:57:31 +0300
 MIME-Version: 1.0
-References: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAHp75VeyU4Ox76wz9VfT8qEKHsE1eAo2iw27Lro1tmjJB0npMg@mail.gmail.com> <CA+V-a8tp0T=ojr3hB-QacOvV5sCZ29YXspPzKSSpGHUA8_1XDA@mail.gmail.com>
-In-Reply-To: <CA+V-a8tp0T=ojr3hB-QacOvV5sCZ29YXspPzKSSpGHUA8_1XDA@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 19 May 2022 12:07:23 +0200
-Message-ID: <CAHp75VcauAsM2dTsS2CjOTc1_fwd-oT=A+yU6LzQ+vwQRAHjBg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] Renesas RZ/G2L IRQC support
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v8 00/27] Introduce power-off+restart call chain API
+Content-Language: en-US
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20220509233235.995021-1-dmitry.osipenko@collabora.com>
+ <CAJZ5v0jhWs-8ChHddebTZcaH6kA05sLEMsXM9Op7kHWAQDxeYA@mail.gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <CAJZ5v0jhWs-8ChHddebTZcaH6kA05sLEMsXM9Op7kHWAQDxeYA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, May 19, 2022 at 6:07 AM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Wed, May 18, 2022 at 10:10 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Wed, May 18, 2022 at 9:29 PM Lad Prabhakar
-> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-
+On 5/18/22 17:46, Rafael J. Wysocki wrote:
+> On Tue, May 10, 2022 at 1:33 AM Dmitry Osipenko
+> <dmitry.osipenko@collabora.com> wrote:
 ...
+>> Introduce new API that provides call chains support for all restart and
+>> power-off modes. The new API is designed with simplicity and extensibility
+>> in mind.
+...
+> The v8 looks much better than the previous versions to me.
+> 
+> I actually don't really have any comments on it except for the minor
+> remark regarding patch [1/27] sent separately.
+> 
+> Please just send an update of that one patch and I will queue up the
+> series for 5.19.
+> 
+> However, I'm going to send a pull request with it in the second half
+> of the merge window, after the majority of the other changes in the
+> subsystems touched by it have been integrated.
 
-> > > GIC. Out of GPIOINT0-122 only 32 can be mapped to GIC SPI, this mapping is
-> > > handled by the pinctrl and IRQC driver.
-> >
-> > Where is the explanation on why valid_mask can't be used instead?
-> >
-> The .valid_mask option is one time setting but what I need is
-> something dynamic i.e. out of 392 GPIO pins any 32 can be used as an
-> interrupt pin. Also with this patch we also save on memory here [0].
+Thanks, Rafael. I sent out the updated [1/27] patch to you.
 
-Which internal APIs are bound to valid_mask not to be updated?
+For the reference, the updated patch can be found here as well:
+
+https://lore.kernel.org/all/20220519105015.1195955-1-dmitry.osipenko@collabora.com/T/#u
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Best regards,
+Dmitry
