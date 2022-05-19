@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B8BC4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 15:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C1EC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 15:51:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238340AbiESPvt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 11:51:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54042 "EHLO
+        id S239993AbiESPvu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 11:51:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241294AbiESPsl (ORCPT
+        with ESMTP id S241342AbiESPsl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Thu, 19 May 2022 11:48:41 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F4101F688C;
-        Thu, 19 May 2022 08:44:48 -0700 (PDT)
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24J6k125002261;
-        Thu, 19 May 2022 10:43:39 -0500
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A63F6890;
+        Thu, 19 May 2022 08:44:49 -0700 (PDT)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24J66mW5012194;
+        Thu, 19 May 2022 10:43:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=/Vh2SSKq+ZiPwDHO9oXSfym8TofsOkknVTrQqYugMjQ=;
- b=QHcKzU05AkZsvP6zzEZRGcPdecHY2a0AE3Q8zoMtgQS4CyN1oxFZitXe7gkJrsagLPzW
- bm5WnDCFM2KOGvrzERJ8gFZF3fUFMJ/6huMjTizEI/ZZXr6/rH8cBMBLiGPxUQTLTaHp
- kJM566Lk4ndnleP7fSf/sSCWThtZ8NUc679otuZ6YUorjuDrdfRR2AT6qJxPfZjBq8/E
- pFuGvHkohAfq8xYehZsNJPxIqxUke1fO/At/DKI7gX5oveoW5iZQGpgmnIkuIwLWOhKe
- GTV5S9lofiNMNkWp8w1RKa6O9Ui7g+J+Ya3GfBvl5WGNRhQkCwQfquqaCvjn4jfEE8vn iw== 
+ bh=lEOQzf6jwkcqt46v/7lQAovdPprogCzrzpBkFDA/ta8=;
+ b=oBCgo64Ot9kwqpn8BjeWCwSMTHJ4/tUtlSQu6BXLO/4AI8N2KEoe3av7vP2tAZlH6kqz
+ swNBkn+VTriZZN49ptokqEA5/0DVJSHKFybpJZLtVrOTeiYxC0jMBIfcDUKmyBeB2lsw
+ yv9bs0xc1Nf8TKmq1/bfC6+FzXN+PnipDaNJSfJL9v+sPmfV8VIc5AqxbgnCVA6cEqpx
+ t+U+n2f1oKd2IGqAsY18g+J0Y4rjFKAL3VDIoRtCdsnGrKjDKLpHx3sYrq+7VdcPLFzn
+ yLVXwXpCH1xs0huB70buwByQyIf1AgiMsdaSvvw5DoSRhrhnGCRp/aq/TFe7BGV+m+Wg 3g== 
 Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3g29u37mcg-10
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3g28upf5dn-8
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 19 May 2022 10:43:38 -0500
+        Thu, 19 May 2022 10:43:32 -0500
 Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
  (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 19 May
- 2022 16:43:21 +0100
+ 2022 16:43:20 +0100
 Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.24 via Frontend
- Transport; Thu, 19 May 2022 16:43:21 +0100
+ Transport; Thu, 19 May 2022 16:43:20 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id C6D3911D1;
-        Thu, 19 May 2022 15:43:21 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 3DDB111D1;
+        Thu, 19 May 2022 15:43:20 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
@@ -58,58 +58,128 @@ CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
         <peter.ujfalusi@gmail.com>, <jarkko.nikula@bitmer.com>,
         <heiko@sntech.de>, <jbrunet@baylibre.com>, <kernel@pengutronix.de>,
         <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 48/56] ASoC: stm: Rename set_fmt_new back to set_fmt
-Date:   Thu, 19 May 2022 16:43:10 +0100
-Message-ID: <20220519154318.2153729-49-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 26/56] ASoC: ux500: Update to use set_fmt_new callback
+Date:   Thu, 19 May 2022 16:42:48 +0100
+Message-ID: <20220519154318.2153729-27-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
 References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: uX5BcH2_PS0VOR5b6FUXvepUeguu_WOq
-X-Proofpoint-ORIG-GUID: uX5BcH2_PS0VOR5b6FUXvepUeguu_WOq
+X-Proofpoint-GUID: ilAx8M0voF3WSsU_nn-pp0DNJuhb3sWj
+X-Proofpoint-ORIG-GUID: ilAx8M0voF3WSsU_nn-pp0DNJuhb3sWj
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Now the core has been migrated across to the new direct clock
-specification we can move the drivers back to the normal set_fmt
+As part of updating the core to directly tell drivers if they are clock
+provider or consumer update this CPU side driver to use the new direct
 callback.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/stm/stm32_i2s.c     | 2 +-
- sound/soc/stm/stm32_sai_sub.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/ux500/ux500_msp_dai.c | 38 ++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
-index 30c04f96ef1d6..32d885f84a922 100644
---- a/sound/soc/stm/stm32_i2s.c
-+++ b/sound/soc/stm/stm32_i2s.c
-@@ -954,7 +954,7 @@ static const struct regmap_config stm32_h7_i2s_regmap_conf = {
+diff --git a/sound/soc/ux500/ux500_msp_dai.c b/sound/soc/ux500/ux500_msp_dai.c
+index 21052378a32eb..cd6c4bdf5041d 100644
+--- a/sound/soc/ux500/ux500_msp_dai.c
++++ b/sound/soc/ux500/ux500_msp_dai.c
+@@ -191,8 +191,8 @@ static int setup_clocking(struct snd_soc_dai *dai,
+ 		return -EINVAL;
+ 	}
  
- static const struct snd_soc_dai_ops stm32_i2s_pcm_dai_ops = {
- 	.set_sysclk	= stm32_i2s_set_sysclk,
--	.set_fmt_new	= stm32_i2s_set_dai_fmt,
-+	.set_fmt	= stm32_i2s_set_dai_fmt,
- 	.startup	= stm32_i2s_startup,
- 	.hw_params	= stm32_i2s_hw_params,
- 	.trigger	= stm32_i2s_trigger,
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 9f169b93fa740..e09221b5f1f3a 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -1225,7 +1225,7 @@ static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBM_CFM:
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_BC_FC:
+ 		dev_dbg(dai->dev, "%s: Codec is master.\n", __func__);
  
- static const struct snd_soc_dai_ops stm32_sai_pcm_dai_ops = {
- 	.set_sysclk	= stm32_sai_set_sysclk,
--	.set_fmt_new	= stm32_sai_set_dai_fmt,
-+	.set_fmt	= stm32_sai_set_dai_fmt,
- 	.set_tdm_slot	= stm32_sai_set_dai_tdm_slot,
- 	.startup	= stm32_sai_startup,
- 	.hw_params	= stm32_sai_hw_params,
+ 		msp_config->iodelay = 0x20;
+@@ -204,7 +204,7 @@ static int setup_clocking(struct snd_soc_dai *dai,
+ 
+ 		break;
+ 
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	case SND_SOC_DAIFMT_BP_FP:
+ 		dev_dbg(dai->dev, "%s: Codec is slave.\n", __func__);
+ 
+ 		msp_config->tx_clk_sel = TX_CLK_SEL_SRG;
+@@ -328,15 +328,15 @@ static int setup_msp_config(struct snd_pcm_substream *substream,
+ 	dev_dbg(dai->dev, "%s: rate: %u, channels: %d.\n", __func__,
+ 		runtime->rate, runtime->channels);
+ 	switch (fmt &
+-		(SND_SOC_DAIFMT_FORMAT_MASK | SND_SOC_DAIFMT_MASTER_MASK)) {
+-	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS:
++		(SND_SOC_DAIFMT_FORMAT_MASK | SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK)) {
++	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_BP_FP:
+ 		dev_dbg(dai->dev, "%s: SND_SOC_DAIFMT_I2S.\n", __func__);
+ 
+ 		msp_config->default_protdesc = 1;
+ 		msp_config->protocol = MSP_I2S_PROTOCOL;
+ 		break;
+ 
+-	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBM_CFM:
++	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_BC_FC:
+ 		dev_dbg(dai->dev, "%s: SND_SOC_DAIFMT_I2S.\n", __func__);
+ 
+ 		msp_config->data_size = MSP_DATA_BITS_16;
+@@ -348,10 +348,10 @@ static int setup_msp_config(struct snd_pcm_substream *substream,
+ 
+ 		break;
+ 
+-	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_CBS_CFS:
+-	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_CBM_CFM:
+-	case SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_CBS_CFS:
+-	case SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_CBM_CFM:
++	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_BP_FP:
++	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_BC_FC:
++	case SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_BP_FP:
++	case SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_BC_FC:
+ 		dev_dbg(dai->dev, "%s: PCM format.\n", __func__);
+ 
+ 		msp_config->data_size = MSP_DATA_BITS_16;
+@@ -477,7 +477,7 @@ static int ux500_msp_dai_prepare(struct snd_pcm_substream *substream,
+ 	}
+ 
+ 	/* Set OPP-level */
+-	if ((drvdata->fmt & SND_SOC_DAIFMT_MASTER_MASK) &&
++	if ((drvdata->fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) &&
+ 		(drvdata->msp->f_bitclk > 19200000)) {
+ 		/* If the bit-clock is higher than 19.2MHz, Vape should be
+ 		 * run in 100% OPP. Only when bit-clock is used (MSP master)
+@@ -544,13 +544,13 @@ static int ux500_msp_dai_set_dai_fmt(struct snd_soc_dai *dai,
+ 	dev_dbg(dai->dev, "%s: MSP %d: Enter.\n", __func__, dai->id);
+ 
+ 	switch (fmt & (SND_SOC_DAIFMT_FORMAT_MASK |
+-		SND_SOC_DAIFMT_MASTER_MASK)) {
+-	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS:
+-	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBM_CFM:
+-	case SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_CBS_CFS:
+-	case SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_CBM_CFM:
+-	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_CBS_CFS:
+-	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_CBM_CFM:
++		SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK)) {
++	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_BP_FP:
++	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_BC_FC:
++	case SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_BP_FP:
++	case SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_BC_FC:
++	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_BP_FP:
++	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_BC_FC:
+ 		break;
+ 
+ 	default:
+@@ -707,7 +707,7 @@ static int ux500_msp_dai_probe(struct snd_soc_dai *dai)
+ static const struct snd_soc_dai_ops ux500_msp_dai_ops[] = {
+ 	{
+ 		.set_sysclk = ux500_msp_dai_set_dai_sysclk,
+-		.set_fmt = ux500_msp_dai_set_dai_fmt,
++		.set_fmt_new = ux500_msp_dai_set_dai_fmt,
+ 		.set_tdm_slot = ux500_msp_dai_set_tdm_slot,
+ 		.startup = ux500_msp_dai_startup,
+ 		.shutdown = ux500_msp_dai_shutdown,
 -- 
 2.30.2
 
