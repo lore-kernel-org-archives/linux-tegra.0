@@ -2,119 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E66C43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 12:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5150BC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 12:08:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237305AbiESMBt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 08:01:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48218 "EHLO
+        id S237679AbiESMIm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 08:08:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230251AbiESMBs (ORCPT
+        with ESMTP id S232762AbiESMIj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 May 2022 08:01:48 -0400
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45EDB41CA;
-        Thu, 19 May 2022 05:01:46 -0700 (PDT)
-Received: by mail-qk1-f170.google.com with SMTP id b20so4531148qkc.6;
-        Thu, 19 May 2022 05:01:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=32e726iWwMNC0xRIbGojngVmwOTaI+USQV4X78pDi0k=;
-        b=TKKqX8UB1dkKMujJjE60CMD0GPbt+ecSObdbVO8u+uj+Lvl4wpI4k+C8IehJi90Dc1
-         AEpqGnmA3bFHkpUWoPdKbQSRrHxBz574SlPQYEOFrco+j/J6BRVeNuZXQoJpbq/2LMdI
-         bqm+sx4wrAX3yeLF9Yxq+tycpg4NfyqplkKJo1+mCroczlli4bmsmAJuORd8KlkuytGm
-         W6nfUhdTogs4kyqjzEisvyFQ+7afTCMzEsOm0NiwgoSLymFXgnpUy4BNGo60TBkBeZZ1
-         VBzaqgSKTtiQZ0UfR9pv99r+Uf1n468xUuVlNF5ERyOuWVdIMVTUDm/x/cdoQjKUTJ62
-         Y9aA==
-X-Gm-Message-State: AOAM532w23kb6U0KVMcJW7cFTeJPGSK6Y70HYBitZi3zyt3/jmW4MvAb
-        AiW8DkXhZuk6Y3oYlrTB72a7d8ffx7hV9Q==
-X-Google-Smtp-Source: ABdhPJxq0tN9iWpWh5IGAus3fAeZAP4zCMY2KjZ59jWDLFegdyv6SWNAXqnoEVSEmNFsXCsNTgdrZg==
-X-Received: by 2002:ae9:ef85:0:b0:6a3:2a1c:fe65 with SMTP id d127-20020ae9ef85000000b006a32a1cfe65mr2730537qkg.300.1652961705565;
-        Thu, 19 May 2022 05:01:45 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id g206-20020a379dd7000000b0069fcf0da629sm1102111qke.134.2022.05.19.05.01.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 May 2022 05:01:41 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id p139so8588149ybc.11;
-        Thu, 19 May 2022 05:01:40 -0700 (PDT)
-X-Received: by 2002:a25:4289:0:b0:64d:746f:5311 with SMTP id
- p131-20020a254289000000b0064d746f5311mr3785817yba.89.1652961700211; Thu, 19
- May 2022 05:01:40 -0700 (PDT)
+        Thu, 19 May 2022 08:08:39 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF5265997C;
+        Thu, 19 May 2022 05:08:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8Or+sigV8tAW403lBCNOcYfh+f/QtBZxoM4MtJnkEDo=; b=JqidS10tAFi8w45bv/QRWgkoh/
+        KOgIwZ/tIUUpLlbLrbLO1ldSksH/br07uow35GeONuGXn9H2gl6Zc+ITyazsuepTHCwyY7cXFe/h7
+        MtwjDL5RB9ZO6kq5gTfsayx//B9lueprkuY9Bysrv6zGbl5LRv1UeYThThR2djyvHZK5yH9WAOS3f
+        IAvBZnCmpegeYcMo7srxsmSG31D8d5jvfPawZOHcM5Mv+NhxsgRuyQoZ7I4NYbnvdtmZ38tbx+LTT
+        WmYVOrIBhGzwQtf/+4wAyIFnS+fHagBv45fyKy1zunamCTiZMunglm+e59nItrKVAlZjSL4ou4wbM
+        ShGTIh/g==;
+Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nrewo-00BE00-NL; Thu, 19 May 2022 14:08:07 +0200
+Message-ID: <73ade79a-5d76-0e68-708c-f14d3665a7d2@igalia.com>
+Date:   Thu, 19 May 2022 09:07:25 -0300
 MIME-Version: 1.0
-References: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220518192924.20948-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220518192924.20948-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 19 May 2022 14:01:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXz7ZtC_63hUckrEeB3uocNG0iKbA4i3xDsuyL48m_7qQ@mail.gmail.com>
-Message-ID: <CAMuHMdXz7ZtC_63hUckrEeB3uocNG0iKbA4i3xDsuyL48m_7qQ@mail.gmail.com>
-Subject: Re: [PATCH v4 6/7] dt-bindings: pinctrl: renesas,rzg2l-pinctrl:
- Document the properties to handle GPIO IRQ
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 19/30] panic: Add the panic hypervisor notifier list
+Content-Language: en-US
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     David Gow <davidgow@google.com>, Evan Green <evgreen@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        akpm@linux-foundation.org, bhe@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
+        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
+        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dexuan Cui <decui@microsoft.com>,
+        Doug Berger <opendmb@gmail.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Wang ShaoBo <bobo.shaobowang@huawei.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        zhenwei pi <pizhenwei@bytedance.com>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-20-gpiccoli@igalia.com> <YoJZVZl/MH0KiE/J@alley>
+ <ad082ce7-db50-13bb-3dbb-9b595dfa78be@igalia.com> <YoOpyW1+q+Z5as78@alley>
+ <YoSnGmBJ3kYs5WMf@alley> <fbbd0a8d-2ef4-4a39-4b75-354918e85778@igalia.com>
+ <YoXr2AD+Jc/ukUhJ@alley>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <YoXr2AD+Jc/ukUhJ@alley>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Prabhakar,
+On 19/05/2022 04:03, Petr Mladek wrote:
+> [...]
+> I would ignore it for now. If anyone would want to safe the log
+> then they would need to read it. They will most likely use
+> the existing kmsg_dump() infastructure. In fact, they should
+> use it to avoid a code duplication.
+> 
+> Best Regards,
+> Petr
 
-On Wed, May 18, 2022 at 9:30 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Document the required properties to handle GPIO IRQ.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> @@ -126,6 +139,9 @@ examples:
->              gpio-controller;
->              #gpio-cells = <2>;
->              gpio-ranges = <&pinctrl 0 0 392>;
-> +            interrupt-controller;
-> +            #interrupt-cells = <2>;
-> +            interrupt-parent = <&irqc>;
-
-I think the "interrupt-parent" property can be dropped from the example.
-
->              clocks = <&cpg CPG_MOD R9A07G044_GPIO_HCLK>;
->              resets = <&cpg R9A07G044_GPIO_RSTN>,
->                       <&cpg R9A07G044_GPIO_PORT_RESETN>,
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cool, thanks! I agree, let's expect people use kmsg_dump() as they should =)
