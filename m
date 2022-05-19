@@ -2,90 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0742C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 17:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C9FC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 18:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230056AbiESRkS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 13:40:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59866 "EHLO
+        id S242176AbiESSFx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 14:05:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbiESRkR (ORCPT
+        with ESMTP id S243151AbiESSFp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 May 2022 13:40:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47A26A30A2;
-        Thu, 19 May 2022 10:40:16 -0700 (PDT)
+        Thu, 19 May 2022 14:05:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9429CDFF6A;
+        Thu, 19 May 2022 11:05:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D58FE618BF;
-        Thu, 19 May 2022 17:40:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FE1C385AA;
-        Thu, 19 May 2022 17:40:09 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 40913B8277E;
+        Thu, 19 May 2022 18:05:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A7BC385AA;
+        Thu, 19 May 2022 18:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652982015;
-        bh=i/bU0bfDloHPKyvRxaGvTgWbXFe6z6JQWAGN/Vhk5Pc=;
+        s=k20201202; t=1652983538;
+        bh=eiONrI+/XIOUrRkbYlo8XEvtMnn4h975jZWYVuC1GfU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dYCOpnXonTOfbFrdBJXmWTXnceJ1NnUiYoMMrqYMLyx6p0mcgHx+HL0vo0uj3chWc
-         QHUAhqTuYbHGquSQEmorV6HW2ryh0cafLQyNUV/izbDSihgLlTHn1+FWINl0lM9K+E
-         4DPCncvaZ1Ms5uHtVp/0kLGnyG7V/SJG8i9+d3Qt3wppTRRfR8qhQ9ckQswZzx0xwU
-         bbKS5eTxGO6XzSMXCF9PurXELsoX/kMEtfIgXXFx5Nts3sFnUTGSWtPUyMTtPK7Kjg
-         8zIq61piE8HgJ8G290KIDTFO89v2Cm4OW9uejsaNwydpYHlvfP6zvetlhxO1Hhvx8p
-         ik2i5vAvRAUXA==
-Date:   Thu, 19 May 2022 18:40:06 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Sameer Pujar <spujar@nvidia.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org, perex@perex.cz,
-        tiwai@suse.com, jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/6] ASoC: tegra: Add binding doc for OPE module
-Message-ID: <YoaA9ob5CRxyA+fD@sirena.org.uk>
-References: <1652895372-29885-1-git-send-email-spujar@nvidia.com>
- <1652895372-29885-2-git-send-email-spujar@nvidia.com>
- <049173a1-0fa6-510b-9169-ebe869b8a3b3@linaro.org>
+        b=bHhW0O/zb8ezRvcI8k2YnsLVhATLz/RylFLkAoiLTo0zIx8NKsPXk1geulxFV7B5l
+         ihuckq535D4hjyyQS5kI0VXinkgn75K8dwNq7JlSIdTkuEw+plIzFIR+r7G/CgHh60
+         Z/YOrD6mtel4MtBTDGXlGCrFTQfxXvEoyXWaWlQ9q1ixvZwcXPSloyvtdKCN0O6bMa
+         2Ot7vSwbc/AfLaF0CZmOn/MOkPXkxonONHf33+BWD4FWQZGipfMRKRUgeYIZtOjuA/
+         kFB9OHRZ4rBEp0odb+fUh5pliqYn97+zrRc8GSO173fynlsk0HK+/9ii0t8DaWJMTw
+         F5/Mat4ypE4ww==
+Date:   Thu, 19 May 2022 23:35:22 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        p.zabel@pengutronix.de, rgumasta@nvidia.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, nathan@kernel.org,
+        dan.carpenter@oracle.com
+Subject: Re: [PATCH v2 0/2] Fix uninitialized variable usage in Tegra GPCDMA
+Message-ID: <YoaG4tFAO1/DRR5k@matsya>
+References: <20220426101913.43335-1-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xjIce6nHQZ0dcLVK"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <049173a1-0fa6-510b-9169-ebe869b8a3b3@linaro.org>
-X-Cookie: Some restrictions may apply.
+In-Reply-To: <20220426101913.43335-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 26-04-22, 15:49, Akhil R wrote:
+> Initialize uninitialized variable and remove unused switch case
+> in tegra186-gpcdma driver.
 
---xjIce6nHQZ0dcLVK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied, thanks
 
-On Thu, May 19, 2022 at 01:40:54PM +0200, Krzysztof Kozlowski wrote:
-> On 18/05/2022 19:36, Sameer Pujar wrote:
-
-> > +title: Tegra210 MBDRC Device Tree Bindings
-
-> s/Device Tree Bindings//
-
-> and then you have enough space to de-acronym this MBDRC.
-
-I suspect people rarely expand the acronym when referring to this device
-so it's probably clearer the way it is.
-
---xjIce6nHQZ0dcLVK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmKGgPUACgkQJNaLcl1U
-h9CIUQf+J47qRJ1T/hXpo2PrxjE+DAy/H24LMvtJ0gv6tuwLslEqSPmvNnX5AQ8H
-XredwBG+ouBdkkVKEx+kVbnClXuFSrGX3YxzBTxcHsbOXUGgvIbYSoKaDloX+N1H
-v1nVvsh1/6viUNyeS8W8sRjQtDSP8mE3GtyWnoTt59Xmrg39ub/QekuPfNBOeXaR
-/uyMAFxZKmLaM+VnQKHXHXJgdeRbwWXjnZNTnz8ncGcs/Augj/dJoaHRaOArirDw
-2kWSvFv/hxoJWI0tKtq6F2uI1Dk2CODyHCaDcyEuclATNmqH48SVFqwVyBDxA639
-6WOmhU7cAmme7vmLkJ+Q3NhA8Gd5Cg==
-=T8z4
------END PGP SIGNATURE-----
-
---xjIce6nHQZ0dcLVK--
+-- 
+~Vinod
