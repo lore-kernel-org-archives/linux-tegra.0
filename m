@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 395FFC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 572E9C4321E
 	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 15:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240842AbiESPt4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 11:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
+        id S241305AbiESPuH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 11:50:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241298AbiESPsn (ORCPT
+        with ESMTP id S241550AbiESPsn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Thu, 19 May 2022 11:48:43 -0400
 Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3879F68BC;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 978AFF68BB;
         Thu, 19 May 2022 08:44:54 -0700 (PDT)
 Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24J66mW1012194;
-        Thu, 19 May 2022 10:43:29 -0500
+        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24J66mW0012194;
+        Thu, 19 May 2022 10:43:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=zovcG00Qw1epnEygXfoI+fXk8bpqiR5gNT0dl14iD4Y=;
- b=lWc/v8rbG6DU3/oen1cs99BZePFwWmNoSiUWQBhylY48FwvXVumaQtWAySXEUo/z6McS
- /n19a4Tn3t4SUfM5OhrzHXKcibSXa7p9DDnH2u9Se/Isfe/g2s+mK76dJc6G5Vf5e6iS
- zF629G9KrsUm46guTqiSNvL6wa5uR5omvc4xNLdwyC3NFY5daFs52w0/yP9oA7HZiBtc
- D49Q6eP0VNpzEg/inh1XB5k9w6wq+/x7e+f64q7vaLP8T1b9P1li8VRLv4mWKMcNZ2Jo
- /zDNcy1p0llemEEQ76/yGfJx3sHNbeZ4Mww6EIMds3wJTVA5TR18Q4gAx0fvAp86DpWN CQ== 
+ bh=hmj+dNo3rOiKGjUzlsevHW/nHS/7sRRohQXepmEJ2pw=;
+ b=aR4oLplxQeflxJ33VqVpaCxZqWM1xcR3lF5eG4OH3aF8Nsvl+X+mDqK9coo/CPyx3n8u
+ wP92T8+trRjhRvCjFZi5jLjuT7WGE/wUml+blcA6pfeAb4hu7IstpOVhlpxW3bTYZd4E
+ dKf+vtFlRVPV3fXzFq3mzwz/KM+vQMe8NYIVVcMaryV2JdL7puB3WPBql6DB2RN12a+0
+ nVujdBVoO5qjJvD6ZvV17mdw84IukUOUo9C9rzphBYPLcvOmv9uk/u8t8JLExVpEwx4W
+ JoxOj5Ez2cWQJh3t6ftes55OzBs+MMOa+glUAfo31X8cwAz6QPN3l8WDhlG0uNeeZdIf rA== 
 Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3g28upf5dn-4
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3g28upf5dn-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 19 May 2022 10:43:29 -0500
+        Thu, 19 May 2022 10:43:28 -0500
 Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
  (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 19 May
@@ -39,7 +39,7 @@ Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.24 via Frontend
  Transport; Thu, 19 May 2022 16:43:19 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id A5A56475;
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 43112476;
         Thu, 19 May 2022 15:43:19 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
@@ -58,17 +58,17 @@ CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
         <peter.ujfalusi@gmail.com>, <jarkko.nikula@bitmer.com>,
         <heiko@sntech.de>, <jbrunet@baylibre.com>, <kernel@pengutronix.de>,
         <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 18/56] ASoC: rockchip: Update to use set_fmt_new callback
-Date:   Thu, 19 May 2022 16:42:40 +0100
-Message-ID: <20220519154318.2153729-19-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 13/56] ASoC: mediatek: Update to use set_fmt_new callback
+Date:   Thu, 19 May 2022 16:42:35 +0100
+Message-ID: <20220519154318.2153729-14-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
 References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: 0Qtm8D2_cnb-mytSm_FVWYGxhUPRu7so
-X-Proofpoint-ORIG-GUID: 0Qtm8D2_cnb-mytSm_FVWYGxhUPRu7so
+X-Proofpoint-GUID: aPgLAPo5I4mVVPR3iN8V7AYT3qCMgllF
+X-Proofpoint-ORIG-GUID: aPgLAPo5I4mVVPR3iN8V7AYT3qCMgllF
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -80,69 +80,75 @@ callback.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/rockchip/rockchip_i2s.c     | 8 ++++----
- sound/soc/rockchip/rockchip_i2s_tdm.c | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ sound/soc/mediatek/mt8195/mt8195-dai-etdm.c | 10 +++++-----
+ sound/soc/mediatek/mt8195/mt8195-dai-pcm.c  |  8 ++++----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
-index 4ce5d25793875..0a66c7df323dc 100644
---- a/sound/soc/rockchip/rockchip_i2s.c
-+++ b/sound/soc/rockchip/rockchip_i2s.c
-@@ -199,13 +199,13 @@ static int rockchip_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
- 
- 	pm_runtime_get_sync(cpu_dai->dev);
- 	mask = I2S_CKR_MSS_MASK;
--	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
--	case SND_SOC_DAIFMT_CBS_CFS:
-+	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
-+	case SND_SOC_DAIFMT_BP_FP:
- 		/* Set source clock in Master mode */
- 		val = I2S_CKR_MSS_MASTER;
- 		i2s->is_master_mode = true;
- 		break;
--	case SND_SOC_DAIFMT_CBM_CFM:
-+	case SND_SOC_DAIFMT_BC_FC:
- 		val = I2S_CKR_MSS_SLAVE;
- 		i2s->is_master_mode = false;
- 		break;
-@@ -486,7 +486,7 @@ static const struct snd_soc_dai_ops rockchip_i2s_dai_ops = {
- 	.hw_params = rockchip_i2s_hw_params,
- 	.set_bclk_ratio	= rockchip_i2s_set_bclk_ratio,
- 	.set_sysclk = rockchip_i2s_set_sysclk,
--	.set_fmt = rockchip_i2s_set_fmt,
-+	.set_fmt_new = rockchip_i2s_set_fmt,
- 	.trigger = rockchip_i2s_trigger,
- };
- 
-diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.c b/sound/soc/rockchip/rockchip_i2s_tdm.c
-index 98700e75b82a1..c90afccdae362 100644
---- a/sound/soc/rockchip/rockchip_i2s_tdm.c
-+++ b/sound/soc/rockchip/rockchip_i2s_tdm.c
-@@ -411,12 +411,12 @@ static int rockchip_i2s_tdm_set_fmt(struct snd_soc_dai *cpu_dai,
+diff --git a/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c b/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
+index c02c10da36004..5f7c9516dfa18 100644
+--- a/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
++++ b/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
+@@ -2172,11 +2172,11 @@ static int mtk_dai_etdm_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 		return -EINVAL;
  	}
  
- 	mask = I2S_CKR_MSS_MASK;
 -	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
--	case SND_SOC_DAIFMT_CBC_CFC:
+-	case SND_SOC_DAIFMT_CBM_CFM:
 +	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
-+	case SND_SOC_DAIFMT_BP_FP:
- 		val = I2S_CKR_MSS_MASTER;
- 		i2s_tdm->is_master_mode = true;
- 		break;
--	case SND_SOC_DAIFMT_CBP_CFP:
 +	case SND_SOC_DAIFMT_BC_FC:
- 		val = I2S_CKR_MSS_SLAVE;
- 		i2s_tdm->is_master_mode = false;
+ 		etdm_data->slave_mode = true;
  		break;
-@@ -1113,7 +1113,7 @@ static const struct snd_soc_dai_ops rockchip_i2s_tdm_dai_ops = {
- 	.hw_params = rockchip_i2s_tdm_hw_params,
- 	.set_bclk_ratio	= rockchip_i2s_tdm_set_bclk_ratio,
- 	.set_sysclk = rockchip_i2s_tdm_set_sysclk,
--	.set_fmt = rockchip_i2s_tdm_set_fmt,
-+	.set_fmt_new = rockchip_i2s_tdm_set_fmt,
- 	.set_tdm_slot = rockchip_dai_tdm_slot,
- 	.trigger = rockchip_i2s_tdm_trigger,
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	case SND_SOC_DAIFMT_BP_FP:
+ 		etdm_data->slave_mode = false;
+ 		break;
+ 	default:
+@@ -2346,7 +2346,7 @@ static const struct snd_soc_dai_ops mtk_dai_etdm_ops = {
+ 	.hw_params = mtk_dai_etdm_hw_params,
+ 	.trigger = mtk_dai_etdm_trigger,
+ 	.set_sysclk = mtk_dai_etdm_set_sysclk,
+-	.set_fmt = mtk_dai_etdm_set_fmt,
++	.set_fmt_new = mtk_dai_etdm_set_fmt,
+ 	.set_tdm_slot = mtk_dai_etdm_set_tdm_slot,
  };
+ 
+@@ -2356,7 +2356,7 @@ static const struct snd_soc_dai_ops mtk_dai_hdmitx_dptx_ops = {
+ 	.hw_params	= mtk_dai_hdmitx_dptx_hw_params,
+ 	.trigger	= mtk_dai_hdmitx_dptx_trigger,
+ 	.set_sysclk	= mtk_dai_hdmitx_dptx_set_sysclk,
+-	.set_fmt	= mtk_dai_etdm_set_fmt,
++	.set_fmt_new	= mtk_dai_etdm_set_fmt,
+ };
+ 
+ /* dai driver */
+diff --git a/sound/soc/mediatek/mt8195/mt8195-dai-pcm.c b/sound/soc/mediatek/mt8195/mt8195-dai-pcm.c
+index 12644ded83d59..37a8968ac21dc 100644
+--- a/sound/soc/mediatek/mt8195/mt8195-dai-pcm.c
++++ b/sound/soc/mediatek/mt8195/mt8195-dai-pcm.c
+@@ -266,11 +266,11 @@ static int mtk_dai_pcm_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 		return -EINVAL;
+ 	}
+ 
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBM_CFM:
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_BC_FC:
+ 		pcmif_priv->slave_mode = 1;
+ 		break;
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	case SND_SOC_DAIFMT_BP_FP:
+ 		pcmif_priv->slave_mode = 0;
+ 		break;
+ 	default:
+@@ -282,7 +282,7 @@ static int mtk_dai_pcm_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 
+ static const struct snd_soc_dai_ops mtk_dai_pcm_ops = {
+ 	.prepare	= mtk_dai_pcm_prepare,
+-	.set_fmt	= mtk_dai_pcm_set_fmt,
++	.set_fmt_new	= mtk_dai_pcm_set_fmt,
+ };
+ 
+ /* dai driver */
 -- 
 2.30.2
 
