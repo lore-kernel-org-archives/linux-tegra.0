@@ -2,98 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FAEC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 13:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B73F2C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 15:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238816AbiESNa1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 09:30:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48900 "EHLO
+        id S230207AbiESPqi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 11:46:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238799AbiESNa0 (ORCPT
+        with ESMTP id S233905AbiESPp6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 May 2022 09:30:26 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A276CEBA7
-        for <linux-tegra@vger.kernel.org>; Thu, 19 May 2022 06:30:19 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id e78so9010902ybc.12
-        for <linux-tegra@vger.kernel.org>; Thu, 19 May 2022 06:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ea9SWDA6wvriBFyiWmSM/cUBDRlPeKx6B/XCiADE6Cg=;
-        b=ks6F3fTckOrmjWS0ClW006McxhjxXzbDAmClZ85Ndf/WMrVkPSfxPwMkCJ5+JB/Zly
-         zqD5LIxa+lWehhvWN4Mf2NAHwpS/L4Y90P7fnLH5GPIKVSen0ZQFicNPS4BO/kxG2Hi7
-         9+VqUpx3JpcDW4Kk2EBUINsel5EOpG7wvvFrLGI/79QAayI4cP63wE/0zgtW6uCGI/46
-         NbjttW4tN3/OkWR6s6nrDwk1Vto3pC3uUL5jEpueyGDrGhBIRRoelrsklzxX3c65f6dY
-         nVGShTwmklzNOXcRrUN7VvADdrC/n6x9IsBvYl4aTfA7ntFmcUWmig7WU3bTqN+epHWp
-         Pvtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ea9SWDA6wvriBFyiWmSM/cUBDRlPeKx6B/XCiADE6Cg=;
-        b=iIkvgACK+mPevydPLqryPXABjq58MVuLzeFSU8pbINa+kCC/MuMlpkYGa/CRO2xU7R
-         Qs2Zv6Q5nwblHlZHU8fYxLanWUDwVLmaK3m8Tsbk8OOZYavDo8qWBr1AyOg1YYg5ugIj
-         qTtDKpSw9KRE5ZUf3D3gsOt3kf8dL3eEoQpGP3O2VAd/c3f1b3mgfP6vgNdBeeFqFy8I
-         DbMS1VtiCOyXP0XNv/9A13i3r59AtjEh3CRf6Sg8kmvQygwYCJ5AXaeIE8nLOPukYhBx
-         /rmNTdDymcXK+cquATyzrNhgvuXfaDYAEcy8QnQ9RDIPujsxYejg9qMKghj9/2TqAp1L
-         fJqA==
-X-Gm-Message-State: AOAM533MgxRyMINPmaMbvcXbRikUXv6X4zosHXNdI56zRmLDMQklmsxy
-        ZjXVMkcESCwVq9DyV21y1Eq1fAe1Pk9DCiwyS75Mdw==
-X-Google-Smtp-Source: ABdhPJx5ABKP9iZZdCdL37HDpt4btHGxSXXOR0fGwkumd4vTxNoxrgrIZ9EOp8UTgSt1tW+U2kK3C15aGRatb6Ii7AA=
-X-Received: by 2002:a5b:691:0:b0:64d:ab44:f12e with SMTP id
- j17-20020a5b0691000000b0064dab44f12emr4304244ybq.533.1652967018884; Thu, 19
- May 2022 06:30:18 -0700 (PDT)
+        Thu, 19 May 2022 11:45:58 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC0827C15E;
+        Thu, 19 May 2022 08:44:17 -0700 (PDT)
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24J6k11o002261;
+        Thu, 19 May 2022 10:43:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=PODMain02222019;
+ bh=tjnD/juqDx0r9lwGe7Wq0UvP1XDXAhB0eJFtnk9DZ0Y=;
+ b=DrR83HdM1bvgprtkGM1OGxUmf50LWqPhMWyR0tKTPhaY7G4FA/VONpKYHrElSfsyj900
+ LOY6kl2/Av2BMzqD8Eog09oPRTvQWXYeq9VXS6kzwPh3jGkysMEl8px3CCoYoW72KmKV
+ AWy0KW6uDAtH4UxoesbKx63F/RF5rLUvwZl8qQ7fHyRjoYr0h2EtC2gwc57LBfeBvBHQ
+ hKiS9QDGOUxZWq0OMHnB2hpL3tG9t05ySMeXSYZvoAAQpCZjHp++jBvG39UH0qxkcuBK
+ k6leIRTXN4GSoWgMM0mdDUR8Vc2x8dGFLKeP0+ZMcjvTqw6PX2cKN5GwRSOTJ+mWbVIs rw== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3g29u37mcg-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 19 May 2022 10:43:32 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 19 May
+ 2022 16:43:20 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.24 via Frontend
+ Transport; Thu, 19 May 2022 16:43:20 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 023BD476;
+        Thu, 19 May 2022 15:43:20 +0000 (UTC)
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <broonie@kernel.org>
+CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
+        <nicolas.ferre@microchip.com>, <nsaenz@kernel.org>,
+        <shawnguo@kernel.org>, <linux-imx@nxp.com>,
+        <cezary.rojewski@intel.com>,
+        <pierre-louis.bossart@linux.intel.com>,
+        <linux-mips@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <daniel@zonque.org>,
+        <srinivas.kandagatla@linaro.org>,
+        <linux-rockchip@lists.infradead.org>, <krzk@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
+        <peter.ujfalusi@gmail.com>, <jarkko.nikula@bitmer.com>,
+        <heiko@sntech.de>, <jbrunet@baylibre.com>, <kernel@pengutronix.de>,
+        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>
+Subject: [PATCH 22/56] ASoC: sunxi: Update to use set_fmt_new callback
+Date:   Thu, 19 May 2022 16:42:44 +0100
+Message-ID: <20220519154318.2153729-23-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
+References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-References: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220518192924.20948-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220518192924.20948-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 19 May 2022 15:30:07 +0200
-Message-ID: <CACRpkdYt-doG_i2T9jjDCb8=oJFR_7Z8RCwW+S05qd90E3FgLg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] gpio: gpiolib: Dont assume child_offset_to_irq
- callback always succeeds
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: KaEXYmEwQEaUYiBbVtR-BjOHPaOE3Qq8
+X-Proofpoint-ORIG-GUID: KaEXYmEwQEaUYiBbVtR-BjOHPaOE3Qq8
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, May 18, 2022 at 9:30 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+As part of updating the core to directly tell drivers if they are clock
+provider or consumer update these CPU side drivers to use the new direct
+callback.
 
-> On Renesas RZ/G2L SoC not all the GPIO pins can be simultaneously used as
-> interrupts. The SoC allows 32 interrupts which is first come first serve
-> basis and is dynamic i.e. if there is a free slot (after rmmod) this can
-> be used by other GPIO pins being used as an interrupt.
->
-> To handle such cases change child_offset_to_irq() callback to return error
-> codes in case of failure. All the users of child_offset_to_irq() callback
-> are also updated with this API change.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ sound/soc/sunxi/sun4i-i2s.c   | 20 ++++++++++----------
+ sound/soc/sunxi/sun8i-codec.c |  8 ++++----
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-This looks very useful!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index 7047f71629ab3..872838d3e0a94 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -702,13 +702,13 @@ static int sun4i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
+ 			   SUN4I_I2S_FMT0_FMT_MASK, val);
+ 
+ 	/* DAI clock master masks */
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_BP_FP:
+ 		/* BCLK and LRCLK master */
+ 		val = SUN4I_I2S_CTRL_MODE_MASTER;
+ 		break;
+ 
+-	case SND_SOC_DAIFMT_CBM_CFM:
++	case SND_SOC_DAIFMT_BC_FC:
+ 		/* BCLK and LRCLK slave */
+ 		val = SUN4I_I2S_CTRL_MODE_SLAVE;
+ 		break;
+@@ -802,13 +802,13 @@ static int sun8i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
+ 			   SUN8I_I2S_TX_CHAN_OFFSET(offset));
+ 
+ 	/* DAI clock master masks */
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_BP_FP:
+ 		/* BCLK and LRCLK master */
+ 		val = SUN8I_I2S_CTRL_BCLK_OUT |	SUN8I_I2S_CTRL_LRCK_OUT;
+ 		break;
+ 
+-	case SND_SOC_DAIFMT_CBM_CFM:
++	case SND_SOC_DAIFMT_BC_FC:
+ 		/* BCLK and LRCLK slave */
+ 		val = 0;
+ 		break;
+@@ -909,13 +909,13 @@ static int sun50i_h6_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
+ 			   SUN50I_H6_I2S_TX_CHAN_SEL_OFFSET(offset));
+ 
+ 	/* DAI clock master masks */
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_BP_FP:
+ 		/* BCLK and LRCLK master */
+ 		val = SUN8I_I2S_CTRL_BCLK_OUT |	SUN8I_I2S_CTRL_LRCK_OUT;
+ 		break;
+ 
+-	case SND_SOC_DAIFMT_CBM_CFM:
++	case SND_SOC_DAIFMT_BC_FC:
+ 		/* BCLK and LRCLK slave */
+ 		val = 0;
+ 		break;
+@@ -1081,7 +1081,7 @@ static int sun4i_i2s_set_tdm_slot(struct snd_soc_dai *dai,
+ 
+ static const struct snd_soc_dai_ops sun4i_i2s_dai_ops = {
+ 	.hw_params	= sun4i_i2s_hw_params,
+-	.set_fmt	= sun4i_i2s_set_fmt,
++	.set_fmt_new	= sun4i_i2s_set_fmt,
+ 	.set_sysclk	= sun4i_i2s_set_sysclk,
+ 	.set_tdm_slot	= sun4i_i2s_set_tdm_slot,
+ 	.trigger	= sun4i_i2s_trigger,
+diff --git a/sound/soc/sunxi/sun8i-codec.c b/sound/soc/sunxi/sun8i-codec.c
+index 0bea2162f68d9..6e9ef948d6621 100644
+--- a/sound/soc/sunxi/sun8i-codec.c
++++ b/sound/soc/sunxi/sun8i-codec.c
+@@ -286,11 +286,11 @@ static int sun8i_codec_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	u32 dsp_format, format, invert, value;
+ 
+ 	/* clock masters */
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBS_CFS: /* Codec slave, DAI master */
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_BP_FP: /* Codec slave, DAI master */
+ 		value = 0x1;
+ 		break;
+-	case SND_SOC_DAIFMT_CBM_CFM: /* Codec Master, DAI slave */
++	case SND_SOC_DAIFMT_BC_FC: /* Codec Master, DAI slave */
+ 		value = 0x0;
+ 		break;
+ 	default:
+@@ -630,7 +630,7 @@ static int sun8i_codec_hw_free(struct snd_pcm_substream *substream,
+ }
+ 
+ static const struct snd_soc_dai_ops sun8i_codec_dai_ops = {
+-	.set_fmt	= sun8i_codec_set_fmt,
++	.set_fmt_new	= sun8i_codec_set_fmt,
+ 	.set_tdm_slot	= sun8i_codec_set_tdm_slot,
+ 	.startup	= sun8i_codec_startup,
+ 	.hw_params	= sun8i_codec_hw_params,
+-- 
+2.30.2
 
-Yours,
-Linus Walleij
