@@ -2,212 +2,104 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C14DC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 08:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13660C43219
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 10:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231215AbiESIwK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 04:52:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
+        id S235775AbiESKIE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 06:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230124AbiESIwJ (ORCPT
+        with ESMTP id S232667AbiESKID (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 May 2022 04:52:09 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A3C3562BC1;
-        Thu, 19 May 2022 01:52:07 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55F3215A1;
-        Thu, 19 May 2022 01:52:07 -0700 (PDT)
-Received: from [10.57.35.249] (unknown [10.57.35.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E14CF3F73D;
-        Thu, 19 May 2022 01:52:04 -0700 (PDT)
-Message-ID: <67628f62-5081-ba64-cdf6-7410928ba2c2@arm.com>
-Date:   Thu, 19 May 2022 09:52:01 +0100
+        Thu, 19 May 2022 06:08:03 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D36DA7740;
+        Thu, 19 May 2022 03:08:02 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id f9so9039622ejc.0;
+        Thu, 19 May 2022 03:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EZvPkAeujwgNKCH5EMvSfalxGi18lEkG+bj2iAM0yAs=;
+        b=jLOnF0e7IvKq0dViMCad++sS/fMzl1uvK8JrCKAnJ8R/TGlg3fdAeTxdFfmrkYDg7I
+         KZ/MY7YpSK86SmKcjAJ8Hepr8OoTq3DoJ1tlflZmNQ3+8mtkpTpKjvxp5H9JkadBoWTM
+         F3TKYyy1q83krbp92fH28aMfL7MhgnFiQVIQgHsSPiP8J6X8kvEE+ingczbeOz7Oy+g/
+         x472XDt1dNPEqSoQo5dGfGevS/JIsxg4Ac5NRg88wGRY02FmWhy5ci9mCXC1Hct5mcuX
+         DivoBjJmvk4KGKIgUvevNHnWKrfdrvrl9oc8u+wev/CDk+fs1gJLS0B9yfEWYqmcD/yj
+         t9dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EZvPkAeujwgNKCH5EMvSfalxGi18lEkG+bj2iAM0yAs=;
+        b=h7J7bnM8u/P0hTKvf2DgsDzxGheBaaHIA9FO98YqNqKROvo9t8s/IQU1IoCMYxi6uJ
+         Ybbf8B9zghzbdwLaScJQCiWA1O3Pdk+e64mU4xWVgxhuPT97sJDP5z0/0ejBNjFoVK7h
+         rjIL6QiEMQ9elz+1fu4plxlZ6kwROrNp5o4o96xPrJfqFRmaRy1tj057b/PLWZ2oNHDv
+         7uDnH0TWfu2riSOvJLrpxf4EhStaxs1nQ1IYSk3e38J1uqowrTPDLA07yGOCzCR3NZiA
+         EGKrI+Uql2P9GVimZ4AVGRZrkL5khagKsS/YTCoEA9vOtABHNKMTJtNQ8EjcjgmpCn9V
+         TrkQ==
+X-Gm-Message-State: AOAM532us8p0P4bXmBN3k1/4jFAqwagttCwp4zReaeDFAIAq8dm6EdSB
+        32951UPxB9p70e5Ytyoa1fD8iK5xZ06ecgrA6IM=
+X-Google-Smtp-Source: ABdhPJzJayPSTOH8apl4X7mFph72vPHSGtbxYNMETu8oPZt5Ra6jCHh52C93NfRy/hJ4wplCEVFMXJnKsXs6wcDGcMw=
+X-Received: by 2002:a17:907:a088:b0:6f4:f661:f77a with SMTP id
+ hu8-20020a170907a08800b006f4f661f77amr3494449ejc.77.1652954880656; Thu, 19
+ May 2022 03:08:00 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH v2 1/2] perf: coresight_pmu: Add support for ARM CoreSight
- PMU driver
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, robin.murphy@arm.com,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sudeep.holla@arm.com,
-        thanu.rangarajan@arm.com, Michael.Williams@arm.com,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com
-References: <20220509002810.12412-1-bwicaksono@nvidia.com>
- <20220515163044.50055-1-bwicaksono@nvidia.com>
- <20220515163044.50055-2-bwicaksono@nvidia.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20220515163044.50055-2-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAHp75VeyU4Ox76wz9VfT8qEKHsE1eAo2iw27Lro1tmjJB0npMg@mail.gmail.com> <CA+V-a8tp0T=ojr3hB-QacOvV5sCZ29YXspPzKSSpGHUA8_1XDA@mail.gmail.com>
+In-Reply-To: <CA+V-a8tp0T=ojr3hB-QacOvV5sCZ29YXspPzKSSpGHUA8_1XDA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 19 May 2022 12:07:23 +0200
+Message-ID: <CAHp75VcauAsM2dTsS2CjOTc1_fwd-oT=A+yU6LzQ+vwQRAHjBg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] Renesas RZ/G2L IRQC support
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 15/05/2022 17:30, Besar Wicaksono wrote:
-> Add support for ARM CoreSight PMU driver framework and interfaces.
-> The driver provides generic implementation to operate uncore PMU based
-> on ARM CoreSight PMU architecture. The driver also provides interface
-> to get vendor/implementation specific information, for example event
-> attributes and formating.
-> 
-> The specification used in this implementation can be found below:
->   * ACPI Arm Performance Monitoring Unit table:
->          https://developer.arm.com/documentation/den0117/latest
->   * ARM Coresight PMU architecture:
->          https://developer.arm.com/documentation/ihi0091/latest
-> 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> ---
->   arch/arm64/configs/defconfig                  |    1 +
->   drivers/perf/Kconfig                          |    2 +
->   drivers/perf/Makefile                         |    1 +
->   drivers/perf/coresight_pmu/Kconfig            |   11 +
->   drivers/perf/coresight_pmu/Makefile           |    6 +
->   .../perf/coresight_pmu/arm_coresight_pmu.c    | 1267 +++++++++++++++++
->   .../perf/coresight_pmu/arm_coresight_pmu.h    |  171 +++
->   7 files changed, 1459 insertions(+)
->   create mode 100644 drivers/perf/coresight_pmu/Kconfig
->   create mode 100644 drivers/perf/coresight_pmu/Makefile
->   create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu.c
->   create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu.h
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 2ca8b1b336d2..8f2120182b25 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1196,6 +1196,7 @@ CONFIG_PHY_UNIPHIER_USB3=y
->   CONFIG_PHY_TEGRA_XUSB=y
->   CONFIG_PHY_AM654_SERDES=m
->   CONFIG_PHY_J721E_WIZ=m
-> +CONFIG_ARM_CORESIGHT_PMU=y
->   CONFIG_ARM_SMMU_V3_PMU=m
->   CONFIG_FSL_IMX8_DDR_PMU=m
->   CONFIG_QCOM_L2_PMU=y
-> diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-> index 1e2d69453771..c4e7cd5b4162 100644
-> --- a/drivers/perf/Kconfig
-> +++ b/drivers/perf/Kconfig
-> @@ -192,4 +192,6 @@ config MARVELL_CN10K_DDR_PMU
->   	  Enable perf support for Marvell DDR Performance monitoring
->   	  event on CN10K platform.
->   
-> +source "drivers/perf/coresight_pmu/Kconfig"
-> +
->   endmenu
-> diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-> index 57a279c61df5..4126a04b5583 100644
-> --- a/drivers/perf/Makefile
-> +++ b/drivers/perf/Makefile
-> @@ -20,3 +20,4 @@ obj-$(CONFIG_ARM_DMC620_PMU) += arm_dmc620_pmu.o
->   obj-$(CONFIG_MARVELL_CN10K_TAD_PMU) += marvell_cn10k_tad_pmu.o
->   obj-$(CONFIG_MARVELL_CN10K_DDR_PMU) += marvell_cn10k_ddr_pmu.o
->   obj-$(CONFIG_APPLE_M1_CPU_PMU) += apple_m1_cpu_pmu.o
-> +obj-$(CONFIG_ARM_CORESIGHT_PMU) += coresight_pmu/
-> diff --git a/drivers/perf/coresight_pmu/Kconfig b/drivers/perf/coresight_pmu/Kconfig
-> new file mode 100644
-> index 000000000000..89174f54c7be
-> --- /dev/null
-> +++ b/drivers/perf/coresight_pmu/Kconfig
-> @@ -0,0 +1,11 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> +
-> +config ARM_CORESIGHT_PMU
-> +	tristate "ARM Coresight PMU"
-> +	depends on ACPI
-> +	depends on ACPI_APMT || COMPILE_TEST
-> +	help
-> +	  Provides support for Performance Monitoring Unit (PMU) events based on
-> +	  ARM CoreSight PMU architecture.
-> \ No newline at end of file
-> diff --git a/drivers/perf/coresight_pmu/Makefile b/drivers/perf/coresight_pmu/Makefile
-> new file mode 100644
-> index 000000000000..a2a7a5fbbc16
-> --- /dev/null
-> +++ b/drivers/perf/coresight_pmu/Makefile
-> @@ -0,0 +1,6 @@
-> +# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> +#
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +obj-$(CONFIG_ARM_CORESIGHT_PMU) += \
-> +	arm_coresight_pmu.o
-> diff --git a/drivers/perf/coresight_pmu/arm_coresight_pmu.c b/drivers/perf/coresight_pmu/arm_coresight_pmu.c
-> new file mode 100644
-> index 000000000000..36ac77ab85cd
-> --- /dev/null
-> +++ b/drivers/perf/coresight_pmu/arm_coresight_pmu.c
-> @@ -0,0 +1,1267 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * ARM CoreSight PMU driver.
-> + *
-> + * This driver adds support for uncore PMU based on ARM CoreSight Performance
-> + * Monitoring Unit Architecture. The PMU is accessible via MMIO registers and
-> + * like other uncore PMUs, it does not support process specific events and
-> + * cannot be used in sampling mode.
-> + *
-> + * This code is based on other uncore PMUs like ARM DSU PMU. It provides a
-> + * generic implementation to operate the PMU according to CoreSight PMU
-> + * architecture and ACPI ARM PMU table (APMT) documents below:
-> + *   - ARM CoreSight PMU architecture document number: ARM IHI 0091 A.a-00bet0.
-> + *   - APMT document number: ARM DEN0117.
-> + * The description of the PMU, like the PMU device identification, available
-> + * events, and configuration options, is vendor specific. The driver provides
-> + * interface for vendor specific code to get this information. This allows the
-> + * driver to be shared with PMU from different vendors.
-> + *
-> + * CoreSight PMU devices are named as arm_coresight_pmu<node_id> where <node_id>
-> + * is APMT node id. The description of the device, like the identifier,
-
-Please see my comment below, near coresight_pmu_alloc().
-
-> + * supported events, and formats can be found in sysfs
-> + * /sys/bus/event_source/devices/arm_coresight_pmu<node_id>
-> + *
-> + * The user should refer to the vendor technical documentation to get details
-> + * about the supported events.
-> + *
-> + * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> + *
-> + */
+On Thu, May 19, 2022 at 6:07 AM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Wed, May 18, 2022 at 10:10 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Wed, May 18, 2022 at 9:29 PM Lad Prabhakar
+> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
 
 ...
 
-> +static int coresight_pmu_alloc(struct platform_device *pdev,
-> +			       struct coresight_pmu **coresight_pmu)
-> +{
-> +	struct acpi_apmt_node *apmt_node;
-> +	struct device *dev;
-> +	struct coresight_pmu *pmu;
-> +
-> +	dev = &pdev->dev;
-> +	apmt_node = *(struct acpi_apmt_node **)dev_get_platdata(dev);
-> +	if (!apmt_node) {
-> +		dev_err(dev, "failed to get APMT node\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	pmu = devm_kzalloc(dev, sizeof(*pmu), GFP_KERNEL);
-> +	if (!pmu)
-> +		return -ENOMEM;
-> +
-> +	*coresight_pmu = pmu;
-> +
-> +	pmu->dev = dev;
-> +	pmu->apmt_node = apmt_node;
-> +	pmu->name =
-> +		devm_kasprintf(dev, GFP_KERNEL, PMUNAME "%u", apmt_node->id);
+> > > GIC. Out of GPIOINT0-122 only 32 can be mapped to GIC SPI, this mapping is
+> > > handled by the pinctrl and IRQC driver.
+> >
+> > Where is the explanation on why valid_mask can't be used instead?
+> >
+> The .valid_mask option is one time setting but what I need is
+> something dynamic i.e. out of 392 GPIO pins any 32 can be used as an
+> interrupt pin. Also with this patch we also save on memory here [0].
 
-Could we not name this "<vendor>_<ipname>_pmu" ? Or even let the 
-"implementor" name it ? After all, for a *normal user*, all it matters
-is how to find a PMU device for my xyz IP.
-The coresight_pmu architecture is there to make the life easier for the
-software driver and the hardware implementation. We don't need to 
-necessarily pass on this abstraction to an end-user and learn how to 
-figure out which "arm_*_pmu<N>" is my PCIe, or SMMU or xyz instance.
+Which internal APIs are bound to valid_mask not to be updated?
 
-Suzuki
+-- 
+With Best Regards,
+Andy Shevchenko
