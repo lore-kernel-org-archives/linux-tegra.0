@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2320EC4321E
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 15:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9119C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 May 2022 15:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240024AbiESPrA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 May 2022 11:47:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53432 "EHLO
+        id S233763AbiESPrE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 May 2022 11:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233763AbiESPpU (ORCPT
+        with ESMTP id S240740AbiESPqL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 May 2022 11:45:20 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBA1B7A458;
-        Thu, 19 May 2022 08:44:17 -0700 (PDT)
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24J6k11u002261;
-        Thu, 19 May 2022 10:43:35 -0500
+        Thu, 19 May 2022 11:46:11 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD37A7CB11;
+        Thu, 19 May 2022 08:44:16 -0700 (PDT)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24JBHtad024228;
+        Thu, 19 May 2022 10:43:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=AjjqMicnhPoZqT6UYhPvoYkn3XWnwuGY9ExR1ybyO/8=;
- b=NK96uTLoDF75ZrvxXTw7p6hi4vOr0sdLWBCFb7xG2WQmM7XY+OSWKOGylt80CwFHEW0E
- vFhM7kYvrRxtFCW7nLM2xduTcKUBmqHh4lQr8sV/uUkgXbFgGEfe+1xcxQfVQOFwvqf5
- A3pODWEL7GZnc8tJxO1yIoPrWM2qx0A+NkP7QDSgAyQ44vklOyxds0962e9L+amBschB
- JVN5JmUiThHA6OHIZ85kQQCP4n9hf8oh1h9ejwTkDE6OFAmENLWwJLW+EJStVYBoKQjB
- DA7lPaF2/RSeC7+BYerdro+mM77ha8x4GHdwnkNK4ugcjsHnlIdFQhBfyMpWDB8diSJ/ wA== 
+ bh=JZwMeAXTmKyqZh6PnwjGmQ7Sg6P9A85VRbLP68aHx+U=;
+ b=NuKu4vk+OZb2YcWlAAFVraEWupCLmAqo6g/teCFwiVObhAP2zaNgrGJkg7fqXXlvkf+W
+ j8VllfGLHAb7SHTVf4t/KetLhJk2FG+dCpkE66CeRU3PKM5CR9jXYIxoEkHEuAuZOqKj
+ Dcny0Oe3fGhBQOshT+Gf4mpVoV92gK2bXBpDdvfBF5pcDl2g2GXHbO/8w6ix4KkRKVoQ
+ pUCAfZFnWfV+/4Lg0ReHkO1GpMbjzGru8BcJ/QGXithzrck4mcqarMpQheE9lGQLKk+R
+ VRcxLEIwpFUQn2dB6BuEE5ghSeyVTwq6c4hubJzdTwnhDjhfvXcVowjNQBlv+uvz95gP yQ== 
 Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3g29u37mcf-5
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3g28upf5dm-5
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 19 May 2022 10:43:34 -0500
+        Thu, 19 May 2022 10:43:27 -0500
 Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 19 May
@@ -39,8 +39,8 @@ Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.24 via Frontend
  Transport; Thu, 19 May 2022 16:43:19 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id BA87A476;
-        Thu, 19 May 2022 15:43:19 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id F195D11D3;
+        Thu, 19 May 2022 15:43:18 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
@@ -58,142 +58,93 @@ CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
         <peter.ujfalusi@gmail.com>, <jarkko.nikula@bitmer.com>,
         <heiko@sntech.de>, <jbrunet@baylibre.com>, <kernel@pengutronix.de>,
         <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 19/56] ASoC: samsung: Update to use set_fmt_new callback
-Date:   Thu, 19 May 2022 16:42:41 +0100
-Message-ID: <20220519154318.2153729-20-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 09/56] ASoC: hisilicon: Update to use set_fmt_new callback
+Date:   Thu, 19 May 2022 16:42:31 +0100
+Message-ID: <20220519154318.2153729-10-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
 References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: 579zJA1j8qpgk8t0NR1Uq8E4v_eh2bkG
-X-Proofpoint-ORIG-GUID: 579zJA1j8qpgk8t0NR1Uq8E4v_eh2bkG
+X-Proofpoint-GUID: xseAf3viMvfsJbVMvc_EICfoCoFhnqVY
+X-Proofpoint-ORIG-GUID: xseAf3viMvfsJbVMvc_EICfoCoFhnqVY
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 As part of updating the core to directly tell drivers if they are clock
-provider or consumer update these CPU side drivers to use the new direct
+provider or consumer update this CPU side driver to use the new direct
 callback.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/samsung/i2s.c         | 8 ++++----
- sound/soc/samsung/pcm.c         | 6 +++---
- sound/soc/samsung/s3c-i2s-v2.c  | 8 ++++----
- sound/soc/samsung/s3c24xx-i2s.c | 8 ++++----
- 4 files changed, 15 insertions(+), 15 deletions(-)
+ sound/soc/hisilicon/hi6210-i2s.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 70c827162be4d..9ed275ebd744e 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -671,11 +671,11 @@ static int i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+diff --git a/sound/soc/hisilicon/hi6210-i2s.c b/sound/soc/hisilicon/hi6210-i2s.c
+index a297d4af5099f..51f98ae651a6b 100644
+--- a/sound/soc/hisilicon/hi6210-i2s.c
++++ b/sound/soc/hisilicon/hi6210-i2s.c
+@@ -227,9 +227,9 @@ static int hi6210_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
+ 	 * We don't actually set the hardware until the hw_params
+ 	 * call, but we need to validate the user input here.
+ 	 */
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBM_CFM:
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_BC_FC:
++	case SND_SOC_DAIFMT_BP_FP:
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -245,8 +245,8 @@ static int hi6210_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
+ 	}
+ 
+ 	i2s->format = fmt;
+-	i2s->master = (i2s->format & SND_SOC_DAIFMT_MASTER_MASK) ==
+-		      SND_SOC_DAIFMT_CBS_CFS;
++	i2s->master = (i2s->format & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) ==
++		      SND_SOC_DAIFMT_BP_FP;
+ 
+ 	return 0;
+ }
+@@ -375,21 +375,21 @@ static int hi6210_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	hi6210_write_reg(i2s, HII2S_MUX_TOP_MODULE_CFG, val);
+ 
+ 
+-	switch (i2s->format & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBM_CFM:
++	switch (i2s->format & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_BC_FC:
+ 		i2s->master = false;
+ 		val = hi6210_read_reg(i2s, HII2S_I2S_CFG);
+ 		val |= HII2S_I2S_CFG__S2_MST_SLV;
+ 		hi6210_write_reg(i2s, HII2S_I2S_CFG, val);
+ 		break;
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	case SND_SOC_DAIFMT_BP_FP:
+ 		i2s->master = true;
+ 		val = hi6210_read_reg(i2s, HII2S_I2S_CFG);
+ 		val &= ~HII2S_I2S_CFG__S2_MST_SLV;
+ 		hi6210_write_reg(i2s, HII2S_I2S_CFG, val);
+ 		break;
+ 	default:
+-		WARN_ONCE(1, "Invalid i2s->fmt MASTER_MASK. This shouldn't happen\n");
++		WARN_ONCE(1, "Invalid i2s->fmt CLOCK_PROVIDER_MASK. This shouldn't happen\n");
  		return -EINVAL;
  	}
  
--	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
--	case SND_SOC_DAIFMT_CBM_CFM:
-+	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
-+	case SND_SOC_DAIFMT_BC_FC:
- 		tmp |= mod_slave;
- 		break;
--	case SND_SOC_DAIFMT_CBS_CFS:
-+	case SND_SOC_DAIFMT_BP_FP:
- 		/*
- 		 * Set default source clock in Master mode, only when the
- 		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
-@@ -1107,7 +1107,7 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- static const struct snd_soc_dai_ops samsung_i2s_dai_ops = {
- 	.trigger = i2s_trigger,
- 	.hw_params = i2s_hw_params,
--	.set_fmt = i2s_set_fmt,
-+	.set_fmt_new = i2s_set_fmt,
- 	.set_clkdiv = i2s_set_clkdiv,
- 	.set_sysclk = i2s_set_sysclk,
- 	.startup = i2s_startup,
-diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
-index 4c4dfde0568fe..818172d8832d2 100644
---- a/sound/soc/samsung/pcm.c
-+++ b/sound/soc/samsung/pcm.c
-@@ -340,8 +340,8 @@ static int s3c_pcm_set_fmt(struct snd_soc_dai *cpu_dai,
- 		goto exit;
- 	}
- 
--	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
--	case SND_SOC_DAIFMT_CBS_CFS:
-+	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
-+	case SND_SOC_DAIFMT_BP_FP:
- 		/* Nothing to do, Master by default */
- 		break;
- 	default:
-@@ -437,7 +437,7 @@ static const struct snd_soc_dai_ops s3c_pcm_dai_ops = {
- 	.set_clkdiv	= s3c_pcm_set_clkdiv,
- 	.trigger	= s3c_pcm_trigger,
- 	.hw_params	= s3c_pcm_hw_params,
--	.set_fmt	= s3c_pcm_set_fmt,
-+	.set_fmt_new	= s3c_pcm_set_fmt,
- };
- 
- static int s3c_pcm_dai_probe(struct snd_soc_dai *dai)
-diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
-index de66cc422e6ea..9c8a0697849d7 100644
---- a/sound/soc/samsung/s3c-i2s-v2.c
-+++ b/sound/soc/samsung/s3c-i2s-v2.c
-@@ -252,12 +252,12 @@ static int s3c2412_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
- 	iismod = readl(i2s->regs + S3C2412_IISMOD);
- 	pr_debug("hw_params r: IISMOD: %x \n", iismod);
- 
--	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
--	case SND_SOC_DAIFMT_CBM_CFM:
-+	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
-+	case SND_SOC_DAIFMT_BC_FC:
- 		i2s->master = 0;
- 		iismod |= S3C2412_IISMOD_SLAVE;
- 		break;
--	case SND_SOC_DAIFMT_CBS_CFS:
-+	case SND_SOC_DAIFMT_BP_FP:
- 		i2s->master = 1;
- 		iismod &= ~S3C2412_IISMOD_SLAVE;
- 		break;
-@@ -666,7 +666,7 @@ int s3c_i2sv2_register_component(struct device *dev, int id,
- 	ops->trigger = s3c2412_i2s_trigger;
- 	if (!ops->hw_params)
- 		ops->hw_params = s3c_i2sv2_hw_params;
--	ops->set_fmt = s3c2412_i2s_set_fmt;
-+	ops->set_fmt_new = s3c2412_i2s_set_fmt;
- 	ops->set_clkdiv = s3c2412_i2s_set_clkdiv;
- 	ops->set_sysclk = s3c_i2sv2_set_sysclk;
- 
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index 0f46304eaa4f3..6226b3b585e54 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -169,11 +169,11 @@ static int s3c24xx_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
- 	iismod = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
- 	pr_debug("hw_params r: IISMOD: %x \n", iismod);
- 
--	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
--	case SND_SOC_DAIFMT_CBM_CFM:
-+	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
-+	case SND_SOC_DAIFMT_BC_CFC:
- 		iismod |= S3C2410_IISMOD_SLAVE;
- 		break;
--	case SND_SOC_DAIFMT_CBS_CFS:
-+	case SND_SOC_DAIFMT_BP_FP:
- 		iismod &= ~S3C2410_IISMOD_SLAVE;
- 		break;
- 	default:
-@@ -394,7 +394,7 @@ static int s3c24xx_i2s_resume(struct snd_soc_component *component)
- static const struct snd_soc_dai_ops s3c24xx_i2s_dai_ops = {
- 	.trigger	= s3c24xx_i2s_trigger,
- 	.hw_params	= s3c24xx_i2s_hw_params,
--	.set_fmt	= s3c24xx_i2s_set_fmt,
-+	.set_fmt_new	= s3c24xx_i2s_set_fmt,
- 	.set_clkdiv	= s3c24xx_i2s_set_clkdiv,
- 	.set_sysclk	= s3c24xx_i2s_set_sysclk,
+@@ -513,7 +513,7 @@ static int hi6210_i2s_dai_probe(struct snd_soc_dai *dai)
+ static const struct snd_soc_dai_ops hi6210_i2s_dai_ops = {
+ 	.trigger	= hi6210_i2s_trigger,
+ 	.hw_params	= hi6210_i2s_hw_params,
+-	.set_fmt	= hi6210_i2s_set_fmt,
++	.set_fmt_new	= hi6210_i2s_set_fmt,
+ 	.startup	= hi6210_i2s_startup,
+ 	.shutdown	= hi6210_i2s_shutdown,
  };
 -- 
 2.30.2
