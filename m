@@ -2,155 +2,246 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C9FC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 May 2022 14:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5351EC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 May 2022 15:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236247AbiETOUl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 May 2022 10:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53770 "EHLO
+        id S1350598AbiETPGO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 May 2022 11:06:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233881AbiETOUk (ORCPT
+        with ESMTP id S1350595AbiETPGN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 May 2022 10:20:40 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91B2515EA77;
-        Fri, 20 May 2022 07:20:37 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id p189so4610488wmp.3;
-        Fri, 20 May 2022 07:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V8d3TsLjdGSYEnI2lRlQdf6FY0CX3FSXW/zunDtdRJ0=;
-        b=nPrDXyIfEMAmjBSmmEyvmqFJT3VMmS42uZbtmZdR6NFocwHQFBOrrDkCu2bh+qf4MM
-         /7mLKdxexJ6gehCnV6HTvaGSOtaV18WCuzFILpT/KFfEAm8xmK91BHIXQK0x1nftKSfE
-         8jNDLduUFmilN+1ShywRnlbZi2K+99UpkXzOKNcIXMcd7XDg+CRU2SMl2C9ansSWXU8k
-         4/zfdLDk/hrH3BuLic5AoE8ol10Py7cliTdfI5sn/cxi0fnnNNIElTBOy6ZqVsroy+l8
-         xSE7uwjd1CBdJWWvwqtrQTKlCTM7Vf2k6D+hrQZhuPDpqrHrmE+F/C4uVRg2c7JRV6EM
-         ujaw==
+        Fri, 20 May 2022 11:06:13 -0400
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A952E9DC;
+        Fri, 20 May 2022 08:06:11 -0700 (PDT)
+Received: by mail-oi1-f174.google.com with SMTP id v9so5614273oie.5;
+        Fri, 20 May 2022 08:06:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V8d3TsLjdGSYEnI2lRlQdf6FY0CX3FSXW/zunDtdRJ0=;
-        b=xU9XjK9lHmOZTIsTArbfA9Ijq09dyPBiL5RTFY07PPetDEtsMqkMvSy/4DE07HPpyb
-         2o55pc6yVLBY7WcLwWLDvyMoXuYM9jTh42ZXzKJOu/vGx6rFCN59PMEIKBd/3fZYkkbu
-         fhlm/EWhchanna8IXvD7ZXXTCxaXuhlr6VeoZ589qFGG/wKagCyW8vaOOFmQ24/GR/H7
-         /4W+udcITpUS/f1VnqxhRPIKpa32a28/J9A3qCXkHTKdb/fJlCX7bYdKW8SbNXOhUMND
-         B336UkQSlNWiaLje6VMhFnvjoqlzP8iOboxM6wDnBz56rarvUytq0rMGKHAT6aoUTnXb
-         Hosg==
-X-Gm-Message-State: AOAM531vWge4bX9aC9HyTs7A8MfyY4J+LxFJa9rnP8gDoqyUpb60/SSg
-        /nuWRw1KfVa9xvqrKMs7najPeAyr7Tc=
-X-Google-Smtp-Source: ABdhPJzgTtilkwzS67YPwgEOjQGvTx+OOIpPBRlDxp1rtZq4Z7qghZ1APuDdwWJhy3ERV9vp9BJtqA==
-X-Received: by 2002:a1c:6a14:0:b0:397:39c4:8ac2 with SMTP id f20-20020a1c6a14000000b0039739c48ac2mr2626149wmc.112.1653056436004;
-        Fri, 20 May 2022 07:20:36 -0700 (PDT)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id l15-20020adfbd8f000000b0020e65d7d36asm2677140wrh.11.2022.05.20.07.20.34
+         :mime-version:content-disposition:in-reply-to;
+        bh=MMzrxEofByja+qMgDSjgy43yQLfQq7Ckp2duOorHFa8=;
+        b=gR+ffFHbTVFviwr8zEkdQhwdv01AZZ0F1p4AZlTRtlgC1kQkBoFFna+WFpJ6ILK9tj
+         9WDMViKswqorkPWbM52W6b8CVTNbR2w/YS0fFyH2opCLkvkFEQIi+D4iJhF6PU0sMKWQ
+         qQ8gAyu+5lsK+nQ0VJS+jED8KJ1IkxDsy43aHRx0dAJ93Gy95zLiZe8mRqQxIn7vCi0M
+         gdz3Yqp7F5AQN+m0S53Ujxx+4351JT81D2DpIapVu7HzEV/Ikw57we25zGNmtmVJaCT1
+         V32AXm1ryObcPCSpy721Ql1kkK+/FkApN3pVWhAqPwM4Frd98hm7w4g5r2YBfdYyK43O
+         fx+g==
+X-Gm-Message-State: AOAM532HYZxsJbBLKM9CDL9uTYaSECRrvEHMFckyz2l3AEfUhesHOE+T
+        tXo4XeSYpMUVP0Ruzv0h7A==
+X-Google-Smtp-Source: ABdhPJyDjyMabagci+qzfR5r1nT/tLH/Z2mobu3J0sl1sdPEQh5b1iEMdO7Ks9T0n2XCpPm3zQi2AQ==
+X-Received: by 2002:a05:6808:3099:b0:32b:77c:669c with SMTP id bl25-20020a056808309900b0032b077c669cmr1094167oib.297.1653059171059;
+        Fri, 20 May 2022 08:06:11 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id h62-20020acab741000000b0032ae70865e3sm1094313oif.14.2022.05.20.08.06.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 May 2022 07:20:35 -0700 (PDT)
-Date:   Fri, 20 May 2022 16:20:33 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Lee Jones <lee.jones@linaro.org>,
+        Fri, 20 May 2022 08:06:10 -0700 (PDT)
+Received: (nullmailer pid 3857203 invoked by uid 1000);
+        Fri, 20 May 2022 15:06:09 -0000
+Date:   Fri, 20 May 2022 10:06:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rahul Tanwar <rtanwar@maxlinear.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
-Message-ID: <YoejsQfd97I6W+lT@orome>
-References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Frank Li <Frank.Li@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] PCI: dwc: Convert to using native IP-core
+ versions representation
+Message-ID: <20220520150609.GA3853502-robh@kernel.org>
+References: <20220503214638.1895-1-Sergey.Semin@baikalelectronics.ru>
+ <20220503214638.1895-6-Sergey.Semin@baikalelectronics.ru>
+ <20220516203003.GB3209795-robh@kernel.org>
+ <20220520092954.fz62wbrpj7qss6pj@mobilestation>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xBogxZoS+yMG4Fb2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
-User-Agent: Mutt/2.2.4 (c3baa83e) (2022-04-30)
+In-Reply-To: <20220520092954.fz62wbrpj7qss6pj@mobilestation>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, May 20, 2022 at 12:29:54PM +0300, Serge Semin wrote:
+> On Mon, May 16, 2022 at 03:30:03PM -0500, Rob Herring wrote:
+> > On Wed, May 04, 2022 at 12:46:26AM +0300, Serge Semin wrote:
+> > > Since DWC PCIe v4.70a the controller version can be read from the
+> > > PORT_LOGIC.PCIE_VERSION_OFF register. Version is represented in the FourCC
+> > > format [1]. It's standard versioning approach for the Synopsys DWC
+> > > IP-cores. Moreover some of the DWC kernel drivers already make use of it
+> > > to fixup version-dependent functionality (See DWC USB3, Stmicro STMMAC or
+> > > recent DW SPI driver). In order to preserve the standard version
+> > > representation and prevent the data conversion back and forth, we suggest
+> > > to preserve the native version representation in the DWC PCIe driver too
+> > > in the same way as it has already been done in the rest of the DWC
+> > > drivers. IP-core version reading from the CSR will be introduced in the
+> > > next commit together with a simple macro-based API to use it.
+> > > 
+> > > [1] https://en.wikipedia.org/wiki/FourCC
+> > > 
+> > > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > > ---
+> > >  drivers/pci/controller/dwc/pci-keystone.c    | 12 ++++++------
+> > >  drivers/pci/controller/dwc/pcie-designware.c |  8 ++++----
+> > >  drivers/pci/controller/dwc/pcie-designware.h | 10 +++++++++-
+> > >  drivers/pci/controller/dwc/pcie-intel-gw.c   |  4 ++--
+> > >  drivers/pci/controller/dwc/pcie-tegra194.c   |  2 +-
+> > >  5 files changed, 22 insertions(+), 14 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> > > index d10e5fd0f83c..c51018c68b56 100644
+> > > --- a/drivers/pci/controller/dwc/pci-keystone.c
+> > > +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> > > @@ -109,7 +109,7 @@ struct ks_pcie_of_data {
+> > >  	enum dw_pcie_device_mode mode;
+> > >  	const struct dw_pcie_host_ops *host_ops;
+> > >  	const struct dw_pcie_ep_ops *ep_ops;
+> > > -	unsigned int version;
+> > > +	u32 version;
+> > >  };
+> > >  
+> > >  struct keystone_pcie {
+> > > @@ -1069,19 +1069,19 @@ static int ks_pcie_am654_set_mode(struct device *dev,
+> > >  
+> > >  static const struct ks_pcie_of_data ks_pcie_rc_of_data = {
+> > >  	.host_ops = &ks_pcie_host_ops,
+> > > -	.version = 0x365A,
+> > > +	.version = DW_PCIE_VER_365A,
+> > >  };
+> > >  
+> > >  static const struct ks_pcie_of_data ks_pcie_am654_rc_of_data = {
+> > >  	.host_ops = &ks_pcie_am654_host_ops,
+> > >  	.mode = DW_PCIE_RC_TYPE,
+> > > -	.version = 0x490A,
+> > > +	.version = DW_PCIE_VER_490A,
+> > >  };
+> > >  
+> > >  static const struct ks_pcie_of_data ks_pcie_am654_ep_of_data = {
+> > >  	.ep_ops = &ks_pcie_am654_ep_ops,
+> > >  	.mode = DW_PCIE_EP_TYPE,
+> > > -	.version = 0x490A,
+> > > +	.version = DW_PCIE_VER_490A,
+> > >  };
+> > >  
+> > >  static const struct of_device_id ks_pcie_of_match[] = {
+> > > @@ -1114,12 +1114,12 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+> > >  	struct device_link **link;
+> > >  	struct gpio_desc *gpiod;
+> > >  	struct resource *res;
+> > > -	unsigned int version;
+> > >  	void __iomem *base;
+> > >  	u32 num_viewport;
+> > >  	struct phy **phy;
+> > >  	u32 num_lanes;
+> > >  	char name[10];
+> > > +	u32 version;
+> > >  	int ret;
+> > >  	int irq;
+> > >  	int i;
+> > > @@ -1233,7 +1233,7 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+> > >  		goto err_get_sync;
+> > >  	}
+> > >  
+> > > -	if (pci->version >= 0x480A)
+> > > +	if (pci->version >= DW_PCIE_VER_480A)
+> > >  		ret = ks_pcie_am654_set_mode(dev, mode);
+> > >  	else
+> > >  		ret = ks_pcie_set_mode(dev);
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> > > index 1682f477bf20..3ebb7bfee10f 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> > > @@ -289,7 +289,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, u8 func_no,
+> > >  	val = type | PCIE_ATU_FUNC_NUM(func_no);
+> > >  	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr))
+> > >  		val |= PCIE_ATU_INCREASE_REGION_SIZE;
+> > > -	if (pci->version == 0x490A)
+> > > +	if (pci->version == DW_PCIE_VER_490A)
+> > >  		val = dw_pcie_enable_ecrc(val);
+> > >  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL1, val);
+> > >  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
+> > > @@ -336,7 +336,7 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
+> > >  			   upper_32_bits(cpu_addr));
+> > >  	dw_pcie_writel_dbi(pci, PCIE_ATU_LIMIT,
+> > >  			   lower_32_bits(limit_addr));
+> > > -	if (pci->version >= 0x460A)
+> > > +	if (pci->version >= DW_PCIE_VER_460A)
+> > >  		dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_LIMIT,
+> > >  				   upper_32_bits(limit_addr));
+> > >  	dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET,
+> > > @@ -345,9 +345,9 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
+> > >  			   upper_32_bits(pci_addr));
+> > >  	val = type | PCIE_ATU_FUNC_NUM(func_no);
+> > >  	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr) &&
+> > > -	    pci->version >= 0x460A)
+> > > +	    pci->version >= DW_PCIE_VER_460A)
+> > >  		val |= PCIE_ATU_INCREASE_REGION_SIZE;
+> > > -	if (pci->version == 0x490A)
+> > > +	if (pci->version == DW_PCIE_VER_490A)
+> > >  		val = dw_pcie_enable_ecrc(val);
+> > >  	dw_pcie_writel_dbi(pci, PCIE_ATU_CR1, val);
+> > >  	dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE);
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> > > index 7d6e9b7576be..5be43c662176 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware.h
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> > > @@ -20,6 +20,14 @@
+> > >  #include <linux/pci-epc.h>
+> > >  #include <linux/pci-epf.h>
+> > >  
+> > > +/* DWC PCIe IP-core versions (native support since v4.70a) */
+> > > +#define DW_PCIE_VER_365A		0x3336352a
+> > > +#define DW_PCIE_VER_460A		0x3436302a
+> > > +#define DW_PCIE_VER_470A		0x3437302a
+> > > +#define DW_PCIE_VER_480A		0x3438302a
+> > > +#define DW_PCIE_VER_490A		0x3439302a
+> > > +#define DW_PCIE_VER_520A		0x3532302a
+> > > +
+> > >  /* Parameters for the waiting for link up routine */
+> > >  #define LINK_WAIT_MAX_RETRIES		10
+> > >  #define LINK_WAIT_USLEEP_MIN		90000
+> > > @@ -269,7 +277,7 @@ struct dw_pcie {
+> > >  	struct pcie_port	pp;
+> > >  	struct dw_pcie_ep	ep;
+> > >  	const struct dw_pcie_ops *ops;
+> > > -	unsigned int		version;
+> > > +	u32			version;
+> > >  	int			num_lanes;
+> > >  	int			link_gen;
+> > >  	u8			n_fts[2];
+> > > diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > > index 5ba144924ff8..786af2ba379f 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > > @@ -59,7 +59,7 @@
+> > >  #define RESET_INTERVAL_MS		100
+> > >  
+> > >  struct intel_pcie_soc {
+> > > -	unsigned int	pcie_ver;
+> > > +	u32	pcie_ver;
+> > 
+> 
+> > This is not used by the Intel driver code, but just passed to the DWC 
+> > core code. Given that and that the IP version is new enough, this should 
+> > be removed one the detection is in place.
+> 
+> Ok. I'll drop it in an additional patch placed after the version
+> detection patch in the series. What about the Tegra 194 code? Shall I
+> drop it from there too? I've got DW PCIe 4.90a reference manual here.
+> It states there are the PCIE_VERSION_NUMBER_OFF and
+> PCIE_VERSION_TYPE_OFF registers in the port logic reg space. So the
+> removal shall not cause problems.
 
---xBogxZoS+yMG4Fb2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, anywhere we can remove it would be good.
 
-On Mon, Apr 25, 2022 at 03:22:44PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Dividing by the result of a division looses precision because the result =
-is
-> rounded twice. E.g. with clk_rate =3D 48000000 and period =3D 32760033 the
-> following numbers result:
->=20
-> 	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH =3D 187500
-> 	hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) =3D 3052
-> 	rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) =3D 6144
->=20
-> The exact result would be 6142.5061875 and (apart from rounding) this is
-> found by using a single division. As a side effect is also a tad
-> cheaper to calculate.
->=20
-> Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
-> example clk_rate =3D 47999999 and period =3D 106667:
->=20
-> 	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
-> 			    NSEC_PER_SEC) =3D 19
->=20
-> 	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-> 			    NSEC_PER_SEC << PWM_DUTY_WIDTH) =3D 20
->=20
-> (The exact result is 20.000062083332033.)
->=20
-> With this optimizations also switch from round-closest to round-down for
-> the period calculation. Given that the calculations were non-optimal for
-> quite some time now with variations in both directions which nobody
-> reported as a problem, this is the opportunity to align the driver's
-> behavior to the requirements of new drivers. This has several upsides:
->=20
->  - Implementation is easier as there are no round-nearest variants of
->    mul_u64_u64_div_u64().
->  - Requests for too small periods are now consistently refused. This was
->    kind of arbitrary before, where period_ns < min_period_ns was
->    refused, but in some cases min_period_ns isn't actually implementable
->    and then values between min_period_ns and the actual minimum were
->    rounded up to the actual minimum.
->=20
-> Note that the duty_cycle calculation isn't using the usual round-down
-> approach yet.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
-> Hello,
->=20
-> changes since (implicit) v1: Updated changelog to explain why rate =3D 0
-> is refused now.
->=20
-> Best regards
-> Uwe
->=20
->  drivers/pwm/pwm-tegra.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---xBogxZoS+yMG4Fb2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmKHo7AACgkQ3SOs138+
-s6GOcw//Uue1sqRViVDZImfMCHlPpSssaNGfIk7ORGXaRTA8YXDIsrpJTEEuYIEz
-avFkK0dDifpigEYGeaSTSR3RrMFiIu1jMaxVau/FUEcFEsaKSMwlVIDprB8arTBc
-KvWTNjIClbspF8HrDrSxoadHJDEqEzJyt1zRvcym8TPXU/hC83TfyFa+8ggEZFC+
-MOF5/aRQ1O7beTWTJDRpC9/UG29fe5rocU3LiCXZBUoC7YP0c9gODcunjux9rqwW
-8fUtvL8b07cVd6uSh9m6SEgJYclcarAsCgIMfr+tohMDJE1TX55jki3Nn+ypd6cy
-bV2vAhJBFClwIEt9KfgPBjyZhuhcVYAg0eIHet0GCdl5p0XQrsb5u1ERmfutqrHZ
-8eEDCvP79uC/fiXpKe5jFm+3JEJEheO8D6/V2vVM1Msuhiyr844m2XMF+cp9cE2b
-qeLtXn+5qNzTolzlrf2eUXrgaxhWayPsFRBEBRMftF6q6JBkshxy6a9dyNUTcF/d
-RfGVlAjPju+ZFIZDlEl99A7pMBmVbVD3481Nk1JQeLiMDieEHb7knbORrKMlnKl5
-On8MmjOuakh/M5iVvniYUDBgHlD/0TSFvn5Y8T1ip8/3k8sh/L/rxcrt+BEPo7cN
-PwCvqDOQVwxPoCqDEiksIVX2Aw1Y2iCXtQagBCT4bBjoskNCXm4=
-=w9fn
------END PGP SIGNATURE-----
-
---xBogxZoS+yMG4Fb2--
+Rob
