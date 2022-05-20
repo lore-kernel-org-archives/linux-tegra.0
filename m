@@ -2,161 +2,155 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1502C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 May 2022 13:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C9FC433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 May 2022 14:20:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349883AbiETNjJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 May 2022 09:39:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34826 "EHLO
+        id S236247AbiETOUl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 May 2022 10:20:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349096AbiETNjI (ORCPT
+        with ESMTP id S233881AbiETOUk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 May 2022 09:39:08 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7113F169E3B;
-        Fri, 20 May 2022 06:39:07 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id eg11so10806951edb.11;
-        Fri, 20 May 2022 06:39:07 -0700 (PDT)
+        Fri, 20 May 2022 10:20:40 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91B2515EA77;
+        Fri, 20 May 2022 07:20:37 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id p189so4610488wmp.3;
+        Fri, 20 May 2022 07:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/vZ5EIynCj28UhpMo2WaUDTGXgrMDD6ssuzpbKQFTrE=;
-        b=dbdCdy787bi5RG1nfo93JEf7fRSGqgvdGgWbhi5+jiM2gZq411FflPdY9L2o3Sz097
-         XA9SzdoyvFOw4oNvCmxQtifumEL2ucGkRJdht2gKQbj9YVfuffNrO+QPvuuZxjrqoS0F
-         NfU67GWBYzEpstGDy844RVUmfAl7HNRGvf/LwT4rnlN6DngXc2ZKIaPbBdhEQ53EpZ4s
-         ITsYoJPxw+STd6rZ1MhtfXgofir7SDd7Ohuuh33FWGAKbBMX+xkiGJYwBkluf7rb/Tbk
-         3LkMR2KGcBuBeRhqmlx3nsng24xG35IMWoTed7v6OpPZiYpWbvZKUFT3MZVg1KYI/Bnh
-         bK1Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=V8d3TsLjdGSYEnI2lRlQdf6FY0CX3FSXW/zunDtdRJ0=;
+        b=nPrDXyIfEMAmjBSmmEyvmqFJT3VMmS42uZbtmZdR6NFocwHQFBOrrDkCu2bh+qf4MM
+         /7mLKdxexJ6gehCnV6HTvaGSOtaV18WCuzFILpT/KFfEAm8xmK91BHIXQK0x1nftKSfE
+         8jNDLduUFmilN+1ShywRnlbZi2K+99UpkXzOKNcIXMcd7XDg+CRU2SMl2C9ansSWXU8k
+         4/zfdLDk/hrH3BuLic5AoE8ol10Py7cliTdfI5sn/cxi0fnnNNIElTBOy6ZqVsroy+l8
+         xSE7uwjd1CBdJWWvwqtrQTKlCTM7Vf2k6D+hrQZhuPDpqrHrmE+F/C4uVRg2c7JRV6EM
+         ujaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/vZ5EIynCj28UhpMo2WaUDTGXgrMDD6ssuzpbKQFTrE=;
-        b=rj176+aMvhWNFkb2oyWSikqNSiPZiT21mY9HNuXFUFubMvPDldQrQQvQ7x0ItrvR0R
-         XQK8jYs1YLpSysypjR6hUUZVRXG4rVvHcUp2cG2HYqJkPTM5HSCNEnQvOi/XcTRK2JAH
-         7AVZaeYKMPOBDNPTKCYjnR4tjtbZcadsJ3XMj1DIVaMIHAP3uF1BKjNnJoFiXS7YuUJt
-         ItG2t0559rG5MWAD/yGAbTMF6Dml9FPUMf3seHZ4TAMa9tJ/+BqJ0HNdt4xjmJqM2Tmo
-         xVdIurlbF4hUFiWw8C9MKR+up1AyOWgTC2kel/dJPoanCaxErFH8uGYBRPfTae28BLce
-         miuA==
-X-Gm-Message-State: AOAM531+fTdSWUN6Fq9054rF/Yqcbi0mMce7I8I7EYtTzOKjoE5kqzlA
-        iQkCBMR4QFWwiq3y4qPGnUk=
-X-Google-Smtp-Source: ABdhPJzB4dDO6rQGcvP8GfFmFaDFqb3hZ0xhEwmOtYMgE32gUNPAUosh+C78GjzIs6waR9fAZFTMtw==
-X-Received: by 2002:a05:6402:3488:b0:427:b4ec:991b with SMTP id v8-20020a056402348800b00427b4ec991bmr10869813edc.319.1653053945963;
-        Fri, 20 May 2022 06:39:05 -0700 (PDT)
-Received: from archbook.localnet (84-72-105-84.dclient.hispeed.ch. [84.72.105.84])
-        by smtp.gmail.com with ESMTPSA id b2-20020aa7df82000000b0042abfe32ac8sm4225152edy.30.2022.05.20.06.39.04
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=V8d3TsLjdGSYEnI2lRlQdf6FY0CX3FSXW/zunDtdRJ0=;
+        b=xU9XjK9lHmOZTIsTArbfA9Ijq09dyPBiL5RTFY07PPetDEtsMqkMvSy/4DE07HPpyb
+         2o55pc6yVLBY7WcLwWLDvyMoXuYM9jTh42ZXzKJOu/vGx6rFCN59PMEIKBd/3fZYkkbu
+         fhlm/EWhchanna8IXvD7ZXXTCxaXuhlr6VeoZ589qFGG/wKagCyW8vaOOFmQ24/GR/H7
+         /4W+udcITpUS/f1VnqxhRPIKpa32a28/J9A3qCXkHTKdb/fJlCX7bYdKW8SbNXOhUMND
+         B336UkQSlNWiaLje6VMhFnvjoqlzP8iOboxM6wDnBz56rarvUytq0rMGKHAT6aoUTnXb
+         Hosg==
+X-Gm-Message-State: AOAM531vWge4bX9aC9HyTs7A8MfyY4J+LxFJa9rnP8gDoqyUpb60/SSg
+        /nuWRw1KfVa9xvqrKMs7najPeAyr7Tc=
+X-Google-Smtp-Source: ABdhPJzgTtilkwzS67YPwgEOjQGvTx+OOIpPBRlDxp1rtZq4Z7qghZ1APuDdwWJhy3ERV9vp9BJtqA==
+X-Received: by 2002:a1c:6a14:0:b0:397:39c4:8ac2 with SMTP id f20-20020a1c6a14000000b0039739c48ac2mr2626149wmc.112.1653056436004;
+        Fri, 20 May 2022 07:20:36 -0700 (PDT)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id l15-20020adfbd8f000000b0020e65d7d36asm2677140wrh.11.2022.05.20.07.20.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 May 2022 06:39:05 -0700 (PDT)
-From:   Nicolas Frattaroli <frattaroli.nicolas@gmail.com>
-To:     broonie@kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lgirdwood@gmail.com, kuninori.morimoto.gx@renesas.com,
-        nicolas.ferre@microchip.com, nsaenz@kernel.org,
-        shawnguo@kernel.org, linux-imx@nxp.com, cezary.rojewski@intel.com,
-        pierre-louis.bossart@linux.intel.com, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, daniel@zonque.org,
-        srinivas.kandagatla@linaro.org, linux-rockchip@lists.infradead.org,
-        krzk@kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        peter.ujfalusi@gmail.com, jarkko.nikula@bitmer.com,
-        heiko@sntech.de, jbrunet@baylibre.com, kernel@pengutronix.de,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 18/56] ASoC: rockchip: Update to use set_fmt_new callback
-Date:   Fri, 20 May 2022 15:39:03 +0200
-Message-ID: <4375965.enAZpblka2@archbook>
-In-Reply-To: <20220519154318.2153729-19-ckeepax@opensource.cirrus.com>
-References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com> <20220519154318.2153729-19-ckeepax@opensource.cirrus.com>
+        Fri, 20 May 2022 07:20:35 -0700 (PDT)
+Date:   Fri, 20 May 2022 16:20:33 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
+Message-ID: <YoejsQfd97I6W+lT@orome>
+References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xBogxZoS+yMG4Fb2"
+Content-Disposition: inline
+In-Reply-To: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
+User-Agent: Mutt/2.2.4 (c3baa83e) (2022-04-30)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Donnerstag, 19. Mai 2022 17:42:40 CEST Charles Keepax wrote:
-> As part of updating the core to directly tell drivers if they are clock
-> provider or consumer update these CPU side drivers to use the new direct
-> callback.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+
+--xBogxZoS+yMG4Fb2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 25, 2022 at 03:22:44PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> Dividing by the result of a division looses precision because the result =
+is
+> rounded twice. E.g. with clk_rate =3D 48000000 and period =3D 32760033 the
+> following numbers result:
+>=20
+> 	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH =3D 187500
+> 	hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) =3D 3052
+> 	rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) =3D 6144
+>=20
+> The exact result would be 6142.5061875 and (apart from rounding) this is
+> found by using a single division. As a side effect is also a tad
+> cheaper to calculate.
+>=20
+> Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
+> example clk_rate =3D 47999999 and period =3D 106667:
+>=20
+> 	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
+> 			    NSEC_PER_SEC) =3D 19
+>=20
+> 	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
+> 			    NSEC_PER_SEC << PWM_DUTY_WIDTH) =3D 20
+>=20
+> (The exact result is 20.000062083332033.)
+>=20
+> With this optimizations also switch from round-closest to round-down for
+> the period calculation. Given that the calculations were non-optimal for
+> quite some time now with variations in both directions which nobody
+> reported as a problem, this is the opportunity to align the driver's
+> behavior to the requirements of new drivers. This has several upsides:
+>=20
+>  - Implementation is easier as there are no round-nearest variants of
+>    mul_u64_u64_div_u64().
+>  - Requests for too small periods are now consistently refused. This was
+>    kind of arbitrary before, where period_ns < min_period_ns was
+>    refused, but in some cases min_period_ns isn't actually implementable
+>    and then values between min_period_ns and the actual minimum were
+>    rounded up to the actual minimum.
+>=20
+> Note that the duty_cycle calculation isn't using the usual round-down
+> approach yet.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 > ---
->  sound/soc/rockchip/rockchip_i2s.c     | 8 ++++----
->  sound/soc/rockchip/rockchip_i2s_tdm.c | 8 ++++----
->  2 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
-> index 4ce5d25793875..0a66c7df323dc 100644
-> --- a/sound/soc/rockchip/rockchip_i2s.c
-> +++ b/sound/soc/rockchip/rockchip_i2s.c
-> @@ -199,13 +199,13 @@ static int rockchip_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
->  
->  	pm_runtime_get_sync(cpu_dai->dev);
->  	mask = I2S_CKR_MSS_MASK;
-> -	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-> -	case SND_SOC_DAIFMT_CBS_CFS:
-> +	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
-> +	case SND_SOC_DAIFMT_BP_FP:
->  		/* Set source clock in Master mode */
->  		val = I2S_CKR_MSS_MASTER;
->  		i2s->is_master_mode = true;
->  		break;
-> -	case SND_SOC_DAIFMT_CBM_CFM:
-> +	case SND_SOC_DAIFMT_BC_FC:
->  		val = I2S_CKR_MSS_SLAVE;
->  		i2s->is_master_mode = false;
->  		break;
-> @@ -486,7 +486,7 @@ static const struct snd_soc_dai_ops rockchip_i2s_dai_ops = {
->  	.hw_params = rockchip_i2s_hw_params,
->  	.set_bclk_ratio	= rockchip_i2s_set_bclk_ratio,
->  	.set_sysclk = rockchip_i2s_set_sysclk,
-> -	.set_fmt = rockchip_i2s_set_fmt,
-> +	.set_fmt_new = rockchip_i2s_set_fmt,
->  	.trigger = rockchip_i2s_trigger,
->  };
->  
-> diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.c b/sound/soc/rockchip/rockchip_i2s_tdm.c
-> index 98700e75b82a1..c90afccdae362 100644
-> --- a/sound/soc/rockchip/rockchip_i2s_tdm.c
-> +++ b/sound/soc/rockchip/rockchip_i2s_tdm.c
-> @@ -411,12 +411,12 @@ static int rockchip_i2s_tdm_set_fmt(struct snd_soc_dai *cpu_dai,
->  	}
->  
->  	mask = I2S_CKR_MSS_MASK;
-> -	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-> -	case SND_SOC_DAIFMT_CBC_CFC:
-> +	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
-> +	case SND_SOC_DAIFMT_BP_FP:
->  		val = I2S_CKR_MSS_MASTER;
->  		i2s_tdm->is_master_mode = true;
->  		break;
-> -	case SND_SOC_DAIFMT_CBP_CFP:
-> +	case SND_SOC_DAIFMT_BC_FC:
->  		val = I2S_CKR_MSS_SLAVE;
->  		i2s_tdm->is_master_mode = false;
->  		break;
-> @@ -1113,7 +1113,7 @@ static const struct snd_soc_dai_ops rockchip_i2s_tdm_dai_ops = {
->  	.hw_params = rockchip_i2s_tdm_hw_params,
->  	.set_bclk_ratio	= rockchip_i2s_tdm_set_bclk_ratio,
->  	.set_sysclk = rockchip_i2s_tdm_set_sysclk,
-> -	.set_fmt = rockchip_i2s_tdm_set_fmt,
-> +	.set_fmt_new = rockchip_i2s_tdm_set_fmt,
->  	.set_tdm_slot = rockchip_dai_tdm_slot,
->  	.trigger = rockchip_i2s_tdm_trigger,
->  };
-> 
+> Hello,
+>=20
+> changes since (implicit) v1: Updated changelog to explain why rate =3D 0
+> is refused now.
+>=20
+> Best regards
+> Uwe
+>=20
+>  drivers/pwm/pwm-tegra.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Please run ./scripts/get_maintainer.pl against the individual patches so
-that I'm included in the recipients of the e-mail as well.
+Applied, thanks.
 
-Anyway, for the i2s-tdm parts:
+Thierry
 
-Tested-by: Nicolas Frattaroli <frattaroli.nicolas@gmail.com>
+--xBogxZoS+yMG4Fb2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tested on a RK3566 connected to an RK817 codec.
+-----BEGIN PGP SIGNATURE-----
 
-Regards,
-Nicolas Frattaroli
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmKHo7AACgkQ3SOs138+
+s6GOcw//Uue1sqRViVDZImfMCHlPpSssaNGfIk7ORGXaRTA8YXDIsrpJTEEuYIEz
+avFkK0dDifpigEYGeaSTSR3RrMFiIu1jMaxVau/FUEcFEsaKSMwlVIDprB8arTBc
+KvWTNjIClbspF8HrDrSxoadHJDEqEzJyt1zRvcym8TPXU/hC83TfyFa+8ggEZFC+
+MOF5/aRQ1O7beTWTJDRpC9/UG29fe5rocU3LiCXZBUoC7YP0c9gODcunjux9rqwW
+8fUtvL8b07cVd6uSh9m6SEgJYclcarAsCgIMfr+tohMDJE1TX55jki3Nn+ypd6cy
+bV2vAhJBFClwIEt9KfgPBjyZhuhcVYAg0eIHet0GCdl5p0XQrsb5u1ERmfutqrHZ
+8eEDCvP79uC/fiXpKe5jFm+3JEJEheO8D6/V2vVM1Msuhiyr844m2XMF+cp9cE2b
+qeLtXn+5qNzTolzlrf2eUXrgaxhWayPsFRBEBRMftF6q6JBkshxy6a9dyNUTcF/d
+RfGVlAjPju+ZFIZDlEl99A7pMBmVbVD3481Nk1JQeLiMDieEHb7knbORrKMlnKl5
+On8MmjOuakh/M5iVvniYUDBgHlD/0TSFvn5Y8T1ip8/3k8sh/L/rxcrt+BEPo7cN
+PwCvqDOQVwxPoCqDEiksIVX2Aw1Y2iCXtQagBCT4bBjoskNCXm4=
+=w9fn
+-----END PGP SIGNATURE-----
 
-
+--xBogxZoS+yMG4Fb2--
