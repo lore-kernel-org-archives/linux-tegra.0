@@ -2,140 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E1AC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 May 2022 10:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A380C4167B
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 May 2022 11:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348118AbiETKZb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 May 2022 06:25:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
+        id S1348465AbiETLYg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 May 2022 07:24:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348104AbiETKZ3 (ORCPT
+        with ESMTP id S232303AbiETLYb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 May 2022 06:25:29 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C05CDED78F;
-        Fri, 20 May 2022 03:25:28 -0700 (PDT)
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K5UCxB026795;
-        Fri, 20 May 2022 05:24:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=WSOvhMBIg+CnexC+Y8X+ZG7BYMkoKeetiZYSiJmE0cw=;
- b=E3MDFwXsbJRiBaE4OT2ai+JBwbYdqbCNDnTM5WTrjlOXZlrikeuJ1tiL+m5bGqsZo03j
- hZNgysmRG2QNG9jfqt9CJyU1HKdQikMi9FpVUiaR7mHeBwbTedb07Mex56RR9EocUbFP
- vjQtPAGfK1wk5RM/9IUs9D/tVUYW0yOqIgk1qYoeQRhBJEla3nFqJiatKvzERFcXHqSI
- Q+/Hno0xMo5/BjF4Kn3iHQ0QMOXFJX9/9GuLbAmIRVv9J84ewdgkmDjMuNAiVSG2dbUO
- otHvJplf8L8ZVHcLm7hZgWu0kIHYmP+5RyytltwUsoK/TaAybqvdQMM8AE7gkhiA4klo dQ== 
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3g28upg6de-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 20 May 2022 05:24:48 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 20 May
- 2022 11:24:47 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.24 via Frontend
- Transport; Fri, 20 May 2022 11:24:47 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 20F84458;
-        Fri, 20 May 2022 10:24:47 +0000 (UTC)
-Date:   Fri, 20 May 2022 10:24:47 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <nicolas.ferre@microchip.com>, <nsaenz@kernel.org>,
-        <shawnguo@kernel.org>, <linux-imx@nxp.com>,
-        <cezary.rojewski@intel.com>,
-        <pierre-louis.bossart@linux.intel.com>,
-        <linux-mips@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <daniel@zonque.org>,
-        <srinivas.kandagatla@linaro.org>,
-        <linux-rockchip@lists.infradead.org>, <krzk@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
-        <peter.ujfalusi@gmail.com>, <jarkko.nikula@bitmer.com>,
-        <heiko@sntech.de>, <jbrunet@baylibre.com>, <kernel@pengutronix.de>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 56/56] ASoC: simple-card-utils: Move
- snd_soc_component_is_codec to be local
-Message-ID: <20220520102447.GL38351@ediswmail.ad.cirrus.com>
-References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
- <20220519154318.2153729-57-ckeepax@opensource.cirrus.com>
- <87czg98193.wl-kuninori.morimoto.gx@renesas.com>
+        Fri, 20 May 2022 07:24:31 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA58B36CE;
+        Fri, 20 May 2022 04:24:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=DGPrrkXTp6oI8cbbgByz5QLKv15GNHxUgmjuIwTAy/E=; b=eqnE/suLTpG3xbkMCBtDpxLY3n
+        NIRgLQiaBi0sCvdNCD4AFRLhJwRt1fDLW5HSSGFY7WXFEGFCYXn6Q0dC8gIFph3vTjXA6DvyBiQwz
+        I5PwxVn4HFAkq1g0udGCDh7f8awWYDjllyLtGAcRh6eSoRE6OIuNpAwHVy7SfEQenDYcne2doKiCl
+        jXXzZQlRm486qDYGQtQ0jW8Ms6RtpLdk65Qcz7YJ7/YEdFvKdb+dzF1Re9Q6nwXZnFrLVKgAD5Mwb
+        LfHsy0RngN1antwERG5D/EtoEWfAXqtoLg2k7TzZKasJtkGm7zpf+kH+Fd2GGS1HnQh8pXfJiIePS
+        VAbFF/9w==;
+Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1ns0jj-00Cb4k-Od; Fri, 20 May 2022 13:24:04 +0200
+Message-ID: <ded31ec0-076b-2c5b-0fe6-0c274954821f@igalia.com>
+Date:   Fri, 20 May 2022 08:23:33 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <87czg98193.wl-kuninori.morimoto.gx@renesas.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-GUID: EewLKkNvojqM2gQAbwrh9EQ5fKjwiv7u
-X-Proofpoint-ORIG-GUID: EewLKkNvojqM2gQAbwrh9EQ5fKjwiv7u
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+Content-Language: en-US
+To:     Baoquan He <bhe@redhat.com>, Petr Mladek <pmladek@suse.com>
+Cc:     "michael Kelley (LINUX)" <mikelley@microsoft.com>,
+        Dave Young <dyoung@redhat.com>, d.hatayama@jp.fujitsu.com,
+        akpm@linux-foundation.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, dave.hansen@linux.intel.com, feng.tang@intel.com,
+        gregkh@linuxfoundation.org, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-25-gpiccoli@igalia.com> <Yn0TnsWVxCcdB2yO@alley>
+ <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
+ <20220519234502.GA194232@MiWiFi-R3L-srv>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20220519234502.GA194232@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, May 20, 2022 at 01:02:33AM +0000, Kuninori Morimoto wrote:
+On 19/05/2022 20:45, Baoquan He wrote:
+> [...]
+>> I really appreciate the summary skill you have, to convert complex
+>> problems in very clear and concise ideas. Thanks for that, very useful!
+>> I agree with what was summarized above.
 > 
-> Hi
+> I want to say the similar words to Petr's reviewing comment when I went
+> through the patches and traced each reviewing sub-thread to try to
+> catch up. Petr has reivewed this series so carefully and given many
+> comments I want to ack immediately.
 > 
-> This is not related to this patch, but...
-> 
-> > -static inline int snd_soc_component_is_codec(struct snd_soc_component *component)
-> > -{
-> > -	return component->driver->non_legacy_dai_naming;
-> > -}
-> (snip)
-> > +static inline int asoc_simple_component_is_codec(struct snd_soc_component *component)
-> > +{
-> > +	return component->driver->endianness;
-> > +}
-> 
-> I have added "endianness" "non_legacy_dai_naming" to component
-> when convert old "Codec style" into current "Component style".
-> All codec needs to have these 2.
-> 
-> 	69941bab7c7aeaa7bf7e84397e294c17f0b7c6df
-> 	("ASoC: snd_soc_component_driver has non_legacy_dai_naming")
-> 
-> 	273d778ef38a8861f880e9df5799029dc82bd55d
-> 	("ASoC: snd_soc_component_driver has endianness")
-> 
-> The reason why I didn't use "codec" was that try to keep
-> original style as much as possible.
-> But it seems this is good time to use "codec" for it ?
-> I think the code will be more understandable.
-> 
-> -	.endianness
-> -	.non_legacy_dai_naming
-> +	.is_codec
+> I agree with most of the suggestions from Petr to this patch, except of
+> one tiny concern, please see below inline comment.
 
-Yeah I considered this but it didn't really feel like the right
-way to go to me. Firstly, at this stage we almost certainly need
-to keep the endianness and non_legacy_dai_naming flags, there are
-corner cases when endianness probably shouldn't be applied to CODECs
-(as noted in my endianness series), and there are platform drivers
-that use non_legacy_dai_naming.
+Hi Baoquan, thanks! I'm glad you're also reviewing that =)
 
-We could add an is_codec flag along side the other two. But it
-means a whole extra flag and means the the core is still requiring
-a concept of what is a CODEC driver, which really we want to get
-rid of as part of componentisation.
 
-My thinking was that, whilst making this function local to the
-driver isn't perfect, simple card will be used with simple CODECs
-that are likely to exist on a standard audio bus, and thus have
-endianness and the newer graph cards don't require specific
-identification of what is a CODEC driver. So it probably works as
-a solution for now.
-
+> [...]
 > 
-> Thank you for your help !!
+> I like the proposed skeleton of panic() and code style suggested by
+> Petr very much. About panic_prefer_crash_dump which might need be added,
+> I hope it has a default value true. This makes crash_dump execute at
+> first by default just as before, unless people specify
+> panic_prefer_crash_dump=0|n|off to disable it. Otherwise we need add
+> panic_prefer_crash_dump=1 in kernel and in our distros to enable kdump,
+> this is inconsistent with the old behaviour.
 
-Absolutely no problem, thank you for all the work you have done
-on this over the years.
+I'd like to understand better why the crash_kexec() must always be the
+first thing in your use case. If we keep that behavior, we'll see all
+sorts of workarounds - see the last patches of this series, Hyper-V and
+PowerPC folks hardcoded "crash_kexec_post_notifiers" in order to force
+execution of their relevant notifiers (like the vmbus disconnect,
+specially in arm64 that has no custom machine_crash_shutdown, or the
+fadump case in ppc). This led to more risk in kdump.
 
-Thanks,
-Charles
+The thing is: with the notifiers' split, we tried to keep only the most
+relevant/necessary stuff in this first list, things that ultimately
+should improve kdump reliability or if not, at least not break it. My
+feeling is that, with this series, we should change the idea/concept
+that kdump must run first nevertheless, not matter what. We're here
+trying to accommodate the antagonistic goals of hypervisors that need
+some clean-up (even for kdump to work) VS. kdump users, that wish a
+"pristine" system reboot ASAP after the crash.
+
+Cheers,
+
+
+Guilherme
