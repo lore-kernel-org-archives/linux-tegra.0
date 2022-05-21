@@ -2,266 +2,172 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B64FC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 May 2022 16:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 810CAC433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 21 May 2022 06:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351390AbiETQI3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 May 2022 12:08:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59348 "EHLO
+        id S230493AbiEUGqr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 21 May 2022 02:46:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351368AbiETQIX (ORCPT
+        with ESMTP id S229939AbiEUGqq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 May 2022 12:08:23 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96A401737DC;
-        Fri, 20 May 2022 09:08:21 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id l13so8458970lfp.11;
-        Fri, 20 May 2022 09:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=FfUPjIMfxDoCmFEuILyx16G0bCa7/gCQ66XZHmjw/J4=;
-        b=NGs4ajQllQCVSH7N9zjf2zLcwFVtAQ8cP3BgAw5IjJolxXB32lLC5Wf8y1N52wC0HB
-         PS1KU5pmKmMZh+ntAVbYXcpSsUL+rJKZ7Ec3dSpopSU/7QLGIKsrAQaxF0hFMoCB5vnR
-         fBOKH2f8cBlO8xWfnA0+vygJRTSpCDdvGX+mTRuhVFv64pA3+kLEwLvAULInLN2d/B5y
-         EY0Vq9nn0URJksUTZDKCGbMyjmMuRj6kvDtgvskN3QluNo7XvWzBTjVXhJRV65iTivLc
-         RVVZccCkbevp2AaJ9E+Q9wdZMozGKSgg38WtjaZn8lHL+y0QGDLAdtkBOdSm9i0HmiJI
-         H8dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FfUPjIMfxDoCmFEuILyx16G0bCa7/gCQ66XZHmjw/J4=;
-        b=ZMQHLCcQ6aetuKlz54LiyaEFeIBzJKHediOj30CwYgKUcxAjWc2t6X+8jTw7smfLGC
-         y5a6s79u5dnIwEHHXQ6hVII52yO6rLZZr7bI3DmjpBBBeCN5eJbaRY58w+ZltqI3l1PG
-         9e04cZ7Wx9+8yILOGX5SnlLiigNJ20ByaDbl8huDKB8LvoS1iyhMOHk3FpOPOF4Hqg1C
-         njbH2vSY5NpItgkXX8AScBdn9Fup5G2xktMRHbPm/l5DoUwguGH8U2cGlgIgSSaqmz5a
-         /tt7L4vSqYcWpxi3vvMYVXqein12Hg7zXFmloz1e7lTo+KU/JTXYzUpsDs+F7TkDk7Em
-         pRjw==
-X-Gm-Message-State: AOAM5321gtVi71663Fl2iilMc4gKcaJ+4Wcs9bknCmsufeEdmFnGKdoF
-        1YcyvoUuIXpbDwtW3GZ5ehE=
-X-Google-Smtp-Source: ABdhPJypfOWOkZ3UZPzQOAJdYOZpxWaN8xzj6tIEQFKmXYO5wkkp027s9EZoZpW3OKFDoePh9jVviQ==
-X-Received: by 2002:ac2:46f5:0:b0:477:bc14:f03a with SMTP id q21-20020ac246f5000000b00477bc14f03amr7236272lfo.608.1653062899811;
-        Fri, 20 May 2022 09:08:19 -0700 (PDT)
-Received: from mobilestation ([95.79.189.214])
-        by smtp.gmail.com with ESMTPSA id a16-20020a05651c011000b0024cac53a82csm367789ljb.0.2022.05.20.09.08.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 May 2022 09:08:18 -0700 (PDT)
-Date:   Fri, 20 May 2022 19:08:16 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Rahul Tanwar <rtanwar@maxlinear.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Frank Li <Frank.Li@nxp.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 05/17] PCI: dwc: Convert to using native IP-core
- versions representation
-Message-ID: <20220520160816.iunrp52sktwicgz2@mobilestation>
-References: <20220503214638.1895-1-Sergey.Semin@baikalelectronics.ru>
- <20220503214638.1895-6-Sergey.Semin@baikalelectronics.ru>
- <20220516203003.GB3209795-robh@kernel.org>
- <20220520092954.fz62wbrpj7qss6pj@mobilestation>
- <20220520150609.GA3853502-robh@kernel.org>
+        Sat, 21 May 2022 02:46:46 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam08on2089.outbound.protection.outlook.com [40.107.100.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D50C522C5;
+        Fri, 20 May 2022 23:46:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hJe4zEk1u86UEmeTGKO33RckV5E1s6pGh94Y7hpXhqDv9U5PF1XyLekkLo9At/V35dIpfRvc5J345B1kbtj0yBeGsbdbCvuX7QZqCgBjDOLhvgGyyVj/aRp/0Sd1U+vUTvcZKg1ZIi7YXX7fYGxfPBTeglGZQyl06angK2aHP5OdPJvJVmXTdvitZ2QoyLH4Z4EnaXU80T4yzvUQi4jkWYxXiXlE3dqgQP+8NXAZ2STznF7d7Wc13RVs85kL6+46zX8hlYgrzXHyWscOWBi2KQSgWEhFj33Qcupl5BKqKeDhDga674Xe8taIxWQSMEx7pqyeyf4G9lT8YfxlXjCZTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pP/ozubGOctAxq7rFBvhOgml7D7tywFMsfNk7m2DZKs=;
+ b=ZLwEVb6BwlBPXK+u0cIcjcYyuISuR4SOQNzuWWLBiXJ7MV6zpcI+oguTPZUJEjaznx1JWn/G+KHVNw9UEwHx0H61cuXdaOSMNGktC28HosFMyedkXUBKEmp5EqO9YH++rUY8v+D4A51/vD/RTZ1665COUKTfCT18eydegHS3sdc1AJORscTud47AKALeLSjCVdSFlQWvVhD1eY8RAaempeUWnwCOO2NCtaQl0BOVvjLIJcKJdLIX89rbIz3M72cqRM7euEKxSGZIIe7B/jCeNwYAznftXOwdY4V1YCZMXrHoXYlv9a4QvmNlV0dxwcbTp+ZZ7V/UOQRrdfTTRUxZ5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pP/ozubGOctAxq7rFBvhOgml7D7tywFMsfNk7m2DZKs=;
+ b=mSdHgPaPLla0TUPzkvh680iP/39yusV8XamKsXGaoZHvO6kOa4IayElOnBYdR5i4pzVyaOi2QRkt0OKwxFqCBZa4a1o0wP8p3dKhQ3ak2hyiSdWqBlMetb43ND+CR9skl7U7c7JFjKf+jxxp8G9dboHf49oL+CMCr89EPdOfP/FaXlrV5pCnEUQwlq12+b7NltbOvOhQCD+KNOzjZTl/DM8AyENrEKuPu45cHcKnCegBoCdMMehlX+r9Ug5LvngNMDeQkQaDE/xZLjNRBz0V0TxYOGStlU+73WnRu+nAWhHw943X0q3uGzEYa9sTAWa8LVNSFiDQPnlht8JWw96jaA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY4PR12MB1576.namprd12.prod.outlook.com (2603:10b6:910:10::9)
+ by DM6PR12MB3420.namprd12.prod.outlook.com (2603:10b6:5:3a::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.18; Sat, 21 May
+ 2022 06:46:42 +0000
+Received: from CY4PR12MB1576.namprd12.prod.outlook.com
+ ([fe80::16b:eff7:847b:19e7]) by CY4PR12MB1576.namprd12.prod.outlook.com
+ ([fe80::16b:eff7:847b:19e7%10]) with mapi id 15.20.5273.019; Sat, 21 May 2022
+ 06:46:41 +0000
+Message-ID: <a4439005-29f0-b458-6a3a-b6c2758a38bf@nvidia.com>
+Date:   Sat, 21 May 2022 12:16:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 1/6] ASoC: tegra: Add binding doc for OPE module
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        broonie@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org, perex@perex.cz,
+        tiwai@suse.com
+Cc:     jonathanh@nvidia.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1652895372-29885-1-git-send-email-spujar@nvidia.com>
+ <1652895372-29885-2-git-send-email-spujar@nvidia.com>
+ <049173a1-0fa6-510b-9169-ebe869b8a3b3@linaro.org>
+ <90680cfb-c611-63cd-ab5f-5afb86c91cec@nvidia.com>
+ <a0eed04a-1380-d96a-a406-217f053354b9@linaro.org>
+From:   Sameer Pujar <spujar@nvidia.com>
+In-Reply-To: <a0eed04a-1380-d96a-a406-217f053354b9@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0100.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:af::9) To CY4PR12MB1576.namprd12.prod.outlook.com
+ (2603:10b6:910:10::9)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220520150609.GA3853502-robh@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 36317875-6c13-48c2-8fcc-08da3af5a9b6
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3420:EE_
+X-Microsoft-Antispam-PRVS: <DM6PR12MB3420967CC3226CEA37E54D72A7D29@DM6PR12MB3420.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LqCHlcwEJaMoUB19X+uOYM/K03zsDB9sTkm68edZCsdmaVXFJaZz1pdaplRImbF2PLZB/ILBXf5/Mol54JQmluJUX7rakCpYYKGoVc3p+t7TE0Hk/fp5smZiKdDmgrANKe+hp23ca85LlNGdCzDknOXeYZwq3gOuIpYp/yGVZTExzmSqoiVPe6dj2n9TURggGbarkupTbFUdRJfzHJGWFdj4BxK/EkptWAxZnyKWCU3DvcYE7VBsGB2+yxV7ByZA9vAzY70bkxfE5daTV/FBRhimjH/NlFwN7I8I8DgMEJZ7sM0oQ/j3HOfUbgnOos+z07LE6mvEYyQcELB5T3kIovyAbEGnBi+/6+IPIFx1AtfgEkOdG5qEQ3xGN4V7/Yuo7JPhzvkDUrITvHOhQqkWW/On+IPg7dugE4uVJSxq71KOgWOslcadDG7Mi9q0Up9jm8TWTRximR9niDbGKX7T2V0+B1pePfn7+CSOSwVjWpyU6mMPNqrpgg2iJwVgTg9OIQF/RmLBQAVDe3xn5GJkW3eFsI1TCcE4Rdd+OyzgvlG5udN2JuXPxxyufo8U+iWLk2DzMhsXOHml82BwBN+PH3Rw94JTvfB//huCtomK9/kD1iy4F0ps0kcVPueoqR84AjePapa+AnWLmOjd5gbaYuEkzTnCwFNP1OX3g9ey1xqnJj2vm70dX8HQtTucD1QxzpHKNaPRN3/Gbxu4hzcZTv7tvTLYIM6Gk+gIkNzbc5XImLKWMpgWbsrFFjLuDDPF
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR12MB1576.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(316002)(36756003)(6486002)(186003)(8936002)(2906002)(31696002)(6666004)(508600001)(6506007)(53546011)(31686004)(86362001)(5660300002)(6512007)(66556008)(38100700002)(26005)(7416002)(2616005)(8676002)(66946007)(66476007)(4326008)(21314003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eHV3ZHJ3QjBWV3JUQm9DeE5hb2lRb3EwajJTNzJLdGlScENpVjFzaVVKUkVY?=
+ =?utf-8?B?TS9jZ0dpQVdEamNmSnZMcFpvQllEZVRGalh6Vy9ZejFBZ2lQZElkejZmNVN0?=
+ =?utf-8?B?V1lvbjJ5c0lMZ3E4bHRyUHI3N1R0QURncUFKMmtVd0drQTFsRkhpUUZ4U0JE?=
+ =?utf-8?B?WFdhUjFZRy8zakhsejRNbmdIV09aR1VNSnZydC9XSDZ3Mko0ZnlESFcxc2lF?=
+ =?utf-8?B?MHlaL1BwYzdhUXFJc1RhenhaazFGVVZZNTg5bndXSDRYRFhVemhBYmtZNUZN?=
+ =?utf-8?B?MlpSR3o3U2Fqc3NwTlFjM1dnWnlNMm5qL1RVa2ZmR1YyVlBGQW03ZENPZkNS?=
+ =?utf-8?B?ODBkeC9HUGhlM0N5R0tEUTBkYy9WQzRPSmxlNXYwdU1jNk9qc1E1Ly81ZGdL?=
+ =?utf-8?B?b2I0dFlwMHpjUjcyU2o1UFByaVlsdFRnWmJBY2hzc3l3ci9CQTFTTmErRVlR?=
+ =?utf-8?B?K203MnlkbHM0OHdYTlpKbU1qWUJ0SUhQdXkwQXk5NGVwbk11NHI4YUY2Q1FQ?=
+ =?utf-8?B?SmQ1ejBvUTEwSTdkaS9TS25aRVBtTmhLSHpFZkZQaWRuZ2VmUUNETXdoSDdz?=
+ =?utf-8?B?eVBqbFkrZmZMczlaYUtrRHArenZCbVVyNzBJKzFIeU9LNm5ubGFUbzRGd0xt?=
+ =?utf-8?B?VUNFOVhsZHMwektZOThhRS9qOVcvNTdDRTF2RGNTRkVYUm5IdDlCMUxIZnpC?=
+ =?utf-8?B?OUsrUERkZU5mVjcxZ1hlRk10Y1RYUkkyRW05RmxYQWV6eUd6WUttYTZuWHNE?=
+ =?utf-8?B?bkMwK1E4Y2NMclRTRFRQT21GL1NrNUFsRmNxRmhWQnNXelBtSlkyZ0Y1TUsy?=
+ =?utf-8?B?Q2MvMDFLb2s2Ump3aVM2eWhnRGZyQWtMVE9OMjZaUDh5V1JuUkE3QWNaSlc5?=
+ =?utf-8?B?RWdNNGFvY2FEME53UzZEVGRmdElWeHo4SW1ZOGQ5L0JCN0paRU0rWlEzZC9w?=
+ =?utf-8?B?ZCt6RmF6ck5xdVFsdW9mQ2YxREZndXJPU2twOWNNSXBkMEtFSU42Z2xZclUx?=
+ =?utf-8?B?akljd3NyVGFVd25tRFdaQTNxWWxyVm9pZmNyckh3Y1IwaVhTdFU1ZHFUZHNk?=
+ =?utf-8?B?MXJ1SUkzekhWWUlUSUVvVEdvZTJZTGpCdk44Q00zMnhGb0dTTDhEZDZnSHBh?=
+ =?utf-8?B?aVJWYlN2SWx0Y0RqVGF6YWVWU2ZPMlprdnQ4M0dEeXA0WnZXczFlQTNLVjhh?=
+ =?utf-8?B?bGR5cWtZT3ZVcTZQZzlpR1dwbWI0My9uMnVxQkd5Q0RNMmk4SE54aXVGc0Yz?=
+ =?utf-8?B?ZERCY2t0WGdLZHlhU1RqRFNnM3NjS2k5bzlhSWJpR0o0bklwUmNyU3R1NVVD?=
+ =?utf-8?B?cWZWRmtFNWhlc3BSQkpPU3JKV2VBMTB4VXc3bzcwNXNQYzZ1YzBVQTBManIx?=
+ =?utf-8?B?NjdTMFFaRk40MmI5K3h6NkhzdGlNTUZNdW80NXpCOFVuZG9WOGdSeFVxcHRE?=
+ =?utf-8?B?WjY1ZTM1ZWhSRVhMUHUvOGxBTmpxZVJDa29NQWFiVXk0SmJxRGFyL1JEY0Zm?=
+ =?utf-8?B?SU5lTG5qbitzdE14Lzd6TTRWbzgvL2hVQ1EwNUhPOEY4U0dVMU1VSzVPd2RC?=
+ =?utf-8?B?M3FaUEtXb2lha0lZMEJ2eUN3VEJmVTJzQlNwRXdYUVBuSGI3U3F3U1pFZHNB?=
+ =?utf-8?B?R081RnhQMWI3Y2RZaWtPaEhCWWk0eUFROEdwVm5yeXF4M0k2RjNycjA5cGRr?=
+ =?utf-8?B?Wm1rWlZPTk5odStCcHJJbytnc0E5elN2T1N2YTV2Y2taZWtpblE5K21INU13?=
+ =?utf-8?B?WERKVWJHSkIzbjZCRFhuZDh2NXFXMUdUQzFWcFJYRnJ0YjZOYkp4ZjVBblA0?=
+ =?utf-8?B?SURKUkF0ejNCN2RRRW9QYUgzWWkrSDhNN1dhTHJSTkFFa3Q0eXJFdmVBRWFl?=
+ =?utf-8?B?bUkxZ1dEUUIyeFloelNLY0pBVVhrblpJV2RTT0R6dkk1L1RwMVZWZjdSa0RN?=
+ =?utf-8?B?UmJWaVcyakU2ckQvby9HeVQ2TjJkTUYraGt1T1ltNjVOaHdqbVVVcVMzUXoz?=
+ =?utf-8?B?RWlwdFE0NTFsamJ0akV4a3loeG5QcUMzMllid3J5OS9CVXRJMmw0ZkVBb0t3?=
+ =?utf-8?B?S3ZoSCtlcGt3cjg4OU1TSDFjd0xpcDAwTGlWUGtHZVJMUFBUS1dOTWkyQlRN?=
+ =?utf-8?B?SFgxakFQVmwzaUliLy96S2ZtUmV3ejhXU2dLTW1zbjhZTkRkd1I2bC9jeVdm?=
+ =?utf-8?B?U0tWdGtPdlhldFdDOG9xcE9UWDMvOGJORHRUWXcwN0p5bU5jdVp2dDJXTjRK?=
+ =?utf-8?B?QVJSV0s5TlR6T3RJdW1hRnFTeHhMYVNlekgzbVd6T0dXNVJlWSsvUklGSTFL?=
+ =?utf-8?B?VW1hd21EdVRiZGF2QU9ITk43cms5YjBOVlpJQ2xxNzhrNFIrdWpGQT09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36317875-6c13-48c2-8fcc-08da3af5a9b6
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR12MB1576.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2022 06:46:41.8652
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Y26uyUUVD31P8dTBbX36F/fTPcVn/bHvYer+IV0V3K8ktKQq5d2SYH9iViM4cZLrtozum6yDc4KFrAIcmk34kg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3420
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, May 20, 2022 at 10:06:09AM -0500, Rob Herring wrote:
-> On Fri, May 20, 2022 at 12:29:54PM +0300, Serge Semin wrote:
-> > On Mon, May 16, 2022 at 03:30:03PM -0500, Rob Herring wrote:
-> > > On Wed, May 04, 2022 at 12:46:26AM +0300, Serge Semin wrote:
-> > > > Since DWC PCIe v4.70a the controller version can be read from the
-> > > > PORT_LOGIC.PCIE_VERSION_OFF register. Version is represented in the FourCC
-> > > > format [1]. It's standard versioning approach for the Synopsys DWC
-> > > > IP-cores. Moreover some of the DWC kernel drivers already make use of it
-> > > > to fixup version-dependent functionality (See DWC USB3, Stmicro STMMAC or
-> > > > recent DW SPI driver). In order to preserve the standard version
-> > > > representation and prevent the data conversion back and forth, we suggest
-> > > > to preserve the native version representation in the DWC PCIe driver too
-> > > > in the same way as it has already been done in the rest of the DWC
-> > > > drivers. IP-core version reading from the CSR will be introduced in the
-> > > > next commit together with a simple macro-based API to use it.
-> > > > 
-> > > > [1] https://en.wikipedia.org/wiki/FourCC
-> > > > 
-> > > > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > > > ---
-> > > >  drivers/pci/controller/dwc/pci-keystone.c    | 12 ++++++------
-> > > >  drivers/pci/controller/dwc/pcie-designware.c |  8 ++++----
-> > > >  drivers/pci/controller/dwc/pcie-designware.h | 10 +++++++++-
-> > > >  drivers/pci/controller/dwc/pcie-intel-gw.c   |  4 ++--
-> > > >  drivers/pci/controller/dwc/pcie-tegra194.c   |  2 +-
-> > > >  5 files changed, 22 insertions(+), 14 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> > > > index d10e5fd0f83c..c51018c68b56 100644
-> > > > --- a/drivers/pci/controller/dwc/pci-keystone.c
-> > > > +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> > > > @@ -109,7 +109,7 @@ struct ks_pcie_of_data {
-> > > >  	enum dw_pcie_device_mode mode;
-> > > >  	const struct dw_pcie_host_ops *host_ops;
-> > > >  	const struct dw_pcie_ep_ops *ep_ops;
-> > > > -	unsigned int version;
-> > > > +	u32 version;
-> > > >  };
-> > > >  
-> > > >  struct keystone_pcie {
-> > > > @@ -1069,19 +1069,19 @@ static int ks_pcie_am654_set_mode(struct device *dev,
-> > > >  
-> > > >  static const struct ks_pcie_of_data ks_pcie_rc_of_data = {
-> > > >  	.host_ops = &ks_pcie_host_ops,
-> > > > -	.version = 0x365A,
-> > > > +	.version = DW_PCIE_VER_365A,
-> > > >  };
-> > > >  
-> > > >  static const struct ks_pcie_of_data ks_pcie_am654_rc_of_data = {
-> > > >  	.host_ops = &ks_pcie_am654_host_ops,
-> > > >  	.mode = DW_PCIE_RC_TYPE,
-> > > > -	.version = 0x490A,
-> > > > +	.version = DW_PCIE_VER_490A,
-> > > >  };
-> > > >  
-> > > >  static const struct ks_pcie_of_data ks_pcie_am654_ep_of_data = {
-> > > >  	.ep_ops = &ks_pcie_am654_ep_ops,
-> > > >  	.mode = DW_PCIE_EP_TYPE,
-> > > > -	.version = 0x490A,
-> > > > +	.version = DW_PCIE_VER_490A,
-> > > >  };
-> > > >  
-> > > >  static const struct of_device_id ks_pcie_of_match[] = {
-> > > > @@ -1114,12 +1114,12 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
-> > > >  	struct device_link **link;
-> > > >  	struct gpio_desc *gpiod;
-> > > >  	struct resource *res;
-> > > > -	unsigned int version;
-> > > >  	void __iomem *base;
-> > > >  	u32 num_viewport;
-> > > >  	struct phy **phy;
-> > > >  	u32 num_lanes;
-> > > >  	char name[10];
-> > > > +	u32 version;
-> > > >  	int ret;
-> > > >  	int irq;
-> > > >  	int i;
-> > > > @@ -1233,7 +1233,7 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
-> > > >  		goto err_get_sync;
-> > > >  	}
-> > > >  
-> > > > -	if (pci->version >= 0x480A)
-> > > > +	if (pci->version >= DW_PCIE_VER_480A)
-> > > >  		ret = ks_pcie_am654_set_mode(dev, mode);
-> > > >  	else
-> > > >  		ret = ks_pcie_set_mode(dev);
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > > > index 1682f477bf20..3ebb7bfee10f 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > > > @@ -289,7 +289,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, u8 func_no,
-> > > >  	val = type | PCIE_ATU_FUNC_NUM(func_no);
-> > > >  	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr))
-> > > >  		val |= PCIE_ATU_INCREASE_REGION_SIZE;
-> > > > -	if (pci->version == 0x490A)
-> > > > +	if (pci->version == DW_PCIE_VER_490A)
-> > > >  		val = dw_pcie_enable_ecrc(val);
-> > > >  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL1, val);
-> > > >  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
-> > > > @@ -336,7 +336,7 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
-> > > >  			   upper_32_bits(cpu_addr));
-> > > >  	dw_pcie_writel_dbi(pci, PCIE_ATU_LIMIT,
-> > > >  			   lower_32_bits(limit_addr));
-> > > > -	if (pci->version >= 0x460A)
-> > > > +	if (pci->version >= DW_PCIE_VER_460A)
-> > > >  		dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_LIMIT,
-> > > >  				   upper_32_bits(limit_addr));
-> > > >  	dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET,
-> > > > @@ -345,9 +345,9 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
-> > > >  			   upper_32_bits(pci_addr));
-> > > >  	val = type | PCIE_ATU_FUNC_NUM(func_no);
-> > > >  	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr) &&
-> > > > -	    pci->version >= 0x460A)
-> > > > +	    pci->version >= DW_PCIE_VER_460A)
-> > > >  		val |= PCIE_ATU_INCREASE_REGION_SIZE;
-> > > > -	if (pci->version == 0x490A)
-> > > > +	if (pci->version == DW_PCIE_VER_490A)
-> > > >  		val = dw_pcie_enable_ecrc(val);
-> > > >  	dw_pcie_writel_dbi(pci, PCIE_ATU_CR1, val);
-> > > >  	dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE);
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> > > > index 7d6e9b7576be..5be43c662176 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > > > @@ -20,6 +20,14 @@
-> > > >  #include <linux/pci-epc.h>
-> > > >  #include <linux/pci-epf.h>
-> > > >  
-> > > > +/* DWC PCIe IP-core versions (native support since v4.70a) */
-> > > > +#define DW_PCIE_VER_365A		0x3336352a
-> > > > +#define DW_PCIE_VER_460A		0x3436302a
-> > > > +#define DW_PCIE_VER_470A		0x3437302a
-> > > > +#define DW_PCIE_VER_480A		0x3438302a
-> > > > +#define DW_PCIE_VER_490A		0x3439302a
-> > > > +#define DW_PCIE_VER_520A		0x3532302a
-> > > > +
-> > > >  /* Parameters for the waiting for link up routine */
-> > > >  #define LINK_WAIT_MAX_RETRIES		10
-> > > >  #define LINK_WAIT_USLEEP_MIN		90000
-> > > > @@ -269,7 +277,7 @@ struct dw_pcie {
-> > > >  	struct pcie_port	pp;
-> > > >  	struct dw_pcie_ep	ep;
-> > > >  	const struct dw_pcie_ops *ops;
-> > > > -	unsigned int		version;
-> > > > +	u32			version;
-> > > >  	int			num_lanes;
-> > > >  	int			link_gen;
-> > > >  	u8			n_fts[2];
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > > > index 5ba144924ff8..786af2ba379f 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > > > @@ -59,7 +59,7 @@
-> > > >  #define RESET_INTERVAL_MS		100
-> > > >  
-> > > >  struct intel_pcie_soc {
-> > > > -	unsigned int	pcie_ver;
-> > > > +	u32	pcie_ver;
-> > > 
-> > 
-> > > This is not used by the Intel driver code, but just passed to the DWC 
-> > > core code. Given that and that the IP version is new enough, this should 
-> > > be removed one the detection is in place.
-> > 
-> > Ok. I'll drop it in an additional patch placed after the version
-> > detection patch in the series. What about the Tegra 194 code? Shall I
-> > drop it from there too? I've got DW PCIe 4.90a reference manual here.
-> > It states there are the PCIE_VERSION_NUMBER_OFF and
-> > PCIE_VERSION_TYPE_OFF registers in the port logic reg space. So the
-> > removal shall not cause problems.
-> 
 
-> Yes, anywhere we can remove it would be good.
+On 20-05-2022 12:21, Krzysztof Kozlowski wrote:
+>
+>>> On 18/05/2022 19:36, Sameer Pujar wrote:
+>>>> +description: |
+>>>> +  The Multi Band Dynamic Range Compressor (MBDRC) is part of Output
+>>>> +  Processing Engine (OPE) which interfaces with Audio Hub (AHUB) via
+>>>> +  Audio Client Interface (ACIF). MBDRC can be used as a traditional
+>>>> +  single full band or a dual band or a multi band dynamic processor.
+>>>> +
+>>>> +maintainers:
+>>>> +  - Jon Hunter <jonathanh@nvidia.com>
+>>>> +  - Mohan Kumar <mkumard@nvidia.com>
+>>>> +  - Sameer Pujar <spujar@nvidia.com>
+>>>> +
+>>>> +properties:
+>>>> +  $nodename:
+>>>> +    pattern: "^mbdrc@[0-9a-f]*$"
+>>> Why? We enforce only generic names in shared schemas and this is neither
+>>> shared schema nor is it generic name.
+>> Idea was to keep these node names consistent across DT files and parent
+>> node can allow a given list of child nodes with strict checks. Does name
+>> like "dynamic-range-compressor@xxx"
+> The checks are not coming from device node name, but from matching
+> schema to compatible. Why do you need consistent names across DTS files?
+> They should be anyway generic but what happens if they differ?
 
-Ok. The modification will concern both Intel GW and Tegra 194 (in two
-separate patches). Keystone PCIe platform driver won't be changed
-since it uses version ID in before the generic DW PCIe host/EP probe
-method invocation.
+The IP is re-used in many Tegra SoC generations and thus it is nice to 
+use the same name. But,
 
--Sergey
 
-> 
-> Rob
+> Additionally, the parent schema enforces nodes of children, so if this
+> is included in other schema, then the change is pointless.
+
+I see your point. Since parent schema already enforces the child node 
+names, another place from child schema to enforce similar rule is not 
+really necessary for now. I will drop this. Thanks.
+
+
