@@ -2,148 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 080B7C4321E
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 May 2022 18:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4CFC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 May 2022 20:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240252AbiEWSbw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 May 2022 14:31:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
+        id S232434AbiEWUL6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 May 2022 16:11:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243719AbiEWSbf (ORCPT
+        with ESMTP id S232739AbiEWULW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 May 2022 14:31:35 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B64620F5A;
-        Mon, 23 May 2022 11:06:22 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id v11so13415860qkf.1;
-        Mon, 23 May 2022 11:06:22 -0700 (PDT)
+        Mon, 23 May 2022 16:11:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5BEC95FBE
+        for <linux-tegra@vger.kernel.org>; Mon, 23 May 2022 13:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653336679;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aeYANgG6QafvRhsuT7XrX05LA9JnznyUmzj/VsLlMdA=;
+        b=Yj8WS3TgyBWol0zwqpFX+oCfO0TClAbApWel0y8Lm2JZ0NoBTC7UFIcg/x7dRPpbzrdd+4
+        YhRnXDgMd3yf4ndEhZyZdSnaPYbQI6XRBRDVtsyB1740VfasjhQd/3fJegwO52BAYNa9ws
+        0rHB5vN/hRisH2M1cGrotITU4zX9cIc=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-447-b346Y9o2PJiOjmrGRVWUUg-1; Mon, 23 May 2022 16:11:12 -0400
+X-MC-Unique: b346Y9o2PJiOjmrGRVWUUg-1
+Received: by mail-qk1-f199.google.com with SMTP id h10-20020a05620a13ea00b006a34abd77c9so7278066qkl.15
+        for <linux-tegra@vger.kernel.org>; Mon, 23 May 2022 13:11:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N4rBBcobCQCpRnDX0N4E6NWTW64w3K1pdJQpMj8qNhc=;
-        b=udpNSUAhyP0FG8UDM1hTD/Pjh6SNQULn1hGtdAPYeDLHUc4PzchUBkFrhQd5rk4IgN
-         kUXrLc9uejFGUyzcZTIyCZ2OksTZRKTfxc1CkuMmtblrmLspSRWOPZG4e+b7l8dtiHjD
-         E7oW9+ss3tMBcn8UH2dpYG47tK19BqyKzW/P4vD3StmxjzMm1mavXFvhPFpXvk82I1UZ
-         Vjq63QGnvRKmjV0vx7Vyrp5yF4DR41bld6QNEudT27Q2oEMyHOnoX6yWLZ6YURSTdFVi
-         wq1nIg2h7mCMxMmwkO/5wc8qwRVUtTF9Hq0UqUDzPxc6yJgTxWuEZnkZiHErEEoYKjei
-         Uwrg==
-X-Gm-Message-State: AOAM533xZQUl2IWoB0x6AQv2JNRZwHN3T1Iu9fOpk1tP18i+6+BrCpq3
-        1yUh8xUnLSBiVz1I93FWpv4yttvzTploOtMzc3E=
-X-Google-Smtp-Source: ABdhPJzWjZYTz0j8MSLd3DxKvbLW/XPtFjrPCplrW/MOl5criBTRv3K3QA0OeDfkMtd0+xXjk3TDeQ==
-X-Received: by 2002:a05:620a:2446:b0:6a0:50e8:2b2f with SMTP id h6-20020a05620a244600b006a050e82b2fmr14661026qkn.261.1653328871953;
-        Mon, 23 May 2022 11:01:11 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id o8-20020a05622a138800b002f93554c009sm2686537qtk.59.2022.05.23.11.01.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 11:01:11 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id p139so26782803ybc.11;
-        Mon, 23 May 2022 11:01:11 -0700 (PDT)
-X-Received: by 2002:a81:ad11:0:b0:2fe:fb00:a759 with SMTP id
- l17-20020a81ad11000000b002fefb00a759mr24887559ywh.283.1653328860919; Mon, 23
- May 2022 11:01:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220509233235.995021-1-dmitry.osipenko@collabora.com> <CAJZ5v0jhWs-8ChHddebTZcaH6kA05sLEMsXM9Op7kHWAQDxeYA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jhWs-8ChHddebTZcaH6kA05sLEMsXM9Op7kHWAQDxeYA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 23 May 2022 20:00:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVbWpgubaA0V_tau3O=czAb3RQV9AwJsoQ+LWjf-wjMkA@mail.gmail.com>
-Message-ID: <CAMuHMdVbWpgubaA0V_tau3O=czAb3RQV9AwJsoQ+LWjf-wjMkA@mail.gmail.com>
-Subject: Re: [PATCH v8 00/27] Introduce power-off+restart call chain API
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=aeYANgG6QafvRhsuT7XrX05LA9JnznyUmzj/VsLlMdA=;
+        b=4g6OdtzyY4x7jb84FGK8mg6a0Xn+XD1IRidhXPA8jDbDrgzHKWygnQ45XURs9MNM3d
+         krdRy2dCrGbkr8a87rnxIeKGJss6imcXzGezw+h0NnWN6LF32ZEZo05ZfNl57ZWBlwVN
+         KGcIXU4mOOHx38QiQEtC5Lq/SruPP64Tu7CM4uL753bWZpP8A+Dnm9Ezz+rbfWt5gjMW
+         YupIHPYLVIV6Md9NFJnhbfLE6FFTAiS2UarK97tGg1ZbGj0AofSkbpB7cO+MX2haEA4I
+         gEXZi3BOZkm/3ucM2y+MF+5xYefjwjD5v90fYMRbemgm7lFGsbvcv6Wns2V+G0To9QDg
+         XosA==
+X-Gm-Message-State: AOAM531C9CrehckzNkgIuwzGk8uQe7Iapsk3meqFEVdpRBaJhI/KUBSo
+        COKGHz3gi3Awdw47CnIBvU+fJy1VIemqtMmAN7DbUG2m9+0coluVThVm9bmxX4/gBPHM1ZqmlbI
+        yvKnJqCJMFxrVjD6GZ3TIXwg=
+X-Received: by 2002:a0c:ea34:0:b0:456:319f:f3aa with SMTP id t20-20020a0cea34000000b00456319ff3aamr18692666qvp.18.1653336670105;
+        Mon, 23 May 2022 13:11:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzIbD5TagG8AM+h1aWON0DBIBdEu6ADrvmmcaZwyFRUjX0un+O0w38rbCqt0Cq79b62hJyx0w==
+X-Received: by 2002:a0c:ea34:0:b0:456:319f:f3aa with SMTP id t20-20020a0cea34000000b00456319ff3aamr18692652qvp.18.1653336669916;
+        Mon, 23 May 2022 13:11:09 -0700 (PDT)
+Received: from [192.168.8.138] (static-71-184-137-158.bstnma.ftas.verizon.net. [71.184.137.158])
+        by smtp.gmail.com with ESMTPSA id c15-20020ac81e8f000000b002f39b99f69fsm5231205qtm.57.2022.05.23.13.11.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 May 2022 13:11:09 -0700 (PDT)
+Message-ID: <4212b4d087c68a5c32e92cfe2609221a5ecac71d.camel@redhat.com>
+Subject: Re: [PATCH] drm/nouveau/tegra: remove needless NULL check
+From:   Lyude Paul <lyude@redhat.com>
+To:     Guo Zhengkui <guozhengkui@vivo.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
+        Robin Murphy <robin.murphy@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Joerg Roedel <jroedel@suse.de>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
+        <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
+        <nouveau@lists.freedesktop.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     zhengkui_guo@outlook.com
+Date:   Mon, 23 May 2022 16:11:07 -0400
+In-Reply-To: <20220519072950.128268-1-guozhengkui@vivo.com>
+References: <20220519072950.128268-1-guozhengkui@vivo.com>
+Organization: Red Hat Inc.
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Rafael,
+Reviewed-by: Lyude Paul <lyude@redhat.com>
 
-On Wed, May 18, 2022 at 4:46 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Tue, May 10, 2022 at 1:33 AM Dmitry Osipenko
-> <dmitry.osipenko@collabora.com> wrote:
+Will push to the appropriate branch in a moment
 
-> >   m68k: Switch to new sys-off handler API
+On Thu, 2022-05-19 at 15:29 +0800, Guo Zhengkui wrote:
+> There has already been NULL check in clk_prepare_enable() and
+> clk_disable_unprepare(), so remove needless NULL check before
+> calling them.
+> 
+> Signed-off-by: Guo Zhengkui <guozhengkui@vivo.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> index 2ed528c065fa..ac9e122586bc 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> @@ -41,11 +41,9 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra
+> *tdev)
+>         ret = clk_prepare_enable(tdev->clk);
+>         if (ret)
+>                 goto err_clk;
+> -       if (tdev->clk_ref) {
+> -               ret = clk_prepare_enable(tdev->clk_ref);
+> -               if (ret)
+> -                       goto err_clk_ref;
+> -       }
+> +       ret = clk_prepare_enable(tdev->clk_ref);
+> +       if (ret)
+> +               goto err_clk_ref;
+>         ret = clk_prepare_enable(tdev->clk_pwr);
+>         if (ret)
+>                 goto err_clk_pwr;
+> @@ -70,8 +68,7 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
+>  err_clamp:
+>         clk_disable_unprepare(tdev->clk_pwr);
+>  err_clk_pwr:
+> -       if (tdev->clk_ref)
+> -               clk_disable_unprepare(tdev->clk_ref);
+> +       clk_disable_unprepare(tdev->clk_ref);
+>  err_clk_ref:
+>         clk_disable_unprepare(tdev->clk);
+>  err_clk:
+> @@ -87,8 +84,7 @@ nvkm_device_tegra_power_down(struct nvkm_device_tegra
+> *tdev)
+>         int ret;
+>  
+>         clk_disable_unprepare(tdev->clk_pwr);
+> -       if (tdev->clk_ref)
+> -               clk_disable_unprepare(tdev->clk_ref);
+> +       clk_disable_unprepare(tdev->clk_ref);
+>         clk_disable_unprepare(tdev->clk);
+>         udelay(10);
+>  
 
-Sorry, I didn't realize this was going to interact with the new m68k
-virtual machine support, which is included in the m68k pull request
-for v5.19.
+-- 
+Cheers,
+ Lyude Paul (she/her)
+ Software Engineer at Red Hat
 
-> However, I'm going to send a pull request with it in the second half
-> of the merge window, after the majority of the other changes in the
-> subsystems touched by it have been integrated.
-
-And presumably you will have to merge in v5.19-rc1, too?
-
-I've sent a fix.  It should appear at
-https://lore.kernel.org/r/20220523175520.949681-1-geert@linux-m68k.org
-soon.
-
-Can you please include that in your PR?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
