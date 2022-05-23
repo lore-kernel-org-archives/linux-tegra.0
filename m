@@ -2,151 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4CFC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 May 2022 20:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513E2C4167D
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 May 2022 20:41:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232434AbiEWUL6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 May 2022 16:11:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42032 "EHLO
+        id S233156AbiEWUlN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 May 2022 16:41:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232739AbiEWULW (ORCPT
+        with ESMTP id S233175AbiEWUlD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 May 2022 16:11:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5BEC95FBE
-        for <linux-tegra@vger.kernel.org>; Mon, 23 May 2022 13:11:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653336679;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=aeYANgG6QafvRhsuT7XrX05LA9JnznyUmzj/VsLlMdA=;
-        b=Yj8WS3TgyBWol0zwqpFX+oCfO0TClAbApWel0y8Lm2JZ0NoBTC7UFIcg/x7dRPpbzrdd+4
-        YhRnXDgMd3yf4ndEhZyZdSnaPYbQI6XRBRDVtsyB1740VfasjhQd/3fJegwO52BAYNa9ws
-        0rHB5vN/hRisH2M1cGrotITU4zX9cIc=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-447-b346Y9o2PJiOjmrGRVWUUg-1; Mon, 23 May 2022 16:11:12 -0400
-X-MC-Unique: b346Y9o2PJiOjmrGRVWUUg-1
-Received: by mail-qk1-f199.google.com with SMTP id h10-20020a05620a13ea00b006a34abd77c9so7278066qkl.15
-        for <linux-tegra@vger.kernel.org>; Mon, 23 May 2022 13:11:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=aeYANgG6QafvRhsuT7XrX05LA9JnznyUmzj/VsLlMdA=;
-        b=4g6OdtzyY4x7jb84FGK8mg6a0Xn+XD1IRidhXPA8jDbDrgzHKWygnQ45XURs9MNM3d
-         krdRy2dCrGbkr8a87rnxIeKGJss6imcXzGezw+h0NnWN6LF32ZEZo05ZfNl57ZWBlwVN
-         KGcIXU4mOOHx38QiQEtC5Lq/SruPP64Tu7CM4uL753bWZpP8A+Dnm9Ezz+rbfWt5gjMW
-         YupIHPYLVIV6Md9NFJnhbfLE6FFTAiS2UarK97tGg1ZbGj0AofSkbpB7cO+MX2haEA4I
-         gEXZi3BOZkm/3ucM2y+MF+5xYefjwjD5v90fYMRbemgm7lFGsbvcv6Wns2V+G0To9QDg
-         XosA==
-X-Gm-Message-State: AOAM531C9CrehckzNkgIuwzGk8uQe7Iapsk3meqFEVdpRBaJhI/KUBSo
-        COKGHz3gi3Awdw47CnIBvU+fJy1VIemqtMmAN7DbUG2m9+0coluVThVm9bmxX4/gBPHM1ZqmlbI
-        yvKnJqCJMFxrVjD6GZ3TIXwg=
-X-Received: by 2002:a0c:ea34:0:b0:456:319f:f3aa with SMTP id t20-20020a0cea34000000b00456319ff3aamr18692666qvp.18.1653336670105;
-        Mon, 23 May 2022 13:11:10 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzIbD5TagG8AM+h1aWON0DBIBdEu6ADrvmmcaZwyFRUjX0un+O0w38rbCqt0Cq79b62hJyx0w==
-X-Received: by 2002:a0c:ea34:0:b0:456:319f:f3aa with SMTP id t20-20020a0cea34000000b00456319ff3aamr18692652qvp.18.1653336669916;
-        Mon, 23 May 2022 13:11:09 -0700 (PDT)
-Received: from [192.168.8.138] (static-71-184-137-158.bstnma.ftas.verizon.net. [71.184.137.158])
-        by smtp.gmail.com with ESMTPSA id c15-20020ac81e8f000000b002f39b99f69fsm5231205qtm.57.2022.05.23.13.11.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 13:11:09 -0700 (PDT)
-Message-ID: <4212b4d087c68a5c32e92cfe2609221a5ecac71d.camel@redhat.com>
-Subject: Re: [PATCH] drm/nouveau/tegra: remove needless NULL check
-From:   Lyude Paul <lyude@redhat.com>
-To:     Guo Zhengkui <guozhengkui@vivo.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Joerg Roedel <jroedel@suse.de>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
-        <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
-        <nouveau@lists.freedesktop.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     zhengkui_guo@outlook.com
-Date:   Mon, 23 May 2022 16:11:07 -0400
-In-Reply-To: <20220519072950.128268-1-guozhengkui@vivo.com>
-References: <20220519072950.128268-1-guozhengkui@vivo.com>
-Organization: Red Hat Inc.
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+        Mon, 23 May 2022 16:41:03 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE309C3F;
+        Mon, 23 May 2022 13:41:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=LG2HkLvcft3PZ/5y+RaNtcoQpztQykGkc8EQp8pxJfI=; b=fPCMiuZns16FgBzoGF9Je3OLkO
+        LL4L2QHAG/wGtiXgEhS21zRsWqE1LMzGwwDxe6f9KpfZaY9eV7CGD4vwhcqTRNInSSR1HDaLnpPpS
+        miMpU8/+9j0GmfawjCEu88Tqk7uAI9V6UbtlRLQsT2Paj7KpRr9Eexx/1nt9uyC0/PRdqZ6qso//5
+        331flFwFw5rYDxq1lD4s7YGntuImz8x8p2XDCS463SY8sQhksTBKudAp4pKnME8DpTbZ4fGAvbQxT
+        wafY442u8mSqR6x/cwniP7CEUq4fd8W+eVImWzP4xrptC52doj1jXiLwbdsJQSnWbw0nF1P7Xd8f/
+        wPYC4mSw==;
+Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1ntEr0-00Gje9-7b; Mon, 23 May 2022 22:40:38 +0200
+Message-ID: <0dda86c0-3a54-8c70-d1e7-18bbb4d41bab@igalia.com>
+Date:   Mon, 23 May 2022 17:40:07 -0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 12/30] parisc: Replace regular spinlock with spin_trylock
+ on panic path
+Content-Language: en-US
+To:     Helge Deller <deller@gmx.de>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        pmladek@suse.com, bhe@redhat.com, akpm@linux-foundation.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
+        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
+        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-13-gpiccoli@igalia.com>
+ <6a7c924a-54a9-c5ea-8a9d-3ea92987b436@gmx.de>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <6a7c924a-54a9-c5ea-8a9d-3ea92987b436@gmx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-
-Will push to the appropriate branch in a moment
-
-On Thu, 2022-05-19 at 15:29 +0800, Guo Zhengkui wrote:
-> There has already been NULL check in clk_prepare_enable() and
-> clk_disable_unprepare(), so remove needless NULL check before
-> calling them.
+On 28/04/2022 13:55, Helge Deller wrote:
+> [...]
+> You may add:
+> Acked-by: Helge Deller <deller@gmx.de> # parisc
 > 
-> Signed-off-by: Guo Zhengkui <guozhengkui@vivo.com>
-> ---
->  drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> index 2ed528c065fa..ac9e122586bc 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-> @@ -41,11 +41,9 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra
-> *tdev)
->         ret = clk_prepare_enable(tdev->clk);
->         if (ret)
->                 goto err_clk;
-> -       if (tdev->clk_ref) {
-> -               ret = clk_prepare_enable(tdev->clk_ref);
-> -               if (ret)
-> -                       goto err_clk_ref;
-> -       }
-> +       ret = clk_prepare_enable(tdev->clk_ref);
-> +       if (ret)
-> +               goto err_clk_ref;
->         ret = clk_prepare_enable(tdev->clk_pwr);
->         if (ret)
->                 goto err_clk_pwr;
-> @@ -70,8 +68,7 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
->  err_clamp:
->         clk_disable_unprepare(tdev->clk_pwr);
->  err_clk_pwr:
-> -       if (tdev->clk_ref)
-> -               clk_disable_unprepare(tdev->clk_ref);
-> +       clk_disable_unprepare(tdev->clk_ref);
->  err_clk_ref:
->         clk_disable_unprepare(tdev->clk);
->  err_clk:
-> @@ -87,8 +84,7 @@ nvkm_device_tegra_power_down(struct nvkm_device_tegra
-> *tdev)
->         int ret;
->  
->         clk_disable_unprepare(tdev->clk_pwr);
-> -       if (tdev->clk_ref)
-> -               clk_disable_unprepare(tdev->clk_ref);
-> +       clk_disable_unprepare(tdev->clk_ref);
->         clk_disable_unprepare(tdev->clk);
->         udelay(10);
->  
+> Helge
 
--- 
-Cheers,
- Lyude Paul (she/her)
- Software Engineer at Red Hat
+Hi Helge, do you think would be possible to still pick this one for
+v5.19 or do you prefer to hold for the next release?
 
+I'm working on V2, so if it's merged for 5.19 I won't send it again.
+Thanks,
+
+
+Guilherme
