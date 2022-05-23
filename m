@@ -2,207 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E0EC43217
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 May 2022 18:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080B7C4321E
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 May 2022 18:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242589AbiEWSAW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 May 2022 14:00:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56886 "EHLO
+        id S240252AbiEWSbw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 May 2022 14:31:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244027AbiEWR5a (ORCPT
+        with ESMTP id S243719AbiEWSbf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 May 2022 13:57:30 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5F47CC5D8D;
-        Mon, 23 May 2022 10:43:09 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.91,246,1647270000"; 
-   d="scan'208";a="121975207"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 24 May 2022 02:42:55 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 15594400F2AD;
-        Tue, 24 May 2022 02:42:48 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Marc Zyngier <maz@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Mon, 23 May 2022 14:31:35 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B64620F5A;
+        Mon, 23 May 2022 11:06:22 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id v11so13415860qkf.1;
+        Mon, 23 May 2022 11:06:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N4rBBcobCQCpRnDX0N4E6NWTW64w3K1pdJQpMj8qNhc=;
+        b=udpNSUAhyP0FG8UDM1hTD/Pjh6SNQULn1hGtdAPYeDLHUc4PzchUBkFrhQd5rk4IgN
+         kUXrLc9uejFGUyzcZTIyCZ2OksTZRKTfxc1CkuMmtblrmLspSRWOPZG4e+b7l8dtiHjD
+         E7oW9+ss3tMBcn8UH2dpYG47tK19BqyKzW/P4vD3StmxjzMm1mavXFvhPFpXvk82I1UZ
+         Vjq63QGnvRKmjV0vx7Vyrp5yF4DR41bld6QNEudT27Q2oEMyHOnoX6yWLZ6YURSTdFVi
+         wq1nIg2h7mCMxMmwkO/5wc8qwRVUtTF9Hq0UqUDzPxc6yJgTxWuEZnkZiHErEEoYKjei
+         Uwrg==
+X-Gm-Message-State: AOAM533xZQUl2IWoB0x6AQv2JNRZwHN3T1Iu9fOpk1tP18i+6+BrCpq3
+        1yUh8xUnLSBiVz1I93FWpv4yttvzTploOtMzc3E=
+X-Google-Smtp-Source: ABdhPJzWjZYTz0j8MSLd3DxKvbLW/XPtFjrPCplrW/MOl5criBTRv3K3QA0OeDfkMtd0+xXjk3TDeQ==
+X-Received: by 2002:a05:620a:2446:b0:6a0:50e8:2b2f with SMTP id h6-20020a05620a244600b006a050e82b2fmr14661026qkn.261.1653328871953;
+        Mon, 23 May 2022 11:01:11 -0700 (PDT)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id o8-20020a05622a138800b002f93554c009sm2686537qtk.59.2022.05.23.11.01.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 May 2022 11:01:11 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id p139so26782803ybc.11;
+        Mon, 23 May 2022 11:01:11 -0700 (PDT)
+X-Received: by 2002:a81:ad11:0:b0:2fe:fb00:a759 with SMTP id
+ l17-20020a81ad11000000b002fefb00a759mr24887559ywh.283.1653328860919; Mon, 23
+ May 2022 11:01:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220509233235.995021-1-dmitry.osipenko@collabora.com> <CAJZ5v0jhWs-8ChHddebTZcaH6kA05sLEMsXM9Op7kHWAQDxeYA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jhWs-8ChHddebTZcaH6kA05sLEMsXM9Op7kHWAQDxeYA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 23 May 2022 20:00:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVbWpgubaA0V_tau3O=czAb3RQV9AwJsoQ+LWjf-wjMkA@mail.gmail.com>
+Message-ID: <CAMuHMdVbWpgubaA0V_tau3O=czAb3RQV9AwJsoQ+LWjf-wjMkA@mail.gmail.com>
+Subject: Re: [PATCH v8 00/27] Introduce power-off+restart call chain API
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 1/5] dt-bindings: interrupt-controller: Add Renesas RZ/G2L Interrupt Controller
-Date:   Mon, 23 May 2022 18:42:34 +0100
-Message-Id: <20220523174238.28942-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220523174238.28942-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220523174238.28942-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-csky@vger.kernel.org,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add DT bindings for the Renesas RZ/G2L Interrupt Controller.
+Hi Rafael,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../renesas,rzg2l-irqc.yaml                   | 133 ++++++++++++++++++
- 1 file changed, 133 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+On Wed, May 18, 2022 at 4:46 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Tue, May 10, 2022 at 1:33 AM Dmitry Osipenko
+> <dmitry.osipenko@collabora.com> wrote:
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-new file mode 100644
-index 000000000000..ffbb4ab4d9a7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-@@ -0,0 +1,133 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/renesas,rzg2l-irqc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas RZ/G2L (and alike SoC's) Interrupt Controller (IA55)
-+
-+maintainers:
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
-+
-+description: |
-+  IA55 performs various interrupt controls including synchronization for the external
-+  interrupts of NMI, IRQ, and GPIOINT and the interrupts of the built-in peripheral
-+  interrupts output by each IP. And it notifies the interrupt to the GIC
-+    - IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI interrupts
-+    - GPIO pins used as external interrupt input pins, mapped to 32 GIC SPI interrupts
-+    - NMI edge select (NMI is not treated as NMI exception and supports fall edge and
-+      stand-up edge detection interrupts)
-+
-+allOf:
-+  - $ref: /schemas/interrupt-controller.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a07g044-irqc    # RZ/G2L
-+      - const: renesas,rzg2l-irqc
-+
-+  '#interrupt-cells':
-+    description: The first cell should contain external interrupt number (IRQ0-7) and the
-+                 second cell is used to specify the flag.
-+    const: 2
-+
-+  '#address-cells':
-+    const: 0
-+
-+  interrupt-controller: true
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 41
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: clk
-+      - const: pclk
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - '#interrupt-cells'
-+  - '#address-cells'
-+  - interrupt-controller
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - resets
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/r9a07g044-cpg.h>
-+
-+    irqc: interrupt-controller@110a0000 {
-+            compatible = "renesas,r9a07g044-irqc", "renesas,rzg2l-irqc";
-+            reg = <0x110a0000 0x10000>;
-+            #interrupt-cells = <2>;
-+            #address-cells = <0>;
-+            interrupt-controller;
-+            interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&cpg CPG_MOD R9A07G044_IA55_CLK>,
-+                     <&cpg CPG_MOD R9A07G044_IA55_PCLK>;
-+            clock-names = "clk", "pclk";
-+            power-domains = <&cpg>;
-+            resets = <&cpg R9A07G044_IA55_RESETN>;
-+    };
--- 
-2.25.1
+> >   m68k: Switch to new sys-off handler API
 
+Sorry, I didn't realize this was going to interact with the new m68k
+virtual machine support, which is included in the m68k pull request
+for v5.19.
+
+> However, I'm going to send a pull request with it in the second half
+> of the merge window, after the majority of the other changes in the
+> subsystems touched by it have been integrated.
+
+And presumably you will have to merge in v5.19-rc1, too?
+
+I've sent a fix.  It should appear at
+https://lore.kernel.org/r/20220523175520.949681-1-geert@linux-m68k.org
+soon.
+
+Can you please include that in your PR?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
