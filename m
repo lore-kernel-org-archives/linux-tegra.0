@@ -2,64 +2,66 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0FAC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 May 2022 15:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 955C4C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 May 2022 15:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237716AbiEWPUu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 May 2022 11:20:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48628 "EHLO
+        id S237874AbiEWP34 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 May 2022 11:29:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237681AbiEWPUs (ORCPT
+        with ESMTP id S238064AbiEWP2k (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 May 2022 11:20:48 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515085DA79;
-        Mon, 23 May 2022 08:20:47 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id w200so13983169pfc.10;
-        Mon, 23 May 2022 08:20:47 -0700 (PDT)
+        Mon, 23 May 2022 11:28:40 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3815FF04;
+        Mon, 23 May 2022 08:28:24 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d22so13407518plr.9;
+        Mon, 23 May 2022 08:28:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=D/Inwr04zz5evYrUoXhEX7FCvYRzx8i5GqA3k3ATkNs=;
-        b=U8EA5fTmJXhERlLZ4BOZWIAaMdCQQGa+myhcNaM9kllBj7/CnKkKIObXyKQa1PNiG7
-         1jnE/Eqygwm8GayKACdjKiZtfFvEZCFuyRFgwEFkQFPJpDGxOV8zPkBb111RAmZC65mV
-         CHQWaLGPLrlX0PGEhi8Gyy21gtZwS+Cb/FVq1htf2/jfpFyYO9BVO2GiGQkypWiQMIcF
-         tkq+JgF0Lc90WOUsv0moDrs9jzyZJfA2WAtsaufMT6c5HJ1bhNWBOMWT/M6xUhwO6rK0
-         xDBXKrX5a6XvlEDPD3ZWCR5V+1wy0fx5N2r4omxifvSgDnk4eidRGni6h1b2ROaAQKbg
-         AP3w==
+        bh=cUC4YaTkSvnRYrJyCu9bbmLHjPFEHYU8Y+xctYQuBfo=;
+        b=pBMqPUwvyvmRiCSpJnrPcKBj4tXANwPwaJQfBeQZbvwD5TWozoyG0AJi0UUreYt344
+         zOf8BbJLr7L8Q27sVXv8Xe/01vjze+sZIZujLJtacMGT25Ek6OwfZJzjVLxZK7pnRZqq
+         w+NlZCn2XazKc9Q+SsUiwDR/EcgWrQCOtFh2AJkgN/dGFO7ntUZsjWuMBlNAjO7V8hp8
+         KM56AtIcTVjuRmWL68A2wCVioWILVggaPBR20LmcqgoOAbSmpWCZAKhMpwl6ObVUpORP
+         4ZNxuFZze22j3imNb4w8yFimrFs8SKdWRstnlHu8BGCnFqUf5JcdPkmeqsZ4Ly0QW9RN
+         yp/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=D/Inwr04zz5evYrUoXhEX7FCvYRzx8i5GqA3k3ATkNs=;
-        b=xmN8DbGNSmuW9NpUQwEn631PF7j6CerdcHXm91oS4A/4mQlHC3WuJrIMdq8FnbgevN
-         FXktgT7RLMYWdu8zZKjuJAxrLfp779K/lRpHUc8at6l1UNx0IK2eVu0V6PLkeRanVR22
-         BlK3QGpGgyNzHEr6ScdhxAmLvTyTo6YX75ClRUN5n0n1MM369S884fn/VjaNodwyiq9S
-         4tJybJPE21G3BdqhAgzS99G3kP8TpCM1c8NvXFqkQRjjTyrQCrEDV6HN15BkJ8zJbnh/
-         2VrjlrkhoKi9Mq0XUbikbrnLvAvdMA1yBcJ8TrIcicuhpAm4pdB+u7y9hyVR5eHRmRiD
-         Gy/Q==
-X-Gm-Message-State: AOAM532UizrzVgiAIg8MH9mH0pZXo2CYBd+lSiFwHXEpyuCDVCfNLIl6
-        psRRkoWbDIqYpP44pWnXWjZotbTyVdOYwQ==
-X-Google-Smtp-Source: ABdhPJxvvXJG0l5AKxskSnSV89HBpYiemGVnoAQea8WztiAzfZ/nSLNRoxvgYc0KgSejg1XFfxGELw==
-X-Received: by 2002:a05:6a00:1826:b0:518:4c8b:c5db with SMTP id y38-20020a056a00182600b005184c8bc5dbmr19660600pfa.22.1653319246872;
-        Mon, 23 May 2022 08:20:46 -0700 (PDT)
+        bh=cUC4YaTkSvnRYrJyCu9bbmLHjPFEHYU8Y+xctYQuBfo=;
+        b=fA5ZzaXz0lHsK56YcpT7hgxF+7saNSM8Sc8qijxsKRrHs+hPaNjB3sebh0kWKxIhWu
+         XC7ekH8hIxzb26x0zXZtDDjcbO9UikcglDjfPCZf1MI+N3nyL4cBbb76F+x49wsHkkr1
+         qurM+WEwHmluTR++ezoN6CQdc1ce7B7fuDJJiZ4QwJoiDOdaH/B78bMyMtcDN9LGTY7B
+         PD7k6ts184eW/C/E1OolQZc7TBNNAxWT2JKwwZpPTvLPJz+MEn7fNzXc/MkIqpEtymPE
+         rWgEoaFrnNcuVMhtbG5585DLzMSwVl+yvL4jHAYTra/w7iGMnASNcR4MCa+uGLb6jjyj
+         yY7w==
+X-Gm-Message-State: AOAM5320em1uWd9xJd78fNkF1Puzx87sbUiHVrPccgAjrw1WLe0G5eDe
+        /DUp0nQ4Tljs+00/d8Ru6C0=
+X-Google-Smtp-Source: ABdhPJyiXyFb6VGU02rrA8lDxILq34YkqQDZvpgVob/1vxaCbMYzV8kEf0lpwxYeYymyJEiLCAvhpQ==
+X-Received: by 2002:a17:902:b58b:b0:162:2e01:9442 with SMTP id a11-20020a170902b58b00b001622e019442mr3261166pls.6.1653319700549;
+        Mon, 23 May 2022 08:28:20 -0700 (PDT)
 Received: from localhost.localdomain ([202.120.234.246])
-        by smtp.googlemail.com with ESMTPSA id a2-20020a1709027e4200b001620db30cd6sm4714465pln.201.2022.05.23.08.20.42
+        by smtp.googlemail.com with ESMTPSA id p1-20020a056a0026c100b0051810d460adsm7412307pfw.114.2022.05.23.08.28.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 08:20:46 -0700 (PDT)
+        Mon, 23 May 2022 08:28:20 -0700 (PDT)
 From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: tegra: Fix refcount leak in tegra114_gic_cpu_pm_registration
-Date:   Mon, 23 May 2022 19:20:36 +0400
-Message-Id: <20220523152037.16078-1-linmq006@gmail.com>
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Warren <swarren@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] clk: tegra20: Fix refcount leak in tegra20_clock_init
+Date:   Mon, 23 May 2022 19:28:11 +0400
+Message-Id: <20220523152811.19692-1-linmq006@gmail.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -71,25 +73,24 @@ of_find_matching_node() returns a node pointer with refcount
 incremented, we should use of_node_put() on it when not need anymore.
 Add missing of_node_put() to avoid refcount leak.
 
-Fixes: 7e8b15dbc392 ("ARM: tegra114: Reprogram GIC CPU interface to bypass IRQ on CPU PM entry")
+Fixes: 37c26a906527 ("clk: tegra: add clock support for Tegra20")
 Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
- arch/arm/mach-tegra/irq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra20.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index 4e1ee70b2a3f..d51bdd46219e 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -73,7 +73,7 @@ static void __init tegra114_gic_cpu_pm_registration(void)
- 		return;
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index be3c33441cfc..8a4514f6d503 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1131,6 +1131,7 @@ static void __init tegra20_clock_init(struct device_node *np)
+ 	}
  
- 	tegra_gic_cpu_base = of_iomap(dn, 1);
--
-+	of_node_put(dn);
- 	cpu_pm_register_notifier(&tegra_gic_notifier_block);
- }
- #else
+ 	pmc_base = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!pmc_base) {
+ 		pr_err("Can't map pmc registers\n");
+ 		BUG();
 -- 
 2.25.1
 
