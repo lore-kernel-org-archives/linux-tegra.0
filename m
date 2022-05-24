@@ -2,141 +2,200 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E170C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 09:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C22F3C43217
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 10:19:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235573AbiEXJ3k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 May 2022 05:29:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37648 "EHLO
+        id S235932AbiEXKTL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 May 2022 06:19:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234728AbiEXJ3j (ORCPT
+        with ESMTP id S235858AbiEXKTI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 May 2022 05:29:39 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 841C23336E
-        for <linux-tegra@vger.kernel.org>; Tue, 24 May 2022 02:29:38 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id q184so985691ybg.11
-        for <linux-tegra@vger.kernel.org>; Tue, 24 May 2022 02:29:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HVD805PIWF+vPNoBSV15VHHtEetrJAxgrnMmdyS5kRQ=;
-        b=S0mvoueLkkCMEb0khGrKphavMKc90PQbW1hZrqOzWs1cit1wqnOgBEbOhwC2Gm1gcj
-         kIHM1+IQNCQTcaoja5VpEYpV4co8AzCNNu+83KAIk53kLqOmI2hfP1Ar9xXxIieD16Om
-         xjzFu5740eVTIKeVCbdUJGmwGM0Rkl5LQ+ZYKyjPu4YPaP+cGshdi94MjFCF/XNepcPw
-         oYZJyyObKJcD+Yod/TT0w5hVunqVNuqN1+xGJPHLYopcydm+GoghNABwOFA16ah6fLCU
-         dQB3qPEbBbhUjnXIz4bp3atdEuAhPeAjinnOqRPhWOrHjmxFQ8/GB4oqJh3UN8Mnv3dI
-         /e3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HVD805PIWF+vPNoBSV15VHHtEetrJAxgrnMmdyS5kRQ=;
-        b=yRrRqru/MNPC2uUnwjFFQ4/1ORkME5h3El25PVEKqI0N02J1yikWKtloUX0OIygvuG
-         qD2IT5bN/+/3GoPWNJeZ6/5S2O6oqlyYtFFT0o+f26NI4KXAxK5PCNg3U2pAJgPulp58
-         TEoWk04sNduXPHzDZqaIW8odLlDiokvI3+1IbbeQv4UvL5oYdp4KXGMUcJAhBJwMYoCE
-         BokjiIlohAA/f/+5krBiXRiAxT7qJk2IvYUnV50cRKsCNxpr6BW2UChSEO/FrjRV/Sjv
-         NESSZxTdj2Ciy8a1h0bJHpNzXKbYo9AuYce1KZ0zFQxz7YpNjBVdVC/rKroKM4m06brD
-         w3rQ==
-X-Gm-Message-State: AOAM532nxM3M/KZUPChrJ+Ggx0L0I8d8q1tmt88pMA9kKj8fIHbKRtFc
-        OErZnJh8K35voViQ+OG5mSF2ZHLPCRziPYNW4Kpd9Q==
-X-Google-Smtp-Source: ABdhPJwSufTp3IMXxz6Jk+46mDzRwOrdHVqjcyhgQZKrft4yGeS0BqvUhfbsZIAkn9moT48nyJeOgOP8pXv2k6Y8YBs=
-X-Received: by 2002:a05:6902:704:b0:64d:f270:22b0 with SMTP id
- k4-20020a056902070400b0064df27022b0mr25054247ybt.626.1653384577755; Tue, 24
- May 2022 02:29:37 -0700 (PDT)
+        Tue, 24 May 2022 06:19:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2190C8AE50
+        for <linux-tegra@vger.kernel.org>; Tue, 24 May 2022 03:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653387546;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5hjdGDxm/5eb7UZfehykEkfZZM041fRa5GaKQ9lwQHI=;
+        b=CWy15vX0/ORZPOeX7tCo7m8pV3utHGmJVj72pb1U6qnqxUNtsZT7UWYdw6bfkfY2k5V4vg
+        nTgccxR94ekeSh1nmFVRgkdYUGXHmZWaaoEguTj8DSIYqr6dOo75cAMVff4PZ5n7nnZdJd
+        l/sOYy5A1QdMlszLbMr6pUwpczvd5aY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-13-cdRBusv8OiWHr2Ge-bjGGw-1; Tue, 24 May 2022 06:19:03 -0400
+X-MC-Unique: cdRBusv8OiWHr2Ge-bjGGw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7889A101A52C;
+        Tue, 24 May 2022 10:19:00 +0000 (UTC)
+Received: from localhost (ovpn-13-156.pek2.redhat.com [10.72.13.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2727240E7F0C;
+        Tue, 24 May 2022 10:18:59 +0000 (UTC)
+Date:   Tue, 24 May 2022 18:18:55 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        "michael Kelley (LINUX)" <mikelley@microsoft.com>,
+        Dave Young <dyoung@redhat.com>, d.hatayama@jp.fujitsu.com,
+        akpm@linux-foundation.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, dave.hansen@linux.intel.com, feng.tang@intel.com,
+        gregkh@linuxfoundation.org, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+Message-ID: <YoyxD3WApHpa/N1n@MiWiFi-R3L-srv>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-25-gpiccoli@igalia.com>
+ <Yn0TnsWVxCcdB2yO@alley>
+ <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
+ <20220519234502.GA194232@MiWiFi-R3L-srv>
+ <ded31ec0-076b-2c5b-0fe6-0c274954821f@igalia.com>
+ <YoyQyHHfhIIXSX0U@alley>
 MIME-Version: 1.0
-References: <20220523174238.28942-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220523174238.28942-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CACRpkdYaWmD9PTcGgeP5MTe9bXMgmf=tUSDBQ-4VxSfL4qkoeQ@mail.gmail.com> <CA+V-a8s+dWMwL6zQnWwFAa15sMgPGYrW+GZ=WhSW1tPxgpLOqA@mail.gmail.com>
-In-Reply-To: <CA+V-a8s+dWMwL6zQnWwFAa15sMgPGYrW+GZ=WhSW1tPxgpLOqA@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 24 May 2022 11:29:26 +0200
-Message-ID: <CACRpkdb43hCCp43p5wmmfhh_6Qr-bAB2vYo7tX27MTGwfjbPGw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] gpio: gpiolib: Allow free() callback to be overridden
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YoyQyHHfhIIXSX0U@alley>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, May 24, 2022 at 11:07 AM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Tue, May 24, 2022 at 9:54 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > On Mon, May 23, 2022 at 7:43 PM Lad Prabhakar
-> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> >
-> > > Allow free() callback to be overridden from irq_domain_ops for
-> > > hierarchical chips.
-> > >
-> > > This allows drivers to free up resources which are allocated during
-> > > child_to_parent_hwirq()/populate_parent_alloc_arg() callbacks.
-> > >
-> > > On Renesas RZ/G2L platform a bitmap is maintained for TINT slots, a slot
-> > > is allocated in child_to_parent_hwirq() callback which is freed up in free
-> > > callback hence this override.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > So that function today looks like this:
-> >
-> > static void gpiochip_hierarchy_setup_domain_ops(struct irq_domain_ops *ops)
-> > {
-> >         ops->activate = gpiochip_irq_domain_activate;
-> >         ops->deactivate = gpiochip_irq_domain_deactivate;
-> >         ops->alloc = gpiochip_hierarchy_irq_domain_alloc;
-> >         ops->free = irq_domain_free_irqs_common;
-> >
-> >         /*
-> >          * We only allow overriding the translate() function for
-> >          * hierarchical chips, and this should only be done if the user
-> >          * really need something other than 1:1 translation.
-> >          */
-> >         if (!ops->translate)
-> >                 ops->translate = gpiochip_hierarchy_irq_domain_translate;
-> > }
-> >
-> > (...)
-> > -       ops->free = irq_domain_free_irqs_common;
-> > (...)
-> > > +       if (!ops->free)
-> > > +               ops->free = irq_domain_free_irqs_common;
-> >
-> > Marc Z is working on cleaning up the way that gpiolib is (ab)using
-> > irqchips. We definitely need his ACK if we do things like this.
-> > This doesn't look like one of the big offenders to me, but I want
-> > to make sure we don't create new problems while Marc is trying
-> > to solve the old ones.
-> >
-> Agreed, I had a discussion with Marc on v3 series [0].
+On 05/24/22 at 10:01am, Petr Mladek wrote:
+> On Fri 2022-05-20 08:23:33, Guilherme G. Piccoli wrote:
+> > On 19/05/2022 20:45, Baoquan He wrote:
+> > > [...]
+> > >> I really appreciate the summary skill you have, to convert complex
+> > >> problems in very clear and concise ideas. Thanks for that, very useful!
+> > >> I agree with what was summarized above.
+> > > 
+> > > I want to say the similar words to Petr's reviewing comment when I went
+> > > through the patches and traced each reviewing sub-thread to try to
+> > > catch up. Petr has reivewed this series so carefully and given many
+> > > comments I want to ack immediately.
+> > > 
+> > > I agree with most of the suggestions from Petr to this patch, except of
+> > > one tiny concern, please see below inline comment.
+> > 
+> > Hi Baoquan, thanks! I'm glad you're also reviewing that =)
+> > 
+> > 
+> > > [...]
+> > > 
+> > > I like the proposed skeleton of panic() and code style suggested by
+> > > Petr very much. About panic_prefer_crash_dump which might need be added,
+> > > I hope it has a default value true. This makes crash_dump execute at
+> > > first by default just as before, unless people specify
+> > > panic_prefer_crash_dump=0|n|off to disable it. Otherwise we need add
+> > > panic_prefer_crash_dump=1 in kernel and in our distros to enable kdump,
+> > > this is inconsistent with the old behaviour.
+> > 
+> > I'd like to understand better why the crash_kexec() must always be the
+> > first thing in your use case. If we keep that behavior, we'll see all
+> > sorts of workarounds - see the last patches of this series, Hyper-V and
+> > PowerPC folks hardcoded "crash_kexec_post_notifiers" in order to force
+> > execution of their relevant notifiers (like the vmbus disconnect,
+> > specially in arm64 that has no custom machine_crash_shutdown, or the
+> > fadump case in ppc). This led to more risk in kdump.
+> > 
+> > The thing is: with the notifiers' split, we tried to keep only the most
+> > relevant/necessary stuff in this first list, things that ultimately
+> > should improve kdump reliability or if not, at least not break it. My
+> > feeling is that, with this series, we should change the idea/concept
+> > that kdump must run first nevertheless, not matter what. We're here
+> > trying to accommodate the antagonistic goals of hypervisors that need
+> > some clean-up (even for kdump to work) VS. kdump users, that wish a
+> > "pristine" system reboot ASAP after the crash.
+> 
+> Good question. I wonder if Baoquan knows about problems caused by the
+> particular notifiers that will end up in the hypervisor list. Note
+> that there will be some shuffles and the list will be slightly
+> different in V2.
 
-Hm yeah I guess I am just stepping on Marc's toes with all my mails :(
+Yes, I knew some of them. Please check my response to Guilherme.
 
-I'll try to just wait for Marc's Reviewed-by instead and not add to the noise,
-I'm probably just wrong.
+We have bug to track the issue on Hyper-V in which failure happened
+during panic notifiers running, haven't come to kdump. Seems both of
+us sent mail replying to Guilherme at the same time. 
 
-Yours,
-Linus Walleij
+> 
+> Anyway, I see four possible solutions:
+> 
+>   1. The most conservative approach is to keep the current behavior
+>      and call kdump first by default.
+> 
+>   2. A medium conservative approach to change the default default
+>      behavior and call hypervisor and eventually the info notifiers
+>      before kdump. There still would be the possibility to call kdump
+>      first by the command line parameter.
+> 
+>   3. Remove the possibility to call kdump first completely. It would
+>      assume that all the notifiers in the info list are super safe
+>      or that they make kdump actually more safe.
+> 
+>   4. Create one more notifier list for operations that always should
+>      be called before crash_dump.
+
+I would vote for 1 or 4 without any hesitation, and prefer 4. I ever
+suggest the variant of solution 4 in v1 reviewing. That's taking those
+notifiers out of list and enforcing to execute them before kdump. E.g
+the one on HyperV to terminate VMbus connection. Maybe solution 4 is
+better to provide a determinate way for people to add necessary code
+at the earliest part.
+
+> 
+> Regarding the extra notifier list (4th solution). It is not clear to
+> me whether it would be always called even before hypervisor list or
+> when kdump is not enabled. We must not over-engineer it.
+
+One thing I would like to notice is, no matter how perfect we split the
+lists this time, we can't gurantee people will add notifiers reasonablly
+in the future. And people from different sub-component may not do
+sufficient investigation and add them to fulfil their local purpose.
+
+The current panic notifers list is the best example. Hyper-V actually
+wants to run some necessary code before kdump, but not all of them, they
+just add it, ignoring the original purpose of
+crash_kexec_post_notifiers. I guess they do like this just because it's
+easy to do, no need to bother changing code in generic place.
+
+Solution 4 can make this no doubt, that's why I like it better.
+
+> 
+> 2nd proposal looks like a good compromise. But maybe we could do
+> this change few releases later. The notifiers split is a big
+> change on its own.
+
+As I replied to Guilherme, solution 2 will cause regression if not
+calling kdump firstly. Solution 3 leaves people space to make mistake,
+they could add nontifier into wrong list.
+
+I would like to note again that the panic notifiers are optional to run,
+while kdump is expectd once loaded, from the original purpose. I guess
+people I know will still have this thought, e.g Hatayama, Masa, they are
+truly often use panic notifiers like this on their company's system.
+
