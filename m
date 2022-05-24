@@ -2,192 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED509C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 15:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1990C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 15:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238616AbiEXPDz convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 May 2022 11:03:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33804 "EHLO
+        id S238644AbiEXPGW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 May 2022 11:06:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236693AbiEXPDs (ORCPT
+        with ESMTP id S238643AbiEXPGR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 May 2022 11:03:48 -0400
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 355BD8AE4C;
-        Tue, 24 May 2022 08:03:47 -0700 (PDT)
-Received: by mail-qt1-f182.google.com with SMTP id hh4so14886798qtb.10;
-        Tue, 24 May 2022 08:03:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xvY3YRGz6Q5JdIA0GD3/2z1w0vgXjW2K3nWPGIL58cE=;
-        b=xmw6PBJiSKQWxyIlk16DzUlnKILhKmHhqG8uMXbF+yPCpsjbkkIGNrPKL+ptX2oSWM
-         10hxtw6XYabM9Y6OFj5CbNeOA11OELyYv1s2LMJi0B+U7SaIcApYvttqfLYa3DLLFIe6
-         S1XMdU4rNuEnzPKmVtdKefOHqVUQBOc1Pg+PLs8+H6hmY3FdIRDD2MEQ+B/QlLapC+Jh
-         V54GLpUZUm8uVkePXQ2BZmAFyFCrb/ErCxRFnlyNGmCTIV6PeP7HbUeKM+eqQkev274K
-         5QGR/DRp6vwg+1wk+89Ky86U/IXZiASfyi9yRqe2FcFNhh84gv4iAPVQvPxpgKfOfeuV
-         7zIw==
-X-Gm-Message-State: AOAM533jFVWX6MTIzltEAkzjXD+sgLwm/jLPRMy1Ure0h6xAde70GoHj
-        b543jcrjuUQklrGLL37dklIHDP06AnN3uGYc
-X-Google-Smtp-Source: ABdhPJwuk9H/mEk8wIoK8/x19GtEPey883vcqDGFb9QDo6KvHAzFTF8B3gztyBKrkKlDvmsI+8rjtg==
-X-Received: by 2002:a05:622a:1aa9:b0:2f9:8593:76c0 with SMTP id s41-20020a05622a1aa900b002f9859376c0mr1039264qtc.278.1653404626186;
-        Tue, 24 May 2022 08:03:46 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id 7-20020a370707000000b0069fc13ce244sm6230671qkh.117.2022.05.24.08.03.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 May 2022 08:03:43 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id g72so3324900ybf.0;
-        Tue, 24 May 2022 08:03:42 -0700 (PDT)
-X-Received: by 2002:a81:2143:0:b0:2fb:1274:247e with SMTP id
- h64-20020a812143000000b002fb1274247emr28501106ywh.384.1653404610585; Tue, 24
- May 2022 08:03:30 -0700 (PDT)
+        Tue, 24 May 2022 11:06:17 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E3310D2;
+        Tue, 24 May 2022 08:06:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A03E8CE1A79;
+        Tue, 24 May 2022 15:06:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F584C34115;
+        Tue, 24 May 2022 15:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1653404770;
+        bh=O7X4vE0GlOx06lgMAdKQm11gzb+06yXdlSRL4alplco=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nXf8Pp4fGvt+fnXcEdHe0oVPOpJaZqbDkmhh9pIhlpLW55pk3P060FwGGr2d1dG7Q
+         8yNT5+f8qiNXIUrXFCuduVvciw6f7N+G/STt1HSyXMXFcTrBwEU6o+Adp57HsbWD2h
+         fGM0fTuPFz8UJVl90erQPksltcKDZ0t1ZkqphJHA=
+Date:   Tue, 24 May 2022 17:06:06 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+        slade@sladewatkins.com,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 00/25] 4.9.316-rc1 review
+Message-ID: <Yoz0Xv59MrUwFkMT@kroah.com>
+References: <20220523165743.398280407@linuxfoundation.org>
+ <6f4034a5-f692-8a64-a09d-8bfe49767b78@nvidia.com>
+ <YozK4DvamHBJ1qdX@kroah.com>
+ <fbeb9833-4166-1919-e6ab-9ac7625a21d6@nvidia.com>
 MIME-Version: 1.0
-References: <20220509233235.995021-1-dmitry.osipenko@collabora.com>
- <20220509233235.995021-8-dmitry.osipenko@collabora.com> <CAMuHMdVGjeFe=Z_1Kr9ZaNZ7HUVH1usvubEB31WUQf0fg8E1kA@mail.gmail.com>
- <c4914e14-1882-55a1-bcbd-a905852b45a3@collabora.com>
-In-Reply-To: <c4914e14-1882-55a1-bcbd-a905852b45a3@collabora.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 24 May 2022 17:03:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWBWWVeegvLQQzT8CRL5z38AhXigaNjzw8p0NwQ1B4DPQ@mail.gmail.com>
-Message-ID: <CAMuHMdWBWWVeegvLQQzT8CRL5z38AhXigaNjzw8p0NwQ1B4DPQ@mail.gmail.com>
-Subject: Re: [PATCH v8 07/27] kernel/reboot: Add kernel_can_power_off()
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbeb9833-4166-1919-e6ab-9ac7625a21d6@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+On Tue, May 24, 2022 at 03:55:58PM +0100, Jon Hunter wrote:
+> 
+> On 24/05/2022 13:09, Greg Kroah-Hartman wrote:
+> 
+> ...
+> 
+> > > I am seeing a boot regression on tegra124-jetson-tk1 and reverting the above
+> > > commit is fixing the problem. This also appears to impact linux-4.14.y,
+> > > 4.19.y and 5.4.y.
+> > > 
+> > > Test results for stable-v4.9:
+> > >      8 builds:	8 pass, 0 fail
+> > >      18 boots:	16 pass, 2 fail
+> > >      18 tests:	18 pass, 0 fail
+> > > 
+> > > Linux version:	4.9.316-rc1-gbe4ec3e3faa1
+> > > Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+> > >                  tegra210-p2371-2180, tegra30-cardhu-a04
+> > > 
+> > > Boot failures:	tegra124-jetson-tk1
+> > 
+> > Odd.  This is also in 5.10.y, right?  No issues there?  Are we missing
+> > something?
+> 
+> 
+> Actually, the more I look at this, the more I see various intermittent
+> reports with this and it is also impacting the mainline.
+> 
+> The problem is that the commit in question is causing a ton of messages to
+> be printed a boot and this sometimes is causing the boot test to fail
+> because the boot is taking too long. The console shows ...
+> 
+> [ 1233.327547] CPU0: Spectre BHB: using loop workaround
+> [ 1233.327795] CPU1: Spectre BHB: using loop workaround
+> [ 1233.328270] CPU1: Spectre BHB: using loop workaround
+> [ 1233.328700] CPU1: Spectre BHB: using loop workaround
+> [ 1233.355477] CPU2: Spectre BHB: using loop workaround
+> ** 7 printk messages dropped **
+> [ 1233.366271] CPU0: Spectre BHB: using loop workaround
+> [ 1233.366580] CPU0: Spectre BHB: using loop workaround
+> [ 1233.366815] CPU1: Spectre BHB: using loop workaround
+> [ 1233.405475] CPU1: Spectre BHB: using loop workaround
+> [ 1233.405874] CPU0: Spectre BHB: using loop workaround
+> [ 1233.406041] CPU1: Spectre BHB: using loop workaround
+> ** 1 printk messages dropped **
+> 
+> There is a similar report of this [0] and I believe that we need a similar
+> fix for the above prints as well. I have reported this to Ard [1]. So I am
+> not sure that these Spectre BHB patches are quite ready for stable.
 
-On Tue, May 24, 2022 at 3:41 PM Dmitry Osipenko
-<dmitry.osipenko@collabora.com> wrote:
-> On 5/24/22 16:14, Geert Uytterhoeven wrote:
-> > On Tue, May 10, 2022 at 1:33 AM Dmitry Osipenko
-> > <dmitry.osipenko@collabora.com> wrote:
-> >> Add kernel_can_power_off() helper that replaces open-coded checks of
-> >> the global pm_power_off variable. This is a necessary step towards
-> >> supporting chained power-off handlers.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> >
-> > Thanks for your patch, which is now commit 0e2110d2e910e44c
-> > ("kernel/reboot: Add kernel_can_power_off()") in pm/linux-next.
-> >
-> > This causes the "poweroff" command (Debian nfsroot) to no longer
-> > cleanly halt the system on arm32 systems, but fail with a panic
-> > instead:
-> >
-> > -reboot: System halted
-> > +reboot: Power down
-> > +Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000000
-> > +CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted
-> > 5.18.0-rc7-shmobile-00007-g0e2110d2e910 #1274
-> > +Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-> > + unwind_backtrace from show_stack+0x10/0x14
-> > + show_stack from dump_stack_lvl+0x40/0x4c
-> > + dump_stack_lvl from panic+0xf4/0x330
-> > + panic from do_exit+0x1c8/0x8e4
-> > + do_exit from __do_sys_reboot+0x174/0x1fc
-> > + __do_sys_reboot from ret_fast_syscall+0x0/0x54
-> > +Exception stack(0xf0815fa8 to 0xf0815ff0)
-> > +5fa0:                   004e6954 00000000 fee1dead 28121969 4321fedc f0d94600
-> > +5fc0: 004e6954 00000000 00000000 00000058 befa0c78 00000000 befa0c10 004e56f8
-> > +5fe0: 00000058 befa0b6c b6ec8d45 b6e4a746
-> > +---[ end Kernel panic - not syncing: Attempted to kill init!
-> > exitcode=0x00000000 ]---
-> >
-> > On arm64, "poweroff" causes a clean "reboot: Power down" before/after.
-> >
-> > On both arm32 and arm64, the same handlers are registered:
-> >   - SYS_OFF_MODE_POWER_OFF_PREPARE: legacy_pm_power_off_prepare
-> >   - SYS_OFF_MODE_POWER_OFF: legacy_pm_power_off
-> >
-> > On both arm32 and arm64, legacy_pm_power_off_prepare() is called.
-> > On both arm32 and arm64, legacy_pm_power_off() does not seem to
-> > be called.
-> >
-> > On arm32, both pm_power_off_prepare and pm_power_off are NULL.
-> > On arm64, pm_power_off_prepare is NULL, and
-> > pm_power_off is psci_sys_poweroff.
-> >
-> > Do you have a clue?
-> > Thanks!
->
-> Thank you, Geert! I see the problem, the kernel_can_power_off() checks whether power-off handler is registered, but it's always registered because legacy_pm_power_off is registered unconditionally. So it causes trouble for platforms that don't have power-off handler installed at all. All platforms that I tested have a power-off handler, so now wonder that I didn't notice this before.
->
-> This change should fix the problem, please give it a try:
+These patches are quite small, and just enable it for this known-broken
+cpu type.
 
-Thank you, that fixes the problem for me!
+If there is an issue enabling it for this cpu type, then we can work on
+that upstream, but there shouldn't be a reason to prevent this from
+being merged now, especially given that it is supposed to be fixing a
+known issue.
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+thanks,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
