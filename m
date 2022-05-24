@@ -2,196 +2,177 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61597C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 18:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EC6C4167B
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 20:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240080AbiEXSmT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 May 2022 14:42:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54594 "EHLO
+        id S241490AbiEXUQz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 May 2022 16:16:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231164AbiEXSmT (ORCPT
+        with ESMTP id S231410AbiEXUQx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 May 2022 14:42:19 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB6EA58385;
-        Tue, 24 May 2022 11:42:17 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id s14so16582161plk.8;
-        Tue, 24 May 2022 11:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to;
-        bh=Srf/k1EMySBKUhCzKsY+R4gF2IaSdK+tZE4km9P9aRU=;
-        b=p57816IQKTz3FFCAIb/HESMUK5uZdTdQLjuS4bQworqgRxKI4/l3ImRUjoOeOhEBgp
-         tcUb5iopva/Zyz7QYWSsmPppit3331USvG30lZq1dUeQvSQt9eXCOKsuDJ8D2Dbx5NNo
-         SSArX72fuv5o/2TgThPAOsl+i0UVqky6C9PaWg6qXHcxx41wpGaA9NAH9epUU2uxQJv7
-         2yIgkjQJ5Z7ZKQCody5KJrnheUfzjmXM5T0kahrVWG4JC5xh553qCpSMMw8SmJ5+mErE
-         3ZMkyT0Jh4LEQ3mTtYEjqk4JQqThtRFTiNS1/YfP9jAZwX+tgiS8TSTSw5IjFMislz00
-         wIKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to;
-        bh=Srf/k1EMySBKUhCzKsY+R4gF2IaSdK+tZE4km9P9aRU=;
-        b=Q1o3geDEEtEIoTXQHMC5cM7FFDol22yBbKoGYBQlH4o48ZyLxpd5LIN5D5ym1xjW61
-         Djr7JGSdQYnI84cW/6q9jLyyf3jVf1DIJohzUkNVwwC+v73LGs2Qt9okvCVCye+dcv0Q
-         f6BFZUG11DAOHlfOyMux6M82FtN6szqPHC4gCDX9EWvVucf1tS3gIRL0mdzLdN1u7kd8
-         +jMMGIPgt1CQl5gPKccFVUROu79cJkBPOh4Xuo+p/PlnKr5ueBXA4MkjeKlmgHZ0hKcB
-         HqU6hkqpgBp/ULzZ/aFqN87zAvD+gXaS09pNTppkPrA/hqgz3xXt67bNDO/csvhg8nYa
-         wx1A==
-X-Gm-Message-State: AOAM533j6FiAjG9jSy/2xX7Lk6bNUIPYJrGraQcFGqClDKN44Pf5RtHT
-        wkcGGoIHOuV85ELqT3WbtVw=
-X-Google-Smtp-Source: ABdhPJyCFsebXQEnhFHYFk4nzRyLZ6g0qPb8mFMiZQYIALYRoRUwC24Rmcq/EDqzmYWfWLAKfqYIGA==
-X-Received: by 2002:a17:902:7c0e:b0:162:1aa9:f550 with SMTP id x14-20020a1709027c0e00b001621aa9f550mr12674628pll.159.1653417737016;
-        Tue, 24 May 2022 11:42:17 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id j11-20020aa783cb000000b0050dc76281f2sm9551555pfn.204.2022.05.24.11.42.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 May 2022 11:42:16 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------D00Jamxdfb3lG1FpuA2Dz5Zj"
-Message-ID: <2dd9228b-8fb8-6877-5825-3923b15b9796@gmail.com>
-Date:   Tue, 24 May 2022 11:42:14 -0700
+        Tue, 24 May 2022 16:16:53 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEFDB2317B;
+        Tue, 24 May 2022 13:16:51 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id F2E871F447A6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1653423409;
+        bh=zYjjoQPSRD28QTzcQmCkF+0zDUTSRxsuI5oi8F0+rRQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=fWA1AifiGfpu5zAody+hWBW74K5h5PJY4o9syShHoFUvcDbGztdgO0rxpFXKrmy2Y
+         v+m0QvVaF2TMOM3FrIQn4vCIIUWVeH9erQlS971HHUB5axW0nhIjNhf2t83dRltpj5
+         F+MJuBOytIM400P1utntTu0dMtY0yhe0QZvOmzJR1Di7UCyoNz6N/1CjkNfHCg26JH
+         3c5z3Ze+AYN7fowyq3Sq6g1iqMrOvzo1fQihDQtpwVaXvHM7BJiRY1axu6Kqy3ixZu
+         ZneM8hZeXSfA/wa0YX+aUD23BvnxfaiuWymTABWNglyXpsDZsuQOqKpz07ThIMgq+Y
+         y0ERqGVUsfdJQ==
+Message-ID: <72eceb0c-8654-6c63-f1c4-c9374f99dfb3@collabora.com>
+Date:   Tue, 24 May 2022 23:16:41 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 4.9 00/25] 4.9.316-rc1 review
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v8 07/27] kernel/reboot: Add kernel_can_power_off()
 Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-        sudipm.mukherjee@gmail.com, slade@sladewatkins.com,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20220523165743.398280407@linuxfoundation.org>
- <6f4034a5-f692-8a64-a09d-8bfe49767b78@nvidia.com>
- <YozK4DvamHBJ1qdX@kroah.com>
- <fbeb9833-4166-1919-e6ab-9ac7625a21d6@nvidia.com>
- <Yoz0Xv59MrUwFkMT@kroah.com> <883fc4cf-dce0-a433-5cf7-7de68be17ffb@gmail.com>
- <97cf35b5-1286-91a0-c0d4-df7fe8a983e6@nvidia.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <97cf35b5-1286-91a0-c0d4-df7fe8a983e6@nvidia.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-csky@vger.kernel.org,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20220509233235.995021-1-dmitry.osipenko@collabora.com>
+ <20220509233235.995021-8-dmitry.osipenko@collabora.com>
+ <CAMuHMdVGjeFe=Z_1Kr9ZaNZ7HUVH1usvubEB31WUQf0fg8E1kA@mail.gmail.com>
+ <c4914e14-1882-55a1-bcbd-a905852b45a3@collabora.com>
+ <CAMuHMdWBWWVeegvLQQzT8CRL5z38AhXigaNjzw8p0NwQ1B4DPQ@mail.gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <CAMuHMdWBWWVeegvLQQzT8CRL5z38AhXigaNjzw8p0NwQ1B4DPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------D00Jamxdfb3lG1FpuA2Dz5Zj
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-On 5/24/22 10:50, Jon Hunter wrote:
+On 5/24/22 18:03, Geert Uytterhoeven wrote:
+> Hi Dmitry,
 > 
-> On 24/05/2022 17:30, Florian Fainelli wrote:
-> 
-> ...
-> 
->> Jonathan any chance this is Tegra specific? Our ARCH_BRCMSTB SoCs 
->> which use a Brahma-B15 which uses nearly the same ca15 processor 
->> functions defined in arch/arm/mm/proc-v7.S reports the following 
->> *before* changes:
+> On Tue, May 24, 2022 at 3:41 PM Dmitry Osipenko
+> <dmitry.osipenko@collabora.com> wrote:
+>> On 5/24/22 16:14, Geert Uytterhoeven wrote:
+>>> On Tue, May 10, 2022 at 1:33 AM Dmitry Osipenko
+>>> <dmitry.osipenko@collabora.com> wrote:
+>>>> Add kernel_can_power_off() helper that replaces open-coded checks of
+>>>> the global pm_power_off variable. This is a necessary step towards
+>>>> supporting chained power-off handlers.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>>>
+>>> Thanks for your patch, which is now commit 0e2110d2e910e44c
+>>> ("kernel/reboot: Add kernel_can_power_off()") in pm/linux-next.
+>>>
+>>> This causes the "poweroff" command (Debian nfsroot) to no longer
+>>> cleanly halt the system on arm32 systems, but fail with a panic
+>>> instead:
+>>>
+>>> -reboot: System halted
+>>> +reboot: Power down
+>>> +Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000000
+>>> +CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted
+>>> 5.18.0-rc7-shmobile-00007-g0e2110d2e910 #1274
+>>> +Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+>>> + unwind_backtrace from show_stack+0x10/0x14
+>>> + show_stack from dump_stack_lvl+0x40/0x4c
+>>> + dump_stack_lvl from panic+0xf4/0x330
+>>> + panic from do_exit+0x1c8/0x8e4
+>>> + do_exit from __do_sys_reboot+0x174/0x1fc
+>>> + __do_sys_reboot from ret_fast_syscall+0x0/0x54
+>>> +Exception stack(0xf0815fa8 to 0xf0815ff0)
+>>> +5fa0:                   004e6954 00000000 fee1dead 28121969 4321fedc f0d94600
+>>> +5fc0: 004e6954 00000000 00000000 00000058 befa0c78 00000000 befa0c10 004e56f8
+>>> +5fe0: 00000058 befa0b6c b6ec8d45 b6e4a746
+>>> +---[ end Kernel panic - not syncing: Attempted to kill init!
+>>> exitcode=0x00000000 ]---
+>>>
+>>> On arm64, "poweroff" causes a clean "reboot: Power down" before/after.
+>>>
+>>> On both arm32 and arm64, the same handlers are registered:
+>>>   - SYS_OFF_MODE_POWER_OFF_PREPARE: legacy_pm_power_off_prepare
+>>>   - SYS_OFF_MODE_POWER_OFF: legacy_pm_power_off
+>>>
+>>> On both arm32 and arm64, legacy_pm_power_off_prepare() is called.
+>>> On both arm32 and arm64, legacy_pm_power_off() does not seem to
+>>> be called.
+>>>
+>>> On arm32, both pm_power_off_prepare and pm_power_off are NULL.
+>>> On arm64, pm_power_off_prepare is NULL, and
+>>> pm_power_off is psci_sys_poweroff.
+>>>
+>>> Do you have a clue?
+>>> Thanks!
 >>
->> [    0.001641] CPU: Testing write buffer coherency: ok
->> [    0.001685] CPU0: Spectre v2: using ICIALLU workaround
->> [    0.001703] ftrace: allocating 30541 entries in 120 pages
->> [    0.044600] CPU0: update cpu_capacity 1024
->> [    0.044633] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
->> [    0.044662] Setting up static identity map for 0x200000 - 0x200060
->> [    0.047410] brcmstb: biuctrl: MCP: Write pairing already disabled
->> [    0.048974] CPU1: update cpu_capacity 1024
->> [    0.048978] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
->> [    0.048981] CPU1: Spectre v2: using ICIALLU workaround
->> [    0.050234] CPU2: update cpu_capacity 1024
->> [    0.050238] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
->> [    0.050241] CPU2: Spectre v2: using ICIALLU workaround
->> [    0.051437] CPU3: update cpu_capacity 1024
->> [    0.051441] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
->> [    0.051444] CPU3: Spectre v2: using ICIALLU workaround
->> [    0.051532] Brought up 4 CPUs
+>> Thank you, Geert! I see the problem, the kernel_can_power_off() checks whether power-off handler is registered, but it's always registered because legacy_pm_power_off is registered unconditionally. So it causes trouble for platforms that don't have power-off handler installed at all. All platforms that I tested have a power-off handler, so now wonder that I didn't notice this before.
 >>
->> and this *after* merging 4.9.316-rc1:
->>
->> [    0.001626] CPU: Testing write buffer coherency: ok
->> [    0.001670] CPU0: Spectre v2: using ICIALLU workaround
->> [    0.001689] CPU0: Spectre BHB: using loop workaround
->> [    0.001705] ftrace: allocating 30542 entries in 120 pages
->> [    0.043752] CPU0: update cpu_capacity 1024
->> [    0.043784] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
->> [    0.043813] Setting up static identity map for 0x200000 - 0x200060
->> [    0.046547] brcmstb: biuctrl: MCP: Write pairing already disabled
->> [    0.048121] CPU1: update cpu_capacity 1024
->> [    0.048124] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
->> [    0.048129] CPU1: Spectre v2: using ICIALLU workaround
->> [    0.048165] CPU1: Spectre BHB: using loop workaround
->> [    0.049398] CPU2: update cpu_capacity 1024
->> [    0.049402] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
->> [    0.049405] CPU2: Spectre v2: using ICIALLU workaround
->> [    0.049440] CPU2: Spectre BHB: using loop workaround
->> [    0.050613] CPU3: update cpu_capacity 1024
->> [    0.050617] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
->> [    0.050619] CPU3: Spectre v2: using ICIALLU workaround
->> [    0.050653] CPU3: Spectre BHB: using loop workaround
->> [    0.050722] Brought up 4 CPUs
->> [    0.050738] SMP: Total of 4 processors activated (216.00 BogoMIPS).
->> [    0.050753] CPU: All CPU(s) started in HYP mode.
+>> This change should fix the problem, please give it a try:
 > 
+> Thank you, that fixes the problem for me!
 > 
-> Does your platform support CPU idle? I see this being triggered
-> during CPU idle transitions ...
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-It does, but not with an idle state resulting in powering down secondary 
-cores. We do have CPU hotplug with power gating as well as system wide 
-suspend states that result in power gating secondaries and they appear 
-to be working fine.
-
-I use the attached script to randomly cycle hot plug/unplug through each 
-4 cores and it has been running over 10k cycles.
-
-> 
-> [    4.415167] CPU0: Spectre BHB: using loop workaround
-> [    4.417621] [<c01109a0>] (unwind_backtrace) from [<c010b7ac>] 
-> (show_stack+0x10/0x14)
-> [    4.430291] [<c010b7ac>] (show_stack) from [<c09c2b38>] 
-> (dump_stack+0xc0/0xd4)
-> [    4.437512] [<c09c2b38>] (dump_stack) from [<c011a6c8>] 
-> (cpu_v7_spectre_bhb_init+0xd8/0x190)
-> [    4.445943] [<c011a6c8>] (cpu_v7_spectre_bhb_init) from [<c010dee8>] 
-> (cpu_suspend+0xac/0xc8)
-> [    4.454377] [<c010dee8>] (cpu_suspend) from [<c011e7e4>] 
-> (tegra114_idle_power_down+0x74/0x78)
-> [    4.462898] [<c011e7e4>] (tegra114_idle_power_down) from [<c06d3b44>] 
-> (cpuidle_enter_state+0x130/0x524)
-> [    4.472286] [<c06d3b44>] (cpuidle_enter_state) from [<c0164a30>] 
-> (do_idle+0x1b0/0x200)
-> [    4.480199] [<c0164a30>] (do_idle) from [<c0164d28>] 
-> (cpu_startup_entry+0x18/0x1c)
-> [    4.487762] [<c0164d28>] (cpu_startup_entry) from [<801018cc>] 
-> (0x801018cc)
-> 
-> Jon
-> 
-
+Great! I'll send the proper patch soon.
 
 -- 
-Florian
---------------D00Jamxdfb3lG1FpuA2Dz5Zj
-Content-Type: application/x-shellscript; name="hotplug.sh"
-Content-Disposition: attachment; filename="hotplug.sh"
-Content-Transfer-Encoding: base64
-
-IyEvYmluL3NoCiMgSG90cGx1ZyB0ZXN0Cgp1c2FnZSgpIHsKCWVjaG8gIlVzYWdlOiAkMCBb
-IyBjcHVzXSIKCWVjaG8gIiAgIElmIG51bWJlciBvZiBjcHVzIGlzIG5vdCBnaXZlbiwgZGVm
-YXVsdHMgdG8gMiIKCWV4aXQKfQoKIyBEZWZhdWx0IHRvIDIgQ1BVcwpOUl9DUFVTPSR7MTot
-Mn0KClsgJE5SX0NQVVMgLWx0IDIgXSAmJiB1c2FnZSAxPiYyCgpNQVhDUFU9JCgoTlJfQ1BV
-Uy0xKSkKTUFYPWBjYXQgL3N5cy9kZXZpY2VzL3N5c3RlbS9jcHUva2VybmVsX21heGAKClsg
-JE1BWENQVSAtZ3QgJE1BWCBdICYmIGVjaG8gIlRvbyBtYW55IENQVXMiIDE+JjIgJiYgdXNh
-Z2UgMT4mMgoKY3B1X3BhdGgoKSB7CgllY2hvIC9zeXMvZGV2aWNlcy9zeXN0ZW0vY3B1L2Nw
-dSQxCn0KCmNoZWNrcG9pbnRfdGVzdCgpIHsKCWlmIFsgJCgoJDEgJSA1MCkpIC1lcSAwIF07
-IHRoZW4KCQllY2hvICIqKioqIEZpbmlzaGVkIHRlc3QgJDEgKioqKiIKCWZpCn0KCmVjaG8g
-JyoqKionCmVjaG8gIlRlc3RpbmcgJE5SX0NQVVMgQ1BVcyIKZWNobyAnKioqKicKClRFU1Q9
-MAp3aGlsZSA6CmRvCglOPSQoKFJBTkRPTSAlIE1BWENQVSArIDEpKQoJT049YGNhdCAkKGNw
-dV9wYXRoICROKS9vbmxpbmVgCgllY2hvICQoKDEtT04pKSA+ICQoY3B1X3BhdGggJE4pL29u
-bGluZQoJVEVTVD0kKChURVNUKzEpKQoJY2hlY2twb2ludF90ZXN0ICRURVNUCmRvbmUK
-
---------------D00Jamxdfb3lG1FpuA2Dz5Zj--
+Best regards,
+Dmitry
