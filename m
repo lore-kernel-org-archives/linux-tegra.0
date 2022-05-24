@@ -2,71 +2,155 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE16C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 02:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 697A7C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 08:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbiEXCJh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 May 2022 22:09:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50124 "EHLO
+        id S232635AbiEXIBj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 May 2022 04:01:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbiEXCJe (ORCPT
+        with ESMTP id S235701AbiEXIBS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 May 2022 22:09:34 -0400
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A9B95A1C;
-        Mon, 23 May 2022 19:09:33 -0700 (PDT)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-e5e433d66dso20674498fac.5;
-        Mon, 23 May 2022 19:09:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=SwWzs+3v6Gy2EsC5WlrpELvaSaVndcghBnKKNBB21YA=;
-        b=ZiSaLFxub4JNqs9aV9CbhyO8d9/x/b1iP4mT+jDPiBu2qCQzLWKR27oO+8YR3Ph9T4
-         74nRe01btvO4vHjbxAwvOUIE4rS8FWdCO5XVMM+aDDWrmjzXwdjZyLrIvYELYiFTeorI
-         0WWdm6i9bxUNZuMTwrMFE78qcTvajQqwO4mdRiXXysTENKO/XCT45sX6d0pZ23Lig9Xl
-         +4MpPidGciFhzZuJ8HvddU09iA5WUObuM75gZYib1jzi3AogaGUwjicNFMh7+rR90jSI
-         vzuNOIMcoxVP8A95YJwUTHVhEabfXJQetmIX1lEKJ9jBCvKhzrNeQDAN7YhUpYjCbBVB
-         sOwg==
-X-Gm-Message-State: AOAM533EClQid/sxgG2VnCzkLmILESR2ySKgPsguyX8HRgy65se63Wl7
-        vEo3wMK2jbW4N7eq8raKlQ==
-X-Google-Smtp-Source: ABdhPJwGEWxVIGvVY6wkQCiesL/leU52wGExHdjpwEzJUvIygpCNEjCII4WbkMPmF0e6IOpPsHFTaQ==
-X-Received: by 2002:a05:6870:9686:b0:f1:8905:3210 with SMTP id o6-20020a056870968600b000f189053210mr1175894oaq.61.1653358172736;
-        Mon, 23 May 2022 19:09:32 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id o192-20020a4a2cc9000000b0035eb4e5a6cfsm4825268ooo.37.2022.05.23.19.09.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 19:09:32 -0700 (PDT)
-Received: (nullmailer pid 2611545 invoked by uid 1000);
-        Tue, 24 May 2022 02:09:31 -0000
-Date:   Mon, 23 May 2022 21:09:31 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH] dt-bindings: timestamp: Correct id path
-Message-ID: <20220524020931.GA2611512-robh@kernel.org>
-References: <20220523172515.5941-1-dipenp@nvidia.com>
+        Tue, 24 May 2022 04:01:18 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DE5FDEA0;
+        Tue, 24 May 2022 01:01:15 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 15E5D1F8A8;
+        Tue, 24 May 2022 08:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1653379274; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YfQDkbqSOT+1qjQjuAj/jCMAhUotd54M/3ml94s/xOo=;
+        b=PgXddxLSPksORjL/S6Twz65MXnqRLkhNWsZMkeMCJl5txCWJEZdmdegZfTAX/9coTEEbNM
+        8MuciDtA/meSONuDDeUgJuaMT6sJm3SP6OoP4PPs2H8u+yjTfPOAegS/VmQ3g6ca5OFCQB
+        kRtlLyoJ6CAvfuEa9KvE4DbHA1Jh8JI=
+Received: from suse.cz (unknown [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 8ADCF2C141;
+        Tue, 24 May 2022 08:01:12 +0000 (UTC)
+Date:   Tue, 24 May 2022 10:01:12 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     Baoquan He <bhe@redhat.com>,
+        "michael Kelley (LINUX)" <mikelley@microsoft.com>,
+        Dave Young <dyoung@redhat.com>, d.hatayama@jp.fujitsu.com,
+        akpm@linux-foundation.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, dave.hansen@linux.intel.com, feng.tang@intel.com,
+        gregkh@linuxfoundation.org, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+Message-ID: <YoyQyHHfhIIXSX0U@alley>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-25-gpiccoli@igalia.com>
+ <Yn0TnsWVxCcdB2yO@alley>
+ <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
+ <20220519234502.GA194232@MiWiFi-R3L-srv>
+ <ded31ec0-076b-2c5b-0fe6-0c274954821f@igalia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220523172515.5941-1-dipenp@nvidia.com>
+In-Reply-To: <ded31ec0-076b-2c5b-0fe6-0c274954821f@igalia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 23 May 2022 10:25:15 -0700, Dipen Patel wrote:
-> During the repository renaming from hte to timestamp, $id path was not
-> updated accordingly. This patch corrects $id path.
+On Fri 2022-05-20 08:23:33, Guilherme G. Piccoli wrote:
+> On 19/05/2022 20:45, Baoquan He wrote:
+> > [...]
+> >> I really appreciate the summary skill you have, to convert complex
+> >> problems in very clear and concise ideas. Thanks for that, very useful!
+> >> I agree with what was summarized above.
+> > 
+> > I want to say the similar words to Petr's reviewing comment when I went
+> > through the patches and traced each reviewing sub-thread to try to
+> > catch up. Petr has reivewed this series so carefully and given many
+> > comments I want to ack immediately.
+> > 
+> > I agree with most of the suggestions from Petr to this patch, except of
+> > one tiny concern, please see below inline comment.
 > 
-> Fixes: af583852d2ef ("dt-bindings: Renamed hte directory to timestamp")
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> ---
->  .../bindings/timestamp/hardware-timestamps-common.yaml          | 2 +-
->  Documentation/devicetree/bindings/timestamp/hte-consumer.yaml   | 2 +-
->  .../devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml      | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+> Hi Baoquan, thanks! I'm glad you're also reviewing that =)
 > 
+> 
+> > [...]
+> > 
+> > I like the proposed skeleton of panic() and code style suggested by
+> > Petr very much. About panic_prefer_crash_dump which might need be added,
+> > I hope it has a default value true. This makes crash_dump execute at
+> > first by default just as before, unless people specify
+> > panic_prefer_crash_dump=0|n|off to disable it. Otherwise we need add
+> > panic_prefer_crash_dump=1 in kernel and in our distros to enable kdump,
+> > this is inconsistent with the old behaviour.
+> 
+> I'd like to understand better why the crash_kexec() must always be the
+> first thing in your use case. If we keep that behavior, we'll see all
+> sorts of workarounds - see the last patches of this series, Hyper-V and
+> PowerPC folks hardcoded "crash_kexec_post_notifiers" in order to force
+> execution of their relevant notifiers (like the vmbus disconnect,
+> specially in arm64 that has no custom machine_crash_shutdown, or the
+> fadump case in ppc). This led to more risk in kdump.
+> 
+> The thing is: with the notifiers' split, we tried to keep only the most
+> relevant/necessary stuff in this first list, things that ultimately
+> should improve kdump reliability or if not, at least not break it. My
+> feeling is that, with this series, we should change the idea/concept
+> that kdump must run first nevertheless, not matter what. We're here
+> trying to accommodate the antagonistic goals of hypervisors that need
+> some clean-up (even for kdump to work) VS. kdump users, that wish a
+> "pristine" system reboot ASAP after the crash.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Good question. I wonder if Baoquan knows about problems caused by the
+particular notifiers that will end up in the hypervisor list. Note
+that there will be some shuffles and the list will be slightly
+different in V2.
+
+Anyway, I see four possible solutions:
+
+  1. The most conservative approach is to keep the current behavior
+     and call kdump first by default.
+
+  2. A medium conservative approach to change the default default
+     behavior and call hypervisor and eventually the info notifiers
+     before kdump. There still would be the possibility to call kdump
+     first by the command line parameter.
+
+  3. Remove the possibility to call kdump first completely. It would
+     assume that all the notifiers in the info list are super safe
+     or that they make kdump actually more safe.
+
+  4. Create one more notifier list for operations that always should
+     be called before crash_dump.
+
+Regarding the extra notifier list (4th solution). It is not clear to
+me whether it would be always called even before hypervisor list or
+when kdump is not enabled. We must not over-engineer it.
+
+2nd proposal looks like a good compromise. But maybe we could do
+this change few releases later. The notifiers split is a big
+change on its own.
+
+Best Regards,
+Petr
