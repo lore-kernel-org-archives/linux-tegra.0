@@ -2,63 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDF7C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 09:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E170C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 09:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235656AbiEXJ0q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 May 2022 05:26:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33028 "EHLO
+        id S235573AbiEXJ3k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 May 2022 05:29:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229770AbiEXJ0p (ORCPT
+        with ESMTP id S234728AbiEXJ3j (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 May 2022 05:26:45 -0400
+        Tue, 24 May 2022 05:29:39 -0400
 Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF78FD1C
-        for <linux-tegra@vger.kernel.org>; Tue, 24 May 2022 02:26:44 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id w18so828121ybi.12
-        for <linux-tegra@vger.kernel.org>; Tue, 24 May 2022 02:26:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 841C23336E
+        for <linux-tegra@vger.kernel.org>; Tue, 24 May 2022 02:29:38 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id q184so985691ybg.11
+        for <linux-tegra@vger.kernel.org>; Tue, 24 May 2022 02:29:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TvF2v3Zdj4AvC6elhsnAGyTKo72kfURW1pII2j4gt/Q=;
-        b=XpzHTpvN6AmprZmrulW4mS/lY8Nyve1zMhfriFFCBRVY2hE/9QHmXRJzy8s7Gc8ET2
-         OXS1sMp9MZ0vpV0wrG/c8HGO+Rr3nBmG9R5WJK4eOCAhNZ9lioFMUlC5XhP6xOa9hKUW
-         MGALMYsCxHaNVg2xNoRgxWhVX4oXfryYfUeZ8lekKH8aLmzAb7xigj5rdoj+RvtKLhoA
-         UJ5JvFb+pzrC6SxzjzSUBwn81XdzPlb+ZN1SJhkUiaq7cc5HK0a1ZziMgbyB0hNqAfgV
-         LAMnJwsbzNgrW1mt/QDwRzHRfst7jFGePVTaQd7LpHfdwmE7Ls0rIk3ecs7yCIn+AWdR
-         OPfQ==
+        bh=HVD805PIWF+vPNoBSV15VHHtEetrJAxgrnMmdyS5kRQ=;
+        b=S0mvoueLkkCMEb0khGrKphavMKc90PQbW1hZrqOzWs1cit1wqnOgBEbOhwC2Gm1gcj
+         kIHM1+IQNCQTcaoja5VpEYpV4co8AzCNNu+83KAIk53kLqOmI2hfP1Ar9xXxIieD16Om
+         xjzFu5740eVTIKeVCbdUJGmwGM0Rkl5LQ+ZYKyjPu4YPaP+cGshdi94MjFCF/XNepcPw
+         oYZJyyObKJcD+Yod/TT0w5hVunqVNuqN1+xGJPHLYopcydm+GoghNABwOFA16ah6fLCU
+         dQB3qPEbBbhUjnXIz4bp3atdEuAhPeAjinnOqRPhWOrHjmxFQ8/GB4oqJh3UN8Mnv3dI
+         /e3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TvF2v3Zdj4AvC6elhsnAGyTKo72kfURW1pII2j4gt/Q=;
-        b=CBZPDaqsN24k/OCSDRcFABCWcSwfXZ5RMb93SeXpRVJhJ9gxP0GjU57dftKSVtC7OW
-         tdoUyeol+rivLW8bQwWbfBldAvzrGHzfnm6bqI/DyI4MclD/1aBfg+FMJ3bIzcgDbPBk
-         GVdCth7PEJvDNDbbV68SEkVoMsIvazXBIZW99BBEPd9De9jqWU4+5JYyPvYJK87IZL+X
-         lD5+uc6TrImnum+LZqoUYWjnn0pVoaTiGNwmy2c4vIJ6zHvK4V/dwICY1vXdbAmPVkRM
-         qAhoHyzpvGpZhKTXAQSp7ISRMqrZCjlJ1EL3A7NNZkDzWxhcH+83RHny5k/FKN+pjqw3
-         UI/Q==
-X-Gm-Message-State: AOAM530z3kQXbExTJcyQz305zcb6+T+a7FOq09/bKlu/5+eVniKBmDn5
-        iDxslxBqePJaSojkfk69ccD+lZDA+WhxBgjaYNLjpw==
-X-Google-Smtp-Source: ABdhPJw4F63kJFgsm1T9Z/g9blNQ0UdX3POXlsiloEufBWHlBkpks52cg5U1Nk/npdqwyeShzZavBlLqOj7LUew5nPg=
-X-Received: by 2002:a25:6cd6:0:b0:64f:c489:5382 with SMTP id
- h205-20020a256cd6000000b0064fc4895382mr10539555ybc.514.1653384403397; Tue, 24
- May 2022 02:26:43 -0700 (PDT)
+        bh=HVD805PIWF+vPNoBSV15VHHtEetrJAxgrnMmdyS5kRQ=;
+        b=yRrRqru/MNPC2uUnwjFFQ4/1ORkME5h3El25PVEKqI0N02J1yikWKtloUX0OIygvuG
+         qD2IT5bN/+/3GoPWNJeZ6/5S2O6oqlyYtFFT0o+f26NI4KXAxK5PCNg3U2pAJgPulp58
+         TEoWk04sNduXPHzDZqaIW8odLlDiokvI3+1IbbeQv4UvL5oYdp4KXGMUcJAhBJwMYoCE
+         BokjiIlohAA/f/+5krBiXRiAxT7qJk2IvYUnV50cRKsCNxpr6BW2UChSEO/FrjRV/Sjv
+         NESSZxTdj2Ciy8a1h0bJHpNzXKbYo9AuYce1KZ0zFQxz7YpNjBVdVC/rKroKM4m06brD
+         w3rQ==
+X-Gm-Message-State: AOAM532nxM3M/KZUPChrJ+Ggx0L0I8d8q1tmt88pMA9kKj8fIHbKRtFc
+        OErZnJh8K35voViQ+OG5mSF2ZHLPCRziPYNW4Kpd9Q==
+X-Google-Smtp-Source: ABdhPJwSufTp3IMXxz6Jk+46mDzRwOrdHVqjcyhgQZKrft4yGeS0BqvUhfbsZIAkn9moT48nyJeOgOP8pXv2k6Y8YBs=
+X-Received: by 2002:a05:6902:704:b0:64d:f270:22b0 with SMTP id
+ k4-20020a056902070400b0064df27022b0mr25054247ybt.626.1653384577755; Tue, 24
+ May 2022 02:29:37 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220523174238.28942-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220523174238.28942-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CACRpkda5x-O+RT-=4AU0MYgeR2j7ToH5maYGCUH5NDyx6T7CFw@mail.gmail.com> <CA+V-a8s8K0VaNunrFnW_BzPCHmi9RK887bb1tBfodbxBmGOvPg@mail.gmail.com>
-In-Reply-To: <CA+V-a8s8K0VaNunrFnW_BzPCHmi9RK887bb1tBfodbxBmGOvPg@mail.gmail.com>
+ <20220523174238.28942-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CACRpkdYaWmD9PTcGgeP5MTe9bXMgmf=tUSDBQ-4VxSfL4qkoeQ@mail.gmail.com> <CA+V-a8s+dWMwL6zQnWwFAa15sMgPGYrW+GZ=WhSW1tPxgpLOqA@mail.gmail.com>
+In-Reply-To: <CA+V-a8s+dWMwL6zQnWwFAa15sMgPGYrW+GZ=WhSW1tPxgpLOqA@mail.gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 24 May 2022 11:26:31 +0200
-Message-ID: <CACRpkdbqm_DYagbtnv3m8H+woQZxLK6g9WrV+8X8PDQyrK-Gxg@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to
- handle GPIO interrupt
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
+Date:   Tue, 24 May 2022 11:29:26 +0200
+Message-ID: <CACRpkdb43hCCp43p5wmmfhh_6Qr-bAB2vYo7tX27MTGwfjbPGw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] gpio: gpiolib: Allow free() callback to be overridden
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Marc Zyngier <maz@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Thomas Gleixner <tglx@linutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -83,83 +81,62 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, May 24, 2022 at 11:01 AM Lad, Prabhakar
+On Tue, May 24, 2022 at 11:07 AM Lad, Prabhakar
 <prabhakar.csengg@gmail.com> wrote:
-> On Tue, May 24, 2022 at 9:57 AM Linus Walleij <linus.walleij@linaro.org> wrote:> >
+> On Tue, May 24, 2022 at 9:54 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
 > > On Mon, May 23, 2022 at 7:43 PM Lad Prabhakar
 > > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
 > >
-> > > Add IRQ domain to RZ/G2L pinctrl driver to handle GPIO interrupt.
+> > > Allow free() callback to be overridden from irq_domain_ops for
+> > > hierarchical chips.
 > > >
-> > > GPIO0-GPIO122 pins can be used as IRQ lines but only 32 pins can be
-> > > used as IRQ lines at a given time. Selection of pins as IRQ lines
-> > > is handled by IA55 (which is the IRQC block) which sits in between the
-> > > GPIO and GIC.
+> > > This allows drivers to free up resources which are allocated during
+> > > child_to_parent_hwirq()/populate_parent_alloc_arg() callbacks.
+> > >
+> > > On Renesas RZ/G2L platform a bitmap is maintained for TINT slots, a slot
+> > > is allocated in child_to_parent_hwirq() callback which is freed up in free
+> > > callback hence this override.
 > > >
 > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > >
-> > I don't know if I'm too tired or reading it wrong, but it seems you
-> > went through the trouble of making it possible to override .free() in
-> > the irqdomain in patch 3/5 and yet not using it in this patch 5/5?
+> > So that function today looks like this:
 > >
-> I think you missed it, free callback is overridden with
-> rzg2l_gpio_irq_domain_free().
->
-> [0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220523174238.28942-6-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> > static void gpiochip_hierarchy_setup_domain_ops(struct irq_domain_ops *ops)
+> > {
+> >         ops->activate = gpiochip_irq_domain_activate;
+> >         ops->deactivate = gpiochip_irq_domain_deactivate;
+> >         ops->alloc = gpiochip_hierarchy_irq_domain_alloc;
+> >         ops->free = irq_domain_free_irqs_common;
+> >
+> >         /*
+> >          * We only allow overriding the translate() function for
+> >          * hierarchical chips, and this should only be done if the user
+> >          * really need something other than 1:1 translation.
+> >          */
+> >         if (!ops->translate)
+> >                 ops->translate = gpiochip_hierarchy_irq_domain_translate;
+> > }
+> >
+> > (...)
+> > -       ops->free = irq_domain_free_irqs_common;
+> > (...)
+> > > +       if (!ops->free)
+> > > +               ops->free = irq_domain_free_irqs_common;
+> >
+> > Marc Z is working on cleaning up the way that gpiolib is (ab)using
+> > irqchips. We definitely need his ACK if we do things like this.
+> > This doesn't look like one of the big offenders to me, but I want
+> > to make sure we don't create new problems while Marc is trying
+> > to solve the old ones.
+> >
+> Agreed, I had a discussion with Marc on v3 series [0].
 
-Yeah my bad, can't read properly today :/
+Hm yeah I guess I am just stepping on Marc's toes with all my mails :(
 
-Why is it necessary to do this stuff in the irqdomain rather than
-in the irqchip? Especially this:
-
-+ bitmap_release_region(pctrl->tint_slot, i, get_order(1));
-
-Since the idea with irq_domain is to translate physical (hardware) IRQs
-to Linux IRQ numbers, I don't see how this is related to that.
-
-To me it seems you have taken the usecase that is normally
-in irqchip and moved it to irqdomain.
-
-To me this seems much more like a job that needs to happen in
-the irqchip .irq_enable()/.irq_disable() pair, and which we have
-done before in Hans Verkuils patch series:
-
-461c1a7d4733 gpiolib: override irq_enable/disable
-4e9439ddacea gpiolib: add flag to indicate if the irq is disabled
-ca620f2de153 gliolib: set hooks in gpiochip_set_irq_hooks()
-
-This gets used by drivers such as:
-drivers/media/cec/platform/cec-gpio/cec-gpio.c
-
-Where you can see these dynamic calls:
-
-static bool cec_gpio_enable_irq(struct cec_adapter *adap)
-{
-        struct cec_gpio *cec = cec_get_drvdata(adap);
-
-        enable_irq(cec->cec_irq);
-        return true;
-}
-
-static void cec_gpio_disable_irq(struct cec_adapter *adap)
-{
-        struct cec_gpio *cec = cec_get_drvdata(adap);
-
-        disable_irq(cec->cec_irq);
-}
-
-Which end up calling .irq_enable()/.irq_disable() on the irq_chip
-dynamically enabling/disabling the irq.
-
-If you prefer to have this done in process context up front when
-the irq is requested/released then irq_chip also have these
-callbacks:
-
-        int             (*irq_request_resources)(struct irq_data *data);
-        void            (*irq_release_resources)(struct irq_data *data);
-
-So I would think over the usecase here a bit. Why does this have
-to be in the irqdomain?
+I'll try to just wait for Marc's Reviewed-by instead and not add to the noise,
+I'm probably just wrong.
 
 Yours,
 Linus Walleij
