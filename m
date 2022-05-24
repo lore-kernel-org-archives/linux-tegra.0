@@ -2,51 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A6A2C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 17:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61597C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 May 2022 18:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240080AbiEXRus (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 May 2022 13:50:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45904 "EHLO
+        id S240080AbiEXSmT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 May 2022 14:42:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbiEXRur (ORCPT
+        with ESMTP id S231164AbiEXSmT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 May 2022 13:50:47 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCBFE5D5E5;
-        Tue, 24 May 2022 10:50:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bD1AqdJZMVOGYWak/HpeuRfhwA9Lw8tstlsNr8HH4cg87qUB37DuW4CJfodSl4Vk2D0IJ9MdTwKr0+ZsGwvpyD2XexRzlKE9yvMRBhfyO3PsPeP+/U4EvdkbehuUYSjLjDrurtLdLqI9PVQERaXTP2xQ8NA5KE+hjCWQW1Njpq2VYsfzg22iQoyC/b540zF3vB946NK8YstvVK7tKIajAXtzSiPOa3rI8wlXS5IPVh2uod1V3auwllI2w/D03NKTVkwb92HaarviIf64TWyZl3jMEy6XdRZzO4F954NRev8HUOolstHiNOUedOjfYx2Te1fkMKF00lBAx/pq449GAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=317fEZYYmhKP/WqFc7raA1y3kQoD987QzRvB9kqW5Dk=;
- b=QbT2uw3mh2ujOFRan7tHLKsnOR8r2VPLDIQcFQwfXZ86z4hjoObCjA0PfyF/7ZayNbV6+qhTii8hTWvIyTl8spDQ+PukYgjx5ibDNPUdK7V2JpWU2Su5x28cDd6YVO0GGXrEzSKu52mLyfL1bvpmeSlU1y9d8+snsoaglS+G0wNeRLQpdPb95lXOMqI51blWF/r1HUA1X8fbABLYbeBNFd6SbSRrURo3LGyrAWYGuM/ahZtNbHeK7gIq2XZF0c1OUO3PSK15fvY4KaPPqZTkuQQ+XUuhfcT552vpu7U6AxYatVrn8yhDhBYTiUx9SmkwCor0JsrFr1fOJ09PPuOpQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=317fEZYYmhKP/WqFc7raA1y3kQoD987QzRvB9kqW5Dk=;
- b=ul+mh2oSIu1+azlFPm0bCCwpcRxnUUeVUpn4nEyFpoiJh7EG4qOLxm6KavEZBWdzWrviZ9Kewg2jOVfnv9sf2Fcu3Tn1kxllfFekiqMbMdRZGO6aSO2IzVRZQNjCAEBQFgo3uTAzt/DnzVKcVX6keZ8Siq3KoGei2gHqmsJDvlanTQKoS3d2TEX1/gExCiPb6/Kla5hxATNO1iBX06/LGiWC/WE7gyWcDYpEUXA/HX4lL92sDasiT0B8+HBcZrURAb/AYiTtqfYXgW/hoxT/e5mRZrHWZWAZRwNsEw1FIZAXzBtq7XVAf7pNtqqXxJR3lWkFXAlnyifowuDt7LGEeQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- CY5PR12MB6035.namprd12.prod.outlook.com (2603:10b6:930:2d::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5273.23; Tue, 24 May 2022 17:50:44 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::f954:6840:ce82:c54f]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::f954:6840:ce82:c54f%4]) with mapi id 15.20.5293.013; Tue, 24 May 2022
- 17:50:44 +0000
-Message-ID: <97cf35b5-1286-91a0-c0d4-df7fe8a983e6@nvidia.com>
-Date:   Tue, 24 May 2022 18:50:37 +0100
+        Tue, 24 May 2022 14:42:19 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB6EA58385;
+        Tue, 24 May 2022 11:42:17 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id s14so16582161plk.8;
+        Tue, 24 May 2022 11:42:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to;
+        bh=Srf/k1EMySBKUhCzKsY+R4gF2IaSdK+tZE4km9P9aRU=;
+        b=p57816IQKTz3FFCAIb/HESMUK5uZdTdQLjuS4bQworqgRxKI4/l3ImRUjoOeOhEBgp
+         tcUb5iopva/Zyz7QYWSsmPppit3331USvG30lZq1dUeQvSQt9eXCOKsuDJ8D2Dbx5NNo
+         SSArX72fuv5o/2TgThPAOsl+i0UVqky6C9PaWg6qXHcxx41wpGaA9NAH9epUU2uxQJv7
+         2yIgkjQJ5Z7ZKQCody5KJrnheUfzjmXM5T0kahrVWG4JC5xh553qCpSMMw8SmJ5+mErE
+         3ZMkyT0Jh4LEQ3mTtYEjqk4JQqThtRFTiNS1/YfP9jAZwX+tgiS8TSTSw5IjFMislz00
+         wIKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to;
+        bh=Srf/k1EMySBKUhCzKsY+R4gF2IaSdK+tZE4km9P9aRU=;
+        b=Q1o3geDEEtEIoTXQHMC5cM7FFDol22yBbKoGYBQlH4o48ZyLxpd5LIN5D5ym1xjW61
+         Djr7JGSdQYnI84cW/6q9jLyyf3jVf1DIJohzUkNVwwC+v73LGs2Qt9okvCVCye+dcv0Q
+         f6BFZUG11DAOHlfOyMux6M82FtN6szqPHC4gCDX9EWvVucf1tS3gIRL0mdzLdN1u7kd8
+         +jMMGIPgt1CQl5gPKccFVUROu79cJkBPOh4Xuo+p/PlnKr5ueBXA4MkjeKlmgHZ0hKcB
+         HqU6hkqpgBp/ULzZ/aFqN87zAvD+gXaS09pNTppkPrA/hqgz3xXt67bNDO/csvhg8nYa
+         wx1A==
+X-Gm-Message-State: AOAM533j6FiAjG9jSy/2xX7Lk6bNUIPYJrGraQcFGqClDKN44Pf5RtHT
+        wkcGGoIHOuV85ELqT3WbtVw=
+X-Google-Smtp-Source: ABdhPJyCFsebXQEnhFHYFk4nzRyLZ6g0qPb8mFMiZQYIALYRoRUwC24Rmcq/EDqzmYWfWLAKfqYIGA==
+X-Received: by 2002:a17:902:7c0e:b0:162:1aa9:f550 with SMTP id x14-20020a1709027c0e00b001621aa9f550mr12674628pll.159.1653417737016;
+        Tue, 24 May 2022 11:42:17 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id j11-20020aa783cb000000b0050dc76281f2sm9551555pfn.204.2022.05.24.11.42.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 May 2022 11:42:16 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------D00Jamxdfb3lG1FpuA2Dz5Zj"
+Message-ID: <2dd9228b-8fb8-6877-5825-3923b15b9796@gmail.com>
+Date:   Tue, 24 May 2022 11:42:14 -0700
+MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
+ Thunderbird/91.8.1
 Subject: Re: [PATCH 4.9 00/25] 4.9.316-rc1 review
 Content-Language: en-US
-To:     Florian Fainelli <f.fainelli@gmail.com>,
+To:     Jon Hunter <jonathanh@nvidia.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
         stable@vger.kernel.org, torvalds@linux-foundation.org,
@@ -59,148 +69,129 @@ References: <20220523165743.398280407@linuxfoundation.org>
  <YozK4DvamHBJ1qdX@kroah.com>
  <fbeb9833-4166-1919-e6ab-9ac7625a21d6@nvidia.com>
  <Yoz0Xv59MrUwFkMT@kroah.com> <883fc4cf-dce0-a433-5cf7-7de68be17ffb@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <883fc4cf-dce0-a433-5cf7-7de68be17ffb@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0046.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:152::15) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 67dd05fa-f7b5-43ee-9a7d-08da3dadecd9
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6035:EE_
-X-Microsoft-Antispam-PRVS: <CY5PR12MB60356010C95F7449D592439BD9D79@CY5PR12MB6035.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JWyGmu8ysUiP8Em77zproqU8tW2vCdTJ/AACyFlLhUPfqedYpFC/8nyXmzc/J50lQRMep52CxizrUKl6plmqhJFeWojVwB7MFarJLcMwAYlly7B7sQGbaSmLivznx5F63FvtoGz2wOOznQbbn1+n3794hr45YVATvnriZkDFzkRfISNMf4IKvp54GUB45rqq9btGYIbe0QMv0OEwWFZyBcJz4hTp/AEsLl5tprIzyC6enmny0ot0djplu35zGFQukPYiztDhI1udDwLKMq5vvg3KzbDZ439n5DNDU4f+989xUp3VitcNvpQ7NMJuDD3e5pyzlc0xKZf8SUo33EUgPNqKqyTUbnRxb7Z0n+lBj/vVOQiqBziZOv1EENQewB5CnGBOawcrRWCTahETWRFaieuZoDNTB7Mj5hz4LdgmxtqngztjfhjEEJyStZEAEof8XqSUVYMKmkW8u01tNF794wWVpZYw/vTeT2OS7IpPmxTTmQM7L1aP4qfHqFN6I8rmAEIQfNNRTmynJ+c+qJ96yMAwNPSLklBAaC7B/VpV06RdQ0eQkm6+pKRIuIMOdCP7t7wsalmqcyeZqWHedVqh+Mr3vFAfcm1LN+ghRG6TNygU4x5SMsnQjTBsxcYtDlU+QAY/9OeE2aCQimHSgKQ/NmDS6G7fqxb72Q/JifWOjIyD+kJJjS2+1d/oKSYpygPKhSpIeTlzLtdh0+P7n7gAqfS9W8cXuhuFZu65PkHTkQGkMKfRV5D/eUChd+aa4oXi
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(36756003)(66946007)(5660300002)(7416002)(508600001)(38100700002)(31686004)(4326008)(2906002)(110136005)(6506007)(66556008)(54906003)(8936002)(8676002)(6666004)(66476007)(2616005)(55236004)(186003)(316002)(26005)(6486002)(83380400001)(31696002)(6512007)(86362001)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N0Zpc3dPR0Z1Q2J3ODIxbHBkdkdHV1ZqZStjcExRUUR5ck0zS2NSbGN1aUVx?=
- =?utf-8?B?YzZtNnl6dVBnaDV0SWtKZlNkUklhNDk2MUFIWTdHdDIxaU44Qk1OL28xcWVh?=
- =?utf-8?B?ZDlIcm1oQWZxK2JZWDk5ZmxUb0tabWphQTg4UjFoeGRwOFF4OTQzL1pDT0Zj?=
- =?utf-8?B?ZWJJVlNhWCtzNi9OOUhBcDhaZk1YN0lZbVp6NUlOemlybWJzMFJaSWQvY2p1?=
- =?utf-8?B?L0xlVTd1d1JrTGZBTmFIWUI1dkVFbVd5cVBZeTcxR2h1M3NyL2JBbEhQbWR4?=
- =?utf-8?B?cDR1KzlRRk03eXd1Z2d5c3Y4TmVxYS83QzdiQmNtM1RuZ0pxcVFqNFV2bVhq?=
- =?utf-8?B?Qmo0TkIrM0ZOdkVrNEMrMjhwTkZtcE5wR3JLeUljRFloR2lCQmVVTmtpTmwz?=
- =?utf-8?B?aTB2Y2dhL0djWFhUUGhsSGk2TG92WHNEcVlDOS8yYnFqZVBxZitlVjAwcnRS?=
- =?utf-8?B?cTdBMC8zKzhDMEt2TEFkWEFrNGJPeXJ3WEJublJiYS82NW4yS2Q5MWdRUmJr?=
- =?utf-8?B?SWxMWFVER1REc2tXU0ExTHUxbFgxa3pLR2NTU0kva3l4L01VY2xrdmNGeU1n?=
- =?utf-8?B?QUxaUlY2UDd4M3RObms2QnF0SWZyZ2wvWUozaUIzaEV0a1pqbTRqWkRKY0ta?=
- =?utf-8?B?c1VrSHFEOGNTT1NwbmN5YTU3M3l0TmdQK0V5SFN5aGhGbm96dERiRythM1FV?=
- =?utf-8?B?WWs3YzAreEx6Nk9SN2dEaHlPN1NIUUprK1ZkdTZkSnRNL3ZsSHl6RXNLejlC?=
- =?utf-8?B?Zk9FeEtmLzd2ajVjSTRZZGpQRTh4cWxqZGdYVUVUSkJ5akJzcXVXbnZjdXBL?=
- =?utf-8?B?MlFGQ1FzY3hFOXdCM3pQZFVrWW5USjBua0VxTitwOUtzd0F6aW9jZHo4Z1F3?=
- =?utf-8?B?NkdTMktzUW9reDZLcVo2blRZZFR4WTFEK0thMyt5bTYvYWQ5NGtzNEd3NG05?=
- =?utf-8?B?eTdqbjI3RGVIWjhLUXBZMlRDWkE0UGhodlNTV0YzT3MvY1Ntb1dHcjlhb1JW?=
- =?utf-8?B?S1c4WXpQYUNablQyczJmZ0pLdFhlcDlwaGx1ZElYN3BVNmxCUktSNDNYZWx0?=
- =?utf-8?B?NW9Oeld0YXVndmMvaTJFQ2pCNWVsSVBOOXp2bXQ4NDZaeXdWSS8xSDI5Qk0w?=
- =?utf-8?B?ZnRudEptZk5lY1NPRUNOWGk5VVUzcjVWaVZTL2xSSjdySk9ob3FSZWxoeXh4?=
- =?utf-8?B?SmZvQkVCWTMvNkZwUS9xUDF0L3l5RDFjNnBlYWUzY0xCejZwUCtVVlp6YXIv?=
- =?utf-8?B?YjRTUzdKY0pYQ0FJOG9GVE5BUW5RWDNHUUk2aFI1OFFPZ1lWbWNwQjFrYU5L?=
- =?utf-8?B?WWJjaE40OTdJMlAwb3FRemhoQ3UwZmpoTWZwaldXSlNpcE9ldnJzK0RTYUVV?=
- =?utf-8?B?WnhTcnZ6YWltYVEzN242clpqOXBjZk52elVqb0wxalBVLzhCbjk0RU1ON1RY?=
- =?utf-8?B?NXZpMlYvNlArUFVXT09zVGtnbzVqVlAra0NxZ0w3aEhKOTRhVmwrZjhUUWY5?=
- =?utf-8?B?aDkzSkFMQStVNyt5RSs1ZTc1Y1AxdU9kYlpJVS93bjh0L0lwZTFIMnpFdFlB?=
- =?utf-8?B?VzRFelRQeFZzclYrVjhocmt0Rk1zZjhIdDJRYVpQSmhjSW9EZUNHWkwvYVhT?=
- =?utf-8?B?WU1tMmFudnd4dUx2a3J3N2F4S2ZOdzIxSTlESzRKNzRjU3hSblIrMEJodXM2?=
- =?utf-8?B?ckhQSmR1VzVKTTR1eDI2NkdCSklXY3EvUER5SEtUeHJabXRyQ1E2SUZwMGZP?=
- =?utf-8?B?VG5LZjNSTlBYRGZGM3NjdWt0M2xTcUt0RGN3QlBTNTZMUXlnaXd4cHB6L3dU?=
- =?utf-8?B?SGRYdGk3QlpjUXd4Tzgyc3lvc1BNUFdiMHpJaWttZitHcGJRTnUwUUZLQWxh?=
- =?utf-8?B?ckNGNjZXNnpFTEY1eEZiNFZMNm1mZTZFNlJoUGlyMDZhNUhUTEFkZlg1bTZY?=
- =?utf-8?B?Qms1cWI3ckh2WVNBUjlyZWU0cUdjbGdLNnF5MWQ4STYwWkJERDhpRnovQmMr?=
- =?utf-8?B?OHgzNFpaVUVhOW5ibndQVnJXU0pwMldMcXJJWGZpaktuMFh0dFBFWEpQVTJI?=
- =?utf-8?B?OUtTZ0ZFOWprNlNWbE85NmlkelkwdnhtbzlwVGlHNXh0VEFhbklxaGZlNjVo?=
- =?utf-8?B?a3FjTXJpci9XSVlGSkhYRVRIUmZWeCtaaXhDRGFTSEhyaXB5OWo5c2RFVkEr?=
- =?utf-8?B?OFMzT01lS3hGT3VmcWNwRlhqQzRDVFl5K3dVTC84ZGEzNXFYSmxDMTE0UGpU?=
- =?utf-8?B?NkxmNXg2eEVvWklYVjVSdDVSOTJKNDFUUnd4VXVpMlBRajlMc0hZZWZiQ3Fh?=
- =?utf-8?B?NTJhaFEyMlhNQXVKdm9wUTlTckc3VUhJTkVjM25VNVAwQW5qUzA3TDhxcnh1?=
- =?utf-8?Q?+cVRUhm/BrZmANtk=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67dd05fa-f7b5-43ee-9a7d-08da3dadecd9
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2022 17:50:44.0072
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5rHpGwnQ/WnA4Sw7FdJ/0Cet7oS8ZPT9W/OWnx56w03Yrv4jUjoflLOAHCG05QKfjaWIMmg86FHTlBSmDsmGug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6035
+ <97cf35b5-1286-91a0-c0d4-df7fe8a983e6@nvidia.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <97cf35b5-1286-91a0-c0d4-df7fe8a983e6@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This is a multi-part message in MIME format.
+--------------D00Jamxdfb3lG1FpuA2Dz5Zj
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 24/05/2022 17:30, Florian Fainelli wrote:
-
-...
-
-> Jonathan any chance this is Tegra specific? Our ARCH_BRCMSTB SoCs which 
-> use a Brahma-B15 which uses nearly the same ca15 processor functions 
-> defined in arch/arm/mm/proc-v7.S reports the following *before* changes:
+On 5/24/22 10:50, Jon Hunter wrote:
 > 
-> [    0.001641] CPU: Testing write buffer coherency: ok
-> [    0.001685] CPU0: Spectre v2: using ICIALLU workaround
-> [    0.001703] ftrace: allocating 30541 entries in 120 pages
-> [    0.044600] CPU0: update cpu_capacity 1024
-> [    0.044633] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-> [    0.044662] Setting up static identity map for 0x200000 - 0x200060
-> [    0.047410] brcmstb: biuctrl: MCP: Write pairing already disabled
-> [    0.048974] CPU1: update cpu_capacity 1024
-> [    0.048978] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
-> [    0.048981] CPU1: Spectre v2: using ICIALLU workaround
-> [    0.050234] CPU2: update cpu_capacity 1024
-> [    0.050238] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
-> [    0.050241] CPU2: Spectre v2: using ICIALLU workaround
-> [    0.051437] CPU3: update cpu_capacity 1024
-> [    0.051441] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
-> [    0.051444] CPU3: Spectre v2: using ICIALLU workaround
-> [    0.051532] Brought up 4 CPUs
+> On 24/05/2022 17:30, Florian Fainelli wrote:
 > 
-> and this *after* merging 4.9.316-rc1:
+> ...
 > 
-> [    0.001626] CPU: Testing write buffer coherency: ok
-> [    0.001670] CPU0: Spectre v2: using ICIALLU workaround
-> [    0.001689] CPU0: Spectre BHB: using loop workaround
-> [    0.001705] ftrace: allocating 30542 entries in 120 pages
-> [    0.043752] CPU0: update cpu_capacity 1024
-> [    0.043784] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-> [    0.043813] Setting up static identity map for 0x200000 - 0x200060
-> [    0.046547] brcmstb: biuctrl: MCP: Write pairing already disabled
-> [    0.048121] CPU1: update cpu_capacity 1024
-> [    0.048124] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
-> [    0.048129] CPU1: Spectre v2: using ICIALLU workaround
-> [    0.048165] CPU1: Spectre BHB: using loop workaround
-> [    0.049398] CPU2: update cpu_capacity 1024
-> [    0.049402] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
-> [    0.049405] CPU2: Spectre v2: using ICIALLU workaround
-> [    0.049440] CPU2: Spectre BHB: using loop workaround
-> [    0.050613] CPU3: update cpu_capacity 1024
-> [    0.050617] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
-> [    0.050619] CPU3: Spectre v2: using ICIALLU workaround
-> [    0.050653] CPU3: Spectre BHB: using loop workaround
-> [    0.050722] Brought up 4 CPUs
-> [    0.050738] SMP: Total of 4 processors activated (216.00 BogoMIPS).
-> [    0.050753] CPU: All CPU(s) started in HYP mode.
+>> Jonathan any chance this is Tegra specific? Our ARCH_BRCMSTB SoCs 
+>> which use a Brahma-B15 which uses nearly the same ca15 processor 
+>> functions defined in arch/arm/mm/proc-v7.S reports the following 
+>> *before* changes:
+>>
+>> [    0.001641] CPU: Testing write buffer coherency: ok
+>> [    0.001685] CPU0: Spectre v2: using ICIALLU workaround
+>> [    0.001703] ftrace: allocating 30541 entries in 120 pages
+>> [    0.044600] CPU0: update cpu_capacity 1024
+>> [    0.044633] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+>> [    0.044662] Setting up static identity map for 0x200000 - 0x200060
+>> [    0.047410] brcmstb: biuctrl: MCP: Write pairing already disabled
+>> [    0.048974] CPU1: update cpu_capacity 1024
+>> [    0.048978] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+>> [    0.048981] CPU1: Spectre v2: using ICIALLU workaround
+>> [    0.050234] CPU2: update cpu_capacity 1024
+>> [    0.050238] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
+>> [    0.050241] CPU2: Spectre v2: using ICIALLU workaround
+>> [    0.051437] CPU3: update cpu_capacity 1024
+>> [    0.051441] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
+>> [    0.051444] CPU3: Spectre v2: using ICIALLU workaround
+>> [    0.051532] Brought up 4 CPUs
+>>
+>> and this *after* merging 4.9.316-rc1:
+>>
+>> [    0.001626] CPU: Testing write buffer coherency: ok
+>> [    0.001670] CPU0: Spectre v2: using ICIALLU workaround
+>> [    0.001689] CPU0: Spectre BHB: using loop workaround
+>> [    0.001705] ftrace: allocating 30542 entries in 120 pages
+>> [    0.043752] CPU0: update cpu_capacity 1024
+>> [    0.043784] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+>> [    0.043813] Setting up static identity map for 0x200000 - 0x200060
+>> [    0.046547] brcmstb: biuctrl: MCP: Write pairing already disabled
+>> [    0.048121] CPU1: update cpu_capacity 1024
+>> [    0.048124] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+>> [    0.048129] CPU1: Spectre v2: using ICIALLU workaround
+>> [    0.048165] CPU1: Spectre BHB: using loop workaround
+>> [    0.049398] CPU2: update cpu_capacity 1024
+>> [    0.049402] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
+>> [    0.049405] CPU2: Spectre v2: using ICIALLU workaround
+>> [    0.049440] CPU2: Spectre BHB: using loop workaround
+>> [    0.050613] CPU3: update cpu_capacity 1024
+>> [    0.050617] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
+>> [    0.050619] CPU3: Spectre v2: using ICIALLU workaround
+>> [    0.050653] CPU3: Spectre BHB: using loop workaround
+>> [    0.050722] Brought up 4 CPUs
+>> [    0.050738] SMP: Total of 4 processors activated (216.00 BogoMIPS).
+>> [    0.050753] CPU: All CPU(s) started in HYP mode.
+> 
+> 
+> Does your platform support CPU idle? I see this being triggered
+> during CPU idle transitions ...
 
+It does, but not with an idle state resulting in powering down secondary 
+cores. We do have CPU hotplug with power gating as well as system wide 
+suspend states that result in power gating secondaries and they appear 
+to be working fine.
 
-Does your platform support CPU idle? I see this being triggered
-during CPU idle transitions ...
+I use the attached script to randomly cycle hot plug/unplug through each 
+4 cores and it has been running over 10k cycles.
 
-[    4.415167] CPU0: Spectre BHB: using loop workaround
-[    4.417621] [<c01109a0>] (unwind_backtrace) from [<c010b7ac>] (show_stack+0x10/0x14)
-[    4.430291] [<c010b7ac>] (show_stack) from [<c09c2b38>] (dump_stack+0xc0/0xd4)
-[    4.437512] [<c09c2b38>] (dump_stack) from [<c011a6c8>] (cpu_v7_spectre_bhb_init+0xd8/0x190)
-[    4.445943] [<c011a6c8>] (cpu_v7_spectre_bhb_init) from [<c010dee8>] (cpu_suspend+0xac/0xc8)
-[    4.454377] [<c010dee8>] (cpu_suspend) from [<c011e7e4>] (tegra114_idle_power_down+0x74/0x78)
-[    4.462898] [<c011e7e4>] (tegra114_idle_power_down) from [<c06d3b44>] (cpuidle_enter_state+0x130/0x524)
-[    4.472286] [<c06d3b44>] (cpuidle_enter_state) from [<c0164a30>] (do_idle+0x1b0/0x200)
-[    4.480199] [<c0164a30>] (do_idle) from [<c0164d28>] (cpu_startup_entry+0x18/0x1c)
-[    4.487762] [<c0164d28>] (cpu_startup_entry) from [<801018cc>] (0x801018cc)
+> 
+> [    4.415167] CPU0: Spectre BHB: using loop workaround
+> [    4.417621] [<c01109a0>] (unwind_backtrace) from [<c010b7ac>] 
+> (show_stack+0x10/0x14)
+> [    4.430291] [<c010b7ac>] (show_stack) from [<c09c2b38>] 
+> (dump_stack+0xc0/0xd4)
+> [    4.437512] [<c09c2b38>] (dump_stack) from [<c011a6c8>] 
+> (cpu_v7_spectre_bhb_init+0xd8/0x190)
+> [    4.445943] [<c011a6c8>] (cpu_v7_spectre_bhb_init) from [<c010dee8>] 
+> (cpu_suspend+0xac/0xc8)
+> [    4.454377] [<c010dee8>] (cpu_suspend) from [<c011e7e4>] 
+> (tegra114_idle_power_down+0x74/0x78)
+> [    4.462898] [<c011e7e4>] (tegra114_idle_power_down) from [<c06d3b44>] 
+> (cpuidle_enter_state+0x130/0x524)
+> [    4.472286] [<c06d3b44>] (cpuidle_enter_state) from [<c0164a30>] 
+> (do_idle+0x1b0/0x200)
+> [    4.480199] [<c0164a30>] (do_idle) from [<c0164d28>] 
+> (cpu_startup_entry+0x18/0x1c)
+> [    4.487762] [<c0164d28>] (cpu_startup_entry) from [<801018cc>] 
+> (0x801018cc)
+> 
+> Jon
+> 
 
-Jon
 
 -- 
-nvpublic
+Florian
+--------------D00Jamxdfb3lG1FpuA2Dz5Zj
+Content-Type: application/x-shellscript; name="hotplug.sh"
+Content-Disposition: attachment; filename="hotplug.sh"
+Content-Transfer-Encoding: base64
+
+IyEvYmluL3NoCiMgSG90cGx1ZyB0ZXN0Cgp1c2FnZSgpIHsKCWVjaG8gIlVzYWdlOiAkMCBb
+IyBjcHVzXSIKCWVjaG8gIiAgIElmIG51bWJlciBvZiBjcHVzIGlzIG5vdCBnaXZlbiwgZGVm
+YXVsdHMgdG8gMiIKCWV4aXQKfQoKIyBEZWZhdWx0IHRvIDIgQ1BVcwpOUl9DUFVTPSR7MTot
+Mn0KClsgJE5SX0NQVVMgLWx0IDIgXSAmJiB1c2FnZSAxPiYyCgpNQVhDUFU9JCgoTlJfQ1BV
+Uy0xKSkKTUFYPWBjYXQgL3N5cy9kZXZpY2VzL3N5c3RlbS9jcHUva2VybmVsX21heGAKClsg
+JE1BWENQVSAtZ3QgJE1BWCBdICYmIGVjaG8gIlRvbyBtYW55IENQVXMiIDE+JjIgJiYgdXNh
+Z2UgMT4mMgoKY3B1X3BhdGgoKSB7CgllY2hvIC9zeXMvZGV2aWNlcy9zeXN0ZW0vY3B1L2Nw
+dSQxCn0KCmNoZWNrcG9pbnRfdGVzdCgpIHsKCWlmIFsgJCgoJDEgJSA1MCkpIC1lcSAwIF07
+IHRoZW4KCQllY2hvICIqKioqIEZpbmlzaGVkIHRlc3QgJDEgKioqKiIKCWZpCn0KCmVjaG8g
+JyoqKionCmVjaG8gIlRlc3RpbmcgJE5SX0NQVVMgQ1BVcyIKZWNobyAnKioqKicKClRFU1Q9
+MAp3aGlsZSA6CmRvCglOPSQoKFJBTkRPTSAlIE1BWENQVSArIDEpKQoJT049YGNhdCAkKGNw
+dV9wYXRoICROKS9vbmxpbmVgCgllY2hvICQoKDEtT04pKSA+ICQoY3B1X3BhdGggJE4pL29u
+bGluZQoJVEVTVD0kKChURVNUKzEpKQoJY2hlY2twb2ludF90ZXN0ICRURVNUCmRvbmUK
+
+--------------D00Jamxdfb3lG1FpuA2Dz5Zj--
