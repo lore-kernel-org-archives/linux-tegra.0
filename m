@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E69DC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 May 2022 23:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C5FC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 May 2022 23:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344388AbiEZX4F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 May 2022 19:56:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53514 "EHLO
+        id S1346726AbiEZX4T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 May 2022 19:56:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349746AbiEZXzZ (ORCPT
+        with ESMTP id S1349663AbiEZXzu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 May 2022 19:55:25 -0400
+        Thu, 26 May 2022 19:55:50 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 642B1EBA8B;
-        Thu, 26 May 2022 16:55:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12038EBE95;
+        Thu, 26 May 2022 16:55:11 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id 2267F1F459F1
+        with ESMTPSA id 52C691F459FA
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653609301;
-        bh=lVCPHIzviQq20mwfYzjAOHeqfWQImXXPIbBe9D1xXlE=;
+        s=mail; t=1653609310;
+        bh=nPEuKswQlR9Y3lB1Q2WuSBCu+q4IQv1b2R4ojzwKwKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bgJiezMp0flB1v25Q2Qf+DKO9Z1KSTZhHbhRu4emPSpVxY8ydKzqqljeN8OvT3Zfm
-         GrP0nApOiROsSpJFfBcj1DyH73EH0cx4M+sXeMFmY2X1O+tgBqJmIgvNg2zNZPTrq5
-         7aaOMTMy06r67/fYRlAAGg8Uj8LgyTB2oLLIK5m5SqQsQ0F3bzhxaFYXKeuxUx/9O3
-         aGf+6kjjtfDGFXJe6P3P5Dj7ARG9p3Esis4XUMKvQ14ji6tydjFaZnTly7l9zc5aMF
-         G3ZJsS7pa52FSEEgAAWuj0+B5tDvwLfEiUhZbVoRVzd0E14r52LRd+xs0iz4bi5BwN
-         beCPhQzt0HN2Q==
+        b=m8aIO9spexkXB7Y8oBGI0YPYaWs/o9KynNSMnYM+QCOBYGce+N6mI0toHIP/pevv4
+         PlxmoM6raMVUbKMbZU4yqFIrwNzX1L2fR6z8pjpPqjpWVyI1qQHkbwl826zk1RkvCd
+         B5p8s8la4i7uXnsYcU3b5rqVkgspWV12oarc04KFQ/srmesKgwe5Sq7hNvA1SrrU4w
+         laM5D27QHrw8jeXLouHaAsmKIwEEmHZ5fbqrcQBamm8jCQT3HtFNnC2ZoX358vRF+o
+         3PW+ug5rE3stsfRINXRuPTcGQtOQs2d7EniYZPtWRp8voclYkmCeOajhS9ARnK6w+9
+         3tk/7Z0yybMwg==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
         Gurchetan Singh <gurchetansingh@chromium.org>,
@@ -66,9 +66,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
         linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org, kernel@collabora.com
-Subject: [PATCH v6 15/22] drm/shmem-helper: Don't use vmap_use_count for dma-bufs
-Date:   Fri, 27 May 2022 02:50:33 +0300
-Message-Id: <20220526235040.678984-16-dmitry.osipenko@collabora.com>
+Subject: [PATCH v6 18/22] drm/gem: Add drm_gem_pin_unlocked()
+Date:   Fri, 27 May 2022 02:50:36 +0300
+Message-Id: <20220526235040.678984-19-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
 References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
@@ -78,89 +78,73 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-There is no need to refcount vmappings of dma-bufs because dma-buf core
-has its own refcounting. Drop the refcounting of dma-bufs. This will ease
-replacing of all drm-shmem locks with a single dma-buf reservation lock,
-preparing drm-shmem code for addition of the generic drm-shmem shrinker.
+Add unlocked variants of drm_gem_un/pin() functions and make them public.
+These new helpers will take care of GEM dma-reservation locking for DRM
+drivers.
+
+We are going to add memory shrinking support to the VirtIO-GPU driver
+that will need to pin framebuffers explicitly to prevent eviction of the
+actively used buffers by the shrinker. VirtIO-GPU driver will use these
+new generic helpers to pin shmem framebuffers.
 
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/gpu/drm/drm_gem_shmem_helper.c | 35 +++++++++++++++-----------
- 1 file changed, 20 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/drm_gem.c | 29 +++++++++++++++++++++++++++++
+ include/drm/drm_gem.h     |  3 +++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 7232e321fdb4..fd2647690bf7 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -293,24 +293,22 @@ static int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
- 	struct drm_gem_object *obj = &shmem->base;
- 	int ret = 0;
- 
--	if (shmem->vmap_use_count++ > 0) {
--		iosys_map_set_vaddr(map, shmem->vaddr);
--		return 0;
--	}
--
- 	if (obj->import_attach) {
- 		ret = dma_buf_vmap(obj->import_attach->dmabuf, map);
- 		if (!ret) {
- 			if (WARN_ON(map->is_iomem)) {
- 				dma_buf_vunmap(obj->import_attach->dmabuf, map);
--				ret = -EIO;
--				goto err_put_pages;
-+				return -EIO;
- 			}
--			shmem->vaddr = map->vaddr;
- 		}
- 	} else {
- 		pgprot_t prot = PAGE_KERNEL;
- 
-+		if (shmem->vmap_use_count++ > 0) {
-+			iosys_map_set_vaddr(map, shmem->vaddr);
-+			return 0;
-+		}
-+
- 		ret = drm_gem_shmem_get_pages(shmem);
- 		if (ret)
- 			goto err_zero_use;
-@@ -376,15 +374,15 @@ static void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem,
- {
- 	struct drm_gem_object *obj = &shmem->base;
- 
--	if (WARN_ON_ONCE(!shmem->vmap_use_count))
--		return;
--
--	if (--shmem->vmap_use_count > 0)
--		return;
--
- 	if (obj->import_attach) {
- 		dma_buf_vunmap(obj->import_attach->dmabuf, map);
- 	} else {
-+		if (WARN_ON_ONCE(!shmem->vmap_use_count))
-+			return;
-+
-+		if (--shmem->vmap_use_count > 0)
-+			return;
-+
- 		vunmap(shmem->vaddr);
- 		drm_gem_shmem_put_pages(shmem);
- 	}
-@@ -637,7 +635,14 @@ void drm_gem_shmem_print_info(const struct drm_gem_shmem_object *shmem,
- 			      struct drm_printer *p, unsigned int indent)
- {
- 	drm_printf_indent(p, indent, "pages_use_count=%u\n", shmem->pages_use_count);
--	drm_printf_indent(p, indent, "vmap_use_count=%u\n", shmem->vmap_use_count);
-+
-+	if (shmem->base.import_attach)
-+		drm_printf_indent(p, indent, "vmap_use_count=%u\n",
-+				  shmem->base.dma_buf->vmapping_counter);
-+	else
-+		drm_printf_indent(p, indent, "vmap_use_count=%u\n",
-+				  shmem->vmap_use_count);
-+
- 	drm_printf_indent(p, indent, "vaddr=%p\n", shmem->vaddr);
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index c61674887582..c909c935cfda 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1179,6 +1179,35 @@ void drm_gem_unpin(struct drm_gem_object *obj)
+ 		obj->funcs->unpin(obj);
  }
- EXPORT_SYMBOL(drm_gem_shmem_print_info);
+ 
++int drm_gem_pin_unlocked(struct drm_gem_object *obj)
++{
++	int ret;
++
++	if (!obj->funcs->pin)
++		return 0;
++
++	ret = dma_resv_lock_interruptible(obj->resv, NULL);
++	if (ret)
++		return ret;
++
++	ret = obj->funcs->pin(obj);
++	dma_resv_unlock(obj->resv);
++
++	return ret;
++}
++EXPORT_SYMBOL(drm_gem_pin_unlocked);
++
++void drm_gem_unpin_unlocked(struct drm_gem_object *obj)
++{
++	if (!obj->funcs->unpin)
++		return;
++
++	dma_resv_lock(obj->resv, NULL);
++	obj->funcs->unpin(obj);
++	dma_resv_unlock(obj->resv);
++}
++EXPORT_SYMBOL(drm_gem_unpin_unlocked);
++
+ int drm_gem_vmap(struct drm_gem_object *obj, struct iosys_map *map)
+ {
+ 	int ret;
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index 0b427939f466..870d81e7a104 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -413,4 +413,7 @@ int drm_gem_dumb_map_offset(struct drm_file *file, struct drm_device *dev,
+ int drm_gem_vmap_unlocked(struct drm_gem_object *obj, struct iosys_map *map);
+ void drm_gem_vunmap_unlocked(struct drm_gem_object *obj, struct iosys_map *map);
+ 
++int drm_gem_pin_unlocked(struct drm_gem_object *obj);
++void drm_gem_unpin_unlocked(struct drm_gem_object *obj);
++
+ #endif /* __DRM_GEM_H__ */
 -- 
 2.35.3
 
