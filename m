@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D47FC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 May 2022 23:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 690D3C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 May 2022 23:54:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349581AbiEZXyX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 May 2022 19:54:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52418 "EHLO
+        id S1349575AbiEZXyZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 May 2022 19:54:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349545AbiEZXyR (ORCPT
+        with ESMTP id S1349577AbiEZXyX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 May 2022 19:54:17 -0400
+        Thu, 26 May 2022 19:54:23 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6787E7B9E0;
-        Thu, 26 May 2022 16:54:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7859CE8BBA;
+        Thu, 26 May 2022 16:54:22 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id 62C221F40887
+        with ESMTPSA id 7FE781F40878
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653609255;
-        bh=5LIdhJtan+LZ6LnQ64jsbMrAvP7fINcUYf3MaY5BoNM=;
+        s=mail; t=1653609261;
+        bh=mb8OzuWYSbm/AwBqD3mtEmj7ojjTOwTQHEjozWJ6AEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f3hb0zk7VJGPn7ap02Rwgz7TrZ/O5CjxmjebLky7DXFjxwh1bGhEp5KdhmP9PuAlW
-         ZVs/oT2mQG2LHjkG94AHUpI5j+6jkKfSTeC666f+Vnzg0MCBoFk/HB3KqNV3aFCeci
-         mpb/yMpgDiuKC91hpp/ErpjhLFcDMsOCGcnUis/tlNxRRYM9dL5Uuyh0AVkOuuqyZO
-         XjbeTgTToclrmOeI+ZEO+N7ioYFvs6q7MdaRDWNUK8Q/TVFV5+m5BBeUhPTERr1jrH
-         ZVjKt8stdo9RGE876EpODo2XGhnQLHZHg8h4JGFnvYopRH/EBRHZs+lbAB8TtOY3Jk
-         oFSx0RPGOuLSw==
+        b=PhWK+IykYUYDFR1HcPNf0jNTY7TZY0Ln8bRitBt0kB04+hQst9WEWAPvJrsPNbW/Z
+         zIQsLj3s8FkbFS4J6AAh9FGS2SwW1x8ICQ0O/cvyoPbSY9PlksO1KkHleCnmYzw7Z6
+         Ps8r6ksbvWvvZMDMZbofS5W+UPPdelQLtTYTEoz/XHigCcMJC4tMpERsMpTB6zdAic
+         8fb8WgUWkUOccDal1GJu2bE6uZh0Ptg5/jLFxQaJtKw60Ga4PMr48eHgPMc+RrV70m
+         KD8BH07+7/LJbMYplSdVI7Vrv32FhCvxsaGBiQiOPaDk68WNK5CFK34N2/2GNSCthp
+         uuNX5S9HTuVQQ==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
         Gurchetan Singh <gurchetansingh@chromium.org>,
@@ -66,9 +66,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
         linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org, kernel@collabora.com
-Subject: [PATCH v6 02/22] drm/gem: Move mapping of imported dma-bufs to drm_gem_mmap_obj()
-Date:   Fri, 27 May 2022 02:50:20 +0300
-Message-Id: <20220526235040.678984-3-dmitry.osipenko@collabora.com>
+Subject: [PATCH v6 04/22] drm/panfrost: Fix shrinker list corruption by madvise IOCTL
+Date:   Fri, 27 May 2022 02:50:22 +0300
+Message-Id: <20220526235040.678984-5-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
 References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
@@ -78,74 +78,33 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
-handle imported dma-bufs properly, which results in mapping of something
-else than the imported dma-buf. For example, on NVIDIA Tegra we get a hard
-lockup when userspace writes to the memory mapping of a dma-buf that was
-imported into Tegra's DRM GEM.
-
-To fix this bug, move mapping of imported dma-bufs to drm_gem_mmap_obj().
-Now mmaping of imported dma-bufs works properly for all DRM drivers.
+Calling madvise IOCTL twice on BO causes memory shrinker list corruption
+and crashes kernel because BO is already on the list and it's added to
+the list again, while BO should be removed from from the list before it's
+re-added. Fix it.
 
 Cc: stable@vger.kernel.org
+Fixes: 013b65101315 ("drm/panfrost: Add madvise and shrinker support")
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/gpu/drm/drm_gem.c              | 3 +++
- drivers/gpu/drm/drm_gem_shmem_helper.c | 9 ---------
- drivers/gpu/drm/tegra/gem.c            | 4 ++++
- 3 files changed, 7 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/panfrost/panfrost_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 86d670c71286..7c0b025508e4 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -1038,6 +1038,9 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
- 	if (obj_size < vma->vm_end - vma->vm_start)
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+index 087e69b98d06..b1e6d238674f 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -433,8 +433,8 @@ static int panfrost_ioctl_madvise(struct drm_device *dev, void *data,
  
-+	if (obj->import_attach)
-+		return dma_buf_mmap(obj->dma_buf, vma, 0);
-+
- 	/* Take a ref for this mapping of the object, so that the fault
- 	 * handler can dereference the mmap offset's pointer to the object.
- 	 * This reference is cleaned up by the corresponding vm_close
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 8ad0e02991ca..6190f5018986 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -609,17 +609,8 @@ EXPORT_SYMBOL_GPL(drm_gem_shmem_vm_ops);
-  */
- int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct vm_area_struct *vma)
- {
--	struct drm_gem_object *obj = &shmem->base;
- 	int ret;
- 
--	if (obj->import_attach) {
--		/* Drop the reference drm_gem_mmap_obj() acquired.*/
--		drm_gem_object_put(obj);
--		vma->vm_private_data = NULL;
--
--		return dma_buf_mmap(obj->dma_buf, vma, 0);
--	}
--
- 	ret = drm_gem_shmem_get_pages(shmem);
- 	if (ret) {
- 		drm_gem_vm_close(vma);
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 7c7dd84e6db8..f92aa20d63bb 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -564,6 +564,10 @@ int __tegra_gem_mmap(struct drm_gem_object *gem, struct vm_area_struct *vma)
- {
- 	struct tegra_bo *bo = to_tegra_bo(gem);
- 
-+	/* imported dmu-buf is mapped by drm_gem_mmap_obj()  */
-+	if (gem->import_attach)
-+		return 0;
-+
- 	if (!bo->pages) {
- 		unsigned long vm_pgoff = vma->vm_pgoff;
- 		int err;
+ 	if (args->retained) {
+ 		if (args->madv == PANFROST_MADV_DONTNEED)
+-			list_add_tail(&bo->base.madv_list,
+-				      &pfdev->shrinker_list);
++			list_move_tail(&bo->base.madv_list,
++				       &pfdev->shrinker_list);
+ 		else if (args->madv == PANFROST_MADV_WILLNEED)
+ 			list_del_init(&bo->base.madv_list);
+ 	}
 -- 
 2.35.3
 
