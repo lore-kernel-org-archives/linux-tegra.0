@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6826C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 May 2022 23:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8699C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 May 2022 23:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349649AbiEZXzG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 May 2022 19:55:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52908 "EHLO
+        id S1349748AbiEZXzZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 May 2022 19:55:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349701AbiEZXyr (ORCPT
+        with ESMTP id S1349756AbiEZXzB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 May 2022 19:54:47 -0400
+        Thu, 26 May 2022 19:55:01 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8016EBAAB;
-        Thu, 26 May 2022 16:54:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78811EC316;
+        Thu, 26 May 2022 16:54:51 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id AF11D1F459E1
+        with ESMTPSA id E84531F459ED
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653609279;
-        bh=+dsYPBe0MtL9U6A9MrplQ6Fk/h2u9i7WdSCVoC7x6z4=;
+        s=mail; t=1653609290;
+        bh=a6CciZvu/niFj4gUJ7nmx5idPKuwsFoNvS/I3tYS4zY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eJE7wbdhuCKQ7ARuAxD2jakaOllV4XZp+wGbuzmwdjZ3AIJXdidlMp45UgBjdSOOD
-         glpNR2ysMVh/exq/dF/BlNApylcmRvmKbtxJTe3lAZ9yCQHa0gOmlq6OmSU4HNZ8AQ
-         j/1OuqQJfB6lruRLryGyl0wPtlwowLPhFkznUgbswyosxFmRIUNzNITJOclCMrRhnn
-         65Fat7aAvOkrbl9cliJKjoeEIg4SJmxvXHlZ44NBvwxUzbEvT10c6y0M8rp7mmWGF4
-         9tQvQ9uNi7WLf/gkC4tjw1g2Jff4+nRrg4Fick8NUGQ+gbgjFX/RBeFTv37OoCYeNg
-         FRZZFSrdn9H4w==
+        b=WGNfPLqGoNps/+DSLrepwv9EQg2HT/Vjb2fWG+klzDhKtzKgTkNc6akuOSiIZrnAL
+         jSfAnstFuKBe9Oo4rLCuS+SbAQjn6fpsUy2CAs+d6q7twRJi2aobsl3R6YgbCD4oVP
+         L72O5Rr4QHy4/A9Qf2yQhzq5nm6554SYVmTW+eT5s/HRqCTsb2n5JC8jTatnbmlLpS
+         J3z8OWGv1bK4Kp/Ol3IXc69207qWAcJLtvsKLSQhouNY8Udugypc7bq1huPS35p1RJ
+         S5W897eU44N8wVcjuTKs+Kvk6KhS/AeKz47+xSc663FPGf8B9hTP+41NIJMb+oO8XV
+         ywGN87A7zBj6Q==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
         Gurchetan Singh <gurchetansingh@chromium.org>,
@@ -66,9 +66,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
         linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org, kernel@collabora.com
-Subject: [PATCH v6 10/22] drm/shmem-helper: Add missing vunmap on error
-Date:   Fri, 27 May 2022 02:50:28 +0300
-Message-Id: <20220526235040.678984-11-dmitry.osipenko@collabora.com>
+Subject: [PATCH v6 12/22] drm/virtio: Simplify error handling of virtio_gpu_object_create()
+Date:   Fri, 27 May 2022 02:50:30 +0300
+Message-Id: <20220526235040.678984-13-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
 References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
@@ -78,29 +78,52 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The vmapping of dma-buf may succeed, but DRM SHMEM rejects the iomem
-mappings, and thus, drm_gem_shmem_vmap_locked() should unvmap the iomem
-before erroring out.
+Change the order of SHMEM initialization and reservation locking
+to make code cleaner and to prepare for transitioning of the common
+GEM SHMEM code to use the GEM's reservation lock instead of the
+shmem.page_lock.
 
-Cc: stable@vger.kernel.org
-Fixes: 49a3f51dfeee ("drm/gem: Use struct dma_buf_map in GEM vmap ops and convert GEM backends")
+There is no need to lock reservation during allocation of the SHMEM pages
+because the lock is needed only to avoid racing with the async host-side
+allocation. Hence we can safely move the SHMEM initialization out of the
+reservation lock.
+
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/gpu/drm/drm_gem_shmem_helper.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/virtio/virtgpu_object.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 6190f5018986..54b0ba28aa0a 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -302,6 +302,7 @@ static int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
- 		ret = dma_buf_vmap(obj->import_attach->dmabuf, map);
- 		if (!ret) {
- 			if (WARN_ON(map->is_iomem)) {
-+				dma_buf_vunmap(obj->import_attach->dmabuf, map);
- 				ret = -EIO;
- 				goto err_put_pages;
- 			}
+diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+index 21c19cdedce0..18f70ef6b4d0 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_object.c
++++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+@@ -236,6 +236,10 @@ int virtio_gpu_object_create(struct virtio_gpu_device *vgdev,
+ 
+ 	bo->dumb = params->dumb;
+ 
++	ret = virtio_gpu_object_shmem_init(vgdev, bo, &ents, &nents);
++	if (ret != 0)
++		goto err_put_id;
++
+ 	if (fence) {
+ 		ret = -ENOMEM;
+ 		objs = virtio_gpu_array_alloc(1);
+@@ -248,15 +252,6 @@ int virtio_gpu_object_create(struct virtio_gpu_device *vgdev,
+ 			goto err_put_objs;
+ 	}
+ 
+-	ret = virtio_gpu_object_shmem_init(vgdev, bo, &ents, &nents);
+-	if (ret != 0) {
+-		if (fence)
+-			virtio_gpu_array_unlock_resv(objs);
+-		virtio_gpu_array_put_free(objs);
+-		virtio_gpu_free_object(&shmem_obj->base);
+-		return ret;
+-	}
+-
+ 	if (params->blob) {
+ 		if (params->blob_mem == VIRTGPU_BLOB_MEM_GUEST)
+ 			bo->guest_blob = true;
 -- 
 2.35.3
 
