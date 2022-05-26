@@ -2,66 +2,68 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64425C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 May 2022 11:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C83AAC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 May 2022 11:44:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347179AbiEZLn6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 May 2022 07:43:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54322 "EHLO
+        id S1345083AbiEZLoM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 May 2022 07:44:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347208AbiEZLnv (ORCPT
+        with ESMTP id S1347095AbiEZLoH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 May 2022 07:43:51 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53A533DA66
-        for <linux-tegra@vger.kernel.org>; Thu, 26 May 2022 04:43:50 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id h186so1135726pgc.3
-        for <linux-tegra@vger.kernel.org>; Thu, 26 May 2022 04:43:50 -0700 (PDT)
+        Thu, 26 May 2022 07:44:07 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBE6CAF31D
+        for <linux-tegra@vger.kernel.org>; Thu, 26 May 2022 04:44:03 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id 137so1129936pgb.5
+        for <linux-tegra@vger.kernel.org>; Thu, 26 May 2022 04:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=At8FyujAWdCUO+FjxXSxheFtkPMDnLD38WsTFqXV9zc=;
-        b=Dgq+KUb9LbagAUGbz4g0hK4phFFYr+29FnN0mX4TX4b1/v4uD7L3UQUKMNMl57R56h
-         Daverzmf41qCwAAuAj/D9h6tWFPYUhKd80gTK5fBqh3Mwes4+U9vtaCWZq2xdMCR3s2g
-         wifI86NL4+O3Rr4ByA0AIeTo1grob/6IktN4l9k8wSWxFJC4HxZBjN8mS39qpcfSDWUK
-         oFZrLn2mJGf+QVSnZktWapMm4qpa8nu9h9Din01EFuezVnNmsJh2EqQxgToMrO1ABl5O
-         jJLD5JFE3gBXwBVphDzJX4ajUKra9m1MEz6sXiTgVkzfyQXevD9S9ukiLZByjYPBFDOc
-         P/pA==
+        bh=11qGt7qh8zRe6KglTXx56ADtsrAzF8XGakYWw73nu7U=;
+        b=B10RnQ+4h3rJ31p7/lyMfDOmSs4vHMBIqdYH/jhUlv+RtqyWrCKWHK7xC5dAO8JVzl
+         O+s+7KTuEoYA134U7uTjPfU4njmVrFjfbNKbdAC/mc4y2pdFVyazvM5n2LgD+c3Bp4Xd
+         8ZMXN3NUen2pWITJUoJz7YpJABh11SHblcNfaghlJmBToJLVUOSCuYpaF8vNtF8VALBF
+         cw1kbqq49Wo4AYmaeTVN/xTzM7YaHjTF5RbwUThblJBXtw6qvCeTxZ+zuC8RWvUr/caZ
+         T6ZtXwAoLeQbU9jEIN2aiWBlX6ta1z1j5OBAtwPU37YS4GpryQtAfo5vW+CnkdElTQwC
+         hIAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=At8FyujAWdCUO+FjxXSxheFtkPMDnLD38WsTFqXV9zc=;
-        b=JpsG+F+x0m/SYbAIt7MS5TX2c0RvWPLoeK2XL/Db/BgKQSz1OCoY4zN5S/0PS0v4rt
-         5gfKGl2FprP4k5/dxKXpSJ80yS2+2Nfg/pcqy+zsM++8Awfewu2LS1M7CgQKlwUPdqFk
-         sNmLEDY+0YbbyiHdkaFYub0sAIecb0EkzyvIO2dIQj2J8Ev9TxkURwBia96fIWXlAzm5
-         U2EGgRgu0ArU0KqHnbySRqIM70Ypk8DSLY6ouGqUqbLLtHN5mUUKNV87sGungVHTpT+r
-         757gYAneLbSapNwL4gcXPbyr2ox8XjQPkCK9YwThxhQIfeq7/vXS/hc3J8sBfC5A/t3l
-         /24A==
-X-Gm-Message-State: AOAM531vz41trItNHf1YosOCvXRpCLM4bbiSlwI2Y02AEleIWHZQGDin
-        UjJW6SENyVPz3QeWDtZ3xuj8oQ==
-X-Google-Smtp-Source: ABdhPJwhHEen29vpBKJyeKDZPt00TZiDzvOdz8gm8EwEypTNkA+35hLqP4GfxTeaCSrp7uJrK2g+zw==
-X-Received: by 2002:a05:6a00:1792:b0:519:80a:9598 with SMTP id s18-20020a056a00179200b00519080a9598mr5231833pfg.10.1653565429812;
-        Thu, 26 May 2022 04:43:49 -0700 (PDT)
+        bh=11qGt7qh8zRe6KglTXx56ADtsrAzF8XGakYWw73nu7U=;
+        b=RbtyK0n/3eYPc19w+RAZ9F1gie0iFKSChC/chJ1YLzMuzalX8xSYOGG+xJs1xSwoa+
+         6Tsv0OOMQQ6zvXsJp2UZk0bvoywFshTH/WFSkscvuaKnsBHaR0v60619A9PeYo2tTDZc
+         1nXmygibSEtQeXZktlZ81M5b2fGayimAlq1R6KwSa8pZGtb+/46AMgqWgpa9ewL60Bu1
+         99ipUvESb9uBlP+djl6JrH98dYWeShMcj/k30GwBEtro7gI6fO4of1J1W9gYev9vhHo7
+         mJ8kboFq/xOa2g+55csp/qQIZGBJB8xpCqUjhI3MKFP9LByr2If0NFTPUIh0OWOVJsLC
+         HmhA==
+X-Gm-Message-State: AOAM532IEuHpJyR9S/9hgHMQjqAlvF5nWdMr6EVKQ5Ez+HkodKPqBiHT
+        cN7yJ9ZFiTnIcIi2jSx+0E5qpw==
+X-Google-Smtp-Source: ABdhPJwVgHoxb/fCbZF3mP2Q0s1t8l7NyGjFM6en7hyZyhg8rEMRObWrGwGkProaqe8dmm38mDCa9Q==
+X-Received: by 2002:aa7:83d0:0:b0:50c:eb2b:8e8a with SMTP id j16-20020aa783d0000000b0050ceb2b8e8amr38168150pfn.31.1653565442488;
+        Thu, 26 May 2022 04:44:02 -0700 (PDT)
 Received: from localhost ([122.162.234.2])
-        by smtp.gmail.com with ESMTPSA id z17-20020a170902d55100b0015e8d4eb269sm1298652plf.179.2022.05.26.04.43.49
+        by smtp.gmail.com with ESMTPSA id e17-20020a170903241100b0015e8d4eb208sm1318377plo.82.2022.05.26.04.44.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 May 2022 04:43:49 -0700 (PDT)
+        Thu, 26 May 2022 04:44:02 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pm@vger.kernel.org,
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Rafael Wysocki <rjw@rjwysocki.net>,
         Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/31] cpufreq: tegra20: Migrate to dev_pm_opp_set_config()
-Date:   Thu, 26 May 2022 17:12:07 +0530
-Message-Id: <4b38ceed657bfcf87ff9ab0dd69dd1f2f5658b24.1653564321.git.viresh.kumar@linaro.org>
+Subject: [PATCH 12/31] devfreq: tegra30: Migrate to dev_pm_opp_set_config()
+Date:   Thu, 26 May 2022 17:12:11 +0530
+Message-Id: <f2951943c1b85eb1ad480da5c2ccdb407dad3296.1653564321.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 In-Reply-To: <cover.1653564321.git.viresh.kumar@linaro.org>
 References: <cover.1653564321.git.viresh.kumar@linaro.org>
@@ -78,44 +80,33 @@ Lets start using it.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/cpufreq/tegra20-cpufreq.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-index e8db3d75be25..2c73623e3abb 100644
---- a/drivers/cpufreq/tegra20-cpufreq.c
-+++ b/drivers/cpufreq/tegra20-cpufreq.c
-@@ -34,7 +34,7 @@ static bool cpu0_node_has_opp_v2_prop(void)
- 
- static void tegra20_cpufreq_put_supported_hw(void *opp_table)
- {
--	dev_pm_opp_put_supported_hw(opp_table);
-+	dev_pm_opp_clear_config(opp_table);
- }
- 
- static void tegra20_cpufreq_dt_unregister(void *cpufreq_dt)
-@@ -49,6 +49,10 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
- 	struct device *cpu_dev;
- 	u32 versions[2];
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 65ecf17a36f4..30382bdfc655 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -830,6 +830,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	unsigned int i;
+ 	long rate;
  	int err;
 +	struct dev_pm_opp_config config = {
-+		.supported_hw = versions,
-+		.supported_hw_count = ARRAY_SIZE(versions),
++		.supported_hw = &hw_version,
++		.supported_hw_count = 1,
 +	};
  
- 	if (!cpu0_node_has_opp_v2_prop()) {
- 		dev_err(&pdev->dev, "operating points not found\n");
-@@ -71,10 +75,10 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
- 	if (WARN_ON(!cpu_dev))
- 		return -ENODEV;
+ 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+ 	if (!tegra)
+@@ -874,9 +878,9 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
  
--	opp_table = dev_pm_opp_set_supported_hw(cpu_dev, versions, 2);
--	err = PTR_ERR_OR_ZERO(opp_table);
-+	opp_table = dev_pm_opp_set_config(cpu_dev, &config);
-+	err = PTR_ERR(opp_table);
+-	err = devm_pm_opp_set_supported_hw(&pdev->dev, &hw_version, 1);
++	err = devm_pm_opp_set_config(&pdev->dev, &config);
  	if (err) {
--		dev_err(&pdev->dev, "failed to set supported hw: %d\n", err);
-+		dev_err(&pdev->dev, "failed to set OPP config: %d\n", err);
+-		dev_err(&pdev->dev, "Failed to set supported HW: %d\n", err);
++		dev_err(&pdev->dev, "Failed to set OPP config: %d\n", err);
  		return err;
  	}
  
