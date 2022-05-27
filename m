@@ -2,653 +2,472 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 832F2C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 May 2022 10:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66926C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 May 2022 11:56:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348461AbiE0K1W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 May 2022 06:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58242 "EHLO
+        id S241248AbiE0L4u (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 May 2022 07:56:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350993AbiE0K1M (ORCPT
+        with ESMTP id S1352448AbiE0LzW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 May 2022 06:27:12 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2089.outbound.protection.outlook.com [40.107.223.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B9A111BB0;
-        Fri, 27 May 2022 03:26:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X5IRbUemYDp0mOHpZgZ7PnKMU4+JR4PpOspWzTgeI2KlWGbBklxd251Gn7/wt1cZIMeLaijk6GgBAuZn66c1WXmTfO7C22XVGyvIq77D6fjpv2UWfx94Pqy9X4/pi18z7OKJAkGezJtLwcTPcWsygW0zXcPERDyq40brf/olVsbos+WFN4uMwgydkkk9cMh0wStLDHlDLZtOml7WaBRUOBH//JuuZKa7ccyQKwF6E+BpMJV8BHUc8WgTringRIC1zpD4G5IT/yqCL8Qk2k5BLwsmleU2L+zHWfj+S7XhpNVy+ZVUIEVf+3xC4P7/gQavJsU8h58uIZ3W1kLqKN86kA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EZ8gkYjQTPE4SOVgYS9rPRHYZwXubcDQdkDVCiW0s7o=;
- b=UOcnTpZVcPS/EHsV0ZjPjR6KqlmdFoFlblTuewmsTGda6Mp5Z3PqEHfdr+p267b44p2e0wnPQeo5ZtxPUujPNwaswVvEYhW9UknLU7d667OlQ4VdBuWDDBskAjmw+5aR231VQa2w2cjVLs+6J72L7uXQvny5KrO6jenqjdTOdiUSHjrHgyARCz4cUa2rvUUgV8oYuONtEhvbyzJvCh0z1Loc00WTWJwmVOxLxD1YEfAYR/TD46PnZv8kJ4ngRIfiTS5dP0b6SUA3Oenn5TnMHQp4wfEmZeqFoD3x/kH0Su1puyjPWR/pHmOax1iy4FZ41uSxzNqrew36Tr5pROTqtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EZ8gkYjQTPE4SOVgYS9rPRHYZwXubcDQdkDVCiW0s7o=;
- b=fnPgIq6g7Fy3lH8+0n0oehOzfrDOfwNdIYP8r+G72jC1lD5RlS0HgEBOkPUqFOP6NOFFOBWXEnbZue49OYB+5eZ1GKlS9yAbBDyvCLnt17Xg/Ds0+uH46cD2q2vcujOERnEVDPJql226HX2AqiPmLYs9RkI7vL8LEsx15HEvxVm7napBP9PzAUojV3kTz6SthJf4azeCG4eji++G/NujIq2ugB6ujNryWoxw2cwkl/uf7x8/gKMQk7WD7sfdfgTz2aysMjudhWejq5OtbLU+vGNyDHH/hcEaUVV2Tz6HKjM17o2cGZeWY8hTru66hp7dIt8Z60IUdpuAPGgm0CycHw==
-Received: from MW3PR05CA0005.namprd05.prod.outlook.com (2603:10b6:303:2b::10)
- by CY5PR12MB6622.namprd12.prod.outlook.com (2603:10b6:930:42::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.13; Fri, 27 May
- 2022 10:26:49 +0000
-Received: from CO1NAM11FT047.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:2b:cafe::a8) by MW3PR05CA0005.outlook.office365.com
- (2603:10b6:303:2b::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.5 via Frontend
- Transport; Fri, 27 May 2022 10:26:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT047.mail.protection.outlook.com (10.13.174.132) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5293.13 via Frontend Transport; Fri, 27 May 2022 10:26:48 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 27 May
- 2022 10:26:48 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Fri, 27 May
- 2022 03:26:47 -0700
-Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server id 15.2.986.22 via Frontend Transport; Fri, 27 May
- 2022 03:26:43 -0700
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <thierry.reding@gmail.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v2 6/6] arm64: tegra: Enable OPE on various platforms
-Date:   Fri, 27 May 2022 15:56:12 +0530
-Message-ID: <1653647172-2569-7-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1653647172-2569-1-git-send-email-spujar@nvidia.com>
-References: <1653647172-2569-1-git-send-email-spujar@nvidia.com>
+        Fri, 27 May 2022 07:55:22 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D55C15A77E;
+        Fri, 27 May 2022 04:48:26 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: alyssa)
+        with ESMTPSA id 1959F1F41BCA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1653652104;
+        bh=xcx3TellMJcq6esop1B7ZmMNwnhsKyZx0+rHkC0A2xI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XYVauD5VZzwta5S8wqxvdl7xMWe3d5yMyyW789dUSVDs6NEJymjjqMrmWBdg2XkhL
+         g8u9ajFqIcSmD+wYUmTz32VixB+QZa48XFz/5YeEW4HV7fezUFsQQiObuTKrCrTzG7
+         dGjKA/9HgMcUVVjQ4ZYCLfULQY/c1kwEGmnQvt0ZnOS7Z3VLv5/IQpbz6T237PEtnS
+         OMAuRoqwIXHn+rA/wjacBNTVsu8L0vt0WOmK9OPZQEL9ggY0RyemKOrHPAoY9PNm3G
+         f8kbED4B7fCB2YoYQvi2qM+wIo11eZkUx8qDNA2zImB9YucqAF8PoZfTyBKU6IBTFo
+         8dr75xh4P13Kg==
+Date:   Fri, 27 May 2022 07:48:11 -0400
+From:   Alyssa Rosenzweig <alyssa@collabora.com>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Almeida <daniel.almeida@collabora.com>,
+        Gert Wollny <gert.wollny@collabora.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Daniel Stone <daniel@fooishbar.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring <robh@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Qiang Yu <yuq825@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian K??nig <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, kernel@collabora.com
+Subject: Re: [PATCH v6 22/22] drm/panfrost: Switch to generic memory shrinker
+Message-ID: <YpC6e9kw8r3UJG31@maud>
+References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
+ <20220526235040.678984-23-dmitry.osipenko@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ff6ca903-1d53-42eb-e96e-08da3fcb688a
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6622:EE_
-X-Microsoft-Antispam-PRVS: <CY5PR12MB6622DD96FF3D7FDC535EC7A7A7D89@CY5PR12MB6622.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UpyRllgpX+xzSzyCw/WqO3ogE/hiAz5t2iuSAJbejhus5ALrvQGF/vMoEMcTGmH9domr+UrO3sYe/B2p1yvqq/JiInDH49JLE37TyWYG1zSNV5z+/rrZWIRrYho8ka//t1Iwk+ijNShhDn/UfeAQoYiWSI7d/hH3/p1EMvQNA+wW/9FKpJsG4le9+9L0T7fkA0Rodenu08dErvqgzdwE8+v/ywp+8wai0B6clBDzPfNDDQb4XhhQMg+DspnyFOI5XcQjyhKh+1NivnyXIYvEYkf1FkkIGrIY7BOfGrizsX5xlEZ9ZW4mgC2iFPV6YW0QeBKLXRfG3afbqt0gE2bmd5yN490PARGxVq4LObfIIBkOmPxYflgoZpcKSHul2LoBBnW5DrlCL1MD8YJuewg3WvwfPMmRO9ummyqyVVwOCb46LanuH6U2ZBkddjv/SSA4mnKsrRI0bcajvv9plM2+CaS+zLL5XJ7KrLYMweic/Q7bxDTx5YOzwup6Ka9ijTYAs0dSPj//n2Xo76+l/UK2qB9P+CA9RKvZveIKxSe1qD0X4uTwq6ImoemJ4OOMmQ+jFqlBA2pWljS4xgn4tl70tZTvTSKBeRtPrW5E3fHpLUh0cjNikcIURG6lgMusO0NwXkT8SMAQZX9AkNBHESi5oL4qa0qjto8BDgz2LkEdjHhsRVaQ4CTmJxFkddcwsxHu43hLhdCOOvGZB7ydBIv27Q==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(316002)(8676002)(4326008)(8936002)(70586007)(36756003)(70206006)(82310400005)(7696005)(40460700003)(110136005)(36860700001)(54906003)(86362001)(186003)(2906002)(508600001)(356005)(30864003)(81166007)(7416002)(6666004)(26005)(5660300002)(107886003)(336012)(426003)(47076005)(2616005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2022 10:26:48.9785
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff6ca903-1d53-42eb-e96e-08da3fcb688a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT047.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6622
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220526235040.678984-23-dmitry.osipenko@collabora.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable OPE module usage on various Jetson platforms. This can be plugged
-into an audio path using ALSA mixer controls. Add audio-graph-port binding
-to use OPE device with generic audio-graph based sound card.
+Acked-by: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 43 +++++++++++
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 43 +++++++++++
- .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi | 43 +++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 84 ++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 84 ++++++++++++++++++++++
- .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts  | 43 +++++++++++
- 6 files changed, 340 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 70737a0..bd18977 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -915,6 +915,22 @@
- 						remote-endpoint = <&asrc_in7_ep>;
- 					};
- 				};
-+
-+				xbar_ope1_in_port: port@70 {
-+					reg = <0x70>;
-+
-+					xbar_ope1_in_ep: endpoint {
-+						remote-endpoint = <&ope1_cif_in_ep>;
-+					};
-+				};
-+
-+				port@71 {
-+					reg = <0x71>;
-+
-+					xbar_ope1_out_ep: endpoint {
-+						remote-endpoint = <&ope1_cif_out_ep>;
-+					};
-+				};
- 			};
- 
- 			admaif@290f000 {
-@@ -1911,6 +1927,31 @@
- 				};
- 			};
- 
-+			processing-engine@2908000 {
-+				status = "okay";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0x0>;
-+
-+						ope1_cif_in_ep: endpoint {
-+							remote-endpoint = <&xbar_ope1_in_ep>;
-+						};
-+					};
-+
-+					ope1_out_port: port@1 {
-+						reg = <0x1>;
-+
-+						ope1_cif_out_ep: endpoint {
-+							remote-endpoint = <&xbar_ope1_out_ep>;
-+						};
-+					};
-+				};
-+			};
-+
- 			amixer@290bb00 {
- 				status = "okay";
- 
-@@ -2552,6 +2593,7 @@
- 		       <&xbar_asrc_in3_port>, <&xbar_asrc_in4_port>,
- 		       <&xbar_asrc_in5_port>, <&xbar_asrc_in6_port>,
- 		       <&xbar_asrc_in7_port>,
-+		       <&xbar_ope1_in_port>,
- 		       /* HW accelerators */
- 		       <&sfc1_out_port>, <&sfc2_out_port>,
- 		       <&sfc3_out_port>, <&sfc4_out_port>,
-@@ -2571,6 +2613,7 @@
- 		       <&mixer_out5_port>,
- 		       <&asrc_out1_port>, <&asrc_out2_port>, <&asrc_out3_port>,
- 		       <&asrc_out4_port>, <&asrc_out5_port>, <&asrc_out6_port>,
-+		       <&ope1_out_port>,
- 		       /* I/O */
- 		       <&i2s1_port>, <&i2s2_port>, <&i2s3_port>, <&i2s4_port>,
- 		       <&i2s5_port>, <&i2s6_port>, <&dmic1_port>, <&dmic2_port>,
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index bce518a..fafd707 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -868,6 +868,22 @@
- 							remote-endpoint = <&asrc_in7_ep>;
- 						};
- 					};
-+
-+					xbar_ope1_in_port: port@70 {
-+						reg = <0x70>;
-+
-+						xbar_ope1_in_ep: endpoint {
-+							remote-endpoint = <&ope1_cif_in_ep>;
-+						};
-+					};
-+
-+					port@71 {
-+						reg = <0x71>;
-+
-+						xbar_ope1_out_ep: endpoint {
-+							remote-endpoint = <&ope1_cif_out_ep>;
-+						};
-+					};
- 				};
- 
- 				admaif@290f000 {
-@@ -1710,6 +1726,31 @@
- 					};
- 				};
- 
-+				processing-engine@2908000 {
-+					status = "okay";
-+
-+					ports {
-+						#address-cells = <1>;
-+						#size-cells = <0>;
-+
-+						port@0 {
-+							reg = <0x0>;
-+
-+							ope1_cif_in_ep: endpoint {
-+								remote-endpoint = <&xbar_ope1_in_ep>;
-+							};
-+						};
-+
-+						ope1_out_port: port@1 {
-+							reg = <0x1>;
-+
-+							ope1_cif_out_ep: endpoint {
-+								remote-endpoint = <&xbar_ope1_out_ep>;
-+							};
-+						};
-+					};
-+				};
-+
- 				amixer@290bb00 {
- 					status = "okay";
- 
-@@ -2273,6 +2314,7 @@
- 		       <&xbar_asrc_in3_port>, <&xbar_asrc_in4_port>,
- 		       <&xbar_asrc_in5_port>, <&xbar_asrc_in6_port>,
- 		       <&xbar_asrc_in7_port>,
-+		       <&xbar_ope1_in_port>,
- 		       /* HW accelerators */
- 		       <&sfc1_out_port>, <&sfc2_out_port>,
- 		       <&sfc3_out_port>, <&sfc4_out_port>,
-@@ -2291,6 +2333,7 @@
- 		       <&mixer_out4_port>, <&mixer_out5_port>,
- 		       <&asrc_out1_port>, <&asrc_out2_port>, <&asrc_out3_port>,
- 		       <&asrc_out4_port>, <&asrc_out5_port>, <&asrc_out6_port>,
-+		       <&ope1_out_port>,
- 		       /* BE I/O Ports */
- 		       <&i2s1_port>, <&i2s2_port>, <&i2s4_port>, <&i2s6_port>,
- 		       <&dmic3_port>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
-index 7acc32d..4cee935 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
-@@ -878,6 +878,22 @@
- 							remote-endpoint = <&asrc_in7_ep>;
- 						};
- 					};
-+
-+					xbar_ope1_in_port: port@70 {
-+						reg = <0x70>;
-+
-+						xbar_ope1_in_ep: endpoint {
-+							remote-endpoint = <&ope1_cif_in_ep>;
-+						};
-+					};
-+
-+					port@71 {
-+						reg = <0x71>;
-+
-+						xbar_ope1_out_ep: endpoint {
-+							remote-endpoint = <&ope1_cif_out_ep>;
-+						};
-+					};
- 				};
- 
- 				admaif@290f000 {
-@@ -1770,6 +1786,31 @@
- 					};
- 				};
- 
-+				processing-engine@2908000 {
-+					status = "okay";
-+
-+					ports {
-+						#address-cells = <1>;
-+						#size-cells = <0>;
-+
-+						port@0 {
-+							reg = <0x0>;
-+
-+							ope1_cif_in_ep: endpoint {
-+								remote-endpoint = <&xbar_ope1_in_ep>;
-+							};
-+						};
-+
-+						ope1_out_port: port@1 {
-+							reg = <0x1>;
-+
-+							ope1_cif_out_ep: endpoint {
-+								remote-endpoint = <&xbar_ope1_out_ep>;
-+							};
-+						};
-+					};
-+				};
-+
- 				amixer@290bb00 {
- 					status = "okay";
- 
-@@ -2323,6 +2364,7 @@
- 		       <&xbar_asrc_in3_port>, <&xbar_asrc_in4_port>,
- 		       <&xbar_asrc_in5_port>, <&xbar_asrc_in6_port>,
- 		       <&xbar_asrc_in7_port>,
-+		       <&xbar_ope1_in_port>,
- 		       /* HW accelerators */
- 		       <&sfc1_out_port>, <&sfc2_out_port>,
- 		       <&sfc3_out_port>, <&sfc4_out_port>,
-@@ -2342,6 +2384,7 @@
- 		       <&mixer_out5_port>,
- 		       <&asrc_out1_port>, <&asrc_out2_port>, <&asrc_out3_port>,
- 		       <&asrc_out4_port>, <&asrc_out5_port>, <&asrc_out6_port>,
-+		       <&ope1_out_port>,
- 		       /* BE I/O Ports */
- 		       <&i2s3_port>, <&i2s5_port>,
- 		       <&dmic1_port>, <&dmic2_port>, <&dmic4_port>,
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 328fbfe..1e26ca9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -682,6 +682,56 @@
- 				};
- 			};
- 
-+			processing-engine@702d8000 {
-+				status = "okay";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0x0>;
-+
-+						ope1_cif_in_ep: endpoint {
-+							remote-endpoint = <&xbar_ope1_in_ep>;
-+						};
-+					};
-+
-+					ope1_out_port: port@1 {
-+						reg = <0x1>;
-+
-+						ope1_cif_out_ep: endpoint {
-+							remote-endpoint = <&xbar_ope1_out_ep>;
-+						};
-+					};
-+				};
-+			};
-+
-+			processing-engine@702d8400 {
-+				status = "okay";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0x0>;
-+
-+						ope2_cif_in_ep: endpoint {
-+							remote-endpoint = <&xbar_ope2_in_ep>;
-+						};
-+					};
-+
-+					ope2_out_port: port@1 {
-+						reg = <0x1>;
-+
-+						ope2_cif_out_ep: endpoint {
-+							remote-endpoint = <&xbar_ope2_out_ep>;
-+						};
-+					};
-+				};
-+			};
-+
- 			amixer@702dbb00 {
- 				status = "okay";
- 
-@@ -1251,6 +1301,38 @@
- 						remote-endpoint = <&mixer_out5_ep>;
- 					};
- 				};
-+
-+				xbar_ope1_in_port: port@41 {
-+					reg = <0x41>;
-+
-+					xbar_ope1_in_ep: endpoint {
-+						remote-endpoint = <&ope1_cif_in_ep>;
-+					};
-+				};
-+
-+				port@42 {
-+					reg = <0x42>;
-+
-+					xbar_ope1_out_ep: endpoint {
-+						remote-endpoint = <&ope1_cif_out_ep>;
-+					};
-+				};
-+
-+				xbar_ope2_in_port: port@43 {
-+					reg = <0x43>;
-+
-+					xbar_ope2_in_ep: endpoint {
-+						remote-endpoint = <&ope2_cif_in_ep>;
-+					};
-+				};
-+
-+				port@44 {
-+					reg = <0x44>;
-+
-+					xbar_ope2_out_ep: endpoint {
-+						remote-endpoint = <&ope2_cif_out_ep>;
-+					};
-+				};
- 			};
- 		};
- 	};
-@@ -1281,6 +1363,7 @@
- 		       <&xbar_mixer_in5_port>, <&xbar_mixer_in6_port>,
- 		       <&xbar_mixer_in7_port>, <&xbar_mixer_in8_port>,
- 		       <&xbar_mixer_in9_port>, <&xbar_mixer_in10_port>,
-+		       <&xbar_ope1_in_port>, <&xbar_ope2_in_port>,
- 		       /* HW accelerators */
- 		       <&sfc1_out_port>, <&sfc2_out_port>,
- 		       <&sfc3_out_port>, <&sfc4_out_port>,
-@@ -1293,6 +1376,7 @@
- 		       <&mixer_out1_port>, <&mixer_out2_port>,
- 		       <&mixer_out3_port>, <&mixer_out4_port>,
- 		       <&mixer_out5_port>,
-+		       <&ope1_out_port>, <&ope2_out_port>,
- 		       /* I/O DAP Ports */
- 		       <&i2s1_port>, <&i2s2_port>, <&i2s3_port>, <&i2s4_port>,
- 		       <&i2s5_port>, <&dmic1_port>, <&dmic2_port>, <&dmic3_port>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 746bd52..749b44c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -1074,6 +1074,56 @@
- 				};
- 			};
- 
-+			processing-engine@702d8000 {
-+				status = "okay";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0x0>;
-+
-+						ope1_cif_in_ep: endpoint {
-+							remote-endpoint = <&xbar_ope1_in_ep>;
-+						};
-+					};
-+
-+					ope1_out_port: port@1 {
-+						reg = <0x1>;
-+
-+						ope1_cif_out_ep: endpoint {
-+							remote-endpoint = <&xbar_ope1_out_ep>;
-+						};
-+					};
-+				};
-+			};
-+
-+			processing-engine@702d8400 {
-+				status = "okay";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0x0>;
-+
-+						ope2_cif_in_ep: endpoint {
-+							remote-endpoint = <&xbar_ope2_in_ep>;
-+						};
-+					};
-+
-+					ope2_out_port: port@1 {
-+						reg = <0x1>;
-+
-+						ope2_cif_out_ep: endpoint {
-+							remote-endpoint = <&xbar_ope2_out_ep>;
-+						};
-+					};
-+				};
-+			};
-+
- 			amixer@702dbb00 {
- 				status = "okay";
- 
-@@ -1611,6 +1661,38 @@
- 						remote-endpoint = <&mixer_out5_ep>;
- 					};
- 				};
-+
-+				xbar_ope1_in_port: port@41 {
-+					reg = <0x41>;
-+
-+					xbar_ope1_in_ep: endpoint {
-+						remote-endpoint = <&ope1_cif_in_ep>;
-+					};
-+				};
-+
-+				port@42 {
-+					reg = <0x42>;
-+
-+					xbar_ope1_out_ep: endpoint {
-+						remote-endpoint = <&ope1_cif_out_ep>;
-+					};
-+				};
-+
-+				xbar_ope2_in_port: port@43 {
-+					reg = <0x43>;
-+
-+					xbar_ope2_in_ep: endpoint {
-+						remote-endpoint = <&ope2_cif_in_ep>;
-+					};
-+				};
-+
-+				port@44 {
-+					reg = <0x44>;
-+
-+					xbar_ope2_out_ep: endpoint {
-+						remote-endpoint = <&ope2_cif_out_ep>;
-+					};
-+				};
- 			};
- 		};
- 	};
-@@ -1884,6 +1966,7 @@
- 		       <&xbar_mixer_in5_port>, <&xbar_mixer_in6_port>,
- 		       <&xbar_mixer_in7_port>, <&xbar_mixer_in8_port>,
- 		       <&xbar_mixer_in9_port>, <&xbar_mixer_in10_port>,
-+		       <&xbar_ope1_in_port>, <&xbar_ope2_in_port>,
- 		       /* HW accelerators */
- 		       <&sfc1_out_port>, <&sfc2_out_port>,
- 		       <&sfc3_out_port>, <&sfc4_out_port>,
-@@ -1896,6 +1979,7 @@
- 		       <&mixer_out1_port>, <&mixer_out2_port>,
- 		       <&mixer_out3_port>, <&mixer_out4_port>,
- 		       <&mixer_out5_port>,
-+		       <&ope1_out_port>, <&ope2_out_port>,
- 		       /* I/O DAP Ports */
- 		       <&i2s3_port>, <&i2s4_port>,
- 		       <&dmic1_port>, <&dmic2_port>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-index eaf1994..3f6c399 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-@@ -867,6 +867,22 @@
- 							remote-endpoint = <&asrc_in7_ep>;
- 						};
- 					};
-+
-+					xbar_ope1_in_port: port@70 {
-+						reg = <0x70>;
-+
-+						xbar_ope1_in_ep: endpoint {
-+							remote-endpoint = <&ope1_cif_in_ep>;
-+						};
-+					};
-+
-+					port@71 {
-+						reg = <0x71>;
-+
-+						xbar_ope1_out_ep: endpoint {
-+							remote-endpoint = <&ope1_cif_out_ep>;
-+						};
-+					};
- 				};
- 
- 				i2s@2901000 {
-@@ -1490,6 +1506,31 @@
- 					};
- 				};
- 
-+				processing-engine@2908000 {
-+					status = "okay";
-+
-+					ports {
-+						#address-cells = <1>;
-+						#size-cells = <0>;
-+
-+						port@0 {
-+							reg = <0x0>;
-+
-+							ope1_cif_in_ep: endpoint {
-+								remote-endpoint = <&xbar_ope1_in_ep>;
-+							};
-+						};
-+
-+						ope1_out_port: port@1 {
-+							reg = <0x1>;
-+
-+							ope1_cif_out_ep: endpoint {
-+								remote-endpoint = <&xbar_ope1_out_ep>;
-+							};
-+						};
-+					};
-+				};
-+
- 				mvc@290a000 {
- 					status = "okay";
- 
-@@ -2044,6 +2085,7 @@
- 		       <&xbar_asrc_in3_port>, <&xbar_asrc_in4_port>,
- 		       <&xbar_asrc_in5_port>, <&xbar_asrc_in6_port>,
- 		       <&xbar_asrc_in7_port>,
-+		       <&xbar_ope1_in_port>,
- 		       /* HW accelerators */
- 		       <&sfc1_out_port>, <&sfc2_out_port>,
- 		       <&sfc3_out_port>, <&sfc4_out_port>,
-@@ -2062,6 +2104,7 @@
- 		       <&mix_out4_port>, <&mix_out5_port>,
- 		       <&asrc_out1_port>, <&asrc_out2_port>, <&asrc_out3_port>,
- 		       <&asrc_out4_port>, <&asrc_out5_port>, <&asrc_out6_port>,
-+		       <&ope1_out_port>,
- 		       /* BE I/O Ports */
- 		       <&i2s1_port>, <&i2s2_port>, <&i2s4_port>, <&i2s6_port>,
- 		       <&dmic3_port>;
--- 
-2.7.4
-
+On Fri, May 27, 2022 at 02:50:40AM +0300, Dmitry Osipenko wrote:
+> Replace Panfrost's memory shrinker with a generic drm-shmem memory
+> shrinker.
+> 
+> Tested-by: Steven Price <steven.price@arm.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/Makefile             |   1 -
+>  drivers/gpu/drm/panfrost/panfrost_device.h    |   4 -
+>  drivers/gpu/drm/panfrost/panfrost_drv.c       |  19 +--
+>  drivers/gpu/drm/panfrost/panfrost_gem.c       |  33 +++--
+>  drivers/gpu/drm/panfrost/panfrost_gem.h       |   9 --
+>  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  | 129 ------------------
+>  drivers/gpu/drm/panfrost/panfrost_job.c       |  18 ++-
+>  7 files changed, 42 insertions(+), 171 deletions(-)
+>  delete mode 100644 drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> 
+> diff --git a/drivers/gpu/drm/panfrost/Makefile b/drivers/gpu/drm/panfrost/Makefile
+> index b71935862417..ecf0864cb515 100644
+> --- a/drivers/gpu/drm/panfrost/Makefile
+> +++ b/drivers/gpu/drm/panfrost/Makefile
+> @@ -5,7 +5,6 @@ panfrost-y := \
+>  	panfrost_device.o \
+>  	panfrost_devfreq.o \
+>  	panfrost_gem.o \
+> -	panfrost_gem_shrinker.o \
+>  	panfrost_gpu.o \
+>  	panfrost_job.o \
+>  	panfrost_mmu.o \
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
+> index 8b25278f34c8..fe04b21fc044 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+> @@ -115,10 +115,6 @@ struct panfrost_device {
+>  		atomic_t pending;
+>  	} reset;
+>  
+> -	struct mutex shrinker_lock;
+> -	struct list_head shrinker_list;
+> -	struct shrinker shrinker;
+> -
+>  	struct panfrost_devfreq pfdevfreq;
+>  };
+>  
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index 859e240161d1..b77c99ba2475 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -160,7 +160,6 @@ panfrost_lookup_bos(struct drm_device *dev,
+>  			break;
+>  		}
+>  
+> -		atomic_inc(&bo->gpu_usecount);
+>  		job->mappings[i] = mapping;
+>  	}
+>  
+> @@ -392,7 +391,6 @@ static int panfrost_ioctl_madvise(struct drm_device *dev, void *data,
+>  {
+>  	struct panfrost_file_priv *priv = file_priv->driver_priv;
+>  	struct drm_panfrost_madvise *args = data;
+> -	struct panfrost_device *pfdev = dev->dev_private;
+>  	struct drm_gem_object *gem_obj;
+>  	struct panfrost_gem_object *bo;
+>  	int ret = 0;
+> @@ -409,7 +407,6 @@ static int panfrost_ioctl_madvise(struct drm_device *dev, void *data,
+>  	if (ret)
+>  		goto out_put_object;
+>  
+> -	mutex_lock(&pfdev->shrinker_lock);
+>  	mutex_lock(&bo->mappings.lock);
+>  	if (args->madv == PANFROST_MADV_DONTNEED) {
+>  		struct panfrost_gem_mapping *first;
+> @@ -435,17 +432,8 @@ static int panfrost_ioctl_madvise(struct drm_device *dev, void *data,
+>  
+>  	args->retained = drm_gem_shmem_madvise(&bo->base, args->madv);
+>  
+> -	if (args->retained) {
+> -		if (args->madv == PANFROST_MADV_DONTNEED)
+> -			list_move_tail(&bo->base.madv_list,
+> -				       &pfdev->shrinker_list);
+> -		else if (args->madv == PANFROST_MADV_WILLNEED)
+> -			list_del_init(&bo->base.madv_list);
+> -	}
+> -
+>  out_unlock_mappings:
+>  	mutex_unlock(&bo->mappings.lock);
+> -	mutex_unlock(&pfdev->shrinker_lock);
+>  	dma_resv_unlock(bo->base.base.resv);
+>  out_put_object:
+>  	drm_gem_object_put(gem_obj);
+> @@ -577,9 +565,6 @@ static int panfrost_probe(struct platform_device *pdev)
+>  	ddev->dev_private = pfdev;
+>  	pfdev->ddev = ddev;
+>  
+> -	mutex_init(&pfdev->shrinker_lock);
+> -	INIT_LIST_HEAD(&pfdev->shrinker_list);
+> -
+>  	err = panfrost_device_init(pfdev);
+>  	if (err) {
+>  		if (err != -EPROBE_DEFER)
+> @@ -601,7 +586,7 @@ static int panfrost_probe(struct platform_device *pdev)
+>  	if (err < 0)
+>  		goto err_out1;
+>  
+> -	panfrost_gem_shrinker_init(ddev);
+> +	drm_gem_shmem_shrinker_register(ddev);
+>  
+>  	return 0;
+>  
+> @@ -619,8 +604,8 @@ static int panfrost_remove(struct platform_device *pdev)
+>  	struct panfrost_device *pfdev = platform_get_drvdata(pdev);
+>  	struct drm_device *ddev = pfdev->ddev;
+>  
+> +	drm_gem_shmem_shrinker_unregister(ddev);
+>  	drm_dev_unregister(ddev);
+> -	panfrost_gem_shrinker_cleanup(ddev);
+>  
+>  	pm_runtime_get_sync(pfdev->dev);
+>  	pm_runtime_disable(pfdev->dev);
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
+> index 293e799e2fe8..f1436405e3a0 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
+> @@ -19,16 +19,6 @@ static void panfrost_gem_free_object(struct drm_gem_object *obj)
+>  	struct panfrost_gem_object *bo = to_panfrost_bo(obj);
+>  	struct panfrost_device *pfdev = obj->dev->dev_private;
+>  
+> -	/*
+> -	 * Make sure the BO is no longer inserted in the shrinker list before
+> -	 * taking care of the destruction itself. If we don't do that we have a
+> -	 * race condition between this function and what's done in
+> -	 * panfrost_gem_shrinker_scan().
+> -	 */
+> -	mutex_lock(&pfdev->shrinker_lock);
+> -	list_del_init(&bo->base.madv_list);
+> -	mutex_unlock(&pfdev->shrinker_lock);
+> -
+>  	/*
+>  	 * If we still have mappings attached to the BO, there's a problem in
+>  	 * our refcounting.
+> @@ -209,6 +199,25 @@ static const struct drm_gem_object_funcs panfrost_gem_funcs = {
+>  	.vm_ops = &drm_gem_shmem_vm_ops,
+>  };
+>  
+> +static int panfrost_shmem_evict(struct drm_gem_shmem_object *shmem)
+> +{
+> +	struct panfrost_gem_object *bo = to_panfrost_bo(&shmem->base);
+> +
+> +	if (!drm_gem_shmem_is_purgeable(shmem))
+> +		return -EOPNOTSUPP;
+> +
+> +	if (!mutex_trylock(&bo->mappings.lock))
+> +		return -EBUSY;
+> +
+> +	panfrost_gem_teardown_mappings_locked(bo);
+> +
+> +	drm_gem_shmem_purge(shmem);
+> +
+> +	mutex_unlock(&bo->mappings.lock);
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * panfrost_gem_create_object - Implementation of driver->gem_create_object.
+>   * @dev: DRM device
+> @@ -230,6 +239,7 @@ struct drm_gem_object *panfrost_gem_create_object(struct drm_device *dev, size_t
+>  	mutex_init(&obj->mappings.lock);
+>  	obj->base.base.funcs = &panfrost_gem_funcs;
+>  	obj->base.map_wc = !pfdev->coherent;
+> +	obj->base.evict = panfrost_shmem_evict;
+>  
+>  	return &obj->base.base;
+>  }
+> @@ -266,6 +276,9 @@ panfrost_gem_create_with_handle(struct drm_file *file_priv,
+>  	if (ret)
+>  		return ERR_PTR(ret);
+>  
+> +	if (!bo->is_heap)
+> +		drm_gem_shmem_set_purgeable(shmem);
+> +
+>  	return bo;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h b/drivers/gpu/drm/panfrost/panfrost_gem.h
+> index 8088d5fd8480..09da064f1c07 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
+> @@ -30,12 +30,6 @@ struct panfrost_gem_object {
+>  		struct mutex lock;
+>  	} mappings;
+>  
+> -	/*
+> -	 * Count the number of jobs referencing this BO so we don't let the
+> -	 * shrinker reclaim this object prematurely.
+> -	 */
+> -	atomic_t gpu_usecount;
+> -
+>  	bool noexec		:1;
+>  	bool is_heap		:1;
+>  };
+> @@ -84,7 +78,4 @@ panfrost_gem_mapping_get(struct panfrost_gem_object *bo,
+>  void panfrost_gem_mapping_put(struct panfrost_gem_mapping *mapping);
+>  void panfrost_gem_teardown_mappings_locked(struct panfrost_gem_object *bo);
+>  
+> -void panfrost_gem_shrinker_init(struct drm_device *dev);
+> -void panfrost_gem_shrinker_cleanup(struct drm_device *dev);
+> -
+>  #endif /* __PANFROST_GEM_H__ */
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> deleted file mode 100644
+> index 7cc32556f908..000000000000
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> +++ /dev/null
+> @@ -1,129 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -/* Copyright (C) 2019 Arm Ltd.
+> - *
+> - * Based on msm_gem_freedreno.c:
+> - * Copyright (C) 2016 Red Hat
+> - * Author: Rob Clark <robdclark@gmail.com>
+> - */
+> -
+> -#include <linux/list.h>
+> -
+> -#include <drm/drm_device.h>
+> -#include <drm/drm_gem_shmem_helper.h>
+> -
+> -#include "panfrost_device.h"
+> -#include "panfrost_gem.h"
+> -#include "panfrost_mmu.h"
+> -
+> -static bool panfrost_gem_shmem_is_purgeable(struct drm_gem_shmem_object *shmem)
+> -{
+> -	return (shmem->madv > 0) &&
+> -		!shmem->pages_pin_count && shmem->sgt &&
+> -		!shmem->base.dma_buf && !shmem->base.import_attach;
+> -}
+> -
+> -static unsigned long
+> -panfrost_gem_shrinker_count(struct shrinker *shrinker, struct shrink_control *sc)
+> -{
+> -	struct panfrost_device *pfdev =
+> -		container_of(shrinker, struct panfrost_device, shrinker);
+> -	struct drm_gem_shmem_object *shmem;
+> -	unsigned long count = 0;
+> -
+> -	if (!mutex_trylock(&pfdev->shrinker_lock))
+> -		return 0;
+> -
+> -	list_for_each_entry(shmem, &pfdev->shrinker_list, madv_list) {
+> -		if (panfrost_gem_shmem_is_purgeable(shmem))
+> -			count += shmem->base.size >> PAGE_SHIFT;
+> -	}
+> -
+> -	mutex_unlock(&pfdev->shrinker_lock);
+> -
+> -	return count;
+> -}
+> -
+> -static bool panfrost_gem_purge(struct drm_gem_object *obj)
+> -{
+> -	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+> -	struct panfrost_gem_object *bo = to_panfrost_bo(obj);
+> -	bool ret = false;
+> -
+> -	if (atomic_read(&bo->gpu_usecount))
+> -		return false;
+> -
+> -	if (!mutex_trylock(&bo->mappings.lock))
+> -		return false;
+> -
+> -	if (!dma_resv_trylock(shmem->base.resv))
+> -		goto unlock_mappings;
+> -
+> -	panfrost_gem_teardown_mappings_locked(bo);
+> -	drm_gem_shmem_purge(&bo->base);
+> -	ret = true;
+> -
+> -	dma_resv_unlock(shmem->base.resv);
+> -
+> -unlock_mappings:
+> -	mutex_unlock(&bo->mappings.lock);
+> -	return ret;
+> -}
+> -
+> -static unsigned long
+> -panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
+> -{
+> -	struct panfrost_device *pfdev =
+> -		container_of(shrinker, struct panfrost_device, shrinker);
+> -	struct drm_gem_shmem_object *shmem, *tmp;
+> -	unsigned long freed = 0;
+> -
+> -	if (!mutex_trylock(&pfdev->shrinker_lock))
+> -		return SHRINK_STOP;
+> -
+> -	list_for_each_entry_safe(shmem, tmp, &pfdev->shrinker_list, madv_list) {
+> -		if (freed >= sc->nr_to_scan)
+> -			break;
+> -		if (drm_gem_shmem_is_purgeable(shmem) &&
+> -		    panfrost_gem_purge(&shmem->base)) {
+> -			freed += shmem->base.size >> PAGE_SHIFT;
+> -			list_del_init(&shmem->madv_list);
+> -		}
+> -	}
+> -
+> -	mutex_unlock(&pfdev->shrinker_lock);
+> -
+> -	if (freed > 0)
+> -		pr_info_ratelimited("Purging %lu bytes\n", freed << PAGE_SHIFT);
+> -
+> -	return freed;
+> -}
+> -
+> -/**
+> - * panfrost_gem_shrinker_init - Initialize panfrost shrinker
+> - * @dev: DRM device
+> - *
+> - * This function registers and sets up the panfrost shrinker.
+> - */
+> -void panfrost_gem_shrinker_init(struct drm_device *dev)
+> -{
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> -	pfdev->shrinker.count_objects = panfrost_gem_shrinker_count;
+> -	pfdev->shrinker.scan_objects = panfrost_gem_shrinker_scan;
+> -	pfdev->shrinker.seeks = DEFAULT_SEEKS;
+> -	WARN_ON(register_shrinker(&pfdev->shrinker));
+> -}
+> -
+> -/**
+> - * panfrost_gem_shrinker_cleanup - Clean up panfrost shrinker
+> - * @dev: DRM device
+> - *
+> - * This function unregisters the panfrost shrinker.
+> - */
+> -void panfrost_gem_shrinker_cleanup(struct drm_device *dev)
+> -{
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> -
+> -	if (pfdev->shrinker.nr_deferred) {
+> -		unregister_shrinker(&pfdev->shrinker);
+> -	}
+> -}
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index 7c4208476fbd..5c327a79455f 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -271,6 +271,19 @@ static void panfrost_attach_object_fences(struct drm_gem_object **bos,
+>  		dma_resv_add_fence(bos[i]->resv, fence, DMA_RESV_USAGE_WRITE);
+>  }
+>  
+> +static int panfrost_objects_prepare(struct drm_gem_object **bos, int bo_count)
+> +{
+> +	struct panfrost_gem_object *bo;
+> +	int ret = 0;
+> +
+> +	while (!ret && bo_count--) {
+> +		bo = to_panfrost_bo(bos[bo_count]);
+> +		ret = bo->base.madv ? -ENOMEM : 0;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  int panfrost_job_push(struct panfrost_job *job)
+>  {
+>  	struct panfrost_device *pfdev = job->pfdev;
+> @@ -282,6 +295,10 @@ int panfrost_job_push(struct panfrost_job *job)
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = panfrost_objects_prepare(job->bos, job->bo_count);
+> +	if (ret)
+> +		goto unlock;
+> +
+>  	mutex_lock(&pfdev->sched_lock);
+>  	drm_sched_job_arm(&job->base);
+>  
+> @@ -323,7 +340,6 @@ static void panfrost_job_cleanup(struct kref *ref)
+>  			if (!job->mappings[i])
+>  				break;
+>  
+> -			atomic_dec(&job->mappings[i]->obj->gpu_usecount);
+>  			panfrost_gem_mapping_put(job->mappings[i]);
+>  		}
+>  		kvfree(job->mappings);
+> -- 
+> 2.35.3
+> 
