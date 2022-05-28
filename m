@@ -2,139 +2,327 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB3FC433F5
-	for <linux-tegra@archiver.kernel.org>; Sat, 28 May 2022 09:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3497C433EF
+	for <linux-tegra@archiver.kernel.org>; Sat, 28 May 2022 14:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231132AbiE1JSM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 28 May 2022 05:18:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37840 "EHLO
+        id S236926AbiE1O7i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 28 May 2022 10:59:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232397AbiE1JSK (ORCPT
+        with ESMTP id S233875AbiE1O7h (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 28 May 2022 05:18:10 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CA41C116;
-        Sat, 28 May 2022 02:18:09 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id u7so7091783ljd.11;
-        Sat, 28 May 2022 02:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=HVRfiub+OH+3yERsymAq7YJAzta8XBR77uv0v0VV0CI=;
-        b=emBIciAFdQnHcKQSohgcuqMQM4xd/Tz5hPJWkxKaoqpZiunJ9s/OTs4WGMG95NSW4L
-         IgZczc+9GJXxJcHaJPXn5wGWSwvNNr7NK0iPiKDna7ZgvHSU3H+3cqKDq++bLMIID/pg
-         WGi2IGkojhYGQUTThKK+rMJIPdLBixIvgKrHxkmswTwOqRnEJD7L5yQqGEaEOrvK5lk+
-         qkpbzv53N91WJdtTRf68St7YDzO4K7K4CZ379sj7xnW+IFrVVRAmkaJKxBPwkYKBzJkg
-         l3Y5YpoNbKupcj3Ag1FqEF0wqmBD5ctEDUT8y+jgldf7YfuRmpnjc1XtWB+r4HJU6Val
-         yWqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=HVRfiub+OH+3yERsymAq7YJAzta8XBR77uv0v0VV0CI=;
-        b=gq/P7L/M2/eq8XmL8bVn07Yty8pWJv17dwwSlwcEIsYQS3AlnF2X57BWwMHt/ExPUN
-         ypDpzkwn++frvGSnAvg4ehPcVY5s5jGK0mqfthoGfCzi2hWllFwi6LOm5rzekML15IFh
-         VhAx/rHf4ITMx7nmfQzOwNMcrIDBZFYdOSJsv0f2lIJVwdjaE+0S/xfPrkRt6ZAIlOBK
-         vOhutONlH4Axi5vH1S2F+BnRs1HAwAsYErHD5zLNbxDCNIWV6iAgpk/jQuff3eNspLnD
-         sC/SNxPUX70Y1WB/3s1FfBMWa9tb8Tlob9sL/Zqh2C5EJHc65ybz51JiCBDU1c/dgaPZ
-         3v6g==
-X-Gm-Message-State: AOAM531HFL0iViMtYtka1hF8ULYzbgt1F/Hn9RUNc8VhdcIuLzS+5QoM
-        9XifyOak39NE8NUdWHHR1CA=
-X-Google-Smtp-Source: ABdhPJxNkzG4eousUKAj15zHH6g3YqSnU9H8B29bmyYBmgxkfeUg1JCXHoHxE95njq7TczFOLpZl7Q==
-X-Received: by 2002:a2e:a5ca:0:b0:253:c604:647c with SMTP id n10-20020a2ea5ca000000b00253c604647cmr27577549ljp.403.1653729487689;
-        Sat, 28 May 2022 02:18:07 -0700 (PDT)
-Received: from [10.0.0.127] (91-159-150-230.elisa-laajakaista.fi. [91.159.150.230])
-        by smtp.gmail.com with ESMTPSA id v9-20020a2ea449000000b0024f3d1daee2sm1402828ljn.106.2022.05.28.02.18.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 May 2022 02:18:07 -0700 (PDT)
-Message-ID: <454f31e4-12ce-2bee-8e95-d75854b34380@gmail.com>
-Date:   Sat, 28 May 2022 12:19:20 +0300
+        Sat, 28 May 2022 10:59:37 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B617AA471
+        for <linux-tegra@vger.kernel.org>; Sat, 28 May 2022 07:59:34 -0700 (PDT)
+Received: from pop-os.home ([90.11.191.102])
+        by smtp.orange.fr with ESMTPA
+        id uxucnzi3ok3ICuxucniOfF; Sat, 28 May 2022 16:59:32 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 28 May 2022 16:59:32 +0200
+X-ME-IP: 90.11.191.102
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     tglx@linutronix.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Johan Hovold <johan@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] USB: Follow-up to SPDX identifiers addition - remove now useless comments
+Date:   Sat, 28 May 2022 16:59:17 +0200
+Message-Id: <0266c8467148794219b69b7bf8a8dd968a89ad24.1653749875.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 52/56] ASoC: ti: Rename set_fmt_new back to set_fmt
-Content-Language: en-US
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org
-Cc:     lgirdwood@gmail.com, kuninori.morimoto.gx@renesas.com,
-        nicolas.ferre@microchip.com, nsaenz@kernel.org,
-        shawnguo@kernel.org, linux-imx@nxp.com, cezary.rojewski@intel.com,
-        pierre-louis.bossart@linux.intel.com, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, daniel@zonque.org,
-        srinivas.kandagatla@linaro.org, linux-rockchip@lists.infradead.org,
-        krzk@kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        jarkko.nikula@bitmer.com, heiko@sntech.de, jbrunet@baylibre.com,
-        kernel@pengutronix.de, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com
-References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
- <20220519154318.2153729-53-ckeepax@opensource.cirrus.com>
-From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20220519154318.2153729-53-ckeepax@opensource.cirrus.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+All these files have been updated in the commit given in the Fixes: tag
+below.
 
+When the SPDX-License-Identifier: has been added, the corresponding text at
+the beginning of the files has not been deleted.
+All these texts are about GPL-2.0, with different variation in the wording.
 
-On 19/05/2022 18:43, Charles Keepax wrote:
-> Now the core has been migrated across to the new direct clock
-> specification we can move the drivers back to the normal set_fmt
-> callback.
+Remove these now useless lines to save some LoC.
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+Fixes: 5fd54ace4721 ("USB: add SPDX identifiers to all remaining files in drivers/usb/")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ include/linux/usb/audio-v2.h      |  3 ---
+ include/linux/usb/audio.h         |  3 ---
+ include/linux/usb/cdc-wdm.h       |  4 ----
+ include/linux/usb/cdc.h           |  4 ----
+ include/linux/usb/gadget.h        |  2 --
+ include/linux/usb/input.h         |  4 ----
+ include/linux/usb/isp1301.h       | 10 ----------
+ include/linux/usb/m66592.h        | 14 --------------
+ include/linux/usb/of.h            |  2 --
+ include/linux/usb/r8a66597.h      | 14 --------------
+ include/linux/usb/serial.h        |  5 -----
+ include/linux/usb/storage.h       |  2 --
+ include/linux/usb/tegra_usb_phy.h | 10 ----------
+ include/linux/usb/ulpi.h          |  4 ----
+ include/linux/usb/xhci-dbgp.h     |  4 ----
+ 15 files changed, 85 deletions(-)
 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->  sound/soc/ti/davinci-i2s.c   | 2 +-
->  sound/soc/ti/davinci-mcasp.c | 2 +-
->  sound/soc/ti/omap-mcbsp.c    | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/ti/davinci-i2s.c b/sound/soc/ti/davinci-i2s.c
-> index c7368d5296688..fe572b720b094 100644
-> --- a/sound/soc/ti/davinci-i2s.c
-> +++ b/sound/soc/ti/davinci-i2s.c
-> @@ -606,7 +606,7 @@ static const struct snd_soc_dai_ops davinci_i2s_dai_ops = {
->  	.prepare	= davinci_i2s_prepare,
->  	.trigger	= davinci_i2s_trigger,
->  	.hw_params	= davinci_i2s_hw_params,
-> -	.set_fmt_new	= davinci_i2s_set_dai_fmt,
-> +	.set_fmt	= davinci_i2s_set_dai_fmt,
->  	.set_clkdiv	= davinci_i2s_dai_set_clkdiv,
->  
->  };
-> diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-> index 961bac6963652..e2aab4729f3ab 100644
-> --- a/sound/soc/ti/davinci-mcasp.c
-> +++ b/sound/soc/ti/davinci-mcasp.c
-> @@ -1620,7 +1620,7 @@ static const struct snd_soc_dai_ops davinci_mcasp_dai_ops = {
->  	.trigger	= davinci_mcasp_trigger,
->  	.delay		= davinci_mcasp_delay,
->  	.hw_params	= davinci_mcasp_hw_params,
-> -	.set_fmt_new	= davinci_mcasp_set_dai_fmt,
-> +	.set_fmt	= davinci_mcasp_set_dai_fmt,
->  	.set_clkdiv	= davinci_mcasp_set_clkdiv,
->  	.set_sysclk	= davinci_mcasp_set_sysclk,
->  	.set_tdm_slot	= davinci_mcasp_set_tdm_slot,
-> diff --git a/sound/soc/ti/omap-mcbsp.c b/sound/soc/ti/omap-mcbsp.c
-> index 5bfb56d4ff844..58d8e200a7b97 100644
-> --- a/sound/soc/ti/omap-mcbsp.c
-> +++ b/sound/soc/ti/omap-mcbsp.c
-> @@ -1271,7 +1271,7 @@ static const struct snd_soc_dai_ops mcbsp_dai_ops = {
->  	.trigger	= omap_mcbsp_dai_trigger,
->  	.delay		= omap_mcbsp_dai_delay,
->  	.hw_params	= omap_mcbsp_dai_hw_params,
-> -	.set_fmt_new	= omap_mcbsp_dai_set_dai_fmt,
-> +	.set_fmt	= omap_mcbsp_dai_set_dai_fmt,
->  	.set_clkdiv	= omap_mcbsp_dai_set_clkdiv,
->  	.set_sysclk	= omap_mcbsp_dai_set_dai_sysclk,
->  };
-
+diff --git a/include/linux/usb/audio-v2.h b/include/linux/usb/audio-v2.h
+index 8fc2abd7aecb..ca796dc1a984 100644
+--- a/include/linux/usb/audio-v2.h
++++ b/include/linux/usb/audio-v2.h
+@@ -2,9 +2,6 @@
+ /*
+  * Copyright (c) 2010 Daniel Mack <daniel@caiaq.de>
+  *
+- * This software is distributed under the terms of the GNU General Public
+- * License ("GPL") version 2, as published by the Free Software Foundation.
+- *
+  * This file holds USB constants and structures defined
+  * by the USB Device Class Definition for Audio Devices in version 2.0.
+  * Comments below reference relevant sections of the documents contained
+diff --git a/include/linux/usb/audio.h b/include/linux/usb/audio.h
+index 170acd500ea1..0747b24a1a7c 100644
+--- a/include/linux/usb/audio.h
++++ b/include/linux/usb/audio.h
+@@ -6,9 +6,6 @@
+  * Developed for Thumtronics by Grey Innovation
+  * Ben Williamson <ben.williamson@greyinnovation.com>
+  *
+- * This software is distributed under the terms of the GNU General Public
+- * License ("GPL") version 2, as published by the Free Software Foundation.
+- *
+  * This file holds USB constants and structures defined
+  * by the USB Device Class Definition for Audio Devices.
+  * Comments below reference relevant sections of that document:
+diff --git a/include/linux/usb/cdc-wdm.h b/include/linux/usb/cdc-wdm.h
+index 9f5a51f79ba5..85417f00a89a 100644
+--- a/include/linux/usb/cdc-wdm.h
++++ b/include/linux/usb/cdc-wdm.h
+@@ -3,10 +3,6 @@
+  * USB CDC Device Management subdriver
+  *
+  * Copyright (c) 2012  Bjørn Mork <bjorn@mork.no>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * version 2 as published by the Free Software Foundation.
+  */
+ 
+ #ifndef __LINUX_USB_CDC_WDM_H
+diff --git a/include/linux/usb/cdc.h b/include/linux/usb/cdc.h
+index 35d784cf32a4..0af0db51bc89 100644
+--- a/include/linux/usb/cdc.h
++++ b/include/linux/usb/cdc.h
+@@ -3,10 +3,6 @@
+  * USB CDC common helpers
+  *
+  * Copyright (c) 2015 Oliver Neukum <oneukum@suse.com>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * version 2 as published by the Free Software Foundation.
+  */
+ #ifndef __LINUX_USB_CDC_H
+ #define __LINUX_USB_CDC_H
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index 3ad58b7a0824..dc3092cea99e 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -10,8 +10,6 @@
+  *
+  * (C) Copyright 2002-2004 by David Brownell
+  * All Rights Reserved.
+- *
+- * This software is licensed under the GNU GPL version 2.
+  */
+ 
+ #ifndef __LINUX_USB_GADGET_H
+diff --git a/include/linux/usb/input.h b/include/linux/usb/input.h
+index 974befa72ac0..5e759b2cf551 100644
+--- a/include/linux/usb/input.h
++++ b/include/linux/usb/input.h
+@@ -1,10 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2005 Dmitry Torokhov
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+  */
+ 
+ #ifndef __LINUX_USB_INPUT_H
+diff --git a/include/linux/usb/isp1301.h b/include/linux/usb/isp1301.h
+index dedb3b2473e8..fa986b926a12 100644
+--- a/include/linux/usb/isp1301.h
++++ b/include/linux/usb/isp1301.h
+@@ -3,16 +3,6 @@
+  * NXP ISP1301 USB transceiver driver
+  *
+  * Copyright (C) 2012 Roland Stigge <stigge@antcom.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; version 2 of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #ifndef __LINUX_USB_ISP1301_H
+diff --git a/include/linux/usb/m66592.h b/include/linux/usb/m66592.h
+index 2dfe68183495..5f04de2b47fd 100644
+--- a/include/linux/usb/m66592.h
++++ b/include/linux/usb/m66592.h
+@@ -3,20 +3,6 @@
+  * M66592 driver platform data
+  *
+  * Copyright (C) 2009  Renesas Solutions Corp.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; version 2 of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- *
+  */
+ 
+ #ifndef __LINUX_USB_M66592_H
+diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
+index dba55ccb9b53..98487fd7ab11 100644
+--- a/include/linux/usb/of.h
++++ b/include/linux/usb/of.h
+@@ -1,8 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * OF helpers for usb devices.
+- *
+- * This file is released under the GPLv2
+  */
+ 
+ #ifndef __LINUX_USB_OF_H
+diff --git a/include/linux/usb/r8a66597.h b/include/linux/usb/r8a66597.h
+index c0753d026bbf..f0fa7ddadbaa 100644
+--- a/include/linux/usb/r8a66597.h
++++ b/include/linux/usb/r8a66597.h
+@@ -5,20 +5,6 @@
+  * Copyright (C) 2009  Renesas Solutions Corp.
+  *
+  * Author : Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; version 2 of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+- *
+  */
+ 
+ #ifndef __LINUX_USB_R8A66597_H
+diff --git a/include/linux/usb/serial.h b/include/linux/usb/serial.h
+index 16ea5a4cc586..8ea319f89e1f 100644
+--- a/include/linux/usb/serial.h
++++ b/include/linux/usb/serial.h
+@@ -4,11 +4,6 @@
+  *
+  *	Copyright (C) 1999 - 2012
+  *	    Greg Kroah-Hartman (greg@kroah.com)
+- *
+- *	This program is free software; you can redistribute it and/or modify
+- *	it under the terms of the GNU General Public License as published by
+- *	the Free Software Foundation; version 2 of the License.
+- *
+  */
+ 
+ #ifndef __LINUX_USB_SERIAL_H
+diff --git a/include/linux/usb/storage.h b/include/linux/usb/storage.h
+index e0240f864548..2827ce72e502 100644
+--- a/include/linux/usb/storage.h
++++ b/include/linux/usb/storage.h
+@@ -9,8 +9,6 @@
+  *
+  * This file contains definitions taken from the
+  * USB Mass Storage Class Specification Overview
+- *
+- * Distributed under the terms of the GNU GPL, version two.
+  */
+ 
+ /* Storage subclass codes */
+diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
+index d3e65eb9e16f..46e73584b6e6 100644
+--- a/include/linux/usb/tegra_usb_phy.h
++++ b/include/linux/usb/tegra_usb_phy.h
+@@ -1,16 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2010 Google, Inc.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #ifndef __TEGRA_USB_PHY_H
+diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
+index 36c2982780ad..5050f502c1ed 100644
+--- a/include/linux/usb/ulpi.h
++++ b/include/linux/usb/ulpi.h
+@@ -3,10 +3,6 @@
+  * ulpi.h -- ULPI defines and function prorotypes
+  *
+  * Copyright (C) 2010 Nokia Corporation
+- *
+- * This software is distributed under the terms of the GNU General
+- * Public License ("GPL") as published by the Free Software Foundation,
+- * version 2 of that License.
+  */
+ 
+ #ifndef __LINUX_USB_ULPI_H
+diff --git a/include/linux/usb/xhci-dbgp.h b/include/linux/usb/xhci-dbgp.h
+index 01fe768873f9..171fd74b1cfc 100644
+--- a/include/linux/usb/xhci-dbgp.h
++++ b/include/linux/usb/xhci-dbgp.h
+@@ -5,10 +5,6 @@
+  * Copyright (C) 2016 Intel Corporation
+  *
+  * Author: Lu Baolu <baolu.lu@linux.intel.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #ifndef __LINUX_XHCI_DBGP_H
 -- 
-Péter
+2.34.1
+
