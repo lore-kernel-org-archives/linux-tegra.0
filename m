@@ -2,327 +2,323 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3497C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 28 May 2022 14:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8835C433FE
+	for <linux-tegra@archiver.kernel.org>; Sun, 29 May 2022 14:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236926AbiE1O7i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 28 May 2022 10:59:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44118 "EHLO
+        id S230350AbiE2OJK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 29 May 2022 10:09:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233875AbiE1O7h (ORCPT
+        with ESMTP id S230342AbiE2OJK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 28 May 2022 10:59:37 -0400
-Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B617AA471
-        for <linux-tegra@vger.kernel.org>; Sat, 28 May 2022 07:59:34 -0700 (PDT)
-Received: from pop-os.home ([90.11.191.102])
-        by smtp.orange.fr with ESMTPA
-        id uxucnzi3ok3ICuxucniOfF; Sat, 28 May 2022 16:59:32 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 28 May 2022 16:59:32 +0200
-X-ME-IP: 90.11.191.102
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     tglx@linutronix.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] USB: Follow-up to SPDX identifiers addition - remove now useless comments
-Date:   Sat, 28 May 2022 16:59:17 +0200
-Message-Id: <0266c8467148794219b69b7bf8a8dd968a89ad24.1653749875.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 29 May 2022 10:09:10 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DEBC3D1FC
+        for <linux-tegra@vger.kernel.org>; Sun, 29 May 2022 07:09:07 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id w27so3887782edl.7
+        for <linux-tegra@vger.kernel.org>; Sun, 29 May 2022 07:09:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ZaM+BiSV1BrvEzxzlRp9jfUPykxbTVypzmZTbnaGAPs=;
+        b=wvaRWn4/+BJiy0S1h9v9tqqqfvBnNb63j77H7vTwyu76KnQvrCaDChidIgKmwU+Mpd
+         sytm01VKyDCCOOHyLi3woFvAeP13G+XMnJXaGuhk7oYpsrxfZCYnxBCzwQ6qBcxyTCkj
+         WjLFhAUBk2RJuXaA5BmEWDr7+NoNDnMsHfL3EAaVg9JH7+V+NiCV/quKhMg6/drIf6FY
+         XHfMXY+KT+GwyswUqlYwkNmPdeYospSZikWx9+H/vpvkZL1GQVVoAZCcBr1g8JukVTe6
+         ugPsuUQMnFCiQb04HYEeSuqMLqWFXFcd0lfGPCttomaT0A6LZrwFJuKeicFwCusx5lDy
+         a94g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ZaM+BiSV1BrvEzxzlRp9jfUPykxbTVypzmZTbnaGAPs=;
+        b=WwyDkRbGBOiDeuvokYR4lGNLR2HU1/ceVFARtkbzPam/c5ZOuPPcBbEuYuHXhwbxNq
+         9p6n/G1ItKmR4M+zd4WaZGcjajZL6IfCQ10SMqwJneyGFRatDoVsyydkdBnHgvGdrtej
+         B3XfwUkD0lRu4b2gf4WvF89P0FI2eNtxDTrO2W9ExsMRef4d6rZ8tZXv8mUzeEAZLyE8
+         r7Tq76jqcpAA0OvcVNneof061c/oVX4T1GApvaZVKoIwhKTLAYomQeOZMPomj5+Mt7Y2
+         DXc45CFOcRPvO7p+8IF/jf0xS3bsiPHnrh7GheVnhsfBChFQC+Pk1G7m/J6AiUf2czCf
+         EQ1w==
+X-Gm-Message-State: AOAM531RTaFniOKcpvHwIMg8FjkoMJnALJgXmniT6xBrP1vDeIc222o8
+        CwsXwrkkvDfBq32Ds3GUL4oslA==
+X-Google-Smtp-Source: ABdhPJyg7TEdtrfo9pOsocT6Pzs1x2LEyPxKwNZrRr2zj2dLepyQzatLUc0TjBU/mgwGAASpiw6pXw==
+X-Received: by 2002:a05:6402:1713:b0:42d:cb5e:d799 with SMTP id y19-20020a056402171300b0042dcb5ed799mr3684983edu.34.1653833346210;
+        Sun, 29 May 2022 07:09:06 -0700 (PDT)
+Received: from [192.168.0.177] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id i2-20020a50d742000000b0042617ba63casm5028584edj.84.2022.05.29.07.09.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 May 2022 07:09:05 -0700 (PDT)
+Message-ID: <149fbcfe-b62c-63a9-6c38-100d493788c3@linaro.org>
+Date:   Sun, 29 May 2022 16:09:04 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v2 1/6] ASoC: tegra: Add binding doc for OPE module
+Content-Language: en-US
+To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        thierry.reding@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        perex@perex.cz, tiwai@suse.com
+Cc:     jonathanh@nvidia.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1653647172-2569-1-git-send-email-spujar@nvidia.com>
+ <1653647172-2569-2-git-send-email-spujar@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1653647172-2569-2-git-send-email-spujar@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All these files have been updated in the commit given in the Fixes: tag
-below.
+On 27/05/2022 12:26, Sameer Pujar wrote:
+> This patch adds YAML schema for DT bindings of Output Processing
+> Engine (OPE) module. It consists of Parametric Equalizer (PEQ)
+> and Multi Band Dynamic Range Compressor (MBDRC) sub blocks and
+> binding doc for these blocks are added as well. The OPE will be
+> registered as an ASoC component and can be plugged into an audio
+> path as per need via ALSA mixer controls. The DT bindings are
+> applicable on Tegra210 and later SoCs where OPE module is present.
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>  .../bindings/sound/nvidia,tegra210-ahub.yaml       |  4 +
+>  .../bindings/sound/nvidia,tegra210-mbdrc.yaml      | 47 ++++++++++++
+>  .../bindings/sound/nvidia,tegra210-ope.yaml        | 87 ++++++++++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-peq.yaml        | 48 ++++++++++++
+>  4 files changed, 186 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> index 6df6f85..47b6e71 100644
+> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> @@ -110,6 +110,10 @@ patternProperties:
+>      type: object
+>      $ref: nvidia,tegra186-asrc.yaml#
+>  
+> +  '^processing-engine@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-ope.yaml#
+> +
+>  required:
+>    - compatible
+>    - reg
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
+> new file mode 100644
+> index 0000000..0d55328
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-mbdrc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 MBDRC Device Tree Bindings
 
-When the SPDX-License-Identifier: has been added, the corresponding text at
-the beginning of the files has not been deleted.
-All these texts are about GPL-2.0, with different variation in the wording.
+Previous comments - s/Device Tree Bindings//
+ -  still applies. Please do not ignore it.
 
-Remove these now useless lines to save some LoC.
+> +
+> +description:
+> +  The Multi Band Dynamic Range Compressor (MBDRC) is part of Output
+> +  Processing Engine (OPE) which interfaces with Audio Hub (AHUB) via
+> +  Audio Client Interface (ACIF). MBDRC can be used as a traditional
+> +  single full band or a dual band or a multi band dynamic processor.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Mohan Kumar <mkumard@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-mbdrc
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra234-mbdrc
+> +              - nvidia,tegra194-mbdrc
+> +              - nvidia,tegra186-mbdrc
+> +          - const: nvidia,tegra210-mbdrc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    dynamic-range-compressor@702d8200 {
+> +        compatible = "nvidia,tegra210-mbdrc";
+> +        reg = <0x702d8200 0x200>;
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
+> new file mode 100644
+> index 0000000..7cbc756
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-ope.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 OPE Device Tree Bindings
 
-Fixes: 5fd54ace4721 ("USB: add SPDX identifiers to all remaining files in drivers/usb/")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- include/linux/usb/audio-v2.h      |  3 ---
- include/linux/usb/audio.h         |  3 ---
- include/linux/usb/cdc-wdm.h       |  4 ----
- include/linux/usb/cdc.h           |  4 ----
- include/linux/usb/gadget.h        |  2 --
- include/linux/usb/input.h         |  4 ----
- include/linux/usb/isp1301.h       | 10 ----------
- include/linux/usb/m66592.h        | 14 --------------
- include/linux/usb/of.h            |  2 --
- include/linux/usb/r8a66597.h      | 14 --------------
- include/linux/usb/serial.h        |  5 -----
- include/linux/usb/storage.h       |  2 --
- include/linux/usb/tegra_usb_phy.h | 10 ----------
- include/linux/usb/ulpi.h          |  4 ----
- include/linux/usb/xhci-dbgp.h     |  4 ----
- 15 files changed, 85 deletions(-)
+Ditto.
 
-diff --git a/include/linux/usb/audio-v2.h b/include/linux/usb/audio-v2.h
-index 8fc2abd7aecb..ca796dc1a984 100644
---- a/include/linux/usb/audio-v2.h
-+++ b/include/linux/usb/audio-v2.h
-@@ -2,9 +2,6 @@
- /*
-  * Copyright (c) 2010 Daniel Mack <daniel@caiaq.de>
-  *
-- * This software is distributed under the terms of the GNU General Public
-- * License ("GPL") version 2, as published by the Free Software Foundation.
-- *
-  * This file holds USB constants and structures defined
-  * by the USB Device Class Definition for Audio Devices in version 2.0.
-  * Comments below reference relevant sections of the documents contained
-diff --git a/include/linux/usb/audio.h b/include/linux/usb/audio.h
-index 170acd500ea1..0747b24a1a7c 100644
---- a/include/linux/usb/audio.h
-+++ b/include/linux/usb/audio.h
-@@ -6,9 +6,6 @@
-  * Developed for Thumtronics by Grey Innovation
-  * Ben Williamson <ben.williamson@greyinnovation.com>
-  *
-- * This software is distributed under the terms of the GNU General Public
-- * License ("GPL") version 2, as published by the Free Software Foundation.
-- *
-  * This file holds USB constants and structures defined
-  * by the USB Device Class Definition for Audio Devices.
-  * Comments below reference relevant sections of that document:
-diff --git a/include/linux/usb/cdc-wdm.h b/include/linux/usb/cdc-wdm.h
-index 9f5a51f79ba5..85417f00a89a 100644
---- a/include/linux/usb/cdc-wdm.h
-+++ b/include/linux/usb/cdc-wdm.h
-@@ -3,10 +3,6 @@
-  * USB CDC Device Management subdriver
-  *
-  * Copyright (c) 2012  Bjørn Mork <bjorn@mork.no>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-  */
- 
- #ifndef __LINUX_USB_CDC_WDM_H
-diff --git a/include/linux/usb/cdc.h b/include/linux/usb/cdc.h
-index 35d784cf32a4..0af0db51bc89 100644
---- a/include/linux/usb/cdc.h
-+++ b/include/linux/usb/cdc.h
-@@ -3,10 +3,6 @@
-  * USB CDC common helpers
-  *
-  * Copyright (c) 2015 Oliver Neukum <oneukum@suse.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-  */
- #ifndef __LINUX_USB_CDC_H
- #define __LINUX_USB_CDC_H
-diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-index 3ad58b7a0824..dc3092cea99e 100644
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -10,8 +10,6 @@
-  *
-  * (C) Copyright 2002-2004 by David Brownell
-  * All Rights Reserved.
-- *
-- * This software is licensed under the GNU GPL version 2.
-  */
- 
- #ifndef __LINUX_USB_GADGET_H
-diff --git a/include/linux/usb/input.h b/include/linux/usb/input.h
-index 974befa72ac0..5e759b2cf551 100644
---- a/include/linux/usb/input.h
-+++ b/include/linux/usb/input.h
-@@ -1,10 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2005 Dmitry Torokhov
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-  */
- 
- #ifndef __LINUX_USB_INPUT_H
-diff --git a/include/linux/usb/isp1301.h b/include/linux/usb/isp1301.h
-index dedb3b2473e8..fa986b926a12 100644
---- a/include/linux/usb/isp1301.h
-+++ b/include/linux/usb/isp1301.h
-@@ -3,16 +3,6 @@
-  * NXP ISP1301 USB transceiver driver
-  *
-  * Copyright (C) 2012 Roland Stigge <stigge@antcom.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-  */
- 
- #ifndef __LINUX_USB_ISP1301_H
-diff --git a/include/linux/usb/m66592.h b/include/linux/usb/m66592.h
-index 2dfe68183495..5f04de2b47fd 100644
---- a/include/linux/usb/m66592.h
-+++ b/include/linux/usb/m66592.h
-@@ -3,20 +3,6 @@
-  * M66592 driver platform data
-  *
-  * Copyright (C) 2009  Renesas Solutions Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-- *
-  */
- 
- #ifndef __LINUX_USB_M66592_H
-diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
-index dba55ccb9b53..98487fd7ab11 100644
---- a/include/linux/usb/of.h
-+++ b/include/linux/usb/of.h
-@@ -1,8 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * OF helpers for usb devices.
-- *
-- * This file is released under the GPLv2
-  */
- 
- #ifndef __LINUX_USB_OF_H
-diff --git a/include/linux/usb/r8a66597.h b/include/linux/usb/r8a66597.h
-index c0753d026bbf..f0fa7ddadbaa 100644
---- a/include/linux/usb/r8a66597.h
-+++ b/include/linux/usb/r8a66597.h
-@@ -5,20 +5,6 @@
-  * Copyright (C) 2009  Renesas Solutions Corp.
-  *
-  * Author : Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-- *
-  */
- 
- #ifndef __LINUX_USB_R8A66597_H
-diff --git a/include/linux/usb/serial.h b/include/linux/usb/serial.h
-index 16ea5a4cc586..8ea319f89e1f 100644
---- a/include/linux/usb/serial.h
-+++ b/include/linux/usb/serial.h
-@@ -4,11 +4,6 @@
-  *
-  *	Copyright (C) 1999 - 2012
-  *	    Greg Kroah-Hartman (greg@kroah.com)
-- *
-- *	This program is free software; you can redistribute it and/or modify
-- *	it under the terms of the GNU General Public License as published by
-- *	the Free Software Foundation; version 2 of the License.
-- *
-  */
- 
- #ifndef __LINUX_USB_SERIAL_H
-diff --git a/include/linux/usb/storage.h b/include/linux/usb/storage.h
-index e0240f864548..2827ce72e502 100644
---- a/include/linux/usb/storage.h
-+++ b/include/linux/usb/storage.h
-@@ -9,8 +9,6 @@
-  *
-  * This file contains definitions taken from the
-  * USB Mass Storage Class Specification Overview
-- *
-- * Distributed under the terms of the GNU GPL, version two.
-  */
- 
- /* Storage subclass codes */
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index d3e65eb9e16f..46e73584b6e6 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -1,16 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2010 Google, Inc.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-  */
- 
- #ifndef __TEGRA_USB_PHY_H
-diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
-index 36c2982780ad..5050f502c1ed 100644
---- a/include/linux/usb/ulpi.h
-+++ b/include/linux/usb/ulpi.h
-@@ -3,10 +3,6 @@
-  * ulpi.h -- ULPI defines and function prorotypes
-  *
-  * Copyright (C) 2010 Nokia Corporation
-- *
-- * This software is distributed under the terms of the GNU General
-- * Public License ("GPL") as published by the Free Software Foundation,
-- * version 2 of that License.
-  */
- 
- #ifndef __LINUX_USB_ULPI_H
-diff --git a/include/linux/usb/xhci-dbgp.h b/include/linux/usb/xhci-dbgp.h
-index 01fe768873f9..171fd74b1cfc 100644
---- a/include/linux/usb/xhci-dbgp.h
-+++ b/include/linux/usb/xhci-dbgp.h
-@@ -5,10 +5,6 @@
-  * Copyright (C) 2016 Intel Corporation
-  *
-  * Author: Lu Baolu <baolu.lu@linux.intel.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #ifndef __LINUX_XHCI_DBGP_H
--- 
-2.34.1
+> +
+> +description:
+> +  The Output Processing Engine (OPE) is one of the AHUB client. It has
+> +  PEQ (Parametric Equalizer) and MBDRC (Multi Band Dynamic Range Compressor)
+> +  sub blocks for data processing.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Mohan Kumar <mkumard@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +allOf:
+> +  - $ref: name-prefix.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-ope
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra234-ope
+> +              - nvidia,tegra194-ope
+> +              - nvidia,tegra186-ope
+> +          - const: nvidia,tegra210-ope
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges: true
+> +
+> +  sound-name-prefix:
+> +    pattern: "^OPE[1-9]$"
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    properties:
+> +      port@0:
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +        description:
+> +          OPE ACIF (Audio Client Interface) input port. This is connected
+> +          to corresponding ACIF output port on AHUB (Audio Hub).
+> +
+> +      port@1:
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +        description:
+> +          OPE ACIF output port. This is connected to corresponding ACIF
+> +          input port on AHUB.
+> +
+> +patternProperties:
+> +  '^equalizer@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-peq.yaml#
+> +
+> +  '^dynamic-range-compressor@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-mbdrc.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    processing-engine@702d8000 {
+> +        compatible = "nvidia,tegra210-ope";
+> +        reg = <0x702d8000 0x100>;
+> +        sound-name-prefix = "OPE1";
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
+> new file mode 100644
+> index 0000000..fea4c63
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
+> @@ -0,0 +1,48 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-peq.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 PEQ Device Tree Bindings
 
+Ditto
+
+> +
+> +description:
+> +  The Parametric Equalizer (PEQ) is a cascade of biquad filters with
+> +  each filter tuned based on certain parameters. It can be used to
+> +  equalize the irregularities in the speaker frequency response.
+> +  PEQ sits inside Output Processing Engine (OPE) which interfaces
+> +  with Audio Hub (AHUB) via Audio Client Interface (ACIF).
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Mohan Kumar <mkumard@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-peq
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra234-peq
+> +              - nvidia,tegra194-peq
+> +              - nvidia,tegra186-peq
+> +          - const: nvidia,tegra210-peq
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    equalizer@702d8100 {
+> +        compatible = "nvidia,tegra210-peq";
+> +        reg = <0x702d8100 0x100>;
+> +    };
+> +
+> +...
+
+
+Best regards,
+Krzysztof
