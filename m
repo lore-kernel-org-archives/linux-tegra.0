@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A555DC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 May 2022 13:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD681C43219
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 May 2022 13:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237416AbiE3Ngo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 May 2022 09:36:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43666 "EHLO
+        id S238557AbiE3Nwa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 May 2022 09:52:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237421AbiE3Nep (ORCPT
+        with ESMTP id S238903AbiE3Nu4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 May 2022 09:34:45 -0400
+        Mon, 30 May 2022 09:50:56 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539CB92D23;
-        Mon, 30 May 2022 06:28:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7188EB0D00;
+        Mon, 30 May 2022 06:35:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C9D460EEE;
-        Mon, 30 May 2022 13:28:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3657C36AEA;
-        Mon, 30 May 2022 13:28:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DF85660E9B;
+        Mon, 30 May 2022 13:35:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5301C341C8;
+        Mon, 30 May 2022 13:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653917295;
-        bh=2aro4hsaizbmehGAHGgs444aSUzly18lMFz3EQEQqnA=;
+        s=k20201202; t=1653917710;
+        bh=ZN6hC2vdwKmBY0Swi3pq5qptEuPjZ0EGRv0BuujKnUE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TJvbwf6ZhSFVpeipBBkBmFGdl1oDAdYJ3nJCKnXPNb1g0jDMTde7+m/aE8QURIKBg
-         bg0UN2IFgttjZS3bTMHHi9QE7R8WSy3xcRz8Pn79EQjUVV5wkB3IVz3+lnnazN9AqN
-         ezshLbGdKnYnVZkH7MkQ2V1kusvW8fgeFteepK3Qr8nzMkuzbSfysSe5tBo+qwmtzS
-         c0K4arulhA+KCWrGpqxCMidF4pV6gUeaLe2huzXLS5clADuIseWZBu6njDeEYbN/p8
-         6W7F/BZ1mwVmt3fTP2KxqeKu+YYdqy76aY6YZB+RGJB3ttnME6X380zL2SpdxV5Tza
-         zd/sROxlr4apw==
+        b=E9aVZQB4dvAOxcJ2JcWxyk4nVcvQaMaKBRxGHRK01R39X50dV3MkdBjwfcgFviqgu
+         VHY9Tn5HJivF8DOnuMQMikSRzMjEXP1h7TG5vQyNUPyXiQ0NeMfV9CpwKgPmHuRihL
+         JYXnDhgt5IJ2CDwA57RNeWmjr18w69ArO08O2kT6rIws1ON3j+QVa5gjJo+tnd/W7H
+         0GfzTOogpc8PR8V4r58O0tfVPcvAB5ML5y83qX2e1E4Ab8xicnotfoVwpZiCel62qr
+         /7yeCYpPhI0XZ3RafRDK48xhZzVJYLIdrHepqGeZ6wYW5rsDtGtiR7ptpw1VQRSnMh
+         sX/HxxJBXypJA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Thierry Reding <treding@nvidia.com>,
@@ -40,12 +40,12 @@ Cc:     Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.18 087/159] drm/tegra: gem: Do not try to dereference ERR_PTR()
-Date:   Mon, 30 May 2022 09:23:12 -0400
-Message-Id: <20220530132425.1929512-87-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.17 072/135] drm/tegra: gem: Do not try to dereference ERR_PTR()
+Date:   Mon, 30 May 2022 09:30:30 -0400
+Message-Id: <20220530133133.1931716-72-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220530132425.1929512-1-sashal@kernel.org>
-References: <20220530132425.1929512-1-sashal@kernel.org>
+In-Reply-To: <20220530133133.1931716-1-sashal@kernel.org>
+References: <20220530133133.1931716-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -74,7 +74,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 0063403ab5e1..7c7dd84e6db8 100644
+index fce0e52973c2..9810b3bdd342 100644
 --- a/drivers/gpu/drm/tegra/gem.c
 +++ b/drivers/gpu/drm/tegra/gem.c
 @@ -88,6 +88,7 @@ static struct host1x_bo_mapping *tegra_bo_pin(struct device *dev, struct host1x_
