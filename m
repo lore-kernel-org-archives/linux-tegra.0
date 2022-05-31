@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71ACBC4167D
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 10:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B052C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 10:01:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245448AbiEaKAg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 May 2022 06:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44030 "EHLO
+        id S245539AbiEaKBI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 May 2022 06:01:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245429AbiEaKAV (ORCPT
+        with ESMTP id S245450AbiEaKA2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 May 2022 06:00:21 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7247385EF2;
-        Tue, 31 May 2022 03:00:20 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id t5so16807078edc.2;
-        Tue, 31 May 2022 03:00:20 -0700 (PDT)
+        Tue, 31 May 2022 06:00:28 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FCC87A2D;
+        Tue, 31 May 2022 03:00:23 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id f9so25641882ejc.0;
+        Tue, 31 May 2022 03:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=z7tQVrAvhtwsiyqp5g4EfVxGXeEppLEfrV1ntrEYWJE=;
-        b=Xh9vdv7Md1Jc0nNaz/QEZs5wsG3AfJ2/jRFF8rTAcPZ6QG7f0rxiqBLYOf13+3PUe5
-         DS/CL5kAFDHB7/bv8EYLoIYIYA3Cx4+ppq4UyjhqSGPcSsG+p4nVI7VGhcdno4MC08p8
-         XVfyNLF1mWExyyS8ZBwIS6tDDHVn9frsIcma0mUCQvKpUlAle8k82hD4G+7Sd4WdVmlz
-         3Cwt+4X8TIMztGZf/ISlFleQ6/rglSf1VgibZ0Ewo75ycww+oCt0RuyECJkUJZ9D3opK
-         u/Qh77+csPwSloqfrGgfn1EfcZpOm7AfMN65GulQjeG/U1vHukfs/GzY6+Kbrf4gD0d7
-         2ncA==
+        bh=0fF+SmUCgmGBHMWIupVoHZia80K1ptfL7PQV1qLHe5E=;
+        b=pGad9b/BwcaioFOjylZCfm5P6oSeZF3Qa2xsSM2t1mLTeOulJ6Fk7o/kQXSFGfU7lJ
+         fp+6f/aeJYjHr4ThwoNMeFWvRYk8Xi3t4V6MuHjD4pXyJ85cRklWkQW6ame4vh7fx+mt
+         eaMJgziirhMF0TIu3swNi0t8QcgG/D+TrXhYN/6zpOjgadE1pDN936EPEKG/3T0VKKBY
+         eGDD/HmuCJdKW697mwOSCL+AIzK1PpEsB7W8mV3UO/gZVPIZSxHIDtHAeMFs64m0dwsi
+         kXbIgj/gmD2mW2jfFnmLmUvUEs8rVjrgUuJi5qMnGsABI9in6Ar4JrgyhpFWFSv1YPAZ
+         psrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=z7tQVrAvhtwsiyqp5g4EfVxGXeEppLEfrV1ntrEYWJE=;
-        b=nsPS0IKYPq3Uh/fLmXmLklePJOipSWlroquZopF1i87MZ7pIinyRcQ4zLvRxiNhvsN
-         ERm0jvdaZ9bYfyF7LJIYOlRR/p6RIk7NXmUCf834XDCjxHrbrq5ITkY905Ml/EGMjWIT
-         UGNbdg3LVvwCKK8mlzLsZ8WvNclXXA+YQr+7tiuvhPjKukviAjiriKiM2Mo7MV1KseuQ
-         2JPb5XTg7O1go/fSJJJG6HlwCFr6g/W+Ykb1DeFo/T/pN5aAECVEctBX4IuFGDInHzUO
-         7w0yaPJZ+V5+Rf9vyUmXSsyhHf9Bgu4Jgcwmk5C+t4z+5DWHxS3RBi9kc21m1k6BvBBT
-         0s3w==
-X-Gm-Message-State: AOAM531V5pwzy57xNuN3EJLgQC7WTuGs3Ha6L1S3iFGmDcT1gRDpAucH
-        5BOB9SpqltgNW2o5j6Rr17ae0j5Bma78Iw==
-X-Google-Smtp-Source: ABdhPJwU+/41hzABOSPHIeWy2MYGjljgCs1L+eRQW55IH1wpboag3ARspMl2JoO5SvKoTgZp0xZVQw==
-X-Received: by 2002:aa7:cdd2:0:b0:42b:aeb2:bc99 with SMTP id h18-20020aa7cdd2000000b0042baeb2bc99mr34074044edw.382.1653991218991;
-        Tue, 31 May 2022 03:00:18 -0700 (PDT)
+        bh=0fF+SmUCgmGBHMWIupVoHZia80K1ptfL7PQV1qLHe5E=;
+        b=nTwOKydqhN5bacDl8hSTSRxO1mPqYUXLZErC6ER51tBidOrNfuYj0CuLzySkYKkB3z
+         NngECq4ySp5yIsE4TDxsRKv56V97PUusccFdQkDfVOSPEQFeknvcEXdfefogiqormguX
+         PlQC90/mbZaIcBDWTA95bBA5diMz79Dll7VaLUXE9kXILsiSKZ9zu/pttLypxfVmkAee
+         HYVoJI0T6Hb27oD1Si4iKIpuLb9QbRMVKbtfDD1YplzrVDSFmy/nf+YaDIBrKZcII/1u
+         2zksRBSFqJWjRXIYQxZ1XgOPHfrTkqTuOXcEv0htf5DKGJw7n1T1X2ayUVaKKD4CJPS3
+         XqcQ==
+X-Gm-Message-State: AOAM532cop1F6/v4GdW1dgs3Q7QKNp7SJV0/ymS6rXW6/p5Peq8RztW2
+        56+sL7d6/8zDSXZBh3MznR/eDrgR1CxM2g==
+X-Google-Smtp-Source: ABdhPJzxN/Ir8FJD89b6qow8Ub7cZ5+SzEkXV/zrFCVZFTH37oV1HNV4o+OUoqVfB6+SbpZEADHJkg==
+X-Received: by 2002:a17:907:9482:b0:6f5:171d:f7f5 with SMTP id dm2-20020a170907948200b006f5171df7f5mr53043726ejc.68.1653991221803;
+        Tue, 31 May 2022 03:00:21 -0700 (PDT)
 Received: from able.fritz.box (p5b0ea02f.dip0.t-ipconnect.de. [91.14.160.47])
-        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.17
+        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 03:00:18 -0700 (PDT)
+        Tue, 31 May 2022 03:00:21 -0700 (PDT)
 From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
@@ -59,9 +59,9 @@ Cc:     christian.koenig@amd.com, alexander.deucher@amd.com,
         daniel@ffwll.ch, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, hughd@google.com,
         andrey.grodzovsky@amd.com
-Subject: [PATCH 06/13] drm/gma500: use drm_oom_badness
-Date:   Tue, 31 May 2022 12:00:00 +0200
-Message-Id: <20220531100007.174649-7-christian.koenig@amd.com>
+Subject: [PATCH 08/13] drm/radeon: use drm_oom_badness
+Date:   Tue, 31 May 2022 12:00:02 +0200
+Message-Id: <20220531100007.174649-9-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220531100007.174649-1-christian.koenig@amd.com>
 References: <20220531100007.174649-1-christian.koenig@amd.com>
@@ -76,21 +76,21 @@ This allows the OOM killer to make a better decision which process to reap.
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/gpu/drm/gma500/psb_drv.c | 1 +
+ drivers/gpu/drm/radeon/radeon_drv.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
-index 1d8744f3e702..d5ab4e081b53 100644
---- a/drivers/gpu/drm/gma500/psb_drv.c
-+++ b/drivers/gpu/drm/gma500/psb_drv.c
-@@ -513,6 +513,7 @@ static const struct file_operations psb_gem_fops = {
- 	.mmap = drm_gem_mmap,
- 	.poll = drm_poll,
- 	.read = drm_read,
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 956c72b5aa33..7e7308c096d8 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -550,6 +550,7 @@ static const struct file_operations radeon_driver_kms_fops = {
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = radeon_kms_compat_ioctl,
+ #endif
 +	.oom_badness = drm_oom_badness,
  };
  
- static const struct drm_driver driver = {
+ static const struct drm_ioctl_desc radeon_ioctls_kms[] = {
 -- 
 2.25.1
 
