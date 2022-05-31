@@ -2,95 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8609CC43217
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 10:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0681C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 13:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245590AbiEaKB5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 May 2022 06:01:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44178 "EHLO
+        id S1344741AbiEaNdo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 May 2022 09:33:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245461AbiEaKA3 (ORCPT
+        with ESMTP id S229939AbiEaNdn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 May 2022 06:00:29 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 632C0880C7;
-        Tue, 31 May 2022 03:00:27 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id er5so16782195edb.12;
-        Tue, 31 May 2022 03:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JruBtp3H6AJykO9OR/eL1GiHC7q7udWmPGM/sruwocU=;
-        b=gblxCfTt5pOw7A9YHZEJV+r2VG2ChUPoOQENqtkp2cD9u6jNXJgjxv2GFFFMsM/j1v
-         Q2bAWtuYoHVtOWqHe7hjKmrV3TsMB+pNFCxXxg98Hxoy145vOkyrtRBbQ1b4zZpA+A1+
-         m3vrIpLanU3qXFTpv1WHgWerwCM08gLxzMyuLrfLY2BLdTpWmtpZZCIA8VnGVxQPJSGw
-         xqv5Ii2BDXG3LKm7eR73P/dCNDyy1at1PARvuyUQJ4QUTBg+DKyDnVUw6Iop+kGwRAzR
-         hJvsA8R/+LW94eBMAMh3wccqPVIx8QKXEc5XbXbso3UNdF0HbknOCrBEyS28rXYGBpJ4
-         wTKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JruBtp3H6AJykO9OR/eL1GiHC7q7udWmPGM/sruwocU=;
-        b=FU0CaP1yyNOiUsROoOGnE/GK2s/hqKZMFHlJhUAgsLPCB3qEYItB6R7D1Kjm6v/T+E
-         zum1YSidMEMbK6cZNH3ty8eorbktpCQgiKuW/OVLXoOMiInins7NoI7NkrYleizQ698c
-         hh5WHfAKgRvF9UoXkNb13D2Hr+9ZHmBj1iNWjIE7oy0VNYWNq5j0hbk3JjtV5iReUeLy
-         Ixfw14MhPg7Jy16I5LVvCseQ66sN69+upFxOXsfu/yNpIV0EJ0Rlo9A8labBjO9etHJL
-         thNlelDrwvI8R8RgXk7FyMFOCpFl8abmH9UpNKMSkr1lxCfbETxsaOGIP9Vfmcjecciz
-         aG1w==
-X-Gm-Message-State: AOAM532yIh4+RSgwwzUBRLyNrCcqzR3QF4foOkP/J1Jozk4tGazrYyAN
-        aWkSk1gOICm39QkHUH+Hz/Rby0HZmUrofw==
-X-Google-Smtp-Source: ABdhPJxrLNkOBCK22JKPARmcl5BjmY6TUTpFvEk9uA+1n3mHpJJ9+WrPqf1O6PJKP4JfkZxzMsKPKw==
-X-Received: by 2002:a05:6402:350b:b0:42d:d565:a62a with SMTP id b11-20020a056402350b00b0042dd565a62amr7607557edd.172.1653991225974;
-        Tue, 31 May 2022 03:00:25 -0700 (PDT)
-Received: from able.fritz.box (p5b0ea02f.dip0.t-ipconnect.de. [91.14.160.47])
-        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 03:00:25 -0700 (PDT)
-From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
-        <ckoenig.leichtzumerken@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     christian.koenig@amd.com, alexander.deucher@amd.com,
-        daniel@ffwll.ch, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, hughd@google.com,
-        andrey.grodzovsky@amd.com
-Subject: [PATCH 11/13] drm/omap: use drm_oom_badness
-Date:   Tue, 31 May 2022 12:00:05 +0200
-Message-Id: <20220531100007.174649-12-christian.koenig@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220531100007.174649-1-christian.koenig@amd.com>
-References: <20220531100007.174649-1-christian.koenig@amd.com>
+        Tue, 31 May 2022 09:33:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE9608FD66;
+        Tue, 31 May 2022 06:33:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 787B961202;
+        Tue, 31 May 2022 13:33:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE73EC3411E;
+        Tue, 31 May 2022 13:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654004021;
+        bh=Z1whR2Seo++h8Uvy3NRM8CLdGeRMk3/5Fhy4XLisltk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cPVxm69Jbg+3fiO8JqUkXLXOD3pdyUhd1MlQm0oMnsnf55jefml2siTeRt11DQHj6
+         j2XvEIwBhLIetl2w51tLK3B2a0OH2Z6D0nlXRYIg/OwhCh9PiTgvXzmtIqsaGVmCk/
+         NKbc9Y8PlTLEjGx6hE7AsqZPZ63XO8dLqIFkWoRvf5c1NjMqCoIcoSwXF5SVIY5lUk
+         8yy0Ek1jNVgbeKugcbrmeNa6X6xfwxRoEHv9D7y02QUzG4xMThGu6A77YkIcbXIDCO
+         zWyzDcprTUSJlyHWEJ6vSN13Fe2Y5DFL0DOsh5h6/dcJ5SSJVn1Q0Awe0RVh1hSBfx
+         aAMov2J80OI8w==
+Received: by mail-ua1-f53.google.com with SMTP id y2so4793056uan.4;
+        Tue, 31 May 2022 06:33:41 -0700 (PDT)
+X-Gm-Message-State: AOAM5324/hXJsqjrtMtCRbOakjadASmODKos4GyTpqOlmof57aZFGCif
+        vS608GbBZKgVhquTEXhTU7PfvLVes8cgunM4mg==
+X-Google-Smtp-Source: ABdhPJzfl2q8a4/jnTVhQHUMa2kRAa20r2HuCUl7f2SfBzhtY8jiaU660L5f3oIf9EZfTKfxQZBl0thsed79l8nNzVE=
+X-Received: by 2002:ab0:4ac1:0:b0:351:ed7d:e65c with SMTP id
+ t1-20020ab04ac1000000b00351ed7de65cmr22397280uae.36.1654004020745; Tue, 31
+ May 2022 06:33:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220523172515.5941-1-dipenp@nvidia.com>
+In-Reply-To: <20220523172515.5941-1-dipenp@nvidia.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 31 May 2022 08:33:29 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJSF=7FOW4oNydRtDYY8L9Y43E4FsBkUzM+U5ZRjYdt7A@mail.gmail.com>
+Message-ID: <CAL_JsqJSF=7FOW4oNydRtDYY8L9Y43E4FsBkUzM+U5ZRjYdt7A@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: timestamp: Correct id path
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org, Dipen Patel <dipenp@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This allows the OOM killer to make a better decision which process to reap.
+On Mon, May 23, 2022 at 12:25 PM Dipen Patel <dipenp@nvidia.com> wrote:
+>
+> During the repository renaming from hte to timestamp, $id path was not
+> updated accordingly. This patch corrects $id path.
+>
+> Fixes: af583852d2ef ("dt-bindings: Renamed hte directory to timestamp")
+> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> ---
+>  .../bindings/timestamp/hardware-timestamps-common.yaml          | 2 +-
+>  Documentation/devicetree/bindings/timestamp/hte-consumer.yaml   | 2 +-
+>  .../devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml      | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/omapdrm/omap_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+Ping. Still failing in linux-next.
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-index eaf67b9e5f12..ca2c484f48ca 100644
---- a/drivers/gpu/drm/omapdrm/omap_drv.c
-+++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-@@ -684,6 +684,7 @@ static const struct file_operations omapdriver_fops = {
- 	.poll = drm_poll,
- 	.read = drm_read,
- 	.llseek = noop_llseek,
-+	.oom_badness = drm_oom_badness,
- };
- 
- static const struct drm_driver omap_drm_driver = {
--- 
-2.25.1
-
+>
+> diff --git a/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml b/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
+> index 4c25ba248a72..fd6a7b51f571 100644
+> --- a/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
+> +++ b/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/hte/hardware-timestamps-common.yaml#
+> +$id: http://devicetree.org/schemas/timestamp/hardware-timestamps-common.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+>  title: Hardware timestamp providers
+> diff --git a/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml b/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
+> index 68d764ac040a..6456515c3d26 100644
+> --- a/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
+> +++ b/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/hte/hte-consumer.yaml#
+> +$id: http://devicetree.org/schemas/timestamp/hte-consumer.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+>  title: HTE Consumer Device Tree Bindings
+> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> index 69e8402d95e5..c31e207d1652 100644
+> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/hte/nvidia,tegra194-hte.yaml#
+> +$id: http://devicetree.org/schemas/timestamp/nvidia,tegra194-hte.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+>  title: Tegra194 on chip generic hardware timestamping engine (HTE)
+>
+> base-commit: cc63e8e92cb872081f249ea16e6c460642f3e4fb
+> --
+> 2.17.1
+>
