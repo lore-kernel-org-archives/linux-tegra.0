@@ -2,274 +2,174 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C93C4321E
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 21:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D690C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 21:42:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347983AbiEaVZH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 May 2022 17:25:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51214 "EHLO
+        id S1348073AbiEaVmO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 May 2022 17:42:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347989AbiEaVZC (ORCPT
+        with ESMTP id S236826AbiEaVmN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 May 2022 17:25:02 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD149CF26;
-        Tue, 31 May 2022 14:25:00 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id 4C9F21F43F0B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1654032299;
-        bh=dWPjJiUcTEsCTwSVeYSxHnF1/ruJ13+dt9/M97DHXpY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=iw1cl93DawB1wUr9b6KkZdHCFs5+L/GBohLHlROEAOks05zME/v6MXMPk6D7ui5Yi
-         RNRHdZFdzCLwhRjjb38P9M6JexB3Wbp2yKOPr5eeU8sVg/8ntyHzURiHlZSY6J8Cm9
-         q6oV/gJyO14M2ElVzYwoEuvi7LeAOBJpJO7JVAQIQbIk2iZISrAGCD8WEks6N0mo8W
-         PABIM3KRc5wMYvZgEpozGR6zO7yQLUE2dke3U5CmMfjFhmLTkzt3Ddgs0XBxEfDRJn
-         c+JlwyAdHThzhqLupTWaB45a5dOVfxT+a6WiHu8uAbSXS41ExvvXWl05U0ZRpjuSZP
-         ldNnEXKzwDRFg==
-Message-ID: <a41c323a-5d69-0ff1-d0da-38eb55e1e4db@collabora.com>
-Date:   Wed, 1 Jun 2022 00:24:49 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v8 16/27] m68k: Switch to new sys-off handler API
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+        Tue, 31 May 2022 17:42:13 -0400
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED7321B;
+        Tue, 31 May 2022 14:42:11 -0700 (PDT)
+Received: by mail-oi1-f181.google.com with SMTP id r65so146844oia.9;
+        Tue, 31 May 2022 14:42:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=gIiu7V/rqZjztwT4OL+Dpls+E/6GMUhDy54RLlpLRXw=;
+        b=n933F+pKKpCoH4Yim+P8CGDGGMuN77qF3aynbgrEPQyS0YylGY5X7ICdRHZ1GvRS9o
+         ch7/dwu7LGPLYMpkWUFZkFhGKNmj/ENu2PSM1mzl14tNduKAHKCG4kyxDeL4NzFzGpkG
+         dnuSYwexzL8mgD6hcsIeBIc41Ov6n8kUNiNU6inX/iaYrRu5p2GHE9zvgvmAQNwOZ8lB
+         72dJfDU+63ZtXNl3p9r8YUv+tMG8hOEdIzYaro+mXJUXj26URosX4lIAGat33ifxzeBK
+         oSNWKIeG6Et+XRmobNPT9FlT7Uh+N5CWAfMzYdNq/Aa8wle14R6IVDH7RQs3y7ooGdtb
+         6nrw==
+X-Gm-Message-State: AOAM532M1mFLiHw+b/m+jkt7ocD9rRTkXzSc9AwOKVKmsQ44mTTywmhN
+        LIztbbFH+cI7xtSqL0RrGa/XNUZf2Q==
+X-Google-Smtp-Source: ABdhPJwgzILUoCZf2uNlhPDheGiyHAk0mxDs8Dn5NTyCeNx0G/Qn4/OaCZRbbk6wucaexjpCSDkyxQ==
+X-Received: by 2002:a05:6808:211c:b0:32b:6ebc:4f5a with SMTP id r28-20020a056808211c00b0032b6ebc4f5amr13006766oiw.230.1654033330586;
+        Tue, 31 May 2022 14:42:10 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id f14-20020a056871070e00b000f342d078fasm3078658oap.52.2022.05.31.14.42.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 May 2022 14:42:10 -0700 (PDT)
+Received: (nullmailer pid 2383926 invoked by uid 1000);
+        Tue, 31 May 2022 21:42:09 -0000
+Date:   Tue, 31 May 2022 16:42:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dipen Patel <dipenp@nvidia.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20220509233235.995021-1-dmitry.osipenko@collabora.com>
- <20220509233235.995021-17-dmitry.osipenko@collabora.com>
- <CAMuHMdUFqf58F31EAGnhp_cu9k-G4Sx1cmwx-PGb3mU+6bjRnQ@mail.gmail.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <CAMuHMdUFqf58F31EAGnhp_cu9k-G4Sx1cmwx-PGb3mU+6bjRnQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        devicetree@vger.kernel.org, sfr@canb.auug.org.au
+Subject: Re: [PATCH] dt-bindings: timestamp: Correct id path
+Message-ID: <20220531214209.GA2350029-robh@kernel.org>
+References: <20220523172515.5941-1-dipenp@nvidia.com>
+ <CAL_JsqJSF=7FOW4oNydRtDYY8L9Y43E4FsBkUzM+U5ZRjYdt7A@mail.gmail.com>
+ <86b11457-2f1a-6b17-fab0-a13d932af993@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <86b11457-2f1a-6b17-fab0-a13d932af993@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/31/22 22:04, Geert Uytterhoeven wrote:
-> Hi Dmitry,
+On Tue, May 31, 2022 at 10:35:55AM -0700, Dipen Patel wrote:
+> Hi Rob,
 > 
-> On Tue, May 10, 2022 at 1:34 AM Dmitry Osipenko
-> <dmitry.osipenko@collabora.com> wrote:
->> Kernel now supports chained power-off handlers. Use
->> register_power_off_handler() that registers power-off handlers and
->> do_kernel_power_off() that invokes chained power-off handlers. Legacy
->> pm_power_off() will be removed once all drivers will be converted to
->> the new sys-off API.
->>
->> Normally arch code should adopt only the do_kernel_power_off() at first,
->> but m68k is a special case because it uses pm_power_off() "inside out",
->> i.e. pm_power_off() invokes machine_power_off() [in fact it does nothing],
->> while it's machine_power_off() that should invoke the pm_power_off(), and
->> thus, we can't convert platforms to the new API separately. There are only
->> two platforms changed here, so it's not a big deal.
->>
->> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> Reviewed-by: Micha≈Ç Miros≈Çaw <mirq-linux@rere.qmqm.pl>
->> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> 
-> Thanks for your patch, which is now commit f0f7e5265b3b37b0
-> ("m68k: Switch to new sys-off handler API") upstream.
-> 
->> --- a/arch/m68k/emu/natfeat.c
->> +++ b/arch/m68k/emu/natfeat.c
->> @@ -15,6 +15,7 @@
->>  #include <linux/string.h>
->>  #include <linux/kernel.h>
->>  #include <linux/module.h>
->> +#include <linux/reboot.h>
->>  #include <linux/io.h>
->>  #include <asm/machdep.h>
->>  #include <asm/natfeat.h>
->> @@ -90,5 +91,5 @@ void __init nf_init(void)
->>         pr_info("NatFeats found (%s, %lu.%lu)\n", buf, version >> 16,
->>                 version & 0xffff);
->>
->> -       mach_power_off = nf_poweroff;
->> +       register_platform_power_off(nf_poweroff);
-> 
-> Unfortunately nothing is registered, as this is called very early
-> (from setup_arch(), before the memory allocator is available.
-> Hence register_sys_off_handler() fails with -ENOMEM, and poweroff
-> stops working.
-> 
-> Possible solutions:
->   - As at most one handler can be registered,
->     register_platform_power_off() could use a static struct sys_off_handler
->     instance,
->   - Keep mach_power_off, and call register_platform_power_off() later.
-> 
-> Anything else?
-> Thanks!
-> 
->> --- a/arch/m68k/mac/config.c
->> +++ b/arch/m68k/mac/config.c
->> @@ -12,6 +12,7 @@
->>
->>  #include <linux/errno.h>
->>  #include <linux/module.h>
->> +#include <linux/reboot.h>
->>  #include <linux/types.h>
->>  #include <linux/mm.h>
->>  #include <linux/tty.h>
->> @@ -140,7 +141,6 @@ void __init config_mac(void)
->>         mach_hwclk = mac_hwclk;
->>         mach_reset = mac_reset;
->>         mach_halt = mac_poweroff;
->> -       mach_power_off = mac_poweroff;
->>  #if IS_ENABLED(CONFIG_INPUT_M68K_BEEP)
->>         mach_beep = mac_mksound;
->>  #endif
->> @@ -160,6 +160,8 @@ void __init config_mac(void)
->>
->>         if (macintosh_config->ident == MAC_MODEL_IICI)
->>                 mach_l2_flush = via_l2_flush;
->> +
->> +       register_platform_power_off(mac_poweroff);
->>  }
-> 
-> This must have the same problem.
+> What is the failing signature and command? I tried below commands on 31st May
 
-The static variant should be better, IMO. I'm not sure whether other platforms won't face the same problem once they will start using register_platform_power_off(). I'll send the fix, thank you for the testing!
+Well, you fixed it in your patch. I'd hope you'd know.
 
---- >8 ---
+> 
+> linux-next and I can not see any failure.
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index a091145ee710..4fea05d387dc 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -315,6 +315,37 @@ static int sys_off_notify(struct notifier_block *nb,
- 	return handler->sys_off_cb(&data);
- }
- 
-+static struct sys_off_handler platform_sys_off_handler;
-+
-+static struct sys_off_handler *alloc_sys_off_handler(int priority)
-+{
-+	struct sys_off_handler *handler;
-+
-+	/*
-+	 * Platforms like m68k can't allocate sys_off handler dynamically
-+	 * at the early boot time.
-+	 */
-+	if (priority == SYS_OFF_PRIO_PLATFORM) {
-+		handler = &platform_sys_off_handler;
-+		if (handler->cb_data)
-+			return ERR_PTR(-EBUSY);
-+	} else {
-+		handler = kzalloc(sizeof(*handler), GFP_KERNEL);
-+		if (!handler)
-+			return ERR_PTR(-ENOMEM);
-+	}
-+
-+	return handler;
-+}
-+
-+static void free_sys_off_handler(struct sys_off_handler *handler)
-+{
-+	if (handler == &platform_sys_off_handler)
-+		memset(handler, 0, sizeof(*handler));
-+	else
-+		kfree(handler);
-+}
-+
- /**
-  *	register_sys_off_handler - Register sys-off handler
-  *	@mode: Sys-off mode
-@@ -345,9 +376,9 @@ register_sys_off_handler(enum sys_off_mode mode,
- 	struct sys_off_handler *handler;
- 	int err;
- 
--	handler = kzalloc(sizeof(*handler), GFP_KERNEL);
--	if (!handler)
--		return ERR_PTR(-ENOMEM);
-+	handler = alloc_sys_off_handler(priority);
-+	if (IS_ERR(handler))
-+		return handler;
- 
- 	switch (mode) {
- 	case SYS_OFF_MODE_POWER_OFF_PREPARE:
-@@ -364,7 +395,7 @@ register_sys_off_handler(enum sys_off_mode mode,
- 		break;
- 
- 	default:
--		kfree(handler);
-+		free_sys_off_handler(handler);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-@@ -391,7 +422,7 @@ register_sys_off_handler(enum sys_off_mode mode,
- 	}
- 
- 	if (err) {
--		kfree(handler);
-+		free_sys_off_handler(handler);
- 		return ERR_PTR(err);
- 	}
- 
-@@ -422,7 +453,7 @@ void unregister_sys_off_handler(struct sys_off_handler *handler)
- 	/* sanity check, shall never happen */
- 	WARN_ON(err);
- 
--	kfree(handler);
-+	free_sys_off_handler(handler);
- }
- EXPORT_SYMBOL_GPL(unregister_sys_off_handler);
- 
+You confirm your fix is there?
+
+> 
+> make O=./output/ DT_CHECKER_FLAGS=-m dt_binding_check
+> † DTC†††† Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dtb
+> † DTC†††† Documentation/devicetree/bindings/timestamp/hte-consumer.example.dtb
+> † DTC†††† Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.example.dtb
+> † CHECK†† Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dtb
+> † CHECK†† Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.example.dtb
+> † CHECK†† Documentation/devicetree/bindings/timestamp/hte-consumer.example.dtb
+
+Had you already run dt_binding_check?
+
+> 
+> make O=./output/ dt_binding_check
+> † LINT††† Documentation/devicetree/bindings
+> † DTEX††† Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.example.dts
+> † DTEX††† Documentation/devicetree/bindings/timestamp/hte-consumer.example.dts
+> † DTEX††† Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dts
+> † CHKDT†† Documentation/devicetree/bindings/processed-schema.json
+> † DTC†††† Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dtb
+> † DTC†††† Documentation/devicetree/bindings/timestamp/hte-consumer.example.dtb
+> † CHECK†† Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dtb
+> † CHECK†† Documentation/devicetree/bindings/timestamp/hte-consumer.example.dtb
+> † DTC†††† Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.example.dtb
+
+I don't see 'SCHEMA' target here. It should have run since LINT and 
+CHKDT did.
+
+Do a 'rm output/Documentation/devicetree/bindings/processed-schema.json' 
+first.
+
+Rob
+
+> 
+> 
+> make O=./output dtbs_check
+> 
+> 
+> Best Regards,
+> 
+> Dipen Patel
+> 
+> On 5/31/22 6:33 AM, Rob Herring wrote:
+> > On Mon, May 23, 2022 at 12:25 PM Dipen Patel <dipenp@nvidia.com> wrote:
+> >> During the repository renaming from hte to timestamp, $id path was not
+> >> updated accordingly. This patch corrects $id path.
+> >>
+> >> Fixes: af583852d2ef ("dt-bindings: Renamed hte directory to timestamp")
+> >> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> >> ---
+> >>  .../bindings/timestamp/hardware-timestamps-common.yaml          | 2 +-
+> >>  Documentation/devicetree/bindings/timestamp/hte-consumer.yaml   | 2 +-
+> >>  .../devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml      | 2 +-
+> >>  3 files changed, 3 insertions(+), 3 deletions(-)
+> > Ping. Still failing in linux-next.
+> >
+> >> diff --git a/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml b/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
+> >> index 4c25ba248a72..fd6a7b51f571 100644
+> >> --- a/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
+> >> +++ b/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
+> >> @@ -1,7 +1,7 @@
+> >>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>  %YAML 1.2
+> >>  ---
+> >> -$id: http://devicetree.org/schemas/hte/hardware-timestamps-common.yaml#
+> >> +$id: http://devicetree.org/schemas/timestamp/hardware-timestamps-common.yaml#
+> >>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>
+> >>  title: Hardware timestamp providers
+> >> diff --git a/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml b/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
+> >> index 68d764ac040a..6456515c3d26 100644
+> >> --- a/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
+> >> +++ b/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
+> >> @@ -1,7 +1,7 @@
+> >>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>  %YAML 1.2
+> >>  ---
+> >> -$id: http://devicetree.org/schemas/hte/hte-consumer.yaml#
+> >> +$id: http://devicetree.org/schemas/timestamp/hte-consumer.yaml#
+> >>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>
+> >>  title: HTE Consumer Device Tree Bindings
+> >> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> >> index 69e8402d95e5..c31e207d1652 100644
+> >> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> >> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> >> @@ -1,7 +1,7 @@
+> >>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>  %YAML 1.2
+> >>  ---
+> >> -$id: http://devicetree.org/schemas/hte/nvidia,tegra194-hte.yaml#
+> >> +$id: http://devicetree.org/schemas/timestamp/nvidia,tegra194-hte.yaml#
+> >>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>
+> >>  title: Tegra194 on chip generic hardware timestamping engine (HTE)
+> >>
+> >> base-commit: cc63e8e92cb872081f249ea16e6c460642f3e4fb
+> >> --
+> >> 2.17.1
+> >>
