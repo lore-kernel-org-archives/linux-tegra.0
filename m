@@ -2,174 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D690C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 21:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFC4C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 22:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348073AbiEaVmO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 May 2022 17:42:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37816 "EHLO
+        id S1348240AbiEaWBF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 May 2022 18:01:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236826AbiEaVmN (ORCPT
+        with ESMTP id S1348273AbiEaWBE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 May 2022 17:42:13 -0400
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED7321B;
-        Tue, 31 May 2022 14:42:11 -0700 (PDT)
-Received: by mail-oi1-f181.google.com with SMTP id r65so146844oia.9;
-        Tue, 31 May 2022 14:42:11 -0700 (PDT)
+        Tue, 31 May 2022 18:01:04 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC7AE54005;
+        Tue, 31 May 2022 15:01:03 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id c15-20020a9d684f000000b0060b097c71ecso10478654oto.10;
+        Tue, 31 May 2022 15:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1kcpHZfon90bWFf3C0opWYOsOsDgVYWIWfKF1sbIHOg=;
+        b=PzDb+I+odIVJv+v3SJAjJiieVhfK9TLxSG7HEepT0URrxw1QQp7kRmiwJBPWRRavIc
+         4OMfjNbouVwJ9QQpQgLBXk6+QrfrsPci7ETu9MqS7ke/cmB5AaDwyt0mTTrETEI0nla8
+         ZoLP0cqrGh6Dw6Q5ps0yJtVdbye1Xjh4O23j3NOeVtWJfStBz4VKNrCPsD2YUn78wnbi
+         Ukl+m69RJ4e1Q6zPLsNeTDpLPDG05ZQrka2NfxXfSb0vOdwt0Bvb0jIKeCOCB3zfJalh
+         4mvF/uQXHPN8cAyYKnxmvof/pxdnJb1AtX2kW5llJ/84g0tUGQEq+0RBuVEWhFw0MnUm
+         /27Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=gIiu7V/rqZjztwT4OL+Dpls+E/6GMUhDy54RLlpLRXw=;
-        b=n933F+pKKpCoH4Yim+P8CGDGGMuN77qF3aynbgrEPQyS0YylGY5X7ICdRHZ1GvRS9o
-         ch7/dwu7LGPLYMpkWUFZkFhGKNmj/ENu2PSM1mzl14tNduKAHKCG4kyxDeL4NzFzGpkG
-         dnuSYwexzL8mgD6hcsIeBIc41Ov6n8kUNiNU6inX/iaYrRu5p2GHE9zvgvmAQNwOZ8lB
-         72dJfDU+63ZtXNl3p9r8YUv+tMG8hOEdIzYaro+mXJUXj26URosX4lIAGat33ifxzeBK
-         oSNWKIeG6Et+XRmobNPT9FlT7Uh+N5CWAfMzYdNq/Aa8wle14R6IVDH7RQs3y7ooGdtb
-         6nrw==
-X-Gm-Message-State: AOAM532M1mFLiHw+b/m+jkt7ocD9rRTkXzSc9AwOKVKmsQ44mTTywmhN
-        LIztbbFH+cI7xtSqL0RrGa/XNUZf2Q==
-X-Google-Smtp-Source: ABdhPJwgzILUoCZf2uNlhPDheGiyHAk0mxDs8Dn5NTyCeNx0G/Qn4/OaCZRbbk6wucaexjpCSDkyxQ==
-X-Received: by 2002:a05:6808:211c:b0:32b:6ebc:4f5a with SMTP id r28-20020a056808211c00b0032b6ebc4f5amr13006766oiw.230.1654033330586;
-        Tue, 31 May 2022 14:42:10 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id f14-20020a056871070e00b000f342d078fasm3078658oap.52.2022.05.31.14.42.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 14:42:10 -0700 (PDT)
-Received: (nullmailer pid 2383926 invoked by uid 1000);
-        Tue, 31 May 2022 21:42:09 -0000
-Date:   Tue, 31 May 2022 16:42:09 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org, sfr@canb.auug.org.au
-Subject: Re: [PATCH] dt-bindings: timestamp: Correct id path
-Message-ID: <20220531214209.GA2350029-robh@kernel.org>
-References: <20220523172515.5941-1-dipenp@nvidia.com>
- <CAL_JsqJSF=7FOW4oNydRtDYY8L9Y43E4FsBkUzM+U5ZRjYdt7A@mail.gmail.com>
- <86b11457-2f1a-6b17-fab0-a13d932af993@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1kcpHZfon90bWFf3C0opWYOsOsDgVYWIWfKF1sbIHOg=;
+        b=4K5uBr0uKC5fMJU8tMKYQaSj83q774YtxcwlIR9PmrdFIuHy0oCE4jQzQERuxW9UYX
+         vatFnLMgawLC1Zor/J9p1609FF3XVglekoyxBMGyzhY7Lzs5DkRN4WHBizTm2ohoatuh
+         AR8kt9KZOgnaXc5bMS1lFBsCr+MjDIo287c7iQizP3B6mGT+1ptt28bSovbkS5ztfA6d
+         3dgQGSdZBhgP/SfBm2BPAkold6vn4aFibRBDN34u5BSVXWLf33Uw8Pon9nU00gJMte6i
+         qjcy1BvCmMwpoN2pXP7Z+N8z74CqIrkC226e9LVOlERUE2NQWyHL3kgCLxZWoSgMctkx
+         NgMg==
+X-Gm-Message-State: AOAM530XF7ncc/WMnz5BiD/PJA6+y2TUy7ljfYIxy9U62zk5VwRg0i4H
+        kxZLqnToe8IldBDKbUWs66FPz411TL1LiJMaKyk=
+X-Google-Smtp-Source: ABdhPJyKVYOkJ1d9Y7SW5ELtHTlhTKMcjbccQa1ILmaqZpJll1OzACOy0Pf6i7ZX6i42bY3GxbQOusF+tYcIkZKsQbg=
+X-Received: by 2002:a9d:6b98:0:b0:60b:c54:e22b with SMTP id
+ b24-20020a9d6b98000000b0060b0c54e22bmr18226057otq.357.1654034462389; Tue, 31
+ May 2022 15:01:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <86b11457-2f1a-6b17-fab0-a13d932af993@nvidia.com>
+References: <20220531100007.174649-1-christian.koenig@amd.com>
+In-Reply-To: <20220531100007.174649-1-christian.koenig@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 31 May 2022 18:00:51 -0400
+Message-ID: <CADnq5_Ng7oe_NMSb6GdL=_T_zw22Gk0B6ePDXRiU7Ljind6Gww@mail.gmail.com>
+Subject: Re: Per file OOM badness
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>
+Cc:     linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        linux-tegra@vger.kernel.org,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Hugh Dickens <hughd@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Koenig <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, May 31, 2022 at 10:35:55AM -0700, Dipen Patel wrote:
-> Hi Rob,
-> 
-> What is the failing signature and command? I tried below commands on 31st May
++ dri-devel
 
-Well, you fixed it in your patch. I'd hope you'd know.
-
-> 
-> linux-next and I can not see any failure.
-
-You confirm your fix is there?
-
-> 
-> make O=./output/ DT_CHECKER_FLAGS=-m dt_binding_check
->   DTC     Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dtb
->   DTC     Documentation/devicetree/bindings/timestamp/hte-consumer.example.dtb
->   DTC     Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.example.dtb
->   CHECK   Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dtb
->   CHECK   Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.example.dtb
->   CHECK   Documentation/devicetree/bindings/timestamp/hte-consumer.example.dtb
-
-Had you already run dt_binding_check?
-
-> 
-> make O=./output/ dt_binding_check
->   LINT    Documentation/devicetree/bindings
->   DTEX    Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.example.dts
->   DTEX    Documentation/devicetree/bindings/timestamp/hte-consumer.example.dts
->   DTEX    Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dts
->   CHKDT   Documentation/devicetree/bindings/processed-schema.json
->   DTC     Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dtb
->   DTC     Documentation/devicetree/bindings/timestamp/hte-consumer.example.dtb
->   CHECK   Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.example.dtb
->   CHECK   Documentation/devicetree/bindings/timestamp/hte-consumer.example.dtb
->   DTC     Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.example.dtb
-
-I don't see 'SCHEMA' target here. It should have run since LINT and 
-CHKDT did.
-
-Do a 'rm output/Documentation/devicetree/bindings/processed-schema.json' 
-first.
-
-Rob
-
-> 
-> 
-> make O=./output dtbs_check
-> 
-> 
-> Best Regards,
-> 
-> Dipen Patel
-> 
-> On 5/31/22 6:33 AM, Rob Herring wrote:
-> > On Mon, May 23, 2022 at 12:25 PM Dipen Patel <dipenp@nvidia.com> wrote:
-> >> During the repository renaming from hte to timestamp, $id path was not
-> >> updated accordingly. This patch corrects $id path.
-> >>
-> >> Fixes: af583852d2ef ("dt-bindings: Renamed hte directory to timestamp")
-> >> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> >> ---
-> >>  .../bindings/timestamp/hardware-timestamps-common.yaml          | 2 +-
-> >>  Documentation/devicetree/bindings/timestamp/hte-consumer.yaml   | 2 +-
-> >>  .../devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml      | 2 +-
-> >>  3 files changed, 3 insertions(+), 3 deletions(-)
-> > Ping. Still failing in linux-next.
-> >
-> >> diff --git a/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml b/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
-> >> index 4c25ba248a72..fd6a7b51f571 100644
-> >> --- a/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
-> >> +++ b/Documentation/devicetree/bindings/timestamp/hardware-timestamps-common.yaml
-> >> @@ -1,7 +1,7 @@
-> >>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>  %YAML 1.2
-> >>  ---
-> >> -$id: http://devicetree.org/schemas/hte/hardware-timestamps-common.yaml#
-> >> +$id: http://devicetree.org/schemas/timestamp/hardware-timestamps-common.yaml#
-> >>  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>
-> >>  title: Hardware timestamp providers
-> >> diff --git a/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml b/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
-> >> index 68d764ac040a..6456515c3d26 100644
-> >> --- a/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
-> >> +++ b/Documentation/devicetree/bindings/timestamp/hte-consumer.yaml
-> >> @@ -1,7 +1,7 @@
-> >>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>  %YAML 1.2
-> >>  ---
-> >> -$id: http://devicetree.org/schemas/hte/hte-consumer.yaml#
-> >> +$id: http://devicetree.org/schemas/timestamp/hte-consumer.yaml#
-> >>  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>
-> >>  title: HTE Consumer Device Tree Bindings
-> >> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> >> index 69e8402d95e5..c31e207d1652 100644
-> >> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> >> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> >> @@ -1,7 +1,7 @@
-> >>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>  %YAML 1.2
-> >>  ---
-> >> -$id: http://devicetree.org/schemas/hte/nvidia,tegra194-hte.yaml#
-> >> +$id: http://devicetree.org/schemas/timestamp/nvidia,tegra194-hte.yaml#
-> >>  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>
-> >>  title: Tegra194 on chip generic hardware timestamping engine (HTE)
-> >>
-> >> base-commit: cc63e8e92cb872081f249ea16e6c460642f3e4fb
-> >> --
-> >> 2.17.1
-> >>
+On Tue, May 31, 2022 at 6:00 AM Christian K=C3=B6nig
+<ckoenig.leichtzumerken@gmail.com> wrote:
+>
+> Hello everyone,
+>
+> To summarize the issue I'm trying to address here: Processes can allocate
+> resources through a file descriptor without being held responsible for it=
+.
+>
+> Especially for the DRM graphics driver subsystem this is rather
+> problematic. Modern games tend to allocate huge amounts of system memory
+> through the DRM drivers to make it accessible to GPU rendering.
+>
+> But even outside of the DRM subsystem this problem exists and it is
+> trivial to exploit. See the following simple example of
+> using memfd_create():
+>
+>          fd =3D memfd_create("test", 0);
+>          while (1)
+>                  write(fd, page, 4096);
+>
+> Compile this and you can bring down any standard desktop system within
+> seconds.
+>
+> The background is that the OOM killer will kill every processes in the
+> system, but just not the one which holds the only reference to the memory
+> allocated by the memfd.
+>
+> Those problems where brought up on the mailing list multiple times now
+> [1][2][3], but without any final conclusion how to address them. Since
+> file descriptors are considered shared the process can not directly held
+> accountable for allocations made through them. Additional to that file
+> descriptors can also easily move between processes as well.
+>
+> So what this patch set does is to instead of trying to account the
+> allocated memory to a specific process it adds a callback to struct
+> file_operations which the OOM killer can use to query the specific OOM
+> badness of this file reference. This badness is then divided by the
+> file_count, so that every process using a shmem file, DMA-buf or DRM
+> driver will get it's equal amount of OOM badness.
+>
+> Callbacks are then implemented for the two core users (memfd and DMA-buf)
+> as well as 72 DRM based graphics drivers.
+>
+> The result is that the OOM killer can now much better judge if a process
+> is worth killing to free up memory. Resulting a quite a bit better system
+> stability in OOM situations, especially while running games.
+>
+> The only other possibility I can see would be to change the accounting of
+> resources whenever references to the file structure change, but this woul=
+d
+> mean quite some additional overhead for a rather common operation.
+>
+> Additionally I think trying to limit device driver allocations using
+> cgroups is orthogonal to this effort. While cgroups is very useful, it
+> works on per process limits and tries to enforce a collaborative model on
+> memory management while the OOM killer enforces a competitive model.
+>
+> Please comment and/or review, we have that problem flying around for year=
+s
+> now and are not at a point where we finally need to find a solution for
+> this.
+>
+> Regards,
+> Christian.
+>
+> [1] https://lists.freedesktop.org/archives/dri-devel/2015-September/08977=
+8.html
+> [2] https://lkml.org/lkml/2018/1/18/543
+> [3] https://lkml.org/lkml/2021/2/4/799
+>
+>
