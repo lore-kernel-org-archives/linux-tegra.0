@@ -2,168 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AA8C43217
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 May 2022 14:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0B8C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 10:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237895AbiE3OrK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 May 2022 10:47:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35108 "EHLO
+        id S245392AbiEaKAP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 May 2022 06:00:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241847AbiE3Op1 (ORCPT
+        with ESMTP id S240788AbiEaKAN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 May 2022 10:45:27 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA4B5DE4E;
-        Mon, 30 May 2022 06:57:30 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id B98F41F417FE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653919049;
-        bh=2XRBuky6ctLBMkVpHH42tRbnrHaVzoRJDfOS/8wLl/E=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=mPwSP+W1lUR0EdMvCliWfZoiylZ8CVpOpjwgflCUTZaI9WHJh5tJXhk8DyguPhNeN
-         HogdCkNBgtGD2G8U9Ep2K49/vmqE56g1BgD7MA21xGk1ZVBj+VJcIxxm08FCLdNgVK
-         RmZOwzc+caJBzV5axbiwKDrCGcHjZmvJd24egZXw9xLh3XfQFPhTT3EpgfN70g8mqC
-         9sjT+smifz0WHNiGEqr7+RZqCI9QQehNyQ19Mpiv9LWCOB9wzR78FM0tska4e7lqKe
-         50oVtOr/eGMjVeh2uPvpXIVZhL/NQ2LFQ3MNEmBcidBDh44gsd28fmmYzNC+2ue0aj
-         H9xWHCkQ7dKmg==
-Message-ID: <7372dd1b-06f7-5336-4738-15f9b4d4d4b3@collabora.com>
-Date:   Mon, 30 May 2022 16:57:22 +0300
+        Tue, 31 May 2022 06:00:13 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3266782170;
+        Tue, 31 May 2022 03:00:12 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id l19so7698191ejr.8;
+        Tue, 31 May 2022 03:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9n4cw6tJMuGq8sS9FRBgBhCHODwjr6qBUbzPf/1V2sg=;
+        b=IzX+BgNjUX84qtPBtVsu+ZQQ2nO4Huw6BvTBNd8rhiurCDNaaV5UMg4BXEj7C+GRmG
+         pLAlNrJvCnrtY74d5Bo/qYvdZdIp6QkYn6H+D4DPT+ND58p4F/z8e2zkIZQsRYdjuNP2
+         1DxX3EdJHY8KDTNcYKELGBk86yao2J8VuJlSo/c21/2arZjhHOW0lpAc7cG/anLi+GyZ
+         EIYmtu/053mPuutoapsZROblF0FdT729/3v6UpunSQlMe0lkJeQVmj9gHa/cACRiumXh
+         G4ykLDd0yxJynuBwQinr7e62C8Qnq4ExNeWx17W3s71BABDAerQSHOy+HAkfJOD712fC
+         cGtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9n4cw6tJMuGq8sS9FRBgBhCHODwjr6qBUbzPf/1V2sg=;
+        b=veFHBMChSxPX/Sxx5ZdURFIquiS2Vac0Pqqg/b2YpH+vmb+CtPvKa9Xk7jf5pORaHh
+         qoWXw576SBcVdoe6k1Tdyj7WYNG5XmqWkyi06pXjDewasGW38Fl3i/QB7aQAY7/dD+On
+         /zZ6bgq82JRx4CHAiX+OjYKN9C5qZdDz1tdHXPgSTvXI9ZeuY7dnPTXfkuU5gwgC+3b9
+         i7vKEawZAFcQqXKlkXDu9SilPQCPQpD1owxved299cf5PPc0NwDVrALaAS6n9gZpqcEi
+         Z+x0SHM1psHOXqpWkvRUAJoHGggqgteItvChGxYPZ+T71mfPTvY/ecN5N8QHou160cE8
+         GODw==
+X-Gm-Message-State: AOAM533s5oQMEPgddujTAQ5KAbk1OJSykK2TNfqB8alImmtF+wohldBv
+        CEOn8TCXT4KnG8fWb74ksmkdWysylPY=
+X-Google-Smtp-Source: ABdhPJwCJfAmChYPGSG1MS5K/vbZUKtFI7ycuya8OGZo2oGfMsdkIctwKWtBLMWRNLTmB2Z1/mcwZQ==
+X-Received: by 2002:a17:907:7d88:b0:6fe:d709:6735 with SMTP id oz8-20020a1709077d8800b006fed7096735mr38261002ejc.76.1653991210599;
+        Tue, 31 May 2022 03:00:10 -0700 (PDT)
+Received: from able.fritz.box (p5b0ea02f.dip0.t-ipconnect.de. [91.14.160.47])
+        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 May 2022 03:00:10 -0700 (PDT)
+From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
+        <ckoenig.leichtzumerken@gmail.com>
+X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     christian.koenig@amd.com, alexander.deucher@amd.com,
+        daniel@ffwll.ch, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, hughd@google.com,
+        andrey.grodzovsky@amd.com
+Subject: Per file OOM badness
+Date:   Tue, 31 May 2022 11:59:54 +0200
+Message-Id: <20220531100007.174649-1-christian.koenig@amd.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v6 14/22] dma-buf: Introduce new locking convention
-Content-Language: en-US
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Gert Wollny <gert.wollny@collabora.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, kernel@collabora.com
-References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
- <20220526235040.678984-15-dmitry.osipenko@collabora.com>
- <0a02a31d-a256-4ca4-0e35-e2ea1868a8ae@amd.com>
- <e6e17c52-43c2-064b-500e-325bb3ba3b2c@collabora.com>
- <02e7946b-34ca-b48e-1ba6-e7b63740a2d9@amd.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <02e7946b-34ca-b48e-1ba6-e7b63740a2d9@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/30/22 16:41, Christian König wrote:
-> Hi Dmitry,
-> 
-> Am 30.05.22 um 15:26 schrieb Dmitry Osipenko:
->> Hello Christian,
->>
->> On 5/30/22 09:50, Christian König wrote:
->>> Hi Dmitry,
->>>
->>> First of all please separate out this patch from the rest of the series,
->>> since this is a complex separate structural change.
->> I assume all the patches will go via the DRM tree in the end since the
->> rest of the DRM patches in this series depend on this dma-buf change.
->> But I see that separation may ease reviewing of the dma-buf changes, so
->> let's try it.
-> 
-> That sounds like you are underestimating a bit how much trouble this
-> will be.
-> 
->>> I have tried this before and failed because catching all the locks in
->>> the right code paths are very tricky. So expect some fallout from this
->>> and make sure the kernel test robot and CI systems are clean.
->> Sure, I'll fix up all the reported things in the next iteration.
->>
->> BTW, have you ever posted yours version of the patch? Will be great if
->> we could compare the changed code paths.
-> 
-> No, I never even finished creating it after realizing how much work it
-> would be.
-> 
->>>> This patch introduces new locking convention for dma-buf users. From
->>>> now
->>>> on all dma-buf importers are responsible for holding dma-buf
->>>> reservation
->>>> lock around operations performed over dma-bufs.
->>>>
->>>> This patch implements the new dma-buf locking convention by:
->>>>
->>>>     1. Making dma-buf API functions to take the reservation lock.
->>>>
->>>>     2. Adding new locked variants of the dma-buf API functions for
->>>> drivers
->>>>        that need to manage imported dma-bufs under the held lock.
->>> Instead of adding new locked variants please mark all variants which
->>> expect to be called without a lock with an _unlocked postfix.
->>>
->>> This should make it easier to remove those in a follow up patch set and
->>> then fully move the locking into the importer.
->> Do we really want to move all the locks to the importers? Seems the
->> majority of drivers should be happy with the dma-buf helpers handling
->> the locking for them.
-> 
-> Yes, I clearly think so.
-> 
->>
->>>>     3. Converting all drivers to the new locking scheme.
->>> I have strong doubts that you got all of them. At least radeon and
->>> nouveau should grab the reservation lock in their ->attach callbacks
->>> somehow.
->> Radeon and Nouveau use gem_prime_import_sg_table() and they take resv
->> lock already, seems they should be okay (?)
-> 
-> You are looking at the wrong side. You need to fix the export code path,
-> not the import ones.
-> 
-> See for example attach on radeon works like this
-> drm_gem_map_attach->drm_gem_pin->radeon_gem_prime_pin->radeon_bo_reserve->ttm_bo_reserve->dma_resv_lock.
+Hello everyone, 
 
-Yeah, I was looking at the both sides, but missed this one.
+To summarize the issue I'm trying to address here: Processes can allocate
+resources through a file descriptor without being held responsible for it.
 
-> Same for nouveau and probably a few other exporters as well. That will
-> certainly cause a deadlock if you don't fix it.
-> 
-> I strongly suggest to do this step by step, first attach/detach and then
-> the rest.
+Especially for the DRM graphics driver subsystem this is rather
+problematic. Modern games tend to allocate huge amounts of system memory
+through the DRM drivers to make it accessible to GPU rendering.
 
-Thank you very much for the suggestions. I'll implement them in the next
-version.
+But even outside of the DRM subsystem this problem exists and it is
+trivial to exploit. See the following simple example of
+using memfd_create():
 
--- 
-Best regards,
-Dmitry
+         fd = memfd_create("test", 0);
+         while (1)
+                 write(fd, page, 4096);
+
+Compile this and you can bring down any standard desktop system within
+seconds.
+
+The background is that the OOM killer will kill every processes in the
+system, but just not the one which holds the only reference to the memory
+allocated by the memfd.
+
+Those problems where brought up on the mailing list multiple times now
+[1][2][3], but without any final conclusion how to address them. Since
+file descriptors are considered shared the process can not directly held
+accountable for allocations made through them. Additional to that file
+descriptors can also easily move between processes as well.
+
+So what this patch set does is to instead of trying to account the
+allocated memory to a specific process it adds a callback to struct
+file_operations which the OOM killer can use to query the specific OOM
+badness of this file reference. This badness is then divided by the
+file_count, so that every process using a shmem file, DMA-buf or DRM
+driver will get it's equal amount of OOM badness.
+
+Callbacks are then implemented for the two core users (memfd and DMA-buf)
+as well as 72 DRM based graphics drivers.
+
+The result is that the OOM killer can now much better judge if a process
+is worth killing to free up memory. Resulting a quite a bit better system
+stability in OOM situations, especially while running games.
+
+The only other possibility I can see would be to change the accounting of
+resources whenever references to the file structure change, but this would
+mean quite some additional overhead for a rather common operation.
+
+Additionally I think trying to limit device driver allocations using
+cgroups is orthogonal to this effort. While cgroups is very useful, it
+works on per process limits and tries to enforce a collaborative model on
+memory management while the OOM killer enforces a competitive model.
+
+Please comment and/or review, we have that problem flying around for years
+now and are not at a point where we finally need to find a solution for
+this.
+
+Regards,
+Christian.
+
+[1] https://lists.freedesktop.org/archives/dri-devel/2015-September/089778.html
+[2] https://lkml.org/lkml/2018/1/18/543
+[3] https://lkml.org/lkml/2021/2/4/799
+
+
