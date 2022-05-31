@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F119C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 10:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB45C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 May 2022 10:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245475AbiEaKBw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 May 2022 06:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44212 "EHLO
+        id S245522AbiEaKBy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 May 2022 06:01:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245454AbiEaKA3 (ORCPT
+        with ESMTP id S245471AbiEaKAa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 May 2022 06:00:29 -0400
+        Tue, 31 May 2022 06:00:30 -0400
 Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40E5880C8;
-        Tue, 31 May 2022 03:00:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C6284A14;
+        Tue, 31 May 2022 03:00:29 -0700 (PDT)
 Received: by mail-ed1-x533.google.com with SMTP id t5so16807078edc.2;
-        Tue, 31 May 2022 03:00:24 -0700 (PDT)
+        Tue, 31 May 2022 03:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CBtdyMzsAJ1/aOexJ9rl7ZeO2ErFHAD5HxTQN3Dqn3Q=;
-        b=clhRBft+k4X+UmpE7If794qBfOtGFA7pbEByZ2pinyy2YRsA2O6lLDOynJMSIVJoFM
-         Wvro65LH9mtebwNBzBwhrtxkvox46+r6wwZH4eYd+mYlM8gfp2s7dxCrtouRZ2HvQ9rb
-         5qqKVWSj4jEdYbd8S6LPV6K7PJCG4fHMCcDZkvLBlGNukalvsGNQKBVKwFWP7x+ZUNc0
-         mZXiAkmse4krF81HSAGDete8t78Ll4SG7G5gaBi9gesUSTbQOYIe2O3LdV31q8XNetNL
-         YzKH8enFbBx54aGHmjR5bRjrnOqioVrO6oNE62MwqlFCmvCaYYCBPM8DqoQ36EIiOpxJ
-         EWLw==
+        bh=dox2mMkLl/5c9D2gga469zGN9zQ+j614KEWkuEZ4MV4=;
+        b=TtHtny7NdbtnaKMNgHxxZ1P6YiZMqlmrfAD504KQpkpUdOed8kz6s4qe73Oso8t6aL
+         GH45XnJdlS9fPbcsu06cjzlIDPfSLe4vdmLZk7L0colYmkysDdcFQUfaXrpgfhWM8Uu9
+         mwNsso9fA2grp70nK3W+gfRLzK4em/GxgeHMyOxZAQwF2uHJZHUlKeoWDTsO9Pf3mIoR
+         +MU2pw1Hj93sIubQtkBk95FwjgyvioAIuxLDOXetbKFAI5WclUufvdU4gR+xUVC90tO0
+         kjPZ8sljqOzsGufGGBR2iVo/n5ohkrTAeCPS+lQRYxTn5nYYxcG4Bmjfy2K5n7PsifJS
+         ohDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CBtdyMzsAJ1/aOexJ9rl7ZeO2ErFHAD5HxTQN3Dqn3Q=;
-        b=Nqf67QK1xFhpnv3I+0YooXGTyza+0FyGc63aFgiOHpDkLk8bGbIdomrtXLmfObV57J
-         DtG/u2Bh+5rHsyAPgSXG2qAnu8n7yueXB6DX9KJ55ZR8jF0TYOUk3PfMdUGqFYT9p3/q
-         ZfGJE+x6gizeti6Fpxnw3zOWzB8kxaklkjEwyl62Tf9xHN7YrWV7l0hJJHOGLu1kuAvy
-         GHjw2hjxUtEbcZKGwYXPJopHt3XlKOKH3bNe+lJHIjoelIbACxCoBYwVKLGYf0BG12Lp
-         phNg4TKGFiljbQgwr6f5kgZhZYwAkjIZiI6ThDJabLKBn4PB0VKb+Hm6q2NxO1wZ7FDY
-         ImcA==
-X-Gm-Message-State: AOAM533yI1m1A8r4YarlX8Wkm3XlUzAJlaVblAU/VnBoOiuImk0UeemL
-        hG2FsgObjE/Zye8SQvbq0PLeDvUE0u1NtA==
-X-Google-Smtp-Source: ABdhPJw42FrkjYM4LnR278q9mfBravYOk4Zj2lNKJYJUZ/HCUi9Q4cA6PZiVhbQJK68MTRAAzi0sdA==
-X-Received: by 2002:aa7:d285:0:b0:42d:ca4f:a046 with SMTP id w5-20020aa7d285000000b0042dca4fa046mr13232089edq.354.1653991224557;
-        Tue, 31 May 2022 03:00:24 -0700 (PDT)
+        bh=dox2mMkLl/5c9D2gga469zGN9zQ+j614KEWkuEZ4MV4=;
+        b=R9EQlfnogdhovkuWtbKi7WmNKNGzsgbZzVQcou2RUYVzeU3Z1K/Q9/0Hf/VA291VGC
+         PJcI1he9qf43XlhXd2zDECwCEuridMqly+xh9uy00J012va49lpQX/xDBIDxKO0Gq1Hr
+         89H2ezS3LCdFQZshRPneapEvds22w3qMl88tY9CWlbIn/1PgZ4r/swKkLF5ylb0jR5Au
+         a5uON4cJc9MAWGoR2n4eD785pwbtlKXH3XvsV7/i6g56lanyyzkxtA//uzh+PF1aYNwE
+         KYcIkbTyT0ODLPgrInmMBC649i4ufFJ/IyWu4JnS70uDwXJdU1CWb4+VRiiui9czkC8h
+         43og==
+X-Gm-Message-State: AOAM533ay4mCTKdrXplfP9GfFptIV0dqH2UB+WIH6E3x6U8zFUKUOAck
+        UZRRf92qB91xKHUnRm8wH7BPVbp6SLtYTA==
+X-Google-Smtp-Source: ABdhPJwaDMI96aKfbI0lqqtNolmvi5yHB6A4EjRXIsAbd+0AZ25rrn/qiMxaKibl1aGvqzYNEfcjIQ==
+X-Received: by 2002:aa7:db02:0:b0:42d:c3ba:9c86 with SMTP id t2-20020aa7db02000000b0042dc3ba9c86mr14927377eds.337.1653991228918;
+        Tue, 31 May 2022 03:00:28 -0700 (PDT)
 Received: from able.fritz.box (p5b0ea02f.dip0.t-ipconnect.de. [91.14.160.47])
-        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.23
+        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 03:00:24 -0700 (PDT)
+        Tue, 31 May 2022 03:00:28 -0700 (PDT)
 From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
@@ -59,9 +59,9 @@ Cc:     christian.koenig@amd.com, alexander.deucher@amd.com,
         daniel@ffwll.ch, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, hughd@google.com,
         andrey.grodzovsky@amd.com
-Subject: [PATCH 10/13] drm/nouveau: use drm_oom_badness
-Date:   Tue, 31 May 2022 12:00:04 +0200
-Message-Id: <20220531100007.174649-11-christian.koenig@amd.com>
+Subject: [PATCH 13/13] drm/tegra: use drm_oom_badness
+Date:   Tue, 31 May 2022 12:00:07 +0200
+Message-Id: <20220531100007.174649-14-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220531100007.174649-1-christian.koenig@amd.com>
 References: <20220531100007.174649-1-christian.koenig@amd.com>
@@ -76,21 +76,21 @@ This allows the OOM killer to make a better decision which process to reap.
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c | 1 +
+ drivers/gpu/drm/tegra/drm.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 561309d447e0..5439b6938455 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1218,6 +1218,7 @@ nouveau_driver_fops = {
- 	.compat_ioctl = nouveau_compat_ioctl,
- #endif
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 9464f522e257..89ea4f658815 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -803,6 +803,7 @@ static const struct file_operations tegra_drm_fops = {
+ 	.read = drm_read,
+ 	.compat_ioctl = drm_compat_ioctl,
  	.llseek = noop_llseek,
 +	.oom_badness = drm_oom_badness,
  };
  
- static struct drm_driver
+ static int tegra_drm_context_cleanup(int id, void *p, void *data)
 -- 
 2.25.1
 
