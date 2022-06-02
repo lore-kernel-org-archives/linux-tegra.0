@@ -2,66 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D04CCA473
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Jun 2022 03:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3D2C43334
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Jun 2022 07:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233543AbiFBDTl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Jun 2022 23:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48018 "EHLO
+        id S231330AbiFBHTO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Jun 2022 03:19:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233549AbiFBDTj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Jun 2022 23:19:39 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9500923CA1C;
-        Wed,  1 Jun 2022 20:19:38 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id 137so3621012pgb.5;
-        Wed, 01 Jun 2022 20:19:38 -0700 (PDT)
+        with ESMTP id S231537AbiFBHTO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Jun 2022 03:19:14 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8078DBA6;
+        Thu,  2 Jun 2022 00:19:13 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id u4so1065368pgk.11;
+        Thu, 02 Jun 2022 00:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=DNuRE/GAXdxtn6roiJJAyTqusXsj7xkWB9v744C6KtQ=;
-        b=UZ9Bgpv8gRre7NiiTeQPFyN1Xh5L4bYRuTD7qkuhK2pcLtngkQIuN131ACsE8hkG+N
-         gqzyCkxQFe/NitIvTDpPshsTcBKmCWJgyy4fzNtA0yt2WNR8W/E0kNJ4RO+VmbIQq+My
-         hyA/Y9Yiz4Jowbwqk7TNCWrGtjOdpOALOw191BDjtV7N1jYoTf6Q4hACPFcarK5adoCg
-         JYAztQ1J+BOEXtPl0DCPubaInsobQtCX+ODsu0T5LOSf+P9gr0rxGims1Xu9vghZM2bd
-         KCfloaQlA7xByUWAcbbRclToW6XprxpUqS+XtHXbbBXIatCPHqelIDTZa+yz4U04fiO1
-         Y5eA==
+        bh=/AgL3mhclsRnOIjShcky6P/zYqYoTK5YEABahucPLqo=;
+        b=XSLWBrUEed9Lolpsa7uO5CbaR4AjyTCecnUaFW3y4NL9c+E4gUNBk5OxOyK964p6/1
+         7oHCe9/pZ7fI2Ty8Ps0Nyn6XXFbISwCb/KnD5tEsSR/JRssY0j9uVSmupr9OL5hch6Xl
+         SfdubO4H9O2FRKMe8jCT1pnYCmj6Qn4Y9UI+CeqQzJyoZuldfgouaUXPh/NjCT+W6kXk
+         Zw/ZdsRRnXKVw64lI9jysyfsn8h5oNJWRzmouJZBel28yszQhnTQnfcqDS7MOjyLwOaC
+         yZcHvzvYuxiPP21sHFbaTmAQmQ4xBsX3YWLYdF00j+a9Xmusg8/AmRjkq8dvC5GJN23e
+         VP3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=DNuRE/GAXdxtn6roiJJAyTqusXsj7xkWB9v744C6KtQ=;
-        b=Y+nhrSfgTBUNiQJZTTYOV3ohT8QfZXtvQEPhTLqKiKHhkCZ9Zt+u33ZFGkCgV+rKiL
-         isNkz2VvKDVzRnuoQ9OYqHZwxxpRaCSOQ4oLBclaBrPHu/b5fHCmsKQqqQsQwG15FGzr
-         tkl/iTaWGOP9/4yjyMUm1RljSkd8wFfWovAJ6nTBjl/DQzLJyHhkImoN/xun6E5UV5wG
-         oKlpXK11c4KCQCgCyVgP1dDqx2gjRLOG8k3m/8+PzYdWPNz1t/B1WdygeJP2Z6o1IfNr
-         zO9ELDC0XXDY2TGWO0ZyBK67ktbbanwWaFl7zU9chUpIHjB65GYJBUlStBESkQrnDlGO
-         aCcw==
-X-Gm-Message-State: AOAM5329COnZA+O/gbPw/BWPPHJQzP0b654eeRJ/3pvf84ts8Hk1ZNVp
-        6Sy2GA4wzENsG02Lun9myh8=
-X-Google-Smtp-Source: ABdhPJwJLMaVLD2u2bJY4KVpXbDijKCzOaTpwPMfdI94WT0FcKKy7drYlOlA9HTHThXN4TtxlUI6Jg==
-X-Received: by 2002:a63:42:0:b0:3fa:b4d7:eeb5 with SMTP id 63-20020a630042000000b003fab4d7eeb5mr2229233pga.71.1654139978086;
-        Wed, 01 Jun 2022 20:19:38 -0700 (PDT)
-Received: from localhost.localdomain ([202.120.234.246])
-        by smtp.googlemail.com with ESMTPSA id iw10-20020a170903044a00b0016188a4005asm2257477plb.122.2022.06.01.20.19.32
+        bh=/AgL3mhclsRnOIjShcky6P/zYqYoTK5YEABahucPLqo=;
+        b=IrrGv8ISbRR+29jG/Y2q1as4C6lzsVhrVKYa4mGeB5x5EMVSivCBRuKDlTZtsCazs2
+         h82Ejqnb8R/QyME38ySSm6VHAvXooAQ+a/QvBUGCKfmtuRmeiyl8I23/H0KjFs8GJ9ZT
+         46D4SIM2T2/ZAcRxn/T1+qyOzN+YZ9v3DyvvfKv7fINcdKZeAd3stx261TMlC5gt4N/T
+         SQZE07nRv6VhqKm0Qh8vGR+eyfLctLbGJw/3vdtshifsP3e17qa+OgwkjOFobPl6GSiJ
+         EhDWHOOqHaC8an/GTCGvbcIxjb3SMoHVU+dNh43zJkd+9E6agYSGpG0KC6g06dSn8sG6
+         2JUQ==
+X-Gm-Message-State: AOAM531lAGLJteaNqIr3RJYXs5q/KzyXUsZMobL03Tl14Dj4jlpY4/ph
+        h2Lmq7CkO4MAR7tijOFfTbM=
+X-Google-Smtp-Source: ABdhPJyNCRxM1xVeTV9AnJRopo/U6+CXHO8H9eRsl8Qtk7uNHjQIPGjV+6Xm3bcluRIWA8q+ko47pA==
+X-Received: by 2002:a63:187:0:b0:3fb:16f3:ac7f with SMTP id 129-20020a630187000000b003fb16f3ac7fmr3032548pgb.284.1654154353050;
+        Thu, 02 Jun 2022 00:19:13 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id b10-20020a170902d50a00b0015ec71f72d6sm2831603plg.253.2022.06.02.00.19.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 20:19:37 -0700 (PDT)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Om Prakash Singh <omp@nvidia.com>,
-        Fan Fei <ffclaire1224@gmail.com>,
-        Miaoqian Lin <linmq006@gmail.com>, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: tegra194: Fix PM error handling in tegra_pcie_config_ep
-Date:   Thu,  2 Jun 2022 07:19:08 +0400
-Message-Id: <20220602031910.55859-1-linmq006@gmail.com>
+        Thu, 02 Jun 2022 00:19:12 -0700 (PDT)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: chi.minghao@zte.com.cn
+To:     thierry.reding@gmail.com
+Cc:     airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH] drm/tegra: Remove redundant NULL check before kfree
+Date:   Thu,  2 Jun 2022 07:19:09 +0000
+Message-Id: <20220602071909.278279-1-chi.minghao@zte.com.cn>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -69,29 +64,31 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The pm_runtime_enable() will increase power disable depth.
-if dw_pcie_ep_init() fails, we should use pm_runtime_disable()
-to balance it pm_runtime_enable().
-Add missing pm_runtime_disable() for tegra_pcie_config_ep()
+From: Minghao Chi <chi.minghao@zte.com.cn>
 
-Fixes: c57247f940e8 ("PCI: tegra: Add support for PCIe endpoint mode in Tegra194")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+kfree on NULL pointer is a no-op.
+
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/tegra/submit.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index cc2678490162..d992371a36e6 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1949,6 +1949,7 @@ static int tegra_pcie_config_ep(struct tegra194_pcie *pcie,
- 	if (ret) {
- 		dev_err(dev, "Failed to initialize DWC Endpoint subsystem: %d\n",
- 			ret);
-+		pm_runtime_disable(dev);
- 		return ret;
+diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+index 6d6dd8c35475..54ac31bc80f6 100644
+--- a/drivers/gpu/drm/tegra/submit.c
++++ b/drivers/gpu/drm/tegra/submit.c
+@@ -639,8 +639,7 @@ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+ 		kfree(job_data->used_mappings);
  	}
  
+-	if (job_data)
+-		kfree(job_data);
++	kfree(job_data);
+ put_bo:
+ 	gather_bo_put(&bo->base);
+ unlock:
 -- 
 2.25.1
+
 
