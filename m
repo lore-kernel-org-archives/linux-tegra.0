@@ -2,86 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EBBC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Jun 2022 13:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA95C43334
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Jun 2022 15:56:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235449AbiFBNhB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Jun 2022 09:37:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56312 "EHLO
+        id S235496AbiFBP40 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Jun 2022 11:56:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235472AbiFBNg6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Jun 2022 09:36:58 -0400
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CEC38BFE;
-        Thu,  2 Jun 2022 06:36:52 -0700 (PDT)
-Received: by mail-oi1-f172.google.com with SMTP id w130so6616387oig.0;
-        Thu, 02 Jun 2022 06:36:52 -0700 (PDT)
+        with ESMTP id S235088AbiFBP40 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Jun 2022 11:56:26 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BCB62A80DD;
+        Thu,  2 Jun 2022 08:56:25 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id d129so5091543pgc.9;
+        Thu, 02 Jun 2022 08:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Tu7jo/PyJIG6BDHX/FMNU8mRbHE8qx0k2AbAIgv/aSw=;
+        b=G4jo1+hJKSw+rgStl1RDyAKlzn6sdzcOvMqZYnRb8VwJFHqt9vu6FxzP5RWkU9flVa
+         POSqy3npwwMgIp5CSWeCDD1msIdEE0UJjR37Kg9yk/7pXH7VhI0kAHk/vXVFVy9GnNUI
+         7Ra/AA/R/y67VxnW+DDlOf2xtVdkxCiN+0ATosFJ6EvK/2SeZVEujPT0cCnykHN0NBo3
+         5BgOwix0MqKOxrPNLprkQVdYsSeIRIywIv8Bq2NGzFpCOZUp8FGQ1iFf4Z+JZAO9jnpY
+         WaV40vB+3QAwC94rW6xWVbh2i/NAqfm04HyesLf1jqelyBmJXGDRRXDPlTbh/y7gc5zF
+         Uguw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pwfbSlcoi2C5nDJgDNKyjclPhwf+l/0Xc9Z6UrC0aU0=;
-        b=cZAWqLcUgB/uw0sG0OHI58jLiJVldyrOB9jdnyu2kGVVmKD3TDRoRrHlUnIAdKC8Lz
-         dCuW2jqnCVwPAehOEMavDp3raNvEPWgUizoLSQzAPPlT9vXfRFJdF9FqPf14iRT/emko
-         fs15A33bDAReQnFyb35qTIJfQ2RyyUZHMgNOP0APgPxGEYsDhZeHDhdih4OeHH6FdSLk
-         dxG3wOlwTilOWpQmkqCYOpUurwZ5F0FFLiWB9NJ0+Da1WBwQ6jJkA4RIfsJFIN8RMoJE
-         IW/Pd1uEtO/C2giXYbo2qMh+LjQEv0xpyQsqp9t7iQhwBG6oYNYCzXom8WLoyTVNoU/d
-         Tz4A==
-X-Gm-Message-State: AOAM532SR3siV58HgXeE8jk+DaCpJynV21dF0hlXsK1+Y0vGH6rmbYlT
-        M23lJbVUHRyXG3gYWxLKmQ==
-X-Google-Smtp-Source: ABdhPJyrAZUWQ0T2CZPatmZOUh88Y6+3CIiOzGsT97Tx4iCEE988ZVcRncw7dgmawOZ42YndW6Kv3Q==
-X-Received: by 2002:a05:6808:1448:b0:326:e239:a490 with SMTP id x8-20020a056808144800b00326e239a490mr18668182oiv.253.1654177011518;
-        Thu, 02 Jun 2022 06:36:51 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id w5-20020a056808140500b00326cb6225f8sm2412022oiv.44.2022.06.02.06.36.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Tu7jo/PyJIG6BDHX/FMNU8mRbHE8qx0k2AbAIgv/aSw=;
+        b=frpS0vBl10al28JvSNxPXzcbHp+cMek5vk5BqvO6UtoHa6eSh8BguI7EWdtZX2FaaB
+         YA15P28r3vvKAQYOjMI87DXJWjsX3HEeTH8mg/tpZwD6vpH+AOEtGV7M2uRl7z/McxPO
+         cdVFMEDbjBogEBVMdyXA/8/ufUXzWTY28EVDb4oRY1xREIPj7iJGrKkCAAGp1rZ/ZIpl
+         v9Fgj0tZusbOLNKccV1/Ppk4MGAZedqXoUla+/hbYUgHlm4uwZVbzoOupyib2lq3nhvY
+         /KAKTM9NvNuVtIq+MD/HK8Saie3hUaWqH7SDVodQnd9LsirCSXzk4mjoiFv3z1ZTCkGw
+         pqog==
+X-Gm-Message-State: AOAM530P6u9Zm6gJlZj1wpAXt0Agt0SIfUXfBHm9hYKf4RQnC4pDSVhq
+        dJ7iOn0CK2/OPnQGP9rRf4ny5a5clWIPzW0WsS8=
+X-Google-Smtp-Source: ABdhPJwDRdxm8qjdYFCIqC2XRn1Qg5sgd/UC1C6tDrjH0A1hr+j6rW5IwdSM13nzTycWCfPhVjncMQ==
+X-Received: by 2002:a05:6a00:815:b0:518:9905:de06 with SMTP id m21-20020a056a00081500b005189905de06mr5854249pfk.76.1654185384781;
+        Thu, 02 Jun 2022 08:56:24 -0700 (PDT)
+Received: from localhost.localdomain ([202.120.234.246])
+        by smtp.googlemail.com with ESMTPSA id z15-20020a63b90f000000b003fc95548840sm3548205pge.36.2022.06.02.08.56.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jun 2022 06:36:51 -0700 (PDT)
-Received: (nullmailer pid 2163694 invoked by uid 1000);
-        Thu, 02 Jun 2022 13:36:50 -0000
-Date:   Thu, 2 Jun 2022 08:36:50 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 4/5] dt-bindings: pinctrl: renesas,rzg2l-pinctrl:
- Document the properties to handle GPIO IRQ
-Message-ID: <20220602133650.GA2163633-robh@kernel.org>
-References: <20220523174238.28942-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220523174238.28942-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Thu, 02 Jun 2022 08:56:23 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] drm/tegra: dc: rgb: Fix refcount leak in tegra_dc_rgb_probe
+Date:   Thu,  2 Jun 2022 19:56:15 +0400
+Message-Id: <20220602155615.43277-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220523174238.28942-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 23 May 2022 18:42:37 +0100, Lad Prabhakar wrote:
-> Document the required properties to handle GPIO IRQ.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml   | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
+of_get_child_by_name() returns a node pointer with refcount
+incremented, we should use of_node_put() on it when not need anymore.
+So add of_node_put() in error paths.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Fixes: format:d8f4a9eda006 ("drm: Add NVIDIA Tegra20 support")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/gpu/drm/tegra/rgb.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+index ff8fce36d2aa..cef2b1b72385 100644
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -196,12 +196,16 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
+ 	int err;
+ 
+ 	np = of_get_child_by_name(dc->dev->of_node, "rgb");
+-	if (!np || !of_device_is_available(np))
+-		return -ENODEV;
++	if (!np || !of_device_is_available(np)) {
++		err = -ENODEV;
++		goto err_put_node;
++	}
+ 
+ 	rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
+-	if (!rgb)
+-		return -ENOMEM;
++	if (!rgb) {
++		err = -ENOMEM;
++		goto err_put_node;
++	}
+ 
+ 	rgb->output.dev = dc->dev;
+ 	rgb->output.of_node = np;
+@@ -209,31 +213,34 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
+ 
+ 	err = tegra_output_probe(&rgb->output);
+ 	if (err < 0)
+-		return err;
++		goto err_put_node;
++
+ 
+ 	rgb->clk = devm_clk_get(dc->dev, NULL);
+ 	if (IS_ERR(rgb->clk)) {
+ 		dev_err(dc->dev, "failed to get clock\n");
+-		return PTR_ERR(rgb->clk);
++		err =  PTR_ERR(rgb->clk);
++		goto err_put_node;
+ 	}
+ 
+ 	rgb->clk_parent = devm_clk_get(dc->dev, "parent");
+ 	if (IS_ERR(rgb->clk_parent)) {
+ 		dev_err(dc->dev, "failed to get parent clock\n");
+-		return PTR_ERR(rgb->clk_parent);
++		err = PTR_ERR(rgb->clk_parent);
++		goto err_put_node;
+ 	}
+ 
+ 	err = clk_set_parent(rgb->clk, rgb->clk_parent);
+ 	if (err < 0) {
+ 		dev_err(dc->dev, "failed to set parent clock: %d\n", err);
+-		return err;
++		goto err_put_node;
+ 	}
+ 
+ 	rgb->pll_d_out0 = clk_get_sys(NULL, "pll_d_out0");
+ 	if (IS_ERR(rgb->pll_d_out0)) {
+ 		err = PTR_ERR(rgb->pll_d_out0);
+ 		dev_err(dc->dev, "failed to get pll_d_out0: %d\n", err);
+-		return err;
++		goto err_put_node;
+ 	}
+ 
+ 	if (dc->soc->has_pll_d2_out0) {
+@@ -241,13 +248,17 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
+ 		if (IS_ERR(rgb->pll_d2_out0)) {
+ 			err = PTR_ERR(rgb->pll_d2_out0);
+ 			dev_err(dc->dev, "failed to get pll_d2_out0: %d\n", err);
+-			return err;
++			goto err_put_node;
+ 		}
+ 	}
+ 
+ 	dc->rgb = &rgb->output;
+ 
+ 	return 0;
++
++err_put_node:
++	of_node_put(np);
++	return err;
+ }
+ 
+ int tegra_dc_rgb_remove(struct tegra_dc *dc)
+-- 
+2.25.1
+
