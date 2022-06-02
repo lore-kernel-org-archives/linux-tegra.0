@@ -2,163 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA95C43334
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Jun 2022 15:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED817C43334
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Jun 2022 15:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235496AbiFBP40 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Jun 2022 11:56:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47774 "EHLO
+        id S236675AbiFBP5m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Jun 2022 11:57:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235088AbiFBP40 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Jun 2022 11:56:26 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BCB62A80DD;
-        Thu,  2 Jun 2022 08:56:25 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id d129so5091543pgc.9;
-        Thu, 02 Jun 2022 08:56:25 -0700 (PDT)
+        with ESMTP id S233858AbiFBP5k (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Jun 2022 11:57:40 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F3005044C;
+        Thu,  2 Jun 2022 08:57:39 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id q21so7038638wra.2;
+        Thu, 02 Jun 2022 08:57:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tu7jo/PyJIG6BDHX/FMNU8mRbHE8qx0k2AbAIgv/aSw=;
-        b=G4jo1+hJKSw+rgStl1RDyAKlzn6sdzcOvMqZYnRb8VwJFHqt9vu6FxzP5RWkU9flVa
-         POSqy3npwwMgIp5CSWeCDD1msIdEE0UJjR37Kg9yk/7pXH7VhI0kAHk/vXVFVy9GnNUI
-         7Ra/AA/R/y67VxnW+DDlOf2xtVdkxCiN+0ATosFJ6EvK/2SeZVEujPT0cCnykHN0NBo3
-         5BgOwix0MqKOxrPNLprkQVdYsSeIRIywIv8Bq2NGzFpCOZUp8FGQ1iFf4Z+JZAO9jnpY
-         WaV40vB+3QAwC94rW6xWVbh2i/NAqfm04HyesLf1jqelyBmJXGDRRXDPlTbh/y7gc5zF
-         Uguw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U45oZztThwfTU4bE8oeP5EulZ4cbmdTMrasnTC5Jdpk=;
+        b=WhGySQvOuchgsSe7+FbwcFf+mI+6SdW3TND8tEcZP15hSvH7EO+WJbESdN6KE67pK2
+         i55m7YhNDq/U/FivXmqhRnOBGq7qmgSk50qkkKeQ9Chu2Ci5FI7sggl7TdtnUKfujZjK
+         GkSKRkz8U8Nhjdf6M/jXDfrUqWE4npO+yQvSrp1Q+bIeGl7kV3WhVykb2ZV1PlCxuVZr
+         OwK2iZffbwKgAV+vp+oInKlnVc+dPEj3L/COOaU3k0lSLgmJdcUjFaOHWpRbfPQP7FKk
+         YXH9MbAws4dCiPoCSpNZjCgjVSmYy1Bx+5nOOpiXMQSzt/EXpwnqfk95wOVOTdo3VUlj
+         nC9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tu7jo/PyJIG6BDHX/FMNU8mRbHE8qx0k2AbAIgv/aSw=;
-        b=frpS0vBl10al28JvSNxPXzcbHp+cMek5vk5BqvO6UtoHa6eSh8BguI7EWdtZX2FaaB
-         YA15P28r3vvKAQYOjMI87DXJWjsX3HEeTH8mg/tpZwD6vpH+AOEtGV7M2uRl7z/McxPO
-         cdVFMEDbjBogEBVMdyXA/8/ufUXzWTY28EVDb4oRY1xREIPj7iJGrKkCAAGp1rZ/ZIpl
-         v9Fgj0tZusbOLNKccV1/Ppk4MGAZedqXoUla+/hbYUgHlm4uwZVbzoOupyib2lq3nhvY
-         /KAKTM9NvNuVtIq+MD/HK8Saie3hUaWqH7SDVodQnd9LsirCSXzk4mjoiFv3z1ZTCkGw
-         pqog==
-X-Gm-Message-State: AOAM530P6u9Zm6gJlZj1wpAXt0Agt0SIfUXfBHm9hYKf4RQnC4pDSVhq
-        dJ7iOn0CK2/OPnQGP9rRf4ny5a5clWIPzW0WsS8=
-X-Google-Smtp-Source: ABdhPJwDRdxm8qjdYFCIqC2XRn1Qg5sgd/UC1C6tDrjH0A1hr+j6rW5IwdSM13nzTycWCfPhVjncMQ==
-X-Received: by 2002:a05:6a00:815:b0:518:9905:de06 with SMTP id m21-20020a056a00081500b005189905de06mr5854249pfk.76.1654185384781;
-        Thu, 02 Jun 2022 08:56:24 -0700 (PDT)
-Received: from localhost.localdomain ([202.120.234.246])
-        by smtp.googlemail.com with ESMTPSA id z15-20020a63b90f000000b003fc95548840sm3548205pge.36.2022.06.02.08.56.20
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U45oZztThwfTU4bE8oeP5EulZ4cbmdTMrasnTC5Jdpk=;
+        b=GHlke+1LiMrbnsnS3LkcBsKF3l7tGa9FJ79fVeYtvvIX+Hk16eIe+mHGckvBADwWG3
+         wzrxUqZ7GcNzQg/ENU8fVedWJv6atGSiI8htXgFNfIVbSH2qehSgCVia9wmXDomlttOW
+         36pZx4pNyiXyI7ngur0NK4qah4dP+oaj2DKe6dd/ssyaatHch/+zvjbuWWliMNxPAQaB
+         ycms8E+FstvDDj4NZlcUQPk6TXKQvu74C9Pa8yHyTSSWv7V/fFruxnbtkq8dChTqae+y
+         gDKtHQlebkIXFSrttCayqH2fThj/OajFiEUGNhNjaZ2AFrVu+drFKYNK7a1t3dNFQB2Y
+         0cMQ==
+X-Gm-Message-State: AOAM533giM31b4PmJS03+cU0/yLjdU2BjcghAzCvdw46Jzpc2yAQo9MN
+        8n0HiJN+b49gqQxCShJQT6A=
+X-Google-Smtp-Source: ABdhPJyz5Kv5HQB5RBrB9iVOmWYxmgljnyJaImOlllFIG4+8+d3kzf27yp84e7joZRyHTookq75vNw==
+X-Received: by 2002:adf:f645:0:b0:20e:652d:2a4e with SMTP id x5-20020adff645000000b0020e652d2a4emr4425383wrp.344.1654185457556;
+        Thu, 02 Jun 2022 08:57:37 -0700 (PDT)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id y7-20020a5d4707000000b002103e9c1233sm4664997wrq.56.2022.06.02.08.57.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jun 2022 08:56:23 -0700 (PDT)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linmq006@gmail.com
-Subject: [PATCH] drm/tegra: dc: rgb: Fix refcount leak in tegra_dc_rgb_probe
-Date:   Thu,  2 Jun 2022 19:56:15 +0400
-Message-Id: <20220602155615.43277-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 02 Jun 2022 08:57:36 -0700 (PDT)
+Date:   Thu, 2 Jun 2022 17:57:34 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org
+Subject: Re: [PATCH] dt-bindings: timestamp: Correct id path
+Message-ID: <Ypjd7lsn7KCDXBXv@orome>
+References: <20220523172515.5941-1-dipenp@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="HnqFdPgdWrRBfQgN"
+Content-Disposition: inline
+In-Reply-To: <20220523172515.5941-1-dipenp@nvidia.com>
+User-Agent: Mutt/2.2.4 (c3baa83e) (2022-04-30)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-of_get_child_by_name() returns a node pointer with refcount
-incremented, we should use of_node_put() on it when not need anymore.
-So add of_node_put() in error paths.
 
-Fixes: format:d8f4a9eda006 ("drm: Add NVIDIA Tegra20 support")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/gpu/drm/tegra/rgb.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+--HnqFdPgdWrRBfQgN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index ff8fce36d2aa..cef2b1b72385 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -196,12 +196,16 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
- 	int err;
- 
- 	np = of_get_child_by_name(dc->dev->of_node, "rgb");
--	if (!np || !of_device_is_available(np))
--		return -ENODEV;
-+	if (!np || !of_device_is_available(np)) {
-+		err = -ENODEV;
-+		goto err_put_node;
-+	}
- 
- 	rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
--	if (!rgb)
--		return -ENOMEM;
-+	if (!rgb) {
-+		err = -ENOMEM;
-+		goto err_put_node;
-+	}
- 
- 	rgb->output.dev = dc->dev;
- 	rgb->output.of_node = np;
-@@ -209,31 +213,34 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
- 
- 	err = tegra_output_probe(&rgb->output);
- 	if (err < 0)
--		return err;
-+		goto err_put_node;
-+
- 
- 	rgb->clk = devm_clk_get(dc->dev, NULL);
- 	if (IS_ERR(rgb->clk)) {
- 		dev_err(dc->dev, "failed to get clock\n");
--		return PTR_ERR(rgb->clk);
-+		err =  PTR_ERR(rgb->clk);
-+		goto err_put_node;
- 	}
- 
- 	rgb->clk_parent = devm_clk_get(dc->dev, "parent");
- 	if (IS_ERR(rgb->clk_parent)) {
- 		dev_err(dc->dev, "failed to get parent clock\n");
--		return PTR_ERR(rgb->clk_parent);
-+		err = PTR_ERR(rgb->clk_parent);
-+		goto err_put_node;
- 	}
- 
- 	err = clk_set_parent(rgb->clk, rgb->clk_parent);
- 	if (err < 0) {
- 		dev_err(dc->dev, "failed to set parent clock: %d\n", err);
--		return err;
-+		goto err_put_node;
- 	}
- 
- 	rgb->pll_d_out0 = clk_get_sys(NULL, "pll_d_out0");
- 	if (IS_ERR(rgb->pll_d_out0)) {
- 		err = PTR_ERR(rgb->pll_d_out0);
- 		dev_err(dc->dev, "failed to get pll_d_out0: %d\n", err);
--		return err;
-+		goto err_put_node;
- 	}
- 
- 	if (dc->soc->has_pll_d2_out0) {
-@@ -241,13 +248,17 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
- 		if (IS_ERR(rgb->pll_d2_out0)) {
- 			err = PTR_ERR(rgb->pll_d2_out0);
- 			dev_err(dc->dev, "failed to get pll_d2_out0: %d\n", err);
--			return err;
-+			goto err_put_node;
- 		}
- 	}
- 
- 	dc->rgb = &rgb->output;
- 
- 	return 0;
-+
-+err_put_node:
-+	of_node_put(np);
-+	return err;
- }
- 
- int tegra_dc_rgb_remove(struct tegra_dc *dc)
--- 
-2.25.1
+On Mon, May 23, 2022 at 10:25:15AM -0700, Dipen Patel wrote:
+> During the repository renaming from hte to timestamp, $id path was not
+> updated accordingly. This patch corrects $id path.
+>=20
+> Fixes: af583852d2ef ("dt-bindings: Renamed hte directory to timestamp")
+> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> ---
+>  .../bindings/timestamp/hardware-timestamps-common.yaml          | 2 +-
+>  Documentation/devicetree/bindings/timestamp/hte-consumer.yaml   | 2 +-
+>  .../devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml      | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 
+Sorry for the delay. I've applied this patch now and dt_binding_check
+now no longer shows any errors for these files.
+
+Thanks,
+Thierry
+
+--HnqFdPgdWrRBfQgN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmKY3e0ACgkQ3SOs138+
+s6Eyrw/+OmA3OMFoGE0eUxpA/a3G8BO4A+6BIw3lzA/WREnaxMpZ4DdwVhUIZzmV
+oJK2DDt5zzWAf2dpl8UaM8A9FFkAjeWU6q6P2F8C0bUJXNvvUC2cnfUtl3iSHwsO
+lysnFZjR2BA881grh2LtEs4309Rddf5f3FA3BqKisF+XsAcrOYGGely435TXCFby
+CiGvllH4zfE5FmUtdIARVqhDbJRPDIPqik6Qdl0iPkUc4yDbeE0An2jVV2/L12uO
+UUFQM0+qpxBmkkLXSWgis8U9+kGxVBWmr+8adF1AGY5D5wXU94PtHTCxtWjxVBhK
+1jl6X0iW8EZ+B9ehaypjOZk7lNIxj0gq1iz/7M9e1IYN/3aNAu+p+hDdX88ii3Gp
+sP0l/eH+77OTpoBN/YJUItnsK3iAh7VyjS63mFRUv9fPf1h9/acueO/f+N3ySDgs
+iUAtPbyx56FiZ+omXhQ2rIRmPZaiDPm3MJj6cQyFGqThlXncinlBnQ0Sk5IeL3Q0
+HaR7AFJLJ9AqHg2pvt5qU60E+MvAsO4OW6SDTnz7YeNDezEg7k9/EWWVgeNVmXbS
+pXRQX2JrRc7sIVyMrGZN7c/vC3psfO572vsw0JVwZ0qZqvovKGHm9uPFfhwoKtbx
+/ylsKr+7UEahxfhG3IcLv6KmDMXLwkaAyLNRf8TPpCwAdN0ari0=
+=dVCk
+-----END PGP SIGNATURE-----
+
+--HnqFdPgdWrRBfQgN--
