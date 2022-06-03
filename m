@@ -2,84 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865E3C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  3 Jun 2022 20:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248FAC43334
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Jun 2022 21:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347669AbiFCUaJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 3 Jun 2022 16:30:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40938 "EHLO
+        id S242179AbiFCVIY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Jun 2022 17:08:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbiFCUaI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Jun 2022 16:30:08 -0400
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96DCE46153;
-        Fri,  3 Jun 2022 13:30:06 -0700 (PDT)
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-f2cbceefb8so12008772fac.11;
-        Fri, 03 Jun 2022 13:30:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=aWgRjcIRY9aXR5lMG74PBf5aEP4BmW1ZmceFBkmSQgE=;
-        b=7vrCa1qMci7NkH4UpRxFzi7IUGX9BVEKrlVMye55KKV7POJlIjdA9NKU7bUf0IISur
-         utddu/qgOzwZ+JYVWu0ntL1PEyQiH8i0l977+Zuq75sczlV+jPsBH9sBrnLcIr2Ry5tb
-         MqRX6aysnLtAfxNWNwB6Q3FVyFAnIV3aEMAPSqsIoIms0qyiCcNrTBI7KQ6nzr1+oGiJ
-         WrscPD3IkKj9Nj2mgzxiwEX4oMQPtO4ErwzWKCYe6Y3eK+2g/K7RW6emXuOWy24nHCUN
-         6ndDCrvWf4VwnCerjF2wM7GqkyMpuDRdIflV4upAKvBqZvaBniJVsbkOdW0lZI3rvUwU
-         ekig==
-X-Gm-Message-State: AOAM530J5f09FR0+uYyd6SyXlOVvLSyg02DMQN0KqjZ6YAwNXaihCcTY
-        qc0kbxzIjCyklVQrEd6OJg==
-X-Google-Smtp-Source: ABdhPJzDAK9Ow9YhSMIGcLFMa9uhRDPTC2tuaf29Q6ftaE+O1AaL/YlVV1f1W6fnvsQb1+wkPGINVA==
-X-Received: by 2002:a05:6870:d0ce:b0:f3:3856:f552 with SMTP id k14-20020a056870d0ce00b000f33856f552mr7127615oaa.99.1654288204596;
-        Fri, 03 Jun 2022 13:30:04 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id k10-20020a056830168a00b006068c4af381sm4098088otr.54.2022.06.03.13.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jun 2022 13:30:04 -0700 (PDT)
-Received: (nullmailer pid 855181 invoked by uid 1000);
-        Fri, 03 Jun 2022 20:30:03 -0000
-Date:   Fri, 3 Jun 2022 15:30:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     broonie@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        thierry.reding@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        perex@perex.cz, tiwai@suse.com, jonathanh@nvidia.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/6] ASoC: tegra: Add binding doc for OPE module
-Message-ID: <20220603203003.GA852734-robh@kernel.org>
-References: <1654238172-16293-1-git-send-email-spujar@nvidia.com>
- <1654238172-16293-2-git-send-email-spujar@nvidia.com>
+        with ESMTP id S231235AbiFCVIV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Jun 2022 17:08:21 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A53727FCB
+        for <linux-tegra@vger.kernel.org>; Fri,  3 Jun 2022 14:08:20 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nxEWf-0003rl-JF; Fri, 03 Jun 2022 23:08:09 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nxEWd-006Hqb-Ub; Fri, 03 Jun 2022 23:08:06 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nxEWb-00E1Hd-7g; Fri, 03 Jun 2022 23:08:05 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     kernel@pengutronix.de, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 10/14] mtd: rawnand: tegra: Don't skip cleanup after mtd_device_unregister() failed
+Date:   Fri,  3 Jun 2022 23:07:54 +0200
+Message-Id: <20220603210758.148493-11-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220603210758.148493-1-u.kleine-koenig@pengutronix.de>
+References: <20220603210758.148493-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1654238172-16293-2-git-send-email-spujar@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1139; i=uwe@kleine-koenig.org; h=from:subject; bh=irb1oiaimsbDKo87nqTOgZKRASJYgqZ1ZPCZwfsS6XY=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBimnflbW3ealPvT9b+g3B+cAJsmzQc8G+AdxD7vvKD MCcxz0yJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYpp35QAKCRDB/BR4rcrsCXtNB/ 48c7Jbr99RVPnriaCqngFSv8q/ISnJI5bbk7lzv40z/dlUnOd1vh7n0ep/VZVJyJ/1T9VxPAx1c33r 6sXHxkWURm0mExha/gkghuyl3HWSLRvfucWjnCRr+zGrUqJlAC4l347mg8oVxl9wo3tAiXS4E7Kk4I p9VeaeRccRlOS+9sV5aU968/ba+OoRWW/aTPSqE896XnKMst29bbH8vaosKMrpos+p8mSnYfRn24yP blX5FD8jmCmWkp2iYoNIhaiJ8kSwAS9SQA+ai1VjeCVTP9ns37N2ME6U0wvbtgdsJQcBPasU9qHg7V NQOyhmC7HM9x8iqUH8o5OoB+8Fu3gG
+X-Developer-Key: i=uwe@kleine-koenig.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jun 03, 2022 at 12:06:07PM +0530, Sameer Pujar wrote:
-> This patch adds YAML schema for DT bindings of Output Processing
-> Engine (OPE) module. It consists of Parametric Equalizer (PEQ)
-> and Multi Band Dynamic Range Compressor (MBDRC) sub blocks and
-> binding doc for these blocks are added as well. The OPE will be
-> registered as an ASoC component and can be plugged into an audio
-> path as per need via ALSA mixer controls. The DT bindings are
-> applicable on Tegra210 and later SoCs where OPE module is present.
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  .../bindings/sound/nvidia,tegra210-ahub.yaml       |  4 +
->  .../bindings/sound/nvidia,tegra210-mbdrc.yaml      | 47 ++++++++++++
->  .../bindings/sound/nvidia,tegra210-ope.yaml        | 87 ++++++++++++++++++++++
->  .../bindings/sound/nvidia,tegra210-peq.yaml        | 48 ++++++++++++
->  4 files changed, 186 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mbdrc.yaml
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-peq.yaml
+If mtd_device_unregister() fails (which it doesn't when used correctly),
+the resources bound by the nand chip should be freed anyhow as returning
+an error value doesn't prevent the device getting unbound.
 
-Doesn't apply for me. I guess there is some undocumented dependency 
-here? Resend after the merge window if that solves it.
+Instead use WARN_ON on the return value similar to how other drivers do
+it.
 
-Rob
+This is a preparation for making platform remove callbacks return void.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/mtd/nand/raw/tegra_nand.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
+index b36e5260ae27..e12f9f580a15 100644
+--- a/drivers/mtd/nand/raw/tegra_nand.c
++++ b/drivers/mtd/nand/raw/tegra_nand.c
+@@ -1223,11 +1223,8 @@ static int tegra_nand_remove(struct platform_device *pdev)
+ 	struct tegra_nand_controller *ctrl = platform_get_drvdata(pdev);
+ 	struct nand_chip *chip = ctrl->chip;
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+-	int ret;
+ 
+-	ret = mtd_device_unregister(mtd);
+-	if (ret)
+-		return ret;
++	WARN_ON(mtd_device_unregister(mtd));
+ 
+ 	nand_cleanup(chip);
+ 
+-- 
+2.36.1
+
