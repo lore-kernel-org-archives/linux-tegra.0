@@ -2,66 +2,56 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE066C43334
-	for <linux-tegra@archiver.kernel.org>; Sun,  5 Jun 2022 16:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D51F5C43334
+	for <linux-tegra@archiver.kernel.org>; Sun,  5 Jun 2022 16:27:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351207AbiFEQQn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 5 Jun 2022 12:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39822 "EHLO
+        id S1345179AbiFEQ11 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 5 Jun 2022 12:27:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351061AbiFEQQm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 5 Jun 2022 12:16:42 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 175864D9FC
-        for <linux-tegra@vger.kernel.org>; Sun,  5 Jun 2022 09:16:41 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id me5so24223522ejb.2
-        for <linux-tegra@vger.kernel.org>; Sun, 05 Jun 2022 09:16:41 -0700 (PDT)
+        with ESMTP id S243238AbiFEQ10 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 5 Jun 2022 12:27:26 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A42BCA5;
+        Sun,  5 Jun 2022 09:27:24 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id a10so3940470wmj.5;
+        Sun, 05 Jun 2022 09:27:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DOd91IrpVsMvaCem3N2Wlo4e4L7ezusJLGgTEZxYBBA=;
-        b=gM5L49Q5RNeeLmx4jz/0qVJoD+bjMCPlzbAXCJbNiWO9sHNBhK0oC+q5dS9DI0hDF9
-         aB88gWRVtT/asQV44soIAqkaWx/vgut/QdrGnnJ3lmg5okT37PQPXX7ZVKAR7WmBVVPZ
-         kc7/YY3mLvNZdYMjYfi9IB27m25VBDCVJkLyQ=
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BlhDqnXIWmz99mOmaitwKvZoXf00bis6sm2lmF5SdE0=;
+        b=mV9dqH2HnBmPIO1d5I4EKXR8iPDfSXlcAvbfJljUN3vbziKUintaochodqEZVkB4Xj
+         AJ2PxMd2+h7Yzr6hT6yfbKL0vq7x5MF8VYjlz4ugAh9S48aOV7K5zrnHYMrVJnKTngSm
+         VURI5b2HlrgCziXUFK8h9F13e6jzQiJZEyqur3x6C8fLsd2oPwzEtotCIniPDWFPnuP+
+         ixsuLzAy8+5N3Gf2vs78cdMVSEF0Uasi6P7VPjIlgtYhI5+jgALwlIgdjeXwJtDz8Mzf
+         sL4R98ifWXgZAXb3dcx6tSPJvPvXxPNMOIk7IANBzClStx/THKXPJ3SklvDg6nBzDkee
+         Nclw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DOd91IrpVsMvaCem3N2Wlo4e4L7ezusJLGgTEZxYBBA=;
-        b=tAjiocKRwA3XOqQB6l0n1VOyMlcZfTtJLZiWrR4821GaFDnLhMfqm2TVLiDL7Hz3qr
-         sOiNBUCkVBE4LVAl3hOCQZvPXQ3aZZVDb4O/3xo/iiutbtPmKWBDkHrZ2j9HWoO8eKRA
-         awjEnqDv5X/eMvckUNLfa+z5jDe1kOUgPhSYqPOeDEERHljYTSS7Fqg8qwdXWbS/cIVU
-         YJ2HukgYHM3kOMbk1mHXScl0b9ajInpfFz51xMta/Ob8outDA0RWOuh5Uqa+pwzn0/2U
-         diJHkxuRsCTmiQPQmo098wtpnEmzAtzvKY1DHm4kPX9E5o+vVUkyHhRRwt1vHhY+SZgt
-         mS3g==
-X-Gm-Message-State: AOAM531FaOiKzXoMFd2SbvpvjqsKZzoiSwFnBwVZXEkiupvaLTIGU0oR
-        il7dY3sgaHIaeUmVED8bBixgYuITX2HvM1y2
-X-Google-Smtp-Source: ABdhPJyxfGNXRQeg7FuvZvmE3WlgGdfn+BdeyouNef3PgZWLVhNzRLMPAh+Yipc+8AAkpXN5Z9ar5g==
-X-Received: by 2002:a17:907:94c1:b0:6ff:7dc9:ac22 with SMTP id dn1-20020a17090794c100b006ff7dc9ac22mr17558989ejc.768.1654445799241;
-        Sun, 05 Jun 2022 09:16:39 -0700 (PDT)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
-        by smtp.gmail.com with ESMTPSA id g2-20020a1709063b0200b0070a5ba0669dsm4353719ejf.218.2022.06.05.09.16.38
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Jun 2022 09:16:38 -0700 (PDT)
-Received: by mail-wm1-f41.google.com with SMTP id c5-20020a1c3505000000b0038e37907b5bso8837424wma.0
-        for <linux-tegra@vger.kernel.org>; Sun, 05 Jun 2022 09:16:38 -0700 (PDT)
-X-Received: by 2002:a05:600c:4982:b0:39c:3c0d:437c with SMTP id
- h2-20020a05600c498200b0039c3c0d437cmr13980053wmp.38.1654445797876; Sun, 05
- Jun 2022 09:16:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220603113908.78777-1-thierry.reding@gmail.com>
- <CAHk-=wiVxF5VLFSuet3OrC7u1Gfb-ZyMs4W-KXAc42rXPRWmhA@mail.gmail.com> <CACRpkda0KiyjV27WEP_MYpvWXyG787L9PJZaP_hnXh_DFpSj5Q@mail.gmail.com>
-In-Reply-To: <CACRpkda0KiyjV27WEP_MYpvWXyG787L9PJZaP_hnXh_DFpSj5Q@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 5 Jun 2022 09:16:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wirNAe3ApyCWMAyz-QFaNX_oNCzc8SSX7a52pV=+OQ6Qg@mail.gmail.com>
-Message-ID: <CAHk-=wirNAe3ApyCWMAyz-QFaNX_oNCzc8SSX7a52pV=+OQ6Qg@mail.gmail.com>
-Subject: Re: [GIT PULL] hte: New subsystem for v5.19-rc1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BlhDqnXIWmz99mOmaitwKvZoXf00bis6sm2lmF5SdE0=;
+        b=4C+5HDLu2E2WEtXExTAJ2wiqB7h+/ZrvNtcUdfgu68ToaLU3BScdakfOWWXCd61/vz
+         8g7R5hcxPyYIis5HNuMCRC1m3TSHIVPSNZr/u9X3SqDiOZ0382XVPt97phRj4CkE8ptw
+         HxW4PDSY8WQYzItSrVc18FUGXBhG5QKmod92rhKcvWenCNG3KSNXEhk/MjRaj8CtpXiS
+         +h30CghWSr7Ltlp02rRLSudy925usY4+c1b69uWDT2tON4NcofgDc0kRoGF2yPrpUCJ8
+         bNHU6yp2Up6BBsUZt3HvkK5BYiGx8rkdm0xhlj51lbMKThtePZmk9PdTNi6A+UrGS1G6
+         E8HA==
+X-Gm-Message-State: AOAM533NmT7WNSGC1cvqo1xWt9sF50W7Mg1acwT8QvGse+kQnK10cJTv
+        cJXb40U7ck2UAUdDDQr4aZs=
+X-Google-Smtp-Source: ABdhPJwITz7ZAWATmsKnFtjy9MAofwUv8X6uuBWL4APFcRGthr9LBgQNsnsaE0oRuFfQQvwgashNAQ==
+X-Received: by 2002:a05:600c:4f90:b0:394:970a:71bd with SMTP id n16-20020a05600c4f9000b00394970a71bdmr18960996wmq.158.1654446443345;
+        Sun, 05 Jun 2022 09:27:23 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id n3-20020a1c2703000000b0039c4b518df4sm3130796wmn.5.2022.06.05.09.27.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jun 2022 09:27:22 -0700 (PDT)
+Date:   Sun, 5 Jun 2022 18:27:20 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>,
         Dipen Patel <dipenp@nvidia.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-tegra <linux-tegra@vger.kernel.org>,
@@ -69,19 +59,107 @@ Cc:     "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>,
         Mark Gross <mgross@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         "Saha, Tamal" <tamal.saha@intel.com>, bala.senthil@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [GIT PULL] hte: New subsystem for v5.19-rc1
+Message-ID: <YpzZaJtgXbY0W4Ji@orome>
+References: <20220603113908.78777-1-thierry.reding@gmail.com>
+ <CAHk-=wiVxF5VLFSuet3OrC7u1Gfb-ZyMs4W-KXAc42rXPRWmhA@mail.gmail.com>
+ <CACRpkda0KiyjV27WEP_MYpvWXyG787L9PJZaP_hnXh_DFpSj5Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="EFh38D72SJj7BkNR"
+Content-Disposition: inline
+In-Reply-To: <CACRpkda0KiyjV27WEP_MYpvWXyG787L9PJZaP_hnXh_DFpSj5Q@mail.gmail.com>
+User-Agent: Mutt/2.2.4 (c3baa83e) (2022-04-30)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Jun 4, 2022 at 1:11 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
+
+--EFh38D72SJj7BkNR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Jun 04, 2022 at 10:11:17AM +0200, Linus Walleij wrote:
+> On Sat, Jun 4, 2022 at 6:38 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > On Fri, Jun 3, 2022 at 4:39 AM Thierry Reding <thierry.reding@gmail.com=
+> wrote:
+> > >
+> > > Note that this currently supports only one provider, but there seems =
+to
+> > > be enough interest in this functionality and we expect to see more
+> > > drivers added once this is merged.
+> >
+> > So the "one provider" worries me, but the part that really doesn't
+> > make me all warm and fuzzy is how this came in at the end of the merge
+> > window.
+>=20
 > Another provider did come up, and were requested (by me) to work with
 > Dipen on the subsystem in august last year, that was the Intel PMC in the
-> Elkhart and Tiger Lake platforms and forward
+> Elkhart and Tiger Lake platforms and forward:
+> https://patchwork.ozlabs.org/project/linux-gpio/cover/20210824164801.2889=
+6-1-lakshmi.sowjanya.d@intel.com/#2766453
+>=20
+> [I added the other Intel people on that submission to CC]
+>=20
+> Intel wanted to put this into the GPIO subsystem and what I saw as mainta=
+iner
+> was that this is a general problem and general purpose (binary) I/O just =
+isn't
+> going to be the only thing they timestamp. Other events will be for IIO a=
+nd
+> hwmon or whatever. They have been
+> requested to contribute to Dipens work the recent 9 months ... so... well=
+ I
+> understand people can get other priorities and stuff.
+>=20
+> Dipen did the right thing and created a separate subsystem that is a prov=
+ider
+> to GPIO and can be a provider to things like IIO as well, which is what
+> it needs to be because for things like sensor fusion and industrial contr=
+ol
+> systems in general precise timestamps are
+> of uttermost importance. And IIO handle a lot of sensors.
+>=20
+> > The DT bindings got the comment "why call it 'hardware timestamp'"
+> > when no other case seems sane.
+>=20
+> Intel is talking about "input timestamping", admittedly it is done in har=
+dware
+> but the point is to timestamp input I/O events.
+>=20
+> > So the DT bindings got renamed. So now part of the code calls it "hte"
+> > (which nobody understands outside of the hte community that is
+> > apparently one single device: Tegra) and part of the code calls it
+> > "timestamp".
+>=20
+> HTE is "hardware timestamping engine", we have hwmon, hwspinlock,
+> hwtracing so maybe hwstamping would be a more natural name then?
 
-Ok, I've pulled this now, even if I don't love the "hte" name. I
-despise specialized TLA's that aren't some obvious "if you're a kernel
-developer, you know what this means".
+Another alternative would be just drivers/timestamp since pretty much
+anything in drivers/ is for "hw".
 
-                       Linus
+Thierry
+
+--EFh38D72SJj7BkNR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmKc2WgACgkQ3SOs138+
+s6FILQ//bhu038q6SHXjBrxVGvixZRnnAgI4bdwZ/iOBzpfXqnFFaXePFtz2DnXG
+MhVKixiQnNN9t+bevpQZ+MZbJ/NBs6BaWv224S9qjGFPXPZEKwJSCaT7XoldRFxN
+Tbk4b27Igpe1gPSd+ApBhM6je7gQf0xNFPr73HdrzUqUO17I68reSDLA2BwUpHjP
+I9YopQ6ZfPF7ZxAMZ39TiMhIcrH+dzP+r9yy5PZX1gdVoXjM+0Bfc3eGvCTnY8FL
+ZoEnKYBu9Ztibr13DsOXV41Pckzxo6XJh46NZD7BRQmPVTbH+QvBSY2ggYocjGe8
+Eo6Y8wm9EoznjmIsp93YbZsv77FXd6DmW8nZKgle3YnDCvWaIS+7h7Mx1Yx4oGIk
+DrTLwVMk2ls9n1Len8xXhXOf2cXKDiNmUnpE2QWm57KMpQT/MLht4aUcptYYV/Sc
+WEoJZZ0gnnzp1LS9xOAXnSqnA36PGtWHXqbX6qJLPep1n8Dxm6ODWuDXY/f0TM/h
+4OgpZWwPpKau1AO2dIGMrQreu57eFttnS2/zXVyPWO7fHCxkbSg4PqEpM2Ajg7JQ
+A9PqLmxjQpUPvMx6+ra1VZgHhBya8vZ6bcZKbVepbtx9/msJiB1CYJOo6preY7qK
+W7Y+UkO16AfIEyR4csivfr1Kwb0ftaVaVeoK3lptbmrW1AqMxmQ=
+=Jzkq
+-----END PGP SIGNATURE-----
+
+--EFh38D72SJj7BkNR--
