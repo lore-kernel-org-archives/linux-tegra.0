@@ -2,326 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8628DC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Jun 2022 06:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2919C43334
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Jun 2022 08:18:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230005AbiFFGU2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Jun 2022 02:20:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57912 "EHLO
+        id S231682AbiFFISE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Jun 2022 04:18:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbiFFGUD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Jun 2022 02:20:03 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2054.outbound.protection.outlook.com [40.107.220.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB2821E0C;
-        Sun,  5 Jun 2022 23:19:57 -0700 (PDT)
+        with ESMTP id S231665AbiFFISD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Jun 2022 04:18:03 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2040.outbound.protection.outlook.com [40.107.95.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A79914D243;
+        Mon,  6 Jun 2022 01:18:02 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IZs1Isgo5gYBbEZVXT8C39faLJaXE1cXQRLasDvvbzqMrHpAUMWZzK9/cK9+kyqBYK6OyOxPsWnMsRYDsDgCCCGI6PjsbppkETWBSdowrUwgIkMmECaVoAGoNaX9OfbenXEz9OxGvDWCkZ0Ii/XokAXCdrplFa7x/BcEUE1TzC/EqCncCFBMB5uh1dWY9DhMPnHTVKMqJQo5FZDaVYUhcJWY8HQFYlXiOP1LgTVyb2O9nckVWqW9UFF91S4QdgGDUGeLLjJMvXHoNfDGd0Dg2rhadfEzlmTAj+CgxSWeFe8gAp3tErHwSCRADnKL1Znbqtm4wuvY3em9/wUbjIGWmQ==
+ b=Bl0L+dVOxvu+i9zElgIC6htzdlD8QShO0Ln/xz884lUrwFpOrYuI0b1jXTPxhiOnWCg7CRF5jYsA7/oUgXvplyWoHhgFoBqyckbRBasumGC4KHcxT5/VRQ+qOJC12ZSS5ScxHK9sJ3Tj39Dh+hvs8oc48ay6cUIbeWgLDzfmHNa8gdkJwQVlnWSFC5IhtbFd8my4ycHRV6dkQ8IGcx4Jl2nIFxDAi/zeIr1dXFAPOCbFLYAHLt+g7kx+zD1wNds2HluvrBJ+iAaEOvHF/AcrTFNxl0AwjB+h9Ckwv+tgDoCAvjGvlymXhpEK5zci0J5zsF71+VTkfN4V4gkLiMWShA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/lD6En4jLD2A0WwJaY5egXjV7PHtQKwxdT6UcRXfAro=;
- b=WVz3jQaucBxcU3/wthTiL1bXrbIU70YSiSZRMrK3h44uaZaOFgxGzjrLjnkpmPMGMZQve8PoeZJ3+C94e5YGo0/pHrpdbYd/qOXJ/YpN2Mj7HtRSt4yH3zlnmT7j+XvRr/Fg4NI/X5AOnXlieJ4n8o2/cDfY5ZHLuxSna9JNayBZEqlI4GPJ8Fkqc/Hk4FCZFd4qXNUM4aOi75uz5VIf2f3FSs2wwAf+ilzD8a7gLfIFfapk/W02wNgu06qKK0ZhAliRB7/lDEIUtCFwclRkafqDYC+jHNXSVyEubziYq2khEZTq87eP5mQ5n2wjpZwmZriVLVYNURsAlMNVHV4VDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=samsung.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=cGXKcMlsvkGPR7qh7EoU9l3P0Ro25S80vVxETCM9I6k=;
+ b=i+PKHjdG5OQz+2vcHfRKAnkjwyocAPDFNIubDhI1+vtViJBmp3PHz2CpEXOIgDlQ6fR8N7qYYy0HicbV0aTXY4H9jDd135RehG68tMrtKqMoazjDd0shdyOoR9X37LswaSucSF68vCE7s/a/rEm603fYN2U696UNgZ/cZuEXGY8yGQfuhbKESrE9iZs9rGRFk+Pe915KoOZL3yXFiad5opZP07r9njzoMXS2mCQaF4Ix3DQjTbRVLhJV4IoLbFCsem/K1C47mu4KQQeqktwtxuh4pzC2wrCiPT/3OPJp+teAvjpB1pN3MVeMY9OtRt5v/RMOo2T9ysPi/r9ywGASrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/lD6En4jLD2A0WwJaY5egXjV7PHtQKwxdT6UcRXfAro=;
- b=DQ4Bp67Hl7HCHGTOzmnvgy0+KA9n62Y6U2o4hNe9tHjjtTPG/41iHH6piyvxFE/FmC2+9s1+dEXeHO9cuW2doRsQZX1jgczPvbhJtEg50WkQ5OSulArDkorGQMqrWHrR0oU/1VcRpxACGtOegEwPTzmA5sYifczXQZen76CfgSSvO/hHde1r1HvxowYYiDnZlIsA+aLBfly6IvqFKM001ap8GliCprzWX8x7Okl3VBNNLm7l7259ALiZLmMr//bx96Vs3K7gQraLpe5ua5FMQqHiBfaoevoAWrQWUK3X7cLs1V9VkWQVN371VQufS/WLoB9Yqrn4Mdbh8cs2KJ/ytg==
-Received: from BN1PR12CA0023.namprd12.prod.outlook.com (2603:10b6:408:e1::28)
- by LV2PR12MB5893.namprd12.prod.outlook.com (2603:10b6:408:175::14) with
+ bh=cGXKcMlsvkGPR7qh7EoU9l3P0Ro25S80vVxETCM9I6k=;
+ b=lsy25EGnocmjPS0OToSWvcLTGHhyVCJSIlyzdfzzdqZOGhYRe+5/6CU1u5Ub0XIxO1jr4P9WDY59CwwpuGdzF7hAMMr4OG1JZJtENP7iS9XxCRUpAcgA/WskKNfyTCSwcwzN4jW8sxrT85UVhb6xEtSTCcLTf8ej0eKZltbVNSycEPdakvV4HyxnkuX5ic0JbhW8Qq5A05MRypgE1vJ/KrLmBp55zGbWnFlhNp+lNbhGdduvYSEjrmJ62VMyMJGDIRarayRb0aWg7wAz3XuBVwBmpbu+wo2UzA4oK/kK2yrf6j7cr38GAxrVnErM8XtFaMb753P24pKfQfkUuZm/eg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY4PR12MB1576.namprd12.prod.outlook.com (2603:10b6:910:10::9)
+ by MN0PR12MB6127.namprd12.prod.outlook.com (2603:10b6:208:3c5::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.18; Mon, 6 Jun
- 2022 06:19:56 +0000
-Received: from BN8NAM11FT067.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e1:cafe::fd) by BN1PR12CA0023.outlook.office365.com
- (2603:10b6:408:e1::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.18 via Frontend
- Transport; Mon, 6 Jun 2022 06:19:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.235) by
- BN8NAM11FT067.mail.protection.outlook.com (10.13.177.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5314.12 via Frontend Transport; Mon, 6 Jun 2022 06:19:55 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 6 Jun
- 2022 06:19:54 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Sun, 5 Jun 2022
- 23:19:53 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Sun, 5 Jun 2022 23:19:51 -0700
-From:   Nicolin Chen <nicolinc@nvidia.com>
-To:     <jgg@nvidia.com>, <joro@8bytes.org>, <will@kernel.org>,
-        <marcan@marcan.st>, <sven@svenpeter.dev>, <robin.murphy@arm.com>,
-        <robdclark@gmail.com>, <m.szyprowski@samsung.com>,
-        <krzysztof.kozlowski@linaro.org>, <baolu.lu@linux.intel.com>,
-        <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <matthias.bgg@gmail.com>, <heiko@sntech.de>, <orsonzhai@gmail.com>,
-        <baolin.wang7@gmail.com>, <zhang.lyra@gmail.com>, <wens@csie.org>,
-        <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
-        <jean-philippe@linaro.org>, <alex.williamson@redhat.com>
-CC:     <suravee.suthikulpanit@amd.com>, <alyssa@rosenzweig.io>,
-        <alim.akhtar@samsung.com>, <dwmw2@infradead.org>,
-        <yong.wu@mediatek.com>, <mjrosato@linux.ibm.com>,
-        <gerald.schaefer@linux.ibm.com>, <thierry.reding@gmail.com>,
-        <vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <cohuck@redhat.com>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>, <kvm@vger.kernel.org>
-Subject: [PATCH 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain and device/group
-Date:   Sun, 5 Jun 2022 23:19:23 -0700
-Message-ID: <20220606061927.26049-2-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220606061927.26049-1-nicolinc@nvidia.com>
-References: <20220606061927.26049-1-nicolinc@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.19; Mon, 6 Jun
+ 2022 08:18:00 +0000
+Received: from CY4PR12MB1576.namprd12.prod.outlook.com
+ ([fe80::16b:eff7:847b:19e7]) by CY4PR12MB1576.namprd12.prod.outlook.com
+ ([fe80::16b:eff7:847b:19e7%10]) with mapi id 15.20.5314.019; Mon, 6 Jun 2022
+ 08:18:00 +0000
+Message-ID: <b70e024b-4f80-16b9-4bbe-ed8a24a384df@nvidia.com>
+Date:   Mon, 6 Jun 2022 13:47:48 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3 1/6] ASoC: tegra: Add binding doc for OPE module
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+Cc:     broonie@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        thierry.reding@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        perex@perex.cz, tiwai@suse.com, jonathanh@nvidia.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1654238172-16293-1-git-send-email-spujar@nvidia.com>
+ <1654238172-16293-2-git-send-email-spujar@nvidia.com>
+ <20220603203003.GA852734-robh@kernel.org>
+From:   Sameer Pujar <spujar@nvidia.com>
+In-Reply-To: <20220603203003.GA852734-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0067.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ad::13) To CY4PR12MB1576.namprd12.prod.outlook.com
+ (2603:10b6:910:10::9)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3b0e22f2-25ab-4220-9b4d-08da4784935c
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5893:EE_
-X-Microsoft-Antispam-PRVS: <LV2PR12MB589361D4BA2573B725FA2AE6ABA29@LV2PR12MB5893.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 86460810-abd1-4fbd-63a1-08da47951198
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6127:EE_
+X-Microsoft-Antispam-PRVS: <MN0PR12MB6127694EF436C789F8E0B56EA7A29@MN0PR12MB6127.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MAESquNyov2hSlN2LefCZ1SDG3fhf1NCMjKy4+Wu3pjUcI0vw3MFZO88F5cIvmMSyFqYY2Ai6CXdvk9eGdjQpBBXglWenu3n1LbkKCv59qoPZRWBPYkluOaztJmLAMbNURV1kw6GShrI20s02fgKL6facc+JU+PbklOF8cKCv89g+xjDmP3cN45D4cKyHJHJU7G4LdjgOWz4p2tccjZ74G7VjPUwaAskilJ0Ksd9MNBLe0ey+YYWcmiwHuyKiHPEM7z57baiZPzqkJdOxDiW4UqCp8Yop89Mk70rgcftvJAPoru1/LCkNN80ovttpZ7kutOsnJgjyQ967e6jOpD+NsGkmds9ClDSvdmENKgd8nKV/qdxSzWKaQw3Mw+BJhQvb/dzTGEOYOAoxcj+aUVeTiH2z3sBl0R+GEkMYygQTL97wWuT6KbcsRhxCYih+BoTzIOGU8Y9RBQYOdUU32ew+vLtvAWwA5QzWEmgS5Iu6V8SqGBIrQD8c/sB0sRoglXvKi6ENJB9FrOL2aDukOvimacO3XhwbYvv3rvbaB0Tgy/o1VLApdfYpcCw5mFHhCdN4sFYly+FPyjXCP+EnPKvfG7680j8/uuK0Slkq1tc1x0zS/NZl8xFNExQvI7WeROd2NapAyHysGp2+yyvI6M0reRBI/mB2CSW6Y18sWK5GKuc4Qg2Gq06Z5kCSMpOCtDJi/aoQDqUU24n39OE/uGE54yEN2nSZbIojFHumwImgE0eGnZyOSAzpkHVt9at3zfBSL4bYizNBDoPKJiDHZJdJQQqyPYTNGPp4xF4daYS6scTK1Pk4Fd8RwhVVSmxZfYKe+X+9brpCYul4LI0VfGKDQ==
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(356005)(1076003)(508600001)(81166007)(4326008)(54906003)(110136005)(36756003)(921005)(70586007)(8676002)(2616005)(186003)(26005)(83380400001)(6666004)(5660300002)(8936002)(2906002)(336012)(47076005)(426003)(7406005)(70206006)(40460700003)(86362001)(316002)(7696005)(36860700001)(82310400005)(7416002)(334744004)(2101003)(83996005)(36900700001)(473944003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: Lw5a1Xxe23rRr8NRFrhOCxxmluRvwOSxBcNybbRYcTQgXcFcc/bLo6AXJGg3Jv06QSkLSuA1V0dX+Ws7JDehz3Vx+Tt+XarYEoQDurdyZRRxKwvs375pUN601mY4j/l27QYtD55/UVxnmatn3HTxWc4whtEMMg/b9rsSS0LT6WrA6Y/ltMfGa8HkQgbN4/TGbqQWosPkDCoG0tykBpn0TR5fFWSFMrcw/ZpKKV/FSJ0qEBJBd6g0EI09KXqGtM8ujIRhaPXaeJ9Jr5r8y9jwO+QSU257pJ0UQgt3XfzOgGTpXy0JJ4rl5twRfuUrCCu/inYkO6XuZT2X3K9su7hj0Nrjr3VlESiA+ApzRZEKsYfuOxxSkZ17WvjJ6OyseY5IdJJz+utoHxpGJXOjlP3ZClAIzv9BcPVNrfv5dYR2O5ttbvfA6EpA/tm6jTZofR6ADIdGXyQ3jbkiG4VcmTM11xR0J/S9Yq32ETn7Po/BiIsVuRDmgfdKIVTRWKDLz1ky58xvKdwDDxM3VXVPVwSeXXZEYfGSUIhnEwLR0JjK5a7wfbAsmWScgUn/Mf6lGeGEA4dbQr+WE354QaYAzU5UQZYd38RRZ9aqXA/0Cexw1L2Vj0jgKaUQ+EDIAstQGA012EVQSo5p9J0Q4ZD8WcPU0NjhUtZr3pFB98UFuVHjimffXqfK2rwp1A0+2GDveNmSzhTU0hNeEdQCgKJr3hl76BaPCMKd6U+fAiFGoVq5lbc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR12MB1576.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(4744005)(31696002)(66476007)(86362001)(6486002)(186003)(66556008)(66946007)(6506007)(6666004)(8676002)(4326008)(53546011)(38100700002)(6916009)(8936002)(36756003)(31686004)(508600001)(83380400001)(6512007)(7416002)(2616005)(2906002)(26005)(5660300002)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SWV4eENPNTZiZ3p0dEIxVHVQSVVXaDZhbkppd1FiQSthN3ozV01WRThBUTg3?=
+ =?utf-8?B?RnR3cjV3VHJ5ZFBzOStEb0FubWkyTlRZQ2ZFUVVqRnRDRjM0MFZBcnlOUUNX?=
+ =?utf-8?B?K3hzOTJwekl0dDF2VGJOc1hUNmlmVVA3SFJ6OGJlSUhDdFNDVThNSUFORVdj?=
+ =?utf-8?B?SW9xS01VR0QyVEdTUTcrL1NzaDRGYktFOU02dGJ1Z2l3K0Vjb1VlQmZ3WlVh?=
+ =?utf-8?B?RTZyNUI3OEszRVZ1TFBJYjBxZmFocFBrSVl5SUdoWmhIZ2E1UTRzdVBOQVBS?=
+ =?utf-8?B?ZjB5UmZ0dE9wQjZUbDZ5UktGS08zamZHY291S0w0TGNPWlFkQkw4Z3RWUnNT?=
+ =?utf-8?B?eU5LT0xzR01FQUtQRktndlpFVkhBcjdXYVlLSnpiWXdMYVVOaXNlRkFGMmFk?=
+ =?utf-8?B?RCtzTG0wMnFvekZnbEVCY3ZMWkhKTXc1NDJ6ZHBwM2lPK2pyT2ppVXJ2ci9J?=
+ =?utf-8?B?U01CdWZmTW02OEJpL2prb3IvdFprdXRYRXhZalBybUx2UUZlek12aXp1ZHFB?=
+ =?utf-8?B?QVM2VVkvaGNPSllVb3BpUGxmeXdJZ1FER28xQi9SYTJNV2hYYU1TVTRoUXhH?=
+ =?utf-8?B?RzNnZVdndFNDQU9zWDJsSk9PVk9ndGticngxQmNXYmdaV3R0Sm4yK0VXK3Mz?=
+ =?utf-8?B?WmNuNFRRYjdaOEV1VEpIMHdMRG9rQ2lQSHVBM1ZtUDllN3duUTRuTzNEc3hO?=
+ =?utf-8?B?TDFDenozZ3NsZ201cEJwVFZ4eDJSSkU1YVdSS2pMOXhKQUZTZ1NPMDBiNnN2?=
+ =?utf-8?B?YjBrS1JBSTVTVlJmUmtGRUhwK3doTFkxcUFsenhvd2JCZWEvRC9aeVhlOE8y?=
+ =?utf-8?B?TlJTdGswRTdsaTVHTnB6TmpQT0RoVmZ6bzNUTWlkaFdxL2pIMjR6MGh5Y2t2?=
+ =?utf-8?B?ZWpoV1ZpV3FKT0dMd0M0ZzhsQ2tQbDd1YkJUTEVkbmdOSVR3Qjh2UFJHVlJ0?=
+ =?utf-8?B?byswSC9JMzVkQmJDVGlhNVZSNkhhY3ZUaWtUUHVLSXdGYVRYcHB5WEpxTkFa?=
+ =?utf-8?B?N05XWjllN1dnYjB2ZlNFMnk5ZjVYRkhZZ0c3SUs3TE1mM2FSRHpaZUR4R2JC?=
+ =?utf-8?B?eDRvVUo2aWVlbmhWZkxuZGV1WWRGbEpaTUtwdlhKeU1ha2N0Ukh0WStGRkhl?=
+ =?utf-8?B?MjFZdlBQV0tpNVJtUWpxRHhTWU9BbnN4dGk5dWxkNnlaSTJHUkkxT2xDQ3l3?=
+ =?utf-8?B?WmlENExnbXdweTZiNHk2ZmFJaEZmTjhCVitjMU5XaHd1Rk1tUHpYdUJramVu?=
+ =?utf-8?B?UFlEaGRkWkN5Ryt2VnpYY3dTNVZweERtNUFNVytRa2hKbDVkaEJMRURpcU9w?=
+ =?utf-8?B?dFRMdFhQUmZXUmlmNGRxbmQxOGJpQStydmErZXFDNDRmRUFXN1ZpU0NIRHBo?=
+ =?utf-8?B?bmdxb1JJMUkvNzlxQkMxai9DQUZpWk5TczZ6ZXdvOUU5d3ZjSHQxdlBhMkY3?=
+ =?utf-8?B?ZGZLL1lIMHJoc01lVGxLQzdWbWVNekc1K2VZY2lUc0lVaVFzN0tPWFRXaUF4?=
+ =?utf-8?B?N3I5TEM5c00rdWF1dnZZNHJ4Z29NemNybG83Y0trSkFqY05iZ2VKSGIyZ3V5?=
+ =?utf-8?B?aXVZNHRTckxCVzE5aTB3ejF4cW5nN3BtaXdCdk41cW1sSkRKWFVlTC83azR3?=
+ =?utf-8?B?T2Y3Rzk5RXVNMlZrMitMS0hkbkwxNThEaDBhNHRMeTNhekNWTDNnR0gzb3BI?=
+ =?utf-8?B?Q2Npc1BZbmtaSE1RTUxvM0dKWXhDV1pTQldDN1NDUzZZeHNEdGViK3pvSm9M?=
+ =?utf-8?B?dlhVMjRSYS9nd1ZLTGtsaUU3OEx0UEF3ZXpWZEFrQ2ovWXlUUFFnSlErRWd2?=
+ =?utf-8?B?eCtSZ005UEN0Mm5YQTFnb3IxV2hEMThkNDBBZDMvOFFMSUErSGcwZWdOak9O?=
+ =?utf-8?B?K0crbHB2NHRHVFU0NXJNRFVnaUsyMUFxVzkzWitqWXAzSUFEekl3c2x0cnZm?=
+ =?utf-8?B?ejhWb3VORkdaRVJmZk9XZkxkNTFEUUtYRDg2dnl4V3ByNk1QeDNPY2lUY240?=
+ =?utf-8?B?U1NrV3Y2aWh6ZS9pNW05NVUyaHRGYjNjSERzS1V2NTQwSEFWTkJxbldQWUM4?=
+ =?utf-8?B?RzVMaThXTGpDOEJ3UzErU2VqTE90RFdZSjlMMXJxMzFtdkE4dnFpUnd2V0tR?=
+ =?utf-8?B?U0VJaGZ0OVNleVAvUk5tVWZHc1RxZlhFQkhURnY1WDRsa3pqNFVoYlkrL1pC?=
+ =?utf-8?B?NzJwY29tZDJwSnVhcUhxTjV3RGtCVG5GV1pPNTErQk1KNWJ2dmlFOUJGTUFq?=
+ =?utf-8?B?aVFnMkJwS2FMa3FlcFBvNWpkZjE2dHZqK2RNTTZybitRaUJmMTBJTE4vZkM2?=
+ =?utf-8?B?K3dHN1pQOVFRd2VhVmx4cm83dW9kdDlqMHJXTHJDcnNSbUgvUjFBdz09?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2022 06:19:55.8046
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86460810-abd1-4fbd-63a1-08da47951198
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR12MB1576.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2022 08:18:00.1776
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b0e22f2-25ab-4220-9b4d-08da4784935c
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT067.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5893
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vhUUErsIshzJt5fVT3uFgeKTx4dJbRy29wh4t/RaqnOLKVONscm6lZeXAWUhWXJtdU3IztO0KlY/mH7I/AukMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6127
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Cases like VFIO wish to attach a device to an existing domain that was
-not allocated specifically from the device. This raises a condition
-where the IOMMU driver can fail the domain attach because the domain and
-device are incompatible with each other.
 
-This is a soft failure that can be resolved by using a different domain.
+On 04-06-2022 02:00, Rob Herring wrote:
+> Doesn't apply for me. I guess there is some undocumented dependency
+> here? Resend after the merge window if that solves it.
 
-Provide a dedicated errno from the IOMMU driver during attach that the
-reason attached failed is because of domain incompatability. EMEDIUMTYPE
-is chosen because it is never used within the iommu subsystem today and
-evokes a sense that the 'medium' aka the domain is incompatible.
+These were getting applied fine on linux-next.
 
-VFIO can use this to know attach is a soft failure and it should continue
-searching. Otherwise the attach will be a hard failure and VFIO will
-return the code to userspace.
-
-Update all drivers to return EMEDIUMTYPE in their failure paths that are
-related to domain incompatability.
-
-Add kdocs describing this behavior.
-
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/amd/iommu.c                   |  2 +-
- drivers/iommu/apple-dart.c                  |  4 ++--
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |  6 +++---
- drivers/iommu/arm/arm-smmu/qcom_iommu.c     |  2 +-
- drivers/iommu/intel/iommu.c                 |  4 ++--
- drivers/iommu/iommu.c                       | 22 +++++++++++++++++++++
- drivers/iommu/ipmmu-vmsa.c                  |  2 +-
- drivers/iommu/omap-iommu.c                  |  2 +-
- drivers/iommu/virtio-iommu.c                |  2 +-
- 9 files changed, 34 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index 840831d5d2ad..ad499658a6b6 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -1662,7 +1662,7 @@ static int attach_device(struct device *dev,
- 	if (domain->flags & PD_IOMMUV2_MASK) {
- 		struct iommu_domain *def_domain = iommu_get_dma_domain(dev);
- 
--		ret = -EINVAL;
-+		ret = -EMEDIUMTYPE;
- 		if (def_domain->type != IOMMU_DOMAIN_IDENTITY)
- 			goto out;
- 
-diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-index 8af0242a90d9..e58dc310afd7 100644
---- a/drivers/iommu/apple-dart.c
-+++ b/drivers/iommu/apple-dart.c
-@@ -495,10 +495,10 @@ static int apple_dart_attach_dev(struct iommu_domain *domain,
- 
- 	if (cfg->stream_maps[0].dart->force_bypass &&
- 	    domain->type != IOMMU_DOMAIN_IDENTITY)
--		return -EINVAL;
-+		return -EMEDIUMTYPE;
- 	if (!cfg->stream_maps[0].dart->supports_bypass &&
- 	    domain->type == IOMMU_DOMAIN_IDENTITY)
--		return -EINVAL;
-+		return -EMEDIUMTYPE;
- 
- 	ret = apple_dart_finalize_domain(domain, cfg);
- 	if (ret)
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 88817a3376ef..6c393cd84925 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -2424,20 +2424,20 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 			"cannot attach to SMMU %s (upstream of %s)\n",
- 			dev_name(smmu_domain->smmu->dev),
- 			dev_name(smmu->dev));
--		ret = -ENXIO;
-+		ret = -EMEDIUMTYPE;
- 		goto out_unlock;
- 	} else if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1 &&
- 		   master->ssid_bits != smmu_domain->s1_cfg.s1cdmax) {
- 		dev_err(dev,
- 			"cannot attach to incompatible domain (%u SSID bits != %u)\n",
- 			smmu_domain->s1_cfg.s1cdmax, master->ssid_bits);
--		ret = -EINVAL;
-+		ret = -EMEDIUMTYPE;
- 		goto out_unlock;
- 	} else if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1 &&
- 		   smmu_domain->stall_enabled != master->stall_enabled) {
- 		dev_err(dev, "cannot attach to stall-%s domain\n",
- 			smmu_domain->stall_enabled ? "enabled" : "disabled");
--		ret = -EINVAL;
-+		ret = -EMEDIUMTYPE;
- 		goto out_unlock;
- 	}
- 
-diff --git a/drivers/iommu/arm/arm-smmu/qcom_iommu.c b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-index 4c077c38fbd6..a8b63b855ffb 100644
---- a/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-+++ b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-@@ -386,7 +386,7 @@ static int qcom_iommu_attach_dev(struct iommu_domain *domain, struct device *dev
- 			"attached to domain on IOMMU %s\n",
- 			dev_name(qcom_domain->iommu->dev),
- 			dev_name(qcom_iommu->dev));
--		return -EINVAL;
-+		return -EMEDIUMTYPE;
- 	}
- 
- 	return 0;
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 44016594831d..0813b119d680 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4323,7 +4323,7 @@ static int prepare_domain_attach_device(struct iommu_domain *domain,
- 		return -ENODEV;
- 
- 	if (dmar_domain->force_snooping && !ecap_sc_support(iommu->ecap))
--		return -EOPNOTSUPP;
-+		return -EMEDIUMTYPE;
- 
- 	/* check if this iommu agaw is sufficient for max mapped address */
- 	addr_width = agaw_to_width(iommu->agaw);
-@@ -4334,7 +4334,7 @@ static int prepare_domain_attach_device(struct iommu_domain *domain,
- 		dev_err(dev, "%s: iommu width (%d) is not "
- 		        "sufficient for the mapped address (%llx)\n",
- 		        __func__, addr_width, dmar_domain->max_addr);
--		return -EFAULT;
-+		return -EMEDIUMTYPE;
- 	}
- 	dmar_domain->gaw = addr_width;
- 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 847ad47a2dfd..19cf28d40ebe 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1972,6 +1972,17 @@ static int __iommu_attach_device(struct iommu_domain *domain,
- 	return ret;
- }
- 
-+/**
-+ * iommu_attach_device - Attach a device to an IOMMU domain
-+ * @domain: IOMMU domain to attach
-+ * @dev: Device that will be attached
-+ *
-+ * Returns 0 on success and error code on failure
-+ *
-+ * Specifically, -EMEDIUMTYPE is returned if the domain and the device are
-+ * incompatible in some way. This indicates that a caller should try another
-+ * existing IOMMU domain or allocate a new one.
-+ */
- int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
- {
- 	struct iommu_group *group;
-@@ -2098,6 +2109,17 @@ static int __iommu_attach_group(struct iommu_domain *domain,
- 	return ret;
- }
- 
-+/**
-+ * iommu_attach_group - Attach an IOMMU group to an IOMMU domain
-+ * @domain: IOMMU domain to attach
-+ * @dev: IOMMU group that will be attached
-+ *
-+ * Returns 0 on success and error code on failure
-+ *
-+ * Specifically, -EMEDIUMTYPE is returned if the domain and the group are
-+ * incompatible in some way. This indicates that a caller should try another
-+ * existing IOMMU domain or allocate a new one.
-+ */
- int iommu_attach_group(struct iommu_domain *domain, struct iommu_group *group)
- {
- 	int ret;
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 8fdb84b3642b..e491e410add5 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -630,7 +630,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 		 */
- 		dev_err(dev, "Can't attach IPMMU %s to domain on IPMMU %s\n",
- 			dev_name(mmu->dev), dev_name(domain->mmu->dev));
--		ret = -EINVAL;
-+		ret = -EMEDIUMTYPE;
- 	} else
- 		dev_info(dev, "Reusing IPMMU context %u\n", domain->context_id);
- 
-diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-index d9cf2820c02e..bbc6c4cd7aae 100644
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -1472,7 +1472,7 @@ omap_iommu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 	/* only a single client device can be attached to a domain */
- 	if (omap_domain->dev) {
- 		dev_err(dev, "iommu domain is already attached\n");
--		ret = -EBUSY;
-+		ret = -EMEDIUMTYPE;
- 		goto out;
- 	}
- 
-diff --git a/drivers/iommu/virtio-iommu.c b/drivers/iommu/virtio-iommu.c
-index 25be4b822aa0..e3b812d8fa96 100644
---- a/drivers/iommu/virtio-iommu.c
-+++ b/drivers/iommu/virtio-iommu.c
-@@ -734,7 +734,7 @@ static int viommu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 		ret = viommu_domain_finalise(vdev, domain);
- 	} else if (vdomain->viommu != vdev->viommu) {
- 		dev_err(dev, "cannot attach to foreign vIOMMU\n");
--		ret = -EXDEV;
-+		ret = -EMEDIUMTYPE;
- 	}
- 	mutex_unlock(&vdomain->mutex);
- 
--- 
-2.17.1
+Merge window seems to have closed now and v5.19-rc1 release is out. I 
+can apply these cleanly on v5.19-rc1. Please let me know if re-send is 
+needed now or I need to wait for some more time? Thanks.
 
