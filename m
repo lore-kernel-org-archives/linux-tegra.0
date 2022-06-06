@@ -2,81 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E1AC43334
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Jun 2022 13:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F60CCA482
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Jun 2022 14:33:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239057AbiFFNsd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Jun 2022 09:48:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46740 "EHLO
+        id S239797AbiFFOd6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Jun 2022 10:33:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239208AbiFFNsb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Jun 2022 09:48:31 -0400
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45BC49A985;
-        Mon,  6 Jun 2022 06:48:27 -0700 (PDT)
-Received: by mail-il1-f181.google.com with SMTP id v7so11961216ilo.3;
-        Mon, 06 Jun 2022 06:48:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Iq+/ZT5S/tsKY65k+c5zzqLlMmHdbOtpYrK6tQD4cqY=;
-        b=0zL69b45rZX+vti6TKAhUTuVAXolTaDVadZv3AygbgK75Iwf2HvWmPV4oa88S+yJDi
-         uREPJe51ALGVCoXQ9D+EaLN8GPGLRMptCyAyVYTFsMGPGQ1pnSLSe3vaHkvKnwRuT55A
-         swxhSbjT4a+9YHKrF28nIaaupjbMwfzCjrGGdwPhRj39NEvTbgTTqMaouCU1d5Y3Cn+W
-         548W5PBtE/5tupQ8GxbfTjde1KPkD+QlTtsLY5tXZ7pO6ikoJXT3OUViUpPwVZc6Afrr
-         Tl7GxeahBcEJUGQghjsP7/TZah1tJqZQH271sfFcRSkXnhNMwOUUu0T3KTKO9l0cLa1X
-         uiTA==
-X-Gm-Message-State: AOAM530SmjNBbwU5Jgg0m4QurEfekARzbCbcaDzuVYxGVDHDg50PRGVy
-        yCmETxiOrZpNxQxXezBKSQ==
-X-Google-Smtp-Source: ABdhPJwbi6EJiI2PaM91wEcFQReWOmrXQCRfzQHoHXpccKkWDSHoKnOoq6i68X1AyLTQWbbX3840mg==
-X-Received: by 2002:a05:6e02:15ca:b0:2bf:ad58:4a6d with SMTP id q10-20020a056e0215ca00b002bfad584a6dmr14825916ilu.13.1654523306793;
-        Mon, 06 Jun 2022 06:48:26 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id y38-20020a029529000000b0032e583132e4sm5675598jah.123.2022.06.06.06.48.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 06:48:26 -0700 (PDT)
-Received: (nullmailer pid 632986 invoked by uid 1000);
-        Mon, 06 Jun 2022 13:48:24 -0000
-Date:   Mon, 6 Jun 2022 08:48:24 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     broonie@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        thierry.reding@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        perex@perex.cz, tiwai@suse.com, jonathanh@nvidia.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/6] ASoC: tegra: Add binding doc for OPE module
-Message-ID: <20220606134824.GB564610-robh@kernel.org>
-References: <1654238172-16293-1-git-send-email-spujar@nvidia.com>
- <1654238172-16293-2-git-send-email-spujar@nvidia.com>
- <20220603203003.GA852734-robh@kernel.org>
- <b70e024b-4f80-16b9-4bbe-ed8a24a384df@nvidia.com>
+        with ESMTP id S239732AbiFFOd5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Jun 2022 10:33:57 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D5D0D2C13F;
+        Mon,  6 Jun 2022 07:33:55 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CACF15DB;
+        Mon,  6 Jun 2022 07:33:55 -0700 (PDT)
+Received: from [10.57.81.38] (unknown [10.57.81.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 555903F73B;
+        Mon,  6 Jun 2022 07:33:48 -0700 (PDT)
+Message-ID: <1e0e5403-1e65-db9a-c8e7-34e316bfda8e@arm.com>
+Date:   Mon, 6 Jun 2022 15:33:42 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b70e024b-4f80-16b9-4bbe-ed8a24a384df@nvidia.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 2/5] iommu: Ensure device has the same iommu_ops as the
+ domain
+Content-Language: en-GB
+To:     Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
+        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
+        sven@svenpeter.dev, robdclark@gmail.com, m.szyprowski@samsung.com,
+        krzysztof.kozlowski@linaro.org, baolu.lu@linux.intel.com,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
+        jernej.skrabec@gmail.com, samuel@sholland.org,
+        jean-philippe@linaro.org, alex.williamson@redhat.com
+Cc:     suravee.suthikulpanit@amd.com, alyssa@rosenzweig.io,
+        alim.akhtar@samsung.com, dwmw2@infradead.org, yong.wu@mediatek.com,
+        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+        thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+        cohuck@redhat.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+References: <20220606061927.26049-1-nicolinc@nvidia.com>
+ <20220606061927.26049-3-nicolinc@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20220606061927.26049-3-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jun 06, 2022 at 01:47:48PM +0530, Sameer Pujar wrote:
-> 
-> On 04-06-2022 02:00, Rob Herring wrote:
-> > Doesn't apply for me. I guess there is some undocumented dependency
-> > here? Resend after the merge window if that solves it.
-> 
-> These were getting applied fine on linux-next.
+On 2022-06-06 07:19, Nicolin Chen wrote:
+> The core code should not call an iommu driver op with a struct device
+> parameter unless it knows that the dev_iommu_priv_get() for that struct
+> device was setup by the same driver. Otherwise in a mixed driver system
+> the iommu_priv could be casted to the wrong type.
 
-linux-next is not a base maintainers can apply to. Convenient instead of 
-having to get a specific tree, but you still need to say what the base 
-is (what tree it should be applied to).
+We don't have mixed-driver systems, and there are plenty more 
+significant problems than this one to solve before we can (but thanks 
+for pointing it out - I hadn't got as far as auditing the public 
+interfaces yet). Once domains are allocated via a particular device's 
+IOMMU instance in the first place, there will be ample opportunity for 
+the core to stash suitable identifying information in the domain for 
+itself. TBH even the current code could do it without needing the 
+weirdly invasive changes here.
 
-> Merge window seems to have closed now and v5.19-rc1 release is out. I can
-> apply these cleanly on v5.19-rc1. Please let me know if re-send is needed
-> now or I need to wait for some more time? Thanks.
+> Store the iommu_ops pointer in the iommu_domain and use it as a check to
+> validate that the struct device is correct before invoking any domain op
+> that accepts a struct device.
 
-Yes, or the automated checks don't run.
+In fact this even describes exactly that - "Store the iommu_ops pointer 
+in the iommu_domain", vs. the "Store the iommu_ops pointer in the 
+iommu_domain_ops" which the patch is actually doing :/
 
-Rob
+[...]
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 19cf28d40ebe..8a1f437a51f2 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1963,6 +1963,10 @@ static int __iommu_attach_device(struct iommu_domain *domain,
+>   {
+>   	int ret;
+>   
+> +	/* Ensure the device was probe'd onto the same driver as the domain */
+> +	if (dev->bus->iommu_ops != domain->ops->iommu_ops)
+
+Nope, dev_iommu_ops(dev) please. Furthermore I think the logical place 
+to put this is in iommu_group_do_attach_device(), since that's the 
+gateway for the public interfaces - we shouldn't need to second-guess 
+ourselves for internal default-domain-related calls.
+
+Thanks,
+Robin.
+
+> +		return -EMEDIUMTYPE;
+> +
+>   	if (unlikely(domain->ops->attach_dev == NULL))
+>   		return -ENODEV;
