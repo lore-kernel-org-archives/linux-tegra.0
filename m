@@ -2,94 +2,174 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2E7CCA482
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 12:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B78C4C43334
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 13:12:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237899AbiFGMmv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Jun 2022 08:42:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49244 "EHLO
+        id S244507AbiFGNMg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Jun 2022 09:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244075AbiFGMms (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 08:42:48 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41229248EB;
-        Tue,  7 Jun 2022 05:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654605766; x=1686141766;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7CnaOaKftZFuU6zS5ejOPSw/a0TRQ7MfLEcH+ST55pI=;
-  b=npA/EwVLm80RPrCVVatUyQvh9x9gm5H6ghJ6dgiol7bnt46yPC4MAeIP
-   hodIq74n82eCvLkbY6D4n1U5g+cmclFLiS1lWHbglspj33Yx0VXhpW1xu
-   XXW9UHZ96K+9IXY9b2Fj6DgEmQ3WeVzrXk0/t33U8iB4Eu56WDtZMlNUm
-   pxMK+4gZexYxZYaxfCiELvhZ9RnU5kjk71ZGLbc98m1622I3PzO/VRn3x
-   XFvHXiaR2OZx8kR0okSiNW3ZGnzZm376te9757QJrrGqkayUVpgzKPh+f
-   935LMOkD4M2Ww6r8zdK9pommUkbicGZ9Jd72qeSG0NnIawB8Rb10j8+x0
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="259493235"
-X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
-   d="scan'208";a="259493235"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 05:42:44 -0700
-X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
-   d="scan'208";a="584184405"
-Received: from zwang64-mobl1.ccr.corp.intel.com (HELO [10.249.174.202]) ([10.249.174.202])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 05:42:34 -0700
-Message-ID: <3d0b2863-bb4f-31e1-d54e-09ddf4762d43@linux.intel.com>
-Date:   Tue, 7 Jun 2022 20:42:32 +0800
+        with ESMTP id S244437AbiFGNMf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 09:12:35 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F721F637
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Jun 2022 06:12:31 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id b17so9865813ilh.6
+        for <linux-tegra@vger.kernel.org>; Tue, 07 Jun 2022 06:12:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura-hr.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mcxZtplXwk/Z+TT8W9hddhp2FUJFjSAJiAMtVESFwX4=;
+        b=1R9AiW1gY1VYK6kYFNaQEa0cCcVv0mg4PT8PsSFrmYE8qP50U/W8QnvoV8a3AAiuY/
+         6AE3+OpXx+GOb6NGUe8ynFndhTMVnvEd+lz2Ufhrj35oREogwN7e8iAHXyGibeX0qGQe
+         Mc3O1gPlG+6DN56TdUTVkO+LFlhq0niqSzLCQ+9IxXf3J157h8Ncm4NBLnm6M3LHv0Sw
+         IOvovO5h/4xOaWe8MHBozd6uGQENdjNERulvpkYnGKBDYA7j+M6905myRyL11P1J3v2z
+         CWFAj3Y3JgP7/y4FItqBEAw5Rd9w78cklOruPWiyG0Fz2W3oVXsI4xUJgPnD4USc75Vj
+         vG8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mcxZtplXwk/Z+TT8W9hddhp2FUJFjSAJiAMtVESFwX4=;
+        b=4rmz45Jqbvwb+aAsYdHo/jsFmbmOPfdOm5gSdF1uHkiD0du/pNKaOR8BspbVxrSlwO
+         eYyzhCfy27QOiRNFWicdxf7k7xgOl9eYqxsUvA41s9l3dGspPVjGWOXdZ+jTRNAb4DL0
+         CQibZk8fHuv9PvXZC60mOsni/p9s+DZr1jIqAF+GwEy/Aa1owNIhwuBPqxvsN5Nr5hLP
+         9ReQd6kod8ZkTi8tS5UyEdEmkTKlIpM5cytOB2/sfkzPfu6959eGCvAjOokZc2nO/9lj
+         9NAxcX6OsTc0wAc0JYvMv6UZ6poWVSQAj+r8tGrKdqcYSBNSsuWAWjQwez0YWvyiOM6u
+         4mBg==
+X-Gm-Message-State: AOAM531MLmbpjvo1cRurMN8vOFnbyOiWjZUoa+iNotlMpd0usLh8P/GR
+        +PL4UDfQHk1xxXIndjwiv4+vn8OBmzEFO8se+TAXxQ==
+X-Google-Smtp-Source: ABdhPJw95CeU2MDQe4i7N7oPLkSanT5aQWwJEN3LpDbgGCXPYQoyGBGQkxeiSbtBzI0UNRW9Pns5C3y7Zo+8caz+foE=
+X-Received: by 2002:a05:6e02:19cc:b0:2d3:e20f:4959 with SMTP id
+ r12-20020a056e0219cc00b002d3e20f4959mr17071989ill.40.1654607550608; Tue, 07
+ Jun 2022 06:12:30 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Cc:     baolu.lu@linux.intel.com, Nicolin Chen <nicolinc@nvidia.com>,
-        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
-        sven@svenpeter.dev, robin.murphy@arm.com, robdclark@gmail.com,
-        m.szyprowski@samsung.com, krzysztof.kozlowski@linaro.org,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        jean-philippe@linaro.org, alex.williamson@redhat.com,
-        suravee.suthikulpanit@amd.com, alyssa@rosenzweig.io,
-        alim.akhtar@samsung.com, dwmw2@infradead.org, yong.wu@mediatek.com,
-        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
-        thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-        cohuck@redhat.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 0/5] Simplify vfio_iommu_type1 attach/detach routine
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>
-References: <20220606061927.26049-1-nicolinc@nvidia.com>
- <d357966b-7abd-f8f3-3ca7-3c99f5e075b9@linux.intel.com>
- <20220607115820.GH1343366@nvidia.com>
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20220607115820.GH1343366@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1644234441.git.baruch@tkos.co.il> <20220412161259.GA7109@lpieralisi>
+ <YnvCGD4RwuyPkTfK@lpieralisi>
+In-Reply-To: <YnvCGD4RwuyPkTfK@lpieralisi>
+From:   Robert Marko <robert.marko@sartura.hr>
+Date:   Tue, 7 Jun 2022 15:12:19 +0200
+Message-ID: <CA+HBbNFo9QCExiA9T4Mn4t5vvir79xF3R9F6OLZa0m5Bzpte3w@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] PCI: IPQ6018 platform support
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Baruch Siach <baruch@tkos.co.il>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
+        linux-pci@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022/6/7 19:58, Jason Gunthorpe wrote:
-> On Tue, Jun 07, 2022 at 03:44:43PM +0800, Baolu Lu wrote:
->> On 2022/6/6 14:19, Nicolin Chen wrote:
->>> Worths mentioning the exact match for enforce_cache_coherency is removed
->>> with this series, since there's very less value in doing that since KVM
->>> won't be able to take advantage of it -- this just wastes domain memory.
->>> Instead, we rely on Intel IOMMU driver taking care of that internally.
->>
->> After reading this series, I don't see that Intel IOMMU driver needs any
->> further change to support the new scheme. Did I miss anything?
-> 
-> You already did it :)
+On Wed, May 11, 2022 at 4:03 PM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Tue, Apr 12, 2022 at 05:12:59PM +0100, Lorenzo Pieralisi wrote:
+> > On Mon, Feb 07, 2022 at 04:51:23PM +0200, Baruch Siach wrote:
+> > > This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is
+> > > ported from downstream Codeaurora v5.4 kernel. The main difference from
+> > > downstream code is the split of PCIe registers configuration from .init to
+> > > .post_init, since it requires phy_power_on().
+> > >
+> > > Tested on IPQ6010 based hardware.
+> > >
+> > > Changes in v6:
+> > >
+> > >   * Drop DT patch applied to the qcom tree
+> > >
+> > >   * Normalize driver changes subject line
+> > >
+> > >   * Add a preparatory patch to rename PCIE_CAP_LINK1_VAL to PCIE_CAP_SLOT_VAL,
+> > >     and define it using PCI_EXP_SLTCAP_* macros
+> > >
+> > >   * Drop a vague comment about ASPM configuration
+> > >
+> > >   * Add a comment about the source of delay periods
+> > >
+> > > Changes in v5:
+> > >
+> > >   * Remove comments from qcom_pcie_init_2_9_0() (Bjorn Andersson)
+> > >
+> > > Changes in v4:
+> > >
+> > >   * Drop applied DT bits
+> > >
+> > >   * Add max-link-speed that was missing from the applied v2 patch
+> > >
+> > >   * Rebase the driver on v5.16-rc3
+> > >
+> > > Changes in v3:
+> > >
+> > >   * Drop applied patches
+> > >
+> > >   * Rely on generic code for speed setup
+> > >
+> > >   * Drop unused macros
+> > >
+> > >   * Formatting fixes
+> > >
+> > > Changes in v2:
+> > >
+> > >   * Add patch moving GEN3_RELATED macros to a common header
+> > >
+> > >   * Drop ATU configuration from pcie-qcom
+> > >
+> > >   * Remove local definition of common registers
+> > >
+> > >   * Use bulk clk and reset APIs
+> > >
+> > >   * Remove msi-parent from device-tree
+> > >
+> > > Baruch Siach (2):
+> > >   PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
+> > >   PCI: qcom: Define slot capabilities using PCI_EXP_SLTCAP_*
+> > >
+> > > Selvam Sathappan Periakaruppan (1):
+> > >   PCI: qcom: Add IPQ60xx support
+> > >
+> > >  drivers/pci/controller/dwc/pcie-designware.h |   7 +
+> > >  drivers/pci/controller/dwc/pcie-qcom.c       | 155 ++++++++++++++++++-
+> > >  drivers/pci/controller/dwc/pcie-tegra194.c   |   6 -
+> > >  3 files changed, 160 insertions(+), 8 deletions(-)
+> >
+> > Hi Bjorn, Andy,
+> >
+> > any feedback on this series please ?
+>
+> Any feedback on these patches please ?
 
-Just as I thought. Thank you!
+Finally dug the CP01, and for me, it works, so:
+Tested-by: Robert Marko <robert.marko@sartura.hr>
 
-Best regards,
-baolu
+Can we finally get this merged or at least looked at.
+IPQ8074 will also benefit from this.
 
+Regards,
+Robert
+>
+> Thanks,
+> Lorenzo
+
+
+
+-- 
+Robert Marko
+Staff Embedded Linux Engineer
+Sartura Ltd.
+Lendavska ulica 16a
+10000 Zagreb, Croatia
+Email: robert.marko@sartura.hr
+Web: www.sartura.hr
