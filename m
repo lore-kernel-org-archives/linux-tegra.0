@@ -2,163 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3388FCCA47C
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 09:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 011D1C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 10:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232941AbiFGJeM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Jun 2022 05:34:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60262 "EHLO
+        id S241291AbiFGKnX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Jun 2022 06:43:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239663AbiFGJeJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 05:34:09 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850971A836
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Jun 2022 02:34:05 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2579Wc0I091949;
-        Tue, 7 Jun 2022 04:32:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1654594358;
-        bh=4gEuMclZBhRQsDp0tvKaU3YrWccQZAGJURM8nh1W4Dc=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=k3vx5fmY3w2g9Kjy9vS3FS56toxZSl4jg/ajU1hdRRImusYUUI39kNg2qhLfeXCDd
-         F7OzJAHN5T4gAJh/8Fu9mAhSWZ+FGGvj2oIwfhncphIoKXvPIxSBH/WdWhJW7XynOc
-         YBUg7FOlGe/94JgUoQ+dgpWXspuXRavwoYOd/Kzs=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2579WcaD112036
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Jun 2022 04:32:38 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Tue, 7
- Jun 2022 04:32:37 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Tue, 7 Jun 2022 04:32:37 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2579WbvB057541;
-        Tue, 7 Jun 2022 04:32:37 -0500
-Date:   Tue, 7 Jun 2022 15:02:36 +0530
-From:   Pratyush Yadav <p.yadav@ti.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-CC:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        with ESMTP id S241288AbiFGKnV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 06:43:21 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A17B1D31E
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Jun 2022 03:43:17 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id y32so27645568lfa.6
+        for <linux-tegra@vger.kernel.org>; Tue, 07 Jun 2022 03:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8XdRg5mTQzw6nhVkPbcttepeHu1kmSLwBbs3fva93xc=;
+        b=N1DSIYQ2tUBiiR928h/wpbuAkWoyNemmJ20vBlcsKVQyNN84AnPudb55G8X5EEHZc5
+         VrfLCbnWDAtsrhHYhabH4L0BcK6Yj8HILDRD4QS8o9jivIkV09uQ9k8+flwSL9YhpfOf
+         EKIY6RpNWcq9H5P5HOecjEdKbfbUTACnthsEE+FVdO9ZPFQkU20CO5hbDY+TsXwi7Gyk
+         XR89OVy0Qnt+8Lqc8HgO4+mf7B2XbeP3Iw4IkdQhRpmxypzV+y4NmZjw14ztQ0cTRyjV
+         Vc9XiSpbooXYnaIEGWYbXJ0j+c6+AycmpTWR911QhQRT0pklscDEgFFUW/dz8ZLGdIVr
+         VVCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8XdRg5mTQzw6nhVkPbcttepeHu1kmSLwBbs3fva93xc=;
+        b=IawPzsfDOzXF8rIN/Tvogk4JxjPtHRHsLCUyJeA2JZvRTlR+EJ6CGrgaRVBIBruPo4
+         44RS0liSpJQJYT1EpPDgWjBeo7nDmdMaOb0ZROs7iFxpXxoQb6ieLeo7nDdgx9XZtq0E
+         N/Mgs7n3gDG+J0/gqHwh2ZQkDSwqNj5DEtL96Ku+ndRmIziwkOTyHMc/GNFdOxerhtSE
+         Ps65+TBmaHZ/3MMyHOwS7oS1AgqHE/tMau0S1ophHmYz5Q59sPoVnH4HPSpSMYH1fM15
+         Kr6bqoHZ25avh4DdHQ52Twd/MQGrzalmd+99ThHVD7tV0nlAxw4Y0af8PncjQQI1ffHX
+         NECg==
+X-Gm-Message-State: AOAM531NMQlRCxvI0azOGJXJLhlbdbv12ho1tl3xatrycSDyfpNcGZk2
+        sQ0Pq0G6GHf2CXTW4h4dcHtTsv+BrZT6H5MmC8dN8w==
+X-Google-Smtp-Source: ABdhPJzxvjAZjQF6R+Mrr94IoW1X7wi8uwFKBgPf5GLnc+Gvu4doMpfp0SK0kukM6bfhDVOV0zyEW3g+vrtCParwkeY=
+X-Received: by 2002:a05:6512:403:b0:479:1627:a9b7 with SMTP id
+ u3-20020a056512040300b004791627a9b7mr15634227lfk.233.1654598595349; Tue, 07
+ Jun 2022 03:43:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220606225137.1536010-1-robh@kernel.org>
+In-Reply-To: <20220606225137.1536010-1-robh@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 7 Jun 2022 12:42:38 +0200
+Message-ID: <CAPDyKFqNiJB_2aEaQpBo4=Vzc60-986=aKKw4JZtXvO=X9WTqQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Drop more redundant 'maxItems/minItems' in
+ if/then schemas
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, <kernel@pengutronix.de>,
-        <linux-mtd@lists.infradead.org>, Michael Walle <michael@walle.cc>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-tegra@vger.kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-amlogic@lists.infradead.org>
-Subject: Re: [PATCH 00/14] mtd: Fix platform remove callbacks to always
- return 0
-Message-ID: <20220607093236.67txulke76mi6t75@ti.com>
-References: <20220603210758.148493-1-u.kleine-koenig@pengutronix.de>
- <20220606151841.682a5939@xps-13>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220606151841.682a5939@xps-13>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Hu Ziji <huziji@marvell.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Miquel,
+On Tue, 7 Jun 2022 at 00:51, Rob Herring <robh@kernel.org> wrote:
+>
+> Another round from new cases in 5.19-rc of removing redundant
+> minItems/maxItems when 'items' list is specified. This time it is in
+> if/then schemas as the meta-schema was failing to check this case.
+>
+> If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
+> same size as the list is redundant and can be dropped. Note that is DT
+> schema specific behavior and not standard json-schema behavior. The tooling
+> will fixup the final schema adding any unspecified minItems/maxItems.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-On 06/06/22 03:18PM, Miquel Raynal wrote:
-> Hi Folks,
-> 
-> u.kleine-koenig@pengutronix.de wrote on Fri,  3 Jun 2022 23:07:44 +0200:
-> 
-> > Hello,
-> > 
-> > this series prepares to make platform remove callbacks return void.
-> > Therefor first update them to always return 0. The rationale is that the
-> > Linux device model doesn't handle failures on remove and if a remove
-> > callback returns an error, it just emits a quite generic error message
-> > and still removes the device.
-> 
-> Tudor, Pratyush, Richard, Vignesh,
-> 
-> The series looks good to me (besides the atmel patch), I think it's
-> best to take it directly through mtd/next instead of going through all
-> the different internal branches, please let me know if you disagree
-> with the idea.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Patch 2 does not look good to me. It modifies the aspeed-smc driver in 
-drivers/mtd/spi-nor/controllers/ but the driver has been moved to 
-drivers/spi/ in Mark's next branch [0]. The patch would likely conflict 
-with that.
+Kind regards
+Uffe
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?id=9c63b846e6df43e5b3d31263f7db545f32deeda3
-
-> 
-> Cheers,
-> Miquèl
-> 
-> > 
-> > Best regards
-> > Uwe
-> > 
-> > Uwe Kleine-König (14):
-> >   mtd: hyperbus: Make hyperbus_unregister_device() return void
-> >   mtd: spi-nor: aspeed-smc: Make aspeed_smc_unregister() return void
-> >   mtd: powernv_flash: Warn about failure to unregister mtd device
-> >   mtd: st-spi_fsm: Warn about failure to unregister mtd device
-> >   mtd: lpddr2_nvm: Warn about failure to unregister mtd device
-> >   mtd: spear_smi: Don't skip cleanup after mtd_device_unregister()
-> >     failed
-> >   mtd: spear_smi: Drop if with an always false condition
-> >   mtd: rawnand: atmel: Warn about failure to unregister mtd device
-> >   mtd: rawnand: omap2: Suppress error message after WARN in .remove()
-> >   mtd: rawnand: tegra: Don't skip cleanup after mtd_device_unregister()
-> >     failed
-> >   mtd: rawnand: meson: Don't skip cleanup after mtd_device_unregister()
-> >     failed
-> >   mtd: rawnand: meson: Drop cleaning platform data in .remove()
-> >   mtd: physmap: Don't skip cleanup after mtd_device_unregister() failed
-> >   mtd: physmap: Drop if with an always false condition
-> > 
-> >  drivers/mtd/devices/powernv_flash.c          |  4 +++-
-> >  drivers/mtd/devices/spear_smi.c              | 10 ++--------
-> >  drivers/mtd/devices/st_spi_fsm.c             |  4 +++-
-> >  drivers/mtd/hyperbus/hbmc-am654.c            |  6 +++---
-> >  drivers/mtd/hyperbus/hyperbus-core.c         |  8 ++------
-> >  drivers/mtd/hyperbus/rpc-if.c                |  5 +++--
-> >  drivers/mtd/lpddr/lpddr2_nvm.c               |  4 +++-
-> >  drivers/mtd/maps/physmap-core.c              | 13 +++----------
-> >  drivers/mtd/nand/raw/atmel/nand-controller.c |  5 ++++-
-> >  drivers/mtd/nand/raw/meson_nand.c            | 16 +++-------------
-> >  drivers/mtd/nand/raw/omap2.c                 |  6 ++----
-> >  drivers/mtd/nand/raw/tegra_nand.c            |  5 +----
-> >  drivers/mtd/spi-nor/controllers/aspeed-smc.c |  8 ++++----
-> >  include/linux/mtd/hyperbus.h                 |  4 +---
-> >  14 files changed, 37 insertions(+), 61 deletions(-)
-> > 
-> > base-commit: 4b0986a3613c92f4ec1bdc7f60ec66fea135991f
-> 
-
--- 
-Regards,
-Pratyush Yadav
-Texas Instruments Inc.
+> ---
+>  .../bindings/memory-controllers/nvidia,tegra186-mc.yaml        | 3 ---
+>  Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml | 1 -
+>  .../devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml  | 1 -
+>  3 files changed, 5 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> index c7cfa6c2cd81..935d63d181d9 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> @@ -150,7 +150,6 @@ allOf:
+>            description: 5 memory controller channels and 1 for stream-id registers
+>
+>          reg-names:
+> -          maxItems: 6
+>            items:
+>              - const: sid
+>              - const: broadcast
+> @@ -170,7 +169,6 @@ allOf:
+>            description: 17 memory controller channels and 1 for stream-id registers
+>
+>          reg-names:
+> -          minItems: 18
+>            items:
+>              - const: sid
+>              - const: broadcast
+> @@ -202,7 +200,6 @@ allOf:
+>            description: 17 memory controller channels and 1 for stream-id registers
+>
+>          reg-names:
+> -          minItems: 18
+>            items:
+>              - const: sid
+>              - const: broadcast
+> diff --git a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
+> index c79639e9027e..7a2b22dd6d05 100644
+> --- a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
+> @@ -145,7 +145,6 @@ allOf:
+>            items:
+>              - description: Xenon IP registers
+>              - description: Armada 3700 SoC PHY PAD Voltage Control register
+> -          minItems: 2
+>
+>          marvell,pad-type:
+>            $ref: /schemas/types.yaml#/definitions/string
+> diff --git a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
+> index cbcf19f51411..ed6c1ca80dcc 100644
+> --- a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
+> @@ -64,7 +64,6 @@ if:
+>  then:
+>    properties:
+>      clocks:
+> -      minItems: 2
+>        items:
+>          - description: High-frequency oscillator input, divided internally
+>          - description: Low-frequency oscillator input
+> --
+> 2.34.1
+>
