@@ -2,134 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3279ECCA482
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Jun 2022 22:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED316CCA473
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 03:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235139AbiFFWvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Jun 2022 18:51:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51450 "EHLO
+        id S233403AbiFGDXs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Jun 2022 23:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232248AbiFFWvx (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Jun 2022 18:51:53 -0400
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB81512AAD;
-        Mon,  6 Jun 2022 15:51:52 -0700 (PDT)
-Received: by mail-il1-f171.google.com with SMTP id y16so12990688ili.13;
-        Mon, 06 Jun 2022 15:51:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vnL10i9b7RWVPFntTkTs63ETZHkZVU4m6YqQkxBLyPI=;
-        b=Fo4V4TxJE8yaK58bV6lEQWEE+e5d6s6iIpWefgtcd35USpFJOPYRKkmC77JNqSjvQY
-         j4Eocoa2i/PFX4LAy4f/ZVkgfl5zreqsb/nXp1fTSbhJjqwMnbSLNvn009hmRQDz2pOl
-         NsctmPgw5sISeKxhk+q0IGaTGdcS7e1c/3dQRLdaB5R8OPhqTg2hcymem4olI+AfMj7W
-         WNYnImjhvGCqZf3eUMbEcFKaMfHnS2oPcuG76KtN2i0+RVDqamvb+dDmsK47nhUgqdtO
-         RQNUbFQInjd4MZ+vBQRi0MLDf7oWLDx1VMip5Jw56/kYP22z8L1wkVUaZah2mGHmpRf2
-         MRqg==
-X-Gm-Message-State: AOAM532/ktpMSWOKbWSN6imwKHLF749lnUMnJ/VddIVMOEcoXTb8RWNz
-        ujX0sAumV9TNnZmO3euuIA==
-X-Google-Smtp-Source: ABdhPJyAQUX2H8fc0GojDtjC87rM9lUE0xrU9ZS9ZA5TIL7KupIiDXA9szJb+jy1xUCWw/NBrpswhw==
-X-Received: by 2002:a92:cf52:0:b0:2d3:afc7:2379 with SMTP id c18-20020a92cf52000000b002d3afc72379mr15153701ilr.310.1654555911895;
-        Mon, 06 Jun 2022 15:51:51 -0700 (PDT)
-Received: from xps15.herring.priv ([64.188.179.251])
-        by smtp.googlemail.com with ESMTPSA id d18-20020a056e020bf200b002cde6e352d4sm6644019ilu.30.2022.06.06.15.51.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 15:51:51 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hu Ziji <huziji@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: [PATCH] dt-bindings: Drop more redundant 'maxItems/minItems' in if/then schemas
-Date:   Mon,  6 Jun 2022 17:51:36 -0500
-Message-Id: <20220606225137.1536010-1-robh@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S233389AbiFGDXl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Jun 2022 23:23:41 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8F485F8EA;
+        Mon,  6 Jun 2022 20:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654572220; x=1686108220;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vzgEhhW4kNaICa/n+qlgLmF5Vog9iKUmfkdT1yy8unU=;
+  b=AvvUfJNC59mEf0LR+dJI9kYlHRwUaTlynJ2FGx7omMpxLaf2wpbWGFnz
+   i2uv2N8Iy/MnNUFAtGKOK+FwsaWHlfVg4yKhGZ7pldj1I/kP1CSc5waEr
+   VDYg46XvRnSksS8mh3xEDiYSeI2UsUbElc1Z8pDNzD/Q25hs+LaftEQbg
+   EWekYbI4vzLfTByRnjhC7w14E4/JMQzkOSLwU8gTF+gsI1L003gpdkdZC
+   ZWP3UBG5HSd5hSIRUSamaybxVUqI+I6hlV+KTGr8JL1L5wRNCePCFDPHU
+   iiY/SaPU6rx7nTCd6jVt+YzRS5XTxwBWzpqewtkNw1rGZgPJV77014HRa
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="337906376"
+X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; 
+   d="scan'208";a="337906376"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 20:23:39 -0700
+X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; 
+   d="scan'208";a="583980445"
+Received: from zwang64-mobl1.ccr.corp.intel.com (HELO [10.249.174.202]) ([10.249.174.202])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 20:23:29 -0700
+Message-ID: <f81b8b8f-b811-3be2-5dda-139dc1bd7bdd@linux.intel.com>
+Date:   Tue, 7 Jun 2022 11:23:27 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Cc:     baolu.lu@linux.intel.com, suravee.suthikulpanit@amd.com,
+        alyssa@rosenzweig.io, alim.akhtar@samsung.com, dwmw2@infradead.org,
+        yong.wu@mediatek.com, mjrosato@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, thierry.reding@gmail.com,
+        vdumpa@nvidia.com, jonathanh@nvidia.com, cohuck@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain
+ and device/group
+Content-Language: en-US
+To:     Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
+        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
+        sven@svenpeter.dev, robin.murphy@arm.com, robdclark@gmail.com,
+        m.szyprowski@samsung.com, krzysztof.kozlowski@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
+        jernej.skrabec@gmail.com, samuel@sholland.org,
+        jean-philippe@linaro.org, alex.williamson@redhat.com
+References: <20220606061927.26049-1-nicolinc@nvidia.com>
+ <20220606061927.26049-2-nicolinc@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20220606061927.26049-2-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Another round from new cases in 5.19-rc of removing redundant
-minItems/maxItems when 'items' list is specified. This time it is in
-if/then schemas as the meta-schema was failing to check this case.
+On 2022/6/6 14:19, Nicolin Chen wrote:
+> +/**
+> + * iommu_attach_group - Attach an IOMMU group to an IOMMU domain
+> + * @domain: IOMMU domain to attach
+> + * @dev: IOMMU group that will be attached
 
-If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
-same size as the list is redundant and can be dropped. Note that is DT
-schema specific behavior and not standard json-schema behavior. The tooling
-will fixup the final schema adding any unspecified minItems/maxItems.
+Nit: @group: ...
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../bindings/memory-controllers/nvidia,tegra186-mc.yaml        | 3 ---
- Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml | 1 -
- .../devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml  | 1 -
- 3 files changed, 5 deletions(-)
+> + *
+> + * Returns 0 on success and error code on failure
+> + *
+> + * Specifically, -EMEDIUMTYPE is returned if the domain and the group are
+> + * incompatible in some way. This indicates that a caller should try another
+> + * existing IOMMU domain or allocate a new one.
+> + */
+>   int iommu_attach_group(struct iommu_domain *domain, struct iommu_group *group)
+>   {
+>   	int ret;
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-index c7cfa6c2cd81..935d63d181d9 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-@@ -150,7 +150,6 @@ allOf:
-           description: 5 memory controller channels and 1 for stream-id registers
- 
-         reg-names:
--          maxItems: 6
-           items:
-             - const: sid
-             - const: broadcast
-@@ -170,7 +169,6 @@ allOf:
-           description: 17 memory controller channels and 1 for stream-id registers
- 
-         reg-names:
--          minItems: 18
-           items:
-             - const: sid
-             - const: broadcast
-@@ -202,7 +200,6 @@ allOf:
-           description: 17 memory controller channels and 1 for stream-id registers
- 
-         reg-names:
--          minItems: 18
-           items:
-             - const: sid
-             - const: broadcast
-diff --git a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
-index c79639e9027e..7a2b22dd6d05 100644
---- a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
-+++ b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
-@@ -145,7 +145,6 @@ allOf:
-           items:
-             - description: Xenon IP registers
-             - description: Armada 3700 SoC PHY PAD Voltage Control register
--          minItems: 2
- 
-         marvell,pad-type:
-           $ref: /schemas/types.yaml#/definitions/string
-diff --git a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
-index cbcf19f51411..ed6c1ca80dcc 100644
---- a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
-@@ -64,7 +64,6 @@ if:
- then:
-   properties:
-     clocks:
--      minItems: 2
-       items:
-         - description: High-frequency oscillator input, divided internally
-         - description: Low-frequency oscillator input
--- 
-2.34.1
-
+Best regards,
+baolu
