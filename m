@@ -2,95 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B80E4C43334
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 11:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50518CCA47F
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 11:47:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242935AbiFGLBU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Jun 2022 07:01:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48256 "EHLO
+        id S243102AbiFGLrU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Jun 2022 07:47:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242349AbiFGK7l (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 06:59:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7902DF68A1;
-        Tue,  7 Jun 2022 03:55:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 07886615E1;
-        Tue,  7 Jun 2022 10:55:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44ECC385A5;
-        Tue,  7 Jun 2022 10:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654599312;
-        bh=RMxBLzAW7Q9aqyjIr5rMgScv+pfwT+8lbeF5Fd1v700=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=qFXaEbfPLM9891/pU83KYLFlThljzmRkg1Gnb/Zv2rjp4HWgtsmwgTWlk4nQZ7SEk
-         KwG4y58qXF1jTacp0XL8O7ABwpRlHij3weDb94mx20VKfkJ+9rZ5z876ySns1iKB5e
-         Kk3GLRoVxRHWvesYIKn676HPwdVHT4kmGpvPkKDPppyfVn+hy+WQwL0B/4Yk/fXoI0
-         nQtD+C11pv+YRIHVFN+ZX8WX+jOGuYkF+3R+WSHCN7AQr08P/UPfX2/22Db+Upx8mK
-         quulXl067G/NVEI1xkwBvic8I3BLUYBSSTiNlaG4xlFOEttmWkl6+HmzbWYp/GzUTf
-         YuCn7Gl2B3FAA==
-From:   Mark Brown <broonie@kernel.org>
-To:     thierry.reding@gmail.com, tiwai@suse.com, spujar@nvidia.com,
-        robh+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        perex@perex.cz, krzysztof.kozlowski+dt@linaro.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-In-Reply-To: <1654238172-16293-1-git-send-email-spujar@nvidia.com>
-References: <1654238172-16293-1-git-send-email-spujar@nvidia.com>
-Subject: Re: (subset) [PATCH v3 0/6] OPE support on Tegra210 and later
-Message-Id: <165459930944.399031.17402863866991236523.b4-ty@kernel.org>
-Date:   Tue, 07 Jun 2022 11:55:09 +0100
+        with ESMTP id S243088AbiFGLrP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 07:47:15 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2055.outbound.protection.outlook.com [40.107.94.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BBDB24E;
+        Tue,  7 Jun 2022 04:47:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=O6xNzqISXgjU7tPWJ09s0XrtuA7Y0CNJNznXFma9u7HO0YKstIyNnhHLDFozo88a+DEc1HQUihNiAVoRU95O8ebtuv9w1/OVnvwA+/5eVwkWfsWlFlERnqxVoc58bJ2AURTEjAygMCvcE2Pgbrt+txXnG9Jqx38rYxTlCJKzcPi0pOYvRlno0zhYvDWC3LQwLsRibQfrD71ZQPoQOSiWM+Qav70D/PpBwz9kTLFDsNif67FpYkRpHOMwK+eUUrkuj+75nJEmCT+9CA2Qqtbb8frjNEtAANqI2mIg2Xgaq+Rr+EH7lJ/pAl5qSOBaNMn759IPHmZLM54H8CbgHbBgHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=satYG4o/8g1NzPl1yoDs3GMB205kYvZT+Iv63Kpjov8=;
+ b=WALMYHFOkPKrdreyA5N3Hc1nMkv+05geMx8c05h09RlWMXghycQ9Qt6P4xRdtDo+ZoDYJr49sv2GzZ/h+SkqeIKJQEndmlrPC+4yaExhYqKTgouoHdFdu5mHfg6hLaOtQ512owAHC9zBLH/zRJbeWIO+S+sm/VlXa+QZ439IJN9uEOwMwQXcRfPrqryfTUVa8qnNv3ke/MHlRhGbcUloA3VbXzROtrYErlyKPkfP+NLPoChZ9xfBQSDidjAou+FL3No/RlX/xTvBEXdrugSqYd80w7EM8XYcybDLdgCeMhzrXUIBzEZhAYGwfRv5YK+ZPhfDnP+ta2EFOs0hZMtbbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=satYG4o/8g1NzPl1yoDs3GMB205kYvZT+Iv63Kpjov8=;
+ b=YgjUtJSEHcZfjyR9ajcuB9qonLSMJdiHYfDS8mDZq7oyhmCMPTII2i8jYnbcXtBCmfunjuLNvfy/NGec2VH/MN5vv6mFOMOrcQCvI63H33LX/mxxSyg/gyXmR9KVI2CTPhU4cUmsNfCGpvLBwrAS2yKwbvlKghR6Eqt0Sxofp8mb6Vr2ZyntDoqvfRkdiDu6d8buh6toKZ5nobVAdAe/G1h3u7QQ97BravOAyOBfaO1ZJTUuSYCf45bAM6S5iya53T01Of7eEk3vKDTe/wPQeGjTgulbHj843fTSjuJWWmmcU1wXWojgcK7cn4eIu+9XX0LgahBu62DG1ybsexAKug==
+Received: from MW4PR03CA0345.namprd03.prod.outlook.com (2603:10b6:303:dc::20)
+ by BYAPR12MB3415.namprd12.prod.outlook.com (2603:10b6:a03:d5::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.15; Tue, 7 Jun
+ 2022 11:47:08 +0000
+Received: from CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:dc:cafe::c5) by MW4PR03CA0345.outlook.office365.com
+ (2603:10b6:303:dc::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.12 via Frontend
+ Transport; Tue, 7 Jun 2022 11:47:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ CO1NAM11FT040.mail.protection.outlook.com (10.13.174.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5314.12 via Frontend Transport; Tue, 7 Jun 2022 11:47:08 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.32; Tue, 7 Jun 2022 11:47:08 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 7 Jun 2022 04:47:06 -0700
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.22 via Frontend
+ Transport; Tue, 7 Jun 2022 04:47:03 -0700
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     <broonie@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <ashishsingha@nvidia.com>,
+        <robh+dt@kernel.org>
+CC:     <skomatineni@nvidia.com>, <ldewangan@nvidia.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Krishna Yarlagadda" <kyarlagadda@nvidia.com>
+Subject: [Patch V3 0/3] spi: tegra quad: Add Tegra Grace features
+Date:   Tue, 7 Jun 2022 17:16:56 +0530
+Message-ID: <20220607114659.54314-1-kyarlagadda@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cdc0e2da-173f-463b-325c-08da487b73c8
+X-MS-TrafficTypeDiagnostic: BYAPR12MB3415:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR12MB3415CA7832E5FF39CF021EC1C3A59@BYAPR12MB3415.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5PAnUM7RaFIH50QrMvC0iZHA0Ukiy9u9nil/FBJbZ18TzrZ/CGK8azFUuaNkv6WuneNXgZHtyu07+bdFj3Jv1qlyy9wS+PcmZaMUJO7wTL2V7wUGjU90Rt+319NZTGT6mKyxgV+Do5CogdH7xglbwXV8PZ3Fq8yhStonuH/I+7rP4/7a7XaXhbJsTR7izHI29Pt5tryZkEYZSOlESJh21OVwy+SgqGWTtm0NXzfupdcDPDkJ3Ro7l2jPU0V7ZxAESDTYCeZiB8cC6gr67sfLHRR9gJbPOLJM6X3kw0oY/Gk1Km3Ag3JN/0w23ISrtpqgsQaj28NphbtwQA1pPEoAWnbBhj1+uE4GaqeOdiFNpucPNN88AEgn+vPgIq1otGhpvOCdOMklw7ovsAag3Il0TvwZ8bjf7Kk1E3O/iSjauJspADNP5A415mejIvLzD7wlIf+c9pkJ7MTTqqs706wJ+/X71Tygt/RnEaJKaCHLmVUXmKNlyDR4vqwjL9ptm16OIUvoJLuTbq30fhsdVBTsN8GKI4kWO5bB6FIMl/e5M3uZ50Z7HO3/xrAo1e/xmW5vNO7ED5st7Khm8aVPbX6OiFgNXT5Tk2mEUkfhXK6RlHVZUKdLoPd0uiiBqK60LgTO36DXuPF+MxlZMPdNNykrCiRQk6z9ShNNfnjFjrfXLlAVFZQrKxTvWBrjw6zFYiyM2LI6fNzGgvDpxBfZwIh/pw==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(54906003)(110136005)(5660300002)(316002)(8936002)(70586007)(70206006)(81166007)(356005)(36756003)(8676002)(4744005)(4326008)(6666004)(426003)(336012)(186003)(26005)(107886003)(47076005)(2616005)(1076003)(7696005)(86362001)(83380400001)(82310400005)(40460700003)(2906002)(36860700001)(508600001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2022 11:47:08.6086
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdc0e2da-173f-463b-325c-08da487b73c8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3415
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 3 Jun 2022 12:06:06 +0530, Sameer Pujar wrote:
-> This series adds support for Output Prcoessing Module (OPE) module on
-> Tegra210 and later generations of SoCs. OPE is a client of AHUB and
-> it has sub blocks of PEQ (Parametric Equalizer) and MBDRC (Multi Band
-> Dynamic Range Compressor) for data processing.
-> 
-> An ASoC component is registered for OPE, which includes PEQ and MBDRC
-> functions as well. This can be plugged in audio path using ALSA mixer
-> controls. The series adds necessary binding documentaion, driver and
-> DT binding patches to enable OPE module on Jetson platforms.
-> 
-> [...]
+Add multiple chip select lines supported on Tegra 241
 
-Applied to
+Changes in v3:
+Handle review comments.
+Move controller's properties to "nvidia,tegra210-quad.yaml".
+Fix style errors in peripheral yaml doc.
+Changes in v2:
+Split Wait polling changes to be handled later
+Change chip name to convention followed (Grace to 241)
+Add tegra qspi peripherals yaml file
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Krishna Yarlagadda (3):
+  spi: tegra210-quad: Multi-cs support
+  spi: dt-bindings: split peripheral prods
+  spi: dt-bindings: Add compatible for Tegra241 QSPI
 
-Thanks!
+ ...nvidia,tegra210-quad-peripheral-props.yaml | 33 +++++++++++++++++++
+ .../bindings/spi/nvidia,tegra210-quad.yaml    | 22 +------------
+ .../bindings/spi/spi-peripheral-props.yaml    |  1 +
+ drivers/spi/spi-tegra210-quad.c               | 33 +++++++++++++++++--
+ 4 files changed, 66 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml
 
-[1/6] ASoC: tegra: Add binding doc for OPE module
-      commit: 45c6c5e052df2ee0d87e74743d8bb72e70fd0887
-[2/6] ASoC: tegra: Add Tegra210 based OPE driver
-      commit: 7358a803c778f28314721e78339f3fa5b787f55c
-[3/6] ASoC: tegra: AHUB routes for OPE module
-      commit: 7ee0910d03168535ffeea2f4ce924eebb3b24863
+-- 
+2.17.1
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
