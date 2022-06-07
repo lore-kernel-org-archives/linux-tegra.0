@@ -2,85 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEF5CCA483
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 07:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE30CCA47C
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 08:44:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237872AbiFGHpO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Jun 2022 03:45:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44090 "EHLO
+        id S238359AbiFGIoB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Jun 2022 04:44:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237907AbiFGHo6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 03:44:58 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8FC32ECC;
-        Tue,  7 Jun 2022 00:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654587897; x=1686123897;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OSBO16dRCwR6Wb79tDIGbzqHZ301kVBrdpEBr6LRMRc=;
-  b=WhVp5S+1hW900TACvFcx0rLwHKeZbfS2Kvoil6SFq4syxzGNCha5E3Lt
-   lbgEZAvxWkwKC/V/DjAl7ke5XN94VFOnpQAncBJ8PWDepGpgLoRnIrQ+y
-   MZTd2G9PVaoakvHUGvNPRhKek6wm1xf1XiS02s9sFOBAdkmaX8P2K7fmc
-   wS/gQf8pGhDQTO0d40OfeqqXdiPB+pGtJiBAVhyptfwnvDeP6o/IoNLre
-   bSpk0vznExOnGUz7ER2qOTV58qi+HhwS9JcurQz0GK8L/cjwoEOzPq7Tt
-   OE5IR7+A93wJWpDQSbyHNrtV8gqBfz53kRMjdbj9nTrJSlbmmC95b6too
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="277374445"
-X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
-   d="scan'208";a="277374445"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 00:44:55 -0700
-X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
-   d="scan'208";a="584086830"
-Received: from zwang64-mobl1.ccr.corp.intel.com (HELO [10.249.174.202]) ([10.249.174.202])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 00:44:45 -0700
-Message-ID: <d357966b-7abd-f8f3-3ca7-3c99f5e075b9@linux.intel.com>
-Date:   Tue, 7 Jun 2022 15:44:43 +0800
+        with ESMTP id S231558AbiFGIn4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 04:43:56 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9CE6D0293
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Jun 2022 01:43:54 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id d12-20020a17090abf8c00b001e2eb431ce4so14839874pjs.1
+        for <linux-tegra@vger.kernel.org>; Tue, 07 Jun 2022 01:43:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nWZrrCkmODQO2L81wBptIQ/FtOI3FJ3gTRz0UShB7Jk=;
+        b=eEf7h7znNG6Yj2uM2z78B+GTzNOp6+yxOEb/GEOn6YkJi5bZX54EU4z1RFLeM1aKab
+         DJ/JDC8Z8HD33X7EJf0QZnlHM0oUQhWwewoq1nkT7iPfuuCURakz/jeYx+ylSSSxFVb2
+         YTBvtKGyd0y59ocgBtXjgjs/Guq1gcmaPwWnTlUGncER6B8qfnJ+vZ5wThw083Ayzdi0
+         H7S3cHlq84AEWdVoxrwq+Qf+gyXmiypjykOP81sAM0WRekz7ads66CRHP0+C6GpKFlEJ
+         Wuc1q6vCX2zaLSvR0DxzHMEfbZQyOFz8dMKP050uvChyQiRwN6IEibPf0eTRTAFbbfzr
+         xMyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nWZrrCkmODQO2L81wBptIQ/FtOI3FJ3gTRz0UShB7Jk=;
+        b=PbHvTEwPolFWOChOS/RMqmcOuzsRW/n8MbOy4MBdGXX+ZQLT1O3Up3KoF1/JlvikFO
+         b5KG3MBGXFiuNYYeTrrNNM7y2Gn/DoGw1gUG9FOBZxrCHlZ7t/pjm8fNSUY0S0u9OAt1
+         zNchxF4WPt27cKSR7wFPoVyZpiB+KY8/3tiEklxISf8SI3o1k9qV+tncr8CI/mu2TgQu
+         4XpIXOUxcwk+K/abfqm9XINSVGcAGc1YJC2O8Wurhf84xzAafi6VUR3bT6UFC+glJTua
+         PtoEi9UptgD4FjkEPdu9zTxubJ5dUncXuiAt7HuEiSZ9eQoig3vjpn0FzhHpGmXWVif8
+         XXPQ==
+X-Gm-Message-State: AOAM530CavPFerS8It7cyqNxPzbgOJqBlsrCIERtrxWQR9/L9qLwpaCP
+        tVobsEl+h56LUMTz2ODqX2bo8g==
+X-Google-Smtp-Source: ABdhPJy2w9iMG3l1xy59r+1E/HWZi6vXpWRinRgoPn7ZlS022LmUN9BqNIjwVEqVFDIj62EinYv/0Q==
+X-Received: by 2002:a17:903:1108:b0:15f:bce:19f8 with SMTP id n8-20020a170903110800b0015f0bce19f8mr28174271plh.7.1654591433595;
+        Tue, 07 Jun 2022 01:43:53 -0700 (PDT)
+Received: from localhost ([122.162.234.2])
+        by smtp.gmail.com with ESMTPSA id 19-20020a170902e9d300b0015e8d4eb1b6sm11873231plk.0.2022.06.07.01.43.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jun 2022 01:43:53 -0700 (PDT)
+Date:   Tue, 7 Jun 2022 14:13:51 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/31] cpufreq: tegra20: Migrate to
+ dev_pm_opp_set_config()
+Message-ID: <20220607084351.i4s5veww6irmaf3t@vireshk-i7>
+References: <cover.1653564321.git.viresh.kumar@linaro.org>
+ <4b38ceed657bfcf87ff9ab0dd69dd1f2f5658b24.1653564321.git.viresh.kumar@linaro.org>
+ <793e49ea-aeb0-a47a-9fe8-742a6397bb35@collabora.com>
+ <5c0e697e-abca-bcf0-cf68-d9c240d82527@collabora.com>
+ <20220530075256.lpw6bhupejy2dnqi@vireshk-i7>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Cc:     baolu.lu@linux.intel.com, suravee.suthikulpanit@amd.com,
-        alyssa@rosenzweig.io, alim.akhtar@samsung.com, dwmw2@infradead.org,
-        yong.wu@mediatek.com, mjrosato@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, thierry.reding@gmail.com,
-        vdumpa@nvidia.com, jonathanh@nvidia.com, cohuck@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 0/5] Simplify vfio_iommu_type1 attach/detach routine
-Content-Language: en-US
-To:     Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
-        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
-        sven@svenpeter.dev, robin.murphy@arm.com, robdclark@gmail.com,
-        m.szyprowski@samsung.com, krzysztof.kozlowski@linaro.org,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        jean-philippe@linaro.org, alex.williamson@redhat.com
-References: <20220606061927.26049-1-nicolinc@nvidia.com>
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20220606061927.26049-1-nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220530075256.lpw6bhupejy2dnqi@vireshk-i7>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022/6/6 14:19, Nicolin Chen wrote:
-> Worths mentioning the exact match for enforce_cache_coherency is removed
-> with this series, since there's very less value in doing that since KVM
-> won't be able to take advantage of it -- this just wastes domain memory.
-> Instead, we rely on Intel IOMMU driver taking care of that internally.
+On 30-05-22, 13:22, Viresh Kumar wrote:
+> On 29-05-22, 19:59, Dmitry Osipenko wrote:
+> > > Please keep the PTR_ERR_OR_ZERO.
+> 
+> Ahh, sorry about that. Fixed.
+> 
+> > > tegra20-cpufreq tegra20-cpufreq: failed to set OPP config: -1042688000
+> > 
+> > With that fixed, now there is another error:
+> > 
+> > [    1.761945] cpu cpu0: _of_add_opp_table_v2: no supported OPPs
+> > [    1.761960] cpu cpu0: OPP table can't be empty
+> 
+> So we failed to find any OPPs which work with the hardware version of
+> updated with dev_pm_opp_set_config(). I tried to follow the path and
+> see if there is something wrong here. Failed to find that :(
+> 
+> > I see this on Tegra30, but not on Tegra20. Apparently OPP table
+> > refcounting is broken on Tegra30 by this patchset. To make it clear,
+> > there are no error without these OPP patches applied. I may take a
+> > closer look if will be needed, just ping me.
+> 
+> Yes, it would be very helpful as I don't have the necessary hardware.
 
-After reading this series, I don't see that Intel IOMMU driver needs any
-further change to support the new scheme. Did I miss anything?
+Hey, any updates on this ? I am looking to resend the series soon, would be nice
+to fix this before that.
 
-Best regards,
-baolu
+-- 
+viresh
