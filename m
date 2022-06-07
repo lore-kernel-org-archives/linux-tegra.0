@@ -2,99 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4ADC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 06:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEF5CCA483
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 07:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237056AbiFGGej (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Jun 2022 02:34:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53552 "EHLO
+        id S237872AbiFGHpO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Jun 2022 03:45:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237046AbiFGGeh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 02:34:37 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831C53123C
-        for <linux-tegra@vger.kernel.org>; Mon,  6 Jun 2022 23:34:34 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id q1so33134229ejz.9
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Jun 2022 23:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=BS02hl5lG0fU1teehsFBTzwy9idYtqKSriIvuXGDAVw=;
-        b=a7CXUgo1LhI6a6Wn7l3MjaqsS2nWFcnVUfB+fpGL3Su3s8vvd+hexirjTkuKfqfJku
-         tpNMIqWEqQEc2ykTutSqnsatSkZguMPoVRX3zgp44CcWRwEfmM1O1H6YW+PdMuDF7l1h
-         GQ6t7rKl0oPrV2wyje3dJJlB8t/G+d+oEPBjgNvSx5jNjOGBUUFO1INCvt51Z5vD9upr
-         zpEb/NvfB8O/xEMwCpBTttttkHN5KejGkpvAyS3ebegD2zJBG1dA9Qz1ci0llYeESeo+
-         JMbAguBqPVrXMBWFpgVz6EOSHE3P+6K+R88uzWCgJV4Flf2vyjRbzalZP0Jxm4TrIWS4
-         iuAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=BS02hl5lG0fU1teehsFBTzwy9idYtqKSriIvuXGDAVw=;
-        b=A3bo2M+y7+uW50Mth8aagzR9XaViKy4no9BbRcCFjXv7mGzcIisX+QoYpCR24DGvvF
-         FPUUDkAXW6oB+uQ6i6fp+HW7sWMcSVrzv8135wYqhBgByb30rNMbyiGvAmhJTEvqwpTt
-         gAwozGltyMLfC4/xk5SNmJDjWqINFm9RUKTho26aysWIkpvm0O8+/TQwsWl55rped9hq
-         X3YrbT3at6AIsKNdcq9uy5ulM09jQZ5xwIFQvxFoe9fDZy6iB6RGxBwI6ydYT5nZ+raq
-         GyQyxX7qsRGb4i++y1+vUVOKaMCH//HBS3yXOnJ/aHNnTBn4aP+XyZGR1oKBKT3K6qGP
-         0nsQ==
-X-Gm-Message-State: AOAM533wQ9klKo5YPFRu5AvZPG/idLhGgV7TlbU3/P2ODD33V2+yYaz+
-        E8Y7ww86oTvB7PdsddnFC2q9PA==
-X-Google-Smtp-Source: ABdhPJxeChl1qKeEil8PnLVpGZrlHOFtfAIS6W5eozpO3H9ZCDC+R/hedgSwKsMBni0ziaZVCtATcQ==
-X-Received: by 2002:a17:907:7e8b:b0:711:e5e6:6694 with SMTP id qb11-20020a1709077e8b00b00711e5e66694mr150753ejc.35.1654583673038;
-        Mon, 06 Jun 2022 23:34:33 -0700 (PDT)
-Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id me3-20020a170906aec300b006ff01fbb7ccsm7153425ejb.40.2022.06.06.23.34.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jun 2022 23:34:32 -0700 (PDT)
-Message-ID: <717eb4d5-f547-4763-1670-51e90cbe0803@linaro.org>
-Date:   Tue, 7 Jun 2022 08:34:31 +0200
+        with ESMTP id S237907AbiFGHo6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 03:44:58 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8FC32ECC;
+        Tue,  7 Jun 2022 00:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654587897; x=1686123897;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OSBO16dRCwR6Wb79tDIGbzqHZ301kVBrdpEBr6LRMRc=;
+  b=WhVp5S+1hW900TACvFcx0rLwHKeZbfS2Kvoil6SFq4syxzGNCha5E3Lt
+   lbgEZAvxWkwKC/V/DjAl7ke5XN94VFOnpQAncBJ8PWDepGpgLoRnIrQ+y
+   MZTd2G9PVaoakvHUGvNPRhKek6wm1xf1XiS02s9sFOBAdkmaX8P2K7fmc
+   wS/gQf8pGhDQTO0d40OfeqqXdiPB+pGtJiBAVhyptfwnvDeP6o/IoNLre
+   bSpk0vznExOnGUz7ER2qOTV58qi+HhwS9JcurQz0GK8L/cjwoEOzPq7Tt
+   OE5IR7+A93wJWpDQSbyHNrtV8gqBfz53kRMjdbj9nTrJSlbmmC95b6too
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="277374445"
+X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
+   d="scan'208";a="277374445"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 00:44:55 -0700
+X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
+   d="scan'208";a="584086830"
+Received: from zwang64-mobl1.ccr.corp.intel.com (HELO [10.249.174.202]) ([10.249.174.202])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 00:44:45 -0700
+Message-ID: <d357966b-7abd-f8f3-3ca7-3c99f5e075b9@linux.intel.com>
+Date:   Tue, 7 Jun 2022 15:44:43 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] dt-bindings: Drop more redundant 'maxItems/minItems' in
- if/then schemas
+ Thunderbird/91.9.1
+Cc:     baolu.lu@linux.intel.com, suravee.suthikulpanit@amd.com,
+        alyssa@rosenzweig.io, alim.akhtar@samsung.com, dwmw2@infradead.org,
+        yong.wu@mediatek.com, mjrosato@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, thierry.reding@gmail.com,
+        vdumpa@nvidia.com, jonathanh@nvidia.com, cohuck@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 0/5] Simplify vfio_iommu_type1 attach/detach routine
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hu Ziji <huziji@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-References: <20220606225137.1536010-1-robh@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220606225137.1536010-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To:     Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
+        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
+        sven@svenpeter.dev, robin.murphy@arm.com, robdclark@gmail.com,
+        m.szyprowski@samsung.com, krzysztof.kozlowski@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
+        jernej.skrabec@gmail.com, samuel@sholland.org,
+        jean-philippe@linaro.org, alex.williamson@redhat.com
+References: <20220606061927.26049-1-nicolinc@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20220606061927.26049-1-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 07/06/2022 00:51, Rob Herring wrote:
-> Another round from new cases in 5.19-rc of removing redundant
-> minItems/maxItems when 'items' list is specified. This time it is in
-> if/then schemas as the meta-schema was failing to check this case.
-> 
-> If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
-> same size as the list is redundant and can be dropped. Note that is DT
-> schema specific behavior and not standard json-schema behavior. The tooling
-> will fixup the final schema adding any unspecified minItems/maxItems.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On 2022/6/6 14:19, Nicolin Chen wrote:
+> Worths mentioning the exact match for enforce_cache_coherency is removed
+> with this series, since there's very less value in doing that since KVM
+> won't be able to take advantage of it -- this just wastes domain memory.
+> Instead, we rely on Intel IOMMU driver taking care of that internally.
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+After reading this series, I don't see that Intel IOMMU driver needs any
+further change to support the new scheme. Did I miss anything?
 
 Best regards,
-Krzysztof
+baolu
