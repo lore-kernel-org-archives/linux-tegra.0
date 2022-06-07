@@ -2,130 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C24DDC43334
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 15:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B4ACCA47C
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 16:08:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344194AbiFGPeF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Jun 2022 11:34:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58554 "EHLO
+        id S1344765AbiFGQIL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Jun 2022 12:08:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344150AbiFGPeD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 11:34:03 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A135C038E;
-        Tue,  7 Jun 2022 08:34:02 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-138-163.dynamic.spd-mgts.ru [109.252.138.163])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D1DF06601A26;
-        Tue,  7 Jun 2022 16:33:57 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1654616040;
-        bh=1OHF6wl6ehs/wRC7M/8ORoOFTl8MMQfJ9asXXd+gmRE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=aEIUXUrg6wlcmhJWW9Dpq0CD51JiB4Gk+im588kYV1D7mO9ub6yKFVwNOXpZVJ2wM
-         opGS/8b5tqT6A+Qs0IOWZkFwx79fas7g7J+6UFuPd62KDBH4Udp9hStEJ+Rda/cqwS
-         /URMw8PUaP1oUBVHs2Yv4T39A3FIsYQBzAsp8bo0QFJ3mZ0J+ykNSYh0VcCXFnvq3G
-         IOXQEb+tEfv6oiz2y9m8bvih3N0zkAqVp0jlIZFmtAilcr0aTfPA8jEpZx7IeH9ey7
-         VUWWcHduvM3mB3xQmqfjKAk9sBAsGQj/TYmOnhe4+/BKszV79pAEu3Vi5r8hO/X1HA
-         L4he4Zd+PxFGA==
-Message-ID: <382d50a2-8e47-5e0f-726b-f077be5b8bc6@collabora.com>
-Date:   Tue, 7 Jun 2022 18:33:55 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v6 17/22] drm/shmem-helper: Add generic memory shrinker
-Content-Language: en-US
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     David Airlie <airlied@linux.ie>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        dri-devel@lists.freedesktop.org,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Dmitry Osipenko <digetx@gmail.com>, kernel@collabora.com,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh@kernel.org>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Steven Price <steven.price@arm.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        virtualization@lists.linux-foundation.org,
-        Chia-I Wu <olvaffe@gmail.com>, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        with ESMTP id S1344712AbiFGQIK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 12:08:10 -0400
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ED5E443C9;
+        Tue,  7 Jun 2022 09:08:10 -0700 (PDT)
+Received: by mail-il1-f177.google.com with SMTP id a15so14520200ilq.12;
+        Tue, 07 Jun 2022 09:08:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IcVu4WajHv6XPQv1yYvHjVGQzqBrXJ6uvkB7WM1ORUk=;
+        b=06jDuZtUm01MYz6g1LpOV9IopS+hS3nFlha4QBir6X2SLNHdkZQqJujlorDcv/idcz
+         h/yGfmS1/QP3LWTzOMuHrTrw4b2WntBUrsvg99jQfC6hKhisHR54XMqoaymxmZ/tJVF2
+         CP+Pi6w6N0tGzBL2fCmh6n/ilPp7BPwil4DwHFmjnXV4q4Unnw3GBp1h9Lhg5mozixxE
+         MIEghyTbZsApr9Bb4dbkY9wcgqFpNNY7lRwkRruwxxXqegXZjgoid/v8v0TBwaGd0iqU
+         NLC8TUh+geIlb8bn6RIcLxHPoBLcchyaXOlLb5ZpQIzVYagYDAXNWN1gj3zNoXKsC09N
+         G0+g==
+X-Gm-Message-State: AOAM530bkhrNmgOAqICCVACUft0skGGROzAc8nY71p0IHyL5pAmUWkTj
+        4hMXSXKB+eHOuoba3viBrQ==
+X-Google-Smtp-Source: ABdhPJwkB6tWssEJWTfCQGirJEa1uIPrrUEYFGpmaCAPiwN8q4TlO6GszS0vcXmTn6BhoiBisqAo5w==
+X-Received: by 2002:a05:6e02:1949:b0:2d3:c0fb:322 with SMTP id x9-20020a056e02194900b002d3c0fb0322mr17090293ilu.242.1654618089339;
+        Tue, 07 Jun 2022 09:08:09 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id i11-20020a02b68b000000b0033167715cf9sm5989686jam.27.2022.06.07.09.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jun 2022 09:08:08 -0700 (PDT)
+Received: (nullmailer pid 3350333 invoked by uid 1000);
+        Tue, 07 Jun 2022 16:08:07 -0000
+Date:   Tue, 7 Jun 2022 10:08:07 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-sunxi@lists.linux.dev, linux-watchdog@vger.kernel.org,
         Maxime Ripard <mripard@kernel.org>,
-        linaro-mm-sig@lists.linaro.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Hu Ziji <huziji@marvell.com>,
+        linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
         linux-tegra@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        amd-gfx@lists.freedesktop.org,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Gert Wollny <gert.wollny@collabora.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Qiang Yu <yuq825@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
- <20220526235040.678984-18-dmitry.osipenko@collabora.com>
- <CAKMK7uHQ+iMkXtrsCWiJL9X1AM9Xkq-wNmj=hhfnenf0r9717g@mail.gmail.com>
- <2aedbd68-cb4b-157c-1ddb-dbdb9348d2fe@gmail.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <2aedbd68-cb4b-157c-1ddb-dbdb9348d2fe@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-mmc@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH] dt-bindings: Drop more redundant 'maxItems/minItems' in
+ if/then schemas
+Message-ID: <20220607160807.GA3350189-robh@kernel.org>
+References: <20220606225137.1536010-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220606225137.1536010-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/6/22 13:57, Christian König wrote:
-> Am 05.06.22 um 18:47 schrieb Daniel Vetter:
->> On Fri, 27 May 2022 at 01:55, Dmitry Osipenko
->> <dmitry.osipenko@collabora.com> wrote:
->>> Introduce a common DRM SHMEM shrinker framework that allows to reduce
->>> code duplication among DRM drivers by replacing theirs custom shrinker
->>> implementations with the generic shrinker.
->>>
->>> In order to start using DRM SHMEM shrinker drivers should:
->>>
->>> 1. Implement new evict() shmem object callback.
->>> 2. Register shrinker using drm_gem_shmem_shrinker_register(drm_device).
->>> 3. Use drm_gem_shmem_set_purgeable(shmem) and alike API functions to
->>>     activate shrinking of shmem GEMs.
->>>
->>> This patch is based on a ideas borrowed from Rob's Clark MSM shrinker,
->>> Thomas' Zimmermann variant of SHMEM shrinker and Intel's i915 shrinker.
->>>
->>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->> So I guess I get a price for being blind since forever, because this
->> thing existed since at least 2013. I just stumbled over
->> llist_lru.[hc], a purpose built list helper for shrinkers. I think we
->> should try to adopt that so that our gpu shrinkers look more like
->> shrinkers for everything else.
+On Mon, 06 Jun 2022 17:51:36 -0500, Rob Herring wrote:
+> Another round from new cases in 5.19-rc of removing redundant
+> minItems/maxItems when 'items' list is specified. This time it is in
+> if/then schemas as the meta-schema was failing to check this case.
 > 
-> What the heck are you talking about?
+> If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
+> same size as the list is redundant and can be dropped. Note that is DT
+> schema specific behavior and not standard json-schema behavior. The tooling
+> will fixup the final schema adding any unspecified minItems/maxItems.
 > 
-> I can't find any llist_lru.[hc] in the linux kernel sources.
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/memory-controllers/nvidia,tegra186-mc.yaml        | 3 ---
+>  Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml | 1 -
+>  .../devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml  | 1 -
+>  3 files changed, 5 deletions(-)
+> 
 
-I think Daniel meant this:
-
-https://elixir.bootlin.com/linux/v5.19-rc1/source/include/linux/list_lru.h
-
-https://elixir.bootlin.com/linux/v5.19-rc1/source/mm/list_lru.c
-
-
--- 
-Best regards,
-Dmitry
+Applied, thanks!
