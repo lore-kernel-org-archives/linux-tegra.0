@@ -2,131 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0913AC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 14:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C24DDC43334
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Jun 2022 15:34:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245713AbiFGOjh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Jun 2022 10:39:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49896 "EHLO
+        id S1344194AbiFGPeF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Jun 2022 11:34:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245703AbiFGOje (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 10:39:34 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08121F45E3
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Jun 2022 07:39:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S1344150AbiFGPeD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Jun 2022 11:34:03 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A135C038E;
+        Tue,  7 Jun 2022 08:34:02 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-138-163.dynamic.spd-mgts.ru [109.252.138.163])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 76935B8206A
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Jun 2022 14:39:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B464C341C0
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Jun 2022 14:39:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654612770;
-        bh=InV9CMrKaQwKl2bK4mb7WbWu4ZjAtIdkFsHCshJZGoA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VYdw6Kg6SP0Pc9r/P3LtWqd2v0dvXeGMX0v2TpqEdlZI9buUIMMwovnTyzk/kJw4D
-         M0sCajR1EZeewAh8WgTChT6K1E6aZdRx6VpT/dhDLAzDj3VpwlVIz80UdvoCLd7cTh
-         Vp+WZ9PqBxpuWSeyIyG0TpUjncOFie41jX0C/dSEq2tiN1vPpD1+WGLwkiLbwfvvcI
-         c+pEligkZtIqq1WiMAf+dee6slcXcAaa8J4p+iKs77M4rw/D+DSLux+FTVvXnI7jnx
-         UP49uatz2/oMX7enKXDHTgVjby7SnNVCxluOFJk+8SVsjhun9FcATwDnTYe7ksAKD2
-         O+Y/oUz1k68/Q==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-f33f0f5b1dso23374368fac.8
-        for <linux-tegra@vger.kernel.org>; Tue, 07 Jun 2022 07:39:30 -0700 (PDT)
-X-Gm-Message-State: AOAM533kNjaaaPhpBOAwia+jgUVooQWMsaYbinqx0/bXAwc0tO4mKnYs
-        VkXPj8Nv8lQNG1Q6Sve6gWN57yxyClzxXExyWuM=
-X-Google-Smtp-Source: ABdhPJxzGNqbRoe8K7UyuygvOXKVPzJ82TObrwyRcAERJC0u8jvk2QH3n9xyRvg1DxVxIjhXX8qa24EFWHA89iPX/Oc=
-X-Received: by 2002:a05:6871:5c8:b0:f3:3c1c:126f with SMTP id
- v8-20020a05687105c800b000f33c1c126fmr16702035oan.126.1654612769275; Tue, 07
- Jun 2022 07:39:29 -0700 (PDT)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D1DF06601A26;
+        Tue,  7 Jun 2022 16:33:57 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1654616040;
+        bh=1OHF6wl6ehs/wRC7M/8ORoOFTl8MMQfJ9asXXd+gmRE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=aEIUXUrg6wlcmhJWW9Dpq0CD51JiB4Gk+im588kYV1D7mO9ub6yKFVwNOXpZVJ2wM
+         opGS/8b5tqT6A+Qs0IOWZkFwx79fas7g7J+6UFuPd62KDBH4Udp9hStEJ+Rda/cqwS
+         /URMw8PUaP1oUBVHs2Yv4T39A3FIsYQBzAsp8bo0QFJ3mZ0J+ykNSYh0VcCXFnvq3G
+         IOXQEb+tEfv6oiz2y9m8bvih3N0zkAqVp0jlIZFmtAilcr0aTfPA8jEpZx7IeH9ey7
+         VUWWcHduvM3mB3xQmqfjKAk9sBAsGQj/TYmOnhe4+/BKszV79pAEu3Vi5r8hO/X1HA
+         L4he4Zd+PxFGA==
+Message-ID: <382d50a2-8e47-5e0f-726b-f077be5b8bc6@collabora.com>
+Date:   Tue, 7 Jun 2022 18:33:55 +0300
 MIME-Version: 1.0
-References: <20220328134714.205342-1-ardb@kernel.org> <20220328134714.205342-2-ardb@kernel.org>
- <a589f56d-a0e1-328d-e4be-9427342d46b8@nvidia.com> <Yo0PzCkBLK5U1nB2@shell.armlinux.org.uk>
- <061d892d-7a16-774a-4b50-b09055040ae2@nvidia.com> <CAMj1kXGMZR4+eyuG=-7bOLxzvs7Mhv4J4B-7kerdXKZxzON2ag@mail.gmail.com>
- <fe5ed99e-955e-d22a-0f78-d83c82cab66d@nvidia.com>
-In-Reply-To: <fe5ed99e-955e-d22a-0f78-d83c82cab66d@nvidia.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Tue, 7 Jun 2022 16:39:16 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXE_MzrnnWLgCVy0Su=_TgMyGV_WnbSgd-eBijboBPQp-Q@mail.gmail.com>
-Message-ID: <CAMj1kXE_MzrnnWLgCVy0Su=_TgMyGV_WnbSgd-eBijboBPQp-Q@mail.gmail.com>
-Subject: Re: [PATCH 1/6] ARM: spectre-bhb: enable for Cortex-A15
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
-        linus.walleij@linaro.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v6 17/22] drm/shmem-helper: Add generic memory shrinker
+Content-Language: en-US
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     David Airlie <airlied@linux.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        dri-devel@lists.freedesktop.org,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Dmitry Osipenko <digetx@gmail.com>, kernel@collabora.com,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Rob Herring <robh@kernel.org>,
+        Daniel Stone <daniel@fooishbar.org>,
+        Steven Price <steven.price@arm.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        virtualization@lists.linux-foundation.org,
+        Chia-I Wu <olvaffe@gmail.com>, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        linaro-mm-sig@lists.linaro.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Daniel Almeida <daniel.almeida@collabora.com>,
+        amd-gfx@lists.freedesktop.org,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Gert Wollny <gert.wollny@collabora.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
+        Rob Clark <robdclark@gmail.com>, Qiang Yu <yuq825@gmail.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
+ <20220526235040.678984-18-dmitry.osipenko@collabora.com>
+ <CAKMK7uHQ+iMkXtrsCWiJL9X1AM9Xkq-wNmj=hhfnenf0r9717g@mail.gmail.com>
+ <2aedbd68-cb4b-157c-1ddb-dbdb9348d2fe@gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <2aedbd68-cb4b-157c-1ddb-dbdb9348d2fe@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 7 Jun 2022 at 16:35, Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 07/06/2022 15:32, Ard Biesheuvel wrote:
-> > On Tue, 7 Jun 2022 at 16:30, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>
-> >>
-> >> On 24/05/2022 18:03, Russell King (Oracle) wrote:
-> >>> On Tue, May 24, 2022 at 03:50:17PM +0100, Jon Hunter wrote:
-> >>>> Hi Ard,
-> >>>>
-> >>>> On 28/03/2022 14:47, Ard Biesheuvel wrote:
-> >>>>> The Spectre-BHB mitigations were inadvertently left disabled for
-> >>>>> Cortex-A15, due to the fact that cpu_v7_bugs_init() is not called in
-> >>>>> that case. So fix that.
-> >>>>>
-> >>>>> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> >>>>> ---
-> >>>>>     arch/arm/mm/proc-v7-bugs.c | 1 +
-> >>>>>     1 file changed, 1 insertion(+)
-> >>>>>
-> >>>>> diff --git a/arch/arm/mm/proc-v7-bugs.c b/arch/arm/mm/proc-v7-bugs.c
-> >>>>> index 06dbfb968182..fb9f3eb6bf48 100644
-> >>>>> --- a/arch/arm/mm/proc-v7-bugs.c
-> >>>>> +++ b/arch/arm/mm/proc-v7-bugs.c
-> >>>>> @@ -288,6 +288,7 @@ void cpu_v7_ca15_ibe(void)
-> >>>>>     {
-> >>>>>      if (check_spectre_auxcr(this_cpu_ptr(&spectre_warned), BIT(0)))
-> >>>>>              cpu_v7_spectre_v2_init();
-> >>>>> +   cpu_v7_spectre_bhb_init();
-> >>>>>     }
-> >>>>>     void cpu_v7_bugs_init(void)
-> >>>>
-> >>>>
-> >>>> Since this patch has been merged, I am seeing a ton of messages when booting
-> >>>> Linux on tegra124-jetson-tk1 ...
-> >>>>
-> >>>> [ 1233.327547] CPU0: Spectre BHB: using loop workaround
-> >>>> [ 1233.327795] CPU1: Spectre BHB: using loop workaround
-> >>>> [ 1233.328270] CPU1: Spectre BHB: using loop workaround
-> >>>
-> >>> Now that you mention this, I vaguely remember some email on the list a
-> >>> while ago about this being caused by something like cpuidle - but I'm
-> >>> unable to find it now.
-> >>>
-> >>>> [0] https://lore.kernel.org/linux-arm-kernel/20220519161310.1489625-1-dmitry.osipenko@collabora.com/T/
-> >>>
-> >>> That was probably it.
-> >>>
-> >>> We can't really do this for the other print, because the system status
-> >>> can change as a result of CPUs being brought online. :(
-> >>>
-> >>
-> >> Does it make sense to only print the message if/when the method changes
-> >> as opposed to every time the CPUs are brought online? That way, there
-> >> would still be at least one print showing the current method. I believe
-> >> that is what Ard had proposed.
-> >>
-> >
-> > A fix for this issue is already in linux-next:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=bafa10435c4f34f4b9bda8fc7ee6e4330ebca3ea
->
->
-> Ah wonderful! Sorry I had missed that. Once merged can we pull into
-> stable as well?
->
+On 6/6/22 13:57, Christian König wrote:
+> Am 05.06.22 um 18:47 schrieb Daniel Vetter:
+>> On Fri, 27 May 2022 at 01:55, Dmitry Osipenko
+>> <dmitry.osipenko@collabora.com> wrote:
+>>> Introduce a common DRM SHMEM shrinker framework that allows to reduce
+>>> code duplication among DRM drivers by replacing theirs custom shrinker
+>>> implementations with the generic shrinker.
+>>>
+>>> In order to start using DRM SHMEM shrinker drivers should:
+>>>
+>>> 1. Implement new evict() shmem object callback.
+>>> 2. Register shrinker using drm_gem_shmem_shrinker_register(drm_device).
+>>> 3. Use drm_gem_shmem_set_purgeable(shmem) and alike API functions to
+>>>     activate shrinking of shmem GEMs.
+>>>
+>>> This patch is based on a ideas borrowed from Rob's Clark MSM shrinker,
+>>> Thomas' Zimmermann variant of SHMEM shrinker and Intel's i915 shrinker.
+>>>
+>>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>> So I guess I get a price for being blind since forever, because this
+>> thing existed since at least 2013. I just stumbled over
+>> llist_lru.[hc], a purpose built list helper for shrinkers. I think we
+>> should try to adopt that so that our gpu shrinkers look more like
+>> shrinkers for everything else.
+> 
+> What the heck are you talking about?
+> 
+> I can't find any llist_lru.[hc] in the linux kernel sources.
 
-Yes. It has a fixes: tag so it will most likely get picked up
-automatically, but feel free to remind the -stable maintainers once
-this patch is merged by Linus.
+I think Daniel meant this:
+
+https://elixir.bootlin.com/linux/v5.19-rc1/source/include/linux/list_lru.h
+
+https://elixir.bootlin.com/linux/v5.19-rc1/source/mm/list_lru.c
+
+
+-- 
+Best regards,
+Dmitry
