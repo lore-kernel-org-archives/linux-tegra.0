@@ -2,94 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 794E0C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Jun 2022 19:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7013C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Jun 2022 20:24:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231175AbiFHTA0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Jun 2022 15:00:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45684 "EHLO
+        id S231392AbiFHUY2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Jun 2022 16:24:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233196AbiFHTAT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Jun 2022 15:00:19 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 793BD3C71C;
-        Wed,  8 Jun 2022 12:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yeiHW5EcLA7eqe7J1MPMCRK8sfCMfurY+HyBM1CQA2g=; b=a1yaq32urq7t04nH3n0QyXBvCN
-        D51rzXl8Al5tGQntxatY+oWoluSnrG8LyjSHvIDqkHkRXKfvBnQ4sb5WqdmUsqibWC3edYzV3hgya
-        jjXXLi7Dy/Z76fjiDter5nkCMNkZCoARIw50FUvn2qH9aL4SXV4vQu96/V/v1jpdpRsTjnxHMEwey
-        6SeeRG85DUk7IS38i59Ezo/Sfc3UIFVw3+JYNtiuf4DhM2A4ZKWK4hgbi97wI7IJKjXqubA9BftDU
-        b1eKY+0CqrUbb0AjYTx4S4r/VLmJxQ+tPZfyzrMYlZqgdcXkUL+ikDb7N7df2ff3L72eXYbGbju9v
-        onsMJ2OA==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1nz0uH-00CMkN-RA; Wed, 08 Jun 2022 21:59:53 +0300
-Message-ID: <8f813d4c-f379-a6d5-1efe-8b20e3572a83@kapsi.fi>
-Date:   Wed, 8 Jun 2022 21:59:47 +0300
+        with ESMTP id S230470AbiFHUY1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Jun 2022 16:24:27 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5715915A3D8;
+        Wed,  8 Jun 2022 13:24:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9FF8AB82ACF;
+        Wed,  8 Jun 2022 20:24:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDDAC34116;
+        Wed,  8 Jun 2022 20:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654719863;
+        bh=kjulfUSLLMXAENNBuRnDb2ttG1bjGhev/8nPL0ukd74=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=Tj82SFOEBNhE2C99Z3s8glLZg5Va/8Cv4lQtee1XdyPOMUb9RuyCumchv0GXMjW7p
+         JpGMGfKwoE1c6gEhf24mZksjoCU9iMMtC9u99/Xfg2rPeVrfQiQOjy7Os+WDAKoLg7
+         Y/jNwAETXYr1edF430gwK6G04XgUXz1ho9ylWCT+sTT91WrJWmBzCt46wTIOXsRnKE
+         2R0khovDUQtfXUmjvnBjlTLJTlB3wOLwcyQRncSRzoLHbtv3gHdOrUbTqfoSNyqC5D
+         OhRL4RTQrqspVbJrSdkVHs0zS6i/2xvFRFKU6ju6UrRXbZ6ZXCBXbvHEb2xlzj4JDv
+         UmKIF5Hio4pug==
+Date:   Wed, 8 Jun 2022 15:24:20 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Robert Marko <robert.marko@sartura.hr>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        linux-pci@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org,
+        Stanimir Varbanov <svarbanov@mm-sol.com>
+Subject: Re: [PATCH v6 0/3] PCI: IPQ6018 platform support
+Message-ID: <20220608202420.GA418223@bhelgaas>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v1 00/13] Host1x support on Tegra234
-Content-Language: en-US
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-References: <20220516100213.1536571-1-cyndis@kapsi.fi>
- <930f3721-ab1e-4bab-de1e-eaf83982e3ea@collabora.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <930f3721-ab1e-4bab-de1e-eaf83982e3ea@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+HBbNFo9QCExiA9T4Mn4t5vvir79xF3R9F6OLZa0m5Bzpte3w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/3/22 12:38, Dmitry Osipenko wrote:
-> On 5/16/22 13:02, cyndis@kapsi.fi wrote:
->> Hi all,
->>
->> This series adds support for Host1x and VIC on the recently released
->> Tegra234 (Orin) SoC. It's split into the following parts:
->>
->> * Device tree binding updates
->> * Cleanup in host1x driver
->> * Add programming of new registers and old registers that now need to
->>    be programmed to a non-reset value
->> * Tegra234 device data and headers
->> * Rewrite of the job opcode sequence, and related patches to
->>    support MLOCKs on Tegra186+.
->>
->> The rewrite of the job opcode sequence brings Tegra186, Tegra194 and
->> Tegra234 support to a 'full-featured' status that is necessary to
->> support all host1x features in the future. This should not have any
->> impact on older SoCs.
->>
->> This series should be applied on top of the Host1x context isolation
->> series.
->>
->> Tested on Jetson AGX Xavier and Jetson AGX Orin.
+[+cc Stanimir, beginning of thread at
+https://lore.kernel.org/r/cover.1644234441.git.baruch@tkos.co.il]
+
+On Tue, Jun 07, 2022 at 03:12:19PM +0200, Robert Marko wrote:
+> On Wed, May 11, 2022 at 4:03 PM Lorenzo Pieralisi
+> <lorenzo.pieralisi@arm.com> wrote:
+> >
+> > On Tue, Apr 12, 2022 at 05:12:59PM +0100, Lorenzo Pieralisi wrote:
+> > > On Mon, Feb 07, 2022 at 04:51:23PM +0200, Baruch Siach wrote:
+> > > > This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is
+> > > > ported from downstream Codeaurora v5.4 kernel. The main difference from
+> > > > downstream code is the split of PCIe registers configuration from .init to
+> > > > .post_init, since it requires phy_power_on().
+> > > >
+> > > > Tested on IPQ6010 based hardware.
+> > > >
+> > > > Changes in v6:
+> > > >
+> > > >   * Drop DT patch applied to the qcom tree
+> > > >
+> > > >   * Normalize driver changes subject line
+> > > >
+> > > >   * Add a preparatory patch to rename PCIE_CAP_LINK1_VAL to PCIE_CAP_SLOT_VAL,
+> > > >     and define it using PCI_EXP_SLTCAP_* macros
+> > > >
+> > > >   * Drop a vague comment about ASPM configuration
+> > > >
+> > > >   * Add a comment about the source of delay periods
+> > > >
+> > > > Changes in v5:
+> > > >
+> > > >   * Remove comments from qcom_pcie_init_2_9_0() (Bjorn Andersson)
+> > > >
+> > > > Changes in v4:
+> > > >
+> > > >   * Drop applied DT bits
+> > > >
+> > > >   * Add max-link-speed that was missing from the applied v2 patch
+> > > >
+> > > >   * Rebase the driver on v5.16-rc3
+> > > >
+> > > > Changes in v3:
+> > > >
+> > > >   * Drop applied patches
+> > > >
+> > > >   * Rely on generic code for speed setup
+> > > >
+> > > >   * Drop unused macros
+> > > >
+> > > >   * Formatting fixes
+> > > >
+> > > > Changes in v2:
+> > > >
+> > > >   * Add patch moving GEN3_RELATED macros to a common header
+> > > >
+> > > >   * Drop ATU configuration from pcie-qcom
+> > > >
+> > > >   * Remove local definition of common registers
+> > > >
+> > > >   * Use bulk clk and reset APIs
+> > > >
+> > > >   * Remove msi-parent from device-tree
+> > > >
+> > > > Baruch Siach (2):
+> > > >   PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
+> > > >   PCI: qcom: Define slot capabilities using PCI_EXP_SLTCAP_*
+> > > >
+> > > > Selvam Sathappan Periakaruppan (1):
+> > > >   PCI: qcom: Add IPQ60xx support
+> > > >
+> > > >  drivers/pci/controller/dwc/pcie-designware.h |   7 +
+> > > >  drivers/pci/controller/dwc/pcie-qcom.c       | 155 ++++++++++++++++++-
+> > > >  drivers/pci/controller/dwc/pcie-tegra194.c   |   6 -
+> > > >  3 files changed, 160 insertions(+), 8 deletions(-)
+> > >
+> > > Hi Bjorn, Andy,
+> > >
+> > > any feedback on this series please ?
+> >
+> > Any feedback on these patches please ?
 > 
-> The code looks okay at a quick glance. Please rebase the patches on top
-> of latest -next. Perhaps won't hurt to merge all the related patchsets
-> into a single series for 5.20.
-> 
+> Finally dug the CP01, and for me, it works, so:
+> Tested-by: Robert Marko <robert.marko@sartura.hr>
 
-Thanks!
+This mainly affects pcie-qcom.c, so it looks like Stanimir should have
+been copied on this, but wasn't.  Please include him on the next
+iteration.
 
-Yeah, I'll rebase and resend the context isolation series and this next 
-week.
+This will also need to be updated to apply on v5.19-rc1:
 
-Mikko
+  03:21:47 ~/linux (next)$ git checkout -b wip/baruch-ipq6018-v6 v5.19-rc1
+  Switched to a new branch 'wip/baruch-ipq6018-v6'
+  03:21:55 ~/linux (wip/baruch-ipq6018-v6)$ git am m/v6_20220207_baruch_pci_ipq6018_platform_support.mbx
+  Applying: PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
+  Applying: PCI: qcom: Define slot capabilities using PCI_EXP_SLTCAP_*
+  Applying: PCI: qcom: Add IPQ60xx support
+  error: patch failed: drivers/pci/controller/dwc/pcie-qcom.c:1531
+  error: drivers/pci/controller/dwc/pcie-qcom.c: patch does not apply
+  Patch failed at 0003 PCI: qcom: Add IPQ60xx support
