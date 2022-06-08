@@ -2,42 +2,42 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7528CCA48A
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Jun 2022 14:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4741DCCA483
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Jun 2022 14:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243181AbiFHOsR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S243187AbiFHOsR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Wed, 8 Jun 2022 10:48:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57932 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242338AbiFHOrH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Jun 2022 10:47:07 -0400
+        with ESMTP id S242186AbiFHOq7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Jun 2022 10:46:59 -0400
 Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB9F9253306;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABAD9253307;
         Wed,  8 Jun 2022 07:46:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=RgIlqtYjjJdUiI+7wCmxTrS6x1kOK6pzGpl8Q80bmr4=; b=bQitAo3/bhX/7hzGI4T3yibna4
-        0mQZeyH26/9uEQoQ3a1aX3sWfKMfQ781vDvBiZrQN/0MSfReYdabg0FWrYVzcM/S2rUEv6t6LGksa
-        2BQ/eFu8BDIKfzmcsKUyYvSei/0kIkIiswTsPUZTWuqJ9hrWBbHm9564E7DCbUTazE3QYRIUcrjOI
-        aJk5EhnlwCnKYq27DXu1QA/DW1E8sCiSYr9HyBmEjLdFA0HQokSNPY9mowQlBRNW8L1t9Mv4j9GoO
-        6NWPHqFFtnihkP9nxLcUiaNc5tX0iEfigOT06QdTK6KDKX5Ebp0k3LNleCw9IlDGN1ZUtCQIxVuOF
-        W43+1Cjg==;
+        bh=fn1U7MEbZz2QK5hbMetRGs1LaJ4dLQ5TDl+y9fGIqjs=; b=AHoLDlFIJpM2yJSN34mWYuYDyZ
+        RrXBAbCHcbiLETtqHyostv6hzGyHst5r7VORCZGrERmGvvRqMr2NwXjLQsK1TYGzVvVJBLCgsCf3j
+        LieJtCZHAdjEyntbLFkbTU93xwC08IjFigevejKo+3rMPJ833Xxh7xrrmgzcKasuf6t3frm6PkmxU
+        vZovY0XqO2YqPGD7SFjfk9rslAidePmYi7ReTaMHUlcVRH/amspREeDyWUmyOeqnEP6bQYjeAjWHS
+        JBInW3LvF6tscP+ZjodqILQopYhhA13ptDRMV4kNqtb9FKzkYAPZG/ay8CNlYM5sVD+3xA6vTTC0E
+        vR1dCMqg==;
 Received: from dhcp-077-249-017-003.chello.nl ([77.249.17.3] helo=noisy.programming.kicks-ass.net)
         by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nywx2-0066CI-F0; Wed, 08 Jun 2022 14:46:30 +0000
+        id 1nywwz-0066Bh-PG; Wed, 08 Jun 2022 14:46:26 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A3C6C302EF4;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 03F4C302E49;
         Wed,  8 Jun 2022 16:46:23 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 9441920C10EDA; Wed,  8 Jun 2022 16:46:18 +0200 (CEST)
-Message-ID: <20220608144517.380962958@infradead.org>
+        id 75C7720C10EAF; Wed,  8 Jun 2022 16:46:18 +0200 (CEST)
+Message-ID: <20220608144516.871305980@infradead.org>
 User-Agent: quilt/0.66
-Date:   Wed, 08 Jun 2022 16:27:46 +0200
+Date:   Wed, 08 Jun 2022 16:27:38 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     peterz@infradead.org
 Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
@@ -98,7 +98,7 @@ Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
         linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
         rcu@vger.kernel.org
-Subject: [PATCH 23/36] arm64,smp: Remove trace_.*_rcuidle() usage
+Subject: [PATCH 15/36] cpuidle,cpu_pm: Remove RCU fiddling from cpu_pm_{enter,exit}()
 References: <20220608142723.103523089@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -106,33 +106,43 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Ever since commit d3afc7f12987 ("arm64: Allow IPIs to be handled as
-normal interrupts") this function is called in regular IRQ context.
+All callers should still have RCU enabled.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/arm64/kernel/smp.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/cpu_pm.c |    9 ---------
+ 1 file changed, 9 deletions(-)
 
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -865,7 +865,7 @@ static void do_handle_IPI(int ipinr)
- 	unsigned int cpu = smp_processor_id();
+--- a/kernel/cpu_pm.c
++++ b/kernel/cpu_pm.c
+@@ -30,16 +30,9 @@ static int cpu_pm_notify(enum cpu_pm_eve
+ {
+ 	int ret;
  
- 	if ((unsigned)ipinr < NR_IPI)
--		trace_ipi_entry_rcuidle(ipi_types[ipinr]);
-+		trace_ipi_entry(ipi_types[ipinr]);
+-	/*
+-	 * This introduces a RCU read critical section, which could be
+-	 * disfunctional in cpu idle. Copy RCU_NONIDLE code to let RCU know
+-	 * this.
+-	 */
+-	rcu_irq_enter_irqson();
+ 	rcu_read_lock();
+ 	ret = raw_notifier_call_chain(&cpu_pm_notifier.chain, event, NULL);
+ 	rcu_read_unlock();
+-	rcu_irq_exit_irqson();
  
- 	switch (ipinr) {
- 	case IPI_RESCHEDULE:
-@@ -914,7 +914,7 @@ static void do_handle_IPI(int ipinr)
- 	}
- 
- 	if ((unsigned)ipinr < NR_IPI)
--		trace_ipi_exit_rcuidle(ipi_types[ipinr]);
-+		trace_ipi_exit(ipi_types[ipinr]);
+ 	return notifier_to_errno(ret);
  }
+@@ -49,11 +42,9 @@ static int cpu_pm_notify_robust(enum cpu
+ 	unsigned long flags;
+ 	int ret;
  
- static irqreturn_t ipi_handler(int irq, void *data)
+-	rcu_irq_enter_irqson();
+ 	raw_spin_lock_irqsave(&cpu_pm_notifier.lock, flags);
+ 	ret = raw_notifier_call_chain_robust(&cpu_pm_notifier.chain, event_up, event_down, NULL);
+ 	raw_spin_unlock_irqrestore(&cpu_pm_notifier.lock, flags);
+-	rcu_irq_exit_irqson();
+ 
+ 	return notifier_to_errno(ret);
+ }
 
 
