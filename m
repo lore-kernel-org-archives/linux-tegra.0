@@ -2,184 +2,161 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62845CCA481
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Jun 2022 07:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 306C3CCA480
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Jun 2022 08:51:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239255AbiFIHjc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Jun 2022 03:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40952 "EHLO
+        id S241991AbiFIIvH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Jun 2022 04:51:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237153AbiFIHj0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Jun 2022 03:39:26 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 361E11AF1F;
-        Thu,  9 Jun 2022 00:39:25 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 88FEF80F1;
-        Thu,  9 Jun 2022 07:34:50 +0000 (UTC)
-Date:   Thu, 9 Jun 2022 10:39:22 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        bcain@quicinc.com, Huacai Chen <chenhuacai@kernel.org>,
-        Xuerui Wang <kernel@xen0n.name>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>, Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        David Miller <davem@davemloft.net>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Juergen Gross <jgross@suse.com>, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, Pv-drivers <pv-drivers@vmware.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        lpieralisi@kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S242628AbiFIIuf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Jun 2022 04:50:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D34E7142A85;
+        Thu,  9 Jun 2022 01:47:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 68A8E617E1;
+        Thu,  9 Jun 2022 08:47:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DD8C34114;
+        Thu,  9 Jun 2022 08:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654764434;
+        bh=a13ggRjGVBRX1EjOqKbLw/ekdwdTjL720ODOeBxI9BA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PUvVrkgPPd3Zj3VJPt+FGoRskkrsqai75NqtYEk54Pk/eq2JNCllJ97/SSmVXFqI5
+         73KtLjL3mAhx5uJZjLurQ6612ktdWjnCAg8ez+kz8jPRGjroBADUCg51YmYi07ycCN
+         SO1eoeEUc1DHqHRwwjVkIGij3dUfgbSIV2coIHMxazRf0OgpSXHOABf34aLgbAliev
+         oibNN8XnkWzMK95H9jg1MraXMPYF9csvNpxLyJj7j2+RyxNhvblVKcPtDHQ24jUe6f
+         A9/FAbUhU5q2KrUJZSn2Jh6AjaBzAzekDga+AmQJFC4LtRCVv1rmjOzq8iGlWD6gVZ
+         +NqZSN3Z8zScA==
+Received: by pali.im (Postfix)
+        id E79682104; Thu,  9 Jun 2022 10:47:10 +0200 (CEST)
+Date:   Thu, 9 Jun 2022 10:47:10 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Baruch Siach <baruch@tkos.co.il>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Anup Patel <anup@brainfault.org>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        jacob.jun.pan@linux.intel.com, Yury Norov <yury.norov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        quic_neeraju@quicinc.com, Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        vschneid@redhat.com, jpoimboe@kernel.org,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SYNOPSYS ARC ARCHITECTURE" 
-        <linux-snps-arc@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-csky@vger.kernel.org,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        "open list:IA64 (Itanium) PLATFORM" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Openrisc <openrisc@lists.librecores.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-um <linux-um@lists.infradead.org>,
-        linux-perf-users@vger.kernel.org,
-        "open list:DRM DRIVER FOR QEMU'S CIRRUS DEVICE" 
-        <virtualization@lists.linux-foundation.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH 33/36] cpuidle,omap3: Use WFI for omap3_pm_idle()
-Message-ID: <YqGjqgSrTRseJW6M@atomide.com>
-References: <20220608142723.103523089@infradead.org>
- <20220608144518.010587032@infradead.org>
- <CAK8P3a0g-fNu9=BUECSXcNeWT7XWHQMnSXZE-XYE+5eakHxKxA@mail.gmail.com>
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Stanimir Varbanov <svarbanov@mm-sol.com>
+Subject: Re: [PATCH v6 2/3] PCI: qcom: Define slot capabilities using
+ PCI_EXP_SLTCAP_*
+Message-ID: <20220609084710.qpqdaid56l6crdpq@pali>
+References: <cover.1644234441.git.baruch@tkos.co.il>
+ <f452d0d28482462557485805d708b9adb9e0f6c0.1644234441.git.baruch@tkos.co.il>
+ <20220608230008.acp6lwu6xjin62ql@pali>
+ <87r13ymrf2.fsf@tarshish>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a0g-fNu9=BUECSXcNeWT7XWHQMnSXZE-XYE+5eakHxKxA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87r13ymrf2.fsf@tarshish>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-* Arnd Bergmann <arnd@arndb.de> [220608 18:18]:
-> On Wed, Jun 8, 2022 at 4:27 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > arch_cpu_idle() is a very simple idle interface and exposes only a
-> > single idle state and is expected to not require RCU and not do any
-> > tracing/instrumentation.
-> >
-> > As such, omap_sram_idle() is not a valid implementation. Replace it
-> > with the simple (shallow) omap3_do_wfi() call. Leaving the more
-> > complicated idle states for the cpuidle driver.
-
-Agreed it makes sense to limit deeper idle states to cpuidle. Hopefully
-there is some informative splat for attempting to use arch_cpu_ide()
-for deeper idle states :)
-
-> I see similar code in omap2:
+On Thursday 09 June 2022 06:27:34 Baruch Siach wrote:
+> Hi Pali,
 > 
-> omap2_pm_idle()
->  -> omap2_enter_full_retention()
->      -> omap2_sram_suspend()
+> On Thu, Jun 09 2022, Pali Rohár wrote:
+> > On Monday 07 February 2022 16:51:25 Baruch Siach wrote:
+> >> From: Baruch Siach <baruch.siach@siklu.com>
+> >> 
+> >> The PCIE_CAP_LINK1_VAL macro actually defines slot capabilities. Use
+> >> PCI_EXP_SLTCAP_* macros to spell its value, and rename it to better
+> >> describe its meaning.
+> >> 
+> >> Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
+> >> ---
+> >>  drivers/pci/controller/dwc/pcie-qcom.c | 15 +++++++++++++--
+> >>  1 file changed, 13 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> >> index c19cd506ed3f..01e58b057d2a 100644
+> >> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> >> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> >> @@ -69,7 +69,18 @@
+> >>  #define PCIE20_AXI_MSTR_RESP_COMP_CTRL1		0x81c
+> >>  #define CFG_BRIDGE_SB_INIT			BIT(0)
+> >>  
+> >> -#define PCIE_CAP_LINK1_VAL			0x2FD7F
+> >> +#define PCIE_CAP_SLOT_POWER_LIMIT_VAL		0x7D00
+> >> +#define PCIE_CAP_SLOT_POWER_LIMIT_SCALE		0x8000
+> >
+> > Hello!
+> >
+> > Please do not use hardcoded values for slot power limit value and scale
+> > numbers. There are macros PCI_EXP_SLTCAP_SPLV and PCI_EXP_SLTCAP_SPLS
+> > for composing mask:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/pci_regs.h?h=v5.19-rc1#n593
+> > Which could be used together with FIELD_PREP(). See e.g. aardvark commit:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0d5b8c298545c827ca9f2461b2655277ce0aef79
 > 
-> Is that code path safe to use without RCU or does it need a similar change?
+> Thanks for the tip.
+> 
+> > And the important information: Slot power limit is board specific and
+> > depends on how power supply and power regulators are designed. So slot
+> > power limit **cannot** be hardcoded in driver. Instead this value should
+> > be read from device tree file for the current board.
+> >
+> > There is a new kernel function of_pci_get_slot_power_limit() which reads
+> > it and compose PCIe slot power limit value and scale numbers. See:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/of.c?h=v5.19-rc1#n631
+> 
+> The 'slot-power-limit-milliwatt' property appears to be undocumented as
+> of v5.19-rc1.
 
-Seems like a similar change should be done for omap2. Then anybody who
-cares to implement a minimal cpuidle support can do so.
+slot-power-limit-milliwatt is already documented in DT scheme pci-bus, see:
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pci/pci-bus.yaml
 
-Regards,
-
-Tony
+> This patch should make no functional change. I guess we should keep the
+> default hard-coded driver value for compatibility with existing DTs with
+> no 'slot-power-limit-milliwatt'.
+> 
+> Thanks,
+> baruch
+> 
+> >> +#define PCIE_CAP_SLOT_VAL			(PCI_EXP_SLTCAP_ABP | \
+> >> +						PCI_EXP_SLTCAP_PCP | \
+> >> +						PCI_EXP_SLTCAP_MRLSP | \
+> >> +						PCI_EXP_SLTCAP_AIP | \
+> >> +						PCI_EXP_SLTCAP_PIP | \
+> >> +						PCI_EXP_SLTCAP_HPS | \
+> >> +						PCI_EXP_SLTCAP_HPC | \
+> >> +						PCI_EXP_SLTCAP_EIP | \
+> >> +						PCIE_CAP_SLOT_POWER_LIMIT_VAL | \
+> >> +						PCIE_CAP_SLOT_POWER_LIMIT_SCALE)
+> >>  
+> >>  #define PCIE20_PARF_Q2A_FLUSH			0x1AC
+> >>  
+> >> @@ -1111,7 +1122,7 @@ static int qcom_pcie_init_2_3_3(struct qcom_pcie *pcie)
+> >>  
+> >>  	writel(PCI_COMMAND_MASTER, pci->dbi_base + PCI_COMMAND);
+> >>  	writel(DBI_RO_WR_EN, pci->dbi_base + PCIE20_MISC_CONTROL_1_REG);
+> >> -	writel(PCIE_CAP_LINK1_VAL, pci->dbi_base + offset + PCI_EXP_SLTCAP);
+> >> +	writel(PCIE_CAP_SLOT_VAL, pci->dbi_base + offset + PCI_EXP_SLTCAP);
+> >>  
+> >>  	val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
+> >>  	val &= ~PCI_EXP_LNKCAP_ASPMS;
+> >> -- 
+> >> 2.34.1
+> >> 
+> 
+> 
+> -- 
+>                                                      ~. .~   Tk Open Systems
+> =}------------------------------------------------ooO--U--Ooo------------{=
+>    - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
