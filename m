@@ -2,76 +2,78 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10588C43334
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Jun 2022 15:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0CACCA473
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Jun 2022 20:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344134AbiFIPyP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Jun 2022 11:54:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43476 "EHLO
+        id S241236AbiFIUNa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Jun 2022 16:13:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344075AbiFIPyM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Jun 2022 11:54:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D354C31DC4;
-        Thu,  9 Jun 2022 08:54:09 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 5FDBB1FEA9;
-        Thu,  9 Jun 2022 15:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1654790048; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jZtcZUbZig1UhIcXMJ758dp36LQQ/d16e8zqnLoYBUI=;
-        b=WeDq7XZhXURQuDayn95bRWP62X8BWXvBWugF0x6+pE4jsWM4S9ZNndFwfvt1GcJxeIMrCZ
-        sg5yXPKNGFmFwwTy5w1f5UsEiyFE3HKe7evhJUnwKy37LUQ9n6BAxBciF4GE87AHj9LJ0Q
-        KzeXJveNtrfE/koMZPau6VmuysgUvhM=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 090D02C141;
-        Thu,  9 Jun 2022 15:54:07 +0000 (UTC)
-Date:   Thu, 9 Jun 2022 17:54:07 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc:     Felix Kuehling <felix.kuehling@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, alexander.deucher@amd.com, daniel@ffwll.ch,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        hughd@google.com, andrey.grodzovsky@amd.com
-Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
-Message-ID: <YqIXn0V3dEvGPZ1h@dhcp22.suse.cz>
-References: <20220531100007.174649-1-christian.koenig@amd.com>
- <20220531100007.174649-4-christian.koenig@amd.com>
- <YqG67sox6L64E6wV@dhcp22.suse.cz>
- <77b99722-fc13-e5c5-c9be-7d4f3830859c@amd.com>
- <YqHuH5brYFQUfW8l@dhcp22.suse.cz>
- <26d3e1c7-d73c-cc95-54ef-58b2c9055f0c@gmail.com>
- <YqIB0bavUeU8Abwl@dhcp22.suse.cz>
- <d841c1ab-c0d1-5130-11fc-c8ea04cc9511@amd.com>
- <41dc3e5a-9e90-70df-74df-ccdf8fa5ae86@amd.com>
+        with ESMTP id S238643AbiFIUNV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Jun 2022 16:13:21 -0400
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7C76572;
+        Thu,  9 Jun 2022 13:13:18 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id a10so23280119ioe.9;
+        Thu, 09 Jun 2022 13:13:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=U+XVqkGl1216NwGHDcD5Ngd9nvqMHfeDnXNSteurP74=;
+        b=CYNnfkXxgA7uKOKYy7OKOIPstgFOwBwtiXyEVt8IDSMI1HKwKNt0Z26+nllpai11CZ
+         0HLPIOpWj/3sFwJdRbX6PaKQd5bnQcEaAUtUKe5WhRTrCljcM/EKsZQf6RKex7U06FEW
+         jMlWKIOEbnhsyEu/xNQTfRM2c6Y5FLGAaDwnYkTGPsYINrn71uTOaRfM9hYhnjQVd+aH
+         hIHvVraR/1WARRa+XLUfg78KTmTlgef+jMtnWMXJWDWeV3weGCvqo9JIZkwSxgaFyCtf
+         kBEJ8nvhIXpQDjm2Yp5AdtN9Dm+ixFGjNBdLl8NKJzzOZEp1mlG3U+HvMh8FWZDXjKXA
+         n4HQ==
+X-Gm-Message-State: AOAM530NYQhRxQ4H+Bvt87tNw64OawP29KzjSwurXBgz3xNTrdeEPBjT
+        LuyhaSE6UAFx0vjpl3q1Ow==
+X-Google-Smtp-Source: ABdhPJyHDkp/wYSMURLFzLrcDYGk6UwE5zGDsJMuhixGMTa4vUrDc818wEJE3jTTI4JRuOnx3OZVzg==
+X-Received: by 2002:a05:6638:40a6:b0:331:cd97:8629 with SMTP id m38-20020a05663840a600b00331cd978629mr8425069jam.304.1654805597707;
+        Thu, 09 Jun 2022 13:13:17 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id i7-20020a925407000000b002cde6e352e5sm10838693ilb.47.2022.06.09.13.13.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jun 2022 13:13:17 -0700 (PDT)
+Received: (nullmailer pid 26524 invoked by uid 1000);
+        Thu, 09 Jun 2022 20:13:15 -0000
+Date:   Thu, 9 Jun 2022 14:13:15 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        ashishsingha@nvidia.com, skomatineni@nvidia.com,
+        ldewangan@nvidia.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch V3 2/3] spi: dt-bindings: split peripheral prods
+Message-ID: <20220609201315.GA24169-robh@kernel.org>
+References: <20220607114659.54314-1-kyarlagadda@nvidia.com>
+ <20220607114659.54314-3-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <41dc3e5a-9e90-70df-74df-ccdf8fa5ae86@amd.com>
+In-Reply-To: <20220607114659.54314-3-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu 09-06-22 17:22:14, Christian König wrote:
-[...]
-> Those files were never part of any filesystem in the first place, so by
-> killing all the process referencing them you can indeed free the memory
-> locked by them.
+On Tue, Jun 07, 2022 at 05:16:58PM +0530, Krishna Yarlagadda wrote:
+> Move peripheral properties for Tegra QSPI controller to
+> nvidia,tegra210-quad-peripheral-props.yaml and add reference
+> to spi-peripheral-props.yaml file.
 
-Yes, this would require the oom killer to understand that all processes
-referencing that file are killed. Theoretically possible but I am not
-sure a feasible solution.
--- 
-Michal Hocko
-SUSE Labs
+What are 'peripheral prods'?
+
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  ...nvidia,tegra210-quad-peripheral-props.yaml | 33 +++++++++++++++++++
+>  .../bindings/spi/nvidia,tegra210-quad.yaml    | 21 ------------
+>  .../bindings/spi/spi-peripheral-props.yaml    |  1 +
+>  3 files changed, 34 insertions(+), 21 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml
+
+Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
