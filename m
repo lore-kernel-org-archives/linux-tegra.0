@@ -2,213 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D2DCCA473
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Jun 2022 13:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0810CC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Jun 2022 14:10:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343813AbiFINcV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Jun 2022 09:32:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53314 "EHLO
+        id S240324AbiFIOKx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Jun 2022 10:10:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238801AbiFINcU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Jun 2022 09:32:20 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA2E223CA05;
-        Thu,  9 Jun 2022 06:32:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 43946B82DE2;
-        Thu,  9 Jun 2022 13:32:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1062C34114;
-        Thu,  9 Jun 2022 13:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654781536;
-        bh=z1uhxQdjX7oKygIhJ5n3vdkXs/MdE4hzoVbc7kac5Pw=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=hMlmSDIOYJ+7b9WtKMfh6cgzJtzXooKB9Ak5wfc8T3UmN/WAUfnlQCqpv4GR0YjgG
-         DWU8hxNDaAM1ZQt9W4THFQE6z0aY044Vscbzm22b4jgWPoF+LLoB4e3e4PGCUo8JaV
-         hSxS8BIZYoLxBWGpe2pGg8ILRHwpznXh3kv7Kleqvg381zngU5Ik1Kyq+svQaNR7TJ
-         Wq//i/RIqX99KrUBuYgO0bJ7T/gHcisYcj5pPKpQXMPx0I11l8o3/lQLUVPzaidmUb
-         2RVz40d6hmCZ5zasbu3JfAz+I5RjDPkDu2c05iawkPzEg4Z20NkuVbFND0UQ7GKmsV
-         DsOgIPzAWiAxQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     ckeepax@opensource.cirrus.com
-Cc:     linux-sunxi@lists.linux.dev, peter.ujfalusi@gmail.com,
-        pierre-louis.bossart@linux.intel.com, linux-imx@nxp.com,
-        krzk@kernel.org, jarkko.nikula@bitmer.com,
-        linux-xtensa@linux-xtensa.org, cezary.rojewski@intel.com,
-        shawnguo@kernel.org, linux-mediatek@lists.infradead.org,
-        nicolas.ferre@microchip.com, patches@opensource.cirrus.com,
-        linux-amlogic@lists.infradead.org, srinivas.kandagatla@linaro.org,
-        daniel@zonque.org, linux-mips@vger.kernel.org,
-        linux-tegra@vger.kernel.org, nsaenz@kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, heiko@sntech.de,
-        alsa-devel@alsa-project.org, kernel@pengutronix.de,
-        jbrunet@baylibre.com,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-rockchip@lists.infradead.org, linux-omap@vger.kernel.org,
-        lgirdwood@gmail.com
-In-Reply-To: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
-References: <20220519154318.2153729-1-ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 00/56] Specify clock provider directly to CPU DAIs
-Message-Id: <165478153064.1052094.1721875477574787769.b4-ty@kernel.org>
-Date:   Thu, 09 Jun 2022 14:32:10 +0100
+        with ESMTP id S237337AbiFIOKw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Jun 2022 10:10:52 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F00A1E2E;
+        Thu,  9 Jun 2022 07:10:47 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id fd25so31404137edb.3;
+        Thu, 09 Jun 2022 07:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=mEtsDMb1k6CAhwW7ISC2TInxkibSNypnKownS0OQOzM=;
+        b=mgrJ9hp/GfgwWN5tXJmnl8BnnEqXCAKpNGpam7MtrpYO0SI1hQovYwM1cGtHRSBW8N
+         8hwdKmACCRbdEVp3ztBxuOUpU8Lj8cWf+Kx+Z+HJz+f/NStxBiUuk3lNwo/iQqflxvTF
+         InhPQenYDtubdWj0kzqQunKVK2VpuXe5lG3LqH359TPGOV1ya8aUubNqeEJm5slFN9UC
+         s0l6wKpJdTKH6VEkOyvnAWu4FuxiRHTd1mmSc0t20a63BtaAauk73vDVGuMPaKxjSfDI
+         ZF7BlODVAXy32IB8sffpp41YjC1ufolYJTK/mIyUwM1Gg4I4h8Te99MpvvqM5hnlFIwa
+         jqMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=mEtsDMb1k6CAhwW7ISC2TInxkibSNypnKownS0OQOzM=;
+        b=bfpDhOe3ZcKZbjcorPwQjYVm6N7fNRquF0Qobpu3I3Pnrj+bCp78CMOXKsmL7M0Bz9
+         Z+lXMfyG2z8aAgEao6Sxkfy8MCkjcaYeBNDgsLCNM9Mggslu+nxOW9C5mDvfZJiDCjh2
+         YdjZGPSyMgQCCielQmf5ciTDZ7YFVmvGAa9Qn+78NZjU+f/W5XH26EQOGDfd1VkJ1R0f
+         f5Z1wv1SqKF8CigoARLcnT94TLyQzbvlU8m/YyVLp6tFMyWPXVK8zaLtW+0nW/72wjCw
+         kQVNHnGwNe3fG9txulbpUtSB878nCH8p2EiymV8kfii/OT02u7L9lPInRDW62+9OOkX6
+         z6Hw==
+X-Gm-Message-State: AOAM532mHO5qujRHkN4OKeSdQJnvAsNOuGEXG+i+W+UP6adwsAqSpPRs
+        WFyud28aZwTnfOSbl8R2m5FevebjqrQ=
+X-Google-Smtp-Source: ABdhPJyeKHQqi9/0tzt/2RVsH3TlW5RXc5Nbx2kxhyDYn4Th+HmG5UQ3rIQ0Tdhh57D5z0Br/W8sFA==
+X-Received: by 2002:a05:6402:3291:b0:42d:dd03:cbb1 with SMTP id f17-20020a056402329100b0042ddd03cbb1mr44742813eda.268.1654783846479;
+        Thu, 09 Jun 2022 07:10:46 -0700 (PDT)
+Received: from ?IPV6:2a02:908:1256:79a0:99ff:907d:6fef:f861? ([2a02:908:1256:79a0:99ff:907d:6fef:f861])
+        by smtp.gmail.com with ESMTPSA id q24-20020aa7d458000000b0042aad9edc9bsm14778769edr.71.2022.06.09.07.10.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jun 2022 07:10:39 -0700 (PDT)
+Message-ID: <26d3e1c7-d73c-cc95-54ef-58b2c9055f0c@gmail.com>
+Date:   Thu, 9 Jun 2022 16:10:33 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
+Content-Language: en-US
+To:     Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        alexander.deucher@amd.com, daniel@ffwll.ch,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        hughd@google.com, andrey.grodzovsky@amd.com
+References: <20220531100007.174649-1-christian.koenig@amd.com>
+ <20220531100007.174649-4-christian.koenig@amd.com>
+ <YqG67sox6L64E6wV@dhcp22.suse.cz>
+ <77b99722-fc13-e5c5-c9be-7d4f3830859c@amd.com>
+ <YqHuH5brYFQUfW8l@dhcp22.suse.cz>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <YqHuH5brYFQUfW8l@dhcp22.suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 19 May 2022 16:42:22 +0100, Charles Keepax wrote:
-> Currently the set_fmt callback always passes clock provider/consumer
-> with respect to the CODEC. This made sense when the framework was
-> directly broken down into platforms and CODECs. However, as things
-> are now broken down into components which can be connected as either
-> the CPU or CODEC side of a DAI link it simplifies things if each
-> side of the link is just told if it is provider or consumer of the
-> clocks. Making this change allows us to remove one of the last parts
-> of the ASoC core that needs to know if a driver is a CODEC driver,
-> where it flips the clock format specifier if a CODEC driver is used on
-> the CPU side of a DAI link, as well as just being conceptually more
-> consistent with componentisation.
-> 
-> [...]
+Am 09.06.22 um 14:57 schrieb Michal Hocko:
+> On Thu 09-06-22 14:16:56, Christian König wrote:
+>> Am 09.06.22 um 11:18 schrieb Michal Hocko:
+>>> On Tue 31-05-22 11:59:57, Christian König wrote:
+>>>> This gives the OOM killer an additional hint which processes are
+>>>> referencing shmem files with potentially no other accounting for them.
+>>>>
+>>>> Signed-off-by: Christian König <christian.koenig@amd.com>
+>>>> ---
+>>>>    mm/shmem.c | 6 ++++++
+>>>>    1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/mm/shmem.c b/mm/shmem.c
+>>>> index 4b2fea33158e..a4ad92a16968 100644
+>>>> --- a/mm/shmem.c
+>>>> +++ b/mm/shmem.c
+>>>> @@ -2179,6 +2179,11 @@ unsigned long shmem_get_unmapped_area(struct file *file,
+>>>>    	return inflated_addr;
+>>>>    }
+>>>> +static long shmem_oom_badness(struct file *file)
+>>>> +{
+>>>> +	return i_size_read(file_inode(file)) >> PAGE_SHIFT;
+>>>> +}
+>>> This doesn't really represent the in memory size of the file, does it?
+>> Well the file could be partially or fully swapped out as anonymous memory or
+>> the address space only sparse populated, but even then just using the file
+>> size as OOM badness sounded like the most straightforward approach to me.
+> It covers hole as well, right?
 
-Applied to
+Yes, exactly.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+>
+>> What could happen is that the file is also mmaped and we double account.
+>>
+>>> Also the memcg oom handling could be considerably skewed if the file was
+>>> shared between more memcgs.
+>> Yes, and that's one of the reasons why I didn't touched the memcg by this
+>> and only affected the classic OOM killer.
+> oom_badness is for all oom handlers, including memcg. Maybe I have
+> misread an earlier patch but I do not see anything specific to global
+> oom handling.
 
-Thanks!
+As far as I can see the oom_badness() function is only used in oom_kill.c and in procfs to return the oom score. Did I missed something?
 
-[01/56] ASoC: core: Add set_fmt_new callback that directly specifies provider
-        commit: 905f3a04e184854555fc248ca4e692fdbf2f2547
-[02/56] ASoC: amd: vangogh: Update to use set_fmt_new callback
-        commit: ab890e0f83a65624d20b0ca4a7cb6306b8511558
-[03/56] ASoC: atmel: Update to use set_fmt_new callback
-        commit: 0fd054a577180cd807992e32c7cd394e54c85903
-[04/56] ASoC: au1x: Update to use set_fmt_new callback
-        commit: fee11f70849b21a244e6e27d281f3858b671bfea
-[05/56] ASoC: bcm: Update to use set_fmt_new callback
-        commit: 04ea2404468b7885c560c3673f6f2fd368f305a2
-[06/56] ASoC: ep93xx: Update to use set_fmt_new callback
-        commit: 5d6124e58d56818249a6266f56d9c3739e72e1bd
-[07/56] ASoC: dwc: Update to use set_fmt_new callback
-        commit: ca0444f1f7b228ae3b8d1a5c0f0d1b4463171f98
-[08/56] ASoC: fsl: Update to use set_fmt_new callback
-        commit: 3b14c15a333b8225ea38479e13c0366539d3374a
-[09/56] ASoC: hisilicon: Update to use set_fmt_new callback
-        commit: 0f362524dd3face4865077a4f7e7e640a95702aa
-[10/56] ASoC: img: Update to use set_fmt_new callback
-        commit: ed2b384082a678a0c4c8c56deff9e5f46d5e3fca
-[11/56] ASoC: Intel: Update to use set_fmt_new callback
-        commit: add9ee8c64c617f561a309cdda50104e9e2c12f6
-[12/56] ASoC: js4740-i2s: Update to use set_fmt_new callback
-        commit: cbb3a19f090d5a41b822caf9ff2058e1c6bc7ea3
-[13/56] ASoC: mediatek: Update to use set_fmt_new callback
-        commit: 3af99430f8d948a41556156155b0295dec274d41
-[14/56] ASoC: meson: Update to use set_fmt_new callback
-        commit: f60442bf6eab47aa4ab127aab88afdcc29a09a73
-[15/56] ASoC: mxs-saif: Update to use set_fmt_new callback
-        commit: f3c0064f1f8e358799c70c7905a09d15c5ec5e5a
-[16/56] ASoC: pxa: Update to use set_fmt_new callback
-        commit: 84c5b47c8ce4d5059d5e7539d3b44922cc0390e9
-[17/56] ASoC: qcom: Update to use set_fmt_new callback
-        commit: 1148e16b335f341f36475b646c692b4a71a1855e
-[18/56] ASoC: rockchip: Update to use set_fmt_new callback
-        commit: 27646d265da1745b2d1d10fec18465631cb1135f
-[19/56] ASoC: samsung: Update to use set_fmt_new callback
-        commit: 0b491c7c1b2555ef08285fd49a8567f2f9f34ff8
-[20/56] ASoC: sh: Update to use set_fmt_new callback
-        commit: 2d4dd776e902546389f2d7808ece7fd815aa829c
-[21/56] ASoC: stm: Update to use set_fmt_new callback
-        commit: 0092dac91ec1c404787841bdd9ecbf3404d1a41c
-[22/56] ASoC: sunxi: Update to use set_fmt_new callback
-        commit: 7cc3965fde74c9c725ed01de4ac35bc7d562d16a
-[23/56] ASoC: tegra: Update to use set_fmt_new callback
-        commit: d92ad6633fa77f9496840b77c8effeaa13ac78dc
-[24/56] ASoC: test-component: Update to use set_fmt_new callback
-        commit: d444c8d246a62392c0d249b1030c3ca271d47649
-[25/56] ASoC: ti: Update to use set_fmt_new callback
-        commit: 563ff63dc9fbb8ef4b8f145a53c84a5489bbd789
-[26/56] ASoC: ux500: Update to use set_fmt_new callback
-        commit: ce3467c78478e33927aea9043bf20f46fa4d5688
-[27/56] ASoC: xtensa: Update to use set_fmt_new callback
-        commit: e945206a0a448ac81dde0609578508368946f7a6
-[28/56] ASoC: core: Always send the CPU DAI a direct clock specifier
-        commit: 6c076273a326cc5b5162451aacf7b7744bb03c66
-[29/56] ASoC: amd: vangogh: Rename set_fmt_new back to set_fmt
-        commit: 346f47e784cd48b456f267a66e0daf1ef10d21b3
-[30/56] ASoC: atmel: Rename set_fmt_new back to set_fmt
-        commit: a839a53b9dc70f94032a671ee019599884612d4a
-[31/56] ASoC: au1x: Rename set_fmt_new back to set_fmt
-        commit: 2c73f5fd20a845fcb48173578b7c83dbcbacdeda
-[32/56] ASoC: bcm: Rename set_fmt_new back to set_fmt
-        commit: 1a267dd98c246237be00587b6e71f969bf75f10d
-[33/56] ASoC: ep93xx: Rename set_fmt_new back to set_fmt
-        commit: 324a4db8de05290237793dc3d7da887846ae90c1
-[34/56] ASoC: dwc: Rename set_fmt_new back to set_fmt
-        commit: 765fb623a2cd925c550370f73efe2137c52a1b25
-[35/56] ASoC: fsl: Rename set_fmt_new back to set_fmt
-        commit: 00778276cf4c611882219ab7aba9664c48981f1a
-[36/56] ASoC: hisilicon: Rename set_fmt_new back to set_fmt
-        commit: b9a7972818b84a15d46505df7808fd86c3fba5bb
-[37/56] ASoC: img: Rename set_fmt_new back to set_fmt
-        commit: 1830a30ec4cf1642a429e80dbbeb86aa7825c71a
-[38/56] ASoC: Intel: Rename set_fmt_new back to set_fmt
-        commit: c14a6ce9848571cf67faff206b02e212bec82761
-[39/56] ASoC: jz4740-i2s: Rename set_fmt_new back to set_fmt
-        commit: 1724cc38e7685ad8b01413acd70a4a731fc105ae
-[40/56] ASoC: mediatek: Rename set_fmt_new back to set_fmt
-        commit: 00ca2d152ef0fa9f4beb2a590e176499440de8fe
-[41/56] ASoC: meson: Rename set_fmt_new back to set_fmt
-        commit: eee6b5b9f3af0e906085022713ef41e56d03eca8
-[42/56] ASoC: mxs-saif: Rename set_fmt_new back to set_fmt
-        commit: 1a805faeb4915496671cd24bd2a75cc97a85dfc8
-[43/56] ASoC: pxa: Rename set_fmt_new back to set_fmt
-        commit: 8e2cc2b241bc0bb905231f301e6dfc80dc79f8a8
-[44/56] ASoC: qcom: Rename set_fmt_new back to set_fmt
-        commit: f1bd2fae856384f9377ca3faed0583d929002640
-[45/56] ASoC: rockchip: Rename set_fmt_new back to set_fmt
-        commit: 059f16bc0e02164617312435c31dffdc419f113f
-[46/56] ASoC: samsung: Rename set_fmt_new back to set_fmt
-        commit: b99d00c724bcf395558cb3028e823bd8f554fee6
-[47/56] ASoC: sh: Rename set_fmt_new back to set_fmt
-        commit: adced68031f96642272fae4e8c36d45d13797306
-[48/56] ASoC: stm: Rename set_fmt_new back to set_fmt
-        commit: 02ba0d9680feee645a321d65012f38d0a368b559
-[49/56] ASoC: sunxi: Rename set_fmt_new back to set_fmt
-        commit: 15011b2388d020a6cdb323539fc69c31b04d9f21
-[50/56] ASoC: tegra: Rename set_fmt_new back to set_fmt
-        commit: 475f2af6a2ff33e828900601a162e324b9986f9a
-[51/56] ASoC: test-component: Rename set_fmt_new back to set_fmt
-        commit: 408c122ef9de99220f7919594ab8af98194a19e8
-[52/56] ASoC: ti: Rename set_fmt_new back to set_fmt
-        commit: 9ff1836023ae19013c01f230e6a091fad6835213
-[53/56] ASoC: ux500: Rename set_fmt_new back to set_fmt
-        commit: e24ba1a21e244e7174e75ca0c4020beaff0ad369
-[54/56] ASoC: xtensa: Rename set_fmt_new back to set_fmt
-        commit: 58e23e21d18532aaa404e1db87ec92762e1fecd5
-[55/56] ASoC: soc-dai: Remove set_fmt_new callback
-        commit: 19423951a4b5c4f0ca107d6a4bed23f3f63718ca
-[56/56] ASoC: simple-card-utils: Move snd_soc_component_is_codec to be local
-        commit: 28086d05ada6d03daa886aad0e469854b811311c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Regards,
+Christian.
