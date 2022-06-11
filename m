@@ -2,144 +2,187 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC83C43334
-	for <linux-tegra@archiver.kernel.org>; Sat, 11 Jun 2022 02:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A10C43334
+	for <linux-tegra@archiver.kernel.org>; Sat, 11 Jun 2022 08:06:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348978AbiFKCd2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Jun 2022 22:33:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43252 "EHLO
+        id S230319AbiFKIGY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 11 Jun 2022 04:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349153AbiFKCdY (ORCPT
+        with ESMTP id S229661AbiFKIGX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Jun 2022 22:33:24 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28CD16B7CA
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Jun 2022 19:33:17 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id z7so975308edm.13
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Jun 2022 19:33:17 -0700 (PDT)
+        Sat, 11 Jun 2022 04:06:23 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 073DF4C7AE;
+        Sat, 11 Jun 2022 01:06:22 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id a15so1231980wrh.2;
+        Sat, 11 Jun 2022 01:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rgKkPquDB/3ylB22sdoq44O3nuMRqOGPmfYPJEM3DpI=;
-        b=JsXVqmPM/FghNi+FuyecZKJimRfQRZRaZMN7LbU4AElduixKN8TVkmhpZTWnrsGkbZ
-         5LwE/p8/n+cIXvQ1YTcLTi0yyURcD/DMLBUnB+eqSpwlWIAygkMHM4b3P17Zp5erCg7D
-         knTgcyr8j5ARmG7z3CGlckVUGoumxDAZyb+n8=
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=PcMyrMkeBq8FtDR9Ah+GKvDRw37wZQSxisNv3VbSxF8=;
+        b=VDanKS2aPNxEPD5gHHW3YO7eybeGWHt49VN3wMDZarFEdbZywtZanpzYHolibuSgHo
+         txN2heXPtUPZyZBdgRvwXaYcOVqigfgho+MuucKKg8YRX5hRDSDbV2sUsSVGMozHxCez
+         cAMPw9hLl6JfXxid1Fm2oOJ1bU7R0pq99NyyOAju9w7veIBu10IusWNm1Ib1mywc3MBN
+         JC7wuCDUDwt6aGszDEkUObBsev4hlStTmbJX7Pr9yBfezUDTR7a/S2C3fzxRQW3b/DKV
+         vQH6tk3Uxk7jxkep6/tBDg/gRPFIF/MOOWhXzLSF7CZwI2b9+eoXzorlWss0DAbJLMeV
+         Z/tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rgKkPquDB/3ylB22sdoq44O3nuMRqOGPmfYPJEM3DpI=;
-        b=s398kNra8hjMV94sjBqpz55Jo9ReDEGTR3fMm6G0bIGRKXo3K/fxlq4MFv6Il/kCkN
-         KDtk0T8+GNRF9jd9zeBN4uc6aeqCEMwBMNEJDMnPjPgp03VIdve0L/Wgjwhuc7oQt1zv
-         L280Ww7XvQzoAPk8gF7RRzn9UtzsoJ0gAAYvYJN8nlDarFcfUJPoOxV5ltP6Nra1QqF1
-         WgB3uY+Wz2JQjAnI9kxNbtCI7ffWPss9cFOB4crPCU/3QnXphf7tpE0Qkf7Jl8p4h9O0
-         skQYflv8sVd11s4JPW71n07U5MlVOC/NGykKHG92Wt62pRbZKo2GvqSB5eIJr19/NFVd
-         aoPw==
-X-Gm-Message-State: AOAM532pob/cKMZVXf15C3BhsIy3TecjlcrSLsvUg5FWmuV4LHv32kxP
-        2u5zQhdiqtM7n0OwF4HW1g9Ck/GTppVEWeEqH47Q9Q==
-X-Google-Smtp-Source: ABdhPJzFbgEeXrjhdaEFlL5CPKYiFgrRM2XGTpISMDDKOxh3YJg+nd70yb1Qcu1fnLsZwhWAweXqTRUn04uTYMjQVNU=
-X-Received: by 2002:aa7:c604:0:b0:42d:cffb:f4dc with SMTP id
- h4-20020aa7c604000000b0042dcffbf4dcmr55022482edq.270.1654914796079; Fri, 10
- Jun 2022 19:33:16 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=PcMyrMkeBq8FtDR9Ah+GKvDRw37wZQSxisNv3VbSxF8=;
+        b=d8CjCHsumrQM6LvlUjSG6bKGoVvQQUEXwnRykLijif2NHIjAYEZ1JXXBHbZoEDqZtO
+         n/ybvRchep6GCO0hF1xUv8OYYA/tfmlQden4MN8QvNU4D2YmrMADR4XjStY1BIKzQOL2
+         6OLW0i5lWUaXhtQtkYi640AODPOlPLwMtuPyJM0WbxwEasrbhTY1d9it5XFh9gmtNvf6
+         qDYIo4MFS/o5y/94NM+9OVIccG0XoYrXWqZlMjQhWNNv55CSvxycfpRHkM5rW4Kmkk0X
+         Z0pVwO8dN8QuJ2llcPPaLuEJN2/NK4PRCzZJNUNnu7hBGrHXv/j+qWxeSOAvIrkhCBPE
+         s4zA==
+X-Gm-Message-State: AOAM5325Xt3plpfr7mrNTGhxSTihQrGHIc+ydm74cZnoFtDGtMedPw/H
+        rw7JLvt8/6ZR7FT+89HEOiM=
+X-Google-Smtp-Source: ABdhPJxOGwCLeulpLrfjSocHTBSjkFkIa8LIlAZvPBEKMl+ZSwhdQvggONhSb/e759HwNYTLN0sK/Q==
+X-Received: by 2002:adf:f706:0:b0:20e:6788:c2b6 with SMTP id r6-20020adff706000000b0020e6788c2b6mr47847880wrp.633.1654934780444;
+        Sat, 11 Jun 2022 01:06:20 -0700 (PDT)
+Received: from ?IPV6:2a02:908:1256:79a0:285a:43cd:3b2c:3f3c? ([2a02:908:1256:79a0:285a:43cd:3b2c:3f3c])
+        by smtp.gmail.com with ESMTPSA id m6-20020adfe0c6000000b0021024f82e01sm1783833wri.16.2022.06.11.01.06.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Jun 2022 01:06:19 -0700 (PDT)
+Message-ID: <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
+Date:   Sat, 11 Jun 2022 10:06:18 +0200
 MIME-Version: 1.0
-References: <20220608142723.103523089@infradead.org> <20220608144517.444659212@infradead.org>
- <YqG6URbihTNCk9YR@alley> <YqHFHB6qqv5wiR8t@worktop.programming.kicks-ass.net>
- <CA+_sPaoJGrXhNPCs2dKf2J7u07y1xYrRFZBUtkKwzK9GqcHSuQ@mail.gmail.com> <YqHvXFdIJfvUDI6e@alley>
-In-Reply-To: <YqHvXFdIJfvUDI6e@alley>
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-Date:   Sat, 11 Jun 2022 11:33:05 +0900
-Message-ID: <CA+_sPaq1ez7jah0bibAdeA__Yp92K_VA7E-NZ9knoUmOW9itJg@mail.gmail.com>
-Subject: Re: [PATCH 24/36] printk: Remove trace_.*_rcuidle() usage
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org,
-        john.ogness@linutronix.de, paulmck@kernel.org, frederic@kernel.org,
-        quic_neeraju@quicinc.com, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
+Content-Language: en-US
+To:     Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        alexander.deucher@amd.com, daniel@ffwll.ch,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        hughd@google.com, andrey.grodzovsky@amd.com
+References: <YqG67sox6L64E6wV@dhcp22.suse.cz>
+ <77b99722-fc13-e5c5-c9be-7d4f3830859c@amd.com>
+ <YqHuH5brYFQUfW8l@dhcp22.suse.cz>
+ <26d3e1c7-d73c-cc95-54ef-58b2c9055f0c@gmail.com>
+ <YqIB0bavUeU8Abwl@dhcp22.suse.cz>
+ <d4a19481-7a9f-19bf-c270-d89baa0970fc@amd.com>
+ <YqIMmK18mb/+s5de@dhcp22.suse.cz>
+ <3f7d3d96-0858-fb6d-07a3-4c18964f888e@gmail.com>
+ <YqMuq/ZrV8loC3jE@dhcp22.suse.cz>
+ <2e7e050e-04eb-0c0a-0675-d7f1c3ae7aed@amd.com>
+ <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jun 9, 2022 at 10:02 PM Petr Mladek <pmladek@suse.com> wrote:
->
-> On Thu 2022-06-09 20:30:58, Sergey Senozhatsky wrote:
-> > My emails are getting rejected... Let me try web-interface
->
-> Bad day for mail sending. I have problems as well ;-)
+Am 10.06.22 um 16:16 schrieb Michal Hocko:
+> [...]
+>>> The primary question is whether it actually helps much or what kind of
+>>> scenarios it can help with and whether we can actually do better for
+>>> those.
+>> Well, it does help massively with a standard Linux desktop and GPU workloads
+>> (e.g. games).
+>>
+>> See what currently happens is that when games allocate for example textures
+>> the memory for that is not accounted against that game. Instead it's usually
+>> the display server (X or Wayland) which most of the shared resources
+>> accounts to because it needs to compose a desktop from it and usually also
+>> mmaps it for fallback CPU operations.
+> Let me try to understand some more. So the game (or the entity to be
+> responsible for the resource) doesn't really allocate the memory but it
+> relies on somebody else (from memcg perspective living in a different
+> resource domain - i.e. a different memcg) to do that on its behalf.
+> Correct? If that is the case then that is certainly not fitting into the
+> memcg model then.
 
-For me the problem is still there and apparently it's an "too many
-recipients" error.
+More or less: yes, that is one possible use case.  But we could leave 
+that one out since it is not the primary use case.
 
-> > I'm somewhat curious whether we can actually remove that trace event.
->
-> Good question.
->
-> Well, I think that it might be useful. It allows to see trace and
-> printk messages together.
+What happens more is that 99% of the resources are only allocated per 
+process, but around 1% are shared with somebody else.
 
-Fair enough. Seems that back in 2011 people were pretty happy with it
-https://lore.kernel.org/all/1322161388.5366.54.camel@jlt3.sipsolutions.net/T/#m7bf6416f469119372191f22a6ecf653c5f7331d2
+But see two comments below of a better description of the problem I'm 
+facing.
 
-but... reportedly, one of the folks who Ack-ed it (*cough cough*
-PeterZ) has never used it.
+> I am not really sure there is any reasonable model where you cannot
+> really tell who is responsible for the resource.
 
-> It was ugly when it was in the console code. The new location
-> in vprintk_store() allows to have it even "correctly" sorted
-> (timestamp) against other tracing messages.
+Well it would be fine with me to leave out those 1% of resources shared 
+with different memcgs.
 
-That's true.
+What breaks my neck are those 99% which are allocated by a game and 
+could potentially be shared but are most of the time not.
+
+>> So what happens when a games over allocates texture resources is that your
+>> whole desktop restarts because the compositor is killed. This obviously also
+>> kills the game, but it would be much nice if we would be more selective
+>> here.
+>>
+>> For hardware rendering DMA-buf and GPU drivers are used, but for the
+>> software fallback shmem files is what is used under the hood as far as I
+>> know. And the underlying problem is the same for both.
+> For shmem files the end user of the buffer can preallocate and so own
+> the buffer and be accounted for it.
+
+The problem is just that it can easily happen that one process is 
+allocating the resource and a different one freeing it.
+
+So just imaging the following example: Process opens X window, get 
+reference to the handle of the buffer backing this window for drawing, 
+tells X to close the window again and then a bit later closes the buffer 
+handle.
+
+In this example the X server would be charged allocating the buffer and 
+the client (which is most likely in a different memcg group) is charged 
+freeing it.
+
+I could of course add something to struct page to track which memcg (or 
+process) it was charged against, but extending struct page is most 
+likely a no-go.
+
+Alternative I could try to track the "owner" of a buffer (e.g. a shmem 
+file), but then it can happen that one processes creates the object and 
+another one is writing to it and actually allocating the memory.
+
+>>> Also do not forget that shared file memory is not the only thing
+>>> to care about. What about the kernel memory used on behalf of processes?
+>> Yeah, I'm aware of that as well. But at least inside the GPU drivers we try
+>> to keep that in a reasonable ratio.
+>>
+>>> Just consider the above mentioned memcg driven model. It doesn't really
+>>> require to chase specific files and do some arbitrary math to share the
+>>> responsibility. It has a clear accounting and responsibility model.
+>> Ok, how does that work then?
+> The memory is accounted to whoever faults that memory in or to the
+> allocating context if that is a kernel memory (in most situations).
+
+That's what I had in mind as well. Problem with this approach is that 
+file descriptors are currently not informed that they are shared between 
+processes.
+
+So to make this work we would need something like attach/detach to 
+process in struct file_operations.
+
+And as I noted, this happens rather often. For example a game which 
+renders 120 frames per second needs to transfer 120 buffers per second 
+between client and X.
+
+So this is not something which could take a lot of time and the file 
+descriptor tracking structures in the Linux kernel are not made for this 
+either.
+
+I think for now I will try something like this specific for DRM drivers. 
+That doesn't solve the shmem file problem, but it at least gives me 
+something at hand for the accelerated Linux desktop case.
+
+Regards,
+Christian.
