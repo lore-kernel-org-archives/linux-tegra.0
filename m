@@ -2,118 +2,157 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF264CCA47B
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Jun 2022 07:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A99CCA47F
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Jun 2022 08:26:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236423AbiFMHpH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Jun 2022 03:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55148 "EHLO
+        id S240096AbiFMI0V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Jun 2022 04:26:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230522AbiFMHpG (ORCPT
+        with ESMTP id S239358AbiFMI0R (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Jun 2022 03:45:06 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74079BC03;
-        Mon, 13 Jun 2022 00:45:05 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 2E50D21A93;
-        Mon, 13 Jun 2022 07:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1655106304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5WMle8KoXV0j63rwJ5QZ4pysRjmykK+gll6/m96aiCQ=;
-        b=FuLo+VOBBkI+oWNStM4seHkoiyK0Hr+aHMOvDiwt9GGELjWedVV4eVmmgJbe872jPvORqJ
-        Vc5aqY4498GBGJEsynJOBtP7uacBYTxS6Qceg9YAfnVQkKLxppmCRYRI6VnRd0Ehidw6e7
-        VkwY4jb2uXaKjgqii9bZJVgtGLmxSos=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id B0E0C2C141;
-        Mon, 13 Jun 2022 07:45:03 +0000 (UTC)
-Date:   Mon, 13 Jun 2022 09:45:01 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        alexander.deucher@amd.com, daniel@ffwll.ch,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        hughd@google.com, andrey.grodzovsky@amd.com
-Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
-Message-ID: <Yqbq/Q5jz2ou87Jx@dhcp22.suse.cz>
-References: <YqHuH5brYFQUfW8l@dhcp22.suse.cz>
- <26d3e1c7-d73c-cc95-54ef-58b2c9055f0c@gmail.com>
- <YqIB0bavUeU8Abwl@dhcp22.suse.cz>
- <d4a19481-7a9f-19bf-c270-d89baa0970fc@amd.com>
- <YqIMmK18mb/+s5de@dhcp22.suse.cz>
- <3f7d3d96-0858-fb6d-07a3-4c18964f888e@gmail.com>
- <YqMuq/ZrV8loC3jE@dhcp22.suse.cz>
- <2e7e050e-04eb-0c0a-0675-d7f1c3ae7aed@amd.com>
- <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
- <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
+        Mon, 13 Jun 2022 04:26:17 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1225E1EED7;
+        Mon, 13 Jun 2022 01:26:14 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id m125-20020a1ca383000000b0039c63fe5f64so2647384wme.0;
+        Mon, 13 Jun 2022 01:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3JSggHLDbkXyuZCKaU+uQ7H5KVpBjE3ZWWl/F0t3JyI=;
+        b=hln/7KIUboOODQa9/Iv7zWAXFI8kFLhiLL+AWnA7ZL0itAJaB93eguKFQupB8Lv94a
+         mnMuLqlfVsMy6aSBFmNweaacWKXWw7aT6TScazfBGhspJqqH/PMOPWdnnnaxNLaf842d
+         D+3NPCattkXMe8VyippSy6AVlz1Q90Igxi/lQII1yr2hkIK0YZRpsj0TKs2Px7tXlVgY
+         915w6r1r+N9IHNGMPf7O4C6rOlcjLzR4xSEqc3Zfq8tMbY0ayFsU19Cug+0HkT25Saig
+         zkxTdXbzsbpEfsV6HhW0WtRME3JJZVdyKx57BtFZ0WE2gh0TSNH76QSkgUTVIoEuHNxT
+         f/gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3JSggHLDbkXyuZCKaU+uQ7H5KVpBjE3ZWWl/F0t3JyI=;
+        b=YRQJp1GBM3OcBer6Bp1WG/lVEMPbsdDfQzMPh5cIijwX90UumIifd1W7M9eZ9tOszB
+         5TKl/a0hV5ldDpz7+f9oV27/cDUZv0Xa/xnwc9fZw9n7CCQCMyb/FtECSzWxIrDXppb/
+         Ye09YW/mZOxpI8n0iwJx5ZMNrEHAvOQb/r/j7oW93vahxjzvyBWWcSxwlkuv2u7wVWQG
+         X5sbWQOGc+JHZxzPSk30elqMZx3J9FHvagdN7/rHVt00R1pTvFtyMh3iUaYo2OSFI5aC
+         k8hMkMwMG9o7FdJHCG6Dxaet7U9Y+D5HPReKeLWn0oj1EOQb+nInIl70eEfpdQYzMesu
+         3K+Q==
+X-Gm-Message-State: AOAM5308RPuyABds5tbz4EScO3Ovyc2GgLPib84QRdAipfTp7gj5CkO5
+        /7msG24JNLD8C5BKoOQn0Qg1EAN/JWJ5bTQ75cw=
+X-Google-Smtp-Source: ABdhPJxgJ3qlsWHXb4q5Q9LeHOXh1hQWbFNdZBk/6atfvyd1YyWRPGtuhT6/ZUDmb0vG1CLuyzfEgHlG2xi/itwptM8=
+X-Received: by 2002:a05:600c:1c9a:b0:39c:7db4:90c3 with SMTP id
+ k26-20020a05600c1c9a00b0039c7db490c3mr13053942wms.161.1655108772491; Mon, 13
+ Jun 2022 01:26:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
+References: <20220608142723.103523089@infradead.org> <20220608144517.251109029@infradead.org>
+In-Reply-To: <20220608144517.251109029@infradead.org>
+From:   Lai Jiangshan <jiangshanlai@gmail.com>
+Date:   Mon, 13 Jun 2022 16:26:01 +0800
+Message-ID: <CAJhGHyCnu_BsKf5STMMJKMWm0NVZ8qXT8Qh=BhhCjSSgwchL3Q@mail.gmail.com>
+Subject: Re: [PATCH 21/36] x86/tdx: Remove TDX_HCALL_ISSUE_STI
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Richard Henderson <rth@twiddle.net>, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        Will Deacon <will@kernel.org>, guoren@kernel.org,
+        bcain@quicinc.com, Huacai Chen <chenhuacai@kernel.org>,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, Michael Ellerman <mpe@ellerman.id.au>,
+        benh@kernel.crashing.org, paulus@samba.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        Richard Weinberger <richard@nod.at>,
+        anton.ivanov@cambridgegreys.com,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        acme <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@kernel.org, Namhyung Kim <namhyung@kernel.org>,
+        Juergen Gross <jgross@suse.com>, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, VMware Inc <pv-drivers@vmware.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>, chris@zankel.net,
+        jcmvbkbc@gmail.com, rafael@kernel.org, lenb@kernel.org,
+        pavel@ucw.cz, gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, Anup Patel <anup@brainfault.org>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        joel@joelfernandes.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        rcu@vger.kernel.org, Isaku Yamahata <isaku.yamahata@gmail.com>,
+        kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat 11-06-22 10:06:18, Christian König wrote:
-> Am 10.06.22 um 16:16 schrieb Michal Hocko:
-[...]
-> > > So what happens when a games over allocates texture resources is that your
-> > > whole desktop restarts because the compositor is killed. This obviously also
-> > > kills the game, but it would be much nice if we would be more selective
-> > > here.
-> > > 
-> > > For hardware rendering DMA-buf and GPU drivers are used, but for the
-> > > software fallback shmem files is what is used under the hood as far as I
-> > > know. And the underlying problem is the same for both.
-> > For shmem files the end user of the buffer can preallocate and so own
-> > the buffer and be accounted for it.
-> 
-> The problem is just that it can easily happen that one process is allocating
-> the resource and a different one freeing it.
-> 
-> So just imaging the following example: Process opens X window, get reference
-> to the handle of the buffer backing this window for drawing, tells X to
-> close the window again and then a bit later closes the buffer handle.
-> 
-> In this example the X server would be charged allocating the buffer and the
-> client (which is most likely in a different memcg group) is charged freeing
-> it.
+On Wed, Jun 8, 2022 at 10:48 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Now that arch_cpu_idle() is expected to return with IRQs disabled,
+> avoid the useless STI/CLI dance.
+>
+> Per the specs this is supposed to work, but nobody has yet relied up
+> this behaviour so broken implementations are possible.
 
-Thanks for the clarification.
+I'm totally newbie here.
 
-> I could of course add something to struct page to track which memcg (or
-> process) it was charged against, but extending struct page is most likely a
-> no-go.
+The point of safe_halt() is that STI must be used and be used
+directly before HLT to enable IRQ during the halting and stop
+the halting if there is any IRQ.
 
-Struct page already maintains is memcg. The one which has charged it and
-it will stay constatnt throughout of the allocation lifetime (cgroup v1
-has a concept of the charge migration but this hasn't been adopted in
-v2).
+In TDX case, STI must be used directly before the hypercall.
+Otherwise, no IRQ can come and the vcpu would be stalled forever.
 
-We have a concept of active_memcg which allows to charge against a
-different memcg than the allocating context. From your example above I
-do not think this is really usable for the described usecase as the X is
-not aware where the request comes from?
+Although the hypercall has an "irq_disabled" argument.
+But the hypervisor doesn't (and can't) touch the IRQ flags no matter
+what the "irq_disabled" argument is.  The IRQ is not enabled during
+the halting if the IRQ is disabled before the hypercall even if
+irq_disabled=false.
 
-> Alternative I could try to track the "owner" of a buffer (e.g. a shmem
-> file), but then it can happen that one processes creates the object and
-> another one is writing to it and actually allocating the memory.
+The "irq_disabled" argument is used for workaround purposes:
+https://lore.kernel.org/kvm/c020ee0b90c424a7010e979c9b32a28e9c488a51.1651774251.git.isaku.yamahata@intel.com/
 
-If you can enforce that the owner is really responsible for the
-allocation then all should be fine. That would require MAP_POPULATE like
-semantic and I suspect this is not really feasible with the existing
-userspace. It would be certainly hard to enforce for bad players.
--- 
-Michal Hocko
-SUSE Labs
+Hope my immature/incorrect reply elicits a real response from
+others.
+
+Thanks
+Lai
