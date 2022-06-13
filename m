@@ -2,137 +2,116 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEF5C43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Jun 2022 16:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8F6CCA480
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Jun 2022 17:21:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245527AbiFMQQK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Jun 2022 12:16:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54602 "EHLO
+        id S242010AbiFMRVQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Jun 2022 13:21:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241505AbiFMQPz (ORCPT
+        with ESMTP id S241022AbiFMRUt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Jun 2022 12:15:55 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573C21BBAC7;
-        Mon, 13 Jun 2022 07:11:31 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 55EEF21BF6;
-        Mon, 13 Jun 2022 14:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1655129490; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9E+o4Ky9bBY7s0UMfZpgf+q0GGL3GUPMLh+CXNxGns8=;
-        b=nonkym9/vs+hiD9DrLlSt8bXIOiX+sGqXWJEFlSqj0bab/6szJrEIzEQXNcn2iKV8aUJko
-        fm5MrnZUcboOH3W064euvLQTExmPomsFbHbWqVqkUN4OcYaUaEVRD1jQsjgfDkxE1JSpXG
-        9vWHbrw+WA20V32PwtEuztdW/OkWLaE=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id E9DBD2C141;
-        Mon, 13 Jun 2022 14:11:29 +0000 (UTC)
-Date:   Mon, 13 Jun 2022 16:11:29 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        alexander.deucher@amd.com, daniel@ffwll.ch,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        hughd@google.com, andrey.grodzovsky@amd.com
-Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
-Message-ID: <YqdFkfLVFUD5K6EK@dhcp22.suse.cz>
-References: <YqIMmK18mb/+s5de@dhcp22.suse.cz>
- <3f7d3d96-0858-fb6d-07a3-4c18964f888e@gmail.com>
- <YqMuq/ZrV8loC3jE@dhcp22.suse.cz>
- <2e7e050e-04eb-0c0a-0675-d7f1c3ae7aed@amd.com>
- <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
- <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
- <Yqbq/Q5jz2ou87Jx@dhcp22.suse.cz>
- <b8b9aba5-575e-8a34-e627-79bef4ed7f97@amd.com>
- <YqcpZY3Xx7Mk2ROH@dhcp22.suse.cz>
- <34daa8ab-a9f4-8f7b-0ea7-821bc36b9497@gmail.com>
+        Mon, 13 Jun 2022 13:20:49 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0715E5BE48;
+        Mon, 13 Jun 2022 05:35:16 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 5285681CC;
+        Mon, 13 Jun 2022 12:30:34 +0000 (UTC)
+Date:   Mon, 13 Jun 2022 15:35:14 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, joel@joelfernandes.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        rcu@vger.kernel.org
+Subject: Re: [PATCH 34/36] cpuidle,omap3: Push RCU-idle into omap_sram_idle()
+Message-ID: <YqcvAmiDSOAOAdA9@atomide.com>
+References: <20220608142723.103523089@infradead.org>
+ <20220608144518.073801916@infradead.org>
+ <YqC6iJx4ygSmry0G@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <34daa8ab-a9f4-8f7b-0ea7-821bc36b9497@gmail.com>
+In-Reply-To: <YqC6iJx4ygSmry0G@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon 13-06-22 14:55:54, Christian König wrote:
-> Am 13.06.22 um 14:11 schrieb Michal Hocko:
-> > [SNIP]
-> > > > > Alternative I could try to track the "owner" of a buffer (e.g. a shmem
-> > > > > file), but then it can happen that one processes creates the object and
-> > > > > another one is writing to it and actually allocating the memory.
-> > > > If you can enforce that the owner is really responsible for the
-> > > > allocation then all should be fine. That would require MAP_POPULATE like
-> > > > semantic and I suspect this is not really feasible with the existing
-> > > > userspace. It would be certainly hard to enforce for bad players.
-> > > I've tried this today and the result was: "BUG: Bad rss-counter state
-> > > mm:000000008751d9ff type:MM_FILEPAGES val:-571286".
-> > > 
-> > > The problem is once more that files are not informed when the process
-> > > clones. So what happened is that somebody called fork() with an mm_struct
-> > > I've accounted my pages to. The result is just that we messed up the
-> > > rss_stats and  the the "BUG..." above.
-> > > 
-> > > The key difference between normal allocated pages and the resources here is
-> > > just that we are not bound to an mm_struct in any way.
-> > It is not really clear to me what exactly you have tried.
+* Peter Zijlstra <peterz@infradead.org> [220608 15:00]:
+> On Wed, Jun 08, 2022 at 04:27:57PM +0200, Peter Zijlstra wrote:
+> > @@ -254,11 +255,18 @@ void omap_sram_idle(void)
+> >  	 */
+> >  	if (save_state)
+> >  		omap34xx_save_context(omap3_arm_context);
+> > +
+> > +	if (rcuidle)
+> > +		cpuidle_rcu_enter();
+> > +
+> >  	if (save_state == 1 || save_state == 3)
+> >  		cpu_suspend(save_state, omap34xx_do_sram_idle);
+> >  	else
+> >  		omap34xx_do_sram_idle(save_state);
+> >  
+> > +	if (rcuidle)
+> > +		rcuidle_rcu_exit();
 > 
-> I've tried to track the "owner" of a driver connection by keeping a
-> reference to the mm_struct who created this connection inside our file
-> private and then use add_mm_counter() to account all the allocations of the
-> driver to this mm_struct.
-> 
-> This works to the extend that now the right process is killed in an OOM
-> situation. The problem with this approach is that the driver is not informed
-> about operations like fork() or clone(), so what happens is that after a
-> fork()/clone() we have an unbalanced rss-counter.
+> *sigh* so much for this having been exposed to the robots for >2 days :/
 
-Yes, I do not think you can make per-process accounting without a
-concept of the per-process ownership.
+I tested your git branch of these patches, so:
 
-> Let me maybe get back to the initial question: We have resources which are
-> not related to the virtual address space of a process, how should we tell
-> the OOM killer about them?
-
-I would say memcg, but we have discussed this already...
-
-I do not think that exposing a resource (in a form of a counter
-or something like that) is sufficient. The existing oom killer
-implementation is hevily process centric (with memcg extension for
-grouping but not changing the overall design in principle). If you
-want to make it aware of resources which are not directly accounted to
-processes then a a new implementation is necessary IMHO. You would need
-to evaluate those resources and kill all the tasks that can hold on that
-resource.
-
-This is also the reason why I am not really fan of the per file
-badness because it adds a notion of resource that is not process bound
-in general so it will add all sorts of weird runtime corner cases which
-are impossible to anticipate [*]. Maybe that will work in some scenarios
-but definitely not something to be done by default without users opting
-into that and being aware of consequences. 
-
-There have been discussions that the existing oom implementation cannot
-fit all potential usecases so maybe we need to finally decide to use a
-plugable, BPFable etc architecture allow implementations that fit
-specific needs.
-
-[*] I know it is not directly related but kinda similar. In the past
-we used to have heuristics to consider work done as a resource . That is
-kill younger processes preferably to reduce the damage.  This has turned
-out to have a very unpredictable behavior and many complains by
-users. Situation has improved when the selection was solely based on
-rss. This has its own cons of course but at least they are predictable.
--- 
-Michal Hocko
-SUSE Labs
+Reviewed-by: Tony Lindgren <tony@atomide.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
