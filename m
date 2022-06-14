@@ -2,76 +2,74 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6400CCA47B
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Jun 2022 21:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2D7C43334
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Jun 2022 08:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241181AbiFMVS6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Jun 2022 17:18:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47686 "EHLO
+        id S240256AbiFNIlG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Jun 2022 04:41:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351969AbiFMVSG (ORCPT
+        with ESMTP id S1352758AbiFNIkr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Jun 2022 17:18:06 -0400
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DAFA1E3EE;
-        Mon, 13 Jun 2022 14:00:48 -0700 (PDT)
-Received: by mail-io1-f53.google.com with SMTP id n11so7420426iod.4;
-        Mon, 13 Jun 2022 14:00:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1Odp6/obgJVsxv8Vv9ZmijjVf80Ud9qsxzsERwV2qZs=;
-        b=UyneMvTW4UDRiTfhmgQ6UnwiycnSwRvM0CX1L+7z2VedG4xl12N9FY6bLYh9JAZpNw
-         mLf3oWKgOIN0wwqq29/EVD6CnBcxwKGDVqROMklB5ljlagP2M3ZXrYY+Sb0E5MAxSArh
-         WmYsDiJMj1P+kqkhJZ95HEq9eLXDXEY9e9KeNtOiQIaKefujlO7ZyyzqXfh67EWd328H
-         ShNEr58Ulv4SOOey/+gKJ3MjZ9roCYwtbySdMh5A1ia9fVYPXSGbic55GKQ2z3R7fEJd
-         UVfn+SPgbibsZFT11PilBFQHohCNyphi8eQl0MD4HWgDcSUXwbZ3grvHsz/fHF5cBWOw
-         3RQA==
-X-Gm-Message-State: AOAM533xqCsaW3yMII0qYiHTzQux/EhBac/dJ4QB5oCO7r3M8t9VqJbE
-        w6m76NFd0E1HbbS1p5HOTw==
-X-Google-Smtp-Source: ABdhPJw8eVfbIVjd2ydKXeVxyTaUwE+vffIj9bUthH3jOQqUqijyC5JzV9l4ObDcrSNOg7gmIgIrXg==
-X-Received: by 2002:a05:6638:14cd:b0:331:d9b3:fa47 with SMTP id l13-20020a05663814cd00b00331d9b3fa47mr947723jak.303.1655154047769;
-        Mon, 13 Jun 2022 14:00:47 -0700 (PDT)
-Received: from robh.at.kernel.org ([69.39.28.171])
-        by smtp.gmail.com with ESMTPSA id k5-20020a023505000000b003315fa78c0bsm3976001jaa.146.2022.06.13.14.00.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 14:00:47 -0700 (PDT)
-Received: (nullmailer pid 75907 invoked by uid 1000);
-        Mon, 13 Jun 2022 21:00:46 -0000
-Date:   Mon, 13 Jun 2022 15:00:46 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>,
+        Tue, 14 Jun 2022 04:40:47 -0400
+X-Greylist: delayed 607 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 14 Jun 2022 01:39:44 PDT
+Received: from extserv.mm-sol.com (ns.mm-sol.com [37.157.136.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB6F43B570;
+        Tue, 14 Jun 2022 01:39:44 -0700 (PDT)
+Received: from [192.168.1.12] (unknown [195.24.90.54])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: svarbanov@mm-sol.com)
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id D1F5DD2BB;
+        Tue, 14 Jun 2022 11:29:29 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mm-sol.com; s=201706;
+        t=1655195374; bh=umrYtwnirkoe99KkZohQM5qPVTV3RIpG36i2bQIdkos=;
+        h=Date:Subject:To:Cc:From:From;
+        b=PMV51+Mb85tRUpz7FyS0UjiWZGEzbHty52Rlh5G77TSFowE8pJ+wmiOll8RFTAhz7
+         s14K0ij8l1Rzt0s+mfNd3+XwpIHpyEg134it1frHExrtJPXsu+ONaS0tn7F2pUjnIz
+         AensMrnGcX9tuU00QtLXLM7RRvKU0334TF3kDl973Mj0254jSr+ScuZaGJlw6749jS
+         oQOUjyRH/bwqvfoVRnthHru7Jxjev+YkpOiFHvn4GTHcEpqBnS1tCpn5i0YuJkTJ6q
+         PAn944ytqRRVnM/kBbpdxuxtACpj/VMNGzEbATyWH37/gOoSWznWHeMQPs+kOqwAlQ
+         a92sxvAGKA0bA==
+Message-ID: <dd3d2e45-7f05-e5bf-ffed-aab83fd7a4af@mm-sol.com>
+Date:   Tue, 14 Jun 2022 11:28:45 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v7 3/3] PCI: qcom: Add IPQ60xx support
+Content-Language: en-US
+To:     Baruch Siach <baruch@tkos.co.il>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>,
         Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
         Baruch Siach <baruch.siach@siklu.com>,
         Kathiravan T <quic_kathirav@quicinc.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Jingoo Han <jingoohan1@gmail.com>,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Robert Marko <robert.marko@sartura.hr>,
         Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] PCI: qcom: Add IPQ60xx support
-Message-ID: <20220613210046.GB62642-robh@kernel.org>
 References: <cover.1655028401.git.baruch@tkos.co.il>
  <a470b27a642d21e7b3e64d0f3287c0c3521bd182.1655028401.git.baruch@tkos.co.il>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From:   Stanimir Varbanov <svarbanov@mm-sol.com>
 In-Reply-To: <a470b27a642d21e7b3e64d0f3287c0c3521bd182.1655028401.git.baruch@tkos.co.il>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Jun 12, 2022 at 01:18:35PM +0300, Baruch Siach wrote:
+Hi,
+
+Thanks for the patch!
+
+On 6/12/22 13:18, Baruch Siach wrote:
 > From: Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>
 > 
 > IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
@@ -87,47 +85,12 @@ On Sun, Jun 12, 2022 at 01:18:35PM +0300, Baruch Siach wrote:
 > 
 > Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
 > Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
-> ---
-> v7:
-> 
->   * Rebase on v5.19-rc1 (Bjorn Helgaas)
-> 
-> v6:
-> 
-> Address Bjorn Helgaas comments:
-> 
->   * Rename PCIE_CAP_LINK1_VAL to PCIE_CAP_SLOT_VAL
-> 
->   * Drop a vague comment about ASPM configuration
-> 
->   * Add a comment about the source of delay periods
-> 
-> v5:
-> 
->   * Remove comments from qcom_pcie_init_2_9_0() (Bjorn Andersson)
-> 
-> v4:
-> 
->   * Rebase on v5.16-rc1
-> 
-> v3:
->   * Drop speed setup; rely on generic code (Rob Herring)
-> 
->   * Drop unused CLK_RATE macros (Bjorn Helgaas)
-> 
->   * Minor formatting fixes (Bjorn Helgaas)
-> 
->   * Add reference to downstream Codeaurora kernel tree (Bjorn Helgaas)
-> 
-> v2:
->   * Drop ATU configuration; rely on common code instead
-> 
->   * Use more common register macros
-> 
->   * Use bulk clk and reset APIs
-> ---
->  drivers/pci/controller/dwc/pcie-designware.h |   1 +
->  drivers/pci/controller/dwc/pcie-qcom.c       | 140 +++++++++++++++++++
->  2 files changed, 141 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Looks good:
+
+Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+
+
+-- 
+regards,
+Stan
