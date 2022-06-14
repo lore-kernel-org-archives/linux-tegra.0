@@ -2,212 +2,175 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B26BCCA47A
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Jun 2022 17:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED7ACCA47E
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Jun 2022 20:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244794AbiFNRda (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Jun 2022 13:33:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53896 "EHLO
+        id S234820AbiFNUpa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Jun 2022 16:45:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242526AbiFNRdZ (ORCPT
+        with ESMTP id S233197AbiFNUp1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Jun 2022 13:33:25 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 77C763056C;
-        Tue, 14 Jun 2022 10:33:23 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD0DD1762;
-        Tue, 14 Jun 2022 10:33:22 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.41.154])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C0913F66F;
-        Tue, 14 Jun 2022 10:33:04 -0700 (PDT)
-Date:   Tue, 14 Jun 2022 18:33:00 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, namhyung@kernel.org, jgross@suse.com,
-        srivatsa@csail.mit.edu, amakhalov@vmware.com,
-        pv-drivers@vmware.com, boris.ostrovsky@oracle.com,
-        chris@zankel.net, jcmvbkbc@gmail.com, rafael@kernel.org,
-        lenb@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, joel@joelfernandes.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org
-Subject: Re: [PATCH 00/36] cpuidle,rcu: Cleanup the mess
-Message-ID: <YqjGTFEWSJGGOjNA@FVFF77S0Q05N>
-References: <20220608142723.103523089@infradead.org>
- <YqhuwQjmZyOVSiLI@FVFF77S0Q05N>
- <Yqi+Nqz1J8wI5GcX@hirez.programming.kicks-ass.net>
+        Tue, 14 Jun 2022 16:45:27 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2085.outbound.protection.outlook.com [40.107.220.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39CD128E0C;
+        Tue, 14 Jun 2022 13:45:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IJ3bF63yYGUN6eohvnWDP9oKyS+9TiW3ayXA/a22grBqOH2hJwisWr8dg6vL6FouhZIJxnde5LqjRSaB0B+B6jBVGsQk36B93Y7xZpZs+lo13PR26x+v0opZkLXS5oaJN5Qfqj7ancj27L3sTu9l27UYeoUv4RDgI8FjYffqcgUDp5V/qg9/U2iH1q2hqf2FXYMLLk3zd5kohvDblI1mhnW5/Zoso9i+mYdgxPpaLq99t7uaJCD0z+zSDITiw4ywtOfDCKZ9sjhwxtl6lt7Dm2tZfMxBdtDDkok9al6DA7ljsRd0uGbx6pYuf9js6DZSCCbD3myNMfIA0bqVbabvCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h+wdnHzm5/tFJI64HWledeJrntDDTEnQRGQb3TjHaak=;
+ b=OqjzX1hhs8nf4EaE+2jE3pmO2Kjv2Mpr0fX4ctxEq4KLBSW0RYxjDnmzTvipUuAhUik3AAYgXsEQ9KKGf8RZgjwoViD4bZ+IrVBJp6v6s1KcottmCIVrRKvabPKML4QZ32oDBXoewriLTn8etvY8/CjbYtPNfIRmzBO78If3Lk65ZZUY+El2wr7LiYLrddG9srRMYGmbc2D6BqCYpYBAoNtR3jdIPEfACZrGqt3eHOPoTaVW3yy5O9+9//T3tuI2ozbvEZgzOk8c0XEx4ZSevYhwo98Qyr3cIaSJAv1K7NBIZAnl3WMPqEUq87YW2fpRPkfLISpEQUG3DqjD5psJSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h+wdnHzm5/tFJI64HWledeJrntDDTEnQRGQb3TjHaak=;
+ b=XfpsHHlhP6RjgRnv2YvQYPgMseZ6o6stX8nOOrlRUvybxcMS0kC7GSuFMym2nIlbXTp7Odm9I5U5Pf3N/Y2WkCxg89a5nmpO9fvfNZnGmnygKuB/JgY2xtYkaauV+jQq0mCRmEzTu9Mw225ue7e9JSF9FC1xZkmQsaZ12oLvnqlPkb77jV0aKtAGged9X2LvbdBlHCNgh624YBjemTB/kCW9nwo5NuB9PgBKzoc81Lw7L3ZFP3iaf855HfB0+bmqlcx/gJwTpcgGazzT9HTEPQPP29lEZR/+LiMa2HOJF1T/T9Z4/taJufU6An6tgBiu7beCFIpJBgw8Q/Wxz4iHPw==
+Received: from BN0PR04CA0144.namprd04.prod.outlook.com (2603:10b6:408:ed::29)
+ by BN6PR1201MB0113.namprd12.prod.outlook.com (2603:10b6:405:55::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.12; Tue, 14 Jun
+ 2022 20:45:23 +0000
+Received: from BN8NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ed:cafe::87) by BN0PR04CA0144.outlook.office365.com
+ (2603:10b6:408:ed::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.17 via Frontend
+ Transport; Tue, 14 Jun 2022 20:45:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ BN8NAM11FT008.mail.protection.outlook.com (10.13.177.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5332.12 via Frontend Transport; Tue, 14 Jun 2022 20:45:23 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Tue, 14 Jun
+ 2022 20:45:22 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 14 Jun
+ 2022 13:45:22 -0700
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
+ Transport; Tue, 14 Jun 2022 13:45:19 -0700
+Date:   Tue, 14 Jun 2022 13:45:18 -0700
+From:   Nicolin Chen <nicolinc@nvidia.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+CC:     Jason Gunthorpe <jgg@nvidia.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "will@kernel.org" <will@kernel.org>,
+        "marcan@marcan.st" <marcan@marcan.st>,
+        "sven@svenpeter.dev" <sven@svenpeter.dev>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "robdclark@gmail.com" <robdclark@gmail.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+        "agross@kernel.org" <agross@kernel.org>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
+        "wens@csie.org" <wens@csie.org>,
+        "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+        "samuel@sholland.org" <samuel@sholland.org>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
+        "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+Subject: Re: [PATCH 3/5] vfio/iommu_type1: Prefer to reuse domains vs match
+ enforced cache coherency
+Message-ID: <YqjzXpzuBa4ATf9o@Asurada-Nvidia>
+References: <20220606061927.26049-1-nicolinc@nvidia.com>
+ <20220606061927.26049-4-nicolinc@nvidia.com>
+ <BN9PR11MB5276DC98E75B1906A76F7ADC8CA49@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20220608111724.GL1343366@nvidia.com>
+ <DM4PR11MB52781590FB8FB197579DEE848CA49@DM4PR11MB5278.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <Yqi+Nqz1J8wI5GcX@hirez.programming.kicks-ass.net>
+In-Reply-To: <DM4PR11MB52781590FB8FB197579DEE848CA49@DM4PR11MB5278.namprd11.prod.outlook.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c57380c9-1dd6-4d7d-4096-08da4e46ce09
+X-MS-TrafficTypeDiagnostic: BN6PR1201MB0113:EE_
+X-Microsoft-Antispam-PRVS: <BN6PR1201MB0113233C3B5CAF3FE03B6129ABAA9@BN6PR1201MB0113.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 01Lo7EEKLCy2OIC9zTeh6zz/WeBLpYGCF/uXe2ghKhndvNCltYjbF+9OT7LjgeEp0EGOYX5nuh8iNeJdBU9ltcgjgxnXDpq2V4ci2ZGnH/qdqBYJAvHqdOHKYZnlUsuyIwMc5/ZbSNSlzit+njn0WYai4x8rr0ZEmgKxr9lbMKggl+67Z3iwkRyy0mB0dp8SfaBVMh1XZDS8flTgxtRw9ggZO3cGg1XUhhsXl9VK5HMTXN8sAFQn3IJgkOd8SZ8F75KGwXFAp8byCM4c6ZzPY0ocQ+1DYLkWW7xxoqtllkzXftPyL/EON92SQXB0iomv5sJSfASJa52ZEdJ9ZCVP8emmMOA0am7u7MWVpExc6P/LjBm1bgZANxlx1mptyq0XjhB057UHTchHzc333st+7lAC+iGMOew4JEbMYoRP//znW+l8zk9usgbzA+tg55NalrgL7Pwht3H1lcAyo+37W026OIYzHwBTwtw0dS3vbt5YA35V7kyPIZnJri/6mo9tuelWk3JF9QPHOG4EAVfkPPv9nWOOTYs4BGK1uO5sxTULTBgNSVwaSw2R+JzRxKw95KPJE1sUFHwcXvCi6mNojKWSjRSoZgD0KA0/ZAbi09qjpoXRJjk/2PiOSdswHXc9qzUWl36cTtF0LUxCn7pNzSodPa/MLmoZXXZ5fZNnEXHmKdEljxtMKov1+RUJYUOPNVkI2hG8arkjz3tAzGtodg==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(40470700004)(36840700001)(46966006)(5660300002)(7416002)(356005)(36860700001)(7406005)(2906002)(186003)(4744005)(40460700003)(82310400005)(26005)(9686003)(33716001)(70586007)(54906003)(8936002)(86362001)(70206006)(55016003)(508600001)(83380400001)(4326008)(47076005)(8676002)(316002)(426003)(336012)(6916009)(81166007)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2022 20:45:23.5861
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c57380c9-1dd6-4d7d-4096-08da4e46ce09
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT008.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1201MB0113
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 14, 2022 at 06:58:30PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 14, 2022 at 12:19:29PM +0100, Mark Rutland wrote:
-> > On Wed, Jun 08, 2022 at 04:27:23PM +0200, Peter Zijlstra wrote:
-> > > Hi All! (omg so many)
-> > 
-> > Hi Peter,
-> > 
-> > Sorry for the delay; my plate has also been rather full recently. I'm beginning
-> > to page this in now.
-> 
-> No worries; we all have too much to do ;-)
-> 
-> > > These here few patches mostly clear out the utter mess that is cpuidle vs rcuidle.
-> > > 
-> > > At the end of the ride there's only 2 real RCU_NONIDLE() users left
-> > > 
-> > >   arch/arm64/kernel/suspend.c:            RCU_NONIDLE(__cpu_suspend_exit());
-> > >   drivers/perf/arm_pmu.c:                 RCU_NONIDLE(armpmu_start(event, PERF_EF_RELOAD));
-> > 
-> > The latter of these is necessary because apparently PM notifiers are called
-> > with RCU not watching. Is that still the case today (or at the end of this
-> > series)? If so, that feels like fertile land for more issues (yaey...). If not,
-> > we should be able to drop this.
-> 
-> That should be fixed; fingers crossed :-)
+Hi Kevin,
 
-Cool; I'll try to give that a spin when I'm sat next to some relevant hardware. :)
-
-> > >   kernel/cfi.c:   RCU_NONIDLE({
-> > > 
-> > > (the CFI one is likely dead in the kCFI rewrite) and there's only a hand full
-> > > of trace_.*_rcuidle() left:
-> > > 
-> > >   kernel/trace/trace_preemptirq.c:                        trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-> > >   kernel/trace/trace_preemptirq.c:                        trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-> > >   kernel/trace/trace_preemptirq.c:                        trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
-> > >   kernel/trace/trace_preemptirq.c:                        trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
-> > >   kernel/trace/trace_preemptirq.c:                trace_preempt_enable_rcuidle(a0, a1);
-> > >   kernel/trace/trace_preemptirq.c:                trace_preempt_disable_rcuidle(a0, a1);
-> > > 
-> > > All of them are in 'deprecated' code that is unused for GENERIC_ENTRY.
-> > I think those are also unused on arm64 too?
-> > 
-> > If not, I can go attack that.
+On Wed, Jun 08, 2022 at 11:48:27PM +0000, Tian, Kevin wrote:
+> > > > The KVM mechanism for controlling wbinvd is only triggered during
+> > > > kvm_vfio_group_add(), meaning it is a one-shot test done once the
+> > devices
+> > > > are setup.
+> > >
+> > > It's not one-shot. kvm_vfio_update_coherency() is called in both
+> > > group_add() and group_del(). Then the coherency property is
+> > > checked dynamically in wbinvd emulation:
+> >
+> > From the perspective of managing the domains that is still
+> > one-shot. It doesn't get updated when individual devices are
+> > added/removed to domains.
 > 
-> My grep spots:
-> 
-> arch/arm64/kernel/entry-common.c:               trace_hardirqs_on();
-> arch/arm64/include/asm/daifflags.h:     trace_hardirqs_off();
-> arch/arm64/include/asm/daifflags.h:             trace_hardirqs_off();
+> It's unchanged per-domain but dynamic per-vm when multiple
+> domains are added/removed (i.e. kvm->arch.noncoherent_dma_count).
+> It's the latter being checked in the kvm.
 
-Ah; I hadn't realised those used trace_.*_rcuidle() behind the scenes.
+I am going to send a v2, yet not quite getting the point here.
+Meanwhile, Jason is on leave.
 
-That affects local_irq_{enable,disable,restore}() too (which is what the
-daifflags.h bits are emulating), and also the generic entry code's
-irqentry_exit().
+What, in your opinion, would be an accurate description here?
 
-So it feels to me like we should be fixing those more generally? e.g. say that
-with a new STRICT_ENTRY[_RCU], we can only call trace_hardirqs_{on,off}() with
-RCU watching, and alter the definition of those?
-
-> The _on thing should be replaced with something like:
-> 
-> 	trace_hardirqs_on_prepare();
-> 	lockdep_hardirqs_on_prepare();
-> 	instrumentation_end();
-> 	rcu_irq_exit();
-> 	lockdep_hardirqs_on(CALLER_ADDR0);
-> 
-> (as I think you know, since you have some of that already). And
-> something similar for the _off thing, but with _off_finish().
-
-Sure; I knew that was necessary for the outermost parts of entry (and I think
-that's all handled), I just hadn't realised that trace_hardirqs_{on,off} did
-the rcuidle thing in the middle.
-
-It'd be nice to not have to open-code the whole sequence everywhere for the
-portions which run after entry and are instrumentable, so (as above) I reckon
-we want to make trace_hardirqs_{on,off}() not do the rcuidle part
-unnecessarily (which IIUC is an end-goal anyway)?
-
-> > > I've touched a _lot_ of code that I can't test and likely broken some of it :/
-> > > In particular, the whole ARM cpuidle stuff was quite involved with OMAP being
-> > > the absolute 'winner'.
-> > > 
-> > > I'm hoping Mark can help me sort the remaining ARM64 bits as he moves that to
-> > > GENERIC_ENTRY.
-> > 
-> > Moving to GENERIC_ENTRY as a whole is going to take a tonne of work
-> > (refactoring both arm64 and the generic portion to be more amenable to each
-> > other), but we can certainly move closer to that for the bits that matter here.
-> 
-> I know ... been there etc.. :-)
-> 
-> > Maybe we want a STRICT_ENTRY option to get rid of all the deprecated stuff that
-> > we can select regardless of GENERIC_ENTRY to make that easier.
-> 
-> Possible yeah.
-> 
-> > > I've also got a note that says ARM64 can probably do a WFE based
-> > > idle state and employ TIF_POLLING_NRFLAG to avoid some IPIs.
-> > 
-> > Possibly; I'm not sure how much of a win that'll be given that by default we'll
-> > have a ~10KHz WFE wakeup from the timer, but we could take a peek.
-> 
-> Ohh.. I didn't know it woke up *that* often. I just know Will made use
-> of it in things like smp_cond_load_relaxed() which would be somewhat
-> similar to a very shallow idle state that looks at the TIF word.
-
-We'll get some saving, I'm just not sure where that falls on the curve of idle
-states. FWIW the wakeup *can* be disabled (and it'd be nice to when we have
-WFxT instructions which take a timeout), it jsut happens to be on by default
-for reasons.
-
-Thanks,
-Mark.
+Thanks
+Nic
