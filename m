@@ -2,133 +2,207 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAE6C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 04:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5522EC43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 05:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236508AbiFOEiz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 00:38:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43006 "EHLO
+        id S243482AbiFOFfq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 01:35:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236534AbiFOEix (ORCPT
+        with ESMTP id S239980AbiFOFfm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 00:38:53 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2053.outbound.protection.outlook.com [40.107.212.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4528D237FE;
-        Tue, 14 Jun 2022 21:38:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Jr9ZshT+CPcEcWKrWoH5w7BUyk0bjwH3Xy355cyUoHCjgFuD4WPsmt0nmmg0cffdxPrrFCt1uMIaNGxzf/BJhy8yT9L9USovrU+cXaMUwijrPi5zc9S2dntnX4nub10hhKukOJq0ZMBTAy9oVtvkYRfWDspFe8T1pimRq5MJVdaLB5G9Itv731GUESiQXWPXlV/OpJr1c+RXvjTAJ3EdYBghf8+HgJTz7lwJyGzDHU8AiZ6MFHBJaQad9QZZsLyzOfC3QJ8uPvVPfhTPVolhvNPHPcqeJVuL1SDRwak2hOspjCvwfrZP1/lz8/CLNdhmDnW7geTnVeXnH60z+U23ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JJ+pFBnj61WNRid+wnwOsWKCQKRt5DOUCWJ7ht+9shM=;
- b=iCQ4zs85L6yUE+aoK6eO3C0fYaEQa3W5hvXYCdJjHQXP4zjQIyxHCiFi2MwrhLEeZMglh200nuL3QDyxbDWfCPlvl8wBh173wDiDDaJApwv8hUsXfM1Wsotmasid1WgTPFAUwph6HHp/agwcLPd3/Z+DgxKLOKfGlqWAUMsPOS/smD0tXKx/s+MzaJJrHjG2DmCZU36InKMZbG9Q2v2k+T+aAi4BzI3RrRUr64Jr4FejkXRyUQNfIXx04FFGhs4ZvHF4MJkOE8OisgYwSnGqhQNe2moH71WtxwRBjxSFyzwKgABAr9M6oWG+FgnlsZRJOruPt02KIRMHYMDwZQAhPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JJ+pFBnj61WNRid+wnwOsWKCQKRt5DOUCWJ7ht+9shM=;
- b=h7YrMj489+TPaSve636za73GBzHc1Ht9T42/8apy0n09wV3cytH3wESWFJD78jMOv9WmTiXR1A5kXz/Tqvj7fGSpYPQNQTPi7QuTGjbSTDj2qO9tirZUVXOnxfMZjPe0eCwvHx91NjdZ7OgfFw42CnzX4cHuGJqthk151ZcG3R4yjs+/7gzYzqhap9VeMeegLDuFBOFXuHkVjY3WJiwn7n4QY0vFJm+Z1p/tI4wA6kW8emduyEXWH+XJDn9xTEGZSfQke0Cz/mLTKzBEsavicpEx9Y8b55iqhGL3ktXkOKAZDpJfNZLmsYNmEcLByVrzc1t+5nq8VWpcuoC2Oh8J6g==
-Received: from BN0PR02CA0028.namprd02.prod.outlook.com (2603:10b6:408:e4::33)
- by DM4PR12MB6157.namprd12.prod.outlook.com (2603:10b6:8:ac::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.22; Wed, 15 Jun
- 2022 04:38:51 +0000
-Received: from BN8NAM11FT036.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e4:cafe::6b) by BN0PR02CA0028.outlook.office365.com
- (2603:10b6:408:e4::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.13 via Frontend
- Transport; Wed, 15 Jun 2022 04:38:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.238) by
- BN8NAM11FT036.mail.protection.outlook.com (10.13.177.168) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5332.12 via Frontend Transport; Wed, 15 Jun 2022 04:38:50 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 15 Jun
- 2022 04:38:49 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 14 Jun
- 2022 21:38:49 -0700
-Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server id 15.2.986.22 via Frontend Transport; Tue, 14 Jun
- 2022 21:38:46 -0700
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <dan.carpenter@oracle.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH] ASoC: tegra: Fix MBDRC bypass mode check
-Date:   Wed, 15 Jun 2022 10:08:34 +0530
-Message-ID: <1655267914-24702-1-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 15 Jun 2022 01:35:42 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 283F649FA0;
+        Tue, 14 Jun 2022 22:35:41 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 6EE2B80AE;
+        Wed, 15 Jun 2022 05:30:54 +0000 (UTC)
+Date:   Wed, 15 Jun 2022 08:35:38 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, joel@joelfernandes.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        rcu@vger.kernel.org, Peter Vasil <petervasil@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>
+Subject: Re: [PATCH 34.5/36] cpuidle,omap4: Push RCU-idle into
+ omap4_enter_lowpower()
+Message-ID: <YqlvqhdlFsNvUBeG@atomide.com>
+References: <20220608142723.103523089@infradead.org>
+ <20220608144518.073801916@infradead.org>
+ <Yqcv6crSNKuSWoTu@atomide.com>
+ <YqkHto+zgAPs4kQI@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9ef31e85-bf95-4d23-2be9-08da4e88f201
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6157:EE_
-X-Microsoft-Antispam-PRVS: <DM4PR12MB6157D5130FADA6C4FC6AFB91A7AD9@DM4PR12MB6157.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vNYPuhcSG3TIRYAHzhNNdrWagOhFVf1stQssGH7s/FgIjUvACf7nW0KpggwU/wOfqv3Ihm0MHv2FkZAHnQu0u2KcDV1AkFRq6XiWPr6apluePNzC6gnORKu2IegC8QTWgCN13mUi2lGIq9U0Xis6ho/ZkrJE6ZB08+BTjV4sqWjcmUKnQvyhJcvyEu8Oy3o337AvN8OUsRRb4hKYlAFFncTYsxSTGxZoKUiByaLsyzu5PjLKoi36Qs1Zi0eEJYXIS3JpWjJEE74faHZk6i2yBfWFwLDvdSzXvgJM5f9tLweDrM8CnCYSg3bC9LYhvUkcNKsMVRUKSpccitbJTcGZ4Fwjw5ALksH1NAQzDrw+PWtn1asoeyYDPGk6cWbGq+8AJbuYMqosVMlc2q7Pivf3QItFQgrfEUyvqPv1ElK9RxsFR1fA4SOgea1a9hqHKB2ZHH5slT2jQECYdC8qPmyLmZ4XyHZICxDKpTtRXJGu7Y08GimKEB1j/HlOEUIX2gal3bhLO1iDMUR+AXMNMA19w2RXMflqJhEwcUjWrmXCaLa4650O3XQwNsQrVdYFi5LudcBCjk0wEdNWNItNMvbkTiVa6/KvCyK0SbzchLGW71qyIdu5YQmIZcofQImp0XognjHtmF+UMa1rc5zTYPFFTzWTxJYg9fonV08Xy+GSD7ytAMOMi3OYVtnjZiSUxmQ0eD2mgNXGl7/OxjXnUBLtCg==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(36840700001)(40470700004)(46966006)(4326008)(508600001)(86362001)(6666004)(356005)(8676002)(110136005)(316002)(83380400001)(54906003)(70586007)(70206006)(36860700001)(426003)(47076005)(336012)(186003)(2616005)(107886003)(8936002)(36756003)(82310400005)(5660300002)(2906002)(26005)(7696005)(81166007)(40460700003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2022 04:38:50.7153
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ef31e85-bf95-4d23-2be9-08da4e88f201
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT036.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6157
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YqkHto+zgAPs4kQI@worktop.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-MBDRC supports different modes of operation. There is no configuration
-required for bypass mode. The hw_params() call does not filter bypass
-mode correctly and it leads to following Smatch static checker warning:
+Hi,
 
-  sound/soc/tegra/tegra210_mbdrc.c:778 tegra210_mbdrc_hw_params()
-  warn: bitwise AND condition is false here
+Adding Aaro Koskinen and Peter Vasil for pm24xx for n800 and n810 related
+idle.
 
-Fix this condition by using proper mode mask and just return for bypass
-mode.
+* Peter Zijlstra <peterz@infradead.org> [220614 22:07]:
+> On Mon, Jun 13, 2022 at 03:39:05PM +0300, Tony Lindgren wrote:
+> > OMAP4 uses full SoC suspend modes as idle states, as such it needs the
+> > whole power-domain and clock-domain code from the idle path.
+> > 
+> > All that code is not suitable to run with RCU disabled, as such push
+> > RCU-idle deeper still.
+> > 
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> > ---
+> > 
+> > Peter here's one more for your series, looks like this is needed to avoid
+> > warnings similar to what you did for omap3.
+> 
+> Thanks Tony!
+> 
+> I've had a brief look at omap2_pm_idle() and do I understand it right
+> that something like the below patch would reduce it to a simple 'WFI'?
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 7358a803c778 ("ASoC: tegra: Add Tegra210 based OPE driver")
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- sound/soc/tegra/tegra210_mbdrc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yes that should do for omap2_do_wfi().
 
-diff --git a/sound/soc/tegra/tegra210_mbdrc.c b/sound/soc/tegra/tegra210_mbdrc.c
-index 7d9da33..d786daa 100644
---- a/sound/soc/tegra/tegra210_mbdrc.c
-+++ b/sound/soc/tegra/tegra210_mbdrc.c
-@@ -775,7 +775,9 @@ int tegra210_mbdrc_hw_params(struct snd_soc_component *cmpnt)
- 
- 	regmap_read(ope->mbdrc_regmap, TEGRA210_MBDRC_CFG, &val);
- 
--	if (val & TEGRA210_MBDRC_CFG_MBDRC_MODE_BYPASS)
-+	val &= TEGRA210_MBDRC_CFG_MBDRC_MODE_MASK;
-+
-+	if (val == TEGRA210_MBDRC_CFG_MBDRC_MODE_BYPASS)
- 		return 0;
- 
- 	for (i = 0; i < MBDRC_NUM_BAND; i++) {
--- 
-2.7.4
+> What do I do with the rest of that code, because I don't think this
+> thing has a cpuidle driver to take over, effectively turning it into
+> dead code.
 
+As we are establishing a policy where deeper idle states must be
+handled by cpuidle, and for most part that has been the case for at least
+10 years, I'd just drop the unused functions with an explanation in the
+patch why we're doing it. Or the functions could be tagged with
+__maybe_unused if folks prefer that.
+
+In the pm24xx case we are not really causing a regression for users as
+there are still pending patches to make n800 and n810 truly usable with
+the mainline kernel. At least the PMIC and LCD related patches need some
+work [0]. The deeper idle states can be added back later using cpuidle
+as needed so we have a clear path.
+
+Aaro & Peter V, do you have any better suggestions here as this will
+mostly affect you guys currently?
+
+Regards,
+
+Tony
+
+[0] https://lore.kernel.org/linux-omap/20211224214512.1583430-1-peter.vasil@gmail.com/
+
+
+> --- a/arch/arm/mach-omap2/pm24xx.c
+> +++ b/arch/arm/mach-omap2/pm24xx.c
+> @@ -126,10 +126,20 @@ static int omap2_allow_mpu_retention(voi
+>  	return 1;
+>  }
+>  
+> -static void omap2_enter_mpu_retention(void)
+> +static void omap2_do_wfi(void)
+>  {
+>  	const int zero = 0;
+>  
+> +	/* WFI */
+> +	asm("mcr p15, 0, %0, c7, c0, 4" : : "r" (zero) : "memory", "cc");
+> +}
+> +
+> +#if 0
+> +/*
+> + * possible cpuidle implementation between WFI and full_retention above
+> + */
+> +static void omap2_enter_mpu_retention(void)
+> +{
+>  	/* The peripherals seem not to be able to wake up the MPU when
+>  	 * it is in retention mode. */
+>  	if (omap2_allow_mpu_retention()) {
+> @@ -146,8 +157,7 @@ static void omap2_enter_mpu_retention(vo
+>  		pwrdm_set_next_pwrst(mpu_pwrdm, PWRDM_POWER_ON);
+>  	}
+>  
+> -	/* WFI */
+> -	asm("mcr p15, 0, %0, c7, c0, 4" : : "r" (zero) : "memory", "cc");
+> +	omap2_do_wfi();
+>  
+>  	pwrdm_set_next_pwrst(mpu_pwrdm, PWRDM_POWER_ON);
+>  }
+> @@ -161,6 +171,7 @@ static int omap2_can_sleep(void)
+>  
+>  	return 1;
+>  }
+> +#endif
+>  
+>  static void omap2_pm_idle(void)
+>  {
+> @@ -169,6 +180,7 @@ static void omap2_pm_idle(void)
+>  	if (omap_irq_pending())
+>  		return;
+>  
+> +#if 0
+>  	error = cpu_cluster_pm_enter();
+>  	if (error || !omap2_can_sleep()) {
+>  		omap2_enter_mpu_retention();
+> @@ -179,6 +191,9 @@ static void omap2_pm_idle(void)
+>  
+>  out_cpu_cluster_pm:
+>  	cpu_cluster_pm_exit();
+> +#else
+> +	omap2_do_wfi();
+> +#endif
+>  }
+>  
+>  static void __init prcm_setup_regs(void)
