@@ -2,99 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81693CCA473
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 13:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9A7C43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 13:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345387AbiFONP1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 09:15:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51870 "EHLO
+        id S241332AbiFONyj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 09:54:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348422AbiFONP1 (ORCPT
+        with ESMTP id S241638AbiFONyi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 09:15:27 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2312A27B;
-        Wed, 15 Jun 2022 06:15:26 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id BF13A21BB9;
-        Wed, 15 Jun 2022 13:15:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1655298924; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=17VEqNPV/TBk73G7tKfWD0AkIggznFYMqcz7zsD4S9c=;
-        b=c5CplPzuxQh5gnp4bD34uWkKLEOaOc1Tpwslt5ARBi5fVdHjWZ4prxmWoQqcdCpqAG1Yor
-        xmQuGVnUEOpCEt1XYqn7LUtFrFvMKUMl0YDT2F/jRq/vq+FW+bBxji/zHIwKJ8jaI2QMZs
-        rqLOKCpvqZTZhxAjHRYVGQZVY5XNs10=
-Received: from suse.cz (unknown [10.100.201.86])
+        Wed, 15 Jun 2022 09:54:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42B2E13D51;
+        Wed, 15 Jun 2022 06:54:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 66BBD2C141;
-        Wed, 15 Jun 2022 13:15:24 +0000 (UTC)
-Date:   Wed, 15 Jun 2022 15:15:23 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, alexander.deucher@amd.com, daniel@ffwll.ch,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        hughd@google.com, andrey.grodzovsky@amd.com
-Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
-Message-ID: <Yqnba1E2FSRVUATY@dhcp22.suse.cz>
-References: <YqMuq/ZrV8loC3jE@dhcp22.suse.cz>
- <2e7e050e-04eb-0c0a-0675-d7f1c3ae7aed@amd.com>
- <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
- <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
- <Yqbq/Q5jz2ou87Jx@dhcp22.suse.cz>
- <b8b9aba5-575e-8a34-e627-79bef4ed7f97@amd.com>
- <YqcpZY3Xx7Mk2ROH@dhcp22.suse.cz>
- <34daa8ab-a9f4-8f7b-0ea7-821bc36b9497@gmail.com>
- <YqdFkfLVFUD5K6EK@dhcp22.suse.cz>
- <9e170201-35df-cfcc-8d07-2f9693278829@amd.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D5CA061B39;
+        Wed, 15 Jun 2022 13:54:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CF4DC34115;
+        Wed, 15 Jun 2022 13:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655301276;
+        bh=68WDubxLhalXX3kweNLoMTxlg/l57c7HnJZeSRidsVA=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=QAzXoOV4qTFwG8YVlXC05IjRNwEjXExoHhXn1AJGsF2HS0KEVA8CHGNSnsVxcld7b
+         Lpy/pDwaajKjuxdzaKnpZopJnoHqlK0qOeA0D30gc/1dpJsalqe+kIoWj77uMnIZKm
+         AYtqFbLhKAnM5RTT9Z3nubRWFeKItEKKS3d/sPFhNo0J9OUdWn2jlHzGIT2fmBPP/A
+         lxr0fBwcbCKNWaBRSDzct1hfBlPPB4ABVbs6w+pltkrAWvGn623voDTOSIFzRJ4qav
+         Y27Xy48O3BNDprSliQP2gHws+avLinAhZWla3FEhuQTND6dA/X5r2WfadKvgBKLt5W
+         7g+fEjhytoDLg==
+From:   Mark Brown <broonie@kernel.org>
+To:     spujar@nvidia.com, dan.carpenter@oracle.com, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org,
+        thierry.reding@gmail.com
+In-Reply-To: <1655267914-24702-1-git-send-email-spujar@nvidia.com>
+References: <1655267914-24702-1-git-send-email-spujar@nvidia.com>
+Subject: Re: [PATCH] ASoC: tegra: Fix MBDRC bypass mode check
+Message-Id: <165530127422.947339.13523217289289739247.b4-ty@kernel.org>
+Date:   Wed, 15 Jun 2022 14:54:34 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9e170201-35df-cfcc-8d07-2f9693278829@amd.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed 15-06-22 14:35:22, Christian König wrote:
-[...]
-> Even the classic mm_struct based accounting includes MM_SHMEMPAGES into the
-> badness. So accounting shared resources as badness to make a decision is
-> nothing new here.
-
-Yeah, it is nothing really new but it also doesn't mean it is an example
-worth following as this doesn't really work currently. Also please note
-that MM_SHMEMPAGES is counting at least something process specific as
-those pages are mapped in to the process (and with enough of wishful
-thinking unmapping can drop the last reference and free something up
-actually) . With generic per-file memory this is even more detached from
-process.
-
-> The difference is that this time the badness doesn't come from the memory
-> management subsystem, but rather from the I/O subsystem.
+On Wed, 15 Jun 2022 10:08:34 +0530, Sameer Pujar wrote:
+> MBDRC supports different modes of operation. There is no configuration
+> required for bypass mode. The hw_params() call does not filter bypass
+> mode correctly and it leads to following Smatch static checker warning:
 > 
-> > This is also the reason why I am not really fan of the per file
-> > badness because it adds a notion of resource that is not process bound
-> > in general so it will add all sorts of weird runtime corner cases which
-> > are impossible to anticipate [*]. Maybe that will work in some scenarios
-> > but definitely not something to be done by default without users opting
-> > into that and being aware of consequences.
+>   sound/soc/tegra/tegra210_mbdrc.c:778 tegra210_mbdrc_hw_params()
+>   warn: bitwise AND condition is false here
 > 
-> Would a kernel command line option to control the behavior be helpful here?
+> [...]
 
-I am not sure what would be the proper way to control that that would be
-future extensible. Kernel command line is certainly and option but if we
-want to extend that to module like or eBPF interface then it wouldn't
-stand a future test very quickly.
+Applied to
 
--- 
-Michal Hocko
-SUSE Labs
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: tegra: Fix MBDRC bypass mode check
+      commit: 4edf738d4c7989c315e37d4d61e34c94557b6ed2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
