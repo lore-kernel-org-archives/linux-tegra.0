@@ -2,63 +2,74 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33815CCA473
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 10:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DFEC43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 11:18:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347364AbiFOKxn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 06:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47010 "EHLO
+        id S237201AbiFOLSb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 07:18:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347341AbiFOKxm (ORCPT
+        with ESMTP id S231216AbiFOLSb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 06:53:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15585130A;
-        Wed, 15 Jun 2022 03:53:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 83AAE6162D;
-        Wed, 15 Jun 2022 10:53:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BCEC34115;
-        Wed, 15 Jun 2022 10:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1655290418;
-        bh=xorApPrJYjqRVSP/59nC6A1gHUam/lVIdxd8tViYqNs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XLzcAJdjue7U4UAgQgf9+RKr6LPQLQ1VcUI/upqTv1jd4xn6ffwn+7ka1a4EDGE8U
-         zqx74/OmAxwHanaqgwTA7wUZlgugxFfwkQhE/i3XRtI35ar4o26wDmuNDE1Dgh11mi
-         /epAMQstrnhJN4qD2PnkwxCSW90WgW64Lkp7vHmk=
-Date:   Wed, 15 Jun 2022 12:53:34 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     heliang <windhl@126.com>
-Cc:     ldewangan@nvidia.com, jirislaby@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, sumit.semwal@linaro.org,
-        christian.koenig@amd.com, linux-serial@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH] drivers: tty: serial: Add missing of_node_put() in
- serial-tegra.c
-Message-ID: <Yqm6LvDGqaRMaUHa@kroah.com>
-References: <20220615104833.3963552-1-windhl@126.com>
+        Wed, 15 Jun 2022 07:18:31 -0400
+Received: from m15111.mail.126.com (m15111.mail.126.com [220.181.15.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A38CF3B00B
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Jun 2022 04:18:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=QqKPV
+        BGfow1c4ZMlx0YSYTPT8kkKDZgzEU0kwf4SuA4=; b=iU8zznYKuLyz1drshpTqO
+        UeX4dBnETWilJ5oDPVg0IeQWmZAK+TVvp30JV3ZVerG0n6Zoeu5AmWPz1U9zy5pb
+        Qg3zT4bGYEhCYL9FDGlt1No38v/GeusGfJMRkDlqjwTRaDvN58dOr2r7tSni71L2
+        a+8ilkCnwIJdhU8q9+6h1M=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp1 (Coremail) with SMTP id C8mowAD3Jifbv6liZhOoEQ--.58335S2;
+        Wed, 15 Jun 2022 19:17:47 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     ldewangan@nvidia.com, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, p.zabel@pengutronix.de,
+        sumit.semwal@linaro.org, christian.koenig@amd.com
+Cc:     linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, windhl@126.com
+Subject: [PATCH] drivers: tty: serial: Add missing of_node_put() in serial-tegra.c
+Date:   Wed, 15 Jun 2022 19:17:47 +0800
+Message-Id: <20220615111747.3963930-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220615104833.3963552-1-windhl@126.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C8mowAD3Jifbv6liZhOoEQ--.58335S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrurW3KFyUCryDCw13JFWrZrb_yoW3CFb_Ww
+        nrW3s7Zr4j9FsYqanavry3ur9IvFn8WFnYqF92qas7W345ZF4DJrWqqrn7A3sF93y7CrW3
+        CrsrWFsrAr1DXjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRimhFDUUUUU==
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbizhwhF18RPTCjAAAAsE
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 06:48:33PM +0800, heliang wrote:
-> In tegra_uart_init(), of_find_matching_node() will return a node
-> pointer with refcount incremented. We should use of_node_put()
-> when it is not used anymore.
-> 
-> Signed-off-by: heliang <windhl@126.com>
+In tegra_uart_init(), of_find_matching_node() will return a node
+pointer with refcount incremented. We should use of_node_put()
+when it is not used anymore.
 
-We need a real name please, one you sign documents with.
+Signed-off-by: Liang He <windhl@126.com>
+---
+ drivers/tty/serial/serial-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-thanks,
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index d942ab152f5a..5c4850a3762c 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -1667,6 +1667,7 @@ static int __init tegra_uart_init(void)
+ 	node = of_find_matching_node(NULL, tegra_uart_of_match);
+ 	if (node)
+ 		match = of_match_node(tegra_uart_of_match, node);
++	of_node_put(node);
+ 	if (match)
+ 		cdata = match->data;
+ 	if (cdata)
+-- 
+2.25.1
 
-greg k-h
