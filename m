@@ -2,75 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3D6C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 12:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB912C43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 12:32:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348390AbiFOMVS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 08:21:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52778 "EHLO
+        id S237586AbiFOMcq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 08:32:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348025AbiFOMVR (ORCPT
+        with ESMTP id S236110AbiFOMco (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 08:21:17 -0400
-X-Greylist: delayed 3690 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 15 Jun 2022 05:21:15 PDT
-Received: from mail-m963.mail.126.com (mail-m963.mail.126.com [123.126.96.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A35AE3818D;
-        Wed, 15 Jun 2022 05:21:14 -0700 (PDT)
+        Wed, 15 Jun 2022 08:32:44 -0400
+Received: from m15114.mail.126.com (m15114.mail.126.com [220.181.15.114])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E59921403C;
+        Wed, 15 Jun 2022 05:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=qRBqy
-        tTLZ34Rt4thGWj9lEN5JpUglvigXgFN4dG4FQ0=; b=CJv5DMjNu1qbzk88jQzZt
-        wYvxeUMZXC2JlwDpysvEUok80Emg4pFK38BmU6dTwgMEzaHHwN0zu8VkeDUhYyb0
-        qqez4OVvCKvg1GyYOgbd9krmTITdHL8AEZD3kf5dfay//BL+yFqdH1/OzfzW6I1Z
-        hpnvAzvaDfYHFqD90IfNJM=
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=yVxto
+        WzxfVXc9Waao1MVmOuzqFd4U+QS86n1nMvSL/o=; b=WGCYTv1DzPjzZztRfimdW
+        2R0kmwl7Qod0F2sBNMT3yWnvNK8YIHQddLHIL0LOIy2dXtaMlhP27tYCMUa7h6sx
+        CvQ6wa4Xx8sZ7NcdevRT+oufUfVTmeWmotiLzd/NaXlO/0OYbGrN50z+CnF7MJ+M
+        gZP6Vk17MfMbXViehYzqr4=
 Received: from localhost.localdomain (unknown [124.16.139.61])
-        by smtp8 (Coremail) with SMTP id NORpCgD3mZYCualig72aFg--.47285S2;
-        Wed, 15 Jun 2022 18:48:36 +0800 (CST)
-From:   heliang <windhl@126.com>
-To:     ldewangan@nvidia.com, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, p.zabel@pengutronix.de,
-        sumit.semwal@linaro.org, christian.koenig@amd.com
-Cc:     linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, windhl@126.com
-Subject: [PATCH] drivers: tty: serial: Add missing of_node_put() in serial-tegra.c
-Date:   Wed, 15 Jun 2022 18:48:33 +0800
-Message-Id: <20220615104833.3963552-1-windhl@126.com>
+        by smtp7 (Coremail) with SMTP id DsmowACHgdlg0aliDgNqDQ--.43205S2;
+        Wed, 15 Jun 2022 20:32:32 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        windhl@126.com
+Subject: [PATCH] drivers: soc: tegra: fuse: Add missing of_node_put() in tegra-apbmisc.c
+Date:   Wed, 15 Jun 2022 20:32:32 +0800
+Message-Id: <20220615123232.3965673-1-windhl@126.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: NORpCgD3mZYCualig72aFg--.47285S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrurW3KFyUCryDCw13JFWrZrb_yoW3CFb_Ww
-        nrW3s7Xr4j9FsYqanavry3ur9Ivrn8WFnYqF92qas7W345ZF4DJrZ0qrn7J3sF93yxCrW3
-        GrsrWFsrAr1DXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xREWEE7UUUUU==
+X-CM-TRANSID: DsmowACHgdlg0aliDgNqDQ--.43205S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKFW3GryrZw1kZrWDXryDAwb_yoWkGwb_WF
+        4UWr93XFWUuFs7Wrya9r43ZryqvayIqFn2gr4Iyr93Gw17XFnxJF4j9r1DCw13Zws2gFyD
+        Aw12vFy8Ar43WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_znQ7UUUUU==
 X-Originating-IP: [124.16.139.61]
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbiuAQhF2JVj36C6QAAsn
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbiuAEhF2JVj38QFgAAsO
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In tegra_uart_init(), of_find_matching_node() will return a node
-pointer with refcount incremented. We should use of_node_put()
-when it is not used anymore.
+In tegra_init_apbmisc(), of_find_matching_node() will return a node
+pointer with refcount incremented. We should use of_node_put in each
+fail path or when it is not used anymore.
 
-Signed-off-by: heliang <windhl@126.com>
+Signed-off-by: Liang He <windhl@126.com>
 ---
- drivers/tty/serial/serial-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index d942ab152f5a..5c4850a3762c 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -1667,6 +1667,7 @@ static int __init tegra_uart_init(void)
- 	node = of_find_matching_node(NULL, tegra_uart_of_match);
- 	if (node)
- 		match = of_match_node(tegra_uart_of_match, node);
-+	of_node_put(node);
- 	if (match)
- 		cdata = match->data;
- 	if (cdata)
+diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+index 590c862538d0..24e54e766581 100644
+--- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
++++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+@@ -182,12 +182,12 @@ void __init tegra_init_apbmisc(void)
+ 		 */
+ 		if (of_address_to_resource(np, 0, &apbmisc) < 0) {
+ 			pr_err("failed to get APBMISC registers\n");
+-			return;
++			goto out_put;
+ 		}
+ 
+ 		if (of_address_to_resource(np, 1, &straps) < 0) {
+ 			pr_err("failed to get strapping options registers\n");
+-			return;
++			goto out_put;
+ 		}
+ 	}
+ 
+@@ -208,4 +208,7 @@ void __init tegra_init_apbmisc(void)
+ 	}
+ 
+ 	long_ram_code = of_property_read_bool(np, "nvidia,long-ram-code");
++
++out_put:
++	of_node_put(np);
+ }
 -- 
 2.25.1
 
