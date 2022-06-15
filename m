@@ -2,72 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5839C43334
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 09:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33815CCA473
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 10:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239449AbiFOJIr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 05:08:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46020 "EHLO
+        id S1347364AbiFOKxn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 06:53:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347342AbiFOJI2 (ORCPT
+        with ESMTP id S1347341AbiFOKxm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 05:08:28 -0400
-Received: from m15111.mail.126.com (m15111.mail.126.com [220.181.15.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EBCB0193F6
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Jun 2022 02:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=u6YQg
-        HrK1S8KKnarhxByDY6BuIzlDp0AO/shcqnjQyY=; b=ePY+hZkbzAva3Cg41mAP0
-        Wj2Ku7jTIbd7N/omPzCMCbZL48b+En0mdGubI1p1H3WPCyD9KzlxaDfHWkxtQQf2
-        W7PxuxKXYG2VaE+xKz6Yu+ivdhoJczPgDaFXy2rfipliFXKDw2UyvRDjWLotCEvG
-        2YABC5MPr16AiPT3xDZdgI=
-Received: from localhost.localdomain (unknown [124.16.139.61])
-        by smtp1 (Coremail) with SMTP id C8mowABXXvbtmaliW+ubEQ--.53231S2;
-        Wed, 15 Jun 2022 16:35:59 +0800 (CST)
-From:   heliang <windhl@126.com>
-To:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, windhl@126.com
-Subject: [PATCH] clk: tegra: Add missing of_node_put in clk-tegra124.c
-Date:   Wed, 15 Jun 2022 16:35:56 +0800
-Message-Id: <20220615083556.3960821-1-windhl@126.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 15 Jun 2022 06:53:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15585130A;
+        Wed, 15 Jun 2022 03:53:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 83AAE6162D;
+        Wed, 15 Jun 2022 10:53:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BCEC34115;
+        Wed, 15 Jun 2022 10:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1655290418;
+        bh=xorApPrJYjqRVSP/59nC6A1gHUam/lVIdxd8tViYqNs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XLzcAJdjue7U4UAgQgf9+RKr6LPQLQ1VcUI/upqTv1jd4xn6ffwn+7ka1a4EDGE8U
+         zqx74/OmAxwHanaqgwTA7wUZlgugxFfwkQhE/i3XRtI35ar4o26wDmuNDE1Dgh11mi
+         /epAMQstrnhJN4qD2PnkwxCSW90WgW64Lkp7vHmk=
+Date:   Wed, 15 Jun 2022 12:53:34 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     heliang <windhl@126.com>
+Cc:     ldewangan@nvidia.com, jirislaby@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, sumit.semwal@linaro.org,
+        christian.koenig@amd.com, linux-serial@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH] drivers: tty: serial: Add missing of_node_put() in
+ serial-tegra.c
+Message-ID: <Yqm6LvDGqaRMaUHa@kroah.com>
+References: <20220615104833.3963552-1-windhl@126.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C8mowABXXvbtmaliW+ubEQ--.53231S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GFyrKF4xGw1xZw1xCF15Arb_yoW3Wrb_XF
-        15XryxXw15Can3AFsxur13ZryIyr1fWrsYqFWSya17Gw18Zr4UWrs0vrn2k3srW39rWFW3
-        Ja4kKw40k34YvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xREQJ5DUUUUU==
-X-Originating-IP: [124.16.139.61]
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3A8hF1pEDuVFTgAAsb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220615104833.3963552-1-windhl@126.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In tegra124_132_clock_init_pre, of_find_matching_node() will return
-a node pointer with refcount incremented. We should use of_node_put()
-when it is not used anymore.
+On Wed, Jun 15, 2022 at 06:48:33PM +0800, heliang wrote:
+> In tegra_uart_init(), of_find_matching_node() will return a node
+> pointer with refcount incremented. We should use of_node_put()
+> when it is not used anymore.
+> 
+> Signed-off-by: heliang <windhl@126.com>
 
-Signed-off-by: heliang <windhl@126.com>
----
- drivers/clk/tegra/clk-tegra124.c | 1 +
- 1 file changed, 1 insertion(+)
+We need a real name please, one you sign documents with.
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 934520aab6e3..a9d4efcef2d4 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1471,6 +1471,7 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
- 	}
- 
- 	pmc_base = of_iomap(node, 0);
-+	of_node_put(node);
- 	if (!pmc_base) {
- 		pr_err("Can't map pmc registers\n");
- 		WARN_ON(1);
--- 
-2.25.1
+thanks,
 
+greg k-h
