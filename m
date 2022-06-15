@@ -2,96 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6132FCCA473
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 14:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0ECC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Jun 2022 20:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345056AbiFOOh5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 10:37:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
+        id S233573AbiFOUXk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 16:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbiFOOhz (ORCPT
+        with ESMTP id S231317AbiFOUXk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 10:37:55 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4708D13CE1;
-        Wed, 15 Jun 2022 07:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=75kgVCcqOPOLeu4JBiLLFab/dM4uNZ1dcLuvpDx9ZCg=; b=kAIWl67VuUe8cBDkmFOZTh4b+J
-        Uy6PgE2+CwIEzhFEfsXCTAadcMkk5TefuTIBHvgzxNrjmUz+/r/f3fMBR5i8mMC7UweLMh9MkeJoD
-        97gkOJRUGibA77qDy9s4vL7NkQkS1Sv+TX4WpruLFHmbGvImVgE9LeYadgdIraA8AGxMlB+PxaWy/
-        1adKvJuvvpCbTsZosCqi5SMDlMupfKEgEY7JpKMS8HhvbF7gyowCTheRqW0YX0S9D05qpW9G1fKLt
-        DJUWQ6k8Tz/HxaHb6kuJRSWnDBXrsJA/DQco3hh/lFSm8XLWvSeNFNfH2bKr+ugXM0hH/Gw2zl2s+
-        laFslj7w==;
-Received: from 179.red-81-39-194.dynamicip.rima-tde.net ([81.39.194.179] helo=[192.168.15.167])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1o1U8m-002LYs-SW; Wed, 15 Jun 2022 16:37:04 +0200
-Message-ID: <362f6520-8209-1721-823c-11928338f57d@igalia.com>
-Date:   Wed, 15 Jun 2022 11:36:39 +0200
+        Wed, 15 Jun 2022 16:23:40 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 262BF4FC43;
+        Wed, 15 Jun 2022 13:23:39 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 25so17772489edw.8;
+        Wed, 15 Jun 2022 13:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PXt3RdHLeGINg4yxXorienYktyDgObMjDMbWVl7BWsk=;
+        b=KXZ2+v4pB+2qbAYGzjRzDzf5N/FIVRKhj96xYwE1vF5kUN0OtkFe9xaDGtDanFONLy
+         hTPZE9BYpcQdjTudH/oFniRh8iBYS/c4UeqaUYPwh2lfS22ODF3u97tyELRsJAEAD6RQ
+         XzWUflxaDj9Iu61DuaeDp+azVZ6V13cNbqU61orL81dExdC116TjkX33GuszgTOcEEvU
+         GzVSKpsmN9Ed5bYW34e8z5P5bSZUO3hseQ9JF3OB2VQmBTRpr4mRhHHoSIsAF/FCWDuG
+         kBQq6IcC9BM5Dg/ILKxnsITQERCqOt1fO9wBv0c6m5vvEQHDWieBkMh2OPDFrT40CG/E
+         Gg5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PXt3RdHLeGINg4yxXorienYktyDgObMjDMbWVl7BWsk=;
+        b=foRJR4Z5O1Xn5NaUZ+zwvqUnHWCUQAYkiS0+3B4TRJkCcjijeH9VAfd46s8dPgByKC
+         VYJW6Ooblfc/0ow9ul+XxiH1QNyDcmUAznibiSnagW0k7vVXhqT0NAI+v19fWOYAiiui
+         QDc5i4YAjt6wmXXUMPHujkxZ5Fvd9kcjTjOidas4lEuH7z6xDya0RQ8RcbOtq7woOMCO
+         TNqBluKDFjTDpxtKO7fYznyLuVUD5GH5DGxmFPdcVAH0yvCIdW6RBOqQ3gwgVqX1gi39
+         9e7Sf97gkb0Q90KO+vYWsPXtaQePvZngDCHinKoMe5UWGEFm3hqFdXcDOEVIb1mgbhgT
+         qThQ==
+X-Gm-Message-State: AJIora/cw7V1qS/IP5j6UKWX0yqUDarjJxwypp3SSqGju42WvbHKKQ3D
+        CZuJaPVI1kc0x2fd8rf+y9YQQHeyGT3pe+KRw8A=
+X-Google-Smtp-Source: AGRyM1ttWT68UgN+Rc46Ac5PG1YpNjzWfiePHBmGn7NJyquiZSoFYih8qcY3rjMrbDxNpWSQCqulgS89b6u9UPfVJg8=
+X-Received: by 2002:a05:6402:3325:b0:42d:e1d8:99e9 with SMTP id
+ e37-20020a056402332500b0042de1d899e9mr1927169eda.87.1655324617605; Wed, 15
+ Jun 2022 13:23:37 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
-Content-Language: en-US
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     bhe@redhat.com, d.hatayama@jp.fujitsu.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Mark Rutland <mark.rutland@arm.com>, mikelley@microsoft.com,
-        vkuznets@redhat.com, akpm@linux-foundation.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        hidehiro.kawai.ez@hitachi.com, jgross@suse.com,
-        john.ogness@linutronix.de, keescook@chromium.org, luto@kernel.org,
-        mhiramat@kernel.org, mingo@redhat.com, paulmck@kernel.org,
-        peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, will@kernel.org
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com>
- <87fskzuh11.fsf@email.froward.int.ebiederm.org>
- <0d084eed-4781-c815-29c7-ac62c498e216@igalia.com> <Yqic0R8/UFqTbbMD@alley>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <Yqic0R8/UFqTbbMD@alley>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220615104833.3963552-1-windhl@126.com> <Yqm6LvDGqaRMaUHa@kroah.com>
+In-Reply-To: <Yqm6LvDGqaRMaUHa@kroah.com>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Thu, 16 Jun 2022 06:23:26 +1000
+Message-ID: <CAPM=9twCiqyakgPLz0v=7-abUhzLb8ZZH7-U65PV8qtQOP7Xww@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] drivers: tty: serial: Add missing
+ of_node_put() in serial-tegra.c
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     heliang <windhl@126.com>, linux-serial@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Perfect Petr, thanks for your feedback!
+On Wed, 15 Jun 2022 at 20:53, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Jun 15, 2022 at 06:48:33PM +0800, heliang wrote:
+> > In tegra_uart_init(), of_find_matching_node() will return a node
+> > pointer with refcount incremented. We should use of_node_put()
+> > when it is not used anymore.
+> >
+> > Signed-off-by: heliang <windhl@126.com>
+>
+> We need a real name please, one you sign documents with.
 
-I'll be out for some weeks, but after that what I'm doing is to split
-the series in 2 parts:
+How do we enforce that? What if Wong, Adele or Beyonce submit a patch?
 
-(a) The general fixes, which should be reviewed by subsystem maintainers
-and even merged individually by them.
+What happens if that patch gets reposted, with S-o-b: He Liang
+<windhl@126.com> or Hel Iang, Heli Ang? Do you know any of those are
+real names? What happens if they post a real name in
+Mandarin/Thai/Cyrillic, can you validate it?
 
-(b) The proper panic refactor, which includes the notifiers list split,
-etc. I'll think about what I consider the best solution for the
-crash_dump required ones, and will try to split in very simple patches
-to make it easier to review.
+Really we require you have an identity attached to an email. If there
+is a problem in the future, we'd prefer the email continues to work so
+that you are contactable. If you are submitting a small amount of
+changes it's probably never going to matter. If you are submitting
+larger bodies of work of course it would be good to have a company or
+larger org attached to track things down legally later, but again that
+isn't always possible.
 
-Cheers,
+I don't think alienating the numerous developers who no longer use
+their legal names are identified by one name, but haven't changed
+their legal one yet people who get married and change their legal name
+but don't change their contribution name and I could run this sentence
+on forever.
 
-
-Guilherme
+Dave.
