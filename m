@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E13CCA490
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 14:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6835CCA480
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 14:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377838AbiFPOfw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Jun 2022 10:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43212 "EHLO
+        id S1377842AbiFPOfx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Jun 2022 10:35:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377750AbiFPOfm (ORCPT
+        with ESMTP id S1377748AbiFPOfp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Jun 2022 10:35:42 -0400
+        Thu, 16 Jun 2022 10:35:45 -0400
 Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F7522CC81;
-        Thu, 16 Jun 2022 07:35:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109972125E;
+        Thu, 16 Jun 2022 07:35:40 -0700 (PDT)
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25G4igBi030693;
-        Thu, 16 Jun 2022 09:34:48 -0500
+        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25GC07CN027888;
+        Thu, 16 Jun 2022 09:34:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=FjIUzY5vic3Zh5VYRT9K5OX6UftqESCVghQUpCGyoBo=;
- b=EUWs6xMzzdsaVhXWSypyBqim7Tk88Wq/hlZ7i0EHh1AbfSllzhp2RoH0QtnOVtaJ2Llt
- CmyIH9+GpFCVY2/OPy8He9D1A3EfL0Xk2zGRiJ04o646JP2NOA26z2pUMeC9311xJZps
- SsYbUiJafits/a78FXmfVs7YgYG2vAkDkuvIF0qfc13POETWom8UXqaOqEm8TyhcMpeG
- Gu0852s+zZUKfY3E/3cLr2V34oeOXcP2/9yJTFT3pE6Gd45PKOwcXCeO2FPKa+pbgAY1
- rHaAzJ6nFJf8gNIpQB0puf3V6gCRZWIfsJJxBIBe7OvodAsxxCvAAY8b06ioct+fKNt2 NQ== 
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gmrf35vuw-13
+ bh=BhA/3TmllykAKe68L8ePJkdQcEbz436s3PFk6YMAMIY=;
+ b=SHfFYHrGPyYVb2wbF7u6oMSwMisw33cFwDcJ1I3+T3j/WGwAj7i7vV4cinIOibI647/y
+ liD7bijF0p8H9OVxNjyww0KdiEbu1Xq2VFNfCKuBtqsoJ6/FBPjgMGNUlVrSG9HgE6EJ
+ /EVl+eNO5xDRfwGxcr4wM2FXBMIlk1hNt8c5wQTWvsZGGswe3s6U8pFSJCox+gZwm/F4
+ XmpIHHR6gaWJxDfEYlLCFUOGgX3un52Gi9YQgFobl7C9i0g3BrZMYD/lx3fn45xg1cFZ
+ Wa1xaXLUmYhwzRr5aUlY2qdQFqIsd7bMX51O37ux+woSzsz3FwEwer2fVt7hqPQBEkwt 5g== 
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gmrf35vuu-20
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 16 Jun 2022 09:34:47 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 16 Jun 2022 09:34:50 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 16 Jun
- 2022 15:34:34 +0100
+ 2022 15:34:35 +0100
 Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 16 Jun 2022 15:34:34 +0100
+ Transport; Thu, 16 Jun 2022 15:34:35 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id A1BDB11DB;
-        Thu, 16 Jun 2022 14:34:34 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 4DB6D11D4;
+        Thu, 16 Jun 2022 14:34:35 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
@@ -60,17 +60,17 @@ CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
         <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
         <dri-devel@lists.freedesktop.org>,
         <linux-rpi-kernel@lists.infradead.org>
-Subject: [PATCH 60/96] ASoC: tas*: Remove now redundant non_legacy_dai_naming flag
-Date:   Thu, 16 Jun 2022 15:33:53 +0100
-Message-ID: <20220616143429.1324494-61-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 68/96] ASoC: ac97: Remove now redundant non_legacy_dai_naming flag
+Date:   Thu, 16 Jun 2022 15:34:01 +0100
+Message-ID: <20220616143429.1324494-69-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220616143429.1324494-1-ckeepax@opensource.cirrus.com>
 References: <20220616143429.1324494-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: xqRX8bURvElcWNIpqBUhtBxZZbZVp8Uk
-X-Proofpoint-ORIG-GUID: xqRX8bURvElcWNIpqBUhtBxZZbZVp8Uk
+X-Proofpoint-GUID: y1JbyBRFnRLUql40DMPPhb1kF1ssxXbc
+X-Proofpoint-ORIG-GUID: y1JbyBRFnRLUql40DMPPhb1kF1ssxXbc
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -82,141 +82,21 @@ the non_legacy_dai_naming flag.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/codecs/tas2552.c  | 1 -
- sound/soc/codecs/tas2562.c  | 2 --
- sound/soc/codecs/tas2764.c  | 1 -
- sound/soc/codecs/tas2770.c  | 1 -
- sound/soc/codecs/tas5086.c  | 1 -
- sound/soc/codecs/tas571x.c  | 1 -
- sound/soc/codecs/tas5720.c  | 2 --
- sound/soc/codecs/tas5805m.c | 1 -
- sound/soc/codecs/tas6424.c  | 1 -
- 9 files changed, 11 deletions(-)
+ sound/soc/codecs/ac97.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/codecs/tas2552.c b/sound/soc/codecs/tas2552.c
-index c98a9332dcc0e..bf3d8539a2688 100644
---- a/sound/soc/codecs/tas2552.c
-+++ b/sound/soc/codecs/tas2552.c
-@@ -668,7 +668,6 @@ static const struct snd_soc_component_driver soc_component_dev_tas2552 = {
- 	.num_dapm_routes	= ARRAY_SIZE(tas2552_audio_map),
- 	.idle_bias_on		= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct regmap_config tas2552_regmap_config = {
-diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
-index e62a3da16aed3..dc088a1c67213 100644
---- a/sound/soc/codecs/tas2562.c
-+++ b/sound/soc/codecs/tas2562.c
-@@ -589,7 +589,6 @@ static const struct snd_soc_component_driver soc_component_dev_tas2110 = {
+diff --git a/sound/soc/codecs/ac97.c b/sound/soc/codecs/ac97.c
+index 6ad9c9443b5db..cc12052e19204 100644
+--- a/sound/soc/codecs/ac97.c
++++ b/sound/soc/codecs/ac97.c
+@@ -119,7 +119,6 @@ static const struct snd_soc_component_driver soc_component_dev_ac97 = {
  	.idle_bias_on		= 1,
  	.use_pmdown_time	= 1,
  	.endianness		= 1,
 -	.non_legacy_dai_naming	= 1,
  };
  
- static const struct snd_soc_dapm_widget tas2562_dapm_widgets[] = {
-@@ -629,7 +628,6 @@ static const struct snd_soc_component_driver soc_component_dev_tas2562 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct snd_soc_dai_ops tas2562_speaker_dai_ops = {
-diff --git a/sound/soc/codecs/tas2764.c b/sound/soc/codecs/tas2764.c
-index d395feffb30b5..42f0c1e449ba4 100644
---- a/sound/soc/codecs/tas2764.c
-+++ b/sound/soc/codecs/tas2764.c
-@@ -548,7 +548,6 @@ static const struct snd_soc_component_driver soc_component_driver_tas2764 = {
- 	.num_dapm_routes	= ARRAY_SIZE(tas2764_audio_map),
- 	.idle_bias_on		= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct reg_default tas2764_reg_defaults[] = {
-diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
-index f6037a148cb60..3cb634c282610 100644
---- a/sound/soc/codecs/tas2770.c
-+++ b/sound/soc/codecs/tas2770.c
-@@ -546,7 +546,6 @@ static const struct snd_soc_component_driver soc_component_driver_tas2770 = {
- 	.num_dapm_routes	= ARRAY_SIZE(tas2770_audio_map),
- 	.idle_bias_on		= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int tas2770_register_codec(struct tas2770_priv *tas2770)
-diff --git a/sound/soc/codecs/tas5086.c b/sound/soc/codecs/tas5086.c
-index 05b57bb1aea04..a864984225bc4 100644
---- a/sound/soc/codecs/tas5086.c
-+++ b/sound/soc/codecs/tas5086.c
-@@ -888,7 +888,6 @@ static const struct snd_soc_component_driver soc_component_dev_tas5086 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct i2c_device_id tas5086_i2c_id[] = {
-diff --git a/sound/soc/codecs/tas571x.c b/sound/soc/codecs/tas571x.c
-index 7b599664db205..4e7f20db57c4d 100644
---- a/sound/soc/codecs/tas571x.c
-+++ b/sound/soc/codecs/tas571x.c
-@@ -756,7 +756,6 @@ static const struct snd_soc_component_driver tas571x_component = {
- 	.num_dapm_routes	= ARRAY_SIZE(tas571x_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static struct snd_soc_dai_driver tas571x_dai = {
-diff --git a/sound/soc/codecs/tas5720.c b/sound/soc/codecs/tas5720.c
-index 2ee06a95f3e4f..3885c0bf0b01c 100644
---- a/sound/soc/codecs/tas5720.c
-+++ b/sound/soc/codecs/tas5720.c
-@@ -572,7 +572,6 @@ static const struct snd_soc_component_driver soc_component_dev_tas5720 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct snd_soc_component_driver soc_component_dev_tas5722 = {
-@@ -589,7 +588,6 @@ static const struct snd_soc_component_driver soc_component_dev_tas5722 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- /* PCM rates supported by the TAS5720 driver */
-diff --git a/sound/soc/codecs/tas5805m.c b/sound/soc/codecs/tas5805m.c
-index fa0e81ec875ad..b1bb614534f74 100644
---- a/sound/soc/codecs/tas5805m.c
-+++ b/sound/soc/codecs/tas5805m.c
-@@ -367,7 +367,6 @@ static const struct snd_soc_component_driver soc_codec_dev_tas5805m = {
- 	.num_dapm_routes	= ARRAY_SIZE(tas5805m_audio_map),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int tas5805m_mute(struct snd_soc_dai *dai, int mute, int direction)
-diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
-index 9c9a6ec4d9779..63d2983c3fcf4 100644
---- a/sound/soc/codecs/tas6424.c
-+++ b/sound/soc/codecs/tas6424.c
-@@ -375,7 +375,6 @@ static struct snd_soc_component_driver soc_codec_dev_tas6424 = {
- 	.num_dapm_routes	= ARRAY_SIZE(tas6424_audio_map),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct snd_soc_dai_ops tas6424_speaker_dai_ops = {
+ static int ac97_probe(struct platform_device *pdev)
 -- 
 2.30.2
 
