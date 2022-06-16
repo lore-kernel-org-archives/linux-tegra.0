@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBE9C19F55
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 14:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19530CCA489
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 14:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377933AbiFPOgU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Jun 2022 10:36:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43404 "EHLO
+        id S1377843AbiFPOgV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Jun 2022 10:36:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377739AbiFPOfu (ORCPT
+        with ESMTP id S1377822AbiFPOfu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Thu, 16 Jun 2022 10:35:50 -0400
 Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 911C52019A;
-        Thu, 16 Jun 2022 07:35:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E23612DD65;
+        Thu, 16 Jun 2022 07:35:48 -0700 (PDT)
 Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25GBnCaH029573;
-        Thu, 16 Jun 2022 09:34:40 -0500
+        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25GBnCaN029573;
+        Thu, 16 Jun 2022 09:34:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=AuKuyKNZw717+uoDrwMCyNmlv5xTJLfHOsVukkcHHpE=;
- b=hy/RJmchhYf2McZR9VDMpFtZU2+aDxfiSpKlaNsCC9Z51j2YSCcH3OxxTWffCR/T5yEW
- ncMr97kW7/CaxIKuiRbX9dg30sYriPFwTlSRDWpOIBdqVwUW/seUro+kA+xb8lpzvIF9
- 34ITMaAyG6G4AnlHnz+Hsx16O0QgNDyWM51BfbQaCHgga5DthktVBRJ+1bPWQnsAyXm2
- 8CMGUyo35UmKG6W59zyXRBYt1/J2xF7t0Hcbjotfbg0w/FOySETaHqbwtYuNbILIHUQ8
- sud1Q2MLV9jP9Cnz3qIAP2+bXYygdiguPQVi/UztQEhRqETntT7ZRmWHz4P63thlHvQr 0w== 
+ bh=UJuHWsEpHcokhmwrN5fDMiRU1wxk1Rq6SwDqBfahFe8=;
+ b=ZtLjH2jITqDxo5HxkOsBH4/LYuu+WWdElHfHDAs43NxQ+f54ymf+tjIn+63BGloD4NpJ
+ 9cq7oeJVUI/ZSnKSV7AGToHksISHPAWPc02HRYHhsWjISPqjwTAkEXcgu20or7sKPRio
+ wlbsi/SirbkHNvf59BWV75lJUKJvE9GVPlzOwa61IswMvl6/m09/cXWsVfW6Py+0G7eG
+ 4JS335B+Gu++EEF58YKGkgKbhr7wFKgRevMDudgHczqnT8qL6QmBa9iYFYhlIUsHEEeF
+ yqSCXN8aBMVj3fJqHWLvnHHHYmLmZ8Nx0vlwQOOJ4G64cDmW7lmBO0awnGo9hiKSbYcT Kw== 
 Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3gmqfq5w3m-1
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3gmqfq5w3m-7
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 16 Jun 2022 09:34:39 -0500
+        Thu, 16 Jun 2022 09:34:44 -0500
 Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 16 Jun
- 2022 15:34:31 +0100
+ 2022 15:34:33 +0100
 Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 16 Jun 2022 15:34:31 +0100
+ Transport; Thu, 16 Jun 2022 15:34:33 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 6438211DA;
-        Thu, 16 Jun 2022 14:34:31 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 8E41B11D3;
+        Thu, 16 Jun 2022 14:34:33 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
@@ -60,149 +60,43 @@ CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
         <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
         <dri-devel@lists.freedesktop.org>,
         <linux-rpi-kernel@lists.infradead.org>
-Subject: [PATCH 19/96] ASoC: atmel: Migrate to new style legacy DAI naming flag
-Date:   Thu, 16 Jun 2022 15:33:12 +0100
-Message-ID: <20220616143429.1324494-20-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 45/96] ASoC: uniphier: Remove now redundant non_legacy_dai_naming flag
+Date:   Thu, 16 Jun 2022 15:33:38 +0100
+Message-ID: <20220616143429.1324494-46-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220616143429.1324494-1-ckeepax@opensource.cirrus.com>
 References: <20220616143429.1324494-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: XK1mXDM8VK7gqhnn2rZ5vFGAYw1H0flu
-X-Proofpoint-GUID: XK1mXDM8VK7gqhnn2rZ5vFGAYw1H0flu
+X-Proofpoint-ORIG-GUID: qjLHDRidj9HdpbM3NirBhuKFY2fD0dT5
+X-Proofpoint-GUID: qjLHDRidj9HdpbM3NirBhuKFY2fD0dT5
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Change the legacy DAI naming flag from opting in to the new scheme
-(non_legacy_dai_naming), to opting out of it (legacy_dai_naming).
-These drivers appear to be on the CPU side of the DAI link and
-currently uses the legacy naming, so add the new flag.
+The ASoC core has now been changed to default to the non-legacy DAI
+naming, as such drivers using the new scheme no longer need to specify
+the non_legacy_dai_naming flag.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/atmel/atmel-classd.c  | 1 +
- sound/soc/atmel/atmel-i2s.c     | 3 ++-
- sound/soc/atmel/atmel-pdmic.c   | 1 +
- sound/soc/atmel/atmel_ssc_dai.c | 7 ++++---
- sound/soc/atmel/mchp-i2s-mcc.c  | 3 ++-
- sound/soc/atmel/mchp-pdmc.c     | 1 +
- sound/soc/atmel/mchp-spdifrx.c  | 3 ++-
- sound/soc/atmel/mchp-spdiftx.c  | 3 ++-
- 8 files changed, 15 insertions(+), 7 deletions(-)
+ sound/soc/uniphier/evea.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
-index 74b7b2611aa70..87d6d6ed026b3 100644
---- a/sound/soc/atmel/atmel-classd.c
-+++ b/sound/soc/atmel/atmel-classd.c
-@@ -458,6 +458,7 @@ static const struct snd_soc_component_driver atmel_classd_cpu_dai_component = {
- 	.num_controls		= ARRAY_SIZE(atmel_classd_snd_controls),
+diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
+index 96343d19a1e0f..42403ae8e31b2 100644
+--- a/sound/soc/uniphier/evea.c
++++ b/sound/soc/uniphier/evea.c
+@@ -397,7 +397,6 @@ static struct snd_soc_component_driver soc_codec_evea = {
  	.idle_bias_on		= 1,
  	.use_pmdown_time	= 1,
-+	.legacy_dai_naming	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
  };
  
- /* ASoC sound card */
-diff --git a/sound/soc/atmel/atmel-i2s.c b/sound/soc/atmel/atmel-i2s.c
-index ba56d6ac7e571..425d66edbf867 100644
---- a/sound/soc/atmel/atmel-i2s.c
-+++ b/sound/soc/atmel/atmel-i2s.c
-@@ -564,7 +564,8 @@ static struct snd_soc_dai_driver atmel_i2s_dai = {
- };
- 
- static const struct snd_soc_component_driver atmel_i2s_component = {
--	.name	= "atmel-i2s",
-+	.name			= "atmel-i2s",
-+	.legacy_dai_naming	= 1,
- };
- 
- static int atmel_i2s_sama5d2_mck_init(struct atmel_i2s_dev *dev,
-diff --git a/sound/soc/atmel/atmel-pdmic.c b/sound/soc/atmel/atmel-pdmic.c
-index ea34efac2fff5..77ff12baead5b 100644
---- a/sound/soc/atmel/atmel-pdmic.c
-+++ b/sound/soc/atmel/atmel-pdmic.c
-@@ -481,6 +481,7 @@ static const struct snd_soc_component_driver atmel_pdmic_cpu_dai_component = {
- 	.num_controls		= ARRAY_SIZE(atmel_pdmic_snd_controls),
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
-+	.legacy_dai_naming	= 1,
- };
- 
- /* ASoC sound card */
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index c92905e343e7e..8aae0beadcfe4 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -858,9 +858,10 @@ static struct snd_soc_dai_driver atmel_ssc_dai = {
- };
- 
- static const struct snd_soc_component_driver atmel_ssc_component = {
--	.name		= "atmel-ssc",
--	.suspend	= atmel_ssc_suspend,
--	.resume		= atmel_ssc_resume,
-+	.name			= "atmel-ssc",
-+	.suspend		= atmel_ssc_suspend,
-+	.resume			= atmel_ssc_resume,
-+	.legacy_dai_naming	= 1,
- };
- 
- static int asoc_ssc_init(struct device *dev)
-diff --git a/sound/soc/atmel/mchp-i2s-mcc.c b/sound/soc/atmel/mchp-i2s-mcc.c
-index 269eab56b6dd9..6dfb96c576ff3 100644
---- a/sound/soc/atmel/mchp-i2s-mcc.c
-+++ b/sound/soc/atmel/mchp-i2s-mcc.c
-@@ -928,7 +928,8 @@ static struct snd_soc_dai_driver mchp_i2s_mcc_dai = {
- };
- 
- static const struct snd_soc_component_driver mchp_i2s_mcc_component = {
--	.name	= "mchp-i2s-mcc",
-+	.name			= "mchp-i2s-mcc",
-+	.legacy_dai_naming	= 1,
- };
- 
- #ifdef CONFIG_OF
-diff --git a/sound/soc/atmel/mchp-pdmc.c b/sound/soc/atmel/mchp-pdmc.c
-index b9f6370594482..aba7c5cde62c6 100644
---- a/sound/soc/atmel/mchp-pdmc.c
-+++ b/sound/soc/atmel/mchp-pdmc.c
-@@ -423,6 +423,7 @@ static const struct snd_soc_component_driver mchp_pdmc_dai_component = {
- 	.num_controls = ARRAY_SIZE(mchp_pdmc_snd_controls),
- 	.open = &mchp_pdmc_open,
- 	.close = &mchp_pdmc_close,
-+	.legacy_dai_naming = 1,
- };
- 
- static const unsigned int mchp_pdmc_1mic[] = {1};
-diff --git a/sound/soc/atmel/mchp-spdifrx.c b/sound/soc/atmel/mchp-spdifrx.c
-index 5fc968483f2c8..0d37b78b94a09 100644
---- a/sound/soc/atmel/mchp-spdifrx.c
-+++ b/sound/soc/atmel/mchp-spdifrx.c
-@@ -846,7 +846,8 @@ static struct snd_soc_dai_driver mchp_spdifrx_dai = {
- };
- 
- static const struct snd_soc_component_driver mchp_spdifrx_component = {
--	.name		= "mchp-spdifrx",
-+	.name			= "mchp-spdifrx",
-+	.legacy_dai_naming	= 1,
- };
- 
- static const struct of_device_id mchp_spdifrx_dt_ids[] = {
-diff --git a/sound/soc/atmel/mchp-spdiftx.c b/sound/soc/atmel/mchp-spdiftx.c
-index d243800464352..78d5bcf0819a3 100644
---- a/sound/soc/atmel/mchp-spdiftx.c
-+++ b/sound/soc/atmel/mchp-spdiftx.c
-@@ -753,7 +753,8 @@ static struct snd_soc_dai_driver mchp_spdiftx_dai = {
- };
- 
- static const struct snd_soc_component_driver mchp_spdiftx_component = {
--	.name		= "mchp-spdiftx",
-+	.name			= "mchp-spdiftx",
-+	.legacy_dai_naming	= 1,
- };
- 
- static const struct of_device_id mchp_spdiftx_dt_ids[] = {
+ static struct snd_soc_dai_driver soc_dai_evea[] = {
 -- 
 2.30.2
 
