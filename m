@@ -2,709 +2,79 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A96FC43334
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 00:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C195C43334
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 01:47:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350621AbiFPAzO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 20:55:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
+        id S1348954AbiFPBrn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 21:47:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350656AbiFPAyf (ORCPT
+        with ESMTP id S1344998AbiFPBrT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 20:54:35 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D452457B3A
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Jun 2022 17:54:24 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id z14so8768609pgh.0
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Jun 2022 17:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rJ1HrRyo5FWcLkbF8euDS8gLFRpt8ZVSJLGa36Wuq9I=;
-        b=a6wkntQJI2Nq34g/YlI3p0RpXffBXSct3Tm6HJvwXq5gJuk0DKnCnu0HHK4YLjAdEv
-         DnnneYiWZ46nX7J4P7b2jp0l8tPF/sC9QjUxLID4gm2VUtdcuaWWBmW3RFbe25J0YFd8
-         pl6bMU1FXulmpVyNZHpu8lrYcaygfnysnxQNrwmgBsSdQywx1oQDiXnzTCd4rEwRsGvb
-         1hR3eGdKBL2fT8Me9BBD8lkMDfqHKQ5ISnCJ/04mmmNAmzJ8TsBEAOQKQkp+U+akcb98
-         q80NkYEiAkKhCErkle3DoHuYNpyPxmKxxsecocv1BEO434WPyFTrszdadoN1nPPHDci2
-         F3UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rJ1HrRyo5FWcLkbF8euDS8gLFRpt8ZVSJLGa36Wuq9I=;
-        b=h0W/PCS6i1kQQLI4Wc4/PCra3OfW0xyi+QCX8dXwNszRv9TRuImSr4OWjS6ZFTcfA5
-         XX6THuAmGFtGKG0z39qvmKUGwU0zT4x8EIYfmerLv93lu/gIQz+Mzq5agNh5eBMiEvZd
-         tfcphNh7Iw6n5BJM+Su86I0mJrR1QNyZT2fTaoM7YG04gZxcrZRtyeXC8EooerfZ9i4c
-         i5lm/OF819oxM5Kplgy+yBCBxJedQiOtBevBNIo9XI92z9yMfn9KyUdeQkIDPFklxKkS
-         iU6KHCboJpM1lAwwdg2hIISf3QD7bUKB1h/WiASaAFPKiAwfzas5qR+c3cc+KYLqp6lu
-         ExJA==
-X-Gm-Message-State: AJIora9WZUM6Y4FeNKWHxCTSGYp206rnKWKBw4+x/c2vckw/DQbFOYjM
-        e2nXtafedFT+hfd7fapSh7dGWA==
-X-Google-Smtp-Source: AGRyM1u8yPfdiYGb7wuhgOAUhI8a6OvKXS6+S1oKH1KqRZQzZNl+eRUGbfyKk5kwjouwf2C3QqY5Fw==
-X-Received: by 2002:a05:6a00:1a87:b0:51c:29f1:13a0 with SMTP id e7-20020a056a001a8700b0051c29f113a0mr2278776pfv.13.1655340863686;
-        Wed, 15 Jun 2022 17:54:23 -0700 (PDT)
-Received: from krzk-bin.. ([192.77.111.2])
-        by smtp.gmail.com with ESMTPSA id p4-20020a170902780400b0016760c06b76sm233660pll.194.2022.06.15.17.54.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 17:54:23 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 20/40] ARM: dts: tegra: align gpio-key node names with dtschema
-Date:   Wed, 15 Jun 2022 17:53:13 -0700
-Message-Id: <20220616005333.18491-20-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220616005224.18391-1-krzysztof.kozlowski@linaro.org>
-References: <20220616005224.18391-1-krzysztof.kozlowski@linaro.org>
+        Wed, 15 Jun 2022 21:47:19 -0400
+Received: from m15113.mail.126.com (m15113.mail.126.com [220.181.15.113])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2E663579AA;
+        Wed, 15 Jun 2022 18:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=1icBp
+        5p0Rg4t5QP7pXu7euYCDr/0Q6K0TcaAKQpB4i0=; b=XdUB94F7618pZ2LNG/vIR
+        Fv3OMtc6WYp3RG4SI6KEj/0c0TxLeLVrJeaJaWrCY3l/5CT1gShqxGSXYP09QsH9
+        1aX1SvQrwuU1H7DuWjbFUBLZnkDLLnQIaQhk+3o4VB2lR5hUR8x043tWMpB++Tlw
+        3Iw6BEp/qy6XP5gVYL32O8=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp3 (Coremail) with SMTP id DcmowADHYJJ9i6pi+1CxDQ--.61740S2;
+        Thu, 16 Jun 2022 09:46:46 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, digetx@gmail.com, ndesaulniers@google.com,
+        ulf.hansson@linaro.org, skamble@nvidia.com, nathan@kernel.org,
+        kkartik@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        windhl@126.com
+Subject: [PATCH v2] soc: tegra: fuse: Add missing of_node_put in tegra_init_fuse
+Date:   Thu, 16 Jun 2022 09:46:36 +0800
+Message-Id: <20220616014636.3972830-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DcmowADHYJJ9i6pi+1CxDQ--.61740S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKFW3GryrZw1rAw4fKFy3Jwb_yoW3KFc_Xa
+        1xWFZ7XF1UWanYva40qrWfZFy2yF4Iqrnaqr4Iv3W2k3W7Zr17GFsIvr17Ca4a9wsrCFW5
+        GryDZFyayr13AjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRt73kDUUUUU==
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGgAiF1-HZTo2ggAAsc
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The node names should be generic and DT schema expects certain pattern
-(e.g. with key/button/switch).
+In this function, of_find_matching_node() will return a node
+pointer with refcount incremented. We should use of_node_put
+when the pointer *np* is not used anymore.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Liang He <windhl@126.com>
 ---
- arch/arm/boot/dts/tegra114-asus-tf701t.dts             |  8 ++++----
- arch/arm/boot/dts/tegra114-dalmore.dts                 |  8 ++++----
- arch/arm/boot/dts/tegra114-roth.dts                    |  6 +++---
- arch/arm/boot/dts/tegra114-tn7.dts                     |  6 +++---
- arch/arm/boot/dts/tegra124-apalis-eval.dts             |  2 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts        |  2 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts              |  2 +-
- arch/arm/boot/dts/tegra124-nyan.dtsi                   |  4 ++--
- arch/arm/boot/dts/tegra124-venice2.dts                 |  2 +-
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts        |  8 ++++----
- arch/arm/boot/dts/tegra20-asus-tf101.dts               |  8 ++++----
- arch/arm/boot/dts/tegra20-colibri-eval-v3.dts          |  2 +-
- arch/arm/boot/dts/tegra20-colibri-iris.dts             |  2 +-
- arch/arm/boot/dts/tegra20-harmony.dts                  |  2 +-
- arch/arm/boot/dts/tegra20-paz00.dts                    |  2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts                 |  4 ++--
- arch/arm/boot/dts/tegra20-trimslice.dts                |  2 +-
- arch/arm/boot/dts/tegra20-ventana.dts                  |  2 +-
- arch/arm/boot/dts/tegra30-apalis-eval.dts              |  2 +-
- arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts         |  2 +-
- .../boot/dts/tegra30-asus-nexus7-grouper-common.dtsi   |  8 ++++----
- arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi | 10 +++++-----
- arch/arm/boot/dts/tegra30-cardhu.dtsi                  |  6 +++---
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts          |  2 +-
- arch/arm/boot/dts/tegra30-ouya.dts                     |  2 +-
- arch/arm/boot/dts/tegra30-pegatron-chagall.dts         | 10 +++++-----
- 26 files changed, 57 insertions(+), 57 deletions(-)
+ changelog:
 
-diff --git a/arch/arm/boot/dts/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/tegra114-asus-tf701t.dts
-index b791ce97424b..b44b2371cd56 100644
---- a/arch/arm/boot/dts/tegra114-asus-tf701t.dts
-+++ b/arch/arm/boot/dts/tegra114-asus-tf701t.dts
-@@ -684,7 +684,7 @@ gpio-keys {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&gpio_keys_default>;
- 
--		power {
-+		button-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-@@ -692,14 +692,14 @@ power {
- 			wakeup-source;
- 		};
- 
--		volume-up {
-+		button-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
- 			debounce-interval = <10>;
- 		};
- 
--		volume-down {
-+		button-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
-@@ -715,7 +715,7 @@ gpio-hall-sensor {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&gpio_hall_sensor_default>;
- 
--		hall-sensor {
-+		event-hall-sensor {
- 			label = "Hall Effect Sensor";
- 			gpios = <&gpio TEGRA_GPIO(O, 5) GPIO_ACTIVE_LOW>;
- 			linux,input-type = <EV_SW>;
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 658edfb8d7fa..fffd62bcea6a 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -1161,26 +1161,26 @@ clk32k_in: clock-32k {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		home {
-+		key-home {
- 			label = "Home";
- 			gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_HOME>;
- 		};
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
- 			wakeup-source;
- 		};
- 
--		volume_down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
- 		};
- 
--		volume_up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
-diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
-index 2498cf18fd39..b9d00009d1f4 100644
---- a/arch/arm/boot/dts/tegra114-roth.dts
-+++ b/arch/arm/boot/dts/tegra114-roth.dts
-@@ -1025,19 +1025,19 @@ clk32k_in: clock-32k {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		back {
-+		key-back {
- 			label = "Back";
- 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_BACK>;
- 		};
- 
--		home {
-+		key-home {
- 			label = "Home";
- 			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_HOME>;
- 		};
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
-index ef8f722dd9cb..f02d8c79eee7 100644
---- a/arch/arm/boot/dts/tegra114-tn7.dts
-+++ b/arch/arm/boot/dts/tegra114-tn7.dts
-@@ -282,20 +282,20 @@ clk32k_in: clock-32k {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
- 			wakeup-source;
- 		};
- 
--		volume_down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(Q, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
- 		};
- 
--		volume_up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index 3209554ec7e6..bce12b3411fc 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -191,7 +191,7 @@ backlight: backlight {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		wakeup {
-+		key-wakeup {
- 			label = "WAKE1_MICO";
- 			gpios = <&gpio TEGRA_GPIO(DD, 3) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_WAKEUP>;
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index 814257c79bf1..800283ad6bdc 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -193,7 +193,7 @@ backlight: backlight {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		wakeup {
-+		key-wakeup {
- 			label = "WAKE1_MICO";
- 			gpios = <&gpio TEGRA_GPIO(DD, 3) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_WAKEUP>;
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index 28b889e4e33b..f41dd4039c07 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1886,7 +1886,7 @@ cpu@0 {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
-index a93cfb492ba1..13061ab5247b 100644
---- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-+++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-@@ -603,7 +603,7 @@ cpu@0 {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		lid {
-+		switch-lid {
- 			label = "Lid";
- 			gpios = <&gpio TEGRA_GPIO(R, 4) GPIO_ACTIVE_LOW>;
- 			linux,input-type = <5>;
-@@ -612,7 +612,7 @@ lid {
- 			wakeup-source;
- 		};
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index 6a9592ceb5f2..8f40fcfc11b0 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -1078,7 +1078,7 @@ clk32k_in: clock-32k {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index bf1126d26aff..dac6d02a1b15 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -905,7 +905,7 @@ panel_input: endpoint {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(I, 3) GPIO_ACTIVE_HIGH>;
- 			linux,code = <KEY_POWER>;
-@@ -914,7 +914,7 @@ power {
- 			wakeup-source;
- 		};
- 
--		rotation-lock {
-+		key-rotation-lock {
- 			label = "Rotate-lock";
- 			gpios = <&gpio TEGRA_GPIO(Q, 2) GPIO_ACTIVE_HIGH>;
- 			linux,code = <SW_ROTATE_LOCK>;
-@@ -922,7 +922,7 @@ rotation-lock {
- 			debounce-interval = <10>;
- 		};
- 
--		volume-up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(Q, 4) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
-@@ -931,7 +931,7 @@ volume-up {
- 			wakeup-source;
- 		};
- 
--		volume-down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(Q, 5) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
-diff --git a/arch/arm/boot/dts/tegra20-asus-tf101.dts b/arch/arm/boot/dts/tegra20-asus-tf101.dts
-index f3b0166f7a9c..62db602c7205 100644
---- a/arch/arm/boot/dts/tegra20-asus-tf101.dts
-+++ b/arch/arm/boot/dts/tegra20-asus-tf101.dts
-@@ -980,7 +980,7 @@ cpu1: cpu@1 {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		dock-hall-sensor {
-+		event-dock-hall-sensor {
- 			label = "Lid";
- 			gpios = <&gpio TEGRA_GPIO(S, 4) GPIO_ACTIVE_LOW>;
- 			linux,input-type = <EV_SW>;
-@@ -990,7 +990,7 @@ dock-hall-sensor {
- 			wakeup-source;
- 		};
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-@@ -999,7 +999,7 @@ power {
- 			wakeup-source;
- 		};
- 
--		volume-up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(Q, 5) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
-@@ -1008,7 +1008,7 @@ volume-up {
- 			wakeup-source;
- 		};
- 
--		volume-down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(Q, 4) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
-diff --git a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
-index d2a3bf9d28bd..cb1190b77db3 100644
---- a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
-@@ -209,7 +209,7 @@ clk16m: osc3 {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		wakeup {
-+		key-wakeup {
- 			label = "SODIMM pin 45 wakeup";
- 			gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
- 			linux,code = <KEY_WAKEUP>;
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 00ecbbd5e9e1..53487cc21513 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -191,7 +191,7 @@ backlight: backlight {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		wakeup {
-+		key-wakeup {
- 			label = "SODIMM pin 45 wakeup";
- 			gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
- 			linux,code = <KEY_WAKEUP>;
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index 79b6b79fab65..11f21aeba8e9 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -648,7 +648,7 @@ clk32k_in: clock-32k {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index 0fb4b1f5bc1c..48fe628c6d87 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -596,7 +596,7 @@ clk32k_in: clock-32k {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		wakeup {
-+		key-wakeup {
- 			label = "Wakeup";
- 			gpios = <&gpio TEGRA_GPIO(J, 7) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_WAKEUP>;
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index c4a6a6a94559..5b4c5ef30996 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -800,14 +800,14 @@ clk32k_in: clock-32k {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
- 			wakeup-source;
- 		};
- 
--		lid {
-+		switch-lid {
- 			label = "Lid";
- 			gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_HIGH>;
- 			linux,input-type = <5>; /* EV_SW */
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 9d0c86711de2..dc51835423a9 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -388,7 +388,7 @@ clk32k_in: clock-32k {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(X, 6) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index b0a00970b61c..caa17e876e41 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -628,7 +628,7 @@ cpu1: cpu@1 {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 93b83b3c5655..ad968ff968d7 100644
---- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -181,7 +181,7 @@ backlight: backlight {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		wakeup {
-+		key-wakeup {
- 			label = "WAKE1_MICO";
- 			gpios = <&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_WAKEUP>;
-diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts b/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
-index fbfa75e53f32..c172fdb5e1ae 100644
---- a/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
-+++ b/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
-@@ -182,7 +182,7 @@ backlight: backlight {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		wakeup {
-+		key-wakeup {
- 			label = "WAKE1_MICO";
- 			gpios = <&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_WAKEUP>;
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-index 55e6171a411d..5ed6b4dca100 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -1124,7 +1124,7 @@ trusted-foundations {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		hall-sensor {
-+		event-hall-sensor {
- 			label = "Lid";
- 			gpios = <&gpio TEGRA_GPIO(S, 6) GPIO_ACTIVE_LOW>;
- 			linux,input-type = <EV_SW>;
-@@ -1134,7 +1134,7 @@ hall-sensor {
- 			wakeup-source;
- 		};
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-@@ -1143,7 +1143,7 @@ power {
- 			wakeup-source;
- 		};
- 
--		volume-up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(Q, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
-@@ -1152,7 +1152,7 @@ volume-up {
- 			wakeup-source;
- 		};
- 
--		volume-down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(Q, 3) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
-diff --git a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-index c662ab261ed5..58159b789688 100644
---- a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-@@ -1511,7 +1511,7 @@ extcon-keys {
- 		compatible = "gpio-keys";
- 		interrupt-parent = <&gpio>;
- 
--		dock-hall-sensor {
-+		event-dock-hall-sensor {
- 			label = "Lid sensor";
- 			gpios = <&gpio TEGRA_GPIO(S, 6) GPIO_ACTIVE_LOW>;
- 			linux,input-type = <EV_SW>;
-@@ -1521,7 +1521,7 @@ dock-hall-sensor {
- 			wakeup-source;
- 		};
- 
--		lineout-detect {
-+		event-lineout-detect {
- 			label = "Audio dock line-out detect";
- 			gpios = <&gpio TEGRA_GPIO(X, 3) GPIO_ACTIVE_LOW>;
- 			linux,input-type = <EV_SW>;
-@@ -1544,7 +1544,7 @@ gpio-keys {
- 		compatible = "gpio-keys";
- 		interrupt-parent = <&gpio>;
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-@@ -1553,7 +1553,7 @@ power {
- 			wakeup-source;
- 		};
- 
--		volume-up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(Q, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
-@@ -1562,7 +1562,7 @@ volume-up {
- 			wakeup-source;
- 		};
- 
--		volume-down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(Q, 3) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index ba257ed36d9c..540530c983ff 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -685,7 +685,7 @@ map0 {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			interrupt-parent = <&pmic>;
- 			interrupts = <2 0>;
-@@ -694,14 +694,14 @@ power {
- 			wakeup-source;
- 		};
- 
--		volume-down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
- 			debounce-interval = <10>;
- 		};
- 
--		volume-up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
-diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index 7d4a6ca4936a..8dbc15f9a9e4 100644
---- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -145,7 +145,7 @@ clk16m: osc3 {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		wakeup {
-+		key-wakeup {
- 			label = "SODIMM pin 45 wakeup";
- 			gpios = <&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_HIGH>;
- 			linux,code = <KEY_WAKEUP>;
-diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
-index e58dda4f9d2c..b7acea39b942 100644
---- a/arch/arm/boot/dts/tegra30-ouya.dts
-+++ b/arch/arm/boot/dts/tegra30-ouya.dts
-@@ -4764,7 +4764,7 @@ usb3_vbus_reg: usb3_vbus_reg {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
-+		key-power {
- 			gpios = <&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
- 			debounce-interval = <10>;
- 			linux,code = <KEY_POWER>;
-diff --git a/arch/arm/boot/dts/tegra30-pegatron-chagall.dts b/arch/arm/boot/dts/tegra30-pegatron-chagall.dts
-index 8ce61035290b..8b22d12dd0e2 100644
---- a/arch/arm/boot/dts/tegra30-pegatron-chagall.dts
-+++ b/arch/arm/boot/dts/tegra30-pegatron-chagall.dts
-@@ -2655,7 +2655,7 @@ extcon-keys {
- 		compatible = "gpio-keys";
- 		interrupt-parent = <&gpio>;
- 
--		dock-insert {
-+		event-dock-insert {
- 			label = "Chagall Dock";
- 			gpios = <&gpio TEGRA_GPIO(S, 4) GPIO_ACTIVE_LOW>;
- 			linux,input-type = <EV_SW>;
-@@ -2665,7 +2665,7 @@ dock-insert {
- 			wakeup-source;
- 		};
- 
--		lineout-detect {
-+		event-lineout-detect {
- 			label = "Audio dock line-out detect";
- 			gpios = <&gpio TEGRA_GPIO(S, 3) GPIO_ACTIVE_LOW>;
- 			linux,input-type = <EV_SW>;
-@@ -2688,7 +2688,7 @@ gpio-keys {
- 		compatible = "gpio-keys";
- 		interrupt-parent = <&gpio>;
- 
--		power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-@@ -2697,7 +2697,7 @@ power {
- 			wakeup-source;
- 		};
- 
--		volume-up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
-@@ -2706,7 +2706,7 @@ volume-up {
- 			wakeup-source;
- 		};
- 
--		volume-down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(Q, 1) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
+ v2: use real name for Sob
+ v1: fix the bug
+
+
+ drivers/soc/tegra/fuse/fuse-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index b0a8405dbdb1..6542267a224d 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -568,6 +568,7 @@ static int __init tegra_init_fuse(void)
+ 	np = of_find_matching_node(NULL, car_match);
+ 	if (np) {
+ 		void __iomem *base = of_iomap(np, 0);
++		of_node_put(np);
+ 		if (base) {
+ 			tegra_enable_fuse_clk(base);
+ 			iounmap(base);
 -- 
-2.34.1
+2.25.1
 
