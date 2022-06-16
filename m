@@ -2,107 +2,82 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5537BC43334
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 10:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC71CCA47A
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 13:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231492AbiFPKbo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Jun 2022 06:31:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47666 "EHLO
+        id S231823AbiFPNQz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Jun 2022 09:16:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiFPKbo (ORCPT
+        with ESMTP id S230392AbiFPNQy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Jun 2022 06:31:44 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68CD65DBDC;
-        Thu, 16 Jun 2022 03:31:43 -0700 (PDT)
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25G5bV9E020293;
-        Thu, 16 Jun 2022 05:30:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=SWjGMvo8oAklPuUAPr0GO8gsjG1MhEdsELaW6hchfiw=;
- b=BipmMncsH74v8veNumsPG80f69ITxRoIc7MJV5Zi2rL3bQ5+mk51dE2OhSzmVSXcq7gH
- PEGgFbnUqvwGXfIrqJ+5fjoPCs/Ec0Xkqzid+BtBguxF7AGz3jEk9HM97FUnz0llfj2J
- SnaDhpCKFjCiclLcSST3ThiOhMPJANt3/jQlGnqJBJU3znPc2cnzoHs2T5JeP00r4vW1
- +i2GvVWeZtsvJEW+DVZc6JY+bzUtTbpkOGfl5P2UwepAFVGjZ9KNqVBGJKLeMv/iBE60
- omgqxkY1nHhzKD6lTOH8noQqMiYRamjt+moKRGOZFv1oaYgr5Yax3RQkuoMHdxAE2o+x DQ== 
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gmrf35mrv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 16 Jun 2022 05:30:47 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 16 Jun
- 2022 11:30:45 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 16 Jun 2022 11:30:45 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 59ACC11D1;
-        Thu, 16 Jun 2022 10:30:45 +0000 (UTC)
-Date:   Thu, 16 Jun 2022 10:30:45 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Sameer Pujar <spujar@nvidia.com>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: Fix clock DAI format on Tegra210
-Message-ID: <20220616103045.GD38351@ediswmail.ad.cirrus.com>
-References: <1655280277-4701-1-git-send-email-spujar@nvidia.com>
+        Thu, 16 Jun 2022 09:16:54 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EAC13CFF7;
+        Thu, 16 Jun 2022 06:16:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A866EB823AA;
+        Thu, 16 Jun 2022 13:16:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0A6C3411A;
+        Thu, 16 Jun 2022 13:16:48 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="qEYhdwB+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1655385407;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cGUeyZ8PR/wVW8IqlWgOlfoA6rSo7jK2kzvB2/EJIPM=;
+        b=qEYhdwB+eG/dU0312YFqcYr9XdIzwWfTXTa0RTktw70V6Pzp9aSUDx812vt4KOpLHpeTiy
+        aEOGTCI/Khe/WJVJw6yBKNhRZVXUrL4bc/SYLJvSpQf5tdoJfkBcqVA8ST2s9KTgjq67f7
+        8RSUD4yqX62PdWfYhLJdbVWZCcxuCn0=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 75d81ab3 (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
+        Thu, 16 Jun 2022 13:16:47 +0000 (UTC)
+Date:   Thu, 16 Jun 2022 15:16:42 +0200
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Ron Economos <re@w6rz.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+        sudipm.mukherjee@gmail.com, slade@sladewatkins.com,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/11] 5.10.123-rc1 review
+Message-ID: <YqstOrOfpkTl43Vh@zx2c4.com>
+References: <20220614183719.878453780@linuxfoundation.org>
+ <9e43b35e-31da-7e51-006c-1aa69acb10d4@nvidia.com>
+ <a05678bb-29f8-23ea-9260-cc1cece3f480@w6rz.net>
+ <51786b52-a33c-96c3-583b-2fd2d158ad5d@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1655280277-4701-1-git-send-email-spujar@nvidia.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-GUID: Wz0DY6398pYy0H8B1wlsGdEhSyg4wtwQ
-X-Proofpoint-ORIG-GUID: Wz0DY6398pYy0H8B1wlsGdEhSyg4wtwQ
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <51786b52-a33c-96c3-583b-2fd2d158ad5d@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 01:34:37PM +0530, Sameer Pujar wrote:
-> I2S reset failures are seen on Tegra210 and later platforms. This indicates
-> absence of I2S bit clock, which is required to perform the reset operation.
-> Following failures are seen with I2S based tests on Tegra210 and later:
-> 
->   tegra210-i2s 2901100.i2s: timeout: failed to reset I2S for playback
->   tegra210-i2s 2901100.i2s: ASoC: PRE_PMU: I2S2 RX event failed: -110
->   tegra210-i2s 2901100.i2s: timeout: failed to reset I2S for capture
->   tegra210-i2s 2901100.i2s: ASoC: PRE_PMU: I2S2 TX event failed: -110
-> 
-> The commit d92ad6633fa7 ("ASoC: tegra: Update to use set_fmt_new callback")
-> regressed I2S functionality on Tegra platforms. Basically it flipped clock
-> provider and consumer DAI formats. This configures Tegra I2S in consumer
-> mode by default now and there is none to provide bit clock during loopback
-> tests. The external codec based tests also fail because both Tegra I2S and
-> codec I2S get configured in consumer mode.
-> 
-> ASoC core flips the DAI format before calling set_fmt() for CPU DAIs. This
-> is negated in above commit. Fix this by swapping SND_SOC_DAIFMT_BC_FC and
-> SND_SOC_DAIFMT_BP_FP switch cases.
-> 
-> Fixes: d92ad6633fa7 ("ASoC: tegra: Update to use set_fmt_new callback")
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
+Hi Jon,
 
-Ah.... I see what has happened there. As this device is one of
-the few CPU side components defining non_legacy_dai_naming whilst
-processing the DAI links the core would have been flipping the
-format for this driver as it would have mistaken it for a CODEC
-to CODEC link, so unlike the other CPU side components the flags
-shouldn't have been inverted when I converted this driver.
+On Thu, Jun 16, 2022 at 11:11:25AM +0100, Jon Hunter wrote:
+> On 16/06/2022 10:46, Ron Economos wrote:
+> > On 6/16/22 1:48 AM, Jon Hunter wrote:
+> > I'm also seeing this on RISC-V. 5.15 and 5.17, but not 5.18.
+> That's good to know. I don't see this on 5.18 either, just 5.10, 5.15 
+> and 5.17.
 
-Apologies for missing this whilst doing the updates, and thank
-you for fixing. I will check if there are any other cases of this
-that need to be hit.
+Right. 5.18 has
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=48bff1053c172e6c7f340e506027d118147c8b7f
+which I thought was a bit too risky to backport. So on 5.18 you're not
+seeing this behavior because /dev/urandom is always seeded magically and
+hence there is never an opportunity to warn about unseeded randomness.
+Maybe we can think about backporting that if no issues come up after
+several months, but I'd rather tread lightly with that one.
 
-A bit late but for what it is worth:
+Anyway, as mentioned in the other message, I've got a patch I'll send
+out in a minute for the unwanted pr_warn().
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
+Jason
