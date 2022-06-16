@@ -2,78 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76672C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 03:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B8FFC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 03:36:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238953AbiFPDcK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 23:32:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52754 "EHLO
+        id S1349658AbiFPDgl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 23:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236391AbiFPDcK (ORCPT
+        with ESMTP id S238953AbiFPDgk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 23:32:10 -0400
-X-Greylist: delayed 420 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 15 Jun 2022 20:32:08 PDT
-Received: from mail-m965.mail.126.com (mail-m965.mail.126.com [123.126.96.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5BA2D5930C;
-        Wed, 15 Jun 2022 20:32:08 -0700 (PDT)
+        Wed, 15 Jun 2022 23:36:40 -0400
+Received: from mail-m963.mail.126.com (mail-m963.mail.126.com [123.126.96.3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 05DFC42493;
+        Wed, 15 Jun 2022 20:36:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=CyCwT
-        NVUp2aw6tPR5VloYtflIPPfgirxy7R55hi2yiI=; b=LKZ1Y15zBbGwx6OYcQBTm
-        dtx5kwrdLXoalwG7oCjv4m8OQqNn+x08VBR2K7tqyMd/B53JDyWb+XoY4/03ANCF
-        DrLdFYtjJy0s9MtLxbMkpQr0YUHsAA+1xvP98SnAJBKNk41dIV09nsaWmRWb2GU/
-        h2Wz0FiHJdRzovM/hAa3m8=
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=aAQ15
+        C2T4MqklkCImE6KXD8zXPltOOPyY05PqikacZI=; b=O74FWCrgxdUj6ibqlh73k
+        93IQfLIYUcO8s3GPWkFEekXoP9jZ/nLeFUxwHsfS5r6HxheP6mSmELkLzyyLlOPe
+        3JlzAMKt81mrd3FJ6nCg44erU+qQ2wOv6Xn67dcZSlhQAnBb3qIPmCaf1LBXsDg4
+        lpijd3/HJlMvdKFysYvU1o=
 Received: from localhost.localdomain (unknown [124.16.139.61])
-        by smtp10 (Coremail) with SMTP id NuRpCgBHlGgnpKpiJDH8Eg--.22565S2;
-        Thu, 16 Jun 2022 11:31:51 +0800 (CST)
+        by smtp8 (Coremail) with SMTP id NORpCgDHRnM4papi4InkFg--.25946S2;
+        Thu, 16 Jun 2022 11:36:26 +0800 (CST)
 From:   Liang He <windhl@126.com>
 To:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
         mturquette@baylibre.com, sboyd@kernel.org,
         thierry.reding@gmail.com, jonathanh@nvidia.com
 Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, windhl@126.com
-Subject: [PATCH v2] clk: tegra: (clk-tegra124) Add missing of_node_put()
-Date:   Thu, 16 Jun 2022 11:31:50 +0800
-Message-Id: <20220616033150.3975316-1-windhl@126.com>
+Subject: [PATCH v2] clk: tegra: (clk-tegra30) Add missing of_node_put()
+Date:   Thu, 16 Jun 2022 11:36:22 +0800
+Message-Id: <20220616033622.3975621-1-windhl@126.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: NuRpCgBHlGgnpKpiJDH8Eg--.22565S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GFyrKF4xGw1xZw1xCF15Arb_yoW3urb_XF
-        15Xry7Zw15CwsayFZxur43ZryIyryfWrs0qFWSya17Gw18Zr4UWrs0vrn2k3srWa9rWFW5
-        Ja4ktw4Fy3s0vjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRibAwDUUUUU==
+X-CM-TRANSID: NORpCgDHRnM4papi4InkFg--.25946S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKFW3GryrZw1kur4kGFWUCFg_yoW3Zrb_X3
+        45XFy7Xw45KFs5CFs8uF43ZryIvFn5WrnYqFWIyw47G3W8Zr4UJr4qvrn7C3s7X39FqFW7
+        GrWkGr4fCrZxAjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRGhF2DUUUUU==
 X-Originating-IP: [124.16.139.61]
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbizgciF18RPTV5+AAAs7
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbizhoiF18RPTWCrwAAsK
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In tegra124_132_clock_init_pre, of_find_matching_node() will return
-a node pointer with refcount incremented. We should use of_node_put()
-when it is not used anymore.
+In tegra30_clock_init, of_find_matching_node() will return a node
+pointer with refcount incremented. We should use of_node_put() when
+the node pointer is not used anymore.
 
 Signed-off-by: Liang He <windhl@126.com>
 ---
  changelog:
 
- v2: use real name
+ v2: use real name for Sob
  v1: fix missing bug
 
- drivers/clk/tegra/clk-tegra124.c | 1 +
+ drivers/clk/tegra/clk-tegra30.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 934520aab6e3..a9d4efcef2d4 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1471,6 +1471,7 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 04b496123820..168c07d5a5f2 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1320,6 +1320,7 @@ static void __init tegra30_clock_init(struct device_node *np)
  	}
  
  	pmc_base = of_iomap(node, 0);
 +	of_node_put(node);
  	if (!pmc_base) {
  		pr_err("Can't map pmc registers\n");
- 		WARN_ON(1);
+ 		BUG();
 -- 
 2.25.1
 
