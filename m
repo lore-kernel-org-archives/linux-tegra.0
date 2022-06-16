@@ -2,132 +2,161 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14532CCA47C
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 20:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7D8CCA488
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 21:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378523AbiFPU0L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Jun 2022 16:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40414 "EHLO
+        id S1379157AbiFPVW5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Jun 2022 17:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378690AbiFPU0E (ORCPT
+        with ESMTP id S1378999AbiFPVWx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Jun 2022 16:26:04 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5B05D648
-        for <linux-tegra@vger.kernel.org>; Thu, 16 Jun 2022 13:26:01 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id r5so2234715pgr.3
-        for <linux-tegra@vger.kernel.org>; Thu, 16 Jun 2022 13:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5oDf6mmYoYGsoU0I4zvpHX1oZdig110uWrdCKfJ96DM=;
-        b=K99w/XO1zGTWG5p0b5wFgtUWUOrT4YwqNbDgdD+6s2ht7eTgzVqqrKb+qDfipid6VQ
-         RCHPEPQvKgRu89Ze62rJQ1UbzvDUahENV93wf2/zIl3EZr2EwYebUMbDfhcHHtwMxn54
-         yWG+RztQTZWP18/pZOwTKwIEVyvQqqDWHeN2wepOyjFGminVWFS4lis144PUC/G0HrfY
-         McR9vxFmPBSSjCskeK0AkbUeMrwmNcpNHFMPu2lOxNEvqnG6c8zaytTME3PRyMm6rntk
-         TnpKsz/uWs22nRtsTU6s7dfe91x9y+pzUQ4MYKaBAn/gbZPrEYvWRwK2qvTpAHxEDeDb
-         TZng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5oDf6mmYoYGsoU0I4zvpHX1oZdig110uWrdCKfJ96DM=;
-        b=mdhR2EcS4rWuAqyjAKxaA3EKgSEjjoJmZKz3SNYYCGhJv7i4arIOgDLkiG815lrzhl
-         jzFqBj/yGhwboJM8QGF21/Xv5tPPcfJhPUNc0EiPcX5+CTC0xQDQjjLN4AIksadsqGgV
-         1lLXtQE4vHzCmG+rgLW16Be+ukR7vvc/HtpA9ZKasFuplX4HkUOn1hIJKcda0UYLPcdR
-         ZEYK6im0YCCt03XNK7pr4xFfZfoVk0Qy9umvvIJJI40HcLaHz+M1l6hC9FWAFk23bC3F
-         P1l1ab2JyRtWz+BuwK/5hxceaagLS+cwi+fYpwGY1s0OujoA3+st+RFAe5pujQ/N9E2l
-         p2ZA==
-X-Gm-Message-State: AJIora9y8svG2qloxTagSmQBXXUkoxcHJU5m/NMH+qh1dnr7DF1R0yzp
-        K44zOGalTvsGPMr5MlN5EdrBdQ==
-X-Google-Smtp-Source: AGRyM1tE/z5ezitmRGVAU4CPIEUY4+4fj61Od8atEUWs8WCGxhFKyRxGSMdn9fimcrLyhx0GDvpS9g==
-X-Received: by 2002:a63:5b04:0:b0:3fc:61a1:da0d with SMTP id p4-20020a635b04000000b003fc61a1da0dmr5910643pgb.177.1655411160331;
-        Thu, 16 Jun 2022 13:26:00 -0700 (PDT)
-Received: from mai.imgcgcw.net ([192.77.111.2])
-        by smtp.gmail.com with ESMTPSA id a5-20020aa79705000000b0051bb0be7109sm2182960pfg.78.2022.06.16.13.25.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jun 2022 13:25:59 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH 2/3] thermal/drivers/tegra: Remove get_trend function
-Date:   Thu, 16 Jun 2022 22:25:36 +0200
-Message-Id: <20220616202537.303655-2-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220616202537.303655-1-daniel.lezcano@linaro.org>
-References: <20220616202537.303655-1-daniel.lezcano@linaro.org>
+        Thu, 16 Jun 2022 17:22:53 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783DC1EC6A;
+        Thu, 16 Jun 2022 14:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1655414572; x=1686950572;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=eIVB2Wcg0d4KNkOlM5BOJs0iOIDhUm5jxxQVobMAAIM=;
+  b=RP2YCFWJTKa74eNpADc52RfwyjDAvZ8LbqtQ+29QXXL8TwRbvjSWS7Ba
+   pq99M69aIQ9JNjTvJTyVDW//G+jY7TSkumi1VWip/2CpHCCXM6c6TDOdt
+   ovkJ3Yi3iryHnvVyD2y26qw2tMuSleKA/emETgYWmPoT1kmV2lQAziBjw
+   O3q86x2LyuYnnhk+Vs+DKTvFCxrgF97TC4OmRtb6/SSLEM/JP4XfqNzIy
+   uBWpPFsIMbGc2UKu+E2AO9bfY2POAwfylNkeUEpgS6fQsCe6X4buSH60h
+   /gpL6lhB831yaHj1bisym9RyaHXfKLRndrfm290x2hFX1FL/TzwTh4/0s
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10380"; a="259207705"
+X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
+   d="scan'208";a="259207705"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2022 14:22:51 -0700
+X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
+   d="scan'208";a="560027674"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.198.157])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2022 14:22:51 -0700
+Date:   Thu, 16 Jun 2022 14:26:56 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        rostedt@goodmis.org, pmladek@suse.com, senozhatsky@chromium.org,
+        john.ogness@linutronix.de, paulmck@kernel.org, frederic@kernel.org,
+        quic_neeraju@quicinc.com, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        joel@joelfernandes.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        rcu@vger.kernel.org, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 04/36] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IRQ_ENABLE
+Message-ID: <20220616142656.4b1acc4a@jacob-builder>
+In-Reply-To: <Yqb45vclY2KVL0wZ@hirez.programming.kicks-ass.net>
+References: <20220608142723.103523089@infradead.org>
+        <20220608144516.172460444@infradead.org>
+        <20220609164921.5e61711d@jacob-builder>
+        <Yqb45vclY2KVL0wZ@hirez.programming.kicks-ass.net>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The get_trend function does already what the generic framework does.
+Hi Peter,
 
-Remove it.
+On Mon, 13 Jun 2022 10:44:22 +0200, Peter Zijlstra <peterz@infradead.org>
+wrote:
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/tegra/soctherm.c | 32 --------------------------------
- 1 file changed, 32 deletions(-)
+> On Thu, Jun 09, 2022 at 04:49:21PM -0700, Jacob Pan wrote:
+> > Hi Peter,
+> > 
+> > On Wed, 08 Jun 2022 16:27:27 +0200, Peter Zijlstra
+> > <peterz@infradead.org> wrote:
+> >   
+> > > Commit c227233ad64c ("intel_idle: enable interrupts before C1 on
+> > > Xeons") wrecked intel_idle in two ways:
+> > > 
+> > >  - must not have tracing in idle functions
+> > >  - must return with IRQs disabled
+> > > 
+> > > Additionally, it added a branch for no good reason.
+> > > 
+> > > Fixes: c227233ad64c ("intel_idle: enable interrupts before C1 on
+> > > Xeons") Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > ---
+> > >  drivers/idle/intel_idle.c |   48
+> > > +++++++++++++++++++++++++++++++++++----------- 1 file changed, 37
+> > > insertions(+), 11 deletions(-)
+> > > 
+> > > --- a/drivers/idle/intel_idle.c
+> > > +++ b/drivers/idle/intel_idle.c
+> > > @@ -129,21 +137,37 @@ static unsigned int mwait_substates __in
+> > >   *
+> > >   * Must be called under local_irq_disable().
+> > >   */  
+> > nit: this comment is no long true, right?  
+> 
+> It still is, all the idle routines are called with interrupts disabled,
+> but must also exit with interrupts disabled.
+> 
+> If the idle method requires interrupts to be enabled, it must be sure to
+> disable them again before returning. Given all the RCU/tracing concerns
+> it must use raw_local_irq_*() for this though.
+Makes sense, it is just little confusing when the immediate caller does
+raw_local_irq_enable() which does not cancel out local_irq_disable().
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 210325f92559..825eab526619 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -633,37 +633,6 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
- 	return 0;
- }
- 
--static int tegra_thermctl_get_trend(void *data, int trip,
--				    enum thermal_trend *trend)
--{
--	struct tegra_thermctl_zone *zone = data;
--	struct thermal_zone_device *tz = zone->tz;
--	int trip_temp, temp, last_temp, ret;
--
--	if (!tz)
--		return -EINVAL;
--
--	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
--	if (ret)
--		return ret;
--
--	temp = READ_ONCE(tz->temperature);
--	last_temp = READ_ONCE(tz->last_temperature);
--
--	if (temp > trip_temp) {
--		if (temp >= last_temp)
--			*trend = THERMAL_TREND_RAISING;
--		else
--			*trend = THERMAL_TREND_STABLE;
--	} else if (temp < trip_temp) {
--		*trend = THERMAL_TREND_DROPPING;
--	} else {
--		*trend = THERMAL_TREND_STABLE;
--	}
--
--	return 0;
--}
--
- static void thermal_irq_enable(struct tegra_thermctl_zone *zn)
- {
- 	u32 r;
-@@ -716,7 +685,6 @@ static int tegra_thermctl_set_trips(void *data, int lo, int hi)
- static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
- 	.get_temp = tegra_thermctl_get_temp,
- 	.set_trip_temp = tegra_thermctl_set_trip_temp,
--	.get_trend = tegra_thermctl_get_trend,
- 	.set_trips = tegra_thermctl_set_trips,
- };
- 
--- 
-2.25.1
+Thanks,
 
+Jacob
