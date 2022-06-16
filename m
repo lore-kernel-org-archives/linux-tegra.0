@@ -2,515 +2,414 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98DC6CCA47D
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 00:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A32C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 00:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354969AbiFPADm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 20:03:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41350 "EHLO
+        id S1346410AbiFPAwl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 20:52:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350582AbiFPAD2 (ORCPT
+        with ESMTP id S245749AbiFPAwj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 20:03:28 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2058.outbound.protection.outlook.com [40.107.244.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07166562EC;
-        Wed, 15 Jun 2022 17:03:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BWLY2CWMyJ2C6hh8D40wr8XdiBJXmZWFTGN23E2ejFUkfrJrsPr3HhIXcdfc5/K8uIGdxUJOSJhtLy0vPfEDU2+iGfBdRdAQXNZWbZT9cR+yHw6KveRtuxyf1ZOHDdgr1YbiwDsh2WvC/Ke3B8garvYhHtarzXL8nsXucaju5PrU1tfUs0q6cw3lMUrlA0xbA3wBOUtYx39yo0ZFwRw+t+XGr8UY75tas4M1A+D+y/JRG1rfLsMfABsKiprlWjQwhVO50KbOGyXCuzPwI4p/XbL3P+Zi4OFNaxBMqlKhQBL/CuzojHcmCQRn0+Var9rP8mzqHrjfONZAybq0B4CRdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oX4lVfi6U1wD2Y1TX0Jzjj5byYCwr4lkCfyYZBLts1s=;
- b=lbEl9qEppK/93xWynNfrLiKVOBKq3WPYnOFKSfmDeGMdeKOC8Xn4uhyTuXu4qFEPpkoG0yiVOEhWo1yLdMXvUDmtHOlaTBdNX38mB6S2Yg50WlaX75ajCco7mffalOPUh6TodhMzHIHtPeXL+4ag/Dv/OqXSJFDAIPgJAKtoxs6QFCwrnLJeUcj+hvOkU8I5yeam5wwLbrQSKKueQ38ge59KDduJNXEQF9cLvAnbc/hzHWtGlo2CZ3nOnYwnOsAhTnBKKt9CnTk/Xt4dnk9gI5gdd5snDEg4qyklRAmcew0eOXgom9pas87wcuPTZLKVy4sHT53N6kZhCaLCKQOWxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oX4lVfi6U1wD2Y1TX0Jzjj5byYCwr4lkCfyYZBLts1s=;
- b=EKTICm+p2ft3FdNI2O60kOqeJ3XOi/DTqiE8r0CiDbW/w98gOMwoc15rO/ha+y2vCHozc7o8DbvfFk9itvcomO7n0cPvlKaUKX6LAxwZg6eQ5ViSZRA8nUkLth1pj7n/voyGeLBNMygafwx5muZTc+FJ5bUllGwGbtWnAApFQKGf1mOPQQwzHZB5Cf709Qg22U0ZaRH89cGtcXE9gQukjDj2rZaJt4Z6TeqqOD+G2q8/4B7UIvSXK5aAregTxoLQqZs33JY6knjcpCfnPrNj9vH1hWr84feLgZrx4T3h7nHvE8rCovYbAsiLV7yvmfAeBtE5NV10Xxxq6AWcSqle1w==
-Received: from MWHPR19CA0089.namprd19.prod.outlook.com (2603:10b6:320:1f::27)
- by BL1PR12MB5706.namprd12.prod.outlook.com (2603:10b6:208:385::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.22; Thu, 16 Jun
- 2022 00:03:22 +0000
-Received: from CO1NAM11FT060.eop-nam11.prod.protection.outlook.com
- (2603:10b6:320:1f:cafe::49) by MWHPR19CA0089.outlook.office365.com
- (2603:10b6:320:1f::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14 via Frontend
- Transport; Thu, 16 Jun 2022 00:03:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.235) by
- CO1NAM11FT060.mail.protection.outlook.com (10.13.175.132) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5332.12 via Frontend Transport; Thu, 16 Jun 2022 00:03:21 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.32; Thu, 16 Jun 2022 00:03:21 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 15 Jun 2022 17:03:20 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.11) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Wed, 15 Jun 2022 17:03:18 -0700
-From:   Nicolin Chen <nicolinc@nvidia.com>
-To:     <joro@8bytes.org>, <will@kernel.org>, <marcan@marcan.st>,
-        <sven@svenpeter.dev>, <robin.murphy@arm.com>,
-        <robdclark@gmail.com>, <baolu.lu@linux.intel.com>,
-        <matthias.bgg@gmail.com>, <orsonzhai@gmail.com>,
-        <baolin.wang7@gmail.com>, <zhang.lyra@gmail.com>,
-        <jean-philippe@linaro.org>, <alex.williamson@redhat.com>,
-        <jgg@nvidia.com>, <kevin.tian@intel.com>
-CC:     <suravee.suthikulpanit@amd.com>, <alyssa@rosenzweig.io>,
-        <dwmw2@infradead.org>, <yong.wu@mediatek.com>,
-        <mjrosato@linux.ibm.com>, <gerald.schaefer@linux.ibm.com>,
-        <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
-        <jonathanh@nvidia.com>, <cohuck@redhat.com>,
-        <thunder.leizhen@huawei.com>, <tglx@linutronix.de>,
-        <christophe.jaillet@wanadoo.fr>, <john.garry@huawei.com>,
-        <chenxiang66@hisilicon.com>, <saiprakash.ranjan@codeaurora.org>,
-        <isaacm@codeaurora.org>, <yangyingliang@huawei.com>,
-        <jordan@cosmicpenguin.net>, <iommu@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>, <kvm@vger.kernel.org>
-Subject: [PATCH v2 5/5] vfio/iommu_type1: Simplify group attachment
-Date:   Wed, 15 Jun 2022 17:03:04 -0700
-Message-ID: <20220616000304.23890-6-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220616000304.23890-1-nicolinc@nvidia.com>
-References: <20220616000304.23890-1-nicolinc@nvidia.com>
+        Wed, 15 Jun 2022 20:52:39 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0BAF1C131
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Jun 2022 17:52:35 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id y196so103054pfb.6
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Jun 2022 17:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bS44KlBALAfqkwqt9ygLgULcU5dF5vLqiaHLdQBQ0Ho=;
+        b=b9HGWtDf4VC1WlcJOpckJNAQ818E19qKR4Cmmaw9dq6l1RKROoGAGdwAQuJHY1TWzl
+         9d8UZDXsbJLBco0Mb1u8qunkkNeEz8p4YKAoIRVKgfXsjQdlFnTGFE+PYWdYNqfnpTwx
+         G+J3rXn0XoOuWzwcp8JMscWAXzWTkpgqnPwEe+lKQ64ysrFqwMeUg0yemLdbkBJGvuwP
+         LsXg1e2Lbq9VWPQ4XXtA8Kd5rr41LFaMju2+8COMibvyvqvNhWQN136z8IHVg2yzC6Gu
+         0K6LVJJTdtsPOVTB9JiJcfwGEuF4qNujG40m5c8szT7s4EtSBB0pNd4iXuyGO8yejkja
+         kxJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bS44KlBALAfqkwqt9ygLgULcU5dF5vLqiaHLdQBQ0Ho=;
+        b=htj+QVVjTw11zoEpO5LB/btYn8TPb/m6vtncRX7DuVqXlTgaZgzSirEkshhGA4aNJ+
+         lHgqt7m3b3If10EGxJyPKVRluYDBphBRshapI8SRCO3VxldyPbZ33+Rj+USftOMK+J1a
+         7rumn73JHnL7Trm/mv2/lxCCHHgh3FuJ9+vRhQ9gT2xafYSvBrzaDGOjXsHYQHgTfong
+         N1uEx2UZk19b4D8LZNlRBU83ZbHbSBD3W+S3T8sovahk8G4/I1OJhapONkM0jBeRJ5ru
+         ZCdxKP4VSm/QbuEYZV27MHFSAnJsxm9FeEpj2GktAnRdhmsEcUISDxmzMgQOJiZxHN3o
+         NAzA==
+X-Gm-Message-State: AJIora9606T+fa/VPLtuz+ExYvFw9wZnm3thEr8LQHACwuqzpnFHZ5xl
+        dWN6pce/jLaLkIxNKgjjjBMLsQ==
+X-Google-Smtp-Source: AGRyM1v62iQJ4p2NmntVYp97jTJ8PjxTfuDqjP+lKe8IZ2Y04aHEh7obpS0MtR3CR9vlb8lk311VYA==
+X-Received: by 2002:a63:814a:0:b0:3fc:ee2c:340f with SMTP id t71-20020a63814a000000b003fcee2c340fmr2189807pgd.380.1655340755007;
+        Wed, 15 Jun 2022 17:52:35 -0700 (PDT)
+Received: from krzk-bin.. ([192.77.111.2])
+        by smtp.gmail.com with ESMTPSA id g26-20020aa7875a000000b005183f333721sm259504pfo.87.2022.06.15.17.52.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jun 2022 17:52:34 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Peter Rosin <peda@axentia.se>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-tegra@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 00/40] dt-bindings: input: gpio-keys: rework matching children
+Date:   Wed, 15 Jun 2022 17:52:24 -0700
+Message-Id: <20220616005224.18391-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1fdd0e1a-ad8e-4a5a-3132-08da4f2ba06b
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5706:EE_
-X-Microsoft-Antispam-PRVS: <BL1PR12MB57066742A6382376D9B6C5E3ABAC9@BL1PR12MB5706.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: k/BonHpEmQVv92qxx6gY499NMhFJa50Un+VMJTdsuZailhAV/sHa4uaq93spAFg8Sij2ogW2Z2A4FBpEzvYeHQFYfxRFI82fxDRwu0P3GvjhMkHw6CbBg3XvjCK/6jLzBTlQ0mmIzZrj1Fg0DehbA+u0+ZwXFo5FnB+da/jnuEC8UH1TR32/t71NQHP98E6SaV1Fk2s/uFTrLgprq/mOYc/j9zJEIVzwbSFCy67rKkdKWGxpZrO25md72ciEHbaXmOEdnC020WCx8B2dKMqumq9N+EQI3v+h4PjB+LEZOwW5LwDdJvzDWJvlbpSsPe0v6ukI09OGJhR1ameurhlol3cBBObzcINERlpPzXUNL3mYkqI1mOF0m/XnksQu33oPVE7X42cJKnRySu1cxMfK34kOwUt5BTVR7I8syQ/k2CANwfHKhYHB7VOlWleZSYA8VRQzvlqXl3eDA9xOj6sLU5dkzXIiQSyazuWyRTAKbOFpRGe/1a6w+xmNNvGMtovP9zsYPSLcEZbin263Y+OXjahWBUVoQU/f2V3gWkm8VmflXz2RESGZP3Kysrc6Pg1s9x+nhHrMwyaaTSBN/aVEnIhudoFw6THCtuNAUuH5QTqXN/kLksHZVsYsoP3Ss5cxfPncQRiSvHpYl7j73zWdjmcBE+1w6COFsuhcy4PF2bVPq7sTcAqoJkI1ujwQPzOnTkOqEV57sjyMMwXry4dATaLQt6FZ6BHWTU/VZUWrzqEoLPY05SOhA2LhBzwTJ4688l88are2wsXgCYEXfOlqWw==
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(40470700004)(46966006)(36840700001)(40460700003)(81166007)(83380400001)(8936002)(7416002)(26005)(186003)(7406005)(1076003)(2906002)(6666004)(7696005)(36756003)(5660300002)(30864003)(2616005)(8676002)(70586007)(426003)(54906003)(86362001)(356005)(921005)(4326008)(508600001)(110136005)(47076005)(336012)(36860700001)(82310400005)(70206006)(316002)(2101003)(83996005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2022 00:03:21.8507
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fdd0e1a-ad8e-4a5a-3132-08da4f2ba06b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT060.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5706
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Un-inline the domain specific logic from the attach/detach_group ops into
-two paired functions vfio_iommu_alloc_attach_domain() and
-vfio_iommu_detach_destroy_domain() that strictly deal with creating and
-destroying struct vfio_domains.
+Hi,
 
-Add the logic to check for EMEDIUMTYPE return code of iommu_attach_group()
-and avoid the extra domain allocations and attach/detach sequences of the
-old code. This allows properly detecting an actual attach error, like
--ENOMEM, vs treating all attach errors as an incompatible domain.
+Merging
+=======
+1. dt-bindings: rebased on top of Rob's:
+   https://lore.kernel.org/all/20220608211207.2058487-1-robh@kernel.org/
 
-Co-developed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/vfio/vfio_iommu_type1.c | 298 +++++++++++++++++---------------
- 1 file changed, 163 insertions(+), 135 deletions(-)
+2. DTS patches are independent. They can be picked up directly by sub-arch
+   maintainers, by Arnd or Olof, or eventually by me (if you wish).
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 573caf320788..5986c68e59ee 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -86,6 +86,7 @@ struct vfio_domain {
- 	struct list_head	group_list;
- 	bool			fgsp : 1;	/* Fine-grained super pages */
- 	bool			enforce_cache_coherency : 1;
-+	bool			msi_cookie : 1;
- };
- 
- struct vfio_dma {
-@@ -2153,12 +2154,163 @@ static void vfio_iommu_iova_insert_copy(struct vfio_iommu *iommu,
- 	list_splice_tail(iova_copy, iova);
- }
- 
-+static struct vfio_domain *
-+vfio_iommu_alloc_attach_domain(struct bus_type *bus, struct vfio_iommu *iommu,
-+			       struct vfio_iommu_group *group)
-+{
-+	struct iommu_domain *new_domain;
-+	struct vfio_domain *domain;
-+	int ret = 0;
-+
-+	/* Try to match an existing compatible domain */
-+	list_for_each_entry (domain, &iommu->domain_list, next) {
-+		ret = iommu_attach_group(domain->domain, group->iommu_group);
-+		if (ret == -EMEDIUMTYPE)
-+			continue;
-+		if (ret)
-+			return ERR_PTR(ret);
-+		goto done;
-+	}
-+
-+	new_domain = iommu_domain_alloc(bus);
-+	if (!new_domain)
-+		return ERR_PTR(-EIO);
-+
-+	if (iommu->nesting) {
-+		ret = iommu_enable_nesting(new_domain);
-+		if (ret)
-+			goto out_free_iommu_domain;
-+	}
-+
-+	ret = iommu_attach_group(new_domain, group->iommu_group);
-+	if (ret)
-+		goto out_free_iommu_domain;
-+
-+	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
-+	if (!domain) {
-+		ret = -ENOMEM;
-+		goto out_detach;
-+	}
-+
-+	domain->domain = new_domain;
-+	vfio_test_domain_fgsp(domain);
-+
-+	/*
-+	 * If the IOMMU can block non-coherent operations (ie PCIe TLPs with
-+	 * no-snoop set) then VFIO always turns this feature on because on Intel
-+	 * platforms it optimizes KVM to disable wbinvd emulation.
-+	 */
-+	if (new_domain->ops->enforce_cache_coherency)
-+		domain->enforce_cache_coherency =
-+			new_domain->ops->enforce_cache_coherency(new_domain);
-+
-+	/* replay mappings on new domains */
-+	ret = vfio_iommu_replay(iommu, domain);
-+	if (ret)
-+		goto out_free_domain;
-+
-+	INIT_LIST_HEAD(&domain->group_list);
-+	list_add(&domain->next, &iommu->domain_list);
-+	vfio_update_pgsize_bitmap(iommu);
-+
-+done:
-+	list_add(&group->next, &domain->group_list);
-+
-+	/*
-+	 * An iommu backed group can dirty memory directly and therefore
-+	 * demotes the iommu scope until it declares itself dirty tracking
-+	 * capable via the page pinning interface.
-+	 */
-+	iommu->num_non_pinned_groups++;
-+
-+	return domain;
-+
-+out_free_domain:
-+	kfree(domain);
-+out_detach:
-+	iommu_detach_group(new_domain, group->iommu_group);
-+out_free_iommu_domain:
-+	iommu_domain_free(new_domain);
-+	return ERR_PTR(ret);
-+}
-+
-+static void vfio_iommu_unmap_unpin_all(struct vfio_iommu *iommu)
-+{
-+	struct rb_node *node;
-+
-+	while ((node = rb_first(&iommu->dma_list)))
-+		vfio_remove_dma(iommu, rb_entry(node, struct vfio_dma, node));
-+}
-+
-+static void vfio_iommu_unmap_unpin_reaccount(struct vfio_iommu *iommu)
-+{
-+	struct rb_node *n, *p;
-+
-+	n = rb_first(&iommu->dma_list);
-+	for (; n; n = rb_next(n)) {
-+		struct vfio_dma *dma;
-+		long locked = 0, unlocked = 0;
-+
-+		dma = rb_entry(n, struct vfio_dma, node);
-+		unlocked += vfio_unmap_unpin(iommu, dma, false);
-+		p = rb_first(&dma->pfn_list);
-+		for (; p; p = rb_next(p)) {
-+			struct vfio_pfn *vpfn = rb_entry(p, struct vfio_pfn,
-+							 node);
-+
-+			if (!is_invalid_reserved_pfn(vpfn->pfn))
-+				locked++;
-+		}
-+		vfio_lock_acct(dma, locked - unlocked, true);
-+	}
-+}
-+
-+static void vfio_iommu_detach_destroy_domain(struct vfio_domain *domain,
-+					     struct vfio_iommu *iommu,
-+					     struct vfio_iommu_group *group)
-+{
-+	iommu_detach_group(domain->domain, group->iommu_group);
-+	list_del(&group->next);
-+	if (!list_empty(&domain->group_list))
-+		goto out_dirty;
-+
-+	/*
-+	 * Group ownership provides privilege, if the group list is empty, the
-+	 * domain goes away. If it's the last domain with iommu and external
-+	 * domain doesn't exist, then all the mappings go away too. If it's the
-+	 * last domain with iommu and external domain exist, update accounting
-+	 */
-+	if (list_is_singular(&iommu->domain_list)) {
-+		if (list_empty(&iommu->emulated_iommu_groups)) {
-+			WARN_ON(iommu->notifier.head);
-+			vfio_iommu_unmap_unpin_all(iommu);
-+		} else {
-+			vfio_iommu_unmap_unpin_reaccount(iommu);
-+		}
-+	}
-+	iommu_domain_free(domain->domain);
-+	list_del(&domain->next);
-+	kfree(domain);
-+	vfio_update_pgsize_bitmap(iommu);
-+
-+out_dirty:
-+	/*
-+	 * Removal of a group without dirty tracking may allow the iommu scope
-+	 * to be promoted.
-+	 */
-+	if (!group->pinned_page_dirty_scope) {
-+		iommu->num_non_pinned_groups--;
-+		if (iommu->dirty_page_tracking)
-+			vfio_iommu_populate_bitmap_full(iommu);
-+	}
-+}
-+
- static int vfio_iommu_type1_attach_group(void *iommu_data,
- 		struct iommu_group *iommu_group, enum vfio_group_type type)
- {
- 	struct vfio_iommu *iommu = iommu_data;
- 	struct vfio_iommu_group *group;
--	struct vfio_domain *domain, *d;
-+	struct vfio_domain *domain;
- 	struct bus_type *bus = NULL;
- 	bool resv_msi, msi_remap;
- 	phys_addr_t resv_msi_base = 0;
-@@ -2197,26 +2349,12 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	if (ret)
- 		goto out_free_group;
- 
--	ret = -ENOMEM;
--	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
--	if (!domain)
-+	domain = vfio_iommu_alloc_attach_domain(bus, iommu, group);
-+	if (IS_ERR(domain)) {
-+		ret = PTR_ERR(domain);
- 		goto out_free_group;
--
--	ret = -EIO;
--	domain->domain = iommu_domain_alloc(bus);
--	if (!domain->domain)
--		goto out_free_domain;
--
--	if (iommu->nesting) {
--		ret = iommu_enable_nesting(domain->domain);
--		if (ret)
--			goto out_domain;
- 	}
- 
--	ret = iommu_attach_group(domain->domain, group->iommu_group);
--	if (ret)
--		goto out_domain;
--
- 	/* Get aperture info */
- 	geo = &domain->domain->geometry;
- 	if (vfio_iommu_aper_conflict(iommu, geo->aperture_start,
-@@ -2254,9 +2392,6 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 
- 	resv_msi = vfio_iommu_has_sw_msi(&group_resv_regions, &resv_msi_base);
- 
--	INIT_LIST_HEAD(&domain->group_list);
--	list_add(&group->next, &domain->group_list);
--
- 	msi_remap = irq_domain_check_msi_remap() ||
- 		    iommu_capable(bus, IOMMU_CAP_INTR_REMAP);
- 
-@@ -2267,107 +2402,32 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 		goto out_detach;
- 	}
- 
--	/*
--	 * If the IOMMU can block non-coherent operations (ie PCIe TLPs with
--	 * no-snoop set) then VFIO always turns this feature on because on Intel
--	 * platforms it optimizes KVM to disable wbinvd emulation.
--	 */
--	if (domain->domain->ops->enforce_cache_coherency)
--		domain->enforce_cache_coherency =
--			domain->domain->ops->enforce_cache_coherency(
--				domain->domain);
--
--	/* Try to match an existing compatible domain */
--	list_for_each_entry(d, &iommu->domain_list, next) {
--		iommu_detach_group(domain->domain, group->iommu_group);
--		if (!iommu_attach_group(d->domain, group->iommu_group)) {
--			list_add(&group->next, &d->group_list);
--			iommu_domain_free(domain->domain);
--			kfree(domain);
--			goto done;
--		}
--
--		ret = iommu_attach_group(domain->domain,  group->iommu_group);
--		if (ret)
--			goto out_domain;
--	}
--
--	vfio_test_domain_fgsp(domain);
--
--	/* replay mappings on new domains */
--	ret = vfio_iommu_replay(iommu, domain);
--	if (ret)
--		goto out_detach;
--
--	if (resv_msi) {
-+	if (resv_msi && !domain->msi_cookie) {
- 		ret = iommu_get_msi_cookie(domain->domain, resv_msi_base);
- 		if (ret && ret != -ENODEV)
- 			goto out_detach;
-+		domain->msi_cookie = true;
- 	}
- 
--	list_add(&domain->next, &iommu->domain_list);
--	vfio_update_pgsize_bitmap(iommu);
--done:
- 	/* Delete the old one and insert new iova list */
- 	vfio_iommu_iova_insert_copy(iommu, &iova_copy);
- 
--	/*
--	 * An iommu backed group can dirty memory directly and therefore
--	 * demotes the iommu scope until it declares itself dirty tracking
--	 * capable via the page pinning interface.
--	 */
--	iommu->num_non_pinned_groups++;
- 	mutex_unlock(&iommu->lock);
- 	vfio_iommu_resv_free(&group_resv_regions);
- 
- 	return 0;
- 
- out_detach:
--	iommu_detach_group(domain->domain, group->iommu_group);
--out_domain:
--	iommu_domain_free(domain->domain);
--	vfio_iommu_iova_free(&iova_copy);
--	vfio_iommu_resv_free(&group_resv_regions);
--out_free_domain:
--	kfree(domain);
-+	vfio_iommu_detach_destroy_domain(domain, iommu, group);
- out_free_group:
- 	kfree(group);
- out_unlock:
- 	mutex_unlock(&iommu->lock);
-+	vfio_iommu_iova_free(&iova_copy);
-+	vfio_iommu_resv_free(&group_resv_regions);
- 	return ret;
- }
- 
--static void vfio_iommu_unmap_unpin_all(struct vfio_iommu *iommu)
--{
--	struct rb_node *node;
--
--	while ((node = rb_first(&iommu->dma_list)))
--		vfio_remove_dma(iommu, rb_entry(node, struct vfio_dma, node));
--}
--
--static void vfio_iommu_unmap_unpin_reaccount(struct vfio_iommu *iommu)
--{
--	struct rb_node *n, *p;
--
--	n = rb_first(&iommu->dma_list);
--	for (; n; n = rb_next(n)) {
--		struct vfio_dma *dma;
--		long locked = 0, unlocked = 0;
--
--		dma = rb_entry(n, struct vfio_dma, node);
--		unlocked += vfio_unmap_unpin(iommu, dma, false);
--		p = rb_first(&dma->pfn_list);
--		for (; p; p = rb_next(p)) {
--			struct vfio_pfn *vpfn = rb_entry(p, struct vfio_pfn,
--							 node);
--
--			if (!is_invalid_reserved_pfn(vpfn->pfn))
--				locked++;
--		}
--		vfio_lock_acct(dma, locked - unlocked, true);
--	}
--}
--
- /*
-  * Called when a domain is removed in detach. It is possible that
-  * the removed domain decided the iova aperture window. Modify the
-@@ -2481,44 +2541,12 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 		group = find_iommu_group(domain, iommu_group);
- 		if (!group)
- 			continue;
--
--		iommu_detach_group(domain->domain, group->iommu_group);
--		list_del(&group->next);
--		/*
--		 * Group ownership provides privilege, if the group list is
--		 * empty, the domain goes away. If it's the last domain with
--		 * iommu and external domain doesn't exist, then all the
--		 * mappings go away too. If it's the last domain with iommu and
--		 * external domain exist, update accounting
--		 */
--		if (list_empty(&domain->group_list)) {
--			if (list_is_singular(&iommu->domain_list)) {
--				if (list_empty(&iommu->emulated_iommu_groups)) {
--					WARN_ON(iommu->notifier.head);
--					vfio_iommu_unmap_unpin_all(iommu);
--				} else {
--					vfio_iommu_unmap_unpin_reaccount(iommu);
--				}
--			}
--			iommu_domain_free(domain->domain);
--			list_del(&domain->next);
--			kfree(domain);
--			vfio_iommu_aper_expand(iommu, &iova_copy);
--			vfio_update_pgsize_bitmap(iommu);
--		}
--		/*
--		 * Removal of a group without dirty tracking may allow
--		 * the iommu scope to be promoted.
--		 */
--		if (!group->pinned_page_dirty_scope) {
--			iommu->num_non_pinned_groups--;
--			if (iommu->dirty_page_tracking)
--				vfio_iommu_populate_bitmap_full(iommu);
--		}
-+		vfio_iommu_detach_destroy_domain(domain, iommu, group);
- 		kfree(group);
- 		break;
- 	}
- 
-+	vfio_iommu_aper_expand(iommu, &iova_copy);
- 	if (!vfio_iommu_resv_refresh(iommu, &iova_copy))
- 		vfio_iommu_iova_insert_copy(iommu, &iova_copy);
- 	else
+Changes since v2
+================
+1. Few node renamings according to comments (at91, rockchip, nuvoton,wpcm450-pinctrl.yaml).
+2. Add Rb tags.
+3. Drop applied patches: allwinner, amlogic, broadcom and samsung.
+
+Changes since v1
+================
+Patch 1: Extend gpio-keys nodes pattern to cover buttons, events and switches (Jeff).
+Patch 2: Include input.yaml (Dmitry, Rob).
+Patch 3: New patch.
+New DTS patches.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (40):
+  dt-bindings: input: gpio-keys: enforce node names to match all
+    properties
+  dt-bindings: input: gpio-keys: reference input.yaml and document
+    properties
+  dt-bindings: input: gpio-keys: accept also interrupt-extended
+  dt-bindings: pinctrl: nuvoton,wpcm450-pinctrl: align key node name
+  arm64: dts: apm: correct gpio-keys properties
+  arm64: dts: broadcom: align gpio-key node names with dtschema
+  arm64: dts: freescale: align gpio-key node names with dtschema
+  arm64: dts: freescale: align led node names with dtschema
+  arm64: dts: hisilicon: align gpio-key node names with dtschema
+  arm64: dts: hisilicon: correct gpio-keys properties
+  arm64: dts: marvell: align gpio-key node names with dtschema
+  arm64: dts: marvell: armada-3720: align lednode names with dtschema
+  ARM: dts: marvell: align gpio-key node names with dtschema
+  ARM: dts: marvell: correct gpio-keys properties
+  arm64: dts: mediatek: align gpio-key node names with dtschema
+  arm64: dts: mediatek: mt7622-bananapi-bpi-r64: align led node names
+    with dtschema
+  arm64: dts: mediatek: mt7622-rfb1: correct gpio-keys properties
+  ARM: dts: mediatek: align gpio-key node names with dtschema
+  arm64: dts: tegra: align gpio-key node names with dtschema
+  ARM: dts: tegra: align gpio-key node names with dtschema
+  arm64: dts: qcom: align gpio-key node names with dtschema
+  arm64: dts: qcom: correct gpio-keys properties
+  arm64: dts: qcom: sdm630-sony-xperia-nile: drop unneeded status from
+    gpio-keys
+  arm64: dts: qcom: align led node names with dtschema
+  ARM: dts: qcom: align gpio-key node names with dtschema
+  arm64: dts: rockchip: align gpio-key node names with dtschema
+  ARM: dts: rockchip: align gpio-key node names with dtschema
+  ARM: dts: rockchip: rk3288-tinker: correct gpio-keys properties
+  arm64: dts: ti: align gpio-key node names with dtschema
+  arm64: dts: xilinx: align gpio-key node names with dtschema
+  ARM: dts: xilinx: align gpio-key node names with dtschema
+  ARM: dts: omap: align gpio-key node names with dtschema
+  ARM: dts: omap: correct gpio-keys properties
+  ARM: dts: animeo: align gpio-key node names with dtschema
+  ARM: dts: animeo: correct gpio-keys properties
+  ARM: dts: aspeed: align gpio-key node names with dtschema
+  ARM: dts: aspeed: correct gpio-keys properties
+  ARM: dts: at91: align gpio-key node names with dtschema
+  ARM: dts: at91: correct gpio-keys properties
+  ARM: dts: at91: drop unneeded status from gpio-keys
+
+ .../devicetree/bindings/input/gpio-keys.yaml  | 159 +++++++++---------
+ .../pinctrl/nuvoton,wpcm450-pinctrl.yaml      |   2 +-
+ arch/arm/boot/dts/am335x-evm.dts              |   8 +-
+ arch/arm/boot/dts/am335x-guardian.dts         |   2 -
+ .../boot/dts/am335x-moxa-uc-2100-common.dtsi  |   4 +-
+ .../boot/dts/am335x-moxa-uc-8100-common.dtsi  |   4 +-
+ arch/arm/boot/dts/am335x-pcm-953.dtsi         |   4 +-
+ arch/arm/boot/dts/am335x-pepper.dts           |   8 +-
+ arch/arm/boot/dts/am335x-shc.dts              |   6 +-
+ arch/arm/boot/dts/am3517-evm-ui.dtsi          |  20 +--
+ arch/arm/boot/dts/am3517-evm.dts              |  18 +-
+ arch/arm/boot/dts/am437x-idk-evm.dts          |   6 +-
+ arch/arm/boot/dts/animeo_ip.dts               |  10 +-
+ arch/arm/boot/dts/armada-370-c200-v2.dts      |   8 +-
+ arch/arm/boot/dts/armada-370-rd.dts           |   2 -
+ .../boot/dts/armada-370-seagate-nas-xbay.dtsi |   8 +-
+ .../armada-370-seagate-personal-cloud.dtsi    |   8 +-
+ .../boot/dts/armada-381-netgear-gs110emx.dts  |   2 +-
+ .../arm/boot/dts/armada-385-clearfog-gtr.dtsi |   4 +-
+ arch/arm/boot/dts/armada-385-linksys.dtsi     |   4 +-
+ .../arm/boot/dts/armada-388-clearfog-base.dts |   2 +-
+ arch/arm/boot/dts/armada-388-clearfog.dts     |   2 +-
+ arch/arm/boot/dts/armada-xp-axpwifiap.dts     |   6 +-
+ arch/arm/boot/dts/armada-xp-linksys-mamba.dts |   8 +-
+ .../boot/dts/armada-xp-openblocks-ax3-4.dts   |   6 +-
+ .../arm/boot/dts/aspeed-bmc-ampere-mtjade.dts |  30 ++--
+ .../boot/dts/aspeed-bmc-bytedance-g220a.dts   |  48 +++---
+ arch/arm/boot/dts/aspeed-bmc-ibm-everest.dts  |  10 +-
+ arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts  |  14 +-
+ .../boot/dts/aspeed-bmc-inspur-fp5280g2.dts   |  22 +--
+ arch/arm/boot/dts/aspeed-bmc-opp-mihawk.dts   |  23 +--
+ arch/arm/boot/dts/aspeed-bmc-opp-mowgli.dts   |  20 +--
+ arch/arm/boot/dts/aspeed-bmc-opp-nicole.dts   |   2 +-
+ arch/arm/boot/dts/aspeed-bmc-opp-palmetto.dts |   2 +-
+ arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts  |   2 +-
+ arch/arm/boot/dts/aspeed-bmc-opp-swift.dts    |  30 ++--
+ arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts   |  14 +-
+ arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts   |   4 +-
+ .../boot/dts/aspeed-bmc-opp-witherspoon.dts   |  16 +-
+ arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts    |   4 +-
+ arch/arm/boot/dts/at91-foxg20.dts             |   4 +-
+ arch/arm/boot/dts/at91-gatwick.dts            |   2 +-
+ arch/arm/boot/dts/at91-kizbox.dts             |   8 +-
+ arch/arm/boot/dts/at91-kizbox2-common.dtsi    |  10 +-
+ arch/arm/boot/dts/at91-kizbox3-hs.dts         |  12 +-
+ arch/arm/boot/dts/at91-kizboxmini-common.dtsi |   6 +-
+ arch/arm/boot/dts/at91-nattis-2-natte-2.dts   |   2 +-
+ arch/arm/boot/dts/at91-qil_a9260.dts          |   4 +-
+ arch/arm/boot/dts/at91-sam9x60ek.dts          |   5 +-
+ arch/arm/boot/dts/at91-sama5d27_som1_ek.dts   |   4 +-
+ arch/arm/boot/dts/at91-sama5d27_wlsom1_ek.dts |   5 +-
+ arch/arm/boot/dts/at91-sama5d2_icp.dts        |   5 +-
+ arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts     |   4 +-
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts   |   4 +-
+ arch/arm/boot/dts/at91-sama5d3_xplained.dts   |   4 +-
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts   |   4 +-
+ arch/arm/boot/dts/at91-sama5d4ek.dts          |   4 +-
+ arch/arm/boot/dts/at91-sama7g5ek.dts          |   4 +-
+ arch/arm/boot/dts/at91-wb45n.dts              |   7 +-
+ arch/arm/boot/dts/at91-wb50n.dts              |  10 +-
+ arch/arm/boot/dts/at91sam9260ek.dts           |   6 +-
+ arch/arm/boot/dts/at91sam9261ek.dts           |  10 +-
+ arch/arm/boot/dts/at91sam9263ek.dts           |   6 +-
+ arch/arm/boot/dts/at91sam9g20ek_common.dtsi   |   6 +-
+ .../dts/at91sam9g25-gardena-smart-gateway.dts |   2 +-
+ arch/arm/boot/dts/at91sam9m10g45ek.dts        |  16 +-
+ arch/arm/boot/dts/at91sam9n12ek.dts           |   4 +-
+ arch/arm/boot/dts/at91sam9rlek.dts            |   6 +-
+ arch/arm/boot/dts/mt7623a-rfb-emmc.dts        |   4 +-
+ arch/arm/boot/dts/mt7623a-rfb-nand.dts        |   4 +-
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |   4 +-
+ arch/arm/boot/dts/mt7623n-rfb-emmc.dts        |   4 +-
+ arch/arm/boot/dts/mt7629-rfb.dts              |   4 +-
+ .../boot/dts/qcom-apq8064-asus-nexus7-flo.dts |   4 +-
+ .../qcom-apq8064-sony-xperia-lagan-yuga.dts   |   8 +-
+ arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtsi |   2 +-
+ arch/arm/boot/dts/qcom-ipq8064-rb3011.dts     |   4 +-
+ arch/arm/boot/dts/qcom-ipq8064-v1.0.dtsi      |   6 +-
+ .../qcom-msm8974-lge-nexus5-hammerhead.dts    |   4 +-
+ .../dts/qcom-msm8974-sony-xperia-rhine.dtsi   |   8 +-
+ .../dts/qcom-msm8974pro-fairphone-fp2.dts     |   6 +-
+ .../boot/dts/qcom-msm8974pro-samsung-klte.dts |   6 +-
+ ...-msm8974pro-sony-xperia-shinano-castor.dts |   8 +-
+ arch/arm/boot/dts/rk3066a-bqcurie2.dts        |   4 +-
+ arch/arm/boot/dts/rk3066a-rayeager.dts        |   2 +-
+ arch/arm/boot/dts/rk3188-bqedison2qc.dts      |   4 +-
+ arch/arm/boot/dts/rk3188-px3-evb.dts          |   2 +-
+ arch/arm/boot/dts/rk3188-radxarock.dts        |   2 +-
+ arch/arm/boot/dts/rk3229-evb.dts              |   2 +-
+ arch/arm/boot/dts/rk3288-evb.dtsi             |   2 +-
+ arch/arm/boot/dts/rk3288-firefly-reload.dts   |   2 +-
+ arch/arm/boot/dts/rk3288-firefly.dtsi         |   2 +-
+ arch/arm/boot/dts/rk3288-phycore-rdk.dts      |   4 +-
+ arch/arm/boot/dts/rk3288-popmetal.dts         |   2 +-
+ arch/arm/boot/dts/rk3288-r89.dts              |   2 +-
+ arch/arm/boot/dts/rk3288-rock2-square.dts     |   2 +-
+ arch/arm/boot/dts/rk3288-tinker.dtsi          |   4 +-
+ .../boot/dts/rk3288-veyron-chromebook.dtsi    |   2 +-
+ arch/arm/boot/dts/rk3288-veyron-minnie.dts    |   4 +-
+ arch/arm/boot/dts/rk3288-veyron-pinky.dts     |   2 +-
+ arch/arm/boot/dts/rk3288-veyron.dtsi          |   2 +-
+ arch/arm/boot/dts/tegra114-asus-tf701t.dts    |   8 +-
+ arch/arm/boot/dts/tegra114-dalmore.dts        |   8 +-
+ arch/arm/boot/dts/tegra114-roth.dts           |   6 +-
+ arch/arm/boot/dts/tegra114-tn7.dts            |   6 +-
+ arch/arm/boot/dts/tegra124-apalis-eval.dts    |   2 +-
+ .../boot/dts/tegra124-apalis-v1.2-eval.dts    |   2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts     |   2 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi          |   4 +-
+ arch/arm/boot/dts/tegra124-venice2.dts        |   2 +-
+ .../boot/dts/tegra20-acer-a500-picasso.dts    |   8 +-
+ arch/arm/boot/dts/tegra20-asus-tf101.dts      |   8 +-
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts |   2 +-
+ arch/arm/boot/dts/tegra20-colibri-iris.dts    |   2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts         |   2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts           |   2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts        |   4 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts       |   2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts         |   2 +-
+ arch/arm/boot/dts/tegra30-apalis-eval.dts     |   2 +-
+ .../arm/boot/dts/tegra30-apalis-v1.1-eval.dts |   2 +-
+ .../tegra30-asus-nexus7-grouper-common.dtsi   |   8 +-
+ .../dts/tegra30-asus-transformer-common.dtsi  |  10 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi         |   6 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |   2 +-
+ arch/arm/boot/dts/tegra30-ouya.dts            |   2 +-
+ .../arm/boot/dts/tegra30-pegatron-chagall.dts |  10 +-
+ arch/arm/boot/dts/zynq-zc702.dts              |   4 +-
+ arch/arm/boot/dts/zynq-zturn-common.dtsi      |   2 +-
+ arch/arm64/boot/dts/apm/apm-merlin.dts        |   2 +-
+ arch/arm64/boot/dts/apm/apm-mustang.dts       |   2 +-
+ .../bcm4906-tplink-archer-c2300-v1.dts        |   8 +-
+ .../bcm4908/bcm4908-asus-gt-ac5300.dts        |   8 +-
+ .../boot/dts/freescale/fsl-ls1088a-ten64.dts  |  10 +-
+ .../boot/dts/freescale/imx8mm-mx8menlo.dts    |   4 +-
+ .../dts/freescale/imx8mm-var-som-symphony.dts |   6 +-
+ .../dts/freescale/imx8mm-venice-gw700x.dtsi   |   8 +-
+ .../dts/freescale/imx8mm-venice-gw7901.dts    |   8 +-
+ .../dts/freescale/imx8mm-venice-gw7902.dts    |   8 +-
+ .../dts/freescale/imx8mm-venice-gw7903.dts    |   6 +-
+ .../boot/dts/freescale/imx8mm-verdin.dtsi     |   2 +-
+ .../dts/freescale/imx8mn-var-som-symphony.dts |   6 +-
+ .../dts/freescale/imx8mn-venice-gw7902.dts    |   8 +-
+ .../boot/dts/freescale/imx8mp-verdin.dtsi     |   2 +-
+ .../dts/freescale/imx8mq-librem5-devkit.dts   |   6 +-
+ .../boot/dts/freescale/imx8mq-librem5.dtsi    |   4 +-
+ .../boot/dts/freescale/imx8mq-nitrogen.dts    |   2 +-
+ .../freescale/imx8qxp-colibri-eval-v3.dtsi    |   2 +-
+ arch/arm64/boot/dts/freescale/mba8mx.dtsi     |   6 +-
+ .../boot/dts/hisilicon/hi3660-hikey960.dts    |   2 +-
+ arch/arm64/boot/dts/hisilicon/hip05-d02.dts   |   6 +-
+ .../dts/marvell/armada-3720-turris-mox.dts    |   4 +-
+ .../marvell/armada-8040-clearfog-gt-8k.dts    |   4 +-
+ .../dts/mediatek/mt7622-bananapi-bpi-r64.dts  |  11 +-
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts  |   5 +-
+ .../dts/mediatek/mt8173-elm-hana-rev7.dts     |   6 +-
+ arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  |  10 +-
+ .../dts/mediatek/mt8183-kukui-jacuzzi.dtsi    |   4 +-
+ .../dts/mediatek/mt8183-kukui-kakadu.dtsi     |   2 +-
+ .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |   2 +-
+ .../boot/dts/mediatek/pumpkin-common.dtsi     |   4 +-
+ .../arm64/boot/dts/nvidia/tegra132-norrin.dts |   4 +-
+ .../boot/dts/nvidia/tegra186-p2771-0000.dts   |   6 +-
+ .../nvidia/tegra186-p3509-0000+p3636-0001.dts |   6 +-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |   4 +-
+ .../boot/dts/nvidia/tegra194-p3509-0000.dtsi  |   4 +-
+ .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   6 +-
+ .../arm64/boot/dts/nvidia/tegra210-p2894.dtsi |   2 +-
+ .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts |  10 +-
+ .../nvidia/tegra234-p3737-0000+p3701-0000.dts |   6 +-
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dts      |   4 +-
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts   |   6 +-
+ .../boot/dts/qcom/msm8916-alcatel-idol347.dts |   2 +-
+ .../arm64/boot/dts/qcom/msm8916-asus-z00l.dts |   4 +-
+ .../arm64/boot/dts/qcom/msm8916-huawei-g7.dts |   2 +-
+ .../boot/dts/qcom/msm8916-longcheer-l8150.dts |   2 +-
+ .../boot/dts/qcom/msm8916-longcheer-l8910.dts |   2 +-
+ .../qcom/msm8916-samsung-a2015-common.dtsi    |   6 +-
+ .../boot/dts/qcom/msm8916-samsung-j5.dts      |   4 +-
+ .../dts/qcom/msm8916-samsung-serranove.dts    |   6 +-
+ .../dts/qcom/msm8916-wingtech-wt88047.dts     |   2 +-
+ .../boot/dts/qcom/msm8992-xiaomi-libra.dts    |   6 +-
+ .../dts/qcom/msm8994-msft-lumia-octagon.dtsi  |  10 +-
+ .../qcom/msm8994-sony-xperia-kitakami.dtsi    |  12 +-
+ .../boot/dts/qcom/msm8996-xiaomi-common.dtsi  |   6 +-
+ .../boot/dts/qcom/msm8998-fxtec-pro1.dts      |  26 ++-
+ .../boot/dts/qcom/msm8998-oneplus-common.dtsi |   6 +-
+ .../dts/qcom/msm8998-sony-xperia-yoshino.dtsi |   8 +-
+ arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |   2 +-
+ arch/arm64/boot/dts/qcom/sc7280-idp.dtsi      |   2 +-
+ .../dts/qcom/sdm630-sony-xperia-nile.dtsi     |  11 +-
+ .../boot/dts/qcom/sdm632-fairphone-fp3.dts    |   2 +-
+ .../boot/dts/qcom/sdm660-xiaomi-lavender.dts  |   2 +-
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi    |   2 +-
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts    |  10 +-
+ .../boot/dts/qcom/sdm845-oneplus-common.dtsi  |   4 +-
+ .../boot/dts/qcom/sdm845-shift-axolotl.dts    |   2 +-
+ .../dts/qcom/sdm845-sony-xperia-tama.dtsi     |   2 +-
+ .../boot/dts/qcom/sdm845-xiaomi-beryllium.dts |   2 +-
+ .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts |   4 +-
+ .../qcom/sm6125-sony-xperia-seine-pdx201.dts  |   4 +-
+ .../boot/dts/qcom/sm7225-fairphone-fp4.dts    |   2 +-
+ arch/arm64/boot/dts/qcom/sm8150-hdk.dts       |   4 +-
+ .../dts/qcom/sm8150-microsoft-surface-duo.dts |   4 +-
+ arch/arm64/boot/dts/qcom/sm8250-hdk.dts       |   4 +-
+ .../boot/dts/qcom/sm8250-sony-xperia-edo.dtsi |   2 +-
+ .../dts/qcom/sm8350-sony-xperia-sagami.dtsi   |   2 +-
+ arch/arm64/boot/dts/rockchip/rk3308-evb.dts   |   2 +-
+ .../boot/dts/rockchip/rk3326-odroid-go2.dts   |  32 ++--
+ .../boot/dts/rockchip/rk3328-nanopi-r2s.dts   |   2 +-
+ arch/arm64/boot/dts/rockchip/rk3368-evb.dtsi  |   2 +-
+ .../boot/dts/rockchip/rk3368-geekbox.dts      |   2 +-
+ .../dts/rockchip/rk3368-orion-r68-meta.dts    |   2 +-
+ .../boot/dts/rockchip/rk3368-px5-evb.dts      |   2 +-
+ arch/arm64/boot/dts/rockchip/rk3368-r88.dts   |   2 +-
+ .../boot/dts/rockchip/rk3399-firefly.dts      |   2 +-
+ .../dts/rockchip/rk3399-gru-chromebook.dtsi   |   2 +-
+ .../boot/dts/rockchip/rk3399-gru-kevin.dts    |   2 +-
+ .../boot/dts/rockchip/rk3399-gru-scarlet.dtsi |   2 +-
+ .../boot/dts/rockchip/rk3399-khadas-edge.dtsi |   2 +-
+ .../boot/dts/rockchip/rk3399-nanopi-r4s.dts   |   4 +-
+ .../boot/dts/rockchip/rk3399-nanopi4.dtsi     |   2 +-
+ .../boot/dts/rockchip/rk3399-orangepi.dts     |   2 +-
+ .../boot/dts/rockchip/rk3399-pinebook-pro.dts |   4 +-
+ .../boot/dts/rockchip/rk3399-roc-pc.dtsi      |   2 +-
+ .../boot/dts/rockchip/rk3399-rockpro64.dtsi   |   2 +-
+ .../boot/dts/rockchip/rk3399-sapphire.dtsi    |   2 +-
+ .../boot/dts/rockchip/rk3566-pinenote.dtsi    |   2 +-
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts |   4 +-
+ .../dts/ti/k3-j721e-common-proc-board.dts     |   4 +-
+ .../boot/dts/xilinx/zynqmp-sm-k26-revA.dts    |   2 +-
+ .../boot/dts/xilinx/zynqmp-zcu100-revC.dts    |   2 +-
+ .../boot/dts/xilinx/zynqmp-zcu102-revA.dts    |   2 +-
+ .../boot/dts/xilinx/zynqmp-zcu106-revA.dts    |   2 +-
+ .../boot/dts/xilinx/zynqmp-zcu111-revA.dts    |   2 +-
+ 236 files changed, 696 insertions(+), 757 deletions(-)
+
 -- 
-2.17.1
+2.34.1
 
