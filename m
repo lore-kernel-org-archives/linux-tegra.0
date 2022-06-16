@@ -2,82 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC71CCA47A
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 13:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E871CCA47A
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 14:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231823AbiFPNQz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Jun 2022 09:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50984 "EHLO
+        id S1377631AbiFPOfX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Jun 2022 10:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230392AbiFPNQy (ORCPT
+        with ESMTP id S1377678AbiFPOfX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Jun 2022 09:16:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EAC13CFF7;
-        Thu, 16 Jun 2022 06:16:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A866EB823AA;
-        Thu, 16 Jun 2022 13:16:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0A6C3411A;
-        Thu, 16 Jun 2022 13:16:48 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="qEYhdwB+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1655385407;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cGUeyZ8PR/wVW8IqlWgOlfoA6rSo7jK2kzvB2/EJIPM=;
-        b=qEYhdwB+eG/dU0312YFqcYr9XdIzwWfTXTa0RTktw70V6Pzp9aSUDx812vt4KOpLHpeTiy
-        aEOGTCI/Khe/WJVJw6yBKNhRZVXUrL4bc/SYLJvSpQf5tdoJfkBcqVA8ST2s9KTgjq67f7
-        8RSUD4yqX62PdWfYhLJdbVWZCcxuCn0=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 75d81ab3 (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
-        Thu, 16 Jun 2022 13:16:47 +0000 (UTC)
-Date:   Thu, 16 Jun 2022 15:16:42 +0200
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Ron Economos <re@w6rz.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-        sudipm.mukherjee@gmail.com, slade@sladewatkins.com,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/11] 5.10.123-rc1 review
-Message-ID: <YqstOrOfpkTl43Vh@zx2c4.com>
-References: <20220614183719.878453780@linuxfoundation.org>
- <9e43b35e-31da-7e51-006c-1aa69acb10d4@nvidia.com>
- <a05678bb-29f8-23ea-9260-cc1cece3f480@w6rz.net>
- <51786b52-a33c-96c3-583b-2fd2d158ad5d@nvidia.com>
+        Thu, 16 Jun 2022 10:35:23 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE321CFFC;
+        Thu, 16 Jun 2022 07:35:22 -0700 (PDT)
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25G4igBg030693;
+        Thu, 16 Jun 2022 09:34:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=PODMain02222019;
+ bh=DN8v8qtec1v5YCZ914sIJGES0VWwSNxzupuu1YFG+cU=;
+ b=Nf/tgL1kOqplx0AcPPM50B5b7lIY2MT/pGvtOxuN4EDF+NZpXIZUxvmveHuRIz327Cu5
+ b/MpAoUi3hR2D2X9Qsjf1zt2gu5m7+8pME+7gfCJwlhzczVtGDgr61lhEwj81B23/w28
+ Mpfsjq+z8ETVaiusDSmIKEDCsk8095kCp6S/edXF7qu0M4KeeytZA+ixSPrPYPbrqdX/
+ RQbjZuIxolL8rfi6+M+O7Iv2JreSEYhR5TyzpJqRptriL6xsE3COLTZ+2F2pZ7iRjeuc
+ 4YqzPf71/WF+lq0W7bbE6dPlo8ALEcO/2vwwrw9kXDm/w15YnBV4ZcL0yzcRtE0bBpB/ dA== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gmrf35vuw-11
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 16 Jun 2022 09:34:45 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 16 Jun
+ 2022 15:34:34 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
+ Transport; Thu, 16 Jun 2022 15:34:34 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 246C911D4;
+        Thu, 16 Jun 2022 14:34:34 +0000 (UTC)
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <broonie@kernel.org>
+CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
+        <mripard@kernel.org>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <vkoul@kernel.org>, <nicolas.ferre@microchip.com>,
+        <nsaenz@kernel.org>, <shawnguo@kernel.org>, <linux-imx@nxp.com>,
+        <cezary.rojewski@intel.com>,
+        <pierre-louis.bossart@linux.intel.com>,
+        <linux-mips@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <daniel@zonque.org>, <srinivas.kandagatla@linaro.org>,
+        <linux-rockchip@lists.infradead.org>, <krzk@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
+        <peter.ujfalusi@gmail.com>, <jarkko.nikula@bitmer.com>,
+        <heiko@sntech.de>, <jbrunet@baylibre.com>, <kernel@pengutronix.de>,
+        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-rpi-kernel@lists.infradead.org>
+Subject: [PATCH 53/96] ASoC: msm*: Remove now redundant non_legacy_dai_naming flag
+Date:   Thu, 16 Jun 2022 15:33:46 +0100
+Message-ID: <20220616143429.1324494-54-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220616143429.1324494-1-ckeepax@opensource.cirrus.com>
+References: <20220616143429.1324494-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <51786b52-a33c-96c3-583b-2fd2d158ad5d@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: fnW09lalbGeDbLapYuDuEImMovdEbBLN
+X-Proofpoint-ORIG-GUID: fnW09lalbGeDbLapYuDuEImMovdEbBLN
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jon,
+The ASoC core has now been changed to default to the non-legacy DAI
+naming, as such drivers using the new scheme no longer need to specify
+the non_legacy_dai_naming flag.
 
-On Thu, Jun 16, 2022 at 11:11:25AM +0100, Jon Hunter wrote:
-> On 16/06/2022 10:46, Ron Economos wrote:
-> > On 6/16/22 1:48 AM, Jon Hunter wrote:
-> > I'm also seeing this on RISC-V. 5.15 and 5.17, but not 5.18.
-> That's good to know. I don't see this on 5.18 either, just 5.10, 5.15 
-> and 5.17.
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ sound/soc/codecs/msm8916-wcd-analog.c  | 1 -
+ sound/soc/codecs/msm8916-wcd-digital.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-Right. 5.18 has
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=48bff1053c172e6c7f340e506027d118147c8b7f
-which I thought was a bit too risky to backport. So on 5.18 you're not
-seeing this behavior because /dev/urandom is always seeded magically and
-hence there is never an opportunity to warn about unseeded randomness.
-Maybe we can think about backporting that if no issues come up after
-several months, but I'd rather tread lightly with that one.
+diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
+index e52a559c52d68..78e543eb3c834 100644
+--- a/sound/soc/codecs/msm8916-wcd-analog.c
++++ b/sound/soc/codecs/msm8916-wcd-analog.c
+@@ -1128,7 +1128,6 @@ static const struct snd_soc_component_driver pm8916_wcd_analog = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
+ };
+ 
+ static int pm8916_wcd_analog_parse_dt(struct device *dev,
+diff --git a/sound/soc/codecs/msm8916-wcd-digital.c b/sound/soc/codecs/msm8916-wcd-digital.c
+index 098a58990f07d..d490a0f186752 100644
+--- a/sound/soc/codecs/msm8916-wcd-digital.c
++++ b/sound/soc/codecs/msm8916-wcd-digital.c
+@@ -1155,7 +1155,6 @@ static const struct snd_soc_component_driver msm8916_wcd_digital = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
+ };
+ 
+ static const struct regmap_config msm8916_codec_regmap_config = {
+-- 
+2.30.2
 
-Anyway, as mentioned in the other message, I've got a patch I'll send
-out in a minute for the unwanted pr_warn().
-
-Jason
