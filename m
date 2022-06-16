@@ -2,79 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C195C43334
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 01:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9383CCA473
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Jun 2022 02:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348954AbiFPBrn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Jun 2022 21:47:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50718 "EHLO
+        id S1350811AbiFPCKb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Jun 2022 22:10:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344998AbiFPBrT (ORCPT
+        with ESMTP id S1358443AbiFPCKW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Jun 2022 21:47:19 -0400
-Received: from m15113.mail.126.com (m15113.mail.126.com [220.181.15.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2E663579AA;
-        Wed, 15 Jun 2022 18:47:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=1icBp
-        5p0Rg4t5QP7pXu7euYCDr/0Q6K0TcaAKQpB4i0=; b=XdUB94F7618pZ2LNG/vIR
-        Fv3OMtc6WYp3RG4SI6KEj/0c0TxLeLVrJeaJaWrCY3l/5CT1gShqxGSXYP09QsH9
-        1aX1SvQrwuU1H7DuWjbFUBLZnkDLLnQIaQhk+3o4VB2lR5hUR8x043tWMpB++Tlw
-        3Iw6BEp/qy6XP5gVYL32O8=
-Received: from localhost.localdomain (unknown [124.16.139.61])
-        by smtp3 (Coremail) with SMTP id DcmowADHYJJ9i6pi+1CxDQ--.61740S2;
-        Thu, 16 Jun 2022 09:46:46 +0800 (CST)
-From:   Liang He <windhl@126.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, digetx@gmail.com, ndesaulniers@google.com,
-        ulf.hansson@linaro.org, skamble@nvidia.com, nathan@kernel.org,
-        kkartik@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        windhl@126.com
-Subject: [PATCH v2] soc: tegra: fuse: Add missing of_node_put in tegra_init_fuse
-Date:   Thu, 16 Jun 2022 09:46:36 +0800
-Message-Id: <20220616014636.3972830-1-windhl@126.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 15 Jun 2022 22:10:22 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 291035AEE0;
+        Wed, 15 Jun 2022 19:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1655345406; x=1686881406;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=u/polTrCcfTR/bnfvj7XjWWQORpzgrJJNnRIhd6+LYo=;
+  b=Qu0Y5FW9OsO/xe+YNrKgzUBvvWAG7ijn3jZtuJVzH2cpylwiwtv+ZnVk
+   1dxCADEwAAzOkRiBfPi/0XDlXEs46ozk6JSWvtHlifRy0VbkWA0AqvGFc
+   Eoybia42yGBAKe+tZ2ubI1FD4lY9lvvaNnKZPPGhQ7KJBOIt9+o/c0WHc
+   y8Ly5SYJ1BEvXXReFGqOgTmS2bl9e9zRMgOJ1dmyn/Chxkjulhblz4yKj
+   CQfWX3SOqbhNcGUdGoToD0Y75DUe0QKiI27n2pSkLUn1AeNtFZFFQ/WVl
+   6udazhGJM6w92GkaYjQ13D5cwlxnHDxZBEbCSjODowSl8ouomWKN1d7yB
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10379"; a="258999490"
+X-IronPort-AV: E=Sophos;i="5.91,302,1647327600"; 
+   d="scan'208";a="258999490"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2022 19:09:59 -0700
+X-IronPort-AV: E=Sophos;i="5.91,302,1647327600"; 
+   d="scan'208";a="831355596"
+Received: from yuefengs-mobl.ccr.corp.intel.com (HELO [10.255.30.105]) ([10.255.30.105])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2022 19:09:51 -0700
+Message-ID: <0c0e6ec8-725d-93e8-44f1-db6c8a673a97@linux.intel.com>
+Date:   Thu, 16 Jun 2022 10:09:49 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DcmowADHYJJ9i6pi+1CxDQ--.61740S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKFW3GryrZw1rAw4fKFy3Jwb_yoW3KFc_Xa
-        1xWFZ7XF1UWanYva40qrWfZFy2yF4Iqrnaqr4Iv3W2k3W7Zr17GFsIvr17Ca4a9wsrCFW5
-        GryDZFyayr13AjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRt73kDUUUUU==
-X-Originating-IP: [124.16.139.61]
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGgAiF1-HZTo2ggAAsc
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Cc:     baolu.lu@linux.intel.com, suravee.suthikulpanit@amd.com,
+        alyssa@rosenzweig.io, dwmw2@infradead.org, yong.wu@mediatek.com,
+        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+        thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+        cohuck@redhat.com, thunder.leizhen@huawei.com, tglx@linutronix.de,
+        christophe.jaillet@wanadoo.fr, john.garry@huawei.com,
+        chenxiang66@hisilicon.com, saiprakash.ranjan@codeaurora.org,
+        isaacm@codeaurora.org, yangyingliang@huawei.com,
+        jordan@cosmicpenguin.net, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain
+ and device/group
+Content-Language: en-US
+To:     Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org,
+        will@kernel.org, marcan@marcan.st, sven@svenpeter.dev,
+        robin.murphy@arm.com, robdclark@gmail.com, matthias.bgg@gmail.com,
+        orsonzhai@gmail.com, baolin.wang7@gmail.com, zhang.lyra@gmail.com,
+        jean-philippe@linaro.org, alex.williamson@redhat.com,
+        jgg@nvidia.com, kevin.tian@intel.com
+References: <20220616000304.23890-1-nicolinc@nvidia.com>
+ <20220616000304.23890-2-nicolinc@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20220616000304.23890-2-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In this function, of_find_matching_node() will return a node
-pointer with refcount incremented. We should use of_node_put
-when the pointer *np* is not used anymore.
+On 2022/6/16 08:03, Nicolin Chen wrote:
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 44016594831d..0dd13330fe12 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -4323,7 +4323,7 @@ static int prepare_domain_attach_device(struct iommu_domain *domain,
+>   		return -ENODEV;
+>   
+>   	if (dmar_domain->force_snooping && !ecap_sc_support(iommu->ecap))
+> -		return -EOPNOTSUPP;
+> +		return -EMEDIUMTYPE;
+>   
+>   	/* check if this iommu agaw is sufficient for max mapped address */
+>   	addr_width = agaw_to_width(iommu->agaw);
+> @@ -4331,10 +4331,10 @@ static int prepare_domain_attach_device(struct iommu_domain *domain,
+>   		addr_width = cap_mgaw(iommu->cap);
+>   
+>   	if (dmar_domain->max_addr > (1LL << addr_width)) {
+> -		dev_err(dev, "%s: iommu width (%d) is not "
+> +		dev_dbg(dev, "%s: iommu width (%d) is not "
+>   		        "sufficient for the mapped address (%llx)\n",
+>   		        __func__, addr_width, dmar_domain->max_addr);
+> -		return -EFAULT;
+> +		return -EMEDIUMTYPE;
+>   	}
+>   	dmar_domain->gaw = addr_width;
 
-Signed-off-by: Liang He <windhl@126.com>
----
- changelog:
+Can we simply remove the dev_err()? As the return value has explicitly
+explained the failure reason, putting a print statement won't help much.
 
- v2: use real name for Sob
- v1: fix the bug
-
-
- drivers/soc/tegra/fuse/fuse-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index b0a8405dbdb1..6542267a224d 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -568,6 +568,7 @@ static int __init tegra_init_fuse(void)
- 	np = of_find_matching_node(NULL, car_match);
- 	if (np) {
- 		void __iomem *base = of_iomap(np, 0);
-+		of_node_put(np);
- 		if (base) {
- 			tegra_enable_fuse_clk(base);
- 			iounmap(base);
--- 
-2.25.1
-
+Best regards,
+baolu
