@@ -2,109 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE69CCA479
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Jun 2022 07:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ECFCCA479
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Jun 2022 12:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380239AbiFQHZo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Jun 2022 03:25:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37304 "EHLO
+        id S241493AbiFQMJj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Jun 2022 08:09:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380206AbiFQHZn (ORCPT
+        with ESMTP id S239096AbiFQMJi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Jun 2022 03:25:43 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1773A65D01;
-        Fri, 17 Jun 2022 00:25:42 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id D16F15C0151;
-        Fri, 17 Jun 2022 03:25:38 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 17 Jun 2022 03:25:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1655450738; x=
-        1655537138; bh=t6QXcNLzauxbqf0PNTG8MvaAdoQQFis6uQHBpNA5m+I=; b=n
-        r/26OCnEDIr6jYGUp00hxr/NMoxkf6xXfRuhMockkxh6n/wloYbpla88d1SGLc3P
-        BtUBgD8RZGZwQq1VPEdFsxTpp0vbEShL/ls6VxYlg3QMzR0vwLar8HSi00UlQ0gL
-        CH0ldBnQE8fgusDetIp4GspeBfNwxFV/Kux0Hx5Gn4thT/XQgU8PMW4HgsFFcXRm
-        Zivnb/+Onrj1LGZ5AHx2nvHV0C75KC/tYxnCCabt/MYKO/z8c0fQcLinaQbHGkZ/
-        ReDK0Ixt6XyqgHi5Jl8vZzwm7V5ELSXQsKa2v6qLRWnUgG5G2P5dohWhsokjAjTc
-        L+OzZ1aV3f76OQGSJyChg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1655450738; x=
-        1655537138; bh=t6QXcNLzauxbqf0PNTG8MvaAdoQQFis6uQHBpNA5m+I=; b=C
-        kYUa18GGhGd0oZQ43NnZDN3+5y/3awo+Sws0Pq3eb6UKVOekXJ4Y7ZEHvLp36JHj
-        tycJVtu9HwZf6jSnqxW4zSYXVJbe86AaaXxlWH7q4QH3qe9lRa6jd+fNATp9LPAT
-        uMB4hcgr49bGrbUHs5jLTWfsDcAY1XnxmodGaA/DgxKZG0akk8naBHEsjI+9wBbi
-        bdBT2GvJE4pNDjc9Q1xJKM5StazQkLXgIHK2oujsy/VM2X0INDscm2W7ndAJ5rcf
-        mBBIfmMwMR/jziK5WAQT6SO63sjbrOoLYrgXG/T1UfFrVqW/5w3OIEWPJWQoFPkh
-        /k+4PB1FRuFRA5/pGTzAw==
-X-ME-Sender: <xms:cCysYuGbj_tXIkPunEurAIwroXW5XpxjXpF4QSJbzxhbPXclwax6XA>
-    <xme:cCysYvWgkzuxSA4c7vUx_UbBJT8gLLCv-uNPJbxN_6t01QjqR06uBZtc0l9wxHzhR
-    zr0LWaTeAJNrwG7Sv4>
-X-ME-Received: <xmr:cCysYoL-s8_MAzYdUOgHxl_upF4_8dJ4RyvHl_ZD6Qzg5t8bcXrIWoJ5sq56JxsiML5p_3EqajNOb9VnX0x1uY0f2nUbuWm7o5g4tUo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedruddvgedguddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgr
-    gihimhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtf
-    frrghtthgvrhhnpeetgfelgefggeekkefggfeludeiudffjeffgeevveekjedukedtudeu
-    teefteefgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:cCysYoGVB8cZQ7yOz48SmLfp873hgDRpdEpPRutGsvxTCLizycl41w>
-    <xmx:cCysYkVSvHtiRSBPNAhrPCzXsNP5d45QhqafU_iIo0w9pj_rG6ibZQ>
-    <xmx:cCysYrOhmw8cG_xUkAWqqi3Xw5qv0x5wtJ9n4l4N9ZI1Bu5NZbr7WA>
-    <xmx:ciysYvyJISiAd-XGF0UUbZ-Rv8dPZGqNpVjs7CZjxA6lvgGh5OS30A>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Jun 2022 03:25:36 -0400 (EDT)
-Date:   Fri, 17 Jun 2022 09:25:33 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com,
-        kuninori.morimoto.gx@renesas.com, airlied@linux.ie,
-        daniel@ffwll.ch, vkoul@kernel.org, nicolas.ferre@microchip.com,
-        nsaenz@kernel.org, shawnguo@kernel.org, linux-imx@nxp.com,
-        cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com,
-        linux-mips@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        daniel@zonque.org, srinivas.kandagatla@linaro.org,
-        linux-rockchip@lists.infradead.org, krzk@kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        peter.ujfalusi@gmail.com, jarkko.nikula@bitmer.com,
-        heiko@sntech.de, jbrunet@baylibre.com, kernel@pengutronix.de,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH 03/96] drm/vc4: Migrate to new style legacy DAI naming
- flag
-Message-ID: <20220617072533.foajsg6z3c2js3nb@houat>
-References: <20220616143429.1324494-1-ckeepax@opensource.cirrus.com>
- <20220616143429.1324494-4-ckeepax@opensource.cirrus.com>
+        Fri, 17 Jun 2022 08:09:38 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5754517598;
+        Fri, 17 Jun 2022 05:09:36 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-136-92.dynamic.spd-mgts.ru [109.252.136.92])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2A982660179A;
+        Fri, 17 Jun 2022 13:09:34 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1655467775;
+        bh=i83+JJRH3W4qGEUUYF7SQgp3g5O/kI5O54Jr6yQ71BE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=XIolfYkv5wCh7FeJg7jAXVgOWno+AIsYz2EAAkTSiosvk+Zk6BZE97kOvD8Y3jxIc
+         gJ6mIOFP6jopreRU78cYaOG1ksMT5d9sfuvpTdJqozYEKZazAHBPeBzJMQxMm2QFdb
+         /eW6AT6ci5okv6oddXQcLPOAVV2b4YXjYui2rvZBtPeIhcMvEo1UGuAftRnuK1aaSh
+         fgunC+t7IEtZyroUMbpsy315Y5f3fBwgdWFy6nyo8HK3y14/UkRcN+PVvJfHJxayLh
+         lHGQKhTmNhRbLd4LJMBF/f0+6fw1V0HtcxbbzvzH8CvWDdhwTwFNXRo5cVNAnuEtJG
+         InSQmD26Arhiw==
+Message-ID: <223d33be-4c73-8605-e2bb-33e4a14682d2@collabora.com>
+Date:   Fri, 17 Jun 2022 15:09:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220616143429.1324494-4-ckeepax@opensource.cirrus.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 08/31] cpufreq: tegra20: Migrate to
+ dev_pm_opp_set_config()
+Content-Language: en-US
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1653564321.git.viresh.kumar@linaro.org>
+ <4b38ceed657bfcf87ff9ab0dd69dd1f2f5658b24.1653564321.git.viresh.kumar@linaro.org>
+ <793e49ea-aeb0-a47a-9fe8-742a6397bb35@collabora.com>
+ <5c0e697e-abca-bcf0-cf68-d9c240d82527@collabora.com>
+ <20220530075256.lpw6bhupejy2dnqi@vireshk-i7>
+ <20220607084351.i4s5veww6irmaf3t@vireshk-i7>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20220607084351.i4s5veww6irmaf3t@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jun 16, 2022 at 03:32:56PM +0100, Charles Keepax wrote:
-> Change the legacy DAI naming flag from opting in to the new scheme
-> (non_legacy_dai_naming), to opting out of it (legacy_dai_naming).
-> This driver appears to be on the CPU side of the DAI link and
-> currently uses the legacy naming, so add the new flag.
->=20
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+On 6/7/22 11:43, Viresh Kumar wrote:
+> On 30-05-22, 13:22, Viresh Kumar wrote:
+>> On 29-05-22, 19:59, Dmitry Osipenko wrote:
+>>>> Please keep the PTR_ERR_OR_ZERO.
+>>
+>> Ahh, sorry about that. Fixed.
+>>
+>>>> tegra20-cpufreq tegra20-cpufreq: failed to set OPP config: -1042688000
+>>>
+>>> With that fixed, now there is another error:
+>>>
+>>> [    1.761945] cpu cpu0: _of_add_opp_table_v2: no supported OPPs
+>>> [    1.761960] cpu cpu0: OPP table can't be empty
+>>
+>> So we failed to find any OPPs which work with the hardware version of
+>> updated with dev_pm_opp_set_config(). I tried to follow the path and
+>> see if there is something wrong here. Failed to find that :(
+>>
+>>> I see this on Tegra30, but not on Tegra20. Apparently OPP table
+>>> refcounting is broken on Tegra30 by this patchset. To make it clear,
+>>> there are no error without these OPP patches applied. I may take a
+>>> closer look if will be needed, just ping me.
+>>
+>> Yes, it would be very helpful as I don't have the necessary hardware.
+> 
+> Hey, any updates on this ? I am looking to resend the series soon, would be nice
+> to fix this before that.
+> 
 
-Acked-by: Maxime Ripard <maxime@cerno.tech>
+I'll take a look over this weekend. Sorry for the delay.
 
-Thanks!
-Maxime
+-- 
+Best regards,
+Dmitry
