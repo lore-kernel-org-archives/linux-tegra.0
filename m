@@ -2,123 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEA0CCA479
-	for <linux-tegra@archiver.kernel.org>; Sat, 18 Jun 2022 03:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 705C6C433EF
+	for <linux-tegra@archiver.kernel.org>; Sat, 18 Jun 2022 12:44:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383988AbiFRDDo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Jun 2022 23:03:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39832 "EHLO
+        id S235293AbiFRMo3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 18 Jun 2022 08:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383900AbiFRDDl (ORCPT
+        with ESMTP id S233710AbiFRMoR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Jun 2022 23:03:41 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 520BA6CAA7;
-        Fri, 17 Jun 2022 20:03:40 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 25I32Nt4004650;
-        Fri, 17 Jun 2022 22:02:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1655521343;
-        bh=v9iLe16OQzDjus8PgEyzt81ju785zygpn75Qb7cPKDk=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ubm9+IAhGGTk3kdTt5x7vdcv21zn8SduavN1QPsDFtatpMEQLnnpq14kmxzjhSdoM
-         EhSYzwprF+3qoaWgxqEa7tkCA7AfNzT0CIUyyPN2V1vMiSYZKDtU+T7Pvq2yIkEfs4
-         7jCtmDUFYShPMx+ispwTz24Ou/91SMS8cN3blxkI=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 25I32NTI008896
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 17 Jun 2022 22:02:23 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Fri, 17
- Jun 2022 22:02:22 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Fri, 17 Jun 2022 22:02:22 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 25I32MBg024730;
-        Fri, 17 Jun 2022 22:02:22 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     <krzysztof.kozlowski@linaro.org>, <olof@lixom.net>,
-        <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>, <arm@kernel.org>
-CC:     Nishanth Menon <nm@ti.com>, <linux-input@vger.kernel.org>,
-        <khuong@os.amperecomputing.com>, <heiko@sntech.de>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <jonathanh@nvidia.com>, <sebastian.hesselbarth@gmail.com>,
-        <agross@kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <tony@atomide.com>,
-        <nicolas.ferre@microchip.com>, <joel@jms.id.au>,
-        <linux-arm-msm@vger.kernel.org>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <thierry.reding@gmail.com>,
-        <claudiu.beznea@microchip.com>, <vigneshr@ti.com>,
-        <bjorn.andersson@linaro.org>, <openbmc@lists.ozlabs.org>,
-        <peda@axentia.se>, <andrew@lunn.ch>,
-        <linux-aspeed@lists.ozlabs.org>, <linus.walleij@linaro.org>,
-        <festevam@gmail.com>, <xuwei5@hisilicon.com>,
-        <alexandre.belloni@bootlin.com>, <leoyang.li@nxp.com>,
-        <michal.simek@xilinx.com>, <andrew@aj.id.au>, <kristo@kernel.org>,
-        <linux-imx@nxp.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        <linux-arm-kernel@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <j.neuschaefer@gmx.net>, <gregory.clement@bootlin.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <linux@armlinux.org.uk>,
-        <kernel@pengutronix.de>, <dmitry.torokhov@gmail.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: (subset) [PATCH v3 00/40] dt-bindings: input: gpio-keys: rework matching children
-Date:   Fri, 17 Jun 2022 22:02:21 -0500
-Message-ID: <165552126299.28422.3856100388848453087.b4-ty@ti.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220616005224.18391-1-krzysztof.kozlowski@linaro.org>
-References: <20220616005224.18391-1-krzysztof.kozlowski@linaro.org>
+        Sat, 18 Jun 2022 08:44:17 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAFE11801;
+        Sat, 18 Jun 2022 05:44:15 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id g12so1264988ljk.11;
+        Sat, 18 Jun 2022 05:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=b447jOYXFdxyC5KLKr4cT1iaWa3YtDHOE19FUkUZFxI=;
+        b=Y09/U+3h7GblcidI+246WuwzVXexOkGoPXfX1PNsq3sMJbAdG1fNyVgv1C17Z5SbJu
+         AgVYtvcUhb9wqZumwwcTdoB+xcyopGEJRiVmwrnIClhvERJib8L17f04eUqmOuBi2BrH
+         1YPOJ2iptquUetsJY79ef+SpWYxeqb5YFwqLrseDnDf/UyeY3b7CY9+r331tq0iMrBWV
+         MYi59h0oWdQQWzgY75Wp13lqUnv4B83Fb2WULYMi+ybDm1qnKKZ/9aE+EKdQqQmcyKac
+         EaUwlnQmmB6g4w0YnoqVU7Oa+NxAeZinL3jZEAaJbx7TX1w9bJyYvkh0RSjKI+fXe8oO
+         JBUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=b447jOYXFdxyC5KLKr4cT1iaWa3YtDHOE19FUkUZFxI=;
+        b=uOXo2HAvbzvcH7dL/VRWtQQSjzmvKBpi6nexpXBEG3oz6PfdDBWjv10izt9lEajwkK
+         RIq2uPJpSmffuCw9GE+A0n8ArsQzu2zYvBgQz+2abYcmTFzvS9fGmsdMI982j0MCCzPR
+         DVMEnSXAh82+a4eZeqkZZzXDb7oZPvm5ak+j9KWSI7WC4TID/S7ul2y28Far6XvtdoM7
+         qW7t0IAwLIDmIAI8VyA46/poK0VgaZk6+Mz0u4M1nh5U1VjtOGXnKXzswCNuUmWNkUvX
+         sUL3YMW5qxyMcy5jl0W51ERLsRXmAxXD9o75Ewlw00FYkCKrb7pWhL9+Dumj7BYV+jhN
+         N62Q==
+X-Gm-Message-State: AJIora9SbgfsfBhsNLpBkXZiRh+JHE15iSboYgGQSnQrhA/jm0sEf9Qp
+        NaDl87IOeXuQSoCqUTO18WC1F8LSgYM=
+X-Google-Smtp-Source: AGRyM1uNGyupmSNC5LwN280DtpS+8PQAJv6zujwqVJTkDeIuZq4jJjVNUWOka2yF8oBdz8mKpDlh+g==
+X-Received: by 2002:a2e:b1c8:0:b0:258:642d:98b0 with SMTP id e8-20020a2eb1c8000000b00258642d98b0mr7410361lja.447.1655556254103;
+        Sat, 18 Jun 2022 05:44:14 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-136-92.dynamic.spd-mgts.ru. [109.252.136.92])
+        by smtp.googlemail.com with ESMTPSA id a25-20020a05651c031900b002554dde32bfsm931096ljp.47.2022.06.18.05.44.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Jun 2022 05:44:13 -0700 (PDT)
+Message-ID: <6d5b2bfc-f449-668c-8c97-638eb806cb66@gmail.com>
+Date:   Sat, 18 Jun 2022 15:44:07 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 2/3] thermal/drivers/tegra: Remove get_trend function
+Content-Language: en-US
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20220616202537.303655-1-daniel.lezcano@linaro.org>
+ <20220616202537.303655-2-daniel.lezcano@linaro.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220616202537.303655-2-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Krzysztof Kozlowski,
-
-On Wed, 15 Jun 2022 17:52:24 -0700, Krzysztof Kozlowski wrote:
-> Merging
-> =======
-> 1. dt-bindings: rebased on top of Rob's:
->    https://lore.kernel.org/all/20220608211207.2058487-1-robh@kernel.org/
+16.06.2022 23:25, Daniel Lezcano пишет:
+> The get_trend function does already what the generic framework does.
 > 
-> 2. DTS patches are independent. They can be picked up directly by sub-arch
->    maintainers, by Arnd or Olof, or eventually by me (if you wish).
+> Remove it.
 > 
-> [...]
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/thermal/tegra/soctherm.c | 32 --------------------------------
+>  1 file changed, 32 deletions(-)
+> 
+> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+> index 210325f92559..825eab526619 100644
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -633,37 +633,6 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+>  	return 0;
+>  }
+>  
+> -static int tegra_thermctl_get_trend(void *data, int trip,
+> -				    enum thermal_trend *trend)
+> -{
+> -	struct tegra_thermctl_zone *zone = data;
+> -	struct thermal_zone_device *tz = zone->tz;
+> -	int trip_temp, temp, last_temp, ret;
+> -
+> -	if (!tz)
+> -		return -EINVAL;
+> -
+> -	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+> -	if (ret)
+> -		return ret;
+> -
+> -	temp = READ_ONCE(tz->temperature);
+> -	last_temp = READ_ONCE(tz->last_temperature);
+> -
+> -	if (temp > trip_temp) {
+> -		if (temp >= last_temp)
+> -			*trend = THERMAL_TREND_RAISING;
+> -		else
+> -			*trend = THERMAL_TREND_STABLE;
+> -	} else if (temp < trip_temp) {
+> -		*trend = THERMAL_TREND_DROPPING;
+> -	} else {
+> -		*trend = THERMAL_TREND_STABLE;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static void thermal_irq_enable(struct tegra_thermctl_zone *zn)
+>  {
+>  	u32 r;
+> @@ -716,7 +685,6 @@ static int tegra_thermctl_set_trips(void *data, int lo, int hi)
+>  static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
+>  	.get_temp = tegra_thermctl_get_temp,
+>  	.set_trip_temp = tegra_thermctl_set_trip_temp,
+> -	.get_trend = tegra_thermctl_get_trend,
+>  	.set_trips = tegra_thermctl_set_trips,
+>  };
+>  
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
-
-[29/40] arm64: dts: ti: align gpio-key node names with dtschema
-        commit: 85423386c9763fb20159892631eccc481a2d9b71
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-
+The framework doesn't use the trip temperature, is it really the same?
+Previously, if temperature was above the trip and was dropping, then it
+was THERMAL_TREND_STABLE instead of THERMAL_TREND_DROPPING.
