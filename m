@@ -2,142 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35546C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Jun 2022 14:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6D6C43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Jun 2022 15:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241922AbiFTOuf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Jun 2022 10:50:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50938 "EHLO
+        id S243935AbiFTPWs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Jun 2022 11:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242536AbiFTOuN (ORCPT
+        with ESMTP id S244064AbiFTPWh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Jun 2022 10:50:13 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C1A63C731;
-        Mon, 20 Jun 2022 07:09:09 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-136-92.dynamic.spd-mgts.ru [109.252.136.92])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id ED33766016AA;
-        Mon, 20 Jun 2022 15:08:57 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1655734140;
-        bh=BXU+ifI6vgvX2l7WRjph+CNUKyZnpbVEdIZ7RrhtSq4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=hbKEas/qwTrQOtYjHwF1kAp5bF+lx0c/HWQwXzlCDzigXVc6ThGjLuF3ZUDyYkTwz
-         MouYrGpQnILP4PpIymmbBhVM9e1PASUWBFi+LgRwQKHtJaeCJSG55KGkiaLdAooRwx
-         r2TI5GDTa0dTQ+8tpeAHv2LUf+jVTzvilnkf5MIXXOtgLhZavAyBeA5Coc+G+31H0n
-         LqN5s7FdaPeYgtK9DeQIbTvs9nVBH3Vd5hMCs7Z3/RWoHnCkbvzEtAtefHevXEAM22
-         OU+8g1IHrfEqrNowXyflyg+A+jrXLHwPj7JmxC/fo9Iq5iwKq0KsVJdcRE82IB0+gX
-         J8VaycDtZEnTQ==
-Message-ID: <3bb3dc53-69fc-8cdb-ae37-583b9b2660a3@collabora.com>
-Date:   Mon, 20 Jun 2022 17:08:54 +0300
+        Mon, 20 Jun 2022 11:22:37 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 424F01BB
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Jun 2022 08:17:13 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id m1so7376145wrb.2
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Jun 2022 08:17:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=zrL5Ko404zTn2sYJajwJygSYjcByLv+eeU7NKJf9fRQ=;
+        b=Dj0IODvlLKHMAhfvaoGfnoMmAfAx3IOmxYS3nagMCoZlJWf//OmKMweRJAErq381Dg
+         urx+BkuXRjugobs2/XkV1aNZ7IGzadwGxZ4jhcVrMO8ifQb4O7PuAXhzk9eNrv+xjh0O
+         hSR40o7ZIvUpJb10nMzwzZskS1ucP+EXvrPdbpRwgnxWQUU6qWNJlgRFZl2xtwWrBSBS
+         xWL9gKfBPkpuaTf2nA1fq1hK0zlH/btnEs5CXeVr/+CTAybALZVYEC6vbgHbI1vkHcPA
+         Wucy2Q32Te47VAHjUkD8lk7giyDh5OwUg97POcuszq/PeL7Y5asHC5KonSvDPTLJZo2Y
+         Za+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=zrL5Ko404zTn2sYJajwJygSYjcByLv+eeU7NKJf9fRQ=;
+        b=FKaBO+JSPbI+T26sckZsyIIbKD6FXkFiAxD8FdeaU7PwgeYhzEKomEU/I04tJSZALI
+         xmA0opItTAlWkO9U6ZEBltfKcLE+NvQWKOQlKlfweNqaskpaxERfabAjgDfCjI8ymUof
+         idhWBBVpfb1DcIpEb8sWhqad296DT8VLqrrt6z4Vy25KZnoHLAJa/dy7SWSvMBQU2Omz
+         wfjbsqBg8xB0cAZtg5Alrmq9iNQNhn/cWfi4AjNSar+qFBDuglabF2ijlv0q+EQYCxqJ
+         3eo9cPSSK0KvSIT/9h/FlwFipuwmoXihdD0kklPxqSoqYquSTkWLrZIByu24UPXCeouT
+         WcsA==
+X-Gm-Message-State: AJIora9yHAWGFdGtAgLyhMuasX2fFAHn2rIV26UXPNPaBP4+y5M8eT2m
+        dddoQ31d1Zxn30bSgJLKtBfyxw==
+X-Google-Smtp-Source: AGRyM1tG/281TeLKRYVvM91ypJ+UK28tXoNfhxwhSGRUzwBmfj6kfRFvOzRIyfKErQIzpUC1WcLCsw==
+X-Received: by 2002:a05:6000:1686:b0:219:b932:ffba with SMTP id y6-20020a056000168600b00219b932ffbamr23977107wrd.227.1655738231674;
+        Mon, 20 Jun 2022 08:17:11 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:1c7:92c1:7b6f:f9? ([2a05:6e02:1041:c10:1c7:92c1:7b6f:f9])
+        by smtp.googlemail.com with ESMTPSA id i9-20020a05600c354900b003975c7058bfsm15724611wmq.12.2022.06.20.08.17.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jun 2022 08:17:10 -0700 (PDT)
+Message-ID: <20db85cb-1d16-3aad-c9b0-0a2a602f20ec@linaro.org>
+Date:   Mon, 20 Jun 2022 17:17:09 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v6 17/22] drm/shmem-helper: Add generic memory shrinker
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 2/3] thermal/drivers/tegra: Remove get_trend function
 Content-Language: en-US
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Gert Wollny <gert.wollny@collabora.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+To:     Dmitry Osipenko <digetx@gmail.com>, rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, kernel@collabora.com
-References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
- <20220526235040.678984-18-dmitry.osipenko@collabora.com>
- <CAF6AEGt61t2truYDCxm17hqUPV-UdEdHjLs+6vmj5RPoPuVBYg@mail.gmail.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <CAF6AEGt61t2truYDCxm17hqUPV-UdEdHjLs+6vmj5RPoPuVBYg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20220616202537.303655-1-daniel.lezcano@linaro.org>
+ <20220616202537.303655-2-daniel.lezcano@linaro.org>
+ <6d5b2bfc-f449-668c-8c97-638eb806cb66@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <6d5b2bfc-f449-668c-8c97-638eb806cb66@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/19/22 20:53, Rob Clark wrote:
-...
->> +static unsigned long
->> +drm_gem_shmem_shrinker_count_objects(struct shrinker *shrinker,
->> +                                    struct shrink_control *sc)
->> +{
->> +       struct drm_gem_shmem_shrinker *gem_shrinker = to_drm_shrinker(shrinker);
->> +       struct drm_gem_shmem_object *shmem;
->> +       unsigned long count = 0;
->> +
->> +       if (!mutex_trylock(&gem_shrinker->lock))
->> +               return 0;
->> +
->> +       list_for_each_entry(shmem, &gem_shrinker->lru_evictable, madv_list) {
->> +               count += shmem->base.size;
->> +
->> +               if (count >= SHRINK_EMPTY)
->> +                       break;
->> +       }
->> +
->> +       mutex_unlock(&gem_shrinker->lock);
+On 18/06/2022 14:44, Dmitry Osipenko wrote:
+> 16.06.2022 23:25, Daniel Lezcano пишет:
+>> The get_trend function does already what the generic framework does.
+>>
+>> Remove it.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+
+[ ... ]
+
+>>   static void thermal_irq_enable(struct tegra_thermctl_zone *zn)
+>>   {
+>>   	u32 r;
+>> @@ -716,7 +685,6 @@ static int tegra_thermctl_set_trips(void *data, int lo, int hi)
+>>   static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
+>>   	.get_temp = tegra_thermctl_get_temp,
+>>   	.set_trip_temp = tegra_thermctl_set_trip_temp,
+>> -	.get_trend = tegra_thermctl_get_trend,
+>>   	.set_trips = tegra_thermctl_set_trips,
+>>   };
+>>   
 > 
-> As I mentioned on other thread, count_objects, being approximate but
-> lockless and fast is the important thing.  Otherwise when you start
-> hitting the shrinker on many threads, you end up serializing them all,
-> even if you have no pages to return to the system at that point.
+> The framework doesn't use the trip temperature, is it really the same?
+> Previously, if temperature was above the trip and was dropping, then it
+> was THERMAL_TREND_STABLE instead of THERMAL_TREND_DROPPING.
 
-Daniel's point for dropping the lockless variant was that we're already
-in trouble if we're hitting shrinker too often and extra optimizations
-won't bring much benefits to us.
+Actually, the only difference is the temp > trip and the temperature < 
+last_temperature. It results in the STABLE trend and the governor does 
+nothing.
 
-Alright, I'll add back the lockless variant (or will use yours
-drm_gem_lru) in the next revision. The code difference is very small
-after all.
+With the core trend function for the same inputs, temperature < 
+last_temperature results in a DROPPING but as temp > trip the 'throttle' 
+boolean is true in the governor, and get_next_state() with DROPPING + 
+throttle=true, results in nothing because the action happens when 
+throttle=false.
 
-...
->> +               /* prevent racing with the dma-buf importing/exporting */
->> +               if (!mutex_trylock(&gem_shrinker->dev->object_name_lock)) {
->> +                       *lock_contention |= true;
->> +                       goto resv_unlock;
->> +               }
-> 
-> I'm not sure this is a good idea to serialize on object_name_lock.
-> Purgeable buffers should never be shared (imported or exported).  So
-> at best you are avoiding evicting and immediately swapping back in, in
-> a rare case, at the cost of serializing multiple threads trying to
-> reclaim pages in parallel.
+All the combinations result at end at the same action from the governor.
 
-The object_name_lock shouldn't cause contention in practice. But objects
-are also pinned on attachment, hence maybe this lock is indeed
-unnecessary.. I'll re-check it.
+
 
 -- 
-Best regards,
-Dmitry
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
