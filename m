@@ -2,110 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95CFC43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Jun 2022 10:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35546C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Jun 2022 14:50:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240492AbiFTKLM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Jun 2022 06:11:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42538 "EHLO
+        id S241922AbiFTOuf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Jun 2022 10:50:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234353AbiFTKLM (ORCPT
+        with ESMTP id S242536AbiFTOuN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Jun 2022 06:11:12 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4210F958E;
-        Mon, 20 Jun 2022 03:11:11 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C40DE113E;
-        Mon, 20 Jun 2022 03:11:10 -0700 (PDT)
-Received: from [10.57.84.159] (unknown [10.57.84.159])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 162D83F7D7;
-        Mon, 20 Jun 2022 03:11:05 -0700 (PDT)
-Message-ID: <55e352d5-3fea-7e46-0530-b41d323b6fcf@arm.com>
-Date:   Mon, 20 Jun 2022 11:11:01 +0100
+        Mon, 20 Jun 2022 10:50:13 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C1A63C731;
+        Mon, 20 Jun 2022 07:09:09 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-136-92.dynamic.spd-mgts.ru [109.252.136.92])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id ED33766016AA;
+        Mon, 20 Jun 2022 15:08:57 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1655734140;
+        bh=BXU+ifI6vgvX2l7WRjph+CNUKyZnpbVEdIZ7RrhtSq4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=hbKEas/qwTrQOtYjHwF1kAp5bF+lx0c/HWQwXzlCDzigXVc6ThGjLuF3ZUDyYkTwz
+         MouYrGpQnILP4PpIymmbBhVM9e1PASUWBFi+LgRwQKHtJaeCJSG55KGkiaLdAooRwx
+         r2TI5GDTa0dTQ+8tpeAHv2LUf+jVTzvilnkf5MIXXOtgLhZavAyBeA5Coc+G+31H0n
+         LqN5s7FdaPeYgtK9DeQIbTvs9nVBH3Vd5hMCs7Z3/RWoHnCkbvzEtAtefHevXEAM22
+         OU+8g1IHrfEqrNowXyflyg+A+jrXLHwPj7JmxC/fo9Iq5iwKq0KsVJdcRE82IB0+gX
+         J8VaycDtZEnTQ==
+Message-ID: <3bb3dc53-69fc-8cdb-ae37-583b9b2660a3@collabora.com>
+Date:   Mon, 20 Jun 2022 17:08:54 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 5/5] vfio/iommu_type1: Simplify group attachment
-Content-Language: en-GB
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Nicolin Chen <nicolinc@nvidia.com>
-Cc:     "cohuck@redhat.com" <cohuck@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "jordan@cosmicpenguin.net" <jordan@cosmicpenguin.net>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "saiprakash.ranjan@codeaurora.org" <saiprakash.ranjan@codeaurora.org>,
-        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "jgg@nvidia.com" <jgg@nvidia.com>,
-        "yangyingliang@huawei.com" <yangyingliang@huawei.com>,
-        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
-        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "isaacm@codeaurora.org" <isaacm@codeaurora.org>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "marcan@marcan.st" <marcan@marcan.st>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>
-References: <20220616000304.23890-1-nicolinc@nvidia.com>
- <20220616000304.23890-6-nicolinc@nvidia.com>
- <BL1PR11MB52710E360B50DDA99C9A65D18CAC9@BL1PR11MB5271.namprd11.prod.outlook.com>
- <YquxcH2S1fM+llOf@Asurada-Nvidia>
- <BN9PR11MB5276C7BFA77C2C176491B56A8CAF9@BN9PR11MB5276.namprd11.prod.outlook.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <BN9PR11MB5276C7BFA77C2C176491B56A8CAF9@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v6 17/22] drm/shmem-helper: Add generic memory shrinker
+Content-Language: en-US
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Almeida <daniel.almeida@collabora.com>,
+        Gert Wollny <gert.wollny@collabora.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Daniel Stone <daniel@fooishbar.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring <robh@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Qiang Yu <yuq825@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, kernel@collabora.com
+References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
+ <20220526235040.678984-18-dmitry.osipenko@collabora.com>
+ <CAF6AEGt61t2truYDCxm17hqUPV-UdEdHjLs+6vmj5RPoPuVBYg@mail.gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <CAF6AEGt61t2truYDCxm17hqUPV-UdEdHjLs+6vmj5RPoPuVBYg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-06-17 03:53, Tian, Kevin wrote:
->> From: Nicolin Chen <nicolinc@nvidia.com>
->> Sent: Friday, June 17, 2022 6:41 AM
->>
->>> ...
->>>> -     if (resv_msi) {
->>>> +     if (resv_msi && !domain->msi_cookie) {
->>>>                ret = iommu_get_msi_cookie(domain->domain,
->>>> resv_msi_base);
->>>>                if (ret && ret != -ENODEV)
->>>>                        goto out_detach;
->>>> +             domain->msi_cookie = true;
->>>>        }
->>>
->>> why not moving to alloc_attach_domain() then no need for the new
->>> domain field? It's required only when a new domain is allocated.
->>
->> When reusing an existing domain that doesn't have an msi_cookie,
->> we can do iommu_get_msi_cookie() if resv_msi is found. So it is
->> not limited to a new domain.
+On 6/19/22 20:53, Rob Clark wrote:
+...
+>> +static unsigned long
+>> +drm_gem_shmem_shrinker_count_objects(struct shrinker *shrinker,
+>> +                                    struct shrink_control *sc)
+>> +{
+>> +       struct drm_gem_shmem_shrinker *gem_shrinker = to_drm_shrinker(shrinker);
+>> +       struct drm_gem_shmem_object *shmem;
+>> +       unsigned long count = 0;
+>> +
+>> +       if (!mutex_trylock(&gem_shrinker->lock))
+>> +               return 0;
+>> +
+>> +       list_for_each_entry(shmem, &gem_shrinker->lru_evictable, madv_list) {
+>> +               count += shmem->base.size;
+>> +
+>> +               if (count >= SHRINK_EMPTY)
+>> +                       break;
+>> +       }
+>> +
+>> +       mutex_unlock(&gem_shrinker->lock);
 > 
-> Looks msi_cookie requirement is per platform (currently only
-> for smmu. see arm_smmu_get_resv_regions()). If there is
-> no mixed case then above check is not required.
+> As I mentioned on other thread, count_objects, being approximate but
+> lockless and fast is the important thing.  Otherwise when you start
+> hitting the shrinker on many threads, you end up serializing them all,
+> even if you have no pages to return to the system at that point.
+
+Daniel's point for dropping the lockless variant was that we're already
+in trouble if we're hitting shrinker too often and extra optimizations
+won't bring much benefits to us.
+
+Alright, I'll add back the lockless variant (or will use yours
+drm_gem_lru) in the next revision. The code difference is very small
+after all.
+
+...
+>> +               /* prevent racing with the dma-buf importing/exporting */
+>> +               if (!mutex_trylock(&gem_shrinker->dev->object_name_lock)) {
+>> +                       *lock_contention |= true;
+>> +                       goto resv_unlock;
+>> +               }
 > 
-> But let's hear whether Robin has a different thought here.
+> I'm not sure this is a good idea to serialize on object_name_lock.
+> Purgeable buffers should never be shared (imported or exported).  So
+> at best you are avoiding evicting and immediately swapping back in, in
+> a rare case, at the cost of serializing multiple threads trying to
+> reclaim pages in parallel.
 
-Yes, the cookie should logically be tied to the lifetime of the domain 
-itself. In the relevant context, "an existing domain that doesn't have 
-an msi_cookie" should never exist.
+The object_name_lock shouldn't cause contention in practice. But objects
+are also pinned on attachment, hence maybe this lock is indeed
+unnecessary.. I'll re-check it.
 
-Thanks,
-Robin.
+-- 
+Best regards,
+Dmitry
