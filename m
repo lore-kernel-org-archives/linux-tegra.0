@@ -2,47 +2,42 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE2AC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Jun 2022 07:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F33C43334
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Jun 2022 08:55:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347627AbiFUHxq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Jun 2022 03:53:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
+        id S1348476AbiFUIzT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Jun 2022 04:55:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346664AbiFUHxq (ORCPT
+        with ESMTP id S1348565AbiFUIzI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Jun 2022 03:53:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7727E23BC6;
-        Tue, 21 Jun 2022 00:53:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Tue, 21 Jun 2022 04:55:08 -0400
+Received: from mail.tkos.co.il (mail.tkos.co.il [84.110.109.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64EEA25EB4;
+        Tue, 21 Jun 2022 01:55:05 -0700 (PDT)
+Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1514861457;
-        Tue, 21 Jun 2022 07:53:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 746A6C3411D;
-        Tue, 21 Jun 2022 07:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655798024;
-        bh=MpeEIIy9pRKV+9+aIbYO9RMnNjY4VitAYHKXHqLyjz4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Tv6Z4bwBbfRqciNuJn1ZLOH+05a+7YGR3D7ZPhImIueGNT9qxD0VBIMoHAiYNfFsC
-         gGAamaeXB47eXKx0ItUmsnhv4PjCBp3ZebLxG8y08rc+L74wEI1xrOhq8VboWKrzAJ
-         6qzYEoG1ED40AkWBVh6Hd1aOBoXK7VnLA37Dww91gMIAV+Z7TjMSiiNu/XGKJBRY8L
-         3rbRGV0SRjCGkGZ6/BM2vPZ7g6HNfHPLSKR8H6laZiy3qldgi+rYeMbz82FfXWvyIR
-         PYE0x7//qOfMn9xONXBQBtm5ilo7aEjTT1+tu/hF9/skB+1AoO4XseO/cBaAkijtvO
-         b1/E5+aV7xAOw==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1o3Yhd-0005fc-7k; Tue, 21 Jun 2022 09:53:37 +0200
-Date:   Tue, 21 Jun 2022 09:53:37 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     Andy Gross <agross@kernel.org>,
+        by mail.tkos.co.il (Postfix) with ESMTPS id C40594407DA;
+        Tue, 21 Jun 2022 11:54:39 +0300 (IDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
+        s=default; t=1655801680;
+        bh=/rQFltQbwW1NtS1kguqnicZH12kOh3aebtATb/mTZtY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=K89WwHjGMxO/tcmUAP6DyOb6mH8so44bT7pzNO0zGkyU4z1Nv8ws2DaqVjQa6pnt0
+         cvbcSrb3lK60Iia8dXPyzKZZwcDAW1bSubaMES/4nmJhGNf/0rvryElbpWSRyYnPlU
+         +zMdtKzC+os8bzhNCvf7QJKDj8KLst4niHP2lUZWRSj58ntx0XibLR9ca7+/8kdcaK
+         lt7SvjZCAli0a3QAiFIKBRT2sjK2EPluO2Rb7fDEqr7jeYLpZXQT9EVoIjaYbMlOLC
+         HApc5gGOfr/xFS0AKkGPjXv9AzL+15pF0PSEkklMbWVsjHZqaCjGc6evQsFcB9l9Vf
+         YQx9D2eknBVug==
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc:     Baruch Siach <baruch.siach@siklu.com>,
+        Rob Herring <robh@kernel.org>,
         Kathiravan T <quic_kathirav@quicinc.com>,
+        Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -51,66 +46,67 @@ Cc:     Andy Gross <agross@kernel.org>,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Robert Marko <robert.marko@sartura.hr>,
         Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+        Johan Hovold <johan@kernel.org>, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] PCI: qcom: Add IPQ60xx support
-Message-ID: <YrF5ARelhL5GnOnJ@hovoldconsulting.com>
-References: <cover.1655028401.git.baruch@tkos.co.il>
- <a470b27a642d21e7b3e64d0f3287c0c3521bd182.1655028401.git.baruch@tkos.co.il>
- <YrCY0dhQEE5pgWT1@hovoldconsulting.com>
- <87k09aekop.fsf@tarshish>
+Subject: [PATCH v8 1/3] PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
+Date:   Tue, 21 Jun 2022 11:54:52 +0300
+Message-Id: <1c2d5a7a139be81fa15f356b2380163dbdebdc09.1655799816.git.baruch@tkos.co.il>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <cover.1655799816.git.baruch@tkos.co.il>
+References: <cover.1655799816.git.baruch@tkos.co.il>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k09aekop.fsf@tarshish>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 21, 2022 at 06:39:45AM +0300, Baruch Siach wrote:
-> Hi Johan,
-> 
-> Thanks for your review comments.
-> 
-> On Mon, Jun 20 2022, Johan Hovold wrote:
-> > On Sun, Jun 12, 2022 at 01:18:35PM +0300, Baruch Siach wrote:
-> >> From: Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>
-> >> 
-> >> IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
-> >> platform.
-> >> 
-> >> The code is based on downstream[1] Codeaurora kernel v5.4 (branch
-> >> win.linuxopenwrt.2.0).
-> >> 
-> >> Split out the DBI registers access part from .init into .post_init. DBI
-> >> registers are only accessible after phy_power_on().
-> >> 
-> >> [1] https://source.codeaurora.org/quic/qsdk/oss/kernel/linux-ipq-5.4/
-> >> 
-> >> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> >> Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
-> >> ---
-> >
-> >> +static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
-> >> +{
-> >> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-> >> +
-> >> +	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
-> >
-> > Assert reset as you do in the init error path?
-> 
-> Not sure about that. As I understand, the reset assert/deassert sequence
-> on init is meant to ensure clean startup state. Deinit most likely does
-> not need that. So maybe I should remove reset assert from init error
-> path instead?
+From: Baruch Siach <baruch.siach@siklu.com>
 
-Yeah, I think the init error path and deinit should at least be
-consistent.
+These are common dwc macros that will be used for other platforms.
 
-> As always, this code sequence is from downstream kernel. I have no
-> access to documentation.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
+---
+ drivers/pci/controller/dwc/pcie-designware.h | 6 ++++++
+ drivers/pci/controller/dwc/pcie-tegra194.c   | 6 ------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-I feel your pain. ;)
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 7d6e9b7576be..ea87809ee298 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -74,6 +74,12 @@
+ #define PCIE_MSI_INTR0_MASK		0x82C
+ #define PCIE_MSI_INTR0_STATUS		0x830
+ 
++#define GEN3_RELATED_OFF			0x890
++#define GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL	BIT(0)
++#define GEN3_RELATED_OFF_GEN3_EQ_DISABLE	BIT(16)
++#define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
++#define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
++
+ #define PCIE_PORT_MULTI_LANE_CTRL	0x8C0
+ #define PORT_MLTI_UPCFG_SUPPORT		BIT(7)
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index cc2678490162..0190786a24b8 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -191,12 +191,6 @@
+ #define GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC_MASK	GENMASK(23, 8)
+ #define GEN3_EQ_CONTROL_OFF_FB_MODE_MASK	GENMASK(3, 0)
+ 
+-#define GEN3_RELATED_OFF			0x890
+-#define GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL	BIT(0)
+-#define GEN3_RELATED_OFF_GEN3_EQ_DISABLE	BIT(16)
+-#define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
+-#define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
+-
+ #define PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT	0x8D0
+ #define AMBA_ERROR_RESPONSE_CRS_SHIFT		3
+ #define AMBA_ERROR_RESPONSE_CRS_MASK		GENMASK(1, 0)
+-- 
+2.35.1
 
-Johan
