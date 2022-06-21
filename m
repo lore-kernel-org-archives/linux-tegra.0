@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DEC0CCA48B
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Jun 2022 15:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E8DCCA48C
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Jun 2022 15:11:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352470AbiFUPLB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Jun 2022 11:11:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45692 "EHLO
+        id S1352392AbiFUPLC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Jun 2022 11:11:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351771AbiFUPKx (ORCPT
+        with ESMTP id S1352389AbiFUPKw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Jun 2022 11:10:53 -0400
+        Tue, 21 Jun 2022 11:10:52 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 603E42A425;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582072A422;
         Tue, 21 Jun 2022 08:10:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=ksIHmlKSMU37+Zo3znbjONqVsnNwDJ3NzqXq/aV3oCA=; b=au5zbtdn7wKZPe2dJRJ/gZlMy1
-        3z17b4S6Z4+f1cD4Fz/zl6QYb6PTVjVuikWuLBy8hiSzgtKiFT8nGGYUJV7WrizuyeamPl8Sot5G7
-        iuHfQZpDx5vAFZj5zVzgExGEHe5BEFcbSmpWmUxqdy2wl3oj50aLfQnmccc6nZhbIgm5wDxgcZyjk
-        UKHX/hiBQd7dsI1vPfb1JpjiJcYkD3IozU7IRYUdJq0zE04OoRONYEHaVORoKphS2aRseSLKEp3lL
-        rxPKLPFF5zd8MUtsuf5UnF6QdiJSnFbJPgPvES9rSmK9I/idDVbFq340xixydZ5tpXWj0Huo65GyV
-        Zr/ZIL2w==;
+        bh=kX6TxBhPYP7/zzOagr1iopz1md+3ufdCaT6isU511rc=; b=B4KKsAdu7ncsWr+sdy3pVK/C2G
+        F9YntmRgqGqxvX76WIfvo5Bto6O+odkTbiTPPDM+32fAURI4qFZVyFaXANbZOtWY6P1pAD4xoj14j
+        xQcyruASEd11BtNOygFKk+XD2RvarhUmlEPkcW1xvo0WaBZPEs3uXQqwgWCwJNI/JXjIWQa9ge1eH
+        dJngun6cI8gCZ1JV/+NuCUqIXwVm6N66Bik5gqtjaQbsubaJCpkHhhrDKkOtQYE9RQ1kqN/962VQg
+        0QMqUW8pOmXl2Z03Ipm31EhdPeswilXhzfbGpDBe3JXtX+Uq7C2qRqrUPpZoiMAzpwbCe2g1jgEqf
+        GFiXRPbg==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1o3fWU-00Ea3F-14; Tue, 21 Jun 2022 18:10:34 +0300
+        id 1o3fWU-00Ea3F-Gr; Tue, 21 Jun 2022 18:10:34 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robin.murphy@arm.com, robh+dt@kernel.org,
@@ -39,11 +39,10 @@ To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v6 03/10] dt-bindings: host1x: Add iommu-map property
-Date:   Tue, 21 Jun 2022 18:10:15 +0300
-Message-Id: <20220621151022.1416300-4-cyndis@kapsi.fi>
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v6 08/10] drm/tegra: nvdec: Fix TRANSCFG register offset
+Date:   Tue, 21 Jun 2022 18:10:20 +0300
+Message-Id: <20220621151022.1416300-9-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220621151022.1416300-1-cyndis@kapsi.fi>
 References: <20220621151022.1416300-1-cyndis@kapsi.fi>
@@ -58,37 +57,40 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add schema information for specifying context stream IDs. This uses
-the standard iommu-map property.
+NVDEC's TRANSCFG register is at a different offset than VIC.
+This becomes a problem now when context isolation is enabled and
+the reset value of the register is no longer sufficient.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
-v3:
+v6:
 * New patch
-v4:
-* Remove memory-contexts subnode.
 ---
- .../bindings/display/tegra/nvidia,tegra20-host1x.yaml        | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/tegra/nvdec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-index 4fd513efb0f7..0adeb03b9e3a 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-@@ -144,6 +144,11 @@ allOf:
-         reset-names:
-           maxItems: 1
+diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
+index 79e1e88203cf..386f9b2e78c4 100644
+--- a/drivers/gpu/drm/tegra/nvdec.c
++++ b/drivers/gpu/drm/tegra/nvdec.c
+@@ -21,6 +21,8 @@
+ #include "falcon.h"
+ #include "vic.h"
  
-+        iommu-map:
-+          description: Specification of stream IDs available for memory context device
-+            use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
-+            usable stream IDs.
++#define NVDEC_TFBIF_TRANSCFG			0x2c44
 +
-       required:
-         - reg-names
+ struct nvdec_config {
+ 	const char *firmware;
+ 	unsigned int version;
+@@ -63,7 +65,7 @@ static int nvdec_boot(struct nvdec *nvdec)
+ 		u32 value;
  
+ 		value = TRANSCFG_ATT(1, TRANSCFG_SID_FALCON) | TRANSCFG_ATT(0, TRANSCFG_SID_HW);
+-		nvdec_writel(nvdec, value, VIC_TFBIF_TRANSCFG);
++		nvdec_writel(nvdec, value, NVDEC_TFBIF_TRANSCFG);
+ 
+ 		if (spec->num_ids > 0) {
+ 			value = spec->ids[0] & 0xffff;
 -- 
 2.36.1
 
