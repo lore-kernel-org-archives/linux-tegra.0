@@ -2,212 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F2DC43334
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Jun 2022 03:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54701C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Jun 2022 05:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344697AbiFUDxt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Jun 2022 23:53:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
+        id S240339AbiFUFuy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Jun 2022 01:50:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343680AbiFUDxs (ORCPT
+        with ESMTP id S232935AbiFUFux (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Jun 2022 23:53:48 -0400
-Received: from mail.tkos.co.il (mail.tkos.co.il [84.110.109.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9F21C131;
-        Mon, 20 Jun 2022 20:53:46 -0700 (PDT)
-Received: from tarshish (unknown [10.0.8.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.tkos.co.il (Postfix) with ESMTPS id 699644403AE;
-        Tue, 21 Jun 2022 06:53:19 +0300 (IDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-        s=default; t=1655783600;
-        bh=WptAxfSfvraXMBMBvNtwNadW7FWtSJ6h8v8Lg3QJU+Q=;
-        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=Et6SnfQS0iMdNuZigK9h1VY4V6DANGVpJi2+xMGysfcyDLryK51xQ0XCywvJPXwPD
-         ohk1L4Xj8d2lfVpmXMYZIoEiGsrPJxSJb19Ny+m/6qieb5son07ITJqizImnem/xdH
-         0jhqESwnMoHpXW4gL+K8J/+NXgFvzFJcxqmCnvKSQVJPrcAEhFxYtUyjoa3DEDVXky
-         5QZYgQ6vbnTdU0gpJkPoVEmHCTu6p3aUqUJiEyrs/WAAgYo41LCAnW/Z0n390hDzV+
-         HJtjNgMq+yGwVJPoJr/8n0W4r1D4uk40mpYwRQo7H7Njz7Pj9e1q5JbWHYYtH7TrCI
-         m2L4S3PSyo5hQ==
-References: <cover.1655028401.git.baruch@tkos.co.il>
- <a470b27a642d21e7b3e64d0f3287c0c3521bd182.1655028401.git.baruch@tkos.co.il>
- <YrCY0dhQEE5pgWT1@hovoldconsulting.com>
-User-agent: mu4e 1.6.10; emacs 27.1
-From:   Baruch Siach <baruch@tkos.co.il>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>,
-        Kathiravan T <quic_kathirav@quicinc.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] PCI: qcom: Add IPQ60xx support
-Date:   Tue, 21 Jun 2022 06:39:45 +0300
-In-reply-to: <YrCY0dhQEE5pgWT1@hovoldconsulting.com>
-Message-ID: <87k09aekop.fsf@tarshish>
+        Tue, 21 Jun 2022 01:50:53 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2079.outbound.protection.outlook.com [40.107.94.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DBF5220CE;
+        Mon, 20 Jun 2022 22:50:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=H5YbqI3I9W8psc4U6pQJSalRFlb9lueaj3d9cAiF0upR8oqYezElZeuOCdtowW4XugnCAeGbrphpuXBv7mJ6LQDFdlig5GvdKUTUeInn6PP0oc98ElFZgUlzXMJOH01oMyYKVhU7IR2ImGo6FPqd35a1yXBpJ9KxVXhfE+c61IX73NSQPeEpuHA2pFmorUhaNHqpmQwJZAU7kQnHDGwfu/kBqKeAecIkz3UCqx8DxW94E7taginYtQ6qKT3ZWBAEcqAPZomVRVVW/Gk1tT9sQ9RDNPArt401UpqeepUqHnX1kTRKyRhAo7QCUOXdhGzpPnx3ygIz4KXbYZVEOrR11Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wZd6jvUF8k3L97pttxib7ixtDkIzq4yinxGG3XuWd1Y=;
+ b=OfhsaOyippEe4fqswoQMZ7KlJsMyiivKQsivpRrKTvOAVcVTEeOX5LwHpqvNBtH3Cujm8LOgsoAs40VRsgKjH9fOu34nRvAglPFF2lkQJcZDPvny+GXAPOqi3DelyFU3M7RSNhaf8CYKs3FyChHdNg9D71H/7feiiMYyxkCyg5yxtDJ4Qi/OZE0gH+UZcanpFQOrrLKmdmoK55SOdj5n4PxbYDlLaMLrmUyxDCHay/lojTwf8KY7J8iiwvCl5Yy22zVZc0DsyKFWJEUFd6iv5OesMN5bk/LveHcXtH7UWzT9bgQrVwCFQTB9jHLis8wQ0GoyXUfKltI2S3S/jdUFyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wZd6jvUF8k3L97pttxib7ixtDkIzq4yinxGG3XuWd1Y=;
+ b=tKB9S/gULPsxlYnaOfU3YDRKstO441RxvCWCkwz/I8y04YZoa98zat2RtCaqXn7ugDi0t1d2b2ZrRaQ4HhGXQMYlbJpKV2quigBdryzaAm/I5xOZhiy0Ggyt5wSbSN8VQeqlqRneW2uQ5SgtAJoVPXOCGaLOAm2E3LuPsakaylbF02sJMEb62GqvpNycwvlWCITXhPFCPf7qAKV52i+hPFIZ/AjHnfw1ow5hozkcqkzNw0iPT92dxKlZUTabmnDNZ3HWlqxioDY2UyFmKZbhr+8pWSydk7lKxqV1zekH8ZIoZBmuHzdAx6eKaAvHH/dh8xu8pQUpqYl0OQEkhAotzQ==
+Received: from BN6PR1101CA0009.namprd11.prod.outlook.com
+ (2603:10b6:405:4a::19) by BY5PR12MB3731.namprd12.prod.outlook.com
+ (2603:10b6:a03:1a7::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14; Tue, 21 Jun
+ 2022 05:50:49 +0000
+Received: from BN8NAM11FT052.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:405:4a:cafe::85) by BN6PR1101CA0009.outlook.office365.com
+ (2603:10b6:405:4a::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.16 via Frontend
+ Transport; Tue, 21 Jun 2022 05:50:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ BN8NAM11FT052.mail.protection.outlook.com (10.13.177.210) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5353.14 via Frontend Transport; Tue, 21 Jun 2022 05:50:48 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Tue, 21 Jun
+ 2022 05:50:48 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Mon, 20 Jun
+ 2022 22:50:47 -0700
+Received: from msst-build.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.986.22 via Frontend
+ Transport; Mon, 20 Jun 2022 22:50:46 -0700
+From:   Besar Wicaksono <bwicaksono@nvidia.com>
+To:     <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <sudeep.holla@arm.com>, <thanu.rangarajan@arm.com>,
+        <Michael.Williams@arm.com>, <treding@nvidia.com>,
+        <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+        <mathieu.poirier@linaro.org>, <mike.leach@linaro.org>,
+        <leo.yan@linaro.org>, Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: [RESEND PATCH v3 0/2] perf: ARM CoreSight PMU support
+Date:   Tue, 21 Jun 2022 00:50:33 -0500
+Message-ID: <20220621055035.31766-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ed4e95fe-a9b7-49ef-55e0-08da5349fe32
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3731:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR12MB37318F5EF8F4336E3DF6C654A0B39@BY5PR12MB3731.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xtTYgvVG5UfSNZK4JDdJecR+KKI0FQuvzIYv9FqyZ7mr7tIlAgswyEk22+iimcA0IdB/+2ogv5FcOCzsmgliXJ3oebIerlLMnTi+iSKLz8Bobjer1fp4aemYqwY/p4Lpu3lDdgAcmqsWJUCqKF2biU3kBDK7upfavheFi/ltMG4G3AKzBcMXv8qxBK0bdMLcC/7cjYoQHW/3Ll8oyvEAn1NJGJTztqUVTP0234YuZ4LwljMzKJcPcdvl4sDgUYSXn2umO12j52HnTB7V0WhEs7+0iUFEnKmGbY0grsmTrTP4+iBtb0Ssl80sYJ+xknfzKmV4oaK9fwPoPW8zFj3t+0aLt8CGnrfWgUS3u/kg/yRthyo/JpFA5wAQm6fTU6Ww2OeiJeR47C1ULX/5FgoiRHuDK7hQs9FoR9+xgE0E1NG5Db4WP16zqKCVTsLb6AEbO8yoAaFNkZm/b8MUXzL6ko4dZ5mgzXgkShWeNrFa+nirNp5Fe2fYGRotMJMrb7ovudTKINW/JSyXocdopq24OIVqsiiT1QYdx9SUkAGXH+0oDzPZMTwNX7pRmhHhj94xq1itc6cxE55UtYdTyHx9hy5/414kiVIbTxB6WpSC1orGnq/vNxgDF258urJ78w7tec+9bYH2qr9s1gwmcDU6Vg4IO5L2o7wBZNL5tG1Oz8Cw2dlpbHyzDpoAUTbnLJCvMS8y4p2u4BxJ0N632dKiichXsGFSRn+E7o6tLu2Zb7HyWKSlC33r35GRIJSlMJJPbUwgMoEizC+FuAKJyAhZOLK/RdBdl2sU5lwAC5JzwkjzQ4z+wZIZQMIAtKw0MRWaJkR+PCTpLZOs0eLr6bKgjnNrFwdc3aiG77ew+AH5LiZVaiUuBVjijC0yXSlqPxL7
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(376002)(346002)(39860400002)(136003)(396003)(46966006)(40470700004)(36840700001)(8936002)(70586007)(8676002)(5660300002)(478600001)(966005)(110136005)(70206006)(4326008)(36860700001)(316002)(54906003)(36756003)(40480700001)(7416002)(82310400005)(6666004)(47076005)(356005)(7696005)(86362001)(82740400003)(186003)(336012)(81166007)(83380400001)(1076003)(26005)(2906002)(426003)(2616005)(107886003)(41300700001)(40460700003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2022 05:50:48.7057
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed4e95fe-a9b7-49ef-55e0-08da5349fe32
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT052.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3731
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Johan,
+Add driver support for ARM CoreSight PMU device and event attributes for NVIDIA
+implementation. The code is based on ARM Coresight PMU architecture and ACPI ARM
+Performance Monitoring Unit table (APMT) specification below:
+ * ARM Coresight PMU:
+        https://developer.arm.com/documentation/ihi0091/latest
+ * APMT: https://developer.arm.com/documentation/den0117/latest
 
-Thanks for your review comments.
+Notes:
+ * There is a concern on the naming of the PMU device.
+   Currently the driver is probing "arm-coresight-pmu" device, however the APMT
+   spec supports different kinds of CoreSight PMU based implementation. So it is
+   open for discussion if the name can stay or a "generic" name is required.
+   Please see the following thread:
+   http://lists.infradead.org/pipermail/linux-arm-kernel/2022-May/740485.html
 
-On Mon, Jun 20 2022, Johan Hovold wrote:
-> On Sun, Jun 12, 2022 at 01:18:35PM +0300, Baruch Siach wrote:
->> From: Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>
->> 
->> IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
->> platform.
->> 
->> The code is based on downstream[1] Codeaurora kernel v5.4 (branch
->> win.linuxopenwrt.2.0).
->> 
->> Split out the DBI registers access part from .init into .post_init. DBI
->> registers are only accessible after phy_power_on().
->> 
->> [1] https://source.codeaurora.org/quic/qsdk/oss/kernel/linux-ipq-5.4/
->> 
->> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->> Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
->> ---
->
->> +static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
->> +{
->> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
->> +
->> +	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
->
-> Assert reset as you do in the init error path?
+The patchset applies on top of
+  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  master next-20220524
 
-Not sure about that. As I understand, the reset assert/deassert sequence
-on init is meant to ensure clean startup state. Deinit most likely does
-not need that. So maybe I should remove reset assert from init error
-path instead?
+Changes from v2:
+ * Driver is now probing "arm-system-pmu" device.
+ * Change default PMU naming to "arm_<APMT node type>_pmu".
+ * Add implementor ops to generate custom name.
+Thanks to suzuki.poulose@arm.com for the review comments.
+v2: https://lore.kernel.org/all/20220515163044.50055-1-bwicaksono@nvidia.com/
 
-As always, this code sequence is from downstream kernel. I have no
-access to documentation.
+Changes from v1:
+ * Remove CPU arch dependency.
+ * Remove 32-bit read/write helper function and just use read/writel.
+ * Add .is_visible into event attribute to filter out cycle counter event.
+ * Update pmiidr matching.
+ * Remove read-modify-write on PMCR since the driver only writes to PMCR.E.
+ * Assign default cycle event outside the 32-bit PMEVTYPER range.
+ * Rework the active event and used counter tracking.
+Thanks to robin.murphy@arm.com for the review comments.
+v1: https://lore.kernel.org/all/20220509002810.12412-1-bwicaksono@nvidia.com/
 
-baruch
+Besar Wicaksono (2):
+  perf: coresight_pmu: Add support for ARM CoreSight PMU driver
+  perf: coresight_pmu: Add support for NVIDIA SCF and MCF attribute
 
->> +}
->> +
->> +static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
->> +{
->> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
->> +	struct device *dev = pcie->pci->dev;
->> +	int ret;
->> +
->> +	ret = reset_control_assert(res->rst);
->> +	if (ret) {
->> +		dev_err(dev, "reset assert failed (%d)\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	/*
->> +	 * Delay periods before and after reset deassert are working values
->> +	 * from downstream Codeaurora kernel
->> +	 */
->> +	usleep_range(2000, 2500);
->> +
->> +	ret = reset_control_deassert(res->rst);
->> +	if (ret) {
->> +		dev_err(dev, "reset deassert failed (%d)\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	usleep_range(2000, 2500);
->> +
->> +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
->> +	if (ret)
->> +		goto err_reset;
->> +
->> +	return 0;
->> +
->> +err_reset:
->> +	reset_control_assert(res->rst);
->> +
->> +	return ret;
->> +}
->> +
->> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
->> +{
->> +	struct dw_pcie *pci = pcie->pci;
->> +	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
->> +	u32 val;
->> +	int i;
->> +
->> +	writel(SLV_ADDR_SPACE_SZ,
->> +		pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
->> +
->> +	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
->> +	val &= ~BIT(0);
->> +	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
->> +
->> +	writel(0, pcie->parf + PCIE20_PARF_DBI_BASE_ADDR);
->> +
->> +	writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
->> +	writel(BYPASS | MSTR_AXI_CLK_EN | AHB_CLK_EN,
->> +		pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
->> +	writel(GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS
->> +		| GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL,
->
-> I noticed that some of this probably has been copied from from
-> qcom_pcie_init_2_3_3(), but please move the | operator to the previous
-> line.
->
->> +		pci->dbi_base + GEN3_RELATED_OFF);
->> +
->> +	writel(MST_WAKEUP_EN | SLV_WAKEUP_EN | MSTR_ACLK_CGC_DIS
->> +		| SLV_ACLK_CGC_DIS | CORE_CLK_CGC_DIS |
->
-> Same here.
->
->> +		AUX_PWR_DET | L23_CLK_RMV_DIS | L1_CLK_RMV_DIS,
->> +		pcie->parf + PCIE20_PARF_SYS_CTRL);
->> +
->> +	writel(0, pcie->parf + PCIE20_PARF_Q2A_FLUSH);
->> +
->> +	dw_pcie_dbi_ro_wr_en(pci);
->> +	writel(PCIE_CAP_SLOT_VAL, pci->dbi_base + offset + PCI_EXP_SLTCAP);
->> +
->> +	val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
->> +	val &= ~PCI_EXP_LNKCAP_ASPMS;
->> +	writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
->> +
->> +	writel(PCI_EXP_DEVCTL2_COMP_TMOUT_DIS, pci->dbi_base + offset +
->> +			PCI_EXP_DEVCTL2);
->> +
->> +	for (i = 0; i < 256; i++)
->> +		writel(0x0, pcie->parf + PCIE20_PARF_BDF_TO_SID_TABLE_N
->> +				+ (4 * i));
->
-> And here for +, but you should probably just remove the line break (you
-> can go up to 100 chars if it makes the code more readable).
->
-> Please drop the 0x prefix too.
->
->> +
->> +	return 0;
->> +}
->
-> Johan
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/perf/Kconfig                          |    2 +
+ drivers/perf/Makefile                         |    1 +
+ drivers/perf/coresight_pmu/Kconfig            |   11 +
+ drivers/perf/coresight_pmu/Makefile           |    7 +
+ .../perf/coresight_pmu/arm_coresight_pmu.c    | 1316 +++++++++++++++++
+ .../perf/coresight_pmu/arm_coresight_pmu.h    |  177 +++
+ .../coresight_pmu/arm_coresight_pmu_nvidia.c  |  312 ++++
+ .../coresight_pmu/arm_coresight_pmu_nvidia.h  |   17 +
+ 9 files changed, 1844 insertions(+)
+ create mode 100644 drivers/perf/coresight_pmu/Kconfig
+ create mode 100644 drivers/perf/coresight_pmu/Makefile
+ create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu.c
+ create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu.h
+ create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.c
+ create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.h
 
 
+base-commit: 09ce5091ff971cdbfd67ad84dc561ea27f10d67a
 -- 
-                                                     ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+2.17.1
+
