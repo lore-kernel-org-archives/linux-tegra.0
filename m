@@ -2,89 +2,68 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7313C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 08:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A17C43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 08:49:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353035AbiFVIle (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 04:41:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40528 "EHLO
+        id S1352227AbiFVIt4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 04:49:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355353AbiFVIlc (ORCPT
+        with ESMTP id S1351923AbiFVItz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Jun 2022 04:41:32 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0396738BE2
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Jun 2022 01:41:31 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id q9so22324531wrd.8
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Jun 2022 01:41:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=sz6VlNHiVjHixKsssl+TJXLUZqbxz+oP9ZVl9b0X04Q=;
-        b=zI2iX2goiGZ0Gj7PoNgF/dAyAFJPQV7L/o29pytA7SjhrmeMSqjizHh9LM7RA3nLpL
-         phtstWK4Oide9ApB3GfvIL1BjbjBb5QFYOe003kH4eGPP3ey8gmLgO64/tp4OhFnuEbF
-         yHWLYcwWDFgNg3VWdRH0e7MMFQzrjGNaGHS4lZt754GjBg7TK7Y6JgjsQ6YfZ61G08KB
-         gyrveMFT9VKbbqvhzlr3LuqmUqvUuQ76g0HidfhCn5r4nz5BGR6iQO4lUQ7lwDXQlh+B
-         bAo7bi8LH9Bbin0bi6s4MMtMeykr+R3L245W1VXlBDdHzR2C/Igp0ZApE+VdhHXUHWKt
-         /9YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=sz6VlNHiVjHixKsssl+TJXLUZqbxz+oP9ZVl9b0X04Q=;
-        b=NlJ5RQ4HCM1AiZljxbU5LWsp7UlR1TkRdoN3OHLTsWgfWoFeq4th0n+64U/KRRC5bA
-         MuTKy5l19VRY1gA8JjaHoCC9N7tT04Mu/TqI0osi8qxfFdlf/Q/L7HSvsMfdNLJenKAk
-         Xdtv8d90/iHZJ4WIjBNvpTafCmN3YYn/OTve1ma2Sjv03Uof2el1rvTcWTgrf3DNoHhV
-         SdlcMhiWfF5LeyPBMY/NfuF0h9a9iN0CypjrcPKu0sRdTQq+TnYKpuq3rzfQ6AA2ly8/
-         6rc2aFi6vxR4P8uwQjBy2WYYyZt17TSw8Y6BezInH5zDaQDwu3QKDXDmbj7TiPSvMzRC
-         iwUA==
-X-Gm-Message-State: AJIora8onJD9H6ushhZ5Pwfn8KLWQaxT2TbrT3Ikl9xplYNOkHmLq/DC
-        jiu6BdYi/Y0vIzDigWamJ/eLjg==
-X-Google-Smtp-Source: AGRyM1vN/2Yn5VoH1r/7PIIbeU5gLOIa16fFrvWUQSeTlBzbJrJqfD1H73MWRPrmSyRCWvuLBq1gaQ==
-X-Received: by 2002:a5d:5231:0:b0:21b:838e:65ba with SMTP id i17-20020a5d5231000000b0021b838e65bamr2099102wra.412.1655887289619;
-        Wed, 22 Jun 2022 01:41:29 -0700 (PDT)
-Received: from [192.168.0.223] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id a17-20020adffad1000000b0021b8749728dsm12525434wrs.73.2022.06.22.01.41.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jun 2022 01:41:29 -0700 (PDT)
-Message-ID: <2f3e843e-b72b-ee71-7465-b2b6c8d51b0d@linaro.org>
-Date:   Wed, 22 Jun 2022 10:41:28 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] memory/tegra: Add missing of_node_get() in
+        Wed, 22 Jun 2022 04:49:55 -0400
+Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F2DBC37A00;
+        Wed, 22 Jun 2022 01:49:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=w9smT
+        9c7AimDj+0qXZ7d9XMDCS+o+Pqmaur0QQu32Rc=; b=YTUKCFSTAYSRF68e3j9a4
+        T1WapaOY27khueUPi/l8Ec/pftVTLcy4EcKZUaseI9sFassBQXTEqgmx2wtGHY3N
+        m3D48pfN6kJeMUVkAcnHtPV9hUb72gnulOKXrFv84ATkPT9R5ATjnuiFF/5J/+wo
+        jU18qxzXdFWrkRpxNOTIJU=
+Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
+ (Coremail) ; Wed, 22 Jun 2022 16:49:43 +0800 (CST)
+X-Originating-IP: [124.16.139.61]
+Date:   Wed, 22 Jun 2022 16:49:43 +0800 (CST)
+From:   "Liang He" <windhl@126.com>
+To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re:Re: [PATCH] memory/tegra: Add missing of_node_get() in
  tegra_emc_find_node_by_ram_code
-Content-Language: en-US
-To:     Liang He <windhl@126.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
+ Copyright (c) 2002-2022 www.mailtech.cn 126com
+In-Reply-To: <2f3e843e-b72b-ee71-7465-b2b6c8d51b0d@linaro.org>
 References: <20220622042824.4094625-1-windhl@126.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220622042824.4094625-1-windhl@126.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <2f3e843e-b72b-ee71-7465-b2b6c8d51b0d@linaro.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
+MIME-Version: 1.0
+Message-ID: <11875304.61a4.1818a9a66bb.Coremail.windhl@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: GMqowABHTyeo17JiAdI6AA--.27634W
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3AgoF1pEDxshpAAAsk
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 22/06/2022 06:28, Liang He wrote:
-> of_find_node_by_name() will decrease the refcount of its first arg and
-> we need to add a of_node_put() to keep refcount balance.
-> 
-> Besides, during the 'for' loop execution, the refcount of 'np' will be
-> automatically increased and decreased. There is no need to call
-> of_node_put() again.
-> 
-> Signed-off-by: Liang He <windhl@126.com>
-> ---
->  drivers/memory/tegra/tegra20-emc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-
-The patch was not even compiled... I consider it harmful approach. NAK.
-See: https://lwn.net/Articles/854645/
-
-Best regards,
-Krzysztof
+CgpBdCAyMDIyLTA2LTIyIDE2OjQxOjI4LCAiS3J6eXN6dG9mIEtvemxvd3NraSIgPGtyenlzenRv
+Zi5rb3psb3dza2lAbGluYXJvLm9yZz4gd3JvdGU6Cj5PbiAyMi8wNi8yMDIyIDA2OjI4LCBMaWFu
+ZyBIZSB3cm90ZToKPj4gb2ZfZmluZF9ub2RlX2J5X25hbWUoKSB3aWxsIGRlY3JlYXNlIHRoZSBy
+ZWZjb3VudCBvZiBpdHMgZmlyc3QgYXJnIGFuZAo+PiB3ZSBuZWVkIHRvIGFkZCBhIG9mX25vZGVf
+cHV0KCkgdG8ga2VlcCByZWZjb3VudCBiYWxhbmNlLgo+PiAKPj4gQmVzaWRlcywgZHVyaW5nIHRo
+ZSAnZm9yJyBsb29wIGV4ZWN1dGlvbiwgdGhlIHJlZmNvdW50IG9mICducCcgd2lsbCBiZQo+PiBh
+dXRvbWF0aWNhbGx5IGluY3JlYXNlZCBhbmQgZGVjcmVhc2VkLiBUaGVyZSBpcyBubyBuZWVkIHRv
+IGNhbGwKPj4gb2Zfbm9kZV9wdXQoKSBhZ2Fpbi4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IExpYW5n
+IEhlIDx3aW5kaGxAMTI2LmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdy
+YTIwLWVtYy5jIHwgMyArKy0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEg
+ZGVsZXRpb24oLSkKPj4gCj4KPlRoZSBwYXRjaCB3YXMgbm90IGV2ZW4gY29tcGlsZWQuLi4gSSBj
+b25zaWRlciBpdCBoYXJtZnVsIGFwcHJvYWNoLiBOQUsuCj5TZWU6IGh0dHBzOi8vbHduLm5ldC9B
+cnRpY2xlcy84NTQ2NDUvCj4KPkJlc3QgcmVnYXJkcywKPktyenlzenRvZgoKU29ycnksIEtyenlz
+enRvZi4KCkFzIHRoZSBwYXRjaCBpcyBzbyBzaW1wbGUgdHdvIGxpbmVzICwgSSB0aG91Z2h0IEkg
+Y2FuIGhhbmRsZSBpdCB3aXRob3V0IGNvbXBpbGluZyBpdC4KClRoYW5rcyB2ZXJ5IG11Y2ggZm9y
+IHlvdXIgbm90aWNlIGFib3V0IHRoZSBhcnRpY2xlIGFuZCBJIGhvcGUgSSBoYXZlIG5vdCBkb25l
+IGFueW90aGVyIGhhcm1mdWwgdGhpbmdzLgoKQW5kIEkgd2lsbCB0YWtlIGNhcmUgb2YgbXkgcGF0
+Y2ggY29kZSBpbiBmdXR1cmUgbm8gbWF0dGVyIGhvdyBzaW1wbGUgaXQgaXMuCgoK
