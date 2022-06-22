@@ -2,191 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CDBCCA47A
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 07:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1C4CCA47D
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 07:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233938AbiFVHYn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 03:24:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57710 "EHLO
+        id S1352309AbiFVHzD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 03:55:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232569AbiFVHYm (ORCPT
+        with ESMTP id S1350096AbiFVHy6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Jun 2022 03:24:42 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF42D22BF6;
-        Wed, 22 Jun 2022 00:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655882681; x=1687418681;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NgoHLyZGRgMPgNFB7tpululSiyLjykD0PpFVx9n2Or0=;
-  b=hjvJ4wk1B0xZ2fNj3mZ3rnC200GGaPOmafmT7Sp663brWx5d5H4gT5xc
-   WjdEgMTIDgawZ4CGYTF8xuLfGmip5DZEbXgYV2yDmwfnPa+nNdu2WQSz6
-   1u4LgN5tSWuLxvOOaTte1xV+JO8fAnkAI2Q2uBxGUAkzJe/5b+EGQ5Pgx
-   SStxsKD/K1QSawdY3j/qstpTRbICh4x551gvVBClIM+ovgoFDxIERvtC1
-   UpyMI1p2xfGgFctvSf/lPBwJsR+l7Pbrtrpbj24wHhAxhs+Iy50SgqqDs
-   U//XnNJRHkEDC5qOy0O7gMWu1MGY99/JQNqwQsxQ44KXzbGabr1QBRJ8p
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10385"; a="281071179"
-X-IronPort-AV: E=Sophos;i="5.92,211,1650956400"; 
-   d="scan'208";a="281071179"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2022 00:24:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,211,1650956400"; 
-   d="scan'208";a="562834083"
-Received: from lkp-server02.sh.intel.com (HELO a67cc04a5eeb) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 22 Jun 2022 00:24:37 -0700
-Received: from kbuild by a67cc04a5eeb with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o3uj7-0000zN-5j;
-        Wed, 22 Jun 2022 07:24:37 +0000
-Date:   Wed, 22 Jun 2022 15:24:35 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
-        robin.murphy@arm.com, robh+dt@kernel.org,
-        krzysztof.kozlowski@canonical.com
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 04/10] gpu: host1x: Add context device management code
-Message-ID: <202206221557.laES8yNQ-lkp@intel.com>
-References: <20220621151022.1416300-5-cyndis@kapsi.fi>
+        Wed, 22 Jun 2022 03:54:58 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0FB9B34666;
+        Wed, 22 Jun 2022 00:54:56 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC87913D5;
+        Wed, 22 Jun 2022 00:54:56 -0700 (PDT)
+Received: from [10.57.85.1] (unknown [10.57.85.1])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E50B3F66F;
+        Wed, 22 Jun 2022 00:54:50 -0700 (PDT)
+Message-ID: <6e1280c5-4b22-ebb3-3912-6c72bc169982@arm.com>
+Date:   Wed, 22 Jun 2022 08:54:45 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220621151022.1416300-5-cyndis@kapsi.fi>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2 3/5] vfio/iommu_type1: Remove the domain->ops
+ comparison
+Content-Language: en-GB
+To:     Nicolin Chen <nicolinc@nvidia.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     "joro@8bytes.org" <joro@8bytes.org>,
+        "will@kernel.org" <will@kernel.org>,
+        "marcan@marcan.st" <marcan@marcan.st>,
+        "sven@svenpeter.dev" <sven@svenpeter.dev>,
+        "robdclark@gmail.com" <robdclark@gmail.com>,
+        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "jgg@nvidia.com" <jgg@nvidia.com>,
+        "suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "yong.wu@mediatek.com" <yong.wu@mediatek.com>,
+        "mjrosato@linux.ibm.com" <mjrosato@linux.ibm.com>,
+        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "vdumpa@nvidia.com" <vdumpa@nvidia.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "thunder.leizhen@huawei.com" <thunder.leizhen@huawei.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+        "john.garry@huawei.com" <john.garry@huawei.com>,
+        "chenxiang66@hisilicon.com" <chenxiang66@hisilicon.com>,
+        "saiprakash.ranjan@codeaurora.org" <saiprakash.ranjan@codeaurora.org>,
+        "isaacm@codeaurora.org" <isaacm@codeaurora.org>,
+        "yangyingliang@huawei.com" <yangyingliang@huawei.com>,
+        "jordan@cosmicpenguin.net" <jordan@cosmicpenguin.net>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <20220616000304.23890-1-nicolinc@nvidia.com>
+ <20220616000304.23890-4-nicolinc@nvidia.com>
+ <BL1PR11MB52717050DBDE29A81637BBFA8CAC9@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <YqutYjgtFOTXCF0+@Asurada-Nvidia>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <YqutYjgtFOTXCF0+@Asurada-Nvidia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Mikko,
+On 2022-06-16 23:23, Nicolin Chen wrote:
+> On Thu, Jun 16, 2022 at 06:40:14AM +0000, Tian, Kevin wrote:
+> 
+>>> The domain->ops validation was added, as a precaution, for mixed-driver
+>>> systems. However, at this moment only one iommu driver is possible. So
+>>> remove it.
+>>
+>> It's true on a physical platform. But I'm not sure whether a virtual platform
+>> is allowed to include multiple e.g. one virtio-iommu alongside a virtual VT-d
+>> or a virtual smmu. It might be clearer to claim that (as Robin pointed out)
+>> there is plenty more significant problems than this to solve instead of simply
+>> saying that only one iommu driver is possible if we don't have explicit code
+>> to reject such configuration. 😊
+> 
+> Will edit this part. Thanks!
 
-Thank you for the patch! Yet something to improve:
+Oh, physical platforms with mixed IOMMUs definitely exist already. The 
+main point is that while bus_set_iommu still exists, the core code 
+effectively *does* prevent multiple drivers from registering - even in 
+emulated cases like the example above, virtio-iommu and VT-d would both 
+try to bus_set_iommu(&pci_bus_type), and one of them will lose. The 
+aspect which might warrant clarification is that there's no combination 
+of supported drivers which claim non-overlapping buses *and* could 
+appear in the same system - even if you tried to contrive something by 
+emulating, say, VT-d (PCI) alongside rockchip-iommu (platform), you 
+could still only describe one or the other due to ACPI vs. Devicetree.
 
-[auto build test ERROR on drm/drm-next]
-[also build test ERROR on tegra/for-next linus/master v5.19-rc3]
-[cannot apply to tegra-drm/drm/tegra/for-next next-20220621]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mikko-Perttunen/Host1x-context-isolation-support/20220621-231339
-base:   git://anongit.freedesktop.org/drm/drm drm-next
-config: arm64-randconfig-r021-20220622 (https://download.01.org/0day-ci/archive/20220622/202206221557.laES8yNQ-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 8b8d126598ce7bd5243da7f94f69fa1104288bee)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/2501beeae7469b805f9f624049fd56643cf6e18e
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Mikko-Perttunen/Host1x-context-isolation-support/20220621-231339
-        git checkout 2501beeae7469b805f9f624049fd56643cf6e18e
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/gpu/host1x/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/gpu/host1x/context.c:80:28: error: no member named 'ids' in 'struct iommu_fwspec'
-                   ctx->stream_id = fwspec->ids[0] & 0xffff;
-                                    ~~~~~~  ^
-   1 error generated.
-
-
-vim +80 drivers/gpu/host1x/context.c
-
-    15	
-    16	int host1x_memory_context_list_init(struct host1x *host1x)
-    17	{
-    18		struct host1x_memory_context_list *cdl = &host1x->context_list;
-    19		struct device_node *node = host1x->dev->of_node;
-    20		struct host1x_memory_context *ctx;
-    21		unsigned int i;
-    22		int err;
-    23	
-    24		cdl->devs = NULL;
-    25		cdl->len = 0;
-    26		mutex_init(&cdl->lock);
-    27	
-    28		err = of_property_count_u32_elems(node, "iommu-map");
-    29		if (err < 0)
-    30			return 0;
-    31	
-    32		cdl->devs = kcalloc(err, sizeof(*cdl->devs), GFP_KERNEL);
-    33		if (!cdl->devs)
-    34			return -ENOMEM;
-    35		cdl->len = err / 4;
-    36	
-    37		for (i = 0; i < cdl->len; i++) {
-    38			struct iommu_fwspec *fwspec;
-    39	
-    40			ctx = &cdl->devs[i];
-    41	
-    42			ctx->host = host1x;
-    43	
-    44			device_initialize(&ctx->dev);
-    45	
-    46			/*
-    47			 * Due to an issue with T194 NVENC, only 38 bits can be used.
-    48			 * Anyway, 256GiB of IOVA ought to be enough for anyone.
-    49			 */
-    50			ctx->dma_mask = DMA_BIT_MASK(38);
-    51			ctx->dev.dma_mask = &ctx->dma_mask;
-    52			ctx->dev.coherent_dma_mask = ctx->dma_mask;
-    53			dev_set_name(&ctx->dev, "host1x-ctx.%d", i);
-    54			ctx->dev.bus = &host1x_context_device_bus_type;
-    55			ctx->dev.parent = host1x->dev;
-    56	
-    57			dma_set_max_seg_size(&ctx->dev, UINT_MAX);
-    58	
-    59			err = device_add(&ctx->dev);
-    60			if (err) {
-    61				dev_err(host1x->dev, "could not add context device %d: %d\n", i, err);
-    62				goto del_devices;
-    63			}
-    64	
-    65			err = of_dma_configure_id(&ctx->dev, node, true, &i);
-    66			if (err) {
-    67				dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
-    68					i, err);
-    69				device_del(&ctx->dev);
-    70				goto del_devices;
-    71			}
-    72	
-    73			fwspec = dev_iommu_fwspec_get(&ctx->dev);
-    74			if (!fwspec) {
-    75				dev_err(host1x->dev, "Context device %d has no IOMMU!\n", i);
-    76				device_del(&ctx->dev);
-    77				goto del_devices;
-    78			}
-    79	
-  > 80			ctx->stream_id = fwspec->ids[0] & 0xffff;
-    81		}
-    82	
-    83		return 0;
-    84	
-    85	del_devices:
-    86		while (i--)
-    87			device_del(&cdl->devs[i].dev);
-    88	
-    89		kfree(cdl->devs);
-    90		cdl->len = 0;
-    91	
-    92		return err;
-    93	}
-    94	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Thanks,
+Robin.
