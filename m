@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41332CCA483
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36DCCCA486
 	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 11:38:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357559AbiFVLh7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 07:37:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48300 "EHLO
+        id S1357599AbiFVLiA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 07:38:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354590AbiFVLhx (ORCPT
+        with ESMTP id S1355718AbiFVLhx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Wed, 22 Jun 2022 07:37:53 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28EAB3C733;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23FBD3B3FB;
         Wed, 22 Jun 2022 04:37:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,26 +21,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=n5fftUEvkFxqEj5rq74Mb5X3DmU+ng2FZSz30Wp76JY=; b=RzyK1+BusDAc55RQOghHuS07Nu
-        5PpLu8Juu1OK292BjpLuADIO359VRqiUa6bwNHJmDlpyBVS0d9wiKqPpnDdhE4E91QyTjgrQuXpzS
-        uFPbJxFdIbEX1sWP0L3VA2lnO6wKweQpEJCSmnlRm32t4CXAldiOqUCeq/mNikL5pcERE7PE7J1M2
-        YrQM7aKV+tzuLcXD6ygK0w+GUGdDRsLzrKndHe5CbpQs374qeSzYoaT1k4wu4dMjqkBfHWXBZmmSE
-        eNJK7fSkVu/CHaF2oJbHCI8mQBVxN9dtiVrdQX/V3lYNDassERwnwZgcMXWKJ8XUEz9sqLoI0foZ1
-        n+Ov1OXA==;
+        bh=jqNVkhlKQgqXtLeAWprMxZosE+nkqym2SEmCMhLQNlc=; b=mn3CrmN0z0NwQ0iOxoQ+6IgzlH
+        QJYgFjCaU6qmHjIav62mRC2tIuUvguRVCr74FNAcMghvD2dY54jQWA6kzkQaP4/VI3DcHgYmv793n
+        W73D8Sji2BG29TDWlHCO3cM/VYvPmktocY3zb++HZsbMwOBTbt8qkC2L+eTJGBlruDwvs3wLChyTg
+        1uLLxIFhm+utzzbfNyoSeu5IjXJNeFkaYbEQ8Tn9Zg0bw4MOKQg0ZPwZk2twxB68dSR/CyKKD0vC/
+        AlyB3/RSYqoXvGp5/lH3YIul6YKxitUGaIfzlf5egITzbuTkg1O+ek31kvYDc1BbJtLVSHOrcJB0y
+        dt3YZ58g==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1o3yg4-0001Xl-CJ; Wed, 22 Jun 2022 14:37:43 +0300
+        id 1o3yg3-0001Xl-Pu; Wed, 22 Jun 2022 14:37:42 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, digetx@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 13/13] drm/tegra: vic: Add Tegra234 support
-Date:   Wed, 22 Jun 2022 14:37:33 +0300
-Message-Id: <20220622113733.1710471-14-cyndis@kapsi.fi>
+Subject: [PATCH v2 06/13] gpu: host1x: Program virtualization tables
+Date:   Wed, 22 Jun 2022 14:37:26 +0300
+Message-Id: <20220622113733.1710471-7-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220622113733.1710471-1-cyndis@kapsi.fi>
 References: <20220622113733.1710471-1-cyndis@kapsi.fi>
@@ -55,59 +55,98 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add Tegra234 support for VIC. It is backwards compatible with
-Tegra194.
+Program virtualization tables specifying which VMs have access to which
+Host1x hardware resources. Programming these has become mandatory in
+Tegra234.
+
+For now, since the driver does not operate as a Host1x hypervisor, we
+basically allow access to everything to everyone.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/drm.c |  1 +
- drivers/gpu/drm/tegra/vic.c | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
+ drivers/gpu/host1x/dev.c | 21 ++++++++++++++++++---
+ drivers/gpu/host1x/dev.h |  8 ++++++++
+ 2 files changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 9464f522e257..426ffeb51f72 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1380,6 +1380,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
- 	{ .compatible = "nvidia,tegra194-sor", },
- 	{ .compatible = "nvidia,tegra194-vic", },
- 	{ .compatible = "nvidia,tegra194-nvdec", },
-+	{ .compatible = "nvidia,tegra234-vic", },
- 	{ /* sentinel */ }
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 8c6ce8014c09..5a57165ab0f6 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -217,7 +217,7 @@ static const struct of_device_id host1x_of_match[] = {
  };
+ MODULE_DEVICE_TABLE(of, host1x_of_match);
  
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index c5526bda88d6..c1734f823d04 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -447,11 +447,20 @@ static const struct vic_config vic_t194_config = {
- 	.supports_sid = true,
- };
- 
-+#define NVIDIA_TEGRA_234_VIC_FIRMWARE "nvidia/tegra234/vic.bin"
+-static void host1x_setup_sid_table(struct host1x *host)
++static void host1x_setup_virtualization_tables(struct host1x *host)
+ {
+ 	const struct host1x_info *info = host->info;
+ 	unsigned int i;
+@@ -231,6 +231,21 @@ static void host1x_setup_sid_table(struct host1x *host)
+ 		host1x_hypervisor_writel(host, entry->offset, entry->base);
+ 		host1x_hypervisor_writel(host, entry->limit, entry->base + 4);
+ 	}
 +
-+static const struct vic_config vic_t234_config = {
-+	.firmware = NVIDIA_TEGRA_234_VIC_FIRMWARE,
-+	.version = 0x23,
-+	.supports_sid = true,
++	for (i = 0; i < info->streamid_vm_table.count; i++) {
++		/* Allow access to all stream IDs to all VMs. */
++		host1x_hypervisor_writel(host, 0xff, info->streamid_vm_table.base + 4 * i);
++	}
++
++	for (i = 0; i < info->classid_vm_table.count; i++) {
++		/* Allow access to all classes to all VMs. */
++		host1x_hypervisor_writel(host, 0xff, info->classid_vm_table.base + 4 * i);
++	}
++
++	for (i = 0; i < info->mmio_vm_table.count; i++) {
++		/* Use VM1 (that's us) as originator VMID for engine MMIO accesses. */
++		host1x_hypervisor_writel(host, 0x1, info->mmio_vm_table.base + 4 * i);
++	}
+ }
+ 
+ static bool host1x_wants_iommu(struct host1x *host1x)
+@@ -602,7 +617,7 @@ static int __maybe_unused host1x_runtime_suspend(struct device *dev)
+ 	return 0;
+ 
+ resume_host1x:
+-	host1x_setup_sid_table(host);
++	host1x_setup_virtualization_tables(host);
+ 	host1x_syncpt_restore(host);
+ 	host1x_intr_start(host);
+ 
+@@ -632,7 +647,7 @@ static int __maybe_unused host1x_runtime_resume(struct device *dev)
+ 		goto disable_clk;
+ 	}
+ 
+-	host1x_setup_sid_table(host);
++	host1x_setup_virtualization_tables(host);
+ 	host1x_syncpt_restore(host);
+ 	host1x_intr_start(host);
+ 
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index 85edcc6e0fc7..920e5548cfbc 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -90,6 +90,11 @@ struct host1x_sid_entry {
+ 	unsigned int limit;
+ };
+ 
++struct host1x_table_desc {
++	unsigned int base;
++	unsigned int count;
 +};
 +
- static const struct of_device_id tegra_vic_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-vic", .data = &vic_t124_config },
- 	{ .compatible = "nvidia,tegra210-vic", .data = &vic_t210_config },
- 	{ .compatible = "nvidia,tegra186-vic", .data = &vic_t186_config },
- 	{ .compatible = "nvidia,tegra194-vic", .data = &vic_t194_config },
-+	{ .compatible = "nvidia,tegra234-vic", .data = &vic_t234_config },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, tegra_vic_of_match);
-@@ -590,3 +599,6 @@ MODULE_FIRMWARE(NVIDIA_TEGRA_186_VIC_FIRMWARE);
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
- MODULE_FIRMWARE(NVIDIA_TEGRA_194_VIC_FIRMWARE);
- #endif
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
-+MODULE_FIRMWARE(NVIDIA_TEGRA_234_VIC_FIRMWARE);
-+#endif
+ struct host1x_info {
+ 	unsigned int nb_channels; /* host1x: number of channels supported */
+ 	unsigned int nb_pts; /* host1x: number of syncpoints supported */
+@@ -103,6 +108,9 @@ struct host1x_info {
+ 	bool has_common; /* has common registers separate from hypervisor */
+ 	unsigned int num_sid_entries;
+ 	const struct host1x_sid_entry *sid_table;
++	struct host1x_table_desc streamid_vm_table;
++	struct host1x_table_desc classid_vm_table;
++	struct host1x_table_desc mmio_vm_table;
+ 	/*
+ 	 * On T20-T148, the boot chain may setup DC to increment syncpoints
+ 	 * 26/27 on VBLANK. As such we cannot use these syncpoints until
 -- 
 2.36.1
 
