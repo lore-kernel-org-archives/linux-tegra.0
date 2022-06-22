@@ -2,88 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64013C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 09:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E02D1CCA47E
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 10:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233025AbiFVJVi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 05:21:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52710 "EHLO
+        id S1355693AbiFVKg6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 06:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230443AbiFVJVh (ORCPT
+        with ESMTP id S1355402AbiFVKgx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Jun 2022 05:21:37 -0400
-Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1CD6D340F6;
-        Wed, 22 Jun 2022 02:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=uNDNB
-        uOiBg9xW6xPfaSEVT4TuUR47+zLORH4BmKJBTY=; b=Zot7GZTW5+zy6sMHrMlIT
-        73ZfpaBkRiJvIP/OKh5De1RI57p/TZFXiZTt/qGLaBmsUZgIjoY/TO8c7cQBbYWn
-        0iKWif6PMqzgPH98xlJLrqDTAVON70oXqpCe+o6f+YsJfDsKrKtPvyDdj81mvw9s
-        3xXlU5QkGgXErCn9x3/C9g=
-Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
- (Coremail) ; Wed, 22 Jun 2022 17:20:33 +0800 (CST)
-X-Originating-IP: [124.16.139.61]
-Date:   Wed, 22 Jun 2022 17:20:33 +0800 (CST)
-From:   "Liang He" <windhl@126.com>
-To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re:Re: [PATCH] memory/tegra: Add missing of_node_get() in
- tegra_emc_find_node_by_ram_code
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
- Copyright (c) 2002-2022 www.mailtech.cn 126com
-In-Reply-To: <b3a0b35e-33fc-f7f3-a111-1a88498b4019@linaro.org>
-References: <20220622042824.4094625-1-windhl@126.com>
- <2f3e843e-b72b-ee71-7465-b2b6c8d51b0d@linaro.org>
- <11875304.61a4.1818a9a66bb.Coremail.windhl@126.com>
- <b3a0b35e-33fc-f7f3-a111-1a88498b4019@linaro.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        Wed, 22 Jun 2022 06:36:53 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5FE13BA7D;
+        Wed, 22 Jun 2022 03:36:49 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id o10so23263128edi.1;
+        Wed, 22 Jun 2022 03:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YFwi1vxkzrvgsqoCKPo5AQXebahZiMS5qtbuazVoioY=;
+        b=C60jruRIr3l7H20jbT6Re8q4TAOBzwgoJniFeCwP9jUCkCeFfZSyKWDXzuiR3+WsFk
+         iug9mCtL5f/362puhR37XxfXjPTn+feFC8tv5f+bUCGxDr5RecoUaz5WL/iKgw40h3f5
+         nRLlZkcl+Cgcr2kX9I7VZkqGcpVV39vi0d4feUx7Mg7xkPeRevq2RrFsFeI4kgEh2RbO
+         1N8lkUgvGsbvP6nJ0yewhGBY+YbTQLHkQCH0wrxztTUCL3jR2tFJCgJ4iW4RmvFKBM5x
+         9Wx0qhacGBBsF/oQxleSmTbsTojFMMwK1Y3Znaa7mITTI9ctZr+bJEAD7fH9uR2Py1m/
+         LCwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YFwi1vxkzrvgsqoCKPo5AQXebahZiMS5qtbuazVoioY=;
+        b=JUQkFuw/LJT3Zo+3RWVoPZFiD2r+ZQg17eyslr5kTL99ME8uvUy2BSEWuIUEBpx+Ju
+         5lgkWlveEWsfYs147upTOC8HupaMjHP3uTE3A4wji8AeY3atS3UnXWMtbGJP8uO7+aZI
+         b74tRwChr9xVkcZsQIyX39BXUzK2/Jy9rVSj5IpEa/fgr7U+sqNWqNJmOMpTaZ5BuT4y
+         kf+tGjg1l3SmsN2QleI70t7hF5P555BGdBlhsSaC8ui0NzV+WrdzsUFdihe0DEmvVdkK
+         tv8DMP+r6szL0EAIqsbNaYcUJjHK0VqEzfvQU5AySASWzRKDye8DpG51ZK8E1G+Tb9AJ
+         PIgg==
+X-Gm-Message-State: AJIora/JbIdlBFYOpg7Dm/7Z1IHgTL1xejn62ZJ6PGGBQCvMFfI1S14t
+        YVorYM/L8RLtE96StQo1Et71XIdRB3bDUjKODnQ=
+X-Google-Smtp-Source: AGRyM1tnnFr1LC7h/zRLo+HkB47D6IcosyajAFO4R/Wl+PPHAqyQruG56xeyLIJB7dGNj2Z8gyVtab2tS/XsOjguV9k=
+X-Received: by 2002:a05:6402:5002:b0:435:1ff1:99ee with SMTP id
+ p2-20020a056402500200b004351ff199eemr3312157eda.230.1655894208315; Wed, 22
+ Jun 2022 03:36:48 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <646ff210.68cc.1818ab69fb3.Coremail.windhl@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: GMqowAAXJibi3rJidtw6AA--.11331W
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi7QYoF1pEAQTNRQACsF
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
+ <20220314141643.22184-2-u.kleine-koenig@pengutronix.de> <d6b890c8-bfb5-cfa5-c6d8-ee245701c077@nvidia.com>
+ <20220621204914.byokkrxiznvod7vq@pengutronix.de>
+In-Reply-To: <20220621204914.byokkrxiznvod7vq@pengutronix.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 22 Jun 2022 12:36:11 +0200
+Message-ID: <CAHp75VcBEpLo+pYy+RG3O2BbePJbGEQ89jxi-oG1W6=+2hgXrQ@mail.gmail.com>
+Subject: Re: [PATCH v8 01/16] clk: generalize devm_clk_get() a bit
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        linux-hwmon@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Tomislav Denis <tomislav.denis@avl.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Andy Gross <agross@kernel.org>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        linux-pwm@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        =?UTF-8?Q?Andr=C3=A9_Gustavo_Nakagomi_Lopez?= <andregnl@usp.br>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Amireddy Mallikarjuna reddy 
+        <mallikarjunax.reddy@linux.intel.com>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Cai Huoqing <caihuoqing@baidu.com>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        dmaengine <dmaengine@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-CgoKQXQgMjAyMi0wNi0yMiAxNzowODozMiwgIktyenlzenRvZiBLb3psb3dza2kiIDxrcnp5c3p0
-b2Yua296bG93c2tpQGxpbmFyby5vcmc+IHdyb3RlOgo+T24gMjIvMDYvMjAyMiAxMDo0OSwgTGlh
-bmcgSGUgd3JvdGU6Cj4+IAo+PiAKPj4gQXQgMjAyMi0wNi0yMiAxNjo0MToyOCwgIktyenlzenRv
-ZiBLb3psb3dza2kiIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+IHdyb3RlOgo+Pj4g
-T24gMjIvMDYvMjAyMiAwNjoyOCwgTGlhbmcgSGUgd3JvdGU6Cj4+Pj4gb2ZfZmluZF9ub2RlX2J5
-X25hbWUoKSB3aWxsIGRlY3JlYXNlIHRoZSByZWZjb3VudCBvZiBpdHMgZmlyc3QgYXJnIGFuZAo+
-Pj4+IHdlIG5lZWQgdG8gYWRkIGEgb2Zfbm9kZV9wdXQoKSB0byBrZWVwIHJlZmNvdW50IGJhbGFu
-Y2UuCj4+Pj4KPj4+PiBCZXNpZGVzLCBkdXJpbmcgdGhlICdmb3InIGxvb3AgZXhlY3V0aW9uLCB0
-aGUgcmVmY291bnQgb2YgJ25wJyB3aWxsIGJlCj4+Pj4gYXV0b21hdGljYWxseSBpbmNyZWFzZWQg
-YW5kIGRlY3JlYXNlZC4gVGhlcmUgaXMgbm8gbmVlZCB0byBjYWxsCj4+Pj4gb2Zfbm9kZV9wdXQo
-KSBhZ2Fpbi4KPj4+Pgo+Pj4+IFNpZ25lZC1vZmYtYnk6IExpYW5nIEhlIDx3aW5kaGxAMTI2LmNv
-bT4KPj4+PiAtLS0KPj4+PiAgZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmEyMC1lbWMuYyB8IDMg
-KystCj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkK
-Pj4+Pgo+Pj4KPj4+IFRoZSBwYXRjaCB3YXMgbm90IGV2ZW4gY29tcGlsZWQuLi4gSSBjb25zaWRl
-ciBpdCBoYXJtZnVsIGFwcHJvYWNoLiBOQUsuCj4+PiBTZWU6IGh0dHBzOi8vbHduLm5ldC9BcnRp
-Y2xlcy84NTQ2NDUvCj4+Pgo+Pj4gQmVzdCByZWdhcmRzLAo+Pj4gS3J6eXN6dG9mCj4+IAo+PiBT
-b3JyeSwgS3J6eXN6dG9mLgo+PiAKPj4gQXMgdGhlIHBhdGNoIGlzIHNvIHNpbXBsZSB0d28gbGlu
-ZXMgLCBJIHRob3VnaHQgSSBjYW4gaGFuZGxlIGl0IHdpdGhvdXQgY29tcGlsaW5nIGl0Lgo+PiAK
-Pj4gVGhhbmtzIHZlcnkgbXVjaCBmb3IgeW91ciBub3RpY2UgYWJvdXQgdGhlIGFydGljbGUgYW5k
-IEkgaG9wZSBJIGhhdmUgbm90IGRvbmUgYW55b3RoZXIgaGFybWZ1bCB0aGluZ3MuCj4+IAo+PiBB
-bmQgSSB3aWxsIHRha2UgY2FyZSBvZiBteSBwYXRjaCBjb2RlIGluIGZ1dHVyZSBubyBtYXR0ZXIg
-aG93IHNpbXBsZSBpdCBpcy4KPgo+Cj5OZXZlciBzZW5kIHBhdGNoZXMgd2hpY2ggd2VyZSBub3Qg
-YnVpbHQuIEl0IHNlZW1zIHlvdSBkaWRuJ3QgYnVpbGQgdGhlbQo+aW4gdGhlIHBhc3QgZWl0aGVy
-LCBldmVuIHRob3VnaCBzZXR0aW5nIHVwIGNyb3NzIGNvbXBpbGUgaXMgdHJpdmlhbCAoZmV3Cj5j
-b21tYW5kcykuIFFFTVUgaXMgYWxzbyBhbiBlYXN5IG9wdGlvbi4KPgo+RXZlbiB0aG91Z2ggeW91
-ciBjb250cmlidXRpb24gbWlnaHQgYmUgdmFsdWFibGUsIGxhY2sgb2YgYnVpbGRpbmcgaXMgYQo+
-c2lnbiBmb3IgbWUgdGhhdCBhcHByb2FjaCBpcyBub3Qgc2VyaW91cywgc28gSSBhbSBub3QgZ29p
-bmcgdG8gdGFrZQo+cmlza3kgY29kZS4KPgo+QmVzdCByZWdhcmRzLAo+S3J6eXN6dG9mCgpUaGFu
-a3MsIEtyenlzenRvZi4KClRoaXMgYSB2YWx1YWJsZSBsZXNzb24gZm9yIG1lLiAKCkxhc3QgZmV3
-IGRheXMsIEkganVzdCB3YW50IHRvIHJlcG9ydCB0aGUgYnVncyBhcyBxdWlja2x5IGFzIEkgY2Fu
-LgoKQW5kIEkgb25seSBmb2N1cyB0aGUgYnVncyBJIGZvdW5kIGJ1dCBub3QgdGhlIHBhdGNoIGNv
-bXBpbGluZyBwcm9ibGVtLgoKWWVzLCBJIGFkbWl0IHRoaXMgYXBwcm9hY2ggKHdheSkgaXMgbm90
-IHNlcmlvdXMgYW5kIHRoaXMgaXMgbXkgZmF1bHQsIHNvcnJ5IGFnYWluIGFuZCBzb3JyeSB0byB3
-YXN0ZSB5b3VyIHRpbWUuCgpGcm9tIG5vdyBvbiwgSSB3aWxsIG5vdCBzZW5kIGFueSBuZXcgcGF0
-Y2ggY29tbWl0IGJlZm9yZSBJIGNvbXBpbGUgdGhlIHBhdGNoIGNvZGUuCgpTb3JyeSBmb3IgbXkg
-YmVoYXZpb3IuCg==
+On Tue, Jun 21, 2022 at 11:01 PM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> On Tue, Jun 21, 2022 at 08:57:00PM +0100, Jon Hunter wrote:
+
+...
+
+> (Pro tipp: The commit in next has a Link: footer. If you follow the
+> link, you find the thread that was actually applied (i.e. v9) and where
+> the fix is also contained.)
+
+Even easier, you may take a message-id from the Link and supply to `b4`:
+
+  b4 mbox ${message-id}
+  mutt -f ${message-id}.mbx # or whatever MUA that handles mboxes
+
+
+Dunno if `b4` has capability to parse Link instead of message-id.
+
+--=20
+With Best Regards,
+Andy Shevchenko
