@@ -2,186 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4275C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 08:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7313C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 08:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354582AbiFVIh2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 04:37:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33152 "EHLO
+        id S1353035AbiFVIle (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 04:41:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354489AbiFVIhG (ORCPT
+        with ESMTP id S1355353AbiFVIlc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Jun 2022 04:37:06 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 999933982C;
-        Wed, 22 Jun 2022 01:36:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655887003; x=1687423003;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Asx2uLZqEWA1Ku8lHPlIL6BlvP7Vxo6bP4XGBrldJgE=;
-  b=nE1Y3T4p7z17RpcLYwdRpYzbWJF07mj0WUV8CYeX5vKZ3JdpZfhKLa9x
-   7Zx1H/2CT1QFgz/tt+XPwzZXaFaiE4sFI5oSLTwbRVM/hho51GHLmWiK+
-   mg0YrMrBAzsw6EWhpQRmJyifmmTeysCZ6307eIBpjh4lpak/WhRZOCKIi
-   h4AsTWnqk7CVqsQmLCPReLqdfbqZbHpwD/2lWUgK2vVTSHq0BZ0OKLeap
-   xFDmdWgE6pSaQMyMUToAzEFtAxTlFbw5qnnbRonG/C0Dmd//pXRAbhcF3
-   Qzh+e19VYIb/kZeRdr+qk6rMvGp+IzOJoei2MoYFjhGnz86Oh8+WEKWye
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10385"; a="269075683"
-X-IronPort-AV: E=Sophos;i="5.92,212,1650956400"; 
-   d="scan'208";a="269075683"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2022 01:36:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,212,1650956400"; 
-   d="scan'208";a="615080835"
-Received: from lkp-server02.sh.intel.com (HELO a67cc04a5eeb) ([10.239.97.151])
-  by orsmga008.jf.intel.com with ESMTP; 22 Jun 2022 01:36:40 -0700
-Received: from kbuild by a67cc04a5eeb with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o3vqp-00013U-Op;
-        Wed, 22 Jun 2022 08:36:39 +0000
-Date:   Wed, 22 Jun 2022 16:35:46 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Liang He <windhl@126.com>, krzysztof.kozlowski@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, windhl@126.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+        Wed, 22 Jun 2022 04:41:32 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0396738BE2
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Jun 2022 01:41:31 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id q9so22324531wrd.8
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Jun 2022 01:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=sz6VlNHiVjHixKsssl+TJXLUZqbxz+oP9ZVl9b0X04Q=;
+        b=zI2iX2goiGZ0Gj7PoNgF/dAyAFJPQV7L/o29pytA7SjhrmeMSqjizHh9LM7RA3nLpL
+         phtstWK4Oide9ApB3GfvIL1BjbjBb5QFYOe003kH4eGPP3ey8gmLgO64/tp4OhFnuEbF
+         yHWLYcwWDFgNg3VWdRH0e7MMFQzrjGNaGHS4lZt754GjBg7TK7Y6JgjsQ6YfZ61G08KB
+         gyrveMFT9VKbbqvhzlr3LuqmUqvUuQ76g0HidfhCn5r4nz5BGR6iQO4lUQ7lwDXQlh+B
+         bAo7bi8LH9Bbin0bi6s4MMtMeykr+R3L245W1VXlBDdHzR2C/Igp0ZApE+VdhHXUHWKt
+         /9YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=sz6VlNHiVjHixKsssl+TJXLUZqbxz+oP9ZVl9b0X04Q=;
+        b=NlJ5RQ4HCM1AiZljxbU5LWsp7UlR1TkRdoN3OHLTsWgfWoFeq4th0n+64U/KRRC5bA
+         MuTKy5l19VRY1gA8JjaHoCC9N7tT04Mu/TqI0osi8qxfFdlf/Q/L7HSvsMfdNLJenKAk
+         Xdtv8d90/iHZJ4WIjBNvpTafCmN3YYn/OTve1ma2Sjv03Uof2el1rvTcWTgrf3DNoHhV
+         SdlcMhiWfF5LeyPBMY/NfuF0h9a9iN0CypjrcPKu0sRdTQq+TnYKpuq3rzfQ6AA2ly8/
+         6rc2aFi6vxR4P8uwQjBy2WYYyZt17TSw8Y6BezInH5zDaQDwu3QKDXDmbj7TiPSvMzRC
+         iwUA==
+X-Gm-Message-State: AJIora8onJD9H6ushhZ5Pwfn8KLWQaxT2TbrT3Ikl9xplYNOkHmLq/DC
+        jiu6BdYi/Y0vIzDigWamJ/eLjg==
+X-Google-Smtp-Source: AGRyM1vN/2Yn5VoH1r/7PIIbeU5gLOIa16fFrvWUQSeTlBzbJrJqfD1H73MWRPrmSyRCWvuLBq1gaQ==
+X-Received: by 2002:a5d:5231:0:b0:21b:838e:65ba with SMTP id i17-20020a5d5231000000b0021b838e65bamr2099102wra.412.1655887289619;
+        Wed, 22 Jun 2022 01:41:29 -0700 (PDT)
+Received: from [192.168.0.223] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id a17-20020adffad1000000b0021b8749728dsm12525434wrs.73.2022.06.22.01.41.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jun 2022 01:41:29 -0700 (PDT)
+Message-ID: <2f3e843e-b72b-ee71-7465-b2b6c8d51b0d@linaro.org>
+Date:   Wed, 22 Jun 2022 10:41:28 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
 Subject: Re: [PATCH] memory/tegra: Add missing of_node_get() in
  tegra_emc_find_node_by_ram_code
-Message-ID: <202206221602.odN70SHs-lkp@intel.com>
+Content-Language: en-US
+To:     Liang He <windhl@126.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 References: <20220622042824.4094625-1-windhl@126.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 In-Reply-To: <20220622042824.4094625-1-windhl@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Liang,
+On 22/06/2022 06:28, Liang He wrote:
+> of_find_node_by_name() will decrease the refcount of its first arg and
+> we need to add a of_node_put() to keep refcount balance.
+> 
+> Besides, during the 'for' loop execution, the refcount of 'np' will be
+> automatically increased and decreased. There is no need to call
+> of_node_put() again.
+> 
+> Signed-off-by: Liang He <windhl@126.com>
+> ---
+>  drivers/memory/tegra/tegra20-emc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-Thank you for the patch! Yet something to improve:
+The patch was not even compiled... I consider it harmful approach. NAK.
+See: https://lwn.net/Articles/854645/
 
-[auto build test ERROR on tegra/for-next]
-[also build test ERROR on tegra-drm/drm/tegra/for-next linus/master v5.19-rc3 next-20220621]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Liang-He/memory-tegra-Add-missing-of_node_get-in-tegra_emc_find_node_by_ram_code/20220622-123052
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-config: hexagon-randconfig-r041-20220622 (https://download.01.org/0day-ci/archive/20220622/202206221602.odN70SHs-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 8b8d126598ce7bd5243da7f94f69fa1104288bee)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/6f5dd7a2fb5c7d45a25cdf4409c5aa03c4df0a96
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Liang-He/memory-tegra-Add-missing-of_node_get-in-tegra_emc_find_node_by_ram_code/20220622-123052
-        git checkout 6f5dd7a2fb5c7d45a25cdf4409c5aa03c4df0a96
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/memory/tegra/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/memory/tegra/tegra20-emc.c:480:2: error: call to undeclared function 'of_get_node'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-           of_get_node(dev->of_node);
-           ^
-   1 error generated.
-
-
-vim +/of_get_node +480 drivers/memory/tegra/tegra20-emc.c
-
-   456	
-   457	static struct device_node *
-   458	tegra_emc_find_node_by_ram_code(struct tegra_emc *emc)
-   459	{
-   460		struct device *dev = emc->dev;
-   461		struct device_node *np;
-   462		u32 value, ram_code;
-   463		int err;
-   464	
-   465		if (emc->mrr_error) {
-   466			dev_warn(dev, "memory timings skipped due to MRR error\n");
-   467			return NULL;
-   468		}
-   469	
-   470		if (of_get_child_count(dev->of_node) == 0) {
-   471			dev_info_once(dev, "device-tree doesn't have memory timings\n");
-   472			return NULL;
-   473		}
-   474	
-   475		if (!of_property_read_bool(dev->of_node, "nvidia,use-ram-code"))
-   476			return of_node_get(dev->of_node);
-   477	
-   478		ram_code = tegra_read_ram_code();
-   479	
- > 480		of_get_node(dev->of_node);
-   481		for (np = of_find_node_by_name(dev->of_node, "emc-tables"); np;
-   482		     np = of_find_node_by_name(np, "emc-tables")) {
-   483			err = of_property_read_u32(np, "nvidia,ram-code", &value);
-   484			if (err || value != ram_code) {
-   485				struct device_node *lpddr2_np;
-   486				bool cfg_mismatches = false;
-   487	
-   488				of_node_get(np);
-   489				lpddr2_np = of_find_node_by_name(np, "lpddr2");
-   490				if (lpddr2_np) {
-   491					const struct lpddr2_info *info;
-   492	
-   493					info = of_lpddr2_get_info(lpddr2_np, dev);
-   494					if (info) {
-   495						if (info->manufacturer_id >= 0 &&
-   496						    info->manufacturer_id != emc->manufacturer_id)
-   497							cfg_mismatches = true;
-   498	
-   499						if (info->revision_id1 >= 0 &&
-   500						    info->revision_id1 != emc->revision_id1)
-   501							cfg_mismatches = true;
-   502	
-   503						if (info->revision_id2 >= 0 &&
-   504						    info->revision_id2 != emc->revision_id2)
-   505							cfg_mismatches = true;
-   506	
-   507						if (info->density != emc->basic_conf4.density)
-   508							cfg_mismatches = true;
-   509	
-   510						if (info->io_width != emc->basic_conf4.io_width)
-   511							cfg_mismatches = true;
-   512	
-   513						if (info->arch_type != emc->basic_conf4.arch_type)
-   514							cfg_mismatches = true;
-   515					} else {
-   516						dev_err(dev, "failed to parse %pOF\n", lpddr2_np);
-   517						cfg_mismatches = true;
-   518					}
-   519	
-   520					of_node_put(lpddr2_np);
-   521				} else {
-   522					cfg_mismatches = true;
-   523				}
-   524	
-   525				if (cfg_mismatches) {
-   526					continue;
-   527				}
-   528			}
-   529	
-   530			return np;
-   531		}
-   532	
-   533		dev_err(dev, "no memory timings for RAM code %u found in device tree\n",
-   534			ram_code);
-   535	
-   536		return NULL;
-   537	}
-   538	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Best regards,
+Krzysztof
