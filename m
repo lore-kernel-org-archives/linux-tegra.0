@@ -2,256 +2,202 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2D7CCA481
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 13:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CCCCCA47D
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 13:59:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355448AbiFVNrw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 09:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37606 "EHLO
+        id S234792AbiFVN7M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 09:59:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353254AbiFVNrr (ORCPT
+        with ESMTP id S1357800AbiFVN6f (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Jun 2022 09:47:47 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2073.outbound.protection.outlook.com [40.107.244.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478AC338A7;
-        Wed, 22 Jun 2022 06:47:44 -0700 (PDT)
+        Wed, 22 Jun 2022 09:58:35 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDDB5DFFB;
+        Wed, 22 Jun 2022 06:58:33 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R4374f2ranSoIn8NdkedUzg+56YX+/XVJsfXbZ1q1+WeeRYBqV0UT2irMQkAcqMdzlQnOhHuLavN52+VWBcZSlzFKHK84tGc37yScxKIQodASa8qHdHJtVdolUSBozO19+bsWNlbrtPa/eZYrCWr9fxLYHv4cNEFrdx+DWHpRGZq8evMmPjI1Ww1OCV0uNQm0DUb8fgCXycAM/A77WoW0sUsRhwfUYBlGPaVTlRVzHOm6kY2OUgv2uCvAcfUAMAfIx9mnSGWCy2ezeC4H2n5s+uU+Y2N49Na8o/eFAw30bTY022noEQ7urHXGw+nAItNG6G56XGMxFAW2PvFcXhR+Q==
+ b=k+xa7V2WJKSh4WjBVoFzStTQLbgobZxreJafcD80PdgcTnMhhuS8dPQPtOgeLrZv8FrPIG+vhQRMDodxrLW2lnNd33avlKR+RF5F39gG0Y2Z3sS66N988Y0gwpsnKVmdo9YAX1UGFSUnsYCeXrzBeWsez2Hz1fiT6b1kwe8q6LahfE4hzeDRFtbwn+nUjEhHcs0FKZ3Rt2JzHlzAiDIpEenWEFNwL6d+hgOfG2QUkhanmyDtujgg3QhnhsTKR+tOM1c2RtCukrCG5mZxSmmS4MmfP9262d3tt8U3Qq+9PG+AlY02d7FqWucVTeonHMobvHmbUy37Ms5AkssKo9l63Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=73C/pHcBUMK2H40ACJ1VSbE5HSn5QQ6H0/KyJfeZtp8=;
- b=oVkgvnwRm8ebLQSYJJ1Wg5YXz+zdZoqVpXAihfhnQ/20V+AG55OCaDUW7OzYwoAojem7K5K/oolKUeNvAOifLPZbSXRvD55w7lZPpdhvoQC3PZx84Wd9RSHzsfkieBhpwBDLPGVYFIXMQn0VC/vUch3MIRscqTKzJhItnJym1tvg6ZypIQe07QsplImLpAq9/2g5NWlp+JfmjyWnKH36QebT0xqFnz3lfIYfm+FrX2s5mDqmWZ+qwdZnvMrT9s82ziHkMYKEygna15u5MyWzFjCpxgjWjJF8peY1skgIl2By+KyA1CD4+/45c75NpPoP5F2BDcUiF1292euRoG0I4Q==
+ bh=7fyr5VRSwvevMp4UBL/ZIBYsmkut/bRRvYD0PmM+ABs=;
+ b=GFH+LmoxqJWN4mdoq0DG0sw2RLjwDKFI+XvZVgXF43uFR9CeyuPw5ai1WX07+eL5Vys5+y4GqZ7bxxke1whQ0F1KSWmGf+5Fdg6mUPRYZPp5vakX8cbaYjYE8YVNQ2bs2IHIQ6g9tszXAn6kJspoQMM3USvhySBlIK8Yg/6ai6SD4vGtOfx66XaDyKMEVWXlF3BwVvemhQZl9+0gnv53/N3xsqhXB6lenGTkVEeycjWX0yFgYdC51jsgqeZyACANob00DLqtQuqWabLEnlwBJWiBn38W/+G42p9L4wqUi1O+PJc0iKdl1NRPnZkRfaDeygVa5AZPqPUitZJncFseTQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=73C/pHcBUMK2H40ACJ1VSbE5HSn5QQ6H0/KyJfeZtp8=;
- b=jUWvBeyaZhnDWCdFNxHJQp0lcikZD1bh9uPtpDydmRXhYRgoMIhzrFGP3iwmZHtSHxflxWk3BSwYJTAnZKIZ0ErUaPYb9+1ifRXxVDXt27Bjc0e5uhGCpgpwJ4O2dQHpSsWEKak2r7Jq/n1Jb5rA2hpNzV0vcy/EJvK5BUCMM+73HhE19ne0kZ0IE3di57AXUTry+v7uFTrSgiC/8GO3eEc4Vc+/mTv5IjMBSQ1vzBobL93zntzZ1MPlsvBviYJ7rgF6Ex49F1T9LWOQHG1NfHN/bnRPxWzfp8kQMT/2gd6JuU7VWVyOOIsfYZhvT0R1uEb2pf6jmRkxu/u5UANc1g==
+ bh=7fyr5VRSwvevMp4UBL/ZIBYsmkut/bRRvYD0PmM+ABs=;
+ b=QSSkNTv0x15BX620XnbRvmsYlPlBASNs8GhOMqnnmeSMZgLYjw6Z+5Xm6wHpW9qf6FJpIlmRzDXSkfO/yYRuw68HTI7Hq7fOCLEpJ6zxgUHT+ZC7Ur/nh2Wz1lH6nd04iIYoZ2Ek0b/ZXg8a7rN1NUCJqwLmHQ6KowYoAK7xGtSv5JSXd2CB0CzcdwZdaoORbc+XdwYCADQHpaVoM8nTt52xN2pKFRqowUhAi9hlxMZdszmLjI5tBHbJHZVAMtHkRHAo6aY3DJ+EtjFGwwf8vqS1Z7/ANDFijlu0s5uSNIwnkxIYcluJ/NgJt2uOdoA3pwUZVgCQ58EEVT2frB60wA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- DM6PR12MB2939.namprd12.prod.outlook.com (2603:10b6:5:18b::24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5353.18; Wed, 22 Jun 2022 13:47:42 +0000
+ MWHPR12MB1920.namprd12.prod.outlook.com (2603:10b6:300:10e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.15; Wed, 22 Jun
+ 2022 13:58:32 +0000
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::190c:967c:2b86:24a8]) by CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::190c:967c:2b86:24a8%4]) with mapi id 15.20.5373.015; Wed, 22 Jun 2022
- 13:47:42 +0000
-Message-ID: <55623c12-dda3-613f-5bc9-80b3b6fec5f9@nvidia.com>
-Date:   Wed, 22 Jun 2022 14:47:35 +0100
+ 13:58:32 +0000
+Message-ID: <eb9558fd-4f2d-4e83-f9a3-86ff5dd51784@nvidia.com>
+Date:   Wed, 22 Jun 2022 14:58:25 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH 5/8] OPP: Allow multiple clocks for a device
+Subject: Re: [PATCH 3/8] OPP: Reuse _opp_compare_key() in _opp_add_static_v2()
 Content-Language: en-US
 To:     Viresh Kumar <viresh.kumar@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 References: <cover.1654849214.git.viresh.kumar@linaro.org>
- <8b29fa207024dc295639f9ba52c28e45782e3baa.1654849214.git.viresh.kumar@linaro.org>
+ <2e335a6c263704a8d465bd02896fc5fff0533fdc.1654849214.git.viresh.kumar@linaro.org>
 From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <8b29fa207024dc295639f9ba52c28e45782e3baa.1654849214.git.viresh.kumar@linaro.org>
+In-Reply-To: <2e335a6c263704a8d465bd02896fc5fff0533fdc.1654849214.git.viresh.kumar@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0097.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:c::13) To CO6PR12MB5444.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0227.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a6::16) To CO6PR12MB5444.namprd12.prod.outlook.com
  (2603:10b6:5:35e::8)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9b64ed3d-8bbc-4c3a-446d-08da5455c752
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2939:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB2939B5BA5D32AC484BBE03F4D9B29@DM6PR12MB2939.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: b8718871-ea83-4305-9631-08da54574ab8
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1920:EE_
+X-Microsoft-Antispam-PRVS: <MWHPR12MB192095D6CE4056CAEE87F765D9B29@MWHPR12MB1920.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: p9we7HHXFmHaDlKXVdQZIQHtrPnC7A/Q8d/DNALsck7Fo0+fht7I37PiaaCyVWfAdm0nDu0fW+NMRE6W5yFsImP2q4HVotc56tML2dbuZIKTKFsJiZgqzA33IPXg92UXbJcoCOi5xpqHy0S5+ByPPAWH1WfBPOGOAddkcF3EzliK8zYJWUts8K5E7fYY1Ukdc2moyLSkzNp4AqBfmAGAS0HebelTNVZckupUj/Vo4aHE0AGliYEWpUrqS2yoKuHpIWm+7xfiue7BL5ib3K1HgF+3XoWMDAwPuUJ9ZW0YBxcjOmXGFFgZMmsBUxrIycl6pGyw6Msl7sC7PMBSJnAsJA5n77p2XGxXWam0Iu2lG4nnpSVPtq4R5j3zo10Z5FpSlEbR3Q48mHxnZCpGjefSOE4yWfx9NrpSvZ2uerpBwiZo22PrLBzeGRnCqXHLsHd34IrjyEQ8xCedqASPu2tj4Uv42HyZIk8SPJDQ4AhxmIbN9qokPRTZv9ZkB6i35MWYzO9lPT+Ln8L56cUS3fFEIXmEwlF4910UVE2TNcQ0e7gTCwPLd8X5DLcHHOMlgAB2K91lHr9LC/r4JI51fdgYW9sRs3bYNF+JQtNlGa02IDjVOc7UcFKLGzq+iqpRrCmUH/KF9K3CjJdlDNc4Jp8Dm8aFrdP9fSNWpvd/sLfTU7lP1I8SMvR885lDUqhVwKMLa1jcL1B/yTvO3w0ixlkxnH9kHg3iCRYX5tRsSXGYff2OfBACIc3yKI7Mmto3+A1UsmUdpK1L1mKo1v17JUNhE38m9KrXPSTrBcapnnpn6Fc=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(346002)(39860400002)(396003)(366004)(136003)(54906003)(110136005)(2906002)(66946007)(186003)(8936002)(6506007)(26005)(36756003)(83380400001)(66476007)(7416002)(66556008)(38100700002)(4326008)(6486002)(2616005)(316002)(45080400002)(8676002)(6512007)(55236004)(5660300002)(31696002)(6666004)(86362001)(53546011)(41300700001)(478600001)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: rqstaUALIMwbR2xTKUZxJUEzIWMVN3smFfc/MIWky4KZ8v20VhhlOfa5QhTZgG+12VV6nNfIkgM5BfrlXbG5tPqSQ+xSb8U2NpVmcopqw2POEHG10u7nNTHzCv/smEU+Ey8cvZi011nJa+dhm0sNre2myxTAon3Bf1AFkf6jWZszOM55SZcSuSXVkY53s7GSfngy8mZNhCUtXn2yMmW32q/hKMkgHVu0o80kBAiRlGzfXVwKOh+jH/869FQt6Gao6TzVv+mk/x0j97iGirQrZCCKmykJOTWxlpuT8ZSoJLcof4R6brWPQ3v0QloKnza5BRA2BD3SEo88Q6FmVn36vKhSrjKgHmdYhLA1aJyAYBGbZ+pQDHQqXPQL+nB+etCFO1gse7Sx7IFNKXDT459fB7MgDoOXUMvDIY0PnxdNP0zBkq26ZpzCROaW87CQnPITmTnFhYQsv0gs01+l0HM61FjnnCXEpmt3O791RaJvHulIEuYjKxE3Wo87py/9PLuAJZiTdSz/ne+nYMqHw89cV+Fqb09Mpq8Kj4HcPRXFF2l7vE2J6A2zNSTBIDfXkqKC3TPppP8+M6CjyXHRpYwF1zSH4qmTQkjvJdWvO0N3ZgC+c1uH48OEoNIGraPqIxzwgU5BQc99quj0mZtIeTOprVZ5A436QS4WhbppuSf3iWvSKYmCsurQ8UxVubvpgHkriBj5AYjkhd+MliIE1wjibrpqBDuCjrrI8/tRr1Bb7qUpoPDs1nB9y35zOIlRJAj6ZytIaG5WD8T0O+LA9ncXvo7LzJ3+8VticejLgqz1iLA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(346002)(39860400002)(376002)(396003)(366004)(478600001)(66476007)(54906003)(4326008)(2906002)(110136005)(8676002)(186003)(83380400001)(66556008)(31696002)(6486002)(66946007)(38100700002)(31686004)(6666004)(41300700001)(86362001)(6506007)(53546011)(2616005)(55236004)(36756003)(5660300002)(7416002)(8936002)(316002)(6512007)(26005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Zitkb3lqSkxYWUVvWlBWNnpvMkJDTUFFdlZxMFl4MGptY3NhY3pVRWlwelEy?=
- =?utf-8?B?cUNXMUwycG9yMVFnWmM5QkQxejZwV1FVUnE5TFFPN3VXeldEOWllVFBubjlw?=
- =?utf-8?B?VnpuVVkyRUxvMEdxUFhKZmlncldtNUN2UVdvdExIWjJWdFdPS1k4d3p1V2tP?=
- =?utf-8?B?M3NjTFN0TjQ0M3JlYk1VREwzUTZrdld2TksxUDZ5dUo0L3N5NE9BNXZsQmx0?=
- =?utf-8?B?RSsxcWt2eVhRZlRUNEtWcGNpaHNmcXNscG5LNUtCQ2dwTCtnNWtrS3FQT3Z2?=
- =?utf-8?B?Qkszd0E4UzEzZG9PTE5MZjBkZjNBWVAyaVMxN0txU0lUazczd0xPbVpGaDVj?=
- =?utf-8?B?ckk0RWZXZ0JuQm05bGxLM3V0TlJtUVJqUkV5QkhwZ1hUMVkzdElPWXBIbWxQ?=
- =?utf-8?B?b1JjV1pOTDRJVlB6WEtTVjl2WHRWdTVrMUdBME43UWM1L1VWN3picXB6akZa?=
- =?utf-8?B?SUs1UHJLV1RKRzMyWjRTN1hhdzlqczhSRkFGYmhPOGJXeThKYlJaTDRxcWt5?=
- =?utf-8?B?MWNDekZXREN3SlY1eVhCeXJ0T0xrRHp4Z1V2dVNGeEY3SVBnZHdtTDBnazRU?=
- =?utf-8?B?UU1ra0Z2UFRPclpnRHlESWVoVEV5WFFBci9tenlJcTNyOS9pNVhxUVRkUUl1?=
- =?utf-8?B?M2p6ZnBHRmpwZHRldEhCckx4OHBWZ3VJSXFMbkwvbXpiek5oamFBUXZzT1hi?=
- =?utf-8?B?QUpvRlNISUorL0t1cWdvRWtvY0NRaUY3dS82MjEwNXFPeE5taG0zY0JvVW5Y?=
- =?utf-8?B?aGo3WVBhdjV3Q2xYbTBuZlVQaENmL2tkbldFV040VjJXN2NwSnNCTnVkNUdz?=
- =?utf-8?B?bVhsVzVWbGl1QU5mTUMxQ21VV2hoZlpaRU13RzVSc0hxVFFuSS9WYUhzK3px?=
- =?utf-8?B?ai8xajVRS3hNNlREcVc4elpHVnpXSDB2eUh3M0J1OHlCVld6VVpDdEtZV0lU?=
- =?utf-8?B?UURIQktqNDNQeXRZNkU2dWFrcWd5UUdnSStEelNvTDAwQ1RvZFA4K0hzWXow?=
- =?utf-8?B?TCtaMXB6dDhCSFY1NjMzN0daVmRQUFlwb2ZzdWdQNEFyVmFtZnpkZlpYS3lk?=
- =?utf-8?B?MDZUSW5TRStwdWxpVUVMbEFVZTlURHN1MnMzWDRwemZpNmd3NEpzSXE3Rjg1?=
- =?utf-8?B?UnVVc010andvelZRaUhjT0toellTWW42aGZnaUY4S01XSTEwdXppcW5NNVdT?=
- =?utf-8?B?alpsMjZXUHVqZmkvVlRIbVZsVi9YUDVyZytTcXY3TngrQy80TnRhSys4eHIy?=
- =?utf-8?B?OXQ3OW9IdDhhOXRnY2gyVUxnTDhjZy9UNzVLMjJnWGZ4KzVRNTI3MnIwWEVz?=
- =?utf-8?B?RHhVRWcxdDZVbnRGSkh1YVFKczRlSW8vemYvTGRrQlB0NUdCY1dvTHViMEY3?=
- =?utf-8?B?dmkxTHA0MjhuQldxQm5Kc0R0enNnMk1nRkJ6WlVSZittSmlrR2Q2MWdCUGUx?=
- =?utf-8?B?blVVdEdWeFV2UzQ0RE1qM1JodVN1N2tibkxpbkF5RStpYjQ0U1pjTkhUSEdu?=
- =?utf-8?B?UFBPRVJYTjdUZW9KamZGVDRDRXc3amtNd1ByYnNiTG11Q251NmpSelNsUHBK?=
- =?utf-8?B?OWpUVXRZcTBHTXNDeHg1SGJpR1RZeUZESUdBSDFURExnNlVSQ0x5ZFM0NVQy?=
- =?utf-8?B?cWxyL3RDNGk5cDhEazZ5ZlNYSWNSUmxjcFY1VXlDL29TaVp3eGJNaG15UVhv?=
- =?utf-8?B?aHlKczRKWWoxY3BreUtmS2NHajBIZVZuWGlRK0NDVG9hT2RMNDMvVDBaUy9j?=
- =?utf-8?B?Nk9Oa3kwVUNGeVl1Umh4dmRNVWk1MFdiWDhSWGhuSjBtcUxMcWk2eElCS3FZ?=
- =?utf-8?B?Z2N1ZGZ6dWh5bVJQWDk2aUtOSEFiWGZIWDlMS09iaXZSdGZhNGUrbmtXekQ0?=
- =?utf-8?B?S2FTR2RKS2JaY2g2eTA1R3ZNbmxhdzZEaGI0Ym85Z1ZKTDhtaFVOYlpzd3dE?=
- =?utf-8?B?ZXZhdVR4bEVjSkVHQU8xTUo0elFRZHVMQWpzSE1nMGhteUp6YXpsR0REYTNL?=
- =?utf-8?B?ZVNPSUpaTXBZaUQya1lVNVVRaDFnWlJrOHF0N2c4TTJ2cUEvNnhISmhDdkFq?=
- =?utf-8?B?UjJ2NzVRNzRnbnFReFhlakRDZzdGWEZycDg2Nm1SS0dUNHRtV1JsaFlqT21U?=
- =?utf-8?B?MHhkeFVibGYyeXV2cFd2cE1VWnhmQlB2YTVzbkNiS0d2cERrejE3R01scWhv?=
- =?utf-8?B?dXVGZEMzd1BzY3F2RkhEa1pXYXg4SHNrKzZpVGFHMmpYZDVjM2E3VlB0MWln?=
- =?utf-8?B?bEpUK1I1dCtvdjZIbFhxMjl4NDRad1F5U2VoUmxVcXMxUDdTaEQzNkExSXl4?=
- =?utf-8?B?RFc3RmhwZ0s4akJyNTVTRU53TkErdUJBUDQwMVlTa20wSFFlZ01WZz09?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T1RpNU4wN3JuN09pd3VONmY4ZHRnc1N4YmJ6amJnRS9ZajV3UExyd2ZNdjdv?=
+ =?utf-8?B?bVZ0bU9sVW1UeUVZakFYZmlxbUlHeU1HREF6UHVJRk1IaUxIUmIySnd2Yi9I?=
+ =?utf-8?B?a01oekp2QkhEQ2QzMHNTUnJhVEd5cHY5Z04zeVFhNnU2ZHMwRTBYZ1lnajli?=
+ =?utf-8?B?azlqdFp6a2dhRkVwK2RLWVMwTFBQei84WW8zNlQ5aXFkck8xbVRIc0NVcDRI?=
+ =?utf-8?B?ZTdrQnhrd1lib3pBbTZhUk9EUEpkdDh5NU9mMEI5eEtTSUF4aFBwYVBJa0xy?=
+ =?utf-8?B?MDVEUnRyMkhTOGJRdEhDQlRMYnZpMzJ0bzhYYW9pNlFYNlBpcGg1SU9jamN1?=
+ =?utf-8?B?WlVZYXhTcmtjTWVFMzhibkhsNkxlRHJldmNiZkhtNnhxdVYvSDFvdGVwOHdD?=
+ =?utf-8?B?dUJabTA1a1NERHoramVKaVFTRktDOW9TengwM2JSOFZqWkdhZ2MwMnVlQ0Vj?=
+ =?utf-8?B?YTAwaEVmTmhiU1p1M1Ara01mNmJ6QTdyOWk4RE1ITi9MSi9DSjg2YlpoTXgy?=
+ =?utf-8?B?STBld0N6UUo4RWZQR3FoaFZ4MHNqaUxtYjQvR0JFYUMwL3pTTTdSWFl3eGcy?=
+ =?utf-8?B?cG51bjlod1VjRXU4RS8rNG13SW5sRVA4enUyV2dWK3JEcnhaa2U5UjArRUN5?=
+ =?utf-8?B?dmw5L0tMSkpVNy9iZlEyWjYvSXdFYnBFSHIyUnFsZ0ZEY1J6Y1lLZWVUd3c3?=
+ =?utf-8?B?S3ZxL3Bqbkd5aEV3QVowc0hUZGtIZ29jUklQK1dxQzN3Y2o2dy9VbjU5Yk1P?=
+ =?utf-8?B?VjhsR0U3cGRUUGdwdjhrTU1lRFZFOHQxcmVHcTY2MDl2R09Nd2tJS3JZVHA3?=
+ =?utf-8?B?akRsMG1OY0sxQk9XMndHblBGQzdDK1lMNUxHbzB4dDJMZFY3eThNZEhUb2hX?=
+ =?utf-8?B?bTdwcURkejU1ak1ORUxpbEhQOTE1ZUpSMjlxcEJvRnR0Tkk2RGNqdVVpYTF1?=
+ =?utf-8?B?N05yOUdzRTlOS3FrWVhNUWxMV2VDUVFJTDdLNDIyMER3cjFsU1ZnbmU1dlBs?=
+ =?utf-8?B?UWd6Y0tkVVpSR2czdlF1ZHFhR21BR2phNnA5ZlBjQzd0Z0YrZTJ6dTNlMHFD?=
+ =?utf-8?B?cllTY2lIQ2dUVnI2cDN6WXEwWnc1ZzNySlQ5d29Ud2FWYkNCWlpsSVU2WDB1?=
+ =?utf-8?B?N3BBbEVvampFdzF2c1BwZmFQdVliREhReFBqcnh0cmIyOGs2Q0l6R3M5bVVX?=
+ =?utf-8?B?Tm1YWS9Qdjl0Y3lhQURiUGxuTys1bVd6UldrQitHalRMODlWaWRSYXlWUllM?=
+ =?utf-8?B?Q0Vzd2xicjZFSFBLSTN1SkQzcU5DN2tlMDJLRVE0UWhTNitWNG5mUEdKdjUr?=
+ =?utf-8?B?UmMrYmVHK0doZDRDalhqYXliZUU2dEVtZmZXVTBnMng0M0RjK3RGM3poL05x?=
+ =?utf-8?B?OFkzSDV0dk1lMitSQWh1aTNSSHVSdklhTmxndHZxK1hCWUVBWDNWRjJ3UmV5?=
+ =?utf-8?B?OW9BUEMwais0dWR6QVVrejB4T05wREQ3M0ZoRUVEb2E4MitwZlRWVWFFWnd1?=
+ =?utf-8?B?MjlldkVwQU9QeXJ5bjNJR3hyN1ZGbGVYZ0dyRDRxQ042cEYxSnBoQktPcHIr?=
+ =?utf-8?B?UXdFNDk2dUtGaUNjVU90b3lYdTVXN2dtSDdVTVBtVUNOZzBvNlFFUWQzb0Iz?=
+ =?utf-8?B?SmlmWlJuMUlYZTRPNDBMd0ZadXBDcm5kVVhDYnRPRW1CdjRXVlRodlZPeWU2?=
+ =?utf-8?B?NnRtL3dNMFgreE5ZVmRNd2RhQ1BsMklIYVhpSXFxaG5hR2tuZGxmNDk5eHll?=
+ =?utf-8?B?V0twWjByamdFdG00RDFnUG40R25LWmIvR3N2NWZXNXdETzMyenlJQzVnRzBI?=
+ =?utf-8?B?TnFRNS9ERDB4REY5dnE4TjM5Z3NrOFBWMTBBWWJKNUpkUCt2Z3VENWJhVDlY?=
+ =?utf-8?B?bnlFMGxuQ0dIdkVRTk5wUVdhbzBWY1NwSkRocXlkU3BXb2EzWlR1TGwvY0cr?=
+ =?utf-8?B?WHNKYjhlYWVuTERXV2FmYjdkZXo4MVZHL3hCaHBwN0hISnR0NE44Ylk3Ny9N?=
+ =?utf-8?B?eUh4czl2bW5VOUVKdlhrQVYzQXBnWDNhOUtlTElXV1p1eUpYeVByS21YQWg3?=
+ =?utf-8?B?SGYvMGVIbGdTZDlYZHk0Vm9vdFlSaGUrMzN1TXJQMHhPbCsxeW1NRE5SNU8x?=
+ =?utf-8?B?cSs3cy9NaWZNU1RTV1pBYWxVNFJmVkxrcjNmYmRoZUFyRm1DNlM3TFhmYm9y?=
+ =?utf-8?B?M25La3o1TksrRTFsZjhTSlo1UHFSMWJ1eHI0TmdmVFdaSGdidnY1UTVlaUJE?=
+ =?utf-8?B?U0lrZk5VdXJVTWFIcVdmRUZDdFEvY0MwSExKeGY5Y1lpU1NnMytnejgwZURv?=
+ =?utf-8?B?TmJ4eGcvdSsrcGtmVWhteDErNGVJRndlYVZQYWhoTlpuSE9BTjVVOGJqN3A1?=
+ =?utf-8?Q?jcX3HiDydh6m2lIk=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b64ed3d-8bbc-4c3a-446d-08da5455c752
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8718871-ea83-4305-9631-08da54574ab8
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2022 13:47:42.3275
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2022 13:58:32.1657
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g8BzibnDo6GwS+fkFa6COq7GgByl39A/KN3YlHddTCLWOcPaQFbo4PrvRzxg7Mjtrxfd0HyGQux0trJaM2Px5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2939
+X-MS-Exchange-CrossTenant-UserPrincipalName: SvL4A8p98HliUdO2k4F0K6MLVE5qWF8mX+ufpnK33Cvm3LUiL0o7xWRuqIGVRajwk+dDZ0S4kgAfYyUZri5lJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1920
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-
 On 10/06/2022 09:20, Viresh Kumar wrote:
-> This patch adds support to allow multiple clocks for a device.
+> Reuse _opp_compare_key() in _opp_add_static_v2() instead of just
+> comparing frequency while finding suspend frequency. Also add a comment
+> over _opp_compare_key() explaining its return values.
 > 
-> The design is pretty much similar to how this is done for regulators,
-> and platforms can supply their own version of the config_clks() callback
-> if they have multiple clocks for their device. The core manages the
-> calls via opp_table->config_clks() eventually.
-> 
-> We have kept both "clk" and "clks" fields in the OPP table structure and
-> the reason is provided as a comment in _opp_set_clknames(). The same
-> isn't done for "rates" though and we use rates[0] at most of the places
-> now.
-> 
-> Co-developed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->   drivers/opp/core.c     | 165 ++++++++++++++++++++++++++++-------------
->   drivers/opp/debugfs.c  |  27 ++++++-
->   drivers/opp/of.c       |  67 +++++++++++++----
->   drivers/opp/opp.h      |  16 ++--
->   include/linux/pm_opp.h |   7 +-
->   5 files changed, 208 insertions(+), 74 deletions(-)
+>   drivers/opp/core.c | 6 ++++++
+>   drivers/opp/of.c   | 4 ++--
+>   2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index fe447f41c99e..9f284dc0d9d7 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1618,6 +1618,12 @@ static bool _opp_supported_by_regulators(struct dev_pm_opp *opp,
+>   	return true;
+>   }
+>   
+> +/*
+> + * Returns
+> + * 0: opp1 == opp2
+> + * 1: opp1 > opp2
+> + * -1: opp1 < opp2
+> + */
+>   int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2)
+>   {
+>   	if (opp1->rate != opp2->rate)
+> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+> index bec9644a7260..843923ab9d66 100644
+> --- a/drivers/opp/of.c
+> +++ b/drivers/opp/of.c
+> @@ -929,8 +929,8 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
+>   	/* OPP to select on device suspend */
+>   	if (of_property_read_bool(np, "opp-suspend")) {
+>   		if (opp_table->suspend_opp) {
+> -			/* Pick the OPP with higher rate as suspend OPP */
+> -			if (new_opp->rate > opp_table->suspend_opp->rate) {
+> +			/* Pick the OPP with higher rate/bw/level as suspend OPP */
+> +			if (_opp_compare_key(opp_table, new_opp, opp_table->suspend_opp) == 1) {
+>   				opp_table->suspend_opp->suspend = false;
+>   				new_opp->suspend = true;
+>   				opp_table->suspend_opp = new_opp;
 
 
-I am seeing the following panic on -next and bisect is point to
-this commit ...
+FYI ... if I checkout commit 00d776d33da9 ("OPP: Reuse
+_opp_compare_key() in _opp_add_static_v2()") from next-20220622
+it does not compile ...
 
-[    2.145604] 8<--- cut here ---
-[    2.145615] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-[    2.145625] [00000000] *pgd=00000000
-[    2.145647] Internal error: Oops: 80000005 [#1] PREEMPT SMP ARM
-[    2.145660] Modules linked in:
-[    2.145671] CPU: 1 PID: 35 Comm: kworker/u8:1 Not tainted 5.19.0-rc3-next-20220622-gf739bc2a47f6 #1
-[    2.145688] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-[    2.145697] Workqueue: events_unbound deferred_probe_work_func
-[    2.145740] PC is at 0x0
-[    2.145750] LR is at _set_opp+0x194/0x380
-[    2.145779] pc : [<00000000>]    lr : [<c086b578>]    psr: 20000013
-[    2.145789] sp : f08f1c80  ip : c152cb40  fp : c264c040
-[    2.145798] r10: 00000000  r9 : c152cb40  r8 : c16f3010
-[    2.145806] r7 : c264c034  r6 : 00000000  r5 : c265d800  r4 : c264c000
-[    2.145815] r3 : 00000000  r2 : c265d800  r1 : c264c000  r0 : c16f3010
-[    2.145825] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[    2.145840] Control: 10c5387d  Table: 8000404a  DAC: 00000051
-[    2.145847] Register r0 information: slab kmalloc-1k start c16f3000 pointer offset 16 size 1024
-[    2.145883] Register r1 information: slab kmalloc-256 start c264c000 pointer offset 0 size 256
-[    2.145914] Register r2 information: slab kmalloc-128 start c265d800 pointer offset 0 size 128
-[    2.145942] Register r3 information: NULL pointer
-[    2.145955] Register r4 information: slab kmalloc-256 start c264c000 pointer offset 0 size 256
-[    2.145983] Register r5 information: slab kmalloc-128 start c265d800 pointer offset 0 size 128
-[    2.146012] Register r6 information: NULL pointer
-[    2.146023] Register r7 information: slab kmalloc-256 start c264c000 pointer offset 52 size 256
-[    2.146052] Register r8 information: slab kmalloc-1k start c16f3000 pointer offset 16 size 1024
-[    2.146081] Register r9 information: slab task_struct start c152cb40 pointer offset 0
-[    2.146105] Register r10 information: NULL pointer
-[    2.146116] Register r11 information: slab kmalloc-256 start c264c000 pointer offset 64 size 256
-[    2.146146] Register r12 information: slab task_struct start c152cb40 pointer offset 0
-[    2.348527] Process kworker/u8:1 (pid: 35, stack limit = 0x(ptrval))
-[    2.354896] Stack: (0xf08f1c80 to 0xf08f2000)
-[    2.359273] 1c80: 00000001 c0868db0 00000000 7a13d783 c152cb40 c264c000 c16f3010 c265d800
-[    2.367471] 1ca0: c2661c40 00000001 c2661c40 00000001 c2661c40 c086b8e8 00000000 7a13d783
-[    2.375666] 1cc0: c12ea5a0 c265d800 000f4240 c058cfcc ef7dddec 000f4240 00000000 c2661e88
-[    2.383861] 1ce0: 000f4240 000f4240 c2661e98 c068d238 00000000 c2665e00 000f4240 000f4240
-[    2.392056] 1d00: c2666258 00000000 c2666000 00000001 c2661c40 c068d15c 00000000 c2666000
-[    2.400253] 1d20: c16fd140 00000000 c16fd140 00000000 00000000 c16b78b8 c16b5e00 c068d2d8
-[    2.408450] 1d40: c16b7810 c26661d8 c2666000 c068ed98 c2663d00 c2663d00 00000000 c086914c
-[    2.416647] 1d60: c2663d00 c16b7810 c068ebec c16b7894 00000004 c0174868 00000000 c16b78b8
-[    2.424843] 1d80: c16b5e00 c0684630 c16b7810 c068ebec 00000000 00000004 c0174868 c152cb40
-[    2.433041] 1da0: c16b78b8 c0684794 c16b7810 c068ebec 00000000 c068506c 00000a00 c265e040
-[    2.441237] 1dc0: c0f5bdd4 00000004 00000000 7a13d783 00000000 c16b7810 c16b7894 00000004
-[    2.449434] 1de0: 60000013 00000000 c265e10c c265e154 00000000 c06854c4 c265e040 c16b7800
-[    2.457629] 1e00: c16b7810 c152cb40 00000000 c05e42b0 00000001 00000000 ffffffff 00000000
-[    2.465824] 1e20: c16b7810 ff8067a4 01000000 7a13d783 c16b7810 c16b7810 00000000 c12f7700
-[    2.474020] 1e40: 00000000 00000001 c1367c20 c140f00d c1405800 c067a668 c16b7810 00000000
-[    2.482214] 1e60: c12f7700 c0678280 c16b7810 c12f7700 c16b7810 00000017 00000001 c06784e4
-[    2.490411] 1e80: c13b6754 f08f1ee4 c16b7810 c0678574 c12f7700 f08f1ee4 c16b7810 c152cb40
-[    2.498609] 1ea0: 00000001 c06788bc 00000000 f08f1ee4 c0678834 c067675c c1367c20 c14b4e70
-[    2.506804] 1ec0: c1ea60b8 7a13d783 c16b7810 c16b7810 c152cb40 c16b7854 c12fa050 c067810c
-[    2.515001] 1ee0: c1400000 c16b7810 00000001 7a13d783 c16b7810 c16b7810 c12fa2f0 c12fa050
-[    2.523197] 1f00: 00000000 c0677410 c16b7810 c12fa038 c12fa038 c06778d0 c12fa06c c176a180
-[    2.531394] 1f20: c1405800 c140f000 00000000 c013dd2c c152cb40 c1405800 c1203d40 c176a180
-[    2.539592] 1f40: c1405800 c140581c c1203d40 c176a198 00000088 c1367177 c1405800 c013e2a4
-[    2.547790] 1f60: c0f07434 00000000 f08f1f7c c176f7c0 c152cb40 c013e064 c176a180 c176f640
-[    2.555984] 1f80: f0831eb4 00000000 00000000 c01459b4 c176f7c0 c01458ac 00000000 00000000
-[    2.564180] 1fa0: 00000000 00000000 00000000 c01001a8 00000000 00000000 00000000 00000000
-[    2.572373] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    2.580569] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[    2.588768]  _set_opp from dev_pm_opp_set_opp+0x38/0x78
-[    2.594038]  dev_pm_opp_set_opp from tegra_pmc_core_pd_set_performance_state+0x44/0xb0
-[    2.602010]  tegra_pmc_core_pd_set_performance_state from _genpd_set_performance_state+0x180/0x1d0
-[    2.611018]  _genpd_set_performance_state from _genpd_set_performance_state+0xa4/0x1d0
-[    2.618972]  _genpd_set_performance_state from genpd_set_performance_state+0x50/0x7c
-[    2.626752]  genpd_set_performance_state from genpd_runtime_resume+0x1ac/0x25c
-[    2.634016]  genpd_runtime_resume from __rpm_callback+0x38/0x14c
-[    2.640073]  __rpm_callback from rpm_callback+0x50/0x54
-[    2.645335]  rpm_callback from rpm_resume+0x394/0x7a0
-[    2.650424]  rpm_resume from __pm_runtime_resume+0x4c/0x64
-[    2.655947]  __pm_runtime_resume from host1x_probe+0x29c/0x654
-[    2.661824]  host1x_probe from platform_probe+0x5c/0xb8
-[    2.667080]  platform_probe from really_probe+0xc8/0x2a8
-[    2.672433]  really_probe from __driver_probe_device+0x84/0xe4
-[    2.678308]  __driver_probe_device from driver_probe_device+0x30/0xd0
-[    2.684789]  driver_probe_device from __device_attach_driver+0x88/0xb4
-[    2.691350]  __device_attach_driver from bus_for_each_drv+0x54/0xb4
-[    2.697647]  bus_for_each_drv from __device_attach+0xf0/0x194
-[    2.703430]  __device_attach from bus_probe_device+0x84/0x8c
-[    2.709129]  bus_probe_device from deferred_probe_work_func+0x7c/0xa8
-[    2.715608]  deferred_probe_work_func from process_one_work+0x214/0x54c
-[    2.722269]  process_one_work from worker_thread+0x240/0x508
-[    2.727960]  worker_thread from kthread+0x108/0x124
-[    2.732872]  kthread from ret_from_fork+0x14/0x2c
-[    2.737602] Exception stack(0xf08f1fb0 to 0xf08f1ff8)
-[    2.742669] 1fa0:                                     00000000 00000000 00000000 00000000
-[    2.750865] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    2.759061] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    2.765690] Code: bad PC value
-[    2.768990] ---[ end trace 0000000000000000 ]---
+drivers/opp/of.c: In function ‘_opp_add_static_v2’:
+drivers/opp/of.c:933:25: error: passing argument 1 of ‘_opp_compare_key’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+     if (_opp_compare_key(opp_table, new_opp, opp_table->suspend_opp) == 1) {
+                          ^~~~~~~~~
+In file included from drivers/opp/of.c:22:0:
+drivers/opp/opp.h:228:5: note: expected ‘struct dev_pm_opp *’ but argument is of type ‘struct opp_table *’
+  int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2);
+      ^~~~~~~~~~~~~~~~
+drivers/opp/of.c:933:8: error: too many arguments to function ‘_opp_compare_key’
+     if (_opp_compare_key(opp_table, new_opp, opp_table->suspend_opp) == 1) {
+         ^~~~~~~~~~~~~~~~
+In file included from drivers/opp/of.c:22:0:
+drivers/opp/opp.h:228:5: note: declared here
+  int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2);
+      ^~~~~~~~~~~~~~~~
 
-
-Let me know if you have any thoughts.
+This breaks bisecting -next and so would be good to fix this.
 
 Cheers
 Jon
