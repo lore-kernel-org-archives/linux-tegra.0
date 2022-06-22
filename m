@@ -2,88 +2,191 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA742C43334
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 06:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CDBCCA47A
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 07:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351948AbiFVG5H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 02:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38058 "EHLO
+        id S233938AbiFVHYn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 03:24:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346267AbiFVG5E (ORCPT
+        with ESMTP id S232569AbiFVHYm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Jun 2022 02:57:04 -0400
-Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E9F7611170;
-        Tue, 21 Jun 2022 23:57:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=zogoA
-        n+yN5BMbClxTPpORdmKdvToRmCB4hLDgQbunzE=; b=N+Oj3fC9rOi4sSbLydqfk
-        xuFSrkVf2hII0nnri0zz5g5H0YKN9Ig/q9IEaIl2B8HIjQGA6b5ztkRsxWWu+FrJ
-        2/VcivMGxhCI3VHnvpGzrQpql3JKFQA4QZrFs4A3t+aATUERZIR433s+uV+Z2/hL
-        itZxjZDpPuMoBqT+K6iytE=
-Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
- (Coremail) ; Wed, 22 Jun 2022 14:56:54 +0800 (CST)
-X-Originating-IP: [124.16.139.61]
-Date:   Wed, 22 Jun 2022 14:56:54 +0800 (CST)
-From:   "Liang He" <windhl@126.com>
-To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re:Re: [PATCH] memory/tegra: Add missing of_node_get() in
- tegra_emc_find_node_by_ram_code
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
- Copyright (c) 2002-2022 www.mailtech.cn 126com
-In-Reply-To: <bdfc94d0-c634-c391-d74b-2104cbf82b22@linaro.org>
-References: <20220622042824.4094625-1-windhl@126.com>
- <bdfc94d0-c634-c391-d74b-2104cbf82b22@linaro.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        Wed, 22 Jun 2022 03:24:42 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF42D22BF6;
+        Wed, 22 Jun 2022 00:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1655882681; x=1687418681;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NgoHLyZGRgMPgNFB7tpululSiyLjykD0PpFVx9n2Or0=;
+  b=hjvJ4wk1B0xZ2fNj3mZ3rnC200GGaPOmafmT7Sp663brWx5d5H4gT5xc
+   WjdEgMTIDgawZ4CGYTF8xuLfGmip5DZEbXgYV2yDmwfnPa+nNdu2WQSz6
+   1u4LgN5tSWuLxvOOaTte1xV+JO8fAnkAI2Q2uBxGUAkzJe/5b+EGQ5Pgx
+   SStxsKD/K1QSawdY3j/qstpTRbICh4x551gvVBClIM+ovgoFDxIERvtC1
+   UpyMI1p2xfGgFctvSf/lPBwJsR+l7Pbrtrpbj24wHhAxhs+Iy50SgqqDs
+   U//XnNJRHkEDC5qOy0O7gMWu1MGY99/JQNqwQsxQ44KXzbGabr1QBRJ8p
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10385"; a="281071179"
+X-IronPort-AV: E=Sophos;i="5.92,211,1650956400"; 
+   d="scan'208";a="281071179"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2022 00:24:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,211,1650956400"; 
+   d="scan'208";a="562834083"
+Received: from lkp-server02.sh.intel.com (HELO a67cc04a5eeb) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 22 Jun 2022 00:24:37 -0700
+Received: from kbuild by a67cc04a5eeb with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o3uj7-0000zN-5j;
+        Wed, 22 Jun 2022 07:24:37 +0000
+Date:   Wed, 22 Jun 2022 15:24:35 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
+        robin.murphy@arm.com, robh+dt@kernel.org,
+        krzysztof.kozlowski@canonical.com
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 04/10] gpu: host1x: Add context device management code
+Message-ID: <202206221557.laES8yNQ-lkp@intel.com>
+References: <20220621151022.1416300-5-cyndis@kapsi.fi>
 MIME-Version: 1.0
-Message-ID: <61741b61.46f3.1818a331e3d.Coremail.windhl@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: GMqowAC3vyc3vbJiXqw6AA--.27316W
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3BIoF1pEDxpG0wABsu
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220621151022.1416300-5-cyndis@kapsi.fi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-CgpBdCAyMDIyLTA2LTIyIDE0OjUwOjQxLCAiS3J6eXN6dG9mIEtvemxvd3NraSIgPGtyenlzenRv
-Zi5rb3psb3dza2lAbGluYXJvLm9yZz4gd3JvdGU6Cj5PbiAyMi8wNi8yMDIyIDA2OjI4LCBMaWFu
-ZyBIZSB3cm90ZToKPj4gb2ZfZmluZF9ub2RlX2J5X25hbWUoKSB3aWxsIGRlY3JlYXNlIHRoZSBy
-ZWZjb3VudCBvZiBpdHMgZmlyc3QgYXJnIGFuZAo+PiB3ZSBuZWVkIHRvIGFkZCBhIG9mX25vZGVf
-cHV0KCkgdG8ga2VlcCByZWZjb3VudCBiYWxhbmNlLgo+Cj5XZSBkbyBOT1QgbmVlZCB0byBhZGQg
-YW4gb2Zfbm9kZV9wdXQ/Cj4KClNvcnJ5LCB0aGlzIGlzIGEgdHlwbywgSSB3YW50IHRvIHNheSB3
-ZSBuZWVkIHRvIGFkZCBhICdvZl9ub2RlX2dldCgpJwoKPkFueXdheSB3aHkgZG8geW91IGFkZCBv
-Zl9ub2RlX2dldCB3aGljaCBpcyBub3QgZXhwbGFpbmVkIGhlcmU/Cj4KClRoaXMgaXMgYSBjb21t
-b24gbWlzdGFrZSB0aGF0IG1pc3NpbmcgdGhlIG9mX25vZGVfZ2V0KFgpIGJlZm9yZSB3ZSBjYWxs
-Cm9mX2ZpbmRfbm9kZV9ieV9uYW1lKFgsLi4pIGFzIHRoZSBvZl9maW5kX3h4eCB3aWxsIGRlY3Jl
-YXNlIHRoZSByZWZjb3VudCBvZiBYLgoKQSBzaW1pbGFyIGVycm9yIGlzOgoKaHR0cHM6Ly9sb3Jl
-Lmtlcm5lbC5vcmcvYWxsLzIwMjAwNzIwMTUyODA2LjQ0MzI2MjY0OEBsaW51eGZvdW5kYXRpb24u
-b3JnLwoKSWYgSSBhbSB3cm9uZywgcGxlYXNlIGNvcnJlY3QgbWUsIHRoYW5rcy4KPj4gCj4+IEJl
-c2lkZXMsIGR1cmluZyB0aGUgJ2ZvcicgbG9vcCBleGVjdXRpb24sIHRoZSByZWZjb3VudCBvZiAn
-bnAnIHdpbGwgYmUKPj4gYXV0b21hdGljYWxseSBpbmNyZWFzZWQgYW5kIGRlY3JlYXNlZC4gVGhl
-cmUgaXMgbm8gbmVlZCB0byBjYWxsCj4+IG9mX25vZGVfcHV0KCkgYWdhaW4uCj4+IAo+PiBTaWdu
-ZWQtb2ZmLWJ5OiBMaWFuZyBIZSA8d2luZGhsQDEyNi5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9t
-ZW1vcnkvdGVncmEvdGVncmEyMC1lbWMuYyB8IDMgKystCj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBp
-bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9t
-ZW1vcnkvdGVncmEvdGVncmEyMC1lbWMuYyBiL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMjAt
-ZW1jLmMKPj4gaW5kZXggMjViYTNjNWU0YWQ2Li5lNDNhNWY4ZTE4OGUgMTAwNjQ0Cj4+IC0tLSBh
-L2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMjAtZW1jLmMKPj4gKysrIGIvZHJpdmVycy9tZW1v
-cnkvdGVncmEvdGVncmEyMC1lbWMuYwo+PiBAQCAtNDc3LDYgKzQ3Nyw3IEBAIHRlZ3JhX2VtY19m
-aW5kX25vZGVfYnlfcmFtX2NvZGUoc3RydWN0IHRlZ3JhX2VtYyAqZW1jKQo+PiAgCj4+ICAJcmFt
-X2NvZGUgPSB0ZWdyYV9yZWFkX3JhbV9jb2RlKCk7Cj4+ICAKPj4gKwlvZl9nZXRfbm9kZShkZXYt
-Pm9mX25vZGUpOwo+PiAgCWZvciAobnAgPSBvZl9maW5kX25vZGVfYnlfbmFtZShkZXYtPm9mX25v
-ZGUsICJlbWMtdGFibGVzIik7IG5wOwo+PiAgCSAgICAgbnAgPSBvZl9maW5kX25vZGVfYnlfbmFt
-ZShucCwgImVtYy10YWJsZXMiKSkgewo+PiAgCQllcnIgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihu
-cCwgIm52aWRpYSxyYW0tY29kZSIsICZ2YWx1ZSk7Cj4+IEBAIC00ODQsNiArNDg1LDcgQEAgdGVn
-cmFfZW1jX2ZpbmRfbm9kZV9ieV9yYW1fY29kZShzdHJ1Y3QgdGVncmFfZW1jICplbWMpCj4+ICAJ
-CQlzdHJ1Y3QgZGV2aWNlX25vZGUgKmxwZGRyMl9ucDsKPj4gIAkJCWJvb2wgY2ZnX21pc21hdGNo
-ZXMgPSBmYWxzZTsKPj4gIAo+PiArCQkJb2Zfbm9kZV9nZXQobnApOwo+PiAgCQkJbHBkZHIyX25w
-ID0gb2ZfZmluZF9ub2RlX2J5X25hbWUobnAsICJscGRkcjIiKTsKPj4gIAkJCWlmIChscGRkcjJf
-bnApIHsKPj4gIAkJCQljb25zdCBzdHJ1Y3QgbHBkZHIyX2luZm8gKmluZm87Cj4+IEBAIC01MjEs
-NyArNTIzLDYgQEAgdGVncmFfZW1jX2ZpbmRfbm9kZV9ieV9yYW1fY29kZShzdHJ1Y3QgdGVncmFf
-ZW1jICplbWMpCj4+ICAJCQl9Cj4+ICAKPj4gIAkJCWlmIChjZmdfbWlzbWF0Y2hlcykgewo+PiAt
-CQkJCW9mX25vZGVfcHV0KG5wKTsKPj4gIAkJCQljb250aW51ZTsKPj4gIAkJCX0KPj4gIAkJfQo+
-Cj4KPkJlc3QgcmVnYXJkcywKPktyenlzenRvZgo=
+Hi Mikko,
+
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on drm/drm-next]
+[also build test ERROR on tegra/for-next linus/master v5.19-rc3]
+[cannot apply to tegra-drm/drm/tegra/for-next next-20220621]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mikko-Perttunen/Host1x-context-isolation-support/20220621-231339
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+config: arm64-randconfig-r021-20220622 (https://download.01.org/0day-ci/archive/20220622/202206221557.laES8yNQ-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 8b8d126598ce7bd5243da7f94f69fa1104288bee)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm64 cross compiling tool for clang build
+        # apt-get install binutils-aarch64-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/2501beeae7469b805f9f624049fd56643cf6e18e
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Mikko-Perttunen/Host1x-context-isolation-support/20220621-231339
+        git checkout 2501beeae7469b805f9f624049fd56643cf6e18e
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/gpu/host1x/
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+>> drivers/gpu/host1x/context.c:80:28: error: no member named 'ids' in 'struct iommu_fwspec'
+                   ctx->stream_id = fwspec->ids[0] & 0xffff;
+                                    ~~~~~~  ^
+   1 error generated.
+
+
+vim +80 drivers/gpu/host1x/context.c
+
+    15	
+    16	int host1x_memory_context_list_init(struct host1x *host1x)
+    17	{
+    18		struct host1x_memory_context_list *cdl = &host1x->context_list;
+    19		struct device_node *node = host1x->dev->of_node;
+    20		struct host1x_memory_context *ctx;
+    21		unsigned int i;
+    22		int err;
+    23	
+    24		cdl->devs = NULL;
+    25		cdl->len = 0;
+    26		mutex_init(&cdl->lock);
+    27	
+    28		err = of_property_count_u32_elems(node, "iommu-map");
+    29		if (err < 0)
+    30			return 0;
+    31	
+    32		cdl->devs = kcalloc(err, sizeof(*cdl->devs), GFP_KERNEL);
+    33		if (!cdl->devs)
+    34			return -ENOMEM;
+    35		cdl->len = err / 4;
+    36	
+    37		for (i = 0; i < cdl->len; i++) {
+    38			struct iommu_fwspec *fwspec;
+    39	
+    40			ctx = &cdl->devs[i];
+    41	
+    42			ctx->host = host1x;
+    43	
+    44			device_initialize(&ctx->dev);
+    45	
+    46			/*
+    47			 * Due to an issue with T194 NVENC, only 38 bits can be used.
+    48			 * Anyway, 256GiB of IOVA ought to be enough for anyone.
+    49			 */
+    50			ctx->dma_mask = DMA_BIT_MASK(38);
+    51			ctx->dev.dma_mask = &ctx->dma_mask;
+    52			ctx->dev.coherent_dma_mask = ctx->dma_mask;
+    53			dev_set_name(&ctx->dev, "host1x-ctx.%d", i);
+    54			ctx->dev.bus = &host1x_context_device_bus_type;
+    55			ctx->dev.parent = host1x->dev;
+    56	
+    57			dma_set_max_seg_size(&ctx->dev, UINT_MAX);
+    58	
+    59			err = device_add(&ctx->dev);
+    60			if (err) {
+    61				dev_err(host1x->dev, "could not add context device %d: %d\n", i, err);
+    62				goto del_devices;
+    63			}
+    64	
+    65			err = of_dma_configure_id(&ctx->dev, node, true, &i);
+    66			if (err) {
+    67				dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
+    68					i, err);
+    69				device_del(&ctx->dev);
+    70				goto del_devices;
+    71			}
+    72	
+    73			fwspec = dev_iommu_fwspec_get(&ctx->dev);
+    74			if (!fwspec) {
+    75				dev_err(host1x->dev, "Context device %d has no IOMMU!\n", i);
+    76				device_del(&ctx->dev);
+    77				goto del_devices;
+    78			}
+    79	
+  > 80			ctx->stream_id = fwspec->ids[0] & 0xffff;
+    81		}
+    82	
+    83		return 0;
+    84	
+    85	del_devices:
+    86		while (i--)
+    87			device_del(&cdl->devs[i].dev);
+    88	
+    89		kfree(cdl->devs);
+    90		cdl->len = 0;
+    91	
+    92		return err;
+    93	}
+    94	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
