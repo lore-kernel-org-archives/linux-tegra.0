@@ -2,101 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23009C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 09:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64013C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 09:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357301AbiFVJLC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 05:11:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34028 "EHLO
+        id S233025AbiFVJVi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 05:21:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356983AbiFVJKO (ORCPT
+        with ESMTP id S230443AbiFVJVh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Jun 2022 05:10:14 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7432B3A5DB
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Jun 2022 02:09:13 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id o8so22457870wro.3
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Jun 2022 02:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=rII6N8r5Ow2gkJoZ8wNqPo0lERmaqyUvrngX7zCrktQ=;
-        b=woJdbpBTcdh6WM3hT6QBjt20ivMgm44sqVBc+ujVi5fDRt8bYFareKMUfbxF/Uxba9
-         0n1XdeL3Jhex1T1boASVuWSZef2F01J0uDE702DUPv3bu3iD1yTdZWva/Th/QBlwNXkj
-         LPXo2kmfohq1RPtf2/aCI4gYm6Erbqyhwy40fsONf96CHUcwl4BJTgjzn2k1Y4MrJBD6
-         rki9fZIAHMvzZzIpjLlzEBklm6Ne2F0Fpoqp02kbZGrxj04H4OJWo0EGWz8a+VUbKAoR
-         oZ1ItNE0ShcEvpprOSuG/zTBugSK8u1P9Xu7lbxcHsGfT+7DYq6j8fM5xdn0jZlUQXRR
-         f7sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=rII6N8r5Ow2gkJoZ8wNqPo0lERmaqyUvrngX7zCrktQ=;
-        b=VARHO5um92x+JRpTDekxbeOsPMvW9kj/TeJQrDQlw+8EjCTHwFB/gNyqGA9UbQhyqD
-         lU4H0Ei0ENjH8EBtXMM+EuzRFnAH4X1qiv9KgHgqiCu8tg7xo4XkYb6qAVxAHF6lwD2J
-         4CgNGskGjvNU4oRMESe4nzGpu0rtoFTRyLL0NyJnh/fwx9NNEfmHCPljCBfg4Jwtsr78
-         21NV0Ro5GXO1eo8jU7yxbBcmanv49rmIiUeCeJC1yDf8NvHd6k4jGg9jfS+4grNlSggD
-         6MnfYt8fi68A6i/7AQ+9X2Ztp4DjR7sr7XQx1VpGcM6/6fw9ieunfFDbsokv1AB06i8n
-         yobg==
-X-Gm-Message-State: AJIora9YWsMQMisEl7m48Ld4VI9lCQzyVVhk4KIF4NGxxK708usieO7L
-        e56xie5+jskC07WdaXWEWnt8Bw==
-X-Google-Smtp-Source: AGRyM1uYYtg8PGs6avN5mBVKn6PeGeVxLL7StDaxuSCeRsgk0FheAtPjP/l44nSnGpMsMlvI2dX0bA==
-X-Received: by 2002:a5d:5a0a:0:b0:21a:9c1f:d88f with SMTP id bq10-20020a5d5a0a000000b0021a9c1fd88fmr2281102wrb.707.1655888951913;
-        Wed, 22 Jun 2022 02:09:11 -0700 (PDT)
-Received: from [192.168.0.223] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id x24-20020a7bc218000000b003942a244ee7sm20732896wmi.44.2022.06.22.02.09.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jun 2022 02:09:11 -0700 (PDT)
-Message-ID: <4bd9d2bd-ec24-4d93-a6a7-fef625d09b26@linaro.org>
-Date:   Wed, 22 Jun 2022 11:09:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] memory/tegra: Add missing of_node_get() in
- tegra_emc_find_node_by_ram_code
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Liang He <windhl@126.com>
+        Wed, 22 Jun 2022 05:21:37 -0400
+Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1CD6D340F6;
+        Wed, 22 Jun 2022 02:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=uNDNB
+        uOiBg9xW6xPfaSEVT4TuUR47+zLORH4BmKJBTY=; b=Zot7GZTW5+zy6sMHrMlIT
+        73ZfpaBkRiJvIP/OKh5De1RI57p/TZFXiZTt/qGLaBmsUZgIjoY/TO8c7cQBbYWn
+        0iKWif6PMqzgPH98xlJLrqDTAVON70oXqpCe+o6f+YsJfDsKrKtPvyDdj81mvw9s
+        3xXlU5QkGgXErCn9x3/C9g=
+Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
+ (Coremail) ; Wed, 22 Jun 2022 17:20:33 +0800 (CST)
+X-Originating-IP: [124.16.139.61]
+Date:   Wed, 22 Jun 2022 17:20:33 +0800 (CST)
+From:   "Liang He" <windhl@126.com>
+To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
 Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re:Re: [PATCH] memory/tegra: Add missing of_node_get() in
+ tegra_emc_find_node_by_ram_code
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
+ Copyright (c) 2002-2022 www.mailtech.cn 126com
+In-Reply-To: <b3a0b35e-33fc-f7f3-a111-1a88498b4019@linaro.org>
 References: <20220622042824.4094625-1-windhl@126.com>
  <2f3e843e-b72b-ee71-7465-b2b6c8d51b0d@linaro.org>
  <11875304.61a4.1818a9a66bb.Coremail.windhl@126.com>
  <b3a0b35e-33fc-f7f3-a111-1a88498b4019@linaro.org>
-In-Reply-To: <b3a0b35e-33fc-f7f3-a111-1a88498b4019@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
+MIME-Version: 1.0
+Message-ID: <646ff210.68cc.1818ab69fb3.Coremail.windhl@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: GMqowAAXJibi3rJidtw6AA--.11331W
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi7QYoF1pEAQTNRQACsF
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 22/06/2022 11:08, Krzysztof Kozlowski wrote:
->>> The patch was not even compiled... I consider it harmful approach. NAK.
->>> See: https://lwn.net/Articles/854645/
->>>
->>> Best regards,
->>> Krzysztof
->>
->> Sorry, Krzysztof.
->>
->> As the patch is so simple two lines , I thought I can handle it without compiling it.
->>
->> Thanks very much for your notice about the article and I hope I have not done anyother harmful things.
->>
->> And I will take care of my patch code in future no matter how simple it is.
-> 
-> 
-> Never send patches which were not built. It seems you didn't build them
-> in the past either, even though setting up cross compile is trivial (few
-> commands). QEMU is also an easy option.
-> 
-> Even though your contribution might be valuable, lack of building is a
-> sign for me that approach is not serious, so I am not going to take
-> risky code.
-
-Unless of course someone's reviews your code. :)
-
-Best regards,
-Krzysztof
+CgoKQXQgMjAyMi0wNi0yMiAxNzowODozMiwgIktyenlzenRvZiBLb3psb3dza2kiIDxrcnp5c3p0
+b2Yua296bG93c2tpQGxpbmFyby5vcmc+IHdyb3RlOgo+T24gMjIvMDYvMjAyMiAxMDo0OSwgTGlh
+bmcgSGUgd3JvdGU6Cj4+IAo+PiAKPj4gQXQgMjAyMi0wNi0yMiAxNjo0MToyOCwgIktyenlzenRv
+ZiBLb3psb3dza2kiIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+IHdyb3RlOgo+Pj4g
+T24gMjIvMDYvMjAyMiAwNjoyOCwgTGlhbmcgSGUgd3JvdGU6Cj4+Pj4gb2ZfZmluZF9ub2RlX2J5
+X25hbWUoKSB3aWxsIGRlY3JlYXNlIHRoZSByZWZjb3VudCBvZiBpdHMgZmlyc3QgYXJnIGFuZAo+
+Pj4+IHdlIG5lZWQgdG8gYWRkIGEgb2Zfbm9kZV9wdXQoKSB0byBrZWVwIHJlZmNvdW50IGJhbGFu
+Y2UuCj4+Pj4KPj4+PiBCZXNpZGVzLCBkdXJpbmcgdGhlICdmb3InIGxvb3AgZXhlY3V0aW9uLCB0
+aGUgcmVmY291bnQgb2YgJ25wJyB3aWxsIGJlCj4+Pj4gYXV0b21hdGljYWxseSBpbmNyZWFzZWQg
+YW5kIGRlY3JlYXNlZC4gVGhlcmUgaXMgbm8gbmVlZCB0byBjYWxsCj4+Pj4gb2Zfbm9kZV9wdXQo
+KSBhZ2Fpbi4KPj4+Pgo+Pj4+IFNpZ25lZC1vZmYtYnk6IExpYW5nIEhlIDx3aW5kaGxAMTI2LmNv
+bT4KPj4+PiAtLS0KPj4+PiAgZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmEyMC1lbWMuYyB8IDMg
+KystCj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkK
+Pj4+Pgo+Pj4KPj4+IFRoZSBwYXRjaCB3YXMgbm90IGV2ZW4gY29tcGlsZWQuLi4gSSBjb25zaWRl
+ciBpdCBoYXJtZnVsIGFwcHJvYWNoLiBOQUsuCj4+PiBTZWU6IGh0dHBzOi8vbHduLm5ldC9BcnRp
+Y2xlcy84NTQ2NDUvCj4+Pgo+Pj4gQmVzdCByZWdhcmRzLAo+Pj4gS3J6eXN6dG9mCj4+IAo+PiBT
+b3JyeSwgS3J6eXN6dG9mLgo+PiAKPj4gQXMgdGhlIHBhdGNoIGlzIHNvIHNpbXBsZSB0d28gbGlu
+ZXMgLCBJIHRob3VnaHQgSSBjYW4gaGFuZGxlIGl0IHdpdGhvdXQgY29tcGlsaW5nIGl0Lgo+PiAK
+Pj4gVGhhbmtzIHZlcnkgbXVjaCBmb3IgeW91ciBub3RpY2UgYWJvdXQgdGhlIGFydGljbGUgYW5k
+IEkgaG9wZSBJIGhhdmUgbm90IGRvbmUgYW55b3RoZXIgaGFybWZ1bCB0aGluZ3MuCj4+IAo+PiBB
+bmQgSSB3aWxsIHRha2UgY2FyZSBvZiBteSBwYXRjaCBjb2RlIGluIGZ1dHVyZSBubyBtYXR0ZXIg
+aG93IHNpbXBsZSBpdCBpcy4KPgo+Cj5OZXZlciBzZW5kIHBhdGNoZXMgd2hpY2ggd2VyZSBub3Qg
+YnVpbHQuIEl0IHNlZW1zIHlvdSBkaWRuJ3QgYnVpbGQgdGhlbQo+aW4gdGhlIHBhc3QgZWl0aGVy
+LCBldmVuIHRob3VnaCBzZXR0aW5nIHVwIGNyb3NzIGNvbXBpbGUgaXMgdHJpdmlhbCAoZmV3Cj5j
+b21tYW5kcykuIFFFTVUgaXMgYWxzbyBhbiBlYXN5IG9wdGlvbi4KPgo+RXZlbiB0aG91Z2ggeW91
+ciBjb250cmlidXRpb24gbWlnaHQgYmUgdmFsdWFibGUsIGxhY2sgb2YgYnVpbGRpbmcgaXMgYQo+
+c2lnbiBmb3IgbWUgdGhhdCBhcHByb2FjaCBpcyBub3Qgc2VyaW91cywgc28gSSBhbSBub3QgZ29p
+bmcgdG8gdGFrZQo+cmlza3kgY29kZS4KPgo+QmVzdCByZWdhcmRzLAo+S3J6eXN6dG9mCgpUaGFu
+a3MsIEtyenlzenRvZi4KClRoaXMgYSB2YWx1YWJsZSBsZXNzb24gZm9yIG1lLiAKCkxhc3QgZmV3
+IGRheXMsIEkganVzdCB3YW50IHRvIHJlcG9ydCB0aGUgYnVncyBhcyBxdWlja2x5IGFzIEkgY2Fu
+LgoKQW5kIEkgb25seSBmb2N1cyB0aGUgYnVncyBJIGZvdW5kIGJ1dCBub3QgdGhlIHBhdGNoIGNv
+bXBpbGluZyBwcm9ibGVtLgoKWWVzLCBJIGFkbWl0IHRoaXMgYXBwcm9hY2ggKHdheSkgaXMgbm90
+IHNlcmlvdXMgYW5kIHRoaXMgaXMgbXkgZmF1bHQsIHNvcnJ5IGFnYWluIGFuZCBzb3JyeSB0byB3
+YXN0ZSB5b3VyIHRpbWUuCgpGcm9tIG5vdyBvbiwgSSB3aWxsIG5vdCBzZW5kIGFueSBuZXcgcGF0
+Y2ggY29tbWl0IGJlZm9yZSBJIGNvbXBpbGUgdGhlIHBhdGNoIGNvZGUuCgpTb3JyeSBmb3IgbXkg
+YmVoYXZpb3IuCg==
