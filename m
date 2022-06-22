@@ -2,68 +2,72 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A17C43334
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 08:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F21C43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Jun 2022 08:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352227AbiFVIt4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Jun 2022 04:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47174 "EHLO
+        id S1355448AbiFVIvm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Jun 2022 04:51:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351923AbiFVItz (ORCPT
+        with ESMTP id S1354687AbiFVIvl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Jun 2022 04:49:55 -0400
-Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F2DBC37A00;
-        Wed, 22 Jun 2022 01:49:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=w9smT
-        9c7AimDj+0qXZ7d9XMDCS+o+Pqmaur0QQu32Rc=; b=YTUKCFSTAYSRF68e3j9a4
-        T1WapaOY27khueUPi/l8Ec/pftVTLcy4EcKZUaseI9sFassBQXTEqgmx2wtGHY3N
-        m3D48pfN6kJeMUVkAcnHtPV9hUb72gnulOKXrFv84ATkPT9R5ATjnuiFF/5J/+wo
-        jU18qxzXdFWrkRpxNOTIJU=
-Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
- (Coremail) ; Wed, 22 Jun 2022 16:49:43 +0800 (CST)
-X-Originating-IP: [124.16.139.61]
-Date:   Wed, 22 Jun 2022 16:49:43 +0800 (CST)
-From:   "Liang He" <windhl@126.com>
-To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re:Re: [PATCH] memory/tegra: Add missing of_node_get() in
- tegra_emc_find_node_by_ram_code
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
- Copyright (c) 2002-2022 www.mailtech.cn 126com
-In-Reply-To: <2f3e843e-b72b-ee71-7465-b2b6c8d51b0d@linaro.org>
-References: <20220622042824.4094625-1-windhl@126.com>
- <2f3e843e-b72b-ee71-7465-b2b6c8d51b0d@linaro.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        Wed, 22 Jun 2022 04:51:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9624237A00;
+        Wed, 22 Jun 2022 01:51:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 51F7EB81C20;
+        Wed, 22 Jun 2022 08:51:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C17C34114;
+        Wed, 22 Jun 2022 08:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655887898;
+        bh=DDevuX+quOyUYyRZh8cHS4Ea+lJpMHBEf4QpVKuKGqI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=R9sT8hVrqKIU4PFILSF2ofL07zhVyORlhL80c+LSwVKihfdPmrXTuqBscMbHp7yFZ
+         R9B+m7X00LnwS3XQzcsc9sXASZrqSrBiEdE+dcB87wfseQ9hdwJP6hgME7z7sTyrsN
+         yRlhkKRJ0qEPNgSml3cow7w9QknJo5SskS2T04pz3dXzH6o0I4s9sYGXpAWsrc0UeJ
+         1qpl9SY8ILfsviioo7AqvBBIE6OgcxUTrTWt0uddAIldVsZ6H5fV7NaWnz1oFzMvyv
+         PIfOwC5jiS7aF1Q9H225+g5OLuti5tbufq/yG4sLVBCYnVRYZHW5QZLsodFsvIOoPj
+         vFenBxegajbGQ==
+Message-ID: <d56f0c69-5c70-5539-03aa-5dd28f284a8b@kernel.org>
+Date:   Wed, 22 Jun 2022 10:51:32 +0200
 MIME-Version: 1.0
-Message-ID: <11875304.61a4.1818a9a66bb.Coremail.windhl@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: GMqowABHTyeo17JiAdI6AA--.27634W
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3AgoF1pEDxshpAAAsk
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] arm/mach: Hold reference returned by of_find_xxx APIs
+Content-Language: en-US
+To:     Liang He <windhl@126.com>, andre.przywara@arm.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tony@atomide.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20220621091937.4082422-1-windhl@126.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220621091937.4082422-1-windhl@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-CgpBdCAyMDIyLTA2LTIyIDE2OjQxOjI4LCAiS3J6eXN6dG9mIEtvemxvd3NraSIgPGtyenlzenRv
-Zi5rb3psb3dza2lAbGluYXJvLm9yZz4gd3JvdGU6Cj5PbiAyMi8wNi8yMDIyIDA2OjI4LCBMaWFu
-ZyBIZSB3cm90ZToKPj4gb2ZfZmluZF9ub2RlX2J5X25hbWUoKSB3aWxsIGRlY3JlYXNlIHRoZSBy
-ZWZjb3VudCBvZiBpdHMgZmlyc3QgYXJnIGFuZAo+PiB3ZSBuZWVkIHRvIGFkZCBhIG9mX25vZGVf
-cHV0KCkgdG8ga2VlcCByZWZjb3VudCBiYWxhbmNlLgo+PiAKPj4gQmVzaWRlcywgZHVyaW5nIHRo
-ZSAnZm9yJyBsb29wIGV4ZWN1dGlvbiwgdGhlIHJlZmNvdW50IG9mICducCcgd2lsbCBiZQo+PiBh
-dXRvbWF0aWNhbGx5IGluY3JlYXNlZCBhbmQgZGVjcmVhc2VkLiBUaGVyZSBpcyBubyBuZWVkIHRv
-IGNhbGwKPj4gb2Zfbm9kZV9wdXQoKSBhZ2Fpbi4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IExpYW5n
-IEhlIDx3aW5kaGxAMTI2LmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdy
-YTIwLWVtYy5jIHwgMyArKy0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEg
-ZGVsZXRpb24oLSkKPj4gCj4KPlRoZSBwYXRjaCB3YXMgbm90IGV2ZW4gY29tcGlsZWQuLi4gSSBj
-b25zaWRlciBpdCBoYXJtZnVsIGFwcHJvYWNoLiBOQUsuCj5TZWU6IGh0dHBzOi8vbHduLm5ldC9B
-cnRpY2xlcy84NTQ2NDUvCj4KPkJlc3QgcmVnYXJkcywKPktyenlzenRvZgoKU29ycnksIEtyenlz
-enRvZi4KCkFzIHRoZSBwYXRjaCBpcyBzbyBzaW1wbGUgdHdvIGxpbmVzICwgSSB0aG91Z2h0IEkg
-Y2FuIGhhbmRsZSBpdCB3aXRob3V0IGNvbXBpbGluZyBpdC4KClRoYW5rcyB2ZXJ5IG11Y2ggZm9y
-IHlvdXIgbm90aWNlIGFib3V0IHRoZSBhcnRpY2xlIGFuZCBJIGhvcGUgSSBoYXZlIG5vdCBkb25l
-IGFueW90aGVyIGhhcm1mdWwgdGhpbmdzLgoKQW5kIEkgd2lsbCB0YWtlIGNhcmUgb2YgbXkgcGF0
-Y2ggY29kZSBpbiBmdXR1cmUgbm8gbWF0dGVyIGhvdyBzaW1wbGUgaXQgaXMuCgoK
+On 21/06/2022 11:19, Liang He wrote:
+> In highbank_init_irq(), tegra_init_irq() and omap4_cpcap_init(),
+> we should hold the reference returned by of_find_xxx APIs and
+> use it to call of_node_put() for refcount balance.
+> 
+> Signed-off-by: Liang He <windhl@126.com>
+> ---
+>  arch/arm/mach-highbank/highbank.c | 6 +++++-
+>  arch/arm/mach-omap2/pmic-cpcap.c  | 5 ++++-
+>  arch/arm/mach-tegra/irq.c         | 6 +++++-
+>  3 files changed, 14 insertions(+), 3 deletions(-)
+
+Before applying the patch please check it carefully. Previous evidence
+[1] suggests that not it was not even compiled.
+
+[1] https://lore.kernel.org/all/202206221602.odN70SHs-lkp@intel.com/
+
+Best regards,
+Krzysztof
