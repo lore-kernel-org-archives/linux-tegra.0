@@ -2,414 +2,200 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D03CCA485
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 12:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E499ACCA47F
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 20:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232096AbiFWM4i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Jun 2022 08:56:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41854 "EHLO
+        id S229839AbiFWUBg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Jun 2022 16:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbiFWM4c (ORCPT
+        with ESMTP id S229455AbiFWUBf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Jun 2022 08:56:32 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D804BFFD;
-        Thu, 23 Jun 2022 05:56:27 -0700 (PDT)
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25NBvlrM011978;
-        Thu, 23 Jun 2022 07:53:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=PODMain02222019;
- bh=/9B3Tv4x1R+WiyZZkgmE6X35871tNRl0teorevLnTSs=;
- b=nwfHcMkRaJARE75hfPCpExYvki9wShlIy05jrU9nPtv/totqPNEq4oL4cVXkobxQr/OV
- 5BnuO1e9KG85AJrMFweU6I5Xt1xx5pr3+u8VMbVxu3QZ2tQ9z/fkShts3NKBll1jHboG
- KvTlejLRB8IEiB5WEjrYhDsW+j2ykRNjvdu6UvgGJLXxg0M1GICTL5LF4c4G1NfkltNG
- dcu6hlStzUcYUYsiZXW0ckycDCE9eM4dz3fZU4kRSXE05qHR9YXMj9SMhmRHNyM3Ppxm
- RbbHVq+eLGPZ5vTbg7jsYxexvckL9wZyQ8vXCu/YEFLcvAJdZ68gDf99hwoEu/KM4nYq wg== 
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3gsb4p6wvp-17
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 23 Jun 2022 07:53:05 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 23 Jun
- 2022 13:52:55 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 23 Jun 2022 13:52:55 +0100
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 2405311D3;
-        Thu, 23 Jun 2022 12:52:55 +0000 (UTC)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <broonie@kernel.org>
-CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
-        <mripard@kernel.org>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <vkoul@kernel.org>, <nicolas.ferre@microchip.com>,
-        <nsaenz@kernel.org>, <shawnguo@kernel.org>, <linux-imx@nxp.com>,
-        <cezary.rojewski@intel.com>,
-        <pierre-louis.bossart@linux.intel.com>,
-        <linux-mips@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <daniel@zonque.org>, <srinivas.kandagatla@linaro.org>,
-        <linux-rockchip@lists.infradead.org>, <krzk@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
-        <peter.ujfalusi@gmail.com>, <jarkko.nikula@bitmer.com>,
-        <heiko@sntech.de>, <jbrunet@baylibre.com>, <kernel@pengutronix.de>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <frattaroli.nicolas@gmail.com>
-Subject: [PATCH v2 49/96] ASoC: cs*: Remove now redundant non_legacy_dai_naming flag
-Date:   Thu, 23 Jun 2022 13:52:03 +0100
-Message-ID: <20220623125250.2355471-50-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
-References: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
+        Thu, 23 Jun 2022 16:01:35 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2056.outbound.protection.outlook.com [40.107.220.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18CF237A87;
+        Thu, 23 Jun 2022 13:01:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ioz+3T6XL/LOssSuOvDzhkh7lr4NxBmrBOpZSkczDCC870NdSesfT+mWbugGkbpxTp1YoVv+KGLUqrR6YoZN97ym7764a3PBU4UB/HD009GaPcIADAZxCvJn0aovrTxSXWGaFUkb0wTt1sUMo2+p5EZU2bP0vWScOuiH9fT7QnHHYT6W6lKKCLuRPXrmm7s5ekHgCDEUmmltbt8EK1KNzpzFsk5vMyPUO4T+5Zw7laP/AFqaun/RGQ4AO4YxULjp7IUNfAJTyO2tT2shx1cg6Szg/R2UZLB/LVjBFmmj+SluNXJoKHOWbVd8ZQ/xkxlntwctdX2VZeTpP54EP8Ah0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F86+RvzjkgjzMtSa8CwsA63oaKihCbAPxS/B+zVQWH4=;
+ b=XWo+NSFjycn8F0mOlZHtyhn8ifCegdJ3I2RvkElRmGVfmBWOEDAG8hxH4ty+ywTmBoEVmlUjFT2g+7uGilBupXrmxBnug3eJZWkJoEZBJQ7clZSq/o/Ze/FOK1uFHV5HNrCwBK/ZMoLVFOIiRzl2K0YAHUg08AaRdHSt+YEBwDk7dAIUf2ZB3RUjnRhsBBwF/qzPNYqhAfFo/Vw8LfW/AIYjVxvkTdcNGzQyLi35+Apodn6gslZ+MhrijQ07Papu39ygQma5jJulMJXsMbvIpJJudvzpklgAj7HA5HF9lCH1iQcCf/AUMeT7nfkd7c4Sbd6ItMXxOE1D1R/eagv5aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F86+RvzjkgjzMtSa8CwsA63oaKihCbAPxS/B+zVQWH4=;
+ b=JIAyEzIH2R2iPILKwFCZIi1wAz2utkwn6aeRrYUHx4S52d83MV5Hkxc5AhLgQqQeJfF3oevKLmySZxL7hpXHYp0R0dNvl/vHJ6raMPH00I9JhkfWgq3htGFp4beF4UnWvhFHmo27ayBsS3ip8f5DMQwEAP3ommYMAJBz8OtVfVFCIzI6VB8TLFKssbxPueIPxejbBxU6uXeaBSHtFwdOiQ31193ISSinowmhBPbMYSCSdoqSfkRhEpJOkMJX10FyG0QQ323CRh7yzta/qqwIsXEsS1snHioJzhmEjVUW0FYCBZ/d13a1yxF7HbgAzkQbyaJL5WFvUoHI81pfa+W3ZA==
+Received: from BN6PR14CA0046.namprd14.prod.outlook.com (2603:10b6:404:13f::32)
+ by SN1PR12MB2525.namprd12.prod.outlook.com (2603:10b6:802:29::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.17; Thu, 23 Jun
+ 2022 20:01:32 +0000
+Received: from BN8NAM11FT049.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:13f:cafe::98) by BN6PR14CA0046.outlook.office365.com
+ (2603:10b6:404:13f::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.18 via Frontend
+ Transport; Thu, 23 Jun 2022 20:01:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ BN8NAM11FT049.mail.protection.outlook.com (10.13.177.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5373.15 via Frontend Transport; Thu, 23 Jun 2022 20:01:31 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Thu, 23 Jun
+ 2022 20:01:31 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Thu, 23 Jun
+ 2022 13:01:30 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.26 via Frontend
+ Transport; Thu, 23 Jun 2022 13:01:27 -0700
+From:   Nicolin Chen <nicolinc@nvidia.com>
+To:     <joro@8bytes.org>, <will@kernel.org>, <marcan@marcan.st>,
+        <sven@svenpeter.dev>, <robin.murphy@arm.com>,
+        <robdclark@gmail.com>, <baolu.lu@linux.intel.com>,
+        <matthias.bgg@gmail.com>, <orsonzhai@gmail.com>,
+        <baolin.wang7@gmail.com>, <zhang.lyra@gmail.com>,
+        <jean-philippe@linaro.org>, <alex.williamson@redhat.com>,
+        <jgg@nvidia.com>, <kevin.tian@intel.com>
+CC:     <suravee.suthikulpanit@amd.com>, <alyssa@rosenzweig.io>,
+        <dwmw2@infradead.org>, <yong.wu@mediatek.com>,
+        <mjrosato@linux.ibm.com>, <gerald.schaefer@linux.ibm.com>,
+        <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
+        <jonathanh@nvidia.com>, <cohuck@redhat.com>,
+        <thunder.leizhen@huawei.com>, <tglx@linutronix.de>,
+        <chenxiang66@hisilicon.com>, <christophe.jaillet@wanadoo.fr>,
+        <john.garry@huawei.com>, <yangyingliang@huawei.com>,
+        <jordan@cosmicpenguin.net>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>, <kvm@vger.kernel.org>
+Subject: [PATCH v3 0/5] Simplify vfio_iommu_type1 attach/detach routine
+Date:   Thu, 23 Jun 2022 13:00:24 -0700
+Message-ID: <20220623200029.26007-1-nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: 0rLPDDbV6tR66bkSPf8IPzzNU8ZWDRS2
-X-Proofpoint-ORIG-GUID: 0rLPDDbV6tR66bkSPf8IPzzNU8ZWDRS2
-X-Proofpoint-Spam-Reason: safe
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 76548f47-483f-43be-535a-08da55532af8
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2525:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?XbHupQRekQ/jWGmhFPXbCar4gKVjHlyVGsmHEQU069ocuou0rvok7c1jeLWc?=
+ =?us-ascii?Q?DZYn/bVfp7lgf6EqZDB88kQ66QzuGskMXIX3cDOHIJ3gggjC0FMubLyF5xHq?=
+ =?us-ascii?Q?mZhWk0hZnleTbgUzhk/zkpUBkJFOLdvwwFTEFtBnwljKp8K5y529//PEKyMQ?=
+ =?us-ascii?Q?uxiDXb0fBz72ktufTP7OLpEASCcNbq54sv50Ui/L5pBQCdl/veDhE0xAdETc?=
+ =?us-ascii?Q?kvAgzBGq65QM4VZZNQxbPJcRidbv1MZ4H5BpjDwlLGLPBhfHDnz2MPZyDUxG?=
+ =?us-ascii?Q?mmfTxPaRUBF1IgO05NrXnYWNsGj09jL3mRGEt5TTThh6rZcoTJEeWenTbEI7?=
+ =?us-ascii?Q?olDCW/7buNYCQNAIJmtzvEtGHM0RCsC7Xuma1VPXyNKPy1iQceJFPpyhD0wq?=
+ =?us-ascii?Q?8sf8SUIDU6xkWAx7HOzF8hnzU2NZzK5d/Tf8Wai0QgrTe1eIv4IACaeAp0zg?=
+ =?us-ascii?Q?7/tzkUiy3P6atov25Yxlg8Fuc8V58VlP0FkgUaAwAHJa5MvVjL88RG17eSo7?=
+ =?us-ascii?Q?7M2kEvJIrgOJV0znUWQ9vGCmyPhU7PzKn13IstacxU73hQo6lBCCNJzoRtm8?=
+ =?us-ascii?Q?1oF+WzQaSOCKzJDvA99hRXp8sWocOteVZYMOTuUuYLgCnAM70o6MIufiLweZ?=
+ =?us-ascii?Q?Rqpi0xWKP3cJTDkDwQYdjNTh+S1XCKry7P7P4zC2ZhBzoUns/IW1WZDW5jRT?=
+ =?us-ascii?Q?ER+bTnY6I90ndhEfzG55FJRdnKmIQeNFmpra15QHnRL0Ip7Y/Cifdjk9nQTe?=
+ =?us-ascii?Q?l9FsajEyzxFTbzX2NMnZgRcK7V9E4PaphTISG/tbLWR4ipDi2HUhMD3Waegc?=
+ =?us-ascii?Q?2RhjdEaAige8tqpkoqM2mePVV60Qwn+/1d0JIc9f7hNEBcEsgpL6pdN8TM6n?=
+ =?us-ascii?Q?M/CKPAXZg73II45c31ccUP8AaBfEjJDH2xZ8sB8+q4vGn1qVxLuQ2JXBP5Uj?=
+ =?us-ascii?Q?tGAyQD8HeDVqjlglitoUi9XdDPR2AcQnrpljXAIH7cLp7ZGbhESni0slS+qi?=
+ =?us-ascii?Q?I3BCbKgYReew7Xen/K4UKHUqdA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(136003)(39860400002)(396003)(376002)(46966006)(36840700001)(40470700004)(316002)(966005)(54906003)(8676002)(70206006)(186003)(356005)(40480700001)(4326008)(41300700001)(36756003)(8936002)(81166007)(2906002)(86362001)(7416002)(5660300002)(2616005)(26005)(478600001)(7696005)(110136005)(921005)(82740400003)(1076003)(7406005)(336012)(36860700001)(82310400005)(6666004)(426003)(70586007)(83380400001)(40460700003)(47076005)(83996005)(2101003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2022 20:01:31.6191
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76548f47-483f-43be-535a-08da55532af8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT049.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2525
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The ASoC core has now been changed to default to the non-legacy DAI
-naming, as such drivers using the new scheme no longer need to specify
-the non_legacy_dai_naming flag.
+This is a preparatory series for IOMMUFD v2 patches. It enforces error
+code -EMEDIUMTYPE in iommu_attach_device() and iommu_attach_group() when
+an IOMMU domain and a device/group are incompatible. It also drops the
+useless domain->ops check since it won't fail in current environment.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- sound/soc/codecs/cs35l32.c | 1 -
- sound/soc/codecs/cs35l33.c | 1 -
- sound/soc/codecs/cs35l34.c | 1 -
- sound/soc/codecs/cs35l35.c | 1 -
- sound/soc/codecs/cs35l36.c | 1 -
- sound/soc/codecs/cs4234.c  | 1 -
- sound/soc/codecs/cs4265.c  | 1 -
- sound/soc/codecs/cs4270.c  | 1 -
- sound/soc/codecs/cs4271.c  | 1 -
- sound/soc/codecs/cs42l42.c | 1 -
- sound/soc/codecs/cs42l51.c | 1 -
- sound/soc/codecs/cs42l52.c | 1 -
- sound/soc/codecs/cs42l56.c | 1 -
- sound/soc/codecs/cs42l73.c | 1 -
- sound/soc/codecs/cs42xx8.c | 1 -
- sound/soc/codecs/cs43130.c | 1 -
- sound/soc/codecs/cs4341.c  | 1 -
- sound/soc/codecs/cs4349.c  | 1 -
- sound/soc/codecs/cs47l15.c | 1 -
- sound/soc/codecs/cs47l24.c | 1 -
- sound/soc/codecs/cs47l35.c | 1 -
- sound/soc/codecs/cs47l85.c | 1 -
- sound/soc/codecs/cs47l90.c | 1 -
- sound/soc/codecs/cs47l92.c | 1 -
- sound/soc/codecs/cs53l30.c | 1 -
- 25 files changed, 25 deletions(-)
+These allow VFIO iommu code to simplify its group attachment routine, by
+avoiding the extra IOMMU domain allocations and attach/detach sequences
+of the old code.
 
-diff --git a/sound/soc/codecs/cs35l32.c b/sound/soc/codecs/cs35l32.c
-index badfc55bc5fa0..8ff6f66be86fa 100644
---- a/sound/soc/codecs/cs35l32.c
-+++ b/sound/soc/codecs/cs35l32.c
-@@ -236,7 +236,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs35l32 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- /* Current and threshold powerup sequence Pg37 in datasheet */
-diff --git a/sound/soc/codecs/cs35l33.c b/sound/soc/codecs/cs35l33.c
-index 47dc0f6d90a2a..082025fa0370c 100644
---- a/sound/soc/codecs/cs35l33.c
-+++ b/sound/soc/codecs/cs35l33.c
-@@ -840,7 +840,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs35l33 = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs35l33_audio_map),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct regmap_config cs35l33_regmap = {
-diff --git a/sound/soc/codecs/cs35l34.c b/sound/soc/codecs/cs35l34.c
-index 50d509a060713..472ac982779be 100644
---- a/sound/soc/codecs/cs35l34.c
-+++ b/sound/soc/codecs/cs35l34.c
-@@ -787,7 +787,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs35l34 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static struct regmap_config cs35l34_regmap = {
-diff --git a/sound/soc/codecs/cs35l35.c b/sound/soc/codecs/cs35l35.c
-index 6b70afb70a674..714a759dca21b 100644
---- a/sound/soc/codecs/cs35l35.c
-+++ b/sound/soc/codecs/cs35l35.c
-@@ -1087,7 +1087,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs35l35 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static struct regmap_config cs35l35_regmap = {
-diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
-index dfe85dc2cd20f..4dc13e6f4874c 100644
---- a/sound/soc/codecs/cs35l36.c
-+++ b/sound/soc/codecs/cs35l36.c
-@@ -1300,7 +1300,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs35l36 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static struct regmap_config cs35l36_regmap = {
-diff --git a/sound/soc/codecs/cs4234.c b/sound/soc/codecs/cs4234.c
-index 881c5ba70c0ed..b49a3cf21ebe2 100644
---- a/sound/soc/codecs/cs4234.c
-+++ b/sound/soc/codecs/cs4234.c
-@@ -660,7 +660,6 @@ static const struct snd_soc_component_driver soc_component_cs4234 = {
- 	.controls		= cs4234_snd_controls,
- 	.num_controls		= ARRAY_SIZE(cs4234_snd_controls),
- 	.set_bias_level		= cs4234_set_bias_level,
--	.non_legacy_dai_naming	= 1,
- 	.idle_bias_on		= 1,
- 	.suspend_bias_off	= 1,
- 	.endianness		= 1,
-diff --git a/sound/soc/codecs/cs4265.c b/sound/soc/codecs/cs4265.c
-index 86bfa8d5ec787..76c19802d5fe1 100644
---- a/sound/soc/codecs/cs4265.c
-+++ b/sound/soc/codecs/cs4265.c
-@@ -553,7 +553,6 @@ static const struct snd_soc_component_driver soc_component_cs4265 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct regmap_config cs4265_regmap = {
-diff --git a/sound/soc/codecs/cs4270.c b/sound/soc/codecs/cs4270.c
-index 97d26b9e8f7fe..ba67e43edf351 100644
---- a/sound/soc/codecs/cs4270.c
-+++ b/sound/soc/codecs/cs4270.c
-@@ -619,7 +619,6 @@ static const struct snd_soc_component_driver soc_component_device_cs4270 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- /*
-diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
-index 7663f89ac6a24..2021cf4426061 100644
---- a/sound/soc/codecs/cs4271.c
-+++ b/sound/soc/codecs/cs4271.c
-@@ -642,7 +642,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs4271 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int cs4271_common_probe(struct device *dev,
-diff --git a/sound/soc/codecs/cs42l42.c b/sound/soc/codecs/cs42l42.c
-index 6ca74c0d46eaa..d545a593a2516 100644
---- a/sound/soc/codecs/cs42l42.c
-+++ b/sound/soc/codecs/cs42l42.c
-@@ -581,7 +581,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs42l42 = {
- 	.num_controls		= ARRAY_SIZE(cs42l42_snd_controls),
- 	.idle_bias_on		= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- /* Switch to SCLK. Atomic delay after the write to allow the switch to complete. */
-diff --git a/sound/soc/codecs/cs42l51.c b/sound/soc/codecs/cs42l51.c
-index 0e933181b5dbb..51721edd8f53c 100644
---- a/sound/soc/codecs/cs42l51.c
-+++ b/sound/soc/codecs/cs42l51.c
-@@ -600,7 +600,6 @@ static const struct snd_soc_component_driver soc_component_device_cs42l51 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static bool cs42l51_writeable_reg(struct device *dev, unsigned int reg)
-diff --git a/sound/soc/codecs/cs42l52.c b/sound/soc/codecs/cs42l52.c
-index 10e696406a71b..90bf535fc5a52 100644
---- a/sound/soc/codecs/cs42l52.c
-+++ b/sound/soc/codecs/cs42l52.c
-@@ -1061,7 +1061,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs42l52 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- /* Current and threshold powerup sequence Pg37 */
-diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
-index 510c94265b1f0..03e2540a0ba12 100644
---- a/sound/soc/codecs/cs42l56.c
-+++ b/sound/soc/codecs/cs42l56.c
-@@ -1114,7 +1114,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs42l56 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct regmap_config cs42l56_regmap = {
-diff --git a/sound/soc/codecs/cs42l73.c b/sound/soc/codecs/cs42l73.c
-index 5a9166289f366..0a146319755a6 100644
---- a/sound/soc/codecs/cs42l73.c
-+++ b/sound/soc/codecs/cs42l73.c
-@@ -1256,7 +1256,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs42l73 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct regmap_config cs42l73_regmap = {
-diff --git a/sound/soc/codecs/cs42xx8.c b/sound/soc/codecs/cs42xx8.c
-index 5d6ef660f851f..d14eb2f6e1dd4 100644
---- a/sound/soc/codecs/cs42xx8.c
-+++ b/sound/soc/codecs/cs42xx8.c
-@@ -497,7 +497,6 @@ static const struct snd_soc_component_driver cs42xx8_driver = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs42xx8_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- const struct cs42xx8_driver_data cs42448_data = {
-diff --git a/sound/soc/codecs/cs43130.c b/sound/soc/codecs/cs43130.c
-index a2bce0f9f247b..ca4d47cc9c915 100644
---- a/sound/soc/codecs/cs43130.c
-+++ b/sound/soc/codecs/cs43130.c
-@@ -2345,7 +2345,6 @@ static struct snd_soc_component_driver soc_component_dev_cs43130 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct regmap_config cs43130_regmap = {
-diff --git a/sound/soc/codecs/cs4341.c b/sound/soc/codecs/cs4341.c
-index 8ac043f1aae01..ac1696034846d 100644
---- a/sound/soc/codecs/cs4341.c
-+++ b/sound/soc/codecs/cs4341.c
-@@ -202,7 +202,6 @@ static const struct snd_soc_component_driver soc_component_cs4341 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct of_device_id __maybe_unused cs4341_dt_ids[] = {
-diff --git a/sound/soc/codecs/cs4349.c b/sound/soc/codecs/cs4349.c
-index 7069e9b548576..f7c5c2fd43046 100644
---- a/sound/soc/codecs/cs4349.c
-+++ b/sound/soc/codecs/cs4349.c
-@@ -260,7 +260,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs4349 = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static const struct regmap_config cs4349_regmap = {
-diff --git a/sound/soc/codecs/cs47l15.c b/sound/soc/codecs/cs47l15.c
-index 391fd7da331fd..0193173b86376 100644
---- a/sound/soc/codecs/cs47l15.c
-+++ b/sound/soc/codecs/cs47l15.c
-@@ -1353,7 +1353,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs47l15 = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs47l15_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int cs47l15_probe(struct platform_device *pdev)
-diff --git a/sound/soc/codecs/cs47l24.c b/sound/soc/codecs/cs47l24.c
-index 6356f81aafc56..f9a2b865d7176 100644
---- a/sound/soc/codecs/cs47l24.c
-+++ b/sound/soc/codecs/cs47l24.c
-@@ -1203,7 +1203,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs47l24 = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs47l24_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int cs47l24_probe(struct platform_device *pdev)
-diff --git a/sound/soc/codecs/cs47l35.c b/sound/soc/codecs/cs47l35.c
-index db2f844b8b17f..c1032d6c9143f 100644
---- a/sound/soc/codecs/cs47l35.c
-+++ b/sound/soc/codecs/cs47l35.c
-@@ -1638,7 +1638,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs47l35 = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs47l35_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int cs47l35_probe(struct platform_device *pdev)
-diff --git a/sound/soc/codecs/cs47l85.c b/sound/soc/codecs/cs47l85.c
-index d4fedc5ad516e..215d8211aa59b 100644
---- a/sound/soc/codecs/cs47l85.c
-+++ b/sound/soc/codecs/cs47l85.c
-@@ -2582,7 +2582,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs47l85 = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs47l85_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int cs47l85_probe(struct platform_device *pdev)
-diff --git a/sound/soc/codecs/cs47l90.c b/sound/soc/codecs/cs47l90.c
-index 5aec937a24629..1ad6526c78717 100644
---- a/sound/soc/codecs/cs47l90.c
-+++ b/sound/soc/codecs/cs47l90.c
-@@ -2497,7 +2497,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs47l90 = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs47l90_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int cs47l90_probe(struct platform_device *pdev)
-diff --git a/sound/soc/codecs/cs47l92.c b/sound/soc/codecs/cs47l92.c
-index a1b8dcdb9f7b7..59da34b480a87 100644
---- a/sound/soc/codecs/cs47l92.c
-+++ b/sound/soc/codecs/cs47l92.c
-@@ -1958,7 +1958,6 @@ static const struct snd_soc_component_driver soc_component_dev_cs47l92 = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs47l92_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static int cs47l92_probe(struct platform_device *pdev)
-diff --git a/sound/soc/codecs/cs53l30.c b/sound/soc/codecs/cs53l30.c
-index 360ca2ffd5069..8796d8e84b7a2 100644
---- a/sound/soc/codecs/cs53l30.c
-+++ b/sound/soc/codecs/cs53l30.c
-@@ -899,7 +899,6 @@ static const struct snd_soc_component_driver cs53l30_driver = {
- 	.num_dapm_routes	= ARRAY_SIZE(cs53l30_dapm_routes),
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
--	.non_legacy_dai_naming	= 1,
- };
- 
- static struct regmap_config cs53l30_regmap = {
+Worths mentioning the exact match for enforce_cache_coherency is removed
+with this series, since there's very less value in doing that since KVM
+won't be able to take advantage of it -- this just wastes domain memory.
+Instead, we rely on Intel IOMMU driver taking care of that internally.
+
+This is on github:
+https://github.com/nicolinc/iommufd/commits/vfio_iommu_attach
+
+Changelog
+v3:
+ * Dropped all dev_err since -EMEDIUMTYPE clearly indicates what error.
+ * Updated commit message of enforce_cache_coherency removing patch.
+ * Updated commit message of domain->ops removing patch.
+ * Replaced "goto out_unlock" with simply mutex_unlock() and return.
+ * Added a line of comments for -EMEDIUMTYPE return check.
+ * Moved iommu_get_msi_cookie() into alloc_attach_domain() as a cookie
+   should be logically tied to the lifetime of a domain itself.
+ * Added Kevin's "Reviewed-by".
+v2: https://lore.kernel.org/kvm/20220616000304.23890-1-nicolinc@nvidia.com/
+ * Added -EMEDIUMTYPE to more IOMMU drivers that fit the category.
+ * Changed dev_err to dev_dbg for -EMEDIUMTYPE to avoid kernel log spam.
+ * Dropped iommu_ops patch, and removed domain->ops in VFIO directly,
+   since there's no mixed-driver use case that would fail the sanity.
+ * Updated commit log of the patch removing enforce_cache_coherency.
+ * Fixed a misplace of "num_non_pinned_groups--" in detach_group patch.
+ * Moved "num_non_pinned_groups++" in PATCH-5 to the common path between
+   domain-reusing and new-domain pathways, like the code previously did.
+ * Fixed a typo in EMEDIUMTYPE patch.
+v1: https://lore.kernel.org/kvm/20220606061927.26049-1-nicolinc@nvidia.com/
+
+Jason Gunthorpe (1):
+  vfio/iommu_type1: Prefer to reuse domains vs match enforced cache
+    coherency
+
+Nicolin Chen (4):
+  iommu: Return -EMEDIUMTYPE for incompatible domain and device/group
+  vfio/iommu_type1: Remove the domain->ops comparison
+  vfio/iommu_type1: Clean up update_dirty_scope in detach_group()
+  vfio/iommu_type1: Simplify group attachment
+
+ drivers/iommu/amd/iommu.c                   |   2 +-
+ drivers/iommu/apple-dart.c                  |   4 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |  15 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu.c       |   6 +-
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c     |   9 +-
+ drivers/iommu/intel/iommu.c                 |  10 +-
+ drivers/iommu/iommu.c                       |  28 ++
+ drivers/iommu/ipmmu-vmsa.c                  |   4 +-
+ drivers/iommu/mtk_iommu_v1.c                |   2 +-
+ drivers/iommu/omap-iommu.c                  |   3 +-
+ drivers/iommu/s390-iommu.c                  |   2 +-
+ drivers/iommu/sprd-iommu.c                  |   6 +-
+ drivers/iommu/tegra-gart.c                  |   2 +-
+ drivers/iommu/virtio-iommu.c                |   3 +-
+ drivers/vfio/vfio_iommu_type1.c             | 340 ++++++++++----------
+ 15 files changed, 225 insertions(+), 211 deletions(-)
+
 -- 
-2.30.2
+2.17.1
 
