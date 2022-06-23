@@ -2,101 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1BDC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 09:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B8AC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 11:02:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231368AbiFWJ4J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Jun 2022 05:56:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57582 "EHLO
+        id S229734AbiFWLC5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Jun 2022 07:02:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231365AbiFWJ4G (ORCPT
+        with ESMTP id S229710AbiFWLC4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Jun 2022 05:56:06 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F78C4615F;
-        Thu, 23 Jun 2022 02:56:05 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id s1so27142426wra.9;
-        Thu, 23 Jun 2022 02:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=6Cgf9hVSkM/EuU/G5NtEggFm/5gYU2/ohft6Hi2iUoM=;
-        b=DLmoXC2LYtmMgIH+URO1IHtjbJCkAlV59T4EGENzDuHw84VK8aoJRf91/NSWhHmkLq
-         la7BekdDXIMQn5158NIifoyNSxZ8rOGLI4tmMtNQuFu09+Je2Cxuo7h8SQQMIVXThZMs
-         8VT/86TI0kDnTa4ob3cL1JI/mU9v/1Gz51zfzHYQ8A/8LW2xVMxzdv4Ob9qaA8GOv6xS
-         Yi4R3/5NY9nOtFNzri5fKyCDwKG0PRRndmIRvK8O17szrd38RoIwjZMS2x+ZesVzcP2F
-         5+3Gn513loHRpcMpd3PgraUPt+wVBI+8OrOXqaF5u2M7VX29rSW+A5iNjl/6PBL0wYKs
-         dCIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6Cgf9hVSkM/EuU/G5NtEggFm/5gYU2/ohft6Hi2iUoM=;
-        b=b+qEexuLvQEmLtIUFiBRosWADih45Zu3iIzuFMVrd5QltGgsOgjb5/So4aKXFbxXRB
-         Kz006KsYPjWWsy2LO3HYCt4bY9a2E89EpaNPUvM76ypHaST1vHOuY9SqjJXceD6tCX4+
-         gnlFWWzbGi3xTZFYSkRule/nW6VdX2EShd0zQd0tfXSDGr+NooszkvEqRUiZeZNOhnV8
-         fOT2kJnGasLpVpYToDUz4FKpGohIlEkaI1Nq3INbA3Ra9N4NhVmETFdpphHD2cWYygDL
-         68pizVV7pNWzcIeTGHBWw6RTE6tZO/8qgB6eTtoAng4zjRY4XAegtfywAoS7/QBcHsqx
-         MRnw==
-X-Gm-Message-State: AJIora/kK6BMb9aCxttFJ1inNR4V1ArynBGPKnRQBtkh+wmJr/R8cBx0
-        n1AGCaOUZG2znNdWsCvHB/sy7L/M4zI=
-X-Google-Smtp-Source: AGRyM1vZrhIfv6R1QkV1NYPXd8xWwai/oZGPfNY5LyQaTGsyWgUNU53R1OmMZyCCfCJniSdsnvSlzA==
-X-Received: by 2002:a05:6000:1a89:b0:21b:83a9:aa6f with SMTP id f9-20020a0560001a8900b0021b83a9aa6fmr7545833wry.33.1655978163774;
-        Thu, 23 Jun 2022 02:56:03 -0700 (PDT)
-Received: from felia.fritz.box (200116b826a89a00b5a52346a320d486.dip.versatel-1u1.de. [2001:16b8:26a8:9a00:b5a5:2346:a320:d486])
-        by smtp.gmail.com with ESMTPSA id bp17-20020a5d5a91000000b0021b9870049dsm7938326wrb.82.2022.06.23.02.56.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 02:56:03 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entry for NVIDIA TEGRA DRM and VIDEO DRIVER
-Date:   Thu, 23 Jun 2022 11:54:52 +0200
-Message-Id: <20220623095452.30745-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 23 Jun 2022 07:02:56 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF027B00;
+        Thu, 23 Jun 2022 04:02:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7AC32B81BF7;
+        Thu, 23 Jun 2022 11:02:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C860C3411B;
+        Thu, 23 Jun 2022 11:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655982171;
+        bh=QWxmpYJIQevrOn+jIA9BiDlZ1Jm6cS7KRCVZB/rj9MU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uQk8I+JcFVSOI+L8cXE8qm9iQ8k8bUT7pZ8ijL0cSccXLN/EnEJluw10gdhEyLr88
+         s6xeP9hTwyT3i50PQskxDM7s5sJ2nLymilcYIEePm8cIm44TRyGaEB2yaLeixVYMrg
+         0mAYkNT2SfaDKlQsjc/t8JthcQT6mrQJK6lEVobXtbCMLERvjkwCLxxYNMtYejSyuS
+         HSovhcM4827L2LVHZT2VNMWzjxl7vsjEsFQKWsfL1FBmkr3e3R9PDrzQmE8758RzF+
+         yE7Esv/81d3SjOJ4ZNdwrzouWuT87mR+AC21FSj5henoKNvlHs7tJDzCKhtuX9qPOn
+         ITMDCSQZB//dg==
+Date:   Thu, 23 Jun 2022 12:02:41 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     kernel test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        lgirdwood@gmail.com, kuninori.morimoto.gx@renesas.com,
+        mripard@kernel.org, airlied@linux.ie, daniel@ffwll.ch,
+        vkoul@kernel.org, nicolas.ferre@microchip.com, nsaenz@kernel.org,
+        shawnguo@kernel.org, linux-imx@nxp.com, cezary.rojewski@intel.com,
+        pierre-louis.bossart@linux.intel.com, linux-mips@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, daniel@zonque.org,
+        srinivas.kandagatla@linaro.org, linux-rockchip@lists.infradead.org,
+        krzk@kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        peter.ujfalusi@gmail.com, jarkko.nikula@bitmer.com,
+        heiko@sntech.de, jbrunet@baylibre.com, kernel@pengutronix.de,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 27/96] ASoC: au1x: Migrate to new style legacy DAI naming
+ flag
+Message-ID: <YrRIUef2WAs15/Mg@sirena.org.uk>
+References: <20220616143429.1324494-28-ckeepax@opensource.cirrus.com>
+ <202206230910.wUXKFP3z-lkp@intel.com>
+ <20220623093951.GG38351@ediswmail.ad.cirrus.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aRjk/oNkrDuhHxkv"
+Content-Disposition: inline
+In-Reply-To: <20220623093951.GG38351@ediswmail.ad.cirrus.com>
+X-Cookie: I had pancake makeup for brunch!
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Commit fd27de58b0ad ("dt-bindings: display: tegra: Convert to json-schema")
-converts nvidia,tegra20-host1x.txt to yaml, but missed to adjust its
-references in MAINTAINERS.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+--aRjk/oNkrDuhHxkv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Repair these file references in NVIDIA TEGRA DRM and VIDEO DRIVER.
+On Thu, Jun 23, 2022 at 09:39:51AM +0000, Charles Keepax wrote:
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Thierry, please pick this minor non-urgent clean-up on top of the commit above.
+> Mark do you want me to send a v2 for the whole series? Or given
+> the size would it be better to just resend this patch?
 
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Series please.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e99a4249dba..f84dba7ee301 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6767,7 +6767,7 @@ L:	dri-devel@lists.freedesktop.org
- L:	linux-tegra@vger.kernel.org
- S:	Supported
- T:	git git://anongit.freedesktop.org/tegra/linux.git
--F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
- F:	Documentation/devicetree/bindings/gpu/host1x/
- F:	drivers/gpu/drm/tegra/
- F:	drivers/gpu/host1x/
-@@ -19757,7 +19757,7 @@ M:	Sowjanya Komatineni <skomatineni@nvidia.com>
- L:	linux-media@vger.kernel.org
- L:	linux-tegra@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
- F:	drivers/staging/media/tegra-video/
- 
- TEGRA XUSB PADCTL DRIVER
--- 
-2.17.1
+--aRjk/oNkrDuhHxkv
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmK0SFEACgkQJNaLcl1U
+h9At5wf6Ax7J+7EqACjWVB1NBLm4Fqt/fn2hmYjsWEp5xg2nu64uAExOpqhd88Ub
+8EiQ8JJ5Yh+LqGAd+ebgMayuxNfGx/YW+EBYI86mKPNt5JUiC9pf7v5IDM8Tdowt
+ItjroWnrAvyu755n93nXekhH53LbekNQZ3r38IqmgYxXfRwuBwo+6LDpWwG+yuZM
+qsKAlnQyapzbY/t5/1ziDvbV9Tu1jRGLpytGhBD3ishspCgdES0U6CAXTAiQbGpc
+MjSi61J4JAE+Xhu37HN97vid7MjwfolyUldVhZBQk80qRTtR78Iu5cv5Mg1kJ1v7
+BEu+WlV4O3xD0frAhInPwl3skpKkHQ==
+=ECPa
+-----END PGP SIGNATURE-----
+
+--aRjk/oNkrDuhHxkv--
