@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8E3CCA488
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 12:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EA9CCA48D
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 12:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232174AbiFWM4e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Jun 2022 08:56:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41542 "EHLO
+        id S232095AbiFWM4f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Jun 2022 08:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232017AbiFWM40 (ORCPT
+        with ESMTP id S232141AbiFWM42 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Jun 2022 08:56:26 -0400
+        Thu, 23 Jun 2022 08:56:28 -0400
 Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2651C4B42F;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87D384B865;
         Thu, 23 Jun 2022 05:56:25 -0700 (PDT)
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25NBNlqV015665;
-        Thu, 23 Jun 2022 07:52:54 -0500
+        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25NBNlqi015665;
+        Thu, 23 Jun 2022 07:53:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=iTADTC41E6DONZdlcFN/gxhcVbEVFbHK0N8VRx+RW/0=;
- b=f1NlkSxjmkIbyl7yrJ4ITRn+rlbYWlwwJH0fAY2afpmc/cGHIevbyLAaSBqk4I0EhKNV
- oHyP3cCN093+S2pz3sRcFA2CRi/7OmlGXBDouvptThVy5ZKM95gdw1WVXCIENf1T1+2U
- qZ8yPshZ/3PlROGumGs4/btzvxjsmweETvCGjI0yjtDCBCIxr0f0qoilF0LnSn7BXbw6
- r/wxa2wFABekJT7fyzWVkDTQN0TYtnlanFcHshcld+R+fdUOl77ka/HTOk+lO46l8isn
- 86sG09kVd8dltjXZR5B8G6bXJpx2rVRN4EZ2RZY0zHeYMJ76dLEPGjpr7TUyTFo/Kdcx Aw== 
+ bh=Moe+iDLBBrEDDxnDYh3XwjhpqoMM9y00x+UEeU8HbSI=;
+ b=nzDzD0M4+oBoB04zS3kTEyNWmfUPwrllM6NPXCURXxqnZPVrKRnNM+1jC4reaatLVL6/
+ eaomOFc8OgQ2rokIOM0wG2hgPs6+RYsLQPb2oV8sD/PkdNHr1IQzFA6f8R0GaPfDEQeZ
+ VidDMiKaPsXwSbSfpdwcp4/AiYqrRsXGc4lHJQVZWlPU5Rmpe7H/hVR96x/x697vhA42
+ iYKSSgo81x3ysKhIVLvEbah/ud74YD4LgwsCmVxVtNxxJJdR1cfYrk715n/4EDxd4zAC
+ DUSBAQ0jTicDQZK4NsJC8HM7nRljzfttU8VuIy62/4TkTAunWA8txK3sORmBQ8vXANg1 6g== 
 Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gsc41fa4j-2
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gsc41fa4j-15
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 23 Jun 2022 07:52:54 -0500
+        Thu, 23 Jun 2022 07:53:04 -0500
 Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 23 Jun
- 2022 13:52:50 +0100
+ 2022 13:52:54 +0100
 Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 23 Jun 2022 13:52:50 +0100
+ Transport; Thu, 23 Jun 2022 13:52:54 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id DF2C911D1;
-        Thu, 23 Jun 2022 12:52:50 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 87A0F11DA;
+        Thu, 23 Jun 2022 12:52:54 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
@@ -61,48 +61,43 @@ CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
         <dri-devel@lists.freedesktop.org>,
         <linux-rpi-kernel@lists.infradead.org>,
         <frattaroli.nicolas@gmail.com>
-Subject: [PATCH v2 02/96] soundwire: intel: Migrate to new style legacy DAI naming flag
-Date:   Thu, 23 Jun 2022 13:51:16 +0100
-Message-ID: <20220623125250.2355471-3-ckeepax@opensource.cirrus.com>
+Subject: [PATCH v2 43/96] ASoC: test-component: Remove now redundant non_legacy_dai_naming flag
+Date:   Thu, 23 Jun 2022 13:51:57 +0100
+Message-ID: <20220623125250.2355471-44-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
 References: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: Ae11oZOIO58_z_pb2qsaSmlcs1fUAi_h
-X-Proofpoint-ORIG-GUID: Ae11oZOIO58_z_pb2qsaSmlcs1fUAi_h
+X-Proofpoint-GUID: C7mfGE8ZI4r9XF-oXseaPgPSXaUVL4js
+X-Proofpoint-ORIG-GUID: C7mfGE8ZI4r9XF-oXseaPgPSXaUVL4js
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Change the legacy DAI naming flag from opting in to the new scheme
-(non_legacy_dai_naming), to opting out of it (legacy_dai_naming).
-This driver appears to be on the CPU side of the DAI link and
-currently uses the legacy naming, so add the new flag.
+The ASoC core has now been changed to default to the non-legacy DAI
+naming, as such drivers using the new scheme no longer need to specify
+the non_legacy_dai_naming flag.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- drivers/soundwire/intel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/soc/generic/test-component.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 505c5ef061e3f..0268fa527c0c0 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -1097,8 +1097,9 @@ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
- };
+diff --git a/sound/soc/generic/test-component.c b/sound/soc/generic/test-component.c
+index e2a009bc69af2..98c8990596a88 100644
+--- a/sound/soc/generic/test-component.c
++++ b/sound/soc/generic/test-component.c
+@@ -569,7 +569,6 @@ static int test_driver_probe(struct platform_device *pdev)
+ 		cdriv->name			= "test_codec";
+ 		cdriv->idle_bias_on		= 1;
+ 		cdriv->endianness		= 1;
+-		cdriv->non_legacy_dai_naming	= 1;
+ 	}
  
- static const struct snd_soc_component_driver dai_component = {
--	.name           = "soundwire",
--	.suspend	= intel_component_dais_suspend
-+	.name			= "soundwire",
-+	.suspend		= intel_component_dais_suspend,
-+	.legacy_dai_naming	= 1,
- };
- 
- static int intel_create_dai(struct sdw_cdns *cdns,
+ 	cdriv->open		= test_component_open;
 -- 
 2.30.2
 
