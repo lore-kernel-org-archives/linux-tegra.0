@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671D3CCA47C
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 12:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9D2CCA483
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 12:53:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231880AbiFWMxk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Jun 2022 08:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36870 "EHLO
+        id S231882AbiFWMxl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Jun 2022 08:53:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231346AbiFWMxk (ORCPT
+        with ESMTP id S231488AbiFWMxk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Thu, 23 Jun 2022 08:53:40 -0400
 Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F803F32C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6977E3F315;
         Thu, 23 Jun 2022 05:53:39 -0700 (PDT)
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25NBNlqa015665;
-        Thu, 23 Jun 2022 07:52:58 -0500
+        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25NAKUt3006859;
+        Thu, 23 Jun 2022 07:53:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=8CQSKjmzsDlZ0wmGn5pCtMbuJN3c/eN6aYD6PAfwFwE=;
- b=JtFi91kATmVFFGml8/LhmeJzG9azkzoJA0iAIfLiQ6G7pghrm+Ovq3F0ICg3nWLPH271
- iP/372rvNjpEbSyFaCfc+73+HLYFohlqQnGzLqK6JxF7UmBWSQS4Au0hbikgZJ/s5e5x
- N1WfTuWr1C19wSY1ArNlsRF1Gpb4qup7kDVuE2aK/qJlN3x+xpmc99Pquikolhz2BBgy
- LcOedzUTBrUqtWxNH26fslnxil5dxTMlgA6pdt3HdZcXoiCZx3zPzSAZWZiuxYwgvoW/
- sLu+98OOGkmIJEptpS1i0iSh2hVYg2wvR6DbJq0UM7jy/Olb9aSiZA4JwZKFnQKHVgRJ Xw== 
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gsc41fa4j-7
+ bh=5SS4T7VeSvIj1FC5R5zWoo7UcAx6bgPzaWWgtGA6/yE=;
+ b=jn6uN96B1wivnuU+Tk3zcTu3AT7F6/5AAOM1nFjPeYYlLgeayYMpYHeo073ySXZVTPVn
+ 0NfSPBx2sHy6I/DZGQmcOLQmEn5lJp58D4o0OrhDsQSrPD1VxPXxUxf7luQcQbFMwFqb
+ ICg9yn6rD+/wyVbVLa+4JkUSK3y5w8lDnBJtZEbJdjXlN11xQ+/7o7oH53y4uSjzzYFp
+ L9mvEbL+0aJr8DL2j3rYvUWCI1jc44rowHg6bfn1/WhgaPEWGbN969F9W2/bCFdcMN6d
+ Jf1gp6LONWik/yJAV+coErIPlCpiXwloN/whhF1npwVe3lNVQYrwkXXNbYOmNcXv3c3c OA== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gsc41fa4u-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 23 Jun 2022 07:52:58 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 23 Jun 2022 07:53:02 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 23 Jun
- 2022 13:52:51 +0100
+ 2022 13:52:54 +0100
 Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 23 Jun 2022 13:52:51 +0100
+ Transport; Thu, 23 Jun 2022 13:52:54 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id CBC35475;
-        Thu, 23 Jun 2022 12:52:51 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id F1B7911D3;
+        Thu, 23 Jun 2022 12:52:53 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
@@ -61,85 +61,43 @@ CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
         <dri-devel@lists.freedesktop.org>,
         <linux-rpi-kernel@lists.infradead.org>,
         <frattaroli.nicolas@gmail.com>
-Subject: [PATCH v2 13/96] ASoC: xilinx: Migrate to new style legacy DAI naming flag
-Date:   Thu, 23 Jun 2022 13:51:27 +0100
-Message-ID: <20220623125250.2355471-14-ckeepax@opensource.cirrus.com>
+Subject: [PATCH v2 36/96] ASoC: fsl: Remove now redundant non_legacy_dai_naming flag
+Date:   Thu, 23 Jun 2022 13:51:50 +0100
+Message-ID: <20220623125250.2355471-37-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
 References: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: RB_-CC6Ip80RPjievzV-rQ9YjtxMKWN4
-X-Proofpoint-ORIG-GUID: RB_-CC6Ip80RPjievzV-rQ9YjtxMKWN4
+X-Proofpoint-GUID: 8l4owaLREXHc23kLDcPMpfygNeuavSCn
+X-Proofpoint-ORIG-GUID: 8l4owaLREXHc23kLDcPMpfygNeuavSCn
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Change the legacy DAI naming flag from opting in to the new scheme
-(non_legacy_dai_naming), to opting out of it (legacy_dai_naming).
-These drivers appear to be on the CPU side of the DAI link and
-currently uses the legacy naming, so add the new flag.
+The ASoC core has now been changed to default to the non-legacy DAI
+naming, as such drivers using the new scheme no longer need to specify
+the non_legacy_dai_naming flag.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/xilinx/xlnx_formatter_pcm.c | 16 ++++++++--------
- sound/soc/xilinx/xlnx_i2s.c           |  1 +
- sound/soc/xilinx/xlnx_spdif.c         |  1 +
- 3 files changed, 10 insertions(+), 8 deletions(-)
+ sound/soc/fsl/fsl_mqs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/xilinx/xlnx_formatter_pcm.c b/sound/soc/xilinx/xlnx_formatter_pcm.c
-index 5c4158069a5a8..f5ac0aa312d6e 100644
---- a/sound/soc/xilinx/xlnx_formatter_pcm.c
-+++ b/sound/soc/xilinx/xlnx_formatter_pcm.c
-@@ -575,14 +575,14 @@ static int xlnx_formatter_pcm_new(struct snd_soc_component *component,
- }
+diff --git a/sound/soc/fsl/fsl_mqs.c b/sound/soc/fsl/fsl_mqs.c
+index bb25c58e335fb..c1e2f671191b5 100644
+--- a/sound/soc/fsl/fsl_mqs.c
++++ b/sound/soc/fsl/fsl_mqs.c
+@@ -155,7 +155,6 @@ static void fsl_mqs_shutdown(struct snd_pcm_substream *substream,
  
- static const struct snd_soc_component_driver xlnx_asoc_component = {
--	.name		= DRV_NAME,
--	.set_sysclk	= xlnx_formatter_set_sysclk,
--	.open		= xlnx_formatter_pcm_open,
--	.close		= xlnx_formatter_pcm_close,
--	.hw_params	= xlnx_formatter_pcm_hw_params,
--	.trigger	= xlnx_formatter_pcm_trigger,
--	.pointer	= xlnx_formatter_pcm_pointer,
--	.pcm_construct	= xlnx_formatter_pcm_new,
-+	.name			= DRV_NAME,
-+	.set_sysclk		= xlnx_formatter_set_sysclk,
-+	.open			= xlnx_formatter_pcm_open,
-+	.close			= xlnx_formatter_pcm_close,
-+	.hw_params		= xlnx_formatter_pcm_hw_params,
-+	.trigger		= xlnx_formatter_pcm_trigger,
-+	.pointer		= xlnx_formatter_pcm_pointer,
-+	.pcm_construct		= xlnx_formatter_pcm_new,
+ static const struct snd_soc_component_driver soc_codec_fsl_mqs = {
+ 	.idle_bias_on = 1,
+-	.non_legacy_dai_naming	= 1,
  };
  
- static int xlnx_formatter_pcm_probe(struct platform_device *pdev)
-diff --git a/sound/soc/xilinx/xlnx_i2s.c b/sound/soc/xilinx/xlnx_i2s.c
-index 4cc6ee7c81a32..9de92d35e30ee 100644
---- a/sound/soc/xilinx/xlnx_i2s.c
-+++ b/sound/soc/xilinx/xlnx_i2s.c
-@@ -158,6 +158,7 @@ static const struct snd_soc_dai_ops xlnx_i2s_dai_ops = {
- 
- static const struct snd_soc_component_driver xlnx_i2s_component = {
- 	.name = DRV_NAME,
-+	.legacy_dai_naming = 1,
- };
- 
- static const struct of_device_id xlnx_i2s_of_match[] = {
-diff --git a/sound/soc/xilinx/xlnx_spdif.c b/sound/soc/xilinx/xlnx_spdif.c
-index cba0e868a7d77..7342048e98751 100644
---- a/sound/soc/xilinx/xlnx_spdif.c
-+++ b/sound/soc/xilinx/xlnx_spdif.c
-@@ -226,6 +226,7 @@ static struct snd_soc_dai_driver xlnx_spdif_rx_dai = {
- 
- static const struct snd_soc_component_driver xlnx_spdif_component = {
- 	.name = "xlnx-spdif",
-+	.legacy_dai_naming = 1,
- };
- 
- static const struct of_device_id xlnx_spdif_of_match[] = {
+ static const struct snd_soc_dai_ops fsl_mqs_dai_ops = {
 -- 
 2.30.2
 
