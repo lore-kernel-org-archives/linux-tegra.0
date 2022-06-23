@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790F5CCA48C
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 12:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9676CCA481
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 12:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232017AbiFWM4f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Jun 2022 08:56:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41548 "EHLO
+        id S231846AbiFWM4h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Jun 2022 08:56:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232136AbiFWM40 (ORCPT
+        with ESMTP id S232142AbiFWM42 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Jun 2022 08:56:26 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A87249F9F;
-        Thu, 23 Jun 2022 05:56:24 -0700 (PDT)
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25N5mxl4032604;
-        Thu, 23 Jun 2022 07:52:59 -0500
+        Thu, 23 Jun 2022 08:56:28 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD0E4BB8B;
+        Thu, 23 Jun 2022 05:56:25 -0700 (PDT)
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25NAKUt8006859;
+        Thu, 23 Jun 2022 07:53:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=Jgy4HYvWutWIwNsNORzLVRecig1c5kbslPS86+xHyEg=;
- b=n+qqWoyXdXY65SVgeNlJnKgfGMejP0S4N78AMb/x2SW6BmBRT4Umzh2xY+O54an2IQUG
- m0ym2b6m2NOyupahPyaaqdhTiz16CMheYgej6xek0fMBwv3DVMgtXbPHdAcoQYFs7QM1
- xb9YcqCEQm7UBg+diYESy7vuIB8g5PNsaCk1XiCFjIyAYxMJASLnUR6zcgxew/Mdmilk
- mj4gyB/rJkrrYEuwHaiz5Lpx4x4/8rE0Tmp/4WrIJcBv6zbEltVonXYOmaEVSUYWVagJ
- U53GMhXVu9dCyDssSOEezh0TdkM4RwEFIii8vYTYbwBWKVGEjZsdVqIFHn7e9+WuQJTF Iw== 
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3gsb4p6wvu-3
+ bh=2oOH0ajpjX51SxIUnf5QoeLn4u7Pp4JTnUSfyoYuy5c=;
+ b=Yj3HxcQ5Nq5ttDCOuIp+XU/qOxpTKhDa4zZiD4WMR7xISVGlCB1hmBVuGJ0BkM3BZTpN
+ y/U5WSLz+8E1M9oFO3oZPqaGyj63x4nwB6pNpRCeWWUgLqZKG904cJcvclX7XknHzBQ6
+ 410fbLz0gxVAv6/VeMcssQH3pwxJ2aDOgJfgXpSr6CJ63/rx6F9tw1UHMBGVj3m2UY/v
+ vPlTt71PvwMVS2yGisURtucfUOoGQYxhXsK9wtU3Cg62+N1JiZc8+cYIRhUWFPic4S3Q
+ 8O4zh/A5/8Ml0yQQHB3jHBHy2vzZDtOfUw8DeM39+gqstUgvG2vgTNrebSDnRw3GxQOu kA== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3gsc41fa4u-6
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 23 Jun 2022 07:52:59 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 23 Jun 2022 07:53:05 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 23 Jun
- 2022 13:52:52 +0100
+ 2022 13:52:55 +0100
 Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
  (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 23 Jun 2022 13:52:52 +0100
+ Transport; Thu, 23 Jun 2022 13:52:55 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 23FFF475;
-        Thu, 23 Jun 2022 12:52:52 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 3A00611D4;
+        Thu, 23 Jun 2022 12:52:55 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
@@ -61,131 +61,108 @@ CC:     <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
         <dri-devel@lists.freedesktop.org>,
         <linux-rpi-kernel@lists.infradead.org>,
         <frattaroli.nicolas@gmail.com>
-Subject: [PATCH v2 16/96] ASoC: meson: Migrate to new style legacy DAI naming flag
-Date:   Thu, 23 Jun 2022 13:51:30 +0100
-Message-ID: <20220623125250.2355471-17-ckeepax@opensource.cirrus.com>
+Subject: [PATCH v2 50/96] ASoC: da*: Remove now redundant non_legacy_dai_naming flag
+Date:   Thu, 23 Jun 2022 13:52:04 +0100
+Message-ID: <20220623125250.2355471-51-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
 References: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: z9PBb0_fYXFUlvKuDJY_TgGeHKkBuxuU
-X-Proofpoint-ORIG-GUID: z9PBb0_fYXFUlvKuDJY_TgGeHKkBuxuU
+X-Proofpoint-GUID: sRpSKbzDDkWksB9kvIVycJdJBNHREjM2
+X-Proofpoint-ORIG-GUID: sRpSKbzDDkWksB9kvIVycJdJBNHREjM2
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Change the legacy DAI naming flag from opting in to the new scheme
-(non_legacy_dai_naming), to opting out of it (legacy_dai_naming).
-These drivers appear to be on the CPU side of the DAI link and
-currently uses the legacy naming, so add the new flag.
+The ASoC core has now been changed to default to the non-legacy DAI
+naming, as such drivers using the new scheme no longer need to specify
+the non_legacy_dai_naming flag.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/meson/axg-frddr.c    | 3 +++
- sound/soc/meson/axg-pdm.c      | 4 +++-
- sound/soc/meson/axg-spdifin.c  | 1 +
- sound/soc/meson/axg-spdifout.c | 1 +
- sound/soc/meson/axg-toddr.c    | 3 +++
- 5 files changed, 11 insertions(+), 1 deletion(-)
+ sound/soc/codecs/da7210.c | 1 -
+ sound/soc/codecs/da7213.c | 1 -
+ sound/soc/codecs/da7218.c | 1 -
+ sound/soc/codecs/da7219.c | 1 -
+ sound/soc/codecs/da732x.c | 1 -
+ sound/soc/codecs/da9055.c | 1 -
+ 6 files changed, 6 deletions(-)
 
-diff --git a/sound/soc/meson/axg-frddr.c b/sound/soc/meson/axg-frddr.c
-index 37f4bb3469b5c..61f9d417fd608 100644
---- a/sound/soc/meson/axg-frddr.c
-+++ b/sound/soc/meson/axg-frddr.c
-@@ -161,6 +161,7 @@ static const struct snd_soc_component_driver axg_frddr_component_drv = {
- 	.hw_free		= axg_fifo_pcm_hw_free,
- 	.pointer		= axg_fifo_pcm_pointer,
- 	.trigger		= axg_fifo_pcm_trigger,
-+	.legacy_dai_naming	= 1,
+diff --git a/sound/soc/codecs/da7210.c b/sound/soc/codecs/da7210.c
+index 76a21976ccddb..f838466bfebf8 100644
+--- a/sound/soc/codecs/da7210.c
++++ b/sound/soc/codecs/da7210.c
+@@ -1173,7 +1173,6 @@ static const struct snd_soc_component_driver soc_component_dev_da7210 = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
  };
  
- static const struct axg_fifo_match_data axg_frddr_match_data = {
-@@ -286,6 +287,7 @@ static const struct snd_soc_component_driver g12a_frddr_component_drv = {
- 	.hw_free		= axg_fifo_pcm_hw_free,
- 	.pointer		= axg_fifo_pcm_pointer,
- 	.trigger		= axg_fifo_pcm_trigger,
-+	.legacy_dai_naming	= 1,
+ #if IS_ENABLED(CONFIG_I2C)
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index 2e645dc60eda4..544ccbcfc8844 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -1922,7 +1922,6 @@ static const struct snd_soc_component_driver soc_component_dev_da7213 = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
  };
  
- static const struct axg_fifo_match_data g12a_frddr_match_data = {
-@@ -356,6 +358,7 @@ static const struct snd_soc_component_driver sm1_frddr_component_drv = {
- 	.hw_free		= axg_fifo_pcm_hw_free,
- 	.pointer		= axg_fifo_pcm_pointer,
- 	.trigger		= axg_fifo_pcm_trigger,
-+	.legacy_dai_naming	= 1,
+ static const struct regmap_config da7213_regmap_config = {
+diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
+index a5d7c350a3ded..91372909d184b 100644
+--- a/sound/soc/codecs/da7218.c
++++ b/sound/soc/codecs/da7218.c
+@@ -3040,7 +3040,6 @@ static const struct snd_soc_component_driver soc_component_dev_da7218 = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
  };
  
- static const struct axg_fifo_match_data sm1_frddr_match_data = {
-diff --git a/sound/soc/meson/axg-pdm.c b/sound/soc/meson/axg-pdm.c
-index 672e43a9729dc..88ac58272f95b 100644
---- a/sound/soc/meson/axg-pdm.c
-+++ b/sound/soc/meson/axg-pdm.c
-@@ -457,7 +457,9 @@ static struct snd_soc_dai_driver axg_pdm_dai_drv = {
- 	.remove		= axg_pdm_dai_remove,
+ 
+diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+index c18f76f370fc4..50ecf30e6136a 100644
+--- a/sound/soc/codecs/da7219.c
++++ b/sound/soc/codecs/da7219.c
+@@ -2647,7 +2647,6 @@ static const struct snd_soc_component_driver soc_component_dev_da7219 = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
  };
  
--static const struct snd_soc_component_driver axg_pdm_component_drv = {};
-+static const struct snd_soc_component_driver axg_pdm_component_drv = {
-+	.legacy_dai_naming = 1,
-+};
  
- static const struct regmap_config axg_pdm_regmap_cfg = {
- 	.reg_bits	= 32,
-diff --git a/sound/soc/meson/axg-spdifin.c b/sound/soc/meson/axg-spdifin.c
-index 4ba44e0d65d9f..e2cc4c4be7586 100644
---- a/sound/soc/meson/axg-spdifin.c
-+++ b/sound/soc/meson/axg-spdifin.c
-@@ -390,6 +390,7 @@ static const struct snd_kcontrol_new axg_spdifin_controls[] = {
- static const struct snd_soc_component_driver axg_spdifin_component_drv = {
- 	.controls		= axg_spdifin_controls,
- 	.num_controls		= ARRAY_SIZE(axg_spdifin_controls),
-+	.legacy_dai_naming	= 1,
+diff --git a/sound/soc/codecs/da732x.c b/sound/soc/codecs/da732x.c
+index 3f1cfee10df3f..2c5b0b74201c7 100644
+--- a/sound/soc/codecs/da732x.c
++++ b/sound/soc/codecs/da732x.c
+@@ -1503,7 +1503,6 @@ static const struct snd_soc_component_driver soc_component_dev_da732x = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
  };
  
- static const struct regmap_config axg_spdifin_regmap_cfg = {
-diff --git a/sound/soc/meson/axg-spdifout.c b/sound/soc/meson/axg-spdifout.c
-index 3960d082e1436..e8a12f15f3b4a 100644
---- a/sound/soc/meson/axg-spdifout.c
-+++ b/sound/soc/meson/axg-spdifout.c
-@@ -383,6 +383,7 @@ static const struct snd_soc_component_driver axg_spdifout_component_drv = {
- 	.dapm_routes		= axg_spdifout_dapm_routes,
- 	.num_dapm_routes	= ARRAY_SIZE(axg_spdifout_dapm_routes),
- 	.set_bias_level		= axg_spdifout_set_bias_level,
-+	.legacy_dai_naming	= 1,
+ static int da732x_i2c_probe(struct i2c_client *i2c)
+diff --git a/sound/soc/codecs/da9055.c b/sound/soc/codecs/da9055.c
+index 9d8c8adc5d768..28043b4530df8 100644
+--- a/sound/soc/codecs/da9055.c
++++ b/sound/soc/codecs/da9055.c
+@@ -1460,7 +1460,6 @@ static const struct snd_soc_component_driver soc_component_dev_da9055 = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
+-	.non_legacy_dai_naming	= 1,
  };
  
- static const struct regmap_config axg_spdifout_regmap_cfg = {
-diff --git a/sound/soc/meson/axg-toddr.c b/sound/soc/meson/axg-toddr.c
-index d6adf7edea41f..e9208e74e9659 100644
---- a/sound/soc/meson/axg-toddr.c
-+++ b/sound/soc/meson/axg-toddr.c
-@@ -182,6 +182,7 @@ static const struct snd_soc_component_driver axg_toddr_component_drv = {
- 	.hw_free		= axg_fifo_pcm_hw_free,
- 	.pointer		= axg_fifo_pcm_pointer,
- 	.trigger		= axg_fifo_pcm_trigger,
-+	.legacy_dai_naming	= 1,
- };
- 
- static const struct axg_fifo_match_data axg_toddr_match_data = {
-@@ -242,6 +243,7 @@ static const struct snd_soc_component_driver g12a_toddr_component_drv = {
- 	.hw_free		= axg_fifo_pcm_hw_free,
- 	.pointer		= axg_fifo_pcm_pointer,
- 	.trigger		= axg_fifo_pcm_trigger,
-+	.legacy_dai_naming	= 1,
- };
- 
- static const struct axg_fifo_match_data g12a_toddr_match_data = {
-@@ -312,6 +314,7 @@ static const struct snd_soc_component_driver sm1_toddr_component_drv = {
- 	.hw_free		= axg_fifo_pcm_hw_free,
- 	.pointer		= axg_fifo_pcm_pointer,
- 	.trigger		= axg_fifo_pcm_trigger,
-+	.legacy_dai_naming	= 1,
- };
- 
- static const struct axg_fifo_match_data sm1_toddr_match_data = {
+ static const struct regmap_config da9055_regmap_config = {
 -- 
 2.30.2
 
