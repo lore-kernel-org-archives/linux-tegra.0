@@ -2,109 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D9BC43334
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 09:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7954C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Jun 2022 09:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229761AbiFWJgO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Jun 2022 05:36:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39598 "EHLO
+        id S229937AbiFWJl1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Jun 2022 05:41:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230323AbiFWJgN (ORCPT
+        with ESMTP id S229656AbiFWJlY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Jun 2022 05:36:13 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EC574969C;
-        Thu, 23 Jun 2022 02:36:09 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 06D691FD84;
-        Thu, 23 Jun 2022 09:36:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1655976968; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=k0mbNIM+JB6w795iF5JgVuU7GedW8ezpGnJMdaZLqFc=;
-        b=J8QALNxCEW1OJSBo0kJeIxMjIArt6h8Re6hB6BbVQA/4gULvEBrBTNTLe+6MwkNfs3MdhM
-        +U2JuSV0CPigje0U5klJwA1qVPVYX2JWk26XVFAjO7P3dCaYeUdQIlAqdQlOJMReUJwNUn
-        exQz9aVA+NftUov4Qz+/5SsUaH0d4Gg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1655976968;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=k0mbNIM+JB6w795iF5JgVuU7GedW8ezpGnJMdaZLqFc=;
-        b=dBgp1ATEUkJdvyO973sUrTj+pbMGITd6mg1TDpSBc9TVhJc58UU/R0cB06TqI2yvifWQML
-        K7sD1WPwEYxPXSCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BF225133A6;
-        Thu, 23 Jun 2022 09:36:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id LrcyLQc0tGLMKgAAMHmgww
-        (envelope-from <ykaukab@suse.de>); Thu, 23 Jun 2022 09:36:07 +0000
-Date:   Thu, 23 Jun 2022 11:36:06 +0200
-From:   Yousaf Kaukab <ykaukab@suse.de>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: tegra: Mark BPMP channels as no-memory-wc
-Message-ID: <20220623093606.GA181983@suse.de>
-References: <20220622132300.1746201-1-cyndis@kapsi.fi>
- <20220622132300.1746201-2-cyndis@kapsi.fi>
- <9e80da1f-60e9-5528-3636-6443461fb207@kapsi.fi>
+        Thu, 23 Jun 2022 05:41:24 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808C449909;
+        Thu, 23 Jun 2022 02:41:23 -0700 (PDT)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25N7fLsF004327;
+        Thu, 23 Jun 2022 04:39:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=i32Dkqu6yqHdJkz3oPGSblt6FxDAn2yx5mHso4uT6jY=;
+ b=nIE3n9kDrMoH4e/LAawz+RzUC2VoQWASFOauN4tM5A1H8JMc8tTXY2cVBGOwMqIrQM6K
+ STuS8s6JFijovnai1W2MNLfVUjobxH6CViDtDBBPJUDXBmHrZJCFNVYS9HIj6iGziz+r
+ VnKUwYrgOKvFYjTYgJ7g8SHsa+TlwYy2/uQ+7BQ2M5FiknT1aLaBacYmzVf4gZibj1KF
+ +x6MXDk3uwUf66jBJA5uO/c3MJHdGz1TvkpWGO+3eq+mJ5MeXOg5XvUPhCzW0RdI3EaW
+ UeEhW8dhlBiL29hjgLxwPY+qxBlb9eORf5BQNruocf4tI6GNJ6GP/Mzs9siqoEV7xXtG sA== 
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3gsb4p6jm6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 23 Jun 2022 04:39:52 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 23 Jun
+ 2022 10:39:51 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
+ Transport; Thu, 23 Jun 2022 10:39:51 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 1797D11D1;
+        Thu, 23 Jun 2022 09:39:51 +0000 (UTC)
+Date:   Thu, 23 Jun 2022 09:39:51 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     kernel test robot <lkp@intel.com>
+CC:     <broonie@kernel.org>, <kbuild-all@lists.01.org>,
+        <lgirdwood@gmail.com>, <kuninori.morimoto.gx@renesas.com>,
+        <mripard@kernel.org>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <vkoul@kernel.org>, <nicolas.ferre@microchip.com>,
+        <nsaenz@kernel.org>, <shawnguo@kernel.org>, <linux-imx@nxp.com>,
+        <cezary.rojewski@intel.com>,
+        <pierre-louis.bossart@linux.intel.com>,
+        <linux-mips@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <daniel@zonque.org>, <srinivas.kandagatla@linaro.org>,
+        <linux-rockchip@lists.infradead.org>, <krzk@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
+        <peter.ujfalusi@gmail.com>, <jarkko.nikula@bitmer.com>,
+        <heiko@sntech.de>, <jbrunet@baylibre.com>, <kernel@pengutronix.de>,
+        <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 27/96] ASoC: au1x: Migrate to new style legacy DAI naming
+ flag
+Message-ID: <20220623093951.GG38351@ediswmail.ad.cirrus.com>
+References: <20220616143429.1324494-28-ckeepax@opensource.cirrus.com>
+ <202206230910.wUXKFP3z-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <9e80da1f-60e9-5528-3636-6443461fb207@kapsi.fi>
+In-Reply-To: <202206230910.wUXKFP3z-lkp@intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-GUID: ngGGSOCW3HD7Nqksfbnzki1Fx-Dv9wmS
+X-Proofpoint-ORIG-GUID: ngGGSOCW3HD7Nqksfbnzki1Fx-Dv9wmS
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 22, 2022 at 04:29:03PM +0300, Mikko Perttunen wrote:
-> On 22.6.2022 16.23, Mikko Perttunen wrote:
-> > From: Mikko Perttunen <mperttunen@nvidia.com>
-> > 
-> > The Tegra SYSRAM contains regions access to which is restricted to
-> > certain hardware blocks on the system, and speculative accesses to
-> > those will cause issues.
-> > 
-> > Patch 'misc: sram: Only map reserved areas in Tegra SYSRAM' attempted
-> > to resolve this by only mapping the regions specified in the device
-> > tree on the assumption that there are no such restricted areas within
-> > the 64K-aligned area of memory that contains the memory we wish to map.
-> > 
-> > Turns out this assumption is wrong, as there are such areas above the
-> > 4K pages described in the device trees. As such, we need to use the
-> > bigger hammer that is no-memory-wc, which causes the memory to be
-> > mapped as Device memory to which speculative accesses are disallowed.
-> > 
-> > As such, the previous patch in the series,
-> >    'firmware: tegra: bpmp: do only aligned access to IPC memory area',
-> > is required with this patch to make the BPMP driver only issue aligned
-> > memory accesses as those are also required with Device memory.
-> > 
-> > Fixes: fec29bf04994 ("misc: sram: Only map reserved areas in Tegra SYSRAM")
-> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > ---
+On Thu, Jun 23, 2022 at 09:59:06AM +0800, kernel test robot wrote:
+> Hi Charles,
 > 
-> FWIW, with this, the aforementioned patch to misc/sram is redundant. It
-> doesn't hurt, but doesn't really help either. Whether or not it should be
-> reverted, I have no opinion.
-I am in favor of reverting commit fec29bf04994 ("misc: sram: Only map
-reserved areas in Tegra SYSRAM"). Tegra platforms are the only consumer
-of this code. I consider it to be redundant after your series.
-For both patches:
-Reviewed-by: Yousaf Kaukab <ykaukab@suse.de>
+> I love your patch! Yet something to improve:
 > 
-> Thanks,
-> Mikko
-BR,
-Yousaf
+> [auto build test ERROR on broonie-sound/for-next]
+> >> sound/soc/au1x/ac97c.c:227:10: error: 'const struct snd_soc_component_driver' has no member named 'legacy_dai_name'; did you mean 'legacy_dai_naming'?
+>      227 |         .legacy_dai_name        = 1,
+>          |          ^~~~~~~~~~~~~~~
+>          |          legacy_dai_naming
+
+Hmm... apologies for this not sure how that snuck through my
+build testing, must have somehow missed this one.
+
+Mark do you want me to send a v2 for the whole series? Or given
+the size would it be better to just resend this patch?
+
+Thanks,
+Charles
