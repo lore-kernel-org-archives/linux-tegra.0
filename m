@@ -2,126 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50038C43334
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 16:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4035C43334
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 16:27:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229981AbiFXQYl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Jun 2022 12:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52246 "EHLO
+        id S229792AbiFXQ1C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Jun 2022 12:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbiFXQYj (ORCPT
+        with ESMTP id S230197AbiFXQ07 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Jun 2022 12:24:39 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B376609EC;
-        Fri, 24 Jun 2022 09:24:37 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id f190so1329532wma.5;
-        Fri, 24 Jun 2022 09:24:37 -0700 (PDT)
+        Fri, 24 Jun 2022 12:26:59 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6937960E2F;
+        Fri, 24 Jun 2022 09:26:57 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id s1so3790839wra.9;
+        Fri, 24 Jun 2022 09:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Fz3eKb7QtxlKCXajNfxmGqshZRvTbTcL6Dlx0Eq94Vc=;
-        b=btEo+IaaLOmM5IDhiHneLo+Jhd0TtBY/zedbRBf4x0Hkp08O/+LN+yLpIjBgDSnnQv
-         oauriEUxZkBn8b9ys1HGRkese3qecvUI3KpKmsQUgm/o2L+YOntawK2yNjkVcGUyQE8t
-         pgzjdds1RNLCJXd825jlf2Q5+18toptKkCWRmiVU2MhMQO5Ls5C4o6GipmdeIVlPFAtF
-         4ogTM50JRgp94RIHfwmWF2jJCWrLytSuBvB3nYMxDWAGjWOJX427Gyjo8N/D5z21x8NA
-         ZFqUQOjqsM4CJn2x0dSmlcpmY4yRFE4cgVwP8BnCfJ57sBZ0tJ3YNSi3uikNOPYp4yz3
-         6XEw==
+        bh=AYBPwF7uWIloDNYt/QphPzAZXxTZcC03d+PPytnRwV4=;
+        b=mimzjrl/A6qU0/5rr7lNYmMv2tJhodCuBM5NpFGwCSRaR86aqKpwv/A0E5I8XgTcbr
+         fhRD7ZQQxqAgmClbXZnR54ZZNXThxu4ahODR30Fo1QO4NHbv2dHERxdhSVhvmP7m35Zx
+         P3FBSvAZPUW+Xu5+e/0e3+Nl/Z9Mp7puaRCJ2+akNawws+wPa8d2h2I2A6tRT/u5C86B
+         nOQHoVIaVhsVYEKKiSeuPsJiDhzXiP66Wbya9WkYGbe7m1+QNZkuqw9LYZlBeFll8URZ
+         NWECCncB+oN6TRUgY/51UZJxR1kNhIRwOMHsWVbuhMdioWkyeMQ7SrZJW+UFh/IEuoW9
+         ypzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fz3eKb7QtxlKCXajNfxmGqshZRvTbTcL6Dlx0Eq94Vc=;
-        b=LP+DODJQy+HMvmbXLlILfMqrlPojgjfHROrnOzruFi2+ch71wPFQ5wQMIhgbc+fV8k
-         v++FIrbsRfkE0Yb2Jjw7t2rwPyjw5xDzY9uqFTZcUE59QLfu2Hns6lYcDZ6qw5WCdPAo
-         PNVw+bqoHMSsfoOYc9Evbk5XT7Q1+KViK1uLAdGn/GBwlil85yH5OQNrsHnR2337IJoI
-         vkgL3BO8e40SVz2sIcEP/PaIrjF2swqi0nPveYPH+3XGyuGdL/gFmd1aAK00bkW5P1rf
-         42ZBTQmPpFl0K3X7fel4/NhP6Ya7Ri54wV7URn7pJsuyfAdvESTnp4M6yNJYorGHkuU/
-         N0KA==
-X-Gm-Message-State: AJIora9uA60Dvctc8in/peG3EEN6CfXe6dSTW1uBjNFNriTKl2l6GQZA
-        MICD723fvCNk0MQWfJr183M=
-X-Google-Smtp-Source: AGRyM1uT1+JWnJa68qcJli/mDCcqnzkgkEDjQbEtNWBf+Tu/i4XL4QFKDBcT0v5e0QCX5TOBNzL3wA==
-X-Received: by 2002:a7b:c5da:0:b0:39c:542a:a07b with SMTP id n26-20020a7bc5da000000b0039c542aa07bmr4904884wmk.83.1656087875442;
-        Fri, 24 Jun 2022 09:24:35 -0700 (PDT)
+        bh=AYBPwF7uWIloDNYt/QphPzAZXxTZcC03d+PPytnRwV4=;
+        b=VihE0CuahbW3d2gwwFLSAX6/Uak+cJtJpWVjapXFHgiLbzgXUEHf+Dn0KzlT3cv/os
+         EWQDWxMxLdiiUUvV5O1s3yW0rrTwE67BDH+HsCrJBHmSFL97ltxpDRtR7V5dw1cqF6X7
+         4W1UNyf35oTLNqZ76QA3GfjIxsM4cr3Swt5WjUI6PurmVqboZLszybvsopFeUL1oyu9d
+         UaPSVg6Y1Z+vM/VQbUGG6cLSMDNjmWjqRxZuZ1wDCB+aKLOU9conpqG9Z+CQ4WmZQgYp
+         +s0zo9gk9rW0dYgJbLEOkEh6HAExb0W1p3sXATpfCZRRqWETMMhbaNdWci3s0M5OESdd
+         ZJRA==
+X-Gm-Message-State: AJIora/hEM4+zEi+wvreL25LxnfbL5eXhvhjByoTYcTqmVZm8wDnucEE
+        FIRuifyrpDO/Oq4sUn44xF4=
+X-Google-Smtp-Source: AGRyM1v+N3LKkbjjD/Y44CNLdhyBhCqakzmU8gne5rz8XZ5zNdfvBOpmiM3UKIygTyHT+0oIoj0PUQ==
+X-Received: by 2002:a05:6000:1d98:b0:21b:aead:9b6c with SMTP id bk24-20020a0560001d9800b0021baead9b6cmr5798557wrb.531.1656088015980;
+        Fri, 24 Jun 2022 09:26:55 -0700 (PDT)
 Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id f8-20020a1cc908000000b0039c99f61e5bsm6963003wmb.5.2022.06.24.09.24.33
+        by smtp.gmail.com with ESMTPSA id h18-20020a05600c28d200b003976fbfbf00sm3340148wmd.30.2022.06.24.09.26.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 09:24:34 -0700 (PDT)
-Date:   Fri, 24 Jun 2022 18:24:32 +0200
+        Fri, 24 Jun 2022 09:26:55 -0700 (PDT)
+Date:   Fri, 24 Jun 2022 18:26:53 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-tegra@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, vbhadram@nvidia.com,
-        treding@nvidia.com, robh+dt@kernel.org, catalin.marinas@arm.com,
-        krzysztof.kozlowski+dt@linaro.org, kuba@kernel.org,
-        jonathanh@nvidia.com, will@kernel.org
-Subject: Re: (subset) [PATCH net-next v1 4/9] memory: tegra: Add MGBE memory
- clients for Tegra234
-Message-ID: <YrXlQJ1qzsZZrx7Q@orome>
-References: <20220623074615.56418-1-vbhadram@nvidia.com>
- <20220623074615.56418-4-vbhadram@nvidia.com>
- <165608679241.23612.16454571226827958210.b4-ty@linaro.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for NVIDIA TEGRA DRM and
+ VIDEO DRIVER
+Message-ID: <YrXlzY/tGl9CA170@orome>
+References: <20220623095452.30745-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ELvShlyS5h/f0Ju7"
+        protocol="application/pgp-signature"; boundary="WXw1FbmeQU/+1/K2"
 Content-Disposition: inline
-In-Reply-To: <165608679241.23612.16454571226827958210.b4-ty@linaro.org>
+In-Reply-To: <20220623095452.30745-1-lukas.bulwahn@gmail.com>
 User-Agent: Mutt/2.2.6 (2022-06-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---ELvShlyS5h/f0Ju7
+--WXw1FbmeQU/+1/K2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 24, 2022 at 06:06:35PM +0200, Krzysztof Kozlowski wrote:
-> On Thu, 23 Jun 2022 13:16:10 +0530, Bhadram Varka wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Tegra234 has multiple network interfaces with each their own memory
-> > clients and stream IDs to allow for proper isolation.
-> >=20
-> >=20
+On Thu, Jun 23, 2022 at 11:54:52AM +0200, Lukas Bulwahn wrote:
+> Commit fd27de58b0ad ("dt-bindings: display: tegra: Convert to json-schema=
+")
+> converts nvidia,tegra20-host1x.txt to yaml, but missed to adjust its
+> references in MAINTAINERS.
 >=20
-> Applied, thanks!
+> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about=
+ a
+> broken reference.
 >=20
-> [4/9] memory: tegra: Add MGBE memory clients for Tegra234
->       https://git.kernel.org/krzk/linux-mem-ctrl/c/6b36629c85dc7d4551e57e=
-92a3e970d099333e4e
+> Repair these file references in NVIDIA TEGRA DRM and VIDEO DRIVER.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Thierry, please pick this minor non-urgent clean-up on top of the commit =
+above.
+>=20
+>  MAINTAINERS | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Ah yes, you'll need the dt-bindings header for this driver bit as well.
-If you don't mind I could pick all of these up into the Tegra tree and
-resolve the dependencies there, then send a pull request for the memory
-tree that incorporates the dt-bindings branch as a dependency.
-
-That way you don't have to worry about this at all. We might also get
-another set of similar changes for PCI or USB during this cycle, so it'd
-certainly be easier to collect all of these in a central place.
+Applied, thanks.
 
 Thierry
 
---ELvShlyS5h/f0Ju7
+--WXw1FbmeQU/+1/K2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmK15UAACgkQ3SOs138+
-s6GY0w//Z2YQbjVYoy/R8sVrEOOoRQ4RDJWm6hiI5p3x64fDoBOUjpfziT28nPfE
-V3OUcPMmf/V8p9ddhu7TqWwgtAIil3Y1ZkwYrm0iddv0jnNNDcT3WbeqPZXlKtUr
-u7DvsRF3Pv/dMjFKyEPwf9rOvZgGDvycRbXiA7uosQUzUuot+7AxSXe5cToXvZtB
-HwR5OQ3ZFcpstHaBfK/5mjC+fRaVCLl0MOXdBf4vIcO/cXAW/wATWp6YTxDwlZ4Q
-S7FqxPIqlsXYbPkHL33MOhjWevKiZYQd6Q/ed1ywP9I/yEwou+bbGQ1gz2GAvADp
-Hl/mJgTvYq7vnc/6rmjqlq2Es8Uy6quonzNHkgAKJxUGXTQyJHoA7mUr3o4GABD5
-t3h+WqpFc41ApVSjpGnwdDXaCTGKor+5NIQCsqiNxfhKZ6OhQ5Q31T/4sll6tLOs
-ZkzfNP/56TfTOqCsHRVqAn94EgOM1NNs5OnJw8L4fGoGgeinM0OXl5DEn5GUyRM4
-1qhTyBLHczLqwLAeOjeoeQI4bd+wkQkWuIDSKwAh2Y5PUMtmcMUGcMFD1CUzR1Kd
-PugLU/05tM7SScvIzIkzB29o7AQHNiFI3IKJjs1l7+e39PXRcnBMM8Wu+kvaF7Dz
-mABmCkPW7g1cHuhuJ1IrMROXPeS+5GrLdNe4yCdQa9UabzS+U+U=
-=HAdh
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmK15c0ACgkQ3SOs138+
+s6EvHRAAj5Sn5POcAeo1gyPgf25OpMA4+Nq1XJ9gk8Zi0UKEtV5jh0ZwmhaDKizm
+pcOi+xqYXm7QDe39q6P7BiQ8kUVlhGPjL/CKskcbYTYWIQbaYxdltwJKWtDa6Je8
+xpsGwgtQMBXZ0DChn+pWky2mrjN5D1r6ZBUIGHdfcb0xFf2PPj9bIcsqxN05S/Oc
+xZVb3MVMaGbYKK1HIOAlwIByk5/NFBoRYr1ygVFxovwMjddvg2wDwSPfx2Ed2CgQ
+f+wZyJGloC98bMl25pa/PzYWdPOSA6c3DSwwt5jSCTXYjboo7TXfw84hfLe5bI4t
+PahEzkik35FSjYTi0ZpOICKLRE2pGGSZvS76J/vRYySy4MOjHY/TJkcoBQy/5MVb
++jhGZTUlSAzoZ+gmeVBkylwKJJyIe/DpHGQ1bABsls2HMkkAjZPRA6lyxrnqB0vy
+h4D+srDkbnAh6O35nw3Q80HvujztmPce+VW6W8vgRwKSOoWvLCQon615lfBbxUFR
+SOVnIDq6Va7t+29tJwzikYstxRoNxC7EHzdhjwc2SQmD2i7nEJPhW5ByJXrr/y2b
+Tlzuv6VUr5BqOAR/pP/g2lohdqFah6gVnBv/0CqD/8jGGnpMLXER+31H0HNzoKTS
+EP2Hy2m6ihgTJ8VX9MWjjzqF+oEXbFF7Ziy6yjyl9CwJGpHCX3o=
+=0k8q
 -----END PGP SIGNATURE-----
 
---ELvShlyS5h/f0Ju7--
+--WXw1FbmeQU/+1/K2--
