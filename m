@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8D3C43334
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 00:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4B2C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 00:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbiFXAsh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Jun 2022 20:48:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40026 "EHLO
+        id S229823AbiFXA5E (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Jun 2022 20:57:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbiFXAsg (ORCPT
+        with ESMTP id S229599AbiFXA5E (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Jun 2022 20:48:36 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57003AA41
-        for <linux-tegra@vger.kernel.org>; Thu, 23 Jun 2022 17:48:34 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id k14so719109plh.4
-        for <linux-tegra@vger.kernel.org>; Thu, 23 Jun 2022 17:48:34 -0700 (PDT)
+        Thu, 23 Jun 2022 20:57:04 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00E82562CC
+        for <linux-tegra@vger.kernel.org>; Thu, 23 Jun 2022 17:57:02 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id t3-20020a17090a510300b001ea87ef9a3dso1281408pjh.4
+        for <linux-tegra@vger.kernel.org>; Thu, 23 Jun 2022 17:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=vT7SI/0dq3kYi1YzDx+CNQqO5F2TeEBjziGGhkphlR0=;
-        b=cJK7kkGYzkuw1/SMY2wrCvbdnAA4eaCFG1FuVGxZGs1fHVRTmGorCsHXrrOGBGjwR8
-         HH5ZMjkqmmvHoEeVk4dNympY3ENzxIHGQPRmEBCBpLNTWzi4VW03eyjmqZxK6eDCJ6xk
-         DXKZ9uxeHt63pNKkUTSv150YrhtkEwcKakQySLlrG9st7iGaYOUVmP4xhlVyWv6PZfm3
-         uyRAh53qApCMUazud1hMCTyVjemqWauOm5sh00/i66o6Jab47HFJpT/23lhhiEUlGdDG
-         0+wNHdxWYOkmIrUhYLy7k6z0E26LpsLTOhRBBOk8evt9vb1s1Tx8bvSg4iaoOO+PsQD3
-         9kyg==
+        bh=hxVvB/m7x0pgtjlNYBhWurxvqaAULbnSfJFRHQ6dHo4=;
+        b=LMOQw6GJtSJ54E9LC8aXS8JjU9Xiug7/qsvW5QpPNmC0/MUnxPZkcpO1Kb8rHGenmc
+         lzbcmdRhC0vjEKRRF4+bOY4vbkzgMM9VmvQwGETZ+0v11g31c8Qsl1WyIoHK+XAl0pH8
+         wjYyASMIZDd9LL3/pPH5ZqxwgTBtIZ1YV/51WxozXcXv+PEAxXA4Yrz3HrhdLsPvrZ2v
+         j7rmSzSxDBqageafcUNeyQqx1gTt9yLe8/ujf7aHo2CY0Pq4vK1G30e7UKaohGd5bYGZ
+         nY+t942ghnZQJA6KYZDoryFEFXUk71S5ZMSF8DiMFo8YbTY6rJFGWF8oxaspQ5YaclkS
+         HTmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=vT7SI/0dq3kYi1YzDx+CNQqO5F2TeEBjziGGhkphlR0=;
-        b=gkcKoQQRF7ISUfH4HM5ASIhgpLMGKSeI9YRLyQGNCJ7qHDMiUxpD58ETBAWpXfJo+R
-         AP9zl5w+Y8QQplBvKBYJhF9V3ugcJlUlY0FZZZ8Yi9VpnlXaoIvLOmjLhxWLisojqewI
-         yaGR80/dLFPCcX0LQP2lgJpRT4Sj6Ct/u0A2TBNIRwHFa2FxpAFpvWf72pLCKN9xcXxN
-         D4t5s6XI7GtBOJ7Ewk6uy893+WnD0K510B/7tejyue12qSkbWeuUaH7uPRkvvp8gDTD2
-         VtOMy6Eoixj429amAK2AxiCvwDdkNU+d30VHypqJO/cPG40+PEK1ew0zo6twLlQ7zqE4
-         w8AQ==
-X-Gm-Message-State: AJIora/jL95lgyk1jBffF04xWCdNCn7tv9oycd2yzmKvnHjsDaFvw/Bc
-        P+P+SSSiMTT4rN9q6W+PNRc1Hw==
-X-Google-Smtp-Source: AGRyM1t3QeybUXk5i3agF3ozxrpy/i3taBdUtkZxi6rAqUowX/nFrq0JKwSCErThiOduLvCrhKq53g==
-X-Received: by 2002:a17:90b:3ec6:b0:1ec:ac25:ce6f with SMTP id rm6-20020a17090b3ec600b001ecac25ce6fmr741120pjb.203.1656031714364;
-        Thu, 23 Jun 2022 17:48:34 -0700 (PDT)
+        bh=hxVvB/m7x0pgtjlNYBhWurxvqaAULbnSfJFRHQ6dHo4=;
+        b=1cblXv3o+MUFCCAv57r2joFfxFUD21+4NSruLyd7deKXs8uJaBTKl2qcXaEBsk5ZLF
+         gFpW4IZEMYJxHXY5+hv6UHlDmcRmaaJm2wzTMGRV60eHnrrAdnHVmhYs3DmiRp/SOeg+
+         l5oHK4Lj/5iLpRnJuVesWDBmqjLVNDty2dJDdKCSWK5Pug4t1hndRfldLGt76Wfka5ft
+         Rz+mN3cLwrbl3eNZBDAHeNw+O3SJcQt7x2xgt50TTNWpyVRF2pMOiJwkAzoQKjPZy/uS
+         CQfXpnqL5BpvpaOd88w6HwbTXMNswzOUmo4RjJ5GJCToFX01JeqdM0H0tUJjlG/WXy46
+         qiTw==
+X-Gm-Message-State: AJIora+V8zK/mspf26GaoUMAJ63Niw40Cy8133Dmiw3udnF+6TBJU6ti
+        04dSlDBM4OeQQw7WdjS95J5DMw==
+X-Google-Smtp-Source: AGRyM1u/rQOGJQmJ3cvPtnGI8BOb90GaJ9FhnlhNwV1scpb7V7CBR/z3hC4vp9WD7hspkr0FrliEYw==
+X-Received: by 2002:a17:90b:4c48:b0:1ec:a20e:a9bf with SMTP id np8-20020a17090b4c4800b001eca20ea9bfmr790585pjb.209.1656032222483;
+        Thu, 23 Jun 2022 17:57:02 -0700 (PDT)
 Received: from localhost ([122.172.201.58])
-        by smtp.gmail.com with ESMTPSA id cp2-20020a170902e78200b0015e8d4eb1d7sm412917plb.33.2022.06.23.17.48.32
+        by smtp.gmail.com with ESMTPSA id v20-20020a1709028d9400b001690a6394b6sm390283plo.247.2022.06.23.17.57.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 17:48:33 -0700 (PDT)
-Date:   Fri, 24 Jun 2022 06:18:31 +0530
+        Thu, 23 Jun 2022 17:57:01 -0700 (PDT)
+Date:   Fri, 24 Jun 2022 06:27:00 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -60,141 +60,47 @@ Cc:     linux-pm@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 22/31] soc/tegra: Migrate to dev_pm_opp_set_config()
-Message-ID: <20220624004831.po35sowzfo4c47b3@vireshk-i7>
+Message-ID: <20220624005700.oj4etaajbutvsym7@vireshk-i7>
 References: <cover.1653564321.git.viresh.kumar@linaro.org>
  <449b344f037c7ef1970bc84d31e0d4c4cb4d2951.1653564321.git.viresh.kumar@linaro.org>
+ <20220624004831.po35sowzfo4c47b3@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <449b344f037c7ef1970bc84d31e0d4c4cb4d2951.1653564321.git.viresh.kumar@linaro.org>
+In-Reply-To: <20220624004831.po35sowzfo4c47b3@vireshk-i7>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 26-05-22, 17:12, Viresh Kumar wrote:
-> The OPP core now provides a unified API for setting all configuration
-> types, i.e. dev_pm_opp_set_config().
-> 
-> Lets start using it.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/soc/tegra/common.c | 8 ++++++--
->  drivers/soc/tegra/pmc.c    | 8 ++++++--
->  2 files changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-> index 49a5360f4507..7ba15cb836e8 100644
-> --- a/drivers/soc/tegra/common.c
-> +++ b/drivers/soc/tegra/common.c
-> @@ -107,6 +107,10 @@ int devm_tegra_core_dev_init_opp_table(struct device *dev,
->  {
->  	u32 hw_version;
->  	int err;
-> +	struct dev_pm_opp_config config = {
-> +		.supported_hw = &hw_version,
-> +		.supported_hw_count = 1,
-> +	};
->  
->  	/* Tegra114+ doesn't support OPP yet */
->  	if (!of_machine_is_compatible("nvidia,tegra20") &&
-> @@ -118,9 +122,9 @@ int devm_tegra_core_dev_init_opp_table(struct device *dev,
->  	else
->  		hw_version = BIT(tegra_sku_info.soc_speedo_id);
->  
-> -	err = devm_pm_opp_set_supported_hw(dev, &hw_version, 1);
-> +	err = devm_pm_opp_set_config(dev, &config);
->  	if (err) {
-> -		dev_err(dev, "failed to set OPP supported HW: %d\n", err);
-> +		dev_err(dev, "failed to set OPP config: %d\n", err);
->  		return err;
->  	}
+On 24-06-22, 06:18, Viresh Kumar wrote:
+> +       struct dev_pm_opp_config config = {
+> +               /*
+> +                * For some devices we don't have any OPP table in the DT, and
+> +                * in order to use the same code path for all the devices, we
+> +                * create a dummy OPP table for them via this. The dummy OPP
+> +                * table is only capable of doing clk_set_rate() on invocation
+> +                * of dev_pm_opp_set_rate() and doesn't provide any other
+> +                * functionality.
+> +                */
+> +               .clk_names = NULL,
+> +               .clk_count = 1,
+> +       };
 
-Jon/Dmitry,
-
-Because of the update [1] to previous patch 21/31, I am updating this
-file as (fresh diff):
+Slight modification here, sorry about that. We just need to set the
+name as NULL and not the array itself.
 
 diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index 9f3fdeb1a11c..cd53e46c4058 100644
+index cd53e46c4058..6a099d764cce 100644
 --- a/drivers/soc/tegra/common.c
 +++ b/drivers/soc/tegra/common.c
-@@ -107,36 +107,42 @@ int devm_tegra_core_dev_init_opp_table(struct device *dev,
- {
-        u32 hw_version;
-        int err;
--
--       /*
--        * For some devices we don't have any OPP table in the DT, and in order
--        * to use the same code path for all the devices, we create a dummy OPP
--        * table for them via this call. The dummy OPP table is only capable of
--        * doing clk_set_rate() on invocation of dev_pm_opp_set_rate() and
--        * doesn't provide any other functionality.
--        */
--       err = devm_pm_opp_set_clkname(dev, NULL);
--       if (err) {
--               dev_err(dev, "failed to set OPP clk: %d\n", err);
--               return err;
--       }
--
--       /* Tegra114+ doesn't support OPP yet */
--       if (!of_machine_is_compatible("nvidia,tegra20") &&
--           !of_machine_is_compatible("nvidia,tegra30"))
--               return -ENODEV;
--
--       if (of_machine_is_compatible("nvidia,tegra20"))
-+       struct dev_pm_opp_config config = {
-+               /*
-+                * For some devices we don't have any OPP table in the DT, and
-+                * in order to use the same code path for all the devices, we
-+                * create a dummy OPP table for them via this. The dummy OPP
-+                * table is only capable of doing clk_set_rate() on invocation
-+                * of dev_pm_opp_set_rate() and doesn't provide any other
-+                * functionality.
-+                */
-+               .clk_names = NULL,
-+               .clk_count = 1,
-+       };
-+
-+       if (of_machine_is_compatible("nvidia,tegra20")) {
-                hw_version = BIT(tegra_sku_info.soc_process_id);
--       else
-+               config.supported_hw = &hw_version;
-+               config.supported_hw_count = 1;
-+       } else if (of_machine_is_compatible("nvidia,tegra30")) {
-                hw_version = BIT(tegra_sku_info.soc_speedo_id);
-+               config.supported_hw = &hw_version;
-+               config.supported_hw_count = 1;
-+       }
-
--       err = devm_pm_opp_set_supported_hw(dev, &hw_version, 1);
-+       err = devm_pm_opp_set_config(dev, &config);
-        if (err) {
--               dev_err(dev, "failed to set OPP supported HW: %d\n", err);
-+               dev_err(dev, "failed to set OPP config: %d\n", err);
-                return err;
-        }
-
-+       /*
-+        * Tegra114+ doesn't support OPP yet, return early for non tegra20/30
-+        * case.
-+        */
-+       if (!config.supported_hw)
-+               return -ENODEV;
-+
-        /*
-         * Older device-trees have an empty OPP table, we will get
-         * -ENODEV from devm_pm_opp_of_add_table() in this case.
-
--------------------------8<-------------------------
-
-The idea here is to always set the clk name (to NULL) and skip other
-stuff for SoCs other than tegra 20/30.
-
-Just see if you can find something odd with the review of it, I will
-resend it properly later once the issues are settled.
+@@ -116,7 +116,7 @@ int devm_tegra_core_dev_init_opp_table(struct device *dev,
+                 * of dev_pm_opp_set_rate() and doesn't provide any other
+                 * functionality.
+                 */
+-               .clk_names = NULL,
++               .clk_names = (const char *[]){ NULL },
+                .clk_count = 1,
+        };
 
 -- 
 viresh
-
-[1] https://lore.kernel.org/lkml/20220624002805.anv62ufihdrncwus@vireshk-i7/
