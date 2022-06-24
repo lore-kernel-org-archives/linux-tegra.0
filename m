@@ -2,85 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5954ACCA47E
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 16:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3DDC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 16:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230474AbiFXQGm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Jun 2022 12:06:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36800 "EHLO
+        id S231168AbiFXQIY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Jun 2022 12:08:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbiFXQGl (ORCPT
+        with ESMTP id S231144AbiFXQIV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Jun 2022 12:06:41 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9896562DB
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Jun 2022 09:06:40 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id o8so3755652wro.3
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Jun 2022 09:06:40 -0700 (PDT)
+        Fri, 24 Jun 2022 12:08:21 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CCD39142;
+        Fri, 24 Jun 2022 09:08:19 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id g18so3714462wrb.10;
+        Fri, 24 Jun 2022 09:08:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XD25QM33us7hPEequuu5UA72HkDpqMdvG8CesGBJr0o=;
-        b=tTfKAwsZQSYXujHGO/BsaRvBdcaNwCqG7HIiKalwbqfhHKdbZSkZ/5Or17qeliqKGq
-         JDE2vMnl6zH0zQBkFTUAL3hK84XBjWM3WPVKld8QV4Dr4WcQ5JYi6dBVYFr2vj5gUeSA
-         Ly+HGwKo5x9GS54htRUXP3ZtOsH0H3okkdgBWMat9yKyK4/GMwBwrQ/GkOSS2p5L9h2Q
-         ALP7JernsUKXZV+TrFDXJDx8i8NDjodlVrGA69kYvyfI2dIXRfc6dntOP6rwx44y3qm5
-         8jSNWJNk4cBFM5UlKr1EnEbfqzKbZYab2vAnI81m4WGZBaxmO4EfqgLLjH4O2rQeZan8
-         EDAA==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5QCcsp/oxE/4aK5lzsCff9T90roPIhhHgQz79caNMm0=;
+        b=nywWrqoT7S5Iyyh6SqrQzlKQY3X52hZhoqeseTw4TA8PjHqSWGls0lr1Z1GG45wc7T
+         ilRYO5/HwDZbE3W/0rSQIrNNlj+oN1rP8X4SqejxGw27dcv/kU6HKNpa0sbhyDb7/8kg
+         SltLregODjAMirVz2CHXo5xeU+fk8TxpNFGj9NeBNA9NoOXPZNla98xGKAsb1A+9VQn3
+         Rcrrjtl1mKTGLGzE8udQvPqy2tO5FEq6SPVaWmSzqGHfR9kwdd5il1OoaNUf4sI0i4DY
+         D7pzczpeRNXkRhtf5bQp/ZWyQhIOUoePOl9kHicutao1JEibogxhZjlK3drqv7GMbpi/
+         jM1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XD25QM33us7hPEequuu5UA72HkDpqMdvG8CesGBJr0o=;
-        b=MOkBtgL+WZMrerAp/4qjoZBFuJ3Uz4QdoA6LD8YjAmILoQpE5yJznyM60S9eDJhtpw
-         ia9XcvY8vdjBAF8VzLUY6SbQF7nkGUn/nVeaMleUeshQVwbrdxjeyHfhivfP6XticP4m
-         OF6lPY3RQIvNIwtma4lIpIMvKTd9fmmNN/2X/yyoDEGzb4nD4DOAE1Ox7rTYIdM9kV7W
-         q8eU1xWGsRuiiMXtsihr2m6jZNaiPqhXxDDyaYonMXEX6XdsTnQsEHeG3VKnmEbnzIp4
-         /q0XBhUVreDjV/umNF4cH0EmVjt6dAQvMfR7OvWdpGQbrRJO/eKircxpuDptl86u2Z+G
-         T9Aw==
-X-Gm-Message-State: AJIora/0G05UWrspZ6Jes34WBhe39qFU2ILg+H+1L9/cM2rZXWIF4hqk
-        u0R2l38ueFBt8IjX09TRKGZ4Vqo9H/T7Kw==
-X-Google-Smtp-Source: AGRyM1uubThZWxs0LtJdne3P4esvibl90VzKex8ROZDrXmt3/kumeOoNNP4LbTVIZXQ4u0xtRlU3tw==
-X-Received: by 2002:a5d:50d0:0:b0:21b:978f:e54 with SMTP id f16-20020a5d50d0000000b0021b978f0e54mr14021882wrt.612.1656086798942;
-        Fri, 24 Jun 2022 09:06:38 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id k1-20020a5d6281000000b0021b9e360523sm2754953wru.8.2022.06.24.09.06.38
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5QCcsp/oxE/4aK5lzsCff9T90roPIhhHgQz79caNMm0=;
+        b=IyR5DCKY3GhMugIBSir19auy5hkOxDHlr1bNbpqSPh6peh58RORFOE6TEnuaw/asK/
+         k2672go6P27dBwEJIBoBVTb4Uvdot6//RdUE+CxB8/tIcgmGr+txE4n1bF1J2Yoa7/15
+         8RaIYVao9Du/8WIBrBkQjYHs51kJhtGRT+Yg0Vo4mSZAGExh0BS6ftB4peRc0lpy6Msl
+         xH6dV8ANxWLv5WF+Uqu8XpFJq+N/qW5ow+GZto+x5i+pjgjlBIxP/rVYOKgdXVXxaWsy
+         woOBcPQl/uZE5XGnq89R7Fwcr+F4hIgCf3LGJIQ2aJpEmBGfrvIl5LWfudLxAULDbDIL
+         X2Kw==
+X-Gm-Message-State: AJIora/8R/nHCZPe896blXAVg3E++DdfA2skhk6D+0REJREVknCTuB/7
+        msSBaOFN+gtofEcQRvAs2Kk=
+X-Google-Smtp-Source: AGRyM1v8XWD6eMjxLPwbRD8oLlGN4gejnKJChEge19xr58Opj+b/4OXgyBk18OXlqG5Rd2aDHkMkjQ==
+X-Received: by 2002:adf:eb88:0:b0:219:b9dd:af57 with SMTP id t8-20020adfeb88000000b00219b9ddaf57mr14093882wrn.7.1656086897824;
+        Fri, 24 Jun 2022 09:08:17 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id d9-20020a05600c3ac900b003a03be22f9fsm2460104wms.18.2022.06.24.09.08.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 09:06:38 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     linux-tegra@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, vbhadram@nvidia.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        thierry.reding@gmail.com, treding@nvidia.com, robh+dt@kernel.org,
-        catalin.marinas@arm.com, krzysztof.kozlowski+dt@linaro.org,
-        kuba@kernel.org, jonathanh@nvidia.com, will@kernel.org
-Subject: Re: (subset) [PATCH net-next v1 4/9] memory: tegra: Add MGBE memory clients for Tegra234
-Date:   Fri, 24 Jun 2022 18:06:35 +0200
-Message-Id: <165608679241.23612.16454571226827958210.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220623074615.56418-4-vbhadram@nvidia.com>
-References: <20220623074615.56418-1-vbhadram@nvidia.com> <20220623074615.56418-4-vbhadram@nvidia.com>
+        Fri, 24 Jun 2022 09:08:17 -0700 (PDT)
+Date:   Fri, 24 Jun 2022 18:08:15 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 19/40] arm64: dts: tegra: align gpio-key node names
+ with dtschema
+Message-ID: <YrXhb5izGPNXEmMK@orome>
+References: <20220616005224.18391-1-krzysztof.kozlowski@linaro.org>
+ <20220616005333.18491-19-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IyLVWPIxofCPGlpx"
+Content-Disposition: inline
+In-Reply-To: <20220616005333.18491-19-krzysztof.kozlowski@linaro.org>
+User-Agent: Mutt/2.2.6 (2022-06-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 23 Jun 2022 13:16:10 +0530, Bhadram Varka wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Tegra234 has multiple network interfaces with each their own memory
-> clients and stream IDs to allow for proper isolation.
-> 
-> 
 
-Applied, thanks!
+--IyLVWPIxofCPGlpx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[4/9] memory: tegra: Add MGBE memory clients for Tegra234
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/6b36629c85dc7d4551e57e92a3e970d099333e4e
+On Wed, Jun 15, 2022 at 05:53:12PM -0700, Krzysztof Kozlowski wrote:
+[...]
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/=
+boot/dts/nvidia/tegra132-norrin.dts
+> index f16acb4cabaa..62d58221ad3c 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+> @@ -1030,7 +1030,7 @@ clk32k_in: clock-32k {
+>  	gpio-keys {
+>  		compatible =3D "gpio-keys";
+> =20
+> -		lid {
+> +		switch-lid {
+>  			label =3D "Lid";
+>  			gpios =3D <&gpio TEGRA_GPIO(R, 4) GPIO_ACTIVE_LOW>;
+>  			linux,input-type =3D <5>;
+> @@ -1039,7 +1039,7 @@ lid {
+>  			wakeup-source;
+>  		};
+> =20
+> -		power {
+> +		switch-power {
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This one is actually a key.
+
+[...]
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/b=
+oot/dts/nvidia/tegra210-smaug.dts
+> index a263d51882ee..8494c7b2961b 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+[...]
+> @@ -1772,7 +1772,7 @@ lid {
+>  			wakeup-source;
+>  		};
+> =20
+> -		tablet_mode {
+> +		key-tablet-mode {
+>  			label =3D "Tablet Mode";
+>  			gpios =3D <&gpio TEGRA_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
+>  			linux,input-type =3D <EV_SW>;
+
+And this one more like a switch since it's triggered by a magnet, as far
+as I understand.
+
+No need to resend, I can fix these up when I apply. Just let me know if
+you have any objections to me making those changes.
+
+Thierry
+
+--IyLVWPIxofCPGlpx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmK14W8ACgkQ3SOs138+
+s6GuoRAAs/Bh3zBxhYqqU+0xHTMaroNOhMkFFFzlQ+JOw+7Wg4AybDOEUQZCU5gP
+YFxNy1JsHoPso+15Y32LoJ3NVwQ82HW3+KBPyPUFHmsuoj8BbNhTJEsc2yht8JV+
+sUbVDThkZu7Tth7i+jrX20VfUPuUK4WveSvRrC3/WY6tzkwWbsEk/lSbP+m5Dir1
+e59WpNyCa41llMSQZzGyOwY2cZ6Y9e64wrqORHrOQxyboVmmeYvtoQADR3a/geF4
+boqK/shRCZDo/ysmfdMfZLjc1XOs5pMYAaOV+xw9VWAhAL8Z7CuOI6sPjHgzBx6q
+SrbW0PVm7fMhWu5YDDUXoKNC2zVmdpWR18AE7zXOUc4aVlVfpWZR02/o9z1/CkYM
+3wpV7DjQWjFWnlUB0Tm0m9mvBLRoH8mjNYcwtPH8g0C4xtPOWrzgl6bFne+cUqBG
+QLNqbqPv+EEvcFOUT2QTO5xEbQaUO9YaF4kNj3dqO0ERT6FFU2z8j/lqmrP5JIuS
++da5kfHfnMQPYVy/OiWmzCjk+GqQ4apF0DllkRFMFkCqjhiV3QsOF4oX/mUuU4UJ
+gg6DMIE2rF9RikECb/TSspTQHhtFv+0bsb1yYxj7qks8cZAezxSreVnUwWJimEpW
+aspfZ6S6xv3QuBOBP8UyFcWhhgwrBbGgMkQvtNt3KrSnr2C7TUA=
+=ykpI
+-----END PGP SIGNATURE-----
+
+--IyLVWPIxofCPGlpx--
