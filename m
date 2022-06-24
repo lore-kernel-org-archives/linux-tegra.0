@@ -2,96 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7844CCA47C
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 00:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBB3C43334
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 01:36:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230495AbiFXA7T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Jun 2022 20:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
+        id S230316AbiFXBgA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Jun 2022 21:36:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbiFXA7S (ORCPT
+        with ESMTP id S229475AbiFXBgA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Jun 2022 20:59:18 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90A1B51339
-        for <linux-tegra@vger.kernel.org>; Thu, 23 Jun 2022 17:59:16 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id t3-20020a17090a510300b001ea87ef9a3dso1285862pjh.4
-        for <linux-tegra@vger.kernel.org>; Thu, 23 Jun 2022 17:59:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KmS8YzmeCRLv0I98pRDwb5hkTAXUpnuhqIpKkfmBufE=;
-        b=JwKtT3fL1uGxHggTu0QP9C6/zTY9cE/chhtLyUukOJz3qAa7Y0GKN4wo/9nSFFhBN2
-         LbH8QZ+Ndo5GLN1iBbnmWCIF9Iv8604vl3J2W3NPRStBsrBu2Ze/Lzz+QCdEC/xJQ5dn
-         ZliKB8Pz8hwPepF1chLtAnEp/Wf0b9l/fttcFDyfxj5Y56IZE+up0KmAMGZO74s76n6j
-         WzBvHMgV2rJMpjTt/McgH3aFee0+p+b4oFy/ebML/kzuDQctvFdVN240LANClVcII1ew
-         r+z7u7R+lraPlaz7KEeu6jHIHAB0xXnGyzl7yB41aCTkIb1seE6scTNJAgUz+Lo6N1sf
-         vaSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KmS8YzmeCRLv0I98pRDwb5hkTAXUpnuhqIpKkfmBufE=;
-        b=eY+MGI8XR+kLTsKHUQ3sWZiUe+s7FfRXQPuPDGrOboJ7WGGlYGfse4LHDINP/AFODV
-         mkFWHaGRlWepnhh4Hs3WD69/lSgI/l3i+c2gxt2JGuGYAFCczQ9XArTTAFS0ZdwfWcLG
-         fLwJ0dF8yjbq7crIlhTIv7zfKGjIZF3LT7vBskQEVlvRh6EEMzUQKEXCODstdDXQMUPE
-         aioy9VRbMBX4eJfbi3+C6i4CBLYmUuXU60M9CtiActuBjq2Y6eJQerNklju0twfStaK8
-         DRkatrcG74dEfvl3QVNui+dHP6btj5u8MDRcVTjVJB0uttFO07IUoq6c/624snGVx/9q
-         FPoQ==
-X-Gm-Message-State: AJIora+WOKlC9dl+78qfPF/BmU/5ONH8LjRo38QDJXKCCi18LCgbjwBO
-        oy5sQVd8qmqx82U/0xr1XW6lzg==
-X-Google-Smtp-Source: AGRyM1tLz9sqqBrgejC9t9gGmFOiQz9+sLFk6OZq10wqEkbzb29GFJyyM8rzDKK3Akgmo2Yjqga6/g==
-X-Received: by 2002:a17:90a:4210:b0:1ec:b859:91a3 with SMTP id o16-20020a17090a421000b001ecb85991a3mr848011pjg.164.1656032356081;
-        Thu, 23 Jun 2022 17:59:16 -0700 (PDT)
-Received: from localhost ([122.172.201.58])
-        by smtp.gmail.com with ESMTPSA id p22-20020a1709027ed600b0016a0fe1a1fbsm391415plb.220.2022.06.23.17.59.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 17:59:15 -0700 (PDT)
-Date:   Fri, 24 Jun 2022 06:29:13 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 21/31] soc/tegra: Remove the call to
- devm_pm_opp_set_clkname()
-Message-ID: <20220624005913.ytsskavsaxt4rzzm@vireshk-i7>
-References: <cover.1653564321.git.viresh.kumar@linaro.org>
- <1e88b248352afe03cd3bf0e887b1f2be86b5afb5.1653564321.git.viresh.kumar@linaro.org>
- <12c085af-1202-95cf-e9ad-ddcfbdadf0d6@nvidia.com>
- <20220624002805.anv62ufihdrncwus@vireshk-i7>
+        Thu, 23 Jun 2022 21:36:00 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FBAC5677A;
+        Thu, 23 Jun 2022 18:35:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656034559; x=1687570559;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gyA97i97HwL5wq54DYwFbjfmzziuSTurfIWHXSjG3gU=;
+  b=nZ3EdQ4LB3Jl8N2xyPUKDufei4aMw6C99PRF+nC2WwjQrP5pByLRC0je
+   fYA/u0eFTu3CHgpePAbfbBve5gzFe1LxTFrVCMiEt3j4hfk+t7BgXgFQF
+   hFj/40ieBwH27qgYQjzqglnjPlCLftcPYKicrEnUbrN2M1Vm3TpqSWLJ7
+   g1QAp+nsTN5ulZc0t7uTNH5N00XA17n241cRgzuWePhofC5F6GVWnEDW1
+   P6s0jKs0RzgmMVvLhK9gEASowjq3zdaTAKjslI5lQ1T7HSqyZKQ4dOdF+
+   r4q3NmigepAGfsKI2rW3jm7zXTuOMQpwiTTlMO94eMJViUAqPOFppP3Li
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10387"; a="367212186"
+X-IronPort-AV: E=Sophos;i="5.92,217,1650956400"; 
+   d="scan'208";a="367212186"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 18:35:59 -0700
+X-IronPort-AV: E=Sophos;i="5.92,217,1650956400"; 
+   d="scan'208";a="645038369"
+Received: from wenli3x-mobl.ccr.corp.intel.com (HELO [10.249.168.117]) ([10.249.168.117])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 18:35:51 -0700
+Message-ID: <270eec00-8aee-2288-4069-d604e6da2925@linux.intel.com>
+Date:   Fri, 24 Jun 2022 09:35:49 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220624002805.anv62ufihdrncwus@vireshk-i7>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Cc:     baolu.lu@linux.intel.com, suravee.suthikulpanit@amd.com,
+        alyssa@rosenzweig.io, dwmw2@infradead.org, yong.wu@mediatek.com,
+        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+        thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+        cohuck@redhat.com, thunder.leizhen@huawei.com, tglx@linutronix.de,
+        chenxiang66@hisilicon.com, christophe.jaillet@wanadoo.fr,
+        john.garry@huawei.com, yangyingliang@huawei.com,
+        jordan@cosmicpenguin.net, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain
+ and device/group
+Content-Language: en-US
+To:     Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org,
+        will@kernel.org, marcan@marcan.st, sven@svenpeter.dev,
+        robin.murphy@arm.com, robdclark@gmail.com, matthias.bgg@gmail.com,
+        orsonzhai@gmail.com, baolin.wang7@gmail.com, zhang.lyra@gmail.com,
+        jean-philippe@linaro.org, alex.williamson@redhat.com,
+        jgg@nvidia.com, kevin.tian@intel.com
+References: <20220623200029.26007-1-nicolinc@nvidia.com>
+ <20220623200029.26007-2-nicolinc@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20220623200029.26007-2-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 24-06-22, 05:58, Viresh Kumar wrote:
-> Though there will still be a problem here with my changes, we don't
-> accept NULL clkname anymore for the set-clkname API. And tegra does
-> this to pick the first clock available in DT (at index 0) I think.
-> Other drivers (mostly qcom) who need such dummy OPP table, provide a
-> real clock name instead. Will it be possible to pass that here somehow
-> ?
+On 2022/6/24 04:00, Nicolin Chen wrote:
+> diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+> index e1cb51b9866c..5386d889429d 100644
+> --- a/drivers/iommu/mtk_iommu_v1.c
+> +++ b/drivers/iommu/mtk_iommu_v1.c
+> @@ -304,7 +304,7 @@ static int mtk_iommu_v1_attach_device(struct iommu_domain *domain, struct device
+>   	/* Only allow the domain created internally. */
+>   	mtk_mapping = data->mapping;
+>   	if (mtk_mapping->domain != domain)
+> -		return 0;
+> +		return -EMEDIUMTYPE;
+>   
+>   	if (!data->m4u_dom) {
+>   		data->m4u_dom = dom;
 
-Jon,
+This change looks odd. It turns the return value from success to
+failure. Is it a bug? If so, it should go through a separated fix patch.
 
-Okay, I was able to handle it without making any further updates to
-the OPP core. Nothing else required from your side on this.
-
-I have pushed the updates (to this patch and 22/31) to opp/linux-next
-branch. You can try it now and it should just work. I have only build
-tested it though.
-
-Thanks.
-
--- 
-viresh
+Best regards,
+baolu
