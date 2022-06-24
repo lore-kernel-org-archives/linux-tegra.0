@@ -2,55 +2,62 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3DDC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 16:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECEBC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 16:09:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231168AbiFXQIY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Jun 2022 12:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38024 "EHLO
+        id S231300AbiFXQJt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Jun 2022 12:09:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231144AbiFXQIV (ORCPT
+        with ESMTP id S231173AbiFXQJs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Jun 2022 12:08:21 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CCD39142;
-        Fri, 24 Jun 2022 09:08:19 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id g18so3714462wrb.10;
-        Fri, 24 Jun 2022 09:08:19 -0700 (PDT)
+        Fri, 24 Jun 2022 12:09:48 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39FA44B1C9
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Jun 2022 09:09:47 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id u12so5630353eja.8
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Jun 2022 09:09:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5QCcsp/oxE/4aK5lzsCff9T90roPIhhHgQz79caNMm0=;
-        b=nywWrqoT7S5Iyyh6SqrQzlKQY3X52hZhoqeseTw4TA8PjHqSWGls0lr1Z1GG45wc7T
-         ilRYO5/HwDZbE3W/0rSQIrNNlj+oN1rP8X4SqejxGw27dcv/kU6HKNpa0sbhyDb7/8kg
-         SltLregODjAMirVz2CHXo5xeU+fk8TxpNFGj9NeBNA9NoOXPZNla98xGKAsb1A+9VQn3
-         Rcrrjtl1mKTGLGzE8udQvPqy2tO5FEq6SPVaWmSzqGHfR9kwdd5il1OoaNUf4sI0i4DY
-         D7pzczpeRNXkRhtf5bQp/ZWyQhIOUoePOl9kHicutao1JEibogxhZjlK3drqv7GMbpi/
-         jM1Q==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=6gvRufNhBM/xZmT8OAxBWgGHDBASE7DNVJwEcxuAfPE=;
+        b=Cx89vn52ESGCQtTlL29RVi/XgLFvM8XFlt/SV26by6aXieczn+IDzFnSz+x/zBzUs4
+         k4EcbfFFZectmSD7JHVjV7CciPu1YJpsG86QnPY5mkKoV9jOMgifYVe+iz1jU3C5sYMu
+         td/R3lhGwizYszf1fpW2U3f3Xr8aoBaa63juyzjbJWA5A4g/m2GKvoH842Fs45mXj9o9
+         Pq9t7p9dzSDl80bqodZpA/ndegN8ch1FwwPH+huColD8WyTwK63N2eRxj+8Oa38/pLwK
+         hGgzK76csb7DvRGrqczRVYQJoYNeM0Eb6kt3xhCNKhWV1MMhgcm9i3/XYtFJILinYTH/
+         dZlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5QCcsp/oxE/4aK5lzsCff9T90roPIhhHgQz79caNMm0=;
-        b=IyR5DCKY3GhMugIBSir19auy5hkOxDHlr1bNbpqSPh6peh58RORFOE6TEnuaw/asK/
-         k2672go6P27dBwEJIBoBVTb4Uvdot6//RdUE+CxB8/tIcgmGr+txE4n1bF1J2Yoa7/15
-         8RaIYVao9Du/8WIBrBkQjYHs51kJhtGRT+Yg0Vo4mSZAGExh0BS6ftB4peRc0lpy6Msl
-         xH6dV8ANxWLv5WF+Uqu8XpFJq+N/qW5ow+GZto+x5i+pjgjlBIxP/rVYOKgdXVXxaWsy
-         woOBcPQl/uZE5XGnq89R7Fwcr+F4hIgCf3LGJIQ2aJpEmBGfrvIl5LWfudLxAULDbDIL
-         X2Kw==
-X-Gm-Message-State: AJIora/8R/nHCZPe896blXAVg3E++DdfA2skhk6D+0REJREVknCTuB/7
-        msSBaOFN+gtofEcQRvAs2Kk=
-X-Google-Smtp-Source: AGRyM1v8XWD6eMjxLPwbRD8oLlGN4gejnKJChEge19xr58Opj+b/4OXgyBk18OXlqG5Rd2aDHkMkjQ==
-X-Received: by 2002:adf:eb88:0:b0:219:b9dd:af57 with SMTP id t8-20020adfeb88000000b00219b9ddaf57mr14093882wrn.7.1656086897824;
-        Fri, 24 Jun 2022 09:08:17 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id d9-20020a05600c3ac900b003a03be22f9fsm2460104wms.18.2022.06.24.09.08.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 09:08:17 -0700 (PDT)
-Date:   Fri, 24 Jun 2022 18:08:15 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=6gvRufNhBM/xZmT8OAxBWgGHDBASE7DNVJwEcxuAfPE=;
+        b=z+88DyAl2LgUO/pC0+Y005M0MhKx03hHozleIb9oTe3ElySFsMKcgsl9M570WcVnY2
+         3YPhJlqJVYbthSJLoKut1alWWXNIy/zlIhVIfHyzoz7AvuvCssGXDDIlXjd0qSX6JSyx
+         lOj3vMKmdKyPfGYeVO1PohylHW7506KRrgQXRortTJC0NyoCrvnh7bHAZhAX13ICxc2O
+         M+Tvpc4ufo8T/4PkJ2sn1INvBYTR1g5OyxqCus1vaCc/0wCxSUOIiCIxIGI95trdykCj
+         Wu+Q06u9HgdNMIFlekQ9EIU3mPUvjEKgn7IiWXvdn1Wgn1IBFvLVOpJa5XVeq5O80rPp
+         UT6w==
+X-Gm-Message-State: AJIora9lQNBeLyjOAtVxQwxGeM4dpLAYF/5oqu0M+uBn7eZhUEjM8Bon
+        Yk32qD2+YHGIosv4zUQmABoDhQ==
+X-Google-Smtp-Source: AGRyM1uDTyymsbqvcpqw+G1IN3KBCRl9t4C7Oh/bLTsQdKflpW3kLavW6JRGTF7d3TRyu/L5i0y9MA==
+X-Received: by 2002:a17:906:2dd:b0:712:1293:3dd8 with SMTP id 29-20020a17090602dd00b0071212933dd8mr14164439ejk.448.1656086985840;
+        Fri, 24 Jun 2022 09:09:45 -0700 (PDT)
+Received: from [192.168.0.237] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id y26-20020a50ce1a000000b004357cec7e48sm2455312edi.13.2022.06.24.09.09.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jun 2022 09:09:45 -0700 (PDT)
+Message-ID: <dcd4be85-21ab-beb9-e6dc-bd7f570459fd@linaro.org>
+Date:   Fri, 24 Jun 2022 18:09:44 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 19/40] arm64: dts: tegra: align gpio-key node names
+ with dtschema
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Olof Johansson <olof@lixom.net>,
         Rob Herring <robh+dt@kernel.org>,
@@ -58,95 +65,66 @@ Cc:     arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 19/40] arm64: dts: tegra: align gpio-key node names
- with dtschema
-Message-ID: <YrXhb5izGPNXEmMK@orome>
 References: <20220616005224.18391-1-krzysztof.kozlowski@linaro.org>
  <20220616005333.18491-19-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="IyLVWPIxofCPGlpx"
-Content-Disposition: inline
-In-Reply-To: <20220616005333.18491-19-krzysztof.kozlowski@linaro.org>
-User-Agent: Mutt/2.2.6 (2022-06-05)
+ <YrXhb5izGPNXEmMK@orome>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <YrXhb5izGPNXEmMK@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 24/06/2022 18:08, Thierry Reding wrote:
+> On Wed, Jun 15, 2022 at 05:53:12PM -0700, Krzysztof Kozlowski wrote:
+> [...]
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+>> index f16acb4cabaa..62d58221ad3c 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+>> @@ -1030,7 +1030,7 @@ clk32k_in: clock-32k {
+>>  	gpio-keys {
+>>  		compatible = "gpio-keys";
+>>  
+>> -		lid {
+>> +		switch-lid {
+>>  			label = "Lid";
+>>  			gpios = <&gpio TEGRA_GPIO(R, 4) GPIO_ACTIVE_LOW>;
+>>  			linux,input-type = <5>;
+>> @@ -1039,7 +1039,7 @@ lid {
+>>  			wakeup-source;
+>>  		};
+>>  
+>> -		power {
+>> +		switch-power {
+> 
+> This one is actually a key.
+> 
+> [...]
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+>> index a263d51882ee..8494c7b2961b 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> [...]
+>> @@ -1772,7 +1772,7 @@ lid {
+>>  			wakeup-source;
+>>  		};
+>>  
+>> -		tablet_mode {
+>> +		key-tablet-mode {
+>>  			label = "Tablet Mode";
+>>  			gpios = <&gpio TEGRA_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
+>>  			linux,input-type = <EV_SW>;
+> 
+> And this one more like a switch since it's triggered by a magnet, as far
+> as I understand.
+> 
+> No need to resend, I can fix these up when I apply. Just let me know if
+> you have any objections to me making those changes.
 
---IyLVWPIxofCPGlpx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sounds good, thanks for catching these.
 
-On Wed, Jun 15, 2022 at 05:53:12PM -0700, Krzysztof Kozlowski wrote:
-[...]
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/=
-boot/dts/nvidia/tegra132-norrin.dts
-> index f16acb4cabaa..62d58221ad3c 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-> @@ -1030,7 +1030,7 @@ clk32k_in: clock-32k {
->  	gpio-keys {
->  		compatible =3D "gpio-keys";
-> =20
-> -		lid {
-> +		switch-lid {
->  			label =3D "Lid";
->  			gpios =3D <&gpio TEGRA_GPIO(R, 4) GPIO_ACTIVE_LOW>;
->  			linux,input-type =3D <5>;
-> @@ -1039,7 +1039,7 @@ lid {
->  			wakeup-source;
->  		};
-> =20
-> -		power {
-> +		switch-power {
 
-This one is actually a key.
-
-[...]
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/b=
-oot/dts/nvidia/tegra210-smaug.dts
-> index a263d51882ee..8494c7b2961b 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-[...]
-> @@ -1772,7 +1772,7 @@ lid {
->  			wakeup-source;
->  		};
-> =20
-> -		tablet_mode {
-> +		key-tablet-mode {
->  			label =3D "Tablet Mode";
->  			gpios =3D <&gpio TEGRA_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
->  			linux,input-type =3D <EV_SW>;
-
-And this one more like a switch since it's triggered by a magnet, as far
-as I understand.
-
-No need to resend, I can fix these up when I apply. Just let me know if
-you have any objections to me making those changes.
-
-Thierry
-
---IyLVWPIxofCPGlpx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmK14W8ACgkQ3SOs138+
-s6GuoRAAs/Bh3zBxhYqqU+0xHTMaroNOhMkFFFzlQ+JOw+7Wg4AybDOEUQZCU5gP
-YFxNy1JsHoPso+15Y32LoJ3NVwQ82HW3+KBPyPUFHmsuoj8BbNhTJEsc2yht8JV+
-sUbVDThkZu7Tth7i+jrX20VfUPuUK4WveSvRrC3/WY6tzkwWbsEk/lSbP+m5Dir1
-e59WpNyCa41llMSQZzGyOwY2cZ6Y9e64wrqORHrOQxyboVmmeYvtoQADR3a/geF4
-boqK/shRCZDo/ysmfdMfZLjc1XOs5pMYAaOV+xw9VWAhAL8Z7CuOI6sPjHgzBx6q
-SrbW0PVm7fMhWu5YDDUXoKNC2zVmdpWR18AE7zXOUc4aVlVfpWZR02/o9z1/CkYM
-3wpV7DjQWjFWnlUB0Tm0m9mvBLRoH8mjNYcwtPH8g0C4xtPOWrzgl6bFne+cUqBG
-QLNqbqPv+EEvcFOUT2QTO5xEbQaUO9YaF4kNj3dqO0ERT6FFU2z8j/lqmrP5JIuS
-+da5kfHfnMQPYVy/OiWmzCjk+GqQ4apF0DllkRFMFkCqjhiV3QsOF4oX/mUuU4UJ
-gg6DMIE2rF9RikECb/TSspTQHhtFv+0bsb1yYxj7qks8cZAezxSreVnUwWJimEpW
-aspfZ6S6xv3QuBOBP8UyFcWhhgwrBbGgMkQvtNt3KrSnr2C7TUA=
-=ykpI
------END PGP SIGNATURE-----
-
---IyLVWPIxofCPGlpx--
+Best regards,
+Krzysztof
