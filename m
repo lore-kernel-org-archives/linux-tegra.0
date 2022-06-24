@@ -2,160 +2,172 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA7DC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 10:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94854C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jun 2022 10:36:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbiFXKcV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Jun 2022 06:32:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43360 "EHLO
+        id S229595AbiFXKgK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Jun 2022 06:36:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbiFXKcU (ORCPT
+        with ESMTP id S230187AbiFXKgJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Jun 2022 06:32:20 -0400
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2075.outbound.protection.outlook.com [40.107.96.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF347C523;
-        Fri, 24 Jun 2022 03:32:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nqHddVnMaz5u1ylaYLsy9KCdZWQGKPL95MX+f1S5WNz+PAgrON5iXD/E2VT9JVw7hnUiy5X2MVORh7fq+RTynmSOcghJti0Fd102pZX0rMPRrmQLxKOpusIWxwR3EHBL74ttd4w5j79S8DKpNozMSOFTkkPMgKDGvZcXEoXaLRMmmXPnvCYYsJO/DiMiMKodNT3KhIivQDdE39C+XS97cK2fleFP+PU3U76W9BaClYUvYO53x6P56ZGieqWLwoanT/nHjlnwyqrsChxAAmO9c4V3ruhRHq/X+jORiTi0IEDUUpnaRU0H1fTJxljXKeWJJyOJbxt5pP+EHoUlI5VuSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M9NpJoz+mN796Wld6wkrNNcg2b8DywddivOHbaZA/G4=;
- b=Oz4XduLNZb6xUm9FfqGpi5Raan9ZlrEAPi1o4ddl+FFKXHRHeoR6hs6R5ZECEjHNnQXIxbvYlrpjoFsb6emEg7wlQySSz/+L4ixHsxiJ79MiNIv5z1r7HyA8NXvSSUV/Cgb83aqj6iyJDG/aF+ebJ5twVpPzRVf+g0fqbGt2tzbx9XVNYAm8/sKiSvvruaF5zxftS5S2ujiecEa3OyzJFmx8uw3Zv8qQEW7F3dwgWGHH+yhEs+COHQcQr5FtyRleXdbgRNmAX7/iKgSCkgLTR3a3ReKJgjLJteyL3TNu/9X5lO7DsZOQxK9ZU7HpR1foh18BFA4uRWRYUEOEA+AFrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M9NpJoz+mN796Wld6wkrNNcg2b8DywddivOHbaZA/G4=;
- b=nkR9nrGLjumv57gFHtmiPexWfUM4HzTRNRfrTeLhIZLlaoFUvDjMrXo2nTjXrPchd3+haSEW/TVJgoL22rGakSjYdwYM4xbDW4c+FekbgZiXAig2nWUtXHf9gF03Uf4mysSCxzY237tsyP191P14T56a7gUMy2Lt2w/zqRbHfn3Phz4tf508Q8MMxa8s7G88SmQcOemSO5Gkly8/XdP6ZrYcLKed2yZFS9Vdb2nUvRR2daQ6hWYA9ZTctqvgHJJbhfS1Xt6AQdJfLSkCreKJ3O933qYwfCIm6Jz7UIalKV+qE5EJaWWzA6s9PM9MakgF11D2td3vZZEdIW7LQW3/Pw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- BN6PR1201MB2544.namprd12.prod.outlook.com (2603:10b6:404:a5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.16; Fri, 24 Jun
- 2022 10:32:18 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::190c:967c:2b86:24a8]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::190c:967c:2b86:24a8%4]) with mapi id 15.20.5373.016; Fri, 24 Jun 2022
- 10:32:18 +0000
-Message-ID: <569eae9e-d14c-6736-3cee-9e7ba75da0b7@nvidia.com>
-Date:   Fri, 24 Jun 2022 11:32:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 21/31] soc/tegra: Remove the call to
- devm_pm_opp_set_clkname()
-Content-Language: en-US
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1653564321.git.viresh.kumar@linaro.org>
- <1e88b248352afe03cd3bf0e887b1f2be86b5afb5.1653564321.git.viresh.kumar@linaro.org>
- <12c085af-1202-95cf-e9ad-ddcfbdadf0d6@nvidia.com>
- <20220624002805.anv62ufihdrncwus@vireshk-i7>
- <20220624005913.ytsskavsaxt4rzzm@vireshk-i7>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20220624005913.ytsskavsaxt4rzzm@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0005.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::15) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        Fri, 24 Jun 2022 06:36:09 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E00117C844;
+        Fri, 24 Jun 2022 03:36:00 -0700 (PDT)
+X-UUID: df7b175fa89346cd93722cc325d9a2de-20220624
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.6,REQID:ae2831ad-169e-48d6-a70a-39fa0ed6540b,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:b14ad71,CLOUDID:8ecdf52d-1756-4fa3-be7f-474a6e4be921,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:1,File:nil
+        ,QS:nil,BEC:nil,COL:0
+X-UUID: df7b175fa89346cd93722cc325d9a2de-20220624
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1111625506; Fri, 24 Jun 2022 18:35:53 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
+ Fri, 24 Jun 2022 18:35:51 +0800
+Received: from mhfsdcap04 (10.17.3.154) by mtkmbs11n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.792.3 via Frontend
+ Transport; Fri, 24 Jun 2022 18:35:50 +0800
+Message-ID: <19cfb1b85a347c70c6b0937bbbca4a176a724454.camel@mediatek.com>
+Subject: Re: [PATCH v3 1/5] iommu: Return -EMEDIUMTYPE for incompatible
+ domain and device/group
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Baolu Lu <baolu.lu@linux.intel.com>
+CC:     "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "jordan@cosmicpenguin.net" <jordan@cosmicpenguin.net>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "jgg@nvidia.com" <jgg@nvidia.com>,
+        "yangyingliang@huawei.com" <yangyingliang@huawei.com>,
+        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
+        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "marcan@marcan.st" <marcan@marcan.st>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Date:   Fri, 24 Jun 2022 18:35:49 +0800
+In-Reply-To: <BN9PR11MB527629DEF740C909A7B7BEB38CB49@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20220623200029.26007-1-nicolinc@nvidia.com>
+         <20220623200029.26007-2-nicolinc@nvidia.com>
+         <270eec00-8aee-2288-4069-d604e6da2925@linux.intel.com>
+         <YrUk8IINqDEZLfIa@Asurada-Nvidia>
+         <8a5e9c81ab1487154828af3ca21e62e39bcce18c.camel@mediatek.com>
+         <BN9PR11MB527629DEF740C909A7B7BEB38CB49@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b10cb127-71b8-4656-18a5-08da55ccd010
-X-MS-TrafficTypeDiagnostic: BN6PR1201MB2544:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GE5r9ojKnyYkhin7Dzq1zOJ+Bb3fbOlUMODZzrn+lJ28SK8pZ+8iwwH4gEwAufIRBk7c7xuQiexiHFTcCREaanh0/ii4y2H+MduDskbT9+Rco9U3Dnu+VqGTPTo6RqGfiHlCrfqZW70NawuJb34jE2bl8bfKUw9WtChhG0UDWUjHwQFoa17z2MOx3hTRKahEaUHFuQiyyQNvgLWsLz9hBkH0Ptoyskzdy+bfXYMMzDakUBIWBNnzpR+2EBJSCrBijMj8JXIsopVqlqDfipS5Ssty3M1/ja2hnr0xB0+YBTperl69VuQzXHL7XpixG2AeYT8g25muAJqY4jhkhkAEe6iIXrc1J+eUWhwIsOzHMGdhYypdrxdAfyVwd1TxDygmjtcLoMSxyxtrmnSyFhiWX5tTHhOoD1nW1iAnQmMval6F8PHRxgXMePiVrZuTRngl++kQyzjhI1C7UeM8ZJLfzaI43/XTlOV+s4nI0pjDbdEkzewy5A9JpNQh9otRER28v8G1+s9pP1toQ70YWcj9di1b0j9Vn8ABIOt2YwiYXOHfmdV/bF5lUtHGhu2ba9Mqt44+qFhXoXr4ZUOevlZl+g0MBPsCAnx3QxEOUyhBdr+pRvEh+M4LfwJqEfZDT7QEuZVGUEBG9/SBnXEkA0+6Vez/1nkLHRe6UO1fMBmYrebrmSaTZD0yNpQ/ah1PPJIFYe11eYbjUYEeTeZG7Dd5UVtppGDK3qTfScYf4jBauZuea/gWhMqhSvAKDa+XjmOIlt1u+2D/g0Rgpe0cmOf3/lNe01PrS8EadbGzVvsJDQoe1y4sBiKXZiKXSXE8zdCrOAcW4fMQGxSy3OGrt97z/w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(39860400002)(396003)(366004)(376002)(346002)(4744005)(7416002)(110136005)(66476007)(2906002)(31686004)(36756003)(41300700001)(54906003)(478600001)(55236004)(6506007)(6512007)(6486002)(4326008)(66946007)(66556008)(8936002)(8676002)(5660300002)(316002)(6666004)(38100700002)(86362001)(83380400001)(2616005)(186003)(31696002)(26005)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NVN0QjR6eVNhc2hVVHZvOS9XenRqZE16UGZyWm5OTzNGaHArWkZvMThSVEZx?=
- =?utf-8?B?U3NUalcwMldCYmUrSkF2a3ZzbDFJazJDV1huV293UHZDNGdSUFhYdGdUZUln?=
- =?utf-8?B?cElOSU5zd1BiWUVYMHJzbmhoRWRkcGtoWHI2MzFJNnE4TW95SEg4T3Q3eW5u?=
- =?utf-8?B?R3orQzlXZStDdjFiTi9hOWFncXZOOUlOdC9yYzNHQ3NVeGM2dTFvd1c0QWdx?=
- =?utf-8?B?TFNTMjVzZG14TkRNS05XRzA5Z29KWkFndFg0Ny9xMWtEeC9EWkI0SUtGekha?=
- =?utf-8?B?V2xXekFub2lGMXVESHRnUjBYWW54QzRnMGFsRmlCeVFoWGc2THpNdkJHOGZr?=
- =?utf-8?B?YVNkaEJGbGhCV2k0RVNkbitpUkQyL0lORGoxL25ON1UzT2JFR1NTUXJtUkxM?=
- =?utf-8?B?WXRHK1VyOGxrZ2pOUnZYRXozT3FBbHpsNUJVZEN3ZHVmZUowZFJyYWtmdXhR?=
- =?utf-8?B?TVpqU0xvdDRTaFB2bFN4ZFROMXJZSE9qRzdEUndrSEZ4TXhhQzM5VHlBbXRq?=
- =?utf-8?B?NHBQdXRFdktsZ1Axa3ZrR2hkZ20vR3hwcEpHUk9BWFF3VHkzZEhvTVptd09R?=
- =?utf-8?B?U0tiVTF4akNDSzAxNjhMMnhXQjRPejlZR3psNTNhdVhhejZrbEJxZ1RVQ0U2?=
- =?utf-8?B?eTg2WXlxK1lRZHM3SCtQcDVWcVRybVFBVUxaMkR6SGIzY082VHAwU2xYMVMv?=
- =?utf-8?B?TDBNeWJ0Wi90MURLaTVqZVpPVDNBejFJSEl6RUNaK0cySHdVVGdiRDR1VDVW?=
- =?utf-8?B?UVUxL0tnRC94Nm9ER3E1T1JkVWlnajZCamRKaXpxeUZqMmxvTlJLeFI5cDgz?=
- =?utf-8?B?ZG9jdmIrRUJwNzdBSWIyZXk0Vzd5eWVNaVN2K0J4YmdKdzZISkRHcFZJekUz?=
- =?utf-8?B?Q0RwMGVWVzV2S2NQVVkydmdPd1liakpIVUl4b3BsWXdFcUN1aW5SeTBnQ0I0?=
- =?utf-8?B?R0FMWmxkSG0xVGd5RnJiWVBqNzBCZ01LY3NDMGNQZ2lseXJWbG0zNE1rVzAy?=
- =?utf-8?B?TjFZRWhtSVdGaTZ0Q2E1L09Ja1ByTE1FUlpwSGRVVy9taW85QWNoSFdSTFNL?=
- =?utf-8?B?MHY0VDhMQy9sV2JFeFJzenpEdU5iZE5kZXlEa1kwa05hSzlQQ1pOVVVLdlBt?=
- =?utf-8?B?SGF6MUtncVIweXlTNWt4UDVHZ1IyRVFoNlZNOG1ab2ZRRkU4TTgxUjkrdSt0?=
- =?utf-8?B?UmxhQVBaMHE0NHN0M3JwYkRyQWxJc1BYcU1BYkFBS0FMSWVOTHQxd3gvUWVa?=
- =?utf-8?B?UEZJWDB3NmNJZ0ppdjY3bTVzREloMGZqTDdESjA0TmxzOVpueGdLanMwWmxY?=
- =?utf-8?B?UkxtVWd4QWE4K2hROXViajRuTlFiWVpqN2tMM2NvajRVV05qODdzNUQ2cnpV?=
- =?utf-8?B?NWZhQkVDaDVjM24wNjJqdmhOYVVJWVIxVStwRXlnd2ZVNHRUemM2OVNFMFZL?=
- =?utf-8?B?dHdYcDB5aVQ5aDNnS0tWUmFXTUFoR0tETi91M2JMem5GclpmU1RSUWJqTmFZ?=
- =?utf-8?B?R3ZpSTFROVVmTTk2VSt4ZDM5QTBDbzJhK21rdGpmVGlLNnpHQkNpejNVTkVx?=
- =?utf-8?B?ODZzdFQ4YTdHUkhzbkZ1Y1lpQklBcms4Vmg3NzFtenJ3d0JJUkFiQXpYVHB2?=
- =?utf-8?B?cE9ZdE5oeHQrMnFSazdDTTcvRThFbWVkV3pXcTZRc1g2WjZFNDdkUzBvazRk?=
- =?utf-8?B?UFdScFFRK3ZJMDFVcWY5ZmNVaHo0UjY2YnBQbm14RTgzWHpudmNWTVNtVnRG?=
- =?utf-8?B?dzB5bEs3bWtLbjBVL1FKb1U1a21EWTZSdFk2Y0RLTlpzWXpnNmpMdWpQYzBO?=
- =?utf-8?B?aXh4a1dyZUh6NnZPN1VwVEFjaVkvbVhSQlJ4aS9UUC9YY0Zzajh1dkdiTzQx?=
- =?utf-8?B?L2hpZ0dQakJKM3YvOXJLWW5sNWpLWVJSRG9mZ0dyeFFTUG9aUHlrM2xzeUp6?=
- =?utf-8?B?SUhub0U1NElCVE9ueHVHQUZpVzhGbDEyTlpIdElEMEp2QXlsaXhEMFdoN3ZX?=
- =?utf-8?B?eEJCZ0lJMS9JY1YyN2pHNDh6QkNpdHlrVzZ6dUkzYld2UGQ2VzBPNXlUSWRu?=
- =?utf-8?B?bDU5SEE0MHAwMEF1eitMek0ySnhhaW9DbWVIMnpTU1ZqRTRUajlnMGtBaHE4?=
- =?utf-8?B?MTRDSFUrL1Y2ODVvVEJod1ZZTEpEYmwzNE9SVjE4RFZOMENhbnNJczV6QmZT?=
- =?utf-8?B?SWc9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b10cb127-71b8-4656-18a5-08da55ccd010
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2022 10:32:18.4375
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LUMuauZzvwK3SSyQnAtRmApSJwGwGQ7IEUomeetlYFOikQQYrseU5uvNhEeKGvmmhA2nQwIaufRFb3aWBhnLvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1201MB2544
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 24/06/2022 01:59, Viresh Kumar wrote:
-> On 24-06-22, 05:58, Viresh Kumar wrote:
->> Though there will still be a problem here with my changes, we don't
->> accept NULL clkname anymore for the set-clkname API. And tegra does
->> this to pick the first clock available in DT (at index 0) I think.
->> Other drivers (mostly qcom) who need such dummy OPP table, provide a
->> real clock name instead. Will it be possible to pass that here somehow
->> ?
+On Fri, 2022-06-24 at 06:16 +0000, Tian, Kevin wrote:
+> > From: Yong Wu
+> > Sent: Friday, June 24, 2022 1:39 PM
+> > 
+> > On Thu, 2022-06-23 at 19:44 -0700, Nicolin Chen wrote:
+> > > On Fri, Jun 24, 2022 at 09:35:49AM +0800, Baolu Lu wrote:
+> > > > External email: Use caution opening links or attachments
+> > > > 
+> > > > 
+> > > > On 2022/6/24 04:00, Nicolin Chen wrote:
+> > > > > diff --git a/drivers/iommu/mtk_iommu_v1.c
+> > > > > b/drivers/iommu/mtk_iommu_v1.c
+> > > > > index e1cb51b9866c..5386d889429d 100644
+> > > > > --- a/drivers/iommu/mtk_iommu_v1.c
+> > > > > +++ b/drivers/iommu/mtk_iommu_v1.c
+> > > > > @@ -304,7 +304,7 @@ static int
+> > > > > mtk_iommu_v1_attach_device(struct
+> > > > > iommu_domain *domain, struct device
+> > > > >       /* Only allow the domain created internally. */
+> > > > >       mtk_mapping = data->mapping;
+> > > > >       if (mtk_mapping->domain != domain)
+> > > > > -             return 0;
+> > > > > +             return -EMEDIUMTYPE;
+> > > > > 
+> > > > >       if (!data->m4u_dom) {
+> > > > >               data->m4u_dom = dom;
+> > > > 
+> > > > This change looks odd. It turns the return value from success
+> > > > to
+> > > > failure. Is it a bug? If so, it should go through a separated
+> > > > fix
+> > > > patch.
+> > 
+> > Thanks for the review:)
+> > 
+> > > 
+> > > Makes sense.
+> > > 
+> > > I read the commit log of the original change:
+> > > 
+> > 
+> > https://lore.kernel.org/r/1589530123-30240-1-git-send-email-
+> > yong.wu@mediatek.com
+> > > 
+> > > It doesn't seem to allow devices to get attached to different
+> > > domains other than the shared mapping->domain, created in the
+> > > in the mtk_iommu_probe_device(). So it looks like returning 0
+> > > is intentional. Though I am still very confused by this return
+> > > value here, I doubt it has ever been used in a VFIO context.
+> > 
+> > It's not used in VFIO context. "return 0" just satisfy the iommu
+> > framework to go ahead. and yes, here we only allow the shared
+> > "mapping-
+> > > domain" (All the devices share a domain created internally).
+> > 
+> > thus I think we should still keep "return 0" here.
+> > 
 > 
-> Jon,
-> 
-> Okay, I was able to handle it without making any further updates to
-> the OPP core. Nothing else required from your side on this.
-> 
-> I have pushed the updates (to this patch and 22/31) to opp/linux-next
-> branch. You can try it now and it should just work. I have only build
-> tested it though.
+> What prevent this driver from being used in VFIO context?
 
+Nothing prevent this. Just I didn't test. mtk_iommu_v1.c only is used
+in mt2701 and there is no VFIO scenario. I'm not sure if it supports
+VFIO. (mtk_iommu.c support VFIO.)
 
-Thanks. I have reverted the previous versions of 21 and 22, and pulled 
-in the latest and these are working.
+> and why would we want to go ahead when an obvious error occurs
+> i.e. when a device is attached to an unexpected domain?
 
-Cheers
-Jon
+The iommu flow in this file always is a bit odd as we need share iommu
+domain in ARM32. As I tested before in the above link, "The iommu
+framework will create a iommu domain for each a device.", therefore we
+have to *workaround* in this file.
 
--- 
-nvpublic
+And this was expected to be fixed by:
+
+https://lore.kernel.org/linux-iommu/cover.1597931875.git.robin.murphy@arm.com/
+
+sorry, I don't know its current status.
+
+Thanks.
+
