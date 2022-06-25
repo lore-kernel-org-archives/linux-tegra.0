@@ -2,381 +2,332 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF04ECCA479
-	for <linux-tegra@archiver.kernel.org>; Sat, 25 Jun 2022 11:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725BDCCA481
+	for <linux-tegra@archiver.kernel.org>; Sat, 25 Jun 2022 12:08:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232641AbiFYLm0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 25 Jun 2022 07:42:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59456 "EHLO
+        id S232827AbiFYMIj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 25 Jun 2022 08:08:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232542AbiFYLmZ (ORCPT
+        with ESMTP id S232170AbiFYMIi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 25 Jun 2022 07:42:25 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB77F1DA62;
-        Sat, 25 Jun 2022 04:42:23 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id a11so5628617ljb.5;
-        Sat, 25 Jun 2022 04:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=7RLaeJAcMzevXo6S5cuXT9EkaWQVtjtmRF8OQ1aZsmw=;
-        b=cPW7eonVFazhqeHbP3DDwJ8ZvNMDH9/wuG0LDUJKKjwmn0n/yZgQHrmW7PlnlkPY68
-         iE978Nqi6ko4TfhBXw28SKHOP9m0GuCnRMj3nI6b0tsL3aUgEV64rC/ZJVNXyuQNeO6N
-         HJlxT/QCFF5rTu8mBRZXQUJNRSuAYHS2y2BbFxOfHD4//5tzjowlzoFRY/A+PqTpbzAR
-         sId5Ltv6vDpV/+K2yuJnhn/viAs06uQAqcrd2HjpilHmk8TvxBGsHYwfQ72rzAI0WRvC
-         fVkBp/IPRx4ZJj6eJWJ2Sct0R9Xepc3POPaqIPDlFEUDZDePkSpR+DZqZa5nyyzW64U2
-         Bksw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=7RLaeJAcMzevXo6S5cuXT9EkaWQVtjtmRF8OQ1aZsmw=;
-        b=3Ikyg/wY6w/DioG4JAVxw6w8iLvgbva0DyiiEnB8TvTBEofsDuC47zppCY0MYRodiA
-         YvsXNNIeouV/r40ZiepQqJBD4BmLQcU5+Y0BdX7K4sSDKw42PK9jnhazMMwLD5VPfU+a
-         G/M2JCIRe8qOJPaS/ZTE1f846jOZtFTfCL2vluSHd6h3FXo0MRIRZ3xmFVrVtW8nZUYU
-         wLybOiK8LYnyws/vtXmrw2DZWBR5FU0nSaVEYgY4kEVLl/0J95UKVG1yeXHD6QfVuKG7
-         TlE1ZRq94lbMkgODJoL2JTwJs1kKQTazqZR1uCgSYxFQ1UH4b947ESYfIzchQuh8aQ4I
-         x8Tg==
-X-Gm-Message-State: AJIora8/iBzdniU2UnYraOMSTi3BT+qInrmFfTPnhGM+DjerAKV+XXOr
-        EFELTzdTLCe3F8A16Ep7/rJS2CFlDrs=
-X-Google-Smtp-Source: AGRyM1tGmwALELYyesbJ/8S4e5EjJt8hWJvyI11otWJpcvJicDjJqxG5VdpGLTmlwEJxaFkxad/UAw==
-X-Received: by 2002:a05:651c:1202:b0:25a:6096:bd7e with SMTP id i2-20020a05651c120200b0025a6096bd7emr1737854lja.304.1656157341774;
-        Sat, 25 Jun 2022 04:42:21 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.118.164])
-        by smtp.googlemail.com with ESMTPSA id p7-20020a2eb987000000b00255526478f1sm626574ljp.88.2022.06.25.04.42.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Jun 2022 04:42:21 -0700 (PDT)
-Message-ID: <565ff879-11e4-1ae4-08d8-1237a875ef12@gmail.com>
-Date:   Sat, 25 Jun 2022 14:42:15 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 5/5] OPP: Remove custom OPP helper support
-Content-Language: en-US
-To:     Viresh Kumar <viresh.kumar@linaro.org>, Keerthy <j-keerthy@ti.com>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <cover.1653991004.git.viresh.kumar@linaro.org>
- <2e6ee73dbc8a231377547a8e9497561cadb38166.1653991004.git.viresh.kumar@linaro.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <2e6ee73dbc8a231377547a8e9497561cadb38166.1653991004.git.viresh.kumar@linaro.org>
+        Sat, 25 Jun 2022 08:08:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5B232BB13;
+        Sat, 25 Jun 2022 05:08:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 69751B807E5;
+        Sat, 25 Jun 2022 12:08:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02FC6C3411C;
+        Sat, 25 Jun 2022 12:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656158913;
+        bh=veiT+bMUWyUEWmup47z/D8oPLnmA4xLJ1PTrTZlDMjI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=eGnBk1IoovvYB98tc+QSKAtfs/XrLk2tGbL96bEAi7vPBeW91kDHZxEUCcKPO6vr3
+         dJoRoeSNz0eO+zLj+Zh1n1YsHmy0YPxcCot8c2i4shcvHGu0ITKsZ8I+Vt/CRK1Vl/
+         YxYs7bO5moVbfqFO6/VRiIWtrKfH61NYBd1yHqS0jB2d8U4MOMaB3X/BEJbhnibiFc
+         YSisD9M7cXTWfPMv36P//LQnQuLII3cAoEqpQCwRA93EOmRyiyosFSdjQM+JEIymjp
+         cWgUMQFmIKHZTNB1ZX1GL8KFst3ilKfQ86fuoDTVv2EOwShDj/lugQ5avom8rKeF+h
+         FWjk3jxwaS9Tg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <maz@kernel.org>)
+        id 1o54aU-0033vB-Jn;
+        Sat, 25 Jun 2022 13:08:30 +0100
+Date:   Sat, 25 Jun 2022 13:08:30 +0100
+Message-ID: <87fsjt2bep.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v5 2/5] irqchip: Add RZ/G2L IA55 Interrupt Controller driver
+In-Reply-To: <CA+V-a8veE6-4C+9kyTNxqsf0jB5xCGhcHncTSM3ejDzBAfz=Bw@mail.gmail.com>
+References: <20220523174238.28942-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        <20220523174238.28942-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        <871qvdf5tb.wl-maz@kernel.org>
+        <CA+V-a8veE6-4C+9kyTNxqsf0jB5xCGhcHncTSM3ejDzBAfz=Bw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: prabhakar.csengg@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com, geert+renesas@glider.be, tglx@linutronix.de, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com, jonathanh@nvidia.com, bjorn.andersson@linaro.org, agross@kernel.org, p.zabel@pengutronix.de, andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com, biju.das.jz@bp.renesas.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-31.05.2022 13:10, Viresh Kumar пишет:
-> The only user of the custom helper is migrated to use
-> config_regulators() interface. Remove the now unused custom OPP helper
-> support.
-> 
-> This cleans up _set_opp() and leaves a single code path to be used by
-> all users.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/opp/core.c     | 126 +----------------------------------------
->  drivers/opp/opp.h      |   7 ---
->  include/linux/pm_opp.h |  35 ------------
->  3 files changed, 2 insertions(+), 166 deletions(-)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 58ce1240e808..554a043bc225 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -972,36 +972,6 @@ static int _set_opp_bw(const struct opp_table *opp_table,
->  	return 0;
->  }
->  
-> -static int _set_opp_custom(const struct opp_table *opp_table,
-> -			   struct device *dev, struct dev_pm_opp *opp,
-> -			   unsigned long freq)
-> -{
-> -	struct dev_pm_set_opp_data *data = opp_table->set_opp_data;
-> -	struct dev_pm_opp *old_opp = opp_table->current_opp;
-> -	int size;
-> -
-> -	/*
-> -	 * We support this only if dev_pm_opp_set_config() was called
-> -	 * earlier to set regulators.
-> -	 */
-> -	if (opp_table->sod_supplies) {
-> -		size = sizeof(*old_opp->supplies) * opp_table->regulator_count;
-> -		memcpy(data->old_opp.supplies, old_opp->supplies, size);
-> -		memcpy(data->new_opp.supplies, opp->supplies, size);
-> -		data->regulator_count = opp_table->regulator_count;
-> -	} else {
-> -		data->regulator_count = 0;
-> -	}
-> -
-> -	data->regulators = opp_table->regulators;
-> -	data->clk = opp_table->clk;
-> -	data->dev = dev;
-> -	data->old_opp.rate = old_opp->rate;
-> -	data->new_opp.rate = freq;
-> -
-> -	return opp_table->set_opp(data);
-> -}
-> -
->  static int _set_required_opp(struct device *dev, struct device *pd_dev,
->  			     struct dev_pm_opp *opp, int i)
->  {
-> @@ -1186,13 +1156,7 @@ static int _set_opp(struct device *dev, struct opp_table *opp_table,
->  		}
->  	}
->  
-> -	if (opp_table->set_opp) {
-> -		ret = _set_opp_custom(opp_table, dev, opp, freq);
-> -	} else {
-> -		/* Only frequency scaling */
-> -		ret = _generic_set_opp_clk_only(dev, opp_table->clk, freq);
-> -	}
-> -
-> +	ret = _generic_set_opp_clk_only(dev, opp_table->clk, freq);
->  	if (ret)
->  		return ret;
->  
-> @@ -2054,7 +2018,6 @@ static void _opp_put_prop_name(struct opp_table *opp_table)
->  static int _opp_set_regulators(struct opp_table *opp_table, struct device *dev,
->  			       const char * const names[], unsigned int count)
->  {
-> -	struct dev_pm_opp_supply *supplies;
->  	struct regulator *reg;
->  	int ret, i;
->  
-> @@ -2082,20 +2045,8 @@ static int _opp_set_regulators(struct opp_table *opp_table, struct device *dev,
->  
->  	opp_table->regulator_count = count;
->  
-> -	supplies = kmalloc_array(count * 2, sizeof(*supplies), GFP_KERNEL);
-> -	if (!supplies) {
-> -		ret = -ENOMEM;
-> -		goto free_regulators;
-> -	}
-> -
-> -	mutex_lock(&opp_table->lock);
-> -	opp_table->sod_supplies = supplies;
-> -	if (opp_table->set_opp_data) {
-> -		opp_table->set_opp_data->old_opp.supplies = supplies;
-> -		opp_table->set_opp_data->new_opp.supplies = supplies + count;
-> -	}
-> -
->  	/* Set generic config_regulators() for single regulators here */
-> +	mutex_lock(&opp_table->lock);
->  	if (count == 1)
->  		opp_table->config_regulators = _opp_config_regulator_single;
->  	mutex_unlock(&opp_table->lock);
-> @@ -2132,16 +2083,6 @@ static void _opp_put_regulators(struct opp_table *opp_table)
->  	for (i = opp_table->regulator_count - 1; i >= 0; i--)
->  		regulator_put(opp_table->regulators[i]);
->  
-> -	mutex_lock(&opp_table->lock);
-> -	if (opp_table->set_opp_data) {
-> -		opp_table->set_opp_data->old_opp.supplies = NULL;
-> -		opp_table->set_opp_data->new_opp.supplies = NULL;
-> -	}
-> -
-> -	kfree(opp_table->sod_supplies);
-> -	opp_table->sod_supplies = NULL;
-> -	mutex_unlock(&opp_table->lock);
-> -
->  	kfree(opp_table->regulators);
->  	opp_table->regulators = NULL;
->  	opp_table->regulator_count = -1;
-> @@ -2195,61 +2136,6 @@ static void _opp_put_clkname(struct opp_table *opp_table)
->  	}
->  }
->  
-> -/**
-> - * _opp_register_set_opp_helper() - Register custom set OPP helper
-> - * @dev: Device for which the helper is getting registered.
-> - * @set_opp: Custom set OPP helper.
-> - *
-> - * This is useful to support complex platforms (like platforms with multiple
-> - * regulators per device), instead of the generic OPP set rate helper.
-> - *
-> - * This must be called before any OPPs are initialized for the device.
-> - */
-> -static int _opp_register_set_opp_helper(struct opp_table *opp_table,
-> -	struct device *dev, int (*set_opp)(struct dev_pm_set_opp_data *data))
-> -{
-> -	struct dev_pm_set_opp_data *data;
-> -
-> -	/* Another CPU that shares the OPP table has set the helper ? */
-> -	if (opp_table->set_opp)
-> -		return 0;
-> -
-> -	data = kzalloc(sizeof(*data), GFP_KERNEL);
-> -	if (!data)
-> -		return -ENOMEM;
-> -
-> -	mutex_lock(&opp_table->lock);
-> -	opp_table->set_opp_data = data;
-> -	if (opp_table->sod_supplies) {
-> -		data->old_opp.supplies = opp_table->sod_supplies;
-> -		data->new_opp.supplies = opp_table->sod_supplies +
-> -					 opp_table->regulator_count;
-> -	}
-> -	mutex_unlock(&opp_table->lock);
-> -
-> -	opp_table->set_opp = set_opp;
-> -
-> -	return 0;
-> -}
-> -
-> -/**
-> - * _opp_unregister_set_opp_helper() - Releases resources blocked for set_opp helper
-> - * @opp_table: OPP table returned from _opp_register_set_opp_helper().
-> - *
-> - * Release resources blocked for platform specific set_opp helper.
-> - */
-> -static void _opp_unregister_set_opp_helper(struct opp_table *opp_table)
-> -{
-> -	if (opp_table->set_opp) {
-> -		opp_table->set_opp = NULL;
-> -
-> -		mutex_lock(&opp_table->lock);
-> -		kfree(opp_table->set_opp_data);
-> -		opp_table->set_opp_data = NULL;
-> -		mutex_unlock(&opp_table->lock);
-> -	}
-> -}
-> -
->  /**
->   * _opp_set_config_regulators_helper() - Register custom set regulator helper.
->   * @dev: Device for which the helper is getting registered.
-> @@ -2447,13 +2333,6 @@ struct opp_table *dev_pm_opp_set_config(struct device *dev,
->  			goto err;
->  	}
->  
-> -	/* Configure opp helper */
-> -	if (config->set_opp) {
-> -		ret = _opp_register_set_opp_helper(opp_table, dev, config->set_opp);
-> -		if (ret)
-> -			goto err;
-> -	}
-> -
->  	/* Configure config_regulators helper */
->  	if (config->config_regulators) {
->  		ret = _opp_set_config_regulators_helper(opp_table, dev, config->config_regulators);
-> @@ -2516,7 +2395,6 @@ void dev_pm_opp_clear_config(struct opp_table *opp_table)
->  	_opp_put_regulators(opp_table);
->  	_opp_put_supported_hw(opp_table);
->  	_opp_put_config_regulators_helper(opp_table);
-> -	_opp_unregister_set_opp_helper(opp_table);
->  	_opp_put_prop_name(opp_table);
->  	_opp_put_clkname(opp_table);
->  
-> diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-> index 4695d315e7f9..407eee9f10ab 100644
-> --- a/drivers/opp/opp.h
-> +++ b/drivers/opp/opp.h
-> @@ -161,9 +161,6 @@ enum opp_table_access {
->   * @enabled: Set to true if the device's resources are enabled/configured.
->   * @genpd_performance_state: Device's power domain support performance state.
->   * @is_genpd: Marks if the OPP table belongs to a genpd.
-> - * @set_opp: Platform specific set_opp callback
-> - * @sod_supplies: Set opp data supplies
-> - * @set_opp_data: Data to be passed to set_opp callback
->   * @dentry:	debugfs dentry pointer of the real device directory (not links).
->   * @dentry_name: Name of the real dentry.
->   *
-> @@ -213,10 +210,6 @@ struct opp_table {
->  	bool genpd_performance_state;
->  	bool is_genpd;
->  
-> -	int (*set_opp)(struct dev_pm_set_opp_data *data);
-> -	struct dev_pm_opp_supply *sod_supplies;
-> -	struct dev_pm_set_opp_data *set_opp_data;
-> -
->  #ifdef CONFIG_DEBUG_FS
->  	struct dentry *dentry;
->  	char dentry_name[NAME_MAX];
-> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> index 185503aab64d..c6d8f01ef9fd 100644
-> --- a/include/linux/pm_opp.h
-> +++ b/include/linux/pm_opp.h
-> @@ -57,39 +57,6 @@ struct dev_pm_opp_icc_bw {
->  	u32 peak;
->  };
->  
-> -/**
-> - * struct dev_pm_opp_info - OPP freq/voltage/current values
-> - * @rate:	Target clk rate in hz
-> - * @supplies:	Array of voltage/current values for all power supplies
-> - *
-> - * This structure stores the freq/voltage/current values for a single OPP.
-> - */
-> -struct dev_pm_opp_info {
-> -	unsigned long rate;
-> -	struct dev_pm_opp_supply *supplies;
-> -};
-> -
-> -/**
-> - * struct dev_pm_set_opp_data - Set OPP data
-> - * @old_opp:	Old OPP info
-> - * @new_opp:	New OPP info
-> - * @regulators:	Array of regulator pointers
-> - * @regulator_count: Number of regulators
-> - * @clk:	Pointer to clk
-> - * @dev:	Pointer to the struct device
-> - *
-> - * This structure contains all information required for setting an OPP.
-> - */
-> -struct dev_pm_set_opp_data {
-> -	struct dev_pm_opp_info old_opp;
-> -	struct dev_pm_opp_info new_opp;
-> -
-> -	struct regulator **regulators;
-> -	unsigned int regulator_count;
-> -	struct clk *clk;
-> -	struct device *dev;
-> -};
-> -
->  typedef int (*config_regulators_t)(struct device *dev, struct dev_pm_opp *old_opp,
->  				   struct dev_pm_opp *new_opp, struct regulator **regulators,
->  				   unsigned int count);
-> @@ -97,7 +64,6 @@ typedef int (*config_regulators_t)(struct device *dev, struct dev_pm_opp *old_op
->   * struct dev_pm_opp_config - Device OPP configuration values
->   * @clk_name: Clk name.
->   * @prop_name: Name to postfix to properties.
-> - * @set_opp: Custom set OPP helper.
->   * @config_regulators: Custom set regulator helper.
->   * @supported_hw: Array of hierarchy of versions to match.
->   * @supported_hw_count: Number of elements in the array.
-> @@ -111,7 +77,6 @@ typedef int (*config_regulators_t)(struct device *dev, struct dev_pm_opp *old_op
->  struct dev_pm_opp_config {
->  	const char *clk_name;
->  	const char *prop_name;
-> -	int (*set_opp)(struct dev_pm_set_opp_data *data);
->  	config_regulators_t config_regulators;
->  	unsigned int *supported_hw;
->  	unsigned int supported_hw_count;
+On Sat, 25 Jun 2022 11:54:44 +0100,
+"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
+>=20
+> Hi Marc,
+>=20
+> Thank you for the review.
+>=20
+> On Sat, Jun 25, 2022 at 10:30 AM Marc Zyngier <maz@kernel.org> wrote:
+> >
+> > On Mon, 23 May 2022 18:42:35 +0100,
+> > Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > >
 
-Hello Viresh,
+[...]
 
-Unfortunately we can't remove the set_opp_helper(). It's terrible that
-this function is unused by Tegra 3d driver because it should be used.
+> > > +static int rzg2l_irqc_alloc(struct irq_domain *domain, unsigned int =
+virq,
+> > > +                         unsigned int nr_irqs, void *arg)
+> > > +{
+> > > +     struct rzg2l_irqc_priv *priv =3D domain->host_data;
+> > > +     unsigned long *chip_data =3D NULL;
+> >
+> > Why the init to NULL?
+> >
+> Can be dropped.
+>=20
+> > > +     struct irq_fwspec spec;
+> > > +     irq_hw_number_t hwirq;
+> > > +     int tint =3D -EINVAL;
+> > > +     unsigned int type;
+> > > +     unsigned int i;
+> > > +     int ret;
+> > > +
+> > > +     ret =3D irq_domain_translate_twocell(domain, arg, &hwirq, &type=
+);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     /*
+> > > +      * For TINT interrupts ie where pinctrl driver is child of irqc=
+ domain
+> > > +      * the hwirq and TINT are encoded in fwspec->param[0].
+> > > +      * hwirq for TINT range from 9-40, hwirq is embedded 0-15 bits =
+and TINT
+> > > +      * from 16-31 bits. TINT from the pinctrl driver needs to be pr=
+ogrammed
+> > > +      * in IRQC registers to enable a given gpio pin as interrupt.
+> > > +      */
+> > > +     if (hwirq > IRQC_IRQ_COUNT) {
+> > > +             tint =3D TINT_EXTRACT_GPIOINT(hwirq);
+> > > +             hwirq =3D TINT_EXTRACT_HWIRQ(hwirq);
+> > > +
+> > > +             if (hwirq < IRQC_TINT_START)
+> > > +                     return -EINVAL;
+> > > +     }
+> > > +
+> > > +     if (hwirq > (IRQC_NUM_IRQ - 1))
+> > > +             return -EINVAL;
+> > > +
+> > > +     chip_data =3D kzalloc(sizeof(*chip_data), GFP_KERNEL);
+> >
+> > Are we really allocating an unsigned long for something that already
+> > fits in something that is pointer-sized?
+> >
+> I think I received some feedback to use unsigned long.  Let me know
+> what you want me to use here.
 
-The patch that supposed to use the devm_pm_opp_register_set_opp_helper()
-[1] was merged a half year ago and just today I noticed that the merged
-code doesn't have devm_pm_opp_register_set_opp_helper() [2]. I think
-Thierry edited my patch before applying it, perhaps there was a merge
-conflict :/ This needs to be fixed now.
+I think this is just a waste of memory, but I don't really care.
 
-[1] https://lore.kernel.org/all/20210817012754.8710-16-digetx@gmail.com/
+>=20
+> > > +     if (!chip_data)
+> > > +             return -ENOMEM;
+> > > +     *chip_data =3D tint;
+> >
+> > So here, *chip_data can be set to -EINVAL if hwirq <=3D IRQC_IRQ_COUNT?
+> > This can't be right.
+> >
+> Yes *chip_data can be -EINVAL. IRQC block handles IRQ0-7 and
+> GPIOINT0-122. So the -EINVAL here is for IRQ0-7 case were dont
+> required the chip data in the call backs hence -EINVAL, Whereas for
+> GPIOINT0-122 we need chip_data in the callbacks as this value needs to
+> be programmed in the hardware registers.
 
-[2]
-https://elixir.bootlin.com/linux/v5.19-rc3/source/drivers/gpu/drm/tegra/gr3d.c#L535
+I can't see anything that checks it (let alone the difference in
+types). And if it isn't checked, this means that the allocation is
+pointless.
+
+>=20
+> > > +
+> > > +     ret =3D irq_domain_set_hwirq_and_chip(domain, virq, hwirq, &irq=
+c_chip,
+> > > +                                         chip_data);
+> > > +     if (ret) {
+> > > +             kfree(chip_data);
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     spec.fwnode =3D domain->parent->fwnode;
+> > > +     spec.param_count =3D priv->map[hwirq].args_count;
+> > > +     for (i =3D 0; i < spec.param_count; i++)
+> > > +             spec.param[i] =3D priv->map[hwirq].args[i];
+> >
+> > Why isn't that simply:
+> >
+> >         spec =3D priv->map[hwirq];
+> >
+> spec is of type =E2=80=98struct irq_fwspec=E2=80=99 and map is of type =
+=E2=80=98struct of_phandle_args=E2=80=99.
+>=20
+> > as this really is the interrupt you want to map to?
+> >
+> Yes.
+>=20
+> > > +
+> > > +     ret =3D irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &sp=
+ec);
+> >
+> > or even better:
+> >
+> >         ret =3D irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
+> >                                            &priv->map[hwirq]);
+> >
+> Does not work as map is of type =E2=80=98struct of_phandle_args=E2=80=99.
+
+Which begs the question: why don't you convert it to an irq_fwspec the
+first place and be done with it?
+
+>=20
+> > > +     if (ret)
+> > > +             kfree(chip_data);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > > +static void rzg2l_irqc_domain_free(struct irq_domain *domain, unsign=
+ed int virq,
+> > > +                                unsigned int nr_irqs)
+> > > +{
+> > > +     struct irq_data *d;
+> > > +
+> > > +     d =3D irq_domain_get_irq_data(domain, virq);
+> > > +     if (d)
+> > > +             kfree(d->chip_data);
+> > > +
+> > > +     irq_domain_free_irqs_common(domain, virq, nr_irqs);
+> > > +}
+> > > +
+> > > +static const struct irq_domain_ops rzg2l_irqc_domain_ops =3D {
+> > > +     .alloc =3D rzg2l_irqc_alloc,
+> > > +     .free =3D rzg2l_irqc_domain_free,
+> > > +     .translate =3D irq_domain_translate_twocell,
+> > > +};
+> > > +
+> > > +static int rzg2l_irqc_parse_map(struct rzg2l_irqc_priv *priv,
+> > > +                             struct device_node *np)
+
+nit: this function could afford being renamed to something more
+correct. It really doesn't map anything, only retrieves the output
+interrupts.
+
+> > > +{
+> > > +     unsigned int i;
+> > > +     int ret;
+> > > +
+> > > +     for (i =3D 0; i < IRQC_NUM_IRQ; i++) {
+> > > +             ret =3D of_irq_parse_one(np, i, &priv->map[i]);
+
+Make map an array of irq_fwspec, and use of_phandle_args_to_fwspec()
+for the conversion.
+
+> > > +             if (ret)
+> > > +                     return ret;
+> > > +     }
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static int rzg2l_irqc_init(struct device_node *node, struct device_n=
+ode *parent)
+> > > +{
+> > > +     struct irq_domain *irq_domain, *parent_domain;
+> > > +     struct platform_device *pdev;
+> > > +     struct reset_control *resetn;
+> > > +     struct rzg2l_irqc_priv *priv;
+> > > +     int ret;
+> > > +
+> > > +     pdev =3D of_find_device_by_node(node);
+> > > +     if (!pdev)
+> > > +             return -ENODEV;
+> > > +
+> > > +     parent_domain =3D irq_find_host(parent);
+> > > +     if (!parent_domain) {
+> > > +             dev_err(&pdev->dev, "cannot find parent domain\n");
+> > > +             return -ENODEV;
+> > > +     }
+> > > +
+> > > +     priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> > > +     if (!priv)
+> > > +             return -ENOMEM;
+> > > +
+> > > +     priv->base =3D devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, =
+NULL);
+> > > +     if (IS_ERR(priv->base))
+> > > +             return PTR_ERR(priv->base);
+> > > +
+> > > +     ret =3D rzg2l_irqc_parse_map(priv, node);
+> > > +     if (ret) {
+> > > +             dev_err(&pdev->dev, "cannot parse interrupts: %d\n", re=
+t);
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     resetn =3D devm_reset_control_get_exclusive_by_index(&pdev->dev=
+, 0);
+> > > +     if (IS_ERR(resetn))
+> > > +             return IS_ERR(resetn);
+> > > +
+> > > +     ret =3D reset_control_deassert(resetn);
+> > > +     if (ret) {
+> > > +             dev_err(&pdev->dev, "failed to deassert resetn pin, %d\=
+n", ret);
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     pm_runtime_enable(&pdev->dev);
+> > > +     ret =3D pm_runtime_resume_and_get(&pdev->dev);
+> > > +     if (ret < 0) {
+> > > +             dev_err(&pdev->dev, "pm_runtime_resume_and_get failed: =
+%d\n", ret);
+> > > +             goto pm_disable;
+> > > +     }
+> >
+> > If using runtime PM, why isn't the core IRQ code made aware of this
+> > dependency by registering the device with irq_domain_set_pm_device()
+> > instead of leaving it enabled forever?
+> >
+> Ouch will add irq_domain_set_pm_device() below.
+
+You'll need a bit more than that. You'll either need to take a PM
+reference on each alloc, or improve irq_chip_pm_{get,put}() to talk
+the hierarchy.
+
+That's probably a separate patch.
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
