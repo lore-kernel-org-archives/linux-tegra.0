@@ -2,88 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D60CCA486
-	for <linux-tegra@archiver.kernel.org>; Sun, 26 Jun 2022 09:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7213CCA483
+	for <linux-tegra@archiver.kernel.org>; Sun, 26 Jun 2022 09:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234206AbiFZJLZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 26 Jun 2022 05:11:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46316 "EHLO
+        id S233786AbiFZJL0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 26 Jun 2022 05:11:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234139AbiFZJLP (ORCPT
+        with ESMTP id S234076AbiFZJLO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 26 Jun 2022 05:11:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D6512A94;
+        Sun, 26 Jun 2022 05:11:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 180DA12AA3;
         Sun, 26 Jun 2022 02:11:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 524AC61193;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2461B6118A;
         Sun, 26 Jun 2022 09:11:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F604C36AF2;
-        Sun, 26 Jun 2022 09:11:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D65F3C341D0;
+        Sun, 26 Jun 2022 09:11:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1656234671;
-        bh=UbhroumrKktLwcM0j168hzEqNjPtue8hUgZS8+1D+3M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GSM1fkYv3tPENI2lq4bo1wzq/N924/jcZqOlvGdvP/BxGN3ww5wxuBbt1B8N1Shqj
-         5YbwLjrfp22oX3sLCqJprUtJA0IhryDwMG4ixgkLqCoaldYlO22rysFgyLdcQHZLRJ
-         wvEx4Y3uPAtMC89FtpNCnI6GCnHRVbsXSR49uQvU1ZXKTtCMkX/2BFU+tYcSfSF8CM
-         lI9YhEngxNRmyJCeA/D7/awBbksYdclX17TIsgqL19eElQaaCRmGpioBqtPVk4xCzl
-         4ulvgJkp9kMVxU64AzlzTVrgShifLoPTi4Fm07NCgFPpAdJI2Xt3DLd7cPMJj9b6pp
-         PA8/I/7BED88w==
+        bh=PhI7xlCBz8s4EqXsemcBzFaZLbSNGrNWFqcVvz20FLU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HhAf8IklB9OEeSwUHmvWxlXncEZMnsUL3ruxIFgodyPNv9p+IrCpMlJ2Ee1QRPg4Y
+         hcLQjIGJsa57ccuYyM9Yyy/ROtPClfozh4WxentR1FyhgZLpBjfJOGg0x+KF4uJ/xK
+         kJvya0UqPXI61UML+5xdxeC865OaTGDrndLJQhHMXq2RYO88lEbM26jWxoanedVi+e
+         mtQoMumgkipZ4Bxf/XC3su3ouzdbhmQdJsOcFrbZpKeXoPTd+pXhJvNl4aEKmUZnEX
+         5AkPirLrYw/XgJk3fQoIdoqyPnzuUz7+aN/pwnstjak/isdyfdJp2rwGOaiGtxsqlk
+         h/pj4xfQ6G59g==
 Received: from mchehab by mail.kernel.org with local (Exim 4.95)
         (envelope-from <mchehab@kernel.org>)
-        id 1o5OIO-001cpA-6C;
-        Sun, 26 Jun 2022 10:11:08 +0100
+        id 1o5OIN-001coA-Qi;
+        Sun, 26 Jun 2022 10:11:07 +0100
 From:   Mauro Carvalho Chehab <mchehab@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, Alex Shi <alexs@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Dipen Patel <dipenp@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 17/20] tegra194-hte.rst: fix reference to its binding
-Date:   Sun, 26 Jun 2022 10:11:03 +0100
-Message-Id: <2e2c86485cb0642455cee01796f9a74de21403e6.1656234456.git.mchehab@kernel.org>
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yanteng Si <siyanteng@loongson.cn>, devicetree@vger.kernel.org,
+        keyrings@vger.kernel.org, kvm@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-input@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
+        linux-tegra@vger.kernel.org, rust-for-linux@vger.kernel.org,
+        x86@kernel.org
+Subject: [PATCH v2 00/20] Update Documentation/ cross-references
+Date:   Sun, 26 Jun 2022 10:10:46 +0100
+Message-Id: <cover.1656234456.git.mchehab@kernel.org>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <cover.1656234456.git.mchehab@kernel.org>
-References: <cover.1656234456.git.mchehab@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The binding directory for hte was renamed. Update references accordingly.
+Fix most broken documentation file cross references on next-20220624.
 
-Fixes: af583852d2ef ("dt-bindings: Renamed hte directory to timestamp")
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
----
+After this series, only 3 references will be broken:
 
-To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-See [PATCH v2 00/20] at: https://lore.kernel.org/all/cover.1656234456.git.mchehab@kernel.org/
+Warning: Documentation/dev-tools/kunit/run_wrapper.rst references a file that doesn't exist: Documentation/dev-tools/kunit/non_uml.rst
+Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+Warning: drivers/acpi/device_pm.c references a file that doesn't exist: Documentation/firmware-guide/acpi/low-power-probe.rst
 
- Documentation/driver-api/hte/tegra194-hte.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All of them seem to be due to the lack of a patch actually adding the
+documentation. Maybe the document file is still under review?
 
-diff --git a/Documentation/driver-api/hte/tegra194-hte.rst b/Documentation/driver-api/hte/tegra194-hte.rst
-index 41983e04d2a0..d29b7fe86f31 100644
---- a/Documentation/driver-api/hte/tegra194-hte.rst
-+++ b/Documentation/driver-api/hte/tegra194-hte.rst
-@@ -37,7 +37,7 @@ LIC (Legacy Interrupt Controller) IRQ GTE
- 
- This GTE instance timestamps LIC IRQ lines in real time. There are 352 IRQ
- lines which this instance can add timestamps to in real time. The hte
--devicetree binding described at ``Documentation/devicetree/bindings/hte/``
-+devicetree binding described at ``Documentation/devicetree/bindings/timestamp``
- provides an example of how a consumer can request an IRQ line. Since it is a
- one-to-one mapping with IRQ GTE provider, consumers can simply specify the IRQ
- number that they are interested in. There is no userspace consumer support for
+Regards,
+Mauro
+
+Mauro Carvalho Chehab (20):
+  docs: netdev: update maintainer-netdev.rst reference
+  docs: filesystems: update netfs-api.rst reference
+  docs: zh_CN: page_frags.rst: fix a broken reference
+  docs: zh_CN/riscv/pmu.rst: remove old docuementation
+  docs: zh_CN/devicetree: fix typos
+  docs: zh_CN: fix a broken reference
+  docs: zh_CN/vm: fix a typo for page reporting ReST file
+  docs: zh_CN/vm/zsmalloc.rst: fix a typo
+  docs: zh_CN/vm/index.rst: fix a broken reference
+  Documentation: update watch_queue.rst references
+  Documentation: KVM: update s390-pv.rst reference
+  Documentation: KVM: update amd-memory-encryption.rst references
+  Documentation: KVM: update msr.rst reference
+  Documentation: KVM: update s390-diag.rst reference
+  objtool: update objtool.txt references
+  arch: m68k: q40: README: drop references to IDE driver
+  tegra194-hte.rst: fix reference to its binding
+  dt-bindings: mfd: update dlg,da9063.yaml reference
+  MAINTAINERS: update nvidia,tegra20-host1x.yaml reference
+  MAINTAINERS: fix cross references to mfd/dlg,da9063.yaml
+
+ .../admin-guide/kernel-parameters.txt         |   2 +-
+ .../bindings/input/da9062-onkey.txt           |   2 +-
+ Documentation/driver-api/hte/tegra194-hte.rst |   2 +-
+ Documentation/security/keys/core.rst          |   2 +-
+ Documentation/security/secrets/coco.rst       |   2 +-
+ .../it_IT/networking/netdev-FAQ.rst           |   2 +-
+ .../translations/zh_CN/devicetree/index.rst   |   2 +-
+ .../zh_CN/devicetree/of_unittest.rst          |   2 +-
+ .../zh_CN/devicetree/usage-model.rst          |   2 +-
+ .../zh_CN/doc-guide/kernel-doc.rst            |   2 +-
+ .../translations/zh_CN/riscv/index.rst        |   1 -
+ .../translations/zh_CN/riscv/pmu.rst          | 235 ------------------
+ .../zh_CN/vm/free_page_reporting.rst          |   2 +-
+ .../translations/zh_CN/vm/frontswap.rst       |   2 +-
+ Documentation/translations/zh_CN/vm/index.rst |   2 +-
+ .../translations/zh_CN/vm/page_frags.rst      |   2 +-
+ .../translations/zh_CN/vm/zsmalloc.rst        |   2 +-
+ Documentation/virt/kvm/api.rst                |   4 +-
+ Documentation/virt/kvm/s390/s390-pv-boot.rst  |   2 +-
+ Documentation/virt/kvm/x86/hypercalls.rst     |   2 +-
+ Documentation/x86/orc-unwinder.rst            |   2 +-
+ MAINTAINERS                                   |   6 +-
+ arch/m68k/q40/README                          |   5 +-
+ include/linux/fscache.h                       |   2 +-
+ include/linux/objtool.h                       |   2 +-
+ include/linux/watch_queue.h                   |   2 +-
+ init/Kconfig                                  |   2 +-
+ kernel/watch_queue.c                          |   2 +-
+ lib/Kconfig.debug                             |   2 +-
+ tools/include/linux/objtool.h                 |   2 +-
+ tools/objtool/check.c                         |   2 +-
+ 31 files changed, 33 insertions(+), 270 deletions(-)
+ delete mode 100644 Documentation/translations/zh_CN/riscv/pmu.rst
+
 -- 
 2.36.1
+
 
