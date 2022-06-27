@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040BDCCA473
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3094CCA483
 	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237075AbiF0OUs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 10:20:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38054 "EHLO
+        id S237072AbiF0OUt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 10:20:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237000AbiF0OUo (ORCPT
+        with ESMTP id S237008AbiF0OUo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 27 Jun 2022 10:20:44 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9B511161;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B991145F;
         Mon, 27 Jun 2022 07:20:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=8VhFQH5Q1ygwgbFioaFYlr73TBFA4fN7hoa82H2H+kA=; b=nsk+RZKrpiEz9FX8RllottRtZs
-        hvwHn1LgFpJH6Rre57p3Jl7C5GTNgUdnLFtlCEUrr++ky6TEQgtlA2y6m/NWIqGjoms8ks3IL+fYq
-        OSM1JHpLadmVnzQ8cAK7V5rBSVBxgta1EQbIGWE/t4utAaB13ZCfdyX4tzPvIErS92XPHju03s+Wp
-        eMGKXlSEpAwgYulIX3MD6k9oC1ZaSNWVBNLYod7fDhIGN5ZaDPljk2WitYDCz20TVXGKhw/ubQHYx
-        4Sgb+BVLzGWLTULncSw0UThpYa6LxCySJVaeI1tDj2t8FvOSXmmos033kAmmwg6H/1oF8TJ5reAtn
-        AAWk8cZA==;
+        bh=Ixmg90dyDmHAicFMf0z9UoK0XakUBMSYYi6CRfswppA=; b=B83Q8R6dOE20SbRqfBwQyYZgHf
+        MnS6+AGqyuKfaCmDxvJQ8ySeMdhzsNErzCYssjkBXKh8pqWz7YJPbmk6Jrz9isqQYjBsOONPDrXDk
+        mwsKJCpBbDtzL4BFh6u9LSdDsX/2h/BLjW0RaYgzTYIDm9ZDZpuGuzhRWp2MMThmN7VsfZ2xJJYlh
+        J2dlfPegLATsoBK3ShxWAtSWlCev0xi6nY/GBurrqCNO8gl4etsLnFebfeO6Z6j/jdgzO3HBL3IWW
+        AC8pYkRZOhYOBThJogAmET6RNQV1yV0xBM8iweRSGoenHvYgTnApgNgN9W1QztO9KynPNZO/oUoEc
+        bhd2nNBg==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1o5pbN-003N2J-9Y; Mon, 27 Jun 2022 17:20:32 +0300
+        id 1o5pbP-003N2J-6O; Mon, 27 Jun 2022 17:20:34 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -42,9 +42,9 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Robin Murphy <robin.murphy@arm.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7/v3 12/22] arm64: tegra: Add Host1x and VIC on Tegra234
-Date:   Mon, 27 Jun 2022 17:19:58 +0300
-Message-Id: <20220627142008.2072474-13-cyndis@kapsi.fi>
+Subject: [PATCH v7/v3 20/22] gpu: host1x: Add MLOCK release code on Tegra234
+Date:   Mon, 27 Jun 2022 17:20:06 +0300
+Message-Id: <20220627142008.2072474-21-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220627142008.2072474-1-cyndis@kapsi.fi>
 References: <20220627142008.2072474-1-cyndis@kapsi.fi>
@@ -59,70 +59,85 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add device tree nodes for Host1x and VIC on Tegra234.
+With the full-featured opcode sequence using MLOCKs, we need to also
+unlock those MLOCKs in the event of a timeout. However, it turns out
+that on Tegra186/Tegra194, by default, we don't need to do this;
+furthermore, on Tegra234 it is much simpler to do; so only implement
+this on Tegra234 for the time being.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 46 ++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/gpu/host1x/hw/cdma_hw.c            | 34 ++++++++++++++++++++++
+ drivers/gpu/host1x/hw/hw_host1x08_common.h |  7 +++++
+ 2 files changed, 41 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index cb3af539e477..cae68e59580c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -454,6 +454,52 @@ misc@100000 {
- 			status = "okay";
- 		};
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index e49cd5b8f735..1b65a10b9dfc 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -238,6 +238,37 @@ static void cdma_resume(struct host1x_cdma *cdma, u32 getptr)
+ 	cdma_timeout_restart(cdma, getptr);
+ }
  
-+		host1x@13e00000 {
-+			compatible = "nvidia,tegra234-host1x";
-+			reg = <0x13e00000 0x10000>,
-+			      <0x13e10000 0x10000>,
-+			      <0x13e40000 0x10000>;
-+			reg-names = "common", "hypervisor", "vm";
-+			interrupts = <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "syncpt0", "syncpt1", "syncpt2", "syncpt3", "syncpt4",
-+			                  "syncpt5", "syncpt6", "syncpt7", "host1x";
-+			clocks = <&bpmp TEGRA234_CLK_HOST1X>;
-+			clock-names = "host1x";
++static void timeout_release_mlock(struct host1x_cdma *cdma)
++{
++#if HOST1X_HW >= 8
++	/* Tegra186 and Tegra194 require a more complicated MLOCK release
++	 * sequence. Furthermore, those chips by default don't enforce MLOCKs,
++	 * so it turns out that if we don't /actually/ need MLOCKs, we can just
++	 * ignore them.
++	 *
++	 * As such, for now just implement this on Tegra234 where things are
++	 * stricter but also easy to implement.
++	 */
++	struct host1x_channel *ch = cdma_to_channel(cdma);
++	struct host1x *host1x = cdma_to_host1x(cdma);
++	u32 offset;
 +
-+			#address-cells = <1>;
-+			#size-cells = <1>;
++	switch (ch->client->class) {
++	case HOST1X_CLASS_VIC:
++		offset = HOST1X_COMMON_VIC_MLOCK;
++		break;
++	case HOST1X_CLASS_NVDEC:
++		offset = HOST1X_COMMON_NVDEC_MLOCK;
++		break;
++	default:
++		WARN(1, "%s was not updated for class %u", __func__, ch->client->class);
++		return;
++	}
 +
-+			ranges = <0x15000000 0x15000000 0x01000000>;
-+			interconnects = <&mc TEGRA234_MEMORY_CLIENT_HOST1XDMAR &emc>;
-+			interconnect-names = "dma-mem";
-+			iommus = <&smmu_niso1 TEGRA234_SID_HOST1X>;
++	host1x_common_writel(host1x, 0x0, offset);
++#endif
++}
 +
-+			vic@15340000 {
-+				compatible = "nvidia,tegra234-vic";
-+				reg = <0x15340000 0x00040000>;
-+				interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&bpmp TEGRA234_CLK_VIC>;
-+				clock-names = "vic";
-+				resets = <&bpmp TEGRA234_RESET_VIC>;
-+				reset-names = "vic";
+ /*
+  * If this timeout fires, it indicates the current sync_queue entry has
+  * exceeded its TTL and the userctx should be timed out and remaining
+@@ -288,6 +319,9 @@ static void cdma_timeout_handler(struct work_struct *work)
+ 	/* stop HW, resetting channel/module */
+ 	host1x_hw_cdma_freeze(host1x, cdma);
+ 
++	/* release any held MLOCK */
++	timeout_release_mlock(cdma);
 +
-+				power-domains = <&bpmp TEGRA234_POWER_DOMAIN_VIC>;
-+				interconnects = <&mc TEGRA234_MEMORY_CLIENT_VICSRD &emc>,
-+						<&mc TEGRA234_MEMORY_CLIENT_VICSWR &emc>;
-+				interconnect-names = "dma-mem", "write";
-+				iommus = <&smmu_niso1 TEGRA234_SID_VIC>;
-+				dma-coherent;
-+			};
-+		};
+ 	host1x_cdma_update_sync_queue(cdma, ch->dev);
+ 	mutex_unlock(&cdma->lock);
+ }
+diff --git a/drivers/gpu/host1x/hw/hw_host1x08_common.h b/drivers/gpu/host1x/hw/hw_host1x08_common.h
+index 4df28440b86b..8e0c99150ec2 100644
+--- a/drivers/gpu/host1x/hw/hw_host1x08_common.h
++++ b/drivers/gpu/host1x/hw/hw_host1x08_common.h
+@@ -2,3 +2,10 @@
+ /*
+  * Copyright (c) 2022 NVIDIA Corporation.
+  */
 +
- 		gpio: gpio@2200000 {
- 			compatible = "nvidia,tegra234-gpio";
- 			reg-names = "security", "gpio";
++#define HOST1X_COMMON_OFA_MLOCK			0x4050
++#define HOST1X_COMMON_NVJPG1_MLOCK		0x4070
++#define HOST1X_COMMON_VIC_MLOCK			0x4078
++#define HOST1X_COMMON_NVENC_MLOCK		0x407c
++#define HOST1X_COMMON_NVDEC_MLOCK		0x4080
++#define HOST1X_COMMON_NVJPG_MLOCK		0x4084
 -- 
 2.36.1
 
