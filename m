@@ -2,61 +2,55 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40377C43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 06:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2926DC43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 06:42:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232330AbiF0GLA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 02:11:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48736 "EHLO
+        id S232202AbiF0GmB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 02:42:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232126AbiF0GK7 (ORCPT
+        with ESMTP id S231474AbiF0GmA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jun 2022 02:10:59 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD97A5593;
-        Sun, 26 Jun 2022 23:10:57 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id bx13so1105645ljb.1;
-        Sun, 26 Jun 2022 23:10:57 -0700 (PDT)
+        Mon, 27 Jun 2022 02:42:00 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE01558B
+        for <linux-tegra@vger.kernel.org>; Sun, 26 Jun 2022 23:41:58 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id i8-20020a17090aee8800b001ecc929d14dso9615744pjz.0
+        for <linux-tegra@vger.kernel.org>; Sun, 26 Jun 2022 23:41:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=lgrkBL8uKPFRXzhMJlCIBm/ZO4xPSeydtzyzWtnDYAg=;
-        b=oaKve63Gla3R3Amie+i2M84COlBAP07Ru/mUGMxFkbe6+P4K/YIVdEGVpjwdkWKLoy
-         xfN+TKd+3OJMy7vLkiLJKDJ+J4F8BrBluyPGFBWmqfs1c1IIw3Il35umx29zgH4fZ0fK
-         uhfN7wkqQT82l768rcKaps7yo32niK5QSxRFhYCZv9XneTgC+7cE0Q6ZXz33Jc2PX8by
-         CceGfun4JkqT5yJiZK50PBT3VuscitokTmU4ZIYPW+ViC8cKD5V+dBeoyma6DcG3Ljic
-         IoOx0UsczpEgKa/FU3+nDQcDpw6A1hVgnC/paQlVgOqCW7w8cTPgmTr8Xf6MyC+W7Dsa
-         DVrg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=45rauxW62zvLiLrUYdOABR/1r2UUII+y5PQH23JQu7k=;
+        b=vhJiLwQCcFv1Yt6V2yG+9+dObL9WLX6fmLFxVczsb1YHUoreh12Pi8nSs4GErNzvpV
+         5V9xb73nB2888hljZbsR327vjZCmTDW6nSpy3h3wt0ViTXOUFRmpoP7TgfWUK1HhLjzp
+         lTUGwqSfqakgzvKRHVkxFx2ZZguCL9M4BIgCRV01skb5o+FnFptRkRPLwOIo/h35HZQy
+         X7mgKXYHVbmmEttrTkz4As+vdrVb2pDEpNl1Ow7sjEbUzy/VJXi1S+xlTdiHhvZ/rkmd
+         DOUOS8aPOLvdaRwrCkxIA3HsVoUnpzxhd0AqERM6fQMZIwpnERb3GXCziX2Pkyd5TK7P
+         5X5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=lgrkBL8uKPFRXzhMJlCIBm/ZO4xPSeydtzyzWtnDYAg=;
-        b=MhqrClLklF9x/4TPzKmoRACoKCr8hf9FMlNlx4z5zobsHcmgzHHcH3Xn9tMIMO40KQ
-         HIn7BggTcTacD/t6zrhl7D5X8zOD9nFL1bvzp35Q04Vgk9nfC9R9zzNBW2CHrn1mgKX5
-         BMtpqFqkVRZEH17W4FZ4Ud0H5cDvO9F3qU1TvLXe5tMzlZM5NxEKHMZInSqGkQriHrZc
-         mQWqveAMI3wtD57dHlApVd7Y1hV8kvQYZCmpPMC76RJKghTiaFCE20nxiATHO1KfkvDU
-         VtKojyUD86f//cr63t0LWpbJhD6nC3k0cAHUPH8x+n1iExdTFtf2F7cEwf4DiFkPZwVj
-         dg/g==
-X-Gm-Message-State: AJIora9uxius0IdJwoolpBM1dUP3FZrT+9phPS0AIONpyS5rloYqjR6J
-        PL5VBYCfkdRklx8egXh2Y7cwXVqJRFM=
-X-Google-Smtp-Source: AGRyM1ufNV51pT9Ff9NQ6oHN2saCEEDtlf1oPK7vfPfGDlYC+jpWBvZbw8cr15Q+/mJIXhebkOSx8A==
-X-Received: by 2002:a05:651c:2107:b0:25b:b088:3259 with SMTP id a7-20020a05651c210700b0025bb0883259mr4795763ljq.142.1656310255996;
-        Sun, 26 Jun 2022 23:10:55 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.118.164])
-        by smtp.googlemail.com with ESMTPSA id a20-20020a05651c031400b0025aa2f6d700sm1109422ljp.62.2022.06.26.23.10.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Jun 2022 23:10:55 -0700 (PDT)
-Message-ID: <4a8114f7-4ee6-a9ad-f5be-ceaf64be8a0e@gmail.com>
-Date:   Mon, 27 Jun 2022 09:10:49 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 5/5] OPP: Remove custom OPP helper support
-Content-Language: en-US
-To:     Viresh Kumar <viresh.kumar@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=45rauxW62zvLiLrUYdOABR/1r2UUII+y5PQH23JQu7k=;
+        b=g35yz7Ohs/2pM4+dNy0L7+Sa6XLPZMbrs+1wfYVgXZPcsMurFGNafUuCYqq5LSq+gg
+         Oc6t76WYQlInXxsheRn/F9/rUqMrZMOlFtJ9nrLLRP+ghHxGQhhDJKdu+YfbE4M16ixP
+         YsZsbJGj+FIi7ZEvtnZrt4xnrsbfzH4tmA7eN6hS63W+OpfILquZLh56l03EJIJs1I12
+         Fo+HAdhpmIV5hy3UZvM9cbYHum0KPoh5xLJPbkVaIZ6rdFaMmItqxsu9PTeLkfgEs/T4
+         c6/6xZG2uKBtO3QrPdxPb3TynrjrRNF/v1D3u33B+e5cAx/xN4y8vAs41f+MLCW9Izt9
+         1Nqg==
+X-Gm-Message-State: AJIora83Yit0DRQRSXS3ZMNqNelPASHva4Z4KaLAN2gwKswFm/KlKioF
+        7Df5kEmMcXnqE4UcAqw/YpiCpw==
+X-Google-Smtp-Source: AGRyM1viYEO4TpTC4lUvX8VkhvtNg6ETswsD7mpBbxH+A0JO6sX4fcnU9+xgZXgcwEJpuRRsDyKwiw==
+X-Received: by 2002:a17:90b:3ece:b0:1ed:13a9:8531 with SMTP id rm14-20020a17090b3ece00b001ed13a98531mr19005332pjb.183.1656312117699;
+        Sun, 26 Jun 2022 23:41:57 -0700 (PDT)
+Received: from localhost ([122.172.201.58])
+        by smtp.gmail.com with ESMTPSA id g38-20020a635226000000b0040cb1f55391sm6281148pgb.2.2022.06.26.23.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Jun 2022 23:41:57 -0700 (PDT)
+Date:   Mon, 27 Jun 2022 12:11:55 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Keerthy <j-keerthy@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
         Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -67,44 +61,29 @@ Cc:     Keerthy <j-keerthy@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-kernel@vger.kernel.org,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5/5] OPP: Remove custom OPP helper support
+Message-ID: <20220627064155.jo7iqz5h33l7a4vn@vireshk-i7>
 References: <cover.1653991004.git.viresh.kumar@linaro.org>
  <2e6ee73dbc8a231377547a8e9497561cadb38166.1653991004.git.viresh.kumar@linaro.org>
  <565ff879-11e4-1ae4-08d8-1237a875ef12@gmail.com>
  <20220627060636.rfpok75zydgcwwo6@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220627060636.rfpok75zydgcwwo6@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <4a8114f7-4ee6-a9ad-f5be-ceaf64be8a0e@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a8114f7-4ee6-a9ad-f5be-ceaf64be8a0e@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.06.2022 09:06, Viresh Kumar пишет:
-> Hi Dmitry,
-> 
-> On 25-06-22, 14:42, Dmitry Osipenko wrote:
->> 31.05.2022 13:10, Viresh Kumar пишет:
->>> The only user of the custom helper is migrated to use
->>> config_regulators() interface. Remove the now unused custom OPP helper
->>> support.
->>>
->>> This cleans up _set_opp() and leaves a single code path to be used by
->>> all users.
-> 
->> Unfortunately we can't remove the set_opp_helper(). It's terrible that
->> this function is unused by Tegra 3d driver because it should be used.
->>
->> The patch that supposed to use the devm_pm_opp_register_set_opp_helper()
->> [1] was merged a half year ago and just today I noticed that the merged
->> code doesn't have devm_pm_opp_register_set_opp_helper() [2]. I think
->> Thierry edited my patch before applying it, perhaps there was a merge
->> conflict :/ This needs to be fixed now.
-> 
-> As the commit log above says, we aren't removing the feature, but just
-> changing the interface to cnofig_regulators(). That was the only
-> special handling the drivers were required to do earlier as well, for
-> which the helper interface was added.
-> 
+On 27-06-22, 09:10, Dmitry Osipenko wrote:
+> Okay, but Tegra 3d driver doesn't need config_regulators(), it needs
+> customized set_opp() to set clock rate for both 3d engines.
 
-Okay, but Tegra 3d driver doesn't need config_regulators(), it needs
-customized set_opp() to set clock rate for both 3d engines.
+What does that mean, you need to set two clocks ? There is separate
+support added for that already [1].
+
+-- 
+viresh
+
+[1] https://lore.kernel.org/lkml/cover.1654849214.git.viresh.kumar@linaro.org/
