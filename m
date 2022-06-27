@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3094CCA483
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B802C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237072AbiF0OUt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 10:20:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38012 "EHLO
+        id S235267AbiF0OUu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 10:20:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237008AbiF0OUo (ORCPT
+        with ESMTP id S237002AbiF0OUo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 27 Jun 2022 10:20:44 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B991145F;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A97011158;
         Mon, 27 Jun 2022 07:20:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=Ixmg90dyDmHAicFMf0z9UoK0XakUBMSYYi6CRfswppA=; b=B83Q8R6dOE20SbRqfBwQyYZgHf
-        MnS6+AGqyuKfaCmDxvJQ8ySeMdhzsNErzCYssjkBXKh8pqWz7YJPbmk6Jrz9isqQYjBsOONPDrXDk
-        mwsKJCpBbDtzL4BFh6u9LSdDsX/2h/BLjW0RaYgzTYIDm9ZDZpuGuzhRWp2MMThmN7VsfZ2xJJYlh
-        J2dlfPegLATsoBK3ShxWAtSWlCev0xi6nY/GBurrqCNO8gl4etsLnFebfeO6Z6j/jdgzO3HBL3IWW
-        AC8pYkRZOhYOBThJogAmET6RNQV1yV0xBM8iweRSGoenHvYgTnApgNgN9W1QztO9KynPNZO/oUoEc
-        bhd2nNBg==;
+        bh=EgbMht9C/EIGKqEapQ/eQ36TCVYKsgYuy2BxNsAgYmM=; b=LXpWxoSk6i+bognoc/dWWlF4wK
+        YQQk9QI7otfjEgPfFCBWK9ihiHNtk+HvcxVF2+nKHxwkFzjRbKiznz/hRwPErZEJ8Qj4G3to8pV87
+        TaOi4pI+lqjsC2llhiQbdqEw95khnX7I0t8V0wsxz1szsVACX17vzTJYgh2TrwZ21oeBu/8EgQI3D
+        5OGHsp1KWukNFZ2zwa44bSgHyNh0xhx+QyWbdfwH4Nys2GYujuylp6Vfff4J8dzJ/TIcvS6xMDArJ
+        VKo+fsZ6ULal6GLeQ+/BycSnigRP09kFULU2jkauAHhHLBFerHeAs3DpN2PiiINNMnkd4X1DSmu5A
+        FCi6lnQQ==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1o5pbP-003N2J-6O; Mon, 27 Jun 2022 17:20:34 +0300
+        id 1o5pbM-003N2J-JE; Mon, 27 Jun 2022 17:20:31 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -42,9 +42,9 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Robin Murphy <robin.murphy@arm.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7/v3 20/22] gpu: host1x: Add MLOCK release code on Tegra234
-Date:   Mon, 27 Jun 2022 17:20:06 +0300
-Message-Id: <20220627142008.2072474-21-cyndis@kapsi.fi>
+Subject: [PATCH v7/v3 09/22] dt-bindings: Add bindings for Tegra234 Host1x and VIC
+Date:   Mon, 27 Jun 2022 17:19:55 +0300
+Message-Id: <20220627142008.2072474-10-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220627142008.2072474-1-cyndis@kapsi.fi>
 References: <20220627142008.2072474-1-cyndis@kapsi.fi>
@@ -59,85 +59,201 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-With the full-featured opcode sequence using MLOCKs, we need to also
-unlock those MLOCKs in the event of a timeout. However, it turns out
-that on Tegra186/Tegra194, by default, we don't need to do this;
-furthermore, on Tegra234 it is much simpler to do; so only implement
-this on Tegra234 for the time being.
+Update VIC and Host1x bindings for changes in Tegra234.
+
+Namely,
+- New compatible strings
+- Sharded syncpoint interrupts
+- Optional reset.
+
+Also, fix the order of descriptions for VM/hypervisor
+register apertures -- while the reg-names specification
+was correct, the descriptions for these were switched.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/host1x/hw/cdma_hw.c            | 34 ++++++++++++++++++++++
- drivers/gpu/host1x/hw/hw_host1x08_common.h |  7 +++++
- 2 files changed, 41 insertions(+)
+v2:
+* Add back 'required' for resets/reset-names on older SoCs
+* Simplified reg descriptions
+* Updated commit message
+v3:
+* Split out bracketing change in example
+---
+ .../display/tegra/nvidia,tegra124-vic.yaml    |   1 +
+ .../display/tegra/nvidia,tegra20-host1x.yaml  | 106 +++++++++++++++---
+ 2 files changed, 93 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-index e49cd5b8f735..1b65a10b9dfc 100644
---- a/drivers/gpu/host1x/hw/cdma_hw.c
-+++ b/drivers/gpu/host1x/hw/cdma_hw.c
-@@ -238,6 +238,37 @@ static void cdma_resume(struct host1x_cdma *cdma, u32 getptr)
- 	cdma_timeout_restart(cdma, getptr);
- }
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
+index 37bb5ddc1963..7200095ef19e 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
+@@ -21,6 +21,7 @@ properties:
+           - nvidia,tegra210-vic
+           - nvidia,tegra186-vic
+           - nvidia,tegra194-vic
++          - nvidia,tegra234-vic
  
-+static void timeout_release_mlock(struct host1x_cdma *cdma)
-+{
-+#if HOST1X_HW >= 8
-+	/* Tegra186 and Tegra194 require a more complicated MLOCK release
-+	 * sequence. Furthermore, those chips by default don't enforce MLOCKs,
-+	 * so it turns out that if we don't /actually/ need MLOCKs, we can just
-+	 * ignore them.
-+	 *
-+	 * As such, for now just implement this on Tegra234 where things are
-+	 * stricter but also easy to implement.
-+	 */
-+	struct host1x_channel *ch = cdma_to_channel(cdma);
-+	struct host1x *host1x = cdma_to_host1x(cdma);
-+	u32 offset;
-+
-+	switch (ch->client->class) {
-+	case HOST1X_CLASS_VIC:
-+		offset = HOST1X_COMMON_VIC_MLOCK;
-+		break;
-+	case HOST1X_CLASS_NVDEC:
-+		offset = HOST1X_COMMON_NVDEC_MLOCK;
-+		break;
-+	default:
-+		WARN(1, "%s was not updated for class %u", __func__, ch->client->class);
-+		return;
-+	}
-+
-+	host1x_common_writel(host1x, 0x0, offset);
-+#endif
-+}
-+
- /*
-  * If this timeout fires, it indicates the current sync_queue entry has
-  * exceeded its TTL and the userctx should be timed out and remaining
-@@ -288,6 +319,9 @@ static void cdma_timeout_handler(struct work_struct *work)
- 	/* stop HW, resetting channel/module */
- 	host1x_hw_cdma_freeze(host1x, cdma);
+       - items:
+           - const: nvidia,tegra132-vic
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+index 0adeb03b9e3a..e6056e9445a7 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+@@ -24,6 +24,7 @@ properties:
+           - nvidia,tegra210-host1x
+           - nvidia,tegra186-host1x
+           - nvidia,tegra194-host1x
++          - nvidia,tegra234-host1x
  
-+	/* release any held MLOCK */
-+	timeout_release_mlock(cdma);
+       - items:
+           - const: nvidia,tegra132-host1x
+@@ -31,23 +32,19 @@ properties:
+ 
+   reg:
+     minItems: 1
+-    maxItems: 2
++    maxItems: 3
+ 
+   reg-names:
+     minItems: 1
+-    maxItems: 2
++    maxItems: 3
+ 
+   interrupts:
+-    items:
+-      - description: host1x syncpoint interrupt
+-      - description: host1x general interrupt
+     minItems: 1
++    maxItems: 9
+ 
+   interrupt-names:
+-    items:
+-      - const: syncpt
+-      - const: host1x
+     minItems: 1
++    maxItems: 9
+ 
+   '#address-cells':
+     description: The number of cells used to represent physical base addresses
+@@ -110,13 +107,35 @@ required:
+   - reg
+   - clocks
+   - clock-names
+-  - resets
+-  - reset-names
+ 
+ additionalProperties:
+   type: object
+ 
+ allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra20-host1x
++              - nvidia,tegra30-host1x
++              - nvidia,tegra114-host1x
++              - nvidia,tegra124-host1x
++              - nvidia,tegra210-host1x
++    then:
++      properties:
++        interrupts:
++          items:
++            - description: host1x syncpoint interrupt
++            - description: host1x general interrupt
 +
- 	host1x_cdma_update_sync_queue(cdma, ch->dev);
- 	mutex_unlock(&cdma->lock);
- }
-diff --git a/drivers/gpu/host1x/hw/hw_host1x08_common.h b/drivers/gpu/host1x/hw/hw_host1x08_common.h
-index 4df28440b86b..8e0c99150ec2 100644
---- a/drivers/gpu/host1x/hw/hw_host1x08_common.h
-+++ b/drivers/gpu/host1x/hw/hw_host1x08_common.h
-@@ -2,3 +2,10 @@
- /*
-  * Copyright (c) 2022 NVIDIA Corporation.
-  */
++        interrupt-names:
++          items:
++            - const: syncpt
++            - const: host1x
++      required:
++        - resets
++        - reset-names
+   - if:
+       properties:
+         compatible:
+@@ -133,10 +152,8 @@ allOf:
+ 
+         reg:
+           items:
+-            - description: physical base address and length of the register
+-                region assigned to the VM
+-            - description: physical base address and length of the register
+-                region used by the hypervisor
++            - description: region used by the hypervisor
++            - description: region assigned to the virtual machine
+ 
+         resets:
+           maxItems: 1
+@@ -144,6 +161,67 @@ allOf:
+         reset-names:
+           maxItems: 1
+ 
++        interrupts:
++          items:
++            - description: host1x syncpoint interrupt
++            - description: host1x general interrupt
 +
-+#define HOST1X_COMMON_OFA_MLOCK			0x4050
-+#define HOST1X_COMMON_NVJPG1_MLOCK		0x4070
-+#define HOST1X_COMMON_VIC_MLOCK			0x4078
-+#define HOST1X_COMMON_NVENC_MLOCK		0x407c
-+#define HOST1X_COMMON_NVDEC_MLOCK		0x4080
-+#define HOST1X_COMMON_NVJPG_MLOCK		0x4084
++        interrupt-names:
++          items:
++            - const: syncpt
++            - const: host1x
++
++        iommu-map:
++          description: Specification of stream IDs available for memory context device
++            use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
++            usable stream IDs.
++
++      required:
++        - reg-names
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra234-host1x
++    then:
++      properties:
++        reg-names:
++          items:
++            - const: common
++            - const: hypervisor
++            - const: vm
++
++        reg:
++          items:
++            - description: region used by host1x server
++            - description: region used by the hypervisor
++            - description: region assigned to the virtual machine
++
++        interrupts:
++          items:
++            - description: host1x syncpoint interrupt 0
++            - description: host1x syncpoint interrupt 1
++            - description: host1x syncpoint interrupt 2
++            - description: host1x syncpoint interrupt 3
++            - description: host1x syncpoint interrupt 4
++            - description: host1x syncpoint interrupt 5
++            - description: host1x syncpoint interrupt 6
++            - description: host1x syncpoint interrupt 7
++            - description: host1x general interrupt
++
++        interrupt-names:
++          items:
++            - const: syncpt0
++            - const: syncpt1
++            - const: syncpt2
++            - const: syncpt3
++            - const: syncpt4
++            - const: syncpt5
++            - const: syncpt6
++            - const: syncpt7
++            - const: host1x
++
+         iommu-map:
+           description: Specification of stream IDs available for memory context device
+             use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
 -- 
 2.36.1
 
