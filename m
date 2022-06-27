@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C89E2CCA480
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAF5CCA487
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237125AbiF0OU4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 10:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38008 "EHLO
+        id S237094AbiF0OU5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 10:20:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237043AbiF0OUq (ORCPT
+        with ESMTP id S237042AbiF0OUq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 27 Jun 2022 10:20:46 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A089B9F;
-        Mon, 27 Jun 2022 07:20:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EB0DFD0A;
+        Mon, 27 Jun 2022 07:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=YCik0veYbVVGtNZV6K0Qb0SwkXFNdPUcrvrXAEOzoLU=; b=dYUTKL/f+mm6D0CqNXuHFBkZwK
-        vUylO3kYifmVFKQWuwF5wZgVBUadN7RHiP62Nrn58eDXYU4hHrbmFMVWj0MWGpCsLtERUvTqf73K7
-        a40F7miybVMksUkyZM9rrRcyutuL7XLUorckAIDfXITRz1+YJzY2HTtk0aEUmcNkdOJ3hTrDUfxg2
-        xZL3F9GUdWU6rNIrW+HquW2kUQSJbOtbzcpa6RF5+JgrhhKWzP6B7l/k6LpopxXAov2hZk7ya8s1Q
-        G6T820glvlfN8lKY4zPzWconmLuIcsAHqw/BFN15h4URPheOYUTKtsKz5LHusMdWAopal70F3lOX4
-        wDgcjdsQ==;
+        bh=yMm5XL2kHJ35mSuqwczK/d9G+qWLW5WP5DUhGmD5Ews=; b=mapIPbesA32jrsANklYn2xhbtv
+        a/lelN8ZiegVI1XYpWOB2mFIYIFKVEb8I9RcGKpQBwzLpIXSjh3EhHlbjAkiDeOS5jWlebQwykMyt
+        5TfntNZJlK6lMNbi8rKVedqxd7eZmE+do2PGLIiSRq7Ygr1dxwp7zKGSPIJveljJKukHj5bsTO6SC
+        UB6t4v5gHRk3qtke1Pu5Xm6N+dM2aJq5GhN6LOZZ/tV7M43JF98DbuELWs8J3nBOOTnPjtwyva/Fb
+        ikMCTeDeQyu8wRcVcU7hKu5bWdBA0UlP0w4+r65yUcA4c7h5BByjbCvWXKAOcDTP9LKiAdqkvAAQT
+        0s2/PomQ==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1o5pbO-003N2J-Ly; Mon, 27 Jun 2022 17:20:33 +0300
+        id 1o5pbL-003N2J-7i; Mon, 27 Jun 2022 17:20:30 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -42,9 +42,9 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Robin Murphy <robin.murphy@arm.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7/v3 18/22] gpu: host1x: Tegra234 device data and headers
-Date:   Mon, 27 Jun 2022 17:20:04 +0300
-Message-Id: <20220627142008.2072474-19-cyndis@kapsi.fi>
+Subject: [PATCH v7/v3 03/22] gpu: host1x: Program context stream ID on submission
+Date:   Mon, 27 Jun 2022 17:19:49 +0300
+Message-Id: <20220627142008.2072474-4-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220627142008.2072474-1-cyndis@kapsi.fi>
 References: <20220627142008.2072474-1-cyndis@kapsi.fi>
@@ -59,463 +59,168 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add device data and chip headers for Tegra234.
+Add code to do stream ID switching at the beginning of a job. The
+stream ID is switched to the stream ID specified by the context
+passed in the job structure.
+
+Before switching the stream ID, an OP_DONE wait is done on the
+channel's engine to ensure that there is no residual ongoing
+work that might do DMA using the new stream ID.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/host1x/Makefile                   |   3 +-
- drivers/gpu/host1x/dev.c                      |  42 ++++
- drivers/gpu/host1x/hw/host1x08.c              |  33 ++++
- drivers/gpu/host1x/hw/host1x08.h              |  15 ++
- drivers/gpu/host1x/hw/host1x08_hardware.h     |  21 ++
- drivers/gpu/host1x/hw/hw_host1x08_channel.h   |  11 ++
- drivers/gpu/host1x/hw/hw_host1x08_common.h    |   4 +
- .../gpu/host1x/hw/hw_host1x08_hypervisor.h    |   9 +
- drivers/gpu/host1x/hw/hw_host1x08_uclass.h    | 181 ++++++++++++++++++
- drivers/gpu/host1x/hw/hw_host1x08_vm.h        |  36 ++++
- 10 files changed, 354 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/host1x/hw/host1x08.c
- create mode 100644 drivers/gpu/host1x/hw/host1x08.h
- create mode 100644 drivers/gpu/host1x/hw/host1x08_hardware.h
- create mode 100644 drivers/gpu/host1x/hw/hw_host1x08_channel.h
- create mode 100644 drivers/gpu/host1x/hw/hw_host1x08_common.h
- create mode 100644 drivers/gpu/host1x/hw/hw_host1x08_hypervisor.h
- create mode 100644 drivers/gpu/host1x/hw/hw_host1x08_uclass.h
- create mode 100644 drivers/gpu/host1x/hw/hw_host1x08_vm.h
+v5:
+* Add fallback stream ID. Not used yet, will be needed for
+  full featured opcode sequence.
+* Rename host1x_context to host1x_memory_context
+v4:
+* Rename job->context to job->memory_context for clarity
+---
+ drivers/gpu/host1x/hw/channel_hw.c        | 52 +++++++++++++++++++++--
+ drivers/gpu/host1x/hw/host1x06_hardware.h | 10 +++++
+ drivers/gpu/host1x/hw/host1x07_hardware.h | 10 +++++
+ include/linux/host1x.h                    |  8 ++++
+ 4 files changed, 76 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-index 28f7aaedce0f..ee5286ffe08d 100644
---- a/drivers/gpu/host1x/Makefile
-+++ b/drivers/gpu/host1x/Makefile
-@@ -15,7 +15,8 @@ host1x-y = \
- 	hw/host1x04.o \
- 	hw/host1x05.o \
- 	hw/host1x06.o \
--	hw/host1x07.o
-+	hw/host1x07.o \
-+	hw/host1x08.o
+diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+index 6b40e9af1e88..f84caf06621a 100644
+--- a/drivers/gpu/host1x/hw/channel_hw.c
++++ b/drivers/gpu/host1x/hw/channel_hw.c
+@@ -180,6 +180,45 @@ static void host1x_enable_gather_filter(struct host1x_channel *ch)
+ #endif
+ }
  
- host1x-$(CONFIG_IOMMU_API) += \
- 	context.o
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index c28939850bf6..0cd3f97e7e49 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -39,6 +39,7 @@
- #include "hw/host1x05.h"
- #include "hw/host1x06.h"
- #include "hw/host1x07.h"
-+#include "hw/host1x08.h"
- 
- void host1x_common_writel(struct host1x *host1x, u32 v, u32 r)
++static void host1x_channel_program_engine_streamid(struct host1x_job *job)
++{
++#if HOST1X_HW >= 6
++	u32 fence;
++
++	if (!job->memory_context)
++		return;
++
++	fence = host1x_syncpt_incr_max(job->syncpt, 1);
++
++	/* First, increment a syncpoint on OP_DONE condition.. */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_nonincr(HOST1X_UCLASS_INCR_SYNCPT, 1),
++		HOST1X_UCLASS_INCR_SYNCPT_INDX_F(job->syncpt->id) |
++			HOST1X_UCLASS_INCR_SYNCPT_COND_F(1));
++
++	/* Wait for syncpoint to increment */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setclass(HOST1X_CLASS_HOST1X,
++			host1x_uclass_wait_syncpt_r(), 1),
++		host1x_class_host_wait_syncpt(job->syncpt->id, fence));
++
++	/*
++	 * Now that we know the engine is idle, return to class and
++	 * change stream ID.
++	 */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setclass(job->class, 0, 0),
++		HOST1X_OPCODE_NOP);
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setpayload(job->memory_context->stream_id),
++		host1x_opcode_setstreamid(job->engine_streamid_offset / 4));
++#endif
++}
++
+ static int channel_submit(struct host1x_job *job)
  {
-@@ -205,7 +206,48 @@ static const struct host1x_info host1x07_info = {
- 	.reserve_vblank_syncpts = false,
+ 	struct host1x_channel *ch = job->channel;
+@@ -236,18 +275,23 @@ static int channel_submit(struct host1x_job *job)
+ 	if (sp->base)
+ 		synchronize_syncpt_base(job);
+ 
+-	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
+-
+ 	host1x_hw_syncpt_assign_to_channel(host, sp, ch);
+ 
+-	job->syncpt_end = syncval;
+-
+ 	/* add a setclass for modules that require it */
+ 	if (job->class)
+ 		host1x_cdma_push(&ch->cdma,
+ 				 host1x_opcode_setclass(job->class, 0, 0),
+ 				 HOST1X_OPCODE_NOP);
+ 
++	/*
++	 * Ensure engine DMA is idle and set new stream ID. May increment
++	 * syncpt max.
++	 */
++	host1x_channel_program_engine_streamid(job);
++
++	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
++	job->syncpt_end = syncval;
++
+ 	submit_gathers(job, syncval - user_syncpt_incrs);
+ 
+ 	/* end CDMA submit & stash pinned hMems into sync queue */
+diff --git a/drivers/gpu/host1x/hw/host1x06_hardware.h b/drivers/gpu/host1x/hw/host1x06_hardware.h
+index 01a142a09800..5d515745eee7 100644
+--- a/drivers/gpu/host1x/hw/host1x06_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x06_hardware.h
+@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+ 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+ }
+ 
++static inline u32 host1x_opcode_setstreamid(unsigned streamid)
++{
++	return (7 << 28) | streamid;
++}
++
++static inline u32 host1x_opcode_setpayload(unsigned payload)
++{
++	return (9 << 28) | payload;
++}
++
+ static inline u32 host1x_opcode_gather_wide(unsigned count)
+ {
+ 	return (12 << 28) | count;
+diff --git a/drivers/gpu/host1x/hw/host1x07_hardware.h b/drivers/gpu/host1x/hw/host1x07_hardware.h
+index e6582172ebfd..82c0cc9bb0b5 100644
+--- a/drivers/gpu/host1x/hw/host1x07_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x07_hardware.h
+@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+ 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+ }
+ 
++static inline u32 host1x_opcode_setstreamid(unsigned streamid)
++{
++	return (7 << 28) | streamid;
++}
++
++static inline u32 host1x_opcode_setpayload(unsigned payload)
++{
++	return (9 << 28) | payload;
++}
++
+ static inline u32 host1x_opcode_gather_wide(unsigned count)
+ {
+ 	return (12 << 28) | count;
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 32a82da13fed..cb2100d9b0ff 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -327,6 +327,14 @@ struct host1x_job {
+ 
+ 	/* Whether host1x-side firewall should be ran for this job or not */
+ 	bool enable_firewall;
++
++	/* Options for configuring engine data stream ID */
++	/* Context device to use for job */
++	struct host1x_memory_context *memory_context;
++	/* Stream ID to use if context isolation is disabled (!memory_context) */
++	u32 engine_fallback_streamid;
++	/* Engine offset to program stream ID to */
++	u32 engine_streamid_offset;
  };
  
-+/*
-+ * Tegra234 has two stream ID protection tables, one for setting stream IDs
-+ * through the channel path via SETSTREAMID, and one for setting them via
-+ * MMIO. We program each engine's data stream ID in the channel path table
-+ * and firmware stream ID in the MMIO path table.
-+ */
-+static const struct host1x_sid_entry tegra234_sid_table[] = {
-+	{
-+		/* VIC channel */
-+		.base = 0x17b8,
-+		.offset = 0x30,
-+		.limit = 0x30
-+	},
-+	{
-+		/* VIC MMIO */
-+		.base = 0x1688,
-+		.offset = 0x34,
-+		.limit = 0x34
-+	},
-+};
-+
-+static const struct host1x_info host1x08_info = {
-+	.nb_channels = 63,
-+	.nb_pts = 1024,
-+	.nb_mlocks = 24,
-+	.nb_bases = 0,
-+	.init = host1x08_init,
-+	.sync_offset = 0x0,
-+	.dma_mask = DMA_BIT_MASK(40),
-+	.has_wide_gather = true,
-+	.has_hypervisor = true,
-+	.has_common = true,
-+	.num_sid_entries = ARRAY_SIZE(tegra234_sid_table),
-+	.sid_table = tegra234_sid_table,
-+	.streamid_vm_table = { 0x1004, 128 },
-+	.classid_vm_table = { 0x1404, 25 },
-+	.mmio_vm_table = { 0x1504, 25 },
-+	.reserve_vblank_syncpts = false,
-+};
-+
- static const struct of_device_id host1x_of_match[] = {
-+	{ .compatible = "nvidia,tegra234-host1x", .data = &host1x08_info, },
- 	{ .compatible = "nvidia,tegra194-host1x", .data = &host1x07_info, },
- 	{ .compatible = "nvidia,tegra186-host1x", .data = &host1x06_info, },
- 	{ .compatible = "nvidia,tegra210-host1x", .data = &host1x05_info, },
-diff --git a/drivers/gpu/host1x/hw/host1x08.c b/drivers/gpu/host1x/hw/host1x08.c
-new file mode 100644
-index 000000000000..754890c34c74
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/host1x08.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Host1x init for Tegra234 SoCs
-+ *
-+ * Copyright (c) 2022 NVIDIA Corporation.
-+ */
-+
-+/* include hw specification */
-+#include "host1x08.h"
-+#include "host1x08_hardware.h"
-+
-+/* include code */
-+#define HOST1X_HW 8
-+
-+#include "cdma_hw.c"
-+#include "channel_hw.c"
-+#include "debug_hw.c"
-+#include "intr_hw.c"
-+#include "syncpt_hw.c"
-+
-+#include "../dev.h"
-+
-+int host1x08_init(struct host1x *host)
-+{
-+	host->channel_op = &host1x_channel_ops;
-+	host->cdma_op = &host1x_cdma_ops;
-+	host->cdma_pb_op = &host1x_pushbuffer_ops;
-+	host->syncpt_op = &host1x_syncpt_ops;
-+	host->intr_op = &host1x_intr_ops;
-+	host->debug_op = &host1x_debug_ops;
-+
-+	return 0;
-+}
-diff --git a/drivers/gpu/host1x/hw/host1x08.h b/drivers/gpu/host1x/hw/host1x08.h
-new file mode 100644
-index 000000000000..a6bad56e44cf
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/host1x08.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Host1x init for Tegra234 SoCs
-+ *
-+ * Copyright (c) 2018 NVIDIA Corporation.
-+ */
-+
-+#ifndef HOST1X_HOST1X08_H
-+#define HOST1X_HOST1X08_H
-+
-+struct host1x;
-+
-+int host1x08_init(struct host1x *host);
-+
-+#endif
-diff --git a/drivers/gpu/host1x/hw/host1x08_hardware.h b/drivers/gpu/host1x/hw/host1x08_hardware.h
-new file mode 100644
-index 000000000000..936243060bff
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/host1x08_hardware.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Tegra host1x Register Offsets for Tegra234
-+ *
-+ * Copyright (c) 2022 NVIDIA Corporation.
-+ */
-+
-+#ifndef __HOST1X_HOST1X08_HARDWARE_H
-+#define __HOST1X_HOST1X08_HARDWARE_H
-+
-+#include <linux/types.h>
-+#include <linux/bitops.h>
-+
-+#include "hw_host1x08_uclass.h"
-+#include "hw_host1x08_vm.h"
-+#include "hw_host1x08_hypervisor.h"
-+#include "hw_host1x08_common.h"
-+
-+#include "opcodes.h"
-+
-+#endif
-diff --git a/drivers/gpu/host1x/hw/hw_host1x08_channel.h b/drivers/gpu/host1x/hw/hw_host1x08_channel.h
-new file mode 100644
-index 000000000000..c9272d2ab14a
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/hw_host1x08_channel.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2022 NVIDIA Corporation.
-+ */
-+
-+#ifndef HOST1X_HW_HOST1X08_CHANNEL_H
-+#define HOST1X_HW_HOST1X08_CHANNEL_H
-+
-+#define HOST1X_CHANNEL_SMMU_STREAMID 0x084
-+
-+#endif
-diff --git a/drivers/gpu/host1x/hw/hw_host1x08_common.h b/drivers/gpu/host1x/hw/hw_host1x08_common.h
-new file mode 100644
-index 000000000000..4df28440b86b
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/hw_host1x08_common.h
-@@ -0,0 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2022 NVIDIA Corporation.
-+ */
-diff --git a/drivers/gpu/host1x/hw/hw_host1x08_hypervisor.h b/drivers/gpu/host1x/hw/hw_host1x08_hypervisor.h
-new file mode 100644
-index 000000000000..22964324c914
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/hw_host1x08_hypervisor.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2022 NVIDIA Corporation.
-+ */
-+
-+#define HOST1X_HV_SYNCPT_PROT_EN			0x1724
-+#define HOST1X_HV_SYNCPT_PROT_EN_CH_EN			BIT(1)
-+#define HOST1X_HV_CH_MLOCK_EN(x)			(0x1700 + (x * 4))
-+#define HOST1X_HV_CH_KERNEL_FILTER_GBUFFER(x)		(0x1710 + (x * 4))
-diff --git a/drivers/gpu/host1x/hw/hw_host1x08_uclass.h b/drivers/gpu/host1x/hw/hw_host1x08_uclass.h
-new file mode 100644
-index 000000000000..724cccd71aa1
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/hw_host1x08_uclass.h
-@@ -0,0 +1,181 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2018 NVIDIA Corporation.
-+ */
-+
-+ /*
-+  * Function naming determines intended use:
-+  *
-+  *     <x>_r(void) : Returns the offset for register <x>.
-+  *
-+  *     <x>_w(void) : Returns the word offset for word (4 byte) element <x>.
-+  *
-+  *     <x>_<y>_s(void) : Returns size of field <y> of register <x> in bits.
-+  *
-+  *     <x>_<y>_f(u32 v) : Returns a value based on 'v' which has been shifted
-+  *         and masked to place it at field <y> of register <x>.  This value
-+  *         can be |'d with others to produce a full register value for
-+  *         register <x>.
-+  *
-+  *     <x>_<y>_m(void) : Returns a mask for field <y> of register <x>.  This
-+  *         value can be ~'d and then &'d to clear the value of field <y> for
-+  *         register <x>.
-+  *
-+  *     <x>_<y>_<z>_f(void) : Returns the constant value <z> after being shifted
-+  *         to place it at field <y> of register <x>.  This value can be |'d
-+  *         with others to produce a full register value for <x>.
-+  *
-+  *     <x>_<y>_v(u32 r) : Returns the value of field <y> from a full register
-+  *         <x> value 'r' after being shifted to place its LSB at bit 0.
-+  *         This value is suitable for direct comparison with other unshifted
-+  *         values appropriate for use in field <y> of register <x>.
-+  *
-+  *     <x>_<y>_<z>_v(void) : Returns the constant value for <z> defined for
-+  *         field <y> of register <x>.  This value is suitable for direct
-+  *         comparison with unshifted values appropriate for use in field <y>
-+  *         of register <x>.
-+  */
-+
-+#ifndef HOST1X_HW_HOST1X08_UCLASS_H
-+#define HOST1X_HW_HOST1X08_UCLASS_H
-+
-+static inline u32 host1x_uclass_incr_syncpt_r(void)
-+{
-+	return 0x0;
-+}
-+#define HOST1X_UCLASS_INCR_SYNCPT \
-+	host1x_uclass_incr_syncpt_r()
-+static inline u32 host1x_uclass_incr_syncpt_cond_f(u32 v)
-+{
-+	return (v & 0xff) << 10;
-+}
-+#define HOST1X_UCLASS_INCR_SYNCPT_COND_F(v) \
-+	host1x_uclass_incr_syncpt_cond_f(v)
-+static inline u32 host1x_uclass_incr_syncpt_indx_f(u32 v)
-+{
-+	return (v & 0xff) << 0;
-+}
-+#define HOST1X_UCLASS_INCR_SYNCPT_INDX_F(v) \
-+	host1x_uclass_incr_syncpt_indx_f(v)
-+static inline u32 host1x_uclass_wait_syncpt_r(void)
-+{
-+	return 0x8;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT \
-+	host1x_uclass_wait_syncpt_r()
-+static inline u32 host1x_uclass_wait_syncpt_indx_f(u32 v)
-+{
-+	return (v & 0xff) << 24;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT_INDX_F(v) \
-+	host1x_uclass_wait_syncpt_indx_f(v)
-+static inline u32 host1x_uclass_wait_syncpt_thresh_f(u32 v)
-+{
-+	return (v & 0xffffff) << 0;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT_THRESH_F(v) \
-+	host1x_uclass_wait_syncpt_thresh_f(v)
-+static inline u32 host1x_uclass_wait_syncpt_base_r(void)
-+{
-+	return 0x9;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT_BASE \
-+	host1x_uclass_wait_syncpt_base_r()
-+static inline u32 host1x_uclass_wait_syncpt_base_indx_f(u32 v)
-+{
-+	return (v & 0xff) << 24;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT_BASE_INDX_F(v) \
-+	host1x_uclass_wait_syncpt_base_indx_f(v)
-+static inline u32 host1x_uclass_wait_syncpt_base_base_indx_f(u32 v)
-+{
-+	return (v & 0xff) << 16;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT_BASE_BASE_INDX_F(v) \
-+	host1x_uclass_wait_syncpt_base_base_indx_f(v)
-+static inline u32 host1x_uclass_wait_syncpt_base_offset_f(u32 v)
-+{
-+	return (v & 0xffff) << 0;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT_BASE_OFFSET_F(v) \
-+	host1x_uclass_wait_syncpt_base_offset_f(v)
-+static inline u32 host1x_uclass_load_syncpt_base_r(void)
-+{
-+	return 0xb;
-+}
-+#define HOST1X_UCLASS_LOAD_SYNCPT_BASE \
-+	host1x_uclass_load_syncpt_base_r()
-+static inline u32 host1x_uclass_load_syncpt_base_base_indx_f(u32 v)
-+{
-+	return (v & 0xff) << 24;
-+}
-+#define HOST1X_UCLASS_LOAD_SYNCPT_BASE_BASE_INDX_F(v) \
-+	host1x_uclass_load_syncpt_base_base_indx_f(v)
-+static inline u32 host1x_uclass_load_syncpt_base_value_f(u32 v)
-+{
-+	return (v & 0xffffff) << 0;
-+}
-+#define HOST1X_UCLASS_LOAD_SYNCPT_BASE_VALUE_F(v) \
-+	host1x_uclass_load_syncpt_base_value_f(v)
-+static inline u32 host1x_uclass_incr_syncpt_base_base_indx_f(u32 v)
-+{
-+	return (v & 0xff) << 24;
-+}
-+#define HOST1X_UCLASS_INCR_SYNCPT_BASE_BASE_INDX_F(v) \
-+	host1x_uclass_incr_syncpt_base_base_indx_f(v)
-+static inline u32 host1x_uclass_incr_syncpt_base_offset_f(u32 v)
-+{
-+	return (v & 0xffffff) << 0;
-+}
-+#define HOST1X_UCLASS_INCR_SYNCPT_BASE_OFFSET_F(v) \
-+	host1x_uclass_incr_syncpt_base_offset_f(v)
-+static inline u32 host1x_uclass_indoff_r(void)
-+{
-+	return 0x2d;
-+}
-+#define HOST1X_UCLASS_INDOFF \
-+	host1x_uclass_indoff_r()
-+static inline u32 host1x_uclass_indoff_indbe_f(u32 v)
-+{
-+	return (v & 0xf) << 28;
-+}
-+#define HOST1X_UCLASS_INDOFF_INDBE_F(v) \
-+	host1x_uclass_indoff_indbe_f(v)
-+static inline u32 host1x_uclass_indoff_autoinc_f(u32 v)
-+{
-+	return (v & 0x1) << 27;
-+}
-+#define HOST1X_UCLASS_INDOFF_AUTOINC_F(v) \
-+	host1x_uclass_indoff_autoinc_f(v)
-+static inline u32 host1x_uclass_indoff_indmodid_f(u32 v)
-+{
-+	return (v & 0xff) << 18;
-+}
-+#define HOST1X_UCLASS_INDOFF_INDMODID_F(v) \
-+	host1x_uclass_indoff_indmodid_f(v)
-+static inline u32 host1x_uclass_indoff_indroffset_f(u32 v)
-+{
-+	return (v & 0xffff) << 2;
-+}
-+#define HOST1X_UCLASS_INDOFF_INDROFFSET_F(v) \
-+	host1x_uclass_indoff_indroffset_f(v)
-+static inline u32 host1x_uclass_indoff_rwn_read_v(void)
-+{
-+	return 1;
-+}
-+#define HOST1X_UCLASS_INDOFF_INDROFFSET_F(v) \
-+	host1x_uclass_indoff_indroffset_f(v)
-+static inline u32 host1x_uclass_load_syncpt_payload_32_r(void)
-+{
-+	return 0x4e;
-+}
-+#define HOST1X_UCLASS_LOAD_SYNCPT_PAYLOAD_32 \
-+	host1x_uclass_load_syncpt_payload_32_r()
-+static inline u32 host1x_uclass_wait_syncpt_32_r(void)
-+{
-+	return 0x50;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT_32 \
-+	host1x_uclass_wait_syncpt_32_r()
-+
-+#endif
-diff --git a/drivers/gpu/host1x/hw/hw_host1x08_vm.h b/drivers/gpu/host1x/hw/hw_host1x08_vm.h
-new file mode 100644
-index 000000000000..1455a4670bf8
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/hw_host1x08_vm.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2022 NVIDIA Corporation.
-+ */
-+
-+#define HOST1X_CHANNEL_DMASTART				0x0000
-+#define HOST1X_CHANNEL_DMASTART_HI			0x0004
-+#define HOST1X_CHANNEL_DMAPUT				0x0008
-+#define HOST1X_CHANNEL_DMAPUT_HI			0x000c
-+#define HOST1X_CHANNEL_DMAGET				0x0010
-+#define HOST1X_CHANNEL_DMAGET_HI			0x0014
-+#define HOST1X_CHANNEL_DMAEND				0x0018
-+#define HOST1X_CHANNEL_DMAEND_HI			0x001c
-+#define HOST1X_CHANNEL_DMACTRL				0x0020
-+#define HOST1X_CHANNEL_DMACTRL_DMASTOP			BIT(0)
-+#define HOST1X_CHANNEL_DMACTRL_DMAGETRST		BIT(1)
-+#define HOST1X_CHANNEL_DMACTRL_DMAINITGET		BIT(2)
-+#define HOST1X_CHANNEL_CMDFIFO_STAT			0x0024
-+#define HOST1X_CHANNEL_CMDFIFO_STAT_EMPTY		BIT(13)
-+#define HOST1X_CHANNEL_CMDFIFO_RDATA			0x0028
-+#define HOST1X_CHANNEL_CMDP_OFFSET			0x0030
-+#define HOST1X_CHANNEL_CMDP_CLASS			0x0034
-+#define HOST1X_CHANNEL_CHANNELSTAT			0x0038
-+#define HOST1X_CHANNEL_CMDPROC_STOP			0x0048
-+#define HOST1X_CHANNEL_TEARDOWN				0x004c
-+#define HOST1X_CHANNEL_SMMU_STREAMID			0x0084
-+
-+#define HOST1X_SYNC_SYNCPT_CPU_INCR(x)			(0x6400 + 4 * (x))
-+#define HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(x)	(0x6600 + 4 * (x))
-+#define HOST1X_SYNC_SYNCPT_INTR_DEST(x)			(0x6684 + 4 * (x))
-+#define HOST1X_SYNC_SYNCPT_THRESH_INT_ENABLE_CPU0(x)	(0x770c + 4 * (x))
-+#define HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(x)	(0x7790 + 4 * (x))
-+#define HOST1X_SYNC_SYNCPT(x)				(0x8080 + 4 * (x))
-+#define HOST1X_SYNC_SYNCPT_INT_THRESH(x)		(0xa088 + 4 * (x))
-+#define HOST1X_SYNC_SYNCPT_CH_APP(x)			(0xb090 + 4 * (x))
-+#define HOST1X_SYNC_SYNCPT_CH_APP_CH(v)			(((v) & 0x3f) << 8)
+ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
 -- 
 2.36.1
 
