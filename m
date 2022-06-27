@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AE1C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A59AC43334
 	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237100AbiF0OVG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 10:21:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38008 "EHLO
+        id S237156AbiF0OVI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 10:21:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237007AbiF0OUo (ORCPT
+        with ESMTP id S236994AbiF0OUn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jun 2022 10:20:44 -0400
+        Mon, 27 Jun 2022 10:20:43 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B5521117C;
-        Mon, 27 Jun 2022 07:20:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE92101F7;
+        Mon, 27 Jun 2022 07:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=NHTxT9CAiJj2gbRGVeeqrWMrGzmcW4tqRGY+AMcH9+4=; b=m7HUDgbHBC6MMxNSs17c7OIzoC
-        l2Q3Zy+T8LZ6sN6Uy4vzx6hMtEYDKjWcTgSmd4Z4t/HJPHLUVaOOc0lDxIZk0pHSEm3CZVm93SMfO
-        a1sIud2+Z4qulbt5TOVSv93zmwtu6YlWnReksGy+/wWiYvHaLgmL7gHPeW89ma2KdyHQVQzdNB9XB
-        q2AjZ3BMFQVorSSct1PTLm1lP5HNydUQE3QqK0Cdw1FH4rfCwPJ7iXd1xsxws4ckVwHCwN81a2d+2
-        PoR8n4rzyNyx42Samt70GUwNFnY9GM321o9m2ct/mrTR9HTVWk5FGlpAH6NrutUdNKCeY3Z7mZqb8
-        MUvUxFCg==;
+        bh=QVKVrjwnukQ5lQnhbQukvjMnPiKrXBsMGzKK7f6HmtQ=; b=XDbrrwqQFS62z5V9uPtlrxzmPs
+        8WsphxZ1YT8MNIfdbeSCXrYysMr0DVEx3SlhBQjVO3xuoIBJZIbGxyZBfYksOltk0M0cBOcFMoq/3
+        RIKgfE6j7BABi+zfLlIgF2I8ID/QiYOEr+DvA24AxFg+F90xJ+7vqr9sQ0ECDLxK69XfYCkeI6tSU
+        Nbr2mc1wcukhKiox9ioSDrk304XyL515MpRNPcpkeaGl3vCzqJJZmd4HQy8WWTq9wXJf2lsi4eRBK
+        AN38/f8g3mIHqMnL4aNVkI+jwOQrKczvApLyOciWhNcpp5nNIpqiFb5kOu+obqoCRnJQCyX0sfchh
+        HXRtESCw==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1o5pbN-003N2J-2D; Mon, 27 Jun 2022 17:20:31 +0300
+        id 1o5pbK-003N2J-Rz; Mon, 27 Jun 2022 17:20:29 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -39,13 +39,12 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>
 Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Robin Murphy <robin.murphy@arm.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7/v3 11/22] dt-bindings: Add headers for Host1x and VIC on Tegra234
-Date:   Mon, 27 Jun 2022 17:19:57 +0300
-Message-Id: <20220627142008.2072474-12-cyndis@kapsi.fi>
+Subject: [PATCH v7/v3 02/22] gpu: host1x: Add context device management code
+Date:   Mon, 27 Jun 2022 17:19:48 +0300
+Message-Id: <20220627142008.2072474-3-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220627142008.2072474-1-cyndis@kapsi.fi>
 References: <20220627142008.2072474-1-cyndis@kapsi.fi>
@@ -60,93 +59,370 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add clock, memory controller, powergate and reset dt-binding headers
-for Host1x and VIC on Tegra234.
+Add code to register context devices from device tree, allocate them
+out and manage their refcounts.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- include/dt-bindings/clock/tegra234-clock.h     | 4 ++++
- include/dt-bindings/memory/tegra234-mc.h       | 5 +++++
- include/dt-bindings/power/tegra234-powergate.h | 1 +
- include/dt-bindings/reset/tegra234-reset.h     | 1 +
- 4 files changed, 11 insertions(+)
+v2:
+* Directly set DMA mask instead of inheriting from Host1x.
+* Use iommu-map instead of custom DT property.
+v4:
+* Use u64 instead of dma_addr_t for DMA mask
+* Use unsigned ints for indexes and adjust error handling flow
+* Parse iommu-map property at top level host1x DT node
+* Use separate DMA mask per device
+* Export symbols as GPL
+v5:
+* Rename host1x_context to host1x_memory_context
+v6:
+* Use device_iommu_mapped to check if the context device got
+  mapped to an IOMMU.
+* Fix build with CONFIG_IOMMU_API disabled.
+---
+ drivers/gpu/host1x/Makefile  |   3 +
+ drivers/gpu/host1x/context.c | 160 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/host1x/context.h |  38 +++++++++
+ drivers/gpu/host1x/dev.c     |  12 ++-
+ drivers/gpu/host1x/dev.h     |   2 +
+ include/linux/host1x.h       |  34 ++++++++
+ 6 files changed, 248 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/host1x/context.c
+ create mode 100644 drivers/gpu/host1x/context.h
 
-diff --git a/include/dt-bindings/clock/tegra234-clock.h b/include/dt-bindings/clock/tegra234-clock.h
-index bd4c3086a2da..6e4e5cc75631 100644
---- a/include/dt-bindings/clock/tegra234-clock.h
-+++ b/include/dt-bindings/clock/tegra234-clock.h
-@@ -38,6 +38,8 @@
-  * throughput and memory controller power.
-  */
- #define TEGRA234_CLK_EMC			31U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_HOST1X */
-+#define TEGRA234_CLK_HOST1X                     46U
- /** @brief output of gate CLK_ENB_FUSE */
- #define TEGRA234_CLK_FUSE			40U
- /** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C1 */
-@@ -132,6 +134,8 @@
- #define TEGRA234_CLK_UARTA			155U
- /** @brief output of gate CLK_ENB_PEX1_CORE_6 */
- #define TEGRA234_CLK_PEX1_C6_CORE		161U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_VIC */
-+#define TEGRA234_CLK_VIC                        167U
- /** @brief output of gate CLK_ENB_PEX2_CORE_7 */
- #define TEGRA234_CLK_PEX2_C7_CORE		171U
- /** @brief output of gate CLK_ENB_PEX2_CORE_8 */
-diff --git a/include/dt-bindings/memory/tegra234-mc.h b/include/dt-bindings/memory/tegra234-mc.h
-index e3b0e9da295d..73fdd18523a9 100644
---- a/include/dt-bindings/memory/tegra234-mc.h
-+++ b/include/dt-bindings/memory/tegra234-mc.h
-@@ -26,6 +26,8 @@
- #define TEGRA234_SID_PCIE8	0x09
- #define TEGRA234_SID_PCIE10	0x0b
- #define TEGRA234_SID_BPMP	0x10
-+#define TEGRA234_SID_HOST1X	0x27
-+#define TEGRA234_SID_VIC	0x34
+diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+index c891a3e33844..28f7aaedce0f 100644
+--- a/drivers/gpu/host1x/Makefile
++++ b/drivers/gpu/host1x/Makefile
+@@ -17,5 +17,8 @@ host1x-y = \
+ 	hw/host1x06.o \
+ 	hw/host1x07.o
  
- /*
-  * memory client IDs
-@@ -33,6 +35,7 @@
++host1x-$(CONFIG_IOMMU_API) += \
++	context.o
++
+ obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
+ obj-$(CONFIG_TEGRA_HOST1X_CONTEXT_BUS) += context_bus.o
+diff --git a/drivers/gpu/host1x/context.c b/drivers/gpu/host1x/context.c
+new file mode 100644
+index 000000000000..b08cf11f9a66
+--- /dev/null
++++ b/drivers/gpu/host1x/context.c
+@@ -0,0 +1,160 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2021, NVIDIA Corporation.
++ */
++
++#include <linux/device.h>
++#include <linux/kref.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/pid.h>
++#include <linux/slab.h>
++
++#include "context.h"
++#include "dev.h"
++
++int host1x_memory_context_list_init(struct host1x *host1x)
++{
++	struct host1x_memory_context_list *cdl = &host1x->context_list;
++	struct device_node *node = host1x->dev->of_node;
++	struct host1x_memory_context *ctx;
++	unsigned int i;
++	int err;
++
++	cdl->devs = NULL;
++	cdl->len = 0;
++	mutex_init(&cdl->lock);
++
++	err = of_property_count_u32_elems(node, "iommu-map");
++	if (err < 0)
++		return 0;
++
++	cdl->devs = kcalloc(err, sizeof(*cdl->devs), GFP_KERNEL);
++	if (!cdl->devs)
++		return -ENOMEM;
++	cdl->len = err / 4;
++
++	for (i = 0; i < cdl->len; i++) {
++		struct iommu_fwspec *fwspec;
++
++		ctx = &cdl->devs[i];
++
++		ctx->host = host1x;
++
++		device_initialize(&ctx->dev);
++
++		/*
++		 * Due to an issue with T194 NVENC, only 38 bits can be used.
++		 * Anyway, 256GiB of IOVA ought to be enough for anyone.
++		 */
++		ctx->dma_mask = DMA_BIT_MASK(38);
++		ctx->dev.dma_mask = &ctx->dma_mask;
++		ctx->dev.coherent_dma_mask = ctx->dma_mask;
++		dev_set_name(&ctx->dev, "host1x-ctx.%d", i);
++		ctx->dev.bus = &host1x_context_device_bus_type;
++		ctx->dev.parent = host1x->dev;
++
++		dma_set_max_seg_size(&ctx->dev, UINT_MAX);
++
++		err = device_add(&ctx->dev);
++		if (err) {
++			dev_err(host1x->dev, "could not add context device %d: %d\n", i, err);
++			goto del_devices;
++		}
++
++		err = of_dma_configure_id(&ctx->dev, node, true, &i);
++		if (err) {
++			dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
++				i, err);
++			device_del(&ctx->dev);
++			goto del_devices;
++		}
++
++		fwspec = dev_iommu_fwspec_get(&ctx->dev);
++		if (!fwspec || !device_iommu_mapped(&ctx->dev)) {
++			dev_err(host1x->dev, "Context device %d has no IOMMU!\n", i);
++			device_del(&ctx->dev);
++			goto del_devices;
++		}
++
++		ctx->stream_id = fwspec->ids[0] & 0xffff;
++	}
++
++	return 0;
++
++del_devices:
++	while (i--)
++		device_del(&cdl->devs[i].dev);
++
++	kfree(cdl->devs);
++	cdl->len = 0;
++
++	return err;
++}
++
++void host1x_memory_context_list_free(struct host1x_memory_context_list *cdl)
++{
++	unsigned int i;
++
++	for (i = 0; i < cdl->len; i++)
++		device_del(&cdl->devs[i].dev);
++
++	kfree(cdl->devs);
++	cdl->len = 0;
++}
++
++struct host1x_memory_context *host1x_memory_context_alloc(struct host1x *host1x,
++							  struct pid *pid)
++{
++	struct host1x_memory_context_list *cdl = &host1x->context_list;
++	struct host1x_memory_context *free = NULL;
++	int i;
++
++	if (!cdl->len)
++		return ERR_PTR(-EOPNOTSUPP);
++
++	mutex_lock(&cdl->lock);
++
++	for (i = 0; i < cdl->len; i++) {
++		struct host1x_memory_context *cd = &cdl->devs[i];
++
++		if (cd->owner == pid) {
++			refcount_inc(&cd->ref);
++			mutex_unlock(&cdl->lock);
++			return cd;
++		} else if (!cd->owner && !free) {
++			free = cd;
++		}
++	}
++
++	if (!free) {
++		mutex_unlock(&cdl->lock);
++		return ERR_PTR(-EBUSY);
++	}
++
++	refcount_set(&free->ref, 1);
++	free->owner = get_pid(pid);
++
++	mutex_unlock(&cdl->lock);
++
++	return free;
++}
++EXPORT_SYMBOL_GPL(host1x_memory_context_alloc);
++
++void host1x_memory_context_get(struct host1x_memory_context *cd)
++{
++	refcount_inc(&cd->ref);
++}
++EXPORT_SYMBOL_GPL(host1x_memory_context_get);
++
++void host1x_memory_context_put(struct host1x_memory_context *cd)
++{
++	struct host1x_memory_context_list *cdl = &cd->host->context_list;
++
++	if (refcount_dec_and_mutex_lock(&cd->ref, &cdl->lock)) {
++		put_pid(cd->owner);
++		cd->owner = NULL;
++		mutex_unlock(&cdl->lock);
++	}
++}
++EXPORT_SYMBOL_GPL(host1x_memory_context_put);
+diff --git a/drivers/gpu/host1x/context.h b/drivers/gpu/host1x/context.h
+new file mode 100644
+index 000000000000..3e03bc1d3bac
+--- /dev/null
++++ b/drivers/gpu/host1x/context.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Host1x context devices
++ *
++ * Copyright (c) 2020, NVIDIA Corporation.
++ */
++
++#ifndef __HOST1X_CONTEXT_H
++#define __HOST1X_CONTEXT_H
++
++#include <linux/mutex.h>
++#include <linux/refcount.h>
++
++struct host1x;
++
++extern struct bus_type host1x_context_device_bus_type;
++
++struct host1x_memory_context_list {
++	struct mutex lock;
++	struct host1x_memory_context *devs;
++	unsigned int len;
++};
++
++#ifdef CONFIG_IOMMU_API
++int host1x_memory_context_list_init(struct host1x *host1x);
++void host1x_memory_context_list_free(struct host1x_memory_context_list *cdl);
++#else
++static inline int host1x_memory_context_list_init(struct host1x *host1x)
++{
++	return 0;
++}
++
++static inline void host1x_memory_context_list_free(struct host1x_memory_context_list *cdl)
++{
++}
++#endif
++
++#endif
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 80c685ab3e30..89cc79a48eab 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -28,6 +28,7 @@
  
- /* High-definition audio (HDA) read clients */
- #define TEGRA234_MEMORY_CLIENT_HDAR 0x15
-+#define TEGRA234_MEMORY_CLIENT_HOST1XDMAR 0x16
- /* PCIE6 read clients */
- #define TEGRA234_MEMORY_CLIENT_PCIE6AR 0x28
- /* PCIE6 write clients */
-@@ -65,6 +68,8 @@
- #define TEGRA234_MEMORY_CLIENT_SDMMCRAB 0x63
- /* sdmmcd memory write client */
- #define TEGRA234_MEMORY_CLIENT_SDMMCWAB 0x67
-+#define TEGRA234_MEMORY_CLIENT_VICSRD 0x6c
-+#define TEGRA234_MEMORY_CLIENT_VICSWR 0x6d
- /* BPMP read client */
- #define TEGRA234_MEMORY_CLIENT_BPMPR 0x93
- /* BPMP write client */
-diff --git a/include/dt-bindings/power/tegra234-powergate.h b/include/dt-bindings/power/tegra234-powergate.h
-index f610eee9bce8..c3f7e380d2c6 100644
---- a/include/dt-bindings/power/tegra234-powergate.h
-+++ b/include/dt-bindings/power/tegra234-powergate.h
-@@ -18,5 +18,6 @@
- #define TEGRA234_POWER_DOMAIN_MGBEA	17U
- #define TEGRA234_POWER_DOMAIN_MGBEB	18U
- #define TEGRA234_POWER_DOMAIN_MGBEC	19U
-+#define TEGRA234_POWER_DOMAIN_VIC       29U
+ #include "bus.h"
+ #include "channel.h"
++#include "context.h"
+ #include "debug.h"
+ #include "dev.h"
+ #include "intr.h"
+@@ -503,10 +504,16 @@ static int host1x_probe(struct platform_device *pdev)
+ 		goto iommu_exit;
+ 	}
  
++	err = host1x_memory_context_list_init(host);
++	if (err) {
++		dev_err(&pdev->dev, "failed to initialize context list\n");
++		goto free_channels;
++	}
++
+ 	err = host1x_syncpt_init(host);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to initialize syncpts\n");
+-		goto free_channels;
++		goto free_contexts;
+ 	}
+ 
+ 	err = host1x_intr_init(host, syncpt_irq);
+@@ -550,6 +557,8 @@ static int host1x_probe(struct platform_device *pdev)
+ 	host1x_intr_deinit(host);
+ deinit_syncpt:
+ 	host1x_syncpt_deinit(host);
++free_contexts:
++	host1x_memory_context_list_free(&host->context_list);
+ free_channels:
+ 	host1x_channel_list_free(&host->channel_list);
+ iommu_exit:
+@@ -571,6 +580,7 @@ static int host1x_remove(struct platform_device *pdev)
+ 
+ 	host1x_intr_deinit(host);
+ 	host1x_syncpt_deinit(host);
++	host1x_memory_context_list_free(&host->context_list);
+ 	host1x_channel_list_free(&host->channel_list);
+ 	host1x_iommu_exit(host);
+ 	host1x_bo_cache_destroy(&host->cache);
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index ca4b082f0cd4..7552a4554534 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -14,6 +14,7 @@
+ 
+ #include "cdma.h"
+ #include "channel.h"
++#include "context.h"
+ #include "intr.h"
+ #include "job.h"
+ #include "syncpt.h"
+@@ -141,6 +142,7 @@ struct host1x {
+ 	struct mutex syncpt_mutex;
+ 
+ 	struct host1x_channel_list channel_list;
++	struct host1x_memory_context_list context_list;
+ 
+ 	struct dentry *debugfs;
+ 
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index c0bf4e581fe9..32a82da13fed 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -446,4 +446,38 @@ int tegra_mipi_disable(struct tegra_mipi_device *device);
+ int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
+ int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
+ 
++/* host1x memory contexts */
++
++struct host1x_memory_context {
++	struct host1x *host;
++
++	refcount_t ref;
++	struct pid *owner;
++
++	struct device dev;
++	u64 dma_mask;
++	u32 stream_id;
++};
++
++#ifdef CONFIG_IOMMU_API
++struct host1x_memory_context *host1x_memory_context_alloc(struct host1x *host1x,
++							  struct pid *pid);
++void host1x_memory_context_get(struct host1x_memory_context *cd);
++void host1x_memory_context_put(struct host1x_memory_context *cd);
++#else
++static inline struct host1x_memory_context *host1x_memory_context_alloc(struct host1x *host1x,
++									struct pid *pid)
++{
++	return NULL;
++}
++
++static inline void host1x_memory_context_get(struct host1x_memory_context *cd)
++{
++}
++
++static inline void host1x_memory_context_put(struct host1x_memory_context *cd)
++{
++}
++#endif
++
  #endif
-diff --git a/include/dt-bindings/reset/tegra234-reset.h b/include/dt-bindings/reset/tegra234-reset.h
-index 547ca3b60caa..1971400bf360 100644
---- a/include/dt-bindings/reset/tegra234-reset.h
-+++ b/include/dt-bindings/reset/tegra234-reset.h
-@@ -44,6 +44,7 @@
- #define TEGRA234_RESET_QSPI1			77U
- #define TEGRA234_RESET_SDMMC4			85U
- #define TEGRA234_RESET_UARTA			100U
-+#define TEGRA234_RESET_VIC                      113U
- #define TEGRA234_RESET_PEX0_CORE_0		116U
- #define TEGRA234_RESET_PEX0_CORE_1		117U
- #define TEGRA234_RESET_PEX0_CORE_2		118U
 -- 
 2.36.1
 
