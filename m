@@ -2,100 +2,210 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892F5C43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 07:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2E8C43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 07:59:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232735AbiF0HVI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 03:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35086 "EHLO
+        id S233265AbiF0H74 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 03:59:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232724AbiF0HVI (ORCPT
+        with ESMTP id S233268AbiF0H7y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jun 2022 03:21:08 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 477025592
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Jun 2022 00:21:07 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id n10so7436079plp.0
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Jun 2022 00:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=wyrrdp6ZR/KZgVEp5poQj+i3E9eGqReZcI/auQwwlWc=;
-        b=BkvnEDt4HcVPkd5HP+4U52Luwmi19snFvXLAI3jjaCiTljpncxTijrvpJKtOFk9e2x
-         psarxdf2qldfH3UYVc0sM/Ye8aPo25K/6yvFil341ahR/Nhsx9py9HvBTRPGRrN5+Nfw
-         msf1t57q1hxW2ll+l0hRhgfrF5l9AtyEQ5c6EhJVOre2nZqXMRd20IWNWlaB/dMHV+c4
-         /dM7/ugJHryhO81BSa1GNFat7PRSmkZYSr9dgrDunTalLaGSi5An4FBkApU/JG+0I/08
-         qv8Hw8VSbh7dRrQUwYWtiUwAYirhj24Bp6TFVDXnDqE7+djIpABRsmwLSMhAa1mvdbGr
-         5Bzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=wyrrdp6ZR/KZgVEp5poQj+i3E9eGqReZcI/auQwwlWc=;
-        b=pDunwpDq9+M8vu6OnUAYP4lipYcQYgYdMvzrN6j/KO7iN2fLIBhDU1Q1HFO7gEBx+j
-         zl6duQbF8w5UjPwl8+kxsydp6gDL88zxCS/z3z+CTlHZPCT8Zh/oV1yd0xNwWoM61r+O
-         8xTjaQTb/pmyDNAP5zum5nSXBpMashi5xhIxnEkPqNCcA7JNC5uCjeihv7qOlfizZjpT
-         Onal0nSfVo4aRn6fgnLL8aLLRql1FCQQdgxjVRI4ETMGmxpN60MSmWZG+28VkTnpIm3Y
-         s587woZenv44rIAu8yLKT2queD5ArnuWrtIsSyMlKndsba6IEKDbYReUL0XtwPhhExNx
-         glyA==
-X-Gm-Message-State: AJIora9nJ/DMa6OXLhq/ddV4f4z9pluavJsR3zgT0Fx1CLs0hkfDPiDR
-        FpSStMbAFeCmcg27gLn78PTIUA==
-X-Google-Smtp-Source: AGRyM1v0kLQ6NUqZ0WLXEvX11q0gyO9xbbZoyOMKNqo7N/Tgq4JPecjgW9cSnG/95uoXrNrshqXMTg==
-X-Received: by 2002:a17:902:d48f:b0:16a:755f:86db with SMTP id c15-20020a170902d48f00b0016a755f86dbmr12899380plg.77.1656314466798;
-        Mon, 27 Jun 2022 00:21:06 -0700 (PDT)
-Received: from localhost ([122.172.201.58])
-        by smtp.gmail.com with ESMTPSA id o7-20020a17090a55c700b001cd4989feebsm8573650pjm.55.2022.06.27.00.21.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jun 2022 00:21:06 -0700 (PDT)
-Date:   Mon, 27 Jun 2022 12:51:04 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 22/31] soc/tegra: Migrate to dev_pm_opp_set_config()
-Message-ID: <20220627072104.ir7kujhezxhzl6a7@vireshk-i7>
-References: <cover.1653564321.git.viresh.kumar@linaro.org>
- <449b344f037c7ef1970bc84d31e0d4c4cb4d2951.1653564321.git.viresh.kumar@linaro.org>
- <20220624004831.po35sowzfo4c47b3@vireshk-i7>
- <20220624005700.oj4etaajbutvsym7@vireshk-i7>
- <73d39022-c6fc-0c21-cb68-9714846f02bf@gmail.com>
- <20220627064526.2nkezq4nufpkl4y2@vireshk-i7>
- <ecc72279-0892-d5ab-689d-87b8fba5147e@gmail.com>
+        Mon, 27 Jun 2022 03:59:54 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2068.outbound.protection.outlook.com [40.107.243.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188E3E46;
+        Mon, 27 Jun 2022 00:59:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m9dzrQFWzQXEHdNnMu3mvxtwbXuwpyGSKCsG8JgYtRc2exg//JoshSBUO/362d0iF/X3X39bY1CdiDWs4wFcPztBCOwT+INmEeUN9UJJjHm9k8NY1wahncHEcriHTKiRca0r5io8H1njL1wu9p2XI+cNl1VHu+UZQmkv1fxGgSageHC/ebIc12q8PYahJaTIqUICv7GL5Mri5tbj63/7cXUEfYTaEccTwdWvS6SK3adzpGBkWUFkrWUMrQyQD3XOzQw1t4q4Lf+Jg9vBKrIBQWRpyvo/SprqhztxAopvJjHEBBBzYGkw9t1NCOuU37n+gSIkVvj/pzK+NCF6beLpIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pj2TPMKoFnwG7hRN5yUHBGCcB0zqLDhqRVBr7Ym7q/k=;
+ b=muQ5mLo5qEqHpwWbIQ8Wud9L8erJhFf4fZe07lNL8l1ZXAsS1E7JKL2/jO2it4CQudkN2+CuPa4qw+S+JyGQMF8roDczCq72Jd0AvmDR/SvAil0QVoeE5YWOIksDOkAL4nejHKCzi5FS/jtjNAdGbwc31C0rxid3a8TScsvaSm94FHK3Bc1JNrKBA4y8VGngKtTZ0rQgIEzKIdGRFDObzu19T0v1Qjp30pL/LJo+xZmX+E13FbIs+LAyCwBH2K/kT14iD8IrLlX02FueXsjZhfthsvfFb42UxaFR3cbLcHCEmNbMeJZlqxQkS6SGh2cFVSB6GzkpyzuH44Rn5LDfZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pj2TPMKoFnwG7hRN5yUHBGCcB0zqLDhqRVBr7Ym7q/k=;
+ b=c39zjN0yKp/6psV+JMl6KrkWRPCRhkDbIs/ZtEG4i/UEExrLmUy0wcWY3OGTiT6sY5cJjkbI72c3v3qfjV6c9g+D3sgMZtjVKmKEWjcY9VzTIZpC6V7bsUBSBv/OU2gCpY8o5bh2hK05DwtCPcWfzIvDW3FbXvdxZaWjQDyKJcPW/qqIgH56PyJFw557uZDt7DRB0D8uSyBjJHXl4KAYrLZ0ICDVR95oPgKD97ikzykB2K7yExKGsKU0jEphdCpqe1D9f2nX7Dm/Nmoh6PdUTej4JHXIpBJ42GN+WwMur7B/10kyyWi+ptUMes97/4vtKiWXDe49xsTNhxN3Jj3NrA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN8PR12MB2900.namprd12.prod.outlook.com (2603:10b6:408:69::18)
+ by MWHPR1201MB0143.namprd12.prod.outlook.com (2603:10b6:301:54::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.15; Mon, 27 Jun
+ 2022 07:59:48 +0000
+Received: from BN8PR12MB2900.namprd12.prod.outlook.com
+ ([fe80::3904:2c16:b3b7:c5f3]) by BN8PR12MB2900.namprd12.prod.outlook.com
+ ([fe80::3904:2c16:b3b7:c5f3%5]) with mapi id 15.20.5373.017; Mon, 27 Jun 2022
+ 07:59:47 +0000
+Message-ID: <48b2c4c2-3032-a90b-07c1-f03b3a84df3a@nvidia.com>
+Date:   Mon, 27 Jun 2022 13:29:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH RESEND v4 07/15] PCI: tegra194: Drop manual DW PCIe
+ controller version setup
+Content-Language: en-US
+To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Frank Li <Frank.Li@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20220624143947.8991-1-Sergey.Semin@baikalelectronics.ru>
+ <20220624143947.8991-8-Sergey.Semin@baikalelectronics.ru>
+From:   Vidya Sagar <vidyas@nvidia.com>
+In-Reply-To: <20220624143947.8991-8-Sergey.Semin@baikalelectronics.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0104.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:9b::6) To BN8PR12MB2900.namprd12.prod.outlook.com
+ (2603:10b6:408:69::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ecc72279-0892-d5ab-689d-87b8fba5147e@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 10724ea7-015e-4fb7-8277-08da581300ef
+X-MS-TrafficTypeDiagnostic: MWHPR1201MB0143:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?K0FoQmhuNE5SRjZERjZzMm5VNlZCM2dKWnVud0NBVEEvckE4eDNJVnpRbG5k?=
+ =?utf-8?B?djZ6OUJIc2E5WFN1emU3QkZrTFhDN1E0bjNQcnZYNUJVeWR5VWI4RHdsekcx?=
+ =?utf-8?B?S1hGSGtlZG9mbGVGbDdRUFJQV05jWlJzeWRaMFVrazBldnBrZkc3bkNkVzRU?=
+ =?utf-8?B?Qy83aUwyYVdlNHB1dXQxeFdvNkRIa2ZQWTcrc2VOcUh2cTdPYmFVcXNmRU9y?=
+ =?utf-8?B?ZjZ6NmlucHBaRDNMU3piOHZ4N2JMODA1YnpTMzFjNGJ5dzRraHJUVjQ4Y3hI?=
+ =?utf-8?B?czJqS1VsZHVTTXRObkU0RkpqTlJkM3REN1VjV1hnVjdmMjhEY0Frckw1TWFS?=
+ =?utf-8?B?UVVPRWdsVnZxcG55OWt2Y1Z4RmptNmltdjJWdVdKK0wxb2ZGYmJ1NVdGYkpL?=
+ =?utf-8?B?V2hQV2lRcDViSlJZc2ZpcGVIeGpHSW5QR1d3QzkrY2VVekJPYW0rWi9aRkw2?=
+ =?utf-8?B?Tkt2cWVkazZySVQ4S0Zhb2hhN2MrNjd2dko1eFRSck1nU3p3Q2dsT0s5MnFE?=
+ =?utf-8?B?eE4xTVJUT3FpUnpqZzRYU1pjR0llbjFRSzcyVXlLY3ZzYzV4RkpkVXRYMEdJ?=
+ =?utf-8?B?aUpEMGNEZkdIMkd6ejd6MUpPUTNlK1ZsZzZFYlJnZHNlR3grb2phQkFta0RN?=
+ =?utf-8?B?Nk43THhTck9KeFdVL013Z3JGRWhSMFN1Tno3RjZibXpLb1pqU2JpYzFSbmZW?=
+ =?utf-8?B?LyszcStMMVhFamxZdUFlRVpUSTJYNmI4aU1Ec0ljYy9HMFdQWnc1QW5ValpE?=
+ =?utf-8?B?ZWV6dWJjT0FES0ViQ1hOWXc1K0t1RzZnY1JLdkRsYmZRbnZ0ZkVxVVZSaWkz?=
+ =?utf-8?B?Rlk4dHBmRTUzN1dVd1AwV1ZqTG83eStzSEt5VVVJYS8rUTFCSGROc1JkQVNR?=
+ =?utf-8?B?dG5VSmZUTHFQdFhaKzRLenNxeXVoeEZIRHhMWjBUb09BT0ZDQ2x6Y1hmQmpn?=
+ =?utf-8?B?UlBFcWtodkQyNjE2UmNYeU5jUzFKbUNIc3JwdGY3TVJJeEFGeWpzb1ozREwv?=
+ =?utf-8?B?SHhxZHVrUE54NTFMb2VGcFZNRUNiNHZ3aSt5UjFjNm0zUzZrc2I4aklRUk94?=
+ =?utf-8?B?RWIzeGVuOEgwVFQ3L3AwZ1JIckFBZHM4VTIrVjJnbERQZ00vSXV3NXFyOHI3?=
+ =?utf-8?B?bHdMYjZKbzFIQ3JJYnplUmFCN25UeHQ1UiswYkwyWGNCTFNDLzEyV0IwTExB?=
+ =?utf-8?B?U2xrbGYzdGswaW11blUzM0Y0b0l6SHdLNGJVNHpFOGJnaDJrck1VNVJGdUE4?=
+ =?utf-8?B?WTZCK2ZrVVJIQ1RXS0tNdVhEOFdUa2V4MjJMdGRjV3dhdG5vdz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB2900.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(366004)(39860400002)(376002)(136003)(346002)(36756003)(6506007)(31696002)(6512007)(66556008)(316002)(7416002)(110136005)(66476007)(186003)(26005)(53546011)(2616005)(921005)(38100700002)(41300700001)(66946007)(6486002)(86362001)(478600001)(54906003)(8936002)(83380400001)(6666004)(6636002)(2906002)(5660300002)(8676002)(4326008)(966005)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QWdpUmRjSGU5U3owQVBGU2t3VG0zZFJRZGowMHQyRS9Xa3hHb1RIQ1ZTNTgr?=
+ =?utf-8?B?MGttQ1VuUklWNDJmUWx3T2I0bTJ2L1FQS3ZFRTE5b2NzVkxXWXV2SzFwKzNO?=
+ =?utf-8?B?R0o5VmRxbVVTNlN1aFh4cklJU2s1VTZKUFpaTkRJb1IvKzh4NjJiSVRyVHQz?=
+ =?utf-8?B?dm5BRzdvbDZEMCtmdXkzNURWUEFoNHBjOGtlUUROblQrdFZ4amw0Ym91ZitB?=
+ =?utf-8?B?aVR1ajVhYk43Y3pMTmlhODFmeXlYaVJGMVI3S1hOamJBY2tkN3p2VE43R0tG?=
+ =?utf-8?B?SFZMWW9yL3Q2amVkL0plU1NmMGZQZ00vYk1MWU9OS2JGcldscklKYnpTT3hW?=
+ =?utf-8?B?NlRsZVJrWnhqM0JiNjdrb0JhWjcwOGlnMUV5MjRuNFpucmZacTVCbkZKalhJ?=
+ =?utf-8?B?M1o0aFpLRDRmOVR0RndtTVZLcGkrdGlDbitzZXc5TGh3OEF4UEIxS0NOQktz?=
+ =?utf-8?B?NHNNYTJHU2ZnZTVodmVPQ0s3ZENudml0L0N3V0FqV0t2SG1OZzhGVVh2Vm9s?=
+ =?utf-8?B?dVRaek81WlJXZDFUbkx0cGVUb0RYY2hqakRLYzVzWGtvY0dOSzcreTFaeE8z?=
+ =?utf-8?B?OWJraG56WS8xUkdxNURJZXg5c2diYzlWSkFGeldzcm50ZVZBdnJKZzg2Qkdm?=
+ =?utf-8?B?V3FuOGFXVFVEMkJQNTkrajh1d0hmaDJoNTNSS29yNW1HY2xwWlNIamwzUG5P?=
+ =?utf-8?B?eStUN3AzakpDc1Fjd2FDaXplWlBwVkxMTW1jZ3NqWnA2djVncUJya2ZGZ2dq?=
+ =?utf-8?B?QlJzSmV3bmoycld2N1Ewb2FvZ24zZkl3YnMyOWhSRjcrUXJwcDNENXhrUDVs?=
+ =?utf-8?B?cXExUm40aXRHNkNWZi82Zit5SHVQd3V3MjNsdzcxaE1rVzl4aXJQWnp3RnNa?=
+ =?utf-8?B?cnVZckhzRmxkTVJoSnAvOEhwNU5RdzJ4d1V2WTVDOGRJUjZoaktRMjE4eE94?=
+ =?utf-8?B?KzBsZlF6N3ZpWUZRRHF0MG5iYVFBUlRqallkQ1Z3Q1NkMnJqWkJRdHcxZjBp?=
+ =?utf-8?B?UklxZ280dmRpVE1kb0wxWS9VSnB6aThPcXlsS3RKNTBkakp2VGtXM1Q0MUxv?=
+ =?utf-8?B?Y0twd01RNVduc091U2kxbC9wUWFUcGJCMm0vTXplVDBodHhJay9CVTVGQkJL?=
+ =?utf-8?B?bkpLMEE1Y3ZQU3RhZFJ2U0dMK3dJR1BvdGlXUDFlbVUySnNwNklPdUJBNHd4?=
+ =?utf-8?B?Rk1oRzFmckUzaGM1MkZzNlhtRnRJZ3BGOEtpYkV3QUR0bWhTTk9NTEsvdmN2?=
+ =?utf-8?B?RkJ5cllhMFFvSzh4WHVtNkE1Yk5ZcVJJRDhMMTE5eE9rNUN2eUJjaWdjakN2?=
+ =?utf-8?B?ZWYwZHMzMU9LQ0k1WE82eGpIVTViWUhudkdUWFNXcFdFV1VhblVHYmJjWmtt?=
+ =?utf-8?B?M2Y3YmZoSkVsTWVVTHFjQkp2UWF0Wk9mZ1RuQllhcy8vYUZFd1JuRmV1cEN0?=
+ =?utf-8?B?cDdmRWtYaE12NzlTY3M4NVBjbkRlSzJsOCtoQ1BLVEd4Q0UxZHJ0MFdQN3Zl?=
+ =?utf-8?B?NXdwaHNkbVVuQXMyZnZCMWRZa1JpR0l6dGRMZ3doOFlVR1ZXdEFVUGtMNnNP?=
+ =?utf-8?B?bndHVUQxTHhaYWxld3Q5Ly9tbmNldHdXclo4eURKTTlFQUlocjl0V0xnRkhy?=
+ =?utf-8?B?ZUY2V1JWTEUzOElJZTh1ZGtPSGVicVFNMnZMcTZzcWhyZFlKdUdHWTZJeE82?=
+ =?utf-8?B?MVFIYkNscFlRaTlYbjVadjkzdVNNNWIyYWVlZ3k1dzBydiswSDdEcEhPeXpH?=
+ =?utf-8?B?bnpQVGw1ejUwcVJCSVMybzkyVjNvL0lJb0pVenpIcWRGRXBxd2Jkd21wK1ZF?=
+ =?utf-8?B?MkcwanMyUFZzYVdKMW4wUkpycytzcHVOQmRlV2syM0NuVzhVQkIzVFcwRUZJ?=
+ =?utf-8?B?WmFVV2wxT1BwakZPb1ZHcnluOTZrdHpEamdXZ1NKWEEyQUZhd0s2NVdVMW9k?=
+ =?utf-8?B?a3ZlaFVoSTJjcXpaOEl2ZlhkQ09Ta3FjU0NSS2lWUm9Ub05LdU5hUEJINWNH?=
+ =?utf-8?B?cFBZdUVicXVNaGpKZldjN25MeW0rSnBVdmdRbk5QZEcyeEZkR1RVRHZKMW9v?=
+ =?utf-8?B?a3ROVzhYUXZiY2FGWU1GSDR3TUhEaWM2Q3N2RmdURTNmbnpSTHkyRTBnbjFo?=
+ =?utf-8?Q?yFyX5ImNJBwOAdJRS57Jz5S/F?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10724ea7-015e-4fb7-8277-08da581300ef
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB2900.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2022 07:59:47.2790
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Omi5RNHpFtqOJSp9gkzKAQRMfBBFCX5xwgczzfJI9qIEZDXOurzEvKbCplgoIhT+zmAGk6zsxwXLEotHKmhRVA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0143
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27-06-22, 10:14, Dmitry Osipenko wrote:
-> 27.06.2022 09:45, Viresh Kumar пишет:
-> >> Looks okay. If you'll solve the cpufreq problem where OPP config is set
-> >> by two drivers for the same cpu device
-> > This is supported, there is some early freeing of resources on the
-> > removal path though, the reasoning for which I already gave in another
-> > email. Though, I am open to sorting that out as well, but nothing
-> > breaks the code for now AFAICT.
-> > 
+
+
+On 6/24/2022 8:09 PM, Serge Semin wrote:
+> External email: Use caution opening links or attachments
 > 
-> In case of Tegra, we use tegra-cpufreq driver that sets supported_hw and
-> registers cpufreq-dt. If cpufreq-dt driver defers the probe, then the
-> supported_hw will be lost on the re-probe. I haven't checked yet, but I
-> suppose that cpufreq-dt driver defers on Tegra30 because of the CPU
-> regulator and that's why we get the "OPP table is missing" error.
+> 
+> Since the DW PCIe common code now supports the IP-core version
+> auto-detection there is no point in manually setting the version up for the
+> controllers newer than v4.70a. Seeing Tegra 194 PCIe Host and EP
+> controllers are based on the DW PCIe v4.90a IP-core we can freely drop the
+> dw_pcie.version field initialization.
+> 
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> 
+> ---
+> 
+> Folks, I don't have Tegra 194 PCIe hw instance to test it out. Could you
+> please make sure this patch doesn't brake anything?
 
-Aha, I get it now. I see, this is a real problem. Will fix it. Give me
-some time to think. Thanks.
+Hi,
+I tried to apply the series 
+https://patchwork.kernel.org/project/linux-pci/list/?series=653624 on 
+top of linux-next and ran into conflicts. Could you please tell me the 
+minimum set of patches to be taken?
 
--- 
-viresh
+Thanks,
+Vidya Sagar
+
+> 
+> Changelog v3:
+> - This is a new patch create as a result of the discussion:
+>    https://lore.kernel.org/linux-pci/20220503214638.1895-6-Sergey.Semin@baikalelectronics.ru/
+> ---
+>   drivers/pci/controller/dwc/pcie-tegra194.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index f24b30b7454f..e497e6de8d15 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1979,7 +1979,6 @@ static int tegra194_pcie_probe(struct platform_device *pdev)
+>          pci->ops = &tegra_dw_pcie_ops;
+>          pci->n_fts[0] = N_FTS_VAL;
+>          pci->n_fts[1] = FTS_VAL;
+> -       pci->version = DW_PCIE_VER_490A;
+> 
+>          pp = &pci->pp;
+>          pp->num_vectors = MAX_MSI_IRQS;
+> --
+> 2.35.1
+> 
