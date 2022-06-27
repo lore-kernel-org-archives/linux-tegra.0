@@ -2,177 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98459C43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 13:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E2DC43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236251AbiF0Ndh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 09:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43042 "EHLO
+        id S236990AbiF0OUn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 10:20:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236264AbiF0Nde (ORCPT
+        with ESMTP id S235267AbiF0OUm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jun 2022 09:33:34 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9775E6399;
-        Mon, 27 Jun 2022 06:33:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 41067B816B0;
-        Mon, 27 Jun 2022 13:33:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B42AC341D0;
-        Mon, 27 Jun 2022 13:33:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656336811;
-        bh=ozPyfku+IxLJ/xWqltXSkq39bDAVGGKGz9HK5lRI660=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Bd5Muo0k50BmpMKNCQwFcq1j67DQkwTwX0UmSF26tAHbqPvfeDci31nPqRtNrUurV
-         +UZTak+TRJUJv0oppssC6cYX1Fc4Lpjy02HhtTKlQuv7C9eYEdfPw06kRYST0ecBHj
-         ZRUTFh5lsbiGTA6KQbhxSzX23tKGD5pGbiUzqr3zTs+xD/HDjBOfirpm9RBpkGTa9p
-         FCsMN6HsgZsPlss0Sodi+1Lis8qhsoeJrswvvTpNx+ip5k8TdP9HY+O2ZdoIGOIUJ1
-         RcDed/3NLRZW/xk0/63cK87Ia40LtFmh/tYeZ/mc9mo+JAK2KaNsjUTDPiTTHUVCcs
-         pV3DCTqIa8uFw==
-Received: by mail-vk1-f175.google.com with SMTP id b5so4469999vkp.4;
-        Mon, 27 Jun 2022 06:33:31 -0700 (PDT)
-X-Gm-Message-State: AJIora9M6JDDkfWLj1YeERI0KOE6lFk+CrJBoltUz9gcvuq6WH6sQhbC
-        ytDlruTFO+XdsNVCbGZAG3LbiID4k5ErEBXT8A==
-X-Google-Smtp-Source: AGRyM1scsPUWNixG94RrMA/c0WdzqcCV5semb71Np32MVVYQN0Tnz33ChJSrmtGpjWTGsYsOWzKI4Q7hjj31Llm839Y=
-X-Received: by 2002:a1f:aac7:0:b0:35e:1c45:def with SMTP id
- t190-20020a1faac7000000b0035e1c450defmr4200423vke.35.1656336809878; Mon, 27
- Jun 2022 06:33:29 -0700 (PDT)
+        Mon, 27 Jun 2022 10:20:42 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3006D101FD;
+        Mon, 27 Jun 2022 07:20:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ksIHmlKSMU37+Zo3znbjONqVsnNwDJ3NzqXq/aV3oCA=; b=jj62KECv4psctWkcuf5Ses0v9O
+        o4gDWXoxwTWF2JnaENsSFlJp75IeIDlmm5FwZx42Fw2pSG0sfcWGkibG9WgCLW+5Kj6JRdKKaQoFk
+        KZR6rCtADOL1SnarxSxH1z6+4243ZmmLJwCwkXB7MvYR+/bhJigZ2aPLOEjVSuNc4WzV5I56YDJpA
+        OmR4T5EvR9cd0LzRh7Uk/nF/Up9dbgiegDUl18WVbAalbekxpXZEda2Wf91ywh6iEDwNVsiBxFDQw
+        keUdgXQ791ceVjqTJMgk9vLnOD7OpHX8v3xZIylpmA2monnp5qqUmHCGEcEhXCJaq8E5o1v/7kHPa
+        sCv/S6Lg==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1o5pbK-003N2J-L8; Mon, 27 Jun 2022 17:20:29 +0300
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh@kernel.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7/v3 01/22] dt-bindings: host1x: Add iommu-map property
+Date:   Mon, 27 Jun 2022 17:19:47 +0300
+Message-Id: <20220627142008.2072474-2-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220627142008.2072474-1-cyndis@kapsi.fi>
+References: <20220627142008.2072474-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
-References: <20220621151022.1416300-1-cyndis@kapsi.fi> <20220621151022.1416300-3-cyndis@kapsi.fi>
- <1656091594.348474.146331.nullmailer@robh.at.kernel.org>
-In-Reply-To: <1656091594.348474.146331.nullmailer@robh.at.kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 27 Jun 2022 07:33:18 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJMDEf1_3P2q2XPKKuOqr=+sYixVfMwnouGXPkMPWtjGA@mail.gmail.com>
-Message-ID: <CAL_JsqJMDEf1_3P2q2XPKKuOqr=+sYixVfMwnouGXPkMPWtjGA@mail.gmail.com>
-Subject: Re: [PATCH v6 02/10] dt-bindings: display: tegra: Convert to json-schema
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     devicetree@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jun 24, 2022 at 11:26 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, 21 Jun 2022 18:10:14 +0300, Mikko Perttunen wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Convert the Tegra host1x controller bindings from the free-form text
-> > format to json-schema.
-> >
-> > This also adds the missing display-hub DT bindings that were not
-> > previously documented.
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  .../display/tegra/nvidia,tegra114-mipi.txt    |  41 --
-> >  .../display/tegra/nvidia,tegra114-mipi.yaml   |  74 ++
-> >  .../display/tegra/nvidia,tegra124-dpaux.yaml  | 149 ++++
-> >  .../display/tegra/nvidia,tegra124-sor.yaml    | 206 ++++++
-> >  .../display/tegra/nvidia,tegra124-vic.yaml    |  71 ++
-> >  .../display/tegra/nvidia,tegra186-dc.yaml     |  85 +++
-> >  .../tegra/nvidia,tegra186-display.yaml        | 310 ++++++++
-> >  .../tegra/nvidia,tegra186-dsi-padctl.yaml     |  45 ++
-> >  .../display/tegra/nvidia,tegra20-dc.yaml      | 181 +++++
-> >  .../display/tegra/nvidia,tegra20-dsi.yaml     | 159 +++++
-> >  .../display/tegra/nvidia,tegra20-epp.yaml     |  70 ++
-> >  .../display/tegra/nvidia,tegra20-gr2d.yaml    |  73 ++
-> >  .../display/tegra/nvidia,tegra20-gr3d.yaml    | 214 ++++++
-> >  .../display/tegra/nvidia,tegra20-hdmi.yaml    | 126 ++++
-> >  .../display/tegra/nvidia,tegra20-host1x.txt   | 675 ------------------
-> >  .../display/tegra/nvidia,tegra20-host1x.yaml  | 347 +++++++++
-> >  .../display/tegra/nvidia,tegra20-isp.yaml     |  67 ++
-> >  .../display/tegra/nvidia,tegra20-mpe.yaml     |  73 ++
-> >  .../display/tegra/nvidia,tegra20-tvo.yaml     |  58 ++
-> >  .../display/tegra/nvidia,tegra20-vi.yaml      | 163 +++++
-> >  .../display/tegra/nvidia,tegra210-csi.yaml    |  52 ++
-> >  .../pinctrl/nvidia,tegra124-dpaux-padctl.txt  |  59 --
-> >  22 files changed, 2523 insertions(+), 775 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.txt
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-dpaux.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-display.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-tvo.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt
-> >
->
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
->
-> yamllint warnings/errors:
->
-> dtschema/dtc warnings/errors:
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml: allOf:1:if:not:properties: {'contains': {'const': 'nvidia,panel'}} should not be valid under {'$ref': '#/definitions/sub-schemas'}
->         hint: A json-schema keyword was found instead of a DT property name.
->         from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml: ignoring, error in schema: allOf: 1: if: not: properties
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.example.dtb: gr3d@54180000: resets: [[4294967295, 24]] is too short
->         From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.example.dtb: gr3d@54180000: reset-names: ['3d'] is too short
->         From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.example.dtb: gr2d@54140000: resets: [[4294967295, 21]] is too short
->         From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.yaml
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.example.dtb: gr2d@54140000: reset-names: ['2d'] is too short
->         From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.yaml
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.example.dtb: gr3d@54180000: resets: [[4294967295, 24]] is too short
->         From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.example.dtb: gr3d@54180000: reset-names: ['3d'] is too short
->         From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
-> Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.example.dtb:0:0: /example-0/sor@54540000: failed to match any schema with compatible: ['nvidia,tegra210-sor']
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.example.dtb: gr2d@54140000: resets: [[4294967295, 21]] is too short
->         From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.yaml
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.example.dtb: gr2d@54140000: reset-names: ['2d'] is too short
->         From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.yaml
->
-> doc reference errors (make refcheckdocs):
-> MAINTAINERS: Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> MAINTAINERS: Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->
-> See https://patchwork.ozlabs.org/patch/
->
-> This check can fail if there are any dependencies. The base for a patch
-> series is generally the most recent rc1.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
->
-> Please check and re-submit.
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Now failing in linux-next. Please fix.
+Add schema information for specifying context stream IDs. This uses
+the standard iommu-map property.
 
-Rob
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+v3:
+* New patch
+v4:
+* Remove memory-contexts subnode.
+---
+ .../bindings/display/tegra/nvidia,tegra20-host1x.yaml        | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+index 4fd513efb0f7..0adeb03b9e3a 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+@@ -144,6 +144,11 @@ allOf:
+         reset-names:
+           maxItems: 1
+ 
++        iommu-map:
++          description: Specification of stream IDs available for memory context device
++            use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
++            usable stream IDs.
++
+       required:
+         - reg-names
+ 
+-- 
+2.36.1
+
