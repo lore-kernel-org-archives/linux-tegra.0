@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19886CCA485
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 284C1CCA486
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235625AbiF0OUx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 10:20:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38056 "EHLO
+        id S237090AbiF0OUz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 10:20:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237034AbiF0OUp (ORCPT
+        with ESMTP id S237012AbiF0OUo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jun 2022 10:20:45 -0400
+        Mon, 27 Jun 2022 10:20:44 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3119E12D15;
-        Mon, 27 Jun 2022 07:20:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA9F411464;
+        Mon, 27 Jun 2022 07:20:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=pGQX1JKxanPmqedEue8d2htEoS8AyrUnifwuz1TiUYY=; b=dFIiw1xO8Eob5L8eHMuTQBIMXO
-        Gz5nY9aLINS2Cjumz/XJZvMsVZC8lyWBMyOmXBb45vpBp0TS54TNlHav0vQEP1b1wyxW/NcqYDH6j
-        sNwLt2T7wqraBNaYI/3YK9mbuNf9J0na+cgFmlvAG2yD9i8QIFKUv0IYfvABLTAD+NcNnSZdyFgIQ
-        9D1HecvqgwxWtMIyRSfm3X8rhk9A6EyYoEmSPt6y4fA7WByF6UODC9yfSNNapTDD6nwKpF84/eYF+
-        2cizfjpMxIFS6q5UwcIy/dYa4l/o+4kQzb1g+KK0g/blSJ3xxdmfbnvP9eVFdbJJ7Ky5bxXQb39sz
-        rxeuH4TQ==;
+        bh=jqNVkhlKQgqXtLeAWprMxZosE+nkqym2SEmCMhLQNlc=; b=UKrJgi8mpssJ8vUSIqsRaFlfde
+        NzafDBO/mC4aXw4QPBIneZ9kKb6AEmJoy0BSC0s0b7rv/H7Dd7LqU0WicsZ1oNrL9FepdSJBJJZL9
+        No54CShhzc5PlHZLn929qk+02aBERQiEvwLSkxtE08wrv/ujH5J5+CaE0BNdAEuxLJ+4Y9BE/tUhM
+        RZz6+IJLoH084FpFlzJicHkBjosb29+qpmnoL1qyLaOSCnj88DEtEmneqKhWfztwf1lvQW4saAQTn
+        mopHYgvC4FQxooW4ChNkaVvOKXmUM+68Yl4XgxIOwlG/3ucGwTVoa3TH7wYGaGr1AorNvWbULm17P
+        0k6oZvhg==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1o5pbP-003N2J-E0; Mon, 27 Jun 2022 17:20:34 +0300
+        id 1o5pbO-003N2J-0V; Mon, 27 Jun 2022 17:20:32 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -42,9 +42,9 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Robin Murphy <robin.murphy@arm.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7/v3 21/22] gpu: host1x: Use RESTART_W to skip timed out jobs on Tegra186+
-Date:   Mon, 27 Jun 2022 17:20:07 +0300
-Message-Id: <20220627142008.2072474-22-cyndis@kapsi.fi>
+Subject: [PATCH v7/v3 15/22] gpu: host1x: Program virtualization tables
+Date:   Mon, 27 Jun 2022 17:20:01 +0300
+Message-Id: <20220627142008.2072474-16-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220627142008.2072474-1-cyndis@kapsi.fi>
 References: <20220627142008.2072474-1-cyndis@kapsi.fi>
@@ -59,47 +59,98 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-When MLOCK enforcement is enabled, the 0-word write currently done
-is rejected by the hardware outside of an MLOCK region. As such,
-on these chips, which also have the newer, more convenient RESTART_W
-opcode, use that instead to skip over the timed out job.
+Program virtualization tables specifying which VMs have access to which
+Host1x hardware resources. Programming these has become mandatory in
+Tegra234.
+
+For now, since the driver does not operate as a Host1x hypervisor, we
+basically allow access to everything to everyone.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/host1x/cdma.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/gpu/host1x/dev.c | 21 ++++++++++++++++++---
+ drivers/gpu/host1x/dev.h |  8 ++++++++
+ 2 files changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 765e5aa64eb6..bb1f3c746be4 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -457,9 +457,24 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 				 * to offset 0xbad. This does nothing but
- 				 * has a easily detected signature in debug
- 				 * traces.
-+				 *
-+				 * On systems with MLOCK enforcement enabled,
-+				 * the above 0 word writes would fall foul of
-+				 * the enforcement. As such, in the first slot
-+				 * put a RESTART_W opcode to the beginning
-+				 * of the next job. We don't use this for older
-+				 * chips since those only support the RESTART
-+				 * opcode with inconvenient alignment requirements.
- 				 */
--				mapped[2*slot+0] = 0x1bad0000;
--				mapped[2*slot+1] = 0x1bad0000;
-+				if (i == 0 && host1x->info->has_wide_gather) {
-+					unsigned int next_job = (job->first_get/8 + job->num_slots)
-+						% HOST1X_PUSHBUFFER_SLOTS;
-+					mapped[2*slot+0] = (0xd << 28) | (next_job * 2);
-+					mapped[2*slot+1] = 0x0;
-+				} else {
-+					mapped[2*slot+0] = 0x1bad0000;
-+					mapped[2*slot+1] = 0x1bad0000;
-+				}
- 			}
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 8c6ce8014c09..5a57165ab0f6 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -217,7 +217,7 @@ static const struct of_device_id host1x_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, host1x_of_match);
  
- 			job->cancelled = true;
+-static void host1x_setup_sid_table(struct host1x *host)
++static void host1x_setup_virtualization_tables(struct host1x *host)
+ {
+ 	const struct host1x_info *info = host->info;
+ 	unsigned int i;
+@@ -231,6 +231,21 @@ static void host1x_setup_sid_table(struct host1x *host)
+ 		host1x_hypervisor_writel(host, entry->offset, entry->base);
+ 		host1x_hypervisor_writel(host, entry->limit, entry->base + 4);
+ 	}
++
++	for (i = 0; i < info->streamid_vm_table.count; i++) {
++		/* Allow access to all stream IDs to all VMs. */
++		host1x_hypervisor_writel(host, 0xff, info->streamid_vm_table.base + 4 * i);
++	}
++
++	for (i = 0; i < info->classid_vm_table.count; i++) {
++		/* Allow access to all classes to all VMs. */
++		host1x_hypervisor_writel(host, 0xff, info->classid_vm_table.base + 4 * i);
++	}
++
++	for (i = 0; i < info->mmio_vm_table.count; i++) {
++		/* Use VM1 (that's us) as originator VMID for engine MMIO accesses. */
++		host1x_hypervisor_writel(host, 0x1, info->mmio_vm_table.base + 4 * i);
++	}
+ }
+ 
+ static bool host1x_wants_iommu(struct host1x *host1x)
+@@ -602,7 +617,7 @@ static int __maybe_unused host1x_runtime_suspend(struct device *dev)
+ 	return 0;
+ 
+ resume_host1x:
+-	host1x_setup_sid_table(host);
++	host1x_setup_virtualization_tables(host);
+ 	host1x_syncpt_restore(host);
+ 	host1x_intr_start(host);
+ 
+@@ -632,7 +647,7 @@ static int __maybe_unused host1x_runtime_resume(struct device *dev)
+ 		goto disable_clk;
+ 	}
+ 
+-	host1x_setup_sid_table(host);
++	host1x_setup_virtualization_tables(host);
+ 	host1x_syncpt_restore(host);
+ 	host1x_intr_start(host);
+ 
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index 85edcc6e0fc7..920e5548cfbc 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -90,6 +90,11 @@ struct host1x_sid_entry {
+ 	unsigned int limit;
+ };
+ 
++struct host1x_table_desc {
++	unsigned int base;
++	unsigned int count;
++};
++
+ struct host1x_info {
+ 	unsigned int nb_channels; /* host1x: number of channels supported */
+ 	unsigned int nb_pts; /* host1x: number of syncpoints supported */
+@@ -103,6 +108,9 @@ struct host1x_info {
+ 	bool has_common; /* has common registers separate from hypervisor */
+ 	unsigned int num_sid_entries;
+ 	const struct host1x_sid_entry *sid_table;
++	struct host1x_table_desc streamid_vm_table;
++	struct host1x_table_desc classid_vm_table;
++	struct host1x_table_desc mmio_vm_table;
+ 	/*
+ 	 * On T20-T148, the boot chain may setup DC to increment syncpoints
+ 	 * 26/27 on VBLANK. As such we cannot use these syncpoints until
 -- 
 2.36.1
 
