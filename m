@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E2DC43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A98D4CCA480
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jun 2022 14:20:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236990AbiF0OUn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jun 2022 10:20:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37970 "EHLO
+        id S237025AbiF0OUo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jun 2022 10:20:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235267AbiF0OUm (ORCPT
+        with ESMTP id S236878AbiF0OUm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 27 Jun 2022 10:20:42 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3006D101FD;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FDE3101C2;
         Mon, 27 Jun 2022 07:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=ksIHmlKSMU37+Zo3znbjONqVsnNwDJ3NzqXq/aV3oCA=; b=jj62KECv4psctWkcuf5Ses0v9O
-        o4gDWXoxwTWF2JnaENsSFlJp75IeIDlmm5FwZx42Fw2pSG0sfcWGkibG9WgCLW+5Kj6JRdKKaQoFk
-        KZR6rCtADOL1SnarxSxH1z6+4243ZmmLJwCwkXB7MvYR+/bhJigZ2aPLOEjVSuNc4WzV5I56YDJpA
-        OmR4T5EvR9cd0LzRh7Uk/nF/Up9dbgiegDUl18WVbAalbekxpXZEda2Wf91ywh6iEDwNVsiBxFDQw
-        keUdgXQ791ceVjqTJMgk9vLnOD7OpHX8v3xZIylpmA2monnp5qqUmHCGEcEhXCJaq8E5o1v/7kHPa
-        sCv/S6Lg==;
+        bh=uAYlVlaSKiCol2osSU9jEMs5Zkro7eHEKz4SvQwuMgY=; b=NwS6g3CvNuaXTIXEi6wkgNcV7f
+        RXIkSTW3bczIukTSnXcBt9rYhEJXAAs64KLZ6M3uUbpTUgl+iaWGMS7rnGrE+YNaqAMae0BzWKnCb
+        d5aoTSayvmqX3IS/xkpFyLdikY2jBxZD9JMAMMCQpLN+z2XwZB9bxL4WE60QMcfHlEQhRRthv2Ks9
+        YU+j8u6FweF0H5CS9JAFN1+py+va/zUqrH85bBUieD5C/Dc08KzzVG1yXxHEsziXWebfvXPzhqThT
+        lmIrKtaaxkynUru1Awzv1BTS5HqqCyhctdhy0PsPTQ3N2MS9hQadN2vV9bj4fS5iwjdGjuh7F2JHM
+        zIB6InzQ==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1o5pbK-003N2J-L8; Mon, 27 Jun 2022 17:20:29 +0300
+        id 1o5pbL-003N2J-Lj; Mon, 27 Jun 2022 17:20:30 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -40,12 +40,11 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Dmitry Osipenko <digetx@gmail.com>
 Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh@kernel.org>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7/v3 01/22] dt-bindings: host1x: Add iommu-map property
-Date:   Mon, 27 Jun 2022 17:19:47 +0300
-Message-Id: <20220627142008.2072474-2-cyndis@kapsi.fi>
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7/v3 05/22] drm/tegra: falcon: Set DMACTX field on DMA transactions
+Date:   Mon, 27 Jun 2022 17:19:51 +0300
+Message-Id: <20220627142008.2072474-6-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220627142008.2072474-1-cyndis@kapsi.fi>
 References: <20220627142008.2072474-1-cyndis@kapsi.fi>
@@ -60,36 +59,47 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add schema information for specifying context stream IDs. This uses
-the standard iommu-map property.
+The DMACTX field determines which context, as specified in the
+TRANSCFG register, is used. While during boot it doesn't matter
+which is used, later on it matters and this value is reused by
+the firmware.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
-v3:
-* New patch
-v4:
-* Remove memory-contexts subnode.
----
- .../bindings/display/tegra/nvidia,tegra20-host1x.yaml        | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/tegra/falcon.c | 8 ++++++++
+ drivers/gpu/drm/tegra/falcon.h | 1 +
+ 2 files changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-index 4fd513efb0f7..0adeb03b9e3a 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-@@ -144,6 +144,11 @@ allOf:
-         reset-names:
-           maxItems: 1
+diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falcon.c
+index 3762d87759d9..c0d85463eb1a 100644
+--- a/drivers/gpu/drm/tegra/falcon.c
++++ b/drivers/gpu/drm/tegra/falcon.c
+@@ -48,6 +48,14 @@ static int falcon_copy_chunk(struct falcon *falcon,
+ 	if (target == FALCON_MEMORY_IMEM)
+ 		cmd |= FALCON_DMATRFCMD_IMEM;
  
-+        iommu-map:
-+          description: Specification of stream IDs available for memory context device
-+            use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
-+            usable stream IDs.
++	/*
++	 * Use second DMA context (i.e. the one for firmware). Strictly
++	 * speaking, at this point both DMA contexts point to the firmware
++	 * stream ID, but this register's value will be reused by the firmware
++	 * for later DMA transactions, so we need to use the correct value.
++	 */
++	cmd |= FALCON_DMATRFCMD_DMACTX(1);
 +
-       required:
-         - reg-names
+ 	falcon_writel(falcon, offset, FALCON_DMATRFMOFFS);
+ 	falcon_writel(falcon, base, FALCON_DMATRFFBOFFS);
+ 	falcon_writel(falcon, cmd, FALCON_DMATRFCMD);
+diff --git a/drivers/gpu/drm/tegra/falcon.h b/drivers/gpu/drm/tegra/falcon.h
+index c56ee32d92ee..1955cf11a8a6 100644
+--- a/drivers/gpu/drm/tegra/falcon.h
++++ b/drivers/gpu/drm/tegra/falcon.h
+@@ -50,6 +50,7 @@
+ #define FALCON_DMATRFCMD_IDLE			(1 << 1)
+ #define FALCON_DMATRFCMD_IMEM			(1 << 4)
+ #define FALCON_DMATRFCMD_SIZE_256B		(6 << 8)
++#define FALCON_DMATRFCMD_DMACTX(v)		(((v) & 0x7) << 12)
+ 
+ #define FALCON_DMATRFFBOFFS			0x0000111c
  
 -- 
 2.36.1
