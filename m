@@ -2,192 +2,217 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C99AC43334
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 16:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70144C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 18:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233446AbiF1Quu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jun 2022 12:50:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60780 "EHLO
+        id S231623AbiF1Sng (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jun 2022 14:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347322AbiF1Qtt (ORCPT
+        with ESMTP id S229955AbiF1Sng (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jun 2022 12:49:49 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3E5F237CC;
-        Tue, 28 Jun 2022 09:47:57 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id q9so18554206wrd.8;
-        Tue, 28 Jun 2022 09:47:57 -0700 (PDT)
+        Tue, 28 Jun 2022 14:43:36 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A6C1D0C6;
+        Tue, 28 Jun 2022 11:43:35 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id o18so11885149plg.2;
+        Tue, 28 Jun 2022 11:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n3HZDcdfLwNiQ/tf7zCGAV+A8ooVMIqgPIQ28MjTeog=;
-        b=e3zeLjiXoUYC1IVaQKWrsc2qKrKVYQG+FiwqsRzNz/YxbDT0nHSgZ8eR2tVfrLi0Hs
-         5GLXKpxS/5dpbABkwwBi+kl4n0khKod1v0GPWJ89X1h3TNUjfC7RS4740ITfxK5/nbrh
-         SHkGrTqHNILhXqHROw320nvIeM2Nre2164Aj2miAgQcaKDnte8RFr2pkEHfcg3h7Vbln
-         87QzWotvsNkfT2Db3zhU9670nwzLrALbqwb/9ZXx2DFpvoAA8Xva7TAYCeAEhYv0BfZt
-         Gn6YjailqEcJJ+mqGAUnmO0/+pJ+0fHuqqBi12yhe5oQnxR7ZUa+HprAzGiPrKPmAQgn
-         fCdQ==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Nf+OblUWFZy1JS2yrD639AItKuL1KQKNpAKw7anuvjY=;
+        b=HZc4YoW+bX2VEtQNtd28uVZZ74iNTEVxswYwXGIaNYz83F/gr+edoSYQ6d7nBUDrR4
+         gK61Um71/RZY9IqytdLIrByDeFiNTsgfHUooOkA3UXhi359fdpaNXtdR2qFasgUMoco/
+         Sxb4DpKF7FeGc9FV8AKqKjR0XO71DDWsGw6aZr2J3VaQL93tq+/cTRAqMy+KOOOE++uG
+         hiCdyFsY2Ow5xHT3TyFriFKi8M3a7UuJzfzef29WjCJLWBjl5duAZsppK50h89b6GvI6
+         bouNW4K8W33mADzbJ3y1nGZZJpxY4tgag++HWOjMhvXe3kbKDLtDmfddV0dhWZ5ooWnc
+         TDhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n3HZDcdfLwNiQ/tf7zCGAV+A8ooVMIqgPIQ28MjTeog=;
-        b=bvqv6H4UXkBG0ohPNWLl+sDnnFgqSW/Zgm2n6Vok9vlBA7elpiKyHgNQanm9WJaPdT
-         fcCpN+FOoxBApgJCiXwIVrhyOy/UTvfstXHkc2gL5gxKegiUzRQqI+4QsWJp1KCUK7nj
-         x6w8howNQW7n5QHU8+W/Mehwd29Y8zYb0TjhJkKpH8UI1AoqUI90ZD4fHACiQLAelqsz
-         b9j3Dvu2/oTUvnNhvqe3PHmvvNuZHoYUv6Oc0u/vSMXHVLaZc1eTgrcWpH22x5ZEvk3i
-         OAaiXTR8mwIxJG3dQGO70Y2HSLA2AElxb7b6EwMxLOjbTMhoWlta4CPib6vkz1cAymFN
-         ORDw==
-X-Gm-Message-State: AJIora/mdY2TxcSWGf/QFntd4VdLghBcpDHeymTzub8EloMoZtlYdxHS
-        buUNrovENftHdUiY2HFJhmPU5XwgmFtzkBxo5QI=
-X-Google-Smtp-Source: AGRyM1shfbz2wZj9C+y4AJcD4Xp16+D3E3FTqL5mLWkwiHI8GjKt117H2EdLaDQl5pCDFAKa86OSOaxFM0gmoOv0egA=
-X-Received: by 2002:a5d:6d8b:0:b0:21b:9814:793d with SMTP id
- l11-20020a5d6d8b000000b0021b9814793dmr18409107wrs.344.1656434876256; Tue, 28
- Jun 2022 09:47:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
- <49cc6f0c-e90e-8edd-52e7-4188620e2c28@arm.com> <f77c1c2d-d9f9-db00-906a-ec10b535621d@collabora.com>
-In-Reply-To: <f77c1c2d-d9f9-db00-906a-ec10b535621d@collabora.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Tue, 28 Jun 2022 09:48:09 -0700
-Message-ID: <CAF6AEGsQBcHbU6Ps5fp5v6ANaZwMAtig-3i-ekQzwG=7BBDNwA@mail.gmail.com>
-Subject: Re: [PATCH v6 00/22] Add generic memory shrinker to VirtIO-GPU and
- Panfrost DRM drivers
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=Nf+OblUWFZy1JS2yrD639AItKuL1KQKNpAKw7anuvjY=;
+        b=R/FAemTzmdoaz6m1zbObm7gcfKw6jfnYNqxPGGaxyYvc0n2UgF6Q5aX++BMxfKEb5A
+         f2BaC6xnbNlU+fzJCxPRDr4/5tZGasri3rIp2KrQ/4lEPBP5ayatjAa0Lt2Q7MtqOXLu
+         yikERfka6U97HyO+EYx1Gk08SJ4todwgaJez3h11OlpxIXX6qlGvpokMXRvAzvLdFPrP
+         fmZYgPEiA6mmKpyPKm/zBJa5V/VwsIKTYpeyG/3v38WDGeMMIBRA3pZZ9+xFacfOGjW6
+         zoZWANnwQbXEWXIUWXNv6z40TfAASFvVk2CqYkEj/ZiMn1R0JR2sL7uc9VvAeOCSkLap
+         mbdA==
+X-Gm-Message-State: AJIora+ADffEOT/JSL7g3QwW7LtNEYIdwDIIcG72ATTZANYX/3gpftr/
+        6iRbB2fGVUlFXRKoKjAaA65EzOsIa9c=
+X-Google-Smtp-Source: AGRyM1uNLIskFHfRQr6mWvFmFqeRAY+FqrXG1HMf9YtxM4eqGdjvdNEoZDUa9fVW3zn6oaVigsD8BA==
+X-Received: by 2002:a17:903:1cf:b0:16a:605a:d58a with SMTP id e15-20020a17090301cf00b0016a605ad58amr4995298plh.37.1656441814741;
+        Tue, 28 Jun 2022 11:43:34 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id bt11-20020a17090af00b00b001d95c09f877sm172288pjb.35.2022.06.28.11.43.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 11:43:33 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 28 Jun 2022 11:43:32 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
 To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Gert Wollny <gert.wollny@collabora.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        Hardware Monitoring <linux-hwmon@vger.kernel.org>,
+        rafael@kernel.org
+Subject: Re: [PATCH 2/3] thermal/drivers/tegra: Remove get_trend function
+Message-ID: <20220628184332.GA3624671@roeck-us.net>
+References: <20220616202537.303655-1-daniel.lezcano@linaro.org>
+ <20220616202537.303655-2-daniel.lezcano@linaro.org>
+ <7841a809-e180-70d2-df9b-b30b411647ce@linaro.org>
+ <d186bb7d-cbe6-8ec4-82a1-8323b3901ac2@collabora.com>
+ <20220628151030.GA3361452@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220628151030.GA3361452@roeck-us.net>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 5:51 AM Dmitry Osipenko
-<dmitry.osipenko@collabora.com> wrote:
->
-> On 6/28/22 15:31, Robin Murphy wrote:
-> > ----->8-----
-> > [   68.295951] ======================================================
-> > [   68.295956] WARNING: possible circular locking dependency detected
-> > [   68.295963] 5.19.0-rc3+ #400 Not tainted
-> > [   68.295972] ------------------------------------------------------
-> > [   68.295977] cc1/295 is trying to acquire lock:
-> > [   68.295986] ffff000008d7f1a0
-> > (reservation_ww_class_mutex){+.+.}-{3:3}, at: drm_gem_shmem_free+0x7c/0x198
-> > [   68.296036]
-> > [   68.296036] but task is already holding lock:
-> > [   68.296041] ffff80000c14b820 (fs_reclaim){+.+.}-{0:0}, at:
-> > __alloc_pages_slowpath.constprop.0+0x4d8/0x1470
-> > [   68.296080]
-> > [   68.296080] which lock already depends on the new lock.
-> > [   68.296080]
-> > [   68.296085]
-> > [   68.296085] the existing dependency chain (in reverse order) is:
-> > [   68.296090]
-> > [   68.296090] -> #1 (fs_reclaim){+.+.}-{0:0}:
-> > [   68.296111]        fs_reclaim_acquire+0xb8/0x150
-> > [   68.296130]        dma_resv_lockdep+0x298/0x3fc
-> > [   68.296148]        do_one_initcall+0xe4/0x5f8
-> > [   68.296163]        kernel_init_freeable+0x414/0x49c
-> > [   68.296180]        kernel_init+0x2c/0x148
-> > [   68.296195]        ret_from_fork+0x10/0x20
-> > [   68.296207]
-> > [   68.296207] -> #0 (reservation_ww_class_mutex){+.+.}-{3:3}:
-> > [   68.296229]        __lock_acquire+0x1724/0x2398
-> > [   68.296246]        lock_acquire+0x218/0x5b0
-> > [   68.296260]        __ww_mutex_lock.constprop.0+0x158/0x2378
-> > [   68.296277]        ww_mutex_lock+0x7c/0x4d8
-> > [   68.296291]        drm_gem_shmem_free+0x7c/0x198
-> > [   68.296304]        panfrost_gem_free_object+0x118/0x138
-> > [   68.296318]        drm_gem_object_free+0x40/0x68
-> > [   68.296334]        drm_gem_shmem_shrinker_run_objects_scan+0x42c/0x5b8
-> > [   68.296352]        drm_gem_shmem_shrinker_scan_objects+0xa4/0x170
-> > [   68.296368]        do_shrink_slab+0x220/0x808
-> > [   68.296381]        shrink_slab+0x11c/0x408
-> > [   68.296392]        shrink_node+0x6ac/0xb90
-> > [   68.296403]        do_try_to_free_pages+0x1dc/0x8d0
-> > [   68.296416]        try_to_free_pages+0x1ec/0x5b0
-> > [   68.296429]        __alloc_pages_slowpath.constprop.0+0x528/0x1470
-> > [   68.296444]        __alloc_pages+0x4e0/0x5b8
-> > [   68.296455]        __folio_alloc+0x24/0x60
-> > [   68.296467]        vma_alloc_folio+0xb8/0x2f8
-> > [   68.296483]        alloc_zeroed_user_highpage_movable+0x58/0x68
-> > [   68.296498]        __handle_mm_fault+0x918/0x12a8
-> > [   68.296513]        handle_mm_fault+0x130/0x300
-> > [   68.296527]        do_page_fault+0x1d0/0x568
-> > [   68.296539]        do_translation_fault+0xa0/0xb8
-> > [   68.296551]        do_mem_abort+0x68/0xf8
-> > [   68.296562]        el0_da+0x74/0x100
-> > [   68.296572]        el0t_64_sync_handler+0x68/0xc0
-> > [   68.296585]        el0t_64_sync+0x18c/0x190
-> > [   68.296596]
-> > [   68.296596] other info that might help us debug this:
-> > [   68.296596]
-> > [   68.296601]  Possible unsafe locking scenario:
-> > [   68.296601]
-> > [   68.296604]        CPU0                    CPU1
-> > [   68.296608]        ----                    ----
-> > [   68.296612]   lock(fs_reclaim);
-> > [   68.296622] lock(reservation_ww_class_mutex);
-> > [   68.296633]                                lock(fs_reclaim);
-> > [   68.296644]   lock(reservation_ww_class_mutex);
-> > [   68.296654]
-> > [   68.296654]  *** DEADLOCK ***
->
-> This splat could be ignored for now. I'm aware about it, although
-> haven't looked closely at how to fix it since it's a kind of a lockdep
-> misreporting.
+On Tue, Jun 28, 2022 at 08:10:30AM -0700, Guenter Roeck wrote:
+> On Tue, Jun 28, 2022 at 02:44:31PM +0300, Dmitry Osipenko wrote:
+> > On 6/28/22 11:41, Daniel Lezcano wrote:
+> > > 
+> > > Thierry, Dmitry,
+> > > 
+> > > are fine with this patch?
+> > 
+> > Seems should be good. I couldn't test it using recent the linux-next
+> > because of a lockup in LM90 driver. There were quite a lot of changes in
+> > LM90 recently, adding Guenter.
+> > 
+> 
+> Weird, I tested those changes to death with real hardware, and I don't
+> see a code path where the mutex can be left in blocked state unless the
+> underlying i2c driver locks up for some reason. What is the platform,
+> and can you point me to the devicetree file ? Also, is there anything
+> else lm90 or i2c related in the kernel log ?
+> 
 
-The lockdep splat could be fixed with something similar to what I've
-done in msm, ie. basically just not acquire the lock in the finalizer:
+Follow-up question: I see that various Tegra systems use lm90 compatible
+chips, and the interrupt line is in general wired up. Can you check if
+you get lots of interrupts on that interrupt line ? Also, can you check
+what happens if you read hwmon attributes directly ?
 
-https://patchwork.freedesktop.org/patch/489364/
+Thanks,
+Guenter
 
-There is one gotcha to watch for, as danvet pointed out
-(scan_objects() could still see the obj in the LRU before the
-finalizer removes it), but if scan_objects() does the
-kref_get_unless_zero() trick, it is safe.
-
-BR,
--R
+> Thanks,
+> Guenter
+> 
+> > INFO: task kworker/3:1:44 blocked for more than 61 seconds.
+> >       Not tainted 5.19.0-rc4-next-20220627-00012-g08b697b94b8a #2
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > task:kworker/3:1     state:D stack:    0 pid:   44 ppid:     2
+> > flags:0x00000000
+> > Workqueue: events_freezable_power_ thermal_zone_device_check
+> > Backtrace:
+> >  __schedule from schedule+0x60/0xcc
+> >  r10:c0fead70 r9:c2854c94 r8:df9a1dac r7:c2814b40 r6:00000002 r5:c1883020
+> >  r4:c2814b40
+> >  schedule from schedule_preempt_disabled+0x28/0x38
+> >  r5:c1883020 r4:c2814b40
+> >  schedule_preempt_disabled from __mutex_lock.constprop.0+0x1e0/0x9ac
+> >  r5:c1883020 r4:c2854c90
+> >  __mutex_lock.constprop.0 from __mutex_lock_slowpath+0x1c/0x20
+> >  r10:00000000 r9:c1882ae0 r8:c2854c90 r7:c2854c40 r6:00000001 r5:00000001
+> >  r4:c2854c90
+> >  __mutex_lock_slowpath from mutex_lock+0x60/0x64
+> >  mutex_lock from lm90_read+0x40/0x3d4
+> >  r5:00000001 r4:c2854e08
+> >  lm90_read from hwmon_thermal_get_temp+0x58/0x8c
+> >  r9:c1882ae0 r8:c2814b40 r7:de6aee00 r6:c1db1660 r5:c0af7940 r4:df9a1eb8
+> >  hwmon_thermal_get_temp from of_thermal_get_temp+0x38/0x44
+> >  r5:df9a1eb8 r4:c1db1400
+> >  of_thermal_get_temp from thermal_zone_get_temp+0x58/0x78
+> >  thermal_zone_get_temp from thermal_zone_device_update.part.0+0x4c/0x450
+> >  r7:de6aee00 r6:c1db1400 r5:00000000 r4:c1db1400
+> >  thermal_zone_device_update.part.0 from thermal_zone_device_check+0x58/0x5c
+> >  r10:00000000 r9:c1882ae0 r8:c2814b40 r7:de6aee00 r6:c1db1400 r5:c1db1660
+> >  r4:00000001
+> >  thermal_zone_device_check from process_one_work+0x21c/0x530
+> >  r7:de6aee00 r6:de6ab600 r5:c2802c00 r4:c1db167c
+> >  process_one_work from worker_thread+0x19c/0x5cc
+> >  r10:00000008 r9:c2814b40 r8:c1703d40 r7:de6ab61c r6:c2802c18 r5:de6ab600
+> >  r4:c2802c00
+> >  worker_thread from kthread+0x100/0x120
+> >  r10:00000000 r9:df895e80 r8:c285e3c0 r7:c2802c00 r6:c014cf84 r5:c285e300
+> >  r4:c2814b40
+> >  kthread from ret_from_fork+0x14/0x2c
+> > Exception stack(0xdf9a1fb0 to 0xdf9a1ff8)
+> > 
+> > > On 16/06/2022 22:25, Daniel Lezcano wrote:
+> > >> The get_trend function does already what the generic framework does.
+> > >>
+> > >> Remove it.
+> > >>
+> > >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > >> ---
+> > >>   drivers/thermal/tegra/soctherm.c | 32 --------------------------------
+> > >>   1 file changed, 32 deletions(-)
+> > >>
+> > >> diff --git a/drivers/thermal/tegra/soctherm.c
+> > >> b/drivers/thermal/tegra/soctherm.c
+> > >> index 210325f92559..825eab526619 100644
+> > >> --- a/drivers/thermal/tegra/soctherm.c
+> > >> +++ b/drivers/thermal/tegra/soctherm.c
+> > >> @@ -633,37 +633,6 @@ static int tegra_thermctl_set_trip_temp(void
+> > >> *data, int trip, int temp)
+> > >>       return 0;
+> > >>   }
+> > >>   -static int tegra_thermctl_get_trend(void *data, int trip,
+> > >> -                    enum thermal_trend *trend)
+> > >> -{
+> > >> -    struct tegra_thermctl_zone *zone = data;
+> > >> -    struct thermal_zone_device *tz = zone->tz;
+> > >> -    int trip_temp, temp, last_temp, ret;
+> > >> -
+> > >> -    if (!tz)
+> > >> -        return -EINVAL;
+> > >> -
+> > >> -    ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+> > >> -    if (ret)
+> > >> -        return ret;
+> > >> -
+> > >> -    temp = READ_ONCE(tz->temperature);
+> > >> -    last_temp = READ_ONCE(tz->last_temperature);
+> > >> -
+> > >> -    if (temp > trip_temp) {
+> > >> -        if (temp >= last_temp)
+> > >> -            *trend = THERMAL_TREND_RAISING;
+> > >> -        else
+> > >> -            *trend = THERMAL_TREND_STABLE;
+> > >> -    } else if (temp < trip_temp) {
+> > >> -        *trend = THERMAL_TREND_DROPPING;
+> > >> -    } else {
+> > >> -        *trend = THERMAL_TREND_STABLE;
+> > >> -    }
+> > >> -
+> > >> -    return 0;
+> > >> -}
+> > >> -
+> > >>   static void thermal_irq_enable(struct tegra_thermctl_zone *zn)
+> > >>   {
+> > >>       u32 r;
+> > >> @@ -716,7 +685,6 @@ static int tegra_thermctl_set_trips(void *data,
+> > >> int lo, int hi)
+> > >>   static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
+> > >>       .get_temp = tegra_thermctl_get_temp,
+> > >>       .set_trip_temp = tegra_thermctl_set_trip_temp,
+> > >> -    .get_trend = tegra_thermctl_get_trend,
+> > >>       .set_trips = tegra_thermctl_set_trips,
+> > >>   };
+> > >>   
+> > > 
+> > > 
+> > 
