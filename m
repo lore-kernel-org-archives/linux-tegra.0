@@ -2,60 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF28C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 06:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0A4C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 07:09:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244457AbiF1Gyu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jun 2022 02:54:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34342 "EHLO
+        id S241578AbiF1HJs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jun 2022 03:09:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343647AbiF1Gyo (ORCPT
+        with ESMTP id S237756AbiF1HJr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jun 2022 02:54:44 -0400
-X-Greylist: delayed 460 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 27 Jun 2022 23:54:43 PDT
-Received: from mail.privatemain.com (mail.privatemain.com [45.86.209.156])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6554927154
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Jun 2022 23:54:43 -0700 (PDT)
-Received: by mail.privatemain.com (Postfix, from userid 1001)
-        id C7961829D3; Tue, 28 Jun 2022 02:46:16 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=privatemain.com;
-        s=mail; t=1656398822;
-        bh=ydItAdwWOyX5wABuTqD9n+VESLmlWw/YxTJchbbqnDQ=;
-        h=Date:From:To:Subject:From;
-        b=JiFK2ngqco/uQoKKtP4Xt9rAcSOQOnmaETuLwIc6szI3S5GyFhfKioAyySYdf5H4x
-         +t+S1fTcKYsYyirdco5jpNn7CdTFbf4qjiwIwDZMxHjXLhpzB1V3c9JOaw9+2AxmDv
-         U4b+7jWGd1Vre2PLO66cYglGsBTuqb/xXg9lHGYANN2GW/fPeufeXg6Nbq1KnSumZq
-         L2ZDeMF4qOSZJQPkTZjP++xu/TQNRfh6CM+5hO27TYShpBz8JENRgv+jogFZMNW/F7
-         JQz0AyEav9jHwOQKynsExvx27eCBhVQvBYZxhi9zSQjgKuru/+UZx/bnvBVW4wFL5B
-         V7YJcc25sMHeA==
-Received: by mail.privatemain.com for <linux-tegra@vger.kernel.org>; Tue, 28 Jun 2022 06:46:12 GMT
-Message-ID: <20220628024500-0.1.26.1f9p.0.acc72zh1w2@privatemain.com>
-Date:   Tue, 28 Jun 2022 06:46:12 GMT
-From:   "Maciej Kielar" <maciej.kielar@privatemain.com>
-To:     <linux-tegra@vger.kernel.org>
-Subject: Prawne zabezpieczenie firmy
-X-Mailer: mail.privatemain.com
+        Tue, 28 Jun 2022 03:09:47 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C30B26AE7
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Jun 2022 00:09:46 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id d129so11319361pgc.9
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Jun 2022 00:09:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=3XMK98yTF7rwQ7mnNqiKavXCsADLxJEzVfR+4Zz4WF0=;
+        b=zWSmtNZ9qNY6UVxItaNgbAeLqd5873FBJyKmcWEeCrm6xpPi5/FSSNwO6dcTsTDqfq
+         DnvwpQ+94ZnXYb9D20ym7ZWBx0eCNxk/GVk4kGINYnhQ6dIHCycrjeCQIXhpuEVsqluI
+         dlRx0guc1WFWLchA1qpzXHQgZQtlCyzEiIqx9gj+s8BK4k9XIWukz3FVBH26XcA4foHq
+         0uBmm0VTpl7A6iKt2KatPhABuvIFNhG8I7DdXPeF9Lx3l1a80XnHWwJyJkFsGw9kqwwO
+         Qtosfyt9lwP9C2O/chNro/bxsb/hU3c1CdLJwWDdcJhGFVdPiv82JjvnKi+g3moOwG7T
+         sESQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=3XMK98yTF7rwQ7mnNqiKavXCsADLxJEzVfR+4Zz4WF0=;
+        b=6OnQ8nrXz+vMIFyvWr4WE8Cz/vIDwvjtJ6xnHP6JolAL9O2Y4akAJKXKR24IPsVwUa
+         fqA7rxSepA7ltW5ThBcTTRVWN1oT47bHP2yKX1Qqcqi1pnenYh2HfC6spjNNQuUIq2Je
+         koQ0WasX3qytagB9cOxb8iir37fL/53GRYcJleu1Jy5lmvHnuhA+904LHJZyoBZSJjgx
+         wwNhNMXINSc2umXciSwccVxVUgQI1r+ulMGjDiluYRnnVMhVqhuliugxz3S9L1oZbrHU
+         qtZiSqEFXnZaSDVT2xWnZSTwylOnoI3+8KqmEy9u4jTrtKSvBI8a5PQ2zL29PmWY1ba/
+         Sujg==
+X-Gm-Message-State: AJIora+amMV09rxtBFRUWUFgh9mCPN1ZXMOfx340A2NQYpb8vDzBejtk
+        3JWR91jeherSgaCtji+r/rtLKw==
+X-Google-Smtp-Source: AGRyM1uEl0n+zjcKdvvyyLVPuhE9wU3a13Tz8GsNbCb4aCUjWCDeNHLF2ac7/nnQGXUqy1ODqa1Hyg==
+X-Received: by 2002:a63:3713:0:b0:40c:b98c:5e4b with SMTP id e19-20020a633713000000b0040cb98c5e4bmr16156287pga.8.1656400185761;
+        Tue, 28 Jun 2022 00:09:45 -0700 (PDT)
+Received: from localhost ([122.172.201.58])
+        by smtp.gmail.com with ESMTPSA id l11-20020a170902d34b00b0015e8d4eb1dbsm8412488plk.37.2022.06.28.00.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 00:09:45 -0700 (PDT)
+Date:   Tue, 28 Jun 2022 12:39:43 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 22/31] soc/tegra: Migrate to dev_pm_opp_set_config()
+Message-ID: <20220628070943.5tfyad63rh6niq6x@vireshk-i7>
+References: <cover.1653564321.git.viresh.kumar@linaro.org>
+ <449b344f037c7ef1970bc84d31e0d4c4cb4d2951.1653564321.git.viresh.kumar@linaro.org>
+ <20220624004831.po35sowzfo4c47b3@vireshk-i7>
+ <20220624005700.oj4etaajbutvsym7@vireshk-i7>
+ <73d39022-c6fc-0c21-cb68-9714846f02bf@gmail.com>
+ <20220627064526.2nkezq4nufpkl4y2@vireshk-i7>
+ <ecc72279-0892-d5ab-689d-87b8fba5147e@gmail.com>
+ <20220627072104.ir7kujhezxhzl6a7@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220627072104.ir7kujhezxhzl6a7@vireshk-i7>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On 27-06-22, 12:51, Viresh Kumar wrote:
+> On 27-06-22, 10:14, Dmitry Osipenko wrote:
+> > 27.06.2022 09:45, Viresh Kumar пишет:
+> > >> Looks okay. If you'll solve the cpufreq problem where OPP config is set
+> > >> by two drivers for the same cpu device
+> > > This is supported, there is some early freeing of resources on the
+> > > removal path though, the reasoning for which I already gave in another
+> > > email. Though, I am open to sorting that out as well, but nothing
+> > > breaks the code for now AFAICT.
+> > > 
+> > 
+> > In case of Tegra, we use tegra-cpufreq driver that sets supported_hw and
+> > registers cpufreq-dt. If cpufreq-dt driver defers the probe, then the
+> > supported_hw will be lost on the re-probe. I haven't checked yet, but I
+> > suppose that cpufreq-dt driver defers on Tegra30 because of the CPU
+> > regulator and that's why we get the "OPP table is missing" error.
+> 
+> Aha, I get it now. I see, this is a real problem. Will fix it. Give me
+> some time to think. Thanks.
 
-czy s=C4=85 Pa=C5=84stwo otwarci na rozmowe o wsp=C3=B3=C5=82pracy z nasz=
-a Kancelari=C4=85?
+Okay, I fixed this in opp/linux-next, can you or Jon please give it a
+go on tegra30 to see if the issue is fixed ?
 
-Obs=C5=82ugujemy firmy z wojew=C3=B3dztwa pomorskiego w zakresie kompleks=
-owego wsparcia prawnego w rozszerzonym zakresie.=20
+FWIW, I have fixed this with the IDR API and the OPP core will only
+free the resources in clear-config, that the corresponding set-config
+has configured. I have tested it with the clk API only though.
 
-Dzi=C4=99ki wieloletniej praktyce i wsp=C3=B3=C5=82pracy z dzia=C5=82alno=
-=C5=9Bciami Pa=C5=84stwa formatu jestem w stanie wypracowa=C4=87 korzystn=
-e rozwi=C4=85zania pod wzgl=C4=99dem podatkowym i organizacyjnym.
+Once you confirm, I will resend all the patches and hope no issues are
+left here.
 
-Mo=C5=BCemy si=C4=99 spotka=C4=87 b=C4=85d=C5=BA porozmawia=C4=87 telefon=
-icznie?
+Thanks for helping out guys. Really appreciate it.
 
-Pozdrawiam,
-Mec. Maciej Kielar
+-- 
+viresh
