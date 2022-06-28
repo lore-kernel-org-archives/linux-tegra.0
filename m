@@ -2,103 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27B1CCA47F
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 22:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E44C43334
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 23:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbiF1Wv1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jun 2022 18:51:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50686 "EHLO
+        id S231462AbiF1XDH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jun 2022 19:03:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbiF1Wv1 (ORCPT
+        with ESMTP id S229705AbiF1XDC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jun 2022 18:51:27 -0400
+        Tue, 28 Jun 2022 19:03:02 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52B93A735
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Jun 2022 15:51:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 023543AA73;
+        Tue, 28 Jun 2022 16:03:02 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id A876B66018E4;
-        Tue, 28 Jun 2022 23:51:24 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 57F226601606;
+        Wed, 29 Jun 2022 00:03:00 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656456685;
-        bh=/Xa85kzcd+3TxYdpCXZHSekH8rF5MDz3C8vqm/YZhmA=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=edGFzE3hZvQjX5emNeX9cmYpsE1FtsToie/JAquPNhQTp1CYdPPRQdSlarr3RY2Kl
-         dViOi3z3v5KcLRyqyMWCD+0DoCnfsAQ/kuAnLTQC+P7TrVUBUaNBCQEyQgT+DJXMFd
-         cG8VE5FkiWQrwuGEXyBlZDjyQ4/tIP4tcKJa5ZG3DtkVM7Pq7Ucbz02lgRGjmSQv4/
-         TS+1rxovfL1mtOWXI4O1zH8Mof2CITGSftTuqpjIXRfIJx5Luyb40MKOwbzsG2LC0j
-         B0SAvhTle+F8OcW1vi81PC/4CZzHcMPJqhX2IczrETLWCYHYnwDx/kKL18S72P57XQ
-         MrXGBU8S8TK8Q==
-Message-ID: <55eebcb4-aeba-5b24-4830-07a526d58f35@collabora.com>
-Date:   Wed, 29 Jun 2022 01:51:21 +0300
+        s=mail; t=1656457380;
+        bh=Xx8ffEFVOiMAvlbG4WQ8kQdSHI8x62r0e8FnRe66H5A=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=cUrbQi2u+NfJZa7ovUFgPSvOjrAoMv6bSVz6vbwC/0GSNUfD1OxCCQ4NnEdXIBw09
+         uMChh34MoyvSSxfXgZ4ac6jNb9TcAKGK5nrW3jMlq1i59UvRTFzAhoOxZF4CAsce+s
+         1FKpqUL3qgvIqGvGS+gjpjfXUh+ft7dxrDfwllbCUxHU5cXXJFjF/3Zjd1qk9ilmWr
+         8nISzsCFt6oY9N42kSImjqK2lVcWb1C64h/F64fZbMJvEibL21Slig+w87nU2X+dO7
+         w2mAo+7/gBiN03zyuXcDtyVDdnN00XqDb7Zd5CAOlUzAv9UkUbUWtPAk29GaTwpeq+
+         6k5DRs8dMdnig==
+Message-ID: <53794ec1-c9b9-67df-ccd2-5ce46f264b5a@collabora.com>
+Date:   Wed, 29 Jun 2022 02:02:57 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH v1] drm/tegra: Fix vmapping of prime buffers
+Subject: Re: [PATCH -next] soc/tegra: fuse: Add missing DMADEVICES dependency
 Content-Language: en-US
+To:     YueHaibing <yuehaibing@huawei.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, digetx@gmail.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220628121039.21640-1-yuehaibing@huawei.com>
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        kernel@collabora.com
-References: <20220628224239.578324-1-dmitry.osipenko@collabora.com>
-In-Reply-To: <20220628224239.578324-1-dmitry.osipenko@collabora.com>
+In-Reply-To: <20220628121039.21640-1-yuehaibing@huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/29/22 01:42, Dmitry Osipenko wrote:
-> The code assumes that Tegra GEM is permanently vmapped, which is not
-> true for the scattered buffers. After converting Tegra video decoder
-> driver to V4L API, we're now getting a BUG_ON from dma-buf core on playing
-> video using libvdpau-tegra on T30+ because tegra_gem_prime_vmap() sets
-> vaddr to NULL. Older pre-V4L video decoder driver wasn't vmapping dma-bufs.
-> Fix it by actually vmapping the exported GEMs.
+On 6/28/22 15:10, YueHaibing wrote:
+> WARNING: unmet direct dependencies detected for TEGRA20_APB_DMA
+>   Depends on [n]: DMADEVICES [=n] && (ARCH_TEGRA [=y] || COMPILE_TEST [=n])
+>   Selected by [y]:
+>   - SOC_TEGRA_FUSE [=y] && ARCH_TEGRA [=y] && ARCH_TEGRA_2x_SOC [=y]
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> TEGRA20_APB_DMA depends on DMADEVICES, so SOC_TEGRA_FUSE also should depends on it
+> before select it.
+> 
+> Fixes: 19d41e5e9c68 ("soc/tegra: fuse: Add APB DMA dependency for Tegra20")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/gpu/drm/tegra/gem.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+>  drivers/soc/tegra/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> index 7c7dd84e6db8..81991090adcc 100644
-> --- a/drivers/gpu/drm/tegra/gem.c
-> +++ b/drivers/gpu/drm/tegra/gem.c
-> @@ -704,14 +704,23 @@ static int tegra_gem_prime_vmap(struct dma_buf *buf, struct iosys_map *map)
->  {
->  	struct drm_gem_object *gem = buf->priv;
->  	struct tegra_bo *bo = to_tegra_bo(gem);
-> +	void *vaddr;
+> diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+> index 5725c8ef0406..2b6ba0f798fa 100644
+> --- a/drivers/soc/tegra/Kconfig
+> +++ b/drivers/soc/tegra/Kconfig
+> @@ -135,6 +135,7 @@ endif
+>  config SOC_TEGRA_FUSE
+>  	def_bool y
+>  	depends on ARCH_TEGRA
+> +	depends on DMADEVICES
+>  	select SOC_BUS
+>  	select TEGRA20_APB_DMA if ARCH_TEGRA_2x_SOC
 >  
-> -	iosys_map_set_vaddr(map, bo->vaddr);
-> +	vaddr = tegra_bo_mmap(&bo->base);
-> +	if (IS_ERR(vaddr))
-> +		return PTR_ERR(vaddr);
-> +
-> +	iosys_map_set_vaddr(map, vaddr);
->  
->  	return 0;
->  }
->  
->  static void tegra_gem_prime_vunmap(struct dma_buf *buf, struct iosys_map *map)
->  {
-> +	struct drm_gem_object *gem = buf->priv;
-> +	struct tegra_bo *bo = to_tegra_bo(gem);
-> +
-> +	tegra_bo_munmap(&bo->base, map->vaddr);
->  }
->  
->  static const struct dma_buf_ops tegra_gem_prime_dmabuf_ops = {
 
-BTW, previously I only tested video dec on T30 using the grate-driver
-kernel that properly vmaps GEMs. That's why it wasn't caught earlier.
+Since it's a problem only for the Tegra20 config, shouldn't it be:
+
+-  select TEGRA20_APB_DMA if ARCH_TEGRA_2x_SOC
++  select TEGRA20_APB_DMA if (ARCH_TEGRA_2x_SOC && DMADEVICES)
+
+?
 
 -- 
 Best regards,
