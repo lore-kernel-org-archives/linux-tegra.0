@@ -2,55 +2,44 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C61C7C43334
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 10:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE74CCA479
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 10:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344779AbiF1KLr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jun 2022 06:11:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41658 "EHLO
+        id S1344367AbiF1KRC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jun 2022 06:17:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344760AbiF1KLm (ORCPT
+        with ESMTP id S1344788AbiF1KQ7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jun 2022 06:11:42 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB8FE2FE43
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Jun 2022 03:11:41 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id 65so11541144pfw.11
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Jun 2022 03:11:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tbey03ru2tYxblJ016YqjV2Da/CXTfP99CuHPvnI5hI=;
-        b=bMFVF7a7mfXa02kwrInM5CuyTCpxlEtJm9MfoR/7bVBeCDo1Bjc/oxVup9khM+tDtd
-         6WLfZ60J9q1Uvn+6DWeV0Y8Vm2JsWqJGjOygA+VbqzlcvziW3+Xa7rFwsYXjYnl4YiE2
-         H2mXNAmb+CJfugOu1ayaJhp4NHLEitxK6CI59M5aN6NIZZ6NmPGkEsOZfacF4P2jrS9Z
-         RznjS9oS6Y1XQix99tNeL/2jhv/4QgyXDUGj6p2WX9d3XpGW7szVh41DWZz8EDBdyQiH
-         oywangJelRKLooUq/D4PuwoZn9BGn0pl5Mq/XqFWYpJB1tTYoJqbbIDw90lJ9EZk8LiX
-         Lcng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tbey03ru2tYxblJ016YqjV2Da/CXTfP99CuHPvnI5hI=;
-        b=j4ilzgb3Lb/GXsS0HsvpCUkmT+xQKq80rYjgY8nxtCF7rXAZ5eKqMlC10gffcO/wmG
-         KP8CQ6H8a0H15aNZ64Gl2EWYdpb+f2Ijjpsx602reZOlDxuYDu17NWV2vXs87BmkcsMA
-         a4oM361GwxR4tFyKIqvgKY9qyR/Ff/GVhajNwFs0eqhvepp0N6Y5YgLfk4GNbsgf7W73
-         bbJdc+P4gMUK+lS6wONB/9K1AQjy/cegT0VXPyN9TaRPKZOCcElE7WJ1zRW0pU8kdAYf
-         iGH7dKhnJLPBm0eCM2f2N05pgBfmRSQhkYXrcs81Uva5knClF8Xe6kugwhgxa1Tm+Nxd
-         TqFQ==
-X-Gm-Message-State: AJIora8KFKZ0AuE4Xi5dLtX9H3I1RNi7zx8jv6eK3xOCYsJaJv0hsTbK
-        jBrRGQDVxnGufi8jXUJDX0YDhw==
-X-Google-Smtp-Source: AGRyM1sXb4XOUh03tYJk3Xrv7BW0Vthk9Lt8zrGSlDbcRtKX8L4DZdYoNiXFstwB368JKU9MskJOHA==
-X-Received: by 2002:a63:7204:0:b0:40c:9dc6:57f1 with SMTP id n4-20020a637204000000b0040c9dc657f1mr16985974pgc.153.1656411101412;
-        Tue, 28 Jun 2022 03:11:41 -0700 (PDT)
-Received: from localhost ([122.172.201.58])
-        by smtp.gmail.com with ESMTPSA id f15-20020a170902684f00b0015e8d4eb2ddsm3313623pln.295.2022.06.28.03.11.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 03:11:41 -0700 (PDT)
-Date:   Tue, 28 Jun 2022 15:41:39 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+        Tue, 28 Jun 2022 06:16:59 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7672FE76;
+        Tue, 28 Jun 2022 03:16:54 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0743E66015C6;
+        Tue, 28 Jun 2022 11:16:51 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1656411412;
+        bh=1tqlWAxPmJlNCdOk5uOFfVSOEf7qfVbTP0IA7EU/8zw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=TkpMzbKCu0LchDuRwPJ+t8ON7otup+mIijJ2VrV9eByciW5GXXr0zIaDw4YlzyPj/
+         deUCZv+VKquqT9EFxdT1p0qPnDAv4Lei3peIFI9JGyDAC7lvDY+9t1aWs7emcYMIDy
+         ck2pJgoFq/Sx3ZmbPjJBCkuwVivsZO4rqdLmb2NhvZPzsd48inkYAKTutX+wQQos+7
+         CUM21fxNr6L11CEOcWx0kf70LOzrIYDy5oyxeYq4c30mtMt7nFLOIYWA+TURyRh8L9
+         MbqD6b4ODAkfashBMrB4DxnH5i4Pb+QAqvWqKLJFHHPSOx1AVxhS27LUyVGVmA1cGs
+         7746SqpG3zIog==
+Message-ID: <49ffbe2d-73ac-ee2e-e3d1-c31a88e40dd4@collabora.com>
+Date:   Tue, 28 Jun 2022 13:16:49 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 22/31] soc/tegra: Migrate to dev_pm_opp_set_config()
+Content-Language: en-US
+To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -60,8 +49,6 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 22/31] soc/tegra: Migrate to dev_pm_opp_set_config()
-Message-ID: <20220628101139.jdpsplkqbbh6qpse@vireshk-i7>
 References: <cover.1653564321.git.viresh.kumar@linaro.org>
  <449b344f037c7ef1970bc84d31e0d4c4cb4d2951.1653564321.git.viresh.kumar@linaro.org>
  <20220624004831.po35sowzfo4c47b3@vireshk-i7>
@@ -72,26 +59,36 @@ References: <cover.1653564321.git.viresh.kumar@linaro.org>
  <20220627072104.ir7kujhezxhzl6a7@vireshk-i7>
  <20220628070943.5tfyad63rh6niq6x@vireshk-i7>
  <a0155aeb-b209-07e1-747a-594a755f54fc@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a0155aeb-b209-07e1-747a-594a755f54fc@collabora.com>
+ <20220628101139.jdpsplkqbbh6qpse@vireshk-i7>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20220628101139.jdpsplkqbbh6qpse@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 28-06-22, 13:08, Dmitry Osipenko wrote:
-> The opp/linux-next works fine, thank you.
+On 6/28/22 13:11, Viresh Kumar wrote:
+> On 28-06-22, 13:08, Dmitry Osipenko wrote:
+>> The opp/linux-next works fine, thank you.
+>>
+>> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 > 
-> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Thanks. I should add this to all the core + tegra -patches in that
+> branch, right ?
 
-Thanks. I should add this to all the core + tegra -patches in that
-branch, right ?
+Yes, please.
 
-> BTW, the idr_alloc() is obsoleted by xa_alloc().
+>> BTW, the idr_alloc() is obsoleted by xa_alloc().
+> 
+> The earlier interface isn't deprecated, right ? I really don't want to
+> go change it again :)
+> 
 
-The earlier interface isn't deprecated, right ? I really don't want to
-go change it again :)
+It has been in a process of deprecation for a couple years now. All IDR
+instances are slowly converting to XA. You won't need to take mutex with
+xa_alloc().
 
 -- 
-viresh
+Best regards,
+Dmitry
