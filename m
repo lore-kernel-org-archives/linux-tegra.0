@@ -2,120 +2,265 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B870C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 19:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E26C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 20:05:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbiF1Tn7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jun 2022 15:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37910 "EHLO
+        id S229904AbiF1UFU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jun 2022 16:05:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229904AbiF1Tnm (ORCPT
+        with ESMTP id S234477AbiF1UDm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jun 2022 15:43:42 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A11223BBD6;
-        Tue, 28 Jun 2022 12:36:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1656444904; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2cxFk3POH1G+70dQzVB6iX87jrhQcrT/GWJ2/9NWyAg=;
-        b=U/LkpYRKyEouw/RFIPSulE95izS8D0UrEn5ZywT6gdTqZfEdUbZKZ4Biij1HhUigPq637v
-        PLeVVqPhLZ6zb7hnnk531ceAIBmFEUD7IFyRXmBQ9jG7SNyagqYaElrcydZcPyOk9g/Mzc
-        IhGXt/fwVwHQOdKF38w/PesWq+ww5eE=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 7/8] watchdog: tegra_wdt: Remove #ifdef guards for PM related functions
-Date:   Tue, 28 Jun 2022 20:34:48 +0100
-Message-Id: <20220628193449.160585-8-paul@crapouillou.net>
-In-Reply-To: <20220628193449.160585-1-paul@crapouillou.net>
-References: <20220628193449.160585-1-paul@crapouillou.net>
+        Tue, 28 Jun 2022 16:03:42 -0400
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B29993DA77;
+        Tue, 28 Jun 2022 12:55:37 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id f15so8413996ilj.11;
+        Tue, 28 Jun 2022 12:55:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=LX7czNIIECaWcTmLUpIGX+lZtnHxfK8JNdAd9YjZVdg=;
+        b=Ha6O5LMWso2Nmyrrw3D40bEhU5eMF3/4oO9YPp67yLPIGEJ2Ht9BFjvDC/9xascrqT
+         4wHv/dVEhB1IxPdk3guyuuIthNOXBgeHzHrDTwBmjbaJ6h3Pv2ITAUPy2i1BxfyNh9hW
+         k57WZjhhx1NFd3bQ9zpEWnms7D0OLMXXXWOKU9Z51HjUhiAWMcziPcyFdSJ6m5VCfJo+
+         xIxc8umi2tioAbcbLLDtewjxpavz9hI9y3LO7VIUxLhlFG95WcMSNOv37tc13gfWFxOJ
+         +B5wDkU+c5QEa1EhmfFcKsToy9gySAhtc4JcOgPallxzNTHjrOjsIp2/YS9loOSIFhVg
+         wdqw==
+X-Gm-Message-State: AJIora+uxGPTl8GxtrkFxAPoEkpAnTVCKn0Bsvh3aKsZ3nlCHGirTcch
+        FdhX8SsdHjLkpHmZUj+o0A==
+X-Google-Smtp-Source: AGRyM1ulObrciZ3EEVmkYx33s1pxZUaVWGOp+9HAVczVUBhN85O/CsOo4LXlBucDqzHRnXUE2QwiFg==
+X-Received: by 2002:a05:6e02:1be1:b0:2da:70ee:dde8 with SMTP id y1-20020a056e021be100b002da70eedde8mr11493265ilv.7.1656446136793;
+        Tue, 28 Jun 2022 12:55:36 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id t15-20020a92b10f000000b002d3ad9791dcsm6017212ilh.27.2022.06.28.12.55.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 12:55:36 -0700 (PDT)
+Received: (nullmailer pid 878199 invoked by uid 1000);
+        Tue, 28 Jun 2022 19:55:34 -0000
+Date:   Tue, 28 Jun 2022 13:55:34 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bhadram Varka <vbhadram@nvidia.com>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, kuba@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org
+Subject: Re: [PATCH net-next v1 5/9] dt-bindings: net: Add Tegra234 MGBE
+Message-ID: <20220628195534.GA868640-robh@kernel.org>
+References: <20220623074615.56418-1-vbhadram@nvidia.com>
+ <20220623074615.56418-5-vbhadram@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam: Yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220623074615.56418-5-vbhadram@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use the new DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros to
-handle the .suspend/.resume callbacks.
+On Thu, Jun 23, 2022 at 01:16:11PM +0530, Bhadram Varka wrote:
+> Add device-tree binding documentation for the Tegra234 MGBE ethernet
+> controller.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
+> ---
+>  .../bindings/net/nvidia,tegra234-mgbe.yaml    | 163 ++++++++++++++++++
+>  1 file changed, 163 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml b/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
+> new file mode 100644
+> index 000000000000..d6db43e60ab8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
+> @@ -0,0 +1,163 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-These macros allow the suspend and resume functions to be automatically
-dropped by the compiler when CONFIG_SUSPEND is disabled, without having
-to use #ifdef guards. Not using #ifdef guards means that the code is
-always compiled independently of any Kconfig option, and thanks to that
-bugs and regressions are easier to catch.
+Dual license. checkpatch.pl will tell you this.
 
-While at it, the functions tegra_wdt_runtime_{suspend,resume} were
-renamed to tegra_wdt_{suspend,resume}, as they are *not* runtime-PM
-callbacks, but standard system suspend/resume callbacks.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra234 MGBE Device Tree Bindings
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
----
- drivers/watchdog/tegra_wdt.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+s/Device Tree Bindings/???bit Ethernet Controller/
 
-diff --git a/drivers/watchdog/tegra_wdt.c b/drivers/watchdog/tegra_wdt.c
-index dfe06e506cad..d5de6c0657a5 100644
---- a/drivers/watchdog/tegra_wdt.c
-+++ b/drivers/watchdog/tegra_wdt.c
-@@ -230,8 +230,7 @@ static int tegra_wdt_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int tegra_wdt_runtime_suspend(struct device *dev)
-+static int tegra_wdt_suspend(struct device *dev)
- {
- 	struct tegra_wdt *wdt = dev_get_drvdata(dev);
- 
-@@ -241,7 +240,7 @@ static int tegra_wdt_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_wdt_runtime_resume(struct device *dev)
-+static int tegra_wdt_resume(struct device *dev)
- {
- 	struct tegra_wdt *wdt = dev_get_drvdata(dev);
- 
-@@ -250,7 +249,6 @@ static int tegra_wdt_runtime_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
- static const struct of_device_id tegra_wdt_of_match[] = {
- 	{ .compatible = "nvidia,tegra30-timer", },
-@@ -258,16 +256,14 @@ static const struct of_device_id tegra_wdt_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, tegra_wdt_of_match);
- 
--static const struct dev_pm_ops tegra_wdt_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(tegra_wdt_runtime_suspend,
--				tegra_wdt_runtime_resume)
--};
-+static DEFINE_SIMPLE_DEV_PM_OPS(tegra_wdt_pm_ops,
-+				tegra_wdt_suspend, tegra_wdt_resume);
- 
- static struct platform_driver tegra_wdt_driver = {
- 	.probe		= tegra_wdt_probe,
- 	.driver		= {
- 		.name	= "tegra-wdt",
--		.pm	= &tegra_wdt_pm_ops,
-+		.pm	= pm_sleep_ptr(&tegra_wdt_pm_ops),
- 		.of_match_table = tegra_wdt_of_match,
- 	},
- };
--- 
-2.35.1
+> +
+> +maintainers:
+> +  - Thierry Reding <treding@nvidia.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +
+> +  compatible:
+> +    const: nvidia,tegra234-mgbe
+> +
+> +  reg:
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  reg-names:
+> +    items:
+> +      - const: hypervisor
+> +      - const: mac
+> +      - const: xpcs
 
+Is this really part of the same block? You don't have a PHY (the one in 
+front of the ethernet PHY) and PCS is sometimes part of the PHY.
+
+> +
+> +  interrupts:
+> +    minItems: 1
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: common
+
+Just drop interrupt-names. Not a useful name really.
+
+> +
+> +  clocks:
+> +    minItems: 12
+> +    maxItems: 12
+> +
+> +  clock-names:
+> +    minItems: 12
+> +    maxItems: 12
+> +    contains:
+> +      enum:
+> +        - mgbe
+> +        - mac
+> +        - mac-divider
+> +        - ptp-ref
+> +        - rx-input-m
+> +        - rx-input
+> +        - tx
+> +        - eee-pcs
+> +        - rx-pcs-input
+> +        - rx-pcs-m
+> +        - rx-pcs
+> +        - tx-pcs
+> +
+> +  resets:
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  reset-names:
+> +    contains:
+> +      enum:
+> +        - mac
+> +        - pcs
+> +
+> +  interconnects:
+> +    items:
+> +      - description: memory read client
+> +      - description: memory write client
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: dma-mem # read
+> +      - const: write
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    items:
+> +      - description: MGBE power-domain
+
+What else would it be? Just 'maxItems: 1'.
+
+> +
+> +  phy-handle: true
+> +
+> +  phy-mode: true
+
+All possible modes are supported by this h/w? Not likely.
+
+> +
+> +  mdio:
+> +    $ref: mdio.yaml#
+> +    unevaluatedProperties: false
+> +    description:
+> +      Creates and registers an MDIO bus.
+
+That's OS behavior...
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - power-domains
+> +  - phy-handle
+> +  - phy-mode
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/tegra234-clock.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/memory/tegra234-mc.h>
+> +    #include <dt-bindings/power/tegra234-powergate.h>
+> +    #include <dt-bindings/reset/tegra234-reset.h>
+> +
+> +    ethernet@6800000 {
+> +        compatible = "nvidia,tegra234-mgbe";
+> +        reg = <0x06800000 0x10000>,
+> +              <0x06810000 0x10000>,
+> +              <0x068a0000 0x10000>;
+> +        reg-names = "hypervisor", "mac", "xpcs";
+> +        interrupts = <GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-names = "common";
+> +        clocks = <&bpmp TEGRA234_CLK_MGBE0_APP>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_MAC>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_MAC_DIVIDER>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_PTP_REF>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_RX_INPUT_M>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_RX_INPUT>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_TX>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_EEE_PCS>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_RX_PCS_INPUT>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_RX_PCS_M>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_RX_PCS>,
+> +                 <&bpmp TEGRA234_CLK_MGBE0_TX_PCS>;
+> +        clock-names = "mgbe", "mac", "mac-divider", "ptp-ref", "rx-input-m",
+> +                      "rx-input", "tx", "eee-pcs", "rx-pcs-input", "rx-pcs-m",
+> +                      "rx-pcs", "tx-pcs";
+> +        resets = <&bpmp TEGRA234_RESET_MGBE0_MAC>,
+> +                 <&bpmp TEGRA234_RESET_MGBE0_PCS>;
+> +        reset-names = "mac", "pcs";
+> +        interconnects = <&mc TEGRA234_MEMORY_CLIENT_MGBEARD &emc>,
+> +                        <&mc TEGRA234_MEMORY_CLIENT_MGBEAWR &emc>;
+> +        interconnect-names = "dma-mem", "write";
+> +        iommus = <&smmu_niso0 TEGRA234_SID_MGBE>;
+> +        power-domains = <&bpmp TEGRA234_POWER_DOMAIN_MGBEA>;
+> +
+> +        phy-handle = <&mgbe0_phy>;
+> +        phy-mode = "usxgmii";
+> +
+> +        mdio {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            mgbe0_phy: phy@0 {
+> +                compatible = "ethernet-phy-ieee802.3-c45";
+> +                reg = <0x0>;
+> +
+> +                #phy-cells = <0>;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.17.1
+> 
+> 
