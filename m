@@ -2,93 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE74CCA479
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 10:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74837C43334
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 10:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344367AbiF1KRC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jun 2022 06:17:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47616 "EHLO
+        id S1344923AbiF1Ke4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jun 2022 06:34:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344788AbiF1KQ7 (ORCPT
+        with ESMTP id S1344922AbiF1Kez (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jun 2022 06:16:59 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7672FE76;
-        Tue, 28 Jun 2022 03:16:54 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Tue, 28 Jun 2022 06:34:55 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F5531394;
+        Tue, 28 Jun 2022 03:34:54 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0743E66015C6;
-        Tue, 28 Jun 2022 11:16:51 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656411412;
-        bh=1tqlWAxPmJlNCdOk5uOFfVSOEf7qfVbTP0IA7EU/8zw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=TkpMzbKCu0LchDuRwPJ+t8ON7otup+mIijJ2VrV9eByciW5GXXr0zIaDw4YlzyPj/
-         deUCZv+VKquqT9EFxdT1p0qPnDAv4Lei3peIFI9JGyDAC7lvDY+9t1aWs7emcYMIDy
-         ck2pJgoFq/Sx3ZmbPjJBCkuwVivsZO4rqdLmb2NhvZPzsd48inkYAKTutX+wQQos+7
-         CUM21fxNr6L11CEOcWx0kf70LOzrIYDy5oyxeYq4c30mtMt7nFLOIYWA+TURyRh8L9
-         MbqD6b4ODAkfashBMrB4DxnH5i4Pb+QAqvWqKLJFHHPSOx1AVxhS27LUyVGVmA1cGs
-         7746SqpG3zIog==
-Message-ID: <49ffbe2d-73ac-ee2e-e3d1-c31a88e40dd4@collabora.com>
-Date:   Tue, 28 Jun 2022 13:16:49 +0300
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4LXLZL2bFCz9sbl;
+        Tue, 28 Jun 2022 12:34:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1656412490;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GCsmhwxPKBHJ46dWmiVRWHiUT3ks2E1dAcyONJ6hmBo=;
+        b=osKoUFpDaV9Xn6/YR52+bC3Tp28nCtNfV1JX5uc6mV+dvDRWGRuKf/MHczF+HeCF4rqvR7
+        mezcwxwPkJRVbqBszbnVuriVCGDFFqb56FfwdDKZl6ybcE1cZhXjAEVbKEzu/c9i+avuJy
+        lLhvsIRSB4qRpw7QlHM89oMr1xADNSThQcLNaR0vCS79jfevUDcDgd+uYUamRsUMkX+xHh
+        T58dZSzAHkXHgmwp1SyMUhnYq7ZVj6wokc/STn8FlrgS1dFtokX/XxUiId1/ylmbG7yicV
+        CTJOo7cvhVVQ+tSZZmZsMfvlZhAuTHjdcj6XiuHiWgfBRE7IdRMx6quP7QoJ/w==
+Message-ID: <9d02d901-8015-dc02-250b-97ed1cfa16c2@mailbox.org>
+Date:   Tue, 28 Jun 2022 12:34:48 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 22/31] soc/tegra: Migrate to dev_pm_opp_set_config()
-Content-Language: en-US
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1653564321.git.viresh.kumar@linaro.org>
- <449b344f037c7ef1970bc84d31e0d4c4cb4d2951.1653564321.git.viresh.kumar@linaro.org>
- <20220624004831.po35sowzfo4c47b3@vireshk-i7>
- <20220624005700.oj4etaajbutvsym7@vireshk-i7>
- <73d39022-c6fc-0c21-cb68-9714846f02bf@gmail.com>
- <20220627064526.2nkezq4nufpkl4y2@vireshk-i7>
- <ecc72279-0892-d5ab-689d-87b8fba5147e@gmail.com>
- <20220627072104.ir7kujhezxhzl6a7@vireshk-i7>
- <20220628070943.5tfyad63rh6niq6x@vireshk-i7>
- <a0155aeb-b209-07e1-747a-594a755f54fc@collabora.com>
- <20220628101139.jdpsplkqbbh6qpse@vireshk-i7>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20220628101139.jdpsplkqbbh6qpse@vireshk-i7>
+Subject: Re: [PATCH 09/14] drm/radeon: use drm_oom_badness
+Content-Language: en-CA
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org
+Cc:     mhocko@suse.com,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20220624080444.7619-1-christian.koenig@amd.com>
+ <20220624080444.7619-10-christian.koenig@amd.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel.daenzer@mailbox.org>
+In-Reply-To: <20220624080444.7619-10-christian.koenig@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: cutc5b13i4ckkykp1cme1mpqiajc1ikh
+X-MBO-RS-ID: dec7526ba758fff16cd
+X-Rspamd-Queue-Id: 4LXLZL2bFCz9sbl
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/28/22 13:11, Viresh Kumar wrote:
-> On 28-06-22, 13:08, Dmitry Osipenko wrote:
->> The opp/linux-next works fine, thank you.
->>
->> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+On 2022-06-24 10:04, Christian König wrote:
+> This allows the OOM killer to make a better decision which process to reap.
 > 
-> Thanks. I should add this to all the core + tegra -patches in that
-> branch, right ?
-
-Yes, please.
-
->> BTW, the idr_alloc() is obsoleted by xa_alloc().
+> Signed-off-by: Christian König <christian.koenig@amd.com>
+> ---
+>  drivers/gpu/drm/radeon/radeon_drv.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> The earlier interface isn't deprecated, right ? I really don't want to
-> go change it again :)
-> 
+> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+> index 956c72b5aa33..11d310cdd2e8 100644
+> --- a/drivers/gpu/drm/radeon/radeon_drv.c
+> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
+> @@ -550,6 +550,7 @@ static const struct file_operations radeon_driver_kms_fops = {
+>  #ifdef CONFIG_COMPAT
+>  	.compat_ioctl = radeon_kms_compat_ioctl,
+>  #endif
+> +	.file_rss = drm_file_rss,
+>  };
+>  
+>  static const struct drm_ioctl_desc radeon_ioctls_kms[] = {
 
-It has been in a process of deprecation for a couple years now. All IDR
-instances are slowly converting to XA. You won't need to take mutex with
-xa_alloc().
+Shortlog should now say "use drm_file_rss", right?
+
 
 -- 
-Best regards,
-Dmitry
+Earthling Michel Dänzer            |                  https://redhat.com
+Libre software enthusiast          |         Mesa and Xwayland developer
