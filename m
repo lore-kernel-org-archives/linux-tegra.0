@@ -2,150 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD402CCA485
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 20:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6597ACCA479
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jun 2022 20:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230053AbiF1UNI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jun 2022 16:13:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48686 "EHLO
+        id S229682AbiF1Usa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jun 2022 16:48:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230498AbiF1UMB (ORCPT
+        with ESMTP id S229448AbiF1Us3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jun 2022 16:12:01 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14242F1F;
-        Tue, 28 Jun 2022 13:03:46 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id k14so12047126plh.4;
-        Tue, 28 Jun 2022 13:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9xiXVBUTdDVI8lRFYwUuLEFozRiUfkYmSBpqeP5Pj/g=;
-        b=PO5WlPn4qyG4yNi2+rfOJbSHxIALmYuUWrA4TZGVKhRjHZpxR6pbZ7hBxxRbA/sDSL
-         3DIop8siw1tIJcZZUyINlra+VotftTItQo+UEEk4C/GBBbTp9iUpuwArkASybwBUmvQ6
-         ZQP7QL3nRp+3wrYyNfKoclZ4au6MmWiBNY2Br25HFduPBdm90fbyayjYHeGtc3o5/rHs
-         6eCYPJ1fe41zPw8yNflAEx898BD0jc2eGvGa+lVrwjMZD6U2sv5XU6J2QxRh14thpujn
-         sIbNlQxH6qROqEGbwd15TppO5R5Sl04g7DDUNQqVMWgTGQP8tkhf0emNLRIxkqyNvU/4
-         CV6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=9xiXVBUTdDVI8lRFYwUuLEFozRiUfkYmSBpqeP5Pj/g=;
-        b=OlC81HLlG8+pIxcIPj1W3fTJeDE26QTqZD+QesH7Yui8nm2f6PxGsBlciUlOmrf+qy
-         A91dypjTr3occXh4ufhmDiWRG1ZHP55WA9FRbuQ9/G6L4VQ6Kr7mzlDHY62w2/fNEnGd
-         c67HumGXGkGYdPYV+L9s7dglhq/ugArPrUabPKSOj0KfTj3ZoRZmTmYwLTROxAzMZ70f
-         eNyLjSJzcLuzFYcp0gtqhnR4Ilt7njuVXSJdkNuUFvEQqgFlgWc7erZlk5L7FYzgLSAG
-         Qxka/vBFIFPr1TYSu+kLGD4L4pxqPz9dZHq5JT2ZW6Y8X0p4YkB+jbED71WcWd/Ym6qQ
-         fWYg==
-X-Gm-Message-State: AJIora+71cR6ulVT6n66xrVCCKemrzdIj/L0vKMzXkHW6RvZ4M56Q/wH
-        0IyBoe4QseuAzu6sVhonmxc=
-X-Google-Smtp-Source: AGRyM1uBeSIjhAvi/nwBQTbee0LM7InUMfH8GHZBCqCHIukRmzKJIegbahKfSxwL6pqkTHIBh086dA==
-X-Received: by 2002:a17:902:e80b:b0:16a:61da:924 with SMTP id u11-20020a170902e80b00b0016a61da0924mr6655821plg.54.1656446625604;
-        Tue, 28 Jun 2022 13:03:45 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id i17-20020a17090320d100b0016a38f8ba7fsm9722949plb.162.2022.06.28.13.03.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 13:03:44 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Tue, 28 Jun 2022 13:03:43 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 7/8] watchdog: tegra_wdt: Remove #ifdef guards for PM
- related functions
-Message-ID: <20220628200343.GG3633970@roeck-us.net>
-References: <20220628193449.160585-1-paul@crapouillou.net>
- <20220628193449.160585-8-paul@crapouillou.net>
+        Tue, 28 Jun 2022 16:48:29 -0400
+X-Greylist: delayed 1198 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 28 Jun 2022 13:48:27 PDT
+Received: from ste-pvt-msa1.bahnhof.se (ste-pvt-msa1.bahnhof.se [213.80.101.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E1132180D;
+        Tue, 28 Jun 2022 13:48:27 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id AC47E3F6D0;
+        Tue, 28 Jun 2022 22:12:59 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+Authentication-Results: ste-pvt-msa1.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id mmpRsQHvcbQV; Tue, 28 Jun 2022 22:12:58 +0200 (CEST)
+Received: by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id CDA333F5E5;
+        Tue, 28 Jun 2022 22:12:55 +0200 (CEST)
+Received: from [192.168.0.209] (h-155-4-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 5504F360156;
+        Tue, 28 Jun 2022 22:12:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1656447175; bh=8qVW4B3M3sdbclxh8UQh5P9peDN3xxFvdDdC5TV32/0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dVFF/BzMCsmmWG2zHPWW6M0VCmuZz4GO4qbbISmpcnG1hjGYEkIoPCt6RUdqXtSN5
+         Zw7NouOgpWzqOWItxknC6wyoxQz+N4x4jBvrz2P0oIotiPufQ3K9y8CBhGSA/p5GgE
+         mX1Zal2b0Dlj2qezn+xXIo0JguejcKH2kGq5qm/s=
+Message-ID: <d3fcb4ee-83ec-09b8-d1ef-0191512fda91@shipmail.org>
+Date:   Tue, 28 Jun 2022 22:12:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220628193449.160585-8-paul@crapouillou.net>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v6 01/22] drm/gem: Properly annotate WW context on
+ drm_gem_lock_reservations() error
+Content-Language: en-US
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Almeida <daniel.almeida@collabora.com>,
+        Gert Wollny <gert.wollny@collabora.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Daniel Stone <daniel@fooishbar.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring <robh@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Qiang Yu <yuq825@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        kernel@collabora.com, linux-media@vger.kernel.org
+References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
+ <20220526235040.678984-2-dmitry.osipenko@collabora.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
+        <thomas_os@shipmail.org>
+In-Reply-To: <20220526235040.678984-2-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 08:34:48PM +0100, Paul Cercueil wrote:
-> Use the new DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros to
-> handle the .suspend/.resume callbacks.
-> 
-> These macros allow the suspend and resume functions to be automatically
-> dropped by the compiler when CONFIG_SUSPEND is disabled, without having
-> to use #ifdef guards. Not using #ifdef guards means that the code is
-> always compiled independently of any Kconfig option, and thanks to that
-> bugs and regressions are easier to catch.
-> 
-> While at it, the functions tegra_wdt_runtime_{suspend,resume} were
-> renamed to tegra_wdt_{suspend,resume}, as they are *not* runtime-PM
-> callbacks, but standard system suspend/resume callbacks.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: linux-tegra@vger.kernel.org
+Hi,
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On 5/27/22 01:50, Dmitry Osipenko wrote:
+> Use ww_acquire_fini() in the error code paths. Otherwise lockdep
+> thinks that lock is held when lock's memory is freed after the
+> drm_gem_lock_reservations() error. The WW needs to be annotated
+> as "freed"
 
+s /WW/ww_acquire_context/ ?
+s /"freed"/"released"/ ?
+
+
+> , which fixes the noisy "WARNING: held lock freed!" splat
+> of VirtIO-GPU driver with CONFIG_DEBUG_MUTEXES=y and enabled lockdep.
+>
+> Cc: stable@vger.kernel.org
+
+Can you dig up the commit in error and add a Fixes: Tag?
+
+Using that and "dim fixes" will also make the Cc: stable tag a bit more 
+verbose.
+
+With that fixed,
+
+Reviewed-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+
+
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 > ---
->  drivers/watchdog/tegra_wdt.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/watchdog/tegra_wdt.c b/drivers/watchdog/tegra_wdt.c
-> index dfe06e506cad..d5de6c0657a5 100644
-> --- a/drivers/watchdog/tegra_wdt.c
-> +++ b/drivers/watchdog/tegra_wdt.c
-> @@ -230,8 +230,7 @@ static int tegra_wdt_probe(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_PM_SLEEP
-> -static int tegra_wdt_runtime_suspend(struct device *dev)
-> +static int tegra_wdt_suspend(struct device *dev)
->  {
->  	struct tegra_wdt *wdt = dev_get_drvdata(dev);
->  
-> @@ -241,7 +240,7 @@ static int tegra_wdt_runtime_suspend(struct device *dev)
->  	return 0;
->  }
->  
-> -static int tegra_wdt_runtime_resume(struct device *dev)
-> +static int tegra_wdt_resume(struct device *dev)
->  {
->  	struct tegra_wdt *wdt = dev_get_drvdata(dev);
->  
-> @@ -250,7 +249,6 @@ static int tegra_wdt_runtime_resume(struct device *dev)
->  
->  	return 0;
->  }
-> -#endif
->  
->  static const struct of_device_id tegra_wdt_of_match[] = {
->  	{ .compatible = "nvidia,tegra30-timer", },
-> @@ -258,16 +256,14 @@ static const struct of_device_id tegra_wdt_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, tegra_wdt_of_match);
->  
-> -static const struct dev_pm_ops tegra_wdt_pm_ops = {
-> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_wdt_runtime_suspend,
-> -				tegra_wdt_runtime_resume)
-> -};
-> +static DEFINE_SIMPLE_DEV_PM_OPS(tegra_wdt_pm_ops,
-> +				tegra_wdt_suspend, tegra_wdt_resume);
->  
->  static struct platform_driver tegra_wdt_driver = {
->  	.probe		= tegra_wdt_probe,
->  	.driver		= {
->  		.name	= "tegra-wdt",
-> -		.pm	= &tegra_wdt_pm_ops,
-> +		.pm	= pm_sleep_ptr(&tegra_wdt_pm_ops),
->  		.of_match_table = tegra_wdt_of_match,
->  	},
->  };
-> -- 
-> 2.35.1
-> 
+>   drivers/gpu/drm/drm_gem.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index eb0c2d041f13..86d670c71286 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -1226,7 +1226,7 @@ drm_gem_lock_reservations(struct drm_gem_object **objs, int count,
+>   		ret = dma_resv_lock_slow_interruptible(obj->resv,
+>   								 acquire_ctx);
+>   		if (ret) {
+> -			ww_acquire_done(acquire_ctx);
+> +			ww_acquire_fini(acquire_ctx);
+>   			return ret;
+>   		}
+>   	}
+> @@ -1251,7 +1251,7 @@ drm_gem_lock_reservations(struct drm_gem_object **objs, int count,
+>   				goto retry;
+>   			}
+>   
+> -			ww_acquire_done(acquire_ctx);
+> +			ww_acquire_fini(acquire_ctx);
+>   			return ret;
+>   		}
+>   	}
