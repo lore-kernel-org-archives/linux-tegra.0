@@ -2,291 +2,185 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBB6C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 16:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95717C43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 17:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbiF2QYI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jun 2022 12:24:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37318 "EHLO
+        id S231803AbiF2RDN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jun 2022 13:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbiF2QYH (ORCPT
+        with ESMTP id S229584AbiF2RDM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jun 2022 12:24:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F8A031215;
-        Wed, 29 Jun 2022 09:24:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9C1BAB82572;
-        Wed, 29 Jun 2022 16:24:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E892C341CC;
-        Wed, 29 Jun 2022 16:23:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656519843;
-        bh=BQk96XPXhMlTi13f6yCCrvn/8gYix9PjnzJYL42TN7s=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=VW2yy9wHGEB3RwMgTdrsQaoW/Ma/abZbffXSLvQ9Zqp6Axo0G2D24TTx5/Yl9FGE7
-         4kFmiAHHKB7kXVfcoaKTk/CtYcJ9rLFHAYy3RpCkDV8fggVH41eMn8hAa5vNFK50/U
-         llHsfbIinN/MnhVCEfLf+e3cGGKyAVnxuT98gfaRko7gmvnfiDj15NQZAcj/hD3pSZ
-         c9YhVwSDPiwPZ+VaIkPJozCDt5Jx8KY5wSv0RxPiAM5EXlg/XnXRqNjB+EseDxBoa0
-         7MpQjBJokUnMJysNj3I64tS+Eie2bZgRhLxqgyDq0vJ4S4hKUnrijIeYvNSkW/Qwcp
-         qIxPAH3f/PEtw==
-From:   Mark Brown <broonie@kernel.org>
-To:     ckeepax@opensource.cirrus.com
-Cc:     linux-mips@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-stm32@st-md-mailman.stormreply.com, nsaenz@kernel.org,
-        lgirdwood@gmail.com, srinivas.kandagatla@linaro.org,
-        jbrunet@baylibre.com, heiko@sntech.de, linux-tegra@vger.kernel.org,
-        shawnguo@kernel.org, linux-rockchip@lists.infradead.org,
-        nicolas.ferre@microchip.com, patches@opensource.cirrus.com,
-        peter.ujfalusi@gmail.com, linux-sunxi@lists.linux.dev,
-        linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        vkoul@kernel.org, frattaroli.nicolas@gmail.com, airlied@linux.ie,
-        daniel@zonque.org, mripard@kernel.org,
-        linux-xtensa@linux-xtensa.org, krzk@kernel.org,
-        cezary.rojewski@intel.com, kernel@pengutronix.de,
-        dri-devel@lists.freedesktop.org, daniel@ffwll.ch,
-        linux-amlogic@lists.infradead.org, linux-imx@nxp.com,
-        pierre-louis.bossart@linux.intel.com, jarkko.nikula@bitmer.com
-In-Reply-To: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
-References: <20220623125250.2355471-1-ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v2 00/96] Refactor non_legacy_dai_naming flag
-Message-Id: <165651983704.2058781.8213227099502123936.b4-ty@kernel.org>
-Date:   Wed, 29 Jun 2022 17:23:57 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        Wed, 29 Jun 2022 13:03:12 -0400
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2047.outbound.protection.outlook.com [40.107.96.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F23717A9B;
+        Wed, 29 Jun 2022 10:03:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Fht4WHe4+QqcHRvK+GgzwwvggCOOWXF0VG/XvioDLDudSQMkYdtsCHOg6eaw1BLpOWAB8xfB2t/mq7IZoWOBCrDP8TnDRTu8fEn5605fcz1KvmHA0927xTi64LsVZIa5U8xnZT6+oMwXaaeQKqA24QhAZZ4ZG6IT9fWM9zMiDBjPfg1+w90RYwBDSrO7cc880EeX2ny0a/9vES4434aVi1ynm9GwNHtImxFdeUQ9ex/l1R0LHY51dchDXtgEKHDwI7vZp4YntYjl+rsBnqZdbMdM4XIJMouSrAhefcy0OyisLfp8mrfexqWyySFrtIXq0rvhtONa87spovHpwjddug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F55DjJkS5S+BjW2C0WuaO5fxeJCMfWr4ggqvQ/tm/To=;
+ b=ETczobMu5OKd1xRAP1HV/wAytM3RmdMgtLBjGhpEIsh7hm7h//4MXwfQprPF8U3AaB/UhDgLu7XR8jDQAU1OSNOIeHLnAa8JX7EzBdp2dldN/kKOkg53bkNFTknq+msINU1nFUU7oyEXETjWbLa7518mIeqUvGAOkAnoyEqYn+jJdLmrPoLpXiimRraHBiHmbVsL2wwfkeVf36YzWmxS2UPNC00a+lrkqu3gExHGyWeVcP6omgaKakw08tpYgfM6IusATSNh0JpjKRStyl4sEePJPy69jKLF/iS5hYBLeFCrCBy/Ky7nL2WfAzNPOVhelBtfDUF0jobNrFprcmpK9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F55DjJkS5S+BjW2C0WuaO5fxeJCMfWr4ggqvQ/tm/To=;
+ b=ZYOoJpq1RlmnT87iVLSya0cWg/Dd1NeZ4OLIeG7s0XL5O+Ivir167w52dUTyh3n0FyKh/F2g5Ua8RRCTy3YxYKMjYYCHpjAiH7rwnLhHRyoS4YzmwUnbU90ofR7fUN93s+5ek61zwd4KEy8h5b/uv9x9a/pFVbk5NqeW6M6rh8WuHLL64A9Npi2KNK74iMSY9GjiZmk4UA05bah3VQ7o2zZBU2BL+oKUZFWdk3olwaDXMlma5LkFQOAdl2krqepHae/KsYe5xiF1X9TFBjO7AWfkxuaBGYMqfBXgerNZD6Oi5OTVt/cRt6dc/NGyV3Km/leZ1xHXZRoKjgA3vRLpVg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ IA1PR12MB6284.namprd12.prod.outlook.com (2603:10b6:208:3e4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.17; Wed, 29 Jun
+ 2022 17:03:09 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::190c:967c:2b86:24a8]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::190c:967c:2b86:24a8%4]) with mapi id 15.20.5395.014; Wed, 29 Jun 2022
+ 17:03:09 +0000
+Message-ID: <f2acd51e-24f6-aa84-cfd4-372dd5e30aa0@nvidia.com>
+Date:   Wed, 29 Jun 2022 18:03:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 22/31] soc/tegra: Migrate to dev_pm_opp_set_config()
+Content-Language: en-US
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1653564321.git.viresh.kumar@linaro.org>
+ <449b344f037c7ef1970bc84d31e0d4c4cb4d2951.1653564321.git.viresh.kumar@linaro.org>
+ <20220624004831.po35sowzfo4c47b3@vireshk-i7>
+ <20220624005700.oj4etaajbutvsym7@vireshk-i7>
+ <73d39022-c6fc-0c21-cb68-9714846f02bf@gmail.com>
+ <20220627064526.2nkezq4nufpkl4y2@vireshk-i7>
+ <ecc72279-0892-d5ab-689d-87b8fba5147e@gmail.com>
+ <20220627072104.ir7kujhezxhzl6a7@vireshk-i7>
+ <20220628070943.5tfyad63rh6niq6x@vireshk-i7>
+ <a0155aeb-b209-07e1-747a-594a755f54fc@collabora.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <a0155aeb-b209-07e1-747a-594a755f54fc@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS9PR04CA0036.eurprd04.prod.outlook.com
+ (2603:10a6:20b:46a::29) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8881c501-e81a-4485-1592-08da59f13e61
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6284:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ur8XjW8S4WLEh7Dg4SVU9GoArPT3xlDfUZkkswMCdGDPRYPzfebHuwn426jKDTUBVAOlb2jTr/1Tb9e3BWEQy8WCDi97zJIUuFuiPHl+XUV/7+rCZW8JYnj+I7I8VMYyVl9k8Qm75m4jKCbJ6Pp5cYR/xDWvsu4UAKAE0p+IVbtUPj6KlxZXz/NTYGw0ceLzCt1kT4f2BVae0Euy91jU6bdDXE+zZ3SG+aJae5hhFNqxOk1GzE1KyCW08gSvpfLUYicnkWa9kwEfzZW3LfjFa6kqWuPSy2PlsMGRshVEtdnLQDMxmBtSIn916Ypwc/q+HMdjbwQgceqCannnDZsdSs4AyM9Q/oxN6Oy9d61cLufcL6wj3fGhXD6RN0EujIxsLjdciRI1iktJxZsUAyuqavsgU1+if7hTfbs6e45NWjfnswP++7GLOCeEnfLAqPklYMdAEG1/ngKmram11v5NUUraepC794gTlsToQFI0U4/nUPwZjbZRj841xuDV9VIZxUAFTiQE+j3KSpcBE/SgQbp+3USAlTcJP3q5pxM7w/hpL7qIjWW7fwOiVwiI8S1h8WBX6i9yULKJa+Imq1TZhZL9wMxGSjvoOhOpMEdLNvk2QF2j79edF6WxMcEDQAPJ2/DG0EcXrwvDzovS6EiMeESuv5PDEyoGfL+z4Y60TVswfzCiU2XGi2nsOiYKNBzvJnd8X7Jxbm3DeotvW/WWa2pneFoEtmgswnhxKlOmza5RIKCZulI3WCrEskE+VNl2AyVvac0YOuW+Rsaxu04+zuQ/2gsnAULrkCrJlL6CVWIadn33ApcG1loi8fZoIU5pu6+o1c457rK/iWice7Cl1g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(366004)(396003)(346002)(376002)(39860400002)(38100700002)(41300700001)(316002)(5660300002)(31696002)(66556008)(66946007)(186003)(31686004)(2616005)(54906003)(110136005)(66476007)(26005)(36756003)(6506007)(2906002)(6486002)(4326008)(8676002)(6512007)(55236004)(83380400001)(6666004)(7416002)(478600001)(8936002)(53546011)(86362001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MmdZRVFKVUhEUUM3VHVteFFJazRxaUlKczV2MllSSHYvY2JKUEYvT1ZHRWZv?=
+ =?utf-8?B?OHRvWFVVZmkxdVR3QjdzUHpZWEdOeXRKejVDZmJVY2ZIc0pEMnZkRW84MW5B?=
+ =?utf-8?B?OUxkK2FUZVYvZkwyYldXNmE0OVNpWnptTlZZVWZ4enNnWEJ1UXg3OHNudnU2?=
+ =?utf-8?B?NHNPM0FSV0MxbjNVQVpMUk9ZTGRJejVYUG9wdFoxZW80d3hLWU5BVkF4VStz?=
+ =?utf-8?B?ZXJVb0xKQjc2akJ0cjgxSU1TM0RHa0JTTFIrMXNzUnZEcGp1NjUrRkxlM3Jo?=
+ =?utf-8?B?czdwSHBGckpGck9jdVFodkptKzBIS2VoOTB4TGZaTDNBUzM1QXExc2hwMGpX?=
+ =?utf-8?B?bGVmNnVZZTlkVUhwRWZzTlk3N2taZXVXdmxqTE5nQlIrTTNleXZuQ3VOV2V6?=
+ =?utf-8?B?eXRFK2pkalg5ajh3NENuVXVKTkI0dDlQMFJIS1ZPcnZhMG1yUUlzUnVNdkNz?=
+ =?utf-8?B?b09CNUN5UE9FNTFWMmt5aU9uSGVjQys1TVArSlY2S2xPUm1RQm5pUy9oRFJB?=
+ =?utf-8?B?RmIzbEpTV2ZoYUtBdEY2VVVqM3daWTFnZGtFNzE1ZzI0Q2hBcUdZMDFYbGxU?=
+ =?utf-8?B?SjBrR2t3clE1U0tzS0RXampnQ3FiUTRnUEVuTHlxM3pqeDdHT3VNd2IzTXNw?=
+ =?utf-8?B?eWNwUGlrRDFZelZ1U2NjeCtnTHhxSllONTN6RGpFZFZmdmIrTDdZeE4wMnJt?=
+ =?utf-8?B?YTAzNVdYS3ZTRy9mK0dwR0dCYjhvaHJKUHNWbEU4MVRLbmc3NDBlYkoyMTdn?=
+ =?utf-8?B?VFBpNzh3d1J0YVBDN1FUQnJLVm5oM21YWVM2dkg0SHRXM3RSSWZuWEdYNkMv?=
+ =?utf-8?B?VmxGa2dWZlJhUHhnU2p6bWpEUGs3aTZJRmFpMGVpMTBndXd5ZjZRZEVqdDNQ?=
+ =?utf-8?B?QjU4Q1RuVlpBUDhCZk9GVmN5ZGszMTY2cDBPVWxRa085eUZ2VUk4Q29WeHNP?=
+ =?utf-8?B?ck8zRDk5R0syb0oxcUZUbFVjUHpBVHc2YTZMc3NvUXM3aWs4SVFmSVVLUG1h?=
+ =?utf-8?B?MVloTnBCSHpVdERJMU5yNFc3NTR0dVRabHU0UGwrSGFkRFp3aVlKTTdBYnpY?=
+ =?utf-8?B?Qzg1Q2F6QXlPTS9GdEgxdm1ZbzZHQVJsNlZ1STZ5M3hGeWxnM3Y3eUI4WlZa?=
+ =?utf-8?B?R2VjTUtzUmhERitNTWJoUnFNNDVDRUsvOEcxa1V5Y2FOdGs4T0lFbnl3aEli?=
+ =?utf-8?B?d0FtQSt6K1AvYXdaQk45MW9lL0dKVkVVVElSQkJkb0VkbENSYkhYckxsK0Fm?=
+ =?utf-8?B?RWl1M2FYTlNZR0E5UE1sRExYUzhGWEZuQXpMUE41Ly90eUZEd1Q2S3NvYjBw?=
+ =?utf-8?B?MXY5YjUzTVBWOTc0Z1paU2FUTitQTjRhS1dGbHBqaVNucncrTGp5VHE0SUx0?=
+ =?utf-8?B?UXZtcXJKNmRRdEt4c0x1VWJkcStTT2JkUXo2L2pvemtKWXhWTHZLeVNGcUp6?=
+ =?utf-8?B?M3dVS2FvMUljSlpCRkxJODcvSTZCNVpUNW9SMG1JUUhvaVZpNGlBTUUxTkR4?=
+ =?utf-8?B?VDFFQ2NmajZvOVhVRmZGRGt6Y3p4b0g0dnY0bmhON2oxMnNWY25WdUhZMHZS?=
+ =?utf-8?B?THQxeHZUMnBkcUtYVFFlZzNiYkZkR3JUNUlZNENpYXprUFQ1OEZqN3JIaDNG?=
+ =?utf-8?B?UjlZU08wMGlWQ1dWSWtUZk9veXdGbndvUjI0Tzh0SEVMWFNDUjM0TTcrdEdy?=
+ =?utf-8?B?Wld5TGI1aE12a0RsUEd5Z0tXa0drUmdHcWsrMDhvblpxemc4ajBEYVp6OUQw?=
+ =?utf-8?B?SFB4K0NEakEzK2x3WEpueHloUHFVemlFY24zNEJSS2N4dG5Gejk4cjZsdEdk?=
+ =?utf-8?B?clRJV3J6cUZLbEpGOXY4QUljeVNBcTlTczdCVjNVU2ZGOC96NStBSjlBT1NI?=
+ =?utf-8?B?c1FCT0p0bk9FdkY1Q1hyUnhVM1R6SkNDNDVjV1VYbWhpVzZqd1Y5VVhKUUM4?=
+ =?utf-8?B?REM0N3lKUUcyVlJXdFY4NTE2VlpQclFaU1NaWHQvOGlyY0Ziam9zKzhpM2l1?=
+ =?utf-8?B?aUFzekY5QXhaNmQzcWpVU3dBcFpFcDZoOUVQSmZCdjJJcmxMZllmRnRvUVBo?=
+ =?utf-8?B?Q2ZYSUx5V2pWZXhvUktPVktRSXd5WlB1Zk1UcWFUaVZxMldHWEtGcWJoa1pn?=
+ =?utf-8?B?bjVWTlVrUUZ3L3lXNmMydGw0czRoMldVMGpFZTRZOWFxQ3BlTVNGY3E4TzZS?=
+ =?utf-8?B?U2c9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8881c501-e81a-4485-1592-08da59f13e61
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2022 17:03:09.8480
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: igvy9VL0hC36NiS927zpTUwxi6MSenTFo9NxMYu480+Me5cyOzs6WCC4GnRKw7VkhmZur+ASCeLq1FSIHWfB+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6284
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 23 Jun 2022 13:51:14 +0100, Charles Keepax wrote:
-> Historically, the legacy DAI naming scheme was applied to platform
-> drivers and the newer scheme to CODEC drivers. During componentisation
-> the core lost the knowledge of if a driver was a CODEC or platform, they
-> were all now components. To continue to support the legacy naming on
-> older platform drivers a flag was added to the snd_soc_component_driver
-> structure, non_legacy_dai_naming, to indicate to use the new scheme and
-> this was applied to all CODECs as part of the migration.
+
+On 28/06/2022 11:08, Dmitry Osipenko wrote:
+> On 6/28/22 10:09, Viresh Kumar wrote:
+>> On 27-06-22, 12:51, Viresh Kumar wrote:
+>>> On 27-06-22, 10:14, Dmitry Osipenko wrote:
+>>>> 27.06.2022 09:45, Viresh Kumar пишет:
+>>>>>> Looks okay. If you'll solve the cpufreq problem where OPP config is set
+>>>>>> by two drivers for the same cpu device
+>>>>> This is supported, there is some early freeing of resources on the
+>>>>> removal path though, the reasoning for which I already gave in another
+>>>>> email. Though, I am open to sorting that out as well, but nothing
+>>>>> breaks the code for now AFAICT.
+>>>>>
+>>>>
+>>>> In case of Tegra, we use tegra-cpufreq driver that sets supported_hw and
+>>>> registers cpufreq-dt. If cpufreq-dt driver defers the probe, then the
+>>>> supported_hw will be lost on the re-probe. I haven't checked yet, but I
+>>>> suppose that cpufreq-dt driver defers on Tegra30 because of the CPU
+>>>> regulator and that's why we get the "OPP table is missing" error.
+>>>
+>>> Aha, I get it now. I see, this is a real problem. Will fix it. Give me
+>>> some time to think. Thanks.
+>>
+>> Okay, I fixed this in opp/linux-next, can you or Jon please give it a
+>> go on tegra30 to see if the issue is fixed ?
+>>
+>> FWIW, I have fixed this with the IDR API and the OPP core will only
+>> free the resources in clear-config, that the corresponding set-config
+>> has configured. I have tested it with the clk API only though.
+>>
+>> Once you confirm, I will resend all the patches and hope no issues are
+>> left here.
+>>
+>> Thanks for helping out guys. Really appreciate it.
+>>
 > 
-> [...]
+> The opp/linux-next works fine, thank you.
+> 
+> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Today's -next is also working fine for me too!
 
-Thanks!
+Thanks
+Jon
 
-[01/96] ASoC: soc-component: Add legacy_dai_naming flag
-        commit: 1c348f748b4dd7711c5564a8fce0842529498dff
-[02/96] soundwire: intel: Migrate to new style legacy DAI naming flag
-        commit: ca68202098a4416501cc9b5d68a54de22d754766
-[03/96] drm/vc4: Migrate to new style legacy DAI naming flag
-        commit: db827cb34ca38f4106f7c667bea3bbb48bc73552
-[04/96] ASoC: img: Migrate to new style legacy DAI naming flag
-        commit: 5f9d69986014945b826c712081678446c1f10fd7
-[05/96] ASoC: spear: Migrate to new style legacy DAI naming flag
-        commit: eeb021ee8fab0baae82e3784664666fd6b826e89
-[06/96] ASoC: jz4740-i2c: Migrate to new style legacy DAI naming flag
-        commit: 2bebc3b622c3c300eb3a3f603473429d8264c3b6
-[07/96] ASoC: ep93xx: Migrate to new style legacy DAI naming flag
-        commit: fe58b58330434ffad5fa0bc97e177aa93a9a6222
-[08/96] ASoC: stm32: Migrate to new style legacy DAI naming flag
-        commit: 36f07985f81b7482dceb8e650d2ce1f0222294d1
-[09/96] ASoC: bcm: Migrate to new style legacy DAI naming flag
-        commit: b9a0db0ae5247d92f379107a9c479f881914999d
-[10/96] ASoC: sh: Migrate to new style legacy DAI naming flag
-        commit: f712ff57a27090baff61f92bdb6521e8781d5e6b
-[11/96] ASoC: tegra: Migrate to new style legacy DAI naming flag
-        commit: 3172582c10540d4bf1caac1c39c903793648db8f
-[12/96] ASoC: hisilicon: Migrate to new style legacy DAI naming flag
-        commit: bf6dacb784f0efb5a225f6560d693fa71c7fda64
-[13/96] ASoC: xilinx: Migrate to new style legacy DAI naming flag
-        commit: bd486b070b1e24b38b3d6d7e33abffe4a18e3296
-[14/96] ASoC: sunxi: Migrate to new style legacy DAI naming flag
-        commit: f450b5dbce413b276e6c9215b40868b905c7b634
-[15/96] ASoC: Intel: Migrate to new style legacy DAI naming flag
-        commit: 725cf3bc6009b7fa156b73982eddf23c71767fbb
-[16/96] ASoC: meson: Migrate to new style legacy DAI naming flag
-        commit: d8572da099247860e97b27a7fddc9d80a71b8c25
-[17/96] ASoC: sti-uniperf: Migrate to new style legacy DAI naming flag
-        commit: ad483da7b0a17fdf4df0bd75b2cf29b5650ca2f7
-[18/96] ASoC: amd: Migrate to new style legacy DAI naming flag
-        commit: 0bc1e7d1fc3c50cf1eb62cd3c8d2b73c5f6d83fe
-[19/96] ASoC: atmel: Migrate to new style legacy DAI naming flag
-        commit: 7593e00807fb62e9f5e7367fc2500428cc317ff0
-[20/96] ASoC: fsl: Migrate to new style legacy DAI naming flag
-        commit: 1e63fcc74ace9824f3529eeabbb8f1881a7d3800
-[21/96] ASoC: xtensa: Migrate to new style legacy DAI naming flag
-        commit: f257dea1c589fa3f558502b3ac7b1c09699a73ab
-[22/96] ASoC: adi: Migrate to new style legacy DAI naming flag
-        commit: 9a34161a0bc90df825694195659d894e80afe7a3
-[23/96] ASoC: dwc: Migrate to new style legacy DAI naming flag
-        commit: e740ef3d9418db78ac7a8a24071933f9146af6e4
-[24/96] ASoC: qcom: Migrate to new style legacy DAI naming flag
-        commit: 8135d0290a9a1f1f752bb374f93a017b2074d09b
-[25/96] ASoC: test-component: Migrate to new style legacy DAI naming flag
-        commit: d73130ba523b88a3edb097ae3eb9f93df844b5e2
-[26/96] ASoC: rockchip: Migrate to new style legacy DAI naming flag
-        commit: d48a77173534df90788075e76fa88c52b7395a1e
-[27/96] ASoC: au1x: Migrate to new style legacy DAI naming flag
-        commit: 8e750817a1943b49d81c633f48370bce93bab98c
-[28/96] ASoC: pxa: Migrate to new style legacy DAI naming flag
-        commit: 05603f15b67a517c05ee2e2298e9accb8b7f1794
-[29/96] ASoC: sof: Migrate to new style legacy DAI naming flag
-        commit: a718ba30038402e6daa311c566d9be39e4ab3f05
-[30/96] ASoC: ux500: Migrate to new style legacy DAI naming flag
-        commit: 768be0d633d9ff668a7ca4ba3b8e3eebea328cb8
-[31/96] ASoC: ti: Migrate to new style legacy DAI naming flag
-        commit: 39c84e77da04f66f20fc54c6c6f49a5863bace5d
-[32/96] ASoC: mxs-saif: Migrate to new style legacy DAI naming flag
-        commit: 4cc4e22843e9bec6e9083d85e8a0bfed85fe5423
-[33/96] ASoC: samsung: Migrate to new style legacy DAI naming flag
-        commit: f7bfa516a39a111a5d3b6473cdac20ee6075358c
-[34/96] ASoC: core: Switch core to new DAI naming flag
-        commit: 129f055a2144ab588a43c2e66d21a1f55ce54f81
-[35/96] media: TDA1997x: Remove now redundant non_legacy_dai_naming flag
-        commit: 55b566ded44db29e9c1ab61623c60ade4600301e
-[36/96] ASoC: fsl: Remove now redundant non_legacy_dai_naming flag
-        commit: 89836f00429b5c3dedb2e2f30262e53847b82ad0
-[37/96] ASoC: meson: Remove now redundant non_legacy_dai_naming flag
-        commit: 9455e289246d8769631e6bec78c0c2ef40171b70
-[38/96] ASoC: pistachio: Remove now redundant non_legacy_dai_naming flag
-        commit: 7e91c90863df7387b9e1f04d9bfc2a43c77d2a46
-[39/96] ASoC: samsung: Remove now redundant non_legacy_dai_naming flag
-        commit: 752044db5b54c867dadfbd0daea90f1b9ecb21f1
-[40/96] ASoC: soc-utils: Remove now redundant non_legacy_dai_naming flag
-        commit: 0f91b4de756415382c10c502010c7536500a1632
-[41/96] ASoC: sunxi: Remove now redundant non_legacy_dai_naming flag
-        commit: 4c6391f59c459e7cf8d584299d0746cb681c2cb7
-[42/96] ASoC: tegra: Remove now redundant non_legacy_dai_naming flag
-        commit: 63c0ec9ebfec499d603993ea8244907bfbe39598
-[43/96] ASoC: test-component: Remove now redundant non_legacy_dai_naming flag
-        commit: 485c5924f262d4aef720c508ee2ff3cb8e2e531b
-[44/96] ASoC: topology: KUnit: Remove now redundant non_legacy_dai_naming flag
-        commit: 7cfb102a55556f5f165a2150a6f77a5aa7257599
-[45/96] ASoC: uniphier: Remove now redundant non_legacy_dai_naming flag
-        commit: 36e79a44b12e4ce2d8659f47dbcce42690919567
-[46/96] ASoC: ad*: Remove now redundant non_legacy_dai_naming flag
-        commit: d9e7ddb98604de6470a0fe4f9e2434a55ca35730
-[47/96] ASoC: ak*: Remove now redundant non_legacy_dai_naming flag
-        commit: 410e73a5338d72c31a32a50c1629d81d8ce6a71f
-[48/96] ASoC: alc*: Remove now redundant non_legacy_dai_naming flag
-        commit: 60d28b5c47c7f02bb52fc5e52a84d669b9b54dbc
-[49/96] ASoC: cs*: Remove now redundant non_legacy_dai_naming flag
-        commit: ff946fd98bffe5de450047f54a27492827186b75
-[50/96] ASoC: da*: Remove now redundant non_legacy_dai_naming flag
-        commit: c03a5b4c419799676013cb0c58c03e00ebe21a61
-[51/96] ASoC: es*: Remove now redundant non_legacy_dai_naming flag
-        commit: f0b163b4d5a215f610bd64eb8ab8a8906e53bec6
-[52/96] ASoC: max*: Remove now redundant non_legacy_dai_naming flag
-        commit: d2d3219ebe568fe4ee90ac748939304f7e05a8ec
-[53/96] ASoC: msm*: Remove now redundant non_legacy_dai_naming flag
-        commit: 736f48714c1b85b0b1f6c88af07989a5828531c9
-[54/96] ASoC: nau*: Remove now redundant non_legacy_dai_naming flag
-        commit: c2fd88f0029172679917ebc536cfdc4b8fabe168
-[55/96] ASoC: pcm*: Remove now redundant non_legacy_dai_naming flag
-        commit: 8d4470b8d08b4aab5136cc3265eb0b05d2a1c72d
-[56/96] ASoC: rt*: Remove now redundant non_legacy_dai_naming flag
-        commit: a524837ddd11bc20ec59d033d0260707cfa3cb99
-[57/96] ASoC: spdif: Remove now redundant non_legacy_dai_naming flag
-        commit: 792a8a944e7aa3f6ae0733429ba9937d7029ee4b
-[58/96] ASoC: ssm*: Remove now redundant non_legacy_dai_naming flag
-        commit: a4311a5b1502f747576e5995d1b5ab04f60033f9
-[59/96] ASoC: sta*: Remove now redundant non_legacy_dai_naming flag
-        commit: 402f437b43870e65377bb97240ee3911858547cb
-[60/96] ASoC: tas*: Remove now redundant non_legacy_dai_naming flag
-        commit: 02bcc2be4c12763dd4c524e67973afe4d8ea6d4c
-[61/96] ASoC: tfa*: Remove now redundant non_legacy_dai_naming flag
-        commit: c91f7e94ce931f058543174a409bb082208cae4a
-[62/96] ASoC: tlv320*: Remove now redundant non_legacy_dai_naming flag
-        commit: 04f3d715df3a463985dc25e55a55dbd970dd77b7
-[63/96] ASoC: twl*: Remove now redundant non_legacy_dai_naming flag
-        commit: 5947b42cbe0ee580c31f7f327119e7f7c703c25c
-[64/96] ASoC: uda*: Remove now redundant non_legacy_dai_naming flag
-        commit: 792008f6df86f7e5f861ef80fd4d6eb444a4aa92
-[65/96] ASoC: wm*: Remove now redundant non_legacy_dai_naming flag
-        commit: 02004449dbe6ec05b5b64a88824939b8fe474b82
-[66/96] ASoC: 88pm860x: Remove now redundant non_legacy_dai_naming flag
-        commit: 4c90eebd97c519361f32e11de991e299f5b47e3d
-[67/96] ASoC: ab8500: Remove now redundant non_legacy_dai_naming flag
-        commit: bb426d37dcd9a1474f785fea434875233d24e537
-[68/96] ASoC: ac97: Remove now redundant non_legacy_dai_naming flag
-        commit: 96b409c94d6766ae8faa9f07fabc3694ddb7d018
-[69/96] ASoC: ads117x: Remove now redundant non_legacy_dai_naming flag
-        commit: e556a108e0aab4688cb0c7b1c0517e3fab8b5eb4
-[70/96] ASoC: bd28623: Remove now redundant non_legacy_dai_naming flag
-        commit: 310288271f55ae0edccd01257c9fdf460dd45e30
-[71/96] ASoC: bt-sco: Remove now redundant non_legacy_dai_naming flag
-        commit: 8c657358f685cec541d7ad3c54f899a65f56783e
-[72/96] ASoC: cpcap: Remove now redundant non_legacy_dai_naming flag
-        commit: 35c5013ce7ca3ad55974e3517273a0e42140b5e7
-[73/96] ASoC: cq93vc: Remove now redundant non_legacy_dai_naming flag
-        commit: 73a3dca65cbe5e7de20f3453b6881acf3fb3cfbe
-[74/96] ASoC: cx20442: Remove now redundant non_legacy_dai_naming flag
-        commit: a0b6e4048228829485a43247c12c7774531728c4
-[75/96] ASoC: dmic: Remove now redundant non_legacy_dai_naming flag
-        commit: 4eaf75fa427262289a2bc34d3fcfbc602ebbacfa
-[76/96] ASoC: gtm601: Remove now redundant non_legacy_dai_naming flag
-        commit: 33b179e7513c30f03277f5de2a845e940a9bde9c
-[77/96] ASoC: hdac_hdmi: Remove now redundant non_legacy_dai_naming flag
-        commit: f02a7d11998eefe8c5627b93627469a0aab8d3da
-[78/96] ASoC: hdmi-codec: Remove now redundant non_legacy_dai_naming flag
-        commit: f5f8019371b42c742d9777052c189e89a0745319
-[79/96] ASoC: ics43432: Remove now redundant non_legacy_dai_naming flag
-        commit: e8f88be5c1548791397dadf2250fb5dcc9461f10
-[80/96] ASoC: inno_rk3036: Remove now redundant non_legacy_dai_naming flag
-        commit: 1f1ee5ae7a8b3d30cbfe18561a4e3b7430e96c9f
-[81/96] ASoC: Intel: avs: Remove now redundant non_legacy_dai_naming flag
-        commit: 22afe04dd84a63440e69dfc7f0e670404fbce831
-[82/96] ASoC: isabelle: Remove now redundant non_legacy_dai_naming flag
-        commit: 328bd81743f0823d9604b0098c95f071e7d02805
-[83/96] ASoC: jz4740: Remove now redundant non_legacy_dai_naming flag
-        commit: dd213681c801fd9d26aef95f4eb563c38f4967f9
-[84/96] ASoC: lm49453: Remove now redundant non_legacy_dai_naming flag
-        commit: 191889406df931cc2e40abf0a0de141b098f0481
-[85/96] ASoC: lochnagar: Remove now redundant non_legacy_dai_naming flag
-        commit: 34b89b309441f7f45f68d7ec3633ee3d50921bc8
-[86/96] ASoC: mc13783: Remove now redundant non_legacy_dai_naming flag
-        commit: 139db4ad9e0b793ffd3f4f23976bf72d5e4e6703
-[87/96] ASoC: ml26124: Remove now redundant non_legacy_dai_naming flag
-        commit: 7e6fcd7f6223ab32bdccc5e22cdec780cde305c3
-[88/96] ASoC: rk817: Remove now redundant non_legacy_dai_naming flag
-        commit: 2e938b8edfedb73efd07545a58fe51bb7fc48a56
-[89/96] ASoC: sgtl5000: Remove now redundant non_legacy_dai_naming flag
-        commit: 81ed3cb8d93936fe32b2b5c213dd56d8ecae7be8
-[90/96] ASoC: si476x: Remove now redundant non_legacy_dai_naming flag
-        commit: 89571b892e74b9724e155774576651cd675b4110
-[91/96] ASoC: stac9766: Remove now redundant non_legacy_dai_naming flag
-        commit: e5257aa583b6d9f80e3aaa3ed6fc68c1b1b5925a
-[92/96] ASoC: sti-sas: Remove now redundant non_legacy_dai_naming flag
-        commit: 20b1894d16547dcd99f190f5a0604a06a0c4479f
-[93/96] ASoC: tscs42xx: Remove now redundant non_legacy_dai_naming flag
-        commit: c06fb318493a059ac2c47937761d048f9ab1b542
-[94/96] ASoC: wl1273: Remove now redundant non_legacy_dai_naming flag
-        commit: 11c8bfaacbcd6c8251f65101d5ceeb173a76b1a3
-[95/96] ASoC: zl38060: Remove now redundant non_legacy_dai_naming flag
-        commit: 4a7a283a41dad608ce32c4ed623cc2caf68150c4
-[96/96] ASoC: soc-component: Remove non_legacy_dai_naming flag
-        commit: 01936221278c5af60d82b8e78ca74caa491c0d31
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+nvpublic
