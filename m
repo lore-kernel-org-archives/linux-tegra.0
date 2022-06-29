@@ -2,122 +2,71 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C478BC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 08:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3606CCA47C
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 08:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231880AbiF2IX7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jun 2022 04:23:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38228 "EHLO
+        id S232331AbiF2Ihn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jun 2022 04:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231801AbiF2IX6 (ORCPT
+        with ESMTP id S232823AbiF2Ihm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jun 2022 04:23:58 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 265E130F57;
-        Wed, 29 Jun 2022 01:23:58 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2C51C66018F6;
-        Wed, 29 Jun 2022 09:23:54 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656491036;
-        bh=TKplUYktuy+fI9Fnwv5CbrVDB+CILHnu464IQXTpgjg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Hh50EXmRXalD8uakgN300BfHpmjducw9bC+QVgu+5qZJ+/06XJI6vmnwyVunKHvTu
-         UurO0sBxI/nVuIlAr3VXYn58dM1imSvobu55OFj091KfdlQDYptmB3FkuxkWooYgI5
-         NpSItA+GHgY6jPnWQbmqoBN/FD6L4QqvRvJdrRvwozQKplNFqn5bxByj5x7N8ZzztY
-         1NGWfuHPh2QKNtJVxBm0HGaBnWhbCFAyCwSOa/+Zp73xpzBmDZHRMCEIF/ZeONMbYT
-         XUq5kP9/+4sLtdAJWqQ7HViJKJJxcDwBrTJthLmqG4Pw4WwunvIZwT0lC3xjDWQAmJ
-         8GjaWihLHjnhA==
-Message-ID: <51d58fff-238e-33e9-20d0-0836b1197459@collabora.com>
-Date:   Wed, 29 Jun 2022 11:23:51 +0300
+        Wed, 29 Jun 2022 04:37:42 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 56AEE3CA5B;
+        Wed, 29 Jun 2022 01:37:40 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 2E19F80CD;
+        Wed, 29 Jun 2022 08:32:25 +0000 (UTC)
+Date:   Wed, 29 Jun 2022 11:37:38 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc:     Liang He <windhl@126.com>, andre.przywara@arm.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm/mach: Hold reference returned by of_find_xxx APIs
+Message-ID: <YrwPUgzXgDp5djxM@atomide.com>
+References: <20220621091937.4082422-1-windhl@126.com>
+ <Yrp8sUMdmfYsiUsD@atomide.com>
+ <YrspRE+g7QvzOvgr@shell.armlinux.org.uk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v6 01/22] drm/gem: Properly annotate WW context on
- drm_gem_lock_reservations() error
-Content-Language: en-US
-To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
-        <thomas_os@shipmail.org>, David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Gert Wollny <gert.wollny@collabora.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com, linux-media@vger.kernel.org
-References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
- <20220526235040.678984-2-dmitry.osipenko@collabora.com>
- <d3fcb4ee-83ec-09b8-d1ef-0191512fda91@shipmail.org>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <d3fcb4ee-83ec-09b8-d1ef-0191512fda91@shipmail.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YrspRE+g7QvzOvgr@shell.armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/28/22 23:12, Thomas Hellström (Intel) wrote:
-> Hi,
+* Russell King (Oracle) <linux@armlinux.org.uk> [220628 16:11]:
+> On Tue, Jun 28, 2022 at 06:59:45AM +0300, Tony Lindgren wrote:
+> > * Liang He <windhl@126.com> [220621 12:14]:
+> > > diff --git a/arch/arm/mach-omap2/pmic-cpcap.c b/arch/arm/mach-omap2/pmic-cpcap.c
+> > > index 668dc84fd31e..a7368d657aa8 100644
+> > > --- a/arch/arm/mach-omap2/pmic-cpcap.c
+> > > +++ b/arch/arm/mach-omap2/pmic-cpcap.c
+> > > @@ -238,8 +238,11 @@ static struct omap_voltdm_pmic omap4_fan_iva = {
+> > >  int __init omap4_cpcap_init(void)
+> > >  {
+> > >  	struct voltagedomain *voltdm;
+> > > +	struct device_node *np;
+> > >  
+> > > -	if (!of_find_compatible_node(NULL, NULL, "motorola,cpcap"))
+> > > +	np = of_find_compatible_node(NULL, NULL, "motorola,cpcap");
+> > > +	of_node_put(np);
+> > > +	if (!np)
+> > >  		return -ENODEV;
+> > 
+> > Hmm so here you are checking for !np after of_node_put()?
 > 
-> On 5/27/22 01:50, Dmitry Osipenko wrote:
->> Use ww_acquire_fini() in the error code paths. Otherwise lockdep
->> thinks that lock is held when lock's memory is freed after the
->> drm_gem_lock_reservations() error. The WW needs to be annotated
->> as "freed"
-> 
-> s /WW/ww_acquire_context/ ?
-> s /"freed"/"released"/ ?
-> 
-> 
->> , which fixes the noisy "WARNING: held lock freed!" splat
->> of VirtIO-GPU driver with CONFIG_DEBUG_MUTEXES=y and enabled lockdep.
->>
->> Cc: stable@vger.kernel.org
-> 
-> Can you dig up the commit in error and add a Fixes: Tag?
-> 
-> Using that and "dim fixes" will also make the Cc: stable tag a bit more
-> verbose.
-> 
-> With that fixed,
-> 
-> Reviewed-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+> This is permissible, because the value of the _pointer_ is being
+> checked without dereferencing the pointer. So the fact that the
+> node may have been freed is actually immaterial.
 
-I'll update this patch, thank you for taking a look.
+OK yeah. This is several lines of code to check if something exists.
+Maybe we should just add bool of_compatible_node_exists() to simplify
+cases like this that does not keep the kfef.
 
--- 
-Best regards,
-Dmitry
+Regards,
+
+Tony
