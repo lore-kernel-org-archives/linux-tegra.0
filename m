@@ -2,319 +2,177 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E4EEC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 06:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34606CCA47C
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 06:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232168AbiF2Gfi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jun 2022 02:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45318 "EHLO
+        id S232204AbiF2Gk2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jun 2022 02:40:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232113AbiF2Gfh (ORCPT
+        with ESMTP id S231629AbiF2Gk1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jun 2022 02:35:37 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 313F42C12D
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Jun 2022 23:35:36 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id r18so12899627edb.9
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Jun 2022 23:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=kBQFkusmcz/SMOWRD7R4YKEzcrVSUMw7+0eTSwhhg8c=;
-        b=yFSGXOTThJGqGcl5Aqt8nukaqco/J/Pgq3+2L3gVKGxN1VDwiq1x4Up7LSaYhkD/TC
-         SCJNYdoD9W+xphqJ8K1JVRWSKGoSzf5V5h0ZAW2Je8pKFCX3qeNQzWGohjrSoeB7aDVr
-         5/1tbL02NJvJ5Or5SZsksmHCm7C5Ddp7tlwkMS9uZqM3Mh/jbnmdrFItF+nUUubxsan6
-         LqcSGLbEXPYtw0t7M0BDt4cglwyGnZit3M4g/J/OmreW3aLwm8N8n+B54EZff+XF3+QX
-         bo1yDSUHmJUZvDjm4nIEM5+98AdTJiFyH1Qhlts1LRsMVtxeZ92Bmj6+itR7oX5Bs20p
-         WH9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=kBQFkusmcz/SMOWRD7R4YKEzcrVSUMw7+0eTSwhhg8c=;
-        b=4LL2FJCmDbaKiT4kjL8mlRL+2Z2mjKRz0fiBNfuHrZCPkugdr18S2X2+iHxFlvOdmZ
-         TBFA7ob5KN9VKScXp7oDth/ghVadNyqEqNTmbiCaIq7hNo0ksG1SoFxXq9gIyuWLK4qs
-         2m11USLtObaYPeE4LNu4B3hSJObFW3cbvfxWptTzv8CLzNyTLkWIjhdPENxVnVIWW9qO
-         KMFgRpfpHsA62gtzMy4bhRsy+ntoDmGyuMCGyQcf9/4oRAOXYEN/BMFLrAZ4idde6MV4
-         tF8mX3pyVxv52BngXlCiRTgG++VN5+jGbcBpMv8Bo6ljF5n6O6Wh8N3IGKOSK0SYWM/m
-         JI4g==
-X-Gm-Message-State: AJIora/TVNUMjZ31Sxw4m/cvg7WkLtyXAzwICJqj/sW5e8YHGr5HhPY6
-        BRuLMB4FdCNx3+l1fGCHDClrpA==
-X-Google-Smtp-Source: AGRyM1vnwG7UM1ZvSadQ2cbuw8dyvte78Wi8y82ra2acHs2+T3hSNHgNjjf/JkSlE3T81fgpoeGeJw==
-X-Received: by 2002:a05:6402:2404:b0:437:d11f:b9c7 with SMTP id t4-20020a056402240400b00437d11fb9c7mr2203046eda.176.1656484534706;
-        Tue, 28 Jun 2022 23:35:34 -0700 (PDT)
-Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id y20-20020a17090629d400b00704cf66d415sm7325538eje.13.2022.06.28.23.35.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jun 2022 23:35:34 -0700 (PDT)
-Message-ID: <07d2cbc3-07e2-85f4-1739-ffbe57d65519@linaro.org>
-Date:   Wed, 29 Jun 2022 08:35:32 +0200
+        Wed, 29 Jun 2022 02:40:27 -0400
+Received: from ste-pvt-msa1.bahnhof.se (ste-pvt-msa1.bahnhof.se [213.80.101.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A027626AE1;
+        Tue, 28 Jun 2022 23:40:24 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 854E940C62;
+        Wed, 29 Jun 2022 08:40:22 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+Authentication-Results: ste-pvt-msa1.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id pU0wAbFoBRnS; Wed, 29 Jun 2022 08:40:21 +0200 (CEST)
+Received: by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 936C240C41;
+        Wed, 29 Jun 2022 08:40:18 +0200 (CEST)
+Received: from [192.168.0.209] (h-155-4-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id E158636016C;
+        Wed, 29 Jun 2022 08:40:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1656484818; bh=c5X9p3SygrAeI8kAv4cnUEr14Zu67PfkDBqu5n1JZJE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Dk1heA72TzwfqFM5AthBnHTC6DdPNKvqtIGAYZbJH355/RVnt8ijwSIqu7vAttHPz
+         WX0p2SfS1SVHlAS1p1yD4GOPcww+7e+8Exx0MOiTrCnsrz24ZGcufvDpM/Zewvu/Cr
+         GmWw0z/B/OoxA6n6QgI6GEuF4woAkKSKa2Gz0HFU=
+Message-ID: <b8271f0c-d6a3-4194-1959-e112859756a3@shipmail.org>
+Date:   Wed, 29 Jun 2022 08:40:17 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH V3 06/11] arm64: tegra: Add P2U and PCIe controller nodes
- to Tegra234 DT
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v6 02/22] drm/gem: Move mapping of imported dma-bufs to
+ drm_gem_mmap_obj()
 Content-Language: en-US
-To:     Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
-        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     kishon@ti.com, vkoul@kernel.org, kw@linux.com,
-        p.zabel@pengutronix.de, mperttunen@nvidia.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-References: <20220629060435.25297-1-vidyas@nvidia.com>
- <20220629060435.25297-7-vidyas@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220629060435.25297-7-vidyas@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Almeida <daniel.almeida@collabora.com>,
+        Gert Wollny <gert.wollny@collabora.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Daniel Stone <daniel@fooishbar.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring <robh@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Qiang Yu <yuq825@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        kernel@collabora.com, linux-media@vger.kernel.org
+References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
+ <20220526235040.678984-3-dmitry.osipenko@collabora.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
+        <thomas_os@shipmail.org>
+In-Reply-To: <20220526235040.678984-3-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 29/06/2022 08:04, Vidya Sagar wrote:
-> Add P2U (PIPE to UPHY) and PCIe controller nodes to device tree.
-> The Tegra234 SoC contains 10 PCIe controllers and 24 P2U instances
-> grouped into three different PHY bricks namely High-Speed IO (HSIO-8 P2Us)
-> NVIDIA High Speed (NVHS-8 P2Us) and Gigabit Ethernet (GBE-8 P2Us)
-> respectively.
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+
+On 5/27/22 01:50, Dmitry Osipenko wrote:
+> Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
+> handle imported dma-bufs properly, which results in mapping of something
+> else than the imported dma-buf. For example, on NVIDIA Tegra we get a hard
+> lockup when userspace writes to the memory mapping of a dma-buf that was
+> imported into Tegra's DRM GEM.
+>
+> To fix this bug, move mapping of imported dma-bufs to drm_gem_mmap_obj().
+> Now mmaping of imported dma-bufs works properly for all DRM drivers.
+Same comment about Fixes: as in patch 1,
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 > ---
-> V3:
-> * Added entries for all controllers that can operate in EndPoint mode
-> 
-> V2:
-> * Added 'iommu-map', 'iommu-map-mask' and 'dma-coherent' entries for each
->   PCIe controller node
-> 
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 935 +++++++++++++++++++++++
->  1 file changed, 935 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> index 2ae2f11f289c..062417e3ede5 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> @@ -998,6 +998,198 @@
->  			status = "okay";
->  		};
->  
-> +		p2u_hsio_0: phy@3e00000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e00000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_hsio_1: phy@3e10000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e10000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_hsio_2: phy@3e20000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e20000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_hsio_3: phy@3e30000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e30000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_hsio_4: phy@3e40000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e40000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_hsio_5: phy@3e50000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e50000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_hsio_6: phy@3e60000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e60000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_hsio_7: phy@3e70000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e70000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_nvhs_0: phy@3e90000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03e90000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_nvhs_1: phy@3ea0000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03ea0000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_nvhs_2: phy@3eb0000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03eb0000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_nvhs_3: phy@3ec0000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03ec0000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_nvhs_4: phy@3ed0000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03ed0000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_nvhs_5: phy@3ee0000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03ee0000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_nvhs_6: phy@3ef0000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03ef0000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_nvhs_7: phy@3f00000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f00000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_gbe_0: phy@3f20000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f20000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_gbe_1: phy@3f30000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f30000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_gbe_2: phy@3f40000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f40000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_gbe_3: phy@3f50000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f50000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_gbe_4: phy@3f60000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f60000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_gbe_5: phy@3f70000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f70000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_gbe_6: phy@3f80000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f80000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
-> +		p2u_gbe_7: phy@3f90000 {
-> +			compatible = "nvidia,tegra234-p2u";
-> +			reg = <0x03f90000 0x10000>;
-> +			reg-names = "ctl";
-> +
-> +			#phy-cells = <0>;
-> +		};
-> +
->  		hsp_aon: hsp@c150000 {
->  			compatible = "nvidia,tegra234-hsp", "nvidia,tegra194-hsp";
->  			reg = <0x0c150000 0x90000>;
-> @@ -1384,6 +1576,749 @@
->  		status = "okay";
->  	};
->  
-> +	pcie@140a0000 {
-> +		compatible = "nvidia,tegra234-pcie";
-> +		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4CA>;
-> +		reg = <0x00 0x140a0000 0x0 0x00020000>, /* appl registers (128K)      */
-> +		      <0x00 0x2a000000 0x0 0x00040000>, /* configuration space (256K) */
-> +		      <0x00 0x2a040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-> +		      <0x00 0x2a080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-> +		reg-names = "appl", "config", "atu_dma", "dbi";
-> +
-> +		status = "disabled";
+>   drivers/gpu/drm/drm_gem.c              | 3 +++
+>   drivers/gpu/drm/drm_gem_shmem_helper.c | 9 ---------
+>   drivers/gpu/drm/tegra/gem.c            | 4 ++++
+>   3 files changed, 7 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index 86d670c71286..7c0b025508e4 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -1038,6 +1038,9 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+>   	if (obj_size < vma->vm_end - vma->vm_start)
+>   		return -EINVAL;
+>   
+> +	if (obj->import_attach)
+> +		return dma_buf_mmap(obj->dma_buf, vma, 0);
 
-Status goes to the end, not somewhere in the middle of properties.
+If we start enabling mmaping of imported dma-bufs on a majority of 
+drivers in this way, how do we ensure that user-space is not blindly 
+using the object mmap without calling the needed DMA_BUF_IOCTL_SYNC 
+which is needed before and after cpu access of mmap'ed dma-bufs?
+
+I was under the impression (admittedly without looking) that the few 
+drivers that actually called into dma_buf_mmap() had some private 
+user-mode driver code in place that ensured this happened.
+
+/Thomas
 
 
-Best regards,
-Krzysztof
+> +
+>   	/* Take a ref for this mapping of the object, so that the fault
+>   	 * handler can dereference the mmap offset's pointer to the object.
+>   	 * This reference is cleaned up by the corresponding vm_close
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> index 8ad0e02991ca..6190f5018986 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -609,17 +609,8 @@ EXPORT_SYMBOL_GPL(drm_gem_shmem_vm_ops);
+>    */
+>   int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct vm_area_struct *vma)
+>   {
+> -	struct drm_gem_object *obj = &shmem->base;
+>   	int ret;
+>   
+> -	if (obj->import_attach) {
+> -		/* Drop the reference drm_gem_mmap_obj() acquired.*/
+> -		drm_gem_object_put(obj);
+> -		vma->vm_private_data = NULL;
+> -
+> -		return dma_buf_mmap(obj->dma_buf, vma, 0);
+> -	}
+> -
+>   	ret = drm_gem_shmem_get_pages(shmem);
+>   	if (ret) {
+>   		drm_gem_vm_close(vma);
+> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+> index 7c7dd84e6db8..f92aa20d63bb 100644
+> --- a/drivers/gpu/drm/tegra/gem.c
+> +++ b/drivers/gpu/drm/tegra/gem.c
+> @@ -564,6 +564,10 @@ int __tegra_gem_mmap(struct drm_gem_object *gem, struct vm_area_struct *vma)
+>   {
+>   	struct tegra_bo *bo = to_tegra_bo(gem);
+>   
+> +	/* imported dmu-buf is mapped by drm_gem_mmap_obj()  */
+> +	if (gem->import_attach)
+> +		return 0;
+> +
+>   	if (!bo->pages) {
+>   		unsigned long vm_pgoff = vma->vm_pgoff;
+>   		int err;
