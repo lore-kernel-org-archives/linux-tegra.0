@@ -2,120 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596A1C43334
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 18:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C7FC43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 19:42:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbiF2S4i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jun 2022 14:56:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41860 "EHLO
+        id S231140AbiF2Tmo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jun 2022 15:42:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbiF2S4h (ORCPT
+        with ESMTP id S230498AbiF2Tmo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jun 2022 14:56:37 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2088.outbound.protection.outlook.com [40.107.94.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108782EA23;
-        Wed, 29 Jun 2022 11:56:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e6n5n6BVHv7o2Vk/xivboXPzOF2bP8GKhjJqH5tE0wH+ILbe+hnSuowiikzd9i/b4mNWafQCRs5OshTSAk9xpEHxQuzGFg6+SCy7hlb/CgGnT74a4hFBMJGvMjpJLIJqAarD705s0ypHxFzRLOYYjeefl7GPgsGy+AIk/wIAFdc6MWcc40/WdoxF82ztSMGWAr2SOZ9oGR3wV0ZMWNtH4dQRn5bu1EBexGnu8YS+mIsCzfncTGDqMNDO2U0NEtMDXZjLZFaOBpq6XckG/VP4ZVhGgJOS5hktNiDriaTM4P3lwwrJMmDPnDut270tKj7x0UShVS5Orj98tCCUCCVvMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w3/nMgJrfZFM0ecEUSpS74BkPx5P6JQVHbMu4dmlRrw=;
- b=MBc2tJSiB4Xde7f1Qzsl66dDAfP+q+x/30605f2/4xdx3fnzGG1wEpzswtvdAKDYFzuPfpimFcejjbEoRcSyEYauEeYpb7uD5zezi5CIus1n37k/knVV6zIdCV5m9sDWma/yH9rfaeNZ7MZIqylUubzs33YWeSJzDxDu+8kWLs/E47ETatNDhC0li25aR1VNSxXQ9av6lxfSnOTKZ1dFmXiKsQoJLXWHTAeZkiFfbKDbKC8Od1xrGiXiJcy9rzedSX03ZPJcjia88OWjuqgyYNhJSOoSgcUNeBcM8nvg5+ZIlfCjoUDnCRzN0pQkINyus+Jzc4Vp8W6KifjXXMS64A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 203.18.50.14) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w3/nMgJrfZFM0ecEUSpS74BkPx5P6JQVHbMu4dmlRrw=;
- b=dHKqh+wXD2AGXhKCfm1QHgZExisucHLN8TgQag4bncoPguwKyI31L9R0sDwf8qdb8nSR/yqAomT1x02aCjMNuAdkps7wQOcw8MO7twS7n8Q31HoNCpFy5v2puURz5kfXog7OMcu61jxadkD0b7uXvvZUtcAgSZyKwlaLLU6UJfmvcNxoVIjczY9kzDyV9x95iflaRIhL+eFvX+vXyF/xSziTYlhyeVM5TchpJoYUnNqKyVK4C23w8sGRoscnABBENXUa3SmPQYc3rHhjjjAZhoIFryigd0Nd214jZ1PkdlRgVErzeMBWkMmqZ/FsT21684K0otoV7fLE9k4jWA+YZA==
-Received: from BN9PR03CA0086.namprd03.prod.outlook.com (2603:10b6:408:fc::31)
- by MN0PR12MB5977.namprd12.prod.outlook.com (2603:10b6:208:37c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.18; Wed, 29 Jun
- 2022 18:56:35 +0000
-Received: from BN8NAM11FT023.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:fc:cafe::22) by BN9PR03CA0086.outlook.office365.com
- (2603:10b6:408:fc::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.17 via Frontend
- Transport; Wed, 29 Jun 2022 18:56:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 203.18.50.14)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 203.18.50.14 as permitted sender) receiver=protection.outlook.com;
- client-ip=203.18.50.14; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (203.18.50.14) by
- BN8NAM11FT023.mail.protection.outlook.com (10.13.177.103) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5373.15 via Frontend Transport; Wed, 29 Jun 2022 18:56:34 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by HKMAIL103.nvidia.com
- (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 29 Jun
- 2022 18:56:32 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 29 Jun
- 2022 11:56:30 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.986.26 via Frontend
- Transport; Wed, 29 Jun 2022 11:56:28 -0700
-From:   Kartik <kkartik@nvidia.com>
-To:     <jassisinghbrar@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <jonathanh@nvidia.com>,
-        <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <robh+dt@kernel.org>,
-        <thierry.reding@gmail.com>, <kkartik@nvidia.com>
-Subject: Re: [PATCH 0/3] Add 128-bit support mailbox for Tegra234 chips
-Date:   Thu, 30 Jun 2022 00:26:27 +0530
-Message-ID: <1656528987-29280-1-git-send-email-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1649921757-16919-1-git-send-email-kkartik@nvidia.com>
-References: <1649921757-16919-1-git-send-email-kkartik@nvidia.com>
+        Wed, 29 Jun 2022 15:42:44 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219D33D1C4
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Jun 2022 12:42:43 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o6da7-0007RG-EE; Wed, 29 Jun 2022 21:42:35 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o6da2-003SHR-Dm; Wed, 29 Jun 2022 21:42:33 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o6da5-001xRY-81; Wed, 29 Jun 2022 21:42:33 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 2/5] ASoC: tegra: tegra20_das: Remove unused function tegra20_das_read
+Date:   Wed, 29 Jun 2022 21:42:21 +0200
+Message-Id: <20220629194224.175607-2-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220629194224.175607-1-u.kleine-koenig@pengutronix.de>
+References: <20220629194224.175607-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 69a01bd4-0585-405c-195f-08da5a0116f3
-X-MS-TrafficTypeDiagnostic: MN0PR12MB5977:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: j/oTTVvcRFJPa6vrQldTxvEeGyAnnMp4tBkk9H9udfxrRIzJNVhMVlAKi9RRwvUAcwJTbL5bPwDJ69kM/9eJlppG0eb60so+Nb/uaGFrXkZ7r41fXWnF/JpmHtxtcQbbSlLTmh/aWwZBZDFssJ/qHAtZ5ylgw+xmHsHJmqFHH9ftVgxdmYueJ+dfzQY63G5ul50k95kaW0iEIs4d4o9HNwUsYPds44Tav5SkePh10yW4U1nJeAid/KW+7nPASMxm4kOE4kyHAau8Jzvw+9J8Zw4t+eggrrKUhjJIGe2dEQCukWVxl1wVau6i01wY9+7j6WHJXbEo/OBlpLmj9AzEWfz+80NyR0epWp/kcxv3lCpArzClA7yQC9ydIqpTEmUvXPfgxEU2rNPe8iRI88SnVRP+wJWRZi8t6gn9HmjZ86HMe4Bd5HyaascaSVrAlavpp3G0eaH2x7VD12HznZAeiiJJkl8pUyLU99b/QFAvve0XwuERnAnzKY0ghhLJs3DucEioWmIHloVs0U3ieNgRRWGF6sT9YpivLW0zIImP8Hmc6VRA+ELLDQV34VIwg1YI7Fru2iooZ/1hH5khVP3kxWcUu1VxHpVQ9y+id/eUTRYOmhosqLQZceRinJ3WyKAhiT4+PQImbbbi1iLplL27ZZtW+ESiFVb3+8q33nNkN1SN6xcdj4JnM0Nskv8cND7rcNb5o9BuMgnCFTjPx46zjaO8j7fchckDqvVfHZto8wE5QJjKBC5rV/DTHz1alaKvib1DW3AiuHaqU4iOmnOpSYAbtWEvaSU0FHDLjwU3CYeDM0+HFvOny2lQjx6w+04/
-X-Forefront-Antispam-Report: CIP:203.18.50.14;CTRY:HK;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:hkhybrid03.nvidia.com;CAT:NONE;SFS:(13230016)(4636009)(136003)(376002)(39860400002)(346002)(396003)(40470700004)(36840700001)(46966006)(7696005)(41300700001)(2906002)(336012)(15650500001)(426003)(83380400001)(40480700001)(186003)(2616005)(82310400005)(36860700001)(478600001)(107886003)(4326008)(70586007)(356005)(8676002)(47076005)(36756003)(70206006)(26005)(8936002)(82740400003)(86362001)(6916009)(54906003)(40460700003)(4744005)(7636003)(5660300002)(316002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2022 18:56:34.8000
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69a01bd4-0585-405c-195f-08da5a0116f3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[203.18.50.14];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT023.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5977
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=788; h=from:subject; bh=N38zUMhA0/Dc3fqjr6CXZtSErJFoyz8+tS9hBRivjeE=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBivKsTyQUNE8UimE1fO9gEEX4unUblCi2mnEQedpck 6qcxjbWJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYryrEwAKCRDB/BR4rcrsCUaACA CGE/LEDhpRx+1nUpVeSj9SIU8feTzn5o1xba4mf+oE7mv1LwE3vZI7U5SSqSnX2BUxsvLNM7o2tFNz HSNPXovbBbLTSmbACBnGRMcMZnfi9dNzG+YFGLxUM8oI5d/LGPltEcHgIHzS0d3aJqekdc99HfTGNR pHqeWlUYIIO+zuDKWahJHw+mQhCFLExRz/upY+um4la4wiWgoFPI99FWEMZwb576zeliIjTnJIghE5 qJcJa0f0XxmpeA2KOFTxjucrClMqmqeuV3cYoQkZLxbcQoybFWkroaXaplCcVwHWXf8nuF04jliykZ 1FyJzewHA4K3SOqOQJbAZvL1Xz0Oo6
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14/04/2022 13:05 +530, Kartik Wrote:
-> This series of patches adds support for 128-bit shared mailbox found
-> on Tegra234 chips. It also introduce tegra_hsp_sm_ops to abstract
-> send & receive APIs for 32-bit and 128-bit shared mailboxes.
-> 
-> Kartik (3):
->   mailbox: tegra-hsp: Add tegra_hsp_sm_ops
->   dt-bindings: tegra186-hsp: add type for shared mailboxes
->   mailbox: tegra-hsp: Add 128-bit shared mailbox support
-> 
->  .../bindings/mailbox/nvidia,tegra186-hsp.yaml |   9 ++
->  drivers/mailbox/tegra-hsp.c                   | 149 ++++++++++++++----
->  include/dt-bindings/mailbox/tegra186-hsp.h    |   5 +
->  3 files changed, 134 insertions(+), 29 deletions(-)
+This function is unused since commit 7203a62562dc ("ASoC: convert
+Tegra20 DAS driver to regmap").
 
-Hi Jassi,
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ sound/soc/tegra/tegra20_das.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Any comments on this from the mailbox side?
+diff --git a/sound/soc/tegra/tegra20_das.c b/sound/soc/tegra/tegra20_das.c
+index d2801130a986..4e23fd96c745 100644
+--- a/sound/soc/tegra/tegra20_das.c
++++ b/sound/soc/tegra/tegra20_das.c
+@@ -104,14 +104,6 @@ static inline void tegra20_das_write(u32 reg, u32 val)
+ 	regmap_write(das->regmap, reg, val);
+ }
+ 
+-static inline u32 tegra20_das_read(u32 reg)
+-{
+-	u32 val;
+-
+-	regmap_read(das->regmap, reg, &val);
+-	return val;
+-}
+-
+ static int tegra20_das_connect_dap_to_dac(int dap, int dac)
+ {
+ 	u32 addr;
+-- 
+2.36.1
 
-Regards,
-Kartik
