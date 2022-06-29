@@ -2,157 +2,219 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B363DC43334
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 08:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FF6C43334
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 09:35:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229846AbiF2In7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jun 2022 04:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57314 "EHLO
+        id S231489AbiF2Jfv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jun 2022 05:35:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232774AbiF2In5 (ORCPT
+        with ESMTP id S231783AbiF2Jfs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jun 2022 04:43:57 -0400
-Received: from pio-pvt-msa2.bahnhof.se (pio-pvt-msa2.bahnhof.se [79.136.2.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE65B1F601;
-        Wed, 29 Jun 2022 01:43:54 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 2A07C3F496;
-        Wed, 29 Jun 2022 10:43:51 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-Authentication-Results: pio-pvt-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4hntFlTqeXsy; Wed, 29 Jun 2022 10:43:49 +0200 (CEST)
-Received: by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id BD3173F380;
-        Wed, 29 Jun 2022 10:43:46 +0200 (CEST)
-Received: from [192.168.0.209] (h-155-4-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 009DD3600FE;
-        Wed, 29 Jun 2022 10:43:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1656492226; bh=x90oW/9huaBEVhlYQnplarSqAv+GdIC9FB+WPge8YXg=;
+        Wed, 29 Jun 2022 05:35:48 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5817C3B3D7;
+        Wed, 29 Jun 2022 02:35:47 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id CD00266017F7;
+        Wed, 29 Jun 2022 10:35:44 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1656495345;
+        bh=AYuYIhk2iyHr8WNWalQKmNnI15MJGuNcUQ4QRSGLoao=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=To+37xln8JJvgy8na/moijj7u3YDsnUNuVyQoNBDexiiEMSNqGDIeVvz1kBQFzukt
-         YcG6WWmRdCE6ePPgCuKLz9/xnAc5XIr2/e3dHA4nZ+veHTgrFehSwVxq0B1yIKdGKa
-         7lAinpshdXw/bjo7xkx8+5chsPjxtjKahuceuJ/M=
-Message-ID: <b4086751-9bff-ea5e-93fc-ce2c513b129b@shipmail.org>
-Date:   Wed, 29 Jun 2022 10:43:45 +0200
+        b=Le3ZgNjQupGL0Oa2pGPrNY5tZ3Q/WwBJwU5wtOtL3V0OWFXs764gRzSEpCwldQRW9
+         qIgLpqZA57okZFLng/yWEmZebmcI/1THbZ1fLTCJbwFGj+n/xvYhQ7HkhiXBlUc5Uw
+         HfdWawmidBI/0MGFkHWCTh5KRHw0TrfVbOPt5ADT6nNUcIvv+sCmaY6jYv0k5WjLXx
+         YXlDjtwfwoLH4Edl7BoYvKQ1Kpk4wUGjGqkJ5AvQmKnZQWdTPaVjGQ4fksm9ZPQ6Pi
+         LvlvlTKqd8lemuNpfAUCKbi1ZG8PZPX4vwUm3vgakpdfb3Q1gl3/xLPDv2Y489QRx3
+         9dND+RMinE5jg==
+Message-ID: <0f6cc7d3-5537-cd8f-d234-a61420e1cbc8@collabora.com>
+Date:   Wed, 29 Jun 2022 12:35:42 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v6 02/22] drm/gem: Move mapping of imported dma-bufs to
- drm_gem_mmap_obj()
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 2/3] thermal/drivers/tegra: Remove get_trend function
 Content-Language: en-US
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com, linux-media@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Gert Wollny <gert.wollny@collabora.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
- <20220526235040.678984-3-dmitry.osipenko@collabora.com>
- <b8271f0c-d6a3-4194-1959-e112859756a3@shipmail.org>
- <c0273ac2-c87c-2612-03d4-dc52510b22f7@collabora.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
-        <thomas_os@shipmail.org>
-In-Reply-To: <c0273ac2-c87c-2612-03d4-dc52510b22f7@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        Hardware Monitoring <linux-hwmon@vger.kernel.org>,
+        rafael@kernel.org
+References: <20220616202537.303655-1-daniel.lezcano@linaro.org>
+ <20220616202537.303655-2-daniel.lezcano@linaro.org>
+ <7841a809-e180-70d2-df9b-b30b411647ce@linaro.org>
+ <d186bb7d-cbe6-8ec4-82a1-8323b3901ac2@collabora.com>
+ <20220628151030.GA3361452@roeck-us.net>
+ <20220628184332.GA3624671@roeck-us.net>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20220628184332.GA3624671@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 6/29/22 10:22, Dmitry Osipenko wrote:
-> On 6/29/22 09:40, Thomas Hellström (Intel) wrote:
->> On 5/27/22 01:50, Dmitry Osipenko wrote:
->>> Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
->>> handle imported dma-bufs properly, which results in mapping of something
->>> else than the imported dma-buf. For example, on NVIDIA Tegra we get a
->>> hard
->>> lockup when userspace writes to the memory mapping of a dma-buf that was
->>> imported into Tegra's DRM GEM.
+On 6/28/22 21:43, Guenter Roeck wrote:
+> On Tue, Jun 28, 2022 at 08:10:30AM -0700, Guenter Roeck wrote:
+>> On Tue, Jun 28, 2022 at 02:44:31PM +0300, Dmitry Osipenko wrote:
+>>> On 6/28/22 11:41, Daniel Lezcano wrote:
+>>>>
+>>>> Thierry, Dmitry,
+>>>>
+>>>> are fine with this patch?
 >>>
->>> To fix this bug, move mapping of imported dma-bufs to drm_gem_mmap_obj().
->>> Now mmaping of imported dma-bufs works properly for all DRM drivers.
->> Same comment about Fixes: as in patch 1,
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->>> ---
->>>    drivers/gpu/drm/drm_gem.c              | 3 +++
->>>    drivers/gpu/drm/drm_gem_shmem_helper.c | 9 ---------
->>>    drivers/gpu/drm/tegra/gem.c            | 4 ++++
->>>    3 files changed, 7 insertions(+), 9 deletions(-)
+>>> Seems should be good. I couldn't test it using recent the linux-next
+>>> because of a lockup in LM90 driver. There were quite a lot of changes in
+>>> LM90 recently, adding Guenter.
 >>>
->>> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
->>> index 86d670c71286..7c0b025508e4 100644
->>> --- a/drivers/gpu/drm/drm_gem.c
->>> +++ b/drivers/gpu/drm/drm_gem.c
->>> @@ -1038,6 +1038,9 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj,
->>> unsigned long obj_size,
->>>        if (obj_size < vma->vm_end - vma->vm_start)
->>>            return -EINVAL;
->>>    +    if (obj->import_attach)
->>> +        return dma_buf_mmap(obj->dma_buf, vma, 0);
->> If we start enabling mmaping of imported dma-bufs on a majority of
->> drivers in this way, how do we ensure that user-space is not blindly
->> using the object mmap without calling the needed DMA_BUF_IOCTL_SYNC
->> which is needed before and after cpu access of mmap'ed dma-bufs?
 >>
->> I was under the impression (admittedly without looking) that the few
->> drivers that actually called into dma_buf_mmap() had some private
->> user-mode driver code in place that ensured this happened.
-> Since it's a userspace who does the mapping, then it should be a
-> responsibility of userspace to do all the necessary syncing.
+>> Weird, I tested those changes to death with real hardware, and I don't
+>> see a code path where the mutex can be left in blocked state unless the
+>> underlying i2c driver locks up for some reason. What is the platform,
+>> and can you point me to the devicetree file ? Also, is there anything
+>> else lm90 or i2c related in the kernel log ?
+>>
+> 
+> Follow-up question: I see that various Tegra systems use lm90 compatible
+> chips, and the interrupt line is in general wired up. Can you check if
+> you get lots of interrupts on that interrupt line ? Also, can you check
+> what happens if you read hwmon attributes directly ?
 
-Sure, but nothing prohibits user-space to ignore the syncing thinking 
-"It works anyway", testing those drivers where the syncing is a NOP. And 
-when a driver that finally needs syncing is tested it's too late to fix 
-all broken user-space.
+The number of interrupt fires is okay. It's a Nexus 7 Tegra30 tablet
+device that I'm using for the testing.
 
->   I'm not
-> sure whether anyone in userspace really needs to map imported dma-bufs
-> in practice. Nevertheless, this use-case is broken and should be fixed
-> by either allowing to do the mapping or prohibiting it.
->
-Then I'd vote for prohibiting it, at least for now. And for the future 
-moving forward we could perhaps revisit the dma-buf need for syncing, 
-requiring those drivers that actually need it to implement emulated 
-coherent memory which can be done not too inefficiently (vmwgfx being 
-one example).
+Today I enabled the lockdep and it immediately showed where the problem is:
 
-/Thomas
+======================================================
+WARNING: possible circular locking dependency detected
+5.19.0-rc4-next-20220628-00002-g94e5dbbe1c58-dirty #24 Not tainted
+------------------------------------------------------
+irq/91-lm90/130 is trying to acquire lock:
+c27ba380 (&tz->lock){+.+.}-{3:3}, at: thermal_zone_device_update+0x2c/0x64
+
+               but task is already holding lock:
+c27b42c8 (&data->update_lock){+.+.}-{3:3}, at: lm90_irq_thread+0x2c/0x68
+
+               which lock already depends on the new lock.
 
 
+               the existing dependency chain (in reverse order) is:
+
+               -> #1 (&data->update_lock){+.+.}-{3:3}:
+       __mutex_lock+0x9c/0x984
+       mutex_lock_nested+0x2c/0x34
+       lm90_read+0x44/0x3e8
+       hwmon_thermal_get_temp+0x58/0x8c
+       of_thermal_get_temp+0x38/0x44
+       thermal_zone_get_temp+0x5c/0x7c
+       thermal_zone_device_update.part.0+0x48/0x5fc
+       thermal_zone_device_set_mode+0xa0/0xe4
+       thermal_zone_device_enable+0x1c/0x20
+       thermal_zone_of_sensor_register+0x18c/0x19c
+       devm_thermal_zone_of_sensor_register+0x68/0xa4
+       __hwmon_device_register+0x704/0x91c
+       hwmon_device_register_with_info+0x6c/0x80
+       devm_hwmon_device_register_with_info+0x78/0xb4
+       lm90_probe+0x618/0x8c0
+       i2c_device_probe+0x170/0x2e0
+       really_probe+0xd8/0x300
+       __driver_probe_device+0x94/0xf4
+       driver_probe_device+0x40/0x118
+       __device_attach_driver+0xc8/0x10c
+       bus_for_each_drv+0x90/0xdc
+       __device_attach+0xbc/0x1d4
+       device_initial_probe+0x1c/0x20
+       bus_probe_device+0x98/0xa0
+       deferred_probe_work_func+0x8c/0xbc
+       process_one_work+0x2b8/0x774
+       worker_thread+0x17c/0x56c
+       kthread+0x108/0x13c
+       ret_from_fork+0x14/0x28
+       0x0
+
+               -> #0 (&tz->lock){+.+.}-{3:3}:
+       __lock_acquire+0x173c/0x3198
+       lock_acquire+0x128/0x3f0
+       __mutex_lock+0x9c/0x984
+       mutex_lock_nested+0x2c/0x34
+       thermal_zone_device_update+0x2c/0x64
+       hwmon_notify_event+0x128/0x138
+       lm90_update_alarms_locked+0x35c/0x3b8
+       lm90_irq_thread+0x38/0x68
+       irq_thread_fn+0x2c/0x8c
+       irq_thread+0x190/0x29c
+       kthread+0x108/0x13c
+       ret_from_fork+0x14/0x28
+       0x0
+
+               other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&data->update_lock);
+                               lock(&tz->lock);
+                               lock(&data->update_lock);
+  lock(&tz->lock);
+
+                *** DEADLOCK ***
+
+1 lock held by irq/91-lm90/130:
+ #0: c27b42c8 (&data->update_lock){+.+.}-{3:3}, at:
+lm90_irq_thread+0x2c/0x68
+
+               stack backtrace:
+CPU: 1 PID: 130 Comm: irq/91-lm90 Not tainted
+5.19.0-rc4-next-20220628-00002-g94e5dbbe1c58-dirty #24
+Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+Backtrace:
+ dump_backtrace from show_stack+0x20/0x24
+ r7:c33d1b60 r6:00000080 r5:60000093 r4:c168c6a4
+ show_stack from dump_stack_lvl+0x68/0x98
+ dump_stack_lvl from dump_stack+0x18/0x1c
+ r7:c33d1b60 r6:c20328cc r5:c203c700 r4:c20328cc
+ dump_stack from print_circular_bug+0x2ec/0x33c
+ print_circular_bug from check_noncircular+0x104/0x168
+ r10:c1a14cc8 r9:c33d1240 r8:00000001 r7:00000000 r6:dfc3dcc0 r5:c33d1b60
+ r4:c33d1b80
+ check_noncircular from __lock_acquire+0x173c/0x3198
+ r7:c33d1b80 r6:c202bc98 r5:c33d1b60 r4:c21d92ac
+ __lock_acquire from lock_acquire+0x128/0x3f0
+ r10:60000013 r9:00000000 r8:00000000 r7:00000000 r6:dfc3dd40 r5:c19ac688
+ r4:c19ac688
+ lock_acquire from __mutex_lock+0x9c/0x984
+ r10:c27ba380 r9:00000000 r8:c21d92ac r7:c33d1240 r6:00000000 r5:00000000
+ r4:c27ba348
+ __mutex_lock from mutex_lock_nested+0x2c/0x34
+ r10:c27b4000 r9:00000000 r8:dfc3de87 r7:00000000 r6:c27ba348 r5:00000000
+ r4:c27ba000
+ mutex_lock_nested from thermal_zone_device_update+0x2c/0x64
+ thermal_zone_device_update from hwmon_notify_event+0x128/0x138
+ r7:00000000 r6:00000000 r5:c2d23ea4 r4:c33fd040
+ hwmon_notify_event from lm90_update_alarms_locked+0x35c/0x3b8
+ r8:c27b4378 r7:c2d23c08 r6:00000020 r5:00000000 r4:c27b4240
+ lm90_update_alarms_locked from lm90_irq_thread+0x38/0x68
+ r9:c01c2814 r8:00000001 r7:c33d2240 r6:c27b4290 r5:c27b4240 r4:c33fc200
+ lm90_irq_thread from irq_thread_fn+0x2c/0x8c
+ r7:c33d2240 r6:c27b4000 r5:c33d1240 r4:c33fc200
+ irq_thread_fn from irq_thread+0x190/0x29c
+ r7:c33d2240 r6:c33fc224 r5:c33d1240 r4:00000000
+ irq_thread from kthread+0x108/0x13c
+ r10:00000000 r9:df9ddbf4 r8:c31d2200 r7:c33fc200 r6:c01c2710 r5:c33d1240
+ r4:c33fc240
+ kthread from ret_from_fork+0x14/0x28
+
+-- 
+Best regards,
+Dmitry
