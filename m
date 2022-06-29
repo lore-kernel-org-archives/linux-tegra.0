@@ -2,211 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFA5C43334
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 19:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4184EC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 19:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230369AbiF2Tmr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jun 2022 15:42:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48582 "EHLO
+        id S230014AbiF2Trj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jun 2022 15:47:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231237AbiF2Tmp (ORCPT
+        with ESMTP id S229864AbiF2Tri (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jun 2022 15:42:45 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147DA2E9EF
-        for <linux-tegra@vger.kernel.org>; Wed, 29 Jun 2022 12:42:45 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o6da7-0007RK-HG; Wed, 29 Jun 2022 21:42:35 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o6da3-003SHb-6R; Wed, 29 Jun 2022 21:42:34 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o6da5-001xRb-Dt; Wed, 29 Jun 2022 21:42:33 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH 3/5] ASoC: tegra: tegra20_das: Get rid of global pointer for driver data
-Date:   Wed, 29 Jun 2022 21:42:22 +0200
-Message-Id: <20220629194224.175607-3-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220629194224.175607-1-u.kleine-koenig@pengutronix.de>
-References: <20220629194224.175607-1-u.kleine-koenig@pengutronix.de>
+        Wed, 29 Jun 2022 15:47:38 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2086.outbound.protection.outlook.com [40.107.244.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E363A1AD;
+        Wed, 29 Jun 2022 12:47:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=f0PJX5RBvOQJXizsm7XXk5ibev9vGSpfBPSn4WdyVa5ghrFuCQFae5qTXcaCWk6xS50Ef/p/HkBXOBmsVjA7GSq0W2eq+KIuffcDoaZoYolI1NDr0MvrSTY053ipmO2PVyyaaQXT4tavqhKI9CHxoCfkCFGy1kOcBBhGf6n9MtJ35ko4u5+I5Ax4ujWkOxP2zwAK7PD70e+7Qkjg0pPHFXmnMGt6NqUdYsNVr1EQLipy5WBUC7Hn0pt3XBrNzCLDZrPmLyXF0lsq+nfhUqZ5qepSUqM2y9ZuOorMdihawoNmQC/FMYyD5SO3kuu1KkcN3SYX8phA+obprcgkMPlQ3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4t2tMU26BQlyqKCQrdW0JpcVFyJO+mK2EE2oPATlIlA=;
+ b=jpTRnHFVFndMxq3v3N/DsLcCopksASQG2tSes+XRlcpr3NnnfzOmb6ARuSVY9cqWty9YxbYZLjlUNDIb3fjuGcpXqA8rs/QTcVC+at7FX8scfWeM0owd1Rv9bWAlOeBQAdLcPg76BIHX1Lm2aqbErpTuH+foXu0ybORfWxub6Ynj1vC8FTN5WxuuY61N9xEpF01IqOLXZAxHxd2gIRiGQBUeNK41aompUfEUYfS1nRlQS7BbdjadblK0joCyscNYO4f6zPBw9Pyt5QRgDjDbuWnJJxd5zNlZ6AVCuB44s74ojp9iQFAufp49AubKBO+hVh2beXmWSHg+TGTjAijR8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.234) smtp.rcpttodomain=rosenzweig.io smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4t2tMU26BQlyqKCQrdW0JpcVFyJO+mK2EE2oPATlIlA=;
+ b=kbSpzWzRS1YUALOvepkAP54VOl8DFy3BXMyZtvElr0/sgXBKuvsoovdvw/j7z29Xy+8+zNA+uGQYhodL2XVyI/k4D33mMLIxVZcaQgU4SLywxUt8qaAE6D7UOxG0834eE3JdNBZm6kevU3BXtq1ZZSbCH4bSjRSXp0SvgJRCM0gMqwHd96XA+jrHf46f7zrbcfupeajYgYobAVhrbTvQvzSMqjx6tgaVqvsxapPmh5R4roDsl93Fv0LZc93VithZBkTENvMgwrkCzuGlAro2zxj3BQOrCLWE3ZQKDuFyEQ6JE5jO3Q5sw43iYRuHskEmbwN/+/FJ0a7wg7foxqnOAg==
+Received: from DS7PR03CA0055.namprd03.prod.outlook.com (2603:10b6:5:3b5::30)
+ by BL1PR12MB5221.namprd12.prod.outlook.com (2603:10b6:208:30b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.18; Wed, 29 Jun
+ 2022 19:47:35 +0000
+Received: from DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b5:cafe::74) by DS7PR03CA0055.outlook.office365.com
+ (2603:10b6:5:3b5::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.17 via Frontend
+ Transport; Wed, 29 Jun 2022 19:47:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.234) by
+ DM6NAM11FT049.mail.protection.outlook.com (10.13.172.188) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5373.15 via Frontend Transport; Wed, 29 Jun 2022 19:47:34 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL101.nvidia.com
+ (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 29 Jun
+ 2022 19:47:34 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 29 Jun
+ 2022 12:47:33 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26 via Frontend
+ Transport; Wed, 29 Jun 2022 12:47:31 -0700
+Date:   Wed, 29 Jun 2022 12:47:30 -0700
+From:   Nicolin Chen <nicolinc@nvidia.com>
+To:     Yong Wu <yong.wu@mediatek.com>
+CC:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Baolu Lu <baolu.lu@linux.intel.com>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "jordan@cosmicpenguin.net" <jordan@cosmicpenguin.net>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "yangyingliang@huawei.com" <yangyingliang@huawei.com>,
+        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
+        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "marcan@marcan.st" <marcan@marcan.st>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 1/5] iommu: Return -EMEDIUMTYPE for incompatible
+ domain and device/group
+Message-ID: <YrysUpY4mdzA0h76@Asurada-Nvidia>
+References: <20220623200029.26007-1-nicolinc@nvidia.com>
+ <20220623200029.26007-2-nicolinc@nvidia.com>
+ <270eec00-8aee-2288-4069-d604e6da2925@linux.intel.com>
+ <YrUk8IINqDEZLfIa@Asurada-Nvidia>
+ <8a5e9c81ab1487154828af3ca21e62e39bcce18c.camel@mediatek.com>
+ <BN9PR11MB527629DEF740C909A7B7BEB38CB49@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <19cfb1b85a347c70c6b0937bbbca4a176a724454.camel@mediatek.com>
+ <20220624181943.GV4147@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4333; h=from:subject; bh=NNwqyKjbaWWkMxiIfqGcg6aIfVxVnVnYfxOrcygWPSU=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBivKsXbco0jkOBROa6nTPsgOVFbpoV/KvbMofKeg2r 5xph/U6JATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYryrFwAKCRDB/BR4rcrsCT0jB/ 0fTacBAnWTe6pSayT6Wf51rlIxuSq9RmDkNJXcte0OBrxAfyfV8M7y26Sc4mVr7laKjvC7C7VEfzYo G+ld0Yr4mve5PS1Wvbbo2Ak3D/LBEOQ0vv9EOwhV/ZdCnVm2F49l36wA0fIsxKuHSFhxdCiMT0dWVL DQlQbgyxDpwS2DRzj8Hd6GfDpgBK1vWffacVyhShr4CIpgY5QiMq82uWaz9Kr0+mGlWMtODQwOTTIw Dt8vDiY3Db2NCgd59hriuCIt4eimNYojPlAvXVLRW8J2GO7q5gKddjh6ddGPZaw7Vo2TBxpfILM+IJ I9cMjCZ1RHRCj5N+tgcf7y+HMWIgbE
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20220624181943.GV4147@nvidia.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8d217259-e4d1-4143-1a2e-08da5a0836ac
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5221:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tial0svSqsOBWr4UrH8SCwFIjyQnY3PhwdCieiCRyW+x6vi6nufunUUzfl8XQu8vEaRhJjGBAe4pGe+ZKAfR+B3ov2ln3fdvF0zUhQDAoDJZAm1CfwEJ2JURkCkbc2Q478avagu2XGxhl64JAxb8w+lDpT8aK3PHZ/LfhjAQoqrimWhE2UhfvN24fwDp23yFkeRn+H/kaZ79l4vS2s8AbT/vCOT6O3Jvk0Y6HEcDPlc0VC6l3C/01Q3BPHx0oPlI9KDRXO4pMSE5pvnkF8RmYHIfIISfgUWB7nsuhuzHWuBojcb6rsblTsRxNH0Fp1lK17/I1anKUpXUNmyOKW9OIHIg6Evd4yVFb5DvzvcQ7xaMbss+QpYJQv6oOxwC2QmSNsH3x7ybT5PNdcUMxSMpFf4zX6htMZ77H6It2PS0ueapWuyq+3vJ4+5Vvc0gB2Dxly6eOldTjlwgi/Q6YcJlwHTiIyOpua7KNiNJVOCZn9jas+cQTv46a0febV9sve/Z4MeylJc2s4MbOkEL367bIRjRTbdXy7qmC/y8a8Cn4dagtC3VPlg34Nnm4aD6dWo+5U36sBQOe8N1UVpIdYcZu8eZJ4WIEdJA0ok2GiIdHvicgQbnlGX56hNp4gCurZw+0FZ3KS9CcnYyVuWGMg7oi7o3i4b/FV+KaivcYLJXFieb2yCtFDXk0UOIkhe4saVqE0wh44G0seXU9OKYk+fij1dEt11l7/CKpaRSkWBojSOF+IOwWIih6hk4tDde2pb/MaCPEwtaJFvcdYb2jrqQXLv8ADvPXts+hOQmbXpusmZeVStCPYWHCV9iSMXicf0t5CiYmppSKIA/rg0RSoztiw==
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(376002)(346002)(136003)(39860400002)(396003)(46966006)(40470700004)(36840700001)(8676002)(70206006)(70586007)(4326008)(9686003)(36860700001)(7416002)(41300700001)(478600001)(26005)(86362001)(40480700001)(82740400003)(40460700003)(6916009)(186003)(81166007)(55016003)(8936002)(356005)(47076005)(82310400005)(33716001)(2906002)(336012)(54906003)(316002)(426003)(7406005)(5660300002)(83380400001)(4744005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2022 19:47:34.8739
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d217259-e4d1-4143-1a2e-08da5a0836ac
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5221
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This enables the driver (at least theoretically) to bind to more than one
-device.
+On Fri, Jun 24, 2022 at 03:19:43PM -0300, Jason Gunthorpe wrote:
+> On Fri, Jun 24, 2022 at 06:35:49PM +0800, Yong Wu wrote:
+> 
+> > > > It's not used in VFIO context. "return 0" just satisfy the iommu
+> > > > framework to go ahead. and yes, here we only allow the shared
+> > > > "mapping-domain" (All the devices share a domain created
+> > > > internally).
+> 
+> What part of the iommu framework is trying to attach a domain and
+> wants to see success when the domain was not actually attached ?
+> 
+> > > What prevent this driver from being used in VFIO context?
+> > 
+> > Nothing prevent this. Just I didn't test.
+> 
+> This is why it is wrong to return success here.
 
-The remove function has nothing to do now, so it is dropped.
+Hi Yong, would you or someone you know be able to confirm whether
+this "return 0" is still a must or not?
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- sound/soc/tegra/tegra20_das.c | 66 +++++++++++------------------------
- 1 file changed, 20 insertions(+), 46 deletions(-)
+Considering that it's an old 32-bit platform for MTK, if it would
+take time to do so, I'd like to drop the change in MTK driver and
+note in commit log for you or other MTK folks to change in future.
 
-diff --git a/sound/soc/tegra/tegra20_das.c b/sound/soc/tegra/tegra20_das.c
-index 4e23fd96c745..8637a0cc1f5e 100644
---- a/sound/soc/tegra/tegra20_das.c
-+++ b/sound/soc/tegra/tegra20_das.c
-@@ -97,14 +97,12 @@ struct tegra20_das {
-  * configuration is programmed.
-  */
- 
--static struct tegra20_das *das;
--
--static inline void tegra20_das_write(u32 reg, u32 val)
-+static inline void tegra20_das_write(struct tegra20_das *das, u32 reg, u32 val)
- {
- 	regmap_write(das->regmap, reg, val);
- }
- 
--static int tegra20_das_connect_dap_to_dac(int dap, int dac)
-+static int tegra20_das_connect_dap_to_dac(struct tegra20_das *das, int dap, int dac)
- {
- 	u32 addr;
- 	u32 reg;
-@@ -116,12 +114,12 @@ static int tegra20_das_connect_dap_to_dac(int dap, int dac)
- 		(dap * TEGRA20_DAS_DAP_CTRL_SEL_STRIDE);
- 	reg = dac << TEGRA20_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_P;
- 
--	tegra20_das_write(addr, reg);
-+	tegra20_das_write(das, addr, reg);
- 
- 	return 0;
- }
- 
--static int tegra20_das_connect_dac_to_dap(int dac, int dap)
-+static int tegra20_das_connect_dac_to_dap(struct tegra20_das *das, int dac, int dap)
- {
- 	u32 addr;
- 	u32 reg;
-@@ -135,7 +133,7 @@ static int tegra20_das_connect_dac_to_dap(int dac, int dap)
- 		dap << TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL_P |
- 		dap << TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL_P;
- 
--	tegra20_das_write(addr, reg);
-+	tegra20_das_write(das, addr, reg);
- 
- 	return 0;
- }
-@@ -168,74 +166,51 @@ static const struct regmap_config tegra20_das_regmap_config = {
- static int tegra20_das_probe(struct platform_device *pdev)
- {
- 	void __iomem *regs;
-+	struct tegra20_das *das;
- 	int ret = 0;
- 
--	if (das)
--		return -ENODEV;
--
- 	das = devm_kzalloc(&pdev->dev, sizeof(struct tegra20_das), GFP_KERNEL);
--	if (!das) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!das)
-+		return -ENOMEM;
-+
- 	das->dev = &pdev->dev;
- 
- 	regs = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(regs)) {
--		ret = PTR_ERR(regs);
--		goto err;
--	}
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
- 
- 	das->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
- 					    &tegra20_das_regmap_config);
- 	if (IS_ERR(das->regmap)) {
- 		dev_err(&pdev->dev, "regmap init failed\n");
--		ret = PTR_ERR(das->regmap);
--		goto err;
-+		return PTR_ERR(das->regmap);
- 	}
- 
--	ret = tegra20_das_connect_dap_to_dac(TEGRA20_DAS_DAP_ID_1,
-+	ret = tegra20_das_connect_dap_to_dac(das, TEGRA20_DAS_DAP_ID_1,
- 					     TEGRA20_DAS_DAP_SEL_DAC1);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Can't set up DAS DAP connection\n");
--		goto err;
-+		return ret;
- 	}
--	ret = tegra20_das_connect_dac_to_dap(TEGRA20_DAS_DAC_ID_1,
-+	ret = tegra20_das_connect_dac_to_dap(das, TEGRA20_DAS_DAC_ID_1,
- 					     TEGRA20_DAS_DAC_SEL_DAP1);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Can't set up DAS DAC connection\n");
--		goto err;
-+		return ret;
- 	}
--
--	ret = tegra20_das_connect_dap_to_dac(TEGRA20_DAS_DAP_ID_3,
-+	ret = tegra20_das_connect_dap_to_dac(das, TEGRA20_DAS_DAP_ID_3,
- 					     TEGRA20_DAS_DAP_SEL_DAC3);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Can't set up DAS DAP connection\n");
--		goto err;
-+		return ret;
- 	}
--	ret = tegra20_das_connect_dac_to_dap(TEGRA20_DAS_DAC_ID_3,
-+	ret = tegra20_das_connect_dac_to_dap(das, TEGRA20_DAS_DAC_ID_3,
- 					     TEGRA20_DAS_DAC_SEL_DAP3);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Can't set up DAS DAC connection\n");
--		goto err;
-+		return ret;
- 	}
- 
--	platform_set_drvdata(pdev, das);
--
--	return 0;
--
--err:
--	das = NULL;
--	return ret;
--}
--
--static int tegra20_das_remove(struct platform_device *pdev)
--{
--	if (!das)
--		return -ENODEV;
--
--	das = NULL;
--
- 	return 0;
- }
- 
-@@ -246,7 +221,6 @@ static const struct of_device_id tegra20_das_of_match[] = {
- 
- static struct platform_driver tegra20_das_driver = {
- 	.probe = tegra20_das_probe,
--	.remove = tegra20_das_remove,
- 	.driver = {
- 		.name = DRV_NAME,
- 		.of_match_table = tegra20_das_of_match,
--- 
-2.36.1
-
+Thanks
+Nic
