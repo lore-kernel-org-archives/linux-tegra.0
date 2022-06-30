@@ -2,82 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF70C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 15:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A134CCA47B
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 15:19:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235549AbiF3PKV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Jun 2022 11:10:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47278 "EHLO
+        id S235676AbiF3PTm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Jun 2022 11:19:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235559AbiF3PKT (ORCPT
+        with ESMTP id S235661AbiF3PTk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Jun 2022 11:10:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 016012B193;
-        Thu, 30 Jun 2022 08:10:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 926EB60E94;
-        Thu, 30 Jun 2022 15:10:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 382C2C34115;
-        Thu, 30 Jun 2022 15:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656601818;
-        bh=kns8+0qB725KuYwFrosVJmskFRLv475UVQh24jxqzZw=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=WrXzuKEL8eXydybg6sjJbvmscFiKhPlUHIJpUtZxuOJCd/rTV+d9ja4wH3dd1+H7T
-         ErfJZinZnpjw4d+d4JrFD9T34LMc4CxF/xqXdnqCBZd1DRCDsH9SD49poMgCSnu7Cj
-         Iv4SGD6GdR11jwQ5rLxXKnMrPbsbOnX9O5aQdHIRXeEQCSQavSfP7xBCRtHsD2iAIS
-         vPdbLz9KOs5YVDCP9gQjsmTo9YMi2mj73Az+FICT7h646wa6ASCOR6rKXTfNs55PrZ
-         oecVsVZ3hFiul7itI7kAG4tKsZyCkePxEHYVQRBaGyIZ4QGutRt5rj8y+Fq0F/+Geh
-         /iOZkBn5AoOhg==
-From:   Mark Brown <broonie@kernel.org>
-To:     perex@perex.cz, thierry.reding@gmail.com, lgirdwood@gmail.com,
-        jonathanh@nvidia.com, kunyu@nfschina.com, tiwai@suse.com
-Cc:     linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20220630020347.7148-1-kunyu@nfschina.com>
-References: <20220630020347.7148-1-kunyu@nfschina.com>
-Subject: Re: [PATCH] sound: delete a semicolon
-Message-Id: <165660181594.664251.10913007808464337942.b4-ty@kernel.org>
-Date:   Thu, 30 Jun 2022 16:10:15 +0100
+        Thu, 30 Jun 2022 11:19:40 -0400
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62EC0377FE;
+        Thu, 30 Jun 2022 08:19:39 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id h20so12589373ilj.13;
+        Thu, 30 Jun 2022 08:19:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ADsvCR0mog9Wctcf3viijqLXbCb8A/ISSb9KkaYOBcQ=;
+        b=cCs6Ygz0yf8Xf/i2rMrycvTOWJPctBTOHWroKkB4GKyDw0xnSrq7Su/sM/JyP5DKCr
+         CBE8eedgnLBedmKOUXg/zyCqjzwcrPiel0HPvJCDJDXCUuPWVjq5iIx4RtZBOvTotxRc
+         lO5K4yOkN8McDwRdYqx53j8k5Tt9bikH63Rhnv+pGbZKSLN3etsomFTqm08ON2MNIu1N
+         KEnfdG8ERfIhJz0bWr9JiJMuV4Z1S22Djm/MCFNmcac476pY4AF/f7xOw3sNLjoluUDJ
+         agEz9Na6xH1v2N1qNRPpLyf1+WamWhLThqWT3zp1vG1+vMtL3KAXTuorIj9OldSJfZPk
+         yc2A==
+X-Gm-Message-State: AJIora/ArW91ayKj5S21dJ7qJ5Nxy0Xa8na7sW/zjg+7fc5qBAJv6Ft/
+        b3COPoXmvzZvbrVq6+O2Qw==
+X-Google-Smtp-Source: AGRyM1syNumhIZ9i8WZw9tGrKUzdzJYR0RUCc8u+zCX5QaXsZAZPAG6uCSOCyYG4AF4BzG+LxuqWjA==
+X-Received: by 2002:a05:6e02:b22:b0:2d9:2bda:34e9 with SMTP id e2-20020a056e020b2200b002d92bda34e9mr5615211ilu.273.1656602378655;
+        Thu, 30 Jun 2022 08:19:38 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id r19-20020a02c853000000b00339dfb793aesm8731583jao.86.2022.06.30.08.19.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 08:19:38 -0700 (PDT)
+Received: (nullmailer pid 2729118 invoked by uid 1000);
+        Thu, 30 Jun 2022 15:19:36 -0000
+Date:   Thu, 30 Jun 2022 09:19:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7/v3 00/22] Host1x context isolation / Tegra234 support
+Message-ID: <20220630151936.GA2722229-robh@kernel.org>
+References: <20220627142008.2072474-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220627142008.2072474-1-cyndis@kapsi.fi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 30 Jun 2022 10:03:47 +0800, Li kunyu wrote:
-> extra semicolons could be deleted.
+On Mon, Jun 27, 2022 at 05:19:46PM +0300, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
 > 
-> 
+> Integrated the Host1x context isolation series (patches 1 to 8) and
+> Tegra234 support series (patches 9 to 22) in one email thread for
+> the benefit of automatic testers.
 
-Applied to
+And probably to the detriment of tools looking at the version number 
+like b4 with the double version. Don't get creative like this.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] sound: delete a semicolon
-      commit: d8d6253b36f55d199590ef908712fe52bb39ee97
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Rob
