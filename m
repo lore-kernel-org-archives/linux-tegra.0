@@ -2,117 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28C2C43334
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 08:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8475C43334
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 09:06:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231572AbiF3IWh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Jun 2022 04:22:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49240 "EHLO
+        id S232798AbiF3JGk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Jun 2022 05:06:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233644AbiF3IWT (ORCPT
+        with ESMTP id S230171AbiF3JGj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Jun 2022 04:22:19 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2E1AD102;
-        Thu, 30 Jun 2022 01:21:53 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC83F1BCB;
-        Thu, 30 Jun 2022 01:21:52 -0700 (PDT)
-Received: from [10.57.85.25] (unknown [10.57.85.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6A263F66F;
-        Thu, 30 Jun 2022 01:21:47 -0700 (PDT)
-Message-ID: <e5799215-8b55-90a8-7ca4-35f85ffb5969@arm.com>
-Date:   Thu, 30 Jun 2022 09:21:42 +0100
+        Thu, 30 Jun 2022 05:06:39 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A4C140E3;
+        Thu, 30 Jun 2022 02:06:38 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id k22so26255561wrd.6;
+        Thu, 30 Jun 2022 02:06:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uJNbDyi7iYddRfY6PB4IGhLFwOJFB/6azLoIbj2eVt0=;
+        b=b/lu/u0pK4Jpqu/9ZnkPm7nOsZDZg0dXb0BlFqMTBXzTi/exCgWSw3UaOpT7MbIMG+
+         uaupUPe1suq67a7wwZwrStBWdTRqydR8ea7ndduFpffgVsG4lACAUZRq3R7VYrLy/ml5
+         YghSpa5pKegJaxOLn6p2803CCJGnkX3ceM6v0Ohu0QAHfxNPYhrYw24EH2k1kk2+8fPp
+         QXqU+U44bnKlNua7Lj2F4KHOa7l028rj6zrbw7fkyvRnXVus3vUw7w6kObt2W0/KMHAn
+         izldOGZqHQiIOHAIJyz7PlEWSQfLIF6r6a+ksRGzxJSo5LuvY4CB4nU0RxZinKzgGgr4
+         YddA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uJNbDyi7iYddRfY6PB4IGhLFwOJFB/6azLoIbj2eVt0=;
+        b=vfrgSRXKBIfX4hntYYL1P2MnkzaoF2KgKWj9YbOeX2L7GUogyVr93e8sg374wfNzf8
+         DZ4T7/lDuEJ4qgfmLIIDNHbkyKVIunCXgSCoBva/boLI3CuiiqaxZ1AuSG0X7Klsb/DA
+         pt5Wy4DZz9A6aSKxjy5Jq/Bcd2XZ/x8fSRIMVElbMOlJald4fW3ofCicnBNXQ6jDe2ih
+         4vri9t3mw50FMLuGZhZcjL5QZSzLziajqkB1lYiqT0foMc6O8QP26hJOeKRY4YxMOhVN
+         CT9C4SyLp6zcN0IvWmBmimQs7dRh3iyJRuWsQ2YnZcmYq35b+D4mX4yS6MeMhBv6CY9t
+         ZeHA==
+X-Gm-Message-State: AJIora+i7ryXIZqaNhCmLrBbMG0wDN6qjuIj21UcFyrGg1f1XQkRDx6/
+        PL35OyBBsgB0fonnKV0Uthk=
+X-Google-Smtp-Source: AGRyM1t4AvZsoA97Y8YSbTneEp69iJbnWr24L1Jebt+RK+smubYEbAguL/fq+0x6JGZ0zeDz2aT1Cg==
+X-Received: by 2002:a5d:6690:0:b0:21b:970c:dc6e with SMTP id l16-20020a5d6690000000b0021b970cdc6emr7545075wru.397.1656579997014;
+        Thu, 30 Jun 2022 02:06:37 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id v4-20020a7bcb44000000b0039746638d6esm5719809wmj.33.2022.06.30.02.06.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 02:06:36 -0700 (PDT)
+Date:   Thu, 30 Jun 2022 11:06:34 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     jassisinghbrar@gmail.com, devicetree@vger.kernel.org,
+        jonathanh@nvidia.com, krzk+dt@kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        robh+dt@kernel.org
+Subject: Re: [PATCH 0/3] Add 128-bit support mailbox for Tegra234 chips
+Message-ID: <Yr1nmhtOTPej5NDv@orome>
+References: <1649921757-16919-1-git-send-email-kkartik@nvidia.com>
+ <1656528987-29280-1-git-send-email-kkartik@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v3 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain
- and device/group
-Content-Language: en-GB
-To:     Nicolin Chen <nicolinc@nvidia.com>, Yong Wu <yong.wu@mediatek.com>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Baolu Lu <baolu.lu@linux.intel.com>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "jordan@cosmicpenguin.net" <jordan@cosmicpenguin.net>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "yangyingliang@huawei.com" <yangyingliang@huawei.com>,
-        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
-        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "marcan@marcan.st" <marcan@marcan.st>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>
-References: <20220623200029.26007-1-nicolinc@nvidia.com>
- <20220623200029.26007-2-nicolinc@nvidia.com>
- <270eec00-8aee-2288-4069-d604e6da2925@linux.intel.com>
- <YrUk8IINqDEZLfIa@Asurada-Nvidia>
- <8a5e9c81ab1487154828af3ca21e62e39bcce18c.camel@mediatek.com>
- <BN9PR11MB527629DEF740C909A7B7BEB38CB49@BN9PR11MB5276.namprd11.prod.outlook.com>
- <19cfb1b85a347c70c6b0937bbbca4a176a724454.camel@mediatek.com>
- <20220624181943.GV4147@nvidia.com> <YrysUpY4mdzA0h76@Asurada-Nvidia>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <YrysUpY4mdzA0h76@Asurada-Nvidia>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="WwmdHsM7OFkf6Idy"
+Content-Disposition: inline
+In-Reply-To: <1656528987-29280-1-git-send-email-kkartik@nvidia.com>
+User-Agent: Mutt/2.2.6 (2022-06-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-06-29 20:47, Nicolin Chen wrote:
-> On Fri, Jun 24, 2022 at 03:19:43PM -0300, Jason Gunthorpe wrote:
->> On Fri, Jun 24, 2022 at 06:35:49PM +0800, Yong Wu wrote:
->>
->>>>> It's not used in VFIO context. "return 0" just satisfy the iommu
->>>>> framework to go ahead. and yes, here we only allow the shared
->>>>> "mapping-domain" (All the devices share a domain created
->>>>> internally).
->>
->> What part of the iommu framework is trying to attach a domain and
->> wants to see success when the domain was not actually attached ?
->>
->>>> What prevent this driver from being used in VFIO context?
->>>
->>> Nothing prevent this. Just I didn't test.
->>
->> This is why it is wrong to return success here.
-> 
-> Hi Yong, would you or someone you know be able to confirm whether
-> this "return 0" is still a must or not?
 
- From memory, it is unfortunately required, due to this driver being in 
-the rare position of having to support multiple devices in a single 
-address space on 32-bit ARM. Since the old ARM DMA code doesn't 
-understand groups, the driver sets up its own canonical 
-dma_iommu_mapping to act like a default domain, but then has to politely 
-say "yeah OK" to arm_setup_iommu_dma_ops() for each device so that they 
-do all end up with the right DMA ops rather than dying in screaming 
-failure (the ARM code's per-device mappings then get leaked, but we 
-can't really do any better).
+--WwmdHsM7OFkf6Idy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The whole mess disappears in the proper default domain conversion, but 
-in the meantime, it's still safe to assume that nobody's doing VFIO with 
-embedded display/video codec/etc. blocks that don't even have reset drivers.
+On Thu, Jun 30, 2022 at 12:26:27AM +0530, Kartik wrote:
+> On 14/04/2022 13:05 +530, Kartik Wrote:
+> > This series of patches adds support for 128-bit shared mailbox found
+> > on Tegra234 chips. It also introduce tegra_hsp_sm_ops to abstract
+> > send & receive APIs for 32-bit and 128-bit shared mailboxes.
+> >=20
+> > Kartik (3):
+> >   mailbox: tegra-hsp: Add tegra_hsp_sm_ops
+> >   dt-bindings: tegra186-hsp: add type for shared mailboxes
+> >   mailbox: tegra-hsp: Add 128-bit shared mailbox support
+> >=20
+> >  .../bindings/mailbox/nvidia,tegra186-hsp.yaml |   9 ++
+> >  drivers/mailbox/tegra-hsp.c                   | 149 ++++++++++++++----
+> >  include/dt-bindings/mailbox/tegra186-hsp.h    |   5 +
+> >  3 files changed, 134 insertions(+), 29 deletions(-)
+>=20
+> Hi Jassi,
+>=20
+> Any comments on this from the mailbox side?
 
-Thanks,
-Robin.
+I noticed that Jassi pulled this in for v5.19-rc1, so I think this is
+all good now.
+
+Thierry
+
+--WwmdHsM7OFkf6Idy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmK9Z5oACgkQ3SOs138+
+s6Gudg/8DgII93awSrn0zPqHH4iVbdt7+bNw3RWZl57m85wwEsIiTZ65eThqtwiB
+GPn2Ee5Tm6EVMOCfngLSdMOiW29xnNyqUynLR1xWKVkEvZejAs1T3mOZ5T/HNSn3
++Ky4iA9lOxM10VdKQS4nMDpN4eRq0Ync/2UGrgl/V7NUcSTWLdZ2gnbYBiDlDLZS
+OSOVP1c6yrdGHLl5ngl1FRjaJyK3IS4YtoegdF8pM3zLnZokgiwxRCoXzy7sT4Z1
+z30/u78QzsXcm1hXbprrPP0V0MmfHWJOIkAKJNhFN2hVXXU/9pgLvc94HuPO4Pb4
+IvUPBITMdgA0C7/5hj0X0ZekRpaqBM5vRG9xjwCjQNs7nUV1Zty1ayTh9GLLJKbL
+eHUtnRf4qZiM+37UyG7LwZhC/6coo0xiwDj4edBGcPVPL3/JwSWKDlScuyHj4yH6
+tVXPXGIjTD8KC4U9P5tJBLHWkpAjFLqeyNr6Ylzzs7RUh0DMRxqMIcrpZUtMSJ2z
+TFYpy4VnG5F8rdixwH8M9zxHypSRhFwT53dDUtumeLXR7+p6CRp5qICbKMzUsq0i
+zPQzyf7vvLSomEFXsHIfzmgw7qnWWB3ozct8yOIJw7eyjwJ5ShdpgzgqaphtRo1K
+oRe2ZlXrADaM2x8jV0EASgOlUpLIpHDmJEoGgm4izkiBp8jxB/g=
+=goh4
+-----END PGP SIGNATURE-----
+
+--WwmdHsM7OFkf6Idy--
