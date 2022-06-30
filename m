@@ -2,132 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456AEC43334
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 09:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E741C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 09:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232954AbiF3JN4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Jun 2022 05:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42628 "EHLO
+        id S234095AbiF3JPf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Jun 2022 05:15:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232852AbiF3JNz (ORCPT
+        with ESMTP id S234153AbiF3JOu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Jun 2022 05:13:55 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 600C31F2E1;
-        Thu, 30 Jun 2022 02:13:54 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id o9so25644207edt.12;
-        Thu, 30 Jun 2022 02:13:54 -0700 (PDT)
+        Thu, 30 Jun 2022 05:14:50 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E6832B25D;
+        Thu, 30 Jun 2022 02:14:39 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id v9so10707083wrp.7;
+        Thu, 30 Jun 2022 02:14:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=D1MB0+cRdMUm4U5TtLDd9s96TysqWuUfBpSmSXVHdQQ=;
-        b=I7fTo6bvGkKGF/wh/EcfPMXOL1d145t8v+08B2hUaGGMUR24uHZARy+LcLfl/39Ukq
-         Fyv852+Oe/W+yWBUapnsOFNyFa+eVaG7/AivIV6qWy7qyP3/uH1nOoZFCTZpsclK0YYp
-         HWSSMU9xajH3tUj4XwTqro4EizsLIxJScupAqpeweCXv+EHP33m6d+XK40o5M9U4ElWw
-         y9M+MC3yJU/OiVijGF0d01Y1FoOwFHPrYyMospRLIAsgv28HKrtxyO/lJ9ft9He1C+m9
-         RqZHdWzMZFYhTy4VvGHSEHe+WhPX4YSr5pr0SKIPplEc3QbUJEzR7iKL984nIHg7kj26
-         KlHw==
+        bh=7JAcCx7O9WUA8J/ba2CcG+LAyXJgnH1EmqzxH+erpu0=;
+        b=H/KLoQkK3aXUvCfb0E+7GO5SYDJOgYT0SdIyendvDiQfizylQajKEa1po19yIeeky3
+         N+He4xha0qGy7V8wvu2WDAIO60Qw5RchPssk19dQnMrvK70K03/yl/BxSUmsBJxe8RrS
+         ZgZ9rlhPt/F3WO5q2L7n599zip+xP4LP7oKpsP8MYtT4W/rRP6TZIDZj4QiJYGtvMtuk
+         ib2eM13wI7bAcR1wtBAudinUhf/uKCcJBs4N71JKzx6WhzCrZvvcZA8ruv5X1t8MSp/K
+         a/7eh2fM81ZELCNZ9e7WhwJSSAs1GchTkFsJaemrCuHrcqKDKitLO+dehYrNCGsyw4BM
+         3kWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D1MB0+cRdMUm4U5TtLDd9s96TysqWuUfBpSmSXVHdQQ=;
-        b=b8kEbI2+SGTuwlEMVkZAANJxHFppVOTCIyr9HtmJhhzrRMs92ccMakrScemdfvIfNV
-         4SXBvuFZx/RYwHHYTuDWRrrsz8+gRQRv0YIc0hY0lpwufimkwl54lXyaMiqRtGhUXX6F
-         HdSScNvwgK5EkIv7Vxn6dZRuokJVLJ7ZyB766hOdMnVqcwbr38iVRdawWyJZ8MEgdl0z
-         vIa5NgzWLcdOUtakNNmhxpEoq8Szt8Qm7aRAGo1vyoA7ChzHfdA3cFGhsHBeJwB9cYDv
-         RvL1PRk4qJ9ycISgdV1nCyqMKZgi6gvCPQzxHCz9+dY1gXzqxWrvHctFd3OS2kKYFssh
-         W7wQ==
-X-Gm-Message-State: AJIora9bw8Ih7pa87ixBGJisL7+p8JOT6KjUr4ZTGpH9v1Ch1CSoh0Db
-        MXGa66DwxLRv5hZGm2/dr3Q=
-X-Google-Smtp-Source: AGRyM1vU2xhGxeW+z2ilaqgHJ72WOXIedRMja5eEhcS1HdkaZGmxC0GHJ9re59ox2MyGTV8VyLFv0g==
-X-Received: by 2002:aa7:d685:0:b0:435:7910:f110 with SMTP id d5-20020aa7d685000000b004357910f110mr9966549edr.247.1656580432766;
-        Thu, 30 Jun 2022 02:13:52 -0700 (PDT)
+        bh=7JAcCx7O9WUA8J/ba2CcG+LAyXJgnH1EmqzxH+erpu0=;
+        b=HzPAa8bLuIKqli2dwznDPXztpGhNu+Gchj1LEX3k0tMmRyEAGJBkihSZdvtHeNUiMM
+         yJjk+6ybZDzlk/xseXOOhyCiOXhPvBr1IdLoLIM6vn24Zn2cIK/5AqaCc2UxkXR3rEcA
+         kJwNZJGA5aMq/hWxccK97wNz8MW1P0VfV/d44x1bEDksfbJ2Ut7r8URtKtD7k6RYis+B
+         PD2XOyvmqtWuxOlukJKNQgijhC8PlWuz6gCsAlieZc4741d5wehanrFpANemw5rLMast
+         Trq0cnlo7/i5Dt1KCbO/BmmV0tRFHx3Ossc2R0KVmpR1d2Mh4sp+X3O24ETbh8Yn1AjF
+         5F0Q==
+X-Gm-Message-State: AJIora8nB4poV5JTVSQCUhTZvUIAFxbMyhj37H2F1KT+z17buTZoVBeY
+        nFMEka6AixiPkpPTHcCNdPs=
+X-Google-Smtp-Source: AGRyM1vDbKEg9OcaNLJk5Ngw5sO6akBRQyPmzcTzpvlzIUjFhFX2UUC4/7O5IrpaWjMnaPe6GlGQhA==
+X-Received: by 2002:a5d:43cd:0:b0:21b:8e53:befe with SMTP id v13-20020a5d43cd000000b0021b8e53befemr7578627wrr.255.1656580477535;
+        Thu, 30 Jun 2022 02:14:37 -0700 (PDT)
 Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s3-20020a1709067b8300b0070efa110afcsm8768854ejo.83.2022.06.30.02.13.51
+        by smtp.gmail.com with ESMTPSA id d11-20020a5d4f8b000000b0020c7ec0fdf4sm22111504wru.117.2022.06.30.02.14.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 02:13:51 -0700 (PDT)
-Date:   Thu, 30 Jun 2022 11:13:50 +0200
+        Thu, 30 Jun 2022 02:14:36 -0700 (PDT)
+Date:   Thu, 30 Jun 2022 11:14:34 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Kartik <kkartik@nvidia.com>
-Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de, krzk+dt@kernel.org,
-        jonathanh@nvidia.com, spujar@nvidia.com, akhilrajeev@nvidia.com,
-        rgumasta@nvidia.com, pshete@nvidia.com, vidyas@nvidia.com,
-        mperttunen@nvidia.com, mkumard@nvidia.com,
+To:     Kartik <kkartik@nvidia.com>
+Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
+        krzk+dt@kernel.org, jonathanh@nvidia.com, spujar@nvidia.com,
+        akhilrajeev@nvidia.com, rgumasta@nvidia.com, pshete@nvidia.com,
+        vidyas@nvidia.com, mperttunen@nvidia.com, mkumard@nvidia.com,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: timer: Add Tegra186 & Tegra234 Timer
-Message-ID: <Yr1pTlG+ncPb1gjO@orome>
+Subject: Re: [PATCH v2 2/6] clocksource: Add Tegra186 timers support
+Message-ID: <Yr1peqpxxnKRb0hq@orome>
 References: <1656527344-28861-1-git-send-email-kkartik@nvidia.com>
- <1656527344-28861-2-git-send-email-kkartik@nvidia.com>
+ <1656527344-28861-3-git-send-email-kkartik@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vd7lLC28doTmyfX4"
+        protocol="application/pgp-signature"; boundary="cBR8FTKly7EDP7kt"
 Content-Disposition: inline
-In-Reply-To: <1656527344-28861-2-git-send-email-kkartik@nvidia.com>
+In-Reply-To: <1656527344-28861-3-git-send-email-kkartik@nvidia.com>
 User-Agent: Mutt/2.2.6 (2022-06-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---vd7lLC28doTmyfX4
+--cBR8FTKly7EDP7kt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 29, 2022 at 11:58:59PM +0530, Kartik wrote:
-> The Tegra186 timer provides ten 29-bit timer counters and one 32-bit
-> timestamp counter. The Tegra234 timer provides sixteen 29-bit timer
-> counters and one 32-bit timestamp counter. Each NV timer selects its
-> timing reference signal from the 1 MHz reference generated by USEC,
-> TSC or either clk_m or OSC. Each TMR can be programmed to generate
-> one-shot, periodic, or watchdog interrupts.
+On Wed, Jun 29, 2022 at 11:59:00PM +0530, Kartik wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
+> Currently this only supports a single watchdog, which uses a timer in
+> the background for countdown. Eventually the timers could be used for
+> various time-keeping tasks, but by default the architected timer will
+> already provide that functionality.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > Signed-off-by: Kartik <kkartik@nvidia.com>
 > ---
->  .../bindings/timer/nvidia,tegra186-timer.yaml | 111 ++++++++++++++++++
->  1 file changed, 111 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra1=
-86-timer.yaml
+>  drivers/clocksource/Kconfig          |   8 +
+>  drivers/clocksource/Makefile         |   1 +
+>  drivers/clocksource/timer-tegra186.c | 508 +++++++++++++++++++++++++++
+>  3 files changed, 517 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-tegra186.c
 
-Rob, I've been wondering about patch application with these DT bindings.
-In the past I've preferred to apply these along with the driver changes
-that implement the bindings. I realize now that that's perhaps a bit
-naive because we've had cases where the driver doesn't fully implement
-everything in the binding as well as cases where the bindings are
-upstreamed without the driver necessarily being upstreamed at the same
-time.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-So I'm thinking that it makes more sense to apply the DT bindings to the
-same tree as the DT changes that add corresponding DT nodes. This would
-also get rid of the (usually temporary) inconsistencies when running the
-DT validation (and even just something like checkpatch) on a DT tree
-that doesn't have corresponding DT bindings.
-
-Do you have any strong preference on this?
-
-Thierry
-
---vd7lLC28doTmyfX4
+--cBR8FTKly7EDP7kt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmK9aU4ACgkQ3SOs138+
-s6H5YA/+JP38fIDSYI7G6PH2+aHJjdG2V1dNqG/fVZBC13jryVWQ6IT8zFdHXxf4
-0TR4H0NwXANXxNNOUIm1/nW+r32ekkyu+BZI5Z+8iyDHEVWBDWP2OL9KA6dTi7BL
-IsxiQ+YrU57t7+C8cVA9hme2e3neVsYLbfB+OnYo+O7E6jh4cnTOSviJ7y6TwIbK
-ESNxtqxgpX41KL+xUiGejk67w/HwTwQ+Muh1cQCqbIF5GmEdmMgo6GUAUmdiDCAs
-YkoQwSq5IQqVIwl7Ap6neo3btmuZHTn3WfIBnlfSGNLLv1rnh23NkJ/ZxAO1P/uR
-wAuy2oSO8GblE71Hc5ZBkfCnp+3KAqiU/XOT4xfmr/mIGKcc47HSVtQAqx51HwPF
-N2Nzd4CvUsasVVx0XGk3QsjlbPdxsqV4HOTQ8s7LY/32u2iK1Azw1uHS4Sat9+m2
-BM/+qwwR0up2Gr4i1kicy2n/OO2F31s4fzliykF2ApPJp8auLynaKM2IEQNUWg9L
-g1nJ4AMELc6lgSkipk0qy8/uy0hOn7rHqI9hZFPbUGMIS2oz5k9kVRcBj4zL4wzq
-Ct2KQs3QjMqx12/LISaRmQLUoCQrfe/vTmhZr+om5M+RJprxLvW9DaT2HhrCBKvJ
-3hqkIw+CDHOyzVxw+LL6oJTUbmGNk3Ta1f5YCOqzbifM3ZnLEJo=
-=m1P7
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmK9aXoACgkQ3SOs138+
+s6FwsA/8DV6vLB6MXZtumwhezE3wsbKfHf83SlGKfBLk8X1grMAMjk+GAO/XPTGs
+lArH01aDGyDdYmJZyhdUpg400lcqkKLGpf1m4qs59YjSRlrS2+3Cdq8NVPvI/6LT
+M1egmja46jPT8FgxNR+p1mrJqUE8/1pXF959whU/uBI9o7E7rXEeUWFTZhTT38Q1
+XGz68FZ05iMPFnstSXueTDpAaW/xTXa/VFKDQ9mnVnQaxdvAn6WXsRWbZLVmQxv8
+M2F0tAONFlvi3wfDsP94oBBPgmpLiF4nr9eh3VuSAkUoRK46k/viRMtYqHUgoIb2
+wYZmb/2SMxs8KeYOxDTztHA1wEEbG3v69r+w9PbxzgBkfnuPUt2KfVarcS+LV13M
+fcBd2XDbqKB+fnMo8ssh/+tmUYrs/6FKYhcBSv4RRIBuyfJG3HEeft9QTsU0jbF7
+U5qRGUtX+7iNx2E5FGS1Klztuc7SK9em+bqN9sZjTq8m7fZ/7QCXovdkJoaxBDbV
+uqfy0Dk5cAOFJt4qZjM02RDtO/x7+Wu4Zt4+skMbkVB3E3vZhTkDlMeh3BnfMM7x
+wc8/X/KiXUGuXbKkFVNB4SaiQAdRgwprb6flc2+Sc0yoc8HhceDx7vs0pGod2rjg
+c2wxVZONssjZG4wJRS9ss2k/oalWCr2v4SPHTG9KaJVVCoQ9WJw=
+=disK
 -----END PGP SIGNATURE-----
 
---vd7lLC28doTmyfX4--
+--cBR8FTKly7EDP7kt--
