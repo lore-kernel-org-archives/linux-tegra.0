@@ -2,83 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F6CC43334
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 10:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B178C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 10:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231958AbiF3KQN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Jun 2022 06:16:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53506 "EHLO
+        id S233722AbiF3KRi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Jun 2022 06:17:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234459AbiF3KQM (ORCPT
+        with ESMTP id S232842AbiF3KRf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Jun 2022 06:16:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD3E4504C;
-        Thu, 30 Jun 2022 03:16:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DFC9BB8295A;
-        Thu, 30 Jun 2022 10:16:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0464C34115;
-        Thu, 30 Jun 2022 10:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656584168;
-        bh=jcZKWVt2cjtK89lhBmxZ8YIRJjZNI/FPZusa5VlI/N0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GO1V87FLObd07KNLLcwvaWddzRv1K4pv7OXda6p+Tcr3NU92e8x7ep8SESYToljbI
-         +sJmDbECw2nWGMMgYuuEoT2mPCaFbckKYLDtd01KZxwKNSnvfO+ZwFxjl6oTwQXXr3
-         ZEOXyEXlCrFQx0ra5Hix83+sN5+7ITnBUE3hzjLEBgWTnGDI1FDEjLe1MFckz3JDqv
-         e6rBZLnCs/X3NwpJkbQsVGk5GqUn7svZPK/MBctvWcT8j+CdxAH0EQwaaJC3rP/Mn0
-         s3YoB8Nf4fK7Rw5OeoQmZMkKLdHP5xrnFiAYzzCr0oq7K8Jgz4WTk7ThKeuGCSPS5e
-         rN4NwhQMjLfGg==
-Date:   Thu, 30 Jun 2022 11:16:03 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Li kunyu <kunyu@nfschina.com>
-Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sound: delete a semicolon
-Message-ID: <Yr1348gai+/fwvfd@sirena.org.uk>
-References: <20220630020347.7148-1-kunyu@nfschina.com>
+        Thu, 30 Jun 2022 06:17:35 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B6D4506C
+        for <linux-tegra@vger.kernel.org>; Thu, 30 Jun 2022 03:17:34 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id d17so20904191wrc.10
+        for <linux-tegra@vger.kernel.org>; Thu, 30 Jun 2022 03:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=c96BIX1fdQoWXVeifIQLvlY9hToa+J8OCLgj66YDpdo=;
+        b=hxR+0DYQzyBeod/6ISMQjw069iwdQP3G6dVo1DQlk4ba7JW7UYZ4O7TE6g9NajuItk
+         p3wuOz4zRGR8CEq/BpalWRVErG0Y0rXGB+22+MVcT5ULiz7KSnNs22YiWKIaBM09kKMw
+         sWlX53ypI0udUXY1yWQEOk32myTSzVneVpmWoBk+l5yc3vElFTUYu8bO9acQI1+lAHZW
+         bHVpgFKSqoXIV+r1jsFOT9efDvWH4IfzT98msNbV6dcn0bgI0Hv97aY925yneWBdby5T
+         6D3frZSyzVLgKQqc86S4j5d0/xodXxI7e8MI049fagc4OBu4uHWmk5vEbZOg1JtZkyJi
+         CYww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=c96BIX1fdQoWXVeifIQLvlY9hToa+J8OCLgj66YDpdo=;
+        b=yop3/8xYrhkZt6zkVjRLiuhCCnNoW0TXDhSoFWEyZbrdNDwq9ZSfy1rGUpJd6T6Mrr
+         YPGcdB7hKEOa1j9fRUcAgJaaDCUicxq+UyR3+YiaMgg5j8ep67PjKZstBEJt7AC6QFHv
+         78Wt9/S4fdq5CEYGqhCdplMkDwnydIYUz+LKyGbwpBWdA6/6UJrbDCCY72G7zjWe0Us2
+         IRT9ZePcjux7jTM30K8yqXy4tRRZ9KnnGm+fzdu/Ga1c8fsQm7cxIGD+ZDli/wNNN598
+         B1abl7ZYilNHL4dlSJxWWi1w7W+4VxLl2uqyVzjeCwcpFfqjBUv/9zZGd4aBPfxsRk5J
+         qg2g==
+X-Gm-Message-State: AJIora/UPQt3P8U8JsbUz3WnsiT8SflXQ0S4x7nD5Mo6PMyzQutDfOZw
+        3uqfBspp0NvIS24HE6+DcX5Ucw==
+X-Google-Smtp-Source: AGRyM1sbvmqN9/tkpqOkQ+1clLVa6+kww2xKsNUSTqdo01t1OTCv0ffjXeaKZcHNWk59VZfg9riTNA==
+X-Received: by 2002:a5d:5a84:0:b0:21b:92c7:a7f with SMTP id bp4-20020a5d5a84000000b0021b92c70a7fmr8055287wrb.586.1656584252619;
+        Thu, 30 Jun 2022 03:17:32 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id k42-20020a05600c1caa00b003a04722d745sm2184242wms.23.2022.06.30.03.17.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jun 2022 03:17:32 -0700 (PDT)
+Message-ID: <1d9ed3ac-289f-88ea-ad08-0031e9bde1bb@linaro.org>
+Date:   Thu, 30 Jun 2022 12:17:30 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eFiyZ/QO4UMV0jds"
-Content-Disposition: inline
-In-Reply-To: <20220630020347.7148-1-kunyu@nfschina.com>
-X-Cookie: Today is what happened to yesterday.
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 2/3] thermal/drivers/tegra: Remove get_trend function
+Content-Language: en-US
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>, rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20220616202537.303655-1-daniel.lezcano@linaro.org>
+ <20220616202537.303655-2-daniel.lezcano@linaro.org>
+ <b4adef64-cc2c-14ab-b16d-3f8c27f3834b@collabora.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <b4adef64-cc2c-14ab-b16d-3f8c27f3834b@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 29/06/2022 22:05, Dmitry Osipenko wrote:
+> On 6/16/22 23:25, Daniel Lezcano wrote:
+>> The get_trend function does already what the generic framework does.
+>>
+>> Remove it.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
 
---eFiyZ/QO4UMV0jds
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[ ... ]
 
-On Thu, Jun 30, 2022 at 10:03:47AM +0800, Li kunyu wrote:
-> extra semicolons could be deleted.
+>>   static void thermal_irq_enable(struct tegra_thermctl_zone *zn)
+>>   {
+>>   	u32 r;
+>> @@ -716,7 +685,6 @@ static int tegra_thermctl_set_trips(void *data, int lo, int hi)
+>>   static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
+>>   	.get_temp = tegra_thermctl_get_temp,
+>>   	.set_trip_temp = tegra_thermctl_set_trip_temp,
+>> -	.get_trend = tegra_thermctl_get_trend,
+>>   	.set_trips = tegra_thermctl_set_trips,
+>>   };
+>>   
+> 
+> Guenter fixed the LM90 driver problem. There are other regressions in
+> the latest -next which complicate testing, but I can't see any problems
+> from the thermal side.
+> 
+> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+Great! Thanks for taking the time to test
 
---eFiyZ/QO4UMV0jds
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmK9d+IACgkQJNaLcl1U
-h9DF7Qf8CAYvofkRcK5v5MvU90SRuDZNQcjuoWbLJ9bGdMBpQRcmMqGmFj1+aP/G
-zXcMRgWG8gFi/MHnzncM8sRVIcubHZZtsNEJ7sAoCqtEwMbCYk3GrW+wgA4gToFa
-sRWySXtIF/sxBXWuDyEWa/ck2G0LzRJHUZzpr1DsPP6mqe00ICHmRLSgXIMIcpIJ
-Xb7uwh1hBKxvBDDkLOEh00deNY/ZgyqWvcFPPXu+DmaN+4D2zHo6il4S9iOonN5M
-cR1PsG2fR5QMTEYsXaAGRYbRdK77LSiGPWYo2nNeTwy9Z/CgLVRlK+4++JojcGsW
-wjsHxT8Rs8paU1+HCuWYf9qq9E5K8w==
-=PsW0
------END PGP SIGNATURE-----
-
---eFiyZ/QO4UMV0jds--
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
