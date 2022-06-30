@@ -2,112 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7FBC43334
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 09:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD15CCA47E
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 09:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234249AbiF3JQF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Jun 2022 05:16:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44712 "EHLO
+        id S232862AbiF3Jda (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Jun 2022 05:33:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234223AbiF3JPh (ORCPT
+        with ESMTP id S230400AbiF3Jd3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Jun 2022 05:15:37 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C12138D97;
-        Thu, 30 Jun 2022 02:15:01 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id o4so22356034wrh.3;
-        Thu, 30 Jun 2022 02:15:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Qs5w4mXuxTGM+ANX6aO1XbOmipxzruUkk3yjzx/1m5M=;
-        b=Nxg1/Tz+7NmXT7PN4DRl96HH/dnYCeyzAmCpGGPJO94V2LQY/Pv9ZvvK+KXVSFyWJG
-         LmEffNuq+MGRK6Ln5VbwJQSDeX0pvMljGL2Wo0URtPtHOkocBs4W7eDxv3Wid809cqdw
-         wEEcDPnD9Ve0MjXKzX5TEufvyz8DjbHkqJCpxBOlKVLxM99p76zxsb/gk7m7rcI+bICb
-         iZ+cbJhluyhfCKjcdoeBlKsfuy5AU4hFNHDiBeGfiXz3EkTEU4vi7dFUEjMWTQjApXVd
-         h0yF3DBfiMAVmKMex/PMYCPJ5Z2V2nOXNhJu5tTWJMrUaa/434dvcVTtiZnSduSf+jzQ
-         DwVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Qs5w4mXuxTGM+ANX6aO1XbOmipxzruUkk3yjzx/1m5M=;
-        b=t7Fr6M0KK53FKbs2XjFDMdFe9m3BaDnvJbFk/2+djyWNtgwCdoqNmv4gfHCIhLwGUm
-         OoKWD+AIxu7RwpGUBA4DXkGzc/RH6ysYyOzGK1niKtxsBbuNiND4e+SeCIxhAkgYfY4h
-         VogjAJd+ac2yIUU7LiAeiVRuvelvJYAFtaEBw17JCd0B8cXlgKfiYUC7L+64Afs/QR8m
-         J4Qx9DTGtkzmhuDQZevvy/Si6k4rF+v7V8449F0WZ+YQGUJHQu3Z/Xrmb7j+DbDtMPmM
-         PMKn2KB0h6CWRsUcc+1fLSyvLvEytxdx0XfwdXA7i+E4X/8DEg5HYMNNk5iKux0UsLNt
-         MG7A==
-X-Gm-Message-State: AJIora/YuY0A9K2tTNS1KQ4Qy3YPGGFnBtk6U3Zti4heM2x4XwwXH9JI
-        98MLPYcEtRXVjyxBJuVVsKg=
-X-Google-Smtp-Source: AGRyM1uSdCfWkJvQdIqiusHWM74RinDF4sSDArFlNmspUI7tsygjA00oqo2g1lG7SW6cb7DySb0KMQ==
-X-Received: by 2002:a5d:64ae:0:b0:21b:b923:7ad5 with SMTP id m14-20020a5d64ae000000b0021bb9237ad5mr7068522wrp.460.1656580499792;
-        Thu, 30 Jun 2022 02:14:59 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id m2-20020adffa02000000b0021d163daeb0sm11623695wrr.108.2022.06.30.02.14.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 02:14:58 -0700 (PDT)
-Date:   Thu, 30 Jun 2022 11:14:57 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Kartik <kkartik@nvidia.com>
-Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
-        krzk+dt@kernel.org, jonathanh@nvidia.com, spujar@nvidia.com,
-        akhilrajeev@nvidia.com, rgumasta@nvidia.com, pshete@nvidia.com,
-        vidyas@nvidia.com, mperttunen@nvidia.com, mkumard@nvidia.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] clocksource/drivers/timer-tegra186: Add support
- for Tegra234 SoC
-Message-ID: <Yr1pkVSyL5c2Upot@orome>
-References: <1656527344-28861-1-git-send-email-kkartik@nvidia.com>
- <1656527344-28861-4-git-send-email-kkartik@nvidia.com>
+        Thu, 30 Jun 2022 05:33:29 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7771E13CD9;
+        Thu, 30 Jun 2022 02:33:25 -0700 (PDT)
+X-UUID: d9a66131010f4958a9a685e7c5722af9-20220630
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.7,REQID:c6e5360c-aab8-43c5-8966-20f89b8b8363,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:87442a2,CLOUDID:2ace0d63-0b3f-4b2c-b3a6-ed5c044366a0,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
+        ,QS:nil,BEC:nil,COL:0
+X-UUID: d9a66131010f4958a9a685e7c5722af9-20220630
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1924593644; Thu, 30 Jun 2022 17:33:20 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Thu, 30 Jun 2022 17:33:18 +0800
+Received: from mhfsdcap04 (10.17.3.154) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 30 Jun 2022 17:33:16 +0800
+Message-ID: <63969062a55b1c520f276b9a4b5f79faa12da20b.camel@mediatek.com>
+Subject: Re: [PATCH v3 1/5] iommu: Return -EMEDIUMTYPE for incompatible
+ domain and device/group
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Nicolin Chen <nicolinc@nvidia.com>
+CC:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Baolu Lu <baolu.lu@linux.intel.com>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "jordan@cosmicpenguin.net" <jordan@cosmicpenguin.net>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "yangyingliang@huawei.com" <yangyingliang@huawei.com>,
+        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
+        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "marcan@marcan.st" <marcan@marcan.st>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Date:   Thu, 30 Jun 2022 17:33:16 +0800
+In-Reply-To: <YrysUpY4mdzA0h76@Asurada-Nvidia>
+References: <20220623200029.26007-1-nicolinc@nvidia.com>
+         <20220623200029.26007-2-nicolinc@nvidia.com>
+         <270eec00-8aee-2288-4069-d604e6da2925@linux.intel.com>
+         <YrUk8IINqDEZLfIa@Asurada-Nvidia>
+         <8a5e9c81ab1487154828af3ca21e62e39bcce18c.camel@mediatek.com>
+         <BN9PR11MB527629DEF740C909A7B7BEB38CB49@BN9PR11MB5276.namprd11.prod.outlook.com>
+         <19cfb1b85a347c70c6b0937bbbca4a176a724454.camel@mediatek.com>
+         <20220624181943.GV4147@nvidia.com> <YrysUpY4mdzA0h76@Asurada-Nvidia>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YaXGqWVK0MNVNA+1"
-Content-Disposition: inline
-In-Reply-To: <1656527344-28861-4-git-send-email-kkartik@nvidia.com>
-User-Agent: Mutt/2.2.6 (2022-06-05)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Wed, 2022-06-29 at 12:47 -0700, Nicolin Chen wrote:
+> On Fri, Jun 24, 2022 at 03:19:43PM -0300, Jason Gunthorpe wrote:
+> > On Fri, Jun 24, 2022 at 06:35:49PM +0800, Yong Wu wrote:
+> > 
+> > > > > It's not used in VFIO context. "return 0" just satisfy the
+> > > > > iommu
+> > > > > framework to go ahead. and yes, here we only allow the shared
+> > > > > "mapping-domain" (All the devices share a domain created
+> > > > > internally).
+> > 
+> > What part of the iommu framework is trying to attach a domain and
+> > wants to see success when the domain was not actually attached ?
+> > 
+> > > > What prevent this driver from being used in VFIO context?
+> > > 
+> > > Nothing prevent this. Just I didn't test.
+> > 
+> > This is why it is wrong to return success here.
+> 
+> Hi Yong, would you or someone you know be able to confirm whether
+> this "return 0" is still a must or not?
+> 
+> Considering that it's an old 32-bit platform for MTK, if it would
+> take time to do so, I'd like to drop the change in MTK driver and
+> note in commit log for you or other MTK folks to change in future.
 
---YaXGqWVK0MNVNA+1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes. Please help drop the change in this file.
 
-On Wed, Jun 29, 2022 at 11:59:01PM +0530, Kartik wrote:
-> The timer IP block present on Tegra234 SoC supports watchdog timer
-> functionality that can be used to recover from system hangs. The
-> watchdog timer uses a timer in the background for countdown.
->=20
-> Signed-off-by: Kartik <kkartik@nvidia.com>
-> ---
->  drivers/clocksource/timer-tegra186.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+Sorry I don't have the board at hand right now and I could not list the
+backtrace where this is needed(should be bus_iommu_probe from the
+previous debug...)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> Thanks
+> Nic
 
---YaXGqWVK0MNVNA+1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmK9aZEACgkQ3SOs138+
-s6H2kxAAnVIhlBIvG4c9Owk/ZtFX96RF4Jt9EWdPmTyr/G9sYbZVar+FkfzfE6ug
-4fOwrV8YFUx1sRuxvVpd/hRjBKcwMsoGHfFvfh26xaGgsqZRcua7/vNtzKxuGEF4
-18mfJ17pJdksMGeUyXwaFz6hfqpNxJjTQ1NV6eCQoQN/tSsvVNtQ1odfvDcI96+K
-1GQ/YfTJfl4r4luhl+ba7hXVmEAnUOpgLUrYZ0pjXxAPTa5qRJC1Z+kphzno6v5F
-p9I2vgFf4vh7Zxdeu5EreGlkR0KhKmkmFVoYMS9xa+3m1dHFra2850M+gKank0+k
-4p0FHWpyngwm1Q/8BTeFaIPZ57van8l3PAcnnRkTd5ZiiiAUfy2wyohSFDE0aDr6
-Uhx+ueIxYfT26zOv/iKMd78yvayTQKQnOfqgny5KgbjUwmJMvFqwFjmkt43NVTB7
-0LgCvgBasb/ZC5c+iFCFNy+FmXhzdFapGr9gaH+aHpH/sXo4F4SXWPOjbOGD2oJn
-QODrlUBFbJoIk4AUnWIt6+QxZPNXpT7MCfuQqAq2rzSLb3c/VukEZ2oYm74DtZL3
-VD8pgW8zZtd2Hr73hErbkK/7LhTlUq9/6AffaNOaN9IfARrdJ1HOpddipsdeeyRu
-5JEdLy7ugdRbPxDvsTi3yHb4J065d3JcRFrw+vATciL716Y6LyA=
-=Ma1N
------END PGP SIGNATURE-----
-
---YaXGqWVK0MNVNA+1--
