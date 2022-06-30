@@ -2,162 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CD4C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jun 2022 23:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF91C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jun 2022 00:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbiF2XGK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jun 2022 19:06:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48190 "EHLO
+        id S229570AbiF3AXK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jun 2022 20:23:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbiF2XGK (ORCPT
+        with ESMTP id S229498AbiF3AXJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jun 2022 19:06:10 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBF11DA7F;
-        Wed, 29 Jun 2022 16:06:08 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 97A3B660177B;
-        Thu, 30 Jun 2022 00:06:04 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656543967;
-        bh=MHzNXwrpamEQJfSn517DbHauHiLavqph9+6FDdh8cW0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=R3tBCTFOx5La3aI3IuCM416s6ri/Rh+h8/CoISbxHReBFWX7oD8ghFIqxKIheLH5w
-         K/nf9MDe20o+qs6uI9V4q7kgllcSj0UFzIr7895NwJrkgQscojZeKpuMoIZ/sXAhJ/
-         ByY76oOA2S/Qn7NuU44zmtC8ngpXqT/Sk6mv6EXPgD3t0Yu7tgBa91vpQ3RjptNtcQ
-         8wCG1+oVsnGfEAp76m0cvoIjw+tsFZcA1BMMt46ZPsluMUFRdOJVorWacWuPAU7oSR
-         BcNWnLcHirxsy7f3PCwGEKwWPOZCORt9oP3UUBVzLpplCao7w54md/Ljni//qJgOjB
-         FFn9vf973GUvQ==
-Message-ID: <467a1cee-ba8c-98f3-0398-2a7a5a90b5c3@collabora.com>
-Date:   Thu, 30 Jun 2022 02:06:01 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v6 02/22] drm/gem: Move mapping of imported dma-bufs to
- drm_gem_mmap_obj()
-Content-Language: en-US
-To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
-        <thomas_os@shipmail.org>
-Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com, linux-media@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Gert Wollny <gert.wollny@collabora.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Wed, 29 Jun 2022 20:23:09 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF8AAE66
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Jun 2022 17:23:07 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id d129so16857314pgc.9
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Jun 2022 17:23:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=bDOI/zGOgy4m2A46KlbmsZQqwXs7u16Ivj5OzK4Omws=;
+        b=dBAbOQvACTkWGpYJZOYa/5H1HMw07URAlIcpTn2jVmcLyMyX0d6J5/z3eVKWA25JrH
+         J8BYM4elvOVARY+ou+ESfx4Wym+pWl0k7GW3DRQepmSXpJQk+POg9EVe+rVCKa/3uILR
+         f2iDtBo+4pVPde+7owd6f5WGub2b8jDDwEO10azRYJyUzt5JOIDmf4gz6nFn2gAlPlRi
+         Mw026bPJiMBkvM6zEK2H6MAMVHoBK2l7JrSFJSuOt7WH1lSN2IIf/RR7vG1aaCfSCnhc
+         LEG4HQ4QOwrq6OpN5bNdk1L2eeLmu9g8uItUaAWxTQyUvfE0c/HXTdzf2yb9gFUobQlZ
+         77qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=bDOI/zGOgy4m2A46KlbmsZQqwXs7u16Ivj5OzK4Omws=;
+        b=rwEjJZkaV1qyn5i2+8SgvR2QfA+CgrLgiBrEAGyqS40o/cU915eaBoMIUriXYJThK/
+         iLSp68uKRgaMwdL8tk5H3sjd6J+HLW2lKxnL4uBsKmNdHL2Ben6covqW7NclL/MKfwRP
+         PM5socv3G8ausvONg1483k/k24APqdcdmPacHB8iA9fdpHlQuGaLAMNsywyZAfTYoL06
+         i6QxWIUhVBR3lZ4ZbZE4hYduvTcyQCY6RKy3dxr/EAHZMqmURYwLYzOSFbzzMBdg8oL+
+         TX1DOjxYg9G88zwAXZKkjOVVK5nCCViQLmLIne7/cbDtl6uk7lVRExtNYRBEYvNnwbBB
+         guDg==
+X-Gm-Message-State: AJIora8hYJvofaefLYMvw7ZSyoUoo785CbDYxteg8BUNbqOKDSx3HB56
+        NO3P1BBH4yE9UClkNnx5yGB9xg==
+X-Google-Smtp-Source: AGRyM1sxK5ymsefnvphBWk7lsdcyv9A0WQiBrMsM4q2L26HWA3zQJvGsemB0leRtjJVtuBmKMr3/6g==
+X-Received: by 2002:a05:6a00:a1f:b0:525:3ad6:fb7e with SMTP id p31-20020a056a000a1f00b005253ad6fb7emr2137905pfh.68.1656548587355;
+        Wed, 29 Jun 2022 17:23:07 -0700 (PDT)
+Received: from localhost ([122.172.201.58])
+        by smtp.gmail.com with ESMTPSA id 142-20020a621494000000b0052285857864sm12472325pfu.97.2022.06.29.17.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 17:23:06 -0700 (PDT)
+Date:   Thu, 30 Jun 2022 05:53:03 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
- <20220526235040.678984-3-dmitry.osipenko@collabora.com>
- <b8271f0c-d6a3-4194-1959-e112859756a3@shipmail.org>
- <c0273ac2-c87c-2612-03d4-dc52510b22f7@collabora.com>
- <b4086751-9bff-ea5e-93fc-ce2c513b129b@shipmail.org>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <b4086751-9bff-ea5e-93fc-ce2c513b129b@shipmail.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 22/31] soc/tegra: Migrate to dev_pm_opp_set_config()
+Message-ID: <20220630002303.qdqzx2czz7d3msnk@vireshk-i7>
+References: <449b344f037c7ef1970bc84d31e0d4c4cb4d2951.1653564321.git.viresh.kumar@linaro.org>
+ <20220624004831.po35sowzfo4c47b3@vireshk-i7>
+ <20220624005700.oj4etaajbutvsym7@vireshk-i7>
+ <73d39022-c6fc-0c21-cb68-9714846f02bf@gmail.com>
+ <20220627064526.2nkezq4nufpkl4y2@vireshk-i7>
+ <ecc72279-0892-d5ab-689d-87b8fba5147e@gmail.com>
+ <20220627072104.ir7kujhezxhzl6a7@vireshk-i7>
+ <20220628070943.5tfyad63rh6niq6x@vireshk-i7>
+ <a0155aeb-b209-07e1-747a-594a755f54fc@collabora.com>
+ <f2acd51e-24f6-aa84-cfd4-372dd5e30aa0@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2acd51e-24f6-aa84-cfd4-372dd5e30aa0@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/29/22 11:43, Thomas Hellström (Intel) wrote:
-> 
-> On 6/29/22 10:22, Dmitry Osipenko wrote:
->> On 6/29/22 09:40, Thomas Hellström (Intel) wrote:
->>> On 5/27/22 01:50, Dmitry Osipenko wrote:
->>>> Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
->>>> handle imported dma-bufs properly, which results in mapping of
->>>> something
->>>> else than the imported dma-buf. For example, on NVIDIA Tegra we get a
->>>> hard
->>>> lockup when userspace writes to the memory mapping of a dma-buf that
->>>> was
->>>> imported into Tegra's DRM GEM.
->>>>
->>>> To fix this bug, move mapping of imported dma-bufs to
->>>> drm_gem_mmap_obj().
->>>> Now mmaping of imported dma-bufs works properly for all DRM drivers.
->>> Same comment about Fixes: as in patch 1,
->>>> Cc: stable@vger.kernel.org
->>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->>>> ---
->>>>    drivers/gpu/drm/drm_gem.c              | 3 +++
->>>>    drivers/gpu/drm/drm_gem_shmem_helper.c | 9 ---------
->>>>    drivers/gpu/drm/tegra/gem.c            | 4 ++++
->>>>    3 files changed, 7 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
->>>> index 86d670c71286..7c0b025508e4 100644
->>>> --- a/drivers/gpu/drm/drm_gem.c
->>>> +++ b/drivers/gpu/drm/drm_gem.c
->>>> @@ -1038,6 +1038,9 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj,
->>>> unsigned long obj_size,
->>>>        if (obj_size < vma->vm_end - vma->vm_start)
->>>>            return -EINVAL;
->>>>    +    if (obj->import_attach)
->>>> +        return dma_buf_mmap(obj->dma_buf, vma, 0);
->>> If we start enabling mmaping of imported dma-bufs on a majority of
->>> drivers in this way, how do we ensure that user-space is not blindly
->>> using the object mmap without calling the needed DMA_BUF_IOCTL_SYNC
->>> which is needed before and after cpu access of mmap'ed dma-bufs?
->>>
->>> I was under the impression (admittedly without looking) that the few
->>> drivers that actually called into dma_buf_mmap() had some private
->>> user-mode driver code in place that ensured this happened.
->> Since it's a userspace who does the mapping, then it should be a
->> responsibility of userspace to do all the necessary syncing.
-> 
-> Sure, but nothing prohibits user-space to ignore the syncing thinking
-> "It works anyway", testing those drivers where the syncing is a NOP. And
-> when a driver that finally needs syncing is tested it's too late to fix
-> all broken user-space.
-> 
->>   I'm not
->> sure whether anyone in userspace really needs to map imported dma-bufs
->> in practice. Nevertheless, this use-case is broken and should be fixed
->> by either allowing to do the mapping or prohibiting it.
->>
-> Then I'd vote for prohibiting it, at least for now. And for the future
-> moving forward we could perhaps revisit the dma-buf need for syncing,
-> requiring those drivers that actually need it to implement emulated
-> coherent memory which can be done not too inefficiently (vmwgfx being
-> one example).
+On 29-06-22, 18:03, Jon Hunter wrote:
+> Today's -next is also working fine for me too!
 
-Alright, I'll change it to prohibit the mapping. This indeed should be a
-better option.
+Thanks.
+
+I hope all the trouble with core update was worth it :)
 
 -- 
-Best regards,
-Dmitry
+viresh
