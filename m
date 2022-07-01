@@ -2,25 +2,25 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8246C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 21:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD42ACCA483
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 21:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231146AbiGAVpG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Jul 2022 17:45:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60146 "EHLO
+        id S231745AbiGAVpP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Jul 2022 17:45:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbiGAVpF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 17:45:05 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2088.outbound.protection.outlook.com [40.107.92.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A80E5C94C;
-        Fri,  1 Jul 2022 14:45:04 -0700 (PDT)
+        with ESMTP id S229572AbiGAVpM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 17:45:12 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D846D56B;
+        Fri,  1 Jul 2022 14:45:11 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jI9pn2CQa9tVt/zSVo7mys2gbuXO+DSJzWOl6PXjlIN0yJH2vR5Y1P6+lTVm4oC349Q66VXWoSvXsImmOaIJ/Qx24RzUopFkL6YNcR8y1uLH2A5MPgLrHxf3mDf69wutcIMjFJSxKFNXrQfHf7K2+ESau4dWORBB0Qw0Jst9VlqUUmUKLMXA+2ozllPuo7F+FqJ6sZBIolryhSQXlGqmDXfA4sYcmKak1y7cZODSySxB2dVIjT3+RoL7Pnju/Sra/KRxHQPFpf3iFlFGvJ+FclbjdDt6xWAoIWcu3KtR3WQ9MvsmmUDPvjOr7zCu9EGl5z97X09SiBY5796mnGnBhw==
+ b=SBQqz/pSopS1qzI6QG/1iDKJnfcjN8CfvpFdQGmS6DX8SZHLU5YHSYx6UhJgjHjrzqErM8O0wWZnE6TtdJ7f9OzgeTSC1pfD/meZQuW6zbSFLsJccBsiLX4DSXKk24q3yL6PjmroVVhSYkmoW00QPIV0m3QpbVaWVlaxl6kO0oDeWgNxDkzQSTAc2naBi69IWxtLZFaN9CmV4sdZsoGkL+D4ylpq0HtGhL+lSzNZYcB34InfCC1nJg7ffEt2quRosnUurJ1shZdqc9iNam5CxAXruxGS8x7XghSyRAyYkFFNbwC4C23qGuyF/qVOFhLqh2y8eHAq3Umg1a3gmX3g3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VBSZ/8mCoG3UGXcMOCHLX5phuetsyzqVOcV/4EW2NGc=;
- b=occ9A/aqGOLEniGSs5RVfKDEYNIigY2cdSuXIsi4qNPbiGX4NbwL2jUNuXbZ6aF7xBgJ9qKpMfrqbsZR6nEzE2oE7RcBrQoVuWoykAdESfkiGeQPYKP6EANb5xqgoqiCgPSDB+zIWg+grBe4yfSRJT+t3QKYoFxz0ePRkkkF7HQQan0MVtripoE0cYT6PWThpC1240GVhReuV28Rh/KGOKeivP9jfOCgGNkBr0IiS7pSheZSiO+yrkii3FStoSDeLQu3PDGNJHqHAjLgQOQVfsLSZghFGMYgL8owqCTpKIuVJIXELW3K2k526LiciFif7Z+acNSIxKgLQTqXyJCMzA==
+ bh=JPSGFk9Xx7MdNiI8/CiOFYiI5dvrJ58k+niwmyR8Gk8=;
+ b=Dveucd0BPOjb5+0sVHIRPtfKyZ6FGA8ZdGDadWrW/nhwnHCNUKrDdT5z+SLNyC0DuDfVAnrGUWS3iMh4q86aPdUl4sEEhbQTmLlMbYqtbkrGLcq0rIpnvIt1p+schJ0s1BT9e6ozikP+wc19rgdA7nPqZ/bdqoG6yVhPREYwUHxUX1pkLG9nAaP3v4F47HHEYRXn1Oq0N43OAR5AhPaeAMQDL1E+oH0etulD3vydHqC6Hfks8j2zyCWQXIF6G2NAG5QVC2Eko2z3Kt3CtnNivfO4KR4VQAE3Gou69n5yny9CLDW1uIcRE4HiMAuMNipmRHbAY6qH5C5gZztRESu6cw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  12.22.5.234) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
@@ -28,18 +28,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VBSZ/8mCoG3UGXcMOCHLX5phuetsyzqVOcV/4EW2NGc=;
- b=k8pG/fJCFUOLx+I8ynI7pEC7H/lQbxgIAh8DR5xVTImRjjzI/+rLzZmRct2GzDh1baxvIsi5P5OSmjJozRsPQhwRDWHIaPszh5pkZu14uOsiaff2kQRBC03ZzWYAMv3shrXNg/l05mj060+UXVVUGosZ18Lhdnxb5HpiGlaMliPUaX2pDCdkN5MP3LNaxNaheRdx52KGHlE9NU2HfTBBx29sH4XOI4BUWavkbJ2bGxddojzEWo0i+qgaMyoxK5zTAFj8Atsq9OvIVPbsHP0E7avmpYt7ChWV7WRH2QltbbJioSqbVOk+YG+f53wZltG8HvC/pGR9/GsuH6j1rxydBg==
-Received: from BN6PR13CA0063.namprd13.prod.outlook.com (2603:10b6:404:11::25)
- by BL3PR12MB6547.namprd12.prod.outlook.com (2603:10b6:208:38e::6) with
+ bh=JPSGFk9Xx7MdNiI8/CiOFYiI5dvrJ58k+niwmyR8Gk8=;
+ b=aHphjtJwbBsB9cYBtz3gqHeT9QwJIrAmgke+XF4ih51NS7c55DlCaut1PiLKMtm10+y6w+InER4y2JcUkw3d7UAhA+Bud6tNxQNGO6OLc/YVI6f8Euvx2RTzV1e+D3p5EVX6h4BEUzJCjNp5D6jT5Syk8ZX6wwtP5rCPhnBM0uw03Dgfm77mEDW9iA5pi9KuOg+9+Z5v3J/Vqxvle8nCCGT55VD4DHpq9JHMC72MxIjvDimpyvxz52O45gNq4jDiR1IWBznk2JtSDnvDTaDg4nFN7HTQGa8UTrogd6Zgt9kxudcgkpLOGhoRgKjJ4rV3YQTpJVzLcEvjE5U1tcSORw==
+Received: from DM6PR18CA0024.namprd18.prod.outlook.com (2603:10b6:5:15b::37)
+ by CH2PR12MB4149.namprd12.prod.outlook.com (2603:10b6:610:7c::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.15; Fri, 1 Jul
- 2022 21:45:02 +0000
-Received: from BN8NAM11FT030.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:11:cafe::6f) by BN6PR13CA0063.outlook.office365.com
- (2603:10b6:404:11::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.11 via Frontend
- Transport; Fri, 1 Jul 2022 21:45:02 +0000
+ 2022 21:45:10 +0000
+Received: from DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:15b:cafe::a) by DM6PR18CA0024.outlook.office365.com
+ (2603:10b6:5:15b::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.17 via Frontend
+ Transport; Fri, 1 Jul 2022 21:45:10 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -47,19 +47,19 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  12.22.5.234 as permitted sender) receiver=protection.outlook.com;
  client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (12.22.5.234) by
- BN8NAM11FT030.mail.protection.outlook.com (10.13.177.146) with Microsoft SMTP
+ DM6NAM11FT049.mail.protection.outlook.com (10.13.172.188) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5395.14 via Frontend Transport; Fri, 1 Jul 2022 21:45:02 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL101.nvidia.com
+ 15.20.5395.14 via Frontend Transport; Fri, 1 Jul 2022 21:45:09 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL101.nvidia.com
  (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 1 Jul
- 2022 21:45:01 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ 2022 21:45:09 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 1 Jul 2022
- 14:45:00 -0700
+ 14:45:08 -0700
 Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server id 15.2.986.26 via Frontend
- Transport; Fri, 1 Jul 2022 14:44:58 -0700
+ Transport; Fri, 1 Jul 2022 14:45:06 -0700
 From:   Nicolin Chen <nicolinc@nvidia.com>
 To:     <joro@8bytes.org>, <will@kernel.org>, <marcan@marcan.st>,
         <sven@svenpeter.dev>, <robin.murphy@arm.com>,
@@ -80,124 +80,121 @@ CC:     <suravee.suthikulpanit@amd.com>, <alyssa@rosenzweig.io>,
         <linux-arm-msm@vger.kernel.org>, <linux-s390@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>,
         <virtualization@lists.linux-foundation.org>, <kvm@vger.kernel.org>
-Subject: [PATCH v5 0/5] cover-letter: Simplify vfio_iommu_type1 attach/detach routine
-Date:   Fri, 1 Jul 2022 14:44:50 -0700
-Message-ID: <20220701214455.14992-1-nicolinc@nvidia.com>
+Subject: [PATCH v5 3/5] vfio/iommu_type1: Remove the domain->ops comparison
+Date:   Fri, 1 Jul 2022 14:44:53 -0700
+Message-ID: <20220701214455.14992-4-nicolinc@nvidia.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220701214455.14992-1-nicolinc@nvidia.com>
+References: <20220701214455.14992-1-nicolinc@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f14d8d5c-a732-4c23-06cf-08da5baaf447
-X-MS-TrafficTypeDiagnostic: BL3PR12MB6547:EE_
+X-MS-Office365-Filtering-Correlation-Id: 93708aec-57cd-4372-09f8-08da5baaf899
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4149:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7zO5x+QGb3Zd5ZjZKBQKOhFjKUIYy5TCTTzdgh+ejGhsQUx6bBsj/LM6OUG7?=
- =?us-ascii?Q?n+Hhs2AuSCSyQnVu5q6UHAa5bS5D5pbi+P4etUGyypBJvbPCZEDs2bS3zdpV?=
- =?us-ascii?Q?Oanv+vjZrGmOFOCvfsbr96fZGC+pYjFwl/Y6jXVXxZomZaqhf+whpPAbw1R4?=
- =?us-ascii?Q?CYRv8jYJJqMHoklq7+zOwxIfeQgj7a0JaDfYiiWqwTc62nXiYTifIVx8Amtz?=
- =?us-ascii?Q?AEpUWgrCoCOvPIgfv7h2MwxxHoiyfZQo8Ou2QV5NkrF/0jfG1uBOgXB1Cx5j?=
- =?us-ascii?Q?WDL6ag9lBplllEzEHv65FiEui3RSdLU5FMV81w5IaM7jDu3ek+xhUxDFUnFM?=
- =?us-ascii?Q?zYRRrSwHU7MzFPj/eshZ9BM0jm5mhksn5AsNrSDcnjBi+jlQ5ctI4kPqp32I?=
- =?us-ascii?Q?TBdyTgNlJ26cFV1SgFVG9PIykmrgzGjfoHY3gGtSlDowHAP71XCc+jW3vGzr?=
- =?us-ascii?Q?hNJUtK9pmiOZ3/z31BWqvpy1jhzDsY0biIrKet4menfTrscKTKIXmYKws9NZ?=
- =?us-ascii?Q?wIFEU3rwBPNll+3M4uZQ7QRiJWL03AoE3g3JdOHARDV0qQNkC4sCuFgoj+dn?=
- =?us-ascii?Q?yzRaSoPrFioKNrbXzq1Pw1mE9U5uxMhKIQhoHodLyY2qdXodyyM/iA2OGluu?=
- =?us-ascii?Q?3hxg9nSt0uEFXnsHP8RdNWLCaHwEmADHrbpW8iBnDzbXl968TzT4TJwQomCw?=
- =?us-ascii?Q?9Pb99Lx6mJKiLKlVU0uhLwZTxnxF1ycztruf8dSMbSrRX2cNWOIGP0qVJKYD?=
- =?us-ascii?Q?VsMUzKKttjv2lv+TcQdYG/7rQryAivdApfIArgJmAO1+E42WU3WiyZSPh0x3?=
- =?us-ascii?Q?PWi/EKiRTIz40LaDtbQaPPD3G9BIq2ZiRjiahDPdWURmgY+03MqZYSWNBQMu?=
- =?us-ascii?Q?hrYyP3yHEdaXpU0cF0WJFPZbwiPraAdfd9zufM1aDeWDlyadY5jvyCql+2EU?=
- =?us-ascii?Q?h58tSJdsADRSAgxD2Z6cPMHlnsTJc8piRfQsLnZbMLVxgwRVuawbuOsYhsdF?=
- =?us-ascii?Q?pMpXISYb4aaZZJalVIX301iqhXefaNwWC/9NOPY+HD1PQyk=3D?=
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(376002)(136003)(396003)(39860400002)(46966006)(36840700001)(40470700004)(316002)(7696005)(7416002)(7406005)(26005)(86362001)(5660300002)(8936002)(478600001)(110136005)(70206006)(4326008)(70586007)(8676002)(82740400003)(356005)(6666004)(966005)(81166007)(54906003)(47076005)(336012)(426003)(83380400001)(40480700001)(40460700003)(36756003)(1076003)(186003)(921005)(82310400005)(41300700001)(2906002)(2616005)(36860700001)(83996005)(2101003)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?MbIWIBAl/l18QMJLzy4TV1FhJRm8Y4YIEePb27DcYTO6qDC5Yp3yyUYBZEtt?=
+ =?us-ascii?Q?LpV8A0quJtgBAO1mLqeXQsuna3vAp7FYQwLGt3TXGzYj5WnHWNiFJFo9z8jL?=
+ =?us-ascii?Q?hRdE0DR0z+WIdQCwDiQkdWIgBXhViDSTmMS+nAnpPHytn9bvhxYbhZmQWyyD?=
+ =?us-ascii?Q?rwEKaqri1PTLpUQXoOdXeZgrEPX+qAGTA01PNx4bFxawW6aOGUvJwkjLGNak?=
+ =?us-ascii?Q?0xopLZSIhP4VusPFn8jTUqh0BOXfj7wEkLqTopK8FWXsyeiLATRwvfN8JUcM?=
+ =?us-ascii?Q?nuFIPgkRRWo6EJ/vGkn8BApauuZH9m+52TbqCXm0hcJxBNiMI23ACg+luFA1?=
+ =?us-ascii?Q?Z64oVHZDHSgKNSoF8TLPnqsTDyilsooqMCg4HYONF73L9sEu9LnjB1aeE6XU?=
+ =?us-ascii?Q?65/eNA7/THsTppWj5A8OMcN1RbaTtJvG8/rddDubY/yoIccvpfR4jrCc7jKm?=
+ =?us-ascii?Q?QZ94oHEd3hykaaUg5DqfKIKN0ZQZlH4dOi27PO28xr/eiJqQBIQCBgiF6PDn?=
+ =?us-ascii?Q?xGkxTV59ThmFv4XyQvAFSyDV59eUweH1ot8INWn3Khf5AoFf3ipbOJeD+IlC?=
+ =?us-ascii?Q?zl0PKGZH3HnwoiI0Qbt+XXI+YVpSfEGFinGOlpQQIyafDx7ADyTSJ0D6Xfq+?=
+ =?us-ascii?Q?0Bf+YJpc+J7Z7eH0KOczJVfUluFOPEgcP5bqBchUnWk8iA8PxwKJAn1BokGT?=
+ =?us-ascii?Q?3irLapQMsF5UEnK6MBq9qiCZzxorhtntSKNJLTb+T+1DTS6smB0voTwwim+i?=
+ =?us-ascii?Q?fwTEalNh1M3lz2gDaC7FQBKLycXqQHcojfEeHRdsv83WFa9ol0SYjnXU4QEa?=
+ =?us-ascii?Q?oBgaW9FTHY/h+jIHPvTS/r4PMKbGKQLFG5TnZhrg553ChIFt5Ur65WBlmkHi?=
+ =?us-ascii?Q?oh6vEZlCbSbsQFOen/ASMCpsaWJE5YxeKP8nJW7kVLWx2zaix4/ZPGG7UfHx?=
+ =?us-ascii?Q?Gc9zxs7d+WysFRM33tGNqIb1KGBonDABsH1MGs0LuRZakq2vnVfcaWEPyomF?=
+ =?us-ascii?Q?URAcc/Y8KBxj0cir24HkdgaSrw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(396003)(136003)(39860400002)(376002)(46966006)(40470700004)(36840700001)(186003)(2616005)(1076003)(83380400001)(2906002)(81166007)(336012)(426003)(86362001)(82740400003)(356005)(36860700001)(921005)(40460700003)(8936002)(47076005)(8676002)(4326008)(7416002)(966005)(5660300002)(82310400005)(40480700001)(70206006)(70586007)(110136005)(316002)(54906003)(7696005)(7406005)(36756003)(478600001)(26005)(41300700001)(6666004)(36900700001)(83996005)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2022 21:45:02.5335
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2022 21:45:09.8443
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f14d8d5c-a732-4c23-06cf-08da5baaf447
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93708aec-57cd-4372-09f8-08da5baaf899
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT030.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6547
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4149
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is a preparatory series for IOMMUFD v2 patches. It enforces error
-code -EMEDIUMTYPE in iommu_attach_device() and iommu_attach_group() when
-an IOMMU domain and a device/group are incompatible. It also drops the
-useless domain->ops check since it won't fail in current environment.
+The domain->ops validation was added, as a precaution, for mixed-driver
+systems.
 
-These allow VFIO iommu code to simplify its group attachment routine, by
-avoiding the extra IOMMU domain allocations and attach/detach sequences
-of the old code.
+Per Robin's remarks,
+* While bus_set_iommu() still exists, the core code prevents multiple
+  drivers from registering, so we can't really run into a situation of
+  having a mixed-driver system:
+  https://lore.kernel.org/kvm/6e1280c5-4b22-ebb3-3912-6c72bc169982@arm.com/
 
-Worths mentioning the exact match for enforce_cache_coherency is removed
-with this series, since there's very less value in doing that as KVM will
-not be able to take advantage of it -- this just wastes domain memory.
-Instead, we rely on Intel IOMMU driver taking care of that internally.
+* And there's plenty more significant problems than this to fix; in future
+  when many can be permitted, we will rely on the IOMMU core code to check
+  the domain->ops:
+  https://lore.kernel.org/kvm/6575de6d-94ba-c427-5b1e-967750ddff23@arm.com/
 
-This is on github:
-https://github.com/nicolinc/iommufd/commits/vfio_iommu_attach
+So remove the check in VFIO for simplicity.
 
-Changelog
-v5:
- * Rebased on top of Robin's "Simplify bus_type determination".
- * Fixed a wrong change returning -EMEDIUMTYPE in arm-smmu driver.
- * Added Baolu's "Reviewed-by".
-v4:
- * Dropped -EMEDIUMTYPE change in mtk_v1 driver per Robin's input
- * Added Baolu's and Kevin's Reviewed-by lines
-v3: https://lore.kernel.org/kvm/20220623200029.26007-1-nicolinc@nvidia.com/
- * Dropped all dev_err since -EMEDIUMTYPE clearly indicates what error.
- * Updated commit message of enforce_cache_coherency removing patch.
- * Updated commit message of domain->ops removing patch.
- * Replaced "goto out_unlock" with simply mutex_unlock() and return.
- * Added a line of comments for -EMEDIUMTYPE return check.
- * Moved iommu_get_msi_cookie() into alloc_attach_domain() as a cookie
-   should be logically tied to the lifetime of a domain itself.
- * Added Kevin's "Reviewed-by".
-v2: https://lore.kernel.org/kvm/20220616000304.23890-1-nicolinc@nvidia.com/
- * Added -EMEDIUMTYPE to more IOMMU drivers that fit the category.
- * Changed dev_err to dev_dbg for -EMEDIUMTYPE to avoid kernel log spam.
- * Dropped iommu_ops patch, and removed domain->ops in VFIO directly,
-   since there's no mixed-driver use case that would fail the sanity.
- * Updated commit log of the patch removing enforce_cache_coherency.
- * Fixed a misplace of "num_non_pinned_groups--" in detach_group patch.
- * Moved "num_non_pinned_groups++" in PATCH-5 to the common path between
-   domain-reusing and new-domain pathways, like the code previously did.
- * Fixed a typo in EMEDIUMTYPE patch.
-v1: https://lore.kernel.org/kvm/20220606061927.26049-1-nicolinc@nvidia.com/
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
+ drivers/vfio/vfio_iommu_type1.c | 32 +++++++++++---------------------
+ 1 file changed, 11 insertions(+), 21 deletions(-)
 
-Jason Gunthorpe (1):
-  vfio/iommu_type1: Prefer to reuse domains vs match enforced cache
-    coherency
-
-Nicolin Chen (4):
-  iommu: Return -EMEDIUMTYPE for incompatible domain and device/group
-  vfio/iommu_type1: Remove the domain->ops comparison
-  vfio/iommu_type1: Clean up update_dirty_scope in detach_group()
-  vfio/iommu_type1: Simplify group attachment
-
- drivers/iommu/amd/iommu.c                   |   2 +-
- drivers/iommu/apple-dart.c                  |   4 +-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |  15 +-
- drivers/iommu/arm/arm-smmu/arm-smmu.c       |   5 +-
- drivers/iommu/arm/arm-smmu/qcom_iommu.c     |   9 +-
- drivers/iommu/intel/iommu.c                 |  10 +-
- drivers/iommu/iommu.c                       |  28 ++
- drivers/iommu/ipmmu-vmsa.c                  |   4 +-
- drivers/iommu/omap-iommu.c                  |   3 +-
- drivers/iommu/s390-iommu.c                  |   2 +-
- drivers/iommu/sprd-iommu.c                  |   6 +-
- drivers/iommu/tegra-gart.c                  |   2 +-
- drivers/iommu/virtio-iommu.c                |   3 +-
- drivers/vfio/vfio_iommu_type1.c             | 352 ++++++++++----------
- 14 files changed, 229 insertions(+), 216 deletions(-)
-
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 7530f0d727e5..5992ee2345a0 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -2280,29 +2280,19 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 			domain->domain->ops->enforce_cache_coherency(
+ 				domain->domain);
+ 
+-	/*
+-	 * Try to match an existing compatible domain.  We don't want to
+-	 * preclude an IOMMU driver supporting multiple bus_types and being
+-	 * able to include different bus_types in the same IOMMU domain, so
+-	 * we test whether the domains use the same iommu_ops rather than
+-	 * testing if they're on the same bus_type.
+-	 */
++	/* Try to match an existing compatible domain */
+ 	list_for_each_entry(d, &iommu->domain_list, next) {
+-		if (d->domain->ops == domain->domain->ops) {
+-			iommu_detach_group(domain->domain, group->iommu_group);
+-			if (!iommu_attach_group(d->domain,
+-						group->iommu_group)) {
+-				list_add(&group->next, &d->group_list);
+-				iommu_domain_free(domain->domain);
+-				kfree(domain);
+-				goto done;
+-			}
+-
+-			ret = iommu_attach_group(domain->domain,
+-						 group->iommu_group);
+-			if (ret)
+-				goto out_domain;
++		iommu_detach_group(domain->domain, group->iommu_group);
++		if (!iommu_attach_group(d->domain, group->iommu_group)) {
++			list_add(&group->next, &d->group_list);
++			iommu_domain_free(domain->domain);
++			kfree(domain);
++			goto done;
+ 		}
++
++		ret = iommu_attach_group(domain->domain,  group->iommu_group);
++		if (ret)
++			goto out_domain;
+ 	}
+ 
+ 	vfio_test_domain_fgsp(domain);
 -- 
 2.17.1
 
