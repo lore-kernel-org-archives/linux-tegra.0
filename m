@@ -2,291 +2,202 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625EFC43334
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 21:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8246C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 21:45:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229808AbiGAVT3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Jul 2022 17:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43712 "EHLO
+        id S231146AbiGAVpG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Jul 2022 17:45:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbiGAVT2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 17:19:28 -0400
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891E850713;
-        Fri,  1 Jul 2022 14:19:27 -0700 (PDT)
-Received: by mail-io1-f49.google.com with SMTP id m13so3484295ioj.0;
-        Fri, 01 Jul 2022 14:19:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ie4E87aNQo3p5DHsiDHnZWV9kNU0HzElTQ+I+fZ+uBQ=;
-        b=yC/DBOGN5JEyTXH5gKc3qK4bZJF4vDNOzYO2sE0JbXE6a9QfP8wRio12I9I4eaq683
-         wwjMIqVt8qQMWqfweb6UlqQ5iF0GOinKTnXWSySLOXETcOg4AgC6DJGTPG+If2yONlMq
-         UuTj4Vd6eILTXx4f1wT7ThHo5iYZL/md7uglA8Rc1P2jsNTCUcFxwQtwdPtlFgildqZa
-         BANmUu+Wu123//8VJIHi/UyP/QASEZBzOH3GwWU3oEd1VSRh75Sl9ewX8xHKvvja70LO
-         qXtZXAXbA630Z613mQMcsfwH1cvpmyoG51b4CsYFcu86Cmw/mURNxp4pYF7rBdLRSccy
-         lE0A==
-X-Gm-Message-State: AJIora/cy1TnUoodvajAwSr8D0/YxWzk1G9o8c2UrnBq2RfpoSFd+A+K
-        AIDgD1miagkbAbEiio8QOw==
-X-Google-Smtp-Source: AGRyM1vIo/Ti2CLb72abhj3zcBGenBo5JemnDmdhKN5EC8zeFjfyVe+k+5LDgF2ZP1Tnnxj/kKgpJA==
-X-Received: by 2002:a05:6638:1444:b0:33c:83bb:7cbc with SMTP id l4-20020a056638144400b0033c83bb7cbcmr10217917jad.187.1656710366715;
-        Fri, 01 Jul 2022 14:19:26 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id n4-20020a056638110400b0032e174e945csm10115830jal.32.2022.07.01.14.19.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Jul 2022 14:19:26 -0700 (PDT)
-Received: (nullmailer pid 1554016 invoked by uid 1000);
-        Fri, 01 Jul 2022 21:19:25 -0000
-Date:   Fri, 1 Jul 2022 15:19:25 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: pinctrl: tegra194: Separate instances
-Message-ID: <20220701211925.GA1550339-robh@kernel.org>
-References: <20220701150501.443296-1-thierry.reding@gmail.com>
- <20220701150501.443296-3-thierry.reding@gmail.com>
+        with ESMTP id S229570AbiGAVpF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 17:45:05 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2088.outbound.protection.outlook.com [40.107.92.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A80E5C94C;
+        Fri,  1 Jul 2022 14:45:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jI9pn2CQa9tVt/zSVo7mys2gbuXO+DSJzWOl6PXjlIN0yJH2vR5Y1P6+lTVm4oC349Q66VXWoSvXsImmOaIJ/Qx24RzUopFkL6YNcR8y1uLH2A5MPgLrHxf3mDf69wutcIMjFJSxKFNXrQfHf7K2+ESau4dWORBB0Qw0Jst9VlqUUmUKLMXA+2ozllPuo7F+FqJ6sZBIolryhSQXlGqmDXfA4sYcmKak1y7cZODSySxB2dVIjT3+RoL7Pnju/Sra/KRxHQPFpf3iFlFGvJ+FclbjdDt6xWAoIWcu3KtR3WQ9MvsmmUDPvjOr7zCu9EGl5z97X09SiBY5796mnGnBhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VBSZ/8mCoG3UGXcMOCHLX5phuetsyzqVOcV/4EW2NGc=;
+ b=occ9A/aqGOLEniGSs5RVfKDEYNIigY2cdSuXIsi4qNPbiGX4NbwL2jUNuXbZ6aF7xBgJ9qKpMfrqbsZR6nEzE2oE7RcBrQoVuWoykAdESfkiGeQPYKP6EANb5xqgoqiCgPSDB+zIWg+grBe4yfSRJT+t3QKYoFxz0ePRkkkF7HQQan0MVtripoE0cYT6PWThpC1240GVhReuV28Rh/KGOKeivP9jfOCgGNkBr0IiS7pSheZSiO+yrkii3FStoSDeLQu3PDGNJHqHAjLgQOQVfsLSZghFGMYgL8owqCTpKIuVJIXELW3K2k526LiciFif7Z+acNSIxKgLQTqXyJCMzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.234) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VBSZ/8mCoG3UGXcMOCHLX5phuetsyzqVOcV/4EW2NGc=;
+ b=k8pG/fJCFUOLx+I8ynI7pEC7H/lQbxgIAh8DR5xVTImRjjzI/+rLzZmRct2GzDh1baxvIsi5P5OSmjJozRsPQhwRDWHIaPszh5pkZu14uOsiaff2kQRBC03ZzWYAMv3shrXNg/l05mj060+UXVVUGosZ18Lhdnxb5HpiGlaMliPUaX2pDCdkN5MP3LNaxNaheRdx52KGHlE9NU2HfTBBx29sH4XOI4BUWavkbJ2bGxddojzEWo0i+qgaMyoxK5zTAFj8Atsq9OvIVPbsHP0E7avmpYt7ChWV7WRH2QltbbJioSqbVOk+YG+f53wZltG8HvC/pGR9/GsuH6j1rxydBg==
+Received: from BN6PR13CA0063.namprd13.prod.outlook.com (2603:10b6:404:11::25)
+ by BL3PR12MB6547.namprd12.prod.outlook.com (2603:10b6:208:38e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.15; Fri, 1 Jul
+ 2022 21:45:02 +0000
+Received: from BN8NAM11FT030.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:11:cafe::6f) by BN6PR13CA0063.outlook.office365.com
+ (2603:10b6:404:11::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.11 via Frontend
+ Transport; Fri, 1 Jul 2022 21:45:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.234) by
+ BN8NAM11FT030.mail.protection.outlook.com (10.13.177.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5395.14 via Frontend Transport; Fri, 1 Jul 2022 21:45:02 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL101.nvidia.com
+ (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 1 Jul
+ 2022 21:45:01 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 1 Jul 2022
+ 14:45:00 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.26 via Frontend
+ Transport; Fri, 1 Jul 2022 14:44:58 -0700
+From:   Nicolin Chen <nicolinc@nvidia.com>
+To:     <joro@8bytes.org>, <will@kernel.org>, <marcan@marcan.st>,
+        <sven@svenpeter.dev>, <robin.murphy@arm.com>,
+        <robdclark@gmail.com>, <baolu.lu@linux.intel.com>,
+        <orsonzhai@gmail.com>, <baolin.wang7@gmail.com>,
+        <zhang.lyra@gmail.com>, <jean-philippe@linaro.org>,
+        <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+        <kevin.tian@intel.com>
+CC:     <suravee.suthikulpanit@amd.com>, <alyssa@rosenzweig.io>,
+        <dwmw2@infradead.org>, <mjrosato@linux.ibm.com>,
+        <gerald.schaefer@linux.ibm.com>, <thierry.reding@gmail.com>,
+        <vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <cohuck@redhat.com>,
+        <thunder.leizhen@huawei.com>, <christophe.jaillet@wanadoo.fr>,
+        <chenxiang66@hisilicon.com>, <john.garry@huawei.com>,
+        <yangyingliang@huawei.com>, <iommu@lists.linux-foundation.org>,
+        <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>, <kvm@vger.kernel.org>
+Subject: [PATCH v5 0/5] cover-letter: Simplify vfio_iommu_type1 attach/detach routine
+Date:   Fri, 1 Jul 2022 14:44:50 -0700
+Message-ID: <20220701214455.14992-1-nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220701150501.443296-3-thierry.reding@gmail.com>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f14d8d5c-a732-4c23-06cf-08da5baaf447
+X-MS-TrafficTypeDiagnostic: BL3PR12MB6547:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7zO5x+QGb3Zd5ZjZKBQKOhFjKUIYy5TCTTzdgh+ejGhsQUx6bBsj/LM6OUG7?=
+ =?us-ascii?Q?n+Hhs2AuSCSyQnVu5q6UHAa5bS5D5pbi+P4etUGyypBJvbPCZEDs2bS3zdpV?=
+ =?us-ascii?Q?Oanv+vjZrGmOFOCvfsbr96fZGC+pYjFwl/Y6jXVXxZomZaqhf+whpPAbw1R4?=
+ =?us-ascii?Q?CYRv8jYJJqMHoklq7+zOwxIfeQgj7a0JaDfYiiWqwTc62nXiYTifIVx8Amtz?=
+ =?us-ascii?Q?AEpUWgrCoCOvPIgfv7h2MwxxHoiyfZQo8Ou2QV5NkrF/0jfG1uBOgXB1Cx5j?=
+ =?us-ascii?Q?WDL6ag9lBplllEzEHv65FiEui3RSdLU5FMV81w5IaM7jDu3ek+xhUxDFUnFM?=
+ =?us-ascii?Q?zYRRrSwHU7MzFPj/eshZ9BM0jm5mhksn5AsNrSDcnjBi+jlQ5ctI4kPqp32I?=
+ =?us-ascii?Q?TBdyTgNlJ26cFV1SgFVG9PIykmrgzGjfoHY3gGtSlDowHAP71XCc+jW3vGzr?=
+ =?us-ascii?Q?hNJUtK9pmiOZ3/z31BWqvpy1jhzDsY0biIrKet4menfTrscKTKIXmYKws9NZ?=
+ =?us-ascii?Q?wIFEU3rwBPNll+3M4uZQ7QRiJWL03AoE3g3JdOHARDV0qQNkC4sCuFgoj+dn?=
+ =?us-ascii?Q?yzRaSoPrFioKNrbXzq1Pw1mE9U5uxMhKIQhoHodLyY2qdXodyyM/iA2OGluu?=
+ =?us-ascii?Q?3hxg9nSt0uEFXnsHP8RdNWLCaHwEmADHrbpW8iBnDzbXl968TzT4TJwQomCw?=
+ =?us-ascii?Q?9Pb99Lx6mJKiLKlVU0uhLwZTxnxF1ycztruf8dSMbSrRX2cNWOIGP0qVJKYD?=
+ =?us-ascii?Q?VsMUzKKttjv2lv+TcQdYG/7rQryAivdApfIArgJmAO1+E42WU3WiyZSPh0x3?=
+ =?us-ascii?Q?PWi/EKiRTIz40LaDtbQaPPD3G9BIq2ZiRjiahDPdWURmgY+03MqZYSWNBQMu?=
+ =?us-ascii?Q?hrYyP3yHEdaXpU0cF0WJFPZbwiPraAdfd9zufM1aDeWDlyadY5jvyCql+2EU?=
+ =?us-ascii?Q?h58tSJdsADRSAgxD2Z6cPMHlnsTJc8piRfQsLnZbMLVxgwRVuawbuOsYhsdF?=
+ =?us-ascii?Q?pMpXISYb4aaZZJalVIX301iqhXefaNwWC/9NOPY+HD1PQyk=3D?=
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(376002)(136003)(396003)(39860400002)(46966006)(36840700001)(40470700004)(316002)(7696005)(7416002)(7406005)(26005)(86362001)(5660300002)(8936002)(478600001)(110136005)(70206006)(4326008)(70586007)(8676002)(82740400003)(356005)(6666004)(966005)(81166007)(54906003)(47076005)(336012)(426003)(83380400001)(40480700001)(40460700003)(36756003)(1076003)(186003)(921005)(82310400005)(41300700001)(2906002)(2616005)(36860700001)(83996005)(2101003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2022 21:45:02.5335
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f14d8d5c-a732-4c23-06cf-08da5baaf447
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT030.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6547
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 01, 2022 at 05:04:59PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Tegra194 has two separate instances of the pin controller, one called
-> AON (in the always-on domain) and another called "main". Instead of
-> treating them as a single pin controller, split them up into two
-> separate controllers. Doing so allows the mapping between the pinmux and
-> GPIO controllers to be trivial identity mappings and more cleanly
-> separates the AON from the main IP blocks.
+This is a preparatory series for IOMMUFD v2 patches. It enforces error
+code -EMEDIUMTYPE in iommu_attach_device() and iommu_attach_group() when
+an IOMMU domain and a device/group are incompatible. It also drops the
+useless domain->ops check since it won't fail in current environment.
 
-Doesn't this break compatibility?
+These allow VFIO iommu code to simplify its group attachment routine, by
+avoiding the extra IOMMU domain allocations and attach/detach sequences
+of the old code.
 
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../pinctrl/nvidia,tegra194-pinmux.yaml       | 164 ++++++++++++++++--
->  1 file changed, 154 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
-> index 66cf1d9a23e8..d2928b809ac2 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
-> @@ -12,12 +12,13 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    const: nvidia,tegra194-pinmux
-> +    enum:
-> +      - nvidia,tegra194-pinmux
-> +      - nvidia,tegra194-pinmux-aon
->  
->    reg:
->      items:
-> -      - description: APB_MISC_GP_*_PADCTRL registers (pad control)
-> -      - description: PINMUX_AUX_* registers (pinmux)
-> +      - description: pinmux registers
->  
->  additionalProperties:
->    description: |
-> @@ -51,15 +52,17 @@ additionalProperties:
->              power partition. Client devices must enable this partition before accessing the
->              configuration for these pins.
->            $ref: /schemas/types.yaml#/definitions/string-array
-> -          items:
-> -            enum: [ pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1,
-> -                    # drive groups
-> -                    drive_pex_l5_clkreq_n_pgg0, drive_pex_l5_rst_n_pgg1 ]
->  
->          nvidia,function:
->            description: A string containing the name of the function to mux to the pin or group.
->            $ref: /schemas/types.yaml#/definitions/string
-> -          enum: [ pe5 ]
-> +          enum: [ aud, can0, can1, ccla, dca, dcb, dgpu, directdc, directdc1, displaya, displayb,
-> +                  dmic1, dmic2, dmic3, dmic4, dmic5, dp, dspk0, dspk1, eqos, extperiph1,
-> +                  extperiph2, extperiph3, extperiph4, gp, gpio, hdmi, i2c1, i2c2, i2c3, i2c5, i2c8,
-> +                  i2s1, i2s2, i2s3, i2s4, i2s5, i2s6, igpu, iqc1, iqc2, mipi, nv, pe0, pe1, pe2,
-> +                  pe3, pe4, pe5, qspi, qspi0, qspi1, rsvd0, rsvd1, rsvd2, rsvd3, sata, sce, sdmmc1,
-> +                  sdmmc3, sdmmc4, slvs, soc, spdif, spi1, spi2, spi3, touch, uarta, uartb, uartc,
-> +                  uartd, uarte, uartg, ufs0, usb, vgp1, vgp2, vgp3, vgp4, vgp5, vgp6, wdt ]
->  
->          nvidia,pull:
->            description: Pull-down/up setting to apply to the pin.
-> @@ -146,6 +149,148 @@ additionalProperties:
->        required:
->          - nvidia,pins
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: nvidia,tegra194-pinmux
-> +    then:
-> +      type: object
-> +      additionalProperties:
-> +        patternProperties:
-> +          "^[a-z0-9-_]+$":
+Worths mentioning the exact match for enforce_cache_coherency is removed
+with this series, since there's very less value in doing that as KVM will
+not be able to take advantage of it -- this just wastes domain memory.
+Instead, we rely on Intel IOMMU driver taking care of that internally.
 
-               type: object
+This is on github:
+https://github.com/nicolinc/iommufd/commits/vfio_iommu_attach
 
-> +            properties:
-> +              nvidia,pins:
-> +                items:
-> +                  enum: [ dap6_sclk_pa0, dap6_dout_pa1, dap6_din_pa2, dap6_fs_pa3, dap4_sclk_pa4,
-> +                          dap4_dout_pa5, dap4_din_pa6, dap4_fs_pa7, cpu_pwr_req_0_pb0,
-> +                          cpu_pwr_req_1_pb1, qspi0_sck_pc0, qspi0_cs_n_pc1, qspi0_io0_pc2,
-> +                          qspi0_io1_pc3, qspi0_io2_pc4, qspi0_io3_pc5, qspi1_sck_pc6,
-> +                          qspi1_cs_n_pc7, qspi1_io0_pd0, qspi1_io1_pd1, qspi1_io2_pd2,
-> +                          qspi1_io3_pd3, eqos_txc_pe0, eqos_td0_pe1, eqos_td1_pe2, eqos_td2_pe3,
-> +                          eqos_td3_pe4, eqos_tx_ctl_pe5, eqos_rd0_pe6, eqos_rd1_pe7, eqos_rd2_pf0,
-> +                          eqos_rd3_pf1, eqos_rx_ctl_pf2, eqos_rxc_pf3, eqos_sma_mdio_pf4,
-> +                          eqos_sma_mdc_pf5, soc_gpio00_pg0, soc_gpio01_pg1, soc_gpio02_pg2,
-> +                          soc_gpio03_pg3, soc_gpio08_pg4, soc_gpio09_pg5, soc_gpio10_pg6,
-> +                          soc_gpio11_pg7, soc_gpio12_ph0, soc_gpio13_ph1, soc_gpio14_ph2,
-> +                          uart4_tx_ph3, uart4_rx_ph4, uart4_rts_ph5, uart4_cts_ph6, dap2_sclk_ph7,
-> +                          dap2_dout_pi0, dap2_din_pi1, dap2_fs_pi2, gen1_i2c_scl_pi3,
-> +                          gen1_i2c_sda_pi4, sdmmc1_clk_pj0, sdmmc1_cmd_pj1, sdmmc1_dat0_pj2,
-> +                          sdmmc1_dat1_pj3, sdmmc1_dat2_pj4, sdmmc1_dat3_pj5, pex_l0_clkreq_n_pk0,
-> +                          pex_l0_rst_n_pk1, pex_l1_clkreq_n_pk2, pex_l1_rst_n_pk3,
-> +                          pex_l2_clkreq_n_pk4, pex_l2_rst_n_pk5, pex_l3_clkreq_n_pk6,
-> +                          pex_l3_rst_n_pk7, pex_l4_clkreq_n_pl0, pex_l4_rst_n_pl1, pex_wake_n_pl2,
-> +                          sata_dev_slp_pl3, dp_aux_ch0_hpd_pm0, dp_aux_ch1_hpd_pm1,
-> +                          dp_aux_ch2_hpd_pm2, dp_aux_ch3_hpd_pm3, hdmi_cec_pm4, soc_gpio50_pm5,
-> +                          soc_gpio51_pm6, soc_gpio52_pm7, soc_gpio53_pn0, soc_gpio54_pn1,
-> +                          soc_gpio55_pn2, sdmmc3_clk_po0, sdmmc3_cmd_po1, sdmmc3_dat0_po2,
-> +                          sdmmc3_dat1_po3, sdmmc3_dat2_po4, sdmmc3_dat3_po5, extperiph1_clk_pp0,
-> +                          extperiph2_clk_pp1, cam_i2c_scl_pp2, cam_i2c_sda_pp3, soc_gpio04_pp4,
-> +                          soc_gpio05_pp5, soc_gpio06_pp6, soc_gpio07_pp7, soc_gpio20_pq0,
-> +                          soc_gpio21_pq1, soc_gpio22_pq2, soc_gpio23_pq3, soc_gpio40_pq4,
-> +                          soc_gpio41_pq5, soc_gpio42_pq6, soc_gpio43_pq7, soc_gpio44_pr0,
-> +                          soc_gpio45_pr1, uart1_tx_pr2, uart1_rx_pr3, uart1_rts_pr4, uart1_cts_pr5,
-> +                          dap1_sclk_ps0, dap1_dout_ps1, dap1_din_ps2, dap1_fs_ps3, aud_mclk_ps4,
-> +                          soc_gpio30_ps5, soc_gpio31_ps6, soc_gpio32_ps7, soc_gpio33_pt0,
-> +                          dap3_sclk_pt1, dap3_dout_pt2, dap3_din_pt3, dap3_fs_pt4, dap5_sclk_pt5,
-> +                          dap5_dout_pt6, dap5_din_pt7, dap5_fs_pu0, directdc1_clk_pv0,
-> +                          directdc1_in_pv1, directdc1_out0_pv2, directdc1_out1_pv3,
-> +                          directdc1_out2_pv4, directdc1_out3_pv5, directdc1_out4_pv6,
-> +                          directdc1_out5_pv7, directdc1_out6_pw0, directdc1_out7_pw1,
-> +                          gpu_pwr_req_px0, cv_pwr_req_px1, gp_pwm2_px2, gp_pwm3_px3, uart2_tx_px4,
-> +                          uart2_rx_px5, uart2_rts_px6, uart2_cts_px7, spi3_sck_py0, spi3_miso_py1,
-> +                          spi3_mosi_py2, spi3_cs0_py3, spi3_cs1_py4, uart5_tx_py5, uart5_rx_py6,
-> +                          uart5_rts_py7, uart5_cts_pz0, usb_vbus_en0_pz1, usb_vbus_en1_pz2,
-> +                          spi1_sck_pz3, spi1_miso_pz4, spi1_mosi_pz5, spi1_cs0_pz6, spi1_cs1_pz7,
-> +                          ufs0_ref_clk_pff0, ufs0_rst_pff1, pex_l5_clkreq_n_pgg0,
-> +                          pex_l5_rst_n_pgg1, directdc_comp, sdmmc4_clk, sdmmc4_cmd, sdmmc4_dqs,
-> +                          sdmmc4_dat7, sdmmc4_dat6, sdmmc4_dat5, sdmmc4_dat4, sdmmc4_dat3,
-> +                          sdmmc4_dat2, sdmmc4_dat1, sdmmc4_dat0, sdmmc1_comp, sdmmc1_hv_trim,
-> +                          sdmmc3_comp, sdmmc3_hv_trim, eqos_comp, qspi_comp,
-> +                          # drive groups
-> +                          drive_soc_gpio33_pt0, drive_soc_gpio32_ps7, drive_soc_gpio31_ps6,
-> +                          drive_soc_gpio30_ps5, drive_aud_mclk_ps4, drive_dap1_fs_ps3,
-> +                          drive_dap1_din_ps2, drive_dap1_dout_ps1, drive_dap1_sclk_ps0,
-> +                          drive_dap3_fs_pt4, drive_dap3_din_pt3, drive_dap3_dout_pt2,
-> +                          drive_dap3_sclk_pt1, drive_dap5_fs_pu0, drive_dap5_din_pt7,
-> +                          drive_dap5_dout_pt6, drive_dap5_sclk_pt5, drive_dap6_fs_pa3,
-> +                          drive_dap6_din_pa2, drive_dap6_dout_pa1, drive_dap6_sclk_pa0,
-> +                          drive_dap4_fs_pa7, drive_dap4_din_pa6, drive_dap4_dout_pa5,
-> +                          drive_dap4_sclk_pa4, drive_extperiph2_clk_pp1, drive_extperiph1_clk_pp0,
-> +                          drive_cam_i2c_sda_pp3, drive_cam_i2c_scl_pp2, drive_soc_gpio40_pq4,
-> +                          drive_soc_gpio41_pq5, drive_soc_gpio42_pq6, drive_soc_gpio43_pq7,
-> +                          drive_soc_gpio44_pr0, drive_soc_gpio45_pr1, drive_soc_gpio20_pq0,
-> +                          drive_soc_gpio21_pq1, drive_soc_gpio22_pq2, drive_soc_gpio23_pq3,
-> +                          drive_soc_gpio04_pp4, drive_soc_gpio05_pp5, drive_soc_gpio06_pp6,
-> +                          drive_soc_gpio07_pp7, drive_uart1_cts_pr5, drive_uart1_rts_pr4,
-> +                          drive_uart1_rx_pr3, drive_uart1_tx_pr2, drive_dap2_din_pi1,
-> +                          drive_dap2_dout_pi0, drive_dap2_fs_pi2, drive_dap2_sclk_ph7,
-> +                          drive_uart4_cts_ph6, drive_uart4_rts_ph5, drive_uart4_rx_ph4,
-> +                          drive_uart4_tx_ph3, drive_soc_gpio03_pg3, drive_soc_gpio02_pg2,
-> +                          drive_soc_gpio01_pg1, drive_soc_gpio00_pg0, drive_gen1_i2c_scl_pi3,
-> +                          drive_gen1_i2c_sda_pi4, drive_soc_gpio08_pg4, drive_soc_gpio09_pg5,
-> +                          drive_soc_gpio10_pg6, drive_soc_gpio11_pg7, drive_soc_gpio12_ph0,
-> +                          drive_soc_gpio13_ph1, drive_soc_gpio14_ph2, drive_soc_gpio50_pm5,
-> +                          drive_soc_gpio51_pm6, drive_soc_gpio52_pm7, drive_soc_gpio53_pn0,
-> +                          drive_soc_gpio54_pn1, drive_soc_gpio55_pn2, drive_dp_aux_ch0_hpd_pm0,
-> +                          drive_dp_aux_ch1_hpd_pm1, drive_dp_aux_ch2_hpd_pm2,
-> +                          drive_dp_aux_ch3_hpd_pm3, drive_hdmi_cec_pm4, drive_pex_l2_clkreq_n_pk4,
-> +                          drive_pex_wake_n_pl2, drive_pex_l1_clkreq_n_pk2, drive_pex_l1_rst_n_pk3,
-> +                          drive_pex_l0_clkreq_n_pk0, drive_pex_l0_rst_n_pk1,
-> +                          drive_pex_l2_rst_n_pk5, drive_pex_l3_clkreq_n_pk6,
-> +                          drive_pex_l3_rst_n_pk7, drive_pex_l4_clkreq_n_pl0,
-> +                          drive_pex_l4_rst_n_pl1, drive_sata_dev_slp_pl3,
-> +                          drive_pex_l5_clkreq_n_pgg0, drive_pex_l5_rst_n_pgg1,
-> +                          drive_cpu_pwr_req_1_pb1, drive_cpu_pwr_req_0_pb0, drive_sdmmc1_clk_pj0,
-> +                          drive_sdmmc1_cmd_pj1, drive_sdmmc1_dat3_pj5, drive_sdmmc1_dat2_pj4,
-> +                          drive_sdmmc1_dat1_pj3, drive_sdmmc1_dat0_pj2, drive_sdmmc3_dat3_po5,
-> +                          drive_sdmmc3_dat2_po4, drive_sdmmc3_dat1_po3, drive_sdmmc3_dat0_po2,
-> +                          drive_sdmmc3_cmd_po1, drive_sdmmc3_clk_po0, drive_gpu_pwr_req_px0,
-> +                          drive_spi3_miso_py1, drive_spi1_cs0_pz6, drive_spi3_cs0_py3,
-> +                          drive_spi1_miso_pz4, drive_spi3_cs1_py4, drive_gp_pwm3_px3,
-> +                          drive_gp_pwm2_px2, drive_spi1_sck_pz3, drive_spi3_sck_py0,
-> +                          drive_spi1_cs1_pz7, drive_spi1_mosi_pz5, drive_spi3_mosi_py2,
-> +                          drive_cv_pwr_req_px1, drive_uart2_tx_px4, drive_uart2_rx_px5,
-> +                          drive_uart2_rts_px6, drive_uart2_cts_px7, drive_uart5_rx_py6,
-> +                          drive_uart5_tx_py5, drive_uart5_rts_py7, drive_uart5_cts_pz0,
-> +                          drive_usb_vbus_en0_pz1, drive_usb_vbus_en1_pz2, drive_ufs0_rst_pff1,
-> +                          drive_ufs0_ref_clk_pff0 ]
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: nvidia,tegra194-pinmux-aon
-> +    then:
-> +      type: object
-> +      additionalProperties:
-> +        patternProperties:
-> +          "^[a-z0-9-_]+$":
+Changelog
+v5:
+ * Rebased on top of Robin's "Simplify bus_type determination".
+ * Fixed a wrong change returning -EMEDIUMTYPE in arm-smmu driver.
+ * Added Baolu's "Reviewed-by".
+v4:
+ * Dropped -EMEDIUMTYPE change in mtk_v1 driver per Robin's input
+ * Added Baolu's and Kevin's Reviewed-by lines
+v3: https://lore.kernel.org/kvm/20220623200029.26007-1-nicolinc@nvidia.com/
+ * Dropped all dev_err since -EMEDIUMTYPE clearly indicates what error.
+ * Updated commit message of enforce_cache_coherency removing patch.
+ * Updated commit message of domain->ops removing patch.
+ * Replaced "goto out_unlock" with simply mutex_unlock() and return.
+ * Added a line of comments for -EMEDIUMTYPE return check.
+ * Moved iommu_get_msi_cookie() into alloc_attach_domain() as a cookie
+   should be logically tied to the lifetime of a domain itself.
+ * Added Kevin's "Reviewed-by".
+v2: https://lore.kernel.org/kvm/20220616000304.23890-1-nicolinc@nvidia.com/
+ * Added -EMEDIUMTYPE to more IOMMU drivers that fit the category.
+ * Changed dev_err to dev_dbg for -EMEDIUMTYPE to avoid kernel log spam.
+ * Dropped iommu_ops patch, and removed domain->ops in VFIO directly,
+   since there's no mixed-driver use case that would fail the sanity.
+ * Updated commit log of the patch removing enforce_cache_coherency.
+ * Fixed a misplace of "num_non_pinned_groups--" in detach_group patch.
+ * Moved "num_non_pinned_groups++" in PATCH-5 to the common path between
+   domain-reusing and new-domain pathways, like the code previously did.
+ * Fixed a typo in EMEDIUMTYPE patch.
+v1: https://lore.kernel.org/kvm/20220606061927.26049-1-nicolinc@nvidia.com/
 
-               type: object
+Jason Gunthorpe (1):
+  vfio/iommu_type1: Prefer to reuse domains vs match enforced cache
+    coherency
 
-> +            properties:
-> +              nvidia,pins:
-> +                items:
-> +                  enum: [ can1_dout_paa0, can1_din_paa1, can0_dout_paa2, can0_din_paa3,
-> +                          can0_stb_paa4, can0_en_paa5, can0_wake_paa6, can0_err_paa7,
-> +                          can1_stb_pbb0, can1_en_pbb1, can1_wake_pbb2, can1_err_pbb3,
-> +                          spi2_sck_pcc0, spi2_miso_pcc1, spi2_mosi_pcc2, spi2_cs0_pcc3,
-> +                          touch_clk_pcc4, uart3_tx_pcc5, uart3_rx_pcc6, gen2_i2c_scl_pcc7,
-> +                          gen2_i2c_sda_pdd0, gen8_i2c_scl_pdd1, gen8_i2c_sda_pdd2, safe_state_pee0,
-> +                          vcomp_alert_pee1, ao_retention_n_pee2, batt_oc_pee3, power_on_pee4,
-> +                          pwr_i2c_scl_pee5, pwr_i2c_sda_pee6, sys_reset_n, shutdown_n, pmu_int_n,
-> +                          soc_pwr_req, clk_32k_in,
-> +                          # drive groups
-> +                          drive_shutdown_n, drive_pmu_int_n, drive_safe_state_pee0,
-> +                          drive_vcomp_alert_pee1, drive_soc_pwr_req, drive_batt_oc_pee3,
-> +                          drive_clk_32k_in, drive_power_on_pee4, drive_pwr_i2c_scl_pee5,
-> +                          drive_pwr_i2c_sda_pee6, drive_ao_retention_n_pee2, drive_touch_clk_pcc4,
-> +                          drive_uart3_rx_pcc6, drive_uart3_tx_pcc5, drive_gen8_i2c_sda_pdd2,
-> +                          drive_gen8_i2c_scl_pdd1, drive_spi2_mosi_pcc2, drive_gen2_i2c_scl_pcc7,
-> +                          drive_spi2_cs0_pcc3, drive_gen2_i2c_sda_pdd0, drive_spi2_sck_pcc0,
-> +                          drive_spi2_miso_pcc1, drive_can1_dout_paa0, drive_can1_din_paa1,
-> +                          drive_can0_dout_paa2, drive_can0_din_paa3, drive_can0_stb_paa4,
-> +                          drive_can0_en_paa5, drive_can0_wake_paa6, drive_can0_err_paa7,
-> +                          drive_can1_stb_pbb0, drive_can1_en_pbb1, drive_can1_wake_pbb2,
-> +                          drive_can1_err_pbb3 ]
-> +
->  required:
->    - compatible
->    - reg
-> @@ -156,8 +301,7 @@ examples:
->  
->      pinmux@2430000 {
->        compatible = "nvidia,tegra194-pinmux";
-> -      reg = <0x2430000 0x17000>,
-> -            <0xc300000 0x04000>;
-> +      reg = <0x2430000 0x17000>;
->  
->        pinctrl-names = "pex_rst";
->        pinctrl-0 = <&pex_rst_c5_out_state>;
-> -- 
-> 2.36.1
-> 
-> 
+Nicolin Chen (4):
+  iommu: Return -EMEDIUMTYPE for incompatible domain and device/group
+  vfio/iommu_type1: Remove the domain->ops comparison
+  vfio/iommu_type1: Clean up update_dirty_scope in detach_group()
+  vfio/iommu_type1: Simplify group attachment
+
+ drivers/iommu/amd/iommu.c                   |   2 +-
+ drivers/iommu/apple-dart.c                  |   4 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |  15 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu.c       |   5 +-
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c     |   9 +-
+ drivers/iommu/intel/iommu.c                 |  10 +-
+ drivers/iommu/iommu.c                       |  28 ++
+ drivers/iommu/ipmmu-vmsa.c                  |   4 +-
+ drivers/iommu/omap-iommu.c                  |   3 +-
+ drivers/iommu/s390-iommu.c                  |   2 +-
+ drivers/iommu/sprd-iommu.c                  |   6 +-
+ drivers/iommu/tegra-gart.c                  |   2 +-
+ drivers/iommu/virtio-iommu.c                |   3 +-
+ drivers/vfio/vfio_iommu_type1.c             | 352 ++++++++++----------
+ 14 files changed, 229 insertions(+), 216 deletions(-)
+
+-- 
+2.17.1
+
