@@ -2,114 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1532CCA479
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 08:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0018DCCA479
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 09:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234458AbiGAIYL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Jul 2022 04:24:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49804 "EHLO
+        id S235187AbiGAJD7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Jul 2022 05:03:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234051AbiGAIXj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 04:23:39 -0400
+        with ESMTP id S234914AbiGAJD5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 05:03:57 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99CC735B2;
-        Fri,  1 Jul 2022 01:22:06 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24EC52FFE9;
+        Fri,  1 Jul 2022 02:03:56 -0700 (PDT)
+Received: from dimapc.. (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 324386600BA8;
-        Fri,  1 Jul 2022 09:22:04 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A1DA66601974;
+        Fri,  1 Jul 2022 10:03:53 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656663725;
-        bh=rjfOD5XJ4oMrFc0ADdNTY8d0gJRB40Z3xVocscFIFek=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=IuIzOVGwc5ZfP59Dw1rJgrS3VGGnhLBrSQFAyYkMfG/wkNtXOx+waALYJU2CDfhqN
-         NOsW/fygf0Mcxr4sUkOk+45rNt/47gERiVx0466vCvzG2YOpTt2ac1ftqqBV1r3SzU
-         BUIO5i/T6t7nMUY7F4qtbZJJ/vO1T6FFRtrYmQOp3fILGb65v4YjIr7jYQDa2sk7fK
-         E4yl6eTuWIRwIMVDl/LnWVUl80bFxQM78Y7S7XSbjIPOwot91w+u55iA2vuWP1Kbaq
-         U5ol2uJNXoLN+8tFEAh6H7xUe5b8f3nJoRcoCSRyDcwInxxv3PonjkQ0aq8lQzWOld
-         7RbIo1eLD7jJg==
-Message-ID: <7f33ec06-5325-b0f9-3e62-df00c356906e@collabora.com>
-Date:   Fri, 1 Jul 2022 11:22:01 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v7 2/2] drm/gem: Don't map imported GEMs
-Content-Language: en-US
-To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
-        <thomas_os@shipmail.org>, David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
+        s=mail; t=1656666234;
+        bh=7x6AJ+nAU7oVPHACGhPnUxGYHzyBq1CqfYXDnLu1/Bc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MK6CbYPvW2XF1+ZGXNwvo9sH2iUyYhJ+MgxlhHthbBw8kxQaSpaxK0FD0byY0AdQT
+         PiPzgUq/ifqmEvz1nu747iKfiZOJqEEjm9e/CREelUszS7gTh3DlFvRkKRIlc78Ib3
+         ffQ32n/buSTGHVwK2ONGJ4EMPZ7Psq6EO18yXrrZA5Lf4508+wVgmlik1z0YQ56jwB
+         654izyNPDU2PAyPWZdnrIIn0u4efZU1RqxKAosAgQWLTbSl8PsPzXORzP7hCL9AqG7
+         az9/ywI+O310Un1G0+VqqHm9+GXommhFgU9S2tsiAoJPYq/7QVIDREN2cij/l5xumJ
+         x37iMvg7etmDg==
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
         Gurchetan Singh <gurchetansingh@chromium.org>,
         Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Emil Velikov <emil.l.velikov@gmail.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas_os@shipmail.org>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Dmitry Osipenko <digetx@gmail.com>,
         linux-tegra@vger.kernel.org, kernel@collabora.com,
         virtualization@lists.linux-foundation.org
-References: <20220630200405.1883897-1-dmitry.osipenko@collabora.com>
- <20220630200405.1883897-3-dmitry.osipenko@collabora.com>
- <75b677b6-c704-e270-c921-93c982020c38@shipmail.org>
- <8ab15669-889b-1119-9323-ec47689c7fb7@collabora.com>
- <22005f1b-4ae2-0fda-beda-1d9847bb2ade@shipmail.org>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <22005f1b-4ae2-0fda-beda-1d9847bb2ade@shipmail.org>
+Subject: [PATCH v8 1/2] drm/gem: Properly annotate WW context on drm_gem_lock_reservations() error
+Date:   Fri,  1 Jul 2022 12:02:39 +0300
+Message-Id: <20220701090240.1896131-2-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
+References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/30/22 23:26, Thomas Hellström (Intel) wrote:
-> 
-> On 6/30/22 22:22, Dmitry Osipenko wrote:
->> Hello Thomas,
->>
->> On 6/30/22 23:15, Thomas Hellström (Intel) wrote:
->>> Hi, Dmitry,
->>>
->>> On 6/30/22 22:04, Dmitry Osipenko wrote:
->>>> Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
->>>> handle imported dma-bufs properly, which results in mapping of
->>>> something
->>>> else than the imported dma-buf. On NVIDIA Tegra we get a hard lockup
->>>> when
->>>> userspace writes to the memory mapping of a dma-buf that was imported
->>>> into
->>>> Tegra's DRM GEM.
->>>>
->>>> Majority of DRM drivers prohibit mapping of the imported GEM objects.
->>>> Mapping of imported GEMs require special care from userspace since it
->>>> should sync dma-buf because mapping coherency of the exporter device
->>>> may
->>>> not match the DRM device. Let's prohibit the mapping for all DRM
->>>> drivers
->>>> for consistency.
->>>>
->>>> Cc: stable@vger.kernel.org
->>>> Suggested-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
->>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->>> This might break drivers whose obj->funcs->mmap() callback already
->>> handles this case, and has userspace that does the right thing.
->> The drm-shmem helper should be the only that maps imported GEMs
->> properly, but drivers that use drm-shmem already prohibit to map
->> imported GEMs. Okay, I'll try to re-check once again to be sure.
-> 
-> OK. If you aren't 100.1% sure, then please drop the Cc: stable tag and
-> let the patch ride out at least an -rc series, because breaking a stable
-> kernel is something we woudln't want to do.
+Use ww_acquire_fini() in the error code paths. Otherwise lockdep
+thinks that lock is held when lock's memory is freed after the
+drm_gem_lock_reservations() error. The ww_acquire_context needs to be
+annotated as "released", which fixes the noisy "WARNING: held lock freed!"
+splat of VirtIO-GPU driver with CONFIG_DEBUG_MUTEXES=y and enabled lockdep.
 
-Apparently the OMAP DRM driver should be broken similarly to the Tegra
-DRM. Unlikely that anyone else maps the imported GEMs in practice, other
-drivers are prohibiting the mapping AFAICS. I'll make the v8 without the
-stable tag since it's not a critical problem after all because it never
-worked for the broken drivers.
+Cc: stable@vger.kernel.org
+Fixes: 7edc3e3b975b5 ("drm: Add helpers for locking an array of BO reservations.")
+Reviewed-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+---
+ drivers/gpu/drm/drm_gem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index eb0c2d041f13..86d670c71286 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1226,7 +1226,7 @@ drm_gem_lock_reservations(struct drm_gem_object **objs, int count,
+ 		ret = dma_resv_lock_slow_interruptible(obj->resv,
+ 								 acquire_ctx);
+ 		if (ret) {
+-			ww_acquire_done(acquire_ctx);
++			ww_acquire_fini(acquire_ctx);
+ 			return ret;
+ 		}
+ 	}
+@@ -1251,7 +1251,7 @@ drm_gem_lock_reservations(struct drm_gem_object **objs, int count,
+ 				goto retry;
+ 			}
+ 
+-			ww_acquire_done(acquire_ctx);
++			ww_acquire_fini(acquire_ctx);
+ 			return ret;
+ 		}
+ 	}
 -- 
-Best regards,
-Dmitry
+2.36.1
+
