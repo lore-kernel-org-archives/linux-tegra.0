@@ -2,111 +2,202 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13036C43334
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 18:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 746C1C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 18:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230489AbiGASRu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Jul 2022 14:17:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45964 "EHLO
+        id S230214AbiGASqP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Jul 2022 14:46:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230359AbiGASRt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 14:17:49 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BDE3115824;
-        Fri,  1 Jul 2022 11:17:48 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6BA4113E;
-        Fri,  1 Jul 2022 11:17:48 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDCD33F5A1;
-        Fri,  1 Jul 2022 11:17:43 -0700 (PDT)
-Message-ID: <2ccb6033-4c34-ff59-50a8-549c924d269d@arm.com>
-Date:   Fri, 1 Jul 2022 19:17:38 +0100
+        with ESMTP id S229553AbiGASqN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 14:46:13 -0400
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26F731509;
+        Fri,  1 Jul 2022 11:46:12 -0700 (PDT)
+Received: by mail-il1-f181.google.com with SMTP id n14so1933730ilt.10;
+        Fri, 01 Jul 2022 11:46:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YCxDpLwBlPepXGkzDGgiHX6IUAIxVYfbH4RlDrqpozU=;
+        b=OpTVlCrUoCdovibCe8lhEYFaPF25bHhtLdcVAohxL0SJ+iEmjVzQxT5kF30o8R40nJ
+         5t65mpzFt2JY4jt8noU7v3Mj87z7piNQATEer9MvzwB3ZLb58e6fI+JVJ0U6gFcvH5qR
+         TVKl8cJjPJsSHu7cEzugRqc+URm0POPVKZ+j4BNAF6tL6Fk+8u93uiEQDjZmcXKXNu9O
+         88QGtL17ia1ADUHgI/zSixsqk3twN4khyJ1Ub4yJUSCv/1BnMjzCzd/k3weAUw24WXZk
+         TY+qmj8+ID+ZzAPPnOonxJFrETstINh+pfhoUzGqfXrsFYINl/+fOXViZ+sqrXNN9k6N
+         oL0w==
+X-Gm-Message-State: AJIora/bavbw2ZBs27Moaf+bKjbhmNJyLzhtHiAzwEza6DxX0Z285SMA
+        GpRbRKvba9vfv3lYai/XbDOzBU0olA==
+X-Google-Smtp-Source: AGRyM1vmCcJU7aTAizYs4y6g0psY8dvbn56iRKlXvByEcGeUeD1uRKs+viF1YrYraeb0qf42lLz73w==
+X-Received: by 2002:a92:d0a:0:b0:2d1:e698:5c4c with SMTP id 10-20020a920d0a000000b002d1e6985c4cmr8972116iln.316.1656701171809;
+        Fri, 01 Jul 2022 11:46:11 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id cn22-20020a0566383a1600b0033171dafaa0sm2180894jab.178.2022.07.01.11.46.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Jul 2022 11:46:11 -0700 (PDT)
+Received: (nullmailer pid 1301953 invoked by uid 1000);
+        Fri, 01 Jul 2022 18:46:09 -0000
+Date:   Fri, 1 Jul 2022 12:46:09 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de, krzk+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, spujar@nvidia.com,
+        akhilrajeev@nvidia.com, rgumasta@nvidia.com, pshete@nvidia.com,
+        vidyas@nvidia.com, mperttunen@nvidia.com, mkumard@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: timer: Add Tegra186 & Tegra234 Timer
+Message-ID: <20220701184609.GA1293870-robh@kernel.org>
+References: <1656527344-28861-1-git-send-email-kkartik@nvidia.com>
+ <1656527344-28861-2-git-send-email-kkartik@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v4 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain
- and device/group
-Content-Language: en-GB
-To:     Nicolin Chen <nicolinc@nvidia.com>
-Cc:     joro@8bytes.org, will@kernel.org, marcan@marcan.st,
-        sven@svenpeter.dev, robdclark@gmail.com, baolu.lu@linux.intel.com,
-        orsonzhai@gmail.com, baolin.wang7@gmail.com, zhang.lyra@gmail.com,
-        jean-philippe@linaro.org, alex.williamson@redhat.com,
-        jgg@nvidia.com, kevin.tian@intel.com,
-        suravee.suthikulpanit@amd.com, alyssa@rosenzweig.io,
-        dwmw2@infradead.org, mjrosato@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, thierry.reding@gmail.com,
-        vdumpa@nvidia.com, jonathanh@nvidia.com, cohuck@redhat.com,
-        thunder.leizhen@huawei.com, christophe.jaillet@wanadoo.fr,
-        chenxiang66@hisilicon.com, john.garry@huawei.com,
-        yangyingliang@huawei.com, iommu@lists.linux-foundation.org,
-        iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-References: <20220630203635.33200-1-nicolinc@nvidia.com>
- <20220630203635.33200-2-nicolinc@nvidia.com>
- <fab41f28-8f48-9f40-09c8-fd5f0714a9e0@arm.com>
- <Yr8kHnK7xRx2DZus@Asurada-Nvidia>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <Yr8kHnK7xRx2DZus@Asurada-Nvidia>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1656527344-28861-2-git-send-email-kkartik@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 01/07/2022 5:43 pm, Nicolin Chen wrote:
-> On Fri, Jul 01, 2022 at 11:21:48AM +0100, Robin Murphy wrote:
+On Wed, Jun 29, 2022 at 11:58:59PM +0530, Kartik wrote:
+> The Tegra186 timer provides ten 29-bit timer counters and one 32-bit
+> timestamp counter. The Tegra234 timer provides sixteen 29-bit timer
+> counters and one 32-bit timestamp counter. Each NV timer selects its
+> timing reference signal from the 1 MHz reference generated by USEC,
+> TSC or either clk_m or OSC. Each TMR can be programmed to generate
+> one-shot, periodic, or watchdog interrupts.
 > 
->>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> index 2ed3594f384e..072cac5ab5a4 100644
->>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> @@ -1135,10 +1135,8 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
->>>        struct arm_smmu_device *smmu;
->>>        int ret;
->>>
->>> -     if (!fwspec || fwspec->ops != &arm_smmu_ops) {
->>> -             dev_err(dev, "cannot attach to SMMU, is it on the same bus?\n");
->>> -             return -ENXIO;
->>> -     }
->>> +     if (!fwspec || fwspec->ops != &arm_smmu_ops)
->>> +             return -EMEDIUMTYPE;
->>
->> This is the wrong check, you want the "if (smmu_domain->smmu != smmu)"
->> condition further down. If this one fails it's effectively because the
->> device doesn't have an IOMMU at all, and similar to patch #3 it will be
+> Signed-off-by: Kartik <kkartik@nvidia.com>
+> ---
+>  .../bindings/timer/nvidia,tegra186-timer.yaml | 111 ++++++++++++++++++
+>  1 file changed, 111 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
 > 
-> Thanks for the review! I will fix that. The "on the same bus" is
-> quite eye-catching.
+> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> new file mode 100644
+> index 000000000000..5dc091532cd7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> @@ -0,0 +1,111 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: NVIDIA Tegra186 timer
+> +
+> +maintainers:
+> +  - Thierry Reding <treding@nvidia.com>
+> +
+> +description: >
+> +  The Tegra timer provides 29-bit timer counters and a 32-bit timestamp
+> +  counter. Each NV timer selects its timing reference signal from the 1 MHz
+> +  reference generated by USEC, TSC or either clk_m or OSC. Each TMR can be
+> +  programmed to generate one-shot, periodic, or watchdog interrupts.
+> +
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra186-timer
+> +        description: >
+> +          The Tegra186 timer provides ten 29-bit timer counters.
+> +      - const: nvidia,tegra234-timer
+> +        description: >
+> +          The Tegra234 timer provides sixteen 29-bit timer counters.
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts: true
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra186-timer
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          minItems: 1
+> +          maxItems: 10
+> +          description: >
+> +            A list of 10 interrupts; one per each timer channels 0 through 9.
+
+The schema says it is a list of 1 to 10 interrupts. Which is it. Surely 
+the h/w is fixed. If so, drop 'minItems' and the first sentence.
+
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra234-timer
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          minItems: 1
+> +          maxItems: 16
+> +          description: >
+> +            A list of 16 interrupts; one per each timer channels 0 through 15.
+
+ditto
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    timer@3010000 {
+> +        compatible = "nvidia,tegra186-timer";
+> +        reg = <0x03010000 0x000e0000>;
+> +        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +    };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    timer@2080000 {
+> +        compatible = "nvidia,tegra234-timer";
+> +        reg = <0x02080000 0x00121000>;
+> +        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+> +    };
+> -- 
+> 2.17.1
 > 
->> removed once the core code takes over properly (I even have both those
->> patches written now!)
 > 
-> Actually in my v1 the proposal for ops check returned -EMEDIUMTYPE
-> also upon an ops mismatch, treating that too as an incompatibility.
-> Do you mean that we should have fine-grained it further?
-
-On second look, I think this particular check was already entirely 
-redundant by the time I made the fwspec conversion to it, oh well. Since 
-it remains harmless for the time being, let's just ignore it entirely 
-until we can confidently say goodbye to the whole lot[1].
-
-I don't think there's any need to differentiate an instance mismatch 
-from a driver mismatch, once the latter becomes realistically possible, 
-mostly due to iommu_domain_alloc() also having to become device-aware to 
-know which driver to allocate from. Thus as far as a user is concerned, 
-if attaching a device to an existing domain fails with -EMEDIUMTYPE, 
-allocating a new domain using the given device, and attaching to that, 
-can be expected to succeed, regardless of why the original attempt was 
-rejected. In fact even in the theoretical different-driver-per-bus model 
-the same principle still holds up.
-
-Thanks,
-Robin.
-
-[1] 
-https://gitlab.arm.com/linux-arm/linux-rm/-/commit/aa4accfa4a10e92daad0d51095918e8a89014393
