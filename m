@@ -2,118 +2,189 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D57F3C43334
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 09:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44802CCA483
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 10:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235168AbiGAJD7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Jul 2022 05:03:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
+        id S235907AbiGAKSQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Jul 2022 06:18:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232975AbiGAJD6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 05:03:58 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF452F005;
-        Fri,  1 Jul 2022 02:03:57 -0700 (PDT)
-Received: from dimapc.. (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 085B26601995;
-        Fri,  1 Jul 2022 10:03:54 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656666236;
-        bh=RmdslR01N1MBAgH0PuAGwuMu+yy8zq6PlP6HQWG4wYg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nHrfgsTuoRx8kOzlzVaWvklMsHeGG13lF79SxJNVQbDTriU/ELNxzpwemsXd/HJ6N
-         tCgqYRHlBxMlkuqLP3wsvalsaUDzYtkehIk70F1HgELnpzz4FiOPyAtyY4y5UswUDN
-         yAfyeqq7GMAYr/O9HKsoT/o1xbyv232TpRHF5nPetXV/bIdrNp6Q3ggZZvtcXuVttG
-         Eg8Ad61hn6u3fNaXzZdHbQACed/6jgtaBhm55qJoAveWbHXi0f717HOAgAlTlD2G75
-         U7x206lJR1eFRFcfFdZcuxuWhuc+VzhdBI/8dKCJrNzOZ7u51CzPwOWOBQgagOvI9I
-         rrmFFUrwntThg==
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas_os@shipmail.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-tegra@vger.kernel.org, kernel@collabora.com,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH v8 2/2] drm/gem: Don't map imported GEMs
-Date:   Fri,  1 Jul 2022 12:02:40 +0300
-Message-Id: <20220701090240.1896131-3-dmitry.osipenko@collabora.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
-References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
+        with ESMTP id S235572AbiGAKSM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 06:18:12 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 695E3BC92;
+        Fri,  1 Jul 2022 03:18:11 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id g4so3203786ybg.9;
+        Fri, 01 Jul 2022 03:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IK1q7pWvnzmd2/yzmMQOB6gFUgHkXgsyzwODpSKqHtU=;
+        b=jSDpH5b4ezTXYDkI+Kv1qjoulW4GueRKAo9MfvH6Or74WD1aO19b0yl9X6h7ikpgsb
+         Yzj9/9QR8pvv9s537mQBeUk8bodicRt2sYNtrKP02dXkQyCDQKSj99VRGbrzh5/zLrXe
+         3DbujuLPciSi5vALJ+old//V6zoLm6pd0LhvBAARG1SXsh/2UP6qVVa/FfV3DuM5if+u
+         lMLgaAYtih653stfzpF6JzV1TgtPEvIAiwFM7x+VFO7m6+ikg5S95jdc8NlSpoxf6NUC
+         chD7vf96GrCNEtWT2dpp9TfC5k1TkiGvGH1SczyJzPL6/3uFcjCYC/RxAKuWF753UD7k
+         NBBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IK1q7pWvnzmd2/yzmMQOB6gFUgHkXgsyzwODpSKqHtU=;
+        b=15An1tGG8nHWbgQ7lfNc8QLkFangfrf5YDaVcKBSZIPQNTJpbJxa1DdQzV2vSVOcbO
+         fh8Ji5/HqmK7yMFs2MeudkwBT0eUgiprBaC/Ipzg3IKpQEC48MbD9m5GtGhAwwOR1S38
+         voachqulCt9cj6gYIc3OwlRxsv9slparbv2iXH6LnUc2rniEK+YWoy+PXqdP3WyAEj5+
+         rsQ/igFcd7l6NwGjhR1DuOEwyg6roMp4wpQsnXjvh0N3s3ON1yJTkfgv0SAFFL/ravUl
+         Z2SByPfwCJvXSEO6RW+F0dcU0r8IacIWIiQdBlThXmbvdg+DnfZF1OkBKNG6LPeik1rx
+         XpYQ==
+X-Gm-Message-State: AJIora9wJdSdxEZ+C6/PPujawAdsPLp91iPchxdMcifaiD5H32SspsC1
+        NV3zAm6bWrrd7io0QsjyNBjW5xoQDju9soyGUQI=
+X-Google-Smtp-Source: AGRyM1tvrcPaXjb6qpRZmlm3mN1+HaZ3X5zFt5Vb6BDK08mCBJ8qF4vfcIrvo5gC3LEAhM4YrPgldTFVhwpUgFcS228=
+X-Received: by 2002:a05:6902:1549:b0:66d:5f76:27ba with SMTP id
+ r9-20020a056902154900b0066d5f7627bamr14092504ybu.385.1656670690515; Fri, 01
+ Jul 2022 03:18:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220701012647.2007122-1-saravanak@google.com> <20220701012647.2007122-3-saravanak@google.com>
+In-Reply-To: <20220701012647.2007122-3-saravanak@google.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 1 Jul 2022 12:17:33 +0200
+Message-ID: <CAHp75Vdw8pZePnqR=mmJh4pv0bPMRJE=p7-cG3akskdxMHmoKw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] serial: Set probe_no_timeout for all DT based drivers
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
+        <linux-aspeed@lists.ozlabs.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Sparc kernel list <sparclinux@vger.kernel.org>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
-handle imported dma-bufs properly, which results in mapping of something
-else than the imported dma-buf. On NVIDIA Tegra we get a hard lockup when
-userspace writes to the memory mapping of a dma-buf that was imported into
-Tegra's DRM GEM.
+On Fri, Jul 1, 2022 at 3:28 AM Saravana Kannan <saravanak@google.com> wrote:
+>
+> With commit 71066545b48e ("driver core: Set fw_devlink.strict=1 by
+> default") the probing of TTY consoles could get delayed if they have
+> optional suppliers that are listed in DT, but those suppliers don't
+> probe by the time kernel boot finishes. The console devices will probe
+> eventually after driver_probe_timeout expires.
+>
+> However, since consoles are often used for debugging kernel issues, it
+> does not make sense to delay their probe. So, set the newly added
+> probe_no_timeout flag for all serial drivers that at DT based. This way,
+> fw_devlink will know not to delay the probing of the consoles past
+> kernel boot.
 
-Majority of DRM drivers prohibit mapping of the imported GEM objects.
-Mapping of imported GEMs require special care from userspace since it
-should sync dma-buf because mapping coherency of the exporter device may
-not match the DRM device. Let's prohibit the mapping for all DRM drivers
-for consistency.
+Same question, do you think only serial drivers need that?
 
-Suggested-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
-Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
----
- drivers/gpu/drm/drm_gem.c              | 4 ++++
- drivers/gpu/drm/drm_gem_shmem_helper.c | 9 ---------
- 2 files changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 86d670c71286..fc9ec42fa0ab 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -1034,6 +1034,10 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
- {
- 	int ret;
- 
-+	/* Don't allow imported objects to be mapped */
-+	if (obj->import_attach)
-+		return -EINVAL;
-+
- 	/* Check for valid size. */
- 	if (obj_size < vma->vm_end - vma->vm_start)
- 		return -EINVAL;
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 8ad0e02991ca..6190f5018986 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -609,17 +609,8 @@ EXPORT_SYMBOL_GPL(drm_gem_shmem_vm_ops);
-  */
- int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct vm_area_struct *vma)
- {
--	struct drm_gem_object *obj = &shmem->base;
- 	int ret;
- 
--	if (obj->import_attach) {
--		/* Drop the reference drm_gem_mmap_obj() acquired.*/
--		drm_gem_object_put(obj);
--		vma->vm_private_data = NULL;
--
--		return dma_buf_mmap(obj->dma_buf, vma, 0);
--	}
--
- 	ret = drm_gem_shmem_get_pages(shmem);
- 	if (ret) {
- 		drm_gem_vm_close(vma);
 -- 
-2.36.1
-
+With Best Regards,
+Andy Shevchenko
