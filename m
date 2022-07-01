@@ -2,122 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC525C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 08:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1532CCA479
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 08:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233510AbiGAIWt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Jul 2022 04:22:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48852 "EHLO
+        id S234458AbiGAIYL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Jul 2022 04:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234620AbiGAIWB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 04:22:01 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6950F70E64
-        for <linux-tegra@vger.kernel.org>; Fri,  1 Jul 2022 01:21:35 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id 136so1764820pfy.10
-        for <linux-tegra@vger.kernel.org>; Fri, 01 Jul 2022 01:21:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bNEnKpORd3QNjxmd6zUBrP8J5Frzy4cYVk636zNrdD0=;
-        b=NInfjvO3HxDbJt56x0UYfx+nwvC1lR93+qkcsX05NDwK5rNzTDLLw03Y/CGBpgN+0F
-         42bNNL8xJYwDLGgG/Ykhb8FwLm9q44K+YQeq6yGhoul+TvAZIvJZ7fQBSlgtSReLl3hU
-         UrohJgZTbFVwxMOKGPQND7n6nVnq9+w0OMtzOM42N5ghKCaZN1xZ26FNFO61XNMS8jtc
-         BfouMkbIzHbqaFMUQ0VLJub2rcav1Tnbg61uO893IIz0TTAd/So5sl/RDnLNuponV8Xn
-         JQls62z6q0j1+ZvbzjXnFLzpiXo9QPhYOkKiSEq1lrbPT8fdvwRte6cDj0li4Wkh9Xp4
-         0V7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bNEnKpORd3QNjxmd6zUBrP8J5Frzy4cYVk636zNrdD0=;
-        b=NChjUiwOtLu7XKWJkXN9Wrf6pICILj8LvukEtbUIjux+B5nTUUtN6UjbDOW3jpRErO
-         PDNO2M4IYL/HcAhmZzOHaKYHvy5tlut6Cflbnv/0vc132V4iLvzQFr5zLidX76AuzHdN
-         AU0EedTWVft+VVE/J0JDOBbIm3P13vRQiqjrpDAqLQEHq11EmGBBDN4TKiw4+vDA+2eH
-         4Y2GdX8FMNffPvka3JprhgwxE6dvbD1WiqLLfR11b3xnHnwJIh58Cykh2gjjJM/ZLo4Q
-         q0dzV6MQ9ynTYlT1AG9IM7tActcnrni7BiwWnkorQ+7ywHZq8ZTC6hnJjDQ/TwUw1SBO
-         EIag==
-X-Gm-Message-State: AJIora/pw8gRvWZmm9aG0mUDO0zzqEdpkSHvqfncRovklFPhqeT1YX1A
-        BfPwjD+hfvFV/NsPftPQupnN2A==
-X-Google-Smtp-Source: AGRyM1uYcdqOf+57d5/HlFxYYKsxbNuIuRKJ9aqdI/aVgWcgYUkw2wQLaX4vKBZMZrBpE8TsLtScWA==
-X-Received: by 2002:a05:6a00:a12:b0:527:dba9:c416 with SMTP id p18-20020a056a000a1200b00527dba9c416mr15334406pfh.33.1656663695136;
-        Fri, 01 Jul 2022 01:21:35 -0700 (PDT)
-Received: from localhost ([122.172.201.58])
-        by smtp.gmail.com with ESMTPSA id o12-20020a170902d4cc00b0016a3f9e4865sm15039024plg.148.2022.07.01.01.21.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Jul 2022 01:21:34 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH V2 18/30] memory: tegra: Migrate to dev_pm_opp_set_config()
-Date:   Fri,  1 Jul 2022 13:50:13 +0530
-Message-Id: <74e3e4c6f63ea155aebd1c113d99e39bc2f8fd80.1656660185.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1656660185.git.viresh.kumar@linaro.org>
-References: <cover.1656660185.git.viresh.kumar@linaro.org>
+        with ESMTP id S234051AbiGAIXj (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 04:23:39 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99CC735B2;
+        Fri,  1 Jul 2022 01:22:06 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-118-164.nat.spd-mgts.ru [109.252.118.164])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 324386600BA8;
+        Fri,  1 Jul 2022 09:22:04 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1656663725;
+        bh=rjfOD5XJ4oMrFc0ADdNTY8d0gJRB40Z3xVocscFIFek=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=IuIzOVGwc5ZfP59Dw1rJgrS3VGGnhLBrSQFAyYkMfG/wkNtXOx+waALYJU2CDfhqN
+         NOsW/fygf0Mcxr4sUkOk+45rNt/47gERiVx0466vCvzG2YOpTt2ac1ftqqBV1r3SzU
+         BUIO5i/T6t7nMUY7F4qtbZJJ/vO1T6FFRtrYmQOp3fILGb65v4YjIr7jYQDa2sk7fK
+         E4yl6eTuWIRwIMVDl/LnWVUl80bFxQM78Y7S7XSbjIPOwot91w+u55iA2vuWP1Kbaq
+         U5ol2uJNXoLN+8tFEAh6H7xUe5b8f3nJoRcoCSRyDcwInxxv3PonjkQ0aq8lQzWOld
+         7RbIo1eLD7jJg==
+Message-ID: <7f33ec06-5325-b0f9-3e62-df00c356906e@collabora.com>
+Date:   Fri, 1 Jul 2022 11:22:01 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v7 2/2] drm/gem: Don't map imported GEMs
+Content-Language: en-US
+To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
+        <thomas_os@shipmail.org>, David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org, kernel@collabora.com,
+        virtualization@lists.linux-foundation.org
+References: <20220630200405.1883897-1-dmitry.osipenko@collabora.com>
+ <20220630200405.1883897-3-dmitry.osipenko@collabora.com>
+ <75b677b6-c704-e270-c921-93c982020c38@shipmail.org>
+ <8ab15669-889b-1119-9323-ec47689c7fb7@collabora.com>
+ <22005f1b-4ae2-0fda-beda-1d9847bb2ade@shipmail.org>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <22005f1b-4ae2-0fda-beda-1d9847bb2ade@shipmail.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The OPP core now provides a unified API for setting all configuration
-types, i.e. dev_pm_opp_set_config().
+On 6/30/22 23:26, Thomas Hellström (Intel) wrote:
+> 
+> On 6/30/22 22:22, Dmitry Osipenko wrote:
+>> Hello Thomas,
+>>
+>> On 6/30/22 23:15, Thomas Hellström (Intel) wrote:
+>>> Hi, Dmitry,
+>>>
+>>> On 6/30/22 22:04, Dmitry Osipenko wrote:
+>>>> Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
+>>>> handle imported dma-bufs properly, which results in mapping of
+>>>> something
+>>>> else than the imported dma-buf. On NVIDIA Tegra we get a hard lockup
+>>>> when
+>>>> userspace writes to the memory mapping of a dma-buf that was imported
+>>>> into
+>>>> Tegra's DRM GEM.
+>>>>
+>>>> Majority of DRM drivers prohibit mapping of the imported GEM objects.
+>>>> Mapping of imported GEMs require special care from userspace since it
+>>>> should sync dma-buf because mapping coherency of the exporter device
+>>>> may
+>>>> not match the DRM device. Let's prohibit the mapping for all DRM
+>>>> drivers
+>>>> for consistency.
+>>>>
+>>>> Cc: stable@vger.kernel.org
+>>>> Suggested-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+>>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>>> This might break drivers whose obj->funcs->mmap() callback already
+>>> handles this case, and has userspace that does the right thing.
+>> The drm-shmem helper should be the only that maps imported GEMs
+>> properly, but drivers that use drm-shmem already prohibit to map
+>> imported GEMs. Okay, I'll try to re-check once again to be sure.
+> 
+> OK. If you aren't 100.1% sure, then please drop the Cc: stable tag and
+> let the patch ride out at least an -rc series, because breaking a stable
+> kernel is something we woudln't want to do.
 
-Lets start using it.
+Apparently the OMAP DRM driver should be broken similarly to the Tegra
+DRM. Unlikely that anyone else maps the imported GEMs in practice, other
+drivers are prohibiting the mapping AFAICS. I'll make the v8 without the
+stable tag since it's not a critical problem after all because it never
+worked for the broken drivers.
 
-Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/memory/tegra/tegra124-emc.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 908f8d5392b2..8da6baa4c369 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -1395,15 +1395,18 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
- static int tegra_emc_opp_table_init(struct tegra_emc *emc)
- {
- 	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
--	struct opp_table *hw_opp_table;
--	int err;
-+	int opp_token, err;
-+	struct dev_pm_opp_config config = {
-+		.supported_hw = &hw_version,
-+		.supported_hw_count = 1,
-+	};
- 
--	hw_opp_table = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
--	err = PTR_ERR_OR_ZERO(hw_opp_table);
--	if (err) {
--		dev_err(emc->dev, "failed to set OPP supported HW: %d\n", err);
-+	err = dev_pm_opp_set_config(emc->dev, &config);
-+	if (err < 0) {
-+		dev_err(emc->dev, "failed to set OPP config: %d\n", err);
- 		return err;
- 	}
-+	opp_token = err;
- 
- 	err = dev_pm_opp_of_add_table(emc->dev);
- 	if (err) {
-@@ -1430,7 +1433,7 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
- remove_table:
- 	dev_pm_opp_of_remove_table(emc->dev);
- put_hw_table:
--	dev_pm_opp_put_supported_hw(hw_opp_table);
-+	dev_pm_opp_clear_config(opp_token);
- 
- 	return err;
- }
 -- 
-2.31.1.272.g89b43f80a514
-
+Best regards,
+Dmitry
