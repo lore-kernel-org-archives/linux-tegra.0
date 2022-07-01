@@ -2,71 +2,212 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE22C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 07:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80960CCA47F
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Jul 2022 08:20:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231426AbiGAH3I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Jul 2022 03:29:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55718 "EHLO
+        id S232435AbiGAIUs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Jul 2022 04:20:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231313AbiGAH3I (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 03:29:08 -0400
-Received: from out30-45.freemail.mail.aliyun.com (out30-45.freemail.mail.aliyun.com [115.124.30.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD2D6B828;
-        Fri,  1 Jul 2022 00:29:06 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VHzzt3O_1656660532;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0VHzzt3O_1656660532)
-          by smtp.aliyun-inc.com;
-          Fri, 01 Jul 2022 15:29:04 +0800
-From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To:     lgirdwood@gmail.com
-Cc:     broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Subject: [PATCH] ASoC: tegra20_ac97: Fix missing error code in tegra20_ac97_platform_probe()
-Date:   Fri,  1 Jul 2022 15:28:50 +0800
-Message-Id: <20220701072850.62408-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        with ESMTP id S232548AbiGAIUr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Jul 2022 04:20:47 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0439B675BD
+        for <linux-tegra@vger.kernel.org>; Fri,  1 Jul 2022 01:20:45 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id r1so1691063plo.10
+        for <linux-tegra@vger.kernel.org>; Fri, 01 Jul 2022 01:20:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oUYtq84iNGdg4Xe0/YKALbCpeBgj55K/qcb5czheU50=;
+        b=YlwArJ/41k5bqIwMZiuj2szedp3s1rO7QSuQEi13s1O5Ve6bFzu2r9LarZt3O04Y9D
+         PVD3yDK+9Vb0f95dKwdM+JysaoQPKDf3zise0iThezxJk79eOmrZ72/c5Rg1gCbtjVDl
+         F60N2JHzziONCyalfA/wfFDCSlR8hqnvk92kRRSbAFaKwCckeWcCYXOytSRq+zImeRVe
+         lfI7JPrzOCmulRfNW+KQk7bRX6SOCXgDerBmRWMomIAXhT8TLCoNxRQjAHBANqs51hrT
+         iXX1rmjYKKRLhXUKxd6B3MFliSf1sdOs2RlkARJG2gMqxLz4mBo8TozUysUa0f+Xm3N4
+         gDYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oUYtq84iNGdg4Xe0/YKALbCpeBgj55K/qcb5czheU50=;
+        b=jH+Hzmwy6FlDwkC9q48wC+bITlhvUJkwr6fi4MelKz59H6DiWXIFameoKH+MOyn9bc
+         xEqd35KVWrOqhS41IZ3+Hm+/DKJiFNRqhKmwCdyzEXVDsn7zukoXVEteWUh/Xi2Ib9jW
+         88N86aH93pFLoUp5jt1tReHwwOlmWbM+pjCvh14SrX4aMjsLtwKHXI1JNzDEst7p4y0K
+         ih2gp91vatCne8euzXUT+MXCiJT39RsyTh19C77P/ffPq1fgiHVlkGYh/wlQesc5o7vZ
+         zmTzy1ZjpVCApS0xTLFnuSSYfwrJLdAv7rXWeV+TIErcgGDrU+dYwQyOUhtB0ASWuKRG
+         RaPw==
+X-Gm-Message-State: AJIora/b2Ak++wHArw8Z0HIxj5507+6Q4VYbgVddUrV4NOlrq8liOwdz
+        OcRAYMp1pzlbXuq5HS4LtwOOjg==
+X-Google-Smtp-Source: AGRyM1uw8CKR4s38IcPhcQa1KogQ13yRLMm2Qxe1pU/dJuysA+BJx5bL0ipnbj/Tos0q5dkbVF00/Q==
+X-Received: by 2002:a17:90a:d80b:b0:1ec:9a1a:2266 with SMTP id a11-20020a17090ad80b00b001ec9a1a2266mr15418832pjv.7.1656663644453;
+        Fri, 01 Jul 2022 01:20:44 -0700 (PDT)
+Received: from localhost ([122.172.201.58])
+        by smtp.gmail.com with ESMTPSA id ru10-20020a17090b2bca00b001e880972840sm3443768pjb.29.2022.07.01.01.20.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Jul 2022 01:20:43 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, NXP Linux Team <linux-imx@nxp.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Qiang Yu <yuq825@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Clark <robdclark@gmail.com>, Rob Herring <robh@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sean Paul <sean@poorly.run>, Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Yangtao Li <tiny.windzz@gmail.com>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        lima@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH V2 00/30] OPP: Add new configuration interface: dev_pm_opp_set_config()
+Date:   Fri,  1 Jul 2022 13:49:55 +0530
+Message-Id: <cover.1656660185.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The error code is missing in this code scenario, add the error code
-'-EINVAL' to the return value 'ret'.
+Hello,
 
-This was found by coccicheck:
+We have too many configuration specific APIs currently, six of them already,
+like dev_pm_opp_set_regulators(). This makes it complex/messy for both the OPP
+core and its users to manage. There is also code redundancy in these APIs, in
+the way they add/manage the OPP table specific stuff.
 
-sound/soc/tegra/tegra20_ac97.c:357 tegra20_ac97_platform_probe() warn: missing error code 'ret'.
+This patch series is an attempt to simplify these interfaces by adding a single
+interface, dev_pm_opp_set_config(), which replaces all the existing ones. This
+series also migrates the users to the new API.
 
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- sound/soc/tegra/tegra20_ac97.c | 2 ++
- 1 file changed, 2 insertions(+)
+The first two patches help get the API in place, followed by patches to migrate
+the end users. Once all the users are migrated, the last few patches remove the
+now unused interfaces.
 
-diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index e17375c6cddb..87facfbcdd11 100644
---- a/sound/soc/tegra/tegra20_ac97.c
-+++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -354,6 +354,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 		}
- 	} else {
- 		dev_err(&pdev->dev, "no codec-reset GPIO supplied\n");
-+		ret = -EINVAL;
- 		goto err_clk_put;
- 	}
- 
-@@ -361,6 +362,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 					    "nvidia,codec-sync-gpio", 0);
- 	if (!gpio_is_valid(ac97->sync_gpio)) {
- 		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
-+		ret = -EINVAL;
- 		goto err_clk_put;
- 	}
- 
+This is pushed here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git opp/linux-next
+
+This is already tested by various folks now.
+
+The entire patchset shall get merged via the OPP tree in 5.20-rc1, please do not
+merge individual patches.
+
+V1->V2:
+- dev_pm_opp_set_config() doesn't return the OPP table anymore, but a token
+  allocated with xa_alloc(). The same needs to be passed to clear-config API.
+- Updated all users according to that as well.
+- The clk_names interface is updated to allow multiple clocks.
+- Converted few // comments to /* */.
+- Added tags by few people.
+- Dropped the last patch to rearrange stuff, not required anymore.
+
+Thanks.
+
+--
+Viresh
+
+Viresh Kumar (30):
+  OPP: Track if clock name is configured by platform
+  OPP: Add dev_pm_opp_set_config() and friends
+  cpufreq: dt: Migrate to dev_pm_opp_set_config()
+  cpufreq: imx: Migrate to dev_pm_opp_set_config()
+  cpufreq: qcom-nvmem: Migrate to dev_pm_opp_set_config()
+  cpufreq: sti: Migrate to dev_pm_opp_set_config()
+  cpufreq: sun50i: Migrate to dev_pm_opp_set_config()
+  cpufreq: tegra20: Migrate to dev_pm_opp_set_config()
+  cpufreq: ti: Migrate to dev_pm_opp_set_config()
+  devfreq: exynos: Migrate to dev_pm_opp_set_config()
+  devfreq: sun8i: Migrate to dev_pm_opp_set_config()
+  devfreq: tegra30: Migrate to dev_pm_opp_set_config()
+  drm/lima: Migrate to dev_pm_opp_set_config()
+  drm/msm: Migrate to dev_pm_opp_set_config()
+  drm/panfrost: Migrate to dev_pm_opp_set_config()
+  drm/tegra: Migrate to dev_pm_opp_set_config()
+  media: venus: Migrate to dev_pm_opp_set_config()
+  memory: tegra: Migrate to dev_pm_opp_set_config()
+  mmc: sdhci-msm: Migrate to dev_pm_opp_set_config()
+  OPP: ti: Migrate to dev_pm_opp_set_config()
+  soc/tegra: Add comment over devm_pm_opp_set_clkname()
+  soc/tegra: Migrate to dev_pm_opp_set_config()
+  spi: qcom: Migrate to dev_pm_opp_set_config()
+  serial: qcom: Migrate to dev_pm_opp_set_config()
+  OPP: Remove dev_pm_opp_set_regulators() and friends
+  OPP: Remove dev_pm_opp_set_supported_hw() and friends
+  OPP: Remove dev_pm_opp_set_clkname() and friends
+  OPP: Remove dev_pm_opp_register_set_opp_helper() and friends
+  OPP: Remove dev_pm_opp_attach_genpd() and friends
+  OPP: Remove dev_pm_opp_set_prop_name() and friends
+
+ drivers/cpufreq/cpufreq-dt.c                  |  20 +-
+ drivers/cpufreq/imx-cpufreq-dt.c              |  18 +-
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          | 109 +--
+ drivers/cpufreq/sti-cpufreq.c                 |  27 +-
+ drivers/cpufreq/sun50i-cpufreq-nvmem.c        |  36 +-
+ drivers/cpufreq/tegra20-cpufreq.c             |  18 +-
+ drivers/cpufreq/ti-cpufreq.c                  |  38 +-
+ drivers/devfreq/exynos-bus.c                  |  25 +-
+ drivers/devfreq/sun8i-a33-mbus.c              |   8 +-
+ drivers/devfreq/tegra30-devfreq.c             |   8 +-
+ drivers/gpu/drm/lima/lima_devfreq.c           |  12 +-
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   8 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c         |  10 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   6 +-
+ drivers/gpu/drm/msm/dp/dp_ctrl.c              |   6 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c            |   6 +-
+ drivers/gpu/drm/panfrost/panfrost_devfreq.c   |   9 +-
+ drivers/gpu/drm/tegra/gr3d.c                  |   6 +-
+ .../media/platform/qcom/venus/pm_helpers.c    |  18 +-
+ drivers/memory/tegra/tegra124-emc.c           |  17 +-
+ drivers/mmc/host/sdhci-msm.c                  |   6 +-
+ drivers/opp/core.c                            | 632 ++++++++----------
+ drivers/opp/opp.h                             |  23 +
+ drivers/opp/ti-opp-supply.c                   |   8 +-
+ drivers/soc/tegra/common.c                    |  45 +-
+ drivers/soc/tegra/pmc.c                       |   8 +-
+ drivers/spi/spi-geni-qcom.c                   |   6 +-
+ drivers/spi/spi-qcom-qspi.c                   |   6 +-
+ drivers/tty/serial/qcom_geni_serial.c         |   6 +-
+ include/linux/pm_opp.h                        | 121 +---
+ 30 files changed, 605 insertions(+), 661 deletions(-)
+
 -- 
-2.20.1.7.g153144c
+2.31.1.272.g89b43f80a514
 
