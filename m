@@ -2,103 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EBCCCA47F
-	for <linux-tegra@archiver.kernel.org>; Sat,  2 Jul 2022 11:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F55DCCA483
+	for <linux-tegra@archiver.kernel.org>; Sat,  2 Jul 2022 11:08:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232272AbiGBLHy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 2 Jul 2022 07:07:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37544 "EHLO
+        id S231502AbiGBLIA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 2 Jul 2022 07:08:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232131AbiGBLHw (ORCPT
+        with ESMTP id S232083AbiGBLHw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Sat, 2 Jul 2022 07:07:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E4015A23;
-        Sat,  2 Jul 2022 04:07:51 -0700 (PDT)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9029615A39;
+        Sat,  2 Jul 2022 04:07:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D0C8FB81D65;
-        Sat,  2 Jul 2022 11:07:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12272C341CF;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 23BA760DF2;
+        Sat,  2 Jul 2022 11:07:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E09AC341D9;
         Sat,  2 Jul 2022 11:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1656760068;
-        bh=MUtQumptp1S/XDH3DSm7yGwg6amST7HBoH5oOaTodtw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rZOBBQfHQAfaDPDZTrfoZWmJyP+X7FYFjcgB0pE7CCFFDQQVM6gdwmRjfyKWuptVW
-         +xanstIS4FDR7LkZyhSt2f5/mWmtZbaf1r7rnojJ4hRNP3srJOMXYM8feMsB+7GUJT
-         oVFnOKPQj9C4gihRlVjPpEzi6//Cju8UesjMNBlM4L2xQ4gOphowDZQTVZXd52vVz9
-         /2LDAlT1VWJ5ddJDz170pesDwCQWouNTDiW8xh8rewCBRJ2H2CScNCSbdVIx0xn6jT
-         bLK8uA7IIaSPFTGSD/YfYiq0t9TXvg1bx070UUn6Srrr0SBdSwIobVSLcq6CLu4+h6
-         Thhroy1iqNPlQ==
+        bh=GXTCFNGJ/qi6q84KgPXHTPGckjOATtaMykjkvdiZ8ns=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DrrTnbY+g/95s2OoeUYPgsUS7r9KhEaNN9bCC94hZDu/RhdENgPzZoSE1bFGIeu8f
+         A7Y7GS2fdeuCvgSTgrN/C3Xk/UA4AOOR8PKrhHb1bqaCJDPjmbmDyW0ool3TYK7/Hd
+         CxINUJxSqKohLK3IuucJQULpCltifiDOZOyZyfbIOGyhrjN6eL4nHdwjPVWdsBmNQr
+         m10KGXrSflXIA+909EoSQweUfDbpYP0KDii/iawMcZOW08nSgdAA6iekKm5+xmvGOt
+         qZOWRpYYA6Df/o1E/Rs8oS6M9Sd+dj4RU3q++vdjNLnLFq1bzTTJ2BD2bq9KC1xlYu
+         xlTWaJKAO8emw==
 Received: from mchehab by mail.kernel.org with local (Exim 4.95)
         (envelope-from <mchehab@kernel.org>)
-        id 1o7ayX-007gru-KO;
+        id 1o7ayX-007gro-J8;
         Sat, 02 Jul 2022 12:07:45 +0100
 From:   Mauro Carvalho Chehab <mchehab@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Alasdair Kergon <agk@redhat.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Brendan Higgins <brendanhiggins@google.com>,
         Dipen Patel <dipenp@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 02/12] docs: tegra194-hte.rst: don't include gpiolib.c twice
-Date:   Sat,  2 Jul 2022 12:07:34 +0100
-Message-Id: <de81b472f552bd651f140f0aa779a29652fffa62.1656759989.git.mchehab@kernel.org>
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, dm-devel@redhat.com,
+        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH 00/12] Fix several documentation build warnings with Sphinx 2.4.4
+Date:   Sat,  2 Jul 2022 12:07:32 +0100
+Message-Id: <cover.1656759988.git.mchehab@kernel.org>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <cover.1656759988.git.mchehab@kernel.org>
-References: <cover.1656759988.git.mchehab@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All extern functions of drivers/gpio/gpiolib.c are already
-inside the Kernel documentation, as driver-api/gpio/index.rst
-already includes it.
+This series is against next-20220701. It fixes several warnings
+that are currently produced while building html docs.
 
-Placing a kernel-doc here will only cause mess, as the same symbol
-will be placed on two parts of the document, causing breakages
-in cross-references.
+Each patch in this series is independent from the others, as
+each one touches a different file.
 
-So, instead, add a cross-reference there.
+Mauro Carvalho Chehab (12):
+  docs: ext4: blockmap.rst: fix a broken table
+  docs: tegra194-hte.rst: don't include gpiolib.c twice
+  docs: device-mapper: add a blank line at writecache.rst
+  docs: PCI: pci-vntb-function.rst: Properly include ascii artwork
+  docs: PCI: pci-vntb-howto.rst: fix a title markup
+  docs: virt: kvm: fix a title markup at api.rst
+  docs: ABI: sysfs-bus-nvdimm
+  kunit: test.h: fix a kernel-doc markup
+  net: mac80211: fix a kernel-doc markup
+  docs: alsa: alsa-driver-api.rst: remove a kernel-doc file
+  docs: arm: index.rst: add google/chromebook-boot-flow
+  docs: leds: index.rst: add leds-qcom-lpg to it
 
-This solves those Sphinx 3.1+ warnings:
-    .../Documentation/driver-api/hte/tegra194-hte:28: ./drivers/gpio/gpiolib.c:2464: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2464.
-    .../Documentation/driver-api/hte/tegra194-hte:28: ./drivers/gpio/gpiolib.c:2493: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2493.
-    .../Documentation/driver-api/hte/tegra194-hte.rst:2464: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2464.
-    .../Documentation/driver-api/hte/tegra194-hte.rst:2464: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2464.
-    .../Documentation/driver-api/hte/tegra194-hte.rst:2464: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2464.
-    .../Documentation/driver-api/hte/tegra194-hte.rst:2493: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2493.
-    .../Documentation/driver-api/hte/tegra194-hte.rst:2493: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2493.
-    .../Documentation/driver-api/hte/tegra194-hte.rst:2493: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2493.
+ Documentation/ABI/testing/sysfs-bus-nvdimm             | 2 ++
+ Documentation/PCI/endpoint/pci-vntb-function.rst       | 2 +-
+ Documentation/PCI/endpoint/pci-vntb-howto.rst          | 2 +-
+ Documentation/admin-guide/device-mapper/writecache.rst | 1 +
+ Documentation/arm/index.rst                            | 2 ++
+ Documentation/driver-api/hte/tegra194-hte.rst          | 3 +--
+ Documentation/filesystems/ext4/blockmap.rst            | 2 +-
+ Documentation/leds/index.rst                           | 1 +
+ Documentation/sound/kernel-api/alsa-driver-api.rst     | 1 -
+ Documentation/virt/kvm/api.rst                         | 6 +++---
+ include/kunit/test.h                                   | 2 +-
+ include/net/mac80211.h                                 | 2 +-
+ 12 files changed, 15 insertions(+), 11 deletions(-)
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
----
-
-To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-See [PATCH 00/12] at: https://lore.kernel.org/all/cover.1656759988.git.mchehab@kernel.org/
-
- Documentation/driver-api/hte/tegra194-hte.rst | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/Documentation/driver-api/hte/tegra194-hte.rst b/Documentation/driver-api/hte/tegra194-hte.rst
-index d29b7fe86f31..f2d617265546 100644
---- a/Documentation/driver-api/hte/tegra194-hte.rst
-+++ b/Documentation/driver-api/hte/tegra194-hte.rst
-@@ -25,8 +25,7 @@ and userspace consumers. The kernel space consumers can directly talk to HTE
- subsystem while userspace consumers timestamp requests go through GPIOLIB CDEV
- framework to HTE subsystem.
- 
--.. kernel-doc:: drivers/gpio/gpiolib.c
--   :functions: gpiod_enable_hw_timestamp_ns gpiod_disable_hw_timestamp_ns
-+See gpiod_enable_hw_timestamp_ns() and gpiod_disable_hw_timestamp_ns().
- 
- For userspace consumers, GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE flag must be
- specified during IOCTL calls. Refer to ``tools/gpio/gpio-event-mon.c``, which
 -- 
 2.36.1
+
 
