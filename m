@@ -2,131 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CB4CCA480
-	for <linux-tegra@archiver.kernel.org>; Sun,  3 Jul 2022 03:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B749ECCA485
+	for <linux-tegra@archiver.kernel.org>; Sun,  3 Jul 2022 03:58:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230392AbiGCD0a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 2 Jul 2022 23:26:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43718 "EHLO
+        id S232007AbiGCD6k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 2 Jul 2022 23:58:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbiGCD02 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 2 Jul 2022 23:26:28 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCF1B9FC3;
-        Sat,  2 Jul 2022 20:26:22 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id fz10so139247pjb.2;
-        Sat, 02 Jul 2022 20:26:22 -0700 (PDT)
+        with ESMTP id S232064AbiGCD6U (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 2 Jul 2022 23:58:20 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16BA3BE17
+        for <linux-tegra@vger.kernel.org>; Sat,  2 Jul 2022 20:57:31 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id h65so8910591oia.11
+        for <linux-tegra@vger.kernel.org>; Sat, 02 Jul 2022 20:57:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/LE3/OvnxwC10hHaqp2JoOJSN7rfZOpUu2WCyCiyCz4=;
-        b=Augt3VIV/iWcoU+DHx6Yl7vroOm9Hwz+XtZe2jvyXkhsx95p/JLAo0xcEd6ix1ZIVf
-         qIfg68MUyw+xLjl2gBsPYsbv6l3jY94RzOJD92gb6rxdLTyy5Av/dXPYvA/EXIhLOtLz
-         svOqPB75mbgpDTnbuNTXc8rdS2DrehpRBgIiYcfLEACt56jQqPD4OYEXOr+iSon97xBH
-         KYxD4XfgTiHC/xmDNEPOFfPpT2EHhts4G6H0Pm0fJr3aoQ7VOuwkBeKtFwd1B4K1k9D/
-         GdNdQLrWNIKMTC9YgyvhuIjL+GirhGz9Rbn2DEPjhAWabLVNFd+wt0MxRzds1x2rF4/L
-         8aeg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=S2PQt3HxkBxUYjC+VtlXEq4NoCpstcc7waq7Ie+ZSSw=;
+        b=LcxkuQlcBom6K7cYz2cObFcKqvmFziGvIewxr5CVdQDXpiVs4Qe1p9/ma3MjpEBl0m
+         LdiaLTeEwxUPT1iylGK2uBRwa96fvGW0y6QRWq5F+NZCFL6N1e6TXJlkAQCGEx5XaKBZ
+         bMXT/f+ogoq6vs4TCzgBdramsCAz0nmWRD4br2nzTC8FHRTsVjgo15di4+fdqYbsWQIV
+         4/vga7HK3myEs7r2HcBsoYeS5QL/sXXpo879hazt2tPiyyJMP+yzm9vvBM9i2od8IqAh
+         LSpFzHsWhZD+5n1ToMnLkj0S4zSlSFpghH27+UmeVqnGiX+vxJHJBYAk1fLnQfBbxsFF
+         J2sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/LE3/OvnxwC10hHaqp2JoOJSN7rfZOpUu2WCyCiyCz4=;
-        b=hSqHn4/XX/P/1YE7EvPtr7Y+Gdsa1DIREWmnADK9NoQy99dUPWRtADeOmp8jV5NVib
-         WBnRteh9EbmYjsDyBRgK8MiOR/LL3MxloBDohF3ox6rX4Ywo29ftvJkN0cTn84sWVVP4
-         evQ/7KuPFaoOm6FTu1uGu6I4xfvA0YhJzAftMKvnnOMhvyMr+B+rSXsMCAuMHgDTUq0a
-         D60ZfydIqmFzEmlgQ99aOyFFJ66m35ObaZ2GcAZoDMLIiTzcRoL06Qy/4yrpQ0pkevKi
-         OrInWrB1W2JRoNrczCaKDgYwbnqHFMS7bK1d1RvhMkjJURkI2ulbJ1mbG3IgRfR4mwHX
-         tBtA==
-X-Gm-Message-State: AJIora9XIOW8cd/kwEIuBr8xZHO3SqObbMGFfCEDNVp09OqOPg7BXXUf
-        ScwRSq1f3RsApXnEAA2R9+hy4tQUFJpMcg==
-X-Google-Smtp-Source: AGRyM1v/qGK0NX2/G7uiSvuhmywhBxQ+rRzGPCB7tQOWN8p4Gfx3qW4Qvkfllc0ImMReMYjkXPk5jA==
-X-Received: by 2002:a17:903:2c6:b0:16a:276a:ad81 with SMTP id s6-20020a17090302c600b0016a276aad81mr29074812plk.65.1656818782428;
-        Sat, 02 Jul 2022 20:26:22 -0700 (PDT)
-Received: from debian.me (subs32-116-206-28-33.three.co.id. [116.206.28.33])
-        by smtp.gmail.com with ESMTPSA id u17-20020a170902e81100b0016a0db8c5b4sm1866809plg.156.2022.07.02.20.26.20
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=S2PQt3HxkBxUYjC+VtlXEq4NoCpstcc7waq7Ie+ZSSw=;
+        b=wY3o118M/3a4HUwjAJ+iOPUgwANLdhGMsiWPuBUO3sM/00pLKL6eNtUsUTfxiDyFmw
+         xwYJJOHNahgQgufEE6aF1MWM5oTHxUhlj5madW9xXmdBBBiXEwLwW4AnZDUuFdrU4GyE
+         MLvZwmG7Pv8zwoEE7hK5yEThbdRjIgizm8qH5MxhJ7VdQspcI4rn/1kNLsYQE/TRtuqb
+         B5F8fsoBcX157c3N0GbTPWQRIRxaUtcK+pA/9MFhtTc9MiZWRnMLhG/DwOhsSyDbVhg+
+         v+6S0nyqfcps5ynMSe2gnBSSVPsg4uRG1IY1kXr2OOvrnBsMsPyFthBAfyz6CHmFg+Bz
+         x9Fg==
+X-Gm-Message-State: AJIora+p47DYaWt+iHxfMh00pt5GwzJIWJmaGY20ABCQlk+6eY6vMghJ
+        FkN6qCmzeBf8OGujeXWe6D9IVg==
+X-Google-Smtp-Source: AGRyM1vPsLVLSd2YTyZeBHDlHn82rVPH0GlTr+Bdo5oMuTiVoQgn60DY/3PL3sh3O2ct5ts3e02W/w==
+X-Received: by 2002:a05:6808:1b25:b0:32e:e59c:3901 with SMTP id bx37-20020a0568081b2500b0032ee59c3901mr13881725oib.186.1656820650648;
+        Sat, 02 Jul 2022 20:57:30 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 25-20020aca0f19000000b0032e5d0b5d5fsm12965910oip.58.2022.07.02.20.57.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jul 2022 20:26:21 -0700 (PDT)
-Received: by debian.me (Postfix, from userid 1000)
-        id EA78810390C; Sun,  3 Jul 2022 10:26:16 +0700 (WIB)
-Date:   Sun, 3 Jul 2022 10:26:16 +0700
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Takashi Iwai <tiwai@suse.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        alsa-devel@alsa-project.org, dm-devel@redhat.com,
-        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 00/12] Fix several documentation build warnings with
- Sphinx 2.4.4
-Message-ID: <YsEMWDYCdjxiUZ1P@debian.me>
-References: <cover.1656759988.git.mchehab@kernel.org>
+        Sat, 02 Jul 2022 20:57:29 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc:     Li Yang <leoyang.li@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Tero Kristo <kristo@kernel.org>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        linux-rockchip@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-tegra@vger.kernel.org,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        linux-gpio@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Heiko Stuebner <heiko@sntech.de>, Nishanth Menon <nm@ti.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Peter Rosin <peda@axentia.se>,
+        linux-arm-kernel@lists.infradead.org,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        openbmc@lists.ozlabs.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Andy Gross <agross@kernel.org>, Wei Xu <xuwei5@hisilicon.com>,
+        linux-omap@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Ray Jui <rjui@broadcom.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-input@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: Re: (subset) [PATCH v2 00/48] dt-bindings: input: gpio-keys: rework matching children
+Date:   Sat,  2 Jul 2022 22:56:25 -0500
+Message-Id: <165682055971.445910.5189932421143220440.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
+References: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1656759988.git.mchehab@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Jul 02, 2022 at 12:07:32PM +0100, Mauro Carvalho Chehab wrote:
-> This series is against next-20220701. It fixes several warnings
-> that are currently produced while building html docs.
+On Thu, 9 Jun 2022 13:37:21 +0200, Krzysztof Kozlowski wrote:
+> Merging
+> =======
+> 1. dt-bindings: rebased on top of Rob's:
+>    https://lore.kernel.org/all/20220608211207.2058487-1-robh@kernel.org/
 > 
-> Each patch in this series is independent from the others, as
-> each one touches a different file.
+> 2. DTS patches are independent. They can be picked up directly by sub-arch
+>    maintainers, by Arnd or Olof, or eventually by me (if you wish).
 > 
-> Mauro Carvalho Chehab (12):
->   docs: ext4: blockmap.rst: fix a broken table
->   docs: tegra194-hte.rst: don't include gpiolib.c twice
->   docs: device-mapper: add a blank line at writecache.rst
->   docs: PCI: pci-vntb-function.rst: Properly include ascii artwork
->   docs: PCI: pci-vntb-howto.rst: fix a title markup
->   docs: virt: kvm: fix a title markup at api.rst
->   docs: ABI: sysfs-bus-nvdimm
->   kunit: test.h: fix a kernel-doc markup
->   net: mac80211: fix a kernel-doc markup
->   docs: alsa: alsa-driver-api.rst: remove a kernel-doc file
->   docs: arm: index.rst: add google/chromebook-boot-flow
->   docs: leds: index.rst: add leds-qcom-lpg to it
-> 
+> [...]
 
-Hi Mauro,
+Applied, thanks!
 
-Thanks for cleaning up these warning above. However, I have already
-submitted some of these cleanups (pending reviews or integration):
+[27/48] arm64: dts: qcom: align gpio-key node names with dtschema
+        commit: b08f5cbd69dcd25f5ab2a0798fe3836a97a9d7c6
+[28/48] arm64: dts: qcom: correct gpio-keys properties
+        commit: 5a4b0b853a2914403746b0a1decab695202ff242
+[29/48] arm64: dts: qcom: sdm630-sony-xperia-nile: drop unneeded status from gpio-keys
+        commit: 9d8840f6ee426b6dfcb65bdf39e2898652e2b1e5
+[30/48] arm64: dts: qcom: align led node names with dtschema
+        commit: 3cfe94d660a8ebc19e78ea0a4781d7e9a1054c65
 
-[1]: https://lore.kernel.org/linux-doc/20220702042350.23187-1-bagasdotme@gmail.com/
-[2]: https://lore.kernel.org/linux-doc/20220612000125.9777-1-bagasdotme@gmail.com/
-[3]: https://lore.kernel.org/linux-doc/20220627095151.19339-1-bagasdotme@gmail.com/
-[4]: https://lore.kernel.org/linux-doc/20220627082928.11239-1-bagasdotme@gmail.com/
-
-There's still a warning left:
-
-Documentation/ABI/testing/sysfs-bus-iio-sx9324:2: WARNING: Unexpected indentation.
-
-But I think the Date: field that triggered the warning above looks OK.
-
-Regardless of that, the build successed.
-
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
+Best regards,
 -- 
-An old man doll... just what I always wanted! - Clara
+Bjorn Andersson <bjorn.andersson@linaro.org>
