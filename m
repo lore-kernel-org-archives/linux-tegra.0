@@ -2,102 +2,71 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A0DC43334
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 08:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F07C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 08:46:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232814AbiGDIYw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jul 2022 04:24:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36268 "EHLO
+        id S229789AbiGDIqE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jul 2022 04:46:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232951AbiGDIYt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 04:24:49 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 91B9865C5;
-        Mon,  4 Jul 2022 01:24:47 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7CAE23A;
-        Mon,  4 Jul 2022 01:24:47 -0700 (PDT)
-Received: from [192.168.33.14] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C55A3F792;
-        Mon,  4 Jul 2022 01:24:45 -0700 (PDT)
-Message-ID: <4ad311e5-62e1-d06b-7c5e-315ed923b5a5@arm.com>
-Date:   Mon, 4 Jul 2022 09:24:44 +0100
+        with ESMTP id S229710AbiGDIqD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 04:46:03 -0400
+Received: from m15112.mail.126.com (m15112.mail.126.com [220.181.15.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ADDA5B7ED
+        for <linux-tegra@vger.kernel.org>; Mon,  4 Jul 2022 01:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=MuDoe
+        08dNNBH2iR8u2GDQUkfwsc1EfDvNcbXMBWHLU8=; b=lgHMQbjTZUcowQct5rv/4
+        4H8skZKzpEHwGMudVTI3zMjcRt2EKSJ45nhLLQoKQPlD0YlTBwvEJdxsuiB9J92v
+        GBxvYfXMH4wgWYZjQIRrIIA6VMAuHqWH5omEZK1tvjcXPFi8mo0xnWuqhXoWEorp
+        yiYYCzUJmds76c6Qu11ZOg=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp2 (Coremail) with SMTP id DMmowAD3Yf6bqMJi275fEQ--.34864S2;
+        Mon, 04 Jul 2022 16:45:16 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     jckuo@nvidia.com, kishon@ti.com, vkoul@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, linux-phy@lists.infradead.org,
+        linux-tegra@vger.kernel.org, windhl@126.com, linmq006@gmail.com
+Subject: [PATCH] phy: tegra: Fix missing of_node_put() in tegra210_xusb_padctl_probe()
+Date:   Mon,  4 Jul 2022 16:45:14 +0800
+Message-Id: <20220704084514.277005-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v3 07/12] thermal/core: Rename trips to ntrips
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linexp.org>,
-        daniel.lezcano@linaro.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        khilman@baylibre.com, abailon@baylibre.com,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        rafael@kernel.org
-References: <20220703183059.4133659-1-daniel.lezcano@linexp.org>
- <20220703183059.4133659-8-daniel.lezcano@linexp.org>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20220703183059.4133659-8-daniel.lezcano@linexp.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DMmowAD3Yf6bqMJi275fEQ--.34864S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruw4fWF1ktFWUtF13Jw1UJrb_yoW3tFg_WF
+        1xZr97XrWvgr4IvFyaqFyIyasrZ3W0qFsYgrs2vr93Ka1jqw1jyryDXry5ur12vw4DJFy7
+        Aa4DZF1UAr4rZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xREKZXDUUUUU==
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbiuBw0F2JVkLyEqQAAsx
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+We should call of_node_put() for the reference 'np' returned by
+of_parse_phandle() which will increase the refcount.
 
+Fixes: 2d1021487273 ("phy: tegra: xusb: Add wake/sleepwalk for Tegra210")
+Co-authored-by: Miaoqian Lin <linmq006@gmail.com>
+Signed-off-by: Liang He <windhl@126.com>
+---
+ drivers/phy/tegra/xusb-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 7/3/22 19:30, Daniel Lezcano wrote:
-> In order to use thermal trips defined in the thermal structure, rename
-> the 'trips' field to 'ntrips' to have the 'trips' field containing the
-> thermal trip points.
-> 
-> Cc: Alexandre Bailon <abailon@baylibre.com>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc; Eduardo Valentin <eduval@amazon.com>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
-> ---
->   drivers/thermal/gov_fair_share.c        |  6 +++---
->   drivers/thermal/gov_power_allocator.c   |  4 ++--
->   drivers/thermal/tegra/tegra30-tsensor.c |  2 +-
->   drivers/thermal/thermal_core.c          | 20 ++++++++++----------
->   drivers/thermal/thermal_helpers.c       |  4 ++--
->   drivers/thermal/thermal_netlink.c       |  2 +-
->   drivers/thermal/thermal_sysfs.c         | 22 +++++++++++-----------
->   include/linux/thermal.h                 |  2 +-
->   8 files changed, 31 insertions(+), 31 deletions(-)
-
-
-[snip]
-
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index 6289b0bb1c97..3a57878a2a6c 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-
-Missing updated ne name in comment here:
-  * @trips:      number of trip points the thermal zone supports
-
-
-> @@ -165,7 +165,7 @@ struct thermal_zone_device {
->   	struct thermal_attr *trip_hyst_attrs;
->   	enum thermal_device_mode mode;
->   	void *devdata;
-> -	int trips;
-> +	int ntrips;
->   	unsigned long trips_disabled;	/* bitmap for disabled trips */
->   	unsigned long passive_delay_jiffies;
->   	unsigned long polling_delay_jiffies;
-
-Maybe this is only my bias, but this new name 'ntrips' looks
-like negation in electronics.
-
-We have examples like: num_cpus, num_pins, num_leds, num_groups,
-num_locks, num_buffers, num_phys, etc...
-
-Could we have 'num_trips' and follow to this convention here as well?
-
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index eedfc7c2cc05..d5eebb7a266c 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -3165,6 +3165,7 @@ tegra210_xusb_padctl_probe(struct device *dev,
+ 	}
+ 
+ 	pdev = of_find_device_by_node(np);
++	of_node_put(np);
+ 	if (!pdev) {
+ 		dev_warn(dev, "PMC device is not available\n");
+ 		goto out;
+-- 
+2.25.1
 
