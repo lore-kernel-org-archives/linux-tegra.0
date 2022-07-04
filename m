@@ -2,87 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A42C43334
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 15:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513BEC43334
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 16:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234525AbiGDP5n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jul 2022 11:57:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40856 "EHLO
+        id S230151AbiGDQ6J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jul 2022 12:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234470AbiGDP5m (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 11:57:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105DDDEA8;
-        Mon,  4 Jul 2022 08:57:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A08C060C02;
-        Mon,  4 Jul 2022 15:57:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E96EC341C7;
-        Mon,  4 Jul 2022 15:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656950261;
-        bh=a6RKJQCid/UVv8Ya1NMJAoisbLIXHGq7RKNAj6q9jqY=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=liVaWde7+wohy/TzijN+e9VpNx+o7oVFjqX6YuhohjCaFOqnFvVH6MAAQhFQKcd5m
-         dHcBDnEsWyrp6Y6Ecqaj30o9zJ13g+RdVWV7KI10m8Xq51yUJ2FEd8BduThGsdBCHV
-         LRcTXM1AZ2Rtnc7/g/zgrEFVFpS2SFXVDZKoj7v0TeNF3WHXCHUkD3AknhNRZy+aDj
-         zdx8tbGMLhrigom1OxQbLik2Lw8k7WezQ9ACXFiJcv0VbpgTPtWF0GzzoLkpuJ3AEn
-         dGvEOJCUkjKUYyciE5eCVBtFgHmz3OXqp6ab6dUjVGTHzzZhqRH5yOy4lM5cPsqbk6
-         fuo87rNqLQMyA==
-From:   Mark Brown <broonie@kernel.org>
-To:     lgirdwood@gmail.com, jiapeng.chong@linux.alibaba.com
-Cc:     linux-tegra@vger.kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, alsa-devel@alsa-project.org, perex@perex.cz,
-        tiwai@suse.com, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de
-In-Reply-To: <20220701072850.62408-1-jiapeng.chong@linux.alibaba.com>
-References: <20220701072850.62408-1-jiapeng.chong@linux.alibaba.com>
-Subject: Re: [PATCH] ASoC: tegra20_ac97: Fix missing error code in tegra20_ac97_platform_probe()
-Message-Id: <165695025874.481068.18415928227093341712.b4-ty@kernel.org>
-Date:   Mon, 04 Jul 2022 16:57:38 +0100
+        with ESMTP id S229611AbiGDQ6J (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 12:58:09 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8EE665D0;
+        Mon,  4 Jul 2022 09:58:07 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id fi2so17675127ejb.9;
+        Mon, 04 Jul 2022 09:58:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p2Q9FRLaZUKXMdeyBBzo8wh6+gFlGM+LoHpN9PIw1WA=;
+        b=QrBi+MNGnPDdmvRfPNSwtoDZm0dlusfdRMi7fljLaHI5Dvc1G5U5pm11u38QM1qmII
+         Q6eRtPj349iHGwc16bekIZLYyuKhOIXFyvshpycQxGDxv6KucPJEReTn+9OzYYomUwlM
+         hHkF49R3zsOdHmmrVZMJZKc7ww9R46/IyytJaq14ik2R81Q40Fzi/xR565qmh54kVGTH
+         jnbU/pdTnvexXHeo0TbsSzZhbjo8LZNyR2yNRueSzNIyDU4Lqnw+tPPYdjrXYIBJ8Rg5
+         Crd7pz6ou5XhJsVxNzwbcUlYxmKXae/eVmhlPsK5ph6C2eR/SDClTLPHVpydxQCoJurX
+         iHGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p2Q9FRLaZUKXMdeyBBzo8wh6+gFlGM+LoHpN9PIw1WA=;
+        b=osgg9GMiTNP2OESqD9wrEre4K3lmIoHOTRJkn8vqnhlJGcS9CtAyA01kvpLz+PjDJ5
+         xbJ1yxXR/YYFclrV+YSampXgjHLbV8/WsdXJIEalOqtgUjrO7+kbQezqzzJDDb+TiFFM
+         4Bi8DhzS02xoCGGc2WpZ67ORNQ7e+Ad0IV0t+hXFzzU9RNyDeTlCZ7okBTo2UXoaMdjZ
+         K2v4RmBZ/ueXx/P5LOFnF3F1EVt2E+HKBdpDzxtTiwucI10nXd1d6Uut2pEMKHSGkAfv
+         RS8I5hWiE7uH2ZobN/QrbrT/FwFS8QsRMOPXzUzEqh4GoLBfbqQMYKbq9vtIJH7emRy7
+         MmtQ==
+X-Gm-Message-State: AJIora8Xu7lf3Ddezc6xr86yeIzNIPmlEPxByGlA55aNHkhQJBddq1BF
+        vPOKCLt7TvDXgrnnzeY2BScVgZDVKg8=
+X-Google-Smtp-Source: AGRyM1uyUuLStaDKcy0XUJgIQi/tMB9+vnxla3vzwtYrCGaTWWGuShZIEYQc5NgWmxphKLDXXJcYig==
+X-Received: by 2002:a17:906:752:b0:726:a6c2:b242 with SMTP id z18-20020a170906075200b00726a6c2b242mr30265671ejb.33.1656953886366;
+        Mon, 04 Jul 2022 09:58:06 -0700 (PDT)
+Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id c20-20020a056402101400b004358cec9ce1sm20880584edu.65.2022.07.04.09.58.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jul 2022 09:58:05 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v2 0/4] pinctrl: tegra: Separate Tegra194 instances
+Date:   Mon,  4 Jul 2022 18:57:58 +0200
+Message-Id: <20220704165802.129717-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 1 Jul 2022 15:28:50 +0800, Jiapeng Chong wrote:
-> The error code is missing in this code scenario, add the error code
-> '-EINVAL' to the return value 'ret'.
-> 
-> This was found by coccicheck:
-> 
-> sound/soc/tegra/tegra20_ac97.c:357 tegra20_ac97_platform_probe() warn: missing error code 'ret'.
-> 
-> [...]
+From: Thierry Reding <treding@nvidia.com>
 
-Applied to
+This patch series changes the pin controller DT description on Tegra194
+in order to properly describe how the hardware works. Currently a
+simplified description is used that merges two pin controller instances
+(called AON and main) into a single DT node. This has some disadvantages
+such as creating a complicated mapping between the pins in those pin
+controllers and the corresponding GPIO controllers (which are already
+separated).
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+As a prerequisite, the first patch in this series converts the device
+tree bindings to json-schema. A second patch then adds an additional
+compatible string for the AON instance (along with more details about
+each controller's pins) and finally patch 3 converts the driver to
+cope with these changes. A fourth patch makes the corresponding
+changes in the Tegra194 DTS file.
 
-Thanks!
+Note that while this changes the DT node in an incompatible way, this
+doesn't have any practical implications for backwards-compatibility. The
+reason for this is that device trees have only reconfigured a very
+narrow subset of pins of the main controller, so the new driver will
+remain backwards-compatible with old device trees.
 
-[1/1] ASoC: tegra20_ac97: Fix missing error code in tegra20_ac97_platform_probe()
-      commit: acf981f94edca13c85fa24dd8511cdc6bd4c98ed
+Changes in v2:
+- address Rob's review comments on the DT bindings
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Thierry
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Thierry Reding (4):
+  dt-bindings: pinctrl: tegra: Convert to json-schema
+  dt-bindings: pinctrl: tegra194: Separate instances
+  pinctrl: tegra: Separate Tegra194 instances
+  arm64: tegra: Separate AON pinmux from main pinmux on Tegra194
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+ .../bindings/clock/nvidia,tegra124-dfll.yaml  |   2 +-
+ .../pinctrl/nvidia,tegra-pinmux-common.yaml   | 195 ++++++++++++
+ .../pinctrl/nvidia,tegra114-pinmux.txt        | 131 --------
+ .../pinctrl/nvidia,tegra114-pinmux.yaml       | 162 ++++++++++
+ .../pinctrl/nvidia,tegra124-pinmux.txt        | 153 ----------
+ .../pinctrl/nvidia,tegra124-pinmux.yaml       | 182 +++++++++++
+ .../pinctrl/nvidia,tegra194-pinmux.txt        | 107 -------
+ .../pinctrl/nvidia,tegra194-pinmux.yaml       | 285 +++++++++++++++++
+ .../pinctrl/nvidia,tegra20-pinmux.txt         | 143 ---------
+ .../pinctrl/nvidia,tegra20-pinmux.yaml        | 107 +++++++
+ .../pinctrl/nvidia,tegra210-pinmux.txt        | 166 ----------
+ .../pinctrl/nvidia,tegra210-pinmux.yaml       | 146 +++++++++
+ .../pinctrl/nvidia,tegra30-pinmux.txt         | 144 ---------
+ .../pinctrl/nvidia,tegra30-pinmux.yaml        | 176 +++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  13 +-
+ drivers/pinctrl/tegra/pinctrl-tegra.c         |  33 +-
+ drivers/pinctrl/tegra/pinctrl-tegra.h         |   2 +
+ drivers/pinctrl/tegra/pinctrl-tegra194.c      | 286 ++++++++++--------
+ 18 files changed, 1437 insertions(+), 996 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-pinmux-common.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-- 
+2.36.1
 
-Thanks,
-Mark
