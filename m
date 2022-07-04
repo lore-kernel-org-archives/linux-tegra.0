@@ -2,386 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C893EC433EF
-	for <linux-tegra@archiver.kernel.org>; Sun,  3 Jul 2022 18:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB87C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 08:15:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232853AbiGCSbz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 3 Jul 2022 14:31:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49434 "EHLO
+        id S233594AbiGDIPZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jul 2022 04:15:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232747AbiGCSbo (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 3 Jul 2022 14:31:44 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA765582
-        for <linux-tegra@vger.kernel.org>; Sun,  3 Jul 2022 11:31:38 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id o19-20020a05600c4fd300b003a0489f414cso4436433wmq.4
-        for <linux-tegra@vger.kernel.org>; Sun, 03 Jul 2022 11:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linexp-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CTpHzS2InsEWdha/c7ASsHGBaisNa75ZXdZy4b4WI+4=;
-        b=2EadyHsJvNm65+YS2KL+xBAk+PCF1L/e6v574Uu0YCSpIyUy4xIMBXweSnV0SZaKmE
-         Y1kK3UhounA03x+SIaMhfLZetS+lEyxkTzd0C4HVVtH8Rg6CIf3ALkDLEgy9phsbwTuq
-         L6wIWk5nAubGUWIATkt30EHDwJ1FUryx/lMKAO7/m/uUkIKqldYDj2pq8VYPjrjRRJKz
-         YBHJubTCtDRMHlnjhx8q2maMcVPCGmzyQxkgnUmGiXRH49s0/TqDPB6tEsY5T56kmmkK
-         YkZxZKftJ6kH1CcBdViYJ38kJkQ8F87WXzCe7bEO9PPgunNs1TTU3u4fevxvo4O3WcUZ
-         ehUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CTpHzS2InsEWdha/c7ASsHGBaisNa75ZXdZy4b4WI+4=;
-        b=r4NZv4BpNs7uZxuSXSPZpg54RCzIPqG6KL8v0JFEa7EAZDDMjY+i1PN0tv9LMTsK5v
-         OVI8GKRlQWHDJ0yURnEiNWdWyzmOQ03THMxjqxOVj9q4MFS4tU98XiLjN87PjuuQlGWO
-         YP8+gk7jhP6EECLeNIu794pJFcXgFzq0Z1BpOJFdM7K2ZTR/CL6tU7H3iHGe/dnnoFGd
-         X2TBRK11Wt2JWe679M1ztJfC3ffuLGV1Hu+pV9GlXaXCOiwyCu4Xzvj6NKuDuZXudljI
-         GjZcylC21s53NR0N2XguWrs4m8XyJ3FedUEhydQOdLTZ6fJFhnzN67UEzv4PzDXPK19H
-         ShNA==
-X-Gm-Message-State: AJIora+g8dcRIBamnYpJC//TuhJgwjNdF8heorpTOXC1UA0pZ7svSpPe
-        RSEsujwb1269xrYZSk9k5Xcorw==
-X-Google-Smtp-Source: AGRyM1tDnvOT6xrVItMTP7jF/4I+x/UzBGDrWoWaPH/ATP1N4Z/M50Q24AQj+9aIuamNWas5F4kvzQ==
-X-Received: by 2002:a05:600c:a42:b0:39c:9166:5a55 with SMTP id c2-20020a05600c0a4200b0039c91665a55mr26996235wmq.141.1656873097939;
-        Sun, 03 Jul 2022 11:31:37 -0700 (PDT)
-Received: from localhost.localdomain (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id x10-20020a5d54ca000000b0021b85664636sm27504258wrv.16.2022.07.03.11.31.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Jul 2022 11:31:37 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linexp.org>
-To:     daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        khilman@baylibre.com, abailon@baylibre.com,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH v3 07/12] thermal/core: Rename trips to ntrips
-Date:   Sun,  3 Jul 2022 20:30:54 +0200
-Message-Id: <20220703183059.4133659-8-daniel.lezcano@linexp.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220703183059.4133659-1-daniel.lezcano@linexp.org>
-References: <20220703183059.4133659-1-daniel.lezcano@linexp.org>
+        with ESMTP id S233615AbiGDIPA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 04:15:00 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2082.outbound.protection.outlook.com [40.107.95.82])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02CFBCB8;
+        Mon,  4 Jul 2022 01:13:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WUbBFJZEbgzIK52WgbKngvXdeG3DQY5ZKsCJMy21RjzYuayqrGe7KeJLqvO06tZVAJusje8fQWcxTmTicYxJ77bzUdmvKftzqlL12RZwd3iK21bSkmqgaKq7jzHTioXLMDsIUhF2TKnTrx3VPwHhpljAMnVqXGhfINbuB43Qx7+eMEINSsUEqYjQF7XMw2FbO/41ZlL/aPUytdlh6AVWVJRRTUHFppTwq+zob88nOwSpdH+R1iDwITcuDhbFafHtb9q4T/zv3ZTGQAQAQcwgCCa3cCKEqUc4VRBYmUESeTF2AMRKfecxpRt+k4Zu780wyAX0/a4rb2jgJFu3sl9J/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D6ZHYP8pJ2TEfRF8D67iZ+QJB5QnATuY7iv6i4lztdQ=;
+ b=C/Lhj96iyFb2eB2ucvGcpisHzo2w2xsVBO1PKdx0vbVmEKqz/BYH44iLJI9ZSN30PIZkAu2VA9Nuijlb6AiPxvNRYgsl1iaS+Lmwk6DbJ3CvOFAkQJZlW9x2143yuXuwi0ZWT9VhCaOuq10hdwGZ2BR3/vZphvtSSO6RYRgmeY3ncS2n3ZR30wfBFi5gTzJR8nstCeHulBa8D6Ich+wi+brsviNqEnst0OwidGhleJ0J1ryRUU0tfw1XJR92K6qOEDingbeWael9UHXsu2QzDf3OPEWtDG9GZ69soWgmUvbTP0/q9xZGQDOlQH4Sd29MRO8UcfCEk+hpnkg9XT9g0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D6ZHYP8pJ2TEfRF8D67iZ+QJB5QnATuY7iv6i4lztdQ=;
+ b=WcF5phdeR1Ik8WzZXc25vnE+bxtT3U6dZ98L2GcpBrHo4KqtXRt8gNWu2qrBDX+ujZlfStYpvqb8QdCxXEuAE3Sxar8oMfh5tJN+V6RRExxcoAGKTo+1coJzfRiYxX91E9sqfozxEv580I+kex8+WcZruTdIFrZBIPR/DAwvZ3qjoNWeVI9J70/TSKLfjSpkvWfpVDfewqfSrusBuz6Wm1Suz+VTp1h9avcxKY44uWVJiKViqtaT/SHAjIuSHlxiG9zrWcRa57dNY5QHvKCAYV7lCTdw60nQP88J7eGTJxGOwSg3puh7o7KRc9gNsycTqnPaucU8uMc0/JMx9OPBrA==
+Received: from MW4P221CA0025.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::30)
+ by BL0PR12MB4723.namprd12.prod.outlook.com (2603:10b6:208:8a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.17; Mon, 4 Jul
+ 2022 08:13:50 +0000
+Received: from CO1NAM11FT063.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8b:cafe::fb) by MW4P221CA0025.outlook.office365.com
+ (2603:10b6:303:8b::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14 via Frontend
+ Transport; Mon, 4 Jul 2022 08:13:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ CO1NAM11FT063.mail.protection.outlook.com (10.13.175.37) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5395.14 via Frontend Transport; Mon, 4 Jul 2022 08:13:49 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 4 Jul
+ 2022 08:13:48 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 4 Jul 2022
+ 01:13:48 -0700
+Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.26 via Frontend
+ Transport; Mon, 4 Jul 2022 01:13:43 -0700
+From:   Kartik <kkartik@nvidia.com>
+To:     <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <spujar@nvidia.com>, <mperttunen@nvidia.com>,
+        <rgumasta@nvidia.com>, <amhetre@nvidia.com>,
+        <akhilrajeev@nvidia.com>, <pshete@nvidia.com>, <vidyas@nvidia.com>,
+        <sumitg@nvidia.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH v3 0/6] Add watchdog timer support for Tegra186/194/234 SoCs
+Date:   Mon, 4 Jul 2022 13:43:36 +0530
+Message-ID: <1656922422-25823-1-git-send-email-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 649f167c-8fc6-40a7-d20a-08da5d952006
+X-MS-TrafficTypeDiagnostic: BL0PR12MB4723:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: CIXAHbSdna6RBxWnzJxcUFwLITjkyfKke9OLegMaLNvq6V+EOmOV37NPlLa73V7WQdT0XSz82bxDBpTmBjem7TQGO5SemqD3LItufLXRFkYGW0dftSFovV+Z6Xtj7XMwn/QAWryqEbMMckMbGtvQJWLltfYft1Ku1nsXZBO7YLDFYcFxjMJgx3x9DaXLwrr8EkyupZ5/dogBLpnnl7GzSyO2PUlNkrpaamYXr9A8MX1kjHft0jNpI6wnyGojWbwJGU5SBfSFh5f4fva7x6aVX5hcXU/EzZJVxsOjGO21tWh7RZJa0OBm+lIO7vaQL1Q2oQAT7mR49Ti7RJwTV90sUqNeam7p7CaqEQVZssc0t2h8WtZp2gsTv9JY4y84sEYCORsO7QvSqg39iPLfmqdMAngEaiUc7MZa2lXAhDijjO6nrTfp0KvQhDeTX4WjgRdLJRGhkDznD1cxD74qA7ukXuwZUlfIfhXhqOCC1UvSTmjCHLTknSPYK/YLk6w3QpA/EHfyfsp5KdNfzwesfKbqFl6w6HPzfjeDm3Hyj5QIsXaEVV+1DRXkmzhORiQJU5R1DhL+C31Jsnw3jcZbR9yDJNDaklNh0XUdZI651v7LH0zdjT0s4MiSnOfNajVyFnZEj6oUmA8ifqROKm7vYmjBQ/aTeY01NhSu9hhxBMAO8Uj65wAY5lhhGZfkpjA97BacRA37Uv/Uxzyf4niZ21oHlKM3GDK2N3imEYC7bL4kHBPZZo1c2wtHaf/zhHJVk8mL4fM0xApwn/HZV7CTcIUc8ZEEDLQNh6IpWX+80VYo6duTzFcQEdfWby3CVvEH/DxlOxZYskU+BxoBttk88EhGcQIJa8aDDwxVRIG36h2wJx+0cmr+oz91Dmvy7qH8xzo+
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(6029001)(4636009)(39860400002)(136003)(376002)(396003)(346002)(46966006)(36840700001)(40470700004)(47076005)(426003)(83380400001)(336012)(82740400003)(82310400005)(40480700001)(81166007)(356005)(921005)(36860700001)(186003)(70206006)(8676002)(70586007)(316002)(2906002)(5660300002)(8936002)(7696005)(26005)(110136005)(2616005)(41300700001)(6666004)(40460700003)(478600001)(36756003)(86362001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2022 08:13:49.4081
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 649f167c-8fc6-40a7-d20a-08da5d952006
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT063.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4723
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In order to use thermal trips defined in the thermal structure, rename
-the 'trips' field to 'ntrips' to have the 'trips' field containing the
-thermal trip points.
+The native timers IP block found on Tegra SoCs implements a watchdog
+timer that can be used to recover from system hangs. This series of
+patches adds support for watchdog timers available on Tegra186,
+Tegra194 and Tegra234 SOC's.
 
-Cc: Alexandre Bailon <abailon@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc; Eduardo Valentin <eduval@amazon.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
----
- drivers/thermal/gov_fair_share.c        |  6 +++---
- drivers/thermal/gov_power_allocator.c   |  4 ++--
- drivers/thermal/tegra/tegra30-tsensor.c |  2 +-
- drivers/thermal/thermal_core.c          | 20 ++++++++++----------
- drivers/thermal/thermal_helpers.c       |  4 ++--
- drivers/thermal/thermal_netlink.c       |  2 +-
- drivers/thermal/thermal_sysfs.c         | 22 +++++++++++-----------
- include/linux/thermal.h                 |  2 +-
- 8 files changed, 31 insertions(+), 31 deletions(-)
+To keep the history intact, I added Tegra234 driver change as separate.
+The original patchset is an old one authored by Thierry.
 
-diff --git a/drivers/thermal/gov_fair_share.c b/drivers/thermal/gov_fair_share.c
-index 1e5abf4822be..5d23bb5c39ea 100644
---- a/drivers/thermal/gov_fair_share.c
-+++ b/drivers/thermal/gov_fair_share.c
-@@ -25,10 +25,10 @@ static int get_trip_level(struct thermal_zone_device *tz)
- 	int trip_temp;
- 	enum thermal_trip_type trip_type;
- 
--	if (tz->trips == 0 || !tz->ops->get_trip_temp)
-+	if (tz->ntrips == 0 || !tz->ops->get_trip_temp)
- 		return 0;
- 
--	for (count = 0; count < tz->trips; count++) {
-+	for (count = 0; count < tz->ntrips; count++) {
- 		tz->ops->get_trip_temp(tz, count, &trip_temp);
- 		if (tz->temperature < trip_temp)
- 			break;
-@@ -53,7 +53,7 @@ static long get_target_state(struct thermal_zone_device *tz,
- 
- 	cdev->ops->get_max_state(cdev, &max_state);
- 
--	return (long)(percentage * level * max_state) / (100 * tz->trips);
-+	return (long)(percentage * level * max_state) / (100 * tz->ntrips);
- }
- 
- /**
-diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
-index 13e375751d22..c9f4eb12b0c4 100644
---- a/drivers/thermal/gov_power_allocator.c
-+++ b/drivers/thermal/gov_power_allocator.c
-@@ -527,7 +527,7 @@ static void get_governor_trips(struct thermal_zone_device *tz,
- 	last_active = INVALID_TRIP;
- 	last_passive = INVALID_TRIP;
- 
--	for (i = 0; i < tz->trips; i++) {
-+	for (i = 0; i < tz->ntrips; i++) {
- 		enum thermal_trip_type type;
- 		int ret;
- 
-@@ -668,7 +668,7 @@ static int power_allocator_bind(struct thermal_zone_device *tz)
- 
- 	get_governor_trips(tz, params);
- 
--	if (tz->trips > 0) {
-+	if (tz->ntrips > 0) {
- 		ret = tz->ops->get_trip_temp(tz,
- 					params->trip_max_desired_temperature,
- 					&control_temp);
-diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
-index 9b6b693cbcf8..8ffd3dcfdb53 100644
---- a/drivers/thermal/tegra/tegra30-tsensor.c
-+++ b/drivers/thermal/tegra/tegra30-tsensor.c
-@@ -316,7 +316,7 @@ static void tegra_tsensor_get_hw_channel_trips(struct thermal_zone_device *tzd,
- 	*hot_trip  = 85000;
- 	*crit_trip = 90000;
- 
--	for (i = 0; i < tzd->trips; i++) {
-+	for (i = 0; i < tzd->ntrips; i++) {
- 		enum thermal_trip_type type;
- 		int trip_temp;
- 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index a8b1628937c6..434a675da245 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -505,7 +505,7 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
- 
- 	tz->notify_event = event;
- 
--	for (count = 0; count < tz->trips; count++)
-+	for (count = 0; count < tz->ntrips; count++)
- 		handle_thermal_trip(tz, count);
- }
- EXPORT_SYMBOL_GPL(thermal_zone_device_update);
-@@ -630,7 +630,7 @@ int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
- 	unsigned long max_state;
- 	int result, ret;
- 
--	if (trip >= tz->trips || trip < 0)
-+	if (trip >= tz->ntrips || trip < 0)
- 		return -EINVAL;
- 
- 	list_for_each_entry(pos1, &thermal_tz_list, node) {
-@@ -811,7 +811,7 @@ static void __bind(struct thermal_zone_device *tz, int mask,
- {
- 	int i, ret;
- 
--	for (i = 0; i < tz->trips; i++) {
-+	for (i = 0; i < tz->ntrips; i++) {
- 		if (mask & (1 << i)) {
- 			unsigned long upper, lower;
- 
-@@ -1057,7 +1057,7 @@ static void __unbind(struct thermal_zone_device *tz, int mask,
- {
- 	int i;
- 
--	for (i = 0; i < tz->trips; i++)
-+	for (i = 0; i < tz->ntrips; i++)
- 		if (mask & (1 << i))
- 			thermal_zone_unbind_cooling_device(tz, i, cdev);
- }
-@@ -1169,7 +1169,7 @@ static void thermal_set_delay_jiffies(unsigned long *delay_jiffies, int delay_ms
- /**
-  * thermal_zone_device_register() - register a new thermal zone device
-  * @type:	the thermal zone device type
-- * @trips:	the number of trip points the thermal zone support
-+ * @ntrips:	the number of trip points the thermal zone support
-  * @mask:	a bit string indicating the writeablility of trip points
-  * @devdata:	private device data
-  * @ops:	standard thermal zone device callbacks
-@@ -1191,7 +1191,7 @@ static void thermal_set_delay_jiffies(unsigned long *delay_jiffies, int delay_ms
-  * IS_ERR*() helpers.
-  */
- struct thermal_zone_device *
--thermal_zone_device_register(const char *type, int trips, int mask,
-+thermal_zone_device_register(const char *type, int ntrips, int mask,
- 			     void *devdata, struct thermal_zone_device_ops *ops,
- 			     struct thermal_zone_params *tzp, int passive_delay,
- 			     int polling_delay)
-@@ -1215,7 +1215,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	if (trips > THERMAL_MAX_TRIPS || trips < 0 || mask >> trips) {
-+	if (ntrips > THERMAL_MAX_TRIPS || ntrips < 0 || mask >> ntrips) {
- 		pr_err("Incorrect number of thermal trips\n");
- 		return ERR_PTR(-EINVAL);
- 	}
-@@ -1225,7 +1225,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	if (trips > 0 && (!ops->get_trip_type || !ops->get_trip_temp))
-+	if (ntrips > 0 && (!ops->get_trip_type || !ops->get_trip_temp))
- 		return ERR_PTR(-EINVAL);
- 
- 	tz = kzalloc(sizeof(*tz), GFP_KERNEL);
-@@ -1255,7 +1255,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 	tz->tzp = tzp;
- 	tz->device.class = &thermal_class;
- 	tz->devdata = devdata;
--	tz->trips = trips;
-+	tz->ntrips = ntrips;
- 
- 	thermal_set_delay_jiffies(&tz->passive_delay_jiffies, passive_delay);
- 	thermal_set_delay_jiffies(&tz->polling_delay_jiffies, polling_delay);
-@@ -1273,7 +1273,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 	if (result)
- 		goto release_device;
- 
--	for (count = 0; count < trips; count++) {
-+	for (count = 0; count < ntrips; count++) {
- 		if (tz->ops->get_trip_type(tz, count, &trip_type) ||
- 		    tz->ops->get_trip_temp(tz, count, &trip_temp) ||
- 		    !trip_temp)
-diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
-index 60bfda1a1db7..c6bb8c7638da 100644
---- a/drivers/thermal/thermal_helpers.c
-+++ b/drivers/thermal/thermal_helpers.c
-@@ -89,7 +89,7 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
- 	ret = tz->ops->get_temp(tz, temp);
- 
- 	if (IS_ENABLED(CONFIG_THERMAL_EMULATION) && tz->emul_temperature) {
--		for (count = 0; count < tz->trips; count++) {
-+		for (count = 0; count < tz->ntrips; count++) {
- 			ret = tz->ops->get_trip_type(tz, count, &type);
- 			if (!ret && type == THERMAL_TRIP_CRITICAL) {
- 				ret = tz->ops->get_trip_temp(tz, count,
-@@ -137,7 +137,7 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
- 	if (!tz->ops->set_trips || !tz->ops->get_trip_hyst)
- 		goto exit;
- 
--	for (i = 0; i < tz->trips; i++) {
-+	for (i = 0; i < tz->ntrips; i++) {
- 		int trip_low;
- 
- 		tz->ops->get_trip_temp(tz, i, &trip_temp);
-diff --git a/drivers/thermal/thermal_netlink.c b/drivers/thermal/thermal_netlink.c
-index 32fea5174cc0..122552937353 100644
---- a/drivers/thermal/thermal_netlink.c
-+++ b/drivers/thermal/thermal_netlink.c
-@@ -469,7 +469,7 @@ static int thermal_genl_cmd_tz_get_trip(struct param *p)
- 
- 	mutex_lock(&tz->lock);
- 
--	for (i = 0; i < tz->trips; i++) {
-+	for (i = 0; i < tz->ntrips; i++) {
- 
- 		enum thermal_trip_type type;
- 		int temp, hyst = 0;
-diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
-index 1c4aac8464a7..e12f35eee0e8 100644
---- a/drivers/thermal/thermal_sysfs.c
-+++ b/drivers/thermal/thermal_sysfs.c
-@@ -416,15 +416,15 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
- 	int indx;
- 
- 	/* This function works only for zones with at least one trip */
--	if (tz->trips <= 0)
-+	if (tz->ntrips <= 0)
- 		return -EINVAL;
- 
--	tz->trip_type_attrs = kcalloc(tz->trips, sizeof(*tz->trip_type_attrs),
-+	tz->trip_type_attrs = kcalloc(tz->ntrips, sizeof(*tz->trip_type_attrs),
- 				      GFP_KERNEL);
- 	if (!tz->trip_type_attrs)
- 		return -ENOMEM;
- 
--	tz->trip_temp_attrs = kcalloc(tz->trips, sizeof(*tz->trip_temp_attrs),
-+	tz->trip_temp_attrs = kcalloc(tz->ntrips, sizeof(*tz->trip_temp_attrs),
- 				      GFP_KERNEL);
- 	if (!tz->trip_temp_attrs) {
- 		kfree(tz->trip_type_attrs);
-@@ -432,7 +432,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
- 	}
- 
- 	if (tz->ops->get_trip_hyst) {
--		tz->trip_hyst_attrs = kcalloc(tz->trips,
-+		tz->trip_hyst_attrs = kcalloc(tz->ntrips,
- 					      sizeof(*tz->trip_hyst_attrs),
- 					      GFP_KERNEL);
- 		if (!tz->trip_hyst_attrs) {
-@@ -442,7 +442,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
- 		}
- 	}
- 
--	attrs = kcalloc(tz->trips * 3 + 1, sizeof(*attrs), GFP_KERNEL);
-+	attrs = kcalloc(tz->ntrips * 3 + 1, sizeof(*attrs), GFP_KERNEL);
- 	if (!attrs) {
- 		kfree(tz->trip_type_attrs);
- 		kfree(tz->trip_temp_attrs);
-@@ -451,7 +451,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
- 		return -ENOMEM;
- 	}
- 
--	for (indx = 0; indx < tz->trips; indx++) {
-+	for (indx = 0; indx < tz->ntrips; indx++) {
- 		/* create trip type attribute */
- 		snprintf(tz->trip_type_attrs[indx].name, THERMAL_NAME_LENGTH,
- 			 "trip_point_%d_type", indx);
-@@ -478,7 +478,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
- 			tz->trip_temp_attrs[indx].attr.store =
- 							trip_point_temp_store;
- 		}
--		attrs[indx + tz->trips] = &tz->trip_temp_attrs[indx].attr.attr;
-+		attrs[indx + tz->ntrips] = &tz->trip_temp_attrs[indx].attr.attr;
- 
- 		/* create Optional trip hyst attribute */
- 		if (!tz->ops->get_trip_hyst)
-@@ -496,10 +496,10 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
- 			tz->trip_hyst_attrs[indx].attr.store =
- 					trip_point_hyst_store;
- 		}
--		attrs[indx + tz->trips * 2] =
-+		attrs[indx + tz->ntrips * 2] =
- 					&tz->trip_hyst_attrs[indx].attr.attr;
- 	}
--	attrs[tz->trips * 3] = NULL;
-+	attrs[tz->ntrips * 3] = NULL;
- 
- 	tz->trips_attribute_group.attrs = attrs;
- 
-@@ -540,7 +540,7 @@ int thermal_zone_create_device_groups(struct thermal_zone_device *tz,
- 	for (i = 0; i < size - 2; i++)
- 		groups[i] = thermal_zone_attribute_groups[i];
- 
--	if (tz->trips) {
-+	if (tz->ntrips) {
- 		result = create_trip_attrs(tz, mask);
- 		if (result) {
- 			kfree(groups);
-@@ -561,7 +561,7 @@ void thermal_zone_destroy_device_groups(struct thermal_zone_device *tz)
- 	if (!tz)
- 		return;
- 
--	if (tz->trips)
-+	if (tz->ntrips)
- 		destroy_trip_attrs(tz);
- 
- 	kfree(tz->device.groups);
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 6289b0bb1c97..3a57878a2a6c 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -165,7 +165,7 @@ struct thermal_zone_device {
- 	struct thermal_attr *trip_hyst_attrs;
- 	enum thermal_device_mode mode;
- 	void *devdata;
--	int trips;
-+	int ntrips;
- 	unsigned long trips_disabled;	/* bitmap for disabled trips */
- 	unsigned long passive_delay_jiffies;
- 	unsigned long polling_delay_jiffies;
+Kartik (4):
+  dt-bindings: timer: Add Tegra186 & Tegra234 Timer
+  clocksource/drivers/timer-tegra186: Add support for Tegra234 SoC
+  arm64: tegra: Enable native timers on Tegra186
+  arm64: tegra: Enable native timers on Tegra234
+
+Thierry Reding (2):
+  clocksource: Add Tegra186 timers support
+  arm64: tegra: Enable native timers on Tegra194
+
+ .../bindings/timer/nvidia,tegra186-timer.yaml | 109 ++++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi      |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  16 +
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  22 +
+ drivers/clocksource/Kconfig                   |   8 +
+ drivers/clocksource/Makefile                  |   1 +
+ drivers/clocksource/timer-tegra186.c          | 514 ++++++++++++++++++
+ 7 files changed, 671 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+ create mode 100644 drivers/clocksource/timer-tegra186.c
+
 -- 
-2.25.1
+2.17.1
 
