@@ -2,224 +2,193 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468DFC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 14:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2221DC43334
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 15:52:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234440AbiGDOfN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jul 2022 10:35:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35212 "EHLO
+        id S234014AbiGDPwm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jul 2022 11:52:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232123AbiGDOfM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 10:35:12 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 081F41136;
-        Mon,  4 Jul 2022 07:35:10 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBF9423A;
-        Mon,  4 Jul 2022 07:35:10 -0700 (PDT)
-Received: from [10.57.41.70] (unknown [10.57.41.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 419853F66F;
-        Mon,  4 Jul 2022 07:35:07 -0700 (PDT)
-Message-ID: <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
-Date:   Mon, 4 Jul 2022 15:35:05 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH V3 02/20] OPP: Make dev_pm_opp_set_regulators() accept
- NULL terminated list
-Content-Language: en-GB
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
+        with ESMTP id S234165AbiGDPw3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 11:52:29 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1312C38B6
+        for <linux-tegra@vger.kernel.org>; Mon,  4 Jul 2022 08:52:28 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id a15so2996888pjs.0
+        for <linux-tegra@vger.kernel.org>; Mon, 04 Jul 2022 08:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=sRl2t1rvyRttEeKDRjtLGVtQ9G7VQBGwaD5cR1+2zVc=;
+        b=OWKeLJydETTHHzSeYEolojpSDDynSbdRGgZm+mwRATvXzsZHkOvQyJvG5dYMEGhHFU
+         y6om+6LA9NOz7PBv6WJuL0+3CGBn/7lsiqmoVu47CFHPb+Sjw3invk2dczk8ks80fLRR
+         x3MKnYuYYZGB5G553t9jZfszkYAA7RPLHEyy3jtqkuhanvuRt6HY8kqSe9jgJ/pQdzSi
+         tho+Xtw+mcp+/DADlPU+yaMqr2YltubKFj+BtqX0uLgnv5VDw1jxAc0gAvqdJZ0Py4u0
+         mpQCusU/77yjDkKmo5zO194I0MxPBNwVZsn+fGKW1ipn51skzJ2KRejOhBdp6wKpaS0k
+         lWIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sRl2t1rvyRttEeKDRjtLGVtQ9G7VQBGwaD5cR1+2zVc=;
+        b=q/W/vag98ucr9Fv66YJwrnfxJcHU+XqFvAXG77HJwHOLCyMD8QVGA8CB7uz11Ylp0j
+         uSo6OU2B/59cwy2gEu90yad/dLH8Sj3dPnJd11/6cH1yLxZ1J5nkB/CzsOq23iWRBzYF
+         pwoFBsXE9+whDKOrXNBD7PgUAObC3mN99ENWwaOh1z+UkRUsJZDF8TX9w3QxnP3fUDnD
+         g4MQeIqgUKTy7A43KiOdwd+mSQIn0kRXB6t7tlBsEVf6RPQ81o1rl9A3TxbbMLKDkSr2
+         oJv7PuH3yL+15fTdTrltBHr9tx7HVakaVVKx8RI7kwC8BCcQPF/Y+ZsuPoo4B7i+vZNo
+         lW7A==
+X-Gm-Message-State: AJIora9eLQQm9MovrPqu6qpWzgX27fjvdQJmqQ4elyT+yi2eeVUqkhj8
+        VpvjdKmdoDK/CfcqZTHt3Cu7Xw==
+X-Google-Smtp-Source: AGRyM1udrllayvfg/+/oNvT3GBTgY3hCV6AUGqvJ+UTbijLSpRL5ts+FK9A7Qg9ItLWQubsj3FVXyw==
+X-Received: by 2002:a17:902:9b8b:b0:16a:14fa:cd27 with SMTP id y11-20020a1709029b8b00b0016a14facd27mr37368228plp.86.1656949947517;
+        Mon, 04 Jul 2022 08:52:27 -0700 (PDT)
+Received: from localhost ([122.171.18.80])
+        by smtp.gmail.com with ESMTPSA id l10-20020a170902d34a00b0016be0571ef8sm2922134plk.143.2022.07.04.08.52.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jul 2022 08:52:26 -0700 (PDT)
+Date:   Mon, 4 Jul 2022 21:22:25 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Qiang Yu <yuq825@gmail.com>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pm@vger.kernel.org,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-References: <cover.1656935522.git.viresh.kumar@linaro.org>
- <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
-From:   Steven Price <steven.price@arm.com>
-In-Reply-To: <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-kernel@vger.kernel.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5/8] OPP: Allow multiple clocks for a device
+Message-ID: <20220704155225.n4kmgwnvsuksbo2p@vireshk-i7>
+References: <20220622141511.yzg5itkdwirpavfj@vireshk-i7>
+ <40e616eb-22f9-19c2-8d77-20cd3c7c518b@nvidia.com>
+ <c6f100e4-8a35-ebf0-f833-06ff0d8a2fb6@collabora.com>
+ <20220630005028.fddtcbkoksbygwc5@vireshk-i7>
+ <8367c38b-8cd3-cde1-5833-874769ef3350@collabora.com>
+ <20220630095245.otvo53ezd4avoujw@vireshk-i7>
+ <b899ff5f-b424-5f44-7c94-deb013ff6bbc@collabora.com>
+ <20220630101540.5dafkegrmcattt2c@vireshk-i7>
+ <20220704120915.s3ermueulcofg7nj@vireshk-i7>
+ <58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04/07/2022 13:07, Viresh Kumar wrote:
-> Make dev_pm_opp_set_regulators() accept a NULL terminated list of names
-> instead of making the callers keep the two parameters in sync, which
-> creates an opportunity for bugs to get in.
+On 04-07-22, 16:17, Dmitry Osipenko wrote:
+> Actually the freq was 0 and it was 1 on the next loop like you suggested.
 > 
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/cpufreq-dt.c                |  9 ++++-----
->  drivers/cpufreq/ti-cpufreq.c                |  7 +++----
->  drivers/devfreq/exynos-bus.c                |  4 ++--
->  drivers/gpu/drm/lima/lima_devfreq.c         |  3 ++-
->  drivers/gpu/drm/panfrost/panfrost_devfreq.c |  4 ++--
->  drivers/opp/core.c                          | 18 ++++++++++++------
->  drivers/soc/tegra/pmc.c                     |  4 ++--
->  include/linux/pm_opp.h                      |  9 ++++-----
->  8 files changed, 31 insertions(+), 27 deletions(-)
-> 
-[...]
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> index 194af7f607a6..12784f349550 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> @@ -91,6 +91,7 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
->  	struct devfreq *devfreq;
->  	struct thermal_cooling_device *cooling;
->  	struct panfrost_devfreq *pfdevfreq = &pfdev->pfdevfreq;
-> +	const char *supplies[] = { pfdev->comp->supply_names[0], NULL };
->  
->  	if (pfdev->comp->num_supplies > 1) {
->  		/*
-> @@ -101,8 +102,7 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
->  		return 0;
->  	}
->  
-> -	ret = devm_pm_opp_set_regulators(dev, pfdev->comp->supply_names,
-> -					 pfdev->comp->num_supplies);
-> +	ret = devm_pm_opp_set_regulators(dev, supplies);
->  	if (ret) {
->  		/* Continue if the optional regulator is missing */
->  		if (ret != -ENODEV) {
+> Previously, the _read_opp_key() was always reading the opp-hz. Now it
+> skips reading the rates in _read_rate() because opp_table->clk_count=0
+> for the tegra30-devfreq driver the uses devm_pm_opp_of_add_table_noclk().
 
-I have to say the 'new improved' list ending with NULL approach doesn't
-work out so well for Panfrost. We already have to have a separate
-'num_supplies' variable for devm_regulator_bulk_get() /
-regulator_bulk_{en,dis}able(), so the keeping everything in sync
-argument is lost here.
+This is exactly what I wrote in an earlier email :)
 
-I would suggest added the NULL on the end of the lists in panfrost_drv.c
-but then it would break the use of ARRAY_SIZE() to automagically keep
-the length correct...
+Anyway, I have pushed two patches on top of my opp/linux-next branch
+and they should fix it in a good way now I suppose. Can you please
+give that a try.
 
-For now the approach isn't too bad because Panfrost doesn't yet support
-enabling devfreq with more than one supply. But that array isn't going
-to work so nicely when that restriction is removed.
+This is how the diff looks like:
 
-The only sane way I can see of handling this in Panfrost would be
-replicating the loop to count the supplies in the Panfrost code which
-would allow dropping num_supplies from struct panfrost_compatible and
-then supply_names in the same struct could be NULL terminated ready for
-devm_pm_opp_set_regulators().
+PM / devfreq: tegra30: Register config_clks helper
 
-Steve
+There is a corner case with Tegra30, where we want to skip clk
+configuration via dev_pm_opp_set_opp(), but still want the OPP core to
+read the "opp-hz" property so we can find the right OPP via freq finding
+helpers.
 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index e166bfe5fc90..4e4593957ec5 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -2105,13 +2105,20 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_put_prop_name);
->   * This must be called before any OPPs are initialized for the device.
->   */
->  struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
-> -					    const char * const names[],
-> -					    unsigned int count)
-> +					    const char * const names[])
->  {
->  	struct dev_pm_opp_supply *supplies;
-> +	const char * const *temp = names;
->  	struct opp_table *opp_table;
->  	struct regulator *reg;
-> -	int ret, i;
-> +	int count = 0, ret, i;
-> +
-> +	/* Count number of regulators */
-> +	while (*temp++)
-> +		count++;
-> +
-> +	if (!count)
-> +		return ERR_PTR(-EINVAL);
->  
->  	opp_table = _add_opp_table(dev, false);
->  	if (IS_ERR(opp_table))
-> @@ -2236,12 +2243,11 @@ static void devm_pm_opp_regulators_release(void *data)
->   * Return: 0 on success and errorno otherwise.
->   */
->  int devm_pm_opp_set_regulators(struct device *dev,
-> -			       const char * const names[],
-> -			       unsigned int count)
-> +			       const char * const names[])
->  {
->  	struct opp_table *opp_table;
->  
-> -	opp_table = dev_pm_opp_set_regulators(dev, names, count);
-> +	opp_table = dev_pm_opp_set_regulators(dev, names);
->  	if (IS_ERR(opp_table))
->  		return PTR_ERR(opp_table);
->  
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 5611d14d3ba2..6a4b8f7e7948 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1384,7 +1384,7 @@ tegra_pmc_core_pd_opp_to_performance_state(struct generic_pm_domain *genpd,
->  static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
->  {
->  	struct generic_pm_domain *genpd;
-> -	const char *rname = "core";
-> +	const char *rname[] = { "core", NULL};
->  	int err;
->  
->  	genpd = devm_kzalloc(pmc->dev, sizeof(*genpd), GFP_KERNEL);
-> @@ -1395,7 +1395,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
->  	genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
->  	genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
->  
-> -	err = devm_pm_opp_set_regulators(pmc->dev, &rname, 1);
-> +	err = devm_pm_opp_set_regulators(pmc->dev, rname);
->  	if (err)
->  		return dev_err_probe(pmc->dev, err,
->  				     "failed to set core OPP regulator\n");
-> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> index 6708b4ec244d..4c490865d574 100644
-> --- a/include/linux/pm_opp.h
-> +++ b/include/linux/pm_opp.h
-> @@ -159,9 +159,9 @@ void dev_pm_opp_put_supported_hw(struct opp_table *opp_table);
->  int devm_pm_opp_set_supported_hw(struct device *dev, const u32 *versions, unsigned int count);
->  struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, const char *name);
->  void dev_pm_opp_put_prop_name(struct opp_table *opp_table);
-> -struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count);
-> +struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[]);
->  void dev_pm_opp_put_regulators(struct opp_table *opp_table);
-> -int devm_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count);
-> +int devm_pm_opp_set_regulators(struct device *dev, const char * const names[]);
->  struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char *name);
->  void dev_pm_opp_put_clkname(struct opp_table *opp_table);
->  int devm_pm_opp_set_clkname(struct device *dev, const char *name);
-> @@ -379,7 +379,7 @@ static inline struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, con
->  
->  static inline void dev_pm_opp_put_prop_name(struct opp_table *opp_table) {}
->  
-> -static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count)
-> +static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[])
->  {
->  	return ERR_PTR(-EOPNOTSUPP);
->  }
-> @@ -387,8 +387,7 @@ static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, co
->  static inline void dev_pm_opp_put_regulators(struct opp_table *opp_table) {}
->  
->  static inline int devm_pm_opp_set_regulators(struct device *dev,
-> -					     const char * const names[],
-> -					     unsigned int count)
-> +					     const char * const names[])
->  {
->  	return -EOPNOTSUPP;
->  }
+The OPP core provides support for the platforms to provide config_clks
+helpers now, lets use them instead of devm_pm_opp_of_add_table_noclk()
+to achieve the same result, as the OPP core won't parse the DT's
+"opp-hz" property if the clock isn't provided.
 
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 65ecf17a36f4..0e0a4058f45c 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -821,6 +821,15 @@ static int devm_tegra_devfreq_init_hw(struct device *dev,
+ 	return err;
+ }
+ 
++static int tegra_devfreq_config_clks_nop(struct device *dev,
++					 struct opp_table *opp_table,
++					 struct dev_pm_opp *opp, void *data,
++					 bool scaling_down)
++{
++	/* We want to skip clk configuration via dev_pm_opp_set_opp() */
++	return 0;
++}
++
+ static int tegra_devfreq_probe(struct platform_device *pdev)
+ {
+ 	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
+@@ -830,6 +839,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	unsigned int i;
+ 	long rate;
+ 	int err;
++	const char *clk_names[] = { "actmon", NULL };
++	struct dev_pm_opp_config config = {
++		.supported_hw = &hw_version,
++		.supported_hw_count = 1,
++		.clk_names = clk_names,
++		.config_clks = tegra_devfreq_config_clks_nop,
++	};
+ 
+ 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+ 	if (!tegra)
+@@ -874,13 +890,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	err = devm_pm_opp_set_supported_hw(&pdev->dev, &hw_version, 1);
++	err = devm_pm_opp_set_config(&pdev->dev, &config);
+ 	if (err) {
+-		dev_err(&pdev->dev, "Failed to set supported HW: %d\n", err);
++		dev_err(&pdev->dev, "Failed to set OPP config: %d\n", err);
+ 		return err;
+ 	}
+ 
+-	err = devm_pm_opp_of_add_table_noclk(&pdev->dev, 0);
++	err = devm_pm_opp_of_add_table_indexed(&pdev->dev, 0);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
+ 		return err;
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 94c19e9b8cbf..03283ada3341 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -2142,7 +2142,7 @@ static int _opp_set_clknames(struct opp_table *opp_table, struct device *dev,
+ 		count = 1;
+ 
+ 	/* Fail early for invalid configurations */
+-	if (!count || (config_clks && count == 1) || (!config_clks && count > 1))
++	if (!count || (!config_clks && count > 1))
+ 		return -EINVAL;
+ 
+ 	/* Another CPU that shares the OPP table has set the clkname ? */
+@@ -2168,10 +2168,12 @@ static int _opp_set_clknames(struct opp_table *opp_table, struct device *dev,
+ 	}
+ 
+ 	opp_table->clk_count = count;
++	opp_table->config_clks = config_clks;
+ 
+ 	/* Set generic single clk set here */
+ 	if (count == 1) {
+-		opp_table->config_clks = _opp_config_clk_single;
++		if (!opp_table->config_clks)
++			opp_table->config_clks = _opp_config_clk_single;
+ 
+ 		/*
+ 		 * We could have just dropped the "clk" field and used "clks"
+@@ -2186,8 +2188,6 @@ static int _opp_set_clknames(struct opp_table *opp_table, struct device *dev,
+ 		 * too.
+ 		 */
+ 		opp_table->clk = opp_table->clks[0];
+-	} else {
+-		opp_table->config_clks = config_clks;
+ 	}
+ 
+ 	return 0;
