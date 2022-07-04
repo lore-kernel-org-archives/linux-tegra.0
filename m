@@ -2,102 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D315FC43334
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 18:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2900AC43334
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 20:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbiGDSFC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jul 2022 14:05:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
+        id S231276AbiGDUb5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jul 2022 16:31:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiGDSFB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 14:05:01 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F178CF5A5;
-        Mon,  4 Jul 2022 11:04:58 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-119-232.nat.spd-mgts.ru [109.252.119.232])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0509F660199B;
-        Mon,  4 Jul 2022 19:04:55 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656957896;
-        bh=B1/s5PkMwtc2g1jiRy99Ol+azvWW3nmVEuKG3yZ3kbg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=IwwfP1HxfJBCHXy9SE/unDpGuRpCbr0f4yYg7msWtbnzG21us3GsR+9nt1yD4P4zn
-         jiO0NYr7Or5x29QpOl8zB4RSWL1Ch7NaUdMtoPC5AQWZUFfMNBnCoGCyn3jO3ga3NY
-         JnCrB8l9TjGIZpks9evf9I6p6u2qTI16vRZOMPluFW8t6qsJCEdgFSFuQxiHnftH01
-         PK7TiVigQgqKbzckUnSab/99oh17H+X3mVur+3WvrwZmbRbQQSbvO47tiIBRsNxumk
-         HUtoORNh3dBbI7Lg+5DGhEF3wvSwMZLgpOG1ITwfCRO7tBU1tTFhWk+MtegarKEFAc
-         I4htdyNTw913A==
-Message-ID: <7c661c98-0cd2-1732-d60c-3202643926a5@collabora.com>
-Date:   Mon, 4 Jul 2022 21:04:53 +0300
+        with ESMTP id S229649AbiGDUb4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 16:31:56 -0400
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1115D6306
+        for <linux-tegra@vger.kernel.org>; Mon,  4 Jul 2022 13:31:56 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 8SjZo3fqFNUm18SjZokYxx; Mon, 04 Jul 2022 22:31:54 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 04 Jul 2022 22:31:54 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] gpu: host1x: Use the bitmap API to allocate bitmaps
+Date:   Mon,  4 Jul 2022 22:31:51 +0200
+Message-Id: <e46ef2e2190fd0183b3b64728fbec209f5b4e57b.1656966695.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 5/8] OPP: Allow multiple clocks for a device
-Content-Language: en-US
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20220622141511.yzg5itkdwirpavfj@vireshk-i7>
- <40e616eb-22f9-19c2-8d77-20cd3c7c518b@nvidia.com>
- <c6f100e4-8a35-ebf0-f833-06ff0d8a2fb6@collabora.com>
- <20220630005028.fddtcbkoksbygwc5@vireshk-i7>
- <8367c38b-8cd3-cde1-5833-874769ef3350@collabora.com>
- <20220630095245.otvo53ezd4avoujw@vireshk-i7>
- <b899ff5f-b424-5f44-7c94-deb013ff6bbc@collabora.com>
- <20220630101540.5dafkegrmcattt2c@vireshk-i7>
- <20220704120915.s3ermueulcofg7nj@vireshk-i7>
- <58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com>
- <20220704155225.n4kmgwnvsuksbo2p@vireshk-i7>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20220704155225.n4kmgwnvsuksbo2p@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 7/4/22 18:52, Viresh Kumar wrote:
-> On 04-07-22, 16:17, Dmitry Osipenko wrote:
->> Actually the freq was 0 and it was 1 on the next loop like you suggested.
->>
->> Previously, the _read_opp_key() was always reading the opp-hz. Now it
->> skips reading the rates in _read_rate() because opp_table->clk_count=0
->> for the tegra30-devfreq driver the uses devm_pm_opp_of_add_table_noclk().
-> 
-> This is exactly what I wrote in an earlier email :)
-> 
-> Anyway, I have pushed two patches on top of my opp/linux-next branch
-> and they should fix it in a good way now I suppose. Can you please
-> give that a try.
-> 
-> This is how the diff looks like:
-> 
-> PM / devfreq: tegra30: Register config_clks helper
-> 
-> There is a corner case with Tegra30, where we want to skip clk
-> configuration via dev_pm_opp_set_opp(), but still want the OPP core to
-> read the "opp-hz" property so we can find the right OPP via freq finding
-> helpers.
-> 
-> The OPP core provides support for the platforms to provide config_clks
-> helpers now, lets use them instead of devm_pm_opp_of_add_table_noclk()
-> to achieve the same result, as the OPP core won't parse the DT's
-> "opp-hz" property if the clock isn't provided.
+Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 
-Works, thanks you!
+It is less verbose and it improves the semantic.
 
-Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+While at it, remove a useless bitmap_zero() call. The bitmap is already
+zero'ed when allocated.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/host1x/channel.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
+index 2a9a3a8d5931..2d0051d6314c 100644
+--- a/drivers/gpu/host1x/channel.c
++++ b/drivers/gpu/host1x/channel.c
+@@ -21,22 +21,18 @@ int host1x_channel_list_init(struct host1x_channel_list *chlist,
+ 	if (!chlist->channels)
+ 		return -ENOMEM;
+ 
+-	chlist->allocated_channels =
+-		kcalloc(BITS_TO_LONGS(num_channels), sizeof(unsigned long),
+-			GFP_KERNEL);
++	chlist->allocated_channels = bitmap_zalloc(num_channels, GFP_KERNEL);
+ 	if (!chlist->allocated_channels) {
+ 		kfree(chlist->channels);
+ 		return -ENOMEM;
+ 	}
+ 
+-	bitmap_zero(chlist->allocated_channels, num_channels);
+-
+ 	return 0;
+ }
+ 
+ void host1x_channel_list_free(struct host1x_channel_list *chlist)
+ {
+-	kfree(chlist->allocated_channels);
++	bitmap_free(chlist->allocated_channels);
+ 	kfree(chlist->channels);
+ }
+ 
 -- 
-Best regards,
-Dmitry
+2.34.1
+
