@@ -2,193 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2221DC43334
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 15:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A42C43334
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 15:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234014AbiGDPwm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jul 2022 11:52:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37514 "EHLO
+        id S234525AbiGDP5n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jul 2022 11:57:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234165AbiGDPw3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 11:52:29 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1312C38B6
-        for <linux-tegra@vger.kernel.org>; Mon,  4 Jul 2022 08:52:28 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id a15so2996888pjs.0
-        for <linux-tegra@vger.kernel.org>; Mon, 04 Jul 2022 08:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=sRl2t1rvyRttEeKDRjtLGVtQ9G7VQBGwaD5cR1+2zVc=;
-        b=OWKeLJydETTHHzSeYEolojpSDDynSbdRGgZm+mwRATvXzsZHkOvQyJvG5dYMEGhHFU
-         y6om+6LA9NOz7PBv6WJuL0+3CGBn/7lsiqmoVu47CFHPb+Sjw3invk2dczk8ks80fLRR
-         x3MKnYuYYZGB5G553t9jZfszkYAA7RPLHEyy3jtqkuhanvuRt6HY8kqSe9jgJ/pQdzSi
-         tho+Xtw+mcp+/DADlPU+yaMqr2YltubKFj+BtqX0uLgnv5VDw1jxAc0gAvqdJZ0Py4u0
-         mpQCusU/77yjDkKmo5zO194I0MxPBNwVZsn+fGKW1ipn51skzJ2KRejOhBdp6wKpaS0k
-         lWIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sRl2t1rvyRttEeKDRjtLGVtQ9G7VQBGwaD5cR1+2zVc=;
-        b=q/W/vag98ucr9Fv66YJwrnfxJcHU+XqFvAXG77HJwHOLCyMD8QVGA8CB7uz11Ylp0j
-         uSo6OU2B/59cwy2gEu90yad/dLH8Sj3dPnJd11/6cH1yLxZ1J5nkB/CzsOq23iWRBzYF
-         pwoFBsXE9+whDKOrXNBD7PgUAObC3mN99ENWwaOh1z+UkRUsJZDF8TX9w3QxnP3fUDnD
-         g4MQeIqgUKTy7A43KiOdwd+mSQIn0kRXB6t7tlBsEVf6RPQ81o1rl9A3TxbbMLKDkSr2
-         oJv7PuH3yL+15fTdTrltBHr9tx7HVakaVVKx8RI7kwC8BCcQPF/Y+ZsuPoo4B7i+vZNo
-         lW7A==
-X-Gm-Message-State: AJIora9eLQQm9MovrPqu6qpWzgX27fjvdQJmqQ4elyT+yi2eeVUqkhj8
-        VpvjdKmdoDK/CfcqZTHt3Cu7Xw==
-X-Google-Smtp-Source: AGRyM1udrllayvfg/+/oNvT3GBTgY3hCV6AUGqvJ+UTbijLSpRL5ts+FK9A7Qg9ItLWQubsj3FVXyw==
-X-Received: by 2002:a17:902:9b8b:b0:16a:14fa:cd27 with SMTP id y11-20020a1709029b8b00b0016a14facd27mr37368228plp.86.1656949947517;
-        Mon, 04 Jul 2022 08:52:27 -0700 (PDT)
-Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id l10-20020a170902d34a00b0016be0571ef8sm2922134plk.143.2022.07.04.08.52.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 08:52:26 -0700 (PDT)
-Date:   Mon, 4 Jul 2022 21:22:25 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5/8] OPP: Allow multiple clocks for a device
-Message-ID: <20220704155225.n4kmgwnvsuksbo2p@vireshk-i7>
-References: <20220622141511.yzg5itkdwirpavfj@vireshk-i7>
- <40e616eb-22f9-19c2-8d77-20cd3c7c518b@nvidia.com>
- <c6f100e4-8a35-ebf0-f833-06ff0d8a2fb6@collabora.com>
- <20220630005028.fddtcbkoksbygwc5@vireshk-i7>
- <8367c38b-8cd3-cde1-5833-874769ef3350@collabora.com>
- <20220630095245.otvo53ezd4avoujw@vireshk-i7>
- <b899ff5f-b424-5f44-7c94-deb013ff6bbc@collabora.com>
- <20220630101540.5dafkegrmcattt2c@vireshk-i7>
- <20220704120915.s3ermueulcofg7nj@vireshk-i7>
- <58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com>
+        with ESMTP id S234470AbiGDP5m (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 11:57:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105DDDEA8;
+        Mon,  4 Jul 2022 08:57:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A08C060C02;
+        Mon,  4 Jul 2022 15:57:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E96EC341C7;
+        Mon,  4 Jul 2022 15:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656950261;
+        bh=a6RKJQCid/UVv8Ya1NMJAoisbLIXHGq7RKNAj6q9jqY=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=liVaWde7+wohy/TzijN+e9VpNx+o7oVFjqX6YuhohjCaFOqnFvVH6MAAQhFQKcd5m
+         dHcBDnEsWyrp6Y6Ecqaj30o9zJ13g+RdVWV7KI10m8Xq51yUJ2FEd8BduThGsdBCHV
+         LRcTXM1AZ2Rtnc7/g/zgrEFVFpS2SFXVDZKoj7v0TeNF3WHXCHUkD3AknhNRZy+aDj
+         zdx8tbGMLhrigom1OxQbLik2Lw8k7WezQ9ACXFiJcv0VbpgTPtWF0GzzoLkpuJ3AEn
+         dGvEOJCUkjKUYyciE5eCVBtFgHmz3OXqp6ab6dUjVGTHzzZhqRH5yOy4lM5cPsqbk6
+         fuo87rNqLQMyA==
+From:   Mark Brown <broonie@kernel.org>
+To:     lgirdwood@gmail.com, jiapeng.chong@linux.alibaba.com
+Cc:     linux-tegra@vger.kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, alsa-devel@alsa-project.org, perex@perex.cz,
+        tiwai@suse.com, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de
+In-Reply-To: <20220701072850.62408-1-jiapeng.chong@linux.alibaba.com>
+References: <20220701072850.62408-1-jiapeng.chong@linux.alibaba.com>
+Subject: Re: [PATCH] ASoC: tegra20_ac97: Fix missing error code in tegra20_ac97_platform_probe()
+Message-Id: <165695025874.481068.18415928227093341712.b4-ty@kernel.org>
+Date:   Mon, 04 Jul 2022 16:57:38 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04-07-22, 16:17, Dmitry Osipenko wrote:
-> Actually the freq was 0 and it was 1 on the next loop like you suggested.
+On Fri, 1 Jul 2022 15:28:50 +0800, Jiapeng Chong wrote:
+> The error code is missing in this code scenario, add the error code
+> '-EINVAL' to the return value 'ret'.
 > 
-> Previously, the _read_opp_key() was always reading the opp-hz. Now it
-> skips reading the rates in _read_rate() because opp_table->clk_count=0
-> for the tegra30-devfreq driver the uses devm_pm_opp_of_add_table_noclk().
+> This was found by coccicheck:
+> 
+> sound/soc/tegra/tegra20_ac97.c:357 tegra20_ac97_platform_probe() warn: missing error code 'ret'.
+> 
+> [...]
 
-This is exactly what I wrote in an earlier email :)
+Applied to
 
-Anyway, I have pushed two patches on top of my opp/linux-next branch
-and they should fix it in a good way now I suppose. Can you please
-give that a try.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-This is how the diff looks like:
+Thanks!
 
-PM / devfreq: tegra30: Register config_clks helper
+[1/1] ASoC: tegra20_ac97: Fix missing error code in tegra20_ac97_platform_probe()
+      commit: acf981f94edca13c85fa24dd8511cdc6bd4c98ed
 
-There is a corner case with Tegra30, where we want to skip clk
-configuration via dev_pm_opp_set_opp(), but still want the OPP core to
-read the "opp-hz" property so we can find the right OPP via freq finding
-helpers.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-The OPP core provides support for the platforms to provide config_clks
-helpers now, lets use them instead of devm_pm_opp_of_add_table_noclk()
-to achieve the same result, as the OPP core won't parse the DT's
-"opp-hz" property if the clock isn't provided.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 65ecf17a36f4..0e0a4058f45c 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -821,6 +821,15 @@ static int devm_tegra_devfreq_init_hw(struct device *dev,
- 	return err;
- }
- 
-+static int tegra_devfreq_config_clks_nop(struct device *dev,
-+					 struct opp_table *opp_table,
-+					 struct dev_pm_opp *opp, void *data,
-+					 bool scaling_down)
-+{
-+	/* We want to skip clk configuration via dev_pm_opp_set_opp() */
-+	return 0;
-+}
-+
- static int tegra_devfreq_probe(struct platform_device *pdev)
- {
- 	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
-@@ -830,6 +839,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 	unsigned int i;
- 	long rate;
- 	int err;
-+	const char *clk_names[] = { "actmon", NULL };
-+	struct dev_pm_opp_config config = {
-+		.supported_hw = &hw_version,
-+		.supported_hw_count = 1,
-+		.clk_names = clk_names,
-+		.config_clks = tegra_devfreq_config_clks_nop,
-+	};
- 
- 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
- 	if (!tegra)
-@@ -874,13 +890,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = devm_pm_opp_set_supported_hw(&pdev->dev, &hw_version, 1);
-+	err = devm_pm_opp_set_config(&pdev->dev, &config);
- 	if (err) {
--		dev_err(&pdev->dev, "Failed to set supported HW: %d\n", err);
-+		dev_err(&pdev->dev, "Failed to set OPP config: %d\n", err);
- 		return err;
- 	}
- 
--	err = devm_pm_opp_of_add_table_noclk(&pdev->dev, 0);
-+	err = devm_pm_opp_of_add_table_indexed(&pdev->dev, 0);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
- 		return err;
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 94c19e9b8cbf..03283ada3341 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -2142,7 +2142,7 @@ static int _opp_set_clknames(struct opp_table *opp_table, struct device *dev,
- 		count = 1;
- 
- 	/* Fail early for invalid configurations */
--	if (!count || (config_clks && count == 1) || (!config_clks && count > 1))
-+	if (!count || (!config_clks && count > 1))
- 		return -EINVAL;
- 
- 	/* Another CPU that shares the OPP table has set the clkname ? */
-@@ -2168,10 +2168,12 @@ static int _opp_set_clknames(struct opp_table *opp_table, struct device *dev,
- 	}
- 
- 	opp_table->clk_count = count;
-+	opp_table->config_clks = config_clks;
- 
- 	/* Set generic single clk set here */
- 	if (count == 1) {
--		opp_table->config_clks = _opp_config_clk_single;
-+		if (!opp_table->config_clks)
-+			opp_table->config_clks = _opp_config_clk_single;
- 
- 		/*
- 		 * We could have just dropped the "clk" field and used "clks"
-@@ -2186,8 +2188,6 @@ static int _opp_set_clknames(struct opp_table *opp_table, struct device *dev,
- 		 * too.
- 		 */
- 		opp_table->clk = opp_table->clks[0];
--	} else {
--		opp_table->config_clks = config_clks;
- 	}
- 
- 	return 0;
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
