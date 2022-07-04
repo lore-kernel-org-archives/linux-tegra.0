@@ -2,132 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 890C0C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 21:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD326C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 22:38:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbiGDVTT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jul 2022 17:19:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34064 "EHLO
+        id S229614AbiGDWiq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jul 2022 18:38:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229921AbiGDVTR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 17:19:17 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A59576366
-        for <linux-tegra@vger.kernel.org>; Mon,  4 Jul 2022 14:19:16 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id o4so14959105wrh.3
-        for <linux-tegra@vger.kernel.org>; Mon, 04 Jul 2022 14:19:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linexp-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=FKGrspbVUBsoG+EbiXh9vc6L1sI8MIdpxiXWMn2tTck=;
-        b=53c3EQNr2zmoWlHUmaol6xcBDhBPh0m9FsNEbojORKaJTU9v3lfj9Ya4gAzj+EUZOG
-         UBkAlMnI3fPm4ikczgZ8z+ywM3HmO8j33QMDSrgsA+3Wyy63Mh6JpkNcEkQaXn1I534o
-         461GxUaDV2TOpO5YV94ttpv7sHaCumb2Tf15z5aeA63SvsRao7hsiSzGhHrzUEGfzpSH
-         Nkg0YrmuLpXg86L7X5Jeg7nlFkmSJLgnftPBgxCreLaU44pLu2nifykvX2tebpCfwBXJ
-         FflYktubQYBHirSW60GhQZU26S16+ZcfeR6riiTW2jfbOhgQQ+UhM22YJTxUH2g74T/c
-         3RRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=FKGrspbVUBsoG+EbiXh9vc6L1sI8MIdpxiXWMn2tTck=;
-        b=ZOT9WFqrw2T2XqK7wHjtSRbhDfB338ALgNDmncMd+ldkVavjoys5cSlxpva81dUlq6
-         h7xQXyKjhnwgQx8nPrYkfsjCvZkVFjyzviBmjxRD/pIeGEjDiQWNtGL/qWSC/7LOdzwJ
-         f9YjC3YxJJOy4c+MTGstSZIx0+nizJQ5x1MXZ0Co7I7Qlr6+8vOig129QyXPveIIUvCb
-         BqQbmeQSxSCTMCloqcrQVNs0qoiVFXEbcX2tUL21iuEAmU8V39z+zV652/Z/oSJWIlZw
-         5FDUb+EwhGLoWLhByYuBdfTsNZOiOSLlgRJhKo70zmHjRQsxjsHL9T+3nYItIkQUJZ3/
-         DvMg==
-X-Gm-Message-State: AJIora8nC017vb5win1SfhOT2q0SnqIz8JY+OuLqV8mw25/lz+ZtrHJg
-        3Jzc090pVAmjGLxqEQ584ukoYA==
-X-Google-Smtp-Source: AGRyM1vVTmWsCzUPEQCQF8hjxMYnje+1ZGB9O4VfD5OUTcID6lUTF1g+sJIekYbsx64tdGFzhLq56A==
-X-Received: by 2002:adf:e0c9:0:b0:21b:8271:2348 with SMTP id m9-20020adfe0c9000000b0021b82712348mr26774460wri.222.1656969555234;
-        Mon, 04 Jul 2022 14:19:15 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id y22-20020a1c4b16000000b003a04a47d9c2sm20389596wma.47.2022.07.04.14.19.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jul 2022 14:19:14 -0700 (PDT)
-Message-ID: <249bf1a9-8491-09e3-3c3f-c4e8a124cb22@linexp.org>
-Date:   Mon, 4 Jul 2022 23:19:13 +0200
+        with ESMTP id S229456AbiGDWip (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 18:38:45 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 221D760F7;
+        Mon,  4 Jul 2022 15:38:44 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-119-232.nat.spd-mgts.ru [109.252.119.232])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id AEB39660199B;
+        Mon,  4 Jul 2022 23:38:39 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1656974322;
+        bh=VRx6udoXxSq0dZb7twvztDgIdzhjYZHCPJJRsM4dVqQ=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=KwvHGSsu2bJpgBrKrgPDv83tWaOdVmGMPR8xlDdCPLhk9xw7Ud+ZimwXxR2cr6Bmp
+         u3TauupmhYOD/BkPc+8ksFovTJTbAcBpLSx299Nu/F9NLYkyvIwA7hazvWNS1Ox8iE
+         oWyqhlB87oYwccFQeaom4XZ5SLTzFf4krAuEcymZX+yHDFAVa73And9pvwQQQaqVG0
+         uVbLJZX3cSps+jjvkOrgPRu1fS1he6n4GOm4SrJjDL0Yuyb5LZkxCAnhCGLYb/AJAq
+         YXka1J9BEeBH6cDYDCae5AG19iXh8wYiVOrUyqTONSTh6YULDs1xUwy4JXtD8NNKBR
+         zdbCJFJEnjwYQ==
+Message-ID: <fd026c44-b067-3537-3020-4ae8f24137ad@collabora.com>
+Date:   Tue, 5 Jul 2022 01:38:36 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v3 07/12] thermal/core: Rename trips to ntrips
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v6 14/22] dma-buf: Introduce new locking convention
 Content-Language: en-US
-To:     Lukasz Luba <lukasz.luba@arm.com>, daniel.lezcano@linaro.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        khilman@baylibre.com, abailon@baylibre.com,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
+        <thomas_os@shipmail.org>
+Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        kernel@collabora.com, linux-media@vger.kernel.org,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Almeida <daniel.almeida@collabora.com>,
+        Gert Wollny <gert.wollny@collabora.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Daniel Stone <daniel@fooishbar.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring <robh@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Qiang Yu <yuq825@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        rafael@kernel.org
-References: <20220703183059.4133659-1-daniel.lezcano@linexp.org>
- <20220703183059.4133659-8-daniel.lezcano@linexp.org>
- <4ad311e5-62e1-d06b-7c5e-315ed923b5a5@arm.com>
-From:   Daniel Lezcano <daniel.lezcano@linexp.org>
-In-Reply-To: <4ad311e5-62e1-d06b-7c5e-315ed923b5a5@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
+ <20220526235040.678984-15-dmitry.osipenko@collabora.com>
+ <0a02a31d-a256-4ca4-0e35-e2ea1868a8ae@amd.com>
+ <e6e17c52-43c2-064b-500e-325bb3ba3b2c@collabora.com>
+ <02e7946b-34ca-b48e-1ba6-e7b63740a2d9@amd.com>
+ <7372dd1b-06f7-5336-4738-15f9b4d4d4b3@collabora.com>
+ <90fe74f6-a622-e4ae-3004-6f1bc1790247@shipmail.org>
+ <0d88cf7c-61e5-d7a8-a6ba-83388114a1fa@collabora.com>
+In-Reply-To: <0d88cf7c-61e5-d7a8-a6ba-83388114a1fa@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04/07/2022 10:24, Lukasz Luba wrote:
+On 7/1/22 13:43, Dmitry Osipenko wrote:
+> On 6/29/22 00:26, Thomas Hellström (Intel) wrote:
+>> On 5/30/22 15:57, Dmitry Osipenko wrote:
+>>> On 5/30/22 16:41, Christian König wrote:
+>>>> Hi Dmitry,
+>>>>
+>>>> Am 30.05.22 um 15:26 schrieb Dmitry Osipenko:
+>>>>> Hello Christian,
+>>>>>
+>>>>> On 5/30/22 09:50, Christian König wrote:
+>>>>>> Hi Dmitry,
+>>>>>>
+>>>>>> First of all please separate out this patch from the rest of the
+>>>>>> series,
+>>>>>> since this is a complex separate structural change.
+>>>>> I assume all the patches will go via the DRM tree in the end since the
+>>>>> rest of the DRM patches in this series depend on this dma-buf change.
+>>>>> But I see that separation may ease reviewing of the dma-buf changes, so
+>>>>> let's try it.
+>>>> That sounds like you are underestimating a bit how much trouble this
+>>>> will be.
+>>>>
+>>>>>> I have tried this before and failed because catching all the locks in
+>>>>>> the right code paths are very tricky. So expect some fallout from this
+>>>>>> and make sure the kernel test robot and CI systems are clean.
+>>>>> Sure, I'll fix up all the reported things in the next iteration.
+>>>>>
+>>>>> BTW, have you ever posted yours version of the patch? Will be great if
+>>>>> we could compare the changed code paths.
+>>>> No, I never even finished creating it after realizing how much work it
+>>>> would be.
+>>>>
+>>>>>>> This patch introduces new locking convention for dma-buf users. From
+>>>>>>> now
+>>>>>>> on all dma-buf importers are responsible for holding dma-buf
+>>>>>>> reservation
+>>>>>>> lock around operations performed over dma-bufs.
+>>>>>>>
+>>>>>>> This patch implements the new dma-buf locking convention by:
+>>>>>>>
+>>>>>>>      1. Making dma-buf API functions to take the reservation lock.
+>>>>>>>
+>>>>>>>      2. Adding new locked variants of the dma-buf API functions for
+>>>>>>> drivers
+>>>>>>>         that need to manage imported dma-bufs under the held lock.
+>>>>>> Instead of adding new locked variants please mark all variants which
+>>>>>> expect to be called without a lock with an _unlocked postfix.
+>>>>>>
+>>>>>> This should make it easier to remove those in a follow up patch set
+>>>>>> and
+>>>>>> then fully move the locking into the importer.
+>>>>> Do we really want to move all the locks to the importers? Seems the
+>>>>> majority of drivers should be happy with the dma-buf helpers handling
+>>>>> the locking for them.
+>>>> Yes, I clearly think so.
+>>>>
+>>>>>>>      3. Converting all drivers to the new locking scheme.
+>>>>>> I have strong doubts that you got all of them. At least radeon and
+>>>>>> nouveau should grab the reservation lock in their ->attach callbacks
+>>>>>> somehow.
+>>>>> Radeon and Nouveau use gem_prime_import_sg_table() and they take resv
+>>>>> lock already, seems they should be okay (?)
+>>>> You are looking at the wrong side. You need to fix the export code path,
+>>>> not the import ones.
+>>>>
+>>>> See for example attach on radeon works like this
+>>>> drm_gem_map_attach->drm_gem_pin->radeon_gem_prime_pin->radeon_bo_reserve->ttm_bo_reserve->dma_resv_lock.
+>>>>
+>>> Yeah, I was looking at the both sides, but missed this one.
+>> Also i915 will run into trouble with attach. In particular since i915
+>> starts a full ww transaction in its attach callback to be able to lock
+>> other objects if migration is needed. I think i915 CI would catch this
+>> in a selftest.
+> Seems it indeed it should deadlock. But i915 selftests apparently
+> should've caught it and they didn't, I'll re-check what happened.
 > 
-> 
-> On 7/3/22 19:30, Daniel Lezcano wrote:
->> In order to use thermal trips defined in the thermal structure, rename
->> the 'trips' field to 'ntrips' to have the 'trips' field containing the
->> thermal trip points.
->>
->> Cc: Alexandre Bailon <abailon@baylibre.com>
->> Cc: Kevin Hilman <khilman@baylibre.com>
->> Cc; Eduardo Valentin <eduval@amazon.com>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
->> ---
->>   drivers/thermal/gov_fair_share.c        |  6 +++---
->>   drivers/thermal/gov_power_allocator.c   |  4 ++--
->>   drivers/thermal/tegra/tegra30-tsensor.c |  2 +-
->>   drivers/thermal/thermal_core.c          | 20 ++++++++++----------
->>   drivers/thermal/thermal_helpers.c       |  4 ++--
->>   drivers/thermal/thermal_netlink.c       |  2 +-
->>   drivers/thermal/thermal_sysfs.c         | 22 +++++++++++-----------
->>   include/linux/thermal.h                 |  2 +-
->>   8 files changed, 31 insertions(+), 31 deletions(-)
-> 
-> 
-> [snip]
-> 
->> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
->> index 6289b0bb1c97..3a57878a2a6c 100644
->> --- a/include/linux/thermal.h
->> +++ b/include/linux/thermal.h
-> 
-> Missing updated ne name in comment here:
->   * @trips:      number of trip points the thermal zone supports
-> 
-> 
->> @@ -165,7 +165,7 @@ struct thermal_zone_device {
->>       struct thermal_attr *trip_hyst_attrs;
->>       enum thermal_device_mode mode;
->>       void *devdata;
->> -    int trips;
->> +    int ntrips;
->>       unsigned long trips_disabled;    /* bitmap for disabled trips */
->>       unsigned long passive_delay_jiffies;
->>       unsigned long polling_delay_jiffies;
-> 
-> Maybe this is only my bias, but this new name 'ntrips' looks
-> like negation in electronics.
-> 
-> We have examples like: num_cpus, num_pins, num_leds, num_groups,
-> num_locks, num_buffers, num_phys, etc...
-> 
-> Could we have 'num_trips' and follow to this convention here as well?
 
-Sure, I'll do the changes accordingly
+The i915 selftests use a separate mock_dmabuf_ops. That's why it works
+for the selftests, i.e. there is no deadlock.
 
+Thomas, would i915 CI run a different set of tests or will it be the
+default i915 selftests ran by IGT?
+
+-- 
+Best regards,
+Dmitry
