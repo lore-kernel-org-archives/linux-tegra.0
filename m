@@ -2,146 +2,102 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B35CC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 17:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D315FC43334
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jul 2022 18:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230349AbiGDRKQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jul 2022 13:10:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55618 "EHLO
+        id S229674AbiGDSFC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jul 2022 14:05:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiGDRKP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 13:10:15 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58DE511A3A;
-        Mon,  4 Jul 2022 10:10:13 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id d2so17790126ejy.1;
-        Mon, 04 Jul 2022 10:10:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xA6mp2zr58Pi9rjKpCMXzs9aHWVQ74+CfkY4PkhIA4c=;
-        b=SHw5y7/zBLcALCjVGyBv1Zfq9zjSm1hxROB2CIvLiHeWSqbGo37kV58nIwUXFv+OOT
-         1voMwYe2tIogB5459PpfxPxGSkrg+bgzvg0NmFpULp9FguF+pGzlo6n4Q1oPsHGLIN/F
-         59LzF90anYtp4j4r1YoDdFB6vbyzVILs/+yTFAaZezmzNTU3+9PUwpADZE/MB2ZtqhQ6
-         0BAI1WakBEpDDGjz+eiJbeiUOzzY2wnETtJ6TKT0TEVb7fgHE6x26v4SI9yxHGLbKnVX
-         fVWw1qTygpyWd+ceA5v19+2S66p3/a5+AHC1aKiBDrs6rtok/dk8/kSFBQjDb1WkB8vH
-         GavQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xA6mp2zr58Pi9rjKpCMXzs9aHWVQ74+CfkY4PkhIA4c=;
-        b=etp1GU9mDJ6K1ZlOFcb0WIUT7pkwniHquPf+zPqC3+pfvnArQ3EC1BhT2407hXKtjI
-         y8+Q2Bwrrt/7NuK4/bLQVuEV3Oz0P7K2FxvbXGkmEnlqsoKIq/S38Wp5yyyz+enf+rWg
-         cLWiaClw74hHOUsN49IXxjCYd0fvDShzz8qgAelj6n7sOFs23lIPuu+uBbAVu3HNdhe+
-         /QYsWt0vp4cd0BeLHcjzQ4pituMEtC0s6EbYEeEKc97BbrNa058moI4bhSkMV7HY5MSR
-         InwpxyR+rqtrLl7dm2m+zUWp4+c9mV5Jxm4Dk/lqmT2HgJr7rrYJERUCSbNmJ/7Iioka
-         ZbVg==
-X-Gm-Message-State: AJIora9LWhtPtbh7CVFkLLVp9pkprmiJtIcIBJxp7DK5jVeyfhqJa2u4
-        XZYhvm+wDgY7Hn9B85kjCUk=
-X-Google-Smtp-Source: AGRyM1tKdKIEjYXSYV3p41eF/ho5jXl/0u0epNFdp0keQSsWs1OWwKGk8sRjNv/uRrnolsjE9ODNXQ==
-X-Received: by 2002:a17:907:16aa:b0:726:9fe7:a989 with SMTP id hc42-20020a17090716aa00b007269fe7a989mr29817704ejc.760.1656954611843;
-        Mon, 04 Jul 2022 10:10:11 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id u12-20020a056402064c00b0043a4de1d421sm2686818edx.84.2022.07.04.10.10.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 10:10:10 -0700 (PDT)
-Date:   Mon, 4 Jul 2022 19:10:09 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: pinctrl: tegra: Convert to json-schema
-Message-ID: <YsMe8ZGuHv50Bumw@orome>
-References: <20220701150501.443296-1-thierry.reding@gmail.com>
- <20220701150501.443296-2-thierry.reding@gmail.com>
- <20220701211708.GA1523809-robh@kernel.org>
+        with ESMTP id S229515AbiGDSFB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 14:05:01 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F178CF5A5;
+        Mon,  4 Jul 2022 11:04:58 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-119-232.nat.spd-mgts.ru [109.252.119.232])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0509F660199B;
+        Mon,  4 Jul 2022 19:04:55 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1656957896;
+        bh=B1/s5PkMwtc2g1jiRy99Ol+azvWW3nmVEuKG3yZ3kbg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=IwwfP1HxfJBCHXy9SE/unDpGuRpCbr0f4yYg7msWtbnzG21us3GsR+9nt1yD4P4zn
+         jiO0NYr7Or5x29QpOl8zB4RSWL1Ch7NaUdMtoPC5AQWZUFfMNBnCoGCyn3jO3ga3NY
+         JnCrB8l9TjGIZpks9evf9I6p6u2qTI16vRZOMPluFW8t6qsJCEdgFSFuQxiHnftH01
+         PK7TiVigQgqKbzckUnSab/99oh17H+X3mVur+3WvrwZmbRbQQSbvO47tiIBRsNxumk
+         HUtoORNh3dBbI7Lg+5DGhEF3wvSwMZLgpOG1ITwfCRO7tBU1tTFhWk+MtegarKEFAc
+         I4htdyNTw913A==
+Message-ID: <7c661c98-0cd2-1732-d60c-3202643926a5@collabora.com>
+Date:   Mon, 4 Jul 2022 21:04:53 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SY7W913tn/dH5AFM"
-Content-Disposition: inline
-In-Reply-To: <20220701211708.GA1523809-robh@kernel.org>
-User-Agent: Mutt/2.2.6 (2022-06-05)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 5/8] OPP: Allow multiple clocks for a device
+Content-Language: en-US
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20220622141511.yzg5itkdwirpavfj@vireshk-i7>
+ <40e616eb-22f9-19c2-8d77-20cd3c7c518b@nvidia.com>
+ <c6f100e4-8a35-ebf0-f833-06ff0d8a2fb6@collabora.com>
+ <20220630005028.fddtcbkoksbygwc5@vireshk-i7>
+ <8367c38b-8cd3-cde1-5833-874769ef3350@collabora.com>
+ <20220630095245.otvo53ezd4avoujw@vireshk-i7>
+ <b899ff5f-b424-5f44-7c94-deb013ff6bbc@collabora.com>
+ <20220630101540.5dafkegrmcattt2c@vireshk-i7>
+ <20220704120915.s3ermueulcofg7nj@vireshk-i7>
+ <58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com>
+ <20220704155225.n4kmgwnvsuksbo2p@vireshk-i7>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20220704155225.n4kmgwnvsuksbo2p@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 7/4/22 18:52, Viresh Kumar wrote:
+> On 04-07-22, 16:17, Dmitry Osipenko wrote:
+>> Actually the freq was 0 and it was 1 on the next loop like you suggested.
+>>
+>> Previously, the _read_opp_key() was always reading the opp-hz. Now it
+>> skips reading the rates in _read_rate() because opp_table->clk_count=0
+>> for the tegra30-devfreq driver the uses devm_pm_opp_of_add_table_noclk().
+> 
+> This is exactly what I wrote in an earlier email :)
+> 
+> Anyway, I have pushed two patches on top of my opp/linux-next branch
+> and they should fix it in a good way now I suppose. Can you please
+> give that a try.
+> 
+> This is how the diff looks like:
+> 
+> PM / devfreq: tegra30: Register config_clks helper
+> 
+> There is a corner case with Tegra30, where we want to skip clk
+> configuration via dev_pm_opp_set_opp(), but still want the OPP core to
+> read the "opp-hz" property so we can find the right OPP via freq finding
+> helpers.
+> 
+> The OPP core provides support for the platforms to provide config_clks
+> helpers now, lets use them instead of devm_pm_opp_of_add_table_noclk()
+> to achieve the same result, as the OPP core won't parse the DT's
+> "opp-hz" property if the clock isn't provided.
 
---SY7W913tn/dH5AFM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Works, thanks you!
 
-On Fri, Jul 01, 2022 at 03:17:08PM -0600, Rob Herring wrote:
-> On Fri, Jul 01, 2022 at 05:04:58PM +0200, Thierry Reding wrote:
-[...]
-> > +additionalProperties:
-> > +  description: |
-> > +    Tegra's pin configuration nodes act as containers for an arbitrary=
- number of subnodes. Each of
-> > +    these subnodes represents some desired configuration for a pin, a =
-group, or a list of pins or
-> > +    groups. This configuration can include the mux function to select =
-on those pin(s)/group(s), and
-> > +    various pin configuration parameters, such as pull-up, tristate, d=
-rive strength, etc.
-> > +
-> > +    The name of each subnode is not important; all subnodes should be =
-enumerated and processed
-> > +    purely based on their content.
-> > +
-> > +    Each subnode only affects those parameters that are explicitly lis=
-ted. In other words, a
-> > +    subnode that lists a mux function but no pin configuration paramet=
-ers implies no information
-> > +    about any pin configuration parameters. Similarly, a pin subnode t=
-hat describes a pullup
-> > +    parameter implies no information about e.g. the mux function or tr=
-istate parameter. For this
-> > +    reason, even seemingly boolean values are actually tristates in th=
-is binding: unspecified, off,
-> > +    or on. Unspecified is represented as an absent property, and off/o=
-n are represented as integer
-> > +    values 0 and 1.
-> > +
-> > +    See the TRM to determine which properties and values apply to each=
- pin/group. Macro values for
-> > +    property values are defined in include/dt-binding/pinctrl/pinctrl-=
-tegra.h.
-> > +  type: object
-> > +  patternProperties:
-> > +    "^pinmux(-[a-z0-9-_]+)?$":
->=20
->          type: object
+Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Looks like this fell through the cracks. I've fixed in in v3 locally,
-but I'll hold off on resending the whole series to avoid the churn.
-
-Thierry
-
---SY7W913tn/dH5AFM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmLDHvEACgkQ3SOs138+
-s6EcMxAArzQqp15SOF5hO05ev9K6KRoxKHvg0TS0zndWqQWucdZtE6uMUrN6R3AI
-03LhC+d9H2Jb4ImdXjcXXbJg1Wen+HBeDRtbXDRmliSjnB0BLPhTvMqLrbX8cEbB
-/hlkd7R7TP5NfJeObMnOlLyct5+bmV8SsnLtN1oUb8WU/iB1uaT/O8geV5+yJSXc
-CqGJ4WL22zf/ZgG6Fr6unPBUpplCr8dM0C2o5z99xuzemr6l/sMdFpescgVBlnK0
-PLUrh5oIcBBtUj0VZHJk17E/wz1Qf5bwEkcEkvkNf+08SWVV7xUokcryK+eA25G4
-n/JIc7I4IgVs9Nyp4AMq9J3NY9qlWsISVqK8wMw0e9F0Qc8tuNI+J5mhCEXnUqtC
-QqBb4SVgw1/8Q0QGLMbG0eQJh7QlOmOvZe/XgrXubq09s1KDlKHi4RxfedDFfddj
-A1frT5+aJItAwOOL3b25mStKqVvgD9JzZyd17kBTaMrEP2LYuPmoF1ktXAlkT9qg
-zNjGjGBevpdF+fflGHuTIk3/yaCdLgWVD+q5XrcX2inf6z0SOy4/4/HQM+glKlFs
-Rj1vnv7DKo99m/yP/EAxCtsWqRjwbbEyLxyfpNZTRIhxhNGhzVjKTCrB94GWC+LN
-T9vCwDpjXjOwEB0qdDurXtOMzRlEjMgj3MUJXGshciWONPSBap8=
-=iK67
------END PGP SIGNATURE-----
-
---SY7W913tn/dH5AFM--
+-- 
+Best regards,
+Dmitry
