@@ -2,77 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAEAC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 20:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D78DBC43334
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 21:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231337AbiGEUr5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Jul 2022 16:47:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53530 "EHLO
+        id S232439AbiGEVsZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Jul 2022 17:48:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbiGEUr4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 16:47:56 -0400
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B0C65F2;
-        Tue,  5 Jul 2022 13:47:55 -0700 (PDT)
-Received: by mail-io1-f52.google.com with SMTP id v185so12263164ioe.11;
-        Tue, 05 Jul 2022 13:47:54 -0700 (PDT)
+        with ESMTP id S232246AbiGEVsZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 17:48:25 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECE510AF;
+        Tue,  5 Jul 2022 14:48:23 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id v67-20020a1cac46000000b003a1888b9d36so8080069wme.0;
+        Tue, 05 Jul 2022 14:48:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PU7Lk/8Sax5XmlQiaVaA1dEst+rO/Dc76xfk8EMg5rU=;
+        b=VWKoc1vTC7dmodEJ7AnbFDZ5fs/4+Nq8GI6aDF//zH1sFJE8ous9N8DVmhCdNBDu7J
+         TEV0OZ7bot7bTz3H4yd56ZRrkwxGIFMbiNXyMqyxTYq3VKR1u9rg6rHhTYMEXhscqSPb
+         Ccm6AxwWMhv1d8/+zxJYMjbHjFhlhaXe+b5fXKLXVU2U8ZbZY80EwHbaMEMkj/MpnXbt
+         Uw0LZyDNux3g8GLLZXWynLp0GUTzkeUfRCaJubH+VuWeVBLJXqR6LPAfYZV768F05DkS
+         81qT5rHG43qh7gdNNw7b8ZC4JsCyyDamnVIJ9F70HPL12MxnnMZIoo1SVum0jci5LIaF
+         DoNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=V+XcxBRAS1mz+WkIhxFyoiIAgbqevA33KfLSpuEfKmo=;
-        b=Mfrk/S4wb8ab69Imp3ostxCUrA/4HF8xvp6dUYtfsMr6UF//h0t6qxp11Cu8cFT0Qz
-         Sj/ETCyn01Xrel1RiPp9FirCzvrS5pMtuuY9hDL/YmOP5tGU9PUXWe3iFgE3Y2abuB2S
-         JXN3aXfhSYtB3EFuIRHHa+gd46cX6fVkPoqBlLh6dGwXErprGkwAwhJPkkHmkZf9RXAD
-         314kjhhHgRaDeMKbuYVjtnUmycrmkZ5o1hCdthXu3/NNUV09Af1+jchO8KeyfuUZvVaT
-         4IRU//AER2+30HG+YUsfypqK79ZbfrB06EZoihiqt+8lynlXiVvRZHkxkb9dCQXfUVOj
-         5ZJA==
-X-Gm-Message-State: AJIora8sgHh4DqB5JVX08Z45yiUU0DgKQJ/GRw0Gwbv3iU7LONx+173I
-        MyioY8VHZylr3sPxQ4wysQ==
-X-Google-Smtp-Source: AGRyM1tXYIHXEzjBvr7vu8fSw4g70ad2L3Bw0HWDQoXBWQAFZBa2TCEo3M5zE7dTdne8Zg/6ARw94g==
-X-Received: by 2002:a05:6638:dc1:b0:33e:f8ab:e8cb with SMTP id m1-20020a0566380dc100b0033ef8abe8cbmr2160001jaj.245.1657054074282;
-        Tue, 05 Jul 2022 13:47:54 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id c28-20020a02331c000000b0033eabfa117fsm5458016jae.106.2022.07.05.13.47.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 13:47:53 -0700 (PDT)
-Received: (nullmailer pid 2596639 invoked by uid 1000);
-        Tue, 05 Jul 2022 20:47:51 -0000
-Date:   Tue, 5 Jul 2022 14:47:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Kartik <kkartik@nvidia.com>
-Cc:     thierry.reding@gmail.com, devicetree@vger.kernel.org,
-        akhilrajeev@nvidia.com, tglx@linutronix.de, sumitg@nvidia.com,
-        rgumasta@nvidia.com, pshete@nvidia.com, vidyas@nvidia.com,
-        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, amhetre@nvidia.com,
-        daniel.lezcano@linaro.org, robh+dt@kernel.org, spujar@nvidia.com,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com
-Subject: Re: [PATCH v3 1/6] dt-bindings: timer: Add Tegra186 & Tegra234 Timer
-Message-ID: <20220705204751.GA2596558-robh@kernel.org>
-References: <1656922422-25823-1-git-send-email-kkartik@nvidia.com>
- <1656922422-25823-2-git-send-email-kkartik@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PU7Lk/8Sax5XmlQiaVaA1dEst+rO/Dc76xfk8EMg5rU=;
+        b=BHzZCVcA51KikK3eBRptwRhimizcV57bdkg3j6/yveqmvKVagPPEm57yggJ7Tb6Pe+
+         3bYms8OlDHFtsAXmCXow2ZUGd2I5f3H/kPmpg/05vS47G1HT8Cret2dNAuiN1a++RzVa
+         +hip0s3OrQBIc+wdUs9xmwMynRw5roYwHmZUdiQaZNbom+KlbPnuV7vMYS7Ry6YZCHDa
+         Y7tEJLZsTsrjfdTVeJfHEceE8T9C7p2WJR/PsUJPxSzreV4BkhDFQ4TCyY04/ayrucNB
+         LltIbXXREfC6oT9wfEor8wQNsY2vHmB3z8UKK0o4qBT8Fz0XQCukNSAODgSGmtU8cPwq
+         AcVw==
+X-Gm-Message-State: AJIora8HdXQsxChXq21vzeItZKuOuiNfAyEh5PVdI1zUT8CTcbBd2fUS
+        Ef44s7uhA2+CMDexJOSlbQvsvQ7GXRjbEUS3sOQ=
+X-Google-Smtp-Source: AGRyM1s4DVmvwO3UYi3am/1hl7v5k+11uGFQz8SR7b/jLPUtCXxxfUROpF6gbwNkgnUr5Rze8aRIMeW9WGiopFicipE=
+X-Received: by 2002:a05:600c:4f83:b0:3a1:7310:62e7 with SMTP id
+ n3-20020a05600c4f8300b003a1731062e7mr36978255wmq.84.1657057702289; Tue, 05
+ Jul 2022 14:48:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1656922422-25823-2-git-send-email-kkartik@nvidia.com>
+References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
+ <20220701090240.1896131-3-dmitry.osipenko@collabora.com> <2bb95e80-b60a-36c0-76c8-a06833032c77@amd.com>
+In-Reply-To: <2bb95e80-b60a-36c0-76c8-a06833032c77@amd.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Tue, 5 Jul 2022 14:48:34 -0700
+Message-ID: <CAF6AEGtqPeF1DjmBKgzWK39Yi81YiNjTjDNn85TKx7uwicFTSA@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] drm/gem: Don't map imported GEMs
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 04 Jul 2022 13:43:37 +0530, Kartik wrote:
-> The Tegra186 timer provides ten 29-bit timer counters and one 32-bit
-> timestamp counter. The Tegra234 timer provides sixteen 29-bit timer
-> counters and one 32-bit timestamp counter. Each NV timer selects its
-> timing reference signal from the 1 MHz reference generated by USEC,
-> TSC or either clk_m or OSC. Each TMR can be programmed to generate
-> one-shot, periodic, or watchdog interrupts.
-> 
-> Signed-off-by: Kartik <kkartik@nvidia.com>
-> ---
->  .../bindings/timer/nvidia,tegra186-timer.yaml | 109 ++++++++++++++++++
->  1 file changed, 109 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-> 
+On Tue, Jul 5, 2022 at 4:51 AM Christian K=C3=B6nig <christian.koenig@amd.c=
+om> wrote:
+>
+> Am 01.07.22 um 11:02 schrieb Dmitry Osipenko:
+> > Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
+> > handle imported dma-bufs properly, which results in mapping of somethin=
+g
+> > else than the imported dma-buf. On NVIDIA Tegra we get a hard lockup wh=
+en
+> > userspace writes to the memory mapping of a dma-buf that was imported i=
+nto
+> > Tegra's DRM GEM.
+> >
+> > Majority of DRM drivers prohibit mapping of the imported GEM objects.
+> > Mapping of imported GEMs require special care from userspace since it
+> > should sync dma-buf because mapping coherency of the exporter device ma=
+y
+> > not match the DRM device. Let's prohibit the mapping for all DRM driver=
+s
+> > for consistency.
+> >
+> > Suggested-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> > Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>
+> I'm pretty sure that this is the right approach, but it's certainly more
+> than possible that somebody abused this already.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I suspect that this is abused if you run deqp cts on android.. ie. all
+winsys buffers are dma-buf imports from gralloc.  And then when you
+hit readpix...
+
+You might only hit this in scenarios with separate gpu and display (or
+dGPU+iGPU) because self-imports are handled differently in
+drm_gem_prime_import_dev().. and maybe not in cases where you end up
+with a blit from tiled/compressed to linear.. maybe that narrows the
+scope enough to just fix it in userspace?
+
+BR,
+-R
+
+> Anyway patch is Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.c=
+om>
+> since you are really fixing a major stability problem here.
+>
+> Regards,
+> Christian.
+>
+> > ---
+> >   drivers/gpu/drm/drm_gem.c              | 4 ++++
+> >   drivers/gpu/drm/drm_gem_shmem_helper.c | 9 ---------
+> >   2 files changed, 4 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> > index 86d670c71286..fc9ec42fa0ab 100644
+> > --- a/drivers/gpu/drm/drm_gem.c
+> > +++ b/drivers/gpu/drm/drm_gem.c
+> > @@ -1034,6 +1034,10 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj,=
+ unsigned long obj_size,
+> >   {
+> >       int ret;
+> >
+> > +     /* Don't allow imported objects to be mapped */
+> > +     if (obj->import_attach)
+> > +             return -EINVAL;
+> > +
+> >       /* Check for valid size. */
+> >       if (obj_size < vma->vm_end - vma->vm_start)
+> >               return -EINVAL;
+> > diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/d=
+rm_gem_shmem_helper.c
+> > index 8ad0e02991ca..6190f5018986 100644
+> > --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> > +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> > @@ -609,17 +609,8 @@ EXPORT_SYMBOL_GPL(drm_gem_shmem_vm_ops);
+> >    */
+> >   int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct vm_=
+area_struct *vma)
+> >   {
+> > -     struct drm_gem_object *obj =3D &shmem->base;
+> >       int ret;
+> >
+> > -     if (obj->import_attach) {
+> > -             /* Drop the reference drm_gem_mmap_obj() acquired.*/
+> > -             drm_gem_object_put(obj);
+> > -             vma->vm_private_data =3D NULL;
+> > -
+> > -             return dma_buf_mmap(obj->dma_buf, vma, 0);
+> > -     }
+> > -
+> >       ret =3D drm_gem_shmem_get_pages(shmem);
+> >       if (ret) {
+> >               drm_gem_vm_close(vma);
+>
