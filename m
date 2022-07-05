@@ -2,118 +2,172 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC14C43334
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 10:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F22C43334
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 11:34:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbiGEKxg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Jul 2022 06:53:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41906 "EHLO
+        id S230104AbiGELeH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Jul 2022 07:34:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230217AbiGEKxK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 06:53:10 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED8516596;
-        Tue,  5 Jul 2022 03:52:35 -0700 (PDT)
-Received: from [192.168.2.145] (unknown [109.252.119.232])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 04042660180F;
-        Tue,  5 Jul 2022 11:52:30 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1657018353;
-        bh=C0XVywH+oyNLG15zS9kJCfV/f1r6tRA5EPvm3RYnUOM=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=BFsJtEh/gBUsqY7oLRLDvEEt2L0qJInllcm8ERMdMkKs/ivYjVrMj7HM0VLqfdii4
-         iZJrTAHKS+FQJADUDLdChPRH7Y6aiXltet0/Ptkf7VzEZKH0NTIj3TrpzjnTsS5eIM
-         +daU4k8lz/lV6BZmBuVv7AHzc7nHJfY2f1YwSD3ROdt84HfzsTGjByasgAXNcMz4d1
-         qg/O+0qPRX6gCd4cBJwu1DYAoDwhHm0Pyvxxug8XaHFbhF++KaNwZMKNBglpUncQwu
-         n6itsrDfKq1GL6c0rmng3zw4Cd6j6JFnFqIEoFQiM5a30K8uZbuwLUOjlQtKkbkZuL
-         78aARH30ofTdQ==
-Message-ID: <37f028a0-f54a-a1a9-e23a-3c1af6979a62@collabora.com>
-Date:   Tue, 5 Jul 2022 13:52:28 +0300
-MIME-Version: 1.0
+        with ESMTP id S230021AbiGELeG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 07:34:06 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 772B162DB;
+        Tue,  5 Jul 2022 04:34:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AyNl3NtuGWwEeqjb2CHrABw6FuhdW9Y2GHmgRyq5zGmTFUsOaUqAS0P6tsMx3rjl3XTmB8SVS/eWJ97V+ZRDOl7/cOKxcw8jcm5M9celaRjKybk9Rc6cqBwnAwseIe/nJk7htuqTEIrKkKnlZjd+X5EeUYXmpCgMW9++lq8IwWwM2maP+hraqCGkCWDcViwHa9UmHFHovwszL+PS8EyxBlqxJh4ZjIAeTTd1F2RXVfkTOpU+yZScsN3QYIUr8IZAbU02mBj1FsNFDIvVwkGh2Rq1Egc5ZEipqcEaugqRQsH0JViOK3UBPZP9WqYTEohZoTu7w39b79J18iAWFEqENA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8TXhxapzxVOZ4HEw3o7/f3/JBLUEle02467ayjlVvFs=;
+ b=CTmAcJBoWIUwyuyP9W8szIDH+aH/SxdRa4AOb1ZOY7XxtjVOA1oZVouRuDXwjUs+dWH46oS0466T3mRlqrLPWmyRe+3Wg8pSCvRpVos/Mrv+0ZDMUCUlJoCE9Ge9/OIqPYSVL1Amt3HbpsKQAsrqRTueZRT71k0xxir1qbnSX4OcP1mv+ovDQKWXggLlifDw5c5NKM65fy9HcD14pRiSMxKVnbRl6ESMoynWWqewOnjdqDgDoBK1pFgo1kw1DzaUhoPSLsuUIpYNauNtFKV4xHnRxBP7E06/kiRFaigJ1u/5tzkftntLc2fF5KXUlAdCS4Q+CNAfXOehUhfZk2ZWxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8TXhxapzxVOZ4HEw3o7/f3/JBLUEle02467ayjlVvFs=;
+ b=y+g0RbdmutH7JcYbOA2J5ReFR+RZ6EctZK0Naltuk0cYaT5iQXYPCZ8PVyhyYLwtrLCa98KYOgRw8rJNdSzvf8gA5lLNsDWrZxU8usx07oqG46D4mFj2AUDF0w5TE52HpL3a7cPRvaf1q2efnB8OVgHqrOTvBxHM6tMDX0j6I7Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com (2603:10b6:408:43::13)
+ by BN8PR12MB3314.namprd12.prod.outlook.com (2603:10b6:408:45::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.15; Tue, 5 Jul
+ 2022 11:33:59 +0000
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::905:1701:3b51:7e39]) by BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::905:1701:3b51:7e39%2]) with mapi id 15.20.5395.021; Tue, 5 Jul 2022
+ 11:33:59 +0000
+Message-ID: <a42237c9-6304-4b06-cede-2175c7e7b87d@amd.com>
+Date:   Tue, 5 Jul 2022 13:33:51 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v6 14/22] dma-buf: Introduce new locking convention
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v8 1/2] drm/gem: Properly annotate WW context on
+ drm_gem_lock_reservations() error
 Content-Language: en-US
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28Intel=29?= 
-        <thomas_os@shipmail.org>
-Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com, linux-media@vger.kernel.org,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
         David Airlie <airlied@linux.ie>,
         Gerd Hoffmann <kraxel@redhat.com>,
         Gurchetan Singh <gurchetansingh@chromium.org>,
         Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Gert Wollny <gert.wollny@collabora.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Rob Clark <robdclark@gmail.com>,
         Emil Velikov <emil.l.velikov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-References: <20220526235040.678984-1-dmitry.osipenko@collabora.com>
- <20220526235040.678984-15-dmitry.osipenko@collabora.com>
- <0a02a31d-a256-4ca4-0e35-e2ea1868a8ae@amd.com>
- <e6e17c52-43c2-064b-500e-325bb3ba3b2c@collabora.com>
- <02e7946b-34ca-b48e-1ba6-e7b63740a2d9@amd.com>
- <7372dd1b-06f7-5336-4738-15f9b4d4d4b3@collabora.com>
- <90fe74f6-a622-e4ae-3004-6f1bc1790247@shipmail.org>
- <0d88cf7c-61e5-d7a8-a6ba-83388114a1fa@collabora.com>
- <fd026c44-b067-3537-3020-4ae8f24137ad@collabora.com>
-In-Reply-To: <fd026c44-b067-3537-3020-4ae8f24137ad@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= <thomas_os@shipmail.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org, kernel@collabora.com,
+        virtualization@lists.linux-foundation.org
+References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
+ <20220701090240.1896131-2-dmitry.osipenko@collabora.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20220701090240.1896131-2-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0131.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:97::16) To BN8PR12MB3587.namprd12.prod.outlook.com
+ (2603:10b6:408:43::13)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6cfd42e6-0da2-47da-555f-08da5e7a4078
+X-MS-TrafficTypeDiagnostic: BN8PR12MB3314:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uh10KPZUPrS3d9rZjjif4aIxItaKYdv3du3AK2JdlsYi1TD93YtygxKP7BVSJeQe8AREmZB0VKzDjyyf9YrX/weFgrlt04kb4YiVS8mLbFyecqmPkgGNxK8OrM8O1Nw46Zpxz87IUeQFcf7uu11d13nt7mpwlIoXSD+5oplgoVT9ySRB5UJ3eiYGwEP15Ft14pkh2dFIXc9hlBtY3jNRuGjsUcfku2XrNwjJ5WJWBwIGLUFN9HW0jSGqX4DM8PWL9g6CvLpaDdBz+CY5YexFuMQVq8HGX8j9xuVdYT40JvI3AHj50j6octEKZNnAtgrGZxuTOXsLg8eLwgig0DNkWqg+XVmlJtpvrQHBG/ySTPSHnYq8EW77fq2gX9UCoeFnqaK68YxC/mDQSBlrWZQKwbiI+9H8SrYyWS5zcmN+djfYmGgo4sqHYbC0zWui9+0hWP1Tjl0fI3l2sx0GMyMJGhjk5NDH3Qze7cniGG2q53g9FHdXmZTJDK98UlIvinfSgD3V4qIYUPYs49IrHgpFeIAfEQwV+LLnDs2ioUj7nFGiHfXtFMG5MHkUI4Hqr7+U63LAeK+BwFmAxf8c3dBxrwjgG+BTl2/nlwIW3i77b1GuR3N13Q2C2RrmODdkfKBoKa6BVFZ9RU3S4wPTm58mVsJvhNebSxBXxGkDOKVOWWaz7OCLb9bqa9eXv4x0PUcmcvCQvhM05rvY95Q08C9CEYMYo5cW0mdiAdqfgGNJoqqCrpMSEZCpd/jfkOGted5VTtCQqReBA3NcRHIP3urZO6CjZ1HT8EpIjp4Itu+Uaq/cqn+Oi15BsTBKu6uRyXFht2/VMa7ceU+XEkXu6EK67wazXPF2nl+NQbR438/Txs4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3587.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(136003)(396003)(376002)(346002)(39860400002)(186003)(83380400001)(2616005)(66574015)(66476007)(8936002)(66946007)(36756003)(31686004)(5660300002)(4326008)(26005)(7416002)(6512007)(6666004)(86362001)(478600001)(8676002)(110136005)(41300700001)(316002)(6506007)(66556008)(38100700002)(6486002)(921005)(31696002)(2906002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZTlzWDdIWjRNbGhzeFZEYk4xWFZaVkU3MldESStSbHo5dkM5ODZFQkRMKzZo?=
+ =?utf-8?B?Z2hHd2RQcE56ZUROdlZhK1d5ZzUwam5wMHZzY0tMOHVWbGEyRVMyTzlVWXhu?=
+ =?utf-8?B?dEZrbjd2L1llb2JUWUl3Y2tPQUxBVDRKUUtTV3U3ZGgvdzl2NmRzdmYrYThZ?=
+ =?utf-8?B?RHd5RE9xTHZsTFlvZGVwdjRrT2ZtQktxOTkzUWIvODdkK2d2ZXozcXdoT21n?=
+ =?utf-8?B?RE1lUVRyQkxEV3NleXBkdzNSUDhacWlMVzZueTIzby90T09Pbm9aZ0Z5NU9m?=
+ =?utf-8?B?SERMNE1RT29DbzBGd05YUldtM2pxVWlTZkpOTy9OT1pzYlZYZ3FZQlpZSytI?=
+ =?utf-8?B?KytFaEE2ZDljSlp3a3VnVmc3MTNvdlE2TzROdVM5UmpMbWxSd0ttbFIyVjlD?=
+ =?utf-8?B?N0Q5RVdaNFU0a3hBSlYydlFBUjBJQkIxL0pHMVBxV0VaT01iSURPRmhLUWQ5?=
+ =?utf-8?B?Y29XZHp0c3dYN3VzUG5FUFRVVGh0YnlpblBKRDFpZStMWXVHRmFLMXBFMnNi?=
+ =?utf-8?B?c0V0Ym9zRzJGbnAwS3FYRW1RSHpzMktYaW4yOTFKaXRHMVo4YWxNVmExY0Zz?=
+ =?utf-8?B?L25BYjlCWEdjUXhQVEZOc2szTnYxUVB3My9YVzkyc1BqNm1EeVJBQjFOUDJF?=
+ =?utf-8?B?YjczUnl0REcwY2pxWFBoNng4V0Z0SW45R21vMlI4Ri9KT1ZOUWlTWCtuYzBr?=
+ =?utf-8?B?WDJXTkExZElKMGEyU3pnMTQxUkVveStjUjV2ZnZKak9LamtSOTZmTlBWWFVl?=
+ =?utf-8?B?ZEFyK0VRelMzRHVNRStQbWljTS9mMG4wL1owNjcwRkc1d0hmOGRDbVN2aTZY?=
+ =?utf-8?B?NU0vaStrRFhrd3crVXlwYkNtNGYvSzNvZ3VnYkZkbWRwbHhYWkNxSDBjdGVC?=
+ =?utf-8?B?M3R3bnRqcVlPaUFQcXY4SWdRUUFpR1M5azRwS1VPYmZvYWltRGFRMzdOOGta?=
+ =?utf-8?B?WWtKMDdIU25oSHpMM1pScWNUbFdGOXhjc0ltK0IvYTczRVRwZFZTVlFlWUQy?=
+ =?utf-8?B?QlR3cVovQUJETGJxSEpnb01iVkcvR2NoRUh6YmM2aEoydnVYKzdmZDUwZVRV?=
+ =?utf-8?B?RzBGZ1VHRFlpVm9CVDJydXJCWFlsWEc0cTZhV3IyWEJhSk1lUmdEVll2dm9E?=
+ =?utf-8?B?NWQ3dU91bVkwbGljdnpnZGNUSW1aZWwrSDRsZW9YMkdYb2lZSjM3Ykl6cC9v?=
+ =?utf-8?B?UkswOFVjUjZpMkhMTjhzdS9nclc5L0tob1lWZnp5VG1iTUtiRTFtYmlJMVBN?=
+ =?utf-8?B?aWVmVWtyREw2Ry85VVRmN2VkTk82YjNuUDU5WW43UVA0cEkzbG5ITzZTK1My?=
+ =?utf-8?B?Z2ZGbW5XZEhBeUIwRnJXOE5Oc3NCMTh3TTBzTGJOMi85V3Q3Q2pzd1Bmdzl1?=
+ =?utf-8?B?OUxkS0Z1QllnZFBpZUo1MlpRVEJRK2FsWmVqSS9aampKM0FmdzVRdVZIcXh0?=
+ =?utf-8?B?aU5YVkRsbHVuaWFnNWNoUEdCRzQ0ZU4yMllnSE11YmdodVdlMEgwNVkwbzdZ?=
+ =?utf-8?B?QTNFWXdmbTlQRWxLQ1NMZm9xWEZRcW00dmcySXlwcmN5Rjh4ays3Q2gwQUFj?=
+ =?utf-8?B?QXZPVkpiczI4dzduendCQnVjaENRdlRSdzMyaUpXRjZUVEI3Y281cy92aUZJ?=
+ =?utf-8?B?VFgxRStIVzVsTnphMlo3YmFMdUx6dDhYZUk0ZUVlUlRUMmg1Q25uejVMNjZI?=
+ =?utf-8?B?NXIveFhNRWttNFFkU1RtcE0rQkErWVBRYXpTd3ZJTWl1cW5tQ0hqYXZrZ2Jy?=
+ =?utf-8?B?YUx0TmVWU0tJYmNsUysxZHZkMyswazZENDZoMEV1Y05RV2pPSENiNGpGZGVn?=
+ =?utf-8?B?amQ1Q0JlMHpWRVdhb1hiSTUrbjU3WXVDTCtWMFd6bGNWOEVRcmVkN1VSYVoz?=
+ =?utf-8?B?Vk1WOWhCclRYS242OGQ5MFhjZnphV21vT3hFeFlVdE9VQ3FSTnFFQnI3NWha?=
+ =?utf-8?B?ZERBMGVqRm91NHdrVGo2WjlVQTlIc1h0WTN3eFdZNmVqMVJyS2dsbzlKNEVG?=
+ =?utf-8?B?QkFaQVJuWk9tczlWUm9oc1hRd2Mrb01HT0crb1dKUGxUMkwxeU5uV0RZeVZw?=
+ =?utf-8?B?dUl4R21oUTFIeDVzeDZLVEhjTVFPWjBzcFBIYmc5NUFiZFV0d2w5aTNsamE4?=
+ =?utf-8?Q?WDRWGM/Xw5Jzc+RGH2xUTm3/H?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cfd42e6-0da2-47da-555f-08da5e7a4078
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3587.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2022 11:33:58.9964
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i4PQRWCPqIp8ku3dByaTcWRszQok7AR4OujmYczTFAoqdQdm9Y/WZIuDiBrlIdQa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3314
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 7/5/22 01:38, Dmitry Osipenko wrote:
-...
->>> Also i915 will run into trouble with attach. In particular since i915
->>> starts a full ww transaction in its attach callback to be able to lock
->>> other objects if migration is needed. I think i915 CI would catch this
->>> in a selftest.
->> Seems it indeed it should deadlock. But i915 selftests apparently
->> should've caught it and they didn't, I'll re-check what happened.
->>
-> 
-> The i915 selftests use a separate mock_dmabuf_ops. That's why it works
-> for the selftests, i.e. there is no deadlock.
-> 
-> Thomas, would i915 CI run a different set of tests or will it be the
-> default i915 selftests ran by IGT?
-> 
+Am 01.07.22 um 11:02 schrieb Dmitry Osipenko:
+> Use ww_acquire_fini() in the error code paths. Otherwise lockdep
+> thinks that lock is held when lock's memory is freed after the
+> drm_gem_lock_reservations() error. The ww_acquire_context needs to be
+> annotated as "released", which fixes the noisy "WARNING: held lock freed!"
+> splat of VirtIO-GPU driver with CONFIG_DEBUG_MUTEXES=y and enabled lockdep.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 7edc3e3b975b5 ("drm: Add helpers for locking an array of BO reservations.")
+> Reviewed-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Nevermind, I had a local kernel change that was forgotten about.. it
-prevented the i915 live tests from running.
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
--- 
-Best regards,
-Dmitry
+> ---
+>   drivers/gpu/drm/drm_gem.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index eb0c2d041f13..86d670c71286 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -1226,7 +1226,7 @@ drm_gem_lock_reservations(struct drm_gem_object **objs, int count,
+>   		ret = dma_resv_lock_slow_interruptible(obj->resv,
+>   								 acquire_ctx);
+>   		if (ret) {
+> -			ww_acquire_done(acquire_ctx);
+> +			ww_acquire_fini(acquire_ctx);
+>   			return ret;
+>   		}
+>   	}
+> @@ -1251,7 +1251,7 @@ drm_gem_lock_reservations(struct drm_gem_object **objs, int count,
+>   				goto retry;
+>   			}
+>   
+> -			ww_acquire_done(acquire_ctx);
+> +			ww_acquire_fini(acquire_ctx);
+>   			return ret;
+>   		}
+>   	}
+
