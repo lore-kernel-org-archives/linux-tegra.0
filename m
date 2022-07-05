@@ -2,151 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BB3C43334
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 04:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56261C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 06:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbiGEEeo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Jul 2022 00:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52040 "EHLO
+        id S229600AbiGEGOz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Jul 2022 02:14:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbiGEEen (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 00:34:43 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1ECB13CF0
-        for <linux-tegra@vger.kernel.org>; Mon,  4 Jul 2022 21:34:42 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id k14so10026400plh.4
-        for <linux-tegra@vger.kernel.org>; Mon, 04 Jul 2022 21:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tmakuE4H8rZY3d6iU39dHrEeioyPOU2VRNgXbaFPqgw=;
-        b=u7aod0CrQMXqVD1ebu7kjSt/WcQQQkg7j6oHslRmkt+QTw/T612mRYZc8qxkE8om3O
-         EQM+h21JvLKnCzpiIq4xgwUXzQLpQJOdCt1694l5ZM1mQPkjlLZ33DO+Dp91Uof0icTc
-         2eCH31nP6U7iVCED/tU23T/actjjYFmw5UZLP7t0DKiBKU/nAR7cp0MXJlqAa8wI742A
-         EQR0aX38sVjulvZcqY4l2O71LHN3k6M9c36toeseQylQoLjWGDZYqtxqvh3+p0Tozz/N
-         XPHPZJPQNycYMom8jxQv3xsFNeAKZLSk+yfh0F9BKr8UZwwsSvArNI8r2sZRhz3icFzn
-         3CaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tmakuE4H8rZY3d6iU39dHrEeioyPOU2VRNgXbaFPqgw=;
-        b=nRsv7L8iduYu80KuCVd0ZQaRvQms88ZgCU6iOxMHA+TOT4YxZm4YaNUuJtjI+IwiP9
-         k8kp+ItDHphtam8Ost/JQkNp4hnvXKxhzpg0X82Ft6Tnq8oLmpeCGAtzoebopZfJ3D1C
-         PGTmaBMydczVyuUD55fU55lSn3zeHKQZLhVjaUAh9nEpUXUE7yBkR8vMrDfAufK9VRDB
-         FY9RF0lejIl61PNEkBEDLAmoNGzYHU4ModHZM+T/ldFsPIn8V3t+cbBSflxuDxYpuL6L
-         5foo/tQH5bSXqpkc2gH4XixyEKzSFUHdkidHmfd0WjjY6zccbDwd6S5oNrF3/tQt8owX
-         2G0Q==
-X-Gm-Message-State: AJIora92rWaAtWhV/sUkWAHgE+rVaqCmsI/alpLDPX4oIN24GJeckOHe
-        MtXAR67ksJLhUJ8XhHMhcD8C7A==
-X-Google-Smtp-Source: AGRyM1sRTY3jhmXML4zUAHI23oIyvbgNG1ONSMMqox+hipkmWXEtiTEid5mCOhRsoVVHI5UrE7Q83A==
-X-Received: by 2002:a17:90b:4a4f:b0:1ef:90fb:35a5 with SMTP id lb15-20020a17090b4a4f00b001ef90fb35a5mr5846805pjb.161.1656995682324;
-        Mon, 04 Jul 2022 21:34:42 -0700 (PDT)
-Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id p26-20020a056a0026da00b005251e2b53acsm21651540pfw.116.2022.07.04.21.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 21:34:41 -0700 (PDT)
-Date:   Tue, 5 Jul 2022 10:04:39 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Steven Price <steven.price@arm.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Qiang Yu <yuq825@gmail.com>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V3 02/20] OPP: Make dev_pm_opp_set_regulators() accept
- NULL terminated list
-Message-ID: <20220705043439.xlrxusxrhwjupiyt@vireshk-i7>
-References: <cover.1656935522.git.viresh.kumar@linaro.org>
- <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
- <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
+        with ESMTP id S229473AbiGEGOz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 02:14:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38476391;
+        Mon,  4 Jul 2022 23:14:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4E409B815D1;
+        Tue,  5 Jul 2022 06:14:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CCB1C341C7;
+        Tue,  5 Jul 2022 06:14:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657001691;
+        bh=N20ajp/3lQ194FtocElV2UAoCsUpGh2T37oUu3nAAso=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P28pH94BLJJGjyyxp/2NDywpRovkFVBoHgAZi66TYlpZ2xbJq7sgZ7QtevriUThj5
+         JGDX/2Go3bZcb6b+KOIjjrm0ym+u/z9RwYcrYS7pAyxmtxRq8GDAUUpUtKGGLRkE2W
+         5gmnAcjN7U+lWAOLfHkCvhxdRTKGdqiCqDtmo50aZ+xsIQ9iuDKOPluaqTMru8ZiKa
+         glvT8M+V13GOWyc4J0YTf5iBBRqTL8tJPW0ZtLr0nl+jd+PiZiiJ63I22wFQZWEsv9
+         mcdJCRcRLsoBe+SrCaTVJEUVOxcPBDAaJ863xqWooWJa3mDbBEscE72jh8KUqVQRD4
+         Rd9V3rQGCuwYg==
+Date:   Tue, 5 Jul 2022 11:44:47 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
+        kw@linux.com, krzk@kernel.org, p.zabel@pengutronix.de,
+        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V3 01/11] dt-bindings: PHY: P2U: Add support for Tegra234
+ P2U block
+Message-ID: <YsPW1w3mYcfxg/sX@matsya>
+References: <20220629060435.25297-1-vidyas@nvidia.com>
+ <20220629060435.25297-2-vidyas@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
+In-Reply-To: <20220629060435.25297-2-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04-07-22, 15:35, Steven Price wrote:
-> I have to say the 'new improved' list ending with NULL approach doesn't
-> work out so well for Panfrost. We already have to have a separate
-> 'num_supplies' variable for devm_regulator_bulk_get() /
-> regulator_bulk_{en,dis}able(), so the keeping everything in sync
-> argument is lost here.
+On 29-06-22, 11:34, Vidya Sagar wrote:
+> Add support for Tegra234 P2U (PIPE to UPHY) module block which is a glue
+> module instantiated once for each PCIe lane between Synopsys DesignWare
+> core based PCIe IP and Universal PHY block.
+
+Applied, thanks
+
 > 
-> I would suggest added the NULL on the end of the lists in panfrost_drv.c
-> but then it would break the use of ARRAY_SIZE() to automagically keep
-> the length correct...
-
-Actually we can still make it work.
-
-> For now the approach isn't too bad because Panfrost doesn't yet support
-> enabling devfreq with more than one supply. But that array isn't going
-> to work so nicely when that restriction is removed.
-> 
-> The only sane way I can see of handling this in Panfrost would be
-> replicating the loop to count the supplies in the Panfrost code which
-> would allow dropping num_supplies from struct panfrost_compatible and
-> then supply_names in the same struct could be NULL terminated ready for
-> devm_pm_opp_set_regulators().
-
-Or doing this, which will simplify both the cases.
-
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index 7fcbc2a5b6cd..b3b55565b8ef 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -625,24 +625,29 @@ static int panfrost_remove(struct platform_device *pdev)
-        return 0;
- }
- 
--static const char * const default_supplies[] = { "mali" };
-+/*
-+ * The OPP core wants the supply names to be NULL terminated, but we need the
-+ * correct num_supplies value for regulator core. Hence, we NULL terminate here
-+ * and then initialize num_supplies with ARRAY_SIZE - 1.
-+ */
-+static const char * const default_supplies[] = { "mali", NULL };
- static const struct panfrost_compatible default_data = {
--       .num_supplies = ARRAY_SIZE(default_supplies),
-+       .num_supplies = ARRAY_SIZE(default_supplies) - 1,
-        .supply_names = default_supplies,
-        .num_pm_domains = 1, /* optional */
-        .pm_domain_names = NULL,
- };
- 
- static const struct panfrost_compatible amlogic_data = {
--       .num_supplies = ARRAY_SIZE(default_supplies),
-+       .num_supplies = ARRAY_SIZE(default_supplies) - 1,
-        .supply_names = default_supplies,
-        .vendor_quirk = panfrost_gpu_amlogic_quirk,
- };
- 
--static const char * const mediatek_mt8183_supplies[] = { "mali", "sram" };
-+static const char * const mediatek_mt8183_supplies[] = { "mali", "sram", NULL };
- static const char * const mediatek_mt8183_pm_domains[] = { "core0", "core1", "core2" };
- static const struct panfrost_compatible mediatek_mt8183_data = {
--       .num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies),
-+       .num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies) - 1,
-        .supply_names = mediatek_mt8183_supplies,
-        .num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
-        .pm_domain_names = mediatek_mt8183_pm_domains,
-
 -- 
-viresh
+~Vinod
