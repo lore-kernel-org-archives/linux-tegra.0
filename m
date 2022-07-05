@@ -2,147 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774F0CCA47C
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 07:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C4EC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 07:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbiGEHAd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Jul 2022 03:00:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34806 "EHLO
+        id S230506AbiGEHBY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Jul 2022 03:01:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbiGEHAc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 03:00:32 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F5AE00E
-        for <linux-tegra@vger.kernel.org>; Tue,  5 Jul 2022 00:00:31 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id q82so3447497pgq.6
-        for <linux-tegra@vger.kernel.org>; Tue, 05 Jul 2022 00:00:31 -0700 (PDT)
+        with ESMTP id S230489AbiGEHBW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 03:01:22 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B2A11149
+        for <linux-tegra@vger.kernel.org>; Tue,  5 Jul 2022 00:01:06 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id g16-20020a17090a7d1000b001ea9f820449so15845390pjl.5
+        for <linux-tegra@vger.kernel.org>; Tue, 05 Jul 2022 00:01:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qUBBq1ygcQTWcllnQnv9hUGFAmvHHVoH28qY+W8QnBE=;
-        b=Xomgl+tX+JuEgJb4L/ud2hR9WtEInetJEz6PnXqPOICEPrbom4zFBSBCMic5H7Kzz8
-         yVfeoaxvja7C8QLeqDYfMGx4BfgrNj6P8QjB1/kDYyV8zKDgIlUZw/RA4DjLmlirFnUR
-         tpQu5+HvrLVQJva7SHLONoU3657vCOXWCYqJpN/Vrw2VlERsiVXPTPmsmzwNaJTjisDP
-         8OUngSWWVvtze8rcVshJhbL+hc8yxO6uKHcI0KtjHy9f/wxJN2w99NVDg5KZ0XBW0jrF
-         DQsJ0wkEZCGsrxfH8kdxBUhQ22BrGgHkqNN/36ERzT137mJ2y6FKNc33qXyZlW0q0u8f
-         kVNQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=cnPaxH1mDSIZ2e0GPjWftFKnYfExNBe634PCeF5701I=;
+        b=u0/ja3+gzAShKN6od06YgRN0+EGIwLFWHCcHMqrhK1OuLT/q7/z0A7GTO8fHEsmENa
+         RPhjD9ICXz65xj+j2vi03p3qYBuXe8mK09mrt3WOedwsDu+5PHtNznf/cK3FXR4wuhjz
+         Vo3Gnibs1I8n6zHJi0MNeET2Qq95OKZxHrTMblvQ0FOHlh+uFp3tg9aFEFFGcrK9K8A7
+         K5Euw9lBjy+qM5MpKyT0VDZWOqpumVqX4oshKpighn4dnJ2X+sSJHGbJUTf5lNB8DIZe
+         wU5s9kqAgKJSlwHMgSvw5CGCANGz1g7pf2pWNy42iHSifmHGMuHPLVGwt8ajeDGMcbQf
+         ZgGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qUBBq1ygcQTWcllnQnv9hUGFAmvHHVoH28qY+W8QnBE=;
-        b=JddSjfmh2SFpWIirM5fId0QaDmRxNBshaaOMwlc7iGvH5urfZVapxlW2EfyGb3obtH
-         Wqjkkqvf2AzICrQc0GSUZDu33bVMVtU2egagPdogiytSxgu2tu+WFteiCBhknDgd18TX
-         hSOcBNXXhtnNjw3rZKYvKxedkvD8pYaqPoQnC7SRoGB8S5dRURNhOEgIda0ewPIZqEIV
-         lTdUjnZk1QpiuNJGrC/UVn9Zp6FlkCt4zt5ne5eruikRrP66GCyUvJ0aH6GmH6dydl/r
-         qaAI9dg2L2LV2krsjrM0PxlAeXmnz7Zd1KgVucVz5kWznbctk0Pt/wQyolBZLn6bpuPF
-         nE3w==
-X-Gm-Message-State: AJIora/66jKFrcGjKlFAJxszzX78Hm933Q/sHuMI+I/5XCpvuwBOjx37
-        FPNcpaNvCIxTY6J9O224REGA7A==
-X-Google-Smtp-Source: AGRyM1sjM0w+mr8gF005E7+SGsLYRu1tV7qvuqbksNU8g/P0WYbFHA2AstWU3pTrsoJwZWT+SA/alQ==
-X-Received: by 2002:a05:6a00:ad0:b0:4f7:a357:6899 with SMTP id c16-20020a056a000ad000b004f7a3576899mr40383862pfl.80.1657004431077;
-        Tue, 05 Jul 2022 00:00:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cnPaxH1mDSIZ2e0GPjWftFKnYfExNBe634PCeF5701I=;
+        b=CTFOtcLatAmdDnaZ+gGAurK+aXFhT0gEODNRx4UGGYhEPm6pa0aPct886pAdIS59i0
+         5JMlAb/ixG7doIKuU+HoJa0M+SD6X/6qJOOL6pKu5xAHaVxyOSIYRF5auxNKJlsaWEcD
+         jutXm8YuXSRlIIbtbsbZkd/anbJYEqeD6ilCfel4t8az54SdxTgzP2lOKdCKIheeOWPc
+         QbYNT7iqUmYsEXnrY/Tvyq+E0lCQWHq2i1y4tJwI0TeIpVUAH6ARszTzDplhvNBabVZf
+         je9Ntk9KibOQUe2YztkQaK8R7ipgWXgJl8A2vkWWZUvOW9NXTJ5ROVIob2FKIQp21WN2
+         iG8A==
+X-Gm-Message-State: AJIora+FxrYBs41XBtXVz+KN/L61iyko2NZ7LNreO8H6eZ6Ko8jNfJGO
+        qNBerXwY814/XR+QZ76qMR26hA==
+X-Google-Smtp-Source: AGRyM1tjcbGETqs70V1A+ZZhLgbBZCVq5Tv/ZsONxxt2m7iSUGbCm4TgP9CVwz8uwJRRcRfg8CCLVg==
+X-Received: by 2002:a17:90a:408f:b0:1d1:d1ba:2abb with SMTP id l15-20020a17090a408f00b001d1d1ba2abbmr43123411pjg.152.1657004466394;
+        Tue, 05 Jul 2022 00:01:06 -0700 (PDT)
 Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id u13-20020a63454d000000b0040d2224ae04sm21522380pgk.76.2022.07.05.00.00.30
+        by smtp.gmail.com with ESMTPSA id w194-20020a627bcb000000b005286308ee62sm3641624pfc.121.2022.07.05.00.01.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 00:00:30 -0700 (PDT)
+        Tue, 05 Jul 2022 00:01:06 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
+To:     Dmitry Osipenko <digetx@gmail.com>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>
+        Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org,
         Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH V2 00/13] OPP: Add support for multiple clocks*
-Date:   Tue,  5 Jul 2022 12:30:03 +0530
-Message-Id: <cover.1657003420.git.viresh.kumar@linaro.org>
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 12/13] PM / devfreq: tegra30: Register config_clks helper
+Date:   Tue,  5 Jul 2022 12:30:15 +0530
+Message-Id: <17e26d352a8de3e003d2f6b578d1d037737682a2.1657003420.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+In-Reply-To: <cover.1657003420.git.viresh.kumar@linaro.org>
+References: <cover.1657003420.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+There is a corner case with Tegra30, where we want to skip clk
+configuration that happens via dev_pm_opp_set_opp(), but still want the
+OPP core to read the "opp-hz" property so we can find the right OPP via
+freq finding helpers.
 
-This patchset adds support for devices with multiple clocks. None of the clocks
-is considered primary in this case and all are handled equally.
+The OPP core provides support for the platforms to provide config_clks
+helpers now, lets use that instead of devm_pm_opp_of_add_table_noclk()
+to achieve the same result, as the OPP core won't parse the DT's
+"opp-hz" property anymore if the clock isn't provided.
 
-The drivers, for multiple clock case, are expected to call dev_pm_opp_set_opp()
-to set the specific OPP. Though how they find the target OPP is left for the
-users to handle. For some, we may have another unique OPP property, like level,
-which can be used to find the OPP. While in case of others, we may want to
-implement freq-based OPP finder APIs for multiple clock rates. I have decided
-not to implement them in advance, and add them only someone wants to use them.
+Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/devfreq/tegra30-devfreq.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-This is rebased over a lot of other OPP changes and is pushed here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git opp/linux-next
-
-V1->V2:
-
-- Fix broken git bisect for:
-  OPP: Reuse _opp_compare_key() in _opp_add_static_v2()
-
-- Include binding changes written by Krzysztof earlier.
-
-- Check config_clks before calling it, it isn't always set.
-
-- Add config_clks for Tegra30's devfreq to handle its corner case.
-
-- _opp_compare_key() supports multi-clk case now, earlier it skipped freq
-  comparison for such a case.
-
-- New patch to compare all bandwidth values as well in _opp_compare_key().
-
-- New patch to remove *_noclk() interface.
-
-- Various other minor fixes.
-
---
-Viresh
-
-Krzysztof Kozlowski (1):
-  dt-bindings: opp: accept array of frequencies
-
-Viresh Kumar (12):
-  OPP: Use consistent names for OPP table instances
-  OPP: Remove rate_not_available parameter to _opp_add()
-  OPP: Reuse _opp_compare_key() in _opp_add_static_v2()
-  OPP: Make dev_pm_opp_set_opp() independent of frequency
-  OPP: Allow multiple clocks for a device
-  OPP: Compare bandwidths for all paths in _opp_compare_key()
-  OPP: Add key specific assert() method to key finding helpers
-  OPP: Assert clk_count == 1 for single clk helpers
-  OPP: Provide a simple implementation to configure multiple clocks
-  OPP: Allow config_clks helper for single clk case
-  PM / devfreq: tegra30: Register config_clks helper
-  OPP: Remove dev{m}_pm_opp_of_add_table_noclk()
-
- .../devicetree/bindings/opp/opp-v2-base.yaml  |  10 +
- drivers/devfreq/tegra30-devfreq.c             |  22 +-
- drivers/opp/core.c                            | 404 +++++++++++++-----
- drivers/opp/cpu.c                             |  12 +-
- drivers/opp/debugfs.c                         |  27 +-
- drivers/opp/of.c                              | 139 +++---
- drivers/opp/opp.h                             |  24 +-
- include/linux/pm_opp.h                        |  29 +-
- 8 files changed, 466 insertions(+), 201 deletions(-)
-
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 65ecf17a36f4..0e0a4058f45c 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -821,6 +821,15 @@ static int devm_tegra_devfreq_init_hw(struct device *dev,
+ 	return err;
+ }
+ 
++static int tegra_devfreq_config_clks_nop(struct device *dev,
++					 struct opp_table *opp_table,
++					 struct dev_pm_opp *opp, void *data,
++					 bool scaling_down)
++{
++	/* We want to skip clk configuration via dev_pm_opp_set_opp() */
++	return 0;
++}
++
+ static int tegra_devfreq_probe(struct platform_device *pdev)
+ {
+ 	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
+@@ -830,6 +839,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	unsigned int i;
+ 	long rate;
+ 	int err;
++	const char *clk_names[] = { "actmon", NULL };
++	struct dev_pm_opp_config config = {
++		.supported_hw = &hw_version,
++		.supported_hw_count = 1,
++		.clk_names = clk_names,
++		.config_clks = tegra_devfreq_config_clks_nop,
++	};
+ 
+ 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+ 	if (!tegra)
+@@ -874,13 +890,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	err = devm_pm_opp_set_supported_hw(&pdev->dev, &hw_version, 1);
++	err = devm_pm_opp_set_config(&pdev->dev, &config);
+ 	if (err) {
+-		dev_err(&pdev->dev, "Failed to set supported HW: %d\n", err);
++		dev_err(&pdev->dev, "Failed to set OPP config: %d\n", err);
+ 		return err;
+ 	}
+ 
+-	err = devm_pm_opp_of_add_table_noclk(&pdev->dev, 0);
++	err = devm_pm_opp_of_add_table_indexed(&pdev->dev, 0);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
+ 		return err;
 -- 
 2.31.1.272.g89b43f80a514
 
