@@ -2,187 +2,116 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD2BCCA479
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 02:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B449BC43334
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jul 2022 04:08:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234651AbiGEC6u (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jul 2022 22:58:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41224 "EHLO
+        id S234365AbiGEEI1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Jul 2022 00:08:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234661AbiGEC6t (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jul 2022 22:58:49 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05ED0F05;
-        Mon,  4 Jul 2022 19:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656989927; x=1688525927;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IDbhF7wCQCWGlR+mgr4YPKJMsld6Uv/Sy7LrfLbGeWc=;
-  b=HQWhATjYqIlOr0mMR7zjkYlB1ReffIAXNsNgfuKHG2Q5MpaAmH4WMTQA
-   5YlslWS5BIqgJhBvYubUbDl0+OTT6XXzPqGMJAMQGjLlMf7YU6oNwGrWH
-   gCju5SdxY0NQdqeLbWoZab5+KDcn9qESDRPVvYYlwvexkHIkN8pQtYtPb
-   Xtd5p9u2c/dFkcvZKG/OPbl3LQbD122gVoXLt77X8Y1w+KNxKXAWhTC6n
-   Wv06vuDB5ZwmjSD6L8RTTmSdjaTV59XXgpS+iYGZKAclUT99kl1k03vau
-   SrBmUFIII2kj+z4xpIYinsXJlK8VRz8xReLSClhq673RMrGlV8swAP0sb
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10398"; a="283263192"
-X-IronPort-AV: E=Sophos;i="5.92,245,1650956400"; 
-   d="scan'208";a="283263192"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2022 19:58:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,245,1650956400"; 
-   d="scan'208";a="597146062"
-Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 04 Jul 2022 19:58:44 -0700
-Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o8Ylv-000Idm-Jw;
-        Tue, 05 Jul 2022 02:58:43 +0000
-Date:   Tue, 5 Jul 2022 10:57:57 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
-        robin.murphy@arm.com, robh+dt@kernel.org,
-        krzysztof.kozlowski@canonical.com
-Cc:     kbuild-all@lists.01.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 04/10] gpu: host1x: Add context device management code
-Message-ID: <202207051045.JWeVR4tW-lkp@intel.com>
-References: <20220621151022.1416300-5-cyndis@kapsi.fi>
+        with ESMTP id S230004AbiGEEI0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jul 2022 00:08:26 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D61FE8E
+        for <linux-tegra@vger.kernel.org>; Mon,  4 Jul 2022 21:08:25 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id t5-20020a17090a6a0500b001ef965b262eso1029521pjj.5
+        for <linux-tegra@vger.kernel.org>; Mon, 04 Jul 2022 21:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jlwigwlQcoYrdhkSBW2yT+ZrjXNWxDoG9Qdpdv63Uew=;
+        b=bOFzd4V7IdTxyt1oHggTxGQErW7qbQZy3wf3TXGcorZf/khYnmfvymzgzeLCK7zxGr
+         qWUS67+BzgMhud6EP93G5FhLZe6JoTJqSZskRMV0fuXBcEe/c/Y9y3/Nm7nDkOgQN8Ef
+         ZH5QHllrTye9o5kvP3A65PQHqn6pJujKXzoogqxmAoknTGiiULqDvZFgxFYhcYFzr4u1
+         Xh7yjcqGW/4KkoNTDmVDk3HBAyqbtcgNWNvDY7HtB0qPEn7kqI6AFG+Y/sfmJukGklfI
+         2bpW0Xt3fvffhdLk+Vz/CKAwHA0yZm68G0IK+qL89On1kJEoIdHrJMAxrWa/bNluCt3d
+         budA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jlwigwlQcoYrdhkSBW2yT+ZrjXNWxDoG9Qdpdv63Uew=;
+        b=EN3Awsr7Pm090xTv6IDpN4o13znMko9OUcurI/8ph4BsruiedXbinS6eX3BnarJksy
+         8KgKI6NPwpaKDtjjNi8PVJ2IJPCrz9KdFnFmXZMQN3tWL2RIJhXoKdlPHKRFrv3xRyzj
+         i/AWQLfqN6+NYxqNHRP1/uoBTmknIbf9esdNfAriMY608k4FpFPq9zq42IRxXZnM8cHG
+         LUMNy2wLVB5fWuuYPoRsWKb0i6Ph4AsnmSK1kwououQTz3oHYL8g+ZfViL4MtJ34ZtQc
+         4QtKiHjGMB5PRpkVQRf0m2jVFAzKN23aeR10p7zRTqHB+SWN0zHkMUZzPFtBJLvKftcf
+         4ReQ==
+X-Gm-Message-State: AJIora8vCmEoAz4+Oy9HjSZ7TCGitID5F8yPku1NKnVJAoVyU9e3aHdU
+        7X63enUB9+ZHwDvccJPQ8Lrolg==
+X-Google-Smtp-Source: AGRyM1tNI2QNHBytqnLJKVyWohCZSupL/dSQ4ZO3W5+QzMRn/9xTNXOmN0sXqWjo7ei3cYWMv/T6NA==
+X-Received: by 2002:a17:902:c405:b0:16b:e7aa:2f22 with SMTP id k5-20020a170902c40500b0016be7aa2f22mr6341600plk.170.1656994104538;
+        Mon, 04 Jul 2022 21:08:24 -0700 (PDT)
+Received: from localhost ([122.171.18.80])
+        by smtp.gmail.com with ESMTPSA id p22-20020a1709027ed600b0016a0fe1a1fbsm22257702plb.220.2022.07.04.21.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jul 2022 21:08:23 -0700 (PDT)
+Date:   Tue, 5 Jul 2022 09:38:21 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5/8] OPP: Allow multiple clocks for a device
+Message-ID: <20220705040821.w5hrj5qmm6tbtpap@vireshk-i7>
+References: <c6f100e4-8a35-ebf0-f833-06ff0d8a2fb6@collabora.com>
+ <20220630005028.fddtcbkoksbygwc5@vireshk-i7>
+ <8367c38b-8cd3-cde1-5833-874769ef3350@collabora.com>
+ <20220630095245.otvo53ezd4avoujw@vireshk-i7>
+ <b899ff5f-b424-5f44-7c94-deb013ff6bbc@collabora.com>
+ <20220630101540.5dafkegrmcattt2c@vireshk-i7>
+ <20220704120915.s3ermueulcofg7nj@vireshk-i7>
+ <58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com>
+ <20220704155225.n4kmgwnvsuksbo2p@vireshk-i7>
+ <7c661c98-0cd2-1732-d60c-3202643926a5@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220621151022.1416300-5-cyndis@kapsi.fi>
+In-Reply-To: <7c661c98-0cd2-1732-d60c-3202643926a5@collabora.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Mikko,
+On 04-07-22, 21:04, Dmitry Osipenko wrote:
+> On 7/4/22 18:52, Viresh Kumar wrote:
+> > On 04-07-22, 16:17, Dmitry Osipenko wrote:
+> >> Actually the freq was 0 and it was 1 on the next loop like you suggested.
+> >>
+> >> Previously, the _read_opp_key() was always reading the opp-hz. Now it
+> >> skips reading the rates in _read_rate() because opp_table->clk_count=0
+> >> for the tegra30-devfreq driver the uses devm_pm_opp_of_add_table_noclk().
+> > 
+> > This is exactly what I wrote in an earlier email :)
+> > 
+> > Anyway, I have pushed two patches on top of my opp/linux-next branch
+> > and they should fix it in a good way now I suppose. Can you please
+> > give that a try.
+> > 
+> > This is how the diff looks like:
+> > 
+> > PM / devfreq: tegra30: Register config_clks helper
+> > 
+> > There is a corner case with Tegra30, where we want to skip clk
+> > configuration via dev_pm_opp_set_opp(), but still want the OPP core to
+> > read the "opp-hz" property so we can find the right OPP via freq finding
+> > helpers.
+> > 
+> > The OPP core provides support for the platforms to provide config_clks
+> > helpers now, lets use them instead of devm_pm_opp_of_add_table_noclk()
+> > to achieve the same result, as the OPP core won't parse the DT's
+> > "opp-hz" property if the clock isn't provided.
+> 
+> Works, thanks you!
+> 
+> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Thank you for the patch! Yet something to improve:
-
-[auto build test ERROR on drm/drm-next]
-[also build test ERROR on tegra/for-next linus/master v5.19-rc5]
-[cannot apply to tegra-drm/drm/tegra/for-next next-20220704]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mikko-Perttunen/Host1x-context-isolation-support/20220621-231339
-base:   git://anongit.freedesktop.org/drm/drm drm-next
-config: arm-randconfig-r005-20220703 (https://download.01.org/0day-ci/archive/20220705/202207051045.JWeVR4tW-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/2501beeae7469b805f9f624049fd56643cf6e18e
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Mikko-Perttunen/Host1x-context-isolation-support/20220621-231339
-        git checkout 2501beeae7469b805f9f624049fd56643cf6e18e
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   drivers/gpu/host1x/context.c: In function 'host1x_memory_context_list_init':
->> drivers/gpu/host1x/context.c:80:40: error: 'struct iommu_fwspec' has no member named 'ids'
-      80 |                 ctx->stream_id = fwspec->ids[0] & 0xffff;
-         |                                        ^~
-
-
-vim +80 drivers/gpu/host1x/context.c
-
-    15	
-    16	int host1x_memory_context_list_init(struct host1x *host1x)
-    17	{
-    18		struct host1x_memory_context_list *cdl = &host1x->context_list;
-    19		struct device_node *node = host1x->dev->of_node;
-    20		struct host1x_memory_context *ctx;
-    21		unsigned int i;
-    22		int err;
-    23	
-    24		cdl->devs = NULL;
-    25		cdl->len = 0;
-    26		mutex_init(&cdl->lock);
-    27	
-    28		err = of_property_count_u32_elems(node, "iommu-map");
-    29		if (err < 0)
-    30			return 0;
-    31	
-    32		cdl->devs = kcalloc(err, sizeof(*cdl->devs), GFP_KERNEL);
-    33		if (!cdl->devs)
-    34			return -ENOMEM;
-    35		cdl->len = err / 4;
-    36	
-    37		for (i = 0; i < cdl->len; i++) {
-    38			struct iommu_fwspec *fwspec;
-    39	
-    40			ctx = &cdl->devs[i];
-    41	
-    42			ctx->host = host1x;
-    43	
-    44			device_initialize(&ctx->dev);
-    45	
-    46			/*
-    47			 * Due to an issue with T194 NVENC, only 38 bits can be used.
-    48			 * Anyway, 256GiB of IOVA ought to be enough for anyone.
-    49			 */
-    50			ctx->dma_mask = DMA_BIT_MASK(38);
-    51			ctx->dev.dma_mask = &ctx->dma_mask;
-    52			ctx->dev.coherent_dma_mask = ctx->dma_mask;
-    53			dev_set_name(&ctx->dev, "host1x-ctx.%d", i);
-    54			ctx->dev.bus = &host1x_context_device_bus_type;
-    55			ctx->dev.parent = host1x->dev;
-    56	
-    57			dma_set_max_seg_size(&ctx->dev, UINT_MAX);
-    58	
-    59			err = device_add(&ctx->dev);
-    60			if (err) {
-    61				dev_err(host1x->dev, "could not add context device %d: %d\n", i, err);
-    62				goto del_devices;
-    63			}
-    64	
-    65			err = of_dma_configure_id(&ctx->dev, node, true, &i);
-    66			if (err) {
-    67				dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
-    68					i, err);
-    69				device_del(&ctx->dev);
-    70				goto del_devices;
-    71			}
-    72	
-    73			fwspec = dev_iommu_fwspec_get(&ctx->dev);
-    74			if (!fwspec) {
-    75				dev_err(host1x->dev, "Context device %d has no IOMMU!\n", i);
-    76				device_del(&ctx->dev);
-    77				goto del_devices;
-    78			}
-    79	
-  > 80			ctx->stream_id = fwspec->ids[0] & 0xffff;
-    81		}
-    82	
-    83		return 0;
-    84	
-    85	del_devices:
-    86		while (i--)
-    87			device_del(&cdl->devs[i].dev);
-    88	
-    89		kfree(cdl->devs);
-    90		cdl->len = 0;
-    91	
-    92		return err;
-    93	}
-    94	
+Finally, thanks a lot Dmitry :)
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+viresh
