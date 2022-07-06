@@ -2,94 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C12E4C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 07:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F51C43334
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 08:09:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230217AbiGFHkf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jul 2022 03:40:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
+        id S230107AbiGFIJ5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jul 2022 04:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230114AbiGFHke (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 03:40:34 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6976D22B30
-        for <linux-tegra@vger.kernel.org>; Wed,  6 Jul 2022 00:40:33 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id bu42so4613278lfb.0
-        for <linux-tegra@vger.kernel.org>; Wed, 06 Jul 2022 00:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=tHC6g1e0eMvimI9KqKd/ut+Z55C7x7KvZC11uhVlLBQ=;
-        b=pMhY5I6oLgh6rf97jnoly2SY51aQrh/m0AW/L+woLnGunZh3dyg4KK3UqWPRnJbhvJ
-         iAHHyav7sIhYJeOPcE+M8r9s+6pZlFbXiN20t4LJQE8RJJvdQ4nFgNufDnL/JPasKTy+
-         W+PXTEzXClRqKAqtNZYqTd+CL5sACsTQ49C2Z3696xC7gzIIi/+xV9ufmjo/y1rxk2vm
-         kpqgltwz0V5cD/mnnshEd9lhqbRDfGOmRjS6N8oh2ryvA5zmKqJ9MjW/nvG+ASqR9Ixt
-         eU7JqcnYSEvcgcg/MS1sBTwd8TVOcQVZL9BL5XI90XGGTHUsrL2weMsH9KhllNdvmwt7
-         ddiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=tHC6g1e0eMvimI9KqKd/ut+Z55C7x7KvZC11uhVlLBQ=;
-        b=2dBUSruE76tk0+ySfVh+291acblTKOboN35keaOvpiBo9LITPvSooNY/Ef1dZ3zJkE
-         sE5T0rmWJ/LvUDbJg0zG6nWlqj9GC2JACKH0VwhlnNFTxZIw6+6WbBnlQfsLpZipF+lt
-         cI3fTi3MLXCe06tSceJVfotJ3FNyUpCL9dBnZEL3dWzBd3/K8Qj0ubmiy5xINuUZb8PH
-         JC1WNx2yMK9bvwKOvUhYw4FndwrkcK+nl50iHNM0VXsHL1hfEh0p/vmlN5DAQv2X7jAd
-         5e2auJ8S33CQTkJmv5Z7zP7X2XznTY5TchB+5LFt4vMfQ0WOLS/W+hD9zGdCBgy/8SJD
-         luug==
-X-Gm-Message-State: AJIora/6zR8N3u8MlnCKHNWLzD1/VnvaZdsZ6XgkMPazWHbpQH9IYZeu
-        N9yH0NzHx387CbXWmHbBfdhAPQ==
-X-Google-Smtp-Source: AGRyM1sUmxKidmtloQsmU6mxIVhwMR/efusfURXP9Md0qWiwboryqpDXm1jRxDwXDWbZpNhegi55Tg==
-X-Received: by 2002:a05:6512:3a95:b0:483:e38b:528b with SMTP id q21-20020a0565123a9500b00483e38b528bmr4274849lfu.227.1657093231756;
-        Wed, 06 Jul 2022 00:40:31 -0700 (PDT)
-Received: from [192.168.1.52] ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id m18-20020a056512359200b00481348b1074sm4128441lfr.81.2022.07.06.00.40.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Jul 2022 00:40:30 -0700 (PDT)
-Message-ID: <9513b46a-126f-667e-4ba1-a2a15d6d303e@linaro.org>
-Date:   Wed, 6 Jul 2022 09:40:29 +0200
+        with ESMTP id S229592AbiGFIJ4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 04:09:56 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7971F18381;
+        Wed,  6 Jul 2022 01:09:55 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D6E51596;
+        Wed,  6 Jul 2022 01:09:55 -0700 (PDT)
+Received: from [10.57.42.44] (unknown [10.57.42.44])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F28C3F792;
+        Wed,  6 Jul 2022 01:09:51 -0700 (PDT)
+Message-ID: <ca5b2602-358c-ce37-c698-8aaf4f579945@arm.com>
+Date:   Wed, 6 Jul 2022 09:09:50 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH net-next v2 1/9] dt-bindings: power: Add Tegra234 MGBE
- power domains
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bhadram Varka <vbhadram@nvidia.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, kuba@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, pabeni@redhat.com,
-        davem@davemloft.net, edumazet@google.com,
-        Thierry Reding <treding@nvidia.com>
-References: <20220706031259.53746-1-vbhadram@nvidia.com>
- <20220706031259.53746-2-vbhadram@nvidia.com>
- <708c4a86-731a-c2a6-e3d3-df23ae7c35b1@linaro.org>
-In-Reply-To: <708c4a86-731a-c2a6-e3d3-df23ae7c35b1@linaro.org>
+ Thunderbird/91.9.1
+Subject: Re: [PATCH V3 02/20] OPP: Make dev_pm_opp_set_regulators() accept
+ NULL terminated list
+Content-Language: en-GB
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Qiang Yu <yuq825@gmail.com>, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org
+References: <cover.1656935522.git.viresh.kumar@linaro.org>
+ <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
+ <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
+ <20220705043439.xlrxusxrhwjupiyt@vireshk-i7>
+From:   Steven Price <steven.price@arm.com>
+In-Reply-To: <20220705043439.xlrxusxrhwjupiyt@vireshk-i7>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 06/07/2022 09:35, Krzysztof Kozlowski wrote:
-> On 06/07/2022 05:12, Bhadram Varka wrote:
->> From: Thierry Reding <treding@nvidia.com>
+On 05/07/2022 05:34, Viresh Kumar wrote:
+> On 04-07-22, 15:35, Steven Price wrote:
+>> I have to say the 'new improved' list ending with NULL approach doesn't
+>> work out so well for Panfrost. We already have to have a separate
+>> 'num_supplies' variable for devm_regulator_bulk_get() /
+>> regulator_bulk_{en,dis}able(), so the keeping everything in sync
+>> argument is lost here.
 >>
->> Add power domain IDs for the four MGBE power partitions found on
->> Tegra234.
+>> I would suggest added the NULL on the end of the lists in panfrost_drv.c
+>> but then it would break the use of ARRAY_SIZE() to automagically keep
+>> the length correct...
+> 
+> Actually we can still make it work.
+> 
+>> For now the approach isn't too bad because Panfrost doesn't yet support
+>> enabling devfreq with more than one supply. But that array isn't going
+>> to work so nicely when that restriction is removed.
 >>
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
->> ---
+>> The only sane way I can see of handling this in Panfrost would be
+>> replicating the loop to count the supplies in the Panfrost code which
+>> would allow dropping num_supplies from struct panfrost_compatible and
+>> then supply_names in the same struct could be NULL terminated ready for
+>> devm_pm_opp_set_regulators().
 > 
+> Or doing this, which will simplify both the cases.
+
+Yes the below works, it's just a bit ugly having the "- 1", and
+potentially easy to forgot when adding another. However I don't suppose
+it would get far in that case so I think it would be spotted quickly
+when adding a new compatible.
+
+It's probably the best solution at the moment.
+
+Thanks,
+
+Steve
+
 > 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index 7fcbc2a5b6cd..b3b55565b8ef 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -625,24 +625,29 @@ static int panfrost_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>  
+> -static const char * const default_supplies[] = { "mali" };
+> +/*
+> + * The OPP core wants the supply names to be NULL terminated, but we need the
+> + * correct num_supplies value for regulator core. Hence, we NULL terminate here
+> + * and then initialize num_supplies with ARRAY_SIZE - 1.
+> + */
+> +static const char * const default_supplies[] = { "mali", NULL };
+>  static const struct panfrost_compatible default_data = {
+> -       .num_supplies = ARRAY_SIZE(default_supplies),
+> +       .num_supplies = ARRAY_SIZE(default_supplies) - 1,
+>         .supply_names = default_supplies,
+>         .num_pm_domains = 1, /* optional */
+>         .pm_domain_names = NULL,
+>  };
+>  
+>  static const struct panfrost_compatible amlogic_data = {
+> -       .num_supplies = ARRAY_SIZE(default_supplies),
+> +       .num_supplies = ARRAY_SIZE(default_supplies) - 1,
+>         .supply_names = default_supplies,
+>         .vendor_quirk = panfrost_gpu_amlogic_quirk,
+>  };
+>  
+> -static const char * const mediatek_mt8183_supplies[] = { "mali", "sram" };
+> +static const char * const mediatek_mt8183_supplies[] = { "mali", "sram", NULL };
+>  static const char * const mediatek_mt8183_pm_domains[] = { "core0", "core1", "core2" };
+>  static const struct panfrost_compatible mediatek_mt8183_data = {
+> -       .num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies),
+> +       .num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies) - 1,
+>         .supply_names = mediatek_mt8183_supplies,
+>         .num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
+>         .pm_domain_names = mediatek_mt8183_pm_domains,
 > 
 
-Wait, I already acked this. Why do I need to ack second time?
-
-Best regards,
-Krzysztof
