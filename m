@@ -2,414 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4FFC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 21:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F96CC43334
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 21:38:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234701AbiGFVdk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jul 2022 17:33:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55240 "EHLO
+        id S234403AbiGFVis (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jul 2022 17:38:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234670AbiGFVd0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 17:33:26 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFEB62AE0E;
-        Wed,  6 Jul 2022 14:33:20 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id j7so9550282wmp.2;
-        Wed, 06 Jul 2022 14:33:20 -0700 (PDT)
+        with ESMTP id S233491AbiGFVip (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 17:38:45 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9F6A205E7;
+        Wed,  6 Jul 2022 14:38:44 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id o4so23783894wrh.3;
+        Wed, 06 Jul 2022 14:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qKcHwD7mAVe9vw148b10Hk52k7+B0j3FvXtghoey17U=;
-        b=aNjAub4g2oDQn9sBDND85pNJ8asLKlZJBeNtyLG61p1Gt9rgKqu43pEqHNWHWUfo8l
-         DBRwuFFm/PAVG0spzRGuwJLABx+HTJoObi0JYhv0D8JMdhoS3VU4pOmR2xy4oAd68nah
-         dZCkkj8fpYTBimAEIBFu2GiqMqRbB844uszFKhsahIttw8tNXzvwID4kYKjpb5cWUqAX
-         l+uwr8B8kFdjqPr2ZtVIZARETFAuo415T6iCK5P/UGk3v3pSVNiYzp+GyLSSNVSURfyD
-         rRQhJ4IGI7Hd14jv7hh5D40uzOtDLc3LOvn+2ub+GLxqIZK/16B8JOc2TWIbxnU73TeX
-         LXxA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gNJEnCZHpDkko/55ZKJIsVKv437PuCqDONd5JHLMG0M=;
+        b=qQAx2IGpgQJicBvqsM59pe7nq9XCSxEAniOBzmcnFZyM1GPNMKrtsJQ1etXpi8l99r
+         42R2ywcqwaJXZqwy0svhMOzz5hDFuIPgLaxEIdjQ/xGDGKXrFq708RBeTTPTeKfXjKCV
+         nD6A+vc4qinjAECxVOO4XJ8dgYempYrbaFTTKOL4T0JNZwrtMJhcHPUFi6q9B6FiEyyO
+         QBbzbw1/COEvpIs+lv4GOqzvOJvvQsGQfD+UrtvFeZfkXtelDRg0JlJDOmCjThcimpVr
+         e3d1Yg9P/eEm2igDbrP5kta/LKP09QzhRvcfv7oeraDTLG9a/e/HNbtivMwGK+JiBpjy
+         8NqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qKcHwD7mAVe9vw148b10Hk52k7+B0j3FvXtghoey17U=;
-        b=ANkKKT8l4qUrnGqlFt1oH5j7nTktPhCVGCN2TyYiuR//ufdY1MyH+9/CzTM63wd6jn
-         3y6jdefpwiVLh2XNVEmkq1x6XCw/e06BV8wbUhABuf5H6LbcwJBN3Aiah8i5c/WTGEjd
-         osfL7BmEgAIhTyvuFr35nN6a9fldg86TBPcsdX7AMv3z5WuysHo15WVoFSiaJi9xbgQr
-         Ya+4xmSebw2FO984dpZKfWDnGMCFgx2rAjcLYC41TP+sF1PJOj1hmK3iFHvcOdnu+EHm
-         fsfv95+gMfnXKvD7oMXRzfayKzztHbcnzTcOaDGDKeae+WHbrhVicrkKceGLZk1H3z3j
-         wHbA==
-X-Gm-Message-State: AJIora934rilMRUZ9JiqgbgYoDOO4gYbFvBHfDQKAMeugHvs7BsgcZ2x
-        wp1zQL7LBY1CZx2SxuERPxw=
-X-Google-Smtp-Source: AGRyM1sPJ75icTuopJlekyV60dTNFcAK+qngl5FpdqhBL4KPs/HxD3Qjk/8a3pqz8AWgbN7gRIyQpQ==
-X-Received: by 2002:a05:600c:3593:b0:3a1:8909:b5b2 with SMTP id p19-20020a05600c359300b003a18909b5b2mr643800wmq.77.1657143199989;
-        Wed, 06 Jul 2022 14:33:19 -0700 (PDT)
-Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g14-20020a05600c4ece00b0039c99f61e5bsm26391573wmq.5.2022.07.06.14.33.18
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gNJEnCZHpDkko/55ZKJIsVKv437PuCqDONd5JHLMG0M=;
+        b=DLix4Nq8K+TnWaV0rJ5qzobUchHpALLrd1idsSMq9tFo06kH/ukwj4J4kqBC/OYVMa
+         qCdq3vH3CXzFO6E0IwVqUZUiahypMsIk/LCE29l4uSmkWFBUWbzNDoUCSalqwmfMEHsv
+         8n3Lw2TMfdNfL6oxf4zZFSyF2KqGXXZleiJBxyYw/UZH4ZZf6puHfR90X5NKBstAewcs
+         lYwzYojQM3L8eFXTDxEV5Ykwb5nnkt/M5CU19yfLlSud/p6dyMzhRzT9ytTCjCobtvux
+         Jd/zjRcjeDs0VbxLrLcxq7xeXC/i0MYb9XNAv/ArCabpCPCaSoaKrUnvGKnRomhVC0K8
+         N+hg==
+X-Gm-Message-State: AJIora/EeRnYs4dK5lae1HHdGMuCJh5Gv137qbYE7mCpkV2Xj1XGASCU
+        qwn8PrLxliMwk2qyhDVgqi5nDwpkCG4=
+X-Google-Smtp-Source: AGRyM1u7MdSTttnX4VYBzOqWL7R+/VG7dccZMxStVn8w+bSP3hC+I0auxDQ+R4NCWA0E8vm4kBsIsA==
+X-Received: by 2002:a05:6000:15c6:b0:21b:ccda:fc69 with SMTP id y6-20020a05600015c600b0021bccdafc69mr39777205wry.411.1657143523440;
+        Wed, 06 Jul 2022 14:38:43 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id q7-20020a05600000c700b0021d76985929sm4860696wrx.80.2022.07.06.14.38.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 14:33:19 -0700 (PDT)
+        Wed, 06 Jul 2022 14:38:42 -0700 (PDT)
+Date:   Wed, 6 Jul 2022 23:38:39 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bhadram Varka <vbhadram@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH net-next v3 9/9] stmmac: tegra: Add MGBE support
-Date:   Wed,  6 Jul 2022 23:32:55 +0200
-Message-Id: <20220706213255.1473069-10-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220706213255.1473069-1-thierry.reding@gmail.com>
-References: <20220706213255.1473069-1-thierry.reding@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Dipen Patel <dipenp@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 17/20] tegra194-hte.rst: fix reference to its binding
+Message-ID: <YsYA35VDnF7V76wk@orome>
+References: <cover.1656234456.git.mchehab@kernel.org>
+ <2e2c86485cb0642455cee01796f9a74de21403e6.1656234456.git.mchehab@kernel.org>
+ <729aeab5-f3d7-a5fc-c1a6-c07a18572b11@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/tql2Wv+jkOEc6cT"
+Content-Disposition: inline
+In-Reply-To: <729aeab5-f3d7-a5fc-c1a6-c07a18572b11@nvidia.com>
+User-Agent: Mutt/2.2.6 (2022-06-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Bhadram Varka <vbhadram@nvidia.com>
 
-Add support for the Multi-Gigabit Ethernet (MGBE/XPCS) IP found on
-NVIDIA Tegra234 SoCs.
+--/tql2Wv+jkOEc6cT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |   6 +
- drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
- .../net/ethernet/stmicro/stmmac/dwmac-tegra.c | 290 ++++++++++++++++++
- 3 files changed, 297 insertions(+)
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+On Mon, Jun 27, 2022 at 10:14:45AM -0700, Dipen Patel wrote:
+> On 6/26/22 2:11 AM, Mauro Carvalho Chehab wrote:
+> > The binding directory for hte was renamed. Update references accordingl=
+y.
+> >
+> > Fixes: af583852d2ef ("dt-bindings: Renamed hte directory to timestamp")
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+> > ---
+> >
+> > To avoid mailbombing on a large number of people, only mailing lists we=
+re C/C on the cover.
+> > See [PATCH v2 00/20] at: https://lore.kernel.org/all/cover.1656234456.g=
+it.mchehab@kernel.org/
+> >
+> >  Documentation/driver-api/hte/tegra194-hte.rst | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/driver-api/hte/tegra194-hte.rst b/Documentat=
+ion/driver-api/hte/tegra194-hte.rst
+> > index 41983e04d2a0..d29b7fe86f31 100644
+> > --- a/Documentation/driver-api/hte/tegra194-hte.rst
+> > +++ b/Documentation/driver-api/hte/tegra194-hte.rst
+> > @@ -37,7 +37,7 @@ LIC (Legacy Interrupt Controller) IRQ GTE
+> > =20
+> >  This GTE instance timestamps LIC IRQ lines in real time. There are 352=
+ IRQ
+> >  lines which this instance can add timestamps to in real time. The hte
+> > -devicetree binding described at ``Documentation/devicetree/bindings/ht=
+e/``
+> > +devicetree binding described at ``Documentation/devicetree/bindings/ti=
+mestamp``
+> >  provides an example of how a consumer can request an IRQ line. Since i=
+t is a
+> >  one-to-one mapping with IRQ GTE provider, consumers can simply specify=
+ the IRQ
+> >  number that they are interested in. There is no userspace consumer sup=
+port for
+>=20
+> Reviewed-by: Dipen Patel <dipenp@nvidia.com>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 31ff35174034..e9f61bdaf7c4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -235,6 +235,12 @@ config DWMAC_INTEL_PLAT
- 	  the stmmac device driver. This driver is used for the Intel Keem Bay
- 	  SoC.
- 
-+config DWMAC_TEGRA
-+	tristate "NVIDIA Tegra MGBE support"
-+	depends on ARCH_TEGRA || COMPILE_TEST
-+	help
-+	  Support for the MGBE controller found on Tegra SoCs.
-+
- config DWMAC_VISCONTI
- 	tristate "Toshiba Visconti DWMAC support"
- 	default ARCH_VISCONTI
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
-index d4e12e9ace4f..057e4bab5c08 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Makefile
-+++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_DWMAC_DWC_QOS_ETH)	+= dwmac-dwc-qos-eth.o
- obj-$(CONFIG_DWMAC_INTEL_PLAT)	+= dwmac-intel-plat.o
- obj-$(CONFIG_DWMAC_GENERIC)	+= dwmac-generic.o
- obj-$(CONFIG_DWMAC_IMX8)	+= dwmac-imx.o
-+obj-$(CONFIG_DWMAC_TEGRA)	+= dwmac-tegra.o
- obj-$(CONFIG_DWMAC_VISCONTI)	+= dwmac-visconti.o
- stmmac-platform-objs:= stmmac_platform.o
- dwmac-altr-socfpga-objs := altr_tse_pcs.o dwmac-socfpga.o
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-new file mode 100644
-index 000000000000..bb4b540820fa
---- /dev/null
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-@@ -0,0 +1,290 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/platform_device.h>
-+#include <linux/of_device.h>
-+#include <linux/module.h>
-+#include <linux/stmmac.h>
-+#include <linux/clk.h>
-+
-+#include "stmmac_platform.h"
-+
-+static const char *const mgbe_clks[] = {
-+	"rx-pcs", "tx", "tx-pcs", "mac-divider", "mac", "mgbe", "ptp-ref", "mac"
-+};
-+
-+struct tegra_mgbe {
-+	struct device *dev;
-+
-+	struct clk_bulk_data *clks;
-+
-+	struct reset_control *rst_mac;
-+	struct reset_control *rst_pcs;
-+
-+	void __iomem *hv;
-+	void __iomem *regs;
-+	void __iomem *xpcs;
-+
-+	struct mii_bus *mii;
-+};
-+
-+#define XPCS_WRAP_UPHY_RX_CONTROL 0x801c
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_SW_OVRD BIT(31)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_PCS_PHY_RDY BIT(10)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET BIT(9)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN BIT(8)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_SLEEP (BIT(7) | BIT(6))
-+#define XPCS_WRAP_UPHY_RX_CONTROL_AUX_RX_IDDQ BIT(5)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_IDDQ BIT(4)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_DATA_EN BIT(0)
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL 0x8020
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN BIT(0)
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL_RX_EN BIT(2)
-+#define XPCS_WRAP_UPHY_STATUS 0x8044
-+#define XPCS_WRAP_UPHY_STATUS_TX_P_UP BIT(0)
-+#define XPCS_WRAP_IRQ_STATUS 0x8050
-+#define XPCS_WRAP_IRQ_STATUS_PCS_LINK_STS BIT(6)
-+
-+#define XPCS_REG_ADDR_SHIFT 10
-+#define XPCS_REG_ADDR_MASK 0x1fff
-+#define XPCS_ADDR 0x3fc
-+
-+#define MGBE_WRAP_COMMON_INTR_ENABLE	0x8704
-+#define MAC_SBD_INTR			BIT(2)
-+#define MGBE_WRAP_AXI_ASID0_CTRL	0x8400
-+#define MGBE_SID			0x6
-+
-+static void mgbe_uphy_lane_bringup(struct tegra_mgbe *mgbe)
-+{
-+	unsigned int retry = 300;
-+	u32 value;
-+	int err;
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_STATUS);
-+	if ((value & XPCS_WRAP_UPHY_STATUS_TX_P_UP) == 0) {
-+		value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL);
-+		value |= XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN;
-+		writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL);
-+	}
-+
-+	err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL, value,
-+				 (value & XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN) == 0,
-+				 500, 500 * 2000);
-+	if (err < 0)
-+		dev_err(mgbe->dev, "timeout waiting for TX lane to become enabled\n");
-+
-+	usleep_range(10000, 20000);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_SW_OVRD;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_IDDQ;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_AUX_RX_IDDQ;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_SLEEP;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL, value,
-+				 (value & XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN) == 0,
-+				 1000, 1000 * 2000);
-+	if (err < 0)
-+		dev_err(mgbe->dev, "timeout waiting for RX calibration to become enabled\n");
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_DATA_EN;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_PCS_PHY_RDY;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	while (--retry) {
-+		err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_IRQ_STATUS, value,
-+					 value & XPCS_WRAP_IRQ_STATUS_PCS_LINK_STS,
-+					 500, 500 * 2000);
-+		if (err < 0) {
-+			dev_err(mgbe->dev, "timeout waiting for link to become ready\n");
-+			usleep_range(10000, 20000);
-+			continue;
-+		}
-+		break;
-+	}
-+
-+	/* clear status */
-+	writel(value, mgbe->xpcs + XPCS_WRAP_IRQ_STATUS);
-+}
-+
-+static int tegra_mgbe_probe(struct platform_device *pdev)
-+{
-+	struct plat_stmmacenet_data *plat;
-+	struct stmmac_resources res;
-+	struct tegra_mgbe *mgbe;
-+	int irq, err, i;
-+
-+	mgbe = devm_kzalloc(&pdev->dev, sizeof(*mgbe), GFP_KERNEL);
-+	if (!mgbe)
-+		return -ENOMEM;
-+
-+	mgbe->dev = &pdev->dev;
-+
-+	memset(&res, 0, sizeof(res));
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	mgbe->hv = devm_platform_ioremap_resource_byname(pdev, "hypervisor");
-+	if (IS_ERR(mgbe->hv))
-+		return PTR_ERR(mgbe->hv);
-+
-+	mgbe->regs = devm_platform_ioremap_resource_byname(pdev, "mac");
-+	if (IS_ERR(mgbe->regs))
-+		return PTR_ERR(mgbe->regs);
-+
-+	mgbe->xpcs = devm_platform_ioremap_resource_byname(pdev, "xpcs");
-+	if (IS_ERR(mgbe->xpcs))
-+		return PTR_ERR(mgbe->xpcs);
-+
-+	res.addr = mgbe->regs;
-+	res.irq = irq;
-+
-+	mgbe->clks = devm_kzalloc(&pdev->dev, sizeof(*mgbe->clks), GFP_KERNEL);
-+	if (!mgbe->clks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i <  ARRAY_SIZE(mgbe_clks); i++)
-+		mgbe->clks[i].id = mgbe_clks[i];
-+
-+	err = devm_clk_bulk_get(mgbe->dev, ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+	if (err < 0)
-+		return err;
-+
-+	err = clk_bulk_prepare_enable(ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+	if (err < 0)
-+		return err;
-+
-+	/* Perform MAC reset */
-+	mgbe->rst_mac = devm_reset_control_get(&pdev->dev, "mac");
-+	if (IS_ERR(mgbe->rst_mac))
-+		return PTR_ERR(mgbe->rst_mac);
-+
-+	err = reset_control_assert(mgbe->rst_mac);
-+	if (err < 0)
-+		return err;
-+
-+	usleep_range(2000, 4000);
-+
-+	err = reset_control_deassert(mgbe->rst_mac);
-+	if (err < 0)
-+		return err;
-+
-+	/* Perform PCS reset */
-+	mgbe->rst_pcs = devm_reset_control_get(&pdev->dev, "pcs");
-+	if (IS_ERR(mgbe->rst_pcs))
-+		return PTR_ERR(mgbe->rst_pcs);
-+
-+	err = reset_control_assert(mgbe->rst_pcs);
-+	if (err < 0)
-+		return err;
-+
-+	usleep_range(2000, 4000);
-+
-+	err = reset_control_deassert(mgbe->rst_pcs);
-+	if (err < 0)
-+		return err;
-+
-+	plat = stmmac_probe_config_dt(pdev, res.mac);
-+	if (IS_ERR(plat))
-+		return PTR_ERR(plat);
-+
-+	plat->has_xgmac = 1;
-+	plat->tso_en = 1;
-+	plat->pmt = 1;
-+	plat->bsp_priv = mgbe;
-+
-+	if (!plat->mdio_node)
-+		plat->mdio_node = of_get_child_by_name(pdev->dev.of_node, "mdio");
-+
-+	if (!plat->mdio_bus_data) {
-+		plat->mdio_bus_data = devm_kzalloc(&pdev->dev, sizeof(*plat->mdio_bus_data),
-+						   GFP_KERNEL);
-+		if (!plat->mdio_bus_data) {
-+			err = -ENOMEM;
-+			goto remove;
-+		}
-+	}
-+
-+	plat->mdio_bus_data->needs_reset = true;
-+
-+	mgbe_uphy_lane_bringup(mgbe);
-+
-+	/* Tx FIFO Size - 128KB */
-+	plat->tx_fifo_size = 131072;
-+	/* Rx FIFO Size - 192KB */
-+	plat->rx_fifo_size = 196608;
-+
-+	/* Enable common interrupt at wrapper level */
-+	writel(MAC_SBD_INTR, mgbe->regs + MGBE_WRAP_COMMON_INTR_ENABLE);
-+
-+	/* Program SID */
-+	writel(MGBE_SID, mgbe->hv + MGBE_WRAP_AXI_ASID0_CTRL);
-+
-+	err = stmmac_dvr_probe(&pdev->dev, plat, &res);
-+	if (err < 0)
-+		goto remove;
-+
-+	return 0;
-+
-+remove:
-+	stmmac_remove_config_dt(pdev, plat);
-+	return err;
-+}
-+
-+static int tegra_mgbe_remove(struct platform_device *pdev)
-+{
-+	struct tegra_mgbe *mgbe = get_stmmac_bsp_priv(&pdev->dev);
-+
-+	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+
-+	stmmac_pltfr_remove(pdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra_mgbe_match[] = {
-+	{ .compatible = "nvidia,tegra234-mgbe", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tegra_mgbe_match);
-+
-+static struct platform_driver tegra_mgbe_driver = {
-+	.probe = tegra_mgbe_probe,
-+	.remove = tegra_mgbe_remove,
-+	.driver = {
-+		.name = "tegra-mgbe",
-+		.pm		= &stmmac_pltfr_pm_ops,
-+		.of_match_table = tegra_mgbe_match,
-+	},
-+};
-+module_platform_driver(tegra_mgbe_driver);
-+
-+MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
-+MODULE_DESCRIPTION("NVIDIA Tegra MGBE driver");
-+MODULE_LICENSE("GPL");
--- 
-2.36.1
+Hi Jonathan,
 
+I think you'll need to pick this one up since it applies on top of your
+earlier patch that moves this documentation into driver-api/.
+
+Thierry
+
+--/tql2Wv+jkOEc6cT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmLGAN8ACgkQ3SOs138+
+s6ETWQ/+N85PYHztcyY57mNQ+nWbaLfq4vuiqkNmLxSAIWQu5boz2VFZwRs5q8ia
+4lmhvNwkWRpEK3XVrQIXCbztyT8uTURnuI92dvLncDZrvDYuVl6ugGvr4KEVMPSH
+y5uJq4aFKVTAGkg+3hFwxt/exeBcc7FnkYLhJ04BexQ3uOM18463PC+5ok0u6nEa
+4re0iDIIceRj/u0a2M8SGFQzDnnQpAsUp5Pwwubmf5A1SVUaiDcLhLN+6D/oBOXT
+AcyUkYZy21CnYT1KkfEDCNvBt7WeqMBrX+A/PBLbBxXGUD6s3fSRzlEb+yC48sg5
+f2EIE9bxK4R2huEqm+VBLR0mFpx9CYZ6i1KeUCpnPAQAj7Qk2mSF0qTnlubJRgbm
+/uCnkyRiq11MFlRWHkx258+BLwPpl1/2POliUEHUdVYh6ZJB8+vHXhUuBHn5cr+v
+cfSMoC/YifcuITi+4mkxvPUJp16Qpyub7NWkRvrD7vforGWG23or62uRyLLs+K4C
+643oghH3xUEyjYUJxAaFe3riGYhK0llQMMZcQ6+l8gkXQmaSIHTJeS7s5iOPHruq
+oOVjCFvany7RfySnEDKE8DbyFjGRKKkuSVM6fm7lZYOelS+DHXLWneV2II9x7cFX
+oCgpawWPFTRkv0uz7dgaBTm7zPsXye3B0ES9pQPlJ2N+hWu3lY0=
+=qYzB
+-----END PGP SIGNATURE-----
+
+--/tql2Wv+jkOEc6cT--
