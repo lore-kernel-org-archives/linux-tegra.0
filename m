@@ -2,219 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CACC43334
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 14:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC42EC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 15:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233861AbiGFOE6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jul 2022 10:04:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
+        id S232688AbiGFPGX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jul 2022 11:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232935AbiGFOE4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 10:04:56 -0400
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386F4D72;
-        Wed,  6 Jul 2022 07:04:54 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-2ef5380669cso140921697b3.9;
-        Wed, 06 Jul 2022 07:04:54 -0700 (PDT)
+        with ESMTP id S232554AbiGFPGW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 11:06:22 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D2631AF2A
+        for <linux-tegra@vger.kernel.org>; Wed,  6 Jul 2022 08:06:21 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id n15so18803355ljg.8
+        for <linux-tegra@vger.kernel.org>; Wed, 06 Jul 2022 08:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=8AO+J2LE63gF/pEN0vFhWdC06z7hhSAJ2kzbzBHJQYc=;
+        b=Yu53js0MAGepvew3Gnozocl206vgIuj1V+C5/ECHoEY/DsvpqGEjcqt9GF843uMUbq
+         pQ+tva9G6ED+y3/e+AW1/Ps8GTtgDscD/JVWR9FPTXdrGy1qaglB5p2jZT/BklBtWKdB
+         b4f3q9wxnYksxsCI/Qh1Nc2PvsultWSf+E75bmnz+hFZoQCKo93Bp7HMq6ol62rfOzvf
+         Tny/uz1AzSMVNa5L5yvbYaLDLDKxZqQxJ6eRjmA45XDrLad4VXyCyv3ppg9S6vtL89UN
+         0XPd9vLhnjdD+fLgTl4RgVSv19MpSZqBHxwd291COOaZp5Hv4g1Rz9Db2zssJiWuYbVl
+         4XJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UBE539EKjjJ8zkn99yLgr6sf0hQeHTgO/l2k1f9VAKg=;
-        b=j7Hpuh+rnxj8p8uzhPFHnQPamCKDD//gbhyIFdN1y25RjFaNQ+hpMekINnCZ4pLLmC
-         hc2g5LPX9BtAYs9kDES2t/wL/dDyLY302bbDf2L+HG7njpoj4DSFY6aJeytEfEVSnhiv
-         qSjMqh/pT3aoJtHyYCu8AHKURj1TtP5mLiV1YZrZiPQ+cW6lmI8HbDwo8PBJ6j0P103m
-         ULpvZwtTKNqPUAujleOqPFQpbCkIH0xEwxHD/X8tyO0WTXs91tV2lFa3DuEa3N+cPxug
-         YfdggNuMLerHmaOwP821rM7mFTGyik4dQvldXpYrYj7uTZAdwprdiz5KML2+95CkqBR8
-         MMBA==
-X-Gm-Message-State: AJIora/nEoDBdwild/DaYPMHgAKtsMFKqtaEufUH27d1lZxUKpDDvvWl
-        rY+Hh9YD5iE93IlCFQNbO1y1gQ0EA1YTPfKfMq4=
-X-Google-Smtp-Source: AGRyM1tzweDvK/HpOTrEcMtuYgu75xJlbU4wLmWYqVeEsIhNId5gL4a/NC1jAK4t+CVNf/Oa7/ufr1ZdqBFMCfc4FVA=
-X-Received: by 2002:a81:24c7:0:b0:314:1e60:a885 with SMTP id
- k190-20020a8124c7000000b003141e60a885mr46512506ywk.301.1657116293184; Wed, 06
- Jul 2022 07:04:53 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=8AO+J2LE63gF/pEN0vFhWdC06z7hhSAJ2kzbzBHJQYc=;
+        b=x5Jc3uU6fm8/v9gJnpwCIgoEkjVFr/0pHKBxPnc+IgbHrF81dL39g2+AyEQA9OUbUx
+         Y5Fv2zUldbf6JZsKnswWPSkQAzoaHEbMY8Khwb7DhMCpJGP0OHIyiUso1ZL/SWzTeCbI
+         SoTP6FQJcyfUA3eoGKak+FRwQNJ13QBML4wRwmkkPopKhiXzRfIpuWXTH/IXuVTIPJ5k
+         qpD4J9H04Jw5oby4etKJrMlI97AvBQnW0qn5SitXDuquA2+853v7WMq3N2jk+SBhuoYs
+         RiEzucdkCN7zxTywycYwbzU7mqS+4I2k/tol2I+RVJHbcbZWmWV9ToSWGDJ6jkcNyzG0
+         2r0w==
+X-Gm-Message-State: AJIora+huGCeMtopYshzn3rCZGn5bcjj/lLDx98WWsgvgtkYXzULjJxu
+        Dsh8/lqk6zhqu9fGVdiTKUiNKw==
+X-Google-Smtp-Source: AGRyM1vvRukpDW59hhuCkomJfS5xKDFgaLXYid6bqitubs0npzp+fQmvLDn1pZEU+L4JkcWZYMhIxA==
+X-Received: by 2002:a2e:a26c:0:b0:25a:6dad:8bf5 with SMTP id k12-20020a2ea26c000000b0025a6dad8bf5mr23877254ljm.136.1657119979530;
+        Wed, 06 Jul 2022 08:06:19 -0700 (PDT)
+Received: from [192.168.1.52] ([84.20.121.239])
+        by smtp.gmail.com with ESMTPSA id g1-20020a0565123b8100b0047f9d9a4186sm6330501lfv.165.2022.07.06.08.06.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Jul 2022 08:06:18 -0700 (PDT)
+Message-ID: <bce8c598-9075-d643-59b5-c2397a55b52f@linaro.org>
+Date:   Wed, 6 Jul 2022 17:06:16 +0200
 MIME-Version: 1.0
-References: <20220608142723.103523089@infradead.org> <20220608144517.885263942@infradead.org>
-In-Reply-To: <20220608144517.885263942@infradead.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 6 Jul 2022 16:04:42 +0200
-Message-ID: <CAJZ5v0j6=x-u3dorwQNd6Sihaa1rx1-uaFXbL1Kc37Hu-fcH3A@mail.gmail.com>
-Subject: Re: [PATCH 31/36] cpuidle,acpi: Make noinstr clean
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        vgupta@kernel.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        ulli.kroll@googlemail.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        bcain@quicinc.com, Huacai Chen <chenhuacai@kernel.org>,
-        kernel@xen0n.name, Geert Uytterhoeven <geert@linux-m68k.org>,
-        sammy@sammy.net, Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi,
-        Stafford Horne <shorne@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        David Miller <davem@davemloft.net>,
-        Richard Weinberger <richard@nod.at>,
-        anton.ivanov@cambridgegreys.com,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@kernel.org, namhyung@kernel.org,
-        Juergen Gross <jgross@suse.com>, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Chris Zankel <chris@zankel.net>, jcmvbkbc@gmail.com,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Anup Patel <anup@brainfault.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Yury Norov <yury.norov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>, senozhatsky@chromium.org,
-        John Ogness <john.ogness@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        quic_neeraju@quicinc.com, Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Benjamin Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-snps-arc@lists.infradead.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        openrisc@lists.librecores.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        linux-s390@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V3 02/11] dt-bindings: pci: tegra: Convert to json-schema
+Content-Language: en-US
+To:     Vidya Sagar <vidyas@nvidia.com>, Rob Herring <robh@kernel.org>
+Cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
+        vkoul@kernel.org, kw@linux.com, p.zabel@pengutronix.de,
+        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
+        Thierry Reding <treding@nvidia.com>
+References: <20220629060435.25297-1-vidyas@nvidia.com>
+ <20220629060435.25297-3-vidyas@nvidia.com>
+ <20220630210449.GA3283899-robh@kernel.org>
+ <e971a557-3387-efcf-87ec-983b998c5e93@nvidia.com>
+ <2829e71b-1769-ce24-f810-d63e619aa5f0@linaro.org>
+ <398a9370-6c2d-319c-2e23-038588fbf004@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <398a9370-6c2d-319c-2e23-038588fbf004@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 8, 2022 at 4:47 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> vmlinux.o: warning: objtool: io_idle+0xc: call to __inb.isra.0() leaves .noinstr.text section
-> vmlinux.o: warning: objtool: acpi_idle_enter+0xfe: call to num_online_cpus() leaves .noinstr.text section
-> vmlinux.o: warning: objtool: acpi_idle_enter+0x115: call to acpi_idle_fallback_to_c1.isra.0() leaves .noinstr.text section
->
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+On 06/07/2022 12:46, Vidya Sagar wrote:
+> 
+> 
+> On 7/6/2022 3:36 PM, Krzysztof Kozlowski wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 06/07/2022 11:53, Vidya Sagar wrote:
+>>>>> +  nvidia,bpmp:
+>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>>>> +    description: |
+>>>>> +      Must contain a pair of phandle to BPMP controller node followed by controller ID. Following
+>>>>> +      are the controller IDs for each controller:
+>>>>> +
+>>>>> +        0: C0
+>>>>> +        1: C1
+>>>>> +        2: C2
+>>>>> +        3: C3
+>>>>> +        4: C4
+>>>>> +        5: C5
+>>>>> +    items:
+>>>>> +      - items:
+>>>>> +          - minimum: 0
+>>>>> +            maximum: 0xffffffff
+>>>>
+>>>> That's already the limit. Just a description is fine.
+>>>>
+>>>>> +          - enum: [ 0, 1, 2, 3, 4, 5 ]
+>>>>
+>>>> maximum: 5
+>>>
+>>> Setting the maximum to '5' is resulting in the following error.
+>>>
+>>> pcie-ep@141a0000: nvidia,bpmp:0:0: 4294967295 is greater than the
+>>> maximum of 5
+>>>
+>>> Could you please help me understand why I'm seeing this error?
+>>
+>> Trim your replies.
+>>
+>> Why adding minimum:5 to the phandle? Rob said add a description. Nothing
+>> about minimum.
+> 
+> I'm sorry I didn't understand the review comment clearly.
+> There is one description added above already. Are you (and Rob) saying 
+> that one more description is needed?
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+You have description of entire property. The property consists of
+phandles ("items", with only one item) and each phandle of two items
+(second nested "items"). The first item in phandle is actual phandle, so
+it does not need any constraints/schema, just a description. This was
+missing.
 
-> ---
->  arch/x86/include/asm/shared/io.h |    4 ++--
->  drivers/acpi/processor_idle.c    |    2 +-
->  include/linux/cpumask.h          |    4 ++--
->  3 files changed, 5 insertions(+), 5 deletions(-)
->
-> --- a/arch/x86/include/asm/shared/io.h
-> +++ b/arch/x86/include/asm/shared/io.h
-> @@ -5,13 +5,13 @@
->  #include <linux/types.h>
->
->  #define BUILDIO(bwl, bw, type)                                         \
-> -static inline void __out##bwl(type value, u16 port)                    \
-> +static __always_inline void __out##bwl(type value, u16 port)           \
->  {                                                                      \
->         asm volatile("out" #bwl " %" #bw "0, %w1"                       \
->                      : : "a"(value), "Nd"(port));                       \
->  }                                                                      \
->                                                                         \
-> -static inline type __in##bwl(u16 port)                                 \
-> +static __always_inline type __in##bwl(u16 port)                                \
->  {                                                                      \
->         type value;                                                     \
->         asm volatile("in" #bwl " %w1, %" #bw "0"                        \
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -593,7 +593,7 @@ static int acpi_idle_play_dead(struct cp
->         return 0;
->  }
->
-> -static bool acpi_idle_fallback_to_c1(struct acpi_processor *pr)
-> +static __always_inline bool acpi_idle_fallback_to_c1(struct acpi_processor *pr)
->  {
->         return IS_ENABLED(CONFIG_HOTPLUG_CPU) && !pr->flags.has_cst &&
->                 !(acpi_gbl_FADT.flags & ACPI_FADT_C2_MP_SUPPORTED);
-> --- a/include/linux/cpumask.h
-> +++ b/include/linux/cpumask.h
-> @@ -908,9 +908,9 @@ static inline const struct cpumask *get_
->   * concurrent CPU hotplug operations unless invoked from a cpuhp_lock held
->   * region.
->   */
-> -static inline unsigned int num_online_cpus(void)
-> +static __always_inline unsigned int num_online_cpus(void)
->  {
-> -       return atomic_read(&__num_online_cpus);
-> +       return arch_atomic_read(&__num_online_cpus);
->  }
->  #define num_possible_cpus()    cpumask_weight(cpu_possible_mask)
->  #define num_present_cpus()     cpumask_weight(cpu_present_mask)
->
->
+Something like this:
+https://elixir.bootlin.com/linux/v5.18-rc1/source/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml#L42
+
+except that in your case second item (in the nested items) have actual
+schema, not description, which is good.
+
+
+
+Best regards,
+Krzysztof
