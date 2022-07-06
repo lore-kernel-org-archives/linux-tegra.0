@@ -2,173 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36408C43334
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 20:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E73C43334
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 20:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233364AbiGFUtE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jul 2022 16:49:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
+        id S231500AbiGFUtR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jul 2022 16:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231500AbiGFUtD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 16:49:03 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC0118E0C;
-        Wed,  6 Jul 2022 13:49:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LeUj6rsylO9bhR1hTBc0+MOe9j6fjP3noPYPqSt6YIi909WAVi485BHF0okvNuiGIoJhQvq1MGqeh1Eq2mCW8Pv9o5j6rR97nkpiuaLplb6wODCJEjE7sReLQ1jgKKmcV5ZRzgtohsrGeu4izH4HqrM5Etx316P1ANc2cogpG1cmgy2nIVyskuDFdts5EDqi4HG4vuoULKnVIP4zRtIJr3XhhTM0tUsKJNqNWuZcud/t5U7XrQ2oC8Ebj5z1VQqKS1j8kJ0e/l5aewCpInibFwQuROUvqG+PSgUVEisLqJJ5WxP5ByqyHpzNTA/la1L4PMjDrz4tx2XSvbxArXUpTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iX6Q6P1IoAJ2CkTx8LEfIMjYvNAfln/DtFmyuBm7N4s=;
- b=M/tFV+hx2SByHbVAGuoopw6oV5C4BWVbNeGiWgXbEFEsBzyHj/6W2nL0DvqGSq9e+Uak1YooCqt/oilUW1r6Dn7KDEPruqexaqBVS6SlKjAQqgv/b7EAFgerw2loMktF8pqT7VvhRVUKhI/vfv015zcIiWDnTvyJpEiuG/7VHE7+CbNxJ3X6PfgCl6GRS8SDC+ak1hwC+lt96sf/ktWmU51k3niuR5qxh9dzfF37vaL6styTOopru4fzihENTzi01bp0DE7PNbm3Jh6C6jl5H00F7t9iO9+/xPq+08ZOmtoV9Z7Vi7oEnjtfda/1F1z6WL8Y3IAc0v1koL3kqTuyIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iX6Q6P1IoAJ2CkTx8LEfIMjYvNAfln/DtFmyuBm7N4s=;
- b=fMz4lh4ly0YDP/NOeOOK8YaOc+dn/xM1NeIeRt7a2UGw3OsmxhwCZZHHh0JmlWBpMu3NcAanHKxQh1Eo8NhciEe423yghtaa+gFS3VKEYHHx3e4Dsi3OpDiuhL4h6Nb3km7avLffLd8xowwjV+posHDltAaEx+e5j0mZlV2DrdEwLq8QCJFqBjEGI/hQmFMMHVxYsmgBpFQ/9MkyPWAE3IE8xA3uwwH+vFNstgwV7lT6KY3DKsn7ADHEZE0LcJCKhfK4EtaExHaSQqcCKm60aa9Y51D1qMoOkc50XnC9Ek0Qt413ibIc/kKf/FzSRLnl+v6jpqM5PuV99sVvPBTlKw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by BN8PR12MB3602.namprd12.prod.outlook.com (2603:10b6:408:49::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Wed, 6 Jul
- 2022 20:49:00 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::dda2:7b0a:3280:5365]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::dda2:7b0a:3280:5365%7]) with mapi id 15.20.5395.021; Wed, 6 Jul 2022
- 20:49:00 +0000
-Message-ID: <7e536472-60cd-c81f-254e-bab9fda7ed37@nvidia.com>
-Date:   Wed, 6 Jul 2022 13:48:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 02/12] docs: tegra194-hte.rst: don't include gpiolib.c
- twice
-Content-Language: en-US
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <cover.1656759988.git.mchehab@kernel.org>
- <de81b472f552bd651f140f0aa779a29652fffa62.1656759989.git.mchehab@kernel.org>
-X-Nvconfidentiality: public
-From:   Dipen Patel <dipenp@nvidia.com>
-In-Reply-To: <de81b472f552bd651f140f0aa779a29652fffa62.1656759989.git.mchehab@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0181.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::6) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+        with ESMTP id S233932AbiGFUtQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 16:49:16 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F44518E0C;
+        Wed,  6 Jul 2022 13:49:14 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id f190so9483242wma.5;
+        Wed, 06 Jul 2022 13:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lYoHz1Fg/1584iuxLfGRJUV0pVNLLTo+tRGLocQgAic=;
+        b=qF8n+bThr2rOi+TwTlYMeusIZZd1KAnaLyxdzTUupEPeEY0phpAZ/8+ni3fZickV51
+         LTf7TRAoVFadi4at5hjXEczDzbM+ilUpJEc/ujyex1l/GE9LkBLHiEK5ZSLL1mOLJtTT
+         SLoXq020YES3i0PyUjWQaPfyF3ZvZgLWFfg8+bVPLWOvHNe0styrmiWMJ2fQSIrlOSNN
+         gq6NjEmDwIaT6jidSInI9WScXjtoEihruq6Ycmwr9OY4ryirsovUo0kMX6ZXiLceXqMU
+         7CIiPKqKJjALnFpvwQKI2bxsIl9b/KKPJTACdcuBWziomlX7p4+2y8zdQJKyVAZVU+cx
+         Sg1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lYoHz1Fg/1584iuxLfGRJUV0pVNLLTo+tRGLocQgAic=;
+        b=43gMfI/aRd29lL+3KuE5Xvm1A+M+t8LNsG58hMXmm0aD7ZTJ7O69y/zPbiGWweILX2
+         vl5H03B8Ukd50I+GQG/IxU5hy7Y/qoFByf0dkqsGDBsk/5oirUJYVK5t0e63YjbX36Ll
+         Jpsu4kaFTSX1hN+Hh6OAFuRb/8IEnjpn4yra2HSLZUsH0sWzmj2QYIufeDaCw2Vwnx6I
+         /Q1ZgYMRuwgYAQ+kbREeFgEI1z8LXOKs7ozAsyKj70BkAvowQPGYSPnkIZBw9JDf0XQL
+         mBAH8TLOYBrWL3slc9Ckc2RSSwuzuT6jv2k8RdjD5rl8reJ4bHnBwTFbSdqXM/Dt0QPc
+         ifqw==
+X-Gm-Message-State: AJIora/3/YEYx8XO1tS9fvq8g5GP/fJ0dcv8v32FY73BN73GDZPPeQBX
+        d9s6xM0N2Fnqw33j15UmCMc=
+X-Google-Smtp-Source: AGRyM1sN2Gr9pnnf2B9ExEsmV7zQLd1jwNdznYyJukcOts3te12cLDDesVoK11ZQXS7PNS527AU84w==
+X-Received: by 2002:a05:600c:1986:b0:3a1:9936:67ff with SMTP id t6-20020a05600c198600b003a1993667ffmr476429wmq.47.1657140552710;
+        Wed, 06 Jul 2022 13:49:12 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id bi18-20020a05600c3d9200b0039c4506bd25sm26412408wmb.14.2022.07.06.13.49.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jul 2022 13:49:11 -0700 (PDT)
+Date:   Wed, 6 Jul 2022 22:49:10 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Bhadram Varka <vbhadram@nvidia.com>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
+        kuba@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        pabeni@redhat.com, davem@davemloft.net, edumazet@google.com
+Subject: Re: [PATCH net-next v2 0/9] tegra: Add support for MGBE controller
+Message-ID: <YsX1OCJDqSzjf2lo@orome>
+References: <20220706031259.53746-1-vbhadram@nvidia.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e613f4fe-b6bd-4177-e6fb-08da5f90f45e
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3602:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: D3sSt1EZGFiVhY/XuBTg4uO5faBdMO83fo3Nt1OX8nFXB8fcA7piv6Je4ZTPr0SaoYCsEmRVihspcJ/MCVrOVwJ7clttbdmCMwOzFLdc7O3HHFLKJhjECedBtnwiY8IJfbbFAqRUD61oMxYJleyUtquma0ctzBcIkP+9uy/l3oIG4Kwi4pDyfAPPtQriH3tlqtq3NyK6fpKeeoBQC+pyWq++//EyXIGTLvjU2btBIrnT5xQMdyO3ajDShcuigIDcKyMSTpYUQArZvBp3g3vDO85xbTKQzLJOzAsPcm450Um5D/cA08vZpiKBusMd/9ldgMAwt82fNrYZYnS5pdZgvqTm8uUnfyogXgjsJi9OLnZHXJX3zOePQE4Aoc4gt1ez9OyvlJ9msKzI2ZYyi/lb4txY5fk09jvNeo4XHtk9PN+6TJRTkB548RO47f9PfywVZcJ6Ajo8SSPJUe8sJ1258+ZgSn8D2/rTlgwQne0p1W2EM94vbAzSM1FGXcB0ovb5e2/ZvecDEU65uhZhFHuzemvbIbJPl/xJ3dqRhgr5dPZUdKT8MfpMUxKDyNHt6xbkJDn269/gJbj4EpctZHRkVOt5/zVP151Qe0vWjYoFtIeX6uSM9fpuQWw2B1SfsfT/sm9fuSYj+40hZhhbd1+3bPrscA5yrFMU4ZjCXgvyG0QlDZkOv22HnPok04+63q4WJHYFHflSSRPhkpQPYVP87T/F6+Z9n8C+bAI6mi/fjHOfpvoAcG1mZEzNwd2q+l6hZ+oTtlAnljfeXbRVwaSueXm+QA4LBXyf4YDMYzHMl/JaU5NznBMJnhMxkBfjenkWqfLidkgp2gfZqXmPizdaDfNu1NoOOx195gL4CQU6YDG58SdJO6Bm91L+qRkdhI8+uKoMMkKijXz2BswUiCYQnfxqpnmOT4HK/rnph99kAB11KvtJAt7LsYQVlSSpWw0v
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(346002)(136003)(39860400002)(366004)(396003)(110136005)(31696002)(83380400001)(6486002)(966005)(478600001)(86362001)(2906002)(53546011)(2616005)(31686004)(186003)(6506007)(38100700002)(36756003)(26005)(66476007)(66556008)(4326008)(8676002)(6512007)(66946007)(41300700001)(8936002)(316002)(5660300002)(54906003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V2tYbVl0YVE4NVA4UmRYQldFR2tGWVhWbk9iVUNxdjlGSjcvVFBaS214bE1h?=
- =?utf-8?B?UEtWQjZWbDZVSXI5TnZWYnUvdHFSUml3SXF5bmc5Y3cxVldrRHZIeDlVTDVm?=
- =?utf-8?B?Yk5XVmQ0Yy9QazBGNnVZMmIwZURSdFljSEZ5blNxOWRVRjRKTC91UTJtMGJ1?=
- =?utf-8?B?VE9DQnBSdk5vMmg1dWtyRExCcDZ5S1lHWVJ5QTlqbFNWVUxXN1hzc05hMG5U?=
- =?utf-8?B?WXIyV1J2UndXN3BFR2pobFBhdFdOOXNGaHdWTURiOTFXRW9DYzhCVHlnd2sy?=
- =?utf-8?B?dXI2eFVhRU9kQVZ3bTIwTGtkeThlWENpUDF0bHhFcFRKVzhxK091TnNkUzJl?=
- =?utf-8?B?ZGUwQzlnaFd1Q3ZTYmlYMDcwVjlHV0I3anJUR0RxZVlPWkk0SXdiYkJkanNv?=
- =?utf-8?B?UUMxaEFneDZ5SE9Hd1IxZ2ZmenF4NHFXVjZlY1EyV0ZKUC9Zb1htZEFQT0tq?=
- =?utf-8?B?NUUvMzVxWFU1THR0N2pxRS8xU09vMTdKa2ZaMWVYOGNxY1B6eDVheDJlQzQ3?=
- =?utf-8?B?Q01Vd0FNdm16T0IwaVlnYVZFNXV4ellPZW1mK2NWSmpXd2Rtd29kVnA1N01O?=
- =?utf-8?B?bThBZ3F4a2NIdklRcHZLYlh5N3N1L0p5cy9uekNnSE43Um11djE5ZUhObGw2?=
- =?utf-8?B?NmZKbUpFNG9GYUdRRVBBdGdQYU1Sc3Q5Sk43TURSaktyVEk3MVVQOGtwT25W?=
- =?utf-8?B?SjRFOHU3YlFpUkI1clEram1ObmpGRm5RalNtVFZmZDdrdlZIeTRJZG9GZnRQ?=
- =?utf-8?B?d2h4OWkvZU4wU3VHRHZ0cDk5dEdubUZhTkNVQWppRkVQRXFWOTM2Qmo5TUlM?=
- =?utf-8?B?NmpXR1VpNXU3VEhRVzdBQStqdURCaGhsRkNLLy9jLzNSOWI2VjQzYms0Wkk0?=
- =?utf-8?B?VWlxd1JWdmppNkQyR2NGUm1za3U1WjU0VHNrV1lxZHRPYk1uZUdQTnYvcER6?=
- =?utf-8?B?b1BCSzZZTmFIeC9lM0hUTGxNL3piYnpEM3hrMldsK3ErUkp6RGFvM2ZZKzdX?=
- =?utf-8?B?RVdFN3Z5R2UrUGwwVUFWbC9iV2lnWm5LTWJqTkprRzJMTHpUSzhuOHNCaWRy?=
- =?utf-8?B?MGpGV0RieFZ0eGt0eXRsTHBnWFcrdnA5R2cyVTNtNHQveC9OdDFmaEg4S0dW?=
- =?utf-8?B?TTdNaTFSMzRrd0YvSmwzVVg1eG1WaFg1MnA3MU9pQURIWFl3dGpPOVg3Q0xw?=
- =?utf-8?B?RzZoVXprYXJYNWkrdG5JM0hXWnVGSkJWOGJWcWdrRExIc29uWnpDMWIwWjBN?=
- =?utf-8?B?Q294RURTLzFESzZHT2hoempOSmRnME40LzNvejYrTFc1eGxJelJCM0w5Umk3?=
- =?utf-8?B?c0o0WUhuZ0xCbHNvaXpURzVEbnN3d2hNdjhQOGY3VEFwamVyLzcvcVcwNWNh?=
- =?utf-8?B?d0VyeTdGUkVQOTdGMk42YTc4ZThKZktTQ05od2c4N2tzTmsrWXEzdS9kN2hU?=
- =?utf-8?B?cFlDaGdDd2NSTWJKQ3lRUFpTa2crOTY5eFZPWGtKcU8zbFFoc2haRlBkbmpl?=
- =?utf-8?B?cEVsR25yK3RkcHU3T1pzclNYSmo5anh5SENQbi82cWl3NzY5cU5GSVM2VXJu?=
- =?utf-8?B?eGN2RzhQcVNGa0l0SmZ0SUgwY0tqM3JoRjVZSnBxZ2U5Vk94ZW1uSDJRcDFP?=
- =?utf-8?B?QVljOUU0MjlCcTBlYlhDd1k0dEJWSSsxM3ByS01HU1ppODYvNHdNeitMc1hv?=
- =?utf-8?B?ZEpQamhXSGNuWmREalFMUkRPcW0vQ2lldjA5K0ZoUjAwaTJ3OTBJSnRLTGg4?=
- =?utf-8?B?bjlVYzNsN2djZHIremR0dW8rRE9RRGxkZ2RyQks0dFdXeVBPN3RFSm5yTFh6?=
- =?utf-8?B?bm4yU2wvWmFCbU90aDFZdzQvWlNJdDR1c3JhOW5tQUlma1RzL3MzMjlVdlEw?=
- =?utf-8?B?UWFWVEJMUGpOK2g1T2lXMk14Ums3QVNHcCtiY1I4UWIvRjNNald3UjFnYzRz?=
- =?utf-8?B?ZEE5bFNNeVgzWG5ZdFRtMTVGNEVzMU5mNkt5dlgxbk9IUGl3YXdOWDBTMThM?=
- =?utf-8?B?VThEQVJCNlo0VHFxZXF4R2RlUUs0aVpsdzB0R3o4QVZ6Rk5NcFpnaEUxVnBW?=
- =?utf-8?B?Z1VlbXB3L0VvaTg4Z1N2YkNTb2ZEa0xZelZjcDJQbEx4RUR0UjgvMDB6TXR3?=
- =?utf-8?Q?ddf64OWfX0Hrf1gcxkHMeMxd+?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e613f4fe-b6bd-4177-e6fb-08da5f90f45e
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2022 20:49:00.7063
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9fWkwkRY9fg0bXBoo3jBhuOfGKlNKMM/DODFbtFrWyg6zll4p05nJCe763udZsjWZWGzs5DpmJ9iqH02SyyNeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3602
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FnJSvki1Pn59tmsf"
+Content-Disposition: inline
+In-Reply-To: <20220706031259.53746-1-vbhadram@nvidia.com>
+User-Agent: Mutt/2.2.6 (2022-06-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 7/2/22 4:07 AM, Mauro Carvalho Chehab wrote:
-> All extern functions of drivers/gpio/gpiolib.c are already
-> inside the Kernel documentation, as driver-api/gpio/index.rst
-> already includes it.
->
-> Placing a kernel-doc here will only cause mess, as the same symbol
-> will be placed on two parts of the document, causing breakages
-> in cross-references.
->
-> So, instead, add a cross-reference there.
->
-> This solves those Sphinx 3.1+ warnings:
->     .../Documentation/driver-api/hte/tegra194-hte:28: ./drivers/gpio/gpiolib.c:2464: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2464.
->     .../Documentation/driver-api/hte/tegra194-hte:28: ./drivers/gpio/gpiolib.c:2493: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2493.
->     .../Documentation/driver-api/hte/tegra194-hte.rst:2464: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2464.
->     .../Documentation/driver-api/hte/tegra194-hte.rst:2464: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2464.
->     .../Documentation/driver-api/hte/tegra194-hte.rst:2464: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2464.
->     .../Documentation/driver-api/hte/tegra194-hte.rst:2493: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2493.
->     .../Documentation/driver-api/hte/tegra194-hte.rst:2493: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2493.
->     .../Documentation/driver-api/hte/tegra194-hte.rst:2493: WARNING: Duplicate C declaration, also defined at driver-api/gpio/index:2493.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-> ---
->
-> To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-> See [PATCH 00/12] at: https://lore.kernel.org/all/cover.1656759988.git.mchehab@kernel.org/
->
->  Documentation/driver-api/hte/tegra194-hte.rst | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/Documentation/driver-api/hte/tegra194-hte.rst b/Documentation/driver-api/hte/tegra194-hte.rst
-> index d29b7fe86f31..f2d617265546 100644
-> --- a/Documentation/driver-api/hte/tegra194-hte.rst
-> +++ b/Documentation/driver-api/hte/tegra194-hte.rst
-> @@ -25,8 +25,7 @@ and userspace consumers. The kernel space consumers can directly talk to HTE
->  subsystem while userspace consumers timestamp requests go through GPIOLIB CDEV
->  framework to HTE subsystem.
->  
-> -.. kernel-doc:: drivers/gpio/gpiolib.c
-> -   :functions: gpiod_enable_hw_timestamp_ns gpiod_disable_hw_timestamp_ns
-> +See gpiod_enable_hw_timestamp_ns() and gpiod_disable_hw_timestamp_ns().
->  
->  For userspace consumers, GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE flag must be
->  specified during IOCTL calls. Refer to ``tools/gpio/gpio-event-mon.c``, which
 
-Acked-by: Dipen Patel <dipenp@nvidia.com>
+--FnJSvki1Pn59tmsf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 06, 2022 at 08:42:50AM +0530, Bhadram Varka wrote:
+> This series adds the support for MGBE ethernet controller
+> which is part of Tegra234 SoC's.
+>=20
+> Bhadram Varka (3):
+>   dt-bindings: net: Add Tegra234 MGBE
+>   arm64: defconfig: Enable Tegra MGBE driver
+>   stmmac: tegra: Add MGBE support
+>=20
+> Thierry Reding (6):
+>   dt-bindings: power: Add Tegra234 MGBE power domains
+>   dt-bindings: Add Tegra234 MGBE clocks and resets
+>   dt-bindings: memory: Add Tegra234 MGBE memory clients
+>   memory: tegra: Add MGBE memory clients for Tegra234
+>   arm64: tegra: Add MGBE nodes on Tegra234
+>   arm64: tegra: Enable MGBE on Jetson AGX Orin Developer Kit
+
+I've applied patches 1-3 as well as 4 to the Tegra tree with Krzysztof's
+Acked-by tags from v1. Bhadram's out sick, so I'm going to send out an
+updated (and hopefully final) version of the DT bindings and driver
+patches later on.
+
+Thierry
+
+--FnJSvki1Pn59tmsf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmLF9UYACgkQ3SOs138+
+s6H+XxAAjab/OuhiRzrvxRJDUm1gRGCWFt4UxtDBPOem1+/HX1o73rIWM/WTgUaI
+/APP+Meoc2YIqv5HOX+xvzs3Ybx9FVPfLcqoCLGOEJsRcr30cXXbPKovisW6mZgH
+TQmg0EqHfxqAZz2lRz5kGowPPH+AyG4WBTLTRYbuEnzeu5xZCXRwSkEKOIogq4pK
+KXxi8RuTMFWjbzFFi6tWUrphkXCYZHfWudlYYQWR/9PJop0GGx4FCNmrhZQ9M2AG
+voNgGw19IO5PkSidJx3Qlsa8futB3Nz09lXYvyNcOF6q6xCOHlcjaO0XhYvwlerN
+jXEKkDwaoee1zC2gbNiAoEP2Fn0jxGh+EJ0tCj+QyyR92tl1nq0LGqafKXyh/d90
+P1arMcYKoXU8IxcC5jndqho5Wr8wjecA0ekTRqKoi5QPQ7MBetodoBMr1A9AXIgT
+iKJTxDBteuOmL66KnCrR/3C7xi0GyAX2uZNaCNx2hIli5D+9gvs3u+YjqBSkMRdR
+f7pUI7O2kNh1P84efBWhANMPGzs3Ot531+rmwJRwLdTexyg9JCeKvdYFrei8jHSJ
+1jzkNrqIDgoxB9p5ZBqvalZhoRn3q+gEVvC5bABh/8fKO5vLgcPVEic0fHwTNAM/
+Ehhk9+R28zzcTIMqnAJbiaJMC+FnO8jAsFr6Upz5xV00ys7naXk=
+=ym3B
+-----END PGP SIGNATURE-----
+
+--FnJSvki1Pn59tmsf--
