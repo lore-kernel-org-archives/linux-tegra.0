@@ -2,120 +2,81 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E73C43334
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 20:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE3CC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 21:20:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231500AbiGFUtR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jul 2022 16:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
+        id S234351AbiGFVUs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jul 2022 17:20:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233932AbiGFUtQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 16:49:16 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F44518E0C;
-        Wed,  6 Jul 2022 13:49:14 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id f190so9483242wma.5;
-        Wed, 06 Jul 2022 13:49:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lYoHz1Fg/1584iuxLfGRJUV0pVNLLTo+tRGLocQgAic=;
-        b=qF8n+bThr2rOi+TwTlYMeusIZZd1KAnaLyxdzTUupEPeEY0phpAZ/8+ni3fZickV51
-         LTf7TRAoVFadi4at5hjXEczDzbM+ilUpJEc/ujyex1l/GE9LkBLHiEK5ZSLL1mOLJtTT
-         SLoXq020YES3i0PyUjWQaPfyF3ZvZgLWFfg8+bVPLWOvHNe0styrmiWMJ2fQSIrlOSNN
-         gq6NjEmDwIaT6jidSInI9WScXjtoEihruq6Ycmwr9OY4ryirsovUo0kMX6ZXiLceXqMU
-         7CIiPKqKJjALnFpvwQKI2bxsIl9b/KKPJTACdcuBWziomlX7p4+2y8zdQJKyVAZVU+cx
-         Sg1Q==
+        with ESMTP id S234115AbiGFVUr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 17:20:47 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74208248D1;
+        Wed,  6 Jul 2022 14:20:45 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id g1so12024286qkl.9;
+        Wed, 06 Jul 2022 14:20:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lYoHz1Fg/1584iuxLfGRJUV0pVNLLTo+tRGLocQgAic=;
-        b=43gMfI/aRd29lL+3KuE5Xvm1A+M+t8LNsG58hMXmm0aD7ZTJ7O69y/zPbiGWweILX2
-         vl5H03B8Ukd50I+GQG/IxU5hy7Y/qoFByf0dkqsGDBsk/5oirUJYVK5t0e63YjbX36Ll
-         Jpsu4kaFTSX1hN+Hh6OAFuRb/8IEnjpn4yra2HSLZUsH0sWzmj2QYIufeDaCw2Vwnx6I
-         /Q1ZgYMRuwgYAQ+kbREeFgEI1z8LXOKs7ozAsyKj70BkAvowQPGYSPnkIZBw9JDf0XQL
-         mBAH8TLOYBrWL3slc9Ckc2RSSwuzuT6jv2k8RdjD5rl8reJ4bHnBwTFbSdqXM/Dt0QPc
-         ifqw==
-X-Gm-Message-State: AJIora/3/YEYx8XO1tS9fvq8g5GP/fJ0dcv8v32FY73BN73GDZPPeQBX
-        d9s6xM0N2Fnqw33j15UmCMc=
-X-Google-Smtp-Source: AGRyM1sN2Gr9pnnf2B9ExEsmV7zQLd1jwNdznYyJukcOts3te12cLDDesVoK11ZQXS7PNS527AU84w==
-X-Received: by 2002:a05:600c:1986:b0:3a1:9936:67ff with SMTP id t6-20020a05600c198600b003a1993667ffmr476429wmq.47.1657140552710;
-        Wed, 06 Jul 2022 13:49:12 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id bi18-20020a05600c3d9200b0039c4506bd25sm26412408wmb.14.2022.07.06.13.49.11
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DAWa7494DFRqqpHDm8ORlleZxGRDphGIG+m5f4M5GfU=;
+        b=hySu4tqN4k52pg10G1/vPWfnUvoni1gyL+VlRm8vyiVlj8YcBkYGjNHJoX91H61rhZ
+         SMenAWa2lwzH8VTWGeVtSr/wpks1+ADybQrICV8L2z5DLOwar37dmJKmo695598Ll25U
+         JSw6Cb+P27oRw7i6nBWaMO/jYcIIjZI3LNLT/fkpS99ywdas3em3MEBjM4sToP8Xhjt4
+         9dt+s0hh0gLRkPq9CIKeTgMnrex21Ic5iT8ZxyXU6uY0DvjkNDdOeZ67hj9zjO1EayOm
+         2SLUyRafhtcAERnZfW9uFKq2dh0iebmHGwHbHaoFWUvfXwOmDYjVuMF0s4ulTmbAJgit
+         q8RA==
+X-Gm-Message-State: AJIora/QeRIHnNC8YDmXp8M8zY/TQggQGBuzpRue05TWZsLo4MMQthB5
+        b+RRUfL/hKwRbXixIrw1lg==
+X-Google-Smtp-Source: AGRyM1u8X5QNza6abXXnIiQoT+WJTgBwh8lL2wWQ/gqzAgec8bKSnJ8YtzaXyopnDSRIph2luRJ0TA==
+X-Received: by 2002:a05:620a:1031:b0:6ae:eaf2:928e with SMTP id a17-20020a05620a103100b006aeeaf2928emr28997399qkk.575.1657142444540;
+        Wed, 06 Jul 2022 14:20:44 -0700 (PDT)
+Received: from xps15.. ([172.58.107.140])
+        by smtp.googlemail.com with ESMTPSA id w20-20020a05620a445400b006af37b005bdsm24747827qkp.128.2022.07.06.14.20.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 13:49:11 -0700 (PDT)
-Date:   Wed, 6 Jul 2022 22:49:10 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Bhadram Varka <vbhadram@nvidia.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
-        kuba@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        pabeni@redhat.com, davem@davemloft.net, edumazet@google.com
-Subject: Re: [PATCH net-next v2 0/9] tegra: Add support for MGBE controller
-Message-ID: <YsX1OCJDqSzjf2lo@orome>
-References: <20220706031259.53746-1-vbhadram@nvidia.com>
+        Wed, 06 Jul 2022 14:20:44 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: arm: nvidia,tegra20-pmc: Move fixed string property names under 'properties'
+Date:   Wed,  6 Jul 2022 15:20:34 -0600
+Message-Id: <20220706212034.568861-1-robh@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FnJSvki1Pn59tmsf"
-Content-Disposition: inline
-In-Reply-To: <20220706031259.53746-1-vbhadram@nvidia.com>
-User-Agent: Mutt/2.2.6 (2022-06-05)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Fixed string property names should be under 'properties' rather than
+'patternProperties'. Additionally, without beginning and end of line
+anchors, any prefix or suffix is allowed on the specified property names.
 
---FnJSvki1Pn59tmsf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As all the nvidia,tegra20-pmc powergates child node properties are fixed
+strings, change 'patternProperties' to 'properties'.
 
-On Wed, Jul 06, 2022 at 08:42:50AM +0530, Bhadram Varka wrote:
-> This series adds the support for MGBE ethernet controller
-> which is part of Tegra234 SoC's.
->=20
-> Bhadram Varka (3):
->   dt-bindings: net: Add Tegra234 MGBE
->   arm64: defconfig: Enable Tegra MGBE driver
->   stmmac: tegra: Add MGBE support
->=20
-> Thierry Reding (6):
->   dt-bindings: power: Add Tegra234 MGBE power domains
->   dt-bindings: Add Tegra234 MGBE clocks and resets
->   dt-bindings: memory: Add Tegra234 MGBE memory clients
->   memory: tegra: Add MGBE memory clients for Tegra234
->   arm64: tegra: Add MGBE nodes on Tegra234
->   arm64: tegra: Enable MGBE on Jetson AGX Orin Developer Kit
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've applied patches 1-3 as well as 4 to the Tegra tree with Krzysztof's
-Acked-by tags from v1. Bhadram's out sick, so I'm going to send out an
-updated (and hopefully final) version of the DT bindings and driver
-patches later on.
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+index 564ae6aaccf7..7fd8d47b1be4 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+@@ -208,7 +208,7 @@ properties:
+       "^[a-z0-9]+$":
+         type: object
+ 
+-        patternProperties:
++        properties:
+           clocks:
+             minItems: 1
+             maxItems: 8
+-- 
+2.34.1
 
-Thierry
-
---FnJSvki1Pn59tmsf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmLF9UYACgkQ3SOs138+
-s6H+XxAAjab/OuhiRzrvxRJDUm1gRGCWFt4UxtDBPOem1+/HX1o73rIWM/WTgUaI
-/APP+Meoc2YIqv5HOX+xvzs3Ybx9FVPfLcqoCLGOEJsRcr30cXXbPKovisW6mZgH
-TQmg0EqHfxqAZz2lRz5kGowPPH+AyG4WBTLTRYbuEnzeu5xZCXRwSkEKOIogq4pK
-KXxi8RuTMFWjbzFFi6tWUrphkXCYZHfWudlYYQWR/9PJop0GGx4FCNmrhZQ9M2AG
-voNgGw19IO5PkSidJx3Qlsa8futB3Nz09lXYvyNcOF6q6xCOHlcjaO0XhYvwlerN
-jXEKkDwaoee1zC2gbNiAoEP2Fn0jxGh+EJ0tCj+QyyR92tl1nq0LGqafKXyh/d90
-P1arMcYKoXU8IxcC5jndqho5Wr8wjecA0ekTRqKoi5QPQ7MBetodoBMr1A9AXIgT
-iKJTxDBteuOmL66KnCrR/3C7xi0GyAX2uZNaCNx2hIli5D+9gvs3u+YjqBSkMRdR
-f7pUI7O2kNh1P84efBWhANMPGzs3Ot531+rmwJRwLdTexyg9JCeKvdYFrei8jHSJ
-1jzkNrqIDgoxB9p5ZBqvalZhoRn3q+gEVvC5bABh/8fKO5vLgcPVEic0fHwTNAM/
-Ehhk9+R28zzcTIMqnAJbiaJMC+FnO8jAsFr6Upz5xV00ys7naXk=
-=ym3B
------END PGP SIGNATURE-----
-
---FnJSvki1Pn59tmsf--
