@@ -2,357 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7473C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 08:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BF9C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jul 2022 08:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231366AbiGFITB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jul 2022 04:19:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57562 "EHLO
+        id S232438AbiGFIjc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jul 2022 04:39:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231362AbiGFITA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 04:19:00 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0822127A
-        for <linux-tegra@vger.kernel.org>; Wed,  6 Jul 2022 01:18:58 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id z12-20020a17090a7b8c00b001ef84000b8bso9231512pjc.1
-        for <linux-tegra@vger.kernel.org>; Wed, 06 Jul 2022 01:18:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NqXzjmPYyKxRNJu+3EE3ctlFFdR9chxtKAJZd/jje28=;
-        b=bWOaqY+oD2MoE3bAUV542QSF69+/YjuH0KSMBb93mlMaBM9SkSmw4M/Eww9Etumq5w
-         EOz3wwH/DGCSmEMW8iBWuf6FNTZ5/Vg7Xyn1l5OCy3/kPWAjkm0f5TNUF9drdXooTFnN
-         3cY3fZIlG0yoD7TV4lcYVrGkY5FHaz0brIDCRxm8Tw7TOtmIQznTH0n745mku1l4xq1N
-         W+DRfuLqtIaM+4SSZA96/icF6VqKypcjJbRe7pEe6DluRxl4nFz35WQ0r6u6qgnyb+ZM
-         TWW/sNIMvXN2gqStPI8Cr/1LpN6CA9PWIfEB3EYHy5DTP/kVF3sBKRylLRrm0gtE3dx9
-         f0zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NqXzjmPYyKxRNJu+3EE3ctlFFdR9chxtKAJZd/jje28=;
-        b=pXZ91eVkm2le78iNCI0kzT/qyot/53AEqAWEHlINLdQLr7DjI/ruLqYck5GqGTTcWs
-         AmCwE6LAHKjjFvQIaMqD6QRtR5HIqwLhXfNxsvXtGPDk0jgXhb3+fwNEjW7PMKYH5wQi
-         RFXugowZbiMNrZ9f4I7+MDwu7FIDr9iZnRICoJJzZnK1DALicigsORxhrH9pLxQ8ZonK
-         scwkfCTvVf/OfPFLKXKt3DmPDmS5iJe3YbHI3pMbz5eYlxHpdiKI6y5Ny9OV4lPlLJbu
-         0hvaWv6DmnvjDs5m+MKTaJ/nWXJg+thEJsxEXMGjfYTdJgyv1+nNWRXk2mp9V+jgg9VV
-         HFTA==
-X-Gm-Message-State: AJIora9dWvwt7a80KeqGq8ZeE5mchcVpx4d1SqoKn2ErSX2Y3sNrxHPR
-        NrVaEYCDwg8ybO9kq23fW89HUw==
-X-Google-Smtp-Source: AGRyM1vt9yUrP6MoG5193YDPSXa0cl6x1FFMtkPhXDvjGRGTz4KSpoNBOFHZ2yK8hfpclXRzbZO0qA==
-X-Received: by 2002:a17:90b:1bc5:b0:1ee:9563:2fca with SMTP id oa5-20020a17090b1bc500b001ee95632fcamr46186864pjb.87.1657095538233;
-        Wed, 06 Jul 2022 01:18:58 -0700 (PDT)
-Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id k8-20020a170902c40800b0016bf2dc1724sm3158688plk.247.2022.07.06.01.18.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 01:18:57 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Qiang Yu <yuq825@gmail.com>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH V3.1 02/20] OPP: Make dev_pm_opp_set_regulators() accept NULL terminated list
-Date:   Wed,  6 Jul 2022 13:48:51 +0530
-Message-Id: <bcabb1a90a5158628ee1633c10f8886544723fb9.1657095331.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
-References: <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
+        with ESMTP id S232439AbiGFIjb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 04:39:31 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618C524975;
+        Wed,  6 Jul 2022 01:39:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fMe31QkWRy3Wq8bZH7KudABr15lw6i7L0XT0Gd+DI6wS1Q4B7lbPiDe2IG2rwpUuunc8HGH8aFXM7xjZExvQ3+1BFJeFkyo9+9M8oP9nZhXU/pDcj+7Dugs1n/32kDyKp/VpaEOuOSAJI3jOrOzYILqyGMYojaXfi8ZRQtTfNkst6MLNKk3fNtBQgkrOXREGmVr2BDlP6EtY6/FIMkXXHXumYqwlvWs9kUsirZW1Q4aBVSVLUhV7tTiWxvipBknbaFY3P5d1TTOSsGijv24qqy58HCjI9SoxlQT5zJf92wM4CndZWUgQO6bqUkAJynRexyn1DJ7ZYP1KcxfgZt6qRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sOgMGDFfhc2ZSrQ57p6nK3ZgOanQF84crkYrEDkckzk=;
+ b=f44wS0jPZmlmTZt0ap1qQYfDFJYUBBIXnH2WkU44j2ewxjTFnxZMg9oNXEPTDQPZ4CJpyXil86xU3/svxTbNFGEyuamoZH3HVizog6q/eZte3vMjzN4NN7qO9jFIrVmstgZoQPtVso9SMuUdxoYADAV11bW1RVzV5PqMAGuUCvokDH7bOi1k7hVOqogCrP8VdEQD0SGIWfVoSkfj0lgNkOCAd3vI32pryNrnMxmJiGJ4Sfziu2fzNoSUWqtllBcZT8oqXwWrIe8oobmgDopw4g9eRZ94PAoT5I7g64324pSNxZxDcBrcqOts1tYm1B5WxpfY7ObgeexqZNE3/CKHpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.234) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sOgMGDFfhc2ZSrQ57p6nK3ZgOanQF84crkYrEDkckzk=;
+ b=eMyvG+/9iUMBeDEC5v1c4AMCAaPhNbwdEmSahEfps4vKjT+67pXvyq7XK++UWDR8aOYBRhrJWhx+tTCDrM3zhihPUnoZVK5rEFhCL8zGacp5c1dKJEHGii9DxrI3ItSzF2g9MHA5nwNyQ3CpLlb/KvXbHnrNlY7zq1/7i9ccIRjYeIVGFfNMWARWv2UGH5P7vAiQ6UAeCuB7xmqzyuR2RpO5JcUC49PqD28W9jsH7w98hU7QfhIVwawmFLtyg39egepQyupN414ayejVMdKk1uNnTfU6ydDkMLxh32tJQcKnECgUNLTPz+k3mLj525y2S5PlJ16ky6qmh6XSa9BWuQ==
+Received: from CO2PR18CA0048.namprd18.prod.outlook.com (2603:10b6:104:2::16)
+ by SN1PR12MB2509.namprd12.prod.outlook.com (2603:10b6:802:29::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Wed, 6 Jul
+ 2022 08:39:28 +0000
+Received: from CO1NAM11FT056.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:104:2:cafe::2e) by CO2PR18CA0048.outlook.office365.com
+ (2603:10b6:104:2::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.21 via Frontend
+ Transport; Wed, 6 Jul 2022 08:39:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.234) by
+ CO1NAM11FT056.mail.protection.outlook.com (10.13.175.107) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5417.15 via Frontend Transport; Wed, 6 Jul 2022 08:39:27 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL101.nvidia.com
+ (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 6 Jul
+ 2022 08:39:26 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 6 Jul 2022
+ 01:39:26 -0700
+Received: from moonraker.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.986.26 via Frontend
+ Transport; Wed, 6 Jul 2022 01:39:23 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] net: stmmac: dwc-qos: Disable split header for Tegra194
+Date:   Wed, 6 Jul 2022 09:39:13 +0100
+Message-ID: <20220706083913.13750-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e298eb69-0bec-4c99-5632-08da5f2b09a1
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2509:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 12Ayo5S5gZh98rklk8qWzJUtuRJ1xPMlw07VCIqRxJv0thmjA+CbQHa61r/pIseUkgpVUpV0UHalefoRW8CBw70aJtmDxUqr4KLu/8kBGCashNO8T7Irxk3yoBR9GJFvol4Tra9jfeMOSXM+6mhWNKgg/yrTWOthzRr2Y4u5/n6ekyudpRpoI6ZvteoSV2lQlfu7LJhbXmvO/gGwt+WI++kMIH5FFe/rksXwH90Z89kYNqZuVi6/bkqZqWvCvRD95PJDBZWy73BzBEiNh9pczUvTEDJYe3dqPOCd7X2pc9WfgBHaZrPU2PTy5MAYSdrlaKunP2wNq/jOPqgOTtLtLMfluUPS9OroXVXr4aJShd2EZkBxkpoy1qewW417CBEfkSojdCqeveZ56RaxZUXsAQPZdHG3tGR9/DxstVR/l2IzZEtfNhzeQmDtdFd9RQ5Om72cJFwtXzjB3x00aQg5cRoTQV2aU3LNagvgF+Rx7ku+bTgYKb/cg6TcSnCCTepUW3X/9Tr9sVtsB/fHyGc2MoFoyriekglfKo/sZPl49sHD7dr9bF9nabcpvkAjrDnpTO3VbWutwy/dvwCRJYkaKHImCZTnjJVYWv62GVVDtnPERn5yHnQY5z545wXvPRc87Xkz+BtSYD3qgnsFIUU9pWH/541fTgv+f1ApmbNEj0ucApCCL+VaCfViysquqX5pczi1e6osd6eLA7FPwImfkLtjA1+kBzq5OMoKVnFqUoQ5BuWIAkMB52aiYXi78vEiKNitrUjgRRhWEZ3d1ib2pDYoDrKsvLXjtK0YfuakDRgkjtU+UdbpAFVu+NEH4R2d6YASIdDxcxcaDk5hk1SWIifBzZb0Z+dDUOX6e0iM4IsQkaDZNXZT0b08BwEEnl4/1lZU6jRfYUNo+KscVydi4Fy1B1R3UxQSvoysXr5Yix4LwN1fx3B11rvb68/JxWX8
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(396003)(376002)(346002)(39860400002)(40470700004)(46966006)(36840700001)(336012)(426003)(47076005)(36756003)(2906002)(40460700003)(6666004)(8936002)(81166007)(70586007)(1076003)(186003)(7696005)(41300700001)(7416002)(36860700001)(5660300002)(107886003)(86362001)(40480700001)(478600001)(70206006)(966005)(4326008)(2616005)(8676002)(82310400005)(26005)(82740400003)(316002)(54906003)(110136005)(356005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2022 08:39:27.5053
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e298eb69-0bec-4c99-5632-08da5f2b09a1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT056.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2509
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Make dev_pm_opp_set_regulators() accept a NULL terminated list of names
-instead of making the callers keep the two parameters in sync, which
-creates an opportunity for bugs to get in.
+There is a long-standing issue with the Synopsys DWC Ethernet driver
+for Tegra194 where random system crashes have been observed [0]. The
+problem occurs when the split header feature is enabled in the stmmac
+driver. In the bad case, a larger than expected buffer length is
+received and causes the calculation of the total buffer length to
+overflow. This results in a very large buffer length that causes the
+kernel to crash. Why this larger buffer length is received is not clear,
+however, the feedback from the NVIDIA design team is that the split
+header feature is not supported for Tegra194. Therefore, disable split
+header support for Tegra194 to prevent these random crashes from
+occurring.
 
-Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+[0] https://lore.kernel.org/linux-tegra/b0b17697-f23e-8fa5-3757-604a86f3a095@nvidia.com/
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
-V3->V3.1:
-- Update panfrost_drv.c to include the NULL element.
+ drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/cpufreq/cpufreq-dt.c                |  9 ++++-----
- drivers/cpufreq/ti-cpufreq.c                |  7 +++----
- drivers/devfreq/exynos-bus.c                |  4 ++--
- drivers/gpu/drm/lima/lima_devfreq.c         |  3 ++-
- drivers/gpu/drm/panfrost/panfrost_devfreq.c |  3 +--
- drivers/gpu/drm/panfrost/panfrost_drv.c     | 15 ++++++++++-----
- drivers/opp/core.c                          | 18 ++++++++++++------
- drivers/soc/tegra/pmc.c                     |  4 ++--
- include/linux/pm_opp.h                      |  9 ++++-----
- 9 files changed, 40 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index 8fcaba541539..be0c19b3ffa5 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -193,7 +193,7 @@ static int dt_cpufreq_early_init(struct device *dev, int cpu)
- 	struct private_data *priv;
- 	struct device *cpu_dev;
- 	bool fallback = false;
--	const char *reg_name;
-+	const char *reg_name[] = { NULL, NULL };
- 	int ret;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+index bc91fd867dcd..358fc26f8d1f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
+@@ -361,6 +361,7 @@ static int tegra_eqos_probe(struct platform_device *pdev,
+ 	data->fix_mac_speed = tegra_eqos_fix_speed;
+ 	data->init = tegra_eqos_init;
+ 	data->bsp_priv = eqos;
++	data->sph_disable = 1;
  
- 	/* Check if this CPU is already covered by some other policy */
-@@ -218,10 +218,9 @@ static int dt_cpufreq_early_init(struct device *dev, int cpu)
- 	 * OPP layer will be taking care of regulators now, but it needs to know
- 	 * the name of the regulator first.
- 	 */
--	reg_name = find_supply_name(cpu_dev);
--	if (reg_name) {
--		priv->opp_table = dev_pm_opp_set_regulators(cpu_dev, &reg_name,
--							    1);
-+	reg_name[0] = find_supply_name(cpu_dev);
-+	if (reg_name[0]) {
-+		priv->opp_table = dev_pm_opp_set_regulators(cpu_dev, reg_name);
- 		if (IS_ERR(priv->opp_table)) {
- 			ret = PTR_ERR(priv->opp_table);
- 			if (ret != -EPROBE_DEFER)
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index 8f9fdd864391..560d67a6bef1 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -173,7 +173,7 @@ static struct ti_cpufreq_soc_data omap34xx_soc_data = {
-  *    seems to always read as 0).
-  */
- 
--static const char * const omap3_reg_names[] = {"cpu0", "vbb"};
-+static const char * const omap3_reg_names[] = {"cpu0", "vbb", NULL};
- 
- static struct ti_cpufreq_soc_data omap36xx_soc_data = {
- 	.reg_names = omap3_reg_names,
-@@ -326,7 +326,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
- 	const struct of_device_id *match;
- 	struct opp_table *ti_opp_table;
- 	struct ti_cpufreq_data *opp_data;
--	const char * const default_reg_names[] = {"vdd", "vbb"};
-+	const char * const default_reg_names[] = {"vdd", "vbb", NULL};
- 	int ret;
- 
- 	match = dev_get_platdata(&pdev->dev);
-@@ -387,8 +387,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
- 		if (opp_data->soc_data->reg_names)
- 			reg_names = opp_data->soc_data->reg_names;
- 		ti_opp_table = dev_pm_opp_set_regulators(opp_data->cpu_dev,
--							 reg_names,
--							 ARRAY_SIZE(default_reg_names));
-+							 reg_names);
- 		if (IS_ERR(ti_opp_table)) {
- 			dev_pm_opp_put_supported_hw(opp_data->opp_table);
- 			ret =  PTR_ERR(ti_opp_table);
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index e689101abc93..541baff93ee8 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -180,10 +180,10 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
- {
- 	struct device *dev = bus->dev;
- 	struct opp_table *opp_table;
--	const char *vdd = "vdd";
-+	const char *supplies[] = { "vdd", NULL };
- 	int i, ret, count, size;
- 
--	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
-+	opp_table = dev_pm_opp_set_regulators(dev, supplies);
- 	if (IS_ERR(opp_table)) {
- 		ret = PTR_ERR(opp_table);
- 		dev_err(dev, "failed to set regulators %d\n", ret);
-diff --git a/drivers/gpu/drm/lima/lima_devfreq.c b/drivers/gpu/drm/lima/lima_devfreq.c
-index 8989e215dfc9..dc83c5421125 100644
---- a/drivers/gpu/drm/lima/lima_devfreq.c
-+++ b/drivers/gpu/drm/lima/lima_devfreq.c
-@@ -111,6 +111,7 @@ int lima_devfreq_init(struct lima_device *ldev)
- 	struct dev_pm_opp *opp;
- 	unsigned long cur_freq;
- 	int ret;
-+	const char *regulator_names[] = { "mali", NULL };
- 
- 	if (!device_property_present(dev, "operating-points-v2"))
- 		/* Optional, continue without devfreq */
-@@ -122,7 +123,7 @@ int lima_devfreq_init(struct lima_device *ldev)
- 	if (ret)
- 		return ret;
- 
--	ret = devm_pm_opp_set_regulators(dev, (const char *[]){ "mali" }, 1);
-+	ret = devm_pm_opp_set_regulators(dev, regulator_names);
- 	if (ret) {
- 		/* Continue if the optional regulator is missing */
- 		if (ret != -ENODEV)
-diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-index 194af7f607a6..5110cd9b2425 100644
---- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-@@ -101,8 +101,7 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
- 		return 0;
- 	}
- 
--	ret = devm_pm_opp_set_regulators(dev, pfdev->comp->supply_names,
--					 pfdev->comp->num_supplies);
-+	ret = devm_pm_opp_set_regulators(dev, pfdev->comp->supply_names);
- 	if (ret) {
- 		/* Continue if the optional regulator is missing */
- 		if (ret != -ENODEV) {
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index 7fcbc2a5b6cd..8a4bef65d38c 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -625,24 +625,29 @@ static int panfrost_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static const char * const default_supplies[] = { "mali" };
-+/*
-+ * The OPP core wants the supply names to be NULL terminated, but we need the
-+ * correct num_supplies value for regulator core. Hence, we NULL terminate here
-+ * and then initialize num_supplies with ARRAY_SIZE - 1.
-+ */
-+static const char * const default_supplies[] = { "mali", NULL };
- static const struct panfrost_compatible default_data = {
--	.num_supplies = ARRAY_SIZE(default_supplies),
-+	.num_supplies = ARRAY_SIZE(default_supplies) - 1,
- 	.supply_names = default_supplies,
- 	.num_pm_domains = 1, /* optional */
- 	.pm_domain_names = NULL,
- };
- 
- static const struct panfrost_compatible amlogic_data = {
--	.num_supplies = ARRAY_SIZE(default_supplies),
-+	.num_supplies = ARRAY_SIZE(default_supplies) - 1,
- 	.supply_names = default_supplies,
- 	.vendor_quirk = panfrost_gpu_amlogic_quirk,
- };
- 
--static const char * const mediatek_mt8183_supplies[] = { "mali", "sram" };
-+static const char * const mediatek_mt8183_supplies[] = { "mali", "sram", NULL };
- static const char * const mediatek_mt8183_pm_domains[] = { "core0", "core1", "core2" };
- static const struct panfrost_compatible mediatek_mt8183_data = {
--	.num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies),
-+	.num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies) - 1,
- 	.supply_names = mediatek_mt8183_supplies,
- 	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
- 	.pm_domain_names = mediatek_mt8183_pm_domains,
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index e166bfe5fc90..4e4593957ec5 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -2105,13 +2105,20 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_put_prop_name);
-  * This must be called before any OPPs are initialized for the device.
-  */
- struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
--					    const char * const names[],
--					    unsigned int count)
-+					    const char * const names[])
- {
- 	struct dev_pm_opp_supply *supplies;
-+	const char * const *temp = names;
- 	struct opp_table *opp_table;
- 	struct regulator *reg;
--	int ret, i;
-+	int count = 0, ret, i;
-+
-+	/* Count number of regulators */
-+	while (*temp++)
-+		count++;
-+
-+	if (!count)
-+		return ERR_PTR(-EINVAL);
- 
- 	opp_table = _add_opp_table(dev, false);
- 	if (IS_ERR(opp_table))
-@@ -2236,12 +2243,11 @@ static void devm_pm_opp_regulators_release(void *data)
-  * Return: 0 on success and errorno otherwise.
-  */
- int devm_pm_opp_set_regulators(struct device *dev,
--			       const char * const names[],
--			       unsigned int count)
-+			       const char * const names[])
- {
- 	struct opp_table *opp_table;
- 
--	opp_table = dev_pm_opp_set_regulators(dev, names, count);
-+	opp_table = dev_pm_opp_set_regulators(dev, names);
- 	if (IS_ERR(opp_table))
- 		return PTR_ERR(opp_table);
- 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 5611d14d3ba2..6a4b8f7e7948 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1384,7 +1384,7 @@ tegra_pmc_core_pd_opp_to_performance_state(struct generic_pm_domain *genpd,
- static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
- {
- 	struct generic_pm_domain *genpd;
--	const char *rname = "core";
-+	const char *rname[] = { "core", NULL};
- 	int err;
- 
- 	genpd = devm_kzalloc(pmc->dev, sizeof(*genpd), GFP_KERNEL);
-@@ -1395,7 +1395,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
- 	genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
- 	genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
- 
--	err = devm_pm_opp_set_regulators(pmc->dev, &rname, 1);
-+	err = devm_pm_opp_set_regulators(pmc->dev, rname);
- 	if (err)
- 		return dev_err_probe(pmc->dev, err,
- 				     "failed to set core OPP regulator\n");
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 6708b4ec244d..4c490865d574 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -159,9 +159,9 @@ void dev_pm_opp_put_supported_hw(struct opp_table *opp_table);
- int devm_pm_opp_set_supported_hw(struct device *dev, const u32 *versions, unsigned int count);
- struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, const char *name);
- void dev_pm_opp_put_prop_name(struct opp_table *opp_table);
--struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count);
-+struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[]);
- void dev_pm_opp_put_regulators(struct opp_table *opp_table);
--int devm_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count);
-+int devm_pm_opp_set_regulators(struct device *dev, const char * const names[]);
- struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char *name);
- void dev_pm_opp_put_clkname(struct opp_table *opp_table);
- int devm_pm_opp_set_clkname(struct device *dev, const char *name);
-@@ -379,7 +379,7 @@ static inline struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, con
- 
- static inline void dev_pm_opp_put_prop_name(struct opp_table *opp_table) {}
- 
--static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count)
-+static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[])
- {
- 	return ERR_PTR(-EOPNOTSUPP);
- }
-@@ -387,8 +387,7 @@ static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, co
- static inline void dev_pm_opp_put_regulators(struct opp_table *opp_table) {}
- 
- static inline int devm_pm_opp_set_regulators(struct device *dev,
--					     const char * const names[],
--					     unsigned int count)
-+					     const char * const names[])
- {
- 	return -EOPNOTSUPP;
- }
+ 	err = tegra_eqos_init(pdev, eqos);
+ 	if (err < 0)
 -- 
-2.31.1.272.g89b43f80a514
+2.25.1
 
