@@ -2,42 +2,42 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD58EC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jul 2022 00:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3F8C43334
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jul 2022 00:40:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234253AbiGGAZu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jul 2022 20:25:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54964 "EHLO
+        id S230452AbiGGAk3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jul 2022 20:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234149AbiGGAZt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 20:25:49 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2062.outbound.protection.outlook.com [40.107.94.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 834261EAE6;
-        Wed,  6 Jul 2022 17:25:48 -0700 (PDT)
+        with ESMTP id S229811AbiGGAk2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jul 2022 20:40:28 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2083.outbound.protection.outlook.com [40.107.223.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26EAB2B27A;
+        Wed,  6 Jul 2022 17:40:28 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j8/i3XcBEidSpmVzRD3Nb81i4UrHstTdaCf0fLYuXxFznsaQGhwjd/N7O7tmNj0MWVJIOBYZkFNBNzy0EalnPmfniGi6q8bzg8E3+vVQe1QoonQtndf6p0WsEA46MFjaZiqOYlKWm2Tr63qMJT4cMdYc1fD+6RMyOEaYAJrxFvYBTnjkvo9iSe/1SemA4TuDHqo+6ADvQZa7cvj7knVPBSD95ZiM2B+AxYbPsksVdWGzScZO1dMWZGVdd9dNKewRYe1NS9qtZDzt+A7yOY3xuQysHvoKNUIR7Noeh6+XQVeTLr/eHxiC11Wefg+AELkNOXQodyi7gFEl+PGGmolOGg==
+ b=bgqCRDUl6kuZM1ebZTssXYYUtQpk2fUij4021plkk2K0Ek+BMZ9ixhXMM5zlQDDnqVcsLwlBxh7HWAVsAHIoBZcOiJTyTKOwqm+3m5bpOWyVt9LJvOc53zpsCDpohbhPFPyAUJKN7B6aYDwzWIeeEGU7MKV33Fb+EnmPbwAVc+7gIYuddAbjc/JripbbJkI8+6/X0dS+I+bivXBWqTYXhnDk3qnJn8DuMbPn3WZmRILyLFjJsZSZpPRJzAoF/gJrXz9ZO9b8ISiwfySKl6+za2OvEI5snHZp9rDCOCZPBSh1ZV4NYU0MEaj7B8l0tgGiTgsSdWRKVnnbfX5WrRqX2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wyqyh0DndB//clh+s1DG0SXDBtfLvAjjuhYDqjo1OFQ=;
- b=FoIraeudt3FGMgWL0Y0Bt1jARvml2kv/8XfJvIY/fbGLAsRTnPqVquSxlIaN82dbEWsN2HNqv23lIz8TV7xKtxJgTI8FxxnuYD8SSr2xQVJSSYt1LAfsFPTlfi4wO84bUDGUqoCICjxXehWiXZVPcyLkTFXewrlg1Xe648501CPU3gulYKLg1dYRlWxlS8orCIX8U7H3D7NNpf8g5MbTq3IfjwXMeSqkg6KN3Lem78PrU83KZbxRivRwsEADXEb8m/TTvY63i7SOTFaZlPbp0kkFGHi/BE8o+Gxqe/foWbV3IQgIQxsvaHgAFTMVRV2CETITyCYRG3J5h0kdMYdK7Q==
+ bh=A/sm1mdL3GoaBITTkA2Zd6dcvS/Kmk4vivcnXkT7MAg=;
+ b=JNKRvq74LhCn3L6wDeSJtusFH7FTE5069kXcb2xe3tjl3nyPHwo+pi6+BAjdaBj3i+TrROsTbu2gGLs+DYuBkIuK8vObYE723Z5PM1rbK5MOA5qf64kYU+PgYRyagtLGO/29mH/0Lq0ZLBgsYB57va99ChSxC/3aUbn1QYNmxoj7yDs2v0ANwm6PNJhKeIb8acUxrq/quWcRm0bRmEVvxkJq6mdEkw+wsGG8Z46cjHtrj0ERhi97a9IpedU8XknYZVf0oN0Xd0KeaxEiwzKJbn66hutpqvOg/cBIIesIsYHoMXXTpi6YBYkr6fEWhH5GYUELoU1Y2ejGQoy3PHK4qg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wyqyh0DndB//clh+s1DG0SXDBtfLvAjjuhYDqjo1OFQ=;
- b=kgWPCqDvfiCN2ZQ6xowskIP98utKmDbmGnxJkxpMRkUbq42wbJBLZmepyc0GLtE6SFCToe2QcBV/GsO6Kzre1tzixISwGYHb2ITRs1x4HNs77hXQmYFyaZqXAq1N1om9wN9S2Y1/H5OnqAwJhExkwgVxdRc3Xq7Ag1n/EFdJVofeoI8L5BunCYg9DWvJhX7ElpZ6vwKUp8IuovY4/OAeC5qR9wVhs1jQlYv8DJRgEzYVe3/7kCKt7ktO3hZaq6KXDkYwOe9jNAo2Y9izsdJEouDZ+G0DiayiBG6Fd/mdrqN5zs8CRP/aBxxyz0Bov4jsG0aBDKMXI2/5XLE7GMl7ig==
+ bh=A/sm1mdL3GoaBITTkA2Zd6dcvS/Kmk4vivcnXkT7MAg=;
+ b=coM2DCctwYOHM4FIrnJDhiokf6Ss69AvzFx8YKedfiYWAwkN9laTilgYDfjeecHdAKUTgfxmGxRgzYU3BqH0QBpK5yFewNwhPBG2F94HhpvkDQESErZ9p3QomE45KaCja06Gb7r88UP5Q1QlHtvjPmKY+FNV/+a7HwfwyyZl9fqyKGNz/17i6pvlPwlpdLKbyJSheFSY6TU71ROiMXl82f80gCTf2/kEVXpQhKC4cgpfbMi6p/cvDH2+IGjegQv6y2yav09peGQXwraPbECPWpZ6Iu7205QLPqyUWDSmenzbfVoHaDh3XQ9Jf9kfGDJCIMy5N/61LZAiAejVFmtCkw==
 Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
- by BL3PR12MB6476.namprd12.prod.outlook.com (2603:10b6:208:3bc::8) with
+ by DM4PR12MB5891.namprd12.prod.outlook.com (2603:10b6:8:67::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.17; Thu, 7 Jul
- 2022 00:25:45 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.21; Thu, 7 Jul
+ 2022 00:40:26 +0000
 Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
  ([fe80::bd95:705e:9479:d8a]) by SJ0PR12MB5676.namprd12.prod.outlook.com
  ([fe80::bd95:705e:9479:d8a%5]) with mapi id 15.20.5395.020; Thu, 7 Jul 2022
- 00:25:45 +0000
+ 00:40:26 +0000
 From:   Besar Wicaksono <bwicaksono@nvidia.com>
 To:     Will Deacon <will@kernel.org>
 CC:     "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
@@ -57,17 +57,17 @@ CC:     "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
         "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
         "mike.leach@linaro.org" <mike.leach@linaro.org>,
         "leo.yan@linaro.org" <leo.yan@linaro.org>
-Subject: RE: [RESEND PATCH v3 1/2] perf: coresight_pmu: Add support for ARM
- CoreSight PMU driver
-Thread-Topic: [RESEND PATCH v3 1/2] perf: coresight_pmu: Add support for ARM
- CoreSight PMU driver
-Thread-Index: AQHYhTLreZhiUX+onkijjgrrTcbLR61jGS4AgA8LzXA=
-Date:   Thu, 7 Jul 2022 00:25:45 +0000
-Message-ID: <SJ0PR12MB56769B3B6A23A49F131E4CADA0839@SJ0PR12MB5676.namprd12.prod.outlook.com>
+Subject: RE: [RESEND PATCH v3 2/2] perf: coresight_pmu: Add support for NVIDIA
+ SCF and MCF attribute
+Thread-Topic: [RESEND PATCH v3 2/2] perf: coresight_pmu: Add support for
+ NVIDIA SCF and MCF attribute
+Thread-Index: AQHYhTLxxcyEPgAfs02S9hth/BTYH61jGWoAgA8O27A=
+Date:   Thu, 7 Jul 2022 00:40:26 +0000
+Message-ID: <SJ0PR12MB5676D57F1E19A51435CAF875A0839@SJ0PR12MB5676.namprd12.prod.outlook.com>
 References: <20220621055035.31766-1-bwicaksono@nvidia.com>
- <20220621055035.31766-2-bwicaksono@nvidia.com>
- <20220627103642.GB22095@willie-the-truck>
-In-Reply-To: <20220627103642.GB22095@willie-the-truck>
+ <20220621055035.31766-3-bwicaksono@nvidia.com>
+ <20220627103731.GC22095@willie-the-truck>
+In-Reply-To: <20220627103731.GC22095@willie-the-truck>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -75,63 +75,64 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 27e3b532-a1c2-4b75-da5f-08da5faf3bd6
-x-ms-traffictypediagnostic: BL3PR12MB6476:EE_
+x-ms-office365-filtering-correlation-id: 8cf9adb4-051f-4532-dc5a-08da5fb14907
+x-ms-traffictypediagnostic: DM4PR12MB5891:EE_
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: glpFo22S781XOg494kNbAxyemMRlB/oHqdngcL6tbFaFm4WlpibmycH8Ird22LOThOUaAMzqoI1PVnfOK1Fj9DUjMjhHTIuffWqlmha/ympCdou7xM3UV2pDJrMuSaD0TvPAewC5hxzWNuIVSe4ArnomCuZfsq41wL0AFxSyLC2fh7xH4A8CIZmwFpKBRGywBJNGCOP7j7m8GAEXwQnZzQCdzn9NqNQBePQ57errr7NmkWwipPw+gNDNroaDf19pXHxuY2aD5UqRiK8F1tQpVOTxzzz830gE/YDiEIhZMUPz09+IPGWpO1n5EmcAG4m1llq/AgTufOjpz2Q7bw7E1fhRplPJAlH/BUcQSpxCF6CCeT5uztLe+UxzccFbrZdC3hdVudcndyWnVGj0Kl4fUfMG3H4LocmhMoASyfoQUw0ezXnWX8KbPaCxMjCqZfBMAMeJl1442HHFbB1QrNG4WGzTVSCdq7yhnSni9DywcFa9rd5ssfRc4T97EJcSNTxDo7LrAqcR9oaCBI8Jyjbi1bi/XCaXv0KQE5s33ZAwu1nXVzYe/Cze1TnMmwDzVS3VcUN4zbtZilizKGgmGdymvvpsHBYVA8raok9HYBhLc779W8UCnbiD/8E1VsLBEFZkLX1tqsAhZV1vB4QGhYQCiEpCImv941qXxYa5YLoYPLAqyOysXKJ96kBoyMOX3l2W9vem2WJAuk2TzyazJffNhZA4/PFj3/wDZO93WuknQhGRxy3i4TgYTP9P91RqwMxxZgsLdJ8kKosrKzM2R8hTm1nJRSt3VpXaA0q1vBtvjzJGFTx9NFz3ctqwoZXyJhbpFXLAmX8YyLU5x1r2BMdHsomrAQreHOIx+DjolX9mCZ24g0q1t+Pz3Er3VSS4m2d/BiQH+ycTX6ck+8YBxmDl0GgnFOX4zmVXaMWOWj/PnNeghAwafBMYyeVQ9b9xpL9o
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(396003)(366004)(346002)(136003)(376002)(71200400001)(9686003)(26005)(2906002)(66446008)(6506007)(478600001)(4326008)(38070700005)(8676002)(55016003)(86362001)(7696005)(41300700001)(64756008)(53546011)(122000001)(966005)(33656002)(83380400001)(52536014)(186003)(54906003)(5660300002)(316002)(66476007)(6916009)(66556008)(7416002)(76116006)(8936002)(38100700002)(66946007);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: PYeACKV3LBoCaZ9Ztf04ztbh/1OHk2z5AGRjF59rvzXVpSkPXkl+eKFvjSyCU3urTktgCnNy0EQG1YOlhRHPV5udG1CiuAeyRsJvh53rGnKF2Y9CySDfpPvupk2+1ojigjJaZEDS9XRnCrwPuWqxLrqz009DTTFlvMfeRkyLk3fCP8ZOtNGWdN+De3Oi3zgXGqblsI69/8tyh61UzaZEhhZmYH3XcolMGGZYsXxgjIDIP8iLcgcoL9a/Gqaw0mcbts/l4w7Bp4LZ6eYeMxbWHmBiG3AjR7V7f8IjJgJpUsyYiN1BsMHSyEa0O2GtyPCZ6IOljLJ9glMWZqnvfjcGietumulcgtD9CY3fUtx6Zk0+MZQ7RemfY5UtkO2yhwSmAT5ylS7JsoQf5qfKpw+SYOaaBMTUjxCRdjau3oPBjeiI0c8mW1QCirt6ORtqvtiXeGBllVGuqUdPkBSF98HT+Vx2A9TWTOMk9Y5mSu85sbMKCrau2U7uyQsunukY6JataEUC7cHYIYi7vmxFqeJ/8VnwVH6Ul4InPtHfa32X21vzfHhRTByi0pum4o+kLgiJQMWe7QH9oCD/qmoxhljVFlK199njR1/fYpQoJ0uwTup19rEZL3kRwC04YanZJ1PtUI9HgDoMoCVBVejLfYfuwl70s6xI55ddOsFQ1AILu8P2Bd7HK60DTHR+47p4LSDOqlwj0wMVtrZcd84vVN7RMMZ7KoMeR57r5mTz+rv9A6gVeq1tnfWxxzPg/ES8+G+wuxeAlEHynt6ZLAQOPMr9opgNnbZLd08MSgFaAlvwBgM6TFH8k5//IyfpgQrybgkB
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(376002)(136003)(396003)(366004)(39860400002)(7696005)(26005)(6506007)(9686003)(71200400001)(38070700005)(186003)(83380400001)(122000001)(55016003)(33656002)(53546011)(2906002)(38100700002)(64756008)(478600001)(66556008)(316002)(5660300002)(86362001)(41300700001)(8936002)(7416002)(52536014)(6916009)(66446008)(4326008)(54906003)(76116006)(66476007)(8676002)(66946007);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?22Z39URWSqHikOIjhiYxM0AYTDCYXxBxlqHUBycy4AeSAE+nlZtb1fjtlgtN?=
- =?us-ascii?Q?gxmGzYaKff0MKRNP/eNOjt7sp+YUa6wf7fnSXHAX8R1UsUkeirdi419vFYqI?=
- =?us-ascii?Q?wlrbcSiLmqanMB//S04K5zzCzQe/ZltWCY00W5Mlo2h5B66zN09tRb7nloMN?=
- =?us-ascii?Q?OZJIsErvxagyHl3rG5PtJB7USRfiIo+IJ+ExaDcBKv/7ELxVLG4YLOQrIkQj?=
- =?us-ascii?Q?U5XB8G5Uo0hdvDVE2ldivooR56dlj8uo9DZxeisSCS0AZ2LU59c23vURESN0?=
- =?us-ascii?Q?muNl25HkD4ry97d4za+eZsCUV0fJpXx4Pfo/aoP0caC9YlhelnXf0g1kH5TA?=
- =?us-ascii?Q?IlzSJW7b0koJhAGpEVoBt/JhtLyarXdZDQs9QIrA7vSzOjhpg7JhuvyYk99G?=
- =?us-ascii?Q?NtNWJunzRgnXXeQFKb6I9XYiWYqZQTE4o26jyNyli2yMQyjtBKmtdrBmaMRD?=
- =?us-ascii?Q?n/Ab16xntL+2GjEIzbCWAhig5ItspyNHQwEMd2Z9vne08FP2cSs1vvmUAG0d?=
- =?us-ascii?Q?SwYQp1dGKb/Xh/oA0vYIqsIG1L6KEPdcBVm+yqpbtjt0YxYfzRpY3U5wWnE9?=
- =?us-ascii?Q?TmJLKNTpwyY9sTbgumKcp9RkdDfGGG/Efd6WoEWFLqZxFlpP9QOmjlhAbi1S?=
- =?us-ascii?Q?F4Nv3ewaeeGKczUMyFfdBYdUyXL9t6+P3KQwFe9NVogHw6yt02VSleXGpKE8?=
- =?us-ascii?Q?znlfa0+wx5D/1sfVctipcQx6ekj9w2TZlg2RL1V6+44xqLsuE/Aseh7GEST9?=
- =?us-ascii?Q?gXMMQiI34AOGEMfT1hTM4QznOCyjTzsxHel4TtIo0awxQfzD76NTh7+6tjGN?=
- =?us-ascii?Q?TGoSy/S0exaWUHy9TEXCSzWEBOSuPvhGlN4ahO0S2Qe/PhHDnD3qdI6dVlce?=
- =?us-ascii?Q?YOIJfJphhh38u1Dm0zrplrHgWdroJrzVvH2r8CEwy7kAo47p8oIaiafUTIw0?=
- =?us-ascii?Q?lbsNnEiOSgUsvbRNc5JjM63hzHsecu0Go/tOCK41H2olXv/ckt3l7uVX/cWi?=
- =?us-ascii?Q?NXr5/HS7KfyvNM2aHT6VUOMP7aFWxNx4d9K2bC27+Sy81c0Nj1WIguqqoruH?=
- =?us-ascii?Q?jXbnUQVXmV4+5KKjSqRngpe2SBT+dY7vRTkE8muLAgbmn/V8ybgKor3Kg2bg?=
- =?us-ascii?Q?Ti7WAw95WH6VrB0NbdqvP1UvGSSxt+4uFmmGwPV5TqHA5mXQz1po4N734YZh?=
- =?us-ascii?Q?7oqyXLGDy7CqhwNNQSw6vBkPwxcvFzCzIUKn87XMm1TRO3eTC92w+XXyDfYL?=
- =?us-ascii?Q?6/eAFVly3NUdHU7FB7fAXW2//EH+E1cL9FO54s1JRxIivltEmMRe5lfpMC1b?=
- =?us-ascii?Q?QhIn1ZCvTiPln8/qzaI96u8vEIzqL/SrxYPkUoR1Chv4hhIrZpvhiYbY6Ifi?=
- =?us-ascii?Q?dcSQYjjht8sGCEUmykzaOCLWrg1e2v2S9wmo8exK5twKWEIrq/VHbe4tluv4?=
- =?us-ascii?Q?jZEk0iYLdt+vSSJcgpoO8zhWjL0iDe3WB8EMgHDFIFG3R3Sk7hlEZ3W0iZj6?=
- =?us-ascii?Q?RhdXgANAmJxI5MmMbzeC1SQFnM6kR/LX9tLXdjv4zogoEydakjeP0dvciaNu?=
- =?us-ascii?Q?PhpLLJ0UIYcYUHsJD5UJ3UWWxjockZ+kPvoG08U6?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5/Tiea2eSwtFiyxcJt2Oi2GdNVYwvVQ/qqKGnX85mnM/zCiy9g7Evdhit176?=
+ =?us-ascii?Q?3iXAImVt6UqNZJ+KE5QM48B8BgS866O4XMkYW6FTcFf1vXQ59mC9oa8/DzKQ?=
+ =?us-ascii?Q?z42Ecax+0DrbsKEdGDIdufwG0cc6xgRJCrz9LHY0mrn+xeA2cjiUO8iB84EQ?=
+ =?us-ascii?Q?X6TDDY9GWTcRx6kNsDCFloUq4A42xmgRbWwHHwgOJqz4lmcu/iIb10FOm4D2?=
+ =?us-ascii?Q?nfzHjvEmvOrI2FawWZ3npVPGCD49TD6POChH43vU4o9/qGi8It7cpk677ily?=
+ =?us-ascii?Q?hcPSiECH1Ye6yftdr+J8gMBeNk9WVYqcvc/MUaqoUO620yVMbaIMfM3KY2hC?=
+ =?us-ascii?Q?njyVZw/6BWjnMqYAMLtFAFB543BHTg1+qeWrU2qbtyHTwqe8RntVmzJU5tQP?=
+ =?us-ascii?Q?YpDxEmxpPru3mzozEwkzDDU+c4r6NP/BUBvB4W4wBLGPOdZBNF+bVa8dGISm?=
+ =?us-ascii?Q?5JMAOnl3vlFJ1EJxxm/XQNZmPcy+jlMb6MBpZihZbYPQZGMAgNZXuA1VPlOu?=
+ =?us-ascii?Q?FgBDuoEEEMAci7i1mCSlFkxSJG5k3swEtj2eLExMB0Q/K2izp/VNLUUhcWwv?=
+ =?us-ascii?Q?NCnIDuuIB66UWpEFzxDzpjKzmmkk+dar3P+GHcofkOyzi0FVDubdJv+BZQKZ?=
+ =?us-ascii?Q?hsu+H3ikcYqFizb1UCz/ezRNVjeeGBSKAg5URKBjZUaq7R3p2JpwkDeu3a4S?=
+ =?us-ascii?Q?+CQhpGNdXLLyfqhlfVwlF0+HhE/xsikkQIJdyb5Fg+UrTwzanaPtUknNtK7F?=
+ =?us-ascii?Q?wOtSHAK00mtvZT84was3chHMrLHkaArx/2p/SyBPPY5UNOg97/+QmHWIao+4?=
+ =?us-ascii?Q?4mNcVow1AfkDrboaXGcq8s5KItlSf9eEmXnGSxgYiNJcGnjZ2VDaZazC5xNo?=
+ =?us-ascii?Q?biMkXFHPM0RfYKpi5YkX+HDl9sddAyWY8UJigG21rao/f+IjqAe7w1aNuLJn?=
+ =?us-ascii?Q?4gc118GkRUG9jCnD8PVW3jFbDA1pb7CT8WySMMnj/YudSsk8wmIzsJD23fDN?=
+ =?us-ascii?Q?4zn7ysicImqaD87RciUhsPJeXOtssC1msaZKNZdt0ax0dvo7gapz8XWdPESR?=
+ =?us-ascii?Q?4rVFfnQ0dpC4LAcSLcA7fFvDTOMhfmeytwFu7/X4dL9g057jfc+b85uBGwUj?=
+ =?us-ascii?Q?cXgM3Swyhe4i//zYOu2Up8pSZ75izqgKz/MappIrNOH1yQTS3S+xWWfEU5mu?=
+ =?us-ascii?Q?2BdZlTTgRxPtqIJEIgDOEVolluchJneenAiNxiGL3jHAFbjCduX+C6r5IQiX?=
+ =?us-ascii?Q?c7gONR6X8mNgbX7lj+gPzI69FvLr1Mc/CHXW/rSriZ6GQWfYKgnyUJGREP9Q?=
+ =?us-ascii?Q?QPQ0QfzWWKulFdQjNZvhsO1hy4Dp4nB1lwP6xZ0E27yR1W8RKgeeKYw9FfqH?=
+ =?us-ascii?Q?6Xqm58sxCGZnKU4bjxk6/Kwy2ZVBHYeLv4jC5e1bwg+STbNrLtDFnGqYtZIN?=
+ =?us-ascii?Q?4pZ3kHLSCnZzGtrngHbKXRma30NA3Sok4Nn9l6rTP68o2QbaJ3t8n6swZjON?=
+ =?us-ascii?Q?56w1bN3yYLQnFReS1BOof+1DDqrdhMDq6h1KG2hkysbsbBiA5PYXiW8TDw+o?=
+ =?us-ascii?Q?4acxqiijrGLT/4byjqVNUWmKokJ+omWrARxlMa8n?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27e3b532-a1c2-4b75-da5f-08da5faf3bd6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jul 2022 00:25:45.4041
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cf9adb4-051f-4532-dc5a-08da5fb14907
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jul 2022 00:40:26.4823
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: trVIQjXso9SPjqIust8NGbz6HB8O3gSjk95NauvG8U1q7Da1xdDfBbGJqmtZGY35CAjtzjxJR/fmAftH6ZJ6Dw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6476
+X-MS-Exchange-CrossTenant-userprincipalname: 6aQNVrsaYdMxpJedjfI0g+8SKb5kHYdnwia9EE3dWpJdJmliL5NQI5ta9rVxdhDl2xHwNKlO04DJPv866t7STw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5891
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
+
 > -----Original Message-----
 > From: Will Deacon <will@kernel.org>
-> Sent: Monday, June 27, 2022 5:37 PM
+> Sent: Monday, June 27, 2022 5:38 PM
 > To: Besar Wicaksono <bwicaksono@nvidia.com>
 > Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
 > catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
@@ -141,100 +142,37 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 > <treding@nvidia.com>; Jonathan Hunter <jonathanh@nvidia.com>; Vikram
 > Sethi <vsethi@nvidia.com>; mathieu.poirier@linaro.org;
 > mike.leach@linaro.org; leo.yan@linaro.org
-> Subject: Re: [RESEND PATCH v3 1/2] perf: coresight_pmu: Add support for
-> ARM CoreSight PMU driver
+> Subject: Re: [RESEND PATCH v3 2/2] perf: coresight_pmu: Add support for
+> NVIDIA SCF and MCF attribute
 >=20
 > External email: Use caution opening links or attachments
 >=20
 >=20
-> On Tue, Jun 21, 2022 at 12:50:34AM -0500, Besar Wicaksono wrote:
-> > Add support for ARM CoreSight PMU driver framework and interfaces.
-> > The driver provides generic implementation to operate uncore PMU based
-> > on ARM CoreSight PMU architecture. The driver also provides interface
-> > to get vendor/implementation specific information, for example event
-> > attributes and formating.
-> >
-> > The specification used in this implementation can be found below:
-> >  * ACPI Arm Performance Monitoring Unit table:
-> >         https://developer.arm.com/documentation/den0117/latest
-> >  * ARM Coresight PMU architecture:
-> >         https://developer.arm.com/documentation/ihi0091/latest
+> On Tue, Jun 21, 2022 at 12:50:35AM -0500, Besar Wicaksono wrote:
+> > Add support for NVIDIA System Cache Fabric (SCF) and Memory Control
+> > Fabric (MCF) PMU attributes for CoreSight PMU implementation in
+> > NVIDIA devices.
 > >
 > > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 > > ---
-> >  arch/arm64/configs/defconfig                  |    1 +
-> >  drivers/perf/Kconfig                          |    2 +
-> >  drivers/perf/Makefile                         |    1 +
-> >  drivers/perf/coresight_pmu/Kconfig            |   11 +
-> >  drivers/perf/coresight_pmu/Makefile           |    6 +
-> >  .../perf/coresight_pmu/arm_coresight_pmu.c    | 1312
-> +++++++++++++++++
-> >  .../perf/coresight_pmu/arm_coresight_pmu.h    |  177 +++
-> >  7 files changed, 1510 insertions(+)
-> >  create mode 100644 drivers/perf/coresight_pmu/Kconfig
-> >  create mode 100644 drivers/perf/coresight_pmu/Makefile
-> >  create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu.c
-> >  create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu.h
-> >
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfi=
-g
-> > index 7d1105343bc2..22184f8883da 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -1212,6 +1212,7 @@ CONFIG_PHY_UNIPHIER_USB3=3Dy
-> >  CONFIG_PHY_TEGRA_XUSB=3Dy
-> >  CONFIG_PHY_AM654_SERDES=3Dm
-> >  CONFIG_PHY_J721E_WIZ=3Dm
-> > +CONFIG_ARM_CORESIGHT_PMU=3Dy
-> >  CONFIG_ARM_SMMU_V3_PMU=3Dm
-> >  CONFIG_FSL_IMX8_DDR_PMU=3Dm
-> >  CONFIG_QCOM_L2_PMU=3Dy
-> > diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-> > index 1e2d69453771..c4e7cd5b4162 100644
-> > --- a/drivers/perf/Kconfig
-> > +++ b/drivers/perf/Kconfig
-> > @@ -192,4 +192,6 @@ config MARVELL_CN10K_DDR_PMU
-> >         Enable perf support for Marvell DDR Performance monitoring
-> >         event on CN10K platform.
-> >
-> > +source "drivers/perf/coresight_pmu/Kconfig"
-> > +
-> >  endmenu
-> > diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-> > index 57a279c61df5..4126a04b5583 100644
-> > --- a/drivers/perf/Makefile
-> > +++ b/drivers/perf/Makefile
-> > @@ -20,3 +20,4 @@ obj-$(CONFIG_ARM_DMC620_PMU) +=3D
-> arm_dmc620_pmu.o
-> >  obj-$(CONFIG_MARVELL_CN10K_TAD_PMU) +=3D
-> marvell_cn10k_tad_pmu.o
-> >  obj-$(CONFIG_MARVELL_CN10K_DDR_PMU) +=3D
-> marvell_cn10k_ddr_pmu.o
-> >  obj-$(CONFIG_APPLE_M1_CPU_PMU) +=3D apple_m1_cpu_pmu.o
-> > +obj-$(CONFIG_ARM_CORESIGHT_PMU) +=3D coresight_pmu/
-> > diff --git a/drivers/perf/coresight_pmu/Kconfig
-> b/drivers/perf/coresight_pmu/Kconfig
-> > new file mode 100644
-> > index 000000000000..89174f54c7be
-> > --- /dev/null
-> > +++ b/drivers/perf/coresight_pmu/Kconfig
-> > @@ -0,0 +1,11 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +#
-> > +# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> > +
-> > +config ARM_CORESIGHT_PMU
-> > +     tristate "ARM Coresight PMU"
-> > +     depends on ACPI
-> > +     depends on ACPI_APMT || COMPILE_TEST
+> >  drivers/perf/coresight_pmu/Makefile           |   3 +-
+> >  .../perf/coresight_pmu/arm_coresight_pmu.c    |   4 +
+> >  .../coresight_pmu/arm_coresight_pmu_nvidia.c  | 312
+> ++++++++++++++++++
+> >  .../coresight_pmu/arm_coresight_pmu_nvidia.h  |  17 +
+> >  4 files changed, 335 insertions(+), 1 deletion(-)
+> >  create mode 100644
+> drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.c
+> >  create mode 100644
+> drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.h
 >=20
-> ACPI_APMT doesn't exist in my tree. What's missing here?
+> Please can you include some documentation along with this driver? See
+> Documentation/admin-guide/perf/ for examples of other PMUs.
 >=20
 > Will
 
-It is missing the APMT support patch in: https://lkml.org/lkml/2022/4/19/13=
-95
-I will add this reference to the driver patch cover letter.
+Thank you for the pointer.
+I will include the documentation in the next revision.
 
-Regards.
+Regards,
 Besar
