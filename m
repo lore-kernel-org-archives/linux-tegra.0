@@ -2,417 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087DEC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jul 2022 07:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4741CCA48B
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jul 2022 08:09:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbiGGHsz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Jul 2022 03:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36474 "EHLO
+        id S235397AbiGGIJX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Jul 2022 04:09:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235099AbiGGHsl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jul 2022 03:48:41 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD6DB32076;
-        Thu,  7 Jul 2022 00:48:36 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id o4so25097382wrh.3;
-        Thu, 07 Jul 2022 00:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f9nLTCidfnrhmXifqG1XQtiik+IMQK61AWbNeVnQJug=;
-        b=COxPdk+QiA9hqXD15/35Y59dlziEZHl9Mel3By4DMFp9kA1AKLdKLEcuc0JwbADkBd
-         DxoNwH+VmpZiHB3eTHCc7jK3eCDwhfD7SGJe5AMhVR5VfdcmmTSxaOhUbm/1daU2HMxo
-         LG+8gS9SlS9/mNIWuLgQoyOMsIEACvzJA6axCHh6pAemRoozwT0abNGr18UHeYdMeaZT
-         epkd60xBCwdBmKxvYD9cDuGKnxoztdWXFECWt8ZW8IS30m68XXmCpRTCvSMNVjInSWul
-         CBSGWzhBttew5ehOCgk/5Gf0Fl5zIiU8ggoUXsmoX1fVr7Nv9S0+hhtWoZkKXWLSjae0
-         HnGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f9nLTCidfnrhmXifqG1XQtiik+IMQK61AWbNeVnQJug=;
-        b=IMWwOevvWoSVl8ogrH2UAd15Rlq9lwawLSCPo1MA1ngNnAU9SzavJGI6lRUJVMVpk8
-         33F4n1BZVU0REBuDt6wy31he4PeFtmfVAoe4mjNqr7wYS37RPO3Z5rs0enYKm9SUpJVG
-         mG04+3nvn2G818IIU1cH3Bup147q87HU/sromDstYRpevzcg95uw9CfKMAFlQUTTGyT8
-         TiDFZsWLOYBnOitlMLHnKPSpgv4GiwuGj8C/IzjQ4Gb0OjDzykl86ZFhwRGR4s0g7dFP
-         SAcqFz5KVDTG9s85fzKVOdPjy+Qa2InLK1KST+/sH02RgZnWiIjXsHXhnu8K2Vv3lbyg
-         l6pg==
-X-Gm-Message-State: AJIora+Empb964tL78dAqGOB6ORTppWKcU32dLtVpnMRL5WoQo70It9F
-        iTtLqeaziZBE0BHVD8v0PiE=
-X-Google-Smtp-Source: AGRyM1umeORrvq7hOAosAYPuDdg+MWwN3qIG30DhfJC6NU5Xxf/xoytLKFkKU3ZG6wIk8Vd07u+gFA==
-X-Received: by 2002:a5d:5747:0:b0:21d:65e9:be07 with SMTP id q7-20020a5d5747000000b0021d65e9be07mr21879807wrw.215.1657180115009;
-        Thu, 07 Jul 2022 00:48:35 -0700 (PDT)
-Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b15-20020adff90f000000b0021b90cc66a1sm37586100wrr.2.2022.07.07.00.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 00:48:34 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bhadram Varka <vbhadram@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH net-next v4 9/9] stmmac: tegra: Add MGBE support
-Date:   Thu,  7 Jul 2022 09:48:18 +0200
-Message-Id: <20220707074818.1481776-10-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220707074818.1481776-1-thierry.reding@gmail.com>
-References: <20220707074818.1481776-1-thierry.reding@gmail.com>
+        with ESMTP id S235287AbiGGIIq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jul 2022 04:08:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC77C4D165;
+        Thu,  7 Jul 2022 01:08:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 057A961F51;
+        Thu,  7 Jul 2022 08:08:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8D2C3411E;
+        Thu,  7 Jul 2022 08:08:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1657181316;
+        bh=Mzw+guaGxcvS7S4YlQr9bq/AYy4U/puT8v9DMSRjm+c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=o8T0RPLH1+QXuxRGiOx0iOcZa4PNW1RYnmq0rwqP4JlY+PYLChMX98BzUOmDLYQt5
+         WHtgniPDP3fJS/IKoiVXIaVBC8g4rRYZFs4Es7HO3CMez5153+NrgRKDzbP84fxvsI
+         PrLKzhYgkU2Ze+gIXne4sqvbIkFu3tT1lxy0BeOk=
+Date:   Thu, 7 Jul 2022 10:08:33 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     kernel test robot <lkp@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        usbb2k-api-dev@nongnu.org, tipc-discussion@lists.sourceforge.net,
+        target-devel@vger.kernel.org, sound-open-firmware@alsa-project.org,
+        samba-technical@lists.samba.org, rds-devel@oss.oracle.com,
+        patches@opensource.cirrus.com, osmocom-net-gprs@lists.osmocom.org,
+        openipmi-developer@lists.sourceforge.net, nvdimm@lists.linux.dev,
+        ntb@lists.linux.dev, netfilter-devel@vger.kernel.org,
+        netdev@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
+        megaraidlinux.pdl@broadcom.com, linuxppc-dev@lists.ozlabs.org,
+        linux1394-devel@lists.sourceforge.net, linux-x25@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-parport@lists.infradead.org,
+        linux-parisc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-nfc@lists.01.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+        linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linaro-mm-sig@lists.linaro.org,
+        legousb-devel@lists.sourceforge.net, kvm@vger.kernel.org,
+        keyrings@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
+        iommu@lists.linux.dev, iommu@lists.linux-foundation.org,
+        intel-wired-lan@lists.osuosl.org, greybus-dev@lists.linaro.org,
+        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
+        devicetree@vger.kernel.org, dev@openvswitch.org,
+        dccp@vger.kernel.org, damon@lists.linux.dev,
+        coreteam@netfilter.org, cgroups@vger.kernel.org,
+        ceph-devel@vger.kernel.org, ath11k@lists.infradead.org,
+        apparmor@lists.ubuntu.com, amd-gfx@lists.freedesktop.org,
+        alsa-devel@alsa-project.org,
+        accessrunner-general@lists.sourceforge.net
+Subject: Re: [linux-next:master] BUILD REGRESSION
+ 088b9c375534d905a4d337c78db3b3bfbb52c4a0
+Message-ID: <YsaUgfPbOg7WuBuB@kroah.com>
+References: <62c683a2.g1VSVt6BrQC6ZzOz%lkp@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62c683a2.g1VSVt6BrQC6ZzOz%lkp@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Bhadram Varka <vbhadram@nvidia.com>
+On Thu, Jul 07, 2022 at 02:56:34PM +0800, kernel test robot wrote:
+> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+> branch HEAD: 088b9c375534d905a4d337c78db3b3bfbb52c4a0  Add linux-next specific files for 20220706
+> 
+> Error/Warning reports:
+> 
+> https://lore.kernel.org/linux-doc/202207070644.x48XOOvs-lkp@intel.com
+> 
+> Error/Warning: (recently discovered and may have been fixed)
+> 
+> Documentation/arm/google/chromebook-boot-flow.rst: WARNING: document isn't included in any toctree
+> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1108): undefined reference to `__aeabi_ddiv'
+> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1124): undefined reference to `__aeabi_ui2d'
+> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1164): undefined reference to `__aeabi_dmul'
+> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1170): undefined reference to `__aeabi_dadd'
+> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1180): undefined reference to `__aeabi_dsub'
+> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1190): undefined reference to `__aeabi_d2uiz'
+> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x162c): undefined reference to `__aeabi_d2iz'
+> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x16b0): undefined reference to `__aeabi_i2d'
+> dc_dmub_srv.c:(.text+0x10f8): undefined reference to `__aeabi_ui2d'
+> dc_dmub_srv.c:(.text+0x464): undefined reference to `__floatunsidf'
+> dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x33c): undefined reference to `__floatunsidf'
+> drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
+> drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
+> drivers/vfio/vfio_iommu_type1.c:2141:35: warning: cast to smaller integer type 'enum iommu_cap' from 'void *' [-Wvoid-pointer-to-enum-cast]
+> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x34c): undefined reference to `__floatunsidf'
+> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x378): undefined reference to `__divdf3'
+> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x38c): undefined reference to `__muldf3'
+> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3a0): undefined reference to `__adddf3'
+> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3b4): undefined reference to `__subdf3'
+> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3d4): undefined reference to `__fixunsdfsi'
+> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x750): undefined reference to `__fixdfsi'
+> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x7c0): undefined reference to `__floatsidf'
+> powerpc-linux-ld: drivers/pci/endpoint/functions/pci-epf-vntb.c:174: undefined reference to `ntb_link_event'
+> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x468): undefined reference to `__divdf3'
+> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x46c): undefined reference to `__muldf3'
+> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x470): undefined reference to `__adddf3'
+> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x474): undefined reference to `__subdf3'
+> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x478): undefined reference to `__fixunsdfsi'
+> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x47c): undefined reference to `__fixdfsi'
+> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x480): undefined reference to `__floatsidf'
+> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x60c): undefined reference to `__floatunsidf'
+> 
+> Unverified Error/Warning (likely false positive, please contact us if interested):
+> 
+> arch/x86/events/core.c:2114 init_hw_perf_events() warn: missing error code 'err'
+> drivers/android/binder.c:1481:19-23: ERROR: from is NULL but dereferenced.
+> drivers/android/binder.c:2920:29-33: ERROR: target_thread is NULL but dereferenced.
+> drivers/android/binder.c:353:25-35: ERROR: node -> proc is NULL but dereferenced.
+> drivers/android/binder.c:4888:16-20: ERROR: t is NULL but dereferenced.
+> drivers/base/regmap/regmap.c:1996:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> drivers/char/random.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> drivers/gpu/drm/amd/display/dc/os_types.h: drm/drm_print.h is included more than once.
+> drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> drivers/greybus/operation.c:617:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
 
-Add support for the Multi-Gigabit Ethernet (MGBE/XPCS) IP found on
-NVIDIA Tegra234 SoCs.
+<snip>
 
-Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Note that this doesn't have any dependencies on any of the patches
-earlier in the series, so this can be applied independently.
+When the compiler crashes, why are you blaming all of these different
+mailing lists?  Perhaps you need to fix your compiler :)
 
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |   6 +
- drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
- .../net/ethernet/stmicro/stmmac/dwmac-tegra.c | 290 ++++++++++++++++++
- 3 files changed, 297 insertions(+)
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+thanks,
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 929cfc22cd0c..47af5a59ce88 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -232,6 +232,12 @@ config DWMAC_INTEL_PLAT
- 	  the stmmac device driver. This driver is used for the Intel Keem Bay
- 	  SoC.
- 
-+config DWMAC_TEGRA
-+	tristate "NVIDIA Tegra MGBE support"
-+	depends on ARCH_TEGRA || COMPILE_TEST
-+	help
-+	  Support for the MGBE controller found on Tegra SoCs.
-+
- config DWMAC_VISCONTI
- 	tristate "Toshiba Visconti DWMAC support"
- 	default ARCH_VISCONTI
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
-index d4e12e9ace4f..057e4bab5c08 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Makefile
-+++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_DWMAC_DWC_QOS_ETH)	+= dwmac-dwc-qos-eth.o
- obj-$(CONFIG_DWMAC_INTEL_PLAT)	+= dwmac-intel-plat.o
- obj-$(CONFIG_DWMAC_GENERIC)	+= dwmac-generic.o
- obj-$(CONFIG_DWMAC_IMX8)	+= dwmac-imx.o
-+obj-$(CONFIG_DWMAC_TEGRA)	+= dwmac-tegra.o
- obj-$(CONFIG_DWMAC_VISCONTI)	+= dwmac-visconti.o
- stmmac-platform-objs:= stmmac_platform.o
- dwmac-altr-socfpga-objs := altr_tse_pcs.o dwmac-socfpga.o
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-new file mode 100644
-index 000000000000..bb4b540820fa
---- /dev/null
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-@@ -0,0 +1,290 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/platform_device.h>
-+#include <linux/of_device.h>
-+#include <linux/module.h>
-+#include <linux/stmmac.h>
-+#include <linux/clk.h>
-+
-+#include "stmmac_platform.h"
-+
-+static const char *const mgbe_clks[] = {
-+	"rx-pcs", "tx", "tx-pcs", "mac-divider", "mac", "mgbe", "ptp-ref", "mac"
-+};
-+
-+struct tegra_mgbe {
-+	struct device *dev;
-+
-+	struct clk_bulk_data *clks;
-+
-+	struct reset_control *rst_mac;
-+	struct reset_control *rst_pcs;
-+
-+	void __iomem *hv;
-+	void __iomem *regs;
-+	void __iomem *xpcs;
-+
-+	struct mii_bus *mii;
-+};
-+
-+#define XPCS_WRAP_UPHY_RX_CONTROL 0x801c
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_SW_OVRD BIT(31)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_PCS_PHY_RDY BIT(10)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET BIT(9)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN BIT(8)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_SLEEP (BIT(7) | BIT(6))
-+#define XPCS_WRAP_UPHY_RX_CONTROL_AUX_RX_IDDQ BIT(5)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_IDDQ BIT(4)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_DATA_EN BIT(0)
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL 0x8020
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN BIT(0)
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL_RX_EN BIT(2)
-+#define XPCS_WRAP_UPHY_STATUS 0x8044
-+#define XPCS_WRAP_UPHY_STATUS_TX_P_UP BIT(0)
-+#define XPCS_WRAP_IRQ_STATUS 0x8050
-+#define XPCS_WRAP_IRQ_STATUS_PCS_LINK_STS BIT(6)
-+
-+#define XPCS_REG_ADDR_SHIFT 10
-+#define XPCS_REG_ADDR_MASK 0x1fff
-+#define XPCS_ADDR 0x3fc
-+
-+#define MGBE_WRAP_COMMON_INTR_ENABLE	0x8704
-+#define MAC_SBD_INTR			BIT(2)
-+#define MGBE_WRAP_AXI_ASID0_CTRL	0x8400
-+#define MGBE_SID			0x6
-+
-+static void mgbe_uphy_lane_bringup(struct tegra_mgbe *mgbe)
-+{
-+	unsigned int retry = 300;
-+	u32 value;
-+	int err;
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_STATUS);
-+	if ((value & XPCS_WRAP_UPHY_STATUS_TX_P_UP) == 0) {
-+		value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL);
-+		value |= XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN;
-+		writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL);
-+	}
-+
-+	err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL, value,
-+				 (value & XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN) == 0,
-+				 500, 500 * 2000);
-+	if (err < 0)
-+		dev_err(mgbe->dev, "timeout waiting for TX lane to become enabled\n");
-+
-+	usleep_range(10000, 20000);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_SW_OVRD;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_IDDQ;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_AUX_RX_IDDQ;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_SLEEP;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL, value,
-+				 (value & XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN) == 0,
-+				 1000, 1000 * 2000);
-+	if (err < 0)
-+		dev_err(mgbe->dev, "timeout waiting for RX calibration to become enabled\n");
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_DATA_EN;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_PCS_PHY_RDY;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	while (--retry) {
-+		err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_IRQ_STATUS, value,
-+					 value & XPCS_WRAP_IRQ_STATUS_PCS_LINK_STS,
-+					 500, 500 * 2000);
-+		if (err < 0) {
-+			dev_err(mgbe->dev, "timeout waiting for link to become ready\n");
-+			usleep_range(10000, 20000);
-+			continue;
-+		}
-+		break;
-+	}
-+
-+	/* clear status */
-+	writel(value, mgbe->xpcs + XPCS_WRAP_IRQ_STATUS);
-+}
-+
-+static int tegra_mgbe_probe(struct platform_device *pdev)
-+{
-+	struct plat_stmmacenet_data *plat;
-+	struct stmmac_resources res;
-+	struct tegra_mgbe *mgbe;
-+	int irq, err, i;
-+
-+	mgbe = devm_kzalloc(&pdev->dev, sizeof(*mgbe), GFP_KERNEL);
-+	if (!mgbe)
-+		return -ENOMEM;
-+
-+	mgbe->dev = &pdev->dev;
-+
-+	memset(&res, 0, sizeof(res));
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	mgbe->hv = devm_platform_ioremap_resource_byname(pdev, "hypervisor");
-+	if (IS_ERR(mgbe->hv))
-+		return PTR_ERR(mgbe->hv);
-+
-+	mgbe->regs = devm_platform_ioremap_resource_byname(pdev, "mac");
-+	if (IS_ERR(mgbe->regs))
-+		return PTR_ERR(mgbe->regs);
-+
-+	mgbe->xpcs = devm_platform_ioremap_resource_byname(pdev, "xpcs");
-+	if (IS_ERR(mgbe->xpcs))
-+		return PTR_ERR(mgbe->xpcs);
-+
-+	res.addr = mgbe->regs;
-+	res.irq = irq;
-+
-+	mgbe->clks = devm_kzalloc(&pdev->dev, sizeof(*mgbe->clks), GFP_KERNEL);
-+	if (!mgbe->clks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i <  ARRAY_SIZE(mgbe_clks); i++)
-+		mgbe->clks[i].id = mgbe_clks[i];
-+
-+	err = devm_clk_bulk_get(mgbe->dev, ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+	if (err < 0)
-+		return err;
-+
-+	err = clk_bulk_prepare_enable(ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+	if (err < 0)
-+		return err;
-+
-+	/* Perform MAC reset */
-+	mgbe->rst_mac = devm_reset_control_get(&pdev->dev, "mac");
-+	if (IS_ERR(mgbe->rst_mac))
-+		return PTR_ERR(mgbe->rst_mac);
-+
-+	err = reset_control_assert(mgbe->rst_mac);
-+	if (err < 0)
-+		return err;
-+
-+	usleep_range(2000, 4000);
-+
-+	err = reset_control_deassert(mgbe->rst_mac);
-+	if (err < 0)
-+		return err;
-+
-+	/* Perform PCS reset */
-+	mgbe->rst_pcs = devm_reset_control_get(&pdev->dev, "pcs");
-+	if (IS_ERR(mgbe->rst_pcs))
-+		return PTR_ERR(mgbe->rst_pcs);
-+
-+	err = reset_control_assert(mgbe->rst_pcs);
-+	if (err < 0)
-+		return err;
-+
-+	usleep_range(2000, 4000);
-+
-+	err = reset_control_deassert(mgbe->rst_pcs);
-+	if (err < 0)
-+		return err;
-+
-+	plat = stmmac_probe_config_dt(pdev, res.mac);
-+	if (IS_ERR(plat))
-+		return PTR_ERR(plat);
-+
-+	plat->has_xgmac = 1;
-+	plat->tso_en = 1;
-+	plat->pmt = 1;
-+	plat->bsp_priv = mgbe;
-+
-+	if (!plat->mdio_node)
-+		plat->mdio_node = of_get_child_by_name(pdev->dev.of_node, "mdio");
-+
-+	if (!plat->mdio_bus_data) {
-+		plat->mdio_bus_data = devm_kzalloc(&pdev->dev, sizeof(*plat->mdio_bus_data),
-+						   GFP_KERNEL);
-+		if (!plat->mdio_bus_data) {
-+			err = -ENOMEM;
-+			goto remove;
-+		}
-+	}
-+
-+	plat->mdio_bus_data->needs_reset = true;
-+
-+	mgbe_uphy_lane_bringup(mgbe);
-+
-+	/* Tx FIFO Size - 128KB */
-+	plat->tx_fifo_size = 131072;
-+	/* Rx FIFO Size - 192KB */
-+	plat->rx_fifo_size = 196608;
-+
-+	/* Enable common interrupt at wrapper level */
-+	writel(MAC_SBD_INTR, mgbe->regs + MGBE_WRAP_COMMON_INTR_ENABLE);
-+
-+	/* Program SID */
-+	writel(MGBE_SID, mgbe->hv + MGBE_WRAP_AXI_ASID0_CTRL);
-+
-+	err = stmmac_dvr_probe(&pdev->dev, plat, &res);
-+	if (err < 0)
-+		goto remove;
-+
-+	return 0;
-+
-+remove:
-+	stmmac_remove_config_dt(pdev, plat);
-+	return err;
-+}
-+
-+static int tegra_mgbe_remove(struct platform_device *pdev)
-+{
-+	struct tegra_mgbe *mgbe = get_stmmac_bsp_priv(&pdev->dev);
-+
-+	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+
-+	stmmac_pltfr_remove(pdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra_mgbe_match[] = {
-+	{ .compatible = "nvidia,tegra234-mgbe", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tegra_mgbe_match);
-+
-+static struct platform_driver tegra_mgbe_driver = {
-+	.probe = tegra_mgbe_probe,
-+	.remove = tegra_mgbe_remove,
-+	.driver = {
-+		.name = "tegra-mgbe",
-+		.pm		= &stmmac_pltfr_pm_ops,
-+		.of_match_table = tegra_mgbe_match,
-+	},
-+};
-+module_platform_driver(tegra_mgbe_driver);
-+
-+MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
-+MODULE_DESCRIPTION("NVIDIA Tegra MGBE driver");
-+MODULE_LICENSE("GPL");
--- 
-2.36.1
-
+greg k-h
