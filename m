@@ -2,402 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279D8C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jul 2022 11:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A8EC43334
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jul 2022 12:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235392AbiGGLHy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Jul 2022 07:07:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56068 "EHLO
+        id S235395AbiGGM1y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Jul 2022 08:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235385AbiGGLHw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jul 2022 07:07:52 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EA3A359245;
-        Thu,  7 Jul 2022 04:07:48 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 178F61063;
-        Thu,  7 Jul 2022 04:07:49 -0700 (PDT)
-Received: from [10.57.86.163] (unknown [10.57.86.163])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21DFB3F66F;
-        Thu,  7 Jul 2022 04:07:45 -0700 (PDT)
-Message-ID: <6c418ba1-36a6-1d54-6908-6235d8155904@arm.com>
-Date:   Thu, 7 Jul 2022 12:07:44 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: [RESEND PATCH v3 2/2] perf: coresight_pmu: Add support for NVIDIA
- SCF and MCF attribute
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, robin.murphy@arm.com,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sudeep.holla@arm.com,
-        thanu.rangarajan@arm.com, Michael.Williams@arm.com,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-        mathieu.poirier@linaro.org, mike.leach@linaro.org,
-        leo.yan@linaro.org
-References: <20220621055035.31766-1-bwicaksono@nvidia.com>
- <20220621055035.31766-3-bwicaksono@nvidia.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20220621055035.31766-3-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S235072AbiGGM1y (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jul 2022 08:27:54 -0400
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61B052251F;
+        Thu,  7 Jul 2022 05:27:53 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id v185so16632929ioe.11;
+        Thu, 07 Jul 2022 05:27:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=cMPT7f9qv5sQO6WNbfFTELIdIiXOvBw5cTsisXNHniQ=;
+        b=H1v4dAcR3R+lnwYPtIEQCKBk7xLj9VCoRBs0Y1HShtJqQDfLCIm17VSiC8FnDGT5b4
+         yW+uvtGzJlqQkD9mGjrkkcUMagPURP/6DMGcc74P5JDwxvUYEKOEBck2WE2Ii9Oyh5Tr
+         B/0KDpjRposrsw5ntBPJV44s36jTzTuRfdZJfcaMf9EkKYn82fHsI+/YsDoeXHtJB7ET
+         8IOYkYVZpx3+27XAEB4bNsv+wQ3vGBdbl2Ylm0x4naBVU1o80UIQgETYLEVhY7OOcS4r
+         Hx82jNbAJ5eWKLP1wRDPJKNfErDdP6HMK+npE35aYjUNf6CzwsHTGm9W8mxBck5v6GVX
+         sAkg==
+X-Gm-Message-State: AJIora+K1PVEpO/QX0l73UCIK67S+rDVFNfa3XNPEoIypmzKIpK3zP3A
+        r3oZieVND5qRKD863jmpLA==
+X-Google-Smtp-Source: AGRyM1tZlHGQo0cV0eRw2oO9lgiCjvxMu4CTwm0ERhDKTH/9dm5gg9bF2hOLr7xmiE2qJa9CFxMU5Q==
+X-Received: by 2002:a5e:a506:0:b0:66a:2cdc:e6f7 with SMTP id 6-20020a5ea506000000b0066a2cdce6f7mr25146629iog.113.1657196872555;
+        Thu, 07 Jul 2022 05:27:52 -0700 (PDT)
+Received: from robh.at.kernel.org ([98.38.210.73])
+        by smtp.gmail.com with ESMTPSA id z23-20020a05663803b700b00331c06bf620sm12890894jap.154.2022.07.07.05.27.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jul 2022 05:27:52 -0700 (PDT)
+Received: (nullmailer pid 1454232 invoked by uid 1000);
+        Thu, 07 Jul 2022 12:27:51 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     kthota@nvidia.com, sagar.tv@gmail.com, lpieralisi@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        kishon@ti.com, robh+dt@kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        gustavo.pimentel@synopsys.com, linux-tegra@vger.kernel.org,
+        thierry.reding@gmail.com, mmaddireddy@nvidia.com,
+        jingoohan1@gmail.com, kw@linux.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20220707081301.29961-4-vidyas@nvidia.com>
+References: <20220707081301.29961-1-vidyas@nvidia.com> <20220707081301.29961-4-vidyas@nvidia.com>
+Subject: Re: [PATCH V4 3/9] dt-bindings: PCI: tegra234: Add schema for tegra234 endpoint mode
+Date:   Thu, 07 Jul 2022 06:27:51 -0600
+Message-Id: <1657196871.476299.1454231.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21/06/2022 06:50, Besar Wicaksono wrote:
-> Add support for NVIDIA System Cache Fabric (SCF) and Memory Control
-> Fabric (MCF) PMU attributes for CoreSight PMU implementation in
-> NVIDIA devices.
+On Thu, 07 Jul 2022 13:42:55 +0530, Vidya Sagar wrote:
+> Add support for PCIe controllers that operate in the endpoint mode
+> in tegra234 chipset.
 > 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
->   drivers/perf/coresight_pmu/Makefile           |   3 +-
->   .../perf/coresight_pmu/arm_coresight_pmu.c    |   4 +
->   .../coresight_pmu/arm_coresight_pmu_nvidia.c  | 312 ++++++++++++++++++
->   .../coresight_pmu/arm_coresight_pmu_nvidia.h  |  17 +
->   4 files changed, 335 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.c
->   create mode 100644 drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.h
+> V4:
+> * Rebased on top of previous patch
 > 
-> diff --git a/drivers/perf/coresight_pmu/Makefile b/drivers/perf/coresight_pmu/Makefile
-> index a2a7a5fbbc16..181b1b0dbaa1 100644
-> --- a/drivers/perf/coresight_pmu/Makefile
-> +++ b/drivers/perf/coresight_pmu/Makefile
-> @@ -3,4 +3,5 @@
->   # SPDX-License-Identifier: GPL-2.0
->   
->   obj-$(CONFIG_ARM_CORESIGHT_PMU) += \
-> -	arm_coresight_pmu.o
-> +	arm_coresight_pmu.o \
-> +	arm_coresight_pmu_nvidia.o
-> diff --git a/drivers/perf/coresight_pmu/arm_coresight_pmu.c b/drivers/perf/coresight_pmu/arm_coresight_pmu.c
-> index ba52cc592b2d..12179d029bfd 100644
-> --- a/drivers/perf/coresight_pmu/arm_coresight_pmu.c
-> +++ b/drivers/perf/coresight_pmu/arm_coresight_pmu.c
-> @@ -42,6 +42,7 @@
->   #include <acpi/processor.h>
->   
->   #include "arm_coresight_pmu.h"
-> +#include "arm_coresight_pmu_nvidia.h"
->   
->   #define PMUNAME "arm_system_pmu"
->   
-> @@ -396,6 +397,9 @@ struct impl_match {
->   };
->   
->   static const struct impl_match impl_match[] = {
-> +	{ .pmiidr = 0x36B,
-> +	  .mask = PMIIDR_IMPLEMENTER_MASK,
-> +	  .impl_init_ops = nv_coresight_init_ops },
->   	{}
->   };
->   
-> diff --git a/drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.c b/drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.c
-> new file mode 100644
-> index 000000000000..54f4eae4c529
-> --- /dev/null
-> +++ b/drivers/perf/coresight_pmu/arm_coresight_pmu_nvidia.c
-> @@ -0,0 +1,312 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> + *
-> + */
-> +
-> +/* Support for NVIDIA specific attributes. */
-> +
-> +#include "arm_coresight_pmu_nvidia.h"
-> +
-> +#define NV_MCF_PCIE_PORT_COUNT		10ULL
-> +#define NV_MCF_PCIE_FILTER_ID_MASK	((1ULL << NV_MCF_PCIE_PORT_COUNT) - 1)
-> +
-> +#define NV_MCF_GPU_PORT_COUNT		2ULL
-> +#define NV_MCF_GPU_FILTER_ID_MASK	((1ULL << NV_MCF_GPU_PORT_COUNT) - 1)
-> +
-> +#define NV_MCF_NVLINK_PORT_COUNT	4ULL
-> +#define NV_MCF_NVLINK_FILTER_ID_MASK	((1ULL << NV_MCF_NVLINK_PORT_COUNT) - 1)
-> +
-> +#define PMIIDR_PRODUCTID_MASK		0xFFF
-> +#define PMIIDR_PRODUCTID_SHIFT		20
-> +
-> +#define to_nv_pmu_impl(coresight_pmu)	\
-> +	(container_of(coresight_pmu->impl.ops, struct nv_pmu_impl, ops))
-> +
-> +#define CORESIGHT_EVENT_ATTR_4_INNER(_pref, _num, _suff, _config)	\
-> +	CORESIGHT_EVENT_ATTR(_pref##_num##_suff, _config)
-> +
-> +#define CORESIGHT_EVENT_ATTR_4(_pref, _suff, _config)			\
-> +	CORESIGHT_EVENT_ATTR_4_INNER(_pref, _0_, _suff, _config),	\
-> +	CORESIGHT_EVENT_ATTR_4_INNER(_pref, _1_, _suff, _config + 1),	\
-> +	CORESIGHT_EVENT_ATTR_4_INNER(_pref, _2_, _suff, _config + 2),	\
-> +	CORESIGHT_EVENT_ATTR_4_INNER(_pref, _3_, _suff, _config + 3)
-> +
-> +struct nv_pmu_impl {
-> +	struct coresight_pmu_impl_ops ops;
-> +	const char *name;
-> +	u32 filter_mask;
-> +	struct attribute **event_attr;
-> +	struct attribute **format_attr;
-> +};
-> +
-> +static struct attribute *scf_pmu_event_attrs[] = {
-> +	CORESIGHT_EVENT_ATTR(bus_cycles,			0x1d),
-> +
-> +	CORESIGHT_EVENT_ATTR(scf_cache_allocate,		0xF0),
-> +	CORESIGHT_EVENT_ATTR(scf_cache_refill,			0xF1),
-> +	CORESIGHT_EVENT_ATTR(scf_cache,				0xF2),
-> +	CORESIGHT_EVENT_ATTR(scf_cache_wb,			0xF3),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(socket, rd_data,			0x101),
-> +	CORESIGHT_EVENT_ATTR_4(socket, dl_rsp,			0x105),
-> +	CORESIGHT_EVENT_ATTR_4(socket, wb_data,			0x109),
-> +	CORESIGHT_EVENT_ATTR_4(socket, ev_rsp,			0x10d),
-> +	CORESIGHT_EVENT_ATTR_4(socket, prb_data,		0x111),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(socket, rd_outstanding,		0x115),
-> +	CORESIGHT_EVENT_ATTR_4(socket, dl_outstanding,		0x119),
-> +	CORESIGHT_EVENT_ATTR_4(socket, wb_outstanding,		0x11d),
-> +	CORESIGHT_EVENT_ATTR_4(socket, wr_outstanding,		0x121),
-> +	CORESIGHT_EVENT_ATTR_4(socket, ev_outstanding,		0x125),
-> +	CORESIGHT_EVENT_ATTR_4(socket, prb_outstanding,		0x129),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(socket, rd_access,		0x12d),
-> +	CORESIGHT_EVENT_ATTR_4(socket, dl_access,		0x131),
-> +	CORESIGHT_EVENT_ATTR_4(socket, wb_access,		0x135),
-> +	CORESIGHT_EVENT_ATTR_4(socket, wr_access,		0x139),
-> +	CORESIGHT_EVENT_ATTR_4(socket, ev_access,		0x13d),
-> +	CORESIGHT_EVENT_ATTR_4(socket, prb_access,		0x141),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_rd_data,		0x145),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_rd_access,		0x149),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_wb_access,		0x14d),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_rd_outstanding,	0x151),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_wr_outstanding,	0x155),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_rd_data,		0x159),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_rd_access,		0x15d),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_wb_access,		0x161),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_rd_outstanding,		0x165),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_wr_outstanding,		0x169),
-> +
-> +	CORESIGHT_EVENT_ATTR(gmem_rd_data,			0x16d),
-> +	CORESIGHT_EVENT_ATTR(gmem_rd_access,			0x16e),
-> +	CORESIGHT_EVENT_ATTR(gmem_rd_outstanding,		0x16f),
-> +	CORESIGHT_EVENT_ATTR(gmem_dl_rsp,			0x170),
-> +	CORESIGHT_EVENT_ATTR(gmem_dl_access,			0x171),
-> +	CORESIGHT_EVENT_ATTR(gmem_dl_outstanding,		0x172),
-> +	CORESIGHT_EVENT_ATTR(gmem_wb_data,			0x173),
-> +	CORESIGHT_EVENT_ATTR(gmem_wb_access,			0x174),
-> +	CORESIGHT_EVENT_ATTR(gmem_wb_outstanding,		0x175),
-> +	CORESIGHT_EVENT_ATTR(gmem_ev_rsp,			0x176),
-> +	CORESIGHT_EVENT_ATTR(gmem_ev_access,			0x177),
-> +	CORESIGHT_EVENT_ATTR(gmem_ev_outstanding,		0x178),
-> +	CORESIGHT_EVENT_ATTR(gmem_wr_data,			0x179),
-> +	CORESIGHT_EVENT_ATTR(gmem_wr_outstanding,		0x17a),
-> +	CORESIGHT_EVENT_ATTR(gmem_wr_access,			0x17b),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(socket, wr_data,			0x17c),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_wr_data,		0x180),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_wb_data,		0x184),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_wr_access,		0x188),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, gmem_wb_outstanding,	0x18c),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_wr_data,		0x190),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_wb_data,		0x194),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_wr_access,		0x198),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, rem_wb_outstanding,		0x19c),
-> +
-> +	CORESIGHT_EVENT_ATTR(gmem_wr_total_bytes,		0x1a0),
-> +	CORESIGHT_EVENT_ATTR(remote_socket_wr_total_bytes,	0x1a1),
-> +	CORESIGHT_EVENT_ATTR(remote_socket_rd_data,		0x1a2),
-> +	CORESIGHT_EVENT_ATTR(remote_socket_rd_outstanding,	0x1a3),
-> +	CORESIGHT_EVENT_ATTR(remote_socket_rd_access,		0x1a4),
-> +
-> +	CORESIGHT_EVENT_ATTR(cmem_rd_data,			0x1a5),
-> +	CORESIGHT_EVENT_ATTR(cmem_rd_access,			0x1a6),
-> +	CORESIGHT_EVENT_ATTR(cmem_rd_outstanding,		0x1a7),
-> +	CORESIGHT_EVENT_ATTR(cmem_dl_rsp,			0x1a8),
-> +	CORESIGHT_EVENT_ATTR(cmem_dl_access,			0x1a9),
-> +	CORESIGHT_EVENT_ATTR(cmem_dl_outstanding,		0x1aa),
-> +	CORESIGHT_EVENT_ATTR(cmem_wb_data,			0x1ab),
-> +	CORESIGHT_EVENT_ATTR(cmem_wb_access,			0x1ac),
-> +	CORESIGHT_EVENT_ATTR(cmem_wb_outstanding,		0x1ad),
-> +	CORESIGHT_EVENT_ATTR(cmem_ev_rsp,			0x1ae),
-> +	CORESIGHT_EVENT_ATTR(cmem_ev_access,			0x1af),
-> +	CORESIGHT_EVENT_ATTR(cmem_ev_outstanding,		0x1b0),
-> +	CORESIGHT_EVENT_ATTR(cmem_wr_data,			0x1b1),
-> +	CORESIGHT_EVENT_ATTR(cmem_wr_outstanding,		0x1b2),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_rd_data,		0x1b3),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_rd_access,		0x1b7),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_wb_access,		0x1bb),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_rd_outstanding,	0x1bf),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_wr_outstanding,	0x1c3),
-> +
-> +	CORESIGHT_EVENT_ATTR(ocu_prb_access,			0x1c7),
-> +	CORESIGHT_EVENT_ATTR(ocu_prb_data,			0x1c8),
-> +	CORESIGHT_EVENT_ATTR(ocu_prb_outstanding,		0x1c9),
-> +
-> +	CORESIGHT_EVENT_ATTR(cmem_wr_access,			0x1ca),
-> +
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_wr_access,		0x1cb),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_wb_data,		0x1cf),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_wr_data,		0x1d3),
-> +	CORESIGHT_EVENT_ATTR_4(ocu, cmem_wb_outstanding,	0x1d7),
-> +
-> +	CORESIGHT_EVENT_ATTR(cmem_wr_total_bytes,		0x1db),
-> +
-> +	CORESIGHT_EVENT_ATTR(cycles, CORESIGHT_PMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *mcf_pmu_event_attrs[] = {
-> +	CORESIGHT_EVENT_ATTR(rd_bytes_loc,			0x0),
-> +	CORESIGHT_EVENT_ATTR(rd_bytes_rem,			0x1),
-> +	CORESIGHT_EVENT_ATTR(wr_bytes_loc,			0x2),
-> +	CORESIGHT_EVENT_ATTR(wr_bytes_rem,			0x3),
-> +	CORESIGHT_EVENT_ATTR(total_bytes_loc,			0x4),
-> +	CORESIGHT_EVENT_ATTR(total_bytes_rem,			0x5),
-> +	CORESIGHT_EVENT_ATTR(rd_req_loc,			0x6),
-> +	CORESIGHT_EVENT_ATTR(rd_req_rem,			0x7),
-> +	CORESIGHT_EVENT_ATTR(wr_req_loc,			0x8),
-> +	CORESIGHT_EVENT_ATTR(wr_req_rem,			0x9),
-> +	CORESIGHT_EVENT_ATTR(total_req_loc,			0xa),
-> +	CORESIGHT_EVENT_ATTR(total_req_rem,			0xb),
-> +	CORESIGHT_EVENT_ATTR(rd_cum_outs_loc,			0xc),
-> +	CORESIGHT_EVENT_ATTR(rd_cum_outs_rem,			0xd),
-> +	CORESIGHT_EVENT_ATTR(cycles, CORESIGHT_PMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *scf_pmu_format_attrs[] = {
-> +	CORESIGHT_FORMAT_EVENT_ATTR,
-> +	NULL,
-> +};
-> +
-> +static struct attribute *mcf_pcie_pmu_format_attrs[] = {
-> +	CORESIGHT_FORMAT_EVENT_ATTR,
-> +	CORESIGHT_FORMAT_ATTR(root_port, "config1:0-9"),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *mcf_gpu_pmu_format_attrs[] = {
-> +	CORESIGHT_FORMAT_EVENT_ATTR,
-> +	CORESIGHT_FORMAT_ATTR(gpu, "config1:0-1"),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *mcf_nvlink_pmu_format_attrs[] = {
-> +	CORESIGHT_FORMAT_EVENT_ATTR,
-> +	CORESIGHT_FORMAT_ATTR(socket, "config1:0-3"),
-> +	NULL,
-> +};
-> +
-> +static struct attribute **
-> +nv_coresight_pmu_get_event_attrs(const struct coresight_pmu *coresight_pmu)
-> +{
-> +	const struct nv_pmu_impl *impl = to_nv_pmu_impl(coresight_pmu);
-> +
-> +	return impl->event_attr;
-> +}
-> +
-> +static struct attribute **
-> +nv_coresight_pmu_get_format_attrs(const struct coresight_pmu *coresight_pmu)
-> +{
-> +	const struct nv_pmu_impl *impl = to_nv_pmu_impl(coresight_pmu);
-> +
-> +	return impl->format_attr;
-> +}
-> +
-> +static const char *
-> +nv_coresight_pmu_get_name(const struct coresight_pmu *coresight_pmu)
-> +{
-> +	const struct nv_pmu_impl *impl = to_nv_pmu_impl(coresight_pmu);
-> +
-> +	return impl->name;
-> +}
-> +
-> +static u32 nv_coresight_pmu_event_filter(const struct perf_event *event)
-> +{
-> +	const struct nv_pmu_impl *impl =
-> +		to_nv_pmu_impl(to_coresight_pmu(event->pmu));
-> +	return event->attr.config1 & impl->filter_mask;
-> +}
-> +
-> +int nv_coresight_init_ops(struct coresight_pmu *coresight_pmu)
-> +{
-> +	u32 product_id;
-> +	struct device *dev;
-> +	struct nv_pmu_impl *impl;
-> +	static atomic_t pmu_idx = {0};
-> +
-> +	dev = coresight_pmu->dev;
-> +
-> +	impl = devm_kzalloc(dev, sizeof(struct nv_pmu_impl), GFP_KERNEL);
-> +	if (!impl)
-> +		return -ENOMEM;
-> +
-> +	product_id = (coresight_pmu->impl.pmiidr >> PMIIDR_PRODUCTID_SHIFT) &
-> +		     PMIIDR_PRODUCTID_MASK;
-> +
-> +	switch (product_id) {
-> +	case 0x103:
-> +		impl->name =
-> +			devm_kasprintf(dev, GFP_KERNEL,
-> +				       "nvidia_mcf_pcie_pmu_%u",
-> +				       coresight_pmu->apmt_node->proc_affinity);
-> +		impl->filter_mask	= NV_MCF_PCIE_FILTER_ID_MASK;
-> +		impl->event_attr	= mcf_pmu_event_attrs;
-> +		impl->format_attr	= mcf_pcie_pmu_format_attrs;
-> +		break;
-> +	case 0x104:
-> +		impl->name =
-> +			devm_kasprintf(dev, GFP_KERNEL,
-> +				       "nvidia_mcf_gpuvir_pmu_%u",
-> +				       coresight_pmu->apmt_node->proc_affinity);
-> +		impl->filter_mask	= NV_MCF_GPU_FILTER_ID_MASK;
-> +		impl->event_attr	= mcf_pmu_event_attrs;
-> +		impl->format_attr	= mcf_gpu_pmu_format_attrs;
-> +		break;
-> +	case 0x105:
-> +		impl->name =
-> +			devm_kasprintf(dev, GFP_KERNEL,
-> +				       "nvidia_mcf_gpu_pmu_%u",
-> +				       coresight_pmu->apmt_node->proc_affinity);
-> +		impl->filter_mask	= NV_MCF_GPU_FILTER_ID_MASK;
-> +		impl->event_attr	= mcf_pmu_event_attrs;
-> +		impl->format_attr	= mcf_gpu_pmu_format_attrs;
-> +		break;
-> +	case 0x106:
-> +		impl->name =
-> +			devm_kasprintf(dev, GFP_KERNEL,
-> +				       "nvidia_mcf_nvlink_pmu_%u",
-> +				       coresight_pmu->apmt_node->proc_affinity);
-> +		impl->filter_mask	= NV_MCF_NVLINK_FILTER_ID_MASK;
-> +		impl->event_attr	= mcf_pmu_event_attrs;
-> +		impl->format_attr	= mcf_nvlink_pmu_format_attrs;
-> +		break;
-> +	case 0x2CF:
-> +		impl->name =
-> +			devm_kasprintf(dev, GFP_KERNEL, "nvidia_scf_pmu_%u",
-> +				       coresight_pmu->apmt_node->proc_affinity);
-> +		impl->filter_mask	= 0x0;
-> +		impl->event_attr	= scf_pmu_event_attrs;
-> +		impl->format_attr	= scf_pmu_format_attrs;
-> +		break;
-> +	default:
-> +		impl->name =
-> +			devm_kasprintf(dev, GFP_KERNEL, "nvidia_uncore_pmu_%u",
-> +				       atomic_fetch_inc(&pmu_idx));
-> +		impl->filter_mask = CORESIGHT_FILTER_MASK;
-> +		impl->event_attr  = coresight_pmu_get_event_attrs(coresight_pmu);
-> +		impl->format_attr =
-> +			coresight_pmu_get_format_attrs(coresight_pmu);
+> V3:
+> * New patch in this series
+> 
+>  .../bindings/pci/nvidia,tegra194-pcie-ep.yaml | 123 +++++++++++++++++-
+>  1 file changed, 117 insertions(+), 6 deletions(-)
+> 
 
-Couldn't we make the generic driver fall back to these routines if a 
-"IP" pmu specific backend doesn't implement these callback ?
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Thanks
-Suzuki
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.example.dtb: pcie-ep@141a0000: Unevaluated properties are not allowed ('nvidia,enable-ext-refclk' was unexpected)
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
