@@ -2,83 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D90F6C43334
-	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jul 2022 00:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90528C43334
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jul 2022 07:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbiGHAUQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Jul 2022 20:20:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36142 "EHLO
+        id S237494AbiGHHTl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Jul 2022 03:19:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbiGHAUQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jul 2022 20:20:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1160F6EEA1;
-        Thu,  7 Jul 2022 17:20:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A238A625FA;
-        Fri,  8 Jul 2022 00:20:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EFA2AC341D1;
-        Fri,  8 Jul 2022 00:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657239614;
-        bh=xr331W5Ea/ycBBI8aMRJXuRpjaog4l4hqCjwl3e4p0I=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=A/rue9HgG6TGNfqlsk1bmfUtjBTY3WlEfkrB/odlebe1uimzQPltbkq1kU1TO8Jq1
-         yILd0McT7t/Sw2PrJzSsTzulm2xByX/zvzgj+px5Xo1PWFunoqg/tFDc0rou30f0Pz
-         M5EirYMC4s/6a3ChrdKeefa8etZ/6lTA1pcSaKRMWMwYCPDJCfhPnnbar/X4+wtqZd
-         XJK6ukt0BVdGELEjAFW4jlBiXWgoGjz0z5FY5+J1gcwgUVC2HCY6OVlaQWI8dNonDf
-         I0IMj2tbsD9Uvn6Aj0VG8eXH89eex9n/45zG+/8BSubZj1o85wsU3NL9wjwBt955o/
-         mysCYXxQuA0cw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DBCF8E45BDC;
-        Fri,  8 Jul 2022 00:20:13 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S237496AbiGHHTb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jul 2022 03:19:31 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6867B34F
+        for <linux-tegra@vger.kernel.org>; Fri,  8 Jul 2022 00:19:29 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id o31-20020a17090a0a2200b001ef7bd037bbso1025977pjo.0
+        for <linux-tegra@vger.kernel.org>; Fri, 08 Jul 2022 00:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=EgcXrxFHPmhqBnO22Uw6rifkBWhXEzlsDV2ZenDVWU8=;
+        b=vU39rQY3c+OTwi/QX2HZiMp2QYsUfvKVx2zn6usRNfHNsEfY+XQm1hgSEt4DdABj+R
+         BNsKnJ7MNpcIJ3+RU9Xqpq2+vUIjMIbjPjfiW/L0ullDWw21nN4N7vhcmv9SwjIm/reZ
+         0D6JU2d9CJ09Uy6StGdnWRtxkxuDmur0f0cmeLDZfwiqOQe8OWeEPFtx8+yMSWPwbqDh
+         mHd9z+NvBtNPrG9qafH6kWzHyUnKF204fzpR+3+mmVpqMb44pI7uLQ2v1zNL8yHKQflj
+         tBOuwVHw7jOuNuV7I1YgF9/MVnEm1wR5ZcB7JzrDsprZEO05MU8Y+95LmzCspoQJTJ7A
+         Cu4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EgcXrxFHPmhqBnO22Uw6rifkBWhXEzlsDV2ZenDVWU8=;
+        b=BpiraN3ITm+VDvaRTkOjwXeDR74IojsAYKxQueA7+U+af9rd6gBEbmJqV2Sf12+pbO
+         RxIYKCWQeDNNOX5TzHeju04GmG0jRnEEvhxSExQuRL7/zGgE5Q4bJ4HPdSULeYtpm25f
+         76poMvZnf3jeBKywDqKQNRGRixTd3N2kDAw2u44pus3AE9F/yGgcrSnFyuwS/T6MN+6D
+         QQ5b7HjQ1kUFKS/2faZn3M8L82XJpnIrOjcbtLjji9SMbJrofNmO5j/ms7ZJAp/RdSnY
+         CEzw4Vj28IoUrqmlUgu1f8md+pJjaByRBmCk5h/F+QmHRZ4qc0er/Q4mppxvchIFDED7
+         PAdQ==
+X-Gm-Message-State: AJIora9rtUoyK55QXjk3ZLLbO8QjcQYL9NcQw0TDRw1IPRRio/7kj8Gw
+        q7toCbKh4ixQafjJO9ZKGhyZYg==
+X-Google-Smtp-Source: AGRyM1vZo8QUsmyZeVSd3mpHaBtw97+PUE+4i7ZXdQ6ibzdXhyINZfsmvaA1cspDz6ZTmsUrV7/sBw==
+X-Received: by 2002:a17:90b:1807:b0:1ef:8aa5:1158 with SMTP id lw7-20020a17090b180700b001ef8aa51158mr10339270pjb.163.1657264768818;
+        Fri, 08 Jul 2022 00:19:28 -0700 (PDT)
+Received: from localhost ([122.171.18.80])
+        by smtp.gmail.com with ESMTPSA id j17-20020a170902da9100b0016be7a89ac9sm9777958plx.94.2022.07.08.00.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Jul 2022 00:19:28 -0700 (PDT)
+Date:   Fri, 8 Jul 2022 12:49:26 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V2 00/13] OPP: Add support for multiple clocks*
+Message-ID: <20220708071926.zehurtbcf35s5tv6@vireshk-i7>
+References: <cover.1657003420.git.viresh.kumar@linaro.org>
+ <d557bbd0-2afb-12dc-1287-1aeb44ef55f5@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: stmmac: dwc-qos: Disable split header for Tegra194
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165723961389.9316.14613536179831335249.git-patchwork-notify@kernel.org>
-Date:   Fri, 08 Jul 2022 00:20:13 +0000
-References: <20220706083913.13750-1-jonathanh@nvidia.com>
-In-Reply-To: <20220706083913.13750-1-jonathanh@nvidia.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d557bbd0-2afb-12dc-1287-1aeb44ef55f5@collabora.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello:
+On 07-07-22, 22:43, Dmitry Osipenko wrote:
+> This patch breaks Tegra again, please take a look:
 
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Damn, not again :(
 
-On Wed, 6 Jul 2022 09:39:13 +0100 you wrote:
-> There is a long-standing issue with the Synopsys DWC Ethernet driver
-> for Tegra194 where random system crashes have been observed [0]. The
-> problem occurs when the split header feature is enabled in the stmmac
-> driver. In the bad case, a larger than expected buffer length is
-> received and causes the calculation of the total buffer length to
-> overflow. This results in a very large buffer length that causes the
-> kernel to crash. Why this larger buffer length is received is not clear,
-> however, the feedback from the NVIDIA design team is that the split
-> header feature is not supported for Tegra194. Therefore, disable split
-> header support for Tegra194 to prevent these random crashes from
-> occurring.
-> 
-> [...]
+>    OPP: Remove dev{m}_pm_opp_of_add_table_noclk()
 
-Here is the summary with links:
-  - net: stmmac: dwc-qos: Disable split header for Tegra194
-    https://git.kernel.org/netdev/net/c/029c1c2059e9
+Why did you mention this patch ? This just removed an unused API,
+Tegra should have broke because of something else, isn't it ?
 
-You are awesome, thank you!
+>  8<--- cut here ---
+>  Unable to handle kernel paging request at virtual address ffffffff
+>  [ffffffff] *pgd=9effd861, *pte=00000000, *ppte=00000000
+>  Internal error: Oops: 37 [#1] PREEMPT SMP ARM
+>  Modules linked in:
+>  CPU: 3 PID: 8 Comm: kworker/u8:0 Not tainted
+> 5.19.0-rc1-00040-g30b62d123f4f #82
+>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>  Workqueue: events_unbound deferred_probe_work_func
+>  PC is at _opp_compare_key+0x40/0xc4
+>  LR is at 0xfffffffb
+
+How is LR set to such an address ?
+
+>  pc : [<c0b91b54>]    lr : [<fffffffb>]    psr: 20000113
+>  sp : df831b08  ip : c33cd4d0  fp : df831b24
+>  r10: c2586078  r9 : c258606c  r8 : 00000000
+>  r7 : 00000000  r6 : 00000001  r5 : c33cd480  r4 : c2586000
+>  r3 : 00000000  r2 : c33cd480  r1 : c258606c  r0 : c2586000
+>  Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>  Control: 10c5387d  Table: 8000404a  DAC: 00000051
+> ...
+>  Backtrace:
+>   _opp_compare_key from _set_opp+0x80/0x408
+
+Whatever happened, happened from _opp_compare_key() and I tried to
+look at it many times, couldn't figure out what's wrong there.
+
+For the device in question, pmc I think, we don't have any "opp-hz"
+property in the DT, but still the OPP core will fetch its clock and
+set clk_count to 1. But this was working earlier too, we were
+comparing the rate anyways. I think one of _opp_compare_rate() or
+_opp_compare_bw() is broken here, but I just couldn't figure out. The
+rate one should run one loop and bw one should just return. I don't
+see why a crash should come out eventually.
+
+Can you help debug this a bit ? Also see what are the values of
+opp_table->path_count and opp_table->clk_count, should be 0 and 1
+AFAICT.
+
+Sorry about this Dmitry, I think we are all settled and again went
+into crap.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+viresh
