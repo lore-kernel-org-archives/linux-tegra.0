@@ -2,59 +2,59 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C23C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jul 2022 18:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF41CCA47B
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jul 2022 18:56:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238135AbiGHS4U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 8 Jul 2022 14:56:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47664 "EHLO
+        id S239308AbiGHS4W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Jul 2022 14:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239308AbiGHS4U (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jul 2022 14:56:20 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3556118376
-        for <linux-tegra@vger.kernel.org>; Fri,  8 Jul 2022 11:56:19 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id k30so19776895edk.8
-        for <linux-tegra@vger.kernel.org>; Fri, 08 Jul 2022 11:56:19 -0700 (PDT)
+        with ESMTP id S239323AbiGHS4V (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jul 2022 14:56:21 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF37318376
+        for <linux-tegra@vger.kernel.org>; Fri,  8 Jul 2022 11:56:20 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id l23so7335644ejr.5
+        for <linux-tegra@vger.kernel.org>; Fri, 08 Jul 2022 11:56:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dGzh3xxv9eIKKsR5DrTrjHmPQwa7yROT9Jik8yh6Oio=;
-        b=ltNzYg2lnwhqnpCr4W8Lq4YNpjtmVBforOx6ZlZiMMmbKbftsdt6IBPVeyGymggBcH
-         Phfkt/sURuhOPKAQcH1agBHdJ/QLfL5FjNgQLTkj3rTo46dwF/tuDKikqh3y9iGgmOH+
-         IafqKcnq6aPvFVlkGBWgwniGls7b3a9KNquOv1X23K33gQiLzGV6IQBRxGEWjvbqk8Wb
-         It7FEid1Kh3w1cOHdaE+adyo9VRURcqmYxOOY/IglTSk7oAqKljVKpaaHDEZ9eSmc7ON
-         mRxp6VlULkNOW2NQZf+v0xvBle0jKXeptTfw8xt19RDqy/hzyiRMX3yrrbjcz8XzSgBI
-         fE/A==
+        bh=Lcigr+7qhzmX48vBaS4O1yAbIqvGgXz8MJ5tWHzkL2w=;
+        b=S7AZl82CjuxiguT8yH+IFQMzWBMKUHi5kkHvoxX5KISdc610SmqyLGqjoS2/XfxHGj
+         6IPc/es5+zy8wMXE4JpF1jgU34lPNqVXEyIN7JcuJZS/PuGO8gA4JgXANbmmTW2dK9jS
+         vXl6gSYcjwPZM4ZEFmHFEjtR6miQheizlB07AvinpaaxTb/MwyZPcDt5C1KGzNC/ve3J
+         CfSVgRe5y1l0kWxh+lG4qe7iFXfDOem8zjgIyxTfoRD3/sIQh5tqjJ7u1/zHg3QI7sBg
+         ZSbnrm597NUddEwm8XW8qNl9bE7kGtgLSm6ESp+NyL76d3dH/xvqIs7kSEjaUrsiX7zq
+         MB3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dGzh3xxv9eIKKsR5DrTrjHmPQwa7yROT9Jik8yh6Oio=;
-        b=GFd+tscIj/Q9OssG40WywlGh7O+TsCqKj9e0QTfPKAk+MPOJ1z+Iv8Ux8Rmmoz+G2A
-         6Pkcp2T56VJ6dgoQhhGhS2F5kUaFtffyQxGIAFrGF/WJUgG6lkiWBm/Znb1TJFIkD3q3
-         /mKFLkhRzwoUCF5WdQOeOYA0SvuoWR9zyLezyK6qAoQzc2KC42nHglBRkYN/yuQ40kmy
-         Dw6u4jfe1Y3G0n8vmUmEvomdaIfmJoQfmhbFqwZZAc3MNi9RRD7Yb5GR6t3W5hiGE4YI
-         DnPDDOUtpmkccHvRdNWbNF3TAsbEmf1ZHdxlXCf5iNNN3kcBdYV7aqEej2pFc0Kz2qpQ
-         HEhg==
-X-Gm-Message-State: AJIora++hR4pY6CphM8IV+vnCkfbH3+DHPqMrCStId8ZsO7Lj0L3gs9h
-        y4eC7b/6jV0YnpryqyyB+48=
-X-Google-Smtp-Source: AGRyM1uAdivH2IpbsFx1x1So9O4Gex8cwyIsLXicnSZK6fMruqs4t50zDdJGAFbEnyGzAd1qYz/t2Q==
-X-Received: by 2002:aa7:db50:0:b0:43a:6319:e2bc with SMTP id n16-20020aa7db50000000b0043a6319e2bcmr6714193edt.237.1657306577786;
-        Fri, 08 Jul 2022 11:56:17 -0700 (PDT)
+        bh=Lcigr+7qhzmX48vBaS4O1yAbIqvGgXz8MJ5tWHzkL2w=;
+        b=rtj40O3qsPYbAg7G6iOtFyQUM74okkElYWLacUl20o72ecO+u88zVle306CzwihNsP
+         eN8TiZjFV9oOIL0K5kJBTPF8TZRaGB0t7IjWbKxA4afRRtQ0ikHxcG0hwAoTOVvgaUrD
+         W6AwSsBTsNRfLwbsCKoOLO4s7HLnFf50+vw2YJK7pwNFeNRwBTQlEwc5A6IoIB5i6uXT
+         vgOtXNSlMxScibh1n+MLN66SuCqQu32aeV1180eX+Ecl870DFsOHsjPAxgXAGsTlZPpi
+         AJwg5bnTm7yTDFIPOleO3LPY0S7EbHi6Qb7V0VAHUXz0tFuMAGWwR7uP6gOFDdfoMCi/
+         QLWA==
+X-Gm-Message-State: AJIora/GT6FnlHtB7OYS9twODnQwQhJBqAVnqmjI1wofZHOee36rbPzR
+        oxxs6Y5qxayILZDIl4Yiom8=
+X-Google-Smtp-Source: AGRyM1s8q5iyATcoXfEIULl8Ta0Z7t1epXgBJKL1vldly5xR4qRLy9Wcg+osHSxjBFohwlVXnTYa2g==
+X-Received: by 2002:a17:907:28d4:b0:72b:307d:fb53 with SMTP id en20-20020a17090728d400b0072b307dfb53mr2035803ejc.84.1657306579287;
+        Fri, 08 Jul 2022 11:56:19 -0700 (PDT)
 Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id c10-20020a17090618aa00b0072b145124f4sm2268358ejf.155.2022.07.08.11.56.16
+        by smtp.gmail.com with ESMTPSA id k13-20020a170906a38d00b006fed787478asm20782991ejz.92.2022.07.08.11.56.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jul 2022 11:56:17 -0700 (PDT)
+        Fri, 08 Jul 2022 11:56:18 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/7] dt-bindings: Changes for v5.20-rc1
-Date:   Fri,  8 Jul 2022 20:56:04 +0200
-Message-Id: <20220708185608.676474-4-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/7] memory: tegra: Changes for v5.20-rc1
+Date:   Fri,  8 Jul 2022 20:56:05 +0200
+Message-Id: <20220708185608.676474-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220708185608.676474-1-thierry.reding@gmail.com>
 References: <20220708185608.676474-1-thierry.reding@gmail.com>
@@ -73,54 +73,46 @@ The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a56:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.20-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.20-memory
 
-for you to fetch changes up to 015a166368d72e3bd22368aa9fc793db953ec9c4:
+for you to fetch changes up to 5060237b0ee1b1c70fcd9a8048664905b74ba6a4:
 
-  dt-bindings: tegra-ccplex-cluster: Remove status from required properties (2022-07-08 16:50:30 +0200)
+  memory: tegra: Add MGBE memory clients for Tegra234 (2022-07-08 10:29:40 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v5.20-rc1
+memory: tegra: Changes for v5.20-rc1
 
-These changes add clock, reset, memory client and power domain
-definitions for various devices found on Tegra234 along with a few
-device tree bindings for new hardware.
+Add memory client definitions for the Multi-Gigabit Ethernet (MGBE)
+controllers found on Tegra234.
 
 ----------------------------------------------------------------
 Akhil R (1):
       dt-bindings: Add headers for Tegra234 GPCDMA
-
-Kartik (1):
-      dt-bindings: timer: Add Tegra186 & Tegra234 Timer
-
-Mikko Perttunen (1):
-      dt-bindings: Add headers for Host1x and VIC on Tegra234
 
 Sumit Gupta (3):
       dt-bindings: arm: tegra: Add NVIDIA Tegra194 CBB 1.0 binding
       dt-bindings: arm: tegra: Add NVIDIA Tegra194 AXI2APB binding
       dt-bindings: arm: tegra: Add NVIDIA Tegra234 CBB 2.0 binding
 
-Thierry Reding (4):
+Thierry Reding (5):
       dt-bindings: power: Add Tegra234 MGBE power domains
       dt-bindings: Add Tegra234 MGBE clocks and resets
       dt-bindings: memory: Add Tegra234 MGBE memory clients
-      dt-bindings: tegra-ccplex-cluster: Remove status from required properties
+      Merge branch 'for-5.20/dt-bindings' into for-5.20/memory
+      memory: tegra: Add MGBE memory clients for Tegra234
 
- .../arm/tegra/nvidia,tegra-ccplex-cluster.yaml     |   1 -
  .../arm/tegra/nvidia,tegra194-axi2apb.yaml         |  40 ++++++++
- .../bindings/arm/tegra/nvidia,tegra194-cbb.yaml    |  97 ++++++++++++++++++
- .../bindings/arm/tegra/nvidia,tegra234-cbb.yaml    |  74 ++++++++++++++
- .../bindings/timer/nvidia,tegra186-timer.yaml      | 109 +++++++++++++++++++++
- include/dt-bindings/clock/tegra234-clock.h         | 105 ++++++++++++++++++++
- include/dt-bindings/memory/tegra234-mc.h           |  26 +++++
- include/dt-bindings/power/tegra234-powergate.h     |   2 +
- include/dt-bindings/reset/tegra234-reset.h         |  10 ++
- 9 files changed, 463 insertions(+), 1 deletion(-)
+ .../bindings/arm/tegra/nvidia,tegra194-cbb.yaml    |  97 ++++++++++++++++++++
+ .../bindings/arm/tegra/nvidia,tegra234-cbb.yaml    |  74 +++++++++++++++
+ drivers/memory/tegra/tegra234.c                    |  80 ++++++++++++++++
+ include/dt-bindings/clock/tegra234-clock.h         | 101 +++++++++++++++++++++
+ include/dt-bindings/memory/tegra234-mc.h           |  21 +++++
+ include/dt-bindings/power/tegra234-powergate.h     |   1 +
+ include/dt-bindings/reset/tegra234-reset.h         |   9 ++
+ 8 files changed, 423 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml
  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
- create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
