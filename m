@@ -2,112 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612B7C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jul 2022 15:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8ABC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jul 2022 16:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238811AbiGHPSZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 8 Jul 2022 11:18:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38414 "EHLO
+        id S238577AbiGHQKv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Jul 2022 12:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238812AbiGHPSX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jul 2022 11:18:23 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E71371BE5
-        for <linux-tegra@vger.kernel.org>; Fri,  8 Jul 2022 08:18:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=XXF2zWezcBTn6BmeEpOUaiRgGpW/Wb8D7UIg9Td2+Qo=; b=UdE+bCKYqiCu0HVEihmqpKjtzZ
-        McnzS3GX745CKugHFDrmV0til/QLq++a2XCGlZOTejiHG3+ZGoAwzzv+fulIKrQatbHZD2ENZY/I/
-        BcZB7HURWrzaZ4lqX30UC1AGpPtz4c+pEwk2xVMXwDEiewT59L7G5EBljPjx/vz8BOMQV0kty8qlU
-        zGdSck4/bsIhlPPtpTpnBlIRSa55lpfSZ2uDGzM7XLw2kNuqSJ3S2ahPa0kKG2FzDL+plUaIHjfKv
-        A3abr5Bdafv/N2E7P3L1U0ugAZyOT/4+VOxlUA51aT8tT/z2oYDljH4s5IEOwAsMmUT75nTz9yKzU
-        oR05YgVQ==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1o9pkH-009wYA-Oy; Fri, 08 Jul 2022 18:18:16 +0300
-From:   Mikko Perttunen <cyndis@kapsi.fi>
+        with ESMTP id S238042AbiGHQKu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jul 2022 12:10:50 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9734A7437F;
+        Fri,  8 Jul 2022 09:10:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nlRFSHNPwW4fPyOrVGc/DM5ittKufIPVnSdlhew/DhrFMXY82Qm0yZbqgbiC8hCYMrifCvkq4pExVq7MI7oHehBvcXLHreYS0wVYcC/4EBt9u9j2fNHlMseHx/H4w4Db+IInGq+lZIGuQrsuCb//lmNNEmfstT9ERbbJdS294zU2O/FVrvmu8Os13NCU5SlKVVS7qeyu1T5+HnZRG/q1S/Cil+KI0cWGsO7NYQR6rypYFTpnIZTQp74q2Je7Khis9y5qco7NM0jPBNZAC0DQzNzE/EDOlz7hytkxOW2ps0+PHF3aR7TKYKAnw+6SzKCw8+McICosb3TFNaLRQO6ryg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YJPHvn9SgY6AsTxG8IEtGGmajSxXRwAm/m62VRAecVM=;
+ b=SecYhmJFCCNNx2KoaBiOW0R3MK/KYrkeBPjDsamZP+eUNRuGokWhV00PuaGtPDzI63KK3tkJouQE3Kugzw9D1uzslfhAvmyv5HFxPf9cxAf+phNJScNYud8RmcEDEg6oaJNVJcmzD24d+c4iTpyHwMH+SM0iWtEw3CbHcsGiWeFDzpN0G/ZlPcYKhtBPwmBJQ5RpJ0z/JAEJii663UgcFTxYUVIy7EpfmTCFukBG8acXRj/Ji/1PSDb3RrUjmZwzjlfvr9bxTXt+Ai4Or3NY3F0Yd+SlVIQM/Pcsg7SmC37/Pg/M1kWYuSFWcXdXjlyj3w+hbq8tVplX0sehXTs3Bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YJPHvn9SgY6AsTxG8IEtGGmajSxXRwAm/m62VRAecVM=;
+ b=B+U1d2qjQgC/KiuQVT6yQUgaPTFojwDvieLPzBcTGaHdoG4p/ZTYpOlHqlDM+LDgEIoPTAmJnGgoDp9WHuFFnWm6g5Xf0jNKUBrGaBmctm7ByOWD/S1n+dcQ/94ZmSQWbEwJFED8lDhnyYd2DTxoZYbZgvLUvitpHfRZYykWdgXJ0pL4ulZDIcnEgjGBqgQ+giV6nL8Ooan+rccEmnDVty9QpuCcLCTtwXGdPPJ11AkPSqRjqjaoeQNjY+bPkgQpJ7dLvb1HCXIzURRFaIMeozkZbhKwVGcI4d85DxroZmOMuTW3ANV3CS5SYm0pe6a62cNlpYAHOjbi/fQpEvvGwg==
+Received: from SJ1PR12MB6339.namprd12.prod.outlook.com (2603:10b6:a03:454::10)
+ by IA1PR12MB6578.namprd12.prod.outlook.com (2603:10b6:208:3a2::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16; Fri, 8 Jul
+ 2022 16:10:48 +0000
+Received: from SJ1PR12MB6339.namprd12.prod.outlook.com
+ ([fe80::28e6:129d:a1f:84d3]) by SJ1PR12MB6339.namprd12.prod.outlook.com
+ ([fe80::28e6:129d:a1f:84d3%5]) with mapi id 15.20.5417.016; Fri, 8 Jul 2022
+ 16:10:47 +0000
+From:   Akhil R <akhilrajeev@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 2/2] gpu: host1x: Generalize host1x_cdma_push_wide
-Date:   Fri,  8 Jul 2022 18:18:02 +0300
-Message-Id: <20220708151803.3064062-2-cyndis@kapsi.fi>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220708151803.3064062-1-cyndis@kapsi.fi>
-References: <20220708151803.3064062-1-cyndis@kapsi.fi>
+CC:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v2 1/3] dt-bindings: dmaengine: Add compatible for
+ Tegra234
+Thread-Topic: [PATCH v2 1/3] dt-bindings: dmaengine: Add compatible for
+ Tegra234
+Thread-Index: AQHYkhH2RKRmdrlQR063eqSYWXAxeq10i9OAgAAamLA=
+Date:   Fri, 8 Jul 2022 16:10:47 +0000
+Message-ID: <SJ1PR12MB6339A080E09C0CCCCB9F2E6BC0829@SJ1PR12MB6339.namprd12.prod.outlook.com>
+References: <20220707145729.41876-1-akhilrajeev@nvidia.com>
+ <20220707145729.41876-2-akhilrajeev@nvidia.com> <YshAt5WAG9zUkrpy@orome>
+In-Reply-To: <YshAt5WAG9zUkrpy@orome>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: dd6adb31-7173-4b8e-8505-08da60fc6b92
+x-ms-traffictypediagnostic: IA1PR12MB6578:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 0iJjEUwQHMVhEa2p/obVnpC7hD6RCt7wxrr3jYXqOJ74DuCr6NmPaUD2D4YSw8GygyvvwVa+S3KnHUem8sjN79eLdorHnOmWQTRbtTR/C3B9Bz89M+7SyyQ9cCEJq7zyJMsVgsWtpxJT2jXGD9yin8N1qmaaISQ+zcW8WX/a0+SU36CtBJbIa1NnHB+cdIYHk4SkOduIc2l/qE6/o5BS+sBWL0b1hX1QA/+hlCJVMcBAG2EqW8WaSeQQbVEM19qJdf4hG6sRjDAGnaVZf1CrhBwqeHd+BDSqVilLxZ6jwHbwzW8XO/56aHi32x0UBOgdzZ6fOiUDFkxDm6HYGFWIzGD7/8yw0HvBn/p81hlJshfyha+zI8+ZnqKAniIsKYM8Y+PomzkiXYQOZNKt7CQaEDDs8XFKqt4Qr/Jd/4+fLbp2Bo+Td790TfSOTpSN++H+NLZm2rwj8vEFZJ+d5tPgyOfmRYSYSR6mA4PJ3D/4BO3WrWG2Je4J+FriH4rqYXl0/sW26Y/2VwIKJrQH+17P5k5wANxuX2qe7BYWZY+dSQqSttsLXiWoAmdkblyww8Qu22gszjuM8vGrF8usacvXWpqt3E7owNRLIfSR8FV+0hR/o2hE4+cNhgCjF5Dbfznc7SHBoaYakqrXxt4gzhCyD3md2UcL9l7VO+5V2qPL0athcIHvcnpBfhjdtw/vMcwhPfhGFEZAny06tRfyDzx3Rg17icuMGANIcsViolEwwYmwjNvkETuAoRbM8l3zUZsp+6zkT6zaUF3u343StMJ9Mv0rQqX4hO4Xm1giuKUZEtH2piZRrao9YgaZG9OFwC1x
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6339.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(396003)(376002)(366004)(39860400002)(136003)(7696005)(6506007)(55016003)(55236004)(186003)(66476007)(66446008)(8676002)(4326008)(66556008)(54906003)(64756008)(76116006)(66946007)(6916009)(71200400001)(26005)(83380400001)(9686003)(86362001)(38070700005)(38100700002)(41300700001)(2906002)(52536014)(8936002)(5660300002)(122000001)(316002)(478600001)(33656002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?GGRg0CqLFRkFRVJiSYIDyicjxJWjhc6zB9EvHugPwMdXf6DpvCzmFFjo24Rg?=
+ =?us-ascii?Q?LcbeoF73K0Zjc/TyyzCa/4Ct9CJBgQAeu8j2+EaCq4XuD2jFV0xvxynVwlSJ?=
+ =?us-ascii?Q?+g+xxuceOHg4b2w2OV+f5hAiJ1XUcRoYlLWNsEkjFaXEmZ0Z0Hdod9nAOZpT?=
+ =?us-ascii?Q?vzpT4caVZMtcexgw2fuy2DZhag8ZArrijvESWFN2ovQx+xP7VQafT/mB/e4X?=
+ =?us-ascii?Q?+x9l2DWfin8QC6pH5NNb7Ndd4W8+nY//pXu8xEIfl6IDwdAJbcSYCFCceIGo?=
+ =?us-ascii?Q?HJqCUzHHjl9eiyQ5hl3pc7YjxWR8y/0NnkDE2/WplYnpRdmG/Sf6jcI0SfM+?=
+ =?us-ascii?Q?QSnRa6f7pVhdytjgLkxiOXisqz2BWle8hFiSWzf8G44xCxycqh7tuUdds8L5?=
+ =?us-ascii?Q?EO6nUBMtEx/HaIJOegMcGuLF+hrDg0b4kyksCDzh5vbZpbckSUPdnxVqSgeU?=
+ =?us-ascii?Q?bErnYfJ794Jpb3moBNYOv1wdYO1Xy9wS4ylwinDfm+lI7Fw7+xPCrrq/ye9h?=
+ =?us-ascii?Q?JkHmmb+dDFWva5sXWZDWnH4H4+GBYuEAhfT69Z59z/+R/SQ7EMkHN2ckeCdx?=
+ =?us-ascii?Q?yF83ybJNEhY3JVz1+AFVIVJMELnLjhjp0kIhzO1zLSJaT1LQhQ/uN8sLqPvI?=
+ =?us-ascii?Q?/wVge8YUVV1eP+W7vzI/v5pjMnWhk0VmxcPWBAH1OSsetE7wqWuGEo0y2C0d?=
+ =?us-ascii?Q?QdV7d5yefdPkseWeJnkheG8c3MiKq55cO52NXVSBPdWIiXhrCJLK/Li71xES?=
+ =?us-ascii?Q?5sXx3E0SGNkxI+KWewooUnqdJg+rCgf2+ShEPcC206bniXTJ6/41WUWFpzUW?=
+ =?us-ascii?Q?zx4U2rY9kONaPmoYl7xs7qwJ5g8KRy4cBsYjuCl5ALWVny16nkTO7TGJ7HW0?=
+ =?us-ascii?Q?hBjrQxdB9u5bBOThWsZHbTYq9Wwc4I0lF02UTiba3tifs6ArHgYOQwRPGdQC?=
+ =?us-ascii?Q?uG0XBR+ENlSMhUnlJk/qhzitRLE7j9j0Ao5meqfe+wDdykwsgSpJrPc8FPqI?=
+ =?us-ascii?Q?7OpMGwGzpUz/Zyg3u0P/BcDw9nsfvmxvQy+YnkfzI8up6144wJowmK7YBTEF?=
+ =?us-ascii?Q?1dHsEYjMPptqj1eI4ZdSdW3+AK9NxE7x2n7WMv6cB0Mzy8nPQTAv4g9ciE7D?=
+ =?us-ascii?Q?r83KAqzqA3ApQRdMBLpSXSswshLtxMJhJmBw0WoVG3l1nAtr+qVCM6YFwDJg?=
+ =?us-ascii?Q?cq0CDLb3I0m9z+926Hekmv+yes9QLMC75fryxUWsQBLy123Arx5dk4E0HB8x?=
+ =?us-ascii?Q?b15DcF7pjn/uvWkxZtIuU3wDtfaG6wt2smzxlEa1kqKiC6+4ZIS5GNEAkkHD?=
+ =?us-ascii?Q?rE54dg/N+qSur7u80hoqtqoDpM6Hsq19hz3Dby4/fRrrDuP9ckpdhLG1vnQn?=
+ =?us-ascii?Q?ZMomTFUZ6SKnuiPCgdvqHB+e04Pm6/vm2MZNtVrKg/KDD8olL5i2t5AXArOR?=
+ =?us-ascii?Q?oI+HUPmhS8Wb9/n6wtjGNDsexDsqubWolRiNkUAvtZX8ml5SAzCqvMgNJQCM?=
+ =?us-ascii?Q?C+OcpRnZ3fZ/kc+yHhLq9eO1t9U7seV4lrgn+yxQ6vPaohrVtGay6oVbTakk?=
+ =?us-ascii?Q?QbZmRLFr8meZO3QiITQXXfZIOFl2sz15sxPzt1fg?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6339.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd6adb31-7173-4b8e-8505-08da60fc6b92
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2022 16:10:47.8979
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1rIBPFpxnLaPN14FHr9u612qVnzzL2UKhf6UdRRq7qnSs4b/WhQrsOQ54tDST14zXUOgyKUKu+sK3MLe/kfXpg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6578
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+> On Thu, Jul 07, 2022 at 08:27:27PM +0530, Akhil R wrote:
+> > Document the compatible string used by GPCDMA controller for Tegra234.
+> >
+> > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> > ---
+> >  .../devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml         | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> > b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> > index 9dd1476d1849..81f3badbc8ec 100644
+> > ---
+> > a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> > +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.ya
+> > +++ ml
+> > @@ -23,6 +23,7 @@ properties:
+> >      oneOf:
+> >        - const: nvidia,tegra186-gpcdma
+> >        - items:
+> > +          - const: nvidia,tegra234-gpcdma
+> >            - const: nvidia,tegra194-gpcdma
+> >            - const: nvidia,tegra186-gpcdma
+>=20
+> I don't think this works because it will now fail to validate Tegra194 de=
+vice trees.
+> You'll need to create a separate set of items for Tegra234.
 
-host1x_cdma_push_wide had the assumptions that the last parameter word
-was a NOP opcode, and that NOP opcodes could be used in all situations.
+If I update it as below, would it work?
 
-Neither are true with the new job opcode sequence, so adjust the
-function to not have these assumptions, and instead place an early
-RESTART opcode when necessary to jump back to the beginning of the
-pushbuffer.
+- items:
+	- const: nvidia,tegra234-gpcdma
+	- const: nvidia,tegra186-gpcdma
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/cdma.c | 24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
+- items:
+	- const: nvidia,tegra194-gpcdma
+	- const: nvidia,tegra186-gpcdma
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index bb1f3c746be4..103fda055394 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -615,8 +615,8 @@ void host1x_cdma_push_wide(struct host1x_cdma *cdma, u32 op1, u32 op2,
- 	struct host1x_channel *channel = cdma_to_channel(cdma);
- 	struct host1x *host1x = cdma_to_host1x(cdma);
- 	struct push_buffer *pb = &cdma->push_buffer;
--	unsigned int needed = 2, extra = 0, i;
- 	unsigned int space = cdma->slots_free;
-+	unsigned int needed = 2, extra = 0;
- 
- 	if (host1x_debug_trace_cmdbuf)
- 		trace_host1x_cdma_push_wide(dev_name(channel->dev), op1, op2,
-@@ -634,20 +634,14 @@ void host1x_cdma_push_wide(struct host1x_cdma *cdma, u32 op1, u32 op2,
- 	cdma->slots_free = space - needed;
- 	cdma->slots_used += needed;
- 
--	/*
--	 * Note that we rely on the fact that this is only used to submit wide
--	 * gather opcodes, which consist of 3 words, and they are padded with
--	 * a NOP to avoid having to deal with fractional slots (a slot always
--	 * represents 2 words). The fourth opcode passed to this function will
--	 * therefore always be a NOP.
--	 *
--	 * This works around a slight ambiguity when it comes to opcodes. For
--	 * all current host1x incarnations the NOP opcode uses the exact same
--	 * encoding (0x20000000), so we could hard-code the value here, but a
--	 * new incarnation may change it and break that assumption.
--	 */
--	for (i = 0; i < extra; i++)
--		host1x_pushbuffer_push(pb, op4, op4);
-+	if (extra > 0) {
-+		/*
-+		 * If there isn't enough space at the tail of the pushbuffer,
-+		 * insert a RESTART(0) here to go back to the beginning.
-+		 * The code above adjusted the indexes appropriately.
-+		 */
-+		host1x_pushbuffer_push(pb, (0x5 << 28), 0xdead0000);
-+	}
- 
- 	host1x_pushbuffer_push(pb, op1, op2);
- 	host1x_pushbuffer_push(pb, op3, op4);
--- 
-2.36.1
+Regards,
+Akhil
 
+--
+nvpublic
