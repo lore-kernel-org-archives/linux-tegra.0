@@ -2,95 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FC6C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jul 2022 08:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B105FC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jul 2022 08:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237736AbiGHIOE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 8 Jul 2022 04:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48280 "EHLO
+        id S237780AbiGHIeK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Jul 2022 04:34:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237733AbiGHIOD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jul 2022 04:14:03 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B67271BCD
-        for <linux-tegra@vger.kernel.org>; Fri,  8 Jul 2022 01:14:01 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id 73so6343471pgb.10
-        for <linux-tegra@vger.kernel.org>; Fri, 08 Jul 2022 01:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dl82gz8QjmANwna+I20UXlrSEeJ1+WO2UZanVzGM0so=;
-        b=CZSXGcFDCZp9VbC5FmUr5/iPgXLOqnr+60QCezEU4A5g7VFUwLtvbvGa8psin8X/fE
-         h1+wvf1+Wt1N/lOwTpaiF5YioutMWPJrueOuIoSV/+yXTurxCWx4ReXRFrpJPtQGxdDN
-         aE6V7tWwwf9DV8sbReSdtVvCtMNBzAURZtL4em3QL5If7q/g19Lu+vhAAgOAS0vS/bQB
-         QGnJI8M+V8YNTCzT4ObD8fvL3fUicj6stZainTO4eD/gQ5xoqKUdPR5T40Y1ZlUq8Kwx
-         Zc7iYB8p67fW0y8LhnGzb0zwfY0/vRE7p8NCzgaczoUtVGHVjFENmXdvz6uFvKXLDcwA
-         sSFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dl82gz8QjmANwna+I20UXlrSEeJ1+WO2UZanVzGM0so=;
-        b=aYKm6S/7aS/MAGkuI5BggwJxYFXQA94JFqCx2ClrINKzfWTztynlq2rtHtKbjQmut5
-         RGoQqEJoRx8FvujeTG9dHjVMmA9InGYy3yXe/AFV1AzHRwlMgRUvEMlW6JJoUcqio5Wx
-         Z/aM3paY33YWLI0OIg5WCjdKSYeOTnVBDjuma4rgAbAPGuQt9GAl61Wta734hB/3MKXy
-         DAj+9FTFM9F2Lwmysz9hBugiD3Gc2+vEDJyHqVsivXdItjCpEkhoowNgKdAtw7Ha28Mo
-         qmE2miQgRUzXCeDgvghkYba8XeV1LDtQt6Icy2g9N+ICQ8YLP0zNGzLTq7mef5atdD+X
-         84UA==
-X-Gm-Message-State: AJIora8nhdVKeubvutrnApTaFT6KO1RyTVZ24DWxDHOXbGa6zjLQi5Mf
-        mB4OMEObL5ck355nQ7QLfO152w==
-X-Google-Smtp-Source: AGRyM1u1VL9RI6muZTqV+yjUK0SBUkQP4Hy/5vLre7Pmw0+rdutvZOufYdaMHzt147Jc8SA1X+QKkQ==
-X-Received: by 2002:a05:6a00:22cb:b0:525:ba83:559a with SMTP id f11-20020a056a0022cb00b00525ba83559amr2760170pfj.54.1657268041108;
-        Fri, 08 Jul 2022 01:14:01 -0700 (PDT)
-Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id h7-20020a170902680700b0016bfbd99f64sm5766698plk.118.2022.07.08.01.14.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jul 2022 01:14:00 -0700 (PDT)
-Date:   Fri, 8 Jul 2022 13:43:58 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V2 00/13] OPP: Add support for multiple clocks*
-Message-ID: <20220708081358.o4ozv5qwf5xpqpb5@vireshk-i7>
-References: <cover.1657003420.git.viresh.kumar@linaro.org>
- <d557bbd0-2afb-12dc-1287-1aeb44ef55f5@collabora.com>
- <20220708071926.zehurtbcf35s5tv6@vireshk-i7>
- <8c52e1d2-6c6d-9a09-e426-e5292f68a3f0@collabora.com>
- <f018df81-e51d-ce4f-f10a-65ea25db48e9@collabora.com>
+        with ESMTP id S237217AbiGHIeK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jul 2022 04:34:10 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16DFC15824
+        for <linux-tegra@vger.kernel.org>; Fri,  8 Jul 2022 01:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ixFXV+1Qd2iJruE4p7B4EgS2FeqpAuYVVZqEbaMEXRg=; b=M1z8RFrv3wFxAs4w7HTugkhoLr
+        S76u1qClQ+NphECxpbgHLG4vYIYkJyS8a5YasaQqP+7VkUhYcp6RNFicg7QS5y52pfppDsSIezYye
+        HXGNLI2Xt8vMONKFa0Z6gd2mzUyW9dqx8QabAJ1omH7XNz7sOeUnWeEsqomQELifnMI5W2vNkWRR1
+        wmJB5AXGJxyUGFnTDjuIShnkXgVL1x2Dy6x9DenFzR8979g8zWV1tsgBlzs44fUBYwyxm5oW+aMfS
+        qSlmXeAYDBhvlVYzLMN4eX9kLE7UiVU5VzlDiCKT/BpmUFti+tmNHBxZUUACo5QC8V5dErLbmwZcg
+        8f9wCR7g==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1o9jR2-008aYH-P7; Fri, 08 Jul 2022 11:33:59 +0300
+Message-ID: <14151873-8334-7a97-63c2-01cf700a95bd@kapsi.fi>
+Date:   Fri, 8 Jul 2022 11:33:59 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f018df81-e51d-ce4f-f10a-65ea25db48e9@collabora.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH] gpu: host1x: Register context bus unconditionally
+Content-Language: en-US
+To:     Robin Murphy <robin.murphy@arm.com>, thierry.reding@gmail.com,
+        mperttunen@nvidia.com
+Cc:     iommu@lists.linux.dev, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <503bffe670b24aac0dfb03c8fc16437b8f0cca58.1657215044.git.robin.murphy@arm.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <503bffe670b24aac0dfb03c8fc16437b8f0cca58.1657215044.git.robin.murphy@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 08-07-22, 10:30, Dmitry Osipenko wrote:
-> BTW, maybe we should consider to start adding kselftests for OPP, like
-> clk framework did. That will be handy to have given that it's not easy
-> to test the whole OPP core without having specific devices.
+On 7/7/22 20:30, Robin Murphy wrote:
+> Conditional registration is a problem for other subsystems which may
+> unwittingly try to interact with host1x_context_device_bus_type in an
+> uninitialised state on non-Tegra platforms. A look under /sys/bus on a
+> typical system already reveals plenty of entries from enabled but
+> otherwise irrelevant configs, so lets keep things simple and register
+> our context bus unconditionally too.
+> 
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+>   drivers/gpu/host1x/context_bus.c | 5 -----
+>   1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/context_bus.c
+> index b0d35b2bbe89..d9421179d7b4 100644
+> --- a/drivers/gpu/host1x/context_bus.c
+> +++ b/drivers/gpu/host1x/context_bus.c
+> @@ -15,11 +15,6 @@ static int __init host1x_context_device_bus_init(void)
+>   {
+>   	int err;
+>   
+> -	if (!of_machine_is_compatible("nvidia,tegra186") &&
+> -	    !of_machine_is_compatible("nvidia,tegra194") &&
+> -	    !of_machine_is_compatible("nvidia,tegra234"))
+> -		return 0;
+> -
+>   	err = bus_register(&host1x_context_device_bus_type);
+>   	if (err < 0) {
+>   		pr_err("bus type registration failed: %d\n", err);
 
-After being regularly bitten by such issues, I added some for cpufreq
-earlier. Its time that I invest some time for OPP core too I think :)
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-I don't know though when I will be able to find time for that :(
-
--- 
-viresh
+Cheers,
+Mikko
