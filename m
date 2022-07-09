@@ -2,206 +2,393 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C43C43334
-	for <linux-tegra@archiver.kernel.org>; Sat,  9 Jul 2022 02:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8639DC43334
+	for <linux-tegra@archiver.kernel.org>; Sat,  9 Jul 2022 22:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbiGICeH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 8 Jul 2022 22:34:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55274 "EHLO
+        id S229755AbiGIWdL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 9 Jul 2022 18:33:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbiGICeG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jul 2022 22:34:06 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2068.outbound.protection.outlook.com [40.107.101.68])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96916140E2;
-        Fri,  8 Jul 2022 19:34:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BvEIEIY1E62mFlGKZ8AREtUVkC5XG6y8rLLbJt+SZq0ZYVMC1Hy9ptAAN3bhg4YShFNgvJGKKae4L7ou4bTnkh7Yfscba4GtpSIG3EL/kNw7cl7f2OgXf/qJ6kpYF5W5rJU8yb+uVMAbvTe71tdfUbN4QMwmn3pmY9oeTX5GqpfRIxhwys1ArgOxNmbzNwSv56RqqJkXK+NL9TqfeNTtfvN6YipDXkQ9bj+vnkseP4vtU2K9f2nGbvVXMF4unmK/jaFXcRdx3cZwfP8vnyGggQXLAIiT4XfYSz1LlURNOGgPUtErJRDtGtdaZpiQt1dcJqijVl9l5z2UWCQ7x1TGPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EBOw7e2YvnMhp+67t7BJHebeE83EZWwLV2DuCqUz4zc=;
- b=OAtbOxDSEJHZj5spsmYWDH86sVmyN9v16KrnpGr1svXjLVItHLdbB5gqLUKn//b47ZBj22KSESQglmbU5BKpLnUesmusK5pP+/VLUOdZTVToN0L+rUcR4L12yKnwzoIFHFEu+SxOI2mQtQpxsdHDFYc1EEUTur2AHeq59A9Ujqm+pNSwzpDsrNG8WrnDtXO/bxwkU3gMgEb9sNZjmKLczBtmetdRkk7DfOJ4AAOKuOktImDK+jlNDnP6EN75kvEPTs6+7ILimyZx/hc+POHDW4JcfKLnt9N0CT/FS0QPadVuEU4Xsyn5e7i1l/mdOJ1G5O/PzbMBbsYtUM2cafQR2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EBOw7e2YvnMhp+67t7BJHebeE83EZWwLV2DuCqUz4zc=;
- b=Pd8GXOJNfGx8X7rOl+qPwfF9b4bIH0/nH/ro9i3JPS+azjyaPoy9gT46f1wb4GiRAXiHZtQZ89eORobhgMgPjR/P4YDt9Ed/eGnOnrdVW6i7LAbaddBD10v2T7KN1NvabRKZ0s3eZnkufsooRzgp6eXTG5g2+lDiP3locSOMeks2iPX104Fjmw6aY6XPACMOYMsggR4kYokS7DDv26SNXo4cVm5oFincafasEKPj3Qo01l0FZu/KtW+tTtmCF3bvF98fLupz86Em+QNhZ8SBhpPD1B8JeRVZPIY4cOxAx1JcN0K29NIvAK7bCvm38BNBo+caTuHq8SPo6WpUGvlg0w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN8PR12MB2900.namprd12.prod.outlook.com (2603:10b6:408:69::18)
- by MN2PR12MB3823.namprd12.prod.outlook.com (2603:10b6:208:168::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16; Sat, 9 Jul
- 2022 02:33:58 +0000
-Received: from BN8PR12MB2900.namprd12.prod.outlook.com
- ([fe80::3904:2c16:b3b7:c5f3]) by BN8PR12MB2900.namprd12.prod.outlook.com
- ([fe80::3904:2c16:b3b7:c5f3%5]) with mapi id 15.20.5395.022; Sat, 9 Jul 2022
- 02:33:58 +0000
-Message-ID: <afc9cd15-a895-792f-3f49-1dca3694b0f3@nvidia.com>
-Date:   Sat, 9 Jul 2022 08:03:45 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH V4 3/9] dt-bindings: PCI: tegra234: Add schema for
- tegra234 endpoint mode
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-Cc:     kthota@nvidia.com, sagar.tv@gmail.com, lpieralisi@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        kishon@ti.com, robh+dt@kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, jonathanh@nvidia.com,
-        gustavo.pimentel@synopsys.com, linux-tegra@vger.kernel.org,
-        thierry.reding@gmail.com, mmaddireddy@nvidia.com,
-        jingoohan1@gmail.com, kw@linux.com, linux-kernel@vger.kernel.org
-References: <20220707081301.29961-1-vidyas@nvidia.com>
- <20220707081301.29961-4-vidyas@nvidia.com>
- <1657196871.476299.1454231.nullmailer@robh.at.kernel.org>
-From:   Vidya Sagar <vidyas@nvidia.com>
-In-Reply-To: <1657196871.476299.1454231.nullmailer@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA1PR01CA0109.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:1::25) To BN8PR12MB2900.namprd12.prod.outlook.com
- (2603:10b6:408:69::18)
+        with ESMTP id S229712AbiGIWdB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 9 Jul 2022 18:33:01 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0AD52A25F
+        for <linux-tegra@vger.kernel.org>; Sat,  9 Jul 2022 15:32:55 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 9-20020a1c0209000000b003a2dfdebe47so234029wmc.3
+        for <linux-tegra@vger.kernel.org>; Sat, 09 Jul 2022 15:32:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linexp-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=XDBCqCi5qpLpV3N/M8gq3K+ocUXlMKc797KB4nwKvLU=;
+        b=k0cnum/P7v/NoYC58+sPIbpJjhuFHtROqqz0oXXmi3jMa2RUUp6wirlBhZLD6fGG9e
+         LRogOPlCCOLAfm7uV4sjjaaNgOVnQ76rSfX+XPGYfrmZZln89wGShZXM971dp3ljDlbh
+         Nc7gWE46hrsjrS5HXLCxMtCoR5VG3YsobB4lm0OQU1i0ZNh4hcudROSOQnP/pebJgPxV
+         67lCDXnnUGNePN+mBMk4OqamftJ07oaDuFYqfEIQzoG5amsEZACBuZj+tzVCGvtgr2I7
+         YQuM0TtH54Tfe4NnP+Ekj/dr91jn0FufQAwP62/DZPSUmteEnseqNETQyjxFtpgSxxwK
+         XJmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=XDBCqCi5qpLpV3N/M8gq3K+ocUXlMKc797KB4nwKvLU=;
+        b=ZibqHonzWrLZToIOMJgC9eG0dswKUAAGjUh3Wruw717eFIOpuBypnfGBrhimxHLAM8
+         CMqJJL3lv7oG3niGGrNOqNBuV976coV8Ddc3nkcDxZmnIjP/mVbh4R1+yW3MyaUV0GXG
+         CQSC/7cdFk6v/DnKVYMvYXXcakRkEL/oMQXiU79EcJ0v1NCHdl2vG12fYv259pHHBhfs
+         +IVi7UlktkZJS6+pzqDvwkYYh/HfcnJn3hXRNCs0Es7ytDTR03LaA7+ibpFVQ3ci2b6u
+         la1z99zR2vhjPcnQ2b78Fo9G49cNoQaYa9tSWjEInFre0bTvU6S5xZtiexhCADiOL957
+         0Yww==
+X-Gm-Message-State: AJIora/1i5Te3cDIR5dWh/ynldTysD0vnjgwUZZWC6EwHa49110y4wW+
+        qwwcda8JfHg9f+96Y4r8hgmtyw==
+X-Google-Smtp-Source: AGRyM1uqa5z1QdfHrDDTNAEoY79PlBr2NG6XAbkadDyl6F12jNSP/i7IKoIShuYZnNUTgdDRqmswZg==
+X-Received: by 2002:a1c:3b09:0:b0:3a2:e125:c8ad with SMTP id i9-20020a1c3b09000000b003a2e125c8admr5088526wma.115.1657405974175;
+        Sat, 09 Jul 2022 15:32:54 -0700 (PDT)
+Received: from localhost.localdomain (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id w15-20020a1cf60f000000b003a2c7bf0497sm2525342wmc.16.2022.07.09.15.32.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Jul 2022 15:32:53 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linexp.org>
+To:     daniel.lezcano@linaro.org, rafael@kernel.org
+Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com,
+        abailon@baylibre.com, lukasz.luba@arm.com,
+        Amit Kucheria <amitk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
+Subject: [PATCH v4 07/12] thermal/core: Rename 'trips' to 'num_trips'
+Date:   Sun, 10 Jul 2022 00:32:24 +0200
+Message-Id: <20220709223229.1619339-8-daniel.lezcano@linexp.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220709223229.1619339-1-daniel.lezcano@linexp.org>
+References: <20220709223229.1619339-1-daniel.lezcano@linexp.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c71f9681-6009-42d8-0448-08da61537988
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3823:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: eEiIT7SRKwqlwKzB4Q91sLtghxu4PblWAdDdjd6upHq0OpusQ6OnPHRJYPqd+tQg79nzTcfaYi7i30w8PeuXtg3wAyv7nK9fEdU7b1MpIjXN7lGDOErOsX3XRG8a/qw+K3623qESZYVfkMeNV8lqlFqQj8/v7Nqy11YKJUXYYMmHZScch/Q6GLKl5oPa67TXpnAQChos+FFEvnhnGtc0TsynuerZMork+cqRVRusXpedmiYY9GHZVghmGjy90wR4UphtaKdIqGMMyWmhHBg9COcXG4IcMhlVQcNmTaPGiLzbrR6FTRTQgkT1wweqaeTAX1tK9tHUc7Wf4VUNxMh0uIAmtx9EDhCyjTRDAfB7+fIhOhSPAoLUNdmabJrVqlPHsbB0m77AygJ9TH3fXyTn2s66oQY8JdlPFsfu2g0ypeJl7UNjkMRBRsCCI2nFh8CQ1pu0O6PhMNy9bdkUwU4YP9JbOGNfbFP/0Xf0lpDwmW5c4jcHLMs42Z30df9CkejwpyQFpJd2rVbtfN5JVNYE5tfChRPiKDW9zKXx0/Z3vHwK2IxEslB51kMq2xLm0uNlw/xMlp+1u5xQCdiMtwDoLXMjtaJArkaZO8nz+eBTT3cJiLnq6AAcwHhXBO74l7xFiYdOXMyF+BilR7cddT7q+ISkf1LKveLo4P654F1ay1qoYLy9uBxh31AnG3kceTlEye5j+iG9TXGzz6LLBtZayX/kN6Qe9vs1vmfsVMPvuE9pffnIJXoLIZvUBJa1WO7EDGvepaxIBISTcisFsz0t4648J2wfrQBayk8IJE1spYC7YWn6alGv4r6uiyH46SJLyP2iYTzZyQ3ezIGFKJUNiGepwJUKM3JTFjOW4EiFBOur/Ks0yQoXUXphPYWOU4nj9vqNA+B67cWVenNJQ9cjLtptFSF2cEwnLJyFQxiQR30=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB2900.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(346002)(396003)(376002)(39860400002)(136003)(38100700002)(66556008)(66476007)(5660300002)(6666004)(6506007)(53546011)(8676002)(41300700001)(66946007)(186003)(6486002)(4326008)(316002)(86362001)(31686004)(6512007)(478600001)(36756003)(2616005)(7416002)(966005)(83380400001)(26005)(31696002)(8936002)(2906002)(6916009)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WEZEdmNQT0oyaXgyeWRpMVFpU29pR3pZeGhhNHNHWTZaaXMwTUlYWjlZKysy?=
- =?utf-8?B?bFcyYm43NHZ3Vm1XM3A5eitSaWZNc2dwcEhnNDZ2Q2JIQjIySDhBZVhhT0lh?=
- =?utf-8?B?d2Mzd1NNaXByU2d2U3RJTFhaYmNmZndjd2psQVp1aWpLd2YwdFlWdHM4ME03?=
- =?utf-8?B?ZmhYSWtJYjBlNDJQbThNV3BuSVpWdHVlYnB3blFodm0zanYvMlNTMktGNDlB?=
- =?utf-8?B?eUpyTkdHcjR5RU1FcDlCbWtmMll4dSsyRnlRZklYR3FHMmxwMWU0WjhyVjNO?=
- =?utf-8?B?K2tsSlV5aHEzV2h2a0M3aVE1T1lJTkxCbE1VallOczcyYW9mTUJZdXRpMUNk?=
- =?utf-8?B?bFJOOHl0cG1hUjl5N3RKRWJpVzNIbFlIM1VqbW1wYlh6VmJvVnZCb1BvL3pq?=
- =?utf-8?B?NTZmMEZiV1dsUUNFUi90UWVwQ0tDZ1ZjNVJHOFVsYWpFMEhyNGFSOXE5V3lm?=
- =?utf-8?B?c3lWZEg2Nzg0Q3g2RjA2bWZ5ZzVFYStrRFppbEJoa1Jsc0M2U0FSaGZweXJL?=
- =?utf-8?B?RzhhNWV3Z2dKd3VnV2U2OFE3THZlWnBPS0ZPekdqS3B4OE1nM2JlUHRJQmUw?=
- =?utf-8?B?dk91bFBDTkRaaXhDbGRod1RFL2czN0ZMTEU3WnluMTlsM0FJTmdWd2drRmlE?=
- =?utf-8?B?UndkeXA5NDJIQUJPdkw0enVPdWV3WVdCeW5HeWpJcmNiZHdGbi9zV1NCeitT?=
- =?utf-8?B?ei9MWkRGYUVPQUdQMHRXQVU0MklkYWwxbTl4ZGJmeW1lbXlYczhIekJpZTlY?=
- =?utf-8?B?YzdtYXlSV1VUQklSdDRCTnNPUi9Yc2R2TzRmcGg5RVRkZVNITUhHNXY2U2xW?=
- =?utf-8?B?bk1xazlBRzl4VnhuQThHcVo5TmZEdjBCY0R0bE5haGJLemV5YzhHTlY2ZTha?=
- =?utf-8?B?TG1qcTNFV09tQUowMktJM0FOWmZFaldmQmN1UjdteVV0aGJhQnoyMVRuRnRt?=
- =?utf-8?B?VllTdjBGbEhwaS9kMHlsSTkycjE2NnRMc3I4UUdnQVBRYXBiTmtXMHYvbU0r?=
- =?utf-8?B?WmVkOVh5c0NjQm9iWVVmbXQwU0d5WWNLckk3Z2xuUVFwTlhud1NtN0lvU200?=
- =?utf-8?B?MjBMZU42TWpNMW9FN0t1ai80Y2FVRm5JVElJMHRWQ01JV3lUd0JzZ3VxMDhX?=
- =?utf-8?B?UGcydjhGU3lCcG9qTjgydWg1K2dNVElUY1k3M2tXcDhESVE2aUszL1d2UUlB?=
- =?utf-8?B?bVFBK3Vram5ybXRYOVJDbnZhRWUvdDVyaHdHRDJNRVlWK0d3eklQTmRJL2tX?=
- =?utf-8?B?dU1kdUlQcGxlZnRLM3BVRVlYekVMeVh1UmF6Z0xvejg0TnR6SDZHRTIrdGQ5?=
- =?utf-8?B?aXI3NG9icGI5bDNUSkNoanJtNnJlajIzTEVJWUtlU25tdy8xQlBCQ2ErMVAw?=
- =?utf-8?B?b3BFaVROempaSEZFeEpGc1c4OUFoSjN3Rjk1ZE51YVBwdzh5V29XTFBVcGg4?=
- =?utf-8?B?SktVU2RnN3hGcWg1SHdVQXFBZjl3R29SV0ZLWlZBVzR2RlUyQnNLMi9rMUc5?=
- =?utf-8?B?YUNIZzc5SFhmdXZ5ZjBXWk5menJzelZJVmRFOFoxUlZOMFdhWEloYmFFOHpu?=
- =?utf-8?B?MUZCcjRaYnV2SmRoU2IrRjVMWFAzUVF0Lzg5YisxRnNOQ2Q0Q2ZGK0Fub0Vl?=
- =?utf-8?B?NU8ySHl6VjZwRk55ZmFheC9Md0tPYnRMN0g1dkl3Tm5scW9KdVhCNWQ4K1NL?=
- =?utf-8?B?U3hvSzBjcHJaSXVnN0FHSjl3OXN6ckR1ZmVjUy9Fdndndkd0Y2RYNG1vWXBs?=
- =?utf-8?B?RE9NMXhVL3pQUnoveUUyWmk2Y204Y3J2V3VUNTRDSzlCOS9LVUdWM1dRYzlr?=
- =?utf-8?B?QVlmeGxNZThxK2hDeVk2c2VCcGREYnJid0E4T2MxcmFCVHFrVW10UEJZY2Uw?=
- =?utf-8?B?SEFPL3BuTkVQdmFBdWYrRjFMMU50UERSeEJSWVhGaDIra0lBM0F0REhndC9M?=
- =?utf-8?B?S202ZWF0VDQwc3d5ZVlERVZqYjdPYUl5aDRMYktrTVFNSlRJbWpuU3laeXRI?=
- =?utf-8?B?RFk1Z1J0SEtNQTVtQk9mM083SkV0d3dFZHg5TXRoUWtPUVZvN3EwWnh2QW9O?=
- =?utf-8?B?VkRjZE93K200bG9zYUtqeDNydG8vcXRXSWhscnMvUlFqUS9wME5LN3k3eGQ4?=
- =?utf-8?Q?oNkNfANhQWE/ERbrJfXY2HH7o?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c71f9681-6009-42d8-0448-08da61537988
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB2900.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2022 02:33:57.9233
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wHsHDYwNhmvr9MHRwY/14+sK50VylWkpI1Aim+amY8MrifBH0CJ/B6PcesHt2DG1xEVgntkkhQ1CNOaW1g57vQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3823
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+In order to use thermal trips defined in the thermal structure, rename
+the 'trips' field to 'ntrips' to have the 'trips' field containing the
+thermal trip points.
 
+Cc: Alexandre Bailon <abailon@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
+---
+ drivers/thermal/gov_fair_share.c        |  6 +++---
+ drivers/thermal/gov_power_allocator.c   |  4 ++--
+ drivers/thermal/tegra/tegra30-tsensor.c |  2 +-
+ drivers/thermal/thermal_core.c          | 20 ++++++++++----------
+ drivers/thermal/thermal_helpers.c       |  4 ++--
+ drivers/thermal/thermal_netlink.c       |  2 +-
+ drivers/thermal/thermal_sysfs.c         | 22 +++++++++++-----------
+ include/linux/thermal.h                 |  4 ++--
+ 8 files changed, 32 insertions(+), 32 deletions(-)
 
-On 7/7/2022 5:57 PM, Rob Herring wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Thu, 07 Jul 2022 13:42:55 +0530, Vidya Sagar wrote:
->> Add support for PCIe controllers that operate in the endpoint mode
->> in tegra234 chipset.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->> V4:
->> * Rebased on top of previous patch
->>
->> V3:
->> * New patch in this series
->>
->>   .../bindings/pci/nvidia,tegra194-pcie-ep.yaml | 123 +++++++++++++++++-
->>   1 file changed, 117 insertions(+), 6 deletions(-)
->>
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.example.dtb: pcie-ep@141a0000: Unevaluated properties are not allowed ('nvidia,enable-ext-refclk' was unexpected)
->          From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/patch/
-> 
-> This check can fail if there are any dependencies. The base for a patch
-> series is generally the most recent rc1.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit.
+diff --git a/drivers/thermal/gov_fair_share.c b/drivers/thermal/gov_fair_share.c
+index 1e5abf4822be..6a2abcfc648f 100644
+--- a/drivers/thermal/gov_fair_share.c
++++ b/drivers/thermal/gov_fair_share.c
+@@ -25,10 +25,10 @@ static int get_trip_level(struct thermal_zone_device *tz)
+ 	int trip_temp;
+ 	enum thermal_trip_type trip_type;
+ 
+-	if (tz->trips == 0 || !tz->ops->get_trip_temp)
++	if (tz->num_trips == 0 || !tz->ops->get_trip_temp)
+ 		return 0;
+ 
+-	for (count = 0; count < tz->trips; count++) {
++	for (count = 0; count < tz->num_trips; count++) {
+ 		tz->ops->get_trip_temp(tz, count, &trip_temp);
+ 		if (tz->temperature < trip_temp)
+ 			break;
+@@ -53,7 +53,7 @@ static long get_target_state(struct thermal_zone_device *tz,
+ 
+ 	cdev->ops->get_max_state(cdev, &max_state);
+ 
+-	return (long)(percentage * level * max_state) / (100 * tz->trips);
++	return (long)(percentage * level * max_state) / (100 * tz->num_trips);
+ }
+ 
+ /**
+diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
+index 13e375751d22..1d5052470967 100644
+--- a/drivers/thermal/gov_power_allocator.c
++++ b/drivers/thermal/gov_power_allocator.c
+@@ -527,7 +527,7 @@ static void get_governor_trips(struct thermal_zone_device *tz,
+ 	last_active = INVALID_TRIP;
+ 	last_passive = INVALID_TRIP;
+ 
+-	for (i = 0; i < tz->trips; i++) {
++	for (i = 0; i < tz->num_trips; i++) {
+ 		enum thermal_trip_type type;
+ 		int ret;
+ 
+@@ -668,7 +668,7 @@ static int power_allocator_bind(struct thermal_zone_device *tz)
+ 
+ 	get_governor_trips(tz, params);
+ 
+-	if (tz->trips > 0) {
++	if (tz->num_trips > 0) {
+ 		ret = tz->ops->get_trip_temp(tz,
+ 					params->trip_max_desired_temperature,
+ 					&control_temp);
+diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
+index 9b6b693cbcf8..05886684f429 100644
+--- a/drivers/thermal/tegra/tegra30-tsensor.c
++++ b/drivers/thermal/tegra/tegra30-tsensor.c
+@@ -316,7 +316,7 @@ static void tegra_tsensor_get_hw_channel_trips(struct thermal_zone_device *tzd,
+ 	*hot_trip  = 85000;
+ 	*crit_trip = 90000;
+ 
+-	for (i = 0; i < tzd->trips; i++) {
++	for (i = 0; i < tzd->num_trips; i++) {
+ 		enum thermal_trip_type type;
+ 		int trip_temp;
+ 
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index a8b1628937c6..cb9b1bd03bd3 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -505,7 +505,7 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
+ 
+ 	tz->notify_event = event;
+ 
+-	for (count = 0; count < tz->trips; count++)
++	for (count = 0; count < tz->num_trips; count++)
+ 		handle_thermal_trip(tz, count);
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_device_update);
+@@ -630,7 +630,7 @@ int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
+ 	unsigned long max_state;
+ 	int result, ret;
+ 
+-	if (trip >= tz->trips || trip < 0)
++	if (trip >= tz->num_trips || trip < 0)
+ 		return -EINVAL;
+ 
+ 	list_for_each_entry(pos1, &thermal_tz_list, node) {
+@@ -811,7 +811,7 @@ static void __bind(struct thermal_zone_device *tz, int mask,
+ {
+ 	int i, ret;
+ 
+-	for (i = 0; i < tz->trips; i++) {
++	for (i = 0; i < tz->num_trips; i++) {
+ 		if (mask & (1 << i)) {
+ 			unsigned long upper, lower;
+ 
+@@ -1057,7 +1057,7 @@ static void __unbind(struct thermal_zone_device *tz, int mask,
+ {
+ 	int i;
+ 
+-	for (i = 0; i < tz->trips; i++)
++	for (i = 0; i < tz->num_trips; i++)
+ 		if (mask & (1 << i))
+ 			thermal_zone_unbind_cooling_device(tz, i, cdev);
+ }
+@@ -1169,7 +1169,7 @@ static void thermal_set_delay_jiffies(unsigned long *delay_jiffies, int delay_ms
+ /**
+  * thermal_zone_device_register() - register a new thermal zone device
+  * @type:	the thermal zone device type
+- * @trips:	the number of trip points the thermal zone support
++ * @num_trips:	the number of trip points the thermal zone support
+  * @mask:	a bit string indicating the writeablility of trip points
+  * @devdata:	private device data
+  * @ops:	standard thermal zone device callbacks
+@@ -1191,7 +1191,7 @@ static void thermal_set_delay_jiffies(unsigned long *delay_jiffies, int delay_ms
+  * IS_ERR*() helpers.
+  */
+ struct thermal_zone_device *
+-thermal_zone_device_register(const char *type, int trips, int mask,
++thermal_zone_device_register(const char *type, int num_trips, int mask,
+ 			     void *devdata, struct thermal_zone_device_ops *ops,
+ 			     struct thermal_zone_params *tzp, int passive_delay,
+ 			     int polling_delay)
+@@ -1215,7 +1215,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	if (trips > THERMAL_MAX_TRIPS || trips < 0 || mask >> trips) {
++	if (num_trips > THERMAL_MAX_TRIPS || num_trips < 0 || mask >> num_trips) {
+ 		pr_err("Incorrect number of thermal trips\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
+@@ -1225,7 +1225,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	if (trips > 0 && (!ops->get_trip_type || !ops->get_trip_temp))
++	if (num_trips > 0 && (!ops->get_trip_type || !ops->get_trip_temp))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	tz = kzalloc(sizeof(*tz), GFP_KERNEL);
+@@ -1255,7 +1255,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+ 	tz->tzp = tzp;
+ 	tz->device.class = &thermal_class;
+ 	tz->devdata = devdata;
+-	tz->trips = trips;
++	tz->num_trips = num_trips;
+ 
+ 	thermal_set_delay_jiffies(&tz->passive_delay_jiffies, passive_delay);
+ 	thermal_set_delay_jiffies(&tz->polling_delay_jiffies, polling_delay);
+@@ -1273,7 +1273,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+ 	if (result)
+ 		goto release_device;
+ 
+-	for (count = 0; count < trips; count++) {
++	for (count = 0; count < num_trips; count++) {
+ 		if (tz->ops->get_trip_type(tz, count, &trip_type) ||
+ 		    tz->ops->get_trip_temp(tz, count, &trip_temp) ||
+ 		    !trip_temp)
+diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
+index 60bfda1a1db7..690890f054a3 100644
+--- a/drivers/thermal/thermal_helpers.c
++++ b/drivers/thermal/thermal_helpers.c
+@@ -89,7 +89,7 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+ 	ret = tz->ops->get_temp(tz, temp);
+ 
+ 	if (IS_ENABLED(CONFIG_THERMAL_EMULATION) && tz->emul_temperature) {
+-		for (count = 0; count < tz->trips; count++) {
++		for (count = 0; count < tz->num_trips; count++) {
+ 			ret = tz->ops->get_trip_type(tz, count, &type);
+ 			if (!ret && type == THERMAL_TRIP_CRITICAL) {
+ 				ret = tz->ops->get_trip_temp(tz, count,
+@@ -137,7 +137,7 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
+ 	if (!tz->ops->set_trips || !tz->ops->get_trip_hyst)
+ 		goto exit;
+ 
+-	for (i = 0; i < tz->trips; i++) {
++	for (i = 0; i < tz->num_trips; i++) {
+ 		int trip_low;
+ 
+ 		tz->ops->get_trip_temp(tz, i, &trip_temp);
+diff --git a/drivers/thermal/thermal_netlink.c b/drivers/thermal/thermal_netlink.c
+index 32fea5174cc0..050d243a5fa1 100644
+--- a/drivers/thermal/thermal_netlink.c
++++ b/drivers/thermal/thermal_netlink.c
+@@ -469,7 +469,7 @@ static int thermal_genl_cmd_tz_get_trip(struct param *p)
+ 
+ 	mutex_lock(&tz->lock);
+ 
+-	for (i = 0; i < tz->trips; i++) {
++	for (i = 0; i < tz->num_trips; i++) {
+ 
+ 		enum thermal_trip_type type;
+ 		int temp, hyst = 0;
+diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+index 1c4aac8464a7..5018459e8dd9 100644
+--- a/drivers/thermal/thermal_sysfs.c
++++ b/drivers/thermal/thermal_sysfs.c
+@@ -416,15 +416,15 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+ 	int indx;
+ 
+ 	/* This function works only for zones with at least one trip */
+-	if (tz->trips <= 0)
++	if (tz->num_trips <= 0)
+ 		return -EINVAL;
+ 
+-	tz->trip_type_attrs = kcalloc(tz->trips, sizeof(*tz->trip_type_attrs),
++	tz->trip_type_attrs = kcalloc(tz->num_trips, sizeof(*tz->trip_type_attrs),
+ 				      GFP_KERNEL);
+ 	if (!tz->trip_type_attrs)
+ 		return -ENOMEM;
+ 
+-	tz->trip_temp_attrs = kcalloc(tz->trips, sizeof(*tz->trip_temp_attrs),
++	tz->trip_temp_attrs = kcalloc(tz->num_trips, sizeof(*tz->trip_temp_attrs),
+ 				      GFP_KERNEL);
+ 	if (!tz->trip_temp_attrs) {
+ 		kfree(tz->trip_type_attrs);
+@@ -432,7 +432,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+ 	}
+ 
+ 	if (tz->ops->get_trip_hyst) {
+-		tz->trip_hyst_attrs = kcalloc(tz->trips,
++		tz->trip_hyst_attrs = kcalloc(tz->num_trips,
+ 					      sizeof(*tz->trip_hyst_attrs),
+ 					      GFP_KERNEL);
+ 		if (!tz->trip_hyst_attrs) {
+@@ -442,7 +442,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+ 		}
+ 	}
+ 
+-	attrs = kcalloc(tz->trips * 3 + 1, sizeof(*attrs), GFP_KERNEL);
++	attrs = kcalloc(tz->num_trips * 3 + 1, sizeof(*attrs), GFP_KERNEL);
+ 	if (!attrs) {
+ 		kfree(tz->trip_type_attrs);
+ 		kfree(tz->trip_temp_attrs);
+@@ -451,7 +451,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+ 		return -ENOMEM;
+ 	}
+ 
+-	for (indx = 0; indx < tz->trips; indx++) {
++	for (indx = 0; indx < tz->num_trips; indx++) {
+ 		/* create trip type attribute */
+ 		snprintf(tz->trip_type_attrs[indx].name, THERMAL_NAME_LENGTH,
+ 			 "trip_point_%d_type", indx);
+@@ -478,7 +478,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+ 			tz->trip_temp_attrs[indx].attr.store =
+ 							trip_point_temp_store;
+ 		}
+-		attrs[indx + tz->trips] = &tz->trip_temp_attrs[indx].attr.attr;
++		attrs[indx + tz->num_trips] = &tz->trip_temp_attrs[indx].attr.attr;
+ 
+ 		/* create Optional trip hyst attribute */
+ 		if (!tz->ops->get_trip_hyst)
+@@ -496,10 +496,10 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+ 			tz->trip_hyst_attrs[indx].attr.store =
+ 					trip_point_hyst_store;
+ 		}
+-		attrs[indx + tz->trips * 2] =
++		attrs[indx + tz->num_trips * 2] =
+ 					&tz->trip_hyst_attrs[indx].attr.attr;
+ 	}
+-	attrs[tz->trips * 3] = NULL;
++	attrs[tz->num_trips * 3] = NULL;
+ 
+ 	tz->trips_attribute_group.attrs = attrs;
+ 
+@@ -540,7 +540,7 @@ int thermal_zone_create_device_groups(struct thermal_zone_device *tz,
+ 	for (i = 0; i < size - 2; i++)
+ 		groups[i] = thermal_zone_attribute_groups[i];
+ 
+-	if (tz->trips) {
++	if (tz->num_trips) {
+ 		result = create_trip_attrs(tz, mask);
+ 		if (result) {
+ 			kfree(groups);
+@@ -561,7 +561,7 @@ void thermal_zone_destroy_device_groups(struct thermal_zone_device *tz)
+ 	if (!tz)
+ 		return;
+ 
+-	if (tz->trips)
++	if (tz->num_trips)
+ 		destroy_trip_attrs(tz);
+ 
+ 	kfree(tz->device.groups);
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 6289b0bb1c97..03e968d61471 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -125,7 +125,7 @@ struct thermal_cooling_device {
+  * @trip_hyst_attrs:	attributes for trip points for sysfs: trip hysteresis
+  * @mode:		current mode of this thermal zone
+  * @devdata:	private pointer for device private data
+- * @trips:	number of trip points the thermal zone supports
++ * @num_trips:	number of trip points the thermal zone supports
+  * @trips_disabled;	bitmap for disabled trips
+  * @passive_delay_jiffies: number of jiffies to wait between polls when
+  *			performing passive cooling.
+@@ -165,7 +165,7 @@ struct thermal_zone_device {
+ 	struct thermal_attr *trip_hyst_attrs;
+ 	enum thermal_device_mode mode;
+ 	void *devdata;
+-	int trips;
++	int num_trips;
+ 	unsigned long trips_disabled;	/* bitmap for disabled trips */
+ 	unsigned long passive_delay_jiffies;
+ 	unsigned long polling_delay_jiffies;
+-- 
+2.25.1
 
-I did run 'make dt_binding_check' before sending the patches for review 
-and didn't observe any issue. Just to make sure that I observe the same 
-issue locally, I updated dtschema and gave DT_CHECKER_FLAGS=-m and yet 
-didn't observe the tool reporting any issue.
-FWIW, I think I missed adding the documentation for 
-'nvidia,enable-ext-refclk' property. I'll add it and send again, but 
-before that, I would like to see if my change addresses the issue 
-correctly and also there are no other issues. Could you please help me 
-with why I'm not observing the issue locally?
-
-FWIW, Here is the output I get with V4 patch.
-
-vidya@vidya-virtual-machine:~/x/linux-next$ make DT_CHECKER_FLAGS=-m
-dt_binding_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml
-
-    LINT    Documentation/devicetree/bindings
-    CHKDT   Documentation/devicetree/bindings/processed-schema.json
-    SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-/home/vidya/x/linux-next/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml:
-ignoring, error in schema: allOf: 1: if: not: properties
-    DTEX
-Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.example.dts
-    DTC
-Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.example.dtb
-    CHECK
-Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.example.dtb
-vidya@vidya-virtual-machine:~/x/linux-next$
-
-Thanks,
-Vidya Sagar
-
-> 
