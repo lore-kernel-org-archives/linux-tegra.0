@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91568C433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 10 Jul 2022 12:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8FFC433EF
+	for <linux-tegra@archiver.kernel.org>; Sun, 10 Jul 2022 12:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbiGJMfc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 10 Jul 2022 08:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58412 "EHLO
+        id S229728AbiGJMf4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 10 Jul 2022 08:35:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbiGJMf3 (ORCPT
+        with ESMTP id S229657AbiGJMfi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 10 Jul 2022 08:35:29 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E8F1144C
-        for <linux-tegra@vger.kernel.org>; Sun, 10 Jul 2022 05:35:27 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id bu1so2663884wrb.9
-        for <linux-tegra@vger.kernel.org>; Sun, 10 Jul 2022 05:35:27 -0700 (PDT)
+        Sun, 10 Jul 2022 08:35:38 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BC7F13D53
+        for <linux-tegra@vger.kernel.org>; Sun, 10 Jul 2022 05:35:32 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id d13-20020a05600c34cd00b003a2dc1cf0b4so1602530wmq.4
+        for <linux-tegra@vger.kernel.org>; Sun, 10 Jul 2022 05:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linexp-org.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XDBCqCi5qpLpV3N/M8gq3K+ocUXlMKc797KB4nwKvLU=;
-        b=T9EDchFlGT4kE8VFbio2ci9HzYc71XyBwd+huTje1aKumQMtWF2nvYLaaHzcovCqtU
-         PchUPMJiXvD3P288if8JrBRE5YS7IqPOaNdKrO8p2D7i6E7yQUj/Sd2Oh17g+Oulyl6R
-         7uXF3gazDiZebiSs8OEjOck1RW3uit9PiQ6gClfYEDmp7GSrBPM443boAiKgJJh9Yhzh
-         /F/buSf/Tdb4Odv6kfeOaCw41N1WnEjknu1TBae6T7Ki9/efUyGxg9QdPLcdubhR7glv
-         y78vVxrElnx0ZZwm+0KpBxKeR2d1bvagWArAky5badjcTIv4DABMkEtQAJVPanwjc5mZ
-         B23w==
+        bh=L3skzrLPntV9feVuTsato+Vtj+oVFJD2KdodKzkC6Z0=;
+        b=sAEw6cqMT71U33e7SfvrJcyAd2gE6AbB0vJgY7xd/u/Wf5P7Hgv4HIFH8Mt4pPTBY0
+         H9UwhD872eu7I05zlTmOX9jsuLJsZDjjJ1LRqKrn1NDYfKMmkU56VKQUJUjL5M7WBnkT
+         1QaAyYFnQVv5YPzkOky3WVzZyA6XSwuSRhqV06xWzJtUnnBYjRsJoiQNLPM8ndVaihE5
+         Wr1J6d4itq6U7yWXS3Dm+BJa8bCiy5a4ZUzkPLXZoaJcW4nkZnlPJ/z/LeY8HSZnOT1N
+         rXLj1WPcg3HCbMFRxoU7L6z8Dp5trADaQG3vOi7apEGkXPR5E5tTYGd0lCfH6A9uHe6a
+         EI7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XDBCqCi5qpLpV3N/M8gq3K+ocUXlMKc797KB4nwKvLU=;
-        b=A2w7qAffSmefa2Ehe9xoLLR+OkFqxoEbDCPZMqeUFZPak5V3NXev0cg3IQVtoj5geO
-         5liyy1ItyKLs3sHoKpeCkkKcZc6NW6vSY54Hf1FYjeQ5wHeK58nituNHp23WBPiUlK0k
-         C3O1HJQXR/exezDl+nJei+ygQI3S3mV8fDd56h99Vvo6/73CQDywAkvPxPFqkd5nNe/Y
-         U3+2+SZfVGTum4hMQYePr981G4IIiaFxYAdV7w8KOpgZvwE5H/y68INMEk6TM4JApk3u
-         Qd81xwd8YLDCXR8qcr1W4vX13ftxRF4oAgkrnMWKEaUJKlon2Go4g6fEvcvf7zZpqVfk
-         4MMw==
-X-Gm-Message-State: AJIora/vnqM3SHrQbtQVshDthcDUYMwUNgThQLbqE6AK+aoD328Kh/m6
-        BI7DAgqQ571S+5qgd/8707/5Ew==
-X-Google-Smtp-Source: AGRyM1tRXEejFGVqxpRyRsE0/11z+sUMc9mvfhAoyrwAATIdkz4+rrRtebjinqNsHpVJLQf8MLH5+g==
-X-Received: by 2002:a5d:5451:0:b0:21d:2295:6a05 with SMTP id w17-20020a5d5451000000b0021d22956a05mr12204812wrv.302.1657456527458;
-        Sun, 10 Jul 2022 05:35:27 -0700 (PDT)
+        bh=L3skzrLPntV9feVuTsato+Vtj+oVFJD2KdodKzkC6Z0=;
+        b=x54a8Kf+5NLRSlpACMYQIPxI1y8llWNHwRcNoQlcAuUXwLVbrIchXJeum+rcOZdKgG
+         LdmyaP3DEWUTAdvlBROGdVL69dND/Gf7WcG/F+wRh8vnapOZ8RGG0PBF/mAnT80DBYCm
+         Us4In0Uj2jafNuAHUgg+umrR5BTdD4tYtKr2n/BsWouKihPmGMKr/n3h8/vPwuXlEA2G
+         jWgTOMbJponDRaqyCjul94SMJfmE4YOEkO0inAjg6I1cLy7FkStTMZMucrOZ8/D0O6Og
+         Ilp/MzyTDnsYZ/8jgFBF7rjQ9pbXluyJ4pYr7R33RpI86xB2DzWpGbSgyHPq+BNaHWjM
+         yD+w==
+X-Gm-Message-State: AJIora8blkVcqHzR3M66jCmLefI8q8/v1bosJwCEDMsj3vyIwWWZHwAT
+        7nBamMlJgrij0mJXsjoMBgSoyw==
+X-Google-Smtp-Source: AGRyM1vyUbaeoRaMhBmtCkfSXCX5V+7e9GTFAynDXwVIc5gIYTc+2A6USfeykIpaXMES3eiUTmijkw==
+X-Received: by 2002:a05:600c:4f08:b0:3a1:99ed:4f1f with SMTP id l8-20020a05600c4f0800b003a199ed4f1fmr10121049wmq.199.1657456532071;
+        Sun, 10 Jul 2022 05:35:32 -0700 (PDT)
 Received: from localhost.localdomain (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 24-20020a05600c22d800b003a0375c4f73sm3775144wmg.44.2022.07.10.05.35.26
+        by smtp.gmail.com with ESMTPSA id 24-20020a05600c22d800b003a0375c4f73sm3775144wmg.44.2022.07.10.05.35.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Jul 2022 05:35:27 -0700 (PDT)
+        Sun, 10 Jul 2022 05:35:31 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linexp.org>
 To:     daniel.lezcano@linaro.org, rafael@kernel.org
 Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>,
         linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH v5 07/12] thermal/core: Rename trips to ntrips
-Date:   Sun, 10 Jul 2022 14:35:06 +0200
-Message-Id: <20220710123512.1714714-8-daniel.lezcano@linexp.org>
+Subject: [PATCH v5 07/12] thermal/core: Rename 'trips' to 'num_trips'
+Date:   Sun, 10 Jul 2022 14:35:07 +0200
+Message-Id: <20220710123512.1714714-9-daniel.lezcano@linexp.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220710123512.1714714-1-daniel.lezcano@linexp.org>
 References: <20220710123512.1714714-1-daniel.lezcano@linexp.org>
@@ -71,7 +71,7 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 In order to use thermal trips defined in the thermal structure, rename
-the 'trips' field to 'ntrips' to have the 'trips' field containing the
+the 'trips' field to 'num_trips' to have the 'trips' field containing the
 thermal trip points.
 
 Cc: Alexandre Bailon <abailon@baylibre.com>
