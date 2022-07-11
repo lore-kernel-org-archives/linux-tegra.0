@@ -2,108 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDD8C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jul 2022 14:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F26EC43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jul 2022 14:38:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229495AbiGKOgi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Jul 2022 10:36:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56976 "EHLO
+        id S231374AbiGKOix (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jul 2022 10:38:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbiGKOgi (ORCPT
+        with ESMTP id S231379AbiGKOir (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Jul 2022 10:36:38 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD0865D7D;
-        Mon, 11 Jul 2022 07:36:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 30C65B80FAE;
-        Mon, 11 Jul 2022 14:36:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B25C34115;
-        Mon, 11 Jul 2022 14:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1657550194;
-        bh=V6QwPdhvRlFZNf3VcUzFm9OphswgaGgjtz+UmgND7H0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rHbA9jkFoEINUY5zhlcGh04NP9luzwWnk/Nht835LvKS7Yb6v/19n3iLIgbh+YNHp
-         YWHiCrCdaGHk4qW4xYorqAHgcF1Xq5aJlu9VkP1T2SERxvtasy1OInuiMxAknl+Pna
-         3NQwCCL7hTE5wO+MO/7iuI5TbGWnrQojN4ZnlERs=
-Date:   Mon, 11 Jul 2022 16:36:32 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-        sudipm.mukherjee@gmail.com, slade@sladewatkins.com,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.15 000/230] 5.15.54-rc1 review
-Message-ID: <Ysw1cCYRwnpvhO7d@kroah.com>
-References: <20220711090604.055883544@linuxfoundation.org>
- <7c552ad4-81e9-2abe-3114-dd55c924844c@nvidia.com>
+        Mon, 11 Jul 2022 10:38:47 -0400
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB6C110F;
+        Mon, 11 Jul 2022 07:38:45 -0700 (PDT)
+Received: by mail-il1-f181.google.com with SMTP id v2so3118641ilo.7;
+        Mon, 11 Jul 2022 07:38:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QI8NoXmTu99A3BGvUDI/8ShLiNFWmdGoMBR5ix0lWDo=;
+        b=isFWdPpUsJEtb3YRqEZyVZhJdZUgu6rdoaukTP8lBnC3z2f8C7vYXvm2NozLaGg5lw
+         TFT+4lZQc/RFEFZASQzNz5nrZ26Rq7RFhrgBV3/fE3CzHSq5cXToSiHuDJPqyaNQ5QHt
+         1Jd2jl9+CPja65JysdSisuAhBlzoUvkd6PDuUJR0xITokLDEytfr2rTagL4+aMTOGhJU
+         QIaw6qW9wxPgyoZKgO0PMu7xZ9TQy9kugpNSk61mLCmWJSjzITQQeJb7tFRyk+8nDdyu
+         4wUkkh36wnL4qH/SC6upR4gYHa6zj6Ka2yrx9ZYNxPqpXf8szltwE20H5nBHbfJYyn2b
+         l0Vg==
+X-Gm-Message-State: AJIora+vMsqjZHl2nThta2mBgmSov+a5uKhzx5UHgiCbN5Q9ujwoqOws
+        rHm+K3A2uEjcZzx1T5ZkCA==
+X-Google-Smtp-Source: AGRyM1vv3IGpJxVA3/ctWFf3shZBxzdiPh3c5Ui151b/79yHG8d9Nn0GwZ8SPYFxfnp8pK50KoGb7g==
+X-Received: by 2002:a05:6e02:164b:b0:2dc:85e3:238b with SMTP id v11-20020a056e02164b00b002dc85e3238bmr1220980ilu.121.1657550324397;
+        Mon, 11 Jul 2022 07:38:44 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id r16-20020a92c5b0000000b002dad39ff841sm2787827ilt.19.2022.07.11.07.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jul 2022 07:38:44 -0700 (PDT)
+Received: (nullmailer pid 3845949 invoked by uid 1000);
+        Mon, 11 Jul 2022 14:38:42 -0000
+Date:   Mon, 11 Jul 2022 08:38:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     kthota@nvidia.com, sagar.tv@gmail.com, lpieralisi@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        kishon@ti.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        gustavo.pimentel@synopsys.com, linux-tegra@vger.kernel.org,
+        thierry.reding@gmail.com, mmaddireddy@nvidia.com,
+        jingoohan1@gmail.com, kw@linux.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 3/9] dt-bindings: PCI: tegra234: Add schema for
+ tegra234 endpoint mode
+Message-ID: <20220711143842.GA3840001-robh@kernel.org>
+References: <20220707081301.29961-1-vidyas@nvidia.com>
+ <20220707081301.29961-4-vidyas@nvidia.com>
+ <1657196871.476299.1454231.nullmailer@robh.at.kernel.org>
+ <afc9cd15-a895-792f-3f49-1dca3694b0f3@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7c552ad4-81e9-2abe-3114-dd55c924844c@nvidia.com>
+In-Reply-To: <afc9cd15-a895-792f-3f49-1dca3694b0f3@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 01:43:59PM +0100, Jon Hunter wrote:
-> Hi Greg,
+On Sat, Jul 09, 2022 at 08:03:45AM +0530, Vidya Sagar wrote:
 > 
-> On 11/07/2022 10:04, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.54 release.
-> > There are 230 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+> 
+> On 7/7/2022 5:57 PM, Rob Herring wrote:
+> > External email: Use caution opening links or attachments
 > > 
-> > Responses should be made by Wed, 13 Jul 2022 09:05:28 +0000.
-> > Anything received after that time might be too late.
 > > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.54-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > and the diffstat can be found below.
+> > On Thu, 07 Jul 2022 13:42:55 +0530, Vidya Sagar wrote:
+> > > Add support for PCIe controllers that operate in the endpoint mode
+> > > in tegra234 chipset.
+> > > 
+> > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > > ---
+> > > V4:
+> > > * Rebased on top of previous patch
+> > > 
+> > > V3:
+> > > * New patch in this series
+> > > 
+> > >   .../bindings/pci/nvidia,tegra194-pcie-ep.yaml | 123 +++++++++++++++++-
+> > >   1 file changed, 117 insertions(+), 6 deletions(-)
+> > > 
 > > 
-> > thanks,
+> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
 > > 
-> > greg k-h
+> > yamllint warnings/errors:
 > > 
-> > -------------
-> > Pseudo-Shortlog of commits:
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.example.dtb: pcie-ep@141a0000: Unevaluated properties are not allowed ('nvidia,enable-ext-refclk' was unexpected)
+> >          From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml
+> > 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://patchwork.ozlabs.org/patch/
+> > 
+> > This check can fail if there are any dependencies. The base for a patch
+> > series is generally the most recent rc1.
+> > 
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> > 
+> > pip3 install dtschema --upgrade
+> > 
+> > Please check and re-submit.
 > 
-> ...
-> 
-> > Mark Rutland <mark.rutland@arm.com>
-> >      irqchip/gic-v3: Ensure pseudo-NMIs have an ISB between ack and handling
-> 
-> 
-> The above change is missing a semi-colon and so is causing the following
-> build error ...
-> 
-> drivers/irqchip/irq-gic-v3.c: In function 'gic_handle_nmi':
-> drivers/irqchip/irq-gic-v3.c:666:2: error: expected ';' before 'err'
->   err = handle_domain_nmi(gic_data.domain, irqnr, regs);
->   ^~~
+> I did run 'make dt_binding_check' before sending the patches for review and
+> didn't observe any issue. Just to make sure that I observe the same issue
+> locally, I updated dtschema and gave DT_CHECKER_FLAGS=-m and yet didn't
+> observe the tool reporting any issue.
+> FWIW, I think I missed adding the documentation for
+> 'nvidia,enable-ext-refclk' property. I'll add it and send again, but before
+> that, I would like to see if my change addresses the issue correctly and
+> also there are no other issues. Could you please help me with why I'm not
+> observing the issue locally?
 
-Ah, the original also didn't have the ; I'll go find the fix commit for
-this...
+There's a fix for unevaluatedProperties that's only in the dtschema main 
+branch and not yet in a release.
 
-> 
-> > Hou Tao <houtao1@huawei.com>
-> >      bpf, arm64: Use emit_addr_mov_i64() for BPF_PSEUDO_FUNC
-> 
-> And the above commit is generating the following build error ...
-> 
-> arch/arm64/net/bpf_jit_comp.c: In function 'build_insn':
-> arch/arm64/net/bpf_jit_comp.c:791:7: error: implicit declaration of function
-> 'bpf_pseudo_func' [-Werror=implicit-function-declaration]
->    if (bpf_pseudo_func(insn))
->        ^~~~~~~~~~~~~~~
-
-Thanks, will figure this one out and do a -rc2 release.
-
-greg k-h
+Rob
