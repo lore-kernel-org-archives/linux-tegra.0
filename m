@@ -2,61 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 939A4C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jul 2022 15:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E07C43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jul 2022 15:40:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229922AbiGKPkk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S229477AbiGKPkk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 11 Jul 2022 11:40:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35336 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbiGKPkj (ORCPT
+        with ESMTP id S230382AbiGKPkk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Jul 2022 11:40:39 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D961D357C5
-        for <linux-tegra@vger.kernel.org>; Mon, 11 Jul 2022 08:40:36 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id y22-20020a7bcd96000000b003a2e2725e89so2959275wmj.0
-        for <linux-tegra@vger.kernel.org>; Mon, 11 Jul 2022 08:40:36 -0700 (PDT)
+        Mon, 11 Jul 2022 11:40:40 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 695073AB35
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Jul 2022 08:40:38 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id h17so7591337wrx.0
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Jul 2022 08:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5BZPQuxil+Dv7iLgZiJ6GR0BqJ50yPaoAlBNq1INefc=;
-        b=ha2P2Cf45SSEFybH5OyAI/ZPan3MCa/+mVMpnR+ZnyVsjP0ShQEzqP6Rmcofec1+9t
-         901eNL6X8JJ5hChWdCKGqFHPcTn4756okeztA/1UaENFTghpKwFmskEhdo2iPqdkIStY
-         z5RD9df/246NObqQY4z93q0Xo27WVFDB1xr6t1UnByCFj1StoE3F/JnUeMVhO1mKbRo6
-         48TwD7gXr7eA+4dFkBMScMw7b/lBlYghpvDk2rEnNs6eO/CxaXqEF0utCs30YdygLZYW
-         cJ1rDOIdw5wiZQMuaDLCxs8wb487pyQXmlD9I5iLF7Oy2lzY+Xp+xSxLeLg+D2j7OV9X
-         D6Gw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=bYnBr/wNjLJrIFyLmT5Q7G4SeBDinWfBMSvyzlXXgSQ=;
+        b=eiokIFpp+GOJ5ReQxNwA54jx2zNuEr8L0Fp07BWZP3GPRzFl+mADVnpKKAvW16RfHU
+         unIV/OgTCpRUScck8bBY72mCqa/PRWMXen+NHQuQrhPqpNLEMtkJm5lwhkxEZ/8JaNr2
+         EsRjTIYXL8PIQjxdiN3GNDUm6dsWNZOTiGsTUIhBFGpCtmPO6X2LzZrIPtsldpB7g06B
+         YkZeCygpo5hdxhjUrnYYoWw2wRtS8xkw5+cT2xX1cwsj8+agYu0NWMQlk+sAqI3azT2w
+         c0ahYC0VoAcUtgx8sUskxV8bNPP0ycSxYz1kArDLPGUL9cHQVebJEDO4pWJE85O/4JXH
+         Jj+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5BZPQuxil+Dv7iLgZiJ6GR0BqJ50yPaoAlBNq1INefc=;
-        b=SJ7LSDAqYWnkQoANC7x+x0ah3f/PvHvP3+QaTRKJG+xJeufit3eWmAvxs6ZuNvdzfP
-         DirUe+R2NHUz8iCXL75IqRkOiU/K3iDc/SmjCQ0CJWb/k80Z6Kzg8JiRQg2FQHpdqMwz
-         CCL7tjug7u5/aB+BQZuleW3UZf5wq9/AplQ0xsJ3csLbk139e7AMvA6Fq6yHAiMb4uvH
-         kyAFRLaxo/sOk4VtfaRk7fY/zMqI8w459CA3LVRSA/debhRhuxEJqqlXdsW4oWImjsIx
-         27FenKtfALIDLL7kdnpNhGxOIynHbQSh2WF63hgjptdClFimjEvgyYEO44Q79Sbvq0R3
-         ixKQ==
-X-Gm-Message-State: AJIora/2nMQF/kfgCjDW+u/nw5DDVt+fZYSWWvZiPEomPXm8fPmaHXJJ
-        DJa0K905Rykba0jTBS9vv4o=
-X-Google-Smtp-Source: AGRyM1sFaRV+x7i0ZCpNH4X6Npn5J6bXisr6Xlq2orwc4LzvrdStvLAnE9wHaKfj8L+pVLwTfbDq6w==
-X-Received: by 2002:a05:600c:4fc8:b0:3a1:99cf:7fe with SMTP id o8-20020a05600c4fc800b003a199cf07femr16358692wmq.142.1657554035321;
-        Mon, 11 Jul 2022 08:40:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bYnBr/wNjLJrIFyLmT5Q7G4SeBDinWfBMSvyzlXXgSQ=;
+        b=dohBZGsZotjVmKLIe7n8LmQDlwbIGU7g+EVrnwbCAoJ6cLT29/d818bEieVaM3DJjb
+         wiQnwghGu9cxtAX/vnAQdhbrgWuubf6GbTv+BtrWAgb1uyn6Si3OODdhUQ6PeAuA2Rqn
+         Mr9H5e/rmXBRNNatsMVGcnisfaCnqYsfPVIg4oJQQj9Vl9dgmMHhmQFP/OgGlDtJkLZg
+         SUmRDOPtZIX9olyF2NNLzmSqtQED8dcWNxSaoP9UlVQW55oQDneRySSlY5n+ftbqdYNh
+         Vl7HryOMrB1GfMODA5cg5/GWcO5Rd3c5wMaMGvM6wONsdR2nnS3LCCZmFK5813HFuBlq
+         AXyg==
+X-Gm-Message-State: AJIora/MRjzVXSyX+9r1GuUK0JiYMYsGPzUANhWN+rSbRQNRsuVURDEQ
+        t6AvfJ/4DHZy7l+8lfiAgdc7n45T/XM=
+X-Google-Smtp-Source: AGRyM1seQ4TfQNSOKZKXsHAuGRJRBTFM1o9VOYZKGqyYG+h23bFo8N8pfa8aquk8RpdK5rTpunaSsw==
+X-Received: by 2002:a5d:4a0c:0:b0:21d:78c9:c5d3 with SMTP id m12-20020a5d4a0c000000b0021d78c9c5d3mr17490933wrq.42.1657554036880;
+        Mon, 11 Jul 2022 08:40:36 -0700 (PDT)
 Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id v6-20020a5d5906000000b0021b970a68f9sm6020435wrd.26.2022.07.11.08.40.34
+        by smtp.gmail.com with ESMTPSA id c8-20020a5d4148000000b0021d8b1656dfsm6109291wrq.93.2022.07.11.08.40.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jul 2022 08:40:34 -0700 (PDT)
+        Mon, 11 Jul 2022 08:40:36 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>
 Cc:     JC Kuo <jckuo@nvidia.com>, Marc Zyngier <maz@kernel.org>,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/3] soc/tegra: pmc: Remove leading space
-Date:   Mon, 11 Jul 2022 17:40:29 +0200
-Message-Id: <20220711154031.689715-1-thierry.reding@gmail.com>
+Subject: [PATCH 2/3] soc/tegra: pmc: Add support for simple wake events
+Date:   Mon, 11 Jul 2022 17:40:30 +0200
+Message-Id: <20220711154031.689715-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220711154031.689715-1-thierry.reding@gmail.com>
+References: <20220711154031.689715-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -65,26 +67,68 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Remove a leading space from a line that is otherwise indented by tabs.
+Simple wake events are neither mapped to GIC interrupts nor have an
+associated GPIO line. They are close to GPIO-backed wake events in that
+the IRQ hierarchy processing needs to stop at the PMC level, but since
+there is no dedicated GPIO line for them, let's turn them into a
+separate type.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/tegra/pmc.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 6a4b8f7e7948..0e87fdb90a4a 100644
+index 0e87fdb90a4a..48286bc59f46 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -2274,7 +2274,7 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+@@ -296,6 +296,17 @@ struct tegra_wake_event {
+ 	} gpio;
+ };
  
- 			/* GPIO hierarchies stop at the PMC level */
- 			if (!err && domain->parent)
-- 				err = irq_domain_disconnect_hierarchy(domain->parent,
-+				err = irq_domain_disconnect_hierarchy(domain->parent,
- 								      virq);
++#define TEGRA_WAKE_SIMPLE(_name, _id)			\
++	{						\
++		.name = _name,				\
++		.id = _id,				\
++		.irq = 0,				\
++		.gpio = {				\
++			.instance = UINT_MAX,		\
++			.pin = UINT_MAX,		\
++		},					\
++	}
++
+ #define TEGRA_WAKE_IRQ(_name, _id, _irq)		\
+ 	{						\
+ 		.name = _name,				\
+@@ -2239,6 +2250,7 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+ 	for (i = 0; i < soc->num_wake_events; i++) {
+ 		const struct tegra_wake_event *event = &soc->wake_events[i];
+ 
++		/* IRQ and simple wake events */
+ 		if (fwspec->param_count == 2) {
+ 			struct irq_fwspec spec;
+ 
+@@ -2251,6 +2263,12 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+ 			if (err < 0)
+ 				break;
+ 
++			/* simple hierarchies stop at the PMC level */
++			if (event->irq == 0) {
++				err = irq_domain_disconnect_hierarchy(domain->parent, virq);
++				break;
++			}
++
+ 			spec.fwnode = &pmc->dev->of_node->fwnode;
+ 			spec.param_count = 3;
+ 			spec.param[0] = GIC_SPI;
+@@ -2263,6 +2281,7 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
  			break;
  		}
+ 
++		/* GPIO wake events */
+ 		if (fwspec->param_count == 3) {
+ 			if (event->gpio.instance != fwspec->param[0] ||
+ 			    event->gpio.pin != fwspec->param[1])
 -- 
 2.36.1
 
