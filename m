@@ -2,139 +2,155 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D0DC43334
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jul 2022 09:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7A4C43334
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jul 2022 12:26:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232667AbiGLJTB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Jul 2022 05:19:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46350 "EHLO
+        id S233058AbiGLM0G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Jul 2022 08:26:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232717AbiGLJS6 (ORCPT
+        with ESMTP id S233046AbiGLMZx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Jul 2022 05:18:58 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2043.outbound.protection.outlook.com [40.107.92.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64039BE2F;
-        Tue, 12 Jul 2022 02:18:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fWE/D6JANtTqYKJ2d5oMcimRqvRFnIXHnbV2bKiPvaL/po+v997CeDFodrDs8PTEorrlsv55qsPP/cH5QAhh6jpquMueLA0kdNsJoFbQu99DxwNtSAaE6QmniRkcKC2kEnCIba/6TVrg/SMdcEyw2SGtLNoQY2P1tw0yeJuXljXBugU8a+gWVz/Z1C8qXmXknbq0seZmV0HmPaL+FYnYsklr+HJ/TitYRFmpiwqc53jGifYxmzGRgEM57dHKiDFp3lZr313hEMCbSx7uoN77xaXmoE5cbdNMC8rN2LpzxWu9rCPLOpwky1UneD4yyzH8jVdnj8+uRCiKpHlEjhHRww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kycy1F3FzvWqntuscYv85uu9at1cnm9/yhv8pTW69FM=;
- b=idFanUvm9Vv6aPQ1srAU22VrXhFJcFjI5XGX5qSyDBST1/lDFAIM+nQLpr62g4eivmLaoSeV1IjuxcAf7vs4r8RDJdcU/idjx7BFpwHi7jBJbkL8eRh312tOjVn5ZXeKer7ZR7LUve72XTGejymOsJvFq8Bhh3RD6TmEYMTAcE/DIKkbkcBFFiNlChfGbINnKWOs5exfMwH8kbI49/PB8sDYwjyrwdeZ+6z88DDAXvhilG/6voQSvnpyhlHXggRUHBYD8e/z20tv9UKsYbi3ty6JdBJ0d5VqMIblp1Q9o6IN9PAS3JWHn5ikekwpkMW19Ip+WgyfCTw+KS3z76lTXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kycy1F3FzvWqntuscYv85uu9at1cnm9/yhv8pTW69FM=;
- b=QUyeFbbIsT3b2oqyyByy5qYdxOQSF4TMpl56Hb1CD9LmVDdlz0DEYqEpoBbPRZw0ydvzrHaD/sqM889qeMG1bTU+Sb9cYaNC34p1SLKpIiJLiPy+INJPozTzD9230J1IEB7co6tBLWRrpVtfvajpuQ5mXNRjTZilm6Ii6IF/njmTwAmY6WjjIeEqu+/KkhPJo/th93mt0BQ7VaV2tF8sRnERJGl/bHMjvyv4ezZSM2+2rWHqg/DA1c/3RfCTOnYYidMz99vIGSYBgAvBZ5nbdJS//MKF7iYxcdaLBvT2GqRnGx8ZdzTfpc5vBDy6zlWDIj7RX9aYDaXYibbeICJWpg==
-Received: from DS7PR06CA0037.namprd06.prod.outlook.com (2603:10b6:8:54::12) by
- DM4PR12MB5987.namprd12.prod.outlook.com (2603:10b6:8:6a::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5417.25; Tue, 12 Jul 2022 09:18:54 +0000
-Received: from DM6NAM11FT045.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:54:cafe::87) by DS7PR06CA0037.outlook.office365.com
- (2603:10b6:8:54::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16 via Frontend
- Transport; Tue, 12 Jul 2022 09:18:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.236) by
- DM6NAM11FT045.mail.protection.outlook.com (10.13.173.123) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5417.15 via Frontend Transport; Tue, 12 Jul 2022 09:18:54 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
- 15.0.1497.32; Tue, 12 Jul 2022 09:18:53 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.26; Tue, 12 Jul 2022 02:18:53 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26 via Frontend
- Transport; Tue, 12 Jul 2022 02:18:53 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.18 000/112] 5.18.11-rc1 review
-In-Reply-To: <20220711090549.543317027@linuxfoundation.org>
-References: <20220711090549.543317027@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Tue, 12 Jul 2022 08:25:53 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36581AF749
+        for <linux-tegra@vger.kernel.org>; Tue, 12 Jul 2022 05:25:52 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id cp18-20020a17090afb9200b001ef79e8484aso1180207pjb.1
+        for <linux-tegra@vger.kernel.org>; Tue, 12 Jul 2022 05:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=P7Kkdpw0CXoEWIErTCFA3Qrrlf9LnDXlc1tDM9FQEkM=;
+        b=KuK+XxEAiZqgqYpARe+Ajp5+Xdwyu7FklH95kCtVjkvgG+1uPVQMUhmdejypzwsmBf
+         Mo2dlK8V3ZWr/GxLdSczjCIlGFxuf+SqP2UzOA52DGrUp6dLD+xeFAsYTL7PgJ9kPAcC
+         mtW+6fqF7M412Pj8YOHBXLLFEqiOasGTHcx72eZTsMfr0dyK5VfHFh4gXRbcW1fCUoIE
+         ttT5O3cTky3v+47P0Y/IlYrTawdf8t75/PedOHBBnreEgIdlJw5oqHKarJN4588BL/XE
+         cXPVJCIqGBTASqn3khqMiRBtsFwDl2IZaS8yUbgvRmdVE4+r+UWADTpcbBUaaXatoyu0
+         Ih+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P7Kkdpw0CXoEWIErTCFA3Qrrlf9LnDXlc1tDM9FQEkM=;
+        b=ex8fKmxgaXNh+CyRifTX6Flo5h66Pdi/I50gfdR3xOoKrqeWWzjYHRuVTx9CWbu1fM
+         G4R6bSJY6iYQQca80gV7I9ZiUXYnzVeazhmDGX+Py3C/6GTjzQFGzOPMrBw2jiaMvcGW
+         PhwjldQE6wRgqAroZzxubkvDnAwF6BounkT4chLD5xh7Bvu/ntGomj59dpKLNjm/KTt2
+         2UZOQna3lXo+/uyszodK32b1S8KOOmQUSGcTEhRlvX3OvkBlt9JSQN5PK6JR9eKDnDoV
+         3MBQcZK+ebemN4EG+QKvQxvI5wH7QcYCriC7ZJkINxoUECDeqDy44qVmRQypBi+BBCTP
+         F1PQ==
+X-Gm-Message-State: AJIora+qd5wKNd93kpnYQIbJNX+YgzS/LotmQYGOG3e0/TfHGH3RL+Oy
+        R/4tDfUQlLIEcnIYU1z0W6Oq
+X-Google-Smtp-Source: AGRyM1uKDhZojzscbBh0F9qg+DTu0azBDT/jsX0vJ6G1yxcsnu7T8U/Es7XsMpSg8z41cXpj/4V+GQ==
+X-Received: by 2002:a17:902:be16:b0:16c:151d:3e21 with SMTP id r22-20020a170902be1600b0016c151d3e21mr24149386pls.49.1657628751649;
+        Tue, 12 Jul 2022 05:25:51 -0700 (PDT)
+Received: from workstation ([117.207.31.14])
+        by smtp.gmail.com with ESMTPSA id f12-20020a170902860c00b0016191b843e2sm6698327plo.235.2022.07.12.05.25.44
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jul 2022 05:25:51 -0700 (PDT)
+Date:   Tue, 12 Jul 2022 17:55:41 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        devicetree@vger.kernel.org,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V2 00/13] OPP: Add support for multiple clocks*
+Message-ID: <20220712122541.GA21746@workstation>
+References: <cover.1657003420.git.viresh.kumar@linaro.org>
+ <YsxSkswzsqgMOc0l@hovoldconsulting.com>
+ <20220712075240.lsjd42yhcskqlzrh@vireshk-i7>
 MIME-Version: 1.0
-Message-ID: <20852e94-a548-410b-a723-3fb86df76d4e@drhqmail201.nvidia.com>
-Date:   Tue, 12 Jul 2022 02:18:53 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 77df111a-dfb5-49e7-1a7c-08da63e78abc
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5987:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RWtrcMbLw8WqVOwTp3TH/smmiwGcAYqgW/akQ8Ea6c/swY3OxKQMMWBeCUzqTsvWlsdM0R9Clp3+/Xsh2hhDqcNLYh/On/5ObPf25wFAcOPIBhYiKBVC/Gks2ZTrImoxDz9uGyZprlfpSriuqy6gOkQzrR7uorSeHFmNKrq5Wa8sI/lSgUKwC3/t2BC9LD3g7Ndi8r6n/xYpiaSOIZ3IV2Kzk2YaNoUOtZnbjbW+2okma4w/FdO0YOgavG6eUbj8dLz2YmkCX1LHNc2Tpb226+EOupMaZ2/WzV/84YIvJydLX9c15TBAiB8q9MU7jkAN+sDtyOfa4NcoAimImgXf2FZ+4hJzJnFK1t+HsFjZi8JFOmy4Z4nv5PnhgR1DG/2G1KIF4sRoMdkMmSbVw8VdsNf0gpTjV5MUuT9mQ1FzKlyjghf414wLn4n8kgqlN64nP8KYHS1Srv2/1gaa0VCulMIN/5TEjs5oC4jqX9F14FMpDb8Q0bL5NK9ggtq6KvssG9MXhjJr7DhnkFNjp5cBx8VLALXsFOHGw5Ri47OW15g+T2RoGmSTxazE66F50mPeLt01zk+PB632RyPTHs5S41M+oYpVB6EGkhjlBzJjqtn0GeOre3fjEKWA8pNtutyKb35S7AG2S7ipBQVGl1ueVMrfshymGUiisLRHxJHzOmHHYK5pe2DnG3A3LuS7P4JgbWlxebbhj4SYDqgDz5xC2oPor7IGgjS9WP7iN78f67h43lmW0n0XUmn/FvJndg1PXwf+wmeitkieC/Vs2nmnIKluL+bQFETqUA051saHvMGMg0w32zTDJSeLCJgQekb0z4qAYYQ0bRCCu9oT1B7MCxKb2oHM4UvpdhQEbgygoSP8EknAMEgtrfc943Lecu/MXGVqbiJRlv7+5bA1znFsSjjd7JUyR7FkWvy0pdEDUDXO+nQtKkFtUwgyS3J1xKLy
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(396003)(39860400002)(376002)(346002)(46966006)(40470700004)(36840700001)(426003)(478600001)(26005)(86362001)(336012)(82740400003)(81166007)(966005)(47076005)(54906003)(31696002)(70206006)(4326008)(6916009)(70586007)(186003)(8676002)(316002)(356005)(7416002)(31686004)(41300700001)(82310400005)(8936002)(2906002)(5660300002)(40480700001)(40460700003)(36860700001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2022 09:18:54.1118
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77df111a-dfb5-49e7-1a7c-08da63e78abc
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT045.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5987
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220712075240.lsjd42yhcskqlzrh@vireshk-i7>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 11 Jul 2022 11:06:00 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.18.11 release.
-> There are 112 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Jul 12, 2022 at 01:22:40PM +0530, Viresh Kumar wrote:
+> On 11-07-22, 18:40, Johan Hovold wrote:
+> > This break OPP parsing on SC8280XP and hence cpufreq and other things:
+> > 
+> > [  +0.010890] cpu cpu0: _opp_add_static_v2: opp key field not found
+> > [  +0.000019] cpu cpu0: _of_add_opp_table_v2: Failed to add OPP, -19
+> > [  +0.000060] cpu cpu0: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 300000000, volt: 576000, enabled: 1. New: freq: 403200000, volt: 576000, enabled: 1
+> > [  +0.000030] cpu cpu0: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 300000000, volt: 576000, enabled: 1. New: freq: 499200000, volt: 576000, enabled: 1
+> > ...
+> > 
+> > I just did a rebase on next-20220708 and hit this.
+> > 
+> > I've narrowed it down to _read_rate() now returning -ENODEV since
+> > opp_table->clk_count is zero.
+> > 
+> > Similar to what was reported for tegra for v1:
+> > 
+> > 	https://lore.kernel.org/all/58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com/
+> > 
+> > I don't have time to look at this any more today, but it would we nice
+> > if you could unbreak linux-next.
+> > 
+> > Perhaps Bjorn or Mani can help with further details, but this doesn't
+> > look like something that is specific to SC8280XP.
 > 
-> Responses should be made by Wed, 13 Jul 2022 09:05:28 +0000.
-> Anything received after that time might be too late.
+> It is actually. This is yet another corner case, Tegra had one as
+> well.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.18.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.18.y
-> and the diffstat can be found below.
+> I have tried to understand the Qcom code / setup to best of my
+> abilities, and the problem as per me is that qcom-cpufreq-hw doesn't
+> provide a clk to the OPP core, which breaks it after the new updates
+> to the OPP core. I believe following will solve it. Can someone please
+> try this ? I will then merge it with the right commit.
 > 
-> thanks,
+
+I gave it a shot on Lenovo X13s based on SC8280 SoC and it fixes the OPP
+issue. So you can add,
+
+Tested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Thanks,
+Mani
+
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 666e1ebf91d1..4f4a285886fa 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1384,6 +1384,20 @@ static struct opp_table *_update_opp_table_clk(struct device *dev,
+>         }
 > 
-> greg k-h
-
-All tests passing for Tegra ...
-
-Test results for stable-v5.18:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
-
-Linux version:	5.18.11-rc1-g3c032a4d5696
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+>         if (ret == -ENOENT) {
+> +               /*
+> +                * There are few platforms which don't want the OPP core to
+> +                * manage device's clock settings. In such cases neither the
+> +                * platform provides the clks explicitly to us, nor the DT
+> +                * contains a valid clk entry. The OPP nodes in DT may still
+> +                * contain "opp-hz" property though, which we need to parse and
+> +                * allow the platform to find an OPP based on freq later on.
+> +                *
+> +                * This is a simple solution to take care of such corner cases,
+> +                * i.e. make the clk_count 1, which lets us allocate space for
+> +                * frequency in opp->rates and also parse the entries in DT.
+> +                */
+> +               opp_table->clk_count = 1;
+> +
+>                 dev_dbg(dev, "%s: Couldn't find clock: %d\n", __func__, ret);
+>                 return opp_table;
+>         }
+> 
+> -- 
+> viresh
