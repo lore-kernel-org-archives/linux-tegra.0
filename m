@@ -2,117 +2,380 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6FCC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jul 2022 20:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCB5CCA47F
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jul 2022 21:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229700AbiGLUNk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Jul 2022 16:13:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53352 "EHLO
+        id S230050AbiGLVpL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Jul 2022 17:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233435AbiGLUNe (ORCPT
+        with ESMTP id S229994AbiGLVpK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Jul 2022 16:13:34 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 15D652DE;
-        Tue, 12 Jul 2022 13:13:31 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08874165C;
-        Tue, 12 Jul 2022 13:13:32 -0700 (PDT)
-Received: from [10.57.85.194] (unknown [10.57.85.194])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 218E23F70D;
-        Tue, 12 Jul 2022 13:13:29 -0700 (PDT)
-Message-ID: <632f5c80-2be3-ace5-6b0d-ee0c9e5560ff@arm.com>
-Date:   Tue, 12 Jul 2022 21:13:24 +0100
+        Tue, 12 Jul 2022 17:45:10 -0400
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4714A2EE0;
+        Tue, 12 Jul 2022 14:45:07 -0700 (PDT)
+Received: by mail-il1-f174.google.com with SMTP id a20so5658507ilk.9;
+        Tue, 12 Jul 2022 14:45:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ePtbEiXwYlvkWg0Ag9Bm1oGl7ingDp4ZCOmvX1M6pNI=;
+        b=2KciIB9vTflRmDYvQTZ2m3EVq9j7om7MdAXsHMut2CMJMLpQi6B3pVz4b1qej/DxCm
+         LUXbLJ19uiahyr/zbq5z/qGnmA2m0e7QpORulzPDO4/yiOUMpVgsHmQDUd6sawPEmgVB
+         N94lD+AAJwloHrwEVc6529C9hUQNTy3zMpm6thM7315DWbBZ0fQekCe6kQjFiwDrFnbV
+         xA1wv4eBXWmMkePdItVC3XCBp5rl7yzwKWS+pvHjkpIg6kx/71U0hOBQdJj7G1TsJb06
+         JzUdrwwJvsFJO0ZuQP3tl3h4o/bQpmoIjj9dXh19mlVQkYhXuWc+zqtJyfxVtfsduns3
+         5vlw==
+X-Gm-Message-State: AJIora+IT7DFVtTy9XmRqWsLVzI7cyyp0RPoNHLHNeeMAey0AMSaJFl7
+        8KUP1OhDkJ+2oRjdAjWocFgnH14/xQ==
+X-Google-Smtp-Source: AGRyM1vs4nXiw4f1tuiBUKQsDxdW4uQzJoTcvQ2HSFXT+BSz1UKNJ7AwJozIhVDHyqqWkHVKWWGz3Q==
+X-Received: by 2002:a05:6e02:1808:b0:2dc:9f6b:6082 with SMTP id a8-20020a056e02180800b002dc9f6b6082mr151717ilv.262.1657662307014;
+        Tue, 12 Jul 2022 14:45:07 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id t8-20020a02c908000000b00332044db2aasm4581828jao.95.2022.07.12.14.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jul 2022 14:45:06 -0700 (PDT)
+Received: (nullmailer pid 2415364 invoked by uid 1000);
+        Tue, 12 Jul 2022 21:45:04 -0000
+Date:   Tue, 12 Jul 2022 15:45:04 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: tegra: Convert to
+ json-schema
+Message-ID: <20220712214504.GR1823936-robh@kernel.org>
+References: <20220704165802.129717-1-thierry.reding@gmail.com>
+ <20220704165802.129717-2-thierry.reding@gmail.com>
+ <20220706153822.GA54439-robh@kernel.org>
+ <YsXwchhxAdSRPFzD@orome>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RESEND PATCH v3 1/2] perf: coresight_pmu: Add support for ARM
- CoreSight PMU driver
-Content-Language: en-GB
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Besar Wicaksono <bwicaksono@nvidia.com>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
-        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>,
-        "mike.leach@linaro.org" <mike.leach@linaro.org>,
-        "leo.yan@linaro.org" <leo.yan@linaro.org>
-References: <20220621055035.31766-1-bwicaksono@nvidia.com>
- <20220621055035.31766-2-bwicaksono@nvidia.com>
- <73dafe08-d1f1-90b6-995e-7d38e9e1dce7@arm.com>
- <SJ0PR12MB567600F730B47F3A1007775AA0829@SJ0PR12MB5676.namprd12.prod.outlook.com>
- <20220712163638.GA2945984@p14s>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20220712163638.GA2945984@p14s>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YsXwchhxAdSRPFzD@orome>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-07-12 17:36, Mathieu Poirier wrote:
-[...]
->>> If we have decied to call this arm_system_pmu, (which I am perfectly
->>> happy with), could we please stick to that name for functions that we
->>> export ?
->>>
->>> e.g,
->>> s/coresight_pmu_sysfs_event_show/arm_system_pmu_event_show()/
->>>
->>
->> Just want to confirm, is it just the public functions or do we need to replace
->> all that has "coresight" naming ? Including the static functions, structs, filename.
+On Wed, Jul 06, 2022 at 10:28:34PM +0200, Thierry Reding wrote:
+> On Wed, Jul 06, 2022 at 09:38:22AM -0600, Rob Herring wrote:
+> > On Mon, Jul 04, 2022 at 06:57:59PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > Convert the NVIDIA Tegra pinmux controller bindings from the free-form
+> > > text format to json-schema.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > ---
+> > > Changes in v2:
+> > > - wrap lines at 80 characters instead of the standard 100 characters in Linux
+> > > - use GPL-2.0-only instead of GPL-2.0+ license for DT bindings
+> > > - reorder additionalProperties for better readability
+> > > - move common definitions into a shared schema
+> > > - remove consumer snippets from examples
+> > > 
+> > >  .../bindings/clock/nvidia,tegra124-dfll.yaml  |   2 +-
+> > >  .../pinctrl/nvidia,tegra-pinmux-common.yaml   | 195 ++++++++++++++++++
+> > >  .../pinctrl/nvidia,tegra114-pinmux.txt        | 131 ------------
+> > >  .../pinctrl/nvidia,tegra114-pinmux.yaml       | 162 +++++++++++++++
+> > >  .../pinctrl/nvidia,tegra124-pinmux.txt        | 153 --------------
+> > >  .../pinctrl/nvidia,tegra124-pinmux.yaml       | 182 ++++++++++++++++
+> > >  .../pinctrl/nvidia,tegra194-pinmux.txt        | 107 ----------
+> > >  .../pinctrl/nvidia,tegra194-pinmux.yaml       |  88 ++++++++
+> > >  .../pinctrl/nvidia,tegra20-pinmux.txt         | 143 -------------
+> > >  .../pinctrl/nvidia,tegra20-pinmux.yaml        | 107 ++++++++++
+> > >  .../pinctrl/nvidia,tegra210-pinmux.txt        | 166 ---------------
+> > >  .../pinctrl/nvidia,tegra210-pinmux.yaml       | 146 +++++++++++++
+> > >  .../pinctrl/nvidia,tegra30-pinmux.txt         | 144 -------------
+> > >  .../pinctrl/nvidia,tegra30-pinmux.yaml        | 176 ++++++++++++++++
+> > >  14 files changed, 1057 insertions(+), 845 deletions(-)
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-pinmux-common.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+> > > index 85234a48b590..96c54c215f77 100644
+> > > --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+> > > +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+> > > @@ -219,7 +219,7 @@ examples:
+> > >  
+> > >      /*
+> > >       * pinmux nodes added for completeness. Binding doc can be found in:
+> > > -     * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
+> > > +     * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
+> > >       */
+> > >  
+> > >      pinmux: pinmux@700008d4 {
+> > > diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-pinmux-common.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-pinmux-common.yaml
+> > > new file mode 100644
+> > > index 000000000000..cb6b722b89af
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-pinmux-common.yaml
+> > > @@ -0,0 +1,195 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/pinctrl/nvidia,tegra-pinmux-common.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NVIDIA Tegra Pinmux Controller
+> > > +
+> > > +maintainers:
+> > > +  - Thierry Reding <thierry.reding@gmail.com>
+> > > +  - Jonathan Hunter <jonathanh@nvidia.com>
+> > > +
+> > > +definitions:
+> > 
+> > This likely doesn't work because 'definitions' doesn't get fixups 
+> > applied. '$defs' would, but in general I prefer avoiding this pattern 
+> > except when really needed. I don't think it helps here. More below.
+> > 
+> > > +  pinconf-node:
+> > > +    type: object
+> > > +    description: |
+> > > +      Please refer to pinctrl-bindings.txt in this directory for details of the
+> > > +      common pinctrl bindings used by client devices, including the meaning of
+> > > +      the phrase "pin configuration node".
+> > > +
+> > > +      Tegra's pin configuration nodes act as a container for an arbitrary number
+> > > +      of subnodes. Each of these subnodes represents some desired configuration
+> > > +      for a pin, a group, or a list of pins or groups. This configuration can
+> > > +      include the mux function to select on those pin(s)/ group(s), and various
+> > > +      pin configuration parameters, such as pull-up, tristate, drive strength,
+> > > +      etc.
+> > > +
+> > > +      The name of each subnode is not important; all subnodes should be
+> > > +      enumerated and processed purely based on their content.
+> > > +
+> > > +      Each subnode only affects those parameters that are explicitly listed. In
+> > > +      other words, a subnode that lists a mux function but no pin configuration
+> > > +      parameters implies no information about any pin configuration parameters.
+> > > +
+> > > +      Similarly, a pin subnode that describes a pullup parameter implies no
+> > > +      information about e.g.  the mux function or tristate parameter. For this
+> > > +      reason, even seemingly boolean values are actually tristates in this
+> > > +      binding: unspecified, off, or on. Unspecified is represented as an absent
+> > > +      property, and off/on are represented as integer values 0 and 1.
+> > > +
+> > > +      Note that many of these properties are only valid for certain specific pins
+> > > +      or groups. See the Tegra TRM and various pinmux spreadsheets for complete
+> > > +      details regarding which groups support which functionality. The Linux
+> > > +      pinctrl driver may also be a useful reference, since it consolidates,
+> > > +      disambiguates, and corrects data from all those sources.
+> > > +
+> > > +    patternProperties:
+> > > +      "^pinmux(-[a-z0-9-_]+)?$":
+> > 
+> > Drop this and make all the below be at the top level (i.e. no indent).
 > 
-> I think all references to "coresight" should be changed to "arm_system_pmu",
-> including filenames.  That way there is no doubt this IP block is not
-> related, and does not interoperate, with the any of the "coresight" IP blocks
-> already supported[1] in the kernel.
+> The intention was to include the general structure as well as the
+> description in each of the derived schemas. Some of the description
+> could perhaps be dropped, but especially the bit about the tristate
+> nature of some of these properties should stay in because it has caused
+> confusion in the past.
 > 
-> I have looked at the documentation[2] in the cover letter and I agree
-> with an earlier comment from Sudeep that this IP has very little to do with any
-> of the other CoreSight IP blocks found in the CoreSight framework[1].  Using the
-> "coresight" naming convention in this driver would be _extremely_ confusing,
-> especially when it comes to exported functions.
+> Is there any other way that the description can be shared with your
+> proposal (other than duplicating it in each binding document).
 
-But conversely, how is it not confusing to make up completely different 
-names for things than what they're actually called? The CoreSight 
-Performance Monitoring Unit is a part of the Arm CoreSight architecture, 
-it says it right there on page 1. What if I instinctively associate the 
-name Mathieu with someone more familiar to me, so to avoid confusion I'd 
-prefer to call you Steve? Is that OK?
+The 'description' above? You can move that to top-level too.
 
-As it happens, Steve, I do actually agree with you that "coresight_" is 
-a bad prefix here, but only for the reason that it's too general. TBH I 
-think that's true of the existing Linux subsystem too, but that damage 
-is already done, and I'd concur that there's little value in trying to 
-unpick that now, despite the clear existence of products like CoreSight 
-DAP and CoreSight ELA which don't have all that much to do with program 
-trace either.
-
-However, hindsight and inertia are hardly good reasons to double down on 
-poor decisions, so if I was going to vote for anything here it would be 
-"cspmu_", which is about as 
-obviously-related-to-the-thing-it-actually-is as we can get while also 
-being pleasantly concise.
-
-[ And no, this isn't bikeshedding. Naming things right is *important* ]
-
-Cheers,
-Robin.
-
+> > > +        type: object
+> > > +        properties:
+> > > +          nvidia,pins:
+> > > +            $ref: /schemas/types.yaml#/definitions/string-array
+> > > +            description: An array of strings. Each string contains the name of
+> > > +              a pin or group.  Valid values for these names are listed below.
+> > > +
+> > > +          nvidia,function:
+> > > +            $ref: /schemas/types.yaml#/definitions/string
+> > > +            description: A string containing the name of the function to mux to
+> > > +              the pin or group. Valid values for function names are listed
+> > > +              below. See the Tegra TRM to determine which are valid for each
+> > > +              pin or group.
+> > > +
+> > > +          nvidia,pull:
+> > > +            description: Pull-down/up setting to apply to the pin.
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +            oneOf:
+> > > +              - description: none
+> > > +                const: 0
+> > > +              - description: down
+> > > +                const: 1
+> > > +              - description: up
+> > > +                const: 2
+> > > +
+> > > +          nvidia,tristate:
+> > > +            description: Tristate setting to apply to the pin.
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +            oneOf:
+> > > +              - description: drive
+> > > +                const: 0
+> > > +              - description: tristate
+> > > +                const: 1
+> > > +
+> > > +          nvidia,schmitt:
+> > > +            description: Enable Schmitt trigger on the input.
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +            oneOf:
+> > > +              - description: disable Schmitt trigger on the input
+> > > +                const: 0
+> > > +              - description: enable Schmitt trigger on the input
+> > > +                const: 1
+> > > +
+> > > +          nvidia,pull-down-strength:
+> > > +            description: Controls drive strength. 0 is weakest. The range of
+> > > +              valid values depends on the pingroup. See "CAL_DRVDN" in the
+> > > +              Tegra TRM.
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +
+> > > +          nvidia,pull-up-strength:
+> > > +            description: Controls drive strength. 0 is weakest. The range of
+> > > +              valid values depends on the pingroup. See "CAL_DRVUP" in the
+> > > +              Tegra TRM.
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +
+> > > +  high-speed-mode:
+> > 
+> > Why do all these need to be definitions? They all have the same name and 
+> > apply to the pinmux nodes. Just move them there with the right name.
 > 
-> Thanks,
-> Steve
+> All of the ones that are separate definitions are properties that appear
+> for only a subset of the IP generations. So the idea was to create a
+> definition and then derived bindings could cherry-pick these as
+> necessary to complement the pinconf-node definition.
 > 
-> [1]. drivers/hwtracing/coresight/
-> [2]. https://developer.arm.com/documentation/ihi0091/latest
+> If I move these definitions to the top level, then they'll end up
+> validating properly on devices where they shouldn't exist. Alternatively
+> I'd have to duplicate all of these across various derivative bindings
+> which gets us mostly back to the previous version of the patch (i.e. we
+> don't save very much by only factoring out the truly common properties).
+
+Not if you use 'additionalProperties: false'. Since it doesn't see into 
+$ref's like unevaluatedProperties does, you have to list out which 
+properties you are using in the derived binding:
+
+$ref: list-of-common-props.yaml#
+
+properties:
+  high-speed-mode: true
+
+additionalProperties: false
+
+list-of-common-props.yaml could have a gazillion properties in 
+it, but anything not listed locally will be disallowed.
+
+
+> > > +    description: Enable high speed mode the pins.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    oneOf:
+> > > +      - description: normal speed mode
+> > > +        const: 0
+> > > +      - description: high speed mode
+> > > +        const: 1
+> > > +
+> > > +  low-power-mode:
+> > > +    description: Controls the drive power or current. Valid values are
+> > > +      from 0 through 3, where 0 specifies the least power and 3 specifies
+> > > +      the most power. See "Low Power Mode" or "LPMD1" and "LPMD0" in the
+> > > +      Tegra TRM.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    enum: [ 0, 1, 2, 3 ]
+> > > +
+> > > +  enable-input:
+> > > +    description: Enable the pin's input path.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    oneOf:
+> > > +      - description: disable input (i.e. output only)
+> > > +        const: 0
+> > > +      - description: enable input
+> > > +        const: 1
+> > > +
+> > > +  open-drain:
+> > > +    description: Open-drain configuration for the pin.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    oneOf:
+> > > +      - description: disable open-drain
+> > > +        const: 0
+> > > +      - description: enable open-drain
+> > > +        const: 1
+> > > +
+> > > +  lock:
+> > > +    description: Lock the pin configuration against further changes until
+> > > +      reset.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    oneOf:
+> > > +      - description: disable pin configuration lock
+> > > +        const: 0
+> > > +      - description: enable pin configuration lock
+> > > +        const: 1
+> > > +
+> > > +  io-reset:
+> > > +    description: reset the I/O path
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    enum: [ 0, 1 ]
+> > > +
+> > > +  rcv-sel:
+> > > +    description: select VIL/VIH receivers
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    oneOf:
+> > > +      - description: normal receivers
+> > > +        const: 0
+> > > +      - description: high-voltage receivers
+> > > +        const: 1
+> > > +
+> > > +  drive-type:
+> > > +    description: Drive type to configure for the pin.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    enum: [ 0, 1, 2, 3 ]
+> > > +
+> > > +  io-hv:
+> > > +    description: Select high-voltage receivers.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    oneOf:
+> > > +      - description: Use normal receivers.
+> > > +        const: 0
+> > > +      - description: Use high-voltage receivers.
+> > > +        const: 1
+> > > +
+> > > +  slew-rate-rising:
+> > > +    description: Controls rising signal slew rate. 0 is fastest. The
+> > > +      range of valid values depends on the pingroup. See "DRVDN_SLWR" in
+> > > +      the Tegra TRM.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +
+> > > +  slew-rate-falling:
+> > > +    description: Controls falling signal slew rate. 0 is fastest. The
+> > > +      range of valid values depends on the pingroup. See "DRVUP_SLWF" in
+> > > +      the Tegra TRM.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +
+> > > +properties:
+> > > +  reg:
+> > > +    minItems: 1
+> > > +    maxItems: 4
+> > 
+> > This doesn't get used anywhere.
+> 
+> I think I needed the properties keyword here because the tooling would
+> otherwise consider this schema invalid. Perhaps if I restructure this
+> that error will go away as well.
+
+Probably so. All part of keeping people within the lines. :)
+
+Rob
