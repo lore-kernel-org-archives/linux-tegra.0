@@ -2,116 +2,154 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40670CCA47C
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jul 2022 13:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52193C43334
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jul 2022 14:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232308AbiGLN1i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Jul 2022 09:27:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40966 "EHLO
+        id S233134AbiGLOaM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Jul 2022 10:30:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiGLN1h (ORCPT
+        with ESMTP id S229829AbiGLO36 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Jul 2022 09:27:37 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B86E904DB;
-        Tue, 12 Jul 2022 06:27:36 -0700 (PDT)
-Received: from mail-yb1-f181.google.com ([209.85.219.181]) by
- mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MrhLw-1noEr434Ng-00nknX; Tue, 12 Jul 2022 15:27:34 +0200
-Received: by mail-yb1-f181.google.com with SMTP id r3so13910841ybr.6;
-        Tue, 12 Jul 2022 06:27:34 -0700 (PDT)
-X-Gm-Message-State: AJIora9CcUmRu2M1BDIyxZd83P4Bm79DqF8WJDkmGUO8HuvVG3rQDewT
-        //bXa3izZG7KWMh0wgZAau/wcyrtsYSEUF94qa0=
-X-Google-Smtp-Source: AGRyM1uXh17pWsKX+Lt0fZNfqCjvNyiaSb6/cGIjflgREtQ0O3M/xH24ftkEVDT58/8HfALKjaLufIJ+KNAVd7QIuNI=
-X-Received: by 2002:a25:73d1:0:b0:66e:aee4:feb3 with SMTP id
- o200-20020a2573d1000000b0066eaee4feb3mr23156338ybc.452.1657632453362; Tue, 12
- Jul 2022 06:27:33 -0700 (PDT)
+        Tue, 12 Jul 2022 10:29:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 018D22871F;
+        Tue, 12 Jul 2022 07:29:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 91A80618F8;
+        Tue, 12 Jul 2022 14:29:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB807C341C8;
+        Tue, 12 Jul 2022 14:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657636196;
+        bh=eD8CW9WNiJT8VXhu8zwAPpJ2nHI6u87NDwtq5Ro4Zkk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pT24m+7R6+CJHODdS4TaCZnUnta0iUdEIVJOWr7keb/BUm3h8P7woBbOS3bnGjyDG
+         H3mH8VlmYAOdfSrROvE1aHkFMIrbycy6ANEXqEhrJW/Ghrz44jlSwKPyBdILAs2wA5
+         dTcNFqENehXUrSK18juekpJWXSpPHviib7ngzjdlwddI71q7gznYGIbaAmWW+U2G8z
+         M5f1BeBaM1PtpaPkUS7tBWvBBD/0i7SHYyhqxoiuKn0pkMhz5sQ7X+GG/6nWvkREZi
+         JyK9eAkIQNR4bQKKM63DQCF2McAsV1jsJBarnKRktOrNLnYL0zGgJ7UELJG3t4trgV
+         Vs7l2LXgTXxcw==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oBGth-0001zS-P1; Tue, 12 Jul 2022 16:29:57 +0200
+Date:   Tue, 12 Jul 2022 16:29:57 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        devicetree@vger.kernel.org,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V2 00/13] OPP: Add support for multiple clocks*
+Message-ID: <Ys2FZa6YDwt7d/Zc@hovoldconsulting.com>
+References: <cover.1657003420.git.viresh.kumar@linaro.org>
+ <YsxSkswzsqgMOc0l@hovoldconsulting.com>
+ <20220712075240.lsjd42yhcskqlzrh@vireshk-i7>
 MIME-Version: 1.0
-References: <20220708185608.676474-1-thierry.reding@gmail.com> <20220708185608.676474-2-thierry.reding@gmail.com>
-In-Reply-To: <20220708185608.676474-2-thierry.reding@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 12 Jul 2022 15:27:16 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1bKUr77t9xkNAX=-RqzRme6Hymr3V=36MSHT_sOFEW5A@mail.gmail.com>
-Message-ID: <CAK8P3a1bKUr77t9xkNAX=-RqzRme6Hymr3V=36MSHT_sOFEW5A@mail.gmail.com>
-Subject: Re: [GIT PULL 1/7] soc/tegra: Changes for v5.20-rc1
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-edac@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:3J6jvD+e/sh/3U6x938tka0X5PHAawbIwdS4d8FtNcYqtxAWqmd
- 3rKIJaC6JsTTulyhyyIhEqaHkXy16Zc/orotK82DlR0mFTGu1eefPzuTQ3z7mgbyJwS8Yes
- ZyIPiArJZsEMupzz3Td2F2u4K56AWNAtVDJjVBGIvuXotxluBCTLFoBAkDZqDAHZ9JEoxcC
- 4xuIyJIcCDlCPCm04zUwQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HtTI3tP1abc=:tftDBu33VXuT2PXyITKu0N
- p+NXxNqygqWnnOSubgxTIJJucYGDnNKifm20iL8MhNWItqIPN2by/ZNTF6HpRUkzF3ZojVa4C
- YUKrBWIyQ8wF3xtwiW9dlWmZhIeWy1ci9vr5u5CN9t4DNCROHC3ogJlr5U72etiDYaepSvWkn
- sInAdctkGedbXMirda4RqpPtRXuQKz6XC4Au/x10PVQc0vAMq8XObejbf4Q8yhreT+kr1cNa7
- ue70jlArM//RwZeF5GWFDHZwiTEJcg8duDUH6CDow4mgJoaUrPO+ywR/KAJHC2UhFfONHLvPr
- iau1mxPPkhx8odO5fPvdmKkz+VnxX6JVKG6Jt/E2SHzYNP7XVXRkk1UC/dSi1IvNB9/taKtcY
- iKCA5whCotzI27fA+UiqZJSe+6pE0Rq2YyITbXQeR9PNT9Yi+ECf0zueXs+VCEi3NTMbfLvQQ
- l3xK295jCViICGmkvZ/P2WT7v3RvA//ilsjjyIzlB95xkQjxmdMJTXsq/mGtemJfAG/+4O3xJ
- 5vDprpKis4eKi5p7VkZeSmx+IgN35JEpS3/dkcmO7irsJcRkKFZZDBvPrulORK8eit4c176Ul
- Yx+XevnzqEWUeZbCQPFZOcqalD7kf+7dDHo5EEGyhNz4zg57RV5IhfZZzF+k5Umds3p3hX9y0
- 0WUTpkD9ZhLb+SZ85PhfoHqAY3r8V3C0afEDPxXhwVXI5X7/xY9kP+QpXPzyErCGRhUhBvyTQ
- XOZkAqJmvzrl5Sr5WfycvGj4i/mn8BWsQIS3zX66XeolSY2z9k9l4Ug+FautkSgmihFZKDGrr
- tWVKTDWcuEMc6RdNo1nrzSopcpSTBZ3f8MoZ4dEHPy+ZMIZSpVsXAYDsb2QEDr+rSX/kbWpxZ
- Ju+6KSNA7ZLU3A0V2pIA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220712075240.lsjd42yhcskqlzrh@vireshk-i7>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 8, 2022 at 8:56 PM Thierry Reding <thierry.reding@gmail.com> wrote:
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.20-soc
-...
-> ----------------------------------------------------------------
-> soc/tegra: Changes for v5.20-rc1
->
-> The bulk of these changes is the new CBB driver which is used to provide
-> (a lot of) information about SErrors when things go wrong, instead of
-> the kernel just crashing or hanging.
->
-> In addition more SoC information is exposed to sysfs and various minor
-> issues are fixed.
->
+On Tue, Jul 12, 2022 at 01:22:40PM +0530, Viresh Kumar wrote:
+> On 11-07-22, 18:40, Johan Hovold wrote:
+> > This break OPP parsing on SC8280XP and hence cpufreq and other things:
+> > 
+> > [  +0.010890] cpu cpu0: _opp_add_static_v2: opp key field not found
+> > [  +0.000019] cpu cpu0: _of_add_opp_table_v2: Failed to add OPP, -19
+> > [  +0.000060] cpu cpu0: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 300000000, volt: 576000, enabled: 1. New: freq: 403200000, volt: 576000, enabled: 1
+> > [  +0.000030] cpu cpu0: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 300000000, volt: 576000, enabled: 1. New: freq: 499200000, volt: 576000, enabled: 1
+> > ...
+> > 
+> > I just did a rebase on next-20220708 and hit this.
+> > 
+> > I've narrowed it down to _read_rate() now returning -ENODEV since
+> > opp_table->clk_count is zero.
+> > 
+> > Similar to what was reported for tegra for v1:
+> > 
+> > 	https://lore.kernel.org/all/58cc8e3c-74d4-e432-8502-299312a1f15e@collabora.com/
+> > 
+> > I don't have time to look at this any more today, but it would we nice
+> > if you could unbreak linux-next.
+> > 
+> > Perhaps Bjorn or Mani can help with further details, but this doesn't
+> > look like something that is specific to SC8280XP.
+> 
+> It is actually. This is yet another corner case, Tegra had one as
+> well.
 
-Hi Thierry,
+I literally meant that it does not appear to be SC8280XP specific. Bjorn
+reported seeing similar problems on multiple Qualcomm SoCs.
 
-I fear I'm going to skip this for the current merge window. It looks like
-the CBB driver you add here would fit into the existing drivers/edac/
-subsystem, or at the minimum should have been reviewed by the
-corresponding maintainers (added to Cc)  to decide whether it goes
-there or not.
+> I have tried to understand the Qcom code / setup to best of my
+> abilities, and the problem as per me is that qcom-cpufreq-hw doesn't
+> provide a clk to the OPP core, which breaks it after the new updates
+> to the OPP core. I believe following will solve it. Can someone please
+> try this ? I will then merge it with the right commit.
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 666e1ebf91d1..4f4a285886fa 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1384,6 +1384,20 @@ static struct opp_table *_update_opp_table_clk(struct device *dev,
+>         }
+> 
+>         if (ret == -ENOENT) {
+> +               /*
+> +                * There are few platforms which don't want the OPP core to
+> +                * manage device's clock settings. In such cases neither the
+> +                * platform provides the clks explicitly to us, nor the DT
+> +                * contains a valid clk entry. The OPP nodes in DT may still
+> +                * contain "opp-hz" property though, which we need to parse and
+> +                * allow the platform to find an OPP based on freq later on.
+> +                *
+> +                * This is a simple solution to take care of such corner cases,
+> +                * i.e. make the clk_count 1, which lets us allocate space for
+> +                * frequency in opp->rates and also parse the entries in DT.
+> +                */
+> +               opp_table->clk_count = 1;
+> +
+>                 dev_dbg(dev, "%s: Couldn't find clock: %d\n", __func__, ret);
+>                 return opp_table;
+>         }
 
-I had not previously seen this driver, but I'll let them have a look first.
+This looks like a hack. And it also triggers a bunch of new warning when
+opp is trying to create debugfs entries for an entirely different table
+which now gets clk_count set to 1:
 
-For the other patches, I found two more problems:
+[  +0.000979]  cx: _update_opp_table_clk: Couldn't find clock: -2
+[  +0.000022] debugfs: Directory 'opp:0' with parent 'cx' already present!
+[  +0.000004] debugfs: Directory 'opp:0' with parent 'cx' already present!
+[  +0.000004] debugfs: Directory 'opp:0' with parent 'cx' already present!
+[  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
+[  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
+[  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
+[  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
+[  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
+[  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
 
-> Bitan Biswas (1):
->       soc/tegra: fuse: Expose Tegra production status
+This is for the rpmhpd whose opp table does not have either opp-hz or
+clocks (just opp-level).
 
-Please don't just add random attributes in the soc device infrastructure.
-This one has a completely generic name but a SoC specific
-meaning, and it lacks a description in Documentation/ABI.
-Not sure what the right ABI is here, but this is something that needs
-to be discussed more broadly when you send a new version.
+The above unbreaks cpufreq though.
 
-I see there are already some custom attributes in the same device,
-we should probably not have added those either, but I suppose
-we are stuck with those, so please add the missing documentation.
-
-> YueHaibing (1):
->      soc/tegra: fuse: Add missing DMADEVICES dependency
-
-This one fixes the warning the wrong way: we don't 'select' random
-drivers from other subsystems, and selecting the entire
-subsystem makes it worse. Just drop the 'select' here and
-enable the drivers in the defconfig.
-
-         Arnd
+Johan
