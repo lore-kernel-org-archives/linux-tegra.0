@@ -2,55 +2,42 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E43C43334
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jul 2022 15:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F862C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jul 2022 15:55:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233553AbiGLPQj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Jul 2022 11:16:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50856 "EHLO
+        id S233681AbiGLPzL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Jul 2022 11:55:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231233AbiGLPQ0 (ORCPT
+        with ESMTP id S233803AbiGLPzF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Jul 2022 11:16:26 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B26B6574
-        for <linux-tegra@vger.kernel.org>; Tue, 12 Jul 2022 08:10:49 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id g126so7727635pfb.3
-        for <linux-tegra@vger.kernel.org>; Tue, 12 Jul 2022 08:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=24GiY7xs/AOkZ2wDT+jq5qIaUGqPEUFDT83Dcdn41lc=;
-        b=AVewZ9GTLN8QUPIMpsumydhLhsrz+NGv835wkw3mm+S/6lHY4UmkHBvsMDSe0JlYj3
-         V1qjJgp280HVU6oPgPg0f0PUXQMNu4txo1kInSWDAtObw+rBlpfVRNPeiPN79aKkZrax
-         Fx8UIRGYezZYo8zxZOijVmX0NErwSDre/B7SlXbg76P31Yc+hxqrBnBdDhFY7jxzMyCE
-         qQ1P71xu2qxxhJyXlP7PXAmpPIqnLLl2vdk9IgL0D11dpPudP8+CnO5EE20062ZSrseK
-         Tb2gpymS1ha8RIG7wIkxZ/0/eRXiBPnHKISuAtL5KqxH1MfyOYOyUGsqqfof3Tv0Sy21
-         +uRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=24GiY7xs/AOkZ2wDT+jq5qIaUGqPEUFDT83Dcdn41lc=;
-        b=1LDtCRaBtM1narARp3/8Of2y6B8kIsWKNvXucN++Hgj7oMONu49fjA2iaaCN/P71Z4
-         V3/68GVWMNOLXKA33QborLgUBpQcvkC7Wfktvz9qMETNmaR39/nHu5B/z6b6HYqdGkid
-         eWZpQlRHqW0IRV9Ky2JHkBfSWS1qOWzhLaYiRISiislYyzuulGX4kGR0ddjZ3R3vBecA
-         jcFC/eORjO3yPqTNqPou/QDH4IqAZpYS9WA9BFmjkb6/H6Rv74pMBaqm+/KyqUxWmYrB
-         TM5/1njrEZtvS5/fySM/z0p/ztVdk9hKDyVNLqscMIssLwOPg4k5FfZ9cnbi08zUOieH
-         NtBQ==
-X-Gm-Message-State: AJIora9dT/S0F/yA3ksJFm69NlQyqqixcHyV4PBYEuzaEcc3iF2P/1sn
-        m06uoqrNfEK/RcOpZZ7K29eR8Q==
-X-Google-Smtp-Source: AGRyM1sTKabYGY8Tal+borECoY05ZOEAoZzgGr3flmGIjIegLuXUBFSTZFgOV0nRcYVZ5Ko1W5RjIw==
-X-Received: by 2002:a63:b50b:0:b0:412:b42c:6940 with SMTP id y11-20020a63b50b000000b00412b42c6940mr20638775pge.460.1657638648500;
-        Tue, 12 Jul 2022 08:10:48 -0700 (PDT)
-Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id o65-20020a625a44000000b0052ac99c2c1csm4888270pfb.83.2022.07.12.08.10.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 08:10:47 -0700 (PDT)
-Date:   Tue, 12 Jul 2022 20:40:45 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Johan Hovold <johan@kernel.org>
+        Tue, 12 Jul 2022 11:55:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 283F1B8EAA;
+        Tue, 12 Jul 2022 08:55:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D72D6B819AC;
+        Tue, 12 Jul 2022 15:55:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E875C3411C;
+        Tue, 12 Jul 2022 15:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657641300;
+        bh=8tOgJxPDTATRCSBvm6zjfU2BJpjyIA7W/clNTO70iqc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UqtUWrYcGEt3nT6wv8aAHmLUeR9RH/RuZJKpdUTTNZrwRUyf+Zrk8rbfUV2yv51Dc
+         4Ff4yqIYcb0iPi1whl2XwD9bS9VT+P6NmZjg42xCtlpuJl3tqUt3vGe6r7cmWGzkU6
+         s7VHxLFrOQtrAQfavCuVStaZNKDmTaw4QQee4UBAbPD0fIhy77URhFT++/CJ4ISvQH
+         n5ELoM4Mz1AN7B7YTMoBgBXQ3klFhQrKBOJeO+tC+r9boJq5EOFmBR1+EvgcHCrQpN
+         HhPPdEewFEGtR002rK40owGK5if/46AncBLHga7vQcb8y1U/E/Y5+1Y1TmLZ4I+4Qw
+         HCJQGDkivRriw==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oBIE1-0003ol-SG; Tue, 12 Jul 2022 17:55:02 +0200
+Date:   Tue, 12 Jul 2022 17:55:01 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -70,135 +57,127 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         Rob Herring <robh@kernel.org>
 Subject: Re: [PATCH V2 00/13] OPP: Add support for multiple clocks*
-Message-ID: <20220712151045.vn4tpat4c4cplndo@vireshk-i7>
+Message-ID: <Ys2ZVeBHyhrUBC4m@hovoldconsulting.com>
 References: <cover.1657003420.git.viresh.kumar@linaro.org>
  <YsxSkswzsqgMOc0l@hovoldconsulting.com>
  <20220712075240.lsjd42yhcskqlzrh@vireshk-i7>
  <Ys2FZa6YDwt7d/Zc@hovoldconsulting.com>
+ <20220712151045.vn4tpat4c4cplndo@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Ys2FZa6YDwt7d/Zc@hovoldconsulting.com>
+In-Reply-To: <20220712151045.vn4tpat4c4cplndo@vireshk-i7>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 12-07-22, 16:29, Johan Hovold wrote:
-> On Tue, Jul 12, 2022 at 01:22:40PM +0530, Viresh Kumar wrote:
-> > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> > index 666e1ebf91d1..4f4a285886fa 100644
-> > --- a/drivers/opp/core.c
-> > +++ b/drivers/opp/core.c
-> > @@ -1384,6 +1384,20 @@ static struct opp_table *_update_opp_table_clk(struct device *dev,
-> >         }
+On Tue, Jul 12, 2022 at 08:40:45PM +0530, Viresh Kumar wrote:
+> On 12-07-22, 16:29, Johan Hovold wrote:
+> > On Tue, Jul 12, 2022 at 01:22:40PM +0530, Viresh Kumar wrote:
+> > > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> > > index 666e1ebf91d1..4f4a285886fa 100644
+> > > --- a/drivers/opp/core.c
+> > > +++ b/drivers/opp/core.c
+> > > @@ -1384,6 +1384,20 @@ static struct opp_table *_update_opp_table_clk(struct device *dev,
+> > >         }
+> > > 
+> > >         if (ret == -ENOENT) {
+> > > +               /*
+> > > +                * There are few platforms which don't want the OPP core to
+> > > +                * manage device's clock settings. In such cases neither the
+> > > +                * platform provides the clks explicitly to us, nor the DT
+> > > +                * contains a valid clk entry. The OPP nodes in DT may still
+> > > +                * contain "opp-hz" property though, which we need to parse and
+> > > +                * allow the platform to find an OPP based on freq later on.
+> > > +                *
+> > > +                * This is a simple solution to take care of such corner cases,
+> > > +                * i.e. make the clk_count 1, which lets us allocate space for
+> > > +                * frequency in opp->rates and also parse the entries in DT.
+> > > +                */
+> > > +               opp_table->clk_count = 1;
+> > > +
+> > >                 dev_dbg(dev, "%s: Couldn't find clock: %d\n", __func__, ret);
+> > >                 return opp_table;
+> > >         }
 > > 
-> >         if (ret == -ENOENT) {
-> > +               /*
-> > +                * There are few platforms which don't want the OPP core to
-> > +                * manage device's clock settings. In such cases neither the
-> > +                * platform provides the clks explicitly to us, nor the DT
-> > +                * contains a valid clk entry. The OPP nodes in DT may still
-> > +                * contain "opp-hz" property though, which we need to parse and
-> > +                * allow the platform to find an OPP based on freq later on.
-> > +                *
-> > +                * This is a simple solution to take care of such corner cases,
-> > +                * i.e. make the clk_count 1, which lets us allocate space for
-> > +                * frequency in opp->rates and also parse the entries in DT.
-> > +                */
-> > +               opp_table->clk_count = 1;
-> > +
-> >                 dev_dbg(dev, "%s: Couldn't find clock: %d\n", __func__, ret);
-> >                 return opp_table;
-> >         }
+> > This looks like a hack.
 > 
-> This looks like a hack.
-
-Yeah, a bit. Initially I wanted to solve it in a cleaner way, like it
-is done for Tegra, where you will pass the right clock name to the OPP
-core, so it can verify that the clk is there and parse the table. And
-then tell the OPP core not to configure the clk from
-dev_pm_opp_set_opp(), which is possible now. This would have done the
-things in the right way.
-
-The problem with Qcom's DT is that the CPU node have the OPP table but
-doesn't contain the clocks, which are available with the
-qcom,cpufreq-hw node instead. Because of this, I couldn't pass the
-real clocks name to the OPP core, "xo", for the CPU device.
-
-I really tried to avoid adding the above code for Tegra and found a
-better and cleaner way out. But I couldn't do the same here and
-figured it may be more generic of a problem, which is fine as well.
-
-The OPP core does two things currently:
-
-1) Parse the DT and provide helpers to find the right OPP, etc.
-
-2) Provide generic helper to configure all resources related to the
-   OPP.
-
-It is fine if some platforms only want to have the first and not the
-second. To have the second though, you need to have the first as well.
-
-The clk is required only for the second case, and the OPP core should
-parse the DT anyways, irrespective of the availability of the clock.
-Because of this reason, making the above change looked reasonable
-(this is what was happening before my new patches came in anyway). The
-clock isn't there, but there is "opp-hz" present in the DT, which
-needs to be parsed.
-
-> And it also triggers a bunch of new warning when
-> opp is trying to create debugfs entries for an entirely different table
-> which now gets clk_count set to 1:
+> Yeah, a bit. Initially I wanted to solve it in a cleaner way, like it
+> is done for Tegra, where you will pass the right clock name to the OPP
+> core, so it can verify that the clk is there and parse the table. And
+> then tell the OPP core not to configure the clk from
+> dev_pm_opp_set_opp(), which is possible now. This would have done the
+> things in the right way.
 > 
-> [  +0.000979]  cx: _update_opp_table_clk: Couldn't find clock: -2
-> [  +0.000022] debugfs: Directory 'opp:0' with parent 'cx' already present!
-> [  +0.000004] debugfs: Directory 'opp:0' with parent 'cx' already present!
-> [  +0.000004] debugfs: Directory 'opp:0' with parent 'cx' already present!
-> [  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
-> [  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
-> [  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
-> [  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
-> [  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
-> [  +0.000003] debugfs: Directory 'opp:0' with parent 'cx' already present!
+> The problem with Qcom's DT is that the CPU node have the OPP table but
+> doesn't contain the clocks, which are available with the
+> qcom,cpufreq-hw node instead. Because of this, I couldn't pass the
+> real clocks name to the OPP core, "xo", for the CPU device.
 > 
-> This is for the rpmhpd whose opp table does not have either opp-hz or
-> clocks (just opp-level).
+> I really tried to avoid adding the above code for Tegra and found a
+> better and cleaner way out. But I couldn't do the same here and
+> figured it may be more generic of a problem, which is fine as well.
+> 
+> The OPP core does two things currently:
+> 
+> 1) Parse the DT and provide helpers to find the right OPP, etc.
+> 
+> 2) Provide generic helper to configure all resources related to the
+>    OPP.
+> 
+> It is fine if some platforms only want to have the first and not the
+> second. To have the second though, you need to have the first as well.
+> 
+> The clk is required only for the second case, and the OPP core should
+> parse the DT anyways, irrespective of the availability of the clock.
+> Because of this reason, making the above change looked reasonable
+> (this is what was happening before my new patches came in anyway). The
+> clock isn't there, but there is "opp-hz" present in the DT, which
+> needs to be parsed.
 
-Ahh, I missed switching back to the earlier code here. i.e. not use
-the frequency for OPP directory's name, when it is 0.
+Ok, thanks for the details. I'd still look into if there's some way to
+avoid setting clk_count when there are no clocks as it sounds like an
+anti-pattern that will just make the code harder to understand and
+maintain.
 
-This will fix it.
+> > And it also triggers a bunch of new warning when
+> > opp is trying to create debugfs entries for an entirely different table
+> > which now gets clk_count set to 1:
+> > 
+> > [  +0.000979]  cx: _update_opp_table_clk: Couldn't find clock: -2
+> > [  +0.000022] debugfs: Directory 'opp:0' with parent 'cx' already present!
 
-diff --git a/drivers/opp/debugfs.c b/drivers/opp/debugfs.c
-index 402c507edac7..96a30a032c5f 100644
---- a/drivers/opp/debugfs.c
-+++ b/drivers/opp/debugfs.c
-@@ -138,7 +138,7 @@ void opp_debug_create_one(struct dev_pm_opp *opp, struct opp_table *opp_table)
-         * - For some devices rate isn't available or there are multiple, use
-         *   index instead for them.
-         */
--       if (likely(opp_table->clk_count == 1))
-+       if (likely(opp_table->clk_count == 1 && opp->rates[0]))
-                id = opp->rates[0];
-        else
-                id = _get_opp_count(opp_table);
+> > This is for the rpmhpd whose opp table does not have either opp-hz or
+> > clocks (just opp-level).
+> 
+> Ahh, I missed switching back to the earlier code here. i.e. not use
+> the frequency for OPP directory's name, when it is 0.
+> 
+> This will fix it.
+> 
+> diff --git a/drivers/opp/debugfs.c b/drivers/opp/debugfs.c
+> index 402c507edac7..96a30a032c5f 100644
+> --- a/drivers/opp/debugfs.c
+> +++ b/drivers/opp/debugfs.c
+> @@ -138,7 +138,7 @@ void opp_debug_create_one(struct dev_pm_opp *opp, struct opp_table *opp_table)
+>          * - For some devices rate isn't available or there are multiple, use
+>          *   index instead for them.
+>          */
+> -       if (likely(opp_table->clk_count == 1))
+> +       if (likely(opp_table->clk_count == 1 && opp->rates[0]))
+>                 id = opp->rates[0];
+>         else
+>                 id = _get_opp_count(opp_table);
 
-I have merged this into:
+Indeed it does, thanks.
 
-commit 341df9889277 ("OPP: Allow multiple clocks for a device")
+> I have merged this into:
+> 
+> commit 341df9889277 ("OPP: Allow multiple clocks for a device")
+> 
+> and pushed out for linux-next.
 
-and pushed out for linux-next.
+Thanks for addressing this quickly. With the two patches above applied,
+the issues I noticed are gone.
 
-
-Bjorn, Mani,
-
-It would be really good if we can find a way to make following work on
-Qcom:
-
-        clk_get(cpu_dev, NULL or "xo")
-
-If that happens, we can handle the special case just at the consumer
-driver (qcom-cpufreq-hw) and not in the core.
-
--- 
-viresh
+Johan
