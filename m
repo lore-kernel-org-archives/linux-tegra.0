@@ -2,65 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E9BCCA482
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Jul 2022 09:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42B6CCA486
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Jul 2022 09:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235956AbiGMJBc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Jul 2022 05:01:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44572 "EHLO
+        id S235971AbiGMJBf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Jul 2022 05:01:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235926AbiGMJBW (ORCPT
+        with ESMTP id S235943AbiGMJBb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Jul 2022 05:01:22 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2040.outbound.protection.outlook.com [40.107.220.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A390EE633A;
-        Wed, 13 Jul 2022 02:01:19 -0700 (PDT)
+        Wed, 13 Jul 2022 05:01:31 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2072.outbound.protection.outlook.com [40.107.243.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B07E680E;
+        Wed, 13 Jul 2022 02:01:29 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LOOGegseh+whN2Df5vWPXzZLPetShkxQMsJwkWmzu5NzqZtjAZyJc1l590BuaoAAab2x8580UcQuL16xwpWI8fqD5TBfffL7Gtfm0mWthfD0j5I+Cuf/N/BO9sEhrUJhkiQ6SO3Qz98XbP1egJzQ5FkKxm/1ub0Vqa5vxxo5ymGt+UwIFCLAjI5TipCB/CdMsUmegJVXB9950QKLDsld9jlShlXttGcZnFUEimeQ7janZg/rFovvg9oDgi3jWcVJpqUdxqYMqWIXn6ppTXj7fAMLY98p17IMVFUJFvZapJMKLNkDXH1b3lnfoQkjmPCXqD4PQLA/m56zPp9x8Oan2A==
+ b=bTtr2UuL9oEpguq8vddOpAy9fxnkQmB2E4BxSUVco+RwT7+p+lE8XBmpML5/akz4RLriyalnDuI+PzpHc/0bQkW4H5/WVgcf5eVUYSRC9wreGQJ4Qx2zQxYib6fgjSRGbVyrY/m1nzjucpyI/xYS/KPYguCysyn3VRtC3UYU2MrWK0YzwRgZG3JOykVVBw/rH8zpPlSUi3+jBW2LG+yeUh9l2IX67OaU2L6Z2J4euNO+MiX0DEX8nJx4F6mpfacGnOLJNhPcRGyRDKWVgNDm16pOyPAENFYY2CRRo0Zr8/Tl5SVbpnh5o8+AKg8UYQo3khEbHsLP7/TA7XNzeyMilQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8meeF6d8nafU81uuGsZ7qTwyruGBJVtwjMPg21Z/uKE=;
- b=NoJbez2Ve/TalCBmXrlWVx+sHtQEc6myoHqWyaCadSEqn27W97P27UoCZr5x+LeYggZIXUHiPJLi8BjvKo/SaoY4Hm6OlcX3hn/0oy6QRTDM6P0O+5SnuJyIPJmRrrexCoMdWQdFRGb4ihKoqAhp1O4xxZtZqZds18Fys4KILzpd4dzdVfwu1OlCbYV6xao/kqnJUrkgtBQiL1m2252B+C+TasmiqA/W20voXY/Wbed1PaPhvTzFY79gYguwlL44Mn/m8rSLzD28bqwsen4EVKtTuJAwbkG6Cz8pjQj7Fv3p5pGy6cZ8hs0popBET6aVd8IHzC335tH/6ilHqPW/QQ==
+ bh=a6+B9Ze6dmvzNMMU0xdfNhK3vKN2IR2Kf37OBEhAc2w=;
+ b=Ga0YuIDT0tkWDbK6UZ4VoP76C3S/WpxhmM6pbq/RxYF/6TTO/NvIFKjiuQIPeW7qMsI6q3e9QyOBRUBspFgJ7OPpJUHNzY6ioFoqdyV9VBj7ZfAgk/ILC/Kpr3ZasGLy6kH1M4ijrV7YqNmGlv0fklrmU6fKhnUt5UadNaWEQrVDxKmdtB3mqBtBbRON6Km+ZRucoRlYI+BN2DUSHN4dZgBic8zy8S1NFbdlAkyFJoqVEFEqACrVHwpMLoG3DU0dRczZaJGr9Knbm9+q1imrn+MIkyzl4u/i9fuOmF8zifAavSXkgzZ6rZ1jj3u6A0dGIC+ybOQfYg7DGUJC6OYh8A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8meeF6d8nafU81uuGsZ7qTwyruGBJVtwjMPg21Z/uKE=;
- b=aW3KzM2Mrlx4uzJySzMLE7ph8LP3tGnghmG/rBqIHCO/juTiD8VDez2sXq/FiZjhjV56UDEleLcg5NuQvu7BSfn+AeTndO9sC9mZTWTaAjARVQf6BOB6ndhHQQi80Hws2zwbtNXSJtfG06SNtJf8eGABbLs1upINohy9QpBd3ANTkpOnEINbgsa4KoLuadMIwphJzA4eegncF62uc7+93rbPo6CgghM0X6ScqSXHIDfuireyYZX3I3YxFR2MFVtJ6k4KUkK6LGVWb7V5T78QwWb4yhZ2NTzAQ1wvE58IXsdnRPz3k441fVdepP2e1vnDBQI68gbxgLgzQRBDN9Vtaw==
-Received: from MW4P221CA0016.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::21)
- by DM8PR12MB5432.namprd12.prod.outlook.com (2603:10b6:8:32::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.20; Wed, 13 Jul
- 2022 09:01:17 +0000
-Received: from CO1NAM11FT038.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8b:cafe::b2) by MW4P221CA0016.outlook.office365.com
- (2603:10b6:303:8b::21) with Microsoft SMTP Server (version=TLS1_2,
+ bh=a6+B9Ze6dmvzNMMU0xdfNhK3vKN2IR2Kf37OBEhAc2w=;
+ b=eUU5D7n118NZSjFxLg4VpHhXeu/iSgzcZh5UgH/1rkmORfqfVZnCHa28RvR7+e5ErUxh7loH2ghLS19rHlqTDKQGu6RG7iJGkdsxpHfzoPufSQ9yjAEAUbWJLH1EP8HsciwQn0aBvkBK+qbkJxikqu14WvHqms+37LveyuDCXPtufXPHVGLogi9YwRLHppYB6NSyLh2RO4NekKjItIp0HAnsyuI+FXobdcYRizBPAq4yZc4RFUgNfD6Qk8D8n1eebl3NBG+u1bYVYxxf4j7kIEtWEMyGBAtPmGug1Dq7zLHGXlwBWVZbS+HtzziQIbFjlHejvkfyPpgpe9lX3XqiJg==
+Received: from BN6PR2001CA0016.namprd20.prod.outlook.com
+ (2603:10b6:404:b4::26) by DM6PR12MB4041.namprd12.prod.outlook.com
+ (2603:10b6:5:210::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16; Wed, 13 Jul
+ 2022 09:01:27 +0000
+Received: from BN8NAM11FT025.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:b4:cafe::a1) by BN6PR2001CA0016.outlook.office365.com
+ (2603:10b6:404:b4::26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.26 via Frontend
- Transport; Wed, 13 Jul 2022 09:01:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ Transport; Wed, 13 Jul 2022 09:01:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.235) by
- CO1NAM11FT038.mail.protection.outlook.com (10.13.174.231) with Microsoft SMTP
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ BN8NAM11FT025.mail.protection.outlook.com (10.13.177.136) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5438.12 via Frontend Transport; Wed, 13 Jul 2022 09:01:16 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 13 Jul
- 2022 09:01:08 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.5438.12 via Frontend Transport; Wed, 13 Jul 2022 09:01:26 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 13 Jul
+ 2022 09:01:26 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 13 Jul
- 2022 02:01:07 -0700
+ 2022 02:01:25 -0700
 Received: from vidyas-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
  (10.129.68.9) with Microsoft SMTP Server id 15.2.986.26 via Frontend
- Transport; Wed, 13 Jul 2022 02:01:03 -0700
+ Transport; Wed, 13 Jul 2022 02:01:21 -0700
 From:   Vidya Sagar <vidyas@nvidia.com>
 To:     <bhelgaas@google.com>, <lpieralisi@kernel.org>,
         <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
@@ -70,9 +70,9 @@ CC:     <kw@linux.com>, <kishon@ti.com>, <linux-pci@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
         <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V5 5/9] arm64: tegra: Add P2U and PCIe controller nodes to Tegra234 DT
-Date:   Wed, 13 Jul 2022 14:30:25 +0530
-Message-ID: <20220713090029.30395-6-vidyas@nvidia.com>
+Subject: [PATCH V5 8/9] Revert "PCI: tegra194: Rename tegra_pcie_dw to tegra194_pcie"
+Date:   Wed, 13 Jul 2022 14:30:28 +0530
+Message-ID: <20220713090029.30395-9-vidyas@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220713090029.30395-1-vidyas@nvidia.com>
 References: <20220713090029.30395-1-vidyas@nvidia.com>
@@ -81,32 +81,33 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bae96d52-6b69-466d-6324-08da64ae3ec2
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5432:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0407ba00-c002-4f34-f3c2-08da64ae450c
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4041:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: CuGqyYeTk2q9WNJafEf7otPRPue1VWUJ1GoVetDr3fF02oDnf0Q/fvUz+01WACdZKW0puNL3cGGoqRiMJDQiMPx6LtcIEM/E+q9qdehAFNx5Qk7emNCuOCgkdcOsmuLhHr8qSPPaeHsq3So5j+U2wz5U3Tx7aBqrTU86qa6pCniTHv6q7HqDJ/COhaLN4G/u8XkxYtplLOmpm1mj8Omi/q+ynOvp+x5ljUWg2ndKCGwzQzMwReVKkHkdEwV4MGHfUAI6igObbDLBHIHwnFoEfapguvM0LOH62QfzUgCZY+rDYO6AEtiHybsuCVXBDUJhuiqIFqJlaUo977gfP57GSPk3H92jQMNxaDf/1TIjpJc6T5EE79b2JoAHe6shm1t7IwYbia7l4fhcDxl2ismAOMY0y3H5NzLCcOmf5Uh9P4EavTFWVnccRGGp7jtdQEt+GyimGIF+egKrCHO7nxwMuQ6c3wzSUV9aD/qjZ4FeeguDwVPR3pfFHnklnjj98ui0D4MWAbbY71Q4vnkdZVKPi1RsRfbnjKanTLXAuQE2ebmC/6hUAPO5OTysC+VoLfBKEBf1mrvDXnLg4lzcddlEAhCJDzrnbDT2mlxC3Keh9EQGl2cw2/qmDV1U++rvxQ1BxOwlU/GxI0Id7X78Gi9gqG4YvLlik7T1K+ziBkvZYhWtITYkxgeStQu/gkkddXFJ+zm8Cn/7032efylA1VthaW8FKeFlJzXV+Gjb1+5RqmXU526v8VbnVOFDNJ1ix4JrhPGkCqLlfhQKznoA+wwgfHLHGtx9D83b5A76zvS6V8iPyP+KNNsQU+Uvdgzf6XxeWcZq6r/A3Y7c9GgrR7t69v9HYL8q+QQnCFTBkbNKE3W57Usv9TVr7t4vzBgOhTym
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(376002)(136003)(346002)(396003)(46966006)(40470700004)(36840700001)(30864003)(36860700001)(6666004)(478600001)(1076003)(41300700001)(426003)(40460700003)(2906002)(356005)(8936002)(7416002)(82740400003)(36756003)(5660300002)(70206006)(40480700001)(81166007)(86362001)(186003)(336012)(26005)(316002)(83380400001)(54906003)(70586007)(8676002)(4326008)(82310400005)(2616005)(47076005)(110136005)(7696005)(36900700001)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: HKu+DH9pUKmADS6D4hoc0cP75b3gTnXF2BrA/7ReN2iS6uqMeZ3CLhLiN7QVw/9kVLaAQSm/79tNK+oX7kbsmcTVZ/OSpgdjdiPFs+Xlve/63PVqr8wTVufZt7fvxfTLiMcGMsubyIUfrEcFIMZkHyETbveKCslPqdzak/YCmHA7BdNq9dE5RJoyl2iDNUoxi/jD20FybA14TuLI/cb/G3xf7Skq53ASXEMuxkfhN1azbi95nIfQ8Xy5uXQ4j4Du5Iyp52G2gX7i3ggAd5A9LEkT6SlHwmG/vaZ+ttQBwMFEHc6aByTo7GPv/7ETVKR+6r33zyLInawaPiyk6qKR/UO2AyiLZXXIFVSZ1dlyhjhSpRnqNOCPFkjlQSmU8+G9FB/audlI1hK3mbONlsrtijSxyfDOoh/1nevwfr2qlHLA12iIqcAKEzdNmahbNTbF65Toh5DyBzJLEHP0U2w4AmuGh/Gr4s0bMMFJTS9kAq5uOuWbXOGUz86B/Y4ym5WnuumLpD3RJOgd7zcOJ+5ynOQjIJbijKmL+HVXVAfc+ltTnEql7shc7a7aGBmgm1RyWoBGlUSweI6ME4ZVWul+v9oMphRrDQaZleFiRQuTEghk17f94K518M3ObPbOpz8tl+1jrRRgPy3EzNSVZ0HVFe+EFjzYh5WwOfLrVE7+2MfccN1PUW6xgddRX7yRlvtsPM8+syN7bDwv7FpcuW8zYNeQxKuHTY2u4sfr4sokJ1RS0NRskW4KFly5LVLUSJF9yx98TRcqznw0GFpb4g3aUI/6itqlj7Los0XRcjYPKDseiF5cGGWEsgCJ+bNb78lCjZV7JFiiJqfOP1NtYCmjtHDC0n0XBTDsb3EacMZK/TBkA/Ie5gBy7G+ho74bhVKj
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(346002)(376002)(39860400002)(396003)(46966006)(40470700004)(36840700001)(26005)(7696005)(186003)(30864003)(8936002)(54906003)(4326008)(8676002)(7416002)(1076003)(2616005)(5660300002)(86362001)(36756003)(40480700001)(82310400005)(478600001)(41300700001)(82740400003)(356005)(336012)(47076005)(426003)(83380400001)(70586007)(70206006)(316002)(40460700003)(110136005)(81166007)(2906002)(36860700001)(36900700001)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2022 09:01:16.3860
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2022 09:01:26.9566
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bae96d52-6b69-466d-6324-08da64ae3ec2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0407ba00-c002-4f34-f3c2-08da64ae450c
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT038.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT025.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5432
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4041
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add P2U (PIPE to UPHY) and PCIe controller nodes to device tree.
-The Tegra234 SoC contains 10 PCIe controllers and 24 P2U instances
-grouped into three different PHY bricks namely High-Speed IO (HSIO-8 P2Us)
-NVIDIA High Speed (NVHS-8 P2Us) and Gigabit Ethernet (GBE-8 P2Us)
-respectively.
+This reverts commit b572569183993b68dec0e990b33641e6f77744ba.
+
+It keeps the names of data structures generic and not contain
+any one particular chip name. This is a preparatory change for the
+upcoming changes that add support for Tegra234.
+This has no functional impact.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
@@ -114,965 +115,747 @@ V5:
 * None
 
 V4:
-* Addressed review comments from Krzysztof
-*   Moved 'status' property to the end
-*   Removed 'num-ib-windows' and 'num-ob-windows' as they are deprecated
+* None
 
 V3:
-* Added entries for all controllers that can operate in EndPoint mode
+* None
 
 V2:
-* Added 'iommu-map', 'iommu-map-mask' and 'dma-coherent' entries for each
-  PCIe controller node
+* New addition in V2 based on Bjorn's review comment
 
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 927 +++++++++++++++++++++++
- 1 file changed, 927 insertions(+)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 222 ++++++++++-----------
+ 1 file changed, 111 insertions(+), 111 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index cf611eff7f6b..e8d9663b007c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -998,6 +998,198 @@ smmu_niso1: iommu@8000000 {
- 			status = "okay";
- 		};
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index d992371a36e6..bd16245fc2c4 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -243,7 +243,7 @@ static const unsigned int pcie_gen_freq[] = {
+ 	GEN4_CORE_CLK_FREQ
+ };
  
-+		p2u_hsio_0: phy@3e00000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e00000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_hsio_1: phy@3e10000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e10000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_hsio_2: phy@3e20000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e20000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_hsio_3: phy@3e30000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e30000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_hsio_4: phy@3e40000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e40000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_hsio_5: phy@3e50000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e50000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_hsio_6: phy@3e60000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e60000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_hsio_7: phy@3e70000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e70000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_nvhs_0: phy@3e90000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03e90000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_nvhs_1: phy@3ea0000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03ea0000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_nvhs_2: phy@3eb0000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03eb0000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_nvhs_3: phy@3ec0000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03ec0000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_nvhs_4: phy@3ed0000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03ed0000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_nvhs_5: phy@3ee0000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03ee0000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_nvhs_6: phy@3ef0000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03ef0000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_nvhs_7: phy@3f00000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f00000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_gbe_0: phy@3f20000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f20000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_gbe_1: phy@3f30000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f30000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_gbe_2: phy@3f40000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f40000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_gbe_3: phy@3f50000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f50000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_gbe_4: phy@3f60000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f60000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_gbe_5: phy@3f70000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f70000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_gbe_6: phy@3f80000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f80000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
-+		p2u_gbe_7: phy@3f90000 {
-+			compatible = "nvidia,tegra234-p2u";
-+			reg = <0x03f90000 0x10000>;
-+			reg-names = "ctl";
-+
-+			#phy-cells = <0>;
-+		};
-+
- 		hsp_aon: hsp@c150000 {
- 			compatible = "nvidia,tegra234-hsp", "nvidia,tegra194-hsp";
- 			reg = <0x0c150000 0x90000>;
-@@ -1384,6 +1576,741 @@ ccplex@e000000 {
- 		status = "okay";
- 	};
+-struct tegra194_pcie {
++struct tegra_pcie_dw {
+ 	struct device *dev;
+ 	struct resource *appl_res;
+ 	struct resource *dbi_res;
+@@ -287,22 +287,22 @@ struct tegra194_pcie {
+ 	int ep_state;
+ };
  
-+	pcie@140a0000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4CA>;
-+		reg = <0x00 0x140a0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x2a000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x2a040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x2a080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <4>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <8>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX2_C8_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX2_CORE_8_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX2_CORE_8>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 8>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x32 0x40000000 0x32 0x40000000 0x2 0xe8000000>, /* prefetchable memory (11904 MB) */
-+			 <0x02000000 0x0  0x40000000 0x35 0x28000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x2a100000 0x00 0x2a100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE8AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE8AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso1 TEGRA234_SID_PCIE8 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@140c0000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4CB>;
-+		reg = <0x00 0x140c0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x2c000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x2c040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x2c080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <4>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <9>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX2_C9_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX2_CORE_9_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX2_CORE_9>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 9>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x35 0x40000000 0x35 0x40000000 0x2 0xe8000000>, /* prefetchable memory (11904 MB) */
-+			 <0x02000000 0x0  0x40000000 0x38 0x28000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x2c100000 0x00 0x2c100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE9AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE9AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso0 TEGRA234_SID_PCIE9 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@140e0000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4CC>;
-+		reg = <0x00 0x140e0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x2e000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x2e040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x2e080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <4>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <10>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX2_C10_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX2_CORE_10_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX2_CORE_10>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 10>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x38 0x40000000 0x38 0x40000000 0x2 0xe8000000>, /* prefetchable memory (11904 MB) */
-+			 <0x02000000 0x0  0x40000000 0x3b 0x28000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x2e100000 0x00 0x2e100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE10AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE10AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso1 TEGRA234_SID_PCIE10 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@14100000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX1A>;
-+		reg = <0x00 0x14100000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x30000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x30040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x30080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <1>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <1>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX0_C1_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX0_CORE_1_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX0_CORE_1>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 1>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x20 0x80000000 0x20 0x80000000 0x0 0x28000000>, /* prefetchable memory (640 MB) */
-+			 <0x02000000 0x0  0x40000000 0x20 0xa8000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x30100000 0x00 0x30100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE1R &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE1W &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso1 TEGRA234_SID_PCIE1 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@14120000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX1A>;
-+		reg = <0x00 0x14120000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x32000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x32040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x32080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <1>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <2>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX0_C2_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX0_CORE_2_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX0_CORE_2>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 2>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x20 0xc0000000 0x20 0xc0000000 0x0 0x28000000>, /* prefetchable memory (640 MB) */
-+			 <0x02000000 0x0  0x40000000 0x20 0xe8000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x32100000 0x00 0x32100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE2AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE2AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso1 TEGRA234_SID_PCIE2 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@14140000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX1A>;
-+		reg = <0x00 0x14140000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x34000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x34040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x34080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <1>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <3>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX0_C3_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX0_CORE_3_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX0_CORE_3>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 3>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x21 0x00000000 0x21 0x00000000 0x0 0x28000000>, /* prefetchable memory (640 MB) */
-+			 <0x02000000 0x0  0x40000000 0x21 0xe8000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x34100000 0x00 0x34100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE3R &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE3W &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso1 TEGRA234_SID_PCIE3 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@14160000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4BB>;
-+		reg = <0x00 0x14160000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x36000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x36040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x36080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <4>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <4>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX0_C4_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX0_CORE_4_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX0_CORE_4>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 4>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x21 0x40000000 0x21 0x40000000 0x2 0xe8000000>, /* prefetchable memory (11904 MB) */
-+			 <0x02000000 0x0  0x40000000 0x24 0x28000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x36100000 0x00 0x36100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE4R &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE4W &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso0 TEGRA234_SID_PCIE4 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@14180000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4BA>;
-+		reg = <0x00 0x14180000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x38000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x38040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x38080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <4>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <0>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX0_C0_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX0_CORE_0_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX0_CORE_0>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 0>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x24 0x40000000 0x24 0x40000000 0x2 0xe8000000>, /* prefetchable memory (11904 MB) */
-+			 <0x02000000 0x0  0x40000000 0x27 0x28000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x38100000 0x00 0x38100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE0R &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE0W &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso0 TEGRA234_SID_PCIE0 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@141a0000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX8A>;
-+		reg = <0x00 0x141a0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x3a000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x3a040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x3a080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <8>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <5>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX1_C5_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX1_CORE_5_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX1_CORE_5>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 5>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x27 0x40000000 0x27 0x40000000 0x3 0xe8000000>, /* prefetchable memory (16000 MB) */
-+			 <0x02000000 0x0  0x40000000 0x2b 0x28000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x3a100000 0x00 0x3a100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE5R &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE5W &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso0 TEGRA234_SID_PCIE5 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@141c0000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4A>;
-+		reg = <0x00 0x141c0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x3c000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x3c040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x3c080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <4>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <6>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX1_C6_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX1_CORE_6_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX1_CORE_6>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 6>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x2b 0x40000000 0x2b 0x40000000 0x2 0xe8000000>, /* prefetchable memory (11904 MB) */
-+			 <0x02000000 0x0  0x40000000 0x2e 0x28000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x3c100000 0x00 0x3c100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE6AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE6AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso0 TEGRA234_SID_PCIE6 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie@141e0000 {
-+		compatible = "nvidia,tegra234-pcie";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX8B>;
-+		reg = <0x00 0x141e0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x3e000000 0x0 0x00040000>, /* configuration space (256K) */
-+		      <0x00 0x3e040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x3e080000 0x0 0x00040000>; /* DBI reg space (256K)       */
-+		reg-names = "appl", "config", "atu_dma", "dbi";
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		num-lanes = <8>;
-+		num-viewport = <8>;
-+		linux,pci-domain = <7>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX2_C7_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX2_CORE_7_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX2_CORE_7>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		nvidia,bpmp = <&bpmp 7>;
-+
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		bus-range = <0x0 0xff>;
-+
-+		ranges = <0x43000000 0x2e 0x40000000 0x2e 0x40000000 0x3 0xe8000000>, /* prefetchable memory (16000 MB) */
-+			 <0x02000000 0x0  0x40000000 0x32 0x28000000 0x0 0x08000000>, /* non-prefetchable memory (128 MB) */
-+			 <0x01000000 0x0  0x3e100000 0x00 0x3e100000 0x0 0x00100000>; /* downstream I/O (1 MB) */
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE7AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE7AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso1 TEGRA234_SID_PCIE7 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie-ep@141a0000 {
-+		compatible = "nvidia,tegra234-pcie-ep";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX8A>;
-+		reg = <0x00 0x141a0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x3a040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x3a080000 0x0 0x00040000>, /* DBI reg space (256K)       */
-+		      <0x27 0x40000000 0x4 0x00000000>; /* Address Space (16G)        */
-+		reg-names = "appl", "atu_dma", "dbi", "addr_space";
-+
-+		num-lanes = <8>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX1_C5_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX1_CORE_5_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX1_CORE_5>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
-+		interrupt-names = "intr";
-+
-+		nvidia,bpmp = <&bpmp 5>;
-+
-+		nvidia,enable-ext-refclk;
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE5R &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE5W &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso0 TEGRA234_SID_PCIE5 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie-ep@141c0000{
-+		compatible = "nvidia,tegra234-pcie-ep";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4A>;
-+		reg = <0x00 0x141c0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x3c040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x3c080000 0x0 0x00040000>, /* DBI space (256K)           */
-+		      <0x2b 0x40000000 0x3 0x00000000>; /* Address Space (12G)        */
-+		reg-names = "appl", "atu_dma", "dbi", "addr_space";
-+
-+		num-lanes = <4>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX1_C6_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX1_CORE_6_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX1_CORE_6>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
-+		interrupt-names = "intr";
-+
-+		nvidia,bpmp = <&bpmp 6>;
-+
-+		nvidia,enable-ext-refclk;
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE6AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE6AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso0 TEGRA234_SID_PCIE6 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie-ep@141e0000{
-+		compatible = "nvidia,tegra234-pcie-ep";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX8B>;
-+		reg = <0x00 0x141e0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x3e040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x3e080000 0x0 0x00040000>, /* DBI space (256K)           */
-+		      <0x2e 0x40000000 0x4 0x00000000>; /* Address Space (16G)        */
-+		reg-names = "appl", "atu_dma", "dbi", "addr_space";
-+
-+		num-lanes = <8>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX2_C7_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX2_CORE_7_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX2_CORE_7>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
-+		interrupt-names = "intr";
-+
-+		nvidia,bpmp = <&bpmp 7>;
-+
-+		nvidia,enable-ext-refclk;
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE7AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE7AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso1 TEGRA234_SID_PCIE7 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
-+	pcie-ep@140e0000{
-+		compatible = "nvidia,tegra234-pcie-ep";
-+		power-domains = <&bpmp TEGRA234_POWER_DOMAIN_PCIEX4CC>;
-+		reg = <0x00 0x140e0000 0x0 0x00020000>, /* appl registers (128K)      */
-+		      <0x00 0x2e040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-+		      <0x00 0x2e080000 0x0 0x00040000>, /* DBI space (256K)           */
-+		      <0x38 0x40000000 0x3 0x00000000>; /* Address Space (12G)        */
-+		reg-names = "appl", "atu_dma", "dbi", "addr_space";
-+
-+		num-lanes = <4>;
-+
-+		clocks = <&bpmp TEGRA234_CLK_PEX2_C10_CORE>;
-+		clock-names = "core";
-+
-+		resets = <&bpmp TEGRA234_RESET_PEX2_CORE_10_APB>,
-+			 <&bpmp TEGRA234_RESET_PEX2_CORE_10>;
-+		reset-names = "apb", "core";
-+
-+		interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
-+		interrupt-names = "intr";
-+
-+		nvidia,bpmp = <&bpmp 10>;
-+
-+		nvidia,enable-ext-refclk;
-+		nvidia,aspm-cmrt-us = <60>;
-+		nvidia,aspm-pwr-on-t-us = <20>;
-+		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		interconnects = <&mc TEGRA234_MEMORY_CLIENT_PCIE10AR &emc>,
-+				<&mc TEGRA234_MEMORY_CLIENT_PCIE10AW &emc>;
-+		interconnect-names = "dma-mem", "write";
-+		iommu-map = <0x0 &smmu_niso1 TEGRA234_SID_PCIE10 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
-+
-+		status = "disabled";
-+	};
-+
- 	sram@40000000 {
- 		compatible = "nvidia,tegra234-sysram", "mmio-sram";
- 		reg = <0x0 0x40000000 0x0 0x80000>;
+-struct tegra194_pcie_of_data {
++struct tegra_pcie_dw_of_data {
+ 	enum dw_pcie_device_mode mode;
+ };
+ 
+-static inline struct tegra194_pcie *to_tegra_pcie(struct dw_pcie *pci)
++static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
+ {
+-	return container_of(pci, struct tegra194_pcie, pci);
++	return container_of(pci, struct tegra_pcie_dw, pci);
+ }
+ 
+-static inline void appl_writel(struct tegra194_pcie *pcie, const u32 value,
++static inline void appl_writel(struct tegra_pcie_dw *pcie, const u32 value,
+ 			       const u32 reg)
+ {
+ 	writel_relaxed(value, pcie->appl_base + reg);
+ }
+ 
+-static inline u32 appl_readl(struct tegra194_pcie *pcie, const u32 reg)
++static inline u32 appl_readl(struct tegra_pcie_dw *pcie, const u32 reg)
+ {
+ 	return readl_relaxed(pcie->appl_base + reg);
+ }
+@@ -314,7 +314,7 @@ struct tegra_pcie_soc {
+ static void apply_bad_link_workaround(struct pcie_port *pp)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	u32 current_link_width;
+ 	u16 val;
+ 
+@@ -347,7 +347,7 @@ static void apply_bad_link_workaround(struct pcie_port *pp)
+ 
+ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
+ {
+-	struct tegra194_pcie *pcie = arg;
++	struct tegra_pcie_dw *pcie = arg;
+ 	struct dw_pcie *pci = &pcie->pci;
+ 	struct pcie_port *pp = &pci->pp;
+ 	u32 val, tmp;
+@@ -418,7 +418,7 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void pex_ep_event_hot_rst_done(struct tegra194_pcie *pcie)
++static void pex_ep_event_hot_rst_done(struct tegra_pcie_dw *pcie)
+ {
+ 	u32 val;
+ 
+@@ -446,7 +446,7 @@ static void pex_ep_event_hot_rst_done(struct tegra194_pcie *pcie)
+ 
+ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
+ {
+-	struct tegra194_pcie *pcie = arg;
++	struct tegra_pcie_dw *pcie = arg;
+ 	struct dw_pcie *pci = &pcie->pci;
+ 	u32 val, speed;
+ 
+@@ -492,7 +492,7 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
+ 
+ static irqreturn_t tegra_pcie_ep_hard_irq(int irq, void *arg)
+ {
+-	struct tegra194_pcie *pcie = arg;
++	struct tegra_pcie_dw *pcie = arg;
+ 	struct dw_pcie_ep *ep = &pcie->pci.ep;
+ 	int spurious = 1;
+ 	u32 status_l0, status_l1, link_status;
+@@ -535,7 +535,7 @@ static irqreturn_t tegra_pcie_ep_hard_irq(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int tegra194_pcie_rd_own_conf(struct pci_bus *bus, u32 devfn, int where,
++static int tegra_pcie_dw_rd_own_conf(struct pci_bus *bus, u32 devfn, int where,
+ 				     int size, u32 *val)
+ {
+ 	/*
+@@ -552,7 +552,7 @@ static int tegra194_pcie_rd_own_conf(struct pci_bus *bus, u32 devfn, int where,
+ 	return pci_generic_config_read(bus, devfn, where, size, val);
+ }
+ 
+-static int tegra194_pcie_wr_own_conf(struct pci_bus *bus, u32 devfn, int where,
++static int tegra_pcie_dw_wr_own_conf(struct pci_bus *bus, u32 devfn, int where,
+ 				     int size, u32 val)
+ {
+ 	/*
+@@ -569,8 +569,8 @@ static int tegra194_pcie_wr_own_conf(struct pci_bus *bus, u32 devfn, int where,
+ 
+ static struct pci_ops tegra_pci_ops = {
+ 	.map_bus = dw_pcie_own_conf_map_bus,
+-	.read = tegra194_pcie_rd_own_conf,
+-	.write = tegra194_pcie_wr_own_conf,
++	.read = tegra_pcie_dw_rd_own_conf,
++	.write = tegra_pcie_dw_wr_own_conf,
+ };
+ 
+ #if defined(CONFIG_PCIEASPM)
+@@ -592,7 +592,7 @@ static const u32 event_cntr_data_offset[] = {
+ 	0x1dc
+ };
+ 
+-static void disable_aspm_l11(struct tegra194_pcie *pcie)
++static void disable_aspm_l11(struct tegra_pcie_dw *pcie)
+ {
+ 	u32 val;
+ 
+@@ -601,7 +601,7 @@ static void disable_aspm_l11(struct tegra194_pcie *pcie)
+ 	dw_pcie_writel_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub, val);
+ }
+ 
+-static void disable_aspm_l12(struct tegra194_pcie *pcie)
++static void disable_aspm_l12(struct tegra_pcie_dw *pcie)
+ {
+ 	u32 val;
+ 
+@@ -610,7 +610,7 @@ static void disable_aspm_l12(struct tegra194_pcie *pcie)
+ 	dw_pcie_writel_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub, val);
+ }
+ 
+-static inline u32 event_counter_prog(struct tegra194_pcie *pcie, u32 event)
++static inline u32 event_counter_prog(struct tegra_pcie_dw *pcie, u32 event)
+ {
+ 	u32 val;
+ 
+@@ -627,7 +627,7 @@ static inline u32 event_counter_prog(struct tegra194_pcie *pcie, u32 event)
+ 
+ static int aspm_state_cnt(struct seq_file *s, void *data)
+ {
+-	struct tegra194_pcie *pcie = (struct tegra194_pcie *)
++	struct tegra_pcie_dw *pcie = (struct tegra_pcie_dw *)
+ 				     dev_get_drvdata(s->private);
+ 	u32 val;
+ 
+@@ -658,7 +658,7 @@ static int aspm_state_cnt(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static void init_host_aspm(struct tegra194_pcie *pcie)
++static void init_host_aspm(struct tegra_pcie_dw *pcie)
+ {
+ 	struct dw_pcie *pci = &pcie->pci;
+ 	u32 val;
+@@ -686,22 +686,22 @@ static void init_host_aspm(struct tegra194_pcie *pcie)
+ 	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
+ }
+ 
+-static void init_debugfs(struct tegra194_pcie *pcie)
++static void init_debugfs(struct tegra_pcie_dw *pcie)
+ {
+ 	debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt", pcie->debugfs,
+ 				    aspm_state_cnt);
+ }
+ #else
+-static inline void disable_aspm_l12(struct tegra194_pcie *pcie) { return; }
+-static inline void disable_aspm_l11(struct tegra194_pcie *pcie) { return; }
+-static inline void init_host_aspm(struct tegra194_pcie *pcie) { return; }
+-static inline void init_debugfs(struct tegra194_pcie *pcie) { return; }
++static inline void disable_aspm_l12(struct tegra_pcie_dw *pcie) { return; }
++static inline void disable_aspm_l11(struct tegra_pcie_dw *pcie) { return; }
++static inline void init_host_aspm(struct tegra_pcie_dw *pcie) { return; }
++static inline void init_debugfs(struct tegra_pcie_dw *pcie) { return; }
+ #endif
+ 
+ static void tegra_pcie_enable_system_interrupts(struct pcie_port *pp)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	u32 val;
+ 	u16 val_w;
+ 
+@@ -739,7 +739,7 @@ static void tegra_pcie_enable_system_interrupts(struct pcie_port *pp)
+ static void tegra_pcie_enable_legacy_interrupts(struct pcie_port *pp)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	u32 val;
+ 
+ 	/* Enable legacy interrupt generation */
+@@ -760,7 +760,7 @@ static void tegra_pcie_enable_legacy_interrupts(struct pcie_port *pp)
+ static void tegra_pcie_enable_msi_interrupts(struct pcie_port *pp)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	u32 val;
+ 
+ 	/* Enable MSI interrupt generation */
+@@ -773,7 +773,7 @@ static void tegra_pcie_enable_msi_interrupts(struct pcie_port *pp)
+ static void tegra_pcie_enable_interrupts(struct pcie_port *pp)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 
+ 	/* Clear interrupt statuses before enabling interrupts */
+ 	appl_writel(pcie, 0xFFFFFFFF, APPL_INTR_STATUS_L0);
+@@ -798,7 +798,7 @@ static void tegra_pcie_enable_interrupts(struct pcie_port *pp)
+ 		tegra_pcie_enable_msi_interrupts(pp);
+ }
+ 
+-static void config_gen3_gen4_eq_presets(struct tegra194_pcie *pcie)
++static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
+ {
+ 	struct dw_pcie *pci = &pcie->pci;
+ 	u32 val, offset, i;
+@@ -851,10 +851,10 @@ static void config_gen3_gen4_eq_presets(struct tegra194_pcie *pcie)
+ 	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+ }
+ 
+-static int tegra194_pcie_host_init(struct pcie_port *pp)
++static int tegra_pcie_dw_host_init(struct pcie_port *pp)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	u32 val;
+ 
+ 	pp->bridge->ops = &tegra_pci_ops;
+@@ -912,10 +912,10 @@ static int tegra194_pcie_host_init(struct pcie_port *pp)
+ 	return 0;
+ }
+ 
+-static int tegra194_pcie_start_link(struct dw_pcie *pci)
++static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+ {
+ 	u32 val, offset, speed, tmp;
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	struct pcie_port *pp = &pci->pp;
+ 	bool retry = true;
+ 
+@@ -980,7 +980,7 @@ static int tegra194_pcie_start_link(struct dw_pcie *pci)
+ 		val &= ~PCI_DLF_EXCHANGE_ENABLE;
+ 		dw_pcie_writel_dbi(pci, offset, val);
+ 
+-		tegra194_pcie_host_init(pp);
++		tegra_pcie_dw_host_init(pp);
+ 		dw_pcie_setup_rc(pp);
+ 
+ 		retry = false;
+@@ -996,32 +996,32 @@ static int tegra194_pcie_start_link(struct dw_pcie *pci)
+ 	return 0;
+ }
+ 
+-static int tegra194_pcie_link_up(struct dw_pcie *pci)
++static int tegra_pcie_dw_link_up(struct dw_pcie *pci)
+ {
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	u32 val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
+ 
+ 	return !!(val & PCI_EXP_LNKSTA_DLLLA);
+ }
+ 
+-static void tegra194_pcie_stop_link(struct dw_pcie *pci)
++static void tegra_pcie_dw_stop_link(struct dw_pcie *pci)
+ {
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 
+ 	disable_irq(pcie->pex_rst_irq);
+ }
+ 
+ static const struct dw_pcie_ops tegra_dw_pcie_ops = {
+-	.link_up = tegra194_pcie_link_up,
+-	.start_link = tegra194_pcie_start_link,
+-	.stop_link = tegra194_pcie_stop_link,
++	.link_up = tegra_pcie_dw_link_up,
++	.start_link = tegra_pcie_dw_start_link,
++	.stop_link = tegra_pcie_dw_stop_link,
+ };
+ 
+-static const struct dw_pcie_host_ops tegra194_pcie_host_ops = {
+-	.host_init = tegra194_pcie_host_init,
++static const struct dw_pcie_host_ops tegra_pcie_dw_host_ops = {
++	.host_init = tegra_pcie_dw_host_init,
+ };
+ 
+-static void tegra_pcie_disable_phy(struct tegra194_pcie *pcie)
++static void tegra_pcie_disable_phy(struct tegra_pcie_dw *pcie)
+ {
+ 	unsigned int phy_count = pcie->phy_count;
+ 
+@@ -1031,7 +1031,7 @@ static void tegra_pcie_disable_phy(struct tegra194_pcie *pcie)
+ 	}
+ }
+ 
+-static int tegra_pcie_enable_phy(struct tegra194_pcie *pcie)
++static int tegra_pcie_enable_phy(struct tegra_pcie_dw *pcie)
+ {
+ 	unsigned int i;
+ 	int ret;
+@@ -1058,7 +1058,7 @@ static int tegra_pcie_enable_phy(struct tegra194_pcie *pcie)
+ 	return ret;
+ }
+ 
+-static int tegra194_pcie_parse_dt(struct tegra194_pcie *pcie)
++static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ {
+ 	struct platform_device *pdev = to_platform_device(pcie->dev);
+ 	struct device_node *np = pcie->dev->of_node;
+@@ -1154,7 +1154,7 @@ static int tegra194_pcie_parse_dt(struct tegra194_pcie *pcie)
+ 	return 0;
+ }
+ 
+-static int tegra_pcie_bpmp_set_ctrl_state(struct tegra194_pcie *pcie,
++static int tegra_pcie_bpmp_set_ctrl_state(struct tegra_pcie_dw *pcie,
+ 					  bool enable)
+ {
+ 	struct mrq_uphy_response resp;
+@@ -1182,7 +1182,7 @@ static int tegra_pcie_bpmp_set_ctrl_state(struct tegra194_pcie *pcie,
+ 	return tegra_bpmp_transfer(pcie->bpmp, &msg);
+ }
+ 
+-static int tegra_pcie_bpmp_set_pll_state(struct tegra194_pcie *pcie,
++static int tegra_pcie_bpmp_set_pll_state(struct tegra_pcie_dw *pcie,
+ 					 bool enable)
+ {
+ 	struct mrq_uphy_response resp;
+@@ -1210,7 +1210,7 @@ static int tegra_pcie_bpmp_set_pll_state(struct tegra194_pcie *pcie,
+ 	return tegra_bpmp_transfer(pcie->bpmp, &msg);
+ }
+ 
+-static void tegra_pcie_downstream_dev_to_D0(struct tegra194_pcie *pcie)
++static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
+ {
+ 	struct pcie_port *pp = &pcie->pci.pp;
+ 	struct pci_bus *child, *root_bus = NULL;
+@@ -1248,7 +1248,7 @@ static void tegra_pcie_downstream_dev_to_D0(struct tegra194_pcie *pcie)
+ 	}
+ }
+ 
+-static int tegra_pcie_get_slot_regulators(struct tegra194_pcie *pcie)
++static int tegra_pcie_get_slot_regulators(struct tegra_pcie_dw *pcie)
+ {
+ 	pcie->slot_ctl_3v3 = devm_regulator_get_optional(pcie->dev, "vpcie3v3");
+ 	if (IS_ERR(pcie->slot_ctl_3v3)) {
+@@ -1269,7 +1269,7 @@ static int tegra_pcie_get_slot_regulators(struct tegra194_pcie *pcie)
+ 	return 0;
+ }
+ 
+-static int tegra_pcie_enable_slot_regulators(struct tegra194_pcie *pcie)
++static int tegra_pcie_enable_slot_regulators(struct tegra_pcie_dw *pcie)
+ {
+ 	int ret;
+ 
+@@ -1307,7 +1307,7 @@ static int tegra_pcie_enable_slot_regulators(struct tegra194_pcie *pcie)
+ 	return ret;
+ }
+ 
+-static void tegra_pcie_disable_slot_regulators(struct tegra194_pcie *pcie)
++static void tegra_pcie_disable_slot_regulators(struct tegra_pcie_dw *pcie)
+ {
+ 	if (pcie->slot_ctl_12v)
+ 		regulator_disable(pcie->slot_ctl_12v);
+@@ -1315,7 +1315,7 @@ static void tegra_pcie_disable_slot_regulators(struct tegra194_pcie *pcie)
+ 		regulator_disable(pcie->slot_ctl_3v3);
+ }
+ 
+-static int tegra_pcie_config_controller(struct tegra194_pcie *pcie,
++static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+ 					bool en_hw_hot_rst)
+ {
+ 	int ret;
+@@ -1412,7 +1412,7 @@ static int tegra_pcie_config_controller(struct tegra194_pcie *pcie,
+ 	return ret;
+ }
+ 
+-static void tegra_pcie_unconfig_controller(struct tegra194_pcie *pcie)
++static void tegra_pcie_unconfig_controller(struct tegra_pcie_dw *pcie)
+ {
+ 	int ret;
+ 
+@@ -1440,7 +1440,7 @@ static void tegra_pcie_unconfig_controller(struct tegra194_pcie *pcie)
+ 			pcie->cid, ret);
+ }
+ 
+-static int tegra_pcie_init_controller(struct tegra194_pcie *pcie)
++static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
+ {
+ 	struct dw_pcie *pci = &pcie->pci;
+ 	struct pcie_port *pp = &pci->pp;
+@@ -1450,7 +1450,7 @@ static int tegra_pcie_init_controller(struct tegra194_pcie *pcie)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	pp->ops = &tegra194_pcie_host_ops;
++	pp->ops = &tegra_pcie_dw_host_ops;
+ 
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret < 0) {
+@@ -1465,11 +1465,11 @@ static int tegra_pcie_init_controller(struct tegra194_pcie *pcie)
+ 	return ret;
+ }
+ 
+-static int tegra_pcie_try_link_l2(struct tegra194_pcie *pcie)
++static int tegra_pcie_try_link_l2(struct tegra_pcie_dw *pcie)
+ {
+ 	u32 val;
+ 
+-	if (!tegra194_pcie_link_up(&pcie->pci))
++	if (!tegra_pcie_dw_link_up(&pcie->pci))
+ 		return 0;
+ 
+ 	val = appl_readl(pcie, APPL_RADM_STATUS);
+@@ -1481,12 +1481,12 @@ static int tegra_pcie_try_link_l2(struct tegra194_pcie *pcie)
+ 				 1, PME_ACK_TIMEOUT);
+ }
+ 
+-static void tegra194_pcie_pme_turnoff(struct tegra194_pcie *pcie)
++static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
+ {
+ 	u32 data;
+ 	int err;
+ 
+-	if (!tegra194_pcie_link_up(&pcie->pci)) {
++	if (!tegra_pcie_dw_link_up(&pcie->pci)) {
+ 		dev_dbg(pcie->dev, "PCIe link is not up...!\n");
+ 		return;
+ 	}
+@@ -1543,15 +1543,15 @@ static void tegra194_pcie_pme_turnoff(struct tegra194_pcie *pcie)
+ 	appl_writel(pcie, data, APPL_PINMUX);
+ }
+ 
+-static void tegra_pcie_deinit_controller(struct tegra194_pcie *pcie)
++static void tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
+ {
+ 	tegra_pcie_downstream_dev_to_D0(pcie);
+ 	dw_pcie_host_deinit(&pcie->pci.pp);
+-	tegra194_pcie_pme_turnoff(pcie);
++	tegra_pcie_dw_pme_turnoff(pcie);
+ 	tegra_pcie_unconfig_controller(pcie);
+ }
+ 
+-static int tegra_pcie_config_rp(struct tegra194_pcie *pcie)
++static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+ {
+ 	struct device *dev = pcie->dev;
+ 	char *name;
+@@ -1578,7 +1578,7 @@ static int tegra_pcie_config_rp(struct tegra194_pcie *pcie)
+ 		goto fail_pm_get_sync;
+ 	}
+ 
+-	pcie->link_state = tegra194_pcie_link_up(&pcie->pci);
++	pcie->link_state = tegra_pcie_dw_link_up(&pcie->pci);
+ 	if (!pcie->link_state) {
+ 		ret = -ENOMEDIUM;
+ 		goto fail_host_init;
+@@ -1603,7 +1603,7 @@ static int tegra_pcie_config_rp(struct tegra194_pcie *pcie)
+ 	return ret;
+ }
+ 
+-static void pex_ep_event_pex_rst_assert(struct tegra194_pcie *pcie)
++static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
+ {
+ 	u32 val;
+ 	int ret;
+@@ -1642,7 +1642,7 @@ static void pex_ep_event_pex_rst_assert(struct tegra194_pcie *pcie)
+ 	dev_dbg(pcie->dev, "Uninitialization of endpoint is completed\n");
+ }
+ 
+-static void pex_ep_event_pex_rst_deassert(struct tegra194_pcie *pcie)
++static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ {
+ 	struct dw_pcie *pci = &pcie->pci;
+ 	struct dw_pcie_ep *ep = &pci->ep;
+@@ -1807,7 +1807,7 @@ static void pex_ep_event_pex_rst_deassert(struct tegra194_pcie *pcie)
+ 
+ static irqreturn_t tegra_pcie_ep_pex_rst_irq(int irq, void *arg)
+ {
+-	struct tegra194_pcie *pcie = arg;
++	struct tegra_pcie_dw *pcie = arg;
+ 
+ 	if (gpiod_get_value(pcie->pex_rst_gpiod))
+ 		pex_ep_event_pex_rst_assert(pcie);
+@@ -1817,7 +1817,7 @@ static irqreturn_t tegra_pcie_ep_pex_rst_irq(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int tegra_pcie_ep_raise_legacy_irq(struct tegra194_pcie *pcie, u16 irq)
++static int tegra_pcie_ep_raise_legacy_irq(struct tegra_pcie_dw *pcie, u16 irq)
+ {
+ 	/* Tegra194 supports only INTA */
+ 	if (irq > 1)
+@@ -1829,7 +1829,7 @@ static int tegra_pcie_ep_raise_legacy_irq(struct tegra194_pcie *pcie, u16 irq)
+ 	return 0;
+ }
+ 
+-static int tegra_pcie_ep_raise_msi_irq(struct tegra194_pcie *pcie, u16 irq)
++static int tegra_pcie_ep_raise_msi_irq(struct tegra_pcie_dw *pcie, u16 irq)
+ {
+ 	if (unlikely(irq > 31))
+ 		return -EINVAL;
+@@ -1839,7 +1839,7 @@ static int tegra_pcie_ep_raise_msi_irq(struct tegra194_pcie *pcie, u16 irq)
+ 	return 0;
+ }
+ 
+-static int tegra_pcie_ep_raise_msix_irq(struct tegra194_pcie *pcie, u16 irq)
++static int tegra_pcie_ep_raise_msix_irq(struct tegra_pcie_dw *pcie, u16 irq)
+ {
+ 	struct dw_pcie_ep *ep = &pcie->pci.ep;
+ 
+@@ -1853,7 +1853,7 @@ static int tegra_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 				   u16 interrupt_num)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+-	struct tegra194_pcie *pcie = to_tegra_pcie(pci);
++	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 
+ 	switch (type) {
+ 	case PCI_EPC_IRQ_LEGACY:
+@@ -1894,7 +1894,7 @@ static const struct dw_pcie_ep_ops pcie_ep_ops = {
+ 	.get_features = tegra_pcie_ep_get_features,
+ };
+ 
+-static int tegra_pcie_config_ep(struct tegra194_pcie *pcie,
++static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
+ 				struct platform_device *pdev)
+ {
+ 	struct dw_pcie *pci = &pcie->pci;
+@@ -1956,12 +1956,12 @@ static int tegra_pcie_config_ep(struct tegra194_pcie *pcie,
+ 	return 0;
+ }
+ 
+-static int tegra194_pcie_probe(struct platform_device *pdev)
++static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ {
+-	const struct tegra194_pcie_of_data *data;
++	const struct tegra_pcie_dw_of_data *data;
+ 	struct device *dev = &pdev->dev;
+ 	struct resource *atu_dma_res;
+-	struct tegra194_pcie *pcie;
++	struct tegra_pcie_dw *pcie;
+ 	struct pcie_port *pp;
+ 	struct dw_pcie *pci;
+ 	struct phy **phys;
+@@ -1987,7 +1987,7 @@ static int tegra194_pcie_probe(struct platform_device *pdev)
+ 	pcie->dev = &pdev->dev;
+ 	pcie->mode = (enum dw_pcie_device_mode)data->mode;
+ 
+-	ret = tegra194_pcie_parse_dt(pcie);
++	ret = tegra_pcie_dw_parse_dt(pcie);
+ 	if (ret < 0) {
+ 		const char *level = KERN_ERR;
+ 
+@@ -2145,9 +2145,9 @@ static int tegra194_pcie_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int tegra194_pcie_remove(struct platform_device *pdev)
++static int tegra_pcie_dw_remove(struct platform_device *pdev)
+ {
+-	struct tegra194_pcie *pcie = platform_get_drvdata(pdev);
++	struct tegra_pcie_dw *pcie = platform_get_drvdata(pdev);
+ 
+ 	if (!pcie->link_state)
+ 		return 0;
+@@ -2163,9 +2163,9 @@ static int tegra194_pcie_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int tegra194_pcie_suspend_late(struct device *dev)
++static int tegra_pcie_dw_suspend_late(struct device *dev)
+ {
+-	struct tegra194_pcie *pcie = dev_get_drvdata(dev);
++	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+ 	u32 val;
+ 
+ 	if (!pcie->link_state)
+@@ -2181,23 +2181,23 @@ static int tegra194_pcie_suspend_late(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra194_pcie_suspend_noirq(struct device *dev)
++static int tegra_pcie_dw_suspend_noirq(struct device *dev)
+ {
+-	struct tegra194_pcie *pcie = dev_get_drvdata(dev);
++	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+ 
+ 	if (!pcie->link_state)
+ 		return 0;
+ 
+ 	tegra_pcie_downstream_dev_to_D0(pcie);
+-	tegra194_pcie_pme_turnoff(pcie);
++	tegra_pcie_dw_pme_turnoff(pcie);
+ 	tegra_pcie_unconfig_controller(pcie);
+ 
+ 	return 0;
+ }
+ 
+-static int tegra194_pcie_resume_noirq(struct device *dev)
++static int tegra_pcie_dw_resume_noirq(struct device *dev)
+ {
+-	struct tegra194_pcie *pcie = dev_get_drvdata(dev);
++	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	if (!pcie->link_state)
+@@ -2207,7 +2207,7 @@ static int tegra194_pcie_resume_noirq(struct device *dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = tegra194_pcie_host_init(&pcie->pci.pp);
++	ret = tegra_pcie_dw_host_init(&pcie->pci.pp);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to init host: %d\n", ret);
+ 		goto fail_host_init;
+@@ -2215,7 +2215,7 @@ static int tegra194_pcie_resume_noirq(struct device *dev)
+ 
+ 	dw_pcie_setup_rc(&pcie->pci.pp);
+ 
+-	ret = tegra194_pcie_start_link(&pcie->pci);
++	ret = tegra_pcie_dw_start_link(&pcie->pci);
+ 	if (ret < 0)
+ 		goto fail_host_init;
+ 
+@@ -2226,9 +2226,9 @@ static int tegra194_pcie_resume_noirq(struct device *dev)
+ 	return ret;
+ }
+ 
+-static int tegra194_pcie_resume_early(struct device *dev)
++static int tegra_pcie_dw_resume_early(struct device *dev)
+ {
+-	struct tegra194_pcie *pcie = dev_get_drvdata(dev);
++	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+ 	u32 val;
+ 
+ 	if (pcie->mode == DW_PCIE_EP_TYPE) {
+@@ -2251,9 +2251,9 @@ static int tegra194_pcie_resume_early(struct device *dev)
+ 	return 0;
+ }
+ 
+-static void tegra194_pcie_shutdown(struct platform_device *pdev)
++static void tegra_pcie_dw_shutdown(struct platform_device *pdev)
+ {
+-	struct tegra194_pcie *pcie = platform_get_drvdata(pdev);
++	struct tegra_pcie_dw *pcie = platform_get_drvdata(pdev);
+ 
+ 	if (!pcie->link_state)
+ 		return;
+@@ -2265,50 +2265,50 @@ static void tegra194_pcie_shutdown(struct platform_device *pdev)
+ 	if (IS_ENABLED(CONFIG_PCI_MSI))
+ 		disable_irq(pcie->pci.pp.msi_irq);
+ 
+-	tegra194_pcie_pme_turnoff(pcie);
++	tegra_pcie_dw_pme_turnoff(pcie);
+ 	tegra_pcie_unconfig_controller(pcie);
+ }
+ 
+-static const struct tegra194_pcie_of_data tegra194_pcie_rc_of_data = {
++static const struct tegra_pcie_dw_of_data tegra_pcie_dw_rc_of_data = {
+ 	.mode = DW_PCIE_RC_TYPE,
+ };
+ 
+-static const struct tegra194_pcie_of_data tegra194_pcie_ep_of_data = {
++static const struct tegra_pcie_dw_of_data tegra_pcie_dw_ep_of_data = {
+ 	.mode = DW_PCIE_EP_TYPE,
+ };
+ 
+-static const struct of_device_id tegra194_pcie_of_match[] = {
++static const struct of_device_id tegra_pcie_dw_of_match[] = {
+ 	{
+ 		.compatible = "nvidia,tegra194-pcie",
+-		.data = &tegra194_pcie_rc_of_data,
++		.data = &tegra_pcie_dw_rc_of_data,
+ 	},
+ 	{
+ 		.compatible = "nvidia,tegra194-pcie-ep",
+-		.data = &tegra194_pcie_ep_of_data,
++		.data = &tegra_pcie_dw_ep_of_data,
+ 	},
+ 	{},
+ };
+ 
+-static const struct dev_pm_ops tegra194_pcie_pm_ops = {
+-	.suspend_late = tegra194_pcie_suspend_late,
+-	.suspend_noirq = tegra194_pcie_suspend_noirq,
+-	.resume_noirq = tegra194_pcie_resume_noirq,
+-	.resume_early = tegra194_pcie_resume_early,
++static const struct dev_pm_ops tegra_pcie_dw_pm_ops = {
++	.suspend_late = tegra_pcie_dw_suspend_late,
++	.suspend_noirq = tegra_pcie_dw_suspend_noirq,
++	.resume_noirq = tegra_pcie_dw_resume_noirq,
++	.resume_early = tegra_pcie_dw_resume_early,
+ };
+ 
+-static struct platform_driver tegra194_pcie_driver = {
+-	.probe = tegra194_pcie_probe,
+-	.remove = tegra194_pcie_remove,
+-	.shutdown = tegra194_pcie_shutdown,
++static struct platform_driver tegra_pcie_dw_driver = {
++	.probe = tegra_pcie_dw_probe,
++	.remove = tegra_pcie_dw_remove,
++	.shutdown = tegra_pcie_dw_shutdown,
+ 	.driver = {
+ 		.name	= "tegra194-pcie",
+-		.pm = &tegra194_pcie_pm_ops,
+-		.of_match_table = tegra194_pcie_of_match,
++		.pm = &tegra_pcie_dw_pm_ops,
++		.of_match_table = tegra_pcie_dw_of_match,
+ 	},
+ };
+-module_platform_driver(tegra194_pcie_driver);
++module_platform_driver(tegra_pcie_dw_driver);
+ 
+-MODULE_DEVICE_TABLE(of, tegra194_pcie_of_match);
++MODULE_DEVICE_TABLE(of, tegra_pcie_dw_of_match);
+ 
+ MODULE_AUTHOR("Vidya Sagar <vidyas@nvidia.com>");
+ MODULE_DESCRIPTION("NVIDIA PCIe host controller driver");
 -- 
 2.34.1
 
