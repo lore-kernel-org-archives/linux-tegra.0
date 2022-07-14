@@ -2,140 +2,274 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29BACCA481
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jul 2022 14:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED831C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jul 2022 15:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233386AbiGNOp7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Jul 2022 10:45:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54050 "EHLO
+        id S239327AbiGNPiv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Jul 2022 11:38:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231876AbiGNOp6 (ORCPT
+        with ESMTP id S239808AbiGNPig (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Jul 2022 10:45:58 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7AF73ED66;
-        Thu, 14 Jul 2022 07:45:56 -0700 (PDT)
-Received: from mail-yw1-f179.google.com ([209.85.128.179]) by
- mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MoOty-1njVyE37qS-00oqNG; Thu, 14 Jul 2022 16:45:54 +0200
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-31c8bb90d09so19259437b3.8;
-        Thu, 14 Jul 2022 07:45:54 -0700 (PDT)
-X-Gm-Message-State: AJIora/f+YRa7w/6Hm4rJOSR4mmCT+n6f3Q903QsAoTO1nOBOdBdROc/
-        0azreUvSe1TPAAcDPBQ5QxKVanASbdfIVb1g374=
-X-Google-Smtp-Source: AGRyM1sAiofyZ4eEN27XJwa3Mt9SWNENKQxEfVUFkxvE89dWciOhpZF91QPduWhp/J38s+Ac736VF37oa7KLX1u7GaM=
-X-Received: by 2002:a81:1e4d:0:b0:31c:86f1:95b1 with SMTP id
- e74-20020a811e4d000000b0031c86f195b1mr10012474ywe.42.1657809953406; Thu, 14
- Jul 2022 07:45:53 -0700 (PDT)
+        Thu, 14 Jul 2022 11:38:36 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73F8B63925;
+        Thu, 14 Jul 2022 08:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1657813095;
+        bh=DtJnqs/sSTnIu3XjHE2BezrZQiBgwGyZEk5B116ynNQ=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=MZt/PuS/hLfThaTSR2wanewjwHHkJDUdJaOShzdUR80706ftTx4Ea+/bAfV91L8ud
+         FUNxDmDmQ9MTnBXaDCog8iMujDeQ7A1QPwVV1JZ3NoAU4MbB5NYTYZ+vaLjtp0gnsU
+         8fPxkF5v6vV5yvX8jAA+PWmypDR2/sBB8/kM4ioU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from max-esprimop556.user.selfnet.de ([141.72.241.228]) by
+ mail.gmx.net (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1My36N-1nL89Z48K7-00zYLE; Thu, 14 Jul 2022 17:38:15 +0200
+From:   Max Buchholz <max.buchholz@gmx.de>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>
+Cc:     Max Buchholz <Max.Buchholz@gmx.de>,
+        David Heidelberg <david@ixit.cz>,
+        Max Buchholz <max.buchholz@gmx.de>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: nvidia,tegra20-kbc: Convert to json-schema
+Date:   Thu, 14 Jul 2022 17:37:31 +0200
+Message-Id: <20220714153732.48698-1-max.buchholz@gmx.de>
+X-Mailer: git-send-email 2.37.0
 MIME-Version: 1.0
-References: <20220708185608.676474-1-thierry.reding@gmail.com>
- <20220708185608.676474-2-thierry.reding@gmail.com> <CAK8P3a1bKUr77t9xkNAX=-RqzRme6Hymr3V=36MSHT_sOFEW5A@mail.gmail.com>
- <Ys6lXD6BSxjH02mW@orome> <CAK8P3a0cSq47B=acZ854TVu=RckJNfyfKdqQUMzCX7SsV7Wt0g@mail.gmail.com>
- <Ys8phjCTfQTD41g+@orome>
-In-Reply-To: <Ys8phjCTfQTD41g+@orome>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 14 Jul 2022 16:45:36 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2NzWh7vtedeb6JXtWjQb1zaiPHQpgReie8a7ahwMzL3w@mail.gmail.com>
-Message-ID: <CAK8P3a2NzWh7vtedeb6JXtWjQb1zaiPHQpgReie8a7ahwMzL3w@mail.gmail.com>
-Subject: Re: [GIT PULL 1/7] soc/tegra: Changes for v5.20-rc1
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
-        SoC Team <soc@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-edac@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:skPpJQW8Zgz3ukUXOMhEi7P5zWMXgy2zVSpfSrDCe6DJOitk8Ll
- s6p+aJ1pT3WflU/JCMfw6MS4/CjIW+Zv+jVculi+0ir0epyjYQBQn4h+cn6sEM76LTnZhtS
- Ueuxo64fiVJXrqF35MTmG+jEL9bvynw2SS4FXx2GIeteSNeLgYWzmFvI/VVGrTImbt6eK85
- 26xVwHhYFgqKYrmgY5YRw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jYyl7EarRJw=:YPs5v/cNPpQcEQwf4N42Qo
- /lRC1k73WmTcFaTz9+hsPs2I/1yzyvKu23/19rnZxuObqA7EUd9cuV2senF+KRR9fY6F024I6
- 6yM3z6pd9o16/quDoFAqD0Wb8J1j7Si2av7uAO9CiznlAP4U5Liuq9/8rS7FKMDcBMoErjavB
- ccR+rJjiUcKanReooxUCyWchdsWsGJRhkIxnlKCxgM8PPvek/nXxZujYjjedFT0N9lvl9jjVY
- u/f6joBeVB162h+oIlGHDWnz/X7XkOdf8unUKrkYc+zogcqhKYon3W8TQDAfgZGt4jdqY6+PA
- 4658i/1T8R+FYkM82/oUU2qf4WtDwhhQSfdV8/mBR3Sz2IZQEkdczG0pij4WsAxUgwX6ypxfj
- O7VbLZuRdJucR+wy/NgHvJbfZNLrAYRny8nHsC2l6dBnb8N3dUJe0GXMOKLfqnew5o/PBeaf8
- 85k+16ljhLTRKdQwOIgkBX78kPTW+IhDOrhEwHn6vUcmXbCdlH6FABou2WP8/3YKUFvRO8svA
- 36nkYH7r9mzERU1ztmSzsTSUfbQAaVRSx5Nxgem4ZIFrrg+BzpnJste6K+OrJHOFk2d4XbIa5
- AOqewMWVo5bxQ+MxWkdB9vdFJZBP7ujKN79GqCwvGdphzTVH9BVtifOmkDtXtmSZr9S4etsKD
- uOdLfjH1vXAwzvlLn+Lf7aZwhPHlXf5jomU/Y4aXgb4wJq8Wh7WNUhXYPXGowWvpLgwEbMQ0m
- wtrm696i/1dGZW72iBJA4peldBg5IKGRLbyQ2ufjyavXFfT5/QXcyZ4Nb0pFDYvWoO6JnEcdO
- s+AjABQui9addrY0M3pZfhOaScJPECP2OrzP4pEwrEJJy7DvDFEsp4HMCsotP/FRjD1Wthh3x
- 8pj476swfq//dHC+elWw==
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fIrSM4Gy1y4DV0VVUdtk9JrFSlEEZSzVRogeJi377bW5WwSVUcW
+ A0GI622mXXcKHn8TFGwvftFPvCUNqx013rwmIYQPsYGae1FXE2R67znqsIIEEQ64jAcewnv
+ KKD6qV1YP1O6FH3xIPwNQf6/1Q+pcvMUAy8kF4NX53RIeo8qr7n+wLLVFsXYp3ZcEqHPL+v
+ pYuypIR2TT3/UT0tiWe3w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:JcalHAO1k7A=:8RBClnJt1vAxUzvv8Mzo6+
+ UuvhGP3LrQl134WotTYrrUyTR6IGEbmNdrApGKq+ohmvLbYG3mNgHsrXiZQnr1o+a7odlglKj
+ /KGtK9mQPu6ECxKhU/6h0+5XJwrnYbPolPbVNd7SiwfkbHgKV+UYb2WobOVT13W/7dC+/0+Wh
+ aq4fwZC5UUtg6kdBW2VBCmCvADzd2mxcFBvDXXf0g30EnbRfoKYpWV6omT7E0CsStPyif4cMJ
+ GW3Ji4BVeSBpI5qkVM6Bn6NyV+Ij/9d5P2MGJLmQGr+iXFHZXW97rJruvc9yqUHPknMUR46Ud
+ rZdd+cH6HPUAto2Ph3vGQL1OFzMEd8wItzQOnqSlKu6OD7sXms+0IdCNR3XO/fdWv3i8X0oDI
+ M1qnoItQg9bloPbhdMCrWiYMYR9uGD5ov8AdH7GXJzFFyz8W/nxoOor0JYb1HuuWv2pJ5pPel
+ 7KJzGDOtNzycosGCjkXZy0uXgYhYQgvtNIfKekbOvwmPf8FD2a7lEKbfo45g0BIbHwLHaXWqa
+ TSeWXzl9pnyt18hC3mN97bPfJttZWzBeoqlykVRNuU4Pv1k2bfc/V1RUUhFs+aoY6+jWCcOLq
+ iT2OyE+DDRQ2mQtrQOYqccQOWKxCPaQ++/UtPTGjzm08PFkt9uooYGqjajKXhRIiaXgPsF+dg
+ T9XcuH8SG9QbEPlhlht1dB3sxDYKWZ8+072A/Veh8Dibkfym5vwUGn/zBX3seqAyjSKEi09BL
+ /AXDuMOgY6RQEGodg3ICNMO5My6mbyDHBu+JCGpjgNQjaZ8IJDahTBcaazW2+5Q6p8UwZfjrT
+ Qc4P6wr/5ZMOBgOA76HBlzj+rsiMxD/F7jW3F2Vdx6x28pgjHabvufCAEH0FDtJJ22SW9bqOV
+ c9/cJE2AtI9zF0zyl1zf2VWEiAFkokbtJrZxPMCC/+e1gGv0EkPMiRrtE1M7IgjFr0yDJ4uzj
+ 93VJzX53LAdqgGK1Mkn5ZKViisLUN6PjH5a2PO4AQ0w/aXZyb40ZN3RzCTJmRJZ6mFpIo/Zdc
+ Fq67SkqlthpK/HQJc2BRdPMdTgFw7reyOqZ+Gra6wcLhL+CJIA+tHlz+Q1sawUVuMaZ5kJ3EK
+ BklmwK7czbn4k+y4bGq3iTN+cVCCtM2s1PBCzyC653lEdT4Vf12BodxXw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 10:22 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Wed, Jul 13, 2022 at 02:14:27PM +0200, Arnd Bergmann wrote:
-> >
-> > It's not a 100% strict rule, I've just tried to limit it as much as possible,
-> > and sometimes missed drivers doing it anyway. My main goal here is
-> > to make things consistent between SoC families, so if one piece of
-> > information is provided by a number of them, I'd rather have a standard
-> > attribute, or a common way of encoding this in the existing attributes
-> > than to have too many custom attributes with similar names.
->
-> The major/minor attributes that we have on Tegra SoCs should be easy to
-> standardize. It seems like those could be fairly common.
+From: Max Buchholz <Max.Buchholz@gmx.de>
 
-I think these can just be folded into one of the other attributes, probably
-either revision or soc_id dependending on what they actually refer to.
+This converts the Nvidia Tegra keyboard controller bindings to YAML
+and fix them up a bit.
 
-These properties are intentionally free-text fields that you can match
-using wildcards with the soc_device_match() function. If I read this
-part right, the information is already available in the soc_id field,
-so we don't even need to change anything here.
+Reviewed-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Max Buchholz <max.buchholz@gmx.de>
+=2D--
+ .../bindings/input/nvidia,tegra20-kbc.txt     |  55 ---------
+ .../bindings/input/nvidia,tegra20-kbc.yaml    | 109 ++++++++++++++++++
+ 2 files changed, 109 insertions(+), 55 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra20=
+-kbc.txt
+ create mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra20=
+-kbc.yaml
 
-> The other one
-> that we have is the "platform" one, which I suppose is not as easy to
-> standardize. I don't recall the exact details, but I think we're mostly
-> interested in whether or not the platform is simulation or silicon. The
-> exact simulation value is not something that userspace scripts will look
-> at, as far as I recall.
+diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.tx=
+t b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+deleted file mode 100644
+index 1faa7292e21f..000000000000
+=2D-- a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
++++ /dev/null
+@@ -1,55 +0,0 @@
+-* Tegra keyboard controller
+-The key controller has maximum 24 pins to make matrix keypad. Any pin
+-can be configured as row or column. The maximum column pin can be 8
+-and maximum row pins can be 16 for Tegra20/Tegra30.
+-
+-Required properties:
+=2D- compatible: "nvidia,tegra20-kbc"
+=2D- reg: Register base address of KBC.
+=2D- interrupts: Interrupt number for the KBC.
+=2D- nvidia,kbc-row-pins: The KBC pins which are configured as row. This i=
+s an
+-  array of pin numbers which is used as rows.
+=2D- nvidia,kbc-col-pins: The KBC pins which are configured as column. Thi=
+s is an
+-  array of pin numbers which is used as column.
+=2D- linux,keymap: The keymap for keys as described in the binding documen=
+t
+-  devicetree/bindings/input/matrix-keymap.txt.
+=2D- clocks: Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+=2D- resets: Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+=2D- reset-names: Must include the following entries:
+-  - kbc
+-
+-Optional properties, in addition to those specified by the shared
+-matrix-keyboard bindings:
+-
+=2D- linux,fn-keymap: a second keymap, same specification as the
+-  matrix-keyboard-controller spec but to be used when the KEY_FN modifier
+-  key is pressed.
+=2D- nvidia,debounce-delay-ms: delay in milliseconds per row scan for debo=
+uncing
+=2D- nvidia,repeat-delay-ms: delay in milliseconds before repeat starts
+=2D- nvidia,ghost-filter: enable ghost filtering for this device
+=2D- wakeup-source: configure keyboard as a wakeup source for suspend/resu=
+me
+-		 (Legacy property supported: "nvidia,wakeup-source")
+-
+-Example:
+-
+-keyboard: keyboard {
+-	compatible =3D "nvidia,tegra20-kbc";
+-	reg =3D <0x7000e200 0x100>;
+-	interrupts =3D <0 85 0x04>;
+-	clocks =3D <&tegra_car 36>;
+-	resets =3D <&tegra_car 36>;
+-	reset-names =3D "kbc";
+-	nvidia,ghost-filter;
+-	nvidia,debounce-delay-ms =3D <640>;
+-	nvidia,kbc-row-pins =3D <0 1 2>;    /* pin 0, 1, 2 as rows */
+-	nvidia,kbc-col-pins =3D <11 12 13>; /* pin 11, 12, 13 as columns */
+-	linux,keymap =3D <0x00000074
+-			0x00010067
+-			0x00020066
+-			0x01010068
+-			0x02000069
+-			0x02010070
+-			0x02020071>;
+-};
+diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.ya=
+ml b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
+new file mode 100644
+index 000000000000..8ecd42e02f09
+=2D-- /dev/null
++++ b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
+@@ -0,0 +1,109 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/input/nvidia,tegra20-kbc.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Nvidia Tegra keyboard controller
++
++maintainers:
++  - Jon Hunter <jonathanh@nvidia.com>
++  - Sameer Pujar <spujar@nvidia.com>
++
++description: The key controller has maximum 24 pins to make matrix keypad=
+. Any pin
++  can be configured as row or column.
++
++allOf:
++  - $ref: "/schemas/input/matrix-keymap.yaml#"
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: nvidia,tegra30-kbc
++          - const: nvidia,tegra20-kbc
++      - items:
++          - const: nvidia,tegra20-kbc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  nvidia,kbc-row-pins:
++    maxItems: 16
++    description: KBC pins which are configured as row
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++  nvidia,kbc-col-pins:
++    maxItems: 8
++    description: KBC pins which are configured as column
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: kbc
++
++  linux,fn-keymap:
++    description: a secondary keymap to be used when the KEY_FN modifier k=
+ey is pressed
++
++  nvidia,debounce-delay-ms:
++    description: delay in milliseconds per row scan for debouncing
++
++  nvidia,repeat-delay-ms:
++    description: delay in milliseconds before repeat starts
++
++  nvidia,ghost-filter:
++    description: enable ghost filtering for this device
++    type: boolean
++
++  wakeup-source:
++    description: configure keyboard as a wakeup source for suspend/resume
++
++  nvidia,wakeup-source:
++    description: configure keyboard as a wakeup source for suspend/resume
++    deprecated: true
++    type: boolean
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - nvidia,kbc-row-pins
++  - nvidia,kbc-col-pins
++  - linux,keymap
++  - clocks
++  - resets
++  - reset-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    kbc@7000e200 {
++        compatible =3D "nvidia,tegra20-kbc";
++        reg =3D <0x7000e200 0x100>;
++        interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
++        clocks =3D <&tegra_car 36>;
++        resets =3D <&tegra_car 36>;
++        reset-names =3D "kbc";
++        nvidia,ghost-filter;
++        nvidia,debounce-delay-ms =3D <640>;
++        nvidia,kbc-row-pins =3D <0 1 2>;    /* pin 0, 1, 2 as rows */
++        nvidia,kbc-col-pins =3D <11 12 13>; /* pin 11, 12, 13 as columns =
+*/
++        linux,keymap =3D <0x00000074
++                        0x00010067
++                        0x00020066
++                        0x01010068
++                        0x02000069
++                        0x02010070
++                        0x02020071>;
++    };
+=2D-
+2.37.0
 
-This also looks like it's part of the chip_id.
-
-> > > > > YueHaibing (1):
-> > > > >      soc/tegra: fuse: Add missing DMADEVICES dependency
-> > > >
-> > > > This one fixes the warning the wrong way: we don't 'select' random
-> > > > drivers from other subsystems, and selecting the entire
-> > > > subsystem makes it worse. Just drop the 'select' here and
-> > > > enable the drivers in the defconfig.
-> > >
-> > > This doesn't actually select the DMADEVICES property. It adds a
-> > > dependency on DMADEVICES and if that is met it will select
-> > > TEGRA20_APB_DMA.
-> >
-> > My mistake. However, I still think it's wrong to select
-> > TEGRA20_APB_DMA here, unless there is a build-time
-> > dependency that prevents it from being compiled otherwise.
-> >
-> > The dmaengine subsystem is meant to abstract the relation
-> > between the drivers using DMA and those providing the feature,
-> > the same way we abstract all the other subsystems. The
-> > fuse driver may only be used on machines that use
-> > TEGRA20_APB_DMA, but neither the driver code nor
-> > Kconfig should care about that.
->
-> This dependency has existed for quite a while and my recollection is
-> that we wanted to make this very explicit because the lack of the
-> TEGRA20_APB_DMA driver makes the FUSE driver completely useless on
-> Tegra20 and that in turn has a very negative impact on the rest of the
-> system, so we deemed a default configuration change insufficient.
->
-> Perhaps a better way to solve this would be to make TEGRA20_APB_DMA
-> default to "y" if ARCH_TEGRA_2x_SOC. And then perhaps make the FUSE
-> driver depend on DMADEVICES. That still wouldn't ensure that we get
-> SOC_TEGRA_FUSE enabled automatically all the time, but perhaps it'd
-> document the dependency a bit more explicitly.
-
-Ok, this sounds good to me.
-
-          Arnd
