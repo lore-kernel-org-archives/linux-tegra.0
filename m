@@ -2,198 +2,301 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF80C43334
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jul 2022 08:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE2AC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jul 2022 13:15:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230173AbiGOIGh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Jul 2022 04:06:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34536 "EHLO
+        id S232989AbiGONPB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Jul 2022 09:15:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbiGOIGg (ORCPT
+        with ESMTP id S229475AbiGONPA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Jul 2022 04:06:36 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2067.outbound.protection.outlook.com [40.107.243.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCB4E7E00C;
-        Fri, 15 Jul 2022 01:06:32 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Su2ml//NGqQFLeOn0CLMxlrka3/4X3UvLTxtEK+absRuLqWKnHMu3hlf0QFp4ozXr0JAsz7NE/UFMUahkupd7aNJx93dSCxBJoX+jrsOvdYO6yKTTph8ytHdYPyVr/dY+CAuxBoxp21RjYBvpqTdieUkqAovkdPj7+xpoVyRmQgCWdjDVoiO1EjtHJQDBXAYEshDA2Lgmvw5cirrHUjHz3uztUFnXdObAEMyB1DvhGmWKZBiFtD+n/8vagvzWSI14U5zWMuuw0OQ5A01OtaKG41+xfmxp9rISE0kii5muc+2hXYEZG5nw59dHvhhtTGJTBLPzopyPG613loHoWGxmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UkLieEmu7/sA1axLo0voLQrZ/JfehGznPfDYEa5pAMk=;
- b=HUfhXfEeRhMBNTWR1t9VG9PEJllNT4xFvr2OhX+RMjbHHMx23B6xMUvu/TDsf9nfU0S5PLes9eRTWMRnBS953YED1nTNuJ6aTr2DrkYZ0XQ2uVdGDhXZBcoOijTj/SD9yyBkwCv7ijKEV9n0AT3FEV/R1Or42f6VafStm9J4rLxMZCaHNAsmu0ZMaRZtJXF440MUlghpBvCezs2QHNSyDM6aAlW6N5zBejc7O2n8GgwWcdzVOCPiJmgVWWZfbEwTcFDsWmoq0G0dvwTvaaON1DaMhHZxgQNESdMGM3uRWV31VxqVjraWE026NQQLggQYj+7mqJT9UnU3FhXJpG4aHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UkLieEmu7/sA1axLo0voLQrZ/JfehGznPfDYEa5pAMk=;
- b=JBQAwO6IQJR4YqT5B/0QHIFH3XP8lWuOyXVI26jE1g1jW2gb717rbJEjirn/SJyscAgGNGVNsVODUwg0HWkf3WYUDpYJt7UchgjgVFr85xLahzCLjlmEHVLB3msat+9Kqe+IWCxBiQDofRHWAtA/XXZRq4GhXnpgoKGjZfpm+OrC6FAlh6Ho2ulegxoTe/JJhOdaHB+UmCY+O99PMHtSj0xzL2yopfeIN7QYJmZpLYvpYfShrLxemp/oGIR+F9Jf5XVIqblK/sOFWjl7ncGneoc+b7slWgub6bwYYkcHbSPs4QfwhRGTx0wAszOkLK/yOTDsMhRVLk1+Kq+F3O5Iqg==
-Received: from DM6PR12CA0015.namprd12.prod.outlook.com (2603:10b6:5:1c0::28)
- by DM5PR12MB1882.namprd12.prod.outlook.com (2603:10b6:3:112::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.25; Fri, 15 Jul
- 2022 08:06:30 +0000
-Received: from DM6NAM11FT037.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:1c0:cafe::15) by DM6PR12CA0015.outlook.office365.com
- (2603:10b6:5:1c0::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.12 via Frontend
- Transport; Fri, 15 Jul 2022 08:06:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.235) by
- DM6NAM11FT037.mail.protection.outlook.com (10.13.172.122) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5438.12 via Frontend Transport; Fri, 15 Jul 2022 08:06:29 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 15 Jul
- 2022 08:06:29 +0000
-Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 15 Jul
- 2022 01:06:24 -0700
-Message-ID: <8dd2310d-cf1d-600e-0bd3-7b16c7b4ac18@nvidia.com>
-Date:   Fri, 15 Jul 2022 13:36:16 +0530
+        Fri, 15 Jul 2022 09:15:00 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 836A3DED3;
+        Fri, 15 Jul 2022 06:14:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1657890882;
+        bh=mlnJkuI/pqDn8MWVINAL1lqJsNsNqD9rO+qAKNY1pnE=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=jFoH6gzMNI/7QiQKV4Pv+9VdbQR9MdIx/AAkYmcIqd8U3p3xdmIgbUsf/jJzE4UrD
+         hRV6FX9Fj+U6vpnt3vivD3dvniqmk1q3kgNhAYd1PX/M2vjNpMC+kDVH8vTGHBJCnw
+         5JusVg8nMyzuicjasrOMLiAesf/BglLjYxq6/GTk=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from max-esprimop556.user.selfnet.de ([141.72.241.228]) by
+ mail.gmx.net (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1MvsJ5-1nMzkj2vrT-00svcz; Fri, 15 Jul 2022 15:14:42 +0200
+From:   Max Buchholz <max.buchholz@gmx.de>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>
+Cc:     Max Buchholz <Max.Buchholz@gmx.de>,
+        David Heidelberg <david@ixit.cz>,
+        Max Buchholz <max.buchholz@gmx.de>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: nvidia,tegra20-kbc: Convert to json-schema
+Date:   Fri, 15 Jul 2022 15:14:21 +0200
+Message-Id: <20220715131422.51143-1-max.buchholz@gmx.de>
+X-Mailer: git-send-email 2.37.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [GIT PULL 1/7] soc/tegra: Changes for v5.20-rc1
-Content-Language: en-US
-To:     Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        arm-soc <arm@kernel.org>, "SoC Team" <soc@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        <linux-edac@vger.kernel.org>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "James Morse" <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Sumit Gupta <sumitg@nvidia.com>, <bbasu@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>
-References: <20220708185608.676474-1-thierry.reding@gmail.com>
- <20220708185608.676474-2-thierry.reding@gmail.com>
- <CAK8P3a1bKUr77t9xkNAX=-RqzRme6Hymr3V=36MSHT_sOFEW5A@mail.gmail.com>
- <Ys6lXD6BSxjH02mW@orome>
- <CAK8P3a0cSq47B=acZ854TVu=RckJNfyfKdqQUMzCX7SsV7Wt0g@mail.gmail.com>
- <YtAajDYfcVHRGl1U@nazgul.tnic>
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <YtAajDYfcVHRGl1U@nazgul.tnic>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a9fdbb20-944a-4eab-136f-08da6638eca3
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1882:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?V1NSR3RNd0FBajc2akZZK3RhTUVvN1JDRi9YUUpCTGR5ZlVpTVQrL2lYa2E4?=
- =?utf-8?B?OXRrTmpIOEI2dk05RW9nNGV3dk8vL09aVlpobWlKaStIakszZmVpU0xzaHB3?=
- =?utf-8?B?b1VoeDhlME5RbUZTWkNkcUJoOXA4M2hIWHR6U1lVVTBtaFFTVTE1ZmZIZDNK?=
- =?utf-8?B?bDE4M3h3R2UzcDZsdDZiYTUrWVhYQlk0cVBOTTVCWTl4cWhjRURjdURqcCs3?=
- =?utf-8?B?cU1FZ1BwSlM0M2dMUTk3VXF0WFAvZVJaU2EwOElaNjlnSTBQcnBoNWVhRTBt?=
- =?utf-8?B?YWdqdm5DUUViNE5aaDYxV0kyNFUyd1p5dVhmblNYWC9WYU5JQ1ZpWktiNTRR?=
- =?utf-8?B?cTFzMDJ1d1ZHUU1vczVQaHBBVDNjamNKbzdBdGlLVkFKMmhURm4xenBDdVE1?=
- =?utf-8?B?SnRuOUtVSUtNRGoyL1E4Mm1TeEFvMlEwc1NqK3Z5VWxFV1RpVk5NeTI5Ri93?=
- =?utf-8?B?NVZra1NuWGdUeXF4dkJCcXlUWHM1T3pnM0xRdHB2dmhxdS8zaFMrb3hHQzFE?=
- =?utf-8?B?Z0pLckRJdElRRkV5bW5RbEtOWEJFTS9LWkNqR0NCQTZDYm81MEhoSG9sZGMz?=
- =?utf-8?B?dkhRV3RyU0ExdzZRTWZwWmxObk1hbFhTdkNFNnc0SzFRVGJIaU1JQW4rT3kw?=
- =?utf-8?B?ak92bm8yYmYrNDhBZFdXOXY1RHJYdm9TQ0Zsc0huOTNZdFRiNjRvblVZRnJ6?=
- =?utf-8?B?S0p3TGc4N2V6c3QxM2F5aGRXbENzejA0M0tMem5RbXR5Vnp2K3k0Rklmb21n?=
- =?utf-8?B?Ty9XaHFqb2hPNittQUpScE1kWEpBODRrMUxYeUQyV3VRQlpoSU4zSXdFRU8z?=
- =?utf-8?B?QjU3bExmbWt1NUtXSmpmanpRejNJY0srdkMzMUJxcDlET2tGOVBJOUkrWWVq?=
- =?utf-8?B?dnNML0tDZHB4ZWtzK1N4RGdDQnJFaUpXY2M5MUtaa21VMHorQzFTL2w1Wkdr?=
- =?utf-8?B?RWgyV1ptdUw5WGlJKys5dll3QitXbWM5ZWg2Ynd2WFVqZnYzM1dXaHZXbkhh?=
- =?utf-8?B?V1h1Y3d1RExZYnVaVUNUZlMydkpzWGtqVGVWaG5uaFBIa1RYM2VSUWhtN2kv?=
- =?utf-8?B?TTc5TmxTZFZ6OTZPWW5sRmhySGI2NXZQRWdxL1U4aGFQWlQ4bFNDSGNyR0FZ?=
- =?utf-8?B?MDVFc3dxZTBjNVAraHNLTVJBb2UxRkxkQk9FU2ZsTXdRd09mdTJMbGlrbHZr?=
- =?utf-8?B?eU5WWCtiK01rWVNFTGI4UGxERHRMVFNOQkhNU3NMekRzWDZIM2VBWVljU2k0?=
- =?utf-8?B?Z0tqT2pXR2ZROEtwRzBzRDV3VTJ5eHNiZGZTcXIrWDk3bUtvdz09?=
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(396003)(136003)(346002)(376002)(39860400002)(36840700001)(40470700004)(46966006)(47076005)(7416002)(478600001)(8936002)(5660300002)(81166007)(356005)(82740400003)(54906003)(31696002)(316002)(16576012)(86362001)(40460700003)(966005)(70206006)(110136005)(4326008)(70586007)(426003)(336012)(8676002)(83380400001)(107886003)(16526019)(186003)(26005)(2616005)(82310400005)(36860700001)(2906002)(6666004)(40480700001)(41300700001)(36756003)(31686004)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2022 08:06:29.9564
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9fdbb20-944a-4eab-136f-08da6638eca3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT037.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1882
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:n3x4oCCTVO0hBabGdWVWg7Q+DE4k2LshQjvvt4qtCppu6cTFdFT
+ 9GxzUFxoebxeIodlh4tHl4n2LzQcUNxhNkH0xu79whlaN5ERMwW/I8ITmmGQ+6Ee3Zi582K
+ OOkKXIhrxKQNIaQEc9DE42Mq3LCXjJ17IqXQdNdvJFb4OLlG93TfjAtwXIdKSgKpXqcxzMg
+ jkBl2Q6OIwkqvLzBUs/EA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rlxgDLbS+Co=:/l/hp/b+WKG/S4WyoXLXkx
+ f/Try0qCHWBIJCdHtskZQTGknPZq4VDIxv4E3suGSjWaUoY/chyfrpZ9nTudR+P7v6C4f303d
+ D0tMQyD6/d0h7KY4CxZTLYyd61W0D4aI1WxcWGMMiedsmnAPFBvEGZQJP2uJkuS4FABQMeiY3
+ HrWG3qsGG056t0TZJeYfQFr73Oh0m/8ERCGqw8hS7g3G0TfTC/CWhLFTHdwF36eFDYz/R8TP+
+ jjOf2wSjkLvq/oIWwPkvD3jU+TCac8FwjUVRVLGIEsKJX/xL+0hWLC1mHG05hw5F8q+X2Gmbn
+ 189Vk3e+N2KYxWK2WmfwFQEA2/aEzdXhunQoviuLIADJxqExY+kARzQrbvSJvzsdElSuYIRCw
+ t8AvZDRk3dJthE1e1n700afCzdmaRrQ9uF2B74nDxFIGdF3FImioLJBfSr3REZyoVNOWHllN5
+ GiQwDDN/VGSgt3OVmUm5H45gR2SkHPHlOw1l3mrHoGuEunbizMMxP6TA8drrjR8/v/3X0b57L
+ r6thvOe5afTG6Gbw7vMELfT6L4dgSCU+uQm0S/q0u91IKsVsVNHv8hSfAfyuEYkTVAbFr9yM+
+ YtaRa4evg+l33j+bzWTyc5JnvzIN6CdQ82dNH63Vaep0ZF24DWt6Fh7ty+8AmAlQpMuBVBabV
+ G6RQqsTwlkKvdPIiK7PPqroSyVRRblVdRAONrSPaM08T1Uw2Ldo65WeSqCjw9XAvcc53e6JlV
+ Nu8CFXKSlScldv+0GPirflc/YJtb+aNx6q1b7uphHgmhwYUF5Qo/k135UPpMCH9yKuxwwQYl7
+ JPEftugEBS4wfTRcGG1Kr1+2Q1kZx41+cxSVMNqWpv9pfseNeDBI4Xqoj8blDPTOX+dsKC/sU
+ C42Xm/0m5t7HkXJvwhmHKLDZCCf2X39BKivuyuj8tjaQiqVSXsQ6+i5E5aZf36FAW2S8SPAFg
+ k+XF0WnOEhz0m3K1Kj+cSd0orVZDFYPCcTAbFSl2rewEq8JouAukwremAM6aZbUSMumdjwLm8
+ quQq+J1XaBAcouhHojgb9hDWGCcQ1NpwSbDG9PRvr2tMJwVjCGpXe9J/XpX2fL6JXSVYeR3DH
+ pE/feBgJvRzBu2A6XA7yjlqrk1g/aP1SzpTGJwrr+E+GzvFImT6h5jrEA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Arnd, Boris,
+From: Max Buchholz <Max.Buchholz@gmx.de>
 
-Thank you for your inputs.
+This converts the Nvidia Tegra keyboard controller bindings to YAML
+and fix them up a bit.
 
->> I think this is just a reflection of what other hardware can do:
->> most machines only detect memory errors, but the EDAC subsystem
->> can work with any type in principle. There are also a lot of
->> conditions elsewhere that can be detected but not corrected.
-> 
-> Just a couple of thoughts from looking at this:
-> 
-> So the EDAC thing reports *hardware* errors by using the RAS
-> capabilities built into an IP block. So it started with memory
-> controllers but it is getting extended to other blocks. AMD are looking
-> at how to integrate GPU hw errors reporting into it, for example.
-> 
-> Looking at that CBB thing, it looks like it is supposed to report not
-> so much hardware errors but operational errors. Some of the hw errors
-> reported by RAS hw are also operation-related but not the majority.
-> 
+Reviewed-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Max Buchholz <max.buchholz@gmx.de>
+=2D--
+v3:
+ - fixed maxItems for array properties
+v2:
+ - rework the file according to the feedback
 
-CBB driver reports errors due to bad MMIO accesses within software.
-The vast majority of the CBB errors tend to be programming errors in 
-setting up address windows leading to decode errors.
+ .../bindings/input/nvidia,tegra20-kbc.txt     |  55 ---------
+ .../bindings/input/nvidia,tegra20-kbc.yaml    | 111 ++++++++++++++++++
+ .../bindings/power/wakeup-source.txt          |   2 +-
+ 3 files changed, 112 insertions(+), 56 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra20=
+-kbc.txt
+ create mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra20=
+-kbc.yaml
 
-> Then, EDAC has this counters exposed in:
-> 
-> $ grep -r . /sys/devices/system/edac/
-> /sys/devices/system/edac/power/runtime_active_time:0
-> /sys/devices/system/edac/power/runtime_status:unsupported
-> /sys/devices/system/edac/power/runtime_suspended_time:0
-> /sys/devices/system/edac/power/control:auto
-> /sys/devices/system/edac/pci/edac_pci_log_pe:1
-> /sys/devices/system/edac/pci/pci0/pe_count:0
-> /sys/devices/system/edac/pci/pci0/npe_count:0
-> /sys/devices/system/edac/pci/pci_parity_count:0
-> /sys/devices/system/edac/pci/pci_nonparity_count:0
-> /sys/devices/system/edac/pci/edac_pci_log_npe:1
-> /sys/devices/system/edac/pci/edac_pci_panic_on_pe:0
-> /sys/devices/system/edac/pci/check_pci_errors:0
-> /sys/devices/system/edac/mc/power/runtime_active_time:0
-> /sys/devices/system/edac/mc/power/runtime_status:unsupported
-> ...
-> 
-> with the respective hierarchy: memory controllers, PCI errors, etc.
-> 
-> So the main question is, does it make sense for you to fit this into the
-> EDAC hierarchy and what would even be the advantage of making it part of
-> EDAC?
-> 
+diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.tx=
+t b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+deleted file mode 100644
+index 1faa7292e21f..000000000000
+=2D-- a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
++++ /dev/null
+@@ -1,55 +0,0 @@
+-* Tegra keyboard controller
+-The key controller has maximum 24 pins to make matrix keypad. Any pin
+-can be configured as row or column. The maximum column pin can be 8
+-and maximum row pins can be 16 for Tegra20/Tegra30.
+-
+-Required properties:
+=2D- compatible: "nvidia,tegra20-kbc"
+=2D- reg: Register base address of KBC.
+=2D- interrupts: Interrupt number for the KBC.
+=2D- nvidia,kbc-row-pins: The KBC pins which are configured as row. This i=
+s an
+-  array of pin numbers which is used as rows.
+=2D- nvidia,kbc-col-pins: The KBC pins which are configured as column. Thi=
+s is an
+-  array of pin numbers which is used as column.
+=2D- linux,keymap: The keymap for keys as described in the binding documen=
+t
+-  devicetree/bindings/input/matrix-keymap.txt.
+=2D- clocks: Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+=2D- resets: Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+=2D- reset-names: Must include the following entries:
+-  - kbc
+-
+-Optional properties, in addition to those specified by the shared
+-matrix-keyboard bindings:
+-
+=2D- linux,fn-keymap: a second keymap, same specification as the
+-  matrix-keyboard-controller spec but to be used when the KEY_FN modifier
+-  key is pressed.
+=2D- nvidia,debounce-delay-ms: delay in milliseconds per row scan for debo=
+uncing
+=2D- nvidia,repeat-delay-ms: delay in milliseconds before repeat starts
+=2D- nvidia,ghost-filter: enable ghost filtering for this device
+=2D- wakeup-source: configure keyboard as a wakeup source for suspend/resu=
+me
+-		 (Legacy property supported: "nvidia,wakeup-source")
+-
+-Example:
+-
+-keyboard: keyboard {
+-	compatible =3D "nvidia,tegra20-kbc";
+-	reg =3D <0x7000e200 0x100>;
+-	interrupts =3D <0 85 0x04>;
+-	clocks =3D <&tegra_car 36>;
+-	resets =3D <&tegra_car 36>;
+-	reset-names =3D "kbc";
+-	nvidia,ghost-filter;
+-	nvidia,debounce-delay-ms =3D <640>;
+-	nvidia,kbc-row-pins =3D <0 1 2>;    /* pin 0, 1, 2 as rows */
+-	nvidia,kbc-col-pins =3D <11 12 13>; /* pin 11, 12, 13 as columns */
+-	linux,keymap =3D <0x00000074
+-			0x00010067
+-			0x00020066
+-			0x01010068
+-			0x02000069
+-			0x02010070
+-			0x02020071>;
+-};
+diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.ya=
+ml b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
+new file mode 100644
+index 000000000000..8e1eaad2fdc1
+=2D-- /dev/null
++++ b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
+@@ -0,0 +1,111 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/input/nvidia,tegra20-kbc.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Nvidia Tegra keyboard controller
++
++maintainers:
++  - Jon Hunter <jonathanh@nvidia.com>
++  - Sameer Pujar <spujar@nvidia.com>
++
++description: The key controller has maximum 24 pins to make matrix keypad=
+. Any pin
++  can be configured as row or column.
++
++allOf:
++  - $ref: "/schemas/input/matrix-keymap.yaml#"
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: nvidia,tegra30-kbc
++          - const: nvidia,tegra20-kbc
++      - items:
++          - const: nvidia,tegra20-kbc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  nvidia,kbc-row-pins:
++    minItems: 1
++    maxItems: 16
++    description: KBC pins which are configured as row
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++  nvidia,kbc-col-pins:
++    minItems: 1
++    maxItems: 8
++    description: KBC pins which are configured as column
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: kbc
++
++  linux,fn-keymap:
++    description: a secondary keymap to be used when the KEY_FN modifier k=
+ey is pressed
++
++  nvidia,debounce-delay-ms:
++    description: delay in milliseconds per row scan for debouncing
++
++  nvidia,repeat-delay-ms:
++    description: delay in milliseconds before repeat starts
++
++  nvidia,ghost-filter:
++    description: enable ghost filtering for this device
++    type: boolean
++
++  wakeup-source:
++    description: configure keyboard as a wakeup source for suspend/resume
++
++  nvidia,wakeup-source:
++    description: configure keyboard as a wakeup source for suspend/resume
++    deprecated: true
++    type: boolean
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - nvidia,kbc-row-pins
++  - nvidia,kbc-col-pins
++  - linux,keymap
++  - clocks
++  - resets
++  - reset-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    kbc@7000e200 {
++        compatible =3D "nvidia,tegra20-kbc";
++        reg =3D <0x7000e200 0x100>;
++        interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
++        clocks =3D <&tegra_car 36>;
++        resets =3D <&tegra_car 36>;
++        reset-names =3D "kbc";
++        nvidia,ghost-filter;
++        nvidia,debounce-delay-ms =3D <640>;
++        nvidia,kbc-row-pins =3D <0 1 2>;    /* pin 0, 1, 2 as rows */
++        nvidia,kbc-col-pins =3D <11 12 13>; /* pin 11, 12, 13 as columns =
+*/
++        linux,keymap =3D <0x00000074
++                        0x00010067
++                        0x00020066
++                        0x01010068
++                        0x02000069
++                        0x02010070
++                        0x02020071>;
++    };
+diff --git a/Documentation/devicetree/bindings/power/wakeup-source.txt b/D=
+ocumentation/devicetree/bindings/power/wakeup-source.txt
+index cfd74659fbed..728f88de371d 100644
+=2D-- a/Documentation/devicetree/bindings/power/wakeup-source.txt
++++ b/Documentation/devicetree/bindings/power/wakeup-source.txt
+@@ -25,7 +25,7 @@ List of legacy properties and respective binding documen=
+t
+ 				Documentation/devicetree/bindings/input/touchscreen/ads7846.txt
+ 5. "linux,keypad-wakeup"	Documentation/devicetree/bindings/input/qcom,pm8=
+xxx-keypad.txt
+ 6. "linux,input-wakeup"		Documentation/devicetree/bindings/input/samsung-=
+keypad.txt
+-7. "nvidia,wakeup-source"	Documentation/devicetree/bindings/input/nvidia,=
+tegra20-kbc.txt
++7. "nvidia,wakeup-source"	Documentation/devicetree/bindings/input/nvidia,=
+tegra20-kbc.yaml
 
-I also think this doesn't seem to fit with the errors reported by EDAC 
-which are mainly hardware errors as Boris explained.
-Please share your thoughts and if we can merge the patches as it is.
+ Examples
+ --------
+=2D-
+2.37.0
 
-> HTH.
-> 
-> --
-> Regards/Gruss,
->      Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
