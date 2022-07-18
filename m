@@ -2,91 +2,69 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0A0C43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 19:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664E3C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 19:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234551AbiGRTQb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jul 2022 15:16:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38144 "EHLO
+        id S235170AbiGRTTi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jul 2022 15:19:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231199AbiGRTQb (ORCPT
+        with ESMTP id S230317AbiGRTTi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jul 2022 15:16:31 -0400
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C98792ED5D;
-        Mon, 18 Jul 2022 12:16:29 -0700 (PDT)
-Received: by mail-il1-f169.google.com with SMTP id r4so2362765ilb.10;
-        Mon, 18 Jul 2022 12:16:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8RF8yPg0V6Ei1ECcsENYa6ZgHRNw38bA40D3WRP4FyM=;
-        b=HtIUSlWeR67/+pac3QdOLs/nTkmfUEP3IOQGcSHNfw8CupHXTLHuMaPwMBcdCxOIt/
-         BhPgPwaC3u9lnnCi11gSBCzJVQj7yN5XOZDSekAdTLbbEv/wKCz3v5EekWn271vmFyX2
-         K+qsBpI1Al0EsGIxmNpu7joFOZ8hJIlSU/BUQitlZLuUXbWltgssjgOqed91QRTdfCUY
-         tUdMsIR6yWfknVDQpvBpE2IK1S8pitqKZjpX1KdEwTZlOGDCGnVcJ3xWlN3BpHPAM6ht
-         S8W+IvKX9hX33KOTj/EpK+Tnbli8NvbRr707kY6xmnEibAZQovY+PhBgf/cYJQD981hb
-         8u/Q==
-X-Gm-Message-State: AJIora/7P6kX1T4V4WCDr8g5mO2a4sCQ2f8w3oaC5Impc/Mx1DsqNDwQ
-        Lx3lJ/oTAvf3+xm+3dANP2dUqYEfZQ==
-X-Google-Smtp-Source: AGRyM1skZXRGXATxAj9yKT/sA/YyYFM/FtsMqbrtgIQYQ35QL7+WaUwDmKepF9LYedHCorY7wdg3Cg==
-X-Received: by 2002:a05:6e02:188c:b0:2dc:a00:3222 with SMTP id o12-20020a056e02188c00b002dc0a003222mr13783935ilu.43.1658171789064;
-        Mon, 18 Jul 2022 12:16:29 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id w64-20020a025d43000000b0033ef9dc43d4sm5785863jaa.159.2022.07.18.12.16.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 12:16:28 -0700 (PDT)
-Received: (nullmailer pid 3377517 invoked by uid 1000);
-        Mon, 18 Jul 2022 19:16:27 -0000
-Date:   Mon, 18 Jul 2022 13:16:27 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     dmaengine@vger.kernel.org, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, p.zabel@pengutronix.de,
-        thierry.reding@gmail.com, vkoul@kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: dmaengine: Add compatible for
- Tegra234
-Message-ID: <20220718191627.GA3375779-robh@kernel.org>
-References: <20220711154536.41736-1-akhilrajeev@nvidia.com>
- <20220711154536.41736-2-akhilrajeev@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220711154536.41736-2-akhilrajeev@nvidia.com>
+        Mon, 18 Jul 2022 15:19:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AB802ED40;
+        Mon, 18 Jul 2022 12:19:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 25E4CB81705;
+        Mon, 18 Jul 2022 19:19:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DA6D8C341C0;
+        Mon, 18 Jul 2022 19:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658171974;
+        bh=5JaMD+HuAu8izb9UBXDSbl43MABbjBtiQasG7N6IfHU=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=NRUO+OOC+A+k1tBDxLh+5mCDFVBz5lG8GH6NX865wkFjfEVuD/VAGVOXBnCi6Fkis
+         nQxtJTgiM9UDhxGnm2se3Z87KKgSMoLfnF/q+zzEELZcpeUoYEmOoLo7iMj9Hp6Ukc
+         VgZvu7bisBQqlhHjgommaZW5v3vAhSWv+3bGJ8WlgnvsYWNnPmb/BdswgpKFzbStHs
+         KfoibyOVbxHcn9NxtWmfrbk3V+NLncLXTx74HmKCvDQJLYQMLsBNVJSehhAkEl1d1K
+         SiCPJ2+XEAbM3zrL7q8y4DjW/eozJ6XKOOPWde+HPk5aVvWnj1G/+uhLo6ElS3ekMZ
+         jeM3vk3kc4Snw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C32CDE451B2;
+        Mon, 18 Jul 2022 19:19:34 +0000 (UTC)
+Subject: Re: [GIT PULL] hte: Fixes for v5.19
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20220718175145.1945060-1-thierry.reding@gmail.com>
+References: <20220718175145.1945060-1-thierry.reding@gmail.com>
+X-PR-Tracked-List-Id: <linux-tegra.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20220718175145.1945060-1-thierry.reding@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/hte/for-5.19
+X-PR-Tracked-Commit-Id: 85ff37e302efdf173cff6d1a310c2f7f38f1d069
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 80e19f34c2887a8881084b7bb7480e9544d56b91
+Message-Id: <165817197478.11636.9862062654333129934.pr-tracker-bot@kernel.org>
+Date:   Mon, 18 Jul 2022 19:19:34 +0000
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dipen Patel <dipenp@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 09:15:34PM +0530, Akhil R wrote:
-> Document the compatible string used by GPCDMA controller for Tegra234.
-> 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->  .../devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> index 9dd1476d1849..399edcd5cecf 100644
-> --- a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> @@ -26,6 +26,10 @@ properties:
->            - const: nvidia,tegra194-gpcdma
->            - const: nvidia,tegra186-gpcdma
->  
-> +      - items:
-> +          - const: nvidia,tegra234-gpcdma
+The pull request you sent on Mon, 18 Jul 2022 19:51:45 +0200:
 
-This can be added to the above entry changing it from a const to enum.
+> git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/hte/for-5.19
 
-> +          - const: nvidia,tegra186-gpcdma
-> +
->    "#dma-cells":
->      const: 1
->  
-> -- 
-> 2.17.1
-> 
-> 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/80e19f34c2887a8881084b7bb7480e9544d56b91
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
