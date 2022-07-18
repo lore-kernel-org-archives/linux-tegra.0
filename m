@@ -2,83 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DAAC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 20:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CE5CCA491
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 21:37:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233616AbiGRUt4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jul 2022 16:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51024 "EHLO
+        id S230263AbiGRVhf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jul 2022 17:37:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233484AbiGRUtz (ORCPT
+        with ESMTP id S235840AbiGRVhM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jul 2022 16:49:55 -0400
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B57FBE25;
-        Mon, 18 Jul 2022 13:49:54 -0700 (PDT)
-Received: by mail-io1-f41.google.com with SMTP id n138so9057825iod.4;
-        Mon, 18 Jul 2022 13:49:54 -0700 (PDT)
+        Mon, 18 Jul 2022 17:37:12 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 900883245B
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jul 2022 14:37:10 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id n12so6061210wrc.8
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jul 2022 14:37:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fcM5H7LuUZitM810U87o0MrCS82Ja03oEXoUJfTqLZY=;
+        b=VCNsKWDEVGSOr0DAmTVUV+kKqkmZzWwuFY+4pOy87ryML5i3PJS9d0BQOaglD3oPh7
+         nZ63sBJOqdDQURw0VKQvtr06U/Sa0Hb70A26EV6vK0klNSK1+vGCQdKeG+QRNjAzt+7V
+         QKdtwCdbxsStYu8Q/st3ILHBdpMnkv2v7N8kDo2bkmEnxgayPgq76ecjRxVWlmd773VE
+         q3OTRr7bIA/8KQ1dN+WkyfIqU1zg4aRMoyM8Mqg+mIOI3Kb3TwQLw1ExOgLVJXxMPSvC
+         yb3RY9poDsyWQ2Em31/WRcjRBiazUMYhtTPiK+wA5mkULPIjew5b0Zw7VXJLvTAn8xF9
+         JyPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ajY7j0BfYhi2jE6qNJgMjzXc0PMFIPwLrREeXQz3rSQ=;
-        b=fNfzerfrh2dBQMLfor6tndFKQaR0SoXmucHx0a3ir64yu6mEtD8q+fff7cmQXaEf7+
-         /UyBd4hTc/i7xa4v74ioD33Wa1la/8YK3Q/2bKjUF6Mc5NQinSEx0NeRBHrPUhS3VbTi
-         u+tP+B4FEAlQ3kVPdVOSnFoztFr6fLiMXmHEe+0PcGy5rugFygxCPc7BGa+TWHg85LXm
-         s05x1QXZQG5q/hhl09MdQ6bIU1ESLFHIJSEeHKVWNxWHBDYPdxzJ3U6KNhbgAzDxBM9h
-         JEgE23+ShBZkXfC9BVOwPMkYnQv8CI1fc8jXtclijlX2tiErcfOJuYpcObK01Jw96Jo/
-         YZbQ==
-X-Gm-Message-State: AJIora8QcF2rN9Waf4Bttf4q1s9fr7p/rhDavEhT3vxDhln3hyFawyjG
-        hEbWwIIQ2w8K7koDYtXXXA==
-X-Google-Smtp-Source: AGRyM1tnESu2T5sFWAqJyROEKa2KQBLBCdWQG0dk7/6q9lnP/jxHZhFA1efOB6uDF2IIcRun/Nf5aw==
-X-Received: by 2002:a05:6638:4089:b0:33f:7f78:1cd2 with SMTP id m9-20020a056638408900b0033f7f781cd2mr15859064jam.130.1658177393523;
-        Mon, 18 Jul 2022 13:49:53 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id p7-20020a0566022b0700b0067885c5fd94sm6444061iov.29.2022.07.18.13.49.51
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fcM5H7LuUZitM810U87o0MrCS82Ja03oEXoUJfTqLZY=;
+        b=ilsGrl89H3VTbZsOwf/d8Mvdk16pLj3kCARF2e/B0jww0F+KN3IbLr+IKgw1cvjs6J
+         cYkWXXu2sNMGtKmrYB1LqWAO/NndnnLBjIF/WjJdk5TGgMcG4PvfyoXbCsUYgT8VtJMC
+         36NW9e7GwIWVq1/kKf95EkDJ2eC5TbWyS1sE7Hl+tPM4vxYmK8Dt7CUIala8Qu7vgVIR
+         iHIkoOUGNN056HkA5lQs09kU4jd50uXHbLWoKzcqMaTdv/pLJmSjuHaLe6yKcA+R2Sb7
+         HFYU0igjmz8OSBE6WvkpbtfzoHiBGVHyMwoqiWLX63OrDXgjVaVszmHb9huoYyKhjb3n
+         /93g==
+X-Gm-Message-State: AJIora/oM80mZvM4uhMTtPiij9nfn+Iz8Z7vI5jlVqpXrLCb0xYwer6x
+        qF76nGnYsa5PXeyZERgThZZmUg==
+X-Google-Smtp-Source: AGRyM1vBobWMgtTC2//bIax1kcof9pKqyUnqASrXceKn9r4UVb6G6Qqrt8Z2o3QIlsyhgI54nMvMIw==
+X-Received: by 2002:a05:6000:702:b0:21d:7f65:f1b5 with SMTP id bs2-20020a056000070200b0021d7f65f1b5mr24197748wrb.555.1658180228794;
+        Mon, 18 Jul 2022 14:37:08 -0700 (PDT)
+Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:496e:2d41:fd5a:4e5e])
+        by smtp.gmail.com with ESMTPSA id ay10-20020a05600c1e0a00b003a32167b8d4sm991527wmb.13.2022.07.18.14.37.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 13:49:53 -0700 (PDT)
-Received: (nullmailer pid 3527793 invoked by uid 1000);
-        Mon, 18 Jul 2022 20:49:50 -0000
-Date:   Mon, 18 Jul 2022 14:49:50 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     thierry.reding@gmail.com, devicetree@vger.kernel.org,
-        gustavo.pimentel@synopsys.com, krzysztof.kozlowski+dt@linaro.org,
-        jonathanh@nvidia.com, kw@linux.com, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, mmaddireddy@nvidia.com,
-        lpieralisi@kernel.org, sagar.tv@gmail.com, robh+dt@kernel.org,
-        kthota@nvidia.com, kishon@ti.com, jingoohan1@gmail.com,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com
-Subject: Re: [PATCH V5 3/9] dt-bindings: PCI: tegra234: Add schema for
- tegra234 endpoint mode
-Message-ID: <20220718204950.GA3527732-robh@kernel.org>
-References: <20220713090029.30395-1-vidyas@nvidia.com>
- <20220713090029.30395-4-vidyas@nvidia.com>
+        Mon, 18 Jul 2022 14:37:08 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc:     thierry.reding@gmail.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, kkartik@nvidia.com
+Subject: [PATCH] clocksource/drivers/tegra186: Put Kconfig option 'tristate' to 'bool'
+Date:   Mon, 18 Jul 2022 23:36:57 +0200
+Message-Id: <20220718213657.1303538-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220713090029.30395-4-vidyas@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 13 Jul 2022 14:30:23 +0530, Vidya Sagar wrote:
-> Add support for PCIe controllers that operate in the endpoint mode
-> in tegra234 chipset.
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> V5:
-> * Addressed review comments from Rob
-> 
-> V4:
-> * Rebased on top of previous patch
-> 
-> V3:
-> * New patch in this series
-> 
->  .../bindings/pci/nvidia,tegra194-pcie-ep.yaml | 97 ++++++++++++++++++-
->  1 file changed, 95 insertions(+), 2 deletions(-)
-> 
+The clocksource are built-in, not as module. We don't know if the core
+time framework is ready for that.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Revert back this option to 'bool'.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 2dcdf02239c3..d7c7912cdd78 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -151,7 +151,7 @@ config TEGRA_TIMER
+ 	  Enables support for the Tegra driver.
+ 
+ config TEGRA186_TIMER
+-	tristate "NVIDIA Tegra186 timer driver"
++	bool "NVIDIA Tegra186 timer driver"
+ 	depends on ARCH_TEGRA || COMPILE_TEST
+ 	depends on WATCHDOG && WATCHDOG_CORE
+ 	help
+-- 
+2.25.1
+
