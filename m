@@ -2,91 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9A4C43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 17:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0A0C43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 19:16:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230411AbiGRRvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jul 2022 13:51:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
+        id S234551AbiGRTQb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jul 2022 15:16:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbiGRRvx (ORCPT
+        with ESMTP id S231199AbiGRTQb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jul 2022 13:51:53 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4AE2D1D0;
-        Mon, 18 Jul 2022 10:51:52 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id y8so16383630eda.3;
-        Mon, 18 Jul 2022 10:51:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OzNDaj+DZhSHMIrNJY7lm71T3WkSPnzySsNM702N+zE=;
-        b=IWbRPmZUG1AiFeiQO3HR1B31sET+hYeHvzIh0Q39+w7eyfEjso7f94PSh6QwpZNeM4
-         coyKBTR+x5wfb0/iZ8dq92B/6W3rsZmYx5sa9ZDiCeZhxTaX2PoJXesmGAh2QNOJYQWE
-         /leEZWfou6/hefbt+hWXFHU7Jg5nt7Wy3BcZH6/h2Mx0BSkneg61rhS8D10kFxyFepXu
-         q81d/2HPF+N5GSRPD3tBgW7V3DorwUsD53ARgcy7FBdEc8yKxjeoBgCcd8Vb4OQhz9g0
-         D32bz/CTnROYPh5WV4onoKGn4s/8DQZ/w3UfGKAh3mKuP+IbVYrbIXqws4VroFFVtkrm
-         pZyg==
+        Mon, 18 Jul 2022 15:16:31 -0400
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C98792ED5D;
+        Mon, 18 Jul 2022 12:16:29 -0700 (PDT)
+Received: by mail-il1-f169.google.com with SMTP id r4so2362765ilb.10;
+        Mon, 18 Jul 2022 12:16:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OzNDaj+DZhSHMIrNJY7lm71T3WkSPnzySsNM702N+zE=;
-        b=sFKHw/YSHfAt68k/lVDNcpEGbcPPaozAeQe5ypydWWo5I+G2Do3MnIUw6DVQsd1DHT
-         fJ0kBXAVfqnW9NCAJo404gxHquxBTa1MjOgy/Hh0ZdM/bkveMNxMopTZqvCGnZ5cFHPa
-         olfwK7R7cre1m0jXAO/AHTGpnVkO21oDOtjeLos1eTdOLG6n2QYiyORFAka8QgKw0dS/
-         KhSyy5jT721jviRy2DjBdbyY9ga1TpUm7QB18JA8YHT81e75zfeu9YpBZ08EHF0GRLvr
-         yX3v8xy033mufn+FfvxzEvkTE/NlnvcRsYXqTmCFWQv5gg3hQJ8TjYE24f+vNCx789pd
-         SUuA==
-X-Gm-Message-State: AJIora+Mtr+AQZVhCPlDstXwersjI/PL72bomFD2lu0BSkFSzG3sW3KI
-        O89hOoZb7SYtvEcV5/oGHOo=
-X-Google-Smtp-Source: AGRyM1t2SRY22FUnIBxr79BTWXtaLzb3OzYXyF2ywpYjSlpK3tyLidmTDuUPD/cRYOA9B9u9dzOEJA==
-X-Received: by 2002:aa7:d60a:0:b0:43a:5795:b729 with SMTP id c10-20020aa7d60a000000b0043a5795b729mr38562794edr.230.1658166710821;
-        Mon, 18 Jul 2022 10:51:50 -0700 (PDT)
-Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id t21-20020aa7d4d5000000b0043a5bcf80a2sm9013260edr.60.2022.07.18.10.51.49
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8RF8yPg0V6Ei1ECcsENYa6ZgHRNw38bA40D3WRP4FyM=;
+        b=HtIUSlWeR67/+pac3QdOLs/nTkmfUEP3IOQGcSHNfw8CupHXTLHuMaPwMBcdCxOIt/
+         BhPgPwaC3u9lnnCi11gSBCzJVQj7yN5XOZDSekAdTLbbEv/wKCz3v5EekWn271vmFyX2
+         K+qsBpI1Al0EsGIxmNpu7joFOZ8hJIlSU/BUQitlZLuUXbWltgssjgOqed91QRTdfCUY
+         tUdMsIR6yWfknVDQpvBpE2IK1S8pitqKZjpX1KdEwTZlOGDCGnVcJ3xWlN3BpHPAM6ht
+         S8W+IvKX9hX33KOTj/EpK+Tnbli8NvbRr707kY6xmnEibAZQovY+PhBgf/cYJQD981hb
+         8u/Q==
+X-Gm-Message-State: AJIora/7P6kX1T4V4WCDr8g5mO2a4sCQ2f8w3oaC5Impc/Mx1DsqNDwQ
+        Lx3lJ/oTAvf3+xm+3dANP2dUqYEfZQ==
+X-Google-Smtp-Source: AGRyM1skZXRGXATxAj9yKT/sA/YyYFM/FtsMqbrtgIQYQ35QL7+WaUwDmKepF9LYedHCorY7wdg3Cg==
+X-Received: by 2002:a05:6e02:188c:b0:2dc:a00:3222 with SMTP id o12-20020a056e02188c00b002dc0a003222mr13783935ilu.43.1658171789064;
+        Mon, 18 Jul 2022 12:16:29 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id w64-20020a025d43000000b0033ef9dc43d4sm5785863jaa.159.2022.07.18.12.16.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 10:51:49 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Dipen Patel <dipenp@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hte: Fixes for v5.19
-Date:   Mon, 18 Jul 2022 19:51:45 +0200
-Message-Id: <20220718175145.1945060-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.36.1
+        Mon, 18 Jul 2022 12:16:28 -0700 (PDT)
+Received: (nullmailer pid 3377517 invoked by uid 1000);
+        Mon, 18 Jul 2022 19:16:27 -0000
+Date:   Mon, 18 Jul 2022 13:16:27 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     dmaengine@vger.kernel.org, jonathanh@nvidia.com,
+        ldewangan@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, p.zabel@pengutronix.de,
+        thierry.reding@gmail.com, vkoul@kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: dmaengine: Add compatible for
+ Tegra234
+Message-ID: <20220718191627.GA3375779-robh@kernel.org>
+References: <20220711154536.41736-1-akhilrajeev@nvidia.com>
+ <20220711154536.41736-2-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220711154536.41736-2-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Linus,
+On Mon, Jul 11, 2022 at 09:15:34PM +0530, Akhil R wrote:
+> Document the compatible string used by GPCDMA controller for Tegra234.
+> 
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+>  .../devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> index 9dd1476d1849..399edcd5cecf 100644
+> --- a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> @@ -26,6 +26,10 @@ properties:
+>            - const: nvidia,tegra194-gpcdma
+>            - const: nvidia,tegra186-gpcdma
+>  
+> +      - items:
+> +          - const: nvidia,tegra234-gpcdma
 
-The following changes since commit 5dad4eccd2b4316a84209603a28d34c6346392bb:
+This can be added to the above entry changing it from a const to enum.
 
-  dt-bindings: timestamp: Correct id path (2022-06-02 15:56:59 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/hte/for-5.19
-
-for you to fetch changes up to 85ff37e302efdf173cff6d1a310c2f7f38f1d069:
-
-  gpiolib: cdev: Fix kernel doc for struct line (2022-06-17 12:58:57 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-hte: Fixes for v5.19
-
-This contains a single fix for an out-of-sync kerneldoc comment.
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      gpiolib: cdev: Fix kernel doc for struct line
-
- drivers/gpio/gpiolib-cdev.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> +          - const: nvidia,tegra186-gpcdma
+> +
+>    "#dma-cells":
+>      const: 1
+>  
+> -- 
+> 2.17.1
+> 
+> 
