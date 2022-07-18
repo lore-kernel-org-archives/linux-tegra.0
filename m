@@ -2,106 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF6FC433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jul 2022 21:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80A1C43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 02:05:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230185AbiGQVb7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 17 Jul 2022 17:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51158 "EHLO
+        id S233059AbiGRCF5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 17 Jul 2022 22:05:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbiGQVb6 (ORCPT
+        with ESMTP id S232539AbiGRCF5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 17 Jul 2022 17:31:58 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 333301145B;
-        Sun, 17 Jul 2022 14:31:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1658093507;
-        bh=f4FfzIpkBTHPOg+j4ipx8biOOkNxFkZwARYVG5NtFms=;
-        h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:References;
-        b=Do8rbAcDILkg69XLI7KSPaqCPCDkRLstFlxJl7QZ5ejNcz9eesYnk4TzGRVKXtsfx
-         ZezdpNEAlBeXpBa+/AEbsMqFnFIsHlS0ka42CxN0wujGU8a05qxBSB5G5HW2ee7gvB
-         yZhmqxZaNks+4rlIfAH9Xb+LUv5Iw7dXcJro341U=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from MacBookPro.fritz.box ([88.130.11.201]) by mail.gmx.net
- (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MfpOd-1ncB5v3grp-00gHsY; Sun, 17 Jul 2022 23:31:46 +0200
-Date:   Sun, 17 Jul 2022 23:31:46 +0200 (CEST)
-From:   Marc Dietrich <marvin24@gmx.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marc Dietrich <marvin24@gmx.de>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 3/5] dt-bindings: arm: tegra: nvec: Convert to
- json-schema
-In-Reply-To: <20220711152020.688461-3-thierry.reding@gmail.com>
-Message-ID: <a8af39d5-e656-1e5e-4809-1b168bca3eda@gmx.de>
-References: <20220711152020.688461-1-thierry.reding@gmail.com> <20220711152020.688461-3-thierry.reding@gmail.com>
+        Sun, 17 Jul 2022 22:05:57 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EDB3E0E5
+        for <linux-tegra@vger.kernel.org>; Sun, 17 Jul 2022 19:05:56 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id k19so7803030pll.5
+        for <linux-tegra@vger.kernel.org>; Sun, 17 Jul 2022 19:05:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3BjGRHLy/P5muSoNU/Pz9GHQ5lT79yzzrjudG9IvvpQ=;
+        b=U0y4ZBls7dp+IJthAqtm3XZcN2mDc6Moz9aOky11OGh5xiAsXPqmRYsA3ASCViImED
+         vpJrYT4RAU/o8wPtQhqFHjcYkKJzY5G5DVfPTTfa0UUkzrJwXVN0Wm7mGz7f//bYkaRf
+         uLDbNup6TOEzG9s3eL6z4z+h8Ena/JD34EfCsDDgjVc6CkEZMz602FQys6VUr388b92k
+         mzcoV/yWkXI3Qs5gRCQGujTZ9y0IGWwMSULp+rPXNnTsMJGgNXBV3cabDo+FHSn+JhT8
+         VJyK66uhR9Un2xnPRr02kdIGF0IdJIE5fAEvK+BGY9dLg3/K81yUur3oPa0Vc6PxR/eb
+         9Vng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3BjGRHLy/P5muSoNU/Pz9GHQ5lT79yzzrjudG9IvvpQ=;
+        b=UgAFwAQFuSWvuvnM2koMh9p0MG0ZQfGx2daiq7C6ZTZQGZarTnpGYbULEfdsPuXPlC
+         hd4vHi6td5LNgzsX+TVgsS7wj9Jm9aby89c0at5DPW5GngX1H3xq+rRpsEaASdcVegV7
+         7P7wlKsJwHvpxVQVGmSr1ZuxaMuKMtIKC31lGYpbZuLIm8AH9SA8ATeHpspEnJnBWYJq
+         /T7Qxalo/tEWmADROdZY6TSj4IXm5zH9q5VI6aWQXx69K+6Qk+uYVss4f0Yh3yDA39Er
+         pkeEg3/4BQ6v1745b33Csn/lwuxonGxw2ffRM4qpGhCy6O01qRW0EKWVeonS7IwPQq0i
+         fiow==
+X-Gm-Message-State: AJIora+H6y/ArPV9FLW1p7UG3mQr77LXN76vs79GggGpSEmQW/SNWT/U
+        vqici3jeyrvoulHwFIbQ0xj7cw==
+X-Google-Smtp-Source: AGRyM1uvcp85DEmyxiSH3PvubO+xKzXk2te9CDJYpnpmn6NbRBOkzE7RuaKMYrS+kcgYBbSLzhJsTA==
+X-Received: by 2002:a17:90b:4d07:b0:1ef:521c:f051 with SMTP id mw7-20020a17090b4d0700b001ef521cf051mr36153656pjb.164.1658109956039;
+        Sun, 17 Jul 2022 19:05:56 -0700 (PDT)
+Received: from localhost ([122.171.18.80])
+        by smtp.gmail.com with ESMTPSA id b18-20020aa78ed2000000b00525302fe9c4sm7863809pfr.190.2022.07.17.19.05.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Jul 2022 19:05:55 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        kernel test robot <lkp@intel.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: tegra194: Staticize struct tegra_cpufreq_soc instances
+Date:   Mon, 18 Jul 2022 07:35:48 +0530
+Message-Id: <5c1a9b405d96848f2dac9aefcef121ad178872f4.1658109927.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Provags-ID: V03:K1:qgXuojO2d/XpMr3wVkvDzxXA9aMI18xf2Z3YeCCIUd+08YqppiQ
- eWqSn8UvLrUmF4+v5MFmG5YCAkyHyM0BAFWGiUbAi8B2ewXILMAifduwz1L+YhaHu6ewB8l
- NCRnuyt8VmWFiHcDhoJ3pdBw9cAxgZ8rbczQvJBgMoNivh0NpKQ8zgCG9PptpGi9CI3B9sY
- fYeLCH3m+7rk6D2BxNHAQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9aeTu9FjRqM=:TpOvQbpdytyGtI1pq8gFeh
- HAuUBl3PgqtSmC5CeqtCv0ax6q8qfO+oAf/2bhLgL5J9rc1zIsXEmcJFi6XsXfxoQjVxsQ2cG
- YAXOthKXTgBx8W9UtKqfuxjY4SGbHb8PWiRAYRZHLI58JTUm4RmLDgwIH0YM19Da3T5WupioK
- Sb+fVn+nGnNeACpL/8hDm/0AQlm7y6ictbJwrZGWrBE8Bp7uNrLv/oqCQ6/iKndFAM/j54545
- g+NWS4XR9ZH2HBQHqA6sTN79oYNpc5uyoaYyozNWW8X1bTiu8oii/mBowW2fn3CXvyR/O0Rz7
- yKr8CO8LkclOvJJY/c8qMJ+6Nw7Ma8wy4l+bxjta5Yz7eF/kJz8BKv3HQmh7H5JGrLbXoKIuF
- dL7iE0RHCa98j9BCCxEWW2RBDLguEwYG+TtNyB/HVEaudVMZT86ZCxPKZKAKxL6cp0VZ7Bfa9
- vp1sup/gWCl9t4JjEiqOUz8rYxwsa7mGFG/fhx+EhGUwypcsLVRrZYnO7bL78l06nxOsDrol/
- tA7TZk89ALF3zF3ovrVMDH914m1aEnW7XUS+dfLddYQNJkiBX1Qu3D3I5ZWV00rNhQtz2pyiZ
- WIR/FUD8GDOeqWRVIXCrj0LkQTZzu8V5aTMq/UYlz2JV78SnluxpKNg7eiQ/98qZwj+oakC3O
- gutQGFtJbQbb3YC24cddD4m10F5sWMnAWmu1UKc28oz0jJpwjImkUuH/V9+0xftsT0QYwjNxj
- RBtLsnpXxHRcTElRzkuuuIOJINO/cvZmAR7NsOrmC46MlAXFHjpETH7BMRy6mHwawB2MbnwRK
- Jb32EyzGrjgOj2rteI+GiKyj1y4OpWv1SEARhyNKNndDyu6tiD9K+pHw8g8r9IVO/ImL6lOvN
- 397gpZY+K9V9ypZUoMXSqjN+XFTvH5FukMVfBZ2E9veg3IDaar1rbjkUPvbqqE971LEkJi6HS
- bsLJDeMP+bPf3CTD08gmluf2obAOXwJ5Xj354sRBsFh1HwZUq6mliy2Wj3jgfdAFy2jmQqlTn
- GbXE3qlRB9DRHnm7fuTZLA1Mw6zr5koIE1IljPNQxxLgOVpbvxxjAXrLcpa0Pf8YPHyFwvpgu
- fPZZee7sE05pdvwR2JyZ3Ass4ibke85iVwq2X/xrbUt1oK9Kusf2JhcvA==
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Thierry,
+Fix sparse warnings by marking these structures static.
 
-On Mon, 11 Jul 2022, Thierry Reding wrote:
+Fixes: 273bc890a2a8 ("cpufreq: tegra194: Add support for Tegra234")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/tegra194-cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> Convert the NVIDIA embedded controller bindings from the free-form text
-> format to json-schema.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Marc,
->
-> you authored this binding a long time ago, which makes the default
-> license for this GPL-2.0. However, the preference is for DT bindings to
-> be dual-licensed under the more permissive GPL-2.0-only OR BSD-2-Clause
-> as done in this patch. Do you have any objections to relicensing?
-
-yeah, that was almost 11 years ago - how fast time can pass ...
-I'm ok with relicensing (and also for the conversion to yaml) - thanks for
-taking care!
-
-Acked-by: Marc Dietrich <marvin24@gmx.de>
-
-Marc
-
-
-> Thierry
->
-> .../bindings/arm/tegra/nvidia,nvec.txt        | 21 -----
-> .../bindings/arm/tegra/nvidia,nvec.yaml       | 94 +++++++++++++++++++
-> 2 files changed, 94 insertions(+), 21 deletions(-)
-> delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,nv=
-ec.txt
-> create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,nv=
-ec.yaml>
-....
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index 2a6a98764a8c..1216046cf4c2 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -162,7 +162,7 @@ static struct tegra_cpufreq_ops tegra234_cpufreq_ops = {
+ 	.set_cpu_ndiv = tegra234_set_cpu_ndiv,
+ };
+ 
+-const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
++static const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
+ 	.ops = &tegra234_cpufreq_ops,
+ 	.actmon_cntr_base = 0x9000,
+ 	.maxcpus_per_cluster = 4,
+@@ -430,7 +430,7 @@ static struct tegra_cpufreq_ops tegra194_cpufreq_ops = {
+ 	.set_cpu_ndiv = tegra194_set_cpu_ndiv,
+ };
+ 
+-const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
++static const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
+ 	.ops = &tegra194_cpufreq_ops,
+ 	.maxcpus_per_cluster = 2,
+ };
+-- 
+2.31.1.272.g89b43f80a514
 
