@@ -2,103 +2,150 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D80A1C43334
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 02:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6921DC43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 05:35:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233059AbiGRCF5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 17 Jul 2022 22:05:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52276 "EHLO
+        id S230009AbiGRFfR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jul 2022 01:35:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232539AbiGRCF5 (ORCPT
+        with ESMTP id S229585AbiGRFfQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 17 Jul 2022 22:05:57 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EDB3E0E5
-        for <linux-tegra@vger.kernel.org>; Sun, 17 Jul 2022 19:05:56 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id k19so7803030pll.5
-        for <linux-tegra@vger.kernel.org>; Sun, 17 Jul 2022 19:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3BjGRHLy/P5muSoNU/Pz9GHQ5lT79yzzrjudG9IvvpQ=;
-        b=U0y4ZBls7dp+IJthAqtm3XZcN2mDc6Moz9aOky11OGh5xiAsXPqmRYsA3ASCViImED
-         vpJrYT4RAU/o8wPtQhqFHjcYkKJzY5G5DVfPTTfa0UUkzrJwXVN0Wm7mGz7f//bYkaRf
-         uLDbNup6TOEzG9s3eL6z4z+h8Ena/JD34EfCsDDgjVc6CkEZMz602FQys6VUr388b92k
-         mzcoV/yWkXI3Qs5gRCQGujTZ9y0IGWwMSULp+rPXNnTsMJGgNXBV3cabDo+FHSn+JhT8
-         VJyK66uhR9Un2xnPRr02kdIGF0IdJIE5fAEvK+BGY9dLg3/K81yUur3oPa0Vc6PxR/eb
-         9Vng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3BjGRHLy/P5muSoNU/Pz9GHQ5lT79yzzrjudG9IvvpQ=;
-        b=UgAFwAQFuSWvuvnM2koMh9p0MG0ZQfGx2daiq7C6ZTZQGZarTnpGYbULEfdsPuXPlC
-         hd4vHi6td5LNgzsX+TVgsS7wj9Jm9aby89c0at5DPW5GngX1H3xq+rRpsEaASdcVegV7
-         7P7wlKsJwHvpxVQVGmSr1ZuxaMuKMtIKC31lGYpbZuLIm8AH9SA8ATeHpspEnJnBWYJq
-         /T7Qxalo/tEWmADROdZY6TSj4IXm5zH9q5VI6aWQXx69K+6Qk+uYVss4f0Yh3yDA39Er
-         pkeEg3/4BQ6v1745b33Csn/lwuxonGxw2ffRM4qpGhCy6O01qRW0EKWVeonS7IwPQq0i
-         fiow==
-X-Gm-Message-State: AJIora+H6y/ArPV9FLW1p7UG3mQr77LXN76vs79GggGpSEmQW/SNWT/U
-        vqici3jeyrvoulHwFIbQ0xj7cw==
-X-Google-Smtp-Source: AGRyM1uvcp85DEmyxiSH3PvubO+xKzXk2te9CDJYpnpmn6NbRBOkzE7RuaKMYrS+kcgYBbSLzhJsTA==
-X-Received: by 2002:a17:90b:4d07:b0:1ef:521c:f051 with SMTP id mw7-20020a17090b4d0700b001ef521cf051mr36153656pjb.164.1658109956039;
-        Sun, 17 Jul 2022 19:05:56 -0700 (PDT)
-Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id b18-20020aa78ed2000000b00525302fe9c4sm7863809pfr.190.2022.07.17.19.05.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Jul 2022 19:05:55 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        Mon, 18 Jul 2022 01:35:16 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2080.outbound.protection.outlook.com [40.107.94.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B2EE003;
+        Sun, 17 Jul 2022 22:35:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HVPfkP38N9BKql8nWA8BDxnYNpyNWrYxFb0TOpO8VvwQwph5BQqxSGQBc7WPgzmCfkwAlhkaujRmEP2OPSLP/hwhQitnhczn+0mhuSvw4uoR42A0e8k+XsKW6Ubvc5E2f1OHxHIg+pNy35G3sqCe6GriJ+Am58Ars0YbsL/8M+NrBewuB7RxTJKMiWfUpShqoYveTvMe1CgOilnNOVGAqb5IcCktrf5TUSkvL6C1LuGvZcwSJSP3xaE8Xfc5b5qcuo3GVRmO299KzkZD2mofFKFyvZMp02F7kwkllFTdvIj1n+Mqx44sE/ip08xmP2SkGQcw1hF9wplsxIDZWvHc5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mDjlqeT3ScY6SSqvdQiH7ZWoFWkq8ua4MPLr5IAGmqY=;
+ b=gY16Zv8ozjSHBBtGSRAjExRsU1TTe+KNNcUCA0iTfLemlyENrRXrPNpFGAVcf/r+KOk1SGEbLAqwkcgGOdQwsYuEO6FlL/jKcwCCMSUpO7Lnp/DV8bxvac0cY40PG4Abpl3Ra2OzU6wxmJeQaH4qcO9iPHHGjJPUMjDJa/p1d+72TPmCX4RkUAMNeYB16eernUH0Kg5Sv7Bv/Soq1Z4/IUWmWsrEfbkqoR3yUluAtilNrg7V33OCjUxhrQwQhmTFcp6zpeMCGY9Hqc7vQie08R883UAE3EB375Y6bEHwNlNvmq8oG2pUwY6U0D88lbkBTG8j9+xEcrI5N6XWfZbtvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mDjlqeT3ScY6SSqvdQiH7ZWoFWkq8ua4MPLr5IAGmqY=;
+ b=An5OpWNxRB2vyCGtlj0xvOZz9LQx6OxDD9VleXYvpblO8n5xC7Dnb4mRKtAJ5MT9a2tkBPkhWY8lRDRGsnvbqQow7YSfLjZc7sxt6RUpPamyy6vvPpkTpZcd2l5XX4mRocVsZcuOaGimBB0mhN3W+L8P0oyUtzlZuzC0g3iaXmSkebmTLmgIdgqgK+ZELYAKuxd1aIDwNxtRugUQ6xAnN9Rjb/qKYEtjF2F3NBAFO0JSQdC0cpG2GqnqRaeH/pRKazwpoUVoEuIAAuE2HaHlxHOuT02x1MjfG0XVUbrB69CuVrwXi7HaIj3oHHkHuEtTy6w2AUxWJdacozm9kZrP/w==
+Received: from BN0PR03CA0041.namprd03.prod.outlook.com (2603:10b6:408:e7::16)
+ by BN8PR12MB4786.namprd12.prod.outlook.com (2603:10b6:408:a9::26) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.14; Mon, 18 Jul
+ 2022 05:35:13 +0000
+Received: from BN8NAM11FT023.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:e7:cafe::71) by BN0PR03CA0041.outlook.office365.com
+ (2603:10b6:408:e7::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.19 via Frontend
+ Transport; Mon, 18 Jul 2022 05:35:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ BN8NAM11FT023.mail.protection.outlook.com (10.13.177.103) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5438.12 via Frontend Transport; Mon, 18 Jul 2022 05:35:12 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 18 Jul
+ 2022 05:35:12 +0000
+Received: from [10.41.21.79] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Sun, 17 Jul
+ 2022 22:35:09 -0700
+Message-ID: <f4dc33b6-4023-1ac3-9365-c51175375bc7@nvidia.com>
+Date:   Mon, 18 Jul 2022 11:05:06 +0530
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] cpufreq: tegra194: Staticize struct tegra_cpufreq_soc
+ instances
+Content-Language: en-US
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>
-Cc:     linux-pm@vger.kernel.org,
+        "Jonathan Hunter" <jonathanh@nvidia.com>
+CC:     <linux-pm@vger.kernel.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         kernel test robot <lkp@intel.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: tegra194: Staticize struct tegra_cpufreq_soc instances
-Date:   Mon, 18 Jul 2022 07:35:48 +0530
-Message-Id: <5c1a9b405d96848f2dac9aefcef121ad178872f4.1658109927.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sumit Gupta <sumitg@nvidia.com>
+References: <5c1a9b405d96848f2dac9aefcef121ad178872f4.1658109927.git.viresh.kumar@linaro.org>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <5c1a9b405d96848f2dac9aefcef121ad178872f4.1658109927.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 14f03849-5ed0-4439-d798-08da687f498e
+X-MS-TrafficTypeDiagnostic: BN8PR12MB4786:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ATVPfHb5j6KGS73ksa2h7e4AdpO3AuoTyCErSJxR//LWZO5GltAoaCkY71J7uwAdbYD7l4tQoDqrMi4oBmGJ3saXzHFmp9/mArvLBaWV9eO3IXyK9kChQqo9aHhPD1xfvQs9rLCQWfNvd5lEU6P3nJBnolAclqkLbgg1xk6V5qTm79FzXQJSOoPZLum5rwzp91P8wciIn7/sV+DJNxOdWjRO0eVDf2hNqx5qlaSOtzhkr5F9jtoUxdz3vG42Dg0zThHAmiXLjmokImG6iQ9hzteHGbb658lsGzisRg28EiFviXrMHvGL85Xqt2hqSjCSnX3v/iT4My93199x5tIKHvXHhY4fMuDQThPyjHSBylEeJioYFZK037ikfinxzzpinCk1hCzkczn6knbpp1QQgMD7szfmhT67AXzloFQkWFGjczzWibxbBlv5/QrmGc3OKvJ7Wpaqf+VBpMiiq5iM37CWXM+4c8YUxT/cc/a+6oy8OdVfJI+iKI8npCqiHHNqcGqKhT3rjGs5bb4FDUbDj843QaX/Ye6xT9M4AGkWIBua8JV60hmbmnnZDgRB6BMknMStvOLE3KAIcTVl1KsIksmc5rIsECLtPo100dX8HXpb1vbUySpn9DWBBggXz7faqH4r9E89TWlfiqzyv9N48v1bcSe5KrWtsCNJdyzZkBbPOY/HC8aUhLZWYb8yJSOzUp2hrXCjMn6H8sVHP5ZeOu7k+tJ4/gAYDgmxi61EDJKNowR3m6I61UBXPRvVN1O9vrV4O47QO4CcdMLnanNDXYjrh6DcvVZ4OwZiXbkFl4PtNKgLsBCZnxNDasH0C8JSl/sC1l3cFYb3hcuk2MZaCO1rPRja+6mOe+BJDagASSP39I9swWqLi5jRqb6bNRpO
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(396003)(136003)(376002)(346002)(46966006)(36840700001)(40470700004)(478600001)(31696002)(40460700003)(82310400005)(26005)(8936002)(70206006)(86362001)(40480700001)(70586007)(36860700001)(53546011)(4326008)(41300700001)(6666004)(81166007)(83380400001)(2616005)(5660300002)(8676002)(426003)(47076005)(54906003)(186003)(107886003)(82740400003)(6636002)(2906002)(31686004)(16526019)(316002)(36756003)(16576012)(110136005)(336012)(356005)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2022 05:35:12.8861
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14f03849-5ed0-4439-d798-08da687f498e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT023.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB4786
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix sparse warnings by marking these structures static.
 
-Fixes: 273bc890a2a8 ("cpufreq: tegra194: Add support for Tegra234")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/tegra194-cpufreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 2a6a98764a8c..1216046cf4c2 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -162,7 +162,7 @@ static struct tegra_cpufreq_ops tegra234_cpufreq_ops = {
- 	.set_cpu_ndiv = tegra234_set_cpu_ndiv,
- };
- 
--const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
-+static const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
- 	.ops = &tegra234_cpufreq_ops,
- 	.actmon_cntr_base = 0x9000,
- 	.maxcpus_per_cluster = 4,
-@@ -430,7 +430,7 @@ static struct tegra_cpufreq_ops tegra194_cpufreq_ops = {
- 	.set_cpu_ndiv = tegra194_set_cpu_ndiv,
- };
- 
--const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
-+static const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
- 	.ops = &tegra194_cpufreq_ops,
- 	.maxcpus_per_cluster = 2,
- };
--- 
-2.31.1.272.g89b43f80a514
+On 18/07/22 07:35, Viresh Kumar wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> Fix sparse warnings by marking these structures static.
+> 
+> Fixes: 273bc890a2a8 ("cpufreq: tegra194: Add support for Tegra234")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
+Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
+
+> ---
+>   drivers/cpufreq/tegra194-cpufreq.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+> index 2a6a98764a8c..1216046cf4c2 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -162,7 +162,7 @@ static struct tegra_cpufreq_ops tegra234_cpufreq_ops = {
+>          .set_cpu_ndiv = tegra234_set_cpu_ndiv,
+>   };
+> 
+> -const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
+> +static const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
+>          .ops = &tegra234_cpufreq_ops,
+>          .actmon_cntr_base = 0x9000,
+>          .maxcpus_per_cluster = 4,
+> @@ -430,7 +430,7 @@ static struct tegra_cpufreq_ops tegra194_cpufreq_ops = {
+>          .set_cpu_ndiv = tegra194_set_cpu_ndiv,
+>   };
+> 
+> -const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
+> +static const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
+>          .ops = &tegra194_cpufreq_ops,
+>          .maxcpus_per_cluster = 2,
+>   };
+> --
+> 2.31.1.272.g89b43f80a514
+> 
