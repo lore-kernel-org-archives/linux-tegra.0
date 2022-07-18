@@ -2,69 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAD8C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 13:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9A4C43334
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jul 2022 17:51:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235147AbiGRND6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jul 2022 09:03:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54264 "EHLO
+        id S230411AbiGRRvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jul 2022 13:51:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235125AbiGRND5 (ORCPT
+        with ESMTP id S229824AbiGRRvx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jul 2022 09:03:57 -0400
-Received: from smtpbg.qq.com (biz-43-154-54-12.mail.qq.com [43.154.54.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75EAFBE6;
-        Mon, 18 Jul 2022 06:03:51 -0700 (PDT)
-X-QQ-mid: bizesmtp83t1658149423t9q2gbh3
-Received: from localhost.localdomain ( [171.223.96.21])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Mon, 18 Jul 2022 21:03:41 +0800 (CST)
-X-QQ-SSF: 01000000002000E0U000C00A0000020
-X-QQ-FEAT: lp8jUtqYSiD/WYpSvM5rrExMkkikEIZnm7KBPA5G3bpbL0hf8ZxD/x6I1wG6q
-        ae1EKSRHKwF9G5gGnV5lplDVJsQ4cCWpyYEsTKQdal0SNx1DZ5ToHQOZoi7171E2frPkQR5
-        aNUFDjXSW7rBkToVv8UkwI59Ubuml4Cpk/J6jllr6LOsr1OFfaJuDB5g0iBdS023aJUbP0O
-        Uw42VhAyeTpe6AVaWz/6boWuK2/h5MLHK/pqeSObcu5mjC5lM+QGSPlRA9b+OXtHZMo/2vf
-        Hx9SEwqMB22ulu7NP81seeEcYCzbzre7cg+NrjVVR93YL+0dJCJfJKNRDOvNn6jlv9sgUmj
-        mofKXQr5sm8WBaFMGvXB5KwyEs3DxP6UgllRMFYs2wVgzdGA62PXeNrxSvxYJT2d8CBj5ta
-        SFoBkQfVG8k=
-X-QQ-GoodBg: 0
-From:   Jason Wang <wangborong@cdjrlc.com>
-To:     daniel.lezcano@linaro.org
-Cc:     rafael@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jason Wang <wangborong@cdjrlc.com>
-Subject: [PATCH] cpuidle: tegra: Fix comment typo
-Date:   Fri, 15 Jul 2022 13:01:44 +0800
-Message-Id: <20220715050144.24638-1-wangborong@cdjrlc.com>
-X-Mailer: git-send-email 2.35.1
+        Mon, 18 Jul 2022 13:51:53 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4AE2D1D0;
+        Mon, 18 Jul 2022 10:51:52 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id y8so16383630eda.3;
+        Mon, 18 Jul 2022 10:51:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OzNDaj+DZhSHMIrNJY7lm71T3WkSPnzySsNM702N+zE=;
+        b=IWbRPmZUG1AiFeiQO3HR1B31sET+hYeHvzIh0Q39+w7eyfEjso7f94PSh6QwpZNeM4
+         coyKBTR+x5wfb0/iZ8dq92B/6W3rsZmYx5sa9ZDiCeZhxTaX2PoJXesmGAh2QNOJYQWE
+         /leEZWfou6/hefbt+hWXFHU7Jg5nt7Wy3BcZH6/h2Mx0BSkneg61rhS8D10kFxyFepXu
+         q81d/2HPF+N5GSRPD3tBgW7V3DorwUsD53ARgcy7FBdEc8yKxjeoBgCcd8Vb4OQhz9g0
+         D32bz/CTnROYPh5WV4onoKGn4s/8DQZ/w3UfGKAh3mKuP+IbVYrbIXqws4VroFFVtkrm
+         pZyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OzNDaj+DZhSHMIrNJY7lm71T3WkSPnzySsNM702N+zE=;
+        b=sFKHw/YSHfAt68k/lVDNcpEGbcPPaozAeQe5ypydWWo5I+G2Do3MnIUw6DVQsd1DHT
+         fJ0kBXAVfqnW9NCAJo404gxHquxBTa1MjOgy/Hh0ZdM/bkveMNxMopTZqvCGnZ5cFHPa
+         olfwK7R7cre1m0jXAO/AHTGpnVkO21oDOtjeLos1eTdOLG6n2QYiyORFAka8QgKw0dS/
+         KhSyy5jT721jviRy2DjBdbyY9ga1TpUm7QB18JA8YHT81e75zfeu9YpBZ08EHF0GRLvr
+         yX3v8xy033mufn+FfvxzEvkTE/NlnvcRsYXqTmCFWQv5gg3hQJ8TjYE24f+vNCx789pd
+         SUuA==
+X-Gm-Message-State: AJIora+Mtr+AQZVhCPlDstXwersjI/PL72bomFD2lu0BSkFSzG3sW3KI
+        O89hOoZb7SYtvEcV5/oGHOo=
+X-Google-Smtp-Source: AGRyM1t2SRY22FUnIBxr79BTWXtaLzb3OzYXyF2ywpYjSlpK3tyLidmTDuUPD/cRYOA9B9u9dzOEJA==
+X-Received: by 2002:aa7:d60a:0:b0:43a:5795:b729 with SMTP id c10-20020aa7d60a000000b0043a5795b729mr38562794edr.230.1658166710821;
+        Mon, 18 Jul 2022 10:51:50 -0700 (PDT)
+Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id t21-20020aa7d4d5000000b0043a5bcf80a2sm9013260edr.60.2022.07.18.10.51.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Jul 2022 10:51:49 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dipen Patel <dipenp@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hte: Fixes for v5.19
+Date:   Mon, 18 Jul 2022 19:51:45 +0200
+Message-Id: <20220718175145.1945060-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr6
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The double `that' is duplicated in line 275, remove one.
+Hi Linus,
 
-Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
----
- drivers/cpuidle/cpuidle-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 5dad4eccd2b4316a84209603a28d34c6346392bb:
 
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index 9845629aeb6d..93ed4b8e164a 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -272,7 +272,7 @@ static int tegra114_enter_s2idle(struct cpuidle_device *dev,
-  * LP2 | C7	(CPU core power gating)
-  * LP2 | CC6	(CPU cluster power gating)
-  *
-- * Note that that the older CPUIDLE driver versions didn't explicitly
-+ * Note that the older CPUIDLE driver versions didn't explicitly
-  * differentiate the LP2 states because these states either used the same
-  * code path or because CC6 wasn't supported.
-  */
--- 
-2.35.1
+  dt-bindings: timestamp: Correct id path (2022-06-02 15:56:59 +0200)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/hte/for-5.19
+
+for you to fetch changes up to 85ff37e302efdf173cff6d1a310c2f7f38f1d069:
+
+  gpiolib: cdev: Fix kernel doc for struct line (2022-06-17 12:58:57 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+hte: Fixes for v5.19
+
+This contains a single fix for an out-of-sync kerneldoc comment.
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      gpiolib: cdev: Fix kernel doc for struct line
+
+ drivers/gpio/gpiolib-cdev.c | 4 ++++
+ 1 file changed, 4 insertions(+)
