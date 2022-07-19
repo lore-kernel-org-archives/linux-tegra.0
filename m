@@ -2,167 +2,389 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DF2CCA481
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jul 2022 07:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB8EC43334
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jul 2022 18:15:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236936AbiGSHlv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jul 2022 03:41:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34604 "EHLO
+        id S238444AbiGSSP2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jul 2022 14:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236958AbiGSHlr (ORCPT
+        with ESMTP id S233818AbiGSSP1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jul 2022 03:41:47 -0400
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2087.outbound.protection.outlook.com [40.107.96.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 927F819C30;
-        Tue, 19 Jul 2022 00:41:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TBz++goaVTZsGsUeGh8w0QOosuv8BNgX1fzkwt+Uy2PTAm0MvjJkwu9T3UY3fVh65ZuubbgZcxoMDN9QjkPllsbSwyEt+qSKRXsbfYN/PPz1ai9A+IaeDbKdnInIrqadTtS/NUHnhtZaO1hFlCLp38CM5Na8sWJrmckTnfvVBJBA58N7V7UbOrTE09Y79eiCJKw7+HXMd63atczz6I4JklNfxBkK6MsGgNGVna9auLxzGIxDCXQnlbNtJxp2fB5A3jZilR6kgmYCjT3bCs3pnU25T0zYHS6xrNiwI6wYbG0tA/ABM7ekZsPMnVGmegvJ5YQGiADSi/DSWWI9fUDS+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZuZrSyAIHXgD6fPTQ/hd+mJxfmof1ZW3wCToq1txlfc=;
- b=H3E3mz2qWlDXvpQ0d7xJKuGIOypBfglh9NlK+jsUqeXrE7woqA2OExFife6AxUtu/xENajmdcDKBctGUOmkngdNeUvbnwf0VFXxq32PPtxKU8TUW5J+3ZWQ3N2XZwzQdlPKmugef4cwk6qAuvyq1tPuYxQSGUjyE8i7tno9cecKGG5LgcQDQSmOf2mhcG5DUblrbpcQoCzmO6UftpjyCmUOkXUZf3T0DMj9kPRyuzsgabmk4PJp7ZUi0KKu1i44sPLDP07iRQVscnuBzAfx/j7CZWLai2L6zHh4t4fNlZu+4AYJ4KYcYahFGcn4Nsr1UmscGjilyg5YxvPhr5e9ByA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZuZrSyAIHXgD6fPTQ/hd+mJxfmof1ZW3wCToq1txlfc=;
- b=It9/l/1NcTNnpEicodmf1p/6lyq9MnfYSH9EyWFKhI/smr/FirM0h43skf19+5SwS1sd+mJ4Ji9KP/nlozhptLfwZY/rkNyzRyvo49Ltr4jc/B+rKlNJxInmEDV0nu7zLYT7Y9HR6irCF6DcsvWP0wWDozvR/mRvmfm0m9765tnSOOTqm8fpdp4RaRqH35ajCjjV4GEXN7OgYMHYBfPClh7oE9Wz77Srs+zEioWQeGxXArHeLqbwNEG0AjlQaXIoHuFhFNzI2oQMwY+/gOHRA6v7W0moE5NgKPqRApcOtMGO1OeaQGtR9sPKUnLLjquCkZshuUcsYKpfcalavpImwQ==
-Received: from SJ1PR12MB6339.namprd12.prod.outlook.com (2603:10b6:a03:454::10)
- by PH7PR12MB5784.namprd12.prod.outlook.com (2603:10b6:510:1d3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.23; Tue, 19 Jul
- 2022 07:41:43 +0000
-Received: from SJ1PR12MB6339.namprd12.prod.outlook.com
- ([fe80::2970:10e4:ca12:d4bd]) by SJ1PR12MB6339.namprd12.prod.outlook.com
- ([fe80::2970:10e4:ca12:d4bd%9]) with mapi id 15.20.5438.023; Tue, 19 Jul 2022
- 07:41:43 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v3 1/3] dt-bindings: dmaengine: Add compatible for
- Tegra234
-Thread-Topic: [PATCH v3 1/3] dt-bindings: dmaengine: Add compatible for
- Tegra234
-Thread-Index: AQHYlT1na+78Q7Y5EEKYW/nlrw2EZq2Ei0aAgADGxnA=
-Date:   Tue, 19 Jul 2022 07:41:43 +0000
-Message-ID: <SJ1PR12MB63391677B9E3249F98D8F1ABC08F9@SJ1PR12MB6339.namprd12.prod.outlook.com>
-References: <20220711154536.41736-1-akhilrajeev@nvidia.com>
- <20220711154536.41736-2-akhilrajeev@nvidia.com>
- <20220718191627.GA3375779-robh@kernel.org>
-In-Reply-To: <20220718191627.GA3375779-robh@kernel.org>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b8c4ccc3-b7bd-41bf-9e44-08da695a2032
-x-ms-traffictypediagnostic: PH7PR12MB5784:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: fTxqu+bl58rd+2F+zQz4h/ijLkAS6uJ9mfLipF3P7de2gftC+Rfg2iclbxk5/cYQ0pCPTxlP5JjfCZsN7npORtRA3syI0I6C7IHXWKBp8OeJu3aKKqeMGOI8M0bXnlScdGkGYIIt0exXqY4XBN3H8Vvz0lGjMFj5cp89D7przV9ETJjFualxw8jNM4SvGzgui1ApohVEOFKjbAMX44jORqJH20rfgBL+cJrx7aM94wA6M92a0/8QvxtMqjEGCXcNMTiOUAbYAgl9ZYVHTK4iGzupll8Wj+ZpeMWkBJRonxB9Qsl/OdALFURlL3y4pr5IuI9lAIxe17lhmQG6qn7iVggAETEbCgop8IaEEgBNeRsvf7ydodAIjt49OR57Y5GtH30n3Yc8zW4oYxQ6E2CblhpR/xCO8Mi84Kb7X9tKYlotYdbbfBL8y56gobHVYBJlUftKdsktAI30m+ADha28AWxy76PxJ5NjjDGtl7rMGTJMxKRECPl5nKR+SIPo+s8bGfaVPPG7GmSc2bTuTMxi8pnjogjIwoHcY0V9/RTYkSoLZ3YZrF2IlkYxXXOj/nwzXchKsvSeGl6eS+aTkUDKMN5jyGRgG2nF22kfuIGNiqvZ6PkJcD0/5Uvr8bkaB9AjZEmxP+dggdmTN2yDz6dLqlPxV+3oPV8QhcoZEA2hd9yBHVAke/3N54OMs95+r0sQviLnmpz+FQqAP2uTLp3BRZH+Cjdqlh0zN9vguHklxDrfIwE+YLHvKH0xaphNoqDJVwU3CmgRWm+cSTeJGvx2R6ok76+4XnJcQ37yZlM8igLHyU+QLh2yCRs4BdhjRGam
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6339.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(39860400002)(346002)(376002)(366004)(136003)(76116006)(71200400001)(478600001)(38070700005)(186003)(316002)(26005)(7696005)(54906003)(55236004)(86362001)(6916009)(41300700001)(6506007)(66556008)(66476007)(4326008)(5660300002)(8936002)(9686003)(8676002)(66946007)(122000001)(2906002)(33656002)(38100700002)(64756008)(55016003)(52536014)(66446008);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?NN8N726Ycv81oJb2Vp0W1leyME0vL0l088AWOU2sycWY/DASLjvRcagKpyLq?=
- =?us-ascii?Q?J50uQFMzVPg4dhF8WIbbZfXrd64KEA7aweQiZNj/JooRx4tYBulYjmJiJmj+?=
- =?us-ascii?Q?YusBmbx7KLQuScvL/gIkGD96KL8DSJWur37FxIPsJx2r3SclivYkfc8+voVn?=
- =?us-ascii?Q?eKN6o3q2UWbzlSGN7tFMO7/4Q3P2U8GW7tgLCzGQkGNK9QDFcoi+kI8c1cG7?=
- =?us-ascii?Q?zDcXhQmvChsWgnM+bY7ZyNoDU5N8VjGYtOFHXEsQXMIDj4TG33xjHkc9is6R?=
- =?us-ascii?Q?R5Ofy6R+WmUdZ3T2CbFnDzUhWpkmdR3CMAs+fssODUo2058k97Zm2W+BpMTd?=
- =?us-ascii?Q?HGU7x/TpCJN7izAPyGms0zkkvc7Zg5SniwQjr8Q1D9TXFgfn6UJy5Z77XsJO?=
- =?us-ascii?Q?fwy/6QkMRi2261x0t4ITQsOvBCxtoLUiPXeDO6fVegAz0ErxkV5SjYSvP8Ob?=
- =?us-ascii?Q?9cIAtaBreO0n/COuUFl96hY3KPS/nd5JxFsNGR0Sf51UWvlb3rWYnbXxgT25?=
- =?us-ascii?Q?JGLz7s6AIn0Qnx4OpM13xgt5EGDQtgYPRZB2JyoaFNl1myCR/aMFt/MO/SPI?=
- =?us-ascii?Q?JyYwBObDSx6xwKT1EfxYmB5MLKyzUidKew+9U9vMcKBZKu79Jk4s78fIU0ha?=
- =?us-ascii?Q?T4Ja+S/UC//nsJB0xD5Z+za5HokMkwJsN9pIVHnFMHA81DPyn+YBtazaOZCe?=
- =?us-ascii?Q?gmEGmuuhlxaEwrEtPHx+AWMQJbWBrdSkUA3zeu21A+sBJxmybcuv4wGD9TQu?=
- =?us-ascii?Q?2eFgyrh1VMyE4VAGMlurBchzs50EyorMsRWgxsBf+jK9GYpu3Vjk/BhYU9EL?=
- =?us-ascii?Q?9RMbcirmY/cZk1givNoRzkvZ4nHvhP5PUPIJvdwqcTfkT93qjOar5eM37s+d?=
- =?us-ascii?Q?DFRrRCXVZ7h/Mc8LkwswslFAYRllaEQRUkIBvyZvSJr08LTzT5ECYI0dADn4?=
- =?us-ascii?Q?swWs1pfLdscJt1hEwxR26TTJ+AbCK03HSoKtPAh3PJc8mrhhB8ncQjsn2mkH?=
- =?us-ascii?Q?SdMYK6bzGotjcTORqPzWmVJjGazwa+4l2cAqIEq1TUQ+DKiVcqZgqH6fGk87?=
- =?us-ascii?Q?dkT+c46AdTKVUtGFcBRy29w634DoXtlnl6xo2HKXoiyKCMllGlBVIgD/npPl?=
- =?us-ascii?Q?hhb9AT0EfhP9cnHlj6GzuoKn3VAizhLpuVA2CDZKhsQFQAojuVhSxVzWEoQO?=
- =?us-ascii?Q?CT0nGdUhzSWYqAIVDErPI9rmu9UVVKToyfDMTW0gmDsxTPXkaDCPO73gZioq?=
- =?us-ascii?Q?CPUmf2HuScRA7jO4Oa2GzRdjOXuXujR7Blvduu92L7ziB+IFeb0bfI0G8i2I?=
- =?us-ascii?Q?FeJjd1pL9kGwBGGMfwizRnnK7rxUQ2fF0BbDvGpuDqGEEKDvY+7EZdWMf3Gb?=
- =?us-ascii?Q?wJtoZdQOJYcgY/8ZcSqndzMNce/YDuMWjNSk3Fi0MPQXS4DOC2If517BYRE4?=
- =?us-ascii?Q?/ht93e9t8QYfwgkjx75f/ynMfsxU3BxCi+3O/kRydHSMAO8Pp4i8nbI1kAGi?=
- =?us-ascii?Q?2j7VZ80SZBiixk0Z+igGBEIvNzwHEsB53+WghbTrq4ydgNyU55X1t2NkYMgh?=
- =?us-ascii?Q?AUIqVPSj1uPcmXsWkbXPL+4Zn6gAPdo/Rk1l/7jj?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 19 Jul 2022 14:15:27 -0400
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 821961B7A9;
+        Tue, 19 Jul 2022 11:15:26 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-31e64ca5161so11349177b3.1;
+        Tue, 19 Jul 2022 11:15:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=06I8x0TQulteUlGhOzn7zrtNpDIesG0Y1ICqtgMw8qU=;
+        b=7dLsKcCA8HrzwGbiQb4SFYytHniW7MJSdJyH73lzqWbnjgt0u8Xvu1l9QZItwefWXU
+         pxr/XEnAKG91dN7R8RPIp5G/Nbihq3evmrBF/f++0UD6rJAgQKCRv5sLk6RYKOCY7ijv
+         fzCuu8HChExKvczyo6CQjt7nZ/sMcPBJbk0C6EBzDwteNwjBLJqUZICZYszjkrnIFqwG
+         tkAmqHFhIUwg8xiSIL074a8LhAOoH8+oLbbQ61lpuaRC489JDYy005JC7UaM9t2tXp2G
+         FS28KFq3fhTTEmOzYehdrvxbFtV0Oh2jAOHCdyM6QmCgmfhmshishoa86+K7vJgAnxIJ
+         k9gw==
+X-Gm-Message-State: AJIora+jIcU6DH1ziaLa32ICkzYNLXBUQyl70/ejvc05CpJizTxMyA1a
+        N0r0jTr49aAnelAwFiArV7FzlQyvBSj1Z2y/g0U=
+X-Google-Smtp-Source: AGRyM1tHcC9n+EFd4RcTxw+7/B2fI6+gaYyK6uScOPxrg64MpVdvGAhpob4vd4QlE5JLASxS03qtp2JNbK5IuuiZrs4=
+X-Received: by 2002:a81:cd6:0:b0:31d:72e3:8b81 with SMTP id
+ 205-20020a810cd6000000b0031d72e38b81mr36949307ywm.301.1658254525616; Tue, 19
+ Jul 2022 11:15:25 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6339.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8c4ccc3-b7bd-41bf-9e44-08da695a2032
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2022 07:41:43.3881
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YTnuqI1s6EkARs5lbl/e5eh5kQ3h/I7tMEG3dwBpE0YpfIkLgUNm1tGFBg4xG8IFrvGWerj2Pmo7zYzB1hnGUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5784
+References: <20220710123512.1714714-1-daniel.lezcano@linexp.org> <20220710123512.1714714-8-daniel.lezcano@linexp.org>
+In-Reply-To: <20220710123512.1714714-8-daniel.lezcano@linexp.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 19 Jul 2022 20:15:14 +0200
+Message-ID: <CAJZ5v0iSWXL7t_xesWVd6MKaWjpJYkmYFeYkFwiw-jeXB+gbsw@mail.gmail.com>
+Subject: Re: [PATCH v5 07/12] thermal/core: Rename trips to ntrips
+To:     Daniel Lezcano <daniel.lezcano@linexp.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> On Mon, Jul 11, 2022 at 09:15:34PM +0530, Akhil R wrote:
-> > Document the compatible string used by GPCDMA controller for Tegra234.
-> >
-> > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> > ---
-> >  .../devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-
-> dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-
-> dma.yaml
-> > index 9dd1476d1849..399edcd5cecf 100644
-> > --- a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yam=
-l
-> > +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-
-> dma.yaml
-> > @@ -26,6 +26,10 @@ properties:
-> >            - const: nvidia,tegra194-gpcdma
-> >            - const: nvidia,tegra186-gpcdma
-> >
-> > +      - items:
-> > +          - const: nvidia,tegra234-gpcdma
->=20
-> This can be added to the above entry changing it from a const to enum.
->=20
-So, it could look like this, correct?
+On Sun, Jul 10, 2022 at 2:35 PM Daniel Lezcano
+<daniel.lezcano@linexp.org> wrote:
+>
+> In order to use thermal trips defined in the thermal structure, rename
+> the 'trips' field to 'ntrips' to have the 'trips' field containing the
+> thermal trip points.
 
-  compatible:
-    oneOf:
-      - const: nvidia,tegra186-gpcdma
-      - items:
-          - enum:
-              - nvidia,tegra234-gpcdma
-              - nvidia,tegra194-gpcdma
-          - const: nvidia,tegra186-gpcdma
+s/ntrips/num_trips/ everywhere above and so in the subject.
 
-Tried dt_binding_check and dtbs_check with this change and did not see any =
-error.
-
-Regards,
-Akhil
-
---
-nvpublic
-
+> Cc: Alexandre Bailon <abailon@baylibre.com>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
+> ---
+>  drivers/thermal/gov_fair_share.c        |  6 +++---
+>  drivers/thermal/gov_power_allocator.c   |  4 ++--
+>  drivers/thermal/tegra/tegra30-tsensor.c |  2 +-
+>  drivers/thermal/thermal_core.c          | 20 ++++++++++----------
+>  drivers/thermal/thermal_helpers.c       |  4 ++--
+>  drivers/thermal/thermal_netlink.c       |  2 +-
+>  drivers/thermal/thermal_sysfs.c         | 22 +++++++++++-----------
+>  include/linux/thermal.h                 |  4 ++--
+>  8 files changed, 32 insertions(+), 32 deletions(-)
+>
+> diff --git a/drivers/thermal/gov_fair_share.c b/drivers/thermal/gov_fair_share.c
+> index 1e5abf4822be..6a2abcfc648f 100644
+> --- a/drivers/thermal/gov_fair_share.c
+> +++ b/drivers/thermal/gov_fair_share.c
+> @@ -25,10 +25,10 @@ static int get_trip_level(struct thermal_zone_device *tz)
+>         int trip_temp;
+>         enum thermal_trip_type trip_type;
+>
+> -       if (tz->trips == 0 || !tz->ops->get_trip_temp)
+> +       if (tz->num_trips == 0 || !tz->ops->get_trip_temp)
+>                 return 0;
+>
+> -       for (count = 0; count < tz->trips; count++) {
+> +       for (count = 0; count < tz->num_trips; count++) {
+>                 tz->ops->get_trip_temp(tz, count, &trip_temp);
+>                 if (tz->temperature < trip_temp)
+>                         break;
+> @@ -53,7 +53,7 @@ static long get_target_state(struct thermal_zone_device *tz,
+>
+>         cdev->ops->get_max_state(cdev, &max_state);
+>
+> -       return (long)(percentage * level * max_state) / (100 * tz->trips);
+> +       return (long)(percentage * level * max_state) / (100 * tz->num_trips);
+>  }
+>
+>  /**
+> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
+> index 13e375751d22..1d5052470967 100644
+> --- a/drivers/thermal/gov_power_allocator.c
+> +++ b/drivers/thermal/gov_power_allocator.c
+> @@ -527,7 +527,7 @@ static void get_governor_trips(struct thermal_zone_device *tz,
+>         last_active = INVALID_TRIP;
+>         last_passive = INVALID_TRIP;
+>
+> -       for (i = 0; i < tz->trips; i++) {
+> +       for (i = 0; i < tz->num_trips; i++) {
+>                 enum thermal_trip_type type;
+>                 int ret;
+>
+> @@ -668,7 +668,7 @@ static int power_allocator_bind(struct thermal_zone_device *tz)
+>
+>         get_governor_trips(tz, params);
+>
+> -       if (tz->trips > 0) {
+> +       if (tz->num_trips > 0) {
+>                 ret = tz->ops->get_trip_temp(tz,
+>                                         params->trip_max_desired_temperature,
+>                                         &control_temp);
+> diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
+> index 9b6b693cbcf8..05886684f429 100644
+> --- a/drivers/thermal/tegra/tegra30-tsensor.c
+> +++ b/drivers/thermal/tegra/tegra30-tsensor.c
+> @@ -316,7 +316,7 @@ static void tegra_tsensor_get_hw_channel_trips(struct thermal_zone_device *tzd,
+>         *hot_trip  = 85000;
+>         *crit_trip = 90000;
+>
+> -       for (i = 0; i < tzd->trips; i++) {
+> +       for (i = 0; i < tzd->num_trips; i++) {
+>                 enum thermal_trip_type type;
+>                 int trip_temp;
+>
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> index a8b1628937c6..cb9b1bd03bd3 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -505,7 +505,7 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
+>
+>         tz->notify_event = event;
+>
+> -       for (count = 0; count < tz->trips; count++)
+> +       for (count = 0; count < tz->num_trips; count++)
+>                 handle_thermal_trip(tz, count);
+>  }
+>  EXPORT_SYMBOL_GPL(thermal_zone_device_update);
+> @@ -630,7 +630,7 @@ int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
+>         unsigned long max_state;
+>         int result, ret;
+>
+> -       if (trip >= tz->trips || trip < 0)
+> +       if (trip >= tz->num_trips || trip < 0)
+>                 return -EINVAL;
+>
+>         list_for_each_entry(pos1, &thermal_tz_list, node) {
+> @@ -811,7 +811,7 @@ static void __bind(struct thermal_zone_device *tz, int mask,
+>  {
+>         int i, ret;
+>
+> -       for (i = 0; i < tz->trips; i++) {
+> +       for (i = 0; i < tz->num_trips; i++) {
+>                 if (mask & (1 << i)) {
+>                         unsigned long upper, lower;
+>
+> @@ -1057,7 +1057,7 @@ static void __unbind(struct thermal_zone_device *tz, int mask,
+>  {
+>         int i;
+>
+> -       for (i = 0; i < tz->trips; i++)
+> +       for (i = 0; i < tz->num_trips; i++)
+>                 if (mask & (1 << i))
+>                         thermal_zone_unbind_cooling_device(tz, i, cdev);
+>  }
+> @@ -1169,7 +1169,7 @@ static void thermal_set_delay_jiffies(unsigned long *delay_jiffies, int delay_ms
+>  /**
+>   * thermal_zone_device_register() - register a new thermal zone device
+>   * @type:      the thermal zone device type
+> - * @trips:     the number of trip points the thermal zone support
+> + * @num_trips: the number of trip points the thermal zone support
+>   * @mask:      a bit string indicating the writeablility of trip points
+>   * @devdata:   private device data
+>   * @ops:       standard thermal zone device callbacks
+> @@ -1191,7 +1191,7 @@ static void thermal_set_delay_jiffies(unsigned long *delay_jiffies, int delay_ms
+>   * IS_ERR*() helpers.
+>   */
+>  struct thermal_zone_device *
+> -thermal_zone_device_register(const char *type, int trips, int mask,
+> +thermal_zone_device_register(const char *type, int num_trips, int mask,
+>                              void *devdata, struct thermal_zone_device_ops *ops,
+>                              struct thermal_zone_params *tzp, int passive_delay,
+>                              int polling_delay)
+> @@ -1215,7 +1215,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       if (trips > THERMAL_MAX_TRIPS || trips < 0 || mask >> trips) {
+> +       if (num_trips > THERMAL_MAX_TRIPS || num_trips < 0 || mask >> num_trips) {
+>                 pr_err("Incorrect number of thermal trips\n");
+>                 return ERR_PTR(-EINVAL);
+>         }
+> @@ -1225,7 +1225,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       if (trips > 0 && (!ops->get_trip_type || !ops->get_trip_temp))
+> +       if (num_trips > 0 && (!ops->get_trip_type || !ops->get_trip_temp))
+>                 return ERR_PTR(-EINVAL);
+>
+>         tz = kzalloc(sizeof(*tz), GFP_KERNEL);
+> @@ -1255,7 +1255,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+>         tz->tzp = tzp;
+>         tz->device.class = &thermal_class;
+>         tz->devdata = devdata;
+> -       tz->trips = trips;
+> +       tz->num_trips = num_trips;
+>
+>         thermal_set_delay_jiffies(&tz->passive_delay_jiffies, passive_delay);
+>         thermal_set_delay_jiffies(&tz->polling_delay_jiffies, polling_delay);
+> @@ -1273,7 +1273,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+>         if (result)
+>                 goto release_device;
+>
+> -       for (count = 0; count < trips; count++) {
+> +       for (count = 0; count < num_trips; count++) {
+>                 if (tz->ops->get_trip_type(tz, count, &trip_type) ||
+>                     tz->ops->get_trip_temp(tz, count, &trip_temp) ||
+>                     !trip_temp)
+> diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
+> index 60bfda1a1db7..690890f054a3 100644
+> --- a/drivers/thermal/thermal_helpers.c
+> +++ b/drivers/thermal/thermal_helpers.c
+> @@ -89,7 +89,7 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+>         ret = tz->ops->get_temp(tz, temp);
+>
+>         if (IS_ENABLED(CONFIG_THERMAL_EMULATION) && tz->emul_temperature) {
+> -               for (count = 0; count < tz->trips; count++) {
+> +               for (count = 0; count < tz->num_trips; count++) {
+>                         ret = tz->ops->get_trip_type(tz, count, &type);
+>                         if (!ret && type == THERMAL_TRIP_CRITICAL) {
+>                                 ret = tz->ops->get_trip_temp(tz, count,
+> @@ -137,7 +137,7 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
+>         if (!tz->ops->set_trips || !tz->ops->get_trip_hyst)
+>                 goto exit;
+>
+> -       for (i = 0; i < tz->trips; i++) {
+> +       for (i = 0; i < tz->num_trips; i++) {
+>                 int trip_low;
+>
+>                 tz->ops->get_trip_temp(tz, i, &trip_temp);
+> diff --git a/drivers/thermal/thermal_netlink.c b/drivers/thermal/thermal_netlink.c
+> index 32fea5174cc0..050d243a5fa1 100644
+> --- a/drivers/thermal/thermal_netlink.c
+> +++ b/drivers/thermal/thermal_netlink.c
+> @@ -469,7 +469,7 @@ static int thermal_genl_cmd_tz_get_trip(struct param *p)
+>
+>         mutex_lock(&tz->lock);
+>
+> -       for (i = 0; i < tz->trips; i++) {
+> +       for (i = 0; i < tz->num_trips; i++) {
+>
+>                 enum thermal_trip_type type;
+>                 int temp, hyst = 0;
+> diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+> index 1c4aac8464a7..5018459e8dd9 100644
+> --- a/drivers/thermal/thermal_sysfs.c
+> +++ b/drivers/thermal/thermal_sysfs.c
+> @@ -416,15 +416,15 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+>         int indx;
+>
+>         /* This function works only for zones with at least one trip */
+> -       if (tz->trips <= 0)
+> +       if (tz->num_trips <= 0)
+>                 return -EINVAL;
+>
+> -       tz->trip_type_attrs = kcalloc(tz->trips, sizeof(*tz->trip_type_attrs),
+> +       tz->trip_type_attrs = kcalloc(tz->num_trips, sizeof(*tz->trip_type_attrs),
+>                                       GFP_KERNEL);
+>         if (!tz->trip_type_attrs)
+>                 return -ENOMEM;
+>
+> -       tz->trip_temp_attrs = kcalloc(tz->trips, sizeof(*tz->trip_temp_attrs),
+> +       tz->trip_temp_attrs = kcalloc(tz->num_trips, sizeof(*tz->trip_temp_attrs),
+>                                       GFP_KERNEL);
+>         if (!tz->trip_temp_attrs) {
+>                 kfree(tz->trip_type_attrs);
+> @@ -432,7 +432,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+>         }
+>
+>         if (tz->ops->get_trip_hyst) {
+> -               tz->trip_hyst_attrs = kcalloc(tz->trips,
+> +               tz->trip_hyst_attrs = kcalloc(tz->num_trips,
+>                                               sizeof(*tz->trip_hyst_attrs),
+>                                               GFP_KERNEL);
+>                 if (!tz->trip_hyst_attrs) {
+> @@ -442,7 +442,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+>                 }
+>         }
+>
+> -       attrs = kcalloc(tz->trips * 3 + 1, sizeof(*attrs), GFP_KERNEL);
+> +       attrs = kcalloc(tz->num_trips * 3 + 1, sizeof(*attrs), GFP_KERNEL);
+>         if (!attrs) {
+>                 kfree(tz->trip_type_attrs);
+>                 kfree(tz->trip_temp_attrs);
+> @@ -451,7 +451,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+>                 return -ENOMEM;
+>         }
+>
+> -       for (indx = 0; indx < tz->trips; indx++) {
+> +       for (indx = 0; indx < tz->num_trips; indx++) {
+>                 /* create trip type attribute */
+>                 snprintf(tz->trip_type_attrs[indx].name, THERMAL_NAME_LENGTH,
+>                          "trip_point_%d_type", indx);
+> @@ -478,7 +478,7 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+>                         tz->trip_temp_attrs[indx].attr.store =
+>                                                         trip_point_temp_store;
+>                 }
+> -               attrs[indx + tz->trips] = &tz->trip_temp_attrs[indx].attr.attr;
+> +               attrs[indx + tz->num_trips] = &tz->trip_temp_attrs[indx].attr.attr;
+>
+>                 /* create Optional trip hyst attribute */
+>                 if (!tz->ops->get_trip_hyst)
+> @@ -496,10 +496,10 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+>                         tz->trip_hyst_attrs[indx].attr.store =
+>                                         trip_point_hyst_store;
+>                 }
+> -               attrs[indx + tz->trips * 2] =
+> +               attrs[indx + tz->num_trips * 2] =
+>                                         &tz->trip_hyst_attrs[indx].attr.attr;
+>         }
+> -       attrs[tz->trips * 3] = NULL;
+> +       attrs[tz->num_trips * 3] = NULL;
+>
+>         tz->trips_attribute_group.attrs = attrs;
+>
+> @@ -540,7 +540,7 @@ int thermal_zone_create_device_groups(struct thermal_zone_device *tz,
+>         for (i = 0; i < size - 2; i++)
+>                 groups[i] = thermal_zone_attribute_groups[i];
+>
+> -       if (tz->trips) {
+> +       if (tz->num_trips) {
+>                 result = create_trip_attrs(tz, mask);
+>                 if (result) {
+>                         kfree(groups);
+> @@ -561,7 +561,7 @@ void thermal_zone_destroy_device_groups(struct thermal_zone_device *tz)
+>         if (!tz)
+>                 return;
+>
+> -       if (tz->trips)
+> +       if (tz->num_trips)
+>                 destroy_trip_attrs(tz);
+>
+>         kfree(tz->device.groups);
+> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> index 6289b0bb1c97..03e968d61471 100644
+> --- a/include/linux/thermal.h
+> +++ b/include/linux/thermal.h
+> @@ -125,7 +125,7 @@ struct thermal_cooling_device {
+>   * @trip_hyst_attrs:   attributes for trip points for sysfs: trip hysteresis
+>   * @mode:              current mode of this thermal zone
+>   * @devdata:   private pointer for device private data
+> - * @trips:     number of trip points the thermal zone supports
+> + * @num_trips: number of trip points the thermal zone supports
+>   * @trips_disabled;    bitmap for disabled trips
+>   * @passive_delay_jiffies: number of jiffies to wait between polls when
+>   *                     performing passive cooling.
+> @@ -165,7 +165,7 @@ struct thermal_zone_device {
+>         struct thermal_attr *trip_hyst_attrs;
+>         enum thermal_device_mode mode;
+>         void *devdata;
+> -       int trips;
+> +       int num_trips;
+>         unsigned long trips_disabled;   /* bitmap for disabled trips */
+>         unsigned long passive_delay_jiffies;
+>         unsigned long polling_delay_jiffies;
+> --
+> 2.25.1
+>
