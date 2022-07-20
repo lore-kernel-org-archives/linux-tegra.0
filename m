@@ -2,202 +2,299 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38244C43334
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jul 2022 12:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECBAC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jul 2022 21:54:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240748AbiGTMmx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Jul 2022 08:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44960 "EHLO
+        id S230008AbiGTVyy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Jul 2022 17:54:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240949AbiGTMmw (ORCPT
+        with ESMTP id S229871AbiGTVyx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Jul 2022 08:42:52 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB316D9ED;
-        Wed, 20 Jul 2022 05:42:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aCb2wgviSVEB7a233jcsYvaISbRV1ui13FR/JghVHG5p7hz1Lf4SNiEMUCypIE1urFxQ4byWQuyVp7c6uQ2yoRzBbNnM+h4sJ+w9L0wf9ciZNFJcHupRT4I1Ur1sPW3KTR1W3IqxC8oOXSw/hqmljC4D3ANXF/UyOIHMC0ugcrPUuIWyPpFmF4PGCzUnbGij0QZPzXIGaINAis601TNRGcRwflKD8JjpMnl0jTEMgUY23VklMHfxcLhZFWOTJImf24A1KfBMZHBc4eDYnWmKQ8qnCk9W25BRoKaVOh+EeT/sAgmhb/32MuxplPZAtyVN5+57p84laKQ0ORILdgnCEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FvOrfIhaDUKKME6o1VCVNW3hllI2jYRoVteHVuisTB8=;
- b=ENkK5jhYIaZR2omFcjYBxSSp95DxpTCHqApHXsjna3hMY9TH52WK5rw5xCHusOmXmwJnzmMnp/b+5iKTgdeybdqE4FGV4mKBDRu+v02Kqpd283ZCDPZclwgLZuGlzPSSGtvPcI5CvI0YGN0BOjtsU6LUZnd5X0H8/FclhNsXk1DjcKZrVRclxw4WB0mra5Z2ZJfKDrOLCWhzecVMwOnXx0ic7K+8tDb5ZheVsn5agMno9dyeP/gTWCwoHpHqnwGot+eD4XnhlRNhU44sIDHZckJ3fK3c3SG7u3ceRWblbkqW+4Q0MD8Y9vQfvfT2JD1i+D+ZWgUToRcollthACbYOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FvOrfIhaDUKKME6o1VCVNW3hllI2jYRoVteHVuisTB8=;
- b=YcMoJrpKDMXgpLJ2/gjpCkyPQghBFMdKQyNkc/oqlR1+ggA0gUkgnwibb1kzW7+09onL0k8NI2Q0AC3nZEFnLb3je5wchZnX8Fg0i3RnGEwE0WNQKjjengRcDpX0e444yEmcfJGuWpWD4daeAK+PEjIlnNH7HuW7ptZVfc4+Ge2NTivr5Gf0vXtEfbZi90aRsWFGucvkSfXFfhW+lf28a+nCVQt4reqU+Fhiz9C4GdHWfCvlOkRL/Zj7eBezbECDXyhcUkZLaBSGv5C+zbOC1CiIObvDNJAMCrOSfkEO1dBtprchkidhYK5YxYVwE7xut9/E9Wi8JI0HUCaFNF1SiQ==
-Received: from DM5PR08CA0047.namprd08.prod.outlook.com (2603:10b6:4:60::36) by
- DM4PR12MB5794.namprd12.prod.outlook.com (2603:10b6:8:61::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5438.23; Wed, 20 Jul 2022 12:42:48 +0000
-Received: from DM6NAM11FT016.eop-nam11.prod.protection.outlook.com
- (2603:10b6:4:60:cafe::ba) by DM5PR08CA0047.outlook.office365.com
- (2603:10b6:4:60::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.23 via Frontend
- Transport; Wed, 20 Jul 2022 12:42:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.234) by
- DM6NAM11FT016.mail.protection.outlook.com (10.13.173.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5458.17 via Frontend Transport; Wed, 20 Jul 2022 12:42:48 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 20 Jul
- 2022 12:42:47 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 20 Jul
- 2022 05:42:47 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.986.26 via Frontend
- Transport; Wed, 20 Jul 2022 05:42:43 -0700
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <christian.koenig@amd.com>, <digetx@gmail.com>,
-        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <sumit.semwal@linaro.org>,
-        <thierry.reding@gmail.com>, <wsa@kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH 2/2] arm64: tegra: Add GPCDMA support for Tegra234 I2C
-Date:   Wed, 20 Jul 2022 18:11:48 +0530
-Message-ID: <20220720124148.7969-3-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220720124148.7969-1-akhilrajeev@nvidia.com>
-References: <20220720124148.7969-1-akhilrajeev@nvidia.com>
+        Wed, 20 Jul 2022 17:54:53 -0400
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931DA4BD2E;
+        Wed, 20 Jul 2022 14:54:52 -0700 (PDT)
+Received: by mail-io1-f45.google.com with SMTP id x64so7060087iof.1;
+        Wed, 20 Jul 2022 14:54:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9VtPYe9lxt2UYt12yH0kPTLc+/Ee0+kkWogkf/Ga1mw=;
+        b=i8rqcZV6XQkXW4YfuOGgNNIpBX9QBmwyKY6ddOmZTvpZXYukb/Wyw54uUEVbzx5cFZ
+         umfB39SzK1RIykPakiwkrMwx61224GuiiOpZTjC5aMzq8iDFg9szCiwXFEj3EX1DeU+S
+         rahT/FZCXOBsDb6JbQEY0PFIDfUvGfr+LqpZCknytTJSLtOHWTtyrVnxEAvHqQQ2QEHp
+         mexAae4nSs2CC09HpBGIpgsFQgx0lDd1GeB8SvTOJ/1t09+LHduk8brgaCe1cX12fn/x
+         q4VHpVhvBwwPpWBoRrnZD7Q+VSzjSLqzFvZPAckR8HzOJ69O5zHnn6G76S5Xp+1F8WdO
+         5s5w==
+X-Gm-Message-State: AJIora88Jy94Fvj/oFbvLut+L4bqJqVpmJscUpiTmN5/t7DfRCgFW3dQ
+        thGqEggmoQBBd7UjvJshYb2aGr/vQQ==
+X-Google-Smtp-Source: AGRyM1upcvDTAAL1zmHltREfx75k37wJhs626FQ2HRpFiNYFrVvR0kPJ3xCx+8W6U72I7S1mnTDAdg==
+X-Received: by 2002:a02:9426:0:b0:33f:14ad:6931 with SMTP id a35-20020a029426000000b0033f14ad6931mr20260682jai.62.1658354091655;
+        Wed, 20 Jul 2022 14:54:51 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id l19-20020a056e02067300b002dc616d93acsm77966ilt.28.2022.07.20.14.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jul 2022 14:54:51 -0700 (PDT)
+Received: (nullmailer pid 4049317 invoked by uid 1000);
+        Wed, 20 Jul 2022 21:54:49 -0000
+Date:   Wed, 20 Jul 2022 15:54:49 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Max Buchholz <max.buchholz@gmx.de>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        David Heidelberg <david@ixit.cz>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: nvidia,tegra20-kbc: Convert to
+ json-schema
+Message-ID: <20220720215449.GA4031847-robh@kernel.org>
+References: <20220715131422.51143-1-max.buchholz@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 775dd079-5458-4979-0081-08da6a4d5a45
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5794:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TZ+y9sYLfzQ8psEpiTBdj9xxy8qydW6Lv5xDYJGc6/12CWEtJbvyCL18uSgjZ+GehUXw7XGRMrWmR62ZjDU8EHIV7S9ZaY4O5+dGPpFIFNjA0CXgovh1dGDCsh4gqOnsavjlvegYn8iZF9VI7+JCThx9fl6VBYuZ/NsIBbSWO7R845M2lwmF2M2Er9OJA0NFsQ5y/9N0/XC77pFVct36BvL5AqiMKQw1pfOtyLnkQfXsUzRqnbypBMA26D13Y5TXQs/MCYwfx6u9aOJBXITS/CVO/pEQ3aMbp5ssGfTtVn25K7WCrZv51wUxnaKbbiuuGAvgXL8gqm0h+FTGlHza3Wxw+aF2DLyCbF0hdVErXwnqf35InzCn7FdWHsORMeHtI930msxiWMa/ectupkIxQkApnrpNHp3TtPUbSWlMnj0Dwm8VT1vWPM+7uhIp28PxkjNRyrhiOhYyFk2dsj6qf4yf1pxSf88tbkJKL4A8ExdbgXS9A6yVqVImEbnACkKJQMx13m39+LiLDItOU2S4pfktPVma3ax4D/y47Tnw/cbS/8RIGDgTTK5s2D2UN/+EaAOkC6C9vDt6GQzAXcutn4ji++kQnQoXDSO+jcTxEwG5KCMGk1KsQUfQetPJtkFYvIbCOM1dpi9+V5p7YC5BTd+eaEfu3u37FtRag7axgRRk7fsHcOJ8rTmYbpkJrls4UW7ceM+Gzu+2KQb2szS87L5DDVHxiVGfjyL7qQB+uPaBxaIaFMRCulRdTuUo2ZbFlHYFyseBR9i9thziRWby6miXtJ7j8daG5zs/u3FnjJJyy6uzgk/lzLr0wiaXXh+n2iF3NANIpeTuNyCJXU29q9Pwk7+t/coOQpGAB8vrwZOBwo8NPElc07FdMXtxCLso/3K0k2DkYaCTNa/v2JUIIA==
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(346002)(39860400002)(376002)(396003)(46966006)(40470700004)(36840700001)(81166007)(110136005)(478600001)(2906002)(7696005)(41300700001)(26005)(40480700001)(8936002)(4326008)(316002)(5660300002)(8676002)(82310400005)(7416002)(82740400003)(921005)(36860700001)(1076003)(356005)(2616005)(83380400001)(70206006)(47076005)(40460700003)(86362001)(336012)(70586007)(426003)(36756003)(107886003)(186003)(36900700001)(2101003)(83996005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2022 12:42:48.4750
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 775dd079-5458-4979-0081-08da6a4d5a45
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT016.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5794
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220715131422.51143-1-max.buchholz@gmx.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add dma properties to support GPCDMA in Tegra234 I2C
+On Fri, Jul 15, 2022 at 03:14:21PM +0200, Max Buchholz wrote:
+> From: Max Buchholz <Max.Buchholz@gmx.de>
+> 
+> This converts the Nvidia Tegra keyboard controller bindings to YAML
+> and fix them up a bit.
+> 
+> Reviewed-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: Max Buchholz <max.buchholz@gmx.de>
+> ---
+> v3:
+>  - fixed maxItems for array properties
+> v2:
+>  - rework the file according to the feedback
+> 
+>  .../bindings/input/nvidia,tegra20-kbc.txt     |  55 ---------
+>  .../bindings/input/nvidia,tegra20-kbc.yaml    | 111 ++++++++++++++++++
+>  .../bindings/power/wakeup-source.txt          |   2 +-
+>  3 files changed, 112 insertions(+), 56 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+>  create mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+> deleted file mode 100644
+> index 1faa7292e21f..000000000000
+> --- a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+> +++ /dev/null
+> @@ -1,55 +0,0 @@
+> -* Tegra keyboard controller
+> -The key controller has maximum 24 pins to make matrix keypad. Any pin
+> -can be configured as row or column. The maximum column pin can be 8
+> -and maximum row pins can be 16 for Tegra20/Tegra30.
+> -
+> -Required properties:
+> -- compatible: "nvidia,tegra20-kbc"
+> -- reg: Register base address of KBC.
+> -- interrupts: Interrupt number for the KBC.
+> -- nvidia,kbc-row-pins: The KBC pins which are configured as row. This is an
+> -  array of pin numbers which is used as rows.
+> -- nvidia,kbc-col-pins: The KBC pins which are configured as column. This is an
+> -  array of pin numbers which is used as column.
+> -- linux,keymap: The keymap for keys as described in the binding document
+> -  devicetree/bindings/input/matrix-keymap.txt.
+> -- clocks: Must contain one entry, for the module clock.
+> -  See ../clocks/clock-bindings.txt for details.
+> -- resets: Must contain an entry for each entry in reset-names.
+> -  See ../reset/reset.txt for details.
+> -- reset-names: Must include the following entries:
+> -  - kbc
+> -
+> -Optional properties, in addition to those specified by the shared
+> -matrix-keyboard bindings:
+> -
+> -- linux,fn-keymap: a second keymap, same specification as the
+> -  matrix-keyboard-controller spec but to be used when the KEY_FN modifier
+> -  key is pressed.
+> -- nvidia,debounce-delay-ms: delay in milliseconds per row scan for debouncing
+> -- nvidia,repeat-delay-ms: delay in milliseconds before repeat starts
+> -- nvidia,ghost-filter: enable ghost filtering for this device
+> -- wakeup-source: configure keyboard as a wakeup source for suspend/resume
+> -		 (Legacy property supported: "nvidia,wakeup-source")
+> -
+> -Example:
+> -
+> -keyboard: keyboard {
+> -	compatible = "nvidia,tegra20-kbc";
+> -	reg = <0x7000e200 0x100>;
+> -	interrupts = <0 85 0x04>;
+> -	clocks = <&tegra_car 36>;
+> -	resets = <&tegra_car 36>;
+> -	reset-names = "kbc";
+> -	nvidia,ghost-filter;
+> -	nvidia,debounce-delay-ms = <640>;
+> -	nvidia,kbc-row-pins = <0 1 2>;    /* pin 0, 1, 2 as rows */
+> -	nvidia,kbc-col-pins = <11 12 13>; /* pin 11, 12, 13 as columns */
+> -	linux,keymap = <0x00000074
+> -			0x00010067
+> -			0x00020066
+> -			0x01010068
+> -			0x02000069
+> -			0x02010070
+> -			0x02020071>;
+> -};
+> diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
+> new file mode 100644
+> index 000000000000..8e1eaad2fdc1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
+> @@ -0,0 +1,111 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/input/nvidia,tegra20-kbc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Nvidia Tegra keyboard controller
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +description: The key controller has maximum 24 pins to make matrix keypad. Any pin
+> +  can be configured as row or column.
+> +
+> +allOf:
+> +  - $ref: "/schemas/input/matrix-keymap.yaml#"
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: nvidia,tegra30-kbc
+> +          - const: nvidia,tegra20-kbc
+> +      - items:
+> +          - const: nvidia,tegra20-kbc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  nvidia,kbc-row-pins:
+> +    minItems: 1
+> +    maxItems: 16
+> +    description: KBC pins which are configured as row
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 32 ++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+items:
+  maximum: 24 (or 23?)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index c3d2e48994d1..c9eed199d980 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -668,6 +668,10 @@
- 			clock-names = "div-clk", "parent";
- 			resets = <&bpmp TEGRA234_RESET_I2C1>;
- 			reset-names = "i2c";
-+			dmas = <&gpcdma 21>, <&gpcdma 21>;
-+			dma-names = "rx", "tx";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
- 		};
- 
- 		cam_i2c: i2c@3180000 {
-@@ -683,6 +687,10 @@
- 			clock-names = "div-clk", "parent";
- 			resets = <&bpmp TEGRA234_RESET_I2C3>;
- 			reset-names = "i2c";
-+			dmas = <&gpcdma 23>, <&gpcdma 23>;
-+			dma-names = "rx", "tx";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
- 		};
- 
- 		dp_aux_ch1_i2c: i2c@3190000 {
-@@ -698,6 +706,10 @@
- 			clock-names = "div-clk", "parent";
- 			resets = <&bpmp TEGRA234_RESET_I2C4>;
- 			reset-names = "i2c";
-+			dmas = <&gpcdma 26>, <&gpcdma 26>;
-+			dma-names = "rx", "tx";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
- 		};
- 
- 		dp_aux_ch0_i2c: i2c@31b0000 {
-@@ -713,6 +725,10 @@
- 			clock-names = "div-clk", "parent";
- 			resets = <&bpmp TEGRA234_RESET_I2C6>;
- 			reset-names = "i2c";
-+			dmas = <&gpcdma 30>, <&gpcdma 30>;
-+			dma-names = "rx", "tx";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
- 		};
- 
- 		dp_aux_ch2_i2c: i2c@31c0000 {
-@@ -728,6 +744,10 @@
- 			clock-names = "div-clk", "parent";
- 			resets = <&bpmp TEGRA234_RESET_I2C7>;
- 			reset-names = "i2c";
-+			dmas = <&gpcdma 27>, <&gpcdma 27>;
-+			dma-names = "rx", "tx";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
- 		};
- 
- 		dp_aux_ch3_i2c: i2c@31e0000 {
-@@ -743,6 +763,10 @@
- 			clock-names = "div-clk", "parent";
- 			resets = <&bpmp TEGRA234_RESET_I2C9>;
- 			reset-names = "i2c";
-+			dmas = <&gpcdma 31>, <&gpcdma 31>;
-+			dma-names = "rx", "tx";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
- 		};
- 
- 		spi@3270000 {
-@@ -1026,6 +1050,10 @@
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			resets = <&bpmp TEGRA234_RESET_I2C2>;
- 			reset-names = "i2c";
-+			dmas = <&gpcdma 22>, <&gpcdma 22>;
-+			dma-names = "rx", "tx";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
- 		};
- 
- 		gen8_i2c: i2c@c250000 {
-@@ -1042,6 +1070,10 @@
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			resets = <&bpmp TEGRA234_RESET_I2C8>;
- 			reset-names = "i2c";
-+			dmas = <&gpcdma 0>, <&gpcdma 0>;
-+			dma-names = "rx", "tx";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-coherent;
- 		};
- 
- 		rtc@c2a0000 {
--- 
-2.17.1
+Also, put 'description' either first or last, not in the middle of 
+constraints.
 
+> +
+> +  nvidia,kbc-col-pins:
+> +    minItems: 1
+> +    maxItems: 8
+> +    description: KBC pins which are configured as column
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+
+Same here.
+
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    const: kbc
+> +
+> +  linux,fn-keymap:
+
+While mentioned in matrix-keymap.yaml, it is not defined as a schema 
+anywhere. It needs a type. I guess here is fine as this doesn't seem 
+to be used much.
+
+> +    description: a secondary keymap to be used when the KEY_FN modifier key is pressed
+> +
+> +  nvidia,debounce-delay-ms:
+> +    description: delay in milliseconds per row scan for debouncing
+> +
+> +  nvidia,repeat-delay-ms:
+> +    description: delay in milliseconds before repeat starts
+> +
+> +  nvidia,ghost-filter:
+> +    description: enable ghost filtering for this device
+> +    type: boolean
+> +
+> +  wakeup-source:
+> +    description: configure keyboard as a wakeup source for suspend/resume
+> +
+> +  nvidia,wakeup-source:
+> +    description: configure keyboard as a wakeup source for suspend/resume
+> +    deprecated: true
+> +    type: boolean
+
+Deprecated for 7 years. Could be dropped?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - nvidia,kbc-row-pins
+> +  - nvidia,kbc-col-pins
+> +  - linux,keymap
+> +  - clocks
+> +  - resets
+> +  - reset-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    kbc@7000e200 {
+
+keyboard@...
+
+> +        compatible = "nvidia,tegra20-kbc";
+> +        reg = <0x7000e200 0x100>;
+> +        interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&tegra_car 36>;
+> +        resets = <&tegra_car 36>;
+> +        reset-names = "kbc";
+> +        nvidia,ghost-filter;
+> +        nvidia,debounce-delay-ms = <640>;
+> +        nvidia,kbc-row-pins = <0 1 2>;    /* pin 0, 1, 2 as rows */
+> +        nvidia,kbc-col-pins = <11 12 13>; /* pin 11, 12, 13 as columns */
+> +        linux,keymap = <0x00000074
+> +                        0x00010067
+> +                        0x00020066
+> +                        0x01010068
+> +                        0x02000069
+> +                        0x02010070
+> +                        0x02020071>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/power/wakeup-source.txt b/Documentation/devicetree/bindings/power/wakeup-source.txt
+> index cfd74659fbed..728f88de371d 100644
+> --- a/Documentation/devicetree/bindings/power/wakeup-source.txt
+> +++ b/Documentation/devicetree/bindings/power/wakeup-source.txt
+> @@ -25,7 +25,7 @@ List of legacy properties and respective binding document
+>  				Documentation/devicetree/bindings/input/touchscreen/ads7846.txt
+>  5. "linux,keypad-wakeup"	Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
+>  6. "linux,input-wakeup"		Documentation/devicetree/bindings/input/samsung-keypad.txt
+> -7. "nvidia,wakeup-source"	Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+> +7. "nvidia,wakeup-source"	Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
+> 
+>  Examples
+>  --------
+> --
+> 2.37.0
+> 
+> 
