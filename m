@@ -2,91 +2,149 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C3FC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jul 2022 21:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AFFC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jul 2022 22:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236251AbiGVVzK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Jul 2022 17:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53344 "EHLO
+        id S232835AbiGVWR3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Jul 2022 18:17:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235202AbiGVVzJ (ORCPT
+        with ESMTP id S231478AbiGVWR3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Jul 2022 17:55:09 -0400
+        Fri, 22 Jul 2022 18:17:29 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D0E7B55;
-        Fri, 22 Jul 2022 14:55:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31D048AECC;
+        Fri, 22 Jul 2022 15:17:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3E3FD6219D;
-        Fri, 22 Jul 2022 21:55:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91129C385A5;
-        Fri, 22 Jul 2022 21:55:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BEABA621E8;
+        Fri, 22 Jul 2022 22:17:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A4FC341C6;
+        Fri, 22 Jul 2022 22:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658526907;
-        bh=h9i8TGdwTjPY0igjGyV++2mxwKyAmG2cvztwvqW4Huk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aWJCPhaG+QOZh0VOxh4GKs5wut+5/pWon1H04G+spPkaO0UxezmV7+o8UOctLPBoB
-         OvA+J4TK3ncl1f0xtYR4CIZWWBwOqBMtGMfa8K+2RlnyFxwg7AlOY7r/5RsmfLXpCi
-         qzyFPzY9yfkCxRHRQjQGP+TrS4agXTo0tT08jBCQ3k9yRpZNrMGPL4Ky1bkaicbr6R
-         g10z9xEnDk7fC17wr5NKS4HC84xIMTY5xVPPdrlEqygJ5RIuLTukU1Nwko0yoa/BNu
-         eC4ipsuVSH8nnCk/Z0C+CZx7uVaxV6CaK2G9LnFhfZC47LySaE8+l2orLBqbcwMqi+
-         gzGyWRw8Ps6Og==
-Received: by mail-vs1-f42.google.com with SMTP id k129so5484502vsk.2;
-        Fri, 22 Jul 2022 14:55:07 -0700 (PDT)
-X-Gm-Message-State: AJIora+h+DPqZK3xLJVO5q1UT/qN2zpSscNt75U7rEiFYeEjFnmkFaMN
-        nFa265Aqbngb7P6nAoh0Yj+kjYYeGVxwulw4Zw==
-X-Google-Smtp-Source: AGRyM1uRewCBeul1qyf913SX/dTS7WokF9cwfziUu2eLZi3AIRfJCbSRgNJjwKD9m8vxiakRTPN5yMyz1tVKE65zCg4=
-X-Received: by 2002:a05:6102:162b:b0:358:418a:4e57 with SMTP id
- cu43-20020a056102162b00b00358418a4e57mr836203vsb.26.1658526906410; Fri, 22
- Jul 2022 14:55:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220721142052.25971-1-vidyas@nvidia.com> <20220721142052.25971-15-vidyas@nvidia.com>
-In-Reply-To: <20220721142052.25971-15-vidyas@nvidia.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 22 Jul 2022 15:54:55 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+rzy2Y8sD3BhNMxu5QoGHC8gc_oFWiwnpgf_Y1xEnARw@mail.gmail.com>
-Message-ID: <CAL_Jsq+rzy2Y8sD3BhNMxu5QoGHC8gc_oFWiwnpgf_Y1xEnARw@mail.gmail.com>
-Subject: Re: [PATCH V6 14/16] PCI: tegra194: Fix link up retry sequence
+        s=k20201202; t=1658528247;
+        bh=td+YTMshEeyZGR/evZyRigCvIWW9VLZJZY+E/aX4XtA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=S1ndK01/ka7GJbgw/cDPqIQy+34bqZ9cz0xCTuY/CdrGB80SKtQKydn5MfoLX3dBb
+         tIamNlcJei626DkoXe4l5sa+yCoRsCQRV6HiU98yxYX6Qf+Xio79GY8oFBf3P6/m97
+         kDRQj2WaYbZXSQvoOA0uBuDgCcn0UkHsD8IhiKUhbT90HV5mqKVxK+fzLPpapScxRt
+         SyIU0D3BVrQcjPUCwwZXz3pt6vmNdH4SZHTMiffdg9QuJn94S38ReBfjpDRLc793s3
+         D7D1v4U2fjy2fWvFB5vQ2d1lAQLw8ollZ8vDeGKhMOt0rkn3ABl2NVIe+AsK6A8qJj
+         ibs3Vt+kwsgrw==
+Date:   Fri, 22 Jul 2022 17:17:25 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Krzysztof Wilczynski <kw@linux.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        PCI <linux-pci@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Krishna Thota <kthota@nvidia.com>,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        sagar.tv@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Cc:     bhelgaas@google.com, lpieralisi@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, kw@linux.com, kishon@ti.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V6 00/16] PCI: tegra: Add Tegra234 PCIe support
+Message-ID: <20220722221725.GA1945889@bhelgaas>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220721142052.25971-1-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jul 21, 2022 at 8:22 AM Vidya Sagar <vidyas@nvidia.com> wrote:
->
-> Add the missing DLF capability offset while clearing
-> DL_FEATURE_EXCHANGE_EN bit during link up retry.
->
-> Fixes: 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support")
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
+On Thu, Jul 21, 2022 at 07:50:36PM +0530, Vidya Sagar wrote:
+> Tegra234 has a total of 11 PCIe controllers based on Synopsys DesignWare core.
+> There are three Universal PHY (UPHY) blocks (viz. HSIO, NVHS and GBE) with
+> each block supporting 8 lanes respectively. Controllers:0~4 use UPHY lanes
+> from HSIO block, Controllers:5,6 use UPHY lanes from NVHS block and
+> Controllers:7~10 use UPHY lanes from GBE block. Lane mapping in each block
+> is controlled in XBAR module by BPMP-FW. Since PCIe core has PIPE interface,
+> a glue module called PIPE-to-UPHY (P2U) is used to connect each UPHY lane
+> (applicable to all three UPHY bricks i.e. HSIO/NVHS/GBE) to PCIe controller.
+> All the controllers can operate in the RootPort mode where as only controllers
+> C5, C6, C7 and C10 can operate in the EndPoint mode.
+> 
+> This patch series
+> - Adds support for Tegra234 in the existing P2U PHY driver
+> - Adds support for Tegra234 in the existing PCIe platform controller driver
+> - Adds device tree nodes for all PCIe controllers
+> - Enables nodes applicable to P3737-0000 platform
+> 
+> Testing done on P3737-0000 platform
+> - PCIe link is up with on-board Broadcom WiFi controller
+> 
+> - PCIe link is up with an NVMe drive connected to M.2 Key-M slot and its
+>   functionality is verified
+> 
+> - PCIe link is up with a variety of cards (NICs and USB3.0 add-on cards)
+>   connected to CEM slot and their functionality is verified
+> 
+> - PCIe link is up with C5 controller configured for the endpoint mode with
+>   a host
+> 
 > V6:
-> * New addition in V6 based on Bjorn's review comment
+> * Addressed review comments from Bjorn
+> * Moved out non-Tegra234 specific changes and created separate patches
+> 
+> V5:
+> * Addressed review comments from Rob
+> 
+> V4:
+> * Addressed review comments from Krzysztof and Rob
+> * Changes are only in schema files and regulator patch
+> * Dropped PHY related patches as they are already accepted
+> 
+> V3:
+> * Add DT nodes for the controllers that can work in the EndPoint mode
+> * Converted the existing device-tree binding documentation from .txt to .yaml
+> * Add T234 specific information to the RP and EP .yaml documentation files
+> * Added regulators required to power up required power rails
+> 
+> V2:
+> * Dropped 3 patches that add clocks & resets IDs, power-domain IDs and
+>   memory IDs for PCIe controllers as the patches are already available
+>   in linux-next
+> * Based on Bjorn's review comment, reverted the commit b57256918399 ("PCI:
+>   tegra194: Rename tegra_pcie_dw to tegra194_pcie") and pushed it as a
+>   separate patch before adding support for T234 in the existing driver
+> * Addressed review comments from Rob for the other changes
+> 
+> Vidya Sagar (16):
+>   dt-bindings: pci: tegra: Convert to json-schema
+>   dt-bindings: PCI: tegra234: Add schema for tegra234 rootport mode
+>   dt-bindings: PCI: tegra234: Add schema for tegra234 endpoint mode
+>   arm64: tegra: Add regulators required for PCIe
+>   arm64: tegra: Add P2U and PCIe controller nodes to Tegra234 DT
+>   arm64: tegra: Enable PCIe slots in P3737-0000 board
+>   PCI: Disable MSI for Tegra234 root ports
+>   Revert "PCI: tegra194: Rename tegra_pcie_dw to tegra194_pcie"
+>   PCI: tegra194: Find RAS DES PCIe capability offset
+>   PCI: tegra194: Fix root port interrupt handling
+>   PCI: tegra194: Clear bandwidth management status
+>   PCI: tegra194: Enable support for 256 Byte payload
+>   PCI: tegra194: Cleanup the exit path for endpoint mode
+>   PCI: tegra194: Fix link up retry sequence
+>   PCI: tegra194: Extend endpoint mode support
+>   PCI: tegra: Add Tegra234 PCIe support
 
-Fixes first, then features. This either be first or not even in this
-series. Unless you want to wait on the whole thing to be reviewed.
+I applied these (except the arch/arm64 .dtsi changes, which I assume
+should go via arm-soc) to pci/ctrl/tegra194 for v5.20, thanks!
 
-Though between this and patch 10, I wonder if this driver even worked upstream?
-
->
->  drivers/pci/controller/dwc/pcie-tegra194.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+>  .../bindings/pci/nvidia,tegra194-pcie-ep.yaml | 318 ++++++
+>  .../bindings/pci/nvidia,tegra194-pcie.txt     | 245 -----
+>  .../bindings/pci/nvidia,tegra194-pcie.yaml    | 349 +++++++
+>  .../devicetree/bindings/pci/snps,dw-pcie.yaml |   4 +-
+>  .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |  36 +
+>  .../nvidia/tegra234-p3737-0000+p3701-0000.dts |  51 +
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 927 ++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h  |  19 +
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 658 ++++++++-----
+>  drivers/pci/quirks.c                          |  13 +-
+>  10 files changed, 2136 insertions(+), 484 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+> 
+> -- 
+> 2.17.1
+> 
