@@ -2,286 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBC2CCA47F
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jul 2022 07:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13A1C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jul 2022 08:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234674AbiGVH6d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Jul 2022 03:58:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50274 "EHLO
+        id S234914AbiGVIW6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Jul 2022 04:22:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiGVH6c (ORCPT
+        with ESMTP id S234964AbiGVIW5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Jul 2022 03:58:32 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E919A6BB;
-        Fri, 22 Jul 2022 00:58:28 -0700 (PDT)
-Received: (Authenticated sender: gregory.clement@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 3A3F460002;
-        Fri, 22 Jul 2022 07:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1658476704;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=J6BappVIJW2LxYwsHqvB0JW6bS9ffn3CmqTgWunNsoQ=;
-        b=dlGmslDPmhE5PzC3/mIxGv+yZ1imsh0uO2+5P26YXleDkETrq5tupFYDqfmySbWhXs/Nb/
-        Os3r2SNXvOWmlkyM8TMaE3OixnzXsZVd0dRJxLsdFgSN4rcJj0Ra+Q6O5bUmIS3mwT/xEC
-        jCdBu3Lun0lRJRcoj0mu0bQH8ncIb1CQp5+1LZcZKcQc22iCA0yvnYXh+/6KrMcfxDy7Br
-        pXln0bw9l86YY4sDXWleevW+G+OH8SBMVzM291i07eTGe1/7tdLNBQ/FQqinKJOKMc+rwv
-        pM29hcOlstYbNEvhs8Ix0ra0Q6aucdQXTEK2LwJ6Ubj+2SRFxi8TfZd2b3Ftyw==
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Arnd Bergmann <arnd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-oxnas@groups.io, linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-sh@vger.kernel.org
-Subject: Re: [PATCH 0/6] ARM: defconfig cleanups
-In-Reply-To: <20220721141325.2413920-1-arnd@kernel.org>
-References: <20220721141325.2413920-1-arnd@kernel.org>
-Date:   Fri, 22 Jul 2022 09:58:14 +0200
-Message-ID: <87o7xhpoix.fsf@BL-laptop>
+        Fri, 22 Jul 2022 04:22:57 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2061.outbound.protection.outlook.com [40.107.223.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A8F9E797;
+        Fri, 22 Jul 2022 01:22:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gZ/BCAFPcBwIAp5ndoB2RHw1SDQ1LcDSmCPOQkhQsGEEjjSxJt/bQo0f3qRu/twN/s/iYPmblTgoZzAZLBQSP9WiXwqMnla4Jk6pwuOkkfouOtPf8g8zkXjyP4x9DCsQnlOOix9xk8L/fAjYhs/5YSXGBHF2m3HgW1IwXUqK7QYnvgcaaZep0iQiRE563fzfsJs2CVT+l+Q2a92yXes410Y/5f3/rPV4NqIz8pF/cx/A/WKM5UM2QOFw3dUSZPM67nw74stondJ2Jc7jGwIDJFR+Hgee2xpUCr+MOa9UjLc7s9rISOCkXgU97Kw2y3mnh2XnDODZg7Gbw+fHT2++3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=syMtTfehAQSvIiUNzZM1mOYBURFNH/RQN/C8B+Atf7M=;
+ b=bbAjeKZ3Q0SmgajRW6XE8TwVzqUTmU2UvO0m8c+6BgVyWb+KRW6RRN9tfhxeZQ5ud6jx8rZDwgJpcGQxCnoiPm8wWbW4pmiwCipd+YiE0bZMPmX+BNI087g/vlbTN+/AcP5/isbliI8w2qtxwwkTKIa9EZpcFu0pQDj5qB2lnQu2eJt8FG1JPXQsFzHXkVeqSqA64Pp4HnRPLpl1Ffs70eSCEdh1IQm8x8KFmKQOYAUdoSMuT5+/pNY244VtbPoc3Q3vkiclsvRsNXXX67dfK8C63jmHbyRTTbBSktl4G2V9CWWapiXf29iS7jbe2NJPRVT+VGBD1YJh4ivFEuikjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=syMtTfehAQSvIiUNzZM1mOYBURFNH/RQN/C8B+Atf7M=;
+ b=bXTcFBOpnHeftNv3jB27CmUXxm+qxtxJ9S+NO/0YM1JZ8mW7VrOBbrnUmwbk7I7H4QErSjMlqGcjbpDaKB6AS3/vznN80obIUyI77WMFedYhc+68owOODBiPL7bs1cCXs0wkRZeGpecFp4m+wX10S0S1QJx+mvORE3rDWPLNvlmdthfj6lZ51fWyFzo4YNmvDF8udQR3HHp4bPjYo9szYMggm7W9SP0/2AYER7CnUi0oNMDB1GYuBejdP6Wisb1Abs1qj0MNTS9YLBqPrfS9izAvOSmcSsDzt+qPgzNwxtYHB6Ywuw+MPM2Epum0p5KjGggy5pR4SihqyoWhyDr90A==
+Received: from MW4P221CA0026.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::31)
+ by BN8PR12MB2948.namprd12.prod.outlook.com (2603:10b6:408:6d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.23; Fri, 22 Jul
+ 2022 08:22:54 +0000
+Received: from CO1NAM11FT053.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8b:cafe::21) by MW4P221CA0026.outlook.office365.com
+ (2603:10b6:303:8b::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.21 via Frontend
+ Transport; Fri, 22 Jul 2022 08:22:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ CO1NAM11FT053.mail.protection.outlook.com (10.13.175.63) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5458.17 via Frontend Transport; Fri, 22 Jul 2022 08:22:53 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.32; Fri, 22 Jul 2022 08:22:53 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.26; Fri, 22 Jul 2022 01:22:52 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26 via Frontend
+ Transport; Fri, 22 Jul 2022 01:22:52 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.18 000/227] 5.18.13-rc3 review
+In-Reply-To: <20220721182818.743726259@linuxfoundation.org>
+References: <20220721182818.743726259@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <3df5e9fe-5cbc-437e-8872-a6e0389ccc1b@drhqmail203.nvidia.com>
+Date:   Fri, 22 Jul 2022 01:22:52 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 096a40b1-5c3b-4c6d-1d74-08da6bbb5fee
+X-MS-TrafficTypeDiagnostic: BN8PR12MB2948:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: pCaSUazoMOwxk5/pjHMzYHASPUNIf2h6czP/buVKEuJtfhiF4KBH71XKpU6E1Zxg6wk4G+m+K3XYmbeMebDxwzZmqy+QF4iF9Ucm6Je6aYrk/2CgyZ8S9UgVJWNO1IjnMzlaBAQdSBbNnQGcZwXR7rwyLB3jnXKmH6o7XVj118E6Up1Yfmuk655AqH0lW0OmEhHYbgGsEErAEJtFq3H7HBeUywgHJaogrh4hCo2En9UHovjzO502p+GPFtw7n3l8ClOdtl557VsE4pfSfYw+j3N/xsZflG+4e13JhH46k53gL2Afl13UoT85QF5XvM0k5RP7eaYhQJxLifuozwVzV73YdATL+QaLqxF6ttvxCtY6gT1+vlHwpyRYlwEbJC11qHE9zmveqd8ztFfhIINjA9fk1I3Q5Z6R6p7L03mywVJWYg3X0OqjsCOkwuCQWBw5ECKp/nZjjVrl04MsboqZzzB5euFSmaLLkAZHdie8VoTwDCfDOG8VJ2xiDDez/2t0Zp/5NnXjClpuOl0p0gMfiCjhqHoqnUdhOZEf7BqjUtE3cO/Y7xw7uTPdmm46lEoeUe0U7xPaJQ0jPE7wtyY5rmd30J4/ev4iE66MZN6bA3dGmWr6VodZ7OZIHKC2FEHrkYF57xhfhzWzWS66fGSUkU+yjDcFHTUnsz+s8l7rU6AwvDdzEHtlkUtasd/NPXRXQ7Q2DUmUEcFdATH0o4D7DKyevxqikGRHoP/m0IAt8Rkt1uDEqSFEXnNpDSj7kp6XRFu7nkGvBk0rM3zfdYsCNyo8RCyeJ7Purl0JCmg4hN10TRPhRaAmyeINT/xJFcnry6keZlV0Q0Qpiu49DeIcZZdIKBLCXJQvt6mv5GH0O5PeO3B6HWhTxlMlCIXZ6AW+Qa5MvoUbbuGJ+dVcuWMzsgk460g4O95J10vh1QN/3Z4=
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(376002)(396003)(346002)(39860400002)(46966006)(40470700004)(36840700001)(336012)(82740400003)(81166007)(426003)(2906002)(36860700001)(47076005)(40480700001)(70206006)(356005)(31686004)(31696002)(70586007)(186003)(7416002)(4326008)(478600001)(26005)(316002)(8676002)(86362001)(5660300002)(82310400005)(41300700001)(40460700003)(54906003)(966005)(6916009)(8936002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2022 08:22:53.7593
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 096a40b1-5c3b-4c6d-1d74-08da6bbb5fee
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT053.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB2948
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Arnd Bergmann <arnd@kernel.org> writes:
+On Thu, 21 Jul 2022 20:34:31 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.18.13 release.
+> There are 227 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 23 Jul 2022 18:26:47 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.18.13-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.18.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> In the process of deprecating board files, I had to modify some defconfig
-> files and ran into the same problem as everyone else that a lot of
-> them are rather outdated. With some scripting, I managed to split out
-> a preparation patch that puts all lines into the expected order without
-> actually changing the contents.
->
-> This helped doing the cleanup separately per Kconfig option that needed
-> to be addressed. I only did a small portion of the follow-up changes
-> to get to the point of being able to rebase my board changes on top,
-> but I did manage to address some bugs that have crept in.
->
-> If there are no objections, I'd apply this set to the arm/defconfig
-> branch of the soc tree directly.
+All tests passing for Tegra ...
 
-For mvebu related SoCs (orion5x, dove, mv78xx0, ...)
+Test results for stable-v5.18:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    130 tests:	130 pass, 0 fail
 
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Linux version:	5.18.13-rc3-g6fd6f57fdfe9
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Thanks,
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Gregory
-
-
->
->       Arnd
->
-> Arnd Bergmann (6):
->   ARM: refresh defconfig files
->   ARM: defconfig: remove irda remnants
->   ARM: defconfig: remove stale CONFIG_ZBOOT_ROM entries
->   ARM: defconfig: address renamed CONFIG_DEBUG_INFO=y
->   ARM: defconfig: remove broken CONFIG_THUMB disables
->   ARM: defconfig: kill remnants of CONFIG_LEDS
->
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Scott Branden <sbranden@broadcom.com>
-> Cc: Alexander Shiyan <shc_work@mail.ru>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Vladimir Zapolskiy <vz@mleia.com>
-> Cc: Taichi Sugaya <sugaya.taichi@socionext.com>
-> Cc: Takao Orito <orito.takao@socionext.com>
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@bootlin.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-> Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: Dinh Nguyen <dinguyen@kernel.org>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-aspeed@lists.ozlabs.org
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Cc: linux-rpi-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-oxnas@groups.io
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> Cc: linux-sunxi@lists.linux.dev
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-sh@vger.kernel.org
->
->  arch/arm/configs/am200epdkit_defconfig    |  28 ++---
->  arch/arm/configs/aspeed_g4_defconfig      |  17 ++-
->  arch/arm/configs/aspeed_g5_defconfig      |  17 ++-
->  arch/arm/configs/assabet_defconfig        |  19 ++-
->  arch/arm/configs/at91_dt_defconfig        |  10 +-
->  arch/arm/configs/axm55xx_defconfig        |  26 ++--
->  arch/arm/configs/badge4_defconfig         |  17 +--
->  arch/arm/configs/bcm2835_defconfig        |  38 +++---
->  arch/arm/configs/cerfcube_defconfig       |  24 ++--
->  arch/arm/configs/clps711x_defconfig       |   6 +-
->  arch/arm/configs/cm_x300_defconfig        |  28 ++---
->  arch/arm/configs/cns3420vb_defconfig      |  20 ++--
->  arch/arm/configs/colibri_pxa270_defconfig |  41 +++----
->  arch/arm/configs/colibri_pxa300_defconfig |  12 +-
->  arch/arm/configs/collie_defconfig         |  22 ++--
->  arch/arm/configs/corgi_defconfig          |  51 ++++----
->  arch/arm/configs/davinci_all_defconfig    |  28 ++---
->  arch/arm/configs/dove_defconfig           |  32 +++--
->  arch/arm/configs/ep93xx_defconfig         |  18 ++-
->  arch/arm/configs/eseries_pxa_defconfig    |  36 ++----
->  arch/arm/configs/exynos_defconfig         |  24 ++--
->  arch/arm/configs/ezx_defconfig            |  74 ++++++------
->  arch/arm/configs/footbridge_defconfig     |  31 ++---
->  arch/arm/configs/h3600_defconfig          |  16 +--
->  arch/arm/configs/h5000_defconfig          |  20 ++--
->  arch/arm/configs/hackkit_defconfig        |  12 +-
->  arch/arm/configs/hisi_defconfig           |  24 ++--
->  arch/arm/configs/imx_v4_v5_defconfig      |  10 +-
->  arch/arm/configs/imx_v6_v7_defconfig      |   8 +-
->  arch/arm/configs/integrator_defconfig     |   2 +-
->  arch/arm/configs/iop32x_defconfig         |  23 ++--
->  arch/arm/configs/ixp4xx_defconfig         |   1 -
->  arch/arm/configs/jornada720_defconfig     |  16 +--
->  arch/arm/configs/keystone_defconfig       |  64 +++++-----
->  arch/arm/configs/lart_defconfig           |  21 ++--
->  arch/arm/configs/lpc18xx_defconfig        |  16 ++-
->  arch/arm/configs/lpc32xx_defconfig        |  12 +-
->  arch/arm/configs/lpd270_defconfig         |  11 +-
->  arch/arm/configs/lubbock_defconfig        |  21 ++--
->  arch/arm/configs/magician_defconfig       |  41 +++----
->  arch/arm/configs/mainstone_defconfig      |  15 ++-
->  arch/arm/configs/milbeaut_m10v_defconfig  |   6 +-
->  arch/arm/configs/mini2440_defconfig       |   8 +-
->  arch/arm/configs/mmp2_defconfig           |  32 +++--
->  arch/arm/configs/moxart_defconfig         |  20 ++--
->  arch/arm/configs/mps2_defconfig           |  18 ++-
->  arch/arm/configs/multi_v4t_defconfig      |   6 +-
->  arch/arm/configs/multi_v5_defconfig       |  14 +--
->  arch/arm/configs/multi_v7_defconfig       |  62 +++++-----
->  arch/arm/configs/mv78xx0_defconfig        |  36 +++---
->  arch/arm/configs/mvebu_v5_defconfig       |  32 +++--
->  arch/arm/configs/mvebu_v7_defconfig       |   4 +-
->  arch/arm/configs/mxs_defconfig            |   6 +-
->  arch/arm/configs/neponset_defconfig       |  30 ++---
->  arch/arm/configs/netwinder_defconfig      |  18 +--
->  arch/arm/configs/nhk8815_defconfig        |   8 +-
->  arch/arm/configs/omap1_defconfig          |  80 ++++++-------
->  arch/arm/configs/omap2plus_defconfig      |  17 ++-
->  arch/arm/configs/orion5x_defconfig        |  36 +++---
->  arch/arm/configs/oxnas_v6_defconfig       |  14 +--
->  arch/arm/configs/palmz72_defconfig        |  16 ++-
->  arch/arm/configs/pcm027_defconfig         |  24 ++--
->  arch/arm/configs/pleb_defconfig           |   8 +-
->  arch/arm/configs/pxa168_defconfig         |  22 ++--
->  arch/arm/configs/pxa255-idp_defconfig     |  21 ++--
->  arch/arm/configs/pxa3xx_defconfig         |  20 ++--
->  arch/arm/configs/pxa910_defconfig         |  26 ++--
->  arch/arm/configs/pxa_defconfig            | 140 ++++++++++------------
->  arch/arm/configs/qcom_defconfig           |  62 +++++-----
->  arch/arm/configs/realview_defconfig       |   8 +-
->  arch/arm/configs/rpc_defconfig            |  20 ++--
->  arch/arm/configs/s3c2410_defconfig        |  12 +-
->  arch/arm/configs/s3c6400_defconfig        |   4 +-
->  arch/arm/configs/s5pv210_defconfig        |   6 +-
->  arch/arm/configs/sama5_defconfig          |   8 +-
->  arch/arm/configs/sama7_defconfig          |   8 +-
->  arch/arm/configs/shannon_defconfig        |  10 +-
->  arch/arm/configs/simpad_defconfig         |  29 ++---
->  arch/arm/configs/socfpga_defconfig        |   8 +-
->  arch/arm/configs/spear13xx_defconfig      |  18 +--
->  arch/arm/configs/spear3xx_defconfig       |  12 +-
->  arch/arm/configs/spear6xx_defconfig       |  10 +-
->  arch/arm/configs/spitz_defconfig          |  51 ++++----
->  arch/arm/configs/stm32_defconfig          |  18 ++-
->  arch/arm/configs/sunxi_defconfig          |   2 +-
->  arch/arm/configs/tct_hammer_defconfig     |  14 +--
->  arch/arm/configs/tegra_defconfig          |  20 ++--
->  arch/arm/configs/trizeps4_defconfig       |  66 +++++-----
->  arch/arm/configs/u8500_defconfig          |   2 +-
->  arch/arm/configs/versatile_defconfig      |   4 +-
->  arch/arm/configs/vexpress_defconfig       |   8 +-
->  arch/arm/configs/vf610m4_defconfig        |   2 +-
->  arch/arm/configs/viper_defconfig          |  30 +++--
->  arch/arm/configs/vt8500_v6_v7_defconfig   |   2 +-
->  arch/arm/configs/xcep_defconfig           |  32 +++--
->  arch/arm/configs/zeus_defconfig           |  28 ++---
->  arch/arm64/configs/defconfig              |   2 +-
->  arch/sh/configs/ecovec24_defconfig        |   2 -
->  100 files changed, 989 insertions(+), 1189 deletions(-)
->
-> -- 
-> 2.29.2
->
-
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Jon
