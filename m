@@ -2,107 +2,195 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5D8C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jul 2022 11:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52468C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jul 2022 15:12:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230151AbiGVLtw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Jul 2022 07:49:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46884 "EHLO
+        id S235765AbiGVPM5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Jul 2022 11:12:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbiGVLtw (ORCPT
+        with ESMTP id S235703AbiGVPMr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Jul 2022 07:49:52 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D28E0B9A05;
-        Fri, 22 Jul 2022 04:49:49 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-119-232.nat.spd-mgts.ru [109.252.119.232])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Fri, 22 Jul 2022 11:12:47 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D60119C279;
+        Fri, 22 Jul 2022 08:12:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8E91B6601ABD;
-        Fri, 22 Jul 2022 12:49:46 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1658490587;
-        bh=MqYe4u+ECqLUduFF9nwMt5GMNViDvgSNcNPt7s7OdOg=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=IlVzO74uGYOg3STIPTgPoK/ufASUrLboQfexLEzLvhl4nkY3ynwbYX3zEiUuttlXX
-         QjVJ4xVw5BkkKQSg0DMuSsWKaTER4UyzIsji3cESZTVVw3nHr4zI0RmVpvDdBj7QQ0
-         /KdakXVjs3EE+a8ossr2CuDP1voSOhE/IL2bLcgrvjRwQZsQAmMdtbYhm1W1oE1uVJ
-         KNT56XW/UqsUv05jE+NKlVv0yDIUI/CnC5hYIYjfDLIuxCr83HFUpuYLBWWpYfS33r
-         H3se/b0lR0RJtJ6QlU5lwvfd1yXQEIm7qMKqRv/WuHiAY8EuPUr0/VWvFNPMroAEqU
-         U60inhtdqnXkA==
-Message-ID: <5c560ee2-c586-fd3e-c57c-d58825e1a73e@collabora.com>
-Date:   Fri, 22 Jul 2022 14:49:43 +0300
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2B8C2B827C3;
+        Fri, 22 Jul 2022 15:12:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E56C341C6;
+        Fri, 22 Jul 2022 15:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658502762;
+        bh=QNDA1Wl/P9Tdabb9er+hcjmLg+ZWPQYKQjQn31syPZs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=TOvvu0qlyhr+tmgrzFarODSHy2nmwd/vZkaOfw7UOlCrWttzwGKU19rg8AV7A8T7i
+         IfjgWg0t2g4Ij3/wDGk0CzmXgSTPXgE3n1u2iwGUjmleTogf4uINMSXjxmVGVqzSDf
+         NdnzljfzlPJdmijyVLMwEzZZ53euLLK3T+7lg1++pTTDKLDbOWkoP2Kq2RUZ3s84P6
+         FBICts7HV/wapVFQ1AVuS+EXg97CVEyaQ8kbfAxQREHvjUc07BdPWl0gXMD41NG9LD
+         308lnEB6RcxuafVaPDXSt3EJNt5k6THt96Bq2WKrP+Lj0X4kKIL9pRDDVTaN2puF9b
+         HBK7vSUuswD+Q==
+Message-ID: <8430301c-3682-fde0-4bf3-033450563be3@kernel.org>
+Date:   Fri, 22 Jul 2022 10:12:34 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v8 0/2] DRM GEM fixes
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 1/6] ARM: refresh defconfig files
 Content-Language: en-US
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= <thomas_os@shipmail.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-tegra@vger.kernel.org, kernel@collabora.com,
-        virtualization@lists.linux-foundation.org
-References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
-In-Reply-To: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To:     Arnd Bergmann <arnd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-oxnas@groups.io, linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-sh@vger.kernel.org
+References: <20220721141325.2413920-1-arnd@kernel.org>
+ <20220721141325.2413920-2-arnd@kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20220721141325.2413920-2-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
 
-On 7/1/22 12:02, Dmitry Osipenko wrote:
-> This patchset fixes two problems in the common GEM code. First fixed problem
-> is the bogus lockdep splat that complicates debugging of DRM drivers. Second
-> problem is the inconsistency in behaviour and improper handling of mapping
-> the imported GEMs by some drivers, to fix it we will prohibit to map the
-> imported GEMs like majority of drivers already do.
-> 
-> Changelog:
-> 
-> v8: - Dropped stable tag from the "Don't map imported GEMs" patch,
->       like was suggested by Thomas Hellström in the review comment to v7.
-> 
-> v7: - Factored out GEM patches from [1] since I'll be working on the
->       dma-buf locking in a separate patchset now.
-> 
-> [1] https://lore.kernel.org/all/20220526235040.678984-1-dmitry.osipenko@collabora.com/
-> 
->     - Improved commit message and added fixes tag to the "Properly annotate
->       WW context" patch.
-> 
->     - Replaced "Move mapping of imported dma-bufs to drm_gem_mmap_obj()"
->       patch with "Don't map imported GEMs", like was suggested by
->       Thomas Hellström.
-> 
->     - Added r-b and suggested-by from Thomas Hellström.
-> 
-> Dmitry Osipenko (2):
->   drm/gem: Properly annotate WW context on drm_gem_lock_reservations()
->     error
->   drm/gem: Don't map imported GEMs
-> 
->  drivers/gpu/drm/drm_gem.c              | 8 ++++++--
->  drivers/gpu/drm/drm_gem_shmem_helper.c | 9 ---------
->  2 files changed, 6 insertions(+), 11 deletions(-)
-> 
 
-Could anyone please take this into drm-misc-next? Maybe Thomas?
+On 7/21/22 09:13, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> A lot of Kconfig options have changed over the years, and we tend
+> to not do a blind 'make defconfig' to refresh the files, to ensure
+> we catch options that should not have gone away.
+> 
+> I used some a bit of scripting to only rework the bits where an
+> option moved around in any of the defconfig files, without also
+> dropping any of the other lines, to make it clearer which options
+> we no longer have.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   arch/arm/configs/am200epdkit_defconfig    |  26 ++---
+>   arch/arm/configs/aspeed_g4_defconfig      |  16 +--
+>   arch/arm/configs/aspeed_g5_defconfig      |  16 +--
+>   arch/arm/configs/assabet_defconfig        |   8 +-
+>   arch/arm/configs/at91_dt_defconfig        |  10 +-
+>   arch/arm/configs/axm55xx_defconfig        |  22 ++--
+>   arch/arm/configs/badge4_defconfig         |   8 +-
+>   arch/arm/configs/bcm2835_defconfig        |  36 +++----
+>   arch/arm/configs/cerfcube_defconfig       |  16 +--
+>   arch/arm/configs/clps711x_defconfig       |   2 +-
+>   arch/arm/configs/cm_x300_defconfig        |  26 ++---
+>   arch/arm/configs/cns3420vb_defconfig      |  18 ++--
+>   arch/arm/configs/colibri_pxa270_defconfig |  32 +++---
+>   arch/arm/configs/colibri_pxa300_defconfig |  10 +-
+>   arch/arm/configs/collie_defconfig         |  20 ++--
+>   arch/arm/configs/corgi_defconfig          |  44 ++++----
+>   arch/arm/configs/davinci_all_defconfig    |  26 ++---
+>   arch/arm/configs/dove_defconfig           |  28 ++---
+>   arch/arm/configs/ep93xx_defconfig         |  16 +--
+>   arch/arm/configs/eseries_pxa_defconfig    |  26 ++---
+>   arch/arm/configs/exynos_defconfig         |  20 ++--
+>   arch/arm/configs/ezx_defconfig            |  72 ++++++-------
+>   arch/arm/configs/footbridge_defconfig     |  14 +--
+>   arch/arm/configs/h3600_defconfig          |  10 +-
+>   arch/arm/configs/h5000_defconfig          |  18 ++--
+>   arch/arm/configs/hackkit_defconfig        |   4 +-
+>   arch/arm/configs/hisi_defconfig           |  24 ++---
+>   arch/arm/configs/imx_v4_v5_defconfig      |   8 +-
+>   arch/arm/configs/imx_v6_v7_defconfig      |   8 +-
+>   arch/arm/configs/integrator_defconfig     |   2 +-
+>   arch/arm/configs/iop32x_defconfig         |  20 ++--
+>   arch/arm/configs/jornada720_defconfig     |  10 +-
+>   arch/arm/configs/keystone_defconfig       |  62 +++++------
+>   arch/arm/configs/lart_defconfig           |   6 +-
+>   arch/arm/configs/lpc18xx_defconfig        |  12 +--
+>   arch/arm/configs/lpc32xx_defconfig        |   8 +-
+>   arch/arm/configs/lpd270_defconfig         |   6 +-
+>   arch/arm/configs/lubbock_defconfig        |  10 +-
+>   arch/arm/configs/magician_defconfig       |  30 +++---
+>   arch/arm/configs/mainstone_defconfig      |   4 +-
+>   arch/arm/configs/milbeaut_m10v_defconfig  |   6 +-
+>   arch/arm/configs/mini2440_defconfig       |   6 +-
+>   arch/arm/configs/mmp2_defconfig           |  28 ++---
+>   arch/arm/configs/moxart_defconfig         |  18 ++--
+>   arch/arm/configs/mps2_defconfig           |  14 +--
+>   arch/arm/configs/multi_v4t_defconfig      |   4 +-
+>   arch/arm/configs/multi_v5_defconfig       |  12 +--
+>   arch/arm/configs/multi_v7_defconfig       |  62 +++++------
+>   arch/arm/configs/mv78xx0_defconfig        |  32 +++---
+>   arch/arm/configs/mvebu_v5_defconfig       |  28 ++---
+>   arch/arm/configs/mvebu_v7_defconfig       |   2 +-
+>   arch/arm/configs/mxs_defconfig            |   4 +-
+>   arch/arm/configs/neponset_defconfig       |  24 ++---
+>   arch/arm/configs/netwinder_defconfig      |  10 +-
+>   arch/arm/configs/nhk8815_defconfig        |   6 +-
+>   arch/arm/configs/omap1_defconfig          |  74 ++++++-------
+>   arch/arm/configs/omap2plus_defconfig      |  16 +--
+>   arch/arm/configs/orion5x_defconfig        |  32 +++---
+>   arch/arm/configs/oxnas_v6_defconfig       |  14 +--
+>   arch/arm/configs/palmz72_defconfig        |  14 +--
+>   arch/arm/configs/pcm027_defconfig         |  22 ++--
+>   arch/arm/configs/pleb_defconfig           |   6 +-
+>   arch/arm/configs/pxa168_defconfig         |  18 ++--
+>   arch/arm/configs/pxa255-idp_defconfig     |  10 +-
+>   arch/arm/configs/pxa3xx_defconfig         |  18 ++--
+>   arch/arm/configs/pxa910_defconfig         |  22 ++--
+>   arch/arm/configs/pxa_defconfig            | 126 +++++++++++-----------
+>   arch/arm/configs/qcom_defconfig           |  60 +++++------
+>   arch/arm/configs/realview_defconfig       |   8 +-
+>   arch/arm/configs/rpc_defconfig            |  18 ++--
+>   arch/arm/configs/s3c2410_defconfig        |   8 +-
+>   arch/arm/configs/s3c6400_defconfig        |   2 +-
+>   arch/arm/configs/s5pv210_defconfig        |   4 +-
+>   arch/arm/configs/sama5_defconfig          |   8 +-
+>   arch/arm/configs/sama7_defconfig          |   8 +-
+>   arch/arm/configs/shannon_defconfig        |   8 +-
+>   arch/arm/configs/simpad_defconfig         |  18 ++--
+>   arch/arm/configs/socfpga_defconfig        |   4 +-
 
-Thanks in advance
+for socfpga
 
--- 
-Best regards,
-Dmitry
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
