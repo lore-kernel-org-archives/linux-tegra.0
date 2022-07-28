@@ -2,233 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52924C25B0C
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Jul 2022 17:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FF9C3F6B0
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Jul 2022 17:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232120AbiG1RVB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Jul 2022 13:21:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60408 "EHLO
+        id S232697AbiG1Rez (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Jul 2022 13:34:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiG1RU5 (ORCPT
+        with ESMTP id S229625AbiG1Rex (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Jul 2022 13:20:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 086A55B79D;
-        Thu, 28 Jul 2022 10:20:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9229461D0F;
-        Thu, 28 Jul 2022 17:20:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75B3C433D7;
-        Thu, 28 Jul 2022 17:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659028854;
-        bh=3juGR+P+/PoNu1lEhZFgztJ6A9LmEO7Lb+rh9Y4NDdw=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=Ajcg/8L4izAZKa2mPe4A6mwD2xhNPSF6zD8jqYYYRNqfhpnanJCwPLkeDTtzMAAXY
-         M7oUXZ6CZuH31IjVxAqM2gRnsWZITNKb55wlZ5JnD/DUCRDg3UdeAIrzeX0lNHjHAR
-         wzgi3C8wJdIpBMqt7sc3STjd7C0uykM6U86/xrKMdBkv3A6gpbtO4hXjJ5l+TjHaLy
-         e4DKSoCgdb1tzebEFm0O9AJWb9AqCOKWaWW3sVozalRIPGLkf5E1tw9aRE4zu/+akq
-         X3FcajNE+AfhyfG4rrsgNdfZt/xVPEzBnwFe9tFjDbwwql6CH8YXjM30w46DcxQYCb
-         8dZ4kaIUmww0Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id 9739D5C0B3E; Thu, 28 Jul 2022 10:20:53 -0700 (PDT)
-Date:   Thu, 28 Jul 2022 10:20:53 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Michel Lespinasse <michel@lespinasse.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
-        linux@armlinux.org.uk, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        frederic@kernel.org, quic_neeraju@quicinc.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, joel@joelfernandes.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org, rh0@fb.com
-Subject: Re: [PATCH 04/36] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IRQ_ENABLE
-Message-ID: <20220728172053.GA3607379@paulmck-ThinkPad-P17-Gen-1>
-Reply-To: paulmck@kernel.org
-References: <20220608142723.103523089@infradead.org>
- <20220608144516.172460444@infradead.org>
- <20220725194306.GA14746@lespinasse.org>
+        Thu, 28 Jul 2022 13:34:53 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2250B6FA29;
+        Thu, 28 Jul 2022 10:34:52 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id i8so3144573wro.11;
+        Thu, 28 Jul 2022 10:34:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XZ4zIVvfcCsidkeWaZTdSTzaHcuDeTcNOjLwNCugDn8=;
+        b=gTHGJkgG1gude+JyHmX79TwGE73T2WZ9MFmNcKNHi30BzronT1LCyMcUDr/MqkoI5W
+         l04zpUFC92TcohG3T8lTEOUoIfo+qifgK8EtwRAme3upF5EmGtikt4Llltdtj9koqqt+
+         cp6otSuWw7/pJ4b6rz3Zpvckkm78stmSt2L3sORIM/YjuOPA9xdjcCbMhSDQ1qi6Gv6d
+         6oMQlGM/RzcHoEwB5FJ7xN9fz7Vrgfs05PvMkPWyynkrriEA/OdNY2DCpcpBD2S0r9iL
+         3MMjOtQZ3pF8VQP/8iRPpfpNF9H1eUTu9/ANn0rE4Mb7l5yTxX2dMF1Jb9E86as498rM
+         +KBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XZ4zIVvfcCsidkeWaZTdSTzaHcuDeTcNOjLwNCugDn8=;
+        b=f1ZzynZwS3OFda7yijKK3B+wcF+3q8WmfropHGYDnqy61K0oqKTKTwzBK3c+CSznh5
+         XJ2V9iGv3Itpj/o46cSy5vmebcIP4USXYTIi6MSXtJ3SaQDygV0i64El/fhHw2+vgi66
+         jAkks6tNQ8C+3IBqZMz07Dcck9upJrQX0WliDHfLCJUc2W4icvVUW9AW3EtKqwRcUdGH
+         lVgVsIFzdeLXQk6ZrIf0AHYnDd+Z8FdHpkIdptVq0Rpr4WYoHl0bgCH6xTYPSoZkaHXU
+         O3M8/teeIqOoGouJ9PgPMhd2j2YOnEVBb5R96L6D6f7P+mQa+yM49EfjqwDs26cI2IDQ
+         LA7Q==
+X-Gm-Message-State: ACgBeo38SUCTO4qAIFrSHSnATGGRnMTvCPU+KJ3nFMdY0hdYeg/BR4Kp
+        L7Q5kvOI7a008xGyoPzIWUEybrQNpk0=
+X-Google-Smtp-Source: AA6agR7/84BmZcJNcafcDcy5qOLjcy7UeHN75LEvTL+0j34k59OqIlFN5YLWf2olSxSoRNl7Q51BiQ==
+X-Received: by 2002:adf:d4c2:0:b0:21e:ddf3:8b14 with SMTP id w2-20020adfd4c2000000b0021eddf38b14mr6866wrk.355.1659029690542;
+        Thu, 28 Jul 2022 10:34:50 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id j20-20020a5d6e54000000b0021e5e5cd3a8sm1548650wrz.87.2022.07.28.10.34.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Jul 2022 10:34:49 -0700 (PDT)
+Date:   Thu, 28 Jul 2022 19:34:47 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Sumit Gupta <sumitg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
+        arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-edac@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>, bbasu@nvidia.com,
+        Vikram Sethi <vsethi@nvidia.com>
+Subject: Re: [GIT PULL 1/7] soc/tegra: Changes for v5.20-rc1
+Message-ID: <YuLItw2p9k4TgoH2@orome>
+References: <20220708185608.676474-1-thierry.reding@gmail.com>
+ <20220708185608.676474-2-thierry.reding@gmail.com>
+ <CAK8P3a1bKUr77t9xkNAX=-RqzRme6Hymr3V=36MSHT_sOFEW5A@mail.gmail.com>
+ <Ys6lXD6BSxjH02mW@orome>
+ <CAK8P3a0cSq47B=acZ854TVu=RckJNfyfKdqQUMzCX7SsV7Wt0g@mail.gmail.com>
+ <YtAajDYfcVHRGl1U@nazgul.tnic>
+ <8dd2310d-cf1d-600e-0bd3-7b16c7b4ac18@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4Boa0tNoBXKDLUKH"
 Content-Disposition: inline
-In-Reply-To: <20220725194306.GA14746@lespinasse.org>
+In-Reply-To: <8dd2310d-cf1d-600e-0bd3-7b16c7b4ac18@nvidia.com>
+User-Agent: Mutt/2.2.6 (2022-06-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jul 25, 2022 at 12:43:06PM -0700, Michel Lespinasse wrote:
-> On Wed, Jun 08, 2022 at 04:27:27PM +0200, Peter Zijlstra wrote:
-> > Commit c227233ad64c ("intel_idle: enable interrupts before C1 on
-> > Xeons") wrecked intel_idle in two ways:
-> > 
-> >  - must not have tracing in idle functions
-> >  - must return with IRQs disabled
-> > 
-> > Additionally, it added a branch for no good reason.
-> > 
-> > Fixes: c227233ad64c ("intel_idle: enable interrupts before C1 on Xeons")
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> After this change was introduced, I am seeing "WARNING: suspicious RCU
-> usage" when booting a kernel with debug options compiled in. Please
-> see the attached dmesg output. The issue starts with commit 32d4fd5751ea
-> and is still present in v5.19-rc8.
-> 
-> I'm not sure, is this too late to fix or revert in v5.19 final ?
 
-I finally got a chance to take a quick look at this.
+--4Boa0tNoBXKDLUKH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The rcu_eqs_exit() function is making a lockdep complaint about
-being invoked with interrupts enabled.  This function is called from
-rcu_idle_exit(), which is an expected code path from cpuidle_enter_state()
-via its call to rcu_idle_exit().  Except that rcu_idle_exit() disables
-interrupts before invoking rcu_eqs_exit().
+On Fri, Jul 15, 2022 at 01:36:16PM +0530, Sumit Gupta wrote:
+> Hi Arnd, Boris,
+>=20
+> Thank you for your inputs.
+>=20
+> > > I think this is just a reflection of what other hardware can do:
+> > > most machines only detect memory errors, but the EDAC subsystem
+> > > can work with any type in principle. There are also a lot of
+> > > conditions elsewhere that can be detected but not corrected.
+> >=20
+> > Just a couple of thoughts from looking at this:
+> >=20
+> > So the EDAC thing reports *hardware* errors by using the RAS
+> > capabilities built into an IP block. So it started with memory
+> > controllers but it is getting extended to other blocks. AMD are looking
+> > at how to integrate GPU hw errors reporting into it, for example.
+> >=20
+> > Looking at that CBB thing, it looks like it is supposed to report not
+> > so much hardware errors but operational errors. Some of the hw errors
+> > reported by RAS hw are also operation-related but not the majority.
+> >=20
+>=20
+> CBB driver reports errors due to bad MMIO accesses within software.
+> The vast majority of the CBB errors tend to be programming errors in sett=
+ing
+> up address windows leading to decode errors.
+>=20
+> > Then, EDAC has this counters exposed in:
+> >=20
+> > $ grep -r . /sys/devices/system/edac/
+> > /sys/devices/system/edac/power/runtime_active_time:0
+> > /sys/devices/system/edac/power/runtime_status:unsupported
+> > /sys/devices/system/edac/power/runtime_suspended_time:0
+> > /sys/devices/system/edac/power/control:auto
+> > /sys/devices/system/edac/pci/edac_pci_log_pe:1
+> > /sys/devices/system/edac/pci/pci0/pe_count:0
+> > /sys/devices/system/edac/pci/pci0/npe_count:0
+> > /sys/devices/system/edac/pci/pci_parity_count:0
+> > /sys/devices/system/edac/pci/pci_nonparity_count:0
+> > /sys/devices/system/edac/pci/edac_pci_log_npe:1
+> > /sys/devices/system/edac/pci/edac_pci_panic_on_pe:0
+> > /sys/devices/system/edac/pci/check_pci_errors:0
+> > /sys/devices/system/edac/mc/power/runtime_active_time:0
+> > /sys/devices/system/edac/mc/power/runtime_status:unsupported
+> > ...
+> >=20
+> > with the respective hierarchy: memory controllers, PCI errors, etc.
+> >=20
+> > So the main question is, does it make sense for you to fit this into the
+> > EDAC hierarchy and what would even be the advantage of making it part of
+> > EDAC?
+> >=20
+>=20
+> I also think this doesn't seem to fit with the errors reported by EDAC wh=
+ich
+> are mainly hardware errors as Boris explained.
+> Please share your thoughts and if we can merge the patches as it is.
 
-The only other call to rcu_idle_exit() does not disable interrupts,
-but it is via rcu_user_exit(), which would be a very odd choice for
-cpuidle_enter_state().
+Arnd,
 
-It seems unlikely, but it might be that it is the use of local_irq_save()
-instead of raw_local_irq_save() within rcu_idle_exit() that is causing
-the trouble.  If this is the case, then the commit shown below would
-help.  Note that this commit removes the warning from lockdep, so it
-is necessary to build the kernel with CONFIG_RCU_EQS_DEBUG=y to enable
-equivalent debugging.
+any more thoughts on this? Looks like there is no consensus on where
+this should go. If it's okay for this to go in via ARM SoC after all,
+I could prepare another pull request including only the CBB changes
+along with some of the reference count fixes. I could possibly also
+rework the DMADEVICES dependency patch as discussed, or we could defer
+it if it's too risky at this point.
 
-Could you please try your test with the -rce commit shown below applied?
+Thierry
 
-							Thanx, Paul
+--4Boa0tNoBXKDLUKH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-------------------------------------------------------------------------
+-----BEGIN PGP SIGNATURE-----
 
-commit ed4ae5eff4b38797607cbdd80da394149110fb37
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Tue May 17 21:00:04 2022 -0700
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmLiyLcACgkQ3SOs138+
+s6FTbhAAo04Ge2JStIVBs0J6WC1LlVc7vETptyeF5ISXjOh8JFDuqQgmrTOW+iLD
+hgw4V4ID1B8Y0LJzKJoWOHus9eXqLWvo4oWVeAjZ5foCYoh4hEmiP3n+iKxqJyyD
+CLOa/nlDeQrGWU+X46hN2pTRF5GyBQlhySviRd7Ub/VpeBrRjD7Tngz1vUXt8Qpw
+UKxhKZCYcPYu+509DJFRbBM5clzW1gS1wEEmdrUaHuRcxl/jbIZtWE5uR58R/4e6
+/mlFXWE9p5dcNmNkKbFNXNV5HtBAuo3wyNqMqXRdQrIuhh0Jqb4zxF2EmlEeJMhI
+bqpbRPqQGYVM0TgW9Jq15JOw4raTj5tIw+yEUWd39f9m67ohqsYjOTZdsU+tvLOU
+N7Zq3tMl5eGQSttzxO149bfmKMsnL7PUy/QfjDfZ0MXkv4QliQMZXWF3B3izb0xu
+B0Y6MVrVNSm6xWk0vU0nhFDq7FigXPLCWfUXSOGNpLNNXjGPcmIw4qwdL09QGJHy
+bNm9a8dmSVvurgYWwvsreWd/BlLNhiU/8+KC3MFFIr9K0dC8NRraUL0qSeKsjEGf
+Tb90vgsCLtnJ9hSKzkCjA3SI4jk/ShwiW8Bbrak86EzhbyqEosEkyAaO2KZBeqG4
+oXdAP76UtXa7BP/C9a3fRxAlTbjdeuwpaMY6+sD9/OlsURNLLOo=
+=tTDm
+-----END PGP SIGNATURE-----
 
-    rcu: Apply noinstr to rcu_idle_enter() and rcu_idle_exit()
-    
-    This commit applies the "noinstr" tag to the rcu_idle_enter() and
-    rcu_idle_exit() functions, which are invoked from portions of the idle
-    loop that cannot be instrumented.  These tags require reworking the
-    rcu_eqs_enter() and rcu_eqs_exit() functions that these two functions
-    invoke in order to cause them to use normal assertions rather than
-    lockdep.  In addition, within rcu_idle_exit(), the raw versions of
-    local_irq_save() and local_irq_restore() are used, again to avoid issues
-    with lockdep in uninstrumented code.
-    
-    This patch is based in part on an earlier patch by Jiri Olsa, discussions
-    with Peter Zijlstra and Frederic Weisbecker, earlier changes by Thomas
-    Gleixner, and off-list discussions with Yonghong Song.
-    
-    Link: https://lore.kernel.org/lkml/20220515203653.4039075-1-jolsa@kernel.org/
-    Reported-by: Jiri Olsa <jolsa@kernel.org>
-    Reported-by: Alexei Starovoitov <ast@kernel.org>
-    Reported-by: Andrii Nakryiko <andrii@kernel.org>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-    Reviewed-by: Yonghong Song <yhs@fb.com>
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index c25ba442044a6..9a5edab5558c9 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -631,8 +631,8 @@ static noinstr void rcu_eqs_enter(bool user)
- 		return;
- 	}
- 
--	lockdep_assert_irqs_disabled();
- 	instrumentation_begin();
-+	lockdep_assert_irqs_disabled();
- 	trace_rcu_dyntick(TPS("Start"), rdp->dynticks_nesting, 0, atomic_read(&rdp->dynticks));
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
- 	rcu_preempt_deferred_qs(current);
-@@ -659,9 +659,9 @@ static noinstr void rcu_eqs_enter(bool user)
-  * If you add or remove a call to rcu_idle_enter(), be sure to test with
-  * CONFIG_RCU_EQS_DEBUG=y.
-  */
--void rcu_idle_enter(void)
-+void noinstr rcu_idle_enter(void)
- {
--	lockdep_assert_irqs_disabled();
-+	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !raw_irqs_disabled());
- 	rcu_eqs_enter(false);
- }
- EXPORT_SYMBOL_GPL(rcu_idle_enter);
-@@ -861,7 +861,7 @@ static void noinstr rcu_eqs_exit(bool user)
- 	struct rcu_data *rdp;
- 	long oldval;
- 
--	lockdep_assert_irqs_disabled();
-+	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !raw_irqs_disabled());
- 	rdp = this_cpu_ptr(&rcu_data);
- 	oldval = rdp->dynticks_nesting;
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && oldval < 0);
-@@ -896,13 +896,13 @@ static void noinstr rcu_eqs_exit(bool user)
-  * If you add or remove a call to rcu_idle_exit(), be sure to test with
-  * CONFIG_RCU_EQS_DEBUG=y.
-  */
--void rcu_idle_exit(void)
-+void noinstr rcu_idle_exit(void)
- {
- 	unsigned long flags;
- 
--	local_irq_save(flags);
-+	raw_local_irq_save(flags);
- 	rcu_eqs_exit(false);
--	local_irq_restore(flags);
-+	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(rcu_idle_exit);
- 
+--4Boa0tNoBXKDLUKH--
