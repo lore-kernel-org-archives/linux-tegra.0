@@ -2,178 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FF9C3F6B0
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Jul 2022 17:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5AFC04A68
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Jul 2022 18:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232697AbiG1Rez (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Jul 2022 13:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43266 "EHLO
+        id S229473AbiG1SxR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Jul 2022 14:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbiG1Rex (ORCPT
+        with ESMTP id S229456AbiG1SxR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Jul 2022 13:34:53 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2250B6FA29;
-        Thu, 28 Jul 2022 10:34:52 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id i8so3144573wro.11;
-        Thu, 28 Jul 2022 10:34:52 -0700 (PDT)
+        Thu, 28 Jul 2022 14:53:17 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2330C743EE;
+        Thu, 28 Jul 2022 11:53:16 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id t1so4113825lft.8;
+        Thu, 28 Jul 2022 11:53:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XZ4zIVvfcCsidkeWaZTdSTzaHcuDeTcNOjLwNCugDn8=;
-        b=gTHGJkgG1gude+JyHmX79TwGE73T2WZ9MFmNcKNHi30BzronT1LCyMcUDr/MqkoI5W
-         l04zpUFC92TcohG3T8lTEOUoIfo+qifgK8EtwRAme3upF5EmGtikt4Llltdtj9koqqt+
-         cp6otSuWw7/pJ4b6rz3Zpvckkm78stmSt2L3sORIM/YjuOPA9xdjcCbMhSDQ1qi6Gv6d
-         6oMQlGM/RzcHoEwB5FJ7xN9fz7Vrgfs05PvMkPWyynkrriEA/OdNY2DCpcpBD2S0r9iL
-         3MMjOtQZ3pF8VQP/8iRPpfpNF9H1eUTu9/ANn0rE4Mb7l5yTxX2dMF1Jb9E86as498rM
-         +KBg==
+         :content-disposition:in-reply-to;
+        bh=YqDuXzOWTVq7U9l2+ECUplWD7jFZHdMOUjcOJGRtYg8=;
+        b=oTsUjBvaphUVin2C+irLGt/eQKo8mEz1OmLk6F+TFa44ZlbqPfzst4bMz9r/xmHSJn
+         thA2IcTMKOtkE6tSKOAoLZeDN9FCKJOUe6kVcn7gDptnjwA2zrQ62oIqrel+7PJy1eiN
+         Bz4Jy2DumSblx8a+L+V3MUsziemK6oDsm3XXQ9nJl4DqDHl9dr7qFXz00Pba9LA5P9Sy
+         Tdq/417wkgMqW5LmNlpGXjAdixfia0K5C0RoOmOwJYOEDwrS/dQYxVFs/5wobUFefq6M
+         L5bZ5MPFbowYk7VxyDWZSVHPwrE3X42q5Xm82TlVolK+O5NlXoj96r7m+1z1WU5dLTab
+         4o0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XZ4zIVvfcCsidkeWaZTdSTzaHcuDeTcNOjLwNCugDn8=;
-        b=f1ZzynZwS3OFda7yijKK3B+wcF+3q8WmfropHGYDnqy61K0oqKTKTwzBK3c+CSznh5
-         XJ2V9iGv3Itpj/o46cSy5vmebcIP4USXYTIi6MSXtJ3SaQDygV0i64El/fhHw2+vgi66
-         jAkks6tNQ8C+3IBqZMz07Dcck9upJrQX0WliDHfLCJUc2W4icvVUW9AW3EtKqwRcUdGH
-         lVgVsIFzdeLXQk6ZrIf0AHYnDd+Z8FdHpkIdptVq0Rpr4WYoHl0bgCH6xTYPSoZkaHXU
-         O3M8/teeIqOoGouJ9PgPMhd2j2YOnEVBb5R96L6D6f7P+mQa+yM49EfjqwDs26cI2IDQ
-         LA7Q==
-X-Gm-Message-State: ACgBeo38SUCTO4qAIFrSHSnATGGRnMTvCPU+KJ3nFMdY0hdYeg/BR4Kp
-        L7Q5kvOI7a008xGyoPzIWUEybrQNpk0=
-X-Google-Smtp-Source: AA6agR7/84BmZcJNcafcDcy5qOLjcy7UeHN75LEvTL+0j34k59OqIlFN5YLWf2olSxSoRNl7Q51BiQ==
-X-Received: by 2002:adf:d4c2:0:b0:21e:ddf3:8b14 with SMTP id w2-20020adfd4c2000000b0021eddf38b14mr6866wrk.355.1659029690542;
-        Thu, 28 Jul 2022 10:34:50 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id j20-20020a5d6e54000000b0021e5e5cd3a8sm1548650wrz.87.2022.07.28.10.34.48
+         :mime-version:content-disposition:in-reply-to;
+        bh=YqDuXzOWTVq7U9l2+ECUplWD7jFZHdMOUjcOJGRtYg8=;
+        b=PHN7/lMdiuSHNm4K7NgKIYg8J3vgIjc0cP66RO3bDQ5H7CkeajccK/1/otzGzLNf3q
+         G2ZVpNVFa++39uQiBGW3SvNbzMVgN+r4+7sEQNFB5ZvPHTc6RjBHPtBaCe9Lzd5ZYsm9
+         k5IjD+wvSC7RxcFMxg1hkj6uJ60zZm89qOA0hv/MZi9rxTC8IdJXmTO9dmHAGrGOowYW
+         brVMUa7mBdStK2uDTlh7dHFD/n61NsB9M9vrYiRtdni1uh8txrlsD8RxbCJw8GlXv+QY
+         RIQdolyA//imBpmhR+Am/4bbgVjWfe0cCPkAdKTicKXyyCr7YZyk1STObQCxI+CirGRG
+         wHfg==
+X-Gm-Message-State: AJIora8/M+y1H2jLegPhGAQ9lGIwp7mZJjG99gXD/v5/pWa5XAqOdEfD
+        JDxX6ODQ8e92SDRR5SDBGiA=
+X-Google-Smtp-Source: AGRyM1vxbrmC9UG6lvhuS8D++pmLdPzd/EMFdQeBuXzwgUbAdL+jtkgDOa5UQ8z/YDvwcmjbrXhETQ==
+X-Received: by 2002:a05:6512:ac6:b0:48a:8379:bcc0 with SMTP id n6-20020a0565120ac600b0048a8379bcc0mr56793lfu.601.1659034394104;
+        Thu, 28 Jul 2022 11:53:14 -0700 (PDT)
+Received: from mobilestation ([95.79.140.178])
+        by smtp.gmail.com with ESMTPSA id y14-20020a0565123f0e00b0048a9a756763sm322087lfa.19.2022.07.28.11.53.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jul 2022 10:34:49 -0700 (PDT)
-Date:   Thu, 28 Jul 2022 19:34:47 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Sumit Gupta <sumitg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
-        arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-edac@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>, bbasu@nvidia.com,
-        Vikram Sethi <vsethi@nvidia.com>
-Subject: Re: [GIT PULL 1/7] soc/tegra: Changes for v5.20-rc1
-Message-ID: <YuLItw2p9k4TgoH2@orome>
-References: <20220708185608.676474-1-thierry.reding@gmail.com>
- <20220708185608.676474-2-thierry.reding@gmail.com>
- <CAK8P3a1bKUr77t9xkNAX=-RqzRme6Hymr3V=36MSHT_sOFEW5A@mail.gmail.com>
- <Ys6lXD6BSxjH02mW@orome>
- <CAK8P3a0cSq47B=acZ854TVu=RckJNfyfKdqQUMzCX7SsV7Wt0g@mail.gmail.com>
- <YtAajDYfcVHRGl1U@nazgul.tnic>
- <8dd2310d-cf1d-600e-0bd3-7b16c7b4ac18@nvidia.com>
+        Thu, 28 Jul 2022 11:53:13 -0700 (PDT)
+Date:   Thu, 28 Jul 2022 21:53:11 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rahul Tanwar <rtanwar@maxlinear.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Frank Li <Frank.Li@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH RESEND v4 03/15] PCI: dwc: Convert to using native
+ IP-core versions representation
+Message-ID: <20220728185311.3b4n2izy64fdpfk6@mobilestation>
+References: <20220624143947.8991-4-Sergey.Semin@baikalelectronics.ru>
+ <20220728152418.GA302516@bhelgaas>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4Boa0tNoBXKDLUKH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8dd2310d-cf1d-600e-0bd3-7b16c7b4ac18@nvidia.com>
-User-Agent: Mutt/2.2.6 (2022-06-05)
+In-Reply-To: <20220728152418.GA302516@bhelgaas>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Jul 28, 2022 at 10:24:18AM -0500, Bjorn Helgaas wrote:
+> On Fri, Jun 24, 2022 at 05:39:35PM +0300, Serge Semin wrote:
+> > Since DWC PCIe v4.70a the controller version can be read from the
+> > PORT_LOGIC.PCIE_VERSION_OFF register. Version is represented in the FourCC
+> > format [1]. It's standard versioning approach for the Synopsys DWC
+> > IP-cores. Moreover some of the DWC kernel drivers already make use of it
+> > to fixup version-dependent functionality (See DWC USB3, Stmicro STMMAC or
+> > recent DW SPI driver).
+> 
 
---4Boa0tNoBXKDLUKH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> These references to other drivers might be useful, but without a
+> function name or file name, I can't easily find them.
 
-On Fri, Jul 15, 2022 at 01:36:16PM +0530, Sumit Gupta wrote:
-> Hi Arnd, Boris,
->=20
-> Thank you for your inputs.
->=20
-> > > I think this is just a reflection of what other hardware can do:
-> > > most machines only detect memory errors, but the EDAC subsystem
-> > > can work with any type in principle. There are also a lot of
-> > > conditions elsewhere that can be detected but not corrected.
-> >=20
-> > Just a couple of thoughts from looking at this:
-> >=20
-> > So the EDAC thing reports *hardware* errors by using the RAS
-> > capabilities built into an IP block. So it started with memory
-> > controllers but it is getting extended to other blocks. AMD are looking
-> > at how to integrate GPU hw errors reporting into it, for example.
-> >=20
-> > Looking at that CBB thing, it looks like it is supposed to report not
-> > so much hardware errors but operational errors. Some of the hw errors
-> > reported by RAS hw are also operation-related but not the majority.
-> >=20
->=20
-> CBB driver reports errors due to bad MMIO accesses within software.
-> The vast majority of the CBB errors tend to be programming errors in sett=
-ing
-> up address windows leading to decode errors.
->=20
-> > Then, EDAC has this counters exposed in:
-> >=20
-> > $ grep -r . /sys/devices/system/edac/
-> > /sys/devices/system/edac/power/runtime_active_time:0
-> > /sys/devices/system/edac/power/runtime_status:unsupported
-> > /sys/devices/system/edac/power/runtime_suspended_time:0
-> > /sys/devices/system/edac/power/control:auto
-> > /sys/devices/system/edac/pci/edac_pci_log_pe:1
-> > /sys/devices/system/edac/pci/pci0/pe_count:0
-> > /sys/devices/system/edac/pci/pci0/npe_count:0
-> > /sys/devices/system/edac/pci/pci_parity_count:0
-> > /sys/devices/system/edac/pci/pci_nonparity_count:0
-> > /sys/devices/system/edac/pci/edac_pci_log_npe:1
-> > /sys/devices/system/edac/pci/edac_pci_panic_on_pe:0
-> > /sys/devices/system/edac/pci/check_pci_errors:0
-> > /sys/devices/system/edac/mc/power/runtime_active_time:0
-> > /sys/devices/system/edac/mc/power/runtime_status:unsupported
-> > ...
-> >=20
-> > with the respective hierarchy: memory controllers, PCI errors, etc.
-> >=20
-> > So the main question is, does it make sense for you to fit this into the
-> > EDAC hierarchy and what would even be the advantage of making it part of
-> > EDAC?
-> >=20
->=20
-> I also think this doesn't seem to fit with the errors reported by EDAC wh=
-ich
-> are mainly hardware errors as Boris explained.
-> Please share your thoughts and if we can merge the patches as it is.
+1. DW APB SSI driver, defined in drivers/spi/spi-dw.h:
+#define DW_HSSI_102A                    0x3130322a
+#define dw_spi_ip_is(_dws, _ip) ...
+#define dw_spi_ver_is(_dws, _ip, _ver) ...
+#define dw_spi_ver_is_ge(_dws, _ip, _ver) ...
 
-Arnd,
+2. DWC USB3 driver, defined in drivers/usb/dwc3/core.h
+#define DWC3_IP                 0x5533
+#define DWC31_IP                0x3331
+#define DWC32_IP                0x3332
+#define DWC3_REVISION_173A      0x5533173a
+#define DWC3_REVISION_175A      0x5533175a
+...
+#define DWC31_REVISION_110A     0x3131302a
+#define DWC31_REVISION_120A     0x3132302a
+...
+#define DWC3_IP_IS(_ip) ...
+#define DWC3_VER_IS(_ip, _ver) ...
+#define DWC3_VER_IS_PRIOR(_ip, _ver) ...
+#define DWC3_VER_IS_WITHIN(_ip, _from, _to) ...
+#define DWC3_VER_TYPE_IS_WITHIN(_ip, _ver, _from, _to) ...
 
-any more thoughts on this? Looks like there is no consensus on where
-this should go. If it's okay for this to go in via ARM SoC after all,
-I could prepare another pull request including only the CBB changes
-along with some of the reference count fixes. I could possibly also
-rework the DMADEVICES dependency patch as discussed, or we could defer
-it if it's too risky at this point.
+Regarding the STMMAC (DW MAC/GMAC/xGMAC) driver. I've harried up to
+claim it has the native IP-core versioning support. The current kernel
+driver doesn't have it. Instead I have it implemented in my local
+repo, but it isn't ready to be submitted yet. I need some more time to
+finish my DW GMAC/xGMAC work first.
 
-Thierry
+Ideally we could have created a common interface for all the drivers.
+I thought about it first when I was initially creating the patchsets.
+But now I don't time left for this at all. The review process's taken
+way much more time than I had/planned to spend for the PCIe-patches.
+So what I can do at this stage is to provide minor fixes if required.
 
---4Boa0tNoBXKDLUKH
-Content-Type: application/pgp-signature; name="signature.asc"
+-Sergey
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmLiyLcACgkQ3SOs138+
-s6FTbhAAo04Ge2JStIVBs0J6WC1LlVc7vETptyeF5ISXjOh8JFDuqQgmrTOW+iLD
-hgw4V4ID1B8Y0LJzKJoWOHus9eXqLWvo4oWVeAjZ5foCYoh4hEmiP3n+iKxqJyyD
-CLOa/nlDeQrGWU+X46hN2pTRF5GyBQlhySviRd7Ub/VpeBrRjD7Tngz1vUXt8Qpw
-UKxhKZCYcPYu+509DJFRbBM5clzW1gS1wEEmdrUaHuRcxl/jbIZtWE5uR58R/4e6
-/mlFXWE9p5dcNmNkKbFNXNV5HtBAuo3wyNqMqXRdQrIuhh0Jqb4zxF2EmlEeJMhI
-bqpbRPqQGYVM0TgW9Jq15JOw4raTj5tIw+yEUWd39f9m67ohqsYjOTZdsU+tvLOU
-N7Zq3tMl5eGQSttzxO149bfmKMsnL7PUy/QfjDfZ0MXkv4QliQMZXWF3B3izb0xu
-B0Y6MVrVNSm6xWk0vU0nhFDq7FigXPLCWfUXSOGNpLNNXjGPcmIw4qwdL09QGJHy
-bNm9a8dmSVvurgYWwvsreWd/BlLNhiU/8+KC3MFFIr9K0dC8NRraUL0qSeKsjEGf
-Tb90vgsCLtnJ9hSKzkCjA3SI4jk/ShwiW8Bbrak86EzhbyqEosEkyAaO2KZBeqG4
-oXdAP76UtXa7BP/C9a3fRxAlTbjdeuwpaMY6+sD9/OlsURNLLOo=
-=tTDm
------END PGP SIGNATURE-----
-
---4Boa0tNoBXKDLUKH--
+> 
+> > In order to preserve the standard version
+> > representation and prevent the data conversion back and forth, we suggest
+> > to preserve the native version representation in the DWC PCIe driver too
+> > in the same way as it has already been done in the rest of the DWC
+> > drivers. IP-core version reading from the CSR will be introduced in the
+> > next commit together with a simple macro-based API to use it.
+> > 
+> > [1] https://en.wikipedia.org/wiki/FourCC
