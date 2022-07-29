@@ -2,139 +2,197 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE83C19F2A
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jul 2022 07:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D2CC25B0C
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jul 2022 10:25:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234252AbiG2H3H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Jul 2022 03:29:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40896 "EHLO
+        id S236177AbiG2KZ5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Jul 2022 06:25:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233949AbiG2H3G (ORCPT
+        with ESMTP id S235867AbiG2KZh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Jul 2022 03:29:06 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2071.outbound.protection.outlook.com [40.107.102.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5932780493;
-        Fri, 29 Jul 2022 00:29:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=foQT/ksqTLppHMrH9k2WSj+3gGHO/TsiAxWKO4fVyUvW8mYZzGQLNMs8dP24Oy2Ev5wuf3DdroOZURWQ6BxxIoA67jDwyFdX1TsTpKuaiO3c0Jx0I0O5EI1jeaI+F9s0BhzirdnXb49R0hwbYIVF9TD37cR3Y7BJgX9DVlvrFPUJpNA3c7tOpRDWG+NylEos3CWfEUePSknZIThnQYGp0RylqXzCCIWkI9edouV7YZRsQXwPJsEeD6URwl2VJMujS9RThq3dTUI7fxm/lnhaJ9ziRKOR9M843ip9zU1qZP246W1clWcFFfNRTBf8GnC6oIrZ3eHo47xUs0g/mK2hBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GGfkHq5NmpHwMT2dF7NeaNGF4BeOAVPGc3+fRNCE2P4=;
- b=NOHr32q0u/1xpPEDqCGllhbSeq+Bly6giJ1KrV7t3xlId8HBeyc0jjaVtiyMIa+/MwNVn96HUWRxgv0sH2mGHliTOIz3g5ls5lXMbeUBSrhkIcbr420Dz8Q604m1/o/DfIjyx0uts1xvszSnlVgpjCuYHgcrRQbhVNMPxhMwQ5XQz9rEGV4qIbIw9gxu987ww8Uhlkd6GEnXwJweH+sa+KJOKq/n0JkgqC7Lt91yLEgOIRE8XdhHq+pugAjklJF3XWGfKVOT70gbOIzPQbDxiuGnd2jWt61vA9AHrsvhu1cJYnSkCoUnC+nscmyHq0nma9tHbpHdX47TEi5J2BKmog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GGfkHq5NmpHwMT2dF7NeaNGF4BeOAVPGc3+fRNCE2P4=;
- b=QuFDpbtI3vdyDBp0SBY3FnDlvgJcuoBGTBQMitTLJzUE0DdY40z1VMxaEtzCq0r/DMIyPoCedoxmGFTn/6B4OvyJqktDQPL9NpuYXoI74I5fkUHDlyAfJ5drv7JM0YDQIICJVAEwEQEPCxWZqi62f7wFvvGzOHsp0xWzI2ORGNcGMY6brJFkxNuzxAijSeIISyrgdO/c4VjG4ZOXzBjIYvCef5NVdiXf+tMJMn24jehiSp6xCdlxC99hYR3oAl0xWr25WNUCPeye4cuphrbmg9MXfpfVP08G9h9FoX/96DuIWIBZOtxiSMMK6lqBQ3DINnhpKZ5GTBCHEMrlgFcW4A==
-Received: from DS7PR05CA0045.namprd05.prod.outlook.com (2603:10b6:8:2f::7) by
- CO6PR12MB5411.namprd12.prod.outlook.com (2603:10b6:5:356::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5482.11; Fri, 29 Jul 2022 07:29:03 +0000
-Received: from DM6NAM11FT036.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:2f:cafe::ce) by DS7PR05CA0045.outlook.office365.com
- (2603:10b6:8:2f::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.7 via Frontend
- Transport; Fri, 29 Jul 2022 07:29:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.236) by
- DM6NAM11FT036.mail.protection.outlook.com (10.13.172.64) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5482.10 via Frontend Transport; Fri, 29 Jul 2022 07:29:02 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
- 15.0.1497.32; Fri, 29 Jul 2022 07:28:56 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.26; Fri, 29 Jul 2022 00:28:56 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26 via Frontend
- Transport; Fri, 29 Jul 2022 00:28:56 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/101] 5.10.134-rc2 review
-In-Reply-To: <20220728150340.045826831@linuxfoundation.org>
-References: <20220728150340.045826831@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Fri, 29 Jul 2022 06:25:37 -0400
+Received: from server.lespinasse.org (server.lespinasse.org [63.205.204.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9645592;
+        Fri, 29 Jul 2022 03:25:14 -0700 (PDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+ d=lespinasse.org; i=@lespinasse.org; q=dns/txt; s=srv-79-ed;
+ t=1659090298; h=date : from : to : cc : subject : message-id :
+ references : mime-version : content-type : in-reply-to : from;
+ bh=a/XS8F6DJ0UncG2aNUIYHtQzj6v+HgUrBJ1uNti4iPo=;
+ b=z07fAc3s82E8eDjOmWqCiQ8bXbav83TEx3/Re97NlSxxiCQo28PSqhP5HNIn+14JJNint
+ RyzSM6g4CHMlWDtCg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lespinasse.org;
+ i=@lespinasse.org; q=dns/txt; s=srv-79-rsa; t=1659090298; h=date :
+ from : to : cc : subject : message-id : references : mime-version :
+ content-type : in-reply-to : from;
+ bh=a/XS8F6DJ0UncG2aNUIYHtQzj6v+HgUrBJ1uNti4iPo=;
+ b=I1XE4PG3J6WdBxHBHPO8gz729jU9NwxFGePQBg2SGh03K5MaVR21Or0F1Ed2fJkedXwqn
+ 73ZEg9HBg/VtqO2lKkpr4whjhup8i+ouV+MRlyl12YqkOIbBlxYxGShIJKbmEieaOBGjn22
+ ZXDWImDNaRHLW7cNGx8eSPR5smKlm5X/Vadfwpk61igIRp4T13wJ8QuAfpZsGCdgjSHCAt3
+ xICHC0gdRmgeZ4VsHAxcqkS8UkYtj/62Fy/MANXsihH037ZiFlqRtJ1IH4+gKYbMZ+SX1Jj
+ 7eSPi+obGVy9GT10OfxqZ1++H06soXF8UFwZNT5FhqZM4eGuNqJqYx1H9gbg==
+Received: by server.lespinasse.org (Postfix, from userid 1000)
+        id 43C591608FB; Fri, 29 Jul 2022 03:24:58 -0700 (PDT)
+Date:   Fri, 29 Jul 2022 03:24:58 -0700
+From:   Michel Lespinasse <michel@lespinasse.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Michel Lespinasse <michel@lespinasse.org>,
+        Peter Zijlstra <peterz@infradead.org>, rth@twiddle.net,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
+        linux@armlinux.org.uk, ulli.kroll@googlemail.com,
+        linus.walleij@linaro.org, shawnguo@kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
+        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        frederic@kernel.org, quic_neeraju@quicinc.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, joel@joelfernandes.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        rcu@vger.kernel.org, rh0@fb.com
+Subject: Re: [PATCH 04/36] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IRQ_ENABLE
+Message-ID: <20220729102458.GA1695@lespinasse.org>
+References: <20220608142723.103523089@infradead.org>
+ <20220608144516.172460444@infradead.org>
+ <20220725194306.GA14746@lespinasse.org>
+ <20220728172053.GA3607379@paulmck-ThinkPad-P17-Gen-1>
 MIME-Version: 1.0
-Message-ID: <38ba67fb-5765-4973-bfa2-84acfa50555f@drhqmail203.nvidia.com>
-Date:   Fri, 29 Jul 2022 00:28:56 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 954b07a8-31a4-4f6f-285e-08da713402e2
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5411:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /hbWboz9mtxE04+Cx4Z+K7KXIyf40xC44JOa2W/8JLhNAbXa7HHWfLMYs/f2ripUQRl2s1LaGdYG/IwiIYCTdLNR9OqEkWWIgCT3BsdKHeQjEmsGyilu07m18HUk4x/K6dTKF7wfjz4jqmFaKZB6NLxtD7/EqTBynMf+htrQs2jcc6F9sZhgJ2MyqktajMD+UbUsTC9NkOe0prUO9BMUSI7pRvG78j4E2siQ+eXGMGfpfr9OWUVtyvrUXbKmAS5h2A+34cZhhw2okrBQZ4gFmSEwJTMAS57XDwd9cCfARLs7H2rB2xshjS1kEuzMOoWFN/cg/xb7doki73d0mYM8RE9SywqoFxCK3CScm/KIiE3sVpSbVPd7pQ87QpBVhs2kW/lmwVD0izSN5hIynNgMaL8mfheOoAAqNoX6M/MCov2kBCepEdH5nq1VBHfx/tTLKwJlvC8iX1rN6If9VhFRXlTTOOxQPaeyf+bJTXwTXgnLMN0MZtCA7VxmXpMiIarr8ND42ozXfaZx2cbdamMkGZQKfXwnl0fg5Bb/ha86odwidaGnzQEJ+by+q2qGnGrTAPOKB5rXULhLHVHZCPrQMxyopvUAJ8EwUf5fjQ9LPJmgAhDbftbRwFLU3ZsMfbnPw9j8QQAPW1r0ApmuubTods/SHHtwzYV7x5gEU7m+8b3B8LaeIJVN2Tg97CJtyfd+/RXXWs4myzsD/sfGTzjEDh4lX7tAnBTx07uhCypTVwsZ08nCgxhCLHLgamyPD3F8rmRbEMZsj6V/ZoZOq9tDyqgwfheohCdLgxr1+MktLKEsJ0eB3kAXErYbV55rbcEd9MnRf4qyLKKH4bDHWAV2BqdaqVGtcM+FP7kjBmzDzFExatXOb7raRhmn29SolKS+rjptCRaKZaKxmdREl2jmZk02YmzXQlBezBW1/cFYIlg=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(396003)(39860400002)(136003)(346002)(376002)(36840700001)(40470700004)(46966006)(966005)(426003)(41300700001)(336012)(47076005)(26005)(478600001)(186003)(36860700001)(82740400003)(356005)(81166007)(2906002)(7416002)(4326008)(70586007)(70206006)(8936002)(8676002)(31686004)(40480700001)(82310400005)(6916009)(54906003)(86362001)(316002)(31696002)(40460700003)(5660300002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2022 07:29:02.5866
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 954b07a8-31a4-4f6f-285e-08da713402e2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT036.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR12MB5411
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220728172053.GA3607379@paulmck-ThinkPad-P17-Gen-1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 28 Jul 2022 17:05:52 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.134 release.
-> There are 101 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, Jul 28, 2022 at 10:20:53AM -0700, Paul E. McKenney wrote:
+> On Mon, Jul 25, 2022 at 12:43:06PM -0700, Michel Lespinasse wrote:
+> > On Wed, Jun 08, 2022 at 04:27:27PM +0200, Peter Zijlstra wrote:
+> > > Commit c227233ad64c ("intel_idle: enable interrupts before C1 on
+> > > Xeons") wrecked intel_idle in two ways:
+> > > 
+> > >  - must not have tracing in idle functions
+> > >  - must return with IRQs disabled
+> > > 
+> > > Additionally, it added a branch for no good reason.
+> > > 
+> > > Fixes: c227233ad64c ("intel_idle: enable interrupts before C1 on Xeons")
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > 
+> > After this change was introduced, I am seeing "WARNING: suspicious RCU
+> > usage" when booting a kernel with debug options compiled in. Please
+> > see the attached dmesg output. The issue starts with commit 32d4fd5751ea
+> > and is still present in v5.19-rc8.
+> > 
+> > I'm not sure, is this too late to fix or revert in v5.19 final ?
 > 
-> Responses should be made by Sat, 30 Jul 2022 15:03:14 +0000.
-> Anything received after that time might be too late.
+> I finally got a chance to take a quick look at this.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.134-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+> The rcu_eqs_exit() function is making a lockdep complaint about
+> being invoked with interrupts enabled.  This function is called from
+> rcu_idle_exit(), which is an expected code path from cpuidle_enter_state()
+> via its call to rcu_idle_exit().  Except that rcu_idle_exit() disables
+> interrupts before invoking rcu_eqs_exit().
 > 
-> thanks,
+> The only other call to rcu_idle_exit() does not disable interrupts,
+> but it is via rcu_user_exit(), which would be a very odd choice for
+> cpuidle_enter_state().
 > 
-> greg k-h
+> It seems unlikely, but it might be that it is the use of local_irq_save()
+> instead of raw_local_irq_save() within rcu_idle_exit() that is causing
+> the trouble.  If this is the case, then the commit shown below would
+> help.  Note that this commit removes the warning from lockdep, so it
+> is necessary to build the kernel with CONFIG_RCU_EQS_DEBUG=y to enable
+> equivalent debugging.
+> 
+> Could you please try your test with the -rce commit shown below applied?
 
-All tests passing for Tegra ...
+Thanks for looking into it.
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    75 tests:	75 pass, 0 fail
+After checking out Peter's commit 32d4fd5751ea,
+cherry picking your commit ed4ae5eff4b3,
+and setting CONFIG_RCU_EQS_DEBUG=y in addition of my usual debug config,
+I am now seeing this a few seconds into the boot:
 
-Linux version:	5.10.134-rc2-g3dbf5c047ca9
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+[    3.010650] ------------[ cut here ]------------
+[    3.010651] WARNING: CPU: 0 PID: 0 at kernel/sched/clock.c:397 sched_clock_tick+0x27/0x60
+[    3.010657] Modules linked in:
+[    3.010660] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.19.0-rc1-test-00005-g1be22fea0611 #1
+[    3.010662] Hardware name: LENOVO 30BFS44D00/1036, BIOS S03KT51A 01/17/2022
+[    3.010663] RIP: 0010:sched_clock_tick+0x27/0x60
+[    3.010665] Code: 1f 40 00 53 eb 02 5b c3 66 90 8b 05 2f c3 40 01 85 c0 74 18 65 8b 05 60 88 8f 4e 85 c0 75 0d 65 8b 05 a9 85 8f 4e 85 c0 74 02 <0f> 0b e8 e2 6c 89 00 48 c7 c3 40 d5 02 00
+ 89 c0 48 03 1c c5 c0 98
+[    3.010667] RSP: 0000:ffffffffb2803e28 EFLAGS: 00010002
+[    3.010670] RAX: 0000000000000001 RBX: ffffc8ce7fa07060 RCX: 0000000000000001
+[    3.010671] RDX: 0000000000000000 RSI: ffffffffb268dd21 RDI: ffffffffb269ab13
+[    3.010673] RBP: 0000000000000001 R08: ffffffffffc300d5 R09: 000000000002be80
+[    3.010674] R10: 000003625b53183a R11: ffffa012b802b7a4 R12: ffffffffb2aa9e80
+[    3.010675] R13: ffffffffb2aa9e00 R14: 0000000000000001 R15: 0000000000000000
+[    3.010677] FS:  0000000000000000(0000) GS:ffffa012b8000000(0000) knlGS:0000000000000000
+[    3.010678] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    3.010680] CR2: ffffa012f81ff000 CR3: 0000000c99612001 CR4: 00000000003706f0
+[    3.010681] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    3.010682] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    3.010683] Call Trace:
+[    3.010685]  <TASK>
+[    3.010688]  cpuidle_enter_state+0xb7/0x4b0
+[    3.010694]  cpuidle_enter+0x29/0x40
+[    3.010697]  do_idle+0x1d4/0x210
+[    3.010702]  cpu_startup_entry+0x19/0x20
+[    3.010704]  rest_init+0x117/0x1a0
+[    3.010708]  arch_call_rest_init+0xa/0x10
+[    3.010711]  start_kernel+0x6d8/0x6ff
+[    3.010716]  secondary_startup_64_no_verify+0xce/0xdb
+[    3.010728]  </TASK>
+[    3.010729] irq event stamp: 44179
+[    3.010730] hardirqs last  enabled at (44179): [<ffffffffb2000ccb>] asm_sysvec_apic_timer_interrupt+0x1b/0x20
+[    3.010734] hardirqs last disabled at (44177): [<ffffffffb22003f0>] __do_softirq+0x3f0/0x498
+[    3.010736] softirqs last  enabled at (44178): [<ffffffffb2200332>] __do_softirq+0x332/0x498
+[    3.010738] softirqs last disabled at (44171): [<ffffffffb16c760b>] irq_exit_rcu+0xab/0xf0
+[    3.010741] ---[ end trace 0000000000000000 ]---
