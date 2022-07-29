@@ -2,240 +2,172 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D99AC19F2D
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jul 2022 15:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32643C00144
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jul 2022 17:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237737AbiG2P2d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Jul 2022 11:28:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58528 "EHLO
+        id S237926AbiG2Rax (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Jul 2022 13:30:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237632AbiG2P2Y (ORCPT
+        with ESMTP id S229979AbiG2Raw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Jul 2022 11:28:24 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2149A86C34;
-        Fri, 29 Jul 2022 08:28:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1E2C4B82846;
-        Fri, 29 Jul 2022 15:28:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C2BC433C1;
-        Fri, 29 Jul 2022 15:28:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659108493;
-        bh=+Eu1+NpdMQSxhSpBOHg1xq9IY5RE5+jGBaKhcxBU/fw=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=SYC3Dsw++Jo9/onL7ZbEg1e34NjAkGJ0/LEyzxxtRyARi5tsRhnhMCBXpA48hlrbx
-         /ygCpipyirN70BTWI+O7BPw3KEXhwiaeJ1toIS9f4x8NNUrtDb0g9IXD0fU2Bmoo6M
-         w/YCbZ5sds6/EqIKdGN13GNgPIYzv0deYvecUifHVmZHvmvFFPvpCRqJ8szO8EVscM
-         zHVucD9HNGWsnSLNuXErgrHHYht/KZ+I5xQvurQSs2gAeRSzLQTzOZZkq+fQyiif2B
-         dBwd0T3KOaUJi1JScRgdDFB1nTqlfa6EEzGGbx1ADBkWPp5B2oyL/vemt0EQW8/A3l
-         tsRJX93dX43kQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id 77B5C5C033E; Fri, 29 Jul 2022 08:28:13 -0700 (PDT)
-Date:   Fri, 29 Jul 2022 08:28:13 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Michel Lespinasse <michel@lespinasse.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
-        linux@armlinux.org.uk, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        frederic@kernel.org, quic_neeraju@quicinc.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, joel@joelfernandes.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org, rh0@fb.com
-Subject: Re: [PATCH 04/36] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IRQ_ENABLE
-Message-ID: <20220729152813.GA3579395@paulmck-ThinkPad-P17-Gen-1>
-Reply-To: paulmck@kernel.org
-References: <20220608142723.103523089@infradead.org>
- <20220608144516.172460444@infradead.org>
- <20220725194306.GA14746@lespinasse.org>
- <20220728172053.GA3607379@paulmck-ThinkPad-P17-Gen-1>
- <20220729102458.GA1695@lespinasse.org>
- <20220729152622.GM2860372@paulmck-ThinkPad-P17-Gen-1>
-MIME-Version: 1.0
+        Fri, 29 Jul 2022 13:30:52 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2087.outbound.protection.outlook.com [40.107.223.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C934F15702;
+        Fri, 29 Jul 2022 10:30:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ARq4JLa2TpLcf5Cv0Ua3QM2QZ08h/GgOqhaxJMSnADnKbhYES1bhH6ZGA7BN00pkh4RHlfLzX6FVSUs1ME4xW4Ou56ht1oUX6jBT3/9sIyCSP3QYkG9AKmyAhvmuFKdmsjemrsl9UsBVp8GL3KlL406DeJUYmMPzuerpn358cjeoSr4vlhP+nq9ofioUkgs+f77DcYCqATJ+kLTr+/tbn4oetCZ6oMirYTebZXScAC+peIU7Crt2QmAvz18b9yJWmQ+DOGskCRAQtjmnQMfI6z1HMuKGVROxlP5AqZsGRb/o7E3b1yqwB/xLEIMDtRIiMlvEYYr4KadSm7IKYk2A9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pqe+kn79OT7U5c0eVBU632BleNTIEotu1HEBxBf0+Kw=;
+ b=fsZFGm944hi/HtXmifQLTUuGwRhXl+lVnlbh2hgvXjpSDyQN7MJGjDitBXbAZE6X+5VrteDhcYqnnONCPqvIRSnCmaxdYnYINRZbza3zXoGXrznxkDdGbn051Sp3fsv8ms5JahxGYHrUeshsGYxDeUTmUhbVqeR2eMqQ8tfM8sWeuLVOeBGthFTmAlF9escq5SkB4DdobHFFS/TOEkASx2cWraQP2Qp6jQhdoXZ7MtmFUWRwsaN9qGBzzMvkmAyJWxAjQQGJvg9970MFOK6oT6uFBymzIIfDTCY9v9V35V/h0/W2XfV/T8Zk8l2m1lG776I3FBYOEwrZzA+pBA/Cyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pqe+kn79OT7U5c0eVBU632BleNTIEotu1HEBxBf0+Kw=;
+ b=rgyrYdgM2S8F7vPJsC7pKBskdZPXPZyTZQ5XMovrvEca4mk1qHwDttWZiQIN9EwnDt1/WJnUO9Su9kmXJGvV7QoAy+DFDIGNx5WZ+LmfgUVxGuUpy8IaE9L42kvxEOpSWGm5oZ1LmNuk5Qs0oFECcpwk4d7s8QkkKpEwYuytJlrAZGntqqjSgOh9k6wVbkApcORmO2m3/4rUAc4d54J2Og32ehLWEE6sm42oenxDAaLtbygJtUUWJgDEN+KyMZqGUPFwW4i8ENNG0/Ikvmoms5XV41XAMCxoOxEkHuU0am+7k4mGXOOSN0/eqkMIEv0fofjlL8hTWwySkrU37KsaCA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15)
+ by DS7PR12MB5909.namprd12.prod.outlook.com (2603:10b6:8:7a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.11; Fri, 29 Jul
+ 2022 17:30:50 +0000
+Received: from MN2PR12MB4192.namprd12.prod.outlook.com
+ ([fe80::4cce:310f:93:5d58]) by MN2PR12MB4192.namprd12.prod.outlook.com
+ ([fe80::4cce:310f:93:5d58%8]) with mapi id 15.20.5482.006; Fri, 29 Jul 2022
+ 17:30:50 +0000
+Date:   Fri, 29 Jul 2022 14:30:49 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Nicolin Chen <nicolinc@nvidia.com>
+Cc:     joro@8bytes.org, will@kernel.org, marcan@marcan.st,
+        sven@svenpeter.dev, robin.murphy@arm.com, robdclark@gmail.com,
+        baolu.lu@linux.intel.com, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com,
+        jean-philippe@linaro.org, alex.williamson@redhat.com,
+        kevin.tian@intel.com, suravee.suthikulpanit@amd.com,
+        alyssa@rosenzweig.io, dwmw2@infradead.org, mjrosato@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, thierry.reding@gmail.com,
+        vdumpa@nvidia.com, jonathanh@nvidia.com, cohuck@redhat.com,
+        thunder.leizhen@huawei.com, christophe.jaillet@wanadoo.fr,
+        chenxiang66@hisilicon.com, john.garry@huawei.com,
+        yangyingliang@huawei.com, iommu@lists.linux-foundation.org,
+        iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] iommu: Return -EMEDIUMTYPE for incompatible
+ domain and device/group
+Message-ID: <YuQZSfQtBTBtJOq2@nvidia.com>
+References: <20220701214455.14992-1-nicolinc@nvidia.com>
+ <20220701214455.14992-2-nicolinc@nvidia.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220729152622.GM2860372@paulmck-ThinkPad-P17-Gen-1>
+In-Reply-To: <20220701214455.14992-2-nicolinc@nvidia.com>
+X-ClientProxiedBy: MN2PR15CA0031.namprd15.prod.outlook.com
+ (2603:10b6:208:1b4::44) To MN2PR12MB4192.namprd12.prod.outlook.com
+ (2603:10b6:208:1d5::15)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 87e2ff84-ba7f-4720-ee4a-08da71881479
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5909:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9n9UroDb54XvkUGt+Q7JyxKJdHq+AqLoS+Ivj1cfkgciJ+GxL/qaOce2l+Q8aaGCp9tlO8GuRqjVLb4klRd1OfsipmijqLUBsVNmXRcCDkoihR1wnpi24+vzTDXuT50/rKkhcJbU/zDYkcP92A0REfHM8H8tiZgKkoZsl7Lw/TzJjXMdRAbiTxAP9c0rmgJkiGcjD5zZ/I5+UxMdf9XB4jBaCqKzPHG1c+v9Ld/0NuRxkgqjlsXY4sVA5OWOKcp8I8nl1PBKqFJdIau6pqx6KpqjTcRtEAfGhxpaljaXRvNdC07OaZ3/f1fqvZ1hxA99341kEX5XklQbsz54VwfkTRRQ/mntg0H/MfVz88ODe+ovE4MRScSgzMy3qqILcMAUWzYU/WnRRpY8cAxInmoOAeY+daaVksAtHmQJfeYLE9vpE0KT4UZ05C0xFjYQ44dQWda+HkRCVToHu3upybFcSLCm7lwTQqFL6TewCyW9ktr8/F15J6beGUZfyhl6zrht7YnLTjY4x4VzJm2QilYPq7X7EdkhA+veUWEaCzk/ve3ZiEQc+IuQzD6eGi9oZJEq6pnz0pg22QeCCI4mNOLTGWyCbYlEwt1w/uBWwtfT+KF0WWx7uITB1qqz34hjMQdyE9jCKH2LmaepafTwkqprVWSYcyTB8uB18iw3XPyWERzcNYgXVkk3z1U0jUS4hFMBPMJuKmHHOb29rpbkO4ozGfcwtkoFlEv0AgjjJPPkenZn4VIin8gTdGcgjvh3XsIs
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4192.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(376002)(136003)(39860400002)(396003)(346002)(41300700001)(26005)(6506007)(86362001)(6512007)(6486002)(38100700002)(2616005)(83380400001)(186003)(4326008)(6862004)(5660300002)(7406005)(7416002)(8936002)(66476007)(66556008)(66946007)(36756003)(37006003)(2906002)(8676002)(478600001)(316002)(6636002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pAf4BFuYy6/pnZBg47tXnnF7rsJt9qgpO9/+gm8EhGJDVyk3weqSpR5Z8P8J?=
+ =?us-ascii?Q?JWqOnl/2vMYrJ5fT2sWJBx0O4Fhbsmu+FGL2cs3BqFjryxYVIy2F8AfEYC/G?=
+ =?us-ascii?Q?ZZ2sDQ3/IeXT7IlODwGh+aFc1W2izwHPJMuFmzbG/pKg9Z9maZdRiDtgSHab?=
+ =?us-ascii?Q?vSo71NK6IT1sEJ2DlTITflKSyI2fI77c7nTEbNKcW5LSID8yeWp56V/0mbcT?=
+ =?us-ascii?Q?F8uXETRE42oPdOnqSb8imeHEvvHN7YnH51SHCgHhAUfQP0hCrDjatb1HOVsI?=
+ =?us-ascii?Q?4Gs0j8q5MRT/q+QM7uuOTWDC5xEtKAWuXiCw9eskIRk+wxG1A+jijt7z95W2?=
+ =?us-ascii?Q?4iPVRECK+/oHGpErVHjzannxZzt5NyQ8TYfsrmZsXnb3qD2A3ht2e7FEJR5Q?=
+ =?us-ascii?Q?PDh7mcGBo3Z03fEwjWNdLY3zeBcs0fBLv7csRSI1MaDLBHBeb3z3EAJR4LDX?=
+ =?us-ascii?Q?M/VA892y8QHaisvXDR+9altc15qI5VYK8UiYEr6uNEx11Bg9dWfq0toUbCBB?=
+ =?us-ascii?Q?MZNCbk5issm4nPtYqVMwll3ql86Z8oZoPZm5sHkCTH+D5YeZPokucTRBS2Ck?=
+ =?us-ascii?Q?Wcru1hZxlXgKFQaCQzU61ZQmwBzL1ODFxMmpUVCYKbj5jxv+O0Hc6OZgTc/h?=
+ =?us-ascii?Q?bW1jxCmWJIjTrXMnrq1spSMMcbK/FR8OjRdyhAGDTe4Iu4L+zxL9Hn7IuhL1?=
+ =?us-ascii?Q?vFTyauceDy2LODgckNBb6/bKhHF6S1DjiLDrkI0RLseYGLALDGMGUJllZD1h?=
+ =?us-ascii?Q?Od3+bqPANTjEtTK4epN5WemyobvWAy20rqUouQOutFlTRvl8D65vb32/O2P+?=
+ =?us-ascii?Q?xnDB6ZLnUk+sFSwmRJ94i7fmqwBHRnmWJcEy5AB2PGOeodBsiZdmdabvPGni?=
+ =?us-ascii?Q?wv4SBPIPOWp2enHAjbrVjDS3MF0mT5lxYXuJdLvbRMTayLsbXR5d+vnybqM+?=
+ =?us-ascii?Q?JPm/3WVwu/drkDoQY2HCwR+vaZeVToHsy4yvGazZeWLhJLGM7FYiLpC2g4b9?=
+ =?us-ascii?Q?LMuaIGG0FaH3jIteP6KyEh7dzTIPqniZlXmf7c2KT92v7QXeCcyfUOUJInok?=
+ =?us-ascii?Q?ZzhaPgt1aSRbhyopj6mxnogfHZvGAZkr5MvRxxWpL1w1MAV3CW2/Ei/h0ecY?=
+ =?us-ascii?Q?W8XZLIOu75tzyO0R//ug1waH1CNj6lyZ3tDsmLFNMBBEBlhAaJPACLx32BBH?=
+ =?us-ascii?Q?zq/phbYlnG8FFiqdLcvjVk6ewCvoz1ZQBfneJBl7cnmVPRyn0YI0K9k5QCHX?=
+ =?us-ascii?Q?L72Q0vr1R93Rx++faCbgnbRieDtPPx7mU7Qc8BzNrTCfBDjniD/SQ4eU1yRa?=
+ =?us-ascii?Q?qy74pIN6bu9/myqYoiAL/c38bPYIWfo+s/Tq8LOmaO42IOYHNWCA9VG9+paC?=
+ =?us-ascii?Q?/v4XK0iCv1rzwcOXtk1ZTm91+AvG+QfGJevog2UcorBYyPYppEbLpmkjBt+F?=
+ =?us-ascii?Q?cfApVYmh/OwUWwEsPKeAHDTMofHudD8Te555bySL9d5BFJdbkEmjs6vWgnmc?=
+ =?us-ascii?Q?DQET+jZIpOHhu9+wa4p7AAdCEYMOWs/ACeGUZ9vLbKAGxJbHjRkDHaAtz+Fc?=
+ =?us-ascii?Q?zsSUkHRWwScNUBmlAdu94zmS9Jbo6k0lAZIM4Uuu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87e2ff84-ba7f-4720-ee4a-08da71881479
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4192.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2022 17:30:50.1247
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SG227D2e0Gq+RHV7KxGVYZsYYZdv6z2kuP/5esO/GzUanlRwXfpzHpXlLPBFsrpb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5909
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Or better yet, try the patch that Rafael proposed.  ;-)
+On Fri, Jul 01, 2022 at 02:44:51PM -0700, Nicolin Chen wrote:
+> Cases like VFIO wish to attach a device to an existing domain that was
+> not allocated specifically from the device. This raises a condition
+> where the IOMMU driver can fail the domain attach because the domain and
+> device are incompatible with each other.
+> 
+> This is a soft failure that can be resolved by using a different domain.
+> 
+> Provide a dedicated errno from the IOMMU driver during attach that the
+> reason attached failed is because of domain incompatability. EMEDIUMTYPE
+> is chosen because it is never used within the iommu subsystem today and
+> evokes a sense that the 'medium' aka the domain is incompatible.
+> 
+> VFIO can use this to know attach is a soft failure and it should continue
+> searching. Otherwise the attach will be a hard failure and VFIO will
+> return the code to userspace.
+> 
+> Update all drivers to return EMEDIUMTYPE in their failure paths that are
+> related to domain incompatability. Also remove adjacent error prints for
+> these soft failures, to prevent a kernel log spam, since -EMEDIUMTYPE is
+> clear enough to indicate an incompatability error.
+> 
+> Add kdocs describing this behavior.
+> 
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/amd/iommu.c                   |  2 +-
+>  drivers/iommu/apple-dart.c                  |  4 +--
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 15 +++--------
+>  drivers/iommu/arm/arm-smmu/arm-smmu.c       |  5 +---
+>  drivers/iommu/arm/arm-smmu/qcom_iommu.c     |  9 ++-----
+>  drivers/iommu/intel/iommu.c                 | 10 +++-----
+>  drivers/iommu/iommu.c                       | 28 +++++++++++++++++++++
+>  drivers/iommu/ipmmu-vmsa.c                  |  4 +--
+>  drivers/iommu/omap-iommu.c                  |  3 +--
+>  drivers/iommu/s390-iommu.c                  |  2 +-
+>  drivers/iommu/sprd-iommu.c                  |  6 ++---
+>  drivers/iommu/tegra-gart.c                  |  2 +-
+>  drivers/iommu/virtio-iommu.c                |  3 +--
+>  13 files changed, 47 insertions(+), 46 deletions(-)
 
-							Thanx, Paul
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-On Fri, Jul 29, 2022 at 08:26:22AM -0700, Paul E. McKenney wrote:
-> On Fri, Jul 29, 2022 at 03:24:58AM -0700, Michel Lespinasse wrote:
-> > On Thu, Jul 28, 2022 at 10:20:53AM -0700, Paul E. McKenney wrote:
-> > > On Mon, Jul 25, 2022 at 12:43:06PM -0700, Michel Lespinasse wrote:
-> > > > On Wed, Jun 08, 2022 at 04:27:27PM +0200, Peter Zijlstra wrote:
-> > > > > Commit c227233ad64c ("intel_idle: enable interrupts before C1 on
-> > > > > Xeons") wrecked intel_idle in two ways:
-> > > > > 
-> > > > >  - must not have tracing in idle functions
-> > > > >  - must return with IRQs disabled
-> > > > > 
-> > > > > Additionally, it added a branch for no good reason.
-> > > > > 
-> > > > > Fixes: c227233ad64c ("intel_idle: enable interrupts before C1 on Xeons")
-> > > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > > 
-> > > > After this change was introduced, I am seeing "WARNING: suspicious RCU
-> > > > usage" when booting a kernel with debug options compiled in. Please
-> > > > see the attached dmesg output. The issue starts with commit 32d4fd5751ea
-> > > > and is still present in v5.19-rc8.
-> > > > 
-> > > > I'm not sure, is this too late to fix or revert in v5.19 final ?
-> > > 
-> > > I finally got a chance to take a quick look at this.
-> > > 
-> > > The rcu_eqs_exit() function is making a lockdep complaint about
-> > > being invoked with interrupts enabled.  This function is called from
-> > > rcu_idle_exit(), which is an expected code path from cpuidle_enter_state()
-> > > via its call to rcu_idle_exit().  Except that rcu_idle_exit() disables
-> > > interrupts before invoking rcu_eqs_exit().
-> > > 
-> > > The only other call to rcu_idle_exit() does not disable interrupts,
-> > > but it is via rcu_user_exit(), which would be a very odd choice for
-> > > cpuidle_enter_state().
-> > > 
-> > > It seems unlikely, but it might be that it is the use of local_irq_save()
-> > > instead of raw_local_irq_save() within rcu_idle_exit() that is causing
-> > > the trouble.  If this is the case, then the commit shown below would
-> > > help.  Note that this commit removes the warning from lockdep, so it
-> > > is necessary to build the kernel with CONFIG_RCU_EQS_DEBUG=y to enable
-> > > equivalent debugging.
-> > > 
-> > > Could you please try your test with the -rce commit shown below applied?
-> > 
-> > Thanks for looking into it.
-> 
-> And thank you for trying this shot in the dark!
-> 
-> > After checking out Peter's commit 32d4fd5751ea,
-> > cherry picking your commit ed4ae5eff4b3,
-> > and setting CONFIG_RCU_EQS_DEBUG=y in addition of my usual debug config,
-> > I am now seeing this a few seconds into the boot:
-> > 
-> > [    3.010650] ------------[ cut here ]------------
-> > [    3.010651] WARNING: CPU: 0 PID: 0 at kernel/sched/clock.c:397 sched_clock_tick+0x27/0x60
-> 
-> And this is again a complaint about interrupts not being disabled.
-> 
-> But it does appear that the problem was the lockdep complaint, and
-> eliminating that did take care of part of the problem.  But lockdep
-> remained enabled, and you therefore hit the next complaint.
-> 
-> > [    3.010657] Modules linked in:
-> > [    3.010660] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.19.0-rc1-test-00005-g1be22fea0611 #1
-> > [    3.010662] Hardware name: LENOVO 30BFS44D00/1036, BIOS S03KT51A 01/17/2022
-> > [    3.010663] RIP: 0010:sched_clock_tick+0x27/0x60
-> 
-> The most straightforward way to get to sched_clock_tick() from
-> cpuidle_enter_state() is via the call to sched_clock_idle_wakeup_event().
-> 
-> Except that it disables interrupts before invoking sched_clock_tick().
-> 
-> > [    3.010665] Code: 1f 40 00 53 eb 02 5b c3 66 90 8b 05 2f c3 40 01 85 c0 74 18 65 8b 05 60 88 8f 4e 85 c0 75 0d 65 8b 05 a9 85 8f 4e 85 c0 74 02 <0f> 0b e8 e2 6c 89 00 48 c7 c3 40 d5 02 00
-> >  89 c0 48 03 1c c5 c0 98
-> > [    3.010667] RSP: 0000:ffffffffb2803e28 EFLAGS: 00010002
-> > [    3.010670] RAX: 0000000000000001 RBX: ffffc8ce7fa07060 RCX: 0000000000000001
-> > [    3.010671] RDX: 0000000000000000 RSI: ffffffffb268dd21 RDI: ffffffffb269ab13
-> > [    3.010673] RBP: 0000000000000001 R08: ffffffffffc300d5 R09: 000000000002be80
-> > [    3.010674] R10: 000003625b53183a R11: ffffa012b802b7a4 R12: ffffffffb2aa9e80
-> > [    3.010675] R13: ffffffffb2aa9e00 R14: 0000000000000001 R15: 0000000000000000
-> > [    3.010677] FS:  0000000000000000(0000) GS:ffffa012b8000000(0000) knlGS:0000000000000000
-> > [    3.010678] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [    3.010680] CR2: ffffa012f81ff000 CR3: 0000000c99612001 CR4: 00000000003706f0
-> > [    3.010681] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > [    3.010682] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > [    3.010683] Call Trace:
-> > [    3.010685]  <TASK>
-> > [    3.010688]  cpuidle_enter_state+0xb7/0x4b0
-> > [    3.010694]  cpuidle_enter+0x29/0x40
-> > [    3.010697]  do_idle+0x1d4/0x210
-> > [    3.010702]  cpu_startup_entry+0x19/0x20
-> > [    3.010704]  rest_init+0x117/0x1a0
-> > [    3.010708]  arch_call_rest_init+0xa/0x10
-> > [    3.010711]  start_kernel+0x6d8/0x6ff
-> > [    3.010716]  secondary_startup_64_no_verify+0xce/0xdb
-> > [    3.010728]  </TASK>
-> > [    3.010729] irq event stamp: 44179
-> > [    3.010730] hardirqs last  enabled at (44179): [<ffffffffb2000ccb>] asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> > [    3.010734] hardirqs last disabled at (44177): [<ffffffffb22003f0>] __do_softirq+0x3f0/0x498
-> > [    3.010736] softirqs last  enabled at (44178): [<ffffffffb2200332>] __do_softirq+0x332/0x498
-> > [    3.010738] softirqs last disabled at (44171): [<ffffffffb16c760b>] irq_exit_rcu+0xab/0xf0
-> > [    3.010741] ---[ end trace 0000000000000000 ]---
-> 
-> Would you be willing to try another shot in the dark, but untested
-> this time?  I freely admit that this is getting strange.
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-> index e374c0c923dae..279f557bf60bb 100644
-> --- a/kernel/sched/clock.c
-> +++ b/kernel/sched/clock.c
-> @@ -394,7 +394,7 @@ notrace void sched_clock_tick(void)
->  	if (!static_branch_likely(&sched_clock_running))
->  		return;
->  
-> -	lockdep_assert_irqs_disabled();
-> +	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !raw_irqs_disabled());
->  
->  	scd = this_scd();
->  	__scd_stamp(scd);
+Jason
