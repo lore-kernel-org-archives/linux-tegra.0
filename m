@@ -2,139 +2,134 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89507C00144
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Aug 2022 14:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DB2C19F2C
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Aug 2022 20:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232576AbiHAO1K (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 1 Aug 2022 10:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43104 "EHLO
+        id S232197AbiHAUMO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 1 Aug 2022 16:12:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232596AbiHAO1D (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Aug 2022 10:27:03 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2061.outbound.protection.outlook.com [40.107.93.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E662B1B8;
-        Mon,  1 Aug 2022 07:27:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jztLVaLPnSJZnE9hL2zXwnb55dCC8NrYc0LN2WtBOsF5pZZw1j2gy5IDFVZ2r697f9yM87UrUgZ1PIv+t2OjFes12h9JVAi2fHh9GpLKhqbjMeVTTYJTpksunU1gcVyyaOCaQSOTQ4v7nlh+0/QuXN8w0Q5QxH9ItOboRrttqdpcKqt4FwO4lZ0Lvjn/lTP7oiYaEFJy9jazbzIJGQFVDRLSMKjCSp572jW+VPJpszYgzVQ6gOQtdSZRyeZWJhWTK2fjeoS7W5xZoIg2pfZbGGc4AddqEJgSuroj0imJXPhT/FT+QSITY8INlk9VsZVMTxxzSO2uWV0+5W+oJjYDtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m+9JUs2e95PVFFyKTL1PNQNdc/R188ahOCMcqZzGFDY=;
- b=P087R356uybG1QQJqVXUKuDmE/vtmFMKl7aRhAbIZ0OuG/YlVcOXrpPpsP6yX4dgstZL/VPHy0dZnHy+zk9476eoTaUz4frhFKb1hl41lYHIt9EJCTR9ozD/AxyCSvqxFr8Zpejbv/191bdKvBhT9mXOb6roP40IMNbxjXDzwRFkjVRidfCtHaa5MBmjwIDBlAYdotUs/hyO/2uA5cLjv2QiHhqEs8Jh/w5WGGjGvVEPtI5jthvyhXC5/NAdHJgwA2L5UphcL671dz6W6ym4VAk2e7e7+hJpDgx5M0jJwLm9uEiVmh59ChcFpY1PGWVWNxqs4QkcD1xrPmAFtaimvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m+9JUs2e95PVFFyKTL1PNQNdc/R188ahOCMcqZzGFDY=;
- b=Tqs4laDsQg3hMq80FODJJQGdCR+LzAMId6TwRt6C1asZA1Pbe2WAPC2nnBG2yGKbLACJOtuu6xy48XpA9xVPNnkWTcmUUH5L1et3yTbKgcBbIvxBp02yQDSiUSybRz55UPxG30SLK+zdKE9tZKjd9SjrUThO4FibvPcHtDyb1S7T0SO6ahrS1bClZuPm61JSifFshIcEzkPrRXhYndhj9db2M8teAtwDXa/08mwffsgrGF+NwYDEn3+hyo2OGI5DfIzhOPBj67U3QXuyfWvJ5tsHXD8XK3bnmp63vJ4HLgGLi23YvdH7jm1tTwgMomvSeLg5t3tYWq2WZ6pKhdDpeA==
-Received: from MW4PR04CA0189.namprd04.prod.outlook.com (2603:10b6:303:86::14)
- by BY5PR12MB3747.namprd12.prod.outlook.com (2603:10b6:a03:1ac::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.11; Mon, 1 Aug
- 2022 14:26:59 +0000
-Received: from CO1NAM11FT007.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:86:cafe::15) by MW4PR04CA0189.outlook.office365.com
- (2603:10b6:303:86::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.15 via Frontend
- Transport; Mon, 1 Aug 2022 14:26:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.235) by
- CO1NAM11FT007.mail.protection.outlook.com (10.13.174.131) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5482.10 via Frontend Transport; Mon, 1 Aug 2022 14:26:59 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 1 Aug
- 2022 14:26:57 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 1 Aug 2022
- 07:26:56 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26 via Frontend
- Transport; Mon, 1 Aug 2022 07:26:56 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.15 00/69] 5.15.59-rc1 review
-In-Reply-To: <20220801114134.468284027@linuxfoundation.org>
-References: <20220801114134.468284027@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S233932AbiHAUL7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Aug 2022 16:11:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E554A32452;
+        Mon,  1 Aug 2022 13:11:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 230F260A07;
+        Mon,  1 Aug 2022 20:11:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B6EC43470;
+        Mon,  1 Aug 2022 20:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659384715;
+        bh=OSqIQPfvYpzTMvxqawaSlG0ztJzt6V5STNgZXTe0fuk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=n3VA8XWEWImLnSFoDbftmNWnGl2LpOR6WfCL0l/z4/qXaMLMsmRlR4TFlTadFAhNW
+         AmfQGx82DBpm3WiUjTW44FAzY51y8Frvh/Erc3eRgTyXK/tKm/PzdisTk8ugOUxZv5
+         LRiunU+dY5vEKGPMvaHjaTBa1g5USOG2QDAZKbCNnH+GS++coY8YXXPrv3zfNuZlhV
+         IYeUF5K4mrdM3sfmYKO0qKq38h/SC2mot3Nz4e+lPemjzooVFi4VsZUDApg6oQSjEd
+         QEOzDBnApfeU5BSQX0R/cg7lAHBowEtAWWkr4q1Iep/dYxKa+Lc1BH6Ee/2JyTSALm
+         UyJgmIjb5sxsA==
+Date:   Mon, 1 Aug 2022 15:11:53 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Frank Li <Frank.Li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH RESEND v4 11/15] PCI: dwc: Simplify in/outbound iATU
+ setup methods
+Message-ID: <20220801201153.GA622787@bhelgaas>
 MIME-Version: 1.0
-Message-ID: <92d2e981-f409-409a-ac31-63dcd0de1027@rnnvmail203.nvidia.com>
-Date:   Mon, 1 Aug 2022 07:26:56 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 978c40f6-c929-467c-f6bb-08da73c9e4ea
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3747:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hIcnhp1yKjgqqtNsZb946ur7uxGgS4VdHCDhB4dAOoiwuqbHvQd/TrrcWUHbP3CvZHMnFbLiTKRRHcwts3RdzW3c8x5uVCFRYhV8vs6oFiTh5vW0qydvEdLEX1OMsc4OHwvZS+QnmOB52YA91MSFbfHuCMudLpRnjKKW43G8KlNeqS+H4NlbFEEoXjCSPMsGn5wtqim9t9DYRWbCMvlJ5fplTzgrXzWq4gujGmJYaEJx2SjGpnAIk5OCKpVAfUvpbO7ol7Gz7yip+rNl7X0yVsfw4qkuE5RAHvvUGpb2kdWLK/BIc7MF6MN/PD9WPkYfbRnrWxrMBOM4VlyMID3FfsoC7/tkV80h0Joxdf7boqIISW4C2XWSCaWOn8z+oAFCAA94wSmBE6uqOptFBDDZeubE/jhEoNzEoV/TLhE+Z/r908I7vDJo+7NmqIOmYe6R18En0mZUplZtZcppvvwxEMseqgI1I9x/h0eL33n1g4PiB5l2CvYfI1l6T/vyDs3RuO3q/430RQ625WL+uTBKp1d25GZz7nc3nwWpX0SBD+T0P8EEHc13B9DsF8ZWgzyVTzUPaGhFK9l5R9K0xGEwm9LKwaEk8Njc7ndXRyAcLdjEqMn0XHHtTKyL+NlioG5CDNIQjoHd71EC7S+kTa8jIhABMttzubfJs/Sd6eQ4ztLR8+PxzU7v5jJdJUjBpbRhoQlUXU0nRimByFx9m8OIlFgo2cef9RNCTA8vmXi5j4zQeHgS4WDCGGZX4o/B2tnfQmKEnlj8EO1l4QbRJ2CiGpE9UFS/0VoHVODFWmbA5KgYMmc1/b65DAtPXHe7LayoR6sE4NpYwSzoQuim0No3veGpxzoF7UA97PYETq2zm5gfjR+5/KV4OmvLpbifM/5DHc/4iUzvxaUgUZzFRh0Uj/XlLHHD/Ps1eoPdT1llU+g=
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(396003)(136003)(346002)(39860400002)(376002)(40470700004)(36840700001)(46966006)(186003)(31696002)(86362001)(82740400003)(356005)(81166007)(40460700003)(426003)(336012)(36860700001)(47076005)(26005)(2906002)(41300700001)(70206006)(8676002)(31686004)(82310400005)(70586007)(7416002)(5660300002)(8936002)(6916009)(40480700001)(966005)(478600001)(316002)(54906003)(4326008)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2022 14:26:59.1477
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 978c40f6-c929-467c-f6bb-08da73c9e4ea
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT007.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3747
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220801135057.GK93763@thinkpad>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 01 Aug 2022 13:46:24 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.59 release.
-> There are 69 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Aug 01, 2022 at 07:20:57PM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Jun 24, 2022 at 05:39:43PM +0300, Serge Semin wrote:
+> > From maintainability and scalability points of view it has been wrong to
+> > use different iATU inbound and outbound regions accessors for the viewport
+> > and unrolled versions of the iATU CSRs mapping. Seeing the particular iATU
+> > region-wise registers layout is almost fully compatible for different
+> > IP-core versions, there were no much points in splitting the code up that
+> > way since it was possible to implement a common windows setup methods for
+> > both viewport and unrolled iATU CSRs spaces. While what we can observe in
+> > the current driver implementation of these methods, is a lot of code
+> > duplication, which consequently worsen the code readability,
+> > maintainability and scalability. Note the current implementation is a bit
+> > more performant than the one suggested in this commit since it implies
+> > having less MMIO accesses. But the gain just doesn't worth having the
+> > denoted difficulties especially seeing the iATU setup methods are mainly
+> > called on the DW PCIe controller and peripheral devices initialization
+> > stage.
+> > 
+> > Here we suggest to move the iATU viewport and unrolled CSR access
+> > specifics in the dw_pcie_readl_atu() and dw_pcie_writel_atu() method, and
+> > convert the dw_pcie_prog_outbound_atu() and
+> > dw_pcie_prog_{ep_}inbound_atu() functions to being generic instead of
+> > having a different methods for each viewport and unrolled types of iATU
+> > CSRs mapping. Nothing complex really. First of all the dw_pcie_readl_atu()
+> > and dw_pcie_writel_atu() are converted to accept relative iATU CSRs
+> > address together with the iATU region direction (inbound or outbound) and
+> > region index. If DW PCIe controller doesn't have the unrolled iATU CSRs
+> > space, then the accessors will need to activate a iATU viewport based on
+> > the specified direction and index, otherwise a base address for the
+> > corresponding region CSRs will be calculated by means of the
+> > PCIE_ATU_UNROLL_BASE() macro. The CSRs macro have been modified in
+> > accordance with that logic in the pcie-designware.h header file.
+> > 
+> > The rest of the changes in this commit just concern converting the iATU
+> > in-/out-bound setup methods and iATU regions detection procedure to be
+> > compatible with the new accessors semantics. As a result we've dropped the
+> > no more required dw_pcie_prog_outbound_atu_unroll(),
+> > dw_pcie_prog_inbound_atu_unroll() and dw_pcie_iatu_detect_regions_unroll()
+> > methods.
+> > 
+> > Note aside with the denoted code improvements, there is an additional
+> > positive side effect of this change. If at some point an atomic iATU
+> > configs setup procedure is required, it will be possible to be done with
+> > no much effort just by adding the synchronization into the
+> > dw_pcie_readl_atu() and dw_pcie_writel_atu() accessors.
+> > 
+> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 > 
-> Responses should be made by Wed, 03 Aug 2022 11:41:16 +0000.
-> Anything received after that time might be too late.
+> One nitpick mentioned below. With that fixed,
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.59-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+> > +static inline void __iomem *dw_pcie_select_atu(struct dw_pcie *pci, u32 dir,
 > 
-> thanks,
-> 
-> greg k-h
+> This could be renamed to "dw_pcie_get_atu_base()" since we are anyway getting
+> the base address of iATU.
 
-All tests passing for Tegra ...
+I can see it both ways.  It definitely returns a base address, so
+"get_atu_base" makes sense.  But it also writes PCIE_ATU_VIEWPORT, and
+"select_atu" hints at that side effect while "get_atu_base" does not.
 
-Test results for stable-v5.15:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    114 tests:	114 pass, 0 fail
-
-Linux version:	5.15.59-rc1-gf7c660e98f9b
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+> > +					       u32 index)
+> >  {
+> > +	void __iomem *base = pci->atu_base;
+> > +
+> > +	if (pci->iatu_unroll_enabled)
+> > +		base += PCIE_ATU_UNROLL_BASE(dir, index);
+> > +	else
+> > +		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, dir | index);
+> > +
+> > +	return base;
+> > +}
