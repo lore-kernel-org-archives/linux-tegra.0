@@ -2,134 +2,261 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DB2C19F2C
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Aug 2022 20:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC3AC19F2C
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Aug 2022 21:23:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232197AbiHAUMO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 1 Aug 2022 16:12:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55516 "EHLO
+        id S235107AbiHAVXw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 1 Aug 2022 17:23:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233932AbiHAUL7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Aug 2022 16:11:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E554A32452;
-        Mon,  1 Aug 2022 13:11:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 230F260A07;
-        Mon,  1 Aug 2022 20:11:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B6EC43470;
-        Mon,  1 Aug 2022 20:11:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659384715;
-        bh=OSqIQPfvYpzTMvxqawaSlG0ztJzt6V5STNgZXTe0fuk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=n3VA8XWEWImLnSFoDbftmNWnGl2LpOR6WfCL0l/z4/qXaMLMsmRlR4TFlTadFAhNW
-         AmfQGx82DBpm3WiUjTW44FAzY51y8Frvh/Erc3eRgTyXK/tKm/PzdisTk8ugOUxZv5
-         LRiunU+dY5vEKGPMvaHjaTBa1g5USOG2QDAZKbCNnH+GS++coY8YXXPrv3zfNuZlhV
-         IYeUF5K4mrdM3sfmYKO0qKq38h/SC2mot3Nz4e+lPemjzooVFi4VsZUDApg6oQSjEd
-         QEOzDBnApfeU5BSQX0R/cg7lAHBowEtAWWkr4q1Iep/dYxKa+Lc1BH6Ee/2JyTSALm
-         UyJgmIjb5sxsA==
-Date:   Mon, 1 Aug 2022 15:11:53 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Frank Li <Frank.Li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH RESEND v4 11/15] PCI: dwc: Simplify in/outbound iATU
- setup methods
-Message-ID: <20220801201153.GA622787@bhelgaas>
+        with ESMTP id S235000AbiHAVXg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Aug 2022 17:23:36 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55E3E459AC
+        for <linux-tegra@vger.kernel.org>; Mon,  1 Aug 2022 14:23:20 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id l22so15633728wrz.7
+        for <linux-tegra@vger.kernel.org>; Mon, 01 Aug 2022 14:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linexp-org.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=vJqB3DsidiN9nPhS4su/6uSlvLZimTeb9ZrCY8jA13M=;
+        b=5aEbX/TT+Te0P+CqQQHLv8B4zadVUfeQTCYvYlPmDe4M1b5ShVtGfTmeDQoxDgsdhz
+         0OJt6GGXbrrgTJPk4wqxUBI0lA54GnD7gMr6N6LfuBfOBN9jnuQTXVLaLZUfPFfrfb+i
+         b3ZXJe6EA1oAT6KdrRObiklwsETGiM9P3aPamlZz2/e6IMwUT63AUoNKDu19i6tisn/m
+         EYeVEyCao9KdRAeL1OQhDSBjMrtJthIrg7dGk+U2NsaYP0ajhXXXcV+KJ0dTlLEJzdry
+         fIGuaenokeBdQ8/W0k/loJcWI2GIUGsZzr8/e7p3oDbUsmNfAuyz6F37ejAC5Iu9b/q2
+         UJvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=vJqB3DsidiN9nPhS4su/6uSlvLZimTeb9ZrCY8jA13M=;
+        b=WBkuNHXKYQye3MtmM14mzQl2Layc8EhBuU7wgoCzXqlqyqH5y1CI9qsFOz60iRbfIG
+         mHGPlYhdlyfEaWrRQuWxCUylx1pkckn98nfUwKvuRRG7tF/xhk+KFXK1/ez6sYfsmEhz
+         sc386LCdLPJHPrezxNA0J9rGWonrD9JUdKwLd6LF4m5YBQa25PJ28ZSuLtdBYyESe34s
+         K9JR643DPW1uNCYIE1FJQpOYaFYHfcTJBHDXXwC1JxwpCjSls1Wrh48qImjJm6CkF4Kw
+         kOz965lpj6/TYJC5DVRDWTQ4e+syKRLxB4jrEQnHO3oMN4zgqJ+cU5LlmPA3d6aEwWOt
+         KnLA==
+X-Gm-Message-State: ACgBeo3cVBERI88UTF0OjM68y0DuPWgyOuxbFUuQ+/x97kJBNWl6jPz4
+        KcBWBpqrJW0BR2rVdlpZj036YQ==
+X-Google-Smtp-Source: AA6agR7JVJB6GT17vvJqVNVEjbmER9jrquRqPOJ8SRwz0E6BM569YRtxc6sDoxS+58jVuXWHbpNhRw==
+X-Received: by 2002:a05:6000:1849:b0:21d:9ad7:f27f with SMTP id c9-20020a056000184900b0021d9ad7f27fmr10881260wri.445.1659388999689;
+        Mon, 01 Aug 2022 14:23:19 -0700 (PDT)
+Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:d00:ceb8:9c09:1302])
+        by smtp.gmail.com with ESMTPSA id c7-20020adffb07000000b0021e501519d3sm12995285wrr.67.2022.08.01.14.23.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Aug 2022 14:23:19 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linexp.org>
+To:     daniel.lezcano@linaro.org, rafael@kernel.org
+Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com,
+        abailon@baylibre.com, lukasz.luba@arm.com, broonie@kernel.org,
+        damien.lemoal@opensource.wdc.com, heiko@sntech.de,
+        hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
+        talel@amazon.com, thierry.reding@gmail.com, digetx@gmail.com,
+        jonathanh@nvidia.com, anarsoul@gmail.com, tiny.windzz@gmail.com,
+        baolin.wang7@gmail.com, f.fainelli@gmail.com,
+        bjorn.andersson@linaro.org, mcoquelin.stm32@gmail.com,
+        glaroque@baylibre.com, miquel.raynal@bootlin.com,
+        shawnguo@kernel.org, niklas.soderlund@ragnatech.se,
+        matthias.bgg@gmail.com, j-keerthy@ti.com,
+        Amit Kucheria <amitk@kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
+Subject: [PATCH v4 07/32] thermal/drivers/tegra: Switch to new of API
+Date:   Mon,  1 Aug 2022 23:22:19 +0200
+Message-Id: <20220801212244.1124867-8-daniel.lezcano@linexp.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220801212244.1124867-1-daniel.lezcano@linexp.org>
+References: <20220801212244.1124867-1-daniel.lezcano@linexp.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220801135057.GK93763@thinkpad>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Aug 01, 2022 at 07:20:57PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Jun 24, 2022 at 05:39:43PM +0300, Serge Semin wrote:
-> > From maintainability and scalability points of view it has been wrong to
-> > use different iATU inbound and outbound regions accessors for the viewport
-> > and unrolled versions of the iATU CSRs mapping. Seeing the particular iATU
-> > region-wise registers layout is almost fully compatible for different
-> > IP-core versions, there were no much points in splitting the code up that
-> > way since it was possible to implement a common windows setup methods for
-> > both viewport and unrolled iATU CSRs spaces. While what we can observe in
-> > the current driver implementation of these methods, is a lot of code
-> > duplication, which consequently worsen the code readability,
-> > maintainability and scalability. Note the current implementation is a bit
-> > more performant than the one suggested in this commit since it implies
-> > having less MMIO accesses. But the gain just doesn't worth having the
-> > denoted difficulties especially seeing the iATU setup methods are mainly
-> > called on the DW PCIe controller and peripheral devices initialization
-> > stage.
-> > 
-> > Here we suggest to move the iATU viewport and unrolled CSR access
-> > specifics in the dw_pcie_readl_atu() and dw_pcie_writel_atu() method, and
-> > convert the dw_pcie_prog_outbound_atu() and
-> > dw_pcie_prog_{ep_}inbound_atu() functions to being generic instead of
-> > having a different methods for each viewport and unrolled types of iATU
-> > CSRs mapping. Nothing complex really. First of all the dw_pcie_readl_atu()
-> > and dw_pcie_writel_atu() are converted to accept relative iATU CSRs
-> > address together with the iATU region direction (inbound or outbound) and
-> > region index. If DW PCIe controller doesn't have the unrolled iATU CSRs
-> > space, then the accessors will need to activate a iATU viewport based on
-> > the specified direction and index, otherwise a base address for the
-> > corresponding region CSRs will be calculated by means of the
-> > PCIE_ATU_UNROLL_BASE() macro. The CSRs macro have been modified in
-> > accordance with that logic in the pcie-designware.h header file.
-> > 
-> > The rest of the changes in this commit just concern converting the iATU
-> > in-/out-bound setup methods and iATU regions detection procedure to be
-> > compatible with the new accessors semantics. As a result we've dropped the
-> > no more required dw_pcie_prog_outbound_atu_unroll(),
-> > dw_pcie_prog_inbound_atu_unroll() and dw_pcie_iatu_detect_regions_unroll()
-> > methods.
-> > 
-> > Note aside with the denoted code improvements, there is an additional
-> > positive side effect of this change. If at some point an atomic iATU
-> > configs setup procedure is required, it will be possible to be done with
-> > no much effort just by adding the synchronization into the
-> > dw_pcie_readl_atu() and dw_pcie_writel_atu() accessors.
-> > 
-> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> 
-> One nitpick mentioned below. With that fixed,
-> 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+The thermal OF code has a new API allowing to migrate the OF
+initialization to a simpler approach. The ops are no longer device
+tree specific and are the generic ones provided by the core code.
 
-> > +static inline void __iomem *dw_pcie_select_atu(struct dw_pcie *pci, u32 dir,
-> 
-> This could be renamed to "dw_pcie_get_atu_base()" since we are anyway getting
-> the base address of iATU.
+Convert the ops to the thermal_zone_device_ops format and use the new
+API to register the thermal zone with these generic ops.
 
-I can see it both ways.  It definitely returns a base address, so
-"get_atu_base" makes sense.  But it also writes PCIE_ATU_VIEWPORT, and
-"select_atu" hints at that side effect while "get_atu_base" does not.
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
+---
+ drivers/thermal/tegra/soctherm.c           | 21 ++++++++++-----------
+ drivers/thermal/tegra/tegra-bpmp-thermal.c | 19 ++++++++++++-------
+ drivers/thermal/tegra/tegra30-tsensor.c    | 12 ++++++------
+ 3 files changed, 28 insertions(+), 24 deletions(-)
 
-> > +					       u32 index)
-> >  {
-> > +	void __iomem *base = pci->atu_base;
-> > +
-> > +	if (pci->iatu_unroll_enabled)
-> > +		base += PCIE_ATU_UNROLL_BASE(dir, index);
-> > +	else
-> > +		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, dir | index);
-> > +
-> > +	return base;
-> > +}
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 825eab526619..1efe470f31e9 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -421,9 +421,9 @@ static int translate_temp(u16 val)
+ 	return t;
+ }
+ 
+-static int tegra_thermctl_get_temp(void *data, int *out_temp)
++static int tegra_thermctl_get_temp(struct thermal_zone_device *tz, int *out_temp)
+ {
+-	struct tegra_thermctl_zone *zone = data;
++	struct tegra_thermctl_zone *zone = tz->devdata;
+ 	u32 val;
+ 
+ 	val = readl(zone->reg);
+@@ -582,10 +582,9 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
+ 	return temp;
+ }
+ 
+-static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
++static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz, int trip, int temp)
+ {
+-	struct tegra_thermctl_zone *zone = data;
+-	struct thermal_zone_device *tz = zone->tz;
++	struct tegra_thermctl_zone *zone = tz->devdata;
+ 	struct tegra_soctherm *ts = zone->ts;
+ 	const struct tegra_tsensor_group *sg = zone->sg;
+ 	struct device *dev = zone->dev;
+@@ -657,9 +656,9 @@ static void thermal_irq_disable(struct tegra_thermctl_zone *zn)
+ 	mutex_unlock(&zn->ts->thermctl_lock);
+ }
+ 
+-static int tegra_thermctl_set_trips(void *data, int lo, int hi)
++static int tegra_thermctl_set_trips(struct thermal_zone_device *tz, int lo, int hi)
+ {
+-	struct tegra_thermctl_zone *zone = data;
++	struct tegra_thermctl_zone *zone = tz->devdata;
+ 	u32 r;
+ 
+ 	thermal_irq_disable(zone);
+@@ -682,7 +681,7 @@ static int tegra_thermctl_set_trips(void *data, int lo, int hi)
+ 	return 0;
+ }
+ 
+-static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
++static const struct thermal_zone_device_ops tegra_of_thermal_ops = {
+ 	.get_temp = tegra_thermctl_get_temp,
+ 	.set_trip_temp = tegra_thermctl_set_trip_temp,
+ 	.set_trips = tegra_thermctl_set_trips,
+@@ -2194,9 +2193,9 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 		zone->sg = soc->ttgs[i];
+ 		zone->ts = tegra;
+ 
+-		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
+-							 soc->ttgs[i]->id, zone,
+-							 &tegra_of_thermal_ops);
++		z = devm_thermal_of_zone_register(&pdev->dev,
++						  soc->ttgs[i]->id, zone,
++						  &tegra_of_thermal_ops);
+ 		if (IS_ERR(z)) {
+ 			err = PTR_ERR(z);
+ 			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+diff --git a/drivers/thermal/tegra/tegra-bpmp-thermal.c b/drivers/thermal/tegra/tegra-bpmp-thermal.c
+index 5affc3d196be..eb84f0b9dc7c 100644
+--- a/drivers/thermal/tegra/tegra-bpmp-thermal.c
++++ b/drivers/thermal/tegra/tegra-bpmp-thermal.c
+@@ -30,9 +30,9 @@ struct tegra_bpmp_thermal {
+ 	struct tegra_bpmp_thermal_zone **zones;
+ };
+ 
+-static int tegra_bpmp_thermal_get_temp(void *data, int *out_temp)
++static int __tegra_bpmp_thermal_get_temp(struct tegra_bpmp_thermal_zone *zone,
++					 int *out_temp)
+ {
+-	struct tegra_bpmp_thermal_zone *zone = data;
+ 	struct mrq_thermal_host_to_bpmp_request req;
+ 	union mrq_thermal_bpmp_to_host_response reply;
+ 	struct tegra_bpmp_message msg;
+@@ -60,9 +60,14 @@ static int tegra_bpmp_thermal_get_temp(void *data, int *out_temp)
+ 	return 0;
+ }
+ 
+-static int tegra_bpmp_thermal_set_trips(void *data, int low, int high)
++static int tegra_bpmp_thermal_get_temp(struct thermal_zone_device *tz, int *out_temp)
+ {
+-	struct tegra_bpmp_thermal_zone *zone = data;
++	return __tegra_bpmp_thermal_get_temp(tz->devdata, out_temp);
++}
++
++static int tegra_bpmp_thermal_set_trips(struct thermal_zone_device *tz, int low, int high)
++{
++	struct tegra_bpmp_thermal_zone *zone = tz->devdata;
+ 	struct mrq_thermal_host_to_bpmp_request req;
+ 	struct tegra_bpmp_message msg;
+ 	int err;
+@@ -157,7 +162,7 @@ static int tegra_bpmp_thermal_get_num_zones(struct tegra_bpmp *bpmp,
+ 	return 0;
+ }
+ 
+-static const struct thermal_zone_of_device_ops tegra_bpmp_of_thermal_ops = {
++static const struct thermal_zone_device_ops tegra_bpmp_of_thermal_ops = {
+ 	.get_temp = tegra_bpmp_thermal_get_temp,
+ 	.set_trips = tegra_bpmp_thermal_set_trips,
+ };
+@@ -200,13 +205,13 @@ static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
+ 		zone->idx = i;
+ 		zone->tegra = tegra;
+ 
+-		err = tegra_bpmp_thermal_get_temp(zone, &temp);
++		err = __tegra_bpmp_thermal_get_temp(zone, &temp);
+ 		if (err < 0) {
+ 			devm_kfree(&pdev->dev, zone);
+ 			continue;
+ 		}
+ 
+-		tzd = devm_thermal_zone_of_sensor_register(
++		tzd = devm_thermal_of_zone_register(
+ 			&pdev->dev, i, zone, &tegra_bpmp_of_thermal_ops);
+ 		if (IS_ERR(tzd)) {
+ 			if (PTR_ERR(tzd) == -EPROBE_DEFER)
+diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
+index 05886684f429..c34501287e96 100644
+--- a/drivers/thermal/tegra/tegra30-tsensor.c
++++ b/drivers/thermal/tegra/tegra30-tsensor.c
+@@ -159,9 +159,9 @@ static void devm_tegra_tsensor_hw_disable(void *data)
+ 	tegra_tsensor_hw_disable(ts);
+ }
+ 
+-static int tegra_tsensor_get_temp(void *data, int *temp)
++static int tegra_tsensor_get_temp(struct thermal_zone_device *tz, int *temp)
+ {
+-	const struct tegra_tsensor_channel *tsc = data;
++	const struct tegra_tsensor_channel *tsc = tz->devdata;
+ 	const struct tegra_tsensor *ts = tsc->ts;
+ 	int err, c1, c2, c3, c4, counter;
+ 	u32 val;
+@@ -217,9 +217,9 @@ static int tegra_tsensor_temp_to_counter(const struct tegra_tsensor *ts, int tem
+ 	return DIV_ROUND_CLOSEST(c2 * 1000000 - ts->calib.b, ts->calib.a);
+ }
+ 
+-static int tegra_tsensor_set_trips(void *data, int low, int high)
++static int tegra_tsensor_set_trips(struct thermal_zone_device *tz, int low, int high)
+ {
+-	const struct tegra_tsensor_channel *tsc = data;
++	const struct tegra_tsensor_channel *tsc = tz->devdata;
+ 	const struct tegra_tsensor *ts = tsc->ts;
+ 	u32 val;
+ 
+@@ -240,7 +240,7 @@ static int tegra_tsensor_set_trips(void *data, int low, int high)
+ 	return 0;
+ }
+ 
+-static const struct thermal_zone_of_device_ops ops = {
++static const struct thermal_zone_device_ops ops = {
+ 	.get_temp = tegra_tsensor_get_temp,
+ 	.set_trips = tegra_tsensor_set_trips,
+ };
+@@ -516,7 +516,7 @@ static int tegra_tsensor_register_channel(struct tegra_tsensor *ts,
+ 	tsc->id = id;
+ 	tsc->regs = ts->regs + 0x40 * (hw_id + 1);
+ 
+-	tsc->tzd = devm_thermal_zone_of_sensor_register(ts->dev, id, tsc, &ops);
++	tsc->tzd = devm_thermal_of_zone_register(ts->dev, id, tsc, &ops);
+ 	if (IS_ERR(tsc->tzd)) {
+ 		if (PTR_ERR(tsc->tzd) != -ENODEV)
+ 			return dev_err_probe(ts->dev, PTR_ERR(tsc->tzd),
+-- 
+2.25.1
+
