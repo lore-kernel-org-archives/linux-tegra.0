@@ -2,715 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFAEC19F2C
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Aug 2022 13:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1022C19F2B
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Aug 2022 14:26:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231958AbiHANvK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 1 Aug 2022 09:51:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46220 "EHLO
+        id S231854AbiHAO05 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 1 Aug 2022 10:26:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231814AbiHANvK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Aug 2022 09:51:10 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A6AB14D3B
-        for <linux-tegra@vger.kernel.org>; Mon,  1 Aug 2022 06:51:06 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id ha11so10993349pjb.2
-        for <linux-tegra@vger.kernel.org>; Mon, 01 Aug 2022 06:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=2p4q9k/yeP9ERuhQBmnMHRCwg5nJin7khzL1lm4prUE=;
-        b=BFEVX9NWefokdtKYIDW6Lifo6jEU4iQZI6yhnbAAe/sIdEKgvE6/hi+OfTsA2ZVP2/
-         6vxkv49LQUhf6gDDVQ8O56Jr6jUa/e+iw6OfbCgBoAPfqEM3tz7VzLgiDdWQ+d1JFU0p
-         DN4VGGqExZSslNnjkMC2LuLPdruMHImqe3EA8DmEl88pyvv1JNdGfjJQdIqNNvruLH9+
-         29gN5cY/S8Pup5+mC/Xr53e/lQwi/SxKJY/LKw6W9xAs1tZLvXWvLpRINksV/huB5oTc
-         ZKvmE0KytlBPRzot2/k5FADrkVHXi7ll8XsM4Rem8E9oGI747Hz9KWNfJ4d1iOHZMc/V
-         T1Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=2p4q9k/yeP9ERuhQBmnMHRCwg5nJin7khzL1lm4prUE=;
-        b=guhwHhtA0LfQg1SSnPesh12WZBOt4R2Cc73OMd4OyaS7a7/V2r47W8Gw97a9tQPtF7
-         ku9psYwnmmmCX7jA6AcCTU/SYG1ajcJ/wRiVMzp4tWtGrhbGqi9c1hVh9MWqyHjFRMY7
-         rvo9ofgCz32xt26OH0jbD+mDHNso1sJ5znG13e01yJcaiMtwOyCPQqet46JZDQWIbrd9
-         XRSoQI1ZCVxZXyi6qJPSzwMfvaorAy1qucAZlt4GN7LK2QcEEgGSnAUxk6k1hZrEF4pV
-         REuRvtp/5gXAc0FkSlhDGaSo9l026XbHp6mf50MNkYdqPG03cf5BFOHOmBLMAh3l9bK0
-         85+w==
-X-Gm-Message-State: ACgBeo05jM1RRZJuqOeZCCq/40IvJFVPb1r6Rtz8qakwsjwLUAdtafT/
-        P0Tnpf08QiBoVloDlo9Mw3ZBHj7vD376
-X-Google-Smtp-Source: AA6agR7Jan5vIA0n85AXRJphUrPBymgpHQ/WLevGv1pNY2S5Ufx+nHC0HvIgMMyiszHw+KqjacnfMw==
-X-Received: by 2002:a17:902:cf4c:b0:16d:1175:9ed0 with SMTP id e12-20020a170902cf4c00b0016d11759ed0mr17309570plg.66.1659361865865;
-        Mon, 01 Aug 2022 06:51:05 -0700 (PDT)
-Received: from thinkpad ([117.217.185.73])
-        by smtp.gmail.com with ESMTPSA id x7-20020a170902a38700b0016bdcb8fbcdsm9606059pla.47.2022.08.01.06.50.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Aug 2022 06:51:05 -0700 (PDT)
-Date:   Mon, 1 Aug 2022 19:20:57 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Cc:     Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Frank Li <Frank.Li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH RESEND v4 11/15] PCI: dwc: Simplify in/outbound iATU
- setup methods
-Message-ID: <20220801135057.GK93763@thinkpad>
-References: <20220624143947.8991-1-Sergey.Semin@baikalelectronics.ru>
- <20220624143947.8991-12-Sergey.Semin@baikalelectronics.ru>
+        with ESMTP id S232158AbiHAO0z (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Aug 2022 10:26:55 -0400
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2042.outbound.protection.outlook.com [40.107.96.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0043C2AE1B;
+        Mon,  1 Aug 2022 07:26:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R3MWwTUu/DWpnnFCpX97EaUMGaThb+fFEERb3vNA1V8cNjK3WzwyEf0NAUsO8ISrpOxwIxa3+tkM9APd8WmtlQ1h34yL6mdzN36pTUJDlrkwhaoOc1FKiVlPGGgpseEqB7UKr6YA/E3iYaaks7Su9gLez1un3KrWnYUcBAlCTnu/F34EOfo8EugTieUIzkZWfxpRAjI5adLPwuqkuxwKjJI3J2axHQw5ULI7+aPjBd+ewRH1SPDj8Fl3mer4HLcI2n1KxX4O4UF+HBKdsQCo8cLwqbPPfwy759vD0D6sIIfJhLqwidvonZ8xPBkIns5KW42nWxRIguG1aEG7qwGrjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1wztB11z5ew1KlYbYupQJGhsPBlqpPOJhdZsVfSKZgU=;
+ b=VBRBvJcU7N/BvenB4GkYPPGSiN5WaMIYFP7bve2u0W9MX7OMSCgbKlUcy5WwJ4b8SKM+nENIqY2CD7V2Ornl5RLPKpjaEkJCjoo3qgD4smBndB+6jztTJMvKzbbCunPPkCBdIdFDLngzLXMlN7lbXlex76LApvIhxwt8NDcPlHlL8tjR8m8XGHcge65WEyaFj90GjnWXZ4bibBeEFZPw+91L97EoNWG7QIugynhlFbEEOuRqIci5dse32LRVEN/qDreY/Q4SD6q7/AuAqStUW3qNLxmnMA/XLkI/obPv30WJ7VzDaN3Zvfjc+stZZa/wj4pWICkOLobrcODu01K0Xg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1wztB11z5ew1KlYbYupQJGhsPBlqpPOJhdZsVfSKZgU=;
+ b=eg1qvuOt8+FuS3wsGDwil71qkz7pRxveEzsGeL5L9kOj8tWDLqS1Oe5tBukXUo/jkIOVrexWFa3JfEl4rXMFAEWmmHfCZsYbuaA9GAG1y3pC0GmYFGJ4zGA7VKuidHEXUm1JCkoZwzldzkXTx4YyTPdrytVrGlKBoWczr7Q56bLOmumzuusIJ63UAOyCpvGrEZnIzQGF5li60xR3quebo/a0hMXAjQA/EGMp/QYucQ6nOdEOdsl7hamw1oOx+E3B6k8JDmhTFpJ2gvCERlTkjsTels0NJWE8R9kbManUcqfXensYeiLtdRTH56l/BQvOd6bsmshd2CtNQbIZ9oA/5A==
+Received: from DS7PR03CA0028.namprd03.prod.outlook.com (2603:10b6:5:3b8::33)
+ by CO6PR12MB5428.namprd12.prod.outlook.com (2603:10b6:5:35c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.11; Mon, 1 Aug
+ 2022 14:26:52 +0000
+Received: from DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b8:cafe::48) by DS7PR03CA0028.outlook.office365.com
+ (2603:10b6:5:3b8::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5458.24 via Frontend
+ Transport; Mon, 1 Aug 2022 14:26:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ DM6NAM11FT041.mail.protection.outlook.com (10.13.172.98) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5482.10 via Frontend Transport; Mon, 1 Aug 2022 14:26:52 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.32; Mon, 1 Aug 2022 14:26:52 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.26; Mon, 1 Aug 2022 07:26:51 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26 via Frontend
+ Transport; Mon, 1 Aug 2022 07:26:51 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/34] 5.4.209-rc1 review
+In-Reply-To: <20220801114128.025615151@linuxfoundation.org>
+References: <20220801114128.025615151@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220624143947.8991-12-Sergey.Semin@baikalelectronics.ru>
+Message-ID: <df1edc65-25b0-4412-8ff3-a88fc440c113@drhqmail202.nvidia.com>
+Date:   Mon, 1 Aug 2022 07:26:51 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4a2efe1f-e17d-4bf3-153f-08da73c9e10f
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5428:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xuA5b4MnliOyy4XpX1wj/3tUIIfO0KW881e545OqudZbOXLQJ8Jz5X9UrlWyWay5b5zXGFvJ06Jg02iIGL2E5By3saSt/jn6/QsNUfzYIIeFCc7CyIWNGW1/c4YIj3Em+RaZ8WquObnTBBurKoRDAqYmw+Df34sHGD8OMvexuyNvWBDoI4ejCLjpQuAQdFzTzIGkEth91AbEbZCPqVbzjFhQGF+qPvUbMHjAUVtWhIP1T6fHtrdd5udvH5mLGAUfbUZ88oLS8ajs45tzJcegszjgRD72BLokrCepacnwGC79tFQAMMX82M85zgSgEB81lF9seWJaxOoDADQ4KLlR0beldBDFsj1qzYCErofvN4BZ5+yuNcBRzQaByc+Lj6AtWpNGE6np4AlvXbQJPxAQE0sMixRcNRZaX24Sm/IbEnRTg0/OyDsWtULY1l2axLJhPr7sbmZaTzKN8wbRGcJYL/mK6gzi7i+NPsm8FLWu4LPG1laOrlthBGLkP3qiv8i4fZGMUWmvh5/UfWT5NCcJSlbB1+0C5O7J2RQHfHad0II9M6plgMe4IFakya1alep+NpwVKD4pesIOnCNkoyDLcL3kML7Z9+kBO3kUslulFtP/g218YFbYVse4JS41WMPq1QqnJTYR25Z9r5pQLEGGFRDBbTz3QE0BSOEdFCqPqqizW8KuzHUI8wmLI0iuW/nIosMJ6HmfXQxrFLdJBUxUaKa5WG2Ou8CjOYWa1a7Pkger7CEjw6vjbF6wbGI7WFKGIvr4UyW56pGqf4t+CnGrcjVfX5+Zdd/4yE/ZgskJUDUWgyZF8uSDXy/gyN+WlEcF9ZPdTraWrkBDl61sekNAntDmgfJBQOcrzZEdcZFkOtt8F221Ni85PXfhZBoqwxc6nLben7e+uiD3R+gkDiTE+N1dPhjSseCUJaXkU7kZDGE=
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(346002)(376002)(39860400002)(396003)(36840700001)(40470700004)(46966006)(47076005)(26005)(186003)(336012)(426003)(356005)(82740400003)(8676002)(36860700001)(81166007)(8936002)(5660300002)(7416002)(4326008)(40480700001)(82310400005)(2906002)(966005)(41300700001)(478600001)(70586007)(54906003)(70206006)(40460700003)(316002)(6916009)(31696002)(86362001)(31686004)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2022 14:26:52.6579
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a2efe1f-e17d-4bf3-153f-08da73c9e10f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR12MB5428
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jun 24, 2022 at 05:39:43PM +0300, Serge Semin wrote:
-> From maintainability and scalability points of view it has been wrong to
-> use different iATU inbound and outbound regions accessors for the viewport
-> and unrolled versions of the iATU CSRs mapping. Seeing the particular iATU
-> region-wise registers layout is almost fully compatible for different
-> IP-core versions, there were no much points in splitting the code up that
-> way since it was possible to implement a common windows setup methods for
-> both viewport and unrolled iATU CSRs spaces. While what we can observe in
-> the current driver implementation of these methods, is a lot of code
-> duplication, which consequently worsen the code readability,
-> maintainability and scalability. Note the current implementation is a bit
-> more performant than the one suggested in this commit since it implies
-> having less MMIO accesses. But the gain just doesn't worth having the
-> denoted difficulties especially seeing the iATU setup methods are mainly
-> called on the DW PCIe controller and peripheral devices initialization
-> stage.
+On Mon, 01 Aug 2022 13:46:40 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.209 release.
+> There are 34 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Here we suggest to move the iATU viewport and unrolled CSR access
-> specifics in the dw_pcie_readl_atu() and dw_pcie_writel_atu() method, and
-> convert the dw_pcie_prog_outbound_atu() and
-> dw_pcie_prog_{ep_}inbound_atu() functions to being generic instead of
-> having a different methods for each viewport and unrolled types of iATU
-> CSRs mapping. Nothing complex really. First of all the dw_pcie_readl_atu()
-> and dw_pcie_writel_atu() are converted to accept relative iATU CSRs
-> address together with the iATU region direction (inbound or outbound) and
-> region index. If DW PCIe controller doesn't have the unrolled iATU CSRs
-> space, then the accessors will need to activate a iATU viewport based on
-> the specified direction and index, otherwise a base address for the
-> corresponding region CSRs will be calculated by means of the
-> PCIE_ATU_UNROLL_BASE() macro. The CSRs macro have been modified in
-> accordance with that logic in the pcie-designware.h header file.
+> Responses should be made by Wed, 03 Aug 2022 11:41:16 +0000.
+> Anything received after that time might be too late.
 > 
-> The rest of the changes in this commit just concern converting the iATU
-> in-/out-bound setup methods and iATU regions detection procedure to be
-> compatible with the new accessors semantics. As a result we've dropped the
-> no more required dw_pcie_prog_outbound_atu_unroll(),
-> dw_pcie_prog_inbound_atu_unroll() and dw_pcie_iatu_detect_regions_unroll()
-> methods.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.209-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> Note aside with the denoted code improvements, there is an additional
-> positive side effect of this change. If at some point an atomic iATU
-> configs setup procedure is required, it will be possible to be done with
-> no much effort just by adding the synchronization into the
-> dw_pcie_readl_atu() and dw_pcie_writel_atu() accessors.
+> thanks,
 > 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> greg k-h
 
-One nitpick mentioned below. With that fixed,
+All tests passing for Tegra ...
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
 
-> 
-> ---
-> 
-> Note the pcie-tegra194-acpi.c driver has been fixed here to have it
-> utilizing the macros introduced in this patch. Judging by the code
-> semantics Tegra 194 ACPI has weird iATU mapping. It's clearly unrolled but
-> the CSRs are accessed over the viewport offsets. This couldn't have been
-> designed more confusing...
-> 
-> Changelog v2:
-> - Move the iATU region selection procedure into a helper function (@Rob).
-> - Simplify the iATU region selection procedure by recalculating the base
->   address only if the space is unrolled. The iATU viewport base address
->   is saved in the pci->atu_base field from now.
-> 
-> Changelog v3:
-> - Fix pcie-tegra194-acpi.c driver to using the new macros names.
->   (@Manivannan)
-> ---
->  drivers/pci/controller/dwc/pcie-designware.c  | 293 ++++++------------
->  drivers/pci/controller/dwc/pcie-designware.h  |  48 ++-
->  .../pci/controller/dwc/pcie-tegra194-acpi.c   |   7 +-
->  3 files changed, 111 insertions(+), 237 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index a90d3f6ce50c..f2aa65d02a6c 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -205,48 +205,64 @@ void dw_pcie_write_dbi2(struct dw_pcie *pci, u32 reg, size_t size, u32 val)
->  		dev_err(pci->dev, "write DBI address failed\n");
->  }
->  
-> -static u32 dw_pcie_readl_atu(struct dw_pcie *pci, u32 reg)
-> +static inline void __iomem *dw_pcie_select_atu(struct dw_pcie *pci, u32 dir,
+Linux version:	5.4.209-rc1-gb48a8f43dce6
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-This could be renamed to "dw_pcie_get_atu_base()" since we are anyway getting
-the base address of iATU.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Thanks,
-Mani
-
-> +					       u32 index)
->  {
-> +	void __iomem *base = pci->atu_base;
-> +
-> +	if (pci->iatu_unroll_enabled)
-> +		base += PCIE_ATU_UNROLL_BASE(dir, index);
-> +	else
-> +		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, dir | index);
-> +
-> +	return base;
-> +}
-> +
-> +static u32 dw_pcie_readl_atu(struct dw_pcie *pci, u32 dir, u32 index, u32 reg)
-> +{
-> +	void __iomem *base;
->  	int ret;
->  	u32 val;
->  
-> +	base = dw_pcie_select_atu(pci, dir, index);
-> +
->  	if (pci->ops && pci->ops->read_dbi)
-> -		return pci->ops->read_dbi(pci, pci->atu_base, reg, 4);
-> +		return pci->ops->read_dbi(pci, base, reg, 4);
->  
-> -	ret = dw_pcie_read(pci->atu_base + reg, 4, &val);
-> +	ret = dw_pcie_read(base + reg, 4, &val);
->  	if (ret)
->  		dev_err(pci->dev, "Read ATU address failed\n");
->  
->  	return val;
->  }
->  
-> -static void dw_pcie_writel_atu(struct dw_pcie *pci, u32 reg, u32 val)
-> +static void dw_pcie_writel_atu(struct dw_pcie *pci, u32 dir, u32 index,
-> +			       u32 reg, u32 val)
->  {
-> +	void __iomem *base;
->  	int ret;
->  
-> +	base = dw_pcie_select_atu(pci, dir, index);
-> +
->  	if (pci->ops && pci->ops->write_dbi) {
-> -		pci->ops->write_dbi(pci, pci->atu_base, reg, 4, val);
-> +		pci->ops->write_dbi(pci, base, reg, 4, val);
->  		return;
->  	}
->  
-> -	ret = dw_pcie_write(pci->atu_base + reg, 4, val);
-> +	ret = dw_pcie_write(base + reg, 4, val);
->  	if (ret)
->  		dev_err(pci->dev, "Write ATU address failed\n");
->  }
->  
-> -static u32 dw_pcie_readl_ob_unroll(struct dw_pcie *pci, u32 index, u32 reg)
-> +static inline u32 dw_pcie_readl_atu_ob(struct dw_pcie *pci, u32 index, u32 reg)
->  {
-> -	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
-> -
-> -	return dw_pcie_readl_atu(pci, offset + reg);
-> +	return dw_pcie_readl_atu(pci, PCIE_ATU_REGION_DIR_OB, index, reg);
->  }
->  
-> -static void dw_pcie_writel_ob_unroll(struct dw_pcie *pci, u32 index, u32 reg,
-> -				     u32 val)
-> +static inline void dw_pcie_writel_atu_ob(struct dw_pcie *pci, u32 index, u32 reg,
-> +					 u32 val)
->  {
-> -	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
-> -
-> -	dw_pcie_writel_atu(pci, offset + reg, val);
-> +	dw_pcie_writel_atu(pci, PCIE_ATU_REGION_DIR_OB, index, reg, val);
->  }
->  
->  static inline u32 dw_pcie_enable_ecrc(u32 val)
-> @@ -290,50 +306,6 @@ static inline u32 dw_pcie_enable_ecrc(u32 val)
->  	return val | PCIE_ATU_TD;
->  }
->  
-> -static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, u8 func_no,
-> -					     int index, int type,
-> -					     u64 cpu_addr, u64 pci_addr,
-> -					     u64 size)
-> -{
-> -	u32 retries, val;
-> -	u64 limit_addr = cpu_addr + size - 1;
-> -
-> -	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_BASE,
-> -				 lower_32_bits(cpu_addr));
-> -	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_BASE,
-> -				 upper_32_bits(cpu_addr));
-> -	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_LIMIT,
-> -				 lower_32_bits(limit_addr));
-> -	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_LIMIT,
-> -				 upper_32_bits(limit_addr));
-> -	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_TARGET,
-> -				 lower_32_bits(pci_addr));
-> -	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_TARGET,
-> -				 upper_32_bits(pci_addr));
-> -	val = type | PCIE_ATU_FUNC_NUM(func_no);
-> -	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr))
-> -		val |= PCIE_ATU_INCREASE_REGION_SIZE;
-> -	if (dw_pcie_ver_is(pci, 490A))
-> -		val = dw_pcie_enable_ecrc(val);
-> -	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL1, val);
-> -	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
-> -				 PCIE_ATU_ENABLE);
-> -
-> -	/*
-> -	 * Make sure ATU enable takes effect before any subsequent config
-> -	 * and I/O accesses.
-> -	 */
-> -	for (retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; retries++) {
-> -		val = dw_pcie_readl_ob_unroll(pci, index,
-> -					      PCIE_ATU_UNR_REGION_CTRL2);
-> -		if (val & PCIE_ATU_ENABLE)
-> -			return;
-> -
-> -		mdelay(LINK_WAIT_IATU);
-> -	}
-> -	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
-> -}
-> -
->  static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
->  					int index, int type, u64 cpu_addr,
->  					u64 pci_addr, u64 size)
-> @@ -344,49 +316,46 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
->  	if (pci->ops && pci->ops->cpu_addr_fixup)
->  		cpu_addr = pci->ops->cpu_addr_fixup(pci, cpu_addr);
->  
-> -	if (pci->iatu_unroll_enabled) {
-> -		dw_pcie_prog_outbound_atu_unroll(pci, func_no, index, type,
-> -						 cpu_addr, pci_addr, size);
-> -		return;
-> -	}
-> -
->  	limit_addr = cpu_addr + size - 1;
->  
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT,
-> -			   PCIE_ATU_REGION_DIR_OB | index);
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_BASE,
-> -			   lower_32_bits(cpu_addr));
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_BASE,
-> -			   upper_32_bits(cpu_addr));
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_LIMIT,
-> -			   lower_32_bits(limit_addr));
-> +	dw_pcie_writel_atu_ob(pci, index, PCIE_ATU_LOWER_BASE,
-> +			      lower_32_bits(cpu_addr));
-> +	dw_pcie_writel_atu_ob(pci, index, PCIE_ATU_UPPER_BASE,
-> +			      upper_32_bits(cpu_addr));
-> +
-> +	dw_pcie_writel_atu_ob(pci, index, PCIE_ATU_LIMIT,
-> +			      lower_32_bits(limit_addr));
->  	if (dw_pcie_ver_is_ge(pci, 460A))
-> -		dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_LIMIT,
-> -				   upper_32_bits(limit_addr));
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET,
-> -			   lower_32_bits(pci_addr));
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_TARGET,
-> -			   upper_32_bits(pci_addr));
-> +		dw_pcie_writel_atu_ob(pci, index, PCIE_ATU_UPPER_LIMIT,
-> +				      upper_32_bits(limit_addr));
-> +
-> +	dw_pcie_writel_atu_ob(pci, index, PCIE_ATU_LOWER_TARGET,
-> +			      lower_32_bits(pci_addr));
-> +	dw_pcie_writel_atu_ob(pci, index, PCIE_ATU_UPPER_TARGET,
-> +			      upper_32_bits(pci_addr));
-> +
->  	val = type | PCIE_ATU_FUNC_NUM(func_no);
->  	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr) &&
->  	    dw_pcie_ver_is_ge(pci, 460A))
->  		val |= PCIE_ATU_INCREASE_REGION_SIZE;
->  	if (dw_pcie_ver_is(pci, 490A))
->  		val = dw_pcie_enable_ecrc(val);
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_CR1, val);
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE);
-> +	dw_pcie_writel_atu_ob(pci, index, PCIE_ATU_REGION_CTRL1, val);
-> +
-> +	dw_pcie_writel_atu_ob(pci, index, PCIE_ATU_REGION_CTRL2, PCIE_ATU_ENABLE);
->  
->  	/*
->  	 * Make sure ATU enable takes effect before any subsequent config
->  	 * and I/O accesses.
->  	 */
->  	for (retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; retries++) {
-> -		val = dw_pcie_readl_dbi(pci, PCIE_ATU_CR2);
-> +		val = dw_pcie_readl_atu_ob(pci, index, PCIE_ATU_REGION_CTRL2);
->  		if (val & PCIE_ATU_ENABLE)
->  			return;
->  
->  		mdelay(LINK_WAIT_IATU);
->  	}
-> +
->  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
->  }
->  
-> @@ -405,54 +374,15 @@ void dw_pcie_prog_ep_outbound_atu(struct dw_pcie *pci, u8 func_no, int index,
->  				    cpu_addr, pci_addr, size);
->  }
->  
-> -static u32 dw_pcie_readl_ib_unroll(struct dw_pcie *pci, u32 index, u32 reg)
-> -{
-> -	u32 offset = PCIE_GET_ATU_INB_UNR_REG_OFFSET(index);
-> -
-> -	return dw_pcie_readl_atu(pci, offset + reg);
-> -}
-> -
-> -static void dw_pcie_writel_ib_unroll(struct dw_pcie *pci, u32 index, u32 reg,
-> -				     u32 val)
-> +static inline u32 dw_pcie_readl_atu_ib(struct dw_pcie *pci, u32 index, u32 reg)
->  {
-> -	u32 offset = PCIE_GET_ATU_INB_UNR_REG_OFFSET(index);
-> -
-> -	dw_pcie_writel_atu(pci, offset + reg, val);
-> +	return dw_pcie_readl_atu(pci, PCIE_ATU_REGION_DIR_IB, index, reg);
->  }
->  
-> -static int dw_pcie_prog_inbound_atu_unroll(struct dw_pcie *pci, u8 func_no,
-> -					   int index, int type,
-> -					   u64 cpu_addr, u8 bar)
-> +static inline void dw_pcie_writel_atu_ib(struct dw_pcie *pci, u32 index, u32 reg,
-> +					 u32 val)
->  {
-> -	u32 retries, val;
-> -
-> -	dw_pcie_writel_ib_unroll(pci, index, PCIE_ATU_UNR_LOWER_TARGET,
-> -				 lower_32_bits(cpu_addr));
-> -	dw_pcie_writel_ib_unroll(pci, index, PCIE_ATU_UNR_UPPER_TARGET,
-> -				 upper_32_bits(cpu_addr));
-> -
-> -	dw_pcie_writel_ib_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL1, type |
-> -				 PCIE_ATU_FUNC_NUM(func_no));
-> -	dw_pcie_writel_ib_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
-> -				 PCIE_ATU_FUNC_NUM_MATCH_EN |
-> -				 PCIE_ATU_ENABLE |
-> -				 PCIE_ATU_BAR_MODE_ENABLE | (bar << 8));
-> -
-> -	/*
-> -	 * Make sure ATU enable takes effect before any subsequent config
-> -	 * and I/O accesses.
-> -	 */
-> -	for (retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; retries++) {
-> -		val = dw_pcie_readl_ib_unroll(pci, index,
-> -					      PCIE_ATU_UNR_REGION_CTRL2);
-> -		if (val & PCIE_ATU_ENABLE)
-> -			return 0;
-> -
-> -		mdelay(LINK_WAIT_IATU);
-> -	}
-> -	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
-> -
-> -	return -EBUSY;
-> +	dw_pcie_writel_atu(pci, PCIE_ATU_REGION_DIR_IB, index, reg, val);
->  }
->  
->  int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, u8 func_no, int index,
-> @@ -460,51 +390,37 @@ int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, u8 func_no, int index,
->  {
->  	u32 retries, val;
->  
-> -	if (pci->iatu_unroll_enabled)
-> -		return dw_pcie_prog_inbound_atu_unroll(pci, func_no, index, type,
-> -						       cpu_addr, bar);
-> +	dw_pcie_writel_atu_ib(pci, index, PCIE_ATU_LOWER_TARGET,
-> +			      lower_32_bits(cpu_addr));
-> +	dw_pcie_writel_atu_ib(pci, index, PCIE_ATU_UPPER_TARGET,
-> +			      upper_32_bits(cpu_addr));
->  
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, PCIE_ATU_REGION_DIR_IB |
-> -			   index);
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET, lower_32_bits(cpu_addr));
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_TARGET, upper_32_bits(cpu_addr));
-> -
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_CR1, type |
-> -			   PCIE_ATU_FUNC_NUM(func_no));
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE |
-> -			   PCIE_ATU_FUNC_NUM_MATCH_EN |
-> -			   PCIE_ATU_BAR_MODE_ENABLE | (bar << 8));
-> +	dw_pcie_writel_atu_ib(pci, index, PCIE_ATU_REGION_CTRL1, type |
-> +			      PCIE_ATU_FUNC_NUM(func_no));
-> +	dw_pcie_writel_atu_ib(pci, index, PCIE_ATU_REGION_CTRL2,
-> +			      PCIE_ATU_ENABLE | PCIE_ATU_FUNC_NUM_MATCH_EN |
-> +			      PCIE_ATU_BAR_MODE_ENABLE | (bar << 8));
->  
->  	/*
->  	 * Make sure ATU enable takes effect before any subsequent config
->  	 * and I/O accesses.
->  	 */
->  	for (retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; retries++) {
-> -		val = dw_pcie_readl_dbi(pci, PCIE_ATU_CR2);
-> +		val = dw_pcie_readl_atu_ib(pci, index, PCIE_ATU_REGION_CTRL2);
->  		if (val & PCIE_ATU_ENABLE)
->  			return 0;
->  
->  		mdelay(LINK_WAIT_IATU);
->  	}
-> +
->  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
->  
-> -	return -EBUSY;
-> +	return -ETIMEDOUT;
->  }
->  
->  void dw_pcie_disable_atu(struct dw_pcie *pci, u32 dir, int index)
->  {
-> -	if (pci->iatu_unroll_enabled) {
-> -		if (dir == PCIE_ATU_REGION_DIR_IB) {
-> -			dw_pcie_writel_ib_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
-> -						 ~(u32)PCIE_ATU_ENABLE);
-> -		} else {
-> -			dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
-> -						 ~(u32)PCIE_ATU_ENABLE);
-> -		}
-> -	} else {
-> -		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, dir | index);
-> -		dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, ~(u32)PCIE_ATU_ENABLE);
-> -	}
-> +	dw_pcie_writel_atu(pci, dir, index, PCIE_ATU_REGION_CTRL2, 0);
->  }
->  
->  int dw_pcie_wait_for_link(struct dw_pcie *pci)
-> @@ -606,63 +522,29 @@ static bool dw_pcie_iatu_unroll_enabled(struct dw_pcie *pci)
->  	return false;
->  }
->  
-> -static void dw_pcie_iatu_detect_regions_unroll(struct dw_pcie *pci)
-> -{
-> -	int max_region, i, ob = 0, ib = 0;
-> -	u32 val;
-> -
-> -	max_region = min((int)pci->atu_size / 512, 256);
-> -
-> -	for (i = 0; i < max_region; i++) {
-> -		dw_pcie_writel_ob_unroll(pci, i, PCIE_ATU_UNR_LOWER_TARGET,
-> -					0x11110000);
-> -
-> -		val = dw_pcie_readl_ob_unroll(pci, i, PCIE_ATU_UNR_LOWER_TARGET);
-> -		if (val == 0x11110000)
-> -			ob++;
-> -		else
-> -			break;
-> -	}
-> -
-> -	for (i = 0; i < max_region; i++) {
-> -		dw_pcie_writel_ib_unroll(pci, i, PCIE_ATU_UNR_LOWER_TARGET,
-> -					0x11110000);
-> -
-> -		val = dw_pcie_readl_ib_unroll(pci, i, PCIE_ATU_UNR_LOWER_TARGET);
-> -		if (val == 0x11110000)
-> -			ib++;
-> -		else
-> -			break;
-> -	}
-> -	pci->num_ib_windows = ib;
-> -	pci->num_ob_windows = ob;
-> -}
-> -
->  static void dw_pcie_iatu_detect_regions(struct dw_pcie *pci)
->  {
-> -	int max_region, i, ob = 0, ib = 0;
-> +	int max_region, ob, ib;
->  	u32 val;
->  
-> -	dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, 0xFF);
-> -	max_region = dw_pcie_readl_dbi(pci, PCIE_ATU_VIEWPORT) + 1;
-> +	if (pci->iatu_unroll_enabled) {
-> +		max_region = min((int)pci->atu_size / 512, 256);
-> +	} else {
-> +		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, 0xFF);
-> +		max_region = dw_pcie_readl_dbi(pci, PCIE_ATU_VIEWPORT) + 1;
-> +	}
->  
-> -	for (i = 0; i < max_region; i++) {
-> -		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, PCIE_ATU_REGION_DIR_OB | i);
-> -		dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET, 0x11110000);
-> -		val = dw_pcie_readl_dbi(pci, PCIE_ATU_LOWER_TARGET);
-> -		if (val == 0x11110000)
-> -			ob++;
-> -		else
-> +	for (ob = 0; ob < max_region; ob++) {
-> +		dw_pcie_writel_atu_ob(pci, ob, PCIE_ATU_LOWER_TARGET, 0x11110000);
-> +		val = dw_pcie_readl_atu_ob(pci, ob, PCIE_ATU_LOWER_TARGET);
-> +		if (val != 0x11110000)
->  			break;
->  	}
->  
-> -	for (i = 0; i < max_region; i++) {
-> -		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, PCIE_ATU_REGION_DIR_IB | i);
-> -		dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET, 0x11110000);
-> -		val = dw_pcie_readl_dbi(pci, PCIE_ATU_LOWER_TARGET);
-> -		if (val == 0x11110000)
-> -			ib++;
-> -		else
-> +	for (ib = 0; ib < max_region; ib++) {
-> +		dw_pcie_writel_atu_ib(pci, ib, PCIE_ATU_LOWER_TARGET, 0x11110000);
-> +		val = dw_pcie_readl_atu_ib(pci, ib, PCIE_ATU_LOWER_TARGET);
-> +		if (val != 0x11110000)
->  			break;
->  	}
->  
-> @@ -690,12 +572,13 @@ void dw_pcie_iatu_detect(struct dw_pcie *pci)
->  		if (!pci->atu_size)
->  			/* Pick a minimal default, enough for 8 in and 8 out windows */
->  			pci->atu_size = SZ_4K;
-> -
-> -		dw_pcie_iatu_detect_regions_unroll(pci);
->  	} else {
-> -		dw_pcie_iatu_detect_regions(pci);
-> +		pci->atu_base = pci->dbi_base + PCIE_ATU_VIEWPORT_BASE;
-> +		pci->atu_size = PCIE_ATU_VIEWPORT_SIZE;
->  	}
->  
-> +	dw_pcie_iatu_detect_regions(pci);
-> +
->  	dev_info(pci->dev, "iATU unroll: %s\n", pci->iatu_unroll_enabled ?
->  		"enabled" : "disabled");
->  
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 72d185ff72f3..c18f0db09b31 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -103,10 +103,21 @@
->  #define PCIE_VERSION_NUMBER		0x8F8
->  #define PCIE_VERSION_TYPE		0x8FC
->  
-> +/*
-> + * iATU inbound and outbound windows CSRs. Before the IP-core v4.80a each
-> + * iATU region CSRs had been indirectly accessible by means of the dedicated
-> + * viewport selector. The iATU/eDMA CSRs space was re-designed in DWC PCIe
-> + * v4.80a in a way so the viewport was unrolled into the directly accessible
-> + * iATU/eDMA CSRs space.
-> + */
->  #define PCIE_ATU_VIEWPORT		0x900
->  #define PCIE_ATU_REGION_DIR_IB		BIT(31)
->  #define PCIE_ATU_REGION_DIR_OB		0
-> -#define PCIE_ATU_CR1			0x904
-> +#define PCIE_ATU_VIEWPORT_BASE		0x904
-> +#define PCIE_ATU_UNROLL_BASE(dir, index) \
-> +	(((index) << 9) | ((dir == PCIE_ATU_REGION_DIR_IB) ? BIT(8) : 0))
-> +#define PCIE_ATU_VIEWPORT_SIZE		0x2C
-> +#define PCIE_ATU_REGION_CTRL1		0x000
->  #define PCIE_ATU_INCREASE_REGION_SIZE	BIT(13)
->  #define PCIE_ATU_TYPE_MEM		0x0
->  #define PCIE_ATU_TYPE_IO		0x2
-> @@ -114,19 +125,19 @@
->  #define PCIE_ATU_TYPE_CFG1		0x5
->  #define PCIE_ATU_TD			BIT(8)
->  #define PCIE_ATU_FUNC_NUM(pf)           ((pf) << 20)
-> -#define PCIE_ATU_CR2			0x908
-> +#define PCIE_ATU_REGION_CTRL2		0x004
->  #define PCIE_ATU_ENABLE			BIT(31)
->  #define PCIE_ATU_BAR_MODE_ENABLE	BIT(30)
->  #define PCIE_ATU_FUNC_NUM_MATCH_EN      BIT(19)
-> -#define PCIE_ATU_LOWER_BASE		0x90C
-> -#define PCIE_ATU_UPPER_BASE		0x910
-> -#define PCIE_ATU_LIMIT			0x914
-> -#define PCIE_ATU_LOWER_TARGET		0x918
-> +#define PCIE_ATU_LOWER_BASE		0x008
-> +#define PCIE_ATU_UPPER_BASE		0x00C
-> +#define PCIE_ATU_LIMIT			0x010
-> +#define PCIE_ATU_LOWER_TARGET		0x014
->  #define PCIE_ATU_BUS(x)			FIELD_PREP(GENMASK(31, 24), x)
->  #define PCIE_ATU_DEV(x)			FIELD_PREP(GENMASK(23, 19), x)
->  #define PCIE_ATU_FUNC(x)		FIELD_PREP(GENMASK(18, 16), x)
-> -#define PCIE_ATU_UPPER_TARGET		0x91C
-> -#define PCIE_ATU_UPPER_LIMIT		0x924
-> +#define PCIE_ATU_UPPER_TARGET		0x018
-> +#define PCIE_ATU_UPPER_LIMIT		0x020
->  
->  #define PCIE_MISC_CONTROL_1_OFF		0x8BC
->  #define PCIE_DBI_RO_WR_EN		BIT(0)
-> @@ -143,19 +154,6 @@
->  
->  #define PCIE_PL_CHK_REG_ERR_ADDR			0xB28
->  
-> -/*
-> - * iATU Unroll-specific register definitions
-> - * From 4.80 core version the address translation will be made by unroll
-> - */
-> -#define PCIE_ATU_UNR_REGION_CTRL1	0x00
-> -#define PCIE_ATU_UNR_REGION_CTRL2	0x04
-> -#define PCIE_ATU_UNR_LOWER_BASE		0x08
-> -#define PCIE_ATU_UNR_UPPER_BASE		0x0C
-> -#define PCIE_ATU_UNR_LOWER_LIMIT	0x10
-> -#define PCIE_ATU_UNR_LOWER_TARGET	0x14
-> -#define PCIE_ATU_UNR_UPPER_TARGET	0x18
-> -#define PCIE_ATU_UNR_UPPER_LIMIT	0x20
-> -
->  /*
->   * The default address offset between dbi_base and atu_base. Root controller
->   * drivers are not required to initialize atu_base if the offset matches this
-> @@ -164,13 +162,6 @@
->   */
->  #define DEFAULT_DBI_ATU_OFFSET (0x3 << 20)
->  
-> -/* Register address builder */
-> -#define PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(region) \
-> -		((region) << 9)
-> -
-> -#define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region) \
-> -		(((region) << 9) | BIT(8))
-> -
->  #define MAX_MSI_IRQS			256
->  #define MAX_MSI_IRQS_PER_CTRL		32
->  #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
-> @@ -277,7 +268,6 @@ struct dw_pcie {
->  	struct device		*dev;
->  	void __iomem		*dbi_base;
->  	void __iomem		*dbi_base2;
-> -	/* Used when iatu_unroll_enabled is true */
->  	void __iomem		*atu_base;
->  	size_t			atu_size;
->  	u32			num_ib_windows;
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194-acpi.c b/drivers/pci/controller/dwc/pcie-tegra194-acpi.c
-> index c2de6ed4d86f..55f61914a986 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194-acpi.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194-acpi.c
-> @@ -39,7 +39,8 @@ static int tegra194_acpi_init(struct pci_config_window *cfg)
->  static void atu_reg_write(struct tegra194_pcie_ecam *pcie_ecam, int index,
->  			  u32 val, u32 reg)
->  {
-> -	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
-> +	u32 offset = PCIE_ATU_UNROLL_BASE(PCIE_ATU_REGION_DIR_OB, index) +
-> +		     PCIE_ATU_VIEWPORT_BASE;
->  
->  	writel(val, pcie_ecam->iatu_base + offset + reg);
->  }
-> @@ -58,8 +59,8 @@ static void program_outbound_atu(struct tegra194_pcie_ecam *pcie_ecam,
->  		      PCIE_ATU_LIMIT);
->  	atu_reg_write(pcie_ecam, index, upper_32_bits(pci_addr),
->  		      PCIE_ATU_UPPER_TARGET);
-> -	atu_reg_write(pcie_ecam, index, type, PCIE_ATU_CR1);
-> -	atu_reg_write(pcie_ecam, index, PCIE_ATU_ENABLE, PCIE_ATU_CR2);
-> +	atu_reg_write(pcie_ecam, index, type, PCIE_ATU_REGION_CTRL1);
-> +	atu_reg_write(pcie_ecam, index, PCIE_ATU_ENABLE, PCIE_ATU_REGION_CTRL2);
->  }
->  
->  static void __iomem *tegra194_map_bus(struct pci_bus *bus,
-> -- 
-> 2.35.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Jon
