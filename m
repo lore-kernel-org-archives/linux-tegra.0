@@ -2,343 +2,260 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA91C00140
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Aug 2022 10:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE15CC19F2D
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Aug 2022 14:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237539AbiHEKl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 Aug 2022 06:41:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52378 "EHLO
+        id S240980AbiHEO5s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 Aug 2022 10:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232145AbiHEKlz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Aug 2022 06:41:55 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2060.outbound.protection.outlook.com [40.107.237.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3368A6D554;
-        Fri,  5 Aug 2022 03:41:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fxnF1RxGUwMDhzTs4nhTFDAAyXHEwMJe0PnqIIXwT3k79rbykYhtVBZxJww/3Ms760TtA04vHKwTn5KtmnVXvtdJk2Qs25USXYAylOtK52ocdqZng6AtcFpqu1FvYe0Z+IWhYJK6/4g23L5oQPgwWEv4itbGaDblvlFDeoV5coDS8w3FN6howkx9mG+KRKbE7W0xiLg9jI/ZDNSqlgC/9B5uKW+MaRkUgXWF8kpBRiAcFRYILisTCaQXj+HIsYMQaOjgQsjb5xh2lH+3VQSVTefsrnCZ6ikC+/xRVkZSSQXi7DE+n+s6vF/giNx5vip7twhXz0oWDfYUQy8gH+oSEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=citX6S8zuMzc1Lvq7ORAg4xm+IUkRpyOXMZ6SBuzdzg=;
- b=QKPUCvtHIepCbwpsBrQ7fmaiqwoT50CsrXkYiwHdswdZE53r4UgJneKSsrPEnIaHxuPQp8L85bWteEGx2329HHSCmKjkKWaEgDjYfK245SAsYAhVSJmcDnvehurQ/433qoPf8BoDkui+o6ZUywzHGNEyIAagsC1CjpGPdABSPAKnPc9UoM2N6Tt4pk/KhUoRyGyKwjZAtgXvQyYDwfbR0qyNYzvFRsRF7WVc+Cy0lA7L5A9wHwd0DYyGMs8MEsypwQky31v2LmZU9bbBTk1kxnXclBthnBvwOtyGgZ+08ZfvdA3ox5BTGaEq99p+tY0V0RbhBWCePhpTP8S4lH69jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=linux.dev smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=citX6S8zuMzc1Lvq7ORAg4xm+IUkRpyOXMZ6SBuzdzg=;
- b=s0hjUDjYf0vZ3nQQp9XCDkdEXXD1+hYJ7oGXSBYHtFC4/QMJn9XkbRPVKn5y/+FYhyhKJziXVXzJnTiQCDlZzRb4RLd7m48ubTtpztKMSWK1GuY8q3IqBKmjI0PQmpou1g+xBqLKGefZiRa5mZxrv9v3l5+SWsClhpFMPpsz1Bta41OVnD+Kerq07tcwP+r+vTVZtJBdbQjJQgi6y4nKHeVOVHy+rVZQbDw8NYHQLTcomAHz0zw+ltcD8r0jWPkjIwzKsiTI3HvgDQUXUvhKgIzU5MlzcGh0QUOllVun2/tUKeOEtknz2P5PATNMJ1g4To6dfAKo5itOU3Jc4BEPXA==
-Received: from DS7PR03CA0287.namprd03.prod.outlook.com (2603:10b6:5:3ad::22)
- by SN1PR12MB2511.namprd12.prod.outlook.com (2603:10b6:802:23::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.14; Fri, 5 Aug
- 2022 10:41:49 +0000
-Received: from DM6NAM11FT052.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3ad:cafe::6d) by DS7PR03CA0287.outlook.office365.com
- (2603:10b6:5:3ad::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.16 via Frontend
- Transport; Fri, 5 Aug 2022 10:41:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.236) by
- DM6NAM11FT052.mail.protection.outlook.com (10.13.172.111) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5504.14 via Frontend Transport; Fri, 5 Aug 2022 10:41:48 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL109.nvidia.com
- (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 5 Aug
- 2022 10:41:48 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 5 Aug 2022
- 03:41:47 -0700
-Received: from build-petlozup-20220627T000321362.nvidia.com (10.127.8.12) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.986.26 via
- Frontend Transport; Fri, 5 Aug 2022 03:41:47 -0700
-From:   Petlozu Pravareshwar <petlozup@nvidia.com>
-To:     <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
-        <p.zabel@pengutronix.de>, <dmitry.osipenko@collabora.com>,
-        <ulf.hansson@linaro.org>, <kkartik@nvidia.com>,
-        <cai.huoqing@linux.dev>, <spatra@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <petlozup@nvidia.com>
-Subject: [PATCH] soc/tegra: pmc: Add IO Pad table for tegra234
-Date:   Fri, 5 Aug 2022 10:41:00 +0000
-Message-ID: <20220805104100.3098200-1-petlozup@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+        with ESMTP id S238504AbiHEO5r (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Aug 2022 10:57:47 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68ED2564CA
+        for <linux-tegra@vger.kernel.org>; Fri,  5 Aug 2022 07:57:44 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id v5so1558686wmj.0
+        for <linux-tegra@vger.kernel.org>; Fri, 05 Aug 2022 07:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=o4qJMXGfl1V64TlbGvBfcm+LN8g9SJYD1xysElPFV+w=;
+        b=eZBBQdzncTXK3CK4MNTJG2M8VMM9rVBloXv1jN1nCd/+1qkQTnhO/efbCMPGsHhhR+
+         LkPnBwv6SEuDRRqbP4CWHuoWPe0LYtlwAYHYzu7nLu2RQ9eNKs31G4BO00vnBeVluRHm
+         F6lVr3xKzO4OJNDhthOsWntpeK8XfnlCsYPqlu1GNRnUqZRmjQMxSMITM3i8NmDgkJiw
+         N9jyAaTL78pezdHS7VG3xL+31qb/AMCztVGDnaoGR20Pd9fOLaGgv6/4Bb9YfWYQaAXU
+         hMshzCDOxdv7JGUkwANk9lJ+Ptm+ejVa54gcxN8sJptA+2GYUfqVUuglLeC1A/aFJV8i
+         ttqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=o4qJMXGfl1V64TlbGvBfcm+LN8g9SJYD1xysElPFV+w=;
+        b=a0Qc5tuIg54X8+XWurDNttFV3qm+g0yZ/YZzKc+wl50kBbuz4M54B13++wBI0iEolE
+         XKIsI0ZTNpbbplvM5r1pVy3OOg220C1N9kGFWhXjf5CShjhYEWOed4EzCjh2JhYqgRZP
+         qEK+1pEyj0wcNXQVuRWkr++PZyqjMMPFO545YHqaY1S0atqzJ2tT+LRyk7kWcAMaHi2N
+         PQR1oliMDpR0m8kUhwutaeTiJ1oqnZeWF257AP1Rx6lc40U99XCBDNP4hELKJqzbiee8
+         eKebxYTs0vkIgY0iju9paruPyE9UmyyT2s1Sg9uwS8HACNArLBudYALxlM/60vjKDrI0
+         gc0w==
+X-Gm-Message-State: ACgBeo3vMv8IPS3REn2/HsHxH5Lmmr3+EsaVpeRThidp81ZXL4IDUNF2
+        jjdyndaEIa0JUAlJd0OmMgss/g==
+X-Google-Smtp-Source: AA6agR5vgKZ1scONDwjrANviaKFae/NRN/p3900F4LwCunVN/wiI0liT70nfxxj9L1NFTeuSjjFQYQ==
+X-Received: by 2002:a7b:c3c6:0:b0:3a3:2065:e022 with SMTP id t6-20020a7bc3c6000000b003a32065e022mr5079223wmj.117.1659711462808;
+        Fri, 05 Aug 2022 07:57:42 -0700 (PDT)
+Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:aef0:8606:da6b:79ef])
+        by smtp.gmail.com with ESMTPSA id y1-20020adfd081000000b0022159d92004sm3102448wrh.82.2022.08.05.07.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Aug 2022 07:57:42 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     daniel.lezcano@linaro.org, rafael@kernel.org
+Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Kaestle <peter@piie.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Antoine Tenart <atenart@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: [PATCH v1 00/26] Rework the trip points creation
+Date:   Fri,  5 Aug 2022 16:57:03 +0200
+Message-Id: <20220805145729.2491611-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b7aea471-a5ae-49cc-542c-08da76cf19e4
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2511:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: B4Wx+BRbjkIOjq9ddT4PCak4/FvOMV1wF2fCNb/fLF7kpG+K5jm5XsokdLY8r7Tfaa62Guz9puzSs/w5F9tKqYv+yLoeCuWGvE8xSZiHXIQfR46C40fgObFVLJrsq1B8cCltArXvTEzA+TxKYh2ScD+Qrf6dsM6UYIzQIMBmaR18ltIs07U4Xbxe24rmXFBO+eagNw2UpqIrQdkeQtdlvYus43l2wqQgG/gk6g5kuh/anrSLqeyq8xKLNpek5QP8xWSi3pEGJe+8rqIZ/U+9LVp4ZTqe/QUFmOAu3L41UuIODsce8Juvi51FJOAihtJobSczzuwc8ANav9dIVtNxPH6l0sq5RdMBUnptgN6/hFzOiwAuLMDdwIOqEPoiHTnHAq/VAvpGEKr3kEECNoK8sT2LuKceGUazvVQDLSbMYvfGOR47XQ6/b4k2CQeNrDnGodA5GyfHpF4Aa14SGLrpdks0OSp5KsH6Cv0v/NTueRuK+vQSDL6xoRylZbYxGq7sr/BiViJKXVB3QfC1rQu2U3lFnLmnzH4wFiN2Usc/0M3yuIU+jiA4sGKaXC3ZWRKZWzSSCfTvUUR9moJE+darRx4DObCVVEQ0YbTInJN4boUpMbMIbkOjG+MgE79v+edec/nxLg38w4PmjtmRjrz6V2Uz8efmI+dJG7D4QiITFEc80IuMYjSNyJUg+iAwpdlHkSo4ttFC6hYd6YgaVve14hJ9Ac1dhewiVtc0pOjFf7MYshecbbgDVh0R6W0bVZ6bcHg+orPd3dEnUgz4LpVLjC6COLwQBcI3LpRcVBE3/rTPFiozW1iRmL69w2uVQVmDR5+82DhExfleaPvpnPJH2nImn0HsSrxIa9MviOzF1bM=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(39860400002)(346002)(396003)(376002)(36840700001)(46966006)(40470700004)(83380400001)(47076005)(1076003)(41300700001)(7696005)(186003)(426003)(26005)(6666004)(82740400003)(336012)(921005)(81166007)(356005)(2616005)(36860700001)(107886003)(82310400005)(2906002)(36756003)(40480700001)(8936002)(5660300002)(70206006)(86362001)(40460700003)(110136005)(478600001)(8676002)(4326008)(70586007)(316002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2022 10:41:48.9954
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7aea471-a5ae-49cc-542c-08da76cf19e4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT052.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2511
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add IO PAD table for tegra234 to allow configuring dpd mode
-and switching the pins to 1.8V or 3.3V as needed.
+This work is the pre-requisite of handling correctly when the trip
+point are crossed. For that we need to rework how the trip points are
+declared and assigned to a thermal zone.
 
-In tegra234, DPD registers are reorganized such that there is
-a DPD_REQ register and a DPD_STATUS register per pad group.
-This change accordingly updates the PMC driver.
+Even if it appears to be a common sense to have the trip points being
+ordered, this no guarantee neither documentation telling that is the
+case.
 
-Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 116 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 112 insertions(+), 4 deletions(-)
+One solution could have been to create an ordered array of trips built
+when registering the thermal zone by calling the different get_trip*
+ops. However those ops receive a thermal zone pointer which is not
+known as it is in the process of creating it.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 5611d14d3ba2..6d666fd0370d 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -266,11 +266,22 @@ struct tegra_powergate {
- 	struct reset_control *reset;
- };
- 
-+enum tegra_dpd_reg {
-+	TEGRA_PMC_IO_INVALID_DPD,
-+	TEGRA_PMC_IO_CSI_DPD,
-+	TEGRA_PMC_IO_DISP_DPD,
-+	TEGRA_PMC_IO_QSPI_DPD,
-+	TEGRA_PMC_IO_UFS_DPD,
-+	TEGRA_PMC_IO_EDP_DPD,
-+	TEGRA_PMC_IO_SDMMC1_HV_DPD,
-+};
-+
- struct tegra_io_pad_soc {
- 	enum tegra_io_pad id;
- 	unsigned int dpd;
- 	unsigned int voltage;
- 	const char *name;
-+	enum tegra_dpd_reg reg_index;
- };
- 
- struct tegra_pmc_regs {
-@@ -284,6 +295,8 @@ struct tegra_pmc_regs {
- 	unsigned int rst_source_mask;
- 	unsigned int rst_level_shift;
- 	unsigned int rst_level_mask;
-+	const unsigned int *reorg_dpd_req;
-+	const unsigned int *reorg_dpd_status;
- };
- 
- struct tegra_wake_event {
-@@ -364,6 +377,7 @@ struct tegra_pmc_soc {
- 	bool has_blink_output;
- 	bool has_usb_sleepwalk;
- 	bool supports_core_domain;
-+	bool has_reorg_hw_dpd_reg_impl;
- };
- 
- /**
-@@ -1546,6 +1560,14 @@ static int tegra_io_pad_get_dpd_register_bit(struct tegra_pmc *pmc,
- 	if (pad->dpd == UINT_MAX)
- 		return -ENOTSUPP;
- 
-+	if (pmc->soc->has_reorg_hw_dpd_reg_impl) {
-+		*mask = BIT(pad->dpd);
-+		*status = pmc->soc->regs->reorg_dpd_status[pad->reg_index];
-+		*request = pmc->soc->regs->reorg_dpd_req[pad->reg_index];
-+
-+		goto done;
-+	}
-+
- 	*mask = BIT(pad->dpd % 32);
- 
- 	if (pad->dpd < 32) {
-@@ -1556,6 +1578,7 @@ static int tegra_io_pad_get_dpd_register_bit(struct tegra_pmc *pmc,
- 		*request = pmc->soc->regs->dpd2_req;
- 	}
- 
-+done:
- 	return 0;
- }
- 
-@@ -3132,6 +3155,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.num_pmc_clks = 0,
- 	.has_blink_output = true,
- 	.has_usb_sleepwalk = true,
-+	.has_reorg_hw_dpd_reg_impl = false,
- };
- 
- static const char * const tegra30_powergates[] = {
-@@ -3193,6 +3217,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output = true,
- 	.has_usb_sleepwalk = true,
-+	.has_reorg_hw_dpd_reg_impl = false,
- };
- 
- static const char * const tegra114_powergates[] = {
-@@ -3250,6 +3275,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output = true,
- 	.has_usb_sleepwalk = true,
-+	.has_reorg_hw_dpd_reg_impl = false,
- };
- 
- static const char * const tegra124_powergates[] = {
-@@ -3367,6 +3393,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output = true,
- 	.has_usb_sleepwalk = true,
-+	.has_reorg_hw_dpd_reg_impl = false,
- };
- 
- static const char * const tegra210_powergates[] = {
-@@ -3497,6 +3524,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output = true,
- 	.has_usb_sleepwalk = true,
-+	.has_reorg_hw_dpd_reg_impl = false,
- };
- 
- #define TEGRA186_IO_PAD_TABLE(_pad)                                          \
-@@ -3654,6 +3682,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.num_pmc_clks = 0,
- 	.has_blink_output = false,
- 	.has_usb_sleepwalk = false,
-+	.has_reorg_hw_dpd_reg_impl = false,
- };
- 
- #define TEGRA194_IO_PAD_TABLE(_pad)                                              \
-@@ -3789,6 +3818,82 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
- 	.num_pmc_clks = 0,
- 	.has_blink_output = false,
- 	.has_usb_sleepwalk = false,
-+	.has_reorg_hw_dpd_reg_impl = false,
-+};
-+
-+#define TEGRA234_IO_PAD(_id, _dpd, _voltage, _name, _dpd_reg_index)	\
-+	((struct tegra_io_pad_soc) {					\
-+		.id		= (_id),				\
-+		.dpd		= (_dpd),				\
-+		.voltage	= (_voltage),				\
-+		.name		= (_name),				\
-+		.reg_index	= (_dpd_reg_index),			\
-+	})
-+
-+#define TEGRA234_IO_PIN_DESC(_id, _dpd, _voltage, _name, _dpd_reg_index) \
-+	((struct pinctrl_pin_desc) {					\
-+		.number = (_id),					\
-+		.name	= (_name)					\
-+	})
-+
-+#define TEGRA234_IO_PAD_TABLE(_pad) {                                          \
-+	/* (id, dpd, voltage, name, dpd_reg_index) */                          \
-+	_pad(TEGRA_IO_PAD_CSIA,           0,         UINT_MAX,	"csia",        \
-+		TEGRA_PMC_IO_CSI_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_CSIB,           1,         UINT_MAX,  "csib",        \
-+		TEGRA_PMC_IO_CSI_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_HDMI_DP0,       0,         UINT_MAX,  "hdmi-dp0",    \
-+		TEGRA_PMC_IO_DISP_DPD),                                        \
-+	_pad(TEGRA_IO_PAD_CSIC,           2,         UINT_MAX,  "csic",        \
-+		TEGRA_PMC_IO_CSI_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_CSID,           3,         UINT_MAX,  "csid",        \
-+		TEGRA_PMC_IO_CSI_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_CSIE,           4,         UINT_MAX,  "csie",        \
-+		TEGRA_PMC_IO_CSI_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_CSIF,           5,         UINT_MAX,  "csif",        \
-+		TEGRA_PMC_IO_CSI_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_UFS,            0,         UINT_MAX,  "ufs",         \
-+		TEGRA_PMC_IO_UFS_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_EDP,            1,         UINT_MAX,  "edp",         \
-+		TEGRA_PMC_IO_EDP_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_SDMMC1_HV,      0,         4,         "sdmmc1-hv",   \
-+		TEGRA_PMC_IO_SDMMC1_HV_DPD),                                   \
-+	_pad(TEGRA_IO_PAD_SDMMC3_HV,      UINT_MAX,  6,         "sdmmc3-hv",   \
-+		TEGRA_PMC_IO_INVALID_DPD),                                     \
-+	_pad(TEGRA_IO_PAD_AUDIO_HV,       UINT_MAX,  1,         "audio-hv",    \
-+		TEGRA_PMC_IO_INVALID_DPD),                                     \
-+	_pad(TEGRA_IO_PAD_AO_HV,          UINT_MAX,  0,         "ao-hv",       \
-+		TEGRA_PMC_IO_INVALID_DPD),                                     \
-+	_pad(TEGRA_IO_PAD_CSIG,           6,         UINT_MAX,  "csig",        \
-+		TEGRA_PMC_IO_CSI_DPD),                                         \
-+	_pad(TEGRA_IO_PAD_CSIH,           7,         UINT_MAX,  "csih",        \
-+		TEGRA_PMC_IO_CSI_DPD)                                          \
-+	}
-+
-+static const struct tegra_io_pad_soc tegra234_io_pads[] =
-+	TEGRA234_IO_PAD_TABLE(TEGRA234_IO_PAD);
-+
-+static const struct pinctrl_pin_desc tegra234_pin_descs[] =
-+	TEGRA234_IO_PAD_TABLE(TEGRA234_IO_PIN_DESC);
-+
-+/* Reorganized HW DPD REQ registers */
-+static const unsigned int tegra234_dpd_req_regs[] = {
-+	[TEGRA_PMC_IO_CSI_DPD] = 0xe0c0,
-+	[TEGRA_PMC_IO_DISP_DPD] = 0xe0d0,
-+	[TEGRA_PMC_IO_QSPI_DPD] = 0xe074,
-+	[TEGRA_PMC_IO_UFS_DPD] = 0xe064,
-+	[TEGRA_PMC_IO_EDP_DPD] = 0xe05c,
-+	[TEGRA_PMC_IO_SDMMC1_HV_DPD] = 0xe054,
-+};
-+
-+/* Reorganized HW DPD STATUS registers */
-+static const unsigned int tegra234_dpd_status_regs[] = {
-+	[TEGRA_PMC_IO_CSI_DPD] = 0xe0c4,
-+	[TEGRA_PMC_IO_DISP_DPD] = 0xe0d4,
-+	[TEGRA_PMC_IO_QSPI_DPD] = 0xe078,
-+	[TEGRA_PMC_IO_UFS_DPD] = 0xe068,
-+	[TEGRA_PMC_IO_EDP_DPD] = 0xe060,
-+	[TEGRA_PMC_IO_SDMMC1_HV_DPD] = 0xe058,
- };
- 
- static const struct tegra_pmc_regs tegra234_pmc_regs = {
-@@ -3802,6 +3907,8 @@ static const struct tegra_pmc_regs tegra234_pmc_regs = {
- 	.rst_source_mask = 0xfc,
- 	.rst_level_shift = 0x0,
- 	.rst_level_mask = 0x3,
-+	.reorg_dpd_req = tegra234_dpd_req_regs,
-+	.reorg_dpd_status = tegra234_dpd_status_regs,
- };
- 
- static const char * const tegra234_reset_sources[] = {
-@@ -3861,10 +3968,10 @@ static const struct tegra_pmc_soc tegra234_pmc_soc = {
- 	.needs_mbist_war = false,
- 	.has_impl_33v_pwr = true,
- 	.maybe_tz_only = false,
--	.num_io_pads = 0,
--	.io_pads = NULL,
--	.num_pin_descs = 0,
--	.pin_descs = NULL,
-+	.num_io_pads = ARRAY_SIZE(tegra234_io_pads),
-+	.io_pads = tegra234_io_pads,
-+	.num_pin_descs = ARRAY_SIZE(tegra234_pin_descs),
-+	.pin_descs = tegra234_pin_descs,
- 	.regs = &tegra234_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-@@ -3879,6 +3986,7 @@ static const struct tegra_pmc_soc tegra234_pmc_soc = {
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
- 	.has_blink_output = false,
-+	.has_reorg_hw_dpd_reg_impl = true,
- };
- 
- static const struct of_device_id tegra_pmc_match[] = {
+This cyclic dependency shows we have to rework how we manage the trip
+points.
+
+Actually, all the trip points definition can be common to the backend
+sensor drivers and we can factor out the thermal trip structure in all
+of them.
+
+Then, as we register the thermal trips array, they will be available
+in the thermal zone structure and a core function can return the trip
+given its id.
+
+The get_trip_* ops won't be needed anymore and could be removed. The
+resulting code will be another step forward to a self encapsulated
+generic thermal framework.
+
+Most of the drivers can be converted more or less easily. This series
+does a first round with most of the drivers. Some remain and will be
+converted but with a smaller set of changes as the conversion is a bit
+more complex.
+
+Cc: Raju Rangoju <rajur@chelsio.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Peter Kaestle <peter@piie.net>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Mark Gross <markgross@kernel.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Amit Kucheria <amitk@kernel.org>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>
+Cc: Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: Support Opensource <support.opensource@diasemi.com>
+Cc: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Thara Gopinath <thara.gopinath@linaro.org>
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Antoine Tenart <atenart@kernel.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: platform-driver-x86@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+
+Daniel Lezcano (26):
+  thermal/core: encapsulate ops->get_trip_* ops into a function
+  thermal/sysfs: Do not make get_trip_hyst optional
+  thermal/core/governors: Use thermal_zone_get_trip() instead of ops
+    functions
+  thermal/drivers/st: Use generic trip points
+  thermal/drivers/tegra: Use generic thermal_zone_get_trip() function
+  thermal/drivers/imx: Use generic thermal_zone_get_trip() function
+  thermal/drivers/exynos: Use generic thermal_zone_get_trip() function
+  thermal/drivers/rcar: Use generic thermal_zone_get_trip() function
+  thermal/drivers/uniphier: Use generic thermal_zone_get_trip() function
+  thermal/drivers/hisi: Use generic thermal_zone_get_trip() function
+  thermal/drivers/qcom: Use generic thermal_zone_get_trip() function
+  thermal/drivers/OF: Use generic thermal_zone_get_trip() function
+  thermal/drivers/armada: Use generic thermal_zone_get_trip() function
+  thermal/core/OF: Remove unused functions
+  thermal/drivers/rcar_gen3: Use the generic function to get the number
+    of trips
+  thermal/drivers/exynos: of_thermal_get_ntrips()
+  thermal/core/of: Remove of_thermal_get_ntrips()
+  thermal/drivers/exynos: Replace of_thermal_is_trip_valid() by
+    thermal_zone_get_trip()
+  thermal/core/of: Remove of_thermal_is_trip_valid()
+  thermal/drivers/broadcom: Use generic thermal_zone_get_trip() function
+  thermal/drivers/da9062: Use generic thermal_zone_get_trip() function
+  thermal/drivers/ti: Remove unused macros ti_thermal_get_trip_value() /
+    ti_thermal_trip_is_valid()
+  thermal/drivers/acerhdf: Use generic thermal_zone_get_trip() function
+  thermal/drivers/cxgb4: Use generic thermal_zone_get_trip() function
+  thermal/intel/int340x: Replace parameter to simplify
+  thermal/drivers/intel: Use generic thermal_zone_get_trip() function
+
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |   2 -
+ .../ethernet/chelsio/cxgb4/cxgb4_thermal.c    |  41 ++----
+ drivers/platform/x86/acerhdf.c                |  73 ++++-------
+ drivers/thermal/armada_thermal.c              |  39 +++---
+ drivers/thermal/broadcom/bcm2835_thermal.c    |   8 +-
+ drivers/thermal/da9062-thermal.c              |  52 ++------
+ drivers/thermal/gov_bang_bang.c               |  23 ++--
+ drivers/thermal/gov_fair_share.c              |  18 +--
+ drivers/thermal/gov_power_allocator.c         |  51 ++++----
+ drivers/thermal/gov_step_wise.c               |  22 ++--
+ drivers/thermal/hisi_thermal.c                |  11 +-
+ drivers/thermal/imx_thermal.c                 |  72 ++++-------
+ .../int340x_thermal/int340x_thermal_zone.c    |  31 ++---
+ .../int340x_thermal/int340x_thermal_zone.h    |   4 +-
+ .../processor_thermal_device.c                |  10 +-
+ drivers/thermal/intel/x86_pkg_temp_thermal.c  | 120 ++++++++++--------
+ drivers/thermal/qcom/qcom-spmi-temp-alarm.c   |  39 +++---
+ drivers/thermal/rcar_gen3_thermal.c           |   2 +-
+ drivers/thermal/rcar_thermal.c                |  49 +------
+ drivers/thermal/samsung/exynos_tmu.c          |  60 ++++-----
+ drivers/thermal/st/st_thermal.c               |  47 +------
+ drivers/thermal/tegra/soctherm.c              |  33 ++---
+ drivers/thermal/tegra/tegra30-tsensor.c       |  17 ++-
+ drivers/thermal/thermal_core.c                |  68 ++++++----
+ drivers/thermal/thermal_core.h                |  30 ++---
+ drivers/thermal/thermal_helpers.c             |  28 ++--
+ drivers/thermal/thermal_netlink.c             |  21 ++-
+ drivers/thermal/thermal_of.c                  |  88 -------------
+ drivers/thermal/thermal_sysfs.c               |  91 +++++--------
+ drivers/thermal/ti-soc-thermal/ti-thermal.h   |  15 ---
+ drivers/thermal/uniphier_thermal.c            |  26 ++--
+ 31 files changed, 434 insertions(+), 757 deletions(-)
+
 -- 
-2.17.1
+2.25.1
 
