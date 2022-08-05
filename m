@@ -2,195 +2,44 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD2FC3F6B0
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Aug 2022 14:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46862C00140
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Aug 2022 22:57:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241011AbiHEO6F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 Aug 2022 10:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
+        id S237177AbiHEW55 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 Aug 2022 18:57:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240979AbiHEO6D (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Aug 2022 10:58:03 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EADD6557D
-        for <linux-tegra@vger.kernel.org>; Fri,  5 Aug 2022 07:57:54 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id z16so3493952wrh.12
-        for <linux-tegra@vger.kernel.org>; Fri, 05 Aug 2022 07:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=hRdCb/MobAHIJM8vydUmmSphNhsju697QB8yA1qNnYg=;
-        b=U0P+Zv153BIa1dIkLySjqVIhBxzvCUWFkPMp7cTrEwmMv2/tUOU/pBGAJ9ZcX7Lx4M
-         gGsi+j/mfk90ZNsbla5zmgIiwPTOkCZLTdelcDky1nMIjKky7RC92qG63iOQRgtZujHD
-         N8vhgDGJVKuXNOBxnGovNqubXx0OpypgGZr3plkmVtfxkSEOkiWtzpOHFca6rkkGVCUi
-         wNdFHZ3Jb90QvCbvNTciHKvqn2zAB39a3hPu+JdDiw/VOzPaAhFAQCtXdalgEDdqpwx9
-         f2j7cuIp3mMwOVSutixr3RQr5sdrX72N4ybfJe4gMgDhD6TaO5vk9bg7VDXzFi4/rqLO
-         PL7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=hRdCb/MobAHIJM8vydUmmSphNhsju697QB8yA1qNnYg=;
-        b=3rG9tIZRScivHazmNMFikuR4eAXthXx58Rk2ssQctx/uKTmLE+Iq7QHVz17vzEkeg/
-         j5EVydjM+Xhl09oM2QM9eCyuL3Cy51NopMTqfwjhr1PLN9g+0K7He1GYvMebugpGsQnu
-         sP1tCGiuGQVKkI017D6k7reCvWXnnad7q2uOG8tA8J2tRVQoBMgHwxFYoPB5lRkO2lkE
-         jg/b1jVTuHiLKmKpBONhXRQYBw1j26Bl6moUIAo/9a+z1o40xMYal9KRXIfmKhkC9Uyn
-         U5d4gNEeeKlk0f1KZJDdpZ3a7U5wTtCp7+MlanYGEH//iu6UN57WMjzrHRwwUNjWrzbI
-         H1GA==
-X-Gm-Message-State: ACgBeo1lkKH/01qo46EywCrykRjhabe6H/21CIe/voqC2iax6A6B24H8
-        PQfCGMn7I6rN6GLw3xHYR69Slg==
-X-Google-Smtp-Source: AA6agR76KiRcIZfHQRiAaeHTYLBYVFmLQN2M4lfDDF3W4GQQ1XKnUsLWnYmxJzdLBcK/TyujRW6HBw==
-X-Received: by 2002:a5d:6609:0:b0:21f:ff6:9090 with SMTP id n9-20020a5d6609000000b0021f0ff69090mr4876558wru.30.1659711472501;
-        Fri, 05 Aug 2022 07:57:52 -0700 (PDT)
-Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:aef0:8606:da6b:79ef])
-        by smtp.gmail.com with ESMTPSA id y1-20020adfd081000000b0022159d92004sm3102448wrh.82.2022.08.05.07.57.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Aug 2022 07:57:52 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH v1 05/26] thermal/drivers/tegra: Use generic thermal_zone_get_trip() function
-Date:   Fri,  5 Aug 2022 16:57:08 +0200
-Message-Id: <20220805145729.2491611-6-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220805145729.2491611-1-daniel.lezcano@linaro.org>
-References: <20220805145729.2491611-1-daniel.lezcano@linaro.org>
+        with ESMTP id S240562AbiHEW55 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Aug 2022 18:57:57 -0400
+X-Greylist: delayed 19018 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 05 Aug 2022 15:57:55 PDT
+Received: from hwsrv-990338.hostwindsdns.com (hwsrv-990338.hostwindsdns.com [IPv6:2607:5501:3000:1fb::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DAC93138B
+        for <linux-tegra@vger.kernel.org>; Fri,  5 Aug 2022 15:57:54 -0700 (PDT)
+Received: from bmwcevermetepec.club (unknown [172.93.128.143])
+        by hwsrv-990338.hostwindsdns.com (Postfix) with ESMTPA id 36A6F1229CD
+        for <linux-tegra@vger.kernel.org>; Fri,  5 Aug 2022 17:37:15 +0000 (UTC)
+Reply-To: chisomnwaezigbo@yahoo.com
+From:   "Wesco Trading Co. LTD" <melia@bmwcevermetepec.club>
+To:     linux-tegra@vger.kernel.org
+Subject: AUGUST ORDER
+Date:   5 Aug 2022 19:37:14 +0200
+Message-ID: <20220805193714.CD49F82AC82707F2@bmwcevermetepec.club>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Replace a single call to thermal_zone_get_trip() to get a trip point
-instead of calling the different ops->get_trip*
+Dear linux-tegra,
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/tegra/soctherm.c        | 33 +++++++++++--------------
- drivers/thermal/tegra/tegra30-tsensor.c | 17 ++++++-------
- 2 files changed, 22 insertions(+), 28 deletions(-)
+Please be informed that we want to purchase your products.
+Lets discuss about the price. Pls send contact no.
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 1efe470f31e9..96b541458ccd 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -582,23 +582,23 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
- 	return temp;
- }
- 
--static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz, int trip, int temp)
-+static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz, int trip_id, int temp)
- {
- 	struct tegra_thermctl_zone *zone = tz->devdata;
- 	struct tegra_soctherm *ts = zone->ts;
-+	struct thermal_trip trip;
- 	const struct tegra_tsensor_group *sg = zone->sg;
- 	struct device *dev = zone->dev;
--	enum thermal_trip_type type;
- 	int ret;
- 
- 	if (!tz)
- 		return -EINVAL;
- 
--	ret = tz->ops->get_trip_type(tz, trip, &type);
-+	ret = thermal_zone_get_trip(tz, trip_id, &trip);
- 	if (ret)
- 		return ret;
- 
--	if (type == THERMAL_TRIP_CRITICAL) {
-+	if (trip.type == THERMAL_TRIP_CRITICAL) {
- 		/*
- 		 * If thermtrips property is set in DT,
- 		 * doesn't need to program critical type trip to HW,
-@@ -609,7 +609,7 @@ static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz, int trip
- 		else
- 			return 0;
- 
--	} else if (type == THERMAL_TRIP_HOT) {
-+	} else if (trip.type == THERMAL_TRIP_HOT) {
- 		int i;
- 
- 		for (i = 0; i < THROTTLE_SIZE; i++) {
-@@ -620,7 +620,7 @@ static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz, int trip
- 				continue;
- 
- 			cdev = ts->throt_cfgs[i].cdev;
--			if (get_thermal_instance(tz, cdev, trip))
-+			if (get_thermal_instance(tz, cdev, trip_id))
- 				stc = find_throttle_cfg_by_name(ts, cdev->type);
- 			else
- 				continue;
-@@ -687,25 +687,20 @@ static const struct thermal_zone_device_ops tegra_of_thermal_ops = {
- 	.set_trips = tegra_thermctl_set_trips,
- };
- 
--static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
-+static int get_hot_temp(struct thermal_zone_device *tz, int *trip_id, int *temp)
- {
--	int ntrips, i, ret;
--	enum thermal_trip_type type;
-+	int i, ret;
-+	struct thermal_trip trip;
- 
--	ntrips = of_thermal_get_ntrips(tz);
--	if (ntrips <= 0)
--		return -EINVAL;
-+	for (i = 0; i < thermal_zone_get_num_trips(tz); i++) {
- 
--	for (i = 0; i < ntrips; i++) {
--		ret = tz->ops->get_trip_type(tz, i, &type);
-+		ret = thermal_zone_get_trip(tz, i, &trip);
- 		if (ret)
- 			return -EINVAL;
--		if (type == THERMAL_TRIP_HOT) {
--			ret = tz->ops->get_trip_temp(tz, i, temp);
--			if (!ret)
--				*trip = i;
- 
--			return ret;
-+		if (trip.type == THERMAL_TRIP_HOT) {
-+			*trip_id = i;
-+			return 0;	
- 		}
- 	}
- 
-diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
-index c34501287e96..cbaad2245f1d 100644
---- a/drivers/thermal/tegra/tegra30-tsensor.c
-+++ b/drivers/thermal/tegra/tegra30-tsensor.c
-@@ -316,18 +316,17 @@ static void tegra_tsensor_get_hw_channel_trips(struct thermal_zone_device *tzd,
- 	*hot_trip  = 85000;
- 	*crit_trip = 90000;
- 
--	for (i = 0; i < tzd->num_trips; i++) {
--		enum thermal_trip_type type;
--		int trip_temp;
-+	for (i = 0; i < thermal_zone_get_num_trips(tzd); i++) {
- 
--		tzd->ops->get_trip_temp(tzd, i, &trip_temp);
--		tzd->ops->get_trip_type(tzd, i, &type);
-+		struct thermal_trip trip;
- 
--		if (type == THERMAL_TRIP_HOT)
--			*hot_trip = trip_temp;
-+		thermal_zone_get_trip(tzd, i, &trip);
-+		
-+		if (trip.type == THERMAL_TRIP_HOT)
-+			*hot_trip = trip.temperature;
- 
--		if (type == THERMAL_TRIP_CRITICAL)
--			*crit_trip = trip_temp;
-+		if (trip.type == THERMAL_TRIP_CRITICAL)
-+			*crit_trip = trip.temperature;
- 	}
- 
- 	/* clamp hardware trips to the calibration limits */
--- 
-2.25.1
-
+Best Regards,
+Mr. Andras Thomason
+(Purchasing Manager)
+***
+Wesco Trading Co. LTD
