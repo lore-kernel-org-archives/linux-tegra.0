@@ -2,261 +2,343 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE83C25B06
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Aug 2022 22:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA91C00140
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Aug 2022 10:41:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240194AbiHDWwg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 Aug 2022 18:52:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42644 "EHLO
+        id S237539AbiHEKl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 Aug 2022 06:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240191AbiHDWwO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Aug 2022 18:52:14 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1677849B5E
-        for <linux-tegra@vger.kernel.org>; Thu,  4 Aug 2022 15:52:10 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id q30so1316584wra.11
-        for <linux-tegra@vger.kernel.org>; Thu, 04 Aug 2022 15:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linexp-org.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=vJqB3DsidiN9nPhS4su/6uSlvLZimTeb9ZrCY8jA13M=;
-        b=ywNDi5DlzfdiSw+Wek8UweNt+1cORGZIl0TiY0LahA+zegr97zHUu1bMR9080FcqEU
-         dSqFgcdJIxpBUNjA0i5szx8JLSn1UWQwhbyHZpUTNje0bugjrSHgqa4sj0pXpchDR1F3
-         FyqYK4bPVnJk43ZWZLXj0qL1k9DIxzcTPUYRlHix8KSpYuOD8ZtdTGiz+7XxYnWVYNQO
-         z3THZH8BwKyb7I2IV4BulTi76NYra85R4u/SnLuQZ0ChfGgLD+aIJoyfPtI0ddsvgI9z
-         lYRhO4eku4GSwSukfJqeuXyHqIpZKkJ2qRxoNI+9aUKGno6OZdVl/j2lziBqtm23XnZS
-         9svg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=vJqB3DsidiN9nPhS4su/6uSlvLZimTeb9ZrCY8jA13M=;
-        b=Gwg93CZocAtaI1Ppb6B8Qnk0L6sWw8qL8j1K0oNI2Z8faQx1BhtLlRH9qBZjPj2O9k
-         F7w82odaB6jxa4HkpaDGxy69xzIPYSwoLfaNB1EUZq5fo01Uh4maXHGQGz35h2hXpSmd
-         FaTCnu9fTegZSN7VIiOvi07i4XqFcJFzimbeFEh9I4G/9NJ8mBZCMHU7oBAKU8V5PJZK
-         PrEDZxqfgCO6UoERMJ8Sa90j7oxwL/rm4EyfVM8u7cEJCBHH0T38j9R9yY8rJB6Piv4q
-         qiCPETOmDg5CNcBK9uk/Q1x6NKFufy11mMUcf0VEKdngsCM9c4IqrSwOTSsLv7qWhmvJ
-         BENw==
-X-Gm-Message-State: ACgBeo0McD8owmeuMNxrreHCl1JKklhWzFTit8Xkfm4B+wmeW73cYahs
-        MydsTfeFR4B/oNqXB7PGnxL4Lg==
-X-Google-Smtp-Source: AA6agR4gPK2BFTS+f/e1TuM189EKCXODMRpapXlBFbhupBNMZ+wRdcTkc60a5Q4HLqzrKYg1t8mhxw==
-X-Received: by 2002:adf:fe42:0:b0:21f:8df:2239 with SMTP id m2-20020adffe42000000b0021f08df2239mr2524925wrs.644.1659653530594;
-        Thu, 04 Aug 2022 15:52:10 -0700 (PDT)
-Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:31aa:ed2c:3f7:19d])
-        by smtp.gmail.com with ESMTPSA id a16-20020a056000051000b0021f87e8945asm2495906wrf.12.2022.08.04.15.52.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 15:52:10 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linexp.org>
-To:     daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com,
-        abailon@baylibre.com, lukasz.luba@arm.com, broonie@kernel.org,
-        damien.lemoal@opensource.wdc.com, heiko@sntech.de,
-        hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
-        talel@amazon.com, thierry.reding@gmail.com, digetx@gmail.com,
-        jonathanh@nvidia.com, anarsoul@gmail.com, tiny.windzz@gmail.com,
-        baolin.wang7@gmail.com, f.fainelli@gmail.com,
-        bjorn.andersson@linaro.org, mcoquelin.stm32@gmail.com,
-        glaroque@baylibre.com, miquel.raynal@bootlin.com,
-        shawnguo@kernel.org, niklas.soderlund@ragnatech.se,
-        matthias.bgg@gmail.com, j-keerthy@ti.com,
-        Amit Kucheria <amitk@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH v5 07/33] thermal/drivers/tegra: Switch to new of API
-Date:   Fri,  5 Aug 2022 00:43:23 +0200
-Message-Id: <20220804224349.1926752-8-daniel.lezcano@linexp.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220804224349.1926752-1-daniel.lezcano@linexp.org>
-References: <20220804224349.1926752-1-daniel.lezcano@linexp.org>
+        with ESMTP id S232145AbiHEKlz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Aug 2022 06:41:55 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2060.outbound.protection.outlook.com [40.107.237.60])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3368A6D554;
+        Fri,  5 Aug 2022 03:41:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fxnF1RxGUwMDhzTs4nhTFDAAyXHEwMJe0PnqIIXwT3k79rbykYhtVBZxJww/3Ms760TtA04vHKwTn5KtmnVXvtdJk2Qs25USXYAylOtK52ocdqZng6AtcFpqu1FvYe0Z+IWhYJK6/4g23L5oQPgwWEv4itbGaDblvlFDeoV5coDS8w3FN6howkx9mG+KRKbE7W0xiLg9jI/ZDNSqlgC/9B5uKW+MaRkUgXWF8kpBRiAcFRYILisTCaQXj+HIsYMQaOjgQsjb5xh2lH+3VQSVTefsrnCZ6ikC+/xRVkZSSQXi7DE+n+s6vF/giNx5vip7twhXz0oWDfYUQy8gH+oSEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=citX6S8zuMzc1Lvq7ORAg4xm+IUkRpyOXMZ6SBuzdzg=;
+ b=QKPUCvtHIepCbwpsBrQ7fmaiqwoT50CsrXkYiwHdswdZE53r4UgJneKSsrPEnIaHxuPQp8L85bWteEGx2329HHSCmKjkKWaEgDjYfK245SAsYAhVSJmcDnvehurQ/433qoPf8BoDkui+o6ZUywzHGNEyIAagsC1CjpGPdABSPAKnPc9UoM2N6Tt4pk/KhUoRyGyKwjZAtgXvQyYDwfbR0qyNYzvFRsRF7WVc+Cy0lA7L5A9wHwd0DYyGMs8MEsypwQky31v2LmZU9bbBTk1kxnXclBthnBvwOtyGgZ+08ZfvdA3ox5BTGaEq99p+tY0V0RbhBWCePhpTP8S4lH69jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=linux.dev smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=citX6S8zuMzc1Lvq7ORAg4xm+IUkRpyOXMZ6SBuzdzg=;
+ b=s0hjUDjYf0vZ3nQQp9XCDkdEXXD1+hYJ7oGXSBYHtFC4/QMJn9XkbRPVKn5y/+FYhyhKJziXVXzJnTiQCDlZzRb4RLd7m48ubTtpztKMSWK1GuY8q3IqBKmjI0PQmpou1g+xBqLKGefZiRa5mZxrv9v3l5+SWsClhpFMPpsz1Bta41OVnD+Kerq07tcwP+r+vTVZtJBdbQjJQgi6y4nKHeVOVHy+rVZQbDw8NYHQLTcomAHz0zw+ltcD8r0jWPkjIwzKsiTI3HvgDQUXUvhKgIzU5MlzcGh0QUOllVun2/tUKeOEtknz2P5PATNMJ1g4To6dfAKo5itOU3Jc4BEPXA==
+Received: from DS7PR03CA0287.namprd03.prod.outlook.com (2603:10b6:5:3ad::22)
+ by SN1PR12MB2511.namprd12.prod.outlook.com (2603:10b6:802:23::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.14; Fri, 5 Aug
+ 2022 10:41:49 +0000
+Received: from DM6NAM11FT052.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3ad:cafe::6d) by DS7PR03CA0287.outlook.office365.com
+ (2603:10b6:5:3ad::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.16 via Frontend
+ Transport; Fri, 5 Aug 2022 10:41:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ DM6NAM11FT052.mail.protection.outlook.com (10.13.172.111) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5504.14 via Frontend Transport; Fri, 5 Aug 2022 10:41:48 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 5 Aug
+ 2022 10:41:48 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 5 Aug 2022
+ 03:41:47 -0700
+Received: from build-petlozup-20220627T000321362.nvidia.com (10.127.8.12) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.986.26 via
+ Frontend Transport; Fri, 5 Aug 2022 03:41:47 -0700
+From:   Petlozu Pravareshwar <petlozup@nvidia.com>
+To:     <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
+        <p.zabel@pengutronix.de>, <dmitry.osipenko@collabora.com>,
+        <ulf.hansson@linaro.org>, <kkartik@nvidia.com>,
+        <cai.huoqing@linux.dev>, <spatra@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <petlozup@nvidia.com>
+Subject: [PATCH] soc/tegra: pmc: Add IO Pad table for tegra234
+Date:   Fri, 5 Aug 2022 10:41:00 +0000
+Message-ID: <20220805104100.3098200-1-petlozup@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b7aea471-a5ae-49cc-542c-08da76cf19e4
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2511:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: B4Wx+BRbjkIOjq9ddT4PCak4/FvOMV1wF2fCNb/fLF7kpG+K5jm5XsokdLY8r7Tfaa62Guz9puzSs/w5F9tKqYv+yLoeCuWGvE8xSZiHXIQfR46C40fgObFVLJrsq1B8cCltArXvTEzA+TxKYh2ScD+Qrf6dsM6UYIzQIMBmaR18ltIs07U4Xbxe24rmXFBO+eagNw2UpqIrQdkeQtdlvYus43l2wqQgG/gk6g5kuh/anrSLqeyq8xKLNpek5QP8xWSi3pEGJe+8rqIZ/U+9LVp4ZTqe/QUFmOAu3L41UuIODsce8Juvi51FJOAihtJobSczzuwc8ANav9dIVtNxPH6l0sq5RdMBUnptgN6/hFzOiwAuLMDdwIOqEPoiHTnHAq/VAvpGEKr3kEECNoK8sT2LuKceGUazvVQDLSbMYvfGOR47XQ6/b4k2CQeNrDnGodA5GyfHpF4Aa14SGLrpdks0OSp5KsH6Cv0v/NTueRuK+vQSDL6xoRylZbYxGq7sr/BiViJKXVB3QfC1rQu2U3lFnLmnzH4wFiN2Usc/0M3yuIU+jiA4sGKaXC3ZWRKZWzSSCfTvUUR9moJE+darRx4DObCVVEQ0YbTInJN4boUpMbMIbkOjG+MgE79v+edec/nxLg38w4PmjtmRjrz6V2Uz8efmI+dJG7D4QiITFEc80IuMYjSNyJUg+iAwpdlHkSo4ttFC6hYd6YgaVve14hJ9Ac1dhewiVtc0pOjFf7MYshecbbgDVh0R6W0bVZ6bcHg+orPd3dEnUgz4LpVLjC6COLwQBcI3LpRcVBE3/rTPFiozW1iRmL69w2uVQVmDR5+82DhExfleaPvpnPJH2nImn0HsSrxIa9MviOzF1bM=
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(39860400002)(346002)(396003)(376002)(36840700001)(46966006)(40470700004)(83380400001)(47076005)(1076003)(41300700001)(7696005)(186003)(426003)(26005)(6666004)(82740400003)(336012)(921005)(81166007)(356005)(2616005)(36860700001)(107886003)(82310400005)(2906002)(36756003)(40480700001)(8936002)(5660300002)(70206006)(86362001)(40460700003)(110136005)(478600001)(8676002)(4326008)(70586007)(316002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2022 10:41:48.9954
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7aea471-a5ae-49cc-542c-08da76cf19e4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT052.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2511
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The thermal OF code has a new API allowing to migrate the OF
-initialization to a simpler approach. The ops are no longer device
-tree specific and are the generic ones provided by the core code.
+Add IO PAD table for tegra234 to allow configuring dpd mode
+and switching the pins to 1.8V or 3.3V as needed.
 
-Convert the ops to the thermal_zone_device_ops format and use the new
-API to register the thermal zone with these generic ops.
+In tegra234, DPD registers are reorganized such that there is
+a DPD_REQ register and a DPD_STATUS register per pad group.
+This change accordingly updates the PMC driver.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
+Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c           | 21 ++++++++++-----------
- drivers/thermal/tegra/tegra-bpmp-thermal.c | 19 ++++++++++++-------
- drivers/thermal/tegra/tegra30-tsensor.c    | 12 ++++++------
- 3 files changed, 28 insertions(+), 24 deletions(-)
+ drivers/soc/tegra/pmc.c | 116 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 112 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 825eab526619..1efe470f31e9 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -421,9 +421,9 @@ static int translate_temp(u16 val)
- 	return t;
- }
- 
--static int tegra_thermctl_get_temp(void *data, int *out_temp)
-+static int tegra_thermctl_get_temp(struct thermal_zone_device *tz, int *out_temp)
- {
--	struct tegra_thermctl_zone *zone = data;
-+	struct tegra_thermctl_zone *zone = tz->devdata;
- 	u32 val;
- 
- 	val = readl(zone->reg);
-@@ -582,10 +582,9 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
- 	return temp;
- }
- 
--static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
-+static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz, int trip, int temp)
- {
--	struct tegra_thermctl_zone *zone = data;
--	struct thermal_zone_device *tz = zone->tz;
-+	struct tegra_thermctl_zone *zone = tz->devdata;
- 	struct tegra_soctherm *ts = zone->ts;
- 	const struct tegra_tsensor_group *sg = zone->sg;
- 	struct device *dev = zone->dev;
-@@ -657,9 +656,9 @@ static void thermal_irq_disable(struct tegra_thermctl_zone *zn)
- 	mutex_unlock(&zn->ts->thermctl_lock);
- }
- 
--static int tegra_thermctl_set_trips(void *data, int lo, int hi)
-+static int tegra_thermctl_set_trips(struct thermal_zone_device *tz, int lo, int hi)
- {
--	struct tegra_thermctl_zone *zone = data;
-+	struct tegra_thermctl_zone *zone = tz->devdata;
- 	u32 r;
- 
- 	thermal_irq_disable(zone);
-@@ -682,7 +681,7 @@ static int tegra_thermctl_set_trips(void *data, int lo, int hi)
- 	return 0;
- }
- 
--static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
-+static const struct thermal_zone_device_ops tegra_of_thermal_ops = {
- 	.get_temp = tegra_thermctl_get_temp,
- 	.set_trip_temp = tegra_thermctl_set_trip_temp,
- 	.set_trips = tegra_thermctl_set_trips,
-@@ -2194,9 +2193,9 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 		zone->sg = soc->ttgs[i];
- 		zone->ts = tegra;
- 
--		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
--							 soc->ttgs[i]->id, zone,
--							 &tegra_of_thermal_ops);
-+		z = devm_thermal_of_zone_register(&pdev->dev,
-+						  soc->ttgs[i]->id, zone,
-+						  &tegra_of_thermal_ops);
- 		if (IS_ERR(z)) {
- 			err = PTR_ERR(z);
- 			dev_err(&pdev->dev, "failed to register sensor: %d\n",
-diff --git a/drivers/thermal/tegra/tegra-bpmp-thermal.c b/drivers/thermal/tegra/tegra-bpmp-thermal.c
-index 5affc3d196be..eb84f0b9dc7c 100644
---- a/drivers/thermal/tegra/tegra-bpmp-thermal.c
-+++ b/drivers/thermal/tegra/tegra-bpmp-thermal.c
-@@ -30,9 +30,9 @@ struct tegra_bpmp_thermal {
- 	struct tegra_bpmp_thermal_zone **zones;
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 5611d14d3ba2..6d666fd0370d 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -266,11 +266,22 @@ struct tegra_powergate {
+ 	struct reset_control *reset;
  };
  
--static int tegra_bpmp_thermal_get_temp(void *data, int *out_temp)
-+static int __tegra_bpmp_thermal_get_temp(struct tegra_bpmp_thermal_zone *zone,
-+					 int *out_temp)
- {
--	struct tegra_bpmp_thermal_zone *zone = data;
- 	struct mrq_thermal_host_to_bpmp_request req;
- 	union mrq_thermal_bpmp_to_host_response reply;
- 	struct tegra_bpmp_message msg;
-@@ -60,9 +60,14 @@ static int tegra_bpmp_thermal_get_temp(void *data, int *out_temp)
- 	return 0;
- }
- 
--static int tegra_bpmp_thermal_set_trips(void *data, int low, int high)
-+static int tegra_bpmp_thermal_get_temp(struct thermal_zone_device *tz, int *out_temp)
- {
--	struct tegra_bpmp_thermal_zone *zone = data;
-+	return __tegra_bpmp_thermal_get_temp(tz->devdata, out_temp);
-+}
++enum tegra_dpd_reg {
++	TEGRA_PMC_IO_INVALID_DPD,
++	TEGRA_PMC_IO_CSI_DPD,
++	TEGRA_PMC_IO_DISP_DPD,
++	TEGRA_PMC_IO_QSPI_DPD,
++	TEGRA_PMC_IO_UFS_DPD,
++	TEGRA_PMC_IO_EDP_DPD,
++	TEGRA_PMC_IO_SDMMC1_HV_DPD,
++};
 +
-+static int tegra_bpmp_thermal_set_trips(struct thermal_zone_device *tz, int low, int high)
-+{
-+	struct tegra_bpmp_thermal_zone *zone = tz->devdata;
- 	struct mrq_thermal_host_to_bpmp_request req;
- 	struct tegra_bpmp_message msg;
- 	int err;
-@@ -157,7 +162,7 @@ static int tegra_bpmp_thermal_get_num_zones(struct tegra_bpmp *bpmp,
+ struct tegra_io_pad_soc {
+ 	enum tegra_io_pad id;
+ 	unsigned int dpd;
+ 	unsigned int voltage;
+ 	const char *name;
++	enum tegra_dpd_reg reg_index;
+ };
+ 
+ struct tegra_pmc_regs {
+@@ -284,6 +295,8 @@ struct tegra_pmc_regs {
+ 	unsigned int rst_source_mask;
+ 	unsigned int rst_level_shift;
+ 	unsigned int rst_level_mask;
++	const unsigned int *reorg_dpd_req;
++	const unsigned int *reorg_dpd_status;
+ };
+ 
+ struct tegra_wake_event {
+@@ -364,6 +377,7 @@ struct tegra_pmc_soc {
+ 	bool has_blink_output;
+ 	bool has_usb_sleepwalk;
+ 	bool supports_core_domain;
++	bool has_reorg_hw_dpd_reg_impl;
+ };
+ 
+ /**
+@@ -1546,6 +1560,14 @@ static int tegra_io_pad_get_dpd_register_bit(struct tegra_pmc *pmc,
+ 	if (pad->dpd == UINT_MAX)
+ 		return -ENOTSUPP;
+ 
++	if (pmc->soc->has_reorg_hw_dpd_reg_impl) {
++		*mask = BIT(pad->dpd);
++		*status = pmc->soc->regs->reorg_dpd_status[pad->reg_index];
++		*request = pmc->soc->regs->reorg_dpd_req[pad->reg_index];
++
++		goto done;
++	}
++
+ 	*mask = BIT(pad->dpd % 32);
+ 
+ 	if (pad->dpd < 32) {
+@@ -1556,6 +1578,7 @@ static int tegra_io_pad_get_dpd_register_bit(struct tegra_pmc *pmc,
+ 		*request = pmc->soc->regs->dpd2_req;
+ 	}
+ 
++done:
  	return 0;
  }
  
--static const struct thermal_zone_of_device_ops tegra_bpmp_of_thermal_ops = {
-+static const struct thermal_zone_device_ops tegra_bpmp_of_thermal_ops = {
- 	.get_temp = tegra_bpmp_thermal_get_temp,
- 	.set_trips = tegra_bpmp_thermal_set_trips,
+@@ -3132,6 +3155,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_reorg_hw_dpd_reg_impl = false,
  };
-@@ -200,13 +205,13 @@ static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
- 		zone->idx = i;
- 		zone->tegra = tegra;
  
--		err = tegra_bpmp_thermal_get_temp(zone, &temp);
-+		err = __tegra_bpmp_thermal_get_temp(zone, &temp);
- 		if (err < 0) {
- 			devm_kfree(&pdev->dev, zone);
- 			continue;
- 		}
- 
--		tzd = devm_thermal_zone_of_sensor_register(
-+		tzd = devm_thermal_of_zone_register(
- 			&pdev->dev, i, zone, &tegra_bpmp_of_thermal_ops);
- 		if (IS_ERR(tzd)) {
- 			if (PTR_ERR(tzd) == -EPROBE_DEFER)
-diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
-index 05886684f429..c34501287e96 100644
---- a/drivers/thermal/tegra/tegra30-tsensor.c
-+++ b/drivers/thermal/tegra/tegra30-tsensor.c
-@@ -159,9 +159,9 @@ static void devm_tegra_tsensor_hw_disable(void *data)
- 	tegra_tsensor_hw_disable(ts);
- }
- 
--static int tegra_tsensor_get_temp(void *data, int *temp)
-+static int tegra_tsensor_get_temp(struct thermal_zone_device *tz, int *temp)
- {
--	const struct tegra_tsensor_channel *tsc = data;
-+	const struct tegra_tsensor_channel *tsc = tz->devdata;
- 	const struct tegra_tsensor *ts = tsc->ts;
- 	int err, c1, c2, c3, c4, counter;
- 	u32 val;
-@@ -217,9 +217,9 @@ static int tegra_tsensor_temp_to_counter(const struct tegra_tsensor *ts, int tem
- 	return DIV_ROUND_CLOSEST(c2 * 1000000 - ts->calib.b, ts->calib.a);
- }
- 
--static int tegra_tsensor_set_trips(void *data, int low, int high)
-+static int tegra_tsensor_set_trips(struct thermal_zone_device *tz, int low, int high)
- {
--	const struct tegra_tsensor_channel *tsc = data;
-+	const struct tegra_tsensor_channel *tsc = tz->devdata;
- 	const struct tegra_tsensor *ts = tsc->ts;
- 	u32 val;
- 
-@@ -240,7 +240,7 @@ static int tegra_tsensor_set_trips(void *data, int low, int high)
- 	return 0;
- }
- 
--static const struct thermal_zone_of_device_ops ops = {
-+static const struct thermal_zone_device_ops ops = {
- 	.get_temp = tegra_tsensor_get_temp,
- 	.set_trips = tegra_tsensor_set_trips,
+ static const char * const tegra30_powergates[] = {
+@@ -3193,6 +3217,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_reorg_hw_dpd_reg_impl = false,
  };
-@@ -516,7 +516,7 @@ static int tegra_tsensor_register_channel(struct tegra_tsensor *ts,
- 	tsc->id = id;
- 	tsc->regs = ts->regs + 0x40 * (hw_id + 1);
  
--	tsc->tzd = devm_thermal_zone_of_sensor_register(ts->dev, id, tsc, &ops);
-+	tsc->tzd = devm_thermal_of_zone_register(ts->dev, id, tsc, &ops);
- 	if (IS_ERR(tsc->tzd)) {
- 		if (PTR_ERR(tsc->tzd) != -ENODEV)
- 			return dev_err_probe(ts->dev, PTR_ERR(tsc->tzd),
+ static const char * const tegra114_powergates[] = {
+@@ -3250,6 +3275,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_reorg_hw_dpd_reg_impl = false,
+ };
+ 
+ static const char * const tegra124_powergates[] = {
+@@ -3367,6 +3393,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_reorg_hw_dpd_reg_impl = false,
+ };
+ 
+ static const char * const tegra210_powergates[] = {
+@@ -3497,6 +3524,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_reorg_hw_dpd_reg_impl = false,
+ };
+ 
+ #define TEGRA186_IO_PAD_TABLE(_pad)                                          \
+@@ -3654,6 +3682,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = false,
+ 	.has_usb_sleepwalk = false,
++	.has_reorg_hw_dpd_reg_impl = false,
+ };
+ 
+ #define TEGRA194_IO_PAD_TABLE(_pad)                                              \
+@@ -3789,6 +3818,82 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = false,
+ 	.has_usb_sleepwalk = false,
++	.has_reorg_hw_dpd_reg_impl = false,
++};
++
++#define TEGRA234_IO_PAD(_id, _dpd, _voltage, _name, _dpd_reg_index)	\
++	((struct tegra_io_pad_soc) {					\
++		.id		= (_id),				\
++		.dpd		= (_dpd),				\
++		.voltage	= (_voltage),				\
++		.name		= (_name),				\
++		.reg_index	= (_dpd_reg_index),			\
++	})
++
++#define TEGRA234_IO_PIN_DESC(_id, _dpd, _voltage, _name, _dpd_reg_index) \
++	((struct pinctrl_pin_desc) {					\
++		.number = (_id),					\
++		.name	= (_name)					\
++	})
++
++#define TEGRA234_IO_PAD_TABLE(_pad) {                                          \
++	/* (id, dpd, voltage, name, dpd_reg_index) */                          \
++	_pad(TEGRA_IO_PAD_CSIA,           0,         UINT_MAX,	"csia",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSIB,           1,         UINT_MAX,  "csib",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_HDMI_DP0,       0,         UINT_MAX,  "hdmi-dp0",    \
++		TEGRA_PMC_IO_DISP_DPD),                                        \
++	_pad(TEGRA_IO_PAD_CSIC,           2,         UINT_MAX,  "csic",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSID,           3,         UINT_MAX,  "csid",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSIE,           4,         UINT_MAX,  "csie",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSIF,           5,         UINT_MAX,  "csif",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_UFS,            0,         UINT_MAX,  "ufs",         \
++		TEGRA_PMC_IO_UFS_DPD),                                         \
++	_pad(TEGRA_IO_PAD_EDP,            1,         UINT_MAX,  "edp",         \
++		TEGRA_PMC_IO_EDP_DPD),                                         \
++	_pad(TEGRA_IO_PAD_SDMMC1_HV,      0,         4,         "sdmmc1-hv",   \
++		TEGRA_PMC_IO_SDMMC1_HV_DPD),                                   \
++	_pad(TEGRA_IO_PAD_SDMMC3_HV,      UINT_MAX,  6,         "sdmmc3-hv",   \
++		TEGRA_PMC_IO_INVALID_DPD),                                     \
++	_pad(TEGRA_IO_PAD_AUDIO_HV,       UINT_MAX,  1,         "audio-hv",    \
++		TEGRA_PMC_IO_INVALID_DPD),                                     \
++	_pad(TEGRA_IO_PAD_AO_HV,          UINT_MAX,  0,         "ao-hv",       \
++		TEGRA_PMC_IO_INVALID_DPD),                                     \
++	_pad(TEGRA_IO_PAD_CSIG,           6,         UINT_MAX,  "csig",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSIH,           7,         UINT_MAX,  "csih",        \
++		TEGRA_PMC_IO_CSI_DPD)                                          \
++	}
++
++static const struct tegra_io_pad_soc tegra234_io_pads[] =
++	TEGRA234_IO_PAD_TABLE(TEGRA234_IO_PAD);
++
++static const struct pinctrl_pin_desc tegra234_pin_descs[] =
++	TEGRA234_IO_PAD_TABLE(TEGRA234_IO_PIN_DESC);
++
++/* Reorganized HW DPD REQ registers */
++static const unsigned int tegra234_dpd_req_regs[] = {
++	[TEGRA_PMC_IO_CSI_DPD] = 0xe0c0,
++	[TEGRA_PMC_IO_DISP_DPD] = 0xe0d0,
++	[TEGRA_PMC_IO_QSPI_DPD] = 0xe074,
++	[TEGRA_PMC_IO_UFS_DPD] = 0xe064,
++	[TEGRA_PMC_IO_EDP_DPD] = 0xe05c,
++	[TEGRA_PMC_IO_SDMMC1_HV_DPD] = 0xe054,
++};
++
++/* Reorganized HW DPD STATUS registers */
++static const unsigned int tegra234_dpd_status_regs[] = {
++	[TEGRA_PMC_IO_CSI_DPD] = 0xe0c4,
++	[TEGRA_PMC_IO_DISP_DPD] = 0xe0d4,
++	[TEGRA_PMC_IO_QSPI_DPD] = 0xe078,
++	[TEGRA_PMC_IO_UFS_DPD] = 0xe068,
++	[TEGRA_PMC_IO_EDP_DPD] = 0xe060,
++	[TEGRA_PMC_IO_SDMMC1_HV_DPD] = 0xe058,
+ };
+ 
+ static const struct tegra_pmc_regs tegra234_pmc_regs = {
+@@ -3802,6 +3907,8 @@ static const struct tegra_pmc_regs tegra234_pmc_regs = {
+ 	.rst_source_mask = 0xfc,
+ 	.rst_level_shift = 0x0,
+ 	.rst_level_mask = 0x3,
++	.reorg_dpd_req = tegra234_dpd_req_regs,
++	.reorg_dpd_status = tegra234_dpd_status_regs,
+ };
+ 
+ static const char * const tegra234_reset_sources[] = {
+@@ -3861,10 +3968,10 @@ static const struct tegra_pmc_soc tegra234_pmc_soc = {
+ 	.needs_mbist_war = false,
+ 	.has_impl_33v_pwr = true,
+ 	.maybe_tz_only = false,
+-	.num_io_pads = 0,
+-	.io_pads = NULL,
+-	.num_pin_descs = 0,
+-	.pin_descs = NULL,
++	.num_io_pads = ARRAY_SIZE(tegra234_io_pads),
++	.io_pads = tegra234_io_pads,
++	.num_pin_descs = ARRAY_SIZE(tegra234_pin_descs),
++	.pin_descs = tegra234_pin_descs,
+ 	.regs = &tegra234_pmc_regs,
+ 	.init = NULL,
+ 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
+@@ -3879,6 +3986,7 @@ static const struct tegra_pmc_soc tegra234_pmc_soc = {
+ 	.pmc_clks_data = NULL,
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = false,
++	.has_reorg_hw_dpd_reg_impl = true,
+ };
+ 
+ static const struct of_device_id tegra_pmc_match[] = {
 -- 
-2.25.1
+2.17.1
 
