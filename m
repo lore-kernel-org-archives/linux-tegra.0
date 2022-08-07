@@ -2,99 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C591BC00140
-	for <linux-tegra@archiver.kernel.org>; Sat,  6 Aug 2022 01:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18015C19F2A
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 Aug 2022 20:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238693AbiHFB2m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 Aug 2022 21:28:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
+        id S233048AbiHGU4G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Aug 2022 16:56:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231234AbiHFB2m (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Aug 2022 21:28:42 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 354F07D1C4;
-        Fri,  5 Aug 2022 18:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1659749321; x=1691285321;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ye8NVzvzBvcHA9s6ReUJQafmZ0O34T0PcCGjPKSAx8w=;
-  b=esaU8RKe4gcVy5C2OvDN4xIZKN8l0bNEcoo52Oe3tAvnGyiV8LauybDQ
-   hF0PBQgviLsaCfvtw3PyDQ6OCkokDglzgN2Kr3sFMa1ElFTZG75UDPrhy
-   ZTExLHAY57ZRkNF+P0emM4trsD189amIUDb6eN5zEFLN5Tu96qr0SlqKu
-   SqQZ+GSooKKT7KFoNQa/5EE6JBayB5a+dQ0jIqa/kP1aVG5a5pivq+tyY
-   q4xsTU/fE2Dm40rg0zSBQeNo1oXC/wUDnvmvlU29vYr7Lb1meP5FlagCp
-   wnMdl5f9r7/+QwEODmyC/R9WYGakTi/9jqabS1c20RicypolAWsOAFUfo
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10430"; a="290334363"
-X-IronPort-AV: E=Sophos;i="5.93,217,1654585200"; 
-   d="scan'208";a="290334363"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2022 18:28:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,217,1654585200"; 
-   d="scan'208";a="693181583"
-Received: from lkp-server01.sh.intel.com (HELO e0eace57cfef) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Aug 2022 18:28:38 -0700
-Received: from kbuild by e0eace57cfef with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oK8cI-000Jtw-0C;
-        Sat, 06 Aug 2022 01:28:38 +0000
-Date:   Sat, 6 Aug 2022 09:27:54 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
-Cc:     kbuild-all@lists.01.org, rui.zhang@intel.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amitk@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 05/26] thermal/drivers/tegra: Use generic
- thermal_zone_get_trip() function
-Message-ID: <202208060952.zqreQz9o-lkp@intel.com>
-References: <20220805145729.2491611-6-daniel.lezcano@linaro.org>
+        with ESMTP id S229645AbiHGU4F (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 16:56:05 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D14165AE
+        for <linux-tegra@vger.kernel.org>; Sun,  7 Aug 2022 13:56:03 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id KnJYoMqN4sL0zKnJYoI6XJ; Sun, 07 Aug 2022 22:56:01 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 07 Aug 2022 22:56:01 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH] soc/tegra: pmc: Use devm_clk_get_optional()
+Date:   Sun,  7 Aug 2022 22:55:59 +0200
+Message-Id: <4d2e518fc75dd3053ec4afcc36e13a0a6f75884e.1659905735.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220805145729.2491611-6-daniel.lezcano@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Daniel,
+Use devm_clk_get_optional() instead of hand writing it.
 
-I love your patch! Yet something to improve:
+While at it, use dev_err_probe() to further simplify the code. This is also
+less verbose if clk_get() returns -EPROBE_DEFER.
 
-[auto build test ERROR on next-20220804]
-[cannot apply to rafael-pm/thermal tegra/for-next linus/master v5.19 v5.19-rc8 v5.19-rc7 v5.19]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/soc/tegra/pmc.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Lezcano/Rework-the-trip-points-creation/20220805-230055
-base:    899926f2ccb4453c51943f6738a71b2c5ad98b71
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20220806/202208060952.zqreQz9o-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/17490c33351b77ce054a22f2e41306ca6c18cd99
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Daniel-Lezcano/Rework-the-trip-points-creation/20220805-230055
-        git checkout 17490c33351b77ce054a22f2e41306ca6c18cd99
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "thermal_zone_get_trip" [drivers/thermal/tegra/tegra-soctherm.ko] undefined!
->> ERROR: modpost: "thermal_zone_get_trip" [drivers/thermal/tegra/tegra30-tsensor.ko] undefined!
-
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 6a4b8f7e7948..016762f88fff 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -2885,17 +2885,10 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 		pmc->scratch = base;
+ 	}
+ 
+-	pmc->clk = devm_clk_get(&pdev->dev, "pclk");
+-	if (IS_ERR(pmc->clk)) {
+-		err = PTR_ERR(pmc->clk);
+-
+-		if (err != -ENOENT) {
+-			dev_err(&pdev->dev, "failed to get pclk: %d\n", err);
+-			return err;
+-		}
+-
+-		pmc->clk = NULL;
+-	}
++	pmc->clk = devm_clk_get_optional(&pdev->dev, "pclk");
++	if (IS_ERR(pmc->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(pmc->clk),
++				     "failed to get pclk\n");
+ 
+ 	/*
+ 	 * PMC should be last resort for restarting since it soft-resets
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.34.1
+
