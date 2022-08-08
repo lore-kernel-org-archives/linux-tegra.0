@@ -2,40 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CC5C00140
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 10:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81011C00140
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 10:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235395AbiHHK1U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Aug 2022 06:27:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47694 "EHLO
+        id S234608AbiHHKug (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Aug 2022 06:50:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232740AbiHHK1T (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Aug 2022 06:27:19 -0400
-X-Greylist: delayed 563 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 08 Aug 2022 03:27:17 PDT
-Received: from bluemartstore.com (unknown [143.244.133.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 586322708
-        for <linux-tegra@vger.kernel.org>; Mon,  8 Aug 2022 03:27:17 -0700 (PDT)
-Received: by bluemartstore.com (Postfix, from userid 1005)
-        id AC62E184A73; Mon,  8 Aug 2022 10:17:07 +0000 (UTC)
-To:     linux-tegra@vger.kernel.org
-Subject: =?us-ascii?Q?Urna_Contact_"EINE_FINANZKRISE_KANN_SIE_SEHR_RE?=  =?us-ascii?Q?ICH_MACHEN!"?=
-Date:   Mon, 8 Aug 2022 10:17:07 +0000
-From:   Urna <contact@elementor.urnawp.com>
-Reply-To: no-reply@thembay.com
-Message-ID: <5JCNHQduM6k4ejINFztSQUXXQ8J0VvdLZS2oOiZc@signcitysa.com>
-X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+        with ESMTP id S235908AbiHHKu3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Aug 2022 06:50:29 -0400
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF67313F7F;
+        Mon,  8 Aug 2022 03:50:27 -0700 (PDT)
+Received: from [167.98.27.226] (helo=[10.35.5.6])
+        by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+        id 1oL0Kz-001qai-Fh; Mon, 08 Aug 2022 11:50:21 +0100
+Message-ID: <6fd64502-6061-f14f-b8c4-b19ab6e26dd5@codethink.co.uk>
+Date:   Mon, 8 Aug 2022 11:50:20 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] soc/tegra: pmc: Add IO Pad table for tegra234
+Content-Language: en-GB
+To:     Petlozu Pravareshwar <petlozup@nvidia.com>, jonathanh@nvidia.com,
+        thierry.reding@gmail.com, p.zabel@pengutronix.de,
+        dmitry.osipenko@collabora.com, ulf.hansson@linaro.org,
+        kkartik@nvidia.com, cai.huoqing@linux.dev, spatra@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220805104100.3098200-1-petlozup@nvidia.com>
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <20220805104100.3098200-1-petlozup@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: CharlesMon <linux-tegra@vger.kernel.org>
-Urna Contact Form
+On 05/08/2022 11:41, Petlozu Pravareshwar wrote:
+> Add IO PAD table for tegra234 to allow configuring dpd mode
+> and switching the pins to 1.8V or 3.3V as needed.
+> 
+> In tegra234, DPD registers are reorganized such that there is
+> a DPD_REQ register and a DPD_STATUS register per pad group.
+> This change accordingly updates the PMC driver.
+> 
+> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> ---
+>   drivers/soc/tegra/pmc.c | 116 ++++++++++++++++++++++++++++++++++++++--
+>   1 file changed, 112 insertions(+), 4 deletions(-)
 
-Message Body:
-Verdienen Sie online uber 1200 $ pro Tag mit der Bitcoin-Gewinnmethode! https://telegra.ph/Deutschland-hat-eine-neue-Einnahmequelle-von-791741-Euro-pro-Woche-08-07
 
---
-This e-mail was sent from a contact form on Urna (https://elementor.urnawp.com)
+snip
 
+>   /**
+> @@ -1546,6 +1560,14 @@ static int tegra_io_pad_get_dpd_register_bit(struct tegra_pmc *pmc,
+>   	if (pad->dpd == UINT_MAX)
+>   		return -ENOTSUPP;
+>   
+> +	if (pmc->soc->has_reorg_hw_dpd_reg_impl) {
+> +		*mask = BIT(pad->dpd);
+> +		*status = pmc->soc->regs->reorg_dpd_status[pad->reg_index];
+> +		*request = pmc->soc->regs->reorg_dpd_req[pad->reg_index];
+> +
+> +		goto done;
+> +	}
+> +
+>   	*mask = BIT(pad->dpd % 32);
+>   
+>   	if (pad->dpd < 32) {
+> @@ -1556,6 +1578,7 @@ static int tegra_io_pad_get_dpd_register_bit(struct tegra_pmc *pmc,
+>   		*request = pmc->soc->regs->dpd2_req;
+>   	}
+>   
+> +done:
+>   	return 0;
+>   }
+>   
+> @@ -3132,6 +3155,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+>   	.num_pmc_clks = 0,
+>   	.has_blink_output = true,
+>   	.has_usb_sleepwalk = true,
+> +	.has_reorg_hw_dpd_reg_impl = false,
+>   };
+
+I don't think you need to set false values in these blocks, the
+default should be false.
+
+
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
