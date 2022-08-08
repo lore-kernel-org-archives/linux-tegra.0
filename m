@@ -2,47 +2,47 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF7DC25B0C
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 01:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6303C25B0E
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 01:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243285AbiHHBub (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 7 Aug 2022 21:50:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38686 "EHLO
+        id S243369AbiHHBwo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Aug 2022 21:52:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243080AbiHHBti (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 21:49:38 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF0E18355;
-        Sun,  7 Aug 2022 18:37:26 -0700 (PDT)
+        with ESMTP id S243649AbiHHBvb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 21:51:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32245D118;
+        Sun,  7 Aug 2022 18:38:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EAF45B80DCF;
-        Mon,  8 Aug 2022 01:37:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 655CCC433C1;
-        Mon,  8 Aug 2022 01:37:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F83960EBD;
+        Mon,  8 Aug 2022 01:38:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5BAFC433D7;
+        Mon,  8 Aug 2022 01:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659922643;
-        bh=gQm1GOy4uLgvoCwWW/Up8QpHprwb0rVnwltmn9hY3LI=;
+        s=k20201202; t=1659922704;
+        bh=gVNJEFm1Q3F65zmNeU+fdgNngxG14eW9scGa3m0pN5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vGUiRLk0VSyE+C8iaoMgwCi3q/Xi6G2zUDQE/q0g+Sd+z5Gp3QbjApf7hbueZyrFe
-         DhRlh3kg0nvng2iHXCRNWxcb767dp8omLYtgmP+r7KDXAlJ0uFFT+Bot6wGb9yBw6u
-         w7neH9TEMb9Z2IC9/7V4d0Yq8wWku8WGcmfSGhqsmSbMjNEFxNHFR5vemifrhtOWKl
-         mlvxxWO2l479FoJkhz6ECMMjWWlOC5fS/INnkNDzq6CRMDesmaPOuU4TpPOv0DsW4w
-         RZvyD3YPR+2O9fXcqjCxl822/f1f+FD5/mfAs7kgl7Kye2IK/L/yJTYFDGHJUKefzw
-         KkbEm0e7QudPQ==
+        b=gnhKSDEHdq7OYG7qHXb06XSpTMaxyojxRgv0BRipHp2+31Pztro9jPmhFYlb/Ks2A
+         bQd/aBfokiHCZ4/l1YxuGmZ8FRqnLHmOXTx8WxtBFoGyy7otbftrd11mAKCtI96miQ
+         uP1Ns1BxxRVGXP4BF4JF2GnoalRyzLWk5PjZh1e62fsB5WisP86UlGrBp2HfyKDEAj
+         PSUoLRVkGpA2U4JTt4x5yqLU9vOF3E552MUHDRAnJKFfaGAlMz2pHzUl9Zf/GoiyYH
+         kX/3V/Lgj1Ayp7vOaDH6qzr6G63riim21aylt5OFGziSbuPl8c8Vum+UJsIUvyK9/8
+         z2XxSiaD2CuRw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Lv Ruyi <lv.ruyi@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, arnd@arndb.de, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 38/45] firmware: tegra: Fix error check return value of debugfs_create_file()
-Date:   Sun,  7 Aug 2022 21:35:42 -0400
-Message-Id: <20220808013551.315446-38-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 26/29] firmware: tegra: Fix error check return value of debugfs_create_file()
+Date:   Sun,  7 Aug 2022 21:37:36 -0400
+Message-Id: <20220808013741.316026-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220808013551.315446-1-sashal@kernel.org>
-References: <20220808013551.315446-1-sashal@kernel.org>
+In-Reply-To: <20220808013741.316026-1-sashal@kernel.org>
+References: <20220808013741.316026-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -67,10 +67,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
-index 3e9fa4b54358..1ed881a567d5 100644
+index 440d99c63638..fad97ec8e81f 100644
 --- a/drivers/firmware/tegra/bpmp-debugfs.c
 +++ b/drivers/firmware/tegra/bpmp-debugfs.c
-@@ -465,7 +465,7 @@ static int bpmp_populate_debugfs_inband(struct tegra_bpmp *bpmp,
+@@ -429,7 +429,7 @@ static int bpmp_populate_debugfs_inband(struct tegra_bpmp *bpmp,
  			mode |= attrs & DEBUGFS_S_IWUSR ? 0200 : 0;
  			dentry = debugfs_create_file(name, mode, parent, bpmp,
  						     &bpmp_debug_fops);
@@ -79,7 +79,7 @@ index 3e9fa4b54358..1ed881a567d5 100644
  				err = -ENOMEM;
  				goto out;
  			}
-@@ -716,7 +716,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
+@@ -680,7 +680,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
  
  		if (t & DEBUGFS_S_ISDIR) {
  			dentry = debugfs_create_dir(name, parent);
@@ -88,7 +88,7 @@ index 3e9fa4b54358..1ed881a567d5 100644
  				return -ENOMEM;
  			err = bpmp_populate_dir(bpmp, seqbuf, dentry, depth+1);
  			if (err < 0)
-@@ -729,7 +729,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
+@@ -693,7 +693,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
  			dentry = debugfs_create_file(name, mode,
  						     parent, bpmp,
  						     &debugfs_fops);
@@ -97,7 +97,7 @@ index 3e9fa4b54358..1ed881a567d5 100644
  				return -ENOMEM;
  		}
  	}
-@@ -779,11 +779,11 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
+@@ -743,11 +743,11 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
  		return 0;
  
  	root = debugfs_create_dir("bpmp", NULL);
