@@ -2,160 +2,294 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF68FC00140
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 20:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFB9C00140
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 20:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238144AbiHHUKO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Aug 2022 16:10:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36884 "EHLO
+        id S243283AbiHHUOv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Aug 2022 16:14:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbiHHUKN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Aug 2022 16:10:13 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2054.outbound.protection.outlook.com [40.107.223.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA6701F7;
-        Mon,  8 Aug 2022 13:10:11 -0700 (PDT)
+        with ESMTP id S244126AbiHHUOp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Aug 2022 16:14:45 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2064.outbound.protection.outlook.com [40.107.243.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E273F1A076;
+        Mon,  8 Aug 2022 13:14:44 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NVwmELxNiVdN4f2OkJ4gb+PMK/4mF/cWiwozTAyNYgXmoIGlOIllobUdOXAMQunXAOjqRLfniuR0wd3Xa1NhzJlodUinlU39qdaJnAhyedcOQmLqBgWX3YsJeMxS0FMCo/EM6bNiAkeUaPI1Gh7zgrpgYT5ak/YIMqklYX+UqLLRvMjRLdP0s/XG0phj6Wvt95/SKFH9BNkBykXg5K5ZgIy00OtmjB3HxbWtkLusjfJmLoGAyzOvvRIj3w3w0HAtkrypBOzvqLL+UTZ78tn4yJlape2NpgEODmPN2YaMCzpD+DUg9RJpHE7rG1j3tzxJkenTN/PHcCzDvFM3kgIuag==
+ b=Ir/Di241lbu+QpjE2ULkJyQ/Z2Q6VUHu0So/DXm9PgS4MD8+undra4mWWFPSctkeFMSqeVSRyp0o1H1NDuiPbi8GMiqVWWQQNchD3Ob3zS0l4i3I8u8NPnusZa56sD1qnLOlHJCeeQURZxNQfR7n0C65XQtAT/GB1hvKdpOL1UWJ8dkrytVsByLkDps1sc7xzpI71T1aEP48gb7vcz/dEBUGH6BBQyqS4ZNuMP/QTcqZzbp5A02TSa1XaoWuWb3XJSsF69vgr6h1N9/CF//3KudxToWuz3zaii26AWWgTwSrMt6/iHtTKif29tWqs5GJ1L0zp6BtcsBzTwrYleYD6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YZ9es/oXNwTytY+HZvhV9GG04AGNT+Raulfd0Pmj16o=;
- b=Fo81Uj41lWL3xXIilpSGNsa9HJOcYrXlbrtSsivL71iszdzRvD0yVCHAmMBF0xwAXTwINIuVFK3m2CHUK+0MM8V4yOJJdomCqdIg4HrtSm9+DvMHPnRvWHtMEMGnQFVHtRE9TjFI3B+4WMEzhzcnhdZJLRrtfqIXzP1Ls1XE8uNiCg8kEx5NguXZzlYnnRpWmIEPoRd7eBFNyeEsRcdzEyrqRyXfWZ14P1a5XbrkJLmpA98ivy/ClnvkGJxR4SG/vyAgS1Fg+a6kNTc+kl+04EnVqF3tgWcKJ1Mljvu7Lca6P8uVVr5sfJzv70EKKNSg/tx1zh3JW0MDK2AMDREjjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=dYCfVPa2cGxvwdokipj2TAofwRVcK7F7QfeIZ1Bn6v0=;
+ b=TCFbES4crJItu2BE/Nm2H4I8qho5a0z2KYow2G1mYR/w6v0cPibBR5XwPFYCL9kmyxx1iTmmzVoqoI/oss4wWnNDORU/63+lzcYsKk+b+3qYJkn+AoZeWADjdhabiU0tqFlV9GhgROEagJR8Lyov9baBVXNKE8/gaCDiELzg/KsA7yXT/B9sIdBQl+4XifEVNflo4vjav5+3Xf0sfi2acQ0qQLKElHic56EPA6FyJXxMZD5NGXeBQtJeEUHclrVSMISTWJQPUH17xKGVrW+XRWRjB9v1JalcLztBDszYMGQkHQvQpUn/91FJ9TmPLbvNNzpQ3yWb1Yh3y/LLcBIL4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=linux.dev smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YZ9es/oXNwTytY+HZvhV9GG04AGNT+Raulfd0Pmj16o=;
- b=mCYKRhGv69PHaDwY+BFDXh8p6TrfahdNHS1BPLIOvDy54Z8ZSNJSY5GmVNggL4LHFltrD+cMwXfdBBrbYvKj6YeVQxgKIo/2Tpt5rnMNuuS+kqer5qpUICtuOjPP4aNkcA9p7E+hpigcJHlrscAzKuRX+RvcklTSY38JgVz6Of/toDOT0K/YDpBBiW8wQpHe4vv5N4qKwEO1bIOTGsft7yDjKw1gkUTuJKWCd9/NLUkGlqUy0nlKWCHDhf4hPqBOaRVU+Zaip1MHvFm1QoWqIJ20PTaqwVvqeVTutDMxcl+ufbEjv8YOXSzuTe0gM+8+Z+7pygzrBmm39LkjRkJFOQ==
-Received: from DM6PR12MB3164.namprd12.prod.outlook.com (2603:10b6:5:188::30)
- by MN2PR12MB4655.namprd12.prod.outlook.com (2603:10b6:208:1b9::13) with
+ bh=dYCfVPa2cGxvwdokipj2TAofwRVcK7F7QfeIZ1Bn6v0=;
+ b=VWiKB3AgMozZzJlfiMpWOdDe2aLUpy3NFITjvAdrGy82uyVcMSw4GHF9z3/QazX6/Z+0cpISsapTw2Nht3TlDi9c3cU4quqbpgdN78fw+ACQixPO88FU2lFz3expX+rdeRheCuy7wyZfEd7siH0ct1aIX3/R/elrnmLgnQP67XFgLsLYkt6rZs7krMGGeRxjsQVboaCzbyvoR3jD4dXQXty8bwHCneZuD6s1hAaWGm2i+77GiiGJAukXy6AOkxyRrULzPg4KstQ6t+zRGjG1to8YEw9QmbgWsD3GlcmmzAuwilk5sN8fjjSEW34B+W0EGAxZYiuCF5ym8JFRUotJrA==
+Received: from MW4PR03CA0183.namprd03.prod.outlook.com (2603:10b6:303:b8::8)
+ by MN2PR12MB3694.namprd12.prod.outlook.com (2603:10b6:208:165::26) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.16; Mon, 8 Aug
- 2022 20:10:09 +0000
-Received: from DM6PR12MB3164.namprd12.prod.outlook.com
- ([fe80::593c:21e4:1120:47a]) by DM6PR12MB3164.namprd12.prod.outlook.com
- ([fe80::593c:21e4:1120:47a%2]) with mapi id 15.20.5504.020; Mon, 8 Aug 2022
- 20:10:09 +0000
+ 2022 20:14:42 +0000
+Received: from CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b8:cafe::9c) by MW4PR03CA0183.outlook.office365.com
+ (2603:10b6:303:b8::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.16 via Frontend
+ Transport; Mon, 8 Aug 2022 20:14:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ CO1NAM11FT054.mail.protection.outlook.com (10.13.174.70) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5504.14 via Frontend Transport; Mon, 8 Aug 2022 20:14:42 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 8 Aug
+ 2022 20:14:41 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 8 Aug 2022
+ 13:14:41 -0700
+Received: from build-petlozup-20220627T000321362.nvidia.com (10.127.8.12) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.986.26 via
+ Frontend Transport; Mon, 8 Aug 2022 13:14:40 -0700
 From:   Petlozu Pravareshwar <petlozup@nvidia.com>
-To:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "dmitry.osipenko@collabora.com" <dmitry.osipenko@collabora.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "Kartik ." <kkartik@nvidia.com>,
-        "cai.huoqing@linux.dev" <cai.huoqing@linux.dev>,
-        Sandipan Patra <spatra@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] soc/tegra: pmc: Add IO Pad table for tegra234
-Thread-Topic: [PATCH] soc/tegra: pmc: Add IO Pad table for tegra234
-Thread-Index: AQHYqLgAOdPi9pdX0kSZNmRTZqgyi62k194AgACb3fA=
-Date:   Mon, 8 Aug 2022 20:10:09 +0000
-Message-ID: <DM6PR12MB3164E33542018A69895585CAB5639@DM6PR12MB3164.namprd12.prod.outlook.com>
-References: <20220805104100.3098200-1-petlozup@nvidia.com>
- <6fd64502-6061-f14f-b8c4-b19ab6e26dd5@codethink.co.uk>
-In-Reply-To: <6fd64502-6061-f14f-b8c4-b19ab6e26dd5@codethink.co.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5a6fd7b0-35c1-4912-759a-08da7979fea4
-x-ms-traffictypediagnostic: MN2PR12MB4655:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: X+4rSzZBW85jrWi/xiu3G88iid0cnL1dElxgFGfYPfZrLWZSAodm+EQN/hzAwG5n4Ioj2ouQw6N1UCOQyXq44o4uVC27eP4ZjJdG67WLUMrFOM+NVHOXj0JICELR9VzBjLkKbEaTyfi3yqKT8UepVLI+9UXTpYu6Us+6fnUS69PcXNZjoX5GvcmOUMb/KNT6R7BKxW2idsfcjhmqoeTdI8zkr+tWXda9XUIKHMLyRQ+n+XxYzItYI7f0FDudrr6Nd4yeCvKmAgh9NycXjrmDtkwcC8RY82wfAVsu7XX+vTIBlSugmZhdZvRGPu5He+RyKifsqEcTPSX4MuvS9HWxHZxLDcVt6wxHC93dgGb0G8QhreC3J2vy+WPb/UvkWmFXWGeEf4DgO3msZOF8UwM+shUJHdKgyiAnkfwQ+Uv9mmak2kU6345wDCD8o/b9VO3+2DSuqlT0JnDKy+UOTVw2h6O2TRjK7TeOPv8CsNCFVlIozFQbiK0/xuTIi/v+YcZNoKkT2LgoIuPj4b6Ct1KjtezjroRGFJPhvRfqgm4gGapjzzDAfsTYc7fxLgC5797Q6q51BzXW+X9s/J3VBJv8tIPv9/rVmPZvoHaxc3hrZLKqz27tm7hRNfEzb4jUYADizuLW7vz356eePkipnvsiJI6QhBLFpqajAd548HpcE7nS7Z/48R1p6AvuYlpx5s8nvv1C/C4rjiRFgaO3fRzcp/2k3EHCuLsyEwfxSEmqXN5z3IbItJrIgj0NrecY0FX4yrC5DqHYSto1nuBrit9aDlrPzmF0sCTzO9BpG92IJu4O2Mo6pyeuihiZ6ucK0Kef
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3164.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(136003)(346002)(376002)(366004)(39860400002)(8676002)(55016003)(66476007)(316002)(66946007)(66556008)(5660300002)(76116006)(64756008)(66446008)(9686003)(7696005)(52536014)(8936002)(2906002)(122000001)(38100700002)(41300700001)(33656002)(478600001)(71200400001)(38070700005)(921005)(26005)(110136005)(86362001)(83380400001)(55236004)(6506007)(53546011)(186003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UUZ4RmJvRmV6cGZjM3d5SjloR0c4TjlBckVwUFo0OXhtZW5KQWpsVm5neng4?=
- =?utf-8?B?NWV1UVFtZWMzV2dFZkhJRjhyOWVubXpmUTZwek9tYTNRS2lVTVdHZTUreGxz?=
- =?utf-8?B?NzBxd2tDajNoSDlUVnF3RDBlbHg0WWtxSWg1Skl2UlJHWE8vQUltZUV6U2s1?=
- =?utf-8?B?N2I5ZHdYa1doeUd4ZTdTSEkwdGtNTFFEUkZLR0M0NFZlUy9lNzN3aWR4ekFR?=
- =?utf-8?B?TjBlWEZRR0dHQm5RR1V0NHZ5bncvcmFpUHBiYU5VeVhRckM0d01JeU9zclla?=
- =?utf-8?B?cHZicUt5TEhLSHFMZEwyYzg2YWVYaHgrRFNnY0ZielNBREM1bHBkdHFRSVFa?=
- =?utf-8?B?ZnltWHRGS2NxVHordjZjbTlkYWVFcktubFNCRitkWjhqRE5kMjFUV1g1SCs1?=
- =?utf-8?B?TWxZV2N6ZVpERnNpempuS2xvbDFxOEM0RUFieXVyVXF6VUxFcmVZd2t4b1VV?=
- =?utf-8?B?WXZ0UUVha2Zxb3dIT1cvQVM1Ni83T0dieWxPTy8zcm0zRE9UUDNxVjRWNnR2?=
- =?utf-8?B?VFlyVFZnM3pvcmJxOFFxdUNpa1lPOFVXUk01REh4UEs5azYveHFWcGt5S1p3?=
- =?utf-8?B?R1poOHIrdUtQbEhlV01OQTlObEM4ZHZ0cFkzeXJCQm9FQzNrK0x5K3lqem9Y?=
- =?utf-8?B?UnprY1NPRXFzQ2oxZDhGbElEQmNPM3BtNVBRYzFLWDVIa3UvbjA3czNxUFJn?=
- =?utf-8?B?LzZES29kUWpjU2pVZWZnU0tMN014QXErVzVhTW5Vc2luK2NoTGZGdmd5c3hl?=
- =?utf-8?B?UU9keUJ2aEpXaFdSbWpUOGlMdGVPdzJzUlk5YUNYcGJkd2hXcWp1Y0FmOGE4?=
- =?utf-8?B?bkxEUUhBNkhETmgycVp0ZkdidjVLYWp6RnFLRXExQ3FCeTlFWnJrcjhNaUdq?=
- =?utf-8?B?dHFPdGFqN1JaWUhTRllhVEtYTkpDb3FJcUNDZ1dsaFJlUGl6cTN6WFEzdnFK?=
- =?utf-8?B?cW9rM0xuYkVoRjB5enk1UGpmZ0JNV1VMcEtXVGFnN3NjaytzV3lNSzV2SGZS?=
- =?utf-8?B?ckkwaUg5eVhIS2dKWjNNZFdTa0xEVW9RMy84ZkZ2TXRZZnRENThMbkVteGdJ?=
- =?utf-8?B?UW4xSVBSRHBBeUJDR3ZLai9DWXYrRVpqUStQVWl6R0FOZGFSZGF0THZQUjNB?=
- =?utf-8?B?SSsrcXRBTHIzMWVaV0hOZG1ldjN5RnpyQXFJdCtPaHBlVHo1ei9zS1IrYm1Q?=
- =?utf-8?B?RWVBVXhacmdHY1JqNTZCZHBpYitGaHEwMlFOeWhveDJjWG9mdWN0UFJzU2Ni?=
- =?utf-8?B?SU1iRUVGOGs3eVVQZGhKTHJ5REJWNUp5YWVEQnI3UnVCK2czUkdTYTdTRC9m?=
- =?utf-8?B?TkdramhCSDZEdmM3c1RuZGxwVTRmN1RNbnhnTDgxQWxMSVBLREdxaEttTnhL?=
- =?utf-8?B?bUNNSkpZZlU4d3ZONkJVOUtlWnBEQ3N4anNINFFWbWltcXJMamtobXlaeU8z?=
- =?utf-8?B?WVVUOWwvOGUvWENLZU5lSFFjcDRJb0FvTjd1UFN5K2RhSUF3eVBZZy82WlUw?=
- =?utf-8?B?c3N4bTJ5Ri9sUEtnMFdDdmQxYTF2a0cwc2w5UGo5eHlVU1hMRzBlSE9Xd1Vq?=
- =?utf-8?B?cDQybC96MDk5MFErV1FwZEJ4ekJBczJJMDNscTB3Y1kxbE1EMUpVcHphYUt1?=
- =?utf-8?B?ZDJRdWNkYjJvWk05dW44SDBHVUJwK1E5ZU94dXRZQW14TUU5MCtPSVJZSStX?=
- =?utf-8?B?d2c2MmZ0cmQ0VnlNaVg0dHFOK013RlM3ckV5QjcrcnRjem5vcXNvdVdnMHpi?=
- =?utf-8?B?ZlR2a2dickZFcDlxWERXZFlCWGUyMnV6VW5DOFRjSlYxKzA5NkgzR01QVGZ5?=
- =?utf-8?B?YTg2ejNBWVRyQXlVaUdFTmdKR1NCOHNYdmh6Snp4Q0V1cUQ3dXVGZzlub3ln?=
- =?utf-8?B?RURQdXJCdFY3WG5XL1lpVmN1ZTBnQ2w2bGxYWDdhbG9LZllkSS9LMEl1TVgz?=
- =?utf-8?B?dnJ4NE15MWl1dmdaTVU4UEpQYk9nQUtrMXpjTFE5ODRhRm02b2ZPWmJKUlVO?=
- =?utf-8?B?eUtLQmJsU3NHZmwxZVlkdDJuTlJPQ09LenArd2dVQkhDNjY0MGppR0Y3L0Jz?=
- =?utf-8?B?TWR2QkdMVmhkQVpxekdZUk9SVThQeUxpUlo2YzNtWWFzdERIWFpXcmlHWW1O?=
- =?utf-8?Q?Qx79IQkfllAU2rIXMeYHaxQYT?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+To:     <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
+        <p.zabel@pengutronix.de>, <dmitry.osipenko@collabora.com>,
+        <ulf.hansson@linaro.org>, <kkartik@nvidia.com>,
+        <cai.huoqing@linux.dev>, <spatra@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <petlozup@nvidia.com>
+Subject: [PATCH v2] soc/tegra: pmc: Add IO Pad table for tegra234
+Date:   Mon, 8 Aug 2022 20:14:20 +0000
+Message-ID: <20220808201420.3451111-1-petlozup@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ebb4d1e9-7132-479a-2cb1-08da797aa143
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3694:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: coHGMYHBde/BmkSCWGucAJCI0IZ+fyWZzRlonOyZ7Fb1973PWfwiY9GCJB6FRWX03QOoSsK5fHUPtLly1jNjCo292raK6yQtpbG6NgO+LE+z56m3gryVkila5C1+2MasElz2EWxeQU7EYRlUv7JfCVtuSbLTykoZADh178TDVwocZQGmqYZZzc7faRW2RQfKOHQs7NkoMVn7PyXGVXW0ZDY9x4NlNtwePb/N796fMJjjyAkWm00dsWSEQavH/kRUjewzsxc0O6vKUHobEy/0MX/qLZWLQw7azgfyJD18U1ad1Yt6OGhpJFSosfq+3Q5rRThLm8ZzXbZb8vjBV7pAGoLFS6W8B0tplKl34BdsUh6mVUUBZe9iBx6gZbgnI55FwFYVXb4p2WWM51hm9MP+mRJ0CEczLDtE4G7VOSsQQgmi0UxcHRpW+IUP8nKUhn+s0oiFfmpHWadbc188hj3H/k54U9LjFIrdfM+oxfGBBrbGAzvnBaoUnqBKHV43xPKWNml4mohSEr4GSpsOMEGdT0/Vnur0a5+SCM4mKU8VBEb1GAVnSqciIx9E5FTEJqtuQUNt0cE/La8adxlKkJJlkRnfPG6jzw5kl/vQcnrOrRr9gKoQklwJV6yI6+5BWiEBvgoWiNj8cTvKYSoZTzdB2CImH9kYdNeaMLL51WZs+M+jLYgF0u1DnNJhnRbatByrO6E48SBQmpj3/mntvEZU0h8YOTHm0D9ziLYIzTJwRBkp+NGSUY462yu8D6Z7rc+YNz5PV613pU0762COzV9tGV4bnftIPfOQ4PPHwMgaEMv+BST9ebJXneh0u5FKQ6dUhGKtnCzdv97wPRXSmF1eQHcszS/Hn+WIjZWYxC5vV3w=
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(396003)(376002)(136003)(39860400002)(36840700001)(46966006)(40470700004)(83380400001)(26005)(107886003)(1076003)(36756003)(2616005)(186003)(336012)(4326008)(110136005)(86362001)(426003)(316002)(6666004)(41300700001)(7696005)(2906002)(40460700003)(47076005)(478600001)(82740400003)(36860700001)(70206006)(5660300002)(40480700001)(70586007)(356005)(8676002)(82310400005)(81166007)(8936002)(921005)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3164.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a6fd7b0-35c1-4912-759a-08da7979fea4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2022 20:10:09.6384
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2022 20:14:42.3914
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KXoEbPT08MirdnCQ7fv0V+pBbDpcfh0PAchOsXANrnVwuhWAY2WO1ZhWqUAtzOr7xujm65vdLIJbyuKFKMsMPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4655
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebb4d1e9-7132-479a-2cb1-08da797aa143
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3694
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PiANCj4gT24gMDUvMDgvMjAyMiAxMTo0MSwgUGV0bG96dSBQcmF2YXJlc2h3YXIgd3JvdGU6DQo+
-ID4gQWRkIElPIFBBRCB0YWJsZSBmb3IgdGVncmEyMzQgdG8gYWxsb3cgY29uZmlndXJpbmcgZHBk
-IG1vZGUgYW5kDQo+ID4gc3dpdGNoaW5nIHRoZSBwaW5zIHRvIDEuOFYgb3IgMy4zViBhcyBuZWVk
-ZWQuDQo+ID4NCj4gPiBJbiB0ZWdyYTIzNCwgRFBEIHJlZ2lzdGVycyBhcmUgcmVvcmdhbml6ZWQg
-c3VjaCB0aGF0IHRoZXJlIGlzIGENCj4gPiBEUERfUkVRIHJlZ2lzdGVyIGFuZCBhIERQRF9TVEFU
-VVMgcmVnaXN0ZXIgcGVyIHBhZCBncm91cC4NCj4gPiBUaGlzIGNoYW5nZSBhY2NvcmRpbmdseSB1
-cGRhdGVzIHRoZSBQTUMgZHJpdmVyLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUGV0bG96dSBQ
-cmF2YXJlc2h3YXIgPHBldGxvenVwQG52aWRpYS5jb20+DQo+ID4gLS0tDQo+ID4gICBkcml2ZXJz
-L3NvYy90ZWdyYS9wbWMuYyB8IDExNg0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKy0tDQo+ID4gICAxIGZpbGUgY2hhbmdlZCwgMTEyIGluc2VydGlvbnMoKyksIDQgZGVs
-ZXRpb25zKC0pDQo+IA0KPiANCj4gc25pcA0KPiANCj4gPiAgIC8qKg0KPiA+IEBAIC0xNTQ2LDYg
-KzE1NjAsMTQgQEAgc3RhdGljIGludA0KPiB0ZWdyYV9pb19wYWRfZ2V0X2RwZF9yZWdpc3Rlcl9i
-aXQoc3RydWN0IHRlZ3JhX3BtYyAqcG1jLA0KPiA+ICAgICAgIGlmIChwYWQtPmRwZCA9PSBVSU5U
-X01BWCkNCj4gPiAgICAgICAgICAgICAgIHJldHVybiAtRU5PVFNVUFA7DQo+ID4NCj4gPiArICAg
-ICBpZiAocG1jLT5zb2MtPmhhc19yZW9yZ19od19kcGRfcmVnX2ltcGwpIHsNCj4gPiArICAgICAg
-ICAgICAgICptYXNrID0gQklUKHBhZC0+ZHBkKTsNCj4gPiArICAgICAgICAgICAgICpzdGF0dXMg
-PSBwbWMtPnNvYy0+cmVncy0+cmVvcmdfZHBkX3N0YXR1c1twYWQtPnJlZ19pbmRleF07DQo+ID4g
-KyAgICAgICAgICAgICAqcmVxdWVzdCA9DQo+ID4gKyBwbWMtPnNvYy0+cmVncy0+cmVvcmdfZHBk
-X3JlcVtwYWQtPnJlZ19pbmRleF07DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgZ290byBkb25l
-Ow0KPiA+ICsgICAgIH0NCj4gPiArDQo+ID4gICAgICAgKm1hc2sgPSBCSVQocGFkLT5kcGQgJSAz
-Mik7DQo+ID4NCj4gPiAgICAgICBpZiAocGFkLT5kcGQgPCAzMikgew0KPiA+IEBAIC0xNTU2LDYg
-KzE1NzgsNyBAQCBzdGF0aWMgaW50DQo+IHRlZ3JhX2lvX3BhZF9nZXRfZHBkX3JlZ2lzdGVyX2Jp
-dChzdHJ1Y3QgdGVncmFfcG1jICpwbWMsDQo+ID4gICAgICAgICAgICAgICAqcmVxdWVzdCA9IHBt
-Yy0+c29jLT5yZWdzLT5kcGQyX3JlcTsNCj4gPiAgICAgICB9DQo+ID4NCj4gPiArZG9uZToNCj4g
-PiAgICAgICByZXR1cm4gMDsNCj4gPiAgIH0NCj4gPg0KPiA+IEBAIC0zMTMyLDYgKzMxNTUsNyBA
-QCBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX3BtY19zb2MNCj4gdGVncmEyMF9wbWNfc29jID0g
-ew0KPiA+ICAgICAgIC5udW1fcG1jX2Nsa3MgPSAwLA0KPiA+ICAgICAgIC5oYXNfYmxpbmtfb3V0
-cHV0ID0gdHJ1ZSwNCj4gPiAgICAgICAuaGFzX3VzYl9zbGVlcHdhbGsgPSB0cnVlLA0KPiA+ICsg
-ICAgIC5oYXNfcmVvcmdfaHdfZHBkX3JlZ19pbXBsID0gZmFsc2UsDQo+ID4gICB9Ow0KPiANCj4g
-SSBkb24ndCB0aGluayB5b3UgbmVlZCB0byBzZXQgZmFsc2UgdmFsdWVzIGluIHRoZXNlIGJsb2Nr
-cywgdGhlIGRlZmF1bHQgc2hvdWxkDQo+IGJlIGZhbHNlLg0KQWdyZWUuIFdpbGwgdXBkYXRlIHRo
-ZSBwYXRjaCBhY2NvcmRpbmdseS4NCg0KVGhhbmtzLg0K
+Add IO PAD table for tegra234 to allow configuring dpd mode
+and switching the pins to 1.8V or 3.3V as needed.
+
+In tegra234, DPD registers are reorganized such that there is
+a DPD_REQ register and a DPD_STATUS register per pad group.
+This change accordingly updates the PMC driver.
+
+Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 109 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 105 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 5611d14d3ba2..34d36a28f7d6 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -266,11 +266,22 @@ struct tegra_powergate {
+ 	struct reset_control *reset;
+ };
+ 
++enum tegra_dpd_reg {
++	TEGRA_PMC_IO_INVALID_DPD,
++	TEGRA_PMC_IO_CSI_DPD,
++	TEGRA_PMC_IO_DISP_DPD,
++	TEGRA_PMC_IO_QSPI_DPD,
++	TEGRA_PMC_IO_UFS_DPD,
++	TEGRA_PMC_IO_EDP_DPD,
++	TEGRA_PMC_IO_SDMMC1_HV_DPD,
++};
++
+ struct tegra_io_pad_soc {
+ 	enum tegra_io_pad id;
+ 	unsigned int dpd;
+ 	unsigned int voltage;
+ 	const char *name;
++	enum tegra_dpd_reg reg_index;
+ };
+ 
+ struct tegra_pmc_regs {
+@@ -284,6 +295,8 @@ struct tegra_pmc_regs {
+ 	unsigned int rst_source_mask;
+ 	unsigned int rst_level_shift;
+ 	unsigned int rst_level_mask;
++	const unsigned int *reorg_dpd_req;
++	const unsigned int *reorg_dpd_status;
+ };
+ 
+ struct tegra_wake_event {
+@@ -364,6 +377,7 @@ struct tegra_pmc_soc {
+ 	bool has_blink_output;
+ 	bool has_usb_sleepwalk;
+ 	bool supports_core_domain;
++	bool has_reorg_hw_dpd_reg_impl;
+ };
+ 
+ /**
+@@ -1546,6 +1560,14 @@ static int tegra_io_pad_get_dpd_register_bit(struct tegra_pmc *pmc,
+ 	if (pad->dpd == UINT_MAX)
+ 		return -ENOTSUPP;
+ 
++	if (pmc->soc->has_reorg_hw_dpd_reg_impl) {
++		*mask = BIT(pad->dpd);
++		*status = pmc->soc->regs->reorg_dpd_status[pad->reg_index];
++		*request = pmc->soc->regs->reorg_dpd_req[pad->reg_index];
++
++		goto done;
++	}
++
+ 	*mask = BIT(pad->dpd % 32);
+ 
+ 	if (pad->dpd < 32) {
+@@ -1556,6 +1578,7 @@ static int tegra_io_pad_get_dpd_register_bit(struct tegra_pmc *pmc,
+ 		*request = pmc->soc->regs->dpd2_req;
+ 	}
+ 
++done:
+ 	return 0;
+ }
+ 
+@@ -3791,6 +3814,81 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
+ 	.has_usb_sleepwalk = false,
+ };
+ 
++#define TEGRA234_IO_PAD(_id, _dpd, _voltage, _name, _dpd_reg_index)	\
++	((struct tegra_io_pad_soc) {					\
++		.id		= (_id),				\
++		.dpd		= (_dpd),				\
++		.voltage	= (_voltage),				\
++		.name		= (_name),				\
++		.reg_index	= (_dpd_reg_index),			\
++	})
++
++#define TEGRA234_IO_PIN_DESC(_id, _dpd, _voltage, _name, _dpd_reg_index) \
++	((struct pinctrl_pin_desc) {					\
++		.number = (_id),					\
++		.name	= (_name)					\
++	})
++
++#define TEGRA234_IO_PAD_TABLE(_pad) {                                          \
++	/* (id, dpd, voltage, name, dpd_reg_index) */                          \
++	_pad(TEGRA_IO_PAD_CSIA,           0,         UINT_MAX,	"csia",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSIB,           1,         UINT_MAX,  "csib",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_HDMI_DP0,       0,         UINT_MAX,  "hdmi-dp0",    \
++		TEGRA_PMC_IO_DISP_DPD),                                        \
++	_pad(TEGRA_IO_PAD_CSIC,           2,         UINT_MAX,  "csic",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSID,           3,         UINT_MAX,  "csid",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSIE,           4,         UINT_MAX,  "csie",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSIF,           5,         UINT_MAX,  "csif",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_UFS,            0,         UINT_MAX,  "ufs",         \
++		TEGRA_PMC_IO_UFS_DPD),                                         \
++	_pad(TEGRA_IO_PAD_EDP,            1,         UINT_MAX,  "edp",         \
++		TEGRA_PMC_IO_EDP_DPD),                                         \
++	_pad(TEGRA_IO_PAD_SDMMC1_HV,      0,         4,         "sdmmc1-hv",   \
++		TEGRA_PMC_IO_SDMMC1_HV_DPD),                                   \
++	_pad(TEGRA_IO_PAD_SDMMC3_HV,      UINT_MAX,  6,         "sdmmc3-hv",   \
++		TEGRA_PMC_IO_INVALID_DPD),                                     \
++	_pad(TEGRA_IO_PAD_AUDIO_HV,       UINT_MAX,  1,         "audio-hv",    \
++		TEGRA_PMC_IO_INVALID_DPD),                                     \
++	_pad(TEGRA_IO_PAD_AO_HV,          UINT_MAX,  0,         "ao-hv",       \
++		TEGRA_PMC_IO_INVALID_DPD),                                     \
++	_pad(TEGRA_IO_PAD_CSIG,           6,         UINT_MAX,  "csig",        \
++		TEGRA_PMC_IO_CSI_DPD),                                         \
++	_pad(TEGRA_IO_PAD_CSIH,           7,         UINT_MAX,  "csih",        \
++		TEGRA_PMC_IO_CSI_DPD)                                          \
++	}
++
++static const struct tegra_io_pad_soc tegra234_io_pads[] =
++	TEGRA234_IO_PAD_TABLE(TEGRA234_IO_PAD);
++
++static const struct pinctrl_pin_desc tegra234_pin_descs[] =
++	TEGRA234_IO_PAD_TABLE(TEGRA234_IO_PIN_DESC);
++
++/* Reorganized HW DPD REQ registers */
++static const unsigned int tegra234_dpd_req_regs[] = {
++	[TEGRA_PMC_IO_CSI_DPD] = 0xe0c0,
++	[TEGRA_PMC_IO_DISP_DPD] = 0xe0d0,
++	[TEGRA_PMC_IO_QSPI_DPD] = 0xe074,
++	[TEGRA_PMC_IO_UFS_DPD] = 0xe064,
++	[TEGRA_PMC_IO_EDP_DPD] = 0xe05c,
++	[TEGRA_PMC_IO_SDMMC1_HV_DPD] = 0xe054,
++};
++
++/* Reorganized HW DPD STATUS registers */
++static const unsigned int tegra234_dpd_status_regs[] = {
++	[TEGRA_PMC_IO_CSI_DPD] = 0xe0c4,
++	[TEGRA_PMC_IO_DISP_DPD] = 0xe0d4,
++	[TEGRA_PMC_IO_QSPI_DPD] = 0xe078,
++	[TEGRA_PMC_IO_UFS_DPD] = 0xe068,
++	[TEGRA_PMC_IO_EDP_DPD] = 0xe060,
++	[TEGRA_PMC_IO_SDMMC1_HV_DPD] = 0xe058,
++};
++
+ static const struct tegra_pmc_regs tegra234_pmc_regs = {
+ 	.scratch0 = 0x2000,
+ 	.dpd_req = 0,
+@@ -3802,6 +3900,8 @@ static const struct tegra_pmc_regs tegra234_pmc_regs = {
+ 	.rst_source_mask = 0xfc,
+ 	.rst_level_shift = 0x0,
+ 	.rst_level_mask = 0x3,
++	.reorg_dpd_req = tegra234_dpd_req_regs,
++	.reorg_dpd_status = tegra234_dpd_status_regs,
+ };
+ 
+ static const char * const tegra234_reset_sources[] = {
+@@ -3861,10 +3961,10 @@ static const struct tegra_pmc_soc tegra234_pmc_soc = {
+ 	.needs_mbist_war = false,
+ 	.has_impl_33v_pwr = true,
+ 	.maybe_tz_only = false,
+-	.num_io_pads = 0,
+-	.io_pads = NULL,
+-	.num_pin_descs = 0,
+-	.pin_descs = NULL,
++	.num_io_pads = ARRAY_SIZE(tegra234_io_pads),
++	.io_pads = tegra234_io_pads,
++	.num_pin_descs = ARRAY_SIZE(tegra234_pin_descs),
++	.pin_descs = tegra234_pin_descs,
+ 	.regs = &tegra234_pmc_regs,
+ 	.init = NULL,
+ 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
+@@ -3879,6 +3979,7 @@ static const struct tegra_pmc_soc tegra234_pmc_soc = {
+ 	.pmc_clks_data = NULL,
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = false,
++	.has_reorg_hw_dpd_reg_impl = true,
+ };
+ 
+ static const struct of_device_id tegra_pmc_match[] = {
+-- 
+2.17.1
+
