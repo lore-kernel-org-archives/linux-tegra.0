@@ -2,115 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6303C25B0E
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 01:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A40C25B0D
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 02:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243369AbiHHBwo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 7 Aug 2022 21:52:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35604 "EHLO
+        id S242774AbiHHClq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Aug 2022 22:41:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243649AbiHHBvb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 21:51:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32245D118;
-        Sun,  7 Aug 2022 18:38:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F83960EBD;
-        Mon,  8 Aug 2022 01:38:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5BAFC433D7;
-        Mon,  8 Aug 2022 01:38:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659922704;
-        bh=gVNJEFm1Q3F65zmNeU+fdgNngxG14eW9scGa3m0pN5o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gnhKSDEHdq7OYG7qHXb06XSpTMaxyojxRgv0BRipHp2+31Pztro9jPmhFYlb/Ks2A
-         bQd/aBfokiHCZ4/l1YxuGmZ8FRqnLHmOXTx8WxtBFoGyy7otbftrd11mAKCtI96miQ
-         uP1Ns1BxxRVGXP4BF4JF2GnoalRyzLWk5PjZh1e62fsB5WisP86UlGrBp2HfyKDEAj
-         PSUoLRVkGpA2U4JTt4x5yqLU9vOF3E552MUHDRAnJKFfaGAlMz2pHzUl9Zf/GoiyYH
-         kX/3V/Lgj1Ayp7vOaDH6qzr6G63riim21aylt5OFGziSbuPl8c8Vum+UJsIUvyK9/8
-         z2XxSiaD2CuRw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lv Ruyi <lv.ruyi@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, arnd@arndb.de, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 26/29] firmware: tegra: Fix error check return value of debugfs_create_file()
-Date:   Sun,  7 Aug 2022 21:37:36 -0400
-Message-Id: <20220808013741.316026-26-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220808013741.316026-1-sashal@kernel.org>
-References: <20220808013741.316026-1-sashal@kernel.org>
+        with ESMTP id S242120AbiHHClk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 22:41:40 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FBE25C4;
+        Sun,  7 Aug 2022 19:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=fiLWB7FlMZG/t3/6at/lVnmuLuXlP9ApBxUL44LLPGI=; b=cV+xsr2dJdusY7y0TkSTgMXeQ0
+        hiXR1lQDTb0NZ1r+yPBc/SHwfmocssIf1OWmy7KfHT0zQhxNolb+CBN8mJ+rzcAqxTB7d0jZGxCc2
+        yeAO0NPrLksriSMv1Tjv55L/P1iTRnYT5eiymmpzFFtIySvuDh8xaUuVSOvQEysBDxEG4gsGiX8JT
+        jg74xcTcIF/+GQvexqGnUqjhudrIrBlSuElsRc7yjmn8k1PmBb+p1vf0Hd5N+gDURFOfDjVagZeYF
+        hZRpk2vdiPL6Ynyd65sLsSPz/ef0ZmpeorlTJZGkIhOw6f+X7tXAd41fClIw1bUShUYqzghpwigEL
+        Z25ohh/A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oKshy-00DVSX-Gm; Mon, 08 Aug 2022 02:41:34 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org, pmladek@suse.com,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-tegra@vger.kernel.org
+Subject: [PATCH v5 23/32] clk: tegra: bpmp: Convert to printbuf
+Date:   Mon,  8 Aug 2022 03:41:19 +0100
+Message-Id: <20220808024128.3219082-24-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220808024128.3219082-1-willy@infradead.org>
+References: <20220808024128.3219082-1-willy@infradead.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Lv Ruyi <lv.ruyi@zte.com.cn>
+From: Kent Overstreet <kent.overstreet@gmail.com>
 
-[ Upstream commit afcdb8e55c91c6ff0700ab272fd0f74e899ab884 ]
+This converts from seq_buf to printbuf, which is similar but heap
+allocates the string buffer.
 
-If an error occurs, debugfs_create_file() will return ERR_PTR(-ERROR),
-so use IS_ERR() to check it.
+Previously in this code the string buffer was allocated on the stack;
+this means we've added a new potential memory allocation failure. This
+is fine though since it's only for a dev_printk() message.
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Memory allocation context: printbuf doesn't take gfp flags, instead we
+prefer the new memalloc_no*_(save|restore) interfaces to be used. Here
+the surrounding code is already allocating with GFP_KERNEL, so
+everything is fine.
+
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-tegra@vger.kernel.org
 ---
- drivers/firmware/tegra/bpmp-debugfs.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-bpmp.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
-index 440d99c63638..fad97ec8e81f 100644
---- a/drivers/firmware/tegra/bpmp-debugfs.c
-+++ b/drivers/firmware/tegra/bpmp-debugfs.c
-@@ -429,7 +429,7 @@ static int bpmp_populate_debugfs_inband(struct tegra_bpmp *bpmp,
- 			mode |= attrs & DEBUGFS_S_IWUSR ? 0200 : 0;
- 			dentry = debugfs_create_file(name, mode, parent, bpmp,
- 						     &bpmp_debug_fops);
--			if (!dentry) {
-+			if (IS_ERR(dentry)) {
- 				err = -ENOMEM;
- 				goto out;
- 			}
-@@ -680,7 +680,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index 3748a39dae7c..7e3b48ed9d45 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -5,7 +5,7 @@
  
- 		if (t & DEBUGFS_S_ISDIR) {
- 			dentry = debugfs_create_dir(name, parent);
--			if (!dentry)
-+			if (IS_ERR(dentry))
- 				return -ENOMEM;
- 			err = bpmp_populate_dir(bpmp, seqbuf, dentry, depth+1);
- 			if (err < 0)
-@@ -693,7 +693,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
- 			dentry = debugfs_create_file(name, mode,
- 						     parent, bpmp,
- 						     &debugfs_fops);
--			if (!dentry)
-+			if (IS_ERR(dentry))
- 				return -ENOMEM;
- 		}
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+-#include <linux/seq_buf.h>
++#include <linux/printbuf.h>
+ #include <linux/slab.h>
+ 
+ #include <soc/tegra/bpmp.h>
+@@ -365,39 +365,38 @@ static void tegra_bpmp_clk_info_dump(struct tegra_bpmp *bpmp,
+ 				     const struct tegra_bpmp_clk_info *info)
+ {
+ 	const char *prefix = "";
+-	struct seq_buf buf;
++	struct printbuf buf = PRINTBUF;
+ 	unsigned int i;
+-	char flags[64];
+-
+-	seq_buf_init(&buf, flags, sizeof(flags));
+ 
+ 	if (info->flags)
+-		seq_buf_printf(&buf, "(");
++		prt_printf(&buf, "(");
+ 
+ 	if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
+-		seq_buf_printf(&buf, "%smux", prefix);
++		prt_printf(&buf, "%smux", prefix);
+ 		prefix = ", ";
  	}
-@@ -743,11 +743,11 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
- 		return 0;
  
- 	root = debugfs_create_dir("bpmp", NULL);
--	if (!root)
-+	if (IS_ERR(root))
- 		return -ENOMEM;
- 
- 	bpmp->debugfs_mirror = debugfs_create_dir("debug", root);
--	if (!bpmp->debugfs_mirror) {
-+	if (IS_ERR(bpmp->debugfs_mirror)) {
- 		err = -ENOMEM;
- 		goto out;
+ 	if ((info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE) == 0) {
+-		seq_buf_printf(&buf, "%sfixed", prefix);
++		prt_printf(&buf, "%sfixed", prefix);
+ 		prefix = ", ";
  	}
+ 
+ 	if (info->flags & TEGRA_BPMP_CLK_IS_ROOT) {
+-		seq_buf_printf(&buf, "%sroot", prefix);
++		prt_printf(&buf, "%sroot", prefix);
+ 		prefix = ", ";
+ 	}
+ 
+ 	if (info->flags)
+-		seq_buf_printf(&buf, ")");
++		prt_printf(&buf, ")");
+ 
+ 	dev_printk(level, bpmp->dev, "%03u: %s\n", info->id, info->name);
+-	dev_printk(level, bpmp->dev, "  flags: %lx %s\n", info->flags, flags);
++	dev_printk(level, bpmp->dev, "  flags: %lx %s\n", info->flags, printbuf_str(&buf));
+ 	dev_printk(level, bpmp->dev, "  parents: %u\n", info->num_parents);
+ 
+ 	for (i = 0; i < info->num_parents; i++)
+ 		dev_printk(level, bpmp->dev, "    %03u\n", info->parents[i]);
++
++	printbuf_exit(&buf);
+ }
+ 
+ static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
 -- 
 2.35.1
 
