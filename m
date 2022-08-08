@@ -2,47 +2,47 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E747DC25B0D
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 01:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C626C25B0C
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 01:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241977AbiHHBgx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 7 Aug 2022 21:36:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57816 "EHLO
+        id S242610AbiHHBoM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Aug 2022 21:44:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242209AbiHHBfw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 21:35:52 -0400
+        with ESMTP id S242613AbiHHBmL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 21:42:11 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5F68CE0B;
-        Sun,  7 Aug 2022 18:33:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F02D313EA4;
+        Sun,  7 Aug 2022 18:35:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C34A60CF7;
-        Mon,  8 Aug 2022 01:33:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A89C433D6;
-        Mon,  8 Aug 2022 01:33:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 69A9C60DFD;
+        Mon,  8 Aug 2022 01:35:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE81C433C1;
+        Mon,  8 Aug 2022 01:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659922400;
+        s=k20201202; t=1659922533;
         bh=698Flm7SpQJiRiiikVpbc456D/RJv3Ovb7vU4f/tM+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aAZbeVCJhIXHDEJAXrU1VxCJ66tx+j5967/bPwCfHiNslvqoliax8pihVDTYz9AMP
-         Sh1EmMy+8pDa88kI04ftAV1aGur04/9PESDrbp1PjCuGbutfk8yfcv8O+LFx86gZSI
-         rKd1AIR0VQOLZiKvUpXchmt9lMUwMpawGXoYXpN82z/CfRfNyEKH56HNgl3N8iSL21
-         lqu6WjzMbqiZDqRIeuL3YJ73juWup2tmxSPtrJwjjLJ9wWBvY80wvD6WbhL4cB/5QZ
-         jaGWUCyA8vNc4yHXxEC/hRjd09wsTyAviTiYWMfGrWYpDbjdlh+hvI/OdQEhijsWyA
-         nJ7PspPJKW6tw==
+        b=aGH7O3wwr5NfNN1OtNQTQMYTHk27xjMOjTxh3ZQL2ThqGDGcx6wcQExT24p6V5O44
+         cTJNjQ1YKiPAlXx2a2nrS2HkqS6ga5r3Ea4HhjFoXj7QASqU2cXi3HoMdOp3smiG/e
+         kGAceR1VwGKX8Fps6dpzAN/oqoTehMIiCJ3RJboyRLTJVKBbzty0EitWmmxYbfGiP6
+         brQE9pJxh5lDN0P26fi3JXD3wtSiUlpRkAGCof90X7VeM65OZH2aOheMTaWPEux6Ei
+         E+FwG0ppJuIZN4ReG7ynsXybqWU30cHVkL+3lBizl5p5OE+/Hl2xo5W1in4DBOQjmI
+         5gnMIWmWrQLWw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Lv Ruyi <lv.ruyi@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, arnd@arndb.de, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.19 47/58] firmware: tegra: Fix error check return value of debugfs_create_file()
-Date:   Sun,  7 Aug 2022 21:31:05 -0400
-Message-Id: <20220808013118.313965-47-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.18 45/53] firmware: tegra: Fix error check return value of debugfs_create_file()
+Date:   Sun,  7 Aug 2022 21:33:40 -0400
+Message-Id: <20220808013350.314757-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220808013118.313965-1-sashal@kernel.org>
-References: <20220808013118.313965-1-sashal@kernel.org>
+In-Reply-To: <20220808013350.314757-1-sashal@kernel.org>
+References: <20220808013350.314757-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
