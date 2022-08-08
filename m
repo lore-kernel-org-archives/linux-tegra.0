@@ -2,77 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18015C19F2A
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 Aug 2022 20:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E747DC25B0D
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Aug 2022 01:36:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233048AbiHGU4G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 7 Aug 2022 16:56:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56040 "EHLO
+        id S241977AbiHHBgx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Aug 2022 21:36:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbiHGU4F (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 16:56:05 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D14165AE
-        for <linux-tegra@vger.kernel.org>; Sun,  7 Aug 2022 13:56:03 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id KnJYoMqN4sL0zKnJYoI6XJ; Sun, 07 Aug 2022 22:56:01 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 07 Aug 2022 22:56:01 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH] soc/tegra: pmc: Use devm_clk_get_optional()
-Date:   Sun,  7 Aug 2022 22:55:59 +0200
-Message-Id: <4d2e518fc75dd3053ec4afcc36e13a0a6f75884e.1659905735.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S242209AbiHHBfw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Aug 2022 21:35:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5F68CE0B;
+        Sun,  7 Aug 2022 18:33:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C34A60CF7;
+        Mon,  8 Aug 2022 01:33:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A89C433D6;
+        Mon,  8 Aug 2022 01:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659922400;
+        bh=698Flm7SpQJiRiiikVpbc456D/RJv3Ovb7vU4f/tM+Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aAZbeVCJhIXHDEJAXrU1VxCJ66tx+j5967/bPwCfHiNslvqoliax8pihVDTYz9AMP
+         Sh1EmMy+8pDa88kI04ftAV1aGur04/9PESDrbp1PjCuGbutfk8yfcv8O+LFx86gZSI
+         rKd1AIR0VQOLZiKvUpXchmt9lMUwMpawGXoYXpN82z/CfRfNyEKH56HNgl3N8iSL21
+         lqu6WjzMbqiZDqRIeuL3YJ73juWup2tmxSPtrJwjjLJ9wWBvY80wvD6WbhL4cB/5QZ
+         jaGWUCyA8vNc4yHXxEC/hRjd09wsTyAviTiYWMfGrWYpDbjdlh+hvI/OdQEhijsWyA
+         nJ7PspPJKW6tw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Lv Ruyi <lv.ruyi@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, arnd@arndb.de, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.19 47/58] firmware: tegra: Fix error check return value of debugfs_create_file()
+Date:   Sun,  7 Aug 2022 21:31:05 -0400
+Message-Id: <20220808013118.313965-47-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220808013118.313965-1-sashal@kernel.org>
+References: <20220808013118.313965-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use devm_clk_get_optional() instead of hand writing it.
+From: Lv Ruyi <lv.ruyi@zte.com.cn>
 
-While at it, use dev_err_probe() to further simplify the code. This is also
-less verbose if clk_get() returns -EPROBE_DEFER.
+[ Upstream commit afcdb8e55c91c6ff0700ab272fd0f74e899ab884 ]
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+If an error occurs, debugfs_create_file() will return ERR_PTR(-ERROR),
+so use IS_ERR() to check it.
+
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/tegra/pmc.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/firmware/tegra/bpmp-debugfs.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 6a4b8f7e7948..016762f88fff 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -2885,17 +2885,10 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 		pmc->scratch = base;
+diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
+index fd89899aeeed..0c440afd5224 100644
+--- a/drivers/firmware/tegra/bpmp-debugfs.c
++++ b/drivers/firmware/tegra/bpmp-debugfs.c
+@@ -474,7 +474,7 @@ static int bpmp_populate_debugfs_inband(struct tegra_bpmp *bpmp,
+ 			mode |= attrs & DEBUGFS_S_IWUSR ? 0200 : 0;
+ 			dentry = debugfs_create_file(name, mode, parent, bpmp,
+ 						     &bpmp_debug_fops);
+-			if (!dentry) {
++			if (IS_ERR(dentry)) {
+ 				err = -ENOMEM;
+ 				goto out;
+ 			}
+@@ -725,7 +725,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
+ 
+ 		if (t & DEBUGFS_S_ISDIR) {
+ 			dentry = debugfs_create_dir(name, parent);
+-			if (!dentry)
++			if (IS_ERR(dentry))
+ 				return -ENOMEM;
+ 			err = bpmp_populate_dir(bpmp, seqbuf, dentry, depth+1);
+ 			if (err < 0)
+@@ -738,7 +738,7 @@ static int bpmp_populate_dir(struct tegra_bpmp *bpmp, struct seqbuf *seqbuf,
+ 			dentry = debugfs_create_file(name, mode,
+ 						     parent, bpmp,
+ 						     &debugfs_fops);
+-			if (!dentry)
++			if (IS_ERR(dentry))
+ 				return -ENOMEM;
+ 		}
  	}
+@@ -788,11 +788,11 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
+ 		return 0;
  
--	pmc->clk = devm_clk_get(&pdev->dev, "pclk");
--	if (IS_ERR(pmc->clk)) {
--		err = PTR_ERR(pmc->clk);
--
--		if (err != -ENOENT) {
--			dev_err(&pdev->dev, "failed to get pclk: %d\n", err);
--			return err;
--		}
--
--		pmc->clk = NULL;
--	}
-+	pmc->clk = devm_clk_get_optional(&pdev->dev, "pclk");
-+	if (IS_ERR(pmc->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(pmc->clk),
-+				     "failed to get pclk\n");
+ 	root = debugfs_create_dir("bpmp", NULL);
+-	if (!root)
++	if (IS_ERR(root))
+ 		return -ENOMEM;
  
- 	/*
- 	 * PMC should be last resort for restarting since it soft-resets
+ 	bpmp->debugfs_mirror = debugfs_create_dir("debug", root);
+-	if (!bpmp->debugfs_mirror) {
++	if (IS_ERR(bpmp->debugfs_mirror)) {
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
 -- 
-2.34.1
+2.35.1
 
