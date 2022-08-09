@@ -2,82 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BCDC19F2D
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Aug 2022 12:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF19C19F2D
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Aug 2022 16:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239452AbiHIM65 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 9 Aug 2022 08:58:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51406 "EHLO
+        id S235725AbiHIQlQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 Aug 2022 12:41:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237342AbiHIM64 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 Aug 2022 08:58:56 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93D5715716
-        for <linux-tegra@vger.kernel.org>; Tue,  9 Aug 2022 05:58:55 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id b96so15085606edf.0
-        for <linux-tegra@vger.kernel.org>; Tue, 09 Aug 2022 05:58:55 -0700 (PDT)
+        with ESMTP id S231409AbiHIQlO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 Aug 2022 12:41:14 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80532B483
+        for <linux-tegra@vger.kernel.org>; Tue,  9 Aug 2022 09:41:13 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id a7so23236204ejp.2
+        for <linux-tegra@vger.kernel.org>; Tue, 09 Aug 2022 09:41:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citymesh-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc;
-        bh=kPjnvUmfJWkzCXvwJnmoZlmPE/PE4hYt5/3+yKlMAyc=;
-        b=WUPh+QPHCQxzXBwITi5JH81d1MavQfLHjzyUGbC9z+XKFxi1iHNJvHv6qbU/FeIwXf
-         XhsJmF6Ogtb9C1Bn0Tsaq4So1guq4BoyMOmWj+VjH3qzQi7MPQ+CX3uFsepTJ7GsvJVh
-         6RB8ocE61dE0l7a30ynDsxEHAJlzWIwLk+1U2R4j0MGfMNxw5fIoxhUEWGU28mSEMyx9
-         uoI7qdEnRqfuFe5TK2bYPtXuPGf0p2hZ5NAQK0sYe8ZVMSDviVC5W+Zq+MtCBcWMRaO5
-         04p0w50dA2c6OTp7gHvXXOn1rOryVhdoeHpss+lyQ9LEmzTQIgT2b5bgo7dIRcQZIDPt
-         LlRg==
+        d=ffwll.ch; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc;
+        bh=naNpYkxE68tX1ARbD3iQv+CO+kO6ut9LpVz/MEIjf2U=;
+        b=iX9Se9TiI3Acb0PyhnYkVRNdA7lVQuf4CJDx2D6WpGaKbYqVnU4KX3GTPDDKS7PYVg
+         gZCH6sdLyyngWxfgd5D+yNp6kzG+ewgTuTXqWMqSckX17sr8zonXMCWzvhLjGrjQGv/c
+         ell5/FxG7+4Gqy9X+TsWsq7ykFiSjP9m/Frk8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc;
-        bh=kPjnvUmfJWkzCXvwJnmoZlmPE/PE4hYt5/3+yKlMAyc=;
-        b=waFUHRe/Xp6IF2d0hh3jQFJ2TNKcjQBN75UmwUKR+Fzfu5uQQbjc1/OKEZgergVjHb
-         oBueoBCtD/5xya35M0fEgjB76i8TtRXAym6xdviSypLT/hiNuEgJZo0dLbU9As6Pnt9U
-         fp1BVIU/bGDTkXu6GoDvFOlbtc5nSPKT8njYLPU/b4tFJ2hTtN4iVxeA96wxwFurJ1ne
-         Bv37gIjKrqxGfxh/omm+MWBw6ml0E6SdlhVuMPX+OVddZPUoviOaq3dcmbAvPc/KLjKY
-         BFtV6bYGTQfH5q9xi3RW7KB9Ga81eIWONylJqcNDE3kDaUZAgq/aBIGJ91Z+FVw91PZV
-         jUhg==
-X-Gm-Message-State: ACgBeo3OiragCaVexJt4GQixlyb8QTBlcNBp6hzJ3EtFzBWDg+Ixy/eu
-        OUSe3eQxG2Yb94TEpxnjSAOkYDOPaOFSIg==
-X-Google-Smtp-Source: AA6agR7hz2nZWQStWvY/4/0h7HwR79WswnvsZen/29O0+9iJON9lwyBiC/dLybyrOulTFL2r5bj5xQ==
-X-Received: by 2002:a05:6402:4489:b0:43d:7f7d:7d88 with SMTP id er9-20020a056402448900b0043d7f7d7d88mr18967767edb.159.1660049934165;
-        Tue, 09 Aug 2022 05:58:54 -0700 (PDT)
-Received: from [10.202.0.7] ([31.31.140.89])
-        by smtp.gmail.com with ESMTPSA id x17-20020aa7cd91000000b0043d34ab7ad6sm5948204edv.49.2022.08.09.05.58.52
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Aug 2022 05:58:52 -0700 (PDT)
-Message-ID: <da3943f1-f4e9-6ddf-1cca-4393edb69dc8@citymesh.com>
-Date:   Tue, 9 Aug 2022 14:58:51 +0200
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc;
+        bh=naNpYkxE68tX1ARbD3iQv+CO+kO6ut9LpVz/MEIjf2U=;
+        b=AwLb48bbwEwQrw9uG+nSVIdsU/hXR/sXaedRyu/sjtI3xyr5C/S6+zEQG9OEFqm3kg
+         Yp25BrzZd8qaCCllgK0LhsIMj/Zo5oCl1a27+Slpk5yeLMPW6kF9she5PST8aZxGsr3r
+         n5l+6ya7boUIkmzm2+sTrRIkLl4e72vKsanyYWHcpuw0VL5C3e8pjcPGf8wpyangwSXL
+         6FvRYI7w+NWVGCJsge8XFyZtdwQd02RmS1T8nEuNKHaJqgUzkODNbpRS7PjK7d4drpuy
+         P9dCYb4OufisKSzR7PWcFnP+5p2o8l0JaswMeq6pPjCwplp+64+luksYahhZixDMThDr
+         fLqg==
+X-Gm-Message-State: ACgBeo2tgoE6rp5jmwhWNOK7nNfSyYvNUBrXonc71No+L8tBF+Uer+S7
+        74nVM0BZr9LiCszMnP5+Jcv8nw==
+X-Google-Smtp-Source: AA6agR5JiN6PB/2pP/tfQ4vgKWFUin1cCx29k5oNnI6uFJ+xd5aN1v/0W1ws1t92QMVelRHOPdZjFw==
+X-Received: by 2002:a17:907:3f98:b0:730:cfce:9c0f with SMTP id hr24-20020a1709073f9800b00730cfce9c0fmr18168166ejc.475.1660063272111;
+        Tue, 09 Aug 2022 09:41:12 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id n25-20020a056402515900b0043d1a9f6e4asm6277567edd.9.2022.08.09.09.41.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Aug 2022 09:41:11 -0700 (PDT)
+Date:   Tue, 9 Aug 2022 18:41:09 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas_os@shipmail.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org, kernel@collabora.com,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v7 1/2] drm/gem: Properly annotate WW context on
+ drm_gem_lock_reservations() error
+Message-ID: <YvKOJRbTsBk91aPO@phenom.ffwll.local>
+Mail-Followup-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas_os@shipmail.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org,
+        kernel@collabora.com, virtualization@lists.linux-foundation.org
+References: <20220630200405.1883897-1-dmitry.osipenko@collabora.com>
+ <20220630200405.1883897-2-dmitry.osipenko@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Content-Language: en-US
-To:     linux-tegra@vger.kernel.org
-From:   Koen Vandeputte <koen.vandeputte@citymesh.com>
-Subject: dts for Nano development board 2GB version
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220630200405.1883897-2-dmitry.osipenko@collabora.com>
+X-Operating-System: Linux phenom 5.10.0-8-amd64 
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+On Thu, Jun 30, 2022 at 11:04:04PM +0300, Dmitry Osipenko wrote:
+> Use ww_acquire_fini() in the error code paths. Otherwise lockdep
+> thinks that lock is held when lock's memory is freed after the
+> drm_gem_lock_reservations() error. The ww_acquire_context needs to be
+> annotated as "released", which fixes the noisy "WARNING: held lock freed!"
+> splat of VirtIO-GPU driver with CONFIG_DEBUG_MUTEXES=y and enabled lockdep.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 7edc3e3b975b5 ("drm: Add helpers for locking an array of BO reservations.")
+> Reviewed-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-I'm currently doing effort to support nvidia jetson within OpenWRT, 
-starting with Nano boards.
+I merged this one to drm-misc-next-fixes. The other one looks like there's
+still opens pending, pls resubmit appropriately (and maybe with some
+analysis in the commit message of how exactly this impacts other drivers).
+-Daniel
 
-It seems only the 4GB board is supported upstream (p3450-0000 
-<https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts?h=v5.19>). 
-[1]
-Can someone share the dts for the 2GB version?Â  (|P3541-0000|)
+> ---
+>  drivers/gpu/drm/drm_gem.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index eb0c2d041f13..86d670c71286 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -1226,7 +1226,7 @@ drm_gem_lock_reservations(struct drm_gem_object **objs, int count,
+>  		ret = dma_resv_lock_slow_interruptible(obj->resv,
+>  								 acquire_ctx);
+>  		if (ret) {
+> -			ww_acquire_done(acquire_ctx);
+> +			ww_acquire_fini(acquire_ctx);
+>  			return ret;
+>  		}
+>  	}
+> @@ -1251,7 +1251,7 @@ drm_gem_lock_reservations(struct drm_gem_object **objs, int count,
+>  				goto retry;
+>  			}
+>  
+> -			ww_acquire_done(acquire_ctx);
+> +			ww_acquire_fini(acquire_ctx);
+>  			return ret;
+>  		}
+>  	}
+> -- 
+> 2.36.1
+> 
 
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/nvidia?h=v5.19
-
-Thanks,
-
-Koen
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
