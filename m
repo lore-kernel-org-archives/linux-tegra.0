@@ -2,149 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA81C00140
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Aug 2022 11:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031D0C25B08
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 Aug 2022 13:12:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231573AbiHJLrR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 Aug 2022 07:47:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44880 "EHLO
+        id S229797AbiHJNMu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 Aug 2022 09:12:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbiHJLrR (ORCPT
+        with ESMTP id S229631AbiHJNMq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 Aug 2022 07:47:17 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0302785B8
-        for <linux-tegra@vger.kernel.org>; Wed, 10 Aug 2022 04:47:15 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id ay12so4846635wmb.1
-        for <linux-tegra@vger.kernel.org>; Wed, 10 Aug 2022 04:47:15 -0700 (PDT)
+        Wed, 10 Aug 2022 09:12:46 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9B3E13FA8
+        for <linux-tegra@vger.kernel.org>; Wed, 10 Aug 2022 06:12:41 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id t1so21187325lft.8
+        for <linux-tegra@vger.kernel.org>; Wed, 10 Aug 2022 06:12:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc;
-        bh=BaeZbBum+4I2jOGaqSAi7IFGsiLy5fQf1iTIfmWWOdI=;
-        b=BZC3Ko+eQnZVoFMw/NtIXSIKWwBGZ5JnUirPvLbP6MeZ9lAjcs7/NqIUBAAVmnmfsc
-         yjF8l5SAxV6c+aoMIfXu59H8J8pu0tA1mzIb5wnr2Jep7gRbo+no+ZileVc8DHsw3Cca
-         WqOuT1Cl+srXtRh0H8IL02PLB6XJFXq2TL9WY=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=Xt4sTSjZbsVw99EpwkCEf7vaG5aOAi9K9YMX6CS8DbU=;
+        b=tDEXm9cJOo9x+jqx0eZjSaW0fOGtKkO/wjuGSXbbyLjhtHUEry6+Bb/qXO5hwNbAAr
+         BctplbuasMFj9Osj0FNf1VY0R3cgmEMx0zg7AfozS5nZwReWFfsvnjUdq6y+MSiRcUVM
+         mHOBaNNXyy5fS9037dkM6laEaVcv6IqsJ/po2HO4wIdbPDIPS+gH13zNcL5+/JhXqnIR
+         YvYFMcqqOng1NzxOzf0w+xfO4IPX11ndEXW0VatliCPM33Q+0pz9ZyBr4Io2Ate93epE
+         /4hGd4W+H8xcdAu5bn32XM8CCGMOTUGazEVX/k5gl0Ig4bmqJOXyZbr+eOeQWo3+5Bs2
+         /wdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc;
-        bh=BaeZbBum+4I2jOGaqSAi7IFGsiLy5fQf1iTIfmWWOdI=;
-        b=Yt+mFKD/N0m2aWG/jJ48/NzsGbq497ZCibhBMT2NPnMVOGpsYfmR/TgiLUJZlpgJuN
-         E7QHtMuPDbD5JyQLe4Wi7qQVQeE8p2JEZZGLHBG/IMCTR+IaFxBWxGxhPu/RrqlH94av
-         w+FzK/nYCoBSXqtKcLzQkQfHuOEJPmw0Od/bLmfIpJams2hMn57laIviiA8bIJ481E2l
-         M+Z8YxRzt5r3LZPC29/yd1HSwmcbyCuweQaMQVaBG7wFCd9JlVIFEX8Pygkv2/gGdqVL
-         kwmiAaISeyo1sw32Lg8o7lKRuWrnSGIMjk5FAm2fBhmPBD5UYKAAEnW/5fkFFfKCEHoi
-         ne8g==
-X-Gm-Message-State: ACgBeo3KLkS/qK2lVlt/laOHCOcYgwQ+YFyjnduCZT4EqKVF389g+o8f
-        HN8ra2E66Wa9/Cnj5on09JX3wA==
-X-Google-Smtp-Source: AA6agR74SoyJ7WCFqoZzbBzJESlrpKgFu1tQjTIechrYDCzQN1w2VaiNKABFBaMCcdYBj6DRC+PfJA==
-X-Received: by 2002:a05:600c:4e86:b0:3a3:2edc:bcb4 with SMTP id f6-20020a05600c4e8600b003a32edcbcb4mr2207476wmq.85.1660132034314;
-        Wed, 10 Aug 2022 04:47:14 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id d2-20020a5d6dc2000000b002235eb9d200sm5647242wrz.10.2022.08.10.04.47.12
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=Xt4sTSjZbsVw99EpwkCEf7vaG5aOAi9K9YMX6CS8DbU=;
+        b=VG4IUPVfbHSkQpitGhCTZTFVfPeNERsE7NXMSwsjOgVZKCjYP4JK4AIWiaHPCxQW4w
+         5EHFFa550TiGryaAXO6xrPkFWKwjIH/1gi45qN5d+GKHRVHjnz2YjjQltCYdEIWl48zm
+         022u5t0Pt6k+8UyizeJdPnykh9qSsm1VDPHOZmZ0paKRdfWHspt47udDIJt78fZE94M0
+         SHMZxROsltPkgIV4Y12UskkWg6h6EJb7mQ1ufxq7zuXHk+/NGbdv/j4fhaTwzRUrgl1e
+         ASuJBOUsNNE6YVmaBI6IeJFS0l76DaFqQ2E3zG6kllJKsumLg1SpqGHek07JSZsR08xc
+         YAIw==
+X-Gm-Message-State: ACgBeo14LDer/0ntbuv+1woJjavIA01GZmpJIeH2Z+FnTlS4x70Rw/5q
+        yyPemphQwKRwa0WdGcLzIUkowQ==
+X-Google-Smtp-Source: AA6agR6BSaEUe26xeOlQs51vuNIgdOU/4k/pdSwN9BiMa+HppfBY/RMrzljKL1NTppwuvFsQnxDjSg==
+X-Received: by 2002:a05:6512:138e:b0:47f:77cc:327a with SMTP id p14-20020a056512138e00b0047f77cc327amr9836703lfa.277.1660137160254;
+        Wed, 10 Aug 2022 06:12:40 -0700 (PDT)
+Received: from localhost.localdomain ([83.146.140.105])
+        by smtp.gmail.com with ESMTPSA id g2-20020a19ee02000000b0048b08f0c4ddsm334168lfb.253.2022.08.10.06.12.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Aug 2022 04:47:13 -0700 (PDT)
-Date:   Wed, 10 Aug 2022 13:47:11 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Rob Clark <robdclark@gmail.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas_os@shipmail.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com
-Subject: Re: [PATCH v8 2/2] drm/gem: Don't map imported GEMs
-Message-ID: <YvOav/vF2awVWIu0@phenom.ffwll.local>
-Mail-Followup-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas_os@shipmail.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com
-References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
- <20220701090240.1896131-3-dmitry.osipenko@collabora.com>
- <2bb95e80-b60a-36c0-76c8-a06833032c77@amd.com>
- <CAF6AEGtqPeF1DjmBKgzWK39Yi81YiNjTjDNn85TKx7uwicFTSA@mail.gmail.com>
- <2a646ce4-c2ec-3b11-77a0-cc720afd6fe1@collabora.com>
+        Wed, 10 Aug 2022 06:12:39 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] spi: dt-bindings: nvidia,tegra210-quad-peripheral-props: correct additional properties
+Date:   Wed, 10 Aug 2022 16:12:36 +0300
+Message-Id: <20220810131236.428529-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a646ce4-c2ec-3b11-77a0-cc720afd6fe1@collabora.com>
-X-Operating-System: Linux phenom 5.10.0-8-amd64 
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jul 06, 2022 at 10:02:07AM +0300, Dmitry Osipenko wrote:
-> On 7/6/22 00:48, Rob Clark wrote:
-> > On Tue, Jul 5, 2022 at 4:51 AM Christian König <christian.koenig@amd.com> wrote:
-> >>
-> >> Am 01.07.22 um 11:02 schrieb Dmitry Osipenko:
-> >>> Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don't
-> >>> handle imported dma-bufs properly, which results in mapping of something
-> >>> else than the imported dma-buf. On NVIDIA Tegra we get a hard lockup when
-> >>> userspace writes to the memory mapping of a dma-buf that was imported into
-> >>> Tegra's DRM GEM.
-> >>>
-> >>> Majority of DRM drivers prohibit mapping of the imported GEM objects.
-> >>> Mapping of imported GEMs require special care from userspace since it
-> >>> should sync dma-buf because mapping coherency of the exporter device may
-> >>> not match the DRM device. Let's prohibit the mapping for all DRM drivers
-> >>> for consistency.
-> >>>
-> >>> Suggested-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
-> >>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> >>
-> >> I'm pretty sure that this is the right approach, but it's certainly more
-> >> than possible that somebody abused this already.
-> > 
-> > I suspect that this is abused if you run deqp cts on android.. ie. all
-> > winsys buffers are dma-buf imports from gralloc.  And then when you
-> > hit readpix...
-> > 
-> > You might only hit this in scenarios with separate gpu and display (or
-> > dGPU+iGPU) because self-imports are handled differently in
-> > drm_gem_prime_import_dev().. and maybe not in cases where you end up
-> > with a blit from tiled/compressed to linear.. maybe that narrows the
-> > scope enough to just fix it in userspace?
-> 
-> Given that that only drivers which use DRM-SHMEM potentially could've
-> map imported dma-bufs (Panfrost, Lima) and they already don't allow to
-> do that, I think we're good.
+Re-usable schemas should use additionalProperties:true, so the schema
+using it will check for evaluated properties.
 
-So can I have an ack from Rob here or are there still questions that this
-might go boom?
+Fixes: e23917822d3c ("spi: dt-bindings: split peripheral prods")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml    | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Dmitry, since you have a bunch of patches merged now I think would also be
-good to get commit rights so you can drive this more yourself. I've asked
-Daniel Stone to help you out with getting that.
--Daniel
+diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml
+index 24e0c2181d25..2c3cada75339 100644
+--- a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml
++++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml
+@@ -29,5 +29,4 @@ properties:
+     minimum: 0
+     maximum: 255
+ 
+-unevaluatedProperties: true
+-
++additionalProperties: true
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.34.1
+
