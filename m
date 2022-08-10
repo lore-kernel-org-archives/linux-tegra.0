@@ -2,140 +2,192 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5030C3F6B0
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Aug 2022 14:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83530C00140
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 Aug 2022 15:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232452AbiHJO0F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 Aug 2022 10:26:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36370 "EHLO
+        id S232286AbiHJPIa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 Aug 2022 11:08:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232590AbiHJOZs (ORCPT
+        with ESMTP id S229867AbiHJPI3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 Aug 2022 10:25:48 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2070.outbound.protection.outlook.com [40.107.223.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97131583C;
-        Wed, 10 Aug 2022 07:25:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OCY4JlrL+679LFdIQ18Xv8faBkKqKLj5T9jIxfNLgITBdx/0QoCOPNDNmEAR7dYKkrpYSQ1sudkD+eqxPQ6+39daxSkTcXTNc/zFTbpWF/cTwiYbg00dPws+HBl5OdCqr/9024aCGPu5mVsrMtTHAgPzcJ2L/nCzlJWJxKmD6ClBUGAEdRw0D+qVhfb8VZqaSXI/2rF8rRJLIfzDCKu9Ch6z15Sb8f+IRSm15twA4T3V6VmEv5pJvRCnUVGVKKmhXZMJMFleNCuqsk8xYnXQbSXxc4lC0e5swwUw2QTzAls1Sv/tQI6459Dv3L9rtJzUpxEDgx0QTZ1JnNyMXAZ0/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cVnoWzl3pwxZuLS9JO/ADaxZWWZMbWgbK48e80afRwg=;
- b=G0z3ea/ajfU2oRoUV2IUCeWHOQ3lqFFSTUdZIAC4HrdnaHFZp7utoKiFvbVo8W6RF7OIznVHZTtuzrB2jA1GhWuCCsk2bqiJWCq1rT0wo9Otwa0DtiP2oHllHuZ9hfHnIDPhVW3GjnD2caihSY5OSepWQ2O1xh90M6qbBDsOEZTrBDMcZBiI6Ks48cooeOdzHgA58kEy+ZW4iEMdz2qm80+rdysEz5R3qN/m+eZ5M4D9jivIZRUo5WEaOnwkHT/vzWXaLWRBKU+t/vZi4mRIMORaR9tKpWt7XZPL1eUumqObF4pvT/MReSLPbecuyiLuc5PNkdAhZzEPnNYYGA6R6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cVnoWzl3pwxZuLS9JO/ADaxZWWZMbWgbK48e80afRwg=;
- b=CK7/nHJGuhSjsMdxpwgmdgHc662MHKhcPRjL3H9+AgqwLvCfY41IHj8vh1YoLRQFj+Ffe6mHm8fyB3AdWqJDw0/XuOpKNFLMQeIskLENjEngvxTOkc5bn3E/T6HqdxtayuqIW4SDRiLG2tbAuNVBSAV3KDThIV/TsfLj7JtgxA10JZeGwSozk/XdKuCPuRszIvT5mUsLtQon+uYQEnj0ryMv1g8ncjv3n1qDaACEPTbMzUtaDVdp29hPPVX4LGztTVlyf0FXlsRmlFYjKqba1eGeidGt2fLrX0SDciOMZCP8h0/3ClUXIPqJeVt8HmW6/mvY5/NqmMIes6CNJpAkPw==
-Received: from BN0PR04CA0064.namprd04.prod.outlook.com (2603:10b6:408:ea::9)
- by MN2PR12MB4472.namprd12.prod.outlook.com (2603:10b6:208:267::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.14; Wed, 10 Aug
- 2022 14:25:45 +0000
-Received: from BN8NAM11FT048.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:ea:cafe::c6) by BN0PR04CA0064.outlook.office365.com
- (2603:10b6:408:ea::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.18 via Frontend
- Transport; Wed, 10 Aug 2022 14:25:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.238) by
- BN8NAM11FT048.mail.protection.outlook.com (10.13.177.117) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5525.11 via Frontend Transport; Wed, 10 Aug 2022 14:25:45 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 10 Aug
- 2022 14:25:44 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 10 Aug
- 2022 07:25:44 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26 via Frontend
- Transport; Wed, 10 Aug 2022 07:25:44 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.18 00/35] 5.18.17-rc1 review
-In-Reply-To: <20220809175515.046484486@linuxfoundation.org>
-References: <20220809175515.046484486@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Wed, 10 Aug 2022 11:08:29 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 672E96C12F;
+        Wed, 10 Aug 2022 08:08:28 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id h138so12348521iof.12;
+        Wed, 10 Aug 2022 08:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc;
+        bh=P8TXeNV+7zskV8fKSSy2utDBKNnP7PwHXswFotxFdK0=;
+        b=WSpLVtuzfN5igBK8LD8eFpSXdWpwPBUjySGUljTob+BUjSVxKylVO7RDdomFHBrH8B
+         jFvSm6eJkbuw5XlkXEaQGHqaatqFW7VEHvQAgl1jx/b4vTlpmCgEO1Qm8HA4U7lvAWQz
+         hl9+/qx0cuemGM39X4lyM6r8ab9sNmDaCXYI4YSZ3LCprskOPyFHh/RssVwnfQZPDzqO
+         Dt7JO4n6bBN3S9C7384h/zV3UT7z6ZhdOy5pwVMYj9KZH0aqWiaP+i0IXHscoTLQs7Yc
+         nYna+23vqtrzY1+2tePKwaKhoZQfRuUZCvsnjEqlMgQYHg6C3dhyFZV/kHWkcmGsGcHS
+         oI6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
+        bh=P8TXeNV+7zskV8fKSSy2utDBKNnP7PwHXswFotxFdK0=;
+        b=xYXjSeZcZHULGqZwjYJugKpGPxSkKwhZEpyHp7PQ3Rd5WU56UuIUruA3Cz9677XpMR
+         yzQ0P4aMvY+7KfrpFXmB4IqlvXXDNWx+N/eC2xH1ASQXPuTG4nuGeEMu0AeLB0Zb0xvf
+         E9Ie6MlAhK9WuQct+wXtZ2UD8GdYNTQY0NJ03yaDwyLus8eOgrafuO+MBiItMDfQvbIx
+         aZ4KoItHzwBVwMvumm5BBk3zB3UY8L9CMqCWWhyDsx8+sLpdkfoCA0bi5nnRwI/XQYKj
+         Dsa+INJH6Nz44B2eSdPEXHlIgpmNTwnSfot7Mz/72z07IfmrcYpcDaH8dtmRBHiu182s
+         8QOw==
+X-Gm-Message-State: ACgBeo1+XQHg2ghVVLshRikGd6a9vYPMN0IlRmxuBAw3MoaTjvil1dok
+        EaHDvF/zslPXmLvb7fpGR5i7DgjXwSIjMXShIW4=
+X-Google-Smtp-Source: AA6agR74RZvvSswze2RlPU2jPG2C0znVnnazQXl+qZfN9DPU4Mu2uILtC9LaOZUSLAH9emrDZl1TfXxVIUeu5/kSLNk=
+X-Received: by 2002:a05:6602:26c7:b0:67b:72ef:b87b with SMTP id
+ g7-20020a05660226c700b0067b72efb87bmr11903368ioo.175.1660144107634; Wed, 10
+ Aug 2022 08:08:27 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <543d7adb-5436-43bd-aa03-14f6ead54696@rnnvmail201.nvidia.com>
-Date:   Wed, 10 Aug 2022 07:25:44 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ed07bd9e-8ce2-47b5-87a2-08da7adc36c9
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4472:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5IY9NfQgAHyyeUprND9N+244x3XiW7TklMp+dI6g7znd4LNq5i9ZB6oDNOFv3q49JQoXqs4Vlp6IdWQkz3kVqE7jyWfSQLPF4IXO55JPULgOTQwsc8jHGJqhqR6j2Br67eDsc74cJLLe4bRg3gBkt1sozyzwTDBvKjB/azgMTW7SnGn9yhFghlBm/JEwN51hVuwn6DifDU2bUqre57aa5NDwhtvkb4DYAbfcp4/9zJNDZQ0INuXAnZn6t7rOIxA6A9dTtYstcBxsx3Lg1313B8MmxO5r52d+yJeB5usvoR814ujx8yl9QGniasJa7HlAziBEE8eHnbwJgrT3Tn4S4P8PTOEoBPZXdIEdWPUR/jgF5n4+Bh/8FwHgTj+Ue8Qhs57xivgCQDlzBAUD2q3cgkHrfPp59tNRmQ3WD8PEWXJRTdl9MhFlLcWA337Y1ZCKpFZftEPc+efu/BEOVmTRqQPU5WHbKYwmW85P7gzLZgFKa3d9QwyLvjeFrh0Pp0FPXzBn3V629lb+3ebaZZ2U4PXHgm9OcDJTNPmmSy8GV+xQui+7JjuLdwZhdpQuZF4LVjRRtFtLgAlUawr844/ffYQH0aGuP7STgRIbdRyrxL1urm5mjkiWfCV0+2088/N/9O0asTOY+YFEBaM6BAzPeoSLUdMcYqDrb484RUo3vVgL5XAROZKhiNKEsrbSPgtwML6lxdDf18q7WupNsBFEib4fBrYhEQg1AtRyROZBMPkbAFcMz3s9WwufpSr0Y5VBVM4MYxCUS6z+MrcIB+gziFiOQ44imL3U1B9Dfi1652bo9vcP/ww2e4/BdqbX8hT7YVMPYdg+vLBjEFOto7rG0Urjiid3eid80ESTykRn3k7lxB6hP9rn1/eV68xcLsAiRMP7FoM8b5bvfXndZGIBzIA3wrqcOkJu6TgF9xlt8SA=
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(376002)(39860400002)(136003)(396003)(46966006)(36840700001)(40470700004)(8676002)(70206006)(40460700003)(478600001)(54906003)(70586007)(8936002)(4326008)(426003)(186003)(966005)(7416002)(5660300002)(31696002)(86362001)(6916009)(31686004)(336012)(81166007)(26005)(316002)(356005)(41300700001)(2906002)(82310400005)(82740400003)(47076005)(36860700001)(40480700001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2022 14:25:45.5355
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed07bd9e-8ce2-47b5-87a2-08da7adc36c9
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT048.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4472
+References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
+ <20220701090240.1896131-3-dmitry.osipenko@collabora.com> <2bb95e80-b60a-36c0-76c8-a06833032c77@amd.com>
+ <CAF6AEGtqPeF1DjmBKgzWK39Yi81YiNjTjDNn85TKx7uwicFTSA@mail.gmail.com>
+ <2a646ce4-c2ec-3b11-77a0-cc720afd6fe1@collabora.com> <YvOav/vF2awVWIu0@phenom.ffwll.local>
+In-Reply-To: <YvOav/vF2awVWIu0@phenom.ffwll.local>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Wed, 10 Aug 2022 08:08:15 -0700
+Message-ID: <CAF6AEGvfAJgwBe4+sK0gAkZ++MwH9x4=698C8XSnmfYNMFZqfA@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] drm/gem: Don't map imported GEMs
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Rob Clark <robdclark@gmail.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        kernel@collabora.com
+Cc:     Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 09 Aug 2022 20:00:29 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.18.17 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 11 Aug 2022 17:55:02 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.18.17-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.18.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Wed, Aug 10, 2022 at 4:47 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> On Wed, Jul 06, 2022 at 10:02:07AM +0300, Dmitry Osipenko wrote:
+> > On 7/6/22 00:48, Rob Clark wrote:
+> > > On Tue, Jul 5, 2022 at 4:51 AM Christian K=C3=B6nig <christian.koenig=
+@amd.com> wrote:
+> > >>
+> > >> Am 01.07.22 um 11:02 schrieb Dmitry Osipenko:
+> > >>> Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers don'=
+t
+> > >>> handle imported dma-bufs properly, which results in mapping of some=
+thing
+> > >>> else than the imported dma-buf. On NVIDIA Tegra we get a hard locku=
+p when
+> > >>> userspace writes to the memory mapping of a dma-buf that was import=
+ed into
+> > >>> Tegra's DRM GEM.
+> > >>>
+> > >>> Majority of DRM drivers prohibit mapping of the imported GEM object=
+s.
+> > >>> Mapping of imported GEMs require special care from userspace since =
+it
+> > >>> should sync dma-buf because mapping coherency of the exporter devic=
+e may
+> > >>> not match the DRM device. Let's prohibit the mapping for all DRM dr=
+ivers
+> > >>> for consistency.
+> > >>>
+> > >>> Suggested-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.c=
+om>
+> > >>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> > >>
+> > >> I'm pretty sure that this is the right approach, but it's certainly =
+more
+> > >> than possible that somebody abused this already.
+> > >
+> > > I suspect that this is abused if you run deqp cts on android.. ie. al=
+l
+> > > winsys buffers are dma-buf imports from gralloc.  And then when you
+> > > hit readpix...
+> > >
+> > > You might only hit this in scenarios with separate gpu and display (o=
+r
+> > > dGPU+iGPU) because self-imports are handled differently in
+> > > drm_gem_prime_import_dev().. and maybe not in cases where you end up
+> > > with a blit from tiled/compressed to linear.. maybe that narrows the
+> > > scope enough to just fix it in userspace?
+> >
+> > Given that that only drivers which use DRM-SHMEM potentially could've
+> > map imported dma-bufs (Panfrost, Lima) and they already don't allow to
+> > do that, I think we're good.
+>
+> So can I have an ack from Rob here or are there still questions that this
+> might go boom?
+>
+> Dmitry, since you have a bunch of patches merged now I think would also b=
+e
+> good to get commit rights so you can drive this more yourself. I've asked
+> Daniel Stone to help you out with getting that.
 
-All tests passing for Tegra ...
+I *think* we'd be ok with this on msm, mostly just by dumb luck.
+Because the dma-buf's we import will be self-import.  I'm less sure
+about panfrost (src/panfrost/lib/pan_bo.c doesn't seem to have a
+special path for imported dma-bufs either, and in that case they won't
+be self-imports.. but I guess no one has tried to run android cts on
+panfrost).
 
-Test results for stable-v5.18:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+What about something less drastic to start, like (apologies for
+hand-edited patch):
 
-Linux version:	5.18.17-rc1-g732bf05a92ab
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 86d670c71286..fc9ec42fa0ab 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1034,6 +1034,10 @@ int drm_gem_mmap_obj(struct drm_gem_object
+*obj, unsigned long obj_size,
+ {
+        int ret;
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
++       WARN_ON_ONCE(obj->import_attach);
++
+        /* Check for valid size. */
+        if (obj_size < vma->vm_end - vma->vm_start)
+                return -EINVAL;
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c
+b/drivers/gpu/drm/drm_gem_shmem_helper.c
+index 8ad0e02991ca..6190f5018986 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -609,17 +609,8 @@ EXPORT_SYMBOL_GPL(drm_gem_shmem_vm_ops);
+  */
+ int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct
+vm_area_struct *vma)
+ {
+-       struct drm_gem_object *obj =3D &shmem->base;
+        int ret;
 
-Jon
+        if (obj->import_attach) {
+-               /* Drop the reference drm_gem_mmap_obj() acquired.*/
+-               drm_gem_object_put(obj);
+-               vma->vm_private_data =3D NULL;
+-
+-               return dma_buf_mmap(obj->dma_buf, vma, 0);
++               return -EINVAL;
+        }
+
+        ret =3D drm_gem_shmem_get_pages(shmem);
+        if (ret) {
+                drm_gem_vm_close(vma);
+--
+2.36.1
