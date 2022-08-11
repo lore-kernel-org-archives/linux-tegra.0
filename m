@@ -2,237 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C224EC00140
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Aug 2022 23:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73ACCC19F2D
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Aug 2022 05:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233707AbiHJXTU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 Aug 2022 19:19:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44234 "EHLO
+        id S233882AbiHKF1Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Aug 2022 01:27:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233687AbiHJXTT (ORCPT
+        with ESMTP id S229437AbiHKF1Y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 Aug 2022 19:19:19 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C1607B797;
-        Wed, 10 Aug 2022 16:19:18 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id g15so6945569iob.0;
-        Wed, 10 Aug 2022 16:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc;
-        bh=l5p5bclQFAlMwZmWlO8t1SaK7xuragzMNLu8+SffqhU=;
-        b=iXu8D1jJDH9R43xBAlDVHcczSFbbeceeaMs+vdM3ROkUuHlsfkvvIZAcW19okAr2K3
-         xE3/M2JLwF8VAZLWtwXzUXB12t8mT9Z/vayYB6PlkW6M1Y3xLyjL1PraTGc1n78Wigci
-         F9flaSw6/OnQjmgwMncTHnWBIqYq2Xi0Ow6NEmAtEF5j5FHI4L8GnZzkyZT0bz7RNUOH
-         LHhD/uRzrsEUGx0X4W2xZZYn5MFuBjuc2z+/KA0qJkwp4NZwNtzZbblg07DPdyIKTXX0
-         9UjqS+uM5iR9Yb0Phc/Voha3j60LENKZ03eavcdc9bZ30bEEtdHnLv3vCUeCrATxQMVO
-         8tVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
-        bh=l5p5bclQFAlMwZmWlO8t1SaK7xuragzMNLu8+SffqhU=;
-        b=MRcEAKvtYrZ+To9yN+UXjHzhzaPWBNmcSxvzBYZc+FDyFQKRZGKGHk/dcz/XwJHNIV
-         Q4eWCvtYDpo2C1qBBC+8sQODGhAP8G+TVaNsRovgoAEpyynGn/jkoWdZ7WieBm/5rrl5
-         kBnlNcvvbHWnZ4wSeQDHIcX4F3YHY2rtLiY/mTcXlwxpwi/vYZYPVXuFyuzSSyhQFWwM
-         b14rJShz5evjGlQFE69re8lzqDL3LwiGEdkdxP5gJpllXg+D7J3GtDV3W2YPIErmIRw4
-         cPZregXkBZ/Hq1rq0I7N5rDk2kJLA+i1IsF/SgbubOCMEMwxVyWAxTZQgcGMtgvBuNJz
-         hptg==
-X-Gm-Message-State: ACgBeo11gS86ncBqkQD68zCPxTvD2VhP3JSvG0fj8QvNPEu6PtGTdTI8
-        jxWUABgT8rSGY0l3+uaNEXVMsul3IrTJHnYH8bp1E+W4
-X-Google-Smtp-Source: AA6agR7JzmvJ4XVRV58axL/tiNu8bHxsGLOSNYpNcG405gbAjtRKdBV0w34FaH4DoBiVQ9D2yCc0XM3fNmlllCh51DY=
-X-Received: by 2002:a05:6638:1353:b0:342:9bfb:7382 with SMTP id
- u19-20020a056638135300b003429bfb7382mr13826837jad.129.1660173557556; Wed, 10
- Aug 2022 16:19:17 -0700 (PDT)
+        Thu, 11 Aug 2022 01:27:24 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2059.outbound.protection.outlook.com [40.107.94.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 104FC6EF3D;
+        Wed, 10 Aug 2022 22:27:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nZUVRBCmm67jnpMCnB2G7jGd3SRshgCBb/AeFKIIRYT1JRtiQ7S52dX7sD2lc/7Y/7+HwNwHBKh92rc14CNxQ5DsJUhGDSMYZAbA5GUXps3m43PDzFU+0v7dBcK893CX1Ep5aMmlMqb7/qWr4xgq10jqDIAjZapAjo4B/gSQ4v/OPFSxCYginID0eCXilTNkQGCLuHPNrnuAdIxL6ay+DoeVEPKb9ZloJ9gQz5nc/b1RKWdbodX6FnC1qY3Tvtsh4ap9GA4zM7CX7nUp0u8IiMuE8lJ8HL29l7cIvM0Wm+vlHU0Ch9oyoksMB6T3yZC5mSrxslozd4eQhi0td35veA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G+vqrM9ZA0w7w4UfrJsSezdCWU8XWx80q4ncgkC4Z9M=;
+ b=XFXR0pnHYJ5n1F2Mo1/UdC0FNIpSgEAXSkILdpDupLBOrhQf0cpWULrrRO9+ed6bAOX0dWHScGLHpyvnQYDRSOIDBv65hKdXiiESbVF4JT/L1+Oj8Eu5RV8jibO/velbcPkGt9obArxA8yCBG9cwI1RDX8dWt2PX5de+85jidylNwcOMATuWId41FqyrZrHwaYRGyw3lfXuBdS/pn0uhdyEE10GyBYXrarug5JGqfhNknQB4LKDPGxPU5odVbrAZwyDQxI5cSz6ZZozI1zTnj1Iu6EWHPzaVxpzYx40OGgFmopvPQXbqkJRzOuGwrsO6TcC7xfWBP3LDeHdFL/wcWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G+vqrM9ZA0w7w4UfrJsSezdCWU8XWx80q4ncgkC4Z9M=;
+ b=OQrR5sw8DuQFQHHnzx6Ym4zcQ68iGe2724BouhgY3qxA6Dftnx29LnkbNkHBeXANjdQ5p3IRqwY9nmxoPPQVb0ZfHLImavfKbYYKnhk8j+qYJSFMqMBRoqLLB/Bqz2xtN8GLtzKIMCPMQ428+DphQnwxckPyY6LFCcRzPWlK83aji2rjJhBh3qaKSUCNl4B6FjUYZwbgIz//Zkyi8sPPwEi+oKJIlQIcr5yoklA3NSi6RYolCzXXKIECJI5x/fdFglfRpvdbmsjP5l8z/xaea5IJT0EA//ECsxwbDuzT+WGE9wtvIjdnYb7ztxKSbio0qctbDsFo7B8xCKoEt187tA==
+Received: from MW4PR04CA0358.namprd04.prod.outlook.com (2603:10b6:303:8a::33)
+ by DM5PR12MB1708.namprd12.prod.outlook.com (2603:10b6:3:10e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.15; Thu, 11 Aug
+ 2022 05:27:22 +0000
+Received: from CO1NAM11FT044.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8a:cafe::bd) by MW4PR04CA0358.outlook.office365.com
+ (2603:10b6:303:8a::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.17 via Frontend
+ Transport; Thu, 11 Aug 2022 05:27:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ CO1NAM11FT044.mail.protection.outlook.com (10.13.175.188) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5525.11 via Frontend Transport; Thu, 11 Aug 2022 05:27:21 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Thu, 11 Aug
+ 2022 05:27:20 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 10 Aug
+ 2022 22:27:19 -0700
+Received: from mkumard.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.986.26 via Frontend
+ Transport; Wed, 10 Aug 2022 22:27:17 -0700
+From:   Mohan Kumar <mkumard@nvidia.com>
+To:     <tiwai@suse.com>, <perex@perex.cz>, <cezary.rojewski@intel.com>
+CC:     <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Mohan Kumar <mkumard@nvidia.com>
+Subject: [PATCH] ALSA: hda: Fix crash due to jack poll in suspend
+Date:   Thu, 11 Aug 2022 10:57:04 +0530
+Message-ID: <20220811052704.2944-1-mkumard@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
- <20220701090240.1896131-3-dmitry.osipenko@collabora.com> <2bb95e80-b60a-36c0-76c8-a06833032c77@amd.com>
- <CAF6AEGtqPeF1DjmBKgzWK39Yi81YiNjTjDNn85TKx7uwicFTSA@mail.gmail.com>
- <2a646ce4-c2ec-3b11-77a0-cc720afd6fe1@collabora.com> <YvOav/vF2awVWIu0@phenom.ffwll.local>
- <CAF6AEGvfAJgwBe4+sK0gAkZ++MwH9x4=698C8XSnmfYNMFZqfA@mail.gmail.com>
- <9674d00e-c0d6-ceba-feab-5dc475bda694@collabora.com> <CAF6AEGv1cVC9ZNMwpwFOki5CrwD3kSAHM9EUFZGWY-y5zcQsCg@mail.gmail.com>
- <fc019528-7ec7-9e5b-1b6d-c44da14346cf@collabora.com>
-In-Reply-To: <fc019528-7ec7-9e5b-1b6d-c44da14346cf@collabora.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Wed, 10 Aug 2022 16:19:05 -0700
-Message-ID: <CAF6AEGv8zSd0fEYB9hd2QOyTt53gFSQoL8JdZtCvtCdYfMfB2Q@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] drm/gem: Don't map imported GEMs
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com, Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a2d7ace1-afb5-4400-3754-08da7b5a2a38
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1708:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ZKDKY1bD4IFCfVzVBwVTsfcl/keu9uNY54wkVFvqxPX/P/nR98UnikREm76io0H/QWb44lAerI7iibjdzB0OlHUgEEmHhdJumo0jve0D3kAH286mxcUU6gwEKYkTJLFXjSnapG195zreS+mgaSPSiW5rSQOeyxYO2AWgBaFQcdVb+/cSl3qx33mXNhyeUEDbfnhZWzOwgWvxtWO9NMT1nU6zU2bJNZ+pc4wYoN6DwGwyH1mpcgr0RXP0RmkZ/+7M4md7rB0xUzg+7A9MwrS+f9XH/tbR0gu5ZeO5vkLtx7jRwYGlK871OizA5KP8NJz4c1HtnQpHanZjYLZidXx9oWLx8ZzF8zwUW43AnFYx2sbOITH8yyrZuelct/hWhcXM/E8QncbJkJb5gXbyq0DTvJCOwVu5AL5qgXxqNNUGRlmZU3nsCnye5qSqJgJdcjREds5PKWGW7IqVb02q57ynGANLm+U/jH9z8GjuucUL4J9Zs7yYvcKrk2AZKuEpEOW75Mh5fzkFsj0/rF5J0uw4yc+3qH/uYxFDksjcC/JXbhkL31Q+1pjTrFOevT3+PFTveqD07VpL+ecdRfHlzS+aqlx4h50yxZMQD9J4KbmjloJTJ0djEv9dom8WKVOWTB0UFECP91MzgiiTgPyrVw+2MY9LNbkqEW3D//BXDT7x/eUNBXwdN6s4usB++JmMKOYoRnm06BhiaLVrFwXiYBK14DnMVjxi1yRVkKLj38/hn9CyyUZcak/2kiAqJK6tuRDgXL8itvStox0mv/9E0ORaSpWdSLbqM8/OUeFsgvAIU10LBohyhvlgcCR4aOieQQxBTXHb+LM67iVoCNqG62BTOg==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(396003)(376002)(136003)(39860400002)(346002)(40470700004)(46966006)(36840700001)(83380400001)(70206006)(316002)(2906002)(4326008)(8676002)(478600001)(110136005)(40480700001)(36756003)(40460700003)(15650500001)(5660300002)(8936002)(70586007)(36860700001)(7696005)(356005)(54906003)(41300700001)(26005)(186003)(336012)(6666004)(81166007)(2616005)(82310400005)(426003)(107886003)(86362001)(82740400003)(1076003)(47076005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2022 05:27:21.0853
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2d7ace1-afb5-4400-3754-08da7b5a2a38
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT044.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1708
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Aug 10, 2022 at 3:23 PM Dmitry Osipenko
-<dmitry.osipenko@collabora.com> wrote:
->
-> On 8/11/22 01:03, Rob Clark wrote:
-> > On Wed, Aug 10, 2022 at 12:26 PM Dmitry Osipenko
-> > <dmitry.osipenko@collabora.com> wrote:
-> >>
-> >> On 8/10/22 18:08, Rob Clark wrote:
-> >>> On Wed, Aug 10, 2022 at 4:47 AM Daniel Vetter <daniel@ffwll.ch> wrote=
-:
-> >>>>
-> >>>> On Wed, Jul 06, 2022 at 10:02:07AM +0300, Dmitry Osipenko wrote:
-> >>>>> On 7/6/22 00:48, Rob Clark wrote:
-> >>>>>> On Tue, Jul 5, 2022 at 4:51 AM Christian K=C3=B6nig <christian.koe=
-nig@amd.com> wrote:
-> >>>>>>>
-> >>>>>>> Am 01.07.22 um 11:02 schrieb Dmitry Osipenko:
-> >>>>>>>> Drivers that use drm_gem_mmap() and drm_gem_mmap_obj() helpers d=
-on't
-> >>>>>>>> handle imported dma-bufs properly, which results in mapping of s=
-omething
-> >>>>>>>> else than the imported dma-buf. On NVIDIA Tegra we get a hard lo=
-ckup when
-> >>>>>>>> userspace writes to the memory mapping of a dma-buf that was imp=
-orted into
-> >>>>>>>> Tegra's DRM GEM.
-> >>>>>>>>
-> >>>>>>>> Majority of DRM drivers prohibit mapping of the imported GEM obj=
-ects.
-> >>>>>>>> Mapping of imported GEMs require special care from userspace sin=
-ce it
-> >>>>>>>> should sync dma-buf because mapping coherency of the exporter de=
-vice may
-> >>>>>>>> not match the DRM device. Let's prohibit the mapping for all DRM=
- drivers
-> >>>>>>>> for consistency.
-> >>>>>>>>
-> >>>>>>>> Suggested-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.inte=
-l.com>
-> >>>>>>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> >>>>>>>
-> >>>>>>> I'm pretty sure that this is the right approach, but it's certain=
-ly more
-> >>>>>>> than possible that somebody abused this already.
-> >>>>>>
-> >>>>>> I suspect that this is abused if you run deqp cts on android.. ie.=
- all
-> >>>>>> winsys buffers are dma-buf imports from gralloc.  And then when yo=
-u
-> >>>>>> hit readpix...
-> >>>>>>
-> >>>>>> You might only hit this in scenarios with separate gpu and display=
- (or
-> >>>>>> dGPU+iGPU) because self-imports are handled differently in
-> >>>>>> drm_gem_prime_import_dev().. and maybe not in cases where you end =
-up
-> >>>>>> with a blit from tiled/compressed to linear.. maybe that narrows t=
-he
-> >>>>>> scope enough to just fix it in userspace?
-> >>>>>
-> >>>>> Given that that only drivers which use DRM-SHMEM potentially could'=
-ve
-> >>>>> map imported dma-bufs (Panfrost, Lima) and they already don't allow=
- to
-> >>>>> do that, I think we're good.
-> >>>>
-> >>>> So can I have an ack from Rob here or are there still questions that=
- this
-> >>>> might go boom?
-> >>>>
-> >>>> Dmitry, since you have a bunch of patches merged now I think would a=
-lso be
-> >>>> good to get commit rights so you can drive this more yourself. I've =
-asked
-> >>>> Daniel Stone to help you out with getting that.
-> >>>
-> >>> I *think* we'd be ok with this on msm, mostly just by dumb luck.
-> >>> Because the dma-buf's we import will be self-import.  I'm less sure
-> >>> about panfrost (src/panfrost/lib/pan_bo.c doesn't seem to have a
-> >>> special path for imported dma-bufs either, and in that case they won'=
-t
-> >>> be self-imports.. but I guess no one has tried to run android cts on
-> >>> panfrost).
-> >>
-> >> The last time I tried to mmap dma-buf imported to Panfrost didn't work
-> >> because Panfrost didn't implement something needed for that. I'll need
-> >> to take a look again because can't recall what it was.
-> >>
-> >>> What about something less drastic to start, like (apologies for
-> >>> hand-edited patch):
-> >>>
-> >>> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> >>> index 86d670c71286..fc9ec42fa0ab 100644
-> >>> --- a/drivers/gpu/drm/drm_gem.c
-> >>> +++ b/drivers/gpu/drm/drm_gem.c
-> >>> @@ -1034,6 +1034,10 @@ int drm_gem_mmap_obj(struct drm_gem_object
-> >>> *obj, unsigned long obj_size,
-> >>>  {
-> >>>         int ret;
-> >>>
-> >>> +       WARN_ON_ONCE(obj->import_attach);
-> >>
-> >> This will hang NVIDIA Tegra, which is what this patch fixed initially.
-> >> If neither of upstream DRM drivers need to map imported dma-bufs and
-> >> never needed, then why do we need this?
-> >
-> > oh, tegra isn't using shmem helpers?  I assumed it was.  Well my point
-> > was to make a more targeted fail on tegra, and a WARN_ON for everyone
-> > else to make it clear that what they are doing is undefined behavior.
-> > Because so far existing userspace (or well, panfrost and freedreno at
-> > least, those are the two I know or checked) don't make special cases
-> > for mmap'ing against the dmabuf fd against the dmabuf fd instead of
-> > the drm device fd.
->
-> It's not clear to me what bad Android does form yours comments. Does it
-> export dma-buf from GPU and then import it to GPU? If yes, then DRM core
-> has a check for the self-importing [1].
->
-> [1]
-> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/drm_prime.=
-c#L918
->
-> If you're meaning something else, then please explain in a more details.
+With jackpoll_in_suspend flag set, there is a possibility that
+jack poll worker thread will run even after system suspend was
+completed. Any register access after system pm callback flow
+will result in kernel crash as still jack poll worker thread
+tries to access registers.
 
-So, android/gralloc allocates buffers externally to the driver and
-imports them into driver.  (And that seems to not just be window
-surfaces, but in cases random textures, etc)
+To fix the crash issue during system flow, cancel the jack poll
+worker thread during system pm prepare callback and cancel the
+worker thread at start of runtime suspend callback and re-schedule
+at last to avoid any unwarranted access of register by worker thread
+during suspend flow.
 
-In the normal case these should be allocated from drm/msm so it should
-hit [1].. this is the "dumb luck" I mentioned earlier.  But I'm not
-confident enough to say that there is no other case.
+Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+---
+ sound/pci/hda/hda_codec.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
->
-> > I *think* it should work out that we don't hit this path with
-> > freedreno but on android I can't really guarantee or prove it.  So
-> > your patch would potentially break existing working userspace.  Maybe
-> > it is userspace that isn't portable (but OTOH it isn't like you are
-> > going to be using freedreno on tegra).  So why don't you go for a more
-> > targeted fix that only returns an error on hw where this is
-> > problematic?
->
-> That's what the first versions of the patch did and Christian suggested
-> that it's not a good approach. In fact it should be not only Tegra that
-> has a broken dma-buf mapping, but apparently OMAP driver too.
+diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
+index 7b2e62fa82d5..384426d7e9dd 100644
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -2940,8 +2940,7 @@ static int hda_codec_runtime_suspend(struct device *dev)
+ 	if (!codec->card)
+ 		return 0;
+ 
+-	if (!codec->bus->jackpoll_in_suspend)
+-		cancel_delayed_work_sync(&codec->jackpoll_work);
++	cancel_delayed_work_sync(&codec->jackpoll_work);
+ 
+ 	state = hda_call_codec_suspend(codec);
+ 	if (codec->link_down_at_suspend ||
+@@ -2949,6 +2948,11 @@ static int hda_codec_runtime_suspend(struct device *dev)
+ 	     (state & AC_PWRST_CLK_STOP_OK)))
+ 		snd_hdac_codec_link_down(&codec->core);
+ 	snd_hda_codec_display_power(codec, false);
++
++	if (codec->bus->jackpoll_in_suspend &&
++		(dev->power.power_state.event != PM_EVENT_SUSPEND))
++		schedule_delayed_work(&codec->jackpoll_work,
++					codec->jackpoll_interval);
+ 	return 0;
+ }
+ 
+@@ -2972,6 +2976,9 @@ static int hda_codec_runtime_resume(struct device *dev)
+ #ifdef CONFIG_PM_SLEEP
+ static int hda_codec_pm_prepare(struct device *dev)
+ {
++	struct hda_codec *codec = dev_to_hda_codec(dev);
++
++	cancel_delayed_work_sync(&codec->jackpoll_work);
+ 	dev->power.power_state = PMSG_SUSPEND;
+ 	return pm_runtime_suspended(dev);
+ }
+@@ -2991,9 +2998,6 @@ static void hda_codec_pm_complete(struct device *dev)
+ 
+ static int hda_codec_pm_suspend(struct device *dev)
+ {
+-	struct hda_codec *codec = dev_to_hda_codec(dev);
+-
+-	cancel_delayed_work_sync(&codec->jackpoll_work);
+ 	dev->power.power_state = PMSG_SUSPEND;
+ 	return pm_runtime_force_suspend(dev);
+ }
+-- 
+2.17.1
 
-Hmm, I guess I'm a bit more conservative when it comes to potentially
-breaking userspace.
-
-BR,
--R
-
->
-> --
-> Best regards,
-> Dmitry
