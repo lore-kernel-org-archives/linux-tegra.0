@@ -2,75 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D18BC25B0F
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Aug 2022 16:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AF2C25B06
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Aug 2022 15:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239455AbiHLQ4a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Aug 2022 12:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58430 "EHLO
+        id S239910AbiHNP24 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Aug 2022 11:28:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239327AbiHLQ41 (ORCPT
+        with ESMTP id S240149AbiHNP23 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Aug 2022 12:56:27 -0400
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C19B915C8;
-        Fri, 12 Aug 2022 09:56:26 -0700 (PDT)
-Received: by mail-io1-f52.google.com with SMTP id l24so1246080ion.13;
-        Fri, 12 Aug 2022 09:56:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=9Cp4QeCbCvOKGEvFZUU0aNCq6FMaAD/1Ak9E24Cc4I4=;
-        b=XiS9tNUdnbmNJyZ3ObWNXgKYYs4HgDRbwgaIQSfPF/9VrScvArHaCjGQBrf8a4lIv+
-         /gdd9SY9OmTJoJ5jTnyKw7hQf1U4wXpXtJ+/ZQc/JWumt2f0fqsYnYL/76IaBPEm/GeB
-         sRraFDj3zbduuVSfoFYInXATnP10VGPa4X//m57Dr+juXQKB4QP+lbKTmiTHifS90kOc
-         pu4oR0oPffDYj4Ae0OAyvKLkiHhKq7DadjtQ0EOCkNlBXvn0tvtFNC9UxEDUhUftH411
-         4rDsktb9nGUdeWukvHQro/udapZ0KUBtdIhZFEDDl+NqM9BPJugQlvPf3GCUXMYRPyjz
-         VmBA==
-X-Gm-Message-State: ACgBeo1tjh3B2Z9OfvTxOsUneZqWk2jf/kM1tOyjLswwwocCRFA5PtoR
-        Vw6dj7WC46mirvfa4uU0bg==
-X-Google-Smtp-Source: AA6agR6qTsIohfC4640GKl7RspnUlKo+Ok0JVFjlNMLyEJRpsWgvTftyGOKSWm0+rvNuYvFQwV40vw==
-X-Received: by 2002:a05:6638:1483:b0:33f:7944:a30d with SMTP id j3-20020a056638148300b0033f7944a30dmr2350179jak.155.1660323385456;
-        Fri, 12 Aug 2022 09:56:25 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id az14-20020a056638418e00b00342e029aa2dsm90467jab.40.2022.08.12.09.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Aug 2022 09:56:24 -0700 (PDT)
-Received: (nullmailer pid 317914 invoked by uid 1000);
-        Fri, 12 Aug 2022 16:56:23 -0000
-Date:   Fri, 12 Aug 2022 10:56:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-spi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: dt-bindings: nvidia,tegra210-quad-peripheral-props:
- correct additional properties
-Message-ID: <20220812165623.GA317861-robh@kernel.org>
-References: <20220810131236.428529-1-krzysztof.kozlowski@linaro.org>
+        Sun, 14 Aug 2022 11:28:29 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DD5AE62;
+        Sun, 14 Aug 2022 08:28:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CBA3BB80B27;
+        Sun, 14 Aug 2022 15:28:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8983AC433B5;
+        Sun, 14 Aug 2022 15:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660490902;
+        bh=hRPBfczdm15C8/gZO/F3YClMCpGorCXgOhAyyTX1B+M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PupUPVohimlC8EMKPfaXVMVfknhoBR1YLSTaEIqmVhvbeOcs5coPuW9JBPopgvsaZ
+         edDEz84enHgXDffxL/1M5uSTI0uIyPtEAXAFJTAsm2xC00Wqx2NnPNAnPVkK5lX8oP
+         Hv8PvV6+qnFsZp1qASrEFL062+2ruDaa3IMVR/0yA1qkRD+3TFsfYY1cbiabUc+6Wq
+         2V9W7RoivPgLBimCkO0pfwgzqJ5hIf9nxoYTI3VKz9D9UaBAswYyMXYOEWoK9TnSAl
+         c9Kb0dvnW5+Qq93pKjKreDv2GqjCrSmKmzMxvDWL+IqImQsbuH1gzUcQRZs3Nc4seQ
+         3MuhXD2O3xtMw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sai Prakash Ranjan <quic_saipraka@quicinc.com>,
+        Marc Zyngier <maz@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Sasha Levin <sashal@kernel.org>, tglx@linutronix.de,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.19 15/64] irqchip/tegra: Fix overflow implicit truncation warnings
+Date:   Sun, 14 Aug 2022 11:23:48 -0400
+Message-Id: <20220814152437.2374207-15-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220814152437.2374207-1-sashal@kernel.org>
+References: <20220814152437.2374207-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220810131236.428529-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 10 Aug 2022 16:12:36 +0300, Krzysztof Kozlowski wrote:
-> Re-usable schemas should use additionalProperties:true, so the schema
-> using it will check for evaluated properties.
-> 
-> Fixes: e23917822d3c ("spi: dt-bindings: split peripheral prods")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/spi/nvidia,tegra210-quad-peripheral-props.yaml    | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
+From: Sai Prakash Ranjan <quic_saipraka@quicinc.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+[ Upstream commit 443685992bda9bb4f8b17fc02c9f6c60e62b1461 ]
+
+Fix -Woverflow warnings for tegra irqchip driver which is a result
+of moving arm64 custom MMIO accessor macros to asm-generic function
+implementations giving a bonus type-checking now and uncovering these
+overflow warnings.
+
+drivers/irqchip/irq-tegra.c: In function ‘tegra_ictlr_suspend’:
+drivers/irqchip/irq-tegra.c:151:18: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+   writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+                  ^
+
+Suggested-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Sai Prakash Ranjan <quic_saipraka@quicinc.com>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/irqchip/irq-tegra.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+index e1f771c72fc4..ad3e2c1b3c87 100644
+--- a/drivers/irqchip/irq-tegra.c
++++ b/drivers/irqchip/irq-tegra.c
+@@ -148,10 +148,10 @@ static int tegra_ictlr_suspend(void)
+ 		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
+ 
+ 		/* Disable COP interrupts */
+-		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), ictlr + ICTLR_COP_IER_CLR);
+ 
+ 		/* Disable CPU interrupts */
+-		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), ictlr + ICTLR_CPU_IER_CLR);
+ 
+ 		/* Enable the wakeup sources of ictlr */
+ 		writel_relaxed(lic->ictlr_wake_mask[i], ictlr + ICTLR_CPU_IER_SET);
+@@ -172,12 +172,12 @@ static void tegra_ictlr_resume(void)
+ 
+ 		writel_relaxed(lic->cpu_iep[i],
+ 			       ictlr + ICTLR_CPU_IEP_CLASS);
+-		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), ictlr + ICTLR_CPU_IER_CLR);
+ 		writel_relaxed(lic->cpu_ier[i],
+ 			       ictlr + ICTLR_CPU_IER_SET);
+ 		writel_relaxed(lic->cop_iep[i],
+ 			       ictlr + ICTLR_COP_IEP_CLASS);
+-		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), ictlr + ICTLR_COP_IER_CLR);
+ 		writel_relaxed(lic->cop_ier[i],
+ 			       ictlr + ICTLR_COP_IER_SET);
+ 	}
+@@ -312,7 +312,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
+ 		lic->base[i] = base;
+ 
+ 		/* Disable all interrupts */
+-		writel_relaxed(~0UL, base + ICTLR_CPU_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), base + ICTLR_CPU_IER_CLR);
+ 		/* All interrupts target IRQ */
+ 		writel_relaxed(0, base + ICTLR_CPU_IEP_CLASS);
+ 
+-- 
+2.35.1
+
