@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C15C28B2B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7732C25B0F
 	for <linux-tegra@archiver.kernel.org>; Sun, 14 Aug 2022 15:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241996AbiHNPw2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Aug 2022 11:52:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37996 "EHLO
+        id S242034AbiHNPw3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Aug 2022 11:52:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242135AbiHNPvR (ORCPT
+        with ESMTP id S241990AbiHNPuv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 14 Aug 2022 11:51:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D33D1D335;
-        Sun, 14 Aug 2022 08:36:56 -0700 (PDT)
+        Sun, 14 Aug 2022 11:50:51 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8264C1CFF7;
+        Sun, 14 Aug 2022 08:36:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C782660B90;
-        Sun, 14 Aug 2022 15:36:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44FE6C433C1;
-        Sun, 14 Aug 2022 15:36:54 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1249FB80B4D;
+        Sun, 14 Aug 2022 15:36:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82704C43470;
+        Sun, 14 Aug 2022 15:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660491415;
-        bh=4w3lDk5hzKUuT+9+ilwQbT7hBop2B7aR7/BqfQaQuMM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=lzxeP/vgnryJsW5c6XT087rEAVDCqrNX/FVQWgYoGT9wKZbrkpql6PTQVyEtxAIDP
-         ZXOMABkWE1KaladI4/kSsJpzIZ+56Lq+P3fVM/rMd3yDXwj6tjEGLrAUr6PutL/7Rn
-         Q70Oa1KhKJ2PwC9K60Is5RvxFK53ZMpwRUaM2IzT60QHcAML7C+7jZhIe5XtfzYkS9
-         qGhPwg9lJS25TkMBzyIe5kke55mZJcxqxTvWn9+37m0jvlEvDeGkKMO60byyD/ipTu
-         pG0P5k9JxFC4Re4hlcdcF71IIcG4IHj76oMxGACToPmySuPYtKFLphCVaOZQ0bl2hS
-         OMODoXS/LNHQQ==
+        s=k20201202; t=1660491374;
+        bh=yx3F4GWmfbblmgPgIsm34N4nZ3rzz+7Tif+D4H6tSck=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mhhvMXWcbUlZSsKCIIeZKKfPFiNDu4noE6QCzBtZcRKHsb1Uj0d1Bmojd+Xpq3gFl
+         tFGmoVxwsqPEwB/agof+uoTGsYBzfJ5+uYQWV5ThcCM3WZjev0iZSEy46ONmmIpRKY
+         ZiyrDT9EkV7d0Ar2+vK8HR4G71S6bU7EX2xWKM2DsDt0fMTk2Ti+s+dAr49EeFKcTv
+         5KY3Nj8eM2wObfcriPHNAJEEDPRl6zcjtitup+UDYzWcqI1Hle8eRvjCQ6j/lGK9mw
+         ygY56g4u15VKO5fBSysZCl7eeiTIiw+q52gI4b4pBUWO1Mpc8XbZHr5XCBGuf9NDLp
+         N9QZ4qimpwdtQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sai Prakash Ranjan <quic_saipraka@quicinc.com>,
@@ -39,10 +39,12 @@ Cc:     Sai Prakash Ranjan <quic_saipraka@quicinc.com>,
         Sasha Levin <sashal@kernel.org>, tglx@linutronix.de,
         thierry.reding@gmail.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 1/7] irqchip/tegra: Fix overflow implicit truncation warnings
-Date:   Sun, 14 Aug 2022 11:36:46 -0400
-Message-Id: <20220814153652.2380549-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 02/13] irqchip/tegra: Fix overflow implicit truncation warnings
+Date:   Sun, 14 Aug 2022 11:35:59 -0400
+Message-Id: <20220814153610.2380234-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220814153610.2380234-1-sashal@kernel.org>
+References: <20220814153610.2380234-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
@@ -77,7 +79,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-index 3973a14bb15b..02ffefd5011a 100644
+index 0abc0cd1c32e..1b3048ecb600 100644
 --- a/drivers/irqchip/irq-tegra.c
 +++ b/drivers/irqchip/irq-tegra.c
 @@ -157,10 +157,10 @@ static int tegra_ictlr_suspend(void)
