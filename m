@@ -2,50 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24B4C25B06
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Aug 2022 15:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2A1C3F6B0
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Aug 2022 15:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240084AbiHNPcy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Aug 2022 11:32:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39414 "EHLO
+        id S240580AbiHNPgl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Aug 2022 11:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239597AbiHNPcK (ORCPT
+        with ESMTP id S240761AbiHNPfc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 14 Aug 2022 11:32:10 -0400
+        Sun, 14 Aug 2022 11:35:32 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1E7F1ADA4;
-        Sun, 14 Aug 2022 08:29:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472F21CFD0;
+        Sun, 14 Aug 2022 08:30:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B58DD60C0B;
-        Sun, 14 Aug 2022 15:29:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15C38C433C1;
-        Sun, 14 Aug 2022 15:29:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BFA9960C94;
+        Sun, 14 Aug 2022 15:30:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 113A7C43470;
+        Sun, 14 Aug 2022 15:30:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660490994;
-        bh=/EAzLTw2LDeTTq+gH0iIZMFAkA3J3B3MG6b3v5PKd8Q=;
+        s=k20201202; t=1660491055;
+        bh=hRPBfczdm15C8/gZO/F3YClMCpGorCXgOhAyyTX1B+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r63qp95N/c4gsRykwxvp9MnvQXPGzaZ63CdzEaiJ05gsN4QFdynGywpQ1s8CiNtlj
-         aApf3tbve+J6QHEEWcMMzCC6GzkwRilGxIkZyU8p1YG4ni5wB9jLnhguFIhj9+nTyb
-         QcSFSbDmrtP7NRlx6uTtBusJT3fktPMv4MWjg1cBjNy4+gYDaAvGxcmtTRIOM1NegI
-         10JD/l5K9QLgY+TZ2q64lQYq4VEJT/1O/H7HonpnNITt2Gi+V25GxDlslM1ViSjnt6
-         H82h+9jmplrINaHAnTnWAadfRNRHv3mTc4b4/FGCeXCoUYblDtzdOqiMidcXewkxZ8
-         JGQcfSaa5WL+w==
+        b=fBdWERADFM/uLE1cBEUckMe3btlPmw/qy7qx6dDAT/jihfXVQTwvowMIdjfzUaxk2
+         Fj4/uzGXh8/SWQC35hRlwyWoiyU2BkWkFXOk7qgz3PNK5dduwb7Y0fCkJgRiwnC1mA
+         ycYFznm+coZTlGpnJMCW8B51WrOuuZ+McfXNczhmLBVsRsOuGqsonDBcYP/TrKLnJV
+         7BKAUQIpvQhWbyCS13WjmdilLGqvp/c8F00VkRDbUFs2dpiIqVU9/0N0xVK9WYC2Ae
+         oYxXuSqDI97wQTGUqUosO0uAyOCDrpb5IDqKB/G83gN/SfUwyBerldUAYUgxsj4ToZ
+         0FIE5o3fGTomw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Akhil R <akhilrajeev@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        ldewangan@nvidia.com, thierry.reding@gmail.com,
-        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.19 51/64] dmaengine: tegra: Add terminate() for Tegra234
-Date:   Sun, 14 Aug 2022 11:24:24 -0400
-Message-Id: <20220814152437.2374207-51-sashal@kernel.org>
+Cc:     Sai Prakash Ranjan <quic_saipraka@quicinc.com>,
+        Marc Zyngier <maz@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Sasha Levin <sashal@kernel.org>, tglx@linutronix.de,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.18 12/56] irqchip/tegra: Fix overflow implicit truncation warnings
+Date:   Sun, 14 Aug 2022 11:29:42 -0400
+Message-Id: <20220814153026.2377377-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220814152437.2374207-1-sashal@kernel.org>
-References: <20220814152437.2374207-1-sashal@kernel.org>
+In-Reply-To: <20220814153026.2377377-1-sashal@kernel.org>
+References: <20220814153026.2377377-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -53,89 +54,71 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Akhil R <akhilrajeev@nvidia.com>
+From: Sai Prakash Ranjan <quic_saipraka@quicinc.com>
 
-[ Upstream commit 36834c67016794b8fa03d7672a5b7f2cc4529298 ]
+[ Upstream commit 443685992bda9bb4f8b17fc02c9f6c60e62b1461 ]
 
-In certain cases where the DMA client bus gets corrupted or if the
-end device ceases to send/receive data, DMA can wait indefinitely
-for the data to be received/sent. Attempting to terminate the transfer
-will put the DMA in pause flush mode and it remains there.
+Fix -Woverflow warnings for tegra irqchip driver which is a result
+of moving arm64 custom MMIO accessor macros to asm-generic function
+implementations giving a bonus type-checking now and uncovering these
+overflow warnings.
 
-The channel is irrecoverable once this pause times out in Tegra194 and
-earlier chips. Whereas, from Tegra234, it can be recovered by disabling
-the channel and reprograming it.
+drivers/irqchip/irq-tegra.c: In function ‘tegra_ictlr_suspend’:
+drivers/irqchip/irq-tegra.c:151:18: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+   writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+                  ^
 
-Hence add a new terminate() function that ignores the outcome of
-dma_pause() so that terminate_all() can proceed to disable the channel.
-
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Link: https://lore.kernel.org/r/20220720104045.16099-3-akhilrajeev@nvidia.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Suggested-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Sai Prakash Ranjan <quic_saipraka@quicinc.com>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/tegra186-gpc-dma.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-tegra.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
-index 05cd451f541d..fa9bda4a2bc6 100644
---- a/drivers/dma/tegra186-gpc-dma.c
-+++ b/drivers/dma/tegra186-gpc-dma.c
-@@ -157,8 +157,8 @@
-  * If any burst is in flight and DMA paused then this is the time to complete
-  * on-flight burst and update DMA status register.
-  */
--#define TEGRA_GPCDMA_BURST_COMPLETE_TIME	20
--#define TEGRA_GPCDMA_BURST_COMPLETION_TIMEOUT	100
-+#define TEGRA_GPCDMA_BURST_COMPLETE_TIME	10
-+#define TEGRA_GPCDMA_BURST_COMPLETION_TIMEOUT	5000 /* 5 msec */
+diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+index e1f771c72fc4..ad3e2c1b3c87 100644
+--- a/drivers/irqchip/irq-tegra.c
++++ b/drivers/irqchip/irq-tegra.c
+@@ -148,10 +148,10 @@ static int tegra_ictlr_suspend(void)
+ 		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
  
- /* Channel base address offset from GPCDMA base address */
- #define TEGRA_GPCDMA_CHANNEL_BASE_ADD_OFFSET	0x20000
-@@ -432,6 +432,17 @@ static int tegra_dma_device_resume(struct dma_chan *dc)
- 	return 0;
- }
+ 		/* Disable COP interrupts */
+-		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), ictlr + ICTLR_COP_IER_CLR);
  
-+static inline int tegra_dma_pause_noerr(struct tegra_dma_channel *tdc)
-+{
-+	/* Return 0 irrespective of PAUSE status.
-+	 * This is useful to recover channels that can exit out of flush
-+	 * state when the channel is disabled.
-+	 */
-+
-+	tegra_dma_pause(tdc);
-+	return 0;
-+}
-+
- static void tegra_dma_disable(struct tegra_dma_channel *tdc)
- {
- 	u32 csr, status;
-@@ -1292,6 +1303,14 @@ static const struct tegra_dma_chip_data tegra194_dma_chip_data = {
- 	.terminate = tegra_dma_pause,
- };
+ 		/* Disable CPU interrupts */
+-		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), ictlr + ICTLR_CPU_IER_CLR);
  
-+static const struct tegra_dma_chip_data tegra234_dma_chip_data = {
-+	.nr_channels = 31,
-+	.channel_reg_size = SZ_64K,
-+	.max_dma_count = SZ_1G,
-+	.hw_support_pause = true,
-+	.terminate = tegra_dma_pause_noerr,
-+};
-+
- static const struct of_device_id tegra_dma_of_match[] = {
- 	{
- 		.compatible = "nvidia,tegra186-gpcdma",
-@@ -1299,6 +1318,9 @@ static const struct of_device_id tegra_dma_of_match[] = {
- 	}, {
- 		.compatible = "nvidia,tegra194-gpcdma",
- 		.data = &tegra194_dma_chip_data,
-+	}, {
-+		.compatible = "nvidia,tegra234-gpcdma",
-+		.data = &tegra234_dma_chip_data,
- 	}, {
- 	},
- };
+ 		/* Enable the wakeup sources of ictlr */
+ 		writel_relaxed(lic->ictlr_wake_mask[i], ictlr + ICTLR_CPU_IER_SET);
+@@ -172,12 +172,12 @@ static void tegra_ictlr_resume(void)
+ 
+ 		writel_relaxed(lic->cpu_iep[i],
+ 			       ictlr + ICTLR_CPU_IEP_CLASS);
+-		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), ictlr + ICTLR_CPU_IER_CLR);
+ 		writel_relaxed(lic->cpu_ier[i],
+ 			       ictlr + ICTLR_CPU_IER_SET);
+ 		writel_relaxed(lic->cop_iep[i],
+ 			       ictlr + ICTLR_COP_IEP_CLASS);
+-		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), ictlr + ICTLR_COP_IER_CLR);
+ 		writel_relaxed(lic->cop_ier[i],
+ 			       ictlr + ICTLR_COP_IER_SET);
+ 	}
+@@ -312,7 +312,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
+ 		lic->base[i] = base;
+ 
+ 		/* Disable all interrupts */
+-		writel_relaxed(~0UL, base + ICTLR_CPU_IER_CLR);
++		writel_relaxed(GENMASK(31, 0), base + ICTLR_CPU_IER_CLR);
+ 		/* All interrupts target IRQ */
+ 		writel_relaxed(0, base + ICTLR_CPU_IEP_CLASS);
+ 
 -- 
 2.35.1
 
