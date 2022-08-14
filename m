@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D3BC28B2C
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Aug 2022 15:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FE0C282E7
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Aug 2022 15:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241483AbiHNPrQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Aug 2022 11:47:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52772 "EHLO
+        id S241578AbiHNPw1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Aug 2022 11:52:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241698AbiHNPqK (ORCPT
+        with ESMTP id S241661AbiHNPtk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 14 Aug 2022 11:46:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435E925C55;
-        Sun, 14 Aug 2022 08:34:41 -0700 (PDT)
+        Sun, 14 Aug 2022 11:49:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D851212AB5;
+        Sun, 14 Aug 2022 08:35:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7143560DC5;
-        Sun, 14 Aug 2022 15:34:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14B3C433D7;
-        Sun, 14 Aug 2022 15:34:38 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 79B8BB80B77;
+        Sun, 14 Aug 2022 15:35:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 205A9C433D6;
+        Sun, 14 Aug 2022 15:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660491279;
+        s=k20201202; t=1660491338;
         bh=hRPBfczdm15C8/gZO/F3YClMCpGorCXgOhAyyTX1B+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fU6cOuSeQBgvunHwcv76Hm7IyeXQpygbutHRnbwkM/EAEeYWTFC+v1GfexMrTTS5e
-         GswD+khz/SWh4YrowvG8qPBX7qy6Ee+8XX91sa0CA+gCKc1sLicVw6D1uOa1VoSaic
-         QbQRnYdVmQcce28gjax/cl2saO6cBTK8GcP+k4deWR22WxIART+k9gvqO7k9iHpbH0
-         6YYrlEwjr+rfzsIwjh8YCUs8TeTqSQAf6E//jCRyVVa1aLqluIsDeFhXmMF0WHsNIW
-         WgLV8j9Vdq8FVcHOkbMcJYiCqsDZpGOVbR++xkc+I3xdQscDVOyDkBa3My8CVg0Gej
-         lSC6x4WkhArOg==
+        b=P+GmVC/YgnTiPdy/WBKSomYItNLbYinIxYv7Fj93xJucivDc58XRnWhI9BExg6UtB
+         VGs1CfzxJgXKxHCkyJ3QjFScX1kA6xtwhRFVUpyENyLa6G9wCUm8O7CxZpETIPHIs5
+         YDXjs2YnIFJXPEIVwSK/EMezUHewa3kJx5/Wf3888T1JfzUpyXIpgudyR5ZvBESmml
+         hXxEtpoD6MrmskdZPUIyBMwoSfjmRRCXy5AZCkFj5eh8xwvvV3CBDpDfbgf2hf3yZ+
+         wb960PQFw+Pa5Wzz6QqkpK6/a2HO+oQ3xZtMcWSFmKcadflbUxyh2LvPpECI0Fv58z
+         dXjN/7Rqw7sQg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sai Prakash Ranjan <quic_saipraka@quicinc.com>,
@@ -39,12 +39,12 @@ Cc:     Sai Prakash Ranjan <quic_saipraka@quicinc.com>,
         Sasha Levin <sashal@kernel.org>, tglx@linutronix.de,
         thierry.reding@gmail.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 05/31] irqchip/tegra: Fix overflow implicit truncation warnings
-Date:   Sun, 14 Aug 2022 11:34:05 -0400
-Message-Id: <20220814153431.2379231-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 04/21] irqchip/tegra: Fix overflow implicit truncation warnings
+Date:   Sun, 14 Aug 2022 11:35:14 -0400
+Message-Id: <20220814153531.2379705-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220814153431.2379231-1-sashal@kernel.org>
-References: <20220814153431.2379231-1-sashal@kernel.org>
+In-Reply-To: <20220814153531.2379705-1-sashal@kernel.org>
+References: <20220814153531.2379705-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
