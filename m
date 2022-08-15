@@ -2,135 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E71C28B2B
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Aug 2022 14:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0A6C3F6B0
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Aug 2022 15:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232323AbiHOOpo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Aug 2022 10:45:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54984 "EHLO
+        id S233286AbiHOPp1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Aug 2022 11:45:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232676AbiHOOpk (ORCPT
+        with ESMTP id S233059AbiHOPpN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Aug 2022 10:45:40 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2051.outbound.protection.outlook.com [40.107.94.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC096253;
-        Mon, 15 Aug 2022 07:45:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UDkYivnxehNBXB4aox/iPax0EJdYUOw5IouL5+ajnlbTeothVsauN2iAFlZuuocHY/BVad/3D8y3Rz+RXtKvxt65BmYxuZmd0x/fFsYaBvGc/J4iyFs8j11fRfNjhpSYzFGMqvZxSvhn08NvWb2FVOYAA9Zgp9ofqHJCTBM7oP9khJMZJXFd/U/01lqc3AVMKYMclbu1rLXaPsrF4GGF3xUqQn/1InexY/icpaTkdU8dr+ZTOKGiuds6J6hPOflQ1Z+oVDuSk3dnU7zUhh29g3ccAgaWpzmBReLbGfIqcuSnx1lhG3az+rAE/kdU+JX8hx4D5eEVgBeD8d6GRc4YgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fij/vQJdID+GPEWhz9oLFHc+Oav2a7wYAcccMSFRG1Y=;
- b=N26qsuJnloXR9LiUaUjmHd32CUPgn2YhN6ySw542PJxZNy4hbIe4hTV/heL9oZizRv/JoMNRUyPGBZRzTjyhygCCgaPS1pnSetlkep6hH34NTVgZ12WNqAb5/CeifSYPcj7/D0cphXHfLzuNppwMSmJYmukvYevIwT5m8vOrX14PTpE+DgsowLiAMyclKDJr//Mnt8TEzIcKmvRwcaJv7W+QGtRAlqAGjHL9Di5p6Hu51bDNmhfq6SEFxs/IEbHX+7jhgq0cPRSBBaIXO6wIufl2J7UVroR2W9qKQvrlb+WRKWDrsn09B3fb66lxKitlvMjii1U7VXnx7URMsvwp4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fij/vQJdID+GPEWhz9oLFHc+Oav2a7wYAcccMSFRG1Y=;
- b=A+HAnjIfU9XZ3SJFLgJoffyGp8WrAw9yX+lbl34KEHkQ6oBEb1LLZt+kH0HWvGBLZZ0JOaZtxoI9mKtU1ep58FtZatAms+61sWsfi4wyQlvqaIIh4Xv8S/+Wr2uB09HhWopsG8v+yszf/nV7sKN202ouIL9xKZeLMTWRfmzZNW24UPCMnuSVhoRVLEG1z9rHO80KYJrOLZDK/nFWvjcFbG+3+XVKDxHyFBcBZLLz7s2lBPZn1iquQXJ2pPDntyrDW9lPgWFmh17K/ZJqWABbyOw/m8FMwXjdZtGjmMQaH6qxipwS38tjJLsVUrcsB9baBcjyFUKuUIwT71vW1lp8vA==
-Received: from DS7PR06CA0014.namprd06.prod.outlook.com (2603:10b6:8:2a::11) by
- BY5PR12MB3843.namprd12.prod.outlook.com (2603:10b6:a03:1a4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5525.11; Mon, 15 Aug
- 2022 14:45:38 +0000
-Received: from DM6NAM11FT080.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:2a:cafe::bd) by DS7PR06CA0014.outlook.office365.com
- (2603:10b6:8:2a::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5525.10 via Frontend
- Transport; Mon, 15 Aug 2022 14:45:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.235) by
- DM6NAM11FT080.mail.protection.outlook.com (10.13.173.105) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5546.7 via Frontend Transport; Mon, 15 Aug 2022 14:45:37 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Mon, 15 Aug
- 2022 14:45:37 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 15 Aug
- 2022 07:45:36 -0700
-Received: from jilin-desktop.nvidia.com (10.127.8.11) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Mon, 15 Aug 2022 07:45:34 -0700
-From:   Jim Lin <jilin@nvidia.com>
-To:     <jckuo@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>
-CC:     <kishon@ti.com>, <vkoul@kernel.org>, <balbi@kernel.org>,
-        <gregkh@linuxfoundation.org>, <jilin@nvidia.com>,
-        <bhsieh@nvidia.com>, <linux-phy@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-Subject: [PATCH 2/2] usb: gadget: tegra: Reduce pad power
-Date:   Mon, 15 Aug 2022 22:44:49 +0800
-Message-ID: <20220815144449.9525-3-jilin@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220815144449.9525-1-jilin@nvidia.com>
-References: <20220815144449.9525-1-jilin@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 15 Aug 2022 11:45:13 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E81818363;
+        Mon, 15 Aug 2022 08:45:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 633D0CE112D;
+        Mon, 15 Aug 2022 15:45:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A385C433B5;
+        Mon, 15 Aug 2022 15:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660578306;
+        bh=Dt7UFo2hvk7w801In8MZ1AepU8mKiD3cZKwIGWvPBEk=;
+        h=From:To:In-Reply-To:References:Subject:Date:From;
+        b=VaShcqkZ3uBeBiArMYvK8aBgmTU/EliuOj3Wj3/q/yK3G/ZEhjdcip69t5dXv4FmB
+         foUpscijB5fKc5R6b/ehGr7tPvFvJ6nYf2ID+PNovjLf5+f78B2CsN8oO1eY3xHa1w
+         S/tk0FTIaxrAhv5DXn1aUf9PpnDx6lfVMNRZdgmz+kX7Qw+60X8I9Gbp37rgnvWHpf
+         kUwveCtyxg9XRYmySC+ZJ5GtMzW5Z2dqXkdOxP9dB5MioeVKL9RTeY+UzUp99a9FwM
+         143XYRmuUmXIPEfakwWQ+1HsCRqf/CfGDRvFSXASkhOK28k9VEg41bZOE8E0BNnT1I
+         x8F+GTsH/nUYw==
+From:   Mark Brown <broonie@kernel.org>
+To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20220810131236.428529-1-krzysztof.kozlowski@linaro.org>
+References: <20220810131236.428529-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] spi: dt-bindings: nvidia,tegra210-quad-peripheral-props: correct additional properties
+Message-Id: <166057830399.697678.9931194157523714173.b4-ty@kernel.org>
+Date:   Mon, 15 Aug 2022 16:45:03 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e8e5b580-2b1a-4119-3633-08da7eccd193
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3843:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wiDHpCWayrFr2RF72y+oKcvk2AK3mjwWcMn+qk0+8eZzzsHw6ad1fBJit11DvKpcZHY2zydYIx06QMy093HfpPjTb93nBwhSoM0PU4e6LTkZbq7MnRXeJyB945ktfSLwc8ev1tSim194TI5hz6LuQpJM0UPiTf5ZhJRPh/PRwms9GClgKKxdMEyhmFRkx4mC5pFqoDWzMHkrmEY/4X6MXkNTMwH55BcBJImHdoKujfv8J5c7jq5iTJLOTOiSLwSZPE8ohUfwwEMhSFpH6xN+plD1jBy6D3gkztIdQDHYNArtMQ4AVFB3A0Kd+spaxzCWoqXg0E8672iOPsd8xaiVsaU+xT0g0WhcB6CksZPbM08Rji71GIKc7+AEjGVlpVsWKa+LoR6zGT79FY3Rv5eAkMc2ie3rk5BUQLNkKE/5R1HewMT1V7eV8zBVBVxMazjiuYGXk3JZiPRhJQhnkYBED5hjPgkKst3HjKo9CxrgTuGPP66aJrdMonVdWI8ksTo/YzQUlTcEyzvyxltUpbZFe4OhFN6VQuz1mGt7jE4rsR1f0ZYx+4RFHSJ5xRDYYFa+mlpLgm1RRzd7BIFl+vs7N9kPs4fsZ3q2wyHZFCw6lJFVexeJxsUnxZ4pl5XF15rJ8Rn/TJqkHvLPDQ5fZ5uXXeWTsz6T5491MUgHiXDLmExSuxBK87BqsSaRIsRpWdNF/4+qpSl78j6bHyr6cChr9h68wjl/bYgD44y/KfozcF0o+o+sQDORneLtgHHNhXCtK62Ra9dZVQN1jiHoL+DUV5z1HIKAtVlY7yEBOX6JHJPJuYwqXIF64ERhJ7yQCEHwaazCO8cmR/6jTesyO25gbQ==
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(396003)(346002)(136003)(376002)(40470700004)(46966006)(36840700001)(86362001)(186003)(36756003)(36860700001)(82740400003)(47076005)(2616005)(426003)(7696005)(1076003)(356005)(336012)(81166007)(6666004)(26005)(316002)(478600001)(54906003)(6636002)(41300700001)(8936002)(110136005)(8676002)(2906002)(5660300002)(70586007)(40480700001)(4326008)(82310400005)(70206006)(40460700003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2022 14:45:37.9766
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8e5b580-2b1a-4119-3633-08da7eccd193
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT080.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3843
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fe10a
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Program USB2 UTMI pad PD controls during port connect/disconnect.
-Power down pad after disconnected to save power.
+On Wed, 10 Aug 2022 16:12:36 +0300, Krzysztof Kozlowski wrote:
+> Re-usable schemas should use additionalProperties:true, so the schema
+> using it will check for evaluated properties.
+> 
+> 
 
-Signed-off-by: Jim Lin <jilin@nvidia.com>
----
- drivers/usb/gadget/udc/tegra-xudc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Applied to
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index 43f1b0d461c1..f03bed263922 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -703,6 +703,8 @@ static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
- 
- 	pm_runtime_get_sync(xudc->dev);
- 
-+	tegra_phy_xusb_utmi_pad_power_on(xudc->curr_utmi_phy);
-+
- 	err = phy_power_on(xudc->curr_utmi_phy);
- 	if (err < 0)
- 		dev_err(xudc->dev, "UTMI power on failed: %d\n", err);
-@@ -757,6 +759,8 @@ static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
- 	/* Make sure interrupt handler has completed before powergating. */
- 	synchronize_irq(xudc->irq);
- 
-+	tegra_phy_xusb_utmi_pad_power_down(xudc->curr_utmi_phy);
-+
- 	err = phy_power_off(xudc->curr_utmi_phy);
- 	if (err < 0)
- 		dev_err(xudc->dev, "UTMI PHY power off failed: %d\n", err);
--- 
-2.17.1
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
+Thanks!
+
+[1/1] spi: dt-bindings: nvidia,tegra210-quad-peripheral-props: correct additional properties
+      commit: 63e2df2d9e46e7f9bbbe4a2b94426bfaedb32807
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
