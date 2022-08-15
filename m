@@ -2,218 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927BDC3F6B0
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Aug 2022 07:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F10C00140
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Aug 2022 14:45:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241370AbiHOHJr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Aug 2022 03:09:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41970 "EHLO
+        id S229445AbiHOOpl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Aug 2022 10:45:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231422AbiHOHJq (ORCPT
+        with ESMTP id S231674AbiHOOpg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Aug 2022 03:09:46 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62EDDE0B8
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Aug 2022 00:09:44 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oNUEG-0003BJ-FY; Mon, 15 Aug 2022 09:09:40 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oNUED-003sIM-3k; Mon, 15 Aug 2022 09:09:39 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oNUEE-00BnuS-OR; Mon, 15 Aug 2022 09:09:38 +0200
-Date:   Mon, 15 Aug 2022 09:09:35 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
-Message-ID: <20220815070935.guqzzlny7f6kcprc@pengutronix.de>
-References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
- <524ca143-e9d4-2a79-3e9e-c8b9ffc9f513@gmail.com>
+        Mon, 15 Aug 2022 10:45:36 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2070.outbound.protection.outlook.com [40.107.94.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E65C25D5;
+        Mon, 15 Aug 2022 07:45:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nwu+ZFyz1j9cwafCgQU1eRn9AmyljWpyqaa99CHT/EhqkKFv7LDLqFzjalGyvUO+x3+i3VmprmcIwQAT2kz7x4jM8ugghySj1aSpwNc9ii3szIIvlVfGbPMAbmXSZjCDEKe3KjmChZDunHD+s2JBDrxFfo5RxhaHjtvykp3t/C+Q1U+sh01c7Y4KAL7IVQ5mIG+318yynBmQzX4nzC1rp4uAwjeaMTgg0yP6ibP7VqcF3EzJcIGx8ncey9YOjNmTvgp2/Hj7yYKAlpRDByoOTUisu+4zVmpEKN9M0xyT4LvOnEo7//FHFmMeT52BSGqkUSWrM6vyPqAY3hPnL9sEnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rV6aFZhwlMIKe8BW/4iD7Fc9HRKFVUHewdKVeTg9ruU=;
+ b=dgYmHyjj2ry/9pHotuLz++WDbw5REGzfCnQKF3vtH6lFrncydGY0g8Lcp7LdpgyO7/s3CSzi5r1g0hZVpvrFwNrAQ/lUiH6FH34r1YYB6wFJvK8SUu2vFahfSPDBq2PhwaGcxmmze2Ry6v99rjMqIBnycNTrlyj/Z2Sejaa4Pd5fscIDXKEcQhz4MtImz6P4xRJ2eKDcZZGnb1P1TTW83kHeIqgebU+buyp+TLYpQuYXMNugBFpzgRw/vuAaWw5sn6AfEIHDlVOMmx94qYIMgrbtp0xBXZjPYinNtBLaNnT2WINAkPlc3MLRxfdHM5/f2tEKAEtpo8xs6b24uO3gNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rV6aFZhwlMIKe8BW/4iD7Fc9HRKFVUHewdKVeTg9ruU=;
+ b=H589z16b7ptR8TAf77TnthvYj2dNQV+eOGstSZAJysrpLIPVWWRjsbf3b2H9zi7J0zpBFapC6QxVU/XSVb3M2TRM3gaX4T3aklgWqWcWmgF/78PiWRc5lpimbgaB8YwijhnYEiyhUMaQ8Wel9nRqh1M1fRIWA61KJ08SZMyN6vAypuh6yyL9ItpOQKk0BYbaJYQXmldVcJCOOq9nhj5UyXvbTqUpSAZNfuzL8l5ssHvENjP34pt5mmthRt6q7Oc9dEPgNA+HyJFLwV6GsNVhgn59wbp2hOLRmtXPp7PU5sStuTYSLy+9/UQYQRM7B/b3cmGBHNkmilcRDOAPTbDI8Q==
+Received: from BN9P221CA0012.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::7)
+ by DM5PR12MB2424.namprd12.prod.outlook.com (2603:10b6:4:b7::34) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.17; Mon, 15 Aug
+ 2022 14:45:32 +0000
+Received: from BN8NAM11FT059.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:10a:cafe::b2) by BN9P221CA0012.outlook.office365.com
+ (2603:10b6:408:10a::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5525.16 via Frontend
+ Transport; Mon, 15 Aug 2022 14:45:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.234) by
+ BN8NAM11FT059.mail.protection.outlook.com (10.13.177.120) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5525.11 via Frontend Transport; Mon, 15 Aug 2022 14:45:32 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL101.nvidia.com
+ (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Mon, 15 Aug
+ 2022 14:45:31 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 15 Aug
+ 2022 07:45:30 -0700
+Received: from jilin-desktop.nvidia.com (10.127.8.11) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Mon, 15 Aug 2022 07:45:28 -0700
+From:   Jim Lin <jilin@nvidia.com>
+To:     <jckuo@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>
+CC:     <kishon@ti.com>, <vkoul@kernel.org>, <balbi@kernel.org>,
+        <gregkh@linuxfoundation.org>, <jilin@nvidia.com>,
+        <bhsieh@nvidia.com>, <linux-phy@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+Subject: [PATCH 0/2] usb: tegra: power down UTMI pad
+Date:   Mon, 15 Aug 2022 22:44:47 +0800
+Message-ID: <20220815144449.9525-1-jilin@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cpawvqiqe4n6jsay"
-Content-Disposition: inline
-In-Reply-To: <524ca143-e9d4-2a79-3e9e-c8b9ffc9f513@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6e5feb56-3f6b-454d-0dd5-08da7eccce26
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2424:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: voCeQl3ucvl5cQXKTo6CybMF8/5ecmypcvT6NwcJ82X5rnzCKSzp65evS6CQ4WW5k8eoCRK7S7JaeuiCOcpjf+/EXWQvHMsx3TTRYZygzS4+vvz5Qo7/s6940CxWEyprzkOEKZ4aR3OvttBNbbmJiT6c82gGgTmS3RnuU1iEHjaVCFzJTP8+6Rvqi8IpoUsRSiOsjKGszrSJpRxu3QG/orGgdojMf9T2TJvx9ZmTjz8tOu6EhBP/Ixiubj1V9M6WcawCm/dpZR3aha5hlWNXUv7dSz7ILtLIceX53L/NGhvRVrhDH3xss8Z/GuwadZnmBHVS6mWZhYVJczNWG4Ayqsfe6DX41nsK9C0hGtFhginRMXj44qu+nhBqG57cB78LIo+bpfAgxjAewdOqRnOUYBSV4sKCENwelraPbcMwkqb1KgAEmD9cbkNZr/o5Qhply63BbCzYdqLseAxmZGPDt4SUbF2wT0JmlzW7hmwfCVtsmKkZqAtK53pWKOP0CONu9VnXAv+BeZ+ENhGxmaNKVy4zEMdxa/E/SofEiwd2Jctne9AOGFBPGBFXepcwF3vfN7/wt6L2ATGdMWE82Sr/R69Go/i5r/2t3leOe5/Mod/gQUZ4H80Z7b7XJTpJPZDFwhn3QeXNJfxY3ZCIMrn/NTuWgpSGvrxXMo+ImXXg2284zfD1YaaSjt35fYsgK4HUWhBQcnqSZFtaVcJkyAeA1JhYgLrq/MhM6KeUvOpXO0+WC5xqp1vjgMb8wudHz1OS2zuYXdq6pv8XcyY/qMCM86kybsayz7IAgy/OVuJmST4sARp8plnVRz6qCiBECo8Rvq1GmOThIR2Nk9uzMtU0kA==
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(396003)(376002)(136003)(39860400002)(46966006)(36840700001)(40470700004)(40480700001)(36860700001)(83380400001)(40460700003)(81166007)(356005)(86362001)(82740400003)(70206006)(70586007)(316002)(478600001)(82310400005)(4326008)(8676002)(54906003)(6636002)(186003)(336012)(426003)(1076003)(7696005)(47076005)(26005)(5660300002)(110136005)(2906002)(2616005)(36756003)(8936002)(6666004)(4744005)(41300700001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2022 14:45:32.1656
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e5feb56-3f6b-454d-0dd5-08da7eccce26
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT059.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2424
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+1. Make functions to be generic and public for tegra host/gadget driver 
+ to power on/down UTMI pad
+2. For tegra gadget driver to power down pad after disconnected
 
---cpawvqiqe4n6jsay
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Jim Lin (2):
+  phy: tegra: xusb: add utmi pad power on/down ops
+  usb: gadget: tegra: Reduce pad power
 
-On Mon, Aug 15, 2022 at 03:28:25AM +0300, Dmitry Osipenko wrote:
-> Hi,
->=20
-> 25.04.2022 16:22, Uwe Kleine-K=C3=B6nig =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Dividing by the result of a division looses precision because the resul=
-t is
-> > rounded twice. E.g. with clk_rate =3D 48000000 and period =3D 32760033 =
-the
-> > following numbers result:
-> >=20
-> > 	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH =3D 187500
-> > 	hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) =3D 3052
-> > 	rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) =3D 6144
-> >=20
-> > The exact result would be 6142.5061875 and (apart from rounding) this is
-> > found by using a single division. As a side effect is also a tad
-> > cheaper to calculate.
-> >=20
-> > Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
-> > example clk_rate =3D 47999999 and period =3D 106667:
-> >=20
-> > 	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
-> > 			    NSEC_PER_SEC) =3D 19
-> >=20
-> > 	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-> > 			    NSEC_PER_SEC << PWM_DUTY_WIDTH) =3D 20
-> >=20
-> > (The exact result is 20.000062083332033.)
-> >=20
-> > With this optimizations also switch from round-closest to round-down for
-> > the period calculation. Given that the calculations were non-optimal for
-> > quite some time now with variations in both directions which nobody
-> > reported as a problem, this is the opportunity to align the driver's
-> > behavior to the requirements of new drivers. This has several upsides:
-> >=20
-> >  - Implementation is easier as there are no round-nearest variants of
-> >    mul_u64_u64_div_u64().
-> >  - Requests for too small periods are now consistently refused. This was
-> >    kind of arbitrary before, where period_ns < min_period_ns was
-> >    refused, but in some cases min_period_ns isn't actually implementable
-> >    and then values between min_period_ns and the actual minimum were
-> >    rounded up to the actual minimum.
-> >=20
-> > Note that the duty_cycle calculation isn't using the usual round-down
-> > approach yet.
-> >=20
-> > Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> > ---
-> > Hello,
-> >=20
-> > changes since (implicit) v1: Updated changelog to explain why rate =3D 0
-> > is refused now.
-> >=20
-> > Best regards
-> > Uwe
-> >=20
-> >  drivers/pwm/pwm-tegra.c | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> > index e5a9ffef4a71..7fc03a9ec154 100644
-> > --- a/drivers/pwm/pwm-tegra.c
-> > +++ b/drivers/pwm/pwm-tegra.c
-> > @@ -99,7 +99,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, st=
-ruct pwm_device *pwm,
-> >  			    int duty_ns, int period_ns)
-> >  {
-> >  	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
-> > -	unsigned long long c =3D duty_ns, hz;
-> > +	unsigned long long c =3D duty_ns;
-> >  	unsigned long rate, required_clk_rate;
-> >  	u32 val =3D 0;
-> >  	int err;
-> > @@ -156,11 +156,9 @@ static int tegra_pwm_config(struct pwm_chip *chip,=
- struct pwm_device *pwm,
-> >  		pc->clk_rate =3D clk_get_rate(pc->clk);
-> >  	}
-> > =20
-> > -	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH;
-> > -
-> >  	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
-> > -	hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
-> > -	rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
-> > +	rate =3D mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-> > +				   (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH);
-> > =20
-> >  	/*
-> >  	 * Since the actual PWM divider is the register's frequency divider
-> > @@ -169,6 +167,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, =
-struct pwm_device *pwm,
-> >  	 */
-> >  	if (rate > 0)
-> >  		rate--;
-> > +	else
-> > +		return -EINVAL;
->=20
-> This patch broke backlight on Asus Transformer tablets, they are now
-> getting this -EINVAL. The root of the problem is under investigation.
+ drivers/phy/tegra/xusb-tegra186.c   | 19 ++++++++++++-------
+ drivers/phy/tegra/xusb.c            | 22 +++++++++++++++++++++-
+ drivers/phy/tegra/xusb.h            |  4 +++-
+ drivers/usb/gadget/udc/tegra-xudc.c |  4 ++++
+ include/linux/phy/tegra/xusb.h      |  2 ++
+ 5 files changed, 42 insertions(+), 9 deletions(-)
 
-This means that you requested a period that is smaller than the minimal
-period the hardware can implement.
+-- 
+2.17.1
 
-What is the clk rate of the PWM clk (i.e. pc->clk_rate?). Looking at
-arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi I guess period is
-4000000. That in turn would mean that
-
-	mul_u64_u64_div_u64(pc->clk_rate, period_ns, (u64)NSEC_PER_SEC << PWM_DUTY=
-_WIDTH)
-
-returned 0 which (with the assumption period_ns =3D 4000000) would imply
-the clk rate is less than 64000.
-
-I don't know the machine, but some more information would be good: What
-is the actual clock rate? Can you please enable PWM_DEBUG (at compile
-time) and tracing (at runtime) (i.e.
-
-	echo 1 > /sys/kernel/debug/tracing/events/pwm/enable
-
-), reproduce the problem and provide the trace (i.e.
-
-	cat /sys/kernel/debug/tracing/trace
-
-)?
-
-> Should we revert this patch meantime or maybe you (Uwe/Thierry) have an
-> idea about what actually has gone wrong here? Thanks in advance.
-
-I'd like to understand if the problem is indeed that the backlight
-driver requests a too small period. In this case I'd prefer to adapt the
-backlight device to use better pwm settings. If there is a problem in
-my change, this needs to be fixed. If you provide the above data, I can
-check the details.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
-   |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---cpawvqiqe4n6jsay
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmL58SwACgkQwfwUeK3K
-7Am//wf/UIChFqLh4y3O7KpgTKmelh1+pUQ+su/UqctBq9Rr+DYMqhmnMqXVohvz
-eNMPBW215BUrWMiX3JgRzOM8Rq4y4twtzi7Jzwk31/xK4Gv5pEUz7y2dKOAr804v
-RH1Xo/Tbz9Y8jcZpoK2cNxvZqm55KKN9dbo6IGEdCHopOFXaEtqM33OKQxe4oDCE
-AZoV2U/BlR9/G9NLPehtyoJpH7H+3QVfDFsAEk8fIjszUkS357wdwlfSyWTDzAqs
-Nm1d2KgbBPinxCe8dHv5yHc8m0rFkdns9Eb8RUFczw1iPrvv6JcwlZkFWyCRcDcg
-DIrxl33sgYFnOckaVuCNXkmAoDafFw==
-=Kumz
------END PGP SIGNATURE-----
-
---cpawvqiqe4n6jsay--
