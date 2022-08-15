@@ -2,88 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0A6C3F6B0
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Aug 2022 15:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D93C25B0E
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Aug 2022 17:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233286AbiHOPp1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Aug 2022 11:45:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32990 "EHLO
+        id S230187AbiHOR02 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Aug 2022 13:26:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233059AbiHOPpN (ORCPT
+        with ESMTP id S230111AbiHOR00 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Aug 2022 11:45:13 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E81818363;
-        Mon, 15 Aug 2022 08:45:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 633D0CE112D;
-        Mon, 15 Aug 2022 15:45:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A385C433B5;
-        Mon, 15 Aug 2022 15:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660578306;
-        bh=Dt7UFo2hvk7w801In8MZ1AepU8mKiD3cZKwIGWvPBEk=;
-        h=From:To:In-Reply-To:References:Subject:Date:From;
-        b=VaShcqkZ3uBeBiArMYvK8aBgmTU/EliuOj3Wj3/q/yK3G/ZEhjdcip69t5dXv4FmB
-         foUpscijB5fKc5R6b/ehGr7tPvFvJ6nYf2ID+PNovjLf5+f78B2CsN8oO1eY3xHa1w
-         S/tk0FTIaxrAhv5DXn1aUf9PpnDx6lfVMNRZdgmz+kX7Qw+60X8I9Gbp37rgnvWHpf
-         kUwveCtyxg9XRYmySC+ZJ5GtMzW5Z2dqXkdOxP9dB5MioeVKL9RTeY+UzUp99a9FwM
-         143XYRmuUmXIPEfakwWQ+1HsCRqf/CfGDRvFSXASkhOK28k9VEg41bZOE8E0BNnT1I
-         x8F+GTsH/nUYw==
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-In-Reply-To: <20220810131236.428529-1-krzysztof.kozlowski@linaro.org>
-References: <20220810131236.428529-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] spi: dt-bindings: nvidia,tegra210-quad-peripheral-props: correct additional properties
-Message-Id: <166057830399.697678.9931194157523714173.b4-ty@kernel.org>
-Date:   Mon, 15 Aug 2022 16:45:03 +0100
+        Mon, 15 Aug 2022 13:26:26 -0400
+Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD59E0DE;
+        Mon, 15 Aug 2022 10:26:24 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1660584383;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eI2BGmyyIY8zW+rShKl34oPf/vsRJS4uIVl8kL8dn94=;
+        b=r8tYQABG44qVpTNChmwVXjRHuWc3Te68jLi5Lm3J1MugACfcvqvgeHAs38aBcYZEyLfnUK
+        b3usRfKjvSRH217n7MXZDCSSNyoRfLUXwf0CWvvsF1Fq3kCYYN1lsJjClm5rMTA58t3eeb
+        Nw8GuPqJFRzsnaNljCKUm80fE2xIhUc=
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 02/11] clk: tegra: bpmp: Convert to printbuf
+Date:   Mon, 15 Aug 2022 13:26:04 -0400
+Message-Id: <20220815172613.621627-3-kent.overstreet@linux.dev>
+In-Reply-To: <20220815172613.621627-1-kent.overstreet@linux.dev>
+References: <20220815172613.621627-1-kent.overstreet@linux.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fe10a
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 10 Aug 2022 16:12:36 +0300, Krzysztof Kozlowski wrote:
-> Re-usable schemas should use additionalProperties:true, so the schema
-> using it will check for evaluated properties.
-> 
-> 
+From: Kent Overstreet <kent.overstreet@gmail.com>
 
-Applied to
+This converts from seq_buf to printbuf, which is similar but heap
+allocates the string buffer.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Previously in this code the string buffer was allocated on the stack;
+this means we've added a new potential memory allocation failure. This
+is fine though since it's only for a dev_printk() message.
 
-Thanks!
+Memory allocation context: printbuf doesn't take gfp flags, instead we
+prefer the new memalloc_no*_(save|restore) interfaces to be used. Here
+the surrounding code is already allocating with GFP_KERNEL, so
+everything is fine.
 
-[1/1] spi: dt-bindings: nvidia,tegra210-quad-peripheral-props: correct additional properties
-      commit: 63e2df2d9e46e7f9bbbe4a2b94426bfaedb32807
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-tegra@vger.kernel.org
+---
+ drivers/clk/tegra/clk-bpmp.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index 3748a39dae..7e3b48ed9d 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -5,7 +5,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+-#include <linux/seq_buf.h>
++#include <linux/printbuf.h>
+ #include <linux/slab.h>
+ 
+ #include <soc/tegra/bpmp.h>
+@@ -365,39 +365,38 @@ static void tegra_bpmp_clk_info_dump(struct tegra_bpmp *bpmp,
+ 				     const struct tegra_bpmp_clk_info *info)
+ {
+ 	const char *prefix = "";
+-	struct seq_buf buf;
++	struct printbuf buf = PRINTBUF;
+ 	unsigned int i;
+-	char flags[64];
+-
+-	seq_buf_init(&buf, flags, sizeof(flags));
+ 
+ 	if (info->flags)
+-		seq_buf_printf(&buf, "(");
++		prt_printf(&buf, "(");
+ 
+ 	if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
+-		seq_buf_printf(&buf, "%smux", prefix);
++		prt_printf(&buf, "%smux", prefix);
+ 		prefix = ", ";
+ 	}
+ 
+ 	if ((info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE) == 0) {
+-		seq_buf_printf(&buf, "%sfixed", prefix);
++		prt_printf(&buf, "%sfixed", prefix);
+ 		prefix = ", ";
+ 	}
+ 
+ 	if (info->flags & TEGRA_BPMP_CLK_IS_ROOT) {
+-		seq_buf_printf(&buf, "%sroot", prefix);
++		prt_printf(&buf, "%sroot", prefix);
+ 		prefix = ", ";
+ 	}
+ 
+ 	if (info->flags)
+-		seq_buf_printf(&buf, ")");
++		prt_printf(&buf, ")");
+ 
+ 	dev_printk(level, bpmp->dev, "%03u: %s\n", info->id, info->name);
+-	dev_printk(level, bpmp->dev, "  flags: %lx %s\n", info->flags, flags);
++	dev_printk(level, bpmp->dev, "  flags: %lx %s\n", info->flags, printbuf_str(&buf));
+ 	dev_printk(level, bpmp->dev, "  parents: %u\n", info->num_parents);
+ 
+ 	for (i = 0; i < info->num_parents; i++)
+ 		dev_printk(level, bpmp->dev, "    %03u\n", info->parents[i]);
++
++	printbuf_exit(&buf);
+ }
+ 
+ static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
+-- 
+2.36.1
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
