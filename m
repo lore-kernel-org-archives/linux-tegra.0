@@ -2,110 +2,202 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7247C00140
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Aug 2022 15:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C3A7C25B0E
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Aug 2022 20:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245734AbiHRPPB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 Aug 2022 11:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56774 "EHLO
+        id S1346106AbiHRUeO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 Aug 2022 16:34:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244793AbiHRPO5 (ORCPT
+        with ESMTP id S1345577AbiHRUeN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 Aug 2022 11:14:57 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A85C21E26;
-        Thu, 18 Aug 2022 08:14:55 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id kb8so3833665ejc.4;
-        Thu, 18 Aug 2022 08:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc;
-        bh=3pOHW2UUGPUYRmj5n0C5eVZOuZ5kPsT1vN7tqKPTQYk=;
-        b=D2G2KZXLAUdE1Fm0wzIy2EYYRXCxenhhIBPQQHoqptOZ/IBsVeAwcbCNRUgcPU0crP
-         wRe2mayNESZsOXgZhMDcpoeNlrAn9T4dYLiEheHko2NkBkZIInT5pKlIOzxIOqm8axnh
-         JPy2Xho8kocriIaCzF+epwilx03xTvkk077F8+oaXcZ22nw59VXOyGJBnhp5PHfWlbCI
-         t5p+mI6CMkRAiJqD+CTPnXp82pFU9rb/xbAdgOYsorNkTVVQdmptcOt7U62TfIB3NFE3
-         lgMhC4L5cTMRnW/nCLjOK6hWOVXEgXZLdOWBgNe8a60CpuCIeccFYsdSkZ/ZVtgguMr2
-         zOpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=3pOHW2UUGPUYRmj5n0C5eVZOuZ5kPsT1vN7tqKPTQYk=;
-        b=c4wqRDh9tVkTHa41mw5UUONZorqz8g32qpqT/GsRYv3uoXKS5/AMFTIKQbAt5hAu2c
-         xJVuI5IT7z9rcvsJROuSOa8ag/rwrdHEzdXNyU2+TRQN9Uq0d9pO44Ea6Lsq0EFF9Mic
-         u/NRZ3bUznTmyjIdRJ+9kC3NtesWsFlJSb3E7aBIlhcjutNMjgjL2piN7Ce13w8pCdhM
-         2wg2VuuVBsu5cqK9iVns0pk3nEbf6IH+Mp29BCY7fm1zcXg18SH+0YukRnqra2uCTNSc
-         Vb7aNeyoy3PMAQpZVl8tHxwDmGRg8N9kbjCjWeKKBVR9BvYQ4X3x42tAsi3hizBG6NG6
-         pQYg==
-X-Gm-Message-State: ACgBeo3vpiRhlNSfoPMNXDG1FtOVW+4PGar1LaiohTfK/hY0Lkoku2Dh
-        Kfh2ub8uYHGkTrWazz5kewM=
-X-Google-Smtp-Source: AA6agR6v/d+71iY3JL6JH/HiKRWZnEUhpdlbWxQanh4o5o/aKE/AR9u0Ijpzg7mKKE/5QPGC4paLVw==
-X-Received: by 2002:a17:907:1361:b0:730:e5c4:6eba with SMTP id yo1-20020a170907136100b00730e5c46ebamr2168073ejb.597.1660835693547;
-        Thu, 18 Aug 2022 08:14:53 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r11-20020a170906704b00b007315c723ac8sm932020ejj.224.2022.08.18.08.14.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Aug 2022 08:14:51 -0700 (PDT)
-Date:   Thu, 18 Aug 2022 17:14:50 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Petlozu Pravareshwar <petlozup@nvidia.com>
-Cc:     jonathanh@nvidia.com, p.zabel@pengutronix.de,
-        dmitry.osipenko@collabora.com, ulf.hansson@linaro.org,
-        kkartik@nvidia.com, cai.huoqing@linux.dev, spatra@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc/tegra: pmc: Print reset info during probe
-Message-ID: <Yv5XarzacTOkTL1k@orome>
-References: <20220817184456.1184459-1-petlozup@nvidia.com>
+        Thu, 18 Aug 2022 16:34:13 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C6FF47BA9;
+        Thu, 18 Aug 2022 13:34:10 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-119-13.nat.spd-mgts.ru [109.252.119.13])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 830566601B46;
+        Thu, 18 Aug 2022 21:34:08 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1660854849;
+        bh=3McgXyA2V1HlrJJ8k6J3er3Mn2T7ge7Jotci/sbzqxw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=f6/YMyW1rN0mrl48pL0EhtaCJcSwmXUxUje8WhpYKxH9Qhc+rr5SN7bCO/D5wr2mp
+         npvXcUasTAyW967dIba/t+ZVISrSCKgKslBSUce0ie1zuaJTIqyOe2E2CSB3kNa76Z
+         UH01rXSV0WZIs1Adx2hdGzJTwSpZ/fLn/YQL9MHDksvuRH+c1qaV/3SHpycsUgkwUy
+         mMqxFeHbxF/hLZzUNFIFI4IL56RQNrDFkh+DqrJfR84ENh9OREJ97H50YhwkbsJumX
+         mBs6k13HLZcQnOixJO5baQxenyiVjC9vT/NK1ygOO+QgLM1iVL16JqYc4UQ7RzmP2H
+         qI6t9JePt+fug==
+Message-ID: <8ba9431b-b2bf-9fb0-9ba7-afeb2c3bce94@collabora.com>
+Date:   Thu, 18 Aug 2022 23:34:03 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="C/vs0DuZb0Diixxt"
-Content-Disposition: inline
-In-Reply-To: <20220817184456.1184459-1-petlozup@nvidia.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
+Content-Language: en-US
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     linux-pwm@vger.kernel.org, Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        kernel@pengutronix.de, linux-tegra@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>,
+        Thomas Graichen <thomas.graichen@gmail.com>
+References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
+ <524ca143-e9d4-2a79-3e9e-c8b9ffc9f513@gmail.com>
+ <20220815070935.guqzzlny7f6kcprc@pengutronix.de>
+ <20220818075401.wguqvcbhzj5ttnio@pengutronix.de>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20220818075401.wguqvcbhzj5ttnio@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 8/18/22 10:54, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Mon, Aug 15, 2022 at 09:09:35AM +0200, Uwe Kleine-König wrote:
+>> On Mon, Aug 15, 2022 at 03:28:25AM +0300, Dmitry Osipenko wrote:
+>>> 25.04.2022 16:22, Uwe Kleine-König пишет:
+>>>> Dividing by the result of a division looses precision because the result is
+>>>> rounded twice. E.g. with clk_rate = 48000000 and period = 32760033 the
+>>>> following numbers result:
+>>>>
+>>>> 	rate = pc->clk_rate >> PWM_DUTY_WIDTH = 187500
+>>>> 	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) = 3052
+>>>> 	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) = 6144
+>>>>
+>>>> The exact result would be 6142.5061875 and (apart from rounding) this is
+>>>> found by using a single division. As a side effect is also a tad
+>>>> cheaper to calculate.
+>>>>
+>>>> Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
+>>>> example clk_rate = 47999999 and period = 106667:
+>>>>
+>>>> 	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
+>>>> 			    NSEC_PER_SEC) = 19
+>>>>
+>>>> 	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
+>>>> 			    NSEC_PER_SEC << PWM_DUTY_WIDTH) = 20
+>>>>
+>>>> (The exact result is 20.000062083332033.)
+>>>>
+>>>> With this optimizations also switch from round-closest to round-down for
+>>>> the period calculation. Given that the calculations were non-optimal for
+>>>> quite some time now with variations in both directions which nobody
+>>>> reported as a problem, this is the opportunity to align the driver's
+>>>> behavior to the requirements of new drivers. This has several upsides:
+>>>>
+>>>>  - Implementation is easier as there are no round-nearest variants of
+>>>>    mul_u64_u64_div_u64().
+>>>>  - Requests for too small periods are now consistently refused. This was
+>>>>    kind of arbitrary before, where period_ns < min_period_ns was
+>>>>    refused, but in some cases min_period_ns isn't actually implementable
+>>>>    and then values between min_period_ns and the actual minimum were
+>>>>    rounded up to the actual minimum.
+>>>>
+>>>> Note that the duty_cycle calculation isn't using the usual round-down
+>>>> approach yet.
+>>>>
+>>>> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+>>>> ---
+>>>> Hello,
+>>>>
+>>>> changes since (implicit) v1: Updated changelog to explain why rate = 0
+>>>> is refused now.
+>>>>
+>>>> Best regards
+>>>> Uwe
+>>>>
+>>>>  drivers/pwm/pwm-tegra.c | 10 +++++-----
+>>>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+>>>> index e5a9ffef4a71..7fc03a9ec154 100644
+>>>> --- a/drivers/pwm/pwm-tegra.c
+>>>> +++ b/drivers/pwm/pwm-tegra.c
+>>>> @@ -99,7 +99,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>>>>  			    int duty_ns, int period_ns)
+>>>>  {
+>>>>  	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
+>>>> -	unsigned long long c = duty_ns, hz;
+>>>> +	unsigned long long c = duty_ns;
+>>>>  	unsigned long rate, required_clk_rate;
+>>>>  	u32 val = 0;
+>>>>  	int err;
+>>>> @@ -156,11 +156,9 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>>>>  		pc->clk_rate = clk_get_rate(pc->clk);
+>>>>  	}
+>>>>  
+>>>> -	rate = pc->clk_rate >> PWM_DUTY_WIDTH;
+>>>> -
+>>>>  	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
+>>>> -	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
+>>>> -	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
+>>>> +	rate = mul_u64_u64_div_u64(pc->clk_rate, period_ns,
+>>>> +				   (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH);
+>>>>  
+>>>>  	/*
+>>>>  	 * Since the actual PWM divider is the register's frequency divider
+>>>> @@ -169,6 +167,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>>>>  	 */
+>>>>  	if (rate > 0)
+>>>>  		rate--;
+>>>> +	else
+>>>> +		return -EINVAL;
+>>>
+>>> This patch broke backlight on Asus Transformer tablets, they are now
+>>> getting this -EINVAL. The root of the problem is under investigation.
+>>
+>> This means that you requested a period that is smaller than the minimal
+>> period the hardware can implement.
+>>
+>> What is the clk rate of the PWM clk (i.e. pc->clk_rate?). Looking at
+>> arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi I guess period is
+>> 4000000. That in turn would mean that
+>>
+>> 	mul_u64_u64_div_u64(pc->clk_rate, period_ns, (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH)
+>>
+>> returned 0 which (with the assumption period_ns = 4000000) would imply
+>> the clk rate is less than 64000.
+>>
+>> I don't know the machine, but some more information would be good: What
+>> is the actual clock rate? Can you please enable PWM_DEBUG (at compile
+>> time) and tracing (at runtime) (i.e.
+>>
+>> 	echo 1 > /sys/kernel/debug/tracing/events/pwm/enable
+>>
+>> ), reproduce the problem and provide the trace (i.e.
+>>
+>> 	cat /sys/kernel/debug/tracing/trace
+>>
+>> )?
+>>
+>>> Should we revert this patch meantime or maybe you (Uwe/Thierry) have an
+>>> idea about what actually has gone wrong here? Thanks in advance.
+>>
+>> I'd like to understand if the problem is indeed that the backlight
+>> driver requests a too small period. In this case I'd prefer to adapt the
+>> backlight device to use better pwm settings. If there is a problem in
+>> my change, this needs to be fixed. If you provide the above data, I can
+>> check the details.
+> 
+> I'd like to get this regression fixed and so a feedback from your side
+> would be highly appreciated. Without further input I'm unable to debug
+> this and a revert would be a sad outcome. Can you at least work out the
+> clk rate, which might be possible by looking into
+> /sys/kernel/debug/clk/clk_summary.
 
---C/vs0DuZb0Diixxt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
++ Thomas Graichen, who reported on irc that it also broke backlight on
+Nyan Big Chromebook
 
-On Wed, Aug 17, 2022 at 06:44:56PM +0000, Petlozu Pravareshwar wrote:
-> During PMC probe, print previous reset related info
-> such as reset reason and reset level.
->=20
-> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-
-We already expose this information in sysfs, why do we need to print it
-during boot?
-
-Thierry
-
---C/vs0DuZb0Diixxt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmL+V2oACgkQ3SOs138+
-s6FjChAAvNUHWb9fpfLIFcVCgRQIpwNJH5MC+XiVINBic0EW3xPSatpUp8cFsXwq
-QWkiiIONVWAcmPvWYiXUlWMNeKJSZbPFIWRL2MkCLdSb4ENw3UUPg7mzww8bUm6R
-i/nsKOEYkLW3PBBU8RtHK0XjvxzKRAMJUcEfdRXWziH85044ONv2Jz6nNfcoEjjj
-mnqM6hjro2O+OY7SnjO3TGSIahtJ+fqM7RNPI3njyGZq11PEEEPoeefZNg+NuBfT
-qDOLi7uYblINcxJAWzwjm9T5ZGEpco8fVzpiVh2kU09BUsFrfvLMjxmhLHOswsvL
-3fdWJXB0r4R8ud/QafoElChP9aKSEV91F5lDHIzd59ygMVQBzpkjsBeZNw2mhxxU
-E87Iehn0KLAl096ea+2yUpsZ4SUSyYJYU6Mz5nDCPoKPzi/m9qxJxhBh/MMp50fu
-uW4ihTxdGE0XI/k2ZZLaDuRqGYFGzEB8S4KpGJvX2wobJoEs+FkFKUiyGRKZUAQF
-s80qdInRiy6+D740jQ1mWqNXrxCIbb4MStc+aRsKk86OXb/oi2mGKBeEY4UBRkPN
-q3baneodA49o4Dfl8qj10dzkIoqmXevSB6s5hkeHbv+qOkJNkTG3hG/84lkAxLjs
-3plJbq6Rz9shIlfJoOAT7bZb9H51xt5uBO+yADFiHfEIW8NUos8=
-=06pU
------END PGP SIGNATURE-----
-
---C/vs0DuZb0Diixxt--
+-- 
+Best regards,
+Dmitry
