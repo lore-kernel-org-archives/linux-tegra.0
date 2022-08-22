@@ -2,183 +2,158 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB78FC28D13
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 Aug 2022 17:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C781DC28D13
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Aug 2022 20:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236459AbiHVR00 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 22 Aug 2022 13:26:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46712 "EHLO
+        id S232177AbiHVUdj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 22 Aug 2022 16:33:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234147AbiHVR0Z (ORCPT
+        with ESMTP id S232112AbiHVUde (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 22 Aug 2022 13:26:25 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB5122ED68;
-        Mon, 22 Aug 2022 10:26:23 -0700 (PDT)
-Received: from [192.168.2.145] (unknown [109.252.119.13])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id ADF9E6601700;
-        Mon, 22 Aug 2022 18:26:20 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1661189181;
-        bh=pmsRP1UXaTtiHegBem/61L12myeersMjGdLcVL0rNCE=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=UPEOCEX3pH3VO2mAxLkubYlxditd/egLQ0BalYwyWhoBHucjlKChmMAEwr+17rFbi
-         KxyYZRmPUbe1jh7Z0hj6+otBBZA2TGL7JoC6W13D7Eh/nMzVHxMbTznLLu/+HVJ/AS
-         emLmezMbDz2bnjwS5MvSHL0HTpFumkAeZjzKNKlvmLqAp5vIxfU64N4yUmfTOObm3k
-         ZOZ5FRHncXFJ2fI1t5UE2P0itXdnGFX7N3ono08HicqWN6bQt4CvoOMzV4RYx7WETb
-         EJCkqQ5FxQ7RvqVrPL4iY7UE8O86KbO6+D2VLKLos/Zx+0gyBo/EliIt+IBeiOckXk
-         6qm2y8su8amAg==
-Message-ID: <e9bde303-6474-aa0b-7880-cf7d8b163983@collabora.com>
-Date:   Mon, 22 Aug 2022 20:26:15 +0300
+        Mon, 22 Aug 2022 16:33:34 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BBF16396;
+        Mon, 22 Aug 2022 13:33:32 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id d8so4507526lfq.0;
+        Mon, 22 Aug 2022 13:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=nRs4+6Qq+mxj3porzYhpRJretUtLEmOubukbTGJZYos=;
+        b=RyoKch+R+u7XVHOPQWfCyQ7JZ6UDzZN1bxqDFOEl40zYAgJ+9LBF8ohv04pqdv9dgd
+         hElovf9vyD3qWPFtZtFLshRW7Jjeh+Be0jB/YxrYhDc33PghHRNaVKrHdCfXlv+SuUfx
+         Uyx0+Qj3JofyDoW4IRaMte6Wg8xAo10UHG2v+H2pjHOsw6aTvrpuN9WDzJJOCN1M+CGK
+         rmOl6BK8VcNImnOwIZLPDI2EB28UjYUWpZHi4nI8+j2GgLFo7d8XOGkRNXm7Y9EcZj3K
+         2jjnbX5JFztGRwiFiT1DW5Bh8V73++2CL+yvloanMVkj2PzU6agU36yKC8yfRSZQij2L
+         MF3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=nRs4+6Qq+mxj3porzYhpRJretUtLEmOubukbTGJZYos=;
+        b=YqF1c6q9iTnCr07vfPWMgJwMVyP9W/GhbiAmGzCsk8eqV6VxNxvr1E7PWqrIgWBUyH
+         zGfg+Ut3ly02KWN/VTl/xTJnr/GsIZQGW5hqODOz7zqhzChKSoT/FfuwVLBR72zyqjX9
+         gimj8zVbaQOV7fluG1ei6syEhF0xm8sLMFLG9RVpBY6INxTCU2HlTZWeeAvQnFZwc92f
+         G8m/FE7CQG/vuZbWTB/uNHKdYhLqUOkmMbOeYBuDEz/uIxOtPJ3IM5jdfuCmXYwmi9qs
+         /892Qs0sf9FvKnwxMh0+jX0BMn44eroB261SeM3L5FEQUi/9A3OTwpCWFiWmoCm75/Qu
+         oWsg==
+X-Gm-Message-State: ACgBeo3Xo+hN/ab89mHH/F4AvWCjujmXaal8eKSPk9pOqKs6FQa/OiID
+        05KM0ypCNVbW9G1o1D3Pa7y6DO4uu9o=
+X-Google-Smtp-Source: AA6agR60sG9svcrPjilKrPuLt8ES8ivmFvsAIlhuBcZEy0DJcRY4UFXqXl18oUfdj1C/PqrWvmr+4Q==
+X-Received: by 2002:a05:6512:3092:b0:492:f323:f05b with SMTP id z18-20020a056512309200b00492f323f05bmr259974lfd.542.1661200410339;
+        Mon, 22 Aug 2022 13:33:30 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-119-13.nat.spd-mgts.ru. [109.252.119.13])
+        by smtp.googlemail.com with ESMTPSA id g6-20020a056512118600b004886508ca5csm2097448lfr.68.2022.08.22.13.33.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Aug 2022 13:33:29 -0700 (PDT)
+Message-ID: <fac10841-1682-845f-3e4a-5668f59caed0@gmail.com>
+Date:   Mon, 22 Aug 2022 23:33:23 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH v8 2/2] drm/gem: Don't map imported GEMs
+Subject: Re: [PATCH RESEND 1/2] i2c: tegra: Add GPCDMA support
 Content-Language: en-US
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= <thomas_os@shipmail.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com, Daniel Vetter <daniel@ffwll.ch>
-References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
- <20220701090240.1896131-3-dmitry.osipenko@collabora.com>
- <2bb95e80-b60a-36c0-76c8-a06833032c77@amd.com>
- <CAF6AEGtqPeF1DjmBKgzWK39Yi81YiNjTjDNn85TKx7uwicFTSA@mail.gmail.com>
- <2a646ce4-c2ec-3b11-77a0-cc720afd6fe1@collabora.com>
- <YvOav/vF2awVWIu0@phenom.ffwll.local>
- <CAF6AEGvfAJgwBe4+sK0gAkZ++MwH9x4=698C8XSnmfYNMFZqfA@mail.gmail.com>
- <9674d00e-c0d6-ceba-feab-5dc475bda694@collabora.com>
- <CAF6AEGv1cVC9ZNMwpwFOki5CrwD3kSAHM9EUFZGWY-y5zcQsCg@mail.gmail.com>
- <fc019528-7ec7-9e5b-1b6d-c44da14346cf@collabora.com>
- <CAF6AEGv8zSd0fEYB9hd2QOyTt53gFSQoL8JdZtCvtCdYfMfB2Q@mail.gmail.com>
- <73b51dde-689f-64ce-a1c8-0d7c84a2ed66@collabora.com>
- <CAF6AEGuR1cRQYaQBYGnMBzy=XJUcN2o2gzabZaGO2Dj62Uq1DA@mail.gmail.com>
- <CAF6AEGvvR1NUd_GKP=Bxp3VTDMBYT+OwTkkgOWxgYFijZaVVEQ@mail.gmail.com>
- <5f118e10-db7a-a128-1e87-c9dddb65b2ac@collabora.com>
- <2ce5ff0a-9ab2-d146-04db-487a64714fce@gmail.com>
- <cf8cd8da-08d2-5e70-a239-2a67da37c9ea@collabora.com>
-In-Reply-To: <cf8cd8da-08d2-5e70-a239-2a67da37c9ea@collabora.com>
+To:     Akhil R <akhilrajeev@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "wsa@kernel.org" <wsa@kernel.org>
+References: <20220819122313.40445-1-akhilrajeev@nvidia.com>
+ <20220819122313.40445-2-akhilrajeev@nvidia.com>
+ <20281ca7-e597-7030-4861-5f9a3594726d@gmail.com>
+ <89a746fd-a98e-3147-7811-33c5051c2b6d@gmail.com>
+ <SJ1PR12MB6339FC1F82EB1BB7417E533BC0719@SJ1PR12MB6339.namprd12.prod.outlook.com>
+ <ebb0764f-db92-d69d-49ac-151f4e3e0b8a@collabora.com>
+ <SJ1PR12MB63396DC508F63807F1CE9901C0719@SJ1PR12MB6339.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <SJ1PR12MB63396DC508F63807F1CE9901C0719@SJ1PR12MB6339.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 8/16/22 22:55, Dmitry Osipenko wrote:
-> On 8/16/22 15:03, Christian König wrote:
->> Am 16.08.22 um 13:44 schrieb Dmitry Osipenko:
->>> [SNIP]
->>>> The other complication I noticed is that we don't seem to keep around
->>>> the fd after importing to a GEM handle.  And I could imagine that
->>>> doing so could cause issues with too many fd's.  So I guess the best
->>>> thing is to keep the status quo and let drivers that cannot mmap
->>>> imported buffers just fail mmap?
->>> That actually should be all the drivers excluding those that use
->>> DRM-SHMEM because only DRM-SHMEM uses dma_buf_mmap(), that's why it
->>> works for Panfrost. I'm pretty sure mmaping of imported GEMs doesn't
->>> work for the MSM driver, isn't it?
+22.08.2022 13:29, Akhil R пишет:
+>> On 8/22/22 09:56, Akhil R wrote:
+>>>> 19.08.2022 18:15, Dmitry Osipenko пишет:
+>>>>> 19.08.2022 15:23, Akhil R пишет:
+>>>>>>      if (of_device_is_compatible(np, "nvidia,tegra210-i2c-vi"))
+>>>>>>              i2c_dev->is_vi = true;
+>>>>>> +    else
+>>>>>> +            i2c_dev->dma_support = !!(of_find_property(np, "dmas",
+>>>>>> + NULL));
+>>>>>
+>>>>> 1. You leak the np returned by of_find_property().
+>>>>>
+>>>>> 2. There is device_property_read_bool() for this kind of
+>>>>> property-exists checks.
+>>> Okay. I went by the implementation in of_dma_request_slave_channel() to
+>>> check 'dmas'.
 >>>
->>> Intel and AMD drivers don't allow to map the imported dma-bufs. Both
->>> refuse to do the mapping.
+>>>>>
+>>>>> 3. If "dmas" is missing in DT, then dma_request_chan() should return
+>>>>> NULL and everything will work fine. I suppose you haven't tried to
+>>>>> test this code.
+>>>>
+>>>> Although, no. It should return ERR_PTR(-ENODEV) and then you should check
+>>>> the return code.
+>>> Yes. Agree that it is more agnostic to check for ERR_PTR(-ENODEV). But since I
+>>> call tegra_init_dma() for every large transfer until DMA is initialized, wouldn't
+>>> it be better to have a flag inside the driver so that we do not have to go
+>> through
+>>> so many functions for every attempted DMA transaction to find out that the
+>> DT
+>>> properties don't exist?
 >>>
->>> Although, AMDGPU "succeeds" to do the mapping using
->>> AMDGPU_GEM_DOMAIN_GTT, but then touching the mapping causes bus fault,
->>> hence mapping actually fails. I think it might be the AMDGPU
->>> driver/libdrm bug, haven't checked yet.
+>>> Shall I just put i2c_dev->dma_support = true here since DMA is supported by
+>>> hardware? It would turn false if dma_request_chan() returns something other
+>>> than -EPROBE_DEFER.
+>>>
+>>>       if (of_device_is_compatible(np, "nvidia,tegra210-i2c-vi"))
+>>>               i2c_dev->is_vi = true;
+>>>  +    else
+>>>  +            i2c_dev->dma_support = true;
 >>
->> That's then certainly broken somehow. Amdgpu should nerve ever have
->> allowed to mmap() imported DMA-bufs and the last time I check it didn't.
+>> The code already has dma_mode for that. I don't see why another variable
+>> is needed.
+>>
+>> Either add new generic dma_request_chan_optional() that will return NULL
+>> if channel is not available and make Tegra I2C driver to use it, or
+>> handle the error code returned by dma_request_chan().
 > 
-> I'll take a closer look. So far I can only tell that it's a kernel
-> driver issue because once I re-applied this "Don't map imported GEMs"
-> patch, AMDGPU began to refuse mapping AMDGPU_GEM_DOMAIN_GTT.
+> Let me elaborate my thoughts. 
 > 
->>> So we're back to the point that neither of DRM drivers need to map
->>> imported dma-bufs and this was never tested. In this case this patch is
->>> valid, IMO.
+> The function tegra_i2c_init_dma() is also called inside tegra_i2c_xfer_msg() if
+> DMA is not initialized before, i.e. if (!i2c_dev->dma_buf).
+
+This is not true
+
+i2c_dev->dma_mode=false if !i2c_dev->dma_buf and that's it
+
+https://elixir.bootlin.com/linux/v6.0-rc2/source/drivers/i2c/busses/i2c-tegra.c#L1253
+
+tegra_i2c_init_dma() is invoked only during probe
+
+> So, if suppose there is no DT entry for dmas, the driver would have to go take the
+> path tegra_i2c_init_dma() -> dma_request_chan() -> of_*() apis -> ... and then figure
+> out that DMA is not supported. This would happen for each transfer of size larger than
+> I2C_PIO_MODE_PREFERRED_LEN.
 > 
-> Actually, I'm now looking at Etnaviv and Nouveau and seems they should
-> map imported dma-buf properly. I know that people ran Android on
-> Etnaviv. So maybe devices with a separated GPU/display need to map
-> imported display BO for Android support. Wish somebody who ran Android
-> on one of these devices using upstream drivers could give a definitive
-> answer. I may try to test Nouveau later on.
-> 
+> To avoid this, I am looking for a variable/flag which can indicate if the driver should attempt
+> to configure DMA or not. I didn't quite get the idea if dma_mode can be extended to support
+> this, because it is updated based on xfer_size on each transfer. My idea of i2c_dev->dma_support
+> is that it will be constant after the probe().
 
-Nouveau+Intel combo doesn't work because of [1] that says:
 
-"Refuse to fault imported pages. This should be handled (if at all) by
-redirecting mmap to the exporter."
-
-[1]
-https://elixir.bootlin.com/linux/v5.19/source/drivers/gpu/drm/ttm/ttm_bo_vm.c#L154
-
-Interestingly, I noticed that there are IGT tests which check prime
-mmaping of Nouveau+Intel [2] (added 9 years ago), but they fail as well,
-as expected. The fact that IGT has such tests is interesting because it
-suggests that the mapping worked in the past. It's also surprising that
-nobody cared to fix the failing tests. For the reference, I checked
-v5.18 and today's linux-next.
-
-[2]
-https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/prime_nv_test.c#L132
-
-Starting subtest: nv_write_i915_cpu_mmap_read
-Received signal SIGBUS.
-Stack trace:
- #0 [fatal_sig_handler+0x163]
- #1 [__sigaction+0x50]
- #2 [__igt_unique____real_main354+0x406]
- #3 [main+0x23]
- #4 [__libc_start_call_main+0x80]
- #5 [__libc_start_main+0x89]
- #6 [_start+0x25]
-Subtest nv_write_i915_cpu_mmap_read: CRASH (0,005s)
-
-Starting subtest: nv_write_i915_gtt_mmap_read
-Received signal SIGBUS.
-Stack trace:
- #0 [fatal_sig_handler+0x163]
- #1 [__sigaction+0x50]
- #2 [__igt_unique____real_main354+0x33d]
- #3 [main+0x23]
- #4 [__libc_start_call_main+0x80]
- #5 [__libc_start_main+0x89]
- #6 [_start+0x25]
-Subtest nv_write_i915_gtt_mmap_read: CRASH (0,004s)
-
-I'm curious about the Etnaviv driver because it uses own shmem
-implementation and maybe it has a working mmaping of imported GEMs since
-it imports the dma-buf pages into Entaviv BO. Although, it should be
-risking to map pages using a different caching attributes (WC) from the
-exporter, which is prohibited on ARM ad then one may try to map imported
-udmabuf.
-
-Apparently, the Intel DG TTM driver should be able to map imported
-dma-buf because it sets TTM_TT_FLAG_EXTERNAL_MAPPABLE.
-
-Overall, it still questionable to me whether it's worthwhile to allow
-the mmaping of imported GEMs since only Panfrost/Lima can do it out of
-all drivers and h/w that I tested. Feels like drivers that can do the
-mapping have it just because they can and not because they need.
-
--- 
-Best regards,
-Dmitry
