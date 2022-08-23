@@ -2,206 +2,155 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E61D3C32772
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Aug 2022 12:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3977C38142
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Aug 2022 15:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243480AbiHWM50 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Aug 2022 08:57:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38544 "EHLO
+        id S243575AbiHWPhJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Aug 2022 11:37:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240762AbiHWM47 (ORCPT
+        with ESMTP id S241442AbiHWPgk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Aug 2022 08:56:59 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8644D1232C6;
-        Tue, 23 Aug 2022 03:01:42 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id r4so17335279edi.8;
-        Tue, 23 Aug 2022 03:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=PUA2nr1wioVzDta9NpRPg2RNm4EXbTJFLkDHu1Yc67I=;
-        b=RzCIb3fC9rUen/D1vmmMtmBfn7tnb3I6i96gMc17FaP25sM1SPevjN8+ALMtmleeQd
-         KDJ7c9FHmvtExIEV88nYFCoUz+7lmYOx6Q5PBAK2JxopOZ/UuX/flPl2VsgVyo8BRS1N
-         c6lRfMcTeBKqlVrEuXPQN6G3d8B55D3Bq9CPE/GRCAn1qdny6TDPYunYwawt5OlNV1i5
-         xFqtbha8jWjcHLh0NQoCE1hu5HXE0avTduoUTU4P7qfxOhvuALOcQeif1r/MzWYQSGfg
-         OjaMQa/TToqTHy5jecXHAvaSs1ls+IQWnbmXznL508j+47EWZOZPn4xrsUlZSekBzrcT
-         xRCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=PUA2nr1wioVzDta9NpRPg2RNm4EXbTJFLkDHu1Yc67I=;
-        b=LESNy2a4jyS97rc7MQDTSgdysMUd0tUsP0YbG6JdUH58zK0s9cvsImKJGjmg9Hr7L3
-         XtTQsW6nEwmi+LfGYJ3akTfG1cwqq80LejXry8BGAkvpFqt1U3+DHWkCythEzHE+vGKZ
-         p5/D9D1BHUT5EEKzm87II0Q2pHgGH17FieuO0fArR5UT9PtYZqr25lTmLZVS3f+zNqE/
-         ij1YaH7f163Ek89U15KDwceWIrNerx48+MnzV25+BHv68E415Tb4Zrq45CaE4nS3clni
-         tlHRWNs65wHwtRkDgdZsVCZyg5pFlvqyhJOwvw054aCZNnQtqYUkmfjTbclue9rt+8hC
-         4N5Q==
-X-Gm-Message-State: ACgBeo1zy59nhVKuj4xVbMrFU8LrKBS878uP9hvHt39lvG8Y7lm7p1cj
-        u47alLOMZ4bxcuzN1iEayzU=
-X-Google-Smtp-Source: AA6agR6VgNqPndRYRwLHtUJsMNlHsCu3V4eKUsxekz1ZbevLr3JDMUTpWtKAYsm/CRJbKE3ITlHyqA==
-X-Received: by 2002:a05:6402:4021:b0:447:29f9:a881 with SMTP id d33-20020a056402402100b0044729f9a881mr1031970eda.391.1661248895466;
-        Tue, 23 Aug 2022 03:01:35 -0700 (PDT)
-Received: from [192.168.178.21] (p4fc20ad4.dip0.t-ipconnect.de. [79.194.10.212])
-        by smtp.gmail.com with ESMTPSA id p16-20020a056402501000b0044625884285sm1184942eda.49.2022.08.23.03.01.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Aug 2022 03:01:34 -0700 (PDT)
-Message-ID: <5988bf07-dd2e-a7ad-1ed9-831a402c3c5d@gmail.com>
-Date:   Tue, 23 Aug 2022 12:01:33 +0200
+        Tue, 23 Aug 2022 11:36:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22108BFE9E;
+        Tue, 23 Aug 2022 04:26:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ECC83B81CE9;
+        Tue, 23 Aug 2022 11:25:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA8A2C433C1;
+        Tue, 23 Aug 2022 11:25:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1661253932;
+        bh=RHJfmfbErHaYXPty7Vle5Iu9cuS5MQAgVtFca0ryUqk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eJYYTySjiuQgiWdmHsEUf3gaqYRsV1W/Z9PLIP8bbagZnqtvifScrNxoueFvwcm3T
+         Yk1364u/0oUQTr/Hkj+z2Aw8PNbHS1Jg8lcSrwW47OgtNGbdVbQrShTlaHi6QTbXbk
+         EoqAhS4GC2KAhNC5E53bP4fCo7p4uCcB1QQ/uwdU=
+Date:   Tue, 23 Aug 2022 13:25:27 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Fix console probe delay when stdout-path isn't set
+Message-ID: <YwS5J3effuHQJRZ5@kroah.com>
+References: <20220701012647.2007122-1-saravanak@google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v8 2/2] drm/gem: Don't map imported GEMs
-Content-Language: en-US
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Rob Clark <robdclark@gmail.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Chia-I Wu <olvaffe@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= <thomas_os@shipmail.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        kernel@collabora.com, Daniel Vetter <daniel@ffwll.ch>
-References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
- <2bb95e80-b60a-36c0-76c8-a06833032c77@amd.com>
- <CAF6AEGtqPeF1DjmBKgzWK39Yi81YiNjTjDNn85TKx7uwicFTSA@mail.gmail.com>
- <2a646ce4-c2ec-3b11-77a0-cc720afd6fe1@collabora.com>
- <YvOav/vF2awVWIu0@phenom.ffwll.local>
- <CAF6AEGvfAJgwBe4+sK0gAkZ++MwH9x4=698C8XSnmfYNMFZqfA@mail.gmail.com>
- <9674d00e-c0d6-ceba-feab-5dc475bda694@collabora.com>
- <CAF6AEGv1cVC9ZNMwpwFOki5CrwD3kSAHM9EUFZGWY-y5zcQsCg@mail.gmail.com>
- <fc019528-7ec7-9e5b-1b6d-c44da14346cf@collabora.com>
- <CAF6AEGv8zSd0fEYB9hd2QOyTt53gFSQoL8JdZtCvtCdYfMfB2Q@mail.gmail.com>
- <73b51dde-689f-64ce-a1c8-0d7c84a2ed66@collabora.com>
- <CAF6AEGuR1cRQYaQBYGnMBzy=XJUcN2o2gzabZaGO2Dj62Uq1DA@mail.gmail.com>
- <CAF6AEGvvR1NUd_GKP=Bxp3VTDMBYT+OwTkkgOWxgYFijZaVVEQ@mail.gmail.com>
- <5f118e10-db7a-a128-1e87-c9dddb65b2ac@collabora.com>
- <2ce5ff0a-9ab2-d146-04db-487a64714fce@gmail.com>
- <cf8cd8da-08d2-5e70-a239-2a67da37c9ea@collabora.com>
- <e9bde303-6474-aa0b-7880-cf7d8b163983@collabora.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <e9bde303-6474-aa0b-7880-cf7d8b163983@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220701012647.2007122-1-saravanak@google.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Am 22.08.22 um 19:26 schrieb Dmitry Osipenko:
-> On 8/16/22 22:55, Dmitry Osipenko wrote:
->> On 8/16/22 15:03, Christian König wrote:
->>> Am 16.08.22 um 13:44 schrieb Dmitry Osipenko:
->>>> [SNIP]
->>>>> The other complication I noticed is that we don't seem to keep around
->>>>> the fd after importing to a GEM handle.  And I could imagine that
->>>>> doing so could cause issues with too many fd's.  So I guess the best
->>>>> thing is to keep the status quo and let drivers that cannot mmap
->>>>> imported buffers just fail mmap?
->>>> That actually should be all the drivers excluding those that use
->>>> DRM-SHMEM because only DRM-SHMEM uses dma_buf_mmap(), that's why it
->>>> works for Panfrost. I'm pretty sure mmaping of imported GEMs doesn't
->>>> work for the MSM driver, isn't it?
->>>>
->>>> Intel and AMD drivers don't allow to map the imported dma-bufs. Both
->>>> refuse to do the mapping.
->>>>
->>>> Although, AMDGPU "succeeds" to do the mapping using
->>>> AMDGPU_GEM_DOMAIN_GTT, but then touching the mapping causes bus fault,
->>>> hence mapping actually fails. I think it might be the AMDGPU
->>>> driver/libdrm bug, haven't checked yet.
->>> That's then certainly broken somehow. Amdgpu should nerve ever have
->>> allowed to mmap() imported DMA-bufs and the last time I check it didn't.
->> I'll take a closer look. So far I can only tell that it's a kernel
->> driver issue because once I re-applied this "Don't map imported GEMs"
->> patch, AMDGPU began to refuse mapping AMDGPU_GEM_DOMAIN_GTT.
->>
->>>> So we're back to the point that neither of DRM drivers need to map
->>>> imported dma-bufs and this was never tested. In this case this patch is
->>>> valid, IMO.
->> Actually, I'm now looking at Etnaviv and Nouveau and seems they should
->> map imported dma-buf properly. I know that people ran Android on
->> Etnaviv. So maybe devices with a separated GPU/display need to map
->> imported display BO for Android support. Wish somebody who ran Android
->> on one of these devices using upstream drivers could give a definitive
->> answer. I may try to test Nouveau later on.
->>
-> Nouveau+Intel combo doesn't work because of [1] that says:
->
-> "Refuse to fault imported pages. This should be handled (if at all) by
-> redirecting mmap to the exporter."
->
-> [1]
-> https://elixir.bootlin.com/linux/v5.19/source/drivers/gpu/drm/ttm/ttm_bo_vm.c#L154
->
-> Interestingly, I noticed that there are IGT tests which check prime
-> mmaping of Nouveau+Intel [2] (added 9 years ago), but they fail as well,
-> as expected. The fact that IGT has such tests is interesting because it
-> suggests that the mapping worked in the past. It's also surprising that
-> nobody cared to fix the failing tests. For the reference, I checked
-> v5.18 and today's linux-next.
->
-> [2]
-> https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/prime_nv_test.c#L132
->
-> Starting subtest: nv_write_i915_cpu_mmap_read
-> Received signal SIGBUS.
-> Stack trace:
->   #0 [fatal_sig_handler+0x163]
->   #1 [__sigaction+0x50]
->   #2 [__igt_unique____real_main354+0x406]
->   #3 [main+0x23]
->   #4 [__libc_start_call_main+0x80]
->   #5 [__libc_start_main+0x89]
->   #6 [_start+0x25]
-> Subtest nv_write_i915_cpu_mmap_read: CRASH (0,005s)
->
-> Starting subtest: nv_write_i915_gtt_mmap_read
-> Received signal SIGBUS.
-> Stack trace:
->   #0 [fatal_sig_handler+0x163]
->   #1 [__sigaction+0x50]
->   #2 [__igt_unique____real_main354+0x33d]
->   #3 [main+0x23]
->   #4 [__libc_start_call_main+0x80]
->   #5 [__libc_start_main+0x89]
->   #6 [_start+0x25]
-> Subtest nv_write_i915_gtt_mmap_read: CRASH (0,004s)
->
-> I'm curious about the Etnaviv driver because it uses own shmem
-> implementation and maybe it has a working mmaping of imported GEMs since
-> it imports the dma-buf pages into Entaviv BO. Although, it should be
-> risking to map pages using a different caching attributes (WC) from the
-> exporter, which is prohibited on ARM ad then one may try to map imported
-> udmabuf.
->
-> Apparently, the Intel DG TTM driver should be able to map imported
-> dma-buf because it sets TTM_TT_FLAG_EXTERNAL_MAPPABLE.
+On Thu, Jun 30, 2022 at 06:26:38PM -0700, Saravana Kannan wrote:
+> These patches are on top of driver-core-next.
+> 
+> Even if stdout-path isn't set in DT, this patch should take console
+> probe times back to how they were before the deferred_probe_timeout
+> clean up series[1].
 
-Even with that flag set it is illegal to map the pages directly by an 
-importer.
+Now dropped from my queue due to lack of a response to other reviewer's
+questions.
 
-If that ever worked then the only real solution is to redirect mmap() 
-calls on importer BOs to dma_buf_mmap().
+thanks,
 
-Regards,
-Christian.
-
->
-> Overall, it still questionable to me whether it's worthwhile to allow
-> the mmaping of imported GEMs since only Panfrost/Lima can do it out of
-> all drivers and h/w that I tested. Feels like drivers that can do the
-> mapping have it just because they can and not because they need.
->
-
+greg k-h
