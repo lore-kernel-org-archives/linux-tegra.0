@@ -2,56 +2,56 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13ECC32774
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Aug 2022 06:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864C6C28D13
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Aug 2022 06:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235727AbiHYGfg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Aug 2022 02:35:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44156 "EHLO
+        id S235576AbiHYGkj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Aug 2022 02:40:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234076AbiHYGff (ORCPT
+        with ESMTP id S233847AbiHYGkh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Aug 2022 02:35:35 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F53DA0243
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Aug 2022 23:35:34 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id bt10so13964431lfb.1
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Aug 2022 23:35:33 -0700 (PDT)
+        Thu, 25 Aug 2022 02:40:37 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F381C7644
+        for <linux-tegra@vger.kernel.org>; Wed, 24 Aug 2022 23:40:33 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id x10so18486715ljq.4
+        for <linux-tegra@vger.kernel.org>; Wed, 24 Aug 2022 23:40:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=EvKjZn6Jwen4vu3P72obwS4c6ve0NpMMiuM5nFUjsc4=;
-        b=hA4GPgaoc/uO4LTyPl6C3Xt+kHB33H1tgfQHneoEsl2dH6kJVkPkiVqziKkgko6psm
-         sykCnNuBjKSGW65OLNnTjZsc1gMvL8pxzST7G8ZaC26d1V9GnCb8gADMrX52Pg5WmWCC
-         MFk+i+s7g5Oj+JlpHgSvV2gIhBbpO8NKxa5qw7xPHWMlOMRk1AL6omhiRuXnNvaZnV7C
-         hzs9IqK1KglzKfqWlH1w0ETUDb9CENa5j95XHDtoTAK8Tdo/Y/REu5u5q9EduEq8Rjsd
-         lawoJlipNd21qz0GU9CDOlfVn2/cLAWisLJlvtML6nXytSjRYSh6PEQckm243xqW+hR8
-         iTUQ==
+        bh=Hxs/x32k0wl5TtEJWin9IF/OZYyYHuwn2WA9sVkAPH4=;
+        b=ggHLVlPzMVeo5o60HoxiBTPeE4b7XvUvw7wCzxVRNSSxvZrDzA0vum3fttHKJZb1fR
+         ST8lBPut9MqchJJeAk+l32ls+cCSMyClhfXUvVYMKIEhPoNwHBoIrhjkvVDI2hc/QbDh
+         pgjS3TRKKqt46IeSOS3sTeECjqy8EEbXyu7dFuu5GTwYGmOMnU7ROusgefK8z35FK/e4
+         0i7ICMCPQxxrz3krhI1mirSmSzgAmZGdmZM6HYzcNk4VNzZvSWefNz2tttcalQl43l/V
+         lqnW25YgvOxlavOf3rM4vrivoTNbdMcBJLeQRPCXEiwVKsJ3WVtb88F7aCzDu2UXWzKs
+         F5/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=EvKjZn6Jwen4vu3P72obwS4c6ve0NpMMiuM5nFUjsc4=;
-        b=LNFQirbKldeNbUMNzmoOgsPbeCV/kwKv6CVBlnChflgeQH8VworuuSZipna7MsM2rd
-         2P91zAkaLbWYa8TAc6yviJS8zHceab1rfL6ap7U6iwAO7nE4RAa3Va/XMpjbIyleDFK4
-         SP9zgHt+UnxaT2qIc2TsAPAevuWAyPJ4DGcPZA3PaaAZQmCifqZE9Sl7zOM/6u0+6TVh
-         byC4/HA7z+NIlQNvYdMZrNXea+RFk4se57c0laXg8n1aOiR3wPAabOgDV5XctUq3PF/z
-         TBsoGRJ22CoPGTrS5YQsfOJqwT/0HaYbxUZCBHzpSTKZInKc0Edzfyh/TjXaJ44l9U8J
-         8UqQ==
-X-Gm-Message-State: ACgBeo1OuHTrZBU9+Nsn6sb6/utyEkGwvZ1IWOndwG5cUvw4EYP2QoJY
-        TXgRG0SLGftFlX2MYt06rAIerA==
-X-Google-Smtp-Source: AA6agR4MXfi9uA9HEyxEy5/qdbVPXms4C7TdYuwdEmdffkyYQy/oAl819Jf7A8eMC6blyL3NxEOxFA==
-X-Received: by 2002:a19:6a05:0:b0:492:f775:6f43 with SMTP id u5-20020a196a05000000b00492f7756f43mr638867lfu.10.1661409332398;
-        Wed, 24 Aug 2022 23:35:32 -0700 (PDT)
+        bh=Hxs/x32k0wl5TtEJWin9IF/OZYyYHuwn2WA9sVkAPH4=;
+        b=CUr9qBHe1J56hmB/+WF00thlvvdBs3B6gXECC4b8wwxmmkZrYZW/IS+pCCIvcD/4DU
+         6Yo5IYYJqFoDEtBQa8/tRpkn5hxHwyXZV3qwflqN7lBx9bUZdKpKilG+l3ak0mVmIXvx
+         smizDHpQgS2oYG9GE7CUU68NZpwG6xp9/LwjKQzpG5yOGyyXZzOZLS5nIdoRsU01sluR
+         n4XR7XImiBQcjp8k5rEVAqhBg2yWhl7xtlvYLldTh5V60S8Xg2ORZy4Ngkjaxe/Y9qMP
+         7JLZ2H5rmGqPJEw0B46q/IbRAoGWr/Q/UMc8iKh7EhWI2pSDBBt5rsh7K+JpzhcR8Y1Y
+         ZwHA==
+X-Gm-Message-State: ACgBeo3x6eij+5fNU5SCUslviDZ2DzDiCFzhghikhNamSXYhI9Ieze1S
+        FS9KzDRPx60YpV95EFTIsmGXOQ==
+X-Google-Smtp-Source: AA6agR4sp9L/aoyZrx2uYhRDhFUfFvBZsJbtMUKU/6yfJBjXbHfPdGvgpeQbd0c1lWSvZ8iGu6FKYQ==
+X-Received: by 2002:a05:651c:b2c:b0:261:d82f:75b8 with SMTP id b44-20020a05651c0b2c00b00261d82f75b8mr601195ljr.266.1661409632356;
+        Wed, 24 Aug 2022 23:40:32 -0700 (PDT)
 Received: from [192.168.0.71] (82.131.98.15.cable.starman.ee. [82.131.98.15])
-        by smtp.gmail.com with ESMTPSA id k16-20020a05651c10b000b00260fdfdd23csm329602ljn.109.2022.08.24.23.35.30
+        by smtp.gmail.com with ESMTPSA id m6-20020a056512114600b00492d7a7b4e3sm339246lfg.4.2022.08.24.23.40.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Aug 2022 23:35:31 -0700 (PDT)
-Message-ID: <3ea10afc-61f4-a5ac-aef9-16ddc6f845e6@linaro.org>
-Date:   Thu, 25 Aug 2022 09:35:29 +0300
+        Wed, 24 Aug 2022 23:40:31 -0700 (PDT)
+Message-ID: <e5239fb9-07fd-3263-76a8-afb2f89b7d7e@linaro.org>
+Date:   Thu, 25 Aug 2022 09:40:30 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
@@ -111,10 +111,11 @@ On 22/08/2022 19:10, Stefan Hansson wrote:
 > CONFIG_NO_HZ=y should be replaced by CONFIG_NO_HZ_IDLE=y for newer
 > kernels, so let's reflect that in the 32-bit ARM defconfigs.
 > 
-> Signed-off-by: Stefan Hansson <newbie13xd@gmail.com>
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> # Samsung
+Thanks for the patch. You did not send it to ARM SoC maintainers and
+their Patchwork mailbox, so I don't think it will be picked up. Please
+resend with proper Cc list to ARM AND ARM64 SoC SUB-ARCHITECTURES
+(COMMON PARTS)
 
 Best regards,
 Krzysztof
