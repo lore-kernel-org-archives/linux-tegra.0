@@ -2,120 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864C6C28D13
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Aug 2022 06:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D851C04AA5
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Aug 2022 08:58:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235576AbiHYGkj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Aug 2022 02:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
+        id S235786AbiHYI6t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Aug 2022 04:58:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233847AbiHYGkh (ORCPT
+        with ESMTP id S237510AbiHYI6q (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Aug 2022 02:40:37 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F381C7644
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Aug 2022 23:40:33 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id x10so18486715ljq.4
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Aug 2022 23:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=Hxs/x32k0wl5TtEJWin9IF/OZYyYHuwn2WA9sVkAPH4=;
-        b=ggHLVlPzMVeo5o60HoxiBTPeE4b7XvUvw7wCzxVRNSSxvZrDzA0vum3fttHKJZb1fR
-         ST8lBPut9MqchJJeAk+l32ls+cCSMyClhfXUvVYMKIEhPoNwHBoIrhjkvVDI2hc/QbDh
-         pgjS3TRKKqt46IeSOS3sTeECjqy8EEbXyu7dFuu5GTwYGmOMnU7ROusgefK8z35FK/e4
-         0i7ICMCPQxxrz3krhI1mirSmSzgAmZGdmZM6HYzcNk4VNzZvSWefNz2tttcalQl43l/V
-         lqnW25YgvOxlavOf3rM4vrivoTNbdMcBJLeQRPCXEiwVKsJ3WVtb88F7aCzDu2UXWzKs
-         F5/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=Hxs/x32k0wl5TtEJWin9IF/OZYyYHuwn2WA9sVkAPH4=;
-        b=CUr9qBHe1J56hmB/+WF00thlvvdBs3B6gXECC4b8wwxmmkZrYZW/IS+pCCIvcD/4DU
-         6Yo5IYYJqFoDEtBQa8/tRpkn5hxHwyXZV3qwflqN7lBx9bUZdKpKilG+l3ak0mVmIXvx
-         smizDHpQgS2oYG9GE7CUU68NZpwG6xp9/LwjKQzpG5yOGyyXZzOZLS5nIdoRsU01sluR
-         n4XR7XImiBQcjp8k5rEVAqhBg2yWhl7xtlvYLldTh5V60S8Xg2ORZy4Ngkjaxe/Y9qMP
-         7JLZ2H5rmGqPJEw0B46q/IbRAoGWr/Q/UMc8iKh7EhWI2pSDBBt5rsh7K+JpzhcR8Y1Y
-         ZwHA==
-X-Gm-Message-State: ACgBeo3x6eij+5fNU5SCUslviDZ2DzDiCFzhghikhNamSXYhI9Ieze1S
-        FS9KzDRPx60YpV95EFTIsmGXOQ==
-X-Google-Smtp-Source: AA6agR4sp9L/aoyZrx2uYhRDhFUfFvBZsJbtMUKU/6yfJBjXbHfPdGvgpeQbd0c1lWSvZ8iGu6FKYQ==
-X-Received: by 2002:a05:651c:b2c:b0:261:d82f:75b8 with SMTP id b44-20020a05651c0b2c00b00261d82f75b8mr601195ljr.266.1661409632356;
-        Wed, 24 Aug 2022 23:40:32 -0700 (PDT)
-Received: from [192.168.0.71] (82.131.98.15.cable.starman.ee. [82.131.98.15])
-        by smtp.gmail.com with ESMTPSA id m6-20020a056512114600b00492d7a7b4e3sm339246lfg.4.2022.08.24.23.40.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Aug 2022 23:40:31 -0700 (PDT)
-Message-ID: <e5239fb9-07fd-3263-76a8-afb2f89b7d7e@linaro.org>
-Date:   Thu, 25 Aug 2022 09:40:30 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH] ARM: configs: replace CONFIG_NO_HZ=y with
- CONFIG_NO_HZ_IDLE=y
-Content-Language: en-US
-To:     Stefan Hansson <newbie13xd@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
+        Thu, 25 Aug 2022 04:58:46 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D9CBA896F;
+        Thu, 25 Aug 2022 01:58:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661417917; x=1692953917;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xWcqRqK9GSZt9NznWIFPcoPcb1DvRs46teeJkfDwcKk=;
+  b=BH9+8xdaFNVEJwYngzSF0QvALLrV34bK68anUupewcQyt+0afe3tW7uq
+   Fi8iwBU2s88gQ9J6XPEqPebIn81iDOT5XjrkdKPdmWEcMdQQI17tVjzrV
+   VHu6Rsm0WvtMYym/d3/zMGuIRb+U3JK7/pvovbEx+nej5NtEn7fOZn7jL
+   Z1LWZSvTkFQ/Vjg2bHFF6QBHOX+ucWIgkw726BHtTB7em+/wiThLDfMyn
+   J6062YIYL6Ng4mTHhXMPj9qaS0U0x9oq4fhved3QQUuIoX3h14Zug4YOZ
+   inMVEin6H09B6DUyXYo5RU+jOFJEdoBEnpMwGMPHYgLCZeI9gc9vE1zil
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10449"; a="273941445"
+X-IronPort-AV: E=Sophos;i="5.93,262,1654585200"; 
+   d="scan'208";a="273941445"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 01:58:37 -0700
+X-IronPort-AV: E=Sophos;i="5.93,262,1654585200"; 
+   d="scan'208";a="670893955"
+Received: from mblazque-mobl1.ger.corp.intel.com (HELO ijarvine-MOBL2.ger.corp.intel.com) ([10.249.44.101])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 01:58:34 -0700
+From:   =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org,
+        Laxman Dewangan <ldewangan@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org
-References: <20220822161018.16101-1-newbie13xd@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220822161018.16101-1-newbie13xd@gmail.com>
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 5/5] serial: tegra: Remove custom frame size calculation
+Date:   Thu, 25 Aug 2022 11:58:10 +0300
+Message-Id: <20220825085810.7290-6-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220825085810.7290-1-ilpo.jarvinen@linux.intel.com>
+References: <20220825085810.7290-1-ilpo.jarvinen@linux.intel.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 22/08/2022 19:10, Stefan Hansson wrote:
-> According to https://www.kernel.org/doc/html/latest/timers/no_hz.html,
-> CONFIG_NO_HZ=y should be replaced by CONFIG_NO_HZ_IDLE=y for newer
-> kernels, so let's reflect that in the 32-bit ARM defconfigs.
-> 
+The number of bits can be calculated using tty_get_frame_size(), no
+need for the driver to do it on its own.
 
-Thanks for the patch. You did not send it to ARM SoC maintainers and
-their Patchwork mailbox, so I don't think it will be picked up. Please
-resend with proper Cc list to ARM AND ARM64 SoC SUB-ARCHITECTURES
-(COMMON PARTS)
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/tty/serial/serial-tegra.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index ad4f3567ff90..5a56bd20abcd 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -1278,7 +1278,6 @@ static void tegra_uart_set_termios(struct uart_port *u,
+ 	unsigned long flags;
+ 	unsigned int lcr;
+ 	unsigned char char_bits;
+-	int symb_bit = 1;
+ 	struct clk *parent_clk = clk_get_parent(tup->uart_clk);
+ 	unsigned long parent_clk_rate = clk_get_rate(parent_clk);
+ 	int max_divider = (tup->cdata->support_clk_src_div) ? 0x7FFF : 0xFFFF;
+@@ -1305,7 +1304,6 @@ static void tegra_uart_set_termios(struct uart_port *u,
+ 	termios->c_cflag &= ~CMSPAR;
+ 
+ 	if ((termios->c_cflag & PARENB) == PARENB) {
+-		symb_bit++;
+ 		if (termios->c_cflag & PARODD) {
+ 			lcr |= UART_LCR_PARITY;
+ 			lcr &= ~UART_LCR_EPAR;
+@@ -1318,22 +1316,18 @@ static void tegra_uart_set_termios(struct uart_port *u,
+ 	}
+ 
+ 	char_bits = tty_get_char_size(termios->c_cflag);
+-	symb_bit += char_bits;
+ 	lcr &= ~UART_LCR_WLEN8;
+ 	lcr |= UART_LCR_WLEN(char_bits);
+ 
+ 	/* Stop bits */
+-	if (termios->c_cflag & CSTOPB) {
++	if (termios->c_cflag & CSTOPB)
+ 		lcr |= UART_LCR_STOP;
+-		symb_bit += 2;
+-	} else {
++	else
+ 		lcr &= ~UART_LCR_STOP;
+-		symb_bit++;
+-	}
+ 
+ 	tegra_uart_write(tup, lcr, UART_LCR);
+ 	tup->lcr_shadow = lcr;
+-	tup->symb_bit = symb_bit;
++	tup->symb_bit = tty_get_frame_size(termios->c_cflag);
+ 
+ 	/* Baud rate. */
+ 	baud = uart_get_baud_rate(u, termios, oldtermios,
+-- 
+2.30.2
+
