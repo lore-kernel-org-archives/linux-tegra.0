@@ -2,156 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB19ECAA2F
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Aug 2022 19:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA21AECAAA2
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Aug 2022 21:25:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243136AbiHYTtB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Aug 2022 15:49:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45970 "EHLO
+        id S234827AbiHYVZi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Aug 2022 17:25:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243313AbiHYTs6 (ORCPT
+        with ESMTP id S231837AbiHYVZi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Aug 2022 15:48:58 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07D9B753AD;
-        Thu, 25 Aug 2022 12:48:57 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id n17so1278570wrm.4;
-        Thu, 25 Aug 2022 12:48:56 -0700 (PDT)
+        Thu, 25 Aug 2022 17:25:38 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 342523ED4D;
+        Thu, 25 Aug 2022 14:25:37 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id c187-20020a1c35c4000000b003a30d88fe8eso3393941wma.2;
+        Thu, 25 Aug 2022 14:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=EEQaOMPMio1TV/1T2nsXijwtVuTW2Re2GSl+fTHb2hE=;
-        b=EOSwTGoA0nee7KFDbY0hqShMabo5lvAZLhzj+GVpXhf++Nzj9OmUn1OmWPoyWldHhh
-         dbnv+/P4Q5eGuNwR8TRpA5vnA71y/Ce1/+KcGBQ6tdxjU8neWPGCvfemSOgYsxBw8wWD
-         /r9CrCVNubmy7oRWc7HuFASont4/bo0USnvpHoPD4sH8l2EyTnNC/e/T0T/K21K+q93v
-         ZgCFsmmoNiygJD27wzIH2Y0gk2krAVmjCcEsgBCs8+912zcjpv5PrvliOdMBJuwshUXM
-         5AuVZDl8hY1dUgNxix/rwOXM95rTapj4RVl6B2/HXjH88mM8Vf/D4YhYMVe3E0VrWWyE
-         q9Hg==
+        bh=nls6DGbfFRAP957pxJ4lCmbOvdtMF+yoGyK/eIAHqyg=;
+        b=dlpbM58i2Zl35pjmx5L7mRNtdc5YCm71F9sFmlELYER6ov9p1Zhw7Uryp66w+fECkw
+         uWkzwI4ANxiJqV2NAH5qiBvSocnn8gCiQ2esbEPyK9VfrLMG6MP+UW57WsLhfQeb18Xm
+         ywTHy3WQy2y0FYikqc1VoN0s6VRtWmBPqvQ7ayhaGh2a543N2UKdV/DJLzBcZZCckZJ6
+         ioibCRuSXHClGOmbzN9j5ra8iRima6daMxIf45aGXMyoGgBcf5Q8AplMooQ7YxG8j1KJ
+         +wVv5gF0Swo9gXi4Wnksh6Jhf6DtKC3uqCuZv3IfpxDnq0EW8o52F4JCeA7KQe1HLfXz
+         RrSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=EEQaOMPMio1TV/1T2nsXijwtVuTW2Re2GSl+fTHb2hE=;
-        b=j+pyGv0GL5IDSommsaBkXxuF6HWewVQJ/l01KChEAqZsxaucuJ/vgntbGyt+gum0Jf
-         KRsIxpi6nCst9okm+ZbiNov6kCaguQKPKwxp3QIHG/fTZ7DZKlFQpb77R7NKnqzN8nMT
-         5LFxbmN0ijwaupvtpf/Cbld4wYrucKisyyUXB93jPPOKM0uw4KvZPqXJIgltUZ8vljfQ
-         h6GMkjGqzLrfvruOf1qHCgTznojjRrk9zMcX2XEm9SjIX+VLbLE/BTPJdVcLmz0zVBcd
-         bujz55uFW3ck7zd++uNsZy74x4MV5j9KqkkFIEwcJkFrSlto6RQI2YnVVg9fXawrna2i
-         Ry0Q==
-X-Gm-Message-State: ACgBeo2cgwnl5/FdXOefNGxUBj2+AS18NOaq8VPcBdDXsNGz7KyQgc9s
-        Nr6PVJwMkfpX80QN04aEdVY=
-X-Google-Smtp-Source: AA6agR6a+jB85i972kXbhLkKKpllW7496fpWqVVpOsWOvIO65uvf0tz0QQyG4Bto1DkO00QbeWBtGA==
-X-Received: by 2002:a5d:514d:0:b0:225:3507:79e6 with SMTP id u13-20020a5d514d000000b00225350779e6mr3063920wrt.85.1661456935527;
-        Thu, 25 Aug 2022 12:48:55 -0700 (PDT)
+        bh=nls6DGbfFRAP957pxJ4lCmbOvdtMF+yoGyK/eIAHqyg=;
+        b=S0GrtkDDxcvDMwrwLo76N8UgGrW6ZwzmfLgdWdKFy7ZQZ6K9CRkHwy/kcbFMrycQPS
+         7YrvwD+c3k8LfQpvsSmxNjol0ZTcXu0dtPN7S6zJs7JYfd2etKPW16let78diEu9Raj7
+         fbQ+7nd7f4NLuK7h1svSEIcusxF27fa6sQolCIVaqpKq9Csj2LhoArWkq8kzkNnCsLSm
+         NFfAyqMkzVgUfdXofASKxuSd17gppxbd/d9yf9fCMW056SjQQqVyic38XOp8tFrVeykN
+         MqzHlu11DfhNMmiFa+0ei5IRgqxUzs7fef58Advlgvdv2AvUJmfIn7zkbI1N61AFWnIm
+         djTQ==
+X-Gm-Message-State: ACgBeo37cG1CCJ1GTBVVM7/J3p/aT8IoWwZHnf7G0oWtEv/JwnE6xphp
+        kbg6qqizQ6J/OJ+mKfCztno=
+X-Google-Smtp-Source: AA6agR4u4BAmHRat5LFEkPb1QUEY6oOp43RCL7jbGC6PWwiKhCvUcU/tuSQkwukDJ89Tw4ddFY+90Q==
+X-Received: by 2002:a05:600c:b47:b0:3a5:a431:ce36 with SMTP id k7-20020a05600c0b4700b003a5a431ce36mr3484083wmr.89.1661462735769;
+        Thu, 25 Aug 2022 14:25:35 -0700 (PDT)
 Received: from kista.localnet (82-149-1-172.dynamic.telemach.net. [82.149.1.172])
-        by smtp.gmail.com with ESMTPSA id f5-20020a5d4dc5000000b002235eb9d200sm120536wru.10.2022.08.25.12.48.53
+        by smtp.gmail.com with ESMTPSA id m5-20020a05600c4f4500b003a64f684704sm7324411wmq.40.2022.08.25.14.25.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Aug 2022 12:48:54 -0700 (PDT)
+        Thu, 25 Aug 2022 14:25:35 -0700 (PDT)
 From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, Stefan Hansson <newbie13xd@gmail.com>
-Cc:     Stefan Hansson <newbie13xd@gmail.com>
-Subject: Re: [RESEND PATCH] ARM: configs: replace CONFIG_NO_HZ=y with CONFIG_NO_HZ_IDLE=y
-Date:   Thu, 25 Aug 2022 21:48:52 +0200
-Message-ID: <2642863.mvXUDI8C0e@kista>
-In-Reply-To: <20220825162034.5901-1-newbie13xd@gmail.com>
-References: <20220825162034.5901-1-newbie13xd@gmail.com>
+To:     vkoul@kernel.org, Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc:     f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, lars@metafoo.de,
+        Eugeniy.Paltsev@synopsys.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, sean.wang@mediatek.com, matthias.bgg@gmail.com,
+        daniel@zonque.org, haojian.zhuang@gmail.com,
+        robert.jarzmik@free.fr, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        alim.akhtar@samsung.com, green.wan@sifive.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        wens@csie.org, samuel@sholland.org, ldewangan@nvidia.com,
+        jonathanh@nvidia.com, thierry.reding@gmail.com,
+        peter.ujfalusi@gmail.com, michal.simek@xilinx.com,
+        tony@atomide.com, trix@redhat.com, radhey.shyam.pandey@xilinx.com,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Subject: Re: [PATCH] dmaengine: drivers: Use devm_platform_ioremap_resource()
+Date:   Thu, 25 Aug 2022 23:25:33 +0200
+Message-ID: <1922204.usQuhbGJ8B@kista>
+In-Reply-To: <20220820130925.589472-1-tudor.ambarus@microchip.com>
+References: <20220820130925.589472-1-tudor.ambarus@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dne =C4=8Detrtek, 25. avgust 2022 ob 18:20:35 CEST je Stefan Hansson napisa=
-l(a):
-> According to https://www.kernel.org/doc/html/latest/timers/no_hz.html,
-> CONFIG_NO_HZ=3Dy should be replaced by CONFIG_NO_HZ_IDLE=3Dy for newer
-> kernels, so let's reflect that in the 32-bit ARM defconfigs.
->=20
-> Signed-off-by: Stefan Hansson <newbie13xd@gmail.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> # Samsung
+Dne sobota, 20. avgust 2022 ob 15:09:25 CEST je Tudor Ambarus napisal(a):
+> platform_get_resource() and devm_ioremap_resource() are wrapped up in the
+> devm_platform_ioremap_resource() helper. Use the helper and get rid of the
+> local variable for struct resource *. We now have a function call less.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 > ---
->  arch/arm/configs/bcm2835_defconfig       | 2 +-
->  arch/arm/configs/cm_x300_defconfig       | 2 +-
->  arch/arm/configs/davinci_all_defconfig   | 2 +-
->  arch/arm/configs/dove_defconfig          | 2 +-
->  arch/arm/configs/exynos_defconfig        | 2 +-
->  arch/arm/configs/ezx_defconfig           | 2 +-
->  arch/arm/configs/hisi_defconfig          | 2 +-
->  arch/arm/configs/imx_v4_v5_defconfig     | 2 +-
->  arch/arm/configs/imx_v6_v7_defconfig     | 2 +-
->  arch/arm/configs/integrator_defconfig    | 2 +-
->  arch/arm/configs/lpc32xx_defconfig       | 2 +-
->  arch/arm/configs/magician_defconfig      | 2 +-
->  arch/arm/configs/milbeaut_m10v_defconfig | 2 +-
->  arch/arm/configs/moxart_defconfig        | 2 +-
->  arch/arm/configs/multi_v5_defconfig      | 2 +-
->  arch/arm/configs/multi_v7_defconfig      | 2 +-
->  arch/arm/configs/mv78xx0_defconfig       | 2 +-
->  arch/arm/configs/mvebu_v5_defconfig      | 2 +-
->  arch/arm/configs/mxs_defconfig           | 2 +-
->  arch/arm/configs/omap1_defconfig         | 2 +-
->  arch/arm/configs/omap2plus_defconfig     | 2 +-
->  arch/arm/configs/orion5x_defconfig       | 2 +-
->  arch/arm/configs/oxnas_v6_defconfig      | 2 +-
->  arch/arm/configs/pcm027_defconfig        | 2 +-
->  arch/arm/configs/pxa168_defconfig        | 2 +-
->  arch/arm/configs/pxa910_defconfig        | 2 +-
->  arch/arm/configs/pxa_defconfig           | 2 +-
->  arch/arm/configs/qcom_defconfig          | 2 +-
->  arch/arm/configs/s5pv210_defconfig       | 2 +-
->  arch/arm/configs/shmobile_defconfig      | 2 +-
->  arch/arm/configs/sunxi_defconfig         | 2 +-
+>  drivers/dma/bcm2835-dma.c                      |  4 +---
+>  drivers/dma/dma-axi-dmac.c                     |  4 +---
+>  drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c |  4 +---
+>  drivers/dma/fsl-edma.c                         |  8 +++-----
+>  drivers/dma/fsl-qdma.c                         | 10 +++-------
+>  drivers/dma/idma64.c                           |  4 +---
+>  drivers/dma/img-mdc-dma.c                      |  4 +---
+>  drivers/dma/imx-dma.c                          |  4 +---
+>  drivers/dma/imx-sdma.c                         |  4 +---
+>  drivers/dma/mcf-edma.c                         |  5 +----
+>  drivers/dma/mediatek/mtk-hsdma.c               |  4 +---
+>  drivers/dma/mmp_pdma.c                         |  4 +---
+>  drivers/dma/mmp_tdma.c                         |  4 +---
+>  drivers/dma/moxart-dma.c                       |  4 +---
+>  drivers/dma/mv_xor_v2.c                        |  7 ++-----
+>  drivers/dma/mxs-dma.c                          |  4 +---
+>  drivers/dma/nbpfaxi.c                          |  4 +---
+>  drivers/dma/pxa_dma.c                          |  4 +---
+>  drivers/dma/qcom/bam_dma.c                     |  4 +---
+>  drivers/dma/s3c24xx-dma.c                      |  4 +---
+>  drivers/dma/sf-pdma/sf-pdma.c                  |  4 +---
+>  drivers/dma/sh/usb-dmac.c                      |  4 +---
+>  drivers/dma/stm32-dma.c                        |  4 +---
+>  drivers/dma/stm32-dmamux.c                     |  4 +---
+>  drivers/dma/stm32-mdma.c                       |  4 +---
+>  drivers/dma/sun4i-dma.c                        |  4 +---
+>  drivers/dma/sun6i-dma.c                        |  4 +---
 
-=46or sunxi:
+For sun4i-dma.c and sun6i-dma.c:
 Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
 Best regards,
 Jernej
 
->  arch/arm/configs/tegra_defconfig         | 2 +-
->  arch/arm/configs/vt8500_v6_v7_defconfig  | 2 +-
->  arch/arm/configs/xcep_defconfig          | 2 +-
->  34 files changed, 34 insertions(+), 34 deletions(-)
+>  drivers/dma/tegra210-adma.c                    |  4 +---
+>  drivers/dma/ti/cppi41.c                        | 10 +++-------
+>  drivers/dma/ti/omap-dma.c                      |  4 +---
+>  drivers/dma/xilinx/zynqmp_dma.c                |  4 +---
+>  31 files changed, 38 insertions(+), 106 deletions(-)
 
 
 
