@@ -2,135 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D36C4ECAAA3
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Aug 2022 12:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F97ECAAD4
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Aug 2022 16:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343975AbiHZMS2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Aug 2022 08:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52514 "EHLO
+        id S1344554AbiHZQDT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Aug 2022 12:03:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343971AbiHZMSF (ORCPT
+        with ESMTP id S230256AbiHZQDP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Aug 2022 08:18:05 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2082.outbound.protection.outlook.com [40.107.237.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B285DDB6B;
-        Fri, 26 Aug 2022 05:18:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E30IL6xAbx15qoAGJT3b+CdvRgj8OkYDwlnDiguLiwmwSBWD/9JLeLthLJv0NS7lPsa685Hu2EKuiFkb/Q2GkSQsOnH/cZS9vrUrr9eJSb3J9JSG09/TgtPBG9aRx9SCurWWZuoEDRne0P9580/UguRI9UJCjgdwLBwZu8UfEy5HzrFHrIxkjJD3SNpu4n6sVZK8SInIMpMvSrjKXKkSbi/bm3Wh/aEu6OOYvepRZ2jhU2Ngdf+S0YkZkVo7Lz9bKMRsVJ6BOldDDPg+ZRFaHnBkOSMUQeKEH9eYuFzJrhKQCdxGVStl3RHqZapew0EHLsKC4buWa4MMn4Iivp6BUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FxhY9JZSd1Y90JwEIwx2s6qbPQVuceZgd++MixZLL7g=;
- b=nmkoV2eJlnTW9C/q6SzhHc+LOnhrgh6JAlaBCJ0gtxUiSr76q2oHagGPAkaMOk9RL4mDopAmnQB0nywA+gk2zzoNDwUPDjP4XBM1xNY9evJ4GuVURxj5szG6ySkilDI8KVwM5mlHe29y0SRu4MpKxSOPlTWOGo0FJJHmQ7L0Kavx1Y7n6zfSMLdR46xnQs3XNmrkEnDm54Zkfs8HjY0zdXJ0zLk7IcbS4NxwQaZszD/8d5lLoZbnJlvdiuZyQbbMeQhJYnefUnXO/U/8Me9zFZi1ARsmR6b5myQ2dlO7GTvsJq6BeYqPhua5I9Xi9fje8dikYhkD9PLGV5mCFksNfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FxhY9JZSd1Y90JwEIwx2s6qbPQVuceZgd++MixZLL7g=;
- b=ZhpkVYex261zpMEkhhM+lAi9WU0XJcy/4SIxBK7MqnfBBVnwvaz9yCLayRiv1vdG8Q09DQCIbYuuLpxA+U1XjVh83CzpQ4Q2XpHKdsiRlp/TyWLjPCsU/XUofrD3E5dfyywTBGIVdPDbJI0jEO6Bi0mzDZVxmEss9x7LEPT67+IAO3ijtFHHwg3hiTouPBhIpYAiwXqfnIw1JEixOJ/Ag8Tn9G+etDDnKug/FpDkYIEIO9FEEJZvBYf38OCfHEAM/RPVOzC42aGbiG1eN7Hz8zd1CvvGh4NWgkQwfWs2qSW8SEzyadZCnjsNY2+pykizPHeDhKefnKZJWfl9zdk/2g==
-Received: from MW4PR04CA0331.namprd04.prod.outlook.com (2603:10b6:303:8a::6)
- by DM4PR12MB5086.namprd12.prod.outlook.com (2603:10b6:5:389::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.14; Fri, 26 Aug
- 2022 12:18:02 +0000
-Received: from CO1NAM11FT072.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8a:cafe::41) by MW4PR04CA0331.outlook.office365.com
- (2603:10b6:303:8a::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.14 via Frontend
- Transport; Fri, 26 Aug 2022 12:18:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT072.mail.protection.outlook.com (10.13.174.106) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5566.15 via Frontend Transport; Fri, 26 Aug 2022 12:18:01 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- DRHQMAIL105.nvidia.com (10.27.9.14) with Microsoft SMTP Server (TLS) id
- 15.0.1497.38; Fri, 26 Aug 2022 12:18:01 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Fri, 26 Aug 2022 05:18:00 -0700
-Received: from sandipan-pc.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Fri, 26 Aug 2022 05:17:58 -0700
-From:   Sandipan Patra <spatra@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <bbasu@nvidia.com>, <kyarlagadda@nvidia.com>,
-        Sandipan Patra <spatra@nvidia.com>
-Subject: [PATCH 2/2] arm64: tegra: Add user PWM support on Jetson Orin
-Date:   Fri, 26 Aug 2022 17:47:46 +0530
-Message-ID: <20220826121746.32003-2-spatra@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220826121746.32003-1-spatra@nvidia.com>
-References: <20220826121746.32003-1-spatra@nvidia.com>
-X-NVConfidentiality: public
+        Fri, 26 Aug 2022 12:03:15 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C7A5D34CC;
+        Fri, 26 Aug 2022 09:03:13 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id bn9so2012531ljb.6;
+        Fri, 26 Aug 2022 09:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc;
+        bh=CJYOqLIO01MXVIHzVSpSMA9KtKvNIpQx9lFJup0kd+A=;
+        b=nZKNJYYb7BsiUFO0xhhabyJFpwpI9wbBPKhrWhpub9OkdeTNhFbhWKITn+cBfbTXCo
+         yEAXKUjBUape0cJ4SA056RPcmIsAIZpf99RCejQG8z1XHVBovkOy7XQXKLNj8kaHiLoq
+         xtQXGz7pZRz458/dVk1w7/mgkIHsAcQnMD04HNV7uio4qPWSoLjRuqmg+xIPEIjBVAAw
+         9MYJd95Z9KDZKK+/NcMYq4yLC0Ckli+meMCuK1bLwPhq1DyiAaFZVD5HEnqeToF1vlLG
+         b4fEkn+Zx+MxDpLvh1ZF+GhCpDDQjQ46CpWGGyWJ1xrh+QV+7VyIIZD7bWAsF5fRXQ6u
+         RsZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=CJYOqLIO01MXVIHzVSpSMA9KtKvNIpQx9lFJup0kd+A=;
+        b=rsn2AybMiVAsbfPZ0U/mFso24P8CVcBL+kSrUctTLCHL3zXastqmMg/jQaKGc9pAXy
+         MUTXlgit+7PuH6QX0FpERpR9I7lwgKulNs+4vhqtA7VFoh3l3enIo94eazc/tq2URuA8
+         se5j3/+S5YLC9H8K4Zo3RmSyLqO5BJW1yoZkB/gOdAEcUtiAxatJX4NV/zbuEWdzJ2+C
+         58sbS8AhLYv4u74d2ZMCIsrSPu9Ta4DlCjAIPf4YBrb6SJrr70t/uTXoYm82IEitK8aA
+         iZeB+hJ72+sNgEuaBM4xdR0lvMi1oYvDscrDhZ41iOzdXIPAmE5fSyMk96k5Kerrf2TY
+         vc6g==
+X-Gm-Message-State: ACgBeo0/RX/TsuAPAW6XjdiqbG4NnpZ9GuPE4R0Y6k7L8eI26JfEZ9xF
+        OEkhKSMYgSlpMFn4R6uToQ4=
+X-Google-Smtp-Source: AA6agR7icvaWbLM6+nRHP0f0x/I0DIAY+vWIHyEWhhwNgtCtOCHUZfXBrRqo6KAeJlB9s7Y/tznmCA==
+X-Received: by 2002:a05:651c:1025:b0:261:cc9c:3db with SMTP id w5-20020a05651c102500b00261cc9c03dbmr2605963ljm.80.1661529791526;
+        Fri, 26 Aug 2022 09:03:11 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id m21-20020a195215000000b0048ad4c718f3sm422620lfb.30.2022.08.26.09.03.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Aug 2022 09:03:10 -0700 (PDT)
+Date:   Fri, 26 Aug 2022 18:03:07 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Petlozu Pravareshwar <petlozup@nvidia.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "dmitry.osipenko@collabora.com" <dmitry.osipenko@collabora.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "Kartik ." <kkartik@nvidia.com>,
+        "cai.huoqing@linux.dev" <cai.huoqing@linux.dev>,
+        Sandipan Patra <spatra@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] soc/tegra: pmc: Print reset info during probe
+Message-ID: <Ywjuuw/rSRUSORFF@orome>
+References: <20220817184456.1184459-1-petlozup@nvidia.com>
+ <Yv5XarzacTOkTL1k@orome>
+ <DM6PR12MB316434A9BA61A01251E3BA3CB5739@DM6PR12MB3164.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7261b63d-270c-45ed-89b3-08da875d055a
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5086:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Hzxw1BNuMdKol7MyI5xZ6st9ip+rRUPd4mzJskngYfXggd3W5cmTr3RRSy5N9vIO6BTQsPeFcwPffn8e22mUXvdfsWBFOj1nCTukeDriUOIjtaoPREfIKIP7Qu0oiKndCthO1ch6gjHxZvv+8AADJahJWZHhNveiE0JgxTI/FrzA++pXfccTF2/lBPgBCS4oA8FfSwLb+rJI1T/buMYopKgzJ7Tsx5fNmfnxEbQQq8xL/2YcoIxsV7/YKGp9EM/N8q2p62/mlCvD2WSeHm0q+l/SCtyHWb9WaiO3vqv+9F7bT8OThQrohLBoZRELrQJGEtA4N9hN8O7vWcBgX7syyUNOzggwJY1VXAzjvuRZmhYy53oeGCEkcIWh6qIKCdGPGrcCU33iDZ5TsBnaPP/GTJudvVA1lmB/UEclAeE8uo3Gi3MTRdAMbBAe2N1hVdiXHEhOqw5g4z/0Dz6nHF7TDa8GGgn42jWPPPLmUx85u1miXjBOtDjmy0QDH/ThNI6rS8ljK0CzFtfRyH1hfLfAY6on3jqthyk0TiogV0OqlHUkuzu9CcWPPqzowleDwUwIuB2TBtl2gd2mZDZTRBX/EFm4FOddHf/4hdoQKRAh0PjVt6PSTN2eUQKOj92jaccOxe1RYq6RPK1AlNTsL50cXIRcmzUXrSh8l/XYAlmcd4b2sl3Jg9w09mn/Fb+7fvaM7sOhQwNq+g/m18FZIS/9L3DLxLy/cUQ/GbZHY4byFmXjCJ1OvRQ2mW+wE6UPfd9mFimrLy3fDC0AkxdjB2Rk44cOknN2JqBWVtP6uk/pjqrri9mBl28VzNkJCX5sJiT3R8D/i0vZ/A0RMyjMPdMZKQ==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(376002)(346002)(396003)(136003)(40470700004)(46966006)(36840700001)(82310400005)(1076003)(2616005)(336012)(426003)(47076005)(186003)(8676002)(70206006)(8936002)(5660300002)(4326008)(36756003)(107886003)(6666004)(40480700001)(478600001)(26005)(41300700001)(7696005)(4744005)(356005)(40460700003)(82740400003)(81166007)(86362001)(36860700001)(2906002)(316002)(110136005)(70586007)(54906003)(36900700001)(16060500005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2022 12:18:01.6624
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7261b63d-270c-45ed-89b3-08da875d055a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT072.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5086
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IwTi6ziXccuE4c+s"
+Content-Disposition: inline
+In-Reply-To: <DM6PR12MB316434A9BA61A01251E3BA3CB5739@DM6PR12MB3164.namprd12.prod.outlook.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable in device tree and use it to drive the PWM controllers on
-40 pin header of Orin dev-kit.
 
-Signed-off-by: Sandipan Patra <spatra@nvidia.com>
----
- .../arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+--IwTi6ziXccuE4c+s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-index a85993c85e45..e76894574d32 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-@@ -2,4 +2,18 @@
- 
- / {
- 	compatible = "nvidia,p3737-0000";
-+
-+	bus@0 {
-+		pwm@3280000 {
-+			status = "okay";
-+		};
-+
-+		pwm@32c0000 {
-+			status = "okay";
-+		};
-+
-+		pwm@32f0000 {
-+			status = "okay";
-+		};
-+	};
- };
--- 
-2.17.1
+On Wed, Aug 24, 2022 at 07:39:46PM +0000, Petlozu Pravareshwar wrote:
+> >=20
+> > On Wed, Aug 17, 2022 at 06:44:56PM +0000, Petlozu Pravareshwar wrote:
+> > > During PMC probe, print previous reset related info such as reset
+> > > reason and reset level.
+> > >
+> > > Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> > > ---
+> > >  drivers/soc/tegra/pmc.c | 27 +++++++++++++++++++++++++++
+> > >  1 file changed, 27 insertions(+)
+> >=20
+> > We already expose this information in sysfs, why do we need to print it
+> > during boot?
+> >=20
+> > Thierry
+> There are some tests which would parse the boot log for this information.
+> But I agree, since we are already providing this information through sysf=
+s,
+> there is no need to print it during boot.
 
+It'd be a good idea to transition the tests to try and obtain this
+information through sysfs first and if that fails they could fall back
+to using the boot log. Although to be honest, I think we've supported
+this sysfs interface for long enough that we probably don't have to
+worry about a fallback.
+
+Thierry
+
+--IwTi6ziXccuE4c+s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMI7rsACgkQ3SOs138+
+s6Fuuw//fpdWuuuYJumXJttWNjjZcCt38TggWatdqAJIJQ3UIyy6K/+jga2fV0SZ
+SMbsuNdMyWBgq7pVNVNrAqZptg+3bnrInbJzU3BIT+UCQuXnL95I1MuvaB2zWTQv
+ZFLRZwd6X4txY70t7iFwstgjkNhKkSupGE6hDHwMh3h0ptGYby3sDtbYlXBBxnRk
+4MLW68/LIuJe36kRJI8Z7LLjzZYOo+Y1Z8Dk59d1pJxQukaH6gy5zxyuxoFd/XAt
+THB6PHQid796Ej8w7W3U9oCyvgzqYPClIA1sxaNH9ZPblDpf2skQczrJAps73aK8
+UReS3Bg0uBsj7elz9OY57bsw0gqp1EqiEK9tlfx9WVF1H2eJYKF1D/2Xb2/lsv6A
+DonpVF+TKzMiYe0AL2+vSWlzK/LB7Ckh9Lyz8aijAepFiQgAjp6G8Ogbme1fsO1Z
+shM4FahaAorW+aqLFBl9VLDthcTVlgx7WTt3aovSMYFS9DBWGluC5DSW9UCtLDVn
+wgv1M9AyXt5sYv2UzDKC2w1LQPejRfNclu0w3wM2SNkkY2551244R0H/JTusvDC6
+2dYgQ/h6f6yrxPAmmIe+2/tgYOCfp5yuMq0Sv2BdQptAR1q5v+12Lebbc0g+4du3
+eotOvH6HE8RBZRubK0d8Ih9ZY9RWc6nE2ZKH+MUqgX7+v0Dgj4M=
+=iqMZ
+-----END PGP SIGNATURE-----
+
+--IwTi6ziXccuE4c+s--
