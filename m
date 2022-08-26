@@ -2,140 +2,205 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63223ECAAD8
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Aug 2022 09:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FA4ECAAD5
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Aug 2022 12:18:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344046AbiHZJr0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Aug 2022 05:47:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46752 "EHLO
+        id S1343664AbiHZMSY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Aug 2022 08:18:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243947AbiHZJrT (ORCPT
+        with ESMTP id S1343861AbiHZMSC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Aug 2022 05:47:19 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7F5D7422
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Aug 2022 02:47:17 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id z20so1077224ljq.3
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Aug 2022 02:47:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=7/zLm6wYmIJxefFBwnQ6xTIL94BoETjg8bQDFj+L0EQ=;
-        b=HIdAzMqZp+CHMUJvXZDL4kQfbbHEzP9oyvYz1ueQNzPdJuFdzN/xiOWNVvAI5PypY2
-         phc7mMSMvv0CqdAk3VeOaSOG1rVJQhyoTe39lWgf29/RQtOFhD7d+DPbjBkxwJtUIkhy
-         cta3uW2ybEZW+YD8Fw2dkJR4gv7MOtmY6qC+zYXXmj+Z4l5AhOceFVfeylnXwXhn1Qg4
-         ld1fWsPQV5Kf/3HaxA9FJzTVAxTZPdCP38pgrmH64yfQ9etak3X7fthigbG+2fPn57OV
-         wm7dDnDP5PGUOjHBGcdSnq4ZOYoc68PuhJYJy371olT9dw/BL1IEEx4esBwhZD/7bnUm
-         gpNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=7/zLm6wYmIJxefFBwnQ6xTIL94BoETjg8bQDFj+L0EQ=;
-        b=ol4Yp3Ee9JBlOh7FJvLUFFGoiuD1ONG5c9kd70s+JFH8eM+r0x4BZz95nhlWZhHWPs
-         l4yZaH7rrG+ujVq0IUzs2ORND7m7HV2uMfEO9UuI6tf4GAwqN1v15QSOKLJsnUc2xFf0
-         ss0y5AVt+6yi2gKz5TIDgkxXHKizMexsQlRCpXKba9pLik6EIGSULZqoE4Ub1x6zeuiq
-         +Y30+qlvt23Op/zpINd0kMd+8oa0HRxSSKv0YEl9AGfLu4Z4FCdmcqgD6gietPCSzZl2
-         KobIcnlZHWPbjnXBIj0k05+Pfwx+4FN+ipcMgp4gz3bL8ld1uW/HlB0Z+fKJiTgWoPgv
-         5eWA==
-X-Gm-Message-State: ACgBeo1fetHXaXAI5WB9OLBYkHSVoXn5VdTk8L1zpWvnOvwTBmSUiRio
-        lS0Kiix907ZVw6W1UfWXrCV3DQ==
-X-Google-Smtp-Source: AA6agR4NooJqTIyf/F5iZCsGcw1gdJa0BYVeuEHWvl+KrvNFJZWMb3qoex5YNXUISP81L4uvAWNr2Q==
-X-Received: by 2002:a05:651c:179c:b0:261:8fbe:b729 with SMTP id bn28-20020a05651c179c00b002618fbeb729mr2140443ljb.114.1661507235107;
-        Fri, 26 Aug 2022 02:47:15 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id q22-20020a194316000000b004931817c487sm320823lfa.197.2022.08.26.02.47.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Aug 2022 02:47:14 -0700 (PDT)
-Message-ID: <e4c5a39e-6a47-6814-92f7-c751bd95bdf0@linaro.org>
-Date:   Fri, 26 Aug 2022 12:47:13 +0300
+        Fri, 26 Aug 2022 08:18:02 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BBA6DDB75;
+        Fri, 26 Aug 2022 05:18:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=juUWhNHqDn2+sPKvVbeVt44WEdJrKQvaxewKza8Q5LAlMLOvLTtCrhsdK+MxAMM9fP9Y/vlNW/1s/hRmEexbbscHo1SGoIBIPdbaj7lB8g9kZMguAgIShNb8rvpFptZxDEFNvrllcClxx9riU2JE25RCBuH5p43XyD+iEWQWohSqOt7wMIXaPnJxAikn+Q1AgM6T/66vc4Dstf82w6z5RGpvgxez3GJDbd7TMYP+SI95URJeYgUCpEHAwjyrZg0klC2HWnyE9JVeMvJuoq9pvfkkT1FATppyXtOAk7i7hkPq7uwK+6EW5trR7lGsDV9KPiy7IcQXt+nIqg7j1aFF6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I6UKajqs/S/laLntuOMFWN+aKmwPPb05+IjUjthsek4=;
+ b=b6flBx4jOa5eT9byaWL/u+EYjqFauyRrclqIPrT89HZjKolgeCg8eY5gTB9gnGCWq8xTiVXRS2m+e6eTqilIlXOmtNKOkxkC9pigWrvkR0bSSnCYEq2at7uS/TPvZeqwc+WHYne+7w36UO5XG8KvSvSBTpXn94KsPfLMdIOGOdarrUNi2WldfAwWqDEL3r/DHIOunSH5Sr0BD9Xxq+6mA0Xw+/HtgjrXzIfUCPVas+gYPhff166Dec/h+bhpyxJ/0U6Ibxwxk8/f8LDW6IMK7TMaKMY/IQ5FcI2lMkZAUQDQQlTfseutsb1RSiYy1TO8yW1fuTe4967MsP2wlZCAxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I6UKajqs/S/laLntuOMFWN+aKmwPPb05+IjUjthsek4=;
+ b=qLGls8ovz/BL5phOgtjgUU06f+0ZktDoJeynUdGIICN4uHwV03ofwXEg3smkuQOnz1EcxtehGB1WAQ5ztXAxg9i3pBXCe/uwuLoWCUhVEREJP8xixDnekVyuCBsFHwv3ZyvpOWwjnlCp4hQwsx3jmi8zMqw0Btci5dQ56TfUmP2wLTV5buxp3H5VJeINg5kQf8movW2M7Xbbb365XuG450FckiaZJcAktkugP67ZPLqb3tjBimTlVtcTJb2EfnHRuGabPdKZgbb8blAhAM9aVYOCRC3673jKN7nM2TwkYIgS6e2bLi8DUg2yhIspo1ibDDBhckuH4kqaj8/PxA2ZXA==
+Received: from BN9PR03CA0622.namprd03.prod.outlook.com (2603:10b6:408:106::27)
+ by MN2PR12MB2960.namprd12.prod.outlook.com (2603:10b6:208:101::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5546.21; Fri, 26 Aug
+ 2022 12:17:58 +0000
+Received: from BN8NAM11FT024.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:106:cafe::8b) by BN9PR03CA0622.outlook.office365.com
+ (2603:10b6:408:106::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15 via Frontend
+ Transport; Fri, 26 Aug 2022 12:17:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ BN8NAM11FT024.mail.protection.outlook.com (10.13.177.38) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5566.15 via Frontend Transport; Fri, 26 Aug 2022 12:17:58 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.38; Fri, 26 Aug 2022 12:17:56 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Fri, 26 Aug 2022 05:17:56 -0700
+Received: from sandipan-pc.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Fri, 26 Aug 2022 05:17:53 -0700
+From:   Sandipan Patra <spatra@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <bbasu@nvidia.com>, <kyarlagadda@nvidia.com>,
+        Sandipan Patra <spatra@nvidia.com>
+Subject: [PATCH 1/2] arm64: tegra: Add PWM controllers on Tegra234
+Date:   Fri, 26 Aug 2022 17:47:45 +0530
+Message-ID: <20220826121746.32003-1-spatra@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 5/5] dt-bindings: display: drop minItems equal to maxItems
-Content-Language: en-GB
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Marek Vasut <marex@denx.de>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
- <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 970ef1da-dfd3-4880-f686-08da875d033f
+X-MS-TrafficTypeDiagnostic: MN2PR12MB2960:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: B9DcQzI9vLmXrc+PbF+T71KMN+/x344EwiEysYIGPr8ied7wunVBC4nXNwI/lLdIRj/1XdDCP0MzsM1dOBstnyY8Pwq+SSxADf5yZSyRaGhPRjvWfZcamjD5RSKMtCK1kAm7WXzNrmDG7B0o69ppe6N+0T4Eq232duQpwfUyJhvvF7gYoxsS81Gt/jScVlbjpmlOeUiklEx+OAsDkMImZIl8i6todxu9z7g4X1g8DXDx7d2b6csVJJTv46lJyBXGyT+BvArciyiQDlqPdC//Lz3+yIJYnSgi7fILU7/u/2aRFKm19P6dwz4kGlygP9+MeUAeXVJzmxWle4+sXkHGl+05mZQWEfnT+efzhEnUWaSZG4GKVrmwXX2TSfymPqGLcJ1s9Ow4/Q1qFzQoOA66/x0T4YNMF7XXL2k9m6KIZVDGG+EcBp1TwLLlLTASOL7Z5OzkkuuxtXDRIdIjQlL/NBZugmr/s3gvUOHbfPZeSbq9+n7XoDkv496ccXt8IJ8S/fk+hCfOahekVgOiqXZZTv95zHzXvecKpYwYbbWehLCG/A5CBumSWYJcEbMYUakCw6tobPm358gV+CzGjtMih98Z+HTIyQN7KHMCVjGg9whOTggerlOQTDIrqyZ8qs1GRRg6INGCoh7LUQKitpUMCsUVpnY3DU3oxuMyOG6pyW8U12KTNf7oc0Ci08LdN/5h+TSIHebYbnP/9cQQGedoKwhfa0/b154NLXZRaug3sCUfrdkNzwC/FNLXauU9emH5Z0SJ7XHm8g3HW4WC4Fm33jKNdCXDDD6uwwZIkPmW/cmAnUTVjR/p6FVKjnRjQR4LiFVA13NN/WymC2ULOYq+8Q==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(396003)(39860400002)(136003)(376002)(40470700004)(36840700001)(46966006)(110136005)(316002)(54906003)(6666004)(7696005)(40480700001)(36860700001)(8676002)(4326008)(82740400003)(478600001)(5660300002)(36756003)(107886003)(41300700001)(26005)(40460700003)(47076005)(426003)(8936002)(2906002)(83380400001)(86362001)(82310400005)(356005)(70206006)(70586007)(2616005)(336012)(186003)(1076003)(81166007)(36900700001)(16060500005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2022 12:17:58.0703
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 970ef1da-dfd3-4880-f686-08da875d033f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT024.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB2960
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 25/08/2022 14:33, Krzysztof Kozlowski wrote:
-> minItems, if missing, are implicitly equal to maxItems, so drop
-> redundant piece to reduce size of code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml   | 1 -
->   .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 --
->   Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 --
+Tegra234 has eight single-channel PWM controllers, one of them in the
+AON block.
 
-For msm changes:
+Signed-off-by: Sandipan Patra <spatra@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 84 ++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
->   .../bindings/display/samsung/samsung,exynos5433-decon.yaml      | 2 --
->   .../bindings/display/samsung/samsung,exynos5433-mic.yaml        | 1 -
->   .../bindings/display/samsung/samsung,exynos7-decon.yaml         | 1 -
->   .../devicetree/bindings/display/samsung/samsung,fimd.yaml       | 1 -
->   .../devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml  | 1 -
->   .../devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml   | 2 --
->   9 files changed, 13 deletions(-)
-> 
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 81a0f599685f..c2dc651f0842 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -840,6 +840,90 @@
+ 			#pwm-cells = <2>;
+ 		};
+ 
++		pwm2: pwm@3290000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x3290000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM2>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM2>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm3: pwm@32a0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32a0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM3>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM3>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm4: pwm@c340000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0xc340000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM4>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM4>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm5: pwm@32c0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32c0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM5>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM5>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm6: pwm@32d0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32d0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM6>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM6>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm7: pwm@32e0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32e0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM7>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM7>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm8: pwm@32f0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32f0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM8>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM8>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
+ 		spi@3300000 {
+ 			compatible = "nvidia,tegra234-qspi";
+ 			reg = <0x3300000 0x1000>;
 -- 
-With best wishes
-Dmitry
+2.17.1
 
