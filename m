@@ -2,159 +2,205 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4488DECAAD4
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Aug 2022 12:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA2BECAAD2
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Aug 2022 12:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbiH2MBl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Aug 2022 08:01:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59050 "EHLO
+        id S230372AbiH2MDW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Aug 2022 08:03:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbiH2MBK (ORCPT
+        with ESMTP id S229785AbiH2MC6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Aug 2022 08:01:10 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2043.outbound.protection.outlook.com [40.107.243.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5D6868A1;
-        Mon, 29 Aug 2022 04:46:07 -0700 (PDT)
+        Mon, 29 Aug 2022 08:02:58 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A7D286B79;
+        Mon, 29 Aug 2022 04:47:59 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SmnmTzI7AG6YQvm8VQCIDRCy1SEpF6iSAvjmPHG5x9TdMindComGr45xtn2AnOQWAbe7E1ZCJOE0ycrygyZDM9TyNAFkPhXNkrDrK2h3e/q+MJIXoQPxDv/1wdZsgCdHqk4H1iafgXd0BXURiTLP4dpSJn+0cg/PVetwDKQL922nRQdt5s499vDxxJA4OxUNns9dXacLlKqaxbnSAcFGyE6uKKOufMR63X1ebVwIVj1iNVwetyJ6qsAU7F/0uVUmtW8yftDohrn3DHaE0PtUuQkF2JxWEaLo/UHBvV7DltD3FdxiGAOkkBSjtbS0jpdP7i/z5kiUmw5KVhiclUpVIQ==
+ b=TixmucmKBRYiphwCd+ixc2JRASB+E4ERxPRB4P+7F1K8RWdag8BvwWRhfR3D4b4Vm3MBtdSuFoF0eUsiHkL64VMIKaqZ1ARQP1wwIIfJCeY5spHHWM6Qpl5VOFYlNMQ3xCHD0rRh94lPAQIWNNhON8CGTua3NEjlPgrX2N1Gn+BpC3aV/KtJ6b5ARKWhFMO5CxNA8wJRhkI+9o0a+WSiRjSMRp90bECIA10k8lDNnSiDaFS+xUTNoyz0PYeoxOIQaRhyfklX0Nb41PGz/yNLSJdCvtBMFR+es1oHbowWX+3xPbHnI0aeUBVaNHpg3cQPnhq9tnkQUVfVhILJJ47duw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3hukz6m3n05GKuFyVlXApm5zN5Ep7/LtvcalZKIcrC8=;
- b=dPZi9YKQKBnWsrKFLjgNGQsAWUJiMMBjJPoJ81OqYvwMMxS7TY6HTtK7ZLFbmMlCmxfwdmAnYzydLliZojBnpJSWxzdQZKPXXyJaASrFZcenQwae/Pp+CVHtDb+utrnOgw+ZtPE9F4yNIom4jHhU2ldgRNpLI7LhI+7uvsdkbBa/sfL0mQpNXYvO8OX9y6HNwhdSfppB03/LxZ9q2+vmCUdjPledRbKxi7BMBMh5SrCug8BsXRSZN9sBJMOQPxMyFTVGxs9o2vVJ9F65ulcNIfhaYnFob7HlL0vCbkDbPVmgh4PcsYjV+qj+6gtytQT/vJFI9b9+db6iDzA9KYANug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=I6UKajqs/S/laLntuOMFWN+aKmwPPb05+IjUjthsek4=;
+ b=m/qc+4s/ZWEuvWYOdx01woMJDavbnnANxA/lqqNXpn7yZAvhwiKlJQ9djqrz7znm2j6tZp+Lo5rlDC++MmfKN7Ky1yGWlY7sZijjbd1mGWCiDJ8semh1A44WS1lCv1lNLjb00hD4VBrR6SMbeMcAcsbD9s+SwmtLEHUYnkxeFkimrlNymBUtc9lhDCN411zQmXq+2Uk+2ia8D/IyvChX/1bks9whti7gPv/Z/Aqr2lWnGHx6qBM5SjL7aVSWnxVrascqrXZP8021QLa4UEsYkZgNFMa9dQ0CYm+q0nZ/kMBE3/xXMkHI3RcAEvQPuF6CXu05nCtpnIudhv/z3zMYxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3hukz6m3n05GKuFyVlXApm5zN5Ep7/LtvcalZKIcrC8=;
- b=rs6aKrWABZUp6g1X8XB7/4Y6PFJcPZ2oKxTZ+PiWhX1OUOE15c8XxyNVIA6zRDQwTKaehHrSbEKBzvBCx3YFK0d2s8wpPrtXyQtSqEW/+bVHiXTAPUcFYVx4VzXXWb5qDIrpn2YEo8krvjfHUNlphiQhwv9H8+Y75D+baR5/r21Eu9OEmG/4+0+7Uc9k/f3jD9YjxiSY0Uo9ws5mq3ksW8cWoPEyXl8/JADmG95+0l3Qthw/N1nkAU87NypIe4zRoqYtXdOlWuoP6CXDKDvO5Lf7LnL9RKT2JkMhj9b1X0QYdJmqXRJsKv2wx9c/gKv/CaBFX7ph24TGoDwAYjrAXw==
-Received: from DM5PR12MB1628.namprd12.prod.outlook.com (2603:10b6:4:7::13) by
- BY5PR12MB3905.namprd12.prod.outlook.com (2603:10b6:a03:194::11) with
+ bh=I6UKajqs/S/laLntuOMFWN+aKmwPPb05+IjUjthsek4=;
+ b=pKDLD5LNfvq+t1KqaXnOmHUA+OJ81j96KJt5TsjjkE3KhB39sDoxP09PWYZdMoiEliDvSx1nQLOM1UM6mltNw1axu8UotdvVHkCLVDs25p+LmX4sQHqy3vbmql05okxXsYG3R3x6prtfPx67s+swCxqXfpLhkMK7ceANlGsdOH6Uajk1A7nsSJlxlHQ3uSPON/fyMEcTNuL1iYvii3WPioyTrUBV0MZLEdaNUJzGQOGkbem2IVdoAZtvudyZLw3iFFtOQzNsVhuDl1w6x3efE357ePWLbCfqFCKZf5AMnTwLhgmoZFrzP9qa8V1hSb2mvAIs2Tn6XRLuji2trok2BQ==
+Received: from DM6PR04CA0027.namprd04.prod.outlook.com (2603:10b6:5:334::32)
+ by BY5PR12MB3649.namprd12.prod.outlook.com (2603:10b6:a03:1ad::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15; Mon, 29 Aug
- 2022 11:44:24 +0000
-Received: from DM5PR12MB1628.namprd12.prod.outlook.com
- ([fe80::c509:a193:93c7:e525]) by DM5PR12MB1628.namprd12.prod.outlook.com
- ([fe80::c509:a193:93c7:e525%5]) with mapi id 15.20.5566.021; Mon, 29 Aug 2022
- 11:44:24 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.14; Mon, 29 Aug
+ 2022 11:44:39 +0000
+Received: from DM6NAM11FT048.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:334:cafe::ad) by DM6PR04CA0027.outlook.office365.com
+ (2603:10b6:5:334::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15 via Frontend
+ Transport; Mon, 29 Aug 2022 11:44:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.238) by
+ DM6NAM11FT048.mail.protection.outlook.com (10.13.173.114) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5566.15 via Frontend Transport; Mon, 29 Aug 2022 11:44:39 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ DRHQMAIL105.nvidia.com (10.27.9.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.38; Mon, 29 Aug 2022 11:44:38 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Mon, 29 Aug 2022 04:44:37 -0700
+Received: from sandipan-pc.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Mon, 29 Aug 2022 04:44:35 -0700
 From:   Sandipan Patra <spatra@nvidia.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Bibek Basu <bbasu@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Subject: RE: [PATCH 2/2] arm64: tegra: Add user PWM support on Jetson Orin
-Thread-Topic: [PATCH 2/2] arm64: tegra: Add user PWM support on Jetson Orin
-Thread-Index: AQHYuUXr+xSdwS0t+ke3FPjrDb5ubK3BceuAgARUJfA=
-Date:   Mon, 29 Aug 2022 11:44:23 +0000
-Message-ID: <DM5PR12MB162825333C0ED3A87D886165AD769@DM5PR12MB1628.namprd12.prod.outlook.com>
-References: <20220826121746.32003-1-spatra@nvidia.com>
- <20220826121746.32003-2-spatra@nvidia.com>
- <eebef02c-e9b9-2ab0-5178-7996cb62a116@linaro.org>
-In-Reply-To: <eebef02c-e9b9-2ab0-5178-7996cb62a116@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 90404f20-3022-47eb-17f3-08da89b3d1f5
-x-ms-traffictypediagnostic: BY5PR12MB3905:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3J3ZkpAuuelEFywv8VaRSXwfQn2YRE+Re/dk6CqoEEhSE7SzNziKXmCeXIfkLsgZzFZ/+2oL+MkHVDzIxGuptZHXdomkc48aFQBGXVZBIANTnvEd3ZYjf9oNfHfDdHbJB9kDF2YZD9kpA9CRbkCj3ZGFJtnY4Ob8fW4qgSu/mLOkLIxlcm1iTyyp/n5R7/q+/tLxy95JuUKsqc0DC4TZ15sUsxHJ3TR/i4kLByT3r3TsN2f7stiLxbeMh0rqXP2Eh1BixUfR9aX0rzSbGccmDDru4xZL6eMQyAyErrl4oDsax7Oe9RcWsTLNCYZk+PldI+rG2On0nQA3qvY2VHr0p7Dib641DDGoP19k0twqM1lnNKOw/VDFWbMa2Oq/T7T0sNf/AVnKCrWmJd7Ik0od98AgkQIU00h3IPGgb1GrcRg4he8grjhTgxL8QCQilFhbvWjeDtJ02jJoE2ceBvW3kJzEE6Ql/j+kjEqIn9EdWgkFMOMJRJR6q1ebSJeYRsxpp3hAt22MOQTWDr0JH4OH5Tp/RGUBQwQ+o40/NOK00l2O4Jt3jA/D5bZ0Jg2Qqw9Fq0QUrdrkPIDq765HXpYskw6D8X0dxQm1t7RmmqnvaE9Gdkg1GezAztrdIVUiMAz6hdLs6oz00mJ9TeVyDORC6UQErP4RoNbwD3SgxVoehRaWboNL3hP+2W9fAwC8kT/fVRlMsjGpcfPplPUC3gkKOakGpxM29q1AymGqA8yQ0Nwjd3o0WarUF8V1dnnA2XYrIBLoyRKXAKh0knFibjVhPw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB1628.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(136003)(366004)(376002)(346002)(396003)(64756008)(8676002)(110136005)(66946007)(66556008)(66476007)(66446008)(4326008)(54906003)(71200400001)(316002)(76116006)(8936002)(86362001)(5660300002)(478600001)(52536014)(41300700001)(38070700005)(9686003)(6506007)(53546011)(122000001)(2906002)(26005)(107886003)(38100700002)(83380400001)(7696005)(55016003)(186003)(33656002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?K0UvQ28wV1hEUkRmWHZzUVFKY2IyQlFWbXdvRDVqdjJqWm5GbDZkL3p1bnNi?=
- =?utf-8?B?QU5oeFdPYUFYdGJEYTdMUVBPSkxHdEdxendLVnNKTit0cTBJS1hFWmJTTDhX?=
- =?utf-8?B?eUl3TEpPZTJycHRvMEFadE1WVktYQ1pSYXg2WUV2dXVwdldvZlpqREJ1T2ox?=
- =?utf-8?B?VE8wK2lrZFZKa0ZXWWpLbjdqTkN4andSSFlUZXp2SGs3TU1hYXRTM29iUTJp?=
- =?utf-8?B?Vk1ySHNxcUliTXlsTGFSMGJWWEgwRmNYN0FHdWs4Um1nUkJOY3RUckVnZUZk?=
- =?utf-8?B?QnhhMGdtQ1pKUzVnczZrSHl2cnpRY2ZWQlRQcXdGeW5uR0JycXZYRVlKR0dZ?=
- =?utf-8?B?UlpPbk5pOW90eHpRTUNuQ0JUOHFKUzFGaXM4UmVrMXJUQnQ4TnVaNnVVaDVH?=
- =?utf-8?B?ZENrVXBad2xyK1gzQmUwNE9OYjJIRS82VUZNUXNlWlFhUGROSlhEVlc3dFg2?=
- =?utf-8?B?TTJxOEhneXlESSt3bjAvRGx2ZThtN21YTjgzRnprRHFhSjBBS1ZXMDB4VXg0?=
- =?utf-8?B?UHJKRC82clRQT0dTYmJvaG1ET3BCT1NkR1YzQTkxTkp1S0tnVmRNU2M0OWJx?=
- =?utf-8?B?SmxsQmplVVZ2aVhkOHBORE5YdXNQU1R5YTlCbDNzYWRlYytQUGVjK1JJYWRv?=
- =?utf-8?B?WGZnT3FxdWdrRkEzQkt1YzJHamxLZUhzZVVJdE55VFJKUTlEcXg1NVU3T2RG?=
- =?utf-8?B?Mzk3N0hhRjNrb2hhZmlLamFjekFVQjlWN01kK2x6SGFGd0FOMVdUZm1Yc0dx?=
- =?utf-8?B?SjFJZDNuWmw5eWNoZFNoblJkdENFSG1xOEdoc0Y4V0xJdTI0Y0ZjalBPV21n?=
- =?utf-8?B?YVkyemFuSnpvc1pXOG8yZzBYdU5jVUgxUFBzMU1oNDJTMFcrNEJ3TE9iemRL?=
- =?utf-8?B?ZTNzT09uZ0t3KzV2RzgwWURGRk8rOW5ZbG9oTEl3alIvTnM2WVpvK3Y2bGpx?=
- =?utf-8?B?dDcxSEVaMTRGQjRWU1JaSVBaK0NVTVdvdDRFZlNlZU9TWWxOT2MxY3RJaDRw?=
- =?utf-8?B?M3I2Z0IzcXpUK3lobGpZRUgwK0kvY2IxRktCWHFmKzVNVUpSVlJDMlhXYXlL?=
- =?utf-8?B?MnlUWDFFTGd1c1ZSeHNJTTUrNytIbC9xU0JLV2daLzNlejdpdG9FNWN0SzB2?=
- =?utf-8?B?MkVTUUVIaTV5b0N3S3dDTWlGVXVzKzNwREk0cmFiTUM2dnlPMzh5aWZpcjd5?=
- =?utf-8?B?dk9Ca0s5eFhHc21qekk4Zm1FWUdPMjRvemJWWVFiUXRZamEzdzNhZEE4MDI1?=
- =?utf-8?B?bkgyZ25pNzNNanozSlY3NHViVlVHL3FpUFIrWnN5dVNMR2gwZVM1L3ZKcE4z?=
- =?utf-8?B?KzJKZEIvMXp3dmF0VENnQmtNWUlFenJtUFpSMnYvVWplc3BUZ05vbituSEdK?=
- =?utf-8?B?TG1BSEVteXdNNUdYNG9vSEJ4bUFQM2xOMFNyZEhObGxZOXVMeWtnQlhkNVZC?=
- =?utf-8?B?WGtRYkdXdlZhcEJSZENTM28wazFSN3RnbXRyR0NDRCs3SzB6dmRmaGkyZDFo?=
- =?utf-8?B?VUZUWksrYjc5Rzh2M0t2cHF3QlYyMi93ZGxJY0tXZlA4VVRnV3ZxcHdkODVN?=
- =?utf-8?B?S2QxdTh3eTk2TFNxSkVTc3JROEVaRDF3d0RIeVk3Nk9uVW9sNE5KWm1XQlUz?=
- =?utf-8?B?ejUwUTdVVUc3eU9qS3R1OXVBUHJQYWQzcGt4em0yT0RGdXhWS2xXZmFPTjdY?=
- =?utf-8?B?NGZtbXlMMHQxd1pZWjN5eDdQSmJGeWZ6NEsyMS9EdUQwRWo5RE8vbTNZbVJ5?=
- =?utf-8?B?eGNBL2ttUDB3V084SVpWS3hkNkVSWW92TENHeEt4bUVFbzljSnB0RW85WnBV?=
- =?utf-8?B?NTM1SDFOcWpGWFJWeUxNdnVzeWtRME9SeXVUT3NRanhSUzB3TERmODZGb3Y3?=
- =?utf-8?B?a3ZiWHlXYUF6QnBweHpjaG4wVlFrV0trZktFL0E4R3R4QmljcXNjRDdyNnZY?=
- =?utf-8?B?TmcwMk9OUHF5N2VUVXFLTXVJa0Z3VGZabG0yMldVTkFQdCt2UkQ2NmRWYWRD?=
- =?utf-8?B?aWlTdUJPRlZsZ2RLdS9KYmV1cHVQZ280d2R5NjBpWjFuTk1pUTJmK1dJekRD?=
- =?utf-8?B?WTAzWmtFY2lmMEdWdE0xZFdGYlVxR255bElHNXg4dFFKTkx1YTdtZ043Tzla?=
- =?utf-8?Q?mnQ4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <bbasu@nvidia.com>, <kyarlagadda@nvidia.com>,
+        Sandipan Patra <spatra@nvidia.com>
+Subject: [PATCH 1/2] arm64: tegra: Add PWM controllers on Tegra234
+Date:   Mon, 29 Aug 2022 17:14:31 +0530
+Message-ID: <20220829114432.19566-1-spatra@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 86ec5f4c-06ef-4eba-a779-08da89b3db17
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3649:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Bl74q31oWeyfgOsiZcKRQ37Vtek1kNi4JKUPvQUiX2qeabL4uIxqg3M8ffZX1DtWcZIe/pbUdRR63SmrgiZQP3lA2LUWWMjYjr2osV6KMxRFMBDK6szzPxiE4FUNXfmn6e3D46oVLvI0j+qQrMkUD5JBKIxRQ2nA5+O+IpL1+3DTwKtYntgQKIjbqZRdjwIti+BtnuDwlJq4x5wLDiU9CRdqE4adZdkfIsj+mq80BaPtkRAo9B193F4CDIOUeDbmBW+/C3NpTEq17MYssKk3Q2k4YxaRYpLU2guIKJKK/UDj34Uta5qaAES1n3gfhxWWcwpEGMYTFsUwVl8FDdHhc5E5RrBgVnZ2UV/QJAovmI98i/GjW6KfiK95pvPGr57nBTVafsdW+kOO2luJR8HzEPnTiAOp6rQ3ZV78294XtO8Hi6KahGm+BE+BUd4yD+6sl05aoSDUbkQbv3UuRIZqoj/bKGoPgF+yX7KP7QCvt1ZOmUlm4VSLMDAJhjx0xiZW/0ESMAFS8pmpYteD+9rjX47dvtliFTCaBDzPsSjRVsd55cCXPJb1p87xbbC0qrrT5zhgqhYPoEJLo33HimK5Xx9loF0aFQAyyHNmSgyM0AUQD8TNTw4T91tzr9/2BRLhbBNM5+8YkSGx5PAbfLkiECzOqQg/lqHlUoldP+HSCPJ2U78AUXJ1d3KdRyrbhWQZRZRfjV7fGlJxn4fK9Tn3jgwrXHCxtjP6znjanaBfUhCB3Hr3H0KhRxwmrHg8RUF6qT2uLFNbmi8NC/ARIe5Ex96q4lH+S45rbn+LBfKf/b3jjwzjwIZVl8OSOs21hMw8QWsI+SJjwD78e8sv+UgGZA==
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(346002)(376002)(136003)(396003)(36840700001)(46966006)(40470700004)(70206006)(6666004)(70586007)(107886003)(2906002)(41300700001)(7696005)(8676002)(8936002)(40460700003)(336012)(4326008)(2616005)(40480700001)(36860700001)(186003)(83380400001)(426003)(478600001)(47076005)(5660300002)(86362001)(1076003)(81166007)(356005)(26005)(82310400005)(82740400003)(36756003)(110136005)(316002)(54906003)(36900700001)(16060500005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM5PR12MB1628.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90404f20-3022-47eb-17f3-08da89b3d1f5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2022 11:44:24.0373
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2022 11:44:39.3008
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /ydWvOfqHu86lnmUxvm2r9Yt0k/VtL5TLDWRzNurcrFhbKej9XwPLkB/CD+1RuljA/d9OSImSj6j4IPm4A2xtQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3905
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86ec5f4c-06ef-4eba-a779-08da89b3db17
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT048.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3649
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS3J6eXN6dG9mIEtvemxv
-d3NraSA8a3J6eXN6dG9mLmtvemxvd3NraUBsaW5hcm8ub3JnPg0KPiBTZW50OiBGcmlkYXksIEF1
-Z3VzdCAyNiwgMjAyMiAxMTowNSBQTQ0KPiBUbzogU2FuZGlwYW4gUGF0cmEgPHNwYXRyYUBudmlk
-aWEuY29tPjsgdGhpZXJyeS5yZWRpbmdAZ21haWwuY29tOw0KPiBKb25hdGhhbiBIdW50ZXIgPGpv
-bmF0aGFuaEBudmlkaWEuY29tPjsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBrcnp5c3p0b2Yua296
-bG93c2tpK2R0QGxpbmFyby5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC0N
-Cj4gdGVncmFAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+
-IENjOiBCaWJlayBCYXN1IDxiYmFzdUBudmlkaWEuY29tPjsgS3Jpc2huYSBZYXJsYWdhZGRhDQo+
-IDxreWFybGFnYWRkYUBudmlkaWEuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDIvMl0gYXJt
-NjQ6IHRlZ3JhOiBBZGQgdXNlciBQV00gc3VwcG9ydCBvbiBKZXRzb24NCj4gT3Jpbg0KPiANCj4g
-RXh0ZXJuYWwgZW1haWw6IFVzZSBjYXV0aW9uIG9wZW5pbmcgbGlua3Mgb3IgYXR0YWNobWVudHMN
-Cj4gDQo+IA0KPiBPbiAyNi8wOC8yMDIyIDE1OjE3LCBTYW5kaXBhbiBQYXRyYSB3cm90ZToNCj4g
-PiBFbmFibGUgaW4gZGV2aWNlIHRyZWUgYW5kIHVzZSBpdCB0byBkcml2ZSB0aGUgUFdNIGNvbnRy
-b2xsZXJzIG9uDQo+ID4gNDAgcGluIGhlYWRlciBvZiBPcmluIGRldi1raXQuDQo+ID4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBTYW5kaXBhbiBQYXRyYSA8c3BhdHJhQG52aWRpYS5jb20+DQo+ID4gLS0t
-DQo+ID4gIC4uLi9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEyMzQtcDM3MzctMDAwMC5kdHNp
-IHwgMTQgKysrKysrKysrKysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMo
-KykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdy
-YTIzNC1wMzczNy0wMDAwLmR0c2kNCj4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdy
-YTIzNC1wMzczNy0wMDAwLmR0c2kNCj4gPiBpbmRleCBhODU5OTNjODVlNDUuLmU3Njg5NDU3NGQz
-MiAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIzNC1w
-MzczNy0wMDAwLmR0c2kNCj4gPiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdy
-YTIzNC1wMzczNy0wMDAwLmR0c2kNCj4gPiBAQCAtMiw0ICsyLDE4IEBADQo+ID4NCj4gPiAgLyB7
-DQo+ID4gICAgICAgY29tcGF0aWJsZSA9ICJudmlkaWEscDM3MzctMDAwMCI7DQo+ID4gKw0KPiA+
-ICsgICAgIGJ1c0AwIHsNCj4gPiArICAgICAgICAgICAgIHB3bUAzMjgwMDAwIHsNCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ICsgICAgICAgICAgICAgfTsN
-Cj4gDQo+IE92ZXJyaWRpbmcgYnkgbm9kZSBwYXRoIGlzIGVycm9yLXByb25lLiBZb3Ugc2hvdWxk
-IG92ZXJyaWRlIGJ5IGxhYmVsLg0KQUNLLg0KDQpUaGFua3MgJiBSZWdhcmRzLA0KU2FuZGlwYW4N
-Cg0KPiANCj4gQmVzdCByZWdhcmRzLA0KPiBLcnp5c3p0b2YNCg==
+Tegra234 has eight single-channel PWM controllers, one of them in the
+AON block.
+
+Signed-off-by: Sandipan Patra <spatra@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 84 ++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 81a0f599685f..c2dc651f0842 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -840,6 +840,90 @@
+ 			#pwm-cells = <2>;
+ 		};
+ 
++		pwm2: pwm@3290000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x3290000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM2>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM2>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm3: pwm@32a0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32a0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM3>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM3>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm4: pwm@c340000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0xc340000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM4>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM4>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm5: pwm@32c0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32c0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM5>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM5>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm6: pwm@32d0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32d0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM6>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM6>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm7: pwm@32e0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32e0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM7>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM7>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
++		pwm8: pwm@32f0000 {
++			compatible = "nvidia,tegra194-pwm",
++				     "nvidia,tegra186-pwm";
++			reg = <0x32f0000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_PWM8>;
++			clock-names = "pwm";
++			resets = <&bpmp TEGRA234_RESET_PWM8>;
++			reset-names = "pwm";
++			status = "disabled";
++			#pwm-cells = <2>;
++		};
++
+ 		spi@3300000 {
+ 			compatible = "nvidia,tegra234-qspi";
+ 			reg = <0x3300000 0x1000>;
+-- 
+2.17.1
+
