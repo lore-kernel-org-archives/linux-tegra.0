@@ -2,342 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EF0ECAAD2
-	for <linux-tegra@archiver.kernel.org>; Sat, 27 Aug 2022 13:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B226ECAAD4
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Aug 2022 09:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbiH0NFu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 27 Aug 2022 09:05:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
+        id S229793AbiH2Jva (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Aug 2022 05:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbiH0NFt (ORCPT
+        with ESMTP id S229597AbiH2Jv2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 27 Aug 2022 09:05:49 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18F55A3D6;
-        Sat, 27 Aug 2022 06:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1661605529;
-        bh=NVXCqOY1o0HLhE9U42CLQq+iogrS7/vsx1EZqNj3yZc=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=NqmXTfRdSsyiFrwjumChhs3v+hHHtXCj47dFS02rOqncX4lw9lCHMbVvz74poND2q
-         kYB7ifzVtOnm4Ci45ApqXV0sUWuuYoh3z8azMuaa/A6OWd1fTO3M3B+VKMZBlrG27X
-         M7rGYF+rQV/XzULi9Ddno2q51Dci64piZB8zdBY0=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [141.72.241.228] ([141.72.241.228]) by web-mail.gmx.net
- (3c-app-gmx-bap34.server.lan [172.19.172.104]) (via HTTP); Sat, 27 Aug 2022
- 15:05:29 +0200
+        Mon, 29 Aug 2022 05:51:28 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD5805E544;
+        Mon, 29 Aug 2022 02:51:25 -0700 (PDT)
+Received: from mail-wr1-f53.google.com ([209.85.221.53]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MAfQk-1oZECh1Xdw-00B0If; Mon, 29 Aug 2022 11:51:23 +0200
+Received: by mail-wr1-f53.google.com with SMTP id az27so9456056wrb.6;
+        Mon, 29 Aug 2022 02:51:22 -0700 (PDT)
+X-Gm-Message-State: ACgBeo1cdW7Ud/KXAcDgKJg54KDGFmdQy7RgJV68olTI2Ez5P56n7hnN
+        HnEYMrHAmR0ki9RZgu7dvem1mbIma6k4U72r6g4=
+X-Google-Smtp-Source: AA6agR4dO9Qog99EOhFMYD2/TUvDUFPeLAFKpCKJySAtY2CWxJsmH8fvbDozC2seipJY5siIbg1N/2rhc6q5GDAswIQ=
+X-Received: by 2002:a17:907:d0b:b0:741:7ca6:a2b with SMTP id
+ gn11-20020a1709070d0b00b007417ca60a2bmr3580848ejc.654.1661763177783; Mon, 29
+ Aug 2022 01:52:57 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <trinity-be166cb2-a06f-4a08-8e24-800e11652def-1661605529717@3c-app-gmx-bap34>
-From:   Max.Buchholz@gmx.de
-To:     Rob Herring <robh@kernel.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+References: <20220818135522.3143514-1-arnd@kernel.org>
+In-Reply-To: <20220818135522.3143514-1-arnd@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 29 Aug 2022 10:52:41 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1tsby7+xfKTQaaBQZ4t-=uWG5Dtbcn_jPEsSMG_YVHgA@mail.gmail.com>
+Message-ID: <CAK8P3a1tsby7+xfKTQaaBQZ4t-=uWG5Dtbcn_jPEsSMG_YVHgA@mail.gmail.com>
+Subject: Re: [PATCH 00/11] ARM: defconfig cleanup
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Qin Jian <qinjian@cqplus1.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        David Heidelberg <david@ixit.cz>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Aw: Re: [PATCH v3] dt-bindings: nvidia,tegra20-kbc: Convert to
- json-schema
-Content-Type: text/plain; charset=UTF-8
-Date:   Sat, 27 Aug 2022 15:05:29 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <20220720215449.GA4031847-robh@kernel.org>
-References: <20220715131422.51143-1-max.buchholz@gmx.de>
- <20220720215449.GA4031847-robh@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:IRP6iRTR2SPbpPTqHONGYmQCOzLWai9l0EHInV5m1cd8EP0eeReSCiP+Fn3L1yzjJ4G7U
- he4pwEV30wBIBQyIvOtmCqYBE+un2O6y1sYOVSPEcXgikxr7yKnzIRlC3U6ZHcw9/NN+1s65RIl1
- 8vxDA+IJ8UH+7b9cabahalAmSm97Qak0uyUREU5hTyJ5ZMUHJOwOzcXqeGukuIJiLDhrMoKUNca4
- g8sdCz5muk5LrYnDkYEt8kQaFQDWaJbbiIp7pAuzGDtCC8z9EQGpxwMIhbQNFr0ouIhCpz91Ckw5
- i0=
-X-UI-Out-Filterresults: notjunk:1;V03:K0:AuEDtR6gQAs=:z9lWspvmh42aU8xCszTnGt
- QJFGmkhSX5FHGXfJgsfXCFYBg4I6fAeCJfkg/+wAaANu9khLSaxutF//jsRCnwm2e/bYNqVvf
- 9ibHezTwdadAbUO85uGT6sK5S0wP0QHGOlEi6ugABAjh+L2maaoA90R7m7kOKHt/gE0ThE80X
- UkfJzO8QA7ZrfE9COD+D95QeE11WUiNrsPfWAAPUhM7ahTjFO2suEfGZZlZk77sJ7V1irhnPV
- TQAWJ6/K1WHOmtOKAe34crooYn2pyZJOOqbgqImHraFkvwtZa8mzHxos0weSgDV875tECnfNy
- a83Bmz6mWXmILeBoiQDAxIMBtAsRUKaClwYmYtvPShMW71vbvUDaqzeKunnxWbSPEHwSZs3NR
- nSVtXMw49M48GqwoJo25KNEUHjpJZ8e3IGU/uoElScFHq8d2Mz2PF04Epv8Dw6qrRBqj7n+Vd
- xewOjKvTzMzF3hMHjyNDD1QYFkTHTqU3flGImbY2p8gFf0Xq5bZha7PEX7ZQssnWj4hl4TDXP
- vIyaq4mCBu/XhSL1bRVWTDcE+coTVspLp3RbK+I546VPThjmkge3x2VHEI9PrPBaFVivMm3V5
- DbGSo+iFcroUduezn5TSHWwVCWaPVeYaAZR/XZjHTZmkhcvOw3Irn2B9Sr+qKB/I7m/CVmjpu
- CCQ3advMx7Ykg+aJjf6kT1rsguXUimzlKdQ76zSGB235aIQoWdx4q7fAfmETbxbZG5xZEVUE/
- 6J0gOg3a4teZphuIrJc4h8CPO11ywLykiFEkpu3tTDncEPcDTBqG/Veu5Hu0RJoaKMcNqVV/2
- erjGTzt
+        Jonathan Hunter <jonathanh@nvidia.com>, Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Shannon Nelson <snelson@pensando.io>,
+        Peter Chen <peter.chen@nxp.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:gf85k6zCm5cJECsQs0SxRf847/xq4I8ODO7U+Gj6k40fdTozveb
+ ELMjAat5zmIE6s9q9Wptq93QYI1b5l8o38ZGAYjV5JZ8cmpULenjiyPXQVvHEQgV6mF130v
+ VSJnO02CRXim3eSApkQCq8P2pGrhvU8o05XEwg/HVMbEnmhNu0h4E2mqxfz6cMReAEPRZDR
+ 1SkGK7PVFUuDfdBuTn0fw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:voOQ47dxVno=:PWIiRwLvZoKwxn1je+6eqX
+ zzuj+QAdkWrtqZZmv9hITubgCl/xx1huPOm3X7bQaL+aRwz2a81CEwnGHzlNET9Myc6rrI3Ts
+ ldk1ewreYruxMeNpTwKoyI7cyFO18t3PGqs1UdV78+nqTjUJj6MtLjvCx7PC7k4rrq/Foet2N
+ gCc2r8833dfAMINc1nLyMxrz+MgyQORVUbyjFzAz36PZwf0paK/QzZVd0Q+14C4uA6NoUe5Hy
+ Dl9crudMA9Sst2ETlhefH4ncE5R4xgDUKteSJ85R6nkovqlQN84letbl16oLxHVVMEX3LofCP
+ 09ElDRovbRApc0nT6hWJ9xTOv3ka5QRkoOceCvGICFYoiJv1yASbB+u1QI6pb6T3ysiUiQcdV
+ uTpvI1lv0X6scUo9xyC1rRJKZbr5BKOGPGwUbswxrMAWJ3K4+XFNqPDAugeYsfZ/2r4ERerHz
+ D8IqpwPdDAkZh8A3WNcicCZ6aLVVejh3D5lSEQlkrbUnApAY4KrGPTXkI+Q8zxNZ7ctGjqccn
+ 6DLvIQvHii2UbO0zKXSOiznK3zXssly8jRGS42PyRUMASCd34sm+QWjAFK3CMzmfwlbY96aeZ
+ 2Vnp1vM/GJpcy7CSG3GAJghov7BJzknwv9993qrShvb51nUJ2pGNzPCC6hTgyxAuCPs4Io4Yy
+ ITZAMmcq9z/G25OZUO9j4i0bft9caKDl3DuFY+oYJBk71Dnmu5SSyRW6UlXc/yyj1LjIgARUj
+ /nyE4DrbW2xx+sFdPdxUNkw4JIpmOde2ffmaJ50Kxsas/FmbIHpE4SuScXRLZf0XCLqnuisxA
+ BifvE3qsJaviSfrX3teBxsIFa6YNvCESM6NJSTAQzPj2lenERzYcQF1xyolfz4ZlGeSVDYzEz
+ Dc/hU1HNMA9yHJ5fWXQQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
-
-> items:
-> maximum: 24 (or 23?)
-
-I do not exactly get what you mean with this and how you get to 24, which =
-isn't the maximum of the kbc-row-pins, but the maximum of kbc-row-pins and =
-kbc-col-pins added=2E I would be glad to get some more clarification abou t=
-hat=2E
-
-Additionally thanks for yll the feedback so far, really appreciate it=2E
-
-regards
-
-Max Buchholz
-=C2=A0
-
-> From: Max Buchholz <Max=2EBuchholz@gmx=2Ede>
+On Thu, Aug 18, 2022 at 3:55 PM Arnd Bergmann <arnd@kernel.org> wrote:
 >
-> This converts the Nvidia Tegra keyboard controller bindings to YAML
-> and fix them up a bit=2E
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> Reviewed-by: David Heidelberg <david@ixit=2Ecz>
-> Signed-off-by: Max Buchholz <max=2Ebuchholz@gmx=2Ede>
-> ---
-> v3:
-> - fixed maxItems for array properties
-> v2:
-> - rework the file according to the feedback
+> I have continued the cleanup of the multi_*_defconfig files, and
+> reordered the other files according to the 'make savedefconfig'
+> output as before.
 >
-> =2E=2E=2E/bindings/input/nvidia,tegra20-kbc=2Etxt | 55 ---------
-> =2E=2E=2E/bindings/input/nvidia,tegra20-kbc=2Eyaml | 111 +++++++++++++++=
-+++
-> =2E=2E=2E/bindings/power/wakeup-source=2Etxt | 2 +-
-> 3 files changed, 112 insertions(+), 56 deletions(-)
-> delete mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra2=
-0-kbc=2Etxt
-> create mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra2=
-0-kbc=2Eyaml
+> I would like to queue these up for 6.1, though the last two
+> should probably be considered bugfixes and merged for 6.0.
 >
-> diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc=
-=2Etxt b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc=2Etxt
-> deleted file mode 100644
-> index 1faa7292e21f=2E=2E000000000000
-> --- a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc=2Etxt
-> +++ /dev/null
-> @@ -1,55 +0,0 @@
-> -* Tegra keyboard controller
-> -The key controller has maximum 24 pins to make matrix keypad=2E Any pin
-> -can be configured as row or column=2E The maximum column pin can be 8
-> -and maximum row pins can be 16 for Tegra20/Tegra30=2E
-> -
-> -Required properties:
-> -- compatible: "nvidia,tegra20-kbc"
-> -- reg: Register base address of KBC=2E
-> -- interrupts: Interrupt number for the KBC=2E
-> -- nvidia,kbc-row-pins: The KBC pins which are configured as row=2E This=
- is an
-> - array of pin numbers which is used as rows=2E
-> -- nvidia,kbc-col-pins: The KBC pins which are configured as column=2E T=
-his is an
-> - array of pin numbers which is used as column=2E
-> -- linux,keymap: The keymap for keys as described in the binding documen=
-t
-> - devicetree/bindings/input/matrix-keymap=2Etxt=2E
-> -- clocks: Must contain one entry, for the module clock=2E
-> - See =2E=2E/clocks/clock-bindings=2Etxt for details=2E
-> -- resets: Must contain an entry for each entry in reset-names=2E
-> - See =2E=2E/reset/reset=2Etxt for details=2E
-> -- reset-names: Must include the following entries:
-> - - kbc
-> -
-> -Optional properties, in addition to those specified by the shared
-> -matrix-keyboard bindings:
-> -
-> -- linux,fn-keymap: a second keymap, same specification as the
-> - matrix-keyboard-controller spec but to be used when the KEY_FN modifie=
-r
-> - key is pressed=2E
-> -- nvidia,debounce-delay-ms: delay in milliseconds per row scan for debo=
-uncing
-> -- nvidia,repeat-delay-ms: delay in milliseconds before repeat starts
-> -- nvidia,ghost-filter: enable ghost filtering for this device
-> -- wakeup-source: configure keyboard as a wakeup source for suspend/resu=
-me
-> - (Legacy property supported: "nvidia,wakeup-source")
-> -
-> -Example:
-> -
-> -keyboard: keyboard {
-> - compatible =3D "nvidia,tegra20-kbc";
-> - reg =3D <0x7000e200 0x100>;
-> - interrupts =3D <0 85 0x04>;
-> - clocks =3D <&tegra_car 36>;
-> - resets =3D <&tegra_car 36>;
-> - reset-names =3D "kbc";
-> - nvidia,ghost-filter;
-> - nvidia,debounce-delay-ms =3D <640>;
-> - nvidia,kbc-row-pins =3D <0 1 2>; /* pin 0, 1, 2 as rows */
-> - nvidia,kbc-col-pins =3D <11 12 13>; /* pin 11, 12, 13 as columns */
-> - linux,keymap =3D <0x00000074
-> - 0x00010067
-> - 0x00020066
-> - 0x01010068
-> - 0x02000069
-> - 0x02010070
-> - 0x02020071>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc=
-=2Eyaml b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc=2Eyaml
-> new file mode 100644
-> index 000000000000=2E=2E8e1eaad2fdc1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc=2Eyaml
-> @@ -0,0 +1,111 @@
-> +# SPDX-License-Identifier: (GPL-2=2E0-only OR BSD-2-Clause)
-> +%YAML 1=2E2
-> +---
-> +$id: "http://devicetree=2Eorg/schemas/input/nvidia,tegra20-kbc=2Eyaml#"
-> +$schema: "http://devicetree=2Eorg/meta-schemas/core=2Eyaml#[http://devi=
-cetree=2Eorg/meta-schemas/core=2Eyaml#]"
-> +
-> +title: Nvidia Tegra keyboard controller
-> +
-> +maintainers:
-> + - Jon Hunter <jonathanh@nvidia=2Ecom>
-> + - Sameer Pujar <spujar@nvidia=2Ecom>
-> +
-> +description: The key controller has maximum 24 pins to make matrix keyp=
-ad=2E Any pin
-> + can be configured as row or column=2E
-> +
-> +allOf:
-> + - $ref: "/schemas/input/matrix-keymap=2Eyaml#"
-> +
-> +properties:
-> + compatible:
-> + oneOf:
-> + - items:
-> + - const: nvidia,tegra30-kbc
-> + - const: nvidia,tegra20-kbc
-> + - items:
-> + - const: nvidia,tegra20-kbc
-> +
-> + reg:
-> + maxItems: 1
-> +
-> + interrupts:
-> + maxItems: 1
-> +
-> + nvidia,kbc-row-pins:
-> + minItems: 1
-> + maxItems: 16
-> + description: KBC pins which are configured as row
-> + $ref: /schemas/types=2Eyaml#/definitions/uint32-array
-
-items:
-maximum: 24 (or 23?)
-
-> +
-> + nvidia,kbc-col-pins:
-> + minItems: 1
-> + maxItems: 8
-> + description: KBC pins which are configured as column
-> + $ref: /schemas/types=2Eyaml#/definitions/uint32-array
-
-Same here=2E
-
-> +
-> + clocks:
-> + maxItems: 1
-> +
-> + resets:
-> + maxItems: 1
-> +
-> + reset-names:
-> + const: kbc
-> +
-> + linux,fn-keymap:
-
-While mentioned in matrix-keymap=2Eyaml, it is not defined as a schema
-anywhere=2E It needs a type=2E I guess here is fine as this doesn't seem
-to be used much=2E
-
-> + description: a secondary keymap to be used when the KEY_FN modifier ke=
-y is pressed
-> +
-> + nvidia,debounce-delay-ms:
-> + description: delay in milliseconds per row scan for debouncing
-> +
-> + nvidia,repeat-delay-ms:
-> + description: delay in milliseconds before repeat starts
-> +
-> + nvidia,ghost-filter:
-> + description: enable ghost filtering for this device
-> + type: boolean
-> +
-> + wakeup-source:
-> + description: configure keyboard as a wakeup source for suspend/resume
-> +
-> + nvidia,wakeup-source:
-> + description: configure keyboard as a wakeup source for suspend/resume
-> + deprecated: true
-> + type: boolean
-
-Deprecated for 7 years=2E Could be dropped?
-
-> +
-> +required:
-> + - compatible
-> + - reg
-> + - interrupts
-> + - nvidia,kbc-row-pins
-> + - nvidia,kbc-col-pins
-> + - linux,keymap
-> + - clocks
-> + - resets
-> + - reset-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> + - |
-> + #include <dt-bindings/interrupt-controller/arm-gic=2Eh>
-> +
-> + kbc@7000e200 {
-
-keyboard@=2E=2E=2E
-
-> + compatible =3D "nvidia,tegra20-kbc";
-> + reg =3D <0x7000e200 0x100>;
-> + interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-> + clocks =3D <&tegra_car 36>;
-> + resets =3D <&tegra_car 36>;
-> + reset-names =3D "kbc";
-> + nvidia,ghost-filter;
-> + nvidia,debounce-delay-ms =3D <640>;
-> + nvidia,kbc-row-pins =3D <0 1 2>; /* pin 0, 1, 2 as rows */
-> + nvidia,kbc-col-pins =3D <11 12 13>; /* pin 11, 12, 13 as columns */
-> + linux,keymap =3D <0x00000074
-> + 0x00010067
-> + 0x00020066
-> + 0x01010068
-> + 0x02000069
-> + 0x02010070
-> + 0x02020071>;
-> + };
-> diff --git a/Documentation/devicetree/bindings/power/wakeup-source=2Etxt=
- b/Documentation/devicetree/bindings/power/wakeup-source=2Etxt
-> index cfd74659fbed=2E=2E728f88de371d 100644
-> --- a/Documentation/devicetree/bindings/power/wakeup-source=2Etxt
-> +++ b/Documentation/devicetree/bindings/power/wakeup-source=2Etxt
-> @@ -25,7 +25,7 @@ List of legacy properties and respective binding docum=
-ent
-> Documentation/devicetree/bindings/input/touchscreen/ads7846=2Etxt
-> 5=2E "linux,keypad-wakeup" Documentation/devicetree/bindings/input/qcom,=
-pm8xxx-keypad=2Etxt
-> 6=2E "linux,input-wakeup" Documentation/devicetree/bindings/input/samsun=
-g-keypad=2Etxt
-> -7=2E "nvidia,wakeup-source" Documentation/devicetree/bindings/input/nvi=
-dia,tegra20-kbc=2Etxt
-> +7=2E "nvidia,wakeup-source" Documentation/devicetree/bindings/input/nvi=
-dia,tegra20-kbc=2Eyaml
+> Since a third of the defconfig files are for machines that
+> are now marked as unused, I skipped those files. There are still
+> a few things that get removed by 'make savedefconfig' as they
+> now get selected by some driver:
 >
-> Examples
-> --------
-> --
-> 2=2E37=2E0
+> -CONFIG_SERIAL_BCM63XX=y
+> -CONFIG_SND_AUDIO_GRAPH_CARD=m
+> -CONFIG_NEW_LEDS=y
+> -CONFIG_LEDS_TRIGGERS=y
+> -CONFIG_TEGRA20_APB_DMA=y
 >
->
+> I think for those we should follow up with patches to remove the
+> 'select' statements.
+
+I dropped the last patch that Greg has already picked up, and merged the
+rest into the arm/defconfig branch of the soc tree.
+
+Thanks for the Acks.
+
+        Arnd
