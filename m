@@ -2,87 +2,69 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD9EECAAD8
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Aug 2022 07:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ADFECAAA1
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Aug 2022 07:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbiH3HT5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Aug 2022 03:19:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58520 "EHLO
+        id S231163AbiH3Hbq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Aug 2022 03:31:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbiH3HT4 (ORCPT
+        with ESMTP id S231167AbiH3HbW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Aug 2022 03:19:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1C37631D;
-        Tue, 30 Aug 2022 00:19:54 -0700 (PDT)
+        Tue, 30 Aug 2022 03:31:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE44B7EE7
+        for <linux-tegra@vger.kernel.org>; Tue, 30 Aug 2022 00:30:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0FEB861466;
-        Tue, 30 Aug 2022 07:19:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E168BC433C1;
-        Tue, 30 Aug 2022 07:19:52 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1E07DB815D2
+        for <linux-tegra@vger.kernel.org>; Tue, 30 Aug 2022 07:30:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62140C433D6;
+        Tue, 30 Aug 2022 07:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661843993;
-        bh=cNl2q6IwhNO1r/WX6/JP3SlN458v5wTt/geQej7BrCw=;
+        s=k20201202; t=1661844643;
+        bh=yxaD30kiK8sn86tWcBr0/VotZNzimgXDeGSr6pKwkP4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cTqkeBK2Wg4Rjz1Qdp1w2nJSsduJhiCv9dfwLA5MTJbuLRYnz3vtqKk3Ldhsq8yHt
-         SLjbHymv3AUeKCudBUL0w9+QrRSGhOp0Pe+G1dU+OyZXinKR/qYKdn+u+0aMu2UjoM
-         kClNAemEplLWLVZj8OZiYKcakpRJmDoVBnOiEbjLi2BWvWRSascb7QAbZRgGpLBx8g
-         E69cPMRPj5GnhVphavfGEp2IF/7TpKG9KRDaMqR6XZnRVBGsEX9whTEaBJDGqKJxYA
-         PXn3EqzZEabPnnBGZYXwnDXnAv+iiBKANwm5sTNPFCkrS7bTnADuBdzxAMtyp0pbFM
-         HPw0ydz2KqMLA==
-Date:   Tue, 30 Aug 2022 12:49:49 +0530
+        b=XUatUZcBjOih6PU1OM6mlpdFMMzM+DZHiclqrUJ/eeHpkcvMLLvFU/UwadK0smemN
+         AbK7CVuFaGOTP/01iNoL5PE9692oI6jEPb0s+tDY/kA+Hq6BajStKM7jB2b5SAjb83
+         UA+CM5uOAIkBpnkVO/BgLcjX76O2yN9YDlRqvjIccUGUcmVpq1DRbClDVtQbeenPiS
+         o+4vSODpJJUq1BwUT9ANhYvKuB3LXQMW7PW+d9a31f7sfaKoHb1RconLriQ8o4QNWq
+         ZXZhp7eyilNzd9MCp1XuEdxQ5WEDN3WgOgv3KSNSbZZmkK4G2aCTPi0anaPnUrbd6X
+         G3cJztijV6yWQ==
+Date:   Tue, 30 Aug 2022 13:00:40 +0530
 From:   Vinod Koul <vkoul@kernel.org>
-To:     williamsukatube@163.com
-Cc:     linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jckuo@nvidia.com, kishon@ti.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        William Dean <williamsukatube@gmail.com>,
-        Hacash Robot <hacashRobot@santino.com>
-Subject: Re: [PATCH] phy: tegra: xusb: check the return value of
- devm_kzalloc() in tegra_xusb_setup_usb_role_switch()
-Message-ID: <Yw26FXFyb3GwQaux@matsya>
-References: <20220723034130.2952016-1-williamsukatube@163.com>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH] phy: tegra: xusb: Only warn once reset problems in
+ .remove()
+Message-ID: <Yw28oH9eGOEhzw9J@matsya>
+References: <20220716145403.107703-1-u.kleine-koenig@pengutronix.de>
+ <20220718075300.u6yxlwebwnh6gymi@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20220723034130.2952016-1-williamsukatube@163.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220718075300.u6yxlwebwnh6gymi@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 23-07-22, 11:41, williamsukatube@163.com wrote:
-> From: William Dean <williamsukatube@gmail.com>
+On 18-07-22, 09:53, Uwe Kleine-König wrote:
+> Hello,
 > 
-> The function devm_kzalloc() in tegra_xusb_setup_usb_role_switch()
-> can fail, so its return value should be checked.
+> $Subject ~= s/once reset/once about reset/
 > 
-> Fixes: f67213cee2b35 ("phy: tegra: xusb: Add usb-role-switch support")
-> Reported-by: Hacash Robot <hacashRobot@santino.com>
+> . Should I resend, or can you fixup when applying this patch? (Assuming
+> you're otherwise happy with the change of course.)
 
-Where is this bug report?
-
-> Signed-off-by: William Dean <williamsukatube@gmail.com>
-> ---
->  drivers/phy/tegra/xusb.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index aa5237eacd29..e3611fb4c779 100644
-> --- a/drivers/phy/tegra/xusb.c
-> +++ b/drivers/phy/tegra/xusb.c
-> @@ -668,6 +668,8 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
->  	port->dev.driver = devm_kzalloc(&port->dev,
->  					sizeof(struct device_driver),
->  					GFP_KERNEL);
-> +	if (!port->dev.driver)
-> +		return -ENOMEM;
->  	port->dev.driver->owner	 = THIS_MODULE;
->  
->  	port->usb_role_sw = usb_role_switch_register(&port->dev,
-> -- 
-> 2.25.1
+Applied with updated subject :)
 
 -- 
 ~Vinod
