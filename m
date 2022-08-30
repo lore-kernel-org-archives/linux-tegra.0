@@ -2,120 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F517ECAAA1
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Aug 2022 08:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326C8ECAAA1
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Aug 2022 09:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbiH3IvB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Aug 2022 04:51:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35546 "EHLO
+        id S229547AbiH3JuK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Aug 2022 05:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231764AbiH3IuZ (ORCPT
+        with ESMTP id S229544AbiH3JuJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Aug 2022 04:50:25 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65A615F4D;
-        Tue, 30 Aug 2022 01:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661849407; x=1693385407;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+zvycWgHswi1PPV0RnXSYc/K43LbVY11y+f+/3GNfko=;
-  b=DrF8CrfrKWH2GYBJJKgEpms4Q8xRoMgM81F6lSwDFdpYMjOEWulUzv19
-   yZuGLCnUGTGvrNLSpSviZjep2S6sKb5hSyMI0pLdYGg+KqAIPc+O/p/vh
-   O5G7ub1NkkgPGwqQdu0wSD8Hf3MCYIhNEGFZyxMN/d5frib6wg7tAfA2T
-   7z6qP8cJeRQqV+cOG9Otcl8fX1NFgM78ffLx2lDN/IWwfF4ab7FQW2q3I
-   W+5geqxhB8gTqItiBXrcdmDPMfeXWeWAUwRxEDxtTB6/x9aZ3sV503fzh
-   N7Kc5BIRLGTJX4RL660HldqI90cSSSu8A218nEfXUPL/nj/FRA8PBcOTQ
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10454"; a="293866357"
-X-IronPort-AV: E=Sophos;i="5.93,274,1654585200"; 
-   d="scan'208";a="293866357"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2022 01:50:03 -0700
-X-IronPort-AV: E=Sophos;i="5.93,274,1654585200"; 
-   d="scan'208";a="672761927"
-Received: from arnesgom-mobl.ger.corp.intel.com (HELO ijarvine-MOBL2.ger.corp.intel.com) ([10.252.54.235])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2022 01:50:00 -0700
-From:   =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v2 5/5] serial: tegra: Remove custom frame size calculation
-Date:   Tue, 30 Aug 2022 11:49:25 +0300
-Message-Id: <20220830084925.5608-6-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220830084925.5608-1-ilpo.jarvinen@linux.intel.com>
-References: <20220830084925.5608-1-ilpo.jarvinen@linux.intel.com>
+        Tue, 30 Aug 2022 05:50:09 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 594B33DF00
+        for <linux-tegra@vger.kernel.org>; Tue, 30 Aug 2022 02:50:08 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id z6so14744711lfu.9
+        for <linux-tegra@vger.kernel.org>; Tue, 30 Aug 2022 02:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=2v5gr3EuoaAEuSb9CcBVwZKMWyYj0Ef79p2UK+9bBKo=;
+        b=KF2dX+CvLFpRg9J23ANVR7KCb4VULoxeWuboROEmuS7MhUltPim3swe5eFY9EmBpxZ
+         CmS3/XYpC+5Vd15RThF9gGCMveLEURCrW2q5qY+ZnUgD/k+ZUMzALZ1OKXI/90dyH+cb
+         uVuF1B0/DbUvoN22Z9pmI7uMaVnp0bY1sDDPNU8c8FWVBoSaRlMWuLdK80EPYRdw6nr4
+         +DQE5EEPiMSrseYy/k8y3aDwTrktBJ4vLxxkslTyJ4WChOMaAGED8KySJ5ugLwO6+iPT
+         W37V+J/WDKT3vO8z4nn77WnDKPSbQ9eGpSQ2fwr4JZt6sTI/7hcDdGW+QM3rLZx8m95j
+         J5iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=2v5gr3EuoaAEuSb9CcBVwZKMWyYj0Ef79p2UK+9bBKo=;
+        b=CXEwoG9+pHkp4LSgAMdKjNeYMo/HHP1EgqUcVzbOlwriajyzJBuEjxEOIwEwpEnMvu
+         g9tDxGyp0QZWlM1B3J+zRlHuEQ/xefpaIbScafmBVNrAwgLgmjL7H8G6ZelAhfnfbIoF
+         nT3i9qCnxCypKb87Y2D9TWc/MKmDbjfrinGJpWhhMiwXHX1bRis5TxZJVjtO+OWRiSZr
+         zAXGA2dGI/ECuaantJqsreWrOf1tw66K6eXDViRbiqnJVKzpjfiCil/5Qmi94Vzwd/qa
+         5m0Hzep9swHHigrN429rWMS+Y7QnwDougtT5ju9RRID6aRYb8t9MtofKv4j+VBrWaFj+
+         eCSw==
+X-Gm-Message-State: ACgBeo0l3Z9VgdCXcQy5aH6eX0PBEEMBA/xF1svx0Cd6qrPAzz2tZIfF
+        fcNvArsDRFI51Z/jJ3gYVNpjKg==
+X-Google-Smtp-Source: AA6agR6TpZaAj9tXPHMAn+/T/7/VYkwQ6zc3UCxUpGnbbDE1QWyw8vznJKQEwWQym5CGS+TYrqCY0g==
+X-Received: by 2002:a05:6512:3409:b0:48a:ef20:ddb with SMTP id i9-20020a056512340900b0048aef200ddbmr8369276lfr.597.1661853006723;
+        Tue, 30 Aug 2022 02:50:06 -0700 (PDT)
+Received: from [192.168.28.124] (balticom-73-99-134.balticom.lv. [109.73.99.134])
+        by smtp.gmail.com with ESMTPSA id u15-20020ac258cf000000b004917a30c82bsm1555014lfo.153.2022.08.30.02.50.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Aug 2022 02:50:06 -0700 (PDT)
+Message-ID: <4dfbf55b-744d-b0b6-0afd-530a45becba0@linaro.org>
+Date:   Tue, 30 Aug 2022 12:50:04 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH 1/2] arm64: tegra: Add PWM controllers on Tegra234
+Content-Language: en-US
+To:     Sandipan Patra <spatra@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bbasu@nvidia.com, kyarlagadda@nvidia.com
+References: <20220829114432.19566-1-spatra@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220829114432.19566-1-spatra@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The number of bits can be calculated using tty_get_frame_size(), no
-need for the driver to do it on its own.
+On 29/08/2022 14:44, Sandipan Patra wrote:
+> Tegra234 has eight single-channel PWM controllers, one of them in the
+> AON block.
+> 
+> Signed-off-by: Sandipan Patra <spatra@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 84 ++++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> index 81a0f599685f..c2dc651f0842 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> @@ -840,6 +840,90 @@
+>  			#pwm-cells = <2>;
+>  		};
+>  
+> +		pwm2: pwm@3290000 {
+> +			compatible = "nvidia,tegra194-pwm",
+> +				     "nvidia,tegra186-pwm";
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/tty/serial/serial-tegra.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+This does not match bindings. Either DTS or bindings need to be fixed.
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index ad4f3567ff90..5a56bd20abcd 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -1278,7 +1278,6 @@ static void tegra_uart_set_termios(struct uart_port *u,
- 	unsigned long flags;
- 	unsigned int lcr;
- 	unsigned char char_bits;
--	int symb_bit = 1;
- 	struct clk *parent_clk = clk_get_parent(tup->uart_clk);
- 	unsigned long parent_clk_rate = clk_get_rate(parent_clk);
- 	int max_divider = (tup->cdata->support_clk_src_div) ? 0x7FFF : 0xFFFF;
-@@ -1305,7 +1304,6 @@ static void tegra_uart_set_termios(struct uart_port *u,
- 	termios->c_cflag &= ~CMSPAR;
- 
- 	if ((termios->c_cflag & PARENB) == PARENB) {
--		symb_bit++;
- 		if (termios->c_cflag & PARODD) {
- 			lcr |= UART_LCR_PARITY;
- 			lcr &= ~UART_LCR_EPAR;
-@@ -1318,22 +1316,18 @@ static void tegra_uart_set_termios(struct uart_port *u,
- 	}
- 
- 	char_bits = tty_get_char_size(termios->c_cflag);
--	symb_bit += char_bits;
- 	lcr &= ~UART_LCR_WLEN8;
- 	lcr |= UART_LCR_WLEN(char_bits);
- 
- 	/* Stop bits */
--	if (termios->c_cflag & CSTOPB) {
-+	if (termios->c_cflag & CSTOPB)
- 		lcr |= UART_LCR_STOP;
--		symb_bit += 2;
--	} else {
-+	else
- 		lcr &= ~UART_LCR_STOP;
--		symb_bit++;
--	}
- 
- 	tegra_uart_write(tup, lcr, UART_LCR);
- 	tup->lcr_shadow = lcr;
--	tup->symb_bit = symb_bit;
-+	tup->symb_bit = tty_get_frame_size(termios->c_cflag);
- 
- 	/* Baud rate. */
- 	baud = uart_get_baud_rate(u, termios, oldtermios,
--- 
-2.30.2
-
+Best regards,
+Krzysztof
