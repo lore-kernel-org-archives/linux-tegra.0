@@ -2,90 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFCBECAAD3
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Sep 2022 12:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB4CC54EE9
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Sep 2022 14:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233368AbiIAMsT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Sep 2022 08:48:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59580 "EHLO
+        id S234638AbiIAOkF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Sep 2022 10:40:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233514AbiIAMsH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Sep 2022 08:48:07 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3DBE40574
-        for <linux-tegra@vger.kernel.org>; Thu,  1 Sep 2022 05:48:03 -0700 (PDT)
+        with ESMTP id S233808AbiIAOj6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Sep 2022 10:39:58 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF37E5FBA;
+        Thu,  1 Sep 2022 07:39:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662036483; x=1693572483;
+  t=1662043197; x=1693579197;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ZNbVjn0emFWA6qjDO1tFmsrKCgCOOTKbwxx+l4Ra70A=;
-  b=bDsNBlTWgaasmzPlrFEYn9KeAnYayVWwfTwO+qOQtaIcHvlcnysnMs+u
-   v9YVNIHtVva8xX2E0s0tpq9wI+d+bw60yvSjV7o2jX7C7YFWH8gCR9L3X
-   G7nj2dw9WeqJE1B9GVZ9PVJ/QUBtyoPRL85OniSP7eIBjBweqM7tkEIAd
-   zQKUHFS/E3rmWk9IUJcZNBjcHXEjyatG6CBl6V+cbLMfQqnwc7Fk9vcKM
-   n3k13F7de907MX7zUpDX3CBePO+FBk3sc8mgOxc0pGtUckvy/FFByQvV9
-   jWiUWYmRbu7nnRjLMB/G8+TOa39CWbaLAqHRucguJvApnALouYP9ZQBs7
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10457"; a="357422389"
-X-IronPort-AV: E=Sophos;i="5.93,280,1654585200"; 
-   d="scan'208";a="357422389"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2022 05:47:54 -0700
-X-IronPort-AV: E=Sophos;i="5.93,280,1654585200"; 
-   d="scan'208";a="940836961"
-Received: from jnikula-mobl4.fi.intel.com (HELO localhost) ([10.237.66.142])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2022 05:47:52 -0700
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     intel-gfx@lists.freedesktop.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jani Nikula <jani.nikula@intel.com>,
+  bh=jlOuWqXv3W1+nK5gEHgXZ0S9vII+w0v5W+k4c+5u558=;
+  b=LWhEGaS192pV68s6tvCPsqbsL/IGxA/QTx1mPdDSZG3eqDxvRjzoJycv
+   EGLzvzK+wRwAbffRygl45L+gvsOx5q2rBUdFdIdWYgCV/K7PI1eyBF/Pf
+   5UThP9xQ619moO/1feja22r7CIwRyKoDxmwH2RyBlTmvulShIxMxrGUuZ
+   J4ukkmY8KHtVQzJmdKmOX8aFkBt7M7G1gaPt6o+j2mfnrRTT60K2xiQjr
+   hqSS7p2MQ/L+gQLPDX0lLG74H/cRqtan4km3ByYFcDib/U9M1dgs7gA8v
+   4dmUgBxo7kBPWNdtti+MSMY6B3wY9UGsgvB410NTzbMGZt3XL62iErFit
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10457"; a="359690403"
+X-IronPort-AV: E=Sophos;i="5.93,281,1654585200"; 
+   d="scan'208";a="359690403"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2022 07:39:55 -0700
+X-IronPort-AV: E=Sophos;i="5.93,281,1654585200"; 
+   d="scan'208";a="642356668"
+Received: from rmalliu-mobl.amr.corp.intel.com (HELO ijarvine-MOBL2.ger.corp.intel.com) ([10.249.44.65])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2022 07:39:50 -0700
+From:   =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 4/9] drm/tegra: convert to using is_hdmi from display info
-Date:   Thu,  1 Sep 2022 15:47:06 +0300
-Message-Id: <1bdb744bc1079affdd108b34206efd2f21adf7c7.1662036058.git.jani.nikula@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1662036058.git.jani.nikula@intel.com>
-References: <cover.1662036058.git.jani.nikula@intel.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Alan Cox <alan@linux.intel.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        stable@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v2 RESEND 2/3] serial: tegra: Use uart_xmit_advance(), fixes icount.tx accounting
+Date:   Thu,  1 Sep 2022 17:39:33 +0300
+Message-Id: <20220901143934.8850-3-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220901143934.8850-1-ilpo.jarvinen@linux.intel.com>
+References: <20220901143934.8850-1-ilpo.jarvinen@linux.intel.com>
 MIME-Version: 1.0
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Prefer the parsed results for is_hdmi in display info over calling
-drm_detect_hdmi_monitor().
+DMA complete & stop paths did not correctly account Tx'ed characters
+into icount.tx. Using uart_xmit_advance() fixes the problem.
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Cc: <stable@vger.kernel.org> # serial: Create uart_xmit_advance()
+Fixes: e9ea096dd225 ("serial: tegra: add serial driver")
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 ---
- drivers/gpu/drm/tegra/hdmi.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/tty/serial/serial-tegra.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index bf240767dad9..40ec3e6cf204 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -867,14 +867,7 @@ static int tegra_hdmi_reconfigure_audio(struct tegra_hdmi *hdmi)
- 
- static bool tegra_output_is_hdmi(struct tegra_output *output)
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index ad4f3567ff90..a5748e41483b 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -525,7 +525,7 @@ static void tegra_uart_tx_dma_complete(void *args)
+ 	count = tup->tx_bytes_requested - state.residue;
+ 	async_tx_ack(tup->tx_dma_desc);
+ 	spin_lock_irqsave(&tup->uport.lock, flags);
+-	xmit->tail = (xmit->tail + count) & (UART_XMIT_SIZE - 1);
++	uart_xmit_advance(&tup->uport, count);
+ 	tup->tx_in_progress = 0;
+ 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+ 		uart_write_wakeup(&tup->uport);
+@@ -613,7 +613,6 @@ static unsigned int tegra_uart_tx_empty(struct uart_port *u)
+ static void tegra_uart_stop_tx(struct uart_port *u)
  {
--	struct edid *edid;
--
--	if (!output->connector.edid_blob_ptr)
--		return false;
--
--	edid = (struct edid *)output->connector.edid_blob_ptr->data;
--
--	return drm_detect_hdmi_monitor(edid);
-+	return output->connector.display_info.is_hdmi;
+ 	struct tegra_uart_port *tup = to_tegra_uport(u);
+-	struct circ_buf *xmit = &tup->uport.state->xmit;
+ 	struct dma_tx_state state;
+ 	unsigned int count;
+ 
+@@ -624,7 +623,7 @@ static void tegra_uart_stop_tx(struct uart_port *u)
+ 	dmaengine_tx_status(tup->tx_dma_chan, tup->tx_cookie, &state);
+ 	count = tup->tx_bytes_requested - state.residue;
+ 	async_tx_ack(tup->tx_dma_desc);
+-	xmit->tail = (xmit->tail + count) & (UART_XMIT_SIZE - 1);
++	uart_xmit_advance(&tup->uport, count);
+ 	tup->tx_in_progress = 0;
  }
  
- static enum drm_connector_status
 -- 
-2.34.1
+2.30.2
 
