@@ -2,106 +2,137 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666D9ECAAD1
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Sep 2022 09:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55305ECAAD1
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Sep 2022 12:47:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbiIAJuK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Sep 2022 05:50:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48410 "EHLO
+        id S232539AbiIAMrg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Sep 2022 08:47:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232418AbiIAJuI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Sep 2022 05:50:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE616564CD;
-        Thu,  1 Sep 2022 02:50:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 45FE361AFB;
-        Thu,  1 Sep 2022 09:50:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13489C433D6;
-        Thu,  1 Sep 2022 09:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1662025806;
-        bh=7h5BOZHPtqnTEJNeK9WhUGvbg4yr1amdKykOlMagcp0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Be7a2tb5V3Nf/P/jwAV8YMBzSnVk8ylqUKA/EasuQtnIZul4ZUfQugFlrhXhNQOuJ
-         UWIXJ5mxq9ACKl5nyinLiGPdXR8j7SVFBw/X54xQZdWaCh5JAq4irt76je0CEOXF1N
-         nyz4vb5Jgz1+x7Tmigpydaevdpm/l2Ro6xiUA6QI=
-Date:   Thu, 1 Sep 2022 11:50:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-        sudipm.mukherjee@gmail.com, slade@sladewatkins.com,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.15 000/136] 5.15.64-rc1 review
-Message-ID: <YxCATHEyQapj71yn@kroah.com>
-References: <20220829105804.609007228@linuxfoundation.org>
- <e9834880-c16e-e269-30ba-3fa8a94ba1af@nvidia.com>
+        with ESMTP id S232226AbiIAMrg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Sep 2022 08:47:36 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9BBA440
+        for <linux-tegra@vger.kernel.org>; Thu,  1 Sep 2022 05:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662036454; x=1693572454;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kWGME9fEdG3M8HkVb+YATaForw5QOx/3sgZwk3gITYM=;
+  b=lPGzrc4SRWC8bQ4sU210q5DBOcqgvpmHoQoF/p1h9aP2a5tuYWQPi5mI
+   6O78gBZ5VrdeMkK4iJEDE/V/zRbPY1MhFJokk0C+6Tsx0Yl8eVh8Jl4pa
+   jAG0TsgRI9l1h3KQV/xgS69kXRbsve2Im7+sBsDsS8JqA+Q4Z1dRxbQiG
+   nlK5hTSXHqIOWLkfKZapdsjK7IALaL3LJ7rs848T7iRTgEo/gOBjsHQft
+   lk6eSkKuTMaH+cU95HJDoE7/z8Krt8PPkQcoUfiK7pWdbNPB3NyQxLm8R
+   ZHJpWHSozNJi6COCYPiQfYn2FyEgMN9xg51XaxoBKCf57JxlxQRbsRTbV
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10457"; a="276105067"
+X-IronPort-AV: E=Sophos;i="5.93,280,1654585200"; 
+   d="scan'208";a="276105067"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2022 05:47:33 -0700
+X-IronPort-AV: E=Sophos;i="5.93,280,1654585200"; 
+   d="scan'208";a="642318075"
+Received: from jnikula-mobl4.fi.intel.com (HELO localhost) ([10.237.66.142])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2022 05:47:26 -0700
+From:   Jani Nikula <jani.nikula@intel.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     intel-gfx@lists.freedesktop.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>, amd-gfx@lists.freedesktop.org,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Lyude Paul <lyude@redhat.com>, nouveau@lists.freedesktop.org
+Subject: [PATCH 0/9] drm: convert to using is_hdmi and has_audio from display info
+Date:   Thu,  1 Sep 2022 15:47:02 +0300
+Message-Id: <cover.1662036058.git.jani.nikula@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9834880-c16e-e269-30ba-3fa8a94ba1af@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Aug 30, 2022 at 11:32:24AM +0100, Jon Hunter wrote:
-> Hi Greg,
-> 
-> On 29/08/2022 11:57, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.64 release.
-> > There are 136 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 31 Aug 2022 10:57:37 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.64-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> 
-> I have been out on vacation and unfortunately some boot issues were
-> introduced for Tegra back in 5.15.61 ...
-> 
-> Test results for stable-v5.15:
->     10 builds:	10 pass, 0 fail
->     32 boots:	28 pass, 4 fail
->     68 tests:	68 pass, 0 fail
-> 
-> Linux version:	5.15.64-rc1-g881ab4a7404d
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
->                 tegra20-ventana, tegra210-p2371-2180,
->                 tegra210-p3450-0000, tegra30-cardhu-a04
-> 
-> Boot failures:	tegra186-p2771-0000, tegra194-p2972-0000,
->                 tegra194-p3509-0000+p3668-0000
-> 
-> 
-> Fortunately, these boot issues are specific to Tegra and were caused by
-> commit a7f751d4e830c5a2ac9e9908df43e8d29b7d3b22 ("arm64: tegra: Mark BPMP
-> channels as no-memory-wc"). This commit had the fixes tag populated but it
-> has a dependency on mainline commit a4740b148a04 ("firmware: tegra: bpmp: Do
-> only aligned access to IPC memory area") which did not have any fixes tag
-> populated.
-> 
-> Can you pull mainline commit a4740b148a04 ("firmware: tegra: bpmp: Do only
-> aligned access to IPC memory area") into 5.15.y, 5.18.y and 5.19.y? Fine if
-> you want to do it for the next stable update.
+The low-hanging fruit of the drm todo item "Replace
+drm_detect_hdmi_monitor() with drm_display_info.is_hdmi", with has_audio
+changes on top.
 
-5.18.y is end-of-life, so I've applied this to the other branches now,
-thanks!
+I'm afraid not all of these have been even build tested, let alone
+actually tested.
 
-greg k-h
+
+BR,
+Jani.
+
+
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com> 
+Cc: Sandy Huang <hjc@rock-chips.com>
+Cc: Heiko Stübner <heiko@sntech.de>
+Cc: Sandy Huang <hjc@rock-chips.com>
+Cc: Heiko Stübner <heiko@sntech.de>
+Cc: Alain Volmat <alain.volmat@foss.st.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: "Pan, Xinhui" <Xinhui.Pan@amd.com>
+Cc: amd-gfx@lists.freedesktop.org
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Karol Herbst <kherbst@redhat.com>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: nouveau@lists.freedesktop.org
+
+Jani Nikula (9):
+  drm/edid: parse display info has_audio similar to is_hdmi
+  drm/nouveau: convert to using is_hdmi and has_audio from display info
+  drm/radeon: convert to using is_hdmi and has_audio from display info
+  drm/tegra: convert to using is_hdmi from display info
+  drm/exynos: convert to using is_hdmi from display info
+  drm/i2c/tda998x: convert to using has_audio from display_info
+  drm/sti/sti_hdmi: convert to using is_hdmi from display info
+  drm/rockchip: cdn-dp: call drm_connector_update_edid_property()
+    unconditionally
+  drm/rockchip: convert to using has_audio from display_info
+
+ drivers/gpu/drm/drm_edid.c                  |  6 ++++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c        |  5 +++--
+ drivers/gpu/drm/i2c/tda998x_drv.c           |  2 +-
+ drivers/gpu/drm/nouveau/dispnv50/disp.c     |  8 ++++----
+ drivers/gpu/drm/nouveau/dispnv50/head.c     |  8 +-------
+ drivers/gpu/drm/nouveau/nouveau_connector.c |  2 +-
+ drivers/gpu/drm/radeon/atombios_encoders.c  | 10 +++++-----
+ drivers/gpu/drm/radeon/evergreen_hdmi.c     |  5 ++---
+ drivers/gpu/drm/radeon/radeon_audio.c       |  6 +++---
+ drivers/gpu/drm/radeon/radeon_connectors.c  | 12 ++++++------
+ drivers/gpu/drm/radeon/radeon_display.c     |  2 +-
+ drivers/gpu/drm/radeon/radeon_encoders.c    |  4 ++--
+ drivers/gpu/drm/rockchip/cdn-dp-core.c      |  7 +++----
+ drivers/gpu/drm/rockchip/inno_hdmi.c        |  3 ++-
+ drivers/gpu/drm/sti/sti_hdmi.c              | 11 ++++++-----
+ drivers/gpu/drm/sti/sti_hdmi.h              |  2 --
+ drivers/gpu/drm/tegra/hdmi.c                |  9 +--------
+ include/drm/drm_connector.h                 |  8 ++++++++
+ 18 files changed, 55 insertions(+), 55 deletions(-)
+
+-- 
+2.34.1
+
