@@ -2,226 +2,137 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A68C38145
-	for <linux-tegra@archiver.kernel.org>; Fri,  2 Sep 2022 11:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23F3ECAAD5
+	for <linux-tegra@archiver.kernel.org>; Fri,  2 Sep 2022 16:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235765AbiIBL14 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 2 Sep 2022 07:27:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55772 "EHLO
+        id S236415AbiIBQgG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 2 Sep 2022 12:36:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235555AbiIBL1j (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 2 Sep 2022 07:27:39 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA9F46236;
-        Fri,  2 Sep 2022 04:25:10 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id w8so2776983lft.12;
-        Fri, 02 Sep 2022 04:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=3wSQssIvU5TpIflujRE62eFde6JJcJsrA+ZhrJwQQfQ=;
-        b=Joj5LgHgcOzbk6WGUMe826PCorH8cLC6HPxEKgV7mNTjgOYCSFMdIo3x1WXOdoA5T2
-         WWhAIPk/+ECEgPSPdM4IO+cCj+tOxv0TZcQ279EUHRH7zDe9eo6KhRHw86uN5BMUciwB
-         0PPY2Za1HuDq6FvV0DM9XaOKIVYbMCXX/5o3c9S2Nv6DT2uVmj2qpOV9yeA2Qhevq8W8
-         Yvv0XXttiAcdlLAu0qbT+abfV5xfHrMESWY54rmWwaT9/KqInAC56gFPfQZ9ye3WNuQ2
-         QuU9Y8q0tq87k2JMbXCanL1utD6mAF0YQjEymU59NiQxLYLIk4ifnKBljLZfgrAMv5Bc
-         I1gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=3wSQssIvU5TpIflujRE62eFde6JJcJsrA+ZhrJwQQfQ=;
-        b=Ufexv8WXfA0S8KQk45i2V8wHY4Wxp200Zl9IaPX/V+AO4PxZlKWRnk4hJejIUQjbQM
-         TqczP+O/Zfk5+2N02NWV1JhdhQ5+uoua63DrcImPBPaCpIpvm5Yg27FpvhPncTxdScRc
-         miNF9qWfOKOoqmgmgL5rjTlZUJALS8PAL2D11fTmb3Wlwpg74udTSbcmKZFiUcZjo6LE
-         rH15ki9mbc0uRG4GgTQ97CLXYb5nU2ki8IiB08hCeCh+W2Whfhze3KPrg19BmXbRSzdh
-         lEneld3SuZMpKlnbk/R7GV/RJrvyxhDlGG6T33pGc930hvc+FtO920Z+ej37Wc3AMnkm
-         zpFg==
-X-Gm-Message-State: ACgBeo3FuW7zlvCiY+FAUQsmR3vQIXKtR6yoyIzGh6TatXKNWwdRiFMW
-        dL4ch9rfQ8eXJ6bQt7zo4ak=
-X-Google-Smtp-Source: AA6agR517c3ElKraOg7+PFGcWmpDlZ72RTpYLX/GxbANV8Bv+WmNHaFflP/JfaczLKnU6tJI7HFsjQ==
-X-Received: by 2002:a05:6512:694:b0:494:9a24:3243 with SMTP id t20-20020a056512069400b004949a243243mr2746673lfe.673.1662117903578;
-        Fri, 02 Sep 2022 04:25:03 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-119-13.nat.spd-mgts.ru. [109.252.119.13])
-        by smtp.googlemail.com with ESMTPSA id h1-20020a2ea481000000b00268bc2c1ed0sm161995lji.22.2022.09.02.04.25.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Sep 2022 04:25:02 -0700 (PDT)
-Message-ID: <61463a5f-9280-bcc7-3595-26ac9ddbe800@gmail.com>
-Date:   Fri, 2 Sep 2022 14:25:01 +0300
+        with ESMTP id S236242AbiIBQgA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 2 Sep 2022 12:36:00 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F8CD87E7;
+        Fri,  2 Sep 2022 09:35:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KJwc7BD9K3us3l3VGsax6TM3a0iWFEYhlfAmFB4zUF5Wz71/P+H/BJc6llk7JtF29rheDmPjrqL2T6WB8IERKt64lRQs55C6Ap5+xYe+HZmWaJiadRxe7x6rZd88oy0HF3SDiBCqo2kYQGQ/NQpE2jZYqwqx+1RHU0ea8H5cflVYp2a+0psZhz3XW/yftEW8dtUIX/B8Vy0CmBHDn28h0iMmjQp7Wxf0vKP1+zuAju4CvBM1rmrOUSi6Dw273c6hzn+TFp+SADx3BUA6h7pbbi8AsPv5c4Y5yIAUuoNKvlMIesu/Sh6cxcN5p6WaCH2PXRIUDd24+vfw/nUVfMJ0xQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=10cvQkjVKqA2Tzrn/1CG5xIrvAUhDOLTtX4JK5P0nv8=;
+ b=FFMhW3pxBoq4kFmYasAyCqU/ptZwlcPRk+4Q3RTTQcILeonDqJCY/NRWvpAL1eMRv3OKDCo8iddbg5afQJcxpitYcxCVSbesqz1WiBdylh4+qbqptj52xw0uaV1E6/Df1Fo+EB5Zl5aF6xj5l5yCKKlLttJPQgMtmGKdMtz622KNvP3H+4+r8BE0xA9Gr5k7IvBQwbJ55nVjynJQ6uN60Z8HFv6hSugl8usa5L5A0dsA8TK+9AP5G9HoAhnSFF+hYuctuvT3pdIBZ144bTHzq10yOMwJwMWDxE0k0WhWYLB3DHPG15I/qN/fXNgICooQ6AmzxdeVu31zLohsdsLWhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=10cvQkjVKqA2Tzrn/1CG5xIrvAUhDOLTtX4JK5P0nv8=;
+ b=eV4G2D3vrk3q2cOKjb6qqpvZs39qqVQ/5fa/rhXkVZIru6hGWWhk1ZxAn0+zVBBMpyEI9282yeP6JEvS3sNBKnktgYmpEqTgAbl/j761+V3sEPsMQoEbqG9yptkPiWYENpdeLvoU8a7SPjQGWiZXWzgVQKORgDjlpFMcorocYCcMbKmNsWofMiv+qlhf/ke6HnZtNbVSaCtw/mIjXZe/t4lm4UW5JoxndtenTv6KmVdaex2CMQ52seYvbQzaHWQLajapU8YoyMRRR9eB/GOjcLhjZeiSQIdONBDcnQUBpsFS+x9zMV34VWAARNd4Zuc+ohSqgD6TCMU5YW9LYDnwow==
+Received: from DM6PR11CA0042.namprd11.prod.outlook.com (2603:10b6:5:14c::19)
+ by DM4PR12MB6088.namprd12.prod.outlook.com (2603:10b6:8:af::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.12; Fri, 2 Sep
+ 2022 16:35:57 +0000
+Received: from DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:14c:cafe::1c) by DM6PR11CA0042.outlook.office365.com
+ (2603:10b6:5:14c::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10 via Frontend
+ Transport; Fri, 2 Sep 2022 16:35:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.238) by
+ DM6NAM11FT067.mail.protection.outlook.com (10.13.172.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5588.10 via Frontend Transport; Fri, 2 Sep 2022 16:35:56 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL105.nvidia.com
+ (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Fri, 2 Sep
+ 2022 16:35:56 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Fri, 2 Sep 2022
+ 09:35:55 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29 via Frontend
+ Transport; Fri, 2 Sep 2022 09:35:55 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/42] 4.14.292-rc1 review
+In-Reply-To: <20220902121358.773776406@linuxfoundation.org>
+References: <20220902121358.773776406@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH RESEND 1/2] i2c: tegra: Add GPCDMA support
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Akhil R <akhilrajeev@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "wsa@kernel.org" <wsa@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "christian.koenig@amd.com" <christian.koenig@amd.com>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-        "Kartik ." <kkartik@nvidia.com>
-References: <SJ1PR12MB6339FC1F82EB1BB7417E533BC0719@SJ1PR12MB6339.namprd12.prod.outlook.com>
- <ebb0764f-db92-d69d-49ac-151f4e3e0b8a@collabora.com>
- <SJ1PR12MB63396DC508F63807F1CE9901C0719@SJ1PR12MB6339.namprd12.prod.outlook.com>
- <fac10841-1682-845f-3e4a-5668f59caed0@gmail.com>
- <cd0374f1-2c05-7e61-7187-cfc9c42edf63@gmail.com>
- <SJ1PR12MB63397BBD4EF314A742680F2CC0709@SJ1PR12MB6339.namprd12.prod.outlook.com>
- <a7ba27c4-992b-28d1-f6c2-3937b4f275ce@collabora.com>
- <c9ba2629-fc81-cefd-0d6d-991084781ec3@collabora.com>
- <SJ1PR12MB63393F51E29BA1F85AD249DBC0709@SJ1PR12MB6339.namprd12.prod.outlook.com>
- <4f791065-e0dd-6ed5-f152-86d7be683490@collabora.com> <YxDEVUq3jbjnOmnI@orome>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <YxDEVUq3jbjnOmnI@orome>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <402bdd3b-d6b6-42bb-bf30-e88e9776a34b@rnnvmail202.nvidia.com>
+Date:   Fri, 2 Sep 2022 09:35:55 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8ebe7ef5-b292-4014-8ebb-08da8d013630
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6088:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: e8Z9KAGKpra/8g815cNcNVatV66DvbGXA3mwykGpWTBNbuUI+Msm6VWt1dSn+tMqoQlO6B9pmOPIi2xNg5MDGroq9Ca+ZNY5HgqEl+pqs7oLn0Mr8h/aV6VBE8wWfjKE4rkjy/hj4NeGnlS179aYSuohFYGtmbwrzRv+V6/t3ue6wNkVmUxLg6jXEAkDh9e2UaKXEFw7iNKgLku1/BBiX6IDodgUuzVU1g/nXtR3JOtpglK7PpzIvXZhGe3TKXqFpGAraI+7JXkhrHWG6dzqkXi897vPVY3EmI+6wDx84KX+QsR3LdC3fsHGw9qIOs/3UzuueEWwlI9h04CdE6CikH+zrfe2fo/W8KldLU8sm4W/ri1+3t616zX4sWVgzlxwj/0xnPmjADfjjtIgq808uiCN8pbXVvTWKDLMw75tHAYnVYzwpH7x5R9tcRvzeFaeuyCsf1XE1vqoAVueagydw8b4GlyDtOqHo9rtthQyykhpG46ldem+WUBDJmIb3h7fpAJNPnEgzfJTZNrPun9020A1D+QZ2BlRuCFjavZqp2dgDEGD6KTYoS8/mwJRrwT17GDqEhJe2Pqk1UlD5s85D5bEfpXkIhu5ddUc+5jQkAUpdCI52opCBgPpgse/VV46GdFuUdfuHoUKXP3ztcV12f5bY5IZS3GVe7DpwCUmWEfqpQgcPN4VJHVnZLEMTmgjpbO7ICsuR5G/ld22xo1kiIAzQRSw7f8yYpA+W0F8iiXF53s5445UbJMQX3Vo6PvVNQr4p59v4ni3lV+xHyV2c9kTtTsbDe2UcgmIVnlFHzs8P35VDngFWq1P6bSblA6HixLfHSgmD8Qn3p5Vq72i9unHvy24yPV7TJyKm22MbVfbhxzLuxhdmcqUHzGOgL6N
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(396003)(136003)(376002)(39860400002)(346002)(46966006)(36840700001)(40470700004)(31696002)(8936002)(40460700003)(86362001)(26005)(82310400005)(478600001)(36860700001)(2906002)(41300700001)(5660300002)(7416002)(426003)(356005)(70206006)(186003)(81166007)(336012)(47076005)(54906003)(82740400003)(70586007)(40480700001)(316002)(31686004)(6916009)(4326008)(966005)(8676002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2022 16:35:56.8888
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ebe7ef5-b292-4014-8ebb-08da8d013630
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6088
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.09.2022 17:40, Thierry Reding пишет:
-> On Tue, Aug 23, 2022 at 04:32:11PM +0300, Dmitry Osipenko wrote:
->> On 8/23/22 15:55, Akhil R wrote:
->> ...
->>>>>> What I am trying for is to have a mechanism that doesn't halt the i2c
->>>> transfers
->>>>>> till DMA is available. Also, I do not want to drop DMA because it was
->>>> unavailable
->>>>>> during probe().
->>>>>
->>>>> Why is it unavailable? Sounds like you're not packaging kernel properly.
->>> Unavailable until initramfs or systemd is started since the module has to be
->>> loaded from either of it.
->>>
->>>>>
->>>>>> This situation is sure to hit if we have I2C driver as built in and DMA driver as a
->>>>>> module. In such cases, I2C will never be able to use the DMA.
->>>>>
->>>>> For Tegra I2C built-in + DMA driver module you should add the dma.ko to
->>>>> initramfs and then it will work. This is a common practice for many
->>>>> kernel drivers.
->>>>>
->>>>> It's also similar to a problem with firmware files that must be
->>>>> available to drivers during boot,
->>>
->>> Isn't the initramfs loaded after the driver initcalls? Wasn't very much clear for me
->>> from the code and docs. We did try adding the module in initramfs initially, but
->>> couldn't find much of a difference from when it is loaded by systemd in rootfs.
->>> Will explore more on this if this really helps.
->>
->> It doesn't matter when initramfs is loaded. Tegra I2C should be
->> re-probed once DMA driver is ready, that's the point of deferred
->> probing. I'd assume that your DMA driver module isn't loading.
+On Fri, 02 Sep 2022 14:18:24 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.292 release.
+> There are 42 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> One problem we have with this, and it's another part of the reason why
-> we have the TEGRA20_APB_DMA conditional in there, is that if no DMA
-> driver is enabled, then the I2C driver will essentially defer probe
-> indefinitely.
+> Responses should be made by Sun, 04 Sep 2022 12:13:47 +0000.
+> Anything received after that time might be too late.
 > 
-> The same would happen if for whatever reason someone was to disable the
-> DMA engine via status = "disabled" in device tree. And that's not
-> something we can easily discover, as far as I can tell. Although perhaps
-> code could be added to discover these kinds of situations.
-
-The case of missing/disabled node needs to be addressed in the DMA API.
-Add new dma_request_chan_optional().
-
-> Both of the above scenarios could also be considered as bugs, I suppose,
-> and in that case the fix would be to update the configuration and/or the
-> device tree.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.292-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
 > 
->>>>>> Another option I thought about was to request and free DMA channel for
->>>> each
->>>>>> transfer, which many serial drivers already do. But I am a bit anxious if that
->>>> will
->>>>>> increase the latency of transfer.
->>>>>
->>>>> Perhaps all you need to do is to add MODULE_SOFTDEP to Tegra I2C driver
->>>>> like we did it for the EMC driver [1].
->>>>>
->>>>> [1]
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-
->>>> next.git/commit/?id=14b43c20c283de36131da0cb44f3170b9ffa7630
->>>>>
->>>>
->>>> Although, probably MODULE_SOFTDEP won't work for a built-in driver. In
->>>> that case, change Tegra I2C kconfig to depend on the DMA driver.
->>>
->>> Since I2C can work without DMA, wouldn't it limit the flexibility of I2C driver.
->>
->> There are kernel configurations that are not worthwhile to support
->> because nobody use them in practice. I think this is exactly the case
->> here. The TEGRA20_APB_DMA driver dependency created troubles for a long
->> time.
->>
->> If DMA driver is enabled in kernel config, then you should provide the
->> driver module to kernel and it will work.
->>
->> If DMA driver is disabled in kernel config, then Tegra I2C driver should
->> take that into account. I'm now recalling that this was the reason of
->> "!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)" in the code.
->>
->> Since all h/w gens now provide DMA support for Tegra I2C, then should be
->> better and easier to make DMA a dependency for Tegra I2C and don't
->> maintain kernel build configurations that nobody cares about.
+> thanks,
 > 
-> This is a suboptimal solution because we have APB DMA for Tegra20
-> through Tegra210 and GPC DMA for Tegra186 and later. So we'd need to
-> depend on two drivers and that would then pull in GPC DMA basically on
-> all generations.
+> greg k-h
 
-You should be right here, Kconfig doesn't support conditional dependencies.
+All tests passing for Tegra ...
 
-> One potential workaround would be to have a fairly elaborate check in
-> the driver to make sure that for SoC generations that support APB DMA
-> that that driver is enabled, and for SoC generations that have GPC DMA
-> that the corresponding driver is enabled. That's quite ugly and it
-> doesn't solve the status = "disabled" problem, so we'd need that as
-> well.
-> 
-> Another thing that I've been thinking about is to use the deferred probe
-> timeout to remedy this. driver_deferred_probe_check_state() can be used
-> by subsystems to help figure out these kinds of situations. Basically if
-> we integrated that into dma_request_channel(), this would at some point
-> (fairly) late into boot return -ETIMEDOUT (or -ENODEV if modules are
-> disabled). So this would help with status = "disabled" and allow us to
-> avoid Kconfig dependencies/conditionals. Unfortunately it seems like
-> that is in the process of being removed, so not sure if that's a long-
-> term option.
-> 
-> What that doesn't help with is the potentially long delay that probe
-> deferral can cause, so it means that all I2C devices may not get a
-> chance to probe until very late into the boot process. We may need to
-> survey what exactly that means to better judge what to do about it. I
-> do agree that probe deferral is the right tool for the job, but it may
-> be prohibitively slow to get I2C working with that.
-> 
-> Another mitigation would be for the driver to keep probing for the DMA
-> channels in the background. Sort of like an asynchronous probe deferral
-> of that subset. Similar things were discussed at some point when the
-> whole fw_devlink and such were hashed out, though at the time I think
-> the preferred proposal was a notification mechanism.
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-Replicate what is done for APBDMA.
+Linux version:	4.14.292-rc1-g3eabc273fb30
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-if (i2c_dev->hw->has_apb_dma)
-	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
-		dev_dbg(i2c_dev->dev, "DMA support not enabled\n");
-			return 0;
-} else {
-	if (!IS_ENABLED(CONFIG_TEGRA186_GPC_DMA)) {
-		dev_dbg(i2c_dev->dev, "DMA support not enabled\n");
-			return 0;
-	}
-}
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-This will enable GPCDMA. Everything else can be done later on.
+Jon
