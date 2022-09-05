@@ -2,209 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09799ECAAD5
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Sep 2022 15:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA4AECAAD5
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Sep 2022 16:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbiIEP6O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Sep 2022 11:58:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52520 "EHLO
+        id S231932AbiIEQdM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Sep 2022 12:33:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230043AbiIEP6N (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Sep 2022 11:58:13 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298D412616;
-        Mon,  5 Sep 2022 08:58:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CBORDRsz5kGle9Y3bP1Gu/hpK/nuzq4n0cH15n3ZtVDGNWLY3AaAuV24Apa+HFqrDN5b1EQt5NJTblO1rMxF8AhzaWVDYqm39LsPXkzqfltZgfd26ZgW8URn3zYJvOqU/WBvdLrZRnb0T14a+8I/gHNPAbvpJx7m+RLJRRfSppmsBIgwkSas7zcOLJwM9ARaJzqemT+QYmK9Og0ybFv9V8nQd/YvGUIYyrZ4CxCiNyPxyiRazaGmMHbYCndoqDtpm+XiNyEwr7D+TTzzc7Vm3KJJ6oVEGUgkT8SphxB7DEcvFMoERMxwWKtBaNDXY7iuP6jdCw8lKc4N4BtnfP+/qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tFqqqRjkdG2e3v/z334g1131NoYzU4caX8u9JyR6s+E=;
- b=BiuRqu+H5PJdCQJZpSHejptEfTnJtup+YfoJLZJkrvyzivgZKEprFmjBNLcbuuMs8yyLo3v55i0NGYvZXz1w3Yc/Lxgz6Lr9k7DiEog9cxuycjuEKb8KTYayvRH2MOgjwrAXAgNLBlD0rabOmyAQi6UbxgdGQ2QqFp5baQt61YhSt5I9rWjjoXHAuDa1fbruORRP7uezhljMTUUKYeAWO9BOoLI0iKaekHchUgM25btSFyy7nctejrek0sZsl9d/nBzvnZlthv7Ilfp7HI9zfOHYiYVQa5sSFWFuiJtyGByChKPJ6muA/DlnSNpxSSjyV1CAbBFFF8noe6awfM96oQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tFqqqRjkdG2e3v/z334g1131NoYzU4caX8u9JyR6s+E=;
- b=Wg6kCRRtjnE+6SEZrhHQts9q6W4QSK2vgVb157J1Z5kN7HhzDPo5PSN+ORMxMyfTq6vJLS/81ybQ4YaD54MQ24VCKyf1plHF4iXuGjLdR+y9dg7nhDFITw19+pljS80xyVNfQY+mEi/tsDa3hYrrFlgHWDdQ6YENBkPH0us0P8ar/ejsQv8dLcdDdMrnjxEjL741wGLrkdGu03I1ED9SMB0gc0Q+RV7pzN64wptWCP02JfFE3pzC2S5tqWYAnkpNOZdWNaIWRF2vDzGSJWdEnZHTyuZdYg2Gh380leN2WA2nMbXX/8wv5i65j2JkdzDrz8Omrk2UlPd83oXWKxa05A==
-Received: from MW2PR16CA0001.namprd16.prod.outlook.com (2603:10b6:907::14) by
- DM4PR12MB5104.namprd12.prod.outlook.com (2603:10b6:5:393::24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5588.10; Mon, 5 Sep 2022 15:58:10 +0000
-Received: from CO1NAM11FT017.eop-nam11.prod.protection.outlook.com
- (2603:10b6:907:0:cafe::b5) by MW2PR16CA0001.outlook.office365.com
- (2603:10b6:907::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.18 via Frontend
- Transport; Mon, 5 Sep 2022 15:58:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.234) by
- CO1NAM11FT017.mail.protection.outlook.com (10.13.175.108) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5588.10 via Frontend Transport; Mon, 5 Sep 2022 15:58:10 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- DRHQMAIL101.nvidia.com (10.27.9.10) with Microsoft SMTP Server (TLS) id
- 15.0.1497.38; Mon, 5 Sep 2022 15:58:09 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Mon, 5 Sep 2022 08:58:08 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Mon, 5 Sep 2022 08:58:06 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <viresh.kumar@linaro.org>, <rafael@kernel.org>,
-        <treding@nvidia.com>, <jonathanh@nvidia.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <bbasu@nvidia.com>, <sumitg@nvidia.com>, <sanjayc@nvidia.com>,
-        <ksitaraman@nvidia.com>
-Subject: [Patch] cpufreq: tegra239: Add support for T239
-Date:   Mon, 5 Sep 2022 21:27:59 +0530
-Message-ID: <20220905155759.17743-1-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+        with ESMTP id S232103AbiIEQdJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Sep 2022 12:33:09 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7B22C660;
+        Mon,  5 Sep 2022 09:33:06 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id t5so11952391edc.11;
+        Mon, 05 Sep 2022 09:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=6TFP59nE0q4HUv8ZkVfRblTtjKpKsP4sx/tU+vV7vtg=;
+        b=QdbMkvg263fL3UC60Vho6UW+iF/AcJ/+rEhNi0lt58zoQyumBmVnOv2DchdMSbX+ux
+         ZrBEMxRrm85NsDQWDx0JaoBxJuY2hQU4dM7aYBJZnhkg3kf0KjRSgOC4EIsXR3pO8P+F
+         UQrUDCeuPohJnGNb1nT4OIodUFvsmbipF1WFAogLh8X5zprE+C9BYh6vu9/t83/xtiHx
+         bzrtCtJKnx9lIFHGpD0nUT0WexVpTfKW7tZrl8MOY9Y3lZ2r8jH94IbmXKg/S+4Lkv6T
+         fagubxJivN5b8eqNgrAV+9DW2Pd06+NzqJNsMatpTZwSmD1kb5jWpuGpTgQl/mQeg9Ep
+         zgWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=6TFP59nE0q4HUv8ZkVfRblTtjKpKsP4sx/tU+vV7vtg=;
+        b=CXE78pv6LdTHfmTDoHSMbrDVawm8PVvBZWHCh6tF+CjIdmbWtdpAaCdGJQoIgqB4o1
+         GylcGiE5eTsodJQ/ZUVw/VJ1s+77QxovoxNPZTYF541fWvIxjRKRZ1D11LDSnyByfHLI
+         EgVIciCWsUceCKbUUhQXYZiycA0BzhkO+0XdtyxrhEKX88SRxJZmG9iFL23P0Kv4kSqP
+         m8VLA4q/C42lvhAtymb68DNGvuoKaAVr2feRrTeo70nKVCFynRs41LfovKEhIo1sdevI
+         +m+I4Sag1gtmDbU9JLbIQM9mfjk4L6BeGDCnEifl68q5yl4LhwIXeYeZzyW3R5FlaHtH
+         OzZA==
+X-Gm-Message-State: ACgBeo3SU3Ao8YU231U5/knuA36VtJT2JhvfO2JgjLC3TxnasZBflcYK
+        r4XVnYJ0M/GFiE+ZLDb6vbc=
+X-Google-Smtp-Source: AA6agR7/WXJVurWceSqahcKJOJ9r9mouFITyPQ5DMwZ49+WkLim/W4jLwYyKVmLg3EuoJ5eITDRlsw==
+X-Received: by 2002:a05:6402:26c5:b0:448:e46f:c9f1 with SMTP id x5-20020a05640226c500b00448e46fc9f1mr24412377edd.287.1662395584761;
+        Mon, 05 Sep 2022 09:33:04 -0700 (PDT)
+Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id l9-20020a1709060cc900b0073ce4abf093sm5239426ejh.214.2022.09.05.09.33.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Sep 2022 09:33:03 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 0/6] drm/simpledrm: Support system memory framebuffers
+Date:   Mon,  5 Sep 2022 18:32:54 +0200
+Message-Id: <20220905163300.391692-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 59a045fc-e8e1-4239-2edf-08da8f576e4c
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5104:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ampBNxy0GcY3dAGq9fDpiaaGGHjaYxyd7vc8VuoEHA3rcQo5Zmt9mQmXy2ZKaNo6yVHqQ8kdOn65mz65lmaOffSFwk9XTA+/qfxmJg8WT4S06W2Fe2xkNGyxxkAhk/qPoOIRtXwhV2jPmB7I+a4rvgeieYA5QazxTGzNr1lPJXJhC/KXhKuOtkxGFJ7qonXauMIlVMsp46S8uIaoS9gTLbbKwGK9LDqwArsgLRV7Y9SFc2jOCcV7QQErQHcG96N2ySUrGkAMyc6K/a9nIAQRG3SbvQBjFMF2QjSNKTPqJmS3vVanrLlCtkGMdzXpPyvWzyCAt7A5uU15wPxjEonWLJCybPYIERgWR+l/oqdkaN2BQcDWEMopyY4IiH5YVNB+os4qaD9lju0QsrQNq34jLBuzFq12fwK3LjU+pj9wOXNBm7iqHtrw85ujO+m02EL58Mw23spB2FBSPyh62JmksWvj6qLbXYBvJYFpYwmire7ocW6L3yOb82CyN8Qz6E6IzFHAHr+9L+aMEimPDduOcrRjgfmGVGJeCG0IvWmi8eCijBCMwkRG6k8YQZnUXlu1X4r8uc7XrEVgJfO8A2vKrGS168sQ8DAujUh6Bo43dzXqtuIahuWpIyY75S2lgme1aZdkb61Fu3rts5H3YIEAkK9vuKwSd960e4tA2AwEPwX4mPPKESpzaCZnJvCm6p2Y4AYR18ETUqfVGffY8atalVQGyZPxMqFpiYZII3fPXB2IdEss40CqFkD4q4JdHHjFNLtRoMW3CfPdQI5fDZgKM8SD5TreKQksNoLh9ncLua5J9I1FjykkAuncEAVYlu0a
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(376002)(39860400002)(396003)(136003)(346002)(40470700004)(46966006)(36840700001)(107886003)(7696005)(26005)(6666004)(478600001)(41300700001)(47076005)(83380400001)(426003)(5660300002)(336012)(2906002)(2616005)(8936002)(40480700001)(82310400005)(40460700003)(54906003)(110136005)(186003)(1076003)(70206006)(4326008)(8676002)(70586007)(36756003)(82740400003)(86362001)(81166007)(356005)(316002)(36860700001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2022 15:58:10.0666
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59a045fc-e8e1-4239-2edf-08da8f576e4c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT017.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5104
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Adding support for Tegra239 SoC which has eight cores in
-a single cluster. Also, moving num_clusters to soc data
-to avoid over allocating memory for four clusters always.
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/cpufreq/tegra194-cpufreq.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+Hi,
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 1216046cf4c2..f38a760da61b 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -38,14 +38,6 @@
- /* cpufreq transisition latency */
- #define TEGRA_CPUFREQ_TRANSITION_LATENCY (300 * 1000) /* unit in nanoseconds */
- 
--enum cluster {
--	CLUSTER0,
--	CLUSTER1,
--	CLUSTER2,
--	CLUSTER3,
--	MAX_CLUSTERS,
--};
--
- struct tegra_cpu_ctr {
- 	u32 cpu;
- 	u32 coreclk_cnt, last_coreclk_cnt;
-@@ -67,12 +59,12 @@ struct tegra_cpufreq_ops {
- struct tegra_cpufreq_soc {
- 	struct tegra_cpufreq_ops *ops;
- 	int maxcpus_per_cluster;
-+	size_t num_clusters;
- 	phys_addr_t actmon_cntr_base;
- };
- 
- struct tegra194_cpufreq_data {
- 	void __iomem *regs;
--	size_t num_clusters;
- 	struct cpufreq_frequency_table **tables;
- 	const struct tegra_cpufreq_soc *soc;
- };
-@@ -166,6 +158,14 @@ static const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
- 	.ops = &tegra234_cpufreq_ops,
- 	.actmon_cntr_base = 0x9000,
- 	.maxcpus_per_cluster = 4,
-+	.num_clusters = 3,
-+};
-+
-+const struct tegra_cpufreq_soc tegra239_cpufreq_soc = {
-+	.ops = &tegra234_cpufreq_ops,
-+	.actmon_cntr_base = 0x4000,
-+	.maxcpus_per_cluster = 8,
-+	.num_clusters = 1,
- };
- 
- static void tegra194_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *clusterid)
-@@ -382,7 +382,7 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
- 
- 	data->soc->ops->get_cpu_cluster_id(policy->cpu, NULL, &clusterid);
- 
--	if (clusterid >= data->num_clusters || !data->tables[clusterid])
-+	if (clusterid >= data->soc->num_clusters || !data->tables[clusterid])
- 		return -EINVAL;
- 
- 	start_cpu = rounddown(policy->cpu, maxcpus_per_cluster);
-@@ -433,6 +433,7 @@ static struct tegra_cpufreq_ops tegra194_cpufreq_ops = {
- static const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
- 	.ops = &tegra194_cpufreq_ops,
- 	.maxcpus_per_cluster = 2,
-+	.num_clusters = 4,
- };
- 
- static void tegra194_cpufreq_free_resources(void)
-@@ -525,15 +526,14 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 
- 	soc = of_device_get_match_data(&pdev->dev);
- 
--	if (soc->ops && soc->maxcpus_per_cluster) {
-+	if (soc->ops && soc->maxcpus_per_cluster && soc->num_clusters) {
- 		data->soc = soc;
- 	} else {
- 		dev_err(&pdev->dev, "soc data missing\n");
- 		return -EINVAL;
- 	}
- 
--	data->num_clusters = MAX_CLUSTERS;
--	data->tables = devm_kcalloc(&pdev->dev, data->num_clusters,
-+	data->tables = devm_kcalloc(&pdev->dev, data->soc->num_clusters,
- 				    sizeof(*data->tables), GFP_KERNEL);
- 	if (!data->tables)
- 		return -ENOMEM;
-@@ -558,7 +558,7 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 		goto put_bpmp;
- 	}
- 
--	for (i = 0; i < data->num_clusters; i++) {
-+	for (i = 0; i < data->soc->num_clusters; i++) {
- 		data->tables[i] = init_freq_table(pdev, bpmp, i);
- 		if (IS_ERR(data->tables[i])) {
- 			err = PTR_ERR(data->tables[i]);
-@@ -590,6 +590,7 @@ static int tegra194_cpufreq_remove(struct platform_device *pdev)
- static const struct of_device_id tegra194_cpufreq_of_match[] = {
- 	{ .compatible = "nvidia,tegra194-ccplex", .data = &tegra194_cpufreq_soc },
- 	{ .compatible = "nvidia,tegra234-ccplex-cluster", .data = &tegra234_cpufreq_soc },
-+	{ .compatible = "nvidia,tegra239-ccplex-cluster", .data = &tegra239_cpufreq_soc },
- 	{ /* sentinel */ }
- };
- 
+this series of patches adds support for framebuffers residing in system
+memory to the simple-framebuffer DRM driver. To do this, the DT bindings
+are extended do accept the memory-region property in addition to the reg
+property for specifying the framebuffer memory. This is done because the
+framebuffer memory will typically also need to be marked as reserved so
+that the operating system will not reuse it and the memory-region
+property is the standard property to reference reserved memory regions.
+
+A new compatible string is documented to annotate the framebuffer memory
+regions and the simpledrm driver has code added to bind such annotated
+regions to the simple-framebuffer device.
+
+The second half of the series then adds support for the AB24 format and
+ties it all together to provide a simple-framebuffer on Jetson Xavier
+NX. It should be noted, though, that the Jetson Xavier NX device tree
+nodes are an example only and ultimately these will be generated (or at
+least filled in) at runtime because of the variable nature of the values
+that they contain.
+
+This example also uses (but doesn't depend on) the iommu-addresses
+property that has been proposed and which will hopefully be merged soon.
+
+Thierry
+
+Thierry Reding (6):
+  dt-bindings: display: simple-framebuffer: Support system memory
+    framebuffers
+  dt-bindings: reserved-memory: Support framebuffer reserved memory
+  drm/simpledrm: Add support for system memory framebuffers
+  drm/format-helper: Support the AB24 format
+  drm/simpledrm: Support the AB24 format
+  arm64: tegra: Add simple framebuffer on Jetson Xavier NX
+
+ .../bindings/display/simple-framebuffer.yaml  |   5 +
+ .../bindings/reserved-memory/framebuffer.yaml |  46 +++++
+ .../nvidia/tegra194-p3509-0000+p3668-0001.dts |  32 ++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |   2 +-
+ drivers/gpu/drm/drm_format_helper.c           |  35 ++++
+ drivers/gpu/drm/tiny/simpledrm.c              | 167 ++++++++++++++----
+ 6 files changed, 255 insertions(+), 32 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+
 -- 
-2.17.1
+2.37.2
 
