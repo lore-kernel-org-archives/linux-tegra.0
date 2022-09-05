@@ -2,199 +2,209 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65460C6FA8C
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Sep 2022 15:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09799ECAAD5
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Sep 2022 15:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238485AbiIEPuH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Sep 2022 11:50:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43174 "EHLO
+        id S231174AbiIEP6O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Sep 2022 11:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237925AbiIEPuF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Sep 2022 11:50:05 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C414D15FEF;
-        Mon,  5 Sep 2022 08:50:03 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id t3so3776852ply.2;
-        Mon, 05 Sep 2022 08:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:sender
-         :from:to:cc:subject:date;
-        bh=3XrVUU9T8R4LO8OA1f5h+alUXAX2S0TQoRT3c9Li0zE=;
-        b=fb+biuem+7b7djICmUqeW/BHTeNp/mSIkZ0RvN2SXnaFs/5YyeMU+evecpiT94v82W
-         Wxfn0CSNmSmyFNdPp1gzvwV0fM9AjmN0MOmTdZboebJPVCoX17sG9lmzebM9ao53ceUW
-         yVd7msO4mdC3TWp+151flO1HCijMCEaMLiYb6sFX8Glvs7ZTTgoL3lCtGTKQ7fyXm+Gg
-         pHh/glh3NMkFwNQZT6QZHQG62OtYie95f/rnYvvh4Y8aPOmfyT9Ar+2EHwInZ1j+1+j+
-         Oy+Ig/euXQdz3oHAXN56OD5BQH1j8orR8xHQaKEnUQLjJ5W8lICDNDnwnI3x7eyp41JE
-         4G+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:sender
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=3XrVUU9T8R4LO8OA1f5h+alUXAX2S0TQoRT3c9Li0zE=;
-        b=hHJgc5TAzDP2StbI84l5K++P9LI6cA0wdfIuqRNmYwprvXNfSGmRIZHXjdhs10aF+a
-         NAeRtAKt1VTR5sK9YDy62ZJfyqmID3XON7MxSVQnYY/B8rEHgp5yHK/h7MOeqKw4Z9NM
-         lUU5ez8gA/0DB2awELe+nIm1ygW4MdugFPRDxeKQYH4dNWhlkGGrc2v8z4bBJC11pYEm
-         CraelHcL2vggAnqf3yP4pKVYL0Yvw+rYPB8Hi5lLOXZWVha9aBT4SL2fOebJA6GNyGd3
-         r6wUkjFQuKz8USFZN09KiNM5RMBtFtjyXMX3RQAmCIDsjgMaH/VkWa03XE4zy/h2AnXJ
-         jkpw==
-X-Gm-Message-State: ACgBeo3wMIO3o1CdQFyFWh2irfNwn4mlGIyNkdUQgBqnvieVchG38a3/
-        +h7uhQ1triWJNlWLoUqT0Fo=
-X-Google-Smtp-Source: AA6agR5VS25L+Z4dRUGvyFsOt5wkYCTLrQ7nt81wIVLfBBuODfZGLGcvsv14A7LgAxNP1Gl1OohTXw==
-X-Received: by 2002:a17:90a:c706:b0:1fd:e21e:7cb1 with SMTP id o6-20020a17090ac70600b001fde21e7cb1mr20626775pjt.234.1662393003052;
-        Mon, 05 Sep 2022 08:50:03 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p1-20020a17090a348100b001faa4a6691asm10512410pjb.30.2022.09.05.08.49.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Sep 2022 08:50:01 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c696b9bf-d0ce-1c6a-0ee3-939b180891be@roeck-us.net>
-Date:   Mon, 5 Sep 2022 08:49:58 -0700
+        with ESMTP id S230043AbiIEP6N (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Sep 2022 11:58:13 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298D412616;
+        Mon,  5 Sep 2022 08:58:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CBORDRsz5kGle9Y3bP1Gu/hpK/nuzq4n0cH15n3ZtVDGNWLY3AaAuV24Apa+HFqrDN5b1EQt5NJTblO1rMxF8AhzaWVDYqm39LsPXkzqfltZgfd26ZgW8URn3zYJvOqU/WBvdLrZRnb0T14a+8I/gHNPAbvpJx7m+RLJRRfSppmsBIgwkSas7zcOLJwM9ARaJzqemT+QYmK9Og0ybFv9V8nQd/YvGUIYyrZ4CxCiNyPxyiRazaGmMHbYCndoqDtpm+XiNyEwr7D+TTzzc7Vm3KJJ6oVEGUgkT8SphxB7DEcvFMoERMxwWKtBaNDXY7iuP6jdCw8lKc4N4BtnfP+/qQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tFqqqRjkdG2e3v/z334g1131NoYzU4caX8u9JyR6s+E=;
+ b=BiuRqu+H5PJdCQJZpSHejptEfTnJtup+YfoJLZJkrvyzivgZKEprFmjBNLcbuuMs8yyLo3v55i0NGYvZXz1w3Yc/Lxgz6Lr9k7DiEog9cxuycjuEKb8KTYayvRH2MOgjwrAXAgNLBlD0rabOmyAQi6UbxgdGQ2QqFp5baQt61YhSt5I9rWjjoXHAuDa1fbruORRP7uezhljMTUUKYeAWO9BOoLI0iKaekHchUgM25btSFyy7nctejrek0sZsl9d/nBzvnZlthv7Ilfp7HI9zfOHYiYVQa5sSFWFuiJtyGByChKPJ6muA/DlnSNpxSSjyV1CAbBFFF8noe6awfM96oQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tFqqqRjkdG2e3v/z334g1131NoYzU4caX8u9JyR6s+E=;
+ b=Wg6kCRRtjnE+6SEZrhHQts9q6W4QSK2vgVb157J1Z5kN7HhzDPo5PSN+ORMxMyfTq6vJLS/81ybQ4YaD54MQ24VCKyf1plHF4iXuGjLdR+y9dg7nhDFITw19+pljS80xyVNfQY+mEi/tsDa3hYrrFlgHWDdQ6YENBkPH0us0P8ar/ejsQv8dLcdDdMrnjxEjL741wGLrkdGu03I1ED9SMB0gc0Q+RV7pzN64wptWCP02JfFE3pzC2S5tqWYAnkpNOZdWNaIWRF2vDzGSJWdEnZHTyuZdYg2Gh380leN2WA2nMbXX/8wv5i65j2JkdzDrz8Omrk2UlPd83oXWKxa05A==
+Received: from MW2PR16CA0001.namprd16.prod.outlook.com (2603:10b6:907::14) by
+ DM4PR12MB5104.namprd12.prod.outlook.com (2603:10b6:5:393::24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5588.10; Mon, 5 Sep 2022 15:58:10 +0000
+Received: from CO1NAM11FT017.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:907:0:cafe::b5) by MW2PR16CA0001.outlook.office365.com
+ (2603:10b6:907::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.18 via Frontend
+ Transport; Mon, 5 Sep 2022 15:58:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.234) by
+ CO1NAM11FT017.mail.protection.outlook.com (10.13.175.108) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5588.10 via Frontend Transport; Mon, 5 Sep 2022 15:58:10 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ DRHQMAIL101.nvidia.com (10.27.9.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.38; Mon, 5 Sep 2022 15:58:09 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Mon, 5 Sep 2022 08:58:08 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Mon, 5 Sep 2022 08:58:06 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <viresh.kumar@linaro.org>, <rafael@kernel.org>,
+        <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <bbasu@nvidia.com>, <sumitg@nvidia.com>, <sanjayc@nvidia.com>,
+        <ksitaraman@nvidia.com>
+Subject: [Patch] cpufreq: tegra239: Add support for T239
+Date:   Mon, 5 Sep 2022 21:27:59 +0530
+Message-ID: <20220905155759.17743-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Content-Language: en-US
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Airlie <airlied@linux.ie>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        USB <linux-usb@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-References: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
- <20220903-gpiod_get_from_of_node-remove-v1-10-b29adfb27a6c@gmail.com>
- <CAHp75Vd35EOy=mP25=9fmYfqQnbafgotHw1fxk-TdGk6Oc8g8Q@mail.gmail.com>
- <75e60144-9fa2-d6ba-bc92-edd23f7e7189@roeck-us.net>
- <CAHp75VcisCTYoRp-=713YKtwi7BQyPKGiUhF4DkpfAFtvDXCiQ@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v1 10/11] watchdog: bd9576_wdt: switch to using
- devm_fwnode_gpiod_get()
-In-Reply-To: <CAHp75VcisCTYoRp-=713YKtwi7BQyPKGiUhF4DkpfAFtvDXCiQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 59a045fc-e8e1-4239-2edf-08da8f576e4c
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5104:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ampBNxy0GcY3dAGq9fDpiaaGGHjaYxyd7vc8VuoEHA3rcQo5Zmt9mQmXy2ZKaNo6yVHqQ8kdOn65mz65lmaOffSFwk9XTA+/qfxmJg8WT4S06W2Fe2xkNGyxxkAhk/qPoOIRtXwhV2jPmB7I+a4rvgeieYA5QazxTGzNr1lPJXJhC/KXhKuOtkxGFJ7qonXauMIlVMsp46S8uIaoS9gTLbbKwGK9LDqwArsgLRV7Y9SFc2jOCcV7QQErQHcG96N2ySUrGkAMyc6K/a9nIAQRG3SbvQBjFMF2QjSNKTPqJmS3vVanrLlCtkGMdzXpPyvWzyCAt7A5uU15wPxjEonWLJCybPYIERgWR+l/oqdkaN2BQcDWEMopyY4IiH5YVNB+os4qaD9lju0QsrQNq34jLBuzFq12fwK3LjU+pj9wOXNBm7iqHtrw85ujO+m02EL58Mw23spB2FBSPyh62JmksWvj6qLbXYBvJYFpYwmire7ocW6L3yOb82CyN8Qz6E6IzFHAHr+9L+aMEimPDduOcrRjgfmGVGJeCG0IvWmi8eCijBCMwkRG6k8YQZnUXlu1X4r8uc7XrEVgJfO8A2vKrGS168sQ8DAujUh6Bo43dzXqtuIahuWpIyY75S2lgme1aZdkb61Fu3rts5H3YIEAkK9vuKwSd960e4tA2AwEPwX4mPPKESpzaCZnJvCm6p2Y4AYR18ETUqfVGffY8atalVQGyZPxMqFpiYZII3fPXB2IdEss40CqFkD4q4JdHHjFNLtRoMW3CfPdQI5fDZgKM8SD5TreKQksNoLh9ncLua5J9I1FjykkAuncEAVYlu0a
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(376002)(39860400002)(396003)(136003)(346002)(40470700004)(46966006)(36840700001)(107886003)(7696005)(26005)(6666004)(478600001)(41300700001)(47076005)(83380400001)(426003)(5660300002)(336012)(2906002)(2616005)(8936002)(40480700001)(82310400005)(40460700003)(54906003)(110136005)(186003)(1076003)(70206006)(4326008)(8676002)(70586007)(36756003)(82740400003)(86362001)(81166007)(356005)(316002)(36860700001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2022 15:58:10.0666
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59a045fc-e8e1-4239-2edf-08da8f576e4c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT017.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5104
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/5/22 08:21, Andy Shevchenko wrote:
-> On Mon, Sep 5, 2022 at 6:13 PM Guenter Roeck <linux@roeck-us.net> wrote:
->> On 9/5/22 04:09, Andy Shevchenko wrote:
->>> On Mon, Sep 5, 2022 at 9:33 AM Dmitry Torokhov
->>> <dmitry.torokhov@gmail.com> wrote:
-> 
-> ...
-> 
->>>> +       count = device_property_count_u32(dev->parent, "rohm,hw-timeout-ms");
->>>> +       if (count < 0 && count != -EINVAL)
->>>> +               return count;
->>>> +
->>>> +       if (count > 0) {
->>>
->>>> +               if (count > ARRAY_SIZE(hw_margin))
->>>> +                       return -EINVAL;
->>>
->>> Why double check? You may move it out of the (count > 0).
->>
->> Two checks will always be needed, so I don't entirely see
->> how that would be better.
-> 
-> But not nested. That's my point:
-> 
-> if (count > ARRAY_SIZE())
->    return ...
-> if (count > 0)
->    ...
-> 
+Adding support for Tegra239 SoC which has eight cores in
+a single cluster. Also, moving num_clusters to soc data
+to avoid over allocating memory for four clusters always.
 
-The old code has either 1 or two checks if there is no error.
-Your suggested code has always two checks. I don't see how that
-is an improvement.
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ drivers/cpufreq/tegra194-cpufreq.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
->>>> -       if (ret == 1)
->>>> -               hw_margin_max = hw_margin[0];
->>>
->>>> +               ret = device_property_read_u32_array(dev->parent,
->>>> +                                                    "rohm,hw-timeout-ms",
->>>> +                                                    hw_margin, count);
->>>> +               if (ret < 0)
->>>> +                       return ret;
->>>
->>> So, only this needs the count > 0 check since below already has it implicitly.
->>>
->> Sorry, I don't understand this comment.
-> 
-> if (count > 0) {
->    ret = device_property_read_u32_array(...);
->    ...
-> }
-> if (count == 1)
->   ...
-> if (count == 2)
->   ...
-> 
-> But here it might be better to have the nested conditionals.
-> 
-
-We know that count is either 1 or 2 here, so strictly speaking
-	if (count == 1) {
-	} else {
-	}
-would be sufficient. On the other side, that depends on ARRAY_SIZE() being
-exactly 2, so
-	if (count == 1) {
-	} else if (count == 2) {
-	}
-would also make sense. Either way is fine with me. I'll leave it up
-to Dmitry to decide what he wants to do.
-
-Thanks,
-Guenter
-
->>>> -       if (ret == 2) {
->>>> -               hw_margin_max = hw_margin[1];
->>>> -               hw_margin_min = hw_margin[0];
->>>> +               if (count == 1)
->>>> +                       hw_margin_max = hw_margin[0];
->>>> +
->>>> +               if (count == 2) {
->>>> +                       hw_margin_max = hw_margin[1];
->>>> +                       hw_margin_min = hw_margin[0];
->>>> +               }
->>>>           }
-> 
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index 1216046cf4c2..f38a760da61b 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -38,14 +38,6 @@
+ /* cpufreq transisition latency */
+ #define TEGRA_CPUFREQ_TRANSITION_LATENCY (300 * 1000) /* unit in nanoseconds */
+ 
+-enum cluster {
+-	CLUSTER0,
+-	CLUSTER1,
+-	CLUSTER2,
+-	CLUSTER3,
+-	MAX_CLUSTERS,
+-};
+-
+ struct tegra_cpu_ctr {
+ 	u32 cpu;
+ 	u32 coreclk_cnt, last_coreclk_cnt;
+@@ -67,12 +59,12 @@ struct tegra_cpufreq_ops {
+ struct tegra_cpufreq_soc {
+ 	struct tegra_cpufreq_ops *ops;
+ 	int maxcpus_per_cluster;
++	size_t num_clusters;
+ 	phys_addr_t actmon_cntr_base;
+ };
+ 
+ struct tegra194_cpufreq_data {
+ 	void __iomem *regs;
+-	size_t num_clusters;
+ 	struct cpufreq_frequency_table **tables;
+ 	const struct tegra_cpufreq_soc *soc;
+ };
+@@ -166,6 +158,14 @@ static const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
+ 	.ops = &tegra234_cpufreq_ops,
+ 	.actmon_cntr_base = 0x9000,
+ 	.maxcpus_per_cluster = 4,
++	.num_clusters = 3,
++};
++
++const struct tegra_cpufreq_soc tegra239_cpufreq_soc = {
++	.ops = &tegra234_cpufreq_ops,
++	.actmon_cntr_base = 0x4000,
++	.maxcpus_per_cluster = 8,
++	.num_clusters = 1,
+ };
+ 
+ static void tegra194_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *clusterid)
+@@ -382,7 +382,7 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+ 
+ 	data->soc->ops->get_cpu_cluster_id(policy->cpu, NULL, &clusterid);
+ 
+-	if (clusterid >= data->num_clusters || !data->tables[clusterid])
++	if (clusterid >= data->soc->num_clusters || !data->tables[clusterid])
+ 		return -EINVAL;
+ 
+ 	start_cpu = rounddown(policy->cpu, maxcpus_per_cluster);
+@@ -433,6 +433,7 @@ static struct tegra_cpufreq_ops tegra194_cpufreq_ops = {
+ static const struct tegra_cpufreq_soc tegra194_cpufreq_soc = {
+ 	.ops = &tegra194_cpufreq_ops,
+ 	.maxcpus_per_cluster = 2,
++	.num_clusters = 4,
+ };
+ 
+ static void tegra194_cpufreq_free_resources(void)
+@@ -525,15 +526,14 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
+ 
+ 	soc = of_device_get_match_data(&pdev->dev);
+ 
+-	if (soc->ops && soc->maxcpus_per_cluster) {
++	if (soc->ops && soc->maxcpus_per_cluster && soc->num_clusters) {
+ 		data->soc = soc;
+ 	} else {
+ 		dev_err(&pdev->dev, "soc data missing\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	data->num_clusters = MAX_CLUSTERS;
+-	data->tables = devm_kcalloc(&pdev->dev, data->num_clusters,
++	data->tables = devm_kcalloc(&pdev->dev, data->soc->num_clusters,
+ 				    sizeof(*data->tables), GFP_KERNEL);
+ 	if (!data->tables)
+ 		return -ENOMEM;
+@@ -558,7 +558,7 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
+ 		goto put_bpmp;
+ 	}
+ 
+-	for (i = 0; i < data->num_clusters; i++) {
++	for (i = 0; i < data->soc->num_clusters; i++) {
+ 		data->tables[i] = init_freq_table(pdev, bpmp, i);
+ 		if (IS_ERR(data->tables[i])) {
+ 			err = PTR_ERR(data->tables[i]);
+@@ -590,6 +590,7 @@ static int tegra194_cpufreq_remove(struct platform_device *pdev)
+ static const struct of_device_id tegra194_cpufreq_of_match[] = {
+ 	{ .compatible = "nvidia,tegra194-ccplex", .data = &tegra194_cpufreq_soc },
+ 	{ .compatible = "nvidia,tegra234-ccplex-cluster", .data = &tegra234_cpufreq_soc },
++	{ .compatible = "nvidia,tegra239-ccplex-cluster", .data = &tegra239_cpufreq_soc },
+ 	{ /* sentinel */ }
+ };
+ 
+-- 
+2.17.1
 
