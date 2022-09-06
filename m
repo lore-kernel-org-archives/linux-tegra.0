@@ -2,118 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C91C6FA89
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 15:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66AD1ECAAD5
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 16:04:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232398AbiIFPlc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Sep 2022 11:41:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43660 "EHLO
+        id S236845AbiIFQEh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Sep 2022 12:04:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231891AbiIFPiN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 11:38:13 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85747C6E82;
-        Tue,  6 Sep 2022 07:47:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=amrRh4ZPtsTEYKAWOBU1ABMQl3k1FLLm/OK/TnZ4Tb19KyoNTLaxNIzXSI1m70yRrCEtwSKs4mfGinIHB2Vo++mmCw3rudsarl9A6JIWumkhVpLjp+JfK/LpF4sG6NipV3I7RQimYPD14IE2T1ZRqN8XONfxKEn5C9FQA2dWFb1csjAALFCQy6XNHYFKXTr6PKYywRyUap1yohPl0OVZVpDtt8BEQdh7LeYDah9V7m8dc1KjGNFW9kK4JmwwKRvTiW/2TisCoLytqF/QsaMu24ONhyHaUcEcKMCqpbxfoMbnUrpxTmtDwrSlpIWct5Rvj/H531zenpcy/J5prul+IA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u07Q4Bkd6p1xDOkKVsrYKVkm5d9bpT1o3fUxl8xQ7Lo=;
- b=G0PVM/6hgdIiNQieOgKm/0l32/dbF28SgaTXcjHfzJ0oeaIBIaXh85xxwjAEZdchQbiMJC+pFi+yXMSudt+odFuWKUPznZIBLg6IDsTZhp9yHNAq5T92+Iwy8TJOSE9Ux90D4BvKN/EsIJMT/vcxYtiyReL/hDGQUeJuubMQ6ZAHFRrOr9+z62h1JS1TmKrzCcQxR0KfbOQZmAoDqKAdUPPBoYY1FYnVjeOBuEdrO4kCWw2GJ24MI6BvyA0n6s4fK07gcZD4tgNn9St3bSlTUyNmfsoWxIzBH7rsiZRi0AuaeNjAZva3L/qX0a7dtACi5VysLpvy9SfM7jR/0NdLLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u07Q4Bkd6p1xDOkKVsrYKVkm5d9bpT1o3fUxl8xQ7Lo=;
- b=dnQ8J4LwUDRY6MSCB0N7W1Y2t1xx2VmfgAcSytPd6rDY0aDPNbpwKx/s5CG/4FN1B45fhTv1yVEYuf+kHx/7hLq6lDVZ0U7NhEwT/xUAiP+UT2Zx+w6wLhgPB+Ig5sykU7b25YSWnxNa5Um12woTps1S0TZGN2KMWK92X+EoNX4iZrCva3Q9AOl9ozZL0QrlGPNWYC61eEq5rBDNR5WXtiIgTK7qhXUvc2HC5AV/l+Hte0Zh3HHOnRzD8DZ2dYlkjtQfkugb9K8sb+weaREZuU4OJNWZAL/70V+UCZ1cHUPLPJd3ieefIP/QIJABuKHPeQZychtCEYLuEPTuEpZ3VQ==
-Received: from DM6PR14CA0060.namprd14.prod.outlook.com (2603:10b6:5:18f::37)
- by MN2PR12MB4079.namprd12.prod.outlook.com (2603:10b6:208:1d5::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.11; Tue, 6 Sep
- 2022 14:47:36 +0000
-Received: from DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:18f:cafe::d2) by DM6PR14CA0060.outlook.office365.com
- (2603:10b6:5:18f::37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.12 via Frontend
- Transport; Tue, 6 Sep 2022 14:47:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.238) by
- DM6NAM11FT067.mail.protection.outlook.com (10.13.172.76) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5588.10 via Frontend Transport; Tue, 6 Sep 2022 14:47:36 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Tue, 6 Sep
- 2022 14:47:35 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 6 Sep 2022
- 07:47:34 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 6 Sep 2022 07:47:31 -0700
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <christian.koenig@amd.com>, <devicetree@vger.kernel.org>,
-        <digetx@gmail.com>, <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <robh+dt@kernel.org>,
-        <sumit.semwal@linaro.org>, <thierry.reding@gmail.com>,
-        <wsa@kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v2 0/3] Add GPCDMA support to Tegra I2C
-Date:   Tue, 6 Sep 2022 20:17:13 +0530
-Message-ID: <20220906144716.16274-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+        with ESMTP id S239698AbiIFQEK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 12:04:10 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC7982D26;
+        Tue,  6 Sep 2022 08:26:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662477999; x=1694013999;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rCGvO6ccyPPJxWuEZsuICJQLGQb8YbWmDASVlzIokmk=;
+  b=dob+eM/lrLt3CeB8ToZ37H/xX+bfA9CW8cR2cLukjjPWI+nBuwN5/OHs
+   nk/J6shPiq33tRjL7tG/jV5OTDTCTXruzjZiG+DCfegnJI9Fz6Sv6hrf1
+   j/lmXs823TYs1Kp02//6glZKKxZlsvypXA15VVHpjF4kr3sraPLklQ/22
+   R/p1WoHvabA5A+v4sCAUS4BqgPVo1xZVaLF5vwff2pE0/o3wsLXkoTuYc
+   /8gHwzopjTg99MtFVDHKNX0mmrYS9oXFczSL2q9qekvnQ4SSxnOln30Hx
+   LbEPq4X+jTAs4s0ScZvhIrrK8ZXpMyo1SYW3pmT8ApVegELVrVS15SIOB
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="360569124"
+X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
+   d="scan'208";a="360569124"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 08:26:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
+   d="scan'208";a="682433423"
+Received: from lkp-server02.sh.intel.com (HELO 95dfd251caa2) ([10.239.97.151])
+  by fmsmga004.fm.intel.com with ESMTP; 06 Sep 2022 08:26:33 -0700
+Received: from kbuild by 95dfd251caa2 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oVaT5-0005Fd-2M;
+        Tue, 06 Sep 2022 15:26:27 +0000
+Date:   Tue, 6 Sep 2022 23:25:29 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     kbuild-all@lists.01.org, devicetree@vger.kernel.org,
+        Sameer Pujar <spujar@nvidia.com>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-tegra@vger.kernel.org, Ashish Mhetre <amhetre@nvidia.com>
+Subject: Re: [PATCH 1/8] memory: tegra: Add API for retrieving carveout bounds
+Message-ID: <202209062313.buowJWo0-lkp@intel.com>
+References: <20220906132823.2390953-2-cyndis@kapsi.fi>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: af3c93ce-288e-43dd-d1ae-08da9016bd13
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4079:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: cRyuyvZIrdDFNqyvZ2SAUQirhatroLXj4TrwN7iTwzOStB73l7LgbXB2KOiijdywiK+sY8eAZz8fxyGbqOxtiaoH5+XPCK8MVhFg/v2AHdpS9tZoYG/WmZx5AHuZ6RcyQHjo8nMj+z19xwqqJpZE7TsTTCQPe/pcbg/QZYYGlQ4+6M/XWM8w97izNtrpH8I5iAyBT+FolOtLWxxhjMFnSHpcF9nXjjcvURrDNFDTG/18Cq/k+KkQB1WEWvviiRTZ1yg7OXuZVXjfQZNSwXrvqsKtkkB5fgXbBYeAFMzXbJuCpptMTnNwLOOJItb2rdapA4sMmIuRSzO/5Q8hSbtjMbw+BKqGlf3dZEKfPdpt+hbhzFk13qobGFeon+qnwRYN3ugrQACjgdAAA2ftSaxzzqjsy4TqUPhFeYFxqf3wb5EqACuzd74YBgqCGKVLSMCBsZVE/K3lWasya31JtnaYvuHcmjwbLcBErYWQuI7I/nWFtkNG9flze1GkgL1cT608IFcTmQbGecI2V1Luu0OfHUoWaitRzKK5xdA31+J3c8sDUgU1wFkeRVsB8x07JHxYbZAcxUPMgkE06y8und5Nxe5q3MMUYr4FzT68CHkBFhQ4NdEvhHPlqgqTCNW/hBcuJmWO1v3zQRb8/eTHDYHBvUbYieQzd6UWkXdHSvesUBJLGj81dhdypekazQFsCdiTMBw+5zMrBMGxm7bVlTmp1lE06JTwBmGJ9g2X9jTc5ZheSaC2dU6VvCsg5zAxszUi2oTSoRdrKHiCMpOGqIRkvz6Ef1EhG14edkl1ke5zEFE6HiBEErJI27F3tqLTfIcaDz6mvtp2TbFtMNLo4jXgoxCahZoiMN237SD2FIhl1+FovgL4jj3Q7uphzYWA5TRa
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(346002)(136003)(376002)(396003)(46966006)(36840700001)(40470700004)(82740400003)(356005)(8676002)(921005)(4326008)(40460700003)(186003)(70586007)(81166007)(336012)(82310400005)(2616005)(8936002)(478600001)(83380400001)(70206006)(36756003)(1076003)(107886003)(7416002)(5660300002)(36860700001)(4744005)(41300700001)(6666004)(40480700001)(26005)(86362001)(7696005)(316002)(426003)(2906002)(110136005)(47076005)(2101003)(83996005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2022 14:47:36.1125
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: af3c93ce-288e-43dd-d1ae-08da9016bd13
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220906132823.2390953-2-cyndis@kapsi.fi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Updates in Tegra I2C driver, device tree and defconfig to support
-GPCDMA for I2C in Tegra 186 and later chips.
+Hi Mikko,
+
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on clk/clk-next krzk-mem-ctrl/for-next pza/reset/next linus/master v6.0-rc4 next-20220906]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mikko-Perttunen/Support-for-NVDEC-on-Tegra234/20220906-215151
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: powerpc-allyesconfig (https://download.01.org/0day-ci/archive/20220906/202209062313.buowJWo0-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/7e2bd1173420c8e09ec90e3322e059a7350482e3
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Mikko-Perttunen/Support-for-NVDEC-on-Tegra234/20220906-215151
+        git checkout 7e2bd1173420c8e09ec90e3322e059a7350482e3
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash drivers/memory/tegra/
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+   drivers/memory/tegra/mc.c: In function 'tegra_mc_get_carveout_info':
+>> drivers/memory/tegra/mc.c:124:83: warning: left shift count >= width of type [-Wshift-count-overflow]
+     124 |         *base |= (phys_addr_t)mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x4) << 32;
+         |                                                                                   ^~
 
 
-Akhil R (3):
-  i2c: tegra: Add GPCDMA support
-  arm64: tegra: Add GPCDMA support for Tegra I2C
-  arm64: defconfig: Make TEGRA186_GPC_DMA built-in
+vim +124 drivers/memory/tegra/mc.c
 
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 32 ++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 32 ++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 32 ++++++++++++++++++++++++
- arch/arm64/configs/defconfig             |  2 +-
- drivers/i2c/busses/i2c-tegra.c           | 11 +++++---
- 5 files changed, 105 insertions(+), 4 deletions(-)
+   109	
+   110	int tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
+   111	                               phys_addr_t *base, u64 *size)
+   112	{
+   113		u32 offset;
+   114	
+   115		if (id < 1 || id >= mc->soc->num_carveouts)
+   116			return -EINVAL;
+   117	
+   118		if (id < 6)
+   119			offset = 0xc0c + 0x50 * (id - 1);
+   120		else
+   121			offset = 0x2004 + 0x50 * (id - 6);
+   122	
+   123		*base = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x0);
+ > 124		*base |= (phys_addr_t)mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x4) << 32;
+   125	
+   126		if (size)
+   127			*size = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x8) << 17;
+   128	
+   129		return 0;
+   130	}
+   131	EXPORT_SYMBOL_GPL(tegra_mc_get_carveout_info);
+   132	
 
 -- 
-2.17.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
