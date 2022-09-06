@@ -2,119 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F231DECAAD5
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 13:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625FDECAAD5
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 13:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240059AbiIFNLW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Sep 2022 09:11:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48030 "EHLO
+        id S240084AbiIFN3a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Sep 2022 09:29:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240145AbiIFNLT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 09:11:19 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831C3659F8;
-        Tue,  6 Sep 2022 06:11:11 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-119-13.nat.spd-mgts.ru [109.252.119.13])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B80DF660037F;
-        Tue,  6 Sep 2022 14:11:06 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1662469869;
-        bh=5QO1SLp5eg80ObSSt8FLqmBTFoFhiD0BogISlBa9BUQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=mOY7c50kE5+Xmrb35k079cHSMFkYyUhYJe+5NjUUjK8ZUXDK2Cj5ao5UFUt6ANYUq
-         MbENZTEK+MC3hZgppOROxiXeWrvpQjkxT6YjcoMgmWubysUlbKG77vCqaEkWRDRal9
-         XXpS0HpF4+46bmoLB10JvyBEUVX9ZdQGSREbTyPXFsZn6YfaEG5VzCQDo8FnzKShL+
-         XBdK7rg58ksb9EzHK9Ozg4bd0EY8Yc3pKrEVM3aopMr0XqtFVapzbd8WRV3eV8G+7D
-         kXDLzfz9Muog+VR73hD4bNVxPc1EBMTiMUwEjla1rHk5Sro9Q91O0seQeTlmhd+iQq
-         3CWCI7wojCwxQ==
-Message-ID: <efe46a7d-89b7-2465-e593-8383d1546c16@collabora.com>
-Date:   Tue, 6 Sep 2022 16:11:03 +0300
+        with ESMTP id S233861AbiIFN33 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 09:29:29 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [91.232.154.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16DCB25FB;
+        Tue,  6 Sep 2022 06:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=cC12j9P8ru5KBXVnbrH+bmEMVgxfMYkSNhABeawipyA=; b=ajBjMhO+HcEVVg/LhLoVkaC387
+        T48HA5iRXrdp+tXRRN1TP9byfY4Fsvd5ZsS7Mze4cbzYQWYIQGozHi4xAn9EO1kZFUC8Ys5p3Qn2J
+        LilPFmOY6mfHH8wO4DH8UfZr7zbXVh0oBC92hU4b7KE4bO0TPFtdQsIaHMaw9HlF8CIjD94lhdGde
+        PoVM7yzQR0JHegQKmo+vjmONqg14NbMXOjtVppasycWj/fE0vvCyg2kO457dz86pMFEIjWRY+LSWb
+        hLZ0WTd3Na6Lo2d7tWV1SpCqQUXvcthp/3tqrmov8yyIevbgkkiHDSgUOn3pWXoZzA10zp51ORi7F
+        ZbSJ3Dyw==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1oVYdY-008sZV-Kn; Tue, 06 Sep 2022 16:29:08 +0300
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/8] drm/tegra: nvdec: Support multiple clocks
+Date:   Tue,  6 Sep 2022 16:28:21 +0300
+Message-Id: <20220906132823.2390953-7-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.37.0
+In-Reply-To: <20220906132823.2390953-1-cyndis@kapsi.fi>
+References: <20220906132823.2390953-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH v5 07/33] thermal/drivers/tegra: Switch to new of API
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linexp.org>,
-        daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com,
-        abailon@baylibre.com, lukasz.luba@arm.com, broonie@kernel.org,
-        damien.lemoal@opensource.wdc.com, heiko@sntech.de,
-        hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
-        talel@amazon.com, thierry.reding@gmail.com, digetx@gmail.com,
-        jonathanh@nvidia.com, anarsoul@gmail.com, tiny.windzz@gmail.com,
-        baolin.wang7@gmail.com, f.fainelli@gmail.com,
-        bjorn.andersson@linaro.org, mcoquelin.stm32@gmail.com,
-        glaroque@baylibre.com, miquel.raynal@bootlin.com,
-        shawnguo@kernel.org, niklas.soderlund@ragnatech.se,
-        matthias.bgg@gmail.com, j-keerthy@ti.com,
-        Amit Kucheria <amitk@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-References: <20220804224349.1926752-1-daniel.lezcano@linexp.org>
- <20220804224349.1926752-8-daniel.lezcano@linexp.org>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20220804224349.1926752-8-daniel.lezcano@linexp.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 8/5/22 01:43, Daniel Lezcano wrote:
-> diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
-> index 05886684f429..c34501287e96 100644
-> --- a/drivers/thermal/tegra/tegra30-tsensor.c
-> +++ b/drivers/thermal/tegra/tegra30-tsensor.c
-> @@ -159,9 +159,9 @@ static void devm_tegra_tsensor_hw_disable(void *data)
->  	tegra_tsensor_hw_disable(ts);
->  }
->  
-> -static int tegra_tsensor_get_temp(void *data, int *temp)
-> +static int tegra_tsensor_get_temp(struct thermal_zone_device *tz, int *temp)
->  {
-> -	const struct tegra_tsensor_channel *tsc = data;
-> +	const struct tegra_tsensor_channel *tsc = tz->devdata;
->  	const struct tegra_tsensor *ts = tsc->ts;
->  	int err, c1, c2, c3, c4, counter;
->  	u32 val;
-> @@ -217,9 +217,9 @@ static int tegra_tsensor_temp_to_counter(const struct tegra_tsensor *ts, int tem
->  	return DIV_ROUND_CLOSEST(c2 * 1000000 - ts->calib.b, ts->calib.a);
->  }
->  
-> -static int tegra_tsensor_set_trips(void *data, int low, int high)
-> +static int tegra_tsensor_set_trips(struct thermal_zone_device *tz, int low, int high)
->  {
-> -	const struct tegra_tsensor_channel *tsc = data;
-> +	const struct tegra_tsensor_channel *tsc = tz->devdata;
->  	const struct tegra_tsensor *ts = tsc->ts;
->  	u32 val;
->  
-> @@ -240,7 +240,7 @@ static int tegra_tsensor_set_trips(void *data, int low, int high)
->  	return 0;
->  }
->  
-> -static const struct thermal_zone_of_device_ops ops = {
-> +static const struct thermal_zone_device_ops ops = {
->  	.get_temp = tegra_tsensor_get_temp,
->  	.set_trips = tegra_tsensor_set_trips,
->  };
-> @@ -516,7 +516,7 @@ static int tegra_tsensor_register_channel(struct tegra_tsensor *ts,
->  	tsc->id = id;
->  	tsc->regs = ts->regs + 0x40 * (hw_id + 1);
->  
-> -	tsc->tzd = devm_thermal_zone_of_sensor_register(ts->dev, id, tsc, &ops);
-> +	tsc->tzd = devm_thermal_of_zone_register(ts->dev, id, tsc, &ops);
->  	if (IS_ERR(tsc->tzd)) {
->  		if (PTR_ERR(tsc->tzd) != -ENODEV)
->  			return dev_err_probe(ts->dev, PTR_ERR(tsc->tzd),
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com> # Nexus7
+NVDEC on Tegra234 requires multiple clocks. Add support for that.
 
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/drm/tegra/nvdec.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
+index 276fe0472730..05af4d107421 100644
+--- a/drivers/gpu/drm/tegra/nvdec.c
++++ b/drivers/gpu/drm/tegra/nvdec.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (c) 2015-2021, NVIDIA Corporation.
++ * Copyright (c) 2015-2022, NVIDIA Corporation.
+  */
+ 
+ #include <linux/clk.h>
+@@ -28,6 +28,7 @@ struct nvdec_config {
+ 	const char *firmware;
+ 	unsigned int version;
+ 	bool supports_sid;
++	bool has_extra_clocks;
+ };
+ 
+ struct nvdec {
+@@ -37,7 +38,8 @@ struct nvdec {
+ 	struct tegra_drm_client client;
+ 	struct host1x_channel *channel;
+ 	struct device *dev;
+-	struct clk *clk;
++	struct clk_bulk_data clks[3];
++	unsigned int num_clks;
+ 
+ 	/* Platform configuration */
+ 	const struct nvdec_config *config;
+@@ -258,7 +260,7 @@ static __maybe_unused int nvdec_runtime_resume(struct device *dev)
+ 	struct nvdec *nvdec = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	err = clk_prepare_enable(nvdec->clk);
++	err = clk_bulk_prepare_enable(nvdec->num_clks, nvdec->clks);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -275,7 +277,7 @@ static __maybe_unused int nvdec_runtime_resume(struct device *dev)
+ 	return 0;
+ 
+ disable:
+-	clk_disable_unprepare(nvdec->clk);
++	clk_bulk_disable_unprepare(nvdec->num_clks, nvdec->clks);
+ 	return err;
+ }
+ 
+@@ -285,7 +287,7 @@ static __maybe_unused int nvdec_runtime_suspend(struct device *dev)
+ 
+ 	host1x_channel_stop(nvdec->channel);
+ 
+-	clk_disable_unprepare(nvdec->clk);
++	clk_bulk_disable_unprepare(nvdec->num_clks, nvdec->clks);
+ 
+ 	return 0;
+ }
+@@ -383,13 +385,22 @@ static int nvdec_probe(struct platform_device *pdev)
+ 	if (IS_ERR(nvdec->regs))
+ 		return PTR_ERR(nvdec->regs);
+ 
+-	nvdec->clk = devm_clk_get(dev, NULL);
+-	if (IS_ERR(nvdec->clk)) {
+-		dev_err(&pdev->dev, "failed to get clock\n");
+-		return PTR_ERR(nvdec->clk);
++	nvdec->clks[0].id = "nvdec";
++	nvdec->num_clks = 1;
++
++	if (nvdec->config->has_extra_clocks) {
++		nvdec->num_clks = 3;
++		nvdec->clks[1].id = "fuse";
++		nvdec->clks[2].id = "tsec_pka";
++	}
++
++	err = devm_clk_bulk_get(dev, nvdec->num_clks, nvdec->clks);
++	if (err) {
++		dev_err(&pdev->dev, "failed to get clock(s)\n");
++		return err;
+ 	}
+ 
+-	err = clk_set_rate(nvdec->clk, ULONG_MAX);
++	err = clk_set_rate(nvdec->clks[0].clk, ULONG_MAX);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to set clock rate\n");
+ 		return err;
 -- 
-Best regards,
-Dmitry
+2.37.0
+
