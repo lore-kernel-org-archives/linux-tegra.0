@@ -2,141 +2,390 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FC2ECAAD5
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 15:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947CDECAAA1
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 15:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232070AbiIFPVn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Sep 2022 11:21:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42894 "EHLO
+        id S233309AbiIFPjQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Sep 2022 11:39:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232795AbiIFPVY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 11:21:24 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AEFF82756;
-        Tue,  6 Sep 2022 07:33:05 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id t11-20020a05683014cb00b0063734a2a786so8149104otq.11;
-        Tue, 06 Sep 2022 07:33:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=0oc/efpNyK02TA049vRdVuq+a16ZNo/nBU3UNBlbLlA=;
-        b=Ond+kA/gLnCbMNvdgqRN8z9f1UGtgr1P5+UPOam+19NuXgbZKJD2X268HcEllLuukc
-         biMA7zpfNIOO8QKiof4wib0OLzrUDMZeug4s4jbLdnazxXqvZg1IbDPhAuP6yw0YX5PH
-         IfjpMq3fW8uX3y4bxHms+1rSKaN91n/O/jGpIB9gT4u4jkEL6/BmyJr11X2/rAWogrcL
-         j8bMCw76/pzsmcXma+fRx3KmeG/d1dFb2rPDLhM2R5vKbBdbAgc5QCofWGQsoKWJKKKp
-         Ui1hftWk7FiA/m2s9+6t2BnjxA+mRqGGkCoGfvv04FbuBT8rCBE3BPJ5hrDa1hrw9yRm
-         l1Hw==
-X-Gm-Message-State: ACgBeo0LDlo8jL22F3w4LRKIseeMrZCMA0hle4UIOrKyfULra2kToFrE
-        uTeqSUVnnlgu+ERGxvKaBw2RYnGM/g==
-X-Google-Smtp-Source: AA6agR5MNLEe98jQgQIHK50PgdC2yea2wXhfxxelbBN17o+lzcVRNee4Gc6KiaqLgekEcrc451ilLw==
-X-Received: by 2002:a05:6830:1281:b0:636:d7e9:1906 with SMTP id z1-20020a056830128100b00636d7e91906mr21706186otp.116.1662474443952;
-        Tue, 06 Sep 2022 07:27:23 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id k5-20020a056830168500b0063922f00ee2sm5961637otr.39.2022.09.06.07.27.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Sep 2022 07:27:22 -0700 (PDT)
-Received: (nullmailer pid 439485 invoked by uid 1000);
-        Tue, 06 Sep 2022 14:27:21 -0000
-Date:   Tue, 6 Sep 2022 09:27:21 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/6] dt-bindings: reserved-memory: Support framebuffer
- reserved memory
-Message-ID: <20220906142721.GA427176-robh@kernel.org>
-References: <20220905163300.391692-1-thierry.reding@gmail.com>
- <20220905163300.391692-3-thierry.reding@gmail.com>
+        with ESMTP id S232690AbiIFPiZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 11:38:25 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E47279F18B;
+        Tue,  6 Sep 2022 07:47:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OJ1mDa6RfU87XtXORQNtqFRsv7cuIBUNVDa/6un4OoZv3ZJRuIpTB+E+N1mIaopAFiv8gCkGdSBj2C3g04WaXJIPfznc6RLFRNcRKfuRb/JdVFGaalMdSZlc83IcVon4ch5fhCDhAFMZVM6VYJW6fyePDAwMJRwfrOunUkBhIoOhCDZ9Sek+Y6LPHoiwvjuFeEbosNRinD6DTPs37iZLFwqNvv9ZErEhtAtWuBUlDSpqjQzmEsDPkVBzYjTCllHEGelB8X8KAMy6G2ch5DELEjHstbE/gTlQUWKqVlZVs29uWQnXoDpTc1bpdos3dRu0Y7KDi6dWrX/zeVJwFqRdCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dnNkpqZi1DY29+pfxdJg2gVA6RbrLOvW6jOVAvxgTkw=;
+ b=Rp4W/OeDBQpjDVGX3uju4A2zMpIyr6Gv4Q8D3G1sczV6JK/LsCjsAm6sf+JDj2ZD9SaM6WLnrnQbGfWam24taWaeBTRXOlFJ8gXxKyifstPGcfR9BO6AHkLe7Hp7BW+GoOyVSKORemdLDF1kC4u7ivNDw/m/tq09/rdEvsvB1hZCONAKV8Llk++M4ytFpq6jU28tg2iPrni7wmORIa/GhfZ24fH3oR1wlD1+W0nZOCKPj0RV+NASeaOevdJKIi9F817p18SAtePrnxr9dszrRm39zWC3rmzbBhi1tfli+qTZZSkaM6bOXHeFGOFKcYo7QMOTGsXkM0cYTiOiKPh3PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dnNkpqZi1DY29+pfxdJg2gVA6RbrLOvW6jOVAvxgTkw=;
+ b=Aw86s9+90YNHIlEeNhzA5kc6MZSLxN7tMRRQyFcrHluq9JVU2gaEmseD6F6GW810mLWvkShrfoZFcefDYcHQWwQ0M0AdscaYbTPMt2cUKF+bCfD44sxQr4DjrgXBWQSsOq8gg6IMcxAyN7DvhqRbRod4dTJGZgI1qNKGDuOgoVXmzqCjwm+E1nrqyisYjE+dNNgMbIfGf/AX3WEZIWBgyAlUHlfLKEbOQybt0JsosxW3C277vTjxHg4SKnFAtxzQPaEeSJDdqeLmXk/NoYOHtM7QTTEsFbfqgUjSSWd0ge3KD8wWbBBmuzPu31ejbCj/yC57NgKU13C4VK9rYr4DcQ==
+Received: from DM6PR14CA0042.namprd14.prod.outlook.com (2603:10b6:5:18f::19)
+ by IA1PR12MB6601.namprd12.prod.outlook.com (2603:10b6:208:3a3::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10; Tue, 6 Sep
+ 2022 14:47:55 +0000
+Received: from DM6NAM11FT023.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:18f:cafe::14) by DM6PR14CA0042.outlook.office365.com
+ (2603:10b6:5:18f::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10 via Frontend
+ Transport; Tue, 6 Sep 2022 14:47:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.238) by
+ DM6NAM11FT023.mail.protection.outlook.com (10.13.173.96) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5588.10 via Frontend Transport; Tue, 6 Sep 2022 14:47:55 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL105.nvidia.com
+ (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Tue, 6 Sep
+ 2022 14:47:55 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 6 Sep 2022
+ 07:47:54 -0700
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Tue, 6 Sep 2022 07:47:50 -0700
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <christian.koenig@amd.com>, <devicetree@vger.kernel.org>,
+        <digetx@gmail.com>, <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <robh+dt@kernel.org>,
+        <sumit.semwal@linaro.org>, <thierry.reding@gmail.com>,
+        <wsa@kernel.org>
+CC:     <akhilrajeev@nvidia.com>
+Subject: [PATCH v2 2/3] arm64: tegra: Add GPCDMA support for Tegra I2C
+Date:   Tue, 6 Sep 2022 20:17:15 +0530
+Message-ID: <20220906144716.16274-3-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220906144716.16274-1-akhilrajeev@nvidia.com>
+References: <20220906144716.16274-1-akhilrajeev@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220905163300.391692-3-thierry.reding@gmail.com>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 18263499-89f0-4be1-1d24-08da9016c8c1
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6601:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tGLvSLbc3p0+Dxm8PO6VuKPy3ec2wAWOqEunxhx5fK1nc9p8p8cdi6i7nOKEKF7R/zWYxHoft5Jj0zytGOJc8k8pGF2lM87N8ME2qhfXWCFYDfjtzCvntLP5EkmnfBYYWuNs4UEphQt22QvFibcDGIT6mJ9LOcoIbP7WxEivtuvdUKT21WTSmy5DhXSXjIlOwBLlNgEuULFm6uK2D8yXISQ9dcnDeiA59dgfti1bkP6KzwwJz00xsV29EYT8XSDRN5IAxojdzzGMc2oom7RqJCDS0Nmi0UNq6SopRok45+VEsIokoTgCn7VUfbUJOLgXg8LpNhZel2TGXjdSJa5UsEmSdVeKNOfHLLh8rRSqjjikSfAHdEOpAc5nyy1tRsjBDwnLH0IQ1nxTNLXQeX0gAIqg8+dS0J3eF9CMwxQJEcV6cMNXZAcMYNfqx2NIj0F9WE0lgavD1MLohSf1BZKlnSKbLv7eUCvsMw0Bvqe7VGH23ay9GbCxrhopt04rAuXBrrbtYxjaonAkT7JeYw1T8P8Q7Y5cnlkAnROTV4nua+A2IIbuc6OYOcYwYjn8n72UblxloHT23Pker0nSMTITtZpCzgZbLREqQg+450dqSI4FY+LqJIgF8MUs4RIl6vhf7x4VYnyarLn3hg0MPF6KH5T2a+jWDisX06ELkbcoYHscXAfmpjLTzejtD7BiiMfBwn0ex+Wg465P3mnWQhx953yAGlnF24n4vewefHgjxXY6KkIT1v1kVPAl4duMU/7l7D1rbb7Lw1WP3Yc7jJtYs6S4qhEfiPmlKP/l+UqRJUu1ocOwTgijaDAz0cqbFpvSibiAYl1r6fvFmYS7LIjRRzU5+dpNRJQXKYA/vre4xyRp1eCluRsTbLKtlaDRBReR
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(396003)(39860400002)(346002)(376002)(46966006)(40470700004)(36840700001)(8676002)(356005)(921005)(41300700001)(2906002)(36860700001)(1076003)(36756003)(7696005)(81166007)(2616005)(336012)(316002)(110136005)(82310400005)(186003)(82740400003)(83380400001)(107886003)(8936002)(5660300002)(47076005)(70586007)(40460700003)(426003)(70206006)(86362001)(26005)(4326008)(7416002)(6666004)(478600001)(40480700001)(36900700001)(83996005)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2022 14:47:55.6875
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18263499-89f0-4be1-1d24-08da9016c8c1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT023.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6601
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Sep 05, 2022 at 06:32:56PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Document the "framebuffer" compatible string for reserved memory nodes
-> to annotate reserved memory regions used for framebuffer carveouts.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../bindings/reserved-memory/framebuffer.yaml | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml b/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
-> new file mode 100644
-> index 000000000000..80574854025d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reserved-memory/framebuffer.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: /reserved-memory framebuffer node bindings
-> +
-> +maintainers:
-> +  - devicetree-spec@vger.kernel.org
-> +
-> +allOf:
-> +  - $ref: "reserved-memory.yaml"
+Add dma properties to support GPCDMA for I2C in Tegra 186 and later
+chips
 
-Don't need quotes.
+Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 32 ++++++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 32 ++++++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 32 ++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+)
 
-> +
-> +properties:
-> +  compatible:
-> +    const: framebuffer
-> +    description: >
-> +      This indicates a region of memory meant to be used as a framebuffer for
-> +      a set of display devices. It can be used by an operating system to keep
-> +      the framebuffer from being overwritten and use it as the backing memory
-> +      for a display device (such as simple-framebuffer).
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 59a10fb184f8..3580fbf99091 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -672,6 +672,10 @@
+ 		clock-names = "div-clk";
+ 		resets = <&bpmp TEGRA186_RESET_I2C1>;
+ 		reset-names = "i2c";
++		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
++		dma-coherent;
++		dmas = <&gpcdma 21>, <&gpcdma 21>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -685,6 +689,10 @@
+ 		clock-names = "div-clk";
+ 		resets = <&bpmp TEGRA186_RESET_I2C3>;
+ 		reset-names = "i2c";
++		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
++		dma-coherent;
++		dmas = <&gpcdma 23>, <&gpcdma 23>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -702,6 +710,10 @@
+ 		pinctrl-names = "default", "idle";
+ 		pinctrl-0 = <&state_dpaux1_i2c>;
+ 		pinctrl-1 = <&state_dpaux1_off>;
++		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
++		dma-coherent;
++		dmas = <&gpcdma 26>, <&gpcdma 26>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -733,6 +745,10 @@
+ 		pinctrl-names = "default", "idle";
+ 		pinctrl-0 = <&state_dpaux_i2c>;
+ 		pinctrl-1 = <&state_dpaux_off>;
++		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
++		dma-coherent;
++		dmas = <&gpcdma 30>, <&gpcdma 30>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -746,6 +762,10 @@
+ 		clock-names = "div-clk";
+ 		resets = <&bpmp TEGRA186_RESET_I2C7>;
+ 		reset-names = "i2c";
++		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
++		dma-coherent;
++		dmas = <&gpcdma 27>, <&gpcdma 27>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -759,6 +779,10 @@
+ 		clock-names = "div-clk";
+ 		resets = <&bpmp TEGRA186_RESET_I2C9>;
+ 		reset-names = "i2c";
++		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
++		dma-coherent;
++		dmas = <&gpcdma 31>, <&gpcdma 31>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -1176,6 +1200,10 @@
+ 		clock-names = "div-clk";
+ 		resets = <&bpmp TEGRA186_RESET_I2C2>;
+ 		reset-names = "i2c";
++		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
++		dma-coherent;
++		dmas = <&gpcdma 22>, <&gpcdma 22>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -1189,6 +1217,10 @@
+ 		clock-names = "div-clk";
+ 		resets = <&bpmp TEGRA186_RESET_I2C8>;
+ 		reset-names = "i2c";
++		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
++		dma-coherent;
++		dmas = <&gpcdma 0>, <&gpcdma 0>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index d0ed55e5c860..9176c4b27133 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -805,6 +805,10 @@
+ 			clock-names = "div-clk";
+ 			resets = <&bpmp TEGRA194_RESET_I2C1>;
+ 			reset-names = "i2c";
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 21>, <&gpcdma 21>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -830,6 +834,10 @@
+ 			clock-names = "div-clk";
+ 			resets = <&bpmp TEGRA194_RESET_I2C3>;
+ 			reset-names = "i2c";
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 23>, <&gpcdma 23>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -847,6 +855,10 @@
+ 			pinctrl-0 = <&state_dpaux1_i2c>;
+ 			pinctrl-1 = <&state_dpaux1_off>;
+ 			pinctrl-names = "default", "idle";
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 26>, <&gpcdma 26>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -864,6 +876,10 @@
+ 			pinctrl-0 = <&state_dpaux0_i2c>;
+ 			pinctrl-1 = <&state_dpaux0_off>;
+ 			pinctrl-names = "default", "idle";
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 30>, <&gpcdma 30>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -881,6 +897,10 @@
+ 			pinctrl-0 = <&state_dpaux2_i2c>;
+ 			pinctrl-1 = <&state_dpaux2_off>;
+ 			pinctrl-names = "default", "idle";
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 27>, <&gpcdma 27>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -898,6 +918,10 @@
+ 			pinctrl-0 = <&state_dpaux3_i2c>;
+ 			pinctrl-1 = <&state_dpaux3_off>;
+ 			pinctrl-names = "default", "idle";
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 31>, <&gpcdma 31>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -1565,6 +1589,10 @@
+ 			clock-names = "div-clk";
+ 			resets = <&bpmp TEGRA194_RESET_I2C2>;
+ 			reset-names = "i2c";
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 22>, <&gpcdma 22>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -1578,6 +1606,10 @@
+ 			clock-names = "div-clk";
+ 			resets = <&bpmp TEGRA194_RESET_I2C8>;
+ 			reset-names = "i2c";
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 0>, <&gpcdma 0>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 81a0f599685f..5852e765ad90 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -737,6 +737,10 @@
+ 			clock-names = "div-clk", "parent";
+ 			resets = <&bpmp TEGRA234_RESET_I2C1>;
+ 			reset-names = "i2c";
++			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
++			dma-coherent;
++			dmas = <&gpcdma 21>, <&gpcdma 21>;
++			dma-names = "rx", "tx";
+ 		};
+ 
+ 		cam_i2c: i2c@3180000 {
+@@ -752,6 +756,10 @@
+ 			clock-names = "div-clk", "parent";
+ 			resets = <&bpmp TEGRA234_RESET_I2C3>;
+ 			reset-names = "i2c";
++			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
++			dma-coherent;
++			dmas = <&gpcdma 23>, <&gpcdma 23>;
++			dma-names = "rx", "tx";
+ 		};
+ 
+ 		dp_aux_ch1_i2c: i2c@3190000 {
+@@ -767,6 +775,10 @@
+ 			clock-names = "div-clk", "parent";
+ 			resets = <&bpmp TEGRA234_RESET_I2C4>;
+ 			reset-names = "i2c";
++			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
++			dma-coherent;
++			dmas = <&gpcdma 26>, <&gpcdma 26>;
++			dma-names = "rx", "tx";
+ 		};
+ 
+ 		dp_aux_ch0_i2c: i2c@31b0000 {
+@@ -782,6 +794,10 @@
+ 			clock-names = "div-clk", "parent";
+ 			resets = <&bpmp TEGRA234_RESET_I2C6>;
+ 			reset-names = "i2c";
++			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
++			dma-coherent;
++			dmas = <&gpcdma 30>, <&gpcdma 30>;
++			dma-names = "rx", "tx";
+ 		};
+ 
+ 		dp_aux_ch2_i2c: i2c@31c0000 {
+@@ -797,6 +813,10 @@
+ 			clock-names = "div-clk", "parent";
+ 			resets = <&bpmp TEGRA234_RESET_I2C7>;
+ 			reset-names = "i2c";
++			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
++			dma-coherent;
++			dmas = <&gpcdma 27>, <&gpcdma 27>;
++			dma-names = "rx", "tx";
+ 		};
+ 
+ 		dp_aux_ch3_i2c: i2c@31e0000 {
+@@ -812,6 +832,10 @@
+ 			clock-names = "div-clk", "parent";
+ 			resets = <&bpmp TEGRA234_RESET_I2C9>;
+ 			reset-names = "i2c";
++			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
++			dma-coherent;
++			dmas = <&gpcdma 31>, <&gpcdma 31>;
++			dma-names = "rx", "tx";
+ 		};
+ 
+ 		spi@3270000 {
+@@ -1109,6 +1133,10 @@
+ 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
+ 			resets = <&bpmp TEGRA234_RESET_I2C2>;
+ 			reset-names = "i2c";
++			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
++			dma-coherent;
++			dmas = <&gpcdma 22>, <&gpcdma 22>;
++			dma-names = "rx", "tx";
+ 		};
+ 
+ 		gen8_i2c: i2c@c250000 {
+@@ -1125,6 +1153,10 @@
+ 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
+ 			resets = <&bpmp TEGRA234_RESET_I2C8>;
+ 			reset-names = "i2c";
++			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
++			dma-coherent;
++			dmas = <&gpcdma 0>, <&gpcdma 0>;
++			dma-names = "rx", "tx";
+ 		};
+ 
+ 		rtc@c2a0000 {
+-- 
+2.17.1
 
-I'm on the fence whether we need this. It doesn't really add anything 
-because 'simple-framebuffer' will reference this node and you can find 
-it that way. I guess a bootloader may not setup 'simple-framebuffer', 
-but then it should probably not have this node either.
-
-On the flip side, better to have compatibles than not to identify nodes.
-
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-
-Use '/ {' to skip the boilerplate causing the error.
-
-> +      chosen {
-> +        framebuffer {
-> +          compatible = "simple-framebuffer";
-> +          memory-region = <&fb>;
-> +        };
-> +      };
-> +
-> +      reserved-memory {
-> +          #address-cells = <1>;
-> +          #size-cells = <1>;
-> +          ranges;
-> +
-> +          fb: framebuffer@80000000 {
-> +              compatible = "framebuffer";
-> +              reg = <0x80000000 0x007e9000>;
-> +          };
-> +      };
-> +
-> +...
-> -- 
-> 2.37.2
-> 
-> 
