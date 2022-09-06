@@ -2,129 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3038CECAAA1
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 00:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1A1ECAAD3
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 02:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231421AbiIFATY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Sep 2022 20:19:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48468 "EHLO
+        id S232469AbiIFCaG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Sep 2022 22:30:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231781AbiIFATX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Sep 2022 20:19:23 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56745C14;
-        Mon,  5 Sep 2022 17:19:22 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id o126so782510pfb.6;
-        Mon, 05 Sep 2022 17:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=v4JA0M0hCIbFC7NXFN+IygsKVK4ZMU4qWYqYqoR4tJc=;
-        b=fHHlrsomzS5RX1w3UIei5qFtxTClmy9iSQEvGb1yFamLQYZo+o6zDJ8zJUVbJLL82Y
-         pkr7UJu0RGPOf+0J7r9ut0astM8MHGg1EaaL+qlGu/ue2aBOikrSmX+DoJq6OVnfYCTQ
-         FMcozHAuaegI9kVFEFk5BCS8NUELgRVLurFlc4zQR+4mEluidRXNcvb1Uq6r9730CALq
-         i+o2Z457eW9sgjxUmvKSOZs27VXpd+EYrVSuTXtKTDhoWiowlHQASX22DQpd3afScQaO
-         NjyzcFcZoXy1i9cNJaiHRj8JaHrrDq+3JIoFmZc3azTXuJLuoblV3/wMiYnfYqdVD2x3
-         dUTA==
+        with ESMTP id S232502AbiIFCaD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Sep 2022 22:30:03 -0400
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE9DA15FC8;
+        Mon,  5 Sep 2022 19:30:01 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id t11-20020a05683014cb00b0063734a2a786so7212858otq.11;
+        Mon, 05 Sep 2022 19:30:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=v4JA0M0hCIbFC7NXFN+IygsKVK4ZMU4qWYqYqoR4tJc=;
-        b=1+/5jNNCtN2Fcbg7pa+Qn/ASzRvEJrQL10qk+VIX4yxA73AmUf3kGFqwy67432klT+
-         xI8H0pD7o2ehXiLaGzu1EbGJDhLIOVJa+pgCjPROUcBeAn5O6xhx2lfpjdWBK6tjUp8X
-         96WY+LDvoHHWl1avLrqsFV79rW8Cdx2ZVmgmCEe852dzNaaKUUdfMH/bMfcPBeyibutS
-         JVb2DPHW0NkXJq/hdYPVFDm0/oUWgZt+j9ceBnY/9sTXmfOib7HBi4/4WQci5KFVRK4f
-         QCl8bdsvVAV2uvVTXbNAZKydZesxAdqYCx7hDCA5YCSMS3Fy5wneVBEhLblQISGolQeu
-         d7+w==
-X-Gm-Message-State: ACgBeo18iFOHzHPbVoCq6ZcjBkFQfj/7YMbXiSussqZwsqA2g7flFT3a
-        8iaXhHR3W2O+9ens/wL9qkQ=
-X-Google-Smtp-Source: AA6agR6BSwkY2FCM/mxUqmLHetzPYwEnkn1n9g0P2sCyTVfQpw3+hUsDHc+Gpjiwldy8UpbPbUcIag==
-X-Received: by 2002:aa7:88c8:0:b0:536:926:700f with SMTP id k8-20020aa788c8000000b005360926700fmr53349294pff.72.1662423561657;
-        Mon, 05 Sep 2022 17:19:21 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:1190:fbfa:ae95:111c])
-        by smtp.gmail.com with ESMTPSA id c10-20020a624e0a000000b0053e156e9475sm431528pfb.182.2022.09.05.17.19.19
+        h=message-id:date:subject:references:in-reply-to:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=62aXNAbn2VJJU9bSVwGuWx0YLMR84OQttybG88JiBOs=;
+        b=4J7nuI/EetuUarNI/h3HCgVCQw9gEs7BVz1LqkDi6nsHoJ8Ci9BE4dVVZtRzgdzlys
+         tmNoSfiO/wCHV7J4QpD28HZwr7/f23s4BHU3KQKKKu7MGlxzmljJg+PxTVBJBk3wZSxN
+         0xBYEC3HoIYVgiZ34BhUQQJdbVueBx7xf12Qaeuw48PlkO5XsWsybRp+byzM676N8CXY
+         13f0ZMYno4skEKg/fasocZGIqPO5F6+if/gedhX0OyFy5yR0umZgA5gMH78IINbnIPL4
+         7ORPOGmYMzLrCwCTmxAj1xWvzOFBxq6yyT/8xWU4MfJFmQNEszMKSLNJ8rrY2JESct/D
+         GeaA==
+X-Gm-Message-State: ACgBeo2yBMc4akHOJ9o0qizhXD1GYCzKc8Wb7E4m+FJiYCWXgePxB1rt
+        zoziVrUQP3a83hAA98jTfA==
+X-Google-Smtp-Source: AA6agR4MAOUUpkDCrbdyOjhtwgxGL7uIHYDE+QmdBjiX5nPXz0w3Jz7VEKY6TdkBgbb60EYww7KImA==
+X-Received: by 2002:a05:6830:24b7:b0:636:ef3f:86c with SMTP id v23-20020a05683024b700b00636ef3f086cmr20334163ots.145.1662431400934;
+        Mon, 05 Sep 2022 19:30:00 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id 128-20020aca0686000000b003442d74e8a5sm4884656oig.45.2022.09.05.19.29.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Sep 2022 17:19:21 -0700 (PDT)
-Date:   Mon, 5 Sep 2022 17:19:17 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Airlie <airlied@linux.ie>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Cc:     linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 07/11] PCI: apple: switch to using
- fwnode_gpiod_get_index()
-Message-ID: <YxaSBRkAG/hKjFol@google.com>
-References: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
- <20220903-gpiod_get_from_of_node-remove-v1-7-b29adfb27a6c@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220903-gpiod_get_from_of_node-remove-v1-7-b29adfb27a6c@gmail.com>
+        Mon, 05 Sep 2022 19:30:00 -0700 (PDT)
+Received: (nullmailer pid 3334461 invoked by uid 1000);
+        Tue, 06 Sep 2022 02:29:58 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, Jon Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>, linux-tegra@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20220905163300.391692-3-thierry.reding@gmail.com>
+References: <20220905163300.391692-1-thierry.reding@gmail.com> <20220905163300.391692-3-thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/6] dt-bindings: reserved-memory: Support framebuffer reserved memory
+Date:   Mon, 05 Sep 2022 21:29:58 -0500
+Message-Id: <1662431398.296852.3334460.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Sep 04, 2022 at 11:30:59PM -0700, Dmitry Torokhov wrote:
-> I would like to stop exporting OF-specific gpiod_get_from_of_node()
-> so that gpiolib can be cleaned a bit, so let's switch to the generic
-> fwnode property API.
+On Mon, 05 Sep 2022 18:32:56 +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Document the "framebuffer" compatible string for reserved memory nodes
+> to annotate reserved memory regions used for framebuffer carveouts.
 > 
-> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-> index a2c3c207a04b..d83817d3ff86 100644
-> --- a/drivers/pci/controller/pcie-apple.c
-> +++ b/drivers/pci/controller/pcie-apple.c
-> @@ -516,8 +516,8 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
->  	u32 stat, idx;
->  	int ret, i;
->  
-> -	reset = gpiod_get_from_of_node(np, "reset-gpios", 0,
-> -				       GPIOD_OUT_LOW, "PERST#");
-> +	reset = fwnode_gpiod_get_index(of_fwnode_handle(np),
-> +				       "reset", 0, GPIOD_OUT_LOW, "PERST#");
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../bindings/reserved-memory/framebuffer.yaml | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+> 
 
-Hmm, I am looking at the driver and it leaks the reset gpio on
-unbind/unload. I guess it does not matter in practice, but still nice
-not to leak. Thankfully it is easy to cure by switching to devm option:
-devm_fwnode_gpiod_get().
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-I'll send and updated patch with a new justification.
+yamllint warnings/errors:
 
-Thanks.
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/reserved-memory/framebuffer.example.dts:18.16-23.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
 
--- 
-Dmitry
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
