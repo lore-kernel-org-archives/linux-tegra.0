@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20627ECAAA1
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 13:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D7DC6FA8C
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 13:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240112AbiIFN3b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S240233AbiIFN3b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 6 Sep 2022 09:29:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46028 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239896AbiIFN33 (ORCPT
+        with ESMTP id S239238AbiIFN33 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 09:29:29 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [91.232.154.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B35395;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173BA2657;
         Tue,  6 Sep 2022 06:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=v3ozdKl00Zk3pGYhPltXKnY62thad7R3U2qnCg2ZWmA=; b=TejASX/tUfb05N0Rr03cDfUJ4z
-        c86onR0QHJHnqqOSViQP28CVl6Vw8eKFGdmSoybLPFtoagFjXer4+jRDQNVL6J5ioZmA7Ip/F7Xoa
-        5cYLC+4wcSBeZGwdlBM2f9yvgsJiaMCH1qppoCCxklP/40vjmwLNxmgrvMbgsxxK28yuPfeVARAAr
-        pNiNAAQokoAu6QoqI0J7i7dRSJ5oFrOF0GB7+xJRK0x9zr2XOLIwV19zEwF4vI8TR/WY1CTk0/8U6
-        DZ+O6ZBxkID6uZ2kD6jB8lhM9NjiuII827ydnCZwmaCmBJUCvpuzxsv2PqgwqU6fItVWn6P0JvQ1a
-        hCjXF2Fw==;
+        bh=Tuvy5Y2Yi3UNEoXv4av1eQWjOERqkurWhKK+J19WGaY=; b=jB9GenLAGk68whmfLt9Z0+r3ic
+        SCD5HDPe9LvE/UE7QueLNbvZStSrsqt0OTXItcNYAbKS6oAEMU/DpEUyKYPU+F+V14ZejUXiWeuUh
+        RjRn11MaMRlwHI2+9ABN5e+Kb9G3euJ+MezkALZ0Op4QUDUKV1VLsemmkL45D+KdSKZSL9rwNQhKT
+        oea5ZTD0V+nyYQYeceTYy8SjKgzyndpQ3YbnHR/ek3PC0vycQu78zNoZk1WJTc0djKgUhmuEPRZxi
+        dsGnGBXeVdQgpk6U3vAcQLg2onHqdJSPluHW4IiynAvLdDmg/PXoxnKlbY/x3dKoPF+Sd4NxlKcdc
+        Ra6N7cRg==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1oVYdW-008sZV-CB; Tue, 06 Sep 2022 16:29:06 +0300
+        id 1oVYdX-008sZV-1Q; Tue, 06 Sep 2022 16:29:07 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
@@ -43,10 +43,12 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Sameer Pujar <spujar@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] Support for NVDEC on Tegra234
-Date:   Tue,  6 Sep 2022 16:28:15 +0300
-Message-Id: <20220906132823.2390953-1-cyndis@kapsi.fi>
+Subject: [PATCH 2/8] dt-bindings: Add headers for NVDEC on Tegra234
+Date:   Tue,  6 Sep 2022 16:28:17 +0300
+Message-Id: <20220906132823.2390953-3-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.37.0
+In-Reply-To: <20220906132823.2390953-1-cyndis@kapsi.fi>
+References: <20220906132823.2390953-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 91.158.25.70
@@ -58,64 +60,84 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Hi all,
+Add clock, memory controller, powergate and reset dt-binding headers
+necessary for NVDEC.
 
-this series adds support for the HW video decoder, NVDEC,
-on Tegra234 (Orin). The main change is a switch from Falcon
-to RISC-V for the internal microcontroller, which brings along
-a change in how the engine is booted. Otherwise it is backwards
-compatible with earlier versions.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ include/dt-bindings/clock/tegra234-clock.h     | 4 ++++
+ include/dt-bindings/memory/tegra234-mc.h       | 3 +++
+ include/dt-bindings/power/tegra234-powergate.h | 1 +
+ include/dt-bindings/reset/tegra234-reset.h     | 1 +
+ 4 files changed, 9 insertions(+)
 
-In previous iterations, firmware was simply loaded from disk and
-written into engine internal memory. Now, the engine has a
-bootrom that loads the firmware from a carveout where it has been
-loaded by the system bootloader; however, we still need to tell it
-where that carveout is loaded and some offsets into it. For that,
-the first patch adds a new memory controller API to query the
-carveout address. The offsets are read from device tree -- the
-expectation is that at flashing time (when the firmware is also
-flashed), the flasher also delivers a device tree overlay with
-values corresponding to the flashed firmware.
-
-The currently available Linux for Tegra release doesn't yet
-include this device tree overlay flashing, and the firmware version
-it contains is incompatible with this series. The plan is to fix
-that for the next Linux for Tegra release, but if necessary, we
-can postpone merging of this series to once those changes are
-available.
-
-Thanks!
-Mikko
-
-Mikko Perttunen (8):
-  memory: tegra: Add API for retrieving carveout bounds
-  dt-bindings: Add headers for NVDEC on Tegra234
-  dt-bindings: Add bindings for Tegra234 NVDEC
-  arm64: tegra: Add NVDEC on Tegra234
-  gpu: host1x: Add stream ID register data for NVDEC on Tegra234
-  drm/tegra: nvdec: Support multiple clocks
-  drm/tegra: Add code for booting RISC-V based engines
-  drm/tegra: Add Tegra234 support to NVDEC driver
-
- .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 118 ++++++++++--
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  27 +++
- drivers/gpu/drm/tegra/Makefile                |   3 +-
- drivers/gpu/drm/tegra/drm.c                   |   1 +
- drivers/gpu/drm/tegra/nvdec.c                 | 171 +++++++++++++++---
- drivers/gpu/drm/tegra/riscv.c                 | 106 +++++++++++
- drivers/gpu/drm/tegra/riscv.h                 |  30 +++
- drivers/gpu/host1x/dev.c                      |  12 ++
- drivers/memory/tegra/mc.c                     |  23 +++
- drivers/memory/tegra/tegra234.c               |   5 +
- include/dt-bindings/clock/tegra234-clock.h    |   4 +
- include/dt-bindings/memory/tegra234-mc.h      |   3 +
- .../dt-bindings/power/tegra234-powergate.h    |   1 +
- include/dt-bindings/reset/tegra234-reset.h    |   1 +
- include/soc/tegra/mc.h                        |  11 ++
- 15 files changed, 470 insertions(+), 46 deletions(-)
- create mode 100644 drivers/gpu/drm/tegra/riscv.c
- create mode 100644 drivers/gpu/drm/tegra/riscv.h
-
+diff --git a/include/dt-bindings/clock/tegra234-clock.h b/include/dt-bindings/clock/tegra234-clock.h
+index 173364a93381..25b4a3fb4588 100644
+--- a/include/dt-bindings/clock/tegra234-clock.h
++++ b/include/dt-bindings/clock/tegra234-clock.h
+@@ -82,6 +82,8 @@
+ #define TEGRA234_CLK_I2S6			66U
+ /** @brief clock recovered from I2S6 input */
+ #define TEGRA234_CLK_I2S6_SYNC_INPUT		67U
++/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVDEC */
++#define TEGRA234_CLK_NVDEC                      83U
+ /** PLL controlled by CLK_RST_CONTROLLER_PLLA_BASE for use by audio clocks */
+ #define TEGRA234_CLK_PLLA			93U
+ /** @brief PLLP clk output */
+@@ -130,6 +132,8 @@
+ #define TEGRA234_CLK_SYNC_I2S5			149U
+ /** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_I2S6 */
+ #define TEGRA234_CLK_SYNC_I2S6			150U
++/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PKA */
++#define TEGRA234_CLK_TSEC_PKA                   154U
+ /** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTA */
+ #define TEGRA234_CLK_UARTA			155U
+ /** @brief output of gate CLK_ENB_PEX1_CORE_6 */
+diff --git a/include/dt-bindings/memory/tegra234-mc.h b/include/dt-bindings/memory/tegra234-mc.h
+index 62987b47ce81..75f0bd30d365 100644
+--- a/include/dt-bindings/memory/tegra234-mc.h
++++ b/include/dt-bindings/memory/tegra234-mc.h
+@@ -32,6 +32,7 @@
+ #define TEGRA234_SID_PCIE10	0x0b
+ #define TEGRA234_SID_BPMP	0x10
+ #define TEGRA234_SID_HOST1X	0x27
++#define TEGRA234_SID_NVDEC	0x29
+ #define TEGRA234_SID_VIC	0x34
+ 
+ /*
+@@ -91,6 +92,8 @@
+ #define TEGRA234_MEMORY_CLIENT_SDMMCWAB 0x67
+ #define TEGRA234_MEMORY_CLIENT_VICSRD 0x6c
+ #define TEGRA234_MEMORY_CLIENT_VICSWR 0x6d
++#define TEGRA234_MEMORY_CLIENT_NVDECSRD 0x78
++#define TEGRA234_MEMORY_CLIENT_NVDECSWR 0x79
+ /* BPMP read client */
+ #define TEGRA234_MEMORY_CLIENT_BPMPR 0x93
+ /* BPMP write client */
+diff --git a/include/dt-bindings/power/tegra234-powergate.h b/include/dt-bindings/power/tegra234-powergate.h
+index ae9286cef85c..e5dc1e00be95 100644
+--- a/include/dt-bindings/power/tegra234-powergate.h
++++ b/include/dt-bindings/power/tegra234-powergate.h
+@@ -19,6 +19,7 @@
+ #define TEGRA234_POWER_DOMAIN_MGBEB	18U
+ #define TEGRA234_POWER_DOMAIN_MGBEC	19U
+ #define TEGRA234_POWER_DOMAIN_MGBED	20U
++#define TEGRA234_POWER_DOMAIN_NVDEC     23U
+ #define TEGRA234_POWER_DOMAIN_VIC	29U
+ 
+ #endif
+diff --git a/include/dt-bindings/reset/tegra234-reset.h b/include/dt-bindings/reset/tegra234-reset.h
+index d48d22b2bc7f..17163019316c 100644
+--- a/include/dt-bindings/reset/tegra234-reset.h
++++ b/include/dt-bindings/reset/tegra234-reset.h
+@@ -30,6 +30,7 @@
+ #define TEGRA234_RESET_I2C7			33U
+ #define TEGRA234_RESET_I2C8			34U
+ #define TEGRA234_RESET_I2C9			35U
++#define TEGRA234_RESET_NVDEC                    44U
+ #define TEGRA234_RESET_MGBE0_PCS		45U
+ #define TEGRA234_RESET_MGBE0_MAC		46U
+ #define TEGRA234_RESET_MGBE1_PCS		49U
 -- 
 2.37.0
 
