@@ -2,161 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59924ECAAA1
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 14:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33880ECAAA1
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 14:30:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241576AbiIFOUp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Sep 2022 10:20:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37570 "EHLO
+        id S241806AbiIFOaB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Sep 2022 10:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242070AbiIFOT3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 10:19:29 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A87916584;
-        Tue,  6 Sep 2022 06:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=5TgEbxrWFzdNuddl7K++xYPc6ZS2zajem0/NCPpGOR0=; b=Fk+UIXUtqwMVPr3cAbQUbH/+UE
-        624lP4cLpXxsWP6tHJdmMNZRMNVgifpwf0rQfhzw2NBjyEvG1qNcQZZJq9Bv6Gr2Z8bsucnCEUn0L
-        cJDqnM6fPeBtTzVqjp6Ytr1TETGsNOk60AcYhXCqc7ypknvSR5t2e07xuFTEfhvkXgYc7ApJSrr2o
-        ihGEvkq+w7NJH97nN/LPrcij2EZJ6V4EPVX5TgzOZpPlKFemSQ6Ym8pfksyd5/T/+GiDBV0MWyVOf
-        RMQY4u0Z5f2BTvj8RIKqmDPcfk+FnwNpyarqW1Z2u9ONiQTPXmeV+uoshX8KfosBL3k7YQrTWSgRX
-        1rvMJxGA==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1oVYdW-008sZV-NY; Tue, 06 Sep 2022 16:29:06 +0300
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/8] memory: tegra: Add API for retrieving carveout bounds
-Date:   Tue,  6 Sep 2022 16:28:16 +0300
-Message-Id: <20220906132823.2390953-2-cyndis@kapsi.fi>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <20220906132823.2390953-1-cyndis@kapsi.fi>
-References: <20220906132823.2390953-1-cyndis@kapsi.fi>
+        with ESMTP id S242419AbiIFO3N (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 10:29:13 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2060f.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8a::60f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D38D90C6F;
+        Tue,  6 Sep 2022 06:55:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AwmcgaHosj32WcCXocjJ6LNjuLbCSv5VuY/VVqAkPvUZWGri5aIJ4rflrNwBd/LlyKAhrmS9dVDheeWRfgH07YtwrZs7jinktSXjFwNz3CWSvNwg3UcOjCHjK0CZaWzRQ9k5VQC12yL11xJb4NkMpULjOxaEPlMHqgb2Lq+h+jeqor7DMvWPNksG8jwqwLenrr1PsB/N1Zxlqpa6NNv2KhYi37Eiga9tslmOPUg9zTRzrK23gw6H/lpnQpNwTFYeTC6REFRPtd9tMmXf5VaZgqUCFNuA65TzYuE3ppyx+za9ay9G/7s0BVdFwWXKxxd1NZOfAgQ2tK7NbkiYJ5Xm1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N47Nf/3XmUtQI0vjqs2VhVAY+i2L6i3w33rZ6Lpb+ig=;
+ b=gzt+9IpmJiJVHia1r+4Qmex0UYxwsUToYjaCvGt8Dqwed0QPClqN8+w6DPySDemowb0cCM5AoMjC7M+XUk5MJZsSaeNeSdozWpsXSmPDSpeWbe7/7FGU1Vy4xoyeXg7JYHs+/rrgs49p2HYVQPN2zGwoAtALzZqMGdYV5gGjN5Gwv4SEAimbsC6C9Kbe2B520YOXgUGAruXLX/5U2xk3AEK5N760+OKykh4F4bsiLsRYxav9MvPOvjxAGY5wd7rddfUEJLpaNodFpJAYDWDUBJY2Ae01os0DOMj02Y6Q0zMCugZOH0k7nH45CX5SKV9GeNoF6KDJYXWtSt9chZUamA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=linux.dev smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N47Nf/3XmUtQI0vjqs2VhVAY+i2L6i3w33rZ6Lpb+ig=;
+ b=B/zc6kQ5XTXuyGSqv/or9IOuSa00FJsj98VPpWyOkWpjmYInbJzI+AkO3I2sVcjaGmSCheQu75Xtc8ukMICNbP0i9CiPARl60SoNAmv4s0Nrjf5RTEFCRK+5zZ0zbQn1u0dbdaLn3SE+YtDKZzXeSv0+H/VKwu0WmXWy2KMkwGAIUkQ5fVk0VVzbMKZctTD2lIZVhcmxt64BzQLVgnpU5ZJnLN3MCaffelTF1lAzHX0MO7L04BVADbW/B/Z+vl+B+5rzAc+z16M5EOJys4nhChs1J7E6x81F4Zt4hwxtHHQYZq74XKbNV7ZVFjPNg5FLMVYT/iKAn9F4BR9C3GN0ig==
+Received: from DM6PR07CA0086.namprd07.prod.outlook.com (2603:10b6:5:337::19)
+ by MW3PR12MB4377.namprd12.prod.outlook.com (2603:10b6:303:55::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.16; Tue, 6 Sep
+ 2022 13:51:25 +0000
+Received: from DM6NAM11FT107.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:337:cafe::55) by DM6PR07CA0086.outlook.office365.com
+ (2603:10b6:5:337::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.11 via Frontend
+ Transport; Tue, 6 Sep 2022 13:51:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ DM6NAM11FT107.mail.protection.outlook.com (10.13.172.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5588.10 via Frontend Transport; Tue, 6 Sep 2022 13:51:24 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.38; Tue, 6 Sep 2022 13:51:23 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Tue, 6 Sep 2022 06:51:22 -0700
+Received: from build-petlozup-20220627T000321362.nvidia.com (10.127.8.12) by
+ mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29
+ via Frontend Transport; Tue, 6 Sep 2022 06:51:22 -0700
+From:   Petlozu Pravareshwar <petlozup@nvidia.com>
+To:     <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
+        <p.zabel@pengutronix.de>, <dmitry.osipenko@collabora.com>,
+        <ulf.hansson@linaro.org>, <kkartik@nvidia.com>,
+        <cai.huoqing@linux.dev>, <spatra@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <petlozup@nvidia.com>, Manish Bhardwaj <mbhardwaj@nvidia.com>
+Subject: [PATCH] soc/tegra: pmc: Check device node status property
+Date:   Tue, 6 Sep 2022 13:51:17 +0000
+Message-ID: <20220906135117.341529-1-petlozup@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5d35beff-be06-49ef-9132-08da900ee372
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4377:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: dAyTuT5S62s6G2ELgbAJHGY5W9P3FdO7ymJ7Kz26pddwbRKXGMBpXNkWzYQQ6QOYUAJCzujbWWFLQ3zSXre+auqs9aKp0j3g3v2fYERjXr/Ozf7ZK4cJ0Szz97n6ifLOx4ocyXokOpE1GcJu8f7x/d8FqyEODbuWQSh4vbqAknJBoo2F9tyFwpZFFEdu43lHqxcRNm2lnge5Nc91n7RB2/VENicHCB+b5tI99v+qWUjAClR/+L1Fe13PQtOzmIt3SLR0UWWJt2B68O9q9XerYDSWLf660SDf3uK7iuJlW1H8qywk+3bK2VjyXDWMaqxdzep0Z+MTq+5C84U/rsTsbnHJbqrmxPZbljFnB2/X/qE+RDxbAt/nl1rnahmygFe7P4ntC/pJsuM30vrYIax9navuJ5RPK54yd800bLa9tF0ACuNNJzaS+3xngHaxOvqIGY4SiMvIGoSxr22whgxQxTdODsSoAJLPcM5wn26JiS1r93XKi1UI+Fb726xQuTe+LbLfFxiBXCTNUyzqzZC6WKjo5tBxfuash6FLyySFB5VVtyggtz0IYhTsJb/Gzi9LfIkV94+LPsIb+gdscz70rCQHW5Age+5r/uZllwcufRNNJ67CRfKfOPeRqUlT/z7VDIO7dfVudOYH51nThpbqIQsoEopAG+7DuXsB3t1GWDjC3O/doZuIFdHcA2iLL2O4IQjS1HQyXpySShIPBcWrPMM3ux4tdMbDAIiIFR5KMjLBv422tCCPFCumrP+Pwg9LIckuBLwoWkIYUOWe5JXhEDFH2linKwUfjXZw4iFH9mjb8DVY2mb82utdMBk6g9oC
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(376002)(396003)(136003)(39860400002)(346002)(40470700004)(36840700001)(46966006)(54906003)(70206006)(478600001)(110136005)(2906002)(316002)(70586007)(36756003)(356005)(81166007)(921005)(86362001)(82740400003)(36860700001)(2616005)(1076003)(107886003)(7696005)(26005)(6666004)(336012)(4326008)(186003)(5660300002)(8676002)(41300700001)(82310400005)(40460700003)(83380400001)(426003)(40480700001)(47076005)(4744005)(8936002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2022 13:51:24.4974
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d35beff-be06-49ef-9132-08da900ee372
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT107.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4377
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+In early_initcall, check if PMC device is available for use
+and avoid accessing PMC resources if the device node status
+property is set to disabled.
 
-On Tegra234 NVDEC firmware is loaded from a secure carveout, where it
-has been loaded by a bootloader. When booting NVDEC, we need to tell it
-the address of this firmware, which we can determine by checking the
-starting address of the carveout. As such, add an MC API to query the
-bounds of carveouts, and add related information on Tegra234.
-
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
 ---
- drivers/memory/tegra/mc.c       | 23 +++++++++++++++++++++++
- drivers/memory/tegra/tegra234.c |  5 +++++
- include/soc/tegra/mc.h          | 11 +++++++++++
- 3 files changed, 39 insertions(+)
+ drivers/soc/tegra/pmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 2f7a58a9df1a..4650300d3ec3 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -107,6 +107,29 @@ int tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev)
- }
- EXPORT_SYMBOL_GPL(tegra_mc_probe_device);
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 6a86961477e8..8c7b46ac6ad6 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -4295,7 +4295,7 @@ static int __init tegra_pmc_early_init(void)
+ 		return -ENXIO;
+ 	}
  
-+int tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
-+                               phys_addr_t *base, u64 *size)
-+{
-+	u32 offset;
-+
-+	if (id < 1 || id >= mc->soc->num_carveouts)
-+		return -EINVAL;
-+
-+	if (id < 6)
-+		offset = 0xc0c + 0x50 * (id - 1);
-+	else
-+		offset = 0x2004 + 0x50 * (id - 6);
-+
-+	*base = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x0);
-+	*base |= (phys_addr_t)mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x4) << 32;
-+
-+	if (size)
-+		*size = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x8) << 17;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra_mc_get_carveout_info);
-+
- static int tegra_mc_block_dma_common(struct tegra_mc *mc,
- 				     const struct tegra_mc_reset *rst)
- {
-diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
-index a9e8fd99730f..74d291d66366 100644
---- a/drivers/memory/tegra/tegra234.c
-+++ b/drivers/memory/tegra/tegra234.c
-@@ -187,4 +187,9 @@ const struct tegra_mc_soc tegra234_mc_soc = {
- 	.ops = &tegra186_mc_ops,
- 	.ch_intmask = 0x0000ff00,
- 	.global_intstatus_channel_shift = 8,
-+	/*
-+	 * Additionally, there are lite carveouts but those are not currently
-+	 * supported.
-+	 */
-+	.num_carveouts = 32,
- };
-diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-index 47ce6d434427..51a2263e1bc5 100644
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -193,6 +193,8 @@ struct tegra_mc_soc {
- 	unsigned int num_address_bits;
- 	unsigned int atom_size;
+-	if (np) {
++	if (of_device_is_available(np)) {
+ 		pmc->soc = match->data;
  
-+	unsigned int num_carveouts;
-+
- 	u16 client_id_mask;
- 	u8 num_channels;
- 
-@@ -244,6 +246,8 @@ unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc);
- #ifdef CONFIG_TEGRA_MC
- struct tegra_mc *devm_tegra_memory_controller_get(struct device *dev);
- int tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev);
-+int tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
-+                               phys_addr_t *base, u64 *size);
- #else
- static inline struct tegra_mc *
- devm_tegra_memory_controller_get(struct device *dev)
-@@ -256,6 +260,13 @@ tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev)
- {
- 	return -ENODEV;
- }
-+
-+static inline int
-+tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
-+                           phys_addr_t *base, u64 *size)
-+{
-+	return -ENODEV;
-+}
- #endif
- 
- #endif /* __SOC_TEGRA_MC_H__ */
+ 		if (pmc->soc->maybe_tz_only)
 -- 
-2.37.0
+2.17.1
 
