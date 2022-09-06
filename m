@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625FDECAAD5
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 13:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20627ECAAA1
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Sep 2022 13:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240084AbiIFN3a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Sep 2022 09:29:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45994 "EHLO
+        id S240112AbiIFN3b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Sep 2022 09:29:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233861AbiIFN33 (ORCPT
+        with ESMTP id S239896AbiIFN33 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Sep 2022 09:29:29 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [91.232.154.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16DCB25FB;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B35395;
         Tue,  6 Sep 2022 06:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=cC12j9P8ru5KBXVnbrH+bmEMVgxfMYkSNhABeawipyA=; b=ajBjMhO+HcEVVg/LhLoVkaC387
-        T48HA5iRXrdp+tXRRN1TP9byfY4Fsvd5ZsS7Mze4cbzYQWYIQGozHi4xAn9EO1kZFUC8Ys5p3Qn2J
-        LilPFmOY6mfHH8wO4DH8UfZr7zbXVh0oBC92hU4b7KE4bO0TPFtdQsIaHMaw9HlF8CIjD94lhdGde
-        PoVM7yzQR0JHegQKmo+vjmONqg14NbMXOjtVppasycWj/fE0vvCyg2kO457dz86pMFEIjWRY+LSWb
-        hLZ0WTd3Na6Lo2d7tWV1SpCqQUXvcthp/3tqrmov8yyIevbgkkiHDSgUOn3pWXoZzA10zp51ORi7F
-        ZbSJ3Dyw==;
+        bh=v3ozdKl00Zk3pGYhPltXKnY62thad7R3U2qnCg2ZWmA=; b=TejASX/tUfb05N0Rr03cDfUJ4z
+        c86onR0QHJHnqqOSViQP28CVl6Vw8eKFGdmSoybLPFtoagFjXer4+jRDQNVL6J5ioZmA7Ip/F7Xoa
+        5cYLC+4wcSBeZGwdlBM2f9yvgsJiaMCH1qppoCCxklP/40vjmwLNxmgrvMbgsxxK28yuPfeVARAAr
+        pNiNAAQokoAu6QoqI0J7i7dRSJ5oFrOF0GB7+xJRK0x9zr2XOLIwV19zEwF4vI8TR/WY1CTk0/8U6
+        DZ+O6ZBxkID6uZ2kD6jB8lhM9NjiuII827ydnCZwmaCmBJUCvpuzxsv2PqgwqU6fItVWn6P0JvQ1a
+        hCjXF2Fw==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1oVYdY-008sZV-Kn; Tue, 06 Sep 2022 16:29:08 +0300
+        id 1oVYdW-008sZV-CB; Tue, 06 Sep 2022 16:29:06 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
@@ -43,12 +43,10 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Sameer Pujar <spujar@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] drm/tegra: nvdec: Support multiple clocks
-Date:   Tue,  6 Sep 2022 16:28:21 +0300
-Message-Id: <20220906132823.2390953-7-cyndis@kapsi.fi>
+Subject: [PATCH 0/8] Support for NVDEC on Tegra234
+Date:   Tue,  6 Sep 2022 16:28:15 +0300
+Message-Id: <20220906132823.2390953-1-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.37.0
-In-Reply-To: <20220906132823.2390953-1-cyndis@kapsi.fi>
-References: <20220906132823.2390953-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 91.158.25.70
@@ -60,98 +58,64 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-NVDEC on Tegra234 requires multiple clocks. Add support for that.
+Hi all,
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/drm/tegra/nvdec.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+this series adds support for the HW video decoder, NVDEC,
+on Tegra234 (Orin). The main change is a switch from Falcon
+to RISC-V for the internal microcontroller, which brings along
+a change in how the engine is booted. Otherwise it is backwards
+compatible with earlier versions.
 
-diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
-index 276fe0472730..05af4d107421 100644
---- a/drivers/gpu/drm/tegra/nvdec.c
-+++ b/drivers/gpu/drm/tegra/nvdec.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2015-2021, NVIDIA Corporation.
-+ * Copyright (c) 2015-2022, NVIDIA Corporation.
-  */
- 
- #include <linux/clk.h>
-@@ -28,6 +28,7 @@ struct nvdec_config {
- 	const char *firmware;
- 	unsigned int version;
- 	bool supports_sid;
-+	bool has_extra_clocks;
- };
- 
- struct nvdec {
-@@ -37,7 +38,8 @@ struct nvdec {
- 	struct tegra_drm_client client;
- 	struct host1x_channel *channel;
- 	struct device *dev;
--	struct clk *clk;
-+	struct clk_bulk_data clks[3];
-+	unsigned int num_clks;
- 
- 	/* Platform configuration */
- 	const struct nvdec_config *config;
-@@ -258,7 +260,7 @@ static __maybe_unused int nvdec_runtime_resume(struct device *dev)
- 	struct nvdec *nvdec = dev_get_drvdata(dev);
- 	int err;
- 
--	err = clk_prepare_enable(nvdec->clk);
-+	err = clk_bulk_prepare_enable(nvdec->num_clks, nvdec->clks);
- 	if (err < 0)
- 		return err;
- 
-@@ -275,7 +277,7 @@ static __maybe_unused int nvdec_runtime_resume(struct device *dev)
- 	return 0;
- 
- disable:
--	clk_disable_unprepare(nvdec->clk);
-+	clk_bulk_disable_unprepare(nvdec->num_clks, nvdec->clks);
- 	return err;
- }
- 
-@@ -285,7 +287,7 @@ static __maybe_unused int nvdec_runtime_suspend(struct device *dev)
- 
- 	host1x_channel_stop(nvdec->channel);
- 
--	clk_disable_unprepare(nvdec->clk);
-+	clk_bulk_disable_unprepare(nvdec->num_clks, nvdec->clks);
- 
- 	return 0;
- }
-@@ -383,13 +385,22 @@ static int nvdec_probe(struct platform_device *pdev)
- 	if (IS_ERR(nvdec->regs))
- 		return PTR_ERR(nvdec->regs);
- 
--	nvdec->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(nvdec->clk)) {
--		dev_err(&pdev->dev, "failed to get clock\n");
--		return PTR_ERR(nvdec->clk);
-+	nvdec->clks[0].id = "nvdec";
-+	nvdec->num_clks = 1;
-+
-+	if (nvdec->config->has_extra_clocks) {
-+		nvdec->num_clks = 3;
-+		nvdec->clks[1].id = "fuse";
-+		nvdec->clks[2].id = "tsec_pka";
-+	}
-+
-+	err = devm_clk_bulk_get(dev, nvdec->num_clks, nvdec->clks);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to get clock(s)\n");
-+		return err;
- 	}
- 
--	err = clk_set_rate(nvdec->clk, ULONG_MAX);
-+	err = clk_set_rate(nvdec->clks[0].clk, ULONG_MAX);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to set clock rate\n");
- 		return err;
+In previous iterations, firmware was simply loaded from disk and
+written into engine internal memory. Now, the engine has a
+bootrom that loads the firmware from a carveout where it has been
+loaded by the system bootloader; however, we still need to tell it
+where that carveout is loaded and some offsets into it. For that,
+the first patch adds a new memory controller API to query the
+carveout address. The offsets are read from device tree -- the
+expectation is that at flashing time (when the firmware is also
+flashed), the flasher also delivers a device tree overlay with
+values corresponding to the flashed firmware.
+
+The currently available Linux for Tegra release doesn't yet
+include this device tree overlay flashing, and the firmware version
+it contains is incompatible with this series. The plan is to fix
+that for the next Linux for Tegra release, but if necessary, we
+can postpone merging of this series to once those changes are
+available.
+
+Thanks!
+Mikko
+
+Mikko Perttunen (8):
+  memory: tegra: Add API for retrieving carveout bounds
+  dt-bindings: Add headers for NVDEC on Tegra234
+  dt-bindings: Add bindings for Tegra234 NVDEC
+  arm64: tegra: Add NVDEC on Tegra234
+  gpu: host1x: Add stream ID register data for NVDEC on Tegra234
+  drm/tegra: nvdec: Support multiple clocks
+  drm/tegra: Add code for booting RISC-V based engines
+  drm/tegra: Add Tegra234 support to NVDEC driver
+
+ .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 118 ++++++++++--
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  27 +++
+ drivers/gpu/drm/tegra/Makefile                |   3 +-
+ drivers/gpu/drm/tegra/drm.c                   |   1 +
+ drivers/gpu/drm/tegra/nvdec.c                 | 171 +++++++++++++++---
+ drivers/gpu/drm/tegra/riscv.c                 | 106 +++++++++++
+ drivers/gpu/drm/tegra/riscv.h                 |  30 +++
+ drivers/gpu/host1x/dev.c                      |  12 ++
+ drivers/memory/tegra/mc.c                     |  23 +++
+ drivers/memory/tegra/tegra234.c               |   5 +
+ include/dt-bindings/clock/tegra234-clock.h    |   4 +
+ include/dt-bindings/memory/tegra234-mc.h      |   3 +
+ .../dt-bindings/power/tegra234-powergate.h    |   1 +
+ include/dt-bindings/reset/tegra234-reset.h    |   1 +
+ include/soc/tegra/mc.h                        |  11 ++
+ 15 files changed, 470 insertions(+), 46 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/riscv.c
+ create mode 100644 drivers/gpu/drm/tegra/riscv.h
+
 -- 
 2.37.0
 
