@@ -2,133 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C725DECAAD3
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Sep 2022 06:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB512C38145
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Sep 2022 07:12:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbiIGG0J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Sep 2022 02:26:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54608 "EHLO
+        id S229719AbiIGHM3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Sep 2022 03:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbiIGG0I (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Sep 2022 02:26:08 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE5786C09;
-        Tue,  6 Sep 2022 23:26:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BtOre6gA0gNDUfSa+jUdjYjxIT5BoOmdXYW77Rhrvz4D0LFpKei/rgAyN5QF7cLOKuOVMifBx7FTA94YF/vQJXdO1hIU2pmLeG5MHlfiv+U7kttxEptovz4BrybbdVEGKbCeWfNnSgyL/66PlzZQJrjPRO3Rfs/vZrFibWLi4DV1FV8UfzxmUliXcreysbciTI/c5q0hP1gWgAtB4ft1gE+DvYGEHAEe0nb9MXE6OAhd9BpZCqSD6T0/hh3rehtUQkc2wkjyMNhg/0xUoP+SsXO+/cucURyuFVLD/pdJQPi3hjkM76TPwKrQNaCyiPdPX/AtojZXid6EtWIey8lkog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nkGHmtUzmloTu2MJasQ4sGNQnbvxTpAUfn/QfMrFa88=;
- b=crWJ6mxTAxLK3DRM0MkBwyT9hr5uT60yZL0btmHbvB+71QUXTH6bS/55UWHileRRaMgEZzmrE37wj1tMCrmINDc6nnmUCqKRdTUHTMsf395QiBI+reZ+HjLep6hBPKxknDHH/yr1Rb+QZe9RDmybCJxnSlcmSFRuy+LTdIV57WSe35vNV9UQlsSKcmowvuVFXbzadHMqp6BYR7z/yWO9O0b25mQJhXCqa6ctngzrGsydQud/BdTsyhi6rRUQDU+z2VQpHT3yBFiOlv0qmPzyS5Ae84uk0auiIdJw9tggLVTHVRNWhKFYLDT6xnUoLwKLKDmoHEI6je9FvgnL+2t6BA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nkGHmtUzmloTu2MJasQ4sGNQnbvxTpAUfn/QfMrFa88=;
- b=rQIzI/4iOLFu1fkRddwc7+1CvveAEQ8Shm8WKRAF3QPnjGxYQhYE/00bg3RMYGWLSQ0syG/3vlVRt9+98zzBQiEIz5fbJ0DbvM/bREQfdU3yTbwYWnR4+dzsDKJ5omb/1dquaTTN0MLUfZvjRz3N/ipe/gcqtJ/MxeQmPS6piHe9GcxlcP8ztbTXEhz/A8X6Xeow5fQJgWt0WvpSGKoYpER6spkfalJjz5c9r8mEKmobIaWMc7vDf500O2mzSa8C7zoYeQMB4HJcnm5JDL9MeQZl6CWvXiDuUKfIc/2b/jG2X6BkJ+5NAIZRbDViBtXuGM8wE4Lq7PBmEmXY/F2bow==
-Received: from BN9PR03CA0557.namprd03.prod.outlook.com (2603:10b6:408:138::22)
- by DS7PR12MB5718.namprd12.prod.outlook.com (2603:10b6:8:71::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.18; Wed, 7 Sep
- 2022 06:26:00 +0000
-Received: from BN8NAM11FT038.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:138:cafe::47) by BN9PR03CA0557.outlook.office365.com
- (2603:10b6:408:138::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.15 via Frontend
- Transport; Wed, 7 Sep 2022 06:26:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.238) by
- BN8NAM11FT038.mail.protection.outlook.com (10.13.176.246) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5612.13 via Frontend Transport; Wed, 7 Sep 2022 06:26:00 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- DRHQMAIL105.nvidia.com (10.27.9.14) with Microsoft SMTP Server (TLS) id
- 15.0.1497.38; Wed, 7 Sep 2022 06:25:59 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Tue, 6 Sep 2022 23:25:59 -0700
-Received: from sandipan-pc.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 6 Sep 2022 23:25:56 -0700
-From:   Sandipan Patra <spatra@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <bbasu@nvidia.com>, <kyarlagadda@nvidia.com>,
-        Sandipan Patra <spatra@nvidia.com>
-Subject: [PATCH 3/3] arm64: tegra: Add user PWM support on Jetson Orin
-Date:   Wed, 7 Sep 2022 11:55:45 +0530
-Message-ID: <20220907062545.30203-3-spatra@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220907062545.30203-1-spatra@nvidia.com>
-References: <20220907062545.30203-1-spatra@nvidia.com>
-X-NVConfidentiality: public
+        with ESMTP id S230173AbiIGHMH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Sep 2022 03:12:07 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D84AA8285E;
+        Wed,  7 Sep 2022 00:12:03 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 85BBE200BC;
+        Wed,  7 Sep 2022 07:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1662534722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2HAYhk17/+K75QvuJRvHwKkGd6LMny/6Cmr5wiK+Bz0=;
+        b=rZccwBDN85RW8XyO0bmOoXZP65PvV6JjWNaHk0c1AWc2snrwirrs/cdkgp2gOR4vSj0V1j
+        ZjPxEs/sc7TuI7ELU299bHf7OFTP0axl16vMIzBOPUt1uFGAe07w8StZEdjV+nrTwH51zX
+        T800JDAuVNEbsJXsVEL7UkrPWa4FzFk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1662534722;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2HAYhk17/+K75QvuJRvHwKkGd6LMny/6Cmr5wiK+Bz0=;
+        b=gvMaXCszgDptJjAkO2wpK+A5d3L0ZQUBl/F0mpBRbQIi1VIDT969z6xu/iRH9/rYB8P9mh
+        adR/LS6sjjmlP7AQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 52ABC13B2B;
+        Wed,  7 Sep 2022 07:12:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 4vEIE0JEGGNLcwAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 07 Sep 2022 07:12:02 +0000
+Message-ID: <d63ab0e3-d726-8782-855b-d466f3b50907@suse.de>
+Date:   Wed, 7 Sep 2022 09:12:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT038:EE_|DS7PR12MB5718:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe1a4f26-b542-426e-190d-08da9099d522
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pdtw8b3OIWIbKCRapyDoIEgsMhF57CTiSjAamm74NEYwslZV/Ic0pG+84YJpOJ1dJgA59PV0VQjU56y4G185fYb1lzJsk3xHcMPZOIHRiY7VR94N9movAHEgPyf3Upt03mj5JNE0bD4Ly91KNP6Z76bqhR7XMcUIGyrxfJt2dEWxOsDtnF1RoOQ1O9j6f6sT6pHp4dnzh2tG+YiMV1uerofTml3msxUsQyTVS1UkDVIqYEuaEUQ1J+WsY2wTjOn1XuUnPCMmMVAG99WGl/WceK+THvb2dJiftQt8QWGV2KscK1N6SYkJqzh86mt0pGhJyBWDqW2i7gEvF5YIauchVujqRA1H0xNKC2X+Lo6qyYue6XXYMgv2JQFsKiLC5JzbjBdgx3gZjrDS5UOlGCP/1zaa43VZ5VfWkF/AFY6Q4x1cGfWzfp+0MZMb/NQc4V40X6e6sj0S7pSJZ1CAMV9cyG+VtWbSYwF6ESxkOsNMixGM01B5uOzD9zqtMrYjcKf8o4cvDHI2vsBl7kY2OkYJnEi+d1UBQBssSLWChDitUCjw0jxLnEtfrIVJOZTuuf1/z3C33LFLyb8lufxaUgYA3HldHiKteH2iRQiKE/3WNmVHAsafLI8SEQ2nLuf/K451EES1ktPArWMBKp3suz/3Cf3xrF5YT4Cl7ZK+fUKLRzck0PDFDqJ0nnuxGpfoe+CI9M2/XoczFs5rkn7Ki+zDFFtPUk3Y6WynSCKTQMUCROQN+HhhseQ2AFaamjU1zehrQcLRjIv9naBEmqdlzdpxeTL8YUP2YBS7BlSde4EbJxZo5q8SepwitbmZgm0WbOyTdCW1/GTEy9pr0XZT8NrLqg==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(136003)(376002)(346002)(396003)(36840700001)(40470700004)(46966006)(81166007)(7696005)(478600001)(26005)(6666004)(107886003)(41300700001)(54906003)(316002)(110136005)(82310400005)(82740400003)(86362001)(36860700001)(40460700003)(1076003)(356005)(336012)(186003)(2616005)(47076005)(2906002)(36756003)(426003)(8936002)(5660300002)(4744005)(4326008)(70206006)(40480700001)(8676002)(70586007)(36900700001)(16060500005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2022 06:26:00.4649
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe1a4f26-b542-426e-190d-08da9099d522
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT038.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5718
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH 5/6] drm/simpledrm: Support the AB24 format
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+References: <20220905163300.391692-1-thierry.reding@gmail.com>
+ <20220905163300.391692-6-thierry.reding@gmail.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <20220905163300.391692-6-thierry.reding@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------YW4bpv6by8WWVaKSP6LngkP0"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable in device tree and use it to drive the PWM controllers on
-40 pin header of Orin dev-kit.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------YW4bpv6by8WWVaKSP6LngkP0
+Content-Type: multipart/mixed; boundary="------------tEGBBsAAWe1Um02ddPSMYoDZ";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie
+ <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d63ab0e3-d726-8782-855b-d466f3b50907@suse.de>
+Subject: Re: [PATCH 5/6] drm/simpledrm: Support the AB24 format
+References: <20220905163300.391692-1-thierry.reding@gmail.com>
+ <20220905163300.391692-6-thierry.reding@gmail.com>
+In-Reply-To: <20220905163300.391692-6-thierry.reding@gmail.com>
 
-Signed-off-by: Sandipan Patra <spatra@nvidia.com>
----
-V2: Overriding by node label instead of node path.
+--------------tEGBBsAAWe1Um02ddPSMYoDZ
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
- arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+SGkNCg0KQW0gMDUuMDkuMjIgdW0gMTg6MzIgc2NocmllYiBUaGllcnJ5IFJlZGluZzoNCj4g
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4gDQo+IEFkZCBB
+QjI0IHRvIHRoZSBsaXN0IG9mIHN1cHBvcnRlZCBmb3JtYXRzLiBUaGUgZm9ybWF0IGhlbHBl
+cnMgc3VwcG9ydA0KPiBjb252ZXJzaW9uIHRvIHRoYXQgZm9ybWF0IGFuZCBpdCBpcyBkb2N1
+bWVudGVkIGluIHRoZSBzaW1wbGUtZnJhbWVidWZmZXINCj4gZGV2aWNlIHRyZWUgYmluZGlu
+Z3MuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Budmlk
+aWEuY29tPg0KDQpSZXZpZXdlZC1ieTogVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5u
+QHN1c2UuZGU+DQoNCj4gLS0tDQo+ICAgZHJpdmVycy9ncHUvZHJtL3Rpbnkvc2ltcGxlZHJt
+LmMgfCAxICsNCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGlueS9zaW1wbGVkcm0uYyBiL2RyaXZlcnMv
+Z3B1L2RybS90aW55L3NpbXBsZWRybS5jDQo+IGluZGV4IDE2Mzc3YjM5ZjAxMi4uNzgyOWEx
+MmJhM2RkIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGlueS9zaW1wbGVkcm0u
+Yw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGlueS9zaW1wbGVkcm0uYw0KPiBAQCAtNTYz
+LDYgKzU2Myw3IEBAIHN0YXRpYyBpbnQgc2ltcGxlZHJtX2RldmljZV9pbml0X21tKHN0cnVj
+dCBzaW1wbGVkcm1fZGV2aWNlICpzZGV2KQ0KPiAgIHN0YXRpYyBjb25zdCB1aW50MzJfdCBz
+aW1wbGVkcm1fcHJpbWFyeV9wbGFuZV9mb3JtYXRzW10gPSB7DQo+ICAgCURSTV9GT1JNQVRf
+WFJHQjg4ODgsDQo+ICAgCURSTV9GT1JNQVRfQVJHQjg4ODgsDQo+ICsJRFJNX0ZPUk1BVF9B
+QkdSODg4OCwNCj4gICAJRFJNX0ZPUk1BVF9SR0I1NjUsDQo+ICAgCS8vRFJNX0ZPUk1BVF9Y
+UkdCMTU1NSwNCj4gICAJLy9EUk1fRk9STUFUX0FSR0IxNTU1LA0KDQotLSANClRob21hcyBa
+aW1tZXJtYW5uDQpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3YXJlIFNv
+bHV0aW9ucyBHZXJtYW55IEdtYkgNCk1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZywg
+R2VybWFueQ0KKEhSQiAzNjgwOSwgQUcgTsO8cm5iZXJnKQ0KR2VzY2jDpGZ0c2bDvGhyZXI6
+IEl2byBUb3Rldg0K
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-index a85993c85e45..5108013a18c6 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-@@ -3,3 +3,15 @@
- / {
- 	compatible = "nvidia,p3737-0000";
- };
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&pwm5 {
-+	status = "okay";
-+};
-+
-+&pwm8 {
-+	status = "okay";
-+};
--- 
-2.17.1
+--------------tEGBBsAAWe1Um02ddPSMYoDZ--
 
+--------------YW4bpv6by8WWVaKSP6LngkP0
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmMYREEFAwAAAAAACgkQlh/E3EQov+Ag
+ew/+NyKeM/FnATB4qvnowFnAZ8V8BUdVRzfSwJkVjGG3uSqnOrBScNtyj6EqQvyRtyhxmcCp4+S0
+csKj+3RaoBaKXSQxAHZVfPZA6xxcPKNI+FQNUeng/Bj8O0Sv1PHhtL4P2YEtAchu+3WRKFuTezsm
+9f0+5rinTnQvA6ILXZYji0XK9ubqxLiA3jbuGxVXFGNZhANSFXMHZgy8R0LHFfTSLZNbj35SV2jg
+xqq+JiCF1EItYWqOAIUSImsQ31N85PyGCct+JTwcm7K9Ft75wJwhrICk55MjyMeypjH6mkNPiRNU
+9qoD/Z7sVqb8if1q+c9fRyOlDBfnK4yX6R2CvEDJrwfHxOYSGklELx+Ng46QPEh/Imxd0diCJvaZ
+ugmvbbfZwl/UMSm+mpfmgtl2dXp2tS8eBpdPDluEnHbGaAnO9X96LHf7KBf3Ww5ndIH21+nR+PCI
+v53qjas04FMv4UvzpU//RY9An8JF7rCBpmdMkcGTbygIMBo2D8A8BYWX/ZgdNCtUqwY1oQRYl+mh
+fwDcTTuSLs/UxNzSawycu2Em7FGrMz8sKy9JWgMLpVM/zkAGganMubvlJU0bSfpYDKgq/YJ6VCqC
+wvG4Qj57D2eqZno/X68BhWmZQcwHCLjBrmh9yTPZ0cUJpDGQ7pG4kaGUnkmYVmLTyl3V62crDAyy
+86c=
+=bMvV
+-----END PGP SIGNATURE-----
+
+--------------YW4bpv6by8WWVaKSP6LngkP0--
