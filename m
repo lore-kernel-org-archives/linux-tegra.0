@@ -2,49 +2,35 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD25C6FA86
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Sep 2022 17:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5BBC6FA82
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Sep 2022 19:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbiIGRLf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Sep 2022 13:11:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49032 "EHLO
+        id S229660AbiIGTlh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Sep 2022 15:41:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230245AbiIGRLI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Sep 2022 13:11:08 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2063.outbound.protection.outlook.com [40.107.244.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20952BD295;
-        Wed,  7 Sep 2022 10:10:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cF4+k6T7lpApf/P8e7zRfUCogRWZtH0Xzx+JtdXF75a8gn3GiVqxjVUzLrY0CbzsHzVhlNJN4Ug1dNrKy9vVk9H2R4+JCOv3AxLBf5YNTTHnrXg3gkbodewhvC2b1+O3jl0kyOFu+Lg3R7hQLn1KEWvNfaPMt6r55E9diq4knyQ6J/KinnOIlOL9/10Ns4T+Pl4MboZj39i7ueIU/eGkFJdSDjcagc5O7xLjmkcfE1VnMCAvOpeP6g4gzwkUiFpWCP+GhXmOTN95Ql+9qYFF3p4v3PGW2tOJSBPA7Q0m/Erw3wNFyRnI7w9nQZNKX73kE+vg4fjDNYMfhmP2FFYstQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s1SYnrrJbkzDkuhn8nt5eiUOc/1JRhHQ03IUxnAF/xQ=;
- b=WY7AujCWdiyhpSjg6Iwi3kzbKTCCOLAcdu0LgFV247VvnvjLLuIDVu1uyUUIndts1qTxHclWB7RBkT+3jHvZ5zNKH3dW9oO7H3sYGHB341ljXw2c6xMgnFY9OzgRkP8wT/7XuO2JlrAtFFUXIbBF/DAlkX4uxCQG2BxbIO64zU+dHMyn0V3ZR0zY+nZMDKXLHsaPMJypFD3LuO+RyeOtsRTyewLK8aNhBwnD/t9jc+AgThp54X4YEXlMEYJr3lra06Qd5bzVCzTpaJwwc6Va+d4r7z0cTH3r1IxcKjPlXBczuUD8Ul6xeJngKRsUF/Rj2hRMB3ukeh9qs31exRUgBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s1SYnrrJbkzDkuhn8nt5eiUOc/1JRhHQ03IUxnAF/xQ=;
- b=SK5jLzXUg3r3BSred0N36jFSP5hcdH7bg4uh12GGOQ10D3VjcQcF+0XGus7+003o/Mw60iXbXVcbTqChe20kh/fXG01rh6lfKWoQKAMbpLp0HzN1df0qvrn4f01Pz9b0URIMhX/X5xEM2HlxmgEFsAp9xAdZRgd241d8ei5x20zzj1t2AqgIwlPlS8K4+H0fGnwrBXKY3LKA5IA/Ubw0Xl2lDMGwUNyyK6pGNgd2Hw/3bBxkc9SukS4MTTQ84LQu6zcMsW66z2QXNfcaGpdTZozIevPMunjg8/N2xuHPIRC2gBIS3REO+pUVX73v9O0+8tzA4oc71NgVUx+hvy/32Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15)
- by BL3PR12MB6570.namprd12.prod.outlook.com (2603:10b6:208:38d::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.15; Wed, 7 Sep
- 2022 17:10:34 +0000
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::462:7fe:f04f:d0d5]) by MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::462:7fe:f04f:d0d5%7]) with mapi id 15.20.5588.018; Wed, 7 Sep 2022
- 17:10:34 +0000
-Date:   Wed, 7 Sep 2022 14:10:33 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org,
-        robin.murphy@arm.com, alex.williamson@redhat.com,
+        with ESMTP id S229523AbiIGTlg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Sep 2022 15:41:36 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 26615639D;
+        Wed,  7 Sep 2022 12:41:34 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 913CA106F;
+        Wed,  7 Sep 2022 12:41:40 -0700 (PDT)
+Received: from [10.57.15.197] (unknown [10.57.15.197])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A19FF3F7B4;
+        Wed,  7 Sep 2022 12:41:20 -0700 (PDT)
+Message-ID: <0b466705-3a17-1bbc-7ef2-5adadc22d1ae@arm.com>
+Date:   Wed, 7 Sep 2022 20:41:13 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: [PATCH v6 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain
+ and device/group
+Content-Language: en-GB
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Nicolin Chen <nicolinc@nvidia.com>,
+        will@kernel.org, alex.williamson@redhat.com,
         suravee.suthikulpanit@amd.com, marcan@marcan.st,
         sven@svenpeter.dev, alyssa@rosenzweig.io, robdclark@gmail.com,
         dwmw2@infradead.org, baolu.lu@linux.intel.com,
@@ -61,116 +47,124 @@ Cc:     Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
         kevin.tian@intel.com
-Subject: Re: [PATCH v6 1/5] iommu: Return -EMEDIUMTYPE for incompatible
- domain and device/group
-Message-ID: <YxjQiVnpU0dr7SHC@nvidia.com>
 References: <20220815181437.28127-1-nicolinc@nvidia.com>
- <20220815181437.28127-2-nicolinc@nvidia.com>
- <YxiRkm7qgQ4k+PIG@8bytes.org>
- <Yxig+zfA2Pr4vk6K@nvidia.com>
- <YxilZbRL0WBR97oi@8bytes.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YxilZbRL0WBR97oi@8bytes.org>
-X-ClientProxiedBy: MN2PR17CA0024.namprd17.prod.outlook.com
- (2603:10b6:208:15e::37) To MN2PR12MB4192.namprd12.prod.outlook.com
- (2603:10b6:208:1d5::15)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6b563c3d-5c00-4930-5db8-08da90f3e08a
-X-MS-TrafficTypeDiagnostic: BL3PR12MB6570:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +SoC2RNech7I4eFFPSN0aqBGTHpgf7qy/8X3zKVQSw28zTuAdg4Opqp6Ms/tJnLJP2AUpIzRzHvxdpSY6lTpxLIWpvzxU+L2QqghRsm1zb7nG5A7ui59sPxNrXT60//vSWB30XfZGaDziNMCEsicqAFjrYyQisO8ArRVoSdxen+hgHH6wjVBouWgpBhILkA2tcZkedUOu8eySYvS65pqLJISSh2uuXYbIaG4bvFUzo8cMOjUw3EmD1mxUT/74b8BzLrVr8r6eWjyKp6GfcsTI0FT8Mi9nKcUZqIVM/7XWXX3h3WClFg2lLEvXv7Zr26mMv3AIP4SDjNkmbA00s5dl74Cp0RJTbgTCRhMkRqt7RlxHQ5WuIEx1LzxQmCujktHhfX0IRUtBoiDCUk/tXThaF0mYvKNrgrF/qNtGFYCBpp8EVRA5+BtIP3QCK+8XMDxD/UzaA4psQJVuoCdVERHxuUyCPYDL8e8LURw8imizPGVdvJQqVduJAji5RgirfgfOjIsgIr49oNQZq5FMiMTun7tDASwNvsgP41V/t8UdZC4KPLY8/biZsWsiw47Yv2M0N+mLEYMUHAb/MiprYivJcKLDneBKp66O7BgLAEqgyInz03MsYaTDWj9/tAxFQnL43RnGgcFluKisiSR7YN07SKVfTXTHQn4gQws+x2T+Mtt3Cn96U37vrKlMQmHLumvWGwldWku9ZYAhDjZ01iVRA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4192.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(366004)(396003)(39860400002)(136003)(346002)(38100700002)(316002)(8676002)(66946007)(4326008)(66556008)(66476007)(2906002)(6916009)(8936002)(5660300002)(7416002)(6512007)(26005)(2616005)(7406005)(186003)(478600001)(86362001)(41300700001)(6486002)(36756003)(6506007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?GISa8QQVLcnFvSXsC6xJCxGNdzNMO6tNaFJFx9jVziOFp4WXZxJD7dy20nkD?=
- =?us-ascii?Q?Ide33D9rsnTcOX8B+bLe2Rua1Fl0y574UYL0TK2GJKChRS+grwDBHgBVPw4g?=
- =?us-ascii?Q?nFPtejZk4bsP7iwoWh2/kzlg8tUBcaSBeu6ygEunT9OUwtELHodyuuGebL3Z?=
- =?us-ascii?Q?BB0kkNjQBFI5hWHqELdL9wV70IiO+N1ee1B0lEEs6/G63qiytD7CKoewdGsO?=
- =?us-ascii?Q?kh7vCDiyayJ/svb87lr53Hko9COdAGePMDT64RoEHZgwMt5oznUeibtN3UvS?=
- =?us-ascii?Q?wdmmGR/m069RtbjeD2P9UpQTFMZ0wI1ERRwEWHXcU63dhlpVgX1jKklRAQ68?=
- =?us-ascii?Q?LYWGSpAch3ZhYE/a46c530NBTGqtrj/kJXejwUIp4K6llhOvcolCgznyN8sK?=
- =?us-ascii?Q?cdlOkxHT90KXhtUYIHRH27BwxJdUCRT9xEztNi8rXUgefJ3eiW+uBrdcBfOW?=
- =?us-ascii?Q?w1E/YOK8OxoIMW+kE8t8ogbBBgNggkPWA4tU6XDtSgvmQ3WFCbWAZEE07CML?=
- =?us-ascii?Q?8gCHf1g6gQH9jr5xLdub89zNIjhOCRRs2RMNiye8lcCN17Az+HlXtjKRaR5X?=
- =?us-ascii?Q?SzRJW8dfrPaA865SSktg16RIMgtihNIZOfMDc5rKBS+vUa5oyDqIfbTWFP69?=
- =?us-ascii?Q?siMc81VTjRiPLdZI6eFdTecvMimY1V4DFkUrezr6qukp/3p4EIaZOL2uVQKn?=
- =?us-ascii?Q?+ZiQMMwmARX2wpUPRQeH0xknPOi2ZSFjtrnGR5EqQ9elFrUYxBzOIpH/HT8V?=
- =?us-ascii?Q?dSD24fChSYMJpACONuCDdnGhakDPIU3h1xNjsgpPCHSY9wvY2w3zEqs+SDQ7?=
- =?us-ascii?Q?rTcuQw0abP7ybBmcgQUPFp1rzH5QmZeq7y04SzRMu32kvILir2lgMhS4bhlT?=
- =?us-ascii?Q?0f9l6kjY+ZnFgJphkp+1BBtitHNXmajNfI8XLDArBuRAVZT9LgwSGGi8+vIE?=
- =?us-ascii?Q?tgJKeH1J4BuwBu2EJ+5Z9ek8f6nkKgyRSMx0XPssYqdca6+HLYTPC+KNWo4x?=
- =?us-ascii?Q?w7n/iMX22s7gD/Pj/uWao7Ucjhi52yiMju7EH66uW5f/5LaWgDxQQDzQLkYo?=
- =?us-ascii?Q?upR3ePo0aJs/XBJ9un8k+3qONtGoqeoAoiuC0XVyIFpBtpO9P2UWVwyUJjni?=
- =?us-ascii?Q?jsjNyjAbYONES4n62RYAomtJz6tpkOkOeSssT3R1bbjKElHvoaicl3YDLLTU?=
- =?us-ascii?Q?hzi/GV+DccRpkQVaFh1Ad5Qkl4i1aKrztd7zkf9HwOrtO+U0gW80x6RoGePY?=
- =?us-ascii?Q?oQz2kHQA4r40U4hby8yAfkEHpHUXHjAGZ97hf6gpu9p5CyO2izY94KXOHAXV?=
- =?us-ascii?Q?XhCtmg9kxU8krsiMycowBhNSEzmuuK96svANtSMwD96TAZcN13qe01MBVXFM?=
- =?us-ascii?Q?mErU6tG/prVFi8y81byaHiauoJ52l9Cxzk8mS+H8K2n+7aEABLZZJRh6ssOi?=
- =?us-ascii?Q?nu7gjM7GVBk4VcTgb5hbHR+XbypVZeXLaUv3VHIT0hOBNaIX7Kt5ZAJWVT3i?=
- =?us-ascii?Q?3+oMGSQ72WapG/uFmNNh7o1qQ+cPHdiizJNfe1Abnw+BhPlx+GSr9YkOrD9s?=
- =?us-ascii?Q?VdxlPS9ERenOoilOV8DRyMNxqE4Hq3UBzKSh2nUN?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b563c3d-5c00-4930-5db8-08da90f3e08a
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4192.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2022 17:10:34.6838
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uJKV1jDxlRDHZ5Z/Yc37+izWK97nNcxnPLc2DIUylaDisbQzVR0u62DIlQTZnGOj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6570
+ <20220815181437.28127-2-nicolinc@nvidia.com> <YxiRkm7qgQ4k+PIG@8bytes.org>
+ <Yxig+zfA2Pr4vk6K@nvidia.com> <9f91f187-2767-13f9-68a2-a5458b888f00@arm.com>
+ <YxjOPo5FFqu2vE/g@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <YxjOPo5FFqu2vE/g@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 07, 2022 at 04:06:29PM +0200, Joerg Roedel wrote:
-> On Wed, Sep 07, 2022 at 10:47:39AM -0300, Jason Gunthorpe wrote:
-> > Would you be happier if we wrote it like
-> > 
-> >  #define IOMMU_EINCOMPATIBLE_DEVICE xx
-> > 
-> > Which tells "which of the function parameters is actually invalid" ?
+On 2022-09-07 18:00, Jason Gunthorpe wrote:
+> On Wed, Sep 07, 2022 at 03:23:09PM +0100, Robin Murphy wrote:
+>> On 2022-09-07 14:47, Jason Gunthorpe wrote:
+>>> On Wed, Sep 07, 2022 at 02:41:54PM +0200, Joerg Roedel wrote:
+>>>> On Mon, Aug 15, 2022 at 11:14:33AM -0700, Nicolin Chen wrote:
+>>>>> Provide a dedicated errno from the IOMMU driver during attach that the
+>>>>> reason attached failed is because of domain incompatability. EMEDIUMTYPE
+>>>>> is chosen because it is never used within the iommu subsystem today and
+>>>>> evokes a sense that the 'medium' aka the domain is incompatible.
+>>>>
+>>>> I am not a fan of re-using EMEDIUMTYPE or any other special value. What
+>>>> is needed here in EINVAL, but with a way to tell the caller which of the
+>>>> function parameters is actually invalid.
+>>>
+>>> Using errnos to indicate the nature of failure is a well established
+>>> unix practice, it is why we have hundreds of error codes and don't
+>>> just return -EINVAL for everything.
+>>>
+>>> What don't you like about it?
+>>>
+>>> Would you be happier if we wrote it like
+>>>
+>>>    #define IOMMU_EINCOMPATIBLE_DEVICE xx
+>>>
+>>> Which tells "which of the function parameters is actually invalid" ?
+>>
+>> FWIW, we're now very close to being able to validate dev->iommu against
+>> where the domain came from in core code, and so short-circuit ->attach_dev
+>> entirely if they don't match.
 > 
-> Having done some Rust hacking in the last months, I have to say I like
-> to concept of error handling with Result<> there. Ideally we have a way
-> to emulate that in our C code without having to change all callers.
+> I don't think this is a long term direction. We have systems now with
+> a number of SMMU blocks and we really are going to see a need that
+> they share the iommu_domains so we don't have unncessary overheads
+> from duplicated io page table memory.
+> 
+> So ultimately I'd expect to pass the iommu_domain to the driver and
+> the driver will decide if the page table memory it represents is
+> compatible or not. Restricting to only the same iommu instance isn't
+> good..
 
-Sure, rust has all sorts of nice things. But the kernel doesn't follow
-rust idioms, and I don't think this is a great place to start
-experimenting with them.
+Who said IOMMU instance? As a reminder, the patch I currently have[1] is 
+matching the driver (via the device ops), which happens to be entirely 
+compatible with drivers supporting cross-instance domains. Mostly 
+because we already have drivers that support cross-instance domains and 
+callers that use them.
 
-The unix/linux idiom is return an errno, and define what the errnos
-mean for your function. We have a long history of creatively applying
-the existing errnos, and sometimes we create new ones.
+>> At that point -EINVAL at the driver callback level could be assumed
+>> to refer to the domain argument, while anything else could be taken
+>> as something going unexpectedly wrong when the attach may otherwise
+>> have worked. I've forgotten if we actually had a valid case anywhere
+>> for "this is my device but even if you retry with a different domain
+>> it's still never going to work", but I think we wouldn't actually
+>> need that anyway - it should be clear enough to a caller that if
+>> attaching to an existing domain fails, then allocating a fresh
+>> domain and attaching also fails, that's the point to give up.
+> 
+> The point was to have clear error handling, we either have permenent
+> errors or 'this domain will never work with this device error'.
+> 
+> If we treat all error as temporary and just retry randomly it can
+> create a mess. For instance we might fail to attach to a perfectly
+> compatible domain due to ENOMEM or something and then go on to
+> successfully a create a new 2nd domain, just due to races.
+> 
+> We can certainly code the try everything then allocate scheme, it is
+> just much more fragile than having definitive error codes.
 
-We rarely return an errno and an additional error code because it
-doesn't fit the overall model, I can't return something like that
-through a system call, for instance.
+Again, not what I was suggesting. In fact the nature of 
+iommu_attach_group() already rules out bogus devices getting this far, 
+so all a driver currently has to worry about is compatibility of a 
+device that it definitely probed with a domain that it definitely 
+allocated. Therefore, from a caller's point of view, if attaching to an 
+existing domain returns -EINVAL, try another domain; multiple different 
+existing domains can be tried, and may also return -EINVAL for the same 
+or different reasons; the final attempt is to allocate a fresh domain 
+and attach to that, which should always be nominally valid and *never* 
+return -EINVAL. If any attempt returns any other error, bail out down 
+the usual "this should have worked but something went wrong" path. Even 
+if any driver did have a nonsensical "nothing went wrong, I just can't 
+attach my device to any of my domains" case, I don't think it would 
+really need distinguishing from any other general error anyway.
 
-> What I am proposing is a way this could be emulated here, but I am open
-> to other suggestions. Still better than re-using random error codes for
-> special purposes.
+Once multiple drivers are in play, the only addition is that the 
+"gatekeeper" check inside iommu_attach_group() may also return -EINVAL 
+if the device is managed by a different driver, since that still fits 
+the same "try again with a different domain" message to the caller.
 
-I think, in context of Linux as a project, it very much is worse to
-make up some rust-inspired error handing and discard the typical
-design patterns.
+It's actually quite neat - basically the exact same thing we've tried to 
+do with -EMEDIUMTYPE here, but more self-explanatory, since the fact is 
+that a domain itself should never be invalid for attaching to via its 
+own ops, and a group should never be inherently invalid for attaching to 
+a suitable domain, it is only ever a particular combination of group (or 
+device at the internal level) and domain that may not be valid together. 
+Thus as long as we can maintain that basic guarantee that attaching a 
+group to a newly allocated domain can only ever fail for resource 
+allocation reasons and not some spurious "incompatibility", then we 
+don't need any obscure trickery, and a single, clear, error code is in 
+fact enough to say all that needs to be said.
 
-Linux works because, for the most part, people follow similar design
-sensibilities throughout the tree.
+Whether iommu_attach_device() should also join the party and start 
+rejecting non-singleton-group devices with a different error, or 
+maintain its current behaviour since its legacy users already have their 
+expectations set, is another matter in its own right.
 
-It has been 3 months since EMEDIUMTYPE was first proposed and 6
-iterations of the series, don't you think it is a bit late in the game
-to try to experiment with rust error handling idioms?
+Cheers,
+Robin.
 
-So, again, would you be happy with a simple 
-
- #define IOMMU_EINCOMPATIBLE_DEVICE xx
-
-to make it less "re-using random error codes"?
-
-Thanks,
-Jason
+[1] 
+https://gitlab.arm.com/linux-arm/linux-rm/-/commit/683cdff1b2d4ae11f56e38d93b37e66e8c939fc9
