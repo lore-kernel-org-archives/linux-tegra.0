@@ -2,76 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728DDC38145
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Sep 2022 13:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D94FC38145
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Sep 2022 13:29:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232401AbiIHNV6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Sep 2022 09:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
+        id S231839AbiIHN27 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Sep 2022 09:28:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232110AbiIHNV3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Sep 2022 09:21:29 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88DF3E5594
-        for <linux-tegra@vger.kernel.org>; Thu,  8 Sep 2022 06:21:22 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id e18so24326574edj.3
-        for <linux-tegra@vger.kernel.org>; Thu, 08 Sep 2022 06:21:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=yGzjUAVlbWD9K7WB5zdnXNvMsAG9MdKx18Dh/BG0fAc=;
-        b=T+IPtcdLJg303fTaAq+ct5LWwvXOQ/rhVoGClZGMLoYPhMskJNU1QqUjBpaDX6bQB8
-         aysHXs4c5+QV/fGHzpw6Lm9KAbX8P2lwqEZX62zLFZjvW8/0xTFB+5zF6AEa67/YiKBG
-         oS/YRtgioKnhYbPZiAERB+c7qzh2bDvxLHeiNhcLDameybe8YdRmW2GRaUy94un4d/z5
-         Am6C6RjA+Elb0Ua6loxzqY/pnzbTW0XbWcXVq0w53ZWmhdBtdM7k2Sq7jUOrRF9Z3iLo
-         iiGJNf9dSTtQ2+bBF2K91nEj4KfaLqF2ZHeGg26GHAV1YTQ0Gd1J4qizLXne8F+NgrC1
-         i83w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=yGzjUAVlbWD9K7WB5zdnXNvMsAG9MdKx18Dh/BG0fAc=;
-        b=qE7pQnFNLvZXRco4kbPzQw99DBFEm/1QCc8YbtIexgpALIvAiZkbBTED8NENA14cod
-         hyR57BT2smQ2UzjOyPec1Me1OtpAHWmQo4vuev+Fzd41+XjVVQMJ2qz+/XqQ2QGaEcxC
-         x7TbqUY/ImtgBVxau2R6SmI972smSw1K0qZ0pg7BCSkTgG5+7P1WMP1g6u73XIIModVJ
-         QLI4og+LX3iYEXz8JQGjlKbMSZeujntU7wysVTbJic3I5HHnxqijDcyUXfgYADCTShQq
-         ku2zUsQPo9FuPdvWaOkSJb9Ph67y1+qFA+pizE88kJMCk0Yp1MU7bNcDZz4Ce57aJeOX
-         b5Tg==
-X-Gm-Message-State: ACgBeo3hax1aX0dRCkK/ymV9Gj+tr9a38xGDOkwI5CivzlxDXtLFuEAC
-        lKOe0K8D0jyci6mbB6J/GAp2bj5gN29lQ/XzLoVi7Q==
-X-Google-Smtp-Source: AA6agR5gu7ZZe9a+j6qGcOZMau8x3QW1vVI/bIdW6gIkpHsboKtJFXGRe4Kpf2DvG8FECjqzZPxoKKIEbjvKVFz3v08=
-X-Received: by 2002:a05:6402:4517:b0:443:7fe1:2d60 with SMTP id
- ez23-20020a056402451700b004437fe12d60mr7126269edb.133.1662643281146; Thu, 08
- Sep 2022 06:21:21 -0700 (PDT)
+        with ESMTP id S232629AbiIHN2g (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Sep 2022 09:28:36 -0400
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0FFD512754D;
+        Thu,  8 Sep 2022 06:28:25 -0700 (PDT)
+Received: from 8bytes.org (p4ff2bb62.dip0.t-ipconnect.de [79.242.187.98])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id 6ACB624069C;
+        Thu,  8 Sep 2022 15:28:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1662643704;
+        bh=tDuhKm9wQfdx7sUd4hZrnBHJRGruWciJVuKdXgXOhg8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nbzo8AaKCmLcJF6ywBTO/rjFGCww8jqPWoQ6WcBpBVILlVrrzm/ywTVSN6gtAJpvI
+         A4WA5AxpHDg5Sd62NU3n5V/Vi1+huBSshzEAQAZS7xn++DhH0oznzPGAGwNcfBbTfq
+         Twt1k1zJR6eHTY8BdmbO1Ww2bxQuZSP3YVyPip5R53rnIHglAbsB0bCYX0JzWlq5Om
+         M3nAYqpIKCggsduzZcJAnKN/jYWRx4aw2vg7FWSxO/QqqKt7N7pAfFXxtOG8goJGLV
+         xuiUyCTz0ghn5xX8vuVnC49wxhLLFEBrREVNPwdgKbdzr/ZwBoayTRYmgPniXvM4Pl
+         wZdcX65MXNFqw==
+Date:   Thu, 8 Sep 2022 15:28:22 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org,
+        robin.murphy@arm.com, alex.williamson@redhat.com,
+        suravee.suthikulpanit@amd.com, marcan@marcan.st,
+        sven@svenpeter.dev, alyssa@rosenzweig.io, robdclark@gmail.com,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com,
+        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+        orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
+        zhang.lyra@gmail.com, thierry.reding@gmail.com, vdumpa@nvidia.com,
+        jonathanh@nvidia.com, jean-philippe@linaro.org, cohuck@redhat.com,
+        tglx@linutronix.de, shameerali.kolothum.thodi@huawei.com,
+        thunder.leizhen@huawei.com, christophe.jaillet@wanadoo.fr,
+        yangyingliang@huawei.com, jon@solid-run.com, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        kevin.tian@intel.com
+Subject: Re: [PATCH v6 1/5] iommu: Return -EMEDIUMTYPE for incompatible
+ domain and device/group
+Message-ID: <Yxnt9uQTmbqul5lf@8bytes.org>
+References: <20220815181437.28127-1-nicolinc@nvidia.com>
+ <20220815181437.28127-2-nicolinc@nvidia.com>
+ <YxiRkm7qgQ4k+PIG@8bytes.org>
+ <Yxig+zfA2Pr4vk6K@nvidia.com>
+ <YxilZbRL0WBR97oi@8bytes.org>
+ <YxjQiVnpU0dr7SHC@nvidia.com>
 MIME-Version: 1.0
-References: <Yhe0pCpfeCpyfPWg@orome> <20220816102725.14708-1-pshete@nvidia.com>
-In-Reply-To: <20220816102725.14708-1-pshete@nvidia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 8 Sep 2022 15:21:10 +0200
-Message-ID: <CACRpkdbMnRNTLcCtqNjKpxWxMbAXLssnuBEuNqAfgDfj3XVfXQ@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: tegra186: add Tegra234 PMC compatible in GPIO driver
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jonathanh@nvidia.com, thierry.reding@gmail.com,
-        smangipudi@nvidia.com, Manish Bhardwaj <mbhardwaj@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YxjQiVnpU0dr7SHC@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 12:27 PM Prathamesh Shete <pshete@nvidia.com> wrote:
+On Wed, Sep 07, 2022 at 02:10:33PM -0300, Jason Gunthorpe wrote:
+> Sure, rust has all sorts of nice things. But the kernel doesn't follow
+> rust idioms, and I don't think this is a great place to start
+> experimenting with them.
 
-> Using this patch we are adding PMC compatible string for
-> Tegra234 in GPIO driver so the IRQ hierarchy can be set.
->
-> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+It is actually a great place to start experimenting. The IOMMU
+interfaces are rather domain specific and if we get something wrong the
+damage is limited to a few callers. There are APIs much more exposed in
+the kernel which would be worse for that.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+But anyway, I am not insisting on it.
 
-It also has Thierry's ACK from v1.
+> It has been 3 months since EMEDIUMTYPE was first proposed and 6
+> iterations of the series, don't you think it is a bit late in the game
+> to try to experiment with rust error handling idioms?
 
-Yours,
-Linus Walleij
+If I am not mistaken, I am the person who gets blamed when crappy IOMMU
+code is sent upstream. So it is also up to me to decide in which state
+and how close to merging a given patch series is an whether it is
+already 'late in the game'.
+
+> So, again, would you be happy with a simple 
+> 
+>  #define IOMMU_EINCOMPATIBLE_DEVICE xx
+> 
+> to make it less "re-using random error codes"?
+
+I am wondering if this can be solved by better defining what the return
+codes mean and adjust the call-back functions to match the definition.
+Something like:
+
+	-ENODEV : Device not mapped my an IOMMU
+	-EBUSY  : Device attached and domain can not be changed
+	-EINVAL : Device and domain are incompatible
+	...
+
+That would be much more intuitive than using something obscure like
+EMEDIUMTYPE.
+
+Regards,
+
+	Joerg
