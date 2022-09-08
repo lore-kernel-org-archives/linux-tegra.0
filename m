@@ -2,171 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19760C6FA86
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Sep 2022 10:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05613ECAAD5
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Sep 2022 10:31:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230508AbiIHK0L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Sep 2022 06:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50920 "EHLO
+        id S230040AbiIHKbu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Sep 2022 06:31:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230430AbiIHK0J (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Sep 2022 06:26:09 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9C9968A7D0;
-        Thu,  8 Sep 2022 03:26:08 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94A8D14BF;
-        Thu,  8 Sep 2022 03:26:14 -0700 (PDT)
-Received: from [10.57.15.197] (unknown [10.57.15.197])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D059C3F71A;
-        Thu,  8 Sep 2022 03:25:52 -0700 (PDT)
-Message-ID: <7ef259b2-121e-643e-49c2-0b65923d392d@arm.com>
-Date:   Thu, 8 Sep 2022 11:25:46 +0100
+        with ESMTP id S229546AbiIHKbt (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Sep 2022 06:31:49 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D2A7BC11D;
+        Thu,  8 Sep 2022 03:31:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TUIQKQULGkK/gZcSVvjbtguB51ydzanpd3FAaqgAoZd7ll9Qv+qVX6tVEqBbAEZ3Zj0/G+KYIMBUg1vu2JNFTJt56SVzrw4S/MW47J38TW8FjyjjY+QtJJ2DLNnr31NIzSSIdQeKgXnOs1KMqw6LtPxAhazsKdJPl6B7xJdqw68JjqPVRyqzftWGaPlFAK2J+sq+EyR2aqm5XVv1no4RkK5TFpdeNoc3ta/72sTu2MtGslklbqg3A+E3ptHwBvEnxmUSIAp3IEfjCoDcAqHb7rxm3RZR7BsoHOsylfGsoLlr6zkjDzcImsmXPlA1GcoiCK7FJ3BZhTIZKlHeS/vdPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rBSDZLhGSjM8dDpKlbMeSmu8poTVqsM/OvTz/79y7/s=;
+ b=Mrv+6ud49nyDzGXKZH0liXgf85B9xCf8MNZYqfr2i34ASgH8+11iATsg7xrFlweIrV+kGcZ+6yYTjMEIKrGGf9myNGRKzxI1F+UXhwqFBeE7IolLuVvrHEL3196AGbTnJkfRT5NJ6roYPnemqWh2E6FBTC++P74FXqezIOamxX3GKiP5/nsFkB5ljWzh604DuH4RGjdJQ6r+rP5W2IaupWcuJCHBhaZtAjttZA1u6oFSwfVGp9cysCFpFwJC12QWQ7e9+eCxv5TQSP4xr+UuA1vsg8MU7J8vDJSJLqUwDC4uOPoVzYLz+MT41F2TkPZoTNBEuQfQ2dPKneqvj5S5tA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rBSDZLhGSjM8dDpKlbMeSmu8poTVqsM/OvTz/79y7/s=;
+ b=tDziDcdkuXyxcfY2GOl9iuXiv7MD56K8vXbkqQKgd78jFyBEjaNNGVBvG/R8A3pvxCwtsU36iIIFd5MsONz71Do57599Qq98+v/0w97T0T1w9rcO/XQVs1C2bzObR9rkPNUeHQjlbnCFVRVAXZwpeVQGCHN621m37DVKYa3G060uhB72qBKQAdi9d5uWjoiXpLn3XIk4Te8g2539nZjpaLdf5ZtkCsalOiPdAAkXjJxZ5wuiH2L8qeSVSxvZq5wsvdTAmLlLrt7+2t1jITVE8wnlsisoqV4rmkMibPIDcWSXcHAfigBhDb3EJTEcoOpdkYjO4zSlxt+kjH5UgiVpqA==
+Received: from DM5PR12MB2406.namprd12.prod.outlook.com (2603:10b6:4:b7::23) by
+ DM6PR12MB4941.namprd12.prod.outlook.com (2603:10b6:5:1b8::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5588.10; Thu, 8 Sep 2022 10:31:46 +0000
+Received: from DM5PR12MB2406.namprd12.prod.outlook.com
+ ([fe80::393c:2a84:46aa:3177]) by DM5PR12MB2406.namprd12.prod.outlook.com
+ ([fe80::393c:2a84:46aa:3177%4]) with mapi id 15.20.5612.018; Thu, 8 Sep 2022
+ 10:31:46 +0000
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+CC:     Suresh Mangipudi <smangipudi@nvidia.com>,
+        Manish Bhardwaj <mbhardwaj@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: RE: [PATCH v2] gpio: tegra186: add Tegra234 PMC compatible in GPIO
+ driver
+Thread-Topic: [PATCH v2] gpio: tegra186: add Tegra234 PMC compatible in GPIO
+ driver
+Thread-Index: AQHYsVrR8d/SrHtqn0eaQvTMm9Q+uK3VeXWg
+Date:   Thu, 8 Sep 2022 10:31:46 +0000
+Message-ID: <DM5PR12MB2406751A5FB491DF5AA50FCCB7409@DM5PR12MB2406.namprd12.prod.outlook.com>
+References: <Yhe0pCpfeCpyfPWg@orome>
+ <20220816102725.14708-1-pshete@nvidia.com>
+In-Reply-To: <20220816102725.14708-1-pshete@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM5PR12MB2406:EE_|DM6PR12MB4941:EE_
+x-ms-office365-filtering-correlation-id: 1ea5b938-cdc0-478c-cbd7-08da91855498
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: C3uD/XCeNHriukpPuZdbRiKW+cidBEXVfCoGhzzJ2e5fYqo7mf353dnbu6h5gE3vCb+y/sESMRLfecQ3NAhJYv2UzUPtyyDJ8tUxTApfLA9dq1Cz7MNjjuopgcRIpgG/HgnCp536FChbSupyg9raGnIicnBH/Tc+K1MVCS/7lJwXRjIOpOiGB52UDnwJGGPPePb/CahoarnM+Cw7ZLc9RyJINVatWJmrwApqvxWrdPUpN2cuegRdPUkwMu3NBpvqlgSF5fhSE5fIEMQJAnCdmkbTWEaNjbnmvv/jvrsUh9uUY8ugZ78aMtSFQLMMmjkUCjUK5GrAUg0S/5w6AQoGgKS8dFi07cm9Ym/NKKhGrhPqLsXgtOaySvpfKE4j2Hlc1f5VkfpIKMPupIttu2t3hgv69myB0DpIphMwRuIEjCnj2ipeJ5MfgeY8cuvJ8cmcShWD3x7Fqf0Gn3tMEYiFZlFa0RryYE6Qek0ICvWy9kS8rquMRI1B4vLd960WmYyavjb3ZMAKJM8jUCwNh+bM4eeCAMX4UpAghdi4QvL06R/29HFkzsGM6HENzR/HKLIVivUySlKSE5zvcH9NOxpT1ObWR5hgX6y+RLvuEgoy7fNg/Rc1G4F6e0pJqPjXEUy7Qt8KGOeKqJnfLhFMJzla5J0VITD9xexHpyM8LdG4WOZ5QAT0N9jKFAs2natERGwXVnzqPeaLUGqtd0N/25hGEntvXGQlYZLpy5MM+xL62K74zPnQovshdQobuHjVb6f35SCrC+NR5kqbQccuZnmk3A==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB2406.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(136003)(346002)(39860400002)(366004)(376002)(7696005)(66556008)(53546011)(8676002)(66476007)(66946007)(5660300002)(110136005)(83380400001)(8936002)(64756008)(76116006)(107886003)(478600001)(26005)(6506007)(41300700001)(52536014)(71200400001)(66446008)(186003)(54906003)(316002)(86362001)(9686003)(55016003)(33656002)(4326008)(38070700005)(2906002)(122000001)(38100700002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?kHavmy9TEsvTr46ImgpN5VFCTitAbF1vwTl9VgaQalr0YWkvbxGbodtY0+Ra?=
+ =?us-ascii?Q?kYPzw3CesJMvUkmtZ17kMITNrXCyru5YjwYL1YMvV1NAz+U3x4tYN+AKOX+F?=
+ =?us-ascii?Q?MDWFCVz0jridvmhwtXP8gbjQwkTpxiQEKfaAlLhrpso6V+Tgp0ya6D2DEyDE?=
+ =?us-ascii?Q?9aVlLwz6hbdTmXKTjBU71GFDTHF6bto3YYxKKDswWVMrgQZA49JWqPnlDQSS?=
+ =?us-ascii?Q?xNnfVlgHsyupft73rkQb0YVFhFUnmSwzWWTmOOTwcPuoOCGsZC8Zlyf9lO/l?=
+ =?us-ascii?Q?ne1zOHAEbZi3JFhmibpSHQH1LRfLyY7rNEiS10SNYo4RA56xYofgB0z2nRJQ?=
+ =?us-ascii?Q?cVZ26A3Bcp2yYU5bJo9GFdlqaXkrPT4Zn14xxhyNo6BbjBKAk/riH6/CPsQr?=
+ =?us-ascii?Q?kaY7xI9emciih6ebRq6vvOYXiApUBeHnDDAlx7XWkQshBloYpGxNxuzNt8gu?=
+ =?us-ascii?Q?YjpU/3oL1V51Xj4tcld+IQYmvREjAfkqGLDpPeF+JrPg747jWR6ytSLbhCdI?=
+ =?us-ascii?Q?6FNXKjOA+/Bq6tITbuZb/hKp4Q3etqqFFhkmhBop1+E8EAGtVKPO9WPNenQd?=
+ =?us-ascii?Q?Hj6XuWVXQTVvTxPgEmZwLh5cn3dUZwzuXPiuCXnPjMUuBZzazCZXpEtXJsEa?=
+ =?us-ascii?Q?80rUMwzFUPCZaZjCYqWYCitglwslohEwvK3IuxWss+Ej0Yxmo7mcs1qhx5UX?=
+ =?us-ascii?Q?2GMmBZDbw8bnmWMmfLP4Y5iaP25znU8H9Pz5dGTk+HUKxK85vsXyTTwIjwwn?=
+ =?us-ascii?Q?VkLEkt7GRTqAUsZRMxooeqpYiBVDa7MXT/SSeC/LadWzYsd6rsbujDn3O4JG?=
+ =?us-ascii?Q?43roAZ40ax1WsyvC4m1XdpiJHcbQTXqIaHWJPCjVwaeft7SxCsfDU3Z8jhBM?=
+ =?us-ascii?Q?WQKBqlJCR5OjxmXbZA+czxlpcNVyr6HJ8wX5VQUnCc0I8I9BoXBV7jO6hpPw?=
+ =?us-ascii?Q?YmXIZqGuOCisCoQicuk/Wmdu10bxvTLtd+mHXbMIU/GKYHEl4WZI1pTobO0m?=
+ =?us-ascii?Q?8utngTSXdBhgg44Yjn1BhXriN/Cf0uut0Ndjfa0m1M77DapOpbCVhLtzM/BG?=
+ =?us-ascii?Q?OImIFHo8TkHPkvcSMtRImGY+YJcAUzWwMC7RtTIz9NTV3pSZjknYqwZP5QE3?=
+ =?us-ascii?Q?0wQ9bJbA7q4DHjGq8yJA1273PXw8SEGXf0ara7NzNcJGWQk3gi4X9Z3VJK35?=
+ =?us-ascii?Q?KytczEKzZJNqqVJrMFcjB6XvtSjjkOz4cVJeHK5Ah3e6E35kx+HodvUSL/hJ?=
+ =?us-ascii?Q?D2PSsTdDrRGokkLMqhRXwqp9dk9ZGEqK4/vcWwwn0TIHW06c/zINT+Lkr+En?=
+ =?us-ascii?Q?Oj0Xv0VyVEYNAxfd666CFH+0ImB6MVsPTgT8PIS831AzigKEWkrhrTT0ABKk?=
+ =?us-ascii?Q?RZNKwKz6g7sV/kT1HmyJG9Mef32YeKngXZn2l/L7lXLBe4dC3DjboCFhYRVd?=
+ =?us-ascii?Q?3biiMGQuq66Q9TKySuDCj2WxuwahaYSVJMZp+B37p7E/VGMdfJIBjFvTsDP5?=
+ =?us-ascii?Q?zqPGvbS2CYZmh8xFrXksNimo7yrtVqBrQZkKS+6V/AsBSfZjC1azOaHYB70p?=
+ =?us-ascii?Q?3J5AAyoIHIk2jzl8y2U=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: [PATCH v6 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain
- and device/group
-Content-Language: en-GB
-To:     Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>
-Cc:     Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org,
-        alex.williamson@redhat.com, suravee.suthikulpanit@amd.com,
-        marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
-        robdclark@gmail.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
-        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
-        orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
-        zhang.lyra@gmail.com, thierry.reding@gmail.com, vdumpa@nvidia.com,
-        jonathanh@nvidia.com, jean-philippe@linaro.org, cohuck@redhat.com,
-        tglx@linutronix.de, shameerali.kolothum.thodi@huawei.com,
-        thunder.leizhen@huawei.com, christophe.jaillet@wanadoo.fr,
-        yangyingliang@huawei.com, jon@solid-run.com, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        kevin.tian@intel.com
-References: <20220815181437.28127-1-nicolinc@nvidia.com>
- <20220815181437.28127-2-nicolinc@nvidia.com> <YxiRkm7qgQ4k+PIG@8bytes.org>
- <Yxig+zfA2Pr4vk6K@nvidia.com> <9f91f187-2767-13f9-68a2-a5458b888f00@arm.com>
- <YxjOPo5FFqu2vE/g@nvidia.com> <0b466705-3a17-1bbc-7ef2-5adadc22d1ae@arm.com>
- <Yxk6sR4JiAAn3Jf5@nvidia.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <Yxk6sR4JiAAn3Jf5@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR12MB2406.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ea5b938-cdc0-478c-cbd7-08da91855498
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Sep 2022 10:31:46.2167
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IXNtbCiNmXH6n87yvLkKmZREgdmhlqmgFJ+H7mHGDtQBikzEj3YW2LnNIPN1ZYhLUjscjHjj40QhJf+WjFritQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4941
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-09-08 01:43, Jason Gunthorpe wrote:
-> On Wed, Sep 07, 2022 at 08:41:13PM +0100, Robin Murphy wrote:
-> 
->>>> FWIW, we're now very close to being able to validate dev->iommu against
->>>> where the domain came from in core code, and so short-circuit ->attach_dev
->>>> entirely if they don't match.
->>>
->>> I don't think this is a long term direction. We have systems now with
->>> a number of SMMU blocks and we really are going to see a need that
->>> they share the iommu_domains so we don't have unncessary overheads
->>> from duplicated io page table memory.
->>>
->>> So ultimately I'd expect to pass the iommu_domain to the driver and
->>> the driver will decide if the page table memory it represents is
->>> compatible or not. Restricting to only the same iommu instance isn't
->>> good..
->>
->> Who said IOMMU instance?
-> 
-> Ah, I completely misunderstood what 'dev->iommu' was referring too, OK
-> I see.
-> 
->> Again, not what I was suggesting. In fact the nature of iommu_attach_group()
->> already rules out bogus devices getting this far, so all a driver currently
->> has to worry about is compatibility of a device that it definitely probed
->> with a domain that it definitely allocated. Therefore, from a caller's point
->> of view, if attaching to an existing domain returns -EINVAL, try another
->> domain; multiple different existing domains can be tried, and may also
->> return -EINVAL for the same or different reasons; the final attempt is to
->> allocate a fresh domain and attach to that, which should always be nominally
->> valid and *never* return -EINVAL. If any attempt returns any other error,
->> bail out down the usual "this should have worked but something went wrong"
->> path. Even if any driver did have a nonsensical "nothing went wrong, I just
->> can't attach my device to any of my domains" case, I don't think it would
->> really need distinguishing from any other general error anyway.
-> 
-> The algorithm you described is exactly what this series does, it just
-> used EMEDIUMTYPE instead of EINVAL. Changing it to EINVAL is not a
-> fundamental problem, just a bit more work.
-> 
-> Looking at Nicolin's series there is a bunch of existing errnos that
-> would still need converting, ie EXDEV, EBUSY, EOPNOTSUPP, EFAULT, and
-> ENXIO are all returned as codes for 'domain incompatible with device'
-> in various drivers. So the patch would still look much the same, just
-> changing them to EINVAL instead of EMEDIUMTYPE.
-> 
-> That leaves the question of the remaining EINVAL's that Nicolin did
-> not convert to EMEDIUMTYPE.
-> 
-> eg in the AMD driver:
-> 
-> 	if (!check_device(dev))
-> 		return -EINVAL;
-> 
-> 	iommu = rlookup_amd_iommu(dev);
-> 	if (!iommu)
-> 		return -EINVAL;
-> 
-> These are all cases of 'something is really wrong with the device or
-> iommu, everything will fail'. Other drivers are using ENODEV for this
-> already, so we'd probably have an additional patch changing various
-> places like that to ENODEV.
-> 
-> This mixture of error codes is the basic reason why a new code was
-> used, because none of the existing codes are used with any
-> consistency.
-> 
-> But OK, I'm on board, lets use more common errnos with specific
-> meaning, that can be documented in a comment someplace:
->   ENOMEM - out of memory
->   ENODEV - no domain can attach, device or iommu is messed up
->   EINVAL - the domain is incompatible with the device
->   <others> - Same behavior as ENODEV, use is discouraged.
-> 
-> I think achieving consistency of error codes is a generally desirable
-> goal, it makes the error code actually useful.
-> 
-> Joerg this is a good bit of work, will you be OK with it?
-> 
->> Thus as long as we can maintain that basic guarantee that attaching
->> a group to a newly allocated domain can only ever fail for resource
->> allocation reasons and not some spurious "incompatibility", then we
->> don't need any obscure trickery, and a single, clear, error code is
->> in fact enough to say all that needs to be said.
-> 
-> As above, this is not the case, drivers do seem to have error paths
-> that are unconditional on the domain. Perhaps they are just protective
-> assertions and never happen.
+Hi=20
+Can you please help review this patch=20
 
-Right, that's the gist of what I was getting at - I think it's worth 
-putting in the effort to audit and fix the drivers so that that *can* be 
-the case, then we can have a meaningful error API with standard codes 
-effectively for free, rather than just sighing at the existing mess and 
-building a slightly esoteric special case on top.
+Thanks
+Prathamesh.
 
-Case in point, the AMD checks quoted above are pointless, since it 
-checks the same things in ->probe_device, and if that fails then the 
-device won't get a group so there's no way for it to even reach 
-->attach_dev any more. I'm sure there's a *lot* of cruft that can be 
-cleared out now that per-device and per-domain ops give us this kind of 
-inherent robustness.
+> -----Original Message-----
+> From: Prathamesh Shete <pshete@nvidia.com>
+> Sent: Tuesday, August 16, 2022 3:57 PM
+> To: linus.walleij@linaro.org; bgolaszewski@baylibre.com; linux-
+> gpio@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Jonathan Hunter <jonathanh@nvidia.com>;
+> thierry.reding@gmail.com
+> Cc: Suresh Mangipudi <smangipudi@nvidia.com>; Prathamesh Shete
+> <pshete@nvidia.com>; Manish Bhardwaj <mbhardwaj@nvidia.com>
+> Subject: [PATCH v2] gpio: tegra186: add Tegra234 PMC compatible in GPIO
+> driver
+>=20
+> Using this patch we are adding PMC compatible string for
+> Tegra234 in GPIO driver so the IRQ hierarchy can be set.
+>=20
+> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra186.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c =
+index
+> 54d9fa7da9c1..824a355ff27a 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -669,6 +669,7 @@ static unsigned int
+> tegra186_gpio_child_offset_to_irq(struct gpio_chip *chip,  static const s=
+truct
+> of_device_id tegra186_pmc_of_match[] =3D {
+>  	{ .compatible =3D "nvidia,tegra186-pmc" },
+>  	{ .compatible =3D "nvidia,tegra194-pmc" },
+> +	{ .compatible =3D "nvidia,tegra234-pmc" },
+>  	{ /* sentinel */ }
+>  };
+>=20
+> --
+> 2.17.1
 
-Cheers,
-Robin.
-
-> Regardless, it doesn't matter. If they return ENODEV or EINVAL the
-> VFIO side algorithm will continue to work fine, it just does alot more
-> work if EINVAL is permanently returned.
-> 
-> Thanks,
-> Jason
