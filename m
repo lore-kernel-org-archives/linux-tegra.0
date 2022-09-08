@@ -2,56 +2,56 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DA3C6FA86
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Sep 2022 08:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F00C38145
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Sep 2022 08:38:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbiIHId7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Sep 2022 04:33:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57324 "EHLO
+        id S231263AbiIHIis (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Sep 2022 04:38:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbiIHIdz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Sep 2022 04:33:55 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C891E1ABB
-        for <linux-tegra@vger.kernel.org>; Thu,  8 Sep 2022 01:33:41 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id r17so8961216ejy.9
-        for <linux-tegra@vger.kernel.org>; Thu, 08 Sep 2022 01:33:41 -0700 (PDT)
+        with ESMTP id S231584AbiIHIiq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Sep 2022 04:38:46 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35BD5E1AB6
+        for <linux-tegra@vger.kernel.org>; Thu,  8 Sep 2022 01:38:44 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id r17so8989181ejy.9
+        for <linux-tegra@vger.kernel.org>; Thu, 08 Sep 2022 01:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=ZlO9z6iariE6j62dDg3WdSSqBdCZFPhJNQtrGMOHOrM=;
-        b=yoKt2dR8DpMlh2XORFcltXAYMgjes8PsrrPXKGawrKEhed4y+WSSTQmmNgG0Gf1SJu
-         /FfQ3PEPixSLl61o/wNzP2mAl16GeJnsTLbhWLnWfaVkAwo6y83SYrJYUs2zfFeTOmCJ
-         KCfvXIX2k6sUR9M4H2LnnadTsaJNBeTiS5ZBjIN9tOf2Kpq6GTWefCkCUFHSnLO/4AAN
-         bF2Kwwu1NBRMUHGOV8o4kZ9m3PqjItvKGaAHum8EmxiW7WxhfY/+qFWuKiEN2m/2UZCf
-         n8HtcVv1JxiPWMi7HHbrHpse1K4PW6ghIMCVLd1VC32slTHEjJxXugMgMhGNvWgPOPtq
-         zkOg==
+        bh=SqPML+unsouuIp4FVHK4Uf7DFvDcdAzoCu01LQ5xtJU=;
+        b=SAoPOQWnZqu89mgLfBmiK5MrA8YCX5o9aGmYu4qqPNVoBkVnERkpNhCjHVCDQ9Zla1
+         dwqjtxWA+cJ6EDML6KOuvVZ4R6NIPdCxT8QAEB80mIcXpDf2Zf9m7S4FsFoMJ51USitH
+         Qd1pfZ4aI8HWIB9O1qt8jwZQ6YhUw0CUeBplhf899+yVwxpGxiGqmmXQn83Kl/G4s1eI
+         C+ZSChYFtQHAmgSz+vgZPMqj3wcCWnPZrWj/U9r/3gRuxpP0SGbraorsJPs29Q973tKF
+         kAzOfKhkV3IcUs1n2dwba5aeil8pWoUhDW7HjrjRLDXn9ByPmVyCvnNoBZTuKajNSFhw
+         VwcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=ZlO9z6iariE6j62dDg3WdSSqBdCZFPhJNQtrGMOHOrM=;
-        b=en/5rj0omXkf8yAa3UPpoKEzOoCVc5ApvHIZ9Wn+/cZ3qgfttw0m3DD6hLLeeV6sr6
-         GcWWTniODCj0JYbLDnOpqcRkO0VVI9Sbw74UFx979FH3EJ6WA6ptuecqZgm+nSX2cz2J
-         4f7vlWp1h4lnx9ukFJndfvTAc4O9N4MRk/sBgFCnpEBRGbJCPX5JgAUzt1JIJg1Lmpag
-         tDM5e0CMUxMuSS6J8Fhsz+ctrEQaJY6JjNRBpbxTqE031mFUfQaxiWX2rKXOoQlnN4w3
-         NHYhJ7A2AESpzf+kMEUnEOQ/88jrbPi08S6/H35cYlHsiRpOZy5B2B0UThYSab+cK99i
-         nhgw==
-X-Gm-Message-State: ACgBeo2TqqWE4YwiC/NHGo88srq+oD1MeHBIQSr/mdBwoItc2xoTfjzT
-        4jJSZR59RNROQ/8sPY6kDuUdB2/Nb488vvfZljUCMA==
-X-Google-Smtp-Source: AA6agR6YdmowLCqDy13X6GVFnJajdgoAbYXT6/9jX+Ol46w4Ykshwr2tFJzDmJvExLu3Rbp1DyOQwdZVX8mDYcaxnJ0=
-X-Received: by 2002:a17:907:7242:b0:741:770b:dfc6 with SMTP id
- ds2-20020a170907724200b00741770bdfc6mr5235773ejc.203.1662626019497; Thu, 08
- Sep 2022 01:33:39 -0700 (PDT)
+        bh=SqPML+unsouuIp4FVHK4Uf7DFvDcdAzoCu01LQ5xtJU=;
+        b=oztxRH+tgty76DDzgO6QHpvk6IhwGnDkPIxF9/mCRs1WZoA/7RUy1zAzgEYK7XQRub
+         I6a/aYiTDZWGplRiu6IEcUkKXDUQz48yg7/8ZcMZhQ5lTKA+786bYrcxw44ssN+7OWQs
+         0hoj5pU/lRTHu4nNgqvLBYDEzZHoRDPM1Dk9laxtkEba8yZNkLb7BSAk4ipdQVmFG9aa
+         tBunSIULU7WgFmFcxxWhVgQplDVWLqashkI8I7LBHBTFoF70G/gV4AbiJ7P/r3EfYgFc
+         oXJdVF0YR1VV7s05iVugL+8tYIUEVl+veTl3CNlJQLA0G1lYYIb1cM5dV4ZdiORjF5g1
+         wK9A==
+X-Gm-Message-State: ACgBeo1ncKwcrHoCjUCxQMJrJErSmO6vclM/ZiY+uUFtYlHHrkdwTqMG
+        Y65neWZp8//sy2wYCUha+O/5t5h6GLn1m71Q+P08Rg==
+X-Google-Smtp-Source: AA6agR5Qlu6bHigQRlsF7FnyAifGVWu07Yimovaj6W3A7lzSYgEVwFSZi08eyLAuAWp+B7C3eLgpufDg+xQ7EBPkK+Y=
+X-Received: by 2002:a17:907:a420:b0:765:70a4:c101 with SMTP id
+ sg32-20020a170907a42000b0076570a4c101mr5281501ejc.526.1662626322796; Thu, 08
+ Sep 2022 01:38:42 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
- <20220903-gpiod_get_from_of_node-remove-v1-7-b29adfb27a6c@gmail.com> <YxaSBRkAG/hKjFol@google.com>
-In-Reply-To: <YxaSBRkAG/hKjFol@google.com>
+ <20220903-gpiod_get_from_of_node-remove-v1-10-b29adfb27a6c@gmail.com>
+In-Reply-To: <20220903-gpiod_get_from_of_node-remove-v1-10-b29adfb27a6c@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 8 Sep 2022 10:33:28 +0200
-Message-ID: <CACRpkdb2dYvNkyx7O24uURjSYcCPkGR+Gj=weCSG6GdcM1B7Xw@mail.gmail.com>
-Subject: Re: [PATCH v1 07/11] PCI: apple: switch to using fwnode_gpiod_get_index()
+Date:   Thu, 8 Sep 2022 10:38:31 +0200
+Message-ID: <CACRpkdaeQFP+H786D=SG4s+sQmxScUzve-uWkm-Sg7xFDK_Syw@mail.gmail.com>
+Subject: Re: [PATCH v1 10/11] watchdog: bd9576_wdt: switch to using devm_fwnode_gpiod_get()
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -92,37 +92,18 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 6, 2022 at 2:19 AM Dmitry Torokhov
+On Mon, Sep 5, 2022 at 8:31 AM Dmitry Torokhov
 <dmitry.torokhov@gmail.com> wrote:
 
-> On Sun, Sep 04, 2022 at 11:30:59PM -0700, Dmitry Torokhov wrote:
-> > I would like to stop exporting OF-specific gpiod_get_from_of_node()
-> > so that gpiolib can be cleaned a bit, so let's switch to the generic
-> > fwnode property API.
-> >
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >
-> > diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-> > index a2c3c207a04b..d83817d3ff86 100644
-> > --- a/drivers/pci/controller/pcie-apple.c
-> > +++ b/drivers/pci/controller/pcie-apple.c
-> > @@ -516,8 +516,8 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
-> >       u32 stat, idx;
-> >       int ret, i;
-> >
-> > -     reset = gpiod_get_from_of_node(np, "reset-gpios", 0,
-> > -                                    GPIOD_OUT_LOW, "PERST#");
-> > +     reset = fwnode_gpiod_get_index(of_fwnode_handle(np),
-> > +                                    "reset", 0, GPIOD_OUT_LOW, "PERST#");
+> I would like to stop exporting OF-specific devm_gpiod_get_from_of_node()
+> so that gpiolib can be cleaned a bit, so let's switch to the generic
+> fwnode property API.
 >
-> Hmm, I am looking at the driver and it leaks the reset gpio on
-> unbind/unload. I guess it does not matter in practice, but still nice
-> not to leak. Thankfully it is easy to cure by switching to devm option:
-> devm_fwnode_gpiod_get().
+> While at it switch the rest of the calls to read properties in
+> bd9576_wdt_probe() to the generic device property API as well.
 >
-> I'll send and updated patch with a new justification.
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-With that change:
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
