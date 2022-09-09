@@ -2,132 +2,237 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFB8ECAAD3
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Sep 2022 15:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B416AECAAA1
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Sep 2022 16:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231853AbiIIPx1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Sep 2022 11:53:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33862 "EHLO
+        id S229687AbiIIQK4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Sep 2022 12:10:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231659AbiIIPxY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Sep 2022 11:53:24 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2064.outbound.protection.outlook.com [40.107.93.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF398F16E5;
-        Fri,  9 Sep 2022 08:53:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ihmnFSTCdSEs7EGiZyNQeOWsEN/Qu/yXHtbMxZKiuJDOu5MkgndL6vP6D7zAZDGPbmgjD8eFvJh+4Y22R6zQbHz0VAD4rpAFQQfmbJZoMMxrrxLmn+YzevTxMKanCNn9UIkuSHckoS3WiftNVK1Q2rq8VTfSMnnCeKvuXlLj6jF7Djwiom2xWaEzmQj+XKLn11zEwYktLhLx4vrWwbgZfDEuCM4L1XjNzVCYg2XtdevvDqnz2b4uPZ28tJq7Fipz4SmJgUWf8tioyR+a1WjB+EeY8A37M9cxLCm3iWiqk2SPVKo/+o+LqRU34fV1jn1234i7hdCAzHdSEBPYgDVK/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nkGHmtUzmloTu2MJasQ4sGNQnbvxTpAUfn/QfMrFa88=;
- b=OHUW49jk6wJCa9tNlGIdYz4gwEMq0Eskex7WyVJU0HwAaX8iaxqXYnDjO4C6OpyJDSuzbrmi6bswGraK6xVpdlhEZS4kUllO3MwdznPKJfSzlOxl6SiDlVPnLd28ZGTHeon/y8xuelCgDZT6blLVCaox/AXW8JVa+mORfeA/9wYqxUlMLkiGviUlrzN4lvARNF4Leg2weTc1LBKgplYFhAchzqynYn1t4lsrWLV3ptf9c/s5uZUavblDAzJQSMLVaeAis6lIOjPHmJmR6sWdRNIbXFgsZY3Z5almVSAm+4feKqcdgPjNB5k0re7FYNzV0tdaue0A+m7zytEsEzhnKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nkGHmtUzmloTu2MJasQ4sGNQnbvxTpAUfn/QfMrFa88=;
- b=njGWOh/aNONzTyGt3J+pa6geQS92agW5EWT+S4iAnMyX8h0dymupOG2DFn5v7CJSSOEWERff8Pa62G8BpzymosPLRsXnfNuJ5XDsa1hccm7+JYSgbNIw80N53boTW0uRBnTpCf6U59mjXGVFhm7VJbascUQ1Vzm2U3OifwxqDb72eskbJzEVHsrkFxIUH0YPZ142TQ2iEar99Js/MqY6dcaLbVo3BtII6ptjxurKTwAE9d8IkmWwZAmWmJRzCf1tpEtC04dDFKOPMRiWzMRvI0Y4fYdOcYHJw4WTYGrQu/CL6/GngxA3K99VCiv3cioZf1iGOhggUPdDKGTublb9Gw==
-Received: from BN0PR04CA0114.namprd04.prod.outlook.com (2603:10b6:408:ec::29)
- by DM4PR12MB6423.namprd12.prod.outlook.com (2603:10b6:8:bd::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5612.14; Fri, 9 Sep 2022 15:53:15 +0000
-Received: from BL02EPF0000C408.namprd05.prod.outlook.com
- (2603:10b6:408:ec:cafe::2a) by BN0PR04CA0114.outlook.office365.com
- (2603:10b6:408:ec::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.18 via Frontend
- Transport; Fri, 9 Sep 2022 15:53:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.236) by
- BL02EPF0000C408.mail.protection.outlook.com (10.167.241.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5612.9 via Frontend Transport; Fri, 9 Sep 2022 15:53:14 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
- 15.0.1497.38; Fri, 9 Sep 2022 15:53:12 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Fri, 9 Sep 2022 08:53:12 -0700
-Received: from sandipan-pc.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Fri, 9 Sep 2022 08:53:09 -0700
-From:   Sandipan Patra <spatra@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <bbasu@nvidia.com>, <kyarlagadda@nvidia.com>,
-        Sandipan Patra <spatra@nvidia.com>
-Subject: [PATCH 3/3] arm64: tegra: Add user PWM support on Jetson Orin
-Date:   Fri, 9 Sep 2022 21:22:58 +0530
-Message-ID: <20220909155258.17908-3-spatra@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220909155258.17908-1-spatra@nvidia.com>
-References: <20220909155258.17908-1-spatra@nvidia.com>
-X-NVConfidentiality: public
+        with ESMTP id S229589AbiIIQK4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Sep 2022 12:10:56 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B433DBD1F5;
+        Fri,  9 Sep 2022 09:10:54 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1408165C;
+        Fri,  9 Sep 2022 09:11:00 -0700 (PDT)
+Received: from [10.57.15.197] (unknown [10.57.15.197])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41FEA3F73D;
+        Fri,  9 Sep 2022 09:10:50 -0700 (PDT)
+Message-ID: <0af66506-3368-6882-2b42-f2e9c2d436b7@arm.com>
+Date:   Fri, 9 Sep 2022 17:10:44 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0000C408:EE_|DM4PR12MB6423:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c75ff4c-f3f1-4507-eb6f-08da927b67ed
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: J7eoHYUFTeJI7z6S0BY46kCsAMv4nTyg0Jcef5/EzVs2/N3TmBxVjCzEN71R4KDLm84SCceU5UFJTYf218zdHF7BaVcqdA5ySOtzczcX+h+FNuDBuysuD8CVZunOXMTwi0qhteXn6GYWiPiGaKDb99sKY8x5447SUNT7knx5dyb8yheLjNT6iuirg5i9wg3u3BuYmZdj8XjnElz1rsCrLJM1uQHvS2eEMT0/kqPiGFHrGAlwCMp4NQeYAq7pSSY+wb3BQ4HS+wkv+U/jjWKYWzG4dA/Nvh4IKiZCnfVZAJzVByez4/+h19ZIso7UOk7ZKqGXSYhaM8xIdQkpjz9NVJXrs9D4uI3N3jvaNV7ckwYxNBIwORO5oXETe26ZjBpfhFkc8vW/StItwRA/Y3ekzddZmSxgKlJWGzMEh/rIYGtuhvXZsl2nP+ZQvBXDIJAa5FzQcpsSXVar08/S6V5yMKu4XzXLfESTAp8Fo4URDYhpmVTRf2IdOGpi5HCvkqmcTjsp9ASIE3pyQKtq/gi2nuh/8Ycq1jU4m6YF9vBDMvQPWMLEGHd9onojDN8Sj4Kbq4Gz0hHmhqkLHsiVv/bnz/iCfK+QNiRVfPJnOvHN3IwrN8nAOwip9qV/v3Dqpi7zcMttjM9JoTUIEaMfQHing/SSWljJX5Bw4Z8Rp7X8SII9O5uDNUNDNF26HkQyduegp8IogSgAhWwD8s5Kkk5SggxzsGI3p9WlmiwVpDTfss4gRq/RIWWEhIj0KeKe/UTptBUxVpLlNpRFBmCOdwSlZDN2AKz5YL0sJNQbAU9XTzoWlaGjmC2FVptbFzWWBXt4j1YtQItwaGvolFkYPs/D9Q==
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(346002)(376002)(39860400002)(396003)(136003)(40470700004)(46966006)(36840700001)(41300700001)(5660300002)(2906002)(8936002)(4744005)(40480700001)(2616005)(36756003)(47076005)(7696005)(26005)(336012)(86362001)(426003)(186003)(107886003)(478600001)(6666004)(1076003)(356005)(81166007)(70586007)(54906003)(82310400005)(70206006)(8676002)(316002)(4326008)(110136005)(36860700001)(82740400003)(40460700003)(36900700001)(16060500005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2022 15:53:14.6749
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c75ff4c-f3f1-4507-eb6f-08da927b67ed
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0000C408.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6423
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH v8 2/5] iommu: Implement of_iommu_get_resv_regions()
+Content-Language: en-GB
+To:     Janne Grunau <j@jannau.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Sameer Pujar <spujar@nvidia.com>, devicetree@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        asahi@lists.linux.dev, Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh@kernel.org>
+References: <20220905170833.396892-1-thierry.reding@gmail.com>
+ <20220905170833.396892-3-thierry.reding@gmail.com>
+ <cdac209d-16b3-6c95-6387-4ffeed97178c@arm.com>
+ <20220909151621.GB4024@jannau.net>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20220909151621.GB4024@jannau.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable in device tree and use it to drive the PWM controllers on
-40 pin header of Orin dev-kit.
+On 2022-09-09 16:16, Janne Grunau wrote:
+> On 2022-09-09 11:56:32 +0100, Robin Murphy wrote:
+>> On 2022-09-05 18:08, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> This is an implementation that IOMMU drivers can use to obtain reserved
+>>> memory regions from a device tree node. It uses the reserved-memory DT
+>>> bindings to find the regions associated with a given device. If these
+>>> regions are marked accordingly, identity mappings will be created for
+>>> them in the IOMMU domain that the devices will be attached to.
+>>>
+>>> Cc: Frank Rowand <frowand.list@gmail.com>
+>>> Cc: devicetree@vger.kernel.org
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>> Changes in v8:
+>>> - cleanup set-but-unused variables
+>>>
+>>> Changes in v6:
+>>> - remove reference to now unused dt-bindings/reserved-memory.h include
+>>>
+>>> Changes in v5:
+>>> - update for new "iommu-addresses" device tree bindings
+>>>
+>>> Changes in v4:
+>>> - fix build failure on !CONFIG_OF_ADDRESS
+>>>
+>>> Changes in v3:
+>>> - change "active" property to identity mapping flag that is part of the
+>>>     memory region specifier (as defined by #memory-region-cells) to allow
+>>>     per-reference flags to be used
+>>>
+>>> Changes in v2:
+>>> - use "active" property to determine whether direct mappings are needed
+>>>
+>>>    drivers/iommu/of_iommu.c | 85 ++++++++++++++++++++++++++++++++++++++++
+>>>    include/linux/of_iommu.h |  8 ++++
+>>>    2 files changed, 93 insertions(+)
+>>>
+>>> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+>>> index 5696314ae69e..6617096ad15f 100644
+>>> --- a/drivers/iommu/of_iommu.c
+>>> +++ b/drivers/iommu/of_iommu.c
+>>> @@ -11,6 +11,7 @@
+>>>    #include <linux/module.h>
+>>>    #include <linux/msi.h>
+>>>    #include <linux/of.h>
+>>> +#include <linux/of_address.h>
+>>>    #include <linux/of_iommu.h>
+>>>    #include <linux/of_pci.h>
+>>>    #include <linux/pci.h>
+>>> @@ -172,3 +173,87 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
+>>>    	return ops;
+>>>    }
+>>> +
+>>> +/**
+>>> + * of_iommu_get_resv_regions - reserved region driver helper for device tree
+>>> + * @dev: device for which to get reserved regions
+>>> + * @list: reserved region list
+>>> + *
+>>> + * IOMMU drivers can use this to implement their .get_resv_regions() callback
+>>> + * for memory regions attached to a device tree node. See the reserved-memory
+>>> + * device tree bindings on how to use these:
+>>> + *
+>>> + *   Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+>>> + */
+>>> +void of_iommu_get_resv_regions(struct device *dev, struct list_head *list)
+>>> +{
+>>> +#if IS_ENABLED(CONFIG_OF_ADDRESS)
+>>> +	struct of_phandle_iterator it;
+>>> +	int err;
+>>> +
+>>> +	of_for_each_phandle(&it, err, dev->of_node, "memory-region", NULL, 0) {
+>>> +		struct iommu_resv_region *region;
+>>> +		struct resource res;
+>>> +		const __be32 *maps;
+>>> +		int size;
+>>> +
+>>> +		memset(&res, 0, sizeof(res));
+>>> +
+>>> +		/*
+>>> +		 * The "reg" property is optional and can be omitted by reserved-memory regions
+>>> +		 * that represent reservations in the IOVA space, which are regions that should
+>>> +		 * not be mapped.
+>>> +		 */
+>>> +		if (of_find_property(it.node, "reg", NULL)) {
+>>> +			err = of_address_to_resource(it.node, 0, &res);
+>>> +			if (err < 0) {
+>>> +				dev_err(dev, "failed to parse memory region %pOF: %d\n",
+>>> +					it.node, err);
+>>> +				continue;
+>>> +			}
+>>> +		}
+>>> +
+>>> +		maps = of_get_property(it.node, "iommu-addresses", &size);
+>>> +		if (maps) {
+>>
+>> Nit: "if (!maps) continue;" and save some indentation.
+>>
+>>> +			const __be32 *end = maps + size / sizeof(__be32);
+>>> +			struct device_node *np;
+>>> +			u32 phandle;
+>>> +			int na, ns;
+>>> +
+>>> +			while (maps < end) {
+>>> +				phys_addr_t start;
+>>> +				size_t length;
+>>> +
+>>> +				phandle = be32_to_cpup(maps++);
+>>> +				np = of_find_node_by_phandle(phandle);
+>>> +				na = of_n_addr_cells(np);
+>>> +				ns = of_n_size_cells(np);
+>>> +
+>>> +				start = of_translate_dma_address(np, maps);
+>>> +				length = of_read_number(maps + na, ns);
+>>
+>> Nit: these could go inside the if condition.
+>>
+>>> +
+>>> +				if (np == dev->of_node) {
+>>> +					int prot = IOMMU_READ | IOMMU_WRITE;
+> 
+> would it be reasonable to infer IOMMU_CACHE here from "dma-coherrent"?
 
-Signed-off-by: Sandipan Patra <spatra@nvidia.com>
----
-V2: Overriding by node label instead of node path.
+Hmm, good point, it really depends on what the device wants - even if it 
+is coherent, we don't necessarily know how it intends to use any 
+particular reservation; allowing MSI writes or similar to allocate in a 
+system cache wouldn't go too well, for instance.
 
- arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Empirically, making the wrong assumption in this area can lead to people 
+preferring to spend a year being unfairly rude on Twitter instead of 
+providing timely productive feedback :(
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-index a85993c85e45..5108013a18c6 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-@@ -3,3 +3,15 @@
- / {
- 	compatible = "nvidia,p3737-0000";
- };
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&pwm5 {
-+	status = "okay";
-+};
-+
-+&pwm8 {
-+	status = "okay";
-+};
--- 
-2.17.1
+>>> +					enum iommu_resv_type type;
+>>> +
+>>> +					/*
+>>> +					 * IOMMU regions without an associated physical region
+>>> +					 * cannot be mapped and are simply reservations.
+>>> +					 */
+>>> +					if (res.end > res.start)
+>>> +						type = IOMMU_RESV_DIRECT_RELAXABLE;
+>>
+>> There may be reservations that have a PA but are expected to live beyond
+>> boot-time handover, like device firmware or a shared-memory communication
+>> buffer which the kernel driver can't reconfigure, or some kind of black hole
+>> that needs a PA because it's also "no-map" for the CPUs. Those are not
+>> relaxable. Might it be reasonable to expect to infer this from the
+>> compatible, or should we have an additional explicit flag to distinguish
+>> ephemeral boot-time mappings from permanent ones?
+> 
+>  From which compatible? the device's? That's not possible for the display
+> processor on apple silicon machines. They will carry mappings for their
+> firmware's data and heap and the boot framebuffer. That are however not
+> direct mappings so it doesn't apply directly to
+> IOMMU_RESV_DIRECT_RELAXABLE. There are probably other ways we could
+> identify the boot framebuffer but so far I'm not even convinced that we
+> want to reuse it.
 
+I mean the compatibles of the reserved-memory nodes themselves. 
+Semantically that should be the perfect way to identify their individual 
+purposes, but in practice does mean that we might end up with a big 
+match table to say that e.g. "apple,framebuffer" is relaxable and wants 
+IOMMU_CACHE, and so on, and old kernels still have to have some default 
+behaviour for new things they don't understand. It's not *too* far off 
+the general situation for drivers, so if we expect these to be fairly 
+rare, maybe that's OK? Particularly if it might be feasible to have some 
+semi-generic compatibles to encapsulate the most common behaviours? I'm 
+inclined to defer to Rob and Frank on this one.
+
+>> Furthermore, we should only use IOMMU_RESV_DIRECT (in either form) if
+>> start
+>> and length actually match res here; if not then we should warn that we're
+>> reserving the IOVA space but not actually honouring the specified mapping
+>> (we'd need a new resv_region type for arbitrary translations).
+> 
+> This would be needed for Asahi's dcp driver. So far I worked around this
+> problem by direct reserved-memory parsing from apple-dart.
+> Probably best to postpone the extension until it's needed.
+
+Indeed, as long as the binding is good from the outset, we can fill in 
+support for the more specialised cases as and when.
+
+Thanks,
+Robin.
