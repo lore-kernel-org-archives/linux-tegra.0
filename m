@@ -2,86 +2,239 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C247FC6FA83
-	for <linux-tegra@archiver.kernel.org>; Sun, 11 Sep 2022 11:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E6DC54EE9
+	for <linux-tegra@archiver.kernel.org>; Sun, 11 Sep 2022 18:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbiIKLch (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 11 Sep 2022 07:32:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48166 "EHLO
+        id S229459AbiIKSAd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 11 Sep 2022 14:00:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230207AbiIKLcf (ORCPT
+        with ESMTP id S229499AbiIKSAd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 11 Sep 2022 07:32:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD20357CB;
-        Sun, 11 Sep 2022 04:32:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 48B3460FE2;
-        Sun, 11 Sep 2022 11:32:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ABFFC433D6;
-        Sun, 11 Sep 2022 11:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662895953;
-        bh=Xo8ZjPAefr5xIF2eSnRkQdGzjG+G5kaePxVrEO84Flo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ST9WkyZ2vYypzS6Q/4dQLgFTIGxehTWmo+1yid5Hbc+UMPZEBezLSlqBMfoRZsveu
-         amw67i+Q6VtauA3B/k+RZvwetNjyq/jthWVeTdRfhZ906ifwC5ceg1CTFe7tZuXsuW
-         Hylk+t7aeY6C2cPftk368sxQzIRxXuy/TihL3NYmoKTRyaC7NpX0T7xyd/Eec3OFh6
-         1b9KfU6GbhQ8O8KM3SL0kXvZUNfqA90cP/Js+jncE3P6qwnd4f9jcbXR2FCexTxcY2
-         Pp9V4ZA0p52mnBdAFimXwxEVC8vkCh/ehlNKjOvmjjJ0296KOP6Oy7oe8B4kgSo1z3
-         Ni3MR1rajQ30g==
-Received: by pali.im (Postfix)
-        id E7335878; Sun, 11 Sep 2022 13:32:30 +0200 (CEST)
-From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: tegra: Update comment about config space
-Date:   Sun, 11 Sep 2022 13:32:16 +0200
-Message-Id: <20220911113216.14892-1-pali@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        Sun, 11 Sep 2022 14:00:33 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67335FD0;
+        Sun, 11 Sep 2022 11:00:31 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-11e9a7135easo17767234fac.6;
+        Sun, 11 Sep 2022 11:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=lpIz80DghGGwjIn4yGkOwm4Ls4TinTTtzRBXCYSCrDk=;
+        b=ZOZgXqz/ArjfoAnB+0jZzRx+rthBH9sr3pdoFE3GNbBzpRISacpgTcE6VOzMyzccAX
+         9F1FpqE8Q9dddd8Cf2TyxBRuX3ELEsjZHVa90iPoGZU5Jg753yq3RV4r9MrVb7yfyk7H
+         pxaLwQoDIkA0jj3CgMY+swbBn2G7O7395aPkaAtWV5Ss4L6wEF+Vnx6S9tQ0D6vEj33B
+         0l5eyMPS0yrXVJ8U9oVTPNTjPPnE1OZDEwadVQ91Ux9Hne8z+Ee9XAbFCKLh1PhOzIT3
+         +Ey31t2F9J6sJwOQHUkh7Ht4bITQYO0W1jiAI7jq+S8JemMZve7JEPgInAnkNyGJxhS2
+         hhQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=lpIz80DghGGwjIn4yGkOwm4Ls4TinTTtzRBXCYSCrDk=;
+        b=Heg4l/9A8oOkck56aoynRlwGzsotTSlF1tEej74dCoAjzZG37HJ+3fjdrhhODz0jHL
+         gMeBY0ypNblR7HkVORdd+8bdWB6hqqgvmbZvD0tdNpke8GufdFDbXdjKchIVFKwud1yC
+         0vak4ZsGjfjKXIRaiMs2mBKjpnecS2GmAw81bYTeg98CA3XqlK0Oi7L1uLCNRATiJaqn
+         UJg03D/YmmRW2S5olAF9gRFAIERGwC0iBjzoNp0YmfgOazftVoUkEnbtyVyiesiB3L5V
+         7MGurdJz1KVe6U80B9n1FuJiSC26djd+efwsVw/7a0QNCby1f8iAzWBAsA+5nBWGUB6w
+         9Oxg==
+X-Gm-Message-State: ACgBeo1w3OpJo8qDAT1yTd6dhmodOzZ6Te5iwObrEP9QH3gG77cr57+x
+        C3D3ynaR2c9Snq2oejDeM7GkIV7bl+rJj3830ns=
+X-Google-Smtp-Source: AA6agR7dMjfSO8Fs6ZPG+miD78AZ0xIGFwEMeQnueiJDM9vQ5cSuGDdWOkeInvxGvtlWlUu5YIafHoVmQClvNOkxNsQ=
+X-Received: by 2002:a05:6808:1a9a:b0:34f:b9df:b3 with SMTP id
+ bm26-20020a0568081a9a00b0034fb9df00b3mr224200oib.183.1662919230912; Sun, 11
+ Sep 2022 11:00:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220701090240.1896131-1-dmitry.osipenko@collabora.com>
+ <2a646ce4-c2ec-3b11-77a0-cc720afd6fe1@collabora.com> <YvOav/vF2awVWIu0@phenom.ffwll.local>
+ <CAF6AEGvfAJgwBe4+sK0gAkZ++MwH9x4=698C8XSnmfYNMFZqfA@mail.gmail.com>
+ <9674d00e-c0d6-ceba-feab-5dc475bda694@collabora.com> <CAF6AEGv1cVC9ZNMwpwFOki5CrwD3kSAHM9EUFZGWY-y5zcQsCg@mail.gmail.com>
+ <fc019528-7ec7-9e5b-1b6d-c44da14346cf@collabora.com> <CAF6AEGv8zSd0fEYB9hd2QOyTt53gFSQoL8JdZtCvtCdYfMfB2Q@mail.gmail.com>
+ <73b51dde-689f-64ce-a1c8-0d7c84a2ed66@collabora.com> <CAF6AEGuR1cRQYaQBYGnMBzy=XJUcN2o2gzabZaGO2Dj62Uq1DA@mail.gmail.com>
+ <CAF6AEGvvR1NUd_GKP=Bxp3VTDMBYT+OwTkkgOWxgYFijZaVVEQ@mail.gmail.com>
+ <5f118e10-db7a-a128-1e87-c9dddb65b2ac@collabora.com> <2ce5ff0a-9ab2-d146-04db-487a64714fce@gmail.com>
+ <cf8cd8da-08d2-5e70-a239-2a67da37c9ea@collabora.com> <e9bde303-6474-aa0b-7880-cf7d8b163983@collabora.com>
+ <5988bf07-dd2e-a7ad-1ed9-831a402c3c5d@gmail.com> <CAF6AEGvnqV4ySs6rNWu0pkeSNJMhgN1rvind8dC-nV1Sv3kk8g@mail.gmail.com>
+ <bab5a55b-cbd3-4119-af39-794e38f5a0ee@collabora.com>
+In-Reply-To: <bab5a55b-cbd3-4119-af39-794e38f5a0ee@collabora.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Sun, 11 Sep 2022 11:00:21 -0700
+Message-ID: <CAF6AEGvdyu8gO-Mjnau8uMwuKNPreEnnUH86WL=LQPcgW_WOEA@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] drm/gem: Don't map imported GEMs
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Chia-I Wu <olvaffe@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        kernel@collabora.com, Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Like many other ARM PCIe controllers, it uses old PCI Configuration
-Mechanism #1 from PCI Local Bus for accessing PCI config space.
-It is not PCIe ECAM in any case.
+On Wed, Sep 7, 2022 at 3:25 AM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
+>
+> On 8/23/22 19:47, Rob Clark wrote:
+> > On Tue, Aug 23, 2022 at 3:01 AM Christian K=C3=B6nig
+> > <ckoenig.leichtzumerken@gmail.com> wrote:
+> >>
+> >> Am 22.08.22 um 19:26 schrieb Dmitry Osipenko:
+> >>> On 8/16/22 22:55, Dmitry Osipenko wrote:
+> >>>> On 8/16/22 15:03, Christian K=C3=B6nig wrote:
+> >>>>> Am 16.08.22 um 13:44 schrieb Dmitry Osipenko:
+> >>>>>> [SNIP]
+> >>>>>>> The other complication I noticed is that we don't seem to keep ar=
+ound
+> >>>>>>> the fd after importing to a GEM handle.  And I could imagine that
+> >>>>>>> doing so could cause issues with too many fd's.  So I guess the b=
+est
+> >>>>>>> thing is to keep the status quo and let drivers that cannot mmap
+> >>>>>>> imported buffers just fail mmap?
+> >>>>>> That actually should be all the drivers excluding those that use
+> >>>>>> DRM-SHMEM because only DRM-SHMEM uses dma_buf_mmap(), that's why i=
+t
+> >>>>>> works for Panfrost. I'm pretty sure mmaping of imported GEMs doesn=
+'t
+> >>>>>> work for the MSM driver, isn't it?
+> >>>>>>
+> >>>>>> Intel and AMD drivers don't allow to map the imported dma-bufs. Bo=
+th
+> >>>>>> refuse to do the mapping.
+> >>>>>>
+> >>>>>> Although, AMDGPU "succeeds" to do the mapping using
+> >>>>>> AMDGPU_GEM_DOMAIN_GTT, but then touching the mapping causes bus fa=
+ult,
+> >>>>>> hence mapping actually fails. I think it might be the AMDGPU
+> >>>>>> driver/libdrm bug, haven't checked yet.
+> >>>>> That's then certainly broken somehow. Amdgpu should nerve ever have
+> >>>>> allowed to mmap() imported DMA-bufs and the last time I check it di=
+dn't.
+> >>>> I'll take a closer look. So far I can only tell that it's a kernel
+> >>>> driver issue because once I re-applied this "Don't map imported GEMs=
+"
+> >>>> patch, AMDGPU began to refuse mapping AMDGPU_GEM_DOMAIN_GTT.
+> >>>>
+> >>>>>> So we're back to the point that neither of DRM drivers need to map
+> >>>>>> imported dma-bufs and this was never tested. In this case this pat=
+ch is
+> >>>>>> valid, IMO.
+> >>>> Actually, I'm now looking at Etnaviv and Nouveau and seems they shou=
+ld
+> >>>> map imported dma-buf properly. I know that people ran Android on
+> >>>> Etnaviv. So maybe devices with a separated GPU/display need to map
+> >>>> imported display BO for Android support. Wish somebody who ran Andro=
+id
+> >>>> on one of these devices using upstream drivers could give a definiti=
+ve
+> >>>> answer. I may try to test Nouveau later on.
+> >>>>
+> >>> Nouveau+Intel combo doesn't work because of [1] that says:
+> >>>
+> >>> "Refuse to fault imported pages. This should be handled (if at all) b=
+y
+> >>> redirecting mmap to the exporter."
+> >>>
+> >>> [1]
+> >>> https://elixir.bootlin.com/linux/v5.19/source/drivers/gpu/drm/ttm/ttm=
+_bo_vm.c#L154
+> >>>
+> >>> Interestingly, I noticed that there are IGT tests which check prime
+> >>> mmaping of Nouveau+Intel [2] (added 9 years ago), but they fail as we=
+ll,
+> >>> as expected. The fact that IGT has such tests is interesting because =
+it
+> >>> suggests that the mapping worked in the past. It's also surprising th=
+at
+> >>> nobody cared to fix the failing tests. For the reference, I checked
+> >>> v5.18 and today's linux-next.
+> >>>
+> >>> [2]
+> >>> https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/=
+prime_nv_test.c#L132
+> >>>
+> >>> Starting subtest: nv_write_i915_cpu_mmap_read
+> >>> Received signal SIGBUS.
+> >>> Stack trace:
+> >>>   #0 [fatal_sig_handler+0x163]
+> >>>   #1 [__sigaction+0x50]
+> >>>   #2 [__igt_unique____real_main354+0x406]
+> >>>   #3 [main+0x23]
+> >>>   #4 [__libc_start_call_main+0x80]
+> >>>   #5 [__libc_start_main+0x89]
+> >>>   #6 [_start+0x25]
+> >>> Subtest nv_write_i915_cpu_mmap_read: CRASH (0,005s)
+> >>>
+> >>> Starting subtest: nv_write_i915_gtt_mmap_read
+> >>> Received signal SIGBUS.
+> >>> Stack trace:
+> >>>   #0 [fatal_sig_handler+0x163]
+> >>>   #1 [__sigaction+0x50]
+> >>>   #2 [__igt_unique____real_main354+0x33d]
+> >>>   #3 [main+0x23]
+> >>>   #4 [__libc_start_call_main+0x80]
+> >>>   #5 [__libc_start_main+0x89]
+> >>>   #6 [_start+0x25]
+> >>> Subtest nv_write_i915_gtt_mmap_read: CRASH (0,004s)
+> >>>
+> >>> I'm curious about the Etnaviv driver because it uses own shmem
+> >>> implementation and maybe it has a working mmaping of imported GEMs si=
+nce
+> >>> it imports the dma-buf pages into Entaviv BO. Although, it should be
+> >>> risking to map pages using a different caching attributes (WC) from t=
+he
+> >>> exporter, which is prohibited on ARM ad then one may try to map impor=
+ted
+> >>> udmabuf.
+>
+> I see now that Etnaviv uses dma_buf_mmap(), so it should be okay.
+>
+> >>> Apparently, the Intel DG TTM driver should be able to map imported
+> >>> dma-buf because it sets TTM_TT_FLAG_EXTERNAL_MAPPABLE.
+> >>
+> >> Even with that flag set it is illegal to map the pages directly by an
+> >> importer.
+> >>
+> >> If that ever worked then the only real solution is to redirect mmap()
+> >> calls on importer BOs to dma_buf_mmap().
+> >
+> > Yeah, I think this is the best option.  Forcing userspace to hang on
+> > to the fd just in case someone calls readpix would be pretty harsh.
+>
+> Actually, I proposed this couple months ago [1].
+>
+> [1] https://patchwork.freedesktop.org/patch/487481/
+>
+> What's not clear to me is how userspace is supposed to sync CPU accesses
+> for imported GEMs. Either userspace need to use dma_buf_sync UAPI for
+> dmabuf of imported GEM or importer driver should do that, or there is
+> some other option?
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- drivers/pci/controller/pci-tegra.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+For anything involving the GPU, userspace already needs to sync access
+(ie. GPUs are asynchronous).. this is done using drm_gem_object::resv
+(which comes from dma_buf::resv)..
 
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 8e323e93be91..5df90d183526 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -395,9 +395,11 @@ static inline u32 pads_readl(struct tegra_pcie *pcie, unsigned long offset)
- }
- 
- /*
-- * The configuration space mapping on Tegra is somewhat similar to the ECAM
-- * defined by PCIe. However it deviates a bit in how the 4 bits for extended
-- * register accesses are mapped:
-+ * The configuration space mapping on Tegra is somewhat similar to the Intel
-+ * PCI Configuration Mechanism #1 as defined in PCI Local Bus Specification.
-+ * But it is mapped directly into physical address space as opposite of the
-+ * CF8/CFC indirect access, bit 31 (enable) is unset and reserved bits [27:24]
-+ * are used to access extended PCIe config space registers.
-  *
-  *    [27:24] extended register number
-  *    [23:16] bus number
--- 
-2.20.1
+Possibly we should require that
+dma_buf_begin_cpu_access()/dma_buf_end_cpu_access().. but in practice
+if the gl/vk driver needs CPU access it is to read the results of it's
+own GPU rendering.  Disallow that and all of deqp/piglit/etc will
+break on systems where "window" surfaces are dma-buf imports (like
+android), which would be a rather unpopular outcome ;-)
 
+BR,
+-R
