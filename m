@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B756C6FA8A
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 13:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D2FC6FA8B
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 13:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231876AbiIMNPR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Sep 2022 09:15:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42340 "EHLO
+        id S231567AbiIMNPS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Sep 2022 09:15:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230521AbiIMNPM (ORCPT
+        with ESMTP id S229592AbiIMNPN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Sep 2022 09:15:12 -0400
+        Tue, 13 Sep 2022 09:15:13 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449DB11155;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF231146B;
         Tue, 13 Sep 2022 06:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=1mp9KTiW7Fzm6dAODf6CTuUENPLklhUU20Em/a8MWa8=; b=oHC1h2r5Ci1e2hCW+YibOyfq6m
-        1lU+Q/fPhtZVTCaPFrgL5HoecJIvye3GnTN3//ozG5GXg8WL5OpNegvlTS0jRhQFknFWiZwj5bN6a
-        R+O79Yj4eZ6cOPCh3YNdVa07bPvDIkbcMRvmohimzKMgklYHfmh4NRnziafa1er3xMF4rmYikW9+S
-        YcS5kdByOQ3LUxO9+D32pXMBO9yST4rF4RA9GNvogLZMu3pQywvlBzZzPt6EnwABDwt9yToTOD4v3
-        NNagpDqnKz//kAO1xqcWM3MHDjsRTIhRUvO/ZK8JrAlSkRwFWQiNK0bcffFQDQev1dsa/kR5Lj2BU
-        XFxmZdXw==;
+        bh=r1BbAaIYphXM8kEX7BlFmPYXKRn9fe68imxk+A0IPao=; b=JZS0LSq3xIHEhZihIIoyptxrNo
+        Q4z0lwtzclSGTyB+6/2p3dl9/YJabgcEtdhFfJHwr7+U/PMhpuH2j1CKIoDbQglQesrjEDuRhQRNj
+        EfsLeBOpiMFEv9LE3da6nMQtaD6/VCqbn9n96cH1p9MMz7ZXTu1EorVcv/Oj0IpTTFMaGol3YgDfY
+        d6QrRJfE6P5nXo2vb5p8lkM5TfeR41AXw67AypyrW3mBjwzXBy1tNOqotrG1jnaLyNZcCrZYmvdWg
+        CXH5iwrEeRNadszT8elmqb+c6lj1GPcUpPnD7XtZHkttA9KdzIq0jiKm+aTMylAWxJnbtNpEvdnJx
+        /JhN0E8w==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1oY5kh-00EVnM-MG; Tue, 13 Sep 2022 16:14:59 +0300
+        id 1oY5kg-00EVnM-JY; Tue, 13 Sep 2022 16:14:58 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
@@ -44,12 +44,10 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Sameer Pujar <spujar@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/8] arm64: tegra: Add NVDEC on Tegra234
-Date:   Tue, 13 Sep 2022 16:14:42 +0300
-Message-Id: <20220913131447.2877280-5-cyndis@kapsi.fi>
+Subject: [PATCH v2 0/8] Support for NVDEC on Tegra234
+Date:   Tue, 13 Sep 2022 16:14:38 +0300
+Message-Id: <20220913131447.2877280-1-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.37.0
-In-Reply-To: <20220913131447.2877280-1-cyndis@kapsi.fi>
-References: <20220913131447.2877280-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 91.158.25.70
@@ -61,59 +59,71 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add a device tree node for NVDEC on Tegra234.
+v2:
+* Updated patches 1,3 based on comments
+* Added Acked-by to patch 2
 
-Booting the firmware requires some information regarding offsets
-within the firmware binary. These are passed through the device
-tree, but since the values vary depending on the firmware version,
-and the firmware itself is not available to the OS, the flasher is
-expected to provide a device tree overlay with values corresponding
-to the firmware it is flashing. The overlay then replaces the
-placeholder values here.
+Original message:
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 27 ++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Hi all,
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 81a0f599685f..65d49b27bc5f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -586,6 +586,33 @@ vic@15340000 {
- 				iommus = <&smmu_niso1 TEGRA234_SID_VIC>;
- 				dma-coherent;
- 			};
-+
-+			nvdec@15480000 {
-+				compatible = "nvidia,tegra234-nvdec";
-+				reg = <0x15480000 0x00040000>;
-+				clocks = <&bpmp TEGRA234_CLK_NVDEC>,
-+				         <&bpmp TEGRA234_CLK_FUSE>,
-+				         <&bpmp TEGRA234_CLK_TSEC_PKA>;
-+				clock-names = "nvdec", "fuse", "tsec_pka";
-+				resets = <&bpmp TEGRA234_RESET_NVDEC>;
-+				reset-names = "nvdec";
-+				power-domains = <&bpmp TEGRA234_POWER_DOMAIN_NVDEC>;
-+				interconnects = <&mc TEGRA234_MEMORY_CLIENT_NVDECSRD &emc>,
-+				                <&mc TEGRA234_MEMORY_CLIENT_NVDECSWR &emc>;
-+				interconnect-names = "dma-mem", "write";
-+				iommus = <&smmu_niso1 TEGRA234_SID_NVDEC>;
-+				dma-coherent;
-+
-+				nvidia,memory-controller = <&mc>;
-+
-+				/* Placeholder values, to be replaced with values from overlay */
-+				nvidia,bl-manifest-offset = <0>;
-+				nvidia,bl-data-offset = <0>;
-+				nvidia,bl-code-offset = <0>;
-+				nvidia,os-manifest-offset = <0>;
-+				nvidia,os-data-offset = <0>;
-+				nvidia,os-code-offset = <0>;
-+			};
- 		};
- 
- 		gpio: gpio@2200000 {
+this series adds support for the HW video decoder, NVDEC,
+on Tegra234 (Orin). The main change is a switch from Falcon
+to RISC-V for the internal microcontroller, which brings along
+a change in how the engine is booted. Otherwise it is backwards
+compatible with earlier versions.
+
+In previous iterations, firmware was simply loaded from disk and
+written into engine internal memory. Now, the engine has a
+bootrom that loads the firmware from a carveout where it has been
+loaded by the system bootloader; however, we still need to tell it
+where that carveout is loaded and some offsets into it. For that,
+the first patch adds a new memory controller API to query the
+carveout address. The offsets are read from device tree -- the
+expectation is that at flashing time (when the firmware is also
+flashed), the flasher also delivers a device tree overlay with
+values corresponding to the flashed firmware.
+
+The currently available Linux for Tegra release doesn't yet
+include this device tree overlay flashing, and the firmware version
+it contains is incompatible with this series. The plan is to fix
+that for the next Linux for Tegra release, but if necessary, we
+can postpone merging of this series to once those changes are
+available.
+
+Thanks!
+Mikko
+
+Mikko Perttunen (8):
+  memory: tegra: Add API for retrieving carveout bounds
+  dt-bindings: Add headers for NVDEC on Tegra234
+  dt-bindings: Add bindings for Tegra234 NVDEC
+  arm64: tegra: Add NVDEC on Tegra234
+  gpu: host1x: Add stream ID register data for NVDEC on Tegra234
+  drm/tegra: nvdec: Support multiple clocks
+  drm/tegra: Add code for booting RISC-V based engines
+  drm/tegra: Add Tegra234 support to NVDEC driver
+
+ .../gpu/host1x/nvidia,tegra234-nvdec.yaml     | 154 ++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  27 +++
+ drivers/gpu/drm/tegra/Makefile                |   3 +-
+ drivers/gpu/drm/tegra/drm.c                   |   1 +
+ drivers/gpu/drm/tegra/nvdec.c                 | 171 +++++++++++++++---
+ drivers/gpu/drm/tegra/riscv.c                 | 106 +++++++++++
+ drivers/gpu/drm/tegra/riscv.h                 |  30 +++
+ drivers/gpu/host1x/dev.c                      |  12 ++
+ drivers/memory/tegra/mc.c                     |  25 +++
+ drivers/memory/tegra/tegra234.c               |   5 +
+ include/dt-bindings/clock/tegra234-clock.h    |   4 +
+ include/dt-bindings/memory/tegra234-mc.h      |   3 +
+ .../dt-bindings/power/tegra234-powergate.h    |   1 +
+ include/dt-bindings/reset/tegra234-reset.h    |   1 +
+ include/soc/tegra/mc.h                        |  11 ++
+ 15 files changed, 528 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
+ create mode 100644 drivers/gpu/drm/tegra/riscv.c
+ create mode 100644 drivers/gpu/drm/tegra/riscv.h
+
 -- 
 2.37.0
 
