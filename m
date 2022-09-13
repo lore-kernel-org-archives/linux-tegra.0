@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D065C6FA82
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 13:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01683C6FA8E
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 13:15:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232185AbiIMNPY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Sep 2022 09:15:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
+        id S232153AbiIMNPX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Sep 2022 09:15:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbiIMNPP (ORCPT
+        with ESMTP id S231557AbiIMNPQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Sep 2022 09:15:15 -0400
+        Tue, 13 Sep 2022 09:15:16 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D5D11147A;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 381C21182A;
         Tue, 13 Sep 2022 06:15:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=p6QzHQt11OGlMmkTQfhRjLd3f6wmGLkJhnf488+Wpoc=; b=R5a8gg3mrVQ44eu8OqpBuaHekR
-        eJoSsUZ6HZApkUs7BgpkCtrGP6F5iGwV1ZNsSg/26pNsoUAFzd+tmFdayHfJU8oUeN/NoBVvN3zo7
-        vtHNYmFEErBRcBhPqZFDMwqs73ofkinbGVSCpt7DTTa+q7y9SBUCUMayPRKwUjYUDU8SCZiWuSPLO
-        mCmVN9WfI+Yvz9FLYJhs0D44CzpLwq80nHYF7q7L1TFnvie9m4nl0mSarvnMf3bhQjHbrfF4+OqiJ
-        qtkjqOrFLrsPlNuAEZ2DXU0gMUGQz2TRbAxzTC9ia8B04gIFN1QgmndDbJG06rvz0l9cSUpRpR7O9
-        cQ5X6GTw==;
+        bh=6o06f6lKEImR2OALb/GgSAF0FPbhPTKph1QDZj138Gs=; b=sXRPMgLBbkNt0C3LJq4SxOZxBA
+        LSJ9IVYtjeAVFej55mgdlka/cBZmDdcis60BPJ939Mka3rHW3GreBFC2/oPbXvCIQtbGNv5akR0Vm
+        Vq05qGXpQ/ZrVMEQBlX6PNnsUBIi55eVO2RPt0U9eggvOpK37uivYHdHpYBONfW+jPuqQl8B8v8Tc
+        EzCr9CTJNgDcIpmWoFA58j+eiqlhuplS4CscU8OY1JS79FUyDj7FdIpWuacMT85d39eyiiiobHbRa
+        rbHGxTF7SFgHuZ56wRVCxo1kRYSdY45y0B25sQ5qXt3hakA7Brk/ZBH4HkmzvNMzQx/2Wo6Zmd5HN
+        XYXIsF7g==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1oY5kh-00EVnM-6S; Tue, 13 Sep 2022 16:14:59 +0300
+        id 1oY5ki-00EVnM-MZ; Tue, 13 Sep 2022 16:15:00 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
@@ -40,14 +40,13 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Ashish Mhetre <amhetre@nvidia.com>,
         Sameer Pujar <spujar@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/8] dt-bindings: Add headers for NVDEC on Tegra234
-Date:   Tue, 13 Sep 2022 16:14:40 +0300
-Message-Id: <20220913131447.2877280-3-cyndis@kapsi.fi>
+Subject: [PATCH v2 8/8] drm/tegra: Add Tegra234 support to NVDEC driver
+Date:   Tue, 13 Sep 2022 16:14:46 +0300
+Message-Id: <20220913131447.2877280-9-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <20220913131447.2877280-1-cyndis@kapsi.fi>
 References: <20220913131447.2877280-1-cyndis@kapsi.fi>
@@ -62,85 +61,263 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add clock, memory controller, powergate and reset dt-binding headers
-necessary for NVDEC.
+Add support for the Tegra234 version of NVDEC to the NVDEC driver.
+This version sports a RISC-V controller and requires a few additional
+clocks. After firmware has been loaded, the behavior is, however,
+backwards compatible.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- include/dt-bindings/clock/tegra234-clock.h     | 4 ++++
- include/dt-bindings/memory/tegra234-mc.h       | 3 +++
- include/dt-bindings/power/tegra234-powergate.h | 1 +
- include/dt-bindings/reset/tegra234-reset.h     | 1 +
- 4 files changed, 9 insertions(+)
+ drivers/gpu/drm/tegra/drm.c   |   1 +
+ drivers/gpu/drm/tegra/nvdec.c | 140 ++++++++++++++++++++++++++++++----
+ 2 files changed, 126 insertions(+), 15 deletions(-)
 
-diff --git a/include/dt-bindings/clock/tegra234-clock.h b/include/dt-bindings/clock/tegra234-clock.h
-index 173364a93381..25b4a3fb4588 100644
---- a/include/dt-bindings/clock/tegra234-clock.h
-+++ b/include/dt-bindings/clock/tegra234-clock.h
-@@ -82,6 +82,8 @@
- #define TEGRA234_CLK_I2S6			66U
- /** @brief clock recovered from I2S6 input */
- #define TEGRA234_CLK_I2S6_SYNC_INPUT		67U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVDEC */
-+#define TEGRA234_CLK_NVDEC                      83U
- /** PLL controlled by CLK_RST_CONTROLLER_PLLA_BASE for use by audio clocks */
- #define TEGRA234_CLK_PLLA			93U
- /** @brief PLLP clk output */
-@@ -130,6 +132,8 @@
- #define TEGRA234_CLK_SYNC_I2S5			149U
- /** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_I2S6 */
- #define TEGRA234_CLK_SYNC_I2S6			150U
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PKA */
-+#define TEGRA234_CLK_TSEC_PKA                   154U
- /** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTA */
- #define TEGRA234_CLK_UARTA			155U
- /** @brief output of gate CLK_ENB_PEX1_CORE_6 */
-diff --git a/include/dt-bindings/memory/tegra234-mc.h b/include/dt-bindings/memory/tegra234-mc.h
-index 62987b47ce81..75f0bd30d365 100644
---- a/include/dt-bindings/memory/tegra234-mc.h
-+++ b/include/dt-bindings/memory/tegra234-mc.h
-@@ -32,6 +32,7 @@
- #define TEGRA234_SID_PCIE10	0x0b
- #define TEGRA234_SID_BPMP	0x10
- #define TEGRA234_SID_HOST1X	0x27
-+#define TEGRA234_SID_NVDEC	0x29
- #define TEGRA234_SID_VIC	0x34
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 6748ec1e0005..a014f11e9edb 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1382,6 +1382,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ .compatible = "nvidia,tegra194-vic", },
+ 	{ .compatible = "nvidia,tegra194-nvdec", },
+ 	{ .compatible = "nvidia,tegra234-vic", },
++	{ .compatible = "nvidia,tegra234-nvdec", },
+ 	{ /* sentinel */ }
+ };
  
- /*
-@@ -91,6 +92,8 @@
- #define TEGRA234_MEMORY_CLIENT_SDMMCWAB 0x67
- #define TEGRA234_MEMORY_CLIENT_VICSRD 0x6c
- #define TEGRA234_MEMORY_CLIENT_VICSWR 0x6d
-+#define TEGRA234_MEMORY_CLIENT_NVDECSRD 0x78
-+#define TEGRA234_MEMORY_CLIENT_NVDECSWR 0x79
- /* BPMP read client */
- #define TEGRA234_MEMORY_CLIENT_BPMPR 0x93
- /* BPMP write client */
-diff --git a/include/dt-bindings/power/tegra234-powergate.h b/include/dt-bindings/power/tegra234-powergate.h
-index ae9286cef85c..e5dc1e00be95 100644
---- a/include/dt-bindings/power/tegra234-powergate.h
-+++ b/include/dt-bindings/power/tegra234-powergate.h
-@@ -19,6 +19,7 @@
- #define TEGRA234_POWER_DOMAIN_MGBEB	18U
- #define TEGRA234_POWER_DOMAIN_MGBEC	19U
- #define TEGRA234_POWER_DOMAIN_MGBED	20U
-+#define TEGRA234_POWER_DOMAIN_NVDEC     23U
- #define TEGRA234_POWER_DOMAIN_VIC	29U
+diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
+index 05af4d107421..10fd21517281 100644
+--- a/drivers/gpu/drm/tegra/nvdec.c
++++ b/drivers/gpu/drm/tegra/nvdec.c
+@@ -8,6 +8,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/host1x.h>
+ #include <linux/iommu.h>
++#include <linux/iopoll.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -16,18 +17,21 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
  
- #endif
-diff --git a/include/dt-bindings/reset/tegra234-reset.h b/include/dt-bindings/reset/tegra234-reset.h
-index d48d22b2bc7f..17163019316c 100644
---- a/include/dt-bindings/reset/tegra234-reset.h
-+++ b/include/dt-bindings/reset/tegra234-reset.h
-@@ -30,6 +30,7 @@
- #define TEGRA234_RESET_I2C7			33U
- #define TEGRA234_RESET_I2C8			34U
- #define TEGRA234_RESET_I2C9			35U
-+#define TEGRA234_RESET_NVDEC                    44U
- #define TEGRA234_RESET_MGBE0_PCS		45U
- #define TEGRA234_RESET_MGBE0_MAC		46U
- #define TEGRA234_RESET_MGBE1_PCS		49U
+-#include <soc/tegra/pmc.h>
++#include <soc/tegra/mc.h>
+ 
+ #include "drm.h"
+ #include "falcon.h"
++#include "riscv.h"
+ #include "vic.h"
+ 
++#define NVDEC_FALCON_DEBUGINFO			0x1094
+ #define NVDEC_TFBIF_TRANSCFG			0x2c44
+ 
+ struct nvdec_config {
+ 	const char *firmware;
+ 	unsigned int version;
+ 	bool supports_sid;
++	bool has_riscv;
+ 	bool has_extra_clocks;
+ };
+ 
+@@ -40,9 +44,14 @@ struct nvdec {
+ 	struct device *dev;
+ 	struct clk_bulk_data clks[3];
+ 	unsigned int num_clks;
++	struct reset_control *reset;
+ 
+ 	/* Platform configuration */
+ 	const struct nvdec_config *config;
++
++	/* RISC-V specific data */
++	struct tegra_drm_riscv riscv;
++	phys_addr_t carveout_base;
+ };
+ 
+ static inline struct nvdec *to_nvdec(struct tegra_drm_client *client)
+@@ -56,7 +65,7 @@ static inline void nvdec_writel(struct nvdec *nvdec, u32 value,
+ 	writel(value, nvdec->regs + offset);
+ }
+ 
+-static int nvdec_boot(struct nvdec *nvdec)
++static int nvdec_boot_falcon(struct nvdec *nvdec)
+ {
+ #ifdef CONFIG_IOMMU_API
+ 	struct iommu_fwspec *spec = dev_iommu_fwspec_get(nvdec->dev);
+@@ -92,6 +101,64 @@ static int nvdec_boot(struct nvdec *nvdec)
+ 	return 0;
+ }
+ 
++static int nvdec_wait_debuginfo(struct nvdec *nvdec, const char *phase)
++{
++	int err;
++	u32 val;
++
++	err = readl_poll_timeout(nvdec->regs + NVDEC_FALCON_DEBUGINFO, val, val == 0x0, 10, 100000);
++	if (err) {
++		dev_err(nvdec->dev, "failed to boot %s, debuginfo=0x%x\n", phase, val);
++		return err;
++	}
++
++	return 0;
++}
++
++static int nvdec_boot_riscv(struct nvdec *nvdec)
++{
++	int err;
++
++	err = reset_control_acquire(nvdec->reset);
++	if (err)
++		return err;
++
++	nvdec_writel(nvdec, 0xabcd1234, NVDEC_FALCON_DEBUGINFO);
++
++	err = tegra_drm_riscv_boot_bootrom(&nvdec->riscv, nvdec->carveout_base, 1,
++					   &nvdec->riscv.bl_desc);
++	if (err) {
++		dev_err(nvdec->dev, "failed to execute bootloader\n");
++		goto release_reset;
++	}
++
++	err = nvdec_wait_debuginfo(nvdec, "bootloader");
++	if (err)
++		goto release_reset;
++
++	err = reset_control_reset(nvdec->reset);
++	if (err)
++		goto release_reset;
++
++	nvdec_writel(nvdec, 0xabcd1234, NVDEC_FALCON_DEBUGINFO);
++
++	err = tegra_drm_riscv_boot_bootrom(&nvdec->riscv, nvdec->carveout_base, 1,
++					   &nvdec->riscv.os_desc);
++	if (err) {
++		dev_err(nvdec->dev, "failed to execute firmware\n");
++		goto release_reset;
++	}
++
++	err = nvdec_wait_debuginfo(nvdec, "firmware");
++	if (err)
++		goto release_reset;
++
++release_reset:
++	reset_control_release(nvdec->reset);
++
++	return err;
++}
++
+ static int nvdec_init(struct host1x_client *client)
+ {
+ 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
+@@ -191,7 +258,7 @@ static const struct host1x_client_ops nvdec_client_ops = {
+ 	.exit = nvdec_exit,
+ };
+ 
+-static int nvdec_load_firmware(struct nvdec *nvdec)
++static int nvdec_load_falcon_firmware(struct nvdec *nvdec)
+ {
+ 	struct host1x_client *client = &nvdec->client.base;
+ 	struct tegra_drm *tegra = nvdec->client.drm;
+@@ -254,7 +321,6 @@ static int nvdec_load_firmware(struct nvdec *nvdec)
+ 	return err;
+ }
+ 
+-
+ static __maybe_unused int nvdec_runtime_resume(struct device *dev)
+ {
+ 	struct nvdec *nvdec = dev_get_drvdata(dev);
+@@ -266,13 +332,19 @@ static __maybe_unused int nvdec_runtime_resume(struct device *dev)
+ 
+ 	usleep_range(10, 20);
+ 
+-	err = nvdec_load_firmware(nvdec);
+-	if (err < 0)
+-		goto disable;
++	if (nvdec->config->has_riscv) {
++		err = nvdec_boot_riscv(nvdec);
++		if (err < 0)
++			goto disable;
++	} else {
++		err = nvdec_load_falcon_firmware(nvdec);
++		if (err < 0)
++			goto disable;
+ 
+-	err = nvdec_boot(nvdec);
+-	if (err < 0)
+-		goto disable;
++		err = nvdec_boot_falcon(nvdec);
++		if (err < 0)
++			goto disable;
++	}
+ 
+ 	return 0;
+ 
+@@ -348,10 +420,18 @@ static const struct nvdec_config nvdec_t194_config = {
+ 	.supports_sid = true,
+ };
+ 
++static const struct nvdec_config nvdec_t234_config = {
++	.version = 0x23,
++	.supports_sid = true,
++	.has_riscv = true,
++	.has_extra_clocks = true,
++};
++
+ static const struct of_device_id tegra_nvdec_of_match[] = {
+ 	{ .compatible = "nvidia,tegra210-nvdec", .data = &nvdec_t210_config },
+ 	{ .compatible = "nvidia,tegra186-nvdec", .data = &nvdec_t186_config },
+ 	{ .compatible = "nvidia,tegra194-nvdec", .data = &nvdec_t194_config },
++	{ .compatible = "nvidia,tegra234-nvdec", .data = &nvdec_t234_config },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, tegra_nvdec_of_match);
+@@ -410,12 +490,42 @@ static int nvdec_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		host_class = HOST1X_CLASS_NVDEC;
+ 
+-	nvdec->falcon.dev = dev;
+-	nvdec->falcon.regs = nvdec->regs;
++	if (nvdec->config->has_riscv) {
++		struct tegra_mc *mc;
+ 
+-	err = falcon_init(&nvdec->falcon);
+-	if (err < 0)
+-		return err;
++		mc = devm_tegra_memory_controller_get(dev);
++		if (IS_ERR(mc)) {
++			dev_err_probe(dev, PTR_ERR(mc),
++				"failed to get memory controller handle\n");
++			return PTR_ERR(mc);
++		}
++
++		err = tegra_mc_get_carveout_info(mc, 1, &nvdec->carveout_base, NULL);
++		if (err) {
++			dev_err(dev, "failed to get carveout info: %d\n", err);
++			return err;
++		}
++
++		nvdec->reset = devm_reset_control_get_exclusive_released(dev, "nvdec");
++		if (IS_ERR(nvdec->reset)) {
++			dev_err_probe(dev, PTR_ERR(nvdec->reset), "failed to get reset\n");
++			return PTR_ERR(nvdec->reset);
++		}
++
++		nvdec->riscv.dev = dev;
++		nvdec->riscv.regs = nvdec->regs;
++
++		err = tegra_drm_riscv_read_descriptors(&nvdec->riscv);
++		if (err < 0)
++			return err;
++	} else {
++		nvdec->falcon.dev = dev;
++		nvdec->falcon.regs = nvdec->regs;
++
++		err = falcon_init(&nvdec->falcon);
++		if (err < 0)
++			return err;
++	}
+ 
+ 	platform_set_drvdata(pdev, nvdec);
+ 
 -- 
 2.37.0
 
