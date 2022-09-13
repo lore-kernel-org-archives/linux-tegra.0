@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E900C6FA82
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 05:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9C9C54EE9
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 05:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbiIMFkk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Sep 2022 01:40:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51720 "EHLO
+        id S229697AbiIMFzR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Sep 2022 01:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230053AbiIMFkj (ORCPT
+        with ESMTP id S229601AbiIMFzQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Sep 2022 01:40:39 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE51564FD;
-        Mon, 12 Sep 2022 22:40:38 -0700 (PDT)
+        Tue, 13 Sep 2022 01:55:16 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3267A1A077;
+        Mon, 12 Sep 2022 22:55:15 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 574873473C;
-        Tue, 13 Sep 2022 05:40:37 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C3B835BD68;
+        Tue, 13 Sep 2022 05:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663047637; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1663048513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=LL+0QmFDBXrLM+is61xFAGwnXTKxqNCWgAvg8pawgpY=;
-        b=EaU+gESL3xtq/aEen3T6blqRalP6siQO2A4hDwumO3toCWNH7t2ywz+PKGUn/lOXzilCIV
-        5PsLQJfv25g4NppsZt9HuSNBzaiwQlfd8/TVLTyGwmJXBsgTr0w32V7Kpfd8r6VPBtoStx
-        1+jSWvNsB3iGv0XW2pORS86S0AW8XPk=
+        bh=PEWNwbzjWeLj0qnwYTZiQaz7IsDhE8koHkL/e891+oM=;
+        b=zBNotOhyiplSJ/cwzJCNF0DVVdJXoBs0z4b9kH0kfgXoKRz34forrEU4zAYr/TO3WRULhC
+        v24chUFJon16poZhJIA7WqwDzlNjRZP8TTNgi0xY5piNYBWLGC5LqQGkL0a/64eqzVOnjI
+        xpJ5pY2u6zAXYLCiXHjMieEGkgTXXf8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663047637;
+        s=susede2_ed25519; t=1663048513;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=LL+0QmFDBXrLM+is61xFAGwnXTKxqNCWgAvg8pawgpY=;
-        b=NBwRBC0kBCjLONgs8/lnfMfslVYqM9MnUtIIK0MSn+b3kqNiBG+3TkO3PvwHE6q7J/Xswx
-        wW7Tt3hIOaoYXYCw==
+        bh=PEWNwbzjWeLj0qnwYTZiQaz7IsDhE8koHkL/e891+oM=;
+        b=0woo0GTrt5R4seMYDdsFq9kSa7fqTXCcoMfqzjJXiHTZCCVLPl1yQUd1I+wUYRpJRp68Mi
+        NHM7GqbxSjBIZ9Aw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 31A3613A86;
-        Tue, 13 Sep 2022 05:40:37 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 608E013AB5;
+        Tue, 13 Sep 2022 05:55:13 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4lN6C9UXIGMlWgAAMHmgww
-        (envelope-from <tiwai@suse.de>); Tue, 13 Sep 2022 05:40:37 +0000
-Date:   Tue, 13 Sep 2022 07:40:36 +0200
-Message-ID: <87fsgvhlwr.wl-tiwai@suse.de>
+        id ZnzgFkEbIGMXXwAAMHmgww
+        (envelope-from <tiwai@suse.de>); Tue, 13 Sep 2022 05:55:13 +0000
+Date:   Tue, 13 Sep 2022 07:55:12 +0200
+Message-ID: <87edwfhl8f.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Mohan Kumar <mkumard@nvidia.com>
 Cc:     <tiwai@suse.com>, <perex@perex.cz>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
         <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: hda: Fix tegra hda dp infoframe struct
-In-Reply-To: <20220913034410.17502-1-mkumard@nvidia.com>
-References: <20220913034410.17502-1-mkumard@nvidia.com>
+Subject: Re: [PATCH] ALSA: hda/tegra: set depop delay for tegra
+In-Reply-To: <20220913053641.23299-1-mkumard@nvidia.com>
+References: <20220913053641.23299-1-mkumard@nvidia.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
@@ -64,94 +64,15 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 13 Sep 2022 05:44:10 +0200,
+On Tue, 13 Sep 2022 07:36:41 +0200,
 Mohan Kumar wrote:
 > 
-> Tegra HDA HW expects infoframe data bytes order same for both
-> HDMI and DP i.e infoframe data starts from 5th bytes offset.
-> This hw behavior mandates to have dummy bytes for dp infoframe
-> structure for Tegra.
+> Reduce the suspend time by setting depop delay to 10ms for
+> tegra.
 > 
 > Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
-> ---
->  sound/pci/hda/patch_hdmi.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
-> index 6c209cd26c0c..a52e764db2e0 100644
-> --- a/sound/pci/hda/patch_hdmi.c
-> +++ b/sound/pci/hda/patch_hdmi.c
-> @@ -218,6 +218,9 @@ struct dp_audio_infoframe {
->  	u8 type; /* 0x84 */
->  	u8 len;  /* 0x1b */
->  	u8 ver;  /* 0x11 << 2 */
-> +#if IS_ENABLED(CONFIG_SND_HDA_TEGRA)
-> +	u8 checksum; /* Tegra HW expects infoframe bytes from 5th offset */
-> +#endif
 
-I'm afraid that we can't use ifdef here, as this is another module
-that is used not only by snd-hda-tegra.  In theory, snd-hda-intel can
-run on Arm using the same codec driver.
+Applied now, thanks.
 
-That is, the check has to be dynamically.  Maybe we need to set a flag
-at tegra_hdmi_init().
-
-If I understand correctly, Tegra uses the same byte layout for both DP
-and HDMI?  If so, the patch like below should work instead.
-
-Of course, if that's really specific to Tegra, not generically for
-Nvidia graphics, the flag has to be set in a different way...
-
-
-thanks,
 
 Takashi
-
--- 8< --
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -171,6 +171,7 @@ struct hdmi_spec {
- 	/* hdmi interrupt trigger control flag for Nvidia codec */
- 	bool hdmi_intr_trig_ctrl;
- 	bool intel_hsw_fixup;	/* apply Intel platform-specific fixups */
-+	bool tegra_dp_workaround; /* workaround DP audio infoframe for Tegra */
- 	/*
- 	 * Non-generic VIA/NVIDIA specific
- 	 */
-@@ -679,15 +680,24 @@ static void hdmi_pin_setup_infoframe(struct hda_codec *codec,
- 				     int ca, int active_channels,
- 				     int conn_type)
- {
-+	struct hdmi_spec *spec = codec->spec;
- 	union audio_infoframe ai;
- 
- 	memset(&ai, 0, sizeof(ai));
--	if (conn_type == 0) { /* HDMI */
-+	if (conn_type == 0 || /* HDMI */
-+	    /* DisplayPort for Tegra: Tegra HW expects same layout as HDMI */
-+	    (conn_type == 1 && spec->tegra_dp_workaround)) {
- 		struct hdmi_audio_infoframe *hdmi_ai = &ai.hdmi;
- 
--		hdmi_ai->type		= 0x84;
--		hdmi_ai->ver		= 0x01;
--		hdmi_ai->len		= 0x0a;
-+		if (conn_type == 0) { /* HDMI */
-+			hdmi_ai->type		= 0x84;
-+			hdmi_ai->ver		= 0x01;
-+			hdmi_ai->len		= 0x0a;
-+		} else { /* Tegra DP */
-+			hdmi_ai->type		= 0x84;
-+			hdmi_ai->len		= 0x1b;
-+			hdmi_ai->ver		= 0x11 << 2;
-+		}
- 		hdmi_ai->CC02_CT47	= active_channels - 1;
- 		hdmi_ai->CA		= ca;
- 		hdmi_checksum_audio_infoframe(hdmi_ai);
-@@ -3992,6 +4002,7 @@ static int tegra_hdmi_init(struct hda_codec *codec)
- 	spec->chmap.ops.chmap_cea_alloc_validate_get_type =
- 		nvhdmi_chmap_cea_alloc_validate_get_type;
- 	spec->chmap.ops.chmap_validate = nvhdmi_chmap_validate;
-+	spec->tegra_dp_workaround = true;
- 
- 	return 0;
- }
