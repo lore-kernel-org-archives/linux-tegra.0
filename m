@@ -2,192 +2,239 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB193C54EE9
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 12:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD9CC54EE9
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 13:15:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232053AbiIMM1b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Sep 2022 08:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35362 "EHLO
+        id S231781AbiIMNPQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Sep 2022 09:15:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232102AbiIMM1P (ORCPT
+        with ESMTP id S230352AbiIMNPM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Sep 2022 08:27:15 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1F317A81
-        for <linux-tegra@vger.kernel.org>; Tue, 13 Sep 2022 05:27:10 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id d12-20020a05600c34cc00b003a83d20812fso9410214wmq.1
-        for <linux-tegra@vger.kernel.org>; Tue, 13 Sep 2022 05:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=VTC8+roq761rPO1lbs0pNCCJS3R+FuNtWSS5Z+GCYq0=;
-        b=miJorPWGXKjdCvQfUrlK5b1TBnftK3ihkKzT7xqaUavMG7CeLtoJKGsTDgIrHxw1I3
-         2o8xQkGSzosqM7uGO5cLcDrsoGHQ8twTWgHZ2vDCp7Moq8rQyncPJPf9AH7M4U8xaxAM
-         YggevJiZ/hK+JQccvTf9e0cZGg7o7aOJH35ps/x9/3ARbo/2W107ZSA8CUuSjnPY3N3y
-         soct36MtuIzorK4dk2RWaf9fYqjmfgyJjBzvbG5Q6v2vAtcjNhQLt/2tXAKSrGGFkQfM
-         wrSlwNuWKXmVGgcul7JnWyX4aFqYYq/VYsG9T/I1xdpyUdb4FKPcIL7ldqP87qC+7eEg
-         /5OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=VTC8+roq761rPO1lbs0pNCCJS3R+FuNtWSS5Z+GCYq0=;
-        b=WseTvNgnytqUjtKcDnyKbstvc+TdIv84hvEjy/0jlG+r84QIJoQDFxua+5j6fUd4YE
-         gGpnTU9qqTbr1XYtZ4GfiImTZmMFHxjE8Su3YuWpf55T/iNuSiBkoP2rzktkeWFlru1h
-         DKnefImhLEIGqDqsLPVWARc1+cA5ZCM02DT7DHLdw56QQtIEpuZbvsApQe7tyZj9NO7q
-         m3Ryq6uukJpLAIFvvrF21rirDEhQ2gKacKKhhBTRdm8HPgCb8FG5jmaWz0quQWPEwc2h
-         kcCFoxBGuTRSKPGmLry8wt6HOzd7XqsIMjpbaiK8pWgjEh07FaQaDOShuuEzTQBWRJaY
-         1gKA==
-X-Gm-Message-State: ACgBeo2RN9h55VjcSw517UTPudgVjGWmOG/BBX7GOq+7UaFtEQ18p+3w
-        u94aF90VDjswxlpiJmlXoob28A==
-X-Google-Smtp-Source: AA6agR6T+QLT8jB5Xi/vSWb9EBDtxlHd1ocjnlnMMf5JCbG+ys2vKBcb/2DyNzFGWO0wDCo6sPf6Iw==
-X-Received: by 2002:a05:600c:6026:b0:3b4:94ff:c019 with SMTP id az38-20020a05600c602600b003b494ffc019mr2218246wmb.101.1663072028280;
-        Tue, 13 Sep 2022 05:27:08 -0700 (PDT)
-Received: from myrica (cpc92880-cmbg19-2-0-cust679.5-4.cable.virginm.net. [82.27.106.168])
-        by smtp.gmail.com with ESMTPSA id p5-20020a05600c358500b003b47b913901sm2496769wmq.1.2022.09.13.05.27.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Sep 2022 05:27:07 -0700 (PDT)
-Date:   Tue, 13 Sep 2022 13:27:03 +0100
-From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
-To:     Nicolin Chen <nicolinc@nvidia.com>
-Cc:     joro@8bytes.org, suravee.suthikulpanit@amd.com, will@kernel.org,
-        robin.murphy@arm.com, robdclark@gmail.com, dwmw2@infradead.org,
-        baolu.lu@linux.intel.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
-        baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
-        thierry.reding@gmail.com, jgg@nvidia.com, sricharan@codeaurora.org,
-        yong.wu@mediatek.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-        tglx@linutronix.de, shameerali.kolothum.thodi@huawei.com,
-        thunder.leizhen@huawei.com, christophe.jaillet@wanadoo.fr,
-        yangyingliang@huawei.com, jon@solid-run.com, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 4/5] iommu: Regulate errno in ->attach_dev callback
- functions
-Message-ID: <YyB3F/o3RfymqiFW@myrica>
-References: <20220913082448.31120-1-nicolinc@nvidia.com>
- <20220913082448.31120-5-nicolinc@nvidia.com>
+        Tue, 13 Sep 2022 09:15:12 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB828765A;
+        Tue, 13 Sep 2022 06:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=oQqM+pClrZfQCqMiQgtSnptBcoYj79KgVRq3HWP8sUE=; b=I+aoXXZXrAJz4xvOpHc3/VlBIw
+        OjpuJOzkmDAhj9seeZOmBKdpoZ47n13HOlW2iFF5FthOpRhc+OPuhNWIBOskk1mrNnfe67prCKgMf
+        +5AoOfLfpzpe5L0Dpz2aDV/OuCOA++EiaoFTFHcmnVZrPdg+ASJbUKe+4fIx+4srI3TPjsLgZ4cH+
+        8ZCjHsFmpDOzQj0lOtteydGR37x1arfE6pKT/XzEmxUsyjFcjhzp6vAiRzEnugtZaXsmeFQH/P6CJ
+        luysIU5p0qhp9OIxfVGQyRGnlOAj33RW/inxlLTkvo2A0da4kbpps4fFnvN3Bwg67Fuhf1yYSH6dx
+        ZZqaBWRw==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1oY5ki-00EVnM-DJ; Tue, 13 Sep 2022 16:15:00 +0300
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 7/8] drm/tegra: Add code for booting RISC-V based engines
+Date:   Tue, 13 Sep 2022 16:14:45 +0300
+Message-Id: <20220913131447.2877280-8-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.37.0
+In-Reply-To: <20220913131447.2877280-1-cyndis@kapsi.fi>
+References: <20220913131447.2877280-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220913082448.31120-5-nicolinc@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Nicolin,
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-On Tue, Sep 13, 2022 at 01:24:47AM -0700, Nicolin Chen wrote:
-> Following the new rules in include/linux/iommu.h kdocs, update all drivers
-> ->attach_dev callback functions to return ENODEV error code for all device
-> specific errors. It particularly excludes EINVAL from being used for such
-> error cases. For the same purpose, also replace one EINVAL with ENOMEM in
-> mtk_iommu driver.
-> 
-> Note that the virtio-iommu does a viommu_domain_map_identity() call, which
-> returns either 0 or ENOMEM at this moment. Change to "return ret" directly
-> to allow it to pass an EINVAL in the future.
-[...]
-> diff --git a/drivers/iommu/virtio-iommu.c b/drivers/iommu/virtio-iommu.c
-> index 80151176ba12..874c01634d2b 100644
-> --- a/drivers/iommu/virtio-iommu.c
-> +++ b/drivers/iommu/virtio-iommu.c
-> @@ -696,7 +696,7 @@ static int viommu_domain_finalise(struct viommu_endpoint *vdev,
->  		if (ret) {
->  			ida_free(&viommu->domain_ids, vdomain->id);
->  			vdomain->viommu = NULL;
-> -			return -EOPNOTSUPP;
-> +			return ret;
+Add helper code for booting RISC-V based engines where firmware is
+located in a carveout.
 
-I think in the future it will be too easy to forget about the constrained
-return value of attach() while modifying some other part of the driver,
-and let an external helper return EINVAL. So I'd rather not propagate ret
-from outside of viommu_domain_attach() and finalise().
-
-For the same reason I do prefer this solution over EMEDIUMTYPE, because
-it's too tempting to use exotic errno when they seem appropriate instead
-of boring ENODEV and EINVAL. The alternative would be adding a special
-purpose code to linux/errno.h, similarly to EPROBE_DEFER, but that might
-be excessive.
-
-Since we can't guarantee that APIs like virtio or ida won't ever return
-EINVAL, we should set all return values:
-
---- 8< ---
-From 7b16796cb78d11971236f98fd2d3cd73ca769827 Mon Sep 17 00:00:00 2001
-From: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Date: Tue, 13 Sep 2022 12:53:02 +0100
-Subject: [PATCH] iommu/virtio: Constrain return value of viommu_attach_dev()
-
-Ensure viommu_attach_dev() only return errno values expected from the
-attach_dev() op. In particular, only return EINVAL when we're sure that
-the device is incompatible with the domain.
-
-Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/iommu/virtio-iommu.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/tegra/Makefile |   3 +-
+ drivers/gpu/drm/tegra/riscv.c  | 106 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/riscv.h  |  30 ++++++++++
+ 3 files changed, 138 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/tegra/riscv.c
+ create mode 100644 drivers/gpu/drm/tegra/riscv.h
 
-diff --git a/drivers/iommu/virtio-iommu.c b/drivers/iommu/virtio-iommu.c
-index 08eeafc9529f..582ff5a33b52 100644
---- a/drivers/iommu/virtio-iommu.c
-+++ b/drivers/iommu/virtio-iommu.c
-@@ -669,13 +669,13 @@ static int viommu_domain_finalise(struct viommu_endpoint *vdev,
- 		dev_err(vdev->dev,
- 			"granule 0x%lx larger than system page size 0x%lx\n",
- 			viommu_page_size, PAGE_SIZE);
--		return -EINVAL;
-+		return -ENODEV;
- 	}
+diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
+index df6cc986aeba..bb0d2c144b55 100644
+--- a/drivers/gpu/drm/tegra/Makefile
++++ b/drivers/gpu/drm/tegra/Makefile
+@@ -24,7 +24,8 @@ tegra-drm-y := \
+ 	gr3d.o \
+ 	falcon.o \
+ 	vic.o \
+-	nvdec.o
++	nvdec.o \
++	riscv.o
  
- 	ret = ida_alloc_range(&viommu->domain_ids, viommu->first_domain,
- 			      viommu->last_domain, GFP_KERNEL);
- 	if (ret < 0)
--		return ret;
-+		return -ENOMEM;
+ tegra-drm-y += trace.o
  
- 	vdomain->id		= (unsigned int)ret;
- 
-@@ -696,7 +696,7 @@ static int viommu_domain_finalise(struct viommu_endpoint *vdev,
- 		if (ret) {
- 			ida_free(&viommu->domain_ids, vdomain->id);
- 			vdomain->viommu = NULL;
--			return -EOPNOTSUPP;
-+			return -ENODEV;
- 		}
- 	}
- 
-@@ -734,7 +734,7 @@ static int viommu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 		ret = viommu_domain_finalise(vdev, domain);
- 	} else if (vdomain->viommu != vdev->viommu) {
- 		dev_err(dev, "cannot attach to foreign vIOMMU\n");
--		ret = -EXDEV;
-+		ret = -EINVAL;
- 	}
- 	mutex_unlock(&vdomain->mutex);
- 
-@@ -769,7 +769,7 @@ static int viommu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 
- 		ret = viommu_send_req_sync(vdomain->viommu, &req, sizeof(req));
- 		if (ret)
--			return ret;
-+			return -ENODEV;
- 	}
- 
- 	if (!vdomain->nr_endpoints) {
-@@ -779,7 +779,7 @@ static int viommu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 		 */
- 		ret = viommu_replay_mappings(vdomain);
- 		if (ret)
--			return ret;
-+			return -ENODEV;
- 	}
- 
- 	vdomain->nr_endpoints++;
+diff --git a/drivers/gpu/drm/tegra/riscv.c b/drivers/gpu/drm/tegra/riscv.c
+new file mode 100644
+index 000000000000..6580416408f8
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/riscv.c
+@@ -0,0 +1,106 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2022, NVIDIA Corporation.
++ */
++
++#include <linux/dev_printk.h>
++#include <linux/device.h>
++#include <linux/iopoll.h>
++#include <linux/of.h>
++
++#include "riscv.h"
++
++#define RISCV_CPUCTL					0x4388
++#define RISCV_CPUCTL_STARTCPU_TRUE			(1 << 0)
++#define RISCV_BR_RETCODE				0x465c
++#define RISCV_BR_RETCODE_RESULT_V(x)			((x) & 0x3)
++#define RISCV_BR_RETCODE_RESULT_PASS_V			3
++#define RISCV_BCR_CTRL					0x4668
++#define RISCV_BCR_CTRL_CORE_SELECT_RISCV		(1 << 4)
++#define RISCV_BCR_DMACFG				0x466c
++#define RISCV_BCR_DMACFG_TARGET_LOCAL_FB		(0 << 0)
++#define RISCV_BCR_DMACFG_LOCK_LOCKED			(1 << 31)
++#define RISCV_BCR_DMAADDR_PKCPARAM_LO			0x4670
++#define RISCV_BCR_DMAADDR_PKCPARAM_HI			0x4674
++#define RISCV_BCR_DMAADDR_FMCCODE_LO			0x4678
++#define RISCV_BCR_DMAADDR_FMCCODE_HI			0x467c
++#define RISCV_BCR_DMAADDR_FMCDATA_LO			0x4680
++#define RISCV_BCR_DMAADDR_FMCDATA_HI			0x4684
++#define RISCV_BCR_DMACFG_SEC				0x4694
++#define RISCV_BCR_DMACFG_SEC_GSCID(v)			((v) << 16)
++
++static void riscv_writel(struct tegra_drm_riscv *riscv, u32 value, u32 offset)
++{
++	writel(value, riscv->regs + offset);
++}
++
++int tegra_drm_riscv_read_descriptors(struct tegra_drm_riscv *riscv)
++{
++	struct tegra_drm_riscv_descriptor *bl = &riscv->bl_desc;
++	struct tegra_drm_riscv_descriptor *os = &riscv->os_desc;
++	const struct device_node *np = riscv->dev->of_node;
++	int err;
++
++#define READ_PROP(name, location) \
++	err = of_property_read_u32(np, name, location); \
++	if (err) { \
++		dev_err(riscv->dev, "failed to read " name ": %d\n", err); \
++		return err; \
++	}
++
++	READ_PROP("nvidia,bl-manifest-offset", &bl->manifest_offset);
++	READ_PROP("nvidia,bl-code-offset", &bl->code_offset);
++	READ_PROP("nvidia,bl-data-offset", &bl->data_offset);
++	READ_PROP("nvidia,os-manifest-offset", &os->manifest_offset);
++	READ_PROP("nvidia,os-code-offset", &os->code_offset);
++	READ_PROP("nvidia,os-data-offset", &os->data_offset);
++#undef READ_PROP
++
++	if (bl->manifest_offset == 0 && bl->code_offset == 0 &&
++	    bl->data_offset == 0 && os->manifest_offset == 0 &&
++	    os->code_offset == 0 && os->data_offset == 0) {
++		dev_err(riscv->dev, "descriptors not available\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++int tegra_drm_riscv_boot_bootrom(struct tegra_drm_riscv *riscv, phys_addr_t image_address,
++				 u32 gscid, const struct tegra_drm_riscv_descriptor *desc)
++{
++	phys_addr_t addr;
++	int err;
++	u32 val;
++
++	riscv_writel(riscv, RISCV_BCR_CTRL_CORE_SELECT_RISCV, RISCV_BCR_CTRL);
++
++	addr = image_address + desc->manifest_offset;
++	riscv_writel(riscv, lower_32_bits(addr >> 8), RISCV_BCR_DMAADDR_PKCPARAM_LO);
++	riscv_writel(riscv, upper_32_bits(addr >> 8), RISCV_BCR_DMAADDR_PKCPARAM_HI);
++
++	addr = image_address + desc->code_offset;
++	riscv_writel(riscv, lower_32_bits(addr >> 8), RISCV_BCR_DMAADDR_FMCCODE_LO);
++	riscv_writel(riscv, upper_32_bits(addr >> 8), RISCV_BCR_DMAADDR_FMCCODE_HI);
++
++	addr = image_address + desc->data_offset;
++	riscv_writel(riscv, lower_32_bits(addr >> 8), RISCV_BCR_DMAADDR_FMCDATA_LO);
++	riscv_writel(riscv, upper_32_bits(addr >> 8), RISCV_BCR_DMAADDR_FMCDATA_HI);
++
++	riscv_writel(riscv, RISCV_BCR_DMACFG_SEC_GSCID(gscid), RISCV_BCR_DMACFG_SEC);
++	riscv_writel(riscv,
++		RISCV_BCR_DMACFG_TARGET_LOCAL_FB | RISCV_BCR_DMACFG_LOCK_LOCKED, RISCV_BCR_DMACFG);
++
++	riscv_writel(riscv, RISCV_CPUCTL_STARTCPU_TRUE, RISCV_CPUCTL);
++
++	err = readl_poll_timeout(
++		riscv->regs + RISCV_BR_RETCODE, val,
++		RISCV_BR_RETCODE_RESULT_V(val) == RISCV_BR_RETCODE_RESULT_PASS_V,
++		10, 100000);
++	if (err) {
++		dev_err(riscv->dev, "error during bootrom execution. BR_RETCODE=%d\n", val);
++		return err;
++	}
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/tegra/riscv.h b/drivers/gpu/drm/tegra/riscv.h
+new file mode 100644
+index 000000000000..bbeb2db078b6
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/riscv.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2022, NVIDIA Corporation.
++ */
++
++#ifndef DRM_TEGRA_RISCV_H
++#define DRM_TEGRA_RISCV_H
++
++struct tegra_drm_riscv_descriptor {
++	u32 manifest_offset;
++	u32 code_offset;
++	u32 code_size;
++	u32 data_offset;
++	u32 data_size;
++};
++
++struct tegra_drm_riscv {
++	/* User initializes */
++	struct device *dev;
++	void __iomem *regs;
++
++	struct tegra_drm_riscv_descriptor bl_desc;
++	struct tegra_drm_riscv_descriptor os_desc;
++};
++
++int tegra_drm_riscv_read_descriptors(struct tegra_drm_riscv *riscv);
++int tegra_drm_riscv_boot_bootrom(struct tegra_drm_riscv *riscv, phys_addr_t image_address,
++				 u32 gscid, const struct tegra_drm_riscv_descriptor *desc);
++
++#endif
 -- 
-2.37.3
+2.37.0
 
