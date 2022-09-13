@@ -2,198 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E140C6FA8A
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 05:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D971AC54EE9
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Sep 2022 05:36:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbiIMFHt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Sep 2022 01:07:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43616 "EHLO
+        id S229677AbiIMFgv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Sep 2022 01:36:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbiIMFHq (ORCPT
+        with ESMTP id S229999AbiIMFgt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Sep 2022 01:07:46 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060.outbound.protection.outlook.com [40.107.223.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B3F1181F;
-        Mon, 12 Sep 2022 22:07:45 -0700 (PDT)
+        Tue, 13 Sep 2022 01:36:49 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2087.outbound.protection.outlook.com [40.107.100.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193F1558FD;
+        Mon, 12 Sep 2022 22:36:49 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lJ6rk1wDg7GFggyVeAthKsN2CS2TsrNgcqZ0EvaNBink4ZS/kR1GMirFMo/GwVm5+d/5HTkE0jMkm0xHwueHOkNV1FigUfpG1Ejma8ChYzNOEoUSZOgN80oiBkXUuiUfVZA3HIqidq9GajV9RyHtT9HTi8rR8/Opw7bTdj1vIQNI+xnyu+J/pUvUpHcOn8YL+JPJP4I85dtss8FBK9/6NHooydttO1XtwnmQqQ2NdOyuWtA0m+4bDpdPWQ3WqMXJ2yd0gqS1amCruBWLZS69X+xo54gOkqoJjty43QeiTLtfVQRH76TP8klzHOkGCQGaRIWK4y44toMEgA9dW/Ir2Q==
+ b=oFkrqAM+8CVMoEp/9N7T/o0J9lySR2swGhuh8p3xW+lI5i+rRDe57YLLw6yhFGkRfyd6s39iyUqcTOZ1JbKsefKXHPlOwWqhjvtUx0KPUGN8dXJcGLnL8hPFtFSj7yjTJCGMGEE3G/kzj4Fm+T/3pOnhxYjYBtOQGi+nsuDeKhOBS6qWdiSmp/S9J4GIEQU4okFxfeyklK9H2491IkYUgbG0mpiidGk0gOzkuKfSZ06whLl9o49pvxeSyL9OPpO72Wgrcoj3p445p1I0JThWZawI+ZXxB+bC3lfXDXaOuK5O4Njh6mENQ3rebl5VoBCen7DZjdG8iXmu5RJTYHtAtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LPncQRs+oqUMdvv8X1zP5Q8/+6v6+f5DRQF4Da73tCs=;
- b=C/OYGbQwleB+xkDcKSAEPT2+wNhdE5nM+yBkrU1ZMnQbd6vr2EGIjWLp1IQSPYJUBmDu+0gbGXiZHxroUWrha+PtaZvpxMlAd+fiUt+mm/zoYBQRT+vA9BBwvid+OqaMCu4/QnY44bD3ZiqxoQ3uzCxPrwf8WIBit36KkOeZ2j/jXwUjJbIAqMoTQK9PzZOYbZCJIW14dhgVk8fAUyYeHA9dww8F6OCdd0Xk32V1KGWAU33PrqnBodExWGQEMZsEc4sv3a35LLWEmIR8jh4a96lg572ENtgEhlmtkKx4NoWOh7F7+JnEgGnYYImMZldSqzl6F4p7XGvoYAXDgkSkLA==
+ bh=8wPMQiL0VI4RqX9OM083O0bTGh+OfpcHnf3AuXuFFBY=;
+ b=dqD1eemhILfjN/CrDJWe8Y2ZdHVWB6hXtKq6G11iPyUJ/zbVO5RGPUwB7iDXf5msGbyxPJwS3g7u8gxekKtk4ziwn8vY7q2vcwvRZVuMEYV3/LhRApiBGZ+5pfmmXO4FyeL4/S1XT7AvR3Dgo9bnuqiy2fTwVOYLKtm8YPSgOTGMJ3is1vNfFeiACRMxYUZY8N6bcPs9RRzmQReHhqOiOyv6Og+Dz35ONAEkr85VrQKadeu+lawaAWtFrSEreDkulboe6am1fnTs3/wVTMIZ/kassEKLKGR1WfpbknNSMP6fFvLRG6cHuHdrCFuXUrua1tHMrHgXh4x0RrmR5T0xxg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=marcan.st smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
+ 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LPncQRs+oqUMdvv8X1zP5Q8/+6v6+f5DRQF4Da73tCs=;
- b=gshcVknPWJ9gmAK3s7QFYOizsJvh25BPo7esEADtT5ZYxJ86bS1AVsOAXnlPcFneq7N/xUTGStfyhIhk2do7RumSaYLkkVlUKBrB65013TUrfjgyVyV9Xr1mLn+jMPcMhW7AoOzu4pDjkiG7jkqKOzoeUCb6Quwy7WsZiNthc9MIy9gXUQhjxt2R/VdzJC+U3k7JIoHjZ7JgPC3vZIGhuKScXaLCNqCUfgTEMLCU3QlaDRuYqhu1j67K2kZK8SoTVERbxcZZSkSh02Y8PCfLrp68eMrn/ROU9eoijEQV3PqlR0bIfKWBy+09asUeaFaWdYiAl4Y9mGuCz6b0+RdRfA==
-Received: from DM6PR17CA0002.namprd17.prod.outlook.com (2603:10b6:5:1b3::15)
- by SA1PR12MB6726.namprd12.prod.outlook.com (2603:10b6:806:255::13) with
+ bh=8wPMQiL0VI4RqX9OM083O0bTGh+OfpcHnf3AuXuFFBY=;
+ b=SRAQTX1FtoDjMv+CHFhOXOZDv6RfRkqM6U5i+mV4AxamE+kZlB2Qgym+QjIEfEeJA7QeSFzk3TLskGtTxNJr8GVAh7BunOuDhd5v0DaQV3kyNYGpDUCWbqQ6GYOYy1CLyrSUA6L+35tKbfi108vLSR9PiunA8vX59lQuEqPsDR9KbGVLAhQfgWZKjtw7TN1LxJRUotBFExiAOVhBXTQYJx49gR26ghh28DA5ugr1yQFnsDPkAdf+nZV3wIvESSL2EbWxR8m4ERHumh8ThLnYEvq0Ie/+TcmF1I6UX5nyDJXjWKAWph+WT1Rx58UqZ4zCeDHOCWUllhnubTPZlVimzw==
+Received: from MW2PR2101CA0015.namprd21.prod.outlook.com (2603:10b6:302:1::28)
+ by MN0PR12MB6344.namprd12.prod.outlook.com (2603:10b6:208:3d3::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.20; Tue, 13 Sep
- 2022 05:07:43 +0000
-Received: from DS1PEPF0000B073.namprd05.prod.outlook.com
- (2603:10b6:5:1b3:cafe::14) by DM6PR17CA0002.outlook.office365.com
- (2603:10b6:5:1b3::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.22 via Frontend
- Transport; Tue, 13 Sep 2022 05:07:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.16; Tue, 13 Sep
+ 2022 05:36:47 +0000
+Received: from CO1NAM11FT039.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:302:1:cafe::85) by MW2PR2101CA0015.outlook.office365.com
+ (2603:10b6:302:1::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.4 via Frontend
+ Transport; Tue, 13 Sep 2022 05:36:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.238) by
- DS1PEPF0000B073.mail.protection.outlook.com (10.167.17.4) with Microsoft SMTP
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ CO1NAM11FT039.mail.protection.outlook.com (10.13.174.110) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5612.12 via Frontend Transport; Tue, 13 Sep 2022 05:07:42 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Tue, 13 Sep
- 2022 05:07:42 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.5612.13 via Frontend Transport; Tue, 13 Sep 2022 05:36:46 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Tue, 13 Sep
+ 2022 05:36:46 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 12 Sep
- 2022 22:07:41 -0700
-Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29 via Frontend
- Transport; Mon, 12 Sep 2022 22:07:38 -0700
-Date:   Mon, 12 Sep 2022 22:07:37 -0700
-From:   Nicolin Chen <nicolinc@nvidia.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-CC:     Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
-        "will@kernel.org" <will@kernel.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-        "marcan@marcan.st" <marcan@marcan.st>,
-        "sven@svenpeter.dev" <sven@svenpeter.dev>,
-        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
-        "robdclark@gmail.com" <robdclark@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-        "mjrosato@linux.ibm.com" <mjrosato@linux.ibm.com>,
-        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
-        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
-        "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "vdumpa@nvidia.com" <vdumpa@nvidia.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "shameerali.kolothum.thodi@huawei.com" 
-        <shameerali.kolothum.thodi@huawei.com>,
-        "thunder.leizhen@huawei.com" <thunder.leizhen@huawei.com>,
-        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
-        "yangyingliang@huawei.com" <yangyingliang@huawei.com>,
-        "jon@solid-run.com" <jon@solid-run.com>,
-        "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [PATCH v6 1/5] iommu: Return -EMEDIUMTYPE for incompatible
- domain and device/group
-Message-ID: <YyAQGbG1NUEMN3jn@Asurada-Nvidia>
-References: <YxiRkm7qgQ4k+PIG@8bytes.org>
- <Yxig+zfA2Pr4vk6K@nvidia.com>
- <YxilZbRL0WBR97oi@8bytes.org>
- <YxjQiVnpU0dr7SHC@nvidia.com>
- <Yxnt9uQTmbqul5lf@8bytes.org>
- <YxoU8lw+qIw9woRL@nvidia.com>
- <YxqwQ+3OICPdEtk0@Asurada-Nvidia>
- <BN9PR11MB5276D4CDC551DEA5962F9A178C439@BN9PR11MB5276.namprd11.prod.outlook.com>
- <YxsshXKlidq8WgT+@nvidia.com>
- <BN9PR11MB527670BB3EEB81064DC811828C479@BN9PR11MB5276.namprd11.prod.outlook.com>
+ 2022 22:36:45 -0700
+Received: from mkumard.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Mon, 12 Sep 2022 22:36:43 -0700
+From:   Mohan Kumar <mkumard@nvidia.com>
+To:     <tiwai@suse.com>, <perex@perex.cz>, <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Mohan Kumar <mkumard@nvidia.com>
+Subject: [PATCH] ALSA: hda/tegra: set depop delay for tegra
+Date:   Tue, 13 Sep 2022 11:06:41 +0530
+Message-ID: <20220913053641.23299-1-mkumard@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB527670BB3EEB81064DC811828C479@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0000B073:EE_|SA1PR12MB6726:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e76b3ff-0212-4044-392f-08da9545e380
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT039:EE_|MN0PR12MB6344:EE_
+X-MS-Office365-Filtering-Correlation-Id: 20753624-a6c4-45dc-0890-08da9549f31a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ZqizB5ozo/odjB1NH7/0SLN3JH2vKgZL8CKGrtbJLwwkiMgZ5Igs1mFl54bcm7syCm5qn3ZJsbH0uwiy2utN68bCp9UtMBM8gTWp2WjrnsWecFdy8tRfkhz6qkzwWL68kVL9F6KKDtNWoxP8gG/Ai8IsOK4sb6GJuHO39VOUEw8+11C3y/ESjrBH3PaEb/RvTXk/BC41NJkSuEckfr/6E8NlydoV74Nfz9FUDo72QBUoHdNISfV7rG48mBarowj9TRxWZtspEoexCmTcPwDKBJfHcOMop5OhqdKY4NLT6aYci+H3gOK7pkXBANJsb1w0rI/TjvxcCycY5OuLMhDsxUwXUsejUUMwP9crK71Z+lYKUlREw8FAqvDOew90KZpKLSTXHGtT5opguv4/77GzqV/iyVIwNYGYP3L81PM6C6r9irX9cU9ZVz7VUo0DDJ8wj31nY0UnoJPv5LIZxepikUIc53DLu/MiWi29oeKIyDgD18ThLcIch4SZNVpzgtNM4RYDufpF0ovM4o/+s7XV5I+JSkIT6f5MGLcJ7gprD+cT6Hsx4H83Kc/DGwgLt6JuaHKxvKIUSao7mf4eUmjDKtXMCiMEP5Z+0kNBqJwm/3ICWoJBcoDFQUn5lTA3mtPBpohRLZfxMKvN/n90dA3h11FugQrYiq27Pk5VHEqmPuSi1BROqFEDo4l9V7YrqpxPB1Y1smvdnZdkFU75eUTEm5Z/dhjZt05iQjfBJtBfNkSBNn8Y6OQ5tPH4TdMuMRfzdIIoXDw49vcHKyrwcxMmFqojBJnzKjDjCTS/GISXniZM2BoIv8qzpt873wd6t3Kz
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(39860400002)(396003)(136003)(451199015)(46966006)(40470700004)(36840700001)(86362001)(336012)(82740400003)(478600001)(8676002)(33716001)(316002)(40460700003)(55016003)(356005)(54906003)(81166007)(70586007)(7406005)(8936002)(70206006)(4326008)(36860700001)(5660300002)(7416002)(82310400005)(26005)(47076005)(426003)(9686003)(41300700001)(40480700001)(6916009)(2906002)(186003)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: GWh5sA4cquPCKEmcJptFzNfOfmFrxW/t4lMwc5Eb/3kd6V3NmrkJ/4ob6wIt+j2t4JAiCBLOto9mW8Hx39GelMdzgSFIKKuU91WvlBsnacN8lWEeBBJMt752iew3Ni6SkGhIUdTlkV681X2Sgcn7idQ9sZQUZfP1OB87KRjIAyC0qegl8Nf3LtenmlJ7HwQ5hY+++kPbnAxJPfbY/QVEE7KqCCV7Xs5OHQH0lgBib5Q39J0S+mfBgtf6Mt0KJ9JxCa+X16HkkNZaTUT36iT1Ks4WAkatIjueKEwjks7cd/ZfeNHNbRNhCunBp6VXG+TqW7EJzrwhR3DyVPLk0Vn9Xg+/BUUNcZXvJdfHvEzalcIrNTswFCBzC6myGKLzsnLmrSOqk2s+nL7RBM6MBis6mnyKBcL7egKGI9qIfxJSh5l4Ye5BUxWr1y5bKxaJT2QMEihKsQjtCc1p8DJ9v+1vrTqsVU9VdvBOUW75R73UfaVzocXXobkUC9e354o46ZbMH9baQ+hx8eEUKMCfWOGbZg5qCMP66kIpc2my06Jn0/nYQ+Me/i7yLwtCxsVff2tLgxgIrQ5wNbSwEFtqj1K5wUeAAsaPrfs2C/f6QMzV5WaiDM+UcWx2xinbfmGtTk9nqfS6J+4i8upj12clZZMGrG9V8XPcvHsUdc4kszgRo9lebAi4/Jq4snLeC5MjU65QvLY7XFAxt3F2pMKiBJLKm3yK45pBcnzAey5iB4y0j/hWLr3LjTyQHFbOaLrg+1flFShrTLBjsPvsq3mG8IgbKlcmCXs9yNkBZHhKV9Y/ngBlF8/KZZIDg5id2q1rN03A
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(396003)(376002)(136003)(346002)(451199015)(46966006)(36840700001)(40470700004)(41300700001)(40460700003)(426003)(4326008)(26005)(83380400001)(107886003)(356005)(8936002)(36860700001)(40480700001)(81166007)(47076005)(186003)(1076003)(336012)(2616005)(316002)(8676002)(110136005)(478600001)(70206006)(36756003)(70586007)(82310400005)(86362001)(5660300002)(54906003)(82740400003)(4744005)(2906002)(7696005)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2022 05:07:42.5021
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2022 05:36:46.8973
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e76b3ff-0212-4044-392f-08da9545e380
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20753624-a6c4-45dc-0890-08da9549f31a
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS1PEPF0000B073.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT039.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6726
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6344
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 02:22:17AM +0000, Tian, Kevin wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> > From: Jason Gunthorpe <jgg@nvidia.com>
-> > Sent: Friday, September 9, 2022 8:08 PM
-> >
-> >
-> > > As discussed in a side thread a note might be added to exempt calling
-> > > kAPI outside of the iommu driver.
-> >
-> > Sadly, not really.. The driver is responsible to santize this if it is
-> > relevant. It is the main downside of this approach.
-> >
-> 
-> Better provide a clarification on what sanitization means.
-> 
-> e.g. I don't think we should change errno in those kAPIs to match the
-> definition in iommu subsystem since e.g. -EINVAL really means different
-> things in different context.
-> 
-> So the sanitization in iommu driver is probably that:
-> 
->   - If an external kAPI returns -EINVAL, convert it to -ENODEV given iommu
->     domain is iommu internal object hence unlikely for external kAPIs to
->     capture incompatibility issue between domain/device;
->   - Otherwise just pass whatever returned to the caller, following the definition
->     of "Same behavior as -ENODEV" above
+Reduce the suspend time by setting depop delay to 10ms for
+tegra.
 
-I added something similar. Thanks!
+Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+---
+ sound/pci/hda/patch_hdmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index ea30f00dc145..190647d018f9 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -266,6 +266,17 @@ struct iommu_ops {
- /**
-  * struct iommu_domain_ops - domain specific operations
-  * @attach_dev: attach an iommu domain to a device
-+ *              Rules of its return errno:
-+ *               EINVAL  - Exclusively, device and domain are incompatible. Must
-+ *                         avoid kernel prints along with this errno. An EINVAL
-+ *                         returned from a kAPI must be coverted to ENODEV if it
-+ *                         is device specific, or to some other reasonable errno
-+ *                         being listed below
-+ *               ENOMEM  - Out of memory
-+ *               ENOSPC  - No space left on device
-+ *               EBUSY   - Device is attached to a domain and cannot be changed
-+ *               ENODEV  - Device specific errors, not able to be attached
-+ *              <others> - Treated as ENODEV by the caller. Use is discouraged
-  * @detach_dev: detach an iommu domain from a device
-  * @map: map a physically contiguous memory region to an iommu domain
-  * @map_pages: map a physically contiguous set of pages of the same size to
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index 6c209cd26c0c..acaf6b790ee1 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -3984,6 +3984,7 @@ static int tegra_hdmi_init(struct hda_codec *codec)
+ 
+ 	generic_hdmi_init_per_pins(codec);
+ 
++	codec->depop_delay = 10;
+ 	codec->patch_ops.build_pcms = tegra_hdmi_build_pcms;
+ 	spec->chmap.ops.chmap_cea_alloc_validate_get_type =
+ 		nvhdmi_chmap_cea_alloc_validate_get_type;
+-- 
+2.17.1
+
