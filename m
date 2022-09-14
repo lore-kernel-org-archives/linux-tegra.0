@@ -2,257 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374D3ECAAD8
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Sep 2022 12:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 807E1ECAAD3
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Sep 2022 12:24:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbiINMVk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Sep 2022 08:21:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33800 "EHLO
+        id S229622AbiINMYN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Sep 2022 08:24:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiINMVj (ORCPT
+        with ESMTP id S229520AbiINMYM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Sep 2022 08:21:39 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2087.outbound.protection.outlook.com [40.107.92.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07927804B1;
-        Wed, 14 Sep 2022 05:21:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PbR+zzfjP4HNN6ooguiaJNzRNNhEKhDxbdSNCNP4eJuzVvLJthLxQs6nFvT8oh4Bl0RZCkB4WLY4Q4ec3twkWxhwOzj6wAvMNQW2yEJVzO7LsZt4xS3HZcs4reG86t6qKNhgfsoBx5euYPda5pIORWeoe9qLPFB5AUZASGI5Ha7q/FZLxPpRoe4FWZIU5aw/hMGydFhqZVPlvCfJp22OVk54xD1ftCGRRqgWX2hm3am9RHTwwnx9Wo5xtaJea+qGbZrXXsQ+VyJ/txzUsSILxEgHDZ6h7GDpiI0n5rgTSN4GdWvvyhW7sTbxOHGVnEa7YzLe6jhU7VH+Q+V0Z5pMWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vdLIMbVqaOsPhbO3kICscAXsiHjjabu2WcZsZzr02p0=;
- b=Z2YT/imcEQvNX/HsxdBI4D/c+fwldOERPC9vF8wJ9i8K3vcOiDbuPB6bIl17T/oIhdBpasi7nzb6hyMZiL78pjIOv03e+HiaPDpwOL0IcvbOWY1VkVtyx+xQYzxsaZHEHpa6vfb5cV/1sMLsuFhLuMZuRknZI05+pfY6DBDAEL5Td4wnAcrxw9TNiBoSKg08gvZKvVA6pHxVmhuT5fL7oU81LDYqXoBpjUxAIMfywCBXANTwQJxKCrbYeH5k7gYty1vtsYloEFWBdAzW1AqtftLnMxJtBGhsP/uv+3fucbmPubld0p58ZybQwF2jOdxJOr5upyzxyeMKaaEgCm6baA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vdLIMbVqaOsPhbO3kICscAXsiHjjabu2WcZsZzr02p0=;
- b=Imt7ezaE8OaVpqTV1FazEwnoVdMLpmMnoLUU83EZI9deQudjbkAknhbY3+Gu3sZanVmVCbocL/cDs2bLPym0HVojknelfp/YmIn8z6DpYZTFxFrtljvocDkq2u+Zn/4dS0YHV8lxjy4rGU8fSbs+SUg0LAVb/lD80JSSlvn4wv+cy4M4ns0r8X9kpM+gubzK+t3JjEnkYnKzGznV4o7ikHDb1EaYHRjgQzB1AmAlIITzPHKZlcyvY5paIFIgfQ6tJuSdJgNu72Qoz8SpK+YD1GTnjLxnn1P4SSD8L08YqCxWUypa0EVe2yQ1wtYguXDRtoKiBgvryq41go2KGSjAjQ==
-Received: from DS7PR03CA0171.namprd03.prod.outlook.com (2603:10b6:5:3b2::26)
- by SA0PR12MB4464.namprd12.prod.outlook.com (2603:10b6:806:9f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.14; Wed, 14 Sep
- 2022 12:21:36 +0000
-Received: from DM6NAM11FT056.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3b2:cafe::ef) by DS7PR03CA0171.outlook.office365.com
- (2603:10b6:5:3b2::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.20 via Frontend
- Transport; Wed, 14 Sep 2022 12:21:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT056.mail.protection.outlook.com (10.13.173.99) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5632.12 via Frontend Transport; Wed, 14 Sep 2022 12:21:35 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 14 Sep
- 2022 05:21:16 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- rnnvmail205.nvidia.com (10.129.68.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Wed, 14 Sep 2022 05:21:16 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Wed, 14 Sep 2022 05:21:15 -0700
-Received: from pshete-ubuntu.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Wed, 14 Sep 2022 05:21:12 -0700
-From:   Prathamesh Shete <pshete@nvidia.com>
-To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <jonathanh@nvidia.com>,
-        <thierry.reding@gmail.com>
-CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>,
-        <kyarlagadda@nvidia.com>, Manish Bhardwaj <mbhardwaj@nvidia.com>
-Subject: [PATCH] gpio: tegra186: Check GPIO pin permission before access.
-Date:   Wed, 14 Sep 2022 17:51:10 +0530
-Message-ID: <20220914122110.7246-1-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 14 Sep 2022 08:24:12 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7411A804AC;
+        Wed, 14 Sep 2022 05:24:11 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id l8so6085174wmi.2;
+        Wed, 14 Sep 2022 05:24:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=wBt4MJoWl/XDT9vy+Q1AkMM9o2ZOPWW9WHkHGa3sxhY=;
+        b=nWOFaA7ZwGlz54U+SMdBLHOLHi6dnpfbv8fIqYBxxOW7NbDJXlYLquPSy48OUCdZt1
+         Dv7sX4p+Y4QIr2EcuR/JksuUoWXbrhJuLvyqAC8j4HQNSDCnc2ZfmaXODU+e0eW/uL1i
+         uGaNnEZ3fBAvKzPqCnnUuglAHi5HCBa3J9Bed/b5v2WWx8Um0xORLaVCUSlalMEj5+YQ
+         H5anYejOx5PZUlxiDCsIxrB0Gj9lJ6akBja5oGxX4u4zBPoh5x1cPARYspxuGKB+9zha
+         5MwGqvab7xw90HlTnebqvoWf2IlVXD+VyxvOCrtnVogECUnV53Vz+hBspF7s6jUmNUXz
+         UIHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=wBt4MJoWl/XDT9vy+Q1AkMM9o2ZOPWW9WHkHGa3sxhY=;
+        b=QH7uOMhuAInBqXsYk4luszCPOGQdeyFUANLPBEQHCJdid4k/MabQvUblFoEbFBEe1y
+         Sqok6Wgcio1ZRheOJpMTqSsmHcH41KHAxpEZebzLpOmQjT31Dkak+Xz0cIsRKW6GVYrj
+         MhbL2PPS/pgj5UIuA9JkBJYCfOpMQ2Lw7mfFNOiwRomUAXGbJqN1LNyYaaZrEPKWKAG+
+         XsMnDcvVjS7FQvjvvTuC092tj5rW0utgRToahebbfEeujVHf3+2VxP4C+kEjIO9Fsfgm
+         zCqPZK7kvn7HVRByQRPUYHytuzDc2WW0Pc07m2GbVKGP6Jo79+JIgEVa+XGup+IEVkOp
+         2KAg==
+X-Gm-Message-State: ACgBeo106QJTEJinW7gI70zqHJEpDFzt/MWoqtBn5+D0XwocNbn48wUf
+        /YcPL3+FoyyDql5CKKn9QFF28nXREwI=
+X-Google-Smtp-Source: AA6agR5lupUogktVVOUvlWGaHhyOnVIxvwSjXlBRX6nCtOvIt8osQVcYYAWHrnhszVIBSsLTEhP5ZQ==
+X-Received: by 2002:a05:600c:3d0e:b0:3b4:9bd1:10be with SMTP id bh14-20020a05600c3d0e00b003b49bd110bemr2854372wmb.101.1663158249798;
+        Wed, 14 Sep 2022 05:24:09 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id q5-20020adff945000000b00228692033dcsm13236893wrr.91.2022.09.14.05.24.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Sep 2022 05:24:08 -0700 (PDT)
+Date:   Wed, 14 Sep 2022 14:24:06 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        jonathanh@nvidia.com, p.zabel@pengutronix.de,
+        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, anrao@nvidia.com,
+        smangipudi@nvidia.com, kyarlagadda@nvidia.com
+Subject: Re: [PATCH v2 4/4] mmc: sdhci-tegra: Use actual clock rate for SW
+ tuning correction
+Message-ID: <YyHH5i3Hon/QRxLF@orome>
+References: <20220914095628.26093-1-pshete@nvidia.com>
+ <20220914095628.26093-4-pshete@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT056:EE_|SA0PR12MB4464:EE_
-X-MS-Office365-Filtering-Correlation-Id: c19a90cf-3e6e-47c3-19d6-08da964baac1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8211l9JAlnzL7JrdeACk8md6K4XkcSSWRTihPGOPsVI+vpUXzRc1CaLufFm8hqLsVO57wAlKEA7NNSpsn8rKlpEd45NAf9rMBMrRRsCOtrzeFWh+96bjMzyJnJbFW7t5VNLPUMAnyEvYXh1HLaTGS36BEV3oaB9CpmHRqgKuhxvtJER1VWWuJ4bL46sAliS4CcvJbZBwNNHXldQzpkipFcImvw0l4i6HZ/1viKvw/WcsxN/D7+fXywleWGl97l/nFh1LDRdlt0nEKr0CBImJUuGe5kBHtHCwK+Zh7yZLNdbibyOIaqW7HkyFmMAhKxfkrO8eHkvxAglptIO263xDMM/IFD1DrtQ4v3JVF6Fe8py3NMHu+B9E5K/oXs4t/VN1V3yuUe5yS28Bt1piY/Qlvia0awJ4G86UgnciCMtbtd9KUXO+an6b6tWvO8pNOn6dafzi+vBFUUfL1y1OeNU6jJtDwvMTjDEfAalDik7K6WFRBk7WLVglH8urioh61RFWj5SwFIGki+tHm6ysbJxgSXpuio22bDhhyF6ZKwtZEiR4GFTpacE4reiOFzdYmpKjVFOemNkjOdTieMFm8Qgr8QO4+2S+zGiOjA7tNNnU8TqR2NGf0VsqOKQC5Crod3b72tPUCYm1XdGMjrPzTZwiL3TJZbIhbIUsKoUn7J/7lsPnkmvjWicL9BIsaK21ijxa2u1EznAt0438cTWW1EbiZeEiIMbgzCxgBGvFd1YsnvBHzgFJJitNtCmrHPGOzhjpyk8m2x/LezgA/nW+/UcarQ==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(346002)(396003)(136003)(451199015)(40470700004)(46966006)(36840700001)(70206006)(336012)(26005)(54906003)(36756003)(47076005)(107886003)(1076003)(82740400003)(316002)(36860700001)(5660300002)(8936002)(356005)(8676002)(7696005)(4326008)(110136005)(2906002)(40480700001)(86362001)(7636003)(83380400001)(186003)(40460700003)(70586007)(82310400005)(41300700001)(478600001)(2616005)(426003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2022 12:21:35.6279
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c19a90cf-3e6e-47c3-19d6-08da964baac1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT056.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4464
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zOKpBxCMi8Uq2OO3"
+Content-Disposition: inline
+In-Reply-To: <20220914095628.26093-4-pshete@nvidia.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This change checks if we have the necessary permission to
-access the GPIO. For devices that have support for virtualisation
-we need to check both the TEGRA186_GPIO_VM_REG and the
-TEGRA186_GPIO_SCR_REG registers. For device that do not have
-virtualisation support for GPIOs we only need to check the
-TEGRA186_GPIO_SCR_REG register.
 
-Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
----
- drivers/gpio/gpio-tegra186.c | 71 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+--zOKpBxCMi8Uq2OO3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 54d9fa7da9c1..e6fc3c9b1e9f 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -26,6 +26,22 @@
- 
- #define TEGRA186_GPIO_INT_ROUTE_MAPPING(p, x) (0x14 + (p) * 0x20 + (x) * 4)
- 
-+#define  TEGRA186_GPIO_VM_REG			0x00
-+#define  TEGRA186_GPIO_VM_RW_MASK		0x03
-+#define  TEGRA186_GPIO_SCR_REG			0x04
-+#define  TEGRA186_GPIO_SCR_DIFF			0x08
-+#define  TEGRA186_GPIO_SCR_BASE_DIFF		0x40
-+#define  TEGRA186_GPIO_SCR_SEC_WEN		BIT(28)
-+#define  TEGRA186_GPIO_SCR_SEC_REN		BIT(27)
-+#define  TEGRA186_GPIO_SCR_SEC_G1W		BIT(9)
-+#define  TEGRA186_GPIO_SCR_SEC_G1R		BIT(1)
-+#define  TEGRA186_GPIO_FULL_ACCESS		(TEGRA186_GPIO_SCR_SEC_WEN | \
-+						 TEGRA186_GPIO_SCR_SEC_REN | \
-+						 TEGRA186_GPIO_SCR_SEC_G1R | \
-+						 TEGRA186_GPIO_SCR_SEC_G1W)
-+#define  TEGRA186_GPIO_SCR_SEC_ENABLE		(TEGRA186_GPIO_SCR_SEC_WEN | \
-+						 TEGRA186_GPIO_SCR_SEC_REN)
-+
- /* control registers */
- #define TEGRA186_GPIO_ENABLE_CONFIG 0x00
- #define  TEGRA186_GPIO_ENABLE_CONFIG_ENABLE BIT(0)
-@@ -77,6 +93,7 @@ struct tegra_gpio_soc {
- 	unsigned int num_irqs_per_bank;
- 
- 	const struct tegra186_pin_range *pin_ranges;
-+	bool has_vm_support;
- 	unsigned int num_pin_ranges;
- 	const char *pinmux;
- 	bool has_gte;
-@@ -129,6 +146,45 @@ static void __iomem *tegra186_gpio_get_base(struct tegra_gpio *gpio,
- 	return gpio->base + offset + pin * 0x20;
- }
- 
-+static void __iomem *tegra186_gpio_get_secure_base(struct tegra_gpio *gpio,
-+					    unsigned int pin)
-+{
-+	const struct tegra_gpio_port *port;
-+	unsigned int offset;
-+
-+	port = tegra186_gpio_get_port(gpio, &pin);
-+	if (!port)
-+		return NULL;
-+
-+	offset = port->bank * 0x1000 + port->port * TEGRA186_GPIO_SCR_BASE_DIFF;
-+
-+	return gpio->secure + offset + pin * TEGRA186_GPIO_SCR_DIFF;
-+}
-+
-+static inline bool tegra186_gpio_is_accessible(struct tegra_gpio *gpio, u32 pin)
-+{
-+	void __iomem *secure;
-+	u32 val;
-+
-+	secure = tegra186_gpio_get_secure_base(gpio, pin);
-+
-+	if (gpio->soc->has_vm_support) {
-+		val = readl(secure + TEGRA186_GPIO_VM_REG);
-+		if ((val & TEGRA186_GPIO_VM_RW_MASK) != TEGRA186_GPIO_VM_RW_MASK)
-+			return false;
-+	}
-+
-+	val = __raw_readl(secure + TEGRA186_GPIO_SCR_REG);
-+
-+	if ((val & TEGRA186_GPIO_SCR_SEC_ENABLE) == 0)
-+		return true;
-+
-+	if ((val & TEGRA186_GPIO_FULL_ACCESS) == TEGRA186_GPIO_FULL_ACCESS)
-+		return true;
-+
-+	return false;
-+}
-+
- static int tegra186_gpio_get_direction(struct gpio_chip *chip,
- 				       unsigned int offset)
- {
-@@ -136,6 +192,9 @@ static int tegra186_gpio_get_direction(struct gpio_chip *chip,
- 	void __iomem *base;
- 	u32 value;
- 
-+	if (!tegra186_gpio_is_accessible(gpio, offset))
-+		return -EPERM;
-+
- 	base = tegra186_gpio_get_base(gpio, offset);
- 	if (WARN_ON(base == NULL))
- 		return -ENODEV;
-@@ -154,6 +213,9 @@ static int tegra186_gpio_direction_input(struct gpio_chip *chip,
- 	void __iomem *base;
- 	u32 value;
- 
-+	if (!tegra186_gpio_is_accessible(gpio, offset))
-+		return -EPERM;
-+
- 	base = tegra186_gpio_get_base(gpio, offset);
- 	if (WARN_ON(base == NULL))
- 		return -ENODEV;
-@@ -177,6 +239,9 @@ static int tegra186_gpio_direction_output(struct gpio_chip *chip,
- 	void __iomem *base;
- 	u32 value;
- 
-+	if (!tegra186_gpio_is_accessible(gpio, offset))
-+		return -EPERM;
-+
- 	/* configure output level first */
- 	chip->set(chip, offset, level);
- 
-@@ -293,6 +358,10 @@ static void tegra186_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	void __iomem *base;
- 	u32 value;
- 
-+	if (!tegra186_gpio_is_accessible(gpio, offset)){
-+		pr_err("GPIO not accessible\n");
-+		return;
-+	}
- 	base = tegra186_gpio_get_base(gpio, offset);
- 	if (WARN_ON(base == NULL))
- 		return;
-@@ -1042,6 +1111,7 @@ static const struct tegra_gpio_soc tegra194_main_soc = {
- 	.num_pin_ranges = ARRAY_SIZE(tegra194_main_pin_ranges),
- 	.pin_ranges = tegra194_main_pin_ranges,
- 	.pinmux = "nvidia,tegra194-pinmux",
-+	.has_vm_support = true,
- };
- 
- #define TEGRA194_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-@@ -1067,6 +1137,7 @@ static const struct tegra_gpio_soc tegra194_aon_soc = {
- 	.instance = 1,
- 	.num_irqs_per_bank = 8,
- 	.has_gte = true,
-+	.has_vm_support = false,
- };
- 
- #define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
--- 
-2.17.1
+On Wed, Sep 14, 2022 at 03:26:28PM +0530, Prathamesh Shete wrote:
+> Ensure tegra_host member "curr_clk_rate" holds the actual clock rate
+> instead of requested clock rate for proper use during tuning correction
+> algorithm.
 
+Ideally there shouldn't be a deviation between host_clk and the actual
+clock rate that was set. Perhaps it'd be good to provide a bit more
+information on what the deviation can be and when that happens, as well
+as what the consequences are. That would make it a bit more obvious why
+this fix is needed.
+
+Thierry
+
+>=20
+> Fixes: ea8fc5953e8b ("mmc: tegra: update hw tuning process")
+>=20
+> Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
+a.c
+> index 7d16dc41fe91..42b018d4ebc3 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -778,7 +778,7 @@ static void tegra_sdhci_set_clock(struct sdhci_host *=
+host, unsigned int clock)
+>  		dev_err(dev, "failed to set clk rate to %luHz: %d\n",
+>  			host_clk, err);
+> =20
+> -	tegra_host->curr_clk_rate =3D host_clk;
+> +	tegra_host->curr_clk_rate =3D clk_get_rate(pltfm_host->clk);
+>  	if (tegra_host->ddr_signaling)
+>  		host->max_clk =3D host_clk;
+>  	else
+> --=20
+> 2.17.1
+>=20
+
+--zOKpBxCMi8Uq2OO3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMhx+YACgkQ3SOs138+
+s6HfBxAAnPdKARLXzcEwbcSdBGD3yO9uo9oEcuzg73LbgObCNv59HF6nhTNxXW+S
+qZ2zUtF0sGpTkWFgMCW1BepxdMe5VrsrDLPJizMVALY+bOvDamzpFOz68gRd/g7B
+lJaRRWhpTbnZmYuk6M7u9NHRTkwFfbgbruRscwfEjAV2dFYBAPatYLd0OS+cqhyC
+137ug/6Dtftt4qtd3Wva6EnxHf14HOI/DlrvsnnQr1BLYxYR5lExIvViJmqlKT9N
+2ALPizSJPovNoQdUU76+VJrY+4Q2edqTV+26KIiVUdnsbFznmZos5Gfi92tCXi+K
+atf4Cch3S6eUKjEFcJUGLWPwOvr2wCwl6J+5Tt+pr9YNZX7Sa5A2ftYf8g3IGr+l
+iWI5RUNXoAWdcG7Xq4ut/dJblSXj+al527q4Cnt8hkTmadMyWRJanIBjuyTcF3hD
+3h4oVnaAF2aS9hmGvt/3B9YdEucXk3OPLva7lZTMype95/E5BvQNZswMTTSHPr65
+4zVIetLfStlYtzTAp3sDmgtksmRz3Ksn9amp0pJGuFcLMw6VXKBiAcWPtHQ4epH5
+ID/Kbv/zOIIWbOnFcXAsEN5A+EB7bQR1tP/MvGTITaD+0rZMSatbkSBmp6y2yyFM
+1U7h12sAuo2gi3jHGBw9cCkX3uZv8mjJCAEU1w3Lhsi/eASM8oc=
+=RpCl
+-----END PGP SIGNATURE-----
+
+--zOKpBxCMi8Uq2OO3--
