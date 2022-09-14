@@ -2,49 +2,49 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0ED4ECAAD3
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Sep 2022 09:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919A0C6FA89
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Sep 2022 09:07:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230446AbiINJDK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Sep 2022 05:03:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47658 "EHLO
+        id S231238AbiINJHC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Sep 2022 05:07:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230200AbiINJCQ (ORCPT
+        with ESMTP id S230304AbiINJGU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Sep 2022 05:02:16 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D23776457;
-        Wed, 14 Sep 2022 02:01:54 -0700 (PDT)
+        Wed, 14 Sep 2022 05:06:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDE9754A3;
+        Wed, 14 Sep 2022 02:03:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 597C2B8170C;
-        Wed, 14 Sep 2022 09:01:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60702C43140;
-        Wed, 14 Sep 2022 09:01:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E31BA6190D;
+        Wed, 14 Sep 2022 09:02:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD70C43470;
+        Wed, 14 Sep 2022 09:02:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663146111;
-        bh=RUselDYlOcAsICvqJ0Jg87IqgKRD31uJXYIX0ZCS6UY=;
+        s=k20201202; t=1663146174;
+        bh=w8J7WeZoAmtAVa2bitCJ9ueRJcsRqLvy4sotjojZBno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ofFq37MMfbAwLMLRMlA7/KCRm3sycWVGj3qyvRzOprqX/jNWpOOh9aOTG4fJzBxW4
-         jp6hUQ1sX3r9WGLZDMIAmaJ+Q3n7ksEFxMpvIpefzV8PAwygYSN2hw1EBBkBY1hUdo
-         IFQjezoBUHbztvQ3F3YE3JVU7FazWFu7J05kqwBRCSes6NOHUiSBMxxjpR0gy3W2Pa
-         j4VTEcglxL68l/UgZQH1Z2K9pRN7BbwjoMMErbTz78k3w43bsdugC1w/olPl0ntOp8
-         n7QVQlWrU6VVtudTd4TLq1Op4je7JaFwAyiozftMq3Ayxl0w4zc2m4CmbY+kqlkore
-         /uQhgfdp4Y9jg==
+        b=NJyojNLIXrXCdLruTMLXRzmQUNW+8zTnnDFK6QV2B4AwqAab9VC9ZzMyLI/q461bv
+         Bdb56xr+YmJAaKIP1wNRCyE8ySu4RpudwGEVEMMwJ86NFsiwkO5IYMQuqjL7/1W4Cp
+         o1CdtBho7cH1v4Z1pVHHhGRmr9Kho1Zt+Zlqlc8+iivReS0uhWEuNa7U2KJI48fIVt
+         ieog4F0Z5duiuFGcg5CleXHLN7hDwgKBZ3u4k3O08/diYynnN7Upkr/wBpeIaQwSAv
+         VU53Zd//A7NRYL8I+5YZbjdW4qJSOi4DAxM6q6qL1ECvTI2zbyJNAwA0BZYNhk2rLB
+         JO4ZWXIJ+8GfQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Mohan Kumar <mkumard@nvidia.com>, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <sashal@kernel.org>, perex@perex.cz,
         tiwai@suse.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        spujar@nvidia.com, digetx@gmail.com, alsa-devel@alsa-project.org,
+        digetx@gmail.com, spujar@nvidia.com, alsa-devel@alsa-project.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.19 13/22] ALSA: hda/tegra: Align BDL entry to 4KB boundary
-Date:   Wed, 14 Sep 2022 05:00:54 -0400
-Message-Id: <20220914090103.470630-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 09/16] ALSA: hda/tegra: Align BDL entry to 4KB boundary
+Date:   Wed, 14 Sep 2022 05:02:17 -0400
+Message-Id: <20220914090224.470913-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220914090103.470630-1-sashal@kernel.org>
-References: <20220914090103.470630-1-sashal@kernel.org>
+In-Reply-To: <20220914090224.470913-1-sashal@kernel.org>
+References: <20220914090224.470913-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -71,10 +71,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-index 7debb2c76aa62..976a112c7d006 100644
+index 773f4903550a0..f0e556f2ccf69 100644
 --- a/sound/pci/hda/hda_tegra.c
 +++ b/sound/pci/hda/hda_tegra.c
-@@ -474,7 +474,8 @@ MODULE_DEVICE_TABLE(of, hda_tegra_match);
+@@ -451,7 +451,8 @@ MODULE_DEVICE_TABLE(of, hda_tegra_match);
  static int hda_tegra_probe(struct platform_device *pdev)
  {
  	const unsigned int driver_flags = AZX_DCAPS_CORBRP_SELF_CLEAR |
