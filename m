@@ -2,156 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC909ECAAD3
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Sep 2022 18:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B443C6FA82
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Sep 2022 19:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbiINSVR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Sep 2022 14:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60408 "EHLO
+        id S229695AbiINTxU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Sep 2022 15:53:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbiINSVQ (ORCPT
+        with ESMTP id S229625AbiINTxS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Sep 2022 14:21:16 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A5CB8034F;
-        Wed, 14 Sep 2022 11:21:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663179675; x=1694715675;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PxGMmhd74kJ3cxcKvpu6UJtjQtuixYNhwOFyvgZmibM=;
-  b=XTuN4aPnWbcnzlKXMNssn2YQxyH6TNkRAoDBv0oYc7mVC1vS8aOG7mQ1
-   kvqueF4VFkXBiNsjxqvUQlTDJX/k/fOiCOamrNvhfrq1XxH5MfhujQt79
-   A2+4NWh3ZVaWJGHdBW/X/xpZ1cDD2m0cbbnhQQFTG+iGI3ywDEAxu06Xi
-   DM0C4OlY+tV/nE6F+h+y/SmuinkFLjsvx/F/fjXdpzobyGJOqxuQCFJFG
-   SXz6K3AzzRKhGaxp34vewBggNgj63v8PyNY28bdt0Pq+tQrT706d4mEtv
-   cXAOBnI03c71tnXUfaVLsmKHmkv2juhN1Rj9XzJNFGGv2LRYgynONnkLF
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10470"; a="278235051"
-X-IronPort-AV: E=Sophos;i="5.93,315,1654585200"; 
-   d="scan'208";a="278235051"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2022 11:21:14 -0700
-X-IronPort-AV: E=Sophos;i="5.93,315,1654585200"; 
-   d="scan'208";a="679169061"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.252.32.55])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2022 11:21:12 -0700
-Message-ID: <05686061-e17e-fcd6-e570-a9ae159cb51c@intel.com>
-Date:   Wed, 14 Sep 2022 21:21:07 +0300
+        Wed, 14 Sep 2022 15:53:18 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AF5A77287B;
+        Wed, 14 Sep 2022 12:53:17 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 956841576;
+        Wed, 14 Sep 2022 12:53:23 -0700 (PDT)
+Received: from [10.57.18.118] (unknown [10.57.18.118])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2CB443F73B;
+        Wed, 14 Sep 2022 12:53:12 -0700 (PDT)
+Message-ID: <5f049bb8-76e6-901a-9f8e-b48d270bc4a0@arm.com>
+Date:   Wed, 14 Sep 2022 20:53:07 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.11.0
-Subject: Re: [PATCH v2 3/4] mmc: sdhci-tegra: Issue CMD and DAT resets
- together
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Prathamesh Shete <pshete@nvidia.com>
-Cc:     ulf.hansson@linaro.org, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        anrao@nvidia.com, smangipudi@nvidia.com, kyarlagadda@nvidia.com
-References: <20220914095628.26093-1-pshete@nvidia.com>
- <20220914095628.26093-3-pshete@nvidia.com> <YyHHIPbXnLiPe/vn@orome>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <YyHHIPbXnLiPe/vn@orome>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 4/5] iommu: Regulate errno in ->attach_dev callback
+ functions
+Content-Language: en-GB
+To:     Nicolin Chen <nicolinc@nvidia.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     joro@8bytes.org, suravee.suthikulpanit@amd.com, will@kernel.org,
+        robdclark@gmail.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        konrad.dybcio@somainline.org, matthias.bgg@gmail.com,
+        heiko@sntech.de, orsonzhai@gmail.com,
+        baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
+        thierry.reding@gmail.com, sricharan@codeaurora.org,
+        yong.wu@mediatek.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+        tglx@linutronix.de, shameerali.kolothum.thodi@huawei.com,
+        thunder.leizhen@huawei.com, christophe.jaillet@wanadoo.fr,
+        yangyingliang@huawei.com, jon@solid-run.com, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+References: <20220913082448.31120-1-nicolinc@nvidia.com>
+ <20220913082448.31120-5-nicolinc@nvidia.com> <YyB3F/o3RfymqiFW@myrica>
+ <YyGaqsXSDMn8R12R@nvidia.com> <YyGjtsB2Yq4fQICS@myrica>
+ <YyIWQ6rX6AR9KX5E@Asurada-Nvidia>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <YyIWQ6rX6AR9KX5E@Asurada-Nvidia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14/09/22 15:20, Thierry Reding wrote:
-> On Wed, Sep 14, 2022 at 03:26:27PM +0530, Prathamesh Shete wrote:
->> In case of error condition to avoid system crash
->> Tegra SDMMC controller requires CMD and DAT resets
->> issued together.
-> 
-> It might be worth specifying exactly what "system crash" means. Does
-> this always happen (i.e. do we have a problem right now?) or are there
-> specific circumstances that cause the crash.
-> 
->> This is applicable to Tegra186 and later chips.
+On 2022-09-14 18:58, Nicolin Chen wrote:
+> On Wed, Sep 14, 2022 at 10:49:42AM +0100, Jean-Philippe Brucker wrote:
+>> External email: Use caution opening links or attachments
 >>
->> Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
->> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
->> ---
->>  drivers/mmc/host/sdhci-tegra.c |  3 ++-
->>  drivers/mmc/host/sdhci.c       | 11 ++++++++---
->>  drivers/mmc/host/sdhci.h       |  2 ++
->>  3 files changed, 12 insertions(+), 4 deletions(-)
 >>
->> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
->> index b66b0cc51497..7d16dc41fe91 100644
->> --- a/drivers/mmc/host/sdhci-tegra.c
->> +++ b/drivers/mmc/host/sdhci-tegra.c
->> @@ -1530,7 +1530,8 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
->>  		  SDHCI_QUIRK_NO_HISPD_BIT |
->>  		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
->>  		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
->> -	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
->> +	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
->> +		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
->>  	.ops  = &tegra186_sdhci_ops,
->>  };
->>  
->> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->> index 7689ffec5ad1..289fa8ae4866 100644
->> --- a/drivers/mmc/host/sdhci.c
->> +++ b/drivers/mmc/host/sdhci.c
->> @@ -3063,9 +3063,14 @@ static bool sdhci_request_done(struct sdhci_host *host)
->>  		 * Spec says we should do both at the same time, but Ricoh
->>  		 * controllers do not like that.
->>  		 */
-> 
-> The comment above seems to indicate that the current behavior (i.e.
-> splitting the CMD and DATA resets) is actually the quirk, so I wonder if
-> this perhaps should be reversed? I suppose it could be difficult to
-> track down the exact controllers that need the separate resets, but this
-> might be worth doing. It's possible that other controllers might run
-> into the same issue that we are if they work strictly to the spec.
-> 
-> Adrian, any ideas on how much of this is just cargo-culted? Do we play
-> it safe and do the "double workaround" or do we want to attempt to
-> rectify this by adding a Ricoh-specific quirk?
-
-It is a good question, but it has been that way for a very long time,
-and the spec tends to document them separately anyway, so it doesn't
-seem there is much reason to change.
-
-> 
-> Thierry
-> 
->> -		sdhci_do_reset(host, SDHCI_RESET_CMD);
->> -		sdhci_do_reset(host, SDHCI_RESET_DATA);
->> -
->> +		if (host->quirks2 &
->> +			SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER) {
->> +			sdhci_do_reset(host, SDHCI_RESET_CMD |
->> +					SDHCI_RESET_DATA);
->> +		} else {
->> +			sdhci_do_reset(host, SDHCI_RESET_CMD);
->> +			sdhci_do_reset(host, SDHCI_RESET_DATA);
->> +		}
->>  		host->pending_reset = false;
->>  	}
->>  
->> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->> index 95a08f09df30..8045308f7859 100644
->> --- a/drivers/mmc/host/sdhci.h
->> +++ b/drivers/mmc/host/sdhci.h
->> @@ -480,6 +480,8 @@ struct sdhci_host {
->>   * block count.
->>   */
->>  #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
->> +/* Issue CMD and DATA reset together */
->> +#define SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER      (1<<19)
->>  
->>  	int irq;		/* Device IRQ */
->>  	void __iomem *ioaddr;	/* Mapped address */
->> -- 
->> 2.17.1
+>> On Wed, Sep 14, 2022 at 06:11:06AM -0300, Jason Gunthorpe wrote:
+>>> On Tue, Sep 13, 2022 at 01:27:03PM +0100, Jean-Philippe Brucker wrote:
+>>>> I think in the future it will be too easy to forget about the constrained
+>>>> return value of attach() while modifying some other part of the driver,
+>>>> and let an external helper return EINVAL. So I'd rather not propagate ret
+>>>> from outside of viommu_domain_attach() and finalise().
+>>>
+>>> Fortunately, if -EINVAL is wrongly returned it only creates an
+>>> inefficiency, not a functional problem. So we do not need to be
+>>> precise here.
 >>
+>> Ah fair. In that case the attach_dev() documentation should indicate that
+>> EINVAL is a hint, so that callers don't rely on it (currently words "must"
+>> and "exclusively" indicate that returning EINVAL for anything other than
+>> device-domain incompatibility is unacceptable). The virtio-iommu
+>> implementation may well return EINVAL from the virtio stack or from the
+>> host response.
+> 
+> How about this?
+> 
+> + * * EINVAL    - mainly, device and domain are incompatible, or something went
+> + *               wrong with the domain. It's suggested to avoid kernel prints
+> + *               along with this errno. And it's better to convert any EINVAL
+> + *               returned from kAPIs to ENODEV if it is device-specific, or to
+> + *               some other reasonable errno being listed below
 
+FWIW, I'd say something like:
+
+"The device and domain are incompatible. If this is due to some previous 
+configuration of the domain, drivers should not log an error, since it 
+is legitimate for callers to test reuse of an existing domain. 
+Otherwise, it may still represent some fundamental problem."
+
+And then at the public interfaces state it from other angle:
+
+"The device and domain are incompatible. If the domain has already been 
+used or configured in some way, attaching the same device to a different 
+domain may be expected to succeed. Otherwise, it may still represent 
+some fundamental problem."
+
+[ and to save another mail, I'm not sure copying the default comment for 
+ENOSPC is all that helpful either - what is "space" for something that 
+isn't a storage device? I'd guess limited hardware resources in some 
+form, but in the IOMMU context, potential confusion with address space 
+is maybe a little too close for comfort? ]
+
+>>>> Since we can't guarantee that APIs like virtio or ida won't ever return
+>>>> EINVAL, we should set all return values:
+>>>
+>>> I dislike this alot, it squashes all return codes to try to optimize
+>>> an obscure failure path :(
+> 
+> Hmm...should I revert all the driver changes back to this version?
+
+Yeah, I don't think we need to go too mad here. Drivers shouldn't emit 
+their *own* -EINVAL unless appropriate, but if it comes back from some 
+external API then that implies something's gone unexpectedly wrong 
+anyway - maybe it's a transient condition and a subsequent different 
+attach might actually work out OK? We can't really say in general. 
+Besides, if the driver sees an error which implies it's done something 
+wrong itself, it probably shouldn't be trusted to try to reason about it 
+further. The caller can handle any error as long as we set their 
+expectations correctly.
+
+Thanks,
+Robin.
