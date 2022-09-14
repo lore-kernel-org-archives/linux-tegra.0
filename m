@@ -2,101 +2,205 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE5D9C6FA8A
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Sep 2022 11:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9EDECAAD3
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Sep 2022 12:08:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbiINLNE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Sep 2022 07:13:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46318 "EHLO
+        id S230016AbiINMIq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Sep 2022 08:08:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbiINLNC (ORCPT
+        with ESMTP id S229952AbiINMIo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Sep 2022 07:13:02 -0400
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [IPv6:2001:690:2100:1::15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65EB35E643;
-        Wed, 14 Sep 2022 04:12:58 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 1F4326007C12;
-        Wed, 14 Sep 2022 12:12:55 +0100 (WEST)
-X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
-        tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
-        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
-        with LMTP id 8uI3pcrmVLhY; Wed, 14 Sep 2022 12:12:52 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id AB2646007C0F;
-        Wed, 14 Sep 2022 12:12:52 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
-        s=mail; t=1663153972;
-        bh=1F25R9TmJ+XPgpvmFc9bytaCvAg1W4j5vCdm/FevPeE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=uPbB+mm/PWnKFCI8EFCLMN8MceDDQECzv95fG9Ib6FDWPUcVwVcdsHZ4QvqKHkmuy
-         sIQi2sx5Urt9Rth1CDfq2zH/xzo5wrc2TBJrlCL62bynq5AQXDSPlkJYzp3MZCirAl
-         zdROKm4ZL5kbuTphzwd+I/VV9t/rvLDa9dnknPJk=
-Received: from wslaptop.lan (unknown [IPv6:2001:818:dcb5:dc00:7a88:7f12:8ed8:518d])
-        (Authenticated sender: ist187313)
-        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 4304A360089;
-        Wed, 14 Sep 2022 12:12:52 +0100 (WEST)
-From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: tegra: smaug: Add Bluetooth node
-Date:   Wed, 14 Sep 2022 12:12:20 +0100
-Message-Id: <20220914111221.862929-2-diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20220914111221.862929-1-diogo.ivo@tecnico.ulisboa.pt>
-References: <20220914111221.862929-1-diogo.ivo@tecnico.ulisboa.pt>
+        Wed, 14 Sep 2022 08:08:44 -0400
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 536E17F26A;
+        Wed, 14 Sep 2022 05:08:43 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id x23-20020a056830409700b00655c6dace73so7886297ott.11;
+        Wed, 14 Sep 2022 05:08:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=hMLOKeXHOSnfU4zqlH09bFkg9yKTy1Fq4MgQhLwV+DM=;
+        b=WqKPOl6rGbJkJDcmUZJKm9+cFsO7LUXmJzzIuABQtOGMH61PFFFE6DlEYv5XcyZurb
+         P6ih1dm839xQss4jsNECSTSPLjfY66ziaAgWveGhr2r59MzK9oAUlis6efayvsrybFbL
+         1kORO6DN4zFFWAUMoq9TWm/iWyYw3pElSDmLGBM4SszCmo39CXNRkIyU+gPW5tCXOloC
+         V6YpX0IY3pL7ig46D6oJbv9tGQn4UM8RdXuqqHRJzpc+rwhDM3+zKi08QN7s+0mwKpsD
+         S5QrYU1BxPkKqFgLxb2m3lGOWu3w7Te37yyPn8In99e0PLNrHUPXbzHjNsKPN5baXsGD
+         RQGQ==
+X-Gm-Message-State: ACgBeo3RF0fSJ34gdTAuMpZKTGEbcC/2BhMzccgXZf8ed4FTwUtkwSbu
+        yG3/O354+F9TwmC4hDvwxA==
+X-Google-Smtp-Source: AA6agR4qmKdSRMjr6cCYgddorY7oSjwFoX8ZUGglOu9qJOO8G4H+NFYqgp2cN0UGOoshspqJbqDiNQ==
+X-Received: by 2002:a05:6830:6104:b0:654:fb1:faba with SMTP id ca4-20020a056830610400b006540fb1fabamr10605314otb.183.1663157322251;
+        Wed, 14 Sep 2022 05:08:42 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m26-20020a0568301e7a00b006339b36127dsm7172351otr.3.2022.09.14.05.08.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Sep 2022 05:08:41 -0700 (PDT)
+Received: (nullmailer pid 1869045 invoked by uid 1000);
+        Wed, 14 Sep 2022 12:08:40 -0000
+Date:   Wed, 14 Sep 2022 07:08:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-tegra@vger.kernel.org, Ashish Mhetre <amhetre@nvidia.com>
+Subject: Re: [PATCH v2 3/8] dt-bindings: Add bindings for Tegra234 NVDEC
+Message-ID: <20220914120840.GA1837218-robh@kernel.org>
+References: <20220913131447.2877280-1-cyndis@kapsi.fi>
+ <20220913131447.2877280-4-cyndis@kapsi.fi>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220913131447.2877280-4-cyndis@kapsi.fi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Google Pixel C contains a BRCM4354 Wi-Fi + BT module.
-Add a DT node for its BT functionality. Tested on Pixel C.
+On Tue, Sep 13, 2022 at 04:14:41PM +0300, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> Update NVDEC bindings for Tegra234. This new engine version only has
+> two memory clients, but now requires three clocks, and as a bigger
+> change the engine loads firmware from a secure carveout configured by
+> the bootloader.
+> 
+> For the latter, we need to add a phandle to the memory controller
+> to query the location of this carveout, and several other properties
+> containing offsets into the firmware inside the carveout. These
+> properties are intended to be populated through a device tree overlay
+> configured at flashing time, so that the values correspond to the
+> flashed NVDEC firmware.
+> 
+> As the binding was getting large with many conditional properties,
+> also split the Tegra234 version out into a separate file.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+> v2:
+> - Split out into separate file to avoid complexity with
+>   conditionals etc.
+> ---
+>  .../gpu/host1x/nvidia,tegra234-nvdec.yaml     | 154 ++++++++++++++++++
+>  1 file changed, 154 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
+> new file mode 100644
+> index 000000000000..eab0475ca983
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
+> @@ -0,0 +1,154 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra234-nvdec.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Device tree binding for NVIDIA Tegra234 NVDEC
+> +
+> +description: |
+> +  NVDEC is the hardware video decoder present on NVIDIA Tegra210
+> +  and newer chips. It is located on the Host1x bus and typically
+> +  programmed through Host1x channels.
+> +
+> +maintainers:
+> +  - Thierry Reding <treding@gmail.com>
+> +  - Mikko Perttunen <mperttunen@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^nvdec@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra234-nvdec
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    items:
+> +      - const: nvdec
+> +      - const: fuse
+> +      - const: tsec_pka
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: nvdec
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  dma-coherent: true
+> +
+> +  interconnects:
+> +    items:
+> +      - description: DMA read memory client
+> +      - description: DMA write memory client
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: dma-mem
+> +      - const: write
+> +
+> +  nvidia,memory-controller:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      phandle to the memory controller for determining carveout information.
+> +
+> +  nvidia,bl-manifest-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Offset to bootloader manifest from beginning of firmware. Typically set as
+> +      part of a device tree overlay corresponding to flashed firmware.
+> +
+> +  nvidia,bl-code-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Offset to bootloader code section from beginning of firmware. Typically set as
+> +      part of a device tree overlay corresponding to flashed firmware.
+> +
+> +  nvidia,bl-data-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Offset to bootloader data section from beginning of firmware. Typically set as
+> +      part of a device tree overlay corresponding to flashed firmware.
+> +
+> +  nvidia,os-manifest-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Offset to operating system manifest from beginning of firmware. Typically set as
+> +      part of a device tree overlay corresponding to flashed firmware.
+> +
+> +  nvidia,os-code-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Offset to operating system code section from beginning of firmware. Typically set as
+> +      part of a device tree overlay corresponding to flashed firmware.
+> +
+> +  nvidia,os-data-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Offset to operating system data section from beginning of firmware. Typically set as
+> +      part of a device tree overlay corresponding to flashed firmware.
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
----
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+I don't think DT is the place for describing your runtime loaded 
+firmware layout.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index a263d51882ee..7ae503a29508 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -17,6 +17,7 @@ / {
- 
- 	aliases {
- 		serial0 = &uarta;
-+		serial3 = &uartd;
- 	};
- 
- 	chosen {
-@@ -1309,6 +1310,22 @@ serial@70006000 {
- 		status = "okay";
- 	};
- 
-+	uartd: serial@70006300 {
-+		compatible = "nvidia,tegra30-hsuart";
-+		status = "okay";
-+
-+		bluetooth {
-+			compatible = "brcm,bcm43540-bt";
-+			max-speed = <4000000>;
-+			brcm,bt-pcm-int-params = [01 02 00 01 01];
-+			device-wakeup-gpios = <&gpio TEGRA_GPIO(H, 3) GPIO_ACTIVE_HIGH>;
-+			shutdown-gpios = <&gpio TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(H, 5) IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-names = "host-wakeup";
-+		};
-+	};
-+
- 	i2c@7000c400 {
- 		status = "okay";
- 		clock-frequency = <1000000>;
--- 
-2.37.3
-
+Rob
