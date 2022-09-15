@@ -2,169 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58124ECAAA1
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 10:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D72BECAAA1
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 11:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229462AbiIOK4k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Sep 2022 06:56:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42636 "EHLO
+        id S229749AbiIOLE5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Sep 2022 07:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiIOK4j (ORCPT
+        with ESMTP id S229636AbiIOLE4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Sep 2022 06:56:39 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70AE8B98D;
-        Thu, 15 Sep 2022 03:56:38 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id b35so26391485edf.0;
-        Thu, 15 Sep 2022 03:56:38 -0700 (PDT)
+        Thu, 15 Sep 2022 07:04:56 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A74B5C950;
+        Thu, 15 Sep 2022 04:04:55 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id z13so12413771edb.13;
+        Thu, 15 Sep 2022 04:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=5KfyDy+cMltzrSXMQTDHvnQXo4AcAbZvGBQ9NxOtQFc=;
-        b=AsYOEwQia6PYiexHLTq69+7G8ccRW0Zz8rL96hdUGLxBzCYuiDE2quPlqGlOfzqGrv
-         nyEeojDUXIfr8IjUIzGK7ahQvMnXx/aEmpuHZIsUOFR1UEB+tJT/Y6Z3W8UCIPoeysjN
-         XaLJ/Hi+GW7ByJe7IJDwbEjZCSHSjqCJrW2ZScZzfekNPs3pkPSuNzHy2K4/fHUlamxD
-         nE/HuzELjZQYOSFrG/J/BOPfENM9BnrLicbO/rHrU01OAQ/oN6GKNLg8l4vIP3E0Kk2c
-         CsdwACh1dssRLH8aA9mnBtmpvyUxrWHBoBC56ArL3azPWsFo8xSYFMKg72ft6CJTU4sC
-         ZejQ==
+        bh=epQ8InS75MD280wupDQB3IBzd82ZH3sQJKCVkfM2TGg=;
+        b=ciDGfT7HtzQDgSHYqWXlOO/+arroyPF21ToQUqDajPdpqQm1ZoGZdZmzbfqZ5lePxi
+         jlyWDf0dlHru/Ip9EF6gRjb0syWftBFbkmjFlkIxvyVaQog3MfIrMyEPMoJj1RPihfbw
+         4SL2WK+l4bns8g+KkMUctmZ4MhgDsUSRt02N8rrFb66mWjouPb/B7e2muf589amzbB+A
+         BtmE6NUIBcaHz8XS6R8jpqsrQ1UfGUK8cSjr45Cu5+vCsdtPI+z9NDeaDB9w++jKyzYp
+         BUKypeMc5+cGZUxYryldVNCyquhXIJRYQC/BiqQ6LTCiADFqscc4XekxpMHw6yFLfwOJ
+         uo4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=5KfyDy+cMltzrSXMQTDHvnQXo4AcAbZvGBQ9NxOtQFc=;
-        b=g7V5NTSA1pZ3CIR8lJWXTZWgylmlQkR2eYbbIAKm4A34lnwgzEVN6DsSciZGJmR8MS
-         3uu+OkSth5dxdprqsMMi8bzN40A+ZULlHVkigmarSiaXc+yEe5tyGihgUy5pPb7Y9Y7d
-         0L8lTfxOnzVQGddJTVTjzQ2fg+CgAQO4Uky71IN+Nywgud8hx/rQRIHb7YCTBlr5WXkv
-         Eb8umV5E0SlFTPfUx7IJi21wbv2Ec1niS0f5ITzXk9XO0TboX7q8GJNeR1OW2ngv9tOD
-         jt+1am8wakeRF4m25xlbaLgJrcCHG3web40aBoyo0w8JSYR/DZjrstH3HkGiHpVlabxb
-         WYNg==
-X-Gm-Message-State: ACgBeo1rcQujfSx7ocn/nk3hPa6N7b57+sDF0xOK7uxIkBxqkr2zezQL
-        hJqwsIU4etr4TUnyc+cAk4s=
-X-Google-Smtp-Source: AA6agR4CVty/vhiihIZJn8i7Xt94qfHqC+VgWaV+RjG4OH/6cDTSG9doydf26HmUn7BJHsM/rOT7yQ==
-X-Received: by 2002:a05:6402:1a4f:b0:44e:f731:f7d5 with SMTP id bf15-20020a0564021a4f00b0044ef731f7d5mr33619590edb.357.1663239397202;
-        Thu, 15 Sep 2022 03:56:37 -0700 (PDT)
+        bh=epQ8InS75MD280wupDQB3IBzd82ZH3sQJKCVkfM2TGg=;
+        b=0kmQbVW3855xcUkt881oRXLH81hm/hXTSrL6XhLGwH034U3AdHXvJ/74G3BGB1TvLx
+         8NeHVPv9e7mosRXkPqdFlmaAPE6zp3GM3favSyy+2YWNgt1Grrwm5gOCPC0Z4FmoGK4n
+         AQfmgE75nGutdViO3j/svvGBfwL7osemeyf85zmlTu5FmwxHWJF25SIqbviiZ/hITJLo
+         B07dzE5o1HwE6hqo+fbD0hed48Xr033j6uaGqV5NW6MqgFKj7b3tsBSAjm5yWat6UX12
+         wJHYSuLrFSlKLd8JZGS4xAcW/72+DR7t35Ltdn722pfogkE+LXAJ9wmK2uy6Wuhv0fgD
+         G32Q==
+X-Gm-Message-State: ACgBeo2InFfZNq+7Hz5rSxJZJp+mAKB2rsFmt6welsJa/V8G4qE8n7GU
+        +f+FHpIvwttZhBDC2iJD08Q=
+X-Google-Smtp-Source: AA6agR4/jmZ6j70+E1u5vwISD+3igDZWFjvJ41mlLCc9W3Rx1k2I6VMawVE/+rA8V8wsI8982zq3OA==
+X-Received: by 2002:aa7:da4f:0:b0:44e:864b:7a3e with SMTP id w15-20020aa7da4f000000b0044e864b7a3emr35151743eds.378.1663239893690;
+        Thu, 15 Sep 2022 04:04:53 -0700 (PDT)
 Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b13-20020aa7c90d000000b0044eda621b08sm11769888edt.54.2022.09.15.03.56.35
+        by smtp.gmail.com with ESMTPSA id b13-20020aa7c90d000000b0044eda621b08sm11784112edt.54.2022.09.15.04.04.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 03:56:36 -0700 (PDT)
-Date:   Thu, 15 Sep 2022 12:56:34 +0200
+        Thu, 15 Sep 2022 04:04:52 -0700 (PDT)
+Date:   Thu, 15 Sep 2022 13:04:51 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Prathamesh Shete <pshete@nvidia.com>
-Cc:     ulf.hansson@linaro.org, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        anrao@nvidia.com, smangipudi@nvidia.com, kyarlagadda@nvidia.com
-Subject: Re: [PATCH v2 3/4] mmc: sdhci-tegra: Issue CMD and DAT resets
- together
-Message-ID: <YyME4i8oMI2omd0v@orome>
-References: <20220914095628.26093-1-pshete@nvidia.com>
- <20220914095628.26093-3-pshete@nvidia.com>
- <YyHHIPbXnLiPe/vn@orome>
- <05686061-e17e-fcd6-e570-a9ae159cb51c@intel.com>
+To:     Jason Wang <wangborong@cdjrlc.com>
+Cc:     daniel.lezcano@linaro.org, rafael@kernel.org, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpuidle: tegra: Fix comment typo
+Message-ID: <YyMG0xBCp3j21vxP@orome>
+References: <20220715050144.24638-1-wangborong@cdjrlc.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WEzO1g9FGLaY/old"
+        protocol="application/pgp-signature"; boundary="wjX9SZ+Gk/1NXCEd"
 Content-Disposition: inline
-In-Reply-To: <05686061-e17e-fcd6-e570-a9ae159cb51c@intel.com>
+In-Reply-To: <20220715050144.24638-1-wangborong@cdjrlc.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---WEzO1g9FGLaY/old
+--wjX9SZ+Gk/1NXCEd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 14, 2022 at 09:21:07PM +0300, Adrian Hunter wrote:
-> On 14/09/22 15:20, Thierry Reding wrote:
-> > On Wed, Sep 14, 2022 at 03:26:27PM +0530, Prathamesh Shete wrote:
-> >> In case of error condition to avoid system crash
-> >> Tegra SDMMC controller requires CMD and DAT resets
-> >> issued together.
-> >=20
-> > It might be worth specifying exactly what "system crash" means. Does
-> > this always happen (i.e. do we have a problem right now?) or are there
-> > specific circumstances that cause the crash.
-> >=20
-> >> This is applicable to Tegra186 and later chips.
-> >>
-> >> Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
-> >> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> >> ---
-> >>  drivers/mmc/host/sdhci-tegra.c |  3 ++-
-> >>  drivers/mmc/host/sdhci.c       | 11 ++++++++---
-> >>  drivers/mmc/host/sdhci.h       |  2 ++
-> >>  3 files changed, 12 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-t=
-egra.c
-> >> index b66b0cc51497..7d16dc41fe91 100644
-> >> --- a/drivers/mmc/host/sdhci-tegra.c
-> >> +++ b/drivers/mmc/host/sdhci-tegra.c
-> >> @@ -1530,7 +1530,8 @@ static const struct sdhci_pltfm_data sdhci_tegra=
-186_pdata =3D {
-> >>  		  SDHCI_QUIRK_NO_HISPD_BIT |
-> >>  		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
-> >>  		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> >> -	.quirks2 =3D SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-> >> +	.quirks2 =3D SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> >> +		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
-> >>  	.ops  =3D &tegra186_sdhci_ops,
-> >>  };
-> >> =20
-> >> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> >> index 7689ffec5ad1..289fa8ae4866 100644
-> >> --- a/drivers/mmc/host/sdhci.c
-> >> +++ b/drivers/mmc/host/sdhci.c
-> >> @@ -3063,9 +3063,14 @@ static bool sdhci_request_done(struct sdhci_hos=
-t *host)
-> >>  		 * Spec says we should do both at the same time, but Ricoh
-> >>  		 * controllers do not like that.
-> >>  		 */
-> >=20
-> > The comment above seems to indicate that the current behavior (i.e.
-> > splitting the CMD and DATA resets) is actually the quirk, so I wonder if
-> > this perhaps should be reversed? I suppose it could be difficult to
-> > track down the exact controllers that need the separate resets, but this
-> > might be worth doing. It's possible that other controllers might run
-> > into the same issue that we are if they work strictly to the spec.
-> >=20
-> > Adrian, any ideas on how much of this is just cargo-culted? Do we play
-> > it safe and do the "double workaround" or do we want to attempt to
-> > rectify this by adding a Ricoh-specific quirk?
+On Fri, Jul 15, 2022 at 01:01:44PM +0800, Jason Wang wrote:
+> The double `that' is duplicated in line 275, remove one.
 >=20
-> It is a good question, but it has been that way for a very long time,
-> and the spec tends to document them separately anyway, so it doesn't
-> seem there is much reason to change.
+> Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
+> ---
+>  drivers/cpuidle/cpuidle-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fair enough. Prathamesh, perhaps revise the comment above as part of
-this patch because with the change below it now sounds a bit confusing.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---WEzO1g9FGLaY/old
+--wjX9SZ+Gk/1NXCEd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjBOAACgkQ3SOs138+
-s6GyHw//d83O3LVe/vcFhw6+YjW5uoA0K9XOIvJvi0F6ERJ3IwZjc5zi7hvq5m9J
-XcPgtFLEIy5d9mND5201hatBGCus1vcdTGG14Epc3aNGTSjMjD7j2KXm4oO1eqKf
-5ScMobQEd2YSXzPZUqj3dYKkJO9tRgmG6cEXwaX8rv/QJZ4d/YBwUf+eOUdEIpVL
-zktakeuQUx0NsjAQJyj2425wXto6hcwUNXa8DPDGRRz9jg7ridZEbsY/8NYiVHW/
-hhyZ5rSxcdCrQ7Qp+Kbg/ZaiVJOVyhEcCpSaAccWRpsqayf7JO7ADWYXu4q0iofH
-mTA9yOhwkqn7vE6SgqKfjOBxhCUnmviWMXEWh+Xcysqp5LHuZ4jrdbTQpAWq1HV+
-Z4DsxzlivkcVXGW6ci+SMP75IxYwUpAoIJTPOgmNrJ78TNmp7VUkl6qvahv8awMS
-IChD0hJdL0YXzVkPjolspEG55X2B5cM79RYQfEJIl1r3lNoyebdbJ17Y6BZHxzV7
-yRCIYAOKiEG415U8HMFTd7wGhZI6pFIWoUmAAnDEOpLj0LgqbpAVuc6L+oXiqw5O
-0fYoQa35cL1wlCHG9Mf3W7M2RXdzdiRwhopT5B7YGzUJNOCdfXqZxmukTCBYpkS9
-SBClYkAqgz7CghNT4apqGc7N5AtukBaECDqIh8zbj7+1puQjewE=
-=dNuj
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjBtIACgkQ3SOs138+
+s6GtVg/+PGXrwMBuRguZzhdIsG0XLqZ3sNbquJjNzLboECmthcYlKyi5d2xUNxNp
+wf2CiMw95KgAxeLrqGI6c5ClWlkp8RJ6AcRNSUe/FRk5KCRJDEaELP/QeL71Xpo6
+7HFUHXzXLxATtqn78Mm4Z25N8YMVQebfb6Zd4QqN5U7R1n+Psej1WStKUJs373H8
+1XokCQBgI6x6fxN4d5KnULepFiwj/OxUIHCHVWYO6CQgH2RsXYg7/HtNoZ4doDAz
+0/lDjM7xkwLZNdyMv5yYKM5ZXyHBiFQ9x3DOPEufKGdhB/hInravhqjKqWXeKcQ0
+VL2QYNEXm9L4/lYrK3pp4eUPO3E+/L1+KT/RMJetYAL6VrXvucwWLbkdL40y5QeN
+T1twnwbXGiZcp28X4KDc0W136Xia6VU0anmD4SVDQmCm0TLGW4qyBbF/J3Avt11v
+7CtqTEgL37XQ47jstaKWcYC45KKWpuZg4IBFox0Sh+wmsOA3cuICJeKZn6uk33kD
+HVF03XeKFq4qt0KI/CV5WzlVY1x0Gq6P7cmSMf04fWPULYsG1EIjg2wKi1ILmxOv
+WHZEw5jS7Gx/Oe2Dcmc31uK/pgfHBeBW4oDDSyuOwLakBuq/wcwrKZZqjDvjIbrh
+2SGoY3gvRiDc3VAQlJEzgTIeE/6dNdVS48QE5Wudx41y6Wqm9xM=
+=V2qv
 -----END PGP SIGNATURE-----
 
---WEzO1g9FGLaY/old--
+--wjX9SZ+Gk/1NXCEd--
