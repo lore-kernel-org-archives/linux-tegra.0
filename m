@@ -2,113 +2,234 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492CFECAAD3
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 12:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE9BECAAD3
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 12:21:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229499AbiIOMMC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Sep 2022 08:12:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50136 "EHLO
+        id S229612AbiIOMVV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Sep 2022 08:21:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiIOMMA (ORCPT
+        with ESMTP id S229685AbiIOMVU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Sep 2022 08:12:00 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED8D6BCD;
-        Thu, 15 Sep 2022 05:11:57 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id e16so30558468wrx.7;
-        Thu, 15 Sep 2022 05:11:57 -0700 (PDT)
+        Thu, 15 Sep 2022 08:21:20 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEDCD8981A;
+        Thu, 15 Sep 2022 05:21:19 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id 13so12722160ejn.3;
+        Thu, 15 Sep 2022 05:21:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=LPM/AULX8xXLs7+uogOUxKAzfuJtpuv0oPBeLnfAptU=;
-        b=CH1OMOjtiwqz7YAYLeKpx1HR4ss1tuzs+xFQlPExYGm64fpkpAGoCji4ONBzn9W5hr
-         KyBnhHu306/sHAlQmD7XnaAKWVGclgRsOsaBW0JPOdabqkvKSIu1YFbcA1Y+UqMI3Jc3
-         9dcQX6+KwkhuxSXT6I2YUphI2z2gPiCj95dnuz/pUgTklzWoUzObva+FFsWdMjH+8p1z
-         zMq1E67lr8Aj4IBC9OXa1UYldvPPUly/7nsmsu5dbMtvo+Ljl1Wg21TPlcz5A6gjIumf
-         T6h13cOlMsFRdz8eIEYp4MOQUxiocYQaleVUGnhmyRJyGAyTzJgR6Bd41O1mphQK9vE+
-         npYA==
+        bh=k83bs0hBxICFx55i2HJIwrB5h1+F3bDwhE6gHy6icWA=;
+        b=D/nB8oD2fkq618/mURvaCoHwpL4dgnIOW4OyecdZ68hRgLCe3/LpQmP4JsF31gNPSS
+         O5qEyZk0q7guRNYSfdQ6XT5JRMLmtG58ipbXCMIDPkpgZzVYT0Qk/OT6oM/hvNLwry9+
+         lJUq8ywGu533PKH5zXX52ej8DOZ+vcyYAPbTjM5vBfRbA0Ex/AzpL3Oy7qx2Y8n2kKY6
+         FL4QxtR/1KGh9zFNIKBFC2uCKw+3y8QYF0w4eLLJqSQKUSsP2GegWQIRLe8Z8orARY/X
+         +L9abGGUKm+ESOyEJR0360Eo+KKa8uBFWmklTtQv88qh1qdwpIF09bFGAUIKRedsPcYX
+         w6BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=LPM/AULX8xXLs7+uogOUxKAzfuJtpuv0oPBeLnfAptU=;
-        b=wGuQpxYUNdtxzvgorqIZOvuECUZ35TrPcEfoj90BaKvP9Re/JpXWAAy+7R+0Z0sKH7
-         mMWyXtEOqYUU+d+2ypt1TXBdH/hmHD0iTi31JoODcRGzrIHOfosxeN6HsW513IPBL9Z6
-         eu4GMvKa/2pZwS4JAmPfnhDNXeI9DVhrwUXkR+DTaqIOxHD4g1PLTb7vYrZci7eZkdSK
-         FHI6xA1gGoZoWvFXksRfQXZYRlu7W2C67IrCiRkiNN6x7704G3/S0t/wk3fWx0D1+BB1
-         8UUabwIusgyagfqBqDYbFBaj/MdKvo4KLxPmH7aJX5qfuyn0vGFugag6BN/IkgOvHuPo
-         2cUw==
-X-Gm-Message-State: ACrzQf0ehuzi5AVhpYkMksoVl6rfU+/pwNRJWNyP57SpBnYq+jH9opif
-        6OmonGs2InpmcatjnJhk4DM=
-X-Google-Smtp-Source: AMsMyM6KNXCAIkfB6NDZg1tBoEnF1MIjuOAqFOx9kifr7Kt7Rz6NMEL+V94j0UlHUB2hPxur03DvEQ==
-X-Received: by 2002:a05:6000:1e14:b0:22a:c818:9737 with SMTP id bj20-20020a0560001e1400b0022ac8189737mr4854301wrb.515.1663243916298;
-        Thu, 15 Sep 2022 05:11:56 -0700 (PDT)
+        bh=k83bs0hBxICFx55i2HJIwrB5h1+F3bDwhE6gHy6icWA=;
+        b=ip4kG4YslBBIlZWL9F8ja+Ygh0a9DuHcbOQZcWnWvyNFY5EbVEsW6oaGXrj7GabeAE
+         Iquct/Z1qnkOB1dClQT9sH1QkLEO6O6Fb6HeXYWF0RlcPfxM3y85LrkKZsEixY6jYsQ7
+         i1fQVYiwoCTsLCEuGQJo6bzuUvqq5fI5ESt2Yf8tZgtSULBoV2hpCojMxcKX8CISZCwx
+         IXp5EKOpmsBJka829sJ2VlgpzmTQUaOkSMCZmRJMMcyCE9PjtDT6T4YBkndln1DpGsfe
+         5P5Miu39kz/DMsPHxUfjFEcJ4hJDvSjMHCIhzBXGZXeXyE5D9PokaDX+7cAAcfeVCv4U
+         Xo6A==
+X-Gm-Message-State: ACgBeo0k9YzvwOqvvD6IEvsS6NVMaWO3P83Jz7/JTYKQH4gsuas/2lQh
+        7vY8zkKvyExj0KanolbhAcA=
+X-Google-Smtp-Source: AA6agR4sFQyJadPBbcrwlDaYMGlvDinRXNtejShnRWoBKLKAYDN4baD15rfPh70nfDqaH6+N1F0NKw==
+X-Received: by 2002:a17:907:3d86:b0:780:2e5b:58e0 with SMTP id he6-20020a1709073d8600b007802e5b58e0mr5710749ejc.312.1663244478168;
+        Thu, 15 Sep 2022 05:21:18 -0700 (PDT)
 Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g8-20020a5d4888000000b00228634628f1sm2418444wrq.110.2022.09.15.05.11.54
+        by smtp.gmail.com with ESMTPSA id fq32-20020a1709069da000b00770812e2394sm9021717ejc.160.2022.09.15.05.21.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 05:11:55 -0700 (PDT)
-Date:   Thu, 15 Sep 2022 14:11:53 +0200
+        Thu, 15 Sep 2022 05:21:17 -0700 (PDT)
+Date:   Thu, 15 Sep 2022 14:21:15 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Petlozu Pravareshwar <petlozup@nvidia.com>
-Cc:     jonathanh@nvidia.com, p.zabel@pengutronix.de,
-        dmitry.osipenko@collabora.com, ulf.hansson@linaro.org,
-        kkartik@nvidia.com, cai.huoqing@linux.dev, spatra@nvidia.com,
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     viresh.kumar@linaro.org, rafael@kernel.org, treding@nvidia.com,
+        jonathanh@nvidia.com, linux-pm@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manish Bhardwaj <mbhardwaj@nvidia.com>
-Subject: Re: [PATCH] soc/tegra: pmc: Check device node status property
-Message-ID: <YyMWiVZm1jAyEHJs@orome>
-References: <20220906135117.341529-1-petlozup@nvidia.com>
+        bbasu@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com
+Subject: Re: [Patch] cpufreq: tegra239: Add support for T239
+Message-ID: <YyMYu9Y38OeaM1WS@orome>
+References: <20220905155759.17743-1-sumitg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Npy2d1m7ESZZaX7I"
+        protocol="application/pgp-signature"; boundary="eqokmArovlNi/Exy"
 Content-Disposition: inline
-In-Reply-To: <20220906135117.341529-1-petlozup@nvidia.com>
+In-Reply-To: <20220905155759.17743-1-sumitg@nvidia.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Npy2d1m7ESZZaX7I
+--eqokmArovlNi/Exy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 06, 2022 at 01:51:17PM +0000, Petlozu Pravareshwar wrote:
-> In early_initcall, check if PMC device is available for use
-> and avoid accessing PMC resources if the device node status
-> property is set to disabled.
+On Mon, Sep 05, 2022 at 09:27:59PM +0530, Sumit Gupta wrote:
+> Adding support for Tegra239 SoC which has eight cores in
+> a single cluster. Also, moving num_clusters to soc data
+> to avoid over allocating memory for four clusters always.
 >=20
-> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
->  drivers/soc/tegra/pmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/cpufreq/tegra194-cpufreq.c | 29 +++++++++++++++--------------
+>  1 file changed, 15 insertions(+), 14 deletions(-)
 
-Applied, thanks.
+The subject is a little confusing. Typically the prefix refers to the
+driver, so it would be something like "cpufreq: tegra194: ".
 
-Thierry
+Furthermore, please always spell out Tegra239 for consistency. This
+makes it easier to grep for.
 
---Npy2d1m7ESZZaX7I
+Otherwise, looks good. So with the above fixed, this is:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+>=20
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra19=
+4-cpufreq.c
+> index 1216046cf4c2..f38a760da61b 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -38,14 +38,6 @@
+>  /* cpufreq transisition latency */
+>  #define TEGRA_CPUFREQ_TRANSITION_LATENCY (300 * 1000) /* unit in nanosec=
+onds */
+> =20
+> -enum cluster {
+> -	CLUSTER0,
+> -	CLUSTER1,
+> -	CLUSTER2,
+> -	CLUSTER3,
+> -	MAX_CLUSTERS,
+> -};
+> -
+>  struct tegra_cpu_ctr {
+>  	u32 cpu;
+>  	u32 coreclk_cnt, last_coreclk_cnt;
+> @@ -67,12 +59,12 @@ struct tegra_cpufreq_ops {
+>  struct tegra_cpufreq_soc {
+>  	struct tegra_cpufreq_ops *ops;
+>  	int maxcpus_per_cluster;
+> +	size_t num_clusters;
+>  	phys_addr_t actmon_cntr_base;
+>  };
+> =20
+>  struct tegra194_cpufreq_data {
+>  	void __iomem *regs;
+> -	size_t num_clusters;
+>  	struct cpufreq_frequency_table **tables;
+>  	const struct tegra_cpufreq_soc *soc;
+>  };
+> @@ -166,6 +158,14 @@ static const struct tegra_cpufreq_soc tegra234_cpufr=
+eq_soc =3D {
+>  	.ops =3D &tegra234_cpufreq_ops,
+>  	.actmon_cntr_base =3D 0x9000,
+>  	.maxcpus_per_cluster =3D 4,
+> +	.num_clusters =3D 3,
+> +};
+> +
+> +const struct tegra_cpufreq_soc tegra239_cpufreq_soc =3D {
+> +	.ops =3D &tegra234_cpufreq_ops,
+> +	.actmon_cntr_base =3D 0x4000,
+> +	.maxcpus_per_cluster =3D 8,
+> +	.num_clusters =3D 1,
+>  };
+> =20
+>  static void tegra194_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *cluste=
+rid)
+> @@ -382,7 +382,7 @@ static int tegra194_cpufreq_init(struct cpufreq_polic=
+y *policy)
+> =20
+>  	data->soc->ops->get_cpu_cluster_id(policy->cpu, NULL, &clusterid);
+> =20
+> -	if (clusterid >=3D data->num_clusters || !data->tables[clusterid])
+> +	if (clusterid >=3D data->soc->num_clusters || !data->tables[clusterid])
+>  		return -EINVAL;
+> =20
+>  	start_cpu =3D rounddown(policy->cpu, maxcpus_per_cluster);
+> @@ -433,6 +433,7 @@ static struct tegra_cpufreq_ops tegra194_cpufreq_ops =
+=3D {
+>  static const struct tegra_cpufreq_soc tegra194_cpufreq_soc =3D {
+>  	.ops =3D &tegra194_cpufreq_ops,
+>  	.maxcpus_per_cluster =3D 2,
+> +	.num_clusters =3D 4,
+>  };
+> =20
+>  static void tegra194_cpufreq_free_resources(void)
+> @@ -525,15 +526,14 @@ static int tegra194_cpufreq_probe(struct platform_d=
+evice *pdev)
+> =20
+>  	soc =3D of_device_get_match_data(&pdev->dev);
+> =20
+> -	if (soc->ops && soc->maxcpus_per_cluster) {
+> +	if (soc->ops && soc->maxcpus_per_cluster && soc->num_clusters) {
+>  		data->soc =3D soc;
+>  	} else {
+>  		dev_err(&pdev->dev, "soc data missing\n");
+>  		return -EINVAL;
+>  	}
+> =20
+> -	data->num_clusters =3D MAX_CLUSTERS;
+> -	data->tables =3D devm_kcalloc(&pdev->dev, data->num_clusters,
+> +	data->tables =3D devm_kcalloc(&pdev->dev, data->soc->num_clusters,
+>  				    sizeof(*data->tables), GFP_KERNEL);
+>  	if (!data->tables)
+>  		return -ENOMEM;
+> @@ -558,7 +558,7 @@ static int tegra194_cpufreq_probe(struct platform_dev=
+ice *pdev)
+>  		goto put_bpmp;
+>  	}
+> =20
+> -	for (i =3D 0; i < data->num_clusters; i++) {
+> +	for (i =3D 0; i < data->soc->num_clusters; i++) {
+>  		data->tables[i] =3D init_freq_table(pdev, bpmp, i);
+>  		if (IS_ERR(data->tables[i])) {
+>  			err =3D PTR_ERR(data->tables[i]);
+> @@ -590,6 +590,7 @@ static int tegra194_cpufreq_remove(struct platform_de=
+vice *pdev)
+>  static const struct of_device_id tegra194_cpufreq_of_match[] =3D {
+>  	{ .compatible =3D "nvidia,tegra194-ccplex", .data =3D &tegra194_cpufreq=
+_soc },
+>  	{ .compatible =3D "nvidia,tegra234-ccplex-cluster", .data =3D &tegra234=
+_cpufreq_soc },
+> +	{ .compatible =3D "nvidia,tegra239-ccplex-cluster", .data =3D &tegra239=
+_cpufreq_soc },
+>  	{ /* sentinel */ }
+>  };
+> =20
+> --=20
+> 2.17.1
+>=20
+
+--eqokmArovlNi/Exy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjFokACgkQ3SOs138+
-s6GU1A/9EdIsca8gNvIVWIriSk6N3JY5no5FQlnUXf05gsayIEdev0crlv8OTuav
-XCY4Xw5RwOIulDuqZvzxzGtFv8XPoDmy3ZuerXXB4tv/iAWg68EbXqevpJbH1apz
-6Uswc5ZbPrXUIx61q/xEpr/J/oL70LygvPxCx35sSNa0m4aVsHJxylk9pgZ9zWOU
-rEmJPxiJ1ngXluH9pWo3Y/o8BN8ukdON5NbvMlcHGnfjX/nmb086AE/h6qSxn1Dv
-d36WI1t1SW7Ys+MrXV4uu0wlNyYH2VcY5refrx3LdGQjEHKgpNvtpBIV/1R/iSPv
-o4quxtmy8NOyMPxIr0hHbxrXMb1cuN9pY0HhCN73KLJEclR0PRPAxEuzaPwWSkvt
-p95kvs8UOr5dzZ7SpBTTp5qXQOgPg6YnjEI48v9fRP/Ql/1sDyj0x+QByEICER/z
-GioXcrCSnITC9mNbmmpmn+wIhlBZZ25OKJihiipypI6LA4LEqLW8zrLebXhVWUAQ
-bne4ymN9uYOy9wjWWb0df/CyZY/tAt41HH7xrEksVyTdN4WyJi53u+Z0QMwfpqdc
-Ho6y6bZ7XEyMwybGXXrj2KL4OLUDe0PcwWu0NTUMWxCW1HgJwJPFpV7yen570bc8
-5NT43Xr4CS+KmU5ZaOz9v/OfoMEt0FCw/9wBDhNV9/EYmgQw3CI=
-=TB7G
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjGLsACgkQ3SOs138+
+s6E6RhAAkOM+qtlaafy1K18OV+dbEYuZmgEA9LTfzEiURxgh0xQWDetovYhQ9aNq
+92SA2NZgEActCeIPJKICB7nJvzs7/5eW3j7SuNEpyRvweV3JALWWxvrFRFPtR5FG
+QuK/iTgytQ4J1FuqCIiPd/FRwyR9fBE74o+9qhmLq6KdXF1VB8O79n2ORfROlau+
+ahKMqU4+F5SAiUSx7+EW7cC/BgFWK7WImxnCrctcJJcyIcdI2tFdLzsOMF6YxtbI
+pjb3CLyOITgAmT9hDX+vo2QllyxDgr0rUzM785Tk/lEVzk9/1jCSxxpB36ssPXmp
+UQVMDYzndSMs7EdRS+m3vSPnBntEfmMTKZr0fapEDHzdCQhywpyzHNBtG5a5m+04
+md4vRO+kzqgdo+ZFU4AiHySWLBX2dqp8lUvAdtrutF5hQEhP6FaI0yOt2yHIIdOy
+l6pE15n+zjDsSBpTJUjtFGl3MkEZOgIbnBl9sxOmDY5WYOa4SuZ8/aO4193G85Ej
+kGyiLvxA/JcpCdRQXfqklVksrCFQoWXdrrUCERU5fDSLe1aiDil2lq87YmbCWP09
+D4MuI0z4YilrQPPpfOTDKn1UV3fWhoCJwbLyuaTMtyvowmQXBdLjX6rxquROsLy8
+vtoEug5fHNVFawjzU5w1xmevM692k8uO8w07P7Pbcfd5KstU1/w=
+=Ja4c
 -----END PGP SIGNATURE-----
 
---Npy2d1m7ESZZaX7I--
+--eqokmArovlNi/Exy--
