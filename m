@@ -2,106 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D72BECAAA1
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 11:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0154ECAAA1
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 11:14:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbiIOLE5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Sep 2022 07:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51518 "EHLO
+        id S229636AbiIOLON (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Sep 2022 07:14:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229636AbiIOLE4 (ORCPT
+        with ESMTP id S229585AbiIOLOM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Sep 2022 07:04:56 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A74B5C950;
-        Thu, 15 Sep 2022 04:04:55 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id z13so12413771edb.13;
-        Thu, 15 Sep 2022 04:04:55 -0700 (PDT)
+        Thu, 15 Sep 2022 07:14:12 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C31B99268;
+        Thu, 15 Sep 2022 04:14:11 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id cc5so20484702wrb.6;
+        Thu, 15 Sep 2022 04:14:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=epQ8InS75MD280wupDQB3IBzd82ZH3sQJKCVkfM2TGg=;
-        b=ciDGfT7HtzQDgSHYqWXlOO/+arroyPF21ToQUqDajPdpqQm1ZoGZdZmzbfqZ5lePxi
-         jlyWDf0dlHru/Ip9EF6gRjb0syWftBFbkmjFlkIxvyVaQog3MfIrMyEPMoJj1RPihfbw
-         4SL2WK+l4bns8g+KkMUctmZ4MhgDsUSRt02N8rrFb66mWjouPb/B7e2muf589amzbB+A
-         BtmE6NUIBcaHz8XS6R8jpqsrQ1UfGUK8cSjr45Cu5+vCsdtPI+z9NDeaDB9w++jKyzYp
-         BUKypeMc5+cGZUxYryldVNCyquhXIJRYQC/BiqQ6LTCiADFqscc4XekxpMHw6yFLfwOJ
-         uo4A==
+        bh=3pcreFA2o+ApXwGD5SR6DwKfZo5EwI/JcS2Afc+r5So=;
+        b=kzvYmYwSlbw0kzncpF3crUIaykleKNYFwdLvjWUNsB0q0p8qZOmpStbhw+UaBSocHB
+         w4dkwmjaeO7nHtpSvPqeCZG7qVP0rvBTSaUwK7mDabXgHUX5yZGmyZGaRyQGEXF2mrTW
+         YP/Q+ZQh4NPHsC28tcEc2BnXakCmcCRxOgS2iHR/Pz+46+94pn9q2CO5qUkipGlOiN8s
+         k+WZYrbwdyPkqPfxgAl+jILOU+JRX1//WjjSAloRQidMSHofW7upnI3zwAJLpgBktyQd
+         vJn/UrtiT4v9NKXMSCKsCkcPSZAt5fV5iI+LvGRLEVfchgO5Vrz4x+TS2OSLAOHsOv8X
+         dW8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=epQ8InS75MD280wupDQB3IBzd82ZH3sQJKCVkfM2TGg=;
-        b=0kmQbVW3855xcUkt881oRXLH81hm/hXTSrL6XhLGwH034U3AdHXvJ/74G3BGB1TvLx
-         8NeHVPv9e7mosRXkPqdFlmaAPE6zp3GM3favSyy+2YWNgt1Grrwm5gOCPC0Z4FmoGK4n
-         AQfmgE75nGutdViO3j/svvGBfwL7osemeyf85zmlTu5FmwxHWJF25SIqbviiZ/hITJLo
-         B07dzE5o1HwE6hqo+fbD0hed48Xr033j6uaGqV5NW6MqgFKj7b3tsBSAjm5yWat6UX12
-         wJHYSuLrFSlKLd8JZGS4xAcW/72+DR7t35Ltdn722pfogkE+LXAJ9wmK2uy6Wuhv0fgD
-         G32Q==
-X-Gm-Message-State: ACgBeo2InFfZNq+7Hz5rSxJZJp+mAKB2rsFmt6welsJa/V8G4qE8n7GU
-        +f+FHpIvwttZhBDC2iJD08Q=
-X-Google-Smtp-Source: AA6agR4/jmZ6j70+E1u5vwISD+3igDZWFjvJ41mlLCc9W3Rx1k2I6VMawVE/+rA8V8wsI8982zq3OA==
-X-Received: by 2002:aa7:da4f:0:b0:44e:864b:7a3e with SMTP id w15-20020aa7da4f000000b0044e864b7a3emr35151743eds.378.1663239893690;
-        Thu, 15 Sep 2022 04:04:53 -0700 (PDT)
+        bh=3pcreFA2o+ApXwGD5SR6DwKfZo5EwI/JcS2Afc+r5So=;
+        b=DCEXUYJol1WxTtf35B6BiNNt238AFRLc4bMUWiXy1jVI5qjjEP+u38oomye3gIv+ZC
+         AXfwLvmvPM/DvePGsDn0RG/I8QecY8VoI0h/21lIyd2lXEVG7I5hmBqFe4tTecZlzokw
+         AbGBua2IKsBFbv9/Xpg9NkMcyiSNamtvTwot4Jtx+H9gjSLL9vmsmAK52nvlviOdKERt
+         wQM8yHf0cyt2zmHzKwqjeu7Q5JbDmH8ZtBLrXxJ/Dzqye6jULOcD1bGBvvTJyr0J04Qr
+         px5jzOuuxIgPGZLu2sYKEA8vAIuD6wxbS70VQ4VtyoD0VubvzQtGnCVEwGsqW1WSdhLA
+         0jlw==
+X-Gm-Message-State: ACrzQf0bbZ/ab6oR2rWf45QG2kGhayaOs3y9kib4Ne6iPey/tUpT+ehw
+        ocbJsw6xLHiIdgPF+ERi3zqM5EmwvFo=
+X-Google-Smtp-Source: AMsMyM6qW6CS49SacNHsTm1hvZFGQSGgo2r7rzRwo4cr3zDMyLsIUHB+aoBtZM79MFxLuAWGCn4Ecg==
+X-Received: by 2002:adf:e849:0:b0:22a:cd2d:33bd with SMTP id d9-20020adfe849000000b0022acd2d33bdmr2915659wrn.548.1663240449965;
+        Thu, 15 Sep 2022 04:14:09 -0700 (PDT)
 Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b13-20020aa7c90d000000b0044eda621b08sm11784112edt.54.2022.09.15.04.04.52
+        by smtp.gmail.com with ESMTPSA id v26-20020a05600c215a00b003a342933727sm2577005wml.3.2022.09.15.04.14.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 04:04:52 -0700 (PDT)
-Date:   Thu, 15 Sep 2022 13:04:51 +0200
+        Thu, 15 Sep 2022 04:14:08 -0700 (PDT)
+Date:   Thu, 15 Sep 2022 13:14:07 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jason Wang <wangborong@cdjrlc.com>
-Cc:     daniel.lezcano@linaro.org, rafael@kernel.org, jonathanh@nvidia.com,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpuidle: tegra: Fix comment typo
-Message-ID: <YyMG0xBCp3j21vxP@orome>
-References: <20220715050144.24638-1-wangborong@cdjrlc.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: pmc: Use devm_clk_get_optional()
+Message-ID: <YyMI/6L+YWgCtcEp@orome>
+References: <4d2e518fc75dd3053ec4afcc36e13a0a6f75884e.1659905735.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wjX9SZ+Gk/1NXCEd"
+        protocol="application/pgp-signature"; boundary="pV6cwMKbUn7CKnNV"
 Content-Disposition: inline
-In-Reply-To: <20220715050144.24638-1-wangborong@cdjrlc.com>
+In-Reply-To: <4d2e518fc75dd3053ec4afcc36e13a0a6f75884e.1659905735.git.christophe.jaillet@wanadoo.fr>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---wjX9SZ+Gk/1NXCEd
+--pV6cwMKbUn7CKnNV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 15, 2022 at 01:01:44PM +0800, Jason Wang wrote:
-> The double `that' is duplicated in line 275, remove one.
+On Sun, Aug 07, 2022 at 10:55:59PM +0200, Christophe JAILLET wrote:
+> Use devm_clk_get_optional() instead of hand writing it.
 >=20
-> Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
+> While at it, use dev_err_probe() to further simplify the code. This is al=
+so
+> less verbose if clk_get() returns -EPROBE_DEFER.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/cpuidle/cpuidle-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/soc/tegra/pmc.c | 15 ++++-----------
+>  1 file changed, 4 insertions(+), 11 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Applied, thanks.
 
---wjX9SZ+Gk/1NXCEd
+Thierry
+
+--pV6cwMKbUn7CKnNV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjBtIACgkQ3SOs138+
-s6GtVg/+PGXrwMBuRguZzhdIsG0XLqZ3sNbquJjNzLboECmthcYlKyi5d2xUNxNp
-wf2CiMw95KgAxeLrqGI6c5ClWlkp8RJ6AcRNSUe/FRk5KCRJDEaELP/QeL71Xpo6
-7HFUHXzXLxATtqn78Mm4Z25N8YMVQebfb6Zd4QqN5U7R1n+Psej1WStKUJs373H8
-1XokCQBgI6x6fxN4d5KnULepFiwj/OxUIHCHVWYO6CQgH2RsXYg7/HtNoZ4doDAz
-0/lDjM7xkwLZNdyMv5yYKM5ZXyHBiFQ9x3DOPEufKGdhB/hInravhqjKqWXeKcQ0
-VL2QYNEXm9L4/lYrK3pp4eUPO3E+/L1+KT/RMJetYAL6VrXvucwWLbkdL40y5QeN
-T1twnwbXGiZcp28X4KDc0W136Xia6VU0anmD4SVDQmCm0TLGW4qyBbF/J3Avt11v
-7CtqTEgL37XQ47jstaKWcYC45KKWpuZg4IBFox0Sh+wmsOA3cuICJeKZn6uk33kD
-HVF03XeKFq4qt0KI/CV5WzlVY1x0Gq6P7cmSMf04fWPULYsG1EIjg2wKi1ILmxOv
-WHZEw5jS7Gx/Oe2Dcmc31uK/pgfHBeBW4oDDSyuOwLakBuq/wcwrKZZqjDvjIbrh
-2SGoY3gvRiDc3VAQlJEzgTIeE/6dNdVS48QE5Wudx41y6Wqm9xM=
-=V2qv
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjCP4ACgkQ3SOs138+
+s6GC7xAAtmI8w9gFIjPA9sZUGMdow1BHER7HNnuzr817NlR6rw9onUc+8Py6yDOU
+hpBSCYh60UiW2oPhVLp3PSxtRKwIiqT3ZBhL2J1sooK6SBDUzQ1TPKzRCzIye/O1
+6dyuYBMp/B+faFpQ0intZednC/gqdZ2tzCjRhW5GLlbqsRZ7mjmIzQ2j7Dl5WfH5
+HbN4QmyAeAaFkJMEnXtvbYCK+ex8/Hpn7o3S64aeC38ruzEmqycn08NOPU6QoWJQ
+RmRB2MuROBn1xLzN0zDVXL5AZdpCZkm/7NZnM1ZijAeTLzxBtaVGm6IZnFf/FoW1
+atwfXho2Lht/lxnfPuH9+b5wRDmx5C3SduKCD76K6sT0Gfd6RIgAa8FXzzXTBnHs
+ni+u0pdeazFN6Y+xx8wMA6S47HUC8ktInG8wsKe7E5sdSJPP/Lz8bSeaYP98xftM
+DQbWJ9CjFHazP9ZQEk1rISTjAhE4MwWbzLTnbXyYM0/8kOsklH30dhILt2aBI1Xe
+7UT0zJmZNNCBSlY21oiT+s34hK7f4Iq0XOARgz1rAM3B2PVr7TfvynWte+surq6R
+l2mVUQrK/SUDDUr9m8lZ9uT31Vy2YvaaK+9Ji5SPRISXPuMtHJzE3gf6Kk9668aJ
+U8FlZbnyOjvLf+a06zCIhRuKXCBD2iP6ghiwDLitE42oSaZGSeo=
+=Cpzu
 -----END PGP SIGNATURE-----
 
---wjX9SZ+Gk/1NXCEd--
+--pV6cwMKbUn7CKnNV--
