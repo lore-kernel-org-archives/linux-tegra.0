@@ -2,109 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AEEECAAA1
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 12:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCE6ECAAD3
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 12:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbiIOMas (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Sep 2022 08:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47024 "EHLO
+        id S229479AbiIOMdX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Sep 2022 08:33:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbiIOMar (ORCPT
+        with ESMTP id S229458AbiIOMdW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Sep 2022 08:30:47 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EE6E52DCE;
-        Thu, 15 Sep 2022 05:30:46 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id n17-20020a05600c501100b003a84bf9b68bso13686154wmr.3;
-        Thu, 15 Sep 2022 05:30:46 -0700 (PDT)
+        Thu, 15 Sep 2022 08:33:22 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89DA153D3B;
+        Thu, 15 Sep 2022 05:33:21 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id z97so26705082ede.8;
+        Thu, 15 Sep 2022 05:33:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=c+Ixagfdqqfi9wNyp/go1IY1VNhsc9BwApfAZYB8y+I=;
-        b=a3qy5KM52SHzBpO8QWXXmAg8KbFRBDajnpP6lPCH5KCeQrUfjmnp3iwzv4h9eapnB9
-         d6iy9VTfxLbAhFUWBqzS6nVBZOn2rbiVcF26Rna5546dJLp73XHY7Oz7S9XsBZswg2JG
-         KTyravUUhz1wPa8i8P4CUcLDGSC7MvotdYUnQwJri3WjmumXSQm5Rc6JYxwMyZ6S9+rd
-         LrJNgC48RCLU2smuV6XLM3YACYI0ULiGNha+/NmGD2IbGTRf8ljlejmhHseBZxoWh1qV
-         VSzu9V9TxPfTQUWYXWfktrlRzcbangO98rrywJN51kvJytWiOejCW+eBBPtabSEnmxxL
-         dlmw==
+        bh=uRcCz7w/qNQWN54sm/KxVXaxOcNEAOypLJYBNVshaf0=;
+        b=BbefnUICwHHtKzxyfBVFf1WlKOK88Lv1gI8/isMFbjqenp/CVSsJSlMT6JNmtnZ83n
+         dgc71FDpkEfSYeE2eodABTOqd6E2ES3pIssm1FCOMDJ2lCcEwqvxm5bygOu0pPaXY/8T
+         U+4+XP3Bap4SCD2l5IENEyooakWYN4YWOdM/mWKFwV+OBfjPpA68nJo3FEo+zVD85oYI
+         mXrtNB09lvR64mA7XQk6LD1MsalNA8G2A+bK5prT98USHJ7J80PP/Htx/m8kJQnnO7yl
+         kkexF2SWV/i0CyMeXmBveXSc/VI3rnw4nHMks513pvIbPkMTCuVPUlU2htP9M5WJISj3
+         9Pcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=c+Ixagfdqqfi9wNyp/go1IY1VNhsc9BwApfAZYB8y+I=;
-        b=dgJfc/hxGKVbnlKxrnZcJmTo+KDcTjOVK/JFi+QlOnDTIeY10Dr6yV1kri52U2nzrX
-         qAmytraNor4kT00Lv4ytEqCFXb4tWb3zbGoKmr3H4qWzytlw0OeYoR9S9/KtgvxFYkCI
-         NoLAQTjznLEOMf9ocGc+MRrD7Mr8La5YbCuF7VTF+yZP4LHFcwuHbYKlssrs6yxPL9yj
-         8y3mpYGHnwIYeSf5PJGpFk+IZpu5Q28jQNNdroyEexUy/Ys5KYmL4eOgmiYtqLq30mGT
-         w4VMx2pqXrbGUOi052Oid0QLHenTKQzUUNSmV4zaHLUsqzG3PAOIXy5sDTqsJUq7Qlq1
-         X5JA==
-X-Gm-Message-State: ACgBeo0alr8UQEcnpZNB5RNYHmm1SQ3glyPNo5D3Gd2JJP+Drwwmmxs+
-        HeuaqpJ5CkP6YiR46XlGtW8=
-X-Google-Smtp-Source: AA6agR5ynfZI5mse/u4KZUzS26/Osxt7zqxNXljRtp4wLS14zPizEyLgNeVDmvm5SpFmI/vlYOLaiw==
-X-Received: by 2002:a05:600c:594:b0:3b4:7637:9444 with SMTP id o20-20020a05600c059400b003b476379444mr6707704wmd.52.1663245044964;
-        Thu, 15 Sep 2022 05:30:44 -0700 (PDT)
+        bh=uRcCz7w/qNQWN54sm/KxVXaxOcNEAOypLJYBNVshaf0=;
+        b=MvaFBMMErb9qKxKjF4ds8X9vyBd4N7xId7q7R0xsSZ0OAa/cNm8cUWQfMEIHwY+jve
+         Iw6SJQz3/imv3tyfrDTKxusNm27SMXmiF7XzY4w4H2rLcgIS3OAplB9oHCOgsueCljg3
+         LECk/QLsggciw2OCBDtYf3UOpQW+FPh21EXr0E2gaz5XQrToNv+zKcxtJXd2l3lumCR9
+         K5mM2qQs+E9HexASqlwGiboFdSp+htDwYoTqpppbFa43nGeECm7YMN6q70yv9S1fWJ94
+         uDX1nNoo7BcKYDn8eUj3ZffEZO8yzKKY9vJMlAEADMXLDf18V86UsjYQT/aRzmoDmJiF
+         1/PA==
+X-Gm-Message-State: ACgBeo2CVxwRSSf7QmYuoXa8GZJysNNKtysqSueND7lDvR1ykpEnoz1/
+        /2qgXZyJCI7ppwL3iFxQZvs=
+X-Google-Smtp-Source: AA6agR5pClp9iMUcfqEMXXv3D/94SFr6VI7ht/lKcFkZNxlQK337vbzQdkg7OWc9HmxLIzYdy3v2bA==
+X-Received: by 2002:a05:6402:2554:b0:450:28d2:2152 with SMTP id l20-20020a056402255400b0045028d22152mr30497812edb.303.1663245200077;
+        Thu, 15 Sep 2022 05:33:20 -0700 (PDT)
 Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n4-20020a1ca404000000b003b47ff3807fsm2738613wme.5.2022.09.15.05.30.43
+        by smtp.gmail.com with ESMTPSA id va6-20020a17090711c600b0076feb45e2d7sm2568937ejb.135.2022.09.15.05.33.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 05:30:43 -0700 (PDT)
-Date:   Thu, 15 Sep 2022 14:30:41 +0200
+        Thu, 15 Sep 2022 05:33:18 -0700 (PDT)
+Date:   Thu, 15 Sep 2022 14:33:16 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mohan Kumar <mkumard@nvidia.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        treding@nvidia.com, jonathanh@nvidia.com, spujar@nvidia.com,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: Enable HDA node for AGX Orin
-Message-ID: <YyMa8aN5vS6jIF45@orome>
-References: <20220901043305.26634-1-mkumard@nvidia.com>
+To:     Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 5/5] serial: tegra: Remove custom frame size
+ calculation
+Message-ID: <YyMbjFMguOjiP0kV@orome>
+References: <20220830084925.5608-1-ilpo.jarvinen@linux.intel.com>
+ <20220830084925.5608-6-ilpo.jarvinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7CfBdTTZ6H+m+y/A"
+        protocol="application/pgp-signature"; boundary="neI4Ah5D6zKSsQ0D"
 Content-Disposition: inline
-In-Reply-To: <20220901043305.26634-1-mkumard@nvidia.com>
+In-Reply-To: <20220830084925.5608-6-ilpo.jarvinen@linux.intel.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---7CfBdTTZ6H+m+y/A
-Content-Type: text/plain; charset=us-ascii
+--neI4Ah5D6zKSsQ0D
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 01, 2022 at 10:03:05AM +0530, Mohan Kumar wrote:
-> Enable HDA node for AGX Orin platform.
+On Tue, Aug 30, 2022 at 11:49:25AM +0300, Ilpo J=C3=A4rvinen wrote:
+> The number of bits can be calculated using tty_get_frame_size(), no
+> need for the driver to do it on its own.
 >=20
-> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/tty/serial/serial-tegra.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 
-Applied, thanks.
+Looks fine:
 
-Thierry
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---7CfBdTTZ6H+m+y/A
+--neI4Ah5D6zKSsQ0D
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjGvEACgkQ3SOs138+
-s6ESuhAAsF6Ndt6GgdhgHLdA/U18ihSuLGLrHM264Dg6eEyUo5LewHRSlfQo1ZgJ
-21M4SeklzkTKirz7r3IJJo8JZN3u4PfejQ5fzDF2OuYOiMTXcVmnKc42A2ur9yn5
-6tx92YKnVXF39plDE86VO3Rxtkfnm9Ej7lWP7P3Cdnz3DlOoz5jo431gWlPsA618
-TdpxBXj544RNJl/gwbB/9YVVlpsYNb4xHM9KOaXPBpvbwCu0Ioap+BtBJUaMTyoS
-O6zevTL7yLQgap5BgBQb9pX60TzXpofpzlkpNY1iTtcaxWbHLsCufx26Luor8A6/
-V0zStLjyyjd1UwK/pLvwBm67HIx33qUWQCCETq9ySonAGDKvLUDh3Z4mC2+0RYkG
-7gBmOZY/9FoO3KM7oCsXf5VDOlogUUYlvIc4P2gfrPct+PUJpAScWvjtODD+9Opx
-p2hfzXHh1WAWXH87/B7RRkDGhyNBF6dpbkRa2AXV+a6VC7H8RdfWc7Jh6S9Kggyy
-/OTV06pwjKaPIOkNPNbPE4hc/uTTdw44BzZCBBjNtrYfC0syZwmjxhTokDXfOd6h
-zKyOm3ol5dwSLMqOEpUoXtxFKxA/Tl+YdxsXBAGjKvRjlQpbQ22VVj5YJ3f0OYS0
-4WfQdLMp4q8nGo/JHJZzqiU72Tbhmt/eWPr2+AE6pDTwM2JesPM=
-=T1Oo
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjG4wACgkQ3SOs138+
+s6HcxA//QwyuWDzZbDmTNw+S78W8M2qz8Fm20rimP46tydT3aB5yG5s+L6y8hvCp
+g/2/GdSMaReB+ZEJadXEJedxh8LHJctucQT54/mjIRUWbIqhY30pgU8sdeOYJ/Wq
+94+a66sYiI0/nO8M4h+xhaoLweTwsaBWrPp1CX/fiFx/aD+60/Csf9+WLBD8IwYU
+qxn02Y/fsaQemFf2WseUSKEcZgexshIl4LQE5pdPwKjSG6speUGgQ18uVe4uhvgn
+fpWS9lAAqROI83u2ZQGLJZTU5m6bHiTGO1q9vhE0b0OqU06sBoZTECvdXReFzkiZ
+g9zt4MfBkZHqpmO/AavSk6p2nPTO2zCJGOkQEJi88Gb2OxKRlMrDBgwr78cSqMEJ
+y4bO3Ty8L0xxOn1R+FDZLUf2erMG97OjPR6vloreA5wt/r9k3R9TDdGEgkzL6ovQ
+rQFzQo91p25Buy6WxaRhCL3g/Rp7YvgVqHMVSQQdGpo2AfeVL30iGQygNJar7MZt
+AAF1Ez8n3OC9s8JNrxU9jXM2KKk6Tg2IN55ycTCCBb6m3gdAaHzaJ0LTjT4hWuIH
+7jHRFoytmJrTdpdaRSH2TL411zv5Xd366mAofXCfo6xtkfPhj78dQ3Dqwp6Ty1wu
+lF5nEnRabBRxUGuM/4MvL1e8ZMzGA3uV82kPe6sR85BZ7/1SC2E=
+=6qEz
 -----END PGP SIGNATURE-----
 
---7CfBdTTZ6H+m+y/A--
+--neI4Ah5D6zKSsQ0D--
