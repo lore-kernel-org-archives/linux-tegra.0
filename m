@@ -2,113 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9276EC6FA8B
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 12:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EEAECAAA1
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Sep 2022 17:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbiIOMjL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Sep 2022 08:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56592 "EHLO
+        id S229484AbiIOR25 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Sep 2022 13:28:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229986AbiIOMjH (ORCPT
+        with ESMTP id S229452AbiIOR24 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Sep 2022 08:39:07 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67049844CB;
-        Thu, 15 Sep 2022 05:39:02 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id e18so7626791wmq.3;
-        Thu, 15 Sep 2022 05:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=JowbcqaoSeHYfBdTSmK7yPgn5pXXbUiwgqBzQ++Q3hY=;
-        b=Zds6NGqWZZ8qjwOAkmr3ltzpBLskhG8fdSr3MDcQ2Y9bwqVzgQcnifi7N3M1lTlk5V
-         PxmB/A8BKT3rs4TZogzc8BG8tw76D3WstQAobiHRlCJ5HhxKRnJxaemiTP6jT8+Zxcfs
-         BtTsNSKXvFryyTsvhw8Q7uBJLlsXZPRF5A4Bc/cCR/xcQtny7OqCcgPfzPFZihXLi73F
-         SCKiP1FiM0dpH4LH2yyWNrxZNkI9D0M5tJrFx7sEmDLWUHWy6ul6cO3y7ys24eGdPU0F
-         2XWgSxU57fF7M/eZBmj3dYfKXIaB+rPXIwof6BTYBm/D+wEWRb52UqAAkqSRL4vSV3NS
-         wHCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=JowbcqaoSeHYfBdTSmK7yPgn5pXXbUiwgqBzQ++Q3hY=;
-        b=ldB3dYE9AbgLbF8Wet9EtYjPl7ZWaC8L9ahav+SBgipvI3c9TrBs3ioQKacIm+Xgy0
-         /NqbkhW+I1+PcnGvw2UBziBhb/euUWJGXcvSMPZzBkKEs4WoaLa/1/3YN3nvOyOFM/A8
-         MvPIR4W4bWY309VIxh0/1CwxJR0e9ORSrsCyuLhzFxRY/WASn9eyqtnH83WlRPMN4Cit
-         HFeZwjxJ9KRe2ylxJFBj/RuX/HdnmK1cB69dzhXoDX6kjMRU+UjsMjFz7mWVwnabsROD
-         Lcu8CHnRUhoUpZj6jE20zRr0r1rO8+QrspJttkkZ9z+AVB77A3+ea0qUX5Rn9gcb52E8
-         wNAw==
-X-Gm-Message-State: ACgBeo3f/ljQwvrrs6WFRy6mF7lANmHn6GsadWNWphsSiiDxjPfE0yXJ
-        SbzG6dtYeslvWsGK4NGkeBg=
-X-Google-Smtp-Source: AA6agR6p+cQR2KXMA9mKPBtsRgWmraQ/EvHReKZd5/k0gahtz19cEOPpIXYgYOGYaCCdfCyrrcA5ag==
-X-Received: by 2002:a1c:7315:0:b0:3a5:ff61:4080 with SMTP id d21-20020a1c7315000000b003a5ff614080mr6482824wmb.196.1663245541937;
-        Thu, 15 Sep 2022 05:39:01 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id fc8-20020a05600c524800b003b48dac344esm3199521wmb.43.2022.09.15.05.38.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 05:38:57 -0700 (PDT)
-Date:   Thu, 15 Sep 2022 14:38:56 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
-        smangipudi@nvidia.com, Manish Bhardwaj <mbhardwaj@nvidia.com>
-Subject: Re: [PATCH v2] gpio: tegra186: add Tegra234 PMC compatible in GPIO
- driver
-Message-ID: <YyMc4OkYLLXjiHmL@orome>
-References: <Yhe0pCpfeCpyfPWg@orome>
- <20220816102725.14708-1-pshete@nvidia.com>
+        Thu, 15 Sep 2022 13:28:56 -0400
+X-Greylist: delayed 108957 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 15 Sep 2022 10:28:53 PDT
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C14C49C1E9;
+        Thu, 15 Sep 2022 10:28:53 -0700 (PDT)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 130CD600877D;
+        Thu, 15 Sep 2022 18:28:51 +0100 (WEST)
+X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
+        tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
+        with LMTP id Iz1jkrXv98L6; Thu, 15 Sep 2022 18:28:48 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 98B476008777;
+        Thu, 15 Sep 2022 18:28:48 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
+        s=mail; t=1663262928;
+        bh=mnGCfMED2lxDnun/7mMj+BV+IXlh6vYMUbEN10N5x10=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=nSXDkOus+D3A8GgGdGQMukCCKNoKeoEAjULrD+QB1aBWwjkkg6WsTH7TEgkQTEb07
+         WoSWB5fXiXbvVj9sfmMq115jxodQyU5afVPO3IM3BbY8LjYmAGYUTO7i//IDgyQY97
+         w4vYRBw+BpwKwSwIzRXqEA+qqk/UrKKHxxNPZDvQ=
+Received: from wslaptop (unknown [IPv6:2001:818:dcb5:dc00:7a88:7f12:8ed8:518d])
+        (Authenticated sender: ist187313)
+        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 5EEDB360095;
+        Thu, 15 Sep 2022 18:28:48 +0100 (WEST)
+Date:   Thu, 15 Sep 2022 18:29:06 +0100
+From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     krzysztof.kozlowski+dt@linaro.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/2] arm64: dts: tegra: smaug: Add Wi-Fi and BT DT nodes
+Message-ID: <20220915172906.rjcxhxx53kdcmwuh@wslaptop>
+References: <20220914111221.862929-1-diogo.ivo@tecnico.ulisboa.pt>
+ <YyL+DmHdJBdoy5KU@orome>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ObJgmcXHiByHBDO8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220816102725.14708-1-pshete@nvidia.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+In-Reply-To: <YyL+DmHdJBdoy5KU@orome>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Sep 15, 2022 at 12:27:26PM +0200, Thierry Reding wrote:
+> Both patches applied, thanks!
+> 
+> Given that this is a rather old device that we rarely see third party
+> contributions for, would you mind sharing some details on your setup?
+> Are you running any of the after market OSes on this?
+> 
+> Thierry
 
---ObJgmcXHiByHBDO8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-On Tue, Aug 16, 2022 at 03:57:25PM +0530, Prathamesh Shete wrote:
-> Using this patch we are adding PMC compatible string for
-> Tegra234 in GPIO driver so the IRQ hierarchy can be set.
->=20
-> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
->  drivers/gpio/gpio-tegra186.c | 1 +
->  1 file changed, 1 insertion(+)
+I am running the latest Arch Linux ARM image on it, and the 5.19 kernel,
+which allow the device to be used from the TTY, since there are
+some bugs in the graphics stack preventing a full desktop environment.
 
-I already acked this on v1, but here goes again, for patchwork:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---ObJgmcXHiByHBDO8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjHOAACgkQ3SOs138+
-s6Hy/Q//dhxKqkvTQwx5kDgrAsB3vWecsum9vMvaN3wqNcheDRlhaNuVY2Q+j2nF
-qNZGvIDjJofnu7TNuCgZE/Kzmtla36JZxLwP1z8u4a5S8F7urkb4jHIJSIwROKfi
-mFFx0Dhf0h1/48xmI1S0M3gf/cX78gLMoMRsZ2tRb8oaMxIrvrBI8Q/6kcQXHi5s
-Ru3U918eU4sVeM3s6WhQHd14ynzkDTuALOOGWP0n1ouSnU0yClSxv8oxfnhdBqDr
-FtNh1DaKDRGVRp0w/jbNFUJaPKBOuEHw2f8wRYAo4TqSFHqVfSfMlHwcbRyNR3JC
-WjBo4ieXw6TPLHVHmeV0ol9+1oPUxevafOpxQk1IlZKXfzah2twdeR+HVhsV+3+B
-0o6v6O43SomBnz1pzRTmBy73p4LdWGLd/Vx+42+1Bipl53vriWmjaAiapScJt+fK
-wvGfeerLeZoUiEicL3y7PYQrhRF5ExAtvgICo2ndGhjDl0enPWUl+kYRchv4yDXE
-oCJTONfKvoJDn7ttMGcM1Ar15p8E32GRhrHxIrYfkYGE6oklZFzQDWeTxvms+8YJ
-bGZsj3kNSC7x1E2PxoRR+6ckGSB+fm5fuJiWl9mTfU/zocWYsINM3kGl1SzCV+ZZ
-S+IbJWLrBm2blnEZhXAVCL0DOzUkl7hwqF8yc3+BKTxvKM9026M=
-=wZRJ
------END PGP SIGNATURE-----
-
---ObJgmcXHiByHBDO8--
+Best regards,
+Diogo
