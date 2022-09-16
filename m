@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54102C54EE9
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Sep 2022 10:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822A8ECAAD8
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Sep 2022 10:36:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231805AbiIPKg1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 16 Sep 2022 06:36:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57658 "EHLO
+        id S231335AbiIPKgd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 16 Sep 2022 06:36:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbiIPKfv (ORCPT
+        with ESMTP id S231919AbiIPKf4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 16 Sep 2022 06:35:51 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB3CAB7768
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Sep 2022 03:20:58 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id m3so10969894eda.12
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Sep 2022 03:20:58 -0700 (PDT)
+        Fri, 16 Sep 2022 06:35:56 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D057B69F7
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Sep 2022 03:20:49 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id l14so48383884eja.7
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Sep 2022 03:20:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=5K/jTI7fjuDW4G/VqPOVZ9ue0kSth/V/PzuxFr/qC+g=;
-        b=S/JMXXmH9Zy6To5nOJq6ZR0ij3lS+NVTUJHgFx8rxpgsJacw+FJwEadgrLfb+JZ3a0
-         qhjwPba5hJ+8TRI3Xt8vOM+3dAg5rjNys6UeND+ot+F5hpgvJhCmLiPido+IsEdiEcdQ
-         OHYhqReTuFavRANuj5Phwt7Pxl7zRHNpREsldyW0r6J3vjIsWM20DbJKnJ3CTw82iWab
-         ZqR8q1PGl/9umXYyo5J/GWac0jA6IU5TPjWAGK9n0Ez0kE+caBGKQ6QbEvVFIr7/bP/+
-         kJLrgHB9XKzymQ5wIueIXjEUbsbzpMgUf7VY6bZTJ7GFoRbrdcFSA2KmiuoTnjdtEpCq
-         EZqQ==
+        bh=lvWfz5XMCXijTtD7aKm6gLi8utYEMVarSMbjGKxHpZ4=;
+        b=SOCYY3oUTJcuAledpJtxqIHVwQyTLCmT8qddWNiuCQOQCw8iw20L26GM3Ium8Aiud6
+         cTn6iRz9ZLrl3XW2LJzCcRTEGdapyOjXwwnHsf6ae0KErRZ4j5RvE/HcjUVTSnmWgZlv
+         RxVV+ioOGFMEC0FwunEKdg+Uk5W5uzRcXdJ9Mao3Rpq3WMUeja2hmb4cmn/nWh97jjVs
+         GcPxxaAspjYfV/iBjkkEi4EkB3ryxachZeV8kQoHkPIeGR5SBZ5EDWwT4lxmYam6iwK8
+         AnfF7rz0B53y6da5jgkOmaNDakuCJcF0/Ys0JH/71eYzj5rEfMPhh2WpFPJgOOg8Ga05
+         F9dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=5K/jTI7fjuDW4G/VqPOVZ9ue0kSth/V/PzuxFr/qC+g=;
-        b=WR5BP9PEiTPhtU77V75tTNbEZz3coMa1oxrVprbW4pbkarFuxrMmb3nuXdSCOaMZUf
-         lLchNsiq7y6eOlxez67XXcFyc0/6H1NNqGeNzEWX+v51uZyWinVNDwczGlQi1/w2hzKz
-         zKb5/Z5cZ0eMtPXjFcYBeOZyFTTDbdvvi5WRwvcfKvTMaIdjhituvwl0tnYTQdllb+FU
-         /gj8cU+F5jupT2s+arOJPta0xWCFsAcIY+od76H0RwzYU/0VBqUXNmrxH9K5GAqgXOD4
-         ON/SZ7wH6nNUkT/fyWpcAQfN6I/JAEyFmTDm9tR4fpluC5NsVFVJV26XQdW2KCtp9Xyk
-         E6Cw==
-X-Gm-Message-State: ACrzQf2+K4AYbVMyfvj1DX6qw/9Ajgk2atv9gDy/Ox7nnoj5Us4nNc9+
-        4Gu3f7NgrigVTIGt9NXSCXE=
-X-Google-Smtp-Source: AMsMyM75Nl7uONh5kfRDrG/I0m+0hj63axO4VVaXJFU3ADb+1LWIXuXeElQImsAj0uP8Ea48HWS8bg==
-X-Received: by 2002:a05:6402:448b:b0:43b:5ec6:8863 with SMTP id er11-20020a056402448b00b0043b5ec68863mr3296514edb.377.1663323610676;
-        Fri, 16 Sep 2022 03:20:10 -0700 (PDT)
+        bh=lvWfz5XMCXijTtD7aKm6gLi8utYEMVarSMbjGKxHpZ4=;
+        b=m+VYOOuD1yNo+EEMtkmQXg7DTZUvAW9QrnrTaH6GPmokOGNvVz7P1VgocF8iKoDQxj
+         ix+D5Cv47TtD+cfYr0NZ5AsNxc6jxBZRNL+PA2kobOhXqwaKKadS06u2mfx3JzGW9kZ7
+         Wb3Y4ptPOOKk4eb5KrXUe+KzQZv+SBWB4jC5AM69m/SXoadTlsZh80cxxN4yf9hb/UsW
+         nK6Zg+FrLLS2QehTtngprTGdIwcHWK6kV1CQBQkOEMhMUnoup2S5oPNDlwFLQuXvTdIy
+         mpLFNMpWgVPezP3idV9aE/PgOPXiCgBogX7pFoM/q7TraeaZ+2Jd+E8RLSDrS4l2wCYQ
+         1XDQ==
+X-Gm-Message-State: ACrzQf1j3PcxfbtreqKb2+X+wFKc1BI2E9D9fql3BmyyXU265zqvbxbA
+        kD+4WxfWz0bRjxO1hb0Fa/M=
+X-Google-Smtp-Source: AMsMyM68DH6bFSZw9QAcddZxF85j5nEpxM+u4fn/qfL17eRXsRnI3DctNl1K87UglMJutF1RBNx0UA==
+X-Received: by 2002:a17:906:6a07:b0:77d:f99c:5ab8 with SMTP id qw7-20020a1709066a0700b0077df99c5ab8mr3110804ejc.544.1663323608312;
+        Fri, 16 Sep 2022 03:20:08 -0700 (PDT)
 Received: from localhost (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s1-20020a05640217c100b0044ec76521a1sm13230860edy.55.2022.09.16.03.20.08
+        by smtp.gmail.com with ESMTPSA id 10-20020a170906218a00b007420aaba67esm10351575eju.36.2022.09.16.03.20.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Sep 2022 03:20:09 -0700 (PDT)
+        Fri, 16 Sep 2022 03:20:07 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 6/6] arm64: tegra: Default configuration changes for v6.1-rc1
-Date:   Fri, 16 Sep 2022 12:19:57 +0200
-Message-Id: <20220916101957.1635854-6-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/6] arm64: tegra: Device tree changes for v6.1-rc1
+Date:   Fri, 16 Sep 2022 12:19:56 +0200
+Message-Id: <20220916101957.1635854-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220916101957.1635854-1-thierry.reding@gmail.com>
 References: <20220916101957.1635854-1-thierry.reding@gmail.com>
@@ -75,32 +75,66 @@ The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.1-arm64-defconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.1-arm64-dt
 
-for you to fetch changes up to 747c39f0ebfaee9cf699dd3c35ac6462db847667:
+for you to fetch changes up to 8e4428051df12f3574b5d7927821c6fb75098d9a:
 
-  arm64: defconfig: Make TEGRA186_GPC_DMA built-in (2022-09-15 15:51:47 +0200)
+  arm64: tegra: Add GPCDMA support for Tegra I2C (2022-09-15 21:30:38 +0200)
+
+Note that this also pulls in the changes from the for-6.1/dt-bindings
+branch to satisfy build-time (and DT validation) dependencies.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Default configuration changes for v6.1-rc1
+arm64: tegra: Device tree changes for v6.1-rc1
 
-Enables the new MGBE driver, as well as the existing SPI and QSPI
-drivers on 64-bit ARM. The GPC DMA driver is now also built into the
-kernel by default to avoid needless probe deferrals that would slow
-down the boot process significantly.
+These changes enable PCI, Ethernet and HDA support on Jetson AGX Orin.
+DMA support is enabled for I2C on a number of SoC generations and the
+Google Pixel C (a.k.a. Smaug) device receives Bluetooth and Wi-Fi
+support.
+
+Other than that this also contains some minor cleanups and fixes.
 
 ----------------------------------------------------------------
 Akhil R (1):
-      arm64: defconfig: Make TEGRA186_GPC_DMA built-in
+      arm64: tegra: Add GPCDMA support for Tegra I2C
 
 Bhadram Varka (1):
-      arm64: defconfig: Enable Tegra MGBE driver
+      dt-bindings: net: Add Tegra234 MGBE
 
-Krishna Yarlagadda (1):
-      arm64: tegra: Enable Tegra SPI & QSPI in deconfig
+Diogo Ivo (2):
+      arm64: dts: tegra: smaug: Add Bluetooth node
+      arm64: dts: tegra: smaug: Add Wi-Fi node
 
- arch/arm64/configs/defconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Mikko Perttunen (2):
+      dt-bindings: Add Host1x context stream IDs on Tegra234
+      arm64: tegra: Add context isolation domains on Tegra234
+
+Mohan Kumar (2):
+      arm64: tegra: Enable HDA node for Jetson AGX Orin
+      arm64: tegra: Add iommus for HDA on Tegra234
+
+Thierry Reding (5):
+      Merge branch 'for-6.1/dt-bindings' into for-6.1/arm64/dt
+      arm64: tegra: Fix up compatible for Tegra234 GPCDMA
+      arm64: tegra: Add MGBE nodes on Tegra234
+      arm64: tegra: Enable MGBE on Jetson AGX Orin Developer Kit
+      arm64: tegra: Fixup iommu-map property formatting
+
+Vidya Sagar (3):
+      arm64: tegra: Add regulators required for PCIe
+      arm64: tegra: Add P2U and PCIe controller nodes to Tegra234 DT
+      arm64: tegra: Enable PCIe slots in P3737-0000 board
+
+ .../bindings/net/nvidia,tegra234-mgbe.yaml         |  162 +++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   49 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   49 +-
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   36 +
+ .../arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi |   36 +
+ .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts  |   73 ++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi           | 1115 +++++++++++++++++++-
+ include/dt-bindings/memory/tegra234-mc.h           |   10 +
+ 8 files changed, 1511 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
