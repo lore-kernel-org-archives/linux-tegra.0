@@ -2,120 +2,229 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A93BECAAA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 16:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B688C6FA92
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 22:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbiISQd4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Sep 2022 12:33:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35740 "EHLO
+        id S230007AbiISW4a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Sep 2022 18:56:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230007AbiISQdy (ORCPT
+        with ESMTP id S229991AbiISW42 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Sep 2022 12:33:54 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B053C8D1;
-        Mon, 19 Sep 2022 09:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663605231; x=1695141231;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+aMmESksKhzCnQk5R8nRr+S8KIYQXjUvUvTxGZinTS0=;
-  b=P74OuXW9bTiNH9/zvtNrmCXNtA8S1pA/eIdUxEojvQFU4xFuTGvQzMvi
-   cfqxdD15f1QOwaMc2PQRc2Bv3LoVHnJunAPqMh9mks1dQqvihUe59LVgt
-   HvK/Vr/9mmN1wBmZqwOdyIik2NyPzezUSq/nbm/VGCrUKHIrIiskF9rcm
-   Nv4uxfg0C5JSuyK66TaSj0ktpqmEO0bfQu6xskVzYUxpzbIFtnRxI08dn
-   aKEuvL/GWBFHw4X1RJf+Re0rTEPXsSIuzoJUVFYGHn6tsVyqTK3LoWgJr
-   SLXEgeMsRYtk5fqzsjfYAbuik16Q62TzIozEsaUT+WKAjl4R/q0z4IBmD
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10475"; a="286493969"
-X-IronPort-AV: E=Sophos;i="5.93,328,1654585200"; 
-   d="scan'208";a="286493969"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2022 09:33:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,328,1654585200"; 
-   d="scan'208";a="760935799"
-Received: from lkp-server01.sh.intel.com (HELO c0a60f19fe7e) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Sep 2022 09:33:46 -0700
-Received: from kbuild by c0a60f19fe7e with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oaJiL-000261-2G;
-        Mon, 19 Sep 2022 16:33:45 +0000
-Date:   Tue, 20 Sep 2022 00:33:28 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Vidya Sagar <vidyas@nvidia.com>, lpieralisi@kernel.org,
-        robh@kernel.org, kw@linux.com, bhelgaas@google.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
-        vkoul@kernel.org, mani@kernel.org,
-        Sergey.Semin@baikalelectronics.ru, ffclaire1224@gmail.com
-Cc:     kbuild-all@lists.01.org, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V1 8/9] phy: tegra: p2u: Set ENABLE_L2_EXIT_RATE_CHANGE
- in calibration
-Message-ID: <202209200038.mZZFPD7g-lkp@intel.com>
-References: <20220919143627.13803-9-vidyas@nvidia.com>
+        Mon, 19 Sep 2022 18:56:28 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 651924506C
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Sep 2022 15:56:23 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a26so2116419ejc.4
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Sep 2022 15:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=5S9VBftUHA8Ab+AfT1DhnDF/jWnQCvfphMhw9w+YVhc=;
+        b=pT3AVw/XaQKfMJa28M67X6CWfwalI0Uvo6unsRjOTD2Z+d/hMLJagRy91+fB9mWt/H
+         RvjlLsn+3FsNx74QkbruJHKtTQ+30w35PYmoN36zBZvRhmzaaut2t/ejO0VHEYQ77EDj
+         OXDYFEqkBBbGSPaGws21i+7eNFUtsVpC10Ocfp53V0C+AqpxtnC2gWLf09NvoZb8DNZe
+         nefkWz5Q2xpTnqPE/9sJZpmszdShkKibcjHKjjaL4N2+oQKOJucjE0sZV5m8l2gxJQLL
+         eUTG5Bs9Z5UoBJW4L2zlLkhjGsOc0HVn5guvp/vsJvOqjFnEQJHDOGaHy7aMupntX7WF
+         7vTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=5S9VBftUHA8Ab+AfT1DhnDF/jWnQCvfphMhw9w+YVhc=;
+        b=J0EV07DFcg1Vm4lgxVGnxKaCqM+VWU1bNRkDDL+Ux0AK/2XCLg36Og7n2mS/M1zlz7
+         Yf+eLrB/SzoGJOcRVNfs7IIGp2Oy9HPza9nomd3lPDjWnVu88iWVnx7bHE6kwVKZogcz
+         9F/cKXayHUcywYfN+WnIIzUsjlhyhY8j11/ufKIO3YO+1IENcH360prwQ2EYLYEM1g3S
+         DRWN1a0A+N05CfCMfEzeS/N/tXhFpdQGKisYu/ZMuARFouvqzv4W9YL+be3PU5irrmmO
+         L2qihhPGzYQTThad+vblPyhbU9n2nhZbMf4p0AkZsxoFeadi+HA26uPeP8tF437N71og
+         9PBQ==
+X-Gm-Message-State: ACrzQf0iiT36g2/tHotfcXJGReiXoSmarL1tuq+F+yb1RW/Zm3uFKJcZ
+        UdLoZeCfEhglndtwaxU6qtQ9EBcKdpaovZ9N2XFn9Q==
+X-Google-Smtp-Source: AMsMyM5kdxcAfNB78ChbidtnpNAMschNYMIGpvHRr7zgKTZ4CCEGx6bhJgHHTNr9SAgKH+LAmfDCBtvH2R9hQBackB8=
+X-Received: by 2002:a17:906:ef8c:b0:77c:8f77:330 with SMTP id
+ ze12-20020a170906ef8c00b0077c8f770330mr14503775ejb.604.1663628181793; Mon, 19
+ Sep 2022 15:56:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220919143627.13803-9-vidyas@nvidia.com>
+References: <20220701012647.2007122-1-saravanak@google.com>
+ <YwS5J3effuHQJRZ5@kroah.com> <CAOesGMivJ5Q-jdeGKw32yhjmNiYctHjpEAnoMMRghYqWD2m2tw@mail.gmail.com>
+ <YygsEtxKz8dsEstc@kroah.com>
+In-Reply-To: <YygsEtxKz8dsEstc@kroah.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 19 Sep 2022 15:56:09 -0700
+Message-ID: <CAOesGMh5GHCONTQ9M1Ro7zW-hkL_1F7Xt=xRV0vYSfPY=7LYkQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Fix console probe delay when stdout-path isn't set
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Vidya,
+On Mon, Sep 19, 2022 at 1:44 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sun, Sep 18, 2022 at 08:44:27PM -0700, Olof Johansson wrote:
+> > On Tue, Aug 23, 2022 at 8:37 AM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Thu, Jun 30, 2022 at 06:26:38PM -0700, Saravana Kannan wrote:
+> > > > These patches are on top of driver-core-next.
+> > > >
+> > > > Even if stdout-path isn't set in DT, this patch should take console
+> > > > probe times back to how they were before the deferred_probe_timeout
+> > > > clean up series[1].
+> > >
+> > > Now dropped from my queue due to lack of a response to other reviewer's
+> > > questions.
+> >
+> > What happened to this patch? I have a 10 second timeout on console
+> > probe on my SiFive Unmatched, and I don't see this flag being set for
+> > the serial driver. In fact, I don't see it anywhere in-tree. I can't
+> > seem to locate another patchset from Saravana around this though, so
+> > I'm not sure where to look for a missing piece for the sifive serial
+> > driver.
+> >
+> > This is the second boot time regression (this one not fatal, unlike
+> > the Layerscape PCIe one) from the fw_devlink patchset.
+> >
+> > Greg, can you revert the whole set for 6.0, please? It's obviously
+> > nowhere near tested enough to go in and I expect we'll see a bunch of
+> > -stable fixups due to this if we let it remain in.
+>
+> What exactly is "the whole set"?  I have the default option fix queued
+> up and will send that to Linus later this week (am traveling back from
+> Plumbers still), but have not heard any problems about any other issues
+> at all other than your report.
 
-Thank you for the patch! Perhaps something to improve:
+I stand corrected in this case, the issue on the Hifive Unmatched was
+a regression due to a PWM clock change -- I just sent a patch for that
+(serial driver fix).
 
-[auto build test WARNING on helgaas-pci/next]
-[also build test WARNING on tegra/for-next linus/master v6.0-rc6 next-20220919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+So it seems like as long as the fw_devlink.strict=1 patch is reverted,
+things are back to a working state here.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vidya-Sagar/Enhancements-to-pcie-tegra194-driver/20220919-224101
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
-config: ia64-allyesconfig (https://download.01.org/0day-ci/archive/20220920/202209200038.mZZFPD7g-lkp@intel.com/config)
-compiler: ia64-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/3b12c1aea8ddaae70567a332fc676c76076bf624
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Vidya-Sagar/Enhancements-to-pcie-tegra194-driver/20220919-224101
-        git checkout 3b12c1aea8ddaae70567a332fc676c76076bf624
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=ia64 SHELL=/bin/bash drivers/phy/
+I still struggle with how the fw_devlink patchset is expected to work
+though, since DT is expected to describe the hardware configuration,
+and it has no knowledge of whether there are drivers that will be
+bound to any referenced supplier devnodes. It's not going to work well
+to assume that they will always be bound, and to add 10 second
+timeouts for those cases isn't a good solution. Seems like the number
+of special cases will keep adding up.
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+The whole design feels like it's falling short, and it's been patched
+here and there to deal with the shortcomings, instead of revisiting
+the full solution. (The patches are the console one, and another to
+deal with nfsroot boots).
 
-All warnings (new ones prefixed by >>):
+As long as it doesn't keep regressing others, I suppose the work to
+redesign it can happen in-tree, but it's not usually how we try to do
+it for new functionality. Especially since it's still being iterated
+on (with active patch sets posted around -rc1 for improvements).
 
->> drivers/phy/tegra/phy-tegra194-p2u.c:89:5: warning: no previous prototype for 'tegra_p2u_calibrate' [-Wmissing-prototypes]
-      89 | int tegra_p2u_calibrate(struct phy *x)
-         |     ^~~~~~~~~~~~~~~~~~~
+Oh, and one more thing for the future -- the main patch that changes
+behavior due to dependency tracking is 2f8c3ae8288e, named "driver
+core: Add wait_for_init_devices_probe helper function". It's easy to
+overlook this when looking at a list of patches since it's said to
+just introduce a helper.
 
 
-vim +/tegra_p2u_calibrate +89 drivers/phy/tegra/phy-tegra194-p2u.c
-
-    88	
-  > 89	int tegra_p2u_calibrate(struct phy *x)
-    90	{
-    91		struct tegra_p2u *phy = phy_get_drvdata(x);
-    92		u32 val;
-    93	
-    94		val = p2u_readl(phy, P2U_CONTROL_CMN);
-    95		val |= P2U_CONTROL_CMN_ENABLE_L2_EXIT_RATE_CHANGE;
-    96		p2u_writel(phy, val, P2U_CONTROL_CMN);
-    97	
-    98		return 0;
-    99	}
-   100	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+-Olof
