@@ -2,114 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3761C6FA98
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 14:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F496ECAAD3
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 14:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbiISOb7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Sep 2022 10:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59782 "EHLO
+        id S229667AbiISOg7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Sep 2022 10:36:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230014AbiISObw (ORCPT
+        with ESMTP id S229542AbiISOg6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Sep 2022 10:31:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6560732078;
-        Mon, 19 Sep 2022 07:31:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EBF16B81C4B;
-        Mon, 19 Sep 2022 14:31:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 884E0C433D6;
-        Mon, 19 Sep 2022 14:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663597905;
-        bh=NkXCfQm/FLpDP/QLaoePbhdmGTT1By087FmiZ+g8tK4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cPr6ORIkZS1hi0mTfC3IAGOVxe5Xf0YIpXn1FG72c3gSFnG+XbcMopHgOCdZrpVuQ
-         LHqUCo/2hUmO1H6LNW9r9rHA5mXGvztHGS2F3OtBjHAXIwt5oCzU5wdBmMInXf415s
-         ibv233mBU12TSNxEClWBTVHK1fzjS7w3j4hbCapvOVbDE6aKKPaOgVe+365dcYYrsH
-         IXd+ByoZVYWQ1bXlckcr80Mp0FHSvK1giDc4yzOoai/YCnXbUK9IDecCd6Dzc6zaZI
-         kDA/PRtGSO5qjzxSvX9Ec26StLbOH1EWQlWCIdAgthIaznmMEXMje+f6NIOt73HqRu
-         77PbrmkIj/BkA==
-Date:   Mon, 19 Sep 2022 16:31:42 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        anup@brainfault.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
-        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
-        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
-        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-        dvyukov@google.com, vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 09/44] cpuidle,omap3: Push RCU-idle into driver
-Message-ID: <20220919143142.GA61009@lothringen>
-References: <20220919095939.761690562@infradead.org>
- <20220919101520.936337959@infradead.org>
+        Mon, 19 Sep 2022 10:36:58 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2065.outbound.protection.outlook.com [40.107.102.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8386BB85A;
+        Mon, 19 Sep 2022 07:36:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=baaqC/q4O6rj7wrN1IrTVIVpwRgkWJiJoPrHVi0QuZ3R0F5mV072pQBvSZZvM9HyIgWxzlyyfzEgT9Rx+BT7V6rbG4i+rAEG8K5WkSwwuuddukKdciJpSisJzjfNZmoo5GMVpRk2zNIy5/ik6WxIMBzzRYhOUxCKG0jS26KG7bItaATsEDIOL6maPMgiAGyaaiykldrJMpDVfY1NEcdpzdLQkqzSfsmAYTKiMnQNtVnluIZhXTGBwdCn6B2icjgkboOahcYOl22PxsjT+7c7b3A3P+PlLb7ckH70PlCCgH5DCKPwLeYnp2/HWxdXjzWxL61D46Txl7PBW2UGJHcUOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=erQNOiq0Qw2v7UDAvlxDxp3yjE3FmL4ppdyMNMH38nM=;
+ b=RcinSKjbe7t931Fp8F7B/1LkwiByV0EGio2zJgnX824kCXRYHW3jub8ssTdE6SbJOnW/L2oRfe9EiIJUzgF7g7MZ3dg+BzkpBmKPu/2HghDIaTaE0n53GVB3d5CVwo6d0XdqEpCgywBfD8LoC+bwpY7Ytz5NhB4nVcuEM1wy/9IugWhFZi158plXJ1ZMbIKjUVsIP+G6ykt0zClyVd/mET6U8qW742PGmDt4Q3pxr858aPaouEv2fdgBSWn7KUJUwIcdsw9ffBJ5PNx9jS2cugEltWdU9A0xV0bidFbQ41X3ZLv3CP9h+3TlF2yP4rvw16olj8z2z+GBYu/hUePGHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=erQNOiq0Qw2v7UDAvlxDxp3yjE3FmL4ppdyMNMH38nM=;
+ b=J8rf+IRK9/KLEU74ABF4PSstBzY5xWZlyMFkg3QzOc8pSjKiBWLXp3OpH5rfhFsW0T5GIEN3vBL2gagCcw/rjXHFlgQUPS+dDrmPCR80WJIBS62ZcVL2t7U2hbOR/lwfFhB73M7Zc/DI2p8IaK1OfZeDZ3JnOJbPYupVGRVTdpuGrcTXRp0QjrhRQyUmUp5nQ7XWhxt/hATfYl1EQntVhrbSZxuQnSOS+TWLcBcIiZcXAA98Xx343/asu0wgmvjh7NkOy0tQa3p6XwdOjBQvuc/bIOECBNULmiy2m+QXzj/vF0w/7TV6Uv5+sLg/x4oSHzO9UF2rpsG+xBewAL+Ajw==
+Received: from CY5P221CA0127.NAMP221.PROD.OUTLOOK.COM (2603:10b6:930:1f::13)
+ by CY5PR12MB6429.namprd12.prod.outlook.com (2603:10b6:930:3b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.18; Mon, 19 Sep
+ 2022 14:36:55 +0000
+Received: from CY4PEPF0000B8E9.namprd05.prod.outlook.com
+ (2603:10b6:930:1f:cafe::b4) by CY5P221CA0127.outlook.office365.com
+ (2603:10b6:930:1f::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.15 via Frontend
+ Transport; Mon, 19 Sep 2022 14:36:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000B8E9.mail.protection.outlook.com (10.167.241.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5654.11 via Frontend Transport; Mon, 19 Sep 2022 14:36:54 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 19 Sep
+ 2022 07:36:37 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 19 Sep
+ 2022 07:36:37 -0700
+Received: from vidyas-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Mon, 19 Sep 2022 07:36:32 -0700
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     <lpieralisi@kernel.org>, <robh@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <kishon@ti.com>, <vkoul@kernel.org>,
+        <mani@kernel.org>, <Sergey.Semin@baikalelectronics.ru>,
+        <ffclaire1224@gmail.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>,
+        <sagar.tv@gmail.com>
+Subject: [PATCH V1 0/9] Enhancements to pcie-tegra194 driver
+Date:   Mon, 19 Sep 2022 20:06:18 +0530
+Message-ID: <20220919143627.13803-1-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220919101520.936337959@infradead.org>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000B8E9:EE_|CY5PR12MB6429:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33312334-86e4-4c01-cd22-08da9a4c662d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Mcw0QrzQsf2zT5L96TK/0W1BfC/OMeuYsPBvo8ytqzmZ+60kWKdt+HvGUjGsLL5PH+5qmE/QDfOvolrG6k0vhuquDBNHB3mP0ohZv2l6Ud1f7tp5CBtt2dRfvltK2I8tDKq8M09rN5HV+g/YGSNbbZuUfuzt4gEre/5Z+QCxaXu7U0gx51U991mSOkw9af9c5Z4BoH2jcFh8SoNMRmG8LNVl5Ojvi/th1RdwMR6hhAjER2ha1M/5qJXvSnVDnXMjnJuWZvaeLnGoYwxY0SRGe1ao7jBoE8PPlybjUYI1jDAy8XLRp6zNnrAWuxiCy29bZfYn7cF9Yi+VMMwahjpGwBRB7w1PMUU9RMimlDhgE9JgPZ5c+2HurUgDtG0yjfZcR7hnng7ZifZclIxQVLbApZKW9HR1oDpb7bO+SJ3wVetc8CHkUbY5LlDIM9ow97WJ4mKzMxxOmUgp6KUNjJPLp0j4cDtcMvEdCaqHbUCYxWqI6pQjDKlSu+VjO3AB5OyHD4ny+J3OJys9CiBC4yaoV8OPwTY52YYOIotct+LSQwH5e3/DQc3fzt6rm1PLCdYhKkq9npOxZhOe2zJHPkpdj0BidV5IeMBHBgm/g4h8b5UDAwSPmm55QDU9XF9LjBocb9etRuIvb+tGUlrOqt7ezXxkDhzedVA7aZtA0xICsN4iTBF0dBolRzn8ae3VJ4go2cs5+KppQ1prjulSabiF1hGba07b9rDVlUAZV5SdOwg1QKKRCz1hXIT6UjsD8nonkb8LWZm+cobtxDdPsTtWR3K053WLsNglw8/YzpnO2zw=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(136003)(396003)(376002)(346002)(451199015)(40470700004)(46966006)(36840700001)(336012)(1076003)(47076005)(186003)(426003)(2616005)(36860700001)(86362001)(4744005)(82740400003)(83380400001)(7636003)(921005)(356005)(8936002)(70206006)(41300700001)(82310400005)(6666004)(7416002)(40480700001)(4326008)(8676002)(70586007)(40460700003)(2906002)(26005)(7696005)(5660300002)(54906003)(110136005)(316002)(478600001)(36756003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2022 14:36:54.7722
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33312334-86e4-4c01-cd22-08da9a4c662d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000B8E9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6429
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 11:59:48AM +0200, Peter Zijlstra wrote:
-> Doing RCU-idle outside the driver, only to then teporarily enable it
-> again before going idle is daft.
+This patch series contains enhancements to the pcie-tegra194.c driver
+that works for both Tegra194 and Tegra234 SoCs and for both RootPort
+and Endpoint modes.
 
-That doesn't tell where those calls are.
+Vidya Sagar (9):
+  PCI: tegra194: Use devm_gpiod_get_optional() to parse
+    "nvidia,refclk-select"
+  PCI: tegra194: Drive CLKREQ signal low explicitly
+  PCI: tegra194: Fix polling delay for L2 state
+  PCI: tegra194: Handle errors in BPMP response
+  PCI: tegra194: Apply pinctrl settings for both PCIe RP and EP
+  PCI: tegra194: Refactor LTSSM state polling on surprise down
+  PCI: tegra194: Disable direct speed change for EP
+  phy: tegra: p2u: Set ENABLE_L2_EXIT_RATE_CHANGE in calibration
+  PCI: tegra194: Calibrate P2U for endpoint mode
 
-Thanks.
+ drivers/pci/controller/dwc/pcie-tegra194.c | 126 +++++++++++++++------
+ drivers/phy/tegra/phy-tegra194-p2u.c       |  14 +++
+ 2 files changed, 104 insertions(+), 36 deletions(-)
+
+-- 
+2.17.1
+
