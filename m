@@ -2,135 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D22EECAAD3
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 14:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 091C2C6FA8B
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 14:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbiISOPt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Sep 2022 10:15:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37990 "EHLO
+        id S229940AbiISOVe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Sep 2022 10:21:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbiISOPk (ORCPT
+        with ESMTP id S229492AbiISOVa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Sep 2022 10:15:40 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2081.outbound.protection.outlook.com [40.107.212.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D008D22B1F;
-        Mon, 19 Sep 2022 07:15:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZNtwPujkkrm8SG2/UCYsGzTV5G9fSm40oAd0f6wCaH7l0v/3PfWoTH9oNv/C/A+8kfn9lvYNm2LfXCnxSHGe4a2BxhIF7VuFoQOznj3lFdFWdNlt5SYrCCxtZnFX05/1+3BSzgLDtE1KhINo76eozb/StM1CQxRZ/LS4ctrqzqE9aKoELPGo5hJKa7ZiftD8QrbYil/sZ6CSsr8uHvxjACEG0neIdWYDb5sXeFwzAMnzlgsHKBrlEnnIjnYpNCVzoRaQ63K4K7/t83OurRE5uGIDwZlWzD40omigEUcJPxYb4LyFK8fUMqLlnR3zDNTOHEqPyBd1lxdFXQsrn5CZQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hOfzlzVM/hxhhjK+JwkpyXDU1ZFV+P07/WO5ezM0v1s=;
- b=N+vuLAW74NJnpthx4S+oxk4dOs6dgaig0z7bKBY1tBUVzBWwMRF2PrWBNGQMFt8Z6ThqRSQ9NKvlO/Hhr/1FY87ekaSvxzh7+V5HkdOq3l0AiOoPkYx3zjh90sOOmzH6r3zrS1YxnFdRQvn2iehrPxRctu81iIq5o2UaoNX2EOYfloC7yunjnkK4Npq39+b7ww1viCwADhRFrB7I/I7Y1hE/n0iHS2nirhg39xJy1NhUiscq+88s1Gax+F72peRGvYMCWuMN/BuNkVeudjaAgPt6ukhpxoMOHv7CITmfbJO8C57TJLyWM2k+6TdTydng4NZtSnWUFhwmVPKsowL8ww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hOfzlzVM/hxhhjK+JwkpyXDU1ZFV+P07/WO5ezM0v1s=;
- b=H0jSXneFICth2IjG4eboecUeKLXJzN6J2Q+K/Rmk5eIxD6p1qBXEmAnFJdUaJwzb4Yc+Z9x2D8GvpIPCUJDiKqAhLaL4oqJsVXfQ+pkUmyVHU3ZElObrcLGN6SIOROI5Zt1Cw8ZVtUwWTleigLaDBVUj/4M4bfxiE7iYA5UQla8IVqXhP48o1rxtgIELwNLdZ6loUJSk10PzoFvmW+8a46aD8OKPJnXCXNlT/ePAOMzPp33kYBXFvrYBufgoxESOpqgnN69yOzA2nLd5HNGQPydSq/3SzUdoVQQl4OlcAHeXYZ0ks1aoc+67FD2t8t9/tn0tElDjoDE+s3y8ataLpA==
-Received: from MW4PR03CA0003.namprd03.prod.outlook.com (2603:10b6:303:8f::8)
- by MN0PR12MB5932.namprd12.prod.outlook.com (2603:10b6:208:37f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.22; Mon, 19 Sep
- 2022 14:15:37 +0000
-Received: from CO1NAM11FT010.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8f:cafe::4d) by MW4PR03CA0003.outlook.office365.com
- (2603:10b6:303:8f::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21 via Frontend
- Transport; Mon, 19 Sep 2022 14:15:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT010.mail.protection.outlook.com (10.13.175.88) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5632.12 via Frontend Transport; Mon, 19 Sep 2022 14:15:36 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 19 Sep
- 2022 07:15:21 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 19 Sep
- 2022 07:15:21 -0700
-Received: from sandipan-pc.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Mon, 19 Sep 2022 07:15:18 -0700
-From:   Sandipan Patra <spatra@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <bbasu@nvidia.com>, <kyarlagadda@nvidia.com>,
-        Sandipan Patra <spatra@nvidia.com>
-Subject: [PATCH v5 3/3] arm64: tegra: Add user PWM support on Jetson Orin
-Date:   Mon, 19 Sep 2022 19:44:55 +0530
-Message-ID: <20220919141455.31084-3-spatra@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220919141455.31084-1-spatra@nvidia.com>
-References: <20220919141455.31084-1-spatra@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 19 Sep 2022 10:21:30 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A4D1AF1A;
+        Mon, 19 Sep 2022 07:21:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F0B5BB80BD1;
+        Mon, 19 Sep 2022 14:21:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C90C433D6;
+        Mon, 19 Sep 2022 14:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663597286;
+        bh=GMqj/raRtewORiNlYwxoo1AKX75xJaQ7/Df3LdF/GfE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rRXMvBKEA1LC8aksUMsBXZm3ng5/GDhYDv3l+Z/mhCf2B9r4jgOIaATHhktCTq8JX
+         GTO4BIKTvR9VwwkTx18qO5XX0gLoEj7Uqo2KB7hE04oKAi955NCi8zOEQhfduOaf15
+         H77mStEMZo0KDIIvHp44kN0YLxum2DrHf9UGUvJZRide/VHPXHLxce55aW8lDBIPRO
+         BLzv1BK6ACB+9fEhx5bw/aCDcAaBhqT0FERLnaybZ58BB4SBwla9J8hm8k9cKWJhb3
+         uX2S3B1R2+xn7Lc8lqABh5JLWUg/ZHSerrJew5J4HElzp86GHfnU42JTBZn1Fw8fGi
+         pJCF0FZi6nIqA==
+Date:   Mon, 19 Sep 2022 16:21:23 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@HansenPartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        anup@brainfault.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
+        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
+        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
+        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+        dvyukov@google.com, vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v2 08/44] cpuidle,imx6: Push RCU-idle into driver
+Message-ID: <20220919142123.GE58444@lothringen>
+References: <20220919095939.761690562@infradead.org>
+ <20220919101520.869531945@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT010:EE_|MN0PR12MB5932:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79e317b6-f976-43fd-a6a2-08da9a496c6d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8mWcJ9PFYnrGQPjDZTls8yp/yE8cu6AMu7jZLD/YJ9NX6vI92C7763FKE44XZYuB+poAkvVnNPcjIW96Hy9cJT6nF6bK3d+bUNhJauIxOcZVX6V4cbt0NUUpGcFLUUysNiJPUB4Njdyqa/OvTNWDRzet5J4qSqMASNFcWVijqT6r+H5FwY+714CnG7LmE8zPxAiysDMzFJ0noSwKwZSWi/pMJsb4I9BPBf6B1wO/GHUE/r39szqcOdgQt1Ntpdy1Gn1MXlLsyFxcIuxjYZUH1dU5TSgeF3B6C6SVask2rJsl0xNND3XktcT1zhH7DKYcGvzWTgig6FtWLg8dSY8wXVR+u1B6yBh6AGEZc0PsUD24RAQVfMzG0m4X8TfE+N31HWupjAeeoYBKnsb++K9rHhIWoqkzUKjMEinVQkbMpolHvkoyOZ2h5Y4AUX5O4811WOhJG/x5+JGs7lNK/CU6isWPJH3cPUDwNamSpAZKSyOUd+Pl59of+8LPX9xSFMnox4h73Z2Ph52oh2LtcACXBj/DSkNkan2cMTzmdb5JB3VXEf5OuLZ+bL6Y6Ts/z25GZhDU37m7AKCk6efsognHPXzjnwa6YP9vM7HIG9S8Wydaa3ywK2fRqmDgDaQNGM4Oc7OdSv1m6X3ASUR3SWVUcyH+ew1lWFpwqw6qQysm51LOtusgCdSbId8YdmA02rWDlp6lj7G14R8f3NPJcF/3IfL1N2tPA+ty3Q5d3C1mWc1CqIj1N04R/9auS6Z1Pt9XrWsxM5fBm3qSvhtLsiK9Gha3yz7NhOgklwW+eDjyuPI=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(376002)(39860400002)(396003)(451199015)(46966006)(36840700001)(40470700004)(110136005)(36756003)(1076003)(7636003)(186003)(82310400005)(478600001)(26005)(356005)(316002)(426003)(5660300002)(86362001)(70206006)(336012)(2906002)(107886003)(8676002)(47076005)(4326008)(6666004)(82740400003)(36860700001)(40460700003)(4744005)(7696005)(40480700001)(41300700001)(54906003)(70586007)(2616005)(8936002)(16060500005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2022 14:15:36.7199
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79e317b6-f976-43fd-a6a2-08da9a496c6d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT010.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5932
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220919101520.869531945@infradead.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable in device tree and use it to drive the PWM controllers on
-40 pin header of Orin dev-kit.
+On Mon, Sep 19, 2022 at 11:59:47AM +0200, Peter Zijlstra wrote:
+> Doing RCU-idle outside the driver, only to then temporarily enable it
+> again, at least twice, before going idle is daft.
 
-Signed-off-by: Sandipan Patra <spatra@nvidia.com>
----
-V1->V2: Overriding by node label instead of node path.
+Hmm, what ends up calling RCU_IDLE() here? Also what about
+cpu_do_idle()?
 
- arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Thanks.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-index a85993c85e45..5108013a18c6 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-@@ -3,3 +3,15 @@
- / {
- 	compatible = "nvidia,p3737-0000";
- };
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&pwm5 {
-+	status = "okay";
-+};
-+
-+&pwm8 {
-+	status = "okay";
-+};
--- 
-2.17.1
-
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  arch/arm/mach-imx/cpuidle-imx6sx.c |    5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> --- a/arch/arm/mach-imx/cpuidle-imx6sx.c
+> +++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
+> @@ -47,7 +47,9 @@ static int imx6sx_enter_wait(struct cpui
+>  		cpu_pm_enter();
+>  		cpu_cluster_pm_enter();
+>  
+> +		ct_idle_enter();
+>  		cpu_suspend(0, imx6sx_idle_finish);
+> +		ct_idle_exit();
+>  
+>  		cpu_cluster_pm_exit();
+>  		cpu_pm_exit();
+> @@ -87,7 +89,8 @@ static struct cpuidle_driver imx6sx_cpui
+>  			 */
+>  			.exit_latency = 300,
+>  			.target_residency = 500,
+> -			.flags = CPUIDLE_FLAG_TIMER_STOP,
+> +			.flags = CPUIDLE_FLAG_TIMER_STOP |
+> +				 CPUIDLE_FLAG_RCU_IDLE,
+>  			.enter = imx6sx_enter_wait,
+>  			.name = "LOW-POWER-IDLE",
+>  			.desc = "ARM power off",
+> 
+> 
