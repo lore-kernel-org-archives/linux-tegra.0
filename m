@@ -2,189 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9D2C6FA82
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 11:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6005DECAAD3
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 11:56:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229943AbiISL1L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Sep 2022 07:27:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41902 "EHLO
+        id S230113AbiISL4H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Sep 2022 07:56:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbiISL0s (ORCPT
+        with ESMTP id S230108AbiISLzn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Sep 2022 07:26:48 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2050.outbound.protection.outlook.com [40.107.93.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23B4122B27;
-        Mon, 19 Sep 2022 04:26:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YJynoAN5mt/B+xGJjnw4DeSsZmedg9CQ76pmlTPKCZ/I3ElhUO3sV+XMM8TA6KsDiSiMqtao7N2BnIlIEe/JrKmrTHDWfqRN5xNOXD2pO99N2uPw7ERiSlIYVpvBKe2SX0/cYMZrr9DIo6B1nj7TglxG5FxFGBQueHcsvGH3qIVH4TDFQKUpDFuhRjGXTJKu7MUeTLhRSJ/4bYijWZlwiHaUYKpRGQ/XwinpEBdXh5z2uogPP7sE94KGBoL81aUIS+1dWHb9D0vQFlWF5KjcOfLUnHVbMcy1DhhoML0axKtawj6l+2lAHxwjNuldIlHUeFZSqMMpBr0pNEnv1H+z0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZH4Tsa1NdkMZgp5GUZfnfhMhIlpbb6nKtUkkfetNmCw=;
- b=GJF6DnPayLeyUd889GKDpizy514EstjsAg2PwpodMyw8ew4AjNCdiFRxoV+w1nOv4mkECTQJuIABLf5ry5tOhlfg8dirVayGZ07syfhiSd2IrWzWIFN26PdKNXHtZ6nNsomxKZVv/7V99QjNps0XLJZ/2REQjq2vve9LbYzW4OBHApY2rS+I8USSZEREjISBFoztjeoRQSGDINrB60bsQ0/qOvVDnKARdfMRqrsfO1C+rRnStsFR3aYnT05fWexfPlGHO0mIMNIRGn7rjnzn/aSVd78Ypf8cAd4fOsupoEkmUZKcIN7zpeoIZsFwC89PqSpK24zuewp/KmbyekGPNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZH4Tsa1NdkMZgp5GUZfnfhMhIlpbb6nKtUkkfetNmCw=;
- b=Yl8bDXHjMEIYUCHYxL0hrSdTP7N5+MUQ1oV8UJ1ODN9amM9gMODqET3EGj6+n1CxZ8XqQnn50+NgwHw351KXimM+jJSwF00hlf6E1ap7ciIJA0qJIM2BT6zF5mi3WmKfnLKhBv3X0uiUFX478NCvCAcCYVnpLXjouayyNBTGr1dKVjDfVLXT2E1AqHsBswB7/z1JQhOQIqNUOGNJYm6EKtY1lO8SJU6pIMRxd4f3ACFnD6YbjTjubjHVA7nH2xi7gCoPdnqLJwQcoFCE4MLsQr41aQPHne6hWoVpvYelNMW2RK49DdXsUXMg0ugurhvs8diYQWn6sJuBYmfheX7dHQ==
-Received: from DS7PR03CA0278.namprd03.prod.outlook.com (2603:10b6:5:3ad::13)
- by DS0PR12MB7560.namprd12.prod.outlook.com (2603:10b6:8:133::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21; Mon, 19 Sep
- 2022 11:26:38 +0000
-Received: from DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3ad:cafe::4c) by DS7PR03CA0278.outlook.office365.com
- (2603:10b6:5:3ad::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21 via Frontend
- Transport; Mon, 19 Sep 2022 11:26:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DM6NAM11FT008.mail.protection.outlook.com (10.13.172.85) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5632.12 via Frontend Transport; Mon, 19 Sep 2022 11:26:38 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 19 Sep
- 2022 04:26:28 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- rnnvmail205.nvidia.com (10.129.68.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Mon, 19 Sep 2022 04:26:27 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Mon, 19 Sep 2022 04:26:27 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Mon, 19 Sep 2022 04:26:25 -0700
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <vkoul@kernel.org>,
-        <thierry.reding@gmail.com>, <p.zabel@pengutronix.de>,
-        <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v2 2/3] arm64: tegra: Add dma-channel-mask in GPCDMA node
-Date:   Mon, 19 Sep 2022 16:55:58 +0530
-Message-ID: <20220919112559.58195-3-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220919112559.58195-1-akhilrajeev@nvidia.com>
-References: <20220919112559.58195-1-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 19 Sep 2022 07:55:43 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32EF4624F
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Sep 2022 04:54:34 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id d16so14647065ils.8
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Sep 2022 04:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=gUsv6szv6dsUeM9asVJnwaGmSGG17UchvxqwxLA3h8g=;
+        b=6l84clV/ev4Ho0Nth4fVfA2YCUlnkvOSgxbqusFUXjXpfQuFFf0cscM9H6JstjQMUy
+         xw7M8POcVaD8G3v3xGng54KrmjSgvwQL7sqhL179TVnFSdqvL9DEfhAXmZU08DpaVB+z
+         zSiunmo3VbmTof1vxAp/v47yQ2WgOGXeXG6GB3Gf7pE1ScGjC0bqV7TAtd/m+fpfq3CI
+         YOLPMuA/GgjNIfHOrOGhD0cM6H3P5LBBOn3aCDWtNVZfJPWoGE1cWKKtEz9Dpfs/6i2d
+         YxcNqnYUQtbiNuONYqqIai1SFElgvUv464Vcz0iTXK3yncl0+rss3soTmcg3IhW6Gf/K
+         H/3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=gUsv6szv6dsUeM9asVJnwaGmSGG17UchvxqwxLA3h8g=;
+        b=m4jDgYveoTe+0H1PDSz6j9y6rFhMQOUaemslSqF1ylbMwi6xaqu5HHU8NmsMxdWn+X
+         BsAlumYM/XCXiisMc52Wv898aAqzT6686YbzGyHRpLuY7kyfAkA0IH4okew/xQdvT5DO
+         FhN+r9VbTgg7Dosko1T2wAFudchHGsKjLeZaMKefcjo+sdHeXverxYbwqXA5ZqpGUiKZ
+         jf2/r3AqHU1sg8GRb+ITM2Nmhh41qxz4iaCFeuJlvLz0IwIBCwehb+gwd/dIyDVM2cKb
+         jt0h5O2u6l/UWn3EO3qjQs4fnp3p3ysnVrkKFkwk7Z2h9KJ9M8d7n1bUareucFe18JJb
+         sqfw==
+X-Gm-Message-State: ACrzQf02Xm9oPDMqG5hOzcg5pK/bgrxVqmZgNGOsadyZGgSAjaZOS0uL
+        JC5FBxK+Ll3Jz7BBfTQDiYRpuDna2uiMgJNMx5pONw==
+X-Google-Smtp-Source: AMsMyM5SaQPoV1xlIMZRfmPqKRzR7kAhfhGoUGwZ5KM3JobcN8dh6yNRCyMvHHbKVsfAJAruxygcE1W13IXNCB18i9o=
+X-Received: by 2002:a92:c04d:0:b0:2f5:1175:c7a3 with SMTP id
+ o13-20020a92c04d000000b002f51175c7a3mr5681407ilf.165.1663588472670; Mon, 19
+ Sep 2022 04:54:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT008:EE_|DS0PR12MB7560:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38a470f4-2595-45a3-0aad-08da9a31d148
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VOIxRykAqTlTE97gA+VDkRN3zMko6BiYJZ0SXOulknxv3G+Wxr5/H/8TIq8Fvp2B6kdXNqRHzV5/aLB9t9k5T2bKIuk+3vUZKe2ALLmYkhgOlTyiCLkWs3Zy8LrrhuwYPL3oKicviGvJjDyInnPE/L50m3Qvzyk5aW2qb59Ltn9U4WY7fBX7NYHrjy/OsC3nN739J6ujQlp6xdDCXtDwPg9xWuNwr+SKZSBJN7xz7+kLvjPj5l55UXh4MdzbsscFN4iQ+vMSy1pEqM+te2MtEQHE8ONVbyfrnrq/YFR6uu6Y+77BnbTINEFT1BvBNSpw97rvBa5DwjDWRDK8lbgf/dslNEhQR495HV5jTjMkfVDgwAUpx43g9jvxzSBgc/psupcUk4fWtOzQJfUqAQx3p4UnqOo/PhxjzkMPnMy7fS7l+BMqGS5JKLmYzpJ7H4AvSAa6N7LHIqh7wHzfvkE6f8386KkaTPl2EWAmgttSZjQ+XKt9iIikbw9qu5Dky8zm2DwudBb51x0QvYuGiM5WDNhiqbl7m89FVf1xxakUZ9rN8y73xTaF4KAPBNA4gHXwUp9BtDapGrCgOXP76l8wJuh7/J8NqSMMS20A8GkA9ygwGKs9V0wmQjc0Ckq9vAJKVuwzw8DBTWLhq0ZplxzPtRRKjMYg9FBRwlUOLQBAFckHFLsPbCupUuqtSkqLdZBgW/mEqNDUPzhI1gW2BJDWGFJS3oxcOjYp6VneF4bivLDH7GlHMFYlZFvjdaz3qf7uJIUthLmgn10N/9ODDufN1A==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(376002)(136003)(396003)(451199015)(40470700004)(46966006)(36840700001)(2906002)(2616005)(7696005)(41300700001)(356005)(36860700001)(82310400005)(6666004)(107886003)(40480700001)(4326008)(8676002)(70586007)(70206006)(83380400001)(110136005)(316002)(336012)(40460700003)(426003)(1076003)(5660300002)(36756003)(47076005)(186003)(8936002)(86362001)(478600001)(26005)(7636003)(82740400003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2022 11:26:38.0175
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38a470f4-2595-45a3-0aad-08da9a31d148
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7560
+References: <20220919095939.761690562@infradead.org> <20220919101520.669962810@infradead.org>
+In-Reply-To: <20220919101520.669962810@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Mon, 19 Sep 2022 17:24:19 +0530
+Message-ID: <CAAhSdy004HaNUNYRD8tcn24LZWdTmOVkF1QN14uLmSw1UXuXqA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/44] cpuidle,riscv: Push RCU-idle into driver
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
+        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        dennis@kernel.org, tj@kernel.org, cl@linux.com,
+        rostedt@goodmis.org, pmladek@suse.com, senozhatsky@chromium.org,
+        john.ogness@linutronix.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, fweisbec@gmail.com, ryabinin.a.a@gmail.com,
+        glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
+        vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add dma-channel-mask property in Tegra GPCDMA device tree node.
+On Mon, Sep 19, 2022 at 3:47 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Doing RCU-idle outside the driver, only to then temporarily enable it
+> again, at least twice, before going idle is daft.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-The property would help to specify the channels to be used in
-kernel and reserve few for the firmware. This was previously
-achieved by limiting the channel number to 31 in the driver.
-Now since we can list all 32 channels, update the interrupts
-property as well to list all 32 interrupts.
+Looks good to me.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 +++-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 +++-
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 4 +++-
- 3 files changed, 9 insertions(+), 3 deletions(-)
+For RISC-V cpuidle:
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 3580fbf99091..13a84e34e094 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -78,7 +78,8 @@
- 		reg = <0x0 0x2600000 0x0 0x210000>;
- 		resets = <&bpmp TEGRA186_RESET_GPCDMA>;
- 		reset-names = "gpcdma";
--		interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-@@ -112,6 +113,7 @@
- 		#dma-cells = <1>;
- 		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
- 		dma-coherent;
-+		dma-channel-mask = <0xfffffffe>;
- 		status = "okay";
- 	};
- 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 9176c4b27133..593fbf22b34f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -142,7 +142,8 @@
- 			reg = <0x2600000 0x210000>;
- 			resets = <&bpmp TEGRA194_RESET_GPCDMA>;
- 			reset-names = "gpcdma";
--			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-@@ -176,6 +177,7 @@
- 			#dma-cells = <1>;
- 			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
- 			dma-coherent;
-+			dma-channel-mask = <0xfffffffe>;
- 			status = "okay";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 5852e765ad90..afd90b72cdea 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -28,7 +28,8 @@
- 			reg = <0x2600000 0x210000>;
- 			resets = <&bpmp TEGRA234_RESET_GPCDMA>;
- 			reset-names = "gpcdma";
--			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-@@ -61,6 +62,7 @@
- 				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 			#dma-cells = <1>;
- 			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-channel-mask = <0xfffffffe>;
- 			dma-coherent;
- 		};
- 
--- 
-2.17.1
+Regards,
+Anup
 
+
+> ---
+>  drivers/cpuidle/cpuidle-riscv-sbi.c |    9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> @@ -116,12 +116,12 @@ static int __sbi_enter_domain_idle_state
+>                 return -1;
+>
+>         /* Do runtime PM to manage a hierarchical CPU toplogy. */
+> -       ct_irq_enter_irqson();
+>         if (s2idle)
+>                 dev_pm_genpd_suspend(pd_dev);
+>         else
+>                 pm_runtime_put_sync_suspend(pd_dev);
+> -       ct_irq_exit_irqson();
+> +
+> +       ct_idle_enter();
+>
+>         if (sbi_is_domain_state_available())
+>                 state = sbi_get_domain_state();
+> @@ -130,12 +130,12 @@ static int __sbi_enter_domain_idle_state
+>
+>         ret = sbi_suspend(state) ? -1 : idx;
+>
+> -       ct_irq_enter_irqson();
+> +       ct_idle_exit();
+> +
+>         if (s2idle)
+>                 dev_pm_genpd_resume(pd_dev);
+>         else
+>                 pm_runtime_get_sync(pd_dev);
+> -       ct_irq_exit_irqson();
+>
+>         cpu_pm_exit();
+>
+> @@ -246,6 +246,7 @@ static int sbi_dt_cpu_init_topology(stru
+>          * of a shared state for the domain, assumes the domain states are all
+>          * deeper states.
+>          */
+> +       drv->states[state_count - 1].flags |= CPUIDLE_FLAG_RCU_IDLE;
+>         drv->states[state_count - 1].enter = sbi_enter_domain_idle_state;
+>         drv->states[state_count - 1].enter_s2idle =
+>                                         sbi_enter_s2idle_domain_idle_state;
+>
+>
