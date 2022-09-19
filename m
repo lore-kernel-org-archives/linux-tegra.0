@@ -2,280 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03705C6FA90
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 10:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32950C6FA82
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Sep 2022 11:27:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230096AbiISKv1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Sep 2022 06:51:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41616 "EHLO
+        id S229557AbiISL0h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Sep 2022 07:26:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbiISKuy (ORCPT
+        with ESMTP id S230211AbiISL0Y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Sep 2022 06:50:54 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93FBA237E6;
-        Mon, 19 Sep 2022 03:45:54 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 47D1122187;
-        Mon, 19 Sep 2022 10:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1663584353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TPY7EEFMWVrZdYCxqqnTs3va11awHySIxzPGii1FR0M=;
-        b=pcs8WC6C8N5NT2mpr02B5yJH+LTCvsIeYhCodeQGG/gLeD9Ve1ZmOFpkpwgw4V+wtja7aY
-        RddPku1MGLIpjFQcO9qKlpCVJhYCWu9Pg3CcPENFblbq3F4iOpEH9QM9LSmS5Ghy2jXKlf
-        wzEuCcR+PKVNegczAeY+9+l4n3MbDsI=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 85A4E13A96;
-        Mon, 19 Sep 2022 10:45:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id T0GyHlxIKGNkeAAAMHmgww
-        (envelope-from <jgross@suse.com>); Mon, 19 Sep 2022 10:45:48 +0000
-Message-ID: <41916640-cf05-c00d-95fa-1e0099741f4c@suse.com>
-Date:   Mon, 19 Sep 2022 12:45:47 +0200
+        Mon, 19 Sep 2022 07:26:24 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2053.outbound.protection.outlook.com [40.107.92.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633AC1DA7C;
+        Mon, 19 Sep 2022 04:26:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iJftq9CHrcKKDkqKptHwtUR0HDb2C0qqcYmmiS654ZTcQkMwdsikRRcva7ZL6Limd8rUuTwe4x2jMEOFa8znvOYs8+1oh/h/q/8B3jQI5o4RQYCo0kYthThxxp80TsfYt5HkG0j36HbZMwbFlagcm9+J/fwji32BpI+x9ExU2TAQkPziqnhDid3s05oFG5lZRdFsKEvXLjKfFa9wf112TZIybhym04mmqjUGH/uTGpk90xrm4Vjd6O6OSbmrfkVf5OhQki7OnUFtW9Bp0KG6gJ8WUw6aBP2V7UzjkyyDsFnuMEJO13+QiJ/x4jCC9IarTpZ2zJnXRwWljgMUGKzjDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gEylTZ+nZvtt7CtuSmVaGt1Bz1AlbWl2lhzMYhaJFCY=;
+ b=eIHqTR4h1+GFDJWPTyUX7MIpapmOp43APo6B0pxoYu3QUiapOezlmAkKaYdLOnDpUCLX85tNpgG/ws7UZi9Ztsu07VXkygYo8COq8RkLpgmP36NRvpaethTQLUZOUsEtP1BqzRHhCeMcDROJAHfBR35MRBrYB+VDuLS9RtjUIkMw3BmTSU1N/IdCaE0JM3Z9VulTWA3zSBNa4QdE7I7VevGkvitxtmX8MnZxFC51t9bJnwWISGoZYgL1wkBWLqvGMn8nfgO3rtRSRIGX8poYI3YjsKWNZNZqLzcum0SzOPXf0vXBQN6TWETvA4q2Fsq7N/sin+Z9XO1NkRO/pASdMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gEylTZ+nZvtt7CtuSmVaGt1Bz1AlbWl2lhzMYhaJFCY=;
+ b=WNtpWTEX3AWlUrVfFs7LIpQ9nmgNnNZbfbAAExsC9YERvqqEdevVcMFyOdTEVUJKzRgfwDu6jdK0dhYPtVf90UdAe9afQvL32vZGoCIsBZkhjbVZQ6Xbu5jCGUUVuORfxD1DQbFwAPV3M22a4J8S8AUtiQdPvsxGDgZCc/LSp94HxgCjGj04qVW2jCPsh9u1EGUhoSEkcuTRNTBBTdTBHTlzXmCelwku1Z5hjnpRP0Gwsi/4jL81qacuj9weKcG5yclRQlopCwpnwUxMOby2cbnZNw4j6EUUPBcEfxZCcVsH+QEe4+AzFyhmshb9+KVPZBPliG0g9Y8CzWx6gWUKXQ==
+Received: from DM6PR06CA0044.namprd06.prod.outlook.com (2603:10b6:5:54::21) by
+ DM8PR12MB5477.namprd12.prod.outlook.com (2603:10b6:8:35::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5632.21; Mon, 19 Sep 2022 11:26:22 +0000
+Received: from DM6NAM11FT089.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:54:cafe::83) by DM6PR06CA0044.outlook.office365.com
+ (2603:10b6:5:54::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21 via Frontend
+ Transport; Mon, 19 Sep 2022 11:26:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DM6NAM11FT089.mail.protection.outlook.com (10.13.173.82) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5632.12 via Frontend Transport; Mon, 19 Sep 2022 11:26:21 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 19 Sep
+ 2022 04:26:10 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ rnnvmail205.nvidia.com (10.129.68.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Mon, 19 Sep 2022 04:26:09 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Mon, 19 Sep 2022 04:26:09 -0700
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Mon, 19 Sep 2022 04:26:07 -0700
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <vkoul@kernel.org>,
+        <thierry.reding@gmail.com>, <p.zabel@pengutronix.de>,
+        <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <akhilrajeev@nvidia.com>
+Subject: [PATCH v2 0/3] Tegra GCPDMA: Add dma-channel-mask support
+Date:   Mon, 19 Sep 2022 16:55:56 +0530
+Message-ID: <20220919112559.58195-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2 30/44] cpuidle,xenpv: Make more PARAVIRT_XXL noinstr
- clean
-Content-Language: en-US
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, srivatsa@csail.mit.edu, amakhalov@vmware.com,
-        pv-drivers@vmware.com, boris.ostrovsky@oracle.com,
-        chris@zankel.net, jcmvbkbc@gmail.com, rafael@kernel.org,
-        lenb@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        anup@brainfault.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
-        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
-        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
-        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-        dvyukov@google.com, vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-References: <20220919095939.761690562@infradead.org>
- <20220919101522.358582588@infradead.org>
-From:   Juergen Gross <jgross@suse.com>
-In-Reply-To: <20220919101522.358582588@infradead.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------uN7TNqTnDntgyCDMTfJPdXrr"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT089:EE_|DM8PR12MB5477:EE_
+X-MS-Office365-Filtering-Correlation-Id: b6f1d637-0d79-4dba-6c2c-08da9a31c76f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OYV/cQSsU2Zc/UrTqBJB5/nLV+m8nuDoDoa+sTnMkFRa1wz7wNpgTC8nJyApbUwonqUCf25CXb7/KMf4SWNMToQtlc/hTw28Q2clNsSa8nGsvktZrW703Z+epIUmGnL0b+CpptV7CfITZGkHj4n/HhdPdeNe0XOSbcmsXvlMcKoHKIsaoDgOz1Y0ZQz3y72/bouLHu1gZAE5fS7Qy1iFwA4SFg751xWczn6tdiMnrzRCiXs+OAded65ks7QX7aQSxXiXgYHNy57Nc+g4nIoxyPeP1XyCYtnd3X0/xLzvW9lUw2wrP7uTF3AsdgEXIgNRE606IbM7GeRDb1aPFry2eV4Rvcmi92GYWE6d+Jzjd3llQ6X7/+H7AfPKOR6ftcxoaOt8v1LNdaKxcC2GMSHzZnWbC+s3vQFbtvoqzdSycmDJ2pk1LGqBosRatAWAdKQngTDj5vDXDAbuqg4MIJzw3uQHarHgwytUNpYKQSk3pUhqbWLK+Wf24S6KUoTXFkaD/iS1jnaEsch/WCnZx4Pd9+IeeILLj5yb7pG+YaLr6jt5/bL3vDKy64ucdqCJ4rYXpuVfwFA8ErREoH+rIOHwULYFYtcXrBswXqkL3LsDW/6S9cOSLHC6vjJ+TLw8NjcgX8UfsKsf2SVWB/aKEt+JdfMZeGyyGnGvSDBnJAmYHycdTxaz0oeAUew5CkhKCkNis9YwXzs1Pa84a/MerD/daIvwSvUujTolqf97Hhtlz1nNlq5+yKNT/kP1UDNtxc+Wmt7idycx+svaN11iNQq1Mw==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(346002)(39860400002)(376002)(136003)(451199015)(40470700004)(46966006)(36840700001)(2906002)(2616005)(4744005)(7696005)(82310400005)(41300700001)(356005)(36860700001)(107886003)(6666004)(40480700001)(4326008)(8676002)(70206006)(70586007)(83380400001)(426003)(110136005)(316002)(336012)(40460700003)(1076003)(5660300002)(36756003)(47076005)(186003)(8936002)(86362001)(478600001)(26005)(7636003)(82740400003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2022 11:26:21.4671
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6f1d637-0d79-4dba-6c2c-08da9a31c76f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT089.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5477
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------uN7TNqTnDntgyCDMTfJPdXrr
-Content-Type: multipart/mixed; boundary="------------bVxl0sFTg1HlWc0dYJ02yXYs";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
- mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
- ulli.kroll@googlemail.com, linus.walleij@linaro.org, shawnguo@kernel.org,
- Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
- festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com, khilman@kernel.org,
- catalin.marinas@arm.com, will@kernel.org, guoren@kernel.org,
- bcain@quicinc.com, chenhuacai@kernel.org, kernel@xen0n.name,
- geert@linux-m68k.org, sammy@sammy.net, monstr@monstr.eu,
- tsbogend@alpha.franken.de, dinguyen@kernel.org, jonas@southpole.se,
- stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
- James.Bottomley@HansenPartnership.com, deller@gmx.de, mpe@ellerman.id.au,
- npiggin@gmail.com, christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
- gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
- svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
- davem@davemloft.net, richard@nod.at, anton.ivanov@cambridgegreys.com,
- johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
- jolsa@kernel.org, namhyung@kernel.org, srivatsa@csail.mit.edu,
- amakhalov@vmware.com, pv-drivers@vmware.com, boris.ostrovsky@oracle.com,
- chris@zankel.net, jcmvbkbc@gmail.com, rafael@kernel.org, lenb@kernel.org,
- pavel@ucw.cz, gregkh@linuxfoundation.org, mturquette@baylibre.com,
- sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
- sudeep.holla@arm.com, agross@kernel.org, bjorn.andersson@linaro.org,
- konrad.dybcio@somainline.org, anup@brainfault.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
- Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
- andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
- dennis@kernel.org, tj@kernel.org, cl@linux.com, rostedt@goodmis.org,
- pmladek@suse.com, senozhatsky@chromium.org, john.ogness@linutronix.de,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
- vschneid@redhat.com, fweisbec@gmail.com, ryabinin.a.a@gmail.com,
- glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
- vincenzo.frascino@arm.com, Andrew Morton <akpm@linux-foundation.org>,
- jpoimboe@kernel.org, linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-omap@vger.kernel.org, linux-csky@vger.kernel.org,
- linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
- loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-xtensa@linux-xtensa.org,
- linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
- kasan-dev@googlegroups.com
-Message-ID: <41916640-cf05-c00d-95fa-1e0099741f4c@suse.com>
-Subject: Re: [PATCH v2 30/44] cpuidle,xenpv: Make more PARAVIRT_XXL noinstr
- clean
-References: <20220919095939.761690562@infradead.org>
- <20220919101522.358582588@infradead.org>
-In-Reply-To: <20220919101522.358582588@infradead.org>
+Read dma-channel-mask from device tree and register only the
+specified channels. This is useful to reserve some channels for the
+firmware.
 
---------------bVxl0sFTg1HlWc0dYJ02yXYs
-Content-Type: multipart/mixed; boundary="------------DqMcUwZmmixeMRf078SIWWNm"
+Also update the channel number and interrupts to include all 32
+channels. The current driver was using only 31 channels as one
+channel was reserved for firmware. Now with this change, the driver
+can align more to the actual hardware.
 
---------------DqMcUwZmmixeMRf078SIWWNm
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+v1->v2:
+  * Reversed the operands and used BIT macro in 'if' condition.
+  * Fixed warning reported-by: kernel test robot <lkp@intel.com>
 
-T24gMTkuMDkuMjIgMTI6MDAsIFBldGVyIFppamxzdHJhIHdyb3RlOg0KPiB2bWxpbnV4Lm86
-IHdhcm5pbmc6IG9ianRvb2w6IGFjcGlfaWRsZV9lbnRlcl9zMmlkbGUrMHhkZTogY2FsbCB0
-byB3YmludmQoKSBsZWF2ZXMgLm5vaW5zdHIudGV4dCBzZWN0aW9uDQo+IHZtbGludXgubzog
-d2FybmluZzogb2JqdG9vbDogZGVmYXVsdF9pZGxlKzB4NDogY2FsbCB0byBhcmNoX3NhZmVf
-aGFsdCgpIGxlYXZlcyAubm9pbnN0ci50ZXh0IHNlY3Rpb24NCj4gdm1saW51eC5vOiB3YXJu
-aW5nOiBvYmp0b29sOiB4ZW5fc2FmZV9oYWx0KzB4YTogY2FsbCB0byBIWVBFUlZJU09SX3Nj
-aGVkX29wLmNvbnN0cHJvcC4wKCkgbGVhdmVzIC5ub2luc3RyLnRleHQgc2VjdGlvbg0KPiAN
-Cj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIgWmlqbHN0cmEgKEludGVsKSA8cGV0ZXJ6QGluZnJh
-ZGVhZC5vcmc+DQo+IFJldmlld2VkLWJ5OiBTcml2YXRzYSBTLiBCaGF0IChWTXdhcmUpIDxz
-cml2YXRzYUBjc2FpbC5taXQuZWR1Pg0KDQpSZXZpZXdlZC1ieTogSnVlcmdlbiBHcm9zcyA8
-amdyb3NzQHN1c2UuY29tPg0KDQoNCkp1ZXJnZW4NCg0K
---------------DqMcUwZmmixeMRf078SIWWNm
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Akhil R (3):
+  dt-bindings: dmaengine: Add dma-channel-mask to Tegra GPCDMA
+  arm64: tegra: Add dma-channel-mask in GPCDMA node
+  dmaengine: tegra: Add support for dma-channel-mask
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+ .../bindings/dma/nvidia,tegra186-gpc-dma.yaml |  7 +++-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  4 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  4 +-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  4 +-
+ drivers/dma/tegra186-gpc-dma.c                | 37 +++++++++++++++----
+ 5 files changed, 45 insertions(+), 11 deletions(-)
 
-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
-jR/i1DG86lem3iBDXzXsZDn8R38=3D
-=3D2wuH
------END PGP PUBLIC KEY BLOCK-----
+-- 
+2.17.1
 
---------------DqMcUwZmmixeMRf078SIWWNm--
-
---------------bVxl0sFTg1HlWc0dYJ02yXYs--
-
---------------uN7TNqTnDntgyCDMTfJPdXrr
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmMoSFwFAwAAAAAACgkQsN6d1ii/Ey/T
-hwf/eGOkDCDy7F9Ra0L0GOLdv4GeCljWmcvbdITwnsuB7hQz/+M0V2k7PvSN/ISQ4Vf6Jn+jdWqe
-BIXXQbgSPEGvf145/zXXKI4Z/CR603o4j00ul4vrymonw4oMQfSU6XSgHQPxxoPF3hdqavHf2w48
-1DJPJ8whPxq8qCNOIZt3O0NWTtIKi2fdc7Gpw4aouzNtdCNdCQKzLjhN1LpTcokA22BVdYBG2wMF
-ZkBuZgDmH0auDXsstAEU8aSublQibxzVadACIUCRvtXxxTSXCujB3IoT9CgcYyav5uxi9nNvOEsp
-f9YTwuEzNv1IhRffytywrjyBDZdbHXFDZM0kU7zKkA==
-=9mzX
------END PGP SIGNATURE-----
-
---------------uN7TNqTnDntgyCDMTfJPdXrr--
