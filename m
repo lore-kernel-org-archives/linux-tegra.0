@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B05BC6FA8E
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 08:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74111ECAAD8
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 08:14:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbiITIO0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Sep 2022 04:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49070 "EHLO
+        id S231210AbiITIO2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Sep 2022 04:14:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231459AbiITINt (ORCPT
+        with ESMTP id S231475AbiITINv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Sep 2022 04:13:49 -0400
+        Tue, 20 Sep 2022 04:13:51 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57CA6A466;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF919659E2;
         Tue, 20 Sep 2022 01:12:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=cC12j9P8ru5KBXVnbrH+bmEMVgxfMYkSNhABeawipyA=; b=lvuhEPUQpr7SKTTC7j05rgcgYo
-        kxksYdBNa1PkgKemzFZ/q4YjcsY3DcQJ/1Y0iTQdXCal8EaSaB1Jici+UeQPcLtXTjsWxLZ8v7n1a
-        1NNXq8tke0z4Vy+Nz7ersJrlMiMBxY0lYvQt9T50ju/16PNemIVH1ha6IO7R4LGfgoQCHAaHZUguM
-        ateW9gfbJs1YMqx80LhIl02oG7lVzC0g5XFklglRQ5DtHI7Xns3aRGRWRHKcbmsGWbgY1HFly9rY1
-        Sle6+OU91w96DPWUJv422VtJsZWw7Juv73hCWa4uo2WFd30zkrhdI8/WhdoBreIuXf4NRlGApMmZ3
-        NwLAjOcg==;
+        bh=6QHkkbYG1N/hBv6OdpkzJhp5+2T/3eG3ZDr7ykqG74U=; b=iBrXymsW088djJCGujg8ZfkYzL
+        hNFiknUxvF+3nMfb3x2jc5RbEsmaqH4HMliyCsUOpKav2EhbqQVUCzPUO1s2TYTBMaoVDVJWhM9gf
+        ZQM+AQX+kYXeEMWHIT5KQGhsnKwLN7NJ8Z9NhIRznpWRyjpUHaxhV22HVRRaZyVd104GK26XMP61k
+        QYbePC+7uq28miZg1dH/05Qgj11B8lOB/MkvHFBXoUVx7SNK0OjeFPbpewkmfBus9ZcsaQq/NQbWR
+        +NTNQ6BrnDBiHbiXQxcbwKTUqbBeTU/o5cBto+g1Gsgzm8EV5YQlkp2ds5qBYpqlIPGOqY+vynMm2
+        QiOC8YkA==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1oaYMp-0017q3-EU; Tue, 20 Sep 2022 11:12:31 +0300
+        id 1oaYMo-0017q3-Lj; Tue, 20 Sep 2022 11:12:30 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
@@ -44,9 +44,9 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Sameer Pujar <spujar@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/8] drm/tegra: nvdec: Support multiple clocks
-Date:   Tue, 20 Sep 2022 11:12:01 +0300
-Message-Id: <20220920081203.3237744-7-cyndis@kapsi.fi>
+Subject: [PATCH v3 3/8] dt-bindings: Add bindings for Tegra234 NVDEC
+Date:   Tue, 20 Sep 2022 11:11:58 +0300
+Message-Id: <20220920081203.3237744-4-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <20220920081203.3237744-1-cyndis@kapsi.fi>
 References: <20220920081203.3237744-1-cyndis@kapsi.fi>
@@ -61,98 +61,196 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-NVDEC on Tegra234 requires multiple clocks. Add support for that.
+Update NVDEC bindings for Tegra234. This new engine version only has
+two memory clients, but now requires three clocks, and as a bigger
+change the engine loads firmware from a secure carveout configured by
+the bootloader.
+
+For the latter, we need to add a phandle to the memory controller
+to query the location of this carveout, and several other properties
+containing offsets into the firmware inside the carveout. This
+carveout is not accessible by the CPU, but is needed by NVDEC,
+so we need this information to be relayed from the bootloader.
+
+As the binding was getting large with many conditional properties,
+also split the Tegra234 version out into a separate file.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/nvdec.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+v3:
+- Adjusted descriptions for firmware-related DT properties
+  as requested.
+- Small update to commit message.
+v2:
+- Split out into separate file to avoid complexity with
+  conditionals etc.
+---
+ .../gpu/host1x/nvidia,tegra234-nvdec.yaml     | 156 ++++++++++++++++++
+ 1 file changed, 156 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
 
-diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
-index 276fe0472730..05af4d107421 100644
---- a/drivers/gpu/drm/tegra/nvdec.c
-+++ b/drivers/gpu/drm/tegra/nvdec.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2015-2021, NVIDIA Corporation.
-+ * Copyright (c) 2015-2022, NVIDIA Corporation.
-  */
- 
- #include <linux/clk.h>
-@@ -28,6 +28,7 @@ struct nvdec_config {
- 	const char *firmware;
- 	unsigned int version;
- 	bool supports_sid;
-+	bool has_extra_clocks;
- };
- 
- struct nvdec {
-@@ -37,7 +38,8 @@ struct nvdec {
- 	struct tegra_drm_client client;
- 	struct host1x_channel *channel;
- 	struct device *dev;
--	struct clk *clk;
-+	struct clk_bulk_data clks[3];
-+	unsigned int num_clks;
- 
- 	/* Platform configuration */
- 	const struct nvdec_config *config;
-@@ -258,7 +260,7 @@ static __maybe_unused int nvdec_runtime_resume(struct device *dev)
- 	struct nvdec *nvdec = dev_get_drvdata(dev);
- 	int err;
- 
--	err = clk_prepare_enable(nvdec->clk);
-+	err = clk_bulk_prepare_enable(nvdec->num_clks, nvdec->clks);
- 	if (err < 0)
- 		return err;
- 
-@@ -275,7 +277,7 @@ static __maybe_unused int nvdec_runtime_resume(struct device *dev)
- 	return 0;
- 
- disable:
--	clk_disable_unprepare(nvdec->clk);
-+	clk_bulk_disable_unprepare(nvdec->num_clks, nvdec->clks);
- 	return err;
- }
- 
-@@ -285,7 +287,7 @@ static __maybe_unused int nvdec_runtime_suspend(struct device *dev)
- 
- 	host1x_channel_stop(nvdec->channel);
- 
--	clk_disable_unprepare(nvdec->clk);
-+	clk_bulk_disable_unprepare(nvdec->num_clks, nvdec->clks);
- 
- 	return 0;
- }
-@@ -383,13 +385,22 @@ static int nvdec_probe(struct platform_device *pdev)
- 	if (IS_ERR(nvdec->regs))
- 		return PTR_ERR(nvdec->regs);
- 
--	nvdec->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(nvdec->clk)) {
--		dev_err(&pdev->dev, "failed to get clock\n");
--		return PTR_ERR(nvdec->clk);
-+	nvdec->clks[0].id = "nvdec";
-+	nvdec->num_clks = 1;
+diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
+new file mode 100644
+index 000000000000..7cc2dd525a96
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
+@@ -0,0 +1,156 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra234-nvdec.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 +
-+	if (nvdec->config->has_extra_clocks) {
-+		nvdec->num_clks = 3;
-+		nvdec->clks[1].id = "fuse";
-+		nvdec->clks[2].id = "tsec_pka";
-+	}
++title: Device tree binding for NVIDIA Tegra234 NVDEC
 +
-+	err = devm_clk_bulk_get(dev, nvdec->num_clks, nvdec->clks);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to get clock(s)\n");
-+		return err;
- 	}
- 
--	err = clk_set_rate(nvdec->clk, ULONG_MAX);
-+	err = clk_set_rate(nvdec->clks[0].clk, ULONG_MAX);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to set clock rate\n");
- 		return err;
++description: |
++  NVDEC is the hardware video decoder present on NVIDIA Tegra210
++  and newer chips. It is located on the Host1x bus and typically
++  programmed through Host1x channels.
++
++maintainers:
++  - Thierry Reding <treding@gmail.com>
++  - Mikko Perttunen <mperttunen@nvidia.com>
++
++properties:
++  $nodename:
++    pattern: "^nvdec@[0-9a-f]*$"
++
++  compatible:
++    enum:
++      - nvidia,tegra234-nvdec
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 3
++
++  clock-names:
++    items:
++      - const: nvdec
++      - const: fuse
++      - const: tsec_pka
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    items:
++      - const: nvdec
++
++  power-domains:
++    maxItems: 1
++
++  iommus:
++    maxItems: 1
++
++  dma-coherent: true
++
++  interconnects:
++    items:
++      - description: DMA read memory client
++      - description: DMA write memory client
++
++  interconnect-names:
++    items:
++      - const: dma-mem
++      - const: write
++
++  nvidia,memory-controller:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      phandle to the memory controller for determining information for the NVDEC
++      firmware secure carveout. This carveout is configured by the bootloader and
++      not accessible to CPU.
++
++  nvidia,bl-manifest-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to bootloader manifest from beginning of firmware that was configured by
++      the bootloader.
++
++  nvidia,bl-code-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to bootloader code section from beginning of firmware that was configured by
++      the bootloader.
++
++  nvidia,bl-data-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to bootloader data section from beginning of firmware that was configured by
++      the bootloader.
++
++  nvidia,os-manifest-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to operating system manifest from beginning of firmware that was configured by
++      the bootloader.
++
++  nvidia,os-code-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to operating system code section from beginning of firmware that was configured by
++      the bootloader.
++
++  nvidia,os-data-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to operating system data section from beginning of firmware that was configured
++      by the bootloader.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - power-domains
++  - nvidia,memory-controller
++  - nvidia,bl-manifest-offset
++  - nvidia,bl-code-offset
++  - nvidia,bl-data-offset
++  - nvidia,os-manifest-offset
++  - nvidia,os-code-offset
++  - nvidia,os-data-offset
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra234-clock.h>
++    #include <dt-bindings/memory/tegra234-mc.h>
++    #include <dt-bindings/power/tegra234-powergate.h>
++    #include <dt-bindings/reset/tegra234-reset.h>
++
++    nvdec@15480000 {
++            compatible = "nvidia,tegra234-nvdec";
++            reg = <0x15480000 0x00040000>;
++            clocks = <&bpmp TEGRA234_CLK_NVDEC>,
++                     <&bpmp TEGRA234_CLK_FUSE>,
++                     <&bpmp TEGRA234_CLK_TSEC_PKA>;
++            clock-names = "nvdec", "fuse", "tsec_pka";
++            resets = <&bpmp TEGRA234_RESET_NVDEC>;
++            reset-names = "nvdec";
++            power-domains = <&bpmp TEGRA234_POWER_DOMAIN_NVDEC>;
++            interconnects = <&mc TEGRA234_MEMORY_CLIENT_NVDECSRD &emc>,
++                            <&mc TEGRA234_MEMORY_CLIENT_NVDECSWR &emc>;
++            interconnect-names = "dma-mem", "write";
++            iommus = <&smmu_niso1 TEGRA234_SID_NVDEC>;
++            dma-coherent;
++
++            nvidia,memory-controller = <&mc>;
++
++            /* Placeholder values, to be replaced with values from overlay */
++            nvidia,bl-manifest-offset = <0>;
++            nvidia,bl-data-offset = <0>;
++            nvidia,bl-code-offset = <0>;
++            nvidia,os-manifest-offset = <0>;
++            nvidia,os-data-offset = <0>;
++            nvidia,os-code-offset = <0>;
++    };
 -- 
 2.37.0
 
