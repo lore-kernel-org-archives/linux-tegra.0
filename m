@@ -2,150 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B322C6FA92
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 12:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C70C6FA8B
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 12:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbiITMcA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Sep 2022 08:32:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47960 "EHLO
+        id S229522AbiITMim (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Sep 2022 08:38:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiITMbw (ORCPT
+        with ESMTP id S231272AbiITMih (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Sep 2022 08:31:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2626E564CE;
-        Tue, 20 Sep 2022 05:31:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C4963B80BEC;
-        Tue, 20 Sep 2022 12:31:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74CCCC433D6;
-        Tue, 20 Sep 2022 12:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663677108;
-        bh=i2971qM7wlevODiVHlQWVkeQKCoULSDtCivyYa6BY3w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q359WuuE7X8iHPUglRgZ6umBriKE4r+Hq60s0D7bZenVvQZ4nI53Q/0IHEDWUvL08
-         uO1lUj+/+gsUuHABZ0IUgFE9VpucvwIQJdQ0+o+qLceGFQWOjTx274Wv0QgoQwQqDB
-         Bq6B/yj6zX6+ne9r87JfQG1DqPPHAUwk/5wBhBEUUm5zmwQcKDqLTClYTCw1gL+EWj
-         y+co7RjqxrjwqgzVQOyvkrVOgNfaKYqf/Dnk/7RydhOFfw29XBhF+VqBugULRYy6nW
-         kGdHmx4EM6/oydyvS6EAGcuvFJCcs2df/Ji6kGzIJMqPXxrjzmWTkMGZJXBpD98pEC
-         ZvljhnwREUPvw==
-Date:   Tue, 20 Sep 2022 14:31:45 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        anup@brainfault.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
-        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
-        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
-        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-        dvyukov@google.com, vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 00/44] cpuidle,rcu: Clean up the mess
-Message-ID: <20220920123145.GC72346@lothringen>
-References: <20220919095939.761690562@infradead.org>
+        Tue, 20 Sep 2022 08:38:37 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2046.outbound.protection.outlook.com [40.107.223.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC3576BCF1;
+        Tue, 20 Sep 2022 05:38:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TQsFW+DDrwEDyMyoGRfka27KLD1YdXjpf8ZcDpCoAhl+UgfscjmaCdX2DFuGoR2QwL7NGkicH2ULxbkQrTB4NBFV73tALGssqh1f7WwWhpBVQZS/Ow+M5FlnmmuGc46pKFZHk6adhSFqtIPshqCujUmTWb6wc4jvZqRRw4q590lMzUKePnxlavvcWt4HDe5B+l/m3LUBKg+N1J5HXvo+Vr845nOSZ92bvBT+p6PJweWSQ59XAd+N+XCUNk0ODsCn6QjaaO0ZYtBFyxkFTfPG0mZdRrGuUdPc5b87tbUk2LjBzbAtFr3WjTYi4qcBdemRdWsNozvLhThD8IZZwxyL6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c8g/lfiqFZnVMQ/AB7Rl4IBT5t+98wmWvA4+//Udwng=;
+ b=DGZGV89ZXliGHIS9Ad6W7aW8gpRB3lIAFtwx6Pp+DJaT0Poe5mL+qAlKxlSCNUv//ky6WzX/KmE03v23+bx05l/lD6xGBSgCFxyhGYhPcYpQjwZBtEkCGT1P31E8PPZFmIq/38Yg7303j9F/HhwkHgrBFee5bXMCq0TCxSN5DKPDEqK59HICXr1i4aRT5rKA6EWX2zUduTH5YfABSw7XaXCWK33M2q0ncs0CobIzy56x8r3hlKFjuqx0cCOLl7+KQSLZop/+pkGbyoVK//QUqQnLYzLp4JcJni/RSvAxJ/j+/nxu1hKficcV0R9romuTUERJskoKHCbOLYev1yxoqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c8g/lfiqFZnVMQ/AB7Rl4IBT5t+98wmWvA4+//Udwng=;
+ b=uTjNv7IMS9tevj4uWkQP4WyD/QI6Wb4LF3owHDXZb3SBFxa9qukQ/7sc3m2+Yv3CwFd5wyqFrcBOpBN3Bd6c1QzxFQKmdW/mWpfCIfNek4nSX4KRbdX7EjHd05CHm9aDK7vVTqaSr0Zw17xlMhEkrXn+kEKE0ey01ZW0zY49Y3ADA+al3i2aMe9s1ECd7cS0LrvRBWE+smuB9qDDnBJYroEDJnCaHVJzK/OU9j7AxMCLg6cyfo/VhyxhS+bKBuc+smqYw6B7WwiVqQwhKnAQFQbhx7o3ZQizMOUl7EXsv6sM4WivrFDqaf8XkYXtuD+Hnh+YT+pgpXrlJFUCeYx2Nw==
+Received: from DS7PR03CA0064.namprd03.prod.outlook.com (2603:10b6:5:3bb::9) by
+ SN7PR12MB6791.namprd12.prod.outlook.com (2603:10b6:806:268::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21; Tue, 20 Sep
+ 2022 12:38:34 +0000
+Received: from DM6NAM11FT086.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3bb:cafe::af) by DS7PR03CA0064.outlook.office365.com
+ (2603:10b6:5:3bb::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21 via Frontend
+ Transport; Tue, 20 Sep 2022 12:38:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DM6NAM11FT086.mail.protection.outlook.com (10.13.173.75) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5632.12 via Frontend Transport; Tue, 20 Sep 2022 12:38:33 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 20 Sep
+ 2022 05:38:06 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 20 Sep
+ 2022 05:38:05 -0700
+Received: from pshete-ubuntu.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Tue, 20 Sep 2022 05:38:02 -0700
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <p.zabel@pengutronix.de>, <linux-mmc@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <anrao@nvidia.com>, <smangipudi@nvidia.com>, <pshete@nvidia.com>,
+        <kyarlagadda@nvidia.com>
+Subject: [PATCH v3 3/4] mmc: sdhci-tegra: Issue CMD and DAT resets together
+Date:   Tue, 20 Sep 2022 18:07:51 +0530
+Message-ID: <20220920123752.21027-3-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220920123752.21027-1-pshete@nvidia.com>
+References: <20220920123752.21027-1-pshete@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220919095939.761690562@infradead.org>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT086:EE_|SN7PR12MB6791:EE_
+X-MS-Office365-Filtering-Correlation-Id: d180fc3c-c5f7-4c81-1cb2-08da9b05081f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: XGe+gPn/LY9Ub+3uDWLScjGOmu3vI9ENsOSXcovB5S9WJQxZjJwoUbfMMFBu4/WJ/nnv0cEs9fF8cdsyOdQidwR4OsLbvnGXLjd7RrCrr+asFALSW9HNQ0klxhB6+A2I2D0vQp2RsYYt6Lqw/m5jASPEK1LJZXgcJ9hRwuIUcHLQFUboVLfJTMBBW/3EJCRLprDLuiD951fFEylFJ4ABxpPnyYQW2jx24CuBo7t6WoCT9VGp+Sn0QDGfdyAvq4jM3y91Bwj5p+69lXQEfnanfFbbj3iCO0D6XHlTnjB8ufGLZ4D3y33JNZOQ+IzdqL8Da3CTncUqMdPOk8dlc4DOKNYVk9UWZMwKU0zFvEWKMvU71w18mJJf++VRLLMDlias3b9Z+lb7qNftpNGRPDjGcrjdRxf6f9IoOjYgPp+dPdI5A1mVyadPyuJacILxODCHgHj/0NVpcV20FP0v0/KQ0Y0xwP3v6nH2PKAkK2reGJzbC9V4+Jx2lQ/d9w9abMQ5Y5ziXU8B8SWl6sLiVR7RWEobmCJSvEd9r05iMKD2FoaK9hfhAyckyrXtMb3srxESRDzkAMIWtqguPkHgzVud1rvMu1iXcSasn9aSgLsUs0bLPpienCXTXhb/mK2G9kq8rICHwlH8jJlv+IS5bpMlbAEmeyOmvxTMlIXXLq/pikUgYhJjbqR5YQqXlYL0TRkqLN4ZNRPNL13MkfsiRUaP/kwYHQFIn8Q3UtGj3t6WswSIGORkAXJWEbau/64StIYVLDTjM+59XMfoz8p2ZRlDFA==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(396003)(376002)(136003)(39860400002)(451199015)(36840700001)(46966006)(40470700004)(36756003)(83380400001)(2906002)(316002)(54906003)(110136005)(8676002)(5660300002)(40480700001)(70206006)(70586007)(4326008)(478600001)(6666004)(107886003)(86362001)(41300700001)(82310400005)(8936002)(7696005)(2616005)(1076003)(186003)(426003)(336012)(26005)(47076005)(7636003)(356005)(40460700003)(36860700001)(82740400003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2022 12:38:33.8182
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d180fc3c-c5f7-4c81-1cb2-08da9b05081f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT086.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6791
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 11:59:39AM +0200, Peter Zijlstra wrote:
-> Hi All!
-> 
-> At long last, a respin of the cpuidle vs rcu cleanup patches.
-> 
-> v1: https://lkml.kernel.org/r/20220608142723.103523089@infradead.org
-> 
-> These here patches clean up the mess that is cpuidle vs rcuidle.
-> 
-> At the end of the ride there's only on RCU_NONIDLE user left:
-> 
->   arch/arm64/kernel/suspend.c:            RCU_NONIDLE(__cpu_suspend_exit());
-> 
-> and 'one' trace_*_rcuidle() user:
-> 
->   kernel/trace/trace_preemptirq.c:                        trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
->   kernel/trace/trace_preemptirq.c:                        trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
->   kernel/trace/trace_preemptirq.c:                        trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
->   kernel/trace/trace_preemptirq.c:                        trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
->   kernel/trace/trace_preemptirq.c:                trace_preempt_enable_rcuidle(a0, a1);
->   kernel/trace/trace_preemptirq.c:                trace_preempt_disable_rcuidle(a0, a1);
-> 
-> However this last is all in deprecated code that should be unused for GENERIC_ENTRY.
-> 
-> I've touched a lot of code that I can't test and I might've broken something by
-> accident. In particular the whole ARM cpuidle stuff was quite involved.
-> 
-> Please all; have a look where you haven't already.
-> 
-> 
-> New since v1:
-> 
->  - rebase on top of Frederic's rcu-context-tracking rename fest
->  - more omap goodness as per the last discusion (thanks Tony!)
->  - removed one more RCU_NONIDLE() from arm64/risc-v perf code
->  - ubsan/kasan fixes
->  - intel_idle module-param for testing
->  - a bunch of extra __always_inline, because compilers are silly.
+In case of error condition to avoid system crash
+Tegra SDMMC controller requires CMD and DAT resets
+issued together. SDHCI controller FSM goes into
+bad state due to rapid SD card hot-plug event.
+Issuing reset on the CMD FSM before DATA FSM results
+in kernel panic, hence add support to issue CMD and
+DAT resets together.
+This is applicable to Tegra186 and later chips.
 
-Except for those I have already tagged as Reviewed:
+Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c |  3 ++-
+ drivers/mmc/host/sdhci.c       | 20 +++++++++++++++-----
+ drivers/mmc/host/sdhci.h       |  2 ++
+ 3 files changed, 19 insertions(+), 6 deletions(-)
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 4d32b5bfc424..58449e010a9b 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1532,7 +1532,8 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+-	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
++	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
++		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
+ 	.ops  = &tegra186_sdhci_ops,
+ };
+ 
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 7689ffec5ad1..2f4a0e84fee8 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3060,12 +3060,22 @@ static bool sdhci_request_done(struct sdhci_host *host)
+ 			host->ops->set_clock(host, host->clock);
+ 
+ 		/*
+-		 * Spec says we should do both at the same time, but Ricoh
+-		 * controllers do not like that.
++		 * While the specification says we should do both at the
++		 * same time, Ricoh controllers (and potentially others) do not
++		 * like that. On the other hand, some controllers (such as those
++		 * found on Tegra186 and later) rely on both being reset at the
++		 * same time. Use a quirk for the latter category since most
++		 * controllers seem to work fine with DAT and CMD getting reset
++		 * at the same time.
+ 		 */
+-		sdhci_do_reset(host, SDHCI_RESET_CMD);
+-		sdhci_do_reset(host, SDHCI_RESET_DATA);
+-
++		if (host->quirks2 &
++			SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER) {
++			sdhci_do_reset(host, SDHCI_RESET_CMD |
++					SDHCI_RESET_DATA);
++		} else {
++			sdhci_do_reset(host, SDHCI_RESET_CMD);
++			sdhci_do_reset(host, SDHCI_RESET_DATA);
++		}
+ 		host->pending_reset = false;
+ 	}
+ 
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 95a08f09df30..8045308f7859 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -480,6 +480,8 @@ struct sdhci_host {
+  * block count.
+  */
+ #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
++/* Issue CMD and DATA reset together */
++#define SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER      (1<<19)
+ 
+ 	int irq;		/* Device IRQ */
+ 	void __iomem *ioaddr;	/* Mapped address */
+-- 
+2.17.1
 
-Thanks for the hard work!
