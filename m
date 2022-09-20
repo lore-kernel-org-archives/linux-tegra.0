@@ -2,224 +2,424 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EECECAAD8
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 12:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8778C54EE9
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 14:05:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbiITMiq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Sep 2022 08:38:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58444 "EHLO
+        id S231292AbiITOFk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Sep 2022 10:05:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbiITMim (ORCPT
+        with ESMTP id S231321AbiITOFZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Sep 2022 08:38:42 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2072.outbound.protection.outlook.com [40.107.94.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC5016BD42;
-        Tue, 20 Sep 2022 05:38:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hEkQ4PCLJWR8sRGTUpUPdRV/+SuyTifBuqUf6Fao2G6uyJRlV+kWeAig7jzliuTCN0fr29RXvkOT9/gEZXXjfg0++FPDBrnwjACGYwVA5ZbpuHKbnexdPkRjZsmVVr3ufWWeDWPugGrGqmg/STm/+mqPC+gQuh9DnZvg/qgE8RNEMZrz7hS54266JEUP4jFN2IDSoeEh9ykKodlWmJEOi3swrtnhgN8Qqp094/nDYmwrdgxxBfNeZsDWViUfwQN2RyKHBzOD23Y9GozGGv7hl1RDqQt2jAlrODTk4g4oqJvcMUCoRDp0o3aYg769jyc6GU0AY+UV/aUl4Mfg8dDWEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y+NpXzTkwuFbgmA+L1IHzsiZPSnfF0Q3uYE+MZUe/m0=;
- b=bqCd/J5ap23n6I1fybPnSBCBSzunbkrtbOqFUzmmVF/mUtZfshzNDdFpesOFRTcOqELBwOh9k/8tHZJjNazg2O9f38B+anI1fFCtUovsBdn9+KoahP0rBQBbZfK25ASz9qpz9+zgi9cMzeH7GAHT7tMt6M44PfhbXobj7OeALLimAwm+jiF0kJqOJsSO6egtydc9zOvRTF0o3rGDh9W5R8Ce/cGcvWFbwNcgAcUrt1D5VpEGvl94iEgb621aSkXTxnD0XH/i+vVe2byHdB75OHKgfCIQ22OEX1uc0it6Co99MD9mE+qsNrifrBpfSyKepMEFgqm0Y7cIyHJ+kmSemg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y+NpXzTkwuFbgmA+L1IHzsiZPSnfF0Q3uYE+MZUe/m0=;
- b=ertJj6LTIfWgjBLLPhzf27TPpvI0YXhCUqJPcw236NigMwbAciFyP8w8fCjUyN/X2Bq40DsmfSNP0Kb6eJKHaxUhPunET56SL6n5CchV3LjzLQ6gjgJdTXhc07UarjtEVyA2vx6MhOOe357dnpPKKj8At6/bbu+S8qrzfmVvcpmzmReyYI31yR03SlEk5NNaJap3r9HZxwxZV4MmJXmfZaTaEOBBcdsfGqjJqmklUY0JOQfVw193lHT091+n8vl1/2ehLaMXX253kS0R78qKDstVGV6LQozmfRlignsn4alZ4DrqcTmRrpUW6UZpSvJ2MsaZkvFV1ncSio+xk7JWww==
-Received: from SJ0PR13CA0112.namprd13.prod.outlook.com (2603:10b6:a03:2c5::27)
- by MW3PR12MB4378.namprd12.prod.outlook.com (2603:10b6:303:52::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21; Tue, 20 Sep
- 2022 12:38:40 +0000
-Received: from CO1PEPF00001A63.namprd05.prod.outlook.com
- (2603:10b6:a03:2c5:cafe::a8) by SJ0PR13CA0112.outlook.office365.com
- (2603:10b6:a03:2c5::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.14 via Frontend
- Transport; Tue, 20 Sep 2022 12:38:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF00001A63.mail.protection.outlook.com (10.167.241.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5654.11 via Frontend Transport; Tue, 20 Sep 2022 12:38:38 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 20 Sep
- 2022 05:38:02 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 20 Sep
- 2022 05:38:01 -0700
-Received: from pshete-ubuntu.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 20 Sep 2022 05:37:58 -0700
-From:   Prathamesh Shete <pshete@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <p.zabel@pengutronix.de>, <linux-mmc@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <anrao@nvidia.com>, <smangipudi@nvidia.com>, <pshete@nvidia.com>,
-        <kyarlagadda@nvidia.com>
-Subject: [PATCH v3 2/4]  mmc: sdhci-tegra: Add support to program MC stream ID
-Date:   Tue, 20 Sep 2022 18:07:50 +0530
-Message-ID: <20220920123752.21027-2-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220920123752.21027-1-pshete@nvidia.com>
-References: <20220920123752.21027-1-pshete@nvidia.com>
+        Tue, 20 Sep 2022 10:05:25 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E004D1834F;
+        Tue, 20 Sep 2022 07:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=pUyjVDld9zFCUTkkA07ck30DRQCGaey9CaHvnqryoew=; b=aY4juj0Ef3v9izwEsAMEEieRfp
+        NMdP3rgNCaxPxwf9MCfOcuUPPKilQ87miVM0OzwH6AO3xMKjR3i2NTjX5MPPxByQDV78mFrie96AA
+        1i3vlSh03EHH5ZSMZ8mgvIz97DJzd02zNI1wJcm6cIFHWLin1dBpIssJtESTULKhTRt7qhGVokQb+
+        WhJfF4mXi+Z8iFV9PlgcpeykLKel6B9E3SHcpVkVcDGkVHSSC98L5smGUEcAznbwJ78JXEHK4hfZ2
+        MYxy2clMkeegtNf4Sxkvi/iJIv85qSED9vgIGziZD8Tn0pLikoKMSoM5W6/bfl+h4aydKP+htQGRT
+        uKdSECRA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oadrn-00EMJA-II; Tue, 20 Sep 2022 14:04:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DF5783006B9;
+        Tue, 20 Sep 2022 16:04:47 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A0C2020161C88; Tue, 20 Sep 2022 16:04:47 +0200 (CEST)
+Date:   Tue, 20 Sep 2022 16:04:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        anup@brainfault.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
+        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
+        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
+        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+        dvyukov@google.com, vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v2 00/44] cpuidle,rcu: Clean up the mess
+Message-ID: <YynIf5WiWbNdiWsq@hirez.programming.kicks-ass.net>
+References: <20220919095939.761690562@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF00001A63:EE_|MW3PR12MB4378:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9ea4991-6099-42fc-2f3c-08da9b050af3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ya4F77tp+9AK0BcKpZ+cogUZO9O4G5Ktajzg0EN0q2H31BWfDSkwo4vacdc/gTKtzkDwOD0y8AsGMl6N0Zfn+cBFH45QM55Pd66hOF+LRY2e8Chq5hHJCzL4Xr6hoc1PgocZA+6nWUhN7AJTADa1LEv/qXpEzbgwdlX8aFY1x/juo87jy4Wi48FtSoajj1MDAC7xf5aTuaPTsveBTVxbp+XiK4fx6wKmRCNn6B353Y1RT8gf+DNmUyQS0nE6EEwUwSUZnfeUQZvSzqufUAld/BItWjX56QgswgNALIgFbPn+lVLWnTAtkVm4j416ei3PgGFky9OJbtEnkoAwC/OaYg9wuFzwR5cspsla7AgJ63m6aZJxiljlMwcMYmw5JOLYFPDmSpp2nK4rrlTKOXhnygZx/KS8ZSZMbbsSD98rXxWP5ExDVL6Y2vd5IN+aBuZvgsCguM0yhBcm4V78Uf7TDHfSJ1ECUhUKPeEWRcqCxGw2HC48czAkOuS4Vdg8QFIv5r9lgq3iOZVIpfIybnNYDt/ONX69FKpuEJf8lys6DzEO9RbW80ePPzk3AI7lniZBoNCMxLcXD6XFYSjaPXd102vnnbRywFtElwvs7bGfHhgoCAPBds56s0F04AItQYlVjZHyN90LydCXM3F2yOLQXbIy6B8FjoITUREyikWne5WorfBfcxCwIqWHaGFDE8npdWq6qKrsdJ12NK1W77AvB077mRso4qu4c09WvBTID+Yjmq2Jzpfn6OyC6ld4rwXmzYAZCHMvmIv0KwxAfmry7g==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(376002)(39860400002)(346002)(451199015)(40470700004)(46966006)(36840700001)(8676002)(82310400005)(36860700001)(82740400003)(40460700003)(356005)(36756003)(86362001)(2906002)(5660300002)(478600001)(7636003)(70206006)(40480700001)(4326008)(70586007)(8936002)(47076005)(54906003)(316002)(110136005)(186003)(1076003)(83380400001)(336012)(41300700001)(6666004)(107886003)(2616005)(7696005)(26005)(426003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2022 12:38:38.6260
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9ea4991-6099-42fc-2f3c-08da9b050af3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF00001A63.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4378
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220919095939.761690562@infradead.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-SMMU clients are supposed to program stream ID from
-their respective address spaces instead of MC override.
-Define NVQUIRK_PROGRAM_STREAMID and use it to program
-SMMU stream ID from the SDMMC client address space.
 
-Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Because Nadav asked about tracing/kprobing idle, I had another go around
+and noticed not all functions calling ct_cpuidle_enter are __cpuidle.
+
+Basically all cpuidle_driver::enter functions should be __cpuidle; i'll
+do that audit shortly.
+
+For now this is ct_cpuidle_enter / CPU_IDLE_ENTER users.
+
 ---
- drivers/mmc/host/sdhci-tegra.c | 35 ++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index a6c5bbae77b4..4d32b5bfc424 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -25,6 +25,7 @@
- #include <linux/mmc/slot-gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/ktime.h>
-+#include <linux/iommu.h>
+--- a/arch/arm/mach-imx/cpuidle-imx6q.c
++++ b/arch/arm/mach-imx/cpuidle-imx6q.c
+@@ -17,8 +17,8 @@
+ static int num_idle_cpus = 0;
+ static DEFINE_RAW_SPINLOCK(cpuidle_lock);
  
- #include <soc/tegra/common.h>
- 
-@@ -94,6 +95,8 @@
- #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
- #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
- 
-+#define SDHCI_TEGRA_CIF2AXI_CTRL_0			0x1fc
-+
- #define NVQUIRK_FORCE_SDHCI_SPEC_200			BIT(0)
- #define NVQUIRK_ENABLE_BLOCK_GAP_DET			BIT(1)
- #define NVQUIRK_ENABLE_SDHCI_SPEC_300			BIT(2)
-@@ -121,6 +124,7 @@
- #define NVQUIRK_HAS_TMCLK				BIT(10)
- 
- #define NVQUIRK_HAS_ANDROID_GPT_SECTOR			BIT(11)
-+#define NVQUIRK_PROGRAM_STREAMID			BIT(12)
- 
- /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
- #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-@@ -128,6 +132,8 @@
- #define SDHCI_TEGRA_CQE_TRNS_MODE	(SDHCI_TRNS_MULTI | \
- 					 SDHCI_TRNS_BLK_CNT_EN | \
- 					 SDHCI_TRNS_DMA)
-+#define SDHCI_TEGRA_STREAMID_MASK			0xff
-+#define SDHCI_TEGRA_WRITE_STREAMID_SHIFT		0x8
- 
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
-@@ -177,6 +183,7 @@ struct sdhci_tegra {
- 	bool enable_hwcq;
- 	unsigned long curr_clk_rate;
- 	u8 tuned_tap_delay;
-+	u32 streamid;
- };
- 
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-@@ -1564,6 +1571,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra234 = {
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
- 		    NVQUIRK_ENABLE_SDR50 |
- 		    NVQUIRK_ENABLE_SDR104 |
-+		    NVQUIRK_PROGRAM_STREAMID |
- 		    NVQUIRK_HAS_TMCLK,
- 	.min_tap_delay = 95,
- 	.max_tap_delay = 111,
-@@ -1636,6 +1644,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	struct sdhci_host *host;
- 	struct sdhci_pltfm_host *pltfm_host;
- 	struct sdhci_tegra *tegra_host;
-+	struct iommu_fwspec *fwspec;
- 	struct clk *clk;
- 	int rc;
- 
-@@ -1775,6 +1784,23 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (rc)
- 		goto err_add_host;
- 
-+	/* Program MC streamID for DMA transfers */
-+	if (soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
-+		fwspec = dev_iommu_fwspec_get(&pdev->dev);
-+		if (fwspec == NULL) {
-+			dev_warn(mmc_dev(host->mmc),
-+				"iommu fwspec is NULL, continue without stream ID\n");
-+		} else {
-+			tegra_host->streamid = fwspec->ids[0] & 0xffff;
-+			tegra_sdhci_writel(host, (tegra_host->streamid &
-+						SDHCI_TEGRA_STREAMID_MASK) |
-+						((tegra_host->streamid <<
-+						SDHCI_TEGRA_WRITE_STREAMID_SHIFT)
-+						& SDHCI_TEGRA_STREAMID_MASK),
-+						SDHCI_TEGRA_CIF2AXI_CTRL_0);
-+		}
-+	}
-+
- 	return 0;
- 
- err_add_host:
-@@ -1861,6 +1887,8 @@ static int sdhci_tegra_suspend(struct device *dev)
- static int sdhci_tegra_resume(struct device *dev)
+-static int imx6q_enter_wait(struct cpuidle_device *dev,
+-			    struct cpuidle_driver *drv, int index)
++static __cpuidle int imx6q_enter_wait(struct cpuidle_device *dev,
++				      struct cpuidle_driver *drv, int index)
  {
- 	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+ 	raw_spin_lock(&cpuidle_lock);
+ 	if (++num_idle_cpus == num_online_cpus())
+--- a/arch/arm/mach-imx/cpuidle-imx6sx.c
++++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
+@@ -30,8 +30,8 @@ static int imx6sx_idle_finish(unsigned l
+ 	return 0;
+ }
+ 
+-static int imx6sx_enter_wait(struct cpuidle_device *dev,
+-			    struct cpuidle_driver *drv, int index)
++static __cpuidle int imx6sx_enter_wait(struct cpuidle_device *dev,
++				       struct cpuidle_driver *drv, int index)
+ {
+ 	imx6_set_lpm(WAIT_UNCLOCKED);
+ 
+--- a/arch/arm/mach-omap2/omap-mpuss-lowpower.c
++++ b/arch/arm/mach-omap2/omap-mpuss-lowpower.c
+@@ -224,8 +224,8 @@ static void __init save_l2x0_context(voi
+  *	2 - CPUx L1 and logic lost + GIC lost: MPUSS OSWR
+  *	3 - CPUx L1 and logic lost + GIC + L2 lost: DEVICE OFF
+  */
+-int omap4_enter_lowpower(unsigned int cpu, unsigned int power_state,
+-			 bool rcuidle)
++__cpuidle int omap4_enter_lowpower(unsigned int cpu, unsigned int power_state,
++				   bool rcuidle)
+ {
+ 	struct omap4_cpu_pm_info *pm_info = &per_cpu(omap4_pm_info, cpu);
+ 	unsigned int save_state = 0, cpu_logic_state = PWRDM_POWER_RET;
+--- a/arch/arm/mach-omap2/pm34xx.c
++++ b/arch/arm/mach-omap2/pm34xx.c
+@@ -175,7 +175,7 @@ static int omap34xx_do_sram_idle(unsigne
+ 	return 0;
+ }
+ 
+-void omap_sram_idle(bool rcuidle)
++__cpuidle void omap_sram_idle(bool rcuidle)
+ {
+ 	/* Variable to tell what needs to be saved and restored
+ 	 * in omap_sram_idle*/
+--- a/arch/arm64/kernel/cpuidle.c
++++ b/arch/arm64/kernel/cpuidle.c
+@@ -62,7 +62,7 @@ int acpi_processor_ffh_lpi_probe(unsigne
+ 	return psci_acpi_cpu_init_idle(cpu);
+ }
+ 
+-int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi)
++__cpuidle int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi)
+ {
+ 	u32 state = lpi->address;
+ 
+--- a/drivers/cpuidle/cpuidle-arm.c
++++ b/drivers/cpuidle/cpuidle-arm.c
+@@ -31,8 +31,8 @@
+  * Called from the CPUidle framework to program the device to the
+  * specified target state selected by the governor.
+  */
+-static int arm_enter_idle_state(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv, int idx)
++static __cpuidle int arm_enter_idle_state(struct cpuidle_device *dev,
++					  struct cpuidle_driver *drv, int idx)
+ {
+ 	/*
+ 	 * Pass idle state index to arm_cpuidle_suspend which in turn
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -122,8 +122,8 @@ static int notrace bl_powerdown_finisher
+  * Called from the CPUidle framework to program the device to the
+  * specified target state selected by the governor.
+  */
+-static int bl_enter_powerdown(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv, int idx)
++static __cpuidle int bl_enter_powerdown(struct cpuidle_device *dev,
++					struct cpuidle_driver *drv, int idx)
+ {
+ 	cpu_pm_enter();
+ 	ct_cpuidle_enter();
+--- a/drivers/cpuidle/cpuidle-mvebu-v7.c
++++ b/drivers/cpuidle/cpuidle-mvebu-v7.c
+@@ -25,9 +25,9 @@
+ 
+ static int (*mvebu_v7_cpu_suspend)(int);
+ 
+-static int mvebu_v7_enter_idle(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv,
+-				int index)
++static __cpuidle int mvebu_v7_enter_idle(struct cpuidle_device *dev,
++					 struct cpuidle_driver *drv,
++					 int index)
+ {
  	int ret;
+ 	bool deepidle = false;
+--- a/drivers/cpuidle/cpuidle-psci.c
++++ b/drivers/cpuidle/cpuidle-psci.c
+@@ -49,14 +49,9 @@ static inline u32 psci_get_domain_state(
+ 	return __this_cpu_read(domain_state);
+ }
  
- 	ret = mmc_gpio_set_cd_wake(host->mmc, false);
-@@ -1871,6 +1899,13 @@ static int sdhci_tegra_resume(struct device *dev)
- 	if (ret)
- 		return ret;
+-static inline int psci_enter_state(int idx, u32 state)
+-{
+-	return CPU_PM_CPU_IDLE_ENTER_PARAM(psci_cpu_suspend_enter, idx, state);
+-}
+-
+-static int __psci_enter_domain_idle_state(struct cpuidle_device *dev,
+-					  struct cpuidle_driver *drv, int idx,
+-					  bool s2idle)
++static __cpuidle int __psci_enter_domain_idle_state(struct cpuidle_device *dev,
++						    struct cpuidle_driver *drv, int idx,
++						    bool s2idle)
+ {
+ 	struct psci_cpuidle_data *data = this_cpu_ptr(&psci_cpuidle_data);
+ 	u32 *states = data->psci_states;
+@@ -192,12 +187,12 @@ static void psci_idle_init_cpuhp(void)
+ 		pr_warn("Failed %d while setup cpuhp state\n", err);
+ }
  
-+	/* Re-program MC streamID for DMA transfers */
-+	if (tegra_host->soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
-+		tegra_sdhci_writel(host, tegra_host->streamid |
-+					(tegra_host->streamid << 8),
-+					SDHCI_TEGRA_CIF2AXI_CTRL_0);
-+	}
+-static int psci_enter_idle_state(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv, int idx)
++static __cpuidle int psci_enter_idle_state(struct cpuidle_device *dev,
++					   struct cpuidle_driver *drv, int idx)
+ {
+ 	u32 *state = __this_cpu_read(psci_cpuidle_data.psci_states);
+ 
+-	return psci_enter_state(idx, state[idx]);
++	return CPU_PM_CPU_IDLE_ENTER_PARAM(psci_cpu_suspend_enter, idx, state[idx]);
+ }
+ 
+ static const struct of_device_id psci_idle_state_match[] = {
+--- a/drivers/cpuidle/cpuidle-qcom-spm.c
++++ b/drivers/cpuidle/cpuidle-qcom-spm.c
+@@ -58,8 +58,8 @@ static int qcom_cpu_spc(struct spm_drive
+ 	return ret;
+ }
+ 
+-static int spm_enter_idle_state(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv, int idx)
++static __cpuidle int spm_enter_idle_state(struct cpuidle_device *dev,
++					  struct cpuidle_driver *drv, int idx)
+ {
+ 	struct cpuidle_qcom_spm_data *data = container_of(drv, struct cpuidle_qcom_spm_data,
+ 							  cpuidle_driver);
+--- a/drivers/cpuidle/cpuidle-riscv-sbi.c
++++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+@@ -93,17 +93,17 @@ static int sbi_suspend(u32 state)
+ 		return sbi_suspend_finisher(state, 0, 0);
+ }
+ 
+-static int sbi_cpuidle_enter_state(struct cpuidle_device *dev,
+-				   struct cpuidle_driver *drv, int idx)
++static __cpuidle int sbi_cpuidle_enter_state(struct cpuidle_device *dev,
++					     struct cpuidle_driver *drv, int idx)
+ {
+ 	u32 *states = __this_cpu_read(sbi_cpuidle_data.states);
+ 
+ 	return CPU_PM_CPU_IDLE_ENTER_PARAM(sbi_suspend, idx, states[idx]);
+ }
+ 
+-static int __sbi_enter_domain_idle_state(struct cpuidle_device *dev,
+-					  struct cpuidle_driver *drv, int idx,
+-					  bool s2idle)
++static __cpuidle int __sbi_enter_domain_idle_state(struct cpuidle_device *dev,
++						   struct cpuidle_driver *drv, int idx,
++						   bool s2idle)
+ {
+ 	struct sbi_cpuidle_data *data = this_cpu_ptr(&sbi_cpuidle_data);
+ 	u32 *states = data->states;
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -160,8 +160,8 @@ static int tegra_cpuidle_coupled_barrier
+ 	return 0;
+ }
+ 
+-static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+-				     int index, unsigned int cpu)
++static __cpuidle int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
++					       int index, unsigned int cpu)
+ {
+ 	int err;
+ 
+@@ -226,9 +226,9 @@ static int tegra_cpuidle_adjust_state_in
+ 	return index;
+ }
+ 
+-static int tegra_cpuidle_enter(struct cpuidle_device *dev,
+-			       struct cpuidle_driver *drv,
+-			       int index)
++static __cpuidle int tegra_cpuidle_enter(struct cpuidle_device *dev,
++					 struct cpuidle_driver *drv,
++					 int index)
+ {
+ 	bool do_rcu = drv->states[index].flags & CPUIDLE_FLAG_RCU_IDLE;
+ 	unsigned int cpu = cpu_logical_map(dev->cpu);
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -137,11 +137,13 @@ int cpuidle_find_deepest_state(struct cp
+ }
+ 
+ #ifdef CONFIG_SUSPEND
+-static void enter_s2idle_proper(struct cpuidle_driver *drv,
+-				struct cpuidle_device *dev, int index)
++static __cpuidle void enter_s2idle_proper(struct cpuidle_driver *drv,
++					  struct cpuidle_device *dev, int index)
+ {
+-	ktime_t time_start, time_end;
+ 	struct cpuidle_state *target_state = &drv->states[index];
++	ktime_t time_start, time_end;
 +
- 	ret = sdhci_resume_host(host);
- 	if (ret)
- 		goto disable_clk;
--- 
-2.17.1
++	instrumentation_begin();
+ 
+ 	time_start = ns_to_ktime(local_clock());
+ 
+@@ -152,13 +154,18 @@ static void enter_s2idle_proper(struct c
+ 	 * suspended is generally unsafe.
+ 	 */
+ 	stop_critical_timings();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
+ 		ct_cpuidle_enter();
++		/* Annotate away the indirect call */
++		instrumentation_begin();
++	}
+ 	target_state->enter_s2idle(dev, drv, index);
+ 	if (WARN_ON_ONCE(!irqs_disabled()))
+ 		raw_local_irq_disable();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
++		instrumentation_end();
+ 		ct_cpuidle_exit();
++	}
+ 	tick_unfreeze();
+ 	start_critical_timings();
+ 
+@@ -166,6 +173,7 @@ static void enter_s2idle_proper(struct c
+ 
+ 	dev->states_usage[index].s2idle_time += ktime_us_delta(time_end, time_start);
+ 	dev->states_usage[index].s2idle_usage++;
++	instrumentation_end();
+ }
+ 
+ /**
+@@ -200,8 +208,9 @@ int cpuidle_enter_s2idle(struct cpuidle_
+  * @drv: cpuidle driver for this cpu
+  * @index: index into the states table in @drv of the state to enter
+  */
+-int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
+-			int index)
++__cpuidle int cpuidle_enter_state(struct cpuidle_device *dev,
++				  struct cpuidle_driver *drv,
++				  int index)
+ {
+ 	int entered_state;
+ 
+@@ -209,6 +218,8 @@ int cpuidle_enter_state(struct cpuidle_d
+ 	bool broadcast = !!(target_state->flags & CPUIDLE_FLAG_TIMER_STOP);
+ 	ktime_t time_start, time_end;
+ 
++	instrumentation_begin();
++
+ 	/*
+ 	 * Tell the time framework to switch to a broadcast timer because our
+ 	 * local timer will be shut down.  If a local timer is used from another
+@@ -235,15 +246,21 @@ int cpuidle_enter_state(struct cpuidle_d
+ 	time_start = ns_to_ktime(local_clock());
+ 
+ 	stop_critical_timings();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
+ 		ct_cpuidle_enter();
++		/* Annotate away the indirect call */
++		instrumentation_begin();
++	}
+ 
+ 	entered_state = target_state->enter(dev, drv, index);
++
+ 	if (WARN_ONCE(!irqs_disabled(), "%ps leaked IRQ state", target_state->enter))
+ 		raw_local_irq_disable();
+ 
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
++		instrumentation_end();
+ 		ct_cpuidle_exit();
++	}
+ 	start_critical_timings();
+ 
+ 	sched_clock_idle_wakeup_event();
+@@ -306,6 +323,8 @@ int cpuidle_enter_state(struct cpuidle_d
+ 		dev->states_usage[index].rejected++;
+ 	}
+ 
++	instrumentation_end();
++
+ 	return entered_state;
+ }
+ 
 
