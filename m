@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABD2C6FA82
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 08:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95616C6FA91
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 08:14:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230371AbiITIOX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Sep 2022 04:14:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
+        id S230437AbiITIOY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Sep 2022 04:14:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231445AbiITINr (ORCPT
+        with ESMTP id S231448AbiITINs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Sep 2022 04:13:47 -0400
+        Tue, 20 Sep 2022 04:13:48 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8605765804;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0792D6566F;
         Tue, 20 Sep 2022 01:12:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=1mp9KTiW7Fzm6dAODf6CTuUENPLklhUU20Em/a8MWa8=; b=AvO2L/zPgU6iS/Jvdu6/w1f/L/
-        EYnLaEYsUxhR3zUiTcanrsHhRNONsQI4e3RCQFkyJNG8zZWkeeKA6PvR1qqr0a3wg8ztlsM+J2Z5/
-        be28mOA8NPasP1owY5pZ//NtgvG52IAUi0tVmAyb77Oz7UG1o6w5w7zjyHD2lmzbrDQYGXZoM0bKm
-        6WZdZlmiNfp2rpLm1zKY1SmfaYlU/Cdkf/+UkFkPXm6m/mJ4wZMrW13buzuVg19+6vrRoWGX2Sb+I
-        dV4+aHZbMoLOKMH/jSz095nUnlHEZLKAqkvkITMMJenosm3lEyPSsGqFInSQDvDiTerr5y/yUKnbL
-        LX6FyB3w==;
+        bh=WGDOR4/G4lvi7odQrLsocAov6jzKFOoeOGWdV2SLtpo=; b=x4m9f3/Jwh/Ot1Cqt4onSuhmqM
+        pp3XTDymKjjyEXwc66DV+ucftntOosGh8dY7pK9p6IUevUxXdO+wgIl9XeABBP03Ucr5XXuSCUViZ
+        cEz/SFwxctVi/E6fgdcZHj+43r7sspLL5aiIyCSAHOX8W6vwLPdlPPoWbSf+yAph1/P0yfjnaAU/i
+        0kVeghdKvKe5LP9HiVOjMXMQq6pwAl3MWAPO7PcSVxmgVXtfUvy4uKNIGGz332O+WUj+1MRqnbfFz
+        03ixvJZRRsdf7eY0sPHE3GC5OA4Qg9u1c1dl1CNv8yepEb+Yh0Jz8A4F8pex8WsfykFOTHmCpiEmT
+        RUnZ6MEQ==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1oaYMo-0017q3-U6; Tue, 20 Sep 2022 11:12:30 +0300
+        id 1oaYMo-0017q3-4p; Tue, 20 Sep 2022 11:12:30 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
@@ -44,9 +44,9 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Sameer Pujar <spujar@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/8] arm64: tegra: Add NVDEC on Tegra234
-Date:   Tue, 20 Sep 2022 11:11:59 +0300
-Message-Id: <20220920081203.3237744-5-cyndis@kapsi.fi>
+Subject: [PATCH v3 1/8] memory: tegra: Add API for retrieving carveout bounds
+Date:   Tue, 20 Sep 2022 11:11:56 +0300
+Message-Id: <20220920081203.3237744-2-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <20220920081203.3237744-1-cyndis@kapsi.fi>
 References: <20220920081203.3237744-1-cyndis@kapsi.fi>
@@ -61,59 +61,110 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add a device tree node for NVDEC on Tegra234.
-
-Booting the firmware requires some information regarding offsets
-within the firmware binary. These are passed through the device
-tree, but since the values vary depending on the firmware version,
-and the firmware itself is not available to the OS, the flasher is
-expected to provide a device tree overlay with values corresponding
-to the firmware it is flashing. The overlay then replaces the
-placeholder values here.
+On Tegra234 NVDEC firmware is loaded from a secure carveout, where it
+has been loaded by a bootloader. When booting NVDEC, we need to tell it
+the address of this firmware, which we can determine by checking the
+starting address of the carveout. As such, add an MC API to query the
+bounds of carveouts, and add related information on Tegra234.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 27 ++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+v2:
+- Add check for 64-bit phys_addr_t. In practice phys_addr_t
+  is always 64 bits where this runs, but it avoids warnings in
+  compile test.
+---
+ drivers/memory/tegra/mc.c       | 25 +++++++++++++++++++++++++
+ drivers/memory/tegra/tegra234.c |  5 +++++
+ include/soc/tegra/mc.h          | 11 +++++++++++
+ 3 files changed, 41 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 81a0f599685f..65d49b27bc5f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -586,6 +586,33 @@ vic@15340000 {
- 				iommus = <&smmu_niso1 TEGRA234_SID_VIC>;
- 				dma-coherent;
- 			};
-+
-+			nvdec@15480000 {
-+				compatible = "nvidia,tegra234-nvdec";
-+				reg = <0x15480000 0x00040000>;
-+				clocks = <&bpmp TEGRA234_CLK_NVDEC>,
-+				         <&bpmp TEGRA234_CLK_FUSE>,
-+				         <&bpmp TEGRA234_CLK_TSEC_PKA>;
-+				clock-names = "nvdec", "fuse", "tsec_pka";
-+				resets = <&bpmp TEGRA234_RESET_NVDEC>;
-+				reset-names = "nvdec";
-+				power-domains = <&bpmp TEGRA234_POWER_DOMAIN_NVDEC>;
-+				interconnects = <&mc TEGRA234_MEMORY_CLIENT_NVDECSRD &emc>,
-+				                <&mc TEGRA234_MEMORY_CLIENT_NVDECSWR &emc>;
-+				interconnect-names = "dma-mem", "write";
-+				iommus = <&smmu_niso1 TEGRA234_SID_NVDEC>;
-+				dma-coherent;
-+
-+				nvidia,memory-controller = <&mc>;
-+
-+				/* Placeholder values, to be replaced with values from overlay */
-+				nvidia,bl-manifest-offset = <0>;
-+				nvidia,bl-data-offset = <0>;
-+				nvidia,bl-code-offset = <0>;
-+				nvidia,os-manifest-offset = <0>;
-+				nvidia,os-data-offset = <0>;
-+				nvidia,os-code-offset = <0>;
-+			};
- 		};
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index 2f7a58a9df1a..592907546ee6 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -107,6 +107,31 @@ int tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(tegra_mc_probe_device);
  
- 		gpio: gpio@2200000 {
++int tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
++                               phys_addr_t *base, u64 *size)
++{
++	u32 offset;
++
++	if (id < 1 || id >= mc->soc->num_carveouts)
++		return -EINVAL;
++
++	if (id < 6)
++		offset = 0xc0c + 0x50 * (id - 1);
++	else
++		offset = 0x2004 + 0x50 * (id - 6);
++
++	*base = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x0);
++#ifdef CONFIG_PHYS_ADDR_T_64BIT
++	*base |= (phys_addr_t)mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x4) << 32;
++#endif
++
++	if (size)
++		*size = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x8) << 17;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(tegra_mc_get_carveout_info);
++
+ static int tegra_mc_block_dma_common(struct tegra_mc *mc,
+ 				     const struct tegra_mc_reset *rst)
+ {
+diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
+index a9e8fd99730f..74d291d66366 100644
+--- a/drivers/memory/tegra/tegra234.c
++++ b/drivers/memory/tegra/tegra234.c
+@@ -187,4 +187,9 @@ const struct tegra_mc_soc tegra234_mc_soc = {
+ 	.ops = &tegra186_mc_ops,
+ 	.ch_intmask = 0x0000ff00,
+ 	.global_intstatus_channel_shift = 8,
++	/*
++	 * Additionally, there are lite carveouts but those are not currently
++	 * supported.
++	 */
++	.num_carveouts = 32,
+ };
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index 47ce6d434427..51a2263e1bc5 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -193,6 +193,8 @@ struct tegra_mc_soc {
+ 	unsigned int num_address_bits;
+ 	unsigned int atom_size;
+ 
++	unsigned int num_carveouts;
++
+ 	u16 client_id_mask;
+ 	u8 num_channels;
+ 
+@@ -244,6 +246,8 @@ unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc);
+ #ifdef CONFIG_TEGRA_MC
+ struct tegra_mc *devm_tegra_memory_controller_get(struct device *dev);
+ int tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev);
++int tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
++                               phys_addr_t *base, u64 *size);
+ #else
+ static inline struct tegra_mc *
+ devm_tegra_memory_controller_get(struct device *dev)
+@@ -256,6 +260,13 @@ tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev)
+ {
+ 	return -ENODEV;
+ }
++
++static inline int
++tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
++                           phys_addr_t *base, u64 *size)
++{
++	return -ENODEV;
++}
+ #endif
+ 
+ #endif /* __SOC_TEGRA_MC_H__ */
 -- 
 2.37.0
 
