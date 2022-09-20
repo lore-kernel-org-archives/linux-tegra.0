@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95616C6FA91
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 08:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 730BAC6FA93
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Sep 2022 08:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230437AbiITIOY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Sep 2022 04:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49050 "EHLO
+        id S230517AbiITIOZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Sep 2022 04:14:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231448AbiITINs (ORCPT
+        with ESMTP id S231450AbiITINs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Tue, 20 Sep 2022 04:13:48 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0792D6566F;
-        Tue, 20 Sep 2022 01:12:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3630A116B;
+        Tue, 20 Sep 2022 01:12:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=WGDOR4/G4lvi7odQrLsocAov6jzKFOoeOGWdV2SLtpo=; b=x4m9f3/Jwh/Ot1Cqt4onSuhmqM
-        pp3XTDymKjjyEXwc66DV+ucftntOosGh8dY7pK9p6IUevUxXdO+wgIl9XeABBP03Ucr5XXuSCUViZ
-        cEz/SFwxctVi/E6fgdcZHj+43r7sspLL5aiIyCSAHOX8W6vwLPdlPPoWbSf+yAph1/P0yfjnaAU/i
-        0kVeghdKvKe5LP9HiVOjMXMQq6pwAl3MWAPO7PcSVxmgVXtfUvy4uKNIGGz332O+WUj+1MRqnbfFz
-        03ixvJZRRsdf7eY0sPHE3GC5OA4Qg9u1c1dl1CNv8yepEb+Yh0Jz8A4F8pex8WsfykFOTHmCpiEmT
-        RUnZ6MEQ==;
+        bh=oQqM+pClrZfQCqMiQgtSnptBcoYj79KgVRq3HWP8sUE=; b=uH8jWtdoexm0zSMkd759J4pvfI
+        9MLmqJdKBaVxg3HTFoAvYtRMFlBvv0sZ8YbkWzL95p52z45m+dPGNK4Ic2rd983cO9Zn9VA+uqCRZ
+        xlkgzQRXHB5pwernBKdr8gjIs6D35XHeYY8yG0Pc3wA7xtSfSfzqbO711A6LadN8SktiWlEcY52o/
+        hvdLxkEwn2pyRy7qjek+EUK/lrJVF/6BxqPz3PIQgc2irp+wsI5yrH10Id88rJuvi4ehVV34uXeJd
+        h400ixUbuvCAWWN38lpFhT2ODaHJybMdNG+uiekaYoeKbk86nTijd697iyKC9xlIQYFTaG8Ek1MPL
+        Vg1u3grQ==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1oaYMo-0017q3-4p; Tue, 20 Sep 2022 11:12:30 +0300
+        id 1oaYMp-0017q3-Mh; Tue, 20 Sep 2022 11:12:31 +0300
 From:   Mikko Perttunen <cyndis@kapsi.fi>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
@@ -44,9 +44,9 @@ Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         Sameer Pujar <spujar@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/8] memory: tegra: Add API for retrieving carveout bounds
-Date:   Tue, 20 Sep 2022 11:11:56 +0300
-Message-Id: <20220920081203.3237744-2-cyndis@kapsi.fi>
+Subject: [PATCH v3 7/8] drm/tegra: Add code for booting RISC-V based engines
+Date:   Tue, 20 Sep 2022 11:12:02 +0300
+Message-Id: <20220920081203.3237744-8-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <20220920081203.3237744-1-cyndis@kapsi.fi>
 References: <20220920081203.3237744-1-cyndis@kapsi.fi>
@@ -61,110 +61,180 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-On Tegra234 NVDEC firmware is loaded from a secure carveout, where it
-has been loaded by a bootloader. When booting NVDEC, we need to tell it
-the address of this firmware, which we can determine by checking the
-starting address of the carveout. As such, add an MC API to query the
-bounds of carveouts, and add related information on Tegra234.
+Add helper code for booting RISC-V based engines where firmware is
+located in a carveout.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-v2:
-- Add check for 64-bit phys_addr_t. In practice phys_addr_t
-  is always 64 bits where this runs, but it avoids warnings in
-  compile test.
----
- drivers/memory/tegra/mc.c       | 25 +++++++++++++++++++++++++
- drivers/memory/tegra/tegra234.c |  5 +++++
- include/soc/tegra/mc.h          | 11 +++++++++++
- 3 files changed, 41 insertions(+)
+ drivers/gpu/drm/tegra/Makefile |   3 +-
+ drivers/gpu/drm/tegra/riscv.c  | 106 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/riscv.h  |  30 ++++++++++
+ 3 files changed, 138 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/tegra/riscv.c
+ create mode 100644 drivers/gpu/drm/tegra/riscv.h
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 2f7a58a9df1a..592907546ee6 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -107,6 +107,31 @@ int tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev)
- }
- EXPORT_SYMBOL_GPL(tegra_mc_probe_device);
+diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
+index df6cc986aeba..bb0d2c144b55 100644
+--- a/drivers/gpu/drm/tegra/Makefile
++++ b/drivers/gpu/drm/tegra/Makefile
+@@ -24,7 +24,8 @@ tegra-drm-y := \
+ 	gr3d.o \
+ 	falcon.o \
+ 	vic.o \
+-	nvdec.o
++	nvdec.o \
++	riscv.o
  
-+int tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
-+                               phys_addr_t *base, u64 *size)
+ tegra-drm-y += trace.o
+ 
+diff --git a/drivers/gpu/drm/tegra/riscv.c b/drivers/gpu/drm/tegra/riscv.c
+new file mode 100644
+index 000000000000..6580416408f8
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/riscv.c
+@@ -0,0 +1,106 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2022, NVIDIA Corporation.
++ */
++
++#include <linux/dev_printk.h>
++#include <linux/device.h>
++#include <linux/iopoll.h>
++#include <linux/of.h>
++
++#include "riscv.h"
++
++#define RISCV_CPUCTL					0x4388
++#define RISCV_CPUCTL_STARTCPU_TRUE			(1 << 0)
++#define RISCV_BR_RETCODE				0x465c
++#define RISCV_BR_RETCODE_RESULT_V(x)			((x) & 0x3)
++#define RISCV_BR_RETCODE_RESULT_PASS_V			3
++#define RISCV_BCR_CTRL					0x4668
++#define RISCV_BCR_CTRL_CORE_SELECT_RISCV		(1 << 4)
++#define RISCV_BCR_DMACFG				0x466c
++#define RISCV_BCR_DMACFG_TARGET_LOCAL_FB		(0 << 0)
++#define RISCV_BCR_DMACFG_LOCK_LOCKED			(1 << 31)
++#define RISCV_BCR_DMAADDR_PKCPARAM_LO			0x4670
++#define RISCV_BCR_DMAADDR_PKCPARAM_HI			0x4674
++#define RISCV_BCR_DMAADDR_FMCCODE_LO			0x4678
++#define RISCV_BCR_DMAADDR_FMCCODE_HI			0x467c
++#define RISCV_BCR_DMAADDR_FMCDATA_LO			0x4680
++#define RISCV_BCR_DMAADDR_FMCDATA_HI			0x4684
++#define RISCV_BCR_DMACFG_SEC				0x4694
++#define RISCV_BCR_DMACFG_SEC_GSCID(v)			((v) << 16)
++
++static void riscv_writel(struct tegra_drm_riscv *riscv, u32 value, u32 offset)
 +{
-+	u32 offset;
++	writel(value, riscv->regs + offset);
++}
 +
-+	if (id < 1 || id >= mc->soc->num_carveouts)
++int tegra_drm_riscv_read_descriptors(struct tegra_drm_riscv *riscv)
++{
++	struct tegra_drm_riscv_descriptor *bl = &riscv->bl_desc;
++	struct tegra_drm_riscv_descriptor *os = &riscv->os_desc;
++	const struct device_node *np = riscv->dev->of_node;
++	int err;
++
++#define READ_PROP(name, location) \
++	err = of_property_read_u32(np, name, location); \
++	if (err) { \
++		dev_err(riscv->dev, "failed to read " name ": %d\n", err); \
++		return err; \
++	}
++
++	READ_PROP("nvidia,bl-manifest-offset", &bl->manifest_offset);
++	READ_PROP("nvidia,bl-code-offset", &bl->code_offset);
++	READ_PROP("nvidia,bl-data-offset", &bl->data_offset);
++	READ_PROP("nvidia,os-manifest-offset", &os->manifest_offset);
++	READ_PROP("nvidia,os-code-offset", &os->code_offset);
++	READ_PROP("nvidia,os-data-offset", &os->data_offset);
++#undef READ_PROP
++
++	if (bl->manifest_offset == 0 && bl->code_offset == 0 &&
++	    bl->data_offset == 0 && os->manifest_offset == 0 &&
++	    os->code_offset == 0 && os->data_offset == 0) {
++		dev_err(riscv->dev, "descriptors not available\n");
 +		return -EINVAL;
-+
-+	if (id < 6)
-+		offset = 0xc0c + 0x50 * (id - 1);
-+	else
-+		offset = 0x2004 + 0x50 * (id - 6);
-+
-+	*base = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x0);
-+#ifdef CONFIG_PHYS_ADDR_T_64BIT
-+	*base |= (phys_addr_t)mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x4) << 32;
-+#endif
-+
-+	if (size)
-+		*size = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, offset + 0x8) << 17;
++	}
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(tegra_mc_get_carveout_info);
 +
- static int tegra_mc_block_dma_common(struct tegra_mc *mc,
- 				     const struct tegra_mc_reset *rst)
- {
-diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
-index a9e8fd99730f..74d291d66366 100644
---- a/drivers/memory/tegra/tegra234.c
-+++ b/drivers/memory/tegra/tegra234.c
-@@ -187,4 +187,9 @@ const struct tegra_mc_soc tegra234_mc_soc = {
- 	.ops = &tegra186_mc_ops,
- 	.ch_intmask = 0x0000ff00,
- 	.global_intstatus_channel_shift = 8,
-+	/*
-+	 * Additionally, there are lite carveouts but those are not currently
-+	 * supported.
-+	 */
-+	.num_carveouts = 32,
- };
-diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-index 47ce6d434427..51a2263e1bc5 100644
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -193,6 +193,8 @@ struct tegra_mc_soc {
- 	unsigned int num_address_bits;
- 	unsigned int atom_size;
- 
-+	unsigned int num_carveouts;
-+
- 	u16 client_id_mask;
- 	u8 num_channels;
- 
-@@ -244,6 +246,8 @@ unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc);
- #ifdef CONFIG_TEGRA_MC
- struct tegra_mc *devm_tegra_memory_controller_get(struct device *dev);
- int tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev);
-+int tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
-+                               phys_addr_t *base, u64 *size);
- #else
- static inline struct tegra_mc *
- devm_tegra_memory_controller_get(struct device *dev)
-@@ -256,6 +260,13 @@ tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev)
- {
- 	return -ENODEV;
- }
-+
-+static inline int
-+tegra_mc_get_carveout_info(struct tegra_mc *mc, unsigned int id,
-+                           phys_addr_t *base, u64 *size)
++int tegra_drm_riscv_boot_bootrom(struct tegra_drm_riscv *riscv, phys_addr_t image_address,
++				 u32 gscid, const struct tegra_drm_riscv_descriptor *desc)
 +{
-+	return -ENODEV;
++	phys_addr_t addr;
++	int err;
++	u32 val;
++
++	riscv_writel(riscv, RISCV_BCR_CTRL_CORE_SELECT_RISCV, RISCV_BCR_CTRL);
++
++	addr = image_address + desc->manifest_offset;
++	riscv_writel(riscv, lower_32_bits(addr >> 8), RISCV_BCR_DMAADDR_PKCPARAM_LO);
++	riscv_writel(riscv, upper_32_bits(addr >> 8), RISCV_BCR_DMAADDR_PKCPARAM_HI);
++
++	addr = image_address + desc->code_offset;
++	riscv_writel(riscv, lower_32_bits(addr >> 8), RISCV_BCR_DMAADDR_FMCCODE_LO);
++	riscv_writel(riscv, upper_32_bits(addr >> 8), RISCV_BCR_DMAADDR_FMCCODE_HI);
++
++	addr = image_address + desc->data_offset;
++	riscv_writel(riscv, lower_32_bits(addr >> 8), RISCV_BCR_DMAADDR_FMCDATA_LO);
++	riscv_writel(riscv, upper_32_bits(addr >> 8), RISCV_BCR_DMAADDR_FMCDATA_HI);
++
++	riscv_writel(riscv, RISCV_BCR_DMACFG_SEC_GSCID(gscid), RISCV_BCR_DMACFG_SEC);
++	riscv_writel(riscv,
++		RISCV_BCR_DMACFG_TARGET_LOCAL_FB | RISCV_BCR_DMACFG_LOCK_LOCKED, RISCV_BCR_DMACFG);
++
++	riscv_writel(riscv, RISCV_CPUCTL_STARTCPU_TRUE, RISCV_CPUCTL);
++
++	err = readl_poll_timeout(
++		riscv->regs + RISCV_BR_RETCODE, val,
++		RISCV_BR_RETCODE_RESULT_V(val) == RISCV_BR_RETCODE_RESULT_PASS_V,
++		10, 100000);
++	if (err) {
++		dev_err(riscv->dev, "error during bootrom execution. BR_RETCODE=%d\n", val);
++		return err;
++	}
++
++	return 0;
 +}
- #endif
- 
- #endif /* __SOC_TEGRA_MC_H__ */
+diff --git a/drivers/gpu/drm/tegra/riscv.h b/drivers/gpu/drm/tegra/riscv.h
+new file mode 100644
+index 000000000000..bbeb2db078b6
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/riscv.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2022, NVIDIA Corporation.
++ */
++
++#ifndef DRM_TEGRA_RISCV_H
++#define DRM_TEGRA_RISCV_H
++
++struct tegra_drm_riscv_descriptor {
++	u32 manifest_offset;
++	u32 code_offset;
++	u32 code_size;
++	u32 data_offset;
++	u32 data_size;
++};
++
++struct tegra_drm_riscv {
++	/* User initializes */
++	struct device *dev;
++	void __iomem *regs;
++
++	struct tegra_drm_riscv_descriptor bl_desc;
++	struct tegra_drm_riscv_descriptor os_desc;
++};
++
++int tegra_drm_riscv_read_descriptors(struct tegra_drm_riscv *riscv);
++int tegra_drm_riscv_boot_bootrom(struct tegra_drm_riscv *riscv, phys_addr_t image_address,
++				 u32 gscid, const struct tegra_drm_riscv_descriptor *desc);
++
++#endif
 -- 
 2.37.0
 
