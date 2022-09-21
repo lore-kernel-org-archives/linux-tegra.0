@@ -2,104 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A818ECAAD8
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Sep 2022 17:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171C4C6FA82
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Sep 2022 18:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229877AbiIURKJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Sep 2022 13:10:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34900 "EHLO
+        id S229803AbiIUShX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Sep 2022 14:37:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbiIURKI (ORCPT
+        with ESMTP id S229669AbiIUShW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Sep 2022 13:10:08 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC2052802
-        for <linux-tegra@vger.kernel.org>; Wed, 21 Sep 2022 10:10:07 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ob3EY-000315-Kj; Wed, 21 Sep 2022 19:10:02 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ob3EY-0026FX-QO; Wed, 21 Sep 2022 19:10:01 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ob3EV-002VW5-T3; Wed, 21 Sep 2022 19:09:59 +0200
-Date:   Wed, 21 Sep 2022 19:09:55 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     linux-pwm@vger.kernel.org, Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        kernel@pengutronix.de, linux-tegra@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
-Message-ID: <20220921170955.4ubpzbruxst2vkiy@pengutronix.de>
-References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
- <524ca143-e9d4-2a79-3e9e-c8b9ffc9f513@gmail.com>
- <CAPVz0n1Xy=feSqw7_bvNw17=xVGnk2yhAMFmyfddU128dU+5qQ@mail.gmail.com>
- <20220921133222.bzqnjv5sodynqseg@pengutronix.de>
- <CAPVz0n19V5Lx889GO7wRzuvPAdBeVE8vXsMzQ-6EGyp4DFGD5w@mail.gmail.com>
+        Wed, 21 Sep 2022 14:37:22 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A94A0314
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Sep 2022 11:37:21 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id x29so8109714ljq.2
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Sep 2022 11:37:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=21yo/o9B1Z///KQURij6FTrdwpuSR6f9Iw+FckBY2pQ=;
+        b=scx5aDinqwOzyktx9EfIUAeNOHk77EkF6br4UcMXBuVwtoxL9iYFi8xijVRCpHvPV9
+         F7MTHj9+nQr5Qn0WPkx8Rtx1szwHU78eK7p7AxgbblziBHJxioaz3RnNszdowlC+iVvs
+         I4HKglXBuw/40CeoXtNAye4gvB84iHMZpwzxnJD0VPDz7EjxINsV0EJP4RFNEURGHWBc
+         Bj3G7xztwKJwVeMwPGJzAZyvlEtVeydENF+4Oxhy2evgKC3rD2H2yY6R6PuQmJ0747K2
+         PQ9NB/hn8JOuKmantMPWAh5Jb6HeKBQuoqZAs289cwEOoodh8gNpoqmO3clxM25sGAg7
+         QJqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=21yo/o9B1Z///KQURij6FTrdwpuSR6f9Iw+FckBY2pQ=;
+        b=ycdRRwhURkHXIv+y8caW7dTjQvCJf9JAEeYrPOqXxR+2V34vGLoFqG1HeV32mTNYMf
+         2gBRaApky5oYSAIiwip909k5x9wSX13gNuunbYQL5LecvyMQMDUhTQO8J2ogLIeb5W1O
+         k4oDtIOdzIfEnx7zJZNUWkIInJQ1yploG4TBs32ik56AlPEDOE62rTU1uxMQW+MgJ865
+         YLRydRi7CMAnVKJjEzDFbCuULSj2INhTfPPaofdkZakZTOOENO6fmojsVPm6889uoa0c
+         UtWp0hs8Rs5EuqN0oBke2p5eHvzg9Ver1kNxmTdmUcy1XB5ZbSPRxFLXqGXB50yeCfqs
+         Q5Ig==
+X-Gm-Message-State: ACrzQf2CoE3UkYtDTu2qt80YsMDsymOQxqakKdq1YsZXcjk8PJ99dwEP
+        KCD8T0T9G3M8gM2qWodg3oGPBQ==
+X-Google-Smtp-Source: AMsMyM62wnzWt6Vp8mUjb+gIZEsui3L9hXgPsI7/JmBOT8VcKQ2uhobjPCK+P25klFmqdlSyfydITA==
+X-Received: by 2002:a05:651c:1951:b0:26c:6215:1e92 with SMTP id bs17-20020a05651c195100b0026c62151e92mr2540306ljb.240.1663785439395;
+        Wed, 21 Sep 2022 11:37:19 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id o9-20020a05651205c900b004979ec19387sm532855lfo.305.2022.09.21.11.37.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Sep 2022 11:37:18 -0700 (PDT)
+Message-ID: <8cb14446-01ec-255a-5bf6-e16098628f60@linaro.org>
+Date:   Wed, 21 Sep 2022 20:37:17 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u5srxwzvzyi72pbi"
-Content-Disposition: inline
-In-Reply-To: <CAPVz0n19V5Lx889GO7wRzuvPAdBeVE8vXsMzQ-6EGyp4DFGD5w@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH v3 1/8] memory: tegra: Add API for retrieving carveout
+ bounds
+Content-Language: en-US
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220920081203.3237744-1-cyndis@kapsi.fi>
+ <20220920081203.3237744-2-cyndis@kapsi.fi>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220920081203.3237744-2-cyndis@kapsi.fi>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 20/09/2022 10:11, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> On Tegra234 NVDEC firmware is loaded from a secure carveout, where it
+> has been loaded by a bootloader. When booting NVDEC, we need to tell it
+> the address of this firmware, which we can determine by checking the
+> starting address of the carveout. As such, add an MC API to query the
+> bounds of carveouts, and add related information on Tegra234.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 
---u5srxwzvzyi72pbi
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 21, 2022 at 05:22:17PM +0300, Svyatoslav Ryhel wrote:
-> According to clk tree Maxim sent me, pwm's parent is already pll_p, I have
-> checked my older logs and it is true for me as well. I can take a fresh c=
-lk
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> log not sooner than tomorrow. I enclose Maxim clk tree from same device
-> trace is (TF700T).
 
-=46rom the below clk tree:
->           pwm                         1        1        0    48000000    =
-      0     0  50000         Y
+Best regards,
+Krzysztof
 
-That confirms that here the clkrate isn't too slow. The trace also
-suggests that you don't suffer from the problem I debugged before.
-
-But you also have the problem that the backlight doesn't work at all for
-you?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---u5srxwzvzyi72pbi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmMrRWAACgkQwfwUeK3K
-7Am26wf+MQKxA9Xf80+LfU7Ew7L69S3AYDkVsv1JUmJmfGRm3nz34J2FNxiFTOOn
-L6aYVOEm7/vcacp/S65Rxl2qFyGTIr3D0kQK6S3OPp5XClfARg3BTe72OZSt+LDY
-Ic4Lnx5I9anLkPO3PccjSXUEWhF+acYq20Lu2ePHtSYPYq2tNmsUfAMsIZcjNgzj
-eEwUFIia5vgHq4uNJ3pkeX9Fj18YcA1g7O9DF7JC5ioCRhEskbN4YXioLB6AwfgL
-w59/tyWuURXXjr6dRVUNpwVcfDyOvA2PJQx6j5veLTX1KTJvgnjjswWeV1pIXN0i
-dtFdQYgdvwOWwj8HXJNLcTIPt2o7lw==
-=SQDA
------END PGP SIGNATURE-----
-
---u5srxwzvzyi72pbi--
