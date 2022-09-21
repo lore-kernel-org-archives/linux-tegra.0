@@ -2,127 +2,189 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 045C7C32771
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Sep 2022 11:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E40ECAAD8
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Sep 2022 13:32:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbiIUL0U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Sep 2022 07:26:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37882 "EHLO
+        id S229521AbiIUNci (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Sep 2022 09:32:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiIUL0S (ORCPT
+        with ESMTP id S229815AbiIUNch (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Sep 2022 07:26:18 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2066.outbound.protection.outlook.com [40.107.101.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D28FE175A5;
-        Wed, 21 Sep 2022 04:26:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C1FHaGTQFXSZuJC0AhUpfcsvQ8BlnpyuhsVdfO18L6/UWQH1zbUsLoGDy+2CgTcs0emcvVbkT4ixEJDKwlvRiEOU+QPCmTPrWo9VIs5jLqO2cTPZphHr2f7F0zT8kcxKDdPyYS2KZ/lUTvVSUdsnWg8Oh8qv8TLbwkUgZEEpzgswMXab7pBBaerMlEPfjW64gcKpVE6jb1H3CZ8Kk1TPUmzgLL8jvmHPA3WPBVT4RkTgclD/uofOos3SNjzyTEceZq39Kjc2J6+pVVeSuhLJDAZp83Eno+2hjLQaPIC8tTXrh4e8JhELtjmAy/Dy8RpnWYfu2QeKdBkISF2upXXmNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GQsvLPc43rGwcrflCalrHrwxIkUzevg0SyHtliu1H2Q=;
- b=MnvluQ7JZBqNa6LjHhMEM7iTib4E1zfTd/CmSfrgJLbOXxfFXXINzHuljb99grq7w/WeREHBqRfnoqjouPIPM1/CI7dOWMIvUvCd+pKfvyvofVHZfQdopqoH/LtV8KfsqSLxdTnwZ6Krb8nRChokqlySum3Y0+LWTr4GaegD1MwPWEsbk+zoq9JiCt/1Ak/TjYiA+lVxfBsn9fkHZB4en51MX17rw+vNesCBInNIAh5dJ0ImzG3GAuc/ND8UKvyiEWOCLg2T8gHC1wdgRW1YMDIVSaji8o4wDeMPgofA+GU5rVr8LU9wA5PhT5rAVAGknvB/W4NTPDd3xXcgoauHBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=pengutronix.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GQsvLPc43rGwcrflCalrHrwxIkUzevg0SyHtliu1H2Q=;
- b=feJkSd1jJR6LZamXUciw+WRT8L/d1hbJO545RBibGh2IcE04w2y/jAKdr/SduaoM/ikd9gIVAu3g47LCdlL2eD1C7tlHNUDFvCBYo2RWanAjPJOicP0yUmuUU8jj84gAyZL4/A0znDKkbeomg0XtwFWyMGyOZFYQtzRd1fjYQr3q6ENSrEtQKvsPcq8We0s4+9XORZiay9JtcD78NkuHbu50tmfeOes3QGuaTtyP3jQiib7zM+0b4MGk8I2c6qNh/K89TIrYm9XHl+k9ChKsIRuSJtT69nS6u2EskiE0yNhRIpVU4j7TXLw2R6KxmbVgB7vTLbBQqdqqyBFkKrKYGw==
-Received: from BN1PR10CA0001.namprd10.prod.outlook.com (2603:10b6:408:e0::6)
- by SN7PR12MB6862.namprd12.prod.outlook.com (2603:10b6:806:265::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.19; Wed, 21 Sep
- 2022 11:26:15 +0000
-Received: from BN8NAM11FT007.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e0:cafe::ae) by BN1PR10CA0001.outlook.office365.com
- (2603:10b6:408:e0::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21 via Frontend
- Transport; Wed, 21 Sep 2022 11:26:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT007.mail.protection.outlook.com (10.13.177.109) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5654.14 via Frontend Transport; Wed, 21 Sep 2022 11:26:13 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 21 Sep
- 2022 04:25:59 -0700
-Received: from 74ef364-lcelt.vdiclient.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Wed, 21 Sep 2022 04:25:57 -0700
-From:   Haotien Hsu <haotienh@nvidia.com>
-To:     <p.zabel@pengutronix.de>
-CC:     <jckuo@nvidia.com>, <kishon@ti.com>, <vkoul@kernel.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Wayne Chang <waynec@nvidia.com>,
-        Haotien Hsu <haotienh@nvidia.com>
-Subject: [PATCH] phy: tegra: xusb: Enable usb role switch attribute
-Date:   Wed, 21 Sep 2022 19:25:00 +0800
-Message-ID: <20220921112500.798282-1-haotienh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 21 Sep 2022 09:32:37 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F528A7EC
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Sep 2022 06:32:36 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oazq0-0007yt-15; Wed, 21 Sep 2022 15:32:28 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oazq0-0024IB-5X; Wed, 21 Sep 2022 15:32:26 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oazpx-002T0u-MB; Wed, 21 Sep 2022 15:32:25 +0200
+Date:   Wed, 21 Sep 2022 15:32:22 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>, linux-pwm@vger.kernel.org,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        kernel@pengutronix.de, linux-tegra@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
+Message-ID: <20220921133222.bzqnjv5sodynqseg@pengutronix.de>
+References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
+ <524ca143-e9d4-2a79-3e9e-c8b9ffc9f513@gmail.com>
+ <CAPVz0n1Xy=feSqw7_bvNw17=xVGnk2yhAMFmyfddU128dU+5qQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT007:EE_|SN7PR12MB6862:EE_
-X-MS-Office365-Filtering-Correlation-Id: 478d07e8-dd91-41dc-8973-08da9bc417cd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 13dQpOJz+DMXYxgy7Us9KBtAUgJkkQ7Gt+dZXSNwF5OW3hkgh6dx5dpxJxqyIS+9gY312dvST6nuxBdfRxHC5YIce9s4V5WBwfRXHUtOZ6Oe2gKgcQIdq8AiEVeI42i3cGctZxcdbcN6/ty2q7mX8DVMtik6MlgOG0fNpcXsznM4tjaDZ4WQzfpu4LP17LaSqCwre2MwPFAvJHPd1xLf/9uw80qg/v3H4/PQmKwBFJncxELM1pMuoElW0NRxQiBBzkzoTO41IpRhsyIGqD7yzKOrgD0YRNGYWpFybvkZdty/Edef+kf9TtE2cVZVjB7WbtI9+H+VnPn8i3XHvYpeqM3gM81KyGeKpkK3SmtWEB90WR04urQyYpC/A9+uMGJPnazOD7Ey4ktnRqzGk4ztlb0FAlog8JKJJJlKRyDcXsiT72Ihqo95caImeR6RuXSppAu/50HKXDfa1tO/+ElcXctQiNKEYk5MZOgIONAaZiKIJwASHQlOUaottFUzogs4xzunPkWTEabjqtqDSTD5CcL9mxm4pI+L1xgpevHO5M1iD4VgtDIntXHeb/LBSrYNvu7Qqtnvm3K66bZk26OOvPnbaf4yGHyit4nKCFNlbmZ5q0NuPpEx/l//n+XQQViW9ryzdUChG51h+WEBP5flD4cz/BBS8ayyc9zpCOKDvGcyWntbb3zwnUzK6XIo+PyiBv4l/TvqENdYxPjacoOw3zcIXCF59LJZ0ibNvDzUPhcWcFqEg5hpFOkBK5PF0aP2jMxnDfDPz6T0pxZYseVhng==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(39860400002)(396003)(136003)(451199015)(40470700004)(36840700001)(46966006)(36860700001)(5660300002)(47076005)(26005)(6916009)(40460700003)(70206006)(6666004)(82310400005)(8676002)(16526019)(2616005)(336012)(478600001)(7636003)(54906003)(86362001)(356005)(107886003)(41300700001)(2906002)(70586007)(36756003)(7696005)(316002)(82740400003)(426003)(40480700001)(4326008)(4744005)(1076003)(186003)(8936002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2022 11:26:13.9244
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 478d07e8-dd91-41dc-8973-08da9bc417cd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT007.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6862
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="shqlbnkkxakaeoiu"
+Content-Disposition: inline
+In-Reply-To: <CAPVz0n1Xy=feSqw7_bvNw17=xVGnk2yhAMFmyfddU128dU+5qQ@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Wayne Chang <waynec@nvidia.com>
 
-This patch enables the usb-role-switch atrribute
-to have the user-space check current device role
-of otg cability ports
+--shqlbnkkxakaeoiu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wayne Chang <waynec@nvidia.com>
-Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
----
- drivers/phy/tegra/xusb.c | 1 +
- 1 file changed, 1 insertion(+)
+Hello Svyatoslav,
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index aa5237eacd29..220ab7719ade 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -656,6 +656,7 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
- 	struct usb_role_switch_desc role_sx_desc = {
- 		.fwnode = dev_fwnode(&port->dev),
- 		.set = tegra_xusb_role_sw_set,
-+		.allow_userspace_control = true,
+On Wed, Sep 21, 2022 at 12:33:48PM +0300, Svyatoslav Ryhel wrote:
+> Asus Transformers are based on T20 and T30 SoC.
+>=20
+> Thanks for your patience, I am enclosing the pwm trace you requested. It =
+is
+> taken from Asus Transformer TF700T owned by Maxim Schwalm (he is included
+> into this mailing list but was not able to send trace).
+>=20
+> Best regards. Svyatoslav R.
+
+Yeah, it seems several devices are affected. The one with a tegra124 was
+a Nyan one.
+
+> cat /sys/kernel/debug/tracing/trace
+> # tracer: nop
+> #
+> # entries-in-buffer/entries-written: 26/26   #P:4
+> #
+> #                                _-----=3D&gt; irqs-off/BH-disabled
+> #                               / _----=3D&gt; need-resched
+> #                              | / _---=3D&gt; hardirq/softirq
+> #                              || / _--=3D&gt; preempt-depth
+> #                              ||| / _-=3D&gt; migrate-disable
+> #                              |||| /     delay
+> #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+> #              | |         |   |||||     |         |
+>  gsd-backlight-h-2626    [001] .n...   161.995352: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D439215 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2631    [001] .....   162.148999: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D486274 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2635    [001] .....   162.315167: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D674509 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2639    [001] .....   162.472855: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D1113725 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2643    [000] .....   162.672130: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D1584313 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2647    [000] .....   162.897159: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D2101960 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2653    [000] .....   163.094710: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D2462745 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2657    [000] .....   163.290172: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D1505882 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2661    [001] .....   163.491553: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D831372 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2665    [001] .....   163.749862: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D439215 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2669    [001] .....   163.922487: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D47058 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2809    [002] .....   313.762043: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D94117 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2814    [003] .....   313.901480: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D643137 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2821    [003] .....   314.033686: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D1427450 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2825    [003] .....   314.168334: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D2101960 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2829    [002] .....   314.294098: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D2729411 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2833    [002] .....   314.424415: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D3560784 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2837    [002] .....   314.530186: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D3843137 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2855    [003] .....   315.054516: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D4000000 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2865    [003] .....   322.214140: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D3717647 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2874    [002] .....   322.446465: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D1976470 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2878    [002] .....   322.583918: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D721568 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2882    [001] .....   322.682135: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D282352 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2914    [001] .....   324.240133: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D407843 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2918    [003] .....   324.376497: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D250980 polarity=3D0 enabled=3D1
+>  gsd-backlight-h-2922    [001] .....   324.479360: pwm_apply: 94faa5b6: p=
+eriod=3D4000000 duty_cycle=3D47058 polarity=3D0 enabled=3D1
+
+Assuming the parent clk rate of the PWM clock is running at 32768 Hz,
+too, the problem is the same.
+
+Maybe
+
+diff --git a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi b/arch/=
+arm/boot/dts/tegra30-asus-transformer-common.dtsi
+index c27e70d8bf2b..8e8cf0abd680 100644
+--- a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
+@@ -1115,6 +1115,10 @@ bluetooth {
+=20
+ 	pwm@7000a000 {
+ 		status =3D "okay";
++
++		/* To ensure a faster clock than TEGRA30_CLK_CLK_32K */
++		assigned-clocks =3D <&tegra_car TEGRA30_CLK_PWM>;
++		assigned-clock-parents =3D <&tegra_car TEGRA30_CLK_PLL_P>;
  	};
- 	int err = 0;
- 
--- 
-2.25.1
+=20
+ 	lcd_ddc: i2c@7000c000 {
 
+helps?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--shqlbnkkxakaeoiu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmMrEmMACgkQwfwUeK3K
+7AnBUwf/TcKgYUhHQLkNX2WjrWi69VHL4d9BWnvog4khbcoCk+6OkgKNFCUUNOFf
+6pk7lEkto6UbO96AiMq1MjEGxL6xFxlyg5UzOzIck91d8z5z3LHEwungelX03glZ
+5lhn8UWjRUGHLkMgxop/zK9lIKQpv9JHNNJ4ph/iI+y69QmeRftKe/QOuX0A6WhC
+jDTzpa7YhacA9gYe7r3sqhb/Lb1xax5xU72Wmtd+Ykf1GLBjxY2zdwcFRWHY+Xkz
+SqL/7TFRD16gRFRk9gYA7nZm7jXTHqG1X/NnQfAFft+hvchLoLfjbOIKz2lreEYq
+1ISIqW0cjbo/EdMRSG/14yMA2EmQLg==
+=DWbp
+-----END PGP SIGNATURE-----
+
+--shqlbnkkxakaeoiu--
