@@ -2,314 +2,287 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB31C6FA82
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Sep 2022 09:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38024C6FA82
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Sep 2022 10:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbiIVJ0B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Sep 2022 05:26:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42826 "EHLO
+        id S231189AbiIVKDZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Sep 2022 06:03:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230364AbiIVJZ7 (ORCPT
+        with ESMTP id S230196AbiIVKDY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Sep 2022 05:25:59 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85097D078A;
-        Thu, 22 Sep 2022 02:25:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R17iILH3bsOytl1Bgc+Q8AuEQqQeudRtx4qKeRhOvfWJ6/FYVq6h9w9MBmFgzurCic1gJ8mgPyHP0y+YTuAPGIoB/BoJohOWDm9IIVWxq9FEhV0CrSImIrDGhpAMQtAabBLoYrn9DtDyd2MLVJMFi1hCCe+jT0S3cvdTya3jagEk5lNDx0nSJc6TfPHw5YWcA9kkDkT5sL7sM3LqrnxSmGL0jZWWBsVAUJqUjEaPpoRHf4pZCAxkwkFZVF3VUYbJBb2g4Uue/pr9TnlIiJnDzq+m32IhKX5mk3JSIpQAOl8UTtfobmCM2XdApk5EO8gJO6RMryPFVcEM/bZm8tGlGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nOVyGSPPcp+bf631Wnn/uXs0IVRtI3tLlIK1AeKPFvQ=;
- b=XhVNPBlq8jx0LmE5rmrgU6eq4fpSLDEyVdZh3M7zO8vjx/FHjBk536HiKNBUKij476SAQmvnLwqQfcsGS4ImiIskNuON0js9lhb+mINZavm/crG4SCeEmcAAxkuKk4BPiSHsqvQviSv0Mo0qSLXikkcN0qgaTDHHkUptNV8m21Dcx3djpPZQOt56XK7f1Vxq4bDoHVW9Y6JgkqxMKe2KOstt0VrVaJW5MgvkkXZK0Go3oSKO6/OJC1WeRtVLMNEvu+/epstKzHgUQhCdqejdt6YBZN5VkQCI4cbjGeMoYKwDLpniWxf2a1jheASnK5O8rK8sufAPYkKbj8K1LNCsFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nOVyGSPPcp+bf631Wnn/uXs0IVRtI3tLlIK1AeKPFvQ=;
- b=gEExT/vwMfq8TTSlh3keQ5w50P2uUyYIL3XgZAYAG3de5Rm49NE8wVRBZ64R9vBVLb29kJ6IRnszrXM9vMwiRmFfLIzEvxDXuete2etWRvh8dy/BX2XEbE8DneTXs0xLxcMVlJ5B+GxezaaPyhqrhTr6Q2Wkj7reEo+1256VRpQ2J4AFQPRDAj/Y4T9quA2S+PmVX8Zf6aou24jnHZtUswhbFMDsJn0WXXuE2X6WNImXUVIS1Jvjw/xA2BRRgiGYiO5Rr12jWiJsKDu0p+MmHFnDt2HzvmFEs7hFo3lrVVC6DsTqgUe5T9WGtviaxNVLzEXb2lPcpmdcbH458MTfAA==
-Received: from BN0PR03CA0058.namprd03.prod.outlook.com (2603:10b6:408:e7::33)
- by PH0PR12MB7078.namprd12.prod.outlook.com (2603:10b6:510:21d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.18; Thu, 22 Sep
- 2022 09:25:54 +0000
-Received: from BN8NAM11FT026.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e7:cafe::2d) by BN0PR03CA0058.outlook.office365.com
- (2603:10b6:408:e7::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.19 via Frontend
- Transport; Thu, 22 Sep 2022 09:25:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN8NAM11FT026.mail.protection.outlook.com (10.13.177.51) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5654.14 via Frontend Transport; Thu, 22 Sep 2022 09:25:53 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Thu, 22 Sep
- 2022 02:25:36 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Thu, 22 Sep
- 2022 02:25:35 -0700
-Received: from jilin-desktop.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Thu, 22 Sep 2022 02:25:34 -0700
-From:   Jim Lin <jilin@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <jilin@nvidia.com>
-Subject: [PATCH] xhci: tegra: USB2 pad power controls
-Date:   Thu, 22 Sep 2022 17:24:56 +0800
-Message-ID: <20220922092456.12264-1-jilin@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+        Thu, 22 Sep 2022 06:03:24 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DE6AB1A2;
+        Thu, 22 Sep 2022 03:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1663841003; x=1695377003;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lFppjMkWFpyHqnWeDyV5+GEziwj7bkXvG42zrnF0Ric=;
+  b=L9xohizv2RHKryIo3wiW42+p3a549bqo7gNv57C5VF5IMGjLellukhIW
+   UBBIitfBpBHnCkq0bQQFRncGCzYshBxA2PWhKyY2JmsfiOPb124urXW7+
+   clzZkGMl2PbqutL+IXCPLZV6zzgSWhhaJFj6q/TzjXfN4Xunxn9Dca4HJ
+   VWS5/0IxETRIGpQrauEMFB2OFq2Bp/jf+uAVLvwsC80NyRo8S/XL1O5P2
+   L5l4+V6g2uX8B0PTCx9K2cn+MCQme1OQwzUUg5OLYzxRA7pRRzSXNQTYO
+   NUbhnh4MJHOhSHUjdaSRsuasPPgvOK4cTkjTXP82i+SpmjMWk4qyD6jHT
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10477"; a="300241304"
+X-IronPort-AV: E=Sophos;i="5.93,335,1654585200"; 
+   d="scan'208";a="300241304"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 03:03:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,335,1654585200"; 
+   d="scan'208";a="570902947"
+Received: from lkp-server01.sh.intel.com (HELO c0a60f19fe7e) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 22 Sep 2022 03:03:19 -0700
+Received: from kbuild by c0a60f19fe7e with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1obJ38-0004a0-2h;
+        Thu, 22 Sep 2022 10:03:18 +0000
+Date:   Thu, 22 Sep 2022 18:02:42 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Prathamesh Shete <pshete@nvidia.com>, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, p.zabel@pengutronix.de,
+        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, anrao@nvidia.com, smangipudi@nvidia.com,
+        pshete@nvidia.com, kyarlagadda@nvidia.com
+Subject: Re: [PATCH v3 2/4]  mmc: sdhci-tegra: Add support to program MC
+ stream ID
+Message-ID: <202209221747.z0EBLZBB-lkp@intel.com>
+References: <20220920123752.21027-2-pshete@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT026:EE_|PH0PR12MB7078:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2910d052-2fcc-477a-f83c-08da9c7c7297
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: THnGJUXT9qSF9kX4zI4w7XUTnTYZsByW3eeoD5nCFN9D2GRbY3mfAx62S32VdTEZ/7XlXXWNxiGKvQLwpI3ABIdZU57leusOqnntSVYpG+2vkU6dTK6clQd8O7ynLLwR1lIvLw2Lx3r5yr0u+1DtG4DPopYEkZ5PkGzfDa9PuGlPTGXDjXdAFqeaaZtCGgfUeeCs4mT6LXo4u4iu3z1C1m2K6AByGuQli3SvU6ctk+SuNGFGUYMBEARXgHTkPx0KRet7TpIf8aoEic73+xy11LdXLMPxpGj31x5o73mp2X9iYC26UmCi2M12wAwWMc/wZTA1RTjqGx3YuPxBLjBhvFlnPGujzf4JjDQ/MjMSQw1Nw2mrQ+S6DunFayQLRPTZP84HVWorwa2qcUchkLSwTWm2JjFSNdcLFb7XLv8S/Klfjv5lpd0gu2UT3gC9l+PUivCRhEh+epXRWlVtWUJWe3hCuYNIawIHWzu/9T6VTnSAWxCZil68QoqdeJNMa5gdm/VVTPGc5/ZUWqRwQlR/jNe1NiSU7iKwFwlZE5E4o5To0F7buYriJl68hAU7+CTZqPHXbq3ZA93dIfozjtydlhs9WWX0kpWICsnNs0dYIBTjAxSIGHnF/+07GbWLSwqTo720rPFrLL22NYJrhJHIi+qEnjCkE54FkdOQTQ7rbckIl0AOz9QXjhgXxfTXdOSszX4zk+QRrhETGMrovFJ0QcjEu+1ycO9Yk0tjLleisN8NGqXS2fnTyEFKvun0qBwzDwyelGsiGhnIPeIWqe2Rqw==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(376002)(136003)(396003)(451199015)(46966006)(36840700001)(40470700004)(6666004)(107886003)(82310400005)(478600001)(4326008)(36756003)(70586007)(70206006)(41300700001)(110136005)(8936002)(40460700003)(54906003)(8676002)(316002)(186003)(36860700001)(7636003)(2616005)(40480700001)(86362001)(82740400003)(426003)(336012)(7696005)(26005)(356005)(83380400001)(1076003)(47076005)(2906002)(5660300002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2022 09:25:53.6755
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2910d052-2fcc-477a-f83c-08da9c7c7297
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT026.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220920123752.21027-2-pshete@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Program USB2 pad PD controls during port connect/disconnect, port
-suspend/resume, to reduce power consumption on disconnect or suspend.
+Hi Prathamesh,
 
-Signed-off-by: Jim Lin <jilin@nvidia.com>
----
- drivers/usb/host/xhci-tegra.c | 130 +++++++++++++++++++++++++++++++++-
- 1 file changed, 129 insertions(+), 1 deletion(-)
+Thank you for the patch! Yet something to improve:
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 1ed46642abd5..9ebd68373bd5 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -189,6 +189,13 @@ struct tegra_xusb_context_soc {
- 	} fpci;
- };
- 
-+enum tegra_xhci_phy_type {
-+	USB3_PHY,
-+	USB2_PHY,
-+	HSIC_PHY,
-+	MAX_PHY_TYPES,
-+};
-+
- struct tegra_xusb_soc {
- 	const char *firmware;
- 	const char * const *supply_names;
-@@ -274,9 +281,17 @@ struct tegra_xusb {
- 
- 	bool suspended;
- 	struct tegra_xusb_context context;
-+	u32 enable_utmi_pad_after_lp0_exit;
- };
- 
- static struct hc_driver __read_mostly tegra_xhci_hc_driver;
-+static int (*original_xhci_hub_control)(struct usb_hcd *hcd, u16 typeReq, u16 wValue, u16 wIndex,
-+	    char *buf, u16 wLength);
-+
-+static inline struct tegra_xusb *hcd_to_tegra_xusb(struct usb_hcd *hcd)
-+{
-+	return (struct tegra_xusb *) dev_get_drvdata(hcd->self.controller);
-+}
- 
- static inline u32 fpci_readl(struct tegra_xusb *tegra, unsigned int offset)
- {
-@@ -1949,12 +1964,27 @@ static void tegra_xhci_enable_phy_sleepwalk_wake(struct tegra_xusb *tegra)
- static void tegra_xhci_disable_phy_wake(struct tegra_xusb *tegra)
- {
- 	struct tegra_xusb_padctl *padctl = tegra->padctl;
--	unsigned int i;
-+	unsigned int i, j;
- 
- 	for (i = 0; i < tegra->num_phys; i++) {
- 		if (!tegra->phys[i])
- 			continue;
-+		if (tegra_xusb_padctl_remote_wake_detected(padctl, tegra->phys[i])) {
-+			if (i < (tegra->soc->ports.usb3.offset + tegra->soc->ports.usb3.count)) {
-+				j = i;
-+			} else if (i < (tegra->soc->ports.usb2.offset +
-+					tegra->soc->ports.usb2.count)) {
-+				j = i - tegra->soc->ports.usb2.offset;
-+				tegra_phy_xusb_utmi_pad_power_on(tegra->phys[i]);
-+			} else {
-+				j = i - (tegra->soc->ports.usb2.offset +
-+					 tegra->soc->ports.usb2.count);
-+			}
-+			dev_dbg(tegra->dev,
-+				"%s port %u (0 based) remote wake detected\n",
-+				dev_name(&tegra->phys[i]->dev), j);
- 
-+		}
- 		tegra_xusb_padctl_disable_phy_wake(padctl, tegra->phys[i]);
- 	}
- }
-@@ -1972,6 +2002,22 @@ static void tegra_xhci_disable_phy_sleepwalk(struct tegra_xusb *tegra)
- 	}
- }
- 
-+static void tegra_xhci_program_utmi_power_lp0_exit(struct tegra_xusb *tegra)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < tegra->soc->ports.usb2.count; i++) {
-+		if (!is_host_mode_phy(tegra, USB2_PHY, i))
-+			continue;
-+		if (tegra->enable_utmi_pad_after_lp0_exit & BIT(i))
-+			tegra_phy_xusb_utmi_pad_power_on(
-+				tegra->phys[tegra->soc->ports.usb2.offset + i]);
-+		else
-+			tegra_phy_xusb_utmi_pad_power_down(
-+				tegra->phys[tegra->soc->ports.usb2.offset + i]);
-+	}
-+}
-+
- static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
- {
- 	struct xhci_hcd *xhci = hcd_to_xhci(tegra->hcd);
-@@ -1980,6 +2026,7 @@ static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
- 	unsigned int i;
- 	int err;
- 	u32 usbcmd;
-+	u32 portsc;
- 
- 	dev_dbg(dev, "entering ELPG\n");
- 
-@@ -1993,6 +2040,15 @@ static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
- 		goto out;
- 	}
- 
-+	for (i = 0; i < tegra->soc->ports.usb2.count; i++) {
-+		if (!xhci->usb2_rhub.ports[i])
-+			continue;
-+		portsc = readl(xhci->usb2_rhub.ports[i]->addr);
-+		tegra->enable_utmi_pad_after_lp0_exit &= ~BIT(i);
-+		if (((portsc & PORT_PLS_MASK) == XDEV_U3) || ((portsc & DEV_SPEED_MASK) == XDEV_FS))
-+			tegra->enable_utmi_pad_after_lp0_exit |= BIT(i);
-+	}
-+
- 	err = xhci_suspend(xhci, wakeup);
- 	if (err < 0) {
- 		dev_err(tegra->dev, "failed to suspend XHCI: %d\n", err);
-@@ -2066,6 +2122,8 @@ static int tegra_xusb_exit_elpg(struct tegra_xusb *tegra, bool runtime)
- 
- 		phy_power_on(tegra->phys[i]);
- 	}
-+	if (tegra->suspended)
-+		tegra_xhci_program_utmi_power_lp0_exit(tegra);
- 
- 	tegra_xusb_config(tegra);
- 	tegra_xusb_restore_context(tegra);
-@@ -2437,6 +2495,74 @@ static int tegra_xhci_setup(struct usb_hcd *hcd)
- 	return xhci_gen_setup(hcd, tegra_xhci_quirks);
- }
- 
-+static int tegra_xhci_hub_control(struct usb_hcd *hcd, u16 type_req, u16 value, u16 index,
-+				  char *buf, u16 length)
-+{
-+	struct tegra_xusb *tegra = hcd_to_tegra_xusb(hcd);
-+	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
-+	struct xhci_hub *rhub;
-+	struct xhci_bus_state *bus_state;
-+	int port = (index & 0xff) - 1;
-+	int port_index;
-+	struct xhci_port **ports;
-+	u32 portsc;
-+	int ret;
-+
-+	rhub = &xhci->usb2_rhub;
-+	bus_state = &rhub->bus_state;
-+	if (bus_state->resuming_ports && hcd->speed == HCD_USB2) {
-+		ports = rhub->ports;
-+		port_index = rhub->num_ports;
-+		while (port_index--) {
-+			if (!test_bit(port_index, &bus_state->resuming_ports))
-+				continue;
-+			portsc = readl(ports[port_index]->addr);
-+			if ((portsc & PORT_PLS_MASK) == XDEV_RESUME)
-+				tegra_phy_xusb_utmi_pad_power_on(
-+					tegra->phys[tegra->soc->ports.usb2.offset + port_index]);
-+		}
-+	}
-+
-+	if (hcd->speed == HCD_USB2) {
-+		port_index = tegra->soc->ports.usb2.offset + port;
-+		if ((type_req == ClearPortFeature) && (value == USB_PORT_FEAT_SUSPEND))
-+			tegra_phy_xusb_utmi_pad_power_on(tegra->phys[port_index]);
-+		if ((type_req == SetPortFeature) && (value == USB_PORT_FEAT_RESET)) {
-+			ports = rhub->ports;
-+			portsc = readl(ports[port]->addr);
-+			if (portsc & PORT_CONNECT)
-+				tegra_phy_xusb_utmi_pad_power_on(tegra->phys[port_index]);
-+		}
-+	}
-+
-+	ret = (*original_xhci_hub_control)(hcd, type_req, value, index, buf, length);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (hcd->speed == HCD_USB2) {
-+		if ((type_req == SetPortFeature) && (value == USB_PORT_FEAT_SUSPEND))
-+			/* We don't suspend the PAD while HNP role swap happens on the OTG port */
-+			if (!((hcd->self.otg_port == (port + 1)) && hcd->self.b_hnp_enable))
-+				tegra_phy_xusb_utmi_pad_power_down(tegra->phys[port_index]);
-+
-+		if ((type_req == ClearPortFeature) && (value == USB_PORT_FEAT_C_CONNECTION)) {
-+			ports = rhub->ports;
-+			portsc = readl(ports[port]->addr);
-+			if (!(portsc & PORT_CONNECT)) {
-+				/* We don't suspend the PAD while HNP role swap happens on the OTG
-+				 * port
-+				 */
-+				if (!((hcd->self.otg_port == (port + 1)) && hcd->self.b_hnp_enable))
-+					tegra_phy_xusb_utmi_pad_power_down(tegra->phys[port_index]);
-+			}
-+		}
-+		if ((type_req == SetPortFeature) && (value == USB_PORT_FEAT_TEST))
-+			tegra_phy_xusb_utmi_pad_power_on(tegra->phys[port_index]);
-+	}
-+
-+	return ret;
-+}
-+
- static const struct xhci_driver_overrides tegra_xhci_overrides __initconst = {
- 	.reset = tegra_xhci_setup,
- };
-@@ -2444,6 +2570,8 @@ static const struct xhci_driver_overrides tegra_xhci_overrides __initconst = {
- static int __init tegra_xusb_init(void)
- {
- 	xhci_init_driver(&tegra_xhci_hc_driver, &tegra_xhci_overrides);
-+	original_xhci_hub_control = tegra_xhci_hc_driver.hub_control;
-+	tegra_xhci_hc_driver.hub_control = tegra_xhci_hub_control;
- 
- 	return platform_driver_register(&tegra_xusb_driver);
- }
+[auto build test ERROR on tegra/for-next]
+[also build test ERROR on linus/master v6.0-rc6 next-20220921]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Prathamesh-Shete/mmc-sdhci-tegra-Separate-Tegra194-and-Tegra234-SoC-data/20220920-203924
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+config: arc-randconfig-r002-20220921 (https://download.01.org/0day-ci/archive/20220922/202209221747.z0EBLZBB-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/8087ec8183ffb01cc85647de0977c2dd369b324d
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Prathamesh-Shete/mmc-sdhci-tegra-Separate-Tegra194-and-Tegra234-SoC-data/20220920-203924
+        git checkout 8087ec8183ffb01cc85647de0977c2dd369b324d
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arc SHELL=/bin/bash drivers/mmc/host/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   drivers/mmc/host/sdhci-tegra.c: In function 'sdhci_tegra_probe':
+>> drivers/mmc/host/sdhci-tegra.c:1794:54: error: 'struct iommu_fwspec' has no member named 'ids'
+    1794 |                         tegra_host->streamid = fwspec->ids[0] & 0xffff;
+         |                                                      ^~
+
+
+vim +1794 drivers/mmc/host/sdhci-tegra.c
+
+  1640	
+  1641	static int sdhci_tegra_probe(struct platform_device *pdev)
+  1642	{
+  1643		const struct sdhci_tegra_soc_data *soc_data;
+  1644		struct sdhci_host *host;
+  1645		struct sdhci_pltfm_host *pltfm_host;
+  1646		struct sdhci_tegra *tegra_host;
+  1647		struct iommu_fwspec *fwspec;
+  1648		struct clk *clk;
+  1649		int rc;
+  1650	
+  1651		soc_data = of_device_get_match_data(&pdev->dev);
+  1652		if (!soc_data)
+  1653			return -EINVAL;
+  1654	
+  1655		host = sdhci_pltfm_init(pdev, soc_data->pdata, sizeof(*tegra_host));
+  1656		if (IS_ERR(host))
+  1657			return PTR_ERR(host);
+  1658		pltfm_host = sdhci_priv(host);
+  1659	
+  1660		tegra_host = sdhci_pltfm_priv(pltfm_host);
+  1661		tegra_host->ddr_signaling = false;
+  1662		tegra_host->pad_calib_required = false;
+  1663		tegra_host->pad_control_available = false;
+  1664		tegra_host->soc_data = soc_data;
+  1665	
+  1666		if (soc_data->nvquirks & NVQUIRK_HAS_ANDROID_GPT_SECTOR)
+  1667			host->mmc->caps2 |= MMC_CAP2_ALT_GPT_TEGRA;
+  1668	
+  1669		if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
+  1670			rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
+  1671			if (rc == 0)
+  1672				host->mmc_host_ops.start_signal_voltage_switch =
+  1673					sdhci_tegra_start_signal_voltage_switch;
+  1674		}
+  1675	
+  1676		/* Hook to periodically rerun pad calibration */
+  1677		if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
+  1678			host->mmc_host_ops.request = tegra_sdhci_request;
+  1679	
+  1680		host->mmc_host_ops.hs400_enhanced_strobe =
+  1681				tegra_sdhci_hs400_enhanced_strobe;
+  1682	
+  1683		if (!host->ops->platform_execute_tuning)
+  1684			host->mmc_host_ops.execute_tuning =
+  1685					tegra_sdhci_execute_hw_tuning;
+  1686	
+  1687		rc = mmc_of_parse(host->mmc);
+  1688		if (rc)
+  1689			goto err_parse_dt;
+  1690	
+  1691		if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
+  1692			host->mmc->caps |= MMC_CAP_1_8V_DDR;
+  1693	
+  1694		/* HW busy detection is supported, but R1B responses are required. */
+  1695		host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
+  1696	
+  1697		/* GPIO CD can be set as a wakeup source */
+  1698		host->mmc->caps |= MMC_CAP_CD_WAKE;
+  1699	
+  1700		tegra_sdhci_parse_dt(host);
+  1701	
+  1702		tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
+  1703								 GPIOD_OUT_HIGH);
+  1704		if (IS_ERR(tegra_host->power_gpio)) {
+  1705			rc = PTR_ERR(tegra_host->power_gpio);
+  1706			goto err_power_req;
+  1707		}
+  1708	
+  1709		/*
+  1710		 * Tegra210 has a separate SDMMC_LEGACY_TM clock used for host
+  1711		 * timeout clock and SW can choose TMCLK or SDCLK for hardware
+  1712		 * data timeout through the bit USE_TMCLK_FOR_DATA_TIMEOUT of
+  1713		 * the register SDHCI_TEGRA_VENDOR_SYS_SW_CTRL.
+  1714		 *
+  1715		 * USE_TMCLK_FOR_DATA_TIMEOUT bit default is set to 1 and SDMMC uses
+  1716		 * 12Mhz TMCLK which is advertised in host capability register.
+  1717		 * With TMCLK of 12Mhz provides maximum data timeout period that can
+  1718		 * be achieved is 11s better than using SDCLK for data timeout.
+  1719		 *
+  1720		 * So, TMCLK is set to 12Mhz and kept enabled all the time on SoC's
+  1721		 * supporting separate TMCLK.
+  1722		 */
+  1723	
+  1724		if (soc_data->nvquirks & NVQUIRK_HAS_TMCLK) {
+  1725			clk = devm_clk_get(&pdev->dev, "tmclk");
+  1726			if (IS_ERR(clk)) {
+  1727				rc = PTR_ERR(clk);
+  1728				if (rc == -EPROBE_DEFER)
+  1729					goto err_power_req;
+  1730	
+  1731				dev_warn(&pdev->dev, "failed to get tmclk: %d\n", rc);
+  1732				clk = NULL;
+  1733			}
+  1734	
+  1735			clk_set_rate(clk, 12000000);
+  1736			rc = clk_prepare_enable(clk);
+  1737			if (rc) {
+  1738				dev_err(&pdev->dev,
+  1739					"failed to enable tmclk: %d\n", rc);
+  1740				goto err_power_req;
+  1741			}
+  1742	
+  1743			tegra_host->tmclk = clk;
+  1744		}
+  1745	
+  1746		clk = devm_clk_get(mmc_dev(host->mmc), NULL);
+  1747		if (IS_ERR(clk)) {
+  1748			rc = dev_err_probe(&pdev->dev, PTR_ERR(clk),
+  1749					   "failed to get clock\n");
+  1750			goto err_clk_get;
+  1751		}
+  1752		pltfm_host->clk = clk;
+  1753	
+  1754		tegra_host->rst = devm_reset_control_get_exclusive(&pdev->dev,
+  1755								   "sdhci");
+  1756		if (IS_ERR(tegra_host->rst)) {
+  1757			rc = PTR_ERR(tegra_host->rst);
+  1758			dev_err(&pdev->dev, "failed to get reset control: %d\n", rc);
+  1759			goto err_rst_get;
+  1760		}
+  1761	
+  1762		rc = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+  1763		if (rc)
+  1764			goto err_rst_get;
+  1765	
+  1766		pm_runtime_enable(&pdev->dev);
+  1767		rc = pm_runtime_resume_and_get(&pdev->dev);
+  1768		if (rc)
+  1769			goto err_pm_get;
+  1770	
+  1771		rc = reset_control_assert(tegra_host->rst);
+  1772		if (rc)
+  1773			goto err_rst_assert;
+  1774	
+  1775		usleep_range(2000, 4000);
+  1776	
+  1777		rc = reset_control_deassert(tegra_host->rst);
+  1778		if (rc)
+  1779			goto err_rst_assert;
+  1780	
+  1781		usleep_range(2000, 4000);
+  1782	
+  1783		rc = sdhci_tegra_add_host(host);
+  1784		if (rc)
+  1785			goto err_add_host;
+  1786	
+  1787		/* Program MC streamID for DMA transfers */
+  1788		if (soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
+  1789			fwspec = dev_iommu_fwspec_get(&pdev->dev);
+  1790			if (fwspec == NULL) {
+  1791				dev_warn(mmc_dev(host->mmc),
+  1792					"iommu fwspec is NULL, continue without stream ID\n");
+  1793			} else {
+> 1794				tegra_host->streamid = fwspec->ids[0] & 0xffff;
+  1795				tegra_sdhci_writel(host, (tegra_host->streamid &
+  1796							SDHCI_TEGRA_STREAMID_MASK) |
+  1797							((tegra_host->streamid <<
+  1798							SDHCI_TEGRA_WRITE_STREAMID_SHIFT)
+  1799							& SDHCI_TEGRA_STREAMID_MASK),
+  1800							SDHCI_TEGRA_CIF2AXI_CTRL_0);
+  1801			}
+  1802		}
+  1803	
+  1804		return 0;
+  1805	
+  1806	err_add_host:
+  1807		reset_control_assert(tegra_host->rst);
+  1808	err_rst_assert:
+  1809		pm_runtime_put_sync_suspend(&pdev->dev);
+  1810	err_pm_get:
+  1811		pm_runtime_disable(&pdev->dev);
+  1812	err_rst_get:
+  1813	err_clk_get:
+  1814		clk_disable_unprepare(tegra_host->tmclk);
+  1815	err_power_req:
+  1816	err_parse_dt:
+  1817		sdhci_pltfm_free(pdev);
+  1818		return rc;
+  1819	}
+  1820	
+
 -- 
-2.17.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
