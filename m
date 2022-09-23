@@ -2,223 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DB1C6FA90
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 12:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854BBC6FA82
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 12:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231320AbiIWMV5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Sep 2022 08:21:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41620 "EHLO
+        id S230216AbiIWMgH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Sep 2022 08:36:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232026AbiIWMUU (ORCPT
+        with ESMTP id S229833AbiIWMgG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Sep 2022 08:20:20 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8519313EEA5;
-        Fri, 23 Sep 2022 05:11:04 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id sb3so199726ejb.9;
-        Fri, 23 Sep 2022 05:11:04 -0700 (PDT)
+        Fri, 23 Sep 2022 08:36:06 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4F5127CB6;
+        Fri, 23 Sep 2022 05:36:04 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 30so34841edw.5;
+        Fri, 23 Sep 2022 05:36:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=HbdDPH64F/izZR7ly2QOBIXzT+xP+w0S1Cpx1XabKT0=;
-        b=LCQRSkiR8pebrQ8zexz+ngPqmB4zsLXBzr/xzvJumSthcPcvG0uQszsAg5ejgEnaI/
-         gbrAnXGsf1eBCQ1BiYa3OIz81BD2VIbIxQutwkIPuprDniOTz08MGatUjKeWFZkwuq4W
-         h/mHhX9VV8w2whNHijV2Wx1MWDL08t66nTTyEVxSjo/FQh07vc7ZeTrZmGTSiqtOOmLN
-         HXC6+2Fvi6SAWOav74X1fFFwaWyXsj12ud/+MSNsQ1TCZ0UmdLb4LBodzWlwaRWTXQd4
-         +XXp0cmPzSp3P9OpXvng6J0IgrOxySDtvm4Q2UEJ3HeJk85wd3PniH3ci8D0e3FLho4+
-         69ew==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=Wdk1JgkEf6+e3NqnmCSJjMireXUCrz29umVj4QoVxEQ=;
+        b=ChqPvxFq/AcMG/qDW+/Fw3x+ZudpgRYRus11vdPTwos+X10x7h2Ik5duzINe4rsYlb
+         TxyKjzVRrqSSOrBwFulI7K53Uec+V5Mi4j8axInmSYDETm+geTA2SmAebnxe+qD/5lsK
+         AdqSQLf3UxgCW3mLYN8RCHBAS7FphwsMSI1sOOIhnsc1+OSf6iN5rN5BlNXJazHclJ7H
+         XJaU1tiRq2cRGysHAD9sajjtM+0D0i/8kRDG2HpYuthYJzr6cwcZCgMd3U02iPADlGv+
+         pzYHVYWSHwOPWmgo/NRTPjXvFhcU5FP2xfJKQFN48Z3l4SWh8/2dKejsfIQHxFtR25Pr
+         B58w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=HbdDPH64F/izZR7ly2QOBIXzT+xP+w0S1Cpx1XabKT0=;
-        b=xFTYthiTkv5jT8ZHI9MzoFGjYJQ+X+r3oWr0Pneln0rQb1wYN8eDOyYV+NI2LERRQH
-         s3i+EHbcdKjlV8wVmOuLC1RXqsMXhUS6TdUYjW570EnE0urWOKjUPtyJwCfDE8FDTQdT
-         7iy2VBhM0GHRas0IMjjV1PBzlrYwlo1UhxwErG03LHj1ikiHmjt6VRTCEpYpZHgUXoc7
-         2nhgb+ZuhoDyIc2qbGdIpVPerEA5MTJEV+fED9oWfdfySV0tj/kmKQNWsnFqJ8465YaI
-         rnHz75gYq+y+L6qK7w/K4Bb1dExk44IaHb4kY6O77DhJXIdpTj3H+vUHHPlCbRb2mrJc
-         1xwg==
-X-Gm-Message-State: ACrzQf2dqxWhcyXUgsSovNYNsC6s7Eny7dVtiULTThpcjHk8CJmrCI8r
-        xu6SuloviuAmfVhj9dGKATc=
-X-Google-Smtp-Source: AMsMyM6V955/ZnDV5ju2ltP+LfSZbkCNHpFbRAMr0+FfG1uQIJiCCKugTq8hM/mtt3b+uIouxV0EXg==
-X-Received: by 2002:a17:906:cc10:b0:77b:df70:efd2 with SMTP id ml16-20020a170906cc1000b0077bdf70efd2mr7062565ejb.590.1663935053686;
-        Fri, 23 Sep 2022 05:10:53 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g7-20020aa7c847000000b0044e01e2533asm1176727edt.43.2022.09.23.05.10.52
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=Wdk1JgkEf6+e3NqnmCSJjMireXUCrz29umVj4QoVxEQ=;
+        b=1rzv8GASz5o3OCSGwdhbTduuf7rKrwPAtTt5Y+nNc7bh8CoIcdFqv+hQP4bOlX7wXB
+         yEGR1QRa0h9gocsdjjbWQDlOuLkmcswem/Dra1GwkNHHfMOnPusAbvZu3+GqRMCQ4XLf
+         9UgyyfCwpSRUflj/0wXCaENxWjQT/tarNyj5YqaQZWAFgEw7+xIUMRyIP4SEeAJlZ5pC
+         4v3hpPbsqb34GJZ2L+1CtLjEfNxoRHKf/9rFb1UTJyRi3GIlcA4O62UOn5AHjhjtdeXW
+         9FvLCLKRE8OY6QP+WMvIG1Ajta0BOzlIWvrtWeRvTOMJyqAu6EWT0wce0OJgzCZHnpya
+         Q/TQ==
+X-Gm-Message-State: ACrzQf3tj5Cs+P6noxa50C/z/GYd0qjgt7bbHqBxHjBRlEwlmpCA6tkP
+        hfUXdtWcT4f4/u3hP95Zkts=
+X-Google-Smtp-Source: AMsMyM59QO1OTdqYxp9OIcu2jWVMwK9ihTGFuFUIlSPywwi6lEZVHdKeKo8DaT/ITFgqglkRLY1VQg==
+X-Received: by 2002:a50:fa99:0:b0:44e:9e71:4899 with SMTP id w25-20020a50fa99000000b0044e9e714899mr8237380edr.197.1663936562857;
+        Fri, 23 Sep 2022 05:36:02 -0700 (PDT)
+Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id e2-20020a056402104200b00445f9faf13csm5459208edu.72.2022.09.23.05.36.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 05:10:52 -0700 (PDT)
-Date:   Fri, 23 Sep 2022 14:10:50 +0200
+        Fri, 23 Sep 2022 05:36:01 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
+To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
         Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Thomas Graichen <thomas.graichen@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>, linux-pwm@vger.kernel.org,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>, kernel@pengutronix.de,
-        linux-tegra@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
-Message-ID: <Yy2iSuOiShnokwGL@orome>
-References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
- <524ca143-e9d4-2a79-3e9e-c8b9ffc9f513@gmail.com>
- <20220815070935.guqzzlny7f6kcprc@pengutronix.de>
- <20220818075401.wguqvcbhzj5ttnio@pengutronix.de>
- <8ba9431b-b2bf-9fb0-9ba7-afeb2c3bce94@collabora.com>
- <20220921081721.l2bpeokwxy5pwfdh@pengutronix.de>
- <e109b19b-47a6-28b6-3eca-b45720637afe@nvidia.com>
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
+        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
+Subject: [PATCH v9 0/5] iommu: Support mappings/reservations in reserved-memory regions
+Date:   Fri, 23 Sep 2022 14:35:52 +0200
+Message-Id: <20220923123557.866972-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iKShUJFSt12tYGZM"
-Content-Disposition: inline
-In-Reply-To: <e109b19b-47a6-28b6-3eca-b45720637afe@nvidia.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---iKShUJFSt12tYGZM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, Sep 22, 2022 at 12:12:31PM +0100, Jon Hunter wrote:
-> Hi Uwe,
->=20
-> On 21/09/2022 09:17, Uwe Kleine-K=C3=B6nig wrote:
->=20
-> ...
->=20
-> > As the clk-rate is only 32768 Hz we get (with period_ns =3D 1000000)
-> >=20
-> > 	32768 * 1000000 / (1000000000 << 8) =3D 0.128
-> >=20
-> > which is indeed rounded down to 0 and then runs into the error path
-> > returning -EINVAL. Before my change (that now broke the backlight
-> > configuration) configuration continued and then ended with actually
-> > configuring period =3D 7812500 ns which is off by nearly a factor of 8.
->=20
-> I am seeing the same issue on Tegra210 Jetson Nano (device-tree
-> tegra210-p3450-0000.dts). This also has a clock rate of 32768 Hz by
-> default which means the min period is 30517ns. However, in the probe
-> the min_period_ns comes from the pc->soc->max_frequency which is 48
-> MHz for Tegra210. The min_period_ns =3D 1/(48 MHz / (2^8)) which is
-> 5334ns. Hence, the actual min period is less than what is actually
-> possible.
->=20
-> I wonder if we should be warning about this and fixing the min
-> period ...
->=20
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index 2f3dcb9e9278..f72928c05c81 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -310,9 +310,13 @@ static int tegra_pwm_probe(struct platform_device *p=
-dev)
->          */
->         pc->clk_rate =3D clk_get_rate(pc->clk);
-> +       if (pc->clk_rate < pc->soc->max_frequency)
-> +               dev_warn(&pdev->dev, "Max frequency limited to %lu Hz!",
-> +                        pc->clk_rate);
-> +
->         /* Set minimum limit of PWM period for the IP */
->         pc->min_period_ns =3D
-> -           (NSEC_PER_SEC / (pc->soc->max_frequency >> PWM_DUTY_WIDTH)) +=
- 1;
-> +           (NSEC_PER_SEC / (pc->clk_rate >> PWM_DUTY_WIDTH)) + 1;
->         pc->rst =3D devm_reset_control_get_exclusive(&pdev->dev, "pwm");
->=20
-> The above does not fix this issue but ...
-> > I didn't find a device tree for an Asus Transformer tablet bases on a
-> > tegra124 in the kernel source, but the options are:
-> >=20
-> >   - Revert commit 8c193f4714df ("pwm: tegra: Optimize period calculatio=
-n").
-> >     I don't like this. IMHO this commit is an improvement and the probl=
-em
-> >     is that the consumer requests a too small period. For a backlight
-> >     this might be ok to result in a much bigger period, for other
-> >     usecases it isn't and so I like refusing period =3D 1000000.
-> >=20
-> >   - We could just drop the "else / return -EINVAL".
-> >     This is inconsistent as then (again) some periods are rounded up
-> >     (with the given clk rate that would be 5334 <=3D period < 7812500)
-> >     while others (period < 5334) yield -EINVAL.
-> >=20
-> >   - Increase the period that the backlight is using to at least 7812500.
-> >     This is done (I guess) by replacing 1000000 by 7812500 (or more) in
-> >     the backlight's PWM phandle.
-> >=20
-> >   - Make the PWM clk faster.
-> >     Looking quickly through the tegra clk driver, the parent of the PWM
-> >     clk could be changed from clk_32k to pll_p or pll_c. This should be
-> >     doable in the dts using something like:
-> >=20
-> >     	assigned-clocks =3D <&tegra_car TEGRA124_CLK_PWM>;
-> > 	assigned-clock-parents =3D <&tegra_car TEGRA124_CLK_PLL_P>;
-> >=20
-> >     in the pwm node. (Note this includes much guesswork, I don't know t=
-he
-> >     PPL's clk-rate, so this might break in other ways. Another option is
-> >     using PLL_C.)
-> >=20
-> > Probably the latter is the nicest option. Is it possible to find out the
-> > setting when the machine is running the original vendor OS?
->=20
-> The latter does seem correct to me. This fixes the issue for Tegra210 ...
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra210.dtsi
-> index 4f0e51f1a343..842843e0a585 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> @@ -670,6 +670,10 @@
->                 clock-names =3D "pwm";
->                 resets =3D <&tegra_car 17>;
->                 reset-names =3D "pwm";
-> +
-> +               assigned-clocks =3D <&tegra_car TEGRA210_CLK_PWM>;
-> +               assigned-clock-parents =3D <&tegra_car TEGRA210_CLK_PLL_P=
->;
-> +
->                 status =3D "disabled";
->         };
+This version has several fixes over the previous v8, which can be found
+here:
 
-Traditionally we've always set the clock parent in the driver via the
-init table (at least on chips prior to Tegra186). On the other hand we
-have a few occurrences of assigned-clock-rates already for Tegra210. I
-don't feel strongly either way. A minor advantage of having the fix in
-the clock driver is that it fixes this automatically for older device
-trees. Not that it really matters since people always update kernel and
-DTB at the same time on Tegra devices.
+  https://lore.kernel.org/all/20220905170833.396892-1-thierry.reding@gmail.com/
 
-It'd be great if we could get confirmation that changing the parent
-clock fixes this on all other boards as well, then we can fix it at the
-same time for all of them.
+An example is included in the DT bindings, but here is an extract of
+what I've used to test this:
+
+        reserved-memory {
+                #address-cells = <2>;
+                #size-cells = <2>;
+                ranges;
+
+                /*
+                 * Creates an identity mapping for the framebuffer that
+                 * the firmware has setup to scan out a bootsplash from.
+                 */
+                fb: framebuffer@92cb2000 {
+                        reg = <0x0 0x92cb2000 0x0 0x00800000>;
+                        iommu-addresses = <&dc0 0x0 0x92cb2000 0x0 0x00800000>;
+                };
+
+                /*
+                 * Creates a reservation in the IOVA space to prevent
+                 * any buffers from being mapped to that region. Note
+                 * that on Tegra the range is actually quite different
+                 * from this, but it would conflict with the display
+                 * driver that I tested this against, so this is just
+                 * a dummy region for testing.
+                 */
+                adsp: reservation-adsp {
+                        iommu-addresses = <&dc0 0x0 0x90000000 0x0 0x00010000>;
+                };
+        };
+
+        host1x@50000000 {
+                dc@54200000 {
+                        memory-region = <&fb>, <&adsp>;
+                };
+        };
+
+This is abbreviated a little to focus on the essentials. Note also that
+the ADSP reservation is not actually used on this device and the driver
+for this doesn't exist yet, but I wanted to include this variant for
+testing, because we'll want to use these bindings for the reservation
+use-case as well at some point.
+
+I've also been able to make use of this binding and the IOMMU code in
+conjunction with the simple-framebuffer driver to hand over a display
+configuration set up by UEFI to the Linux kernel.
+
+Janne has confirmed[0] this to be suitable for indirect mappings as
+well, though these patches don't implement that feature yet. Potential
+extensions to this have been discussed but are not yet included at this
+time to not further complicate things.
 
 Thierry
 
---iKShUJFSt12tYGZM
-Content-Type: application/pgp-signature; name="signature.asc"
+[0]: https://lore.kernel.org/all/20220909144504.GA4024@jannau.net/
 
------BEGIN PGP SIGNATURE-----
+Navneet Kumar (1):
+  iommu/tegra-smmu: Support managed domains
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMtokcACgkQ3SOs138+
-s6GzHxAAtZgktIWYaVh0FtY0458PpKea4nibQJyxwuu3tU5ETy4/sTZKVJ1Mm3KP
-ZPGlS2Al6R+ly1JAoDhBwPZUMdD4lDf0gvINOCtX/bRMoSGAsLqGVpRs9WG+2wth
-xALirq1/qot/v7ewgQKiksyVgNaQMba2+9l8uqGyNJc4LRXeCFZqBIDR81iHrqsS
-C0IbQmimICmfoVQoVU5nOxtVk5ozdMF3pdJPQu2cHIBI3IwV6sAlChmQZgkzvlY9
-UBDN6xXVEIDBCyRKR/AXF9xlqnP2Vaotfo2jMs7YrIuCCgfhUbYtMBwP52KoyeZi
-COyja2A1mid/xaOXWRjBSsA/waiuvLdeY1vhJt0+JJH3xHoh6qBA3z5tYQ5mdf6T
-mzNOJQwlNMx8TawB93mYU6fN8du5i6zhWbnVZCLdpNW5Xp/L4XUo4dQbciT2MJTf
-kWPQnkPNkRWEUnVG6JYQuUd1q7JEBgZjBmhkcWVn52xEAJ/xS7LtWklDrQYkmV6f
-WPVC2VnWDN7GBCQonYV08tNORC6Y0VWuMBqZ4ska3OVg6YbM6DOEF0XSzyKkMyFL
-rp+w1713kFH4MMb5P5jedbdUHuAB7YshX5PeRuEED4PuahRbf0ZQAVKdXr8+VGUl
-Zxmv0Mqb6KzzHZjl94DzpnZ7X4agZdhBVj4tLABwDuitBUF6wBg=
-=SVA+
------END PGP SIGNATURE-----
+Thierry Reding (4):
+  dt-bindings: reserved-memory: Document iommu-addresses
+  iommu: Implement of_iommu_get_resv_regions()
+  iommu: dma: Use of_iommu_get_resv_regions()
+  iommu/tegra-smmu: Add support for reserved regions
 
---iKShUJFSt12tYGZM--
+ .../reserved-memory/reserved-memory.yaml      |  70 ++++++++++++
+ drivers/iommu/dma-iommu.c                     |   3 +
+ drivers/iommu/of_iommu.c                      | 104 ++++++++++++++++++
+ drivers/iommu/tegra-smmu.c                    |  86 ++++++++++++---
+ include/linux/of_iommu.h                      |   8 ++
+ 5 files changed, 254 insertions(+), 17 deletions(-)
+
+-- 
+2.37.3
+
