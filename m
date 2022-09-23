@@ -2,52 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 854BBC6FA82
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 12:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89559C6FA82
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 12:36:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230216AbiIWMgH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Sep 2022 08:36:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49036 "EHLO
+        id S230431AbiIWMgK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Sep 2022 08:36:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229833AbiIWMgG (ORCPT
+        with ESMTP id S230297AbiIWMgJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Sep 2022 08:36:06 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4F5127CB6;
-        Fri, 23 Sep 2022 05:36:04 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 30so34841edw.5;
-        Fri, 23 Sep 2022 05:36:04 -0700 (PDT)
+        Fri, 23 Sep 2022 08:36:09 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE60312870D;
+        Fri, 23 Sep 2022 05:36:06 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id z2so59645edi.1;
+        Fri, 23 Sep 2022 05:36:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=Wdk1JgkEf6+e3NqnmCSJjMireXUCrz29umVj4QoVxEQ=;
-        b=ChqPvxFq/AcMG/qDW+/Fw3x+ZudpgRYRus11vdPTwos+X10x7h2Ik5duzINe4rsYlb
-         TxyKjzVRrqSSOrBwFulI7K53Uec+V5Mi4j8axInmSYDETm+geTA2SmAebnxe+qD/5lsK
-         AdqSQLf3UxgCW3mLYN8RCHBAS7FphwsMSI1sOOIhnsc1+OSf6iN5rN5BlNXJazHclJ7H
-         XJaU1tiRq2cRGysHAD9sajjtM+0D0i/8kRDG2HpYuthYJzr6cwcZCgMd3U02iPADlGv+
-         pzYHVYWSHwOPWmgo/NRTPjXvFhcU5FP2xfJKQFN48Z3l4SWh8/2dKejsfIQHxFtR25Pr
-         B58w==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=w6jjw8DFkYwlWS7fcZou1kBVAeHYZmnbwGCONqs9cv0=;
+        b=UTROLkadDdKrd1mijVv/d2meCSb4VhSRDelrozl8zC1jpZGtI2l9FDpqwOC0WPmU1f
+         ut0uBltBpWl+TOy6+YCHRYyAvYIl6xBng2VSYvS5982ndG+gs9E5MYjCNchX4WwH4zbY
+         cVzp/j7V/7FPH317oflm7gQj3/Rf7q5Fl0igAfdfcHIkkDEeDpukPoLm3HN17hr643rX
+         azxqZGm602cf5+i6BRTxK9MBjuiXrE2aVm6ktv58k9JxOBzathNKFEAOMBuqeyCC8lNJ
+         ZOgGMIC3DoclxBxr+wUbWsvalGS71LvMgxxyHj7ryyaOS4Ew4Ai4wnuQXZ2+xixx/5Ob
+         kgKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=Wdk1JgkEf6+e3NqnmCSJjMireXUCrz29umVj4QoVxEQ=;
-        b=1rzv8GASz5o3OCSGwdhbTduuf7rKrwPAtTt5Y+nNc7bh8CoIcdFqv+hQP4bOlX7wXB
-         yEGR1QRa0h9gocsdjjbWQDlOuLkmcswem/Dra1GwkNHHfMOnPusAbvZu3+GqRMCQ4XLf
-         9UgyyfCwpSRUflj/0wXCaENxWjQT/tarNyj5YqaQZWAFgEw7+xIUMRyIP4SEeAJlZ5pC
-         4v3hpPbsqb34GJZ2L+1CtLjEfNxoRHKf/9rFb1UTJyRi3GIlcA4O62UOn5AHjhjtdeXW
-         9FvLCLKRE8OY6QP+WMvIG1Ajta0BOzlIWvrtWeRvTOMJyqAu6EWT0wce0OJgzCZHnpya
-         Q/TQ==
-X-Gm-Message-State: ACrzQf3tj5Cs+P6noxa50C/z/GYd0qjgt7bbHqBxHjBRlEwlmpCA6tkP
-        hfUXdtWcT4f4/u3hP95Zkts=
-X-Google-Smtp-Source: AMsMyM59QO1OTdqYxp9OIcu2jWVMwK9ihTGFuFUIlSPywwi6lEZVHdKeKo8DaT/ITFgqglkRLY1VQg==
-X-Received: by 2002:a50:fa99:0:b0:44e:9e71:4899 with SMTP id w25-20020a50fa99000000b0044e9e714899mr8237380edr.197.1663936562857;
-        Fri, 23 Sep 2022 05:36:02 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=w6jjw8DFkYwlWS7fcZou1kBVAeHYZmnbwGCONqs9cv0=;
+        b=gElgo8rw0kcfAYrzCSLCu7b/JEPAHG+grs5u7ygfZzmfpmMrf9cwwNq+4FN1Iau8Wz
+         7r1reOxpByrqjdlqUJkSe0GZUivzICpUF8EuRxl2tCjMPSJArY/XMMXIwxFq8zB3Mqos
+         m+Hl9u78om5mhA8r+vYIK+lusOnsQbdQ8r7q1uAKAOpzj7TsBHngUudtCU45vtU1OUzJ
+         RBuxNqYY7wbGC3uocmaG7DhjYxJCeZHDkq82UAQUyeUKir5fdAl5VG4Wly3qgkwvlxjE
+         V+YHcw1X92B9g4jXRmjzsFoy3PnyHUFOEIZsfiVlr43OjX+laDXcoxHU3804EoyniC1M
+         Dc/w==
+X-Gm-Message-State: ACrzQf0hcP9pgN+MyWatI74z3q9wyYvEeKekU0vyf2KblBKpORRAYbfe
+        Yk1QYBlBbMr1WtaOzCwuNy8=
+X-Google-Smtp-Source: AMsMyM6XYeNWMVe2MiXKRZ2S4M+5CN69WMLH/kH9gD/rrX7jJuJTJW3wgqC/b+SbBkYEcxlurehrlQ==
+X-Received: by 2002:a05:6402:50d1:b0:452:899e:77c with SMTP id h17-20020a05640250d100b00452899e077cmr8268391edb.0.1663936564864;
+        Fri, 23 Sep 2022 05:36:04 -0700 (PDT)
 Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id e2-20020a056402104200b00445f9faf13csm5459208edu.72.2022.09.23.05.36.01
+        by smtp.gmail.com with ESMTPSA id i14-20020a50fc0e000000b0044792480994sm5445745edr.68.2022.09.23.05.36.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 05:36:01 -0700 (PDT)
+        Fri, 23 Sep 2022 05:36:03 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
 Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
@@ -57,11 +58,14 @@ Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
         Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
         Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
         devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
-Subject: [PATCH v9 0/5] iommu: Support mappings/reservations in reserved-memory regions
-Date:   Fri, 23 Sep 2022 14:35:52 +0200
-Message-Id: <20220923123557.866972-1-thierry.reding@gmail.com>
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v9 1/5] dt-bindings: reserved-memory: Document iommu-addresses
+Date:   Fri, 23 Sep 2022 14:35:53 +0200
+Message-Id: <20220923123557.866972-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220923123557.866972-1-thierry.reding@gmail.com>
+References: <20220923123557.866972-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -70,84 +74,134 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Hi,
+This adds the "iommu-addresses" property to reserved-memory nodes, which
+allow describing the interaction of memory regions with IOMMUs. Two use-
+cases are supported:
 
-This version has several fixes over the previous v8, which can be found
-here:
+  1. Static mappings can be described by pairing the "iommu-addresses"
+     property with a "reg" property. This is mostly useful for adopting
+     firmware-allocated buffers via identity mappings. One common use-
+     case where this is required is if early firmware or bootloaders
+     have set up a bootsplash framebuffer that a display controller is
+     actively scanning out from during the operating system boot
+     process.
 
-  https://lore.kernel.org/all/20220905170833.396892-1-thierry.reding@gmail.com/
+  2. If an "iommu-addresses" property exists without a "reg" property,
+     the reserved-memory node describes an IOVA reservation. Such memory
+     regions are excluded from the IOVA space available to operating
+     system drivers and can be used for regions that must not be used to
+     map arbitrary buffers.
 
-An example is included in the DT bindings, but here is an extract of
-what I've used to test this:
+Each mapping or reservation is tied to a specific device via a phandle
+to the device's device tree node. This allows a reserved-memory region
+to be reused across multiple devices.
 
-        reserved-memory {
-                #address-cells = <2>;
-                #size-cells = <2>;
-                ranges;
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v9:
+- add Reviewed-by tags
 
-                /*
-                 * Creates an identity mapping for the framebuffer that
-                 * the firmware has setup to scan out a bootsplash from.
-                 */
-                fb: framebuffer@92cb2000 {
-                        reg = <0x0 0x92cb2000 0x0 0x00800000>;
-                        iommu-addresses = <&dc0 0x0 0x92cb2000 0x0 0x00800000>;
-                };
+Changes in v8:
+- include validation warnings that had crept into an unrelated patch
 
-                /*
-                 * Creates a reservation in the IOVA space to prevent
-                 * any buffers from being mapped to that region. Note
-                 * that on Tegra the range is actually quite different
-                 * from this, but it would conflict with the display
-                 * driver that I tested this against, so this is just
-                 * a dummy region for testing.
-                 */
-                adsp: reservation-adsp {
-                        iommu-addresses = <&dc0 0x0 0x90000000 0x0 0x00010000>;
-                };
-        };
+Changes in v7:
+- keep reserved-memory.txt to avoid broken references
 
-        host1x@50000000 {
-                dc@54200000 {
-                        memory-region = <&fb>, <&adsp>;
-                };
-        };
+Changes in v6:
+- add device phandle to iommu-addresses property in examples
+- remove now unused dt-bindings/reserved-memory.h header
 
-This is abbreviated a little to focus on the essentials. Note also that
-the ADSP reservation is not actually used on this device and the driver
-for this doesn't exist yet, but I wanted to include this variant for
-testing, because we'll want to use these bindings for the reservation
-use-case as well at some point.
+ .../reserved-memory/reserved-memory.yaml      | 70 +++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-I've also been able to make use of this binding and the IOMMU code in
-conjunction with the simple-framebuffer driver to hand over a display
-configuration set up by UEFI to the Linux kernel.
-
-Janne has confirmed[0] this to be suitable for indirect mappings as
-well, though these patches don't implement that feature yet. Potential
-extensions to this have been discussed but are not yet included at this
-time to not further complicate things.
-
-Thierry
-
-[0]: https://lore.kernel.org/all/20220909144504.GA4024@jannau.net/
-
-Navneet Kumar (1):
-  iommu/tegra-smmu: Support managed domains
-
-Thierry Reding (4):
-  dt-bindings: reserved-memory: Document iommu-addresses
-  iommu: Implement of_iommu_get_resv_regions()
-  iommu: dma: Use of_iommu_get_resv_regions()
-  iommu/tegra-smmu: Add support for reserved regions
-
- .../reserved-memory/reserved-memory.yaml      |  70 ++++++++++++
- drivers/iommu/dma-iommu.c                     |   3 +
- drivers/iommu/of_iommu.c                      | 104 ++++++++++++++++++
- drivers/iommu/tegra-smmu.c                    |  86 ++++++++++++---
- include/linux/of_iommu.h                      |   8 ++
- 5 files changed, 254 insertions(+), 17 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+index 44f72bcf1782..fb48d016e368 100644
+--- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
++++ b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+@@ -52,6 +52,30 @@ properties:
+       Address and Length pairs. Specifies regions of memory that are
+       acceptable to allocate from.
+ 
++  iommu-addresses:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: >
++      A list of phandle and specifier pairs that describe static IO virtual
++      address space mappings and carveouts associated with a given reserved
++      memory region. The phandle in the first cell refers to the device for
++      which the mapping or carveout is to be created.
++
++      The specifier consists of an address/size pair and denotes the IO
++      virtual address range of the region for the given device. The exact
++      format depends on the values of the "#address-cells" and "#size-cells"
++      properties of the device referenced via the phandle.
++
++      When used in combination with a "reg" property, an IOVA mapping is to
++      be established for this memory region. One example where this can be
++      useful is to create an identity mapping for physical memory that the
++      firmware has configured some hardware to access (such as a bootsplash
++      framebuffer).
++
++      If no "reg" property is specified, the "iommu-addresses" property
++      defines carveout regions in the IOVA space for the given device. This
++      can be useful if a certain memory region should not be mapped through
++      the IOMMU.
++
+   no-map:
+     type: boolean
+     description: >
+@@ -97,4 +121,50 @@ oneOf:
+ 
+ additionalProperties: true
+ 
++examples:
++  - |
++    / {
++      compatible = "foo";
++      model = "foo";
++
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      reserved-memory {
++        #address-cells = <2>;
++        #size-cells = <2>;
++        ranges;
++
++        adsp_resv: reservation-adsp {
++          /*
++           * Restrict IOVA mappings for ADSP buffers to the 512 MiB region
++           * from 0x40000000 - 0x5fffffff. Anything outside is reserved by
++           * the ADSP for I/O memory and private memory allocations.
++           */
++          iommu-addresses = <&adsp 0x0 0x00000000 0x00 0x40000000>,
++                            <&adsp 0x0 0x60000000 0xff 0xa0000000>;
++        };
++
++        fb: framebuffer@90000000 {
++          reg = <0x0 0x90000000 0x0 0x00800000>;
++          iommu-addresses = <&dc0 0x0 0x90000000 0x0 0x00800000>;
++        };
++      };
++
++      bus@0 {
++        #address-cells = <1>;
++        #size-cells = <1>;
++        ranges = <0x0 0x0 0x0 0x40000000>;
++
++        adsp: adsp@2990000 {
++          reg = <0x2990000 0x2000>;
++          memory-region = <&adsp_resv>;
++        };
++
++        dc0: display@15200000 {
++          reg = <0x15200000 0x10000>;
++          memory-region = <&fb>;
++        };
++      };
++    };
+ ...
 -- 
 2.37.3
 
