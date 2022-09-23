@@ -2,213 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E26ECAAD8
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 12:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF292C6FA93
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 12:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbiIWMgR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Sep 2022 08:36:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49370 "EHLO
+        id S229637AbiIWMj7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Sep 2022 08:39:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230015AbiIWMgO (ORCPT
+        with ESMTP id S231221AbiIWMj4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Sep 2022 08:36:14 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 759D512870D;
-        Fri, 23 Sep 2022 05:36:13 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a26so393425ejc.4;
-        Fri, 23 Sep 2022 05:36:13 -0700 (PDT)
+        Fri, 23 Sep 2022 08:39:56 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E4136434;
+        Fri, 23 Sep 2022 05:39:54 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id dv25so332408ejb.12;
+        Fri, 23 Sep 2022 05:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=45FPLJtotmi83jvbhlF3knLgFodQxc+PCDadB/Ni74U=;
-        b=hUzu/xUg1Amd0TqYEh/0ptnENuePAU+G03TdRJudFn7bnMOKYSGoH5t0w3F5AMuCbo
-         Gu6DkoZfx3DIf/mPnvuYuXp8RXwjDhVoES5nYY96xtTJFFB3pVUtO+z2ybNKe+GlKxPz
-         oAwz0mQOqGDl5MyB4ty3QpHsxpEUGbaogSceBEkS/Eh6qan4we3gDzAONlGxx2zEyjGc
-         BTD1HKoOM2DxASU7ar1OUymwJJKXQko3ulwcTlcyBSG6FGKTe6Qas0HjyctyMkfkYl8k
-         XkViEjU85gh7QD/nNme3fFNvXogVBwgDHe+GwNN7UTTjjBKJzXXSRnVfd1d95bg84YnD
-         U6CQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=89Pdm3fZG43xqH8RcuQNWzoAkMrNr3sxzlCA4ZL7Hv8=;
+        b=kp4FAFvavOGUoUQGNdmN/3zGrgkPFOEwxDLAACl7x88nEiPPkMYdjLI95SBpHT2ne8
+         JYXwCaMq71SXZHXKzoPvjORR2EfMttUdPnBwkYxwp/szLoCj3pqOr5/ovkJ1zC+0MM6T
+         2jAcQKLKFan4Y54bLA4glvpmlkpncZdZRVLSmcaY5VMlWtQY+czY2AHZP3S65GlgA8Rp
+         4po86l/+iH6z/8E4GJPaNyrD6lcpOfR4rVx1WHNcxo3MMXav0JWqjyFJ7AEQJmX8j255
+         pdlAiQNr9Vt7dYpZMCpxf25H6UarEM1hf+m2yPBkuxXWjntlNRgwn8GUMjkuzxGTxSTq
+         P1dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=45FPLJtotmi83jvbhlF3knLgFodQxc+PCDadB/Ni74U=;
-        b=wUoDdTC77dEfEgA0TOF17brAGUjXo1UzYoqYXO072P12DOtXaPQ2i0J4tuNhTez11e
-         9gG7aWHfNuN9yIisuGtbEBkB5Iz+PlXhHmzlucSySKWQCuP4IxUTgwr2mGhYJEFLQHxc
-         ndm4HHw+zlam2QhvkmVf5to0zIlZ8axBWumf9e2D4kg50LLc7cmJlycBp0x4VIxpmgqA
-         ZJuKggTCpxKwlgK/BkLUftLL04Dm1Jvi3kdsbOfcUFdf61RwUo5j4x+GWmCPaPQTPXkf
-         Mfl+1pCO+rV8X/RiOFfSaNsq+oUIYm6qaOKs4k4NeNrRotRMoMj8qyLFjJwQdYmxP8wJ
-         nv+Q==
-X-Gm-Message-State: ACrzQf2k0QRxPw5GROpPG09xMxiMkcVUC41bo068NEZg1ZWUigtwxY3d
-        lO2FskTRFHL1PiE5fmApnW4=
-X-Google-Smtp-Source: AMsMyM5NzIq+NxiJPBbImg/z4eTRG1g4eAhI/J/LC659m7wDsWTrOTLWdes325cSwxbF+gtK/31oWQ==
-X-Received: by 2002:a17:907:97d1:b0:780:26c9:1499 with SMTP id js17-20020a17090797d100b0078026c91499mr6770793ejc.371.1663936571907;
-        Fri, 23 Sep 2022 05:36:11 -0700 (PDT)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id w21-20020a17090633d500b0073c0b87ba34sm3907428eja.198.2022.09.23.05.36.10
+        bh=89Pdm3fZG43xqH8RcuQNWzoAkMrNr3sxzlCA4ZL7Hv8=;
+        b=7+5H8d15kgtNAHyFmAXFlp02fk7h6bYBUjR0zJiIiwZ7niBhjf3elLCNJ5RAeN12xQ
+         JLemzHzJFS+cVEcFU03SLUSeS5g7SyK8f4OuABCjJOzlV4uNFEbh8Iw4nOvWTE+UU+Xz
+         1ZxblD6Urs0+7tiI6ryUCWDEkLpxSCCWVoKV1ILWTinhQg0oF2ccpgPZSuxJ+hQpJGyX
+         7Dt+Ttdw19o5x05wm5CeYuVN4MWni5QY0MMs4he8jpWDYqTxqUy4J3S0TbW85Hr3je1a
+         nD7Nc2Ke9Yn3ZXFSWc1vpHBBgq2tbpTObf0puxSSHUCMYBaf76+nNyc+jge3jBbvljpB
+         41pQ==
+X-Gm-Message-State: ACrzQf0MRfqUoO4QZUQAieOm53GxOLkqnDz3yDA9RffVddfUGwpv8RYZ
+        WXfJt/nhBnbCl5M985dXlSo=
+X-Google-Smtp-Source: AMsMyM7vKpNILY1ysmbRJ1+H1iG6jmPCjjHfJEnkV/93ECAnZGfDDsJnKJP0zbe2EXz6X+/uc7DBlg==
+X-Received: by 2002:a17:906:8466:b0:77b:43e9:48b5 with SMTP id hx6-20020a170906846600b0077b43e948b5mr6815720ejc.254.1663936792628;
+        Fri, 23 Sep 2022 05:39:52 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id q8-20020a170906388800b0077958ddaec6sm3969303ejd.186.2022.09.23.05.39.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 05:36:10 -0700 (PDT)
+        Fri, 23 Sep 2022 05:39:51 -0700 (PDT)
+Date:   Fri, 23 Sep 2022 14:39:49 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
-Subject: [PATCH v9 4/5] iommu/tegra-smmu: Add support for reserved regions
-Date:   Fri, 23 Sep 2022 14:35:56 +0200
-Message-Id: <20220923123557.866972-5-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20220923123557.866972-1-thierry.reding@gmail.com>
-References: <20220923123557.866972-1-thierry.reding@gmail.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bhadram Varka <vbhadram@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v4 9/9] stmmac: tegra: Add MGBE support
+Message-ID: <Yy2pFfUWU7LwGG/m@orome>
+References: <20220707074818.1481776-1-thierry.reding@gmail.com>
+ <20220707074818.1481776-10-thierry.reding@gmail.com>
+ <YxjIj1kr0mrdoWcd@orome>
+ <64414eac-fa09-732e-6582-408cfb9d41dd@nvidia.com>
+ <20220922083454.1b7936b2@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PZUsOL4JDQ+8OvIb"
+Content-Disposition: inline
+In-Reply-To: <20220922083454.1b7936b2@kernel.org>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-The Tegra DRM driver currently uses the IOMMU API explicitly. This means
-that it has fine-grained control over when exactly the translation
-through the IOMMU is enabled. This currently happens after the driver
-probes, so the driver is in a DMA quiesced state when the IOMMU
-translation is enabled.
+--PZUsOL4JDQ+8OvIb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-During the transition of the Tegra DRM driver to use the DMA API instead
-of the IOMMU API explicitly, it was observed that on certain platforms
-the display controllers were still actively fetching from memory. When a
-DMA IOMMU domain is created as part of the DMA/IOMMU API setup during
-boot, the IOMMU translation for the display controllers can be enabled a
-significant amount of time before the driver has had a chance to reset
-the hardware into a sane state. This causes the SMMU to detect faults on
-the addresses that the display controller is trying to fetch.
+On Thu, Sep 22, 2022 at 08:34:54AM -0700, Jakub Kicinski wrote:
+> On Thu, 22 Sep 2022 16:05:22 +0100 Jon Hunter wrote:
+> > On 07/09/2022 17:36, Thierry Reding wrote:
+> > > On Thu, Jul 07, 2022 at 09:48:18AM +0200, Thierry Reding wrote: =20
+> > >> From: Bhadram Varka <vbhadram@nvidia.com>
+> > >>
+> > >> Add support for the Multi-Gigabit Ethernet (MGBE/XPCS) IP found on
+> > >> NVIDIA Tegra234 SoCs.
+> > >>
+> > >> Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
+> > >> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > >> ---
+> > >> Note that this doesn't have any dependencies on any of the patches
+> > >> earlier in the series, so this can be applied independently.
+> >
+> > > Patches 1-8 of this have already been applied to the Tegra tree. Are
+> > > there any more comments on this or can this be merged as well?
+> > >=20
+> > >  From a Tegra point of view this looks good, so:
+> > >=20
+> > > Acked-by: Thierry Reding <treding@nvidia.com> =20
+> >=20
+> > Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> >=20
+> > Please can we queue this for v6.1? I have added the stmmac maintainers=
+=20
+> > to the email, but not sure if you can pick this up?
+>=20
+> Could you repost it independently of the series so that it can go thru
+> the net auto-checkers? It should be able to make 6.1 pretty comfortably.
 
-To avoid this, and as a byproduct paving the way for seamless transition
-of display from the bootloader to the kernel, add support for reserved
-regions in the Tegra SMMU driver. This is implemented using the standard
-reserved memory device tree bindings, which let us describe regions of
-memory which the kernel is forbidden from using for regular allocations.
-The Tegra SMMU driver will parse the nodes associated with each device
-via the "memory-region" property and return reserved regions that the
-IOMMU core will then create direct mappings for prior to attaching the
-IOMMU domains to the devices. This ensures that a 1:1 mapping is in
-place when IOMMU translation starts and prevents the SMMU from detecting
-any faults.
+Done. Let me know if there's anything in the patch that needs more work.
+For the auto-checkers, do they send out notifications if they find
+anything or can I monitor them manually somewhere? Are all of those
+reported in the patchwork checks?
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/iommu/tegra-smmu.c | 50 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 49 insertions(+), 1 deletion(-)
+Thierry
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index a86e5c8da1b1..57b4f2b37447 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -10,6 +10,7 @@
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/of_iommu.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -471,6 +472,7 @@ static void tegra_smmu_as_unprepare(struct tegra_smmu *smmu,
- 	tegra_smmu_free_asid(smmu, as->id);
- 
- 	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
-+	as->pd_dma = 0;
- 
- 	as->smmu = NULL;
- 
-@@ -534,6 +536,38 @@ static void tegra_smmu_set_pde(struct tegra_smmu_as *as, unsigned long iova,
- 	struct tegra_smmu *smmu = as->smmu;
- 	u32 *pd = page_address(as->pd);
- 	unsigned long offset = pd_index * sizeof(*pd);
-+	bool unmap = false;
-+
-+	/*
-+	 * XXX Move this outside of this function. Perhaps add a struct
-+	 * iommu_domain parameter to ->{get,put}_resv_regions() so that
-+	 * the mapping can be done there.
-+	 *
-+	 * The problem here is that as->smmu is only known once we attach
-+	 * the domain to a device (because then we look up the right SMMU
-+	 * instance via the dev->archdata.iommu pointer). When the direct
-+	 * mappings are created for reserved regions, the domain has not
-+	 * been attached to a device yet, so we don't know. We currently
-+	 * fix that up in ->apply_resv_regions() because that is the first
-+	 * time where we have access to a struct device that will be used
-+	 * with the IOMMU domain. However, that's asymmetric and doesn't
-+	 * take care of the page directory mapping either, so we need to
-+	 * come up with something better.
-+	 */
-+	if (WARN_ON_ONCE(as->pd_dma == 0)) {
-+		as->pd_dma = dma_map_page(smmu->dev, as->pd, 0, SMMU_SIZE_PD,
-+					  DMA_TO_DEVICE);
-+		if (dma_mapping_error(smmu->dev, as->pd_dma))
-+			return;
-+
-+		if (!smmu_dma_addr_valid(smmu, as->pd_dma)) {
-+			dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD,
-+				       DMA_TO_DEVICE);
-+			return;
-+		}
-+
-+		unmap = true;
-+	}
- 
- 	/* Set the page directory entry first */
- 	pd[pd_index] = value;
-@@ -546,6 +580,12 @@ static void tegra_smmu_set_pde(struct tegra_smmu_as *as, unsigned long iova,
- 	smmu_flush_ptc(smmu, as->pd_dma, offset);
- 	smmu_flush_tlb_section(smmu, as->id, iova);
- 	smmu_flush(smmu);
-+
-+	if (unmap) {
-+		dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD,
-+			       DMA_TO_DEVICE);
-+		as->pd_dma = 0;
-+	}
- }
- 
- static u32 *tegra_smmu_pte_offset(struct page *pt_page, unsigned long iova)
-@@ -846,7 +886,6 @@ static struct iommu_device *tegra_smmu_probe_device(struct device *dev)
- 		smmu = tegra_smmu_find(args.np);
- 		if (smmu) {
- 			err = tegra_smmu_configure(smmu, dev, &args);
--
- 			if (err < 0) {
- 				of_node_put(args.np);
- 				return ERR_PTR(err);
-@@ -864,6 +903,13 @@ static struct iommu_device *tegra_smmu_probe_device(struct device *dev)
- 	return &smmu->iommu;
- }
- 
-+static void tegra_smmu_release_device(struct device *dev)
-+{
-+	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
-+
-+	put_device(smmu->dev);
-+}
-+
- static const struct tegra_smmu_group_soc *
- tegra_smmu_find_group(struct tegra_smmu *smmu, unsigned int swgroup)
- {
-@@ -964,7 +1010,9 @@ static int tegra_smmu_of_xlate(struct device *dev,
- static const struct iommu_ops tegra_smmu_ops = {
- 	.domain_alloc = tegra_smmu_domain_alloc,
- 	.probe_device = tegra_smmu_probe_device,
-+	.release_device = tegra_smmu_release_device,
- 	.device_group = tegra_smmu_device_group,
-+	.get_resv_regions = of_iommu_get_resv_regions,
- 	.of_xlate = tegra_smmu_of_xlate,
- 	.pgsize_bitmap = SZ_4K,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
--- 
-2.37.3
+--PZUsOL4JDQ+8OvIb
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMtqRUACgkQ3SOs138+
+s6HOew/+J/mhrRPu0C8SXCR2BYLpMLikcrSFxQLijLEa1YNMZ/YEYo5LtRGV67En
+DlHrxTpoO1aZ/6V/ok5Wp3bacorcQJnAauajCqsLWTzK5gmsdTRREHuLwL6WYgQE
+VloXZLx+W4U4ukQd9L8QiO092YMp1sqWNy7XcyoKukNWhO7lQS1SFR+FQK9QoRLj
+NRtuOBmn6A+ifc7vXHoMHa6jg2chLJu8H5rnFXy9jTIoEcPwtxq60kwpWtk/xmc8
+qhXbqbk6ZMGC7El49GDWZhbUbmAmmsL7+BIV2ywNklAc2npFkbTTioQedy0TuA5I
+M0XJgkCwDsmiChAlAYIuyVttprUIrO2jvLpMCEx1CwVhAUXsqaymfiZ/M7UZ/oAA
+O4K2HkFRlMxXSt8+0zrcCVlR/RNqLgDH5lmaDVsTsPIt4+mpJ9U/HRSofaPKSxEl
+6czO+ZYrxlkQ2RpRHFKfC29ZWjgyZH3UMgidN5sNlMfLSXrdHjtul+5o7CM/YhBl
+ci9N0lSDhlPbZyRTxxpL9399Sa/cUPeX+Fj7A0Gu3y2b4spo+jLfCGbFJDuFMzmO
+N5xmJ/O7f6cMbmopGQob2c4pRaf6YHsk+8m7aDi/3Z6k8w2ywq55eoKftTF5tcxf
+0VcN1pxfspDAqTTlKkKWiJRZVSanwwL9132rx0JIDi/Uw1ysOo8=
+=sVdn
+-----END PGP SIGNATURE-----
+
+--PZUsOL4JDQ+8OvIb--
