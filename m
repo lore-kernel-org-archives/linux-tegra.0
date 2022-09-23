@@ -2,409 +2,223 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 147ACC6FA82
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 11:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DB1C6FA90
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 12:21:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231727AbiIWLth (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Sep 2022 07:49:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37126 "EHLO
+        id S231320AbiIWMV5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Sep 2022 08:21:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231699AbiIWLtg (ORCPT
+        with ESMTP id S232026AbiIWMUU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Sep 2022 07:49:36 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1641CDC;
-        Fri, 23 Sep 2022 04:49:29 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id sd10so149301ejc.2;
-        Fri, 23 Sep 2022 04:49:29 -0700 (PDT)
+        Fri, 23 Sep 2022 08:20:20 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8519313EEA5;
+        Fri, 23 Sep 2022 05:11:04 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id sb3so199726ejb.9;
+        Fri, 23 Sep 2022 05:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=QJWBSxrEP3MPkxXD0D64Dzx/zcCpYle+kieuflhQMAU=;
-        b=QCn/a3uMWMkeo+V9vcMucCXtH+vuqgDTXxGMUUYEyBlFGs0K7f4MJ/0F+TeCDKLs8t
-         N0Sn6T5HwM0Q+M5Mzd6eHr5JmG3v6cDfh8hFeBYhL9OS2zvAOdrB4cs4z+ps3O26wR/M
-         XAOQWHkegbnCORk3TIRpJXUTUhssWJH/PlMOSgIvZHqD15eMoo4CRzourKNmYbJmazcs
-         KGxX9TXaT3kEaHN9WYfmif07FmH9OBmozHcw3SSxge+scEZjg4bCsVM51lpZxIX1Lrw4
-         eFzLZzwMeou4hL2/y9qjLcmaT7hpO9FfccNDD7CWLebgJOj7jcveRRqGakfoGpGjEFWD
-         UZvg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=HbdDPH64F/izZR7ly2QOBIXzT+xP+w0S1Cpx1XabKT0=;
+        b=LCQRSkiR8pebrQ8zexz+ngPqmB4zsLXBzr/xzvJumSthcPcvG0uQszsAg5ejgEnaI/
+         gbrAnXGsf1eBCQ1BiYa3OIz81BD2VIbIxQutwkIPuprDniOTz08MGatUjKeWFZkwuq4W
+         h/mHhX9VV8w2whNHijV2Wx1MWDL08t66nTTyEVxSjo/FQh07vc7ZeTrZmGTSiqtOOmLN
+         HXC6+2Fvi6SAWOav74X1fFFwaWyXsj12ud/+MSNsQ1TCZ0UmdLb4LBodzWlwaRWTXQd4
+         +XXp0cmPzSp3P9OpXvng6J0IgrOxySDtvm4Q2UEJ3HeJk85wd3PniH3ci8D0e3FLho4+
+         69ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=QJWBSxrEP3MPkxXD0D64Dzx/zcCpYle+kieuflhQMAU=;
-        b=M2HvvCH8QF+CaQvx/4DFOH4UiwT7PBMYwW3G7XakM+iOpNdTpIjnpetuYU1fFkOEO/
-         SjSD9j8WNFCjKdUBssha3zVe9SbqsL/AIIBM1Dh5mhJS1fWhFnY7SeUdiS2rWnNDs4mp
-         vyew5lxqi89P3RRPK/YAdyPgTp9QmD+s0lWyIAmdoo9DNKhb51gRxyusLtkQF0q+RSMY
-         ttIENN6GI/16xRkuL4nwjKn85NigaYI0fDu1prrE/fEiNfE6VU3N+P4oiCkmxkRTVJph
-         q6yPbtbCQJYmAP4+V4UfarfYkjmxvIRkgNSlnn4tqtZjje4unpiDsealh3F4mYVQo4bT
-         zHmA==
-X-Gm-Message-State: ACrzQf0CkD8vuSUiD/DmtkRZL2+++rSvXCxePxk2Nd/tQYwyC6WXRhOo
-        VfXrdR/Fjcrpjzx0gqdH2B4=
-X-Google-Smtp-Source: AMsMyM6FUjjiMr20JD5RgR1y1XIYB+hH/vHdQbWc7E5LpSwuRy569Ix5Cpe9jlNy4fycBiGlg/71aA==
-X-Received: by 2002:a17:906:4795:b0:781:397:63de with SMTP id cw21-20020a170906479500b00781039763demr6578559ejc.339.1663933768002;
-        Fri, 23 Sep 2022 04:49:28 -0700 (PDT)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id hb19-20020a170906b89300b0077fc47605b4sm3850608ejb.217.2022.09.23.04.49.27
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=HbdDPH64F/izZR7ly2QOBIXzT+xP+w0S1Cpx1XabKT0=;
+        b=xFTYthiTkv5jT8ZHI9MzoFGjYJQ+X+r3oWr0Pneln0rQb1wYN8eDOyYV+NI2LERRQH
+         s3i+EHbcdKjlV8wVmOuLC1RXqsMXhUS6TdUYjW570EnE0urWOKjUPtyJwCfDE8FDTQdT
+         7iy2VBhM0GHRas0IMjjV1PBzlrYwlo1UhxwErG03LHj1ikiHmjt6VRTCEpYpZHgUXoc7
+         2nhgb+ZuhoDyIc2qbGdIpVPerEA5MTJEV+fED9oWfdfySV0tj/kmKQNWsnFqJ8465YaI
+         rnHz75gYq+y+L6qK7w/K4Bb1dExk44IaHb4kY6O77DhJXIdpTj3H+vUHHPlCbRb2mrJc
+         1xwg==
+X-Gm-Message-State: ACrzQf2dqxWhcyXUgsSovNYNsC6s7Eny7dVtiULTThpcjHk8CJmrCI8r
+        xu6SuloviuAmfVhj9dGKATc=
+X-Google-Smtp-Source: AMsMyM6V955/ZnDV5ju2ltP+LfSZbkCNHpFbRAMr0+FfG1uQIJiCCKugTq8hM/mtt3b+uIouxV0EXg==
+X-Received: by 2002:a17:906:cc10:b0:77b:df70:efd2 with SMTP id ml16-20020a170906cc1000b0077bdf70efd2mr7062565ejb.590.1663935053686;
+        Fri, 23 Sep 2022 05:10:53 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id g7-20020aa7c847000000b0044e01e2533asm1176727edt.43.2022.09.23.05.10.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 04:49:27 -0700 (PDT)
+        Fri, 23 Sep 2022 05:10:52 -0700 (PDT)
+Date:   Fri, 23 Sep 2022 14:10:50 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Bhadram Varka <vbhadram@nvidia.com>,
-        linux-tegra@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH net-next v4 RESEND] stmmac: tegra: Add MGBE support
-Date:   Fri, 23 Sep 2022 13:49:22 +0200
-Message-Id: <20220923114922.864552-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.37.3
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>, linux-pwm@vger.kernel.org,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>, kernel@pengutronix.de,
+        linux-tegra@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
+Message-ID: <Yy2iSuOiShnokwGL@orome>
+References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
+ <524ca143-e9d4-2a79-3e9e-c8b9ffc9f513@gmail.com>
+ <20220815070935.guqzzlny7f6kcprc@pengutronix.de>
+ <20220818075401.wguqvcbhzj5ttnio@pengutronix.de>
+ <8ba9431b-b2bf-9fb0-9ba7-afeb2c3bce94@collabora.com>
+ <20220921081721.l2bpeokwxy5pwfdh@pengutronix.de>
+ <e109b19b-47a6-28b6-3eca-b45720637afe@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="iKShUJFSt12tYGZM"
+Content-Disposition: inline
+In-Reply-To: <e109b19b-47a6-28b6-3eca-b45720637afe@nvidia.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Bhadram Varka <vbhadram@nvidia.com>
 
-Add support for the Multi-Gigabit Ethernet (MGBE/XPCS) IP found on
-NVIDIA Tegra234 SoCs.
+--iKShUJFSt12tYGZM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |   6 +
- drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
- .../net/ethernet/stmicro/stmmac/dwmac-tegra.c | 290 ++++++++++++++++++
- 3 files changed, 297 insertions(+)
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+On Thu, Sep 22, 2022 at 12:12:31PM +0100, Jon Hunter wrote:
+> Hi Uwe,
+>=20
+> On 21/09/2022 09:17, Uwe Kleine-K=C3=B6nig wrote:
+>=20
+> ...
+>=20
+> > As the clk-rate is only 32768 Hz we get (with period_ns =3D 1000000)
+> >=20
+> > 	32768 * 1000000 / (1000000000 << 8) =3D 0.128
+> >=20
+> > which is indeed rounded down to 0 and then runs into the error path
+> > returning -EINVAL. Before my change (that now broke the backlight
+> > configuration) configuration continued and then ended with actually
+> > configuring period =3D 7812500 ns which is off by nearly a factor of 8.
+>=20
+> I am seeing the same issue on Tegra210 Jetson Nano (device-tree
+> tegra210-p3450-0000.dts). This also has a clock rate of 32768 Hz by
+> default which means the min period is 30517ns. However, in the probe
+> the min_period_ns comes from the pc->soc->max_frequency which is 48
+> MHz for Tegra210. The min_period_ns =3D 1/(48 MHz / (2^8)) which is
+> 5334ns. Hence, the actual min period is less than what is actually
+> possible.
+>=20
+> I wonder if we should be warning about this and fixing the min
+> period ...
+>=20
+> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> index 2f3dcb9e9278..f72928c05c81 100644
+> --- a/drivers/pwm/pwm-tegra.c
+> +++ b/drivers/pwm/pwm-tegra.c
+> @@ -310,9 +310,13 @@ static int tegra_pwm_probe(struct platform_device *p=
+dev)
+>          */
+>         pc->clk_rate =3D clk_get_rate(pc->clk);
+> +       if (pc->clk_rate < pc->soc->max_frequency)
+> +               dev_warn(&pdev->dev, "Max frequency limited to %lu Hz!",
+> +                        pc->clk_rate);
+> +
+>         /* Set minimum limit of PWM period for the IP */
+>         pc->min_period_ns =3D
+> -           (NSEC_PER_SEC / (pc->soc->max_frequency >> PWM_DUTY_WIDTH)) +=
+ 1;
+> +           (NSEC_PER_SEC / (pc->clk_rate >> PWM_DUTY_WIDTH)) + 1;
+>         pc->rst =3D devm_reset_control_get_exclusive(&pdev->dev, "pwm");
+>=20
+> The above does not fix this issue but ...
+> > I didn't find a device tree for an Asus Transformer tablet bases on a
+> > tegra124 in the kernel source, but the options are:
+> >=20
+> >   - Revert commit 8c193f4714df ("pwm: tegra: Optimize period calculatio=
+n").
+> >     I don't like this. IMHO this commit is an improvement and the probl=
+em
+> >     is that the consumer requests a too small period. For a backlight
+> >     this might be ok to result in a much bigger period, for other
+> >     usecases it isn't and so I like refusing period =3D 1000000.
+> >=20
+> >   - We could just drop the "else / return -EINVAL".
+> >     This is inconsistent as then (again) some periods are rounded up
+> >     (with the given clk rate that would be 5334 <=3D period < 7812500)
+> >     while others (period < 5334) yield -EINVAL.
+> >=20
+> >   - Increase the period that the backlight is using to at least 7812500.
+> >     This is done (I guess) by replacing 1000000 by 7812500 (or more) in
+> >     the backlight's PWM phandle.
+> >=20
+> >   - Make the PWM clk faster.
+> >     Looking quickly through the tegra clk driver, the parent of the PWM
+> >     clk could be changed from clk_32k to pll_p or pll_c. This should be
+> >     doable in the dts using something like:
+> >=20
+> >     	assigned-clocks =3D <&tegra_car TEGRA124_CLK_PWM>;
+> > 	assigned-clock-parents =3D <&tegra_car TEGRA124_CLK_PLL_P>;
+> >=20
+> >     in the pwm node. (Note this includes much guesswork, I don't know t=
+he
+> >     PPL's clk-rate, so this might break in other ways. Another option is
+> >     using PLL_C.)
+> >=20
+> > Probably the latter is the nicest option. Is it possible to find out the
+> > setting when the machine is running the original vendor OS?
+>=20
+> The latter does seem correct to me. This fixes the issue for Tegra210 ...
+>=20
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/d=
+ts/nvidia/tegra210.dtsi
+> index 4f0e51f1a343..842843e0a585 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> @@ -670,6 +670,10 @@
+>                 clock-names =3D "pwm";
+>                 resets =3D <&tegra_car 17>;
+>                 reset-names =3D "pwm";
+> +
+> +               assigned-clocks =3D <&tegra_car TEGRA210_CLK_PWM>;
+> +               assigned-clock-parents =3D <&tegra_car TEGRA210_CLK_PLL_P=
+>;
+> +
+>                 status =3D "disabled";
+>         };
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 31ff35174034..e9f61bdaf7c4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -235,6 +235,12 @@ config DWMAC_INTEL_PLAT
- 	  the stmmac device driver. This driver is used for the Intel Keem Bay
- 	  SoC.
- 
-+config DWMAC_TEGRA
-+	tristate "NVIDIA Tegra MGBE support"
-+	depends on ARCH_TEGRA || COMPILE_TEST
-+	help
-+	  Support for the MGBE controller found on Tegra SoCs.
-+
- config DWMAC_VISCONTI
- 	tristate "Toshiba Visconti DWMAC support"
- 	default ARCH_VISCONTI
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
-index d4e12e9ace4f..057e4bab5c08 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Makefile
-+++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_DWMAC_DWC_QOS_ETH)	+= dwmac-dwc-qos-eth.o
- obj-$(CONFIG_DWMAC_INTEL_PLAT)	+= dwmac-intel-plat.o
- obj-$(CONFIG_DWMAC_GENERIC)	+= dwmac-generic.o
- obj-$(CONFIG_DWMAC_IMX8)	+= dwmac-imx.o
-+obj-$(CONFIG_DWMAC_TEGRA)	+= dwmac-tegra.o
- obj-$(CONFIG_DWMAC_VISCONTI)	+= dwmac-visconti.o
- stmmac-platform-objs:= stmmac_platform.o
- dwmac-altr-socfpga-objs := altr_tse_pcs.o dwmac-socfpga.o
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-new file mode 100644
-index 000000000000..bb4b540820fa
---- /dev/null
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-@@ -0,0 +1,290 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/platform_device.h>
-+#include <linux/of_device.h>
-+#include <linux/module.h>
-+#include <linux/stmmac.h>
-+#include <linux/clk.h>
-+
-+#include "stmmac_platform.h"
-+
-+static const char *const mgbe_clks[] = {
-+	"rx-pcs", "tx", "tx-pcs", "mac-divider", "mac", "mgbe", "ptp-ref", "mac"
-+};
-+
-+struct tegra_mgbe {
-+	struct device *dev;
-+
-+	struct clk_bulk_data *clks;
-+
-+	struct reset_control *rst_mac;
-+	struct reset_control *rst_pcs;
-+
-+	void __iomem *hv;
-+	void __iomem *regs;
-+	void __iomem *xpcs;
-+
-+	struct mii_bus *mii;
-+};
-+
-+#define XPCS_WRAP_UPHY_RX_CONTROL 0x801c
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_SW_OVRD BIT(31)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_PCS_PHY_RDY BIT(10)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET BIT(9)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN BIT(8)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_SLEEP (BIT(7) | BIT(6))
-+#define XPCS_WRAP_UPHY_RX_CONTROL_AUX_RX_IDDQ BIT(5)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_IDDQ BIT(4)
-+#define XPCS_WRAP_UPHY_RX_CONTROL_RX_DATA_EN BIT(0)
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL 0x8020
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN BIT(0)
-+#define XPCS_WRAP_UPHY_HW_INIT_CTRL_RX_EN BIT(2)
-+#define XPCS_WRAP_UPHY_STATUS 0x8044
-+#define XPCS_WRAP_UPHY_STATUS_TX_P_UP BIT(0)
-+#define XPCS_WRAP_IRQ_STATUS 0x8050
-+#define XPCS_WRAP_IRQ_STATUS_PCS_LINK_STS BIT(6)
-+
-+#define XPCS_REG_ADDR_SHIFT 10
-+#define XPCS_REG_ADDR_MASK 0x1fff
-+#define XPCS_ADDR 0x3fc
-+
-+#define MGBE_WRAP_COMMON_INTR_ENABLE	0x8704
-+#define MAC_SBD_INTR			BIT(2)
-+#define MGBE_WRAP_AXI_ASID0_CTRL	0x8400
-+#define MGBE_SID			0x6
-+
-+static void mgbe_uphy_lane_bringup(struct tegra_mgbe *mgbe)
-+{
-+	unsigned int retry = 300;
-+	u32 value;
-+	int err;
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_STATUS);
-+	if ((value & XPCS_WRAP_UPHY_STATUS_TX_P_UP) == 0) {
-+		value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL);
-+		value |= XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN;
-+		writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL);
-+	}
-+
-+	err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL, value,
-+				 (value & XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN) == 0,
-+				 500, 500 * 2000);
-+	if (err < 0)
-+		dev_err(mgbe->dev, "timeout waiting for TX lane to become enabled\n");
-+
-+	usleep_range(10000, 20000);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_SW_OVRD;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_IDDQ;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_AUX_RX_IDDQ;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_SLEEP;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL, value,
-+				 (value & XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN) == 0,
-+				 1000, 1000 * 2000);
-+	if (err < 0)
-+		dev_err(mgbe->dev, "timeout waiting for RX calibration to become enabled\n");
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_DATA_EN;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_PCS_PHY_RDY;
-+	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-+
-+	while (--retry) {
-+		err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_IRQ_STATUS, value,
-+					 value & XPCS_WRAP_IRQ_STATUS_PCS_LINK_STS,
-+					 500, 500 * 2000);
-+		if (err < 0) {
-+			dev_err(mgbe->dev, "timeout waiting for link to become ready\n");
-+			usleep_range(10000, 20000);
-+			continue;
-+		}
-+		break;
-+	}
-+
-+	/* clear status */
-+	writel(value, mgbe->xpcs + XPCS_WRAP_IRQ_STATUS);
-+}
-+
-+static int tegra_mgbe_probe(struct platform_device *pdev)
-+{
-+	struct plat_stmmacenet_data *plat;
-+	struct stmmac_resources res;
-+	struct tegra_mgbe *mgbe;
-+	int irq, err, i;
-+
-+	mgbe = devm_kzalloc(&pdev->dev, sizeof(*mgbe), GFP_KERNEL);
-+	if (!mgbe)
-+		return -ENOMEM;
-+
-+	mgbe->dev = &pdev->dev;
-+
-+	memset(&res, 0, sizeof(res));
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	mgbe->hv = devm_platform_ioremap_resource_byname(pdev, "hypervisor");
-+	if (IS_ERR(mgbe->hv))
-+		return PTR_ERR(mgbe->hv);
-+
-+	mgbe->regs = devm_platform_ioremap_resource_byname(pdev, "mac");
-+	if (IS_ERR(mgbe->regs))
-+		return PTR_ERR(mgbe->regs);
-+
-+	mgbe->xpcs = devm_platform_ioremap_resource_byname(pdev, "xpcs");
-+	if (IS_ERR(mgbe->xpcs))
-+		return PTR_ERR(mgbe->xpcs);
-+
-+	res.addr = mgbe->regs;
-+	res.irq = irq;
-+
-+	mgbe->clks = devm_kzalloc(&pdev->dev, sizeof(*mgbe->clks), GFP_KERNEL);
-+	if (!mgbe->clks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i <  ARRAY_SIZE(mgbe_clks); i++)
-+		mgbe->clks[i].id = mgbe_clks[i];
-+
-+	err = devm_clk_bulk_get(mgbe->dev, ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+	if (err < 0)
-+		return err;
-+
-+	err = clk_bulk_prepare_enable(ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+	if (err < 0)
-+		return err;
-+
-+	/* Perform MAC reset */
-+	mgbe->rst_mac = devm_reset_control_get(&pdev->dev, "mac");
-+	if (IS_ERR(mgbe->rst_mac))
-+		return PTR_ERR(mgbe->rst_mac);
-+
-+	err = reset_control_assert(mgbe->rst_mac);
-+	if (err < 0)
-+		return err;
-+
-+	usleep_range(2000, 4000);
-+
-+	err = reset_control_deassert(mgbe->rst_mac);
-+	if (err < 0)
-+		return err;
-+
-+	/* Perform PCS reset */
-+	mgbe->rst_pcs = devm_reset_control_get(&pdev->dev, "pcs");
-+	if (IS_ERR(mgbe->rst_pcs))
-+		return PTR_ERR(mgbe->rst_pcs);
-+
-+	err = reset_control_assert(mgbe->rst_pcs);
-+	if (err < 0)
-+		return err;
-+
-+	usleep_range(2000, 4000);
-+
-+	err = reset_control_deassert(mgbe->rst_pcs);
-+	if (err < 0)
-+		return err;
-+
-+	plat = stmmac_probe_config_dt(pdev, res.mac);
-+	if (IS_ERR(plat))
-+		return PTR_ERR(plat);
-+
-+	plat->has_xgmac = 1;
-+	plat->tso_en = 1;
-+	plat->pmt = 1;
-+	plat->bsp_priv = mgbe;
-+
-+	if (!plat->mdio_node)
-+		plat->mdio_node = of_get_child_by_name(pdev->dev.of_node, "mdio");
-+
-+	if (!plat->mdio_bus_data) {
-+		plat->mdio_bus_data = devm_kzalloc(&pdev->dev, sizeof(*plat->mdio_bus_data),
-+						   GFP_KERNEL);
-+		if (!plat->mdio_bus_data) {
-+			err = -ENOMEM;
-+			goto remove;
-+		}
-+	}
-+
-+	plat->mdio_bus_data->needs_reset = true;
-+
-+	mgbe_uphy_lane_bringup(mgbe);
-+
-+	/* Tx FIFO Size - 128KB */
-+	plat->tx_fifo_size = 131072;
-+	/* Rx FIFO Size - 192KB */
-+	plat->rx_fifo_size = 196608;
-+
-+	/* Enable common interrupt at wrapper level */
-+	writel(MAC_SBD_INTR, mgbe->regs + MGBE_WRAP_COMMON_INTR_ENABLE);
-+
-+	/* Program SID */
-+	writel(MGBE_SID, mgbe->hv + MGBE_WRAP_AXI_ASID0_CTRL);
-+
-+	err = stmmac_dvr_probe(&pdev->dev, plat, &res);
-+	if (err < 0)
-+		goto remove;
-+
-+	return 0;
-+
-+remove:
-+	stmmac_remove_config_dt(pdev, plat);
-+	return err;
-+}
-+
-+static int tegra_mgbe_remove(struct platform_device *pdev)
-+{
-+	struct tegra_mgbe *mgbe = get_stmmac_bsp_priv(&pdev->dev);
-+
-+	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+
-+	stmmac_pltfr_remove(pdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra_mgbe_match[] = {
-+	{ .compatible = "nvidia,tegra234-mgbe", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tegra_mgbe_match);
-+
-+static struct platform_driver tegra_mgbe_driver = {
-+	.probe = tegra_mgbe_probe,
-+	.remove = tegra_mgbe_remove,
-+	.driver = {
-+		.name = "tegra-mgbe",
-+		.pm		= &stmmac_pltfr_pm_ops,
-+		.of_match_table = tegra_mgbe_match,
-+	},
-+};
-+module_platform_driver(tegra_mgbe_driver);
-+
-+MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
-+MODULE_DESCRIPTION("NVIDIA Tegra MGBE driver");
-+MODULE_LICENSE("GPL");
--- 
-2.37.3
+Traditionally we've always set the clock parent in the driver via the
+init table (at least on chips prior to Tegra186). On the other hand we
+have a few occurrences of assigned-clock-rates already for Tegra210. I
+don't feel strongly either way. A minor advantage of having the fix in
+the clock driver is that it fixes this automatically for older device
+trees. Not that it really matters since people always update kernel and
+DTB at the same time on Tegra devices.
 
+It'd be great if we could get confirmation that changing the parent
+clock fixes this on all other boards as well, then we can fix it at the
+same time for all of them.
+
+Thierry
+
+--iKShUJFSt12tYGZM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMtokcACgkQ3SOs138+
+s6GzHxAAtZgktIWYaVh0FtY0458PpKea4nibQJyxwuu3tU5ETy4/sTZKVJ1Mm3KP
+ZPGlS2Al6R+ly1JAoDhBwPZUMdD4lDf0gvINOCtX/bRMoSGAsLqGVpRs9WG+2wth
+xALirq1/qot/v7ewgQKiksyVgNaQMba2+9l8uqGyNJc4LRXeCFZqBIDR81iHrqsS
+C0IbQmimICmfoVQoVU5nOxtVk5ozdMF3pdJPQu2cHIBI3IwV6sAlChmQZgkzvlY9
+UBDN6xXVEIDBCyRKR/AXF9xlqnP2Vaotfo2jMs7YrIuCCgfhUbYtMBwP52KoyeZi
+COyja2A1mid/xaOXWRjBSsA/waiuvLdeY1vhJt0+JJH3xHoh6qBA3z5tYQ5mdf6T
+mzNOJQwlNMx8TawB93mYU6fN8du5i6zhWbnVZCLdpNW5Xp/L4XUo4dQbciT2MJTf
+kWPQnkPNkRWEUnVG6JYQuUd1q7JEBgZjBmhkcWVn52xEAJ/xS7LtWklDrQYkmV6f
+WPVC2VnWDN7GBCQonYV08tNORC6Y0VWuMBqZ4ska3OVg6YbM6DOEF0XSzyKkMyFL
+rp+w1713kFH4MMb5P5jedbdUHuAB7YshX5PeRuEED4PuahRbf0ZQAVKdXr8+VGUl
+Zxmv0Mqb6KzzHZjl94DzpnZ7X4agZdhBVj4tLABwDuitBUF6wBg=
+=SVA+
+-----END PGP SIGNATURE-----
+
+--iKShUJFSt12tYGZM--
