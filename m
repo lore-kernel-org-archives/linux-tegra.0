@@ -2,155 +2,409 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B993C6FA8E
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 11:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 147ACC6FA82
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Sep 2022 11:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231371AbiIWLph (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Sep 2022 07:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59280 "EHLO
+        id S231727AbiIWLth (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Sep 2022 07:49:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231237AbiIWLpg (ORCPT
+        with ESMTP id S231699AbiIWLtg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Sep 2022 07:45:36 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on20614.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe5a::614])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DDC5DED62;
-        Fri, 23 Sep 2022 04:45:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NuhR6fTF/7GVkLqydhQUBTrhmBskrzlv7IZzfSCp5j8cX8wmXcTfGn9/F72XBMKyvYZSebTUZU1BmIVd58I8X//Rei0ptE/n4lvLT7EuslH8xMKUmLIv24+QcgWAo9hsivxlL5idGMbESpcNMQFhKz2CeIm9EZl+4+97Ilpp2JRfP/M2MAqUWPOr9Ffv8Fdqgv5JTK3IpD0opDYzG1+3V77qYrDk8ki2dEzQKPZbERYFFSHpSmAFW8nfDyzlNcVUdPm/4HGYViB4OqtybYuix7HlkYLjb3WCZq2tHBr8ybn56bbe6Kc08WHxvNY2jCn+1M+YYXk7r27jOSxU/g07nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hoZtU3PqsuOhyogdC8b2iPRmiTid4cWDez6G3i2gSPc=;
- b=gLnmgz96yoxYuv1DQLSJRAuYWXndSGZh8OcHpsFMU3n0Gvz00DbnuMvAIDeUv96+mB3FrnYD04u5qG062ZogVnrPu6cFmC1GDD0G9zmk0fmda+odxtoL2YubA9hKijP0VrZsu2+N0ku5XX749TY+0NUAzhX9/i932rXZecEg01+ZC7RxXqmvx1vWjZ1MbQtgDvMshabGLOh/ezglIlfTyTt7j2zQBdIi11YHcYTVPssDTIYx45VEyUH+DiFcBWMnZmHzlPK4snxVFNL656QmKHelrxLIDia9tnwnOBsGlbyT+nKVjAakrAQXFecbt3k4uOmosg6UUj2QAAZ27CSkIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hoZtU3PqsuOhyogdC8b2iPRmiTid4cWDez6G3i2gSPc=;
- b=kFRlx3tBjd9r0LEmQ1507wNZTKp6/FxVz6fCjua9ncckIxHhpXragcHVO4+gm3HPDcMpOL+xGaop4xWWf8EMHtCvwRIZFD+FeFhNpPLyrtXXNP15tHekIUEvD0WIuAuorMxWo3A7niiPJktm+YXpSj7NpWwK4XIoL/8BJXYQFAWqJVp8McVAABnegc2DsL5vdC8nqRtLIefOx5lHKuBxXc/oeYgli1CqVS8Qm9LZxrK6LBipU7t+2UmX2hCMJU1VheXn2AV91HB3k0HrC1mKo25c94ggdeR/8kA0V/DyXXKPQID8WSxXMhArXA8vB4wQJFfvLK4JECL0RwaBgsKSew==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- MN0PR12MB5786.namprd12.prod.outlook.com (2603:10b6:208:375::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.16; Fri, 23 Sep
- 2022 11:45:33 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::b07f:53b1:426e:a29d]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::b07f:53b1:426e:a29d%5]) with mapi id 15.20.5654.020; Fri, 23 Sep 2022
- 11:45:32 +0000
-Message-ID: <d289e057-9709-1b4d-f64f-c3ed627cd0f7@nvidia.com>
-Date:   Fri, 23 Sep 2022 12:45:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2 3/3] dmaengine: tegra: Add support for dma-channel-mask
-Content-Language: en-US
-To:     Akhil R <akhilrajeev@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20220919112559.58195-1-akhilrajeev@nvidia.com>
- <20220919112559.58195-4-akhilrajeev@nvidia.com>
- <8d15c575-a490-e1ed-7e97-5a5cdea0925f@nvidia.com>
- <SJ1PR12MB633958099C6DDAA4A428ECBEC0519@SJ1PR12MB6339.namprd12.prod.outlook.com>
- <d2b4a1f5-200f-2560-c249-709e4e2817b1@nvidia.com>
- <SJ1PR12MB6339660F292E63B2E0CDD85FC0519@SJ1PR12MB6339.namprd12.prod.outlook.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <SJ1PR12MB6339660F292E63B2E0CDD85FC0519@SJ1PR12MB6339.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0232.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a6::21) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        Fri, 23 Sep 2022 07:49:36 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1641CDC;
+        Fri, 23 Sep 2022 04:49:29 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id sd10so149301ejc.2;
+        Fri, 23 Sep 2022 04:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=QJWBSxrEP3MPkxXD0D64Dzx/zcCpYle+kieuflhQMAU=;
+        b=QCn/a3uMWMkeo+V9vcMucCXtH+vuqgDTXxGMUUYEyBlFGs0K7f4MJ/0F+TeCDKLs8t
+         N0Sn6T5HwM0Q+M5Mzd6eHr5JmG3v6cDfh8hFeBYhL9OS2zvAOdrB4cs4z+ps3O26wR/M
+         XAOQWHkegbnCORk3TIRpJXUTUhssWJH/PlMOSgIvZHqD15eMoo4CRzourKNmYbJmazcs
+         KGxX9TXaT3kEaHN9WYfmif07FmH9OBmozHcw3SSxge+scEZjg4bCsVM51lpZxIX1Lrw4
+         eFzLZzwMeou4hL2/y9qjLcmaT7hpO9FfccNDD7CWLebgJOj7jcveRRqGakfoGpGjEFWD
+         UZvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=QJWBSxrEP3MPkxXD0D64Dzx/zcCpYle+kieuflhQMAU=;
+        b=M2HvvCH8QF+CaQvx/4DFOH4UiwT7PBMYwW3G7XakM+iOpNdTpIjnpetuYU1fFkOEO/
+         SjSD9j8WNFCjKdUBssha3zVe9SbqsL/AIIBM1Dh5mhJS1fWhFnY7SeUdiS2rWnNDs4mp
+         vyew5lxqi89P3RRPK/YAdyPgTp9QmD+s0lWyIAmdoo9DNKhb51gRxyusLtkQF0q+RSMY
+         ttIENN6GI/16xRkuL4nwjKn85NigaYI0fDu1prrE/fEiNfE6VU3N+P4oiCkmxkRTVJph
+         q6yPbtbCQJYmAP4+V4UfarfYkjmxvIRkgNSlnn4tqtZjje4unpiDsealh3F4mYVQo4bT
+         zHmA==
+X-Gm-Message-State: ACrzQf0CkD8vuSUiD/DmtkRZL2+++rSvXCxePxk2Nd/tQYwyC6WXRhOo
+        VfXrdR/Fjcrpjzx0gqdH2B4=
+X-Google-Smtp-Source: AMsMyM6FUjjiMr20JD5RgR1y1XIYB+hH/vHdQbWc7E5LpSwuRy569Ix5Cpe9jlNy4fycBiGlg/71aA==
+X-Received: by 2002:a17:906:4795:b0:781:397:63de with SMTP id cw21-20020a170906479500b00781039763demr6578559ejc.339.1663933768002;
+        Fri, 23 Sep 2022 04:49:28 -0700 (PDT)
+Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id hb19-20020a170906b89300b0077fc47605b4sm3850608ejb.217.2022.09.23.04.49.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Sep 2022 04:49:27 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Bhadram Varka <vbhadram@nvidia.com>,
+        linux-tegra@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH net-next v4 RESEND] stmmac: tegra: Add MGBE support
+Date:   Fri, 23 Sep 2022 13:49:22 +0200
+Message-Id: <20220923114922.864552-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MN0PR12MB5786:EE_
-X-MS-Office365-Filtering-Correlation-Id: 59de3676-4b34-4e87-ae92-08da9d591f0c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TVGYpYIf1yg6clyWYg0Fc5nkH1x9Z1yvW1CXiHm9h7auwPHUEQOeQCgMrsGl6MU/4R88rTJP97a1+inAQIOY/07uBvpCsHr5Wh880HcNgR4Jt0ZP/I/aRmx0TXPfjFODK4BtPapWWZ3dRr2i3cM0Xxlga7ev+t/QUKA0P13vmrmrr3b4iZMOY4Z9XO3evAgzLPPnAjTYoydYGFDp6RQ0QNs3wOV2KntEDY4iJrya8Xt2iUnAQYQrMaqyg45nEOU1sUD0ypwu0mW47ZxghMx3gDAuvzxSNG3qnAaZWv1yy3fsqKhmyqjDfLd2neIlWFndslGIBoADZNk6mv+/WjFt0mVfeNCwVlkwsRtantFR/SfxsGW05mBborAnlZpYlbjNBMTv1Du3krFJycR/y9JFUexBy+wEsPsjDMPDuuMQpkwuZ63qnXF5xucOKx/G7ff7fbdqn9jKcMbWisW2tcLyo6rtKSm1cA1NbH/c8/YXeZbypkm2wScnWs3vz6/3vNO6ExmTWHfeku77Hmtr4nNk0bHjcsk4M6DIdR0pFSBG0pzTgppVPopxpZFCzGa/z1dvgsLg8MP149OFxvO9BKUVCH0ZX/ByJq7brFZ0wbItcwj3dk5rDtkJFA7BEOYvvFA3qr54bq6OwZXWg/ReTrMVovq850s81rg5Mw08csLhW13RQJuVSFAvuJL2/yms6drXFEo9nH2zjRCz6Yqc2m/RMTuI+cKGb14ZT3rhEORwDn2O+fk1Erx/grONZxkfjqxPh6xRacedowX0ZckscQFmh6apwEpVNv52byma3QIJWM8=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(39860400002)(366004)(136003)(396003)(451199015)(6486002)(4744005)(8936002)(2906002)(31686004)(41300700001)(6666004)(2616005)(6512007)(38100700002)(66476007)(110136005)(53546011)(8676002)(66946007)(66556008)(316002)(86362001)(31696002)(6506007)(5660300002)(186003)(478600001)(36756003)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ekdkSm1hdnM5bDVKOW91dHV0RXZxcCtONTRweTdJSzZZVGhyT2wvZWVEZjQw?=
- =?utf-8?B?c0dRalU2cU5tZkFlS2VxTmZCZFlQWTlPN0I3UWkzZ2tacm5ESTRyR3NVOTFn?=
- =?utf-8?B?K0h5K2x2SldSVU5xMWl4US9WYS9Yak9xMTFQRkpGa1E5bkE1dHJxK250QW0x?=
- =?utf-8?B?cEVrc3V1REFiQlROTDQ0MFYyaHdhY2t2VkdyY2JMeWI0WUloQjN0aGM4V0pE?=
- =?utf-8?B?MEp1OHI1dm5jSnpQZ2FtUUtiVjNHc1dBTHhpR1pPWW1lSzhhcXQ2NU9KOTlm?=
- =?utf-8?B?QWdWUEVtbnIwM1hWZGMxSkh2cXkxL29NNFpjVjBkM3ZWME1iaFVDaFk1alJz?=
- =?utf-8?B?MTN1K3JlK1NWQXI5bFdQMCtHb3FpM29zbGpTSDVtRDhUemF4ckxsREpFRWxF?=
- =?utf-8?B?amRnajZDVGs4YjNLKzVGNDVNZ0NiVnlvT0Mxa0JFNERYcHNjOE1ybGl4Ulhq?=
- =?utf-8?B?aE9KVkhJTS8zMkhhODZBbnRQdFN5RjNmOTdiTVRneEs2eTBBUHUxbWJlaU14?=
- =?utf-8?B?SWx4ZExJeDgvQ2FGNFU0NVU0ZXdpN0VBUU1SWU9QSXpoVXh5YWg0dDJCbnZQ?=
- =?utf-8?B?cFZOeEU5OFVVY1NMUXNNTlpDMm9UL3B4OWRCNmFoNlhML1hFdUd6QzU3eU42?=
- =?utf-8?B?NkZSbkU3eWl2RjV5YVhOaFo2TXlYc2FOZmRlWHlMYWM0VktLVm1vMVRmMXpm?=
- =?utf-8?B?c2hMT1pZQnpQWFJrNFV5Q3I0MDhvRnVBVytxTHJLWkp4eUErM0J2NHM4STBv?=
- =?utf-8?B?aGRLRW9CUnJsQmMzU2dzSWl2VEgzMDFwZTNCSjlIbkpsN0tHbURlZllsWER2?=
- =?utf-8?B?QVN5cWErWE9saU9XTmpKdjRpd3V2cXJxVE5Tajl5K1MybmxJaFhkSis0RFlv?=
- =?utf-8?B?R2Rhd3FTNTRnOUIxUkxNMGg5S1AyVjRLN3lqbkhRVTdWWVZQeXloTTVwcTRW?=
- =?utf-8?B?MW52WWduT2V2cE5YaFhoR0gzWmJyVExBYVExY3RJak5BVUJtMlBKTUtEMElM?=
- =?utf-8?B?M3JpcmNtcGl3V0xpVXFTRTN4RGk0TTVzUHdvWm9IeUo1dVB2TVFaV2M4TVZW?=
- =?utf-8?B?U2tSZHpjUklXb3NRRGZ6WElHMVNKZmwrNW5OR0FiSWd3UERzOStTZEhwWDA1?=
- =?utf-8?B?bS80c0sxdzBITkNheGVFMjgxcmFpQm9sdDhXeHVTVTh5bFVibjRYSTBEVGxo?=
- =?utf-8?B?bndhZ3E2ZjNNWmQyMC8rNThVQ0pOeU56TU9zYVBXdnQ3QUdCLzgzdTlHaVhl?=
- =?utf-8?B?ZlEyTTVHQVF0USs3WkFDakFyR0RsZmNQUnJtZHVDUlh1a213U1ppS3JkcVZ6?=
- =?utf-8?B?N2R5WDBpbWZzdVRpYjJGUERCbU1tNDloNkxSOGhEZHRvSjNzTmk1YW4zak5T?=
- =?utf-8?B?SHIwMmhVVDkzUTl4WE5VNndMZU5pQTFnWFB4ZlFXdS91cC9Md2ZubG5zVmo0?=
- =?utf-8?B?NlMrS1VyZ3QxVzRzdGpJTjhKLzdtcWxUUncrMVpuQ2NsRUpKNWVTY01KVnhF?=
- =?utf-8?B?MzQyYkxaSU93cW9XT2hkLzFwY0NzQndzbk5UMnhpRVkwbEc2SUN6MFkvYUkr?=
- =?utf-8?B?YzFMOVJxRmhZWkora25XZWY1cU5Wa0JaNTQ5QU9BZ05SZGtOaEF6Q0dVbnRV?=
- =?utf-8?B?QzVWTVYwNDdPZUE0Yk1sUGl4UktPWHN6YXJVbFhRYWhMZVdoVG8xK1dRa2h6?=
- =?utf-8?B?Z2I0VVhEL1F1VGhyWTV0RVk2aVRtMWNVOUdWZW5iU0FoL1RxMGFYT3NaeEZM?=
- =?utf-8?B?R2lGN0R3R1FKQy85d0hPOEZ2MnpadnNjemptZkpZbHNFZGZvR0hhTkdBRGZV?=
- =?utf-8?B?dXJuc0ZmcVprQ1pSNWo1L21EZ25mZys4R2ZVS3RkVlg4a25DZUx4WUdlaWpV?=
- =?utf-8?B?aktQVU54a1VMWS82S0MzYzVDWnZHMHlXUmdReUJBN2lJWElHUXhLbHZpSDk2?=
- =?utf-8?B?SGZKVVI5QnBoZkJDYlBkNEpVNUQvWXh4U01FMklMalExUUJpd3EzQTUzbzdn?=
- =?utf-8?B?RHNEbjk5N0locGM4TDJSb0hTYkJCZzhuWGV2clR3SCtVSDNGamFpNFBPQXhh?=
- =?utf-8?B?UFBTczcrbmptMmQyQ09GbnNkWDhSSXpWNmxaYitRN2Jub0JoaFljOUUrWXVX?=
- =?utf-8?B?UHlpTG1Qd0ZLWHRtaTYyNXc0dm5QU1FtQ3dkYmYvTkpWZk55WFB6UENiUVBF?=
- =?utf-8?B?YTA5b25iYkZmalcxM1k4d2dtTWRQVkhYSGpid2syTTM5NlhwaXljZTRTOFFW?=
- =?utf-8?B?cCtCelVDWUJHN2V6OC9pTjZkTzlnPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59de3676-4b34-4e87-ae92-08da9d591f0c
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2022 11:45:32.8058
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QM/V3P6BYKiIU/UnafUhr71reqdjUZEhm09JBF01VQuPKGOG22Mp7vrNS29xsSthzMRzo8IeZ44BubNd5vY3rQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5786
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Bhadram Varka <vbhadram@nvidia.com>
 
-On 23/09/2022 12:09, Akhil R wrote:
+Add support for the Multi-Gigabit Ethernet (MGBE/XPCS) IP found on
+NVIDIA Tegra234 SoCs.
 
-...
+Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |   6 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-tegra.c | 290 ++++++++++++++++++
+ 3 files changed, 297 insertions(+)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
 
->> Ah OK. I was wondering how this worked with 'channel_reg_size' but
->> looking closer I see channel_reg_size is always SZ_64K. I wonder why we
->> even bother having this parameter and don't use SZ_64K directly?
-> There is an offset from the base address which the per channel registers start.
-> Although this offset value happens to match with the channel_reg_size, this is
-> not actually the per channel register size.
-
-Yes I see that, but I mean why do we even bother having this 
-channel_reg_size parameter? Does not look like we need this (currently). 
-All we need is ...
-
-  tdc->chan_base_offset = TEGRA_GPCDMA_CHANNEL_BASE_ADDR_OFFSET +
-                          (i * SZ_64K);
-
-Jon
-
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+index 31ff35174034..e9f61bdaf7c4 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+@@ -235,6 +235,12 @@ config DWMAC_INTEL_PLAT
+ 	  the stmmac device driver. This driver is used for the Intel Keem Bay
+ 	  SoC.
+ 
++config DWMAC_TEGRA
++	tristate "NVIDIA Tegra MGBE support"
++	depends on ARCH_TEGRA || COMPILE_TEST
++	help
++	  Support for the MGBE controller found on Tegra SoCs.
++
+ config DWMAC_VISCONTI
+ 	tristate "Toshiba Visconti DWMAC support"
+ 	default ARCH_VISCONTI
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+index d4e12e9ace4f..057e4bab5c08 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Makefile
++++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+@@ -31,6 +31,7 @@ obj-$(CONFIG_DWMAC_DWC_QOS_ETH)	+= dwmac-dwc-qos-eth.o
+ obj-$(CONFIG_DWMAC_INTEL_PLAT)	+= dwmac-intel-plat.o
+ obj-$(CONFIG_DWMAC_GENERIC)	+= dwmac-generic.o
+ obj-$(CONFIG_DWMAC_IMX8)	+= dwmac-imx.o
++obj-$(CONFIG_DWMAC_TEGRA)	+= dwmac-tegra.o
+ obj-$(CONFIG_DWMAC_VISCONTI)	+= dwmac-visconti.o
+ stmmac-platform-objs:= stmmac_platform.o
+ dwmac-altr-socfpga-objs := altr_tse_pcs.o dwmac-socfpga.o
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+new file mode 100644
+index 000000000000..bb4b540820fa
+--- /dev/null
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+@@ -0,0 +1,290 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include <linux/platform_device.h>
++#include <linux/of_device.h>
++#include <linux/module.h>
++#include <linux/stmmac.h>
++#include <linux/clk.h>
++
++#include "stmmac_platform.h"
++
++static const char *const mgbe_clks[] = {
++	"rx-pcs", "tx", "tx-pcs", "mac-divider", "mac", "mgbe", "ptp-ref", "mac"
++};
++
++struct tegra_mgbe {
++	struct device *dev;
++
++	struct clk_bulk_data *clks;
++
++	struct reset_control *rst_mac;
++	struct reset_control *rst_pcs;
++
++	void __iomem *hv;
++	void __iomem *regs;
++	void __iomem *xpcs;
++
++	struct mii_bus *mii;
++};
++
++#define XPCS_WRAP_UPHY_RX_CONTROL 0x801c
++#define XPCS_WRAP_UPHY_RX_CONTROL_RX_SW_OVRD BIT(31)
++#define XPCS_WRAP_UPHY_RX_CONTROL_RX_PCS_PHY_RDY BIT(10)
++#define XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET BIT(9)
++#define XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN BIT(8)
++#define XPCS_WRAP_UPHY_RX_CONTROL_RX_SLEEP (BIT(7) | BIT(6))
++#define XPCS_WRAP_UPHY_RX_CONTROL_AUX_RX_IDDQ BIT(5)
++#define XPCS_WRAP_UPHY_RX_CONTROL_RX_IDDQ BIT(4)
++#define XPCS_WRAP_UPHY_RX_CONTROL_RX_DATA_EN BIT(0)
++#define XPCS_WRAP_UPHY_HW_INIT_CTRL 0x8020
++#define XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN BIT(0)
++#define XPCS_WRAP_UPHY_HW_INIT_CTRL_RX_EN BIT(2)
++#define XPCS_WRAP_UPHY_STATUS 0x8044
++#define XPCS_WRAP_UPHY_STATUS_TX_P_UP BIT(0)
++#define XPCS_WRAP_IRQ_STATUS 0x8050
++#define XPCS_WRAP_IRQ_STATUS_PCS_LINK_STS BIT(6)
++
++#define XPCS_REG_ADDR_SHIFT 10
++#define XPCS_REG_ADDR_MASK 0x1fff
++#define XPCS_ADDR 0x3fc
++
++#define MGBE_WRAP_COMMON_INTR_ENABLE	0x8704
++#define MAC_SBD_INTR			BIT(2)
++#define MGBE_WRAP_AXI_ASID0_CTRL	0x8400
++#define MGBE_SID			0x6
++
++static void mgbe_uphy_lane_bringup(struct tegra_mgbe *mgbe)
++{
++	unsigned int retry = 300;
++	u32 value;
++	int err;
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_STATUS);
++	if ((value & XPCS_WRAP_UPHY_STATUS_TX_P_UP) == 0) {
++		value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL);
++		value |= XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN;
++		writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL);
++	}
++
++	err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_UPHY_HW_INIT_CTRL, value,
++				 (value & XPCS_WRAP_UPHY_HW_INIT_CTRL_TX_EN) == 0,
++				 500, 500 * 2000);
++	if (err < 0)
++		dev_err(mgbe->dev, "timeout waiting for TX lane to become enabled\n");
++
++	usleep_range(10000, 20000);
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_SW_OVRD;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_IDDQ;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_AUX_RX_IDDQ;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_SLEEP;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL, value,
++				 (value & XPCS_WRAP_UPHY_RX_CONTROL_RX_CAL_EN) == 0,
++				 1000, 1000 * 2000);
++	if (err < 0)
++		dev_err(mgbe->dev, "timeout waiting for RX calibration to become enabled\n");
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_DATA_EN;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value &= ~XPCS_WRAP_UPHY_RX_CONTROL_RX_CDR_RESET;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	value = readl(mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++	value |= XPCS_WRAP_UPHY_RX_CONTROL_RX_PCS_PHY_RDY;
++	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
++
++	while (--retry) {
++		err = readl_poll_timeout(mgbe->xpcs + XPCS_WRAP_IRQ_STATUS, value,
++					 value & XPCS_WRAP_IRQ_STATUS_PCS_LINK_STS,
++					 500, 500 * 2000);
++		if (err < 0) {
++			dev_err(mgbe->dev, "timeout waiting for link to become ready\n");
++			usleep_range(10000, 20000);
++			continue;
++		}
++		break;
++	}
++
++	/* clear status */
++	writel(value, mgbe->xpcs + XPCS_WRAP_IRQ_STATUS);
++}
++
++static int tegra_mgbe_probe(struct platform_device *pdev)
++{
++	struct plat_stmmacenet_data *plat;
++	struct stmmac_resources res;
++	struct tegra_mgbe *mgbe;
++	int irq, err, i;
++
++	mgbe = devm_kzalloc(&pdev->dev, sizeof(*mgbe), GFP_KERNEL);
++	if (!mgbe)
++		return -ENOMEM;
++
++	mgbe->dev = &pdev->dev;
++
++	memset(&res, 0, sizeof(res));
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0)
++		return irq;
++
++	mgbe->hv = devm_platform_ioremap_resource_byname(pdev, "hypervisor");
++	if (IS_ERR(mgbe->hv))
++		return PTR_ERR(mgbe->hv);
++
++	mgbe->regs = devm_platform_ioremap_resource_byname(pdev, "mac");
++	if (IS_ERR(mgbe->regs))
++		return PTR_ERR(mgbe->regs);
++
++	mgbe->xpcs = devm_platform_ioremap_resource_byname(pdev, "xpcs");
++	if (IS_ERR(mgbe->xpcs))
++		return PTR_ERR(mgbe->xpcs);
++
++	res.addr = mgbe->regs;
++	res.irq = irq;
++
++	mgbe->clks = devm_kzalloc(&pdev->dev, sizeof(*mgbe->clks), GFP_KERNEL);
++	if (!mgbe->clks)
++		return -ENOMEM;
++
++	for (i = 0; i <  ARRAY_SIZE(mgbe_clks); i++)
++		mgbe->clks[i].id = mgbe_clks[i];
++
++	err = devm_clk_bulk_get(mgbe->dev, ARRAY_SIZE(mgbe_clks), mgbe->clks);
++	if (err < 0)
++		return err;
++
++	err = clk_bulk_prepare_enable(ARRAY_SIZE(mgbe_clks), mgbe->clks);
++	if (err < 0)
++		return err;
++
++	/* Perform MAC reset */
++	mgbe->rst_mac = devm_reset_control_get(&pdev->dev, "mac");
++	if (IS_ERR(mgbe->rst_mac))
++		return PTR_ERR(mgbe->rst_mac);
++
++	err = reset_control_assert(mgbe->rst_mac);
++	if (err < 0)
++		return err;
++
++	usleep_range(2000, 4000);
++
++	err = reset_control_deassert(mgbe->rst_mac);
++	if (err < 0)
++		return err;
++
++	/* Perform PCS reset */
++	mgbe->rst_pcs = devm_reset_control_get(&pdev->dev, "pcs");
++	if (IS_ERR(mgbe->rst_pcs))
++		return PTR_ERR(mgbe->rst_pcs);
++
++	err = reset_control_assert(mgbe->rst_pcs);
++	if (err < 0)
++		return err;
++
++	usleep_range(2000, 4000);
++
++	err = reset_control_deassert(mgbe->rst_pcs);
++	if (err < 0)
++		return err;
++
++	plat = stmmac_probe_config_dt(pdev, res.mac);
++	if (IS_ERR(plat))
++		return PTR_ERR(plat);
++
++	plat->has_xgmac = 1;
++	plat->tso_en = 1;
++	plat->pmt = 1;
++	plat->bsp_priv = mgbe;
++
++	if (!plat->mdio_node)
++		plat->mdio_node = of_get_child_by_name(pdev->dev.of_node, "mdio");
++
++	if (!plat->mdio_bus_data) {
++		plat->mdio_bus_data = devm_kzalloc(&pdev->dev, sizeof(*plat->mdio_bus_data),
++						   GFP_KERNEL);
++		if (!plat->mdio_bus_data) {
++			err = -ENOMEM;
++			goto remove;
++		}
++	}
++
++	plat->mdio_bus_data->needs_reset = true;
++
++	mgbe_uphy_lane_bringup(mgbe);
++
++	/* Tx FIFO Size - 128KB */
++	plat->tx_fifo_size = 131072;
++	/* Rx FIFO Size - 192KB */
++	plat->rx_fifo_size = 196608;
++
++	/* Enable common interrupt at wrapper level */
++	writel(MAC_SBD_INTR, mgbe->regs + MGBE_WRAP_COMMON_INTR_ENABLE);
++
++	/* Program SID */
++	writel(MGBE_SID, mgbe->hv + MGBE_WRAP_AXI_ASID0_CTRL);
++
++	err = stmmac_dvr_probe(&pdev->dev, plat, &res);
++	if (err < 0)
++		goto remove;
++
++	return 0;
++
++remove:
++	stmmac_remove_config_dt(pdev, plat);
++	return err;
++}
++
++static int tegra_mgbe_remove(struct platform_device *pdev)
++{
++	struct tegra_mgbe *mgbe = get_stmmac_bsp_priv(&pdev->dev);
++
++	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
++
++	stmmac_pltfr_remove(pdev);
++
++	return 0;
++}
++
++static const struct of_device_id tegra_mgbe_match[] = {
++	{ .compatible = "nvidia,tegra234-mgbe", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, tegra_mgbe_match);
++
++static struct platform_driver tegra_mgbe_driver = {
++	.probe = tegra_mgbe_probe,
++	.remove = tegra_mgbe_remove,
++	.driver = {
++		.name = "tegra-mgbe",
++		.pm		= &stmmac_pltfr_pm_ops,
++		.of_match_table = tegra_mgbe_match,
++	},
++};
++module_platform_driver(tegra_mgbe_driver);
++
++MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
++MODULE_DESCRIPTION("NVIDIA Tegra MGBE driver");
++MODULE_LICENSE("GPL");
 -- 
-nvpublic
+2.37.3
+
