@@ -2,172 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6554EC6FA8E
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Sep 2022 18:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D1CC07E9D
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Sep 2022 19:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231423AbiIZSm4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Sep 2022 14:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47838 "EHLO
+        id S229845AbiIZT03 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Sep 2022 15:26:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231295AbiIZSlx (ORCPT
+        with ESMTP id S229597AbiIZT01 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Sep 2022 14:41:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11AC41982;
-        Mon, 26 Sep 2022 11:41:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B2D516120E;
-        Mon, 26 Sep 2022 18:41:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8346C433D7;
-        Mon, 26 Sep 2022 18:40:49 +0000 (UTC)
-Date:   Mon, 26 Sep 2022 14:41:57 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        anup@brainfault.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
-        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
-        cl@linux.com, pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, fweisbec@gmail.com, ryabinin.a.a@gmail.com,
-        glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
-        vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 33/44] ftrace: WARN on rcuidle
-Message-ID: <20220926144157.0406dfbb@gandalf.local.home>
-In-Reply-To: <20220919101522.573936213@infradead.org>
-References: <20220919095939.761690562@infradead.org>
-        <20220919101522.573936213@infradead.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Mon, 26 Sep 2022 15:26:27 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E958C5A146;
+        Mon, 26 Sep 2022 12:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1664220386; x=1695756386;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=AZVPuZo3Qc/Eaz29CT/RaRCe8emvF7DALAGUFRZb1JM=;
+  b=TcwD/ukEO5BCSK38tnrE5sWSUfY0Dm1TTjE67LXKuOOc5xmPtufYXx9Z
+   wxVjyrTAbE6H6wFb/kfkgeUN/Z/jjh5XFjuwIqRKsTRDEzyjbp9ttQ6pF
+   z8AI/W5sybEerB+/CC6kzSxPTZ3TSoJ6z6T5F6CdF8S5EvOC2+FtRrsyb
+   nhA6An0S4iRvg4RiDpi4GjZSXSFPCgIm3JTM0Xzlyz6POHIBeTNrehcfP
+   nJteSMFrSu4vIQ+Bd+Cxqz+16TbLcUBn6pDMfR2ulg3ukqw/sFWQO7sDs
+   5ApmGkMM+nIMhz1XVX9MdiLmYN4MQIOP91GBMjJ/pmyNcabvWqFWlGZTf
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10482"; a="327474590"
+X-IronPort-AV: E=Sophos;i="5.93,346,1654585200"; 
+   d="scan'208";a="327474590"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2022 12:26:26 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10482"; a="796457561"
+X-IronPort-AV: E=Sophos;i="5.93,346,1654585200"; 
+   d="scan'208";a="796457561"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.252.59.121])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2022 12:26:22 -0700
+Message-ID: <91f09a39-57fa-06a9-6e9e-b3e768d9e26a@intel.com>
+Date:   Mon, 26 Sep 2022 22:26:19 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.11.0
+Subject: Re: [PATCH v3 3/4] mmc: sdhci-tegra: Issue CMD and DAT resets
+ together
+Content-Language: en-US
+To:     Prathamesh Shete <pshete@nvidia.com>, ulf.hansson@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     anrao@nvidia.com, smangipudi@nvidia.com, kyarlagadda@nvidia.com
+References: <20220926094906.14537-1-pshete@nvidia.com>
+ <20220926094906.14537-3-pshete@nvidia.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20220926094906.14537-3-pshete@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-Nit, the subject should have "tracing:" an not "ftrace:" as the former
-encompasses the tracing infrastructure and the latter is for the function
-hook part of that.
-
-On Mon, 19 Sep 2022 12:00:12 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> CONFIG_GENERIC_ENTRY disallows any and all tracing when RCU isn't
-> enabled.
+On 26/09/22 12:49, Prathamesh Shete wrote:
+> In case of error condition to avoid system crash
+> Tegra SDMMC controller requires CMD and DAT resets
+> issued together. SDHCI controller FSM goes into
+> bad state due to rapid SD card hot-plug event.
+> Issuing reset on the CMD FSM before DATA FSM results
+> in kernel panic, hence add support to issue CMD and
+> DAT resets together.
+> This is applicable to Tegra186 and later chips.
 > 
-> XXX if s390 (the only other GENERIC_ENTRY user as of this writing)
-> isn't comfortable with this, we could switch to
-> HAVE_NOINSTR_VALIDATION which is x86_64 only atm.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 > ---
->  include/linux/tracepoint.h |   13 ++++++++++++-
->  kernel/trace/trace.c       |    3 +++
->  2 files changed, 15 insertions(+), 1 deletion(-)
+>  drivers/mmc/host/sdhci-tegra.c |  3 ++-
+>  drivers/mmc/host/sdhci.c       | 20 +++++++++++++++-----
+>  drivers/mmc/host/sdhci.h       |  2 ++
+>  3 files changed, 19 insertions(+), 6 deletions(-)
 > 
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -178,6 +178,16 @@ static inline struct tracepoint *tracepo
->  #endif /* CONFIG_HAVE_STATIC_CALL */
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 4d32b5bfc424..58449e010a9b 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -1532,7 +1532,8 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+>  		  SDHCI_QUIRK_NO_HISPD_BIT |
+>  		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+>  		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> -	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+> +	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+> +		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
+>  	.ops  = &tegra186_sdhci_ops,
+>  };
 >  
->  /*
-> + * CONFIG_GENERIC_ENTRY archs are expected to have sanitized entry and idle
-> + * code that disallow any/all tracing/instrumentation when RCU isn't watching.
-> + */
-> +#ifdef CONFIG_GENERIC_ENTRY
-> +#define RCUIDLE_COND(rcuidle)	(rcuidle)
-> +#else
-
-Should probably move the below comment to here:
-
- /* srcu can't be used from NMI */
-
-> +#define RCUIDLE_COND(rcuidle)	(rcuidle && in_nmi())
-> +#endif
-> +
-> +/*
->   * it_func[0] is never NULL because there is at least one element in the array
->   * when the array itself is non NULL.
->   */
-> @@ -189,7 +199,8 @@ static inline struct tracepoint *tracepo
->  			return;						\
->  									\
->  		/* srcu can't be used from NMI */			\
-
-And remove the above.
-
--- Steve
-
-> -		WARN_ON_ONCE(rcuidle && in_nmi());			\
-> +		if (WARN_ON_ONCE(RCUIDLE_COND(rcuidle)))		\
-> +			return;						\
->  									\
->  		/* keep srcu and sched-rcu usage consistent */		\
->  		preempt_disable_notrace();				\
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -3104,6 +3104,9 @@ void __trace_stack(struct trace_array *t
->  		return;
->  	}
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 7689ffec5ad1..2f4a0e84fee8 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3060,12 +3060,22 @@ static bool sdhci_request_done(struct sdhci_host *host)
+>  			host->ops->set_clock(host, host->clock);
 >  
-> +	if (WARN_ON_ONCE(IS_ENABLED(CONFIG_GENERIC_ENTRY)))
-> +		return;
-> +
->  	/*
->  	 * When an NMI triggers, RCU is enabled via ct_nmi_enter(),
->  	 * but if the above rcu_is_watching() failed, then the NMI
-> 
+>  		/*
+> -		 * Spec says we should do both at the same time, but Ricoh
+> -		 * controllers do not like that.
+> +		 * While the specification says we should do both at the
+> +		 * same time, Ricoh controllers (and potentially others) do not
+> +		 * like that. On the other hand, some controllers (such as those
+> +		 * found on Tegra186 and later) rely on both being reset at the
+> +		 * same time. Use a quirk for the latter category since most
+> +		 * controllers seem to work fine with DAT and CMD getting reset
+> +		 * at the same time.
+>  		 */
+> -		sdhci_do_reset(host, SDHCI_RESET_CMD);
+> -		sdhci_do_reset(host, SDHCI_RESET_DATA);
+> -
+> +		if (host->quirks2 &
+> +			SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER) {
+> +			sdhci_do_reset(host, SDHCI_RESET_CMD |
+> +					SDHCI_RESET_DATA);
+> +		} else {
+> +			sdhci_do_reset(host, SDHCI_RESET_CMD);
+> +			sdhci_do_reset(host, SDHCI_RESET_DATA);
+> +		}
 
+There is a bit a tidy up of SDHCI resets here:
+
+https://lore.kernel.org/linux-mmc/20220926192022.85660-1-adrian.hunter@intel.com/
+
+Would you mind implementing the quirk on top of that patch set.
+The quirk should go somewhere in the new sdhci_reset_for_reason()
+function, which should make it's use more consistent.
