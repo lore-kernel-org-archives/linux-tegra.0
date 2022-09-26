@@ -2,116 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 020C1C07E9D
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Sep 2022 09:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA98C32771
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Sep 2022 09:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233252AbiIZJ2p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Sep 2022 05:28:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45972 "EHLO
+        id S233679AbiIZJtk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Sep 2022 05:49:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234585AbiIZJ2V (ORCPT
+        with ESMTP id S234055AbiIZJt3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Sep 2022 05:28:21 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B170B46D9A
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Sep 2022 02:26:39 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id bu25so7969822lfb.3
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Sep 2022 02:26:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=/a2oANDpQ1dr3+9qhM2hL8b3sTifgVcp3Q4mQ+OH8Gg=;
-        b=yfI4SdDlEexAg6S0IzENzJ0SwkQLZ8A06gEgiNIrRqMkAH25wQHjRRUowRyaFB+HUc
-         ufHa1wUiQUxrLgxcFTHZ2vwNowMYY1+5ShK/XJaBwnM5cX6Wc6P6NPKubB/JeOrVFiUs
-         91n2789xBRQgJpwXt9+kgg6bYyi8yw9pQNKi1q53XLLGnU/Xf3rjYIozl1Cq66I9Hy/Y
-         1jZAav8uZK3aal9MwimPTeTM/C3Fzfyj7Q1d8dG58zMe3tnhFSTVkixdcz8ZJUsLelWA
-         aAcCQBEWKjQPlKbgcA+ncpDin8HaDh1ynGDFnnBUx27qJ12TpqPxZ774CkAD0KIEwIt1
-         Cdng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=/a2oANDpQ1dr3+9qhM2hL8b3sTifgVcp3Q4mQ+OH8Gg=;
-        b=E3xE98S5Q2zt34mgFil0EBLqqlthHGy8QqXscb6nH1qV8dWIkcQ2T27F6mo8+ghcw9
-         E2aXpP50HsR8GbLk5peOP7nUxn4l0KomoI68ta+bcNsii3J1A2PwMxkLB13BPEQCEuKT
-         uoKkggkZlL/tnbfnvcreM0t2aOkAryHvWHsg1H80srDVeKMX51mcpLmb5l9rA2SrSVNu
-         zEjPXfVxOkbevzu33kJ5J+fKh1/K1GzAQhSgYV7t6gVbRsrCDAZIBrPdIFQmrawOolmD
-         toyhOrhqDfmkxcsNSkMykL6pPGzKwmS74dVo1p6/dZZRhiuo5IYKplRg+XvwxAf5wRDu
-         5LfA==
-X-Gm-Message-State: ACrzQf3+a9xV+Kh1gyATRDWSdEatlN3sMUYkQlL/rGPLU32Jvp216Lpe
-        ZzvA4lVO7pNVsUcXqChE5nlVYwK/6+S7Wg==
-X-Google-Smtp-Source: AMsMyM7JnkBvE7lOseku7vV63MLg5uR8PhyO3nLUSHOzzI7VO1Wnhk3PD47zzWwCo9pGVqikgfmRlg==
-X-Received: by 2002:a05:6512:308d:b0:499:bd1a:d1bc with SMTP id z13-20020a056512308d00b00499bd1ad1bcmr9158392lfd.274.1664184395211;
-        Mon, 26 Sep 2022 02:26:35 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id p10-20020ac24eca000000b00498f1eddad0sm2480737lfr.122.2022.09.26.02.26.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Sep 2022 02:26:34 -0700 (PDT)
-Message-ID: <b5252d24-0c7a-5e71-ec4b-d0460181acb8@linaro.org>
-Date:   Mon, 26 Sep 2022 11:26:33 +0200
+        Mon, 26 Sep 2022 05:49:29 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2059.outbound.protection.outlook.com [40.107.92.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F28113F;
+        Mon, 26 Sep 2022 02:49:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RrHsU9LOv2rIrMXN7sWQrh23bmoI5TFGWLQlDam5xLHkxZK6jTaOuGjzFB/DBbziQR9XEOz1hgYzvOzptjaEpV/dwPwOo+BCvw47avC4KR6g2yZQxUIf53jMv/yrrCvUeRUwjxS0wwJaR50Tr+UVA5iKAfywLsMt6svxfgeRe3j97ArjjUBgAQFqHWeW4n/rzjMhCUTzji9NmvPU4mOtyaGDMHQpqXC/fxjdsom5hofQrYIfJ2JC/JoAsQvYAhEMfxKZZZI6UN5IOK2d1zRVQIydUxfyvqoB/h4rDsSUNg1GBqjhg6USA2VZXWCKt8u75QbQlfWCLuOFrdNFnPyD0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yt2SFqLcav+hZ/lBpn/7PhfyM9sb1S7Ki7Fjfdb/ozI=;
+ b=C2H1LOGwsbxWYVnSE7Cd6T+nU9zjtyB9V34EBxUlQ4IjG/9oQGLqF5coLKlE24tFBB5nJNqIurezsgMRUl3m5b+ez6lTHU3Enyy4FnXzbHzhebyxEuOFHlL34R9c0Crr9Es+UmL/BUpGhAgzu0fjfbAjOars6nUpR8fgeoEBPLXguJhI6u9GI1HBxc3bU8rL15kV9vnDrUFBT3JJqR9zbmgv1Fau2zoDwB1U6BV+FUruG8UOl6FGs3V/aoiXfGjRPbB0cTv7u7pKAKRful8s7eeVLEI2Mc9abwYui5HqfmsB+8cbztYanixaZZbJkPpewGzU1/BlVEgnW9W4hRWfig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yt2SFqLcav+hZ/lBpn/7PhfyM9sb1S7Ki7Fjfdb/ozI=;
+ b=THZH5t+ILN39/Iyt4qsj6h5Y8UuHxgN9VplvNdEgwhARf4/ybQsbBfWqylsGuQ8OtmCecBQgz2IquCbLXgj2bRzsd5UiTuE67+B+NmdO9EJRM3sdQI0PqOGVCY056iCFGeqLYNIXb/y0KS8XMnidhwxbLizMRwuGE0uC5/dej3ULRneRAO/88w73TXgT4Snt2xDU0FoE4L7JkaC3kPjk7Qm7j4vj2A5stDZKc9KijD6OJCgX1mafpp4SmQIdGB9bdm+6PAuJHCVY5I4MYa9V8MNTPYwLWfKNcJYl0HMW417jbtwgk3quR7Unt/79y/G9J+xh3xt+HOvPj9qFN3K3Mg==
+Received: from BN9PR03CA0584.namprd03.prod.outlook.com (2603:10b6:408:10d::19)
+ by DM6PR12MB4403.namprd12.prod.outlook.com (2603:10b6:5:2ab::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.26; Mon, 26 Sep
+ 2022 09:49:26 +0000
+Received: from BN8NAM11FT073.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:10d:cafe::82) by BN9PR03CA0584.outlook.office365.com
+ (2603:10b6:408:10d::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.26 via Frontend
+ Transport; Mon, 26 Sep 2022 09:49:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN8NAM11FT073.mail.protection.outlook.com (10.13.177.231) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5654.14 via Frontend Transport; Mon, 26 Sep 2022 09:49:25 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 26 Sep
+ 2022 02:49:11 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 26 Sep
+ 2022 02:49:11 -0700
+Received: from pshete-ubuntu.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Mon, 26 Sep 2022 02:49:08 -0700
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <p.zabel@pengutronix.de>, <linux-mmc@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <anrao@nvidia.com>, <smangipudi@nvidia.com>, <pshete@nvidia.com>,
+        <kyarlagadda@nvidia.com>
+Subject: [PATCH v3 1/4] mmc: sdhci-tegra: Separate Tegra194 and Tegra234 SoC data
+Date:   Mon, 26 Sep 2022 15:19:03 +0530
+Message-ID: <20220926094906.14537-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH 3/4] memory: tegra210-emc: use DEFINE_SHOW_ATTRIBUTE to
- simplify code
-Content-Language: en-US
-To:     Liu Shixin <liushixin2@huawei.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20220922143344.3252585-1-liushixin2@huawei.com>
- <20220922143344.3252585-4-liushixin2@huawei.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220922143344.3252585-4-liushixin2@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT073:EE_|DM6PR12MB4403:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a964afb-f445-40a7-14b1-08da9fa465dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: b+dfj5W3YBdHqJvPC6Pj2gf5eHr+EvUX3fUfbMQCcULXcA/nzxBqUmkvdwppGfq/GTpHI0pzMHlCfiwWkXSpfzr5D+AaR+vJi5zKwLeiYGxCQ1x5GoG7YAWJfpdwyy1AR3vcXO4F4hwn+0MD5sC+VvamiluR4Z8Mk80A3LdkixoBH04dFQBDO5lYxUgiMnKAGS9pNYrwt+HfDs7V9vXYTL8KCLW3+UPJ/0QrBr5A64qUELABENDI+zuN+YdwEv3VrMYyndbG5Ng5+ijZeJFGYiy3PGwS03op5XWqiQArVqgHgwuqApVgRIP6xqB1mh55ruHjiWX2ffGbHVZaqRwcg+WVHnl76BFCli4/giBlRkZLUuqP11Y3MbG0lZuH5vNKqeE+nNW7KCRsXkpZ3ZooIDC4FkIZVI9JniB32eedbIye89FO7YbuLaCDjO7XHxuxRNKwA3x0V7UlW+UrBcWKnqdKmV10zvg/2dWpGxEPAP0Z+7hf6LhgN3GhZdbaN1H8l3dv8o481iMWV/aPYPs9JnkOs5W+LECBWSkHjx/WwumFsFoo7yK1HhqOW8b2ZKlrA4SwOVaFdc/uFlHCY+4dw9SeVa3u71yTnnNYcIdJAgoZDzsrquIyZ5Vjfn9WJjNbAc0ySZLDXB8PJL5y0Cz8MhcMfUReXA5t3kBSt7liCQY73UEDT4Ss8zL+8HzmvVKsy8aG6gXVaXoPTRsFqmNvZJmk+fQBPR9jFhRMd/iL1EAUW5PQgzV6UCyx/fQrmIR1AjZJ+3AKWVQ3o/WTWpb1DQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(39860400002)(136003)(346002)(451199015)(40470700004)(36840700001)(46966006)(82310400005)(40460700003)(36860700001)(36756003)(356005)(7636003)(82740400003)(86362001)(2906002)(5660300002)(478600001)(4326008)(8676002)(70206006)(70586007)(54906003)(316002)(110136005)(8936002)(186003)(1076003)(336012)(83380400001)(47076005)(40480700001)(41300700001)(107886003)(6666004)(426003)(7696005)(2616005)(26005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2022 09:49:25.6690
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a964afb-f445-40a7-14b1-08da9fa465dc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT073.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4403
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 22/09/2022 16:33, Liu Shixin wrote:
-> Use DEFINE_SHOW_ATTRIBUTE helper macro to simplify the code.
-> No functional change.
-> 
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-> ---
->  drivers/memory/tegra/tegra210-emc-core.c | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
-> 
-> diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
-> index cbe1a7723514..603b306daca1 100644
-> --- a/drivers/memory/tegra/tegra210-emc-core.c
-> +++ b/drivers/memory/tegra/tegra210-emc-core.c
-> @@ -1621,20 +1621,8 @@ static int tegra210_emc_debug_available_rates_show(struct seq_file *s,
->  
->  	return 0;
->  }
-> +DEFINE_SHOW_ATTRIBUTE(tegra210_emc_debug_available_rates);
->  
-> -static int tegra210_emc_debug_available_rates_open(struct inode *inode,
-> -						   struct file *file)
-> -{
-> -	return single_open(file, tegra210_emc_debug_available_rates_show,
-> -			   inode->i_private);
-> -}
-> -
-> -static const struct file_operations tegra210_emc_debug_available_rates_fops = {
-> -	.open = tegra210_emc_debug_available_rates_open,
-> -	.read = seq_read,
-> -	.llseek = seq_lseek,
-> -	.release = single_release,
-> -};
->  
+Create new SoC data structure for Tegra234 platforms.
+Additional features, tap value configurations are added/
+updated for Tegra234 platform hence separate Tegra194 and
+Tegra234 SoC data.
 
-It looks you leave here two blank lines. If so, please fix it - only one
-blank line.
+Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
->  static int tegra210_emc_debug_min_rate_get(void *data, u64 *rate)
->  {
-
-Best regards,
-Krzysztof
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 2d2d8260c681..a6c5bbae77b4 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1556,7 +1556,21 @@ static const struct sdhci_tegra_soc_data soc_data_tegra194 = {
+ 	.max_tap_delay = 139,
+ };
+ 
++static const struct sdhci_tegra_soc_data soc_data_tegra234 = {
++	.pdata = &sdhci_tegra186_pdata,
++	.dma_mask = DMA_BIT_MASK(39),
++	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
++		    NVQUIRK_HAS_PADCALIB |
++		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
++		    NVQUIRK_ENABLE_SDR50 |
++		    NVQUIRK_ENABLE_SDR104 |
++		    NVQUIRK_HAS_TMCLK,
++	.min_tap_delay = 95,
++	.max_tap_delay = 111,
++};
++
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
++	{ .compatible = "nvidia,tegra234-sdhci", .data = &soc_data_tegra234 },
+ 	{ .compatible = "nvidia,tegra194-sdhci", .data = &soc_data_tegra194 },
+ 	{ .compatible = "nvidia,tegra186-sdhci", .data = &soc_data_tegra186 },
+ 	{ .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
+-- 
+2.17.1
 
