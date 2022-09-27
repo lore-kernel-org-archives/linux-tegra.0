@@ -2,236 +2,220 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A22BCC07E9D
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Sep 2022 12:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F822C6FA8E
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Sep 2022 12:45:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbiI0MkG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Sep 2022 08:40:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36062 "EHLO
+        id S230202AbiI0Mpz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Sep 2022 08:45:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232413AbiI0MkB (ORCPT
+        with ESMTP id S230055AbiI0Mpy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Sep 2022 08:40:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C167269F;
-        Tue, 27 Sep 2022 05:39:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2890F61932;
-        Tue, 27 Sep 2022 12:39:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15663C433C1;
-        Tue, 27 Sep 2022 12:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1664282397;
-        bh=37yDCTtTXKSMe/LNxUNskIHnOhgXH3MxP0BfzMXipSc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oDLkAAZAK9fwuZt7LKXM8ftnzMYuqEX16TQ7tEzyFmrIv30ofSaafC4Y6LcrceyD7
-         V+zHm07PGvSaenwVeBW7ozfKT0qc6eaS4RIQDezd00apiD/wzViERNkpjWxNMuSu3T
-         TKNCo/J23ajBzpoO84jGyHvI9aryn0jwbsbvfsIQ=
-Date:   Tue, 27 Sep 2022 14:39:53 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Olof Johansson <olof@lixom.net>,
-        Saravana Kannan <saravanak@google.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tobias Klauser <tklauser@distanz.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pali Rohar <pali@kernel.org>,
-        Andreas Farber <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Timur Tabi <timur@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
-        kevin hilman <khilman@kernel.org>,
-        ulf hansson <ulf.hansson@linaro.org>,
-        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
-        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
-        andrew lunn <andrew@lunn.ch>,
-        heiner kallweit <hkallweit1@gmail.com>,
-        eric dumazet <edumazet@google.com>,
-        jakub kicinski <kuba@kernel.org>,
-        paolo abeni <pabeni@redhat.com>,
-        linus walleij <linus.walleij@linaro.org>,
-        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
-        david ahern <dsahern@kernel.org>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-actions@lists.infradead.org,
-        linux-unisoc@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        sparclinux@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Fix console probe delay when stdout-path isn't set
-Message-ID: <YzLvGXjP8+W0X/1s@kroah.com>
-References: <20220701012647.2007122-1-saravanak@google.com>
- <YwS5J3effuHQJRZ5@kroah.com>
- <CAOesGMivJ5Q-jdeGKw32yhjmNiYctHjpEAnoMMRghYqWD2m2tw@mail.gmail.com>
- <YygsEtxKz8dsEstc@kroah.com>
- <CAOesGMh5GHCONTQ9M1Ro7zW-hkL_1F7Xt=xRV0vYSfPY=7LYkQ@mail.gmail.com>
- <CAL_JsqK7auA8coB3DCqSDKw1ept_yQihVs-Me3bvU923os23xg@mail.gmail.com>
- <YzLp9yXgoJmy5YU8@smile.fi.intel.com>
+        Tue, 27 Sep 2022 08:45:54 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 254B51406F7;
+        Tue, 27 Sep 2022 05:45:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1664282753; x=1695818753;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4sq1AHyWFyOqVpjRETvsq1ss7KGQ2KV4EhyDYN3JmJg=;
+  b=I7yjHeho+za68gzOwraRmsxbgUx2YpejdX8V+q8S2tYNMVCmqWhO+LMp
+   XRHbpru5G+uQV1WlnrhWjqABEqDNdh83KwfghtlBJrJCaL6rPTFG7vb54
+   TtTzsykrzPnA5FObh8SVPcryoOAtI0S8ytxVV9Y6o1+MUpSuh67k5pDve
+   oE2nsGat0d2HgDnVbqDq9XAFfKOnbsDcRpRRwvwJxdpHj+hBTOMYcn98r
+   bLN6xYAwfwszE1VdjbCiEieGXI7YkNPoslMGRAdgnAxx2Kqbw7PaO4w16
+   N343ydjGmDdwKHdfXTRieo/8feyegJ/BsrpTjpRK4JITqGw5b9U54zEAT
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10483"; a="363143665"
+X-IronPort-AV: E=Sophos;i="5.93,349,1654585200"; 
+   d="scan'208";a="363143665"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2022 05:45:52 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10483"; a="763863509"
+X-IronPort-AV: E=Sophos;i="5.93,349,1654585200"; 
+   d="scan'208";a="763863509"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.252.35.200])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2022 05:45:49 -0700
+Message-ID: <a5c231e8-f28a-e692-5961-58e6838711ed@intel.com>
+Date:   Tue, 27 Sep 2022 15:45:44 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YzLp9yXgoJmy5YU8@smile.fi.intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.11.0
+Subject: Re: [PATCH v5 2/3] mmc: sdhci-tegra: Add support to program MC stream
+ ID
+Content-Language: en-US
+To:     Prathamesh Shete <pshete@nvidia.com>, ulf.hansson@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     anrao@nvidia.com, smangipudi@nvidia.com, kyarlagadda@nvidia.com
+References: <df68846a-2a09-ef98-6823-d536d99ccb61@intel.com>
+ <20220927111314.32229-1-pshete@nvidia.com>
+ <20220927111314.32229-2-pshete@nvidia.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20220927111314.32229-2-pshete@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 03:17:59PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 26, 2022 at 01:25:05PM -0500, Rob Herring wrote:
-> > On Mon, Sep 19, 2022 at 5:56 PM Olof Johansson <olof@lixom.net> wrote:
-> > >
-> > > On Mon, Sep 19, 2022 at 1:44 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Sun, Sep 18, 2022 at 08:44:27PM -0700, Olof Johansson wrote:
-> > > > > On Tue, Aug 23, 2022 at 8:37 AM Greg Kroah-Hartman
-> > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > >
-> > > > > > On Thu, Jun 30, 2022 at 06:26:38PM -0700, Saravana Kannan wrote:
-> > > > > > > These patches are on top of driver-core-next.
-> > > > > > >
-> > > > > > > Even if stdout-path isn't set in DT, this patch should take console
-> > > > > > > probe times back to how they were before the deferred_probe_timeout
-> > > > > > > clean up series[1].
-> > > > > >
-> > > > > > Now dropped from my queue due to lack of a response to other reviewer's
-> > > > > > questions.
-> > > > >
-> > > > > What happened to this patch? I have a 10 second timeout on console
-> > > > > probe on my SiFive Unmatched, and I don't see this flag being set for
-> > > > > the serial driver. In fact, I don't see it anywhere in-tree. I can't
-> > > > > seem to locate another patchset from Saravana around this though, so
-> > > > > I'm not sure where to look for a missing piece for the sifive serial
-> > > > > driver.
-> > > > >
-> > > > > This is the second boot time regression (this one not fatal, unlike
-> > > > > the Layerscape PCIe one) from the fw_devlink patchset.
-> > > > >
-> > > > > Greg, can you revert the whole set for 6.0, please? It's obviously
-> > > > > nowhere near tested enough to go in and I expect we'll see a bunch of
-> > > > > -stable fixups due to this if we let it remain in.
-> > > >
-> > > > What exactly is "the whole set"?  I have the default option fix queued
-> > > > up and will send that to Linus later this week (am traveling back from
-> > > > Plumbers still), but have not heard any problems about any other issues
-> > > > at all other than your report.
-> > >
-> > > I stand corrected in this case, the issue on the Hifive Unmatched was
-> > > a regression due to a PWM clock change -- I just sent a patch for that
-> > > (serial driver fix).
-> > >
-> > > So it seems like as long as the fw_devlink.strict=1 patch is reverted,
-> > > things are back to a working state here.
-> > >
-> > > I still struggle with how the fw_devlink patchset is expected to work
-> > > though, since DT is expected to describe the hardware configuration,
-> > > and it has no knowledge of whether there are drivers that will be
-> > > bound to any referenced supplier devnodes. It's not going to work well
-> > > to assume that they will always be bound, and to add 10 second
-> > > timeouts for those cases isn't a good solution. Seems like the number
-> > > of special cases will keep adding up.
-> > 
-> > Since the introduction of deferred probe, the kernel has always
-> > assumed if there is a device described, then there is or will be a
-> > driver for it. The result is you can't use new DTs (if they add
-> > providers) with older kernels.
-> > 
-> > We've ended up with a timeout because no one has come up with a better
-> > way to handle it. What the kernel needs is userspace saying "I'm done
-> > loading modules", but it's debatable whether that's a good solution
-> > too.
+On 27/09/22 14:13, Prathamesh Shete wrote:
+> SMMU clients are supposed to program stream ID from
+> their respective address spaces instead of MC override.
+> Define NVQUIRK_PROGRAM_STREAMID and use it to program
+> SMMU stream ID from the SDMMC client address space.
 > 
-> In my opinion the deferred probe is a big hack and that is the root
-> cause of the issues we have here and there. It has to be redesigned
-> to be mathematically robust. It was an attempt by Andrzej Hajda to
-> solve this [1].
+> Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 47 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
 > 
-> [1]: https://events19.linuxfoundation.org/wp-content/uploads/2017/12/Deferred-Problem-Issues-With-Complex-Dependencies-Between-Devices-in-Linux-Kernel-Andrzej-Hajda-Samsung.pdf
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index a6c5bbae77b4..46f37cc26dbb 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -25,6 +25,9 @@
+>  #include <linux/mmc/slot-gpio.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/ktime.h>
+> +#ifdef CONFIG_IOMMU_API
+> +#include <linux/iommu.h>
+> +#endif
+>  
+>  #include <soc/tegra/common.h>
+>  
+> @@ -94,6 +97,8 @@
+>  #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
+>  #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
+>  
+> +#define SDHCI_TEGRA_CIF2AXI_CTRL_0			0x1fc
+> +
+>  #define NVQUIRK_FORCE_SDHCI_SPEC_200			BIT(0)
+>  #define NVQUIRK_ENABLE_BLOCK_GAP_DET			BIT(1)
+>  #define NVQUIRK_ENABLE_SDHCI_SPEC_300			BIT(2)
+> @@ -121,6 +126,7 @@
+>  #define NVQUIRK_HAS_TMCLK				BIT(10)
+>  
+>  #define NVQUIRK_HAS_ANDROID_GPT_SECTOR			BIT(11)
+> +#define NVQUIRK_PROGRAM_STREAMID			BIT(12)
+>  
+>  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+>  #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
+> @@ -128,6 +134,8 @@
+>  #define SDHCI_TEGRA_CQE_TRNS_MODE	(SDHCI_TRNS_MULTI | \
+>  					 SDHCI_TRNS_BLK_CNT_EN | \
+>  					 SDHCI_TRNS_DMA)
+> +#define SDHCI_TEGRA_STREAMID_MASK			0xff
+> +#define SDHCI_TEGRA_WRITE_STREAMID_SHIFT		0x8
+>  
+>  struct sdhci_tegra_soc_data {
+>  	const struct sdhci_pltfm_data *pdata;
+> @@ -177,6 +185,9 @@ struct sdhci_tegra {
+>  	bool enable_hwcq;
+>  	unsigned long curr_clk_rate;
+>  	u8 tuned_tap_delay;
+> +#ifdef CONFIG_IOMMU_API
+> +	u32 streamid;
+> +#endif
+>  };
+>  
+>  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+> @@ -1564,6 +1575,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra234 = {
+>  		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
+>  		    NVQUIRK_ENABLE_SDR50 |
+>  		    NVQUIRK_ENABLE_SDR104 |
+> +		    NVQUIRK_PROGRAM_STREAMID |
+>  		    NVQUIRK_HAS_TMCLK,
+>  	.min_tap_delay = 95,
+>  	.max_tap_delay = 111,
+> @@ -1636,6 +1648,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>  	struct sdhci_host *host;
+>  	struct sdhci_pltfm_host *pltfm_host;
+>  	struct sdhci_tegra *tegra_host;
+> +#ifdef CONFIG_IOMMU_API
+> +	struct iommu_fwspec *fwspec;
+> +#endif
 
-deferred probe has _ALWAYS_ been known to be a hack, way back when we
-accepted it, but it was the best hack we had to solve a real problem
-that we had, so it was accepted.
+Move this below
 
-It's been polished over the years, but yes, it does break down at times,
-due to the crazy complexity of hardware systems that we have no control
-over.
+>  	struct clk *clk;
+>  	int rc;
+>  
+> @@ -1775,6 +1790,25 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>  	if (rc)
+>  		goto err_add_host;
+>  
+> +	/* Program MC streamID for DMA transfers */
+> +#ifdef CONFIG_IOMMU_API
+> +	if (soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
 
-If you have concrete solutions for how to solve the issue, wonderful,
-please submit patches :)
+Can put it here
 
-thanks,
+		struct iommu_fwspec *fwspec;
 
-greg k-h
+
+> +		fwspec = dev_iommu_fwspec_get(&pdev->dev);
+> +		if (fwspec == NULL) {
+> +			dev_warn(mmc_dev(host->mmc),
+> +				"iommu fwspec is NULL, continue without stream ID\n");
+> +		} else {
+> +			tegra_host->streamid = fwspec->ids[0] & 0xffff;
+> +			tegra_sdhci_writel(host, (tegra_host->streamid &
+> +						SDHCI_TEGRA_STREAMID_MASK) |
+> +						((tegra_host->streamid <<
+> +						SDHCI_TEGRA_WRITE_STREAMID_SHIFT)
+> +						& SDHCI_TEGRA_STREAMID_MASK),
+> +						SDHCI_TEGRA_CIF2AXI_CTRL_0);
+
+This is hard to read.  Maybe use GENMASK and FIELD_PREP, or if the bytes
+need swapping, one of the byte swapping macros.
+
+Also, isn't this always zero ?
+
+	((tegra_host->streamid << SDHCI_TEGRA_WRITE_STREAMID_SHIFT) & SDHCI_TEGRA_STREAMID_MASK),
+
+
+> +		}
+> +	}
+> +#endif
+> +
+>  	return 0;
+>  
+>  err_add_host:
+> @@ -1861,6 +1895,10 @@ static int sdhci_tegra_suspend(struct device *dev)
+>  static int sdhci_tegra_resume(struct device *dev)
+>  {
+>  	struct sdhci_host *host = dev_get_drvdata(dev);
+> +#ifdef CONFIG_IOMMU_API
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> +#endif
+>  	int ret;
+>  
+>  	ret = mmc_gpio_set_cd_wake(host->mmc, false);
+> @@ -1871,6 +1909,15 @@ static int sdhci_tegra_resume(struct device *dev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	/* Re-program MC streamID for DMA transfers */
+> +#ifdef CONFIG_IOMMU_API
+> +	if (tegra_host->soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
+> +		tegra_sdhci_writel(host, tegra_host->streamid |
+> +					(tegra_host->streamid << 8),
+
+This looks like it ought to be the same calculation as above ?
+
+> +					SDHCI_TEGRA_CIF2AXI_CTRL_0);
+> +	}
+> +#endif
+> +
+>  	ret = sdhci_resume_host(host);
+>  	if (ret)
+>  		goto disable_clk;
+
