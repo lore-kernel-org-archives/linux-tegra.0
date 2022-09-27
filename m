@@ -2,518 +2,240 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30785C6FA82
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Sep 2022 11:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71388C6FA94
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Sep 2022 12:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231574AbiI0LnD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Sep 2022 07:43:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51216 "EHLO
+        id S232371AbiI0MUS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Sep 2022 08:20:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229736AbiI0LnC (ORCPT
+        with ESMTP id S232310AbiI0MTv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Sep 2022 07:43:02 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E1FE5127550;
-        Tue, 27 Sep 2022 04:43:00 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 508821042;
-        Tue, 27 Sep 2022 04:43:07 -0700 (PDT)
-Received: from [10.57.32.158] (unknown [10.57.32.158])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2DCF3F73B;
-        Tue, 27 Sep 2022 04:42:57 -0700 (PDT)
-Message-ID: <7082762d-2d4d-aa7b-656c-75593b0697f0@arm.com>
-Date:   Tue, 27 Sep 2022 12:42:56 +0100
+        Tue, 27 Sep 2022 08:19:51 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB0812FF07;
+        Tue, 27 Sep 2022 05:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1664281126; x=1695817126;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OFIxxBkiaCDaU7hdmWCgva7sjv3x1WGTNlqGM1oQtNQ=;
+  b=QjkNRJ9JABpK5KuGM6vW13ifDgF1zvv2NkXQaswwpopi4XOrqXvNEW0a
+   zpn3E9p4vm/ehX8quUW0x0BcZv29fvHaAW/CgJ7m0T7qXQe0amKRrEDAS
+   EzB9PNHcvJpz0v5O31ewC6zMNtvXzKqa8GeDCBYoV0lCNy6b/2IZB1DBT
+   Id0ypUSxa2I1GHDoKY+PdTwG9seHh2aJKRcz1VEVKBPDv0rkhfFI2ij6M
+   HzvJcvXyiqAF0KmEO1wuXT7fF/4llRwNNO0kHo3UcyfJOgYiuwzhcscEj
+   KvJSp43ftV8CWZlWWf9OWIxVC5CY0jzHRUjgnkJrYa+TZkir+NeUE9ezV
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10482"; a="302782109"
+X-IronPort-AV: E=Sophos;i="5.93,349,1654585200"; 
+   d="scan'208";a="302782109"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2022 05:18:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10482"; a="599160114"
+X-IronPort-AV: E=Sophos;i="5.93,349,1654585200"; 
+   d="scan'208";a="599160114"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006.jf.intel.com with ESMTP; 27 Sep 2022 05:18:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1od9XD-008RHv-1p;
+        Tue, 27 Sep 2022 15:17:59 +0300
+Date:   Tue, 27 Sep 2022 15:17:59 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Rob Herring <robh@kernel.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Fix console probe delay when stdout-path isn't set
+Message-ID: <YzLp9yXgoJmy5YU8@smile.fi.intel.com>
+References: <20220701012647.2007122-1-saravanak@google.com>
+ <YwS5J3effuHQJRZ5@kroah.com>
+ <CAOesGMivJ5Q-jdeGKw32yhjmNiYctHjpEAnoMMRghYqWD2m2tw@mail.gmail.com>
+ <YygsEtxKz8dsEstc@kroah.com>
+ <CAOesGMh5GHCONTQ9M1Ro7zW-hkL_1F7Xt=xRV0vYSfPY=7LYkQ@mail.gmail.com>
+ <CAL_JsqK7auA8coB3DCqSDKw1ept_yQihVs-Me3bvU923os23xg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.13.1
-Subject: Re: [PATCH v4 2/2] perf: arm_cspmu: Add support for NVIDIA SCF and
- MCF attribute
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, robin.murphy@arm.com,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sudeep.holla@arm.com,
-        thanu.rangarajan@arm.com, Michael.Williams@arm.com,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-        mathieu.poirier@linaro.org, mike.leach@linaro.org,
-        leo.yan@linaro.org
-References: <20220814182351.8861-1-bwicaksono@nvidia.com>
- <20220814182351.8861-3-bwicaksono@nvidia.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20220814182351.8861-3-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqK7auA8coB3DCqSDKw1ept_yQihVs-Me3bvU923os23xg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14/08/2022 19:23, Besar Wicaksono wrote:
-> Add support for NVIDIA System Cache Fabric (SCF) and Memory Control
-> Fabric (MCF) PMU attributes for CoreSight PMU implementation in
-> NVIDIA devices.
+On Mon, Sep 26, 2022 at 01:25:05PM -0500, Rob Herring wrote:
+> On Mon, Sep 19, 2022 at 5:56 PM Olof Johansson <olof@lixom.net> wrote:
+> >
+> > On Mon, Sep 19, 2022 at 1:44 AM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Sun, Sep 18, 2022 at 08:44:27PM -0700, Olof Johansson wrote:
+> > > > On Tue, Aug 23, 2022 at 8:37 AM Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > On Thu, Jun 30, 2022 at 06:26:38PM -0700, Saravana Kannan wrote:
+> > > > > > These patches are on top of driver-core-next.
+> > > > > >
+> > > > > > Even if stdout-path isn't set in DT, this patch should take console
+> > > > > > probe times back to how they were before the deferred_probe_timeout
+> > > > > > clean up series[1].
+> > > > >
+> > > > > Now dropped from my queue due to lack of a response to other reviewer's
+> > > > > questions.
+> > > >
+> > > > What happened to this patch? I have a 10 second timeout on console
+> > > > probe on my SiFive Unmatched, and I don't see this flag being set for
+> > > > the serial driver. In fact, I don't see it anywhere in-tree. I can't
+> > > > seem to locate another patchset from Saravana around this though, so
+> > > > I'm not sure where to look for a missing piece for the sifive serial
+> > > > driver.
+> > > >
+> > > > This is the second boot time regression (this one not fatal, unlike
+> > > > the Layerscape PCIe one) from the fw_devlink patchset.
+> > > >
+> > > > Greg, can you revert the whole set for 6.0, please? It's obviously
+> > > > nowhere near tested enough to go in and I expect we'll see a bunch of
+> > > > -stable fixups due to this if we let it remain in.
+> > >
+> > > What exactly is "the whole set"?  I have the default option fix queued
+> > > up and will send that to Linus later this week (am traveling back from
+> > > Plumbers still), but have not heard any problems about any other issues
+> > > at all other than your report.
+> >
+> > I stand corrected in this case, the issue on the Hifive Unmatched was
+> > a regression due to a PWM clock change -- I just sent a patch for that
+> > (serial driver fix).
+> >
+> > So it seems like as long as the fw_devlink.strict=1 patch is reverted,
+> > things are back to a working state here.
+> >
+> > I still struggle with how the fw_devlink patchset is expected to work
+> > though, since DT is expected to describe the hardware configuration,
+> > and it has no knowledge of whether there are drivers that will be
+> > bound to any referenced supplier devnodes. It's not going to work well
+> > to assume that they will always be bound, and to add 10 second
+> > timeouts for those cases isn't a good solution. Seems like the number
+> > of special cases will keep adding up.
 > 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> ---
->   Documentation/admin-guide/perf/index.rst      |   1 +
->   Documentation/admin-guide/perf/nvidia-pmu.rst | 120 ++++++
->   drivers/perf/arm_cspmu/Makefile               |   3 +-
->   drivers/perf/arm_cspmu/arm_cspmu.c            |   7 +
->   drivers/perf/arm_cspmu/nvidia_cspmu.c         | 367 ++++++++++++++++++
->   drivers/perf/arm_cspmu/nvidia_cspmu.h         |  17 +
->   6 files changed, 514 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/admin-guide/perf/nvidia-pmu.rst
->   create mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.c
->   create mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
+> Since the introduction of deferred probe, the kernel has always
+> assumed if there is a device described, then there is or will be a
+> driver for it. The result is you can't use new DTs (if they add
+> providers) with older kernels.
 > 
-> diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
-> index 69b23f087c05..cf05fed1f67f 100644
-> --- a/Documentation/admin-guide/perf/index.rst
-> +++ b/Documentation/admin-guide/perf/index.rst
-> @@ -17,3 +17,4 @@ Performance monitor support
->      xgene-pmu
->      arm_dsu_pmu
->      thunderx2-pmu
-> +   nvidia-pmu
-> diff --git a/Documentation/admin-guide/perf/nvidia-pmu.rst b/Documentation/admin-guide/perf/nvidia-pmu.rst
-> new file mode 100644
-> index 000000000000..c41b93965824
-> --- /dev/null
-> +++ b/Documentation/admin-guide/perf/nvidia-pmu.rst
-> @@ -0,0 +1,120 @@
-> +=========================================================
-> +NVIDIA Tegra SoC Uncore Performance Monitoring Unit (PMU)
-> +=========================================================
-> +
-> +The NVIDIA Tegra SoC includes various system PMUs to measure key performance
-> +metrics like memory bandwidth, latency, and utilization:
-> +
-> +* Scalable Coherency Fabric (SCF)
-> +* Memory Controller Fabric (MCF) GPU physical interface
-> +* MCF GPU virtual interface
-> +* MCF NVLINK interface
-> +* MCF PCIE interface
-> +
-> +PMU Driver
-> +----------
-> +
-> +The PMUs in this document are based on ARM CoreSight PMU Architecture as
-> +described in document: ARM IHI 0091. Since this is a standard architecture, the
-> +PMUs are managed by a common driver "arm-cs-arch-pmu". This driver describes
-> +the available events and configuration of each PMU in sysfs. Please see the
-> +sections below to get the sysfs path of each PMU. Like other uncore PMU driver,
-> +the driver provides "cpumask" sysfs attribute to show the CPU id used to handle
-> +the PMU event. There is also "associated_cpus" sysfs attribute, which contains a
-> +list of CPUs associated with the PMU instance.
-> +
-> +SCF PMU
-> +-------
-> +
-> +The SCF PMU monitors system level cache events, CPU traffic, and
-> +strongly-ordered PCIE traffic to local/remote memory.
-> +
-> +The events and configuration options of this PMU device are described in sysfs,
-> +see /sys/bus/event_sources/devices/nvidia_scf_pmu_<socket-id>.
-> +
-> +Example usage::
-> +
-> +  perf stat -a -e nvidia_scf_pmu_0/config=0x0/
-> +
-> +This will count the events in socket 0.
-> +
-> +MCF GPU Physical PMU
-> +--------------------
-> +
-> +The MCF GPU physical PMU monitors ATS translated traffic from GPU to
-> +local/remote memory via Nvlink C2C.
-> +
-> +The events and configuration options of this PMU device are described in sysfs,
-> +see /sys/bus/event_sources/devices/nvidia_mcf_gpu_pmu_<socket-id>.
-> +
-> +Multiple GPUs can be connected to the SoC. The user can use "gpu" bitmap
-> +parameter to select the GPU(s) to monitor, i.e. "gpu=0xF" corresponds to GPU 0
-> +to 3. /sys/bus/event_sources/devices/nvidia_mcf_gpu_pmu_<socket-id>/format/gpu
-> +shows the valid bits that can be set in the "gpu" parameter.
-> +
-> +Example usage::
-> +
-> +  perf stat -a -e nvidia_mcf_gpu_pmu_0/config=0x0,gpu=0x3/
-> +
-> +This will count the events on GPU 0 and 1 that are connected to SoC in socket 0.
-> +
-> +MCF GPU Virtual PMU
-> +-------------------
-> +
-> +The MCF GPU virtual PMU monitors SMMU inline translated traffic (as opposed to
-> +ATS) from GPU to local/remote memory via Nvlink C2C.
-> +
-> +The events and configuration options of this PMU device are described in sysfs,
-> +see /sys/bus/event_sources/devices/nvidia_mcf_gpuvir_pmu_<socket-id>.
-> +
-> +Multiple GPUs can be connected to the SoC. The user can use "gpu" bitmap
-> +parameter to select the GPU(s) to monitor, i.e. "gpu=0xF" corresponds to GPU 0
-> +to 3. /sys/bus/event_sources/devices/nvidia_mcf_gpuvir_pmu_<socket-id>/format/gpu
-> +shows the valid bits that can be set in the "gpu" parameter.
-> +
-> +Example usage::
-> +
-> +  perf stat -a -e nvidia_mcf_gpuvir_pmu_0/config=0x0,gpu=0x3/
-> +
-> +This will count the events on GPU 0 and 1 that are connected to SoC in socket 0.
-> +
-> +MCF NVLINK PMU
-> +--------------
-> +
-> +The MCF NVLINK PMU monitors I/O coherent traffic from external socket to local
-> +memory.
-> +
-> +The events and configuration options of this PMU device are described in sysfs,
-> +see /sys/bus/event_sources/devices/nvidia_mcf_nvlink_pmu_<socket-id>.
-> +
-> +Each SoC socket can be connected to one or more sockets via NVLINK. The user can
-> +use "rem_socket" bitmap parameter to select the remote socket(s) to monitor,
-> +i.e. "rem_socket=0xE" corresponds to socket 1 to 3.
-> +/sys/bus/event_sources/devices/nvidia_mcf_nvlink_pmu_<socket-id>/format/rem_socket
-> +shows the valid bits that can be set in the "rem_socket" parameter.
-> +
-> +Example usage::
-> +
-> +  perf stat -a -e nvidia_mcf_nvlink_pmu_0/config=0x0,rem_socket=0x6/
-> +
-> +This will count the events from remote socket 1 and 2 to socket 0.
-> +
-> +MCF PCIE PMU
-> +------------
-> +
-> +The MCF PCIE PMU monitors traffic from PCIE root ports to local/remote memory.
-> +
-> +The events and configuration options of this PMU device are described in sysfs,
-> +see /sys/bus/event_sources/devices/nvidia_mcf_pcie_pmu_<socket-id>.
-> +
-> +Each SoC socket can support multiple root ports. The user can use
-> +"root_port" bitmap parameter to select the port(s) to monitor, i.e.
-> +"root_port=0xF" corresponds to root port 0 to 3.
-> +/sys/bus/event_sources/devices/nvidia_mcf_pcie_pmu_<socket-id>/format/root_port
-> +shows the valid bits that can be set in the "root_port" parameter.
-> +
-> +Example usage::
-> +
-> +  perf stat -a -e nvidia_mcf_pcie_pmu_0/config=0x0,root_port=0x3/
-> +
-> +This will count the events from root port 0 and 1 of socket 0.
-> diff --git a/drivers/perf/arm_cspmu/Makefile b/drivers/perf/arm_cspmu/Makefile
-> index cdc3455f74d8..1b586064bd77 100644
-> --- a/drivers/perf/arm_cspmu/Makefile
-> +++ b/drivers/perf/arm_cspmu/Makefile
-> @@ -3,4 +3,5 @@
->   # SPDX-License-Identifier: GPL-2.0
->   
->   obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += \
-> -	arm_cspmu.o
-> +	arm_cspmu.o \
-> +	nvidia_cspmu.o
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-> index 410876f86eb0..7a0beb515e53 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-> @@ -31,6 +31,7 @@
->   #include <acpi/processor.h>
->   
->   #include "arm_cspmu.h"
-> +#include "nvidia_cspmu.h"
->   
->   #define PMUNAME "arm_cspmu"
->   #define DRVNAME "arm-cs-arch-pmu"
-> @@ -118,6 +119,9 @@ static_assert(
->   			ops->callback = arm_cspmu_ ## callback;	\
->   	} while (0)
->   
-> +/* JEDEC-assigned JEP106 identification code */
-> +#define ARM_CSPMU_IMPL_ID_NVIDIA		0x36B
-> +
->   static unsigned long arm_cspmu_cpuhp_state;
->   
->   /*
-> @@ -369,6 +373,9 @@ struct impl_match {
->   };
->   
->   static const struct impl_match impl_match[] = {
-> +	{ .pmiidr = ARM_CSPMU_IMPL_ID_NVIDIA,
-> +	  .mask = ARM_CSPMU_PMIIDR_IMPLEMENTER,
-> +	  .impl_init_ops = nv_cspmu_init_ops },
+> We've ended up with a timeout because no one has come up with a better
+> way to handle it. What the kernel needs is userspace saying "I'm done
+> loading modules", but it's debatable whether that's a good solution
+> too.
 
-Super minor nit: Coding style. Could we use :
+In my opinion the deferred probe is a big hack and that is the root
+cause of the issues we have here and there. It has to be redesigned
+to be mathematically robust. It was an attempt by Andrzej Hajda to
+solve this [1].
 
-	{
-		.field = value,
-		...
-	},
+[1]: https://events19.linuxfoundation.org/wp-content/uploads/2017/12/Deferred-Problem-Issues-With-Complex-Dependencies-Between-Devices-in-Linux-Kernel-Andrzej-Hajda-Samsung.pdf
 
->   	{}
->   };
->   
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> new file mode 100644
-> index 000000000000..261f20680bc1
-> --- /dev/null
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -0,0 +1,367 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> + *
-> + */
-> +
-> +/* Support for NVIDIA specific attributes. */
-> +
-> +#include "nvidia_cspmu.h"
-> +
-> +#define NV_MCF_PCIE_PORT_COUNT       10ULL
-> +#define NV_MCF_PCIE_FILTER_ID_MASK   GENMASK_ULL(NV_MCF_PCIE_PORT_COUNT - 1, 0)
-> +
-> +#define NV_MCF_GPU_PORT_COUNT        2ULL
-> +#define NV_MCF_GPU_FILTER_ID_MASK    GENMASK_ULL(NV_MCF_GPU_PORT_COUNT - 1, 0)
-> +
-> +#define NV_MCF_NVL_PORT_COUNT        4ULL
-> +#define NV_MCF_NVL_FILTER_ID_MASK    GENMASK_ULL(NV_MCF_NVL_PORT_COUNT - 1, 0)
-> +
-> +#define NV_SCF_MCF_PRODID_MASK       GENMASK(31, 0)
-> +
-> +#define NV_FORMAT_NAME_GENERIC	0
-> +
-> +#define to_nv_cspmu_ctx(cspmu)	((struct nv_cspmu_ctx *)(cspmu->impl.ctx))
-> +
-> +#define NV_CSPMU_EVENT_ATTR_4_INNER(_pref, _num, _suff, _config)	\
-> +	ARM_CSPMU_EVENT_ATTR(_pref##_num##_suff, _config)
-> +
-> +#define NV_CSPMU_EVENT_ATTR_4(_pref, _suff, _config)			\
-> +	NV_CSPMU_EVENT_ATTR_4_INNER(_pref, _0_, _suff, _config),	\
-> +	NV_CSPMU_EVENT_ATTR_4_INNER(_pref, _1_, _suff, _config + 1),	\
-> +	NV_CSPMU_EVENT_ATTR_4_INNER(_pref, _2_, _suff, _config + 2),	\
-> +	NV_CSPMU_EVENT_ATTR_4_INNER(_pref, _3_, _suff, _config + 3)
-> +
-> +struct nv_cspmu_ctx {
-> +	const char *name;
-> +	u32 filter_mask;
-> +	struct attribute **event_attr;
-> +	struct attribute **format_attr;
-> +};
-> +
-> +static struct attribute *scf_pmu_event_attrs[] = {
-> +	ARM_CSPMU_EVENT_ATTR(bus_cycles,			0x1d),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(scf_cache_allocate,		0xF0),
-> +	ARM_CSPMU_EVENT_ATTR(scf_cache_refill,			0xF1),
-> +	ARM_CSPMU_EVENT_ATTR(scf_cache,				0xF2),
-> +	ARM_CSPMU_EVENT_ATTR(scf_cache_wb,			0xF3),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(socket, rd_data,			0x101),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, dl_rsp,			0x105),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, wb_data,			0x109),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, ev_rsp,			0x10d),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, prb_data,			0x111),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(socket, rd_outstanding,		0x115),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, dl_outstanding,		0x119),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, wb_outstanding,		0x11d),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, wr_outstanding,		0x121),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, ev_outstanding,		0x125),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, prb_outstanding,		0x129),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(socket, rd_access,		0x12d),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, dl_access,		0x131),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, wb_access,		0x135),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, wr_access,		0x139),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, ev_access,		0x13d),
-> +	NV_CSPMU_EVENT_ATTR_4(socket, prb_access,		0x141),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_rd_data,		0x145),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_rd_access,		0x149),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_wb_access,		0x14d),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_rd_outstanding,		0x151),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_wr_outstanding,		0x155),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_rd_data,			0x159),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_rd_access,		0x15d),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_wb_access,		0x161),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_rd_outstanding,		0x165),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_wr_outstanding,		0x169),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(gmem_rd_data,			0x16d),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_rd_access,			0x16e),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_rd_outstanding,		0x16f),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_dl_rsp,			0x170),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_dl_access,			0x171),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_dl_outstanding,		0x172),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_wb_data,			0x173),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_wb_access,			0x174),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_wb_outstanding,		0x175),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_ev_rsp,			0x176),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_ev_access,			0x177),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_ev_outstanding,		0x178),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_wr_data,			0x179),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_wr_outstanding,		0x17a),
-> +	ARM_CSPMU_EVENT_ATTR(gmem_wr_access,			0x17b),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(socket, wr_data,			0x17c),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_wr_data,		0x180),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_wb_data,		0x184),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_wr_access,		0x188),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, gmem_wb_outstanding,		0x18c),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_wr_data,			0x190),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_wb_data,			0x194),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_wr_access,		0x198),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, rem_wb_outstanding,		0x19c),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(gmem_wr_total_bytes,		0x1a0),
-> +	ARM_CSPMU_EVENT_ATTR(remote_socket_wr_total_bytes,	0x1a1),
-> +	ARM_CSPMU_EVENT_ATTR(remote_socket_rd_data,		0x1a2),
-> +	ARM_CSPMU_EVENT_ATTR(remote_socket_rd_outstanding,	0x1a3),
-> +	ARM_CSPMU_EVENT_ATTR(remote_socket_rd_access,		0x1a4),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(cmem_rd_data,			0x1a5),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_rd_access,			0x1a6),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_rd_outstanding,		0x1a7),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_dl_rsp,			0x1a8),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_dl_access,			0x1a9),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_dl_outstanding,		0x1aa),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_wb_data,			0x1ab),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_wb_access,			0x1ac),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_wb_outstanding,		0x1ad),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_ev_rsp,			0x1ae),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_ev_access,			0x1af),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_ev_outstanding,		0x1b0),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_wr_data,			0x1b1),
-> +	ARM_CSPMU_EVENT_ATTR(cmem_wr_outstanding,		0x1b2),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_rd_data,		0x1b3),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_rd_access,		0x1b7),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_wb_access,		0x1bb),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_rd_outstanding,		0x1bf),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_wr_outstanding,		0x1c3),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(ocu_prb_access,			0x1c7),
-> +	ARM_CSPMU_EVENT_ATTR(ocu_prb_data,			0x1c8),
-> +	ARM_CSPMU_EVENT_ATTR(ocu_prb_outstanding,		0x1c9),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(cmem_wr_access,			0x1ca),
-> +
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_wr_access,		0x1cb),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_wb_data,		0x1cf),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_wr_data,		0x1d3),
-> +	NV_CSPMU_EVENT_ATTR_4(ocu, cmem_wb_outstanding,		0x1d7),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(cmem_wr_total_bytes,		0x1db),
-> +
-> +	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *mcf_pmu_event_attrs[] = {
-> +	ARM_CSPMU_EVENT_ATTR(rd_bytes_loc,			0x0),
-> +	ARM_CSPMU_EVENT_ATTR(rd_bytes_rem,			0x1),
-> +	ARM_CSPMU_EVENT_ATTR(wr_bytes_loc,			0x2),
-> +	ARM_CSPMU_EVENT_ATTR(wr_bytes_rem,			0x3),
-> +	ARM_CSPMU_EVENT_ATTR(total_bytes_loc,			0x4),
-> +	ARM_CSPMU_EVENT_ATTR(total_bytes_rem,			0x5),
-> +	ARM_CSPMU_EVENT_ATTR(rd_req_loc,			0x6),
-> +	ARM_CSPMU_EVENT_ATTR(rd_req_rem,			0x7),
-> +	ARM_CSPMU_EVENT_ATTR(wr_req_loc,			0x8),
-> +	ARM_CSPMU_EVENT_ATTR(wr_req_rem,			0x9),
-> +	ARM_CSPMU_EVENT_ATTR(total_req_loc,			0xa),
-> +	ARM_CSPMU_EVENT_ATTR(total_req_rem,			0xb),
-> +	ARM_CSPMU_EVENT_ATTR(rd_cum_outs_loc,			0xc),
-> +	ARM_CSPMU_EVENT_ATTR(rd_cum_outs_rem,			0xd),
-> +	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *generic_pmu_event_attrs[] = {
-> +	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *scf_pmu_format_attrs[] = {
-> +	ARM_CSPMU_FORMAT_EVENT_ATTR,
-> +	NULL,
-> +};
-> +
-> +static struct attribute *mcf_pcie_pmu_format_attrs[] = {
-> +	ARM_CSPMU_FORMAT_EVENT_ATTR,
-> +	ARM_CSPMU_FORMAT_ATTR(root_port, "config1:0-9"),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *mcf_gpu_pmu_format_attrs[] = {
-> +	ARM_CSPMU_FORMAT_EVENT_ATTR,
-> +	ARM_CSPMU_FORMAT_ATTR(gpu, "config1:0-1"),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *mcf_nvlink_pmu_format_attrs[] = {
-> +	ARM_CSPMU_FORMAT_EVENT_ATTR,
-> +	ARM_CSPMU_FORMAT_ATTR(rem_socket, "config1:0-3"),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *generic_pmu_format_attrs[] = {
-> +	ARM_CSPMU_FORMAT_EVENT_ATTR,
-> +	ARM_CSPMU_FORMAT_FILTER_ATTR,
-> +	NULL,
-> +};
-> +
-> +static struct attribute **
-> +nv_cspmu_get_event_attrs(const struct arm_cspmu *cspmu)
-> +{
-> +	const struct nv_cspmu_ctx *ctx = to_nv_cspmu_ctx(cspmu);
-> +
-> +	return ctx->event_attr;
-> +}
-> +
-> +static struct attribute **
-> +nv_cspmu_get_format_attrs(const struct arm_cspmu *cspmu)
-> +{
-> +	const struct nv_cspmu_ctx *ctx = to_nv_cspmu_ctx(cspmu);
-> +
-> +	return ctx->format_attr;
-> +}
-> +
-> +static const char *
-> +nv_cspmu_get_name(const struct arm_cspmu *cspmu)
-> +{
-> +	const struct nv_cspmu_ctx *ctx = to_nv_cspmu_ctx(cspmu);
-> +
-> +	return ctx->name;
-> +}
-> +
-> +static u32 nv_cspmu_event_filter(const struct perf_event *event)
-> +{
-> +	const struct nv_cspmu_ctx *ctx =
-> +		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
-> +
-> +	return event->attr.config1 & ctx->filter_mask;
-> +}
-> +
-> +enum nv_cspmu_name_fmt {
-> +	NAME_FMT_GENERIC,
-> +	NAME_FMT_PROC
-> +};
-> +
-> +struct nv_cspmu_match {
-> +	u32 prodid;
-> +	u32 prodid_mask;
-> +	u64 filter_mask;
-> +	const char *name_pattern;
-> +	enum nv_cspmu_name_fmt name_fmt;
-> +	struct attribute **event_attr;
-> +	struct attribute **format_attr;
-> +};
-> +
-> +static const struct nv_cspmu_match nv_cspmu_match[] = {
-
-Similar coding style nit below.
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Otherwise,
-
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
