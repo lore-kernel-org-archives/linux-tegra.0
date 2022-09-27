@@ -2,179 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12011C6FA92
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Sep 2022 16:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BE4C07E9D
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Sep 2022 17:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbiI0QA0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Sep 2022 12:00:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36850 "EHLO
+        id S231831AbiI0RXc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Sep 2022 13:23:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231926AbiI0QAZ (ORCPT
+        with ESMTP id S230504AbiI0RXb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Sep 2022 12:00:25 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D959B75CFF;
-        Tue, 27 Sep 2022 09:00:23 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id e18so13852865edj.3;
-        Tue, 27 Sep 2022 09:00:23 -0700 (PDT)
+        Tue, 27 Sep 2022 13:23:31 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736BF1CFB84;
+        Tue, 27 Sep 2022 10:23:30 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id o7so6444081qkj.10;
+        Tue, 27 Sep 2022 10:23:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=aJuVRn2ynJ1wXVYFYmSjthXIebM45gjx5lMxq4i3RYU=;
-        b=nLdsiPS0LfTl0r4gKIVJQw3DFA6Qymnb+9UxbtB7/hFgQTrRV6WuOGZmsNQ5pkN0Qq
-         lU1TWVrdLl8TbgEY2EBVTrgRQpzp3czCcdBJO+uXk81oovA0vrk1bUOfd4VJOWyZ73Nd
-         +fdcxik/Ae2eRONez+34XbxLFOYMdt5B50bhZggBcmJWBztRARNz3U6NqiY84uVmz+iB
-         1LN9YZfU6iHgwvKMM2qGKSry2fb6d0PEc5QlqTW7IY5XNsWMqcq/sQCKVmII6GCImUHw
-         2THSZIfDoYp4RAFpocaWNf5/fkfncr3FpKThfrual81nTw9cNOMVSNY1B+P7xOj58yUh
-         EHtQ==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=OvfwnftG1GbhRE0XCNvKdR8uwWFkmyM0UsIY8UjwcUY=;
+        b=mtStXT0jOZjZIZIadOR23xiEnQnI97Fp0KVJrdEHMrqcdFsaKyA2t5GQCER0Kw9NGh
+         UX5NA+ksc8NkRXILu08bWQiwrX3O1IZmFrzSb+Q1ja8swRCXZO2SgG73acXDrRxXLjbd
+         7bhaqlCu6PvKL8q6cW0eaTVu5yfVBslKGKhevE1GR+0Yox5p973DB5EVgMAH37Rvrsne
+         txv3vWVW5seWvDkN/ikKcLtNjbqCsQA0jfo/PKnxpvOdfOf5y2ltQsU3MILE7Or//17Y
+         GTPbC85wrrbXrPu+cEC5i8oUoFAXcD40w3c/QptxHDewjz/V/ha4G8F+jOFTevSEuc+n
+         bsfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=aJuVRn2ynJ1wXVYFYmSjthXIebM45gjx5lMxq4i3RYU=;
-        b=8AqkXJQZ5huDtxs2/69GyyMkh1HQqWIXVqytvaBMW5foo45rNjw2pcEdh12QgILHQD
-         X5Z9YpwpxRLzzj1P/PSJm8nK9vDyT80BPHir2nij7aqvj35Kf/EsoVoXB9+xAfdZmXKf
-         kew0qe411PMC3wToM1QqkvrICi288o3VATywrq6PGKb2GSR3K+3uwWNvAXdJDpYypF90
-         vwmXx2gSlqgIAK9wq5UNxcrFJ+YGtRhlic7tZPsACN8IsYuKhe0OUgLlXVlJ4ynuGuV4
-         7ji8XF7eTP+nc67LdEyeDEZN6YebJRIMAc/O1f8GqkCe0stP9stGVsC8afyyooHHiU69
-         j7Iw==
-X-Gm-Message-State: ACrzQf0EtSk8SZp42mNj+a2SDyCPSgerfRbk1cEd1+ve8PV2LssZldsM
-        brV/D4/fGGH0VXJSyA+ODMw=
-X-Google-Smtp-Source: AMsMyM5yL2bZzFqp/CZGyeLzDMFRkqmHp3vo2ulfm1un/c9MP9lSWKMrVthKTc+9rpj3zqjzijDGsw==
-X-Received: by 2002:aa7:dd57:0:b0:453:2d35:70bb with SMTP id o23-20020aa7dd57000000b004532d3570bbmr29223064edw.26.1664294422229;
-        Tue, 27 Sep 2022 09:00:22 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ku18-20020a170907789200b0073100dfa7b0sm1013854ejc.8.2022.09.27.09.00.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 09:00:20 -0700 (PDT)
-Date:   Tue, 27 Sep 2022 18:00:19 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>
-Cc:     arm@kernel.org, soc@kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-edac@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Rahul Bedarkar <rabedarkar@nvidia.com>
-Subject: Re: [GIT PULL 1/7] soc/tegra: Changes for v5.20-rc1
-Message-ID: <YzMeE2HKOd5WaNqd@orome>
-References: <20220708185608.676474-1-thierry.reding@gmail.com>
- <20220708185608.676474-2-thierry.reding@gmail.com>
- <CAK8P3a1bKUr77t9xkNAX=-RqzRme6Hymr3V=36MSHT_sOFEW5A@mail.gmail.com>
- <Ys6lXD6BSxjH02mW@orome>
- <CAK8P3a0cSq47B=acZ854TVu=RckJNfyfKdqQUMzCX7SsV7Wt0g@mail.gmail.com>
- <YtAajDYfcVHRGl1U@nazgul.tnic>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=OvfwnftG1GbhRE0XCNvKdR8uwWFkmyM0UsIY8UjwcUY=;
+        b=Ilt7ITVcGpl0AQUu4wPUpDzT+npVjF0wpavnqbbMZkz+idnT7bCNl7A80s0HLx7DnN
+         ZT+YY68TFndYY29IW4YjSKeT/OpyzGwxzuraES6zUwSxLAsOKckjJPxN3FlhhnNe/Xak
+         7dVjhAsoJTaBwj/67R33Tlv3mVAYHEqwqqPXP4dgnd+LIz+36BRswp+L4SEIUzr8UatC
+         h7hlpKmmv3kaHA/Hm78gEJn9EdhaJV1g3OXh/Xp9+Xe/cFhKyLYhi11YYM0fYPjiIwEN
+         Yl1nGMB6w1mEMaFFpmY5zykeiw754rRfTp7QA3cy/sZuE39kVgbsjzJIvuhhDq0u1wm6
+         G08g==
+X-Gm-Message-State: ACrzQf23m+IR+kGAKRrvsOwHpUw7IYM1F8d/nmiKmdlBI/hiD8wlV7AO
+        ihL5EzC29pKCv7CZuDuhKF8=
+X-Google-Smtp-Source: AMsMyM7NvUfubRv2tZvMpO3HLc1LthQzmkpt9CemUU/xdXAanAkZjAb3ctP5wyTm6ZcDfMnDgG5rUQ==
+X-Received: by 2002:a05:620a:987:b0:6cb:cdf2:ee34 with SMTP id x7-20020a05620a098700b006cbcdf2ee34mr18616446qkx.429.1664299409395;
+        Tue, 27 Sep 2022 10:23:29 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id t11-20020a05622a148b00b0034305a91aaesm1271721qtx.83.2022.09.27.10.23.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Sep 2022 10:23:28 -0700 (PDT)
+Message-ID: <1b50703c-9de0-3331-0517-2691b7005489@gmail.com>
+Date:   Tue, 27 Sep 2022 10:23:23 -0700
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XRzEosQ5RA2jqi3s"
-Content-Disposition: inline
-In-Reply-To: <YtAajDYfcVHRGl1U@nazgul.tnic>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH net-next v4 RESEND] stmmac: tegra: Add MGBE support
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vladimir Oltean <olteanv@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Bhadram Varka <vbhadram@nvidia.com>,
+        linux-tegra@vger.kernel.org, netdev@vger.kernel.org
+References: <20220923114922.864552-1-thierry.reding@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20220923114922.864552-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
++Russell, Andrew, Vladimir,
 
---XRzEosQ5RA2jqi3s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 9/23/22 04:49, Thierry Reding wrote:
+> From: Bhadram Varka <vbhadram@nvidia.com>
+> 
+> Add support for the Multi-Gigabit Ethernet (MGBE/XPCS) IP found on
+> NVIDIA Tegra234 SoCs.
+> 
+> Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>   drivers/net/ethernet/stmicro/stmmac/Kconfig   |   6 +
+>   drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+>   .../net/ethernet/stmicro/stmmac/dwmac-tegra.c | 290 ++++++++++++++++++
 
-On Thu, Jul 14, 2022 at 03:31:07PM +0200, Borislav Petkov wrote:
-> On Wed, Jul 13, 2022 at 02:14:27PM +0200, Arnd Bergmann wrote:
-> > I think this is just a reflection of what other hardware can do:
-> > most machines only detect memory errors, but the EDAC subsystem
-> > can work with any type in principle. There are also a lot of
-> > conditions elsewhere that can be detected but not corrected.
->=20
-> Just a couple of thoughts from looking at this:
->=20
-> So the EDAC thing reports *hardware* errors by using the RAS
-> capabilities built into an IP block. So it started with memory
-> controllers but it is getting extended to other blocks. AMD are looking
-> at how to integrate GPU hw errors reporting into it, for example.
->=20
-> Looking at that CBB thing, it looks like it is supposed to report not
-> so much hardware errors but operational errors. Some of the hw errors
-> reported by RAS hw are also operation-related but not the majority.
->=20
-> Then, EDAC has this counters exposed in:
->=20
-> $ grep -r . /sys/devices/system/edac/
-> /sys/devices/system/edac/power/runtime_active_time:0
-> /sys/devices/system/edac/power/runtime_status:unsupported
-> /sys/devices/system/edac/power/runtime_suspended_time:0
-> /sys/devices/system/edac/power/control:auto
-> /sys/devices/system/edac/pci/edac_pci_log_pe:1
-> /sys/devices/system/edac/pci/pci0/pe_count:0
-> /sys/devices/system/edac/pci/pci0/npe_count:0
-> /sys/devices/system/edac/pci/pci_parity_count:0
-> /sys/devices/system/edac/pci/pci_nonparity_count:0
-> /sys/devices/system/edac/pci/edac_pci_log_npe:1
-> /sys/devices/system/edac/pci/edac_pci_panic_on_pe:0
-> /sys/devices/system/edac/pci/check_pci_errors:0
-> /sys/devices/system/edac/mc/power/runtime_active_time:0
-> /sys/devices/system/edac/mc/power/runtime_status:unsupported
-> ...
->=20
-> with the respective hierarchy: memory controllers, PCI errors, etc.
->=20
-> So the main question is, does it make sense for you to fit this into the
-> EDAC hierarchy and what would even be the advantage of making it part of
-> EDAC?
+You should be modeling this as a proper PCS driver and have a 
+'pcs-handle' property pointing to it in your Device Tree.
 
-Closing the loop on this: we've decided to keep this in drivers/soc for
-now, with the option of re-evaluating when we encounter similar
-functionality on other hardware.
-
-I'm also going to hijack the thread because something else came up
-recently that fits the audience here and it's up the same alley: on
-Tegra234 a mechanism, called FSI (Functional Safety Island), exists
-to report failures to an external MCU that's monitoring the system.
-
-Special hardware exists in the SoC that can send these errors to the
-MCU via different transports, and the idea is to report software-
-detected failures from kernel drivers such as I2C or PCI via this
-mechanism, so appropriate action can be taken. So essentially we're
-looking at adding some new API, preferably something generic, to these
-bus drivers along with "provider" drivers that get notified of these
-reports so that they can be forwarded to the FSI (and then the MCU).
-
-This again doesn't seem to be a great fit for EDAC as it is today, but
-I can also not find anything better looking around the kernel. So I'm
-wondering if this is something that others have encountered and might
-have solved already and I just haven't found it, or if this is something
-that would be worth creating a new subsystem for. Or perhaps this could
-be integrated into EDAC somehow? I'm a bit reluctant to add yet another
-custom infrastructure for this, given that it's functionality that
-likely exists in other SoCs as well.
-
-Any thoughts on this?
-
-Thierry
-
---XRzEosQ5RA2jqi3s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMzHhAACgkQ3SOs138+
-s6G4wxAAnW+S0l13pKsw2U4zZ5sNcYSoEgHdCR8jCxsO0W4Lc3b8L/xQkfxIleZW
-9/6fKDe6sygRujnqnYgBGIUUC6SjgklTDMpQaI39oFK6XglyFsFaYVyZpKBfFISc
-UbVFT71QClax5nUbOXmftPPMSHp7OUQzql3ANq2gT5r9usHIqtE3cDamJv1p/CRA
-TMPQSakOv9cI+CtQHWPMV7b9DUG9e6SNzsHhpC/JZsbySATcsTW0IyTBY2pNTBf7
-Rqe/uCh8jlJx42rCuY/GVGl0TGDO/Im1GjrII5M3OoSkb1aTH0VaSCa4KQhi5WRS
-Jh2tnMCkKwwmjpuuNnUc2K6+OUHl2Iya2Gfa+Q0OVhTvi+stpjImpG5xjLpyBj3W
-KHFdE1tzXSn1yxwYhe7WS1vd4ZsHWeP19oo6VRFsav+51e1qyXsj2I7PoucD67bG
-o+NjiVIZxNg/lnaf2za/6qZ7qMT9kJAXDeH4oUmYhDsydnpLvQZ6aPkDl3X11qaK
-BejA3/XatDIk/hL8sqFiVTvgyiqaZJzaVYdEGrr0yJRpuDVCXkCHrG9njyLOYtdH
-LQ2aTmFIgunI+r2tDLoEjR8bjxEvV+C9kwhRVAySSYC9Pdwz+Dnb2yWE6AYt8EnR
-ZV3aVTGFyjc5OByFB3KBIptfB/syLfnnq9ZcKcWfQvDyI2EMS8E=
-=UI0x
------END PGP SIGNATURE-----
-
---XRzEosQ5RA2jqi3s--
+The configuration you are doing here is probably working the first time 
+you bring-up the network device but I doubt it works across system 
+suspend/resume states where power to the GMAC and PCS is lost, it also 
+begs the question of which mediums this was tested with and whether 
+dynamic switching of speeds and so on is working?
+--
+Florian
