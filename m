@@ -2,96 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A503DC32771
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Sep 2022 09:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98887C32771
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Sep 2022 10:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231920AbiI1JDV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Sep 2022 05:03:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56384 "EHLO
+        id S233466AbiI1KrR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Sep 2022 06:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233552AbiI1JDH (ORCPT
+        with ESMTP id S233100AbiI1KrQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Sep 2022 05:03:07 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0380DF6BC
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Sep 2022 02:03:05 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id h3so13655253lja.1
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Sep 2022 02:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=Qivih7Ox0DdR7xAv+foWHqtTQqdqkALSOgUvdHP21xA=;
-        b=MK7CFQ9YcPNocb/BlU8K2dGG0Nrome6kA7nPy0n6rjndVEZaNPV7X8uN9Wbay3cDiF
-         2CaEcd90WMbW7h2S/umJ3fIPGAk4bYqI5uctxq/Xlq/PNhbWo5YlGwrYgJOoo3Qp9HnN
-         W+QY/AZb3BZuqMNSJ5NP5epnW6LSxvApRh9qFHh7OppqQ7RhvnD47a1m+on2zfJtoQ6u
-         pNk50zRulq86ttW1Mwcs93xK+BslCH1L0yAvrh7qjVcddCAxOEr8JyKX5WJaXfYYHm9X
-         hq7AFHJcanh+W0Q0JYGbgFH9a1WTP1REgHNldvwm2wwiGDFNrk113OXxiwN00c0O6v2Z
-         K7wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=Qivih7Ox0DdR7xAv+foWHqtTQqdqkALSOgUvdHP21xA=;
-        b=jF7e5sZaACGqTLsb4Tvj4Koj26201h6IoKwsWiNjFedkq/1bf7WA3wMYE6RroRzqaF
-         joagfEbaODVAMTRVWK9hhO0FuXJ04OHKGXLJnwZUnUm4aJT9TR6DtaPEpCXeTXt7tHtd
-         mqGPPSbT8ttqJbZy7zZSKxvE05n2Z9xqhoWFBN4EGFZdqHJYmEotXxvGQEWo0/hQEBgr
-         gffCggMzQeAYdwo+UoTwUZZ9a6tm53pDDY6Ikm9B2y7CoP+ttDi88/YsuJBbTg6a6Cyd
-         oG210beUF7RZw37ByM/Ph2JF0J16YTGoyXf8NrXc5AKf3VJK8lZ47fnwlh/+VoqVG+Yt
-         zzSA==
-X-Gm-Message-State: ACrzQf3g+J7MTzObihfFNpzXDABnj8Yi/yzbDROjBlgmKY4iYDmLIyN5
-        ZLOg8+NwSUtygKvyfWjz49Zdgg==
-X-Google-Smtp-Source: AMsMyM6kVPc1yWr8KuUU2EZPmo0ooqebRc+y5zFM1TknSI5X2qRgOQd12MT1RgPccoVXhFpIcchTwQ==
-X-Received: by 2002:a2e:9114:0:b0:26b:e3a2:3f89 with SMTP id m20-20020a2e9114000000b0026be3a23f89mr11902830ljg.132.1664355784273;
-        Wed, 28 Sep 2022 02:03:04 -0700 (PDT)
-Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id j6-20020a2ea906000000b0026c297a9e11sm377185ljq.133.2022.09.28.02.03.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 02:03:02 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     liushixin2@huawei.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] memory: tegra: Use DEFINE_SHOW_ATTRIBUTE to simplify code
-Date:   Wed, 28 Sep 2022 11:02:58 +0200
-Message-Id: <166435026500.12920.10508016012075575717.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220926130025.1061373-1-liushixin2@huawei.com>
-References: <20220926130025.1061373-1-liushixin2@huawei.com>
+        Wed, 28 Sep 2022 06:47:16 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B9D0ACA0F;
+        Wed, 28 Sep 2022 03:47:15 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7E631595;
+        Wed, 28 Sep 2022 03:47:21 -0700 (PDT)
+Received: from [10.57.66.102] (unknown [10.57.66.102])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B49C93F792;
+        Wed, 28 Sep 2022 03:47:12 -0700 (PDT)
+Message-ID: <739570af-b90a-aea6-ee56-cb1d5da48c97@arm.com>
+Date:   Wed, 28 Sep 2022 11:47:11 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.13.1
+Subject: Re: [PATCH v4 2/2] perf: arm_cspmu: Add support for NVIDIA SCF and
+ MCF attribute
+To:     Besar Wicaksono <bwicaksono@nvidia.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
+        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vikram Sethi <vsethi@nvidia.com>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "mike.leach@linaro.org" <mike.leach@linaro.org>,
+        "leo.yan@linaro.org" <leo.yan@linaro.org>
+References: <20220814182351.8861-1-bwicaksono@nvidia.com>
+ <20220814182351.8861-3-bwicaksono@nvidia.com>
+ <7082762d-2d4d-aa7b-656c-75593b0697f0@arm.com>
+ <SJ0PR12MB5676A36BC125A9873F74E697A0549@SJ0PR12MB5676.namprd12.prod.outlook.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <SJ0PR12MB5676A36BC125A9873F74E697A0549@SJ0PR12MB5676.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 26 Sep 2022 21:00:21 +0800, Liu Shixin wrote:
-> Use DEFINE_SHOW_ATTRIBUTE helper macro to simplify the code.
-> No functional change.
+On 28/09/2022 02:38, Besar Wicaksono wrote:
 > 
-> v1->v2: remove duplicate blank lines.
 > 
-> Liu Shixin (4):
->   memory: tegra20-emc: use DEFINE_SHOW_ATTRIBUTE to simplify code
->   memory: tegra30-emc: use DEFINE_SHOW_ATTRIBUTE to simplify code
->   memory: tegra210-emc: use DEFINE_SHOW_ATTRIBUTE to simplify code
->   memory: tegra186-emc: use DEFINE_SHOW_ATTRIBUTE to simplify code
+>> -----Original Message-----
+>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Sent: Tuesday, September 27, 2022 6:43 AM
+>> To: Besar Wicaksono <bwicaksono@nvidia.com>; robin.murphy@arm.com;
+>> catalin.marinas@arm.com; will@kernel.org; mark.rutland@arm.com
+>> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+>> linux-tegra@vger.kernel.org; sudeep.holla@arm.com;
+>> thanu.rangarajan@arm.com; Michael.Williams@arm.com; Thierry Reding
+>> <treding@nvidia.com>; Jonathan Hunter <jonathanh@nvidia.com>; Vikram
+>> Sethi <vsethi@nvidia.com>; mathieu.poirier@linaro.org;
+>> mike.leach@linaro.org; leo.yan@linaro.org
+>> Subject: Re: [PATCH v4 2/2] perf: arm_cspmu: Add support for NVIDIA SCF
+>> and MCF attribute
+>>
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 14/08/2022 19:23, Besar Wicaksono wrote:
+>>> Add support for NVIDIA System Cache Fabric (SCF) and Memory Control
+>>> Fabric (MCF) PMU attributes for CoreSight PMU implementation in
+>>> NVIDIA devices.
+>>>
+>>> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+
+>>> +struct nv_cspmu_match {
+>>> +     u32 prodid;
+>>> +     u32 prodid_mask;
+>>> +     u64 filter_mask;
+>>> +     const char *name_pattern;
+>>> +     enum nv_cspmu_name_fmt name_fmt;
+>>> +     struct attribute **event_attr;
+>>> +     struct attribute **format_attr;
+>>> +};
+>>> +
+>>> +static const struct nv_cspmu_match nv_cspmu_match[] = {
+>>
+>> Similar coding style nit below.
+>>
 > 
-> [...]
+> Sure, I will update this.
+> 
+>>
+>> Otherwise,
+>>
+>> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> Thanks!
+> 
+> Unfortunately, we need to update the name of the PMUs and remove
+> some of the attributes in NVIDIA implementation. This requires a change
+> in nvidia_cspmu.c and nvidia-pmu.rst. I hope you are fine if I include this
+> change on v5 patch.
 
-Applied, thanks!
+That should be fine.
 
-[1/4] memory: tegra20-emc: use DEFINE_SHOW_ATTRIBUTE to simplify code
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/94a052d7d52a70d8681644bd88062c61b0f986ce
-[2/4] memory: tegra30-emc: use DEFINE_SHOW_ATTRIBUTE to simplify code
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/91fcc1dfa790d74b9a1dacfefdb023804dedd319
-[3/4] memory: tegra210-emc: use DEFINE_SHOW_ATTRIBUTE to simplify code
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/82710f9114a7857052f012599fdb688b93ee218c
-[4/4] memory: tegra186-emc: use DEFINE_SHOW_ATTRIBUTE to simplify code
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/56efd6435c6890a3a38a33d192a0f9d5c835a24b
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Suzuki
