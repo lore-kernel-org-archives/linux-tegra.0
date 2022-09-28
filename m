@@ -2,192 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF1FC32771
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Sep 2022 14:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AF5C32771
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Sep 2022 14:35:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234324AbiI1OSj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Sep 2022 10:18:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55580 "EHLO
+        id S233934AbiI1OfR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Sep 2022 10:35:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234327AbiI1OS3 (ORCPT
+        with ESMTP id S233506AbiI1OfQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Sep 2022 10:18:29 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B872CA8960;
-        Wed, 28 Sep 2022 07:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1664374708; x=1695910708;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EJh16eR+tKg6pE5ERnOaK8XXO+3MO7Hak0ng3v5+mXc=;
-  b=Ux0qg6CTd7oDNUfNrUFGC6Lze+E9XjI+IdasuflujCXKRbwE9uFaigrf
-   o/F8Y0q3WP/UIWyxjqqzdrv5ZamRJoqlQYOSFYPaqqY4LsoPJjCYu/0gl
-   +NJ/Sa/Sr6Rb6ZBqWRKsxjagq0yJDX00VCkQmMOqKnYxvWiJIGvTwotnP
-   GVV8nplhOKXWLZxsf4cyIkvqd7681s3TGWdZokGTOrHThjI89DeZUYkv5
-   nhkDQqVnQefR4dG9KcOw+l3O5KOmxHeBaBtLHWZYRfLJG2cQzNbZcKAKU
-   TZpbb3vUa9X0lcfLoL3BlXjk7RWmvNla0sFbDOjQ0+kjMS5PeBE1CknBT
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10484"; a="288771265"
-X-IronPort-AV: E=Sophos;i="5.93,352,1654585200"; 
-   d="scan'208";a="288771265"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2022 07:18:28 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10484"; a="617223882"
-X-IronPort-AV: E=Sophos;i="5.93,352,1654585200"; 
-   d="scan'208";a="617223882"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.252.61.24])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2022 07:18:24 -0700
-Message-ID: <34f002a4-b811-106b-52b5-6041674b15e9@intel.com>
-Date:   Wed, 28 Sep 2022 17:18:19 +0300
+        Wed, 28 Sep 2022 10:35:16 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC8D87CB79;
+        Wed, 28 Sep 2022 07:35:14 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id l14so27560779eja.7;
+        Wed, 28 Sep 2022 07:35:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=bITryamKPXAaRRd2P5JThc+kCnMrI1AdcBLFS62YJTM=;
+        b=JME++gzbxsQDSHyB5nBuZ+eAXbc+6lkyj/ZOK33HsVtR7zkN40I3qzN3hi9LxzimAP
+         Dfw34Bbc0jDus2v8SCLIs3VF4bA+7dI78cTOsJDOas4EDEtKYywcJ+VrbGyG7IpP0iSO
+         0PKTR3wnaYzH1i0LFnR87b5ndDyTJYTBed3m18qBCHBWIx7z/uwAC5cy4wa8y2N4Q3Ue
+         dLHKikSqmaN57yU5P+0OimIXTsY4/Jg8fkoJ7THtLvEYpAENciUb/J8kJwrEBqG8BI5p
+         GV9PQEsTQe4lJodk82nGdvnFFGYcaZSHa2iUNxQvnuX1PaS0uvGGU48CE9dISv3oape0
+         v1RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=bITryamKPXAaRRd2P5JThc+kCnMrI1AdcBLFS62YJTM=;
+        b=AtmHUryLi5+SWJJWbVlN+k4HKwC7w76WRA6S3zSffKd9EZYEfnk34KiQI6iv9TlD5O
+         BKZpP6Rp7lG14nlCJ6URV/w3SWHCMfSHOoKcJJp3xpqBkfjOWZZbkudU9080tfTQeq5D
+         u6FGXiWmHRwIN3hAI4hK2uBzNNUJ0L/aksslPHFCxSaxbHk/B3aulF++xsa4Avqyx/iv
+         AVzrmQwHRQdmqOvw13pkRrVE7VGMrHTCHj788pX6j/kZrI6/lELBqKkVGeJppFtx8aDE
+         IQmzsCc63yg8rf0+J3BUk7jJGS2ICSCGrvIxoLHSr+9hxkUWzUS9tY2bngJpMFLQd5YF
+         lRkw==
+X-Gm-Message-State: ACrzQf0pPjJndAoNjkgx+2RCSFMmBFed8Ny4qpZuzUR3ZabMmvv4j1Ag
+        jmvcds4KK1tvQ5LlIPWSYto=
+X-Google-Smtp-Source: AMsMyM7EDKPCuPoi+lD+mpD0Wys7tz3LPH1v2LlA7lAm8CznGXnuyPttmyMkcDlXYNpz9imHcrdwJw==
+X-Received: by 2002:a17:906:730b:b0:782:2eaf:a4ad with SMTP id di11-20020a170906730b00b007822eafa4admr29146255ejc.27.1664375713473;
+        Wed, 28 Sep 2022 07:35:13 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id t7-20020a170906a10700b0074136cac2e7sm2467887ejy.81.2022.09.28.07.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Sep 2022 07:35:12 -0700 (PDT)
+Date:   Wed, 28 Sep 2022 16:35:10 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: tegra: Use PCI_CONF1_EXT_ADDRESS() macro
+Message-ID: <YzRbnjb6UVwrj/li@orome>
+References: <20220928121911.14994-1-pali@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.11.0
-Subject: Re: [PATCH v6 2/4] mmc: sdhci-tegra: Add support to program MC stream
- ID
-Content-Language: en-US
-To:     Prathamesh Shete <pshete@nvidia.com>, ulf.hansson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     anrao@nvidia.com, smangipudi@nvidia.com, kyarlagadda@nvidia.com
-References: <a5c231e8-f28a-e692-5961-58e6838711ed@intel.com>
- <20220928125648.19636-1-pshete@nvidia.com>
- <20220928125648.19636-2-pshete@nvidia.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20220928125648.19636-2-pshete@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RyfNZ9e+knk+ANeR"
+Content-Disposition: inline
+In-Reply-To: <20220928121911.14994-1-pali@kernel.org>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 28/09/22 15:56, Prathamesh Shete wrote:
-> SMMU clients are supposed to program stream ID from
-> their respective address spaces instead of MC override.
-> Define NVQUIRK_PROGRAM_STREAMID and use it to program
-> SMMU stream ID from the SDMMC client address space.
-> 
-> Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 
-One observation below.
+--RyfNZ9e+knk+ANeR
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Nevertheless:
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
+On Wed, Sep 28, 2022 at 02:19:11PM +0200, Pali Roh=C3=A1r wrote:
+> Simplify pci-tegra.c driver code and use new PCI_CONF1_EXT_ADDRESS() macro
+> for accessing PCI config space.
+>=20
+> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
 > ---
->  drivers/mmc/host/sdhci-tegra.c | 44 ++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index a6c5bbae77b4..60ce3e80f248 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -25,6 +25,10 @@
->  #include <linux/mmc/slot-gpio.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/ktime.h>
-> +#ifdef CONFIG_IOMMU_API
-> +#include <linux/iommu.h>
-> +#include <linux/bitops.h>
-> +#endif
->  
->  #include <soc/tegra/common.h>
->  
-> @@ -94,6 +98,8 @@
->  #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
->  #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
->  
-> +#define SDHCI_TEGRA_CIF2AXI_CTRL_0			0x1fc
-> +
->  #define NVQUIRK_FORCE_SDHCI_SPEC_200			BIT(0)
->  #define NVQUIRK_ENABLE_BLOCK_GAP_DET			BIT(1)
->  #define NVQUIRK_ENABLE_SDHCI_SPEC_300			BIT(2)
-> @@ -121,6 +127,7 @@
->  #define NVQUIRK_HAS_TMCLK				BIT(10)
->  
->  #define NVQUIRK_HAS_ANDROID_GPT_SECTOR			BIT(11)
-> +#define NVQUIRK_PROGRAM_STREAMID			BIT(12)
->  
->  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
->  #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-> @@ -177,6 +184,9 @@ struct sdhci_tegra {
->  	bool enable_hwcq;
->  	unsigned long curr_clk_rate;
->  	u8 tuned_tap_delay;
-> +#ifdef CONFIG_IOMMU_API
-> +	u32 streamid;
-> +#endif
->  };
->  
->  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-> @@ -1564,6 +1574,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra234 = {
->  		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
->  		    NVQUIRK_ENABLE_SDR50 |
->  		    NVQUIRK_ENABLE_SDR104 |
-> +		    NVQUIRK_PROGRAM_STREAMID |
->  		    NVQUIRK_HAS_TMCLK,
->  	.min_tap_delay = 95,
->  	.max_tap_delay = 111,
-> @@ -1775,6 +1786,25 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  	if (rc)
->  		goto err_add_host;
->  
-> +	/* Program MC streamID for DMA transfers */
-> +#ifdef CONFIG_IOMMU_API
-> +	if (soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
-> +		struct iommu_fwspec *fwspec;
-> +
-> +		fwspec = dev_iommu_fwspec_get(&pdev->dev);
-> +		if (fwspec == NULL) {
-> +			dev_warn(mmc_dev(host->mmc),
-> +				"iommu fwspec is NULL, continue without stream ID\n");
+> Please look also at this related patch:
+> https://patchwork.kernel.org/project/linux-pci/patch/20220911113216.14892=
+-1-pali@kernel.org/
+> ---
+>  drivers/pci/controller/pci-tegra.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
 
-It will still program a zero streamid upon resume.
+I had to go chase down the patch that introduces PCI_CONF1_EXT_ADDRESS.
+It would've been easier if this had been part of the series that
+introduced that, or if you had provided a link to that patch here.
 
-> +		} else {
-> +			tegra_host->streamid = fwspec->ids[0] & 0xff;
-> +			tegra_sdhci_writel(host, tegra_host->streamid |
-> +						FIELD_PREP(GENMASK(15, 8),
-> +						tegra_host->streamid),
-> +						SDHCI_TEGRA_CIF2AXI_CTRL_0);
-> +		}
-> +	}
-> +#endif
-> +
->  	return 0;
->  
->  err_add_host:
-> @@ -1861,6 +1891,10 @@ static int sdhci_tegra_suspend(struct device *dev)
->  static int sdhci_tegra_resume(struct device *dev)
->  {
->  	struct sdhci_host *host = dev_get_drvdata(dev);
-> +#ifdef CONFIG_IOMMU_API
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> +#endif
->  	int ret;
->  
->  	ret = mmc_gpio_set_cd_wake(host->mmc, false);
-> @@ -1871,6 +1905,16 @@ static int sdhci_tegra_resume(struct device *dev)
->  	if (ret)
->  		return ret;
->  
-> +	/* Re-program MC streamID for DMA transfers */
-> +#ifdef CONFIG_IOMMU_API
-> +	if (tegra_host->soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
-> +		tegra_sdhci_writel(host, tegra_host->streamid |
-> +					FIELD_PREP(GENMASK(15, 8),
-> +					tegra_host->streamid),
-> +					SDHCI_TEGRA_CIF2AXI_CTRL_0);
-> +	}
-> +#endif
-> +
->  	ret = sdhci_resume_host(host);
->  	if (ret)
->  		goto disable_clk;
+Anyway, looks like this is equivalent to the existing inline function,
+so:
 
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--RyfNZ9e+knk+ANeR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmM0W54ACgkQ3SOs138+
+s6H5Dw/8CCO0A48ejlIl6fquIuKAyXV4HMQnBUd+DQgaINWHH893pKdu1BsR672v
+IBVB6xEb+9zR5l5zqPyxGl6p51xXhzE6H3FxEOYnSxk1tJAzRTeo/hslUvhWTCWy
+ePiI+7zY8zxAEwSIUF0fU0kyoMuUMyDZELJTbxF5PM4PoDYy7fYSTptN0DTztsEk
+ftpnOOVTWVIArYRrBPQEyk60teDGwQOAYlICcjqlm8yt3Zsn6yNEh5M0wmO/oDZH
+kJtCaw5kymBa610fny18hooEZpE8SypRbFptOpi6/Tagkj4RywPYlBTfCo3qWDvR
+Tv33A/X2RB+f0/vyUjfUmZN3GWY00lv64N9IRucYLpSDoN4xjrWsVTXAmCDjAMKS
+OOkGIJuEt+T/aPX0DqpxrKOEm/dw3ywURK05rinmPsisWShOyBm7p1/yxm3smZL4
+35TyDIsSCLpGQCoLZc7zPsD6h0fo0bK8VLPUeulzMC4ZYXjP53G7HTSGWHcMqecM
+PJFUv9PuzLdfvbkbixFsNzSpZo4HqTi41VlHIdlSzUXd1aZsBvcc4a3B9c8fFd1X
+8Jc0bGLDhmxAFQeGpjKtXMy1++p34yrO1hI80IS2jDV7je63ZKA7zlCrBA4+cjM7
+cnjGjC+ZyDLd8S0XkYf3NdJXIkmrk3EOfzXdDSj3EfOOyVHLl2k=
+=a3Eo
+-----END PGP SIGNATURE-----
+
+--RyfNZ9e+knk+ANeR--
