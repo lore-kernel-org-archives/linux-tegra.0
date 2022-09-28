@@ -2,179 +2,182 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CDAC04A95
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Sep 2022 19:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961EDC32771
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Sep 2022 20:19:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232439AbiI1TEG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Sep 2022 15:04:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34228 "EHLO
+        id S232959AbiI1UTD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Sep 2022 16:19:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230431AbiI1TEG (ORCPT
+        with ESMTP id S230015AbiI1UTB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Sep 2022 15:04:06 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2058.outbound.protection.outlook.com [40.107.93.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8385F3139;
-        Wed, 28 Sep 2022 12:04:04 -0700 (PDT)
+        Wed, 28 Sep 2022 16:19:01 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D295C6E88F;
+        Wed, 28 Sep 2022 13:19:00 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AjGCX3H4aSI/GU82G003TGbpcplmE8xyofLD7Wd2ThsgcCnti1sws3Z22Blqw+33JmPtDhsbuZ4cBjGU9s54Al0lnwaZmRmVomaEgvB5Q8DdlkhZMIoQbfPoL0SEhBfma1vS7i5pRSn/fSbCSDxdlPA1u5vCiI7KitDNRoJkwObWPRAc5giJRCXjJ5wAFSE1C/NofWRDyrZfQUqbABQH5bHPj3rUZh3miMETeRodjkXasXpqjollCgeP0HpG2wADgT+gUxUUJf1qXoiNLmcbjNRsYLvWHzSzx4ccdXyWogVDKv8Dfrp8/itlKn2Vb+llG0WSgOkeZ5LwEKcckiFLfg==
+ b=l5ha0Q349MX4vegeTGktgyEzMjpv9peC8GEBIlaPJzkO4o1i8VAuzzsnurlK+5jj70qkygtIk4i8xkMZX+2xCtg0ppBUYDtr3rvKmz/IU+zZJsQOLoqCE4oPIvqQuzhJwaAC4e1C6PvFHAmm+kmWHKO93p2kQzR8tER1mF5d4E43c0mjmC8OdURKEjuV4mLCqe6vgGvpMk8yt2+nfSVG08XCsvZ6qX++lOxxHEhhSyfY1SK1dN7u9+JtR7BYYzOXHUxs17s/PjCSR4YS/8iAJOpWUQ+6+bAsvfpKlBzdsOezpqIZHNuLqOs7Yd1wQbGPvXEO/l7P8nmH3VuGcUwjvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jvcwIiFfTBcGkUXTUYn2GEwijQyDtS22EJP91fCn5fQ=;
- b=odQuqyKG1NphF/ZGjLjUZAo0bojA09kJpRtGTaAmRlxUB34duTaI1yL3QCOCrqWrNa16hN7xY5v+gKanCsAtbse+tNTbuRQwQ0/ptDoUi7uvw0f0No4iC7JRD+sJe1OkNwRcpNcrCb32Lq6YaIV+lz8FecwB3gjk0AMvGUg4bbqH0AFt31VOSYcNKYo9iD+n0uAEF6bMs2JMC89CzRkoxLntBMo669Hc55J4lOiF6Iiys9aeJEnLJeGkpkLAMK1bqf6JzC3N0NCI/hd5k5lDUf4q9FMiPXFDmazPfpajNw/cvTibLj9yi1dC/4Yiq4wfTSRqolTaTUundH+VLa4HQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=bxEAvJtGK4/vz4fCmWglij/cpCcK7WpQtMybnTRh+HQ=;
+ b=kMRQIgqAbl7BJcNnAvpRymj8ox8rCzgDhggsV88BgiHGTQ9dwbHdfwblghdQOyTycyqXO1FhVRE1zOx8f3oNQPgodRGFoBMdVORqOIiyZxM93KsMNXRtbvZp+HPG87rpyYN0xLDx9RpugewK2GQZCtFv42nXchaHJnqVn1GXGLT/flBuNGRD5ZsNQayWakzqVW5cFZ5lYeezhLlfoMPhZRWPRx1HACkXVLRbCe43DFgaJpd0fWuO+rYhhWb9t9TZ6vJdJygg21Ei3pt6UnQN5OVXzPX/Vx/fK73cO7v4YE4Ix2V3SglQZWe9qAEkXor1zC7JO7lDowjuK+HQ0/i/sA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jvcwIiFfTBcGkUXTUYn2GEwijQyDtS22EJP91fCn5fQ=;
- b=oU8FkkQoA/qKqBpwQLKfYwXHaGrvYaDgBiItd97K1zuo+suYrqc/Ju/9iN1jcPgXiuUlp2RW3+Dgkl0/6HVg/YZ8k36tJJip6Rt3Rla4WAxIboxdHXecJK8z3qITDGEhSM2/FKUtPNON+jQplJZBTgnh4CPTvOK1O+oD5CxPZk/EXY5T6AG5TEQgGx/BBYkRscrsbbGA4gyg6WEjAwtqyiim64PRGW5I5xHHMDSCuoAhM3kWKmGw/JwLvuChQur4PHF9C466m97BZWwBwqDKqhIPpRG5b/UgleQaKGaNiWe5SI9JXI4AaadqDJVA4hSni/7H1clKdDp7nZ61BYAyIw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- BL0PR12MB4883.namprd12.prod.outlook.com (2603:10b6:208:1c6::23) with
+ bh=bxEAvJtGK4/vz4fCmWglij/cpCcK7WpQtMybnTRh+HQ=;
+ b=SW97fFfDlRSY4domQiFhAlHE1M4O4oA15x3s8+2pV/tW7/d6BugV19/wfOM4lO4femG5E2foGOn7ZJMqIqTPnSi67dmSi+OcseMNQkdnFZIz06L4xvueHVf2aFRDHhf7TNhTK9y4rA5YXqW7HtaVG3sbE+4LajtS9nSLdq55ZQIRNRiXaaFjUGgZz8aApTTYh7vvNM30FtAPNk0PKD5E1ZAP0iBQ/IHRSmr7rhl1JATAFkWQKk6UADv/bLBd56xTuQjv9Ge74Yzaci//CCywhJRbaCf+VuHHhA8kiUvxCKNxdPh2r39W89/rrlET9mgXWtaJk0zYFceDKQXN29F9pA==
+Received: from DS7PR06CA0012.namprd06.prod.outlook.com (2603:10b6:8:2a::22) by
+ IA1PR12MB6307.namprd12.prod.outlook.com (2603:10b6:208:3e5::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.15; Wed, 28 Sep
- 2022 19:04:02 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::b07f:53b1:426e:a29d]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::b07f:53b1:426e:a29d%5]) with mapi id 15.20.5676.017; Wed, 28 Sep 2022
- 19:04:02 +0000
-Message-ID: <6648ece7-0a8e-2217-0c5a-5d58dd5a012c@nvidia.com>
-Date:   Wed, 28 Sep 2022 20:03:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 1/1] usb: gadget: tegra-xudc: Add Tegra234 SOC support
-Content-Language: en-US
-To:     Wayne Chang <waynec@nvidia.com>, balbi@kernel.org,
-        gregkh@linuxfoundation.org, thierry.reding@gmail.com
-Cc:     singhanc@nvidia.com, linux-usb@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220928135502.3458833-1-waynec@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20220928135502.3458833-1-waynec@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0212.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9e::32) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.20; Wed, 28 Sep
+ 2022 20:18:59 +0000
+Received: from DM6NAM11FT108.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:8:2a:cafe::5f) by DS7PR06CA0012.outlook.office365.com
+ (2603:10b6:8:2a::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.17 via Frontend
+ Transport; Wed, 28 Sep 2022 20:18:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DM6NAM11FT108.mail.protection.outlook.com (10.13.172.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5676.17 via Frontend Transport; Wed, 28 Sep 2022 20:18:58 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 28 Sep
+ 2022 13:18:49 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 28 Sep
+ 2022 13:18:49 -0700
+Received: from msst-build.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Wed, 28 Sep 2022 13:18:47 -0700
+From:   Besar Wicaksono <bwicaksono@nvidia.com>
+To:     <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <sudeep.holla@arm.com>, <thanu.rangarajan@arm.com>,
+        <Michael.Williams@arm.com>, <treding@nvidia.com>,
+        <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+        <mathieu.poirier@linaro.org>, <mike.leach@linaro.org>,
+        <leo.yan@linaro.org>, Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: [PATCH v5 0/2] perf: ARM CoreSight PMU support
+Date:   Wed, 28 Sep 2022 15:18:28 -0500
+Message-ID: <20220928201830.45637-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|BL0PR12MB4883:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3bb0a8b8-2b1c-4921-f096-08daa18434ee
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT108:EE_|IA1PR12MB6307:EE_
+X-MS-Office365-Filtering-Correlation-Id: afb37fd0-4973-4d15-971e-08daa18ead1c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ijFUPMMd20nE9Z28gqKlK5Oj8yV09nJLAAslY9xupkp6W+ElCCKyFDq1Lh5ybaNCKPAc/8NV/uxBRQCiBW5VZMmetYXXL+Q5N2Irls72h+A7gw196LK+CbqhNwrSbkfxtyOQRTV0iayzk4lPTMhzRjTYROVa/V3CFjCuAycoQZV+gjDSrFJkh4vzIgqUxI1qhvnrpyOaibnuWnuYh1Ud0ZtCGlDLk/M1QMUidmbl+99E5JCPnRiUVUE+vxe8ng6VCNPd+V4iiiS8rJhZddzW133qjXZ/Prtu/rA/lYKEYEWsRgHxdUPsL4ewBi2v8mO678oFszgcgeInjeKxBCI6eZtAuKtv8WyJcZiBngOLWfRV5TCF1VMlIujrBxF6PCGDjolVItNZX2GMdUv7MGRQkeqagNwqrATpXCBl+RfSt5Z1i8AIqStj/vuCR8syO2YFVfCYle9zcfKUMIdYxTiiIheRJpfSsESg11BLDz9B5J9L3ud6fkzkHT6eQR3V5UVdzM+XM2DSt1yYO/OZ6oQS61vAzxdauQThYYC3iNxCaDPyH+Kpru3DcVoS6rRhNrhrzbDkABKK884BS2wRRf1WbnYO1IoNaBaYzehmySOJDv1MwhzTZQaGUygX0OYFlp3fm5BE71ovIl3hneARMdsa5sc7ripOu2GRljqhxuocRHxMDhP1cVU6fCUMRXHofftts4sRxkGOhm5QTP29nrxPWcn/d3HFiE3+L+wkryT4z6x045M5pT5anfosNV5A238psni/uossPoqDgDiaRRUgZ7pJ1kZj1nLm+tbSnn58CgY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(376002)(39860400002)(366004)(396003)(451199015)(31686004)(186003)(6512007)(2616005)(6506007)(53546011)(6666004)(38100700002)(316002)(8676002)(66476007)(66946007)(478600001)(4326008)(66556008)(36756003)(6486002)(41300700001)(2906002)(31696002)(86362001)(8936002)(5660300002)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UkhuUHBWdDNjcGkrNjIzeEhnUlcvbllQanY1V1VoTHRMRlgyWW94ZWljMFJ2?=
- =?utf-8?B?NzI1TmRMa2UxdnBWTFU4SUUwM3JzeFlJN1FxajNMOGY2UjB1bGVVZkt1RXBF?=
- =?utf-8?B?S0RiaTlubGlzS1piZGlSem9abUFtYjJGWmxMajVYQmx1M2JNWE1CNVRKR0VB?=
- =?utf-8?B?UEU3N1ZWZmNWd01aS2NUSE1XdVV5d0hES1pXdEFyaVlPRU5XMk1oQ3lVNDZQ?=
- =?utf-8?B?THNUcGZrYTZ2b1dqOEkrZ2ZFczNwNGt4cThjTWU0bFdEbTU3c1NqaW93cmR3?=
- =?utf-8?B?RldkR3dYSzl6M1pTYzJJRmRDZGNGTTY1UFRuWTRuOEFFN3VKWWZsdVZBSS8v?=
- =?utf-8?B?K0t5eUlLOW81QVFyVGtNeTJwZzVwS3I5VlMvRUZDd2pTdXVjeThDcER4czlJ?=
- =?utf-8?B?Mk9SS0U5anVXSi9wV0E3YThwZzdJUUJCWlFSZmFOZW1JSm9mWjh1L2ZuZ2R6?=
- =?utf-8?B?blZoYXUwQXBjbXFRQngwejZCb0lkNkF6Mkg3dlpKbnBVSWhERmtTMTRtRnI1?=
- =?utf-8?B?a0tIRkd4c2hSTTQ1YXZwZlBCWXRWaWdNWjN0SjgvNTl3RzJySHBaSUlCb3Fm?=
- =?utf-8?B?SDlPTmNDZ1ptYTU5MHZZMHZBcnJIOEdyZHpyWjZFS3ozYmkzbW10bTJBa1Bo?=
- =?utf-8?B?aWYzREJJcVBQaFNYVm8wWmw1elV5UnF1N0U0R0VyaytDKzlHZmRkTmZaTEk3?=
- =?utf-8?B?SjdpamFROXVlTHBYa3d6SDlDWUZQTk5kRWxQOVpPYWNvSWprdlhCUXJ5NVJs?=
- =?utf-8?B?Smk1ZXpwbGlnQlBVejFxWWU2RTQyYUVNdjgxekFlSkFCLzNnQ0plUFlhSlBQ?=
- =?utf-8?B?c3RVZWNXcS9yODR6VWN0NWovSlU0ck1DTEF5TXZZd2dDVjI5cmtRSnY5bGc2?=
- =?utf-8?B?TmVWZzloZll0a1lMWW9rN0NvQ1JqcFVUZ29PNStRN01YTUdQSnI5SVl3TnFt?=
- =?utf-8?B?ZFQvTS8yU0VOWjkxazFxS0Mwdk5zYkVCMUs3U1JyVUdzV1JyV0c4QS9XbFp3?=
- =?utf-8?B?QkI3NFhDOXVUbyt2UzhvcE9RM0tCSktsWUVhS2lZYktENm9keUM0ck55WGVV?=
- =?utf-8?B?SEFJdzNPdit1SVlEaHF5VFRad3poazVQYlVvMHFhRENCYlZKeWZDc0xXSVdW?=
- =?utf-8?B?OFpSRlpnYkh4emVaTFV0ZWlsd0twelpCbS9CK0RTVWxzSTl3S0hIL2NtZ2hS?=
- =?utf-8?B?cjV2Qi80UHhOQUl3bVRKaFdPdE42MktoNit2dUQzM0lGT0RFUmw5a3MzTTNH?=
- =?utf-8?B?dkxFRXEySEhLak4yU2JDV0V6bHpTckxGNytUb2RHTjhXU3BCb1dkYmd0dzhQ?=
- =?utf-8?B?aHpQaHJMRmd1RjFTcmJKQzFGaVpjQk0rV01XOVFGS3krb2pjVm5ZTStQTDVn?=
- =?utf-8?B?K3d2VWVBRmtRUDlaZkJWTkNFRGI0UlVRTVk3SkZKT1hidDQ5Qm41NXFta3pE?=
- =?utf-8?B?bldEcnZBdXFucDIrN29NMFRBQXFXWDU5RG93SWRCR3BVQXF5VXBXbnRVOGlC?=
- =?utf-8?B?MXd4NEJJa0hnM0dCSlp3N3pWUVRrSFdEWnBPdStoWnM2SU45V0RoWEVJbGQz?=
- =?utf-8?B?N0tOYXhSakpJVUJaLy9sTjZXS2dYUGlpMzVBa0hmM0tMYVFXSXFTV1duSStN?=
- =?utf-8?B?K1VpODB2dkRQcEFHUmRpRlovNjBOb1RMVGIyMHpoVldEaHE2djJOQU56VjFj?=
- =?utf-8?B?ZmllU0xZYU8yY1E3RENkVnpOdi90U3A5TEhZYW5YK0JlT0dJVFZSdmZDWmNl?=
- =?utf-8?B?R2pROE54QWJ4M0VCWm5xNXMvZ2N3bWd2aUswM04rek8wZzl3dEpvc01lcExy?=
- =?utf-8?B?dmt3Vitwem5MY29qZm5LWXVXUUROcVFXVjY2N1dkU2xYeDZqZHA4R1gwclBI?=
- =?utf-8?B?UTBzOWkvbXViSFBMOHoyb2tOV1JKNklOQURySVNaN0ZpeGg4akVycE1pUS9l?=
- =?utf-8?B?Z3VreXFUaVpWMmhTVFhYVUVHL05WV0NienUxT3YveXd5NkE2WkFoeEJIcnVC?=
- =?utf-8?B?N1UwcXlTRWpuakJ2ejc4bDlXRUh1eXA5cXB0aEl0aHI4S2pYa1c1NWFqU2xv?=
- =?utf-8?B?V1pZYStWam5PMmh5dFB0bUpLY0FHQlZjbjJzbGhWc3dDK2s1RDF0a2xWZUJD?=
- =?utf-8?B?a1BvcVdwS1drdnVoRDBnMzFab1B5SjlaUEZ6UTN4bkk3S3J6bGJ6dUw1bkZJ?=
- =?utf-8?B?QTdmQ3JXdzByZ0VCZDlwZDBXRVY2NTVJQm40RVZXOTR1QmNmaVZRSFpvdHFX?=
- =?utf-8?B?SUlkNVk5dkhLTTF3NFNtRHg3Z0NRPT0=?=
+X-Microsoft-Antispam-Message-Info: W0f/jZLxc6O2wgW4z9bXkOEH/JrDFQnqBSrBSq47vgxxYZfnwnoiMNj8Qf5FbMKhJyzt9ll5xbc4eeKrykXPf7t0YI8eAHFrUVVj+02LoqsGQ4TvDFrm0p3AIidYEvopshEZVTUIP24B3QgPtnwZfnfOqJrWxoFQiK+dpeAqjNSrf6pDRHGir8UaQTyxsXmPz3YQ42hIP5SjCnuJuyPaYBl6hWDnhwjA5mXnsfmocSCDcYBneigzR+xErfALI+dchcSVEUXpng4G2XyoxiN4+zwFsbSFZectTv6MuKCKqVzqb2FaF19ihkbgOgr+8HW3KsnKA3he8e+0THlwX+lcGgskeaLSZs6YnzEcDVj66iquRgVkeEWUQtoTyBHVb5Kb7NpNHkqcZ1+sUktcQeUiSnPIPcdGfWMmkhV3/yLlFWr7SrHNVLkoEAdKOUZaXZATx9pT5fC6MWloTV/U4fFU8D9JmCzgjYGB5zwTmtJ5gB1mHQk5WQU1D+0X4l/e8/xNeATjS+l5YPd6lqRNdBuw6aAnwLca7PlIB3c3XVhmZ0HZkyiNYLfCf+md7nH3q44K8yAlxbzfw/sg5gJe6vMBEO5k7zYHkdi8/jbIOIvUKQa8MBV2CgDnUzNjNNfc3Bv08r+T5TAD8X/6B/ltGgk6jn464KCfz4J2WBbySXqCiiRX63uzQ8HsTxKRTaPX42hQtbwF1BpxOqvFitKhSbVypZwSy139dCKrU++7e7cDWhrOMy3fsB+BmX054F0Qm2Fl5f7GfRJd0UXGuAu+g7i74HsgRdpA/oDjfpNkXdZiueM+tdaHsQhAUaR7diHYxl67Bq5yQmQWm/9dUnqab0stNYNpFNBAtWqaQNp+CUWFv1e3dmcE5PORyc9lR+WfaWwk/mqIKWDg/MY6gqgSqf+ROQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(39860400002)(136003)(396003)(451199015)(40470700004)(36840700001)(46966006)(7636003)(2906002)(7696005)(41300700001)(336012)(5660300002)(40480700001)(36860700001)(7416002)(6666004)(82310400005)(2616005)(356005)(186003)(36756003)(47076005)(83380400001)(8936002)(26005)(1076003)(82740400003)(107886003)(316002)(70586007)(110136005)(426003)(54906003)(86362001)(70206006)(478600001)(4326008)(40460700003)(966005)(8676002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3bb0a8b8-2b1c-4921-f096-08daa18434ee
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2022 19:04:02.5612
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2022 20:18:58.6700
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: afb37fd0-4973-4d15-971e-08daa18ead1c
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6x/37Tq82K7iTW0prpfZbRMglQnrIHiomm23UMPjtYgFkMHeFT7FO9Es/o03+bn/x3kW05ZWwFJiHveT+lbTQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4883
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT108.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6307
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Add driver support for ARM CoreSight PMU device and event attributes for NVIDIA
+implementation. The code is based on ARM Coresight PMU architecture and ACPI ARM
+Performance Monitoring Unit table (APMT) specification below:
+ * ARM Coresight PMU:
+        https://developer.arm.com/documentation/ihi0091/latest
+ * APMT: https://developer.arm.com/documentation/den0117/latest
 
-On 28/09/2022 14:55, Wayne Chang wrote:
-> From: Sing-Han Chen <singhanc@nvidia.com>
-> 
-> This commit adds XUSB device mode controller support on Tegra234 SoC.
-> Tegra234 XUDC is very similar to the existing Tegra194 XUDC.
-> 
-> Signed-off-by: Sing-Han Chen <singhanc@nvidia.com>
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> ---
->   drivers/usb/gadget/udc/tegra-xudc.c | 17 +++++++++++++++++
->   1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-> index 3c37effdfa64..53277aa5a270 100644
-> --- a/drivers/usb/gadget/udc/tegra-xudc.c
-> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
-> @@ -3656,6 +3656,19 @@ static struct tegra_xudc_soc tegra194_xudc_soc_data = {
->   	.has_ipfs = false,
->   };
->   
-> +static struct tegra_xudc_soc tegra234_xudc_soc_data = {
-> +	.clock_names = tegra186_xudc_clock_names,
-> +	.num_clks = ARRAY_SIZE(tegra186_xudc_clock_names),
-> +	.num_phys = 4,
-> +	.u1_enable = true,
-> +	.u2_enable = true,
-> +	.lpm_enable = true,
-> +	.invalid_seq_num = false,
-> +	.pls_quirk = false,
-> +	.port_reset_quirk = false,
-> +	.has_ipfs = false,
-> +};
-> +
->   static const struct of_device_id tegra_xudc_of_match[] = {
->   	{
->   		.compatible = "nvidia,tegra210-xudc",
-> @@ -3669,6 +3682,10 @@ static const struct of_device_id tegra_xudc_of_match[] = {
->   		.compatible = "nvidia,tegra194-xudc",
->   		.data = &tegra194_xudc_soc_data
->   	},
-> +	{
-> +		.compatible = "nvidia,tegra234-xudc",
-> +		.data = &tegra234_xudc_soc_data
-> +	},
+The patchset applies on top of
+  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  master next-20220524
+
+For APMT support, please see patchset: https://lkml.org/lkml/2022/4/19/1395 
+
+Changes from v4:
+ * Fix code formatting
+ * Add timeout to read register function with high-low-high sequence
+ * Add NO_INTERRUPT capability on PMU that does not have IRQ
+ * Fix the name of NVIDIA PMUs
+ * Drop filter attribute for NVLink-C2C PMUs
+ * Added Reviewed/Acked-by from Suzuki
+Thanks to suzuki.poulose@arm.com and will@kernel.org for the review comments.
+v4: https://lore.kernel.org/linux-arm-kernel/20220814182351.8861-1-bwicaksono@nvidia.com/
+
+Changes from v3:
+ * Driver is now probing "arm-cs-arch-pmu" device.
+ * The driver files, directory, functions are renamed with "arm_cspmu" prefix.
+ * Use Kconfig ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU.
+ * Add kernel doc for NVIDIA Uncore PMU.
+ * Use GENMASK and FIELD_GET macros everywhere.
+Thanks to suzuki.poulose@arm.com and will@kernel.org for the review comments.
+v3: https://lore.kernel.org/linux-arm-kernel/20220621055035.31766-1-bwicaksono@nvidia.com/
+
+Changes from v2:
+ * Driver is now probing "arm-system-pmu" device.
+ * Change default PMU naming to "arm_<APMT node type>_pmu".
+ * Add implementor ops to generate custom name.
+Thanks to suzuki.poulose@arm.com for the review comments.
+v2: https://lore.kernel.org/linux-arm-kernel/20220515163044.50055-1-bwicaksono@nvidia.com/
+
+Changes from v1:
+ * Remove CPU arch dependency.
+ * Remove 32-bit read/write helper function and just use read/writel.
+ * Add .is_visible into event attribute to filter out cycle counter event.
+ * Update pmiidr matching.
+ * Remove read-modify-write on PMCR since the driver only writes to PMCR.E.
+ * Assign default cycle event outside the 32-bit PMEVTYPER range.
+ * Rework the active event and used counter tracking.
+Thanks to robin.murphy@arm.com for the review comments.
+v1: https://lore.kernel.org/linux-arm-kernel/20220509002810.12412-1-bwicaksono@nvidia.com/
+
+Besar Wicaksono (2):
+  perf: arm_cspmu: Add support for ARM CoreSight PMU driver
+  perf: arm_cspmu: Add support for NVIDIA SCF and MCF attribute
+
+ Documentation/admin-guide/perf/index.rst      |    1 +
+ Documentation/admin-guide/perf/nvidia-pmu.rst |  299 ++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/perf/Kconfig                          |    2 +
+ drivers/perf/Makefile                         |    1 +
+ drivers/perf/arm_cspmu/Kconfig                |   13 +
+ drivers/perf/arm_cspmu/Makefile               |    7 +
+ drivers/perf/arm_cspmu/arm_cspmu.c            | 1285 +++++++++++++++++
+ drivers/perf/arm_cspmu/arm_cspmu.h            |  151 ++
+ drivers/perf/arm_cspmu/nvidia_cspmu.c         |  398 +++++
+ drivers/perf/arm_cspmu/nvidia_cspmu.h         |   17 +
+ 11 files changed, 2175 insertions(+)
+ create mode 100644 Documentation/admin-guide/perf/nvidia-pmu.rst
+ create mode 100644 drivers/perf/arm_cspmu/Kconfig
+ create mode 100644 drivers/perf/arm_cspmu/Makefile
+ create mode 100644 drivers/perf/arm_cspmu/arm_cspmu.c
+ create mode 100644 drivers/perf/arm_cspmu/arm_cspmu.h
+ create mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.c
+ create mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
 
 
-The device-tree binding documentation is missing for this compatible 
-string. Please send a patch to add this compatible string to the 
-appropriate binding doc.
-
-Thanks!
-Jon
-
+base-commit: 09ce5091ff971cdbfd67ad84dc561ea27f10d67a
 -- 
-nvpublic
+2.17.1
+
