@@ -2,120 +2,160 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B992C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 14:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C33C4321E
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 14:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235638AbiI2OjO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Sep 2022 10:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33058 "EHLO
+        id S235724AbiI2O50 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Sep 2022 10:57:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235814AbiI2OjD (ORCPT
+        with ESMTP id S235697AbiI2O5Y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Sep 2022 10:39:03 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 35BC31C4337
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Sep 2022 07:39:00 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 735B11650;
-        Thu, 29 Sep 2022 07:39:06 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.81.100])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4868B3F792;
-        Thu, 29 Sep 2022 07:38:58 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 15:38:52 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-arm-kernel@lists.infradead.org, ardb@kernel.org,
-        catalin.marinas@arm.com, james.morse@arm.com, joey.gouly@arm.com,
-        maz@kernel.org, will@kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 6/8] arm64: alternatives: have callbacks take a cap
-Message-ID: <YzWlLvurVCXOBkKn@FVFF77S0Q05N>
-References: <20220912162210.3626215-1-mark.rutland@arm.com>
- <20220912162210.3626215-7-mark.rutland@arm.com>
- <3cecc3a5-30b0-f0bd-c3de-9e09bd21909b@nvidia.com>
- <dc53c62d-58e4-ce20-edc6-969c71801c9a@nvidia.com>
- <YzV3y361Mj9N+CcW@FVFF77S0Q05N>
- <9317eb32-4dc3-c865-a1ac-320a14ebea56@nvidia.com>
- <YzV87YY4N7SJ3Q3H@FVFF77S0Q05N>
- <f38d5afb-6d15-f802-7c81-533fa59e51d8@nvidia.com>
+        Thu, 29 Sep 2022 10:57:24 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EDB313EE9C
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Sep 2022 07:57:21 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id cc5so2615877wrb.6
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Sep 2022 07:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=nMnoSaH++1jbxSRlI1i6ADibQaQmTqMy1EUBbqCTBb4=;
+        b=Vv38lf5pdCpNoqOoAP120tgQ2KJMA7ZXY3zRv5IFf/18Ka+QYWp8iVvfDHwGWrUURq
+         XMcDVzCN67NfLLBvXneNU5Hkez1866vy2rJVUYu1vKryg0jxvA42QIHMFr7FwGNaV9n6
+         +IocjwdpayeRbeM2/sZgvPjKG7ythoaKpeUuXczusJJEcfS9wVBWcjyCRFl0D/sVgICw
+         2J5a8U1veuMcYYFjAV1q0dwyuM/YnZan597rCZ3Ds+v2h0MHW6JxifLG9t4Ao/8M6lM7
+         dZ4dzrfOEAf3pCEuuCr6J1A5XSYwp2pNtFtcBkJ2x/vFTyXVLC2qrq4yFh7WpEiVWHAy
+         sp4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=nMnoSaH++1jbxSRlI1i6ADibQaQmTqMy1EUBbqCTBb4=;
+        b=ewLS8ub6CzY9pvOSfuSHkiDNxemxaNJG1yQMzyYPgVmq+Ph7za3c+is1NdoZmrOKLz
+         TlGsmEtDRbm6NBjkSd11tVM0V5C+smgbq7HWHT0B0zxbBYiWldPiE+5lVywpLyGbXw+I
+         NGYo29A6JHbw/qCal09oFlqNnObePnO5OuBtKqtZp2oVNv8iD+cNmFUzE4khFyFEDPV0
+         f/h/uRx+brY6+U3X0sxiTSfnAt/jKlvsT6rCxv7KtsKYG+lDkxSFzlIuvmTsM+Emerov
+         9rnTbRsunJHgOpWpMXEqyIatTxYtbKiytZR2jZANoyEweo5gJE1Kbca/cjaKj+2s7Ys5
+         vs5g==
+X-Gm-Message-State: ACrzQf0O7C1wGkJnQVA5QN7+WNxdJkxrSX5hR2fmgYShJEBTI2qQInyu
+        T4RepwglaKb38P9uhW2hjNbtTA==
+X-Google-Smtp-Source: AMsMyM4axP40VuENGb1cdsZ/JJas2+un/fCosaf9j+YjtgOlism/1wYOdarXHCbv/7WEnKLKyS9PoQ==
+X-Received: by 2002:a05:6000:2a3:b0:226:dff3:b031 with SMTP id l3-20020a05600002a300b00226dff3b031mr2687409wry.495.1664463439654;
+        Thu, 29 Sep 2022 07:57:19 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:48a2:39eb:9d1b:8b8d? ([2a05:6e02:1041:c10:48a2:39eb:9d1b:8b8d])
+        by smtp.googlemail.com with ESMTPSA id t187-20020a1c46c4000000b003b4a699ce8esm4646084wma.6.2022.09.29.07.57.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Sep 2022 07:57:19 -0700 (PDT)
+Message-ID: <ae86fc5a-0521-3dde-c2ea-8679c0ec4831@linaro.org>
+Date:   Thu, 29 Sep 2022 16:57:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f38d5afb-6d15-f802-7c81-533fa59e51d8@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v7 00/29] Rework the trip points creation
+Content-Language: en-US
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        rui.zhang@intel.com, Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Kaestle <peter@piie.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Antoine Tenart <atenart@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org
+References: <20220928210059.891387-1-daniel.lezcano@linaro.org>
+ <d0be3159-8094-aed1-d9b1-c4b16d88d67c@linaro.org>
+ <CAJZ5v0hOFoe0KqEimFv9pgmiAOzuRoLjdqoScr53ErNFU4AAPA@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0hOFoe0KqEimFv9pgmiAOzuRoLjdqoScr53ErNFU4AAPA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 02:37:54PM +0100, Jon Hunter wrote:
+On 29/09/2022 15:58, Rafael J. Wysocki wrote:
+> On Thu, Sep 29, 2022 at 2:26 PM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>>
+>> Hi Rafael,
+>>
+>> are you happy with the changes?
 > 
-> On 29/09/2022 12:09, Mark Rutland wrote:
+> I'll have a look and let you know.
+
+Great, thanks
 > 
-> ...
+>> I would like to integrate those changes with the thermal pull request
 > 
-> > > Yes that fixes it.
-> > > 
-> > > Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> > 
-> > Great!
-> > 
-> > Could you please let me know which version of binutils, so that we can add
-> > something regarding that in a comment and in the commit message?
-> > 
-> > The output of ${CROSS_COMPILE}as --version would suffice.
-> > 
-> > With that, I can clean this up and send as a proper patch.
+> Sure, but it looks like you've got only a few ACKs for these patches
+> from the driver people.
 > 
-> 
-> Yes it is ...
-> 
-> GNU ld (Linaro_Binutils-2017.08) 2.27.0.20161019
+> Wouldn't it be prudent to give them some more time to review the changes?
 
-Thanks for that!
+Well I would say I received the ACKs from the drivers which are actively 
+maintained. Others are either not with a dedicated maintainer or not a 
+reactive one. The first iteration of the series is from August 5th. So 
+it has been 2 months.
 
-FWIW< I can reproduce that with the Linaro 17.05 toolchain release:
+I pinged for imx, armada and tegra two weeks ago.
 
-| [mark@lakrids:~/src/linux]% uselinaro 17.05 aarch64-linux-gnu-as --version
-| GNU assembler (Linaro_Binutils-2017.05) 2.27.0.20161019
-| Copyright (C) 2016 Free Software Foundation, Inc.
-| This program is free software; you may redistribute it under the terms of
-| the GNU General Public License version 3 or later.
-| This program has absolutely no warranty.
-| This assembler was configured for a target of `aarch64-linux-gnu'.
-| [mark@lakrids:~/src/linux]% uselinaro 17.05 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -s defconfig
-| [mark@lakrids:~/src/linux]% uselinaro 17.05 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -s Image    
-| /tmp/ccAy74PK.s: Assembler messages:
-| /tmp/ccAy74PK.s:2528: Error: found 'L', expected: ')'
-| /tmp/ccAy74PK.s:2528: Error: found 'L', expected: ')'
-| /tmp/ccAy74PK.s:2528: Error: found 'L', expected: ')'
-| /tmp/ccAy74PK.s:2528: Error: found 'L', expected: ')'
-| /tmp/ccAy74PK.s:2528: Error: junk at end of line, first unrecognized character is `L'
-| /tmp/ccAy74PK.s:3562: Error: found 'L', expected: ')'
-| /tmp/ccAy74PK.s:3562: Error: found 'L', expected: ')'
-| /tmp/ccAy74PK.s:3562: Error: found 'L', expected: ')'
-| /tmp/ccAy74PK.s:3562: Error: found 'L', expected: ')'
-| /tmp/ccAy74PK.s:3562: Error: junk at end of line, first unrecognized character is `L'
-| make[1]: *** [scripts/Makefile.build:249: init/main.o] Error 1
-| make: *** [Makefile:1853: init] Error 2
+The st, hisilicon drivers fall under the thermal maintainers umbrella
 
-... but curiously the 17.08 release seems to have a new, working version of
-binutils:
+There are three series coming after this series to be posted. I would 
+like to go forward in the process of cleaning up the framework. IMO two 
+months is enough to let the maintainers pay attention to the changes, 
+especially if we do a gentle ping and there are seven versions.
 
-| [mark@lakrids:~/src/linux]% uselinaro 17.08 aarch64-linux-gnu-as --version
-| GNU assembler (Linaro_Binutils-2017.08) 2.28.2.20170706
-| Copyright (C) 2017 Free Software Foundation, Inc.
-| This program is free software; you may redistribute it under the terms of
-| the GNU General Public License version 3 or later.
-| This program has absolutely no warranty.
-| This assembler was configured for a target of `aarch64-linux-gnu'.
-| [mark@lakrids:~/src/linux]% uselinaro 17.08 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -s defconfig
-| [mark@lakrids:~/src/linux]% uselinaro 17.08 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j50 -s Image
-| [mark@lakrids:~/src/linux]% echo $?
-| 0
+And after that comes the thermal_zone_device_register() parameters 
+simplification :)
 
-... so I'm not sure why your copy has an older binutils.
+[ ... ]
 
-Regardless, I'll go prep that patch with a real commit message, and add your
-Tested-by.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Thanks,
-Mark.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
