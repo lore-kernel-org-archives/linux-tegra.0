@@ -2,65 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77D9C4167B
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 17:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D30C4167B
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 19:36:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236099AbiI2Rfm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Sep 2022 13:35:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39550 "EHLO
+        id S230017AbiI2TgD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Sep 2022 15:36:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235442AbiI2Rfk (ORCPT
+        with ESMTP id S229805AbiI2TgB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Sep 2022 13:35:40 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEAC210F729;
-        Thu, 29 Sep 2022 10:35:39 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id i17so1289470qkk.12;
-        Thu, 29 Sep 2022 10:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=zA6Y5hkQML6R8vIpJqVNEmC/+vTq2vUA6WDac9IkZHQ=;
-        b=oDEM1tP1F7UAQVNZ91VmNnenaUm4qws7hEHmiEJRTthVohQUH5kO4G1hktHhuWt4CM
-         EXQeLMeZeFlF32hqNkCbnw4vAAccKlVWEdhS89TBTSAWS4VrzAAwYropIGyq+4fzcIO5
-         eDhJkFzHIo9VN1Dc2ixvSF25dp8FYQaXt+ADjX3g7d9JFEJEKQoi5HInCc8iua/m7T9X
-         /0LdiHd4Ua5124nOwY/J4/lsmG9wSL2LOzz4GJGQ4eSC41jVmv1amWgIwgY0SoTz1KV5
-         gLSqULVmTuciVMrXMzGbthl1K7bl/z5QNTi7Uzp1DXtwPIrBwOoRdLlgk9Tzp/smlRHe
-         lBUw==
+        Thu, 29 Sep 2022 15:36:01 -0400
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD2D75F9A6;
+        Thu, 29 Sep 2022 12:35:59 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id k12so1517246qkj.8;
+        Thu, 29 Sep 2022 12:35:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=zA6Y5hkQML6R8vIpJqVNEmC/+vTq2vUA6WDac9IkZHQ=;
-        b=stlfClGuOeRKo9IdjBO6QsPE5ItAzVKAq408AgvN/UoWm2gpXniOujvhlmlhqXw8ua
-         7lA8JrGZoD9Scrdo5qhhoZqP9k0HnKl6hAxgWCtVgLw/qz72hlm9rVOvqVJ5mAuADnsF
-         MYN7+8meZDGPPtZNCQICAftGSJfrCMjGVrFNqFqSqPNKtIFWRD5tCdyOay0NKMjnyHC6
-         qrVQ/ML1V3kNHkIkLrO6JDfT0Dpx0ikRw/h1OojmFx1FFdhqXLZ55CFLX8cme5urb8wU
-         PecmgWsExTbvc/ztOW1m2oHtZA5KMOYO3iSQDX1JAXAlVQbC9BpJNzyXrG6FYQFpSFfA
-         dvEg==
-X-Gm-Message-State: ACrzQf3JaelOPEMIF4soYIABCAC7Bm8JMoU7zfl65Ac3e8xzhuMCB4oe
-        OF9CZENOXkOttkiXUemnvV8=
-X-Google-Smtp-Source: AMsMyM4Yah3QrJm+TCHsStE8k6mas/dBTRodARjXJOj7YfvBpRznPsuKIDoMU9NryiwLqSH3VhMzdQ==
-X-Received: by 2002:a05:620a:2683:b0:6cf:3768:8e4b with SMTP id c3-20020a05620a268300b006cf37688e4bmr3058946qkp.768.1664472938687;
-        Thu, 29 Sep 2022 10:35:38 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id l19-20020ac84593000000b003437a694049sm5992207qtn.96.2022.09.29.10.35.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Sep 2022 10:35:37 -0700 (PDT)
-Message-ID: <bc0fd01d-4d05-ef97-dbb9-d92b4549b9a3@gmail.com>
-Date:   Thu, 29 Sep 2022 10:34:57 -0700
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=mTAlcKpePLUmoa2PPlLgnnpbbR37vsLCkLJsK3FMOMM=;
+        b=zonwpLQcKQG+p2EU8QstcgW8hyoj+hCye+Gp+61vVgzBiB56Aubi5H1NSfomPzhVsA
+         Zxro0mDXhF9BDRkdtR1Pjgrbo4vANCoeGbndss/IRw3qq7TuNlMTkIFbLBpswp13mvtt
+         kK0gYEwokxJPlqpr8FAG+t1LaEBKxdxmrIyVkxLdwrUP37mG2ZwwFbmHMKt+pBFXdOst
+         8MzsJniTYqeFtIxm7e3sVgZANp37M5v4hSQ53mh56YUzN+IIh/nWd4TVba9h0mi2KyoV
+         Dz77r5JHBkMVnjEMWaVVfOGIzHc+UKx8evxnRkHK6tmgi9gMZiA/TWPpPMQhq4MrvDdV
+         BGHQ==
+X-Gm-Message-State: ACrzQf11s1ZFzyh6D7Auax7/3wMtv0laiaSaLNiEljkKcUcGwuUC/8YT
+        jThOBetiYo28V+NwTDT0xA0kKbSCujtI9zLOQkA=
+X-Google-Smtp-Source: AMsMyM6nwPbbMnzN+TFVkeFoMqPTRrzMun/9SaGI62vQ28n3j95zFU2xk6dTQ3pv+9rh/XRcMovC6IXcuteR1RYwINI=
+X-Received: by 2002:a05:620a:290d:b0:6b6:1a92:d88a with SMTP id
+ m13-20020a05620a290d00b006b61a92d88amr3634308qkp.58.1664480158981; Thu, 29
+ Sep 2022 12:35:58 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v7 23/29] thermal/drivers/broadcom: Use generic
- thermal_zone_get_trip() function
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        rui.zhang@intel.com, Raju Rangoju <rajur@chelsio.com>,
+References: <20220928210059.891387-1-daniel.lezcano@linaro.org>
+ <d0be3159-8094-aed1-d9b1-c4b16d88d67c@linaro.org> <CAJZ5v0hOFoe0KqEimFv9pgmiAOzuRoLjdqoScr53ErNFU4AAPA@mail.gmail.com>
+ <ae86fc5a-0521-3dde-c2ea-8679c0ec4831@linaro.org>
+In-Reply-To: <ae86fc5a-0521-3dde-c2ea-8679c0ec4831@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 29 Sep 2022 21:35:48 +0200
+Message-ID: <CAJZ5v0jrWamTTXcHabSk=6cmm4pEx0_ebiECKZRfrX_vS85YYg@mail.gmail.com>
+Subject: Re: [PATCH v7 00/29] Rework the trip points creation
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        Raju Rangoju <rajur@chelsio.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -82,10 +69,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -97,33 +83,69 @@ Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Antoine Tenart <atenart@kernel.org>,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
         linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org
-References: <20220928210059.891387-1-daniel.lezcano@linaro.org>
- <20220928210059.891387-24-daniel.lezcano@linaro.org>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220928210059.891387-24-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/28/22 14:00, Daniel Lezcano wrote:
-> The thermal framework gives the possibility to register the trip
-> points with the thermal zone. When that is done, no get_trip_* ops are
-> needed and they can be removed.
-> 
-> Convert ops content logic into generic trip points and register them with the
-> thermal zone.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+On Thu, Sep 29, 2022 at 4:57 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 29/09/2022 15:58, Rafael J. Wysocki wrote:
+> > On Thu, Sep 29, 2022 at 2:26 PM Daniel Lezcano
+> > <daniel.lezcano@linaro.org> wrote:
+> >>
+> >>
+> >> Hi Rafael,
+> >>
+> >> are you happy with the changes?
+> >
+> > I'll have a look and let you know.
+>
+> Great, thanks
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Well, because you have not added the history of changes to the
+patches, that will take more time than it would otherwise.
+
+Generally, please always add information on what has changed in the
+patch between different versions of it.
+
+> >> I would like to integrate those changes with the thermal pull request
+> >
+> > Sure, but it looks like you've got only a few ACKs for these patches
+> > from the driver people.
+> >
+> > Wouldn't it be prudent to give them some more time to review the changes?
+>
+> Well I would say I received the ACKs from the drivers which are actively
+> maintained. Others are either not with a dedicated maintainer or not a
+> reactive one. The first iteration of the series is from August 5th. So
+> it has been 2 months.
+>
+> I pinged for imx, armada and tegra two weeks ago.
+
+OK
+
+> The st, hisilicon drivers fall under the thermal maintainers umbrella
+>
+> There are three series coming after this series to be posted. I would
+> like to go forward in the process of cleaning up the framework. IMO two
+> months is enough to let the maintainers pay attention to the changes,
+> especially if we do a gentle ping and there are seven versions.
+>
+> And after that comes the thermal_zone_device_register() parameters
+> simplification :)
+
+Well, that's all fine, but I don't want people to get surprised by
+significant changes they haven't expected and I want to avoid missing
+anything subtle.
