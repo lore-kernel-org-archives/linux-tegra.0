@@ -2,309 +2,253 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20697C43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 13:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A999C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 14:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235448AbiI2N61 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Sep 2022 09:58:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47750 "EHLO
+        id S235550AbiI2OGS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Sep 2022 10:06:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235044AbiI2N6Z (ORCPT
+        with ESMTP id S235480AbiI2OGM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Sep 2022 09:58:25 -0400
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E619814DAEF;
-        Thu, 29 Sep 2022 06:58:23 -0700 (PDT)
-Received: by mail-qv1-f42.google.com with SMTP id s13so929209qvq.10;
-        Thu, 29 Sep 2022 06:58:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=j2eS2oYTh9Esr2YqEh75jDi4MmL4n4Pma3h/bszXlXg=;
-        b=JHkw2ED6N+6vDgkpaluIQ0M/eGBd/6C37lL4moRwFXrE3rc5vPbt+742/0s6RAv32Y
-         Fx1WfiUyOc0eSYX/3Ka9uox+NwORxiOopuwjG3g4nR/5a5+x6n7ziHHS37hLA5nPNMgC
-         oqnxY7ORu0gfAF00PvYEoFE2SS2j2t+/IZ7U47QL7PhXLs0bk/jcvPMjE45XawrisUKw
-         MsU8NA2FRWsa9M5ybn51Hy4ecFcnyCpaVUMKdOl14gK0nMmvgGwYwUBuikJTkwDX149g
-         tqjJf/WIvloHnc4dH7neDOgeilCDIGztEAAMxhcxR8jb3SJhrMPFgT4KiCe8VeB7hTc6
-         nR2Q==
-X-Gm-Message-State: ACrzQf05KldJqOtWvx6IGV6kgcAPNqaoeH4VkzRWL1S7LVtHIzfV4fNw
-        IdnljfWKkZvEcHXDyfBxVYNiKvPVcLI8LFlYInY=
-X-Google-Smtp-Source: AMsMyM4AySKi6X3qswEVoCCAsrAbASFeJ+Cin4SOyYreY9KboClevIW+n0aulgtbybFccZ7D03ytU7kp5buKL8yuZEs=
-X-Received: by 2002:ad4:4ea3:0:b0:4af:646a:9787 with SMTP id
- ed3-20020ad44ea3000000b004af646a9787mr2549068qvb.15.1664459902561; Thu, 29
- Sep 2022 06:58:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220928210059.891387-1-daniel.lezcano@linaro.org> <d0be3159-8094-aed1-d9b1-c4b16d88d67c@linaro.org>
-In-Reply-To: <d0be3159-8094-aed1-d9b1-c4b16d88d67c@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 29 Sep 2022 15:58:11 +0200
-Message-ID: <CAJZ5v0hOFoe0KqEimFv9pgmiAOzuRoLjdqoScr53ErNFU4AAPA@mail.gmail.com>
-Subject: Re: [PATCH v7 00/29] Rework the trip points creation
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, rui.zhang@intel.com,
-        Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Kaestle <peter@piie.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Thu, 29 Sep 2022 10:06:12 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2049.outbound.protection.outlook.com [40.107.95.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09BDF1514EF;
+        Thu, 29 Sep 2022 07:06:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Pb8BUNUnsCD3H9GqQ0k9hVi/HfyNT3rVlXy1SftrE4E+cB+qmWsqOY3YCiX90G34mfSqbU3OMn9FgnxMjRT6ajrqvXtKVlIaop+BYgv5eE7WbdwZyUF57CfKBWmMS+PRs3mmZWERz1XElaKd2LEVPQo4QLxbUMv7JUWsdvEe9IX8eBNC5JvtsziKr912M+sBNwVo+owlalgk8SbUoUnGpn0gNJ7QHAYpysUUk/WQpxvUoXmbW/Ft4qVGOPZ1wCtInbU1ozVlvqBknF+bzyORcoYPs8D2vcoUxtiffN942NbwjYwqSlYbYUJHxDvImftq9jwCZhK/Mq1WnzvJ0szJHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YiiA1fspuJz6cvLY0hAIN1Tx8J/tzQLxoyxyc/aAvFE=;
+ b=MqlnoWiBTxgasbjCLdRAD+LeElLVbKdQ1iNxdxVsehgqggKJjobdeoVCacuTVfvBwSvwajN3b/1LCsQvJrPrY/tqW4axOx3eulnthEcciGYwdKmsdDUk3vtPCEzG8Y1XQuneRLBZJJFutu90GuL1CJUfjg2mjyg/+NdLj5/FDT//aATrjLyNaNNrElhvyzdFsF6S+WZNFYnDFAY9rNrEMCRQGSTW6Wj33FNF7c4nF0DyzLFOPSWn8DGU56lbSG5ahKtCVjsKjopkIUpnSrJNGmzxHlc3NoKcddqBWAG/LoJoMPsWV9fqcwymD1n1tV8m6IM9XdJz+sfKXtfvWJIVGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YiiA1fspuJz6cvLY0hAIN1Tx8J/tzQLxoyxyc/aAvFE=;
+ b=aLH9wxJQsfev/CYEQK0GR5HfWjqats60GyMeG1VEvYudHvoC87w8HGccfZla21pKomZMUVO3mxT1GDTptfuAhsNZTTBaFsk1BGCz1Nt+vuoBa37dVD7Nr8DtxkNBtw+2VBRDlGHZTYPsMXVijTfCRYqQ8MRdNrIUBIyQjC9FEjcFoKDcw4bkOJ/WOuS6Cj9tcHNUGwNtgeSj/V2wmvRIO5S4QNb0xNJsUa+jqZuK1JruNmaXF4SVvsxSy89rtasVv41vyn9JeujkQQDLv/2UmmAXFqbFBnM3Pt3wxnNxclL4aRpDeiOYllYTs+Eac08PN6gCcggQRcr+4Enunq1aQw==
+Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
+ by MN0PR12MB5740.namprd12.prod.outlook.com (2603:10b6:208:373::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.26; Thu, 29 Sep
+ 2022 14:06:09 +0000
+Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
+ ([fe80::3c98:4af6:e849:aa5]) by SJ0PR12MB5676.namprd12.prod.outlook.com
+ ([fe80::3c98:4af6:e849:aa5%4]) with mapi id 15.20.5676.017; Thu, 29 Sep 2022
+ 14:06:08 +0000
+From:   Besar Wicaksono <bwicaksono@nvidia.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
+        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
+        Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Antoine Tenart <atenart@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Vikram Sethi <vsethi@nvidia.com>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "mike.leach@linaro.org" <mike.leach@linaro.org>,
+        "leo.yan@linaro.org" <leo.yan@linaro.org>
+Subject: RE: [PATCH v5 1/2] perf: arm_cspmu: Add support for ARM CoreSight PMU
+ driver
+Thread-Topic: [PATCH v5 1/2] perf: arm_cspmu: Add support for ARM CoreSight
+ PMU driver
+Thread-Index: AQHY03eZbdRwasQ0NkO0/RBm6KsShK32FDcAgABW9/A=
+Date:   Thu, 29 Sep 2022 14:06:08 +0000
+Message-ID: <SJ0PR12MB5676FE048F8105D01C83D0EBA0579@SJ0PR12MB5676.namprd12.prod.outlook.com>
+References: <20220928201830.45637-1-bwicaksono@nvidia.com>
+ <20220928201830.45637-2-bwicaksono@nvidia.com>
+ <f67bf3b6-c8ba-4134-5772-ce750f4bb4dd@arm.com>
+In-Reply-To: <f67bf3b6-c8ba-4134-5772-ce750f4bb4dd@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR12MB5676:EE_|MN0PR12MB5740:EE_
+x-ms-office365-filtering-correlation-id: e2903fe1-b673-4dbc-db8b-08daa223c200
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: aTCzXTTXjreR13IJaXNe2+anl+xGpa7TeiEn7V8rr6I/xUitkONgS6dBYBGpVpgR8epVA1i9sdimLM6Jn5eQuHHwvI22bNRiQyGIE/5Ex8+YcpMqzDhyCPHVTpVDcrD9xWh1drMUPS2mgUBr0dXEvthz3WcLKN4+cEABqbEwM9G71j8cF1XUKRbhWG5mvTi/sX+Ifc/HM0yeBgBXJzxh8Mv4TEQmFIUFc1cIM+dpkBYWTX+rig6rEkRQqoVdOjdUzxiUaaeZBBzLlyqSua0Eceze1tPSK2Lx0SIKaoRh43IiewBp71S1pM7ImsdtsLI3fzOJYPmMfBk/GlB5NCzPy9ULk2GIHwMptfOqZTWiEt6D2v11fprUDoD/coufnEMpZUim6CwJ7A3FVI9oG+4XpoQX/oKeqt4d/Nla7dlC+YZfrvB+y6qie1RD8Ij+GO4cM/T1Waz+w8kyOJwK2KLGCuCvE4pIywsql/nem3rsQnsMeyHs2regUP/rKoUO02NK71nAAEC20CvKrnRslT1xodGExw6KzNTlJ2YIhD9FloExSj7KG4Y+cxIHJFA0rBwHgVri1EwOsUwjQsy//6gbZ3UAvdtV6K3dy+svhUbuASK8LH271gZhmxxAFUTngnBnYpKyius3T0Uwzhf7Xd9irDlr8za7aUuOhchlC+T3+ssfFpv/1WR6r9/z1ZPN0e5qapGiJAQnJyGLOHCOQdUqbuLKmEM9IxOHXXBHhgoA9XiT5cb9DTXGV1OAkJ/XHAjZNrzLSydgu/yHQOb4gE7JALYUCcp/+Oz6/JWlPvzvRwaOEFfF3egUYvrtdzTVH/jyuVxmBiMPslUj4KDPDtxYbt/UnY0/768icsW5PHE32wGgDmuXgkRsYINrFMg8Vns1C5PjEKSr4LtigxuRG/8hQw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(366004)(346002)(39860400002)(136003)(451199015)(54906003)(110136005)(122000001)(7416002)(186003)(2906002)(33656002)(8936002)(52536014)(66946007)(5660300002)(66476007)(38070700005)(66556008)(86362001)(8676002)(41300700001)(26005)(4326008)(76116006)(66446008)(53546011)(9686003)(6506007)(7696005)(64756008)(316002)(478600001)(83380400001)(38100700002)(966005)(55016003)(71200400001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dkRKc0FJTUpQbFdKTklMMDJrbjhJblYwZUVpamJQcXFTQzVvTi8xVVc5QXJP?=
+ =?utf-8?B?Zmt3MjRmTUVuSWFxWEx5L1JRVVJuQ1VIcS80ck5GUzU4QmhobmtLU2tKaWh3?=
+ =?utf-8?B?WnJPY0grbkVaZGlDTm9ETnVReDFzMFJCcEhYTGp3MDZYbHNJZkNhbGpUQ2VF?=
+ =?utf-8?B?WE1welFSOWh4dEdMblVDUmd5VmRxLzJJL08wQmxJK2FkTE5DczNJdGpVUWV1?=
+ =?utf-8?B?b1ppYW4rN0x2RzVWNmUxcGQzcmtYN3MvTEJCWFNBMGZIR0tLaWpPQ2k1WXVZ?=
+ =?utf-8?B?ZVY4bmVkMUV5S09NNXY5VEhyT1haSTV5Y3hkemZhalUyOXdxb3ZMbXNBZXFv?=
+ =?utf-8?B?RXlIdUNKdE80VHlJL0kzNTJxUmlCSlRjaGV6OTN4dnJ1aHJ0V1Y0MkIwcjVV?=
+ =?utf-8?B?M3dPUXdNajJQQnBLL3hMb05XYk83RWM1OFBEZVZnOGRXUGYxaFFVK1ZIVWJX?=
+ =?utf-8?B?T2xFd3orTzZWeGh5Y3JJM1d4Tk1LVXhZMDJ3VlQ1TW4yQ0NOMkJqaTZMS2l6?=
+ =?utf-8?B?bXY2OUh3VWZ2S1dOdUJNNDk3SlpPYUkxb0ducGdlMFlFNmRvZGpOQ2RTV1h1?=
+ =?utf-8?B?WU1vQVlLSXBZQyt4MGJUL1Eyd05mc1hQNmVZNHZ3eThzbnQ2bWxDalpnQVJt?=
+ =?utf-8?B?bThPUTh1RHBPcEtWa2ZXRFU5MXRGYzgwUFB5ZXhxN0FYNk5qSm0wYXJqSG5i?=
+ =?utf-8?B?R2cvRklGSmgycnVsSmFaQ2FXREFRNEY4RnRocHdkMkx0dHJyTUlhUDVpRHdS?=
+ =?utf-8?B?SUZnVFdHTE1NSTlEc0daQUNFZ0ZLSFM0bC96ZVhLaW93WUV3dUNsVVl0U2Ru?=
+ =?utf-8?B?OHR4NGdRTEN1T00zVkdkWW1wNmd4WjJMcyt2VTFCdFpQUTBsMEN0STVhd3Ba?=
+ =?utf-8?B?S1dIaXhtM1JOTlZZdFVPZytFQWl1R3paMUwwTDRidlJuc1YydHY3elo3cmJm?=
+ =?utf-8?B?NmtpWTVCdU9xR0V2aDRzeThnTFNJcUVObU1CZ1RaRWhBR3FuS0R3dzE2M3lr?=
+ =?utf-8?B?RGRyd25veG1xWDl5anZJdEhXUWZTREU4RUUxaUpiWU5BZUFCMnZ5L2ZHMFpT?=
+ =?utf-8?B?R1gzS1NHYUJkdHZhTjdTQkZOcFg4THVJblV3aEh3VDFoOUkvbFZ3U1BsYmZ1?=
+ =?utf-8?B?WGd4MHNxNURzd204YkI1cE5HNFkyZzZXVFRtajlwUFZRYmVmdUYvcU9JK2Nk?=
+ =?utf-8?B?MnR6UVlYN0sxVHFITTJ0OVF3WkRrT0Jad250MTl5RktDVVRDZEt3R2xKSzJZ?=
+ =?utf-8?B?MWR3dFBsZmhoZGlKaTFJanF4YTlKK2g0QThKTjNPa25Pclk4UFZteldteExa?=
+ =?utf-8?B?ZkhTd01tWjN5Slo3cmcxcHdHd3VhNFRDSG9OQ1RkYlZiVnVjNEdzakpyV1VI?=
+ =?utf-8?B?azZReVF3UE51K2ZacGIwcCtSblpMRkNvMVplZjBYdEVuVVNkUmxSdVZkaEVW?=
+ =?utf-8?B?V1FlOERNemw1SldORGNsUHZoOE51VEhyYUlkdDlGbDhicVlTbkdtOXBtaFRE?=
+ =?utf-8?B?U3RZUVltWjMwVnc4WDFxVEZvdkhKa0RmRnpOTy9rVnNiMXBPanpwTHh3T05H?=
+ =?utf-8?B?OVk5Q1R6R1VMbmNSNE9scTVKTVVWMDhlaHVHZTkxb0l2THpHakFPa2hxU2hG?=
+ =?utf-8?B?ZnlSWEVwaXo5eDUvMDhFQWdqKzFZUDlQb2JHWXFhWW1MVytIOUs5UE1YeHdO?=
+ =?utf-8?B?VWJ0eGRMaFVtbjc4OVg1a2QrMVRvQkFERFRicFIwYVR1T1ZWQTQ2TDFsM2k2?=
+ =?utf-8?B?RFBUZ1lvUDN0aEFjRzlDbnNDRnVhVHNZUnJaS0o1ak5TSnZ5ZlVWQ1lJYXZB?=
+ =?utf-8?B?QWlVNU15c2xPeUNnS09xaG1xNDNXdVZuVlZVV1JsV0dIQWxiNzFSdmpuMGRt?=
+ =?utf-8?B?K3NNWEY3dlhkdzdWeElWVFNqOVdTd1FOL2ZnUS9ZNmc4akxTTGYzL01LWW0z?=
+ =?utf-8?B?NDdBVE1sWjRlVXVZQjJlS295a1piTjRBYWQ4cHZuYzFiUWVTRnJldG5rRVFi?=
+ =?utf-8?B?ZzF1ZGZsZk5pdktvMG9mVHd4UkNaQjhHMU42SjVTZmRkUGNtcnNEMHV2K0pT?=
+ =?utf-8?B?MFlqaDRWdDlJZHdwNjZDNHpUeVVsaWpGaFY1MWxhMVNMMnUyTDhPOXRkanJW?=
+ =?utf-8?Q?X8mzh5Q0zywrk4aDZoOr48TbN?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2903fe1-b673-4dbc-db8b-08daa223c200
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2022 14:06:08.8425
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Snj7ctv1wAfGWWpLKHmmT/6OL1rn2Z2tJfzFLdtzjHJriSCuW6Ql6axQe4LNzZ6aPN9OchDs2CglfOjhTHIKpA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5740
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 2:26 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
->
-> Hi Rafael,
->
-> are you happy with the changes?
-
-I'll have a look and let you know.
-
-> I would like to integrate those changes with the thermal pull request
-
-Sure, but it looks like you've got only a few ACKs for these patches
-from the driver people.
-
-Wouldn't it be prudent to give them some more time to review the changes?
-
-> On 28/09/2022 23:00, Daniel Lezcano wrote:
-> > This work is the pre-requisite of handling correctly when the trip
-> > point are crossed. For that we need to rework how the trip points are
-> > declared and assigned to a thermal zone.
-> >
-> > Even if it appears to be a common sense to have the trip points being
-> > ordered, this no guarantee neither documentation telling that is the
-> > case.
-> >
-> > One solution could have been to create an ordered array of trips built
-> > when registering the thermal zone by calling the different get_trip*
-> > ops. However those ops receive a thermal zone pointer which is not
-> > known as it is in the process of creating it.
-> >
-> > This cyclic dependency shows we have to rework how we manage the trip
-> > points.
-> >
-> > Actually, all the trip points definition can be common to the backend
-> > sensor drivers and we can factor out the thermal trip structure in all
-> > of them.
-> >
-> > Then, as we register the thermal trips array, they will be available
-> > in the thermal zone structure and a core function can return the trip
-> > given its id.
-> >
-> > The get_trip_* ops won't be needed anymore and could be removed. The
-> > resulting code will be another step forward to a self encapsulated
-> > generic thermal framework.
-> >
-> > Most of the drivers can be converted more or less easily. This series
-> > does a first round with most of the drivers. Some remain and will be
-> > converted but with a smaller set of changes as the conversion is a bit
-> > more complex.
-> >
-> > Changelog:
-> >   v7:
-> >      - Added missing return 0 in the x86_pkg_temp driver
-> >   v6:
-> >      - Improved the code for the get_crit_temp() function as suggested by Rafael
-> >      - Removed inner parenthesis in the set_trip_temp() function and invert the
-> >        conditions. Check the type of the trip point is unchanged
-> >      - Folded patch 4 with 1
-> >      - Add per thermal zone info message in the bang-bang governor
-> >      - Folded the fix for an uninitialized variable in int340x_thermal_zone_add()
-> >   v5:
-> >      - Fixed a deadlock when calling thermal_zone_get_trip() while
-> >        handling the thermal zone lock
-> >      - Remove an extra line in the sysfs change
-> >      - Collected tags
-> > v4:
-> >     - Remove extra lines on exynos changes as reported by Krzysztof Kozlowski
-> >     - Collected tags
-> >   v3:
-> >     - Reorg the series to be git-bisect safe
-> >     - Added the set_trip generic function
-> >     - Added the get_crit_temp generic function
-> >     - Removed more dead code in the thermal-of
-> >     - Fixed the exynos changelog
-> >     - Fixed the error check for the exynos drivers
-> >     - Collected tags
-> >   v2:
-> >     - Added missing EXPORT_SYMBOL_GPL() for thermal_zone_get_trip()
-> >     - Removed tab whitespace in the acerhdf driver
-> >     - Collected tags
-> >
-> > Cc: Raju Rangoju <rajur@chelsio.com>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: Eric Dumazet <edumazet@google.com>
-> > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: Paolo Abeni <pabeni@redhat.com>
-> > Cc: Peter Kaestle <peter@piie.net>
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > Cc: Mark Gross <markgross@kernel.org>
-> > Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > Cc: Amit Kucheria <amitk@kernel.org>
-> > Cc: Zhang Rui <rui.zhang@intel.com>
-> > Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>
-> > Cc: Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>
-> > Cc: Florian Fainelli <f.fainelli@gmail.com>
-> > Cc: Ray Jui <rjui@broadcom.com>
-> > Cc: Scott Branden <sbranden@broadcom.com>
-> > Cc: Support Opensource <support.opensource@diasemi.com>
-> > Cc: Lukasz Luba <lukasz.luba@arm.com>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> > Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> > Cc: Fabio Estevam <festevam@gmail.com>
-> > Cc: NXP Linux Team <linux-imx@nxp.com>
-> > Cc: Thara Gopinath <thara.gopinath@linaro.org>
-> > Cc: Andy Gross <agross@kernel.org>
-> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
-> > Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-> > Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > Cc: Eduardo Valentin <edubezval@gmail.com>
-> > Cc: Keerthy <j-keerthy@ti.com>
-> > Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: Antoine Tenart <atenart@kernel.org>
-> > Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > Cc: Dmitry Osipenko <digetx@gmail.com>
-> > Cc: netdev@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: platform-driver-x86@vger.kernel.org
-> > Cc: linux-pm@vger.kernel.org
-> > Cc: linux-rpi-kernel@lists.infradead.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-arm-msm@vger.kernel.org
-> > Cc: linux-renesas-soc@vger.kernel.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-tegra@vger.kernel.org
-> > Cc: linux-omap@vger.kernel.org
-> >
-> > Daniel Lezcano (29):
-> >    thermal/core: Add a generic thermal_zone_get_trip() function
-> >    thermal/sysfs: Always expose hysteresis attributes
-> >    thermal/core: Add a generic thermal_zone_set_trip() function
-> >    thermal/core/governors: Use thermal_zone_get_trip() instead of ops
-> >      functions
-> >    thermal/of: Use generic thermal_zone_get_trip() function
-> >    thermal/of: Remove unused functions
-> >    thermal/drivers/exynos: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/exynos: of_thermal_get_ntrips()
-> >    thermal/drivers/exynos: Replace of_thermal_is_trip_valid() by
-> >      thermal_zone_get_trip()
-> >    thermal/drivers/tegra: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/uniphier: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/hisi: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/qcom: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/armada: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/rcar_gen3: Use the generic function to get the number
-> >      of trips
-> >    thermal/of: Remove of_thermal_get_ntrips()
-> >    thermal/of: Remove of_thermal_is_trip_valid()
-> >    thermal/of: Remove of_thermal_set_trip_hyst()
-> >    thermal/of: Remove of_thermal_get_crit_temp()
-> >    thermal/drivers/st: Use generic trip points
-> >    thermal/drivers/imx: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/rcar: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/broadcom: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/da9062: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/ti: Remove unused macros ti_thermal_get_trip_value() /
-> >      ti_thermal_trip_is_valid()
-> >    thermal/drivers/acerhdf: Use generic thermal_zone_get_trip() function
-> >    thermal/drivers/cxgb4: Use generic thermal_zone_get_trip() function
-> >    thermal/intel/int340x: Replace parameter to simplify
-> >    thermal/drivers/intel: Use generic thermal_zone_get_trip() function
-> >
-> >   drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |   2 -
-> >   .../ethernet/chelsio/cxgb4/cxgb4_thermal.c    |  41 +----
-> >   drivers/platform/x86/acerhdf.c                |  73 +++-----
-> >   drivers/thermal/armada_thermal.c              |  39 ++---
-> >   drivers/thermal/broadcom/bcm2835_thermal.c    |   8 +-
-> >   drivers/thermal/da9062-thermal.c              |  52 +-----
-> >   drivers/thermal/gov_bang_bang.c               |  39 +++--
-> >   drivers/thermal/gov_fair_share.c              |  18 +-
-> >   drivers/thermal/gov_power_allocator.c         |  51 +++---
-> >   drivers/thermal/gov_step_wise.c               |  22 ++-
-> >   drivers/thermal/hisi_thermal.c                |  11 +-
-> >   drivers/thermal/imx_thermal.c                 |  72 +++-----
-> >   .../int340x_thermal/int340x_thermal_zone.c    |  33 ++--
-> >   .../int340x_thermal/int340x_thermal_zone.h    |   4 +-
-> >   .../processor_thermal_device.c                |  10 +-
-> >   drivers/thermal/intel/x86_pkg_temp_thermal.c  | 120 +++++++------
-> >   drivers/thermal/qcom/qcom-spmi-temp-alarm.c   |  39 ++---
-> >   drivers/thermal/rcar_gen3_thermal.c           |   2 +-
-> >   drivers/thermal/rcar_thermal.c                |  53 +-----
-> >   drivers/thermal/samsung/exynos_tmu.c          |  57 +++----
-> >   drivers/thermal/st/st_thermal.c               |  47 +----
-> >   drivers/thermal/tegra/soctherm.c              |  33 ++--
-> >   drivers/thermal/tegra/tegra30-tsensor.c       |  17 +-
-> >   drivers/thermal/thermal_core.c                | 161 +++++++++++++++---
-> >   drivers/thermal/thermal_core.h                |  24 +--
-> >   drivers/thermal/thermal_helpers.c             |  28 +--
-> >   drivers/thermal/thermal_netlink.c             |  21 +--
-> >   drivers/thermal/thermal_of.c                  | 116 -------------
-> >   drivers/thermal/thermal_sysfs.c               | 133 +++++----------
-> >   drivers/thermal/ti-soc-thermal/ti-thermal.h   |  15 --
-> >   drivers/thermal/uniphier_thermal.c            |  27 ++-
-> >   include/linux/thermal.h                       |  10 ++
-> >   32 files changed, 560 insertions(+), 818 deletions(-)
-> >
->
->
-> --
-> <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
+SGkgU3V6dWtpLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1enVr
+aSBLIFBvdWxvc2UgPHN1enVraS5wb3Vsb3NlQGFybS5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBT
+ZXB0ZW1iZXIgMjksIDIwMjIgMzoyOSBBTQ0KPiBUbzogQmVzYXIgV2ljYWtzb25vIDxid2ljYWtz
+b25vQG52aWRpYS5jb20+OyByb2Jpbi5tdXJwaHlAYXJtLmNvbTsNCj4gY2F0YWxpbi5tYXJpbmFz
+QGFybS5jb207IHdpbGxAa2VybmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb20NCj4gQ2M6IGxp
+bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZzsNCj4gbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBzdWRlZXAuaG9sbGFAYXJt
+LmNvbTsNCj4gdGhhbnUucmFuZ2FyYWphbkBhcm0uY29tOyBNaWNoYWVsLldpbGxpYW1zQGFybS5j
+b207IFRoaWVycnkgUmVkaW5nDQo+IDx0cmVkaW5nQG52aWRpYS5jb20+OyBKb25hdGhhbiBIdW50
+ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPjsgVmlrcmFtDQo+IFNldGhpIDx2c2V0aGlAbnZpZGlh
+LmNvbT47IG1hdGhpZXUucG9pcmllckBsaW5hcm8ub3JnOw0KPiBtaWtlLmxlYWNoQGxpbmFyby5v
+cmc7IGxlby55YW5AbGluYXJvLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY1IDEvMl0gcGVy
+ZjogYXJtX2NzcG11OiBBZGQgc3VwcG9ydCBmb3IgQVJNDQo+IENvcmVTaWdodCBQTVUgZHJpdmVy
+DQo+IA0KPiBFeHRlcm5hbCBlbWFpbDogVXNlIGNhdXRpb24gb3BlbmluZyBsaW5rcyBvciBhdHRh
+Y2htZW50cw0KPiANCj4gDQo+IEhpIEJlc2FyDQo+IA0KPiBPbiAyOC8wOS8yMDIyIDIxOjE4LCBC
+ZXNhciBXaWNha3Nvbm8gd3JvdGU6DQo+ID4gQWRkIHN1cHBvcnQgZm9yIEFSTSBDb3JlU2lnaHQg
+UE1VIGRyaXZlciBmcmFtZXdvcmsgYW5kIGludGVyZmFjZXMuDQo+ID4gVGhlIGRyaXZlciBwcm92
+aWRlcyBnZW5lcmljIGltcGxlbWVudGF0aW9uIHRvIG9wZXJhdGUgdW5jb3JlIFBNVSBiYXNlZA0K
+PiA+IG9uIEFSTSBDb3JlU2lnaHQgUE1VIGFyY2hpdGVjdHVyZS4gVGhlIGRyaXZlciBhbHNvIHBy
+b3ZpZGVzIGludGVyZmFjZQ0KPiA+IHRvIGdldCB2ZW5kb3IvaW1wbGVtZW50YXRpb24gc3BlY2lm
+aWMgaW5mb3JtYXRpb24sIGZvciBleGFtcGxlIGV2ZW50DQo+ID4gYXR0cmlidXRlcyBhbmQgZm9y
+bWF0aW5nLg0KPiA+DQo+ID4gVGhlIHNwZWNpZmljYXRpb24gdXNlZCBpbiB0aGlzIGltcGxlbWVu
+dGF0aW9uIGNhbiBiZSBmb3VuZCBiZWxvdzoNCj4gPiAgICogQUNQSSBBcm0gUGVyZm9ybWFuY2Ug
+TW9uaXRvcmluZyBVbml0IHRhYmxlOg0KPiA+ICAgICAgICAgIGh0dHBzOi8vZGV2ZWxvcGVyLmFy
+bS5jb20vZG9jdW1lbnRhdGlvbi9kZW4wMTE3L2xhdGVzdA0KPiA+ICAgKiBBUk0gQ29yZXNpZ2h0
+IFBNVSBhcmNoaXRlY3R1cmU6DQo+ID4gICAgICAgICAgaHR0cHM6Ly9kZXZlbG9wZXIuYXJtLmNv
+bS9kb2N1bWVudGF0aW9uL2loaTAwOTEvbGF0ZXN0DQo+ID4NCj4gPiBSZXZpZXdlZC1ieTogU3V6
+dWtpIEsgUG91bG9zZSA8c3V6dWtpLnBvdWxvc2VAYXJtLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5
+OiBCZXNhciBXaWNha3Nvbm8gPGJ3aWNha3Nvbm9AbnZpZGlhLmNvbT4NCj4gDQo+IEFwb2xvZ2ll
+cyBmb3IgdGhpcyBsYXRlIGNvbW1lbnQuIFBsZWFzZSBmaW5kIGl0IGJlbG93Lg0KPiANCj4gPiAt
+LS0NCj4gPiAgIGFyY2gvYXJtNjQvY29uZmlncy9kZWZjb25maWcgICAgICAgfCAgICAxICsNCj4g
+PiAgIGRyaXZlcnMvcGVyZi9LY29uZmlnICAgICAgICAgICAgICAgfCAgICAyICsNCj4gPiAgIGRy
+aXZlcnMvcGVyZi9NYWtlZmlsZSAgICAgICAgICAgICAgfCAgICAxICsNCj4gPiAgIGRyaXZlcnMv
+cGVyZi9hcm1fY3NwbXUvS2NvbmZpZyAgICAgfCAgIDEzICsNCj4gPiAgIGRyaXZlcnMvcGVyZi9h
+cm1fY3NwbXUvTWFrZWZpbGUgICAgfCAgICA2ICsNCj4gPiAgIGRyaXZlcnMvcGVyZi9hcm1fY3Nw
+bXUvYXJtX2NzcG11LmMgfCAxMjc2DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4g
+PiAgIGRyaXZlcnMvcGVyZi9hcm1fY3NwbXUvYXJtX2NzcG11LmggfCAgMTUxICsrKysNCj4gPiAg
+IDcgZmlsZXMgY2hhbmdlZCwgMTQ1MCBpbnNlcnRpb25zKCspDQo+ID4gICBjcmVhdGUgbW9kZSAx
+MDA2NDQgZHJpdmVycy9wZXJmL2FybV9jc3BtdS9LY29uZmlnDQo+ID4gICBjcmVhdGUgbW9kZSAx
+MDA2NDQgZHJpdmVycy9wZXJmL2FybV9jc3BtdS9NYWtlZmlsZQ0KPiA+ICAgY3JlYXRlIG1vZGUg
+MTAwNjQ0IGRyaXZlcnMvcGVyZi9hcm1fY3NwbXUvYXJtX2NzcG11LmMNCj4gPiAgIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBkcml2ZXJzL3BlcmYvYXJtX2NzcG11L2FybV9jc3BtdS5oDQo+ID4NCj4gPiBk
+aWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9jb25maWdzL2RlZmNvbmZpZyBiL2FyY2gvYXJtNjQvY29u
+Zmlncy9kZWZjb25maWcNCj4gPiBpbmRleCA3ZDExMDUzNDNiYzIuLmVlMzFjOTE1OWE1YiAxMDA2
+NDQNCj4gPiAtLS0gYS9hcmNoL2FybTY0L2NvbmZpZ3MvZGVmY29uZmlnDQo+ID4gKysrIGIvYXJj
+aC9hcm02NC9jb25maWdzL2RlZmNvbmZpZw0KPiA+IEBAIC0xMjEyLDYgKzEyMTIsNyBAQCBDT05G
+SUdfUEhZX1VOSVBISUVSX1VTQjM9eQ0KPiA+ICAgQ09ORklHX1BIWV9URUdSQV9YVVNCPXkNCj4g
+PiAgIENPTkZJR19QSFlfQU02NTRfU0VSREVTPW0NCj4gPiAgIENPTkZJR19QSFlfSjcyMUVfV0la
+PW0NCj4gPiArQ09ORklHX0FSTV9DT1JFU0lHSFRfUE1VX0FSQ0hfU1lTVEVNX1BNVT15DQo+ID4g
+ICBDT05GSUdfQVJNX1NNTVVfVjNfUE1VPW0NCj4gPiAgIENPTkZJR19GU0xfSU1YOF9ERFJfUE1V
+PW0NCj4gPiAgIENPTkZJR19RQ09NX0wyX1BNVT15DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+cGVyZi9LY29uZmlnIGIvZHJpdmVycy9wZXJmL0tjb25maWcNCj4gPiBpbmRleCAxZTJkNjk0NTM3
+NzEuLmM5NGQzNjAxZWI0OCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BlcmYvS2NvbmZpZw0K
+PiA+ICsrKyBiL2RyaXZlcnMvcGVyZi9LY29uZmlnDQo+ID4gQEAgLTE5Miw0ICsxOTIsNiBAQCBj
+b25maWcgTUFSVkVMTF9DTjEwS19ERFJfUE1VDQo+ID4gICAgICAgICBFbmFibGUgcGVyZiBzdXBw
+b3J0IGZvciBNYXJ2ZWxsIEREUiBQZXJmb3JtYW5jZSBtb25pdG9yaW5nDQo+ID4gICAgICAgICBl
+dmVudCBvbiBDTjEwSyBwbGF0Zm9ybS4NCj4gPg0KPiA+ICtzb3VyY2UgImRyaXZlcnMvcGVyZi9h
+cm1fY3NwbXUvS2NvbmZpZyINCj4gPiArDQo+ID4gICBlbmRtZW51DQo+ID4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvcGVyZi9NYWtlZmlsZSBiL2RyaXZlcnMvcGVyZi9NYWtlZmlsZQ0KPiA+IGluZGV4
+IDU3YTI3OWM2MWRmNS4uM2JjOTMyM2YwOTY1IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcGVy
+Zi9NYWtlZmlsZQ0KPiA+ICsrKyBiL2RyaXZlcnMvcGVyZi9NYWtlZmlsZQ0KPiA+IEBAIC0yMCwz
+ICsyMCw0IEBAIG9iai0kKENPTkZJR19BUk1fRE1DNjIwX1BNVSkgKz0NCj4gYXJtX2RtYzYyMF9w
+bXUubw0KPiA+ICAgb2JqLSQoQ09ORklHX01BUlZFTExfQ04xMEtfVEFEX1BNVSkgKz0NCj4gbWFy
+dmVsbF9jbjEwa190YWRfcG11Lm8NCj4gPiAgIG9iai0kKENPTkZJR19NQVJWRUxMX0NOMTBLX0RE
+Ul9QTVUpICs9DQo+IG1hcnZlbGxfY24xMGtfZGRyX3BtdS5vDQo+ID4gICBvYmotJChDT05GSUdf
+QVBQTEVfTTFfQ1BVX1BNVSkgKz0gYXBwbGVfbTFfY3B1X3BtdS5vDQo+ID4gK29iai0kKENPTkZJ
+R19BUk1fQ09SRVNJR0hUX1BNVV9BUkNIX1NZU1RFTV9QTVUpICs9DQo+IGFybV9jc3BtdS8NCj4g
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wZXJmL2FybV9jc3BtdS9LY29uZmlnDQo+IGIvZHJpdmVy
+cy9wZXJmL2FybV9jc3BtdS9LY29uZmlnDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBp
+bmRleCAwMDAwMDAwMDAwMDAuLmMyYzU2ZWNhZmNjYg0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiAr
+KysgYi9kcml2ZXJzL3BlcmYvYXJtX2NzcG11L0tjb25maWcNCj4gPiBAQCAtMCwwICsxLDEzIEBA
+DQo+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gPiArIw0KPiA+ICsj
+IENvcHlyaWdodCAoYykgMjAyMiwgTlZJRElBIENPUlBPUkFUSU9OICYgQUZGSUxJQVRFUy4NCj4g
+PiArDQo+ID4gK2NvbmZpZyBBUk1fQ09SRVNJR0hUX1BNVV9BUkNIX1NZU1RFTV9QTVUNCj4gPiAr
+ICAgICB0cmlzdGF0ZSAiQVJNIENvcmVzaWdodCBBcmNoaXRlY3R1cmUgUE1VIg0KPiA+ICsgICAg
+IGRlcGVuZHMgb24gQUNQSQ0KPiA+ICsgICAgIGRlcGVuZHMgb24gQUNQSV9BUE1UIHx8IENPTVBJ
+TEVfVEVTVA0KPiA+ICsgICAgIGhlbHANCj4gPiArICAgICAgIFByb3ZpZGVzIHN1cHBvcnQgZm9y
+IHBlcmZvcm1hbmNlIG1vbml0b3JpbmcgdW5pdCAoUE1VKSBkZXZpY2VzDQo+ID4gKyAgICAgICBi
+YXNlZCBvbiBBUk0gQ29yZVNpZ2h0IFBNVSBhcmNoaXRlY3R1cmUuIE5vdGUgdGhhdCB0aGlzIFBN
+VQ0KPiA+ICsgICAgICAgYXJjaGl0ZWN0dXJlIGRvZXMgbm90IGhhdmUgcmVsYXRpb25zaGlwIHdp
+dGggdGhlIEFSTSBDb3JlU2lnaHQNCj4gPiArICAgICAgIFNlbGYtSG9zdGVkIFRyYWNpbmcuDQo+
+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGVyZi9hcm1fY3NwbXUvTWFrZWZpbGUNCj4gYi9kcml2
+ZXJzL3BlcmYvYXJtX2NzcG11L01ha2VmaWxlDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4g
+PiBpbmRleCAwMDAwMDAwMDAwMDAuLmNkYzM0NTVmNzRkOA0KPiA+IC0tLSAvZGV2L251bGwNCj4g
+PiArKysgYi9kcml2ZXJzL3BlcmYvYXJtX2NzcG11L01ha2VmaWxlDQo+ID4gQEAgLTAsMCArMSw2
+IEBADQo+ID4gKyMgQ29weXJpZ2h0IChjKSAyMDIyLCBOVklESUEgQ09SUE9SQVRJT04gJiBBRkZJ
+TElBVEVTLg0KPiA+ICsjDQo+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAN
+Cj4gPiArDQo+ID4gK29iai0kKENPTkZJR19BUk1fQ09SRVNJR0hUX1BNVV9BUkNIX1NZU1RFTV9Q
+TVUpICs9IFwNCj4gPiArICAgICBhcm1fY3NwbXUubw0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L3BlcmYvYXJtX2NzcG11L2FybV9jc3BtdS5jDQo+IGIvZHJpdmVycy9wZXJmL2FybV9jc3BtdS9h
+cm1fY3NwbXUuYw0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMDAw
+MDAwLi4wZmE1ZjI5YmYxYzYNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvZHJpdmVycy9w
+ZXJmL2FybV9jc3BtdS9hcm1fY3NwbXUuYw0KPiA+IEBAIC0wLDAgKzEsMTI3NiBAQA0KPiANCj4g
+DQo+ID4gKy8qIERlZmF1bHQgZXZlbnQgbGlzdC4gKi8NCj4gPiArc3RhdGljIHN0cnVjdCBhdHRy
+aWJ1dGUgKmFybV9jc3BtdV9ldmVudF9hdHRyc1tdID0gew0KPiA+ICsgICAgIEFSTV9DU1BNVV9F
+VkVOVF9BVFRSKGN5Y2xlcywNCj4gQVJNX0NTUE1VX0VWVF9DWUNMRVNfREVGQVVMVCksDQo+ID4g
+KyAgICAgTlVMTCwNCj4gPiArfTsNCj4gPiArDQo+ID4gK3N0YXRpYyBzdHJ1Y3QgYXR0cmlidXRl
+ICoqDQo+ID4gK2FybV9jc3BtdV9nZXRfZXZlbnRfYXR0cnMoY29uc3Qgc3RydWN0IGFybV9jc3Bt
+dSAqY3NwbXUpDQo+ID4gK3sNCj4gPiArICAgICByZXR1cm4gYXJtX2NzcG11X2V2ZW50X2F0dHJz
+Ow0KPiA+ICt9DQo+IA0KPiBUaGlzIHdvdWxkIG1ha2UgYWxsIHRoZSAiUE1VIiBpbnN0YW5jZXMg
+KHdoaWNoIGRvbid0IGltcGxlbWVudCB0aGUNCj4gY2FsbGJhY2spIHNoYXJlIGEgbm9uLWNvbnN0
+IGFycmF5LiBDb3VsZCB3ZSBpbnN0ZWFkIHJldHVybiBhIGNvcHkgb2YNCj4gdGhlIGF0dHJzIHRv
+IGF2b2lkIGRyaXZlcnMgbWVzc2luZyB1cCB3aXRoIHRoZSBhcnJheSA/DQo+IFRoZSBhcnJheSBj
+b3VsZCBiZSBhbGxvY2F0ZWQgdmlhIGRldm1fIG9uIHRoZSBzcGVjaWZpYyBkZXZpY2UsIHRodXMN
+Cj4gaXQgZ2V0cyBjbGVhbmVkIHVwIG9uIHRoZSBkZXZpY2UgdGVhciBkb3duID8NCj4gDQo+IC4u
+Lg0KPiANCj4gPiArc3RhdGljIHN0cnVjdCBhdHRyaWJ1dGUgKioNCj4gPiArYXJtX2NzcG11X2dl
+dF9mb3JtYXRfYXR0cnMoY29uc3Qgc3RydWN0IGFybV9jc3BtdSAqY3NwbXUpDQo+ID4gK3sNCj4g
+PiArICAgICByZXR1cm4gYXJtX2NzcG11X2Zvcm1hdF9hdHRyczsNCj4gPiArfQ0KPiA+ICsNCj4g
+DQo+IFNhbWUgYXMgYWJvdmUNCg0KSSB3YXMgZXhwZWN0aW5nIHRoZSB2ZW5kb3Igc3BlY2lmaWMg
+aW1wbCB0byBiZSBhd2FyZSBhbmQgbWFrZSBpdHMgb3duDQpjb3B5IGlmIGl0IG5lZWRzIHRvIG1h
+a2UgbW9kaWZpY2F0aW9ucyB0byB0aGUgYXJyYXkuIEJ1dCBJIGNhbiByZXR1cm4gYSBjb3B5DQp0
+byBiZSBvbiB0aGUgc2FmZSBzaWRlLiBXZSBjYW4gcmV2aXNpdCBhZ2FpbiBpZiBpdCBpcyB1bm5l
+Y2Vzc2FyeS4NCg0KSSB3aWxsIHNlbmQgdGhlIHVwZGF0ZWQgcGF0Y2ggc2hvcnRseS4NCg0KVGhh
+bmtzLA0KQmVzYXINCg0KPiANCj4gU3V6dWtpDQo=
