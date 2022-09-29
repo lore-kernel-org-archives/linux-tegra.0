@@ -2,182 +2,69 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16870C07E9D
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 08:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E97C04A95
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 08:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235522AbiI2I3e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Sep 2022 04:29:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60332 "EHLO
+        id S235141AbiI2Irm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Sep 2022 04:47:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235516AbiI2I32 (ORCPT
+        with ESMTP id S235444AbiI2Irk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Sep 2022 04:29:28 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EDBA813EAF8;
-        Thu, 29 Sep 2022 01:29:25 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 607DA1A9A;
-        Thu, 29 Sep 2022 01:29:32 -0700 (PDT)
-Received: from [10.57.66.102] (unknown [10.57.66.102])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CFBC3F73D;
-        Thu, 29 Sep 2022 01:29:23 -0700 (PDT)
-Message-ID: <f67bf3b6-c8ba-4134-5772-ce750f4bb4dd@arm.com>
-Date:   Thu, 29 Sep 2022 09:29:22 +0100
+        Thu, 29 Sep 2022 04:47:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76957133CAB;
+        Thu, 29 Sep 2022 01:47:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 18A2DB821F2;
+        Thu, 29 Sep 2022 08:47:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48122C433B5;
+        Thu, 29 Sep 2022 08:47:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664441255;
+        bh=Vv10LeELwgV/jutorQpxnf35fil0pkpxpZIhlnO4P6g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=chP0iiA73P2n30Eg3s5Epk8D+7V78RiIgMLKS5z7xC1llAunDJLsYl+qLFtcyWYfM
+         tPku0dDDbnpD68NEVPcskvQ3Eo9F6uHSIBro6jFlUCGVgXFl35Q703Cdd7Cf3jp4eO
+         4Cck7s/CkcujpkKNhbz8phnx1Ift4MTph9E59Crkgv7PJNumQ3kYI9a3sQUSb26ZLf
+         kd7XNrnXI1oIILz83P5ZyAZCikl9M14wCl2sGD1wgVCEMgo2FvYOkEL9AjxEzixZxg
+         vx3+l5rqJa50Pk7JSLJaDMix65Bm3NJqsk70MG8seq7l9v9pj0oy7zN+3uM+nMsxmV
+         OWzL8ALaHzFpw==
+From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+To:     =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] PCI: tegra: Use PCI_CONF1_EXT_ADDRESS() macro
+Date:   Thu, 29 Sep 2022 10:47:30 +0200
+Message-Id: <166444123034.167287.381471789619893320.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220928121911.14994-1-pali@kernel.org>
+References: <20220928121911.14994-1-pali@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.13.1
-Subject: Re: [PATCH v5 1/2] perf: arm_cspmu: Add support for ARM CoreSight PMU
- driver
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, robin.murphy@arm.com,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sudeep.holla@arm.com,
-        thanu.rangarajan@arm.com, Michael.Williams@arm.com,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-        mathieu.poirier@linaro.org, mike.leach@linaro.org,
-        leo.yan@linaro.org
-References: <20220928201830.45637-1-bwicaksono@nvidia.com>
- <20220928201830.45637-2-bwicaksono@nvidia.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20220928201830.45637-2-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Besar
-
-On 28/09/2022 21:18, Besar Wicaksono wrote:
-> Add support for ARM CoreSight PMU driver framework and interfaces.
-> The driver provides generic implementation to operate uncore PMU based
-> on ARM CoreSight PMU architecture. The driver also provides interface
-> to get vendor/implementation specific information, for example event
-> attributes and formating.
+On Wed, 28 Sep 2022 14:19:11 +0200, Pali Rohár wrote:
+> Simplify pci-tegra.c driver code and use new PCI_CONF1_EXT_ADDRESS() macro
+> for accessing PCI config space.
 > 
-> The specification used in this implementation can be found below:
->   * ACPI Arm Performance Monitoring Unit table:
->          https://developer.arm.com/documentation/den0117/latest
->   * ARM Coresight PMU architecture:
->          https://developer.arm.com/documentation/ihi0091/latest
 > 
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 
-Apologies for this late comment. Please find it below.
+Applied to pci/misc, thanks!
 
-> ---
->   arch/arm64/configs/defconfig       |    1 +
->   drivers/perf/Kconfig               |    2 +
->   drivers/perf/Makefile              |    1 +
->   drivers/perf/arm_cspmu/Kconfig     |   13 +
->   drivers/perf/arm_cspmu/Makefile    |    6 +
->   drivers/perf/arm_cspmu/arm_cspmu.c | 1276 ++++++++++++++++++++++++++++
->   drivers/perf/arm_cspmu/arm_cspmu.h |  151 ++++
->   7 files changed, 1450 insertions(+)
->   create mode 100644 drivers/perf/arm_cspmu/Kconfig
->   create mode 100644 drivers/perf/arm_cspmu/Makefile
->   create mode 100644 drivers/perf/arm_cspmu/arm_cspmu.c
->   create mode 100644 drivers/perf/arm_cspmu/arm_cspmu.h
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 7d1105343bc2..ee31c9159a5b 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1212,6 +1212,7 @@ CONFIG_PHY_UNIPHIER_USB3=y
->   CONFIG_PHY_TEGRA_XUSB=y
->   CONFIG_PHY_AM654_SERDES=m
->   CONFIG_PHY_J721E_WIZ=m
-> +CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU=y
->   CONFIG_ARM_SMMU_V3_PMU=m
->   CONFIG_FSL_IMX8_DDR_PMU=m
->   CONFIG_QCOM_L2_PMU=y
-> diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-> index 1e2d69453771..c94d3601eb48 100644
-> --- a/drivers/perf/Kconfig
-> +++ b/drivers/perf/Kconfig
-> @@ -192,4 +192,6 @@ config MARVELL_CN10K_DDR_PMU
->   	  Enable perf support for Marvell DDR Performance monitoring
->   	  event on CN10K platform.
->   
-> +source "drivers/perf/arm_cspmu/Kconfig"
-> +
->   endmenu
-> diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-> index 57a279c61df5..3bc9323f0965 100644
-> --- a/drivers/perf/Makefile
-> +++ b/drivers/perf/Makefile
-> @@ -20,3 +20,4 @@ obj-$(CONFIG_ARM_DMC620_PMU) += arm_dmc620_pmu.o
->   obj-$(CONFIG_MARVELL_CN10K_TAD_PMU) += marvell_cn10k_tad_pmu.o
->   obj-$(CONFIG_MARVELL_CN10K_DDR_PMU) += marvell_cn10k_ddr_pmu.o
->   obj-$(CONFIG_APPLE_M1_CPU_PMU) += apple_m1_cpu_pmu.o
-> +obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu/
-> diff --git a/drivers/perf/arm_cspmu/Kconfig b/drivers/perf/arm_cspmu/Kconfig
-> new file mode 100644
-> index 000000000000..c2c56ecafccb
-> --- /dev/null
-> +++ b/drivers/perf/arm_cspmu/Kconfig
-> @@ -0,0 +1,13 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> +
-> +config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
-> +	tristate "ARM Coresight Architecture PMU"
-> +	depends on ACPI
-> +	depends on ACPI_APMT || COMPILE_TEST
-> +	help
-> +	  Provides support for performance monitoring unit (PMU) devices
-> +	  based on ARM CoreSight PMU architecture. Note that this PMU
-> +	  architecture does not have relationship with the ARM CoreSight
-> +	  Self-Hosted Tracing.
-> diff --git a/drivers/perf/arm_cspmu/Makefile b/drivers/perf/arm_cspmu/Makefile
-> new file mode 100644
-> index 000000000000..cdc3455f74d8
-> --- /dev/null
-> +++ b/drivers/perf/arm_cspmu/Makefile
-> @@ -0,0 +1,6 @@
-> +# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
-> +#
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += \
-> +	arm_cspmu.o
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-> new file mode 100644
-> index 000000000000..0fa5f29bf1c6
-> --- /dev/null
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-> @@ -0,0 +1,1276 @@
+[1/1] PCI: tegra: Use PCI_CONF1_EXT_ADDRESS() macro
+      https://git.kernel.org/lpieralisi/pci/c/8bb7ff12a914
 
-
-> +/* Default event list. */
-> +static struct attribute *arm_cspmu_event_attrs[] = {
-> +	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
-> +static struct attribute **
-> +arm_cspmu_get_event_attrs(const struct arm_cspmu *cspmu)
-> +{
-> +	return arm_cspmu_event_attrs;
-> +}
-
-This would make all the "PMU" instances (which don't implement the
-callback) share a non-const array. Could we instead return a copy of
-the attrs to avoid drivers messing up with the array ?
-The array could be allocated via devm_ on the specific device, thus
-it gets cleaned up on the device tear down ?
-
-...
-
-> +static struct attribute **
-> +arm_cspmu_get_format_attrs(const struct arm_cspmu *cspmu)
-> +{
-> +	return arm_cspmu_format_attrs;
-> +}
-> +
-
-Same as above
-
-Suzuki
+Thanks,
+Lorenzo
