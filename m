@@ -2,163 +2,315 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD003C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 11:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8120EC4167B
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 12:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235007AbiI2LJo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Sep 2022 07:09:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48670 "EHLO
+        id S233495AbiI2M0D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Sep 2022 08:26:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234420AbiI2LJn (ORCPT
+        with ESMTP id S235064AbiI2M0B (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Sep 2022 07:09:43 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 47CDB111C
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Sep 2022 04:09:38 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8CF615BF;
-        Thu, 29 Sep 2022 04:09:44 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.81.100])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E60D3F73B;
-        Thu, 29 Sep 2022 04:09:36 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 12:09:33 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-arm-kernel@lists.infradead.org, ardb@kernel.org,
-        catalin.marinas@arm.com, james.morse@arm.com, joey.gouly@arm.com,
-        maz@kernel.org, will@kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 6/8] arm64: alternatives: have callbacks take a cap
-Message-ID: <YzV87YY4N7SJ3Q3H@FVFF77S0Q05N>
-References: <20220912162210.3626215-1-mark.rutland@arm.com>
- <20220912162210.3626215-7-mark.rutland@arm.com>
- <3cecc3a5-30b0-f0bd-c3de-9e09bd21909b@nvidia.com>
- <dc53c62d-58e4-ce20-edc6-969c71801c9a@nvidia.com>
- <YzV3y361Mj9N+CcW@FVFF77S0Q05N>
- <9317eb32-4dc3-c865-a1ac-320a14ebea56@nvidia.com>
+        Thu, 29 Sep 2022 08:26:01 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28166121129
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Sep 2022 05:25:57 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id l8so849690wmi.2
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Sep 2022 05:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=NbDaoX4gV0r+47K4xMd3g5Ou3lbNgQYB+MGdJOvpQD8=;
+        b=aVqdXxGe3hjPidzSFD5huhDDctOrTqR6bMOBGpa0DcKqyp6EVNg6KQo3O51gbLwz4p
+         5bLgLrLGBysw+PdI3AzZe48rUTGN3vNq5k68cDeix4wXlZcIPxJ3KLUT1tDckB9WmhZr
+         4J4EZPQoFNf55CQrO6buwhDr5g0xcxUXUYv9aULhDC7Nc5pgacjYhFRNWM8O4+UQz98D
+         tv9L8aO3PJdd4giWHw18CYMDDICUQEyeOw+OLjLwGknIPNu5ye5yY2RgckxCiBFdsFqE
+         Y1gC2zSawRebw3Y8PSFlrmwDuA/Lcytnh1WR2YItMeW3Kp1zA3VZ66AvsJilMqgARAi6
+         jRWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=NbDaoX4gV0r+47K4xMd3g5Ou3lbNgQYB+MGdJOvpQD8=;
+        b=ATFddAQtIb/xX21um7pFPJsX9FXYByhw2GQQIMLxMZ3/Vo0FDCCuyHM7Je4T7KmlTK
+         QoBXDb/keRgdiryV+1C5vc4Y7Cz/xANl72MGweT/WczZZWGcQrfZteA3LgtVQkedYu9/
+         9XjAXPt26kVigrMCF4IvsM0sObIl56u/gOa6HJ15fRfdlkOMWfS+df6uxpQoPID68CZV
+         qkbYaj6q3fE8RCvL/CmwtRtWJAnKQuod+jO7zDaXfacaxMxtTHVZjrMbi3hvSDOexMhF
+         dSlfTmtO/KQ8s/Rk10uuE9mAu9xddg47WbsGaZEiLfL36K0Sykn68uboN3roX44yoGoZ
+         VKNA==
+X-Gm-Message-State: ACrzQf3PcCSU7ilNh8cYttEFymVMMI4RnIpf+2cW/zk/FBGde7G3XQCj
+        4CXGbu9ermXJXLDT1yH3fq0jRA==
+X-Google-Smtp-Source: AMsMyM5D/Mwl8jCDLB1JztAjhICzFFtZl7IFXEk6s7QLb+LbOBiYX3iKh8BMXSwkEf0gDFvfcEubXg==
+X-Received: by 2002:a05:600c:3ba0:b0:3b4:8ad0:6c with SMTP id n32-20020a05600c3ba000b003b48ad0006cmr10372001wms.186.1664454355463;
+        Thu, 29 Sep 2022 05:25:55 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:48a2:39eb:9d1b:8b8d? ([2a05:6e02:1041:c10:48a2:39eb:9d1b:8b8d])
+        by smtp.googlemail.com with ESMTPSA id q17-20020adff511000000b002253fd19a6asm8358816wro.18.2022.09.29.05.25.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Sep 2022 05:25:54 -0700 (PDT)
+Message-ID: <d0be3159-8094-aed1-d9b1-c4b16d88d67c@linaro.org>
+Date:   Thu, 29 Sep 2022 14:25:51 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v7 00/29] Rework the trip points creation
+Content-Language: en-US
+To:     rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        rui.zhang@intel.com, Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Kaestle <peter@piie.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Antoine Tenart <atenart@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org
+References: <20220928210059.891387-1-daniel.lezcano@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20220928210059.891387-1-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9317eb32-4dc3-c865-a1ac-320a14ebea56@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 12:01:24PM +0100, Jon Hunter wrote:
+
+Hi Rafael,
+
+are you happy with the changes? I would like to integrate those changes 
+with the thermal pull request
+
+
+On 28/09/2022 23:00, Daniel Lezcano wrote:
+> This work is the pre-requisite of handling correctly when the trip
+> point are crossed. For that we need to rework how the trip points are
+> declared and assigned to a thermal zone.
 > 
-> On 29/09/2022 11:47, Mark Rutland wrote:
-> > On Thu, Sep 29, 2022 at 10:53:56AM +0100, Jon Hunter wrote:
-> > > 
-> > > On 27/09/2022 10:31, Jon Hunter wrote:
-> > > 
-> > > ...
-> > > 
-> > > > > diff --git a/arch/arm64/include/asm/alternative-macros.h
-> > > > > b/arch/arm64/include/asm/alternative-macros.h
-> > > > > index 7e157ab6cd505..189c31be163ce 100644
-> > > > > --- a/arch/arm64/include/asm/alternative-macros.h
-> > > > > +++ b/arch/arm64/include/asm/alternative-macros.h
-> > > > > @@ -2,10 +2,16 @@
-> > > > >    #ifndef __ASM_ALTERNATIVE_MACROS_H
-> > > > >    #define __ASM_ALTERNATIVE_MACROS_H
-> > > > > +#include <linux/const.h>
-> > > > > +
-> > > > >    #include <asm/cpucaps.h>
-> > > > >    #include <asm/insn-def.h>
-> > > > > -#define ARM64_CB_PATCH ARM64_NCAPS
-> > > > > +#define ARM64_CB_BIT    (UL(1) << 15)
-> > > > > +
-> > > > > +#if ARM64_NCAPS >= ARM64_CB_BIT
-> > > > > +#error "cpucaps have overflown ARM64_CB_BIT"
-> > > > > +#endif
-> > > > 
-> > > > 
-> > > > Some of our builders are failing and bisect is pointing to this commit.
-> > > > Looks like they don't like the above and I see the following errors ...
-> > > > 
-> > > >     CC      arch/arm64/kvm/hyp/vhe/debug-sr.o
-> > > > /tmp/ccY3kbki.s: Assembler messages:
-> > > > /tmp/ccY3kbki.s:1600: Error: found 'L', expected: ')'
-> > > > /tmp/ccY3kbki.s:1600: Error: found 'L', expected: ')'
-> > > > /tmp/ccY3kbki.s:1600: Error: found 'L', expected: ')'
-> > > > /tmp/ccY3kbki.s:1600: Error: found 'L', expected: ')'
-> > > > /tmp/ccY3kbki.s:1600: Error: junk at end of line, first unrecognized
-> > > > character is `L'
-> > > > /tmp/ccY3kbki.s:1723: Error: found 'L', expected: ')'
-> > > > /tmp/ccY3kbki.s:1723: Error: found 'L', expected: ')'
-> > > > /tmp/ccY3kbki.s:1723: Error: found 'L', expected: ')'
-> > > > /tmp/ccY3kbki.s:1723: Error: found 'L', expected: ')'
-> > > > /tmp/ccY3kbki.s:1723: Error: junk at end of line, first unrecognized
-> > > > character is `L'
-> > > > scripts/Makefile.build:249: recipe for target
-> > > > 'arch/arm64/kvm/hyp/vhe/debug-sr.o' failed
-> > > > 
-> > > > Seems that it does not like the 'UL' macro for some reason. Any thoughts?
-> > > 
-> > > 
-> > > FYI, this issue is seen with GCC6 but GCC7 and beyond appear to work fine.
-> > 
-> > Hmm... IIRC there was an issue with some older binutils here not liking the UL
-> > suffix, but I thought we'd moved beyond those versions now; can you tell me
-> > exactly which binutils version you're using?
-> > 
-> > I currently can't run the kernel.org crosstool GCC 5.5.0 release on my machine
-> > since something's going wrong looking for an older version of libisl.so than my
-> > system provides; I'll see if I can get that going and test locally.
-> > 
-> > I suspect we can bodge around this with something like the diff below.
-> > 
-> > Thanks,
-> > Mark.
-> > 
-> > ---->8----
-> > diff --git a/arch/arm64/include/asm/alternative-macros.h b/arch/arm64/include/asm/alternative-macros.h
-> > index 966767debaa3..4dd23bdbfb9e 100644
-> > --- a/arch/arm64/include/asm/alternative-macros.h
-> > +++ b/arch/arm64/include/asm/alternative-macros.h
-> > @@ -2,12 +2,14 @@
-> >   #ifndef __ASM_ALTERNATIVE_MACROS_H
-> >   #define __ASM_ALTERNATIVE_MACROS_H
-> > +#include <linux/bits.h>
-> >   #include <linux/const.h>
-> >   #include <asm/cpucaps.h>
-> >   #include <asm/insn-def.h>
-> > -#define ARM64_CB_BIT	(UL(1) << 15)
-> > +#define ARM64_CB_SHIFT	15
-> > +#define ARM64_CB_BIT	BIT(ARM64_CB_SHIFT)
-> >   #if ARM64_NCAPS >= ARM64_CB_BIT
-> >   #error "cpucaps have overflown ARM64_CB_BIT"
-> > @@ -80,7 +82,7 @@
-> >   	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg))
-> >   #define ALTERNATIVE_CB(oldinstr, feature, cb) \
-> > -	__ALTERNATIVE_CFG_CB(oldinstr, ARM64_CB_BIT | (feature), 1, cb)
-> > +	__ALTERNATIVE_CFG_CB(oldinstr, (1 << ARM64_CB_SHIFT) | (feature), 1, cb)
-> >   #else
-> >   #include <asm/assembler.h>
-> > @@ -150,7 +152,7 @@
-> >   .macro alternative_cb cap, cb
-> >   	.set .Lasm_alt_mode, 0
-> >   	.pushsection .altinstructions, "a"
-> > -	altinstruction_entry 661f, \cb, ARM64_CB_BIT | \cap, 662f-661f, 0
-> > +	altinstruction_entry 661f, \cb, (1 << ARM64_CB_SHIFT) | \cap, 662f-661f, 0
-> >   	.popsection
-> >   661:
-> >   .endm
+> Even if it appears to be a common sense to have the trip points being
+> ordered, this no guarantee neither documentation telling that is the
+> case.
 > 
+> One solution could have been to create an ordered array of trips built
+> when registering the thermal zone by calling the different get_trip*
+> ops. However those ops receive a thermal zone pointer which is not
+> known as it is in the process of creating it.
 > 
-> Yes that fixes it.
+> This cyclic dependency shows we have to rework how we manage the trip
+> points.
 > 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Actually, all the trip points definition can be common to the backend
+> sensor drivers and we can factor out the thermal trip structure in all
+> of them.
+> 
+> Then, as we register the thermal trips array, they will be available
+> in the thermal zone structure and a core function can return the trip
+> given its id.
+> 
+> The get_trip_* ops won't be needed anymore and could be removed. The
+> resulting code will be another step forward to a self encapsulated
+> generic thermal framework.
+> 
+> Most of the drivers can be converted more or less easily. This series
+> does a first round with most of the drivers. Some remain and will be
+> converted but with a smaller set of changes as the conversion is a bit
+> more complex.
+> 
+> Changelog:
+>   v7:
+>      - Added missing return 0 in the x86_pkg_temp driver
+>   v6:
+>      - Improved the code for the get_crit_temp() function as suggested by Rafael
+>      - Removed inner parenthesis in the set_trip_temp() function and invert the
+>        conditions. Check the type of the trip point is unchanged
+>      - Folded patch 4 with 1
+>      - Add per thermal zone info message in the bang-bang governor
+>      - Folded the fix for an uninitialized variable in int340x_thermal_zone_add()
+>   v5:
+>      - Fixed a deadlock when calling thermal_zone_get_trip() while
+>        handling the thermal zone lock
+>      - Remove an extra line in the sysfs change
+>      - Collected tags
+> v4:
+>     - Remove extra lines on exynos changes as reported by Krzysztof Kozlowski
+>     - Collected tags
+>   v3:
+>     - Reorg the series to be git-bisect safe
+>     - Added the set_trip generic function
+>     - Added the get_crit_temp generic function
+>     - Removed more dead code in the thermal-of
+>     - Fixed the exynos changelog
+>     - Fixed the error check for the exynos drivers
+>     - Collected tags
+>   v2:
+>     - Added missing EXPORT_SYMBOL_GPL() for thermal_zone_get_trip()
+>     - Removed tab whitespace in the acerhdf driver
+>     - Collected tags
+> 
+> Cc: Raju Rangoju <rajur@chelsio.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Peter Kaestle <peter@piie.net>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Mark Gross <markgross@kernel.org>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Amit Kucheria <amitk@kernel.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>
+> Cc: Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: Support Opensource <support.opensource@diasemi.com>
+> Cc: Lukasz Luba <lukasz.luba@arm.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: Thara Gopinath <thara.gopinath@linaro.org>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
+> Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Eduardo Valentin <edubezval@gmail.com>
+> Cc: Keerthy <j-keerthy@ti.com>
+> Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Antoine Tenart <atenart@kernel.org>
+> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Cc: Dmitry Osipenko <digetx@gmail.com>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: platform-driver-x86@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> 
+> Daniel Lezcano (29):
+>    thermal/core: Add a generic thermal_zone_get_trip() function
+>    thermal/sysfs: Always expose hysteresis attributes
+>    thermal/core: Add a generic thermal_zone_set_trip() function
+>    thermal/core/governors: Use thermal_zone_get_trip() instead of ops
+>      functions
+>    thermal/of: Use generic thermal_zone_get_trip() function
+>    thermal/of: Remove unused functions
+>    thermal/drivers/exynos: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/exynos: of_thermal_get_ntrips()
+>    thermal/drivers/exynos: Replace of_thermal_is_trip_valid() by
+>      thermal_zone_get_trip()
+>    thermal/drivers/tegra: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/uniphier: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/hisi: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/qcom: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/armada: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/rcar_gen3: Use the generic function to get the number
+>      of trips
+>    thermal/of: Remove of_thermal_get_ntrips()
+>    thermal/of: Remove of_thermal_is_trip_valid()
+>    thermal/of: Remove of_thermal_set_trip_hyst()
+>    thermal/of: Remove of_thermal_get_crit_temp()
+>    thermal/drivers/st: Use generic trip points
+>    thermal/drivers/imx: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/rcar: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/broadcom: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/da9062: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/ti: Remove unused macros ti_thermal_get_trip_value() /
+>      ti_thermal_trip_is_valid()
+>    thermal/drivers/acerhdf: Use generic thermal_zone_get_trip() function
+>    thermal/drivers/cxgb4: Use generic thermal_zone_get_trip() function
+>    thermal/intel/int340x: Replace parameter to simplify
+>    thermal/drivers/intel: Use generic thermal_zone_get_trip() function
+> 
+>   drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |   2 -
+>   .../ethernet/chelsio/cxgb4/cxgb4_thermal.c    |  41 +----
+>   drivers/platform/x86/acerhdf.c                |  73 +++-----
+>   drivers/thermal/armada_thermal.c              |  39 ++---
+>   drivers/thermal/broadcom/bcm2835_thermal.c    |   8 +-
+>   drivers/thermal/da9062-thermal.c              |  52 +-----
+>   drivers/thermal/gov_bang_bang.c               |  39 +++--
+>   drivers/thermal/gov_fair_share.c              |  18 +-
+>   drivers/thermal/gov_power_allocator.c         |  51 +++---
+>   drivers/thermal/gov_step_wise.c               |  22 ++-
+>   drivers/thermal/hisi_thermal.c                |  11 +-
+>   drivers/thermal/imx_thermal.c                 |  72 +++-----
+>   .../int340x_thermal/int340x_thermal_zone.c    |  33 ++--
+>   .../int340x_thermal/int340x_thermal_zone.h    |   4 +-
+>   .../processor_thermal_device.c                |  10 +-
+>   drivers/thermal/intel/x86_pkg_temp_thermal.c  | 120 +++++++------
+>   drivers/thermal/qcom/qcom-spmi-temp-alarm.c   |  39 ++---
+>   drivers/thermal/rcar_gen3_thermal.c           |   2 +-
+>   drivers/thermal/rcar_thermal.c                |  53 +-----
+>   drivers/thermal/samsung/exynos_tmu.c          |  57 +++----
+>   drivers/thermal/st/st_thermal.c               |  47 +----
+>   drivers/thermal/tegra/soctherm.c              |  33 ++--
+>   drivers/thermal/tegra/tegra30-tsensor.c       |  17 +-
+>   drivers/thermal/thermal_core.c                | 161 +++++++++++++++---
+>   drivers/thermal/thermal_core.h                |  24 +--
+>   drivers/thermal/thermal_helpers.c             |  28 +--
+>   drivers/thermal/thermal_netlink.c             |  21 +--
+>   drivers/thermal/thermal_of.c                  | 116 -------------
+>   drivers/thermal/thermal_sysfs.c               | 133 +++++----------
+>   drivers/thermal/ti-soc-thermal/ti-thermal.h   |  15 --
+>   drivers/thermal/uniphier_thermal.c            |  27 ++-
+>   include/linux/thermal.h                       |  10 ++
+>   32 files changed, 560 insertions(+), 818 deletions(-)
+> 
 
-Great!
 
-Could you please let me know which version of binutils, so that we can add
-something regarding that in a comment and in the commit message?
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-The output of ${CROSS_COMPILE}as --version would suffice.
-
-With that, I can clean this up and send as a proper patch.
-
-Thanks,
-Mark.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
