@@ -2,312 +2,407 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21746C6FA94
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Sep 2022 21:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBDCC04A95
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Sep 2022 00:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234736AbiI1VIV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:08:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34896 "EHLO
+        id S232557AbiI2A3G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Sep 2022 20:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234744AbiI1VH2 (ORCPT
+        with ESMTP id S231650AbiI2A3F (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:07:28 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7997E99AE
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Sep 2022 14:02:49 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 130-20020a1c0288000000b003b494ffc00bso1523146wmc.0
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Sep 2022 14:02:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=8pE/zvW6S2HkLQ2nl2eyAsUouKTzMht2lN2QByjtNa0=;
-        b=HXgRA9xl5RtEEpQ5/9Hq1X1TOVu6+5Dvikau2PJ8VMeDHLrc4OSRAgVq//EZ48s8q5
-         lDmlvj3F8CY47RTSGFLxjUvZADzBtXslmokGMTKuqFodZJ+Zl1QG9Ub9a/JSC2+JQ2Td
-         Y313IR+CtM5NwQ+St6ezsiZXV4Pckcd6eQJMBCT0zVedq+RBNCvCtSB7/OEP4t+v08OB
-         HbUUnJsUtuAWBjALk+KkkIY2SwUi9InwQhBx/gK2+pSoH+1jgxRFchL4xAA1pi1L3Mrt
-         ur2x0CX+ziGq1Ob5Bu5cR9jloA1h2sodrdmQQAU5+R8fhDeGi0+Bey1/uHrH0yPwzC0G
-         fSVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=8pE/zvW6S2HkLQ2nl2eyAsUouKTzMht2lN2QByjtNa0=;
-        b=lsFDGhM4OR26ER7fsShqTPgVKkjWPvcPCb35oT81ACzHlX8WF7kaHnaXKs+ZDOXFWx
-         g5gq/0zsX9MZAAG2Tq3KOkiBTHlEn71le8zhtj8Q6lwIhwrmI1Ne4/Ff6O81/LBjhBsi
-         osEnM3Kf6Y52pyINB4uILLM9cjKpP8JNgtHZiMJ3KWTvqvRT5QdQ1Xk26ie2+Z6qrb9+
-         eyFAO4ckGOlnzzNC+PXs2yC5Y2QHkMVvK0Xt4fMNlctHiS9Cy9RaZwhLRwkYwn9HTw4P
-         buSveGqCm7p7WncbcznugWZUS5rIHdUS4Gy/yzuToXRAHkFHADbJT1B3LiqEbPM9VLP5
-         3N6A==
-X-Gm-Message-State: ACrzQf3Vfr3isaLMR9jXdk2+zBIVx4uZOBG4fPYQpUpxwHoyC+EtZFw6
-        k1zobW/Ei5hrfuF5YTw8xuMoXQ==
-X-Google-Smtp-Source: AMsMyM53Cgbe2M2piI5xT5mM6XcJ8yzolBHl+XMtiR3Xq3RzX8Yn8x7ONN7QPSwi29vVBxqLfLohWw==
-X-Received: by 2002:a1c:2743:0:b0:3b3:4066:fa61 with SMTP id n64-20020a1c2743000000b003b34066fa61mr8362048wmn.79.1664398968373;
-        Wed, 28 Sep 2022 14:02:48 -0700 (PDT)
-Received: from mai.. ([2a05:6e02:1041:c10:48a2:39eb:9d1b:8b8d])
-        by smtp.gmail.com with ESMTPSA id g20-20020a05600c4ed400b003b4931eb435sm2874300wmq.26.2022.09.28.14.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 14:02:46 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        rui.zhang@intel.com, Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Kaestle <peter@piie.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Antoine Tenart <atenart@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, Jiang Jian <jiangjian@cdjrlc.com>
-Subject: [PATCH v7 29/29] thermal/drivers/intel: Use generic thermal_zone_get_trip() function
-Date:   Wed, 28 Sep 2022 23:00:59 +0200
-Message-Id: <20220928210059.891387-30-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220928210059.891387-1-daniel.lezcano@linaro.org>
-References: <20220928210059.891387-1-daniel.lezcano@linaro.org>
+        Wed, 28 Sep 2022 20:29:05 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2050.outbound.protection.outlook.com [40.107.220.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C883F30A;
+        Wed, 28 Sep 2022 17:29:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KnY1Hy+bD3x6mAEWVhzcLTB3afPkHNyTeJLezfw74HFJor7jecHrfAlhtcuaWXno6JH8P1fdw4TqqlrLh8RGMF+KjAo+RJhS8UmwgruEsgPDn6IdEJ4ve3WBHf+MQehOcZ8FpZik8Ofh1QdRB1D73m02FAeEILVmlGJc4K8UnmRXatMWATR4MVVHtr5+UKjaNTt1PCDxh7cf1ito3aLldm1NG4B8lOObzLblvS0FyKxzVL/gx0OwDvwe4w5NRVQulO4eRPOrTDKC8+0I25HYE0T9iiy57SrumkstPfsXnlrZUY7yPqOIy9oTrWieg3XvKSI/2FpQQhRmMVz8kJw4qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+akvTvhl880RQ+JJoIByXbKbSrj69mKLNtbbs3uwtN4=;
+ b=nS5nmW1MSoCVpKYxY5E6D9DEtxqYqVCx8+qvr/cBnad898RvyDlCLGZnf2VqFP+KID11Y7MKJPE6sfh89rHDflZnXqkFRDwIs/Sj5v7yEDoo03pPd8fTW/Niz/nOVINPcO/STULBYpRBmSwve0SvCRhYFAz2tcGbuLGljDSBULfywrnThr1WKTzHAsJ1yt0fe1TwN+DXfym3safAcVT0qs3pop3mWJ7zgKZsdJmTfdgRLGXDkqukPha41QTUcBT3UEojcuDOyXut4aBDeGaWa6Gj2haWOPPM6ahwkLTMyWQffkhKyufqMs2/sXi5MjenUzxI73BVlasouPpQLez+/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+akvTvhl880RQ+JJoIByXbKbSrj69mKLNtbbs3uwtN4=;
+ b=pav/0eifzCW7wgRPPZnKF3HAj+FA0j3Z8nRoLr1var86RUO4MyCm9+9dqX+K3+V1E/hXQuPEsDA0DQF62SnuT6LKyat8HjN47JLxwCiq5gM4PUuo6rtG85s6SS/2VJn2FAb+ZCR/wzUW/6lnzHEZI8wIFhL2AaTxGMwkcE6MjHttbMHgk5/NY01avfaZBdnH30ZSpPoaI+jvXE0lw2aba35dpR6pSHAfnwi71RiXl7P5ozLgj2Dnx/52U9MhJcLm6980xkvOkOc1DA4vPe2OGlwjw//e3LHs7l28lC4+p6CknRFQwso/FqWpHq47ubt94379ROMPMWess3kefAqfhQ==
+Received: from MW3PR05CA0016.namprd05.prod.outlook.com (2603:10b6:303:2b::21)
+ by CH2PR12MB4310.namprd12.prod.outlook.com (2603:10b6:610:a9::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.17; Thu, 29 Sep
+ 2022 00:29:00 +0000
+Received: from CO1NAM11FT111.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:2b:cafe::78) by MW3PR05CA0016.outlook.office365.com
+ (2603:10b6:303:2b::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.7 via Frontend
+ Transport; Thu, 29 Sep 2022 00:29:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1NAM11FT111.mail.protection.outlook.com (10.13.174.61) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5676.17 via Frontend Transport; Thu, 29 Sep 2022 00:29:00 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 28 Sep
+ 2022 17:28:50 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Wed, 28 Sep 2022 17:28:50 -0700
+Received: from msst-build.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Wed, 28 Sep 2022 17:28:49 -0700
+From:   Besar Wicaksono <bwicaksono@nvidia.com>
+To:     <rafael@kernel.org>, <lenb@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <lorenzo.pieralisi@arm.com>,
+        <guohanjun@huawei.com>, <sudeep.holla@arm.com>
+CC:     <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+        <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Besar Wicaksono" <bwicaksono@nvidia.com>
+Subject: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT) initial support
+Date:   Wed, 28 Sep 2022 19:28:34 -0500
+Message-ID: <20220929002834.32664-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT111:EE_|CH2PR12MB4310:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f0182a6-fcd5-47cd-eb26-08daa1b19aae
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YYLwxWxyEMu38gCDOAfrjaB8fcbX2qE/wZmE71dqj1lsAyF24e3p8KxU3OZ1OlmHcrGMsIWAvWlc0tRtkWAGm4tfZpc1PBJ81Mh3fiyphq7Qi9wwGiUkaqZbrYC+0B3aOHWw9Ti+AKjCcEaU+BdMqsJ1etmc/mF+UWZZdC3dqJX4ks2UUFe3uqX+YRy8LQ+Cc8/3aUukngtbtTZOx0Oii91tqYb+sx5A4wrhbDw1ub9eM0aryBCNZuBEzS1rLMv4ZCm84FxxPKj4bdldFeYvF0YArpSt4IGLA0x3h+feKuu1tzM7yPn5M8WHI3aGJfJusPLlu/ZVgnHVZ6EgjaKsYE8Wbei+n8VxpIpjfYsFXKxo09UD3iCq+FnuVRoqnrrz5KO7qyfeUzrMGDDa3ZxuZYxFagkhp9Rp+EPJNLdQTqGblsYJlDjDg0rDdxvZMGAXd9MKKnYYi4431KKcSm+b1T+8IuDaivQIOKnvagyeccYc72/VaprdEGnZ4Ic0Su0T+54Qu2EPaZnpoJrOQJN7Puinakq+Hz75qQ1pz/sCaZ4i69Ks4efsGm+RVu2vYYkl940IYaj2duSzffF624DWyyX8oXsN6lOXNAaJjhMHzPpoI//oaJ6V/yrkvUeLLKcc4iKFEP0sxNR7/oZrzmivFEySdp+Is5UnZ2oMvqiiBO1/nSJ9C0B0M4SCx1V646BtcefyroZH2/T9f47HtRSVgv1QbkDnrWPmos4hCC+YTItM97RgRx8oeWlp0lQQlJiL/5hgJQVB0rPJSqn8chWu/MqIibSIhKSoQHe6odeqF58EFTNxrtSz3nwrtZSTI1WIdO7DdtH32XWtje325LeJnJ1DsqgG5HGfMlxyup+Cj6ByOlRqy+PjZstfw1pnwEyC47IBiiJJxlp/rDlw5yEUqA==
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(39860400002)(346002)(136003)(451199015)(40470700004)(36840700001)(46966006)(2906002)(36756003)(7636003)(356005)(41300700001)(8676002)(8936002)(7416002)(4326008)(5660300002)(82310400005)(70206006)(70586007)(54906003)(86362001)(966005)(110136005)(40480700001)(316002)(82740400003)(478600001)(1076003)(26005)(7696005)(6666004)(40460700003)(36860700001)(107886003)(336012)(426003)(47076005)(2616005)(83380400001)(186003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2022 00:29:00.1690
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f0182a6-fcd5-47cd-eb26-08daa1b19aae
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT111.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4310
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The thermal framework gives the possibility to register the trip
-points with the thermal zone. When that is done, no get_trip_* ops are
-needed and they can be removed.
+ARM Performance Monitoring Unit Table describes the properties of PMU
+support in ARM-based system. The APMT table contains a list of nodes,
+each represents a PMU in the system that conforms to ARM CoreSight PMU
+architecture. The properties of each node include information required
+to access the PMU (e.g. MMIO base address, interrupt number) and also
+identification. For more detailed information, please refer to the
+specification below:
+ * APMT: https://developer.arm.com/documentation/den0117/latest
+ * ARM Coresight PMU:
+        https://developer.arm.com/documentation/ihi0091/latest
 
-Convert ops content logic into generic trip points and register them with the
-thermal zone.
+The initial support adds the detection of APMT table and generic
+infrastructure to create platform devices for ARM CoreSight PMUs.
+Similar to IORT the root pointer of APMT is preserved during runtime
+and each PMU platform device is given a pointer to the corresponding
+APMT node.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 ---
- drivers/thermal/intel/x86_pkg_temp_thermal.c | 120 +++++++++++--------
- 1 file changed, 67 insertions(+), 53 deletions(-)
 
-diff --git a/drivers/thermal/intel/x86_pkg_temp_thermal.c b/drivers/thermal/intel/x86_pkg_temp_thermal.c
-index a0e234fce71a..40a9355207e7 100644
---- a/drivers/thermal/intel/x86_pkg_temp_thermal.c
-+++ b/drivers/thermal/intel/x86_pkg_temp_thermal.c
-@@ -53,6 +53,7 @@ struct zone_device {
- 	u32				msr_pkg_therm_high;
- 	struct delayed_work		work;
- 	struct thermal_zone_device	*tzone;
-+	struct thermal_trip		*trips;
- 	struct cpumask			cpumask;
- };
+The patch applies on top of
+  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  master next-20220524
+
+Changes from v1:
+ * Include acpi_apmt.h header file
+ * Update the device name. Related driver patch:
+   https://lore.kernel.org/linux-arm-kernel/20220928201830.45637-1-bwicaksono@nvidia.com/
+v1: https://lkml.org/lkml/2022/4/19/1395
+
+ arch/arm64/Kconfig          |   1 +
+ drivers/acpi/arm64/Kconfig  |   3 +
+ drivers/acpi/arm64/Makefile |   1 +
+ drivers/acpi/arm64/apmt.c   | 177 ++++++++++++++++++++++++++++++++++++
+ drivers/acpi/bus.c          |   2 +
+ include/linux/acpi_apmt.h   |  19 ++++
+ 6 files changed, 203 insertions(+)
+ create mode 100644 drivers/acpi/arm64/apmt.c
+ create mode 100644 include/linux/acpi_apmt.h
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index aaeb70358979..dbcb09ee29dd 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config ARM64
+ 	def_bool y
++	select ACPI_APMT if ACPI
+ 	select ACPI_CCA_REQUIRED if ACPI
+ 	select ACPI_GENERIC_GSI if ACPI
+ 	select ACPI_GTDT if ACPI
+diff --git a/drivers/acpi/arm64/Kconfig b/drivers/acpi/arm64/Kconfig
+index d4a72835f328..b3ed6212244c 100644
+--- a/drivers/acpi/arm64/Kconfig
++++ b/drivers/acpi/arm64/Kconfig
+@@ -18,3 +18,6 @@ config ACPI_AGDI
+ 	  reset command.
  
-@@ -138,40 +139,6 @@ static int sys_get_curr_temp(struct thermal_zone_device *tzd, int *temp)
- 	return -EINVAL;
- }
- 
--static int sys_get_trip_temp(struct thermal_zone_device *tzd,
--			     int trip, int *temp)
--{
--	struct zone_device *zonedev = tzd->devdata;
--	unsigned long thres_reg_value;
--	u32 mask, shift, eax, edx;
--	int ret;
--
--	if (trip >= MAX_NUMBER_OF_TRIPS)
--		return -EINVAL;
--
--	if (trip) {
--		mask = THERM_MASK_THRESHOLD1;
--		shift = THERM_SHIFT_THRESHOLD1;
--	} else {
--		mask = THERM_MASK_THRESHOLD0;
--		shift = THERM_SHIFT_THRESHOLD0;
--	}
--
--	ret = rdmsr_on_cpu(zonedev->cpu, MSR_IA32_PACKAGE_THERM_INTERRUPT,
--			   &eax, &edx);
--	if (ret < 0)
--		return ret;
--
--	thres_reg_value = (eax & mask) >> shift;
--	if (thres_reg_value)
--		*temp = zonedev->tj_max - thres_reg_value * 1000;
--	else
--		*temp = THERMAL_TEMP_INVALID;
--	pr_debug("sys_get_trip_temp %d\n", *temp);
--
--	return 0;
--}
--
- static int
- sys_set_trip_temp(struct thermal_zone_device *tzd, int trip, int temp)
- {
-@@ -212,18 +179,9 @@ sys_set_trip_temp(struct thermal_zone_device *tzd, int trip, int temp)
- 			l, h);
- }
- 
--static int sys_get_trip_type(struct thermal_zone_device *thermal, int trip,
--			     enum thermal_trip_type *type)
--{
--	*type = THERMAL_TRIP_PASSIVE;
--	return 0;
--}
--
- /* Thermal zone callback registry */
- static struct thermal_zone_device_ops tzone_ops = {
- 	.get_temp = sys_get_curr_temp,
--	.get_trip_temp = sys_get_trip_temp,
--	.get_trip_type = sys_get_trip_type,
- 	.set_trip_temp = sys_set_trip_temp,
- };
- 
-@@ -328,6 +286,48 @@ static int pkg_thermal_notify(u64 msr_val)
- 	return 0;
- }
- 
-+static struct thermal_trip *pkg_temp_thermal_trips_init(int cpu, int tj_max, int num_trips)
+ 	  If set, the kernel parses AGDI table and listens for the command.
++
++config ACPI_APMT
++	bool
+diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
+index 7b9e4045659d..e21a9e84e394 100644
+--- a/drivers/acpi/arm64/Makefile
++++ b/drivers/acpi/arm64/Makefile
+@@ -2,4 +2,5 @@
+ obj-$(CONFIG_ACPI_AGDI) 	+= agdi.o
+ obj-$(CONFIG_ACPI_IORT) 	+= iort.o
+ obj-$(CONFIG_ACPI_GTDT) 	+= gtdt.o
++obj-$(CONFIG_ACPI_APMT) 	+= apmt.o
+ obj-y				+= dma.o
+diff --git a/drivers/acpi/arm64/apmt.c b/drivers/acpi/arm64/apmt.c
+new file mode 100644
+index 000000000000..f55167ca51e7
+--- /dev/null
++++ b/drivers/acpi/arm64/apmt.c
+@@ -0,0 +1,177 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ARM APMT table support.
++ * Design document number: ARM DEN0117.
++ *
++ * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
++ *
++ */
++
++#define pr_fmt(fmt)	"ACPI: APMT: " fmt
++
++#include <linux/acpi.h>
++#include <linux/acpi_apmt.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++
++#define DEV_NAME "arm-cs-arch-pmu"
++
++/* There can be up to 3 resources: page 0 and 1 address, and interrupt. */
++#define DEV_MAX_RESOURCE_COUNT 3
++
++/* Root pointer to the mapped APMT table */
++static struct acpi_table_header *apmt_table;
++
++static int __init apmt_init_resources(struct resource *res,
++					      struct acpi_apmt_node *node)
 +{
-+	struct thermal_trip *trips;
-+	unsigned long thres_reg_value;
-+	u32 mask, shift, eax, edx;
-+	int ret, i;
++	int irq, trigger;
++	int num_res = 0;
 +
-+	trips = kzalloc(sizeof(*trips) * num_trips, GFP_KERNEL);
-+	if (!trips)
-+		return ERR_PTR(-ENOMEM);
-+	
-+	for (i = 0; i < num_trips; i++) {
++	res[num_res].start = node->base_address0;
++	res[num_res].end = node->base_address0 + SZ_4K - 1;
++	res[num_res].flags = IORESOURCE_MEM;
 +
-+		if (i) {
-+			mask = THERM_MASK_THRESHOLD1;
-+			shift = THERM_SHIFT_THRESHOLD1;
-+		} else {
-+			mask = THERM_MASK_THRESHOLD0;
-+			shift = THERM_SHIFT_THRESHOLD0;
++	num_res++;
++
++	res[num_res].start = node->base_address1;
++	res[num_res].end = node->base_address1 + SZ_4K - 1;
++	res[num_res].flags = IORESOURCE_MEM;
++
++	num_res++;
++
++	if (node->ovflw_irq != 0) {
++		trigger = (node->ovflw_irq_flags & ACPI_APMT_OVFLW_IRQ_FLAGS_MODE);
++		trigger = (trigger == ACPI_APMT_OVFLW_IRQ_FLAGS_MODE_LEVEL) ?
++			ACPI_LEVEL_SENSITIVE : ACPI_EDGE_SENSITIVE;
++		irq = acpi_register_gsi(NULL, node->ovflw_irq, trigger,
++						ACPI_ACTIVE_HIGH);
++
++		if (irq <= 0) {
++			pr_warn("APMT could not register gsi hwirq %d\n", irq);
++			return num_res;
 +		}
 +
-+		ret = rdmsr_on_cpu(cpu, MSR_IA32_PACKAGE_THERM_INTERRUPT,
-+				   &eax, &edx);
-+		if (ret < 0) {
-+			kfree(trips);
-+			return ERR_PTR(ret);
-+		}
++		res[num_res].start = irq;
++		res[num_res].end = irq;
++		res[num_res].flags = IORESOURCE_IRQ;
 +
-+		thres_reg_value = (eax & mask) >> shift;
-+
-+		trips[i].temperature = thres_reg_value ?
-+			tj_max - thres_reg_value * 1000 : THERMAL_TEMP_INVALID;
-+
-+		trips[i].type = THERMAL_TRIP_PASSIVE;
-+		
-+		pr_debug("%s: cpu=%d, trip=%d, temp=%d\n",
-+			 __func__, cpu, i, trips[i].temperature);
++		num_res++;
 +	}
 +
-+	return trips;
++	return num_res;
 +}
 +
- static int pkg_temp_thermal_device_add(unsigned int cpu)
- {
- 	int id = topology_logical_die_id(cpu);
-@@ -353,24 +353,27 @@ static int pkg_temp_thermal_device_add(unsigned int cpu)
- 	if (!zonedev)
- 		return -ENOMEM;
- 
-+	zonedev->trips = pkg_temp_thermal_trips_init(cpu, tj_max, thres_count);
-+	if (IS_ERR(zonedev->trips)) {
-+		err = PTR_ERR(zonedev->trips);
-+		goto out_kfree_zonedev;
++/**
++ * apmt_add_platform_device() - Allocate a platform device for APMT node
++ * @node: Pointer to device ACPI APMT node
++ *
++ * Returns: 0 on success, <0 failure
++ */
++static int __init apmt_add_platform_device(struct acpi_apmt_node *node,
++							struct fwnode_handle *fwnode)
++{
++	struct platform_device *pdev;
++	int ret, count;
++	struct resource res[DEV_MAX_RESOURCE_COUNT];
++
++	pdev = platform_device_alloc(DEV_NAME, PLATFORM_DEVID_AUTO);
++	if (!pdev)
++		return -ENOMEM;
++
++	memset(res, 0, sizeof(res));
++
++	count = apmt_init_resources(res, node);
++
++	ret = platform_device_add_resources(pdev, res, count);
++	if (ret)
++		goto dev_put;
++
++	/*
++	 * Add a copy of APMT node pointer to platform_data to be used to
++	 * retrieve APMT data information.
++	 */
++	ret = platform_device_add_data(pdev, &node, sizeof(node));
++	if (ret)
++		goto dev_put;
++
++	pdev->dev.fwnode = fwnode;
++
++	ret = platform_device_add(pdev);
++
++	if (ret)
++		goto dev_put;
++
++	return 0;
++
++dev_put:
++	platform_device_put(pdev);
++
++	return ret;
++}
++
++static int __init apmt_init_platform_devices(void)
++{
++	struct acpi_apmt_node *apmt_node;
++	struct acpi_table_apmt *apmt;
++	struct fwnode_handle *fwnode;
++	u64 offset, end;
++	int ret;
++
++	/*
++	 * apmt_table and apmt both point to the start of APMT table, but
++	 * have different struct types
++	 */
++	apmt = (struct acpi_table_apmt *)apmt_table;
++	offset = sizeof(*apmt);
++	end = apmt->header.length;
++
++	while (offset < end) {
++		apmt_node = ACPI_ADD_PTR(struct acpi_apmt_node, apmt,
++				 offset);
++
++		fwnode = acpi_alloc_fwnode_static();
++		if (!fwnode)
++			return -ENOMEM;
++
++		ret = apmt_add_platform_device(apmt_node, fwnode);
++		if (ret) {
++			acpi_free_fwnode_static(fwnode);
++			return ret;
++		}
++
++		offset += apmt_node->length;
 +	}
-+	
- 	INIT_DELAYED_WORK(&zonedev->work, pkg_temp_thermal_threshold_work_fn);
- 	zonedev->cpu = cpu;
- 	zonedev->tj_max = tj_max;
--	zonedev->tzone = thermal_zone_device_register("x86_pkg_temp",
--			thres_count,
-+	zonedev->tzone = thermal_zone_device_register_with_trips("x86_pkg_temp",
-+			zonedev->trips, thres_count,
- 			(thres_count == MAX_NUMBER_OF_TRIPS) ? 0x03 : 0x01,
- 			zonedev, &tzone_ops, &pkg_temp_tz_params, 0, 0);
- 	if (IS_ERR(zonedev->tzone)) {
- 		err = PTR_ERR(zonedev->tzone);
--		kfree(zonedev);
--		return err;
-+		goto out_kfree_trips;
- 	}
- 	err = thermal_zone_device_enable(zonedev->tzone);
--	if (err) {
--		thermal_zone_device_unregister(zonedev->tzone);
--		kfree(zonedev);
--		return err;
--	}
-+	if (err)
-+		goto out_unregister_tz;
 +
- 	/* Store MSR value for package thermal interrupt, to restore at exit */
- 	rdmsr(MSR_IA32_PACKAGE_THERM_INTERRUPT, zonedev->msr_pkg_therm_low,
- 	      zonedev->msr_pkg_therm_high);
-@@ -379,7 +382,16 @@ static int pkg_temp_thermal_device_add(unsigned int cpu)
- 	raw_spin_lock_irq(&pkg_temp_lock);
- 	zones[id] = zonedev;
- 	raw_spin_unlock_irq(&pkg_temp_lock);
++	return 0;
++}
 +
++void __init acpi_apmt_init(void)
++{
++	acpi_status status;
++	int ret;
++
++	/**
++	 * APMT table nodes will be used at runtime after the apmt init,
++	 * so we don't need to call acpi_put_table() to release
++	 * the APMT table mapping.
++	 */
++	status = acpi_get_table(ACPI_SIG_APMT, 0, &apmt_table);
++
++	if (ACPI_FAILURE(status)) {
++		if (status != AE_NOT_FOUND) {
++			const char *msg = acpi_format_exception(status);
++
++			pr_err("Failed to get APMT table, %s\n", msg);
++		}
++
++		return;
++	}
++
++	ret = apmt_init_platform_devices();
++	if (ret) {
++		pr_err("Failed to initialize APMT platform devices, ret: %d\n", ret);
++		acpi_put_table(apmt_table);
++	}
++}
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index 86fa61a21826..f9dc5b3d5c55 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -27,6 +27,7 @@
+ #include <linux/dmi.h>
+ #endif
+ #include <linux/acpi_agdi.h>
++#include <linux/acpi_apmt.h>
+ #include <linux/acpi_iort.h>
+ #include <linux/acpi_viot.h>
+ #include <linux/pci.h>
+@@ -1411,6 +1412,7 @@ static int __init acpi_init(void)
+ 	acpi_setup_sb_notify_handler();
+ 	acpi_viot_init();
+ 	acpi_agdi_init();
++	acpi_apmt_init();
  	return 0;
-+
-+out_unregister_tz:	
-+	thermal_zone_device_unregister(zonedev->tzone);
-+out_kfree_trips:
-+	kfree(zonedev->trips);
-+out_kfree_zonedev:
-+	kfree(zonedev);
-+	return err;
  }
  
- static int pkg_thermal_cpu_offline(unsigned int cpu)
-@@ -463,8 +475,10 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
- 	raw_spin_unlock_irq(&pkg_temp_lock);
- 
- 	/* Final cleanup if this is the last cpu */
--	if (lastcpu)
-+	if (lastcpu) {
-+		kfree(zonedev->trips);
- 		kfree(zonedev);
-+	}
- 	return 0;
- }
- 
+diff --git a/include/linux/acpi_apmt.h b/include/linux/acpi_apmt.h
+new file mode 100644
+index 000000000000..40bd634d082f
+--- /dev/null
++++ b/include/linux/acpi_apmt.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * ARM CoreSight PMU driver.
++ * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
++ *
++ */
++
++#ifndef __ACPI_APMT_H__
++#define __ACPI_APMT_H__
++
++#include <linux/acpi.h>
++
++#ifdef CONFIG_ACPI_APMT
++void acpi_apmt_init(void);
++#else
++static inline void acpi_apmt_init(void) { }
++#endif /* CONFIG_ACPI_APMT */
++
++#endif /* __ACPI_APMT_H__ */
+
+base-commit: 09ce5091ff971cdbfd67ad84dc561ea27f10d67a
 -- 
-2.34.1
+2.17.1
 
