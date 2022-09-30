@@ -2,163 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0B3C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Sep 2022 02:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D80BC4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Sep 2022 11:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbiI3CwE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Sep 2022 22:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33892 "EHLO
+        id S230482AbiI3LMl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Sep 2022 07:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbiI3CwD (ORCPT
+        with ESMTP id S231569AbiI3LMW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Sep 2022 22:52:03 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2073.outbound.protection.outlook.com [40.107.243.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A93D1E904B;
-        Thu, 29 Sep 2022 19:52:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jvHNFZdROs9pkaT4YoG9eK2FIDL6VrBFXgv0c7wl0lJ+U8ICUDjQ1m4EVn2fjT2APx8LtX+V0lz7kz/fMW6ek5LMSvAegu4RR1p+mt72KqXwKa1ITGTUO/CwAHjO3p97Ctkg+J3USezJS78zwnY9X/a1smZhdxDoIb5Wy02HbEKCW5GOSm6sEFtANQ4KzfEvr1PGdxAqDvIDsp8RaJY/j1Qt1TPL9HMp6ipGQ/lxAv3qSb+H1AxwV87vS4/Kpvl6ISVd4cNpXvUlKzJ4BsLt1nONP07vGrqsYqnNzFuFTwh8I1QgMswUdONrZDlttr/ebkZ6ia2XPD0Roum0zui/ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qf+SUDv/Udo3tdSrGEj3woRGoy2kWOZNf44LJwO4wNo=;
- b=DWjkYaMR5zncMyWLK76T9Ipi3X0+vdJh+s41sHPqjbOTEHUXBPMUNpccprYqr8KrgE8wt8U1WSiLCs/kIEeK10sWuNPjkME/KECwosLkn1oaprBZB6UUSomBJSkea2YkLojEex4jgLn/6Ky1kkSztd+2KSw0kmX9flVioWPHNhUMd5bzRMPP96LXbU7kTHwiyOlpMcFyQMzJI9j6BZMxQRrJWVlDnJ6lcOhZ1ut1nzeSppT4X6cXEOcWAIKKsKcyYOQRe053FA8fmm97FakvttjZb7NjfCUHcKSYhJ5d+nrUUFw13YdkUQXEcTPBpRfolJm84jyP8LFMbf3mT1hxRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qf+SUDv/Udo3tdSrGEj3woRGoy2kWOZNf44LJwO4wNo=;
- b=pEx9YWeD92pELUWwUn9fdewKocyf3QADoUkjv5Yq954suggM7kjCcsYXYc1+W+ERikjys/zDvPCeZSRvBZqTvbIBi1d4anZ/jMEr0xH3byK462UN6N3tZapuiDTZM4tF7fdxSb4yoc4pGs8sYyvBbRJqgEQm5eN5/eWyaLFUp7LAcw7xifzeh6hvi44CAwM0ryAaBBD9bqpJICm4byvosW0c2q2OK7tiIYJJrpfDupBp1CdLIBv+v4vOHAV0Z1ZUEDkhiC+DQ3nLwWCKW0i40IKP/Gn5LoyUAS6QryPYweulj/86TIMiUdHgID7uIBbKNA5Nv+tGxPFP6FJTTbeohg==
-Received: from PH0PR12MB5500.namprd12.prod.outlook.com (2603:10b6:510:ef::8)
- by DM4PR12MB6063.namprd12.prod.outlook.com (2603:10b6:8:b1::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.17; Fri, 30 Sep
- 2022 02:52:01 +0000
-Received: from PH0PR12MB5500.namprd12.prod.outlook.com
- ([fe80::7940:4aca:1c44:40eb]) by PH0PR12MB5500.namprd12.prod.outlook.com
- ([fe80::7940:4aca:1c44:40eb%8]) with mapi id 15.20.5676.023; Fri, 30 Sep 2022
- 02:52:01 +0000
-From:   Wayne Chang <waynec@nvidia.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>,
-        Jui Chang Kuo <jckuo@nvidia.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] dt-bindings: usb: tegra-xudc: Add Tegra234 XUSB
- controller support
-Thread-Topic: [PATCH 1/1] dt-bindings: usb: tegra-xudc: Add Tegra234 XUSB
- controller support
-Thread-Index: AQHY07WJCQQXs5FPEEaLH2T8XUC3Sg==
-Date:   Fri, 30 Sep 2022 02:52:01 +0000
-Message-ID: <PH0PR12MB5500E1CC960C8451D1B97E7CAF569@PH0PR12MB5500.namprd12.prod.outlook.com>
-References: <20220929034221.3817058-1-waynec@nvidia.com>
- <efd42f94-1868-9189-d88e-f03b8c19f866@linaro.org>
-Accept-Language: en-US, zh-TW
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR12MB5500:EE_|DM4PR12MB6063:EE_
-x-ms-office365-filtering-correlation-id: 4e31822c-7549-4395-a243-08daa28ebfa2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: hnSVFXICGKPHQybPZZ1EBy4qHhFbJnJAsThIVfX04ifhQlxN5tsvSwoYnyVpc+8FCT2mFIRWb8eVMiIflNCWO9UAD15viM1+brMACbzXXqfF+amK74TiDQ6olJ5CBx9/fnheNyt5hh5d3PccOZh5awerYn4Oe41/uDaUcmbLvt2vT1xXMqxZ4YuylWiPrHSXwiEebniFXaLITGnE9siPSmmV3jrEQzlMou7hSFB4WGu5R5C1C5WWYg3FsD4u3H4c1YtauKkiMCKALXwqd35QIS+RKrtX9TV5dhiIQXN344F9RqMfsRerqIoxY8p2VYKIqEr0vSV4B6SNXL5HOP5HQMZPMajvKySJ0p8E6BJh1HLU+wM/85PDOEywNnJTL0bkwMOuSkmEaC6yRHdMcbmYGHIGeLbO/BE0wOopOocBOl9pdtrw3Cl/miLINoA9R60PrK/+1V5zJj/qRtukaYOl13cOrN+bdate2qsp74j1n3/OfWoC9Za4z7J+bvED9KnUH+5QxbbHcVIcZSAg8/UnjHxSmhmy/pZwb9rhE2PGCCvNpNWcU1nndWcM+vWU1lJGdVfZahGl/k3gGeXzw8KpMDJTc4f4h0hZanyhrRZZhP26gpaqJPoEbPnbqZaKozIrr6EdPi3DBBkT5VLRQ2NGxcSTq3iMs9/RxWDkQ50Ie/6kjd+zXNqxpMIjSH+/z+WsMEyQzYjl1p2550hEgX7DckZcLDIEtw8P8VXFl8d4WbLb1+KGhonOueiXhtjtDsfde5YZb3YeV4tUpzecy14JgA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB5500.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(39860400002)(366004)(346002)(136003)(451199015)(26005)(9686003)(53546011)(71200400001)(316002)(6636002)(38100700002)(33656002)(122000001)(91956017)(38070700005)(55016003)(86362001)(478600001)(66446008)(6506007)(186003)(110136005)(54906003)(52536014)(8936002)(5660300002)(2906002)(64756008)(7696005)(66476007)(76116006)(41300700001)(4326008)(66946007)(66556008)(8676002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?1ttKT5HmDpiElxLhW1QuLOqW0K9f5essWBzrvjDrJwpzVSD4vQ2dgziiNWXP?=
- =?us-ascii?Q?heTxDdpohNYuk7Fxrfm5EE8OU5EOJHqIuN/5xspw3kU/bjzNgRgTHLbtiVF/?=
- =?us-ascii?Q?C+UekeH3+pdl4icj01HitnSFQ9F6MlBnWPoddIL+wMieiVw0kyleqe0aLk7P?=
- =?us-ascii?Q?kEawkDjgIFbk9Xgcn3ah4+Gdmjv9GNMMufcEPupk1rq/2EpuciqlyI+Kgw9q?=
- =?us-ascii?Q?jaFrFUJQn6Q/q2IGTOubpPOqZGbEBObb3S8MzR9rXR/MiDEO3jlNjQT0qDZu?=
- =?us-ascii?Q?rNMfvG1A9mKuYdBndnbHWrhxxco5DDosPexdwY6/jIDCdiWiMyOln0+yGJJI?=
- =?us-ascii?Q?UUIY8EkTlM7eXJJJIKGqEpVNFNjzMC772u6Mnn+kDaUvdo17gFE3EXMIlp0n?=
- =?us-ascii?Q?1iy6UzwTtQQ06lU6TWYKJNb89Awh8oJP5BrULYBFR9PSqCEHY1bxMqGO3CMV?=
- =?us-ascii?Q?F6anPw5vlGNHmHLXLczeGasJyz2ZcGg+iHHHZgniXeA7ljzdvRBlkxLpUlj2?=
- =?us-ascii?Q?liusoP2r28HEwLix6vhlmNTfrinEDxAbMLMhYSP9Yo+Z/zjz2/RBp2TmNIEh?=
- =?us-ascii?Q?L08E2mTLm9wWwHi0PQG7IFV0EMm8HjhzrrnVnJvLzn1RpIDj+Zv2KC0hbtDU?=
- =?us-ascii?Q?AQtLpCnGx3JC0mZGL4tkTmQ6PDx8C08VqfQ0i/N9iRBD8kUKWVVXp3RyF2Ca?=
- =?us-ascii?Q?hy6LJ7zfspxSKUUtSSf6j1DQzqeyjlb9A/WhDaBC+rnbsQbhtBZXA588tVSb?=
- =?us-ascii?Q?GrabcUZez4/hMccPsQ8ZUw9WhKpUiQL9wHoXxCwG2pVSK45z62m23ABa15UU?=
- =?us-ascii?Q?w1Kj6gGcsXD/+enA69+C2q3usXuyQTrarIob6EUPPZ/Gbo0vfaM70onWGTJC?=
- =?us-ascii?Q?EvhSJNuPeVtrVsxS3l5JoOzuZx5JTWCsQDGgFbxyTdK5aCTmJ2f9C9WeIQPH?=
- =?us-ascii?Q?OMGimRZTIu8nWta3PmHAKhRk6qHeTuqGV3/29aEyrq+0atJzwM290PXAn6ST?=
- =?us-ascii?Q?aEZpnUsrosKNWQm41a1oTw1w9sLtFrUw5pxARw5JEkuw7VfO7EyoLsJ6M3rv?=
- =?us-ascii?Q?w5vF6VngOL+Ic5RQ1MZe8AKpamSoQ0ANnWSvetsxkCEnJ7a1ueNXdkZlbuAA?=
- =?us-ascii?Q?/T9p8N3go6M4NFZabPAF9wxklwmAa5DDTg6JtgI3PPLHAdAPzywkjBKzaOlL?=
- =?us-ascii?Q?2kzz86vTqlyzDgm5mFEVropdX73usKkoUFiSOP4Fe79t5xWm44qB3zeQgrDB?=
- =?us-ascii?Q?MAjhbJ2wtoNvaAmFmq8d9JPWkaSkKLiwecf9yjBL1TNymefR/zMY/K7WT5tb?=
- =?us-ascii?Q?kQ+ESvsqm1h9Y51D89ra2UcsDTMFdyLKvYjNUkEmI7snQs0bLpKkHea/nrAR?=
- =?us-ascii?Q?Tof5Oma0ICGCyx9N8j23Dki6DcPoBx00VsW3ASv3Bpkt/iaArP22FNT2bD64?=
- =?us-ascii?Q?SVgKCUEp9CGlroIoROeFK3AraRqdrt1cPuVVKBUgLmtoITJoutNVMIeuIv8u?=
- =?us-ascii?Q?DZ04+qBaxdj6AN6zgpwdQKmcz5bVm5hTo5bgg/XmlF60pau77cGKj7mHV44+?=
- =?us-ascii?Q?1WSHt4fUsDD/vm8+C8UhkXKJ1KBZCUQxX7c+11SH?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 30 Sep 2022 07:12:22 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F0AE9FD2
+        for <linux-tegra@vger.kernel.org>; Fri, 30 Sep 2022 03:49:34 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id g20so4376034ljg.7
+        for <linux-tegra@vger.kernel.org>; Fri, 30 Sep 2022 03:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=LQmSfvmdYcsQ3TJepFnKd/I61iUETxbyLBYaG0YvPbI=;
+        b=Y+JUJPVygm/ITXHKeSfUaFFgpAaI72Jh2PqOZmcQbr7wEp/T21V1m1zqkb7bdugTVK
+         zVG/Ozek+Mr1dlouceNXls+BAU5UiECu/CgM0WtVvmeR/QJ3rlRuI7vVGgpmn8LOQQ8f
+         Ndfs34MSlH6zNitvV4S5VBKBARAUvcqT6J31HXC0rxISSqZnAq7KXyyOyZUmU8QfeNnW
+         Yk/3yUBxsPhKkdhpJ5hjvPPGt07fYg1kc3TKX5JsLbgXqKleWz2ouwU+vIKk+W8ffCR7
+         odxsWCkgiCLk77IjVeadGAgft4V82TUO+QfaO9ydbejomjCQ7bBsIMKjdI+ixkFTd43K
+         kYjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=LQmSfvmdYcsQ3TJepFnKd/I61iUETxbyLBYaG0YvPbI=;
+        b=YbDpVbcocJLO+aZdvjg+0af4u6q2KwRGfu1DfgPluX2vdtnKc/11+3aA4Bun39C3Tf
+         PfB/tirJZaLHJmdt8pgt7uOOW4fAo1Mv6IQfCLhCCcLVZSc549n3Utzo44viE33vxPuy
+         PDCPTSdxuPJGCzSrKrLNgVSTpxdexc342a/5OF07vId0OKsGHdnFEKgpBM82dmoaBTnC
+         vP/vlEz98YHmv5Nulln3l3LewnEqqLB67z8SQMggME+mSTRafySCo7S8gxL/+6iqknGc
+         jFL/eRVHNLDqmcF1f34+WNxzrW8vkxzYlCn793QOASaqzrSk/udFFuLzB51armGHIqov
+         MzPg==
+X-Gm-Message-State: ACrzQf3Gx9uW/TNkXQDm+y3vOIbTh9JYyijMlPV4I0oMARi8gwk5rdWf
+        GUytcWSZu4Ld/maMRbvoUtAADg==
+X-Google-Smtp-Source: AMsMyM7iRCfgwHnj4h/qw1Yb45TDQhUYhGG/iT/OtytoacNNDFFRxQ8wUpFxhvqSHgxpX4K25dcMfg==
+X-Received: by 2002:a2e:86cf:0:b0:26b:fe50:8c4c with SMTP id n15-20020a2e86cf000000b0026bfe508c4cmr2557212ljj.17.1664534972789;
+        Fri, 30 Sep 2022 03:49:32 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id q12-20020ac246ec000000b004945c1c5cccsm253083lfo.268.2022.09.30.03.49.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Sep 2022 03:49:32 -0700 (PDT)
+Message-ID: <efa2f644-0a1d-00f7-970c-f17ceb0cc550@linaro.org>
+Date:   Fri, 30 Sep 2022 12:49:31 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB5500.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e31822c-7549-4395-a243-08daa28ebfa2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2022 02:52:01.0196
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Za1WLXe3M3WkiA6CjN9KtZ6iPDYNHgT/Ya7Q/QeklKL9mT0Q17iadl0mqUby2417hk6A0VH6l8boj4g4atCQJw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6063
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH 1/4] dt-bindings: display: Add bindings for JDI
+ LPM102A188A
+Content-Language: en-US
+To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
+        daniel@ffwll.ch, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
+        arnd@arndb.de, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20220929170502.1034040-1-diogo.ivo@tecnico.ulisboa.pt>
+ <20220929170502.1034040-2-diogo.ivo@tecnico.ulisboa.pt>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220929170502.1034040-2-diogo.ivo@tecnico.ulisboa.pt>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Krzvsztof,=0A=
-=0A=
-Thanks for the review.=0A=
-=0A=
-On 9/29/22 15:01, Krzysztof Kozlowski wrote:=0A=
-> External email: Use caution opening links or attachments=0A=
-> =0A=
-> =0A=
-> On 29/09/2022 05:42, Wayne Chang wrote:=0A=
->> Extend the Tegra XUSB controller device tree binding with Tegra234=0A=
->> support.=0A=
->>=0A=
->> Signed-off-by: Wayne Chang <waynec@nvidia.com>=0A=
->> ---=0A=
->>   Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 2 ++=0A=
->>   1 file changed, 2 insertions(+)=0A=
->>=0A=
->> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yam=
-l b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml=0A=
->> index fd6e7c81426e..7e4eb379bcf4 100644=0A=
->> --- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml=0A=
->> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml=0A=
->> @@ -22,6 +22,7 @@ properties:=0A=
->>             - nvidia,tegra210-xudc # For Tegra210=0A=
->>             - nvidia,tegra186-xudc # For Tegra186=0A=
->>             - nvidia,tegra194-xudc # For Tegra194=0A=
->> +          - nvidia,tegra234-xudc # For Tegra194=0A=
-> =0A=
-> Where is the driver change? Where is DTS?=0A=
-The driver is sent to upstream while the dts is working now.=0A=
-I'll send them out together with this change in a series when they all =0A=
-got ready.=0A=
-=0A=
-> Best regards,=0A=
-> Krzysztof=0A=
-> =0A=
-> =0A=
-=0A=
-thanks,=0A=
-Wayne.=0A=
+On 29/09/2022 19:04, Diogo Ivo wrote:
+> The LPM102A188A is a 10.2" 2560x1800 IPS panel found in
+> the Google Pixel C.
+> 
+
+
+Thank you for your patch. There is something to discuss/improve.
+
+> +  Each of the DSI channels controls a separate DSI peripheral. The peripheral
+> +  driven by the first link (DSI-LINK1) is considered the primary peripheral
+> +  and controls the device. The 'link2' property contains a phandle to the
+> +  peripheral driven by the second link (DSI-LINK2).
+> +
+> +allOf:
+> +  - $ref: panel-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: jdi,lpm102a188a
+> +
+> +  reg: true
+> +  enable-gpios: true
+> +  reset-gpios: true
+> +  power-supply: true
+> +  backlight: true
+> +
+> +  ts-reset-gpios:
+> +    maxItems: 1
+> +    description: |
+> +      Specifier for a GPIO connected to the touchscreen reset control signal.
+> +      The reset signal is active low.
+
+Isn't touchscreen a separate (input) device?
+
+> +
+> +  ddi-supply:
+> +    description: The regulator that provides IOVCC (1.8V).
+> +
+> +  link2:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      phandle to the DSI peripheral on the secondary link. Note that the
+> +      presence of this property marks the containing node as DSI-LINK1.
+
+Best regards,
+Krzysztof
+
