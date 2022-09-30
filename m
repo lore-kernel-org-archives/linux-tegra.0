@@ -2,129 +2,370 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4822DC43219
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Sep 2022 17:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90706C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Sep 2022 17:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231426AbiI3Rjr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Sep 2022 13:39:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46824 "EHLO
+        id S231654AbiI3RqW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Sep 2022 13:46:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbiI3Rjp (ORCPT
+        with ESMTP id S230438AbiI3RqV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Sep 2022 13:39:45 -0400
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 014FE63F8;
-        Fri, 30 Sep 2022 10:39:37 -0700 (PDT)
-Received: by mail-qk1-f174.google.com with SMTP id 3so3257924qka.5;
-        Fri, 30 Sep 2022 10:39:36 -0700 (PDT)
+        Fri, 30 Sep 2022 13:46:21 -0400
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 611CC1739D3;
+        Fri, 30 Sep 2022 10:46:20 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id b23so3090110qtr.13;
+        Fri, 30 Sep 2022 10:46:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=N8mI8UTtYw4tqhx/SpyLW2KXywh682BjJEpPuPB5RK8=;
-        b=zza6M3ytDEKAzydyndqKGKalgkEdTflvG+1mVsOmpzJVSEfQyM1NmEn0S1pOg53NiD
-         n/oKD0SJf++HmZZOxUNk1xbMU3bRVVVEPkWuQ/LRqYNiRangkq8Cv0vcmzWrUv0sE+eF
-         ylZZEiuf9HiDn3otQKqX+Gt4ZRdzOtbLICSZzYpXc3Bn5CMALFP1gRWoeFJDHrXI9dEw
-         vzTiteAg/odRDSxTW0++J+kmhxVN0+IZOeWFg8kSpiCrbFxBnJK7Kw2pwwsKWQQ18Y+9
-         oP9yfzSwcQdb2PnGJ91lhFK55L/UKW076ReFyudxrgfX4R6Aas6AcWUcvQ1UoDnDgKwE
-         sRMg==
-X-Gm-Message-State: ACrzQf3heoTHuLle29KFoFXqqdcVVzcLFeyqdrSGJR3fLN/BZBK2uQyc
-        q/JzPuKmsdju9DRQIrk3cF+FvFuzKujEzwH56jg=
-X-Google-Smtp-Source: AMsMyM5Be2M9430vaNDQKWi5Jn7X5sqcjjBRWlaB305zeNKwPI8Niz3+jSeejZPUTnTD+6uF7YXR9Lo8HGSlB5J32Ng=
-X-Received: by 2002:a05:620a:46ac:b0:6ce:3e55:fc21 with SMTP id
- bq44-20020a05620a46ac00b006ce3e55fc21mr6841047qkb.285.1664559576163; Fri, 30
- Sep 2022 10:39:36 -0700 (PDT)
+        bh=UWpIBj+/9sQw5QyigeVTqr3A6AC0TPRLfI1uqBcxDFQ=;
+        b=VR2+2gNu3LTkl+BoDjmmOhbecJd4mtc75UZOiu0CgblrgQ05u3xTwba9LdO4skt2US
+         3673nKuMg+fkQadH/fr1cw9ppuOLhU3L6DWYmGW++6in9BwJWd1zKWbk1URjCC34U9YI
+         mvFtxYikWo28t4KWTm1Wbo8KIkXQKsNxArRf49X1YY3UwyyQiWSuylWaRXdtOySjAsun
+         80LL/8wK7MnKJflI686VYoSDQkd3/AWDE2wEC1poTnV17DWX6oPwBYvCEu70Gsr1+fZ3
+         rqyhSD6OYdAU+SOdlhY6jRGcUpSx+cD6W8JziaxKES7zDkwEIcZ6XH0eozrqHonBfA3u
+         bRQA==
+X-Gm-Message-State: ACrzQf0QY2BJ2jGL46oG8w9UIJ7+DY3kwUDb+kjSvoxYBX9/6jVgWJPX
+        VsLCzxqj0kE9Bm6O3R1b3Big4yLy6BiUQJtE0/0=
+X-Google-Smtp-Source: AMsMyM4m7jwXON/4b4YZv4l+r4LmRE0QFUsGIqap9s7oQh8aq/1X51OA+Ojtt77lDUokyhsUUE54UNjZsPEN39MaHno=
+X-Received: by 2002:a05:622a:1a08:b0:35c:d9b5:144b with SMTP id
+ f8-20020a05622a1a0800b0035cd9b5144bmr7795240qtb.27.1664559979468; Fri, 30 Sep
+ 2022 10:46:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220928210059.891387-1-daniel.lezcano@linaro.org>
- <d0be3159-8094-aed1-d9b1-c4b16d88d67c@linaro.org> <CAJZ5v0hOFoe0KqEimFv9pgmiAOzuRoLjdqoScr53ErNFU4AAPA@mail.gmail.com>
- <ae86fc5a-0521-3dde-c2ea-8679c0ec4831@linaro.org> <CAJZ5v0jrWamTTXcHabSk=6cmm4pEx0_ebiECKZRfrX_vS85YYg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jrWamTTXcHabSk=6cmm4pEx0_ebiECKZRfrX_vS85YYg@mail.gmail.com>
+References: <20220929002834.32664-1-bwicaksono@nvidia.com>
+In-Reply-To: <20220929002834.32664-1-bwicaksono@nvidia.com>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 30 Sep 2022 19:39:25 +0200
-Message-ID: <CAJZ5v0gnfK2MBuzZi-C03VVO+b4dthckJcdj3zLo3q-qAUyy_g@mail.gmail.com>
-Subject: Re: [PATCH v7 00/29] Rework the trip points creation
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Zhang, Rui" <rui.zhang@intel.com>,
-        Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Kaestle <peter@piie.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Antoine Tenart <atenart@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>
+Date:   Fri, 30 Sep 2022 19:46:08 +0200
+Message-ID: <CAJZ5v0iBZRZmV_oU+VurqxnVMbFN_ttqrL=cLh0sUH+=u0PYsw@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT)
+ initial support
+To:     Besar Wicaksono <bwicaksono@nvidia.com>, sudeep.holla@arm.com,
+        lorenzo.pieralisi@arm.com
+Cc:     lenb@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        guohanjun@huawei.com, linux-tegra@vger.kernel.org,
+        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 9:35 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Thu, Sep 29, 2022 at 2:29 AM Besar Wicaksono <bwicaksono@nvidia.com> wrote:
 >
-> On Thu, Sep 29, 2022 at 4:57 PM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> >
-> > On 29/09/2022 15:58, Rafael J. Wysocki wrote:
-> > > On Thu, Sep 29, 2022 at 2:26 PM Daniel Lezcano
-> > > <daniel.lezcano@linaro.org> wrote:
-> > >>
-> > >>
-> > >> Hi Rafael,
-> > >>
-> > >> are you happy with the changes?
-> > >
-> > > I'll have a look and let you know.
-> >
-> > Great, thanks
+> ARM Performance Monitoring Unit Table describes the properties of PMU
+> support in ARM-based system. The APMT table contains a list of nodes,
+> each represents a PMU in the system that conforms to ARM CoreSight PMU
+> architecture. The properties of each node include information required
+> to access the PMU (e.g. MMIO base address, interrupt number) and also
+> identification. For more detailed information, please refer to the
+> specification below:
+>  * APMT: https://developer.arm.com/documentation/den0117/latest
+>  * ARM Coresight PMU:
+>         https://developer.arm.com/documentation/ihi0091/latest
 >
-> Well, because you have not added the history of changes to the
-> patches, that will take more time than it would otherwise.
+> The initial support adds the detection of APMT table and generic
+> infrastructure to create platform devices for ARM CoreSight PMUs.
+> Similar to IORT the root pointer of APMT is preserved during runtime
+> and each PMU platform device is given a pointer to the corresponding
+> APMT node.
+>
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 
-Done.  I've sent ACKs and still had a comment on one patch (minor but
-still).  When that is addressed, the four initial core patches should
-be good to go in.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I'm trusting you regarding the thermal/of changes (even though I think
-that it would be good if someone involved in that code could review
-them) and if you are confident about all of the driver changes, they
-are fine with me too.
+for the change in bus.c, but as a side note, it would be good to move
+all of the ARM-specific initialization into one place, so it is not
+necessary to touch bus.c every time a new piece of it is added.
+
+> ---
+>
+> The patch applies on top of
+>   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>   master next-20220524
+>
+> Changes from v1:
+>  * Include acpi_apmt.h header file
+>  * Update the device name. Related driver patch:
+>    https://lore.kernel.org/linux-arm-kernel/20220928201830.45637-1-bwicaksono@nvidia.com/
+> v1: https://lkml.org/lkml/2022/4/19/1395
+>
+>  arch/arm64/Kconfig          |   1 +
+>  drivers/acpi/arm64/Kconfig  |   3 +
+>  drivers/acpi/arm64/Makefile |   1 +
+>  drivers/acpi/arm64/apmt.c   | 177 ++++++++++++++++++++++++++++++++++++
+>  drivers/acpi/bus.c          |   2 +
+>  include/linux/acpi_apmt.h   |  19 ++++
+>  6 files changed, 203 insertions(+)
+>  create mode 100644 drivers/acpi/arm64/apmt.c
+>  create mode 100644 include/linux/acpi_apmt.h
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index aaeb70358979..dbcb09ee29dd 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config ARM64
+>         def_bool y
+> +       select ACPI_APMT if ACPI
+>         select ACPI_CCA_REQUIRED if ACPI
+>         select ACPI_GENERIC_GSI if ACPI
+>         select ACPI_GTDT if ACPI
+> diff --git a/drivers/acpi/arm64/Kconfig b/drivers/acpi/arm64/Kconfig
+> index d4a72835f328..b3ed6212244c 100644
+> --- a/drivers/acpi/arm64/Kconfig
+> +++ b/drivers/acpi/arm64/Kconfig
+> @@ -18,3 +18,6 @@ config ACPI_AGDI
+>           reset command.
+>
+>           If set, the kernel parses AGDI table and listens for the command.
+> +
+> +config ACPI_APMT
+> +       bool
+> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
+> index 7b9e4045659d..e21a9e84e394 100644
+> --- a/drivers/acpi/arm64/Makefile
+> +++ b/drivers/acpi/arm64/Makefile
+> @@ -2,4 +2,5 @@
+>  obj-$(CONFIG_ACPI_AGDI)        += agdi.o
+>  obj-$(CONFIG_ACPI_IORT)        += iort.o
+>  obj-$(CONFIG_ACPI_GTDT)        += gtdt.o
+> +obj-$(CONFIG_ACPI_APMT)        += apmt.o
+>  obj-y                          += dma.o
+> diff --git a/drivers/acpi/arm64/apmt.c b/drivers/acpi/arm64/apmt.c
+> new file mode 100644
+> index 000000000000..f55167ca51e7
+> --- /dev/null
+> +++ b/drivers/acpi/arm64/apmt.c
+> @@ -0,0 +1,177 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ARM APMT table support.
+> + * Design document number: ARM DEN0117.
+> + *
+> + * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
+> + *
+> + */
+> +
+> +#define pr_fmt(fmt)    "ACPI: APMT: " fmt
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/acpi_apmt.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define DEV_NAME "arm-cs-arch-pmu"
+> +
+> +/* There can be up to 3 resources: page 0 and 1 address, and interrupt. */
+> +#define DEV_MAX_RESOURCE_COUNT 3
+> +
+> +/* Root pointer to the mapped APMT table */
+> +static struct acpi_table_header *apmt_table;
+> +
+> +static int __init apmt_init_resources(struct resource *res,
+> +                                             struct acpi_apmt_node *node)
+> +{
+> +       int irq, trigger;
+> +       int num_res = 0;
+> +
+> +       res[num_res].start = node->base_address0;
+> +       res[num_res].end = node->base_address0 + SZ_4K - 1;
+> +       res[num_res].flags = IORESOURCE_MEM;
+> +
+> +       num_res++;
+> +
+> +       res[num_res].start = node->base_address1;
+> +       res[num_res].end = node->base_address1 + SZ_4K - 1;
+> +       res[num_res].flags = IORESOURCE_MEM;
+> +
+> +       num_res++;
+> +
+> +       if (node->ovflw_irq != 0) {
+> +               trigger = (node->ovflw_irq_flags & ACPI_APMT_OVFLW_IRQ_FLAGS_MODE);
+> +               trigger = (trigger == ACPI_APMT_OVFLW_IRQ_FLAGS_MODE_LEVEL) ?
+> +                       ACPI_LEVEL_SENSITIVE : ACPI_EDGE_SENSITIVE;
+> +               irq = acpi_register_gsi(NULL, node->ovflw_irq, trigger,
+> +                                               ACPI_ACTIVE_HIGH);
+> +
+> +               if (irq <= 0) {
+> +                       pr_warn("APMT could not register gsi hwirq %d\n", irq);
+> +                       return num_res;
+> +               }
+> +
+> +               res[num_res].start = irq;
+> +               res[num_res].end = irq;
+> +               res[num_res].flags = IORESOURCE_IRQ;
+> +
+> +               num_res++;
+> +       }
+> +
+> +       return num_res;
+> +}
+> +
+> +/**
+> + * apmt_add_platform_device() - Allocate a platform device for APMT node
+> + * @node: Pointer to device ACPI APMT node
+> + *
+> + * Returns: 0 on success, <0 failure
+> + */
+> +static int __init apmt_add_platform_device(struct acpi_apmt_node *node,
+> +                                                       struct fwnode_handle *fwnode)
+> +{
+> +       struct platform_device *pdev;
+> +       int ret, count;
+> +       struct resource res[DEV_MAX_RESOURCE_COUNT];
+> +
+> +       pdev = platform_device_alloc(DEV_NAME, PLATFORM_DEVID_AUTO);
+> +       if (!pdev)
+> +               return -ENOMEM;
+> +
+> +       memset(res, 0, sizeof(res));
+> +
+> +       count = apmt_init_resources(res, node);
+> +
+> +       ret = platform_device_add_resources(pdev, res, count);
+> +       if (ret)
+> +               goto dev_put;
+> +
+> +       /*
+> +        * Add a copy of APMT node pointer to platform_data to be used to
+> +        * retrieve APMT data information.
+> +        */
+> +       ret = platform_device_add_data(pdev, &node, sizeof(node));
+> +       if (ret)
+> +               goto dev_put;
+> +
+> +       pdev->dev.fwnode = fwnode;
+> +
+> +       ret = platform_device_add(pdev);
+> +
+> +       if (ret)
+> +               goto dev_put;
+> +
+> +       return 0;
+> +
+> +dev_put:
+> +       platform_device_put(pdev);
+> +
+> +       return ret;
+> +}
+> +
+> +static int __init apmt_init_platform_devices(void)
+> +{
+> +       struct acpi_apmt_node *apmt_node;
+> +       struct acpi_table_apmt *apmt;
+> +       struct fwnode_handle *fwnode;
+> +       u64 offset, end;
+> +       int ret;
+> +
+> +       /*
+> +        * apmt_table and apmt both point to the start of APMT table, but
+> +        * have different struct types
+> +        */
+> +       apmt = (struct acpi_table_apmt *)apmt_table;
+> +       offset = sizeof(*apmt);
+> +       end = apmt->header.length;
+> +
+> +       while (offset < end) {
+> +               apmt_node = ACPI_ADD_PTR(struct acpi_apmt_node, apmt,
+> +                                offset);
+> +
+> +               fwnode = acpi_alloc_fwnode_static();
+> +               if (!fwnode)
+> +                       return -ENOMEM;
+> +
+> +               ret = apmt_add_platform_device(apmt_node, fwnode);
+> +               if (ret) {
+> +                       acpi_free_fwnode_static(fwnode);
+> +                       return ret;
+> +               }
+> +
+> +               offset += apmt_node->length;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +void __init acpi_apmt_init(void)
+> +{
+> +       acpi_status status;
+> +       int ret;
+> +
+> +       /**
+> +        * APMT table nodes will be used at runtime after the apmt init,
+> +        * so we don't need to call acpi_put_table() to release
+> +        * the APMT table mapping.
+> +        */
+> +       status = acpi_get_table(ACPI_SIG_APMT, 0, &apmt_table);
+> +
+> +       if (ACPI_FAILURE(status)) {
+> +               if (status != AE_NOT_FOUND) {
+> +                       const char *msg = acpi_format_exception(status);
+> +
+> +                       pr_err("Failed to get APMT table, %s\n", msg);
+> +               }
+> +
+> +               return;
+> +       }
+> +
+> +       ret = apmt_init_platform_devices();
+> +       if (ret) {
+> +               pr_err("Failed to initialize APMT platform devices, ret: %d\n", ret);
+> +               acpi_put_table(apmt_table);
+> +       }
+> +}
+> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+> index 86fa61a21826..f9dc5b3d5c55 100644
+> --- a/drivers/acpi/bus.c
+> +++ b/drivers/acpi/bus.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/dmi.h>
+>  #endif
+>  #include <linux/acpi_agdi.h>
+> +#include <linux/acpi_apmt.h>
+>  #include <linux/acpi_iort.h>
+>  #include <linux/acpi_viot.h>
+>  #include <linux/pci.h>
+> @@ -1411,6 +1412,7 @@ static int __init acpi_init(void)
+>         acpi_setup_sb_notify_handler();
+>         acpi_viot_init();
+>         acpi_agdi_init();
+> +       acpi_apmt_init();
+>         return 0;
+>  }
+>
+> diff --git a/include/linux/acpi_apmt.h b/include/linux/acpi_apmt.h
+> new file mode 100644
+> index 000000000000..40bd634d082f
+> --- /dev/null
+> +++ b/include/linux/acpi_apmt.h
+> @@ -0,0 +1,19 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * ARM CoreSight PMU driver.
+> + * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
+> + *
+> + */
+> +
+> +#ifndef __ACPI_APMT_H__
+> +#define __ACPI_APMT_H__
+> +
+> +#include <linux/acpi.h>
+> +
+> +#ifdef CONFIG_ACPI_APMT
+> +void acpi_apmt_init(void);
+> +#else
+> +static inline void acpi_apmt_init(void) { }
+> +#endif /* CONFIG_ACPI_APMT */
+> +
+> +#endif /* __ACPI_APMT_H__ */
+>
+> base-commit: 09ce5091ff971cdbfd67ad84dc561ea27f10d67a
+> --
+> 2.17.1
+>
