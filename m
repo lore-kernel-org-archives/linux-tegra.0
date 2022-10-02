@@ -2,143 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30193C433FE
-	for <linux-tegra@archiver.kernel.org>; Sat,  1 Oct 2022 23:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A03C433FE
+	for <linux-tegra@archiver.kernel.org>; Sun,  2 Oct 2022 10:37:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229544AbiJAXuY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 1 Oct 2022 19:50:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51826 "EHLO
+        id S229681AbiJBKhb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 2 Oct 2022 06:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbiJAXuV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 1 Oct 2022 19:50:21 -0400
-Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C4A420BDE;
-        Sat,  1 Oct 2022 16:50:15 -0700 (PDT)
-Message-ID: <2a465222-342a-418b-95af-9948f6ce9065@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1664668213;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=E50mveDkhjyT/f41Fre/RrdiU0a3ioACNtlJoHsW0io=;
-        b=ONPbNZ3JwSONx6g62DdPSiaRq5lycwAkGySS5As9hNZwrdh2m4KHrSq3euYqmO9EW8zNbi
-        hw9SuxjfSn5rBmkbKy7YwFly/6WlOJE1Ut6HqMSygMYoMUInZ/h0oh674Zhc3VF6r5NANt
-        cXqkxZESbjiIi1HilBDEmxQfGXJEvxo=
-Date:   Sat, 1 Oct 2022 17:50:07 -0600
+        with ESMTP id S229449AbiJBKh3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 2 Oct 2022 06:37:29 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F9A83BC52;
+        Sun,  2 Oct 2022 03:37:29 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id a20so5018614qtw.10;
+        Sun, 02 Oct 2022 03:37:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=Vn8QgBQKdU3foTWT0lboWMjSxI0LuQABTI7xN/fvQJ0=;
+        b=TqiGc6xZScuk/OOtuoC4b8ytKYZGECE1pBo9clYJjs8ShtJ4zQxxz+8O/8MTyolrOA
+         PrqRO03ObGrUjA2gVlkw6GdGZGiUBhkl8c6P6mgQmUrApqmP9tVbpFa/pIK1fe8uTIyS
+         P3gCfgU8fa/wMo0TGiUS+XACaz1MTYR3tJtqMAChW+KEFhpLZhdZnLHMT5jbiIKOWV+c
+         KjXFslovT/auGOO1omMggRspIWrYU3rj/TbCOQnXFm6XlFcQCoVRiQBniO0OmzaKzD6o
+         YcCkcQQXqYWyoful8q4jnxsWymU/YmSW3Wd9J3H41M+dXdTVmxGfGkuwOX1DZ9PFjXzs
+         EoDA==
+X-Gm-Message-State: ACrzQf20r4cicBHp7HDYQe3mZmmTUsrXMt6DeIaBo9wWXnSYvM8wqncL
+        fhhSiDnOQpAAC3IZXcOV8GkSjCc/5R0/3w==
+X-Google-Smtp-Source: AMsMyM6qgKZoENCBZs4SYYtuQXLpBv2+jAR8oU66XWERib4YYCWo/8533axKLQit65huCIcRg/vjOg==
+X-Received: by 2002:ac8:7dc6:0:b0:35c:c9b1:9f98 with SMTP id c6-20020ac87dc6000000b0035cc9b19f98mr12943534qte.170.1664707047858;
+        Sun, 02 Oct 2022 03:37:27 -0700 (PDT)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id b1-20020ac87541000000b0035bb6c3811asm6617926qtr.53.2022.10.02.03.37.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Oct 2022 03:37:27 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-353fbfa727cso82810747b3.4;
+        Sun, 02 Oct 2022 03:37:27 -0700 (PDT)
+X-Received: by 2002:a0d:ea90:0:b0:358:b93:d039 with SMTP id
+ t138-20020a0dea90000000b003580b93d039mr4473622ywe.47.1664707046943; Sun, 02
+ Oct 2022 03:37:26 -0700 (PDT)
 MIME-Version: 1.0
-Subject: Re: [PATCH V1 0/4] GPIO based PCIe Hot-Plug support
-To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
-        Lukas Wunner <lukas@wunner.de>
-Cc:     Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lpieralisi@kernel.org, kw@linux.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, mani@kernel.org,
-        Sergey.Semin@baikalelectronics.ru, jszhang@kernel.org,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
-        =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>
-References: <20220930192747.21471-1-vidyas@nvidia.com>
- <20221001160025.GB9324@wunner.de> <20221001162049.ln2qheyyb5muifi7@pali>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Jonathan Derrick <jonathan.derrick@linux.dev>
-In-Reply-To: <20221001162049.ln2qheyyb5muifi7@pali>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20221001122148.9158-1-kyarlagadda@nvidia.com> <20221001122148.9158-5-kyarlagadda@nvidia.com>
+In-Reply-To: <20221001122148.9158-5-kyarlagadda@nvidia.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 2 Oct 2022 12:37:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUoABDeLrdudfY09jGmCcnFpJmFGf0OieVBG6OuEpk7ZA@mail.gmail.com>
+Message-ID: <CAMuHMdUoABDeLrdudfY09jGmCcnFpJmFGf0OieVBG6OuEpk7ZA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] spi: tegra210-quad: native dma support
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        skomatineni@nvidia.com, ldewangan@nvidia.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Krishna,
 
+On Sat, Oct 1, 2022 at 2:26 PM Krishna Yarlagadda
+<kyarlagadda@nvidia.com> wrote:
+> Enable Native DMA support for Tegra23 & Tegra24
+>
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 
-On 10/1/2022 10:20 AM, Pali Rohár wrote:
-> On Saturday 01 October 2022 18:00:25 Lukas Wunner wrote:
->> Adding Marek, Pali & Jon to cc as they've worked on somewhat similar
->> functionality:
->>
->> https://lore.kernel.org/linux-pci/20220927141926.8895-1-kabel@kernel.org/
->> https://lore.kernel.org/linux-pci/1581120007-5280-1-git-send-email-jonathan.derrick@intel.com/
->>
->> On Sat, Oct 01, 2022 at 12:57:43AM +0530, Vidya Sagar wrote:
->>> To support the Hot-plug feature, PCIe spec has a well-defined model for
->>> hardware implementation and software programming interface. There are also
->>> some architectures/platforms where the Hot-plug feature is implemented in a
->>> non-standard way and software support for the respective implementations is
->>> available with the kernel. This patch series attempts to add support for one
->>> such non-standard way of supporting the Hot-plug feature where a single GPIO
->>> is used to detect and report the Hot-Plug and Unplug events to the SW.
->>> The platforms that can use this piece of software need to have GPIO routed
->>> from the slot to the controller which can indicate the presence/absence of
->>> the downstream device through its state. This GPIO should also have the
->>> capability to interrupt the system when the connection/disconnection event
->>> takes place.
->>> A GPIO Hot-plug framework is written which looks for a "hotplug-gpios" named
->>> GPIO entry in the corresponding device-tree entry of the controller and
->>> registers a hot-pluggable slot with the Hot-plug framework.
->>> The platform drivers of the PCIe host bridges/root ports can register with the
->>> aforementioned GPIO Hot-Plug framework along with ops to perform any platform
->>> specific tasks during Hot-Plug/Unplug events.
->>>
->>> Oza Pawandeep made an attempt to upstream support for a similar Hot-plug
->>> feature implementation at a platform level, but the implementation as such
->>> was very specific to that platform (at least the way I understood it).
->>> https://patchwork.kernel.org/project/linux-pci/patch/1504155029-24729-2-git-send-email-oza.oza@broadcom.com/
->>> https://patchwork.kernel.org/project/linux-pci/patch/1504155029-24729-3-git-send-email-oza.oza@broadcom.com/
->>> https://patchwork.kernel.org/project/linux-pci/patch/1504155029-24729-4-git-send-email-oza.oza@broadcom.com/
->>> This current series also attempts to address that by extracting out all the
->>> common code to do with GPIO and Hot-plug core framework and expecting the
->>> platform drivers to only register/unregister with the GPIO framework. So,
->>> @Oza, could you try using the GPIO framework from this series and enable
->>> Hot-plug support for your platform if it still makes sense?
-> 
-> Hello!
-> 
-> Would not it better to rather synthesise PCIe Slot Capabilities support
-> in your PCIe Root Port device (e.g. via pci-bridge-emul.c) and then let
-> existing PCI hotplug code to take care for hotplugging? Because it
-> already implements all required stuff for re-scanning, registering and
-> unregistering PCIe devices for Root Ports with Slot Capabilities. And I
-> think that there is no need to have just another (GPIO based)
-> implementation of PCI hotplug.
-I did that a few years ago (rejected), but can attest to the robustness 
-of the pcie hotplug code on non-hotplug slots.
-https://lwn.net/Articles/811988/
+Thanks for your patch!
 
+> --- a/drivers/spi/spi-tegra210-quad.c
+> +++ b/drivers/spi/spi-tegra210-quad.c
 
-> 
-> Similar thing Marek and me have implemented for PCIe link state events
-> in patch series with Lukas pointed.
-> 
->>> @Rob,
->>> Regarding the DT documentation change to add about 'hotplug-gpios, I'm not
->>> sure if pci.txt is the right place or the dt-schema repository
->>> i.e https://github.com/devicetree-org/dt-schema
->>> But, in the interest of keeping all the changes related to this feature in the
->>> the same repository, I made the changes to the pci.txt file in this repo itself.
->>> Please let me know if the documentation change needs to be moved to the other
->>> repo.
->>>
->>> The Changes have been tested on the Tegra234 platform.
->>>
->>> Vidya Sagar (4):
->>>    dt-bindings: Add "hotplug-gpios" PCIe property
->>>    PCI/hotplug: Add GPIO PCIe hotplug driver
->>>    PCI: tegra194: Add support to configure a pluggable slot
->>>    PCI: tegra194: Enable GPIO based Hot-Plug support
->>>
->>>   Documentation/devicetree/bindings/pci/pci.txt |   4 +
->>>   drivers/pci/controller/dwc/pcie-tegra194.c    |  85 +++++++-
->>>   drivers/pci/hotplug/Kconfig                   |  11 +
->>>   drivers/pci/hotplug/Makefile                  |   1 +
->>>   drivers/pci/hotplug/gpio_php.c                | 200 ++++++++++++++++++
->>>   drivers/pci/hotplug/gpiophp.h                 |  40 ++++
->>>   6 files changed, 334 insertions(+), 7 deletions(-)
->>>   create mode 100644 drivers/pci/hotplug/gpio_php.c
->>>   create mode 100644 drivers/pci/hotplug/gpiophp.h
->>>
->>> -- 
->>> 2.17.1
->>>
+> @@ -163,7 +169,7 @@
+>  #define DATA_TRANSFER                          3
+>
+>  struct tegra_qspi_soc_data {
+> -       bool has_dma;
+> +       int has_dma;
+
+unsigned int
+
+Please rename the variable to e.g. "dma_mode", as "has_<foo>" suggests
+it is a boolean flag.
+
+>         bool cmb_xfer_capable;
+>         unsigned int cs_count;
+>  };
+
+> @@ -629,23 +640,35 @@ static int tegra_qspi_start_dma_based_transfer(struct tegra_qspi *tqspi, struct
+>                 len = tqspi->curr_dma_words * 4;
+>
+>         /* set attention level based on length of transfer */
+> -       val = 0;
+> -       if (len & 0xf) {
+> -               val |= QSPI_TX_TRIG_1 | QSPI_RX_TRIG_1;
+> -               dma_burst = 1;
+> -       } else if (((len) >> 4) & 0x1) {
+> -               val |= QSPI_TX_TRIG_4 | QSPI_RX_TRIG_4;
+> -               dma_burst = 4;
+> -       } else {
+> -               val |= QSPI_TX_TRIG_8 | QSPI_RX_TRIG_8;
+> -               dma_burst = 8;
+> +       if (has_ext_dma) {
+> +               val = 0;
+> +               if (len & 0xf) {
+> +                       val |= QSPI_TX_TRIG_1 | QSPI_RX_TRIG_1;
+> +                       dma_burst = 1;
+> +               } else if (((len) >> 4) & 0x1) {
+> +                       val |= QSPI_TX_TRIG_4 | QSPI_RX_TRIG_4;
+> +                       dma_burst = 4;
+> +               } else {
+> +                       val |= QSPI_TX_TRIG_8 | QSPI_RX_TRIG_8;
+> +                       dma_burst = 8;
+> +               }
+>         }
+>
+>         tegra_qspi_writel(tqspi, val, QSPI_DMA_CTL);
+>         tqspi->dma_control_reg = val;
+>
+>         dma_sconfig.device_fc = true;
+> -       if (tqspi->cur_direction & DATA_DIR_TX) {
+> +       if ((tqspi->cur_direction & DATA_DIR_TX) && !has_ext_dma) {
+> +               if (tqspi->is_packed)
+> +                       tx_dma_phys = t->tx_dma;
+> +               else
+> +                       tx_dma_phys = tqspi->tx_dma_phys;
+> +               tegra_qspi_copy_client_txbuf_to_qspi_txbuf(tqspi, t);
+> +               tegra_qspi_writel(tqspi, (tx_dma_phys & 0xffffffff),
+
+lower_32_bits(), for consistency with below.
+
+> +                                 QSPI_DMA_MEM_ADDRESS_REG);
+> +               tegra_qspi_writel(tqspi, ((tx_dma_phys >> 32) & 0xff),
+
+upper_32_bits(), to fix the build failures reported by 0-day
+("warning: shift count >= width of type").
+
+> +                                 QSPI_DMA_HI_ADDRESS_REG);
+> +       } else if ((tqspi->cur_direction & DATA_DIR_TX) && has_ext_dma) {
+>                 dma_sconfig.dst_addr = tqspi->phys + QSPI_TX_FIFO;
+>                 dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+>                 dma_sconfig.dst_maxburst = dma_burst;
+
+> @@ -1045,6 +1085,8 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
+>                                         struct spi_message *msg)
+>  {
+>         bool is_first_msg = true;
+> +       bool has_ext_dma = (tqspi->soc_data->has_dma &
+> +                           QSPI_DMA_EXT) ? true : false;
+
+No need for the "? true : false" (everywhere)
+
+>         struct spi_transfer *xfer;
+>         struct spi_device *spi = msg->spi;
+>         u8 transfer_phase = 0;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
