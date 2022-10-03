@@ -2,79 +2,71 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 222EDC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 18:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C637DC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 18:11:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229867AbiJCSKH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Oct 2022 14:10:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51746 "EHLO
+        id S229972AbiJCSLR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Oct 2022 14:11:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229972AbiJCSKE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 14:10:04 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8471209E;
-        Mon,  3 Oct 2022 11:09:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 87825B81203;
-        Mon,  3 Oct 2022 18:09:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD545C433D6;
-        Mon,  3 Oct 2022 18:09:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664820596;
-        bh=ANqFI6xslOGdcFDVAOiICDsxXBMTCaKi13Ycp8pVIR8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=KPHRzHlWh1OPUagG4uwrYFJlVJRRNFCam8EqLQCMYmXat2XL0n5epL0Z7L4NJu0iI
-         n32bD1rCeEqJ7ipwWNDJojRYW+NdpqCbvD2jjHaJO3e5bz8XtlsDYhrqLGOh2vZ0QQ
-         If/q3ezlan3MHHGsWQnEK+xAqbI0STq9CrWerzRI9U986HYrCU3aVRZg2AI5HKCArO
-         1EM0nQBRUp8VQZodOmWDn/gfeuqBRc2v4Amr0Lm/8xb+hWlppeD10CvHuW2L4DKEWz
-         Ng1hr9DbIKH+53tfitlwZZ2oZT1T1zOlO8Hq1NjPIVQcXkCV8gGSfoXPmwNLfWXtKF
-         a7ozlM0JggbYA==
-Date:   Mon, 3 Oct 2022 13:09:49 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jonathan Derrick <jonathan.derrick@linux.dev>
-Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lpieralisi@kernel.org, kw@linux.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, mani@kernel.org,
-        Sergey.Semin@baikalelectronics.ru, jszhang@kernel.org,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Subject: Re: [PATCH V1 0/4] GPIO based PCIe Hot-Plug support
-Message-ID: <20221003180949.GA2104321@bhelgaas>
+        with ESMTP id S229988AbiJCSLQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 14:11:16 -0400
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 903022983F;
+        Mon,  3 Oct 2022 11:11:15 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id v130so12109331oie.2;
+        Mon, 03 Oct 2022 11:11:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=WjpJSrrz4ItmynRB2TM1xpUm+i5VinINQl9WbadQBXU=;
+        b=qt+moN/ysZWqVVXRVsHKfd4Hu6+odJutLMWbL8LCgMZC7Nk08uuRw/LDBPEO3mzakp
+         QTxr+aeDitttK4mrBrk55qHQJLteWwIeOAGjG8aBOiNf+JGVcKcZr9ymfePogxIyWJvw
+         YEX6cd8V+VKVcPM23pNK2E8xewHhXuVq5im8/X5EHoEUDupJC8bMH/y/lclzVPXVBz3w
+         2g20r9jJRJCO1mJaN0uKe8p+PjTfbZdsiFEQMqaXJmz6j3rRiHJGkl8xcIwaiMcMVHtd
+         sfTWfw3vwtqv4wj4AIa6uX4yIFna7EQM8O6DtDpb8DKzs09j+vYCerWnOzIva9GTMdbO
+         htPA==
+X-Gm-Message-State: ACrzQf3D3HRwxeQ2qjzHs0yADnqYFxc0AIboKTTxoNRCt2RVO+Rb8aUQ
+        pK1KAI0q8YjMHAfobxv5zQ==
+X-Google-Smtp-Source: AMsMyM6pNf9zHN7JqU8QkZvS4QWQ6Kz64td7M8/BpYnZbLiHSvbrU26S8+2eQBvO4QVM9OSY4FPDNA==
+X-Received: by 2002:a05:6808:1c2:b0:350:2b01:f324 with SMTP id x2-20020a05680801c200b003502b01f324mr4604402oic.56.1664820674788;
+        Mon, 03 Oct 2022 11:11:14 -0700 (PDT)
+Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id t21-20020a9d7495000000b006391bdbb361sm2530950otk.31.2022.10.03.11.11.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Oct 2022 11:11:14 -0700 (PDT)
+Received: (nullmailer pid 2535168 invoked by uid 1000);
+        Mon, 03 Oct 2022 18:11:13 -0000
+Date:   Mon, 3 Oct 2022 13:11:13 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: tegra: Update headers for Tegra234
+Message-ID: <166482067321.2535109.3977497901999170478.robh@kernel.org>
+References: <20221003125141.123759-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a465222-342a-418b-95af-9948f6ce9065@linux.dev>
+In-Reply-To: <20221003125141.123759-1-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Oct 01, 2022 at 05:50:07PM -0600, Jonathan Derrick wrote:
-> On 10/1/2022 10:20 AM, Pali Rohár wrote:
-> ...
+On Mon, 03 Oct 2022 13:51:41 +0100, Jon Hunter wrote:
+> Update the device-tree clock, memory, power and reset headers for
+> Tegra234 by adding the definitions for all the various devices.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  include/dt-bindings/clock/tegra234-clock.h    | 639 +++++++++++++++++-
+>  include/dt-bindings/memory/tegra234-mc.h      | 440 +++++++++++-
+>  .../dt-bindings/power/tegra234-powergate.h    |  15 +
+>  include/dt-bindings/reset/tegra234-reset.h    | 111 ++-
+>  4 files changed, 1175 insertions(+), 30 deletions(-)
+> 
 
-> > Would not it better to rather synthesise PCIe Slot Capabilities support
-> > in your PCIe Root Port device (e.g. via pci-bridge-emul.c) and then let
-> > existing PCI hotplug code to take care for hotplugging? Because it
-> > already implements all required stuff for re-scanning, registering and
-> > unregistering PCIe devices for Root Ports with Slot Capabilities. And I
-> > think that there is no need to have just another (GPIO based)
-> > implementation of PCI hotplug.
->
-> I did that a few years ago (rejected), but can attest to the robustness of
-> the pcie hotplug code on non-hotplug slots.
-> https://lwn.net/Articles/811988/
-
-I think the thread is here:
-https://lore.kernel.org/linux-pci/1581120007-5280-1-git-send-email-jonathan.derrick@intel.com/
-and I'm sorry that my response came across as "rejected".  I intended
-it as "this is good ideas and good work and we should keep going".
-
-Bjorn
+Acked-by: Rob Herring <robh@kernel.org>
