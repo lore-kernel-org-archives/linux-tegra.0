@@ -2,255 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38053C4167E
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 09:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E75A6C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 10:16:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230466AbiJCJei (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Oct 2022 05:34:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45480 "EHLO
+        id S229714AbiJCKQQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Oct 2022 06:16:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbiJCJb7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 05:31:59 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E416341D06
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Oct 2022 02:28:13 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id u10so15660323wrq.2
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Oct 2022 02:28:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=Bvo7EJO01qiFSqaGbT4JiAGDEh8uk0vvz3ltgjeJ4xY=;
-        b=W8ReuKq7jMw2pEnUxARbGJlF66wfoQjg77hHrUh6nC3tjrBDcuDBiUJBkLHLHKhJer
-         mpIne0abBol1bAOH7i+luGK7um7d+qNm0/chXUcthIDDARkvmvzuIew1TTTxnTqFBE+r
-         ECQO2cLGey9/bgIKD1WRr4joW/DotdD2wSkmlnN+JpJv6vyt9oGmnARpJJMQ4D2wcYpY
-         ni7W/TXqbROKufTlSeo3OMrqkazbe34ydWVtz0TXbU9+X4WXvWf8ZWJdOgy80DbVmvlY
-         pDT6uXObL2BoQ4a4Ofqgq2n+lNH2XZtiCsdGDuN0ZPymWCD+o0GcMcSDnmMlwe9R6+fp
-         plIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=Bvo7EJO01qiFSqaGbT4JiAGDEh8uk0vvz3ltgjeJ4xY=;
-        b=uEzB15Z0nmk3bA3OUdZc9XXCnglkcOhbvbplDHRXqmqzn3HqLV0guLgFpoivPIz1iq
-         0/F1X1qm/ym1Rj+2KkNQ+oiwhuBiN4JpE5P3tRa7wEFVcRyrmqd/FgRBC9kbRmzlEyQ1
-         KcO6r3nYBbU9ar9G9bubMx3SKO1pcH/05+bHXM+Dbo7edWeDd4gu8qqH+W5+NLpXjZ5k
-         6sxKtk6/l/at9bWrIaM6Kr46ZZ8MSJH8VY2wMfibAPwFy1aoruJJRrMsdVq81ML0JE2B
-         rf2lE4SZqHPVBUyS+/uAdvhJEMo/eIYWeVsto7Cg1x796pA9vbpEma2Afl+ByR4UJCcf
-         BXhQ==
-X-Gm-Message-State: ACrzQf2/S8OEQw/WOnmDLZld1VHY/tmoqq+Dn9YyuacNM/EOH29p/Fkf
-        IJhCQOTC8/8hjy3/oQ+JFC7v8Q==
-X-Google-Smtp-Source: AMsMyM6ELzLHVK4/BCcPbpIkgCQlGCCs9OZGnaeVi3u5I4MTLMi0XYiBPGTqyEgDtCUZssOE4JC0UQ==
-X-Received: by 2002:a5d:6da1:0:b0:22b:774:52c3 with SMTP id u1-20020a5d6da1000000b0022b077452c3mr12601883wrs.172.1664789261097;
-        Mon, 03 Oct 2022 02:27:41 -0700 (PDT)
-Received: from mai.. ([2a05:6e02:1041:c10:f3a:9f5e:1605:a75a])
-        by smtp.gmail.com with ESMTPSA id ay3-20020a5d6f03000000b0022cc157bf26sm9707520wrb.85.2022.10.03.02.27.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 02:27:40 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        rui.zhang@intel.com, Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Kaestle <peter@piie.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Antoine Tenart <atenart@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: [PATCH v8 26/29] thermal/drivers/acerhdf: Use generic thermal_zone_get_trip() function
-Date:   Mon,  3 Oct 2022 11:25:59 +0200
-Message-Id: <20221003092602.1323944-27-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
-References: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
+        with ESMTP id S229480AbiJCKQP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 06:16:15 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCCE2D746;
+        Mon,  3 Oct 2022 03:16:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SqII3bAlAJRNgZkKdW3mX4xzJExG2hiakTMQtLlEXWnDd+pQ45IG132c4YEpmwNSMG8JjVGdiIhx88mHSuoGE5pMoKL6j2XJf3V9EB+u+MV77l6yinWt3daw+f48N8eRSjTpbGysTFspJ22kSySsNy4HzUcWVFH+k+YTvSfhgk05BlVZbwqSfolzpCHQrcH9Ln7l8rVmKbm9JJ0y5aEIvrROAiqtYDQYQVCCMpKbOqHGkl3HB8ZVI9J9CRVmNX/VEH8AwhXDuxY1Urcs9HFrVVb9pjBv8xUnfvPNjds5Afe5zijvw8PwJxMYXYVlYXQC8os338pZCwH8asWp8+IfKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hRIZYlK27Jo02n996oEcTePRcdNiYiwTlNusJbm5MKs=;
+ b=Eu9cQ/P6mIBeZPNWxfBIE3DeUyZvHcyuBt34k5OeaLEsMKclj8lV3NntyuXHpa0KdqyEK0YgYsvGc9CxKQ4m5sRLq7rQclhF3UrdlBgqvjhbAXYcIw4kA37FOPkhWfwBoqU8b0mmYmxH/UNhHhtZzsbYJgvnG3jEloe1I/g8GF828PMdmqo2LZVWa/sceCLd5rBb0wQT+N+Ip/YpEcN0tqB+EnB57qoRpwGyvA1aJd5Ybu/3XIy5Fb9I+POEHxHIGWitWrbRjFcbYhLCXnPvp+jdUJb3ePcT6VdCVR7OKIo+WC8g1hmtjEdplgcrhyLG+6OnDoTcVQl3rcEwLfjewQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=baylibre.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hRIZYlK27Jo02n996oEcTePRcdNiYiwTlNusJbm5MKs=;
+ b=dppiZoFMxjWbBWkoe/tERwKfsTR84kwIPQ6r6e6o5n1SU5WAL1/mPFqwGY9XOnROdhOUoGSWFL4xXxqHy+YY/FZLxwijFxvdgAh0puhIHjqbJjMrP2wWnttnA4FcShELnuuumViDOxwv0uTCFQRmMTW8W0y1bIjTFoGvcmUrwBlenAwvThgHc+EKDjvpbn/06/skdwQ6aC1A208kQ5lylXDcaJb8y3UaYO3HdRGLslfcPM4gldcGwDsKhOPMCX2aXFRvCu4d52N786rda872QFwBCSB5n1RSTVmrNQTWJX6LeeQfMBRZMrsTLEgBRwPFGdcMNnTCFYepKqusNk47tA==
+Received: from MW4PR03CA0153.namprd03.prod.outlook.com (2603:10b6:303:8d::8)
+ by SA1PR12MB6703.namprd12.prod.outlook.com (2603:10b6:806:253::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.20; Mon, 3 Oct
+ 2022 10:16:13 +0000
+Received: from CO1NAM11FT048.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8d:cafe::f5) by MW4PR03CA0153.outlook.office365.com
+ (2603:10b6:303:8d::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.26 via Frontend
+ Transport; Mon, 3 Oct 2022 10:16:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT048.mail.protection.outlook.com (10.13.175.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5676.17 via Frontend Transport; Mon, 3 Oct 2022 10:16:12 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 3 Oct 2022
+ 03:16:03 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 3 Oct 2022
+ 03:16:02 -0700
+Received: from moonraker.home (10.127.8.14) by mail.nvidia.com (10.129.68.6)
+ with Microsoft SMTP Server id 15.2.986.29 via Frontend Transport; Mon, 3 Oct
+ 2022 03:16:01 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] clk: tegra: Fix Tegra210 PWM parent clock
+Date:   Mon, 3 Oct 2022 11:15:55 +0100
+Message-ID: <20221003101555.25458-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT048:EE_|SA1PR12MB6703:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ee31a4a-8780-41dc-ac72-08daa5284c8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LfWga/t3caAe0lMVTWE7vZFIpHnz8lbgmp+DB5RpC57LinwXkT6YeEh5dVZe3k9qyuljfZ2N2MnXjqWI0PE/K2YRpJzKpbjDr8VVA9tlgT6VPLAufQcp5lNX5pekQ+CF8sj3og2tEZULYyy0B07JU2enbipz6dnDyLBWzP3cBFEMZZsKXyutVDs/ln+K3SMsaqf8/pvy9GpE26QjYyv7hAEOv4epQLR7zK4Rz44ENZ7RxiBCsVAL6vMXsAVFQxI7yRjjNlnhvCt1Y9z0PakNmWUmJq2r1QU8NysNgUJ4rK2JYRsplcn+FJwherWr8F/+W7/GTY4VN9bgExNqhJsBnYLLdtMdaEOuvGJ4IAGEk41ziR3WVmKbJMFSZjchP1Jbd+Oi1vkkHPBPTzoQNS2C2ei72l6psdab/T2e4W1QXbRgMjz04TV0Kcju7uPtE6B/JK5e/AQQGqcszUfK39OL/DR7W1M/QcHqIEhDJ5u+bQh4lDsF3UkK+nSeCQtuqhVIZ0d2ZkuwTpoJL+Ui1mMkhKURhrhkwzIfqm2yo5oMp1d2nWkGkwHrU1UJKoR/+puhUmzdv6BgCY+sMVaHTZTbLXnfIrQkP76HsB3/SLC/X8XKgBIsuJt40IJQgHtCulngiAGNJU1jDMJToNqZZkoOKeu6/b1uFc7v05ppDG83hHjegNbTkRgGr1bsLvVAHjLZdXqK7pdPKhN5PGxB0vN+CbQYEm7rkachEawbHyDXhGymDbNCICxFYane5kp9T4Elbc3HfJXkztX8WU/ZcQTGig==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(396003)(39860400002)(376002)(451199015)(40470700004)(46966006)(36840700001)(86362001)(36860700001)(356005)(7636003)(82740400003)(4326008)(8676002)(70586007)(70206006)(40460700003)(110136005)(316002)(54906003)(2906002)(5660300002)(41300700001)(336012)(8936002)(1076003)(186003)(82310400005)(83380400001)(2616005)(47076005)(426003)(107886003)(478600001)(26005)(6666004)(40480700001)(36756003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2022 10:16:12.6684
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ee31a4a-8780-41dc-ac72-08daa5284c8a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT048.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6703
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The thermal framework gives the possibility to register the trip
-points with the thermal zone. When that is done, no get_trip_* ops are
-needed and they can be removed.
+Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
+the period calculation in the Tegra PWM driver and now returns an error
+if the period requested is less than minimum period supported. This is
+breaking PWM fan support on the Tegra210 Jetson Nano platform and
+probing the PWM fan driver now fails ...
 
-Convert ops content logic into generic trip points and register them with the
-thermal zone.
+ pwm-fan pwm-fan: Failed to configure PWM: -22
+ pwm-fan: probe of pwm-fan failed with error -22
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Peter Kästle <peter@piie.net>
+The problem is that the default parent clock for the PWM on Tegra210 is
+a 32kHz clock and is unable to support the requested PWM period. Fix
+this by updating the parent clock for the PWM to be the PLL_P which
+operates at 48MHz.
+
+Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/platform/x86/acerhdf.c | 73 ++++++++++++----------------------
- 1 file changed, 26 insertions(+), 47 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
-index 3463629f8764..a7407aa032ba 100644
---- a/drivers/platform/x86/acerhdf.c
-+++ b/drivers/platform/x86/acerhdf.c
-@@ -46,6 +46,8 @@
-  * measured by the on-die thermal monitor are within 0 <= Tj <= 90. So,
-  * assume 89°C is critical temperature.
-  */
-+#define ACERHDF_DEFAULT_TEMP_FANON 60000
-+#define ACERHDF_DEFAULT_TEMP_FANOFF 53000
- #define ACERHDF_TEMP_CRIT 89000
- #define ACERHDF_FAN_OFF 0
- #define ACERHDF_FAN_AUTO 1
-@@ -70,8 +72,8 @@ static int kernelmode;
- #endif
- 
- static unsigned int interval = 10;
--static unsigned int fanon = 60000;
--static unsigned int fanoff = 53000;
-+static unsigned int fanon = ACERHDF_DEFAULT_TEMP_FANON;
-+static unsigned int fanoff = ACERHDF_DEFAULT_TEMP_FANOFF;
- static unsigned int verbose;
- static unsigned int list_supported;
- static unsigned int fanstate = ACERHDF_FAN_AUTO;
-@@ -137,6 +139,15 @@ struct ctrl_settings {
- 	int mcmd_enable;
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 499f999e91e1..a3488aaac3f7 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3597,6 +3597,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
+ 	{ TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
++	{ TEGRA210_CLK_PWM, TEGRA210_CLK_PLL_P, 48000000, 0 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
  };
- 
-+static struct thermal_trip trips[] = {
-+	[0] = { .temperature = ACERHDF_DEFAULT_TEMP_FANON,
-+		.hysteresis = ACERHDF_DEFAULT_TEMP_FANON - ACERHDF_DEFAULT_TEMP_FANOFF,
-+		.type = THERMAL_TRIP_ACTIVE },
-+
-+	[1] = { .temperature = ACERHDF_TEMP_CRIT,
-+		.type = THERMAL_TRIP_CRITICAL }
-+};
-+
- static struct ctrl_settings ctrl_cfg __read_mostly;
- 
- /* Register addresses and values for different BIOS versions */
-@@ -326,6 +337,15 @@ static void acerhdf_check_param(struct thermal_zone_device *thermal)
- 		fanon = ACERHDF_MAX_FANON;
- 	}
- 
-+	if (fanon < fanoff) {
-+		pr_err("fanoff temperature (%d) is above fanon temperature (%d), clamping to %d\n",
-+		       fanoff, fanon, fanon);
-+		fanoff = fanon;
-+	};
-+
-+	trips[0].temperature = fanon;
-+	trips[0].hysteresis  = fanon - fanoff;
-+
- 	if (kernelmode && prev_interval != interval) {
- 		if (interval > ACERHDF_MAX_INTERVAL) {
- 			pr_err("interval too high, set to %d\n",
-@@ -424,43 +444,6 @@ static int acerhdf_change_mode(struct thermal_zone_device *thermal,
- 	return 0;
- }
- 
--static int acerhdf_get_trip_type(struct thermal_zone_device *thermal, int trip,
--				 enum thermal_trip_type *type)
--{
--	if (trip == 0)
--		*type = THERMAL_TRIP_ACTIVE;
--	else if (trip == 1)
--		*type = THERMAL_TRIP_CRITICAL;
--	else
--		return -EINVAL;
--
--	return 0;
--}
--
--static int acerhdf_get_trip_hyst(struct thermal_zone_device *thermal, int trip,
--				 int *temp)
--{
--	if (trip != 0)
--		return -EINVAL;
--
--	*temp = fanon - fanoff;
--
--	return 0;
--}
--
--static int acerhdf_get_trip_temp(struct thermal_zone_device *thermal, int trip,
--				 int *temp)
--{
--	if (trip == 0)
--		*temp = fanon;
--	else if (trip == 1)
--		*temp = ACERHDF_TEMP_CRIT;
--	else
--		return -EINVAL;
--
--	return 0;
--}
--
- static int acerhdf_get_crit_temp(struct thermal_zone_device *thermal,
- 				 int *temperature)
- {
-@@ -474,13 +457,9 @@ static struct thermal_zone_device_ops acerhdf_dev_ops = {
- 	.unbind = acerhdf_unbind,
- 	.get_temp = acerhdf_get_ec_temp,
- 	.change_mode = acerhdf_change_mode,
--	.get_trip_type = acerhdf_get_trip_type,
--	.get_trip_hyst = acerhdf_get_trip_hyst,
--	.get_trip_temp = acerhdf_get_trip_temp,
- 	.get_crit_temp = acerhdf_get_crit_temp,
- };
- 
--
- /*
-  * cooling device callback functions
-  * get maximal fan cooling state
-@@ -710,10 +689,10 @@ static int __init acerhdf_register_thermal(void)
- 	if (IS_ERR(cl_dev))
- 		return -EINVAL;
- 
--	thz_dev = thermal_zone_device_register("acerhdf", 2, 0, NULL,
--					      &acerhdf_dev_ops,
--					      &acerhdf_zone_params, 0,
--					      (kernelmode) ? interval*1000 : 0);
-+	thz_dev = thermal_zone_device_register_with_trips("acerhdf", trips, ARRAY_SIZE(trips),
-+							  0, NULL, &acerhdf_dev_ops,
-+							  &acerhdf_zone_params, 0,
-+							  (kernelmode) ? interval*1000 : 0);
- 	if (IS_ERR(thz_dev))
- 		return -EINVAL;
- 
 -- 
-2.34.1
+2.7.4
 
