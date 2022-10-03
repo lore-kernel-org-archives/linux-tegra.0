@@ -2,122 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F38C433F5
-	for <linux-tegra@archiver.kernel.org>; Sun,  2 Oct 2022 17:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E12C43217
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 08:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbiJBRyh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 2 Oct 2022 13:54:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56906 "EHLO
+        id S231303AbiJCInW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Oct 2022 04:43:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229734AbiJBRyg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 2 Oct 2022 13:54:36 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCA3FB73;
-        Sun,  2 Oct 2022 10:54:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NJslQCPiyj7q4eoGAothPDfac9yBk349D3yzaX1+051/AVr90tmBQfmHt7rMom19xddardNP+dB6vg3Zu5kU1qcgwYrxsX07RVhwSLBAQZ/+MOwXJQmO+XOygRuEIeLGEXkvdeedi2KYZRGzGGTFm1Y9riraoyLVaetxraEQ8iWtLUmZYEyXkB52Qa572JRCnDrzVzRpX5apXyMsMOvWGg3VDhOav7dt/9n4zNIlHbpPRN2zT1CYW0noprSEwoJv4goQhV4VKhdky/+5oFD8EQc3zERVoLIbbNZxI9c/3cLyw6VeeAQPg2cx3cwWX3dw14tmFcd0rK9D3h3fSCWLpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fRS2pc9VQykC+BTL6zITy+OBfUzWq0plnbhNAKq3OMs=;
- b=OcU+mpb8mX2bI3tJdj+8Dy8GCVxSF2FbdiAiZbuZ3xdgttYoa53JGHH6aynEYHuE+9C2hkfxC1bMGzpgRiQ89t48sV296hGhRBJJu8AZ+EjJkbWwwJcc91Gtk0UGafzgKWsABAY0aIVD6OVftwDz7o1DHBtxUz8heBEsb9GJKM12AbLmpweRaqSQvLqLzfCwRZv8ihMu0LtzIdm9dpZoKcYxzct9nhPJPOMTiK4bG/QWtl2CMWIImhZ7dvzZE8DD8Zt/InnYa07nXrqwJZlAy6aMEMU270XGASsh8mLXWo4GefZBsni40qnfVjeOFJz6BM1rIsCO1vlpNFtJgSQ8gg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fRS2pc9VQykC+BTL6zITy+OBfUzWq0plnbhNAKq3OMs=;
- b=IbFvcVtUJpoKbrhjg5FkqJq4Hp6L0CLAYdkqP0ojx4TPmlA6fH76jDxqUU7v6qcFk0sVDGi83qFhesWt8hosIMrrgiHK+MEQhV/zXImJhOHyQ+EfrWGzBoI2x4F+ncFZvTb/xAyWXi6G8IgqtuCK3ABFHBsBo4GvMUSBMm1OX8auhDJuL/rNlV4XRT+Jhl4bPcuA1WwPLRGa+jPuz0mAF+psbTTqXTKBrP6mPU7NSsuwaE4FxKPmm5nQEaGP51y7OZ0Z6pU71mlDOl6SJIqLQSv/ojgWXOvDR6sK3BpKmTHN5ig7zjC/7wuwg1HAn8PLIjI5GP6fn1ZnWAqWGK4RaA==
-Received: from MW2PR16CA0005.namprd16.prod.outlook.com (2603:10b6:907::18) by
- MN2PR12MB4319.namprd12.prod.outlook.com (2603:10b6:208:1dc::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.28; Sun, 2 Oct
- 2022 17:54:32 +0000
-Received: from CO1NAM11FT110.eop-nam11.prod.protection.outlook.com
- (2603:10b6:907:0:cafe::fa) by MW2PR16CA0005.outlook.office365.com
- (2603:10b6:907::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.17 via Frontend
- Transport; Sun, 2 Oct 2022 17:54:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1NAM11FT110.mail.protection.outlook.com (10.13.175.125) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5676.17 via Frontend Transport; Sun, 2 Oct 2022 17:54:31 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Sun, 2 Oct 2022
- 10:54:31 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Sun, 2 Oct 2022
- 10:54:31 -0700
-Received: from build-petlozup-20220913T015306864.nvidia.com (10.127.8.12) by
- mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.986.29 via
- Frontend Transport; Sun, 2 Oct 2022 10:54:30 -0700
-From:   Petlozu Pravareshwar <petlozup@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <p.zabel@pengutronix.de>, <dmitry.osipenko@collabora.com>,
-        <ulf.hansson@linaro.org>, <kkartik@nvidia.com>,
-        <cai.huoqing@linux.dev>, <spatra@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <petlozup@nvidia.com>
-Subject: [PATCH] soc/tegra: pmc: Select IRQ_DOMAIN_HIERARCHY
-Date:   Sun, 2 Oct 2022 17:54:25 +0000
-Message-ID: <20221002175425.445559-1-petlozup@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+        with ESMTP id S229949AbiJCImw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 04:42:52 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B8BA8205CE;
+        Mon,  3 Oct 2022 01:19:13 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CB4E139F;
+        Mon,  3 Oct 2022 00:33:12 -0700 (PDT)
+Received: from [10.57.4.29] (unknown [10.57.4.29])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B323B3F73B;
+        Mon,  3 Oct 2022 00:32:57 -0700 (PDT)
+Message-ID: <e4276afa-b6c5-8f5f-e604-92bc480714c9@arm.com>
+Date:   Mon, 3 Oct 2022 08:32:55 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT110:EE_|MN2PR12MB4319:EE_
-X-MS-Office365-Filtering-Correlation-Id: 353a7216-b65b-4919-2f06-08daa49f28f1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JiFCQFMkzgqdagT9FsrUPT8LbQVk0mAy44loueaTQCXgRtGs7iCWbQxE8wtiwlfn74YXFO7E/MpSgZxq62VpdQF+UThfwk8/tbgP6h2JLbeUMaAas7oGRRrrrJXIrSBbvJGPUFfBRkVPmyvU10HE74RAczCB0iZy1hl+MGfnForiAsLJGGjzmCadNROZFMeet/B9VwCNOc1HzTdFF8uy+TtYYPhjALnWBDjGL4gC9+ONACwSZXKax4ZeJywSqqvX7EX2mRWyhiiWXrt5Or+ORzzsJmlYI2FYVFci6RNqSXYL48h1V8foX6MgVDHpa8efOq79JK2g5rIcHM76+WOP7WP7T9EyyrkaG2Op101r4FsfM2u8J90hOjTAW/MiKUH+vrfmNEuL1xLiEoZI95YGfePZKcI0/I202HVErwLIyZSaCuOit7in3VIiDe1bbBYVZr7oCL6pmnd7OrqXepSYNHD3AODsD1Oh9sNaKU7Tel3OVaMv0LNVwdfIh+h+Q0daThTlepyjoq28fEM6fFnRRt64kIiQ5oSzCqIRvH3nVIH1l1ucBnAQ6PYqKpAQXqKhheja7cf3oYSqpJzFLfBXWZUXS9MlIko65TGS4RJhdGIeMvCt66mTMvw8LUCjIESeriOA/Otc+kHVSg6/B6bkh4x8TX8c+osxkmTpej2VpBM4L8UW47YJhUgvSiw9gRSsLnTO0YLgLyeVTaqTWROnnJ/VIrvFJQsddEkQI9mcYX++O7X2w0Hn7rGYIPoBAEqVmFaLC/Yj5yRjXP7varvI8JZkHIUcHtpVtWDWKKrWyEE=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(39860400002)(136003)(396003)(451199015)(46966006)(40470700004)(36840700001)(36860700001)(40480700001)(86362001)(36756003)(921005)(356005)(7636003)(70586007)(40460700003)(70206006)(8676002)(4326008)(82740400003)(82310400005)(110136005)(316002)(2906002)(41300700001)(8936002)(4744005)(5660300002)(426003)(186003)(2616005)(1076003)(336012)(47076005)(478600001)(26005)(6666004)(107886003)(7696005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2022 17:54:31.8903
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 353a7216-b65b-4919-2f06-08daa49f28f1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT110.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4319
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v7 00/29] Rework the trip points creation
+Content-Language: en-US
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Kaestle <peter@piie.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Antoine Tenart <atenart@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>
+References: <20220928210059.891387-1-daniel.lezcano@linaro.org>
+ <d0be3159-8094-aed1-d9b1-c4b16d88d67c@linaro.org>
+ <CAJZ5v0hOFoe0KqEimFv9pgmiAOzuRoLjdqoScr53ErNFU4AAPA@mail.gmail.com>
+ <ae86fc5a-0521-3dde-c2ea-8679c0ec4831@linaro.org>
+ <CAJZ5v0jrWamTTXcHabSk=6cmm4pEx0_ebiECKZRfrX_vS85YYg@mail.gmail.com>
+ <CAJZ5v0gnfK2MBuzZi-C03VVO+b4dthckJcdj3zLo3q-qAUyy_g@mail.gmail.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAJZ5v0gnfK2MBuzZi-C03VVO+b4dthckJcdj3zLo3q-qAUyy_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra PMC driver depends on IRQ domain hierarchy support.
-Hence select IRQ_DOMAIN_HIERARCHY config for SOC_TEGRA_PMC.
+Hi Rafael and Daniel
 
-Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
----
- drivers/soc/tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On 9/30/22 18:39, Rafael J. Wysocki wrote:
+> On Thu, Sep 29, 2022 at 9:35 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>
+>> On Thu, Sep 29, 2022 at 4:57 PM Daniel Lezcano
+>> <daniel.lezcano@linaro.org> wrote:
+>>>
+>>> On 29/09/2022 15:58, Rafael J. Wysocki wrote:
+>>>> On Thu, Sep 29, 2022 at 2:26 PM Daniel Lezcano
+>>>> <daniel.lezcano@linaro.org> wrote:
+>>>>>
+>>>>>
+>>>>> Hi Rafael,
+>>>>>
+>>>>> are you happy with the changes?
+>>>>
+>>>> I'll have a look and let you know.
+>>>
+>>> Great, thanks
+>>
+>> Well, because you have not added the history of changes to the
+>> patches, that will take more time than it would otherwise.
+> 
+> Done.  I've sent ACKs and still had a comment on one patch (minor but
+> still).  When that is addressed, the four initial core patches should
+> be good to go in.
+> 
+> I'm trusting you regarding the thermal/of changes (even though I think
+> that it would be good if someone involved in that code could review
+> them) and if you are confident about all of the driver changes, they
+> are fine with me too.
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index 5725c8ef0406..3d19adedb651 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -147,6 +147,7 @@ config SOC_TEGRA_PMC
- 	select PM_OPP
- 	select PM_GENERIC_DOMAINS
- 	select REGMAP
-+	select IRQ_DOMAIN_HIERARCHY
- 
- config SOC_TEGRA_POWERGATE_BPMP
- 	def_bool y
--- 
-2.17.1
+Sorry for being late. I have been busy with some internal bug hunting.
+I'll check the code today and test it on my dev boards.
 
+Regards,
+Lukasz
