@@ -2,81 +2,79 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B47E4C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 17:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222EDC433FE
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 18:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbiJCRGZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Oct 2022 13:06:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
+        id S229867AbiJCSKH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Oct 2022 14:10:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbiJCRGS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 13:06:18 -0400
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [IPv6:2001:690:2100:1::15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6D22A958;
-        Mon,  3 Oct 2022 10:06:15 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id D1F66600877D;
-        Mon,  3 Oct 2022 18:06:11 +0100 (WEST)
-X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
-        tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
-        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
-        with LMTP id FPiKoMBdFlg5; Mon,  3 Oct 2022 18:06:09 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id DC6C06008807;
-        Mon,  3 Oct 2022 18:06:08 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
-        s=mail; t=1664816769;
-        bh=j/vj94Hq8GqMHbVdpKQEiPA9nY5yaiwfjKz3Fu0wWLY=;
-        h=Date:From:Cc:Subject:References:In-Reply-To;
-        b=ax+GMRclLYMO8Tzb5hxg6a5/MDlCg+JJ7XkUtOGkdl9udTaN4IcOxM1OcItJ9mjts
-         4Y0lflRj4SnNGY/PIUOapXFUwvoRoVQkBgfC6amciG4Hdp3QFB/7EyC4QlQSrG+MWe
-         O9yleHu/dpohpOAxFlQE58x/4tLvpfXMf7WNdxKg=
-Received: from wslaptop (unknown [IPv6:2001:818:dcb5:dc00:7a88:7f12:8ed8:518d])
-        (Authenticated sender: ist187313)
-        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id B8741360094;
-        Mon,  3 Oct 2022 18:06:06 +0100 (WEST)
-Date:   Mon, 3 Oct 2022 18:06:34 +0100
-From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
-        daniel@ffwll.ch, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
-        arnd@arndb.de, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: display: Add bindings for JDI
- LPM102A188A
-Message-ID: <20221003170634.56jibls3xjxiiulg@wslaptop>
-References: <20220929170502.1034040-1-diogo.ivo@tecnico.ulisboa.pt>
- <20220929170502.1034040-2-diogo.ivo@tecnico.ulisboa.pt>
- <efa2f644-0a1d-00f7-970c-f17ceb0cc550@linaro.org>
+        with ESMTP id S229972AbiJCSKE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 14:10:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8471209E;
+        Mon,  3 Oct 2022 11:09:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 87825B81203;
+        Mon,  3 Oct 2022 18:09:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD545C433D6;
+        Mon,  3 Oct 2022 18:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664820596;
+        bh=ANqFI6xslOGdcFDVAOiICDsxXBMTCaKi13Ycp8pVIR8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=KPHRzHlWh1OPUagG4uwrYFJlVJRRNFCam8EqLQCMYmXat2XL0n5epL0Z7L4NJu0iI
+         n32bD1rCeEqJ7ipwWNDJojRYW+NdpqCbvD2jjHaJO3e5bz8XtlsDYhrqLGOh2vZ0QQ
+         If/q3ezlan3MHHGsWQnEK+xAqbI0STq9CrWerzRI9U986HYrCU3aVRZg2AI5HKCArO
+         1EM0nQBRUp8VQZodOmWDn/gfeuqBRc2v4Amr0Lm/8xb+hWlppeD10CvHuW2L4DKEWz
+         Ng1hr9DbIKH+53tfitlwZZ2oZT1T1zOlO8Hq1NjPIVQcXkCV8gGSfoXPmwNLfWXtKF
+         a7ozlM0JggbYA==
+Date:   Mon, 3 Oct 2022 13:09:49 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jonathan Derrick <jonathan.derrick@linux.dev>
+Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lpieralisi@kernel.org, kw@linux.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, mani@kernel.org,
+        Sergey.Semin@baikalelectronics.ru, jszhang@kernel.org,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
+        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Subject: Re: [PATCH V1 0/4] GPIO based PCIe Hot-Plug support
+Message-ID: <20221003180949.GA2104321@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <efa2f644-0a1d-00f7-970c-f17ceb0cc550@linaro.org>
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2a465222-342a-418b-95af-9948f6ce9065@linux.dev>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 12:49:31PM +0200, Krzysztof Kozlowski wrote:
-> > +  ts-reset-gpios:
-> > +    maxItems: 1
-> > +    description: |
-> > +      Specifier for a GPIO connected to the touchscreen reset control signal.
-> > +      The reset signal is active low.
-> 
-> Isn't touchscreen a separate (input) device?
+On Sat, Oct 01, 2022 at 05:50:07PM -0600, Jonathan Derrick wrote:
+> On 10/1/2022 10:20 AM, Pali Rohár wrote:
+> ...
 
-Hello, thank you for the feedback.
+> > Would not it better to rather synthesise PCIe Slot Capabilities support
+> > in your PCIe Root Port device (e.g. via pci-bridge-emul.c) and then let
+> > existing PCI hotplug code to take care for hotplugging? Because it
+> > already implements all required stuff for re-scanning, registering and
+> > unregistering PCIe devices for Root Ports with Slot Capabilities. And I
+> > think that there is no need to have just another (GPIO based)
+> > implementation of PCI hotplug.
+>
+> I did that a few years ago (rejected), but can attest to the robustness of
+> the pcie hotplug code on non-hotplug slots.
+> https://lwn.net/Articles/811988/
 
-According to the downstream kernel's log, it seems like the panel and
-the touchscreen controller are considered to be embedded in the same unit
-(for example in [1]), with the touch input being transmitted via HID-over-I2C,
-and since I did not find any reset gpio handling in that driver I opted to
-include this reset here, unless there is a better way of going about this.
+I think the thread is here:
+https://lore.kernel.org/linux-pci/1581120007-5280-1-git-send-email-jonathan.derrick@intel.com/
+and I'm sorry that my response came across as "rejected".  I intended
+it as "this is good ideas and good work and we should keep going".
 
-Best regards,
-
-Diogo
-
-[1]: https://android.googlesource.com/kernel/tegra/+/bca61c34db9f72113af058f53eeb9fbd5e69a1d0
+Bjorn
