@@ -2,98 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63ECC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 16:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D72C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 16:48:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbiJCQRC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Oct 2022 12:17:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34516 "EHLO
+        id S229628AbiJCQsF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Oct 2022 12:48:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbiJCQQ5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 12:16:57 -0400
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A43D33A1A;
-        Mon,  3 Oct 2022 09:16:55 -0700 (PDT)
-Received: by mail-oi1-f169.google.com with SMTP id m130so11757321oif.6;
-        Mon, 03 Oct 2022 09:16:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=n6qNXTUxVdbW5pamC8yW/XZu0YEjyP8JbCRL+nV6Xik=;
-        b=Wl6Z63+Sc3lP6InVrLx9lI5qsA3w2iU/0SC3+DwVzCLbfoKonEcAU3nruWCDyZuXtd
-         Fyz2JZ9LxQJ4GKYB3I4/3+k3REfKC7ykxHbX9uN5kpu1XGoAm8mXIrl88g17KhYvKr+h
-         ndPFUWn7wmOmNPI3nb5g0FloXGIcj3AqwJfu4vliHCAEXfJFFWdIq9Db1w5ydO/A8mAP
-         jxDvHBFa1cxf24sLW1fMVE51kVAQP7wMFNfL273xjNjcOIsCTzcREXleZM/qGYN1vdLa
-         M4OA6aoK7biMy3A393Gv5qM+d39UwnVs2EBCyi16UmqTgcpODo8Jh1IhXqU+6bQHjovo
-         D1pQ==
-X-Gm-Message-State: ACrzQf0SPWVdNx6k7v9JRc3NqyQm9nA/Kbi78qvUTRyS1O0kHUPnqpHK
-        PDQJ0v8w7eHdy/gSDQj2cwATpESoXw==
-X-Google-Smtp-Source: AMsMyM5EYqsB+/ddWpoDpynNS+3amBvzxr+amDgwN06v0eLd9S0EKVKIRe6kbLbya8z3KvSzYFYG9g==
-X-Received: by 2002:aca:180b:0:b0:352:8bda:c428 with SMTP id h11-20020aca180b000000b003528bdac428mr4376671oih.13.1664813814275;
-        Mon, 03 Oct 2022 09:16:54 -0700 (PDT)
-Received: from macbook.herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id ep31-20020a056870a99f00b0011bde9f5745sm3018755oab.23.2022.10.03.09.16.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 09:16:53 -0700 (PDT)
-Received: (nullmailer pid 2398224 invoked by uid 1000);
-        Mon, 03 Oct 2022 16:16:52 -0000
-Date:   Mon, 3 Oct 2022 11:16:52 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-tegra@vger.kernel.org, Ashish Mhetre <amhetre@nvidia.com>,
-        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 3/8] dt-bindings: Add bindings for Tegra234 NVDEC
-Message-ID: <166481381193.2398163.17368666034757782768.robh@kernel.org>
-References: <20220920081203.3237744-1-cyndis@kapsi.fi>
- <20220920081203.3237744-4-cyndis@kapsi.fi>
+        with ESMTP id S229882AbiJCQsA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 12:48:00 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058D32F676;
+        Mon,  3 Oct 2022 09:48:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A639AB81110;
+        Mon,  3 Oct 2022 16:47:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15E6C433C1;
+        Mon,  3 Oct 2022 16:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664815677;
+        bh=XtvExxchVlDh7PWub1JJO1kNRtZLJokZK3uiD3JNED4=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=tSKgq8loUa/tq2URDLFMK5kJvAZC1hPzxDczgHQRbt3pZj8Wj2UiXdS/6ZOT9dJwR
+         4KpyRKo4orj/kuqFC2eCF6U0YrPi06fOniTnsQyGTP35uaJttKGfUo2xhNSJZ/XLnj
+         077w/Yiv+MVIFG3uWebzAtBBrD2biG3C/8EQ9F8mHoskwpJvQBUmd298XPFaz+EFOX
+         3LdMUX8s+yhXCURLB6iGVE73mQKAPdh4CKIuNf4AdsWGVSs8HtIPMVBU6H7fi9bF9r
+         2nUQfngs/CZuA15y/aPwr8xt2xKUxu7KP507LabwAtWmUg9oHWgYaZV5vAJMwJH2W/
+         zOskDyOKcJCjQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        linux-tegra@vger.kernel.org, jonathanh@nvidia.com,
+        linux-spi@vger.kernel.org, thierry.reding@gmail.com
+Cc:     skomatineni@nvidia.com, linux-kernel@vger.kernel.org,
+        ldewangan@nvidia.com
+In-Reply-To: <20221001122148.9158-1-kyarlagadda@nvidia.com>
+References: <20221001122148.9158-1-kyarlagadda@nvidia.com>
+Subject: Re: (subset) [PATCH 1/5] spi: tegra210-quad: Fix combined sequence
+Message-Id: <166481567551.272308.1247948376003313434.b4-ty@kernel.org>
+Date:   Mon, 03 Oct 2022 17:47:55 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220920081203.3237744-4-cyndis@kapsi.fi>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fc921
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 20 Sep 2022 11:11:58 +0300, Mikko Perttunen wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+On Sat, 1 Oct 2022 17:51:44 +0530, Krishna Yarlagadda wrote:
+> Return value should be updated to zero in combined sequence routine
+> if transfer is completed successfully. Currently it holds timeout value
+> resulting in errors.
 > 
-> Update NVDEC bindings for Tegra234. This new engine version only has
-> two memory clients, but now requires three clocks, and as a bigger
-> change the engine loads firmware from a secure carveout configured by
-> the bootloader.
-> 
-> For the latter, we need to add a phandle to the memory controller
-> to query the location of this carveout, and several other properties
-> containing offsets into the firmware inside the carveout. This
-> carveout is not accessible by the CPU, but is needed by NVDEC,
-> so we need this information to be relayed from the bootloader.
-> 
-> As the binding was getting large with many conditional properties,
-> also split the Tegra234 version out into a separate file.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
-> v3:
-> - Adjusted descriptions for firmware-related DT properties
->   as requested.
-> - Small update to commit message.
-> v2:
-> - Split out into separate file to avoid complexity with
->   conditionals etc.
-> ---
->  .../gpu/host1x/nvidia,tegra234-nvdec.yaml     | 156 ++++++++++++++++++
->  1 file changed, 156 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/5] spi: tegra210-quad: Fix combined sequence
+      commit: 8777dd9dff4020bba66654ec92e4b0ab6367ad30
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
