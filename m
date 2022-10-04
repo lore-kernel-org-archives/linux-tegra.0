@@ -2,250 +2,210 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D798C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 07:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DBAC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 10:29:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbiJDHtA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Oct 2022 03:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47400 "EHLO
+        id S229785AbiJDK3X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Oct 2022 06:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbiJDHtA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 03:49:00 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2046.outbound.protection.outlook.com [40.107.212.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C95040BF7;
-        Tue,  4 Oct 2022 00:48:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bt6mDOEfU/q5pP9Ndvyx9EZmmkR3v63+GaFPOBSIAwo3592MuX+eR+9QNqCC7xEt4sRvlt/p/Ddvhjmr2opmByO68zuRwMppxoxUCJKcgHh5wj0bh/DBb2DIcX9QRHGH/PE6XGyHPUq9MMxmxgORIDy7HsBL7+vIaIRhWqUsMRkszHQ9a8eYKHRe0YJBN+bxStG0WIXDmQTYqpe8L8VBS9vkJR8pJwKXijFtwYLMMjvltY4Bkli/6C/v6K4tM1tHIVuBwn+e1xUe1ZOCL5bH4LNnYbtv0Abqg18NOJJ9Ury70iDL4pNdo8m3VWiPrXeHxBvHQ8tN4Cz2kqiV7WdYWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GpAc9FxD+ctGh/7wZPNZsTSJXjl39cyxbuhUuM0CpM4=;
- b=nF143xSDb2aNtVf0oRzW29bsYHjGgxl7bxeVo7vZJPAIlZdjQowbJaO1mE/MAIG0WUJLTY+eJkFmCviKBE8SNgro2ObqB02+WhGI1KvkOUebh0GwUfg4cTalQfRaVzfylDIwYY5NySK1jd6zE0jI4zzr57EHhlTO1NvyGKWwaOcfoQFdM/cJr/FEfThlEv17aEoscOv/fnpfAV4VkTCZ9++IBGEvajakkuS367ISDv6/iaYU25nEB55OGzITYDkph6db7GrEqKuaZvrylHk08RpPsQO+eXTLCA6IgNuGSOIXpWzXLWfo4a7+kxKHo2uP9AVV9ob4jRVCYsREoWPe/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GpAc9FxD+ctGh/7wZPNZsTSJXjl39cyxbuhUuM0CpM4=;
- b=j6bEP42s2JEuxjvFJBuflMjdrHeLUT7bEgIgZAhui8fkjasOBK/VcUvcaMRvydDRICkpJl2+V2VFdRSPRRCXCb9JdqWm11sZa2iiHS1aDQXTBB2kXTvuIOjISYd1Ct3dxicv5fNVzpbkqG7MNm5EOK/ehMRhOPj8GRpETRX8QGApm5AAfzXlmCuuMVJf2NoXF8dHyGcxCqcmBC3huOXvVXZHBq2wZxTwzZhYPBqXUWJzwqNlhYXg8sRjBCbEnV51eBqzbbBvW9ZuRXOiOaxaeIxj6WAHaefpiM+1KKK7n0z087/gc/Ml01VOdUVc6zpu+sbKhxM4NFfuCBbhHVOlyQ==
-Received: from BN8PR15CA0064.namprd15.prod.outlook.com (2603:10b6:408:80::41)
- by CH2PR12MB5004.namprd12.prod.outlook.com (2603:10b6:610:62::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.23; Tue, 4 Oct
- 2022 07:48:57 +0000
-Received: from BN8NAM11FT101.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:80:cafe::49) by BN8PR15CA0064.outlook.office365.com
- (2603:10b6:408:80::41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.31 via Frontend
- Transport; Tue, 4 Oct 2022 07:48:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN8NAM11FT101.mail.protection.outlook.com (10.13.177.126) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5676.17 via Frontend Transport; Tue, 4 Oct 2022 07:48:57 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 4 Oct 2022
- 00:48:54 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Tue, 4 Oct 2022 00:48:53 -0700
-Received: from pshete-ubuntu.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 4 Oct 2022 00:48:51 -0700
-From:   Prathamesh Shete <pshete@nvidia.com>
-To:     <thierry.reding@gmail.com>, <linus.walleij@linaro.org>,
-        <bgolaszewski@baylibre.com>, <jonathanh@nvidia.com>,
-        <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>,
-        <kyarlagadda@nvidia.com>, Manish Bhardwaj <mbhardwaj@nvidia.com>
-Subject: [PATCH v2] gpio: tegra186: Check GPIO pin permission before access.
-Date:   Tue, 4 Oct 2022 13:18:45 +0530
-Message-ID: <20221004074845.29583-1-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <YyHVoihMuKNRFXAS@orome>
-References: <YyHVoihMuKNRFXAS@orome>
+        with ESMTP id S229851AbiJDK3K (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 06:29:10 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C682CC9A;
+        Tue,  4 Oct 2022 03:29:04 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-333a4a5d495so131013797b3.10;
+        Tue, 04 Oct 2022 03:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=1lUIWCR3r011/t+0Z08z8q0dDNOYLDdrY1UN5uqDESU=;
+        b=gWFEx5m1Blh2fa8ekzLkgvMBG69ssxYAMdYFjll11yfRMcZDKShKvPI0W4GX18SyJv
+         9Z0dc/68MRlow3gJlBBCd0eEqYs5GQL2csch/wfy7Hl/TBvgNP4QFIwghTo+/9tSwUEB
+         txQDJUjkjVlQzVrNZrjspI7ao2uA//Y+4DLnon5HEjU2w++AnmOQA2nqpG3+D18WSFWW
+         HRbFDxtd+dCdfzq5A/I9l8C1rwfmW7pDEGuBoYG6eGOJRxjX6epdl4xDXrCjhwP9jWxL
+         hkkFflJ+Rt2EntPEuDgOCVYgb9QZ/JPjzkrmUxsNroI8NzyjycOQucQrGECvmjtOKQtc
+         yhzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=1lUIWCR3r011/t+0Z08z8q0dDNOYLDdrY1UN5uqDESU=;
+        b=NBApH2ntn+gYq/THuRUXq5E7L85yRP2hpROdpbf3pqalCtZrT0uDT0JaAxZrFJ3gIC
+         BjbjGxojpLNOnv/thMjJR+V5bD6PYyCjnBNRJv9r3zudoTwwNa9H//rJoh8zRbpb8w9+
+         tOVLHUQ251fTOn1BntKaPyV6mJorpMKrJC9lDiNfj4/7oj8koAqQbyKVjeoWMcgDeCqh
+         hnbRyOurWOuaTwPaisJIguPPyG7BBWnmq37722xKvGLBVKFCsU0BhkxI7bPmpAuqCwRB
+         zV79DyU7T9TQb1Bmw/FfT66N3OYmqWkXFMu3y0j7/R5DucleyKEnPz4rm83E6/u26TmZ
+         yueg==
+X-Gm-Message-State: ACrzQf1mzTjZe8YBkkLXv5+DCXoNADINY+M3Sp8Il6ndi30YLsoi9cvM
+        2jJPhllhTGFm2oR1gxWDTwA1IozJNuvdri2pmuE=
+X-Google-Smtp-Source: AMsMyM5hUjwDTJXjQh3X5oEZcEqPnJf1clOw6pk6zBfZkQn7WdGWwxByl5BWqYRPXkcZlH19NWRTLO0YlNbG7PQ00G4=
+X-Received: by 2002:a81:3887:0:b0:354:f509:7fae with SMTP id
+ f129-20020a813887000000b00354f5097faemr24996677ywa.459.1664879344047; Tue, 04
+ Oct 2022 03:29:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT101:EE_|CH2PR12MB5004:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2691a36a-f153-4fdd-006c-08daa5dce4c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: k1Ber+dt5LE3x7wUZFcLBSij8JsqmCvBNk1Qev+XUf3ux7rMvKZ0UICuXI8RizsE29Z2Eza5V6F/oFHqzImLrHJY2MN/k21C6mcAPX/SaWY8Te767cbXMlpj1lLc76mMk0fD+lQ7C6huX50MmSXkSwYtoDH2VA+P4QsxIXPe+J3+fCvxScTZug5NUSq4arrcs0ZJzKCyq+J1EtSGdmQABmwKQ3z2+bpZA8136YZ5LX2GoWuiVcOuEvcdfb7KQIbJS1sv9MXa7Nyke++2ULBX3cw3m4j1w6V3yM1oCZSW3oV4nTkY9S47ZvQZTs6yvFjlQ73ul9eOhnDwsuJmCLG4a5yJ4VzW0qDIYpSL8pbds3odrNeyHh2BtqwSj3AxX/pntvKw1wfBtSZ3CvFDU4xsbTU1NPoPzLYTaadhhAEMXsxoOQAXbYIJDMbhtoAzwd8j6ZzUngZM8jPuiXlAkTJDJfATDQyRCiaOlJVyM01VNKVGKlmp9OfBFOlZCsiHvoxMqA7LB0f/IHpPpQycxPoi5JFGJVqkOfItBlrmhXhaNk8gPPUnUCuVsXM6R9FucbF4PVioyQvylel6GM6JOWo3TKAhlPG3aW4hDCrLQFF0kxptm32yCKvFlwqPE9SXo70Ph4vYlYVuhM/jD1fGAP3SY6IaQZ6MjiRkqq7REJyxcyrqKBTDQAE4ST4wloE1GdPsmJSsN/Ja8an60DvirDyHKos4qX5nmC3LG6DwEXre8UIkmF3tFypPfWEMIsjj0GxV+yXeB9uD15M/3Pnz/1lw7g==
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(39860400002)(346002)(376002)(451199015)(36840700001)(40470700004)(46966006)(1076003)(186003)(2616005)(356005)(82310400005)(2906002)(316002)(36756003)(70206006)(107886003)(6666004)(40460700003)(70586007)(54906003)(478600001)(110136005)(41300700001)(8676002)(4326008)(336012)(7636003)(40480700001)(86362001)(7696005)(8936002)(26005)(5660300002)(426003)(47076005)(82740400003)(83380400001)(36860700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2022 07:48:57.3622
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2691a36a-f153-4fdd-006c-08daa5dce4c2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT101.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB5004
+References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
+ <524ca143-e9d4-2a79-3e9e-c8b9ffc9f513@gmail.com> <20220815070935.guqzzlny7f6kcprc@pengutronix.de>
+ <20220818075401.wguqvcbhzj5ttnio@pengutronix.de> <8ba9431b-b2bf-9fb0-9ba7-afeb2c3bce94@collabora.com>
+ <20220921081721.l2bpeokwxy5pwfdh@pengutronix.de> <e109b19b-47a6-28b6-3eca-b45720637afe@nvidia.com>
+ <Yy2iSuOiShnokwGL@orome>
+In-Reply-To: <Yy2iSuOiShnokwGL@orome>
+From:   Thomas Graichen <thomas.graichen@googlemail.com>
+Date:   Tue, 4 Oct 2022 12:28:25 +0200
+Message-ID: <CAOUEw12eDo2k5h+A05EHDkr4xDCQVw3O=2T-30KpFjhYRWhXmw@mail.gmail.com>
+Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Dmitry Osipenko <digetx@gmail.com>, linux-pwm@vger.kernel.org,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>, kernel@pengutronix.de,
+        linux-tegra@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This change checks if we have the necessary permission to
-access the GPIO. For devices that have support for virtualisation
-we need to check both the TEGRA186_GPIO_VM_REG and the
-TEGRA186_GPIO_SCR_REG registers. For device that do not have
-virtualisation support for GPIOs we only need to check the
-TEGRA186_GPIO_SCR_REG register.
+On Fri, Sep 23, 2022 at 2:10 PM Thierry Reding <thierry.reding@gmail.com> w=
+rote:
+>
+> On Thu, Sep 22, 2022 at 12:12:31PM +0100, Jon Hunter wrote:
+> > Hi Uwe,
+> >
+> > On 21/09/2022 09:17, Uwe Kleine-K=C3=B6nig wrote:
+> >
+> > ...
+> >
+> > > As the clk-rate is only 32768 Hz we get (with period_ns =3D 1000000)
+> > >
+> > >     32768 * 1000000 / (1000000000 << 8) =3D 0.128
+> > >
+> > > which is indeed rounded down to 0 and then runs into the error path
+> > > returning -EINVAL. Before my change (that now broke the backlight
+> > > configuration) configuration continued and then ended with actually
+> > > configuring period =3D 7812500 ns which is off by nearly a factor of =
+8.
+> >
+> > I am seeing the same issue on Tegra210 Jetson Nano (device-tree
+> > tegra210-p3450-0000.dts). This also has a clock rate of 32768 Hz by
+> > default which means the min period is 30517ns. However, in the probe
+> > the min_period_ns comes from the pc->soc->max_frequency which is 48
+> > MHz for Tegra210. The min_period_ns =3D 1/(48 MHz / (2^8)) which is
+> > 5334ns. Hence, the actual min period is less than what is actually
+> > possible.
+> >
+> > I wonder if we should be warning about this and fixing the min
+> > period ...
+> >
+> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> > index 2f3dcb9e9278..f72928c05c81 100644
+> > --- a/drivers/pwm/pwm-tegra.c
+> > +++ b/drivers/pwm/pwm-tegra.c
+> > @@ -310,9 +310,13 @@ static int tegra_pwm_probe(struct platform_device =
+*pdev)
+> >          */
+> >         pc->clk_rate =3D clk_get_rate(pc->clk);
+> > +       if (pc->clk_rate < pc->soc->max_frequency)
+> > +               dev_warn(&pdev->dev, "Max frequency limited to %lu Hz!"=
+,
+> > +                        pc->clk_rate);
+> > +
+> >         /* Set minimum limit of PWM period for the IP */
+> >         pc->min_period_ns =3D
+> > -           (NSEC_PER_SEC / (pc->soc->max_frequency >> PWM_DUTY_WIDTH))=
+ + 1;
+> > +           (NSEC_PER_SEC / (pc->clk_rate >> PWM_DUTY_WIDTH)) + 1;
+> >         pc->rst =3D devm_reset_control_get_exclusive(&pdev->dev, "pwm")=
+;
+> >
+> > The above does not fix this issue but ...
+> > > I didn't find a device tree for an Asus Transformer tablet bases on a
+> > > tegra124 in the kernel source, but the options are:
+> > >
+> > >   - Revert commit 8c193f4714df ("pwm: tegra: Optimize period calculat=
+ion").
+> > >     I don't like this. IMHO this commit is an improvement and the pro=
+blem
+> > >     is that the consumer requests a too small period. For a backlight
+> > >     this might be ok to result in a much bigger period, for other
+> > >     usecases it isn't and so I like refusing period =3D 1000000.
+> > >
+> > >   - We could just drop the "else / return -EINVAL".
+> > >     This is inconsistent as then (again) some periods are rounded up
+> > >     (with the given clk rate that would be 5334 <=3D period < 7812500=
+)
+> > >     while others (period < 5334) yield -EINVAL.
+> > >
+> > >   - Increase the period that the backlight is using to at least 78125=
+00.
+> > >     This is done (I guess) by replacing 1000000 by 7812500 (or more) =
+in
+> > >     the backlight's PWM phandle.
+> > >
+> > >   - Make the PWM clk faster.
+> > >     Looking quickly through the tegra clk driver, the parent of the P=
+WM
+> > >     clk could be changed from clk_32k to pll_p or pll_c. This should =
+be
+> > >     doable in the dts using something like:
+> > >
+> > >             assigned-clocks =3D <&tegra_car TEGRA124_CLK_PWM>;
+> > >     assigned-clock-parents =3D <&tegra_car TEGRA124_CLK_PLL_P>;
+> > >
+> > >     in the pwm node. (Note this includes much guesswork, I don't know=
+ the
+> > >     PPL's clk-rate, so this might break in other ways. Another option=
+ is
+> > >     using PLL_C.)
+> > >
+> > > Probably the latter is the nicest option. Is it possible to find out =
+the
+> > > setting when the machine is running the original vendor OS?
+> >
+> > The latter does seem correct to me. This fixes the issue for Tegra210 .=
+..
+> >
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot=
+/dts/nvidia/tegra210.dtsi
+> > index 4f0e51f1a343..842843e0a585 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > @@ -670,6 +670,10 @@
+> >                 clock-names =3D "pwm";
+> >                 resets =3D <&tegra_car 17>;
+> >                 reset-names =3D "pwm";
+> > +
+> > +               assigned-clocks =3D <&tegra_car TEGRA210_CLK_PWM>;
+> > +               assigned-clock-parents =3D <&tegra_car TEGRA210_CLK_PLL=
+_P>;
+> > +
+> >                 status =3D "disabled";
+> >         };
+>
+> Traditionally we've always set the clock parent in the driver via the
+> init table (at least on chips prior to Tegra186). On the other hand we
+> have a few occurrences of assigned-clock-rates already for Tegra210. I
+> don't feel strongly either way. A minor advantage of having the fix in
+> the clock driver is that it fixes this automatically for older device
+> trees. Not that it really matters since people always update kernel and
+> DTB at the same time on Tegra devices.
+>
+> It'd be great if we could get confirmation that changing the parent
+> clock fixes this on all other boards as well, then we can fix it at the
+> same time for all of them.
+>
+> Thierry
 
-Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
----
- drivers/gpio/gpio-tegra186.c | 74 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+just a little update: i just compiled a v6.0 kernel for the nyan
+chromebook (tegra124) and now the display remains completely black -
+with v5.19 it was at least working with broken brightness control -
+reverting the pwm optimization patch it works perfectly fine in both
+cases ... please let me know if you have any patches i should test to
+fix this
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 54d9fa7da9c1..34b6c287d608 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -26,6 +26,22 @@
- 
- #define TEGRA186_GPIO_INT_ROUTE_MAPPING(p, x) (0x14 + (p) * 0x20 + (x) * 4)
- 
-+#define  TEGRA186_GPIO_VM			0x00
-+#define  TEGRA186_GPIO_VM_RW_MASK		0x03
-+#define  TEGRA186_GPIO_SCR			0x04
-+#define  TEGRA186_GPIO_SCR_PIN_SIZE		0x08
-+#define  TEGRA186_GPIO_SCR_PORT_SIZE		0x40
-+#define  TEGRA186_GPIO_SCR_SEC_WEN		BIT(28)
-+#define  TEGRA186_GPIO_SCR_SEC_REN		BIT(27)
-+#define  TEGRA186_GPIO_SCR_SEC_G1W		BIT(9)
-+#define  TEGRA186_GPIO_SCR_SEC_G1R		BIT(1)
-+#define  TEGRA186_GPIO_FULL_ACCESS		(TEGRA186_GPIO_SCR_SEC_WEN | \
-+						 TEGRA186_GPIO_SCR_SEC_REN | \
-+						 TEGRA186_GPIO_SCR_SEC_G1R | \
-+						 TEGRA186_GPIO_SCR_SEC_G1W)
-+#define  TEGRA186_GPIO_SCR_SEC_ENABLE		(TEGRA186_GPIO_SCR_SEC_WEN | \
-+						 TEGRA186_GPIO_SCR_SEC_REN)
-+
- /* control registers */
- #define TEGRA186_GPIO_ENABLE_CONFIG 0x00
- #define  TEGRA186_GPIO_ENABLE_CONFIG_ENABLE BIT(0)
-@@ -77,6 +93,7 @@ struct tegra_gpio_soc {
- 	unsigned int num_irqs_per_bank;
- 
- 	const struct tegra186_pin_range *pin_ranges;
-+	bool has_vm_support;
- 	unsigned int num_pin_ranges;
- 	const char *pinmux;
- 	bool has_gte;
-@@ -129,6 +146,58 @@ static void __iomem *tegra186_gpio_get_base(struct tegra_gpio *gpio,
- 	return gpio->base + offset + pin * 0x20;
- }
- 
-+static void __iomem *tegra186_gpio_get_secure_base(struct tegra_gpio *gpio,
-+					    unsigned int pin)
-+{
-+	const struct tegra_gpio_port *port;
-+	unsigned int offset;
-+
-+	port = tegra186_gpio_get_port(gpio, &pin);
-+	if (!port)
-+		return NULL;
-+
-+	offset = port->bank * 0x1000 + port->port * TEGRA186_GPIO_SCR_PORT_SIZE;
-+
-+	return gpio->secure + offset + pin * TEGRA186_GPIO_SCR_PIN_SIZE;
-+}
-+
-+static inline bool tegra186_gpio_is_accessible(struct tegra_gpio *gpio, u32 pin)
-+{
-+	void __iomem *secure;
-+	u32 val;
-+
-+	secure = tegra186_gpio_get_secure_base(gpio, pin);
-+
-+	if (gpio->soc->has_vm_support) {
-+		val = readl(secure + TEGRA186_GPIO_VM);
-+		if ((val & TEGRA186_GPIO_VM_RW_MASK) != TEGRA186_GPIO_VM_RW_MASK)
-+			return false;
-+	}
-+
-+	val = __raw_readl(secure + TEGRA186_GPIO_SCR);
-+
-+	if ((val & TEGRA186_GPIO_SCR_SEC_ENABLE) == 0)
-+		return true;
-+
-+	if ((val & TEGRA186_GPIO_FULL_ACCESS) == TEGRA186_GPIO_FULL_ACCESS)
-+		return true;
-+
-+	return false;
-+}
-+
-+static int tegra186_init_valid_mask(struct gpio_chip *chip,
-+		unsigned long *valid_mask, unsigned int ngpios)
-+{
-+	struct tegra_gpio *gpio = gpiochip_get_data(chip);
-+	int j;
-+
-+	for (j = 0; j < ngpios; j++) {
-+		if (!tegra186_gpio_is_accessible(gpio, j))
-+			clear_bit(j, valid_mask);
-+	}
-+	return 0;
-+}
-+
- static int tegra186_gpio_get_direction(struct gpio_chip *chip,
- 				       unsigned int offset)
- {
-@@ -763,6 +832,7 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 	gpio->soc = device_get_match_data(&pdev->dev);
- 	gpio->gpio.label = gpio->soc->name;
- 	gpio->gpio.parent = &pdev->dev;
-+	gpio->gpio.init_valid_mask = tegra186_init_valid_mask;
- 
- 	/* count the number of banks in the controller */
- 	for (i = 0; i < gpio->soc->num_ports; i++)
-@@ -1042,6 +1112,7 @@ static const struct tegra_gpio_soc tegra194_main_soc = {
- 	.num_pin_ranges = ARRAY_SIZE(tegra194_main_pin_ranges),
- 	.pin_ranges = tegra194_main_pin_ranges,
- 	.pinmux = "nvidia,tegra194-pinmux",
-+	.has_vm_support = true,
- };
- 
- #define TEGRA194_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-@@ -1067,6 +1138,7 @@ static const struct tegra_gpio_soc tegra194_aon_soc = {
- 	.instance = 1,
- 	.num_irqs_per_bank = 8,
- 	.has_gte = true,
-+	.has_vm_support = false,
- };
- 
- #define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-@@ -1111,6 +1183,7 @@ static const struct tegra_gpio_soc tegra234_main_soc = {
- 	.name = "tegra234-gpio",
- 	.instance = 0,
- 	.num_irqs_per_bank = 8,
-+	.has_vm_support = true,
- };
- 
- #define TEGRA234_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-@@ -1136,6 +1209,7 @@ static const struct tegra_gpio_soc tegra234_aon_soc = {
- 	.name = "tegra234-gpio-aon",
- 	.instance = 1,
- 	.num_irqs_per_bank = 8,
-+	.has_vm_support = false,
- };
- 
- #define TEGRA241_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
--- 
-2.17.1
-
+best wishes - thomas
