@@ -2,99 +2,161 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E15C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 16:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890C9C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 17:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbiJDQgy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Oct 2022 12:36:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58474 "EHLO
+        id S230241AbiJDRUX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Oct 2022 13:20:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbiJDQgy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 12:36:54 -0400
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [IPv6:2001:690:2100:1::15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703615E579;
-        Tue,  4 Oct 2022 09:36:52 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 074816005417;
-        Tue,  4 Oct 2022 17:36:50 +0100 (WEST)
-X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
-        tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
-        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
-        with LMTP id j8yPc4mpqb_j; Tue,  4 Oct 2022 17:36:47 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 0E566600881E;
-        Tue,  4 Oct 2022 17:36:45 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
-        s=mail; t=1664901407;
-        bh=DMhcGkQbTq6SDO0SLsiFN4a0xZV0HfX1yyp+AGRsmVo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=fabVcPBNbSXlLC7+WUv5tqiPTOvXo7j6AWxsirSb9ZAAs5TBaofkbX8nH15fURDWi
-         b0YZ/T8CHc5BQt9d0Gp0oe2dJQAshoByDzia6i6beu2KnhknCX6/BpU3VC4jUwwq3Z
-         KzCcthCBp5fPl8PwJtoa0cSOlD5HAnue6jO9lJOo=
-Received: from wslaptop (unknown [IPv6:2001:818:dcb5:dc00:7a88:7f12:8ed8:518d])
-        (Authenticated sender: ist187313)
-        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id B7304360083;
-        Tue,  4 Oct 2022 17:36:44 +0100 (WEST)
-Date:   Tue, 4 Oct 2022 17:37:18 +0100
-From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
-        daniel@ffwll.ch, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
-        arnd@arndb.de, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        diogo.ivo@tecnico.ulisboa.pt
-Subject: Re: [PATCH 1/4] dt-bindings: display: Add bindings for JDI
- LPM102A188A
-Message-ID: <20221004163718.ederwgmvt24kvhms@wslaptop>
-References: <20220929170502.1034040-1-diogo.ivo@tecnico.ulisboa.pt>
- <20220929170502.1034040-2-diogo.ivo@tecnico.ulisboa.pt>
- <efa2f644-0a1d-00f7-970c-f17ceb0cc550@linaro.org>
- <20221003170634.56jibls3xjxiiulg@wslaptop>
- <98d3b42d-3f9f-9b6e-8c17-46deae4b4030@linaro.org>
+        with ESMTP id S229921AbiJDRUD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 13:20:03 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B16010C4;
+        Tue,  4 Oct 2022 10:19:54 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A163E1A32;
+        Tue,  4 Oct 2022 10:20:00 -0700 (PDT)
+Received: from FVFF77S0Q05N.cambridge.arm.com (FVFF77S0Q05N.cambridge.arm.com [10.1.38.139])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E7683F792;
+        Tue,  4 Oct 2022 10:19:38 -0700 (PDT)
+Date:   Tue, 4 Oct 2022 18:19:33 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@HansenPartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, namhyung@kernel.org, jgross@suse.com,
+        srivatsa@csail.mit.edu, amakhalov@vmware.com,
+        pv-drivers@vmware.com, boris.ostrovsky@oracle.com,
+        chris@zankel.net, jcmvbkbc@gmail.com, rafael@kernel.org,
+        lenb@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        anup@brainfault.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
+        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
+        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
+        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+        dvyukov@google.com, vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v2 33/44] ftrace: WARN on rcuidle
+Message-ID: <YzxrJYjKxy/vUc5n@FVFF77S0Q05N.cambridge.arm.com>
+References: <20220919095939.761690562@infradead.org>
+ <20220919101522.573936213@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <98d3b42d-3f9f-9b6e-8c17-46deae4b4030@linaro.org>
+In-Reply-To: <20220919101522.573936213@infradead.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 04, 2022 at 01:05:04PM +0200, Krzysztof Kozlowski wrote:
-> On 03/10/2022 19:06, Diogo Ivo wrote:
-> > On Fri, Sep 30, 2022 at 12:49:31PM +0200, Krzysztof Kozlowski wrote:
-> >> Isn't touchscreen a separate (input) device?
-> > 
-> > Hello, thank you for the feedback.
-> > 
-> > According to the downstream kernel's log, it seems like the panel and
-> > the touchscreen controller are considered to be embedded in the same unit
-> > (for example in [1]), 
+On Mon, Sep 19, 2022 at 12:00:12PM +0200, Peter Zijlstra wrote:
+> CONFIG_GENERIC_ENTRY disallows any and all tracing when RCU isn't
+> enabled.
 > 
-> Downstream kernel is not a proof of proper description of hardware. If
-> downstream says orange is an apple, does it mean orange is really an
-> apple? No... Downstream creates a lot of junk, hacks and workarounds.
-
-After some searching (which I should have done sooner, so
-apologies) I came across a teardown of the Pixel C ([1], for completeness),
-which incorporates this panel. Indeed a separate touch controller was found,
-so it seems the downstream kernel threw me off as per your warning.
-
-[1]: https://www.ifixit.com/Teardown/Google+Pixel+C+Teardown/62277 (Step 4)
-
-> > with the touch input being transmitted via HID-over-I2C,
-> > and since I did not find any reset gpio handling in that driver I opted to
-> > include this reset here, unless there is a better way of going about this.
+> XXX if s390 (the only other GENERIC_ENTRY user as of this writing)
+> isn't comfortable with this, we could switch to
+> HAVE_NOINSTR_VALIDATION which is x86_64 only atm.
 > 
-> Instead it should be in touch screen device.
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  include/linux/tracepoint.h |   13 ++++++++++++-
+>  kernel/trace/trace.c       |    3 +++
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -178,6 +178,16 @@ static inline struct tracepoint *tracepo
+>  #endif /* CONFIG_HAVE_STATIC_CALL */
+>  
+>  /*
+> + * CONFIG_GENERIC_ENTRY archs are expected to have sanitized entry and idle
+> + * code that disallow any/all tracing/instrumentation when RCU isn't watching.
+> + */
+> +#ifdef CONFIG_GENERIC_ENTRY
+> +#define RCUIDLE_COND(rcuidle)	(rcuidle)
+> +#else
+> +#define RCUIDLE_COND(rcuidle)	(rcuidle && in_nmi())
+> +#endif
 
-Noted, I will remove it from the binding in the next version. 
+Could we make this depend on ARCH_WANTS_NO_INSTR instead?
 
-> Where is the DTS of that device?
+That'll allow arm64 to check this even though we're not using the generic entry
+code (and there's lots of work necessary to make that possible...).
 
-The relevant part of the DTS can be found here:
-https://android.googlesource.com/kernel/tegra/+/refs/heads/android-tegra-dragon-3.18-oreo/arch/arm64/boot/dts/tegra/tegra210-smaug.dtsi
+Thanks,
+Mark.
 
-Best regards,
-Diogo
+> +
+> +/*
+>   * it_func[0] is never NULL because there is at least one element in the array
+>   * when the array itself is non NULL.
+>   */
+> @@ -189,7 +199,8 @@ static inline struct tracepoint *tracepo
+>  			return;						\
+>  									\
+>  		/* srcu can't be used from NMI */			\
+> -		WARN_ON_ONCE(rcuidle && in_nmi());			\
+> +		if (WARN_ON_ONCE(RCUIDLE_COND(rcuidle)))		\
+> +			return;						\
+>  									\
+>  		/* keep srcu and sched-rcu usage consistent */		\
+>  		preempt_disable_notrace();				\
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -3104,6 +3104,9 @@ void __trace_stack(struct trace_array *t
+>  		return;
+>  	}
+>  
+> +	if (WARN_ON_ONCE(IS_ENABLED(CONFIG_GENERIC_ENTRY)))
+> +		return;
+> +
+>  	/*
+>  	 * When an NMI triggers, RCU is enabled via ct_nmi_enter(),
+>  	 * but if the above rcu_is_watching() failed, then the NMI
+> 
+> 
