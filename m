@@ -2,114 +2,166 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AD5C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 11:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6658EC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 11:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbiJDLFf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Oct 2022 07:05:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53468 "EHLO
+        id S229905AbiJDLFs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Oct 2022 07:05:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiJDLFY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 07:05:24 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 006D914D0D
-        for <linux-tegra@vger.kernel.org>; Tue,  4 Oct 2022 04:05:07 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id bu25so20605111lfb.3
-        for <linux-tegra@vger.kernel.org>; Tue, 04 Oct 2022 04:05:07 -0700 (PDT)
+        with ESMTP id S229564AbiJDLFg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 07:05:36 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7AB41580B
+        for <linux-tegra@vger.kernel.org>; Tue,  4 Oct 2022 04:05:34 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id b15so4521586pje.1
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Oct 2022 04:05:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=CdB5pNPn1z3hOORutMayY9OylE9bDXafftjb5ZY85Ls=;
-        b=Aicc3p/LBIP8Hd7tOw2WCIqknBYo352b1b1KQPR9O/IjkKO71/O57c7Mz4gv7Ats4F
-         6Dq02RpB3MiBwI6H5tolRswKTCzujMlCDphrtPw3DoCBFbLUcSSMhbaFbj8KqUECeEyB
-         ZZb0FdgYEr1F/SR58Kf5vl7t1BDV+Sq4E+kQonxwwhbrOiQ1wa5YuKEWSEu0hG657lkg
-         Q5bwbVNQs2oqNWPcYE1LEglqVVxrN/RzJjVRdunJYo7teb7yhI3OExHJZPdd6C3F2yZ4
-         GU+t8aWxSjNcxC7osUORq7KOsKR8G6In8RWM8yOxr0rEBPRdD1oZQxMWBZUqftHV/+CQ
-         FhkQ==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=8dOAtcXqtbDTbOtGHdeMRx2lSxGZ/p81xoeulWg88O8=;
+        b=ALPYtY9NECpkdz09jpHMZbs0aH+hKiq7zCwXfK1hWKvM2elz9mNR/JJb0byGfir59h
+         CWc9izoQX0glvUd9bdjzB+GxZIKg7cZ1wWKnb5xSlDD9fDdUtUduD7qTiOAX8rgJzNMY
+         16i4fnybYgh61uFsRfFa0jFHaMm217pAorBQUItONSq5D0pjQfmpgEbFEG0ovD83XmiY
+         JRBnUwctQs5MU4QsxdCrYJ2mV5ubOvxFCDZOs+xf+eBgsrQVN1CIV6SHGqFX6RFQbzq7
+         D2ARCpgG/orA8SpRSFPIMnoc2IRLOYljdFwc8QX3tXFa2vpA/P7Kkd/ZsaWnXMh+ArFb
+         1Asw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=CdB5pNPn1z3hOORutMayY9OylE9bDXafftjb5ZY85Ls=;
-        b=o5hvHMQBXYZamUrXB2hlhMJ8SWSlHdFOxaZciQfco1SCXB+COvbl/O+wno2YaBHYK4
-         8vAdZqFD6DfgMMzgOHtC0eZGn8+/vwPr9fA4636gdWkDTR2xKtwbzZvJRgifHQN9oB6h
-         +jcwqjrVoNJXBMn3qjQvFRZYMZOubqIt7ROPAoE8wjr3wgTcuXv2V99bX+nVCVm35Z7X
-         YXujhFwfNTo/to2GCQVzzkoZzl6HbmJml1aQDVFUv9KawIOGTNTgRyPUKSwmai11GvH4
-         e5L1MrnlSbXz5rp8vvbyNR8gbTMKD8gSS1OKRduwx80oxulkpGdz+1x+SK6zeKMwn3PF
-         lB2g==
-X-Gm-Message-State: ACrzQf2bZr8VhtZRv9AqENGWO5Z8NSKaFXh2TZSVfZlb8VziMOta7ZR6
-        j5VZXrCIXATz/oiwirMYDVJXfA==
-X-Google-Smtp-Source: AMsMyM6qbKEnyaJKurccIDdstvhYg0/dHAN3kIdwHg1wwhfHgZh++ybgBnDtI2SIdmUXvVbaaM5x1w==
-X-Received: by 2002:a05:6512:3a8b:b0:4a2:515e:eb51 with SMTP id q11-20020a0565123a8b00b004a2515eeb51mr1098564lfu.540.1664881506353;
-        Tue, 04 Oct 2022 04:05:06 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id p18-20020a2eb992000000b0026c47426cd0sm1177909ljp.140.2022.10.04.04.05.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Oct 2022 04:05:05 -0700 (PDT)
-Message-ID: <98d3b42d-3f9f-9b6e-8c17-46deae4b4030@linaro.org>
-Date:   Tue, 4 Oct 2022 13:05:04 +0200
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=8dOAtcXqtbDTbOtGHdeMRx2lSxGZ/p81xoeulWg88O8=;
+        b=kxeutLH2bkMYV5Hqrf7lB8WIPRGQmcXUF1S7TjLfaOIladWTLHNv9qACTbr9CBj9oZ
+         M1bxvqT2LXa58VM6Jug2vITXVt+5maIdKC/mp12VNxxYsNP6QNpBmxsT46j2Qw9B3zzv
+         XPx0Gbc24ZPUx1Ah6HXSdutrzCKzX3oRzbxgFkGf2qGhQZlrwWQHn0kNtljl7P2gcV82
+         USkYlNUfaMhwKMN94r1yD8KAMiGzsHPZ9yWg9UIRL7fRMRcdQTHHhgWZOLzV+TO71HT7
+         vEb98Jxgp+KYkUHXtMX2H60iykYGcH9j3RVP88h6YVn4NFEzJTwLIaxxx9VOa0QgMLg2
+         YDiA==
+X-Gm-Message-State: ACrzQf1xg+b1SKdp1cUvanalRD/8NGI0M5vmzrE/t6Zp/+Iz9rs4cG6P
+        uzkcyQAxQ+CUbsQ/Ttjl280jBAxv4AcYKYC1cUVOnw==
+X-Google-Smtp-Source: AMsMyM4crcx6LouSmUkordoRMp2FZSPTtuc3An5Wuzy+BH6M/IICg47GwaPPyycgbJ/QSQxkTeG6xy+CkgFRgaEAD/g=
+X-Received: by 2002:a17:90b:4d07:b0:1ef:521c:f051 with SMTP id
+ mw7-20020a17090b4d0700b001ef521cf051mr17203785pjb.164.1664881533975; Tue, 04
+ Oct 2022 04:05:33 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH 1/4] dt-bindings: display: Add bindings for JDI
- LPM102A188A
-Content-Language: en-US
-To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
-        daniel@ffwll.ch, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
-        arnd@arndb.de, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20220929170502.1034040-1-diogo.ivo@tecnico.ulisboa.pt>
- <20220929170502.1034040-2-diogo.ivo@tecnico.ulisboa.pt>
- <efa2f644-0a1d-00f7-970c-f17ceb0cc550@linaro.org>
- <20221003170634.56jibls3xjxiiulg@wslaptop>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221003170634.56jibls3xjxiiulg@wslaptop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220919095939.761690562@infradead.org> <20220919101521.274051658@infradead.org>
+In-Reply-To: <20220919101521.274051658@infradead.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 4 Oct 2022 13:04:57 +0200
+Message-ID: <CAPDyKFquBVkYmKsriPD+BfVrrz62ih7oCxb7HwOML+Zzs-5U_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 14/44] cpuidle,cpu_pm: Remove RCU fiddling from cpu_pm_{enter,exit}()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        anup@brainfault.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
+        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
+        cl@linux.com, rostedt@goodmis.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, fweisbec@gmail.com,
+        ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+        dvyukov@google.com, vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/10/2022 19:06, Diogo Ivo wrote:
-> On Fri, Sep 30, 2022 at 12:49:31PM +0200, Krzysztof Kozlowski wrote:
->>> +  ts-reset-gpios:
->>> +    maxItems: 1
->>> +    description: |
->>> +      Specifier for a GPIO connected to the touchscreen reset control signal.
->>> +      The reset signal is active low.
->>
->> Isn't touchscreen a separate (input) device?
-> 
-> Hello, thank you for the feedback.
-> 
-> According to the downstream kernel's log, it seems like the panel and
-> the touchscreen controller are considered to be embedded in the same unit
-> (for example in [1]), 
+On Mon, 19 Sept 2022 at 12:17, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> All callers should still have RCU enabled.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-Downstream kernel is not a proof of proper description of hardware. If
-downstream says orange is an apple, does it mean orange is really an
-apple? No... Downstream creates a lot of junk, hacks and workarounds.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-> with the touch input being transmitted via HID-over-I2C,
-> and since I did not find any reset gpio handling in that driver I opted to
-> include this reset here, unless there is a better way of going about this.
+Kind regards
+Uffe
 
-Instead it should be in touch screen device.
-
-> 
-> Best regards,
-> 
-> Diogo
-> 
-> [1]: https://android.googlesource.com/kernel/tegra/+/bca61c34db9f72113af058f53eeb9fbd5e69a1d0
-
-Where is the DTS of that device?
-
-Best regards,
-Krzysztof
-
+> ---
+>  kernel/cpu_pm.c |    9 ---------
+>  1 file changed, 9 deletions(-)
+>
+> --- a/kernel/cpu_pm.c
+> +++ b/kernel/cpu_pm.c
+> @@ -30,16 +30,9 @@ static int cpu_pm_notify(enum cpu_pm_eve
+>  {
+>         int ret;
+>
+> -       /*
+> -        * This introduces a RCU read critical section, which could be
+> -        * disfunctional in cpu idle. Copy RCU_NONIDLE code to let RCU know
+> -        * this.
+> -        */
+> -       ct_irq_enter_irqson();
+>         rcu_read_lock();
+>         ret = raw_notifier_call_chain(&cpu_pm_notifier.chain, event, NULL);
+>         rcu_read_unlock();
+> -       ct_irq_exit_irqson();
+>
+>         return notifier_to_errno(ret);
+>  }
+> @@ -49,11 +42,9 @@ static int cpu_pm_notify_robust(enum cpu
+>         unsigned long flags;
+>         int ret;
+>
+> -       ct_irq_enter_irqson();
+>         raw_spin_lock_irqsave(&cpu_pm_notifier.lock, flags);
+>         ret = raw_notifier_call_chain_robust(&cpu_pm_notifier.chain, event_up, event_down, NULL);
+>         raw_spin_unlock_irqrestore(&cpu_pm_notifier.lock, flags);
+> -       ct_irq_exit_irqson();
+>
+>         return notifier_to_errno(ret);
+>  }
+>
+>
