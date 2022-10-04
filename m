@@ -2,435 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2707FC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Oct 2022 21:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F8FC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 04:05:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbiJCV1r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Oct 2022 17:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44916 "EHLO
+        id S229684AbiJDEFL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Oct 2022 00:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbiJCV1R (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Oct 2022 17:27:17 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2604F664
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Oct 2022 14:18:12 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id j7so13156736wrr.3
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Oct 2022 14:18:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=Axxsa4o83JxVySF0VeMEEgQfzZQEKD42u7jzjyEhlTA=;
-        b=Xj5R/xtYz0KVD8v36F7VJfwh0AouVJWpEaeGMIJV93h8iQ0EYzDjZ1zTozM6TufDg3
-         0KM9P0ctFd3Fs7cUhCJjrwScSreI+E9HIlZm/OZ/bkI1nqVDTey0WZYSWgaiEJfegKim
-         /LJw/rCP1DeHLNdozCvsBhU3yFjf4n80/pMNtq1T8zjTiJ36lahBrdTiZ9jB1PlJPLG4
-         eJpf94uwUzubWN/ss3zYtJJ37EO6J2ndTIECOcuK/YgL77S2SyUyW/wFzGVFObQ+WgbF
-         g4KiY4ITBf4jbBVOTXr5v4v+khxASQWurI+57sRxRT8flp5xOw8DV2jJif41PPNbicf0
-         Or4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Axxsa4o83JxVySF0VeMEEgQfzZQEKD42u7jzjyEhlTA=;
-        b=BpiuTm8vWq3avVOVku2dFRjYQwXltyWW1FSpjH52nnWe2s9aaElVkKsKxvqS6/U7rn
-         hyAYvLBu4mddP0zrORuf6AkZ9M8LMzsRCFHtNsFv9s51Tinwgd/bTU5iI/f+x+FF4nao
-         ulILRNpYlI6r9QUda7a2SK5QI9bJCJK/5RWJ9XIz9xj/vjeB+EpcgiIGf6yq6jnwuFyi
-         Dj8nuYAJ2KaD91xzKUHtBc+31QuKYtV1TNcGhsEYnbszDDutFrPnbUGFpptD/XGcKu4y
-         7e4es/LDwXrGHgP0rNv2c9GJaAkSgH+QbKEayLMraXVDoeiAYtRSkwooxk5LtiSbAjeV
-         nx2g==
-X-Gm-Message-State: ACrzQf1KbgLpgkjBAe0jURbKmhdO2PQPlHrxu7GZVaDOM4w9efXe7fHT
-        IRZlW6boLH6iXVhGiyqf5AbeTA==
-X-Google-Smtp-Source: AMsMyM5ldop9A6R5ttlN72dKmImyDiKX+QeWExu9pLifC5OYYNjcvQZwV3oYzqRijrfGYgHtgvvn7Q==
-X-Received: by 2002:a05:6000:2ad:b0:228:cf8f:fe85 with SMTP id l13-20020a05600002ad00b00228cf8ffe85mr14608289wry.94.1664831890494;
-        Mon, 03 Oct 2022 14:18:10 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:c456:8337:99aa:2667? ([2a05:6e02:1041:c10:c456:8337:99aa:2667])
-        by smtp.googlemail.com with ESMTPSA id g10-20020a05600c4eca00b003a62400724bsm14660100wmq.0.2022.10.03.14.18.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Oct 2022 14:18:09 -0700 (PDT)
-Message-ID: <c3258cb2-9a56-d048-5738-1132331a157d@linaro.org>
-Date:   Mon, 3 Oct 2022 23:18:07 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v8 00/29] Rework the trip points creation
+        with ESMTP id S229621AbiJDEFI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 00:05:08 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B03711C26;
+        Mon,  3 Oct 2022 21:05:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gDPs2laSvatvcf3aQaxeut+9U0cguYTnc2PcDlcRIy6bGecKxp9uYEJ8v/9LQkWuFRkeBe+mt8SDiFD/LKREZIh3NywZ9kW/YlqiwXtXNsjQMWphjuFLh+MhfSHPYu8z4gDkZOc1cy9v6i+X1TiKCNttmx1jZX9Ay50D8+dNFYYq3PNjX84AIZoDc20Mp7JfrCywg8FKtQlaPTR65fQdqNw/iDjLTIR+91QAT9nccWGiiuTF7MT0bUdFpMe0VloZqOpIjnNfWi/f1rcad/2WTrmnK32ukz/oyG/g3/hYt9s8bZbkMNnRVImmgVZFnDwQtiXeLuT0ZV+hr0zb7xoK8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vlC6Or01MxI40uhbb/QxNkNlHKpGqHWVIL1FWUuFMO4=;
+ b=Z0Xp3DaJD0Bt+CJtMj/92ObqHZ9iwulZalYUh684L79UZ8TEpb+q00IoB0zVfjJr5t7qYzxg/I986aFrfeKKAXOLVNBt91gQbHv5PLTtUyB1nlX4zCy3YbLojNwV6lY3gcQjHHRomxtCN/rO9CfbiTK3oOoKJX6W2lULkSZHJxy2Ft3j8jhKUFBem1qSTKTc2BsNSmOUMPeH5ZPWZPv35QWKE9HByhKITP6u8WPr4qP8swQIBvJz1ChrqZj7rQ9BMbhkrLETm1TKvjwybZBOWWBpKa9BGXujB4hoaAu3YHf52l/jw4V/vE/lMiKVmCgYTCnxBKM1T7OBG2Hu+9gOcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vlC6Or01MxI40uhbb/QxNkNlHKpGqHWVIL1FWUuFMO4=;
+ b=uUwxVJhKNwifYVReiY/ADauir/7kiQON6lEfWdIe7Ppjktzzc9GsUOyxA/Yd096Zct2yamdLp8uKi4Fq2McM+dHj/4zO2oXc2/2ynUNzR9vmUjhNwXn+Tf6lpqIvWq7B3Fkyug35i2lTWfLeFMFDdyA8lyeKJ1K8ukVNKKbZG3l0GJmwizLLWAfPEn1xQx1BuJE7JsJQoOp+mVcrHM97R1lEjY40oVHEAkDh2dZXEzp7eNEzkjtFc7NuIQ8v1urPXb8d1hdAyvioB4i2PkiuCINWTTo44bgBqdAlGNWtxbB4p7Huh1sDddhZf+qz2T96GB0/C1oBiio79de9du2JTg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN8PR12MB2900.namprd12.prod.outlook.com (2603:10b6:408:69::18)
+ by PH7PR12MB7209.namprd12.prod.outlook.com (2603:10b6:510:204::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.16; Tue, 4 Oct
+ 2022 04:05:03 +0000
+Received: from BN8PR12MB2900.namprd12.prod.outlook.com
+ ([fe80::d9ae:c30e:ce3d:9cb3]) by BN8PR12MB2900.namprd12.prod.outlook.com
+ ([fe80::d9ae:c30e:ce3d:9cb3%7]) with mapi id 15.20.5676.028; Tue, 4 Oct 2022
+ 04:05:03 +0000
+Message-ID: <364fc93d-a4b5-59cb-c62a-8e3b32507523@nvidia.com>
+Date:   Tue, 4 Oct 2022 09:34:49 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH V1 0/4] GPIO based PCIe Hot-Plug support
 Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        rui.zhang@intel.com,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org
-References: <CGME20221003092704eucas1p2875c1f996dfd60a58f06cf986e02e8eb@eucas1p2.samsung.com>
- <20221003092602.1323944-1-daniel.lezcano@linaro.org>
- <8cdd1927-da38-c23e-fa75-384694724b1c@samsung.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <8cdd1927-da38-c23e-fa75-384694724b1c@samsung.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>, lpieralisi@kernel.org,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
+        Jonathan Derrick <jonathan.derrick@linux.dev>
+Cc:     Lukas Wunner <lukas@wunner.de>, bhelgaas@google.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        kw@linux.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mani@kernel.org, Sergey.Semin@baikalelectronics.ru,
+        jszhang@kernel.org, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com,
+        =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>
+References: <2a465222-342a-418b-95af-9948f6ce9065@linux.dev>
+ <20221003180949.GA2104321@bhelgaas> <20221003182147.jp5gn2jpnf4gucdl@pali>
+From:   Vidya Sagar <vidyas@nvidia.com>
+In-Reply-To: <20221003182147.jp5gn2jpnf4gucdl@pali>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0072.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ad::19) To BN8PR12MB2900.namprd12.prod.outlook.com
+ (2603:10b6:408:69::18)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8PR12MB2900:EE_|PH7PR12MB7209:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9cacda82-3b1f-4856-9d61-08daa5bd9cfc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: TFQQ33sag3sG46Ucbu2sYvVxIZ3mJO2qmvYMrPGV0zVPWMmlLyl2djV8QXGuio5fAA8HjVfecKwYvzk155U++UbGPno9H+In/H8eeVA9TQ59yZe4CTooQb8Q12RvvTShpd4+kCV/DecARHuqVkFWwbwz/7Jw8VXnx9sRCPS8UT27IPBjKNOBZvQvj83/kYJVxwM8KHs8rYUamIyDn3n3i5w40DhghOHV2vFWOoiEZ/8qhN1xL04TQ7oOCSCNcE1DUx+p/N+4IZodJbw05jX9ONwTsULvqX6atZ9oheDvOxYNVox1uxa3wFq8+33Ghfn393H7xqsBAW9r8ytwolt5fc97cM88cwUrSRzvTHZJ6KJOYxKDJBranLno7u6e1tFOVgkpNEFopI9H/IW9FhnURNrY3OiUHHSQG8b73lBCjfSQqxp8BNGQEpo5m+6+RLWBTcAS3Sfh80OHKrY4iH5CkA0j/InQ08cAuqnzy1DNmPpjsfGYRGeseuUpY3rC88GVD6O3L9c6MMGNuw0rlUoFpDMMYF1rHWAuYVh0KuNF6O3SExkhQ/ZTh0RWx78kTVl2LzSl8dc8VYg0v0F36VCn4H8ddsDW4NkARNzAB5FKl9/WqP7kr7IxNpAcWcw+RJZvFOqkSRw438yIAH2aJBLqDmSp53cxzDxEvpxsX0IabCM7lzwJNx0409Sqjp5Pt3XUJCvSKFa3mWR9NXeRyrZmo6sNNdj1Y0kA2KA8aewrsvC2x2O/99637rZOFbsMLcrhJMbtABkBORKR6BbNGR3a4NvsbNpvjujwDUYX4V/jSYCcdNFbyTMz/ZQl++v+cSy8yAupZApWnTaPZOUd1yL5O2QKeot88Had8bwPoDd08XCWErXm04OvFs2k5MqkS4B3
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB2900.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(366004)(396003)(136003)(376002)(346002)(451199015)(6486002)(966005)(478600001)(54906003)(31686004)(5660300002)(316002)(26005)(7416002)(8936002)(6512007)(6506007)(8676002)(53546011)(41300700001)(110136005)(186003)(36756003)(6666004)(4326008)(66556008)(38100700002)(66946007)(2906002)(66574015)(83380400001)(66476007)(31696002)(2616005)(86362001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eDExTWRuRmxSK0lKMmg2MlpTTG1WZzE5Y29vdzF6OGZMaWhvUng1Z3A1SW9Q?=
+ =?utf-8?B?dzEyaGlhdnFNK0xoMEpuL3lyMUdWRXJFQ1R1YWhkTVYyc2dqL0UrWVp1c0E2?=
+ =?utf-8?B?aHJTUVZCR0c2REIxSmd0TGpqSkJUTlFnUVdDNkI3OXkza0NZTGo3Q3FuT1hp?=
+ =?utf-8?B?RjF3bC92SlVRcUVxY20vK2dyLzlMVEZ1RktpNzRJTmc1bk52aVlGOWIwaVF2?=
+ =?utf-8?B?SzUxdng5SlFUcXlkaHFJUWdrcjJja2JoeDBubi80amxMZlVtdzhYa213cXll?=
+ =?utf-8?B?TWZ2TmMxUFpNTUFwRUszQmhlalBiZnBleGhFTDdCYXB0bm1qSUlxblRsQ1Rs?=
+ =?utf-8?B?NGdUSEU0WUd4QU1LT0puV1U0V1ZGa21QWXprQVBxNnZnTXZDRzFKZ2xhd1Vj?=
+ =?utf-8?B?M2w2TEZTTE44K3Z5bklSSE5IVm9yeGMzcERxTXhBeUJvdlRZTmYrQmtid3Zh?=
+ =?utf-8?B?dnovMjNSeE5SMTV1ZmVZdzh2bGppOGh0T3hqVmV3eXljUkhZZVBnMHpYa3NQ?=
+ =?utf-8?B?K29QK2w3QUZzSzRUMlJRcXNVdDhVUGxjZ3hQRSsrd1JhdlBZZGxXTnIxUkpl?=
+ =?utf-8?B?a0tjQ2VRQjFLY1RMRU5zWG9MUUNaeTJ2TnpjSEUxZ0ZVUkEvY3Z6OGF2Qitl?=
+ =?utf-8?B?VzRvM2N0QnE5U2hud0QvWGFtdW5NZXQ3WnNVL3R4YjFOVVlGU1ZTRjl0VENn?=
+ =?utf-8?B?M2xSWmZMT3AvOUpRaXdtUVVYRDQwNUdGalk2WFJWT2R6Q3hjNWExYnJReTVQ?=
+ =?utf-8?B?QStYdVc3ZThXQ3RzK3dJaUZvNXVrQkxEempWSW8vY1QyTDkyM2JUYWI4ZlBN?=
+ =?utf-8?B?R1VIbExDR25Ya3BuNzJoVWlIemNBRllJQkdrR2t3NTlpQ0JpVW1wN1UwTS9D?=
+ =?utf-8?B?V2VJaTdWTzNGeDczN2hIMHREMEl6UlpBTGJvUVlFYm5KTTREa3pabUh2TElp?=
+ =?utf-8?B?S0ZqS0daYVFzY1NKVHRuTEc0OGpJTS8zNVMzSTBHQ0ZySjVaejdEVkNJKzI5?=
+ =?utf-8?B?akljZHJyYVV2SHovWjhjS052M0wxQ2ZWdzRZcmMxWnd4U0NuU0t5ZGhsVE9L?=
+ =?utf-8?B?aURtbjlHWlRWdmNKYk1qd2l6VmoxNkJpUDNWQ2oraVpyUk9KRFZpbVJJQXRk?=
+ =?utf-8?B?ek1HMlFKeWtJczZodm5jOFRRYjRxVnd2cWRIZ1k0dDJ3UE15LzJ6N05xYnpV?=
+ =?utf-8?B?R3RJS1JlTjBGL3pEcjVqYno4V2lKQlIxVkR1TTFNU3cwODF0YlJpRlprTG1k?=
+ =?utf-8?B?ZHZmN29CVGFLdTRxNlNlREI4OWVZRGs2VkNFM1VnYWp3eHdOZDVXTWlWS0s0?=
+ =?utf-8?B?L0pRd3VXVkEyQzNwdjIzQjl4N0hRQkk0Vm83emF4RlBPV01nc0RENm5IZWpT?=
+ =?utf-8?B?WmtSbndLZnk2TUs2MWUyZHh3a21wYnEySWJKNUVJYjhoL055TEUyVEhsbnMx?=
+ =?utf-8?B?ajduSTdObFNyZStnblRrVEhnVXdxL015dzBYR29WK2FaUWs0Z0tmMEFqc3M2?=
+ =?utf-8?B?c0dTbGFOcm1xVE9yL2F2TzFkcjIrK0RocVFFU2FQa3NJUFhDS0JSQkl1SUZp?=
+ =?utf-8?B?TWtRemdsbGY5bEZaS3lnRGFiY3ovcGJzblYxOVQ2L2x5cXFJQ0FIWTM3L1pa?=
+ =?utf-8?B?UXdxQ0ZsWnJHU2g0dHcrczZwRUJydzQyd3loYmJxUTQ4Sld2eW1uZ3Rlb1FG?=
+ =?utf-8?B?ZzdpMDlUUXMrM2U0UGRtS28xK3hjYmJhM1oySHBDY3dOQVg1UGRxSGJlZTlz?=
+ =?utf-8?B?NDdKWDBSVXY5UXo4c1NrMzlUVjdTenhNZHZiWjJFUVFKeUUybWtaRWhaVi9C?=
+ =?utf-8?B?SVhhY2YzRXdHdW1QVmtoTzE5WFc3ZEx5TkRFc1gzTXU3ZlJvZHFKRERaYTZx?=
+ =?utf-8?B?alFqS0pzU0R3dXh5MTN4eGw5R1laU3dLQ3BUOE9Ra1g1b2lUWHN1Q0RTS2Fi?=
+ =?utf-8?B?M0pQRTZ4UVdUeFZkbEcycThqZHdWUnhKTkJOaUZjQVpCZlJBUnFxcnVHcDBU?=
+ =?utf-8?B?YU1lcTdVNUsvZnpKQWUvaFRwcGo4cVdzbTlXekV4d0RpS0lMWG5jNGVkWFdq?=
+ =?utf-8?B?M2F2SUxMaGJpbkI4ZFMzOTJCSVpsdGJIZ3Z5bUpnYTA5WjI0NUR4bWtqTEwv?=
+ =?utf-8?Q?xqX0nAAdF4nbdnhaVNl4iqZeb?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cacda82-3b1f-4856-9d61-08daa5bd9cfc
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB2900.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2022 04:05:03.0986
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: whQbeynybiLCnN7eV1piotQPCJ9uaunS60t355Nb1ymNXlDjHrC9kR7tBjOeEidp1zcnTbcylXsDGthJPr+9Zw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7209
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/10/2022 16:10, Marek Szyprowski wrote:
-> Hi Daniel,
-> 
-> On 03.10.2022 11:25, Daniel Lezcano wrote:
->> This work is the pre-requisite of handling correctly when the trip
->> point are crossed. For that we need to rework how the trip points are
->> declared and assigned to a thermal zone.
->>
->> Even if it appears to be a common sense to have the trip points being
->> ordered, this no guarantee neither documentation telling that is the
->> case.
->>
->> One solution could have been to create an ordered array of trips built
->> when registering the thermal zone by calling the different get_trip*
->> ops. However those ops receive a thermal zone pointer which is not
->> known as it is in the process of creating it.
->>
->> This cyclic dependency shows we have to rework how we manage the trip
->> points.
->>
->> Actually, all the trip points definition can be common to the backend
->> sensor drivers and we can factor out the thermal trip structure in all
->> of them.
->>
->> Then, as we register the thermal trips array, they will be available
->> in the thermal zone structure and a core function can return the trip
->> given its id.
->>
->> The get_trip_* ops won't be needed anymore and could be removed. The
->> resulting code will be another step forward to a self encapsulated
->> generic thermal framework.
->>
->> Most of the drivers can be converted more or less easily. This series
->> does a first round with most of the drivers. Some remain and will be
->> converted but with a smaller set of changes as the conversion is a bit
->> more complex.
->>
->> Changelog:
->> v8:
->> - Pretty oneline change and parenthesis removal (Rafael)
->> - Collected tags
->> v7:
->> - Added missing return 0 in the x86_pkg_temp driver
->> v6:
->> - Improved the code for the get_crit_temp() function as suggested by
->> Rafael
->> - Removed inner parenthesis in the set_trip_temp() function and invert the
->> conditions. Check the type of the trip point is unchanged
->> - Folded patch 4 with 1
->> - Add per thermal zone info message in the bang-bang governor
->> - Folded the fix for an uninitialized variable in
->> int340x_thermal_zone_add()
->> v5:
->> - Fixed a deadlock when calling thermal_zone_get_trip() while
->> handling the thermal zone lock
->> - Remove an extra line in the sysfs change
->> - Collected tags
->> v4:
->> - Remove extra lines on exynos changes as reported by Krzysztof Kozlowski
->> - Collected tags
->> v3:
->> - Reorg the series to be git-bisect safe
->> - Added the set_trip generic function
->> - Added the get_crit_temp generic function
->> - Removed more dead code in the thermal-of
->> - Fixed the exynos changelog
->> - Fixed the error check for the exynos drivers
->> - Collected tags
->> v2:
->> - Added missing EXPORT_SYMBOL_GPL() for thermal_zone_get_trip()
->> - Removed tab whitespace in the acerhdf driver
->> - Collected tags
->>
->> Cc: Raju Rangoju <rajur@chelsio.com>
->> Cc: "David S. Miller" <davem@davemloft.net>
->> Cc: Eric Dumazet <edumazet@google.com>
->> Cc: Jakub Kicinski <kuba@kernel.org>
->> Cc: Paolo Abeni <pabeni@redhat.com>
->> Cc: Peter Kaestle <peter@piie.net>
->> Cc: Hans de Goede <hdegoede@redhat.com>
->> Cc: Mark Gross <markgross@kernel.org>
->> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
->> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Amit Kucheria <amitk@kernel.org>
->> Cc: Zhang Rui <rui.zhang@intel.com>
->> Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>
->> Cc: Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>
->> Cc: Florian Fainelli <f.fainelli@gmail.com>
->> Cc: Ray Jui <rjui@broadcom.com>
->> Cc: Scott Branden <sbranden@broadcom.com>
->> Cc: Support Opensource <support.opensource@diasemi.com>
->> Cc: Lukasz Luba <lukasz.luba@arm.com>
->> Cc: Shawn Guo <shawnguo@kernel.org>
->> Cc: Sascha Hauer <s.hauer@pengutronix.de>
->> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
->> Cc: Fabio Estevam <festevam@gmail.com>
->> Cc: NXP Linux Team <linux-imx@nxp.com>
->> Cc: Thara Gopinath <thara.gopinath@linaro.org>
->> Cc: Andy Gross <agross@kernel.org>
->> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
->> Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
->> Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
->> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Cc: Alim Akhtar <alim.akhtar@samsung.com>
->> Cc: Thierry Reding <thierry.reding@gmail.com>
->> Cc: Jonathan Hunter <jonathanh@nvidia.com>
->> Cc: Eduardo Valentin <edubezval@gmail.com>
->> Cc: Keerthy <j-keerthy@ti.com>
->> Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Cc: Antoine Tenart <atenart@kernel.org>
->> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
->> Cc: Dmitry Osipenko <digetx@gmail.com>
->> Cc: netdev@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: platform-driver-x86@vger.kernel.org
->> Cc: linux-pm@vger.kernel.org
->> Cc: linux-rpi-kernel@lists.infradead.org
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-arm-msm@vger.kernel.org
->> Cc: linux-renesas-soc@vger.kernel.org
->> Cc: linux-samsung-soc@vger.kernel.org
->> Cc: linux-tegra@vger.kernel.org
->> Cc: linux-omap@vger.kernel.org
->>
->> Daniel Lezcano (29):
->> thermal/core: Add a generic thermal_zone_get_trip() function
->> thermal/sysfs: Always expose hysteresis attributes
->> thermal/core: Add a generic thermal_zone_set_trip() function
->> thermal/core/governors: Use thermal_zone_get_trip() instead of ops
->> functions
->> thermal/of: Use generic thermal_zone_get_trip() function
->> thermal/of: Remove unused functions
->> thermal/drivers/exynos: Use generic thermal_zone_get_trip() function
->> thermal/drivers/exynos: of_thermal_get_ntrips()
->> thermal/drivers/exynos: Replace of_thermal_is_trip_valid() by
->> thermal_zone_get_trip()
->> thermal/drivers/tegra: Use generic thermal_zone_get_trip() function
->> thermal/drivers/uniphier: Use generic thermal_zone_get_trip() function
->> thermal/drivers/hisi: Use generic thermal_zone_get_trip() function
->> thermal/drivers/qcom: Use generic thermal_zone_get_trip() function
->> thermal/drivers/armada: Use generic thermal_zone_get_trip() function
->> thermal/drivers/rcar_gen3: Use the generic function to get the number
->> of trips
->> thermal/of: Remove of_thermal_get_ntrips()
->> thermal/of: Remove of_thermal_is_trip_valid()
->> thermal/of: Remove of_thermal_set_trip_hyst()
->> thermal/of: Remove of_thermal_get_crit_temp()
->> thermal/drivers/st: Use generic trip points
->> thermal/drivers/imx: Use generic thermal_zone_get_trip() function
->> thermal/drivers/rcar: Use generic thermal_zone_get_trip() function
->> thermal/drivers/broadcom: Use generic thermal_zone_get_trip() function
->> thermal/drivers/da9062: Use generic thermal_zone_get_trip() function
->> thermal/drivers/ti: Remove unused macros ti_thermal_get_trip_value() /
->> ti_thermal_trip_is_valid()
->> thermal/drivers/acerhdf: Use generic thermal_zone_get_trip() function
->> thermal/drivers/cxgb4: Use generic thermal_zone_get_trip() function
->> thermal/intel/int340x: Replace parameter to simplify
->> thermal/drivers/intel: Use generic thermal_zone_get_trip() function
-> 
-> I've tested this v8 patchset after fixing the issue with Exynos TMU with
-> https://lore.kernel.org/all/20221003132943.1383065-1-daniel.lezcano@linaro.org/
-> patch and I got the following lockdep warning on all Exynos-based boards:
-> 
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.0.0-rc1-00083-ge5c9d117223e #12945 Not tainted
-> ------------------------------------------------------
-> swapper/0/1 is trying to acquire lock:
-> c1ce66b0 (&data->lock#2){+.+.}-{3:3}, at: exynos_get_temp+0x3c/0xc8
-> 
-> but task is already holding lock:
-> c2979b94 (&tz->lock){+.+.}-{3:3}, at:
-> thermal_zone_device_update.part.0+0x3c/0x528
-> 
-> which lock already depends on the new lock.
-
-I'm wondering if the problem is not already there and related to 
-data->lock ...
-
-Doesn't the thermal zone lock already prevent racy access to the data 
-structure?
-
-Another question: if the sensor clock is disabled after reading it, how 
-does the hardware update the temperature and detect the programed 
-threshold is crossed?
-
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #1 (&tz->lock){+.+.}-{3:3}:
->          mutex_lock_nested+0x1c/0x24
->          thermal_zone_get_trip+0x20/0x44
->          exynos_tmu_initialize+0x144/0x1e0
->          exynos_tmu_probe+0x2b0/0x728
->          platform_probe+0x5c/0xb8
->          really_probe+0xe0/0x414
->          __driver_probe_device+0xa0/0x208
->          driver_probe_device+0x30/0xc0
->          __driver_attach+0xf0/0x1f0
->          bus_for_each_dev+0x70/0xb0
->          bus_add_driver+0x174/0x218
->          driver_register+0x88/0x11c
->          do_one_initcall+0x64/0x380
->          kernel_init_freeable+0x1c0/0x224
->          kernel_init+0x18/0x12c
->          ret_from_fork+0x14/0x2c
->          0x0
-> 
-> -> #0 (&data->lock#2){+.+.}-{3:3}:
->          lock_acquire+0x124/0x3e4
->          __mutex_lock+0x90/0x948
->          mutex_lock_nested+0x1c/0x24
->          exynos_get_temp+0x3c/0xc8
->          __thermal_zone_get_temp+0x5c/0x12c
->          thermal_zone_device_update.part.0+0x78/0x528
->          __thermal_cooling_device_register.part.0+0x298/0x354
->          __cpufreq_cooling_register.constprop.0+0x138/0x218
->          of_cpufreq_cooling_register+0x48/0x8c
->          cpufreq_online+0x8d0/0xb2c
->          cpufreq_add_dev+0xb0/0xec
->          subsys_interface_register+0x108/0x118
->          cpufreq_register_driver+0x15c/0x380
->          dt_cpufreq_probe+0x2e4/0x434
->          platform_probe+0x5c/0xb8
->          really_probe+0xe0/0x414
->          __driver_probe_device+0xa0/0x208
->          driver_probe_device+0x30/0xc0
->          __driver_attach+0xf0/0x1f0
->          bus_for_each_dev+0x70/0xb0
->          bus_add_driver+0x174/0x218
->          driver_register+0x88/0x11c
->          do_one_initcall+0x64/0x380
->          kernel_init_freeable+0x1c0/0x224
->          kernel_init+0x18/0x12c
->          ret_from_fork+0x14/0x2c
->          0x0
-> 
-> other info that might help us debug this:
-> 
->    Possible unsafe locking scenario:
-> 
->          CPU0                    CPU1
->          ----                    ----
->     lock(&tz->lock);
->                                  lock(&data->lock#2);
->                                  lock(&tz->lock);
->     lock(&data->lock#2);
-> 
->    *** DEADLOCK ***
-> 
-> 5 locks held by swapper/0/1:
->    #0: c1c8648c (&dev->mutex){....}-{3:3}, at: __driver_attach+0xe4/0x1f0
->    #1: c1210434 (cpu_hotplug_lock){++++}-{0:0}, at:
-> cpufreq_register_driver+0xc4/0x380
->    #2: c1ed8298 (subsys mutex#8){+.+.}-{3:3}, at:
-> subsys_interface_register+0x4c/0x118
->    #3: c131f944 (thermal_list_lock){+.+.}-{3:3}, at:
-> __thermal_cooling_device_register.part.0+0x238/0x354
->    #4: c2979b94 (&tz->lock){+.+.}-{3:3}, at:
-> thermal_zone_device_update.part.0+0x3c/0x528
-> 
-> stack backtrace:
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.0.0-rc1-00083-ge5c9d117223e
-> #12945
-> Hardware name: Samsung Exynos (Flattened Device Tree)
->    unwind_backtrace from show_stack+0x10/0x14
->    show_stack from dump_stack_lvl+0x58/0x70
->    dump_stack_lvl from check_noncircular+0xf0/0x158
->    check_noncircular from __lock_acquire+0x15e8/0x2a7c
->    __lock_acquire from lock_acquire+0x124/0x3e4
->    lock_acquire from __mutex_lock+0x90/0x948
->    __mutex_lock from mutex_lock_nested+0x1c/0x24
->    mutex_lock_nested from exynos_get_temp+0x3c/0xc8
->    exynos_get_temp from __thermal_zone_get_temp+0x5c/0x12c
->    __thermal_zone_get_temp from thermal_zone_device_update.part.0+0x78/0x528
->    thermal_zone_device_update.part.0 from
-> __thermal_cooling_device_register.part.0+0x298/0x354
->    __thermal_cooling_device_register.part.0 from
-> __cpufreq_cooling_register.constprop.0+0x138/0x218
->    __cpufreq_cooling_register.constprop.0 from
-> of_cpufreq_cooling_register+0x48/0x8c
->    of_cpufreq_cooling_register from cpufreq_online+0x8d0/0xb2c
->    cpufreq_online from cpufreq_add_dev+0xb0/0xec
->    cpufreq_add_dev from subsys_interface_register+0x108/0x118
->    subsys_interface_register from cpufreq_register_driver+0x15c/0x380
->    cpufreq_register_driver from dt_cpufreq_probe+0x2e4/0x434
->    dt_cpufreq_probe from platform_probe+0x5c/0xb8
->    platform_probe from really_probe+0xe0/0x414
->    really_probe from __driver_probe_device+0xa0/0x208
->    __driver_probe_device from driver_probe_device+0x30/0xc0
->    driver_probe_device from __driver_attach+0xf0/0x1f0
->    __driver_attach from bus_for_each_dev+0x70/0xb0
->    bus_for_each_dev from bus_add_driver+0x174/0x218
->    bus_add_driver from driver_register+0x88/0x11c
->    driver_register from do_one_initcall+0x64/0x380
->    do_one_initcall from kernel_init_freeable+0x1c0/0x224
->    kernel_init_freeable from kernel_init+0x18/0x12c
->    kernel_init from ret_from_fork+0x14/0x2c
-> Exception stack(0xf082dfb0 to 0xf082dff8)
-> ...
-> 
-> Let me know if You need anything more to test.
-> 
-> 
->> drivers/net/ethernet/chelsio/cxgb4/cxgb4.h | 2 -
->> .../ethernet/chelsio/cxgb4/cxgb4_thermal.c | 41 +----
->> drivers/platform/x86/acerhdf.c | 73 +++-----
->> drivers/thermal/armada_thermal.c | 39 ++---
->> drivers/thermal/broadcom/bcm2835_thermal.c | 8 +-
->> drivers/thermal/da9062-thermal.c | 52 +-----
->> drivers/thermal/gov_bang_bang.c | 39 +++--
->> drivers/thermal/gov_fair_share.c | 18 +-
->> drivers/thermal/gov_power_allocator.c | 51 +++---
->> drivers/thermal/gov_step_wise.c | 22 ++-
->> drivers/thermal/hisi_thermal.c | 11 +-
->> drivers/thermal/imx_thermal.c | 72 +++-----
->> .../int340x_thermal/int340x_thermal_zone.c | 33 ++--
->> .../int340x_thermal/int340x_thermal_zone.h | 4 +-
->> .../processor_thermal_device.c | 10 +-
->> drivers/thermal/intel/x86_pkg_temp_thermal.c | 120 +++++++------
->> drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 39 ++---
->> drivers/thermal/rcar_gen3_thermal.c | 2 +-
->> drivers/thermal/rcar_thermal.c | 53 +-----
->> drivers/thermal/samsung/exynos_tmu.c | 57 +++----
->> drivers/thermal/st/st_thermal.c | 47 +----
->> drivers/thermal/tegra/soctherm.c | 33 ++--
->> drivers/thermal/tegra/tegra30-tsensor.c | 17 +-
->> drivers/thermal/thermal_core.c | 160 +++++++++++++++---
->> drivers/thermal/thermal_core.h | 24 +--
->> drivers/thermal/thermal_helpers.c | 28 +--
->> drivers/thermal/thermal_netlink.c | 21 +--
->> drivers/thermal/thermal_of.c | 116 -------------
->> drivers/thermal/thermal_sysfs.c | 133 +++++----------
->> drivers/thermal/ti-soc-thermal/ti-thermal.h | 15 --
->> drivers/thermal/uniphier_thermal.c | 27 ++-
->> include/linux/thermal.h | 10 ++
->> 32 files changed, 559 insertions(+), 818 deletions(-)
->>
-> Best regards
-> 
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+On 10/3/2022 11:51 PM, Pali Rohár wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On Monday 03 October 2022 13:09:49 Bjorn Helgaas wrote:
+>> On Sat, Oct 01, 2022 at 05:50:07PM -0600, Jonathan Derrick wrote:
+>>> On 10/1/2022 10:20 AM, Pali Rohár wrote:
+>>> ...
+>>
+>>>> Would not it better to rather synthesise PCIe Slot Capabilities support
+>>>> in your PCIe Root Port device (e.g. via pci-bridge-emul.c) and then let
+>>>> existing PCI hotplug code to take care for hotplugging? Because it
+>>>> already implements all required stuff for re-scanning, registering and
+>>>> unregistering PCIe devices for Root Ports with Slot Capabilities. And I
+>>>> think that there is no need to have just another (GPIO based)
+>>>> implementation of PCI hotplug.
+>>>
+>>> I did that a few years ago (rejected), but can attest to the robustness of
+>>> the pcie hotplug code on non-hotplug slots.
+>>> https://lwn.net/Articles/811988/
+>>
+>> I think the thread is here:
+>> https://lore.kernel.org/linux-pci/1581120007-5280-1-git-send-email-jonathan.derrick@intel.com/
+>> and I'm sorry that my response came across as "rejected".  I intended
+>> it as "this is good ideas and good work and we should keep going".
+>>
+>> Bjorn
+> 
+> Nice! So we have consensus that this is a good idea. Anyway, if you need
+> help with designing something here, please let me know as I have good
+> understanding of all (just two) consumers of pci-bridge-emul.c driver.
+> 
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks all for your comments.
+
+I would like to hear from Bjorn / Lorenzo if the design of the current 
+patch series is fine at a high level or I should explore emulating the 
+root port's configuration space to fake slot config/control registers 
+(which in turn depend on the hotplug GPIO interrupt & state to update 
+Presence Detect related bits in Slot status register) and use the PCIe 
+native Hot-plug framework itself to carry out with enabling the Hot-plug 
+functionality?
+
+Thanks,
+Vidya Sagar
+
+
