@@ -2,55 +2,55 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8BBC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 11:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E25C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Oct 2022 11:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbiJDLIv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Oct 2022 07:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58294 "EHLO
+        id S229766AbiJDLKZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Oct 2022 07:10:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbiJDLIl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 07:08:41 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7A5564F8
-        for <linux-tegra@vger.kernel.org>; Tue,  4 Oct 2022 04:08:38 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id v10-20020a17090a634a00b00205e48cf845so18261249pjs.4
-        for <linux-tegra@vger.kernel.org>; Tue, 04 Oct 2022 04:08:38 -0700 (PDT)
+        with ESMTP id S229805AbiJDLKF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Oct 2022 07:10:05 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24873CE35
+        for <linux-tegra@vger.kernel.org>; Tue,  4 Oct 2022 04:09:58 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id 3so12450773pga.1
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Oct 2022 04:09:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=Gtwwkxm3K9zy3ub+GhlddjjtZ7fh91sG2Y46OOYgmCM=;
-        b=EnhlO7DcICPKJpPG1jb7KTMLBU7DAMNWLzZM/l8aLFUsRZkWp+mkSVMMBmLZ1zgxaC
-         wxY3CYIRcHyRXss5NtxD4hq5yFum2Xsa/Xfa8NFMZbQ3tgmqUq13E1Fcil8BIgM2OEw6
-         m+P6TSNsaCcBVdUXpgo0TEJ7VOVGVt6KKPFMuMhn/bj0r2dm5zCuaEvX7UiZOqeeJEdX
-         h1wGhs9cmKjNMVwi5bkackIBv98JM8+NjLMoMPaPS3klw1yQNu9dahurEQIN+cDnqkmM
-         Hbcu0L1M6U3Rd654P0n2Hh4Q6bzGWuS7xOAcwB9SuDvPVBJ1Tctv5MAKRuD35o1eodHl
-         dgPQ==
+        bh=Z7fvRiwPcYU72K21mcsEeWsle1VHrp2FoZLK7rnaPdE=;
+        b=OhrgekEJA2e8cdAwMtySnzVGP1IXX7u0VkwcrOOu54GZ2JxdWY9lEfVkhASIMdH6iJ
+         3CS7i3bHpSnDattX7vdcbOy/0Ru61hlzqZKw12qszXyQ8c8k8+VbmoP3khJqXB2u34OK
+         r0R6w3Chhty48bs5fIPiEqpNsjqgSOd25DYZPmh/eJumMJEGGWz83W+3fdR0JwF+vFO5
+         mEEbHpfpQY24Mu19zAFZi2TsiyCRpZk9s0G1O2wNLxMVY3JMpx0s8hV3tsChMbk0eh7y
+         zwRqOOW8NupYp/v5bTpNygY4XFLMrr9CtK+i2O/hqSFWvl5B0S5XIVxlEXDh/AnokWSK
+         1UeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=Gtwwkxm3K9zy3ub+GhlddjjtZ7fh91sG2Y46OOYgmCM=;
-        b=i1Xp9QknLNuYPnS/8FMi8MiUCU/xexCM8s0PRoZr/Xtbk07cd3enfNSSLw0bbhTtJs
-         0zCtFuq1tTl6x5G5CcDVwXPMqViBdWlf/sQ4pmidcf5s07pBdaI9sCy7N20o5RrL78rj
-         RBY/whn+Fgz46Y4+koGKNAwZMopZm5Ex7aBJI7aXnIZzpDn8LeMbxtqCCdfSGM844DMa
-         mD7QBpfm+DAJmMhxS0UMD/iyw5E+IYDvrW0P52sAA4FUVRsXib1S2X83WNRl72gYCt8L
-         EFz16hJfeGISQ4oxMdl5WdAtMpbd7JQEFXoNmlCLh5aj7dxMC8+lIY/B7HORE1plMU+c
-         +w+g==
-X-Gm-Message-State: ACrzQf00e7qTLfwi5GXGZ4hmJjwm375xl4T7S3WxUQmSNSL3WwTE0KK1
-        63OjTpLVnxnQFS/gWWduE0+UZSv3BomxAV7r30HKOg==
-X-Google-Smtp-Source: AMsMyM6cCdnxuhXSy92rYBN/YepwF/hndLawv3zc1vUJoDTHY6JL7u1f8y1gp2OsfAUCoRgnjKuog3OS/wqaN/v/F3w=
-X-Received: by 2002:a17:90b:1b06:b0:202:cce0:2148 with SMTP id
- nu6-20020a17090b1b0600b00202cce02148mr17035330pjb.84.1664881717434; Tue, 04
- Oct 2022 04:08:37 -0700 (PDT)
+        bh=Z7fvRiwPcYU72K21mcsEeWsle1VHrp2FoZLK7rnaPdE=;
+        b=EFLfw6mrkxSZP+gI8faGKUFAXFgcB9a/QkjyP2hNWBPYn1BQ5q6i+ZUhXMRjPciZfZ
+         6xJFLfyKS+5u754VMik90Rm6geDCOLVCQgKCViNMaUuU8OEHhkz9AgEgBJfVZe/8+p6W
+         4vov68nlahG7OwqUczDH3M0WaVLW4GK4VACFfK9hsk27VJQjwhX2l7CVCBQep7CV5GNY
+         TvflpoHTNgOE4qDGjPzNXOLUGaxmk24wDUbTaPH3BZ5dUyf7c2SLZablJvA7MXL/eOAg
+         FaAcmOd9czOxyx5xsdbtlG83/+r4/YzOpCCA8HMDHk09X7dx7wwY3FdRaDdtPm08Th01
+         eohA==
+X-Gm-Message-State: ACrzQf1zUsVtmyX7jbORcK+36ZeT0+wmPmh82FPih+kD0aW5lPGb+D3e
+        o2oXK02g9hesR8yn5bLIU9qS6agSFhrpWzXB9R1gEg==
+X-Google-Smtp-Source: AMsMyM7VbOFlVrwp8sat5c2fOoVrC6O5AG2BNs0Q/N/ssPahKqJyAog1GJURpNPkzC/i2wh0dKpKol7XCM05LlISp3k=
+X-Received: by 2002:a63:464d:0:b0:441:5968:cd0e with SMTP id
+ v13-20020a63464d000000b004415968cd0emr18985801pgk.595.1664881798027; Tue, 04
+ Oct 2022 04:09:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220919095939.761690562@infradead.org> <20220919101521.886766952@infradead.org>
-In-Reply-To: <20220919101521.886766952@infradead.org>
+References: <20220919095939.761690562@infradead.org> <20220919101522.975285117@infradead.org>
+In-Reply-To: <20220919101522.975285117@infradead.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 4 Oct 2022 13:08:00 +0200
-Message-ID: <CAPDyKFoMidikoTPe0Xd+wZQdBBJSoy+CZ2ZmJShfLkbGZZRYDQ@mail.gmail.com>
-Subject: Re: [PATCH v2 23/44] arm,smp: Remove trace_.*_rcuidle() usage
+Date:   Tue, 4 Oct 2022 13:09:21 +0200
+Message-ID: <CAPDyKFqoBJPgehVODY0DGuUcnqJE5rpZjRPfdMCzOP0=JrvKNw@mail.gmail.com>
+Subject: Re: [PATCH v2 39/44] cpuidle,clk: Remove trace_.*_rcuidle()
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     juri.lelli@redhat.com, rafael@kernel.org, catalin.marinas@arm.com,
         linus.walleij@linaro.org, bsegall@google.com, guoren@kernel.org,
@@ -117,22 +117,14 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 19 Sept 2022 at 12:18, Peter Zijlstra <peterz@infradead.org> wrote:
+On Mon, 19 Sept 2022 at 12:17, Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> None of these functions should ever be ran with RCU disabled anymore.
->
-> Specifically, do_handle_IPI() is only called from handle_IPI() which
-> explicitly does irq_enter()/irq_exit() which ensures RCU is watching.
->
-> The problem with smp_cross_call() was, per commit 7c64cc0531fa ("arm: Use
-> _rcuidle for smp_cross_call() tracepoints"), that
-> cpuidle_enter_state_coupled() already had RCU disabled, but that's
-> long been fixed by commit 1098582a0f6c ("sched,idle,rcu: Push rcu_idle
-> deeper into the idle path").
+> OMAP was the one and only user.
+
+OMAP? :-)
+
 >
 > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-FWIW:
 
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
@@ -140,38 +132,41 @@ Kind regards
 Uffe
 
 > ---
->  arch/arm/kernel/smp.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/clk/clk.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 >
-> --- a/arch/arm/kernel/smp.c
-> +++ b/arch/arm/kernel/smp.c
-> @@ -639,7 +639,7 @@ static void do_handle_IPI(int ipinr)
->         unsigned int cpu = smp_processor_id();
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -978,12 +978,12 @@ static void clk_core_disable(struct clk_
+>         if (--core->enable_count > 0)
+>                 return;
 >
->         if ((unsigned)ipinr < NR_IPI)
-> -               trace_ipi_entry_rcuidle(ipi_types[ipinr]);
-> +               trace_ipi_entry(ipi_types[ipinr]);
+> -       trace_clk_disable_rcuidle(core);
+> +       trace_clk_disable(core);
 >
->         switch (ipinr) {
->         case IPI_WAKEUP:
-> @@ -686,7 +686,7 @@ static void do_handle_IPI(int ipinr)
->         }
+>         if (core->ops->disable)
+>                 core->ops->disable(core->hw);
 >
->         if ((unsigned)ipinr < NR_IPI)
-> -               trace_ipi_exit_rcuidle(ipi_types[ipinr]);
-> +               trace_ipi_exit(ipi_types[ipinr]);
+> -       trace_clk_disable_complete_rcuidle(core);
+> +       trace_clk_disable_complete(core);
+>
+>         clk_core_disable(core->parent);
 >  }
+> @@ -1037,12 +1037,12 @@ static int clk_core_enable(struct clk_co
+>                 if (ret)
+>                         return ret;
 >
->  /* Legacy version, should go away once all irqchips have been converted */
-> @@ -709,7 +709,7 @@ static irqreturn_t ipi_handler(int irq,
+> -               trace_clk_enable_rcuidle(core);
+> +               trace_clk_enable(core);
 >
->  static void smp_cross_call(const struct cpumask *target, unsigned int ipinr)
->  {
-> -       trace_ipi_raise_rcuidle(target, ipi_types[ipinr]);
-> +       trace_ipi_raise(target, ipi_types[ipinr]);
->         __ipi_send_mask(ipi_desc[ipinr], target);
->  }
+>                 if (core->ops->enable)
+>                         ret = core->ops->enable(core->hw);
 >
+> -               trace_clk_enable_complete_rcuidle(core);
+> +               trace_clk_enable_complete(core);
+>
+>                 if (ret) {
+>                         clk_core_disable(core->parent);
 >
 >
 > _______________________________________________
