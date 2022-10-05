@@ -2,203 +2,208 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2265C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Oct 2022 08:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89186C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Oct 2022 12:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbiJEIlA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Oct 2022 04:41:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46810 "EHLO
+        id S229653AbiJEMKR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Oct 2022 08:10:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbiJEIk4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Oct 2022 04:40:56 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2045.outbound.protection.outlook.com [40.107.223.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB856EF27;
-        Wed,  5 Oct 2022 01:40:54 -0700 (PDT)
+        with ESMTP id S229639AbiJEMKQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Oct 2022 08:10:16 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2057.outbound.protection.outlook.com [40.107.101.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F74E252B1;
+        Wed,  5 Oct 2022 05:10:13 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SOZbbzghi2CmzTeSevJRsEOo7qqi45KqGGTOW3Thg39HigQxpEFx0BH/URKEFkqLvQ8nqMwPx3xu3RO2UTZENXGT69KU3DjKxNUaBkVV0kaiYUel7TN4IbenKY39KAf5DtzC+SO7dOTE0wztiZLCo3fCT97Gl21Sng7ChxHhzalDy6XSBh4nCqCzMcL+hD97CTllOlcZRcNuM5IwjB3ieJWUkJH8Z330tExw5VnRLvL+WdvMlDcqrCAvZlmdROVc95z8FqHiOmivY4hl2JHU3lWI1pDpi+goJydMbiBtrEYDvk9ohUmhoHsXk8h30IlK4DZFdOCaSp4Kfpc9DXTepA==
+ b=LyumH5Hf3RyxqNk00+NEsWigdVDzDJ24Mthx3WAGrNavW7FZZIZblZkMy0sPK5PnnsI+ElfDccYn30TsTDw1jMnW2Euuvs61wxOAtsFukL3KJ1gSx1gjN/xqMtQWNvZSH4TqNx27Dh3qbssYPRflXqg+PrAZf45LpjJHWAu5CnOK51lnIkx8XoR9X7AMYqkNkaMpBZ0IrmuU3CzAD5wou704P6Ldjupz6iWgw8RydZKRnKz1FJWctUncytgRuFTC2iEA2Uo7WbiLbJqX/tSItw61Y8U7ogr35Pl/xkYeCJCNfsZeG1+p9HES5cK8i5mLBoOKPazplYfNwDkL2cbvhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z3CMRs9/hiKMEvcG5/1EV+Q5x0RPGtG2ZyPTXp3sGlw=;
- b=L0AGPzbJ7LOuLJ59IK9UpzAaeL7R5VKWts/RRHZTGC8tBp9jThqPuCSloqt2oSQP/fYrPua5IA5Eo4/sz3CtmCF7VAJbvTjIwuUIuNKpzRsT3ARYjoB7LFEZ0J5KIj1dZT5WpwTah9OE2VdCLeRESvIu0tcKZnMavUY2WiMMrwqTQNp2ePjMrP+YRkbWIEmxCGns8TBUNr+fRKwSxfnzSxVaenvdYkp1Q7oMYZnXo3lyDrt/ptr/7OQg53Pt7WCFG0xWbXQRv/PobsoTDNEv4W+fZoHJSxelS6mC/d4BG5j4DRKwcroYxlvSYmZ6fAZxhPAtVFrhd67rVLp7smTptA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=pengutronix.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=pUbyroNgk6au9DxcQtxnAPtYhztnXSIU2sjVrcIM/9k=;
+ b=m2/xfP77YwQ68ohPBpgVdCvLXKRJX1vndEsWCtUq9z5xNC0NQdyDgeLJyjvp7S9p/5F12qaX696k19bJKVpbbwy0Xz08nCTje6kDE9+/QxTsB2ZuyMbCeR5nJLxaW9I/YzBw6w2ZANe+hoRr2vUFtfN+uBwF0bcDqbDztudGBwKflqOKAKKJUWFv92hLggRFOiuMajHko13J+ddI5czjyMzZgKbqTdM9dd6Mmy8Gya8FkvMnP47JV6ouBK75bDHtcmo+KaK8C50cx55LZM4gXuK5jbWvB3ntRniqFG5ysKkID6E90F5mWt48NlyGDhdMdwMixYfyjLZ7rTKESdOHJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z3CMRs9/hiKMEvcG5/1EV+Q5x0RPGtG2ZyPTXp3sGlw=;
- b=kb72UCzvkSaPDkMi4v2G69gCXaDzVOi24Q1g2o7d6ttOIvtXNeYMMhW/URpHfGhaAEpMLTbfNH3INcWoZKXAWAnWUHmrVcO6UMbMwdybD1f141k0PeonCtscA+NFBdMzx1omPyyXnrD6gSWhqIQfiDRG/e0+YBJahfKPU5G3kJ7J5mgnL7msBbtFcnfqKVgWNtvgwjXBza/AvGcuXELGfd+xPo8kB88m7DCBEYFjwzzCQRqCxVUEyoY0Y/XD7aDcegpO+QZEY4TSPIpusf1mEbaOxQwEM/D8XE1+IGBWxAsUTF4IKSyjeXLPyTMbhxBnlzdRdklSgLft58p5e84Y1g==
-Received: from MW4PR03CA0080.namprd03.prod.outlook.com (2603:10b6:303:b6::25)
- by CH0PR12MB5138.namprd12.prod.outlook.com (2603:10b6:610:bd::17) with
+ bh=pUbyroNgk6au9DxcQtxnAPtYhztnXSIU2sjVrcIM/9k=;
+ b=NWTwZ6sQKZS7gNx/q/8D1oPPphBFIHdIp/sCaWKU/hG7DYLvj+UUdpjTIodElJtwO53r6mGg4NJDAUAAReCfVqj1WaxSShIMLfI42f4I7mehh5YgY3c6+R5DM8JvMHQzPcDp17fQn3/80CVWEhdbmpH0Rpyozh04QCXBFicAOsQUT5fdtqMF+C8Cn5b66bfo1gxZ4mK5DVffr704IKW2sfQon6JiothUjASkECka55UM41WulhThfsFqIp1yZo9pFt9NGiLCf0ZHh2jy5A4noYUqhJTsIVmVH8CAvbJWSxT3haHNKhjyEVfKA8kvPJhseBjo8JawWkC4L91jnuLJ/w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ LV2PR12MB5870.namprd12.prod.outlook.com (2603:10b6:408:175::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.28; Wed, 5 Oct
- 2022 08:40:52 +0000
-Received: from CO1NAM11FT050.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b6:cafe::27) by MW4PR03CA0080.outlook.office365.com
- (2603:10b6:303:b6::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.23 via Frontend
- Transport; Wed, 5 Oct 2022 08:40:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT050.mail.protection.outlook.com (10.13.174.79) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5709.10 via Frontend Transport; Wed, 5 Oct 2022 08:40:52 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 5 Oct 2022
- 01:40:44 -0700
-Received: from 74ef364-lcelt.vdiclient.nvidia.com (10.126.230.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Wed, 5 Oct 2022 01:40:42 -0700
-From:   Haotien Hsu <haotienh@nvidia.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Vinod Koul <vkoul@kernel.org>
-CC:     JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Haotien Hsu <haotienh@nvidia.com>,
-        "Wayne Chang" <waynec@nvidia.com>
-Subject: [PATCH] phy: tegra: xusb: Remove usb3 supply
-Date:   Wed, 5 Oct 2022 16:40:31 +0800
-Message-ID: <20221005084031.2154251-1-haotienh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.31; Wed, 5 Oct
+ 2022 12:10:10 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::b07f:53b1:426e:a29d]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::b07f:53b1:426e:a29d%5]) with mapi id 15.20.5676.033; Wed, 5 Oct 2022
+ 12:10:10 +0000
+Message-ID: <657d2418-0c3e-296f-8f4a-dc10ced2dffe@nvidia.com>
+Date:   Wed, 5 Oct 2022 13:10:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2 2/4] ALSA: hda: Rework snd_hdac_stream_reset() to use
+ macros
+Content-Language: en-US
+To:     =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc:     linux-kernel@vger.kernel.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Mohan Kumar D <mkumard@nvidia.com>
+References: <20220818141517.109280-1-amadeuszx.slawinski@linux.intel.com>
+ <20220818141517.109280-3-amadeuszx.slawinski@linux.intel.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20220818141517.109280-3-amadeuszx.slawinski@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
+X-ClientProxiedBy: LO4P123CA0678.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:351::18) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT050:EE_|CH0PR12MB5138:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1d2a4d0-08eb-40a3-c36e-08daa6ad4fd3
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|LV2PR12MB5870:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c7f6a8f-2a9d-4ac8-e31c-08daa6ca8cd5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: eF23okbThuX3WSsCt7kWm+DGVy98Cuhk7KcFkVizm8qXNApQZOtlm0+IBVPkLKoCuPoMR2ULOt2ZUiJ9emvdPCOKawgpw4lI/p0qnZgVJ99M+sjfXqBHDIJVDfeQeVsYDyBPnUzdY0D2js7QWO2wtDkI5r0yaNVejnowPIInCe/ZHHoULIWTqQIz3+a8mHCMQktMwegDpkOp0UdGuVy+Z81nzG+MnEZ3xfRR7OHck2QklUUCmoB32oFIKY0klZKGLrnkTd4+ZLBIlYhazvqpj3KAcJlStq8MDyxEe3o8ZmqhIrjq5e2ec+AJwH1c31Eeu35lvyrDf1s3yl09O5kvzDGb/ioZL4MX7M1yuev0aGvlRTcEcd106gI85LRv6rbpEXE2xlHzLQKV+QnA0MPzM1B9QL63g95NifC2qqkjKUgAlQXmpCMsZG8P7kPnMQggphsrPVE4d/FSqDOjTpVQz/F+Mx6cD03+CKTjkQC18Yo2Ekf2KNwrfeaA/maxMj8LPq/JEIZ0n52qIpCb2yD0ZpNLirDUMX4j9Ci7Yno93529qZVcFcvHSQBwqd93A8GoABYYCbK3L7gh6Vx3Y6uRVQynFOCJsgffb/yR1u9H7KKZMwGaYqJ8F9xrM1n7iiXhQR/o9gcfDg08MHCjSZfpyYm+rakGSozWoI/ptV8KZEalzWuBTxDt3hefoCKf3laTd/0tmLSMT840EWRxRZsO6uUulL1LWvEzKoLNTyUsCxp5FjZInWTl6RCotDs8koYfsTqn6pkTgw2ixJ4m+SNgDw==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(39860400002)(136003)(346002)(451199015)(40470700004)(46966006)(36840700001)(83380400001)(82740400003)(82310400005)(336012)(16526019)(36860700001)(47076005)(426003)(356005)(86362001)(186003)(5660300002)(8936002)(316002)(41300700001)(40480700001)(70586007)(110136005)(8676002)(54906003)(4326008)(70206006)(2616005)(6666004)(7696005)(107886003)(7636003)(26005)(40460700003)(1076003)(478600001)(2906002)(36756003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: UnarfzMRpCikC4Yf6N61Ao3FshWW0Z29M03bHyNYgBzIEHT35RL38Ts5lET5pMKXgPRIGNM3SBUHRcny2mPd0dTjQSkmiIHhkt1RJBnuZq5mhOLMsCQ2Tas1oISNx7LO1AtzTCLmd4X5BzQ3FZSesqGGvPV3WC1/XPWfFNhUtkpognoRVdSOSepN1wWvbskc5u1oMiIPxxdXYaseBE24T00LgkLIH59d10Fqind0rUS7xT0/0feBmcUPScnI1xou5c1KeEDDOS2h91nPL12zYz50nDEj+Y6TCUHVpHjKh5vUHYGmJsoRWdPczaEB6y6QvL2mIK4t8kr1qZdqVCbsSLvJow6SzjT7+CaI34l/Vxe61DSVEjsWlCSK212UYfAXIsKJnu1VsTMDFDFg6KbNRPHmAaaPVZKzXOFIWI7fCDN4qKex0Hq1ANLDO/s2tqgfXRk43UoKgoW3VAp+Q18/jBIyq4HoHCTFIT7MkQ74wWmg1OzCszKetUzht8JUkv0jjpsGYvBJFCDHHJPshAKC0Es7N5TJeJmN0CgGbHaYiTjphcpJ/RU8q3bfRvtx99ZAvokHZOzD3J7DaljLKEet2mHP0S+QgnZkaypEzDhC4HEnPYsRKLrvOr4ofmI+2DYl7/lE4RczUNpsooiTxwSlM2po9Gpp6aS1U6KLjzIvlOY1vQQJ8N/yJ9tCeP7ffmjCVfKC9Sbig8QYu8qnDDymMklJ2Ef2Uc59bV69mCJJ1bajSW33WamOzVh5zCR/wXlUlBcQOPkLsjFp7DXJLtqFv3OHQ87M3SXtjsOLzlDd0FU=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(136003)(39860400002)(396003)(366004)(451199015)(6666004)(107886003)(6506007)(53546011)(478600001)(6486002)(8676002)(4326008)(66556008)(66946007)(66476007)(36756003)(316002)(54906003)(86362001)(38100700002)(31696002)(6512007)(66574015)(186003)(2616005)(83380400001)(41300700001)(5660300002)(110136005)(2906002)(31686004)(8936002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dFMzRjkzVTlOL3NkS1BFZ1l2RG96blQ2MXhxZ1hNRXMwd0c5allYc3RQTFZU?=
+ =?utf-8?B?eDExOXZMTE5CVmxuT1lzUjNsTFlkdE9uaXl0cGg5TmE1L1d6RDNNNmhnaGJN?=
+ =?utf-8?B?eS9yUXBpNmVweEVvbFptSzB0d1NFUlJtRk0wK1RONFN5bTR1c2U1REZHR291?=
+ =?utf-8?B?Y0JRbmFRblhBZ3o2N09STWFGanZtZS9vREJuUW5RQ1YrMHhFaXNuS0dta1dF?=
+ =?utf-8?B?UFh3SER3aVJ1R0hUcTZxZHBkYTg5N25FWmpxOGJHNWZRbmthOXEzWGpaV2c5?=
+ =?utf-8?B?SmlLbE4rUlRNa2ZyY1dhVDRRVk5iY1JUdWtSTU9CbDFaQVQ3L1JmRnlvbnIw?=
+ =?utf-8?B?KzdkT2RkZDR2STRuY3kyRjJlQ1ZxKzQ5NzhjZ3NWOUhyYXc1TmdCM0NiT3Fv?=
+ =?utf-8?B?QzhrMkIzZzVPc1NqVDhpd3Eyd1dSaFNjSEhRWlFzelk2aGoybWM2aGpjcHYw?=
+ =?utf-8?B?RG9xc1JuMXJYbHlkK1plTU1yNlpHdFJKUERIdUZRWGFQYk5MblN1NTBGY0JY?=
+ =?utf-8?B?b2J3KzhWWjNtSytMc2h4THdHZ3grcEJkZVBsOFFKYWprWjNTOVl1UzRxc2Uv?=
+ =?utf-8?B?dVZZZ3ZkbXhvZFIzODFZT01YMGpTUlNCYTZhaWtsaXpLY3JxWVI2OG1XSkFw?=
+ =?utf-8?B?Sy9mYkJjSWdNM2xJYlR0MnhZbWJvY2gxaXl4V1JnTlZyNjE3TmhYWEp4NkpW?=
+ =?utf-8?B?VVloNWVtNzZTNXpNMzJYaGZrKzFHRXlpS1BzendnamozS1FGZXRXZHVDQ0Uw?=
+ =?utf-8?B?VVlXUTUzTC9KWTJvYXpRQkdWNGEwOHhFZEYvQnBnK2tud0N6WmxCbVRmbDMv?=
+ =?utf-8?B?eVN3bDZJdndlLzVuWjV3SkFjb1U4M3JPQnJVOWxlRnJmdldxMmViaDEzOEtW?=
+ =?utf-8?B?ZlIySC8yZ1E1M2hYN2M0MXg1S0pSV3oyczN6ZlU1RjFPSFY4YU55eEdwSEg4?=
+ =?utf-8?B?Y0pSRHlrSUxEMHRmNk5HdnlaVW9VRE1FWGdiUGYraHdnNXRFZXYza24zUW9x?=
+ =?utf-8?B?cXVMa0FFa2wrZ003SjFBOU9CMm5mOHRPWmRmNGFjd0pkMVlYamRaSEc3NFNa?=
+ =?utf-8?B?NzZCRTY5azFlTTZyeTZ4UnlQa3oxSUIyVEZFQTJXMFFvMzFIekdkOGdHL2Vj?=
+ =?utf-8?B?WE1abjFFMm80ek5UVnBaTnBOcDB6Y0dUYzkwOXBMUHZhcGJYdXEzZDc4NVZE?=
+ =?utf-8?B?L0hJTXpIS2hVOGd1UkpvS1Bxb2w0ZzdMODE2YlRCZ2RrYWk5SFEyTTR1c0Vy?=
+ =?utf-8?B?dlM1NUxEcDllTC9iYUdZUEVqTTRJRzh6VldUYmpZaFN4YjBiUWRMYzcrL1gz?=
+ =?utf-8?B?TVJoT0E5WVI4R2x5MUpTWm5YNEhLK2RFRk5kYkxib2tTTlZsS1ZjU3U3bmxs?=
+ =?utf-8?B?S2hsYjdTTWxvYzVkbVk1YXhVWnJVOS9veFg2aVJKWVRQT01xUkRoZUZzMFY1?=
+ =?utf-8?B?WGJubWhYTEVQd2ttVFB1aUh0Si82YUdySjBSZXhUdzFUMktqNTV0NUI3cFpw?=
+ =?utf-8?B?RzZuSnl0SkJyTnVTK2Z5S2xsZ1kyUGJKSmt3SXE4REJtc3BxdFBPdVFWNW5h?=
+ =?utf-8?B?UGFhZ3VXaWkrQk1vZXNCSkY1Q3dqY1FzZFZ1cVJCc3lZRjM3bU5zKzcyTGZF?=
+ =?utf-8?B?SjJwTlYwenM1eWZTRXo1a1dZaXprNHh2TzBDQ1FGNlZWbHM5TS9WYzUva0tu?=
+ =?utf-8?B?bW96MlhXVnBHRzVMMlBYbDR5UXd6SklWalBKNWdrSU9FeHBBKzg4a2RLU1lj?=
+ =?utf-8?B?VjFaemV0K1Y2V01MRGd3YmFwb1o4ajNaMTFFeVFTNFhZQVU5S3NFNEFrZ2pP?=
+ =?utf-8?B?NnlqVW1YTFI4NW9PTkp5Z2xhcjh4aHdtNG43TlRRZWRFTEk3OE9URUc4V1pK?=
+ =?utf-8?B?L3kvc281NXowSUxobERyR0lEQWJOa0Z0QXkyM0pweFdrQWorZWdTcVFtMkxR?=
+ =?utf-8?B?TXZZSXZtRFdrNUVOTUtpaW41RlgxSG4zc2ZmeWo2NGxwbWk4SGltbmpibjd1?=
+ =?utf-8?B?SVRybzR4R2JIdiswR2xSeFdjZVRkUE5JY01nbWt0TVhjQkFQcGN0ZE9mbE5I?=
+ =?utf-8?B?MklqTWV0S3FSNmY1RXpyei93RnRLSDk3NXlvMjE2bzcwTnRPbVl0djJaUXBa?=
+ =?utf-8?B?NFlwUXpzVndZU2xVUTVqaCs4SWgzVU1nWmFtU0M4c011eEJuYjVLWU9Lcytp?=
+ =?utf-8?Q?u06TNnbPhUbF9ebcFnLizK4ZGkJS/vekB9raN/Cs3186?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2022 08:40:52.3459
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c7f6a8f-2a9d-4ac8-e31c-08daa6ca8cd5
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2022 12:10:10.6371
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1d2a4d0-08eb-40a3-c36e-08daa6ad4fd3
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT050.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5138
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xZsoIpKwRJkybg1WkC6fjb3pLNxq5MhVEsLRAaJOrVADwCi8+bMHwLVGVjNViEOnQkmJH16RYrpXNxykpHWOWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5870
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Wayne Chang <waynec@nvidia.com>
 
-Remove redundant codes for getting the vbus supply of usb3 ports because
-we get and control the vbus supply by the companion usb2 ports
+On 18/08/2022 15:15, Amadeusz Sławiński wrote:
+> We can use existing macros to poll and update register values instead of
+> open coding the functionality.
+> 
+> Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
+> Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+> ---
+>   sound/hda/hdac_stream.c | 26 ++++++--------------------
+>   1 file changed, 6 insertions(+), 20 deletions(-)
+> 
+> diff --git a/sound/hda/hdac_stream.c b/sound/hda/hdac_stream.c
+> index f3582012d22f..bdf6d4db6769 100644
+> --- a/sound/hda/hdac_stream.c
+> +++ b/sound/hda/hdac_stream.c
+> @@ -165,7 +165,6 @@ EXPORT_SYMBOL_GPL(snd_hdac_stop_streams_and_chip);
+>   void snd_hdac_stream_reset(struct hdac_stream *azx_dev)
+>   {
+>   	unsigned char val;
+> -	int timeout;
+>   	int dma_run_state;
+>   
+>   	snd_hdac_stream_clear(azx_dev);
+> @@ -173,30 +172,17 @@ void snd_hdac_stream_reset(struct hdac_stream *azx_dev)
+>   	dma_run_state = snd_hdac_stream_readb(azx_dev, SD_CTL) & SD_CTL_DMA_START;
+>   
+>   	snd_hdac_stream_updateb(azx_dev, SD_CTL, 0, SD_CTL_STREAM_RESET);
+> -	udelay(3);
+> -	timeout = 300;
+> -	do {
+> -		val = snd_hdac_stream_readb(azx_dev, SD_CTL) &
+> -			SD_CTL_STREAM_RESET;
+> -		if (val)
+> -			break;
+> -	} while (--timeout);
+> +
+> +	/* wait for hardware to report that the stream entered reset */
+> +	snd_hdac_stream_readb_poll(azx_dev, SD_CTL, val, (val & SD_CTL_STREAM_RESET), 3, 300);
+>   
+>   	if (azx_dev->bus->dma_stop_delay && dma_run_state)
+>   		udelay(azx_dev->bus->dma_stop_delay);
+>   
+> -	val &= ~SD_CTL_STREAM_RESET;
+> -	snd_hdac_stream_writeb(azx_dev, SD_CTL, val);
+> -	udelay(3);
+> +	snd_hdac_stream_updateb(azx_dev, SD_CTL, SD_CTL_STREAM_RESET, 0);
+>   
+> -	timeout = 300;
+> -	/* waiting for hardware to report that the stream is out of reset */
+> -	do {
+> -		val = snd_hdac_stream_readb(azx_dev, SD_CTL) &
+> -			SD_CTL_STREAM_RESET;
+> -		if (!val)
+> -			break;
+> -	} while (--timeout);
+> +	/* wait for hardware to report that the stream is out of reset */
+> +	snd_hdac_stream_readb_poll(azx_dev, SD_CTL, val, !(val & SD_CTL_STREAM_RESET), 3, 300);
+>   
+>   	/* reset first position - may not be synced with hw at this time */
+>   	if (azx_dev->posbuf)
 
-Signed-off-by: Wayne Chang <waynec@nvidia.com>
-Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
----
- drivers/phy/tegra/xusb-tegra124.c |  1 -
- drivers/phy/tegra/xusb-tegra186.c |  1 -
- drivers/phy/tegra/xusb-tegra210.c |  1 -
- drivers/phy/tegra/xusb.c          | 10 +---------
- drivers/phy/tegra/xusb.h          |  2 --
- 5 files changed, 1 insertion(+), 14 deletions(-)
 
-diff --git a/drivers/phy/tegra/xusb-tegra124.c b/drivers/phy/tegra/xusb-tegra124.c
-index db56c7fbe60b..f4f75ea033b8 100644
---- a/drivers/phy/tegra/xusb-tegra124.c
-+++ b/drivers/phy/tegra/xusb-tegra124.c
-@@ -1652,7 +1652,6 @@ tegra124_usb3_port_map(struct tegra_xusb_port *port)
- 
- static const struct tegra_xusb_port_ops tegra124_usb3_port_ops = {
- 	.release = tegra_xusb_usb3_port_release,
--	.remove = tegra_xusb_usb3_port_remove,
- 	.enable = tegra124_usb3_port_enable,
- 	.disable = tegra124_usb3_port_disable,
- 	.map = tegra124_usb3_port_map,
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index f6099609f154..25db49789f41 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -1213,7 +1213,6 @@ tegra186_usb3_port_map(struct tegra_xusb_port *port)
- 
- static const struct tegra_xusb_port_ops tegra186_usb3_port_ops = {
- 	.release = tegra_xusb_usb3_port_release,
--	.remove = tegra_xusb_usb3_port_remove,
- 	.enable = tegra186_usb3_port_enable,
- 	.disable = tegra186_usb3_port_disable,
- 	.map = tegra186_usb3_port_map,
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index eedfc7c2cc05..ebc8a7e21a31 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -3078,7 +3078,6 @@ tegra210_usb3_port_map(struct tegra_xusb_port *port)
- 
- static const struct tegra_xusb_port_ops tegra210_usb3_port_ops = {
- 	.release = tegra_xusb_usb3_port_release,
--	.remove = tegra_xusb_usb3_port_remove,
- 	.enable = tegra210_usb3_port_enable,
- 	.disable = tegra210_usb3_port_disable,
- 	.map = tegra210_usb3_port_map,
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 46661a8d5bbc..0eaab6d846bf 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -960,8 +960,7 @@ static int tegra_xusb_usb3_port_parse_dt(struct tegra_xusb_usb3_port *usb3)
- 			return -EINVAL;
- 	}
- 
--	usb3->supply = regulator_get(&port->dev, "vbus");
--	return PTR_ERR_OR_ZERO(usb3->supply);
-+	return 0;
- }
- 
- static int tegra_xusb_add_usb3_port(struct tegra_xusb_padctl *padctl,
-@@ -1018,13 +1017,6 @@ void tegra_xusb_usb3_port_release(struct tegra_xusb_port *port)
- 	kfree(usb3);
- }
- 
--void tegra_xusb_usb3_port_remove(struct tegra_xusb_port *port)
--{
--	struct tegra_xusb_usb3_port *usb3 = to_usb3_port(port);
--
--	regulator_put(usb3->supply);
--}
--
- static void __tegra_xusb_remove_ports(struct tegra_xusb_padctl *padctl)
- {
- 	struct tegra_xusb_port *port, *tmp;
-diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index d66b22bfeaa7..1b6b780efeec 100644
---- a/drivers/phy/tegra/xusb.h
-+++ b/drivers/phy/tegra/xusb.h
-@@ -360,7 +360,6 @@ void tegra_xusb_hsic_port_release(struct tegra_xusb_port *port);
- 
- struct tegra_xusb_usb3_port {
- 	struct tegra_xusb_port base;
--	struct regulator *supply;
- 	bool context_saved;
- 	unsigned int port;
- 	bool internal;
-@@ -382,7 +381,6 @@ struct tegra_xusb_usb3_port *
- tegra_xusb_find_usb3_port(struct tegra_xusb_padctl *padctl,
- 			  unsigned int index);
- void tegra_xusb_usb3_port_release(struct tegra_xusb_port *port);
--void tegra_xusb_usb3_port_remove(struct tegra_xusb_port *port);
- 
- struct tegra_xusb_port_ops {
- 	void (*release)(struct tegra_xusb_port *port);
+HDA playback is failing on -next for various Tegra boards. Bisect is 
+point to this commit and reverting it fixes the problem. I was a bit 
+puzzled why this change is causing a problem, but looking closer there 
+is a difference between the previous code that was calling 
+snd_hdac_stream_readb() and the new code that is calling 
+snd_hdac_stream_readb_poll(). The function snd_hdac_stream_readb() calls 
+snd_hdac_aligned_mmio() is see if the device has an aligned MMIO which 
+Tegra does and then would call snd_hdac_aligned_read(). However, now the 
+code always call readb() and this is breaking Tegra.
+
+So it is either necessary to update snd_hdac_stream_readb_poll() to 
+handle this or revert this change.
+
+Cheers
+Jon
+
 -- 
-2.25.1
-
+nvpublic
