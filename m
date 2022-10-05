@@ -2,187 +2,179 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C62C4321E
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Oct 2022 13:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B22C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Oct 2022 13:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbiJENFy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Oct 2022 09:05:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49384 "EHLO
+        id S229722AbiJENwU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Oct 2022 09:52:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229802AbiJENFv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Oct 2022 09:05:51 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F164B220F2
-        for <linux-tegra@vger.kernel.org>; Wed,  5 Oct 2022 06:05:47 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221005130543euoutp02821892fa2b451c7ac7ae7aacca14e9a5~bLhJbeiyK0749507495euoutp02h
-        for <linux-tegra@vger.kernel.org>; Wed,  5 Oct 2022 13:05:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221005130543euoutp02821892fa2b451c7ac7ae7aacca14e9a5~bLhJbeiyK0749507495euoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1664975143;
-        bh=cShw/3LGlylN+4jJotpQbuNoLk30Zznf4m8prglpDWE=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=S/UHF0e2phRkGiCF0XGwtynhMSI6OuPOWGnyUO31/4azPx9Fd/P482Gl+oVJELhmQ
-         4jSqwCm04jceqZqXx7ZIDlc124H3kU9UGzGKbKQ0r9kZHRmSgCpFwDeWXGZJSZtX8T
-         i62BfLpu0Uya4Uk6HTG2BvfShkSGvcgkGRaYS9oA=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20221005130543eucas1p1aed6763fdecb50ca11125c7eec2cbbf0~bLhI6xuMy3238032380eucas1p14;
-        Wed,  5 Oct 2022 13:05:43 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 1B.A2.29727.6218D336; Wed,  5
-        Oct 2022 14:05:42 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20221005130542eucas1p1a50cb2c3ee56c7c6b3b78f9d4b191abf~bLhIInLdI3061230612eucas1p19;
-        Wed,  5 Oct 2022 13:05:42 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221005130542eusmtrp2fa51b0c29199130127621c85d53fce3c~bLhIHmN630188401884eusmtrp2Y;
-        Wed,  5 Oct 2022 13:05:42 +0000 (GMT)
-X-AuditID: cbfec7f2-205ff7000001741f-4f-633d81261c13
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id BA.2D.10862.6218D336; Wed,  5
-        Oct 2022 14:05:42 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20221005130541eusmtip25243c5df6e3b8a7331bd5ea6df42850f~bLhHDpACD0498804988eusmtip2d;
-        Wed,  5 Oct 2022 13:05:41 +0000 (GMT)
-Message-ID: <207c1979-0da2-b05d-fead-6880ad956b90@samsung.com>
-Date:   Wed, 5 Oct 2022 15:05:41 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.13.1
-Subject: Re: [PATCH v8 00/29] Rework the trip points creation
+        with ESMTP id S229598AbiJENwS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Oct 2022 09:52:18 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 967125D0C6;
+        Wed,  5 Oct 2022 06:52:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=foWiIEwyQY9r2kj43iV+/WBuLGIwVMAQlkq4hmRakyi8114n0Z28+tbIlboE7wcY8AUXQW2/2BjUP74dIIpWeGyWa2VVwraJFHm1WhsP3pXuxUuQykDyCaKTvuUdqt/9/Ti3uZpph8EJHpfmm6ilTWYtfWYvDawvgf7vYm65uSVyGPVGi2GaLkHb2PzLPThe9t2XBE5LlQOcPSq1gw32AsAQraJICuVt+jBqWHXiAQHq1lugttUX7FuK5K3AAKGMFYx9IbXYR8E8Dg9dm0IJwdG1tdTJkKYk5JodnKa8h9nb6w3bfiIBjutoFEQ+/DkOYzF7gJ/bVHn5GqfWDEbi8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nK6Kiu8eJUGcCBoa9ph3FFFW71ciDkxrDodT6pjxLhk=;
+ b=VUV0SgaJquqpkAxPOmlrIYglOmwxG5EhLKc+iHjjUN0SrQlrCLjz+2rim4zSvNYP8/Uc1hy309tR3AXGXwmfYw+uH19qjNzwvUsOC/WCaSegn99wqPuLjca1h2B2a4o/FjGcF8IGn3YXGzLXVPlpzO0sg+J7WqmEzGmJxOu51rArkkZ9ru+YWdM9pND/wy4o6KNWD8tnr98TsJm6F9CBZbMKbxVGsFCk71a3dsdaxrgu87gUwT2LM4GLGDg8E9BiaPLSXGMHDZTTruAV3wwxx952gRpGr0MPzol9KA2nWMfBEGTn7SuU4iWngReY44V81fGBVtIAmPZtFqLWY0Hcgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nK6Kiu8eJUGcCBoa9ph3FFFW71ciDkxrDodT6pjxLhk=;
+ b=R5YJSQe1iNc3jVoipXnGsqg3dP0SwvT65kopsPJoVrGu+o1vDQb4DC9aM3Lj3j97n57BD9L6HvVRBoFKofRjMpnYgnK2hjx9kxVWQl884V27wWEmIcpwNuU00KVarYNragWCNl97X/RXUnLwnugxYrHbc/zOpQvh+xM9g+Wk+9I7YbN30M/+V/kn3PUOVg72kvOLys85mOd2N5N9EpBshSXptgdFIuDmJaNMIJfB9jBIui81oxa4I1LDA3f9q9OGdfDV9ONef+UTgsmr60FUP+P0u+qCAWRHkhzjYMz61y6UcnZ1YmQBUmXWGTJTvznyDF7q7KCzjdkL1WaYIafC8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY5PR12MB6551.namprd12.prod.outlook.com (2603:10b6:930:41::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5676.31; Wed, 5 Oct 2022 13:52:12 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::b07f:53b1:426e:a29d]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::b07f:53b1:426e:a29d%5]) with mapi id 15.20.5676.033; Wed, 5 Oct 2022
+ 13:52:12 +0000
+Message-ID: <9677f39a-5297-bb1c-d4e3-62484ec1cf25@nvidia.com>
+Date:   Wed, 5 Oct 2022 14:52:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2 2/4] ALSA: hda: Rework snd_hdac_stream_reset() to use
+ macros
 Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        rui.zhang@intel.com,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, rafael@kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <851008bf-145d-224c-87a8-cb6ec1e9addb@linaro.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Mohan Kumar D <mkumard@nvidia.com>
+References: <20220818141517.109280-1-amadeuszx.slawinski@linux.intel.com>
+ <20220818141517.109280-3-amadeuszx.slawinski@linux.intel.com>
+ <657d2418-0c3e-296f-8f4a-dc10ced2dffe@nvidia.com>
+ <87a66av4gk.wl-tiwai@suse.de>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <87a66av4gk.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkk+LIzCtJLcpLzFFi42LZduznOV21Rttkg9/XrS3OPf7NYvFg3jY2
-        i7W9R1ksvm+5zmQx77OsxaqpO1ks9r7eym6x6fE1VouJ+8+yW3T9WslscXnXHDaL2Uv6WSw+
-        9x5htNj68h2TxcTbG9gtZpzfx2TR+WUWm8WxBWIWq/e8YLaY+2Uqs8WTh31sFntbLzI7iHnM
-        un+WzWPFJ32PnbPusnss3vOSyWPTqk42jzvX9rB5bF5S77Hx3Q4mj/6/Bh59W1YxenzeJBfA
-        HcVlk5Kak1mWWqRvl8CVsXLTSraCv/wVFze/YmpgbOPtYuTgkBAwkXg+T7SLkYtDSGAFo8Tz
-        f59ZIZwvjBK7H75lh3A+M0rM2PSBsYuRE6zj4qNHLBCJ5YwSP859Z4ZwPjJKXF6yiR2kilfA
-        TuLn2sdgNouAisSi582MEHFBiZMzn7CA2KICyRI/uw6wgdjCArYS7390gtUzC4hL3HoynwnE
-        FhHQk2h838YEsoBZYAqbxOEVe1lBEmwChhJdb7vAmjmBlh3ZsAiqWV5i+9s5zBCnvuKUODHR
-        FsJ2kZg/6S4ThC0s8er4FnYIW0bi/875YAskBNoZJRb8vg/lTGCUaHh+C+ppa4k7536xgYKM
-        WUBTYv0ufUjoOUrc/+cPYfJJ3HgrCHECn8SkbdOZIcK8Eh1tQhAz1CRmHV8Ht/XghUvMExiV
-        ZiGFyiwk389C8swshLULGFlWMYqnlhbnpqcWG+allusVJ+YWl+al6yXn525iBKbS0/+Of9rB
-        OPfVR71DjEwcjIcYJTiYlUR4eU/aJAvxpiRWVqUW5ccXleakFh9ilOZgURLnZZuhlSwkkJ5Y
-        kpqdmlqQWgSTZeLglGpgas1MywlXW6yRvWzhuUS/oxOTTppaP9/kmKzPFxEUopizT8O0wNm2
-        aX9r6JKILwqnVqyUKhD7WbFlS/i74w+ubdT7fr/52CfZJ5mnd2wwYNVk7GH0/ZY3a8KfW3OU
-        M9uvrT0nzXXI2Mjk7fxDiqLy5TGuC2JO9Zlf/nNecva3A2v9OZPmvLK5cHTdRvF93tXS4uEp
-        fTmngzQ+p/AE6UysU/FdZVpdmm8xOyd1X36Pi8vDSUWR/gblZufs2EVN9Y93hU80fXYyKv+I
-        YVPJ7v7+rcuTiqR2Lj+7Osbr7r6vaa0LS382yZ6Jeu6z5orKgje9XK95hftf1J0oVr5/5kWY
-        NeuH+Km5FlqZKpWvjqxQYinOSDTUYi4qTgQA70iftBQEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMKsWRmVeSWpSXmKPExsVy+t/xe7pqjbbJBttb2SzOPf7NYvFg3jY2
-        i7W9R1ksvm+5zmQx77OsxaqpO1ks9r7eym6x6fE1VouJ+8+yW3T9WslscXnXHDaL2Uv6WSw+
-        9x5htNj68h2TxcTbG9gtZpzfx2TR+WUWm8WxBWIWq/e8YLaY+2Uqs8WTh31sFntbLzI7iHnM
-        un+WzWPFJ32PnbPusnss3vOSyWPTqk42jzvX9rB5bF5S77Hx3Q4mj/6/Bh59W1YxenzeJBfA
-        HaVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXsXLT
-        SraCv/wVFze/YmpgbOPtYuTkkBAwkbj46BFLFyMXh5DAUkaJlytb2CESMhInpzWwQtjCEn+u
-        dbGB2EIC7xklZu8OA7F5Bewkfq59DFbPIqAiseh5MyNEXFDi5MwnLCC2qECyxMs/E8FqhAVs
-        Jd7/6ASzmQXEJW49mc8EYosI6Ek0vm9jgohPY5P4/DkeYtdGJon3W+pBbDYBQ4mutxA3cALt
-        PbJhEdQcM4murV2MELa8xPa3c5gnMArNQnLGLCTrZiFpmYWkZQEjyypGkdTS4tz03GIjveLE
-        3OLSvHS95PzcTYzA1LHt2M8tOxhXvvqod4iRiYPxEKMEB7OSCC/vSZtkId6UxMqq1KL8+KLS
-        nNTiQ4ymwLCYyCwlmpwPTF55JfGGZgamhiZmlgamlmbGSuK8ngUdiUIC6YklqdmpqQWpRTB9
-        TBycUg1M1fHK5u17e/xmPNAx/RH0+cWjBb8WrNXuNq34YHCgtn/5TlP7D3sKTu25XGdRv+Bo
-        oMPkE2zaJ5cdPzpr9inpX/6XOaK26YtPvS8ygaf5seqXe+0nVrnrNpe0+Z9e/SOpau82KdeZ
-        J2Vkru5/EVpp7Cj1wkzmg0iIo6HeXPkwqU0PC9Iap8yJesKwfzqXW6GYzvcLrEL2N40WJrjP
-        3szWtf2Uada+eyXyJi2z9Phn7N6RvLljdZqM9uFwg+K7eW41zayWv3UMdkV+n7np305rbdGb
-        t7tCMuctC7JT2X7EV3mP2PRd+xP61F8/NJB9vf1I0+KwwILXh3j22pbOLnhya8YOsRa7yJzF
-        cj45z6adV2Ipzkg01GIuKk4EAIdUMlKmAwAA
-X-CMS-MailID: 20221005130542eucas1p1a50cb2c3ee56c7c6b3b78f9d4b191abf
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20221003092704eucas1p2875c1f996dfd60a58f06cf986e02e8eb
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20221003092704eucas1p2875c1f996dfd60a58f06cf986e02e8eb
-References: <CGME20221003092704eucas1p2875c1f996dfd60a58f06cf986e02e8eb@eucas1p2.samsung.com>
-        <20221003092602.1323944-1-daniel.lezcano@linaro.org>
-        <8cdd1927-da38-c23e-fa75-384694724b1c@samsung.com>
-        <c3258cb2-9a56-d048-5738-1132331a157d@linaro.org>
-        <851008bf-145d-224c-87a8-cb6ec1e9addb@linaro.org>
+X-ClientProxiedBy: LO4P123CA0421.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18b::12) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|CY5PR12MB6551:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3bb02c4d-2ace-4708-cb65-08daa6d8cdb1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MjhQRV98TNUbTvRX69kdjlsxcal7fmoc01Q4SqYLUJIC4Ni18IASNSh36SO/0GPr1BJPp66hOHOsOdhQjCiLsDyJXSR/dYBnXfYeLhvxopGJeoFDMfJL3fEoChJBVNL5AS2l3vXCwftF0fl/CtNmZm7wiQKjMDGvcsY0SsyVm24xYwQL9KOX8TzlM1OkNRhRJ/jO9V6QBfLJr33+sXXK5BIj8OtfebuO/KvAQoBtw10f/yDJlAdOJ6ciR5iuMf/H3yp/wjyIUNPIpfadPJnCRhO+NxwHuuc2sQKRTARkIiCoSkvBYglQQFrfCNR49JNI41lq3vdcAfeoBNcNthMQcuKQ82xouSJpfqn7DwFnB1zGg1sVJo4bxfZCodjDJq1J7FjaZacURXk7kSe25rGhAm86ZNx/HucFir3Xz05rBzOBt32qgnDcbA94KowoR3Gf92NYTs4fp/Dyikp2QQd6ycCY5XjAP3uu72NrJzPnoQX2duZv6X8A4m6FxksM9Sj7X5k3T+HJV67Iesg7Stu51acnWuoh4x47T/w3QGgybzTDjamT7h8jATjNHHKAH4ltyPRd9UOO/9/M1EtIwyHHobZzAYBwqwnyp3/TaH2ZdQ70iIpVPHHNhDi0mTOkxue6goeOqSxgC2Gwi/qlXZf/BuHaqOJgPySU+QZzkMGJ6dqczbyLeuC52hmcWg9coqkisyZ9NQnK6qPW+C8wyOY3NRYQPNzjTjzwlNEs5yP1JO+OoDKKVmUn/J/uYfK9kNC0aZh3oZnFNOZuBwT4Gm6IEBuAHpVwRoR1qPQGBs/oaEs=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(366004)(376002)(136003)(346002)(396003)(451199015)(38100700002)(186003)(36756003)(86362001)(31696002)(4326008)(53546011)(8936002)(41300700001)(5660300002)(66476007)(66556008)(66946007)(107886003)(6506007)(6666004)(6512007)(8676002)(478600001)(316002)(6486002)(54906003)(6916009)(2616005)(2906002)(83380400001)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VHpSK213b0syKytoSVBYVUsxQ3BnbHVYT0UzazJDQVBIWWVVZHBWVm44RmdL?=
+ =?utf-8?B?c1ZwY2NIUGgvc2tWdnlqZFVrdnF5MDRzSW9va0F5VWloMEorS3pQREt6bi8r?=
+ =?utf-8?B?SWg4UTRYSnBTdEkzTTVlcVh1czVoeE5uUnpuaEFMYU9UV1JBSzYxbzJOemJq?=
+ =?utf-8?B?cW5hWGoxL0xJYUxTS21KdHNOb2xCdkhjVG1hSTEzYVZxTmF1OEhGQWVTRWJW?=
+ =?utf-8?B?YXYzeVNTbzd4YUMvL1ZWS3RoQkhBdC8zaHhTV2VPc05peHo4VmxFd3BQYWFs?=
+ =?utf-8?B?bXFFTElvL3F5MGZpQ1lLb2tYbUtub3g5bm9pUkx6TFc4VjBhbTVRdUpIeVBv?=
+ =?utf-8?B?dnFvMitMb3lLWjhyWE9qTmR3bHZXUCtsOUppd1JTWCs3YzdFek96M0hoMFNs?=
+ =?utf-8?B?WWV0ekYyTElweE4wdjN3MTdrcGE4TS9IbTI0dHE3OU82dVZiU3M4TmlDSW9R?=
+ =?utf-8?B?R0ZkV1JSaHNSMUxMbGczandKV0kyUHZOU201ZElnNDZjbTJQdDBYRGFrVlBL?=
+ =?utf-8?B?azhqYnR6dUZlQktmVWxxWGhvYVorWnN2ZVl0Z0FURUk5ZkNnbXVsZUNIMGZS?=
+ =?utf-8?B?TVplWjdkTUZ0K3hTM3dkc3JZM293Vmc3SHdWWlJYbzFVZWRpSnJCSUVwWFhQ?=
+ =?utf-8?B?SXFQQW1tZGU3SXJzbmNZSDVjMEtLcE9ucGF4VmR2TERidDhLOUg4azJJTEhE?=
+ =?utf-8?B?NEVPNWVlVFB0cXBjM2twRzFJWERQMzhzRHRoZ05MUE1tUmZMZmIzQ0lXajcz?=
+ =?utf-8?B?UnEzZXJFWjFFLzQzUkZVZHltNEFNeGQ0WXArZHBMaUo4bWdRbjdPcnAva25k?=
+ =?utf-8?B?SndoWWY5b3pKcjhxTkVlV1RHeE55SWdrTHE0c25WMkZ1Tk9oTHA2RnpQNEJp?=
+ =?utf-8?B?eHF6Q2xDZjhhL1NmaGpJY3hEMFRXaGQ0WVBwY1V1NkVPdFAwWGFDRmJlV0po?=
+ =?utf-8?B?SmpPNytucktCaUtjeldlQUZOcERTUjRmUExBNnVtQlJ5cEozWXRLZlEveno5?=
+ =?utf-8?B?ZEhjNmtXb0JIdlpYUnFQcUxOV211U2xjaDc2Szd6dG9YdU9sV0M5Z2YrdVRN?=
+ =?utf-8?B?aTcyYUJWWlYwMXQxSTc0Y2JnSFQ1bjZhV1VEVXc4V0lzSFFqano3Qk1WbGNO?=
+ =?utf-8?B?WitaVHNTS2ViMGpKbEt0TVA1bHJBSVU3M1o4YzZTMDV6Tlc5NkpsckxZMlp5?=
+ =?utf-8?B?N0dpbitpeUY0bmV1Nk9Nc2ZRSmd3RUlZQjVVNXMrVW5ySUxiL09tbExoc3RV?=
+ =?utf-8?B?VnpjSWY1NWFGV3lVNEJsZHhlbko0eWIxQjgvZlFYT0tJNTNNTkxram1tVlBn?=
+ =?utf-8?B?NThMQTdzdVJKNnhJdGpaYUdZVkxMMGVmQ3BuazBNYUxaUGhIc2VRU0k5K1Ra?=
+ =?utf-8?B?RjJMNXFlWFhmdUhDR3d6ZVFBNjJGMXJqQ0FYZjNaU1c0TWxpakxwYjYxV3da?=
+ =?utf-8?B?YTloK0Z5WXBpaXA0Yy82YnJyYU9ENmVWMFJHMHVzWEo1U0Z6eW9IR0J5WHRn?=
+ =?utf-8?B?anBwMWRNZ1pNUmxwakFOY3ZLWlh5Q0FLQVlUSEpVcTlPcm1JbGtiQ3dtWmVH?=
+ =?utf-8?B?WGs3UTRPMnNaQjZrbitSbDJhQktPdjRYUU1EeVB3ak1HdGt3NVZ1ZC80cmlX?=
+ =?utf-8?B?SnV1M1prRmRoUGxYakVnYUhhaFVianJmRGRLUjhWbitmRjNzdHNZOFUzemF2?=
+ =?utf-8?B?d1BheDkvR3ZuSWIraWFDZzJJK0FFaVdjSnRDajRyY29naVZJby9oMndnWnpm?=
+ =?utf-8?B?YlMwVVByU2ZwRG41WjIwWmx3VmdGS3JwNlpLSHRRdVNXYnQwRDQyOGFBazIy?=
+ =?utf-8?B?MHE1K2NzRCtBMFJuczRxL2hweDAzcnhTQmpMWWpYalE0RnJqaWNNU081WnFT?=
+ =?utf-8?B?OUdZdzZoc043Nys4OEdWTEd3WnRDUzRuK2o1YkVGU0JEeTlkNG5GVVd3eGYx?=
+ =?utf-8?B?Q1kvazVnQTNidjFEdDB2Y3NhSFpqUDFSblBBLzAxTXNqUkRSOWZ1WUIzTW9y?=
+ =?utf-8?B?QXJXOXgyN1dKd0JTSzJkSElSVUIvdHFsQTBYMEMza0ZtcjUzeEFoYk1QOFJO?=
+ =?utf-8?B?NGwyOUJ3QlEwNUcyKyt6OUZ5WWd5eHRsY243M3RjSTIxdzB4K29CSGp6bmw3?=
+ =?utf-8?B?a0R1cG1STmdBcDMwZ210ZEMxMnhVeVVDSUdSTHo2b2VVMzgrS0dRb3piU0V6?=
+ =?utf-8?B?b2pOazhxd3dQd0VWcW1YbHl6RUc4OWMvSHBia25IUmQvbWdnR0Y5TzNPN0pn?=
+ =?utf-8?B?OC93SVNieHMxWTJIWkc2b0V6Wk9nPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bb02c4d-2ace-4708-cb65-08daa6d8cdb1
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2022 13:52:12.2985
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NFxwP9hNiyW11Ft/eLFmjHg8OXCzatfN4ppKME7pcG2qZel4ELIf9y8ITfsmTXMeRq+LJoAdZB9IWxDOWBT3HA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6551
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 05.10.2022 14:37, Daniel Lezcano wrote:
->
-> Hi Marek,
->
-> On 03/10/2022 23:18, Daniel Lezcano wrote:
->
-> [ ... ]
->
->>> I've tested this v8 patchset after fixing the issue with Exynos TMU 
->>> with
->>> https://lore.kernel.org/all/20221003132943.1383065-1-daniel.lezcano@linaro.org/ 
->>>
->>> patch and I got the following lockdep warning on all Exynos-based 
->>> boards:
->>>
->>>
->>> ======================================================
->>> WARNING: possible circular locking dependency detected
->>> 6.0.0-rc1-00083-ge5c9d117223e #12945 Not tainted
->>> ------------------------------------------------------
->>> swapper/0/1 is trying to acquire lock:
->>> c1ce66b0 (&data->lock#2){+.+.}-{3:3}, at: exynos_get_temp+0x3c/0xc8
->>>
->>> but task is already holding lock:
->>> c2979b94 (&tz->lock){+.+.}-{3:3}, at:
->>> thermal_zone_device_update.part.0+0x3c/0x528
->>>
->>> which lock already depends on the new lock.
->>
->> I'm wondering if the problem is not already there and related to 
->> data->lock ...
->>
->> Doesn't the thermal zone lock already prevent racy access to the data 
->> structure?
->>
->> Another question: if the sensor clock is disabled after reading it, 
->> how does the hardware update the temperature and detect the programed 
->> threshold is crossed?
->
-> just a gentle ping, as the fix will depend on your answer ;)
->
-Sorry, I've been busy with other stuff. I thought I will fix this once I 
-find a bit of spare time.
+On 05/10/2022 13:29, Takashi Iwai wrote:
 
-IMHO the clock management is a bit over-engineered, as there is little 
-(if any) benefit from such fine grade clock management. That clock is 
-needed only for the AHB related part of the TMU (reading/writing the 
-registers). The IRQ generation and temperature measurement is clocked 
-from so called 'sclk' (special clock).
+...
 
-I also briefly looked at the code and the internal lock doesn't look to 
-be really necessary assuming that the thermal core already serializes 
-all the calls.
+>> HDA playback is failing on -next for various Tegra boards. Bisect is
+>> point to this commit and reverting it fixes the problem. I was a bit
+>> puzzled why this change is causing a problem, but looking closer there
+>> is a difference between the previous code that was calling
+>> snd_hdac_stream_readb() and the new code that is calling
+>> snd_hdac_stream_readb_poll(). The function snd_hdac_stream_readb()
+>> calls snd_hdac_aligned_mmio() is see if the device has an aligned MMIO
+>> which Tegra does and then would call snd_hdac_aligned_read(). However,
+>> now the code always call readb() and this is breaking Tegra.
+>>
+>> So it is either necessary to update snd_hdac_stream_readb_poll() to
+>> handle this or revert this change.
+> 
+> Does the patch below work?
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> -- 8< --
+> --- a/include/sound/hdaudio.h
+> +++ b/include/sound/hdaudio.h
+> @@ -592,8 +592,8 @@ int snd_hdac_get_stream_stripe_ctl(struct hdac_bus *bus,
+>   #define snd_hdac_stream_readb(dev, reg) \
+>   	snd_hdac_reg_readb((dev)->bus, (dev)->sd_addr + AZX_REG_ ## reg)
+>   #define snd_hdac_stream_readb_poll(dev, reg, val, cond, delay_us, timeout_us) \
+> -	readb_poll_timeout((dev)->sd_addr + AZX_REG_ ## reg, val, cond, \
+> -			   delay_us, timeout_us)
+> +	read_poll_timeout(snd_hdac_reg_readb, val, cond, delay_us, timeout_us,\
+> +			  false, (dev)->bus, (dev)->sd_addr + AZX_REG_ ## reg)
+>   #define snd_hdac_stream_readl_poll(dev, reg, val, cond, delay_us, timeout_us) \
+>   	readl_poll_timeout((dev)->sd_addr + AZX_REG_ ## reg, val, cond, \
+>   			   delay_us, timeout_us)
 
-Best regards
+
+Amazingly it does not work. I would have thought that would, but it does 
+not. I am a bit puzzled by that?
+
+Jon
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+nvpublic
