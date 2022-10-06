@@ -2,140 +2,249 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22716C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Oct 2022 09:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D4AC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Oct 2022 10:52:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231363AbiJFJcH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Oct 2022 05:32:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38678 "EHLO
+        id S231238AbiJFKwx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Oct 2022 06:52:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231440AbiJFJcG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Oct 2022 05:32:06 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C745A9AFA3;
-        Thu,  6 Oct 2022 02:32:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WF57Gem3eyuKemSHGUOcBq7sBnIWQGmAIQ9FIYHgHrIKboonTrw5e08fZC7GEgopSI3Td32pqMr2sdDvetA99tXYqXTcJyRrHOoIn08kM+mUTxqnATAJkv0tG/5cxD0OXOW0xCyYrVQ3qnAIpIrc+028+2zpl71En23meyx7XpVYJymink99UEN6dLmwvF8euubIdRwGkll6JPVA2QBI0L2na3QE2tDvOv97hNTpbkAPoAIequZrwhqTI9owZhRIJt1a0xcCTkGs/VpnRrVfpsE0vNCm1TqjTd/5BFzzd5Xl6DvenFC0waLQCE5zAysxcCe9K/BjdQf14ek7P+wjuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uKhoKgc+ApRwif4elZMau1HGmgtA7EzvvAQ2CEQVA4A=;
- b=LQrMt35GaCg/8ue7cWk6nlj2uGYdHHuBGLFh2WdHh9qjwIek2ZVd8qzEmWbbv0s9bevpzS84u65m0yFeEnVEx0wQ0k8pInAyz5lYC+FtAaTte1MQ3u/x22eBiVcFJWsfNKe1TqT5nZG073FWtTTpbBQbnHgfPSxUgDCjIipqifbXvACdSeLHZew/veCR/yWYu90BAChzikDNwzAu5ql2jCJxniwrBcuaGcF1xQsHaGWikwQyCJyd1pzGxuG17xgK2DOQaS/jDbplYEKypeyiKAdXRAOCtlarY7FqLcsLqBRe6XaYw3zMlKAKAuzWLrfzRM8t3GvEoGFkXPEhA2nEXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uKhoKgc+ApRwif4elZMau1HGmgtA7EzvvAQ2CEQVA4A=;
- b=bYdJceqQs7vNJtOsTJ15SpRQbizx4XV3ljS38qxJlD1zQNiKjcwinLtC8m74hs//RVEQ65WjaDaJK3dhzm4rBGpTUAV/rMaFbhuBy7vzfdVzWkw/nmvZwhgIQm3l9BYo7zuk3SQ/KEv9I8btd+CHyhZ0unZqx36nFQMU4LobzPWoysP2KxkYC3/ZDPVt3FD2wtPB/ctMNEBiIkAkTMF/ocSz2hckulP10o1Wi1PTtKGKyQy6UVdHu/FAaK5PBPZNG/5zi9n/SnxUoJ96xElySa9DHyLLEYrh22vOTo+ToFe6gcn3bJZBqNm8thAb32ogYNEYSFlIEO0/2oH90x6Zmw==
-Received: from MW4PR04CA0336.namprd04.prod.outlook.com (2603:10b6:303:8a::11)
- by LV2PR12MB5870.namprd12.prod.outlook.com (2603:10b6:408:175::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.31; Thu, 6 Oct
- 2022 09:32:02 +0000
-Received: from CO1NAM11FT096.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8a:cafe::c3) by MW4PR04CA0336.outlook.office365.com
- (2603:10b6:303:8a::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24 via Frontend
- Transport; Thu, 6 Oct 2022 09:32:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CO1NAM11FT096.mail.protection.outlook.com (10.13.175.84) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5709.10 via Frontend Transport; Thu, 6 Oct 2022 09:32:02 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Thu, 6 Oct 2022
- 02:32:01 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Thu, 6 Oct 2022 02:32:00 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29 via Frontend
- Transport; Thu, 6 Oct 2022 02:32:00 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.4 00/51] 5.4.217-rc1 review
-In-Reply-To: <20221005113210.255710920@linuxfoundation.org>
-References: <20221005113210.255710920@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S230512AbiJFKww (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Oct 2022 06:52:52 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7140C98C81;
+        Thu,  6 Oct 2022 03:52:51 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id m3so2182054eda.12;
+        Thu, 06 Oct 2022 03:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=t8o+pyb3f/qVg1V7tg8SlbaPQuVD9Bud8eOgYKBOp4E=;
+        b=PU4TSIObQFqDgBqfJKx3R+EN14v0wZRDC18pHhIxXNyT5jZM9YKoz/EMDN4L/8WWWm
+         nsi9XARo88knP8q83F2/170w+J81+GeGO7Cbaq9bpJEAFRlKGdQQ++WbmGXSp00xqE/w
+         I/SKa0fr6nPKzN0n93r/QbniURE7kyiO2t/GCPPmbGor7pgEVTVogaBX3zj0izW5SF3C
+         WjH+ZpJZTfPWL/ReGKyWZT3PZeYXmFgtxKtYUuJisbZvtO5crJeMptWZvQar+ZZAruRm
+         19kjpTPDvEEJ6eBzeoKoHo/DJVxxwgYtP3v8JcaVjAJxfNy2zZIjeWyLine0SmM8+drn
+         ejeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=t8o+pyb3f/qVg1V7tg8SlbaPQuVD9Bud8eOgYKBOp4E=;
+        b=4tGG3y+cQcLw+ApnpNE9T0fLMj6wmt1x00tQ6hjd1PKI6E83Hj43xzejQi1GcjgZZ8
+         2QQjZGkXvRQBbf8wneQJUh2qDsfjH2sx+XbJEq9TRp0qvYi2JuXvcKtCvaJJ/b4Iil8m
+         t3OJQdZ/5SI6NGiaIYWwbTGRsS+DlUTmMsBKT0CySQSlXeMhFIL0V35H7dKlz4e9Bm09
+         qCFcYXxyVnegpi0tGV45fO4XMAcV6oqMFzC800/iogyKBy2yAQ35BhKv2Z0zV5a81C2n
+         FFUgi2WYzgqu8OIQT7Kc5fxhLYsyishZEnGEqHHJDF9aj8jqHEMvqqremfYw1LBpeW39
+         AXnA==
+X-Gm-Message-State: ACrzQf1MUrr4mbnCdqfPIowfALps/OW8/RT5vI+Cb+Lj3gjSSWGc30lQ
+        siXssSN/dCGh833tFnAaTXQ=
+X-Google-Smtp-Source: AMsMyM77X4RBaOSUIWqFPbX5N1+nuYY8E3lKPOxSOVSjz5WtuDU/HxX572kvNnKY7tGQNBY1TGeiBQ==
+X-Received: by 2002:a05:6402:34cf:b0:459:f9c5:7795 with SMTP id w15-20020a05640234cf00b00459f9c57795mr624566edc.160.1665053569839;
+        Thu, 06 Oct 2022 03:52:49 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id o25-20020a170906769900b007829fb46a0esm10243994ejm.142.2022.10.06.03.52.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Oct 2022 03:52:48 -0700 (PDT)
+Date:   Thu, 6 Oct 2022 12:52:46 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Prathamesh Shete <pshete@nvidia.com>
+Cc:     ulf.hansson@linaro.org, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        anrao@nvidia.com, smangipudi@nvidia.com, kyarlagadda@nvidia.com
+Subject: Re: [PATCH v6 2/4] mmc: sdhci-tegra: Add support to program MC
+ stream ID
+Message-ID: <Yz6zfrVq9cP/wrJb@orome>
+References: <a5c231e8-f28a-e692-5961-58e6838711ed@intel.com>
+ <20220928125648.19636-1-pshete@nvidia.com>
+ <20220928125648.19636-2-pshete@nvidia.com>
+ <34f002a4-b811-106b-52b5-6041674b15e9@intel.com>
 MIME-Version: 1.0
-Message-ID: <9eb1718f-e2d1-4a8b-aea1-adf66c7af01b@drhqmail202.nvidia.com>
-Date:   Thu, 6 Oct 2022 02:32:00 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT096:EE_|LV2PR12MB5870:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25592515-34e6-41e7-ba2a-08daa77da018
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: z9A2vRy461hPnOqyDr9qmh/2rcr88azHTMdN2pbG4BTUskLOArARKzadVNHZNIaeENfCtsorBOFEE0MNZLgyB0ckazkiMJ2g/G13ASInKnmqci3JDlpRXbrmk2LPH1GQKQVO6oycxLyQD3wW3VcKE/OVJ0FOAyOpunpYjHIbtUQF6+0iTfSMPtym0ahIYb1Zc261sIlJEKcEPTFyQgHDEnDtQvSB+hqGXLSpPUEtMIe5duCw42mDPQDBrcmXIxvkFGQoJ15KAMQHD1JC0HiTnq2fEa6Lq5FYWBwIwDk1BaqfRzhSjSfyctTTEnuaYgnM91ZYRkQie5mlM0e2oVHsYk1i1z9swWKkXGZahrixEFefQcfNOmCXwuCISRx0CbrmI/Cu+lbxxZTed4mKL2VsV9bT+67fe4khkpjUyI3jaONeD2MjhLFf43miuWPyjb5wZE169bWxmVbr6DzG7r7hm1dWoreARItfCxEDeUQ9M0Zmbuqec007xijVwfXZVMSBDtsc8ChtJeHvx9OE0LlMx123i0xuMwhzCu2hLT/p6o2ol2cQ9Vu6uclhhzWUJ/gxGEfsGSdHXJK2QFD1SqERwlpN9aVMbp45w9Mfmranf6OXWTG10neugQtslDSC4o6DBEW5As8TVF5350vDFQDoWRtumeeQBYK1+s57cpz9YqwLXexYX8vsgM2lKbqk/DPe3oZSVX8qdlFkgmdHObThmY5eKkxjuFa13o8UMmYLfENtYHx06bSX7hF/1W2qEzBJTYm+zZ4AFnkvu8awQnvWE3/+4wjevmCzhZR4VClj8N0mgHUvlFuNgmcs4D3NEykJ97+lt8jBGRSXzeMBRLYluCUe8ER17Sp24bLb8jO3lOM=
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(346002)(136003)(376002)(451199015)(36840700001)(40470700004)(46966006)(2906002)(5660300002)(41300700001)(7416002)(8936002)(31686004)(316002)(54906003)(36860700001)(70586007)(6916009)(86362001)(31696002)(82740400003)(478600001)(966005)(4326008)(8676002)(70206006)(356005)(47076005)(7636003)(186003)(40460700003)(40480700001)(26005)(426003)(336012)(82310400005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2022 09:32:02.3978
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25592515-34e6-41e7-ba2a-08daa77da018
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT096.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5870
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="GYjMp6IFoAg2M0P0"
+Content-Disposition: inline
+In-Reply-To: <34f002a4-b811-106b-52b5-6041674b15e9@intel.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 05 Oct 2022 13:31:48 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.217 release.
-> There are 51 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 07 Oct 2022 11:31:56 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.217-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+--GYjMp6IFoAg2M0P0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Test results for stable-v5.4:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    59 tests:	59 pass, 0 fail
+On Wed, Sep 28, 2022 at 05:18:19PM +0300, Adrian Hunter wrote:
+> On 28/09/22 15:56, Prathamesh Shete wrote:
+> > SMMU clients are supposed to program stream ID from
+> > their respective address spaces instead of MC override.
+> > Define NVQUIRK_PROGRAM_STREAMID and use it to program
+> > SMMU stream ID from the SDMMC client address space.
+> >=20
+> > Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
+> > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+>=20
+> One observation below.
+>=20
+> Nevertheless:
+>=20
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+>=20
+> > ---
+> >  drivers/mmc/host/sdhci-tegra.c | 44 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 44 insertions(+)
+> >=20
+> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-te=
+gra.c
+> > index a6c5bbae77b4..60ce3e80f248 100644
+> > --- a/drivers/mmc/host/sdhci-tegra.c
+> > +++ b/drivers/mmc/host/sdhci-tegra.c
+> > @@ -25,6 +25,10 @@
+> >  #include <linux/mmc/slot-gpio.h>
+> >  #include <linux/gpio/consumer.h>
+> >  #include <linux/ktime.h>
+> > +#ifdef CONFIG_IOMMU_API
+> > +#include <linux/iommu.h>
+> > +#include <linux/bitops.h>
+> > +#endif
+> > =20
+> >  #include <soc/tegra/common.h>
+> > =20
+> > @@ -94,6 +98,8 @@
+> >  #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
+> >  #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
+> > =20
+> > +#define SDHCI_TEGRA_CIF2AXI_CTRL_0			0x1fc
+> > +
+> >  #define NVQUIRK_FORCE_SDHCI_SPEC_200			BIT(0)
+> >  #define NVQUIRK_ENABLE_BLOCK_GAP_DET			BIT(1)
+> >  #define NVQUIRK_ENABLE_SDHCI_SPEC_300			BIT(2)
+> > @@ -121,6 +127,7 @@
+> >  #define NVQUIRK_HAS_TMCLK				BIT(10)
+> > =20
+> >  #define NVQUIRK_HAS_ANDROID_GPT_SECTOR			BIT(11)
+> > +#define NVQUIRK_PROGRAM_STREAMID			BIT(12)
+> > =20
+> >  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+> >  #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
+> > @@ -177,6 +184,9 @@ struct sdhci_tegra {
+> >  	bool enable_hwcq;
+> >  	unsigned long curr_clk_rate;
+> >  	u8 tuned_tap_delay;
+> > +#ifdef CONFIG_IOMMU_API
+> > +	u32 streamid;
+> > +#endif
+> >  };
+> > =20
+> >  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+> > @@ -1564,6 +1574,7 @@ static const struct sdhci_tegra_soc_data soc_data=
+_tegra234 =3D {
+> >  		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
+> >  		    NVQUIRK_ENABLE_SDR50 |
+> >  		    NVQUIRK_ENABLE_SDR104 |
+> > +		    NVQUIRK_PROGRAM_STREAMID |
+> >  		    NVQUIRK_HAS_TMCLK,
+> >  	.min_tap_delay =3D 95,
+> >  	.max_tap_delay =3D 111,
+> > @@ -1775,6 +1786,25 @@ static int sdhci_tegra_probe(struct platform_dev=
+ice *pdev)
+> >  	if (rc)
+> >  		goto err_add_host;
+> > =20
+> > +	/* Program MC streamID for DMA transfers */
+> > +#ifdef CONFIG_IOMMU_API
+> > +	if (soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
+> > +		struct iommu_fwspec *fwspec;
+> > +
+> > +		fwspec =3D dev_iommu_fwspec_get(&pdev->dev);
+> > +		if (fwspec =3D=3D NULL) {
+> > +			dev_warn(mmc_dev(host->mmc),
+> > +				"iommu fwspec is NULL, continue without stream ID\n");
+>=20
+> It will still program a zero streamid upon resume.
 
-Linux version:	5.4.217-rc1-g6376bfa24632
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+This was confusing to me, but I think what you mean is that the check
+for fwspec =3D=3D NULL should also be done in sdhci_tegra_resume().
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+>=20
+> > +		} else {
+> > +			tegra_host->streamid =3D fwspec->ids[0] & 0xff;
+> > +			tegra_sdhci_writel(host, tegra_host->streamid |
+> > +						FIELD_PREP(GENMASK(15, 8),
+> > +						tegra_host->streamid),
+> > +						SDHCI_TEGRA_CIF2AXI_CTRL_0);
+> > +		}
+> > +	}
+> > +#endif
+> > +
+> >  	return 0;
+> > =20
+> >  err_add_host:
+> > @@ -1861,6 +1891,10 @@ static int sdhci_tegra_suspend(struct device *de=
+v)
+> >  static int sdhci_tegra_resume(struct device *dev)
+> >  {
+> >  	struct sdhci_host *host =3D dev_get_drvdata(dev);
+> > +#ifdef CONFIG_IOMMU_API
+> > +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> > +	struct sdhci_tegra *tegra_host =3D sdhci_pltfm_priv(pltfm_host);
+> > +#endif
+> >  	int ret;
+> > =20
+> >  	ret =3D mmc_gpio_set_cd_wake(host->mmc, false);
+> > @@ -1871,6 +1905,16 @@ static int sdhci_tegra_resume(struct device *dev)
+> >  	if (ret)
+> >  		return ret;
+> > =20
+> > +	/* Re-program MC streamID for DMA transfers */
+> > +#ifdef CONFIG_IOMMU_API
+> > +	if (tegra_host->soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
+> > +		tegra_sdhci_writel(host, tegra_host->streamid |
+> > +					FIELD_PREP(GENMASK(15, 8),
+> > +					tegra_host->streamid),
+> > +					SDHCI_TEGRA_CIF2AXI_CTRL_0);
+> > +	}
+> > +#endif
 
-Jon
+So this here should be exactly the same as in sdhci_tegra_probe(). Which
+would be an argument for putting this into a separate function.
+
+That said, I'm not sure if this matters at all. If fwspec =3D=3D NULL, that
+implies that device tree didn't have an "iommus" property, which also
+implies that SMMU translations for this device will not be enabled at
+all, if I recall correctly, so whether this CIF2AXI_CTRL register is
+programmed or not in that case should be irrelevant.
+
+Still, might be good to keep this the same in both sdhci_tegra_probe()
+and sdhci_tegra_resume() for consistency.
+
+With that fixed, the series:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--GYjMp6IFoAg2M0P0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmM+s3wACgkQ3SOs138+
+s6EQeg//bDHPfg9KdsFStVnvP7sP/AtLWVOwl08YsFNGLAb1U6hT+lLyVkXPBw/K
+zfWcP6Mg2r3mlpqRCN2rlA2B1XYPg9OIkVetZ89rOyIeOV/n/9oRbjlzqYSPqwL4
+e0SNOIwGWPI84LYgSkHXi1f+wa8/XkVM2WZx/YNJR7RXVwHpourFog/va+0cq6wX
+dfU6YAU6ragHdu83sJxc72VFnDLqRRmFhu3lnisO3vkWwWR2mBubj7a5Liha7Jkc
+Uu9JPRtcS40BX7mlZFGA1M0ZltCB24cLCNkoLUlzlSzkLAXURvsBtZMdJwQzAj9N
+t/QibHe4096yB+rP5V5O5sZzM9aTjD5KRpqbiQM/EOi/Y0orQUM6y0UhEWJF4s6V
+n7fLxV/Ww9SzDSwwfPoPQylY40Adb69vDhzDxCvCa9lBjotf0iz1oiJGFZmAG41U
+vD2NzIdcLX+oVx1uVfv+ZmytaKCFFtwrLmu7bsH3bNr3RoIPrWXO5vVnmvKQmyJy
+IaygKAsXWac+gRvlX3yE4svgrOQ4b4XD47w4Mf6mZBzAgzpzSVVgJ3AOpxqNQw5o
+ftCShW+l6mkp8NlgzEKzx2+XN/G7pPV3LFvTAbqIZWukBoSqOT5S4Egly+7ZEB39
+gHgeka78NJPf2jIij0yclTiCMxT6xkEbZzGS+fnbmetvduNwMh4=
+=p3hS
+-----END PGP SIGNATURE-----
+
+--GYjMp6IFoAg2M0P0--
