@@ -2,249 +2,285 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D4AC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Oct 2022 10:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7CCC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Oct 2022 11:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231238AbiJFKwx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Oct 2022 06:52:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38234 "EHLO
+        id S231202AbiJFLFJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Oct 2022 07:05:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbiJFKww (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Oct 2022 06:52:52 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7140C98C81;
-        Thu,  6 Oct 2022 03:52:51 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id m3so2182054eda.12;
-        Thu, 06 Oct 2022 03:52:51 -0700 (PDT)
+        with ESMTP id S231203AbiJFLFI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Oct 2022 07:05:08 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2945E3135E;
+        Thu,  6 Oct 2022 04:05:07 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id z3so1286655edc.10;
+        Thu, 06 Oct 2022 04:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=t8o+pyb3f/qVg1V7tg8SlbaPQuVD9Bud8eOgYKBOp4E=;
-        b=PU4TSIObQFqDgBqfJKx3R+EN14v0wZRDC18pHhIxXNyT5jZM9YKoz/EMDN4L/8WWWm
-         nsi9XARo88knP8q83F2/170w+J81+GeGO7Cbaq9bpJEAFRlKGdQQ++WbmGXSp00xqE/w
-         I/SKa0fr6nPKzN0n93r/QbniURE7kyiO2t/GCPPmbGor7pgEVTVogaBX3zj0izW5SF3C
-         WjH+ZpJZTfPWL/ReGKyWZT3PZeYXmFgtxKtYUuJisbZvtO5crJeMptWZvQar+ZZAruRm
-         19kjpTPDvEEJ6eBzeoKoHo/DJVxxwgYtP3v8JcaVjAJxfNy2zZIjeWyLine0SmM8+drn
-         ejeQ==
+        bh=SWj+08Nh6gkacuObeofoo80owftzdWimdlCVryl1eqo=;
+        b=quNWaGl9LqL5qFvHqWNTpdUoIPDi6pC1wBdiIe31yXUCwDPp3szjQV9GZJb0dsBMB8
+         f4iftHXkZm9zxr/8oQuoqhumRJ9oq/WaSfAdTK1S9kQ9uGaHcJ1JgvccnT1Uesiq+Ztl
+         9mRXjgl9pB/92eM2LbAa9vitZwL9uVATNu9SvXCRYYZ5E5Rr9V3ZfVjiNuu/IFuKYnqi
+         sBmbBO0UoJP+3fJhjuxZo6RMTbpgHrKc7HJ1K77Eht3NnD6QqO4iG/KN71GWP2GnOjva
+         Ag6GVuOx37MXhkQEz4qhZ/3Ecg3JSw29NDdnXIIl3GZRxBXQAjibIa/XG0r0Lvf5QKf9
+         5/Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=t8o+pyb3f/qVg1V7tg8SlbaPQuVD9Bud8eOgYKBOp4E=;
-        b=4tGG3y+cQcLw+ApnpNE9T0fLMj6wmt1x00tQ6hjd1PKI6E83Hj43xzejQi1GcjgZZ8
-         2QQjZGkXvRQBbf8wneQJUh2qDsfjH2sx+XbJEq9TRp0qvYi2JuXvcKtCvaJJ/b4Iil8m
-         t3OJQdZ/5SI6NGiaIYWwbTGRsS+DlUTmMsBKT0CySQSlXeMhFIL0V35H7dKlz4e9Bm09
-         qCFcYXxyVnegpi0tGV45fO4XMAcV6oqMFzC800/iogyKBy2yAQ35BhKv2Z0zV5a81C2n
-         FFUgi2WYzgqu8OIQT7Kc5fxhLYsyishZEnGEqHHJDF9aj8jqHEMvqqremfYw1LBpeW39
-         AXnA==
-X-Gm-Message-State: ACrzQf1MUrr4mbnCdqfPIowfALps/OW8/RT5vI+Cb+Lj3gjSSWGc30lQ
-        siXssSN/dCGh833tFnAaTXQ=
-X-Google-Smtp-Source: AMsMyM77X4RBaOSUIWqFPbX5N1+nuYY8E3lKPOxSOVSjz5WtuDU/HxX572kvNnKY7tGQNBY1TGeiBQ==
-X-Received: by 2002:a05:6402:34cf:b0:459:f9c5:7795 with SMTP id w15-20020a05640234cf00b00459f9c57795mr624566edc.160.1665053569839;
-        Thu, 06 Oct 2022 03:52:49 -0700 (PDT)
+        bh=SWj+08Nh6gkacuObeofoo80owftzdWimdlCVryl1eqo=;
+        b=DwB8UgnaFc+04vKvzcCcCkLwTUHXHgCyPV24v1ouJako20qufShsiXcQbxOJYoZIId
+         EKIezjvycVVmdqxA1CoXD53qxG3Pq7hO2l/rebbg1ZvWpGxYuy4LFhZwTivH9dPC6WXa
+         DbTZC9hNRr7hmpoiMecU7Gf7716PL0mziDVfq4ZsWm8VFLUX2eicN5Ml0up4Z/ixdC3a
+         KWqBm7rcLoCyoCys1NJENhGwMc/wQtkhhhmuQQj/nflkkNY4MYywbM/73nLzzZWAZ4eJ
+         LPJywwYJlsgigtHKn2NosYyas+3qMjXwn/q70xSfE6MNLQmUXtHeRrvmkInBJPis36qd
+         js6g==
+X-Gm-Message-State: ACrzQf3qxFy7ZS5PR+7hXnear+/j290s+rHM/IuTXY/UDPmJNSujLcju
+        2JfUx7jZQWrnwRWaQZaNtJ4=
+X-Google-Smtp-Source: AMsMyM5FmaVUK8IRl2IifqJqWbb12QuQZvx1CzopJn1qkQ7i2wV/7f05khpiPqEnxvrLDKRqppbd/A==
+X-Received: by 2002:a05:6402:500d:b0:459:3e56:e6f9 with SMTP id p13-20020a056402500d00b004593e56e6f9mr4057876eda.367.1665054305305;
+        Thu, 06 Oct 2022 04:05:05 -0700 (PDT)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id o25-20020a170906769900b007829fb46a0esm10243994ejm.142.2022.10.06.03.52.48
+        by smtp.gmail.com with ESMTPSA id lb9-20020a170907784900b0073ddd36ba8csm10198373ejc.145.2022.10.06.04.05.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 03:52:48 -0700 (PDT)
-Date:   Thu, 6 Oct 2022 12:52:46 +0200
+        Thu, 06 Oct 2022 04:05:04 -0700 (PDT)
+Date:   Thu, 6 Oct 2022 13:05:02 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Prathamesh Shete <pshete@nvidia.com>
-Cc:     ulf.hansson@linaro.org, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        anrao@nvidia.com, smangipudi@nvidia.com, kyarlagadda@nvidia.com
-Subject: Re: [PATCH v6 2/4] mmc: sdhci-tegra: Add support to program MC
- stream ID
-Message-ID: <Yz6zfrVq9cP/wrJb@orome>
-References: <a5c231e8-f28a-e692-5961-58e6838711ed@intel.com>
- <20220928125648.19636-1-pshete@nvidia.com>
- <20220928125648.19636-2-pshete@nvidia.com>
- <34f002a4-b811-106b-52b5-6041674b15e9@intel.com>
+        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
+        Manish Bhardwaj <mbhardwaj@nvidia.com>
+Subject: Re: [PATCH v2] gpio: tegra186: Check GPIO pin permission before
+ access.
+Message-ID: <Yz62XmiH8YG3Dtsf@orome>
+References: <YyHVoihMuKNRFXAS@orome>
+ <20221004074845.29583-1-pshete@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GYjMp6IFoAg2M0P0"
+        protocol="application/pgp-signature"; boundary="wIueMpqElCFwwyGl"
 Content-Disposition: inline
-In-Reply-To: <34f002a4-b811-106b-52b5-6041674b15e9@intel.com>
+In-Reply-To: <20221004074845.29583-1-pshete@nvidia.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---GYjMp6IFoAg2M0P0
+--wIueMpqElCFwwyGl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 28, 2022 at 05:18:19PM +0300, Adrian Hunter wrote:
-> On 28/09/22 15:56, Prathamesh Shete wrote:
-> > SMMU clients are supposed to program stream ID from
-> > their respective address spaces instead of MC override.
-> > Define NVQUIRK_PROGRAM_STREAMID and use it to program
-> > SMMU stream ID from the SDMMC client address space.
-> >=20
-> > Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
-> > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+On Tue, Oct 04, 2022 at 01:18:45PM +0530, Prathamesh Shete wrote:
+> This change checks if we have the necessary permission to
+> access the GPIO. For devices that have support for virtualisation
+> we need to check both the TEGRA186_GPIO_VM_REG and the
+> TEGRA186_GPIO_SCR_REG registers. For device that do not have
+> virtualisation support for GPIOs we only need to check the
+> TEGRA186_GPIO_SCR_REG register.
 >=20
-> One observation below.
->=20
-> Nevertheless:
->=20
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
->=20
-> > ---
-> >  drivers/mmc/host/sdhci-tegra.c | 44 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 44 insertions(+)
-> >=20
-> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-te=
-gra.c
-> > index a6c5bbae77b4..60ce3e80f248 100644
-> > --- a/drivers/mmc/host/sdhci-tegra.c
-> > +++ b/drivers/mmc/host/sdhci-tegra.c
-> > @@ -25,6 +25,10 @@
-> >  #include <linux/mmc/slot-gpio.h>
-> >  #include <linux/gpio/consumer.h>
-> >  #include <linux/ktime.h>
-> > +#ifdef CONFIG_IOMMU_API
-> > +#include <linux/iommu.h>
-> > +#include <linux/bitops.h>
-> > +#endif
-> > =20
-> >  #include <soc/tegra/common.h>
-> > =20
-> > @@ -94,6 +98,8 @@
-> >  #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
-> >  #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
-> > =20
-> > +#define SDHCI_TEGRA_CIF2AXI_CTRL_0			0x1fc
-> > +
-> >  #define NVQUIRK_FORCE_SDHCI_SPEC_200			BIT(0)
-> >  #define NVQUIRK_ENABLE_BLOCK_GAP_DET			BIT(1)
-> >  #define NVQUIRK_ENABLE_SDHCI_SPEC_300			BIT(2)
-> > @@ -121,6 +127,7 @@
-> >  #define NVQUIRK_HAS_TMCLK				BIT(10)
-> > =20
-> >  #define NVQUIRK_HAS_ANDROID_GPT_SECTOR			BIT(11)
-> > +#define NVQUIRK_PROGRAM_STREAMID			BIT(12)
-> > =20
-> >  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-> >  #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-> > @@ -177,6 +184,9 @@ struct sdhci_tegra {
-> >  	bool enable_hwcq;
-> >  	unsigned long curr_clk_rate;
-> >  	u8 tuned_tap_delay;
-> > +#ifdef CONFIG_IOMMU_API
-> > +	u32 streamid;
-> > +#endif
-> >  };
-> > =20
-> >  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-> > @@ -1564,6 +1574,7 @@ static const struct sdhci_tegra_soc_data soc_data=
-_tegra234 =3D {
-> >  		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
-> >  		    NVQUIRK_ENABLE_SDR50 |
-> >  		    NVQUIRK_ENABLE_SDR104 |
-> > +		    NVQUIRK_PROGRAM_STREAMID |
-> >  		    NVQUIRK_HAS_TMCLK,
-> >  	.min_tap_delay =3D 95,
-> >  	.max_tap_delay =3D 111,
-> > @@ -1775,6 +1786,25 @@ static int sdhci_tegra_probe(struct platform_dev=
-ice *pdev)
-> >  	if (rc)
-> >  		goto err_add_host;
-> > =20
-> > +	/* Program MC streamID for DMA transfers */
-> > +#ifdef CONFIG_IOMMU_API
-> > +	if (soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
-> > +		struct iommu_fwspec *fwspec;
-> > +
-> > +		fwspec =3D dev_iommu_fwspec_get(&pdev->dev);
-> > +		if (fwspec =3D=3D NULL) {
-> > +			dev_warn(mmc_dev(host->mmc),
-> > +				"iommu fwspec is NULL, continue without stream ID\n");
->=20
-> It will still program a zero streamid upon resume.
+> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra186.c | 74 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 74 insertions(+)
 
-This was confusing to me, but I think what you mean is that the check
-for fwspec =3D=3D NULL should also be done in sdhci_tegra_resume().
+This looks mostly good. A few small comments, see below.
 
->=20
-> > +		} else {
-> > +			tegra_host->streamid =3D fwspec->ids[0] & 0xff;
-> > +			tegra_sdhci_writel(host, tegra_host->streamid |
-> > +						FIELD_PREP(GENMASK(15, 8),
-> > +						tegra_host->streamid),
-> > +						SDHCI_TEGRA_CIF2AXI_CTRL_0);
-> > +		}
-> > +	}
-> > +#endif
-> > +
-> >  	return 0;
-> > =20
-> >  err_add_host:
-> > @@ -1861,6 +1891,10 @@ static int sdhci_tegra_suspend(struct device *de=
-v)
-> >  static int sdhci_tegra_resume(struct device *dev)
-> >  {
-> >  	struct sdhci_host *host =3D dev_get_drvdata(dev);
-> > +#ifdef CONFIG_IOMMU_API
-> > +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
-> > +	struct sdhci_tegra *tegra_host =3D sdhci_pltfm_priv(pltfm_host);
-> > +#endif
-> >  	int ret;
-> > =20
-> >  	ret =3D mmc_gpio_set_cd_wake(host->mmc, false);
-> > @@ -1871,6 +1905,16 @@ static int sdhci_tegra_resume(struct device *dev)
-> >  	if (ret)
-> >  		return ret;
-> > =20
-> > +	/* Re-program MC streamID for DMA transfers */
-> > +#ifdef CONFIG_IOMMU_API
-> > +	if (tegra_host->soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
-> > +		tegra_sdhci_writel(host, tegra_host->streamid |
-> > +					FIELD_PREP(GENMASK(15, 8),
-> > +					tegra_host->streamid),
-> > +					SDHCI_TEGRA_CIF2AXI_CTRL_0);
-> > +	}
-> > +#endif
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index 54d9fa7da9c1..34b6c287d608 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -26,6 +26,22 @@
+> =20
+>  #define TEGRA186_GPIO_INT_ROUTE_MAPPING(p, x) (0x14 + (p) * 0x20 + (x) *=
+ 4)
+> =20
+> +#define  TEGRA186_GPIO_VM			0x00
+> +#define  TEGRA186_GPIO_VM_RW_MASK		0x03
+> +#define  TEGRA186_GPIO_SCR			0x04
+> +#define  TEGRA186_GPIO_SCR_PIN_SIZE		0x08
+> +#define  TEGRA186_GPIO_SCR_PORT_SIZE		0x40
+> +#define  TEGRA186_GPIO_SCR_SEC_WEN		BIT(28)
+> +#define  TEGRA186_GPIO_SCR_SEC_REN		BIT(27)
+> +#define  TEGRA186_GPIO_SCR_SEC_G1W		BIT(9)
+> +#define  TEGRA186_GPIO_SCR_SEC_G1R		BIT(1)
+> +#define  TEGRA186_GPIO_FULL_ACCESS		(TEGRA186_GPIO_SCR_SEC_WEN | \
+> +						 TEGRA186_GPIO_SCR_SEC_REN | \
+> +						 TEGRA186_GPIO_SCR_SEC_G1R | \
+> +						 TEGRA186_GPIO_SCR_SEC_G1W)
+> +#define  TEGRA186_GPIO_SCR_SEC_ENABLE		(TEGRA186_GPIO_SCR_SEC_WEN | \
+> +						 TEGRA186_GPIO_SCR_SEC_REN)
+> +
+>  /* control registers */
+>  #define TEGRA186_GPIO_ENABLE_CONFIG 0x00
+>  #define  TEGRA186_GPIO_ENABLE_CONFIG_ENABLE BIT(0)
+> @@ -77,6 +93,7 @@ struct tegra_gpio_soc {
+>  	unsigned int num_irqs_per_bank;
+> =20
+>  	const struct tegra186_pin_range *pin_ranges;
+> +	bool has_vm_support;
 
-So this here should be exactly the same as in sdhci_tegra_probe(). Which
-would be an argument for putting this into a separate function.
+You've placed this right between two fields that clearly belong
+together. Best to add new fields towards the end of the structure if
+they are not related to any of the other fields.
 
-That said, I'm not sure if this matters at all. If fwspec =3D=3D NULL, that
-implies that device tree didn't have an "iommus" property, which also
-implies that SMMU translations for this device will not be enabled at
-all, if I recall correctly, so whether this CIF2AXI_CTRL register is
-programmed or not in that case should be irrelevant.
+>  	unsigned int num_pin_ranges;
+>  	const char *pinmux;
+>  	bool has_gte;
+> @@ -129,6 +146,58 @@ static void __iomem *tegra186_gpio_get_base(struct t=
+egra_gpio *gpio,
+>  	return gpio->base + offset + pin * 0x20;
+>  }
+> =20
+> +static void __iomem *tegra186_gpio_get_secure_base(struct tegra_gpio *gp=
+io,
+> +					    unsigned int pin)
+> +{
+> +	const struct tegra_gpio_port *port;
+> +	unsigned int offset;
+> +
+> +	port =3D tegra186_gpio_get_port(gpio, &pin);
+> +	if (!port)
+> +		return NULL;
+> +
+> +	offset =3D port->bank * 0x1000 + port->port * TEGRA186_GPIO_SCR_PORT_SI=
+ZE;
+> +
+> +	return gpio->secure + offset + pin * TEGRA186_GPIO_SCR_PIN_SIZE;
+> +}
+> +
+> +static inline bool tegra186_gpio_is_accessible(struct tegra_gpio *gpio, =
+u32 pin)
 
-Still, might be good to keep this the same in both sdhci_tegra_probe()
-and sdhci_tegra_resume() for consistency.
+Pin offsets are "unsigned int" in the rest of the driver, so please
+stick to that here as well.
 
-With that fixed, the series:
+> +{
+> +	void __iomem *secure;
+> +	u32 val;
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+The drivers uses "u32 value;" everywhere else, so best stick to that for
+consistency.
 
---GYjMp6IFoAg2M0P0
+> +
+> +	secure =3D tegra186_gpio_get_secure_base(gpio, pin);
+> +
+> +	if (gpio->soc->has_vm_support) {
+> +		val =3D readl(secure + TEGRA186_GPIO_VM);
+> +		if ((val & TEGRA186_GPIO_VM_RW_MASK) !=3D TEGRA186_GPIO_VM_RW_MASK)
+> +			return false;
+> +	}
+> +
+> +	val =3D __raw_readl(secure + TEGRA186_GPIO_SCR);
+> +
+> +	if ((val & TEGRA186_GPIO_SCR_SEC_ENABLE) =3D=3D 0)
+> +		return true;
+> +
+> +	if ((val & TEGRA186_GPIO_FULL_ACCESS) =3D=3D TEGRA186_GPIO_FULL_ACCESS)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +static int tegra186_init_valid_mask(struct gpio_chip *chip,
+> +		unsigned long *valid_mask, unsigned int ngpios)
+> +{
+> +	struct tegra_gpio *gpio =3D gpiochip_get_data(chip);
+> +	int j;
+
+Make that unsigned int to match the type of ngpios.
+
+> +
+> +	for (j =3D 0; j < ngpios; j++) {
+> +		if (!tegra186_gpio_is_accessible(gpio, j))
+> +			clear_bit(j, valid_mask);
+> +	}
+> +	return 0;
+> +}
+> +
+>  static int tegra186_gpio_get_direction(struct gpio_chip *chip,
+>  				       unsigned int offset)
+>  {
+> @@ -763,6 +832,7 @@ static int tegra186_gpio_probe(struct platform_device=
+ *pdev)
+>  	gpio->soc =3D device_get_match_data(&pdev->dev);
+>  	gpio->gpio.label =3D gpio->soc->name;
+>  	gpio->gpio.parent =3D &pdev->dev;
+> +	gpio->gpio.init_valid_mask =3D tegra186_init_valid_mask;
+
+Maybe slot this in before the gpio->gpio.add_pin_ranges assignment
+further below in this function to keep things ordered a bit better.
+
+> =20
+>  	/* count the number of banks in the controller */
+>  	for (i =3D 0; i < gpio->soc->num_ports; i++)
+> @@ -1042,6 +1112,7 @@ static const struct tegra_gpio_soc tegra194_main_so=
+c =3D {
+>  	.num_pin_ranges =3D ARRAY_SIZE(tegra194_main_pin_ranges),
+>  	.pin_ranges =3D tegra194_main_pin_ranges,
+>  	.pinmux =3D "nvidia,tegra194-pinmux",
+> +	.has_vm_support =3D true,
+>  };
+> =20
+>  #define TEGRA194_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
+> @@ -1067,6 +1138,7 @@ static const struct tegra_gpio_soc tegra194_aon_soc=
+ =3D {
+>  	.instance =3D 1,
+>  	.num_irqs_per_bank =3D 8,
+>  	.has_gte =3D true,
+> +	.has_vm_support =3D false,
+>  };
+> =20
+>  #define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
+> @@ -1111,6 +1183,7 @@ static const struct tegra_gpio_soc tegra234_main_so=
+c =3D {
+>  	.name =3D "tegra234-gpio",
+>  	.instance =3D 0,
+>  	.num_irqs_per_bank =3D 8,
+> +	.has_vm_support =3D true,
+>  };
+> =20
+>  #define TEGRA234_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
+> @@ -1136,6 +1209,7 @@ static const struct tegra_gpio_soc tegra234_aon_soc=
+ =3D {
+>  	.name =3D "tegra234-gpio-aon",
+>  	.instance =3D 1,
+>  	.num_irqs_per_bank =3D 8,
+> +	.has_vm_support =3D false,
+
+It's not technically necessary to initialize 0/false fields because
+that's what they end up with if you don't initialize them at all. I do
+like to be explicit, so no objection from me on this. However, since we
+are being explicit, we should set this new field for Tegra186 and
+Tegra241 as well.
+
+Thierry
+
+--wIueMpqElCFwwyGl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmM+s3wACgkQ3SOs138+
-s6EQeg//bDHPfg9KdsFStVnvP7sP/AtLWVOwl08YsFNGLAb1U6hT+lLyVkXPBw/K
-zfWcP6Mg2r3mlpqRCN2rlA2B1XYPg9OIkVetZ89rOyIeOV/n/9oRbjlzqYSPqwL4
-e0SNOIwGWPI84LYgSkHXi1f+wa8/XkVM2WZx/YNJR7RXVwHpourFog/va+0cq6wX
-dfU6YAU6ragHdu83sJxc72VFnDLqRRmFhu3lnisO3vkWwWR2mBubj7a5Liha7Jkc
-Uu9JPRtcS40BX7mlZFGA1M0ZltCB24cLCNkoLUlzlSzkLAXURvsBtZMdJwQzAj9N
-t/QibHe4096yB+rP5V5O5sZzM9aTjD5KRpqbiQM/EOi/Y0orQUM6y0UhEWJF4s6V
-n7fLxV/Ww9SzDSwwfPoPQylY40Adb69vDhzDxCvCa9lBjotf0iz1oiJGFZmAG41U
-vD2NzIdcLX+oVx1uVfv+ZmytaKCFFtwrLmu7bsH3bNr3RoIPrWXO5vVnmvKQmyJy
-IaygKAsXWac+gRvlX3yE4svgrOQ4b4XD47w4Mf6mZBzAgzpzSVVgJ3AOpxqNQw5o
-ftCShW+l6mkp8NlgzEKzx2+XN/G7pPV3LFvTAbqIZWukBoSqOT5S4Egly+7ZEB39
-gHgeka78NJPf2jIij0yclTiCMxT6xkEbZzGS+fnbmetvduNwMh4=
-=p3hS
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmM+tlwACgkQ3SOs138+
+s6Ez+w/9FpeFqssyODdvFPPaSJVoQhx8Avcx4WK/cItqBnM+tB1fygrgpl6A2sh5
+XvZKOzhET0TCtFLpftfonlG+3elynFYdOEqugG9vcFTcS7vffxXt9dj5tJX62k7X
+7dbonYK9jvNhy26oEjOe2NOaRk6BOR4KNVC8TYwXZcJizq4Z6m/8apk8hiYLIzd8
+vonhilY/oeA7ac4QtL2JOtN1zmIzUKc0Gmz55ZwOMAhJAZag3zJpsE1dBLDQc96k
+ncDV+v99WFsghH9hdwWGLXf9rvvPkoQFWzayeE6kKMlFVLRnTZE5sYomAAfJfFF1
+TfDcW6P3aj32VCCBq6Jtrlq0Z3LLgbBZyPTJKqTMj1JK+7a7ruDa9RObMCrifPcC
+C4hb1R/F3t7NF/FJOjA3DnWilMwNZV8Ez8ux6FTiVWVMPPyBKnLns7YbFYpOyWd/
+LjD2yKuWhEfAUA0te8GlRBvO4fgm8VxaJqbfK3aOwRZT+n1ZiSCrR1PQMih9GSbE
+PzunC2qRpyr28AoUpII1IqCAYzs/Xz3FBh7XipIQSH1vEQPSzJwwdQXGyhmZTKvl
+aMPL6CAngZsnntATEEMtatiZPnGcJHl63J74cxYXkMrAY9AbEZCaxrjKInOhnIcL
+hEWwUhEXlVozq1FlSZSicZ2YpLNb8tQcF5Sr4N1S/Quu3tVuuR0=
+=wN8V
 -----END PGP SIGNATURE-----
 
---GYjMp6IFoAg2M0P0--
+--wIueMpqElCFwwyGl--
