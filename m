@@ -2,165 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68EFC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Oct 2022 12:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB8CC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Oct 2022 13:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231721AbiJFM4x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Oct 2022 08:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
+        id S231199AbiJFNHH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Oct 2022 09:07:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231740AbiJFM4Y (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Oct 2022 08:56:24 -0400
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960B421828;
-        Thu,  6 Oct 2022 05:55:33 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id r17so4322258eja.7;
-        Thu, 06 Oct 2022 05:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=pMgQyMBUHz4DAGv7dUKQ5faE2OXLKUuJdGmQsBE60y8=;
-        b=AUCe13PGJRYHhE/cTCIPw3OUFheQpUYNOU1YGMsrmfFlzNw2kwLLxVFE7xU4qNWRhj
-         9+MqUoB1YKqUZ3grGYiXLXIciHboc0OhiCtxIR1W6M6cavsAtHlj8DlNj+fTVvalDIHy
-         74udg159h7+Xf8btJEit/ihZjOhuuIrIzg9xBO3ev96L9E/t8wiG+V9Pk6SPpVBYA/4e
-         0cBR56s7R/eWMiRwmY8UgV4MYlvuFtsey9C35FuQE9TFx9hvThpq6mFowVovaFMgQxMq
-         1kR8ncqlEbm7AvVMob7N3+9WrsNEH0eadJyccflxQBerghS+1SNTMW5eEMB8BSvJASQK
-         bX8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=pMgQyMBUHz4DAGv7dUKQ5faE2OXLKUuJdGmQsBE60y8=;
-        b=JZX3MSiVAIFWTKQp5c+/RkLvEMiehP+yNk6eK8bkAS25L0ACywHhsm3OxdoXDtbrxZ
-         GudILje6ImjSGU/LuHTq09zIe5QwN4pMQanac1eHIbsILflVF9Tk9z74nV5MF9JOZBGw
-         rVAkDOnWClF0YijLZR3oeCT4/7DQV7UdCoSLcnk4DlQfFWjf2RrLd606rUlArfxSCR+L
-         xSSTLDAUItuAP/6We7+/851v2QO6i80pxbdzr4CJIRunGOmYKX9eH6pC4pcUlhciCF+D
-         ZezVT5PvitQ0gveRxjYAJAQ0cZU2mzlmATZ/w5NGgKhZ4qrAPbDQf4obWfNZXdCrGa4e
-         kJEA==
-X-Gm-Message-State: ACrzQf2vvzKQIgXLwxer9+SHmf7In+2MMJ5gMw7vvmfL3Z5mbr8rXWR1
-        1MWJOUbsVAXuwICuP4Re9zU=
-X-Google-Smtp-Source: AMsMyM5eI7766P4xReWjJJvJIeOwhFNTHRvpw0SnB31J+1Nay85fWQ9zH9PSAx5ICwz59XycOdax6Q==
-X-Received: by 2002:a17:907:7ea7:b0:78d:3638:9018 with SMTP id qb39-20020a1709077ea700b0078d36389018mr3934377ejc.236.1665060627958;
-        Thu, 06 Oct 2022 05:50:27 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b40-20020a509f2b000000b00456c6b4b777sm5710157edf.69.2022.10.06.05.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 05:50:27 -0700 (PDT)
-Date:   Thu, 6 Oct 2022 14:50:25 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: tegra: Update comment about config space
-Message-ID: <Yz7PEakeTyvmnxDh@orome>
-References: <20220911113216.14892-1-pali@kernel.org>
- <YzRcYwQYlawV10QS@orome>
- <20221005194336.gdnu4vfzkudedjw5@pali>
+        with ESMTP id S230458AbiJFNGz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Oct 2022 09:06:55 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2042.outbound.protection.outlook.com [40.107.95.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B572A5734;
+        Thu,  6 Oct 2022 06:06:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lDw4Dcg5n6DRQIXott2G/RIPbn3Eq3klEqkxmmy3MlWmjbJebQj9Z7KCWgVO3Jty7Le8UsIRcmo3Plt2tCxgXrzQVDrvUjg6niHfMvzm1EFHj0YkMaaKaYAR2U3zRh2lAnlXTHoFGar8lej52wbsHCevPvuhXbw+vYotaU5efIUlGYobap9Jaff3Gfgl5GQXRV/YyGejeiVWizdmmGmQnmtszAFrogAkapRPGB0/wz0lxgoRPSBZoAuW/+hCutNxEWNzsPkz8d+L33Ouhh8dhH662/vmymNpz5tOzgbNUh0J8AuSg1uStJGpgkxlOQ1xtl6uxQUEcRhvwIxvmQMtdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ySAXZuQxT+OaejFFBcyvnzs7QYtblFhBELXJC0YqmDY=;
+ b=lBZLT4W3LOlmDoksTok5J9ZB/rTBxxjSEZ7z3jLTatl/knKsRo92yUlpzHhSJBPUJPrXFox0WQav2s+icWp8f5GJH8zXRcOiNl7YXi8jwfzcvKMipCRgAR7ukXQLZSS1m+BLsm06CJaDS27kzr3QQS9bF73sukE+wCiHb3c/7CxelMmHRoD1UNR5+yFyFOifG4+/n/Ke3C6dmOSV40zw+BjKsE0hh799ZII9jAzrWr6Zdv9UAyRP5hPc/mEvrRCzGV7usnaEubqImNoyLK+l8CHlBOdOlySxbRlgGSbfk1jNz856Bomq0iOl0DUvTo+BJ1qkUOm/ta4232bKVoub7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ySAXZuQxT+OaejFFBcyvnzs7QYtblFhBELXJC0YqmDY=;
+ b=Sr+UCXaOIAwB7GO2RyvReK268Mgn1V/8NB5X9/Goxpq8pqPqcWFNIOfZP4A7VWV4lCpMtpWwa0OlMloMyzUOVJ3cbiAjmnKVq85AHgK2lcWU727b6MK7WOF0MwVHFBDC1zywz1Sc9p8ig+yo+cqlq/ANuulG8JO+WSbr7GNoxulZdA2qZkf21rwboTQr6RcEzY1pm/CpFu9wOgTgpDmu5mQZMP6elmHXAGHKmn66p+BtGb7eK+CDqyqQ+eC36PabuLcWkMH8W1mBirSSB6K99e/+4RViu38Yt1QDFbrj/ZRU3F67EaQDzChjsrDEVvhpqdJiuigX9dQsRqD7MeDptA==
+Received: from MW3PR05CA0011.namprd05.prod.outlook.com (2603:10b6:303:2b::16)
+ by PH7PR12MB6665.namprd12.prod.outlook.com (2603:10b6:510:1a7::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24; Thu, 6 Oct
+ 2022 13:06:51 +0000
+Received: from CO1NAM11FT027.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:2b:cafe::9d) by MW3PR05CA0011.outlook.office365.com
+ (2603:10b6:303:2b::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.7 via Frontend
+ Transport; Thu, 6 Oct 2022 13:06:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1NAM11FT027.mail.protection.outlook.com (10.13.174.224) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5709.10 via Frontend Transport; Thu, 6 Oct 2022 13:06:50 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Thu, 6 Oct 2022
+ 06:06:28 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Thu, 6 Oct 2022
+ 06:06:27 -0700
+Received: from pshete-ubuntu.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Thu, 6 Oct 2022 06:06:24 -0700
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <p.zabel@pengutronix.de>, <linux-mmc@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <anrao@nvidia.com>, <smangipudi@nvidia.com>, <pshete@nvidia.com>,
+        <kyarlagadda@nvidia.com>
+Subject: [PATCH v7 1/4] mmc: sdhci-tegra: Separate Tegra194 and Tegra234 SoC data
+Date:   Thu, 6 Oct 2022 18:36:19 +0530
+Message-ID: <20221006130622.22900-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <Yz6zfrVq9cP/wrJb@orome>
+References: <Yz6zfrVq9cP/wrJb@orome>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ERmlPpGZ/YGPk8vW"
-Content-Disposition: inline
-In-Reply-To: <20221005194336.gdnu4vfzkudedjw5@pali>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT027:EE_|PH7PR12MB6665:EE_
+X-MS-Office365-Filtering-Correlation-Id: ace4b991-020e-4661-868f-08daa79ba225
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: dlIx2B8+ypxAjI8FrWfp6eLGltb4WwMIzbUJV/rH79Cz6QlxHdfi8cQHMxrAZQw+eeSDzBMsDiyMB8ZUc59QjEjzep6PakQGkyLW0LEDpboqyzjUF8vnZSdRvUZGL+P3PInGfImQiO5GM3oaJp+z9AvE6PVI1eFFNjwTRDYHQ3ReOyN1nZ+G/trpe2JXNsSg9brgQzo8atImM5YuvJC30ozKhn3xcBigKpYbHyP7ifo7BVQIana9nzW2flCTcmV165Fjo4J1ttrrAdafcTxqvpt7gTEcduMkS6OhhSMIFuDfJ6czUx9P89xkdYXAx0GYbeoVSRjTDfFpM2XecgsytkQRtVPYvcKC+9nLO5So96VMJVbgLIiviqrD0ngOj3QF4r4OAAa1h59DHOyRQJBMV6CGISMM2i63CR4foHJJntrRC6QRQyTpHNA/sY8xwx+BqEb0f4WLwgIGypgf6nUSPKf+7z70+XD0fq2Txex7UvX+MHGzHkhU1iMex2JQ1lqBEN8aH4qJbqmeWB/+kkf+aJqaK783zgakqEZgMCcCictwYUajS8Rz6/Zm2PTu0A19be5iVJIetNSBsVwTOXNusGR/HIWESP5p2gCuwlutIkOMLg+frOBpqqP/ThUKP5T/hf35UvB7mbalblVRSrm0vetHCzaLsPDJFKe8sQRGaAOv6hSTsuipNF5R4qG53qBphT2hiw8TOjfgMHbHJ3LFxxVUnrTPLeRRNHZmXGALDJOmV5462zDs/xfuC2UL40iTsuoi3zPDYIZkUhFW14WQeQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(346002)(376002)(396003)(451199015)(36840700001)(40470700004)(46966006)(5660300002)(186003)(110136005)(426003)(356005)(54906003)(1076003)(86362001)(336012)(26005)(316002)(2906002)(40480700001)(4326008)(83380400001)(70206006)(8936002)(70586007)(7636003)(40460700003)(47076005)(36756003)(2616005)(82740400003)(8676002)(82310400005)(41300700001)(36860700001)(7696005)(107886003)(6666004)(478600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2022 13:06:50.6609
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ace4b991-020e-4661-868f-08daa79ba225
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT027.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6665
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Create new SoC data structure for Tegra234 platforms.
+Additional features, tap value configurations are added/
+updated for Tegra234 platform hence separate Tegra194 and
+Tegra234 SoC data.
 
---ERmlPpGZ/YGPk8vW
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-On Wed, Oct 05, 2022 at 09:43:36PM +0200, Pali Roh=C3=A1r wrote:
-> On Wednesday 28 September 2022 16:38:27 Thierry Reding wrote:
-> > On Sun, Sep 11, 2022 at 01:32:16PM +0200, Pali Roh=C3=A1r wrote:
-> > > Like many other ARM PCIe controllers, it uses old PCI Configuration
-> > > Mechanism #1 from PCI Local Bus for accessing PCI config space.
-> > > It is not PCIe ECAM in any case.
-> > >=20
-> > > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> > > ---
-> > >  drivers/pci/controller/pci-tegra.c | 8 +++++---
-> > >  1 file changed, 5 insertions(+), 3 deletions(-)
-> >=20
-> > Perhaps this should be rolled into the PCI_CONF1_EXT_ADDRESS patch?
->=20
-> Well, I split documentation change and PCI_CONF1_EXT_ADDRESS usage into
-> two patches as those are two different / separate things. Documentation
-> change is a fix (because documentation is wrong) and PCI_CONF1_EXT_ADDRESS
-> is an improvement - code cleanup. And in case if there is a issue with
-> "cleanup" patch it can be reverted without need to revert also "fix"
-> part. This is just information how I looked at these changes and why I
-> decided to split them.
->=20
-> > On
-> > the other hand there's really no use in keeping this comment around
-> > after that other patch because the documentation for the new macro lays
-> > out the details already.
-> >=20
-> > Thierry
->=20
-> Ok, whether documentation is needed or not - it is your maintainer
-> decision. Maybe really obvious things do not have to be documented.
-> Also another look at this problem can be that if somebody wrote wrong
-> documentation for it, maybe it is not too obvious? I do not have opinion
-> on this, so choose what is better :-)
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 2d2d8260c681..a6c5bbae77b4 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1556,7 +1556,21 @@ static const struct sdhci_tegra_soc_data soc_data_tegra194 = {
+ 	.max_tap_delay = 139,
+ };
+ 
++static const struct sdhci_tegra_soc_data soc_data_tegra234 = {
++	.pdata = &sdhci_tegra186_pdata,
++	.dma_mask = DMA_BIT_MASK(39),
++	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
++		    NVQUIRK_HAS_PADCALIB |
++		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
++		    NVQUIRK_ENABLE_SDR50 |
++		    NVQUIRK_ENABLE_SDR104 |
++		    NVQUIRK_HAS_TMCLK,
++	.min_tap_delay = 95,
++	.max_tap_delay = 111,
++};
++
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
++	{ .compatible = "nvidia,tegra234-sdhci", .data = &soc_data_tegra234 },
+ 	{ .compatible = "nvidia,tegra194-sdhci", .data = &soc_data_tegra194 },
+ 	{ .compatible = "nvidia,tegra186-sdhci", .data = &soc_data_tegra186 },
+ 	{ .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
+-- 
+2.17.1
 
-I wrote that documentation back at the time and I fail to see what
-exactly is wrong about it. Granted, it doesn't mention the Intel PCI
-Configuration mechanism #1 from the PCI Local Bus Specification, but
-that's just because I didn't know about it. Back when I wrote this I
-was looking at the PCIe specifications (because, well, this supports
-PCIe) and I noticed that it was similar to ECAM. And that's exactly
-what the comment says and it points out what the differences are.
-
-So just because the mapping is closer to PCI_CONF1_EXT_ADDRESS than
-ECAM, it doesn't automatically make the comment wrong. The mapping also
-isn't exactly PCI_CONF1_EXT_ADDRESS, so the new comment can be
-considered equally wrong. The mapping is neither ECAM nor PCI_CONF1, so
-describing it one way or the other doesn't make a difference.
-
-> In any case, wrong documentation (which is the current state) should be
-> fixed (and removal in most case is also proper fix).
-
-Again, I don't see that this fixes anything because there was no bug.
-The documentation change makes the most sense when combined with the
-change that actually implements this in terms of the new macro.
-
-The existing documentation exists to give further background information
-about the mapping. If we remove the comment out of context we loose that
-extra information. However, if at the same time we change the code to
-use another (documented) macro, then we replace the information without
-loosing anything.
-
-Thierry
-
---ERmlPpGZ/YGPk8vW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmM+zw4ACgkQ3SOs138+
-s6GdLQ/+K2j1y2qtNmImdTk6z0RFpErz4nwlOCuWT8DAT/EhGoQbinPh2BdjSXNg
-YXhfLiuq2EPHg/sE0m5EGifBF6ntxU35M34GZydQ/sSpLpyymYDyUj1iWul7PbGe
-/OKq/0sOmL/F9L0lkouwEnnftncz5JDa/xGEQ5g6D3wiyTsz1IVorXUjC8ezilSm
-ZNxdgaV1uwV4k5Tt+tLGK1FXA1G1bLi0wEUJm3c/sUPQLGkF+HHCeyxzwkDMyVe1
-9j5Go1tULi6ZPMGw4MZvX7g02dZ9kZif9I2xf6P+N9LHyvAeG8vVCMlj8In3IT1B
-CUwiYwx70qucJZB9gAnOeHWBWCFPHf9gi97kGvkQ4ysCMQ022j2FrsnyEIJ+IwL2
-TdiU6Sf60TAjmLudBew0Gf4ruDPyQWL5DLHOb/bqYWd59PBsd2Svno4S7JwaJUKK
-fPLwilYCpMjwD/jy7eBG5Hkoehd0jEeTZbg4wVczJVbCHVV3hKJShVpaHjH5CN1p
-iaZcK67rPEFyRjuq6skj8bkFKqUaQFRBe7Ui1nrntDi33e32W9JnwJ7DadVeuGfu
-9zWLcIxKEHTAaKdx/tUG6RJL+qCLaB/5GBx/7NzLQk4QQn9gOrBb9wm3EkXsUtRR
-/JnJkLSvqaDK4VzuGSMkmt/0tPGI+LFF4pSeqqBu0jvfru78CFY=
-=uOBE
------END PGP SIGNATURE-----
-
---ERmlPpGZ/YGPk8vW--
