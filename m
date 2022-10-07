@@ -2,159 +2,145 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB083C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 13:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27999C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 13:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbiJGNsd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 09:48:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60256 "EHLO
+        id S229731AbiJGNyd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 09:54:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229754AbiJGNs1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 09:48:27 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 261FC114DC6;
-        Fri,  7 Oct 2022 06:48:26 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1555C106F;
-        Fri,  7 Oct 2022 06:48:32 -0700 (PDT)
-Received: from [10.57.65.170] (unknown [10.57.65.170])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A48653F67D;
-        Fri,  7 Oct 2022 06:48:23 -0700 (PDT)
-Message-ID: <b541eb50-fd9d-1105-4ae1-640ec7df1c68@arm.com>
-Date:   Fri, 7 Oct 2022 14:48:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v9 5/5] iommu/tegra-smmu: Support managed domains
-Content-Language: en-GB
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Nicolin Chen <nicolinc@nvidia.com>,
+        with ESMTP id S229508AbiJGNyc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 09:54:32 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F1CC822B;
+        Fri,  7 Oct 2022 06:54:30 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id ot12so11539156ejb.1;
+        Fri, 07 Oct 2022 06:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Enx4RjQIyhd33IM+TyBELZC95J59S4Pgr5DS3EUuMxI=;
+        b=gpj8FDZDpI7ZZ947ym7dXZiNVjveu/V+u1fISf6SmQWJg2gbqTO0XOG+EmXfZaVTIT
+         5Kzj5pNupn6gpoaHds0HBtixiVNwiN3NbX6L83pCT/MnChWvT+9+P2DiAgZH67g/Di1L
+         Lc8JeHvrl0E/i0R0cY+XkHRAS9Uhy2Q8MJ4Mm7kV3LaNoF2F1hGCh80L0nQCgoNd9mFT
+         Ji+cPG9OXVLcelxI8y/PSz3JZfu6vaeQX2mvqa5NG457ajgkycuhmoGrMD2HU61p4ErC
+         he/0JMcHbyEXa0vIWCtNfvBcBgsWMQEcvvhmk8mr4ZoH1Jc5sdG4eciwGLjTv6XdfMzw
+         HebA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Enx4RjQIyhd33IM+TyBELZC95J59S4Pgr5DS3EUuMxI=;
+        b=fmHByDzOh4r+HBRK/3K1hCL7R8Zw7zxH5QeN0m/esintOjGk0y8wSelNMWsT+tK3K/
+         CV7QjDC84wtlmJFwQIogVsiD8Fzg2DV4OgobDN2jdEkbMiAE/TP/kmB6CIVbwQ/GLHht
+         xDA38E9qd7G0lnCQjErTa9wB17rAbMc2iTRj2dunn2/ApfOe7xUauI06PYBn2cYXepgm
+         BCDvprrgbDPFJ5rliXP6qfBNbDomKhVYzTq9HZEbk/G48D3iaFBINw5S3UfHLhXELe6+
+         YEMyCJcyMJtCbfYe01tFW2YbuJfIKz+1dK6SEa9oeiNXNL0AQGGDvGCgwB1RjCjfTQ8s
+         aAjA==
+X-Gm-Message-State: ACrzQf3bfq5k5FDba0DeofUjA4MxW68NTashXBIHIp7PnYDMe1HXmqk0
+        MMy8REQG2Y8SJ6aiSPx8Ids=
+X-Google-Smtp-Source: AMsMyM7La77T3ZitZ18KvtNZX+eTUrTaeesjPgbUf2RaeFhRX5epUFC4Oz9+762DvbFsno6Xj8g/rw==
+X-Received: by 2002:a17:907:847:b0:77f:f489:cc25 with SMTP id ww7-20020a170907084700b0077ff489cc25mr4192567ejb.80.1665150869489;
+        Fri, 07 Oct 2022 06:54:29 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id f12-20020a17090660cc00b007415f8ffcbbsm1269503ejk.98.2022.10.07.06.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Oct 2022 06:54:28 -0700 (PDT)
+Date:   Fri, 7 Oct 2022 15:54:26 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Nicolin Chen <nicolinc@nvidia.com>,
         Krishna Reddy <vdumpa@nvidia.com>,
         Dmitry Osipenko <dmitry.osipenko@collabora.com>,
         Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
         Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
         devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v9 1/5] dt-bindings: reserved-memory: Document
+ iommu-addresses
+Message-ID: <Y0AvkshNYmqc3UGo@orome>
 References: <20220923123557.866972-1-thierry.reding@gmail.com>
- <20220923123557.866972-6-thierry.reding@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20220923123557.866972-6-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <20220923123557.866972-2-thierry.reding@gmail.com>
+ <3fb949ad-74c4-1bac-7e14-5d056afcef5f@arm.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5W5c90u2fS2v03qz"
+Content-Disposition: inline
+In-Reply-To: <3fb949ad-74c4-1bac-7e14-5d056afcef5f@arm.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-09-23 13:35, Thierry Reding wrote:
-> From: Navneet Kumar <navneetk@nvidia.com>
-> 
-> Allow creating identity and DMA API compatible IOMMU domains. When
-> creating a DMA API compatible domain, make sure to also create the
-> required cookie.
 
-Nit: this description is now confusingly outdated.
+--5W5c90u2fS2v03qz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: Navneet Kumar <navneetk@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v5:
-> - remove DMA cookie initialization that's now no longer needed
-> 
->   drivers/iommu/tegra-smmu.c | 38 +++++++++++++++++++++-----------------
->   1 file changed, 21 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 57b4f2b37447..7ad993330634 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -20,6 +20,8 @@
->   #include <soc/tegra/ahb.h>
->   #include <soc/tegra/mc.h>
->   
-> +#include "dma-iommu.h"
-> +
->   struct tegra_smmu_group {
->   	struct list_head list;
->   	struct tegra_smmu *smmu;
-> @@ -277,7 +279,9 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
->   {
->   	struct tegra_smmu_as *as;
->   
-> -	if (type != IOMMU_DOMAIN_UNMANAGED)
-> +	if (type != IOMMU_DOMAIN_UNMANAGED &&
-> +	    type != IOMMU_DOMAIN_DMA &&
-> +	    type != IOMMU_DOMAIN_IDENTITY)
+On Fri, Oct 07, 2022 at 02:45:31PM +0100, Robin Murphy wrote:
+> On 2022-09-23 13:35, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > This adds the "iommu-addresses" property to reserved-memory nodes, which
+> > allow describing the interaction of memory regions with IOMMUs. Two use-
+> > cases are supported:
+> >=20
+> >    1. Static mappings can be described by pairing the "iommu-addresses"
+> >       property with a "reg" property. This is mostly useful for adopting
+> >       firmware-allocated buffers via identity mappings. One common use-
+> >       case where this is required is if early firmware or bootloaders
+> >       have set up a bootsplash framebuffer that a display controller is
+> >       actively scanning out from during the operating system boot
+> >       process.
+> >=20
+> >    2. If an "iommu-addresses" property exists without a "reg" property,
+> >       the reserved-memory node describes an IOVA reservation. Such memo=
+ry
+> >       regions are excluded from the IOVA space available to operating
+> >       system drivers and can be used for regions that must not be used =
+to
+> >       map arbitrary buffers.
+>=20
+> Bah, I've only just realised: don't we also need to change the "oneOf:
+> required: ..." schema to permit "iommu-addresses" without "reg" or "size"?
 
-Since there's apparently no actual handling of IOMMU_DOMAIN_IDENTITY 
-being added anywhere, AFAICS it's still going to set up an address space 
-for translation with nothing mapped in its pagetable, which is pretty 
-much the opposite of what's required :/
+Hm... good point. I think at least we'll want another:
 
->   		return NULL;
->   
->   	as = kzalloc(sizeof(*as), GFP_KERNEL);
-> @@ -287,25 +291,16 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
->   	as->attr = SMMU_PD_READABLE | SMMU_PD_WRITABLE | SMMU_PD_NONSECURE;
->   
->   	as->pd = alloc_page(GFP_KERNEL | __GFP_DMA | __GFP_ZERO);
-> -	if (!as->pd) {
-> -		kfree(as);
-> -		return NULL;
-> -	}
-> +	if (!as->pd)
-> +		goto free_as;
->   
->   	as->count = kcalloc(SMMU_NUM_PDE, sizeof(u32), GFP_KERNEL);
-> -	if (!as->count) {
-> -		__free_page(as->pd);
-> -		kfree(as);
-> -		return NULL;
-> -	}
-> +	if (!as->count)
-> +		goto free_pd_range;
->   
->   	as->pts = kcalloc(SMMU_NUM_PDE, sizeof(*as->pts), GFP_KERNEL);
-> -	if (!as->pts) {
-> -		kfree(as->count);
-> -		__free_page(as->pd);
-> -		kfree(as);
-> -		return NULL;
-> -	}
-> +	if (!as->pts)
-> +		goto free_pts;
+     - required:
+         - iommu-addresses
 
-Nit: all this part is now just unrelated refactoring.
+in there. I wonder if we also need to avoid the combination of "size"
+and "iommu-addresses". When "size" is specified, is it guaranteed that
+those regions will be allocated before the direct mapping needs to be
+created?
 
-Thanks,
-Robin.
+Thierry
 
->   
->   	spin_lock_init(&as->lock);
->   
-> @@ -315,6 +310,15 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
->   	as->domain.geometry.force_aperture = true;
->   
->   	return &as->domain;
-> +
-> +free_pts:
-> +	kfree(as->pts);
-> +free_pd_range:
-> +	__free_page(as->pd);
-> +free_as:
-> +	kfree(as);
-> +
-> +	return NULL;
->   }
->   
->   static void tegra_smmu_domain_free(struct iommu_domain *domain)
-> @@ -1012,7 +1016,7 @@ static const struct iommu_ops tegra_smmu_ops = {
->   	.probe_device = tegra_smmu_probe_device,
->   	.release_device = tegra_smmu_release_device,
->   	.device_group = tegra_smmu_device_group,
-> -	.get_resv_regions = of_iommu_get_resv_regions,
-> +	.get_resv_regions = iommu_dma_get_resv_regions,
->   	.of_xlate = tegra_smmu_of_xlate,
->   	.pgsize_bitmap = SZ_4K,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
+--5W5c90u2fS2v03qz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNAL5IACgkQ3SOs138+
+s6HMjg/9Ez5oe7o7RKjlGxLRasyNNnpD5dUT5ZmEPcxWBlLBs+6fYqmvVi5DycrV
+857CsTJED2/fHahH5TQqsUJmQ4jWtS7Z9Aw74dEMjVqAAtJOmzT0nAyXrgSSaV4E
+EoOqSM8O++HDS8qUlFqI7CJMXpuUv9hfoDit0m4tSg6fFPKNO5fhWg8oNAgXaKqQ
+MhBZyLjb0dqCFP/2tfLR0PoLhYv9p4kfu/tcH2HNbScAQDIb61yRRro/bw+q3ABn
+a63qkZlW0ow8MepXiTfqVbZVToWrP6aSrIAgDgQhi4eQOr4WiHHS0U/t2atgW0Hc
+LNLC534Hii+aIYSNK6xjDtvbEp2JS0jBVIqpJr6dCOY7jnsGLLwa5GJeNRaPbksE
+XZ3QvChk9RGv7plPjIVAf23kDethEZEyfEOB93czUH1yQ97+zYQFbNJ06hrjYy0f
+JbZ6pehcwEiP6PfkP54hzUBsgZrxu6a6INYvxArsEywj0IGhxpzLd/7yWbZ3sewm
+FQQ03w4RguTfAZBog9+ckWCJKJQId9N2lexIT0XU5vMBZvj06yQdXOxLqTsPs24M
+rF2efBe1iCzIOxx7O/ki11AJhTAhLMAbblT75FtJfLaL+v8XdkyjEpx/iz8M+MUu
+hus7GIQTd7f6SpYF77unDhcBvJKeT9LQVucyaEtKo84eCFhDIqA=
+=3sh+
+-----END PGP SIGNATURE-----
+
+--5W5c90u2fS2v03qz--
