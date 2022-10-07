@@ -2,200 +2,179 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4320C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 15:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FA1C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 15:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbiJGPRe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 11:17:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47098 "EHLO
+        id S229561AbiJGPW2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 11:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbiJGPRd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 11:17:33 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A22E9C2DB;
-        Fri,  7 Oct 2022 08:17:32 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id sc25so5890478ejc.12;
-        Fri, 07 Oct 2022 08:17:32 -0700 (PDT)
+        with ESMTP id S229452AbiJGPW1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 11:22:27 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ADB4102517;
+        Fri,  7 Oct 2022 08:22:25 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id z3so6515101edc.10;
+        Fri, 07 Oct 2022 08:22:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V26sKgll4yhf5OInasFDPraHLvHOGfKc1/jMD2mrCdY=;
-        b=HA5zI4mup8zTLt3WQStDfg7k3NeT7Yc8cvgSPBai5Izl7qJIV0YtjZxNDtUcdK2PAh
-         fOP1TkhdDQgyhptFHhccV/Dj5OC3DaGtMAVeBZ3/LeUmbdvKQqKICceLkRmRnyJGMsMK
-         zsEMARo2RA5jP9uOOWHVzQTJiVJGtRHbyHlayaSBxfl+Dba72aWbgkHZ9fI2fmEm5nD1
-         qrxdGuBrMyFnbZZJzOgwZoZprGpvexF88Eb1I+js3/2CaDzzfH25U06seM1afjt+sEm/
-         Cpj/f/a6XkEzyW0XjAaA3zVPQ9TIjF22wvzFhtDsTGxVoFqGkHnwN3GDgN2gZZ0OKf9r
-         BUzA==
+        bh=+El8A1P1S/zXel3Nequ87VItdNh3NPA1dXujJmoYOXk=;
+        b=R8nscShiJ4u+0sTGiav+3+Ex1pUvbKm3kIdYDUam8/6TsjAQWrhix/TlKOT5j8pbtd
+         4CSwwu5oP0qft57eLUnB6P8tysG8oCrRYcHOMnrnC1NOMXpBMVUEEPx/dG+ILMtyWANW
+         6jrXug1ap1+hHhdGqpVg9kOgCI4vFp2j3ystxYisA4ajCQjV1NjF6YkvvqTafT0YYqEP
+         1/VlXMdUdfHRKk59lj3Usgttove6VF2S7LisXNmYxb7m73dYLM/gLMEaChnVGZ2Pv9dY
+         z78pG8+2FashQAEQ/CrM7LcCGdY5Atsv6LXQsGPHlV7P5tFyqa5cDmP+KJ4RBpOQVQeD
+         xq8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V26sKgll4yhf5OInasFDPraHLvHOGfKc1/jMD2mrCdY=;
-        b=ebLbBkA8MRFCak8Y9stMw2DRwPBYtru+4msYJKsDR1Diqqd2ul3Fdr+8ZmaGhfQqZ3
-         bYE/0GFMr27unxjqOx7Dcwd89MMP6Y1L35ODQhWtKA3o90PrJgzspGnEG2QhtVh4SklN
-         WcTi148CJUBnOYqGBNcVfq0yKu/pqtGYnPMPSP5MY/RXD6fR5jbU/Cc+wkDUjPV74HX/
-         M2y2xwm+d8E7/ccETzL2tj6Mm2K8mP8Xi1FJ8ienoHQf5D7PVYnmi9CtTukUiGd0DLd4
-         msJqj9K437R+HKB24k8bjBQjSog0jGOlRQFst10/GLnvedL7+sLGq/Vr86DK3ymO5V+c
-         38TA==
-X-Gm-Message-State: ACrzQf2iyJ1PxqcR4ON3hC1s7932A0XhMqMFkju17EMa2KYEW5zP3vwv
-        m6kr0899tqxQy9GUHb4KQ50=
-X-Google-Smtp-Source: AMsMyM594vSZP896w39KXYsrXRxzj4eqfemAMF8fnZ4o3nlz15LhKzCy6tF0fW1JqIS5m825zDidCg==
-X-Received: by 2002:a17:907:724a:b0:782:405f:8115 with SMTP id ds10-20020a170907724a00b00782405f8115mr4443202ejc.147.1665155850917;
-        Fri, 07 Oct 2022 08:17:30 -0700 (PDT)
+        bh=+El8A1P1S/zXel3Nequ87VItdNh3NPA1dXujJmoYOXk=;
+        b=QiTdFej65Nh1Vry1bonLYflN0HGAKkY/d169KWWwvHgsfSkaDUkVoBmvJDHtlHwG0u
+         ZshEaXFesSjsogU962UQldB/gGTkBsVpYXyOqZq9OuVV0+6rwQjQPc5Z28K2JFFPdEa0
+         L/8It/pxsv9vOuRuTnpTFXqSVrvxIxc7K/NIRngDl4Mmhy0U3VuMnu+npWGs1sGIXN/P
+         FCjevgU8I4em3t7KWQOD+GxHdwZYwdVPlGMG/mAO9aMAf3huW7bd+G3oJGoJ8BIHhweM
+         vFsPrNE4W/LiyARKCXZXEd0dQR7UIvkhNVcNY0uwCk/I+neKMvHiD55ydRjJu1KfpNNr
+         izFQ==
+X-Gm-Message-State: ACrzQf38bkeYjQA+bhhmweWOPAAqPvNrZSNTHmD2LJdYuVa+BhSKiv4T
+        fH0WhFjcDVgrRKlS7KX0YfW07OOXB44=
+X-Google-Smtp-Source: AMsMyM64pxlk0Q2rX8xynlf1HAWCmrrGeyUbN5wqj6UXON1FnS76vurUVYCh3xSq3RCT/YrPpa7P2w==
+X-Received: by 2002:a05:6402:1910:b0:458:8b32:4752 with SMTP id e16-20020a056402191000b004588b324752mr5059019edz.302.1665156144032;
+        Fri, 07 Oct 2022 08:22:24 -0700 (PDT)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id d1-20020a170906304100b00788c622fa2csm1366255ejd.135.2022.10.07.08.17.29
+        by smtp.gmail.com with ESMTPSA id o29-20020a509b1d000000b00459c5c2138csm1678498edi.32.2022.10.07.08.22.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 08:17:29 -0700 (PDT)
-Date:   Fri, 7 Oct 2022 17:17:27 +0200
+        Fri, 07 Oct 2022 08:22:22 -0700 (PDT)
+Date:   Fri, 7 Oct 2022 17:22:21 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Will Deacon <will@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Vinod Koul <vkoul@kernel.org>,
-        Akhil R <akhilrajeev@nvidia.com>, christian.koenig@amd.com,
-        devicetree@vger.kernel.org, digetx@gmail.com, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        sumit.semwal@linaro.org, wsa@kernel.org
-Subject: Re: [PATCH v2 2/3] arm64: tegra: Add GPCDMA support for Tegra I2C
-Message-ID: <Y0BDB2lz4PHUwE8L@orome>
-References: <20220906144716.16274-1-akhilrajeev@nvidia.com>
- <20220906144716.16274-3-akhilrajeev@nvidia.com>
- <Y0AnpYeECoyQchmY@orome>
- <Y0A44EIF74bri/uu@orome>
- <d95eb458-151b-0a31-0aa6-4073ea962d2c@arm.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
+        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v9 1/5] dt-bindings: reserved-memory: Document
+ iommu-addresses
+Message-ID: <Y0BELav7cgHdW0eT@orome>
+References: <20220923123557.866972-1-thierry.reding@gmail.com>
+ <20220923123557.866972-2-thierry.reding@gmail.com>
+ <3fb949ad-74c4-1bac-7e14-5d056afcef5f@arm.com>
+ <Y0AvkshNYmqc3UGo@orome>
+ <75bebf10-6b89-464c-f9ad-c53f9f830c20@arm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wQZPKONB5tShC1t9"
+        protocol="application/pgp-signature"; boundary="ReXUlrLGezBjaiaj"
 Content-Disposition: inline
-In-Reply-To: <d95eb458-151b-0a31-0aa6-4073ea962d2c@arm.com>
+In-Reply-To: <75bebf10-6b89-464c-f9ad-c53f9f830c20@arm.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---wQZPKONB5tShC1t9
+--ReXUlrLGezBjaiaj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 07, 2022 at 03:53:21PM +0100, Robin Murphy wrote:
-> On 2022-10-07 15:34, Thierry Reding wrote:
-> > On Fri, Oct 07, 2022 at 03:20:37PM +0200, Thierry Reding wrote:
-> > > On Tue, Sep 06, 2022 at 08:17:15PM +0530, Akhil R wrote:
-> > > > Add dma properties to support GPCDMA for I2C in Tegra 186 and later
-> > > > chips
+On Fri, Oct 07, 2022 at 03:21:46PM +0100, Robin Murphy wrote:
+> On 2022-10-07 14:54, Thierry Reding wrote:
+> > On Fri, Oct 07, 2022 at 02:45:31PM +0100, Robin Murphy wrote:
+> > > On 2022-09-23 13:35, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
 > > > >=20
-> > > > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> > > > ---
-> > > >   arch/arm64/boot/dts/nvidia/tegra186.dtsi | 32 +++++++++++++++++++=
-+++++
-> > > >   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 32 +++++++++++++++++++=
-+++++
-> > > >   arch/arm64/boot/dts/nvidia/tegra234.dtsi | 32 +++++++++++++++++++=
-+++++
-> > > >   3 files changed, 96 insertions(+)
+> > > > This adds the "iommu-addresses" property to reserved-memory nodes, =
+which
+> > > > allow describing the interaction of memory regions with IOMMUs. Two=
+ use-
+> > > > cases are supported:
 > > > >=20
-> > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra186.dtsi
-> > > > index 59a10fb184f8..3580fbf99091 100644
-> > > > --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> > > > +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> > > > @@ -672,6 +672,10 @@
-> > > >   		clock-names =3D "div-clk";
-> > > >   		resets =3D <&bpmp TEGRA186_RESET_I2C1>;
-> > > >   		reset-names =3D "i2c";
-> > > > +		iommus =3D <&smmu TEGRA186_SID_GPCDMA_0>;
-> > > > +		dma-coherent;
+> > > >     1. Static mappings can be described by pairing the "iommu-addre=
+sses"
+> > > >        property with a "reg" property. This is mostly useful for ad=
+opting
+> > > >        firmware-allocated buffers via identity mappings. One common=
+ use-
+> > > >        case where this is required is if early firmware or bootload=
+ers
+> > > >        have set up a bootsplash framebuffer that a display controll=
+er is
+> > > >        actively scanning out from during the operating system boot
+> > > >        process.
+> > > >=20
+> > > >     2. If an "iommu-addresses" property exists without a "reg" prop=
+erty,
+> > > >        the reserved-memory node describes an IOVA reservation. Such=
+ memory
+> > > >        regions are excluded from the IOVA space available to operat=
+ing
+> > > >        system drivers and can be used for regions that must not be =
+used to
+> > > >        map arbitrary buffers.
 > > >=20
-> > > I wonder: why do we need the iommus and dma-coherent properties here?
-> > > The I2C controllers are not directly accessing memory, instead it's t=
-he
-> > > GPCDMA via the dmas/dma-names properties. The GPCDMA already has these
-> > > properties set, so they seem to be useless here.
+> > > Bah, I've only just realised: don't we also need to change the "oneOf:
+> > > required: ..." schema to permit "iommu-addresses" without "reg" or "s=
+ize"?
 > >=20
-> > Looking at this some more, the reason why we need these is so that the
-> > struct device backing these I2C controllers is attached to an IOMMU and
-> > the DMA ops are set up correspondingly. Without these, the DMA memory
-> > allocated by the I2C controllers will not be mapped through the IOMMU
-> > and cause faults because the GPCDMA is the one that needs to access
-> > those.
+> > Hm... good point. I think at least we'll want another:
 > >=20
-> > I do recall that we have a similar case for audio where the "sound card"
-> > needs to have an iommus property to make sure it allocates memory
-> > through the same IOMMU domain as the ADMA, which is the device that ends
-> > up doing the actual memory accesses.
+> >       - required:
+> >           - iommu-addresses
 > >=20
-> > Rob, Robin, Will, do you know of a good way other than the DT workaround
-> > here to address this? I think ideally we would want to obtain the "DMA
-> > parent" of these devices so that we allocate memory for that parent
-> > instead of the child. We do have some existing infrastructure for this
-> > type of relationship with the __of_get_dma_parent() function as well as
-> > the interconnects property, but I wonder if that's really the right way
-> > to represent this.
-> >=20
-> > Adding "interconnects" properties would also duplicate the "dmas"
-> > properties we already use to obtain the TX and RX DMA channels. One
-> > simple way to more accurately do this would be to reach into the DMA
-> > engine internals (dma_chan->device->dev) and pass that to dma_alloc_*()
-> > to make sure we allocate for the correct device. For audio that could be
-> > a bit complicated because most of that code is shared across multiple
-> > vendors. I couldn't find any examples where a driver would reach into
-> > DMA channels to allocate for the parent, so I'm wondering what other
-> > people do to solve this issue. Or if anyone else even has the same
-> > issue.
+> > in there. I wonder if we also need to avoid the combination of "size"
+> > and "iommu-addresses". When "size" is specified, is it guaranteed that
+> > those regions will be allocated before the direct mapping needs to be
+> > created?
 >=20
-> As far as I'm aware that's the correct approach, i.e. if a driver is using
-> an external dmaengine then it's responsible for making DMA mappings for t=
-he
-> correct DMA channel device. We ended up being a bit asymmetrical in that =
-the
-> dmaengine driver itself has to take care of its own mapping for the
-> non-memory end of a transfer when an IOMMU is involved - that's what
-> dma_map_resource() was created for, see pl330 and rcar-dmac for examples.
->=20
-> The only driver I have first-hand experience with in this context is
-> amba-pl011, using pl330 through an SMMU on the Arm Juno board, but that
-> definitely works fine without DT hacks.
+> Well, it couldn't really be a direct mapping anyway. In general I don't
+> think that combination makes any sense, since the presence of
+> "iommu-addresses" means one of two things; either it says the IOVA range =
+is
+> carved out for some special purpose or just unusable, in which case
+> allocating any memory to back it would surely be pointless, or it's saying
+> don't touch these addresses because the device is already accessing them,
+> thus the underlying physical memory must be allocated somewhere already.
 
-Oh yeah, I see. That's exactly what I had in mind. And now that I'm
-using the right regex I can also find more occurrences of this. Thanks
-for those pointers. Looks like that's the right approach then. I'll try
-to make corresponding changes and see if there's any fallout.
+I thought perhaps there could be cases where it is known that a
+controller needs to access memory in a certain I/O virtual region but
+doesn't actually care where that lives in physical memory and also does
+not rely on that memory have been previously set up (pre-filled, or
+whatever). Say you've got a micro-controller in a system that needs its
+firmware in a given region, but the OS can set up that region without
+any other limitations. One could use "size" and "iommu-addresses" to
+make sure the region is allocated with a specific size and located in a
+specific I/O virtual region. Not sure if that's perhaps a bit exotic,
+though.
 
-Thanks,
 Thierry
 
->=20
-> Robin.
->=20
-> > Adding Lars-Peter for the sound/dmaengine helpers and Vinod for general
-> > dmaengine. Perhaps they have some thoughts on or experience with this.
-> >=20
-> > Thierry
-
---wQZPKONB5tShC1t9
+--ReXUlrLGezBjaiaj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNAQwUACgkQ3SOs138+
-s6GNYw//Z/EGBx4Jcbvb8wh30msO6xog/7vX4qgTtWGmVVAVWNHscABOJwQ2KoJP
-+pLZPg9wqKy9J7r7Qt0z0YwIj1cgKbnfSb9itLc32LeST0bOrUuvMuV5O3mT+b8F
-kvs1XpNUY7lOqC4rMjVB+JyzfzL2EaEzDZN7lTwIVy5JbeZqipmU3jdconExQWdP
-n1s8EHZXUiRlmEkIpECaCka6iXk6olz9dm8qocjjafvLSM67lhUlQozCOmC4Qnby
-sA3jOGN48sZm+ubTyoD69Ew+fJgZRGGXBov4T3poApUG2nB0WsII7QnhoDlRjeGx
-ljsRZbI4zZYysA8kaJPYai+Y4G5VffDPDdrJgHh8caUYWa8EasM2KKFqAM4Aifk0
-cgbzZhBi/ezRRNjuu4AISHXnwIkaKZwtWk5v+Y8fL3w+dGx9H+xB67i4ltrEwbqR
-eaJ45GyEWZ6fHMghZGK89A93uwCtR3yhOF3LRXYmtQQfy8h/F3iYLZM4Lc9x5wqE
-vCvRLEy+5OkNUAmvZKO8VOF9r1NqyXfFYGbSkZ4j+uaSzy+F4s1CGEGi+qa8h5ua
-wDPsQlIBqJ7Ccum5n4MPTF0TJw92TW80cCM2DaVw7h8UcPsPq1/qYSzU4tAACyVl
-5gwtg99X2JHIYrnq1J0fL8l2AxB5qcjm6qjYaul1KWgyYKMsvdE=
-=7MPa
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNARCwACgkQ3SOs138+
+s6G/wBAAq+jpQ9peE9xOPuucGTxcDci018hQWZ5ZsRlBmFmyT5BzIX0cT4DGGJsZ
+6vf3ALxD4/NH5cdcWFj8OSlgLwo7E08+5cDI/aTL9688j9iKoUt8Lc2rWdUaSvlb
+Mdv6KtE8+Isl4cZktPz+MwyGO7tV+khGGXcNYN0F+Y7qByk8l1/WyaRy/618qa6W
+iQ8bkg3I6GhLInwBIzbTYTVr+AaWtZsYVCRkUDBz5QmmOsQJX1eCiUsn2+gjJ+UZ
++2aL72uC8QW5SyQ8HYJwTdBikhNli5wEQj+J7Lat398uhjLNqmvczJubFk2HTbXD
+dIfhhLWqWwQfBkNYoOLhTk5mZWaS3SceEEHRaBHMCW/diav/yQeqN3WsyvWnqsHp
+FHgrqVHy0VilyHsxape6LtHTdjTvCBEC39MnMDyQQstGCedlI9o+FKiUI7bYcwDp
+nAL+wi/3y8u3NReOEvjTiwVqIFTn7KkxNio3WsFPTDsaIYIfJXqFZVD5FyqIT+ia
+ew1Tly8J5ciU8coSbnKfdWF4K2669b/YrM6hPCXrfSkPP7uVVUtb64KoRveuhAUp
+0tP0EAfXTGzIgZB9Z7vVCwnVtNRzRB3sXJmPefMiWgc2Fl1T1HdoIOw93Oz1sUFR
+0sRscCxk1jNDynPz344SyQikVfaF9D0SmuS/xzP24yyJJ372jUg=
+=pvnC
 -----END PGP SIGNATURE-----
 
---wQZPKONB5tShC1t9--
+--ReXUlrLGezBjaiaj--
