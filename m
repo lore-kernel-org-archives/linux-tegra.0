@@ -2,146 +2,192 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDCFC43217
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 12:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EC1C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 12:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbiJGMuX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 08:50:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43982 "EHLO
+        id S229561AbiJGMv7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 08:51:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbiJGMuV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 08:50:21 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FBD50528;
-        Fri,  7 Oct 2022 05:50:08 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id m14so5603682ljg.2;
-        Fri, 07 Oct 2022 05:50:08 -0700 (PDT)
+        with ESMTP id S229722AbiJGMv6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 08:51:58 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E621FBCBA6;
+        Fri,  7 Oct 2022 05:51:57 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id z97so6894328ede.8;
+        Fri, 07 Oct 2022 05:51:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2Y5rrHwKLrZ4oqRyovAy2VnaQoMJrQoBHsrafxjglos=;
-        b=G/OrJ8zqmuYb/kkS4UhLEWzbWimpcbgnoO9d6aBezAILPtzafFiTWoGM+F66GRzlIY
-         LMgAgEJ7Pa0gdROKyt8NntQDeLrEljz9GLjSH4Ij0rmhfjVCx9vqEEYof2j6rHosktm7
-         owcS11xjt87jTesZhyoO3+2tL04cTlwYm2PanSbXSmttF/TZ7KDeRv4EODiWkEDn5bty
-         VEhqWZpIN8w/fx+AvQb6Jb0okDEgwOy/GdZvwLB82j232EfKPsLKcbNV0TJB11M0jLzs
-         FjZHe1UOO1A0JCJFHOPoXE1/zxW+6j0g+6TRHnU+5i+dw6Fic7iwCHfKeEYUUOSKDXw1
-         FWAw==
+        bh=UVR4A7rTDXaDZT2ap3V+IDUaXiwWgE+SqvzF3iigsYM=;
+        b=Dzw3kT/irBpT48ntV/1nFrgfbswZ7E69GOVn7keVyflPBLViOYJ9hzLNiOuekVDCQI
+         13mi33qu0hnQxkbA/pyteGQ9o2b6QaKUo78KHCl/r/5pXctYZhMWbAu/e360d2aDBHlK
+         YAiE6IZVBQCzNFD/xgRxuHhFuD1u2rIx+nTCJ0eAUKjXZl8jpwrKYwXVXlHmaywfUMYd
+         XxJO9nuSOLsr+7NsQmAXGxesLNdYREunmNZtmzaQsyWZdOVzOpUY9EM77oKc3O6KfeCa
+         kxCINd0LDTdsK4bDekAuqdtSrhNHHuBUMrRHCTblrhEHbZAExgCLQWMs3YGfVTOmklO8
+         O5BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2Y5rrHwKLrZ4oqRyovAy2VnaQoMJrQoBHsrafxjglos=;
-        b=j9Ylv6uwsZQGQPSKUn/uFvr0llIVIfi1Ovj3pYfSM70AwsOyCFX8Kjj+r4XlfSmb5S
-         7IdJeehgpxt0wzTV4Se9GUSJrKimbX2JUFkSuEEW8RBBHGogZ5fcYYm2wbrglLyTI7vN
-         0pjYDguKzYifMG602FCyn2jzI7okU9cj54xiKNR3mbhyWJdmKhAE2kgTSwLnE0QTPvpq
-         /sNow9LVuQSdppmY3k/emKtuN9AXYCJ7il9i7SZIaJL9Vj2S/T0LJ0On8MhPyS68/qYW
-         UcAdQUAWnZdIdC7yLk20FitbHJdNBotNrRkdgTSahsMnc1RMItOQm0vBkbr6iSDGoJe8
-         76lw==
-X-Gm-Message-State: ACrzQf0OHIwo/c3NLdBc1553/d8u4y6OI84oo6ARZwAevrF6oGgzQ9Ea
-        ijVsOB+0E8E9kxpAvJgRIto=
-X-Google-Smtp-Source: AMsMyM5ifxC7UlGdvc8qqaOEFBsU8euuliNMcSqjfAmJ19hRmNULRYAXYUCwGxaNG7vixk8xgJwMYg==
-X-Received: by 2002:a2e:96d0:0:b0:26a:8a3c:861e with SMTP id d16-20020a2e96d0000000b0026a8a3c861emr1574575ljj.54.1665147006947;
-        Fri, 07 Oct 2022 05:50:06 -0700 (PDT)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id t27-20020a2e8e7b000000b0026dfe55be7fsm241505ljk.63.2022.10.07.05.50.04
+        bh=UVR4A7rTDXaDZT2ap3V+IDUaXiwWgE+SqvzF3iigsYM=;
+        b=XgAZzbQsb6Tzdwp2CD6aZ4qAcJDsVVllKf+Tp18y+/kSgZEZB05dZiwFkhqJPhBOlN
+         ELVnDgAEUJkeoS0LxtRjRxCVlx/jzZl7T1ZrnoE9A/seDW1MAg6a+Z5rIbJ4PW6qKicR
+         Wnj6PPLeTcpAxGxdcf3elJSeVh+xYk/s/HNWLL52UBDPduB2EYH7AGIBiwwPuoOe7OrL
+         5Ys2/C/xTLjwb0XVy6y6lQaKCMNMZn0Po2rJUq5NTWSAdvWnEJPwG2SJ6QJ7Tu4GtfHW
+         jglG8buO+B+g/cDbXh32ZYoOeWdqCBxBeq+ZcOt/j/LT5P39G8GmCoinrk6y2LR3kYuh
+         6MFg==
+X-Gm-Message-State: ACrzQf1npuLkchal9Ii8YX5LSN1lvXEBXcAGWe6VzS+WfHgpXe1Rzkjn
+        IK6N8FLJZH7CcXm4vpuDRy4=
+X-Google-Smtp-Source: AMsMyM72M6aPDsfwBObYtVFL0p8t0YHAzYNzlKS+HyicbULufboz6R4lgnogFL6VLCkU+wcFIWnz5A==
+X-Received: by 2002:a05:6402:35d3:b0:459:ddca:4db7 with SMTP id z19-20020a05640235d300b00459ddca4db7mr4377016edc.393.1665147116313;
+        Fri, 07 Oct 2022 05:51:56 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ti5-20020a170907c20500b0073d9630cbafsm1171837ejc.126.2022.10.07.05.51.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 05:50:06 -0700 (PDT)
+        Fri, 07 Oct 2022 05:51:55 -0700 (PDT)
+Date:   Fri, 7 Oct 2022 14:51:53 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 7/7] arm64: tegra: Add simple framebuffer on Jetson Xavier NX
-Date:   Fri,  7 Oct 2022 14:49:46 +0200
-Message-Id: <20221007124946.406808-8-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20221007124946.406808-1-thierry.reding@gmail.com>
-References: <20221007124946.406808-1-thierry.reding@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
+        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH v9 0/5] iommu: Support mappings/reservations in
+ reserved-memory regions
+Message-ID: <Y0Ag6QkQ+DPOElhm@orome>
+References: <20220923123557.866972-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="JGYHqtEsfJ0xq16p"
+Content-Disposition: inline
+In-Reply-To: <20220923123557.866972-1-thierry.reding@gmail.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-Add the framebuffer carveout reserved memory node as well as a simple-
-framebuffer node that is used to bind to the framebuffer that the
-bootloader has set up.
+--JGYHqtEsfJ0xq16p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- clear out dynamic fields and leave it up to firmware to fill them in
-- mark simple-framebuffer node as disabled by default
+On Fri, Sep 23, 2022 at 02:35:52PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Hi,
+>=20
+> This version has several fixes over the previous v8, which can be found
+> here:
+>=20
+>   https://lore.kernel.org/all/20220905170833.396892-1-thierry.reding@gmai=
+l.com/
+>=20
+> An example is included in the DT bindings, but here is an extract of
+> what I've used to test this:
+>=20
+>         reserved-memory {
+>                 #address-cells =3D <2>;
+>                 #size-cells =3D <2>;
+>                 ranges;
+>=20
+>                 /*
+>                  * Creates an identity mapping for the framebuffer that
+>                  * the firmware has setup to scan out a bootsplash from.
+>                  */
+>                 fb: framebuffer@92cb2000 {
+>                         reg =3D <0x0 0x92cb2000 0x0 0x00800000>;
+>                         iommu-addresses =3D <&dc0 0x0 0x92cb2000 0x0 0x00=
+800000>;
+>                 };
+>=20
+>                 /*
+>                  * Creates a reservation in the IOVA space to prevent
+>                  * any buffers from being mapped to that region. Note
+>                  * that on Tegra the range is actually quite different
+>                  * from this, but it would conflict with the display
+>                  * driver that I tested this against, so this is just
+>                  * a dummy region for testing.
+>                  */
+>                 adsp: reservation-adsp {
+>                         iommu-addresses =3D <&dc0 0x0 0x90000000 0x0 0x00=
+010000>;
+>                 };
+>         };
+>=20
+>         host1x@50000000 {
+>                 dc@54200000 {
+>                         memory-region =3D <&fb>, <&adsp>;
+>                 };
+>         };
+>=20
+> This is abbreviated a little to focus on the essentials. Note also that
+> the ADSP reservation is not actually used on this device and the driver
+> for this doesn't exist yet, but I wanted to include this variant for
+> testing, because we'll want to use these bindings for the reservation
+> use-case as well at some point.
+>=20
+> I've also been able to make use of this binding and the IOMMU code in
+> conjunction with the simple-framebuffer driver to hand over a display
+> configuration set up by UEFI to the Linux kernel.
+>=20
+> Janne has confirmed[0] this to be suitable for indirect mappings as
+> well, though these patches don't implement that feature yet. Potential
+> extensions to this have been discussed but are not yet included at this
+> time to not further complicate things.
+>=20
+> Thierry
+>=20
+> [0]: https://lore.kernel.org/all/20220909144504.GA4024@jannau.net/
+>=20
+> Navneet Kumar (1):
+>   iommu/tegra-smmu: Support managed domains
+>=20
+> Thierry Reding (4):
+>   dt-bindings: reserved-memory: Document iommu-addresses
+>   iommu: Implement of_iommu_get_resv_regions()
+>   iommu: dma: Use of_iommu_get_resv_regions()
+>   iommu/tegra-smmu: Add support for reserved regions
+>=20
+>  .../reserved-memory/reserved-memory.yaml      |  70 ++++++++++++
+>  drivers/iommu/dma-iommu.c                     |   3 +
+>  drivers/iommu/of_iommu.c                      | 104 ++++++++++++++++++
+>  drivers/iommu/tegra-smmu.c                    |  86 ++++++++++++---
+>  include/linux/of_iommu.h                      |   8 ++
+>  5 files changed, 254 insertions(+), 17 deletions(-)
 
- .../nvidia/tegra194-p3509-0000+p3668-0001.dts | 33 +++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  2 +-
- 2 files changed, 34 insertions(+), 1 deletion(-)
+Joerg, if there are no further concerns on this, can you pick this up
+once v6.1-rc1 is released?
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts
-index 238fd98e8e45..44600479ea5f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts
-@@ -7,4 +7,37 @@
- / {
- 	model = "NVIDIA Jetson Xavier NX Developer Kit (eMMC)";
- 	compatible = "nvidia,p3509-0000+p3668-0001", "nvidia,tegra194";
-+
-+	chosen {
-+		framebuffer {
-+			compatible = "simple-framebuffer";
-+			status = "disabled";
-+			memory-region = <&fb>;
-+			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
-+			clocks = <&bpmp TEGRA194_CLK_SOR1_REF>,
-+				 <&bpmp TEGRA194_CLK_SOR1_OUT>,
-+				 <&bpmp TEGRA194_CLK_SOR1_PAD_CLKOUT>,
-+				 <&bpmp TEGRA194_CLK_PLLD2>,
-+				 <&bpmp TEGRA194_CLK_PLLDP>,
-+				 <&bpmp TEGRA194_CLK_NVDISPLAY_DISP>,
-+				 <&bpmp TEGRA194_CLK_NVDISPLAYHUB>,
-+				 <&bpmp TEGRA194_CLK_NVDISPLAY_P0>;
-+			width = <0>;
-+			height = <0>;
-+			stride = <0>;
-+			format = "";
-+		};
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		fb: framebuffer@0,0 {
-+			compatible = "framebuffer";
-+			reg = <0x0 0x0 0x0 0x0>;
-+			iommu-addresses = <&dc0 0x0 0x0 0x0 0x0>;
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 4d10b6b5324d..a961d42c81d6 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1960,7 +1960,7 @@ display-hub@15200000 {
- 
- 				ranges = <0x15200000 0x15200000 0x40000>;
- 
--				display@15200000 {
-+				dc0: display@15200000 {
- 					compatible = "nvidia,tegra194-dc";
- 					reg = <0x15200000 0x10000>;
- 					interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.37.3
+Thanks,
+Thierry
 
+--JGYHqtEsfJ0xq16p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNAIOkACgkQ3SOs138+
+s6HMOw/9EzfFTbPIHJ55dk8c2dHNzdSSSd0VIS6K9XFP1CTDRcmSNrM32GN1jL5X
+Eo/cDhXNNj8hBHOK8ejI0QP2mSRaEGOEQ4AN+a/I4FKQ6UQqRR6S9h14eyCkWoIm
+s0IbugJCLcKIJ6pZ+TrzdbqicAZHTUih0r5BWfaMGWi6Dz4GC0YD+xflDKm3Ysp2
+DOpEzGHOYfOTJ3DIilCWiMMHqSXFeuexMj9WYoSoH192BClik3JEHUJEk9VpI+fo
+YvFLmbsutf4YapyUcyV2jJ8rA9gFmccCmtSg5xziqnoHnmRqlnSECDimDVMlfr2s
+HwbS0mLUe9nYxlpRWk5e/i63lEJx/5/EhXWeXp9zP7mIXnWC4/BAfpSXq6A8Dv3v
+vmTEuzadcWkrAPcz6o4aeVb7S/34IAkTEBr7jzV37Mm2i20E065FlXuOeUpwv+1j
+ePyqbDfAOvnFnnNpdZHlcIEJoXL5+pUaPcuNx+2PlPnS8ychYfoZxkStRueEqAfs
+SfrtV4T02Pq+ASUya8i6Qd80q06uNwzA0gtY4+R+Vu/K27b5TH3Eze1Sr9jhiJM1
+5t37qbbzC3chPFc9uPLr6aDBhEC5uZg1xLFMOVDEiKSsMJiuRY0tRyebh8++RB8Y
+yT4/+IAy8b0SUKyxpNIomSfBpIVya2B7cGuL1hkICSM+wo/8Ksk=
+=OhtH
+-----END PGP SIGNATURE-----
+
+--JGYHqtEsfJ0xq16p--
