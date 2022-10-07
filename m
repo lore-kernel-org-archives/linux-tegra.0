@@ -2,183 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2A1C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 08:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03649C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 08:46:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbiJGIps (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 04:45:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44006 "EHLO
+        id S229650AbiJGIqv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 04:46:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbiJGIpq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 04:45:46 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36B264E855;
-        Fri,  7 Oct 2022 01:45:44 -0700 (PDT)
+        with ESMTP id S229494AbiJGIqu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 04:46:50 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2061.outbound.protection.outlook.com [40.107.100.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ABA4BBE1D;
+        Fri,  7 Oct 2022 01:46:47 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bxpE18tjgggGNvXYApGzNi1nBN+Eo+y+PhBGVU7dXim34UOthCSHDgxfAZ3XbqbJBuGwR82Bi5aRg8oWG5ytvtkza3mcgjP/ZkULuQHpWF0cTvH0jYkPMUCUGKysEEnNhSqk8T/VaruATwDHiRRj6jfKE8si+lPtUmCYSOX9AWJe2CUdqZJOho1Dp4U3wPUzzpuaYco5MPBXyeh8icwxbCMTbGKJBgix2h1dHs5K92rrAzF96FtbZsrr7JSd6zBF3GbeLjeUIXHScZMCs9lTXRPoTvNhPB2Y+ab8IlEo6444DZi/V2PXZr1kLz95EAzSQDPIQtEHP2EDuwqJcd9QTg==
+ b=OKPOQgg2PazUqSlxUrCBk4RvtmYNxXHqhJz7lfW1HeSVwZPmalCNChm/nGGbwVieizy/08daYlfiiYrkcYxMM5xQdIf97ovxc6FD2GeSdchBiXw5kk3LJ35WqkQxjd+PQTUmzjsbnuCWwEXhuYJgmr+B0cBhyzqFljxuNqgBr2cf3+MWaiTBijSwrf37frDk6HYXTozhWwhTHH3Em5e1Bikklcv5OzEjZK6jP7VRbRth0yzSoi/O3ku2IIJ1CIyzkXu+x5uUtaDoR2jPx8nffDBGY0V4JqS2ay+hdxsrx1sp4dukYDNFe/VSS9NuY24c7z6oObYcsl/0eGi1Or6jmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AQzNQ4zCElsL8rYunqBXqrdWfbReaDfyHLpjcfqC6rw=;
- b=kLqSSeJXcPGdciBDZ5IqiMi36jeUUdTjykqRlqJaPuVBPzAd0rw74KFE6R1TuuvuxPPAD6bhOtjl3JfwRrZLJ32C9CxvwXy6nGKTgywP17P4nxE3HZ8x2smuj+KIhinnfpViE04iVtD+PuKU6huI9eB5Eqj5Wroc0Spnr3bv7Xj71AD+MUYRlXvflReUv2vYxBNuotFnnl79bSITjHCvEl4t2eLI+8raEekRElXQ9OmoAyuxt4FYJo7NmP2YWWBGYWnRiPorvqxvb+Qx/QmYHEdBWWk/BdsMb/9mQvQ9kkAf3bawRqNQ2548lBKw5YHMhZtUz8MjnxuyE95NYpuk6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=baylibre.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=4h1W8YyMaxms2iT9HFHU19+wBZf/TVErVYrdz1mZMRk=;
+ b=FyWQ+VDOo2akspHZVrlwBqqzWts/Ct0bRXLTCfb22A5DjyoJk3/hs45Ze3h1PAFH4gd3lNB/RM4pvDal38VFglZC/mHVIJtiapTm0LvCYHz7babk5a+Dx9u1sXfWAV7WR1HMGKOAm2jMomga+UA2o/CElW2qbfZQjiVWpulqgMw2qasj7KeXfDhuLXNOIQZvMhbIFj7MS0QQphhjfgezQRLg4alYGiAfZRF0IX4j1oWld6mz+ct5sR9yoNOSuGlByJPDxZGdgsQKu+YiFOeyRSt8dxBfB3A3gqCUXwS2StznJfyEZYEDCBXH3wtqpHxNNLyi1w7JajEOVleNVnNzZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AQzNQ4zCElsL8rYunqBXqrdWfbReaDfyHLpjcfqC6rw=;
- b=s5J1BHh363eoC6j8c1tlGt0FVsFTIUEKl3cDJ3zqWJb/dQNVTW5sQaQpms+j0UL+oaoiH5ITde0imNpgBwkZfHmGOhGuwo/A6GwF4ovYxC71qQcwYssKencTL82AR/52Y+MHlu3uhYw9lha/DehmiW8bHDv2WZBQl/TAALfL4TWFjdb+en07xadIphPvU4vfmbzURZiTCdBpV7IOSDSeomCKAVFUH4OqHsWVvOFV317Ir7ZaTGWfV0vMnj5LE8MYKyJ9QOOsp2yDG0sjZ4DfZOXcU2q2gCNEfn9z3bH4NCy/FobT7PaIbtLLHWsy5z4bzhZApirWSQBpV3lwA6AoJw==
-Received: from MW4PR03CA0183.namprd03.prod.outlook.com (2603:10b6:303:b8::8)
- by MW4PR12MB6777.namprd12.prod.outlook.com (2603:10b6:303:1e9::17) with
+ bh=4h1W8YyMaxms2iT9HFHU19+wBZf/TVErVYrdz1mZMRk=;
+ b=kIIO1+mJA9CigZ/w4HAqKhHWQ7hGilaz1Jr0U8wHUPqsVdDXFR675kSsveZIW3SSkfJUuSSEIi/Fkp4ZPaP6tS1Nxa5kJ1p+BLHkxvqS3PLSPKuDU0O2WIMC8lYhUI4QXyxx3hA5iwo/gf5L2LW7BhCbJUlRucE/YyaAkElsNp9ciC8uAWIN1vpGM/6DydWcgSsIsS9kg9897vUr6QawY4qYN9T4QdjzPkU3Ztkxp1kHWxnWnYEJH5Q+xC6QG85+fSkFjDUn83dsYbdJcOOBCjX/ReMHHu8i+Nsy8yVXsgUYcbFQ6VZBiqFVmzwMJQD8+zOa+t+q/7OfKLFsgU4YHg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ BL1PR12MB5174.namprd12.prod.outlook.com (2603:10b6:208:31c::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.28; Fri, 7 Oct
- 2022 08:45:41 +0000
-Received: from CO1NAM11FT029.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b8:cafe::18) by MW4PR03CA0183.outlook.office365.com
- (2603:10b6:303:b8::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24 via Frontend
- Transport; Fri, 7 Oct 2022 08:45:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1NAM11FT029.mail.protection.outlook.com (10.13.174.214) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5709.10 via Frontend Transport; Fri, 7 Oct 2022 08:45:41 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 7 Oct 2022
- 01:45:29 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Fri, 7 Oct 2022
- 01:45:28 -0700
-Received: from moonraker.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Fri, 7 Oct 2022 01:45:26 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
+ 2022 08:46:45 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::c0e5:f111:3e59:7c66]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::c0e5:f111:3e59:7c66%5]) with mapi id 15.20.5709.015; Fri, 7 Oct 2022
+ 08:46:44 +0000
+Message-ID: <5238af65-e207-c23d-c1e1-93e09d8268d9@nvidia.com>
+Date:   Fri, 7 Oct 2022 09:46:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] clk: tegra: Fix Tegra210 PWM parent clock
+Content-Language: en-US
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2] clk: tegra: Fix Tegra PWM parent clock
-Date:   Fri, 7 Oct 2022 09:45:24 +0100
-Message-ID: <20221007084524.10712-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20221003101555.25458-1-jonathanh@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20221003101555.25458-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0038.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ac::6) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT029:EE_|MW4PR12MB6777:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ed2b39c-aabe-4589-4897-08daa84050f9
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|BL1PR12MB5174:EE_
+X-MS-Office365-Filtering-Correlation-Id: dd4ab974-b2cf-49ca-4268-08daa8407636
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nhnRufT1eNbGMrmuF4OMyWTm33+S4yqqEtN/NmbRwR4V4n9n9rxn7Z0g1sFl5rmm/VclxwWs3aSvQ/pXXtO1W3PvA8vbQx8Tui8ayHUX+nzD5UpAm41aSzPY0SW3Vx04frdP5hnB3kGI5aRYF83FxQ/nYMJBYFsbHd8Mdj/FNeU+Up7ZouMWNsnzbc5Jlj7u3VzVU1abyVmeOQVqK/lcRekJG6gdc0X4opsCACM0sl/1es68M8dqZd3yI097ut17ANFyJfoCwfp9rHvCug5hl/zDZfopsEKgtjX/atalzDiBS1eTEjbRA8AmeFts0JPWvsUiJaZV/IcRxuiY7osD3LWerIEMCrjriqXp7QB6+zjJf4YW6S7CnKTBmnEmERlnbJ7YOcTNWLzhnC5nRWDdqlYqV5LklMfdJuWhzlYvmqxNWngLL11jhJ4b3+r5LqsEcIi2OyM5inR+67ZPCKOG1HNyDezWRylQG3enipZnCBOWbGZQhqc0JwXMre+D1wM2/6bbDpv/SNOnNzFGhhEQPbn4sw4FPF+MXBcamcjtHElRqweBnl7bkSlZquJPU4LcKC0ErBEjuDM0vOF3kkNwBsGKblFAr4can8zHkv8DdmBCEkJzFFeasCrv6pgc6lLE7HzD6/roT+GTyKJsWedeZJx7s6wI/S2Qytqc3tJHrN5xLesRfXdMlVMW2Wb+3n6iXBhaFXlcs/02EcI4f3YnaqAuNSKcM+3qjELggJPVLiJCCZVzGjpOkZIsi7FzBfVFYfn5UH6tWHz19gXIBBOvnA==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(346002)(136003)(39860400002)(451199015)(46966006)(36840700001)(40470700004)(47076005)(426003)(83380400001)(82310400005)(36860700001)(36756003)(2616005)(336012)(1076003)(70586007)(7636003)(86362001)(186003)(26005)(7696005)(8676002)(356005)(4326008)(478600001)(2906002)(5660300002)(82740400003)(107886003)(8936002)(110136005)(54906003)(316002)(70206006)(40460700003)(41300700001)(40480700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: HczvK7BZN0NbvPGbfNeLYguEeHY1knqwRwHANqOy64nDdPJodZbw+nbKDvrqLXVDJldI6MKEa4WpCGUKf/UL2hxgbFnzFIpg3xc2JsxefrD6C7HYioh08jCg4j3w8X/dP7ihaOAzR9UKqxG79vkKER1Ct59bMt3kvIHmZUIO5tlI9UHUCFFTbFMqli67cRxLw2kdfnD5ct2Y1hBk/MlHb0WnPFZFHO2YYqdSmq+MvzH36croU1QLkQx0jAsWFCFBlFGNeWCrqVxVJLf5DRxx9RcPeF7dZ9oo31pP+ObOGefTDG/tx8SOQywsXBxns2wF/0pvsQY5LprIy2L090dSOQsdtT2jA1QqoO9jHYG7m2SE9Z8t2KWi+YFY5qATIlz8f111f/IJch6OSaxXASa5t7ecCK3mgCANipWyEKmE2lZnjPXs6BprqcuJzdoEpONssixEJMKbBA9qIuxA+1l8A9+bTutfv1HK524Fl9fcUCOf9U6pSilcO3dJiFJHN7m705hNaLnKgHCDwdXgT7VWaickL88lwFRhA446ZA1LSWiasEYpybCVasmrAceEJev0SDBFR2NSjAWNwI8JF+6ZJ/Pmvz8pZYmqDmmzxEG7xWtzEVNEEW4K2VVhs1VZGe2LlQLOJeORpeCzGTrSLS0Nn19oK+QOt4P0ZjRHmYsfT5SmubM/XqTx/zueqDTJLA4cEM9TANw5jgx0BAbgkQlVbAl2NemKsVSFwNLKXA7QxO9Yx/Vqfp5WT9jA2dRahzSM/FTP4Wgzv48NpRr0qBdzfcgSoGwmGe8iVxqzXWFJ+/w=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(136003)(376002)(366004)(396003)(451199015)(31686004)(2906002)(31696002)(8676002)(6512007)(66556008)(41300700001)(6486002)(6666004)(6506007)(66476007)(4326008)(53546011)(86362001)(4744005)(110136005)(36756003)(38100700002)(2616005)(186003)(83380400001)(8936002)(5660300002)(478600001)(66946007)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MHZtUkF6SVYveEJ0eHBDRUF6K3NicTJmVUJBVGhqZzdabHNEZGkwQS9BQTh0?=
+ =?utf-8?B?OGpSa29iOHRUdkdnZFB5a3RnUVNoNVRrb2hXdzNma2ZqeUphcXprS2ozMmE2?=
+ =?utf-8?B?TnJlZTVSeEFpcVd3eEhrTUlmaHpzSC8raW5SZE93bkZrZFJ0QmswUU1xd1BV?=
+ =?utf-8?B?K2ZKczE3WjNwRXNOWjVJWkM3RTNEMko0M21SWFpiOGpJenAwbzJPU0V1azNr?=
+ =?utf-8?B?TXR6U0tKdDR3UnFkRUpTSVlVSkhrN2QzMEttWGluWnRsRkdtdUpuSmNoVFNo?=
+ =?utf-8?B?d2RJa29icmFyRFh1NlBvNUhwR1VXdWZrUFBkekVINE1hR3JtWktxUTlTVnpO?=
+ =?utf-8?B?R0NTWXJRODVCSzVLQkkvNFlRNzE2dmQrL3YzSkFmdU42a0RoTC9JME1GOVhU?=
+ =?utf-8?B?Ri8vVFhVckJxcWZXK2RUYm5Jck1Ubk1qWjgyNWUrVUlJV2hENkRHOURyMk5P?=
+ =?utf-8?B?QWdiMDYvc0ZTVDhNTER6RUl1ZXYzcXVpbkpEUUhFTTNwM01lelY0RVIvK3FB?=
+ =?utf-8?B?RDFhYVBsbXpYMjFNS3JxWEVTeStvMk1wUVJKbXRxd3lvNER3bmFCdzYycG1W?=
+ =?utf-8?B?N0lKK2trK05YTHFhbTFFczV6TGhSa2x3K2R1SHBBeVFNT2NVclJrQWNiMkpB?=
+ =?utf-8?B?QTRlR0ZQVjM2QU1Beks0S3lCaHpVU21panZnSm4xeTAzQ213REFoZ0Ewelhj?=
+ =?utf-8?B?Wk1uL01talU3T1NzNFlyb1pBQXdLdm5VdVdjVTdjaHN4a0M4eVplQVd6UGxW?=
+ =?utf-8?B?aEVKVU9KSzJkTW1BRkxaYUR3aEdYWTB5ZjZqcnViVWlvWU96Yk5UZDF2Tm1Y?=
+ =?utf-8?B?S0pjUHk5NVRtdCtjZkh6bkM3QlVJaFpSNWVpb241RFVZZVpENU94bDFYTnBr?=
+ =?utf-8?B?Umltc2dpazEycHdrRFpKVlNhdFlncVZFamVpMUxmVjAzajlOWFhXcjBpTUlQ?=
+ =?utf-8?B?THUxakw4QUZyemR5L3NGSGprZzNrOEN5eFZUNC81dkYyRGdMSmNEWHI4Mzk3?=
+ =?utf-8?B?NVpaZmkycS93TGJKRWVvaGxVTktQeEVYRTNYVTk4QVpFeHFHd3k2NDlpQlNV?=
+ =?utf-8?B?MlhqVElwM3EzTlF5VHRwanQwdVc5ekdGZDdXcllkTFZmZFQrb2IxNGRQWFM2?=
+ =?utf-8?B?UW15bGtlb1VCelUxYUpsYkhYTUZUS09JTER5OEhZSjIxTW1nRUkzNVdkanZF?=
+ =?utf-8?B?Si9GTEpCa3Yrd0dOK2xqOFQzTDNTMDN3TzhOMTZuaUJHOGRQY0V5dS9lWFo3?=
+ =?utf-8?B?VFB5Zk03WmFPUlRwYmoxYkRHUVVYazFZcmhpZjMzUjc5dmtpV05JUVN3aCtF?=
+ =?utf-8?B?Y2k0cEtuZjhySmdPTXlCbTM0a0hKWXdkcnZjM0dJQWdtbG55S203SVI2ME0r?=
+ =?utf-8?B?TEMzd0ttUldtdzJHcjRKTmpPYjJWYVhJOFpEdFpxWERtemhJYjJmOW0rTHdr?=
+ =?utf-8?B?NXNUVE4rTTMrcUdXUWM5dC9BQTZ0YmNHVEl6SjJ1N05SVjUvc2RnNzBxK2th?=
+ =?utf-8?B?UjAwTGtwQTh0K1J6em1JS05CZVZkY25mNnpLWUFGck0rQVNPYXp5Z0Y5Nzd4?=
+ =?utf-8?B?cy9CcFFDMm1tT05xaTZvZGl5OUw5S1NGNlppbCsvSnV2UG1pd3QzRG42VWFm?=
+ =?utf-8?B?OUlKTmtJRG1SN2xGSVVrOTRKLzl4VnpCeVRPSnp1NnhMOTZvdHQ0aS9XQW5H?=
+ =?utf-8?B?TlN6YWt5TDJrbnFWZzlKeTVGQm9ucWpkM3lmM1BzSm5yTjViRzJiMW5PbnZ6?=
+ =?utf-8?B?SnkzcDAxMzlKd0JOT2FESWg0ZzBEaW5FcjJFY0x1NGxpY0JTOFdmeXZCdUta?=
+ =?utf-8?B?dVl4aGtGZmpGRmM1dFJWL1VSQytoMHh3RVpkb0RqYk5VM2ZJUWQ5YitvMDNJ?=
+ =?utf-8?B?d3c1RXBBQWd4emRNRjJJTWRTQjcvdEFTWmdrRUJoZ2hva2ZjNkRUbHRLZXRR?=
+ =?utf-8?B?SjJLb2ducmtlWTl2VW50QmVjUy9QVHZUa2tyVnV5eFpnMmprcnZMSzVFR2ZZ?=
+ =?utf-8?B?REM0ZDhtd2xTOGhGTGRqK0gzek1YeFovYkxiRTlwUVdOamhNUDZCeHBSWHMz?=
+ =?utf-8?B?ZUFlcHg1Q2doNEozY1BDUS9GY3pnR2M3SUFPRmZPZzJVRGg4VEdtZnBKanhH?=
+ =?utf-8?B?S0JSMFFaT2dvS0JENnNHVjN1VFpCeDFJNlE3ZHJ5a0luUlZjUUdERlh5V2dW?=
+ =?utf-8?Q?bxibj9A0QCmjKrZO7nkl3rBmjudswVbAobJ6NLb25CFS?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2022 08:45:41.5296
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd4ab974-b2cf-49ca-4268-08daa8407636
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2022 08:46:44.3943
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ed2b39c-aabe-4589-4897-08daa84050f9
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT029.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6777
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Fq60XnSy8la0FP9cUfCZWC0rMQTRHD9UKvWRxWJqiY6//6vlevcrVDNTynPjkUVnTZj9AXsEIv1Twck6fWBp6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5174
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
-the period calculation in the Tegra PWM driver and now returns an error
-if the period requested is less than minimum period supported. This is
-breaking PWM support on various Tegra platforms. For example, on the
-Tegra210 Jetson Nano platform this is breaking the PWM fan support and
-probing the PWM fan driver now fails ...
+On 03/10/2022 11:15, Jon Hunter wrote:
+> Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
+> the period calculation in the Tegra PWM driver and now returns an error
+> if the period requested is less than minimum period supported. This is
+> breaking PWM fan support on the Tegra210 Jetson Nano platform and
+> probing the PWM fan driver now fails ...
+> 
+>   pwm-fan pwm-fan: Failed to configure PWM: -22
+>   pwm-fan: probe of pwm-fan failed with error -22
+> 
+> The problem is that the default parent clock for the PWM on Tegra210 is
+> a 32kHz clock and is unable to support the requested PWM period. Fix
+> this by updating the parent clock for the PWM to be the PLL_P which
+> operates at 48MHz.
+> 
+> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
- pwm-fan pwm-fan: Failed to configure PWM: -22
- pwm-fan: probe of pwm-fan failed with error -22
 
-The problem is that the default parent clock for the PWM on Tegra210 is
-a 32kHz clock and is unable to support the requested PWM period.
+I have sent a V2 on this to fix the PWM support for some other Tegra 
+devices.
 
-Fix PWM support on Tegra20, Tegra30, Tegra124 and Tegra210 by updating
-the parent clock for the PWM to be the PLL_P.
+Jon
 
-Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
-
-I have tested this on Tegra210 and boot tested on the Tegra20/30/124
-platforms but please confirm if this fixes all the issues seen on these
-platforms.
-
- drivers/clk/tegra/clk-tegra124.c | 1 +
- drivers/clk/tegra/clk-tegra20.c  | 1 +
- drivers/clk/tegra/clk-tegra210.c | 1 +
- drivers/clk/tegra/clk-tegra30.c  | 1 +
- 4 files changed, 4 insertions(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index a9d4efcef2d4..6c46592d794e 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1330,6 +1330,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_I2S3_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
- 	{ TEGRA124_CLK_I2S4_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
- 	{ TEGRA124_CLK_VIMCLK_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA124_CLK_PWM, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0 },
- };
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 8a4514f6d503..422d78247553 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1044,6 +1044,7 @@ static struct tegra_clk_init_table init_table[] = {
- 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
-+	{ TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
- };
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 499f999e91e1..a3488aaac3f7 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3597,6 +3597,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
- 	{ TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
- 	{ TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
-+	{ TEGRA210_CLK_PWM, TEGRA210_CLK_PLL_P, 48000000, 0 },
- 	/* This MUST be the last entry. */
- 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
- };
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 168c07d5a5f2..60f1534711f1 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table init_table[] = {
- 	{ TEGRA30_CLK_VIMCLK_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
- 	{ TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
-+	{ TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
- };
 -- 
-2.25.1
-
+nvpublic
