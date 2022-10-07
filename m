@@ -2,108 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6F5C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 09:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1B2C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 09:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbiJGJF1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 05:05:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51206 "EHLO
+        id S229452AbiJGJv7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 05:51:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbiJGJF0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 05:05:26 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C161A4862
-        for <linux-tegra@vger.kernel.org>; Fri,  7 Oct 2022 02:05:24 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id d10so4379225pfh.6
-        for <linux-tegra@vger.kernel.org>; Fri, 07 Oct 2022 02:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=vuJolKOvcivD/aX91qIw8K+wkQRzYxb0y/y1JZ9OmnA=;
-        b=VMucyp3eulkyWa4RtK33D5vsDdmOx3E/5uQASe5XFyBc7QvZuu4g64YGeCqYMhawug
-         ME5vfLEOBdt/XKVL8wVkuDE0oFZbAQwP1yBezOGvcHfUUWAXoZUtdeQTinVJRWT8pCSX
-         /GQQTFltv2Fz0fYnMAFq+wXoKyHXcGOaSHDeZkEVGFAbRVSINJ0J3YUAn095cpTI71jq
-         I4MyfBFjeLyhtN6o94yh6V4lAm0CFLs2jb89EqQ0UAfNd4Hr1mQBZEpajmt+8hM+Qcij
-         1onKQgdMymLVLwl5nOK/TMAuX7f2MFxxZNu0Axk64TsudUs+UCQpjwwzuzJw63xlzX+p
-         sVgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=vuJolKOvcivD/aX91qIw8K+wkQRzYxb0y/y1JZ9OmnA=;
-        b=IajpPmqXAFEKdo54whkZzA8Bty/7tqJeLVM38cpynCP4o8hYKLigzCx+wIVGGrR7iM
-         BBfW6WFS1QZP7Qqlb6ZoXp9ffBAYNHFYh0KKJqjTDwxx80Qc3eux9yg8uxURXddcCa+i
-         +Vjkqtm2aZXHDMYOFGFckBAdEQdJVi59zRio8xsB6ZmYD5trapDeLmlbEaRuGfUahBeu
-         s+n6RDhhHDImGBwIlbUPtrxW02xqhIDLI1zAxIwe/gKZOklr9HLsTBETs4lNeNmk7Tnl
-         85RHTI+zYu7p12Q5hvOcrxfluRUTL5pheL6M3YRGm17ZrNhPOzVEij8xRhttPSMXSuYG
-         6w0A==
-X-Gm-Message-State: ACrzQf2itGVuYApKB2JpA8npjeLKwRB6s2Kvb7TrtoPqTJCNigDD2sSM
-        /YpS2SwenUMS2eJmMC/c/Jw992/h6Kni/yiYjehy4Q==
-X-Google-Smtp-Source: AMsMyM64mfUZgwPaHuURYaWD48vnFONQ5XCe+zQV5qK4djTsOG42Yp4NYuS7nB7GGU3nnFAZ+lm7I/aSnkyo1ewOiMg=
-X-Received: by 2002:a63:90c1:0:b0:450:75b5:29fe with SMTP id
- a184-20020a6390c1000000b0045075b529femr3514159pge.541.1665133523790; Fri, 07
- Oct 2022 02:05:23 -0700 (PDT)
+        with ESMTP id S229825AbiJGJvh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 05:51:37 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82404CF85E;
+        Fri,  7 Oct 2022 02:51:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Kr52aEIryugCWCTJyQjbs1kTiU6KluArZIorrHaZlAqsnkcVV5CRxCWpPGfd29LFNKg90vmOZ44EknaNW1AUl+9KV763dfyz4aNmyvYiqnuo2FqqfrDcLJly+/s7remJJdyDM0SlR3xdFDOg6JREO7dWTboDzvmzhKZhUeEWhq1jYvaTm8HHAyrxVZSjo89JFFIGvjF0xf3rrEO2nr5rLfiaXMplLGdzeG4mtgUhXroSg7TC3dh67ln3icFHouOp+2ZRQDlRi9P7Bdy0rhgUltwBqaltbnmXYR71c/EdX5RE/UsCYeD4a14rg3gFCKZ80aEDDf9XVKDlTbTd5+SJ9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=obEyzbemWDE/oImirQ0oefqnwYB4OLKPCLq7DM35DaI=;
+ b=igwvlL/UHkIUWLxqUQhedA59LxlsEnl40pT14NktICHzVxaKC7xmyOnINWWjLi2hOeeZwICOLPEYArG8xJjnBvRX4sEqfaX3Ijpoc9itHUZYU/cDnG7FQ1Fpn04dPAnLkVHjZcpqQxHT14sq9PyIeabIC1sgfL6Qw4bxG8kIwswqMJSPCRpdWtnFfoiQ7vog+4W/xRwOBiRQp6YoCuCkzvRPz/XN1o/xoVck7dHkAo9vWurZJOGld738KpAN5/7aiWik/4/Ibzmvjf9Bf0ezV9/7UiDxQWx/901NugYwVsSEVm122gYOv/8pKPu/q9SqN4BbWw0uQyg8Pq+szTNuYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=obEyzbemWDE/oImirQ0oefqnwYB4OLKPCLq7DM35DaI=;
+ b=g1KmVKzhMTPZOeg56hgsocDiNbKC3CSR8FrTCyXS6mB2zKH8stJU7bQ1p84kyoKeAz0p2xwhz8bn95OgBnj0Mhcr1daK92UjJekbV70jxtdIpCqYlALTZerzNtNPtI6PgmYhPTiRQ1azb5bNFzPNBg3lsQQqn9qFfGO/wt+aMmGUpWI45VjKj6UswAMA67q/R1gRroAWm+GdNyYfJ0FBJOZrB6mlGnPL+3w3z75LI6pWeOn4qAL8uMWOusJX0e98kYKJk9SuxPDW5gKsmokJOGtbJ7uaCSLqhRbu6Ia2ztT2Qw/g5c+2de7x2ur0IHESY4dTcJbMPFlB3nCqG/wALg==
+Received: from BN9PR03CA0626.namprd03.prod.outlook.com (2603:10b6:408:106::31)
+ by MN0PR12MB6175.namprd12.prod.outlook.com (2603:10b6:208:3c4::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.31; Fri, 7 Oct
+ 2022 09:51:17 +0000
+Received: from BN8NAM11FT068.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:106:cafe::87) by BN9PR03CA0626.outlook.office365.com
+ (2603:10b6:408:106::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.30 via Frontend
+ Transport; Fri, 7 Oct 2022 09:51:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN8NAM11FT068.mail.protection.outlook.com (10.13.177.69) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5709.10 via Frontend Transport; Fri, 7 Oct 2022 09:51:16 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 7 Oct 2022
+ 02:51:13 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Fri, 7 Oct 2022 02:51:12 -0700
+Received: from kkartik-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Fri, 7 Oct 2022 02:51:09 -0700
+From:   Kartik <kkartik@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <digetx@gmail.com>, <kkartik@nvidia.com>, <windhl@126.com>,
+        <ndesaulniers@google.com>, <nathan@kernel.org>,
+        <skamble@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] Tegra Fuse Nvmem Interface Update
+Date:   Fri, 7 Oct 2022 15:21:05 +0530
+Message-ID: <1665136268-29494-1-git-send-email-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <Yz6zfrVq9cP/wrJb@orome> <20221006130622.22900-1-pshete@nvidia.com>
- <20221006130622.22900-4-pshete@nvidia.com>
-In-Reply-To: <20221006130622.22900-4-pshete@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 7 Oct 2022 11:04:47 +0200
-Message-ID: <CAPDyKFq5mocPRZO97=f0TiNsgXntT+R9+XRK94MTvFPUBF4tig@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] mmc: sdhci-tegra: Use actual clock rate for SW
- tuning correction
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     adrian.hunter@intel.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, p.zabel@pengutronix.de,
-        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, anrao@nvidia.com,
-        smangipudi@nvidia.com, kyarlagadda@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT068:EE_|MN0PR12MB6175:EE_
+X-MS-Office365-Filtering-Correlation-Id: baa5f013-ec8c-4f98-1bba-08daa8497a94
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: JomBCwpyFfdsm+iZTjMwJgQCaEv4lDXNnicIA/MDy1h/uPjK5OAdqEGm1zAdS2w0tE/1sQtnJUqBclQa1LW5d74sf5hKBkrXgNrNMQkGdj6TVnufuIbafkPpw/S6b5K7zfoK0YX9fzUYPAUTz6YlYWhN7jzbMm8csG7cEFt9DRDyjAftfI6ctbNGZGaW1HCraWCtVbBrRI3MD7grlUPZbyCV8hE4dLNx9Hl6kh//gEUAYr21R8eCuwSsa4ByIJdvqc20HMYnW8CFfNbHQPyiCZO41P/fy8S//sErJJQ17rgLoyw5kChghsXfgTzuZ1rBKuw0KI0gl5y2f3fHNsYCXCudVLRh6Wb/EeCx4o/SH1gPcq9ikiImSNhsPhopLBFpKT16aPkKJ4Bs+ANU6hMH4Zz14sanB8R4kKM0W3yHNjtz3NNk0DKGv3zwDUefyCwOOtd6i6AOhQMZuKxgvq3jIrrO1uNnuyp0psx9EOdbTz8arZr+WCoxV9X58xcmOmhPn8eVT63brWk1ZtnD/hAmr/BtVguNhKPWMKSxuozz4zPGog6PMjm3wQBxEG6Hki6iSHXiT5VGzN5/LPW1EuSb3DHuDoDpAdz3BNKMc//mqLuYgoNJJ3WuKeSkjZSUWFYC4iSYgzY2qcu8CgZSmvIjiY7dWtBHiC2bGwxv5VwT/hBf2MPwsd0Cu2c0b4ZpqdpaQkdAwCnuuHeh8s5x65uXUUq7KE1XVMD0biHkXJkIwoU9UjTiPaVy+EYDPdlpktXKokWK1zOJUDbyEI63EPMK0CBsjcnSnWP8AXxF5RHMzc1mFRyB+Q7eb+WHAzD/UJBBbFPzKswUvRTL9CgH7M52zA==
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(136003)(396003)(346002)(451199015)(46966006)(40470700004)(36840700001)(40480700001)(82310400005)(8936002)(41300700001)(2906002)(2616005)(426003)(356005)(5660300002)(478600001)(70206006)(7636003)(921005)(6666004)(15650500001)(70586007)(47076005)(36860700001)(4744005)(36756003)(110136005)(82740400003)(336012)(83380400001)(40460700003)(186003)(26005)(316002)(86362001)(8676002)(7696005)(2101003)(83996005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2022 09:51:16.6764
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: baa5f013-ec8c-4f98-1bba-08daa8497a94
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT068.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6175
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 6 Oct 2022 at 15:07, Prathamesh Shete <pshete@nvidia.com> wrote:
->
-> Ensure tegra_host member "curr_clk_rate" holds the actual clock rate
-> instead of requested clock rate for proper use during tuning correction
-> algorithm. Actual clk rate may not be the same as the requested clk
-> frequency depending on the parent clock source set. Tuning correction
-> algorithm depends on certain parameters which are sensitive to current
-> clk rate. If the host clk is selected instead of the actual clock rate,
-> tuning correction algorithm may end up applying invalid correction,
-> which could result in errors
->
-> Fixes: ea8fc5953e8b ("mmc: tegra: update hw tuning process")
->
-> Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
+This series of patches make various enhancements and updates to Tegra
+Fuse nvmem interface, that includes:
+ 1. Using per SOC nvmem cells. As, tegra fuse availability and size
+    can vary from once SOC to another.
+ 2. Fixes an issue with nvmem binary interface which could result in RAS
+    errors.
+ 3. Add opt-dla-disable nvmem cell for Tegra234 SOC, this is used by
+    Tegra Deep Learning Accelerator driver to correctly identify internal
+    and production boards.
 
-Applied for fixes and by adding a stable tag, thanks!
+NOTE: Patch "soc/tegra: fuse: use soc specific nvmem cells" had already
+been sent out for review. Please ignore the previous patch.
 
-Kind regards
-Uffe
+Kartik (3):
+  soc/tegra: fuse: use soc specific nvmem cells
+  soc/tegra: fuse: add fuse nvmem keepout list
+  soc/tegra: fuse: add opt-dla-disable nvmem cell
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 3663c5d0efe0..ccbb26a66284 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -783,7 +783,7 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->                 dev_err(dev, "failed to set clk rate to %luHz: %d\n",
->                         host_clk, err);
->
-> -       tegra_host->curr_clk_rate = host_clk;
-> +       tegra_host->curr_clk_rate = clk_get_rate(pltfm_host->clk);
->         if (tegra_host->ddr_signaling)
->                 host->max_clk = host_clk;
->         else
-> --
-> 2.17.1
->
+ drivers/soc/tegra/fuse/fuse-tegra.c   | 112 +---------
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 294 +++++++++++++++++++++++++-
+ drivers/soc/tegra/fuse/fuse.h         |   4 +
+ 3 files changed, 299 insertions(+), 111 deletions(-)
+
+-- 
+2.17.1
+
