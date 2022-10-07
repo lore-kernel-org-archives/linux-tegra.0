@@ -2,113 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB012C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 15:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7ADC433FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 16:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbiJGP5e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 11:57:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34572 "EHLO
+        id S229950AbiJGQ0U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 12:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229636AbiJGP5d (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 11:57:33 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601AAA5737
-        for <linux-tegra@vger.kernel.org>; Fri,  7 Oct 2022 08:57:31 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id q17so6171670lji.11
-        for <linux-tegra@vger.kernel.org>; Fri, 07 Oct 2022 08:57:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m5HuWaiBxYc9lI4KqIWMCv5yIi0RRFxzG1NnVl7MMOE=;
-        b=ak/dQlFN+CtlNnUw49riVpZvBwA21CcPyo4J7WkbfMnXxK+iew8WeMXf/qKQ6zhTBA
-         EoE8vIr7FTJqsV5aribkJf+wRUvDeKdC8diY8RmcZDedMs8TeM9RGMsQnKg5k+EzCSlx
-         GyzZnbX5NQAxmWCSZ/UBhzf/SbASZFMx1Hr+nQw62HVStTQk7hhgsmVKSnfd1zFqWLB1
-         iZIzCZ4KxD1VIYMM2oBhj6LIyYUoZmWtIyyMzNehYf3DTBeDfy8N+h7fEtEB/K3KSkB4
-         TvgY9Os3qPd8Jyv7iN8RR7JKM7+/V7CRjp0g+wNEEsgk/Kftw5AdihGzCBK/yaNer+0A
-         KGVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5HuWaiBxYc9lI4KqIWMCv5yIi0RRFxzG1NnVl7MMOE=;
-        b=V1ayCEKSAq35FEz31jsd8A6mpqequQqvtndZ5c2iECfgkrENV7sD5ScQXlWcATl5Pn
-         k3t/bvmXTqv1zyzQ742zXiY6RXg3w4GF8CeCSe8LtRfcteF4ZFF3FSMEevtVUWr0HSZP
-         czy0SharRXxkmtCKK3aCeWqFrTSN5NJIezIvAQAwDeK/gkTd+Sgfgj1HhuJAw5iLOfS+
-         ujiQTJbJZGExqb6PMDxj4Y4sLI1H8awTNPIRLAMdcCrjb1UJe4Jia9O5Qqxx4FAk5A7b
-         4NkymZEV4kVmobcVfGMrNVRMcB3RwohgewLW623M0RclEVotoAn00iXWAN7bwWzX8+xt
-         17YQ==
-X-Gm-Message-State: ACrzQf21ruTj2/9UImxCf78m3YRjg3giOpVwsDU9FOs3zvxPt79Nd+zt
-        vuU2jyfQbO88JpD47qtI3nt51A==
-X-Google-Smtp-Source: AMsMyM43XNH71np2bAVnS27qMV7G6nXKrqTTHy5zZmJF94oJjA09EWdUEbskt0R24ZpJCmxFUpYVOQ==
-X-Received: by 2002:a05:651c:b13:b0:26c:679f:ea66 with SMTP id b19-20020a05651c0b1300b0026c679fea66mr2085382ljr.516.1665158249732;
-        Fri, 07 Oct 2022 08:57:29 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id cf11-20020a056512280b00b004a03fd4476esm331324lfb.287.2022.10.07.08.57.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Oct 2022 08:57:29 -0700 (PDT)
-Message-ID: <7bf3f70a-4af6-c62a-75fc-89591d5de04b@linaro.org>
-Date:   Fri, 7 Oct 2022 17:57:28 +0200
+        with ESMTP id S229947AbiJGQ0T (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 12:26:19 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 717853ECC3;
+        Fri,  7 Oct 2022 09:26:18 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E45A106F;
+        Fri,  7 Oct 2022 09:26:24 -0700 (PDT)
+Received: from [10.57.65.170] (unknown [10.57.65.170])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B50D3F67D;
+        Fri,  7 Oct 2022 09:26:15 -0700 (PDT)
+Message-ID: <b33e92ef-9156-18f4-4e74-1f09b43deeab@arm.com>
+Date:   Fri, 7 Oct 2022 17:25:52 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
  Thunderbird/102.3.1
-Subject: Re: [PATCH v2] arm64: tegra: Add Tegra234 SDMMC1 device tree node
-Content-Language: en-US
-To:     Prathamesh Shete <pshete@nvidia.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     smangipudi@nvidia.com, kyarlagadda@nvidia.com, anrao@nvidia.com
-References: <80d046b9-ff8c-58dc-d149-e984d509fe5a@linaro.org>
- <20221007124424.16037-1-pshete@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221007124424.16037-1-pshete@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v9 1/5] dt-bindings: reserved-memory: Document
+ iommu-addresses
+Content-Language: en-GB
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
+        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
+        Rob Herring <robh@kernel.org>
+References: <20220923123557.866972-1-thierry.reding@gmail.com>
+ <20220923123557.866972-2-thierry.reding@gmail.com>
+ <3fb949ad-74c4-1bac-7e14-5d056afcef5f@arm.com> <Y0AvkshNYmqc3UGo@orome>
+ <75bebf10-6b89-464c-f9ad-c53f9f830c20@arm.com> <Y0BELav7cgHdW0eT@orome>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <Y0BELav7cgHdW0eT@orome>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 07/10/2022 14:44, Prathamesh Shete wrote:
-> Add device tree node for Tegra234 SDMMC1 instance.
-> Add and enable SD card instance in device tree.
+On 2022-10-07 16:22, Thierry Reding wrote:
+> On Fri, Oct 07, 2022 at 03:21:46PM +0100, Robin Murphy wrote:
+>> On 2022-10-07 14:54, Thierry Reding wrote:
+>>> On Fri, Oct 07, 2022 at 02:45:31PM +0100, Robin Murphy wrote:
+>>>> On 2022-09-23 13:35, Thierry Reding wrote:
+>>>>> From: Thierry Reding <treding@nvidia.com>
+>>>>>
+>>>>> This adds the "iommu-addresses" property to reserved-memory nodes, which
+>>>>> allow describing the interaction of memory regions with IOMMUs. Two use-
+>>>>> cases are supported:
+>>>>>
+>>>>>      1. Static mappings can be described by pairing the "iommu-addresses"
+>>>>>         property with a "reg" property. This is mostly useful for adopting
+>>>>>         firmware-allocated buffers via identity mappings. One common use-
+>>>>>         case where this is required is if early firmware or bootloaders
+>>>>>         have set up a bootsplash framebuffer that a display controller is
+>>>>>         actively scanning out from during the operating system boot
+>>>>>         process.
+>>>>>
+>>>>>      2. If an "iommu-addresses" property exists without a "reg" property,
+>>>>>         the reserved-memory node describes an IOVA reservation. Such memory
+>>>>>         regions are excluded from the IOVA space available to operating
+>>>>>         system drivers and can be used for regions that must not be used to
+>>>>>         map arbitrary buffers.
+>>>>
+>>>> Bah, I've only just realised: don't we also need to change the "oneOf:
+>>>> required: ..." schema to permit "iommu-addresses" without "reg" or "size"?
+>>>
+>>> Hm... good point. I think at least we'll want another:
+>>>
+>>>        - required:
+>>>            - iommu-addresses
+>>>
+>>> in there. I wonder if we also need to avoid the combination of "size"
+>>> and "iommu-addresses". When "size" is specified, is it guaranteed that
+>>> those regions will be allocated before the direct mapping needs to be
+>>> created?
+>>
+>> Well, it couldn't really be a direct mapping anyway. In general I don't
+>> think that combination makes any sense, since the presence of
+>> "iommu-addresses" means one of two things; either it says the IOVA range is
+>> carved out for some special purpose or just unusable, in which case
+>> allocating any memory to back it would surely be pointless, or it's saying
+>> don't touch these addresses because the device is already accessing them,
+>> thus the underlying physical memory must be allocated somewhere already.
 > 
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> I thought perhaps there could be cases where it is known that a
+> controller needs to access memory in a certain I/O virtual region but
+> doesn't actually care where that lives in physical memory and also does
+> not rely on that memory have been previously set up (pre-filled, or
+> whatever). Say you've got a micro-controller in a system that needs its
+> firmware in a given region, but the OS can set up that region without
+> any other limitations. One could use "size" and "iommu-addresses" to
+> make sure the region is allocated with a specific size and located in a
+> specific I/O virtual region. Not sure if that's perhaps a bit exotic,
+> though.
 
-> +
->  		mmc@3460000 {
->  			compatible = "nvidia,tegra234-sdhci", "nvidia,tegra186-sdhci";
->  			reg = <0x03460000 0x20000>;
-> @@ -1541,6 +1581,25 @@
->  
->  			#interrupt-cells = <2>;
->  			interrupt-controller;
+Yeah, that was the closest case I could think of as well, but I'd really 
+rather not encourage people to abuse DT that way. If a kernel driver is 
+loading firmware and initialising the device from scratch then it should 
+be able to sort everything out at runtime without DT involvement. Even 
+if the firmware is somehow massive enough to warrant an early dynamic 
+carveout rather than a regular page/CMA allocation, there's still no 
+good excuse for the driver not to manage its own address space constraints.
 
-The blank line which you incorrectly placed, should be here...
+On the other hand if the device really does need its firmware at a 
+specific hard-coded address than that would need a fixed physical 
+reservation anyway, since the DT can't assume that the OS is definitely 
+going to use IOMMU translation.
 
-> +			sdmmc1_3v3: sdmmc1-3v3 {
-> +				pins = "sdmmc1-hv";
-> +				power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-> +			};
-> +
-> +			sdmmc1_1v8: sdmmc1-1v8 {
-> +				pins = "sdmmc1-hv";
-> +				power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-> +			};
-> +
-> +			sdmmc3_3v3: sdmmc3-3v3 {
-> +				pins = "sdmmc3-hv";
-> +				power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-> +			};
-> +
-> +			sdmmc3_1v8: sdmmc3-1v8 {
-> +				pins = "sdmmc3-hv";
-> +				power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-> +			};
-
-
-Best regards,
-Krzysztof
-
+Thanks,
+Robin.
