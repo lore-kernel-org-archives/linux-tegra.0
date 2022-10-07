@@ -2,148 +2,181 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03649C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 08:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1221C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 08:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbiJGIqv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 04:46:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45928 "EHLO
+        id S229495AbiJGIuD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 04:50:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbiJGIqu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 04:46:50 -0400
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2061.outbound.protection.outlook.com [40.107.100.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ABA4BBE1D;
-        Fri,  7 Oct 2022 01:46:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OKPOQgg2PazUqSlxUrCBk4RvtmYNxXHqhJz7lfW1HeSVwZPmalCNChm/nGGbwVieizy/08daYlfiiYrkcYxMM5xQdIf97ovxc6FD2GeSdchBiXw5kk3LJ35WqkQxjd+PQTUmzjsbnuCWwEXhuYJgmr+B0cBhyzqFljxuNqgBr2cf3+MWaiTBijSwrf37frDk6HYXTozhWwhTHH3Em5e1Bikklcv5OzEjZK6jP7VRbRth0yzSoi/O3ku2IIJ1CIyzkXu+x5uUtaDoR2jPx8nffDBGY0V4JqS2ay+hdxsrx1sp4dukYDNFe/VSS9NuY24c7z6oObYcsl/0eGi1Or6jmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4h1W8YyMaxms2iT9HFHU19+wBZf/TVErVYrdz1mZMRk=;
- b=FyWQ+VDOo2akspHZVrlwBqqzWts/Ct0bRXLTCfb22A5DjyoJk3/hs45Ze3h1PAFH4gd3lNB/RM4pvDal38VFglZC/mHVIJtiapTm0LvCYHz7babk5a+Dx9u1sXfWAV7WR1HMGKOAm2jMomga+UA2o/CElW2qbfZQjiVWpulqgMw2qasj7KeXfDhuLXNOIQZvMhbIFj7MS0QQphhjfgezQRLg4alYGiAfZRF0IX4j1oWld6mz+ct5sR9yoNOSuGlByJPDxZGdgsQKu+YiFOeyRSt8dxBfB3A3gqCUXwS2StznJfyEZYEDCBXH3wtqpHxNNLyi1w7JajEOVleNVnNzZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4h1W8YyMaxms2iT9HFHU19+wBZf/TVErVYrdz1mZMRk=;
- b=kIIO1+mJA9CigZ/w4HAqKhHWQ7hGilaz1Jr0U8wHUPqsVdDXFR675kSsveZIW3SSkfJUuSSEIi/Fkp4ZPaP6tS1Nxa5kJ1p+BLHkxvqS3PLSPKuDU0O2WIMC8lYhUI4QXyxx3hA5iwo/gf5L2LW7BhCbJUlRucE/YyaAkElsNp9ciC8uAWIN1vpGM/6DydWcgSsIsS9kg9897vUr6QawY4qYN9T4QdjzPkU3Ztkxp1kHWxnWnYEJH5Q+xC6QG85+fSkFjDUn83dsYbdJcOOBCjX/ReMHHu8i+Nsy8yVXsgUYcbFQ6VZBiqFVmzwMJQD8+zOa+t+q/7OfKLFsgU4YHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- BL1PR12MB5174.namprd12.prod.outlook.com (2603:10b6:208:31c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.28; Fri, 7 Oct
- 2022 08:46:45 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::c0e5:f111:3e59:7c66]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::c0e5:f111:3e59:7c66%5]) with mapi id 15.20.5709.015; Fri, 7 Oct 2022
- 08:46:44 +0000
-Message-ID: <5238af65-e207-c23d-c1e1-93e09d8268d9@nvidia.com>
-Date:   Fri, 7 Oct 2022 09:46:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] clk: tegra: Fix Tegra210 PWM parent clock
-Content-Language: en-US
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20221003101555.25458-1-jonathanh@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20221003101555.25458-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0038.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ac::6) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        with ESMTP id S229472AbiJGIuC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 04:50:02 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178992656F;
+        Fri,  7 Oct 2022 01:50:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1665132601; x=1696668601;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CNNiQJ0jvcJk580eA851dG+WgC8+tA465upvwZmefVk=;
+  b=luOLotz+Gi8L6n68r6YDy8ARb0G+zDjVaSwuVgAyL9ySxlsbciGnvbOP
+   sn6aiwjAr7bF4r4Ut6ttCBnkB6UmcQjfqg2Toems3yHJYEKKqhNgFPcPo
+   xJw6Mz4Ui64SBHS90dHwHXv79jGC2+Mdn++ytl/nhFu7NPq07jIlM6hAw
+   C4VDkcIwkhkeqNnfFUfUxWBLCk3BFainqP2g6Kps9eOdPmMxAU77Q1x9W
+   xTZp639JUi5rVLpuoASkQUsjhHqhvauLSz+QwFsojmoQV/7Lxc3NpFsJs
+   6K6AxrZqfgWPyrjqrOhpsXE5HcEDdC3zH17e8+HxPkk8wGSxVc8wiZhke
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="286914342"
+X-IronPort-AV: E=Sophos;i="5.95,166,1661842800"; 
+   d="scan'208";a="286914342"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2022 01:50:00 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="714204628"
+X-IronPort-AV: E=Sophos;i="5.95,166,1661842800"; 
+   d="scan'208";a="714204628"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.99.241.18]) ([10.99.241.18])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2022 01:49:58 -0700
+Message-ID: <6730eda1-7a7a-3660-ebe4-e9e42de421a3@linux.intel.com>
+Date:   Fri, 7 Oct 2022 10:49:56 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|BL1PR12MB5174:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd4ab974-b2cf-49ca-4268-08daa8407636
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HczvK7BZN0NbvPGbfNeLYguEeHY1knqwRwHANqOy64nDdPJodZbw+nbKDvrqLXVDJldI6MKEa4WpCGUKf/UL2hxgbFnzFIpg3xc2JsxefrD6C7HYioh08jCg4j3w8X/dP7ihaOAzR9UKqxG79vkKER1Ct59bMt3kvIHmZUIO5tlI9UHUCFFTbFMqli67cRxLw2kdfnD5ct2Y1hBk/MlHb0WnPFZFHO2YYqdSmq+MvzH36croU1QLkQx0jAsWFCFBlFGNeWCrqVxVJLf5DRxx9RcPeF7dZ9oo31pP+ObOGefTDG/tx8SOQywsXBxns2wF/0pvsQY5LprIy2L090dSOQsdtT2jA1QqoO9jHYG7m2SE9Z8t2KWi+YFY5qATIlz8f111f/IJch6OSaxXASa5t7ecCK3mgCANipWyEKmE2lZnjPXs6BprqcuJzdoEpONssixEJMKbBA9qIuxA+1l8A9+bTutfv1HK524Fl9fcUCOf9U6pSilcO3dJiFJHN7m705hNaLnKgHCDwdXgT7VWaickL88lwFRhA446ZA1LSWiasEYpybCVasmrAceEJev0SDBFR2NSjAWNwI8JF+6ZJ/Pmvz8pZYmqDmmzxEG7xWtzEVNEEW4K2VVhs1VZGe2LlQLOJeORpeCzGTrSLS0Nn19oK+QOt4P0ZjRHmYsfT5SmubM/XqTx/zueqDTJLA4cEM9TANw5jgx0BAbgkQlVbAl2NemKsVSFwNLKXA7QxO9Yx/Vqfp5WT9jA2dRahzSM/FTP4Wgzv48NpRr0qBdzfcgSoGwmGe8iVxqzXWFJ+/w=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(136003)(376002)(366004)(396003)(451199015)(31686004)(2906002)(31696002)(8676002)(6512007)(66556008)(41300700001)(6486002)(6666004)(6506007)(66476007)(4326008)(53546011)(86362001)(4744005)(110136005)(36756003)(38100700002)(2616005)(186003)(83380400001)(8936002)(5660300002)(478600001)(66946007)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MHZtUkF6SVYveEJ0eHBDRUF6K3NicTJmVUJBVGhqZzdabHNEZGkwQS9BQTh0?=
- =?utf-8?B?OGpSa29iOHRUdkdnZFB5a3RnUVNoNVRrb2hXdzNma2ZqeUphcXprS2ozMmE2?=
- =?utf-8?B?TnJlZTVSeEFpcVd3eEhrTUlmaHpzSC8raW5SZE93bkZrZFJ0QmswUU1xd1BV?=
- =?utf-8?B?K2ZKczE3WjNwRXNOWjVJWkM3RTNEMko0M21SWFpiOGpJenAwbzJPU0V1azNr?=
- =?utf-8?B?TXR6U0tKdDR3UnFkRUpTSVlVSkhrN2QzMEttWGluWnRsRkdtdUpuSmNoVFNo?=
- =?utf-8?B?d2RJa29icmFyRFh1NlBvNUhwR1VXdWZrUFBkekVINE1hR3JtWktxUTlTVnpO?=
- =?utf-8?B?R0NTWXJRODVCSzVLQkkvNFlRNzE2dmQrL3YzSkFmdU42a0RoTC9JME1GOVhU?=
- =?utf-8?B?Ri8vVFhVckJxcWZXK2RUYm5Jck1Ubk1qWjgyNWUrVUlJV2hENkRHOURyMk5P?=
- =?utf-8?B?QWdiMDYvc0ZTVDhNTER6RUl1ZXYzcXVpbkpEUUhFTTNwM01lelY0RVIvK3FB?=
- =?utf-8?B?RDFhYVBsbXpYMjFNS3JxWEVTeStvMk1wUVJKbXRxd3lvNER3bmFCdzYycG1W?=
- =?utf-8?B?N0lKK2trK05YTHFhbTFFczV6TGhSa2x3K2R1SHBBeVFNT2NVclJrQWNiMkpB?=
- =?utf-8?B?QTRlR0ZQVjM2QU1Beks0S3lCaHpVU21panZnSm4xeTAzQ213REFoZ0Ewelhj?=
- =?utf-8?B?Wk1uL01talU3T1NzNFlyb1pBQXdLdm5VdVdjVTdjaHN4a0M4eVplQVd6UGxW?=
- =?utf-8?B?aEVKVU9KSzJkTW1BRkxaYUR3aEdYWTB5ZjZqcnViVWlvWU96Yk5UZDF2Tm1Y?=
- =?utf-8?B?S0pjUHk5NVRtdCtjZkh6bkM3QlVJaFpSNWVpb241RFVZZVpENU94bDFYTnBr?=
- =?utf-8?B?Umltc2dpazEycHdrRFpKVlNhdFlncVZFamVpMUxmVjAzajlOWFhXcjBpTUlQ?=
- =?utf-8?B?THUxakw4QUZyemR5L3NGSGprZzNrOEN5eFZUNC81dkYyRGdMSmNEWHI4Mzk3?=
- =?utf-8?B?NVpaZmkycS93TGJKRWVvaGxVTktQeEVYRTNYVTk4QVpFeHFHd3k2NDlpQlNV?=
- =?utf-8?B?MlhqVElwM3EzTlF5VHRwanQwdVc5ekdGZDdXcllkTFZmZFQrb2IxNGRQWFM2?=
- =?utf-8?B?UW15bGtlb1VCelUxYUpsYkhYTUZUS09JTER5OEhZSjIxTW1nRUkzNVdkanZF?=
- =?utf-8?B?Si9GTEpCa3Yrd0dOK2xqOFQzTDNTMDN3TzhOMTZuaUJHOGRQY0V5dS9lWFo3?=
- =?utf-8?B?VFB5Zk03WmFPUlRwYmoxYkRHUVVYazFZcmhpZjMzUjc5dmtpV05JUVN3aCtF?=
- =?utf-8?B?Y2k0cEtuZjhySmdPTXlCbTM0a0hKWXdkcnZjM0dJQWdtbG55S203SVI2ME0r?=
- =?utf-8?B?TEMzd0ttUldtdzJHcjRKTmpPYjJWYVhJOFpEdFpxWERtemhJYjJmOW0rTHdr?=
- =?utf-8?B?NXNUVE4rTTMrcUdXUWM5dC9BQTZ0YmNHVEl6SjJ1N05SVjUvc2RnNzBxK2th?=
- =?utf-8?B?UjAwTGtwQTh0K1J6em1JS05CZVZkY25mNnpLWUFGck0rQVNPYXp5Z0Y5Nzd4?=
- =?utf-8?B?cy9CcFFDMm1tT05xaTZvZGl5OUw5S1NGNlppbCsvSnV2UG1pd3QzRG42VWFm?=
- =?utf-8?B?OUlKTmtJRG1SN2xGSVVrOTRKLzl4VnpCeVRPSnp1NnhMOTZvdHQ0aS9XQW5H?=
- =?utf-8?B?TlN6YWt5TDJrbnFWZzlKeTVGQm9ucWpkM3lmM1BzSm5yTjViRzJiMW5PbnZ6?=
- =?utf-8?B?SnkzcDAxMzlKd0JOT2FESWg0ZzBEaW5FcjJFY0x1NGxpY0JTOFdmeXZCdUta?=
- =?utf-8?B?dVl4aGtGZmpGRmM1dFJWL1VSQytoMHh3RVpkb0RqYk5VM2ZJUWQ5YitvMDNJ?=
- =?utf-8?B?d3c1RXBBQWd4emRNRjJJTWRTQjcvdEFTWmdrRUJoZ2hva2ZjNkRUbHRLZXRR?=
- =?utf-8?B?SjJLb2ducmtlWTl2VW50QmVjUy9QVHZUa2tyVnV5eFpnMmprcnZMSzVFR2ZZ?=
- =?utf-8?B?REM0ZDhtd2xTOGhGTGRqK0gzek1YeFovYkxiRTlwUVdOamhNUDZCeHBSWHMz?=
- =?utf-8?B?ZUFlcHg1Q2doNEozY1BDUS9GY3pnR2M3SUFPRmZPZzJVRGg4VEdtZnBKanhH?=
- =?utf-8?B?S0JSMFFaT2dvS0JENnNHVjN1VFpCeDFJNlE3ZHJ5a0luUlZjUUdERlh5V2dW?=
- =?utf-8?Q?bxibj9A0QCmjKrZO7nkl3rBmjudswVbAobJ6NLb25CFS?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd4ab974-b2cf-49ca-4268-08daa8407636
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2022 08:46:44.3943
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fq60XnSy8la0FP9cUfCZWC0rMQTRHD9UKvWRxWJqiY6//6vlevcrVDNTynPjkUVnTZj9AXsEIv1Twck6fWBp6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5174
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v2 2/4] ALSA: hda: Rework snd_hdac_stream_reset() to use
+ macros
+Content-Language: en-US
+To:     Jon Hunter <jonathanh@nvidia.com>, Takashi Iwai <tiwai@suse.de>
+Cc:     alsa-devel@alsa-project.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Mohan Kumar D <mkumard@nvidia.com>
+References: <20220818141517.109280-1-amadeuszx.slawinski@linux.intel.com>
+ <20220818141517.109280-3-amadeuszx.slawinski@linux.intel.com>
+ <657d2418-0c3e-296f-8f4a-dc10ced2dffe@nvidia.com>
+ <87a66av4gk.wl-tiwai@suse.de>
+ <86947512-33c8-4e22-5329-a41735c6b1ef@nvidia.com>
+From:   =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <86947512-33c8-4e22-5329-a41735c6b1ef@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/10/2022 11:15, Jon Hunter wrote:
-> Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
-> the period calculation in the Tegra PWM driver and now returns an error
-> if the period requested is less than minimum period supported. This is
-> breaking PWM fan support on the Tegra210 Jetson Nano platform and
-> probing the PWM fan driver now fails ...
+On 10/6/2022 10:45 AM, Jon Hunter wrote:
 > 
->   pwm-fan pwm-fan: Failed to configure PWM: -22
->   pwm-fan: probe of pwm-fan failed with error -22
+> On 05/10/2022 13:29, Takashi Iwai wrote:
 > 
-> The problem is that the default parent clock for the PWM on Tegra210 is
-> a 32kHz clock and is unable to support the requested PWM period. Fix
-> this by updating the parent clock for the PWM to be the PLL_P which
-> operates at 48MHz.
+> ...
 > 
-> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>> HDA playback is failing on -next for various Tegra boards. Bisect is
+>>> point to this commit and reverting it fixes the problem. I was a bit
+>>> puzzled why this change is causing a problem, but looking closer there
+>>> is a difference between the previous code that was calling
+>>> snd_hdac_stream_readb() and the new code that is calling
+>>> snd_hdac_stream_readb_poll(). The function snd_hdac_stream_readb()
+>>> calls snd_hdac_aligned_mmio() is see if the device has an aligned MMIO
+>>> which Tegra does and then would call snd_hdac_aligned_read(). However,
+>>> now the code always call readb() and this is breaking Tegra.
+>>>
+>>> So it is either necessary to update snd_hdac_stream_readb_poll() to
+>>> handle this or revert this change.
+>>
+>> Does the patch below work?
+>>
+>>
+>> thanks,
+>>
+>> Takashi
+>>
+>> -- 8< --
+>> --- a/include/sound/hdaudio.h
+>> +++ b/include/sound/hdaudio.h
+>> @@ -592,8 +592,8 @@ int snd_hdac_get_stream_stripe_ctl(struct hdac_bus 
+>> *bus,
+>>   #define snd_hdac_stream_readb(dev, reg) \
+>>       snd_hdac_reg_readb((dev)->bus, (dev)->sd_addr + AZX_REG_ ## reg)
+>>   #define snd_hdac_stream_readb_poll(dev, reg, val, cond, delay_us, 
+>> timeout_us) \
+>> -    readb_poll_timeout((dev)->sd_addr + AZX_REG_ ## reg, val, cond, \
+>> -               delay_us, timeout_us)
+>> +    read_poll_timeout(snd_hdac_reg_readb, val, cond, delay_us, 
+>> timeout_us,\
+>> +              false, (dev)->bus, (dev)->sd_addr + AZX_REG_ ## reg)
+>>   #define snd_hdac_stream_readl_poll(dev, reg, val, cond, delay_us, 
+>> timeout_us) \
+>>       readl_poll_timeout((dev)->sd_addr + AZX_REG_ ## reg, val, cond, \
+>>                  delay_us, timeout_us)
+> 
+> 
+> So looking at this a bit more I see ...
+> 
+> [  199.422773] bad: scheduling from the idle thread!
+> [  199.427610] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G      D  
+> C         6.0.0-rc7-next-20220930-00007-gd6ae4ed0a78f-dirty #23
+> [  199.438880] Hardware name: NVIDIA Jetson Nano Developer Kit (DT)
+> [  199.444899] Call trace:
+> [  199.447357]  dump_backtrace.part.7+0xe8/0xf8
+> [  199.451680]  show_stack+0x14/0x38
+> [  199.455024]  dump_stack_lvl+0x64/0x7c
+> [  199.458715]  dump_stack+0x14/0x2c
+> [  199.462067]  dequeue_task_idle+0x2c/0x58
+> [  199.466038]  dequeue_task+0x38/0x98
+> [  199.469565]  __schedule+0x4a4/0x6d8
+> [  199.473104]  schedule+0x58/0xc0
+> [  199.476292]  schedule_hrtimeout_range_clock+0x98/0x108
+> [  199.481472]  schedule_hrtimeout_range+0x10/0x18
+> [  199.486039]  usleep_range_state+0x7c/0xb0
+> [  199.490084]  snd_hdac_stream_reset+0xe8/0x328 [snd_hda_core]
+> [  199.495913]  snd_hdac_stream_sync+0xe4/0x190 [snd_hda_core]
+> [  199.501627]  azx_pcm_trigger+0x1d8/0x250 [snd_hda_codec]
+> [  199.507109]  snd_pcm_do_stop+0x54/0x70
+> [  199.510904]  snd_pcm_action_single+0x44/0xa0
+> [  199.515215]  snd_pcm_drain_done+0x20/0x28
+> [  199.519267]  snd_pcm_update_state+0x114/0x128
+> [  199.523670]  snd_pcm_update_hw_ptr0+0x22c/0x3a0
+> [  199.528246]  snd_pcm_period_elapsed_under_stream_lock+0x44/0x88
+> [  199.534216]  snd_pcm_period_elapsed+0x24/0x48
+> [  199.538617]  stream_update+0x3c/0x50 [snd_hda_codec]
+> [  199.543737]  snd_hdac_bus_handle_stream_irq+0xe8/0x150 [snd_hda_core]
+> [  199.550320]  azx_interrupt+0xb4/0x1b0 [snd_hda_codec]
+> [  199.555524]  __handle_irq_event_percpu+0x74/0x140
+> [  199.560281]  handle_irq_event_percpu+0x14/0x48
+> [  199.564772]  handle_irq_event+0x44/0x88
+> [  199.568653]  handle_fasteoi_irq+0xa8/0x130
+> [  199.572788]  generic_handle_domain_irq+0x28/0x40
+> [  199.577452]  gic_handle_irq+0x9c/0xb8
+> [  199.581168]  call_on_irq_stack+0x2c/0x40
+> [  199.585129]  do_interrupt_handler+0x7c/0x80
+> [  199.589355]  el1_interrupt+0x34/0x68
+> [  199.592969]  el1h_64_irq_handler+0x14/0x20
+> [  199.597107]  el1h_64_irq+0x64/0x68
+> [  199.600540]  cpuidle_enter_state+0x130/0x2f8
+> [  199.604853]  cpuidle_enter+0x38/0x50
+> [  199.608463]  call_cpuidle+0x18/0x38
+> [  199.611991]  do_idle+0x1f8/0x248
+> [  199.615259]  cpu_startup_entry+0x20/0x28
+> [  199.619224]  kernel_init+0x0/0x128
+> [  199.622669]  arch_post_acpi_subsys_init+0x0/0x8
+> [  199.627240]  start_kernel+0x630/0x668
+> [  199.630933]  __primary_switched+0xb4/0xbc
+> 
+> 
+> If I change your patch to be read_poll_timeout_atomic, then it works \o/
+> 
+> Can we make that update?
+> 
+> Jon
+> 
 
+Yes, it makes sense, as it uses udelay instead of usleep, same as 
+original code.
 
-I have sent a V2 on this to fix the PWM support for some other Tegra 
-devices.
+I've send patch which updates the macros. It passed validation on our side.
 
-Jon
+Thanks for report!
 
--- 
-nvpublic
+Amadeusz
