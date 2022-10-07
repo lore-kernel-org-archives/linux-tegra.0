@@ -2,83 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 863FAC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 14:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2519C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 14:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229892AbiJGOCD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 10:02:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54058 "EHLO
+        id S229492AbiJGOV5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 10:21:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230028AbiJGOCB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 10:02:01 -0400
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F17CF198;
-        Fri,  7 Oct 2022 07:01:57 -0700 (PDT)
-Received: by mail-il1-f182.google.com with SMTP id y17so2540631ilq.8;
-        Fri, 07 Oct 2022 07:01:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lCEqDjTqDHXCkXuuNG9mr4r8E8D6Nx9MxlUrNn9MgDM=;
-        b=7q8IGBJzIN3txHxAhBYHYwF55hpvo/nQ+Feo52GgTvAeWqZF3rwN0bKDRNi2MPLCrg
-         c7hr5Gbl8cWBilUisLllwkXZ/TL2sdiHaG1XrhUoEp3zV1J+6UFGh74jsRnAftvVe4Hx
-         aDYF2GYrErVgu0OQP0DXREx5EsAgyv93ZS43eDMFu+RT0fYX+Mvr/isnjzPBkqIMU/n6
-         RtrIY5dvNGnjaTzH9CJaQ/nFh1Im+HSZba8vyXBEzUhX0vbKJHxSKV0toBOVW0ejIy7V
-         u8EbG+gotfGEh5rcr1p5SpNidhezdw8fjeeo3e1K2EAmVhlDcBa9S86blSNDK+DzYH7N
-         1b3g==
-X-Gm-Message-State: ACrzQf0Pgrz7uHIO/zSKlb2d8Fx2hiYDO60+P29AFR+6ZP9KI2/rmGcl
-        fntk5bk9iP6aSSFjv/fgTg==
-X-Google-Smtp-Source: AMsMyM5HdV6fWhkDutBBJHS69tyeSpDRy8qVNZU6pcM0qE7BeR/x8Kah7W/SLoE69+r0ieimtfxMbw==
-X-Received: by 2002:a05:6e02:1bc9:b0:2f1:9ee8:246d with SMTP id x9-20020a056e021bc900b002f19ee8246dmr2411994ilv.246.1665151316125;
-        Fri, 07 Oct 2022 07:01:56 -0700 (PDT)
-Received: from robh_at_kernel.org ([2607:fb90:17de:d2e8:8e7a:471f:1892:c117])
-        by smtp.gmail.com with ESMTPSA id r17-20020a92d991000000b002e8ea827aafsm934006iln.74.2022.10.07.07.01.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 07:01:55 -0700 (PDT)
-Received: (nullmailer pid 286220 invoked by uid 1000);
-        Fri, 07 Oct 2022 14:01:53 -0000
-Date:   Fri, 7 Oct 2022 09:01:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, linux-tegra@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH v2 3/7] dt-bindings: reserved-memory: Support framebuffer
- reserved memory
-Message-ID: <166515131260.286166.8226735356907205186.robh@kernel.org>
-References: <20221007124946.406808-1-thierry.reding@gmail.com>
- <20221007124946.406808-4-thierry.reding@gmail.com>
+        with ESMTP id S229674AbiJGOV4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 10:21:56 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 61E381204F6;
+        Fri,  7 Oct 2022 07:21:55 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66DE4106F;
+        Fri,  7 Oct 2022 07:22:01 -0700 (PDT)
+Received: from [10.57.65.170] (unknown [10.57.65.170])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC9253F67D;
+        Fri,  7 Oct 2022 07:21:52 -0700 (PDT)
+Message-ID: <75bebf10-6b89-464c-f9ad-c53f9f830c20@arm.com>
+Date:   Fri, 7 Oct 2022 15:21:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221007124946.406808-4-thierry.reding@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH v9 1/5] dt-bindings: reserved-memory: Document
+ iommu-addresses
+Content-Language: en-GB
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
+        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
+        Rob Herring <robh@kernel.org>
+References: <20220923123557.866972-1-thierry.reding@gmail.com>
+ <20220923123557.866972-2-thierry.reding@gmail.com>
+ <3fb949ad-74c4-1bac-7e14-5d056afcef5f@arm.com> <Y0AvkshNYmqc3UGo@orome>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <Y0AvkshNYmqc3UGo@orome>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 07 Oct 2022 14:49:42 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 2022-10-07 14:54, Thierry Reding wrote:
+> On Fri, Oct 07, 2022 at 02:45:31PM +0100, Robin Murphy wrote:
+>> On 2022-09-23 13:35, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> This adds the "iommu-addresses" property to reserved-memory nodes, which
+>>> allow describing the interaction of memory regions with IOMMUs. Two use-
+>>> cases are supported:
+>>>
+>>>     1. Static mappings can be described by pairing the "iommu-addresses"
+>>>        property with a "reg" property. This is mostly useful for adopting
+>>>        firmware-allocated buffers via identity mappings. One common use-
+>>>        case where this is required is if early firmware or bootloaders
+>>>        have set up a bootsplash framebuffer that a display controller is
+>>>        actively scanning out from during the operating system boot
+>>>        process.
+>>>
+>>>     2. If an "iommu-addresses" property exists without a "reg" property,
+>>>        the reserved-memory node describes an IOVA reservation. Such memory
+>>>        regions are excluded from the IOVA space available to operating
+>>>        system drivers and can be used for regions that must not be used to
+>>>        map arbitrary buffers.
+>>
+>> Bah, I've only just realised: don't we also need to change the "oneOf:
+>> required: ..." schema to permit "iommu-addresses" without "reg" or "size"?
 > 
-> Document the "framebuffer" compatible string for reserved memory nodes
-> to annotate reserved memory regions used for framebuffer carveouts.
+> Hm... good point. I think at least we'll want another:
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v2:
-> - use four spaces for indentation in example (as recommended elsewhere)
-> - add explicit root node
-> - drop unneeded quotes
+>       - required:
+>           - iommu-addresses
 > 
->  .../bindings/reserved-memory/framebuffer.yaml | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
-> 
+> in there. I wonder if we also need to avoid the combination of "size"
+> and "iommu-addresses". When "size" is specified, is it guaranteed that
+> those regions will be allocated before the direct mapping needs to be
+> created?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Well, it couldn't really be a direct mapping anyway. In general I don't 
+think that combination makes any sense, since the presence of 
+"iommu-addresses" means one of two things; either it says the IOVA range 
+is carved out for some special purpose or just unusable, in which case 
+allocating any memory to back it would surely be pointless, or it's 
+saying don't touch these addresses because the device is already 
+accessing them, thus the underlying physical memory must be allocated 
+somewhere already.
+
+Thanks,
+Robin.
