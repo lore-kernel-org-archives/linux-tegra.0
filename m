@@ -2,212 +2,190 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 746B2C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 10:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98050C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Oct 2022 12:34:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbiJGK0W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Oct 2022 06:26:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50306 "EHLO
+        id S229500AbiJGMeD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Oct 2022 08:34:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiJGK0U (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 06:26:20 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09AA67B1C1;
-        Fri,  7 Oct 2022 03:26:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MmrW69TKwwI/c1EgkOIDzyN3afvjVazmMjFZHf6EDV3NyapybaWqJkneEkf4ayYBp8JHHg6ARwhb0DJqgiEFBPGMET+4dPEUzM3IJtVfoSe7EKfgQBUnEsy2g4zaYzV/Ab/BAN/K/z9dlCsP/bTBh6m3gWKoGxYKkUoBu7DzrGs2gDsZ3sRWbdrNGwgCMdLN5w6G+wjMoC8hi2TVuqZkrc3NaXiALjJZgMhGAMNxrDeNb6juQwr7CThSUwudqZSfI1je2Vh3gZQVD0kCihJ02KYbHf+kXM+e/yMbtRhfrzjTA2+PDs+aFg5wd01olcnFiKhrmE3QReFc17+ScJjtzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Af96STCZpeyijDbKk+Oa7i2Mhw7vlMlDSf6tLhfgXg=;
- b=dQ2DNdNIeOoTbYGAqpoRFpykuWvpGIDHU5FQ/eDX34u1MeQ514Q9UFGbXRVV1TSAI74q67AFaXTCDNqD2kvtNXhHueMNFkEaAfiO/S6XeTu+VSJutHIO03a3hC8gzwdntKSX7T8ntgDUKurf3Zvw5EQXoBvH+mH9gY+IcC/LBCzkkNtQhKZ7hweksrL+GMVh5jU4WQgyoIgYcCg2OjRJyc+xVTKn1aMLIpk8PKdhLPFB04bhOHWIWC34IjSGmLpNUMx3edW/W5tYUwZ2bWj6MZvq9h2PEwTMLWzKLOMCuQ8lXMnAHO3VfkQnsWw+U28i+rRLuaxW0pyVle0ORc1DXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9Af96STCZpeyijDbKk+Oa7i2Mhw7vlMlDSf6tLhfgXg=;
- b=ST3cMh/dF/EG8C0IMRqzWOmR2Pu4rqOa9yVquFrb6k3bg8bqIXw8SC8sWOevxEMIOg5oFvUsm1xsCpFUnM7Zcb1qgJbpfwKSbBPLpXS6rjRo0ryyfWl8YJGBT80VwGb1yxmLWktLf8NW7RzeEkIGGXm+598h4Cg3eKlx19nCWZ8KO5Uwcq5Yj6QX7dEI8xlu7bDAnY+Z6MuRxEWm06C5MFY4fofkgx5DNiRMp7czw+h546s4M8PgisJghhoyNxwHZ6QxJsWDdPtGQrqbYqnkwjPgUv3MlYc2ukxg6e8sxar/ABLxjVrHWxKVLL4e3n3kKImju1eSU5ZsvgnhoScGGA==
-Received: from DM6PR02CA0119.namprd02.prod.outlook.com (2603:10b6:5:1b4::21)
- by DS0PR12MB6630.namprd12.prod.outlook.com (2603:10b6:8:d2::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.36; Fri, 7 Oct
- 2022 10:26:18 +0000
-Received: from DM6NAM11FT012.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:1b4:cafe::a3) by DM6PR02CA0119.outlook.office365.com
- (2603:10b6:5:1b4::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.28 via Frontend
- Transport; Fri, 7 Oct 2022 10:26:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- DM6NAM11FT012.mail.protection.outlook.com (10.13.173.109) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5709.10 via Frontend Transport; Fri, 7 Oct 2022 10:26:18 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 7 Oct 2022
- 03:26:11 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Fri, 7 Oct 2022 03:26:10 -0700
-Received: from pshete-ubuntu.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Fri, 7 Oct 2022 03:26:07 -0700
-From:   Prathamesh Shete <pshete@nvidia.com>
-To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>,
-        <kyarlagadda@nvidia.com>, <anrao@nvidia.com>
-Subject: [PATCH] arm64: tegra: Add Tegra234 SDMMC1 device tree node
-Date:   Fri, 7 Oct 2022 15:56:05 +0530
-Message-ID: <20221007102605.15828-1-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S229492AbiJGMeC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Oct 2022 08:34:02 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0AEBC4C0E
+        for <linux-tegra@vger.kernel.org>; Fri,  7 Oct 2022 05:34:00 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id bs18so5555323ljb.1
+        for <linux-tegra@vger.kernel.org>; Fri, 07 Oct 2022 05:34:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HkOmdE+hZtMPQTiOZSsH7S2sa0ul444Iw/UaaGdANrc=;
+        b=Or4uUZRyPfCNpCFenKV5qDSe38AGCsQ6lJR9TV5pLr5DipWB4odgPWTxVYtWPh+Pvc
+         b8cYFZ51OqBPRkJwzGQpnnPJ+ZHjKWqZC9bRhXAiC36DcKHc1ujJtjuxKfJD+INGx/yi
+         peye1G5IiXFREiiVd76wvOh6VwtZ6BX12QiBGyIDoEgSjXQdDK5WLfv1Psxlv6i9XC2I
+         TGx8ZZjqsBo3C12vxFv6gOFACeZdSgE6o3F2Ni8eqgLbEAh4mkbAhassCuTVHBG0FRQQ
+         /J/qJLBIrNnfid+aSepAO4nfua3ZKwIsb0fo6kZ3B+QvL2Qq9DjL9gemMNjoHj1UrXvz
+         olwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HkOmdE+hZtMPQTiOZSsH7S2sa0ul444Iw/UaaGdANrc=;
+        b=H0MUq/XSVkGWnWvAnkvVtNd6ifziKiFnZaBqyc2xUlo/bOZccRoinPFWMW+DOeMjaz
+         yIQr8FEUOBR8wZyCo/p8TBUF7gIcju0PEKjPv1PG3boIjeOhAqsPel9B1bL4ndmc5FCU
+         CVNaqqLIamM79SLLqdVWrSSOx0k3tgvimav9Xfp/ODkGr7sYRjB5AwMdC+BSfMLwLax8
+         ckdRdUiP58oEAx7jD/LSm0Oyu511Uu8lAAzRB/Gw3Q/jGgEHfUANEmhAqnbgxo9xQ6Ne
+         kxxGv3kZoz5gs/m7NgreK7tBqfYXjGSwem/H1TZ62QKDUUOrYSeJGkjLxMNLoG5d1Ny3
+         pcXQ==
+X-Gm-Message-State: ACrzQf0gE+rRkC2EIFKKJT2OXhii3Tc9Q2dAOHI7Bqz3b4FEzMp3+tGb
+        Fi7qvm9r+ZOkRUm4C4lmRTDVUQ==
+X-Google-Smtp-Source: AMsMyM4QjaDTmAAncZ6sOC0VRZ2SYXni2dM5ZSghqXwDA5ghu3Lt8IqZREKDQSWBQVOuxZrvujU9Ow==
+X-Received: by 2002:a05:651c:4c9:b0:26c:79cd:2819 with SMTP id e9-20020a05651c04c900b0026c79cd2819mr1736770lji.159.1665146039325;
+        Fri, 07 Oct 2022 05:33:59 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id p6-20020a056512328600b004a03d5c2140sm278808lfe.136.2022.10.07.05.33.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Oct 2022 05:33:58 -0700 (PDT)
+Message-ID: <80d046b9-ff8c-58dc-d149-e984d509fe5a@linaro.org>
+Date:   Fri, 7 Oct 2022 14:33:57 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT012:EE_|DS0PR12MB6630:EE_
-X-MS-Office365-Filtering-Correlation-Id: 523c60c6-aaeb-46ce-8195-08daa84e5f2a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: fPZzJZiWsKLJvFtxgv/VPT4iJjJg4brvbvRaun5gBCWMnz019BoN5jVngR7PfKOheCrsKr6lWBYTr86Ty6mX8HcuOjqhGXyenxpfvPfxaEQZFXMVRKREki0RWIqwEQCTAKHDcdEc4pjbjTvv1nTY27GXmMDUm4GJ69fUNcbGw14/NsaHxdOHsNQRrrNr27iEM41uWke06oSBfEnecDE3h9bSDe5NGavK+XWRY6SlVUd7n6HTjHZhai38JfiwAVvPcpFzLceGv1HOyPsD5B+V8QqgGZDq4b/wtdknZZyHhN8nepczrLJBpUnTilkkbYg4Dg1uXYy91I+MQ7RJrAfLxVgfXS3B3j4s6qa+OffNUuYCAcvZTAvTkzR5TJOGKCb0L5M7LPlPo2ZVOpm/oyUW9W11EqUKvSqMeadLUw2LL0myPKc8U9tK6Bu73aJOtETx9k+D88DflGb8HDd9BArUXlTOyCrES0UNihNt/So57oW04+PrBTIz1g6PT03n3kQhlxzRGbxF/uDCk+UCkkI+mnTpyU5XWxnQah9mj8BoJKW7/nwDbEKkI7EjhOa+CF4zYHXilop6+qDPQYom4gT6pUrRsGSluc8ZQIlQw9iNcXDpQPilPh3WHAvVm+AJJJYKwBjaxH+WFeQeYHPKGfl64YCP0vcUckx7t5xHAL0g8P7jDyS2cOMU2qs81uzvtmGhqttk2VV1mycHIH3A1XRKbyYqJtuXnEXJbmNFocRl0fl9WyjXdyoZynBWsTyles9Aa7c3UDHiOuAhY6fG/ZDwUA==
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(39860400002)(396003)(346002)(451199015)(46966006)(40470700004)(36840700001)(426003)(47076005)(36860700001)(83380400001)(36756003)(1076003)(2616005)(70586007)(336012)(186003)(82310400005)(7636003)(26005)(86362001)(7696005)(356005)(107886003)(478600001)(82740400003)(2906002)(5660300002)(4326008)(40460700003)(8676002)(8936002)(316002)(110136005)(54906003)(40480700001)(70206006)(41300700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2022 10:26:18.2476
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 523c60c6-aaeb-46ce-8195-08daa84e5f2a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT012.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6630
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH] arm64: tegra: Add Tegra234 SDMMC1 device tree node
+Content-Language: en-US
+To:     Prathamesh Shete <pshete@nvidia.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     smangipudi@nvidia.com, kyarlagadda@nvidia.com, anrao@nvidia.com
+References: <20221007102605.15828-1-pshete@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221007102605.15828-1-pshete@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device tree node for Tegra234 SDMMC1 instance.
-Add and enable SD card instance in device tree.
+On 07/10/2022 12:26, Prathamesh Shete wrote:
+> Add device tree node for Tegra234 SDMMC1 instance.
+> Add and enable SD card instance in device tree.
+> 
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |  7 +++
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 59 +++++++++++++++++++
+>  2 files changed, 66 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
+> index 9e4d72cfa69f..fe52810e5b9d 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
+> @@ -55,6 +55,13 @@
+>  			};
+>  		};
+>  
+> +		mmc@3400000 {
+> +			status = "okay";
+> +			bus-width = <4>;
+> +			cd-gpios = <&gpio TEGRA234_MAIN_GPIO(G, 7) GPIO_ACTIVE_LOW>;
+> +			disable-wp;
+> +		};
+> +
+>  		mmc@3460000 {
+>  			status = "okay";
+>  			bus-width = <8>;
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> index 0170bfa8a467..87f6b8be79a5 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> @@ -7,6 +7,7 @@
+>  #include <dt-bindings/memory/tegra234-mc.h>
+>  #include <dt-bindings/power/tegra234-powergate.h>
+>  #include <dt-bindings/reset/tegra234-reset.h>
+> +#include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>  
+>  / {
+>  	compatible = "nvidia,tegra234";
+> @@ -895,6 +896,45 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		mmc@3400000 {
+> +			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra234-sdhci";
+> +			reg = <0x03400000 0x20000>;
+> +			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&bpmp TEGRA234_CLK_SDMMC1>,
+> +				 <&bpmp TEGRA234_CLK_SDMMC_LEGACY_TM>;
+> +			clock-names = "sdhci", "tmclk";
+> +			assigned-clocks = <&bpmp TEGRA234_CLK_SDMMC1>,
+> +					<&bpmp TEGRA234_CLK_PLLC4_MUXED>;
+> +			assigned-clock-parents =
+> +					  <&bpmp TEGRA234_CLK_PLLC4_MUXED>,
+> +					  <&bpmp TEGRA234_CLK_PLLC4_VCO_DIV2>;
+> +			resets = <&bpmp TEGRA234_RESET_SDMMC1>;
+> +			reset-names = "sdhci";
+> +			interconnects = <&mc TEGRA234_MEMORY_CLIENT_SDMMCRA &emc>,
+> +					<&mc TEGRA234_MEMORY_CLIENT_SDMMCWA &emc>;
+> +			interconnect-names = "dma-mem", "write";
+> +			iommus = <&smmu_niso1 TEGRA234_SID_SDMMC1A>;
+> +			pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> +			pinctrl-0 = <&sdmmc1_3v3>;
+> +			pinctrl-1 = <&sdmmc1_1v8>;
+> +			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
+> +								      <0x07>;
+> +			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
+> +									<0x07>;
+> +			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
+> +			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
+> +									<0x07>;
+> +			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
+> +			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
+> +			nvidia,default-tap = <14>;
+> +			nvidia,default-trim = <0x8>;
+> +			sd-uhs-sdr25;
+> +			sd-uhs-sdr50;
+> +			sd-uhs-ddr50;
+> +			sd-uhs-sdr104;
+> +			status = "disabled";
+> +		};
+> +
+>  		mmc@3460000 {
+>  			compatible = "nvidia,tegra234-sdhci", "nvidia,tegra186-sdhci";
+>  			reg = <0x03460000 0x20000>;
+> @@ -1541,6 +1581,25 @@
+>  
+>  			#interrupt-cells = <2>;
+>  			interrupt-controller;
+> +			sdmmc1_3v3: sdmmc1-3v3 {
+> +				pins = "sdmmc1-hv";
+> +				power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> +			};
+> +
+> +			sdmmc1_1v8: sdmmc1-1v8 {
+> +				pins = "sdmmc1-hv";
+> +				power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> +			};
+> +			sdmmc3_3v3: sdmmc3-3v3 {
+> +				pins = "sdmmc3-hv";
+> +				power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> +			};
+> +
+> +			sdmmc3_1v8: sdmmc3-1v8 {
+> +				pins = "sdmmc3-hv";
+> +				power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> +			};
+> +
 
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
----
- .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |  7 +++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 59 +++++++++++++++++++
- 2 files changed, 66 insertions(+)
+Wrong conflict resolution... blank line went into the wrong place.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-index 9e4d72cfa69f..fe52810e5b9d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-@@ -55,6 +55,13 @@
- 			};
- 		};
- 
-+		mmc@3400000 {
-+			status = "okay";
-+			bus-width = <4>;
-+			cd-gpios = <&gpio TEGRA234_MAIN_GPIO(G, 7) GPIO_ACTIVE_LOW>;
-+			disable-wp;
-+		};
-+
- 		mmc@3460000 {
- 			status = "okay";
- 			bus-width = <8>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 0170bfa8a467..87f6b8be79a5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -7,6 +7,7 @@
- #include <dt-bindings/memory/tegra234-mc.h>
- #include <dt-bindings/power/tegra234-powergate.h>
- #include <dt-bindings/reset/tegra234-reset.h>
-+#include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
- 
- / {
- 	compatible = "nvidia,tegra234";
-@@ -895,6 +896,45 @@
- 			status = "disabled";
- 		};
- 
-+		mmc@3400000 {
-+			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra234-sdhci";
-+			reg = <0x03400000 0x20000>;
-+			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&bpmp TEGRA234_CLK_SDMMC1>,
-+				 <&bpmp TEGRA234_CLK_SDMMC_LEGACY_TM>;
-+			clock-names = "sdhci", "tmclk";
-+			assigned-clocks = <&bpmp TEGRA234_CLK_SDMMC1>,
-+					<&bpmp TEGRA234_CLK_PLLC4_MUXED>;
-+			assigned-clock-parents =
-+					  <&bpmp TEGRA234_CLK_PLLC4_MUXED>,
-+					  <&bpmp TEGRA234_CLK_PLLC4_VCO_DIV2>;
-+			resets = <&bpmp TEGRA234_RESET_SDMMC1>;
-+			reset-names = "sdhci";
-+			interconnects = <&mc TEGRA234_MEMORY_CLIENT_SDMMCRA &emc>,
-+					<&mc TEGRA234_MEMORY_CLIENT_SDMMCWA &emc>;
-+			interconnect-names = "dma-mem", "write";
-+			iommus = <&smmu_niso1 TEGRA234_SID_SDMMC1A>;
-+			pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+			pinctrl-0 = <&sdmmc1_3v3>;
-+			pinctrl-1 = <&sdmmc1_1v8>;
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
-+								      <0x07>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
-+			nvidia,default-tap = <14>;
-+			nvidia,default-trim = <0x8>;
-+			sd-uhs-sdr25;
-+			sd-uhs-sdr50;
-+			sd-uhs-ddr50;
-+			sd-uhs-sdr104;
-+			status = "disabled";
-+		};
-+
- 		mmc@3460000 {
- 			compatible = "nvidia,tegra234-sdhci", "nvidia,tegra186-sdhci";
- 			reg = <0x03460000 0x20000>;
-@@ -1541,6 +1581,25 @@
- 
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
-+			sdmmc1_3v3: sdmmc1-3v3 {
-+				pins = "sdmmc1-hv";
-+				power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+			};
-+
-+			sdmmc1_1v8: sdmmc1-1v8 {
-+				pins = "sdmmc1-hv";
-+				power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+			};
-+			sdmmc3_3v3: sdmmc3-3v3 {
-+				pins = "sdmmc3-hv";
-+				power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+			};
-+
-+			sdmmc3_1v8: sdmmc3-1v8 {
-+				pins = "sdmmc3-hv";
-+				power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+			};
-+
- 		};
- 
- 		aon-fabric@c600000 {
--- 
-2.17.1
+>  		};
+>  
+>  		aon-fabric@c600000 {
+
+Best regards,
+Krzysztof
 
