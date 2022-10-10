@@ -2,111 +2,259 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30D0C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Oct 2022 16:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD06C43219
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Oct 2022 20:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbiJJQGE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Oct 2022 12:06:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50872 "EHLO
+        id S229648AbiJJUPH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Oct 2022 16:15:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230026AbiJJQFt (ORCPT
+        with ESMTP id S229502AbiJJUPB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Oct 2022 12:05:49 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FFC624F06
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Oct 2022 09:05:13 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohvGu-0004Pk-GE; Mon, 10 Oct 2022 18:04:52 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohvGs-000iow-Uc; Mon, 10 Oct 2022 18:04:50 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohvGs-006uaf-45; Mon, 10 Oct 2022 18:04:50 +0200
-Date:   Mon, 10 Oct 2022 18:04:49 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Robert Eckelmann <longnoserob@gmail.com>,
-        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>
-Subject: Re: [PATCH V3] clk: tegra: Fix Tegra PWM parent clock
-Message-ID: <20221010160449.un6gdrxu3hqbvd3i@pengutronix.de>
-References: <20221010100046.6477-1-jonathanh@nvidia.com>
+        Mon, 10 Oct 2022 16:15:01 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AE9330F76;
+        Mon, 10 Oct 2022 13:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1665432899; x=1696968899;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hoHtp7ua/tOZfAXpLOK1gBSb/sEyQkWFQ6Xh4kF5nfY=;
+  b=HubOx1wdiYmCEBX6FHOglY66/019WVdLKdldl1tmK89hflxiia2wDcwC
+   YFSxDYvlzHjqcHty7/l4oLWatyOdIwzfzalp4tD5YDDOSiSIBzQfR1vo5
+   kgBHAvWO+IWbXTpQAqjP28BiO4A0dxflwDUJ4Ffs5gpXjBG6FsQHcCdm2
+   gyCH+p3hKUiA5LG1qKn8dA8xlZExfbDjLU21MnMstn/DFZQz8QIIb95gh
+   jN8vNEaCyCU0jwOyKYULlrh66HJCVNaIkXWL3AiDeeu94GdJ1Hk4XZBur
+   8k64Q6RiU+2kjKsnl8trzwMbxHvp7xaFlkUocScYOy0fdkTC4+TfI4sNO
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="303065999"
+X-IronPort-AV: E=Sophos;i="5.95,173,1661842800"; 
+   d="scan'208";a="303065999"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2022 13:14:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="603862730"
+X-IronPort-AV: E=Sophos;i="5.95,173,1661842800"; 
+   d="scan'208";a="603862730"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2022 13:14:48 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 8E95D1C8; Mon, 10 Oct 2022 23:15:08 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Marc Zyngier <maz@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Billy Tsai <billy_tsai@aspeedtech.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [rft, PATCH v2 00/36] pinctrl: Clean up and add missed headers
+Date:   Mon, 10 Oct 2022 23:14:16 +0300
+Message-Id: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="igprdqe3agturd5e"
-Content-Disposition: inline
-In-Reply-To: <20221010100046.6477-1-jonathanh@nvidia.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Currently the header inclusion inside the pinctrl headers seems more arbitrary
+than logical. This series is basically out of two parts:
+- add missed headers to the pin control drivers / users
+- clean up the headers of pin control subsystem
 
---igprdqe3agturd5e
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The idea is to have this series to be pulled after -rc1 by the GPIO and
+pin control subsystems, so all new drivers will utilize cleaned up headers
+of the pin control.
 
-On Mon, Oct 10, 2022 at 11:00:46AM +0100, Jon Hunter wrote:
-> Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
-> the period calculation in the Tegra PWM driver and now returns an error
-> if the period requested is less than minimum period supported. This is
-> breaking PWM support on various Tegra platforms. For example, on the
-> Tegra210 Jetson Nano platform this is breaking the PWM fan support and
-> probing the PWM fan driver now fails ...
->=20
->  pwm-fan pwm-fan: Failed to configure PWM: -22
->  pwm-fan: probe of pwm-fan failed with error -22
->=20
-> The problem is that the default parent clock for the PWM on Tegra210 is
-> a 32kHz clock and is unable to support the requested PWM period.
->=20
-> Fix PWM support on Tegra20, Tegra30, Tegra114, Tegra124 and Tegra210 by
-> updating the parent clock for the PWM to be the PLL_P.
->=20
-> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # TF101 T20
-> Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com> # TF101 T20
-> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # TF201 T30
-> Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # TF700T T3
+Please, review and comment.
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Changelog v2:
+- added preparatory patches: all, but last (LKP)
+- added missed forward declaration to the last patch (LKP)
 
-Thanks for your work on this!
+Andy Shevchenko (36):
+  gpiolib: tegra186: Add missed header(s)
+  gpiolib: cdev: Add missed header(s)
+  media: c8sectpfe: Add missed header(s)
+  pinctrl: actions: Add missed header(s)
+  pinctrl: aspeed: Add missed header(s)
+  pinctrl: at91: Add missed header(s)
+  pinctrl: axp209: Add missed header(s)
+  pinctrl: bcm: Add missed header(s)
+  pinctrl: cygnus-mux: Add missed header(s)
+  pinctrl: imx: Add missed header(s)
+  pinctrl: ingenic: Add missed header(s)
+  pinctrl: k210: Add missed header(s)
+  pinctrl: lochnagar: Add missed header(s)
+  pinctrl: mediatek: Add missed header(s)
+  pinctrl: mvebu: Add missed header(s)
+  pinctrl: npcm7xx: Add missed header(s)
+  pinctrl: ocelot: Add missed header(s)
+  pinctrl: qcom: Add missed header(s)
+  pinctrl: renesas: Add missed header(s)
+  pinctrl: samsung: Add missed header(s)
+  pinctrl: single: Add missed header(s)
+  pinctrl: spear: Add missed header(s)
+  pinctrl: sprd: Add missed header(s)
+  pinctrl: st: Add missed header(s)
+  pinctrl: starfive: Add missed header(s)
+  pinctrl: stm32: Add missed header(s)
+  pinctrl: stmfx: Add missed header(s)
+  pinctrl: tegra: Add missed header(s)
+  pinctrl: ti-iodelay: Add missed header(s)
+  pinctrl: uniphier: Add missed header(s)
+  pinctrl: zynqmp: Add missed header(s)
+  pinctrl: cherryview: Add missed header(s)
+  pinctrl: lynxpoint: Add missed header(s)
+  pinctrl: merrifield: Add missed header(s)
+  pinctrl: intel: Add missed header(s)
+  pinctrl: Clean up headers
 
-Uwe
+ drivers/gpio/gpio-tegra186.c                  |  3 +-
+ drivers/gpio/gpiolib-cdev.c                   |  6 ++--
+ .../st/sti/c8sectpfe/c8sectpfe-core.c         |  8 +++--
+ drivers/pinctrl/actions/pinctrl-owl.c         | 10 +++---
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c       |  1 +
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c        | 13 +++++---
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c      |  9 ++++--
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c      | 12 ++++---
+ drivers/pinctrl/bcm/pinctrl-ns2-mux.c         |  8 +++--
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c         |  8 +++--
+ drivers/pinctrl/cirrus/pinctrl-lochnagar.c    |  6 ++--
+ drivers/pinctrl/core.c                        | 19 ++++++------
+ drivers/pinctrl/core.h                        | 12 ++++++-
+ drivers/pinctrl/devicetree.h                  |  6 ++++
+ drivers/pinctrl/freescale/pinctrl-imx.c       |  8 +++--
+ drivers/pinctrl/intel/pinctrl-cherryview.c    |  6 ++--
+ drivers/pinctrl/intel/pinctrl-intel.c         |  6 ++--
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c     |  6 ++--
+ drivers/pinctrl/intel/pinctrl-merrifield.c    |  4 ++-
+ drivers/pinctrl/mediatek/pinctrl-moore.c      |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-paris.c      |  5 +++
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c         | 14 +++++----
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c     | 11 ++++---
+ drivers/pinctrl/pinconf.h                     | 10 ++++++
+ drivers/pinctrl/pinctrl-at91-pio4.c           | 10 ++++--
+ drivers/pinctrl/pinctrl-at91.c                | 16 +++++-----
+ drivers/pinctrl/pinctrl-axp209.c              |  8 +++--
+ drivers/pinctrl/pinctrl-ingenic.c             | 10 +++---
+ drivers/pinctrl/pinctrl-k210.c                | 12 ++++---
+ drivers/pinctrl/pinctrl-ocelot.c              | 10 +++---
+ drivers/pinctrl/pinctrl-single.c              |  5 ++-
+ drivers/pinctrl/pinctrl-st.c                  | 21 ++++++++-----
+ drivers/pinctrl/pinctrl-stmfx.c               |  2 ++
+ drivers/pinctrl/pinctrl-utils.h               |  5 +++
+ drivers/pinctrl/pinctrl-zynqmp.c              |  4 ++-
+ drivers/pinctrl/pinmux.c                      | 17 +++++-----
+ drivers/pinctrl/pinmux.h                      | 11 +++++++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      |  8 +++--
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c       |  8 +++--
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  7 +++--
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c       |  4 ++-
+ drivers/pinctrl/renesas/pinctrl.c             |  8 +++--
+ drivers/pinctrl/samsung/pinctrl-samsung.c     | 11 ++++---
+ drivers/pinctrl/spear/pinctrl-spear.c         |  6 ++--
+ drivers/pinctrl/sprd/pinctrl-sprd.c           |  6 ++--
+ .../starfive/pinctrl-starfive-jh7100.c        |  2 ++
+ drivers/pinctrl/stm32/pinctrl-stm32.c         | 16 +++++-----
+ drivers/pinctrl/tegra/pinctrl-tegra.c         |  6 ++--
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c       |  8 +++--
+ .../pinctrl/uniphier/pinctrl-uniphier-core.c  |  8 +++--
+ include/linux/pinctrl/consumer.h              | 31 +++++++++----------
+ include/linux/pinctrl/devinfo.h               |  6 ++--
+ include/linux/pinctrl/machine.h               |  8 +++--
+ include/linux/pinctrl/pinconf-generic.h       | 23 ++++++++------
+ include/linux/pinctrl/pinctrl.h               | 18 +++++------
+ include/linux/pinctrl/pinmux.h                |  5 ++-
+ 56 files changed, 328 insertions(+), 186 deletions(-)
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
---igprdqe3agturd5e
-Content-Type: application/pgp-signature; name="signature.asc"
+base-commit: 9d157c89c5569f0ef560b7a5b2d7bf59ae98499c
+-- 
+2.35.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNEQp8ACgkQwfwUeK3K
-7AmPLwf8C0lY9kL1/ubNj9hd4hrNrZ0IhspuLTX14xCRaa+U0pR0xtAD7HAoeu0v
-aYz7Kiy77diuaFIyt1Rb1uNAV3okUNC1dQXOpp4cXVwa/LXwDIwXxOw0EYwyR26Z
-kd1viLZ4Q6eMoao2arEOiiisZh78OaOx1Mhncue8nv5No9xMNE8kOv07wW7Lr1je
-Fel+Ll98SoZU+tHU2eUIp2rwR0K1ZN3L+tglVldKXbCERy7+tKuxoSfivPwohEp1
-mt7MZOhonrPM4zdQcs8bnPVvQMOW8HSMiydbFmpe++tcdByZTpEZ+Ah9Li9i9krl
-ss6g+zm7fvGT+UWJ1B+EhnDpUDQvTw==
-=y2EG
------END PGP SIGNATURE-----
-
---igprdqe3agturd5e--
