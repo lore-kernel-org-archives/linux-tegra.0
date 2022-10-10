@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9E6C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Oct 2022 20:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BE0C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Oct 2022 20:16:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbiJJUQe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Oct 2022 16:16:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52778 "EHLO
+        id S229826AbiJJUQi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Oct 2022 16:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229845AbiJJUPq (ORCPT
+        with ESMTP id S229909AbiJJUPt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Oct 2022 16:15:46 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E0A796A6;
-        Mon, 10 Oct 2022 13:15:30 -0700 (PDT)
+        Mon, 10 Oct 2022 16:15:49 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44024796AC;
+        Mon, 10 Oct 2022 13:15:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665432933; x=1696968933;
+  t=1665432938; x=1696968938;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=EZ3ygaOLlWwepCuvu84+w4yWIH5OPHvluovAh/nnM6E=;
-  b=dbPb2oU8Oj10AMrdCQFEtC//JStB5kZZYKdc3Mo7YOtm37zVnGzjuLkq
-   rSmV98PaLYUuzKXPPSqBb0Lt7XWyRbffhhtGxKfsMYMD9/SGYaNffAbEp
-   jSzD4Pl6QxY4YI7EIF4g45nbbgJy8VqLiDriUc5bRfv6SNKK/U5Dq1LYI
-   xnAKMmUZZRghm2XXHavnaRBbnPDzzmbPV0S+cuh7COb2+CbYAdxcmfKYs
-   wwC8zut8aqaWqbAjzy0pVyIU02SltOGKKMWgkwBP22qrtN45tGkUoUMSV
-   +u6/U2/cs7VvaISh5Z2OlLWG0L5dpMYzw3l1FwK+2eCrxK/jWwuIW8r5T
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="284054649"
+  bh=xi/Nfv8WtOYvT0HZPT8w43GxR/eWjmHTHS8mPgZHjTw=;
+  b=j6Ltm369hlMrA9ptlcFEXS0nbjmLclwdbA6VmV3OZjrlzPvDNsAFQBAe
+   C5gJfCvIFNH3AN/hmfTHbuCVX7AwEcA16bfEPTiSzLjyYbaJx+QXH0fRh
+   04u22NQVeATSDV3dsNlvzN9QaswRB7axS2HJM/PTclbsMD0tjhVvkwQw2
+   DbZhH2WP1HL8p6MUoWZmIhrpyD2gE/i0FfDZHtSjOB5XJLnSQ+SaRXxHc
+   9pplFct8U7oOEIGULi49HlzhhMBQEnJWop9+ykiQIGnZLa1mcDCIufYaH
+   6x6clhtHKNLfOg99+dUB4GtawSghmgkMkyFiOo3FQ78RNgPta+hXbH/RS
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="301936471"
 X-IronPort-AV: E=Sophos;i="5.95,173,1661842800"; 
-   d="scan'208";a="284054649"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2022 13:15:24 -0700
+   d="scan'208";a="301936471"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2022 13:15:34 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="715240752"
+X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="603862936"
 X-IronPort-AV: E=Sophos;i="5.95,173,1661842800"; 
-   d="scan'208";a="715240752"
+   d="scan'208";a="603862936"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Oct 2022 13:15:14 -0700
+  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2022 13:15:23 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E0BF35A3; Mon, 10 Oct 2022 23:15:12 +0300 (EEST)
+        id 75476781; Mon, 10 Oct 2022 23:15:13 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Marc Zyngier <maz@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -132,9 +132,9 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Emil Renner Berthing <kernel@esmil.dk>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v2 12/36] pinctrl: k210: Add missed header(s)
-Date:   Mon, 10 Oct 2022 23:14:28 +0300
-Message-Id: <20221010201453.77401-13-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 20/36] pinctrl: samsung: Add missed header(s)
+Date:   Mon, 10 Oct 2022 23:14:36 +0300
+Message-Id: <20221010201453.77401-21-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
 References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
@@ -151,39 +151,35 @@ While at it, sort headers alphabetically.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-k210.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-index ecab6bf63dc6..288e44457fec 100644
---- a/drivers/pinctrl/pinctrl-k210.c
-+++ b/drivers/pinctrl/pinctrl-k210.c
-@@ -3,18 +3,20 @@
-  * Copyright (C) 2020 Sean Anderson <seanga2@gmail.com>
-  * Copyright (c) 2020 Western Digital Corporation or its affiliates.
-  */
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index bd13b5ef246d..5736761927cb 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -15,15 +15,16 @@
+ // but provides extensions to which platform specific implementation of the gpio
+ // and wakeup interrupts can be hooked to.
+ 
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
 -#include <linux/io.h>
--#include <linux/of_device.h>
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
+-#include <linux/property.h>
+-#include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/gpio/driver.h>
++#include <linux/init.h>
 +#include <linux/io.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
--#include <linux/bitfield.h>
- #include <linux/regmap.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
 +#include <linux/seq_file.h>
- #include <linux/slab.h>
-+
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
--#include <linux/pinctrl/pinconf.h>
--#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/slab.h>
+ #include <linux/spinlock.h>
  
- #include <dt-bindings/pinctrl/k210-fpioa.h>
- 
+ #include "../core.h"
 -- 
 2.35.1
 
