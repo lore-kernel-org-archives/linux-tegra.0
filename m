@@ -2,111 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9703C4332F
-	for <linux-tegra@archiver.kernel.org>; Sun,  9 Oct 2022 08:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07684C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Oct 2022 06:05:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229799AbiJIITI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 9 Oct 2022 04:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48098 "EHLO
+        id S231215AbiJJGFA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Oct 2022 02:05:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbiJIITH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 9 Oct 2022 04:19:07 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC50C2D76D
-        for <linux-tegra@vger.kernel.org>; Sun,  9 Oct 2022 01:19:05 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohRWV-0007rM-5y; Sun, 09 Oct 2022 10:18:59 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohRWT-000SSj-Hu; Sun, 09 Oct 2022 10:18:57 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ohRWS-006bmL-RI; Sun, 09 Oct 2022 10:18:56 +0200
-Date:   Sun, 9 Oct 2022 10:18:53 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Subject: Re: [PATCH V2] clk: tegra: Fix Tegra PWM parent clock
-Message-ID: <20221009081853.6ipyu7u3ghcp6dfo@pengutronix.de>
-References: <20221007084524.10712-1-jonathanh@nvidia.com>
+        with ESMTP id S230230AbiJJGE7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 10 Oct 2022 02:04:59 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 739AC220E2
+        for <linux-tegra@vger.kernel.org>; Sun,  9 Oct 2022 23:04:58 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id l1so9453194pld.13
+        for <linux-tegra@vger.kernel.org>; Sun, 09 Oct 2022 23:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ze6sWpLp4OvIIrfkLpb2+ilcLI2WvN54fOLaHJtyJQ0=;
+        b=brojRUA4twJZbhunUPYWOqEG3kEV1+Dt5K34DHoxqPqdRk7/m1oig7e/E3ZrIjKEm5
+         WwwJX5MD/Tt2CNOhQx1slrOGSRpTWRQ0f5og5wJMxA9qRP8OatdepajU6lGlQvTerV5t
+         +tGum6VU5yOzWqdv6V7W4E55U6C3LWAassuBs+1VQ4B7Dr46mCY0LmkLZY6QWglhSo1h
+         mPq+5W/QRslkKQ8rJajiRu3rIVgS9hAzw5Wvbcs4BQApO4SkRr58PBNmDxLvHT9/zbIX
+         zEPNQ3juQycV/tbNxi/ike8VJIfzIxKRdykkRfET/wR/yBJahqydktty3iFLaOmKp4Up
+         cdlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ze6sWpLp4OvIIrfkLpb2+ilcLI2WvN54fOLaHJtyJQ0=;
+        b=AUQqxlW2QdUnn+VBxXhGbctb90mAM0GKvQQ+dDR+kSG66po9Q6aVYdwSKuFfYaOKSl
+         zlUEFBdfNOR5HWLKP5GC68cBw7mnGarEotSWBxCBm9Qtg+c2z6vP7rz9XZuRAl8e6TKY
+         O/fC5LEtfvqjK1Kdw49DnUsxK2zTYpQT7Laov0uT8P0cCqPDuQQoEws9QPMqmOOheSIG
+         ioUHaoC0P3ylgWGtEBSjR0EpdR6lPfz1EAbdoJuyEpGDoTql/L3sq+0f6YNYc6t97Pdu
+         GOXUJ0+ANoQLEGgfr9svv/CnL9GwYzzwYlk763MbXxfdoon0IlHMvkq9ZL84Pd+2x1Ue
+         liSw==
+X-Gm-Message-State: ACrzQf1FpccVIhN6qE0ToeOsNcOTSwcwbvj0GiMx9dpHa6eoGVjyx2GR
+        4fUeBR55tgRK/AH/gCCCtW/4Zw==
+X-Google-Smtp-Source: AMsMyM4Dw8vuxf5zlXz41FyIpJmGE5/yHcnIZmYyUCdgOIk9PW8Q4pogshvbi2TUcY/YN/hvkrBz0A==
+X-Received: by 2002:a17:902:ea0c:b0:181:61d1:ac1c with SMTP id s12-20020a170902ea0c00b0018161d1ac1cmr9048198plg.120.1665381897930;
+        Sun, 09 Oct 2022 23:04:57 -0700 (PDT)
+Received: from localhost ([122.172.86.128])
+        by smtp.gmail.com with ESMTPSA id e10-20020a170902784a00b0017dd839f2a5sm5691051pln.38.2022.10.09.23.04.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Oct 2022 23:04:57 -0700 (PDT)
+Date:   Mon, 10 Oct 2022 11:34:55 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>, Rob Herring <robh@kernel.org>
+Cc:     rafael@kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bbasu@nvidia.com, sanjayc@nvidia.com,
+        ksitaraman@nvidia.com
+Subject: Re: [Patch v2] cpufreq: tegra194: Add support for Tegra239
+Message-ID: <20221010060455.o3mnc5fx2xm34wpb@vireshk-i7>
+References: <20220920110646.27837-1-sumitg@nvidia.com>
+ <20221004152714.GA1524940-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="t4ajb5urhxiezmny"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221007084524.10712-1-jonathanh@nvidia.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20221004152714.GA1524940-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 04-10-22, 10:27, Rob Herring wrote:
+> On Tue, Sep 20, 2022 at 04:36:46PM +0530, Sumit Gupta wrote:
+> > @@ -586,6 +586,7 @@ static int tegra194_cpufreq_remove(struct platform_device *pdev)
+> >  static const struct of_device_id tegra194_cpufreq_of_match[] = {
+> >  	{ .compatible = "nvidia,tegra194-ccplex", .data = &tegra194_cpufreq_soc },
+> >  	{ .compatible = "nvidia,tegra234-ccplex-cluster", .data = &tegra234_cpufreq_soc },
+> > +	{ .compatible = "nvidia,tegra239-ccplex-cluster", .data = &tegra239_cpufreq_soc },
+> 
+> Not documented.
 
---t4ajb5urhxiezmny
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sumit, can you please send a patch to document this in bindings ?
 
-Hello,
-
-On Fri, Oct 07, 2022 at 09:45:24AM +0100, Jon Hunter wrote:
-> Commit 8c193f4714df ("pwm: tegra: Optimize period calculation") updated
-> the period calculation in the Tegra PWM driver and now returns an error
-> if the period requested is less than minimum period supported. This is
-> breaking PWM support on various Tegra platforms. For example, on the
-> Tegra210 Jetson Nano platform this is breaking the PWM fan support and
-> probing the PWM fan driver now fails ...
->=20
->  pwm-fan pwm-fan: Failed to configure PWM: -22
->  pwm-fan: probe of pwm-fan failed with error -22
->=20
-> The problem is that the default parent clock for the PWM on Tegra210 is
-> a 32kHz clock and is unable to support the requested PWM period.
->=20
-> Fix PWM support on Tegra20, Tegra30, Tegra124 and Tegra210 by updating
-> the parent clock for the PWM to be the PLL_P.
->=20
-> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-
-First of all, thanks for your fix. Very appreciated.
-
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-
-Who will take care for this patch? I assume it will be Stephen and
-Michael (i.e. the clk maintainers)? Do you consider this patch fine for
-application before the next merge window, or do you expect that it might
-break other use cases and so should cook in next for some time?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---t4ajb5urhxiezmny
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNCg+oACgkQwfwUeK3K
-7AnK7Af+IUWQbHvwVB7qQUkTcEHygOppJwAidslsZyCayakJcj4WXigoAh5la6cK
-Ml1L+6ooajSOR8Qbi6K+arQwHp7H0W3EPIPkK24QC5Zkn8UGKUax2RNrocgx8akB
-Q0qjrEHEKhzOP6Rd+8Xa0qiTWlvntgOZFxnLBJhvXuKHJTHXWxSxWVqAyw8bgZjv
-qo/Llga9DbHWUdmd4ZQF3ug2Aqju05zsByw5EBZ0VojfgAtOcJXyKTRXDqiDQRO6
-BqhyEPbImD29EQXDZX6eVUYoyWGdl7JNi9KpT1IlazGDHSWixVEkr72kNi9xIc/J
-xafBcjmS52rMweDsxqjqAvt+jgo2oA==
-=ndcB
------END PGP SIGNATURE-----
-
---t4ajb5urhxiezmny--
+-- 
+viresh
