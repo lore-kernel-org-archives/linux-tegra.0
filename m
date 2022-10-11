@@ -2,101 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA54C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Oct 2022 12:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 533F1C4167E
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Oct 2022 13:48:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229638AbiJKMeK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Oct 2022 08:34:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44302 "EHLO
+        id S229917AbiJKNso (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Oct 2022 09:48:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbiJKMeJ (ORCPT
+        with ESMTP id S230004AbiJKNs0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Oct 2022 08:34:09 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8D3B7437E
-        for <linux-tegra@vger.kernel.org>; Tue, 11 Oct 2022 05:34:07 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id z20so13040722plb.10
-        for <linux-tegra@vger.kernel.org>; Tue, 11 Oct 2022 05:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GRrUWenaqh6VKLU3VCogfj+LN1gtoIMhQ34n8miswGo=;
-        b=n0TisemITtLvCmpzeT6B1nL6BL12hI4RRK9BKQFG1JVrNkUU8xHqBr/kj/0P6dQe4c
-         MqFvQHAm4sV/IXQx3BMgj6I0p5flUIthSaeCB/97sZlDG0JwxJFnt6M+QkTZ5Y2Zh384
-         XOr9VtMH9mFi01UfYhHPHVE0IMfydTzvN6nhIwXvRJ17g4A5pw5uJkYL4kXtKPNhvkE2
-         GJVB9mhejySWuaHnJM9kfcVWObCn4PKXPbWd1nvUH/WurVnea1Z+nLh3GIvueI3XXAVQ
-         eccDewB/409zbCo9O2ApzsmFQ8kN0Do3D/GRDTa7Qm/PT1qCzVTsNtynyMoia/3ZneL0
-         bSzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GRrUWenaqh6VKLU3VCogfj+LN1gtoIMhQ34n8miswGo=;
-        b=Ejwp6dCZG+jtXDp3PJUPXLLRwpnvduRHVxS36I0DMITafETgirPuUH5tuwshJ7zLIJ
-         3N4qJHIC2t2h05iQVVHQXUzGT488yvYqoO45C7fMQMBPNiVvDEPs8ml1T5SM+QMDJoKd
-         aQKr4ddFmTuLN9BkWnKTijJ2UGKA8d7PiWaP6YR1/Q8c2OyeQhPsmCdE6g718y27rEoH
-         t+K3u7AJ3RfpYSkXHolCJ4rAiHElhigNtK5/HPGPyd6E8c2PTSXLBNkoCazx2kh4pkQp
-         vqwmwyfWOiV6nBLWGZdr74u8rRgr2iM6gfSGve1/p+r0OgZ0JWshq5tlHaYYgtX8d2SD
-         1h2Q==
-X-Gm-Message-State: ACrzQf0Ccxj6SuipJUP7EEOaZOdZet7iJ/fuZ563FcsEU1UW/4XuccmS
-        SLLjVBXHeGFRvdzzDf/XIN5USnR06KiPkUH7mBmyIQ==
-X-Google-Smtp-Source: AMsMyM5kGpIgK+2qkllcQJjzHDW3VzrbrE5bqXlGS+Qs+8V81zFp5lKejVOw50LHSxGOvdI7ObVrjHDu7c99rO7fI1w=
-X-Received: by 2002:a17:90b:1d8b:b0:20d:30a5:499e with SMTP id
- pf11-20020a17090b1d8b00b0020d30a5499emr14653471pjb.84.1665491647339; Tue, 11
- Oct 2022 05:34:07 -0700 (PDT)
+        Tue, 11 Oct 2022 09:48:26 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD8AE77555;
+        Tue, 11 Oct 2022 06:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1665496105; x=1697032105;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QHbuyb2S/uUcVxyF/lwXUqAZuHdBPKm0sW+WbMyb3sc=;
+  b=Pj4BNK+rzzSTyBXemPpBH2NMgeihtQKzOP08GkE32BBDFHsEGUAOjS/g
+   YtBTzP+IhzjASx0CQoxtsOGSgggsc6r1ZngggideScpztEHBpvubxJvM/
+   PrBL8xLU0ZS173Xl1LBsRCKZZsUhVi7fKD8k2d9jHx/MqBAXkHRDZRdt4
+   jP4ZP+oPiaF9m0MFT6RAOay9XKsfteS6LOUKuYpRkK5k6bSbSgcvtu+/L
+   naYmNshmjYqukJl6ZQrLY6QTS7HynU+I2J6mqh2J4UJJdOFmwMHwDGHsu
+   Dh8DYhwk1KYkPnYhlJoeIytZJScs+etnJw5/us2S84x9IdC3nJtnr0iej
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10497"; a="303244167"
+X-IronPort-AV: E=Sophos;i="5.95,176,1661842800"; 
+   d="scan'208";a="303244167"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2022 06:48:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10497"; a="695068698"
+X-IronPort-AV: E=Sophos;i="5.95,176,1661842800"; 
+   d="scan'208";a="695068698"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Oct 2022 06:48:19 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oiFcH-005KIR-1Z;
+        Tue, 11 Oct 2022 16:48:17 +0300
+Date:   Tue, 11 Oct 2022 16:48:17 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 02/36] gpiolib: cdev: Add missed header(s)
+Message-ID: <Y0V0IXF3sASTGdMU@smile.fi.intel.com>
+References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
+ <20221010201453.77401-3-andriy.shevchenko@linux.intel.com>
+ <Y0SyVwjDl7NGfTPn@sol>
+ <CAHp75Vf4oS8g0zxgismtLrzsJ7AE-bdMEq+GAzx2=Mwnhuk3UA@mail.gmail.com>
 MIME-Version: 1.0
-References: <Yz6zfrVq9cP/wrJb@orome> <20221006130622.22900-1-pshete@nvidia.com>
- <20221006130622.22900-2-pshete@nvidia.com> <CAPDyKFr_Yi2EgrBUzsORnM4mOkf25WR8+7_dfF2h4XzRDPm9-w@mail.gmail.com>
- <DM5PR12MB2406610AB26183BACB19EED6B7239@DM5PR12MB2406.namprd12.prod.outlook.com>
-In-Reply-To: <DM5PR12MB2406610AB26183BACB19EED6B7239@DM5PR12MB2406.namprd12.prod.outlook.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 11 Oct 2022 14:33:30 +0200
-Message-ID: <CAPDyKFqn2jMVQ5BAOZPFx2OOyMRQvsQ1E7mGAQp82x5+v6aSGQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] mmc: sdhci-tegra: Add support to program MC stream ID
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aniruddha Tvs Rao <anrao@nvidia.com>,
-        Suresh Mangipudi <smangipudi@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf4oS8g0zxgismtLrzsJ7AE-bdMEq+GAzx2=Mwnhuk3UA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 11 Oct 2022 at 13:44, Prathamesh Shete <pshete@nvidia.com> wrote:
->
-> Hi Ulf
->
-> The initial patches were without the #ifdef. #ifdef is being added as per review comments and kernel robot errors.
-> Following error was detected by kernel robot
-> >>
-> All errors (new ones prefixed by >>):
->
->    drivers/mmc/host/sdhci-tegra.c: In function 'sdhci_tegra_probe':
-> >> drivers/mmc/host/sdhci-tegra.c:1794:54: error: 'struct iommu_fwspec' has no member named 'ids'
->     1794 |                         tegra_host->streamid = fwspec->ids[0] & 0xffff;
->          |                                                      ^~
->
->
-> vim +1794 drivers/mmc/host/sdhci-tegra.c
-> >>
-> Adrian also pointed out this issue so to address these issues #ifdef was added
+On Tue, Oct 11, 2022 at 11:05:42AM +0300, Andy Shevchenko wrote:
+> On Tue, Oct 11, 2022 at 3:02 AM Kent Gibson <warthog618@gmail.com> wrote:
+> > On Mon, Oct 10, 2022 at 11:14:18PM +0300, Andy Shevchenko wrote:
 
-I see!
+...
 
-In that case, perhaps we can add a "depends on IOMMU_API" in the
-Kconfig instead? Or is the tegra driver used on platforms where
-IOMMU_API could be unset?
+> > > -#include <linux/gpio.h>
+> > >  #include <linux/gpio/driver.h>
+> > > +#include <linux/gpio.h>
+> > > +#include <linux/hte.h>
+> >
+> > Ok with the hte re-order.
+> >
+> > But moving the gpio subsystem header after the gpio/driver is not
+> > alphabetical ('.' precedes '/') and it read better and made more sense
+> > to me the way it was.
+> 
+> I see, I guess this is vim sort vs shell sort. Strange, they should
+> follow the locale settings...
 
-[...]
+I have checked, the shell and vim sort gave the same result as in this patch.
 
-Kind regards
-Uffe
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
