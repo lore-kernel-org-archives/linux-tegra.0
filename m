@@ -2,177 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D30DC43219
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Oct 2022 20:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02988C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Oct 2022 03:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229495AbiJKU4V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Oct 2022 16:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55838 "EHLO
+        id S229537AbiJLDHj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Oct 2022 23:07:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbiJKU4S (ORCPT
+        with ESMTP id S229452AbiJLDHh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Oct 2022 16:56:18 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 356AA7A74B;
-        Tue, 11 Oct 2022 13:56:17 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id h12so7795831pjk.0;
-        Tue, 11 Oct 2022 13:56:17 -0700 (PDT)
+        Tue, 11 Oct 2022 23:07:37 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601589C7F7
+        for <linux-tegra@vger.kernel.org>; Tue, 11 Oct 2022 20:07:34 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id x6so15019410pll.11
+        for <linux-tegra@vger.kernel.org>; Tue, 11 Oct 2022 20:07:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AcPVh42qVgkJBf4RM2Ey0P8OhTX4x5A+uHddaUsQ6Co=;
-        b=DlfaPAoLX/0Jb1SsUAFBMfuYimfDeLB1Gs+lotFCf5wX/xRNwwaeEjZ5ki70F0YSfL
-         rO7wa9sBAK38Fitsjr8wWeGaTbB17rWj/5uv6Qggo2NMYLqZ3T8nbfHPEpUJcQu2bQ5S
-         2uJcOyvVHU3GCMrUVyQTjgWU857w+EEMu3KOOXzRP0sBYb9WpwXPa+bHwKfdWnDYL1IZ
-         sjB2VBMKHp8LTg0LYEtI3ZlOLTHkYjnwE1T4zHOamUMrxkhqgzXrSXOnblYNQPKxo6AV
-         GmstnP6z2i66RfbJJQ1IzTNkzjBUrVnp0pu77wz8fvzBSAWlB5mtP7EKE8gyxWRookcL
-         WWLA==
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZNJfRDpcAKr8ACE2m9HF/GFLqzPGRxixlVowBczXTN8=;
+        b=LJGbU33DU05/QCkrNRdRZMPdtH86dbxeLyFu56M3N6Dy7DlkQKw6F3+VvZKMrtjWkp
+         XFlr1rznO7kd0CNzyXGywLJdYpa/I4gxBkep+Gozw9w+Jw/UEMBSgvqvXl+4JkPo84Bt
+         OEp15uaNtDBL4WRg/7nl/WLZ4sPwy3365ZLUhAYOU1E7ygM6rwkhvKriM1KDV0ZEjVsI
+         65TPwGnC3orOVCp/TIhDs+hQ65kXGuZpwYmOh0KZXVIWOVvslYWwZANEze3+1EQx7qDj
+         egtTLWTS1sxL+ZRhf6VUjJ/zj9rygzOwIATQOTa6NzXIahGpY7n5PzNy4aXT2xNfRTaz
+         Fq4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AcPVh42qVgkJBf4RM2Ey0P8OhTX4x5A+uHddaUsQ6Co=;
-        b=s0qEG/YqPzYKf5wwma94gZzg+rApwbx6t5JyvFlCnZX+0sTp2PAov1kYvp/96eClF0
-         nqiVu0v2O1h8v8XkelxVQLKLX2G01q7MB9roL1Ch+iAspfC2hFp0hIW9ZLmrAYOt3PfJ
-         gDM18/pW6Amgt9j5UViiOMY4+TO2peL0dUnFQUMUHN8/nZKGvYpL3GbGg0hs6tjkMPcW
-         i2k5Scg4NqzpBsxwrfc8FAlIbppSW9SjKvQaH2rVsZId8GbYSlCWEbGtTIRQ5YoeNWBS
-         iy7kvvPb7o8nj1jR4lim6Z1EeLFb2m5XwCr/e14XxzuTxvG61Jxc+PniIW0aTtWUs55S
-         XD+w==
-X-Gm-Message-State: ACrzQf08EDOYEfYFeMJXaE5vvH5FjWq7DrfmGeFyZRnB8PtmSDVDovIT
-        /Nw+85don7KMx4EnREjUdCA=
-X-Google-Smtp-Source: AMsMyM5pIEdsgeht0NOYcyruIBhuS4NISKYBTrmuG1I0+RU2v1LFNfTy+oB9jcY4eA/I6+ThSmPvTg==
-X-Received: by 2002:a17:90b:1bc9:b0:20d:75b8:ee5d with SMTP id oa9-20020a17090b1bc900b0020d75b8ee5dmr1171628pjb.147.1665521776548;
-        Tue, 11 Oct 2022 13:56:16 -0700 (PDT)
-Received: from ?IPV6:2600:8802:b00:4a48:7467:a6d1:4211:7f63? ([2600:8802:b00:4a48:7467:a6d1:4211:7f63])
-        by smtp.gmail.com with ESMTPSA id k207-20020a6284d8000000b00537eacc8fa6sm9403022pfd.40.2022.10.11.13.56.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Oct 2022 13:56:15 -0700 (PDT)
-Message-ID: <0684f480-2092-d520-2c8e-bd9a2dca47e3@gmail.com>
-Date:   Tue, 11 Oct 2022 13:56:09 -0700
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZNJfRDpcAKr8ACE2m9HF/GFLqzPGRxixlVowBczXTN8=;
+        b=iv1HBbm9QXjsgN+9tXSkzHmls0IuPJpskk/B6AcPR81bAAXYOie1PQqNVH3BjDC8f5
+         TcwA7YXNsbuHjWVAK85T7hySR2qsRUK5T06D73NbmL3jd26txwrjKmUsYs/J1A338/Y6
+         PDhV/KcJ2JCmVtMJbOld0ijoZ+NfmFXJWXQG4rVSy0Wfxg4DqE/HjFcGkc5ENdG8QhVr
+         cwtIrtDz0UbwwO5UnbMefyDVrkHzpP1twDgNhK5rFYb5AkXX/fn4V/J1S76ylGgkJpGF
+         df5fQXzeYqrE/jEbpzQwj0osNMSJVlomJGI2b101gt/HDJzbnYTF1RAAlcsAvVOJ2wWz
+         pM7Q==
+X-Gm-Message-State: ACrzQf2dIHmFy8aDwTNkL5A0Q/3y4fctRoauZLa5oAEHVnxSvZi8ApyF
+        eRmNKAtwZiSvbK+OrZ9kekHwKA==
+X-Google-Smtp-Source: AMsMyM4SI9rtKMOewPCH+amLCTl8+42jCoz9oy7gWSooXLChf8G5zzs73Jwjwref8q3ms7C9ce4NiA==
+X-Received: by 2002:a17:90b:17cf:b0:20d:72eb:fd0c with SMTP id me15-20020a17090b17cf00b0020d72ebfd0cmr2550871pjb.217.1665544053822;
+        Tue, 11 Oct 2022 20:07:33 -0700 (PDT)
+Received: from localhost ([122.172.86.128])
+        by smtp.gmail.com with ESMTPSA id l7-20020a17090a660700b002037a4e913bsm283774pjj.44.2022.10.11.20.07.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Oct 2022 20:07:32 -0700 (PDT)
+Date:   Wed, 12 Oct 2022 08:37:29 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: tegra194: Fix module loading
+Message-ID: <20221012030729.avte3mhtzat36nme@vireshk-i7>
+References: <20221011153243.133712-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [rft, PATCH v2 00/36] pinctrl: Clean up and add missed headers
-Content-Language: en-US
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Billy Tsai <billy_tsai@aspeedtech.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221011153243.133712-1-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-
-On 10/10/2022 1:14 PM, Andy Shevchenko wrote:
-> Currently the header inclusion inside the pinctrl headers seems more arbitrary
-> than logical. This series is basically out of two parts:
-> - add missed headers to the pin control drivers / users
-> - clean up the headers of pin control subsystem
+On 11-10-22, 16:32, Jon Hunter wrote:
+> When the Tegra194 CPUFREQ driver is built as a module it is not
+> automatically loaded as expected on Tegra194 devices. Populate the
+> MODULE_DEVICE_TABLE to fix this.
 > 
-> The idea is to have this series to be pulled after -rc1 by the GPIO and
-> pin control subsystems, so all new drivers will utilize cleaned up headers
-> of the pin control.
+> Fixes: df320f89359c ("cpufreq: Add Tegra194 cpufreq driver")
+
+Added:
+
+    Cc: v5.9+ <stable@vger.kernel.org> # v5.9+
+
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra194-cpufreq.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Please, review and comment.
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+> index c2004cae3f02..4596c3e323aa 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -589,6 +589,7 @@ static const struct of_device_id tegra194_cpufreq_of_match[] = {
+>  	{ .compatible = "nvidia,tegra239-ccplex-cluster", .data = &tegra239_cpufreq_soc },
+>  	{ /* sentinel */ }
+>  };
+> +MODULE_DEVICE_TABLE(of, tegra194_cpufreq_of_match);
+>  
+>  static struct platform_driver tegra194_ccplex_driver = {
+>  	.driver = {
 
-Did you really need to split this on a per-driver basis as opposed to 
-just a treewide drivers/pinctrl, drivers/media and drivers/gpiolib patch 
-set?
+Applied. Thanks.
 
-36 patches seems needlessly high when 4 patches could have achieve the 
-same outcome.
 -- 
-Florian
+viresh
