@@ -2,181 +2,336 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217FDC4167B
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Oct 2022 09:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F54C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Oct 2022 09:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbiJLJQO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Oct 2022 05:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37774 "EHLO
+        id S229471AbiJLJky (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Oct 2022 05:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbiJLJQL (ORCPT
+        with ESMTP id S229560AbiJLJkw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Oct 2022 05:16:11 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960597331F;
-        Wed, 12 Oct 2022 02:16:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1665566157; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=s+g0+ssYTgL3cZkE5/H6taOX78xERs3DGn3pyH5uewU=;
-        b=q1TTDkSv+2wywK6AIXiGaOkH7iZ2YU3VEKYOBAZiyQM7JBPfmc8c6P2ZhHrYUGYo8pdYOS
-        dts7t4kZKIQ9e1u3iLHUzQuRMcbtwmO5Z8KpYm4wJCUKd79SLah8Tf9+RyDQWaVWq5AUrm
-        d0C/wxgx1Yk/JFU/GDZxLIKL5vEmKNw=
-Date:   Wed, 12 Oct 2022 10:15:29 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 11/36] pinctrl: ingenic: Add missed header(s)
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Billy Tsai <billy_tsai@aspeedtech.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        =?iso-8859-2?q?Rafa=B3_Mi=B3ecki?= <rafal@milecki.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Andreas =?iso-8859-1?q?F=E4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Message-Id: <T1VMJR.YAQIRYFT8EC22@crapouillou.net>
-In-Reply-To: <20221010201453.77401-12-andriy.shevchenko@linux.intel.com>
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
-        <20221010201453.77401-12-andriy.shevchenko@linux.intel.com>
+        Wed, 12 Oct 2022 05:40:52 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2040.outbound.protection.outlook.com [40.107.220.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6E6357C9;
+        Wed, 12 Oct 2022 02:40:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NntxNO8TIe+5VQYAE9JoZk4elUYET/HkZNB4f+1IDhVEeT5+tGfsyjRvnZybgSaANLi6VSZhEeR2Xg2Uw0zjs0ePomA4ELkAOWDFanF8IScgbyn0ezmumHMaWEgLu7QFIhh54pLWl4iUhg/96BX2WLtY966kWP8QuyfDAJP/5SFbqBJJrpAB91hk22Sg4qRLztrU6oBytBcHi+3Gx+OYZ9aYOBUPpLCR41ksDcxVgEzIIlbq4eFc9xpliiSnrrXyNGKJfNE99txEOU29KrPtjqOXxt8q9kFONlP1Cb6x5x8nLwUpJO1UPTnpCskS1ZphkRcWJHKWD42/zPKqAGEIqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IO3APibJx7aaA7a+/xRxMwOT+8HRO4lY0I4goHPpLcE=;
+ b=KTiH+cJEOCme2v3eJ/mPfeK1u3UIXY1z4W8fGZmp+zUeZBRyWjn/06CoSNQROK7fxqZUk4sEAcvwTIk7cYZmiAxIzKE1ItthqqOdgi8adXC9yrSIjkPmsDqsXIhZAizzUTINd/z6DYrbKm2ysKg5CUWKhQXIElh3Tp6XI6fftpBU3QD4GZZMC6yi9ChWZk0ZVF6hcK+crSuEVxqSdLg8HsmMhmFUaFtGf/tIYk+jEmuXJlqo1fSXvZWFeatUqhaX5wsBK5MhOrrSQpZ4pM+xPbPvyF03I2nhrnTICsuJ2KE/OrFNW76hFyvq7Cs2+Kfiywrbo5xqtAYP4LMLxrazCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IO3APibJx7aaA7a+/xRxMwOT+8HRO4lY0I4goHPpLcE=;
+ b=SCnyujzfc8GZD5kS8U+7qix2eDSVNjyajnzuia7Gpd2WpHhWC3BKW5n3NgDr1BgK6c3R1AnL4z7ksLzET9F2PlrJqz7SuyKy/C9SOAMs4j5y/98VK1rl63eYJ+8oPfVA7FndBT/Ma2m6NIXYQVOjL4uliZGxC7fAGUrwYKaSotQrsLM0e4DZJbTrE/noWILyoKcRHwammfU7aIf/y7OrOEUsvUtWqkkKiZY0RMpwLRbE+sG48gKTKJHjyu0pNLyHgN/ozglAMABC/HM1l8aztqgZ1oWtdRgMINM5xCRJyFlZU6I8h0WRTumTAGsgEkE1hV2aL2xdyWG88/gyRUL2aA==
+Received: from BN0PR04CA0139.namprd04.prod.outlook.com (2603:10b6:408:ed::24)
+ by CH2PR12MB5018.namprd12.prod.outlook.com (2603:10b6:610:6e::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.28; Wed, 12 Oct
+ 2022 09:40:47 +0000
+Received: from BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ed:cafe::5f) by BN0PR04CA0139.outlook.office365.com
+ (2603:10b6:408:ed::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.22 via Frontend
+ Transport; Wed, 12 Oct 2022 09:40:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN8NAM11FT015.mail.protection.outlook.com (10.13.176.90) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5723.20 via Frontend Transport; Wed, 12 Oct 2022 09:40:47 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 12 Oct
+ 2022 02:40:33 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 12 Oct
+ 2022 02:40:32 -0700
+Received: from jilin-desktop.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Wed, 12 Oct 2022 02:40:31 -0700
+From:   Jim Lin <jilin@nvidia.com>
+To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>
+CC:     <mathias.nyman@intel.com>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <jilin@nvidia.com>
+Subject: [PATCH v2] xhci: tegra: USB2 pad power controls
+Date:   Wed, 12 Oct 2022 17:40:20 +0800
+Message-ID: <20221012094020.2442-1-jilin@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT015:EE_|CH2PR12MB5018:EE_
+X-MS-Office365-Filtering-Correlation-Id: de533379-8a77-4f5c-4f19-08daac35d767
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: i+wJhEBhlTMas6G+NIxK4WmX2d813pLOLC3KB12FHYTZZnLyNbrIZd81TS+YvJdkGcL9UxJI1RHwOSdpMb0Wzp7yjsmrV2IpvGcHadOa7KlTj/iTHfgtXCjfFLt75ml9+Kokk6TXLbZ8a4Oqt2OgdugiEKIIhqdoYj5RCtnB87Fc2nFkPccxTjy8G3RNLncA/yt8aOF7ruOIwfeitRdDSVlf/uR/vf7bYfm22WjOfcgqb7bWplbZQFMkVw9u7h8ODmKAaKNTT6PO/yUluw/srkrPmNaH1aDJ5i9GbkAIk4VZtNGk8M0uiPNe83iRKt6vBnLJNtibonPWgpx8LPgiXF4/hnUbqg3MLgt0OComX6QTsVkgVmf/Xdoac/rzyILvgaYJZOXTJ3kES3xfNkBOh/IP89xjAKhbb6QbMnsbLs6saePauIVEnQM794kbxBi2xH3Dy3fKAQ9KMPI275H0++tfPaQ7nLjS4TWJvmTJAK0QuPvMsnlnnSlIzdHHQjO7Jzf1avtqCFzYvduvrt+JQhyVZGPXOA8wm6hxgekR+li6gWdbY+CXHH1bq+x5O3EjXLQJnw8J/yYUzL6n2OInfq+F6WL+E6Ej+MmVGOPTZSt3OLWEehosolmapbDEkhGF82ytJGvXpsEwd3mBHgw1JkDx7vOsgi2pQ1fA/hte5iqvshXQttYyB1WQsFCrgqH6bFRYz+dBSc///nW2jIjcUzRKQQhREcnsGb+r+wieE0NvCqSWw3nbeos9LNCrJYU0LugN0UJtuyANf8M+ximzmw==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(136003)(346002)(396003)(376002)(451199015)(40470700004)(46966006)(36840700001)(47076005)(356005)(41300700001)(186003)(7636003)(82740400003)(86362001)(82310400005)(36860700001)(426003)(4326008)(8936002)(8676002)(6666004)(83380400001)(5660300002)(7696005)(40480700001)(54906003)(70586007)(26005)(478600001)(40460700003)(110136005)(336012)(107886003)(2616005)(316002)(70206006)(1076003)(2906002)(36756003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2022 09:40:47.1431
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: de533379-8a77-4f5c-4f19-08daac35d767
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB5018
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Program USB2 pad PD controls during port connect/disconnect, port
+suspend/resume, and test mode, to reduce power consumption on
+disconnect or suspend.
+
+Signed-off-by: Jim Lin <jilin@nvidia.com>
+---
+v2: Fix issue that wrong tegra->phys[] may be accessed on tegra124
 
 
-Le lun., oct. 10 2022 at 23:14:27 +0300, Andy Shevchenko=20
-<andriy.shevchenko@linux.intel.com> a =E9crit :
-> Do not imply that some of the generic headers may be always included.
-> Instead, include explicitly what we are direct user of.
->=20
-> While at it, sort headers alphabetically.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ drivers/usb/host/xhci-tegra.c | 141 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 139 insertions(+), 2 deletions(-)
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-
-Cheers,
--Paul
-
-> ---
->  drivers/pinctrl/pinctrl-ingenic.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c=20
-> b/drivers/pinctrl/pinctrl-ingenic.c
-> index 7e732076dedf..dbc25a60fbff 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -14,16 +14,18 @@
->  #include <linux/kernel.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/of.h>
-> -#include <linux/pinctrl/pinctrl.h>
-> -#include <linux/pinctrl/pinmux.h>
-> -#include <linux/pinctrl/pinconf.h>
-> -#include <linux/pinctrl/pinconf-generic.h>
->  #include <linux/platform_device.h>
->  #include <linux/property.h>
->  #include <linux/regmap.h>
->  #include <linux/seq_file.h>
->  #include <linux/slab.h>
->=20
-> +#include <linux/pinctrl/consumer.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
-> +#include <linux/pinctrl/pinconf.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinmux.h>
-> +
->  #include "core.h"
->  #include "pinconf.h"
->  #include "pinmux.h"
-> --
-> 2.35.1
->=20
-
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index c8af2cd2216d..316585068ab5 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -2,7 +2,7 @@
+ /*
+  * NVIDIA Tegra xHCI host controller driver
+  *
+- * Copyright (c) 2014-2020, NVIDIA CORPORATION. All rights reserved.
++ * Copyright (c) 2014-2022, NVIDIA CORPORATION. All rights reserved.
+  * Copyright (C) 2014 Google, Inc.
+  */
+ 
+@@ -189,6 +189,13 @@ struct tegra_xusb_context_soc {
+ 	} fpci;
+ };
+ 
++enum tegra_xhci_phy_type {
++	USB3_PHY,
++	USB2_PHY,
++	HSIC_PHY,
++	MAX_PHY_TYPES,
++};
++
+ struct tegra_xusb_soc {
+ 	const char *firmware;
+ 	const char * const *supply_names;
+@@ -274,9 +281,17 @@ struct tegra_xusb {
+ 
+ 	bool suspended;
+ 	struct tegra_xusb_context context;
++	u32 enable_utmi_pad_after_lp0_exit;
+ };
+ 
+ static struct hc_driver __read_mostly tegra_xhci_hc_driver;
++static int (*original_xhci_hub_control)(struct usb_hcd *hcd, u16 typeReq, u16 wValue, u16 wIndex,
++	    char *buf, u16 wLength);
++
++static inline struct tegra_xusb *hcd_to_tegra_xusb(struct usb_hcd *hcd)
++{
++	return (struct tegra_xusb *) dev_get_drvdata(hcd->self.controller);
++}
+ 
+ static inline u32 fpci_readl(struct tegra_xusb *tegra, unsigned int offset)
+ {
+@@ -1949,12 +1964,30 @@ static void tegra_xhci_enable_phy_sleepwalk_wake(struct tegra_xusb *tegra)
+ static void tegra_xhci_disable_phy_wake(struct tegra_xusb *tegra)
+ {
+ 	struct tegra_xusb_padctl *padctl = tegra->padctl;
+-	unsigned int i;
++	unsigned int i, j;
+ 
+ 	for (i = 0; i < tegra->num_phys; i++) {
+ 		if (!tegra->phys[i])
+ 			continue;
++		if (tegra_xusb_padctl_remote_wake_detected(padctl, tegra->phys[i])) {
++			if (i < tegra->soc->phy_types[USB3_PHY].num) {
++				/* USB3 */
++				j = i;
++			} else if (i < (tegra->soc->phy_types[USB3_PHY].num +
++					tegra->soc->phy_types[USB2_PHY].num)) {
++				/* USB2 */
++				j = i - tegra->soc->phy_types[USB3_PHY].num;
++				tegra_phy_xusb_utmi_pad_power_on(tegra->phys[i]);
++			} else {
++				/* HSIC */
++				j = i - (tegra->soc->phy_types[USB3_PHY].num +
++					 tegra->soc->phy_types[USB2_PHY].num);
++			}
++			dev_dbg(tegra->dev,
++				"%s port %u (0 based) remote wake detected\n",
++				dev_name(&tegra->phys[i]->dev), j);
+ 
++		}
+ 		tegra_xusb_padctl_disable_phy_wake(padctl, tegra->phys[i]);
+ 	}
+ }
+@@ -1972,6 +2005,23 @@ static void tegra_xhci_disable_phy_sleepwalk(struct tegra_xusb *tegra)
+ 	}
+ }
+ 
++static void tegra_xhci_program_utmi_power_lp0_exit(struct tegra_xusb *tegra)
++{
++	unsigned int i;
++
++	for (i = 0; i < tegra->soc->phy_types[USB2_PHY].num; i++) {
++		if (!is_host_mode_phy(tegra, USB2_PHY, i))
++			continue;
++		/* USB2 */
++		if (tegra->enable_utmi_pad_after_lp0_exit & BIT(i))
++			tegra_phy_xusb_utmi_pad_power_on(
++				tegra->phys[tegra->soc->phy_types[USB3_PHY].num + i]);
++		else
++			tegra_phy_xusb_utmi_pad_power_down(
++				tegra->phys[tegra->soc->phy_types[USB3_PHY].num + i]);
++	}
++}
++
+ static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
+ {
+ 	struct xhci_hcd *xhci = hcd_to_xhci(tegra->hcd);
+@@ -1980,6 +2030,7 @@ static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
+ 	unsigned int i;
+ 	int err;
+ 	u32 usbcmd;
++	u32 portsc;
+ 
+ 	dev_dbg(dev, "entering ELPG\n");
+ 
+@@ -1993,6 +2044,15 @@ static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
+ 		goto out;
+ 	}
+ 
++	for (i = 0; i < tegra->soc->phy_types[USB2_PHY].num; i++) {
++		if (!xhci->usb2_rhub.ports[i])
++			continue;
++		portsc = readl(xhci->usb2_rhub.ports[i]->addr);
++		tegra->enable_utmi_pad_after_lp0_exit &= ~BIT(i);
++		if (((portsc & PORT_PLS_MASK) == XDEV_U3) || ((portsc & DEV_SPEED_MASK) == XDEV_FS))
++			tegra->enable_utmi_pad_after_lp0_exit |= BIT(i);
++	}
++
+ 	err = xhci_suspend(xhci, wakeup);
+ 	if (err < 0) {
+ 		dev_err(tegra->dev, "failed to suspend XHCI: %d\n", err);
+@@ -2066,6 +2126,8 @@ static int tegra_xusb_exit_elpg(struct tegra_xusb *tegra, bool runtime)
+ 
+ 		phy_power_on(tegra->phys[i]);
+ 	}
++	if (tegra->suspended)
++		tegra_xhci_program_utmi_power_lp0_exit(tegra);
+ 
+ 	tegra_xusb_config(tegra);
+ 	tegra_xusb_restore_context(tegra);
+@@ -2437,6 +2499,79 @@ static int tegra_xhci_setup(struct usb_hcd *hcd)
+ 	return xhci_gen_setup(hcd, tegra_xhci_quirks);
+ }
+ 
++static int tegra_xhci_hub_control(struct usb_hcd *hcd, u16 type_req, u16 value, u16 index,
++				  char *buf, u16 length)
++{
++	struct tegra_xusb *tegra = hcd_to_tegra_xusb(hcd);
++	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
++	struct xhci_hub *rhub;
++	struct xhci_bus_state *bus_state;
++	int port = (index & 0xff) - 1;
++	int i;
++	struct xhci_port **ports;
++	u32 portsc;
++	int ret;
++
++	rhub = &xhci->usb2_rhub;
++	bus_state = &rhub->bus_state;
++	if (bus_state->resuming_ports && hcd->speed == HCD_USB2) {
++		ports = rhub->ports;
++		i = rhub->num_ports;
++		while (i--) {
++			if (!test_bit(i, &bus_state->resuming_ports))
++				continue;
++			portsc = readl(ports[i]->addr);
++			if ((portsc & PORT_PLS_MASK) == XDEV_RESUME)
++				tegra_phy_xusb_utmi_pad_power_on(
++					tegra->phys[tegra->soc->phy_types[USB3_PHY].num + i]);
++		}
++	}
++
++	if (hcd->speed == HCD_USB2) {
++		i = tegra->soc->phy_types[USB3_PHY].num + port;
++		if ((type_req == ClearPortFeature) && (value == USB_PORT_FEAT_SUSPEND)) {
++			if (!index || index > rhub->num_ports)
++				return -EPIPE;
++			tegra_phy_xusb_utmi_pad_power_on(tegra->phys[i]);
++		}
++		if ((type_req == SetPortFeature) && (value == USB_PORT_FEAT_RESET)) {
++			if (!index || index > rhub->num_ports)
++				return -EPIPE;
++			ports = rhub->ports;
++			portsc = readl(ports[port]->addr);
++			if (portsc & PORT_CONNECT)
++				tegra_phy_xusb_utmi_pad_power_on(tegra->phys[i]);
++		}
++	}
++
++	ret = (*original_xhci_hub_control)(hcd, type_req, value, index, buf, length);
++	if (ret < 0)
++		return ret;
++
++	if (hcd->speed == HCD_USB2) {
++		if ((type_req == SetPortFeature) && (value == USB_PORT_FEAT_SUSPEND))
++			/* We don't suspend the PAD while HNP role swap happens on the OTG port */
++			if (!((hcd->self.otg_port == (port + 1)) && hcd->self.b_hnp_enable))
++				tegra_phy_xusb_utmi_pad_power_down(tegra->phys[i]);
++
++		if ((type_req == ClearPortFeature) && (value == USB_PORT_FEAT_C_CONNECTION)) {
++			ports = rhub->ports;
++			portsc = readl(ports[port]->addr);
++			if (!(portsc & PORT_CONNECT)) {
++				/* We don't suspend the PAD while HNP role swap happens on the OTG
++				 * port
++				 */
++				if (!((hcd->self.otg_port == (port + 1)) && hcd->self.b_hnp_enable))
++					tegra_phy_xusb_utmi_pad_power_down(tegra->phys[i]);
++			}
++		}
++		if ((type_req == SetPortFeature) && (value == USB_PORT_FEAT_TEST))
++			tegra_phy_xusb_utmi_pad_power_on(tegra->phys[i]);
++	}
++
++	return ret;
++}
++
+ static const struct xhci_driver_overrides tegra_xhci_overrides __initconst = {
+ 	.reset = tegra_xhci_setup,
+ };
+@@ -2444,6 +2579,8 @@ static const struct xhci_driver_overrides tegra_xhci_overrides __initconst = {
+ static int __init tegra_xusb_init(void)
+ {
+ 	xhci_init_driver(&tegra_xhci_hc_driver, &tegra_xhci_overrides);
++	original_xhci_hub_control = tegra_xhci_hc_driver.hub_control;
++	tegra_xhci_hc_driver.hub_control = tegra_xhci_hub_control;
+ 
+ 	return platform_driver_register(&tegra_xusb_driver);
+ }
+-- 
+2.17.1
 
