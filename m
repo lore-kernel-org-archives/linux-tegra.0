@@ -2,149 +2,155 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C910C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Oct 2022 13:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CD2C38A2B
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Oct 2022 14:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbiJMNn7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Oct 2022 09:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41106 "EHLO
+        id S229844AbiJMOxZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Oct 2022 10:53:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbiJMNn6 (ORCPT
+        with ESMTP id S229459AbiJMOxW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Oct 2022 09:43:58 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C2C10D697
-        for <linux-tegra@vger.kernel.org>; Thu, 13 Oct 2022 06:43:56 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id b2so1842296plc.7
-        for <linux-tegra@vger.kernel.org>; Thu, 13 Oct 2022 06:43:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O81+P58FUqUzFvyhgNRSmI+OPkunmpM/swl0Z9C3YBg=;
-        b=ioli8x3yHwDJN+q9To8poYslymiA7VxYi3Vcv85dQquOoUzOU/2j0K+Kf2Xm4ZZtNR
-         8D6d8etpktGLMcSegOxQ44t05jwy4RhL4K99PLeSJpPLfdkHrIf9LD6351WljHQnGt0C
-         MFhidHsfCw0XJue8oOiAO1lu1DLfkCyKZP1fY/yVSJGCOH6lHoTbZ0REtbExaDkOXotk
-         8cGVtPC/Ezmyv76OCZUKrUSk9u6URw5Souuv0wjyM8Sfbqiz0YANIlD7tFRizm4pbCdL
-         2Fzb70j48sC4xtdTi8rOIuniTFGudO7T6CZkoZsht9vosfI1Wfxuxm42VrBHx7SKQlEa
-         5gtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O81+P58FUqUzFvyhgNRSmI+OPkunmpM/swl0Z9C3YBg=;
-        b=YWnt2+8huZ/jXVRx6gqERB3yxnwJRP3pWl7RZJ0+AnmMwpYco1LMpLZwHt8tICqCOz
-         EIZL2AECCoMA9psvdWE7ccse2k31B2U22f2O8C0Y3Ts26xGLmvTx3JwnXrAyQfk5NX9J
-         q3rcu7oR6EAvkdAp8QiR7SB1uUbAwmtJVpf/xvLtWfOKAm7r0d2H6xtUVKvVThnBvbJ/
-         gvOSmkInOLdtQXjgKMzlMJXTDAnSQLt//mi2Kc9IBXGKdQywDJPGjA58WrH/JCYyA+Yh
-         eEjO7YSe6wrZC1n5KENiJFB7ZIWwU0RT4/NkemaRSCZAzUKx9woBVJ0TUwBS6L3UfQOp
-         RT6g==
-X-Gm-Message-State: ACrzQf2EfgUqHkiZrZ8me8KcU9SJLzy2Ak7B3AiXgDcYOEkWC6Ur/6DR
-        jJiUQowMI6FyfgSD4cPRJ8L3XJDjhhloXAU3OqdG6A==
-X-Google-Smtp-Source: AMsMyM5iw0c63ZR4dpISN3UmFSzHp5mi5fer3iRlq8DDZ7XJmTyUQktu+UCO6+i1ktquI1thkVrEtWSlAnxyQ9zbA20=
-X-Received: by 2002:a17:90a:7b8c:b0:20b:1f3b:f6fd with SMTP id
- z12-20020a17090a7b8c00b0020b1f3bf6fdmr11160768pjc.202.1665668635466; Thu, 13
- Oct 2022 06:43:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <Yz6zfrVq9cP/wrJb@orome> <20221006130622.22900-1-pshete@nvidia.com>
- <20221006130622.22900-2-pshete@nvidia.com> <CAPDyKFr_Yi2EgrBUzsORnM4mOkf25WR8+7_dfF2h4XzRDPm9-w@mail.gmail.com>
- <DM5PR12MB2406610AB26183BACB19EED6B7239@DM5PR12MB2406.namprd12.prod.outlook.com>
- <CAPDyKFqn2jMVQ5BAOZPFx2OOyMRQvsQ1E7mGAQp82x5+v6aSGQ@mail.gmail.com> <DM5PR12MB2406405CE44A7606B5A28203B7259@DM5PR12MB2406.namprd12.prod.outlook.com>
-In-Reply-To: <DM5PR12MB2406405CE44A7606B5A28203B7259@DM5PR12MB2406.namprd12.prod.outlook.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 13 Oct 2022 15:43:18 +0200
-Message-ID: <CAPDyKFq5hNTdwT7CMvsxG=_5u+xvG2k3-PfbGhAbHfHbGqK81w@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] mmc: sdhci-tegra: Add support to program MC stream ID
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Thu, 13 Oct 2022 10:53:22 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC417104D25;
+        Thu, 13 Oct 2022 07:53:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1665672801; x=1697208801;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r+A85jTxRgf0CRicOayM4dLLN5VzvuhrenYOP1O6oTU=;
+  b=VBGQt3snKjaSwwIfB7YOjIhGItT1jhraaOyt/kxPQdFmLsAiKxfjMZ6/
+   wTvssSGWNAA5yxuojqVut3MlNJOmvWjDB5elRRqSDAKUIxYv1zwyZnPq8
+   VBvbvculER9n6hIqddQGd/StEG/GfU8NvlcYhvz90HmrQh3GZCbuG+4Vt
+   Fova2skDghdNYp0Abp5DZ3SZDl/Gtia9BF+/3Zd/o0j0FlfPVN/fQ8mAh
+   efiwBEJxZXxTPvIVLAjiFBPfzdS4bSlDwAKwtiQBEs43kyDXiJ6rA0MZW
+   qpEWPpxmQ0k2SIWwmV7SKES/GvsfSCndSOerYJq8Yla5DIfLiNQ0g/pLg
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="285484078"
+X-IronPort-AV: E=Sophos;i="5.95,180,1661842800"; 
+   d="scan'208";a="285484078"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 07:53:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="872359863"
+X-IronPort-AV: E=Sophos;i="5.95,180,1661842800"; 
+   d="scan'208";a="872359863"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Oct 2022 07:53:11 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id DC55F26D; Thu, 13 Oct 2022 17:53:31 +0300 (EEST)
+Date:   Thu, 13 Oct 2022 17:53:31 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Billy Tsai <billy_tsai@aspeedtech.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Rafa?? Mi??ecki <rafal@milecki.pl>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aniruddha Tvs Rao <anrao@nvidia.com>,
-        Suresh Mangipudi <smangipudi@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Andreas F??rber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 35/36] pinctrl: intel: Add missed header(s)
+Message-ID: <Y0gma4fmhWISrKHe@black.fi.intel.com>
+References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
+ <20221010201453.77401-36-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221010201453.77401-36-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 13 Oct 2022 at 08:33, Prathamesh Shete <pshete@nvidia.com> wrote:
->
-> Hi Ulf,
->
-> >> In that case, perhaps we can add a "depends on IOMMU_API" in the Kconfig
-> >> instead? Or is the tegra driver used on platforms where IOMMU_API could be
-> >> unset?
-> Yes it can/will work with IOMMU disabled so its not recommended to add a "depends on" condition in Kconfig.
+On Mon, Oct 10, 2022 at 11:14:51PM +0300, Andy Shevchenko wrote:
+> Do not imply that some of the generic headers may be always included.
+> Instead, include explicitly what we are direct user of.
+> 
+> While at it, sort headers alphabetically.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Alright, in that case it looks to me that there are two other options
-to move forward.
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-1) Add proper definitions of the struct iommu_fwspec in
-include/linux/iommu.h even when CONFIG_IOMMU_API is unset. In a way it
-seems a bit silly to me, to have the iommu stubs around, unless those
-can be used for cases like this, right!?
-
-2) Move the code within the "ifdef CONFIG_IOMMU_API" sections into
-separate functions - and add stubs for these functions too. In this
-way the functions can be called, independently of whether
-CONFIG_IOMMU_API is set/unse, which would make the code in
-drivers/mmc/host/sdhci-tegra.c cleaner and thus easier to maintain.
-
-
->
-> Thanks
-> Prathamesh
->
-> > -----Original Message-----
-> > From: Ulf Hansson <ulf.hansson@linaro.org>
-> > Sent: Tuesday, October 11, 2022 6:04 PM
-> > To: Prathamesh Shete <pshete@nvidia.com>
-> > Cc: adrian.hunter@intel.com; thierry.reding@gmail.com; Jonathan Hunter
-> > <jonathanh@nvidia.com>; p.zabel@pengutronix.de; linux-
-> > mmc@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; Aniruddha Tvs Rao <anrao@nvidia.com>; Suresh
-> > Mangipudi <smangipudi@nvidia.com>; Krishna Yarlagadda
-> > <kyarlagadda@nvidia.com>
-> > Subject: Re: [PATCH v7 2/4] mmc: sdhci-tegra: Add support to program MC
-> > stream ID
-> >
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On Tue, 11 Oct 2022 at 13:44, Prathamesh Shete <pshete@nvidia.com> wrote:
-> > >
-> > > Hi Ulf
-> > >
-> > > The initial patches were without the #ifdef. #ifdef is being added as per review
-> > comments and kernel robot errors.
-> > > Following error was detected by kernel robot
-> > > >>
-> > > All errors (new ones prefixed by >>):
-> > >
-> > >    drivers/mmc/host/sdhci-tegra.c: In function 'sdhci_tegra_probe':
-> > > >> drivers/mmc/host/sdhci-tegra.c:1794:54: error: 'struct iommu_fwspec' has
-> > no member named 'ids'
-> > >     1794 |                         tegra_host->streamid = fwspec->ids[0] & 0xffff;
-> > >          |                                                      ^~
-> > >
-> > >
-> > > vim +1794 drivers/mmc/host/sdhci-tegra.c
-> > > >>
-> > > Adrian also pointed out this issue so to address these issues #ifdef
-> > > was added
-> >
-> > I see!
-> >
-> > In that case, perhaps we can add a "depends on IOMMU_API" in the Kconfig
-> > instead? Or is the tegra driver used on platforms where IOMMU_API could be
-> > unset?
-> >
-> > [...]
-
-Kind regards
-Uffe
+For all the intel pinctrl changes.
