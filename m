@@ -2,58 +2,54 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6CCC43217
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Oct 2022 13:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1AFC4321E
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Oct 2022 01:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229829AbiJLNy7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Oct 2022 09:54:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52552 "EHLO
+        id S229701AbiJMBXX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Oct 2022 21:23:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229754AbiJLNyy (ORCPT
+        with ESMTP id S229489AbiJMBXV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Oct 2022 09:54:54 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE65311A05;
-        Wed, 12 Oct 2022 06:54:50 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id x1-20020a17090ab00100b001fda21bbc90so2038073pjq.3;
-        Wed, 12 Oct 2022 06:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4W9PYnqE39FVIWPtx23Tk+GKt7RrA3d27Hf1sKJ7FqQ=;
-        b=UozGTu6YyIYkQQoEJ9mpP/ZP9EXBHkczxk9/ST0nwoYD5CXIifS1ksxnJ1z/XlD8Iv
-         DnXdQDc3QD5BBRt/elc/g3MpiMLgBMvz47ICmyWRQUwskodG72pwSD0FvOfnFwxR4gNT
-         0Nv0c1ZEd9a//beEgotrvzkxpjlIn11dOn3z2tb/KyektIxRp3AMw9k8NLnKlAlJMfAZ
-         ZW00APC6mm2Rgc0I9F6MtW+FIkz4pX/PUfBY7jV2tV/BJmcb7sxvPImZbSg5MEvkpS1A
-         VQqSmx00wjuq8wBY7o0koQO6OL1C+JRHOCj4nWqmVRt4CML82YQgP9dT0rzT4hrO952e
-         5MGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4W9PYnqE39FVIWPtx23Tk+GKt7RrA3d27Hf1sKJ7FqQ=;
-        b=SQhryKpLsYaX+V71pp5IBRS91fGROUxv/7os8zPiWHgrsgXKzeuG1h65Jj64zfWZF7
-         7IWKDWKmgKqZuUTkekP2/70ehkVv/MtkZPZTvesxMsSC7mN+na3607EqGVL9SsRBxFjU
-         FVWv6ZGoOiN5LAjzN6YaOmb9VKq9ondgpTxA1+7NNbQLWl0M6m+qyaPYjySpxdYiGfgy
-         WXgjgmyQWuPfwEgaEIPPGwtrAVnHxdQxO6ihwyPHrsYHr0MUr0P4ycIs0snez01/u9Zd
-         WYDeUz0NOYr5KhIzXviB+EcmGQ8eDE6CauVwSFOHg5dQBJ08MgvHkwChpVexFJp4YgAu
-         3OAA==
-X-Gm-Message-State: ACrzQf0IbnWsera2MGpRInyopnRNiIL6leMZLFxUL8vtXllgRpW9BRlE
-        FESDsb3b3u3wTjARLSj6nYc=
-X-Google-Smtp-Source: AMsMyM4GsOvqLbKi8bnipwZei9bul2eCxZ/xzZEAA7xagdE0qfFC/6Wvyu2i9hoIPRYsb/0vz6gCvA==
-X-Received: by 2002:a17:90a:f2c3:b0:20b:b75f:2f9e with SMTP id gt3-20020a17090af2c300b0020bb75f2f9emr5408380pjb.43.1665582890145;
-        Wed, 12 Oct 2022 06:54:50 -0700 (PDT)
-Received: from sol (110-174-58-111.static.tpgi.com.au. [110.174.58.111])
-        by smtp.gmail.com with ESMTPSA id s20-20020aa78bd4000000b00562f6df42f1sm8959924pfd.152.2022.10.12.06.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Oct 2022 06:54:49 -0700 (PDT)
-Date:   Wed, 12 Oct 2022 21:54:39 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Wed, 12 Oct 2022 21:23:21 -0400
+Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53076D77DA;
+        Wed, 12 Oct 2022 18:23:16 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R631e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=98;SR=0;TI=SMTPD_---0VS19mRS_1665624179;
+Received: from 30.97.48.54(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VS19mRS_1665624179)
+          by smtp.aliyun-inc.com;
+          Thu, 13 Oct 2022 09:23:04 +0800
+Message-ID: <b7c8afe1-af89-9b5a-2c2c-82a2810ca9f1@linux.alibaba.com>
+Date:   Thu, 13 Oct 2022 09:23:27 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH v2 23/36] pinctrl: sprd: Add missed header(s)
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Billy Tsai <billy_tsai@aspeedtech.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
         linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
@@ -65,60 +61,104 @@ Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 02/36] gpiolib: cdev: Add missed header(s)
-Message-ID: <Y0bHH06cbngWk4mH@sol>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
 References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <20221010201453.77401-3-andriy.shevchenko@linux.intel.com>
- <Y0SyVwjDl7NGfTPn@sol>
- <Y0bBXSHyxpdTGxoU@smile.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y0bBXSHyxpdTGxoU@smile.fi.intel.com>
+ <20221010201453.77401-24-andriy.shevchenko@linux.intel.com>
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20221010201453.77401-24-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Oct 12, 2022 at 04:30:05PM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 11, 2022 at 08:01:27AM +0800, Kent Gibson wrote:
-> > On Mon, Oct 10, 2022 at 11:14:18PM +0300, Andy Shevchenko wrote:
-> 
-> ...
-> 
-> > > -#include <linux/gpio.h>
-> > >  #include <linux/gpio/driver.h>
-> > > +#include <linux/gpio.h>
-> 
-> > But moving the gpio subsystem header after the gpio/driver is not
-> > alphabetical ('.' precedes '/') and it read better and made more sense
-> > to me the way it was.
-> 
-> Okay, I will move it back.
-> 
-> ...
-> 
-> > > +#include <linux/seq_file.h>
-> > 
-> > I wasn't aware that we use anything from seq_file.
-> > What am I missing?
-> 
-> 
-> Eventually I can answer to your question: the commit 0ae3109a8391
-> ("gpiolib: cdev: add fdinfo output for line request file descriptors")
-> is what you are missing.
-> 
-> That said, we need this patch.
-> 
 
-Ah, yes - totally forgot that one is in flight.
-That makes sense then.
 
-With the gpio headers retaining their original order:
-
-Rewiewed-by: Kent Gibson <warthog618@gmail.com>
-
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+On 10/11/2022 4:14 AM, Andy Shevchenko wrote:
+> Do not imply that some of the generic headers may be always included.
+> Instead, include explicitly what we are direct user of.
 > 
+> While at it, sort headers alphabetically.
 > 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+LGTM. Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+> ---
+>   drivers/pinctrl/sprd/pinctrl-sprd.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+> index dca7a505d413..c1806b7dcf78 100644
+> --- a/drivers/pinctrl/sprd/pinctrl-sprd.c
+> +++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+> @@ -13,12 +13,14 @@
+>   #include <linux/of.h>
+>   #include <linux/of_device.h>
+>   #include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <linux/pinctrl/consumer.h>
+>   #include <linux/pinctrl/machine.h>
+> -#include <linux/pinctrl/pinconf.h>
+>   #include <linux/pinctrl/pinconf-generic.h>
+> +#include <linux/pinctrl/pinconf.h>
+>   #include <linux/pinctrl/pinctrl.h>
+>   #include <linux/pinctrl/pinmux.h>
+> -#include <linux/slab.h>
+>   
+>   #include "../core.h"
+>   #include "../pinmux.h"
