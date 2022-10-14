@@ -2,78 +2,75 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FFCC4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Oct 2022 10:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9308EC433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Oct 2022 10:59:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbiJNKz6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Oct 2022 06:55:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37038 "EHLO
+        id S229691AbiJNK7s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Oct 2022 06:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbiJNKz5 (ORCPT
+        with ESMTP id S229598AbiJNK7r (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Oct 2022 06:55:57 -0400
+        Fri, 14 Oct 2022 06:59:47 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8A36B1BF224;
-        Fri, 14 Oct 2022 03:55:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 393A31740C;
+        Fri, 14 Oct 2022 03:59:45 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 899DE13D5;
-        Fri, 14 Oct 2022 03:56:02 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EEB1A13D5;
+        Fri, 14 Oct 2022 03:59:50 -0700 (PDT)
 Received: from bogus (unknown [10.57.35.221])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DD4B3F792;
-        Fri, 14 Oct 2022 03:55:53 -0700 (PDT)
-Date:   Fri, 14 Oct 2022 11:55:50 +0100
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 807B63F792;
+        Fri, 14 Oct 2022 03:59:41 -0700 (PDT)
+Date:   Fri, 14 Oct 2022 11:59:38 +0100
 From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Besar Wicaksono <bwicaksono@nvidia.com>, lorenzo.pieralisi@arm.com,
-        lenb@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        guohanjun@huawei.com, linux-tegra@vger.kernel.org,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+To:     Besar Wicaksono <bwicaksono@nvidia.com>
+Cc:     rafael@kernel.org, lenb@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, lorenzo.pieralisi@arm.com, guohanjun@huawei.com,
+        linux-tegra@vger.kernel.org, treding@nvidia.com,
+        jonathanh@nvidia.com, vsethi@nvidia.com,
         linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT)
  initial support
-Message-ID: <20221014105550.zf7ufboxid3jryrz@bogus>
+Message-ID: <20221014105938.fyy6jns5fsu5xd7q@bogus>
 References: <20220929002834.32664-1-bwicaksono@nvidia.com>
- <CAJZ5v0iBZRZmV_oU+VurqxnVMbFN_ttqrL=cLh0sUH+=u0PYsw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0iBZRZmV_oU+VurqxnVMbFN_ttqrL=cLh0sUH+=u0PYsw@mail.gmail.com>
+In-Reply-To: <20220929002834.32664-1-bwicaksono@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 07:46:08PM +0200, Rafael J. Wysocki wrote:
-> On Thu, Sep 29, 2022 at 2:29 AM Besar Wicaksono <bwicaksono@nvidia.com> wrote:
-> >
-> > ARM Performance Monitoring Unit Table describes the properties of PMU
-> > support in ARM-based system. The APMT table contains a list of nodes,
-> > each represents a PMU in the system that conforms to ARM CoreSight PMU
-> > architecture. The properties of each node include information required
-> > to access the PMU (e.g. MMIO base address, interrupt number) and also
-> > identification. For more detailed information, please refer to the
-> > specification below:
-> >  * APMT: https://developer.arm.com/documentation/den0117/latest
-> >  * ARM Coresight PMU:
-> >         https://developer.arm.com/documentation/ihi0091/latest
-> >
-> > The initial support adds the detection of APMT table and generic
-> > infrastructure to create platform devices for ARM CoreSight PMUs.
-> > Similar to IORT the root pointer of APMT is preserved during runtime
-> > and each PMU platform device is given a pointer to the corresponding
-> > APMT node.
-> >
-> > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> 
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> for the change in bus.c, but as a side note, it would be good to move
-> all of the ARM-specific initialization into one place, so it is not
-> necessary to touch bus.c every time a new piece of it is added.
->
+Hi Besar,
 
-Agreed, I will look into that and move them all under single acpi_arm_init()
-or something.
+On Wed, Sep 28, 2022 at 07:28:34PM -0500, Besar Wicaksono wrote:
+> ARM Performance Monitoring Unit Table describes the properties of PMU
+> support in ARM-based system. The APMT table contains a list of nodes,
+> each represents a PMU in the system that conforms to ARM CoreSight PMU
+> architecture. The properties of each node include information required
+> to access the PMU (e.g. MMIO base address, interrupt number) and also
+> identification. For more detailed information, please refer to the
+> specification below:
+>  * APMT: https://developer.arm.com/documentation/den0117/latest
+>  * ARM Coresight PMU:
+>         https://developer.arm.com/documentation/ihi0091/latest
+> 
+> The initial support adds the detection of APMT table and generic
+> infrastructure to create platform devices for ARM CoreSight PMUs.
+> Similar to IORT the root pointer of APMT is preserved during runtime
+> and each PMU platform device is given a pointer to the corresponding
+> APMT node.
+> 
+
+This looks good to me know.
+
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+
+Hi Lorenzo,
+
+Not sure if there are any other arm specific ACPI changes in the queue
+for v6.2. Can you please add this too ?
 
 -- 
 Regards,
