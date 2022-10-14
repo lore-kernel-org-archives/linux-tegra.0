@@ -2,76 +2,194 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9308EC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Oct 2022 10:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE130C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Oct 2022 13:38:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbiJNK7s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Oct 2022 06:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39280 "EHLO
+        id S229705AbiJNNi4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Oct 2022 09:38:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbiJNK7r (ORCPT
+        with ESMTP id S229537AbiJNNiz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Oct 2022 06:59:47 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 393A31740C;
-        Fri, 14 Oct 2022 03:59:45 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EEB1A13D5;
-        Fri, 14 Oct 2022 03:59:50 -0700 (PDT)
-Received: from bogus (unknown [10.57.35.221])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 807B63F792;
-        Fri, 14 Oct 2022 03:59:41 -0700 (PDT)
-Date:   Fri, 14 Oct 2022 11:59:38 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Besar Wicaksono <bwicaksono@nvidia.com>
-Cc:     rafael@kernel.org, lenb@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, lorenzo.pieralisi@arm.com, guohanjun@huawei.com,
-        linux-tegra@vger.kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, vsethi@nvidia.com,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT)
- initial support
-Message-ID: <20221014105938.fyy6jns5fsu5xd7q@bogus>
-References: <20220929002834.32664-1-bwicaksono@nvidia.com>
+        Fri, 14 Oct 2022 09:38:55 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2D801CF550
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Oct 2022 06:38:53 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id o21so2350412ple.5
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Oct 2022 06:38:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fim10Nn883YUuRB2/zDNHur11GszoVSITqSX1+3i+0g=;
+        b=bs7c64n6kbvSh5qiJsiElDDFXFU1VVybCgFb6Lkt0knUuNLMmDDQFoAba8s7bOm6tc
+         HBXZ/k7XqDvFn2taimFdCCw35vtrJ9cnU7Puqc0NbAtrEgInxi065txtnd+a7zfNDhXq
+         JFHULWlzRvUFdZ0jjry0MNw0WXPeyDvMdMPDvU0AATLo/3264KC8HPBp2XDrkrmz+/Ts
+         +VdbQAPDxQmrp0qPpfy4tcSx63LcXOHZDC/L5Y0L9yTNozWxGouAqNF/SDPtBzH0wrin
+         kZqojhBj0upDKWISx1YKO8Oi4480ftPuz86dG+hJF+deJEqIxjH2S9K1NFADuSOt0Evn
+         Be/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fim10Nn883YUuRB2/zDNHur11GszoVSITqSX1+3i+0g=;
+        b=PHLFYjMhAbX74/fU7CYii0Nrey6siAVWIcPrAkd9D79PIjXdxeVRM2WtilebQJh6dj
+         cLawqeIT2RqdvqyM/+wcdx+ZkHrPMvLpQLkH25Ajd02rgqYdlHAS55k9BeVp3mmWG02r
+         YYp84ytlvUaoJxseLwD2M15wsr+b1YgJpdMPurzsb+TG2/Mt0ea5VPoR/yyHxyrVVkWQ
+         /cVadmSuW9h6zxrZDawftfJlPQuhCi5C710CiF/K38jGq5Nm5nybO5wF21kFnezZHrby
+         YZambAjcMmjVIEiGRtanow9PNipyFtnZG+/DFJlX17Q5GDY8IVOXcev56n1NReFVPUEb
+         a9mA==
+X-Gm-Message-State: ACrzQf3ckeqJipBEVce4+ObZPNuTx7gffI+hTH8Aa432k/v4CsvZibx2
+        DDRWetHk+KoRuaR3tNTKlVW8WzAk7ySGgBXO6N+r29+z26w=
+X-Google-Smtp-Source: AMsMyM6IyYAWSgGy7Wfh5gYeg/kE2f9/kZGqWyNKDL/n4TD+JNio2ZbU9nxwvu6gC+RdB+bq8FYZptK2XTDEibOl1Hc=
+X-Received: by 2002:a17:90b:4d07:b0:1ef:521c:f051 with SMTP id
+ mw7-20020a17090b4d0700b001ef521cf051mr17878182pjb.164.1665754733353; Fri, 14
+ Oct 2022 06:38:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220929002834.32664-1-bwicaksono@nvidia.com>
+References: <CAPDyKFq5hNTdwT7CMvsxG=_5u+xvG2k3-PfbGhAbHfHbGqK81w@mail.gmail.com>
+ <20221014072456.28953-1-pshete@nvidia.com> <20221014072456.28953-2-pshete@nvidia.com>
+In-Reply-To: <20221014072456.28953-2-pshete@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 14 Oct 2022 15:38:16 +0200
+Message-ID: <CAPDyKFoJS8oewB71Swo2dBsfG3qsBf+fWbWn3rfL8Acdh0zqKQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/3] mmc: sdhci-tegra: Add support to program MC stream ID
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     adrian.hunter@intel.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, p.zabel@pengutronix.de,
+        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, anrao@nvidia.com,
+        smangipudi@nvidia.com, kyarlagadda@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Besar,
+On Fri, 14 Oct 2022 at 09:25, Prathamesh Shete <pshete@nvidia.com> wrote:
+>
+> SMMU clients are supposed to program stream ID from
+> their respective address spaces instead of MC override.
+> Define NVQUIRK_PROGRAM_STREAMID and use it to program
+> SMMU stream ID from the SDMMC client address space.
+>
+> Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 42 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index a6c5bbae77b4..0cd7c3f7e6f4 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -25,6 +25,10 @@
+>  #include <linux/mmc/slot-gpio.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/ktime.h>
+> +#ifdef CONFIG_IOMMU_API
 
-On Wed, Sep 28, 2022 at 07:28:34PM -0500, Besar Wicaksono wrote:
-> ARM Performance Monitoring Unit Table describes the properties of PMU
-> support in ARM-based system. The APMT table contains a list of nodes,
-> each represents a PMU in the system that conforms to ARM CoreSight PMU
-> architecture. The properties of each node include information required
-> to access the PMU (e.g. MMIO base address, interrupt number) and also
-> identification. For more detailed information, please refer to the
-> specification below:
->  * APMT: https://developer.arm.com/documentation/den0117/latest
->  * ARM Coresight PMU:
->         https://developer.arm.com/documentation/ihi0091/latest
-> 
-> The initial support adds the detection of APMT table and generic
-> infrastructure to create platform devices for ARM CoreSight PMUs.
-> Similar to IORT the root pointer of APMT is preserved during runtime
-> and each PMU platform device is given a pointer to the corresponding
-> APMT node.
-> 
+This ifdef can be removed, the compiler should sort this out for us.
 
-This looks good to me know.
+> +#include <linux/iommu.h>
+> +#include <linux/bitops.h>
+> +#endif
+>
+>  #include <soc/tegra/common.h>
+>
+> @@ -94,6 +98,8 @@
+>  #define SDHCI_TEGRA_AUTO_CAL_STATUS                    0x1ec
+>  #define SDHCI_TEGRA_AUTO_CAL_ACTIVE                    BIT(31)
+>
+> +#define SDHCI_TEGRA_CIF2AXI_CTRL_0                     0x1fc
+> +
+>  #define NVQUIRK_FORCE_SDHCI_SPEC_200                   BIT(0)
+>  #define NVQUIRK_ENABLE_BLOCK_GAP_DET                   BIT(1)
+>  #define NVQUIRK_ENABLE_SDHCI_SPEC_300                  BIT(2)
+> @@ -121,6 +127,7 @@
+>  #define NVQUIRK_HAS_TMCLK                              BIT(10)
+>
+>  #define NVQUIRK_HAS_ANDROID_GPT_SECTOR                 BIT(11)
+> +#define NVQUIRK_PROGRAM_STREAMID                       BIT(12)
+>
+>  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+>  #define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
+> @@ -177,6 +184,9 @@ struct sdhci_tegra {
+>         bool enable_hwcq;
+>         unsigned long curr_clk_rate;
+>         u8 tuned_tap_delay;
+> +#ifdef CONFIG_IOMMU_API
+> +       u32 streamid;
+> +#endif
+>  };
+>
+>  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+> @@ -1564,6 +1574,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra234 = {
+>                     NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
+>                     NVQUIRK_ENABLE_SDR50 |
+>                     NVQUIRK_ENABLE_SDR104 |
+> +                   NVQUIRK_PROGRAM_STREAMID |
+>                     NVQUIRK_HAS_TMCLK,
+>         .min_tap_delay = 95,
+>         .max_tap_delay = 111,
+> @@ -1630,6 +1641,33 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
+>         return ret;
+>  }
+>
+> +/* Program MC streamID for DMA transfers */
+> +#ifdef CONFIG_IOMMU_API
+> +static void program_stream_id(struct device *dev)
+> +{
+> +       struct sdhci_host *host = dev_get_drvdata(dev);
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> +       struct iommu_fwspec *fwspec;
+> +
+> +       if (tegra_host->soc_data->nvquirks & NVQUIRK_PROGRAM_STREAMID) {
+> +               fwspec = dev_iommu_fwspec_get(dev);
+> +               if (!fwspec) {
+> +                       dev_warn(mmc_dev(host->mmc),
+> +                               "iommu fwspec is NULL, continue without stream ID\n");
+> +               } else {
+> +                       tegra_host->streamid = fwspec->ids[0] & 0xff;
+> +                       tegra_sdhci_writel(host, tegra_host->streamid |
+> +                                               FIELD_PREP(GENMASK(15, 8),
+> +                                               tegra_host->streamid),
+> +                                               SDHCI_TEGRA_CIF2AXI_CTRL_0);
+> +               }
+> +       }
+> +}
+> +#else
+> +static void program_stream_id(struct device *dev) { }
+> +#endif
+> +
+>  static int sdhci_tegra_probe(struct platform_device *pdev)
+>  {
+>         const struct sdhci_tegra_soc_data *soc_data;
+> @@ -1775,6 +1813,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>         if (rc)
+>                 goto err_add_host;
+>
+> +       program_stream_id(&pdev->dev);
+> +
+>         return 0;
+>
+>  err_add_host:
+> @@ -1871,6 +1911,8 @@ static int sdhci_tegra_resume(struct device *dev)
+>         if (ret)
+>                 return ret;
+>
+> +       program_stream_id(dev);
+> +
+>         ret = sdhci_resume_host(host);
+>         if (ret)
+>                 goto disable_clk;
+> --
+> 2.17.1
+>
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Other than the minor nitpick, this looks good to me!
 
-Hi Lorenzo,
-
-Not sure if there are any other arm specific ACPI changes in the queue
-for v6.2. Can you please add this too ?
-
--- 
-Regards,
-Sudeep
+Kind regards
+Uffe
