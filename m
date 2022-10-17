@@ -2,95 +2,82 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB385C4167E
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 09:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CE5C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 09:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231287AbiJQJ1X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 05:27:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55740 "EHLO
+        id S231160AbiJQJb0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 05:31:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231196AbiJQJ1U (ORCPT
+        with ESMTP id S229923AbiJQJbZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 05:27:20 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E945B2D1EF;
-        Mon, 17 Oct 2022 02:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665998836; x=1697534836;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uMXEjdYfJ4AJV1TGc6N3Z98FaBO6KSM8lYZW5Txc/+Q=;
-  b=Pi7/Q36Gv0V2i/sunl3bQdHyhH5qB8SHZyMfmWmEat3yrl9eiKxT78Sz
-   APOS0Qb8qzVjrN+KNu07fJY7PNHx6BR3vNnbyS2PlR7gNCTALCG/B3pjI
-   9k7dg1EMl7UN1N1aJmZs6RrJdhY3aY0sh6olGIhCCIrS1byNmiiKokih9
-   rYNJFHXPbcxGE4GVOsKLfRpsj69TJb46Ng5U0gOylBsvY6Mb9zIGJT/+2
-   wDH8gHghzQ3uBIKgysAt4oXt9QEzxK8fuxNPnGt2UdYba7J6MyAienvNa
-   vwMi4RvzF1QZ6NvCZP+EGFWGJw8xlOeBWP4ynSBBnCycHY3jrlswlS21f
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10502"; a="303365454"
-X-IronPort-AV: E=Sophos;i="5.95,191,1661842800"; 
-   d="scan'208";a="303365454"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2022 02:27:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10502"; a="630619961"
-X-IronPort-AV: E=Sophos;i="5.95,191,1661842800"; 
-   d="scan'208";a="630619961"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga007.fm.intel.com with ESMTP; 17 Oct 2022 02:27:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1okMOj-008i6R-2u;
-        Mon, 17 Oct 2022 12:27:01 +0300
-Date:   Mon, 17 Oct 2022 12:27:01 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [rft, PATCH v2 00/36] pinctrl: Clean up and add missed headers
-Message-ID: <Y00f5exY2fM6IwZ+@smile.fi.intel.com>
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdZ1M3ckw+jFgvMqG4jvR-t_44GPoZ6ZDXszwZCJr-cDpg@mail.gmail.com>
+        Mon, 17 Oct 2022 05:31:25 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B27241D03
+        for <linux-tegra@vger.kernel.org>; Mon, 17 Oct 2022 02:31:22 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id r17so23487884eja.7
+        for <linux-tegra@vger.kernel.org>; Mon, 17 Oct 2022 02:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7XLVcLpyTW3hYyAvbDI66HfSdH+CV6t1oRyHuEEVL8k=;
+        b=WzrhIQONV2yqOXtsG3DhCRSqwLdBFRuisyqA4vmLTYFWYfYQAf1RAasKeyTn5aT8l2
+         sHOfEK8NIx54Os01bjJNSrbCP0gudEBObtLOiucvaDzIKrdyPwoVG7XgvdzQbCHhdGW1
+         AxXGhqAVfJjuR6ip2EV9KKQKbqXpptmCOdRf0++1kUwWwzNowIqHpd/ZxBHzWiUFXUVn
+         bKtTNpq5eugJFTxVawdUcjZ9H2qKl6evtu2EtZ30kwyof0zr53/mmdv0ASvrLZC/VSJ7
+         Ly2EKFJ2BB+TCzer8Maa27M8yXAyTBpmyz/Os7ffQu9s++pXpGyaf259huuzllavotly
+         rH7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7XLVcLpyTW3hYyAvbDI66HfSdH+CV6t1oRyHuEEVL8k=;
+        b=YbD5cDaczCtmCSCG0ybsdQGIToXdCDBTpekelGwgEU7oSKXJE8llTEga8XkooRmqVn
+         nblHnXO//VTmz+ReA62vO+8i+UT4zRRGc1uVESZWrpVIqtljFeUoKeOYSajLw/vEYBJl
+         KBgooK36pi36ySP7RKyEjKC7Qy9PIEh13VHtiID9zTxvyZsOFN6ASSh39p2mp22MSLjv
+         6q7UwnIDdxBWpwLJ6XaGGUuiyG/TLlLMDas3OYc+owF810mB9g7+3A1N3tW8VsUTxnP0
+         8fN6knqIX0oemavJFQLt2ALnzkukctgj0K30MHGKMdYEhGH5en9kKY/PUUFfZMqaamV/
+         iJUw==
+X-Gm-Message-State: ACrzQf1UOt17JLoFqRjY4yh2BRYrprzL37voNXpE7dBgVrnTZt0CnRuZ
+        nTIIzo0w1HdohDn5xANYgFMDXpJkQ8oxoq7EU6g8jQ==
+X-Google-Smtp-Source: AMsMyM6G1c3vhghVFZehisdpRiti+VaiidpH6kvYQnFU0ch7LzevazRYQ+FcrpSkkJTAnVXaQKPR+32adlK8NBMWywM=
+X-Received: by 2002:a17:907:7606:b0:78e:61d:757e with SMTP id
+ jx6-20020a170907760600b0078e061d757emr7488608ejc.690.1665999081191; Mon, 17
+ Oct 2022 02:31:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ1M3ckw+jFgvMqG4jvR-t_44GPoZ6ZDXszwZCJr-cDpg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <Yz62XmiH8YG3Dtsf@orome> <20221007055936.5446-1-pshete@nvidia.com>
+In-Reply-To: <20221007055936.5446-1-pshete@nvidia.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 17 Oct 2022 11:31:09 +0200
+Message-ID: <CACRpkdYkJdZ67kyTnDg3xFzO8MJhC0nHK98O+KJwCLBqV_5f-Q@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: tegra186: Check GPIO pin permission before access.
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     thierry.reding@gmail.com, bgolaszewski@baylibre.com,
+        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
+        Manish Bhardwaj <mbhardwaj@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 11:02:09AM +0200, Linus Walleij wrote:
-> On Mon, Oct 10, 2022 at 10:15 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > Currently the header inclusion inside the pinctrl headers seems more arbitrary
-> > than logical. This series is basically out of two parts:
-> > - add missed headers to the pin control drivers / users
-> > - clean up the headers of pin control subsystem
-> >
-> > The idea is to have this series to be pulled after -rc1 by the GPIO and
-> > pin control subsystems, so all new drivers will utilize cleaned up headers
-> > of the pin control.
-> 
-> Aha I see you want to send a pull request so I backed out the applied patches
-> from the series for now.
+On Fri, Oct 7, 2022 at 7:59 AM Prathamesh Shete <pshete@nvidia.com> wrote:
 
-Can I consider all that you answered to as Rb tag?
+> This change checks if we have the necessary permission to
+> access the GPIO. For devices that have support for virtualisation
+> we need to check both the TEGRA186_GPIO_VM_REG and the
+> TEGRA186_GPIO_SCR_REG registers. For device that do not have
+> virtualisation support for GPIOs we only need to check the
+> TEGRA186_GPIO_SCR_REG register.
+>
+> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+Very nice patch!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-
+Yours,
+Linus Walleij
