@@ -2,136 +2,149 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D37C4321E
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 13:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A60C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 14:11:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbiJQNcR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 09:32:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42550 "EHLO
+        id S230248AbiJQOLb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 10:11:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbiJQNcP (ORCPT
+        with ESMTP id S230079AbiJQOL3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 09:32:15 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C87B649B66;
-        Mon, 17 Oct 2022 06:32:11 -0700 (PDT)
-Received: from fraeml705-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4MrdB34gj5z686tl;
-        Mon, 17 Oct 2022 21:28:59 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- fraeml705-chm.china.huawei.com (10.206.15.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.31; Mon, 17 Oct 2022 15:32:04 +0200
-Received: from localhost (10.202.226.42) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
- 2022 14:32:03 +0100
-Date:   Mon, 17 Oct 2022 14:32:02 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-CC:     <broonie@kernel.org>, <sanju.mehta@amd.com>,
-        <chin-ting_kuo@aspeedtech.com>, <clg@kaod.org>,
-        <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
-        <rjui@broadcom.com>, <sbranden@broadcom.com>,
-        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
-        <john.garry@huawei.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
-        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
-        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
-        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
-        <robert.jarzmik@free.fr>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
-        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
-        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
-        <rostedt@goodmis.org>, <mingo@redhat.com>,
-        <l.stelmach@samsung.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
-        <kvalo@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <vigneshr@ti.com>, <jic23@kernel.org>,
-        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>,
-        <git@amd.com>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
-        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <claudiu.beznea@microchip.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
-        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
-        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
-        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
-        <ldewangan@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <michal.simek@amd.com>,
-        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
-        <libertas-dev@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
-        <akumarma@amd.com>, <amitrkcian2002@gmail.com>
-Subject: Re: [PATCH 05/10] iio: imu: Replace spi->chip_select references to
- spi->chip_select[0]
-Message-ID: <20221017143202.00003b1d@huawei.com>
-In-Reply-To: <20221017121249.19061-6-amit.kumar-mahapatra@amd.com>
-References: <20221017121249.19061-1-amit.kumar-mahapatra@amd.com>
-        <20221017121249.19061-6-amit.kumar-mahapatra@amd.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.29; i686-w64-mingw32)
+        Mon, 17 Oct 2022 10:11:29 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 832A257BEB;
+        Mon, 17 Oct 2022 07:11:27 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id k2so25236231ejr.2;
+        Mon, 17 Oct 2022 07:11:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wc4vhu3cj7ob5Y0sdul0MVZXyT2m9YP+8Qo/4ifVpWs=;
+        b=gxdD1NB9+4TZqPOstQjfh2IOQoJQ4GXNBKGNF2IeU1ZsIyAN97PghiyFeJH0se2Boy
+         fc1kN47+MUZKEAkGx7/cAIV+x1SlO9jiUtZEv4cBn8iaesre/Vh4/v0GHNlp3hiiw5ev
+         CmqIjVHlD9zUtck6BtNckzBrXx5uRfRVL7LjxhME5cc1rJcDLK3RjfK20C7eIFYYhqKV
+         SM/XyTa2x/kOwI3+dnPQ9KuPHa2URB8dQqXc8I7c/R/Z9iV/IWiC9F/d0xfS8QOol3zC
+         EPCBXvOvR+yrN73dadAb10KO0P54yg7CVHnSs5nNQjX4PNWK3od4TuhzPBNljkqedZOd
+         a+pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wc4vhu3cj7ob5Y0sdul0MVZXyT2m9YP+8Qo/4ifVpWs=;
+        b=4toSJD4pXK/LM3GxOXv8ktN2uMAKiUpNF3c1LcffwbQxsxVd8iPOPuOr/25Rphi7D9
+         7mxwpx3sR09r5lMQYKXjHgMF4uk7kPsokzACTv83qBjsA9okvOyq3z6aKlJ2QS8BbDra
+         vvQ005sIDFQ+ZzFHHGu1cil8Mwh6k83GXsRroWzw7uw6xZ1Xtd0rD4KdGzmCCOJ6qITa
+         trfVKbuJvKZe8uZMzSSyJ8qMlbW827vCdD6hi5OoHvpvZYmM7LpqNVROjoAH/U622IVS
+         Ln7ykDKWPBJY9LCcOrjGgSBA0xHtGWytEiBGAZnZlD8TQ2G7rebzTnQiwc1ZZqgS6DHe
+         9jrw==
+X-Gm-Message-State: ACrzQf2V8qCkqxQ/MfGDjJkPIONxzcRzAg6wW4g/yct0p4BHAPaMu/LV
+        6zPs6DAYV8dLmHOcNVQK794=
+X-Google-Smtp-Source: AMsMyM4y6Ve+vTWBpgAifoQzvsVeFbJBwIEnSCHCwtM8mCeMeDXljEtdl7teviAk5kN9Im79G96oxw==
+X-Received: by 2002:a17:907:6d9a:b0:78d:f864:de0e with SMTP id sb26-20020a1709076d9a00b0078df864de0emr9112609ejc.26.1666015885968;
+        Mon, 17 Oct 2022 07:11:25 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 23-20020a170906311700b00771cb506149sm6236307ejx.59.2022.10.17.07.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Oct 2022 07:11:24 -0700 (PDT)
+Date:   Mon, 17 Oct 2022 16:11:22 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Prathamesh Shete <pshete@nvidia.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aniruddha Tvs Rao <anrao@nvidia.com>,
+        Suresh Mangipudi <smangipudi@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: Re: [PATCH v7 2/4] mmc: sdhci-tegra: Add support to program MC
+ stream ID
+Message-ID: <Y01iiqtNA9xek46S@orome>
+References: <Yz6zfrVq9cP/wrJb@orome>
+ <20221006130622.22900-1-pshete@nvidia.com>
+ <20221006130622.22900-2-pshete@nvidia.com>
+ <CAPDyKFr_Yi2EgrBUzsORnM4mOkf25WR8+7_dfF2h4XzRDPm9-w@mail.gmail.com>
+ <DM5PR12MB2406610AB26183BACB19EED6B7239@DM5PR12MB2406.namprd12.prod.outlook.com>
+ <CAPDyKFqn2jMVQ5BAOZPFx2OOyMRQvsQ1E7mGAQp82x5+v6aSGQ@mail.gmail.com>
+ <DM5PR12MB2406405CE44A7606B5A28203B7259@DM5PR12MB2406.namprd12.prod.outlook.com>
+ <CAPDyKFq5hNTdwT7CMvsxG=_5u+xvG2k3-PfbGhAbHfHbGqK81w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.42]
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bW1/UntuZ/Dpz/dP"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFq5hNTdwT7CMvsxG=_5u+xvG2k3-PfbGhAbHfHbGqK81w@mail.gmail.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 17 Oct 2022 17:42:44 +0530
-Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com> wrote:
 
-> For adding multi CS support & to prevent any existing driver from
-> breaking, replaced all spi->chip_select references to spi->chip_slect[0].
-> 
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+--bW1/UntuZ/Dpz/dP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hmm. No particular reason why that print should exist at all.
-The warning above it covers the case where there is a mismatch
-in IDs so this adds nothing useful.
+On Thu, Oct 13, 2022 at 03:43:18PM +0200, Ulf Hansson wrote:
+> On Thu, 13 Oct 2022 at 08:33, Prathamesh Shete <pshete@nvidia.com> wrote:
+> >
+> > Hi Ulf,
+> >
+> > >> In that case, perhaps we can add a "depends on IOMMU_API" in the Kco=
+nfig
+> > >> instead? Or is the tegra driver used on platforms where IOMMU_API co=
+uld be
+> > >> unset?
+> > Yes it can/will work with IOMMU disabled so its not recommended to add =
+a "depends on" condition in Kconfig.
+>=20
+> Alright, in that case it looks to me that there are two other options
+> to move forward.
+>=20
+> 1) Add proper definitions of the struct iommu_fwspec in
+> include/linux/iommu.h even when CONFIG_IOMMU_API is unset. In a way it
+> seems a bit silly to me, to have the iommu stubs around, unless those
+> can be used for cases like this, right!?
 
-So patch is fine, but I'd be equally happy with just dropping the
-print.
+I recall that I had proposed a patch for this a long time ago:
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+	https://lore.kernel.org/all/20191209120005.2254786-3-thierry.reding@gmail.=
+com/
 
-> ---
->  drivers/iio/imu/adis16400.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/imu/adis16400.c b/drivers/iio/imu/adis16400.c
-> index 17bb0c40a149..aa7bfcee3510 100644
-> --- a/drivers/iio/imu/adis16400.c
-> +++ b/drivers/iio/imu/adis16400.c
-> @@ -466,7 +466,7 @@ static int adis16400_initial_setup(struct iio_dev *indio_dev)
->  
->  		dev_info(&indio_dev->dev, "%s: prod_id 0x%04x at CS%d (irq %d)\n",
->  			indio_dev->name, prod_id,
-> -			st->adis.spi->chip_select, st->adis.spi->irq);
-> +			st->adis.spi->chip_select[0], st->adis.spi->irq);
->  	}
->  	/* use high spi speed if possible */
->  	if (st->variant->flags & ADIS16400_HAS_SLOW_MODE) {
+Given that Joerg had acked it at the time, I think the only reason why
+it never ended up getting merged is because the rest of the series did
+not get enough traction. I wonder if I should peel it out of the series
+and propose it separately.
 
+I agree it doesn't make any sense to have the stubs to allow compilation
+and then break compilation because users of the stubs will end up
+wanting to dereference the structure.
+
+Thierry
+
+--bW1/UntuZ/Dpz/dP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNNYocACgkQ3SOs138+
+s6Ealw/+N+g3kvb61CMuasUT4REnY/0pdkX6PG+sIPl74h/vEy4RQONsMSIF60At
+vT5lx44ULGJq6Hi76D4A2OaZqGwezVI8lhdMPPzajE6LgH+VgnqaXbZzcSu1C0n9
+jGRyRvg0xcikfl8leufXlIPY4vew2i6OHaGX9kOOrpfuHyQPEf0qYGPRPtdOPHg6
+nxkUuOSxT2wSVxByOystb2Idao31IaN+dHk9Yds/OfLi5a3eXicJTfcV2Ashpktx
+91k7ZbPIXrYpB0TxhkqlsQGTC2tqaoR2vXAYB2MfGlz7FTuFXeyV7Xk8zaHvgMRg
+jfqqsqwXyzltIk5MY4ErJk8c1XZLRO6q3iepi4xSU0wb59Sjmcb7klZP5scPJC6H
+fHha2s6BZoLzw584a7O5RvjDK5GOGcMYDxmEGz5mb+ZKLsHdG24sdV2F46/qJU5c
+iRNZhlYV7PNCJmSxMFoOozA63v7YKR4RYQfBJSKHGSinTK+QJ2Cqm3EsRbCrBQgt
+u4AigcYY+T+pMd+L9HfYb0nxPYjViqa0FEtvv8fDua89MVVtGlQ+trHec4licmNF
+NNj87vkJpFe8uJYIWbsNAI6s1d6G/tGdcW85v11KFsBbJX/+HJawDSJXVj1ZF4m8
+fRRI7PcXMrKBlKhCAPfYz5057boPT+Gh64gTH1Lv2HQz7TCYvTE=
+=FnaY
+-----END PGP SIGNATURE-----
+
+--bW1/UntuZ/Dpz/dP--
