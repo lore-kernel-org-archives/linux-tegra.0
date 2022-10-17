@@ -2,96 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA3AC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 14:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE86C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 14:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230258AbiJQOO0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 10:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48176 "EHLO
+        id S230411AbiJQOjA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 10:39:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230262AbiJQOOY (ORCPT
+        with ESMTP id S229738AbiJQOi7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 10:14:24 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E89B6A;
-        Mon, 17 Oct 2022 07:14:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 57D60B81632;
-        Mon, 17 Oct 2022 14:14:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83438C433C1;
-        Mon, 17 Oct 2022 14:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1666016058;
-        bh=W1OZR9rX5R0Jg1nEu7Pmdr4d7IiTgkSuQYWHCdiGUy0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hnhwEAM9f2tiXubb7wbIdvhJE+QFdOduFDtkrhYFxxiGpnPe90FTBgJZzHCNcmYlZ
-         HN9UcdT4yRlWZwhMhM/cz3kF9qiLURLroLyGz1s1HJ3iOTRBEQaQAmdrrvDLKS1s1d
-         vHOcM7ukfF+toajrKBJSi0iWVh0B7wshUDWH8fa8=
-Date:   Mon, 17 Oct 2022 16:14:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jim Lin <jilin@nvidia.com>
-Cc:     jonathanh@nvidia.com, thierry.reding@gmail.com,
-        mathias.nyman@intel.com, linux-usb@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] xhci: tegra: USB2 pad power controls
-Message-ID: <Y01jNqAZrx0uA2xe@kroah.com>
-References: <20221017122531.9923-1-jilin@nvidia.com>
+        Mon, 17 Oct 2022 10:38:59 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EBFD659C0;
+        Mon, 17 Oct 2022 07:38:58 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id w18so25386388ejq.11;
+        Mon, 17 Oct 2022 07:38:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=71UDum2d0oKTyyrYpYR53saiIHSJtCoCDLAXfJhuh0c=;
+        b=YOUbjnCw6CQ+zeEfv3qNSDqY46R8PCIYzPoFfDBaZLucYbmypPvHxW50NxmaKxPp+v
+         3b1jxUGzTfRuKl4tahTyQrJZPRpQymz4LQy+1mJPTPt0p3gIruNxRxFe4zdEu+P1ttLE
+         2czHBIjRqa+BBLpesK3o5XgQGzymmWdILwZGmLFJoAaQ/KdzwOdvC1m4ySYZpxG41hqK
+         6l6avz8Fz9BD9VC7lvW3Kpd0i+44l4U9PxGOf0f/gj+Z7hCCWpNJZsXzq2EPRZ5E50s0
+         cQX7tqsZDolzzJ+UB91ZVbcB0YaGPWOqvF+vMcViRek0bcN/zWJSBfX9mN1kCwg1r/dx
+         /2Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=71UDum2d0oKTyyrYpYR53saiIHSJtCoCDLAXfJhuh0c=;
+        b=OyGaeMtVU2KtXxPgG3cKQ4r3fpfaCtARReI0S3DX16X8aDMW8+dyNcV49MJxdootpN
+         slZGd5u1/1C/X2O+HcaP7WIYuNSlmS1yYlam8pVhOpJa7at2pRUY8mKbUjWoel8C2Nne
+         KZTOFuhTf9WoLI6qxszpyjltydlYvBx3/2qI+OZWFf9u4U0nt75Q/wN6Mf3Vfd6CeQ+Y
+         Ckd89bjqopggWhLD7KPb6UxYScHNQR9QKamxCCx480FfwtMFtq9gEL2BGIVNIF2ODCHn
+         lEr20ir34xqqE4kSGl5gP4X5tPQpeMoARZnKggzirPiErWx8byenna1+oQQMbTM7u6Aw
+         ex2Q==
+X-Gm-Message-State: ACrzQf0V1z5Scc/VOwYG4OVdAX+sa8AruA/O/81TqsERx1CgUxzQObmd
+        MDgU5Ot15CwLPi+OCnXtozU=
+X-Google-Smtp-Source: AMsMyM5B/fqBSYUN5FBCtfdzvZ77V3Tlw079HWU+uo6zYZQQL2kTw4bk3X3MK0XWuUtGmtvWbsdpIg==
+X-Received: by 2002:a17:906:dacd:b0:780:a90c:e144 with SMTP id xi13-20020a170906dacd00b00780a90ce144mr8882293ejb.153.1666017537079;
+        Mon, 17 Oct 2022 07:38:57 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id x2-20020a50ba82000000b0044eb5b922bdsm7434353ede.24.2022.10.17.07.38.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Oct 2022 07:38:56 -0700 (PDT)
+Date:   Mon, 17 Oct 2022 16:38:54 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: display: simple-framebuffer: Support
+ system memory framebuffers
+Message-ID: <Y01o/ktQGO430tc6@orome>
+References: <20221007124946.406808-1-thierry.reding@gmail.com>
+ <20221007124946.406808-2-thierry.reding@gmail.com>
+ <44567457-2062-6e16-9a7f-c4ad23809ac9@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oU+6EXuFJR8wOBj7"
 Content-Disposition: inline
-In-Reply-To: <20221017122531.9923-1-jilin@nvidia.com>
+In-Reply-To: <44567457-2062-6e16-9a7f-c4ad23809ac9@suse.de>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 08:25:31PM +0800, Jim Lin wrote:
-> Program USB2 pad PD controls during port connect/disconnect, port
-> suspend/resume, and test mode, to reduce power consumption on
-> disconnect or suspend.
-> 
-> Signed-off-by: Jim Lin <jilin@nvidia.com>
-> ---
-> v2: Fix issue that wrong tegra->phys[] may be accessed on tegra124
-> v3: No change on copyright
-> v4: Remove hcd_to_tegra_xusb() function which is used only once.
-> 
->  drivers/usb/host/xhci-tegra.c | 134 +++++++++++++++++++++++++++++++++-
->  1 file changed, 133 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index c8af2cd2216d..a47454503d9e 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -189,6 +189,13 @@ struct tegra_xusb_context_soc {
->  	} fpci;
->  };
->  
-> +enum tegra_xhci_phy_type {
-> +	USB3_PHY,
-> +	USB2_PHY,
-> +	HSIC_PHY,
-> +	MAX_PHY_TYPES,
-> +};
-> +
->  struct tegra_xusb_soc {
->  	const char *firmware;
->  	const char * const *supply_names;
-> @@ -274,9 +281,12 @@ struct tegra_xusb {
->  
->  	bool suspended;
->  	struct tegra_xusb_context context;
-> +	u32 enable_utmi_pad_after_lp0_exit;
->  };
->  
->  static struct hc_driver __read_mostly tegra_xhci_hc_driver;
-> +static int (*original_xhci_hub_control)(struct usb_hcd *hcd, u16 typeReq, u16 wValue, u16 wIndex,
-> +	    char *buf, u16 wLength);
 
-That does not work when you have multiple devices in the system, right?
-You should not have _any_ static data in a driver.
+--oU+6EXuFJR8wOBj7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
+On Mon, Oct 10, 2022 at 11:37:37AM +0200, Thomas Zimmermann wrote:
+> Hi
+>=20
+> Am 07.10.22 um 14:49 schrieb Thierry Reding:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > In order to support framebuffers residing in system memory, allow the
+> > memory-region property to override the framebuffer memory specification
+> > in the "reg" property.
+>=20
+> What happens if both properties are present and they disagree with each
+> other?
+>=20
+> I understand that the framebuffer is behind 'memory-region', but does 're=
+g'
+> still contain device memory?  Do we need to acquire ownership from within
+> the driver?
 
-greg k-h
+The intention is for both memory-region and reg properties to be
+mutually exclusive. I can't think of a scenario where you would need or
+want both.
+
+Note also the documentation for the memory-region property:
+
+|  memory-region:
+|    maxItems: 1
+|    description: Phandle to a node describing the memory to be used for the
+|      framebuffer. If present, overrides the "reg" property (if one exists=
+).
+
+Thierry
+
+--oU+6EXuFJR8wOBj7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNNaP4ACgkQ3SOs138+
+s6H7iw/9HTbPf+ms8rkbXYj+BazFfadfC6vbV0zPNK0f5t1IYUC8Dk0MYIwjdCAN
+KbSNIys+uh1EKjJeClsiJvSBLhrqrZVeVdqruxnLUx3kDYuIWvwJBcF4RJE/3SoG
+wS2nU80/E4q56dTqRyMxMYfwM86fnAFm26TxZul0Oa4prNc7KV+ixrQKybszACLa
+sAQ5F9FimcyngTFIspuT6v7a+rhS9H7uFjOKFQirfBw57aA7gsb2VMpH4UMOx77n
+UA9xa9XqRU9M3A6DC/W80XikkbBAK6eOCHrFIyaIM69KPnrdLhu40BbcqS7ol8Jw
+tkKRK3rO5FPQSGj1kV+oY9S8wE6p8lUl26Wh6HcLxZfIUH+SYP3AZ/TDIwX1LPiU
+7ETTkD5UJZRoTXt36FFt7dwGEiBpmbAuKwsa+M1zlTi5mnzOlqNzxmP7T0XpnDKQ
+QaF5wRp7yd+hrzrTOhq/XC4Nxih7dCDqG5Ige7EpY14NopzwXeiH0FKNXlq2Y0FD
+CnbxXPCl+Eitf2M8bCkn0n43LjxLpxEqJLUeM0ZyZTzBzu39wx4J2nyZX5KMUsCK
+lh3d1x5Z0nD99lNrIVlxPLwFkUw50gDwn3NiPcfzuAAOpmrcmpugtp3lMtIJ4hyf
+F9KSI+8HNSGujTApANyy6mvp+T8buDgv9VoOd4A85RhJhNIprkI=
+=jBYl
+-----END PGP SIGNATURE-----
+
+--oU+6EXuFJR8wOBj7--
