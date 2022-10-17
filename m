@@ -2,141 +2,275 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A508C43219
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 10:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D2BC43219
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 12:13:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbiJQKBl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 06:01:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47098 "EHLO
+        id S230149AbiJQMNg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 08:13:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230170AbiJQKBi (ORCPT
+        with ESMTP id S229806AbiJQMNe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 06:01:38 -0400
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2053.outbound.protection.outlook.com [40.107.100.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E95894457D;
-        Mon, 17 Oct 2022 03:01:36 -0700 (PDT)
+        Mon, 17 Oct 2022 08:13:34 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2048.outbound.protection.outlook.com [40.107.237.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287631A811;
+        Mon, 17 Oct 2022 05:13:33 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E2ZM4Nwl3SaLOGEvI+6mUTByjG5DWAxlhGF6fmFSrqaKntlgFLm17gpwk6WAT1Gd9ufjoOk45cUHI3hfShkYrg4Jix32PQS/KwLxx/+bstLMuPa8nl92Dq7z65OxaJPYJkxMa593vXlc0LuZpGZ84sqMkQxcFDhba8Mv5R9o4yRUlYaOEfZOg270Lm+vehVcJ4PCSIMST6qP1I+kHs7REtnPJOMK9n8fuA2bRphO1XoArTG7XNk2NtZgGrnKwlY2K2d804ZVOrk6QfHtkdkcf5cT8jLwhmDMnwgGRDta5xbYkbni01LHGNUe1FrLaAgfFMCUjhFCj+RCsvmF1CltXg==
+ b=ScEZXGXZLAngpuP1JrDNhbakDpergk/kWHVBXJ6yaQ22eA2t99M7QGJtIFw+xMrwZV573LWxIF71/o5XMmCjICe5dhGHesVuMVwocmV8PtFhZJv/btdGkGVeq2IXXfXbAHpc9iH1/oQtB9F0SE3pNSKvyWnU7qkC5vCKcX46SSQXqujysfvsgW3Go/piie0kucVnuR8ok+zfWs0nsV48JsSmZ+zXMAKgs0bZ4ZAAvsXBtgitQtO937ALcovycCuavGYCiwc0+XmasSmUVwEY8eyN86cf1c8mQd0tkS8Vo8wtjFl6MfF3zfzvMZ7QCoM2RHlpgmYpsm5zBIXHRhYPLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2FaGAFSw0D3Sx+5KwTIwWCIua3tAkHjjxOlXDnJye5g=;
- b=YZ/+CovMFtofkc4K2Ci+UN09ZSEQI0XlUumWpgQTVL7T2V9dd0+dYgeB52owRfcaLiM6qCTkWqMsr/59gzpeDIU8pPgWKdxEDzmBcIHAd46Guz8Can7ozANMGvf5lQ1cQ0X2ZVo7aRfMNxAr0VD2o9+/ICk6Q0k/Ec/m+yzb6rPFCMzt4f7u+kKI8BPSzGkZAjXkj+DpT2IW0l68WXPkHlaIB/1RTFXqemPXYC1qf9N/M9Utm7KZWfsImvHiSmGR3WtHywspQ8bTS5vbXCylPaa0jK7PCGHdDju2cb3OgZGk1pqykXmoBGV0ZUU4L2vW92ABlZWxevWI45uDHBL1MA==
+ bh=Z+OOhvf9vm68JdIg/K/RPVtUl+JCMYNMMnVHKJocI20=;
+ b=gTG/mCTOoVQHlx0wJbC5Bh2GKtSKHJWkI0OAlWUzqQHCa/x6Q2HpKJMS3XIxe9VjP3bPEq7zRnYwy4ybj0Oe3COGhYVOc/uIR4Lia8oEib/0TRc+t6Ehar10UkTdp4V+thGpyo0ZBV/GtCPCIvEXVrvhry8paNUA2rD/3F8vhabuHDxrB4BNxq467czibCGQXdJPxK5o2qNqYoDxPugkDNq5w2Ys1XSdq2d9Q+zX1x9y6X0Makkey2yzzHxYH3Vj7LAURS5+uW3dW8otSrWZh45xaF6JHFJKjRebSlx+G0j4wYSIC9oXPss73ZdAdlm7hm/PGAyMW6Xrbd+gdXIz3A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2FaGAFSw0D3Sx+5KwTIwWCIua3tAkHjjxOlXDnJye5g=;
- b=W0XH5vDv1HmFc68DNT0lfr08AnRvWMTBgx2n91duQgG4q95GhIU46NT1zun4wYBBYbQvRTLEJnNlmjHJQYDGeHjNK4ucexdWybcZEnkYnRl6KMCZQ4hNi0qZJfct8p36k68+EMnGV8OBPOiMMZof7r7hgko/KHVBViSQwvU9Z1xgk9xPhsPJg4kU4tfKelXc2+gt8l0e1dB5PQH0lp2vUUznco9/SpjaLFh16s2j+5ZMaD10ZG088ihRW8+sU1fepE+JkzKUF3Cd+sOiJYM8IpEXL2Zdb/hKWjPvrxIIzdB9zlLGO0GJuhmK+30X0kYccJ8UbpimnH9AxbAvA0YlBQ==
-Received: from MW4P221CA0007.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::12)
- by MN0PR12MB6342.namprd12.prod.outlook.com (2603:10b6:208:3c1::9) with
+ bh=Z+OOhvf9vm68JdIg/K/RPVtUl+JCMYNMMnVHKJocI20=;
+ b=KioMigmazqjCrqKkwj2qLW/B9Acljup9Z+j1zC/g9tJrEXCGKBCoLH/vYZNFjDmEFul8wYmHVwJrY+ibEE4vBNHDhEPbDqWDpsQtYuE9uDpUWaxZyL0AW4HpIQvsLVEd1NNP44ZHru9rILS5zpT8sl0EFb0P/0eEflVpfpe8PFc=
+Received: from MW4PR04CA0200.namprd04.prod.outlook.com (2603:10b6:303:86::25)
+ by CY5PR12MB6034.namprd12.prod.outlook.com (2603:10b6:930:2e::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.30; Mon, 17 Oct
- 2022 10:01:34 +0000
-Received: from CO1NAM11FT073.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8b:cafe::22) by MW4P221CA0007.outlook.office365.com
- (2603:10b6:303:8b::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.31 via Frontend
- Transport; Mon, 17 Oct 2022 10:01:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CO1NAM11FT073.mail.protection.outlook.com (10.13.174.196) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5723.20 via Frontend Transport; Mon, 17 Oct 2022 10:01:34 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 17 Oct
- 2022 03:01:32 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Mon, 17 Oct 2022 03:01:31 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29 via Frontend
- Transport; Mon, 17 Oct 2022 03:01:31 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 0/4] 5.10.149-rc1 review
-In-Reply-To: <20221016064454.382206984@linuxfoundation.org>
-References: <20221016064454.382206984@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.29; Mon, 17 Oct
+ 2022 12:13:29 +0000
+Received: from CO1NAM11FT015.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:86:cafe::44) by MW4PR04CA0200.outlook.office365.com
+ (2603:10b6:303:86::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.32 via Frontend
+ Transport; Mon, 17 Oct 2022 12:13:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1NAM11FT015.mail.protection.outlook.com (10.13.175.130) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5723.20 via Frontend Transport; Mon, 17 Oct 2022 12:13:28 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
+ 2022 07:13:25 -0500
+Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.31 via Frontend
+ Transport; Mon, 17 Oct 2022 07:13:02 -0500
+From:   Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+To:     <broonie@kernel.org>, <sanju.mehta@amd.com>,
+        <chin-ting_kuo@aspeedtech.com>, <clg@kaod.org>,
+        <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
+        <john.garry@huawei.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
+        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
+        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
+        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
+        <robert.jarzmik@free.fr>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
+        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
+        <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <l.stelmach@samsung.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
+        <kvalo@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <vigneshr@ti.com>, <jic23@kernel.org>,
+        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>
+CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
+        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
+        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
+        <ldewangan@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <michal.simek@amd.com>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
+        <libertas-dev@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
+        <akumarma@amd.com>, <amitrkcian2002@gmail.com>,
+        Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Subject: [PATCH 00/10] spi: Add support for stacked/parallel memories
+Date:   Mon, 17 Oct 2022 17:42:39 +0530
+Message-ID: <20221017121249.19061-1-amit.kumar-mahapatra@amd.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Message-ID: <65fe35ec-2eb8-42ed-b85a-dd6574ffd177@drhqmail202.nvidia.com>
-Date:   Mon, 17 Oct 2022 03:01:31 -0700
+Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT073:EE_|MN0PR12MB6342:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96c9b1a2-391c-483f-0263-08dab026929c
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT015:EE_|CY5PR12MB6034:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e949b9e-c633-4f4f-2b2b-08dab0390049
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: q0CVQK+cfYsQ9LzdziW0r5R7b4KoagbzPaG80aXJsdugc0+dTZUnSHKFrk3klmC9m1NahiBQvyK1qNZHKRXj14+rGqZrcN6kZ+eYJAxq64aQJwQ/WPtzy/6u/qytBJtv6/RUYCS8ESG0PZ56HiLTiXfooo6gAeY1d465rXiJWaVFtqrcW76GtfzzFGmZVMh9ov8glUrbPSA7TmEfLzb9XNxgjBgBM3UMLc4y9My29h0luLMfeNpTYqxgfrrZjBCW55A6yJhxuGW/YkBBIsYo62aTH0iVd0/otwX7r0DLiXm6vaiL0Noiw9YrdVYetDsDiFzg25t0Aby351f8shX8CWZEdych0F9kLEX3xwU+TuuUmjFQEPWkCSEphiMmRhjLOIwmvE7S0DZnpbHbnXUirUrsEiX+deT+xMO6A3GeNd894My46kyNl365sSwSzEoriJmWlNaMBqkiELVI4OxT6hJ4IL+yZsBi1QG1rDyH/KBTbJjy+0qMyfH5uoX7gqlzAErqYQhLfEspoHd1qjBHE8pI+wFtuLbXBNqV58YyvbLsx/TqBtcCGMh7bsji+xz/FQFEkWVCzBrsxG70fi0lUJBBK3GEUoJq/bGvoZaq4rGFWnEPVqS8on/NimVXfHDD5Ky17VXyzIH63+lUnH360/U6MB/lLcL/0+KCzhdNLk19jcBwBQM2Ks0bIaUkXHo4VIKGkR12LIWD6CUhji5HjPyAFPEA/ZgWzxMqQdR96NajsES7gZvrPfI2huEvxGJpZn/fuwoN6cGXd2LQxxwwEXvkh6D4QXVAsHBHFf/5bLyb7np5ykpQj3D2jgvAWXMnYliYNaOwlERGKBHxtfdKubkAyaA2LO/Z8NFPRJOZj2Y=
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(136003)(376002)(396003)(39860400002)(451199015)(40470700004)(36840700001)(46966006)(54906003)(6916009)(70206006)(8676002)(70586007)(31696002)(41300700001)(4326008)(5660300002)(36860700001)(316002)(26005)(47076005)(426003)(86362001)(40480700001)(7416002)(8936002)(40460700003)(7636003)(356005)(2906002)(82740400003)(186003)(478600001)(82310400005)(966005)(336012)(31686004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2022 10:01:34.0196
+X-Microsoft-Antispam-Message-Info: UnjauWc33IchfFOhin/lfEzUnE4DnDDJfEwMJ26C6WmRnDOkf/Qwb4aMoN2RI5Eqq+2tiAbeo0KAJmarLWEM9tDs/x2BzokkMnAXUv6up8Ix0NH/DlI1ut5rgrTngBQV6Hfssa/EdpTxribN0zuoxpfJZeuK7z0CaBuBoVc5XqWldKdXPvBkMsDH7IwmdxeA/a8g6rMulbR3mDbdAKVl9tIuDZJr+utXEQ3Q6rbREhuhlwrDZKmiUwMyAnbhDYtUSvXKGPEUgKOYVkJgH0qNncBH4x2BdZWXvIT5dKotnRayE/epH8pMusQvg/Tn1nt0lNuN9EFoZnrIcuvFsuyWqY7eLpxMOwhOynTfQ/Dz6Nt0t6ZqktneaCFKNqKvHG6dODmLyco7sdMAwf+4pkj+U1cFyM+9BaVmnFqCo/UEZ0iIpk6u8KWzEKN9m9kIlQTMbA5bSoxZEe22kZSvbl+isNi6cyeUkGTPxn1ZG5woGnvEy4Fxmaki3GDp0WJLIX2w5tJfbZ7LCI7tmt2bEmNX0Vz5sCakByIvJ6RWSBpz1GGfinTaNQyenEMP9l6EnVQ65Lz/Kn1g7/i3NP6m7lD/94Ct+P5zalTz7EsGJOj6g4KmRqcGyCMzsKzB4MrL1zIRzlhXGONNKZ+MhFHI/F1WwYDHcTqz1cxtAQ3Ygs9GeZ6d7ZWvFmN11gGRzxnp30yHCy494nBI0tKwHEhwokR+Oq4xaUKYy1cfcVpu/kq0rv3PytPTBFLio64ERZc4WzsvGUu3SA49lJE4CSNpH6VMrnESjFNwxHjDIoodNmXKJ+eRUaj+h7OrDQ9DgiDCqSSd/WaygIXvk9sW1nf6aAwRmrn3TP3fV2O33M/5fm1t2Et8T/gIBD2JVxHzfGI0uFv0ptTlGPAbm1I3B91Lr2PxnQ==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(346002)(39860400002)(376002)(451199015)(40470700004)(36840700001)(46966006)(6666004)(478600001)(41300700001)(316002)(4326008)(54906003)(110136005)(8676002)(36756003)(70586007)(70206006)(921005)(81166007)(356005)(40460700003)(1076003)(82310400005)(2616005)(336012)(36860700001)(186003)(82740400003)(26005)(47076005)(426003)(83380400001)(86362001)(40480700001)(7416002)(7406005)(7366002)(2906002)(7336002)(5660300002)(8936002)(36900700001)(2101003)(41080700001)(83996005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2022 12:13:28.8109
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96c9b1a2-391c-483f-0263-08dab026929c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT073.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e949b9e-c633-4f4f-2b2b-08dab0390049
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT015.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6342
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6034
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 16 Oct 2022 08:46:10 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.149 release.
-> There are 4 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue, 18 Oct 2022 06:44:46 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.149-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+This patch is in the continuation to the discussions which happened on
+'commit f89504300e94 ("spi: Stacked/parallel memories bindings")' for
+adding dtbinding support for stacked/parallel memories.
 
-All tests passing for Tegra ...
+This patch series updated the spi-nor, spi core and the spi drivers
+to add stacked and parallel memories support.
+---
+BRANCH: mtd/next
+---
+Amit Kumar Mahapatra (10):
+  spi: Add stacked memories support in SPI core
+  spi: Replace all spi->chip_select & spi->cs_gpiod references with
+    array
+  net: Replace spi->chip_select references to spi->chip_select[0]
+  mtd: devices: Replace spi->chip_select references to
+    spi->chip_select[0]
+  iio: imu: Replace spi->chip_select references to spi->chip_select[0]
+  mtd: spi-nor: Add stacked memories support in spi-nor
+  spi: spi-zynqmp-gqspi: Add stacked memories support in GQSPI driver
+  spi: Add parallel memories support in SPI core
+  mtd: spi-nor: Add parallel memories support in spi-nor
+  spi: spi-zynqmp-gqspi: Add parallel memories support in GQSPI driver
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    75 tests:	75 pass, 0 fail
+ drivers/iio/imu/adis16400.c                   |   2 +-
+ drivers/mtd/devices/mtd_dataflash.c           |   2 +-
+ drivers/mtd/spi-nor/atmel.c                   |  10 +-
+ drivers/mtd/spi-nor/core.c                    | 569 +++++++++++++++---
+ drivers/mtd/spi-nor/core.h                    |   8 +
+ drivers/mtd/spi-nor/debugfs.c                 |   4 +-
+ drivers/mtd/spi-nor/gigadevice.c              |   2 +-
+ drivers/mtd/spi-nor/issi.c                    |   6 +-
+ drivers/mtd/spi-nor/macronix.c                |   4 +-
+ drivers/mtd/spi-nor/micron-st.c               |  27 +-
+ drivers/mtd/spi-nor/otp.c                     |  18 +-
+ drivers/mtd/spi-nor/sfdp.c                    |  20 +-
+ drivers/mtd/spi-nor/spansion.c                |  32 +-
+ drivers/mtd/spi-nor/sst.c                     |   4 +-
+ drivers/mtd/spi-nor/swp.c                     |  12 +-
+ drivers/mtd/spi-nor/winbond.c                 |   6 +-
+ drivers/mtd/spi-nor/xilinx.c                  |  14 +-
+ drivers/net/ethernet/asix/ax88796c_main.c     |   2 +-
+ drivers/net/ethernet/davicom/dm9051.c         |   2 +-
+ drivers/net/ieee802154/ca8210.c               |   2 +-
+ drivers/net/wan/slic_ds26522.c                |   2 +-
+ .../net/wireless/marvell/libertas/if_spi.c    |   2 +-
+ drivers/spi/spi-altera-core.c                 |   2 +-
+ drivers/spi/spi-amd.c                         |   4 +-
+ drivers/spi/spi-ar934x.c                      |   2 +-
+ drivers/spi/spi-armada-3700.c                 |   4 +-
+ drivers/spi/spi-aspeed-smc.c                  |  12 +-
+ drivers/spi/spi-at91-usart.c                  |   2 +-
+ drivers/spi/spi-ath79.c                       |   4 +-
+ drivers/spi/spi-atmel.c                       |  26 +-
+ drivers/spi/spi-au1550.c                      |   4 +-
+ drivers/spi/spi-axi-spi-engine.c              |   2 +-
+ drivers/spi/spi-bcm-qspi.c                    |   6 +-
+ drivers/spi/spi-bcm2835.c                     |   6 +-
+ drivers/spi/spi-bcm2835aux.c                  |   2 +-
+ drivers/spi/spi-bcm63xx-hsspi.c               |  22 +-
+ drivers/spi/spi-bcm63xx.c                     |   2 +-
+ drivers/spi/spi-cadence-quadspi.c             |   4 +-
+ drivers/spi/spi-cadence-xspi.c                |   4 +-
+ drivers/spi/spi-cadence.c                     |   4 +-
+ drivers/spi/spi-cavium.c                      |   8 +-
+ drivers/spi/spi-coldfire-qspi.c               |   8 +-
+ drivers/spi/spi-davinci.c                     |  18 +-
+ drivers/spi/spi-dln2.c                        |   6 +-
+ drivers/spi/spi-dw-core.c                     |   2 +-
+ drivers/spi/spi-dw-mmio.c                     |   4 +-
+ drivers/spi/spi-falcon.c                      |   2 +-
+ drivers/spi/spi-fsi.c                         |   2 +-
+ drivers/spi/spi-fsl-dspi.c                    |   4 +-
+ drivers/spi/spi-fsl-espi.c                    |   6 +-
+ drivers/spi/spi-fsl-lpspi.c                   |   2 +-
+ drivers/spi/spi-fsl-qspi.c                    |   6 +-
+ drivers/spi/spi-fsl-spi.c                     |  10 +-
+ drivers/spi/spi-gpio.c                        |   4 +-
+ drivers/spi/spi-hisi-sfc-v3xx.c               |   2 +-
+ drivers/spi/spi-img-spfi.c                    |  14 +-
+ drivers/spi/spi-imx.c                         |  30 +-
+ drivers/spi/spi-ingenic.c                     |   4 +-
+ drivers/spi/spi-jcore.c                       |   4 +-
+ drivers/spi/spi-mem.c                         |   4 +-
+ drivers/spi/spi-meson-spicc.c                 |   2 +-
+ drivers/spi/spi-mpc512x-psc.c                 |   8 +-
+ drivers/spi/spi-mpc52xx.c                     |   2 +-
+ drivers/spi/spi-mt65xx.c                      |   6 +-
+ drivers/spi/spi-mt7621.c                      |   2 +-
+ drivers/spi/spi-mux.c                         |   8 +-
+ drivers/spi/spi-mxs.c                         |   2 +-
+ drivers/spi/spi-npcm-fiu.c                    |  20 +-
+ drivers/spi/spi-nxp-fspi.c                    |  10 +-
+ drivers/spi/spi-omap-100k.c                   |   2 +-
+ drivers/spi/spi-omap-uwire.c                  |   8 +-
+ drivers/spi/spi-omap2-mcspi.c                 |  24 +-
+ drivers/spi/spi-orion.c                       |   4 +-
+ drivers/spi/spi-pic32-sqi.c                   |   2 +-
+ drivers/spi/spi-pic32.c                       |   4 +-
+ drivers/spi/spi-pl022.c                       |   2 +-
+ drivers/spi/spi-pxa2xx.c                      |   6 +-
+ drivers/spi/spi-qcom-qspi.c                   |   2 +-
+ drivers/spi/spi-rb4xx.c                       |   2 +-
+ drivers/spi/spi-rockchip-sfc.c                |   2 +-
+ drivers/spi/spi-rockchip.c                    |  28 +-
+ drivers/spi/spi-rspi.c                        |  10 +-
+ drivers/spi/spi-s3c64xx.c                     |   2 +-
+ drivers/spi/spi-sc18is602.c                   |   4 +-
+ drivers/spi/spi-sh-msiof.c                    |   6 +-
+ drivers/spi/spi-st-ssc4.c                     |   2 +-
+ drivers/spi/spi-stm32-qspi.c                  |   6 +-
+ drivers/spi/spi-sun4i.c                       |   2 +-
+ drivers/spi/spi-sun6i.c                       |   2 +-
+ drivers/spi/spi-synquacer.c                   |   6 +-
+ drivers/spi/spi-tegra114.c                    |  28 +-
+ drivers/spi/spi-tegra20-sflash.c              |   2 +-
+ drivers/spi/spi-tegra20-slink.c               |   6 +-
+ drivers/spi/spi-ti-qspi.c                     |  16 +-
+ drivers/spi/spi-topcliff-pch.c                |   2 +-
+ drivers/spi/spi-xcomm.c                       |   2 +-
+ drivers/spi/spi-xilinx.c                      |   6 +-
+ drivers/spi/spi-xlp.c                         |   4 +-
+ drivers/spi/spi-zynq-qspi.c                   |   2 +-
+ drivers/spi/spi-zynqmp-gqspi.c                |  58 +-
+ drivers/spi/spi.c                             | 219 ++++---
+ drivers/spi/spidev.c                          |   4 +-
+ include/linux/mtd/spi-nor.h                   |   8 +-
+ include/linux/spi/spi.h                       |  28 +-
+ include/trace/events/spi.h                    |  10 +-
+ 105 files changed, 1062 insertions(+), 521 deletions(-)
 
-Linux version:	5.10.149-rc1-gac0fb49345ee
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+-- 
+2.17.1
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
