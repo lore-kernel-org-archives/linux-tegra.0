@@ -2,178 +2,200 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED32C4167D
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 12:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C1EC43219
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 12:17:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230385AbiJQMRC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 08:17:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33434 "EHLO
+        id S230401AbiJQMRB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 08:17:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230423AbiJQMQz (ORCPT
+        with ESMTP id S230418AbiJQMQt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 08:16:55 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A399B303D6;
-        Mon, 17 Oct 2022 05:16:37 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id hh9so7500046qtb.13;
-        Mon, 17 Oct 2022 05:16:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FViSSKwYNLFy/8i7voLq1fvEAiC2E4b3lKUtg6bhSNs=;
-        b=G4XBw7OtjlEVYhvq3ujakfFtUjrlMIkd5uVVPI4L3fSHgn9r2dYLTBKR1DSk55qy8/
-         vjDDH2t4lQErUrsZ81N0WmnCPAq1TAG4psbIGjoQRhntN5Cmq1aF/T5qp0/euyInLZPZ
-         /K8bnHyxQYrmvZCrh75klmy5Bz15Y/XvsM73Xs3LGuMo2izmCHPf5UYpUMbW37BEsOEV
-         sVucDgXlyB1YZt4pqPGa9U7E85eMuIK9JN+tGTbAMfTNB3gqhaNnxWOxBOHdWu8HWlhw
-         4OAFcfWlF4Cka/k2IMLMYdJ1w8Emhfeq9FKglqB57GbZ26ff4iD6Qp74edFo/4+10u7I
-         pv7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FViSSKwYNLFy/8i7voLq1fvEAiC2E4b3lKUtg6bhSNs=;
-        b=AAgtD54KEeZFbwm+oOvkLgsBQA+x0mXOOq8HKr3JmD301Fv88h2r/dCg2FZqGKAuHw
-         u9TZ8olr7fknnyGDdK4AfeHHaW1OH2/GC7BIxB09oPjkLu6ZCxebJh5Jz7KQmAzYeP/W
-         YW2rMmNbPHwUnmczKpzZRdB4C7djbCN71eAC1Vk5TlknqjKvG+2gLn19WJoHa5RCTP2Z
-         mfVVO3SJVEzn1+DmVnOCnJffseT6fKqC+a8sl0tqWssuaA+Hs7pO+XGQK4v1Og9O+bUw
-         PpDmtfVys4+DN/VusMrgh3gRXrHfoh7kk2wUxK74WxUlZJmzhyo3MXV7mg2SfSGPSQmx
-         tY7Q==
-X-Gm-Message-State: ACrzQf2fG3WplF/DT9RBcjwPQNdWSA2zBpq5ogSsY+RINJZVC5zim57c
-        lhipM419ewLfqhagTHylvrqmy4mKAWYfQYLcK+A=
-X-Google-Smtp-Source: AMsMyM5ONAbRwJ0mRV8lFkFN/+yOIGgrHcLBILWbhUW8XaqfnSolfxdkiScuiVdMZUaqcXP+J2a9nYR4SqM8sa8eRyQ=
-X-Received: by 2002:a05:622a:1045:b0:39c:e2e1:dc59 with SMTP id
- f5-20020a05622a104500b0039ce2e1dc59mr7379719qte.195.1666008987610; Mon, 17
- Oct 2022 05:16:27 -0700 (PDT)
+        Mon, 17 Oct 2022 08:16:49 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2042.outbound.protection.outlook.com [40.107.220.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4313E5FAED;
+        Mon, 17 Oct 2022 05:16:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ofkS6zmSlU/L160fuk3kmJfu8LrH7414/6LHGgdWrq21sR+entrcv7NnwzY8bJFiW/D4EDXWghc5r1YSsjVT0KjsjQFhZNFzxoBOobPKD8LGHeweb2WI6dhSMIZAhagtR5DKY/c6imrmvRDJs99ivF1j5pwayKNeGKjMEShz9vmvItjNbA1yPavRArjqK0iSRXzfvAOjQ/GA/kK/6QhwovQDK4aD52JdDTnCi/LrxRBZrUpjSax3Y1MaDN/xRK9C2QQVYF7xHXIRrKSNg2UWAymqosFZvB1cPSJRuDiXRilDhIRuPiGDdeMwnW4EEOQnO8lPh3qWG+3LolgrVrAh2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uwd9qUuHdsHBoeDJaDZzMkmq1y0m1ydAGqQ/2KCaDWk=;
+ b=YZFfDCujCF4TiMP8nsg2fPU5cr5GKwq7exQIt2NDVP4TMTmCdNSAIzumpwj4ToK9s8NZwLDIpZCBFbDX6yJps04DQLeuNx8xnjuuXQqOKeYVNpI0ouE/1vYePUpAnaojVvEPbLH33Jh2bjtn8ZHoadLLdiCgsoLE3dL25R9HygxGxbe5F4shdolc7/zlVbPxOrC+k1biAvkd6OtUpxJryzd6w4YflQRQOk+Cy6y6F6K5+B6DwmshPTBRsluDzQO19EL5S/P01LvUUFZYg4S6zML0dE96fdz/akra4CNnhTzkza9pVn3QCerlRFN+4FEHs2jQrMFKxff5Z+cUYRF4Aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uwd9qUuHdsHBoeDJaDZzMkmq1y0m1ydAGqQ/2KCaDWk=;
+ b=rvpNhsHsvaPXQyDMcXhnaphwV6MTgGmlA+SGT+izmUQCOOVvd4rChDkr8S+tyvIno/ZmeClZlTLjpNF+h5JEFos0ggjTTYWaQQFG2rsJ2tXR5SDU7WyoweFIocx4WsDqnxQBU+AahDSPEkepuWnHXTEYNVB5+dYMnmwcNr2874c=
+Received: from BN9PR03CA0795.namprd03.prod.outlook.com (2603:10b6:408:13f::20)
+ by MW4PR12MB6874.namprd12.prod.outlook.com (2603:10b6:303:20b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.29; Mon, 17 Oct
+ 2022 12:16:08 +0000
+Received: from BN8NAM11FT103.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:13f:cafe::8a) by BN9PR03CA0795.outlook.office365.com
+ (2603:10b6:408:13f::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.31 via Frontend
+ Transport; Mon, 17 Oct 2022 12:16:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN8NAM11FT103.mail.protection.outlook.com (10.13.176.181) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5723.20 via Frontend Transport; Mon, 17 Oct 2022 12:16:08 +0000
+Received: from SATLEXMB07.amd.com (10.181.41.45) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
+ 2022 07:16:07 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB07.amd.com
+ (10.181.41.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
+ 2022 05:16:06 -0700
+Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.31 via Frontend
+ Transport; Mon, 17 Oct 2022 07:15:43 -0500
+From:   Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+To:     <broonie@kernel.org>, <sanju.mehta@amd.com>,
+        <chin-ting_kuo@aspeedtech.com>, <clg@kaod.org>,
+        <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
+        <john.garry@huawei.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
+        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
+        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
+        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
+        <robert.jarzmik@free.fr>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
+        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
+        <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <l.stelmach@samsung.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
+        <kvalo@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <vigneshr@ti.com>, <jic23@kernel.org>,
+        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>
+CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
+        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
+        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
+        <ldewangan@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <michal.simek@amd.com>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
+        <libertas-dev@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
+        <akumarma@amd.com>, <amitrkcian2002@gmail.com>,
+        Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Subject: [PATCH 07/10] spi: spi-zynqmp-gqspi: Add stacked memories support in GQSPI driver
+Date:   Mon, 17 Oct 2022 17:42:46 +0530
+Message-ID: <20221017121249.19061-8-amit.kumar-mahapatra@amd.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20221017121249.19061-1-amit.kumar-mahapatra@amd.com>
+References: <20221017121249.19061-1-amit.kumar-mahapatra@amd.com>
 MIME-Version: 1.0
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <20221010201453.77401-2-andriy.shevchenko@linux.intel.com>
- <CACRpkdbdzFR-a_xh8EjLMAshTeesOYhD3-_Bkc=vi7iK72ZKtA@mail.gmail.com> <CAMRc=MexjuQw+hUDDfCVxiBEJ573jNb3Ko9SyOU-xJ03wOe8cQ@mail.gmail.com>
-In-Reply-To: <CAMRc=MexjuQw+hUDDfCVxiBEJ573jNb3Ko9SyOU-xJ03wOe8cQ@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 17 Oct 2022 15:15:51 +0300
-Message-ID: <CAHp75VftkwPB-+jhCrhCdPRN0hLm5DLADMyAO45eBTRFfxiNuQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/36] gpiolib: tegra186: Add missed header(s)
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Billy Tsai <billy_tsai@aspeedtech.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT103:EE_|MW4PR12MB6874:EE_
+X-MS-Office365-Filtering-Correlation-Id: 168266ee-b613-4b35-5fbb-08dab0395f1c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lUFDR5U8DYxStaYK3AfNFl0eRi4RodVP9hy2F95QaPiLb5yiwDk4oZmCCfLScEiMzfDyQmi2gc8ncUSgdIN5rtB7tn2yqwpm/61g7Xjun0zgcV0tnYDlBI+cooMJG/mMTBwGUE81VlUXUiwr0PwXcV0rJ9EbYfrNcMEODGWRQesKBRtcx18/uL2xRykSzCeI6le9/0ifmG/eYoo1/XcuYGMuPJXTAawCPLyJMnHEI4UFHRlmuN4h6GCx/MgFVZZsHsB8KDnRhSy8fXFHHbM7JupvAPnXNq3aff6HKVRxUR3k/cILa8oxW01qPzFA5Bk+rAb4Ut9o8vk2O0R3rEEMhjSoPuxi5EMzeG+jD6dKtnxZpifp1v2c3zztN3zae1O/EbIBjw6rU5dj+vzIONdiQeSZGz5Y2cnVkFtpIIVSyXqbd8Vmdsz7CKi3ts5wECh8siB51Qk4tb7yTcWCUfxyFl992wed3HbWhbaOgQctwaar4syL4JAAWJrYIEvk1ZkQhjVs6LiAnT6E86bUUy+kem0MTYmYTceVpm450O5AXOW05LzLasJZSNqsj6uATPMOYrIfqj28SrPa8kn+5i83eWS7oOgBLKNUE6FWvJtcYVL2qTfBeyPfnHLf6tJW/F+eaq1323A02BqCDq3rGzQAhjzFYEoCRLJP9aI/Duw2untewrzpsPawUewCMhGznnqQRP5+sfurizNXzhFVN4KLjp3LTHofXsWV5EYOPNQJQi1WbBJX7FHd+CkijrQ0K5iFHJbkQU2aYEdb+eYKE/GG1MCL0aZekdlh7/CHsy/8I9S0wvvjzlE5Q/EfnQpmOnM8tPTtC12I9td/do9B/tLe4G97USlzzrn3LqKyPJXShNmo7uXILSJ8SE3X0MjsBlPNc2B2RQxT7ZlWU64P7Pe00g==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(346002)(136003)(39860400002)(451199015)(36840700001)(40470700004)(46966006)(83380400001)(186003)(336012)(2616005)(1076003)(2906002)(40460700003)(26005)(8676002)(41300700001)(4326008)(82740400003)(47076005)(426003)(40480700001)(86362001)(81166007)(82310400005)(356005)(921005)(36860700001)(316002)(54906003)(7406005)(36756003)(8936002)(5660300002)(7416002)(7366002)(7336002)(70206006)(70586007)(110136005)(478600001)(2101003)(83996005)(41080700001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2022 12:16:08.0416
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 168266ee-b613-4b35-5fbb-08dab0395f1c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT103.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6874
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 12:35 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> On Mon, Oct 17, 2022 at 10:52 AM Linus Walleij <linus.walleij@linaro.org>=
- wrote:
->>=C2=B7On Mon, Oct 10, 2022 at 10:15 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > > Do not imply that some of the generic headers may be always included.
-> > > Instead, include explicitly what we are direct user of.
-> > >
-> > > While at it, sort headers alphabetically.
-> > >
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+GQSPI supports two chip select CS0 & CS1. Update the driver to
+assert/de-assert the appropriate chip select as per the bits set in
+qspi->cs_index_mask.
 
-> Andy: are you going to send it together with the corresponding pinctrl
-> changes in a separate PR?
+Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+---
+ drivers/spi/spi-zynqmp-gqspi.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-Yes, this is the plan, but I want first to push it to Linux Next (via
-my tree) for a couple of days, so we will be sure there are no
-compilation issues.
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index 35ff734fb82d..4759f704bf5c 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -156,6 +156,9 @@
+ #define GQSPI_FREQ_100MHZ	100000000
+ #define GQSPI_FREQ_150MHZ	150000000
+ 
++#define GQSPI_SELECT_LOWER_CS  BIT(0)
++#define GQSPI_SELECT_UPPER_CS  BIT(1)
++
+ #define SPI_AUTOSUSPEND_TIMEOUT		3000
+ enum mode_type {GQSPI_MODE_IO, GQSPI_MODE_DMA};
+ 
+@@ -467,15 +470,17 @@ static void zynqmp_qspi_chipselect(struct spi_device *qspi, bool is_high)
+ 
+ 	genfifoentry |= GQSPI_GENFIFO_MODE_SPI;
+ 
++	if (qspi->cs_index_mask & GQSPI_SELECT_UPPER_CS) {
++		zynqmp_gqspi_selectslave(xqspi,
++					 GQSPI_SELECT_FLASH_CS_UPPER,
++					 GQSPI_SELECT_FLASH_BUS_LOWER);
++	} else if (qspi->cs_index_mask & GQSPI_SELECT_LOWER_CS) {
++		zynqmp_gqspi_selectslave(xqspi,
++					 GQSPI_SELECT_FLASH_CS_LOWER,
++					 GQSPI_SELECT_FLASH_BUS_LOWER);
++	}
++	genfifoentry |= xqspi->genfifobus;
+ 	if (!is_high) {
+-		if (!qspi->chip_select[0]) {
+-			xqspi->genfifobus = GQSPI_GENFIFO_BUS_LOWER;
+-			xqspi->genfifocs = GQSPI_GENFIFO_CS_LOWER;
+-		} else {
+-			xqspi->genfifobus = GQSPI_GENFIFO_BUS_UPPER;
+-			xqspi->genfifocs = GQSPI_GENFIFO_CS_UPPER;
+-		}
+-		genfifoentry |= xqspi->genfifobus;
+ 		genfifoentry |= xqspi->genfifocs;
+ 		genfifoentry |= GQSPI_GENFIFO_CS_SETUP;
+ 	} else {
+-- 
+2.17.1
 
---=20
-With Best Regards,
-Andy Shevchenko
