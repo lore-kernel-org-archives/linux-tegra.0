@@ -2,65 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BE4C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 05:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF23BC433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 07:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiJQFhz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 01:37:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58570 "EHLO
+        id S230005AbiJQHTl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 03:19:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbiJQFhy (ORCPT
+        with ESMTP id S229919AbiJQHTk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 01:37:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7789B4D4CF
-        for <linux-tegra@vger.kernel.org>; Sun, 16 Oct 2022 22:37:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1F68DB80E88
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Oct 2022 05:37:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FCAC433D6;
-        Mon, 17 Oct 2022 05:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665985070;
-        bh=l82/GTBkohY3ZdHf/rjfVba1i2r1OPoKfMNAHu+bjqA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GwrSM0rVJ7HY+i4wSl5aLapJJJZgZjRAlcEVPMSVmjGRRyc7/mTNvEt8ohkGapKjy
-         P5/lAlHfVBcVyiZ1boyRdtZajW0YK2VvN7ZFHq0thNW0ksiODzE9F6+wWMvtgnzr8G
-         jytacvPLcaxw3t0Dm5uRAhV4lRYZEbxyuPRLI9sYxXBa0hOCdKW5zdAUenR1uRfwX9
-         ZYZHXCxadzqvpOELQ2u3VVQSXURsb1OIhEmkzZ8TVmbfnIKKuxCIJJDHHaRP2xyEV+
-         8EP0bNB+LRGylh5kItcILDu//3z31LzJobi9dV5IxafO9Npi/gM8OzALrqeC3YbWKm
-         vgdrLU4CfY35w==
-Date:   Mon, 17 Oct 2022 11:07:46 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Jim Lin <jilin@nvidia.com>
-Subject: Re: [PATCH] phy: tegra: xusb: Fix crash during pad power on/down
-Message-ID: <Y0zqKh7B9BaOoREo@matsya>
-References: <20221010135132.30809-1-jonathanh@nvidia.com>
+        Mon, 17 Oct 2022 03:19:40 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D1565D0;
+        Mon, 17 Oct 2022 00:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1665991176; x=1697527176;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UBuvRDypJT++mgXI7DOwGnJFcpVZ/gzflYCezJdbRdo=;
+  b=uym6OB4c1Sk5NO5RwIY51XSS9/CIJ07C5BmaM8Q+VVZUb0IaslrOWhtJ
+   cLoVAuTxp4wl68MPEvd6+pzimQfZvo+YQKjjIts2iPvim2WR8xfCfxJtw
+   P7cMhS2ZgaIXOEoGbAwSQFw6GXzLahEKXrBcLTOIe7fhOONftq3lWsxlS
+   TOoZt35q2tWqT6DHlSVSvGFAoHMNSd5XUn25isoC6DzXNIvdCjtAo60Yq
+   bYxQyfh0e2Z27T2rcfHtYtND17wdKz1Dqc+ksbE4osXF0CBvUvMEXRy9j
+   CV8n82ELrr3QcfXf9mngBFnuaLnaL9/bURic9BB1JWuPWBKvjuvxvyQWM
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.95,190,1661842800"; 
+   d="scan'208";a="182465180"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Oct 2022 00:19:33 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Mon, 17 Oct 2022 00:19:33 -0700
+Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
+ Transport; Mon, 17 Oct 2022 00:19:26 -0700
+Message-ID: <91250148-67b9-d514-6af0-bfcd719fde53@microchip.com>
+Date:   Mon, 17 Oct 2022 09:19:22 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221010135132.30809-1-jonathanh@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] dt-bindings: Remove "status" from schema examples, again
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "David Airlie" <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "Lars-Peter Clausen" <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Cosmin Tanislav <cosmin.tanislav@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nandhini Srikandan <nandhini.srikandan@intel.com>,
+        Rashmi A <rashmi.a@intel.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, Sumit Gupta <sumitg@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-iio@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-phy@lists.infradead.org>
+References: <20221014205104.2822159-1-robh@kernel.org>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20221014205104.2822159-1-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10-10-22, 14:51, Jon Hunter wrote:
-> Commit a88520bfc0ec ("usb: gadget: tegra: Reduce pad power") added calls
-> to tegra_phy_xusb_utmi_pad_power_on/down in the Tegra XUDC driver to
-> control the pad power. This change is causing a kernel panic when
-> powering down the pads on entering suspend with the Jetson TX2 platform.
-> The panic occurs because the 'xudc->curr_utmi_phy' is not configured on
-> this platform and we do not check to see if the pointer is valid before
-> attempting to deference the pointer. Fix this by checking to see if the
-> 'phy' pointer passed to tegra_phy_xusb_utmi_pad_power_on/down is valid.
+On 14/10/2022 at 22:51, Rob Herring wrote:
+> There's no reason to have "status" properties in examples. "okay" is the
+> default, and "disabled" turns off some schema checks ('required'
+> specifically).
+> 
+> A meta-schema check for this is pending, so hopefully the last time to
+> fix these.
+> 
+> Fix the indentation in intel,phy-thunderbay-emmc while we're here.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>   .../arm/tegra/nvidia,tegra-ccplex-cluster.yaml    |  1 -
+>   .../display/tegra/nvidia,tegra124-dpaux.yaml      |  1 -
+>   .../display/tegra/nvidia,tegra186-display.yaml    |  2 --
+>   .../bindings/iio/addac/adi,ad74413r.yaml          |  1 -
+>   .../devicetree/bindings/net/cdns,macb.yaml        |  1 -
+>   .../devicetree/bindings/net/nxp,dwmac-imx.yaml    |  1 -
+>   .../bindings/phy/intel,phy-thunderbay-emmc.yaml   | 15 +++++++--------
+>   7 files changed, 7 insertions(+), 15 deletions(-)
 
-Applied, thanks
+[..]
+
+> diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Documentation/devicetree/bindings/net/cdns,macb.yaml
+> index 318f4efe7f6f..bef5e0f895be 100644
+> --- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
+> +++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
+> @@ -203,7 +203,6 @@ examples:
+>                       power-domains = <&zynqmp_firmware PD_ETH_1>;
+>                       resets = <&zynqmp_reset ZYNQMP_RESET_GEM1>;
+>                       reset-names = "gem1_rst";
+> -                    status = "okay";
+>                       phy-mode = "sgmii";
+>                       phys = <&psgtr 1 PHY_TYPE_SGMII 1 1>;
+>                       fixed-link {
+
+
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Thanks Rob. Best regards,
+   Nicolas
 
 -- 
-~Vinod
+Nicolas Ferre
