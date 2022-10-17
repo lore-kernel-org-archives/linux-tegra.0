@@ -2,252 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CC0C4167D
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 12:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB86C4167E
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 12:20:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbiJQMTp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 08:19:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38628 "EHLO
+        id S229562AbiJQMU3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 08:20:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230453AbiJQMTi (ORCPT
+        with ESMTP id S230460AbiJQMUW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 08:19:38 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2061a.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e88::61a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C49C6286D4;
-        Mon, 17 Oct 2022 05:19:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DM4L8f6YS2c2JB7aunKIJX8xgBoVqw+XiuC25N5GeCD2T4Hz3mxh0Rmosaqx69EoAikRqSLSO/x6v7rGMI9VRbIE0JhQCkggtkL3g6xSlqVj5ab2t0FASLkn7O8rvLwI1+wWv0+AZaN7VmlrXyAijZnGq+ApjnYH0or3HYotTY9kLXKI5AIOTLwB2gk78XI6uTXLWN+tlZxumK60zUxR88ILfq7qafXNNO80xfeQ/T5HqpOEghVokIJOW4hAB/9LkqudmVZs2q3ylJ1sQDhm6PQbLcP3jZtKKNCEEkol3sZlOkoP/19vm9p4iuEwfZhx028KUslzU9QHougE+foJZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bYazlS7D6o3rlLXTfDOpO0nZBDP732XuJopiABuEWl0=;
- b=EeSWLeBgufXBAzduwsm/dNjDt2ATNakWf7YTqPX4L44WBBEWHEhDYbGvitE0zZaeNbzAuiOX1Sqpa+o7FOB6bwoa137bi+lb+raoZb2n1kOgNVVMPcYLXjq5V+u+6oVsMZFn1RdG+cZnQLzWGigNeHj7DTUtDO2MS34y5fehWkcSNxzWXLMuMfBpktivTvOvLFAaXZwSo/tYPPSjgjKS1xPALRY8IWJFcg3XMl0SjRB0l5I8H3/LN+l+vHljRi8cbIRZL5bsBx8RXi8DWOAnK902e7EOeE1CcYOeaodygB+SvJMU8hdkA0C7pI4o04zrJMwQ+ISUoL+WhtcfiSisaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bYazlS7D6o3rlLXTfDOpO0nZBDP732XuJopiABuEWl0=;
- b=Re7i4D5PpZp0PY7OJFWHNw0JxR4tfcEdDTADefxdxspg74N/tNDrTrOAvXRcRvIPsrO8ABzcUKpE/Q9WRpn2SbMbSdiUKyF1E6jsD8X11KLcjZX30L9C9uWimhfeyFhGzggEMqTfmzOJVEdE+aIyWrAKXSAtHVcHyQXVcj9cOyY=
-Received: from BN9PR03CA0151.namprd03.prod.outlook.com (2603:10b6:408:f4::6)
- by DM4PR12MB5325.namprd12.prod.outlook.com (2603:10b6:5:390::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.32; Mon, 17 Oct
- 2022 12:17:19 +0000
-Received: from BN8NAM11FT111.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:f4:cafe::fb) by BN9PR03CA0151.outlook.office365.com
- (2603:10b6:408:f4::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.30 via Frontend
- Transport; Mon, 17 Oct 2022 12:17:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN8NAM11FT111.mail.protection.outlook.com (10.13.177.54) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5723.20 via Frontend Transport; Mon, 17 Oct 2022 12:17:19 +0000
-Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
- 2022 07:17:18 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB08.amd.com
- (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
- 2022 05:17:17 -0700
-Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.31 via Frontend
- Transport; Mon, 17 Oct 2022 07:16:55 -0500
-From:   Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-To:     <broonie@kernel.org>, <sanju.mehta@amd.com>,
-        <chin-ting_kuo@aspeedtech.com>, <clg@kaod.org>,
-        <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
-        <rjui@broadcom.com>, <sbranden@broadcom.com>,
-        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
-        <john.garry@huawei.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
-        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
-        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
-        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
-        <robert.jarzmik@free.fr>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
-        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
-        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
-        <rostedt@goodmis.org>, <mingo@redhat.com>,
-        <l.stelmach@samsung.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
-        <kvalo@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <vigneshr@ti.com>, <jic23@kernel.org>,
-        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>
-CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
-        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <claudiu.beznea@microchip.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
-        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
-        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
-        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
-        <ldewangan@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <michal.simek@amd.com>,
-        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
-        <libertas-dev@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
-        <akumarma@amd.com>, <amitrkcian2002@gmail.com>,
-        Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Subject: [PATCH 10/10] spi: spi-zynqmp-gqspi: Add parallel memories support in GQSPI driver
-Date:   Mon, 17 Oct 2022 17:42:49 +0530
-Message-ID: <20221017121249.19061-11-amit.kumar-mahapatra@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221017121249.19061-1-amit.kumar-mahapatra@amd.com>
-References: <20221017121249.19061-1-amit.kumar-mahapatra@amd.com>
+        Mon, 17 Oct 2022 08:20:22 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9F22A72C;
+        Mon, 17 Oct 2022 05:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666009208; x=1697545208;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RmYFEN28phqSp8mG6aCLWFWEADNDyPYb/TiMHr0QPNc=;
+  b=bVrtCfRzZZIwP1YbPM3XmRuzNXEqz+fQAYCNhezuppRKF/9rPVJRZf/i
+   GHi6Cg5886LJa+CG4OPtuG4EZe+nzoLzYAswlVoEwKGx23DvxQ3X3MXye
+   sYcZOxYsrbIPYTwXOddhqDu+Jo5zOzIqC1skO9k74UDSlhvKcBIqmEnWz
+   5xQrfHmwi8bXZL4Wo6TZV+kLE1EDjNpCAOkhFbW6TqlZLqLdoW7xDiQFc
+   gNFWxuP/2BxjKj/BeUQQtWmhtvg7d5+t9Y+3BL+Xwxfg3199PbuP7b18p
+   gcBOjG2N4j+oTWx2HNZz936uYkf0PshtHGwCdzUBhZK1BLzyYjB4gB3Ve
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10502"; a="332320293"
+X-IronPort-AV: E=Sophos;i="5.95,191,1661842800"; 
+   d="scan'208";a="332320293"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2022 05:18:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10502"; a="623207818"
+X-IronPort-AV: E=Sophos;i="5.95,191,1661842800"; 
+   d="scan'208";a="623207818"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2022 05:18:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1okP4U-008mkH-2E;
+        Mon, 17 Oct 2022 15:18:18 +0300
+Date:   Mon, 17 Oct 2022 15:18:18 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [rft, PATCH v2 00/36] pinctrl: Clean up and add missed headers
+Message-ID: <Y01ICtqd8uy/4/Mb@smile.fi.intel.com>
+References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdZ1M3ckw+jFgvMqG4jvR-t_44GPoZ6ZDXszwZCJr-cDpg@mail.gmail.com>
+ <Y00f5exY2fM6IwZ+@smile.fi.intel.com>
+ <CACRpkdYmSOGtFz8W_RRkDqMXRRBOSB9jqSn65Sah90bf3Gm59g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT111:EE_|DM4PR12MB5325:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66b081e1-9fe6-4224-8b75-08dab03989bf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Ww/K/luUKbn2cK/1rk2xYUfgTKlAX3l67GjcllqynrcZ2ozkdw67tAbNlAe7f7IdWe/p5rT85UHRqBqTgbBEN3R6wJHnmwQQzrSFIyXgb9dtFLwZj6jRI34OcXElrlsMus83KR2Nfaq2fCSnPqpnnHQs8UirhMLEsAYl9NtQBdup2vfHu2QDUi9MuY2QB/f6FGgbfYepRVHVdnINGpAS4y7yn7E6HfXpgh488pAE8BQogJNEtGsmCOlSpqo2b5UErgJj8P2Hf7JbsUpibRGr9FD9PjRaRruQJURqVcM0X5wYu4H7DCFOBsT5ztCVdx22iT0okHN45GjUjgtTUtq6GQaEtQlYoFygVZ3x6PZa8Z/CQmAo2Q52LZTp4OT0ZH7N+ADUAMRuxUtBiuaiulW5P94PhmXwYlI4X3bkWBcmmivFtiHZ267XAd0RSfceOYZYIn07+KYfnqdzyFKSX4rJ5fYJQ4Cx5ouaf36UJUbOWlC7/UB5U/vFiZ3GRFOCI79cfp4+8Ezie/WVfgWlYDghZGRjnGa/ECXfcUx6qOcXtLhV7bFflKhoJeeE5YkIHnFyTwseN4vw4LecFYuS/U18WhWZLWgp28Mw/ADKsTIbMZL9ykuVtDTC7TdLOzPAn46f/9ynAEzyzTQCtQkoRtjLk69be2QQ1FqrhW95JgWlNESeQfKQ7xME84LO/HDzwVmPrf8eYInvRpwrD8u0oR95/lk93p9ou73NUd4y4NG/Tc+m4yn10+9pKQR2mSLqot//gHKxmoT/kG9LX1uN7m9LFCFdgSUkRW2xQkT0dYmui4DBYZ5rYd6pD/oKTgKyN4tDc9wnRYw619mpOfmGQUdh2bjoNok2f1uqCWO1bpp45NduSIi2STKLOC1oUQL2+aWagKcBrtc+pNoVfdlOefiwXQ==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(136003)(346002)(396003)(451199015)(36840700001)(40470700004)(46966006)(2616005)(26005)(6666004)(36860700001)(83380400001)(478600001)(336012)(186003)(1076003)(47076005)(426003)(7336002)(7366002)(7406005)(7416002)(5660300002)(2906002)(40480700001)(40460700003)(82310400005)(54906003)(110136005)(316002)(41300700001)(8936002)(8676002)(70206006)(4326008)(70586007)(86362001)(36756003)(81166007)(356005)(921005)(82740400003)(41080700001)(36900700001)(2101003)(83996005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2022 12:17:19.5752
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66b081e1-9fe6-4224-8b75-08dab03989bf
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT111.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5325
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYmSOGtFz8W_RRkDqMXRRBOSB9jqSn65Sah90bf3Gm59g@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-During GQSPI driver probe set ctlr->multi-cs-cap for enabling multi CS
-capability of the controller. In parallel mode the controller can either
-split the data between both the flash or can send the same data to both the
-flashes, this is determined by the STRIPE bit. While sending commands to
-the flashes the GQSPI driver send the same command to both the flashes by
-resetting the STRIPE bit, but while writing/reading data to & from the
-flash the GQSPI driver splits the data evenly between both the flashes by
-setting the STRIPE bit.
+On Mon, Oct 17, 2022 at 11:58:03AM +0200, Linus Walleij wrote:
+> On Mon, Oct 17, 2022 at 11:27 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Oct 17, 2022 at 11:02:09AM +0200, Linus Walleij wrote:
+> > > On Mon, Oct 10, 2022 at 10:15 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > > Currently the header inclusion inside the pinctrl headers seems more arbitrary
+> > > > than logical. This series is basically out of two parts:
+> > > > - add missed headers to the pin control drivers / users
+> > > > - clean up the headers of pin control subsystem
+> > > >
+> > > > The idea is to have this series to be pulled after -rc1 by the GPIO and
+> > > > pin control subsystems, so all new drivers will utilize cleaned up headers
+> > > > of the pin control.
+> > >
+> > > Aha I see you want to send a pull request so I backed out the applied patches
+> > > from the series for now.
+> >
+> > Can I consider all that you answered to as Rb tag?
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
----
- drivers/spi/spi-zynqmp-gqspi.c | 39 +++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+Thank you!
 
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index 4759f704bf5c..6574e0a9efa5 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -23,6 +23,7 @@
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
- #include <linux/spi/spi-mem.h>
-+#include <linux/mtd/spi-nor.h>
- 
- /* Generic QSPI register offsets */
- #define GQSPI_CONFIG_OFST		0x00000100
-@@ -192,6 +193,7 @@ struct qspi_platform_data {
-  * @op_lock:		Operational lock
-  * @speed_hz:          Current SPI bus clock speed in hz
-  * @has_tapdelay:	Used for tapdelay register available in qspi
-+ * @is_parallel:		Used for multi CS support
-  */
- struct zynqmp_qspi {
- 	struct spi_controller *ctlr;
-@@ -214,8 +216,33 @@ struct zynqmp_qspi {
- 	struct mutex op_lock;
- 	u32 speed_hz;
- 	bool has_tapdelay;
-+	bool is_parallel;
- };
- 
-+/**
-+ * zynqmp_gqspi_update_stripe - For GQSPI controller data stripe capabilities
-+ * @op:	Pointer to mem ops
-+ * Return:      Status of the data stripe
-+ *
-+ * Returns true if data stripe need to be enabled, else returns false
-+ */
-+bool zynqmp_gqspi_update_stripe(const struct spi_mem_op *op)
-+{
-+	if (op->cmd.opcode ==  SPINOR_OP_BE_4K ||
-+	    op->cmd.opcode ==  SPINOR_OP_BE_32K ||
-+	    op->cmd.opcode ==  SPINOR_OP_CHIP_ERASE ||
-+	    op->cmd.opcode ==  SPINOR_OP_SE ||
-+	    op->cmd.opcode ==  SPINOR_OP_BE_32K_4B ||
-+	    op->cmd.opcode ==  SPINOR_OP_SE_4B ||
-+	    op->cmd.opcode == SPINOR_OP_BE_4K_4B ||
-+	    op->cmd.opcode ==  SPINOR_OP_WRSR ||
-+	    op->cmd.opcode ==  SPINOR_OP_BRWR ||
-+	    op->cmd.opcode ==  SPINOR_OP_WRSR2)
-+		return false;
-+
-+	return true;
-+}
-+
- /**
-  * zynqmp_gqspi_read - For GQSPI controller read operation
-  * @xqspi:	Pointer to the zynqmp_qspi structure
-@@ -470,7 +497,14 @@ static void zynqmp_qspi_chipselect(struct spi_device *qspi, bool is_high)
- 
- 	genfifoentry |= GQSPI_GENFIFO_MODE_SPI;
- 
--	if (qspi->cs_index_mask & GQSPI_SELECT_UPPER_CS) {
-+	if ((qspi->cs_index_mask & GQSPI_SELECT_LOWER_CS) &&
-+	    (qspi->cs_index_mask & GQSPI_SELECT_UPPER_CS)) {
-+		zynqmp_gqspi_selectslave(xqspi,
-+					 GQSPI_SELECT_FLASH_CS_BOTH,
-+					 GQSPI_SELECT_FLASH_BUS_BOTH);
-+		if (!xqspi->is_parallel)
-+			xqspi->is_parallel = true;
-+	} else if (qspi->cs_index_mask & GQSPI_SELECT_UPPER_CS) {
- 		zynqmp_gqspi_selectslave(xqspi,
- 					 GQSPI_SELECT_FLASH_CS_UPPER,
- 					 GQSPI_SELECT_FLASH_BUS_LOWER);
-@@ -1139,6 +1173,8 @@ static int zynqmp_qspi_exec_op(struct spi_mem *mem,
- 	}
- 
- 	if (op->data.nbytes) {
-+		if (xqspi->is_parallel && zynqmp_gqspi_update_stripe(op))
-+			genfifoentry |= GQSPI_GENFIFO_STRIPE;
- 		reinit_completion(&xqspi->data_completion);
- 		if (op->data.dir == SPI_MEM_DATA_OUT) {
- 			xqspi->txbuf = (u8 *)op->data.buf.out;
-@@ -1334,6 +1370,7 @@ static int zynqmp_qspi_probe(struct platform_device *pdev)
- 	ctlr->bits_per_word_mask = SPI_BPW_MASK(8);
- 	ctlr->dev.of_node = np;
- 	ctlr->auto_runtime_pm = true;
-+	ctlr->multi_cs_cap = true;
- 
- 	ret = devm_spi_register_controller(&pdev->dev, ctlr);
- 	if (ret) {
+> I haven't reviewed in detail but I fully trust you to do the right thing
+> and fix any fallout so will happily pull this.
+
+The plan is to push this to Linux Next for a couple of days and then I'll send
+PR to you and Bart.
+
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
