@@ -2,146 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37289C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 12:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0E9C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 12:46:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbiJQMpM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 08:45:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45736 "EHLO
+        id S230456AbiJQMqk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 08:46:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbiJQMpK (ORCPT
+        with ESMTP id S230391AbiJQMq1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 08:45:10 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58394BD0D;
-        Mon, 17 Oct 2022 05:45:09 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id k2so24644966ejr.2;
-        Mon, 17 Oct 2022 05:45:09 -0700 (PDT)
+        Mon, 17 Oct 2022 08:46:27 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D546E4F181;
+        Mon, 17 Oct 2022 05:46:24 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id y14so24593569ejd.9;
+        Mon, 17 Oct 2022 05:46:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HWmxqGF/038fMoL0OujOGP+aUEXKzs6WrKb2H91XwNw=;
-        b=EFPUYe56DLRb3jgtTvrgrWMjZcb2OFrMZW/fKGOSYVmpPLtM+MB1FhSMEMTC+mmOpM
-         oZKQzByoqLHCiacPyzOg15lHZW25asKMonWrwGf9xFik0n3XFA4GipB9Skv3lYTtGBrw
-         2HAIRwA+aw3ygewkI9Au7Hn1qKd8Z1s4qsnLPkAC691hzgDKgJojC8AiH1QvzC7MhkCp
-         lD9qpS45onpnbXrBuxbQtCy56E+lWY8x76Tio4rOVKtGK3ixVkOlyDVP00rppM5U+bS6
-         cLTUGnW3R3KVOrSo9uh+EWC2TYXEIJfMFLK8cwKb8pF3BqOztV6yiV0Z+WISL50PNpYq
-         AbDw==
+        bh=0VhTPIytBoNv8+TbDZr5QCn1+oF/ctoi5F9yehDAD1M=;
+        b=iRXBmm8wwjYtv2OYRKxE/LrfNj1sYEjNBMuG3M3Setn7W8eHVitAWYMnlB/Ne3Nic2
+         1nBT4OQcZ82jXdKEnDB4fjTtns4CL+YQOM1Fb6DZcpIfzafztje0b33+C6jOgSZjC3DA
+         Zks4YDrTKv2hAi/YQHCTMvVJXPb4VAHPujq/m7+Xqarz695AbtlYeVGxIDedrQ0H6ymU
+         3sOw6BxE3OMIOiNjaSxRCiEJk9SdI3OAn/HEU/qX0WOdlpJAZBTPZFrL5feNhfbTQJc3
+         UmwQvzzBK7IyNWdEjksQ2r2Q5lRuk/m73JoNqs5j7sCteidq7mZWtqHE3OcnmFvyDCu7
+         ZUUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HWmxqGF/038fMoL0OujOGP+aUEXKzs6WrKb2H91XwNw=;
-        b=s8zwTNyxsfCNg3mSBI+oHde07233lkT/sNI76etkfmOzjlpjSPTdz684AbuFHHImck
-         u/HLB0rCtmpLmvqmzzFqAREETx1SsD8Rxi1o5h7EDYjBJRN6TMQWzKl62RwBT7qSo3lZ
-         +qDZ73Azz/e4E4Kf7wmx9Jb02/nZHa0dDzYtNqEAfr+1PtZezwSLzbnBEbutTdWhDtTr
-         FvLL3VOYTHolT46C+wZHPcy9n3ZHKw30qg46BCIsedY+E2vK8CqsESXCjTkTQ4I4JRjW
-         U/ZHfwUHfJzd8Y3IIqyIdGw4ljnDPl+4iGukOGY07ulloXtwR1f0g+5g1Nbe1ahJGRsX
-         fzTQ==
-X-Gm-Message-State: ACrzQf0nPtjX4dEepyUOKaVFLP6ip8KSZ3RTv6ObBxbovBbYSQ/MQmJD
-        4KLphvEHfc6uHsoJq1PUCKg=
-X-Google-Smtp-Source: AMsMyM7mhW15Nb2oDKxIsTla97uYTBzTlYARXy6rnD14TSiS80WugSwHh2x9mLvRwyzeCzQXuBw9mw==
-X-Received: by 2002:a17:906:5d04:b0:722:f46c:b891 with SMTP id g4-20020a1709065d0400b00722f46cb891mr8593565ejt.4.1666010708172;
-        Mon, 17 Oct 2022 05:45:08 -0700 (PDT)
+        bh=0VhTPIytBoNv8+TbDZr5QCn1+oF/ctoi5F9yehDAD1M=;
+        b=mMJsn6qV5ib65t5EnltuJAfgHVSp8ZtDsNHf/hXzTLRTe8+Mz/ZnbBtb9heuCU52mi
+         b6hE5f3yIIcxSobKhUrL/VC1QVrxl5dQkT7wnA5s+MZ8T3qejZg2txTaQUd2MZKwJt/M
+         p6vVXofCO6aX91PPn1FYTDL3ZAJLHP31aAxDbIrPBccSTwptRQq7YJ9ZwChUF1UlYQAV
+         ndu6XKw0GWSL8h+VzmYvAAwe0er/ICmWOddTsCa78RmiTmsaXjrSzyGYPci5/NUKdDWp
+         OZMDyXlH5lWqy5aGG8EcZx7AtuKX0rcpiZizTwXW/Lff7nNoZgYQoGO6a+sKDeeK/HOI
+         prUQ==
+X-Gm-Message-State: ACrzQf3q8I7ya2iZBZh4ux1Rns/12IayooWpTrxlngcWbwTi0sjuXNPI
+        HzwtwizkeWHbPf/j3U2fR10=
+X-Google-Smtp-Source: AMsMyM5mH0ip2bfRVzImwgmQ4VV5CXsNsXUPZ4DywNlP9ZINkwbvP+xWsxxhgS4Xz6zfT70q232dmQ==
+X-Received: by 2002:a17:907:1b24:b0:76d:7b9d:2f8b with SMTP id mp36-20020a1709071b2400b0076d7b9d2f8bmr8111071ejc.414.1666010782988;
+        Mon, 17 Oct 2022 05:46:22 -0700 (PDT)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id p6-20020a05640243c600b0045b4b67156fsm7294536edc.45.2022.10.17.05.45.05
+        by smtp.gmail.com with ESMTPSA id h4-20020aa7de04000000b004574f4326b8sm7231820edv.30.2022.10.17.05.46.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 05:45:06 -0700 (PDT)
-Date:   Mon, 17 Oct 2022 14:45:04 +0200
+        Mon, 17 Oct 2022 05:46:22 -0700 (PDT)
+Date:   Mon, 17 Oct 2022 14:46:20 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Cosmin Tanislav <cosmin.tanislav@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nandhini Srikandan <nandhini.srikandan@intel.com>,
-        Rashmi A <rashmi.a@intel.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Sumit Gupta <sumitg@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-iio@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: Remove "status" from schema examples, again
-Message-ID: <Y01OUPVLczqzuj3b@orome>
-References: <20221014205104.2822159-1-robh@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] Revert "PCI: tegra: Use PCI_CONF1_EXT_ADDRESS() macro"
+Message-ID: <Y01OnJ1FmS2nwaWN@orome>
+References: <20221017084006.11770-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ENKGIPZJ+FvcFLFo"
+        protocol="application/pgp-signature"; boundary="0HsTIXSYqUDN8Ndt"
 Content-Disposition: inline
-In-Reply-To: <20221014205104.2822159-1-robh@kernel.org>
+In-Reply-To: <20221017084006.11770-1-jonathanh@nvidia.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---ENKGIPZJ+FvcFLFo
+--0HsTIXSYqUDN8Ndt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 14, 2022 at 03:51:04PM -0500, Rob Herring wrote:
-> There's no reason to have "status" properties in examples. "okay" is the
-> default, and "disabled" turns off some schema checks ('required'
-> specifically).
+On Mon, Oct 17, 2022 at 09:40:06AM +0100, Jon Hunter wrote:
+> This reverts commit 8bb7ff12a91429eb76e093b517ae810b146448fe.
 >=20
-> A meta-schema check for this is pending, so hopefully the last time to
-> fix these.
+> Commit 8bb7ff12a914 ("PCI: tegra: Use PCI_CONF1_EXT_ADDRESS() macro")
+> updated the Tegra PCI driver to use the macro PCI_CONF1_EXT_ADDRESS()
+> instead of a local function in the Tegra PCI driver. This is breaking
+> PCI for some Tegra platforms because, when calculating the offset value,
+> the mask applied to the lower 8-bits changed from 0xff to 0xfc. For now,
+> fix this by reverting this commit.
 >=20
-> Fix the indentation in intel,phy-thunderbay-emmc while we're here.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Fixes: 8bb7ff12a914 ("PCI: tegra: Use PCI_CONF1_EXT_ADDRESS() macro")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  .../arm/tegra/nvidia,tegra-ccplex-cluster.yaml    |  1 -
->  .../display/tegra/nvidia,tegra124-dpaux.yaml      |  1 -
->  .../display/tegra/nvidia,tegra186-display.yaml    |  2 --
->  .../bindings/iio/addac/adi,ad74413r.yaml          |  1 -
->  .../devicetree/bindings/net/cdns,macb.yaml        |  1 -
->  .../devicetree/bindings/net/nxp,dwmac-imx.yaml    |  1 -
->  .../bindings/phy/intel,phy-thunderbay-emmc.yaml   | 15 +++++++--------
->  7 files changed, 7 insertions(+), 15 deletions(-)
+>  drivers/pci/controller/pci-tegra.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+
+Sorry for missing this during review:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---ENKGIPZJ+FvcFLFo
+--0HsTIXSYqUDN8Ndt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNNTlAACgkQ3SOs138+
-s6FjaRAAjTcwhjc2StE06L8/1hqmMcPI/MCBfZcFFcC+zH7z+tLcW29ZRegOLWAo
-Rnix/qmiwHYlde5STzozQYYbrLGPN7rBoJKd5uDXwWc0fYOxosOHHDv3q/shRLO4
-EpOLNfcMImYQPOV3ni8nH8mNdR62bloiyCz/qG6ASKu2x22ZmHpqYv1TC7H4WNgM
-He1HB8XDWbgXdtsXDbKEEDN9gXaFTYCkPH3G5tRq7aWl6bIakBQRzPLjCnaUnznw
-NgP7GbBHYIigaGGPAzSBjUHQuJ2zLithJGZ2ISxqGUrtI1dvw9N3oaFGyTUBOdej
-sU1+ml7aIYT9bi2ES6xiDuNaVOclaefRw6GxwoRUGlcCa81/N+3zf3RlD6fZ0JxN
-B3zvkKn0c7KoZ8MgpouBFNeC4aIO2VOB8FH5eGSnNwz5Sh1+MgIBMKlu1Hq/6zu5
-Ih7hVnpzzLirkDdr1mOcnw/4Ok/z92c7UajhH2kv1iK0Z85NitRcCfvdexGoOsQ/
-0lwQ4iZ5sMZu++FcGxPdMBiL0ehEbfhPKNjzS+44rbN6xldqYfyiTs0F+s8tZ4VR
-Ak8u7RQJ/3zdYi4KH9BgyUeHh7AjyyeYcNAsk7DkuBFtu9GIm50vMSP4oMWShsZv
-4omD7j8WnVAveBPTXeKD+1jQztY1gjGbHFSxdgZyKUpkgxb2/Jk=
-=QfTP
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNNTpwACgkQ3SOs138+
+s6HM/A//dLQ2+KCnadqbBvCw6Na04hXtu8LbrDb/bzY+96/xdbBTD11AcVlPCdX2
+gaiTxIdUlChiWt8uR6zF/HVgvsaKMEn8MoWU30hNmCrMM9BsaSzin0hdrPeVqpBN
+BkjddfRFNHDXj0A80P5r5BqsEf1/Q6P/Fk1DI8wiClMw42mKRhZpE/y3Cyj2Uk0l
+RvDQI1sy+z/VyNKrZCm/B9tso2ZCWSJMoQr5t9ph5mtN4onT2t0qK41BDVF+4En5
+5eXrDmCqwq0h63/ZQibYTTRMwwYsDSK8lzCOWD1lsSNHeUrRJHz27LuSnYsLsO1n
+IFrWBWrvIsrfRH/RO4g7sI1b4/TwoAWLzRiaYE8Nwr8Unk6TABymd3oJkS+/N79p
+uXaLYIjLpFiDniV1lffjUVuQJmX8hAxf1GNnv7JC+En8rJjDac9MVx019kOACK6/
+Xr8U9GkhRxxrktnrG9Gr3Hjh5QodfXqnh+Cry2FEdH37lAZhjEbKLa4VBdSJTu0+
+G5SSIJgiJqOYAYk0ZVSSZcZbjliSQ4FfuH1yYDUMbhch1FoaR0JJxdCQYyQUoVK4
+vY4Tf5StLLruBHVyB/hG25ZKfz8adki5SMVR5s8qJcVY156NBJby0yNHHPYvRSzC
+lDTqjoyqdadZZI+Ndy1Rv5Ge2FnltCN2dkB4PStFB7KfTuDmD2s=
+=JEGk
 -----END PGP SIGNATURE-----
 
---ENKGIPZJ+FvcFLFo--
+--0HsTIXSYqUDN8Ndt--
