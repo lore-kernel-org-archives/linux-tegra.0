@@ -2,63 +2,82 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203ACC4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 08:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398B9C43217
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Oct 2022 08:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbiJQIBv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 04:01:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49670 "EHLO
+        id S230156AbiJQIHA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 04:07:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229822AbiJQIBu (ORCPT
+        with ESMTP id S230149AbiJQIG7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 04:01:50 -0400
-Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4FD65B7A4
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Oct 2022 01:01:48 -0700 (PDT)
-Received: by mail.fadrush.pl (Postfix, from userid 1002)
-        id 2E1A622089; Mon, 17 Oct 2022 08:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
-        t=1665993707; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
-        h=Date:From:To:Subject:From;
-        b=dM8YRpYoOHp4B98LXL15wQWp/ktkkxhR8BAcIIzay+9GB0BdjIVeT9RMlYa3JRb0A
-         2RrRG/WhFURvveah6XMEEEt8ttWrenW6caLKU66qhdwMk/oUiYE7r81O9NfP0919Vn
-         iy8/APOIpR/xUWL7Wh2dyrlyv5sGroIXYSkKQLpqeyOnHYouuxElz2WYLS89FVTECx
-         Qls5xLws0GYOg+jdZamaApIKOeh8NrbNdUmU9WRXWFqxruojfa38UL+x2+83QfLZiO
-         hzQ+ktMeXxeHTqrkVhhz+FbbwFYfr0OPpdDnIsOYwHFgTsNXG+lNIsw0Jr0DlipUaR
-         WSde2HW0wGtDQ==
-Received: by mail.fadrush.pl for <linux-tegra@vger.kernel.org>; Mon, 17 Oct 2022 08:00:39 GMT
-Message-ID: <20221017064500-0.1.29.mkic.0.lkmd0pnnw4@fadrush.pl>
-Date:   Mon, 17 Oct 2022 08:00:39 GMT
-From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
-To:     <linux-tegra@vger.kernel.org>
-Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
-X-Mailer: mail.fadrush.pl
+        Mon, 17 Oct 2022 04:06:59 -0400
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43400578B7
+        for <linux-tegra@vger.kernel.org>; Mon, 17 Oct 2022 01:06:58 -0700 (PDT)
+Received: by mail-ua1-x931.google.com with SMTP id a8so4054172uaj.11
+        for <linux-tegra@vger.kernel.org>; Mon, 17 Oct 2022 01:06:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n7z2zqfikD651OG+4PqNGLgjVdCisNAlofdRvbyLWcg=;
+        b=NdMPhGP7re2rsdLDqwAO5pjkZ0WmwEnl/DutqM++yjkYM88jbyO8FHEhHaZQp50N0r
+         WVzoYtJNARRDgvkzHe7QH6BvS661UZA+eCMnFPCTZeAjmjXS/AQa5sZ43SKPR/2SKXKT
+         tVA8CHHDUqavWd1yFVCtOIWJGE4WdG1i8J/L3ZGFcbYI0TT96h5G7KDCkSPbaBUCwoUf
+         h3kETGy921lChCp0TPBw9sWiPlalFvv60qauMv0Pa2oDzZcBwwxSQBJ4wSU19SXUAgOg
+         rWXF1t50JurYxXikU5zaZl20VQIFIE9bgyN69IaakYLI4yMrRmj9ZHsJ3RoQM8vamluo
+         TAkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n7z2zqfikD651OG+4PqNGLgjVdCisNAlofdRvbyLWcg=;
+        b=wl/zmdES3ubIfBj8qFByYXJeDaySgKydDJLqfzMfrLvp/RK+rKrLDgnwW5h2NVT6sS
+         x0Eh4a/3zuVEgdfRW06PQ8AjuQhJ4IHdL1RBQH6XMiSpzJ77Ra6l7QzmVys/ZqgHp9Y6
+         9eQtE5lWK0zATlC0VFS6FvrGdgUwka4S7a/jT6Z2r5LztDEczV+wugTAkh1e0fHrSF6x
+         pQ6lHOiMdbKDETzw7zermkMOQqaCW/rGPJKsxUdmxfvoYwIofvM+w+2rHHgFZlH1CDKf
+         OkxEEM8LCYXmM33r4M6WuWW6O9B6wI4jei5SqcqNWLTKSYNCSAXpB27EQXbwZGYusPNz
+         EEOQ==
+X-Gm-Message-State: ACrzQf0uQWyq4TwYAtmk0r8TldkSfofedIod915+YBw/nH/IbZ5d6GyT
+        x/0RsWiNkMew22SQhRmm6vsFlmYZLbWx51QsKek5sQ==
+X-Google-Smtp-Source: AMsMyM5zKGzq/HLcG+oVMJ1IuRtu+Ts3/HzgbGWj/9vgLKcOz67M0wCJQ+LbJp5ikNVBUPZUSTKaAsCMTG02LhSp4C8=
+X-Received: by 2002:ab0:2155:0:b0:3e2:bdc:cfa5 with SMTP id
+ t21-20020ab02155000000b003e20bdccfa5mr3781207ual.119.1665994017309; Mon, 17
+ Oct 2022 01:06:57 -0700 (PDT)
 MIME-Version: 1.0
+References: <20221015172602.84855-1-clamor95@gmail.com> <20221015172602.84855-2-clamor95@gmail.com>
+In-Reply-To: <20221015172602.84855-2-clamor95@gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 17 Oct 2022 10:06:46 +0200
+Message-ID: <CAMRc=MfR50MnQo9LpBJQXojEzVn8oAzjLXHC=om=-HwkN+NOuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] gpio: tegra: Convert to immutable irq chip
+To:     Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Sat, Oct 15, 2022 at 7:26 PM Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+>
+> Update the driver to use an immutable IRQ chip to fix this warning:
+>
+>     "not an immutable chip, please consider fixing it!"
+>
+> Preserve per-chip labels by adding an ->irq_print_chip() callback.
+>
+> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # TF201 T30
+> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # TF101 T20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
-proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
-stwa firmie stabilny rozw=C3=B3j.=20
+Applied, thanks!
 
-Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
-a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
-nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
-po rozwoju firmy.
-
-Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
-nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
-adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
-j=C4=85 je innym.
-
-Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
-o=C5=9Bwiadczonego doradcy finansowego?
-
-
-Pozdrawiam
-Jakub Olejniczak
+Bart
