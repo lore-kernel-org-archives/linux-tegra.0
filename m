@@ -2,138 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5C5C43217
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Oct 2022 15:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5507AC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Oct 2022 16:28:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230483AbiJRPce (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Oct 2022 11:32:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48904 "EHLO
+        id S229890AbiJRQ2t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Oct 2022 12:28:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230436AbiJRPc3 (ORCPT
+        with ESMTP id S229592AbiJRQ2r (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Oct 2022 11:32:29 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2347EA98D8;
-        Tue, 18 Oct 2022 08:32:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F177CB81FE8;
-        Tue, 18 Oct 2022 15:32:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC9DDC43144;
-        Tue, 18 Oct 2022 15:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666107139;
-        bh=QX/EKb7llb6QCtdExPCwBkvhptpa3K+vuo/INCClXNs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DYulS4PmxUsNXR2nvBTvFkxjf458bejDLyltERt4EgttiUEKphVaPkbTko10Rk/fu
-         Qd3j8YOZLbAW05xchAKVVR6tSvx3lnUv9aeXHfS0SOOi0efDxz8xE//NaBmLDZFAf+
-         2/3Wy345G9NhNUD/dLODhflnzZi5+5GiekG5jlAUV3Drref1igak4Q98IFEt1Srd6i
-         9h3f5O5d43m60Nvbj1gSEdCV0KaDRpd6xGEbzy7LiRMxXXJYhieKJws+p/MkrjFGrQ
-         8+9HFsF+foUDX2PHq5Eq+x8sftWmSIhr+gX4++cfQRDJIY32og6ZAMPEC4l08oPmj+
-         SUl3i8pjE3BJQ==
-Received: by mail-ua1-f48.google.com with SMTP id f4so5663743uav.3;
-        Tue, 18 Oct 2022 08:32:19 -0700 (PDT)
-X-Gm-Message-State: ACrzQf2d5tpplEPsT8gsej5kc5C+SvLLYQunNd9TFscQTI43OZ4JEQ7H
-        V8pervRthKGnuKN6cDc1J3Oecah9Va0Rvjb13A==
-X-Google-Smtp-Source: AMsMyM77fSY/875/XYF2nRfIhuJTbqdgQF8AwoUuEq4yUADekjhaA9uPXi+KY0pQHENOQNzEt9XJNGVhuBror0Z7l4Q=
-X-Received: by 2002:a9f:29a3:0:b0:3d6:4c6f:9d92 with SMTP id
- s32-20020a9f29a3000000b003d64c6f9d92mr1880398uas.43.1666107138562; Tue, 18
- Oct 2022 08:32:18 -0700 (PDT)
+        Tue, 18 Oct 2022 12:28:47 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2064.outbound.protection.outlook.com [40.107.93.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D20BBF31;
+        Tue, 18 Oct 2022 09:28:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nmZU/k1TtGo9zDf7avyPKYWgWsqhJwVi4NZgdm3+ASEp2Hw1fA/hvQYuJsCVgDcMl9DKdshkde+x40y1vag2ShqAzkHemplUh95qJJKZaZOcgi/UlAdn0WYDpO6WI3987RF9tpJkLU0JRlaTpD81GTfBrWEbZATo9OsUB13tAbCkqgc11PRHsqQFBqN+/WVOHj914be3cuht71tqEMgrX/6MvwD5o78gT/ptWKWw5vKpKiLjjwu8bz/soMilJE0NOsFsUMt55xqfX7axwQ92vj75xGKuZ3ObpcHsUjbJrz1KRH905OoOCmYCl6UX9JZaI4XTTcrveJeUPEMkYmTxDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gEylTZ+nZvtt7CtuSmVaGt1Bz1AlbWl2lhzMYhaJFCY=;
+ b=Kq2FigDcrqbkDQWUZ7luVVhaXAcnZ77hBiO4UMOPqC/y+WXNIrty36Y074yEx74toTRBDtZJEn8NF29OgFcGP3eL+9cnINqTF4Vk+VFjR5msaG3VT2WiLXF9YpWe6WcWcTCJfdta1TkkhvrsUf3m7MoiGigVLUDlieJtyk//3UvJYLSJ+5w1Rjbb05+pRmUnw7T8i1JR3tjxjMcYsccwJMEt+em9/J7br3y1Gd6IyS+hw4yeNx77EKdTQxbv770m+X+s0PBpcxNZDHKYrQAaGUTn0BX/9vfx6dhwe6OV15RO9o9y48Vz1iEvfaUQZnfgqe7wjk1EbQmW44uB7akRtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gEylTZ+nZvtt7CtuSmVaGt1Bz1AlbWl2lhzMYhaJFCY=;
+ b=ai+7idmzrWY91a8TtczZxyn5HWfunHdbEL+xx73HWYuyY3Gwwy1wXCafnnYsYPEcTMGLCcD1QU0ZQIav5rF5cZ6PCtaXypV86B06J+gDwihD56mbmBDaQKxakEpm79G6av+1xp5IP0C+TNwX75LKrFSvOFAQ25G1Opp6Ip7TiIXw2q4Ax6x+FUYtZ9gYsH14KlmBBUd4YHYguhe3Qpmk7RWi+yqBsatQrNv5F3FaRwpNRGYLDSBztcVAIi2QbxPPrTunSlLxrYkDwttWeC1cEJKsZM/I3NLP0SHa07RllrIQgpkkwu3qaJYfsFDZwbhnwbn7SjN9vCwzD/Ht2Pn/cg==
+Received: from BN0PR04CA0103.namprd04.prod.outlook.com (2603:10b6:408:ec::18)
+ by IA0PR12MB7602.namprd12.prod.outlook.com (2603:10b6:208:43a::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.33; Tue, 18 Oct
+ 2022 16:28:44 +0000
+Received: from BN8NAM11FT095.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ec:cafe::68) by BN0PR04CA0103.outlook.office365.com
+ (2603:10b6:408:ec::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.31 via Frontend
+ Transport; Tue, 18 Oct 2022 16:28:44 +0000
+X-MS-Exchange-Authentication-Results: spf=none (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=nvidia.com;
+Received-SPF: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN8NAM11FT095.mail.protection.outlook.com (10.13.176.206) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5723.20 via Frontend Transport; Tue, 18 Oct 2022 16:28:43 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 18 Oct
+ 2022 09:28:29 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 18 Oct
+ 2022 09:28:29 -0700
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Tue, 18 Oct 2022 09:28:26 -0700
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <vkoul@kernel.org>,
+        <thierry.reding@gmail.com>, <p.zabel@pengutronix.de>,
+        <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <akhilrajeev@nvidia.com>
+Subject: [PATCH RESEND v2 0/3] Tegra GCPDMA: Add dma-channel-mask support
+Date:   Tue, 18 Oct 2022 21:58:09 +0530
+Message-ID: <20221018162812.69673-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20221007124946.406808-1-thierry.reding@gmail.com>
- <20221007124946.406808-5-thierry.reding@gmail.com> <dd869713-6eb2-fadd-fdef-6ca155198a8c@suse.de>
- <Y01sunkDsQQQhXuC@orome> <CAL_JsqKzSife8_ob3P=KVVcQ_ny=ppMF5LsjLxvYz95roy-y2A@mail.gmail.com>
- <Y06EHB8D1ip3PVyb@orome>
-In-Reply-To: <Y06EHB8D1ip3PVyb@orome>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 18 Oct 2022 10:32:09 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJGx6-wSDd=-g84dUY-=kPu5ikCyggMnTVEGMq8K7d0Jw@mail.gmail.com>
-Message-ID: <CAL_JsqJGx6-wSDd=-g84dUY-=kPu5ikCyggMnTVEGMq8K7d0Jw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] drm/simpledrm: Add support for system memory framebuffers
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT095:EE_|IA0PR12MB7602:EE_
+X-MS-Office365-Filtering-Correlation-Id: 059d037b-c086-40eb-3432-08dab125d327
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: g3yVRo0s4IdZFfkWSDlcPuFj+XrQBHm3jncxFZMboFZS5Nu8gIadV6pItIJm9UbZL6rGLcMNEqdOuNjHCruMu99sqdK3oBiwuQLfVlE1D+xR21expyLiPTA9NQ/3toAGa6S3PXEQzNYB/gmms04RotFhi+r3QqPmTmk7jcDPDLd+qW80oRzpPqXNAoGjmE068eD3qe40Nl7PcHBbGIIY8WGkiAELPus3oqCPSQFFW7Yly1Sv0V4XeaGTtyzPCpRhS0N3jHTk2eNmR9GCp9WghRKs3OTtudSj+f7uAxlZLqLINQfydAsjGY7af4yPaAiqJKypc/Re/xgWS6+U+tSeZ744JpfuxdamqSXMsFmRwenOxYM9LhwAA8erTaqSWIRiVdxFgwsOkhr4RY8MtldFYj9PLxT4EEP0s5Ld2Ve6A3n2IUD4trn4iKW/Vn9cO8F1tmU6qwUK7mnPmK0Yfe846tDdSJahWON4ZNBrL6i6y5Uponqigm1LyvSmzxBQYFa4s6NVnifOKfGKX756j+5Y86EbsBjgpQ83Ja2cJUU9pTZjbO1tDQWap+pLCYEfhki7srGDB2Ui4y/SPR4zw6fD7VchTllICpdp997wIGVM0MnDIWqNSyNKOtIe+jVF7RHW75n2Kh8FsdxBpdobCmKBH1VsMpH4c+4Ekb1V0XeJrOWUxj0Gn7uS5Np1vvN+PHL1JgrYbqTRby03c5PE954vIqzTox3gvWpdYkoanCgDpSwQ7Hs2oGjknOoZt4JkEZ6hf8UBuhuhrbhLhsZjuGEXog==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(39860400002)(136003)(396003)(346002)(451199015)(36840700001)(46966006)(40470700004)(83380400001)(2616005)(336012)(2906002)(186003)(1076003)(86362001)(36756003)(40480700001)(4326008)(8676002)(7696005)(40460700003)(26005)(41300700001)(7636003)(82740400003)(356005)(82310400005)(36860700001)(316002)(426003)(47076005)(70586007)(8936002)(5660300002)(4744005)(6666004)(70206006)(107886003)(110136005)(478600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2022 16:28:43.8471
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 059d037b-c086-40eb-3432-08dab125d327
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT095.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7602
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 5:47 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Mon, Oct 17, 2022 at 01:15:59PM -0500, Rob Herring wrote:
-> > On Mon, Oct 17, 2022 at 9:54 AM Thierry Reding <thierry.reding@gmail.com> wrote:
-> > >
-> > > On Mon, Oct 10, 2022 at 10:12:34AM +0200, Thomas Zimmermann wrote:
-> > > > Hi
-> > > >
-> > > > Am 07.10.22 um 14:49 schrieb Thierry Reding:
-> > > > > From: Thierry Reding <treding@nvidia.com>
-> > > > >
-> > > > > Simple framebuffers can be set up in system memory, which cannot be
-> > > > > requested and/or I/O remapped using the I/O resource helpers. Add a
-> > > > > separate code path that obtains system memory framebuffers from the
-> > > > > reserved memory region referenced in the memory-region property.
-> > > > >
-> > > > > v2: make screen base a struct iosys_map to avoid sparse warnings
-> >
-> > [...]
-> >
-> > > > > +static int simple_framebuffer_init(struct reserved_mem *rmem)
-> > > > > +{
-> > > > > +   pr_info("framebuffer memory at %pa, size %lu bytes\n", &rmem->base,
-> > > > > +           (unsigned long)rmem->size);
-> > > > > +
-> > > > > +   rmem->ops = &simple_framebuffer_ops;
-> > > > > +
-> > > > > +   return 0;
-> > > > > +}
-> > > > > +RESERVEDMEM_OF_DECLARE(simple_framebuffer, "framebuffer", simple_framebuffer_init);
-> > > >
-> > > > What's the prupose of these code at all?  I looked through the kernel, but
-> > > > there aren't many other examples of it.
-> > >
-> > > This is a fairly standard construct to deal with early memory
-> > > reservations. What happens is roughly this: during early kernel boot,
-> > > the reserved-memory core code will iterate over all children of the top-
-> > > level reserved-memory node and see if they have a compatible string that
-> > > matches one of the entries in the table created by these
-> > > RESERVEDMEM_OF_DECLARE entries. It will then call the init function for
-> > > a matched entry and register a struct reserved_mem for these. The init
-> > > function in this case just dumps an informational message to the boot
-> > > log to provide some information about the framebuffer region that was
-> > > reserved (which can be used for example for troubleshooting purposes)
-> > > and sets the device init/release operations (which will be called when a
-> > > device is associated with the reserved memory region, i.e. when the
-> > > of_reserved_mem_device_init_by_idx() function is called).
-> > >
-> > > The reason why there aren't many examples of this is because these are
-> > > special memory regions that (at least upstream) kernels seldom support.
-> > > Perhaps the most common use-cases are the shared DMA pools (such as
-> > > CMA).
-> >
-> > Also, not all regions need to be handled 'early' before slab allocator
-> > or drivers are probed. Do you need early handling here? I can't see
-> > why other than if fbcon is up early.
->
-> No, I don't think this needs early handling. Obviously we want this to
-> be available as soon as possible, but since the framebuffer driver is
-> built on top of DRM and that all becomes available fairly late, I don't
-> think this could ever run *that* early.
->
-> So are you saying that in general if we don't need early handling we
-> should avoid RESERVEDMEM_OF_DECLARE and instead manually resolve the
-> memory regions and inspect them? In other words, RESERVEDMEM_OF_DECLARE
-> should only ever be used when this early handling is needed?
+Read dma-channel-mask from device tree and register only the
+specified channels. This is useful to reserve some channels for the
+firmware.
 
-Right. Like all the other *_OF_DECLARE() macros, they are only for
-when needed before driver probe time. Lots of shared memory mailbox
-drivers use reserved-memory regions if you need examples.
+Also update the channel number and interrupts to include all 32
+channels. The current driver was using only 31 channels as one
+channel was reserved for firmware. Now with this change, the driver
+can align more to the actual hardware.
 
-Rob
+v1->v2:
+  * Reversed the operands and used BIT macro in 'if' condition.
+  * Fixed warning reported-by: kernel test robot <lkp@intel.com>
+
+Akhil R (3):
+  dt-bindings: dmaengine: Add dma-channel-mask to Tegra GPCDMA
+  arm64: tegra: Add dma-channel-mask in GPCDMA node
+  dmaengine: tegra: Add support for dma-channel-mask
+
+ .../bindings/dma/nvidia,tegra186-gpc-dma.yaml |  7 +++-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  4 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  4 +-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  4 +-
+ drivers/dma/tegra186-gpc-dma.c                | 37 +++++++++++++++----
+ 5 files changed, 45 insertions(+), 11 deletions(-)
+
+-- 
+2.17.1
+
