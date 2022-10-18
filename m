@@ -2,107 +2,182 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BA5C43217
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Oct 2022 07:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FBCC43217
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Oct 2022 07:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbiJRHWA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Oct 2022 03:22:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37354 "EHLO
+        id S229941AbiJRH2i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Oct 2022 03:28:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbiJRHV6 (ORCPT
+        with ESMTP id S229796AbiJRH2h (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Oct 2022 03:21:58 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on20626.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe5b::626])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C057FE43;
-        Tue, 18 Oct 2022 00:21:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jCXF5bQ7n2GtAvk89aykkemi4wp4la9xoo6aHxuvV6icEnPPIrDPLL6uzXfJqIEv6WRIJFt7MJvFh8vH59VQoCMdHYbnQB1D+oB58z3riEjq8mzt/5IQTlJJUoDMgOE5LwW+BHv091dSpu3LSD6UfKMJlVlrIODEoJi2VML+G5TT6zEv7IC7KkBoc0LZ7AWIk95nqjoUXqeBeE3/eSA6KapSRH/9A4T7WnrOdomMmDZlL9qIQphbBoXTdQdATHRqF/yXljH3nvwmAF1GPCp/8FALNnaMnSDVCXii0a98k11fXrwp5CQXhFxGSq9hBGr+crRQk1BOiZ7Hi41cUuhFPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dRAJalTtBzjtEjDvJ14LUpiBSmJ8fy03Fr7GFH2DTt0=;
- b=FpIUFkf6ED59pn/owTZNOMF4vUAYwQwoO/ofHmVYHwAk/+tjpOJn3DfYrG5A+pPRvXsHrs62TQdjtNwzmNBosIAkwFMnfy78Sltx3fEEMz2KNW0HX85dU8B1bAZvnNCcAB/fszJj905hIqlwX7fdMNDFDRH8ouMlZ/mUcEcR0rHnTxv46QjXdaZ/442ElhgxEpNXXLfMnI0VNILbZqO/IJ4e++jPs8tuwTdaoHjySCDfEZLuWOZn8H86mrA5fSng58tmylYFq+vMJYdqUphdc32C5KwlA8ZHk3JERAl9up2i+StV8aloMYYvBsyYgs96ilwL3eZSQIPCt0wuei0Hxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dRAJalTtBzjtEjDvJ14LUpiBSmJ8fy03Fr7GFH2DTt0=;
- b=OInBFEwf8BR34YmWdLLhNlulZZrIs4bWmiCYTo8hMhBmK9sL2FPxDFaKC02lxzSbPJL1jAl9Pey89oYxAoXAuZzgxSr/tucq5sE9+t5AFgcp5rTafmEJBfm6k/pNhLWSQUtKVS07U9SiulS+pCAMNPpUTf8Azn4oj2ItVD4q5boLAAzIS7vQd6fKfbzKylMHlxkvndVLCM2DwrSdHTQM3MOrX4KzG1xjj0rAuWba1qmLzFbG8jFJrIsgeaATvqNcelSuQICSDwFTEAyLMP5UbJ4FLvPNzrN+IDFbmcLQ8+pIKBp8ZZ9gZthvMSrJmpmDQRjNi5l7pLjVLgiq9aMGVQ==
-Received: from DS7PR06CA0041.namprd06.prod.outlook.com (2603:10b6:8:54::10) by
- CH2PR12MB4168.namprd12.prod.outlook.com (2603:10b6:610:a8::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5723.30; Tue, 18 Oct 2022 07:21:54 +0000
-Received: from DM6NAM11FT073.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:54:cafe::8f) by DS7PR06CA0041.outlook.office365.com
- (2603:10b6:8:54::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.30 via Frontend
- Transport; Tue, 18 Oct 2022 07:21:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- DM6NAM11FT073.mail.protection.outlook.com (10.13.173.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5723.20 via Frontend Transport; Tue, 18 Oct 2022 07:21:54 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 18 Oct
- 2022 00:21:52 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Tue, 18 Oct 2022 00:21:52 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 18 Oct 2022 00:21:48 -0700
-From:   Kartik <kkartik@nvidia.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <akhilrajeev@nvidia.com>, <jirislaby@kernel.org>,
-        <jonathanh@nvidia.com>, <kkartik@nvidia.com>,
-        <ldewangan@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <swarren@nvidia.com>, <thierry.reding@gmail.com>
-Subject: Re: [PATCH] serial: tegra: read DMA status before terminating
-Date:   Tue, 18 Oct 2022 12:51:47 +0530
-Message-ID: <1666077707-13117-1-git-send-email-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <Y05Pma6GLVtXVCrg@kroah.com>
-References: <Y05Pma6GLVtXVCrg@kroah.com>
+        Tue, 18 Oct 2022 03:28:37 -0400
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4142B60D;
+        Tue, 18 Oct 2022 00:28:36 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id a18so8165397qko.0;
+        Tue, 18 Oct 2022 00:28:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WsYcGW4TBn6VK6ga6YeeEhBKt8rBJ4PJ+yBy0r0qvZQ=;
+        b=7cmB9RAZPIb1mm/t378K9BkdtxtQcublOvOnw+87kR7XR9tGnRH/P2ct5e/LcucKun
+         raPupMtNMTDUHqauNh26+tdbVFlYxo7hCofd2ajFUmScwZJBXANF5RB4nIvKhTsSm+Cw
+         YqpBjkLvteCPx2gXJFa5jfPJGUA/0e+4eLvqJ1bycBIug2iOuAUIQjHsubCWSi1tFlSm
+         qfXKWycG3GEh77mXwC0/sL7I2gDIJDuBWPU/ViIqSoW7h5lLY7Ick2mOYUaLk4ZNxDoJ
+         Co2Kz1hGZG3CAR4icOT50aTJOlK4smcus2P/mND9WwAZThje/oaKL/fZnvNYYsRG7LIS
+         t8jQ==
+X-Gm-Message-State: ACrzQf0FdFa4yvmEMSiDc71ODZb1dtTDM0XVOJYxVKyf41jfrd/7F7OC
+        8D0X/hsyYFw6BVJXTyuWpsPKcfSsCgzFTQ==
+X-Google-Smtp-Source: AMsMyM6V6Huror4kr2/bh0w1E6/DBl282o3yPQa2JsHtOMHv0sPFbNrz9WFoVC9yBykk1K8aweAmbw==
+X-Received: by 2002:a05:620a:1523:b0:6ee:4780:4844 with SMTP id n3-20020a05620a152300b006ee47804844mr943848qkk.700.1666078115383;
+        Tue, 18 Oct 2022 00:28:35 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id az13-20020a05620a170d00b006eea461177csm1887335qkb.29.2022.10.18.00.28.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Oct 2022 00:28:35 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id e62so15981257yba.6;
+        Tue, 18 Oct 2022 00:28:34 -0700 (PDT)
+X-Received: by 2002:a25:2:0:b0:6c4:dc1:d37c with SMTP id 2-20020a250002000000b006c40dc1d37cmr1255226yba.380.1666078114683;
+ Tue, 18 Oct 2022 00:28:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT073:EE_|CH2PR12MB4168:EE_
-X-MS-Office365-Filtering-Correlation-Id: c105ecd5-d147-4153-b541-08dab0d96f2a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vJc35nx5jhrREz7NOyHMg7K39+tJFtdyhzO2GdKaJBFrTm1cqx0StS3qtf7gD0MJJaEizygmI2XpgMUGX9m5NyW88Lj7hvax/tIyrKY53Uv9s+RVoTbJxxTDIVontOib0JUBOzclfjmQxIv+wXSNQn/qWsEoQ0FeuPeKTCAY5LPcpDhkRFcyDJM7UjBSgKQpR/OSv3A9FE97mHNShM7Uvx17FiiktaVeMC/sDeOx4/KItOG3BUq1EBPp6oAmhFYj25OsdstMVQ54MNkmO+IyYhzsu1TT7zoMgMee1ApgXjzXMSa3cnVbnhY9xeDt4agFGvgUIMocEMT9HK1U/nku3UXiKkJUuZc+onmSgT2n5YQtb2G5sdtAkRPeqvQPrVSAURg664g24VTaB5w/uuHXpOqmBG3G8QLH5o3jgz97R8+AXX0JjbFMFNuaEJSX2EXeIfCcFG3rBsprgUeZzsV/5Cxn0kEXt0gwNKk+A19eHuJy2k/angqPv7klL8TQc3CJWoH8lK/W74r9hRxOozbmsxAvy/AgADhoqxqbB3s/Na661g1XogS8raGzl0yzkYFaN0PTXrsSXhal4QazXeupzECJpFjgXNr4Xyt2/3jbHHK6hYWqiL2j8x/ALbHBzI0fpWiVlJQzM57MmX7q6YuAhdkrw38l5/Fsp6/Xjf4v3beHr7S4EBdZ7BSUOMnmpV/O7h/k/vA883pUy31T16UH+wnAYcS/vBXXzvohblc/xKa78kMIqk6Fkr6/G2v5eFhEKt3RZxAYQ1sqsYmiT+PPeQ==
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(396003)(376002)(136003)(346002)(451199015)(46966006)(40470700004)(36840700001)(86362001)(82740400003)(41300700001)(7696005)(82310400005)(316002)(53546011)(6916009)(26005)(5660300002)(54906003)(40460700003)(8936002)(40480700001)(7636003)(356005)(4326008)(478600001)(36756003)(70586007)(8676002)(70206006)(47076005)(186003)(2906002)(2616005)(426003)(36860700001)(336012)(558084003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2022 07:21:54.4402
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c105ecd5-d147-4153-b541-08dab0d96f2a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT073.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4168
+References: <20221015172602.84855-1-clamor95@gmail.com> <20221015172602.84855-2-clamor95@gmail.com>
+In-Reply-To: <20221015172602.84855-2-clamor95@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 18 Oct 2022 09:28:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVy2YPY=35tBUj-_p=VvkGpJH4=OrDQLjFvr6+pKv3JRA@mail.gmail.com>
+Message-ID: <CAMuHMdVy2YPY=35tBUj-_p=VvkGpJH4=OrDQLjFvr6+pKv3JRA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] gpio: tegra: Convert to immutable irq chip
+To:     Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 12:32, Greg KH wrote:
-> So which one is correct?
-They are basically the same patch. I goofed up while sending it.
-Please ignore the previous patch.
+Hi Svyatoslav,
 
-Regards,
-Kartik
+On Sat, Oct 15, 2022 at 7:30 PM Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> Update the driver to use an immutable IRQ chip to fix this warning:
+>
+>     "not an immutable chip, please consider fixing it!"
+>
+> Preserve per-chip labels by adding an ->irq_print_chip() callback.
+>
+> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # TF201 T30
+> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # TF101 T20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+
+Thanks for your patch!
+
+Thanks for your patch, which is now commit 6ebd28bd087127ab
+("gpio: tegra: Convert to immutable irq chip") in next-20221018.
+
+noreply@ellerman.id.au reports a build failure introduced by
+this commit on e.g. m68k-allmodconfig:
+
+    drivers/gpio/gpio-tegra.c:616:48: error: 'tegra_gpio_irq_set_wake'
+undeclared here (not in a function); did you mean
+'tegra_gpio_irq_set_type'?
+
+
+> index e4fb4cb38a0f..6b469253fad8 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+
+> @@ -598,10 +600,43 @@ static void tegra_gpio_irq_release_resources(struct irq_data *d)
+>         tegra_gpio_enable(tgi, d->hwirq);
+>  }
+>
+> +static void tegra_gpio_irq_print_chip(struct irq_data *d, struct seq_file *s)
+> +{
+> +       struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+> +
+> +       seq_printf(s, dev_name(chip->parent));
+> +}
+> +
+> +static const struct irq_chip tegra_gpio_irq_chip = {
+> +       .irq_shutdown           = tegra_gpio_irq_shutdown,
+> +       .irq_ack                = tegra_gpio_irq_ack,
+> +       .irq_mask               = tegra_gpio_irq_mask,
+> +       .irq_unmask             = tegra_gpio_irq_unmask,
+> +       .irq_set_type           = tegra_gpio_irq_set_type,
+> +       .irq_set_wake           = pm_sleep_ptr(tegra_gpio_irq_set_wake),
+
+This is an unrelated change, breaking the build if CONFIG_PM_SLEEP
+is not set: the function pointer argument of pm_sleep_ptr() is always
+referenced, so the function definition must not be protected by #ifdef
+CONFIG_PM_SLEEP.
+
+As tegra_gpio_{resume,suspend}() are also in that section, you probably
+want to convert the references to them to the new macros introduced by
+commit 1a3c7bb088266fa2 ("PM: core: Add new *_PM_OPS macros,
+deprecate old ones"), too.
+
+Or just revert this change for now.
+
+> +       .irq_print_chip         = tegra_gpio_irq_print_chip,
+> +       .irq_request_resources  = tegra_gpio_irq_request_resources,
+> +       .irq_release_resources  = tegra_gpio_irq_release_resources,
+> +       .flags                  = IRQCHIP_IMMUTABLE,
+> +};
+> +
+> +static const struct irq_chip tegra210_gpio_irq_chip = {
+> +       .irq_shutdown           = tegra_gpio_irq_shutdown,
+> +       .irq_ack                = tegra_gpio_irq_ack,
+> +       .irq_mask               = tegra_gpio_irq_mask,
+> +       .irq_unmask             = tegra_gpio_irq_unmask,
+> +       .irq_set_affinity       = tegra_gpio_irq_set_affinity,
+> +       .irq_set_type           = tegra_gpio_irq_set_type,
+> +       .irq_set_wake           = pm_sleep_ptr(tegra_gpio_irq_set_wake),
+> +       .irq_print_chip         = tegra_gpio_irq_print_chip,
+> +       .irq_request_resources  = tegra_gpio_irq_request_resources,
+> +       .irq_release_resources  = tegra_gpio_irq_release_resources,
+> +       .flags                  = IRQCHIP_IMMUTABLE,
+> +};
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>
+>  #include <linux/debugfs.h>
+> -#include <linux/seq_file.h>
+>
+>  static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
+>  {
+> @@ -689,18 +724,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>         tgi->gc.ngpio                   = tgi->bank_count * 32;
+>         tgi->gc.parent                  = &pdev->dev;
+>
+> -       tgi->ic.name                    = "GPIO";
+> -       tgi->ic.irq_ack                 = tegra_gpio_irq_ack;
+> -       tgi->ic.irq_mask                = tegra_gpio_irq_mask;
+> -       tgi->ic.irq_unmask              = tegra_gpio_irq_unmask;
+> -       tgi->ic.irq_set_type            = tegra_gpio_irq_set_type;
+> -       tgi->ic.irq_shutdown            = tegra_gpio_irq_shutdown;
+> -#ifdef CONFIG_PM_SLEEP
+> -       tgi->ic.irq_set_wake            = tegra_gpio_irq_set_wake;
+> -#endif
+> -       tgi->ic.irq_request_resources   = tegra_gpio_irq_request_resources;
+> -       tgi->ic.irq_release_resources   = tegra_gpio_irq_release_resources;
+> -
+>         platform_set_drvdata(pdev, tgi);
+>
+>         if (tgi->soc->debounce_supported)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
