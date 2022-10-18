@@ -2,170 +2,173 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD7EC4332F
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Oct 2022 01:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850FDC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Oct 2022 03:27:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbiJRBVH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Oct 2022 21:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36480 "EHLO
+        id S229587AbiJRD10 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Oct 2022 23:27:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbiJRBVH (ORCPT
+        with ESMTP id S230387AbiJRD0g (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Oct 2022 21:21:07 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B538B9580;
-        Mon, 17 Oct 2022 18:21:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666056062; x=1697592062;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=su5zkI72C0sQs7FAa4bTuhB/QJ0TTUO44k56XMq6UHE=;
-  b=k44ZMY7j2nykHe93Nnkox6z+NI6hlmnTWmuRkU11Bqn0oU2oLMzBpSI4
-   pVfe+/dz9o5PmABrWa7ekOhgUy+C0geVpjReeEdKgDF3NoiJ+0TBefC/9
-   uPvR9Ke0PuuSpfpEJ+pyRJAVtWqJ+1qPwxBo6KoRqqhc8FyP4lSNaUMnc
-   Ev9BVPagLLSSTq3dgCnG27/1yZqxnnEuB+MQ9nXkE9wFoR+vpo0YP1oLe
-   4MI3b5YCpHfeYIvqtH30ONV5pPdUwgNpN0nEjRcmA5hnvx70/vcA7QTqR
-   FceuzhrD9XU7EIXBJQ8o+3YaR/Y1be8wWMwq86ZIOfH5qgeXWbOWnd3TW
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10503"; a="367991493"
-X-IronPort-AV: E=Sophos;i="5.95,192,1661842800"; 
-   d="scan'208";a="367991493"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2022 18:21:02 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10503"; a="659576177"
-X-IronPort-AV: E=Sophos;i="5.95,192,1661842800"; 
-   d="scan'208";a="659576177"
-Received: from blu2-mobl3.ccr.corp.intel.com (HELO [10.254.211.49]) ([10.254.211.49])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2022 18:20:54 -0700
-Message-ID: <a7c55d04-2523-e6d5-8715-0f8a6d3e3233@linux.intel.com>
-Date:   Tue, 18 Oct 2022 09:20:52 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Cc:     baolu.lu@linux.intel.com, jgg@nvidia.com, kevin.tian@intel.com,
-        quic_jjohnson@quicinc.com, suravee.suthikulpanit@amd.com,
-        robdclark@gmail.com, dwmw2@infradead.org, yong.wu@mediatek.com,
-        matthias.bgg@gmail.com, orsonzhai@gmail.com,
-        baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
-        thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-        jean-philippe@linaro.org, tglx@linutronix.de,
-        shameerali.kolothum.thodi@huawei.com,
-        christophe.jaillet@wanadoo.fr, yangyicong@hisilicon.com,
-        yangyingliang@huawei.com, quic_saipraka@quicinc.com,
-        jon@solid-run.com, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v7 2/5] iommu: Add return value rules to attach_dev op and
- APIs
-To:     Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org,
-        will@kernel.org, robin.murphy@arm.com
-References: <cover.1666042872.git.nicolinc@nvidia.com>
- <bd56d93c18621104a0fa1b0de31e9b760b81b769.1666042872.git.nicolinc@nvidia.com>
+        Mon, 17 Oct 2022 23:26:36 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2082.outbound.protection.outlook.com [40.107.237.82])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88525A3465;
+        Mon, 17 Oct 2022 20:20:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FOL8kPuYdMX9rQKOfePqDT14Y/S+jJeONB66AreUPgRRQlkyAUOWfXhJGgznZLiPawgvRi/7c5E20zB1yEoM/5GeHRr4DkcEuS3I60nTNhJjBAZYJwM28792iFGDEbL76IJvcRcd/P8phZz7UJA0xF+Rr4yVP/doHM0dR9uZrd5qZkIid8IwlADsIKQyGtdahI3op4IJuqILm9FoJ2Xq6eOc1jJT/SMgt9WQHAT6JtD8rb5KXftuMPAd1YXdmCYdKfUIGG9j8Rh/gKd24anmY37epXb7nuUSwzbx+WaCq43MCTlen+IQU2u6lep5u71X0gT47jIwM4U1nhB0HTwrzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WU59yyJcyjC/lhRBOw8MGPOmOvjD8wDwQVaQNPtm6OI=;
+ b=XTB1g67JyL2FVzEIT/n84wHqysFhCeLSm0dCRF1g1uBju1GJStIqypoXrlWWGQO3tKgSA9gyLWTF3ESkR1567gQTvy5BM02OxkvwngmBUlhKRqjEvhz6bj2Ny/WwyBgCYzeC2TKwr/FIX0/ORzFDhz1cVaL5M7ZEIOINyetTIDAod/WCJEkbVZ7rgl4ngYBKfgfIEYKcnYYKlHSgncnqSu443y9aoa04Lb9JChURjit5f1TzrHwdCBXfFjJIoPJDXCycNKjQRsCEg2hkUnuw9B+PYOqKRgxClK/goc5eAulold1EACYzHyCh5cR2GkdNqT8gQnoRC0Fnk7bF47B7sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WU59yyJcyjC/lhRBOw8MGPOmOvjD8wDwQVaQNPtm6OI=;
+ b=c6O2j1kr4jm4g49rrHP+2S8marTJRCUEIVyvtMlFZNKsF3LL2iG6KSY9X+4aYEw6XV098Sp6UpcoIZMNny8vnC3q44m9WKbzN2LFoNJ+wa6nOV5In7EtcmdAxIreDCO/l02ZENiGMToADYAtG9toAjq6gVw7KokvRHG85okkdVGg+uDZsAP59tYxy7ft3vcVMbxbDNFu7uNHieeQB+6SEmOUwb27fmSSuir0JrUIUwUG1e90Q/k8wb+EL4KtXUk2q1lwAWPreztBaqzQYeUcGt2TRgLVOD/qd/ViQqMb3Lz2s7w4xzLW5NNJKRgdF7tMBCAkgrJxMFd9Z3QmiYr79g==
+Received: from IA1PR12MB6603.namprd12.prod.outlook.com (2603:10b6:208:3a1::17)
+ by PH7PR12MB7210.namprd12.prod.outlook.com (2603:10b6:510:205::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.16; Tue, 18 Oct
+ 2022 03:20:33 +0000
+Received: from IA1PR12MB6603.namprd12.prod.outlook.com
+ ([fe80::d140:ead8:ffd1:76e3]) by IA1PR12MB6603.namprd12.prod.outlook.com
+ ([fe80::d140:ead8:ffd1:76e3%6]) with mapi id 15.20.5723.033; Tue, 18 Oct 2022
+ 03:20:33 +0000
+From:   Jim Lin <jilin@nvidia.com>
+To:     Jonathan Hunter <jonathanh@nvidia.com>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "mathias.nyman@intel.com" <mathias.nyman@intel.com>
+Subject: Re: [PATCH v3] xhci: tegra: USB2 pad power controls
+Thread-Topic: [PATCH v3] xhci: tegra: USB2 pad power controls
+Thread-Index: AQHY3iTzGqk+LW8EIUGun7Nw/Ps9r64Ko9kAgAe3xICAALMQAIAAdjCA
+Date:   Tue, 18 Oct 2022 03:20:32 +0000
+Message-ID: <ff55893f6876fe04de43906db927fbe1139dc4da.camel@nvidia.com>
+References: <20221012102511.3093-1-jilin@nvidia.com>
+         <37b168f2-049c-c01f-9f60-c119fabf8606@nvidia.com>
+         <cf9b9c605ed06e59edd3ae5deba914cfbfa55be3.camel@nvidia.com>
+         <d627e907-8c2e-6a98-20ad-5f7c50e56146@nvidia.com>
+In-Reply-To: <d627e907-8c2e-6a98-20ad-5f7c50e56146@nvidia.com>
+Accept-Language: en-US
 Content-Language: en-US
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <bd56d93c18621104a0fa1b0de31e9b760b81b769.1666042872.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA1PR12MB6603:EE_|PH7PR12MB7210:EE_
+x-ms-office365-filtering-correlation-id: 076dd00c-6b69-4cf9-93f4-08dab0b7b775
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: GBL0wGpg9YeaQHsISKRynYim0/phZ/dS1LK0fj4RKmitpT7Ktm9VS76AggqCZcSxtLm2CgefOJ70xlmeNg5npzG6rqYM7MQd2H55unDMaa2Cd3SvGGAZEyszHrlU/cDtFyciN/qhNP3ysBELphw0FG9/HMHPK9Yr1B3iTaxroc/HiF23k8cmws6gWAKpRjb+IoRUsVRn6Ak5hO4ZKrdyUdwnpD43aOFfebPbcm7lixUQe4+wSXtVo3AGWC3EQ59KdL7z2s0fJJ5Q9mY9qAOS0mpNw97m9S1U8dxPQYCuOoeL16KsZGuxrxnr9soiBDRRJWNq3CumqWIL1LUURmdEIlptzA+MVUlbSa5m3gcZWEjwjoUlHG6hfb2jksr/z3u/ZXqzmZ6LrrQzf20gtd6FriOpSCl5LBsT49Pj8LR7+pBgOhNGh4QBiGWZY3uvgmPDI44hZ68IbcbF+diWB9lhrfcYu/Ywv1plVU6qVI0cldliAS4qkMbpI/oZvwBmgTqdrOs8ZmVeGo3KnS+WYxsYIlk3B7lCD/8MRZ44ewVERma7hPy6+elVldi+2+5aX2S2P0jmeNXy0GwLPS1rN5aT6hJ04iwEZgeTFfgTByv2nvbdY4PqYLTXft6xP97xDSX/QQjKGkiOGqmAW5V4k5zzoaJoLccqOUQJu8XhBIYeXLwOjKVwvo5rfy83kFoxty+ZKVjBc09G65L8K8OxmvNG1Gr3FYtU8pjDceJydyiJMb3pgeFX26vu4R4x+Q/r3mV5LBVyKMoLfmLTtSlgp8b7rW0jHtWy75xqpYX0f2fN0m4=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6603.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(39860400002)(366004)(396003)(136003)(346002)(451199015)(6636002)(36756003)(53546011)(26005)(2616005)(8936002)(6512007)(41300700001)(4326008)(64756008)(66556008)(66446008)(66946007)(83380400001)(66476007)(186003)(91956017)(38070700005)(6506007)(2906002)(76116006)(6862004)(8676002)(86362001)(6486002)(122000001)(71200400001)(5660300002)(4001150100001)(37006003)(316002)(478600001)(54906003)(38100700002)(99106002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZktJdjBwUmZjOGZ1S29hUjZBR2E3V0VTWG5pSittbE1pLzlYdkFtd2lzeXhF?=
+ =?utf-8?B?V3pVK3RLRVpZbHIranFHK0JyZUxSVDRFZWNyQUIzK3h4Q3pFTGd0MXZwV2Vw?=
+ =?utf-8?B?MnFoYXBvSzlaaEtRWGcwdG5QZUpMblFQQWZRdmRIQ3pWN29SR2Y4OUlkZ0RJ?=
+ =?utf-8?B?Y0lGMzc1MXNOV3RPQUcrdWEzRHlReWRrcXBORVJWNm5mSk8rT1oydHZxdEUv?=
+ =?utf-8?B?Nm5GNFExdzZqeXBkOW52R3lZend5YzB5T2IyOHpDTm5OWmtaVFh1c0lTVlNS?=
+ =?utf-8?B?MkRnQWRUQ2x5UGpvM3R6WXBZZXZ6VzZyd1JqekdFWDF4QTZUNDV4N1k4TEZ6?=
+ =?utf-8?B?aHczSjJEbmE0eVB2MC9RQmhMNlEwTkNZYmIyTUZFMzM2K2FIVVhsbTJpSFlI?=
+ =?utf-8?B?WFNZMDRCLzJMRzY3QUxZeGE5eEtpYmptdWd1amYxTlpCbWdHT0tqZnd3NkNS?=
+ =?utf-8?B?a0ROWnFWaHVSWXdSVlJLY20vNnhvdXBaRmFCODE3UjdhVTlUSFlxZXg3NFpW?=
+ =?utf-8?B?SmNuekxaVnpZakJ6bzdQNXRMRFJySUdXMVZMcjdwQzNPV1o4c3BQU2Z6TGhO?=
+ =?utf-8?B?aDJ0NnlPVFRIZ2R4RGg0OTJYSHltbTU2QWxmQmFGaDdMZ3FSSVF6RGpmanN3?=
+ =?utf-8?B?SHBJYTNmREZpZ0RmSG1uV01KdVVzakE3aHNwM3BkMUhBd1ZzMks2Qk9aQTM2?=
+ =?utf-8?B?VExtdm5RRlk4ZzFsUlF5YmYyeDZDa21RVmVDYkFSTmtQcVdZSTZTcnZsVjly?=
+ =?utf-8?B?eUVrNVcya040eWlhNUxMczRSc1dvTDJDOVBkTUs1bEdyTXRCcTNyalk4Z3FK?=
+ =?utf-8?B?RnRuR2wrK1hoR3dPNHF1TTlZVXJsUmZOMlNWTjV6b3BWMWFZSEpLa25INFRa?=
+ =?utf-8?B?a0I1ZU1oTTU4REkvYVNHbzNEL0d0NHBhNHFhdnNoYmZYVzVKdnVUNmFTSUxW?=
+ =?utf-8?B?NU9zY0x1K2lxK3JXU0ZFUmp4Sk1DR3Q0NHlTK1Q0QTVDR3FsRFpwTDI2eEw3?=
+ =?utf-8?B?dWZGSGFFc2xIWXpYTG5NM3c5TzRRZVlneTBjRWpjaXp0WUtBdXZjaCthNncz?=
+ =?utf-8?B?emtGTDVoZzVVTDQ1QzI4dWZPdGowaUxnMnhhRzZKQXIvb0hRQTUyRFRGUng3?=
+ =?utf-8?B?SmFxRXdtNW5YQ000elBXZGVRZE04RWpyN2MzbHQycXQ1bVVGbWgxeXNZc2xP?=
+ =?utf-8?B?N3lIZUJCeWFCTUxEbFRzNlA4VmJmdUdHbWZwT1JVbzdqOXpLa1Z6MVc1aEND?=
+ =?utf-8?B?b0pWQ2ZtUjgyRndSVERUNGR3ODVxOUpCT3A2WW1HdWM4U2loSVRzTXFMWTBr?=
+ =?utf-8?B?Zkl1N0Q0K3grcmlPclE4cXRpN0gwOTNoU21pOHJIVjNRQ0hZWm9yN3d4d2FV?=
+ =?utf-8?B?cCtNU3lTSVh2MDlyRjhLNnYxaTI4Vk5lVDZvV3EyaWppQlk4dFQ4YndkdnZi?=
+ =?utf-8?B?V2lBNlN4am5wblhvcTArZ3M1TzQzQkYvdTNVbDBEZTBHaVBoZlhoZ0tBTzln?=
+ =?utf-8?B?L040U2VyeE9KaWh0bzNWRXhselk0dVdkcFBVdUNoMzVoYVZZVnRJSnhmNEd4?=
+ =?utf-8?B?ejIyNUd5WGY4M3ltZGJPcTVNd2F4ZlM4VjJDWHdzMGVIN1ZyeHdlMjdSRDhV?=
+ =?utf-8?B?TytrVm9mYWR0RHJ1eUp4RHFOWmVheXBUaG5OSlVIN3U5YmpQM2xFMkNKWE92?=
+ =?utf-8?B?cjJwWlJVbU1XZkxVZEZ3S2FTN3REYTVMYTBrSENEUHBkK3ZCdENBcFhKRE5m?=
+ =?utf-8?B?RlZWM3NsY2MySmRXeDU5L1VmcjF0aTZWMXJaNmp6ZHRqMUxjUEJUbStvaHlJ?=
+ =?utf-8?B?K2FNaDd0VGxaOFFCSWZWeC94UVhIMDRReklNV21KekkzUi84QkUvQXBMMUw5?=
+ =?utf-8?B?K1VvdFZ1UnNCTm42dFc1bENpanl3WGthL1hxaFVkM05rYW5iTGdiMFNEbGxS?=
+ =?utf-8?B?N09VcEg3Qll1cjFYekgxUU9tVk9ITmt3bUtWdTVhKzd2KzgvakdzSldoQkVD?=
+ =?utf-8?B?YXZleURUNk1qcm14WEFJUG1jNDFPZ1dTWUFqRHJORzhBT284bTZETzFzbUx1?=
+ =?utf-8?B?SytDRWlmY1o0bTQ4VmxNbktGNWdURytTb0daVkpna0N5QlZpSHNMVjloYWtI?=
+ =?utf-8?Q?aDKjVHeLC2zjxGGKU2yr+GZ5y?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9B2076D88B45F847B15717ABECB9C793@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6603.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 076dd00c-6b69-4cf9-93f4-08dab0b7b775
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2022 03:20:32.9473
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: M67pAN2cnGQXfk0q1g4JqcpSmJRoLz/YioYEAokyJP/M5+vnDVQPLJjg2G47CFbYUnJGhrU/vMBcabcBvHK9Lw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7210
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022/10/18 7:01, Nicolin Chen wrote:
-> Cases like VFIO wish to attach a device to an existing domain that was
-> not allocated specifically from the device. This raises a condition
-> where the IOMMU driver can fail the domain attach because the domain and
-> device are incompatible with each other.
-> 
-> This is a soft failure that can be resolved by using a different domain.
-> 
-> Provide a dedicated errno EINVAL from the IOMMU driver during attach that
-> the reason why the attach failed is because of domain incompatibility.
-> 
-> VFIO can use this to know that the attach is a soft failure and it should
-> continue searching. Otherwise, the attach will be a hard failure and VFIO
-> will return the code to userspace.
-> 
-> Update kdocs to add rules of return value to the attach_dev op and APIs.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->   drivers/iommu/iommu.c | 24 ++++++++++++++++++++++++
->   include/linux/iommu.h | 12 ++++++++++++
->   2 files changed, 36 insertions(+)
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 4893c2429ca5..3c0c5d64bb50 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -1949,6 +1949,18 @@ static int __iommu_attach_device(struct iommu_domain *domain,
->   	return ret;
->   }
->   
-> +/**
-> + * iommu_attach_device - Attach an IOMMU domain to a device
-> + * @domain: IOMMU domain to attach
-> + * @dev: Device that will be attached
-> + *
-> + * Returns 0 on success and error code on failure
-> + *
-> + * Note that EINVAL can be treated as a soft failure, indicating
-> + * that certain configuration of the domain is incompatible with
-> + * the device. In this case attaching a different domain to the
-> + * device may succeed.
-> + */
->   int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
->   {
->   	struct iommu_group *group;
-> @@ -2075,6 +2087,18 @@ static int __iommu_attach_group(struct iommu_domain *domain,
->   	return ret;
->   }
->   
-> +/**
-> + * iommu_attach_group - Attach an IOMMU domain to an IOMMU group
-> + * @domain: IOMMU domain to attach
-> + * @group: IOMMU group that will be attached
-> + *
-> + * Returns 0 on success and error code on failure
-> + *
-> + * Note that EINVAL can be treated as a soft failure, indicating
-> + * that certain configuration of the domain is incompatible with
-> + * the group. In this case attaching a different domain to the
-> + * group may succeed.
-> + */
->   int iommu_attach_group(struct iommu_domain *domain, struct iommu_group *group)
->   {
->   	int ret;
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index a325532aeab5..6f3569340e8a 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -266,6 +266,18 @@ struct iommu_ops {
->   /**
->    * struct iommu_domain_ops - domain specific operations
->    * @attach_dev: attach an iommu domain to a device
-> + *  Return:
-> + * * 0		- success
-> + * * EINVAL	- can indicate that device and domain are incompatible due to
-> + *		  some previous configuration of the domain, in which case the
-> + *		  driver shouldn't log an error, since it is legitimate for a
-> + *		  caller to test reuse of existing domains. Otherwise, it may
-> + *		  still represent some other fundamental problem
-> + * * ENOMEM	- out of memory
-> + * * ENOSPC	- non-ENOMEM type of resource allocation failures
-> + * * EBUSY	- device is attached to a domain and cannot be changed
-> + * * ENODEV	- device specific errors, not able to be attached
-> + * * <others>	- treated as ENODEV by the caller. Use is discouraged
->    * @detach_dev: detach an iommu domain from a device
->    * @map: map a physically contiguous memory region to an iommu domain
->    * @map_pages: map a physically contiguous set of pages of the same size to
-
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-
-Best regards,
-baolu
+T24gTW9uLCAyMDIyLTEwLTE3IGF0IDIxOjE3ICswMTAwLCBKb24gSHVudGVyIHdyb3RlOg0KPiBP
+biAxNy8xMC8yMDIyIDEwOjM2LCBKaW0gTGluIHdyb3RlOg0KPiA+IE9uIFdlZCwgMjAyMi0xMC0x
+MiBhdCAxMjo0NSArMDEwMCwgSm9uIEh1bnRlciB3cm90ZToNCj4gPiA+IE9uIDEyLzEwLzIwMjIg
+MTE6MjUsIEppbSBMaW4gd3JvdGU6DQo+ID4gPiA+IFByb2dyYW0gVVNCMiBwYWQgUEQgY29udHJv
+bHMgZHVyaW5nIHBvcnQgY29ubmVjdC9kaXNjb25uZWN0LA0KPiA+ID4gPiBwb3J0DQo+ID4gPiA+
+IHN1c3BlbmQvcmVzdW1lLCBhbmQgdGVzdCBtb2RlLCB0byByZWR1Y2UgcG93ZXIgY29uc3VtcHRp
+b24gb24NCj4gPiA+ID4gZGlzY29ubmVjdCBvciBzdXNwZW5kLg0KPiA+ID4gPiANCj4gPiA+ID4g
+U2lnbmVkLW9mZi1ieTogSmltIExpbiA8amlsaW5AbnZpZGlhLmNvbT4NCj4gPiA+ID4gLS0tDQo+
+ID4gPiA+IHYyOiBGaXggaXNzdWUgdGhhdCB3cm9uZyB0ZWdyYS0+cGh5c1tdIG1heSBiZSBhY2Nl
+c3NlZCBvbg0KPiA+ID4gPiB0ZWdyYTEyNA0KPiA+ID4gPiB2MzogTm8gY2hhbmdlIG9uIGNvcHly
+aWdodA0KPiA+ID4gPiANCj4gPiA+ID4gICAgZHJpdmVycy91c2IvaG9zdC94aGNpLXRlZ3JhLmMg
+fCAxMzkNCj4gPiA+ID4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQ0KPiA+ID4g
+PiAgICAxIGZpbGUgY2hhbmdlZCwgMTM4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4g
+PiA+ID4gDQo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9ob3N0L3hoY2ktdGVncmEu
+Yw0KPiA+ID4gPiBiL2RyaXZlcnMvdXNiL2hvc3QveGhjaS0NCj4gPiA+ID4gdGVncmEuYw0KPiA+
+ID4gPiBpbmRleCBjOGFmMmNkMjIxNmQuLjk5NjE4MmExOTU5ZiAxMDA2NDQNCj4gPiA+ID4gLS0t
+IGEvZHJpdmVycy91c2IvaG9zdC94aGNpLXRlZ3JhLmMNCj4gPiA+ID4gKysrIGIvZHJpdmVycy91
+c2IvaG9zdC94aGNpLXRlZ3JhLmMNCj4gPiA+ID4gQEAgLTE4OSw2ICsxODksMTMgQEAgc3RydWN0
+IHRlZ3JhX3h1c2JfY29udGV4dF9zb2Mgew0KPiA+ID4gPiAgICAJfSBmcGNpOw0KPiA+ID4gPiAg
+ICB9Ow0KPiA+ID4gPiAgICANCj4gPiA+ID4gK2VudW0gdGVncmFfeGhjaV9waHlfdHlwZSB7DQo+
+ID4gPiA+ICsJVVNCM19QSFksDQo+ID4gPiA+ICsJVVNCMl9QSFksDQo+ID4gPiA+ICsJSFNJQ19Q
+SFksDQo+ID4gPiA+ICsJTUFYX1BIWV9UWVBFUywNCj4gPiA+ID4gK307DQo+ID4gPiA+ICsNCj4g
+PiA+ID4gICAgc3RydWN0IHRlZ3JhX3h1c2Jfc29jIHsNCj4gPiA+ID4gICAgCWNvbnN0IGNoYXIg
+KmZpcm13YXJlOw0KPiA+ID4gPiAgICAJY29uc3QgY2hhciAqIGNvbnN0ICpzdXBwbHlfbmFtZXM7
+DQo+ID4gPiA+IEBAIC0yNzQsOSArMjgxLDE3IEBAIHN0cnVjdCB0ZWdyYV94dXNiIHsNCj4gPiA+
+ID4gICAgDQo+ID4gPiA+ICAgIAlib29sIHN1c3BlbmRlZDsNCj4gPiA+ID4gICAgCXN0cnVjdCB0
+ZWdyYV94dXNiX2NvbnRleHQgY29udGV4dDsNCj4gPiA+ID4gKwl1MzIgZW5hYmxlX3V0bWlfcGFk
+X2FmdGVyX2xwMF9leGl0Ow0KPiA+ID4gPiAgICB9Ow0KPiA+ID4gPiAgICANCj4gPiA+ID4gICAg
+c3RhdGljIHN0cnVjdCBoY19kcml2ZXIgX19yZWFkX21vc3RseSB0ZWdyYV94aGNpX2hjX2RyaXZl
+cjsNCj4gPiA+ID4gK3N0YXRpYyBpbnQgKCpvcmlnaW5hbF94aGNpX2h1Yl9jb250cm9sKShzdHJ1
+Y3QgdXNiX2hjZCAqaGNkLA0KPiA+ID4gPiB1MTYNCj4gPiA+ID4gdHlwZVJlcSwgdTE2IHdWYWx1
+ZSwgdTE2IHdJbmRleCwNCj4gPiA+ID4gKwkgICAgY2hhciAqYnVmLCB1MTYgd0xlbmd0aCk7DQo+
+ID4gPiANCj4gPiA+IElzIGl0IGJldHRlciB0byBhZGQgdGhpcyBmdW5jdGlvbiBwb2ludGVyIHRv
+IHRoZSB0ZWdyYV94dXNiDQo+ID4gPiBzdHJ1Y3R1cmU/DQo+ID4gPiANCj4gPiA+IEpvbg0KPiA+
+ID4gDQo+ID4gDQo+ID4gRG8geW91IG1lYW4gcmVtb3ZpbmcgdmFyaWFibGUgIm9yaWdpbmFsX3ho
+Y2lfaHViX2NvbnRyb2wiIGFuZCBzYXZlDQo+ID4gZnVuY3Rpb24gcG9pbnRlciB0byB0aGUgdGVn
+cmFfeHVzYiBzdHJ1Y3R1cmUgPw0KPiA+IA0KPiA+IEJ1dCB0aGF0IGRvZXNuJ3QgbG9vayBwb3Nz
+aWJsZSBvdmVyIGhlcmUgdG8gcG9pbnQgdG8gdGVncmFfeHVzYg0KPiA+IHN0cnVjdHVyZSBhbmQg
+c2F2ZSBwb2ludGVyICh0byB0ZWdyYV94aGNpX2hjX2RyaXZlci5odWJfY29udHJvbCkNCj4gPiBp
+bnRvDQo+ID4gaXQuDQo+IA0KPiANCj4gQWggeWVzLCB0aGlzIGlzIGluIHRoZSBpbml0IGZ1bmN0
+aW9uIGFuZCBzbyB3ZSBjYW4ndCBkbyB0aGF0LiBBbnkNCj4gaXNzdWUgDQo+IHdpdGggY2FsbGlu
+ZyB4aGNpX2h1Yl9jb250cm9sKCkgZGlyZWN0bHkgaW4gdGhlIGZ1bmN0aW9uIA0KPiB0ZWdyYV94
+aGNpX2h1Yl9jb250cm9sKCk/DQo+IA0KPiBKb24NCj4gDQpUaGFua3MsIHdpbGwgdHJ5Lg0KDQot
+LW52cHVibGljDQo=
