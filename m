@@ -2,146 +2,265 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12250C43217
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Oct 2022 14:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549EBC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Oct 2022 15:14:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbiJRO6Y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Oct 2022 10:58:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55988 "EHLO
+        id S229845AbiJRPOB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Oct 2022 11:14:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229710AbiJRO6X (ORCPT
+        with ESMTP id S229891AbiJRPOA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Oct 2022 10:58:23 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2079.outbound.protection.outlook.com [40.107.94.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1274DAC49;
-        Tue, 18 Oct 2022 07:58:22 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jcNWZwxufyzqhyexizxIE7aNN9l0NAmeOVgVGF2g7GNsIGXnrWQLERzz6w2I+9zq2Wu3XNcJWoPgs4dkP7Pm+LOR8vyr+tA1dX3udGXJ6niTa2uC68HtG6M4IST+r6KeogAm61+GugsDdzm7W7xQHTnE4otq8yR2yKTAvAEcVMxz+PddGNZJoQ6d7r7IVUWm1Y7oF21HGx5ZcsCPP0fLqzBTGlPCs/TmW0DYQSI16T9YCsCa8PTlaETydZD2PLHM4APkdfoAJ/qLiQdG4hHR91ZW3zLUy12+Int2dgJs931p7pq/9qyEPMmGKBHPtOVAMLOv24WQ8JlD/2llzDX9PQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CNQJMUWdUyNpksAtq1QU0JbiYRy4ThfuGCkfcAU58bM=;
- b=l+/KXS/8tFGXSwUYzB4n/pMFYvH0UnwCLZaoMIiIn4ZANkdzt3K4KSBB/MgOClkcjtEvmSewkamKSsSoDUyPR1lCYXCnzao1yIkQ5WuOII6/+HbNHtmpPYiVIdEWlJFQlMQLitS+Fj3Wfj/paa9/GoSigIMdXPuOhsBMCcUpdjz1E2vt2C26gTSn4tBxL989NG6D24nZ/elS4IeaoQZL6BKiD/6fGO8LMBTVWlSwS+JDQeHE2ys5lRv2Jl0iPjTX5c0+jDKH3or2Hy4aJEsaQjNoeWSFZkysWlonD3xaD7ZYF7eoTPeXCIMgM8KOTfdRZxWSXHa8ZqLIvE2MxZnvkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CNQJMUWdUyNpksAtq1QU0JbiYRy4ThfuGCkfcAU58bM=;
- b=Wu1fKjMCQwEkcYxQNzHpQaEKc3TCTinWlmoEXtmxG6w5Ht8iExYe8DlW41oj3unXQCso3JCTwdkQjrJ6wQIthhKxqLBG4zifNy7QRtNFRtCBD8bmvzUTgXSo9fwSXoi+9A+FuvO7x+mWnxlACVlrPXO0mwhdtu9UIM3imuirlqCWuhh4hBAAZlTVMd8DumHJBVN1ZwkPu5dDSp5dXPd33oV3Gi8eKajDm+UdCkJPAidnJcHZB7IBKZOZBvuuN851CKvlmGjzTKvZjISP2PD1CRsuE3mKNNcCNseoTM2rJFolYTc1gXoSwjAKwSuWfJDo8frjqthN3T01sSW87Yrzag==
-Received: from MW2PR16CA0004.namprd16.prod.outlook.com (2603:10b6:907::17) by
- DM4PR12MB7502.namprd12.prod.outlook.com (2603:10b6:8:112::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5723.32; Tue, 18 Oct 2022 14:58:21 +0000
-Received: from CO1NAM11FT086.eop-nam11.prod.protection.outlook.com
- (2603:10b6:907:0:cafe::15) by MW2PR16CA0004.outlook.office365.com
- (2603:10b6:907::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.17 via Frontend
- Transport; Tue, 18 Oct 2022 14:58:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT086.mail.protection.outlook.com (10.13.175.73) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5723.20 via Frontend Transport; Tue, 18 Oct 2022 14:58:21 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 18 Oct
- 2022 07:58:11 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 18 Oct
- 2022 07:58:11 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 18 Oct 2022 07:58:07 -0700
-From:   Kartik <kkartik@nvidia.com>
-To:     <ldewangan@nvidia.com>, <gregkh@linuxfoundation.org>,
-        <jirislaby@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <alan@linux.intel.com>,
-        <swarren@nvidia.com>, <akhilrajeev@nvidia.com>,
-        <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] serial: tegra: Read DMA status before terminating
-Date:   Tue, 18 Oct 2022 20:28:06 +0530
-Message-ID: <1666105086-17326-1-git-send-email-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Tue, 18 Oct 2022 11:14:00 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FF4915E3;
+        Tue, 18 Oct 2022 08:13:59 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id ot12so33072554ejb.1;
+        Tue, 18 Oct 2022 08:13:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hNhLngTIuDz1fSYbv22Q+H67fNTF0+BxYrf0gp74wcE=;
+        b=SJ+IAl+5OCTWqEqNS36XDi+g263hCCGcnv4o+XbHlDJ0gApDWpYXAX3H9pg10kSFbs
+         1c+0+FMqM1YzZxp/KuVkkOBnXCmtICYgDnkTG2MvOK0a7StFrLopq47qfs4qOevwCYEo
+         XJIutrgBVM4p17Zch+5QVppdx/uVViK45dBPOnYGMDKTmQyQ0mg82PSrobNxHdba/bvl
+         cGYeQtzraRd0YOAuZwX5cZoPta0Ld9wAsTsMVx2YhGalaPbF/BbT8069N/KTz0mGAZ9V
+         EYqQiw2UMUIJ7Rp5Az+5XcoH4e9/tDnpLy7JnkCMUY912y8s7ETc+Q+1mNzCX/f7SEx1
+         w6qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hNhLngTIuDz1fSYbv22Q+H67fNTF0+BxYrf0gp74wcE=;
+        b=TZlIKs6oupWuIrN5lAmOfOqkRl6vNpAlcWnp0I438OBP9mDhiMQMjWrZEhiYw1lWVJ
+         JySRMowL/eA+V5z92oyXMgE1tmPc3XwcJslwksblSEhJujmv6K04F9lpZ6Gj7lr2nRxe
+         XRN5yjo8Nf4U2bwUr8DbNEFn7+artCVOQkopCwBFgkPHamjtftJbJf0IGTXVmhJSpTIE
+         y9BqEcwNF6eXgTlrpT5jwOl8HuZU/S4p+42C/QszF7Ac/2AcSeRWImHPz0nwe2e2s0GJ
+         LATsHpnLV1SVVrHAH1awvDKpyQPY89Cb5W37Fz74NE81awBfQ3pAxmczoLGgmtery88R
+         yPNA==
+X-Gm-Message-State: ACrzQf3e6jh+Y5JqKYeEXe9h/3+KewmaZxrAFcvHei1pb2YMqPQg2c4f
+        n4eCW+YMWhI6qeaLHisp8RE=
+X-Google-Smtp-Source: AMsMyM49rLo/J1OXRnregHqWmX5zETPBTJALo8rB9x3LRt9TqKEOvT1Vo3wcC0KotJWcvAsjr0kH5A==
+X-Received: by 2002:a17:907:7638:b0:78d:9e03:86a8 with SMTP id jy24-20020a170907763800b0078d9e0386a8mr2859624ejc.6.1666106037381;
+        Tue, 18 Oct 2022 08:13:57 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ey4-20020a0564022a0400b00459148fbb3csm9069904edb.86.2022.10.18.08.13.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Oct 2022 08:13:56 -0700 (PDT)
+Date:   Tue, 18 Oct 2022 17:13:54 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] drm/simpledrm: Add support for system memory
+ framebuffers
+Message-ID: <Y07CsnyOAwU/pv7y@orome>
+References: <20221007124946.406808-1-thierry.reding@gmail.com>
+ <20221007124946.406808-5-thierry.reding@gmail.com>
+ <dd869713-6eb2-fadd-fdef-6ca155198a8c@suse.de>
+ <Y01sunkDsQQQhXuC@orome>
+ <ea6c20a6-f171-4618-1763-45d4efa907c9@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT086:EE_|DM4PR12MB7502:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc4f7a00-47ba-4895-152e-08dab1193330
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: uZmDflVE8GlCneUTUHT6CdhVgMARyDYqzFgwEZYh4IajzFEiEYLnWIHr1DGs8tpYFsGI0KjGfk8Mzl0DPPf+EcXQ1n6k/kcOsrqncprBkRecFJUbxdO/lYrhBsX00SI1w8wO2Z18gYmmdgEjpcZUIHUN13O+o2H1defYAOdJ23EN7T3oBMNIYdGzb3ONOQFqXvPhbhq6gS3UZJ6/lWpcUrsIin6PvUOCDHLuKjIMbtDW3ne+ZSfJ4/N+9s2r3KL4lnVcnQoLfoWo2KOoVYkHVH3IteNNWj+fYAgMUwA/7IBwVYHFlge0s8RGQ06VyTfi86B2gj7YQHXAtE6bBUo3iijVkPV7tvncL64uHssOhphwK4TkxKk0qSDIBHtZtCz3RiO7zLfVggkKDOeQ9WYzhbuPGSg95ZqpEJIuaqFCATICG43MbUHoi7xBK8G8BZbUJ4eb6hJIFyebXqNB6KSKrx58OI+f3LwIHOx5L4kFtRl+LoxjQYkzsbI5z74sXh0Y9WW/VgWoIuFk8+M6nG9Kv+xWcUszTl4y/Nes0YjBr0k8ef4ZNJOGVAY18frqnVNJcx2LYgzCvRST5zSZwEh4AWFpepg+322hEUBQaz3IPe1LaFzJDKwJWlON0sLFkuO3Unbu2V95LmjN1BOQwgo4SHYyyfuwBiZCTU66fFmLYWWJZMAKEd1JjEUf0VP+G6DVu8i65mvGtj4jknGriKFv5DXRsp05/Ny66stxpOSY2rop4cnwmwZgTj/qpdZHTM3XlTtEAny87wNX1CQKh6isnokcKxtJl4yOw/4oxnXBTM0=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(346002)(136003)(39860400002)(451199015)(36840700001)(46966006)(40470700004)(5660300002)(316002)(70206006)(336012)(478600001)(110136005)(7696005)(70586007)(41300700001)(8676002)(26005)(186003)(2906002)(8936002)(2616005)(86362001)(83380400001)(47076005)(82740400003)(36756003)(356005)(7636003)(82310400005)(921005)(426003)(36860700001)(40460700003)(40480700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2022 14:58:21.5715
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc4f7a00-47ba-4895-152e-08dab1193330
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT086.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7502
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+4WO9rRGtMXr/sgr"
+Content-Disposition: inline
+In-Reply-To: <ea6c20a6-f171-4618-1763-45d4efa907c9@suse.de>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Read the DMA status before terminating the DMA, as doing so deletes
-the DMA desc.
 
-Also, to get the correct transfer status information, pause the DMA
-using dmaengine_pause() before reading the DMA status.
+--+4WO9rRGtMXr/sgr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: e9ea096dd225 ("serial: tegra: add serial driver")
+On Tue, Oct 18, 2022 at 01:58:53PM +0200, Thomas Zimmermann wrote:
+> Hi Thierry
+>=20
+> Am 17.10.22 um 16:54 schrieb Thierry Reding:
+> > On Mon, Oct 10, 2022 at 10:12:34AM +0200, Thomas Zimmermann wrote:
+> [...]
+> > >=20
+> > > That whole 'Memory Manangement' block is will be unmaintainable. Befo=
+re I go
+> > > into a detailed review, please see my questions about the reservedmem=
+ code
+> > > at the end of the patch.
+> >=20
+> > It looks reasonably maintainable to me. Given that we only have __iomem
+> > and non-__iomem cases, this is about the extent of the complexity that
+> > could ever be added.
+>=20
+> I think we should split the detection and usage, as the driver does with
+> other properties. It would fit better into the driver's overall design. I=
+'ll
+> send out another email with a review to illustrate what I have in mind.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Signed-off-by: Kartik <kkartik@nvidia.com>
----
-v1->v2:
- * Pause the DMA before reading the DMA status.
- * Updated commit message.
+Okay, great.
 
- drivers/tty/serial/serial-tegra.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> > > >    /*
+> > > >     * Modesetting
+> > > >     */
+> > > > @@ -491,15 +594,15 @@ static void simpledrm_primary_plane_helper_at=
+omic_update(struct drm_plane *plane
+> > > >    	drm_atomic_helper_damage_iter_init(&iter, old_plane_state, plan=
+e_state);
+> > > >    	drm_atomic_for_each_plane_damage(&iter, &damage) {
+> > > > -		struct iosys_map dst =3D IOSYS_MAP_INIT_VADDR(sdev->screen_base);
+> > > >    		struct drm_rect dst_clip =3D plane_state->dst;
+> > > >    		if (!drm_rect_intersect(&dst_clip, &damage))
+> > > >    			continue;
+> > > > -		iosys_map_incr(&dst, drm_fb_clip_offset(sdev->pitch, sdev->forma=
+t, &dst_clip));
+> > > > -		drm_fb_blit(&dst, &sdev->pitch, sdev->format->format, shadow_pla=
+ne_state->data, fb,
+> > > > -			    &damage);
+> > > > +		iosys_map_incr(&sdev->screen_base, drm_fb_clip_offset(sdev->pitc=
+h, sdev->format,
+> > > > +								      &dst_clip));
+> > >=20
+> > > You'll modify screen_base and it'll eventually blow up. You have to k=
+eep
+> > > initializing the dst variable within the loop.
+> > >=20
+> > > > +		drm_fb_blit(&sdev->screen_base, &sdev->pitch, sdev->format->form=
+at,
+> > > > +			    shadow_plane_state->data, fb, &damage);
+> > > >    	}
+> > > >    	drm_dev_exit(idx);
+> > > > @@ -518,7 +621,7 @@ static void simpledrm_primary_plane_helper_atom=
+ic_disable(struct drm_plane *plan
+> > > >    		return;
+> > > >    	/* Clear screen to black if disabled */
+> > > > -	memset_io(sdev->screen_base, 0, sdev->pitch * sdev->mode.vdisplay=
+);
+> > > > +	iosys_map_memset(&sdev->screen_base, 0, 0, sdev->pitch * sdev->mo=
+de.vdisplay);
+> > > >    	drm_dev_exit(idx);
+> > > >    }
+> > > > @@ -635,8 +738,6 @@ static struct simpledrm_device *simpledrm_devic=
+e_create(struct drm_driver *drv,
+> > > >    	struct drm_device *dev;
+> > > >    	int width, height, stride;
+> > > >    	const struct drm_format_info *format;
+> > > > -	struct resource *res, *mem;
+> > > > -	void __iomem *screen_base;
+> > > >    	struct drm_plane *primary_plane;
+> > > >    	struct drm_crtc *crtc;
+> > > >    	struct drm_encoder *encoder;
+> > > > @@ -706,35 +807,9 @@ static struct simpledrm_device *simpledrm_devi=
+ce_create(struct drm_driver *drv,
+> > > >    	drm_dbg(dev, "framebuffer format=3D%p4cc, size=3D%dx%d, stride=
+=3D%d byte\n",
+> > > >    		&format->format, width, height, stride);
+> > > > -	/*
+> > > > -	 * Memory management
+> > > > -	 */
+> > > > -
+> > > > -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > > -	if (!res)
+> > > > -		return ERR_PTR(-EINVAL);
+> > > > -
+> > > > -	ret =3D devm_aperture_acquire_from_firmware(dev, res->start, reso=
+urce_size(res));
+> > > > -	if (ret) {
+> > > > -		drm_err(dev, "could not acquire memory range %pr: error %d\n", r=
+es, ret);
+> > > > +	ret =3D simpledrm_device_init_mm(sdev);
+> > > > +	if (ret)
+> > > >    		return ERR_PTR(ret);
+> > > > -	}
+> > > > -
+> > > > -	mem =3D devm_request_mem_region(&pdev->dev, res->start, resource_=
+size(res), drv->name);
+> > > > -	if (!mem) {
+> > > > -		/*
+> > > > -		 * We cannot make this fatal. Sometimes this comes from magic
+> > > > -		 * spaces our resource handlers simply don't know about. Use
+> > > > -		 * the I/O-memory resource as-is and try to map that instead.
+> > > > -		 */
+> > > > -		drm_warn(dev, "could not acquire memory region %pr\n", res);
+> > > > -		mem =3D res;
+> > > > -	}
+> > > > -
+> > > > -	screen_base =3D devm_ioremap_wc(&pdev->dev, mem->start, resource_=
+size(mem));
+> > > > -	if (!screen_base)
+> > > > -		return ERR_PTR(-ENOMEM);
+> > > > -	sdev->screen_base =3D screen_base;
+> > > >    	/*
+> > > >    	 * Modesetting
+> > > > @@ -878,5 +953,35 @@ static struct platform_driver simpledrm_platfo=
+rm_driver =3D {
+> > > >    module_platform_driver(simpledrm_platform_driver);
+> > > > +static int simple_framebuffer_device_init(struct reserved_mem *rme=
+m, struct device *dev)
+> > > > +{
+> > > > +	struct simpledrm_device *sdev =3D dev_get_drvdata(dev);
+> > > > +
+> > > > +	sdev->sysmem_start =3D rmem->base;
+> > > > +	sdev->sysmem_size =3D rmem->size;
+> > >=20
+> > >  From what I understand, you use the sysmem_ variables in the same co=
+de that
+> > > allocates the simpledrm_device, which creates a chicken-egg problem. =
+When
+> > > does this code run?
+> >=20
+> > This will run as a result of the of_reserved_mem_device_init_by_idx()
+> > call earlier. It might be possible to push more code from the sysmem
+> > initialization code path above into this function. That may also make
+> > the somewhat clunky sysmem_start/size fields unnecessary.
+> >=20
+> > Alternatively, we may be able to skip the whole RESERVEDMEM_OF_DECLARE
+> > bits here and directly resolve the memory-region property and read its
+> > "reg" property. However it seemed more appropriate to use the existing
+> > infrastructure for this, even if it's rather minimal.
+>=20
+> I agree. It would still be nicer if there was a version of
+> of_reserved_mem_device_init_by_idx that returns the instance of reserved_=
+mem
+> instead of setting it in the device structure behind our back.
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index b7170cb9a544..cda9cd4fa92c 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -619,8 +619,9 @@ static void tegra_uart_stop_tx(struct uart_port *u)
- 	if (tup->tx_in_progress != TEGRA_UART_TX_DMA)
- 		return;
- 
--	dmaengine_terminate_all(tup->tx_dma_chan);
-+	dmaengine_pause(tup->tx_dma_chan);
- 	dmaengine_tx_status(tup->tx_dma_chan, tup->tx_cookie, &state);
-+	dmaengine_terminate_all(tup->tx_dma_chan);
- 	count = tup->tx_bytes_requested - state.residue;
- 	async_tx_ack(tup->tx_dma_desc);
- 	uart_xmit_advance(&tup->uport, count);
-@@ -763,8 +764,9 @@ static void tegra_uart_terminate_rx_dma(struct tegra_uart_port *tup)
- 		return;
- 	}
- 
--	dmaengine_terminate_all(tup->rx_dma_chan);
-+	dmaengine_pause(tup->rx_dma_chan);
- 	dmaengine_tx_status(tup->rx_dma_chan, tup->rx_cookie, &state);
-+	dmaengine_terminate_all(tup->rx_dma_chan);
- 
- 	tegra_uart_rx_buffer_push(tup, state.residue);
- 	tup->rx_dma_active = false;
--- 
-2.17.1
+There's of_reserved_mem_lookup() which does that, or at least something
+close to that. Ultimately, as Rob mentioned, we may not need any of this
+infrastructure and can just directly parse the node from the driver.
+This should allow us to avoid any of this infrastructure (i.e. the extra
+indirection) and encapsulate the handling of this better.
 
+I have a couple of ideas, but I'll wait for your feedback to work that
+in as well.
+
+Thierry
+
+--+4WO9rRGtMXr/sgr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNOwrAACgkQ3SOs138+
+s6GjBBAAwMOwYJOhKQB73ERCKCA5rnQjsnTexose3tnO8d1wi+1hsDpRZx8uuXYs
+H/6wum0kONVmCZd7D6gVTgAcXbNdyWNsgtghlrVMDkgHVvVfa7ler5gylBtWwqlX
+Tjt53HUcSXCBqISKcyhQd+IOoL1Qfwb9sCJdxAdJF1Qga0F8oXu24+4Kj0vH5RMe
+ATL+eXl9kvCdzhQMuAQEYDudvoJrDuxJ3QJJhaS2WAnjBQN6Ukb1iLubl4vleaFH
+6Hf3wUAiF0+kMDTAi874Gb6rjF4NvHWIO7/m0uOMlrefJyQ04IPuYebcbXYA+upF
+ET3vQILn79XWSH5Vx1NEihZ6mVWg6JcVx4Wnf9qlkQSoyNf1lxnQrq5qc33F05Ho
+rNa3MycoOADcRMhalpHtfZF7fWhy8h0YNUM2FsCKUiaGWzvfdsxGXp5qycho9kNm
+98QX/xVWd/HHGEHPNjnz73dEd+acb2vDzgxXUJ2yWxjlQ4w1KjPLqf01HYv8I/qI
+kqIrhoGcs41keS8PSW/4PWW4Vax6BZt2X7SeRyxk21D4dlijftMfcNY5YR2Rs/PM
+QFcndH/LumO2D+rYLLDMItlQ7V3T3s6WNuky6hmTuXpWU9cfxwAyxc1UI+SZX5T3
+TgSzPvEFJl2gmTkjfGyUVxVPVtTxxg8uo7aMYfZchq0fctrVB6E=
+=D93o
+-----END PGP SIGNATURE-----
+
+--+4WO9rRGtMXr/sgr--
