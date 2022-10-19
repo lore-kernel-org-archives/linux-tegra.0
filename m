@@ -2,85 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A68C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Oct 2022 09:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788CAC4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Oct 2022 10:19:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbiJSJfD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Oct 2022 05:35:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44444 "EHLO
+        id S229848AbiJSKTE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Oct 2022 06:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233969AbiJSJeP (ORCPT
+        with ESMTP id S229879AbiJSKSL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Oct 2022 05:34:15 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82783BC6B;
-        Wed, 19 Oct 2022 02:15:05 -0700 (PDT)
+        Wed, 19 Oct 2022 06:18:11 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2435510A7C9;
+        Wed, 19 Oct 2022 02:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666170907; x=1697706907;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GyL/mkBnWw9BwSgBpj4b43K3+WPQ3jqn+0KpOYzRE0M=;
-  b=XP0UX+Ei2CkvB4C19RJtrduq8F6tE3lCoiIxOIltmADxJtlLFqyc2hES
-   TZVazlw41PYIbg0n+ZURc8zPClk3j9czRoC3e8W5Mk+BPX/163AMNKgwc
-   1SwXp0Z3sEPZ8htQmcyn6gZjukzSWbyeeESZE2RQOnEn7edEhhF+HlZJK
-   iNt8ZgtrxI/icsOUuNGAhAY+rcr0cq1GwN7WllK55uE9O+7eIgw0fD9Zy
-   q3WMjn8XYG08wJdPpVUzEiZkgj07kJTzrXKTAii+y3Uu3J2wonu31P9Mn
-   If2orn0Tz1aFrV49oGP+js0ncasVhSuHBwqvutkHfe0wK7tAxdkWF5oNB
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="332911244"
+  t=1666173521; x=1697709521;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=9dSAc1UFg4UrWGr+WusmcEeV8LdPl63/4+kSRPsPwNY=;
+  b=JawsDlwJSLRkt2mBl0ShSTAsAu3aJuozJB1k3Ou37BcMjHjRNgs3IySp
+   XT1XGQFMDxC+I2a9I5CcxLxoEI+PF1VMShhuEbN925rhRx8Tilne5T1LG
+   QBfLEA4JE6YwvOx118tDLFdqI9eUJE2NOjzeGkroweTejTgHJzLHuHDxp
+   BDCB59y3rSa1AJuHF/NGhEJ9XTOFCat0R4LoZ1Ncl5yzZPO7gMR1yv21S
+   AfAcjlNEQcQVYefLbf960Uwz6uJTGDvKEx+gDhQzkn8yiW2knaB1Jo2Qh
+   B+XJZRuoVWGtLLzapxV30zJiZ8U7jACv9vuXd5EC5at/IZPd5rIEQiJsj
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="308041281"
 X-IronPort-AV: E=Sophos;i="5.95,195,1661842800"; 
-   d="scan'208";a="332911244"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 02:14:06 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="734119160"
+   d="scan'208";a="308041281"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 02:13:04 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="804206433"
 X-IronPort-AV: E=Sophos;i="5.95,195,1661842800"; 
-   d="scan'208";a="734119160"
-Received: from sponnura-mobl1.amr.corp.intel.com (HELO ijarvine-MOBL2.ger.corp.intel.com) ([10.251.214.35])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 02:14:03 -0700
-From:   =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To:     linux-serial@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
+   d="scan'208";a="804206433"
+Received: from sponnura-mobl1.amr.corp.intel.com ([10.251.214.35])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 02:12:59 -0700
+Date:   Wed, 19 Oct 2022 12:12:56 +0300 (EEST)
+From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To:     Kartik <kkartik@nvidia.com>
+cc:     ldewangan@nvidia.com, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, alan@linux.intel.com, swarren@nvidia.com,
+        akhilrajeev@nvidia.com, linux-serial@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 31/44] serial: tegra: Use uart_xmit_advance()
-Date:   Wed, 19 Oct 2022 12:11:38 +0300
-Message-Id: <20221019091151.6692-32-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20221019091151.6692-1-ilpo.jarvinen@linux.intel.com>
-References: <20221019091151.6692-1-ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v2] serial: tegra: Read DMA status before terminating
+In-Reply-To: <1666105086-17326-1-git-send-email-kkartik@nvidia.com>
+Message-ID: <a579bb7-1895-19e4-d189-911c74cce69a@linux.intel.com>
+References: <1666105086-17326-1-git-send-email-kkartik@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323329-812515331-1666170783=:1619"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Take advantage of the new uart_xmit_advance() helper.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Ilpo JÃ¤rvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/tty/serial/serial-tegra.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+--8323329-812515331-1666170783=:1619
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index b7170cb9a544..4304e3f9307d 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -496,8 +496,7 @@ static void tegra_uart_fill_tx_fifo(struct tegra_uart_port *tup, int max_bytes)
- 				break;
- 		}
- 		tegra_uart_write(tup, xmit->buf[xmit->tail], UART_TX);
--		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
--		tup->uport.icount.tx++;
-+		uart_xmit_advance(&tup->uport, 1);
- 	}
- }
- 
+On Tue, 18 Oct 2022, Kartik wrote:
+
+> Read the DMA status before terminating the DMA, as doing so deletes
+> the DMA desc.
+> 
+> Also, to get the correct transfer status information, pause the DMA
+> using dmaengine_pause() before reading the DMA status.
+> 
+> Fixes: e9ea096dd225 ("serial: tegra: add serial driver")
+> 
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Signed-off-by: Kartik <kkartik@nvidia.com>
+> ---
+> v1->v2:
+>  * Pause the DMA before reading the DMA status.
+>  * Updated commit message.
+> 
+>  drivers/tty/serial/serial-tegra.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+> index b7170cb9a544..cda9cd4fa92c 100644
+> --- a/drivers/tty/serial/serial-tegra.c
+> +++ b/drivers/tty/serial/serial-tegra.c
+> @@ -619,8 +619,9 @@ static void tegra_uart_stop_tx(struct uart_port *u)
+>  	if (tup->tx_in_progress != TEGRA_UART_TX_DMA)
+>  		return;
+>  
+> -	dmaengine_terminate_all(tup->tx_dma_chan);
+> +	dmaengine_pause(tup->tx_dma_chan);
+>  	dmaengine_tx_status(tup->tx_dma_chan, tup->tx_cookie, &state);
+> +	dmaengine_terminate_all(tup->tx_dma_chan);
+>  	count = tup->tx_bytes_requested - state.residue;
+>  	async_tx_ack(tup->tx_dma_desc);
+>  	uart_xmit_advance(&tup->uport, count);
+> @@ -763,8 +764,9 @@ static void tegra_uart_terminate_rx_dma(struct tegra_uart_port *tup)
+>  		return;
+>  	}
+>  
+> -	dmaengine_terminate_all(tup->rx_dma_chan);
+> +	dmaengine_pause(tup->rx_dma_chan);
+>  	dmaengine_tx_status(tup->rx_dma_chan, tup->rx_cookie, &state);
+> +	dmaengine_terminate_all(tup->rx_dma_chan);
+>  
+>  	tegra_uart_rx_buffer_push(tup, state.residue);
+>  	tup->rx_dma_active = false;
+
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+
+
 -- 
-2.30.2
+ i.
 
+--8323329-812515331-1666170783=:1619--
