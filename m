@@ -2,169 +2,264 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B67C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Oct 2022 18:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80816C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Oct 2022 19:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbiJSSET (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Oct 2022 14:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54030 "EHLO
+        id S230228AbiJSTzP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Oct 2022 15:55:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiJSSET (ORCPT
+        with ESMTP id S230266AbiJSTzK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Oct 2022 14:04:19 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2063.outbound.protection.outlook.com [40.107.244.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE48110B14;
-        Wed, 19 Oct 2022 11:04:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KaxHsaSmirUjbFIRxUepkJYMMNwqvHy4wMmqtxFuqMq23mjkaeuGUDNBgQOpVKfaPebe1TBfUSQs7A+Yyr6WcTIoGWwe7VszSIb+zPVBlF1R0RVrjOXRXbmjEtmEy/M3cerDdAMIvfkFvVXadbjM7GWmM3JJI1Ims/LAV8GVzmlnvC0+KgL8gPe/MwVqvEjT1VjZqLGvXM6pn7yYU6mCNELZMrnHR+b7eKAbEaM2rCaZKhH7aB5CFp5Ud7fV5RLqQiX4lVmlkWwParGKna1vHQT4Y8yoV100QPyPUY6RGz6qcCpJgI9XGjArZ6xnizUxplQS3bt4sJL/4j1gb+cy0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f1lp3E4S7ledwpeKtu/yth5tJilRhTnqS3cN5ciLzik=;
- b=j+2z1yDoQ/oNZKQrYreUPzGsd4okHgBZbOZ5nvJ5il8vw5594vwKX+/cCFHwUpLWAl3gpci4gugTJJnWFG6G57pbGPlhdPn3YnIJI5C7Iu0ud2NglinBkq4fGMNzL+aWIX7kIDHRkbpJpvi2HzL71pq02SdG+8fZYPDL99hyOPQUfaP/uVrTAHfgdTmWLjda6kCFDztvO80rPDAoKYtRSS3XzzvaT5EjsVlmzJMSlWnHXnMrDUmqbIILgkM5tsyRdGtXPnQYmivoPxsUyv8QCfM0A80bq87pXEv0doFk46gANJtXBXHH5o/JTg3sSUAvtc8BX0NYN3Kn4J/a9rH4Hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f1lp3E4S7ledwpeKtu/yth5tJilRhTnqS3cN5ciLzik=;
- b=lE906chmawDu+X86WZytAz7bEbnoru89HJBYyu408nu5mNqNIYrhAAUkHK8FyCHWVpYjo+eyQBAEI1tywv3xj2FURz2ItTawwE3WQ5hOoZqfBNfzgC9W2N1KGB9Q1jJ3r2Dr1NTdpomUNotVkBkMC/aV9qaXR08ghObPA/xcXRk0jlUKfMd9q0X4ju5vOCvzvQE04o0Dz4AiFRh4T+RLLOTjDl0Se23Oj5uZPWrLzCRz/D1tXDKA2hvxSqwDRf4l/U4wcGuQ4VP3YffB4ZXwl+dEVoUihREVFmh+DaPsRFsEVts4X1/o2zUlb/yTCpTW1lWGouOLL15aavKSpJdJwA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- BN9PR12MB5365.namprd12.prod.outlook.com (2603:10b6:408:102::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.34; Wed, 19 Oct
- 2022 18:04:16 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::c0e5:f111:3e59:7c66]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::c0e5:f111:3e59:7c66%5]) with mapi id 15.20.5723.033; Wed, 19 Oct 2022
- 18:04:16 +0000
-Message-ID: <6944bdcc-94d4-0e51-59ea-cedc86acc361@nvidia.com>
-Date:   Wed, 19 Oct 2022 19:01:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH 6.0 000/862] 6.0.3-rc1 review
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-        srw@sladewatkins.net,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20221019083249.951566199@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20221019083249.951566199@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0166.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:312::10) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        Wed, 19 Oct 2022 15:55:10 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA6C618B48B;
+        Wed, 19 Oct 2022 12:55:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CCDAFB825E1;
+        Wed, 19 Oct 2022 19:55:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59AABC433D6;
+        Wed, 19 Oct 2022 19:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666209301;
+        bh=rWNcMUcG9DDNLMyAn9aOc5PTGDK+JqC/MOVV6hh0TP0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AS1bySSuzt+v9qgP9nV4W0vcNULhVRnV+aVK+fHcxSdO2qnAx0mHBUYS/2UMN/l+c
+         ZB2ih7HSz9gX2L92v/AYZq0T4faa4J6z1Hccthvtt722q+PTH8wTXhMxeUL9qAOt5W
+         eDe95lTcW9FsELfdPte8ZT1T5vONtwIfP1tZwLHT/30JarfrKyUEDlC4hXNITGj9M0
+         WKENOhumsKWpgDPNZHyJi2NZyX9jivbIIOP6qahufWn7y4aTMzdJWprc+ZT39jE29V
+         ujZ9lax01KINQ3L8m5mI/lNZolvX4OQ8j8W/zr6NwQNXox1MDBKXPtqjBcoGFgtgss
+         Vm8j7doGKP3qg==
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc:     Kishon Vijay Abraham I <kishon@kernel.org>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Toan Le <toan@os.amperecomputing.com>,
+        Joyce Ooi <joyce.ooi@intel.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+        Michal Simek <michal.simek@amd.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] PCI: Remove unnecessary of_irq.h includes
+Date:   Wed, 19 Oct 2022 14:54:51 -0500
+Message-Id: <20221019195452.37606-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|BN9PR12MB5365:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61f949b3-5442-4de5-5513-08dab1fc5613
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: o6OkHlHVjExaOcg2oKVfZ7+JtJDznTtSxEPCjri6M7uzjBkihFErfgdvpmmawmHasiwM/+iEeffjbOfjKzU6TX5eYGaMWEBEQ9O4N7DpyBdhsm2t1xuP/2OGHUi1UdD0vuCceEBbqk0tRBJd07B8ZwHAin2ks1S4ZqvQfUWMVSLvbnWQLrkZXORDwUxdkOKs9vPx8buhC/Zq2OXG0Mbpt+QDTBosZr7/YyqU22dZ6eYvZYoZrkqW77KHQmyq4Oma9Lt6DYENwQN7iGDUBjiNytL4kwbyaP6Zt5sJ9LNnvej88FkLdkAA30fpBgVYa5e8LiptbCkg/GBSTA94MPIVD38G6+pizUxN/SXAJaiTm8meSM7v9ql79xviM5kyDrQwxP+r7oUkDoJtmqLb2Ladag26rtzI/Cqs2EkmSE9QqfPet059p3372UxrXdYQazEY8wKIjxf8b8xMDdzX4VGY9MAVRgmMTbY3B/0xzqEIxx8g5t3e9WqeEDKI74npDmSzk8BM3de1Uzn26F2UkrWMiXDAXR5Mr4G/popPQ9yzhGhu75Y0e0QAcrlLI+6x/zAqXD4jmXxSWS3xLngGClsFHMqUste+Zu7htrAegV9P9YMqf7NkQ3+tL0W8fsCdHs8sFKc/EnHlng3Hsc5AIOA/7J5oUobnAIvUDpGPmXVXPvi48NZgZwvVuTFNJhAX7WTztCHdtlDbOajhzVkNoLKsoQohllscb8pYTE9s84Cjjk6a+Vb//5LObMjpso4bZ/WRmcQphsWV8YF9oKSuPZT1axGLluUx0UKbe6eeHF5RlvwjqsYl89mkIGjhDCLSlI3/qkj8eBA6vC7Few5zU8+KIm847DJlI2lXc+/QQmX9IAF6cGuLbYLdGWniJPNBnc+v
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(366004)(376002)(346002)(136003)(39860400002)(451199015)(316002)(8936002)(6512007)(2616005)(2906002)(186003)(5660300002)(7416002)(66556008)(66476007)(8676002)(4326008)(66946007)(6666004)(83380400001)(41300700001)(86362001)(31696002)(6506007)(36756003)(53546011)(478600001)(38100700002)(31686004)(966005)(6486002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aHFTVlhsQWgwWjY2RDRUOTRLd1VhUTBCcjBCZUxhdU5hTFkvUHhuSituNkJp?=
- =?utf-8?B?bllaUS9UM1hXY3NPWXVRVU52cXI2SENsbHdOZ3J5NDZhcUVjaFQvVjNScFRX?=
- =?utf-8?B?SHZERUREVUU2SFdzRHVIYUQreTh4OXhuazlqVHFOZHJpZEVvQ2MxdVY4Umcy?=
- =?utf-8?B?dEVJV0RWVUZIc3ZKUjFGUGY3TjhIZVZJTXpFemJQTGpyb2JyWUpWb3BSNHJX?=
- =?utf-8?B?ZXNoOWdrUUpjR2FqV2p5SFp3UlZRWldVUm9lWi9XaFZwK3JhWStJci9sQUd4?=
- =?utf-8?B?YUVaakdmTkNkUUdaVjkyTlR1Z0tycGFRU3BDcEdlYW45b080cVhjVGZQUW5u?=
- =?utf-8?B?YnFFcGpvZm9UTkpCNFh4ay9QZjBNWG9MSnRQZ3RNcnI2M2EzOW9xbUpjamVK?=
- =?utf-8?B?TkZialQ0UFBLY3pkYWN5WG5YeTlHYlNzdFgxWVlTU2JGaWtzTHNpajZNMHhy?=
- =?utf-8?B?bFQ0UEZVaklIVWRQZlIyWDdMaWNOcFE5SEZRdzRadDdaUzNHTFM0Z2VQeEhK?=
- =?utf-8?B?UHMzcmFqZkJTbUVEOHVUa0pmTFlISkw5RXRVQzg0UzY2RnJ2TktNZ2tQQ3FU?=
- =?utf-8?B?aVpUK0I2UTArZ2ptTzEvdmxyMkh3RzYxTTNrMmNJWXJxREh1TWNFd0lRVkln?=
- =?utf-8?B?ZVplRmxSR2J3YjBvVXZhd0hteHJGaHA2Sk05WGxaMWVVK3pQME1nUEk0T2lx?=
- =?utf-8?B?SGkxRlNPcndkMXc3Nk50cEQzOHgxcmtQVWlua0U1WTRuUnNya0FXbUFkYjhL?=
- =?utf-8?B?YnRyWFJZQ0F4SzhYZjZUWDRkY3pZWVRCYWRtUGhlMU9FZFFhOE5NUzRlSERt?=
- =?utf-8?B?TjVIeUxieHI3S0ZqbHk2cys4NUNCV3lvaEdjWkxjSksrTVFxSXZucHhMT0ZB?=
- =?utf-8?B?WHBLNHRYbUZ3ODJZaHdXQXpQamtKQnU2SUlNRnRud21UcUVucnNwQlo3WDM2?=
- =?utf-8?B?TElMK0dNWnRyTlNHc1FtdEhHeDBCVVVVMXpiaTMxMlhEZnFoSjBJMFI2RDRH?=
- =?utf-8?B?eUFvUG9paUxaQ21hU09hZUU4b2prM3NOMVdaTTVSTGtJc29hTldUdzRJbkJM?=
- =?utf-8?B?RGprMU83bXVXZmFTb0VndUd6UktLRDFxQXhVaDNlR3RxS3llM2N4UG1lTHlC?=
- =?utf-8?B?M3NER0hMUFVnc3JuS1pmT0t4anFVNWJCaE1iZ0NVeDVDcnJ2bkY0UFNrRVhj?=
- =?utf-8?B?aWtqYXpZV01iTkoyZzM0R214bjlwS0NRRllqUWR5YTA5Yk5URUhIK0xkbk14?=
- =?utf-8?B?Yk43RE1RWWNRWDVhSzlKRGNBaEFOdStVb2xxOW9kV1IxVUo5dnNnalN0NUtK?=
- =?utf-8?B?MWh2S0REZkdTSkhFNUFGZUpJeEp2K0Nob2FGR2l1UVZrY0FMUXU1dkk0empU?=
- =?utf-8?B?M0krenlqSEVpNGFEQ2hWdmJVcldoTVlUcGNpUkxmS29tbXZBVkFHMjd0cm85?=
- =?utf-8?B?dVlGME4vaUVZMzVmWmhiaEFoNTNvVjVEVWpzVVdoZWRuc3p3ZllYT0tvdVll?=
- =?utf-8?B?RTZ1VTRPV0Y1RFRzTWJpUWkwWHlMamg5R0YyTjh6cmc2dTVCYjlSSnhqcE1H?=
- =?utf-8?B?dkFKOUxzL0NuSlJHZHZCeGJKNkt5OHEvSzRnNnhXWmZQZGxhVENsTXoxRGt6?=
- =?utf-8?B?UWdkbzNnTEdXYzd4KzBtMjd1UTZtVG9wVHIwNkZWNjBWMDdjeWg4UUc3bFVJ?=
- =?utf-8?B?Ui9jRUNQQllUTUcrVFFTOTVzMzAxR0c1UHNGOXgyNHVwWHM5OHJZRDBoMUJi?=
- =?utf-8?B?T2RzK1l6Mi9OcFlyM1hRaXFQSzl2alNrT29HQTh5b3h0SURFbnA3cUtub21B?=
- =?utf-8?B?aHhDZlFQY3dsaFpMM1RSMXNJSVVlMHd2UzN6UzZSUzRMdDJqNk5jdDc5YUtS?=
- =?utf-8?B?cmduOUQ2dUFKUGJYMHIxSlRaUWFJOUpweW9EL3FBS0dkazJkUm1GM1piWWRh?=
- =?utf-8?B?WGtTck1wQm03Ukthdkp0VW5CNyt0YWFnWGhIUkxZNXhZRnRGOVQvU3dZc1Vp?=
- =?utf-8?B?Vlg0WHBQNTlVakc4K3BHeSsxNHVjNHpMWTNHSkk2eEl2MFEyYVJaZFpaYkdh?=
- =?utf-8?B?WFRQeUE1d1M0ZTFBNHVDV2Z0K0VXTk85dHRud3NGVjRSNW9nWDJrcjFTNjNG?=
- =?utf-8?B?amdPbllER3o2ZVRaOXpQNkl1MWYzRkNSZkp0eHFyR1BTaTZ3RUNXRjlFYThK?=
- =?utf-8?B?WUlFSWZ2NWFPSkpRZ0U1MWgxUkZuS2w1RmVJR05vdGxmZDNOYVI0aDg4dk5q?=
- =?utf-8?B?T2xBaVhqd2UrN2lXN2JQRG5MdytnPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61f949b3-5442-4de5-5513-08dab1fc5613
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2022 18:04:16.2672
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jbqZx5zh/MvVfD2o8CSU8XwSw157q3doBJMDc1WsLnWThUEgKPdmN5evN8piUDQHxyRPBl387lmDfWemqxB7hA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5365
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-On 19/10/2022 09:21, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.0.3 release.
-> There are 862 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 21 Oct 2022 08:30:19 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.0.3-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.0.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Many host controller drivers #include <linux/of_irq.h> even though they
+don't need it.  Remove the unnecessary #includes.
 
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/controller/cadence/pci-j721e.c   | 1 -
+ drivers/pci/controller/dwc/pci-layerscape.c  | 1 -
+ drivers/pci/controller/dwc/pcie-armada8k.c   | 1 -
+ drivers/pci/controller/dwc/pcie-tegra194.c   | 1 -
+ drivers/pci/controller/pci-v3-semi.c         | 1 -
+ drivers/pci/controller/pci-xgene-msi.c       | 1 -
+ drivers/pci/controller/pci-xgene.c           | 1 -
+ drivers/pci/controller/pcie-altera-msi.c     | 1 -
+ drivers/pci/controller/pcie-iproc-platform.c | 1 -
+ drivers/pci/controller/pcie-iproc.c          | 1 -
+ drivers/pci/controller/pcie-microchip-host.c | 1 -
+ drivers/pci/controller/pcie-rockchip-host.c  | 1 -
+ drivers/pci/controller/pcie-xilinx-cpm.c     | 1 -
+ drivers/pci/controller/pcie-xilinx-nwl.c     | 1 -
+ 14 files changed, 14 deletions(-)
 
-No new regressions for Tegra ...
-
-Test results for stable-v6.0:
-     11 builds:	11 pass, 0 fail
-     28 boots:	28 pass, 0 fail
-     130 tests:	128 pass, 2 fail
-
-Linux version:	6.0.3-rc1-g844297340351
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                 tegra20-ventana, tegra210-p2371-2180,
-                 tegra210-p3450-0000, tegra30-cardhu-a04
-
-Test failures:	tegra194-p2972-0000: boot.py
-                 tegra210-p3450-0000: devices
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+index a82f845cc4b5..cc83a8925ce0 100644
+--- a/drivers/pci/controller/cadence/pci-j721e.c
++++ b/drivers/pci/controller/cadence/pci-j721e.c
+@@ -15,7 +15,6 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_irq.h>
+ #include <linux/pci.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
+index 879b8692f96a..ed5fb492fe08 100644
+--- a/drivers/pci/controller/dwc/pci-layerscape.c
++++ b/drivers/pci/controller/dwc/pci-layerscape.c
+@@ -13,7 +13,6 @@
+ #include <linux/init.h>
+ #include <linux/of_pci.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_address.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
+index dc469ef8e99b..5c999e15c357 100644
+--- a/drivers/pci/controller/dwc/pcie-armada8k.c
++++ b/drivers/pci/controller/dwc/pcie-armada8k.c
+@@ -21,7 +21,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/resource.h>
+ #include <linux/of_pci.h>
+-#include <linux/of_irq.h>
+ 
+ #include "pcie-designware.h"
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 1b6b437823d2..02d78a12b6e7 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -21,7 +21,6 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/phy/phy.h>
+diff --git a/drivers/pci/controller/pci-v3-semi.c b/drivers/pci/controller/pci-v3-semi.c
+index 154a5398633c..784fcf35599c 100644
+--- a/drivers/pci/controller/pci-v3-semi.c
++++ b/drivers/pci/controller/pci-v3-semi.c
+@@ -22,7 +22,6 @@
+ #include <linux/kernel.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
+index bfa259781b69..5efc6e56559f 100644
+--- a/drivers/pci/controller/pci-xgene-msi.c
++++ b/drivers/pci/controller/pci-xgene-msi.c
+@@ -10,7 +10,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/msi.h>
+-#include <linux/of_irq.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pci-xgene.c b/drivers/pci/controller/pci-xgene.c
+index 549d3bd6d1c2..887b4941ff32 100644
+--- a/drivers/pci/controller/pci-xgene.c
++++ b/drivers/pci/controller/pci-xgene.c
+@@ -14,7 +14,6 @@
+ #include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/pci-acpi.h>
+diff --git a/drivers/pci/controller/pcie-altera-msi.c b/drivers/pci/controller/pcie-altera-msi.c
+index 7b1d3ebc34ec..89110b879d5f 100644
+--- a/drivers/pci/controller/pcie-altera-msi.c
++++ b/drivers/pci/controller/pcie-altera-msi.c
+@@ -13,7 +13,6 @@
+ #include <linux/module.h>
+ #include <linux/msi.h>
+ #include <linux/of_address.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pcie-iproc-platform.c b/drivers/pci/controller/pcie-iproc-platform.c
+index 538115246c79..4142a73e611d 100644
+--- a/drivers/pci/controller/pcie-iproc-platform.c
++++ b/drivers/pci/controller/pcie-iproc-platform.c
+@@ -12,7 +12,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/phy/phy.h>
+ 
+diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+index 2519201b0e51..83029bdfd884 100644
+--- a/drivers/pci/controller/pcie-iproc.c
++++ b/drivers/pci/controller/pcie-iproc.c
+@@ -18,7 +18,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/phy/phy.h>
+ 
+diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
+index 7263d175b5ad..937a79bcfddc 100644
+--- a/drivers/pci/controller/pcie-microchip-host.c
++++ b/drivers/pci/controller/pcie-microchip-host.c
+@@ -12,7 +12,6 @@
+ #include <linux/module.h>
+ #include <linux/msi.h>
+ #include <linux/of_address.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci-ecam.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+index 7352b5ff8d35..c96c0f454570 100644
+--- a/drivers/pci/controller/pcie-rockchip-host.c
++++ b/drivers/pci/controller/pcie-rockchip-host.c
+@@ -28,7 +28,6 @@
+ #include <linux/of_device.h>
+ #include <linux/of_pci.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_irq.h>
+ #include <linux/pci.h>
+ #include <linux/pci_ids.h>
+ #include <linux/phy/phy.h>
+diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
+index e4ab48041eb6..4a787a941674 100644
+--- a/drivers/pci/controller/pcie-xilinx-cpm.c
++++ b/drivers/pci/controller/pcie-xilinx-cpm.c
+@@ -16,7 +16,6 @@
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_irq.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+ #include <linux/pci-ecam.h>
+diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+index 40d070e54ad2..f0271b6c6f8d 100644
+--- a/drivers/pci/controller/pcie-xilinx-nwl.c
++++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+@@ -17,7 +17,6 @@
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_irq.h>
+ #include <linux/pci.h>
+ #include <linux/pci-ecam.h>
+ #include <linux/platform_device.h>
 -- 
-nvpublic
+2.25.1
+
