@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B68C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEC1C4708A
 	for <linux-tegra@archiver.kernel.org>; Thu, 20 Oct 2022 10:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbiJTKio (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Oct 2022 06:38:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60754 "EHLO
+        id S230495AbiJTKip (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Oct 2022 06:38:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230085AbiJTKiG (ORCPT
+        with ESMTP id S230527AbiJTKiL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Oct 2022 06:38:06 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26B61D1E25;
-        Thu, 20 Oct 2022 03:37:59 -0700 (PDT)
+        Thu, 20 Oct 2022 06:38:11 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2EB41BF85C;
+        Thu, 20 Oct 2022 03:38:03 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3B59D22B3D;
-        Thu, 20 Oct 2022 10:37:58 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id DE84D1FA48;
+        Thu, 20 Oct 2022 10:38:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1666262278; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1666262281; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FmVfBkgQXeOJOs+lPsJuCl8bEsl7tdAgDeD2faGswnM=;
-        b=xXdmWqIQfh0f0yJA3s0BPIeYEr3NNBygmE7VRKPJkQsM/g6E2+cV3BtvIsSHfPV/Zm2qX7
-        r2clL0Fv/uWooja8TMsFYgvZciJRT0hTccsFr8g1QaD0IUJqiBlD+GdmvD0oilhw5kenke
-        6XqrCQkfvOQ9SsLQR9c+XaGqOPwxmz4=
+        bh=TEgpl55AepC361EexBBEYuHLTFWdn6vIDOCsAIRAdbs=;
+        b=AJq1HDi4mThCywNbsDoinhziCOvhwOWDf/KaqbLD9BIxZWF3RJc8Q6yjFbAYUctj7cT5ab
+        ILadHlCgqINQgo4eRiMLMe6NNhv5ATaD+RplwNroGQ8btG2hXvSpioeoFAgK/zzzrH6ohw
+        0J+C55W94IIN5heAULo+EEO3yzDk4tI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1666262278;
+        s=susede2_ed25519; t=1666262281;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FmVfBkgQXeOJOs+lPsJuCl8bEsl7tdAgDeD2faGswnM=;
-        b=4eKuWLJB4biZqfRWi8B+SJis28AqEs4YJSoTa7xFnBHPlmt1qY0h5xZ7aBvq6htSbFrV3z
-        FgVjttMfW3hPpXAA==
+        bh=TEgpl55AepC361EexBBEYuHLTFWdn6vIDOCsAIRAdbs=;
+        b=AQCoFHh+2wQhVT9GDAYJbWIYQLcMCP63/l5NM1FsXeL6KZxteKRzRGp//IUiBz30//HCHF
+        VtwNVvPmLxS4YkBw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BBDBF13AF5;
-        Thu, 20 Oct 2022 10:37:57 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5DB0613AF5;
+        Thu, 20 Oct 2022 10:38:01 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id EG0KLQUlUWPPYwAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 20 Oct 2022 10:37:57 +0000
+        id YBkHFgklUWPPYwAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 20 Oct 2022 10:38:01 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
         javierm@redhat.com, mripard@kernel.org,
@@ -69,9 +69,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 02/21] drm/imx: Don't set struct drm_driver.lastclose
-Date:   Thu, 20 Oct 2022 12:37:36 +0200
-Message-Id: <20221020103755.24058-3-tzimmermann@suse.de>
+Subject: [PATCH 09/21] drm/panel-ili9341: Include <linux/backlight.h>
+Date:   Thu, 20 Oct 2022 12:37:43 +0200
+Message-Id: <20221020103755.24058-10-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221020103755.24058-1-tzimmermann@suse.de>
 References: <20221020103755.24058-1-tzimmermann@suse.de>
@@ -81,28 +81,25 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Don't set struct drm_driver.lastclose. It's used to restore the
-fbdev console. But as imx uses generic fbdev emulation, the
-console is being restored by the DRM client helpers already. See
-the call to drm_client_dev_restore() in drm_lastclose().
+Include <linux/backlight.h> for devm_of_find_backlight().
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/imx/dcss/dcss-kms.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/imx/dcss/dcss-kms.c b/drivers/gpu/drm/imx/dcss/dcss-kms.c
-index b4f82ebca5325..1defd6a40f11d 100644
---- a/drivers/gpu/drm/imx/dcss/dcss-kms.c
-+++ b/drivers/gpu/drm/imx/dcss/dcss-kms.c
-@@ -21,7 +21,6 @@ DEFINE_DRM_GEM_DMA_FOPS(dcss_cma_fops);
+diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+index 39dc40cf681f0..b59472c29a40d 100644
+--- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
++++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+@@ -18,6 +18,7 @@
+  * Copyright 2018 David Lechner <david@lechnology.com>
+  */
  
- static const struct drm_mode_config_funcs dcss_drm_mode_config_funcs = {
- 	.fb_create = drm_gem_fb_create,
--	.output_poll_changed = drm_fb_helper_output_poll_changed,
- 	.atomic_check = drm_atomic_helper_check,
- 	.atomic_commit = drm_atomic_helper_commit,
- };
++#include <linux/backlight.h>
+ #include <linux/bitops.h>
+ #include <linux/delay.h>
+ #include <linux/gpio/consumer.h>
 -- 
 2.38.0
 
