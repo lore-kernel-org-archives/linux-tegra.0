@@ -2,156 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE42C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Oct 2022 14:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B22CC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Oct 2022 15:04:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbiJTOjm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Oct 2022 10:39:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52252 "EHLO
+        id S229836AbiJTPEl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Oct 2022 11:04:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbiJTOjl (ORCPT
+        with ESMTP id S229535AbiJTPEj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Oct 2022 10:39:41 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C01FC45994;
-        Thu, 20 Oct 2022 07:39:37 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id fy4so47870258ejc.5;
-        Thu, 20 Oct 2022 07:39:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7IBc4Yq8Q2wojqJRoTXwKINe4EXfuLpls0+hErypEFo=;
-        b=gZODZUHlkRpR7H8NtcEmS7qUoStNZcJCVl+CTEfuQ9+mzdn/Dr3eMik5rPJLuI/f12
-         JGOIt4xc32hIm8osyd2p2Ds4ZejhVvwMgREgdOxJZn1k80g65v2pHx9/5URgaJkWv+7h
-         HOg/Tj24MgyE+yXjajHOhHEYKLC50IT4NoTtCeO5bPdFf4F3zIeWwaGxivPDVPYVNV0r
-         k01PSJzPix+FyYK9oZXL8OmNHyVKth5KF00YEoQkSnC5GphNwYNuVAvuefY1MzVM20P0
-         RJrjAt62fjR9JSmyXuKAO82VB4AOBofun0K1FDeEw9cURvt7zsZZ8/lQwWrlnOdzVoKz
-         hknQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7IBc4Yq8Q2wojqJRoTXwKINe4EXfuLpls0+hErypEFo=;
-        b=X0SNhL/v4VybTzOVGwljK1EYc0ffLgNorwEP9CszVrMxwQskK8lD1JM9LqMtYFPQuz
-         qLQjN3L0fhqoaNiMXosiXiPtKd3VzkRrMxT4K11212uNtdmIGYOeWSB0OQHYmSUdV6Wj
-         ueNJgWLQ+IyrtBQ5NdGtj0FPTdmR1cdRcqL2X+kC5xAENQcBzB2f/6zf/q65xP7OjeDN
-         9aQqDELx1MSd/cZzhbfT/ZU7NhicgqVZQPBF/PjlKv66yyvt+hqRfXu2+qOCBm095RCL
-         S/V24Ij4CqJ+YaEHxOstOsfjaWDz7VIFj3g5P6rnddSN5K8esoS5O2NY6Rw5PGQzBoZk
-         1zLg==
-X-Gm-Message-State: ACrzQf2Hgsrog8iDKO/YA1l6NgitPToY96N1DuZ8yHYbDEn4PBGhiPp/
-        HlwyUgquO16IGfVmJFqF3qA=
-X-Google-Smtp-Source: AMsMyM5bI53CGHElHf+1qqH3+WpX7VjyFz807TUJs8QBwmlVhImzVws19tZRURgTC351N2sYhNt27g==
-X-Received: by 2002:a17:907:7fa5:b0:791:9a5f:101a with SMTP id qk37-20020a1709077fa500b007919a5f101amr11254345ejc.453.1666276775407;
-        Thu, 20 Oct 2022 07:39:35 -0700 (PDT)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id kv25-20020a17090778d900b0078cf8a743d6sm10390664ejc.100.2022.10.20.07.39.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 07:39:34 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Wolfram Sang <wsa@kernel.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH] i2c: tegra: Allocate DMA memory for DMA engine
-Date:   Thu, 20 Oct 2022 16:39:33 +0200
-Message-Id: <20221020143933.1951609-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Thu, 20 Oct 2022 11:04:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 335FB2A96C;
+        Thu, 20 Oct 2022 08:04:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C0BA361BCE;
+        Thu, 20 Oct 2022 15:04:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE56FC433C1;
+        Thu, 20 Oct 2022 15:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666278276;
+        bh=MRWW87pAsq3Ov7I38XJfjHIT6/6rcGMTIKudamH/Qlc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=fvmtWob5RXz/kHLTL1TNBOAyteTHgsKDs4ZTjevlmoHIwxTjMd0nHa/IJPz0Bqkkm
+         ACdZeNHLrRH+6y5zswwgfHPmTvxDu75CA8nbwp7RKnHlIuMqln7eIskaTwbhmpZewT
+         KVgKEOET44WVom2LR3A3I+QIYGZyJc62sUPg4agsLtmbZzDt3ZqTt09OXKTpApPPGw
+         gk6b9kg8u38YOwSVK2VXY83opXqL6uuA5lx7BKQI8usJHilEMYH8sGqNo88EMFvPgt
+         mN0/wxxiGAPaMYBiC0DwgBywEJONrUS11+7Miwv0T25KrHYUaFo/K6Gy1GR3Et/cEe
+         KMdiC587G7e6w==
+Date:   Thu, 20 Oct 2022 10:04:34 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     kernel test robot <lkp@intel.com>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>, kbuild-all@lists.01.org,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Toan Le <toan@os.amperecomputing.com>,
+        Joyce Ooi <joyce.ooi@intel.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+        Michal Simek <monstr@monstr.eu>,
+        bcm-kernel-feedback-list@broadcom.com, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] PCI: Remove unnecessary of_irq.h includes
+Message-ID: <20221020150434.GA121028@bhelgaas>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221020134101.GA90102@bhelgaas>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Oct 20, 2022 at 08:41:01AM -0500, Bjorn Helgaas wrote:
+> On Thu, Oct 20, 2022 at 04:09:37PM +0800, kernel test robot wrote:
+> > Hi Bjorn,
+> > 
+> > I love your patch! Yet something to improve:
+> > 
+> > [auto build test ERROR on helgaas-pci/next]
+> > [also build test ERROR on xilinx-xlnx/master rockchip/for-next linus/master v6.1-rc1 next-20221020]
+> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > And when submitting patch, we suggest to use '--base' as documented in
+> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > 
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Bjorn-Helgaas/PCI-Remove-unnecessary-of_irq-h-includes/20221020-100633
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
+> > patch link:    https://lore.kernel.org/r/20221019195452.37606-1-helgaas%40kernel.org
+> > patch subject: [PATCH] PCI: Remove unnecessary of_irq.h includes
+> > config: ia64-randconfig-r026-20221020
+> > compiler: ia64-linux-gcc (GCC) 12.1.0
+> > reproduce (this is a W=1 build):
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         # https://github.com/intel-lab-lkp/linux/commit/273a24b16a40ffd6a64c6c55aecbfae00a1cd996
+> >         git remote add linux-review https://github.com/intel-lab-lkp/linux
+> >         git fetch --no-tags linux-review Bjorn-Helgaas/PCI-Remove-unnecessary-of_irq-h-includes/20221020-100633
+> >         git checkout 273a24b16a40ffd6a64c6c55aecbfae00a1cd996
+> >         # save the config file
+> >         mkdir build_dir && cp config build_dir/.config
+> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=ia64 SHELL=/bin/bash drivers/pci/controller/
+> 
+> FYI, the instructions above didn't work for me.  Missing "config".
 
-When the I2C controllers are running in DMA mode, it is the DMA engine
-that performs the memory accesses rather than the I2C controller. Pass
-the DMA engine's struct device pointer to the DMA API to make sure the
-correct DMA operations are used.
+Sorry, my fault, "config" was a MIME attachment.  Possibly update the
+instructions:
 
-This fixes an issue where the DMA engine's SMMU stream ID needs to be
-misleadingly set for the I2C controllers in device tree.
-
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 954022c04cc4..3869c258a529 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -284,6 +284,7 @@ struct tegra_i2c_dev {
- 	struct dma_chan *tx_dma_chan;
- 	struct dma_chan *rx_dma_chan;
- 	unsigned int dma_buf_size;
-+	struct device *dma_dev;
- 	dma_addr_t dma_phys;
- 	void *dma_buf;
- 
-@@ -420,7 +421,7 @@ static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
- static void tegra_i2c_release_dma(struct tegra_i2c_dev *i2c_dev)
- {
- 	if (i2c_dev->dma_buf) {
--		dma_free_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
-+		dma_free_coherent(i2c_dev->dma_dev, i2c_dev->dma_buf_size,
- 				  i2c_dev->dma_buf, i2c_dev->dma_phys);
- 		i2c_dev->dma_buf = NULL;
- 	}
-@@ -472,10 +473,13 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 
- 	i2c_dev->tx_dma_chan = chan;
- 
-+	WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
-+	i2c_dev->dma_dev = chan->device->dev;
-+
- 	i2c_dev->dma_buf_size = i2c_dev->hw->quirks->max_write_len +
- 				I2C_PACKET_HEADER_SIZE;
- 
--	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
-+	dma_buf = dma_alloc_coherent(i2c_dev->dma_dev, i2c_dev->dma_buf_size,
- 				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
- 	if (!dma_buf) {
- 		dev_err(i2c_dev->dev, "failed to allocate DMA buffer\n");
-@@ -1272,7 +1276,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 
- 	if (i2c_dev->dma_mode) {
- 		if (i2c_dev->msg_read) {
--			dma_sync_single_for_device(i2c_dev->dev,
-+			dma_sync_single_for_device(i2c_dev->dma_dev,
- 						   i2c_dev->dma_phys,
- 						   xfer_size, DMA_FROM_DEVICE);
- 
-@@ -1280,7 +1284,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 			if (err)
- 				return err;
- 		} else {
--			dma_sync_single_for_cpu(i2c_dev->dev,
-+			dma_sync_single_for_cpu(i2c_dev->dma_dev,
- 						i2c_dev->dma_phys,
- 						xfer_size, DMA_TO_DEVICE);
- 		}
-@@ -1293,7 +1297,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 			memcpy(i2c_dev->dma_buf + I2C_PACKET_HEADER_SIZE,
- 			       msg->buf, msg->len);
- 
--			dma_sync_single_for_device(i2c_dev->dev,
-+			dma_sync_single_for_device(i2c_dev->dma_dev,
- 						   i2c_dev->dma_phys,
- 						   xfer_size, DMA_TO_DEVICE);
- 
-@@ -1344,7 +1348,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		}
- 
- 		if (i2c_dev->msg_read && i2c_dev->msg_err == I2C_ERR_NONE) {
--			dma_sync_single_for_cpu(i2c_dev->dev,
-+			dma_sync_single_for_cpu(i2c_dev->dma_dev,
- 						i2c_dev->dma_phys,
- 						xfer_size, DMA_FROM_DEVICE);
- 
--- 
-2.37.3
-
+  - # save the config file
+  + # save the config file from the MIME attachment
