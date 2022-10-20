@@ -2,109 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB33C43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Oct 2022 14:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 546CBC43217
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Oct 2022 14:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbiJTOVO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Oct 2022 10:21:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36110 "EHLO
+        id S229862AbiJTOXs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Oct 2022 10:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230003AbiJTOVM (ORCPT
+        with ESMTP id S229834AbiJTOXr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Oct 2022 10:21:12 -0400
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0BBD17653F;
-        Thu, 20 Oct 2022 07:21:11 -0700 (PDT)
-Received: by mail-ot1-f43.google.com with SMTP id a16-20020a056830101000b006619dba7fd4so11478766otp.12;
-        Thu, 20 Oct 2022 07:21:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DRmvj/Qw7m4kPQR3vXMSaW6JmzIt/vfRx5j71ATZMPo=;
-        b=LN/a7FVubtK7CtFQMBjbUYQPFN3ZABLJOszym3ac6/f3rs4Y3GgxFTuCm4OCT2bK3q
-         7tHlq0rsT4yk8TWw+g9FQP2FGWVkWNIrV1VsDGV84eoIvXtTzqx35GtOUYYV7ERa+dUJ
-         cEIGjXh2pXnbjpYkRkKaDkTgW3PEBlTLo8YH+33CfnXFUsKaI+IsytV8lDT3v1e0+Wpz
-         rs/9PnyJ+K+l4fnhaB+v2dK6NCIAP4arDYGfkVyFY1h/9P+97h6LoCasXtFCFBoidL/7
-         KdgfpSqHS8K1/8oGFYpQPoEGMzcgd5/xTLay56Fjc2a9T8uWcJQcVQB+TTDB0PTiiJaU
-         pR1A==
-X-Gm-Message-State: ACrzQf20X7sNn26UZ3G2z4XKn5r1sRcIHMtbz1Wo92Q89PLAXOeFXc02
-        SLwL4fu/0gvV4/lwXijf2Q==
-X-Google-Smtp-Source: AMsMyM6kgMpF5YggwgwsLirXF7Rn0lq5eGb6xz4yME8rs2ScP7Fq/R5S22HP4elC/sSX+ifGN97D+g==
-X-Received: by 2002:a05:6830:2a0d:b0:656:bd3f:253f with SMTP id y13-20020a0568302a0d00b00656bd3f253fmr7105548otu.25.1666275671070;
-        Thu, 20 Oct 2022 07:21:11 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id z15-20020a4ade4f000000b004767c273d3csm7559774oot.5.2022.10.20.07.21.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 07:21:10 -0700 (PDT)
-Received: (nullmailer pid 1261301 invoked by uid 1000);
-        Thu, 20 Oct 2022 14:21:10 -0000
-Date:   Thu, 20 Oct 2022 09:21:10 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        linux-arm-kernel@lists.infradead.org,
-        David Airlie <airlied@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Nandhini Srikandan <nandhini.srikandan@intel.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Cosmin Tanislav <cosmin.tanislav@analog.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Rashmi A <rashmi.a@intel.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-phy@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-iio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [PATCH] dt-bindings: Remove "status" from schema examples, again
-Message-ID: <166627566746.1261189.15059225154291335125.robh@kernel.org>
-References: <20221014205104.2822159-1-robh@kernel.org>
+        Thu, 20 Oct 2022 10:23:47 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC9C51ABA15
+        for <linux-tegra@vger.kernel.org>; Thu, 20 Oct 2022 07:23:46 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8ADCFD6E;
+        Thu, 20 Oct 2022 07:23:52 -0700 (PDT)
+Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6A8213F67D;
+        Thu, 20 Oct 2022 07:23:45 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     thierry.reding@gmail.com
+Cc:     dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2] gpu: host1x: Avoid trying to use GART on Tegra20
+Date:   Thu, 20 Oct 2022 15:23:40 +0100
+Message-Id: <39c44dce203112a8dfe279e8e2c4ad164e3cf5e5.1666275461.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.36.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221014205104.2822159-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 14 Oct 2022 15:51:04 -0500, Rob Herring wrote:
-> There's no reason to have "status" properties in examples. "okay" is the
-> default, and "disabled" turns off some schema checks ('required'
-> specifically).
-> 
-> A meta-schema check for this is pending, so hopefully the last time to
-> fix these.
-> 
-> Fix the indentation in intel,phy-thunderbay-emmc while we're here.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../arm/tegra/nvidia,tegra-ccplex-cluster.yaml    |  1 -
->  .../display/tegra/nvidia,tegra124-dpaux.yaml      |  1 -
->  .../display/tegra/nvidia,tegra186-display.yaml    |  2 --
->  .../bindings/iio/addac/adi,ad74413r.yaml          |  1 -
->  .../devicetree/bindings/net/cdns,macb.yaml        |  1 -
->  .../devicetree/bindings/net/nxp,dwmac-imx.yaml    |  1 -
->  .../bindings/phy/intel,phy-thunderbay-emmc.yaml   | 15 +++++++--------
->  7 files changed, 7 insertions(+), 15 deletions(-)
-> 
+Since commit c7e3ca515e78 ("iommu/tegra: gart: Do not register with
+bus") quite some time ago, the GART driver has effectively disabled
+itself to avoid issues with the GPU driver expecting it to work in ways
+that it doesn't. As of commit 57365a04c921 ("iommu: Move bus setup to
+IOMMU device registration") that bodge no longer works, but really the
+GPU driver should be responsible for its own behaviour anyway. Make the
+workaround explicit.
 
-Applied, thanks!
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Suggested-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+
+v2: Cover DRM instance too, move into *_wants_iommu() for consistency
+
+ drivers/gpu/drm/tegra/drm.c | 4 ++++
+ drivers/gpu/host1x/dev.c    | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 6748ec1e0005..a1f909dac89a 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1093,6 +1093,10 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
+ 	struct host1x *host1x = dev_get_drvdata(dev->dev.parent);
+ 	struct iommu_domain *domain;
+ 
++	/* Our IOMMU usage policy doesn't currently play well with GART */
++	if (of_machine_is_compatible("nvidia,tegra20"))
++		return false;
++
+ 	/*
+ 	 * If the Tegra DRM clients are backed by an IOMMU, push buffers are
+ 	 * likely to be allocated beyond the 32-bit boundary if sufficient
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 0cd3f97e7e49..f60ea24db0ec 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -292,6 +292,10 @@ static void host1x_setup_virtualization_tables(struct host1x *host)
+ 
+ static bool host1x_wants_iommu(struct host1x *host1x)
+ {
++	/* Our IOMMU usage policy doesn't currently play well with GART */
++	if (of_machine_is_compatible("nvidia,tegra20"))
++		return false;
++
+ 	/*
+ 	 * If we support addressing a maximum of 32 bits of physical memory
+ 	 * and if the host1x firewall is enabled, there's no need to enable
+-- 
+2.36.1.dirty
+
