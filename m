@@ -2,393 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24853C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Oct 2022 14:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE42C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Oct 2022 14:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbiJTOeZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Oct 2022 10:34:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
+        id S229682AbiJTOjm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Oct 2022 10:39:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229802AbiJTOeX (ORCPT
+        with ESMTP id S229506AbiJTOjl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Oct 2022 10:34:23 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1C2102D;
-        Thu, 20 Oct 2022 07:34:21 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id sc25so47832785ejc.12;
-        Thu, 20 Oct 2022 07:34:20 -0700 (PDT)
+        Thu, 20 Oct 2022 10:39:41 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C01FC45994;
+        Thu, 20 Oct 2022 07:39:37 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id fy4so47870258ejc.5;
+        Thu, 20 Oct 2022 07:39:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8dZpl7PAKnUHG/bo7IiH7C/vg2bw1JjzUYKFeB9b92M=;
-        b=Aep/KhxbdLJAmRUS4CIyUdTz/GhaPghFBF/BevU6OQZJyev4OtgYZiubXXEb/LJV4m
-         eEdtJK3B9s5VnrBBlPHHrkNikc/ZCPx4oe1m6s1rTvXOFIKR/ZyQjzOn/P16BpdWqJak
-         idC4v4dKtzPj9WH42McDhPIOOr8CESHjqis3h35eWskf+Fp02KbtZ8uTZF7gmxmsAP9h
-         kdw/gh+SUM0DktdP9AvaIwUCjcjo1CfKMAMqYs4AOgANVSy4IBvc0bN3dcJkTDDOoqRF
-         U84n1iKj0ykZyAH1FmTXl3UOxB0rLWFi5uzeBqO/75ZNk59mhtVshn0qmjUBd+Ozsntg
-         Uglg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7IBc4Yq8Q2wojqJRoTXwKINe4EXfuLpls0+hErypEFo=;
+        b=gZODZUHlkRpR7H8NtcEmS7qUoStNZcJCVl+CTEfuQ9+mzdn/Dr3eMik5rPJLuI/f12
+         JGOIt4xc32hIm8osyd2p2Ds4ZejhVvwMgREgdOxJZn1k80g65v2pHx9/5URgaJkWv+7h
+         HOg/Tj24MgyE+yXjajHOhHEYKLC50IT4NoTtCeO5bPdFf4F3zIeWwaGxivPDVPYVNV0r
+         k01PSJzPix+FyYK9oZXL8OmNHyVKth5KF00YEoQkSnC5GphNwYNuVAvuefY1MzVM20P0
+         RJrjAt62fjR9JSmyXuKAO82VB4AOBofun0K1FDeEw9cURvt7zsZZ8/lQwWrlnOdzVoKz
+         hknQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8dZpl7PAKnUHG/bo7IiH7C/vg2bw1JjzUYKFeB9b92M=;
-        b=jr6V+nZnQc0JoNV5fLosAxVjh4zGvEAcE3Vh2VIY0LltB/rsRkK+4QiwAXvP8C22sC
-         PopU2yn28KrDz1hJfg7vaqSqAxCNQHg8fKVVh3vpzoVFYVtLpRmHgo+BEJfCi4tZZT7v
-         KzhzE/DJTvcx/akgjuL2+gDq1Z8wRPofnXX7EMdk3zot0VqxV+9tfvFVnIBC7gzX4oyi
-         91q0eYtpO5/y82IxaoEj8QkuXKZaa1ZPtmyDGkVo3Yrrw1eRQGZVpM/YXgigIzl3kRgn
-         TDfs6v5O4dCB6bWgt8I+4VvT0dvmDOQjYX9XdNv6ijBxH46U8q1NymL3O+MZcN2k1QCn
-         eqhQ==
-X-Gm-Message-State: ACrzQf3lzl5hTf6dK6q1+Lc5KhBwP+hiZEW5zODXpCNP40dfa/Owj/K2
-        ttr282STrTmOXLhm8xi+yKdfy4dsosI=
-X-Google-Smtp-Source: AMsMyM6JGkn3KoS/CA7gZW3htSpXsnS9e2iqYS3fUSSbYdKdIKBdbxQ/6lcFMrCaEpkoRsONWT7BMw==
-X-Received: by 2002:a17:907:a48:b0:77c:51b0:5aeb with SMTP id be8-20020a1709070a4800b0077c51b05aebmr11517724ejc.61.1666276459223;
-        Thu, 20 Oct 2022 07:34:19 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170906329500b00730b3bdd8d7sm10442755ejw.179.2022.10.20.07.34.17
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7IBc4Yq8Q2wojqJRoTXwKINe4EXfuLpls0+hErypEFo=;
+        b=X0SNhL/v4VybTzOVGwljK1EYc0ffLgNorwEP9CszVrMxwQskK8lD1JM9LqMtYFPQuz
+         qLQjN3L0fhqoaNiMXosiXiPtKd3VzkRrMxT4K11212uNtdmIGYOeWSB0OQHYmSUdV6Wj
+         ueNJgWLQ+IyrtBQ5NdGtj0FPTdmR1cdRcqL2X+kC5xAENQcBzB2f/6zf/q65xP7OjeDN
+         9aQqDELx1MSd/cZzhbfT/ZU7NhicgqVZQPBF/PjlKv66yyvt+hqRfXu2+qOCBm095RCL
+         S/V24Ij4CqJ+YaEHxOstOsfjaWDz7VIFj3g5P6rnddSN5K8esoS5O2NY6Rw5PGQzBoZk
+         1zLg==
+X-Gm-Message-State: ACrzQf2Hgsrog8iDKO/YA1l6NgitPToY96N1DuZ8yHYbDEn4PBGhiPp/
+        HlwyUgquO16IGfVmJFqF3qA=
+X-Google-Smtp-Source: AMsMyM5bI53CGHElHf+1qqH3+WpX7VjyFz807TUJs8QBwmlVhImzVws19tZRURgTC351N2sYhNt27g==
+X-Received: by 2002:a17:907:7fa5:b0:791:9a5f:101a with SMTP id qk37-20020a1709077fa500b007919a5f101amr11254345ejc.453.1666276775407;
+        Thu, 20 Oct 2022 07:39:35 -0700 (PDT)
+Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id kv25-20020a17090778d900b0078cf8a743d6sm10390664ejc.100.2022.10.20.07.39.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 07:34:18 -0700 (PDT)
-Date:   Thu, 20 Oct 2022 16:34:16 +0200
+        Thu, 20 Oct 2022 07:39:34 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
-        Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v9 2/5] iommu: Implement of_iommu_get_resv_regions()
-Message-ID: <Y1FcaNgVXYsfm77f@orome>
-References: <20220923123557.866972-1-thierry.reding@gmail.com>
- <20220923123557.866972-3-thierry.reding@gmail.com>
- <Y1A78xWWJTCfsdGL@orome>
+To:     Wolfram Sang <wsa@kernel.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] i2c: tegra: Allocate DMA memory for DMA engine
+Date:   Thu, 20 Oct 2022 16:39:33 +0200
+Message-Id: <20221020143933.1951609-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="C8KFzC3JLrgNSjam"
-Content-Disposition: inline
-In-Reply-To: <Y1A78xWWJTCfsdGL@orome>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---C8KFzC3JLrgNSjam
-Content-Type: multipart/mixed; boundary="dCBbHJqO6VA9aoz5"
-Content-Disposition: inline
+When the I2C controllers are running in DMA mode, it is the DMA engine
+that performs the memory accesses rather than the I2C controller. Pass
+the DMA engine's struct device pointer to the DMA API to make sure the
+correct DMA operations are used.
 
+This fixes an issue where the DMA engine's SMMU stream ID needs to be
+misleadingly set for the I2C controllers in device tree.
 
---dCBbHJqO6VA9aoz5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 19, 2022 at 08:03:31PM +0200, Thierry Reding wrote:
-> On Fri, Sep 23, 2022 at 02:35:54PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > This is an implementation that IOMMU drivers can use to obtain reserved
-> > memory regions from a device tree node. It uses the reserved-memory DT
-> > bindings to find the regions associated with a given device. If these
-> > regions are marked accordingly, identity mappings will be created for
-> > them in the IOMMU domain that the devices will be attached to.
-> >=20
-> > Cc: Frank Rowand <frowand.list@gmail.com>
-> > Cc: devicetree@vger.kernel.org
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Changes in v9:
-> > - address review comments by Robin Murphy:
-> >   - warn about non-direct mappings since they are not supported yet
-> >   - cleanup code to require less indentation
-> >   - narrow scope of variables
-> >=20
-> > Changes in v8:
-> > - cleanup set-but-unused variables
-> >=20
-> > Changes in v6:
-> > - remove reference to now unused dt-bindings/reserved-memory.h include
-> >=20
-> > Changes in v5:
-> > - update for new "iommu-addresses" device tree bindings
-> >=20
-> > Changes in v4:
-> > - fix build failure on !CONFIG_OF_ADDRESS
-> >=20
-> > Changes in v3:
-> > - change "active" property to identity mapping flag that is part of the
-> >   memory region specifier (as defined by #memory-region-cells) to allow
-> >   per-reference flags to be used
-> >=20
-> > Changes in v2:
-> > - use "active" property to determine whether direct mappings are needed
-> >=20
-> >  drivers/iommu/of_iommu.c | 104 +++++++++++++++++++++++++++++++++++++++
-> >  include/linux/of_iommu.h |   8 +++
-> >  2 files changed, 112 insertions(+)
-> >=20
-> > diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-> > index 5696314ae69e..0bf2b08bca0a 100644
-> > --- a/drivers/iommu/of_iommu.c
-> > +++ b/drivers/iommu/of_iommu.c
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/module.h>
-> >  #include <linux/msi.h>
-> >  #include <linux/of.h>
-> > +#include <linux/of_address.h>
-> >  #include <linux/of_iommu.h>
-> >  #include <linux/of_pci.h>
-> >  #include <linux/pci.h>
-> > @@ -172,3 +173,106 @@ const struct iommu_ops *of_iommu_configure(struct=
- device *dev,
-> > =20
-> >  	return ops;
-> >  }
-> > +
-> > +static inline bool check_direct_mapping(struct device *dev, struct res=
-ource *phys,
-> > +					phys_addr_t start, phys_addr_t end)
-> > +{
-> > +	if (start !=3D phys->start || end !=3D phys->end) {
-> > +		dev_warn(dev, "treating non-direct mapping [%pr] -> [%pap-%pap] as r=
-eservation\n",
-> > +			 &phys, &start, &end);
-> > +		return false;
-> > +	}
-> > +
-> > +	return true;
-> > +}
-> > +
-> > +/**
-> > + * of_iommu_get_resv_regions - reserved region driver helper for devic=
-e tree
-> > + * @dev: device for which to get reserved regions
-> > + * @list: reserved region list
-> > + *
-> > + * IOMMU drivers can use this to implement their .get_resv_regions() c=
-allback
-> > + * for memory regions attached to a device tree node. See the reserved=
--memory
-> > + * device tree bindings on how to use these:
-> > + *
-> > + *   Documentation/devicetree/bindings/reserved-memory/reserved-memory=
-=2Etxt
-> > + */
-> > +void of_iommu_get_resv_regions(struct device *dev, struct list_head *l=
-ist)
-> > +{
-> > +#if IS_ENABLED(CONFIG_OF_ADDRESS)
-> > +	struct of_phandle_iterator it;
-> > +	int err;
-> > +
-> > +	of_for_each_phandle(&it, err, dev->of_node, "memory-region", NULL, 0)=
- {
-> > +		const __be32 *maps, *end;
-> > +		struct resource res;
-> > +		int size;
-> > +
-> > +		memset(&res, 0, sizeof(res));
-> > +
-> > +		/*
-> > +		 * The "reg" property is optional and can be omitted by reserved-mem=
-ory regions
-> > +		 * that represent reservations in the IOVA space, which are regions =
-that should
-> > +		 * not be mapped.
-> > +		 */
-> > +		if (of_find_property(it.node, "reg", NULL)) {
-> > +			err =3D of_address_to_resource(it.node, 0, &res);
-> > +			if (err < 0) {
-> > +				dev_err(dev, "failed to parse memory region %pOF: %d\n",
-> > +					it.node, err);
-> > +				continue;
-> > +			}
-> > +		}
-> > +
-> > +		maps =3D of_get_property(it.node, "iommu-addresses", &size);
-> > +		if (!maps)
-> > +			continue;
-> > +
-> > +		end =3D maps + size / sizeof(__be32);
-> > +
-> > +		while (maps < end) {
-> > +			struct device_node *np;
-> > +			u32 phandle;
-> > +			int na, ns;
-> > +
-> > +			phandle =3D be32_to_cpup(maps++);
-> > +			np =3D of_find_node_by_phandle(phandle);
-> > +			na =3D of_n_addr_cells(np);
-> > +			ns =3D of_n_size_cells(np);
-> > +
-> > +			if (np =3D=3D dev->of_node) {
-> > +				int prot =3D IOMMU_READ | IOMMU_WRITE;
-> > +				struct iommu_resv_region *region;
-> > +				enum iommu_resv_type type;
-> > +				phys_addr_t start;
-> > +				size_t length;
-> > +
-> > +				start =3D of_translate_dma_address(np, maps);
->=20
-> I just came across an issue when extending the testing from simple-
-> framebuffer to the full display engine, with the main difference being
-> that the fill display engine is hooked up both to the IOMMU and to the
-> memory controller via the interconnects property ("dma-mem").
->=20
-> The latter seems to throw off the of_translate_dma_address() because we
-> have a top-level bus@0 node that sets #address-cells =3D <1> and #size-
-> cells =3D <1>, which is sufficient to represent the "reg" entries for the
-> devices. However, for the reserved-memory node needs #address-cells =3D
-> <2> and #size-cells =3D <2> to make sure we can describe memory regions
-> above the 4 GiB boundary (and potentially larger than 4 GiB, too).
->=20
-> What happens now is that of_translate_dma_address() will find the DMA
-> parent for the display engine, which is the memory controller, which
-> also has #address-cells =3D <2> and #size-cells =3D <2> for the same reas=
-on
-> as the reserved-memory node. In other words, what this tries to model is
-> that for DMA accesses, we span more than the 4 GiB range that is
-> sufficient to address registers for IP blocks.
->=20
-> However, of_translate_dma_address() then ends up getting #address-cells
-> and #size-cells from the *parent* of the DMA parent. And then everything
-> falls apart during translation.
->=20
-> Any idea if I'm doing something wrong? Or is the code wrong and it's not
-> actually using the right cell counts? Should it be using the cell counts
-> from the DMA parent rather than its parent bus?
-
-I came up with the attached patch. This works for my case, but will
-abort the DMA parent traversal early on some devices. I'm not sure how
-much this would matter in practice.
-
-A safer way would be to create a new variant of __of_get_dma_parent()
-that doesn't have the of_get_parent() fallback. That's assuming that we
-agree on the concept of having potentially different cell counts, and
-effectively DMA busses that are separate from the traditional control
-busses in DT.
-
-Do we also need separate DMA cell counts so that one node can be a DMA
-bus and a control bus at the same time? Or is this overcomplicating
-things and a simpler approach would be to propagate the cell counts all
-the way to the top level? I think this all might work with the existing
-code if I make bus@0's cell count 2 & 2 for Tegra SoC DTSI files. It's a
-lot of churn and seems more like a workaround rather than a correct
-model of the busses.
-
-Thierry
-
---dCBbHJqO6VA9aoz5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline;
-	filename="0001-of-Stop-DMA-translation-at-last-DMA-parent.patch"
-Content-Transfer-Encoding: quoted-printable
-
-=46rom 7f63e7c86fa43f6c7d9254323606daeeb442cf48 Mon Sep 17 00:00:00 2001
-=46rom: Thierry Reding <treding@nvidia.com>
-Date: Thu, 20 Oct 2022 15:21:10 +0200
-Subject: [PATCH] of: Stop DMA translation at last DMA parent
-
-DMA parent devices can define separate DMA busses via the "dma-ranges"
-and "#address-cells" and "#size-cells" properties. If the DMA bus has
-different cell counts than its parent, this can cause the translation
-of DMA address to fails (e.g. truncation from 2 to 1 address cells).
-
-Avoid this by stopping to search for DMA parents when a parent without
-a "dma-ranges" property is encountered. Also, since it is the DMA parent
-that defines the DMA bus, use the bus' cell counts instead of its parent
-cell counts.
-
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/of/address.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index 14f137a21b0c..e2f45bdbc41a 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -475,6 +475,7 @@ static u64 __of_translate_address(struct device_node *d=
-ev,
- 				  const __be32 *in_addr, const char *rprop,
- 				  struct device_node **host)
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 954022c04cc4..3869c258a529 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -284,6 +284,7 @@ struct tegra_i2c_dev {
+ 	struct dma_chan *tx_dma_chan;
+ 	struct dma_chan *rx_dma_chan;
+ 	unsigned int dma_buf_size;
++	struct device *dma_dev;
+ 	dma_addr_t dma_phys;
+ 	void *dma_buf;
+ 
+@@ -420,7 +421,7 @@ static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
+ static void tegra_i2c_release_dma(struct tegra_i2c_dev *i2c_dev)
  {
-+	bool dma =3D rprop && !strcmp(rprop, "dma-ranges");
- 	struct device_node *parent =3D NULL;
- 	struct of_bus *bus, *pbus;
- 	__be32 addr[OF_MAX_ADDR_CELLS];
-@@ -494,7 +495,12 @@ static u64 __of_translate_address(struct device_node *=
-dev,
- 	bus =3D of_match_bus(parent);
-=20
- 	/* Count address cells & copy address locally */
--	bus->count_cells(dev, &na, &ns);
-+	if (dma) {
-+		na =3D of_bus_n_addr_cells(parent);
-+		ns =3D of_bus_n_size_cells(parent);
-+	} else {
-+		bus->count_cells(dev, &na, &ns);
-+	}
- 	if (!OF_CHECK_COUNTS(na, ns)) {
- 		pr_debug("Bad cell count for %pOF\n", dev);
- 		goto bail;
-@@ -515,7 +521,7 @@ static u64 __of_translate_address(struct device_node *d=
-ev,
- 		parent =3D get_parent(dev);
-=20
- 		/* If root, we have finished */
--		if (parent =3D=3D NULL) {
-+		if (parent =3D=3D NULL || (dma && !of_get_property(parent, "dma-ranges",=
- NULL))) {
- 			pr_debug("reached root node\n");
- 			result =3D of_read_number(addr, na);
- 			break;
-@@ -536,7 +542,12 @@ static u64 __of_translate_address(struct device_node *=
-dev,
-=20
- 		/* Get new parent bus and counts */
- 		pbus =3D of_match_bus(parent);
--		pbus->count_cells(dev, &pna, &pns);
-+		if (dma) {
-+			pna =3D of_bus_n_addr_cells(parent);
-+			pns =3D of_bus_n_size_cells(parent);
-+		} else {
-+			pbus->count_cells(dev, &pna, &pns);
-+		}
- 		if (!OF_CHECK_COUNTS(pna, pns)) {
- 			pr_err("Bad cell count for %pOF\n", dev);
- 			break;
---=20
+ 	if (i2c_dev->dma_buf) {
+-		dma_free_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
++		dma_free_coherent(i2c_dev->dma_dev, i2c_dev->dma_buf_size,
+ 				  i2c_dev->dma_buf, i2c_dev->dma_phys);
+ 		i2c_dev->dma_buf = NULL;
+ 	}
+@@ -472,10 +473,13 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+ 
+ 	i2c_dev->tx_dma_chan = chan;
+ 
++	WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
++	i2c_dev->dma_dev = chan->device->dev;
++
+ 	i2c_dev->dma_buf_size = i2c_dev->hw->quirks->max_write_len +
+ 				I2C_PACKET_HEADER_SIZE;
+ 
+-	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
++	dma_buf = dma_alloc_coherent(i2c_dev->dma_dev, i2c_dev->dma_buf_size,
+ 				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
+ 	if (!dma_buf) {
+ 		dev_err(i2c_dev->dev, "failed to allocate DMA buffer\n");
+@@ -1272,7 +1276,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 
+ 	if (i2c_dev->dma_mode) {
+ 		if (i2c_dev->msg_read) {
+-			dma_sync_single_for_device(i2c_dev->dev,
++			dma_sync_single_for_device(i2c_dev->dma_dev,
+ 						   i2c_dev->dma_phys,
+ 						   xfer_size, DMA_FROM_DEVICE);
+ 
+@@ -1280,7 +1284,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 			if (err)
+ 				return err;
+ 		} else {
+-			dma_sync_single_for_cpu(i2c_dev->dev,
++			dma_sync_single_for_cpu(i2c_dev->dma_dev,
+ 						i2c_dev->dma_phys,
+ 						xfer_size, DMA_TO_DEVICE);
+ 		}
+@@ -1293,7 +1297,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 			memcpy(i2c_dev->dma_buf + I2C_PACKET_HEADER_SIZE,
+ 			       msg->buf, msg->len);
+ 
+-			dma_sync_single_for_device(i2c_dev->dev,
++			dma_sync_single_for_device(i2c_dev->dma_dev,
+ 						   i2c_dev->dma_phys,
+ 						   xfer_size, DMA_TO_DEVICE);
+ 
+@@ -1344,7 +1348,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		}
+ 
+ 		if (i2c_dev->msg_read && i2c_dev->msg_err == I2C_ERR_NONE) {
+-			dma_sync_single_for_cpu(i2c_dev->dev,
++			dma_sync_single_for_cpu(i2c_dev->dma_dev,
+ 						i2c_dev->dma_phys,
+ 						xfer_size, DMA_FROM_DEVICE);
+ 
+-- 
 2.37.3
 
-
---dCBbHJqO6VA9aoz5--
-
---C8KFzC3JLrgNSjam
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNRXGUACgkQ3SOs138+
-s6HDlg/+I1R2a7WXzRmfGuzmKMXBXVfnhHUqLPiNnT7raUMzjn8W8Iv3q3sGhoiM
-zEg2f5jyYrJpyiEeGqHpLsntFnppIJjfCDgaZXiJcqmeQFV+Lf01UMewnFEYQ6/N
-ED7U8SDeOUQzAyiXQHNHi8RsJfZNj5+L3L7IsQFlJzp2s1U3V7l5N6FiNRHdRpqa
-sZOmjx4DtEGv4A6fuhun27Dkufh6MB1dP4vay7pkgnxvUKzB82px7odS2occn0+3
-IlgsoJ+2cpsmMl8z40OSENQCSo19bocoKcD1h5uQap8P5GEk/mI04YHobwGHiVV9
-w+6jPsCFBbcFvlIvxY5XvJhKhOfnRfQ9B3nmQiIBgThUZZQWVnuxHxNQQwbqNa7I
-ylMCHidZUk5703rZT2K0Pj837X4e1xBTdOUeLbBBLuuFGdgmVOU3WQfQDhVb08jE
-npzahkvpT0tlCoNVGZLztUwriTMd8jsCpUqyIdshzhbLawt03yYg1sLReYyc5L0B
-2O4WDdtFZeRzXFDgcGpof1bFI8kzlvM/pL1NCCpgBx5kEfHS8vXhOQrVvk07Sc35
-tehVWVooPXDAmBeFyg6+N6acz96472SviaIrJIzdHAHjx0eWQ6VJthXrhZM0eljH
-SgEFcKCI69nnXYoXMANf/irsLMHLHSTzW8ZGgLFzFuwUZRrfhIo=
-=vCci
------END PGP SIGNATURE-----
-
---C8KFzC3JLrgNSjam--
