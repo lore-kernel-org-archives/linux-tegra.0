@@ -2,155 +2,113 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E58C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Oct 2022 00:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC898C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Oct 2022 02:16:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229832AbiJUAw6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Oct 2022 20:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42658 "EHLO
+        id S229799AbiJUCQI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Oct 2022 22:16:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbiJUAw4 (ORCPT
+        with ESMTP id S229583AbiJUCQI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Oct 2022 20:52:56 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 910C6230AB2;
-        Thu, 20 Oct 2022 17:52:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666313571; x=1697849571;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=t8eukQQRNGfAZeDiwMZwSJzWT294/JgXyPrPo/qNp6g=;
-  b=ZtK6dDj5xf+TztAflG22tT3twX9N2MOfJNYt9kLPReA22KyumiiCZL0+
-   dLvl3N84uoPnESmxTok4D14AoGegrz6byJF2ERX9bljD+Mecda458TqjS
-   9aOLT7ltQxfaGxsizcACSwc5pc+/vOMg0WFslwGeXehMjC1D0efbNoU03
-   6Qy3qFFvjEpHQBad6HTZ3Nx6mSaKWQ/Wluc1msHXnlMEd+hIQ22wMNvcF
-   jN+1KHmFBRGMEgD2uHOc2wPG3XPX8Eepfn4MowSNn1dK/PKsisQdcLfJx
-   OBHTt38hFHowgOFIRIbcanptldJX57WmgJ2ojPWhzovO/+C5MnAzjLd9W
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10506"; a="294275824"
-X-IronPort-AV: E=Sophos;i="5.95,200,1661842800"; 
-   d="scan'208";a="294275824"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2022 17:52:50 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10506"; a="608037424"
-X-IronPort-AV: E=Sophos;i="5.95,200,1661842800"; 
-   d="scan'208";a="608037424"
-Received: from rongch2-mobl.ccr.corp.intel.com (HELO [10.249.172.222]) ([10.249.172.222])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2022 17:52:42 -0700
-Subject: Re: [kbuild-all] Re: [PATCH] PCI: Remove unnecessary of_irq.h
- includes
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        kernel test robot <lkp@intel.com>
-Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>, llvm@lists.linux.dev,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
-        Toan Le <toan@os.amperecomputing.com>,
-        linux-riscv@lists.infradead.org,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>, Joyce Ooi <joyce.ooi@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, Mingkai Hu <mingkai.hu@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Michal Simek <monstr@monstr.eu>,
-        kbuild-all@lists.01.org, Scott Branden <sbranden@broadcom.com>,
-        Daire McNa mara <daire.mcnamara@microchip.com>,
-        linux-kernel@vger.kernel.org, Tom Joseph <tjoseph@cadence.com>,
-        linuxppc-dev@lists.ozlabs.org
-References: <20221020150731.GA121202@bhelgaas>
-From:   "Chen, Rong A" <rong.a.chen@intel.com>
-Message-ID: <9ac1f194-cef3-68bf-25e2-4bc6c0dbefce@intel.com>
-Date:   Fri, 21 Oct 2022 08:52:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.12.0
+        Thu, 20 Oct 2022 22:16:08 -0400
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB0E822C448;
+        Thu, 20 Oct 2022 19:16:03 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-132fb4fd495so1843712fac.12;
+        Thu, 20 Oct 2022 19:16:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bZo2SoHGMB49U08FrggSD62F1dJU4x2WpR2kVlXQtTc=;
+        b=er2GizeSfMKN92eiA3N1GE2f0GyImLMEB18NraTx3m8V4CoD6UO2RmkoHXumQaYrQ/
+         cJOLI4QxkDHquTGIjhoT3ygey+5x23HIkpDneHH5ClyrVT1oJTMOw7TavZouqV0G0zN4
+         mdwHud+NbA66JUlmBQhz93tYxL7X5/fbidGRuCvqesg+kEsMANPedis/exKYiDgYdiMf
+         KBgESHC14djbHngUnGyuXhPaHMQXDx+ApGvqgRWl499fjiDh8AfUuFWLXZ+6IUfHUcu+
+         ningQ5H0clSIUJ/Lkj649vP8STGrKPsmJC5PQ3BVu4/kcNzvV+W1K8DVUVwDTi2FcIq+
+         bnXA==
+X-Gm-Message-State: ACrzQf3JzruYiBTjwU+WgBDDrqFkcXj13MuJVJgexbGg5XAddl0ORnff
+        PcVcHEUWk6lF86PQiUj4lg==
+X-Google-Smtp-Source: AMsMyM5JqlxGmxU3HmlsBn+wCVxoYJuiS0p3ug0txSMNfjbiGur1wQ7LqoQZCrDcHynQBVEyZ74sBA==
+X-Received: by 2002:a05:6870:8193:b0:13a:e465:ad18 with SMTP id k19-20020a056870819300b0013ae465ad18mr4895007oae.30.1666318563053;
+        Thu, 20 Oct 2022 19:16:03 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id t11-20020a9d66cb000000b0063b24357269sm612592otm.13.2022.10.20.19.16.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Oct 2022 19:16:02 -0700 (PDT)
+Received: (nullmailer pid 2187016 invoked by uid 1000);
+        Fri, 21 Oct 2022 02:16:04 -0000
+Date:   Thu, 20 Oct 2022 21:16:04 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     ldewangan@nvidia.com, jonathanh@nvidia.com, vkoul@kernel.org,
+        thierry.reding@gmail.com, p.zabel@pengutronix.de,
+        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sfr@canb.auug.org.au
+Subject: Re: [PATCH RESEND v2 3/3] dmaengine: tegra: Add support for
+ dma-channel-mask
+Message-ID: <20221021021604.GA2181729-robh@kernel.org>
+References: <20221020083322.36431-1-akhilrajeev@nvidia.com>
+ <20221020083322.36431-4-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20221020150731.GA121202@bhelgaas>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221020083322.36431-4-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-
-On 10/20/2022 11:07 PM, Bjorn Helgaas wrote:
-> On Thu, Oct 20, 2022 at 10:13:10PM +0800, kernel test robot wrote:
->> Hi Bjorn,
->>
->> I love your patch! Yet something to improve:
->>
->> [auto build test ERROR on helgaas-pci/next]
->> [also build test ERROR on xilinx-xlnx/master rockchip/for-next linus/master v6.1-rc1 next-20221020]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Bjorn-Helgaas/PCI-Remove-unnecessary-of_irq-h-includes/20221020-100633
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
->> patch link:    https://lore.kernel.org/r/20221019195452.37606-1-helgaas%40kernel.org
->> patch subject: [PATCH] PCI: Remove unnecessary of_irq.h includes
->> config: s390-randconfig-r044-20221019
->> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 791a7ae1ba3efd6bca96338e10ffde557ba83920)
->> reproduce (this is a W=1 build):
->>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>          chmod +x ~/bin/make.cross
->>          # install s390 cross compiling tool for clang build
->>          # apt-get install binutils-s390x-linux-gnu
->>          # https://github.com/intel-lab-lkp/linux/commit/273a24b16a40ffd6a64c6c55aecbfae00a1cd996
->>          git remote add linux-review https://github.com/intel-lab-lkp/linux
->>          git fetch --no-tags linux-review Bjorn-Helgaas/PCI-Remove-unnecessary-of_irq-h-includes/20221020-100633
->>          git checkout 273a24b16a40ffd6a64c6c55aecbfae00a1cd996
->>          # save the config file
->>          mkdir build_dir && cp config build_dir/.config
->>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=s390 SHELL=/bin/bash drivers/pci/controller/
+On Thu, Oct 20, 2022 at 02:03:22PM +0530, Akhil R wrote:
+> Add support for dma-channel-mask so that only the specified channels
+> are used. This helps to reserve some channels for the firmware.
 > 
-> Maybe more user error?
+> This was initially achieved by limiting the channel number to 31 in
+> the driver and adjusting the register address to skip channel0 which
+> was reserved for a firmware. Now, with this change, the driver can
+> align more to the actual hardware which has 32 channels.
 > 
->    $ COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=s390 SHELL=/bin/bash drivers/pci/controller/
->    Compiler will be installed in /home/bjorn/0day
->    make --keep-going HOSTCC=/home/bjorn/0day/clang/bin/clang CC=/home/bjorn/0day/clang/bin/clang OBJCOPY=/usr/s390x-linux-gnu/bin/objcopy AR=llvm-ar NM=llvm-nm STRIP=llvm-strip OBJDUMP=llvm-objdump OBJSIZE=llvm-size READELF=llvm-readelf HOSTCXX=clang++ HOSTAR=llvm-ar CROSS_COMPILE=s390x-linux-gnu- --jobs=16 W=1 O=build_dir ARCH=s390 SHELL=/bin/bash drivers/pci/controller/
->    make[1]: Entering directory '/home/bjorn/linux/build_dir'
->      SYNC    include/config/auto.conf.cmd
->      GEN     Makefile
->    scripts/Kconfig.include:40: linker 's390x-linux-gnu-ld' not found
-
-
-Hi Bjorn,
-
-You may need to install the below package, or similar package for other OS:
-
-$ dpkg -S /usr/bin/s390x-linux-gnu-ld
-binutils-s390x-linux-gnu: /usr/bin/s390x-linux-gnu-ld
-
- >>          # install s390 cross compiling tool for clang build
- >>          # apt-get install binutils-s390x-linux-gnu
-
-Best Regards,
-Rong Chen
-
->    make[3]: *** [../scripts/kconfig/Makefile:77: syncconfig] Error 1
->    make[2]: *** [../Makefile:697: syncconfig] Error 2
->    make[1]: *** [/home/bjorn/linux/Makefile:798: include/config/auto.conf.cmd] Error 2
->    make[1]: Failed to remake makefile 'include/config/auto.conf.cmd'.
->    make[1]: Failed to remake makefile 'include/config/auto.conf'.
->      GEN     Makefile
->    Error: kernelrelease not valid - run 'make prepare' to update it
->    ../scripts/mkcompile_h: 19: s390x-linux-gnu-ld: not found
->    make[1]: Target 'drivers/pci/controller/' not remade because of errors.
->    make[1]: Leaving directory '/home/bjorn/linux/build_dir'
->    make: *** [Makefile:231: __sub-make] Error 2
->    make: Target 'drivers/pci/controller/' not remade because of errors.
-> _______________________________________________
-> kbuild-all mailing list -- kbuild-all@lists.01.org
-> To unsubscribe send an email to kbuild-all-leave@lists.01.org
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/dma/tegra186-gpc-dma.c | 37 +++++++++++++++++++++++++++-------
+>  1 file changed, 30 insertions(+), 7 deletions(-)
 > 
+> diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
+> index fa9bda4a2bc6..1d1180db6d4e 100644
+> --- a/drivers/dma/tegra186-gpc-dma.c
+> +++ b/drivers/dma/tegra186-gpc-dma.c
+> @@ -161,7 +161,10 @@
+>  #define TEGRA_GPCDMA_BURST_COMPLETION_TIMEOUT	5000 /* 5 msec */
+>  
+>  /* Channel base address offset from GPCDMA base address */
+> -#define TEGRA_GPCDMA_CHANNEL_BASE_ADD_OFFSET	0x20000
+> +#define TEGRA_GPCDMA_CHANNEL_BASE_ADDR_OFFSET	0x10000
+> +
+> +/* Default channel mask reserving channel0 */
+> +#define TEGRA_GPCDMA_DEFAULT_CHANNEL_MASK	0xfffffffe
+>  
+>  struct tegra_dma;
+>  struct tegra_dma_channel;
+> @@ -246,6 +249,7 @@ struct tegra_dma {
+>  	const struct tegra_dma_chip_data *chip_data;
+>  	unsigned long sid_m2d_reserved;
+>  	unsigned long sid_d2m_reserved;
+> +	u32 chan_mask;
+>  	void __iomem *base_addr;
+>  	struct device *dev;
+>  	struct dma_device dma_dev;
+> @@ -1288,7 +1292,7 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
+>  }
+>  
+>  static const struct tegra_dma_chip_data tegra186_dma_chip_data = {
+> -	.nr_channels = 31,
+> +	.nr_channels = 32,
+
+This is an ABI break. A new kernel with an old DTB will use 32 channels 
+instead of 31. You should leave this and use the dma-channel-mask to 
+enable all 32 channels.
+
+Rob
