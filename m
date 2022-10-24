@@ -2,2020 +2,2464 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB9BEB649D
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 11:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7DFFA3743
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 13:21:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbiJXLUh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Oct 2022 07:20:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56784 "EHLO
+        id S230482AbiJXNUi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Oct 2022 09:20:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230350AbiJXLUW (ORCPT
+        with ESMTP id S236012AbiJXNTA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Oct 2022 07:20:22 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 678913A4AD;
-        Mon, 24 Oct 2022 04:20:15 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7FC252216A;
-        Mon, 24 Oct 2022 11:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1666610409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nSk2FXDEc25zzGR//kIX1RE1tNJvczIT2jFo/lnzWZs=;
-        b=aswqT2C05mfTMEagSCDXCiNX74B6hYWJDoGI42x4CMXgdAvMAdgvPVXg3JPOV7lTs4GyoS
-        jnf2EhP6BHLFTpspx7P7G2Hl/+gRkoqx8w2N6fbnVFQFMWNXX3siYcMowWsTegQ13AO7UB
-        4ePGHgaYgvr4suFt3eW/1Nqk7q9yuBQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1666610409;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nSk2FXDEc25zzGR//kIX1RE1tNJvczIT2jFo/lnzWZs=;
-        b=Ie9Ce208Cm9C7CSCcyJskr8Qut7zW4mcyAmaYrdwoGN9uQNVGR1w9BOCCN2tszF2tXyr10
-        0KUOJBRn3ISuC+Dg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B199013A98;
-        Mon, 24 Oct 2022 11:20:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id IEYpKuh0VmOYMgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 24 Oct 2022 11:20:08 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
-        javierm@redhat.com, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 20/21] drm/fb-helper: Move generic fbdev emulation into separate source file
-Date:   Mon, 24 Oct 2022 13:19:52 +0200
-Message-Id: <20221024111953.24307-21-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.38.0
-In-Reply-To: <20221024111953.24307-1-tzimmermann@suse.de>
-References: <20221024111953.24307-1-tzimmermann@suse.de>
+        Mon, 24 Oct 2022 09:19:00 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2060c.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe5a::60c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82063A5720;
+        Mon, 24 Oct 2022 05:27:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iMJV6LXBIw0B+xCSK7B9UiF4IXdSMPBrlyrqJ2DYEwEcxB5D4oV8MpxW/51Gde/Gy078CTjYSf77QVoYfIPS/XBEHwjMLY1KzxLxmZuVEYqJj9/YUu6V1lbRh1G1NCNz4icW2L7hastWv2P1ljYCeVkgbO0GcoVENjPzdjrmCQ1T911+SvuIhDnZwGI9sQ3Fa+bXUl9Ihn78u3c35/PzpE8/Ggpl/80vCcLqwhrHv2aS+0Kxgw0CLdRdoroTlye150a38wZ3sAycMFxRlltRRsNLespwfwATfMcYXFyh+hO4Ct8TNTYWaTNiYb/5NpZ4ssWIWAQvii7JIDhyyUofeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fwgtGVG3Gy49xZVarQWGRj1qVHxe79YS3mo9Dn+iPzI=;
+ b=F2HLjDt0sdN+hCdpyW6U/3c0GdT6I6DV2FzfxRos19tMZYzdCoaL4l8EttKeRQGb9ZuT3DRO5ADidzrkJzSlfzugcAVahm/fZINeftYlG7JTmlxpwzrxphKgPACnX9nSKHQWbfUAvLclOgO1qk7oTn9IBDSlzdNnCuq5dmE1+2ZqN5PJOF3brr65/cvTg5TfFnP+NObAvH/6Hv/ExgYROaqj2pG8c+r/3Dot9sDcxBvS697M561Xbrsf9bwAnZgZqGbGpKGCkMi1J63kb/R/Qia8dje7GbPMv1df6qJLJXarBcj14ovlix8wddrmQdJ36UH4R/IJjQdhJSSQ999Ljw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fwgtGVG3Gy49xZVarQWGRj1qVHxe79YS3mo9Dn+iPzI=;
+ b=WmepIjoSi9mZNUsUrvpFTRz4Wz/WZYKE/uHnP6DaIGrG+O7BcJfm/fFLYSO3vO3nArGghx5e7QLkBZ+cYBm6V3DI1eX/V+yQg+lFc/0qfH7Mb2ATdoJD25hubtBAd38ssMIuJl3TucWOpUIWy+xw+qZzJZv4Pc/YKlM3/gP/RQ/xBa9lkR2QBbUtpw8he/nuGn/W3x6rWk1ukAxsN+9vh6jCPpmFexxc74EIkl0gqeKhYQQzJV2Dbh9cUmpjJPtFg7EsB/UYgLs75kWJnlVWFENiR7AFVIM11NYydH8an7pE/kaWJg57PwLIHxg7oDunV50j3om69aUgOT8k5wafLA==
+Received: from MW4PR04CA0043.namprd04.prod.outlook.com (2603:10b6:303:6a::18)
+ by DM6PR12MB4074.namprd12.prod.outlook.com (2603:10b6:5:218::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.23; Mon, 24 Oct
+ 2022 12:14:54 +0000
+Received: from CO1NAM11FT053.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:6a:cafe::5) by MW4PR04CA0043.outlook.office365.com
+ (2603:10b6:303:6a::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.27 via Frontend
+ Transport; Mon, 24 Oct 2022 12:14:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1NAM11FT053.mail.protection.outlook.com (10.13.175.63) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5746.16 via Frontend Transport; Mon, 24 Oct 2022 12:14:54 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 24 Oct
+ 2022 05:14:43 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 24 Oct
+ 2022 05:14:43 -0700
+Received: from 44189d9-lcedt.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Mon, 24 Oct 2022 05:14:42 -0700
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     <treding@nvidia.com>, <linux-tegra@vger.kernel.org>
+CC:     <linux-clk@vger.kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 1/2] firmware: tegra: Update BPMP ABI
+Date:   Mon, 24 Oct 2022 15:14:38 +0300
+Message-ID: <20221024121439.3381239-1-pdeschrijver@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT053:EE_|DM6PR12MB4074:EE_
+X-MS-Office365-Filtering-Correlation-Id: 130680b1-9e15-41e5-b719-08dab5b95c11
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HjEKe4UprGPv7wyV/ZgxW/cQtjfHeQHZf+r69F6UhyipE+BDeeb1p0dj5ugRChFDjQbC/HK37271EIzwk3YkLlZDz8+7n8ziZ5OHSsi2fMb0osNApktPvbXM5jfcp4rRG/1mBhJ+clJ1wuxBFrSqMoo6uSQX7b0p+QzGkbga7OBcZZREXcwPgGdPV9Y9WXe9zpXloa+/bx/752IyHkFqEE4oDtE+/ldJHxTrNxcYdkTZ59BsPqsYIpVw86Moz1l+RIpV7skOYyTajSQqAb1UnSiUpmXZMAoCHwSve/B59wXd5GMup+bLxAU6wczo+I7rigP+ZrnU4FL2bvlGi1OKj+RkP7x8RJs/EBHghaDkiPmTjJzAIJvA0EX2c7ciHoxy7viQbhB8GimtrPC3GrfmZHyJH4MlFbWBwhEia9Fs+SqA8ytDl6sbiVNZerkS5AN69PcEAktRN04jYoLsboRGDTIzzpKm+uRSU3yePq68XdqC7sHgxVap7xOAbZNJEo5rSEJDfcR2sRM25cL61+Dk4EKdGbqxJ94rP8kEhvEfm7dyVoojlggm8Ol30HRHhl0zjTyiQf799xzPAjQw4SzMyzpWS9r7u44NG9QxhbzZ5Gs3B1huDx+/TuDJIQC9QrF4a2itVi56//SyLA2kxV1vsgTf0rjob8s9PFPTmrNB2hsWczZIl5fdY+G0M9XRTkHjy6N9zhYmIudqseZxT9ibPDxmYsArxesqE9p95q+Hd4IPzWAmrieBqIlSyMZTOBd7VVzaYrovvZV6QAA6l65Djw==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(39860400002)(136003)(396003)(376002)(451199015)(36840700001)(40470700004)(46966006)(1076003)(186003)(336012)(26005)(83380400001)(7696005)(316002)(107886003)(6666004)(41300700001)(5660300002)(15650500001)(8676002)(70206006)(2906002)(54906003)(36860700001)(70586007)(478600001)(86362001)(8936002)(40480700001)(47076005)(2616005)(426003)(40460700003)(450100002)(4326008)(30864003)(356005)(7636003)(36756003)(82740400003)(110136005)(82310400005)(559001)(579004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2022 12:14:54.3026
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 130680b1-9e15-41e5-b719-08dab5b95c11
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT053.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4074
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Move the generic fbdev implementation into its own source and header
-file. Adapt drivers. No functonal changes, but some of the internal
-helpers have been renamed to fit into the drm_fbdev_ naming scheme.
+Update the BPMP ABI to align with the the latest version.
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/gpu/drm/Makefile                      |   2 +-
- .../gpu/drm/arm/display/komeda/komeda_drv.c   |   2 +-
- drivers/gpu/drm/arm/hdlcd_drv.c               |   2 +-
- drivers/gpu/drm/arm/malidp_drv.c              |   2 +-
- drivers/gpu/drm/aspeed/aspeed_gfx_drv.c       |   2 +-
- drivers/gpu/drm/ast/ast_drv.c                 |   1 +
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c  |   2 +-
- drivers/gpu/drm/drm_fb_helper.c               | 517 +-----------------
- drivers/gpu/drm/drm_fbdev.c                   | 512 +++++++++++++++++
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c     |   2 +-
- drivers/gpu/drm/gud/gud_drv.c                 |   2 +-
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |   1 +
- .../gpu/drm/hisilicon/kirin/kirin_drm_drv.c   |   2 +-
- drivers/gpu/drm/hyperv/hyperv_drm_drv.c       |   2 +-
- drivers/gpu/drm/imx/dcss/dcss-kms.c           |   2 +-
- drivers/gpu/drm/imx/imx-drm-core.c            |   2 +-
- drivers/gpu/drm/ingenic/ingenic-drm-drv.c     |   2 +-
- drivers/gpu/drm/kmb/kmb_drv.c                 |   2 +-
- drivers/gpu/drm/logicvc/logicvc_drm.c         |   2 +-
- drivers/gpu/drm/mcde/mcde_drv.c               |   2 +-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c        |   2 +-
- drivers/gpu/drm/meson/meson_drv.c             |   2 +-
- drivers/gpu/drm/mgag200/mgag200_drv.c         |   1 +
- drivers/gpu/drm/mxsfb/lcdif_drv.c             |   2 +-
- drivers/gpu/drm/mxsfb/mxsfb_drv.c             |   2 +-
- drivers/gpu/drm/panel/panel-ilitek-ili9341.c  |   2 +-
- drivers/gpu/drm/pl111/pl111_drv.c             |   2 +-
- drivers/gpu/drm/qxl/qxl_drv.c                 |   1 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.c         |   2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |   2 +-
- drivers/gpu/drm/solomon/ssd130x.c             |   2 +-
- drivers/gpu/drm/sti/sti_drv.c                 |   2 +-
- drivers/gpu/drm/stm/drv.c                     |   2 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c             |   2 +-
- drivers/gpu/drm/tidss/tidss_drv.c             |   2 +-
- drivers/gpu/drm/tilcdc/tilcdc_drv.c           |   2 +-
- drivers/gpu/drm/tiny/arcpgu.c                 |   2 +-
- drivers/gpu/drm/tiny/bochs.c                  |   2 +-
- drivers/gpu/drm/tiny/cirrus.c                 |   2 +-
- drivers/gpu/drm/tiny/gm12u320.c               |   2 +-
- drivers/gpu/drm/tiny/hx8357d.c                |   2 +-
- drivers/gpu/drm/tiny/ili9163.c                |   2 +-
- drivers/gpu/drm/tiny/ili9225.c                |   2 +-
- drivers/gpu/drm/tiny/ili9341.c                |   2 +-
- drivers/gpu/drm/tiny/ili9486.c                |   2 +-
- drivers/gpu/drm/tiny/mi0283qt.c               |   2 +-
- drivers/gpu/drm/tiny/ofdrm.c                  |   2 +-
- drivers/gpu/drm/tiny/panel-mipi-dbi.c         |   2 +-
- drivers/gpu/drm/tiny/repaper.c                |   2 +-
- drivers/gpu/drm/tiny/simpledrm.c              |   2 +-
- drivers/gpu/drm/tiny/st7586.c                 |   2 +-
- drivers/gpu/drm/tiny/st7735r.c                |   2 +-
- drivers/gpu/drm/tve200/tve200_drv.c           |   2 +-
- drivers/gpu/drm/udl/udl_drv.c                 |   2 +-
- drivers/gpu/drm/vboxvideo/vbox_drv.c          |   2 +-
- drivers/gpu/drm/vc4/vc4_drv.c                 |   2 +-
- drivers/gpu/drm/virtio/virtgpu_drv.c          |   1 +
- drivers/gpu/drm/vkms/vkms_drv.c               |   2 +-
- drivers/gpu/drm/xlnx/zynqmp_dpsub.c           |   2 +-
- include/drm/drm_fb_helper.h                   |   9 -
- include/drm/drm_fbdev.h                       |  15 +
- 61 files changed, 586 insertions(+), 576 deletions(-)
- create mode 100644 drivers/gpu/drm/drm_fbdev.c
- create mode 100644 include/drm/drm_fbdev.h
+ include/soc/tegra/bpmp-abi.h | 1802 +++++++++++++++++++++++++---------
+ 1 file changed, 1357 insertions(+), 445 deletions(-)
 
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index 6e55c47288e42..b1c3d31128094 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -117,7 +117,7 @@ drm_kms_helper-y := \
- 	drm_self_refresh_helper.o \
- 	drm_simple_kms_helper.o
- drm_kms_helper-$(CONFIG_DRM_PANEL_BRIDGE) += bridge/panel.o
--drm_kms_helper-$(CONFIG_DRM_FBDEV_EMULATION) += drm_fb_helper.o
-+drm_kms_helper-$(CONFIG_DRM_FBDEV_EMULATION) += drm_fbdev.o drm_fb_helper.o
- obj-$(CONFIG_DRM_KMS_HELPER) += drm_kms_helper.o
- 
- #
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
-index 9fce4239d4ad4..9124d9e3f4e71 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
-@@ -9,7 +9,7 @@
- #include <linux/platform_device.h>
- #include <linux/component.h>
- #include <linux/pm_runtime.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_module.h>
- #include <drm/drm_of.h>
- #include "komeda_dev.h"
-diff --git a/drivers/gpu/drm/arm/hdlcd_drv.c b/drivers/gpu/drm/arm/hdlcd_drv.c
-index a032003c340cc..fddcef0c373e0 100644
---- a/drivers/gpu/drm/arm/hdlcd_drv.c
-+++ b/drivers/gpu/drm/arm/hdlcd_drv.c
-@@ -26,7 +26,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_debugfs.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_modeset_helper.h>
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index 1d0b0c54ccc74..7665b651bbc59 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -19,7 +19,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-index a94f1a9e8f409..fa2fec7940b23 100644
---- a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-+++ b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-@@ -16,7 +16,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_device.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
-index bbeb5defc8f5c..44f5da586dad1 100644
---- a/drivers/gpu/drm/ast/ast_drv.c
-+++ b/drivers/gpu/drm/ast/ast_drv.c
-@@ -33,6 +33,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_module.h>
- #include <drm/drm_probe_helper.h>
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-index f7e7f4e919c77..3d3e3dee7d8ec 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-@@ -19,7 +19,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index d1afb420c6e06..f52a90263ac36 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -30,24 +30,17 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/console.h>
--#include <linux/dma-buf.h>
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/slab.h>
- #include <linux/sysrq.h>
--#include <linux/vmalloc.h>
- 
- #include <drm/drm_atomic.h>
--#include <drm/drm_crtc.h>
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
-+#include <drm/drm_modeset_helper_vtables.h>
- #include <drm/drm_print.h>
- #include <drm/drm_vblank.h>
- 
--#include "drm_crtc_helper_internal.h"
- #include "drm_internal.h"
- 
- static bool drm_fbdev_emulation = true;
-@@ -61,25 +54,6 @@ MODULE_PARM_DESC(drm_fbdev_overalloc,
- 		 "Overallocation of the fbdev buffer (%) [default="
- 		 __MODULE_STRING(CONFIG_DRM_FBDEV_OVERALLOC) "]");
- 
--/*
-- * In order to keep user-space compatibility, we want in certain use-cases
-- * to keep leaking the fbdev physical address to the user-space program
-- * handling the fbdev buffer.
-- * This is a bad habit essentially kept into closed source opengl driver
-- * that should really be moved into open-source upstream projects instead
-- * of using legacy physical addresses in user space to communicate with
-- * other out-of-tree kernel modules.
-- *
-- * This module_param *should* be removed as soon as possible and be
-- * considered as a broken and legacy behaviour from a modern fbdev device.
-- */
--#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
--static bool drm_leak_fbdev_smem = false;
--module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
--MODULE_PARM_DESC(drm_leak_fbdev_smem,
--		 "Allow unsafe leaking fbdev physical smem address [default=false]");
--#endif
--
- static LIST_HEAD(kernel_fb_helper_list);
- static DEFINE_MUTEX(kernel_fb_helper_lock);
- 
-@@ -372,80 +346,6 @@ static void drm_fb_helper_resume_worker(struct work_struct *work)
- 	console_unlock();
- }
- 
--static void drm_fb_helper_damage_blit_real(struct drm_fb_helper *fb_helper,
--					   struct drm_clip_rect *clip,
--					   struct iosys_map *dst)
--{
--	struct drm_framebuffer *fb = fb_helper->fb;
--	size_t offset = clip->y1 * fb->pitches[0];
--	size_t len = clip->x2 - clip->x1;
--	unsigned int y;
--	void *src;
--
--	switch (drm_format_info_bpp(fb->format, 0)) {
--	case 1:
--		offset += clip->x1 / 8;
--		len = DIV_ROUND_UP(len + clip->x1 % 8, 8);
--		break;
--	case 2:
--		offset += clip->x1 / 4;
--		len = DIV_ROUND_UP(len + clip->x1 % 4, 4);
--		break;
--	case 4:
--		offset += clip->x1 / 2;
--		len = DIV_ROUND_UP(len + clip->x1 % 2, 2);
--		break;
--	default:
--		offset += clip->x1 * fb->format->cpp[0];
--		len *= fb->format->cpp[0];
--		break;
--	}
--
--	src = fb_helper->info->screen_buffer + offset;
--	iosys_map_incr(dst, offset); /* go to first pixel within clip rect */
--
--	for (y = clip->y1; y < clip->y2; y++) {
--		iosys_map_memcpy_to(dst, 0, src, len);
--		iosys_map_incr(dst, fb->pitches[0]);
--		src += fb->pitches[0];
--	}
--}
--
--static int drm_fb_helper_damage_blit(struct drm_fb_helper *fb_helper,
--				     struct drm_clip_rect *clip)
--{
--	struct drm_client_buffer *buffer = fb_helper->buffer;
--	struct iosys_map map, dst;
--	int ret;
--
--	/*
--	 * We have to pin the client buffer to its current location while
--	 * flushing the shadow buffer. In the general case, concurrent
--	 * modesetting operations could try to move the buffer and would
--	 * fail. The modeset has to be serialized by acquiring the reservation
--	 * object of the underlying BO here.
--	 *
--	 * For fbdev emulation, we only have to protect against fbdev modeset
--	 * operations. Nothing else will involve the client buffer's BO. So it
--	 * is sufficient to acquire struct drm_fb_helper.lock here.
--	 */
--	mutex_lock(&fb_helper->lock);
--
--	ret = drm_client_buffer_vmap(buffer, &map);
--	if (ret)
--		goto out;
--
--	dst = map;
--	drm_fb_helper_damage_blit_real(fb_helper, clip, &dst);
--
--	drm_client_buffer_vunmap(buffer);
--
--out:
--	mutex_unlock(&fb_helper->lock);
--
--	return ret;
--}
--
- static void drm_fb_helper_damage_work(struct work_struct *work)
- {
- 	struct drm_fb_helper *helper = container_of(work, struct drm_fb_helper, damage_work);
-@@ -2322,423 +2222,10 @@ EXPORT_SYMBOL(drm_fb_helper_lastclose);
-  *
-  * This function can be used as the
-  * &drm_mode_config_funcs.output_poll_changed callback for drivers that only
-- * need to call drm_fb_helper_hotplug_event().
-+ * need to call drm_fbdev.hotplug_event().
+diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
+index 53171e324d1c..ecefcaec7e66 100644
+--- a/include/soc/tegra/bpmp-abi.h
++++ b/include/soc/tegra/bpmp-abi.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * Copyright (c) 2014-2020, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014-2022, NVIDIA CORPORATION.  All rights reserved.
   */
- void drm_fb_helper_output_poll_changed(struct drm_device *dev)
- {
- 	drm_fb_helper_hotplug_event(dev->fb_helper);
- }
- EXPORT_SYMBOL(drm_fb_helper_output_poll_changed);
--
--static bool drm_fbdev_use_shadow_fb(struct drm_fb_helper *fb_helper)
--{
--	struct drm_device *dev = fb_helper->dev;
--	struct drm_framebuffer *fb = fb_helper->fb;
--
--	return dev->mode_config.prefer_shadow_fbdev ||
--	       dev->mode_config.prefer_shadow ||
--	       fb->funcs->dirty;
--}
--
--/* @user: 1=userspace, 0=fbcon */
--static int drm_fbdev_fb_open(struct fb_info *info, int user)
--{
--	struct drm_fb_helper *fb_helper = info->par;
--
--	/* No need to take a ref for fbcon because it unbinds on unregister */
--	if (user && !try_module_get(fb_helper->dev->driver->fops->owner))
--		return -ENODEV;
--
--	return 0;
--}
--
--static int drm_fbdev_fb_release(struct fb_info *info, int user)
--{
--	struct drm_fb_helper *fb_helper = info->par;
--
--	if (user)
--		module_put(fb_helper->dev->driver->fops->owner);
--
--	return 0;
--}
--
--static void drm_fbdev_cleanup(struct drm_fb_helper *fb_helper)
--{
--	struct fb_info *fbi = fb_helper->info;
--	void *shadow = NULL;
--
--	if (!fb_helper->dev)
--		return;
--
--	if (fbi) {
--		if (fbi->fbdefio)
--			fb_deferred_io_cleanup(fbi);
--		if (drm_fbdev_use_shadow_fb(fb_helper))
--			shadow = fbi->screen_buffer;
--	}
--
--	drm_fb_helper_fini(fb_helper);
--
--	if (shadow)
--		vfree(shadow);
--	else if (fb_helper->buffer)
--		drm_client_buffer_vunmap(fb_helper->buffer);
--
--	drm_client_framebuffer_delete(fb_helper->buffer);
--}
--
--static void drm_fbdev_release(struct drm_fb_helper *fb_helper)
--{
--	drm_fbdev_cleanup(fb_helper);
--	drm_client_release(&fb_helper->client);
--	kfree(fb_helper);
--}
--
--/*
-- * fb_ops.fb_destroy is called by the last put_fb_info() call at the end of
-- * unregister_framebuffer() or fb_release().
-- */
--static void drm_fbdev_fb_destroy(struct fb_info *info)
--{
--	drm_fbdev_release(info->par);
--}
--
--static int drm_fbdev_fb_mmap(struct fb_info *info, struct vm_area_struct *vma)
--{
--	struct drm_fb_helper *fb_helper = info->par;
--
--	if (drm_fbdev_use_shadow_fb(fb_helper))
--		return fb_deferred_io_mmap(info, vma);
--	else if (fb_helper->dev->driver->gem_prime_mmap)
--		return fb_helper->dev->driver->gem_prime_mmap(fb_helper->buffer->gem, vma);
--	else
--		return -ENODEV;
--}
--
--static bool drm_fbdev_use_iomem(struct fb_info *info)
--{
--	struct drm_fb_helper *fb_helper = info->par;
--	struct drm_client_buffer *buffer = fb_helper->buffer;
--
--	return !drm_fbdev_use_shadow_fb(fb_helper) && buffer->map.is_iomem;
--}
--
--static ssize_t drm_fbdev_fb_read(struct fb_info *info, char __user *buf,
--				 size_t count, loff_t *ppos)
--{
--	ssize_t ret;
--
--	if (drm_fbdev_use_iomem(info))
--		ret = drm_fb_helper_cfb_read(info, buf, count, ppos);
--	else
--		ret = drm_fb_helper_sys_read(info, buf, count, ppos);
--
--	return ret;
--}
--
--static ssize_t drm_fbdev_fb_write(struct fb_info *info, const char __user *buf,
--				  size_t count, loff_t *ppos)
--{
--	ssize_t ret;
--
--	if (drm_fbdev_use_iomem(info))
--		ret = drm_fb_helper_cfb_write(info, buf, count, ppos);
--	else
--		ret = drm_fb_helper_sys_write(info, buf, count, ppos);
--
--	return ret;
--}
--
--static void drm_fbdev_fb_fillrect(struct fb_info *info,
--				  const struct fb_fillrect *rect)
--{
--	if (drm_fbdev_use_iomem(info))
--		drm_fb_helper_cfb_fillrect(info, rect);
--	else
--		drm_fb_helper_sys_fillrect(info, rect);
--}
--
--static void drm_fbdev_fb_copyarea(struct fb_info *info,
--				  const struct fb_copyarea *area)
--{
--	if (drm_fbdev_use_iomem(info))
--		drm_fb_helper_cfb_copyarea(info, area);
--	else
--		drm_fb_helper_sys_copyarea(info, area);
--}
--
--static void drm_fbdev_fb_imageblit(struct fb_info *info,
--				   const struct fb_image *image)
--{
--	if (drm_fbdev_use_iomem(info))
--		drm_fb_helper_cfb_imageblit(info, image);
--	else
--		drm_fb_helper_sys_imageblit(info, image);
--}
--
--static const struct fb_ops drm_fbdev_fb_ops = {
--	.owner		= THIS_MODULE,
--	DRM_FB_HELPER_DEFAULT_OPS,
--	.fb_open	= drm_fbdev_fb_open,
--	.fb_release	= drm_fbdev_fb_release,
--	.fb_destroy	= drm_fbdev_fb_destroy,
--	.fb_mmap	= drm_fbdev_fb_mmap,
--	.fb_read	= drm_fbdev_fb_read,
--	.fb_write	= drm_fbdev_fb_write,
--	.fb_fillrect	= drm_fbdev_fb_fillrect,
--	.fb_copyarea	= drm_fbdev_fb_copyarea,
--	.fb_imageblit	= drm_fbdev_fb_imageblit,
--};
--
--static struct fb_deferred_io drm_fbdev_defio = {
--	.delay		= HZ / 20,
--	.deferred_io	= drm_fb_helper_deferred_io,
--};
--
--/*
-- * This function uses the client API to create a framebuffer backed by a dumb buffer.
+ 
+ #ifndef ABI_BPMP_ABI_H
+@@ -72,6 +72,32 @@
+  * @}
+  */
+ 
++/**
++ * @ingroup MRQ_Format
++ * Request an answer from the peer.
++ * This should be set in mrq_request::flags for all requests targetted
++ * at BPMP. For requests originating in BPMP, this flag is optional except
++ * for messages targeting MCE, for which the field must be set.
++ * When this flag is not set, the remote peer must not send a response
++ * back.
++ */
++#define BPMP_MAIL_DO_ACK	(1U << 0U)
++
++/**
++ * @ingroup MRQ_Format
++ * Ring the sender's doorbell when responding. This should be set unless
++ * the sender wants to poll the underlying communications layer directly.
++ *
++ * An optional direction that can be specified in mrq_request::flags.
++ */
++#define BPMP_MAIL_RING_DB	(1U << 1U)
++
++/**
++ * @ingroup MRQ_Format
++ * CRC present
++ */
++#define BPMP_MAIL_CRC_PRESENT	(1U << 2U)
++
+ /**
+  * @ingroup MRQ_Format
+  * @brief Header for an MRQ message
+@@ -85,12 +111,139 @@ struct mrq_request {
+ 	uint32_t mrq;
+ 
+ 	/**
+-	 * @brief Flags providing follow up directions to the receiver
++	 * @brief 32bit word containing a number of fields as follows:
++	 *
++	 * 	struct {
++	 * 		uint8_t options:4;
++	 * 		uint8_t xid:4;
++	 * 		uint8_t payload_length;
++	 * 		uint16_t crc16;
++	 * 	};
++	 *
++	 * **options** directions to the receiver and indicates CRC presence.
++	 *
++	 * #BPMP_MAIL_DO_ACK and  #BPMP_MAIL_RING_DB see documentation of respective options.
++	 * #BPMP_MAIL_CRC_PRESENT is supported on T234 and later platforms. It indicates the
++	 * crc16, xid and length fields are present when set.
++	 * Some platform configurations, especially when targeted to applications requiring
++	 * functional safety, mandate this option being set or otherwise will respond with
++	 * -BPMP_EBADMSG and ignore the request.
+ 	 *
+-	 * | Bit | Description                                |
+-	 * |-----|--------------------------------------------|
+-	 * | 1   | ring the sender's doorbell when responding |
+-	 * | 0   | should be 1                                |
++	 * **xid** is a transaction ID.
++	 *
++	 * Only used when #BPMP_MAIL_CRC_PRESENT is set.
++	 *
++	 * **payload_length** of the message expressed in bytes without the size of this header.
++	 * See table below for minimum accepted payload lengths for each MRQ.
++	 * Note: For DMCE communication, this field expresses the length as a multiple of 4 bytes
++	 * rather than bytes.
++	 *
++	 * Only used when #BPMP_MAIL_CRC_PRESENT is set.
++	 *
++	 * | MRQ                  | CMD                                  | minimum payload length
++	 * | -------------------- | ------------------------------------ | ------------------------------------------ |
++	 * | MRQ_PING             |                                      | 4                                          |
++	 * | MRQ_THREADED_PING    |                                      | 4                                          |
++	 * | MRQ_RESET            | any                                  | 8                                          |
++	 * | MRQ_I2C              |                                      | 12 + cmd_i2c_xfer_request.data_size        |
++	 * | MRQ_CLK              | CMD_CLK_GET_RATE                     | 4                                          |
++	 * | MRQ_CLK              | CMD_CLK_SET_RATE                     | 16                                         |
++	 * | MRQ_CLK              | CMD_CLK_ROUND_RATE                   | 16                                         |
++	 * | MRQ_CLK              | CMD_CLK_GET_PARENT                   | 4                                          |
++	 * | MRQ_CLK              | CMD_CLK_SET_PARENT                   | 8                                          |
++	 * | MRQ_CLK              | CMD_CLK_ENABLE                       | 4                                          |
++	 * | MRQ_CLK              | CMD_CLK_DISABLE                      | 4                                          |
++	 * | MRQ_CLK              | CMD_CLK_IS_ENABLED                   | 4                                          |
++	 * | MRQ_CLK              | CMD_CLK_GET_ALL_INFO                 | 4                                          |
++	 * | MRQ_CLK              | CMD_CLK_GET_MAX_CLK_ID               | 4                                          |
++	 * | MRQ_CLK              | CMD_CLK_GET_FMAX_AT_VMIN             | 4                                          |
++	 * | MRQ_QUERY_ABI        |                                      | 4                                          |
++	 * | MRQ_PG               | CMD_PG_QUERY_ABI                     | 12                                         |
++	 * | MRQ_PG               | CMD_PG_SET_STATE                     | 12                                         |
++	 * | MRQ_PG               | CMD_PG_GET_STATE                     | 8                                          |
++	 * | MRQ_PG               | CMD_PG_GET_NAME                      | 8                                          |
++	 * | MRQ_PG               | CMD_PG_GET_MAX_ID                    | 8                                          |
++	 * | MRQ_THERMAL          | CMD_THERMAL_QUERY_ABI                | 8                                          |
++	 * | MRQ_THERMAL          | CMD_THERMAL_GET_TEMP                 | 8                                          |
++	 * | MRQ_THERMAL          | CMD_THERMAL_SET_TRIP                 | 20                                         |
++	 * | MRQ_THERMAL          | CMD_THERMAL_GET_NUM_ZONES            | 4                                          |
++	 * | MRQ_THERMAL          | CMD_THERMAL_GET_THERMTRIP            | 8                                          |
++	 * | MRQ_CPU_VHINT        |                                      | 8                                          |
++	 * | MRQ_ABI_RATCHET      |                                      | 2                                          |
++	 * | MRQ_EMC_DVFS_LATENCY |                                      | 8                                          |
++	 * | MRQ_EMC_DVFS_EMCHUB  |                                      | 8                                          |
++	 * | MRQ_EMC_DISP_RFL     |                                      | 4                                          |
++	 * | MRQ_BWMGR            | CMD_BWMGR_QUERY_ABI                  | 8                                          |
++	 * | MRQ_BWMGR            | CMD_BWMGR_CALC_RATE                  | 8 + 8 * bwmgr_rate_req.num_iso_clients     |
++	 * | MRQ_ISO_CLIENT       | CMD_ISO_CLIENT_QUERY_ABI             | 8                                          |
++	 * | MRQ_ISO_CLIENT       | CMD_ISO_CLIENT_CALCULATE_LA          | 16                                         |
++	 * | MRQ_ISO_CLIENT       | CMD_ISO_CLIENT_SET_LA                | 16                                         |
++	 * | MRQ_ISO_CLIENT       | CMD_ISO_CLIENT_GET_MAX_BW            | 8                                          |
++	 * | MRQ_CPU_NDIV_LIMITS  |                                      | 4                                          |
++	 * | MRQ_CPU_AUTO_CC3     |                                      | 4                                          |
++	 * | MRQ_RINGBUF_CONSOLE  | CMD_RINGBUF_CONSOLE_QUERY_ABI        | 8                                          |
++	 * | MRQ_RINGBUF_CONSOLE  | CMD_RINGBUF_CONSOLE_READ             | 5                                          |
++	 * | MRQ_RINGBUF_CONSOLE  | CMD_RINGBUF_CONSOLE_WRITE            | 5 + cmd_ringbuf_console_write_req.len      |
++	 * | MRQ_RINGBUF_CONSOLE  | CMD_RINGBUF_CONSOLE_GET_FIFO         | 4                                          |
++	 * | MRQ_STRAP            | STRAP_SET                            | 12                                         |
++	 * | MRQ_UPHY             | CMD_UPHY_PCIE_LANE_MARGIN_CONTROL    | 24                                         |
++	 * | MRQ_UPHY             | CMD_UPHY_PCIE_LANE_MARGIN_STATUS     | 4                                          |
++	 * | MRQ_UPHY             | CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT | 5                                          |
++	 * | MRQ_UPHY             | CMD_UPHY_PCIE_CONTROLLER_STATE       | 6                                          |
++	 * | MRQ_UPHY             | CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF  | 5                                          |
++	 * | MRQ_FMON             | CMD_FMON_GEAR_CLAMP                  | 16                                         |
++	 * | MRQ_FMON             | CMD_FMON_GEAR_FREE                   | 4                                          |
++	 * | MRQ_FMON             | CMD_FMON_GEAR_GET                    | 4                                          |
++	 * | MRQ_FMON             | CMD_FMON_FAULT_STS_GET               | 8                                          |
++	 * | MRQ_EC               | CMD_EC_STATUS_EX_GET                 | 12                                         |
++	 * | MRQ_QUERY_FW_TAG     |                                      | 0                                          |
++	 * | MRQ_DEBUG            | CMD_DEBUG_OPEN_RO                    | 4 + length of cmd_debug_fopen_request.name |
++	 * | MRQ_DEBUG            | CMD_DEBUG_OPEN_WO                    | 4 + length of cmd_debug_fopen_request.name |
++	 * | MRQ_DEBUG            | CMD_DEBUG_READ                       | 8                                          |
++	 * | MRQ_DEBUG            | CMD_DEBUG_WRITE                      | 12 + cmd_debug_fwrite_request.datalen      |
++	 * | MRQ_DEBUG            | CMD_DEBUG_CLOSE                      | 8                                          |
++	 * | MRQ_TELEMETRY        |                                      | 8                                          |
++	 * | MRQ_PWR_LIMIT        | CMD_PWR_LIMIT_QUERY_ABI              | 8                                          |
++	 * | MRQ_PWR_LIMIT        | CMD_PWR_LIMIT_SET                    | 20                                         |
++	 * | MRQ_PWR_LIMIT        | CMD_PWR_LIMIT_GET                    | 16                                         |
++	 * | MRQ_PWR_LIMIT        | CMD_PWR_LIMIT_CURR_CAP               | 8                                          |
++	 * | MRQ_GEARS            |                                      | 0                                          |
++	 * | MRQ_BWMGR_INT        | CMD_BWMGR_INT_QUERY_ABI              | 8                                          |
++	 * | MRQ_BWMGR_INT        | CMD_BWMGR_INT_CALC_AND_SET           | 16                                         |
++	 * | MRQ_BWMGR_INT        | CMD_BWMGR_INT_CAP_SET                | 8                                          |
++	 * | MRQ_OC_STATUS        |                                      | 0                                          |
++	 *
++	 * **crc16**
++	 *
++	 * CRC16 using polynomial x^16 + x^14 + x^12 + x^11 + x^8 + x^5 + x^4 + x^2 + 1
++	 * and initialization value 0x4657. The CRC is calculated over all bytes of the message
++	 * including this header. However the crc16 field is considered to be set to 0 when
++	 * calculating the CRC. Only used when #BPMP_MAIL_CRC_PRESENT is set. If
++	 * #BPMP_MAIL_CRC_PRESENT is set and this field does not match the CRC as
++	 * calculated by BPMP, -BPMP_EBADMSG will be returned and the request will
++	 * be ignored. See code snippet below on how to calculate the CRC.
++	 *
++	 * @code
++	 *	uint16_t calc_crc_digest(uint16_t crc, uint8_t *data, size_t size)
++	 *	{
++	 *		for (size_t i = 0; i < size; i++) {
++	 *			crc ^= data[i] << 8;
++	 *			for (size_t j = 0; j < 8; j++) {
++	 *				if ((crc & 0x8000) == 0x8000) {
++	 *					crc = (crc << 1) ^ 0xAC9A;
++	 *				} else {
++	 *					crc = (crc << 1);
++	 *				}
++	 *			}
++	 *		}
++	 *		return crc;
++	 *	}
++	 *
++	 *	uint16_t calc_crc(uint8_t *data, size_t size)
++	 *	{
++	 *		return calc_crc_digest(0x4657, data, size);
++	 *	}
++	 * @endcode
+ 	 */
+ 	uint32_t flags;
+ } BPMP_ABI_PACKED;
+@@ -107,7 +260,35 @@ struct mrq_request {
+ struct mrq_response {
+ 	/** @brief Error code for the MRQ request itself */
+ 	int32_t err;
+-	/** @brief Reserved for future use */
++
++	/**
++	 * @brief 32bit word containing a number of fields as follows:
++	 *
++	 * 	struct {
++	 * 		uint8_t options:4;
++	 * 		uint8_t xid:4;
++	 * 		uint8_t payload_length;
++	 * 		uint16_t crc16;
++	 * 	};
++	 *
++	 * **options** indicates CRC presence.
++	 *
++	 * #BPMP_MAIL_CRC_PRESENT is supported on T234 and later platforms and
++	 * indicates the crc16 related fields are present when set.
++	 *
++	 * **xid** is the transaction ID as sent by the requestor.
++	 *
++	 * **length** of the message expressed in bytes without the size of this header.
++	 * Note: For DMCE communication, this field expresses the length as a multiple of 4 bytes
++	 * rather than bytes.
++	 *
++	 * **crc16**
++	 *
++	 * CRC16 using polynomial x^16 + x^14 + x^12 + x^11 + x^8 + x^5 + x^4 + x^2 + 1
++	 * and initialization value 0x4657. The CRC is calculated over all bytes of the message
++	 * including this header. However the crc16 field is considered to be set to 0 when
++	 * calculating the CRC. Only used when #BPMP_MAIL_CRC_PRESENT is set.
++	 */
+ 	uint32_t flags;
+ } BPMP_ABI_PACKED;
+ 
+@@ -131,24 +312,16 @@ struct mrq_response {
+ 
+ #define MRQ_PING		0U
+ #define MRQ_QUERY_TAG		1U
+-#define MRQ_MODULE_LOAD		4U
+-#define MRQ_MODULE_UNLOAD	5U
+-#define MRQ_TRACE_MODIFY	7U
+-#define MRQ_WRITE_TRACE		8U
+ #define MRQ_THREADED_PING	9U
+-#define MRQ_MODULE_MAIL		11U
+ #define MRQ_DEBUGFS		19U
+ #define MRQ_RESET		20U
+ #define MRQ_I2C			21U
+ #define MRQ_CLK			22U
+ #define MRQ_QUERY_ABI		23U
+-#define MRQ_PG_READ_STATE	25U
+-#define MRQ_PG_UPDATE_STATE	26U
+ #define MRQ_THERMAL		27U
+ #define MRQ_CPU_VHINT		28U
+ #define MRQ_ABI_RATCHET		29U
+ #define MRQ_EMC_DVFS_LATENCY	31U
+-#define MRQ_TRACE_ITER		64U
+ #define MRQ_RINGBUF_CONSOLE	65U
+ #define MRQ_PG			66U
+ #define MRQ_CPU_NDIV_LIMITS	67U
+@@ -159,6 +332,40 @@ struct mrq_response {
+ #define MRQ_FMON		72U
+ #define MRQ_EC			73U
+ #define MRQ_DEBUG		75U
++#define MRQ_EMC_DVFS_EMCHUB	76U
++#define MRQ_BWMGR		77U
++#define MRQ_ISO_CLIENT		78U
++#define MRQ_EMC_DISP_RFL	79U
++#define MRQ_TELEMETRY		80U
++#define MRQ_PWR_LIMIT		81U
++#define MRQ_GEARS		82U
++#define MRQ_BWMGR_INT		83U
++#define MRQ_OC_STATUS		84U
++
++/** @cond DEPRECATED */
++#define MRQ_RESERVED_2		2U
++#define MRQ_RESERVED_3		3U
++#define MRQ_RESERVED_4		4U
++#define MRQ_RESERVED_5   	5U
++#define MRQ_RESERVED_6		6U
++#define MRQ_RESERVED_7		7U
++#define MRQ_RESERVED_8		8U
++#define MRQ_RESERVED_10		10U
++#define MRQ_RESERVED_11		11U
++#define MRQ_RESERVED_12		12U
++#define MRQ_RESERVED_13		13U
++#define MRQ_RESERVED_14		14U
++#define MRQ_RESERVED_15		15U
++#define MRQ_RESERVED_16		16U
++#define MRQ_RESERVED_17		17U
++#define MRQ_RESERVED_18		18U
++#define MRQ_RESERVED_24		24U
++#define MRQ_RESERVED_25		25U
++#define MRQ_RESERVED_26		26U
++#define MRQ_RESERVED_30		30U
++#define MRQ_RESERVED_64		64U
++#define MRQ_RESERVED_74		74U
++/** @endcond DEPRECATED */
+ 
+ /** @} */
+ 
+@@ -167,7 +374,7 @@ struct mrq_response {
+  * @brief Maximum MRQ code to be sent by CPU software to
+  * BPMP. Subject to change in future
+  */
+-#define MAX_CPU_MRQ_ID		75U
++#define MAX_CPU_MRQ_ID		84U
+ 
+ /**
+  * @addtogroup MRQ_Payloads
+@@ -183,8 +390,11 @@ struct mrq_response {
+  *   @defgroup ABI_info ABI Info
+  *   @defgroup Powergating Power Gating
+  *   @defgroup Thermal Thermal
++ *   @defgroup OC_status OC status
+  *   @defgroup Vhint CPU Voltage hint
+  *   @defgroup EMC EMC
++ *   @defgroup BWMGR BWMGR
++ *   @defgroup ISO_CLIENT ISO_CLIENT
+  *   @defgroup CPU NDIV Limits
+  *   @defgroup RingbufConsole Ring Buffer Console
+  *   @defgroup Strap Straps
+@@ -192,8 +402,11 @@ struct mrq_response {
+  *   @defgroup CC3 Auto-CC3
+  *   @defgroup FMON FMON
+  *   @defgroup EC EC
+- *   @defgroup Fbvolt_status Fuse Burn Voltage Status
+- * @}
++ *   @defgroup Telemetry Telemetry
++ *   @defgroup Pwrlimit PWR_LIMIT
++ *   @defgroup Gears Gears
++ *   @defgroup BWMGR_INT Bandwidth Manager Integrated
++ * @} MRQ_Payloads
+  */
+ 
+ /**
+@@ -304,190 +517,6 @@ struct mrq_query_fw_tag_response {
+ 	uint8_t tag[32];
+ } BPMP_ABI_PACKED;
+ 
+-/**
+- * @ingroup MRQ_Codes
+- * @def MRQ_MODULE_LOAD
+- * @brief Dynamically load a BPMP code module
 - *
-- * The _sys_ versions are used for &fb_ops.fb_read, fb_write, fb_fillrect,
-- * fb_copyarea, fb_imageblit.
+- * * Platforms: T210, T210B01, T186
+- * @cond (bpmp_t210 || bpmp_t210b01 || bpmp_t186)
+- * * Initiators: CCPLEX
+- * * Targets: BPMP
+- * * Request Payload: @ref mrq_module_load_request
+- * * Response Payload: @ref mrq_module_load_response
+- *
+- * @note This MRQ is disabled on production systems
+- *
 - */
--static int drm_fb_helper_generic_probe(struct drm_fb_helper *fb_helper,
--				       struct drm_fb_helper_surface_size *sizes)
--{
--	struct drm_client_dev *client = &fb_helper->client;
--	struct drm_device *dev = fb_helper->dev;
--	struct drm_client_buffer *buffer;
--	struct drm_framebuffer *fb;
--	struct fb_info *fbi;
--	u32 format;
--	struct iosys_map map;
--	int ret;
--
--	drm_dbg_kms(dev, "surface width(%d), height(%d) and bpp(%d)\n",
--		    sizes->surface_width, sizes->surface_height,
--		    sizes->surface_bpp);
--
--	format = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
--	buffer = drm_client_framebuffer_create(client, sizes->surface_width,
--					       sizes->surface_height, format);
--	if (IS_ERR(buffer))
--		return PTR_ERR(buffer);
--
--	fb_helper->buffer = buffer;
--	fb_helper->fb = buffer->fb;
--	fb = buffer->fb;
--
--	fbi = drm_fb_helper_alloc_info(fb_helper);
--	if (IS_ERR(fbi))
--		return PTR_ERR(fbi);
--
--	fbi->fbops = &drm_fbdev_fb_ops;
--	fbi->screen_size = sizes->surface_height * fb->pitches[0];
--	fbi->fix.smem_len = fbi->screen_size;
--	fbi->flags = FBINFO_DEFAULT;
--
--	drm_fb_helper_fill_info(fbi, fb_helper, sizes);
--
--	if (drm_fbdev_use_shadow_fb(fb_helper)) {
--		fbi->screen_buffer = vzalloc(fbi->screen_size);
--		if (!fbi->screen_buffer)
--			return -ENOMEM;
--		fbi->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
--
--		fbi->fbdefio = &drm_fbdev_defio;
--		fb_deferred_io_init(fbi);
--	} else {
--		/* buffer is mapped for HW framebuffer */
--		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
--		if (ret)
--			return ret;
--		if (map.is_iomem) {
--			fbi->screen_base = map.vaddr_iomem;
--		} else {
--			fbi->screen_buffer = map.vaddr;
--			fbi->flags |= FBINFO_VIRTFB;
--		}
--
--		/*
--		 * Shamelessly leak the physical address to user-space. As
--		 * page_to_phys() is undefined for I/O memory, warn in this
--		 * case.
--		 */
--#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
--		if (drm_leak_fbdev_smem && fbi->fix.smem_start == 0 &&
--		    !drm_WARN_ON_ONCE(dev, map.is_iomem))
--			fbi->fix.smem_start =
--				page_to_phys(virt_to_page(fbi->screen_buffer));
--#endif
--	}
--
--	return 0;
--}
--
--static int drm_fbdev_fb_dirty(struct drm_fb_helper *helper, struct drm_clip_rect *clip)
--{
--	struct drm_device *dev = helper->dev;
--	int ret;
--
--	if (!drm_fbdev_use_shadow_fb(helper))
--		return 0;
--
--	/* Call damage handlers only if necessary */
--	if (!(clip->x1 < clip->x2 && clip->y1 < clip->y2))
--		return 0;
--
--	if (helper->buffer) {
--		ret = drm_fb_helper_damage_blit(helper, clip);
--		if (drm_WARN_ONCE(dev, ret, "Damage blitter failed: ret=%d\n", ret))
--			return ret;
--	}
--
--	if (helper->fb->funcs->dirty) {
--		ret = helper->fb->funcs->dirty(helper->fb, NULL, 0, 0, clip, 1);
--		if (drm_WARN_ONCE(dev, ret, "Dirty helper failed: ret=%d\n", ret))
--			return ret;
--	}
--
--	return 0;
--}
--
--static const struct drm_fb_helper_funcs drm_fb_helper_generic_funcs = {
--	.fb_probe = drm_fb_helper_generic_probe,
--	.fb_dirty = drm_fbdev_fb_dirty,
--};
--
--static void drm_fbdev_client_unregister(struct drm_client_dev *client)
--{
--	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
--
--	if (fb_helper->info)
--		/* drm_fbdev_fb_destroy() takes care of cleanup */
--		drm_fb_helper_unregister_info(fb_helper);
--	else
--		drm_fbdev_release(fb_helper);
--}
--
--static int drm_fbdev_client_restore(struct drm_client_dev *client)
--{
--	drm_fb_helper_lastclose(client->dev);
--
--	return 0;
--}
--
--static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
--{
--	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
--	struct drm_device *dev = client->dev;
--	int ret;
--
--	/* Setup is not retried if it has failed */
--	if (!fb_helper->dev && fb_helper->funcs)
--		return 0;
--
--	if (dev->fb_helper)
--		return drm_fb_helper_hotplug_event(dev->fb_helper);
--
--	if (!dev->mode_config.num_connector) {
--		drm_dbg_kms(dev, "No connectors found, will not create framebuffer!\n");
--		return 0;
--	}
--
--	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
--
--	ret = drm_fb_helper_init(dev, fb_helper);
--	if (ret)
--		goto err;
--
--	if (!drm_drv_uses_atomic_modeset(dev))
--		drm_helper_disable_unused_functions(dev);
--
--	ret = drm_fb_helper_initial_config(fb_helper, fb_helper->preferred_bpp);
--	if (ret)
--		goto err_cleanup;
--
--	return 0;
--
--err_cleanup:
--	drm_fbdev_cleanup(fb_helper);
--err:
--	fb_helper->dev = NULL;
--	fb_helper->info = NULL;
--
--	drm_err(dev, "fbdev: Failed to setup generic emulation (ret=%d)\n", ret);
--
--	return ret;
--}
--
--static const struct drm_client_funcs drm_fbdev_client_funcs = {
--	.owner		= THIS_MODULE,
--	.unregister	= drm_fbdev_client_unregister,
--	.restore	= drm_fbdev_client_restore,
--	.hotplug	= drm_fbdev_client_hotplug,
--};
 -
 -/**
-- * drm_fbdev_generic_setup() - Setup generic fbdev emulation
-- * @dev: DRM device
-- * @preferred_bpp: Preferred bits per pixel for the device.
-- *                 @dev->mode_config.preferred_depth is used if this is zero.
+- * @ingroup Module
+- * @brief Request with #MRQ_MODULE_LOAD
 - *
-- * This function sets up generic fbdev emulation for drivers that supports
-- * dumb buffers with a virtual address and that can be mmap'ed.
-- * drm_fbdev_generic_setup() shall be called after the DRM driver registered
-- * the new DRM device with drm_dev_register().
+- * Used by #MRQ_MODULE_LOAD calls to ask the recipient to dynamically
+- * load the code located at #phys_addr and having size #size
+- * bytes. #phys_addr is treated as a void pointer.
 - *
-- * Restore, hotplug events and teardown are all taken care of. Drivers that do
-- * suspend/resume need to call drm_fb_helper_set_suspend_unlocked() themselves.
-- * Simple drivers might use drm_mode_config_helper_suspend().
+- * The recipient copies the code from #phys_addr to locally allocated
+- * memory prior to responding to this message.
 - *
-- * Drivers that set the dirty callback on their framebuffer will get a shadow
-- * fbdev buffer that is blitted onto the real buffer. This is done in order to
-- * make deferred I/O work with all kinds of buffers. A shadow buffer can be
-- * requested explicitly by setting struct drm_mode_config.prefer_shadow or
-- * struct drm_mode_config.prefer_shadow_fbdev to true beforehand. This is
-- * required to use generic fbdev emulation with SHMEM helpers.
+- * @todo document the module header format
 - *
-- * This function is safe to call even when there are no connectors present.
-- * Setup will be retried on the next hotplug event.
+- * The sender is responsible for ensuring that the code is mapped in
+- * the recipient's address map.
 - *
-- * The fbdev is destroyed by drm_dev_unregister().
 - */
--void drm_fbdev_generic_setup(struct drm_device *dev,
--			     unsigned int preferred_bpp)
--{
--	struct drm_fb_helper *fb_helper;
--	int ret;
+-struct mrq_module_load_request {
+-	/** @brief Base address of the code to load */
+-	uint32_t phys_addr;
+-	/** @brief Size in bytes of code to load */
+-	uint32_t size;
+-} BPMP_ABI_PACKED;
 -
--	drm_WARN(dev, !dev->registered, "Device has not been registered.\n");
--	drm_WARN(dev, dev->fb_helper, "fb_helper is already set!\n");
+-/**
+- * @ingroup Module
+- * @brief Response to #MRQ_MODULE_LOAD
+- *
+- * @todo document mrq_response::err
+- */
+-struct mrq_module_load_response {
+-	/** @brief Handle to the loaded module */
+-	uint32_t base;
+-} BPMP_ABI_PACKED;
+-/** @endcond*/
 -
--	fb_helper = kzalloc(sizeof(*fb_helper), GFP_KERNEL);
--	if (!fb_helper) {
--		drm_err(dev, "Failed to allocate fb_helper\n");
--		return;
--	}
+-/**
+- * @ingroup MRQ_Codes
+- * @def MRQ_MODULE_UNLOAD
+- * @brief Unload a previously loaded code module
+- *
+- * * Platforms: T210, T210B01, T186
+- * @cond (bpmp_t210 || bpmp_t210b01 || bpmp_t186)
+- * * Initiators: CCPLEX
+- * * Targets: BPMP
+- * * Request Payload: @ref mrq_module_unload_request
+- * * Response Payload: N/A
+- *
+- * @note This MRQ is disabled on production systems
+- */
 -
--	ret = drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
--	if (ret) {
--		kfree(fb_helper);
--		drm_err(dev, "Failed to register client: %d\n", ret);
--		return;
--	}
+-/**
+- * @ingroup Module
+- * @brief Request with #MRQ_MODULE_UNLOAD
+- *
+- * Used by #MRQ_MODULE_UNLOAD calls to request that a previously loaded
+- * module be unloaded.
+- */
+-struct mrq_module_unload_request {
+-	/** @brief Handle of the module to unload */
+-	uint32_t base;
+-} BPMP_ABI_PACKED;
+-/** @endcond*/
 -
--	/*
--	 * FIXME: This mixes up depth with bpp, which results in a glorious
--	 * mess, resulting in some drivers picking wrong fbdev defaults and
--	 * others wrong preferred_depth defaults.
+-/**
+- * @ingroup MRQ_Codes
+- * @def MRQ_TRACE_MODIFY
+- * @brief Modify the set of enabled trace events
+- *
+- * @deprecated
+- *
+- * * Platforms: All
+- * * Initiators: CCPLEX
+- * * Targets: BPMP
+- * * Request Payload: @ref mrq_trace_modify_request
+- * * Response Payload: @ref mrq_trace_modify_response
+- *
+- * @note This MRQ is disabled on production systems
+- */
+-
+-/**
+- * @ingroup Trace
+- * @brief Request with #MRQ_TRACE_MODIFY
+- *
+- * Used by %MRQ_TRACE_MODIFY calls to enable or disable specify trace
+- * events.  #set takes precedence for any bit set in both #set and
+- * #clr.
+- */
+-struct mrq_trace_modify_request {
+-	/** @brief Bit mask of trace events to disable */
+-	uint32_t clr;
+-	/** @brief Bit mask of trace events to enable */
+-	uint32_t set;
+-} BPMP_ABI_PACKED;
+-
+-/**
+- * @ingroup Trace
+- * @brief Response to #MRQ_TRACE_MODIFY
+- *
+- * Sent in repsonse to an #MRQ_TRACE_MODIFY message. #mask reflects the
+- * state of which events are enabled after the recipient acted on the
+- * message.
+- *
+- */
+-struct mrq_trace_modify_response {
+-	/** @brief Bit mask of trace event enable states */
+-	uint32_t mask;
+-} BPMP_ABI_PACKED;
+-
+-/**
+- * @ingroup MRQ_Codes
+- * @def MRQ_WRITE_TRACE
+- * @brief Write trace data to a buffer
+- *
+- * @deprecated
+- *
+- * * Platforms: All
+- * * Initiators: CCPLEX
+- * * Targets: BPMP
+- * * Request Payload: @ref mrq_write_trace_request
+- * * Response Payload: @ref mrq_write_trace_response
+- *
+- * mrq_response::err depends on the @ref mrq_write_trace_request field
+- * values. err is -#BPMP_EINVAL if size is zero or area is NULL or
+- * area is in an illegal range. A positive value for err indicates the
+- * number of bytes written to area.
+- *
+- * @note This MRQ is disabled on production systems
+- */
+-
+-/**
+- * @ingroup Trace
+- * @brief Request with #MRQ_WRITE_TRACE
+- *
+- * Used by MRQ_WRITE_TRACE calls to ask the recipient to copy trace
+- * data from the recipient's local buffer to the output buffer. #area
+- * is treated as a byte-aligned pointer in the recipient's address
+- * space.
+- *
+- * The sender is responsible for ensuring that the output
+- * buffer is mapped in the recipient's address map. The recipient is
+- * responsible for protecting its own code and data from accidental
+- * overwrites.
+- */
+-struct mrq_write_trace_request {
+-	/** @brief Base address of output buffer */
+-	uint32_t area;
+-	/** @brief Size in bytes of the output buffer */
+-	uint32_t size;
+-} BPMP_ABI_PACKED;
+-
+-/**
+- * @ingroup Trace
+- * @brief Response to #MRQ_WRITE_TRACE
+- *
+- * Once this response is sent, the respondent will not access the
+- * output buffer further.
+- */
+-struct mrq_write_trace_response {
+-	/**
+-	 * @brief Flag whether more data remains in local buffer
+-	 *
+-	 * Value is 1 if the entire local trace buffer has been
+-	 * drained to the outputbuffer. Value is 0 otherwise.
 -	 */
--	if (!preferred_bpp)
--		preferred_bpp = dev->mode_config.preferred_depth;
--	if (!preferred_bpp)
--		preferred_bpp = 32;
--	fb_helper->preferred_bpp = preferred_bpp;
+-	uint32_t eof;
+-} BPMP_ABI_PACKED;
 -
--	ret = drm_fbdev_client_hotplug(&fb_helper->client);
--	if (ret)
--		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+ /** @private */
+ struct mrq_threaded_ping_request {
+ 	uint32_t challenge;
+@@ -498,50 +527,6 @@ struct mrq_threaded_ping_response {
+ 	uint32_t reply;
+ } BPMP_ABI_PACKED;
+ 
+-/**
+- * @ingroup MRQ_Codes
+- * @def MRQ_MODULE_MAIL
+- * @brief Send a message to a loadable module
+- *
+- * * Platforms: T210, T210B01, T186
+- * @cond (bpmp_t210 || bpmp_t210b01 || bpmp_t186)
+- * * Initiators: Any
+- * * Targets: BPMP
+- * * Request Payload: @ref mrq_module_mail_request
+- * * Response Payload: @ref mrq_module_mail_response
+- *
+- * @note This MRQ is disabled on production systems
+- */
 -
--	drm_client_register(&fb_helper->client);
--}
--EXPORT_SYMBOL(drm_fbdev_generic_setup);
-diff --git a/drivers/gpu/drm/drm_fbdev.c b/drivers/gpu/drm/drm_fbdev.c
-new file mode 100644
-index 0000000000000..64085bc8b3809
---- /dev/null
-+++ b/drivers/gpu/drm/drm_fbdev.c
-@@ -0,0 +1,512 @@
-+// SPDX-License-Identifier: MIT
-+
-+#include <linux/moduleparam.h>
-+
-+#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_drv.h>
-+#include <drm/drm_fb_helper.h>
-+#include <drm/drm_framebuffer.h>
-+#include <drm/drm_print.h>
-+
-+#include <drm/drm_fbdev.h>
-+
-+/*
-+ * In order to keep user-space compatibility, we want in certain use-cases
-+ * to keep leaking the fbdev physical address to the user-space program
-+ * handling the fbdev buffer.
-+ * This is a bad habit essentially kept into closed source opengl driver
-+ * that should really be moved into open-source upstream projects instead
-+ * of using legacy physical addresses in user space to communicate with
-+ * other out-of-tree kernel modules.
-+ *
-+ * This module_param *should* be removed as soon as possible and be
-+ * considered as a broken and legacy behaviour from a modern fbdev device.
-+ */
-+#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
-+static bool drm_leak_fbdev_smem;
-+module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
-+MODULE_PARM_DESC(drm_leak_fbdev_smem,
-+		 "Allow unsafe leaking fbdev physical smem address [default=false]");
-+#endif
-+
-+static bool drm_fbdev_use_shadow_fb(struct drm_fb_helper *fb_helper)
-+{
-+	struct drm_device *dev = fb_helper->dev;
-+	struct drm_framebuffer *fb = fb_helper->fb;
-+
-+	return dev->mode_config.prefer_shadow_fbdev ||
-+	       dev->mode_config.prefer_shadow ||
-+	       fb->funcs->dirty;
-+}
-+
-+/* @user: 1=userspace, 0=fbcon */
-+static int drm_fbdev_fb_open(struct fb_info *info, int user)
-+{
-+	struct drm_fb_helper *fb_helper = info->par;
-+
-+	/* No need to take a ref for fbcon because it unbinds on unregister */
-+	if (user && !try_module_get(fb_helper->dev->driver->fops->owner))
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
-+static int drm_fbdev_fb_release(struct fb_info *info, int user)
-+{
-+	struct drm_fb_helper *fb_helper = info->par;
-+
-+	if (user)
-+		module_put(fb_helper->dev->driver->fops->owner);
-+
-+	return 0;
-+}
-+
-+static void drm_fbdev_cleanup(struct drm_fb_helper *fb_helper)
-+{
-+	struct fb_info *fbi = fb_helper->info;
-+	void *shadow = NULL;
-+
-+	if (!fb_helper->dev)
-+		return;
-+
-+	if (fbi) {
-+		if (fbi->fbdefio)
-+			fb_deferred_io_cleanup(fbi);
-+		if (drm_fbdev_use_shadow_fb(fb_helper))
-+			shadow = fbi->screen_buffer;
-+	}
-+
-+	drm_fb_helper_fini(fb_helper);
-+
-+	if (shadow)
-+		vfree(shadow);
-+	else if (fb_helper->buffer)
-+		drm_client_buffer_vunmap(fb_helper->buffer);
-+
-+	drm_client_framebuffer_delete(fb_helper->buffer);
-+}
-+
-+static void drm_fbdev_release(struct drm_fb_helper *fb_helper)
-+{
-+	drm_fbdev_cleanup(fb_helper);
-+	drm_client_release(&fb_helper->client);
-+	kfree(fb_helper);
-+}
-+
-+/*
-+ * fb_ops.fb_destroy is called by the last put_fb_info() call at the end of
-+ * unregister_framebuffer() or fb_release().
-+ */
-+static void drm_fbdev_fb_destroy(struct fb_info *info)
-+{
-+	drm_fbdev_release(info->par);
-+}
-+
-+static int drm_fbdev_fb_mmap(struct fb_info *info, struct vm_area_struct *vma)
-+{
-+	struct drm_fb_helper *fb_helper = info->par;
-+
-+	if (drm_fbdev_use_shadow_fb(fb_helper))
-+		return fb_deferred_io_mmap(info, vma);
-+	else if (fb_helper->dev->driver->gem_prime_mmap)
-+		return fb_helper->dev->driver->gem_prime_mmap(fb_helper->buffer->gem, vma);
-+	else
-+		return -ENODEV;
-+}
-+
-+static bool drm_fbdev_use_iomem(struct fb_info *info)
-+{
-+	struct drm_fb_helper *fb_helper = info->par;
-+	struct drm_client_buffer *buffer = fb_helper->buffer;
-+
-+	return !drm_fbdev_use_shadow_fb(fb_helper) && buffer->map.is_iomem;
-+}
-+
-+static ssize_t drm_fbdev_fb_read(struct fb_info *info, char __user *buf,
-+				 size_t count, loff_t *ppos)
-+{
-+	ssize_t ret;
-+
-+	if (drm_fbdev_use_iomem(info))
-+		ret = drm_fb_helper_cfb_read(info, buf, count, ppos);
-+	else
-+		ret = drm_fb_helper_sys_read(info, buf, count, ppos);
-+
-+	return ret;
-+}
-+
-+static ssize_t drm_fbdev_fb_write(struct fb_info *info, const char __user *buf,
-+				  size_t count, loff_t *ppos)
-+{
-+	ssize_t ret;
-+
-+	if (drm_fbdev_use_iomem(info))
-+		ret = drm_fb_helper_cfb_write(info, buf, count, ppos);
-+	else
-+		ret = drm_fb_helper_sys_write(info, buf, count, ppos);
-+
-+	return ret;
-+}
-+
-+static void drm_fbdev_fb_fillrect(struct fb_info *info,
-+				  const struct fb_fillrect *rect)
-+{
-+	if (drm_fbdev_use_iomem(info))
-+		drm_fb_helper_cfb_fillrect(info, rect);
-+	else
-+		drm_fb_helper_sys_fillrect(info, rect);
-+}
-+
-+static void drm_fbdev_fb_copyarea(struct fb_info *info,
-+				  const struct fb_copyarea *area)
-+{
-+	if (drm_fbdev_use_iomem(info))
-+		drm_fb_helper_cfb_copyarea(info, area);
-+	else
-+		drm_fb_helper_sys_copyarea(info, area);
-+}
-+
-+static void drm_fbdev_fb_imageblit(struct fb_info *info,
-+				   const struct fb_image *image)
-+{
-+	if (drm_fbdev_use_iomem(info))
-+		drm_fb_helper_cfb_imageblit(info, image);
-+	else
-+		drm_fb_helper_sys_imageblit(info, image);
-+}
-+
-+static const struct fb_ops drm_fbdev_fb_ops = {
-+	.owner		= THIS_MODULE,
-+	DRM_FB_HELPER_DEFAULT_OPS,
-+	.fb_open	= drm_fbdev_fb_open,
-+	.fb_release	= drm_fbdev_fb_release,
-+	.fb_destroy	= drm_fbdev_fb_destroy,
-+	.fb_mmap	= drm_fbdev_fb_mmap,
-+	.fb_read	= drm_fbdev_fb_read,
-+	.fb_write	= drm_fbdev_fb_write,
-+	.fb_fillrect	= drm_fbdev_fb_fillrect,
-+	.fb_copyarea	= drm_fbdev_fb_copyarea,
-+	.fb_imageblit	= drm_fbdev_fb_imageblit,
-+};
-+
-+static struct fb_deferred_io drm_fbdev_defio = {
-+	.delay		= HZ / 20,
-+	.deferred_io	= drm_fb_helper_deferred_io,
-+};
-+
-+/*
-+ * This function uses the client API to create a framebuffer backed by a dumb buffer.
-+ */
-+static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
-+			      struct drm_fb_helper_surface_size *sizes)
-+{
-+	struct drm_client_dev *client = &fb_helper->client;
-+	struct drm_device *dev = fb_helper->dev;
-+	struct drm_client_buffer *buffer;
-+	struct drm_framebuffer *fb;
-+	struct fb_info *fbi;
-+	u32 format;
-+	struct iosys_map map;
-+	int ret;
-+
-+	drm_dbg_kms(dev, "surface width(%d), height(%d) and bpp(%d)\n",
-+		    sizes->surface_width, sizes->surface_height,
-+		    sizes->surface_bpp);
-+
-+	format = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
-+	buffer = drm_client_framebuffer_create(client, sizes->surface_width,
-+					       sizes->surface_height, format);
-+	if (IS_ERR(buffer))
-+		return PTR_ERR(buffer);
-+
-+	fb_helper->buffer = buffer;
-+	fb_helper->fb = buffer->fb;
-+	fb = buffer->fb;
-+
-+	fbi = drm_fb_helper_alloc_info(fb_helper);
-+	if (IS_ERR(fbi))
-+		return PTR_ERR(fbi);
-+
-+	fbi->fbops = &drm_fbdev_fb_ops;
-+	fbi->screen_size = sizes->surface_height * fb->pitches[0];
-+	fbi->fix.smem_len = fbi->screen_size;
-+	fbi->flags = FBINFO_DEFAULT;
-+
-+	drm_fb_helper_fill_info(fbi, fb_helper, sizes);
-+
-+	if (drm_fbdev_use_shadow_fb(fb_helper)) {
-+		fbi->screen_buffer = vzalloc(fbi->screen_size);
-+		if (!fbi->screen_buffer)
-+			return -ENOMEM;
-+		fbi->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
-+
-+		fbi->fbdefio = &drm_fbdev_defio;
-+		fb_deferred_io_init(fbi);
-+	} else {
-+		/* buffer is mapped for HW framebuffer */
-+		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
-+		if (ret)
-+			return ret;
-+		if (map.is_iomem) {
-+			fbi->screen_base = map.vaddr_iomem;
-+		} else {
-+			fbi->screen_buffer = map.vaddr;
-+			fbi->flags |= FBINFO_VIRTFB;
-+		}
-+
-+		/*
-+		 * Shamelessly leak the physical address to user-space. As
-+		 * page_to_phys() is undefined for I/O memory, warn in this
-+		 * case.
-+		 */
-+#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
-+		if (drm_leak_fbdev_smem && fbi->fix.smem_start == 0 &&
-+		    !drm_WARN_ON_ONCE(dev, map.is_iomem))
-+			fbi->fix.smem_start =
-+				page_to_phys(virt_to_page(fbi->screen_buffer));
-+#endif
-+	}
-+
-+	return 0;
-+}
-+
-+static void drm_fbdev_damage_blit_real(struct drm_fb_helper *fb_helper,
-+				       struct drm_clip_rect *clip,
-+				       struct iosys_map *dst)
-+{
-+	struct drm_framebuffer *fb = fb_helper->fb;
-+	size_t offset = clip->y1 * fb->pitches[0];
-+	size_t len = clip->x2 - clip->x1;
-+	unsigned int y;
-+	void *src;
-+
-+	switch (drm_format_info_bpp(fb->format, 0)) {
-+	case 1:
-+		offset += clip->x1 / 8;
-+		len = DIV_ROUND_UP(len + clip->x1 % 8, 8);
-+		break;
-+	case 2:
-+		offset += clip->x1 / 4;
-+		len = DIV_ROUND_UP(len + clip->x1 % 4, 4);
-+		break;
-+	case 4:
-+		offset += clip->x1 / 2;
-+		len = DIV_ROUND_UP(len + clip->x1 % 2, 2);
-+		break;
-+	default:
-+		offset += clip->x1 * fb->format->cpp[0];
-+		len *= fb->format->cpp[0];
-+		break;
-+	}
-+
-+	src = fb_helper->info->screen_buffer + offset;
-+	iosys_map_incr(dst, offset); /* go to first pixel within clip rect */
-+
-+	for (y = clip->y1; y < clip->y2; y++) {
-+		iosys_map_memcpy_to(dst, 0, src, len);
-+		iosys_map_incr(dst, fb->pitches[0]);
-+		src += fb->pitches[0];
-+	}
-+}
-+
-+static int drm_fbdev_damage_blit(struct drm_fb_helper *fb_helper,
-+				 struct drm_clip_rect *clip)
-+{
-+	struct drm_client_buffer *buffer = fb_helper->buffer;
-+	struct iosys_map map, dst;
-+	int ret;
-+
-+	/*
-+	 * We have to pin the client buffer to its current location while
-+	 * flushing the shadow buffer. In the general case, concurrent
-+	 * modesetting operations could try to move the buffer and would
-+	 * fail. The modeset has to be serialized by acquiring the reservation
-+	 * object of the underlying BO here.
+-/**
+- * @ingroup Module
+- * @brief Request with #MRQ_MODULE_MAIL
+- */
+-struct mrq_module_mail_request {
+-	/** @brief Handle to the previously loaded module */
+-	uint32_t base;
+-	/** @brief Module-specific mail payload
+-	 *
+-	 * The length of data[ ] is unknown to the BPMP core firmware
+-	 * but it is limited to the size of an IPC message.
+-	 */
+-	uint8_t data[BPMP_ABI_EMPTY_ARRAY];
+-} BPMP_ABI_PACKED;
+-
+-/**
+- * @ingroup Module
+- * @brief Response to #MRQ_MODULE_MAIL
+- */
+-struct mrq_module_mail_response {
+-	/** @brief Module-specific mail payload
+-	 *
+-	 * The length of data[ ] is unknown to the BPMP core firmware
+-	 * but it is limited to the size of an IPC message.
+-	 */
+-	uint8_t data[BPMP_ABI_EMPTY_ARRAY];
+-} BPMP_ABI_PACKED;
+-/** @endcond */
+-
+ /**
+  * @ingroup MRQ_Codes
+  * @def MRQ_DEBUGFS
+@@ -686,7 +671,7 @@ struct mrq_debugfs_response {
+ #define DEBUGFS_S_ISDIR	(1 << 9)
+ #define DEBUGFS_S_IRUSR	(1 << 8)
+ #define DEBUGFS_S_IWUSR	(1 << 7)
+-/** @} */
++/** @} Debugfs */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -931,7 +916,7 @@ enum mrq_reset_commands {
+  * @brief Request with MRQ_RESET
+  *
+  * Used by the sender of an #MRQ_RESET message to request BPMP to
+- * assert or deassert a given reset line.
++ * assert or or deassert a given reset line.
+  */
+ struct mrq_reset_request {
+ 	/** @brief Reset action to perform (@ref mrq_reset_commands) */
+@@ -970,7 +955,7 @@ struct mrq_reset_response {
+ 	} BPMP_UNION_ANON;
+ } BPMP_ABI_PACKED;
+ 
+-/** @} */
++/** @} Reset */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -1032,7 +1017,17 @@ struct serial_i2c_request {
+  * @brief Trigger one or more i2c transactions
+  */
+ struct cmd_i2c_xfer_request {
+-	/** @brief Valid bus number from @ref bpmp_i2c_ids*/
++	/**
++	 * @brief Tegra PWR_I2C bus identifier
 +	 *
-+	 * For fbdev emulation, we only have to protect against fbdev modeset
-+	 * operations. Nothing else will involve the client buffer's BO. So it
-+	 * is sufficient to acquire struct drm_fb_helper.lock here.
++	 * @cond (bpmp_t234 || bpmp_t239 || bpmp_t194)
++	 * Must be set to 5.
++	 * @endcond (bpmp_t234 || bpmp_t239 || bpmp_t194)
++	 * @cond bpmp_th500
++	 * Must be set to 1.
++	 * @endcond bpmp_th500
++	 *
 +	 */
-+	mutex_lock(&fb_helper->lock);
+ 	uint32_t bus_id;
+ 
+ 	/** @brief Count of valid bytes in #data_buf*/
+@@ -1084,7 +1079,7 @@ struct mrq_i2c_response {
+ 	struct cmd_i2c_xfer_response xfer;
+ } BPMP_ABI_PACKED;
+ 
+-/** @} */
++/** @} I2C */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -1109,6 +1104,13 @@ enum {
+ 	CMD_CLK_IS_ENABLED = 6,
+ 	CMD_CLK_ENABLE = 7,
+ 	CMD_CLK_DISABLE = 8,
++/** @cond DEPRECATED */
++	CMD_CLK_PROPERTIES = 9,
++	CMD_CLK_POSSIBLE_PARENTS = 10,
++	CMD_CLK_NUM_POSSIBLE_PARENTS = 11,
++	CMD_CLK_GET_POSSIBLE_PARENT = 12,
++	CMD_CLK_RESET_REFCOUNTS = 13,
++/** @endcond DEPRECATED */
+ 	CMD_CLK_GET_ALL_INFO = 14,
+ 	CMD_CLK_GET_MAX_CLK_ID = 15,
+ 	CMD_CLK_GET_FMAX_AT_VMIN = 16,
+@@ -1119,6 +1121,21 @@ enum {
+ #define BPMP_CLK_HAS_SET_RATE	(1U << 1U)
+ #define BPMP_CLK_IS_ROOT	(1U << 2U)
+ #define BPMP_CLK_IS_VAR_ROOT	(1U << 3U)
++/**
++ * @brief Protection against rate and parent changes
++ *
++ * #MRQ_CLK command #CMD_CLK_SET_RATE or #MRQ_CLK command #CMD_CLK_SET_PARENT will return
++ * -#BPMP_EACCES.
++ */
++#define BPMP_CLK_RATE_PARENT_CHANGE_DENIED (1U << 30)
 +
-+	ret = drm_client_buffer_vmap(buffer, &map);
-+	if (ret)
-+		goto out;
++/**
++ * @brief Protection against state changes
++ *
++ * #MRQ_CLK command #CMD_CLK_ENABLE or #MRQ_CLK command #CMD_CLK_DISABLE will return
++ * -#BPMP_EACCES.
++ */
++#define BPMP_CLK_STATE_CHANGE_DENIED (1U << 31)
+ 
+ #define MRQ_CLK_NAME_MAXLEN	40U
+ #define MRQ_CLK_MAX_PARENTS	16U
+@@ -1210,6 +1227,46 @@ struct cmd_clk_disable_response {
+ 	BPMP_ABI_EMPTY
+ } BPMP_ABI_PACKED;
+ 
++/** @cond DEPRECATED */
++/** @private */
++struct cmd_clk_properties_request {
++	BPMP_ABI_EMPTY
++} BPMP_ABI_PACKED;
 +
-+	dst = map;
-+	drm_fbdev_damage_blit_real(fb_helper, clip, &dst);
++/** @todo flags need to be spelled out here */
++struct cmd_clk_properties_response {
++	uint32_t flags;
++} BPMP_ABI_PACKED;
 +
-+	drm_client_buffer_vunmap(buffer);
++/** @private */
++struct cmd_clk_possible_parents_request {
++	BPMP_ABI_EMPTY
++} BPMP_ABI_PACKED;
 +
-+out:
-+	mutex_unlock(&fb_helper->lock);
++struct cmd_clk_possible_parents_response {
++	uint8_t num_parents;
++	uint8_t reserved[3];
++	uint32_t parent_id[MRQ_CLK_MAX_PARENTS];
++} BPMP_ABI_PACKED;
 +
-+	return ret;
-+}
++/** @private */
++struct cmd_clk_num_possible_parents_request {
++	BPMP_ABI_EMPTY
++} BPMP_ABI_PACKED;
 +
-+static int drm_fbdev_fb_dirty(struct drm_fb_helper *helper, struct drm_clip_rect *clip)
-+{
-+	struct drm_device *dev = helper->dev;
-+	int ret;
++struct cmd_clk_num_possible_parents_response {
++	uint8_t num_parents;
++} BPMP_ABI_PACKED;
 +
-+	if (!drm_fbdev_use_shadow_fb(helper))
-+		return 0;
++struct cmd_clk_get_possible_parent_request {
++	uint8_t parent_idx;
++} BPMP_ABI_PACKED;
 +
-+	/* Call damage handlers only if necessary */
-+	if (!(clip->x1 < clip->x2 && clip->y1 < clip->y2))
-+		return 0;
++struct cmd_clk_get_possible_parent_response {
++	uint32_t parent_id;
++} BPMP_ABI_PACKED;
++/** @endcond DEPRECATED */
 +
-+	if (helper->buffer) {
-+		ret = drm_fbdev_damage_blit(helper, clip);
-+		if (drm_WARN_ONCE(dev, ret, "Damage blitter failed: ret=%d\n", ret))
-+			return ret;
-+	}
+ /** @private */
+ struct cmd_clk_get_all_info_request {
+ 	BPMP_ABI_EMPTY
+@@ -1241,6 +1298,7 @@ struct cmd_clk_get_fmax_at_vmin_response {
+ 	int64_t rate;
+ } BPMP_ABI_PACKED;
+ 
 +
-+	if (helper->fb->funcs->dirty) {
-+		ret = helper->fb->funcs->dirty(helper->fb, NULL, 0, 0, clip, 1);
-+		if (drm_WARN_ONCE(dev, ret, "Dirty helper failed: ret=%d\n", ret))
-+			return ret;
-+	}
+ /**
+  * @ingroup Clocks
+  * @brief Request with #MRQ_CLK
+@@ -1267,6 +1325,17 @@ struct cmd_clk_get_fmax_at_vmin_response {
+  *
+  */
+ 
++/** @cond DEPRECATED
++ *
++ * Older versions of firmware also supported following sub-commands:
++ * |CMD_CLK_PROPERTIES          |-                      |
++ * |CMD_CLK_POSSIBLE_PARENTS    |-                      |
++ * |CMD_CLK_NUM_POSSIBLE_PARENTS|-                      |
++ * |CMD_CLK_GET_POSSIBLE_PARENT |clk_get_possible_parent|
++ * |CMD_CLK_RESET_REFCOUNTS     |-                      |
++ *
++ * @endcond DEPRECATED */
 +
-+	return 0;
-+}
+ struct mrq_clk_request {
+ 	/** @brief Sub-command and clock id concatenated to 32-bit word.
+ 	 * - bits[31..24] is the sub-cmd.
+@@ -1288,6 +1357,15 @@ struct mrq_clk_request {
+ 		struct cmd_clk_disable_request clk_disable;
+ 		/** @private */
+ 		struct cmd_clk_is_enabled_request clk_is_enabled;
++		/** @cond DEPRECATED */
++		/** @private */
++		struct cmd_clk_properties_request clk_properties;
++		/** @private */
++		struct cmd_clk_possible_parents_request clk_possible_parents;
++		/** @private */
++		struct cmd_clk_num_possible_parents_request clk_num_possible_parents;
++		struct cmd_clk_get_possible_parent_request clk_get_possible_parent;
++		/** @endcond DEPRECATED */
+ 		/** @private */
+ 		struct cmd_clk_get_all_info_request clk_get_all_info;
+ 		/** @private */
+@@ -1321,6 +1399,17 @@ struct mrq_clk_request {
+  *
+  */
+ 
++/** @cond DEPRECATED
++ *
++ * Older versions of firmware also supported following sub-commands:
++ * |CMD_CLK_PROPERTIES          |clk_properties          |
++ * |CMD_CLK_POSSIBLE_PARENTS    |clk_possible_parents    |
++ * |CMD_CLK_NUM_POSSIBLE_PARENTS|clk_num_possible_parents|
++ * |CMD_CLK_GET_POSSIBLE_PARENT |clk_get_possible_parents|
++ * |CMD_CLK_RESET_REFCOUNTS     |-                       |
++ *
++ * @endcond DEPRECATED */
 +
-+static const struct drm_fb_helper_funcs drm_fb_helper_generic_funcs = {
-+	.fb_probe = drm_fbdev_fb_probe,
-+	.fb_dirty = drm_fbdev_fb_dirty,
-+};
+ struct mrq_clk_response {
+ 	union {
+ 		struct cmd_clk_get_rate_response clk_get_rate;
+@@ -1333,13 +1422,19 @@ struct mrq_clk_response {
+ 		/** @private */
+ 		struct cmd_clk_disable_response clk_disable;
+ 		struct cmd_clk_is_enabled_response clk_is_enabled;
++		/** @cond DEPRECATED */
++		struct cmd_clk_properties_response clk_properties;
++		struct cmd_clk_possible_parents_response clk_possible_parents;
++		struct cmd_clk_num_possible_parents_response clk_num_possible_parents;
++		struct cmd_clk_get_possible_parent_response clk_get_possible_parent;
++		/** @endcond DEPRECATED */
+ 		struct cmd_clk_get_all_info_response clk_get_all_info;
+ 		struct cmd_clk_get_max_clk_id_response clk_get_max_clk_id;
+ 		struct cmd_clk_get_fmax_at_vmin_response clk_get_fmax_at_vmin;
+ 	} BPMP_UNION_ANON;
+ } BPMP_ABI_PACKED;
+ 
+-/** @} */
++/** @} Clocks */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -1378,107 +1473,20 @@ struct mrq_query_abi_response {
+ } BPMP_ABI_PACKED;
+ 
+ /**
+- * @ingroup MRQ_Codes
+- * @def MRQ_PG_READ_STATE
+- * @brief Read the power-gating state of a partition
+- *
+- * * Platforms: T186
+- * @cond bpmp_t186
+- * * Initiators: Any
+- * * Targets: BPMP
+- * * Request Payload: @ref mrq_pg_read_state_request
+- * * Response Payload: @ref mrq_pg_read_state_response
+- */
+-
+-/**
+- * @ingroup Powergating
+- * @brief Request with #MRQ_PG_READ_STATE
+- *
+- * Used by MRQ_PG_READ_STATE call to read the current state of a
+- * partition.
+- */
+-struct mrq_pg_read_state_request {
+-	/** @brief ID of partition */
+-	uint32_t partition_id;
+-} BPMP_ABI_PACKED;
+-
+-/**
+- * @ingroup Powergating
+- * @brief Response to MRQ_PG_READ_STATE
+- * @todo define possible errors.
+- */
+-struct mrq_pg_read_state_response {
+-	/** @brief Read as don't care */
+-	uint32_t sram_state;
+-	/** @brief State of power partition
+-	 * * 0 : off
+-	 * * 1 : on
+-	 */
+-	uint32_t logic_state;
+-} BPMP_ABI_PACKED;
+-/** @endcond*/
+-/** @} */
+-
+-/**
+- * @ingroup MRQ_Codes
+- * @def MRQ_PG_UPDATE_STATE
+- * @brief Modify the power-gating state of a partition. In contrast to
+- * MRQ_PG calls, the operations that change state (on/off) of power
+- * partition are reference counted.
+- *
+- * * Platforms: T186
+- * @cond bpmp_t186
+- * * Initiators: Any
+- * * Targets: BPMP
+- * * Request Payload: @ref mrq_pg_update_state_request
+- * * Response Payload: N/A
+- */
+-
+-/**
+- * @ingroup Powergating
+- * @brief Request with mrq_pg_update_state_request
+  *
+- * Used by #MRQ_PG_UPDATE_STATE call to request BPMP to change the
+- * state of a power partition #partition_id.
+- */
+-struct mrq_pg_update_state_request {
+-	/** @brief ID of partition */
+-	uint32_t partition_id;
+-	/** @brief Secondary control of power partition
+-	 *  @details Ignored by many versions of the BPMP
+-	 *  firmware. For maximum compatibility, set the value
+-	 *  according to @ref logic_state
+-	 * *  0x1: power ON partition (@ref logic_state == 0x3)
+-	 * *  0x3: power OFF partition (@ref logic_state == 0x1)
+-	 */
+-	uint32_t sram_state;
+-	/** @brief Controls state of power partition, legal values are
+-	 * *  0x1 : power OFF partition
+-	 * *  0x3 : power ON partition
+-	 */
+-	uint32_t logic_state;
+-	/** @brief Change state of clocks of the power partition, legal values
+-	 * *  0x0 : do not change clock state
+-	 * *  0x1 : disable partition clocks (only applicable when
+-	 *          @ref logic_state == 0x1)
+-	 * *  0x3 : enable partition clocks (only applicable when
+-	 *          @ref logic_state == 0x3)
+-	 */
+-	uint32_t clock_state;
+-} BPMP_ABI_PACKED;
+-/** @endcond*/
+-
+-/**
+  * @ingroup MRQ_Codes
+  * @def MRQ_PG
+  * @brief Control power-gating state of a partition. In contrast to
+  * MRQ_PG_UPDATE_STATE, operations that change the power partition
+  * state are NOT reference counted
+  *
+- * @note BPMP-FW forcefully turns off some partitions as part of SC7 entry
+- * because their state cannot be adequately restored on exit. Therefore,
+- * it is recommended to power off all domains via MRQ_PG prior to SC7 entry.
++ * @cond (bpmp_t194 || bpmp_t186)
++ * @note On T194 and earlier BPMP-FW forcefully turns off some partitions as
++ * part of SC7 entry because their state cannot be adequately restored on exit.
++ * Therefore, it is recommended to power off all domains via MRQ_PG prior to SC7
++ * entry.
+  * See @ref bpmp_pdomain_ids for further detail.
++ * @endcond (bpmp_t194 || bpmp_t186)
+  *
+  * * Platforms: T186, T194
+  * * Initiators: Any
+@@ -1643,7 +1651,7 @@ struct mrq_pg_response {
+ 	} BPMP_UNION_ANON;
+ } BPMP_ABI_PACKED;
+ 
+-/** @} */
++/** @} Powergating */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -1889,7 +1897,44 @@ union mrq_thermal_bpmp_to_host_response {
+ 	struct cmd_thermal_get_thermtrip_response get_thermtrip;
+ 	struct cmd_thermal_get_num_zones_response get_num_zones;
+ } BPMP_ABI_PACKED;
+-/** @} */
 +
-+static void drm_fbdev_client_unregister(struct drm_client_dev *client)
-+{
-+	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
++/** @} Thermal */
 +
-+	if (fb_helper->info)
-+		/* drm_fbdev_fb_destroy() takes care of cleanup */
-+		drm_fb_helper_unregister_info(fb_helper);
-+	else
-+		drm_fbdev_release(fb_helper);
-+}
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_OC_STATUS
++ * @brief Query over current status
++ *
++ * * Platforms: T234
++ * @cond bpmp_t234
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: N/A
++ * * Response Payload: @ref mrq_oc_status_response
++ *
++ * @addtogroup OC_status
++ * @{
++ */
 +
-+static int drm_fbdev_client_restore(struct drm_client_dev *client)
-+{
-+	drm_fb_helper_lastclose(client->dev);
++#define OC_STATUS_MAX_SIZE	24U
 +
-+	return 0;
-+}
++/*
++ * @brief Response to #MRQ_OC_STATUS
++ *
++ * throt_en: Value for each OC alarm where zero signifies throttle is
++ *           disabled, and non-zero throttle is enabled.
++ * event_cnt: Total number of OC events for each OC alarm.
++ *
++ * mrq_response::err is 0 if the operation was successful and
++ * -#BPMP_ENODEV otherwise.
++ */
++struct mrq_oc_status_response {
++	uint8_t throt_en[OC_STATUS_MAX_SIZE];
++	uint32_t event_cnt[OC_STATUS_MAX_SIZE];
++} BPMP_ABI_PACKED;
 +
-+static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
-+{
-+	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
-+	struct drm_device *dev = client->dev;
-+	int ret;
++/** @} OC_status */
++/** @endcond bpmp_t234 */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -1948,8 +1993,9 @@ struct cpu_vhint_data {
+ 	/** reserved for future use */
+ 	uint16_t reserved[328];
+ } BPMP_ABI_PACKED;
+-/** @endcond */
+-/** @} */
 +
-+	/* Setup is not retried if it has failed */
-+	if (!fb_helper->dev && fb_helper->funcs)
-+		return 0;
++/** @} Vhint */
++/** @endcond bpmp_t186 */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -2016,14 +2062,15 @@ struct mrq_abi_ratchet_response {
+ 	/** @brief BPMP's ratchet value */
+ 	uint16_t ratchet;
+ };
+-/** @} */
 +
-+	if (dev->fb_helper)
-+		return drm_fb_helper_hotplug_event(dev->fb_helper);
++/** @} ABI_info */
+ 
+ /**
+  * @ingroup MRQ_Codes
+  * @def MRQ_EMC_DVFS_LATENCY
+  * @brief Query frequency dependent EMC DVFS latency
+  *
+- * * Platforms: T186, T194
++ * * Platforms: T186, T194, T234
+  * * Initiators: CCPLEX
+  * * Targets: BPMP
+  * * Request Payload: N/A
+@@ -2053,15 +2100,551 @@ struct mrq_emc_dvfs_latency_response {
+ 	struct emc_dvfs_latency pairs[EMC_DVFS_LATENCY_MAX_SIZE];
+ } BPMP_ABI_PACKED;
+ 
+-/** @} */
++/** @} EMC */
+ 
+ /**
+  * @ingroup MRQ_Codes
+- * @def MRQ_CPU_NDIV_LIMITS
+- * @brief CPU freq. limits in ndiv
++ * @def MRQ_EMC_DVFS_EMCHUB
++ * @brief Query EMC HUB frequencies
+  *
+- * * Platforms: T194 onwards
+- * @cond bpmp_t194
++ * * Platforms: T234 onwards
++ * @cond (bpmp_t234 || bpmp_t239 || bpmp_th500)
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: N/A
++ * * Response Payload: @ref mrq_emc_dvfs_emchub_response
++ * @addtogroup EMC
++ * @{
++ */
 +
-+	if (!dev->mode_config.num_connector) {
-+		drm_dbg_kms(dev, "No connectors found, will not create framebuffer!\n");
-+		return 0;
-+	}
++/**
++ * @brief Used by @ref mrq_emc_dvfs_emchub_response
++ */
++struct emc_dvfs_emchub {
++	/** @brief EMC DVFS node frequency in kHz */
++	uint32_t freq;
++	/** @brief EMC HUB frequency in kHz */
++	uint32_t hub_freq;
++} BPMP_ABI_PACKED;
 +
-+	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
++#define EMC_DVFS_EMCHUB_MAX_SIZE	EMC_DVFS_LATENCY_MAX_SIZE
++/**
++ * @brief Response to #MRQ_EMC_DVFS_EMCHUB
++ */
++struct mrq_emc_dvfs_emchub_response {
++	/** @brief The number valid entries in #pairs */
++	uint32_t num_pairs;
++	/** @brief EMC DVFS node <frequency, hub frequency> information */
++	struct emc_dvfs_emchub pairs[EMC_DVFS_EMCHUB_MAX_SIZE];
++} BPMP_ABI_PACKED;
 +
-+	ret = drm_fb_helper_init(dev, fb_helper);
-+	if (ret)
-+		goto err;
++/** @} EMC */
++/** @endcond (bpmp_t234 || bpmp_t239 || bpmp_th500) */
 +
-+	if (!drm_drv_uses_atomic_modeset(dev))
-+		drm_helper_disable_unused_functions(dev);
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_EMC_DISP_RFL
++ * @brief Set EMC display RFL handshake mode of operations
++ *
++ * * Platforms: T234 onwards
++ * @cond (bpmp_t234 || bpmp_t239 || bpmp_th500)
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_emc_disp_rfl_request
++ * * Response Payload: N/A
++ *
++ * @addtogroup EMC
++ * @{
++ */
 +
-+	ret = drm_fb_helper_initial_config(fb_helper, fb_helper->preferred_bpp);
-+	if (ret)
-+		goto err_cleanup;
-+
-+	return 0;
-+
-+err_cleanup:
-+	drm_fbdev_cleanup(fb_helper);
-+err:
-+	fb_helper->dev = NULL;
-+	fb_helper->info = NULL;
-+
-+	drm_err(dev, "fbdev: Failed to setup generic emulation (ret=%d)\n", ret);
-+
-+	return ret;
-+}
-+
-+static const struct drm_client_funcs drm_fbdev_client_funcs = {
-+	.owner		= THIS_MODULE,
-+	.unregister	= drm_fbdev_client_unregister,
-+	.restore	= drm_fbdev_client_restore,
-+	.hotplug	= drm_fbdev_client_hotplug,
++enum mrq_emc_disp_rfl_mode {
++	/** @brief EMC display RFL handshake disabled  */
++	EMC_DISP_RFL_MODE_DISABLED = 0,
++	/** @brief EMC display RFL handshake enabled  */
++	EMC_DISP_RFL_MODE_ENABLED = 1,
 +};
 +
 +/**
-+ * drm_fbdev_generic_setup() - Setup generic fbdev emulation
-+ * @dev: DRM device
-+ * @preferred_bpp: Preferred bits per pixel for the device.
-+ *                 @dev->mode_config.preferred_depth is used if this is zero.
++ * @ingroup EMC
++ * @brief Request with #MRQ_EMC_DISP_RFL
 + *
-+ * This function sets up generic fbdev emulation for drivers that supports
-+ * dumb buffers with a virtual address and that can be mmap'ed.
-+ * drm_fbdev_generic_setup() shall be called after the DRM driver registered
-+ * the new DRM device with drm_dev_register().
++ * Used by the sender of an #MRQ_EMC_DISP_RFL message to
++ * request the mode of EMC display RFL handshake.
 + *
-+ * Restore, hotplug events and teardown are all taken care of. Drivers that do
-+ * suspend/resume need to call drm_fb_helper_set_suspend_unlocked() themselves.
-+ * Simple drivers might use drm_mode_config_helper_suspend().
-+ *
-+ * Drivers that set the dirty callback on their framebuffer will get a shadow
-+ * fbdev buffer that is blitted onto the real buffer. This is done in order to
-+ * make deferred I/O work with all kinds of buffers. A shadow buffer can be
-+ * requested explicitly by setting struct drm_mode_config.prefer_shadow or
-+ * struct drm_mode_config.prefer_shadow_fbdev to true beforehand. This is
-+ * required to use generic fbdev emulation with SHMEM helpers.
-+ *
-+ * This function is safe to call even when there are no connectors present.
-+ * Setup will be retried on the next hotplug event.
-+ *
-+ * The fbdev is destroyed by drm_dev_unregister().
++ * mrq_response::err is
++ * * 0: RFL mode is set successfully
++ * * -#BPMP_EINVAL: invalid mode requested
++ * * -#BPMP_ENOSYS: RFL handshake is not supported
++ * * -#BPMP_EACCES: Permission denied
++ * * -#BPMP_ENODEV: if disp rfl mrq is not supported by BPMP-FW
 + */
-+void drm_fbdev_generic_setup(struct drm_device *dev,
-+			     unsigned int preferred_bpp)
-+{
-+	struct drm_fb_helper *fb_helper;
-+	int ret;
++struct mrq_emc_disp_rfl_request {
++	/** @brief EMC display RFL mode (@ref mrq_emc_disp_rfl_mode) */
++	uint32_t mode;
++} BPMP_ABI_PACKED;
 +
-+	drm_WARN(dev, !dev->registered, "Device has not been registered.\n");
-+	drm_WARN(dev, dev->fb_helper, "fb_helper is already set!\n");
++/** @} EMC */
++/** @endcond (bpmp_t234 || bpmp_t239 || bpmp_th500) */
 +
-+	fb_helper = kzalloc(sizeof(*fb_helper), GFP_KERNEL);
-+	if (!fb_helper)
-+		return;
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_BWMGR
++ * @brief bwmgr requests
++ *
++ * * Platforms: T234 onwards
++ * @cond (bpmp_t234 || bpmp_t239 || bpmp_th500)
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_bwmgr_request
++ * * Response Payload: @ref mrq_bwmgr_response
++ *
++ * @addtogroup BWMGR
++ *
++ * @{
++ */
 +
-+	ret = drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
-+	if (ret) {
-+		kfree(fb_helper);
-+		drm_err(dev, "Failed to register client: %d\n", ret);
-+		return;
-+	}
++enum mrq_bwmgr_cmd {
++	/**
++	 * @brief Check whether the BPMP driver supports the specified
++	 * request type
++	 *
++	 * mrq_response::err is 0 if the specified request is
++	 * supported and -#BPMP_ENODEV otherwise.
++	 */
++	CMD_BWMGR_QUERY_ABI = 0,
++
++	/**
++	 * @brief Determine dram rate to satisfy iso/niso bw requests
++	 *
++	 * mrq_response::err is
++	 * *  0: calc_rate succeeded.
++	 * *  -#BPMP_EINVAL: Invalid request parameters.
++	 * *  -#BPMP_ENOTSUP: Requested bw is not available.
++	 */
++	CMD_BWMGR_CALC_RATE = 1
++};
++
++/*
++ * request data for request type CMD_BWMGR_QUERY_ABI
++ *
++ * type: Request type for which to check existence.
++ */
++struct cmd_bwmgr_query_abi_request {
++	uint32_t type;
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Used by @ref cmd_bwmgr_calc_rate_request
++ */
++struct iso_req {
++	/* @brief bwmgr client ID @ref bpmp_bwmgr_ids */
++	uint32_t id;
++	/* @brief bw in kBps requested by client */
++	uint32_t iso_bw;
++} BPMP_ABI_PACKED;
++
++#define MAX_ISO_CLIENTS		13U
++/*
++ * request data for request type CMD_BWMGR_CALC_RATE
++ */
++struct cmd_bwmgr_calc_rate_request {
++	/* @brief total bw in kBps requested by all niso clients */
++	uint32_t sum_niso_bw;
++	/* @brief The number of iso clients */
++	uint32_t num_iso_clients;
++	/* @brief iso_req <id, iso_bw> information */
++	struct iso_req isobw_reqs[MAX_ISO_CLIENTS];
++} BPMP_ABI_PACKED;
++
++/*
++ * response data for request type CMD_BWMGR_CALC_RATE
++ *
++ * iso_rate_min: min dram data clk rate in kHz to satisfy all iso bw reqs
++ * total_rate_min: min dram data clk rate in kHz to satisfy all bw reqs
++ */
++struct cmd_bwmgr_calc_rate_response {
++	uint32_t iso_rate_min;
++	uint32_t total_rate_min;
++} BPMP_ABI_PACKED;
++
++/*
++ * @brief Request with #MRQ_BWMGR
++ *
++ *
++ * |sub-command                 |payload                       |
++ * |----------------------------|------------------------------|
++ * |CMD_BWMGR_QUERY_ABI         | cmd_bwmgr_query_abi_request  |
++ * |CMD_BWMGR_CALC_RATE         | cmd_bwmgr_calc_rate_request  |
++ *
++ */
++struct mrq_bwmgr_request {
++	uint32_t cmd;
++	union {
++		struct cmd_bwmgr_query_abi_request query_abi;
++		struct cmd_bwmgr_calc_rate_request bwmgr_rate_req;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
++
++/*
++ * @brief Response to MRQ_BWMGR
++ *
++ * |sub-command                 |payload                       |
++ * |----------------------------|------------------------------|
++ * |CMD_BWMGR_CALC_RATE         | cmd_bwmgr_calc_rate_response |
++ */
++struct mrq_bwmgr_response {
++	union {
++		struct cmd_bwmgr_calc_rate_response bwmgr_rate_resp;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
++
++/** @} BWMGR */
++/** @endcond (bpmp_t234 || bpmp_t239 || bpmp_th500) */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_BWMGR_INT
++ * @brief bpmp-integrated bwmgr requests
++ *
++ * * Platforms: T234 onwards
++ * @cond (bpmp_t234 || bpmp_t239 || bpmp_th500)
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_bwmgr_int_request
++ * * Response Payload: @ref mrq_bwmgr_int_response
++ *
++ * @addtogroup BWMGR_INT
++ * @{
++ */
++
++enum mrq_bwmgr_int_cmd {
++	/**
++	 * @brief Check whether the BPMP-FW supports the specified
++	 * request type
++	 *
++	 * mrq_response::err is 0 if the specified request is
++	 * supported and -#BPMP_ENODEV otherwise.
++	 */
++	CMD_BWMGR_INT_QUERY_ABI = 1,
++
++	/**
++	 * @brief Determine and set dram rate to satisfy iso/niso bw request
++	 *
++	 * mrq_response::err is
++	 * *  0: request succeeded.
++	 * *  -#BPMP_EINVAL: Invalid request parameters.
++	 *          set_frequency in @ref cmd_bwmgr_int_calc_and_set_response
++	 *          will not be set.
++	 * *  -#BPMP_ENOTSUP: Requested bw is not available.
++	 *          set_frequency in @ref cmd_bwmgr_int_calc_and_set_response
++	 *          will be current dram-clk rate.
++	 */
++	CMD_BWMGR_INT_CALC_AND_SET = 2,
++
++	/**
++	 * @brief Set a max DRAM frequency for the bandwidth-manager
++	 *
++	 * mrq_response::err is
++	 * *  0: request succeeded.
++	 * *  -#BPMP_ENOTSUP: Requested cap frequency is not possible.
++	 */
++	CMD_BWMGR_INT_CAP_SET = 3
++};
++
++/*
++ * request structure for request type CMD_BWMGR_QUERY_ABI
++ *
++ * type: Request type for which to check existence.
++ */
++struct cmd_bwmgr_int_query_abi_request {
++	/* @brief request type determined by @ref mrq_bwmgr_int_cmd */
++	uint32_t type;
++} BPMP_ABI_PACKED;
++
++/**
++ * @defgroup bwmgr_int_unit_type BWMGR_INT floor unit-types
++ * @addtogroup bwmgr_int_unit_type
++ * @{
++ */
++/** @brief kilobytes per second unit-type */
++#define BWMGR_INT_UNIT_KBPS  0U
++/** @brief kilohertz unit-type */
++#define BWMGR_INT_UNIT_KHZ   1U
++
++/** @} bwmgr_int_unit_type */
++
++/*
++ * request data for request type CMD_BWMGR_INT_CALC_AND_SET
++ */
++struct cmd_bwmgr_int_calc_and_set_request {
++	/* @brief bwmgr client ID @ref bpmp_bwmgr_ids */
++	uint32_t client_id;
++	/* @brief average niso bw usage in kBps requested by client. */
++	uint32_t niso_bw;
++	/*
++	 * @brief average iso bw usage in kBps requested by client.
++	 *  Value is ignored if client is niso. Determined by client_id.
++	 */
++	uint32_t iso_bw;
++	/*
++	 * @brief memory clock floor requested by client.
++	 *  Unit determined by floor_unit.
++	 */
++	uint32_t mc_floor;
++	/*
++	 * @brief toggle to determine the unit-type of floor value.
++	 *  See @ref bwmgr_int_unit_type definitions for unit-type mappings.
++	 */
++	uint8_t floor_unit;
++} BPMP_ABI_PACKED;
++
++struct cmd_bwmgr_int_cap_set_request {
++	/* @brief requested cap frequency in Hz. */
++	uint64_t rate;
++} BPMP_ABI_PACKED;
++
++/*
++ * response data for request type CMD_BWMGR_CALC_AND_SET
++ */
++struct cmd_bwmgr_int_calc_and_set_response {
++	/* @brief current set memory clock frequency in Hz */
++	uint64_t rate;
++} BPMP_ABI_PACKED;
++
++/*
++ * @brief Request with #MRQ_BWMGR_INT
++ *
++ *
++ * |sub-command                 |payload                            |
++ * |----------------------------|-----------------------------------|
++ * |CMD_BWMGR_INT_QUERY_ABI     | cmd_bwmgr_int_query_abi_request   |
++ * |CMD_BWMGR_INT_CALC_AND_SET  | cmd_bwmgr_int_calc_and_set_request|
++ * |CMD_BWMGR_INT_CAP_SET       | cmd_bwmgr_int_cap_set_request     |
++ *
++ */
++struct mrq_bwmgr_int_request {
++	uint32_t cmd;
++	union {
++		struct cmd_bwmgr_int_query_abi_request query_abi;
++		struct cmd_bwmgr_int_calc_and_set_request bwmgr_calc_set_req;
++		struct cmd_bwmgr_int_cap_set_request bwmgr_cap_set_req;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
++
++/*
++ * @brief Response to MRQ_BWMGR_INT
++ *
++ * |sub-command                 |payload                                |
++ * |----------------------------|---------------------------------------|
++ * |CMD_BWMGR_INT_CALC_AND_SET  | cmd_bwmgr_int_calc_and_set_response   |
++ */
++struct mrq_bwmgr_int_response {
++	union {
++		struct cmd_bwmgr_int_calc_and_set_response bwmgr_calc_set_resp;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
++
++/** @} BWMGR_INT */
++/** @endcond (bpmp_t234 || bpmp_t239 || bpmp_th500) */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_ISO_CLIENT
++ * @brief ISO client requests
++ *
++ * * Platforms: T234 onwards
++ * @cond (bpmp_t234 || bpmp_t239 || bpmp_th500)
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_iso_client_request
++ * * Response Payload: @ref mrq_iso_client_response
++ *
++ * @addtogroup ISO_CLIENT
++ * @{
++ */
++
++enum mrq_iso_client_cmd {
++	/**
++	 * @brief Check whether the BPMP driver supports the specified
++	 * request type
++	 *
++	 * mrq_response::err is 0 if the specified request is
++	 * supported and -#BPMP_ENODEV otherwise.
++	 */
++	CMD_ISO_CLIENT_QUERY_ABI = 0,
 +
 +	/*
-+	 * FIXME: This mixes up depth with bpp, which results in a glorious
-+	 * mess, resulting in some drivers picking wrong fbdev defaults and
-+	 * others wrong preferred_depth defaults.
++	 * @brief check for legal LA for the iso client. Without programming
++	 * LA MC registers, calculate and ensure that legal LA is possible for
++	 * iso bw requested by the ISO client.
++	 *
++	 * mrq_response::err is
++	 * *  0: check la succeeded.
++	 * *  -#BPMP_EINVAL: Invalid request parameters.
++	 * *  -#BPMP_EFAULT: Legal LA is not possible for client requested iso_bw
 +	 */
-+	if (!preferred_bpp)
-+		preferred_bpp = dev->mode_config.preferred_depth;
-+	if (!preferred_bpp)
-+		preferred_bpp = 32;
-+	fb_helper->preferred_bpp = preferred_bpp;
++	CMD_ISO_CLIENT_CALCULATE_LA = 1,
 +
-+	ret = drm_fbdev_client_hotplug(&fb_helper->client);
-+	if (ret)
-+		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
++	/*
++	 * @brief set LA for the iso client. Calculate and program the LA/PTSA
++	 * MC registers corresponding to the client making bw request
++	 *
++	 * mrq_response::err is
++	 * *  0: set la succeeded.
++	 * *  -#BPMP_EINVAL: Invalid request parameters.
++	 * *  -#BPMP_EFAULT: Failed to calculate or program MC registers.
++	 */
++	CMD_ISO_CLIENT_SET_LA = 2,
 +
-+	drm_client_register(&fb_helper->client);
-+}
-+EXPORT_SYMBOL(drm_fbdev_generic_setup);
-diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-index b4acc3422ba45..5bf2d019dd5c4 100644
---- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-+++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-@@ -20,7 +20,7 @@
++	/*
++	 * @brief Get max possible bw for iso client
++	 *
++	 * mrq_response::err is
++	 * *  0: get_max_bw succeeded.
++	 * *  -#BPMP_EINVAL: Invalid request parameters.
++	 */
++	CMD_ISO_CLIENT_GET_MAX_BW = 3
++};
++
++/*
++ * request data for request type CMD_ISO_CLIENT_QUERY_ABI
++ *
++ * type: Request type for which to check existence.
++ */
++struct cmd_iso_client_query_abi_request {
++	uint32_t type;
++} BPMP_ABI_PACKED;
++
++/*
++ * request data for request type CMD_ISO_CLIENT_CALCULATE_LA
++ *
++ * id: client ID in @ref bpmp_bwmgr_ids
++ * bw: bw requested in kBps by client ID.
++ * init_bw_floor: initial dram_bw_floor in kBps passed by client ID.
++ * ISO client will perform mempool allocation and DVFS buffering based
++ * on this dram_bw_floor.
++ */
++struct cmd_iso_client_calculate_la_request {
++	uint32_t id;
++	uint32_t bw;
++	uint32_t init_bw_floor;
++} BPMP_ABI_PACKED;
++
++/*
++ * request data for request type CMD_ISO_CLIENT_SET_LA
++ *
++ * id: client ID in @ref bpmp_bwmgr_ids
++ * bw: bw requested in kBps by client ID.
++ * final_bw_floor: final dram_bw_floor in kBps.
++ * Sometimes the initial dram_bw_floor passed by ISO client may need to be
++ * updated by considering higher dram freq's. This is the final dram_bw_floor
++ * used to calculate and program MC registers.
++ */
++struct cmd_iso_client_set_la_request {
++	uint32_t id;
++	uint32_t bw;
++	uint32_t final_bw_floor;
++} BPMP_ABI_PACKED;
++
++/*
++ * request data for request type CMD_ISO_CLIENT_GET_MAX_BW
++ *
++ * id: client ID in @ref bpmp_bwmgr_ids
++ */
++struct cmd_iso_client_get_max_bw_request {
++	uint32_t id;
++} BPMP_ABI_PACKED;
++
++/*
++ * response data for request type CMD_ISO_CLIENT_CALCULATE_LA
++ *
++ * la_rate_floor: minimum dram_rate_floor in kHz at which a legal la is possible
++ * iso_client_only_rate: Minimum dram freq in kHz required to satisfy this clients
++ * iso bw request, assuming all other iso clients are inactive
++ */
++struct cmd_iso_client_calculate_la_response {
++	uint32_t la_rate_floor;
++	uint32_t iso_client_only_rate;
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Used by @ref cmd_iso_client_get_max_bw_response
++ */
++struct iso_max_bw {
++	/* @brief dram frequency in kHz */
++	uint32_t freq;
++	/* @brief max possible iso-bw in kBps */
++	uint32_t iso_bw;
++} BPMP_ABI_PACKED;
++
++#define ISO_MAX_BW_MAX_SIZE	14U
++/*
++ * response data for request type CMD_ISO_CLIENT_GET_MAX_BW
++ */
++struct cmd_iso_client_get_max_bw_response {
++	/* @brief The number valid entries in iso_max_bw pairs */
++	uint32_t num_pairs;
++	/* @brief max ISOBW <dram freq, max bw> information */
++	struct iso_max_bw pairs[ISO_MAX_BW_MAX_SIZE];
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Request with #MRQ_ISO_CLIENT
++ *
++ * Used by the sender of an #MRQ_ISO_CLIENT message.
++ *
++ * |sub-command                          |payload                                 |
++ * |------------------------------------ |----------------------------------------|
++ * |CMD_ISO_CLIENT_QUERY_ABI		 |cmd_iso_client_query_abi_request        |
++ * |CMD_ISO_CLIENT_CALCULATE_LA		 |cmd_iso_client_calculate_la_request     |
++ * |CMD_ISO_CLIENT_SET_LA		 |cmd_iso_client_set_la_request           |
++ * |CMD_ISO_CLIENT_GET_MAX_BW		 |cmd_iso_client_get_max_bw_request       |
++ *
++ */
++
++struct mrq_iso_client_request {
++	/* Type of request. Values listed in enum mrq_iso_client_cmd */
++	uint32_t cmd;
++	union {
++		struct cmd_iso_client_query_abi_request query_abi;
++		struct cmd_iso_client_calculate_la_request calculate_la_req;
++		struct cmd_iso_client_set_la_request set_la_req;
++		struct cmd_iso_client_get_max_bw_request max_isobw_req;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Response to MRQ_ISO_CLIENT
++ *
++ * Each sub-command supported by @ref mrq_iso_client_request may return
++ * sub-command-specific data. Some do and some do not as indicated in
++ * the following table
++ *
++ * |sub-command                  |payload                             |
++ * |---------------------------- |------------------------------------|
++ * |CMD_ISO_CLIENT_CALCULATE_LA  |cmd_iso_client_calculate_la_response|
++ * |CMD_ISO_CLIENT_SET_LA        |N/A                                 |
++ * |CMD_ISO_CLIENT_GET_MAX_BW    |cmd_iso_client_get_max_bw_response  |
++ *
++ */
++
++struct mrq_iso_client_response {
++	union {
++		struct cmd_iso_client_calculate_la_response calculate_la_resp;
++		struct cmd_iso_client_get_max_bw_response max_isobw_resp;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
++
++/** @} ISO_CLIENT */
++/** @endcond (bpmp_t234 || bpmp_t239 || bpmp_th500) */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_CPU_NDIV_LIMITS
++ * @brief CPU freq. limits in ndiv
++ *
++ * * Platforms: T194 onwards
++ * @cond (bpmp_t194 || bpmp_t234 || bpmp_t239 || bpmp_th500)
+  * * Initiators: CCPLEX
+  * * Targets: BPMP
+  * * Request Payload: @ref mrq_cpu_ndiv_limits_request
+@@ -2094,15 +2677,15 @@ struct mrq_cpu_ndiv_limits_response {
+ 	uint16_t ndiv_min;
+ } BPMP_ABI_PACKED;
  
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
-index 8d1630b8edac1..53e4630369c9c 100644
---- a/drivers/gpu/drm/gud/gud_drv.c
-+++ b/drivers/gpu/drm/gud/gud_drv.c
-@@ -18,7 +18,7 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_debugfs.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index 5a2e1cac06b2e..cd3b6d6444b0d 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -17,6 +17,7 @@
- #include <drm/drm_aperture.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_gem_vram_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-index 73ee7f25f7346..47c22b8f37acd 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-@@ -19,7 +19,7 @@
+-/** @} */
+-/** @endcond */
++/** @} CPU */
++/** @endcond (bpmp_t194 || bpmp_t234 || bpmp_t239 || bpmp_th500) */
  
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/hyperv/hyperv_drm_drv.c b/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
-index ca127ff797f75..5462e05ad2e49 100644
---- a/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
-+++ b/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
-@@ -11,7 +11,7 @@
- #include <drm/drm_aperture.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_simple_kms_helper.h>
+ /**
+  * @ingroup MRQ_Codes
+  * @def MRQ_CPU_AUTO_CC3
+  * @brief Query CPU cluster auto-CC3 configuration
+  *
+- * * Platforms: T194 onwards
++ * * Platforms: T194
+  * @cond bpmp_t194
+  * * Initiators: CCPLEX
+  * * Targets: BPMP
+@@ -2140,40 +2723,8 @@ struct mrq_cpu_auto_cc3_response {
+ 	uint32_t auto_cc3_config;
+ } BPMP_ABI_PACKED;
  
-diff --git a/drivers/gpu/drm/imx/dcss/dcss-kms.c b/drivers/gpu/drm/imx/dcss/dcss-kms.c
-index 1defd6a40f11d..4f4267c95c76e 100644
---- a/drivers/gpu/drm/imx/dcss/dcss-kms.c
-+++ b/drivers/gpu/drm/imx/dcss/dcss-kms.c
-@@ -7,7 +7,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge_connector.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_of.h>
-diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-index 8dd8b0f912af6..a82c92f0a0d10 100644
---- a/drivers/gpu/drm/imx/imx-drm-core.c
-+++ b/drivers/gpu/drm/imx/imx-drm-core.c
-@@ -16,7 +16,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-index 99f86f1ba8bee..20d8953525876 100644
---- a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-+++ b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-@@ -32,7 +32,7 @@
- #include <drm/drm_encoder.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_fb_dma_helper.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_atomic_helper.h>
-diff --git a/drivers/gpu/drm/kmb/kmb_drv.c b/drivers/gpu/drm/kmb/kmb_drv.c
-index 2382ccb3ee99d..0fc46b71e5bf5 100644
---- a/drivers/gpu/drm/kmb/kmb_drv.c
-+++ b/drivers/gpu/drm/kmb/kmb_drv.c
-@@ -15,7 +15,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/logicvc/logicvc_drm.c b/drivers/gpu/drm/logicvc/logicvc_drm.c
-index cc9a4e965f779..87bbfd55f7803 100644
---- a/drivers/gpu/drm/logicvc/logicvc_drm.c
-+++ b/drivers/gpu/drm/logicvc/logicvc_drm.c
-@@ -17,7 +17,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_print.h>
- 
-diff --git a/drivers/gpu/drm/mcde/mcde_drv.c b/drivers/gpu/drm/mcde/mcde_drv.c
-index 38c3907bb151a..52ec3f70ea087 100644
---- a/drivers/gpu/drm/mcde/mcde_drv.c
-+++ b/drivers/gpu/drm/mcde/mcde_drv.c
-@@ -69,7 +69,7 @@
- #include <drm/drm_bridge.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_dma_helper.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 91f58db5915f5..450ba47bd8771 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -17,7 +17,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem.h>
- #include <drm/drm_gem_dma_helper.h>
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index 3b24a924b7b97..c88a5eab9dad3 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -18,7 +18,7 @@
- #include <drm/drm_aperture.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_modeset_helper_vtables.h>
-diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
-index ece6cd102dbb1..75132cfc8d6de 100644
---- a/drivers/gpu/drm/mgag200/mgag200_drv.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
-@@ -11,6 +11,7 @@
- 
- #include <drm/drm_aperture.h>
- #include <drm/drm_drv.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_file.h>
- #include <drm/drm_ioctl.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/mxsfb/lcdif_drv.c b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-index 075002ed6fb09..d682b26f84c0b 100644
---- a/drivers/gpu/drm/mxsfb/lcdif_drv.c
-+++ b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-@@ -16,7 +16,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_mode_config.h>
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index b29b332ed3814..eec7c26d039f0 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -20,7 +20,7 @@
- #include <drm/drm_bridge.h>
- #include <drm/drm_connector.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-index b59472c29a40d..d37fc22527e1f 100644
---- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-+++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-@@ -31,7 +31,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/pl111/pl111_drv.c b/drivers/gpu/drm/pl111/pl111_drv.c
-index eb25eedb5ee00..fdc40470e1a1f 100644
---- a/drivers/gpu/drm/pl111/pl111_drv.c
-+++ b/drivers/gpu/drm/pl111/pl111_drv.c
-@@ -48,7 +48,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
-index 3044ca948ce22..34cda5b234100 100644
---- a/drivers/gpu/drm/qxl/qxl_drv.c
-+++ b/drivers/gpu/drm/qxl/qxl_drv.c
-@@ -37,6 +37,7 @@
- #include <drm/drm_aperture.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_file.h>
- #include <drm/drm_gem_ttm_helper.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index a2776f1d6f2c2..6b9e87a49e8e9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -20,7 +20,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_managed.h>
- #include <drm/drm_probe_helper.h>
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 813f9f8c86982..8bf0a85a59b40 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -17,7 +17,7 @@
- 
- #include <drm/drm_aperture.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_of.h>
- #include <drm/drm_probe_helper.h>
-diff --git a/drivers/gpu/drm/solomon/ssd130x.c b/drivers/gpu/drm/solomon/ssd130x.c
-index f2795f90ea693..5a654201ff32c 100644
---- a/drivers/gpu/drm/solomon/ssd130x.c
-+++ b/drivers/gpu/drm/solomon/ssd130x.c
-@@ -23,7 +23,7 @@
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_edid.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_format_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_atomic_helper.h>
-diff --git a/drivers/gpu/drm/sti/sti_drv.c b/drivers/gpu/drm/sti/sti_drv.c
-index 7abf010a32935..0d9607855ef66 100644
---- a/drivers/gpu/drm/sti/sti_drv.c
-+++ b/drivers/gpu/drm/sti/sti_drv.c
-@@ -14,7 +14,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_debugfs.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_of.h>
-diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
-index d7914f5122dff..9e7159eef7e2c 100644
---- a/drivers/gpu/drm/stm/drv.c
-+++ b/drivers/gpu/drm/stm/drv.c
-@@ -18,7 +18,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index d06ffd99d86e1..63d27244268ea 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -17,7 +17,7 @@
- #include <drm/drm_aperture.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_module.h>
- #include <drm/drm_of.h>
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
-index 15cd9b91b7e2a..0c5534194cd0f 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.c
-+++ b/drivers/gpu/drm/tidss/tidss_drv.c
-@@ -14,7 +14,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_managed.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-index f72755b8ea14c..3fb1e8d0e8f80 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-@@ -16,7 +16,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_debugfs.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/tiny/arcpgu.c b/drivers/gpu/drm/tiny/arcpgu.c
-index bb302a3fd6b5f..4d10c5bf2e601 100644
---- a/drivers/gpu/drm/tiny/arcpgu.c
-+++ b/drivers/gpu/drm/tiny/arcpgu.c
-@@ -12,7 +12,7 @@
- #include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_fb_dma_helper.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_dma_helper.h>
-diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
-index 04682f831544c..6cf2ad5b55fed 100644
---- a/drivers/gpu/drm/tiny/bochs.c
-+++ b/drivers/gpu/drm/tiny/bochs.c
-@@ -7,7 +7,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/tiny/cirrus.c b/drivers/gpu/drm/tiny/cirrus.c
-index 354d5e854a6f0..f7181b2f8369d 100644
---- a/drivers/gpu/drm/tiny/cirrus.c
-+++ b/drivers/gpu/drm/tiny/cirrus.c
-@@ -30,7 +30,7 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_file.h>
- #include <drm/drm_format_helper.h>
- #include <drm/drm_fourcc.h>
-diff --git a/drivers/gpu/drm/tiny/gm12u320.c b/drivers/gpu/drm/tiny/gm12u320.c
-index 7441d992a5d7a..3a37138aeba96 100644
---- a/drivers/gpu/drm/tiny/gm12u320.c
-+++ b/drivers/gpu/drm/tiny/gm12u320.c
-@@ -12,7 +12,7 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_file.h>
- #include <drm/drm_format_helper.h>
- #include <drm/drm_fourcc.h>
-diff --git a/drivers/gpu/drm/tiny/hx8357d.c b/drivers/gpu/drm/tiny/hx8357d.c
-index 48c24aa8c28a1..eefffa46bb78d 100644
---- a/drivers/gpu/drm/tiny/hx8357d.c
-+++ b/drivers/gpu/drm/tiny/hx8357d.c
-@@ -18,7 +18,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/tiny/ili9163.c b/drivers/gpu/drm/tiny/ili9163.c
-index 9a1a5943bee01..0aa1d84995abc 100644
---- a/drivers/gpu/drm/tiny/ili9163.c
-+++ b/drivers/gpu/drm/tiny/ili9163.c
-@@ -9,7 +9,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_mipi_dbi.h>
-diff --git a/drivers/gpu/drm/tiny/ili9225.c b/drivers/gpu/drm/tiny/ili9225.c
-index a79da2b4af647..028e63e68a883 100644
---- a/drivers/gpu/drm/tiny/ili9225.c
-+++ b/drivers/gpu/drm/tiny/ili9225.c
-@@ -20,7 +20,7 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_dma_helper.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_atomic_helper.h>
-diff --git a/drivers/gpu/drm/tiny/ili9341.c b/drivers/gpu/drm/tiny/ili9341.c
-index 69b265e78096b..2a0b516ff1b44 100644
---- a/drivers/gpu/drm/tiny/ili9341.c
-+++ b/drivers/gpu/drm/tiny/ili9341.c
-@@ -17,7 +17,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/tiny/ili9486.c b/drivers/gpu/drm/tiny/ili9486.c
-index c80028bb1d110..f16cadc813ca7 100644
---- a/drivers/gpu/drm/tiny/ili9486.c
-+++ b/drivers/gpu/drm/tiny/ili9486.c
-@@ -16,7 +16,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/tiny/mi0283qt.c b/drivers/gpu/drm/tiny/mi0283qt.c
-index bc522fb3d94d1..5307d5d28df59 100644
---- a/drivers/gpu/drm/tiny/mi0283qt.c
-+++ b/drivers/gpu/drm/tiny/mi0283qt.c
-@@ -15,7 +15,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/tiny/ofdrm.c b/drivers/gpu/drm/tiny/ofdrm.c
-index 0e1cc2369afcc..016372da72d12 100644
---- a/drivers/gpu/drm/tiny/ofdrm.c
-+++ b/drivers/gpu/drm/tiny/ofdrm.c
-@@ -11,7 +11,7 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_device.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_format_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_atomic_helper.h>
-diff --git a/drivers/gpu/drm/tiny/panel-mipi-dbi.c b/drivers/gpu/drm/tiny/panel-mipi-dbi.c
-index 955a61d628e7c..7249cf8accec4 100644
---- a/drivers/gpu/drm/tiny/panel-mipi-dbi.c
-+++ b/drivers/gpu/drm/tiny/panel-mipi-dbi.c
-@@ -16,7 +16,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
-index e62f4d16b2c6b..347366a3d5767 100644
---- a/drivers/gpu/drm/tiny/repaper.c
-+++ b/drivers/gpu/drm/tiny/repaper.c
-@@ -26,7 +26,7 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_dma_helper.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_format_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_atomic_helper.h>
-diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/simpledrm.c
-index cbb100753154e..b9f541c058c55 100644
---- a/drivers/gpu/drm/tiny/simpledrm.c
-+++ b/drivers/gpu/drm/tiny/simpledrm.c
-@@ -15,7 +15,7 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_device.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_format_helper.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/tiny/st7586.c b/drivers/gpu/drm/tiny/st7586.c
-index b6f620b902e6d..a9de2c6695d13 100644
---- a/drivers/gpu/drm/tiny/st7586.c
-+++ b/drivers/gpu/drm/tiny/st7586.c
-@@ -16,7 +16,7 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_dma_helper.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_format_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_atomic_helper.h>
-diff --git a/drivers/gpu/drm/tiny/st7735r.c b/drivers/gpu/drm/tiny/st7735r.c
-index c36ba08acda18..4d2d43c27582f 100644
---- a/drivers/gpu/drm/tiny/st7735r.c
-+++ b/drivers/gpu/drm/tiny/st7735r.c
-@@ -18,7 +18,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/tve200/tve200_drv.c b/drivers/gpu/drm/tve200/tve200_drv.c
-index 611785e097576..684f319d94c70 100644
---- a/drivers/gpu/drm/tve200/tve200_drv.c
-+++ b/drivers/gpu/drm/tve200/tve200_drv.c
-@@ -40,7 +40,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_module.h>
-diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
-index 91effdcefb6d5..6ccfc23b9134c 100644
---- a/drivers/gpu/drm/udl/udl_drv.c
-+++ b/drivers/gpu/drm/udl/udl_drv.c
-@@ -7,7 +7,7 @@
- 
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_file.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/vboxvideo/vbox_drv.c b/drivers/gpu/drm/vboxvideo/vbox_drv.c
-index 1cd716eb17a1c..61cc110440a54 100644
---- a/drivers/gpu/drm/vboxvideo/vbox_drv.c
-+++ b/drivers/gpu/drm/vboxvideo/vbox_drv.c
-@@ -14,7 +14,7 @@
- #include <drm/drm_aperture.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_file.h>
- #include <drm/drm_ioctl.h>
- #include <drm/drm_managed.h>
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 2027063fdc309..94d4a6b1cd3ab 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -33,7 +33,7 @@
- #include <drm/drm_aperture.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_vblank.h>
- 
- #include <soc/bcm2835/raspberrypi-firmware.h>
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-index 0035affc3e590..70c0f49ac895b 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-@@ -35,6 +35,7 @@
- #include <drm/drm_aperture.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_file.h>
- 
- #include "virtgpu_drv.h"
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index 0ffe5f0e33f75..e616d2e614dcb 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -17,7 +17,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_file.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_ioctl.h>
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-index 1de2d927c32b0..27c8a8218914b 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-@@ -19,7 +19,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_device.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fbdev.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-index 6581183618b89..933ca016f1224 100644
---- a/include/drm/drm_fb_helper.h
-+++ b/include/drm/drm_fb_helper.h
-@@ -285,9 +285,6 @@ int drm_fb_helper_debug_leave(struct fb_info *info);
- 
- void drm_fb_helper_lastclose(struct drm_device *dev);
- void drm_fb_helper_output_poll_changed(struct drm_device *dev);
+-/** @} */
+-/** @endcond */
 -
--void drm_fbdev_generic_setup(struct drm_device *dev,
--			     unsigned int preferred_bpp);
- #else
- static inline void drm_fb_helper_prepare(struct drm_device *dev,
- 					struct drm_fb_helper *helper,
-@@ -472,12 +469,6 @@ static inline void drm_fb_helper_lastclose(struct drm_device *dev)
- static inline void drm_fb_helper_output_poll_changed(struct drm_device *dev)
- {
- }
+-/**
+- * @ingroup MRQ_Codes
+- * @def MRQ_TRACE_ITER
+- * @brief Manage the trace iterator
+- *
+- * @deprecated
+- *
+- * * Platforms: All
+- * * Initiators: CCPLEX
+- * * Targets: BPMP
+- * * Request Payload: N/A
+- * * Response Payload: @ref mrq_trace_iter_request
+- * @addtogroup Trace
+- * @{
+- */
+-enum {
+-	/** @brief (re)start the tracing now. Ignore older events */
+-	TRACE_ITER_INIT = 0,
+-	/** @brief Clobber all events in the trace buffer */
+-	TRACE_ITER_CLEAN = 1
+-};
 -
--static inline void
--drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp)
--{
--}
+-/**
+- * @brief Request with #MRQ_TRACE_ITER
+- */
+-struct mrq_trace_iter_request {
+-	/** @brief TRACE_ITER_INIT or TRACE_ITER_CLEAN */
+-	uint32_t cmd;
+-} BPMP_ABI_PACKED;
 -
- #endif
+-/** @} */
++/** @} CC3 */
++/** @endcond bpmp_t194 */
  
- #endif
-diff --git a/include/drm/drm_fbdev.h b/include/drm/drm_fbdev.h
-new file mode 100644
-index 0000000000000..d977087e94b6b
---- /dev/null
-+++ b/include/drm/drm_fbdev.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: MIT */
+ /**
+  * @ingroup MRQ_Codes
+@@ -2351,7 +2902,8 @@ union mrq_ringbuf_console_bpmp_to_host_response {
+ 	struct cmd_ringbuf_console_write_resp write;
+ 	struct cmd_ringbuf_console_get_fifo_resp get_fifo;
+ } BPMP_ABI_PACKED;
+-/** @} */
 +
-+#ifndef DRM_FBDEV_H
-+#define DRM_FBDEV_H
++/** @} RingbufConsole */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -2359,7 +2911,7 @@ union mrq_ringbuf_console_bpmp_to_host_response {
+  * @brief Set a strap value controlled by BPMP
+  *
+  * * Platforms: T194 onwards
+- * @cond bpmp_t194
++ * @cond (bpmp_t194 || bpmp_t234 || bpmp_t239 || bpmp_th500)
+  * * Initiators: CCPLEX
+  * * Targets: BPMP
+  * * Request Payload: @ref mrq_strap_request
+@@ -2390,17 +2942,14 @@ enum mrq_strap_cmd {
+ struct mrq_strap_request {
+ 	/** @brief @ref mrq_strap_cmd */
+ 	uint32_t cmd;
+-	/** @brief Strap ID from @ref Strap_Ids */
++	/** @brief Strap ID from @ref Strap_Identifiers */
+ 	uint32_t id;
+ 	/** @brief Desired value for strap (if cmd is #STRAP_SET) */
+ 	uint32_t value;
+ } BPMP_ABI_PACKED;
+ 
+-/**
+- * @defgroup Strap_Ids Strap Identifiers
+- * @}
+- */
+-/** @endcond */
++/** @} Strap */
++/** @endcond (bpmp_t194 || bpmp_t234 || bpmp_t239 || bpmp_th500) */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -2408,7 +2957,7 @@ struct mrq_strap_request {
+  * @brief Perform a UPHY operation
+  *
+  * * Platforms: T194 onwards
+- * @cond bpmp_t194
++ * @cond (bpmp_t194 || bpmp_t234 || bpmp_t239 || bpmp_th500)
+  * * Initiators: CCPLEX
+  * * Targets: BPMP
+  * * Request Payload: @ref mrq_uphy_request
+@@ -2423,6 +2972,9 @@ enum {
+ 	CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT = 3,
+ 	CMD_UPHY_PCIE_CONTROLLER_STATE = 4,
+ 	CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF = 5,
++	CMD_UPHY_DISPLAY_PORT_INIT = 6,
++	CMD_UPHY_DISPLAY_PORT_OFF = 7,
++	CMD_UPHY_XUSB_DYN_LANES_RESTORE = 8,
+ 	CMD_UPHY_MAX,
+ };
+ 
+@@ -2445,28 +2997,41 @@ struct cmd_uphy_margin_status_response {
+ } BPMP_ABI_PACKED;
+ 
+ struct cmd_uphy_ep_controller_pll_init_request {
+-	/** @brief EP controller number, valid: 0, 4, 5 */
++	/** @brief EP controller number, T194 valid: 0, 4, 5; T234 valid: 5, 6, 7, 10; T239 valid: 0 */
+ 	uint8_t ep_controller;
+ } BPMP_ABI_PACKED;
+ 
+ struct cmd_uphy_pcie_controller_state_request {
+-	/** @brief PCIE controller number, valid: 0, 1, 2, 3, 4 */
++	/** @brief PCIE controller number, T194 valid: 0-4; T234 valid: 0-10; T239 valid: 0-3 */
+ 	uint8_t pcie_controller;
+ 	uint8_t enable;
+ } BPMP_ABI_PACKED;
+ 
+ struct cmd_uphy_ep_controller_pll_off_request {
+-	/** @brief EP controller number, valid: 0, 4, 5 */
++	/** @brief EP controller number, T194 valid: 0, 4, 5; T234 valid: 5, 6, 7, 10; T239 valid: 0 */
+ 	uint8_t ep_controller;
+ } BPMP_ABI_PACKED;
+ 
++struct cmd_uphy_display_port_init_request {
++	/** @brief DisplayPort link rate, T239 valid: 1620, 2700, 5400, 8100, 2160, 2430, 3240, 4320, 6750 */
++	uint16_t link_rate;
++	/** @brief 1: lane 0; 2: lane 1; 3: lane 0 and 1 */
++	uint16_t lanes_bitmap;
++} BPMP_ABI_PACKED;
 +
-+struct drm_device;
++struct cmd_uphy_xusb_dyn_lanes_restore_request {
++	/** @brief 1: lane 0; 2: lane 1; 3: lane 0 and 1 */
++	uint16_t lanes_bitmap;
++} BPMP_ABI_PACKED;
 +
-+#ifdef CONFIG_DRM_FBDEV_EMULATION
-+void drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp);
-+#else
-+static inline void drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp)
-+{ }
-+#endif
+ /**
+  * @ingroup UPHY
+  * @brief Request with #MRQ_UPHY
+  *
+- * Used by the sender of an #MRQ_UPHY message to control UPHY Lane RX margining.
+- * The uphy_request is split into several sub-commands. Some sub-commands
+- * require no additional data. Others have a sub-command specific payload
++ * Used by the sender of an #MRQ_UPHY message to control UPHY.
++ * The uphy_request is split into several sub-commands. CMD_UPHY_PCIE_LANE_MARGIN_STATUS
++ * requires no additional data. Others have a sub-command specific payload. Below table
++ * shows sub-commands with their corresponding payload data.
+  *
+  * |sub-command                          |payload                                 |
+  * |------------------------------------ |----------------------------------------|
+@@ -2475,6 +3040,9 @@ struct cmd_uphy_ep_controller_pll_off_request {
+  * |CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT |cmd_uphy_ep_controller_pll_init_request |
+  * |CMD_UPHY_PCIE_CONTROLLER_STATE       |cmd_uphy_pcie_controller_state_request  |
+  * |CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF  |cmd_uphy_ep_controller_pll_off_request  |
++ * |CMD_UPHY_PCIE_DISPLAY_PORT_INIT      |cmd_uphy_display_port_init_request      |
++ * |CMD_UPHY_PCIE_DISPLAY_PORT_OFF       |                                        |
++ * |CMD_UPHY_XUSB_DYN_LANES_RESTORE      |cmd_uphy_xusb_dyn_lanes_restore_request |
+  *
+  */
+ 
+@@ -2489,6 +3057,8 @@ struct mrq_uphy_request {
+ 		struct cmd_uphy_ep_controller_pll_init_request ep_ctrlr_pll_init;
+ 		struct cmd_uphy_pcie_controller_state_request controller_state;
+ 		struct cmd_uphy_ep_controller_pll_off_request ep_ctrlr_pll_off;
++		struct cmd_uphy_display_port_init_request display_port_init;
++		struct cmd_uphy_xusb_dyn_lanes_restore_request xusb_dyn_lanes_restore;
+ 	} BPMP_UNION_ANON;
+ } BPMP_ABI_PACKED;
+ 
+@@ -2513,8 +3083,8 @@ struct mrq_uphy_response {
+ 	} BPMP_UNION_ANON;
+ } BPMP_ABI_PACKED;
+ 
+-/** @} */
+-/** @endcond */
++/** @} UPHY */
++/** @endcond (bpmp_t194 || bpmp_t234 || bpmp_t239 || bpmp_th500) */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -2522,14 +3092,16 @@ struct mrq_uphy_response {
+  * @brief Perform a frequency monitor configuration operations
+  *
+  * * Platforms: T194 onwards
+- * @cond bpmp_t194
++ * @cond (bpmp_t194 || bpmp_t234 || bpmp_t239 || bpmp_th500)
+  * * Initiators: CCPLEX
+  * * Targets: BPMP
+  * * Request Payload: @ref mrq_fmon_request
+  * * Response Payload: @ref mrq_fmon_response
++ * @endcond (bpmp_t194 || bpmp_t234 || bpmp_t239 || bpmp_th500)
+  *
+  * @addtogroup FMON
+  * @{
++ * @cond (bpmp_t194 || bpmp_t234)
+  */
+ enum {
+ 	/**
+@@ -2538,6 +3110,20 @@ enum {
+ 	 * The monitored clock must be running for clamp to succeed. If
+ 	 * clamped, FMON configuration is preserved when clock rate
+ 	 * and/or state is changed.
++	 *
++	 * mrq_response::err is 0 if the operation was successful, or @n
++	 * -#BPMP_EACCES: FMON access error @n
++	 * -#BPMP_EBADCMD if subcommand is not supported @n
++	 * -#BPMP_EBADSLT: clamp FMON on cluster with auto-CC3 enabled @n
++	 * -#BPMP_EBUSY: fmon is already clamped at different rate @n
++	 * -#BPMP_EFAULT: self-diagnostic error @n
++	 * -#BPMP_EINVAL: invalid FMON configuration @n
++	 * -#BPMP_EOPNOTSUPP: not in production mode @n
++	 * -#BPMP_ENODEV: invalid clk_id @n
++	 * -#BPMP_ENOENT: no calibration data, uninitialized @n
++	 * -#BPMP_ENOTSUP: avfs config not set @n
++	 * -#BPMP_ENOSYS: clamp FMON on cluster clock w/ no NAFLL @n
++	 * -#BPMP_ETIMEDOUT: operation timed out @n
+ 	 */
+ 	CMD_FMON_GEAR_CLAMP = 1,
+ 	/**
+@@ -2545,6 +3131,13 @@ enum {
+ 	 *
+ 	 * Allow FMON configuration to follow monitored clock rate
+ 	 * and/or state changes.
++	 *
++	 * mrq_response::err is 0 if the operation was successful, or @n
++	 * -#BPMP_EBADCMD if subcommand is not supported @n
++	 * -#BPMP_ENODEV: invalid clk_id @n
++	 * -#BPMP_ENOENT: no calibration data, uninitialized @n
++	 * -#BPMP_ENOTSUP: avfs config not set @n
++	 * -#BPMP_EOPNOTSUPP: not in production mode @n
+ 	 */
+ 	CMD_FMON_GEAR_FREE = 2,
+ 	/**
+@@ -2553,11 +3146,54 @@ enum {
+ 	 *
+ 	 * Inherently racy, since clamp state can be changed
+ 	 * concurrently. Useful for testing.
++	 *
++	 * mrq_response::err is 0 if the operation was successful, or @n
++	 * -#BPMP_EBADCMD if subcommand is not supported @n
++	 * -#BPMP_ENODEV: invalid clk_id @n
++	 * -#BPMP_ENOENT: no calibration data, uninitialized @n
++	 * -#BPMP_ENOTSUP: avfs config not set @n
++	 * -#BPMP_EOPNOTSUPP: not in production mode @n
+ 	 */
+ 	CMD_FMON_GEAR_GET = 3,
+-	CMD_FMON_NUM,
++	/**
++	 * @brief Return current status of FMON faults detected by FMON
++	 *         h/w or s/w since last invocation of this command.
++	 *         Clears fault status.
++	 *
++	 * mrq_response::err is 0 if the operation was successful, or @n
++	 * -#BPMP_EBADCMD if subcommand is not supported @n
++	 * -#BPMP_EINVAL: invalid fault type @n
++	 * -#BPMP_ENODEV: invalid clk_id @n
++	 * -#BPMP_ENOENT: no calibration data, uninitialized @n
++	 * -#BPMP_ENOTSUP: avfs config not set @n
++	 * -#BPMP_EOPNOTSUPP: not in production mode @n
++	 */
++	CMD_FMON_FAULT_STS_GET = 4,
+ };
+ 
++/**
++ * @cond DEPRECATED
++ * Kept for backward compatibility
++ */
++#define CMD_FMON_NUM		4
 +
-+#endif
++/** @endcond DEPRECATED */
++
++/**
++ * @defgroup fmon_fault_type FMON fault type
++ * @addtogroup fmon_fault_type
++ * @{
++ */
++/** @brief All detected FMON faults (h/w or s/w) */
++#define FMON_FAULT_TYPE_ALL		0U
++/** @brief FMON faults detected by h/w */
++#define FMON_FAULT_TYPE_HW		1U
++/** @brief FMON faults detected by s/w */
++#define FMON_FAULT_TYPE_SW		2U
++
++/** @} fmon_fault_type */
++
++
+ struct cmd_fmon_gear_clamp_request {
+ 	int32_t unused;
+ 	int64_t rate;
+@@ -2587,6 +3223,14 @@ struct cmd_fmon_gear_get_response {
+ 	int64_t rate;
+ } BPMP_ABI_PACKED;
+ 
++struct cmd_fmon_fault_sts_get_request {
++	uint32_t fault_type;	/**< @ref fmon_fault_type */
++} BPMP_ABI_PACKED;
++
++struct cmd_fmon_fault_sts_get_response {
++	uint32_t fault_sts;
++} BPMP_ABI_PACKED;
++
+ /**
+  * @ingroup FMON
+  * @brief Request with #MRQ_FMON
+@@ -2601,9 +3245,9 @@ struct cmd_fmon_gear_get_response {
+  * |CMD_FMON_GEAR_CLAMP         |fmon_gear_clamp        |
+  * |CMD_FMON_GEAR_FREE          |-                      |
+  * |CMD_FMON_GEAR_GET           |-                      |
++ * |CMD_FMON_FAULT_STS_GET      |fmon_fault_sts_get     |
+  *
+  */
+-
+ struct mrq_fmon_request {
+ 	/** @brief Sub-command and clock id concatenated to 32-bit word.
+ 	 * - bits[31..24] is the sub-cmd.
+@@ -2618,6 +3262,7 @@ struct mrq_fmon_request {
+ 		struct cmd_fmon_gear_free_request fmon_gear_free;
+ 		/** @private */
+ 		struct cmd_fmon_gear_get_request fmon_gear_get;
++		struct cmd_fmon_fault_sts_get_request fmon_fault_sts_get;
+ 	} BPMP_UNION_ANON;
+ } BPMP_ABI_PACKED;
+ 
+@@ -2633,6 +3278,7 @@ struct mrq_fmon_request {
+  * |CMD_FMON_GEAR_CLAMP         |-                       |
+  * |CMD_FMON_GEAR_FREE          |-                       |
+  * |CMD_FMON_GEAR_GET           |fmon_gear_get           |
++ * |CMD_FMON_FAULT_STS_GET      |fmon_fault_sts_get      |
+  *
+  */
+ 
+@@ -2643,11 +3289,12 @@ struct mrq_fmon_response {
+ 		/** @private */
+ 		struct cmd_fmon_gear_free_response fmon_gear_free;
+ 		struct cmd_fmon_gear_get_response fmon_gear_get;
++		struct cmd_fmon_fault_sts_get_response fmon_fault_sts_get;
+ 	} BPMP_UNION_ANON;
+ } BPMP_ABI_PACKED;
+ 
+-/** @} */
+-/** @endcond */
++/** @endcond (bpmp_t194 || bpmp_t234) */
++/** @} FMON */
+ 
+ /**
+  * @ingroup MRQ_Codes
+@@ -2655,7 +3302,7 @@ struct mrq_fmon_response {
+  * @brief Provide status information on faults reported by Error
+  *        Collator (EC) to HSM.
+  *
+- * * Platforms: T194 onwards
++ * * Platforms: T194
+  * @cond bpmp_t194
+  * * Initiators: CCPLEX
+  * * Targets: BPMP
+@@ -2664,8 +3311,10 @@ struct mrq_fmon_response {
+  *
+  * @note This MRQ ABI is under construction, and subject to change
+  *
++ * @endcond bpmp_t194
+  * @addtogroup EC
+  * @{
++ * @cond bpmp_t194
+  */
+ enum {
+ 	/**
+@@ -2676,7 +3325,7 @@ enum {
+ 	 * -#BPMP_ENODEV if target EC is not owned by BPMP @n
+ 	 * -#BPMP_EACCES if target EC power domain is turned off @n
+ 	 * -#BPMP_EBADCMD if subcommand is not supported
+-	 * @endcond
++	 * @endcond DEPRECATED
+ 	 */
+ 	CMD_EC_STATUS_GET = 1,	/* deprecated */
+ 
+@@ -2787,7 +3436,8 @@ enum ec_registers_group {
+ #define EC_STATUS_FLAG_LAST_ERROR	0x0002U
+ /** @brief EC latent error flag */
+ #define EC_STATUS_FLAG_LATENT_ERROR	0x0004U
+-/** @} */
++
++/** @} bpmp_ec_status_flags */
+ 
+ /**
+  * @defgroup bpmp_ec_desc_flags EC Descriptor Flags
+@@ -2798,7 +3448,8 @@ enum ec_registers_group {
+ #define EC_DESC_FLAG_RESOLVED		0x0001U
+ /** @brief EC descriptor failed to retrieve id flag */
+ #define EC_DESC_FLAG_NO_ID		0x0002U
+-/** @} */
++
++/** @} bpmp_ec_desc_flags */
+ 
+ /**
+  * |error type                       | fmon_clk_id values        |
+@@ -2810,14 +3461,18 @@ struct ec_err_fmon_desc {
+ 	uint16_t desc_flags;
+ 	/** @brief FMON monitored clock id */
+ 	uint16_t fmon_clk_id;
+-	/** @brief Bitmask of @ref bpmp_fmon_faults_flags */
++	/**
++	 * @brief Bitmask of fault flags
++	 *
++	 * @ref bpmp_fmon_faults_flags
++	 */
+ 	uint32_t fmon_faults;
+ 	/** @brief FMON faults access error */
+ 	int32_t fmon_access_error;
+ } BPMP_ABI_PACKED;
+ 
+ /**
+- * |error type                       | vmon_adc_id values        |
++ * | error type                      | vmon_adc_id values        |
+  * |---------------------------------|---------------------------|
+  * |@ref EC_ERR_TYPE_VOLTAGE_MONITOR |@ref bpmp_adc_ids          |
+  */
+@@ -2826,16 +3481,16 @@ struct ec_err_vmon_desc {
+ 	uint16_t desc_flags;
+ 	/** @brief VMON rail adc id */
+ 	uint16_t vmon_adc_id;
+-	/** @brief Bitmask of @ref bpmp_vmon_faults_flags */
++	/** @brief Bitmask of bpmp_vmon_faults_flags */
+ 	uint32_t vmon_faults;
+ 	/** @brief VMON faults access error */
+ 	int32_t vmon_access_error;
+ } BPMP_ABI_PACKED;
+ 
+ /**
+- * |error type                       | reg_id values             |
+- * |---------------------------------|---------------------------|
+- * |@ref EC_ERR_TYPE_REGISTER_PARITY |@ref bpmp_ec_registers_ids |
++ * |error type                       | reg_id values         |
++ * |---------------------------------|-----------------------|
++ * |@ref EC_ERR_TYPE_REGISTER_PARITY | bpmp_ec_registers_ids |
+  */
+ struct ec_err_reg_parity_desc {
+ 	/** @brief Bitmask of @ref bpmp_ec_desc_flags  */
+@@ -2847,10 +3502,10 @@ struct ec_err_reg_parity_desc {
+ } BPMP_ABI_PACKED;
+ 
+ /**
+- * |error type                        | err_source_id values     |
+- * |--------------------------------- |--------------------------|
+- * |@ref EC_ERR_TYPE_SW_CORRECTABLE   | @ref bpmp_ec_ce_swd_ids  |
+- * |@ref EC_ERR_TYPE_SW_UNCORRECTABLE | @ref bpmp_ec_ue_swd_ids  |
++ * |error type                        | err_source_id values |
++ * |--------------------------------- |----------------------|
++ * |@ref EC_ERR_TYPE_SW_CORRECTABLE   | bpmp_ec_ce_swd_ids   |
++ * |@ref EC_ERR_TYPE_SW_UNCORRECTABLE | bpmp_ec_ue_swd_ids   |
+  */
+ struct ec_err_sw_error_desc {
+ 	/** @brief Bitmask of @ref bpmp_ec_desc_flags  */
+@@ -2862,15 +3517,15 @@ struct ec_err_sw_error_desc {
+ } BPMP_ABI_PACKED;
+ 
+ /**
+- * |error type                              | err_source_id values      |
+- * |----------------------------------------|---------------------------|
+- * |@ref EC_ERR_TYPE_PARITY_INTERNAL        |@ref bpmp_ec_ipath_ids     |
+- * |@ref EC_ERR_TYPE_ECC_SEC_INTERNAL       |@ref bpmp_ec_ipath_ids     |
+- * |@ref EC_ERR_TYPE_ECC_DED_INTERNAL       |@ref bpmp_ec_ipath_ids     |
+- * |@ref EC_ERR_TYPE_COMPARATOR             |@ref bpmp_ec_comparator_ids|
+- * |@ref EC_ERR_TYPE_PARITY_SRAM            |@ref bpmp_clock_ids        |
+- * |@ref EC_ERR_TYPE_OTHER_HW_CORRECTABLE   |@ref bpmp_ec_misc_hwd_ids  |
+- * |@ref EC_ERR_TYPE_OTHER_HW_UNCORRECTABLE |@ref bpmp_ec_misc_hwd_ids  |
++ * |error type                              | err_source_id values   |
++ * |----------------------------------------|------------------------|
++ * |@ref EC_ERR_TYPE_PARITY_INTERNAL        |  bpmp_ec_ipath_ids     |
++ * |@ref EC_ERR_TYPE_ECC_SEC_INTERNAL       |  bpmp_ec_ipath_ids     |
++ * |@ref EC_ERR_TYPE_ECC_DED_INTERNAL       |  bpmp_ec_ipath_ids     |
++ * |@ref EC_ERR_TYPE_COMPARATOR             |  bpmp_ec_comparator_ids|
++ * |@ref EC_ERR_TYPE_OTHER_HW_CORRECTABLE   |  bpmp_ec_misc_hwd_ids  |
++ * |@ref EC_ERR_TYPE_OTHER_HW_UNCORRECTABLE |  bpmp_ec_misc_hwd_ids  |
++ * |@ref EC_ERR_TYPE_PARITY_SRAM            |  bpmp_clock_ids        |
+  */
+ struct ec_err_simple_desc {
+ 	/** @brief Bitmask of @ref bpmp_ec_desc_flags  */
+@@ -2917,7 +3572,7 @@ struct cmd_ec_status_get_response {
+ 	/** @brief  EC error descriptors */
+ 	union ec_err_desc error_descs[EC_ERR_STATUS_DESC_MAX_NUM];
+ } BPMP_ABI_PACKED;
+-/** @endcond */
++/** @endcond DEPRECATED */
+ 
+ struct cmd_ec_status_ex_get_response {
+ 	/** @brief Target EC id (the same id received with request). */
+@@ -2955,7 +3610,7 @@ struct cmd_ec_status_ex_get_response {
+  * |sub-command                 |payload                |
+  * |----------------------------|-----------------------|
+  * |@ref CMD_EC_STATUS_GET      |ec_status_get          |
+- * @endcond
++ * @endcond DEPRECATED
+  *
+  * |sub-command                 |payload                |
+  * |----------------------------|-----------------------|
+@@ -2983,7 +3638,7 @@ struct mrq_ec_request {
+  * |sub-command                 |payload                 |
+  * |----------------------------|------------------------|
+  * |@ref CMD_EC_STATUS_GET      |ec_status_get           |
+- * @endcond
++ * @endcond DEPRECATED
+  *
+  * |sub-command                 |payload                 |
+  * |----------------------------|------------------------|
+@@ -2997,13 +3652,264 @@ struct mrq_ec_response {
+ 		 * @cond DEPRECATED
+ 		 */
+ 		struct cmd_ec_status_get_response ec_status_get;
+-		/** @endcond */
++		/** @endcond DEPRECATED */
+ 		struct cmd_ec_status_ex_get_response ec_status_ex_get;
+ 	} BPMP_UNION_ANON;
+ } BPMP_ABI_PACKED;
+ 
+-/** @} */
+-/** @endcond */
++/** @endcond bpmp_t194 */
++/** @} EC */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_TELEMETRY
++ * @brief Get address of memory buffer refreshed with recently sampled
++ *        telemetry data
++ *
++ * * Platforms: TH500 onwards
++ * @cond bpmp_th500
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: N/A
++ * * Response Payload: @ref mrq_telemetry_response
++ * @addtogroup Telemetry
++ * @{
++ */
++
++/**
++ * @brief Response to #MRQ_TELEMETRY
++ *
++ * mrq_response::err is
++ * * 0: Telemetry data is available at returned address
++ * * -#BPMP_EACCES: MRQ master is not allowed to request buffer refresh
++ * * -#BPMP_ENAVAIL: Telemetry buffer cannot be refreshed via this MRQ channel
++ * * -#BPMP_ENOTSUP: Telemetry buffer is not supported by BPMP-FW
++ * * -#BPMP_ENODEV: Telemetry mrq is not supported by BPMP-FW
++ */
++struct mrq_telemetry_response {
++	/** @brief Physical address of telemetry data buffer */
++	uint64_t data_buf_addr;	/**< see @ref bpmp_telemetry_layout */
++} BPMP_ABI_PACKED;
++
++/** @} Telemetry */
++/** @endcond bpmp_th500 */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_PWR_LIMIT
++ * @brief Control power limits.
++ *
++ * * Platforms: TH500 onwards
++ * @cond bpmp_th500
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_pwr_limit_request
++ * * Response Payload: @ref mrq_pwr_limit_response
++ *
++ * @addtogroup Pwrlimit
++ * @{
++ */
++enum mrq_pwr_limit_cmd {
++	/**
++	 * @brief Check whether the BPMP-FW supports the specified
++	 * command
++	 *
++	 * mrq_response::err is 0 if the specified request is
++	 * supported and -#BPMP_ENODEV otherwise.
++	 */
++	CMD_PWR_LIMIT_QUERY_ABI = 0,
++
++	/**
++	 * @brief Set power limit
++	 *
++	 * mrq_response:err is
++	 * * 0: Success
++	 * * -#BPMP_ENODEV: Pwr limit mrq is not supported by BPMP-FW
++	 * * -#BPMP_ENAVAIL: Invalid request parameters
++	 * * -#BPMP_EACCES: Request is not accepted
++	 */
++	CMD_PWR_LIMIT_SET = 1,
++
++	/**
++	 * @brief Get power limit setting
++	 *
++	 * mrq_response:err is
++	 * * 0: Success
++	 * * -#BPMP_ENODEV: Pwr limit mrq is not supported by BPMP-FW
++	 * * -#BPMP_ENAVAIL: Invalid request parameters
++	 */
++	CMD_PWR_LIMIT_GET = 2,
++
++	/**
++	 * @brief Get current power cap
++	 *
++	 * mrq_response:err is
++	 * * 0: Success
++	 * * -#BPMP_ENODEV: Pwr limit mrq is not supported by BPMP-FW
++	 * * -#BPMP_ENAVAIL: Invalid request parameters
++	 */
++	CMD_PWR_LIMIT_CURR_CAP = 3,
++};
++
++/**
++ * @defgroup bpmp_pwr_limit_type PWR_LIMIT TYPEs
++ * @{
++ */
++/** @brief Limit value specifies traget cap */
++#define PWR_LIMIT_TYPE_TARGET_CAP		0U
++/** @brief Limit value specifies maximum possible target cap */
++#define PWR_LIMIT_TYPE_BOUND_MAX		1U
++/** @brief Limit value specifies minimum possible target cap */
++#define PWR_LIMIT_TYPE_BOUND_MIN		2U
++/** @brief Number of limit types supported by mrq interface */
++#define PWR_LIMIT_TYPE_NUM			3U
++
++/** @} bpmp_pwr_limit_type */
++
++/**
++ * @brief Request data for #MRQ_PWR_LIMIT command CMD_PWR_LIMIT_QUERY_ABI
++ */
++struct cmd_pwr_limit_query_abi_request {
++	uint32_t cmd_code; /**< @ref mrq_pwr_limit_cmd */
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Request data for #MRQ_PWR_LIMIT command CMD_PWR_LIMIT_SET
++ *
++ * Set specified limit of specified type from specified source. The success of
++ * the request means that specified value is accepted as input to arbitration
++ * with other sources settings for the same limit of the same type. Zero limit
++ * is ignored by the arbitration (i.e., indicates "no limit set").
++ */
++struct cmd_pwr_limit_set_request {
++	uint32_t limit_id;   /**< @ref bpmp_pwr_limit_id */
++	uint32_t limit_src;  /**< @ref bpmp_pwr_limit_src */
++	uint32_t limit_type; /**< @ref bpmp_pwr_limit_type */
++	uint32_t limit_setting;
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Request data for #MRQ_PWR_LIMIT command CMD_PWR_LIMIT_GET
++ *
++ * Get previously set from specified source specified limit value of specified
++ * type.
++ */
++struct cmd_pwr_limit_get_request {
++	uint32_t limit_id;   /**< @ref bpmp_pwr_limit_id */
++	uint32_t limit_src;  /**< @ref bpmp_pwr_limit_src */
++	uint32_t limit_type; /**< @ref bpmp_pwr_limit_type */
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Response data for #MRQ_PWR_LIMIT command CMD_PWR_LIMIT_GET
++ */
++struct cmd_pwr_limit_get_response {
++	uint32_t limit_setting;
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Request data for #MRQ_PWR_LIMIT command CMD_PWR_LIMIT_CURR_CAP
++ *
++ * For specified limit get current power cap aggregated from all sources.
++ */
++struct cmd_pwr_limit_curr_cap_request {
++	uint32_t limit_id;   /**< @ref bpmp_pwr_limit_id */
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Response data for #MRQ_PWR_LIMIT command CMD_PWR_LIMIT_CURR_CAP
++ */
++struct cmd_pwr_limit_curr_cap_response {
++	uint32_t curr_cap;
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Request with #MRQ_PWR_LIMIT
++ *
++ * |sub-command                 |payload                          |
++ * |----------------------------|---------------------------------|
++ * |CMD_PWR_LIMIT_QUERY_ABI     | cmd_pwr_limit_query_abi_request |
++ * |CMD_PWR_LIMIT_SET           | cmd_pwr_limit_set_request       |
++ * |CMD_PWR_LIMIT_GET           | cmd_pwr_limit_get_request       |
++ * |CMD_PWR_LIMIT_CURR_CAP      | cmd_pwr_limit_curr_cap_request  |
++ */
++struct mrq_pwr_limit_request {
++	uint32_t cmd;
++	union {
++		struct cmd_pwr_limit_query_abi_request pwr_limit_query_abi_req;
++		struct cmd_pwr_limit_set_request pwr_limit_set_req;
++		struct cmd_pwr_limit_get_request pwr_limit_get_req;
++		struct cmd_pwr_limit_curr_cap_request pwr_limit_curr_cap_req;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
++
++/**
++ * @brief Response to MRQ_PWR_LIMIT
++ *
++ * |sub-command                 |payload                          |
++ * |----------------------------|---------------------------------|
++ * |CMD_PWR_LIMIT_QUERY_ABI     | -                               |
++ * |CMD_PWR_LIMIT_SET           | -                               |
++ * |CMD_PWR_LIMIT_GET           | cmd_pwr_limit_get_response      |
++ * |CMD_PWR_LIMIT_CURR_CAP      | cmd_pwr_limit_curr_cap_response |
++ */
++struct mrq_pwr_limit_response {
++	union {
++		struct cmd_pwr_limit_get_response pwr_limit_get_rsp;
++		struct cmd_pwr_limit_curr_cap_response pwr_limit_curr_cap_rsp;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
++
++/** @} PwrLimit */
++/** @endcond bpmp_th500 */
++
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_GEARS
++ * @brief Get thresholds for NDIV offset switching
++ *
++ * * Platforms: TH500 onwards
++ * @cond bpmp_th500
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: N/A
++ * * Response Payload: @ref mrq_gears_response
++ * @addtogroup Gears
++ * @{
++ */
++
++/**
++ * @brief Response to #MRQ_GEARS
++ *
++ * Used by the sender of an #MRQ_GEARS message to request thresholds
++ * for NDIV offset switching.
++ *
++ * The mrq_gears_response::ncpu array defines four thresholds in units
++ * of number of online CPUS to be used for choosing between five different
++ * NDIV offset settings for CCPLEX cluster NAFLLs
++ *
++ * 1. If number of online CPUs < ncpu[0] use offset0
++ * 2. If number of online CPUs < ncpu[1] use offset1
++ * 3. If number of online CPUs < ncpu[2] use offset2
++ * 4. If number of online CPUs < ncpu[3] use offset3
++ * 5. If number of online CPUs >= ncpu[3] disable offsetting
++ *
++ * For TH500 mrq_gears_response::ncpu array has four valid entries.
++ *
++ * mrq_response::err is
++ * * 0: gears defined and response data valid
++ * * -#BPMP_ENODEV: MRQ is not supported by BPMP-FW
++ * * -#BPMP_EACCES: Operation not permitted for the MRQ master
++ * * -#BPMP_ENAVAIL: NDIV offsetting is disabled
++ */
++struct mrq_gears_response {
++	/** @brief number of online CPUs for each gear */
++	uint32_t ncpu[16];
++} BPMP_ABI_PACKED;
++
++/** @} Gears */
++/** @endcond bpmp_th500 */
+ 
+ /**
+  * @addtogroup Error_Codes
+@@ -3047,12 +3953,18 @@ struct mrq_ec_response {
+ #define BPMP_ENOSYS	38
+ /** @brief Invalid slot */
+ #define BPMP_EBADSLT	57
++/** @brief Invalid message */
++#define BPMP_EBADMSG	77
++/** @brief Operation not supported */
++#define BPMP_EOPNOTSUPP 95
++/** @brief Targeted resource not available */
++#define BPMP_ENAVAIL	119
+ /** @brief Not supported */
+ #define BPMP_ENOTSUP	134
+ /** @brief No such device or address */
+ #define BPMP_ENXIO	140
+ 
+-/** @} */
++/** @} Error_Codes */
+ 
+ #if defined(BPMP_ABI_CHECKS)
+ #include "bpmp_abi_checks.h"
 -- 
-2.38.0
+2.34.1
 
