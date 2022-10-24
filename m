@@ -2,179 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBB8C67871
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 20:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8420EC38A2D
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 21:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235181AbiJXUrB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Oct 2022 16:47:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58300 "EHLO
+        id S234506AbiJXVYq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Oct 2022 17:24:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235092AbiJXUqa (ORCPT
+        with ESMTP id S235357AbiJXVYO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Oct 2022 16:46:30 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF303BA25E;
-        Mon, 24 Oct 2022 11:54:13 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id r22so13947107ljn.10;
-        Mon, 24 Oct 2022 11:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I99K5okNHj9DY0iCHvns9gSnT1ZJFo2RdmiNrPZQRxA=;
-        b=fjjh+VqoY24xpSkbD5FlM++9ADwleBq4rStVCyBkKmVwwg0D0cYLIhxcnvP2FcRAdC
-         0sIuuL2nJhgoVovJUCNfaytjlctNZlK/GIVzGFea302vmyab9pDPieiWbp5Ln3+wiOYm
-         tbGsTZqRofcMRwQcYkc66ILWMcfo2dZUGEC5ROxLE0edhkSOCOkWFa2Hg7wG12D+RdRv
-         Kmdsb21rKPICe4ULCWF8/ejahaYsgOb6HbngN+eOFQ2i5Cr2wQLUkjf5tAlc3xdNH3Q8
-         XvKeX3IVBsq8I+lldDB/ultMdooUmwjKJwsK91QRXhLC9UhJSY5T7fRNGPkzmz4CscKh
-         cAdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I99K5okNHj9DY0iCHvns9gSnT1ZJFo2RdmiNrPZQRxA=;
-        b=RAFti6E+DhS8AgXa3+HSIfxyz3QEp08lwoH1T3kvw8G/Rh6lGj4j92HwjRHGAaTqt4
-         CB7G/bisSqeoolFxq+XlNsWD3AHMR9lbtAU7imJmkIyKQ+Ja4RnvZu/xOouxscwwcWUe
-         8jsFsGN+3Xak/o8EihQF+gnAo6o4EL+ucZ49xdrFZbD+N4LEfCgFcGqkO7un8XmA9yWB
-         XBRfenUHr8j+4mvo8UmSR/CHKqAoijzX17XaCY8ALPCsEalQBnigat2E0/VtyRCmJQac
-         T308dqAjzywozdqGaYffNvSsRL0q5aoJ/N71rOBUqQl888RqA58E6moX3Ee4tomKt3my
-         Nc8A==
-X-Gm-Message-State: ACrzQf0NSBjYyXL+zM0XHRjX2I9sB2qktaK18JhNvL3+TzQliCs3ShFy
-        Oztg7GpCZNM8a0nGXhUzVJ3OnTrJLBg=
-X-Google-Smtp-Source: AMsMyM6LUWBeG60cTX4ICueYfZGzsbWQNLdvNJls+Qeur6c0tl8Do2q96H3YkgnFwA95/bShFJ58Uw==
-X-Received: by 2002:aa7:ce09:0:b0:461:5406:20e4 with SMTP id d9-20020aa7ce09000000b00461540620e4mr15004323edv.5.1666617355456;
-        Mon, 24 Oct 2022 06:15:55 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id y16-20020a056402359000b004589da5e5cesm18755197edc.41.2022.10.24.06.15.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 06:15:54 -0700 (PDT)
-Date:   Mon, 24 Oct 2022 15:15:52 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] Support for NVDEC on Tegra234
-Message-ID: <Y1aQCG3IxL+SNTv+@orome>
-References: <20220920081203.3237744-1-cyndis@kapsi.fi>
+        Mon, 24 Oct 2022 17:24:14 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2042.outbound.protection.outlook.com [40.107.101.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E689F204AC9;
+        Mon, 24 Oct 2022 12:30:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MtgKwmF0l/CvQiGc6jbJGzQopXSRkXL30tWGvUZerHt0WsTU1OE2F8PZ++BgVY6USFj8wMbu7PGW3ew/fQHtm2rOlLyBzomarWd+kMVbI1xELJRU5rTfHj8mdGcC/SNvEiSpz0ywEgGyLNb0qgCHFqyJVMzTcaX1nqPBhIvPY7McYY3ACLaxX+oXngz1dEmsFPZXKYjL7NpWqmfyXgY5lr2WNaOkW5r/hQH0rIHsIKINdVybwt3HC9gyAglCx1fEw8wGDc6Rm5F05O9H6+nEQwErUIiLlBE5s9d0+qhM9BYaMv7cAGULG0EBFjsm3KTsl+bbOk1NtdRL2o77a+bVtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OihZybG2E9XgJgLg+2STNo+igkFycv9RLNhn28lZKKg=;
+ b=ev3yDUPKkstZ58FQYJecMGrJy2ZTeu8+cFB+3fCtbKlOhj7v4wacAPCWO2GZUSzEfHqCw5TxLva1hxL/hfIk3x3RvWhf+MAXemJ5dk+5RnUtK1rx9K7jOaH8W67gx4mG1mtBkUrlCeaWPu7SVUA+AJvjFyb418fy+OgmCbjW/K1osOQM8LEDJrDfnjZ1UlIjRuPg1u+k3cU1u4G5/qlToVbeCwY0LtZfEYHwT0gGGwG0biGrmeN6ns1dPwGPaQu5yrKaiusnNQs9bScX2dIHotRoyDwNHKmHrQNHX1MdYa3bqIO9yvslSm8r0NfY+YQl7px419x6xEwIluhNX1U3QQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OihZybG2E9XgJgLg+2STNo+igkFycv9RLNhn28lZKKg=;
+ b=b1OxNd2orNxr+lxyqHOn+Dsjqf2+8jRgRXQGqoh9uVhv6VSmHSNb18/DGji/SLbatUyqC1Emw7GZTmAqayZzj3lzO5MaPpLTO2Ph9Ab5eUbhwRn8/q8OWdtt8/rjxbXd+7T4EKXqKQ1QAJYMhSoq7RuhJENNZRSOGZe4SgziJO4JmnaqB49Xf5xZdHx9UHxq4HsQxZfFuggy7Btv4gpSxabCI/kZYcNyyw9XkgDmeEInUHI9J6g2ffPr3H2FvLrU69vYuKlbbM5x85voNmYMiljVyOI/+CmELUhfMOysrUgaFmGT3w+DtyLf2kDAwwi6S+VF+xpI/aj3m37VspHp3Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ BN9PR12MB5067.namprd12.prod.outlook.com (2603:10b6:408:134::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.33; Mon, 24 Oct
+ 2022 19:21:33 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::c0e5:f111:3e59:7c66]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::c0e5:f111:3e59:7c66%6]) with mapi id 15.20.5746.023; Mon, 24 Oct 2022
+ 19:21:32 +0000
+Message-ID: <f668441f-761e-7929-1e97-e48ca1150473@nvidia.com>
+Date:   Mon, 24 Oct 2022 20:21:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 6.0 00/20] 6.0.4-rc1 review
+Content-Language: en-US
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+        srw@sladewatkins.net,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20221024112934.415391158@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20221024112934.415391158@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P265CA0014.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:339::12) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KWZej2K6xFmsTmcs"
-Content-Disposition: inline
-In-Reply-To: <20220920081203.3237744-1-cyndis@kapsi.fi>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|BN9PR12MB5067:EE_
+X-MS-Office365-Filtering-Correlation-Id: a9eda405-1768-4eef-2ee8-08dab5f4f5b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: BUpTU8MFqGaJclo7+wkgTZGd3v/vDxdbQ3epXQtdrbKDOXYy/uOVOa5vuYTm2PU2DZK2CasCRAeJnsNufpwHyvF3dSoNERa7GT0ccFGL2NZlPFWlfnl+Vn6HkhBFuMexCob2PYhwPhInGM+Yaqyu6zvA+NI9yv61OjVCYcxO1cmtErwHdIvvS6KrLEJHY1My7vu8TH+FOqAI9D/tZfoMXh501LGALXIRrd6ESqjGtR7Br4HTFN5ZfFbDUm74lXvPvvVeAZT64b8OBr3PUjA1UqVHPvF+MkM4MCxfTlAP4EqrjgekTmKOX97buQrpkhrbI1NfgDSoUPkDYL4vhBTi2tkRp2zAVmL/l3yBxPSUafx/3N8Kefix6iZF5N9VFTh1ab7/F1r55e0/cUAgIonNm6FZYGKOwovmXacY5WaHDLxejfmg2vz5wr44TsFa0mkixtqsXkCF5sVEAueMnSy0zbbnSyRMe5Z8UH0LYpyQ05kzxscfzPHGvXPNTwfDwds4IvTxaouzgTls9nxoTQcfAhfDhpfnKp2lM72O1JaPSvpZ3jm9bMePBSm7cKfk1LYM8Hh+m5qrseEhMBanhRoJ8YuuJtP/7w4hpJIFUZNIk3a8SE1L/SdOfjQGKm0E+tX4e/tUgqcQoEHX9bEeTYX4xRuGxS5nrec2PD29utOoGIRUeLfP16h+lB/unMLGdi2HHKymAF1TGi9bVrNp3vunSAzAk8VnYz6nrUQy5WDj77A07EGo3UEc3NSrgcysfj9QvKcBpvB6p8wsHj+RHryoOPMsXHWxg3qbl+L2suRRBtu0rkMkSS3vd+9JOtwwkDVTQojosNq4FOK5qJOn1diCiHRQv8DEznqicY6to92Weieww5vlvHyfzMLq9zakBuhs
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(366004)(39860400002)(396003)(136003)(451199015)(478600001)(83380400001)(66556008)(8676002)(6486002)(2616005)(31696002)(66946007)(8936002)(86362001)(186003)(5660300002)(966005)(66476007)(316002)(6506007)(36756003)(6512007)(6666004)(2906002)(41300700001)(7416002)(4326008)(53546011)(31686004)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TWRlc1ZMWTdWVTNwV2RUb25ONzdHcFBaMUprblNnS0ZGM29OZzI5ZmhORStM?=
+ =?utf-8?B?ZmplZkNzTUtjYTFNUngzR2R4b0MwaHVnZFNSU29PY21lL0VRLzBBUW9rcnpY?=
+ =?utf-8?B?Nk1HYVFqNTQ2RVRmM3dnMGZ2b09HbUMwR29YZ3hKTytQOE9NVmo4YU1qcFpR?=
+ =?utf-8?B?Q09lTXR1Q3crSWZyWkpJRGg0SjIreXEvZ3QxMFJ2eXh1WVowaWN4Z0lmTHpk?=
+ =?utf-8?B?RHNLMDJ3ZWtiRkRETmJlMWJ3cTNJemlIYUY1QW1DZldnaGxhZ1hRYUdVRU5I?=
+ =?utf-8?B?ZzdRZ2tFVHRXam5pV09TUjlCTjl2OGc0Ukxadi8xUGNwN2tTU1huN2RNTWVN?=
+ =?utf-8?B?NjUrK0wrU0FHajU1OGVzQkRxLzRScm5va1VBaXdsL1FqZTJMdTZqT0F2c1JP?=
+ =?utf-8?B?SWI3QlQ1aFFXejNQWWxQNUFucnR4cG54cElHbFQ5YjJXUzRET29YTjJwVWNX?=
+ =?utf-8?B?NzdiVG5rVFJncGFsbEZHQXVBYWs1Vmg3TGlTYzA2RzdOZENXTy9jcW1hVHgv?=
+ =?utf-8?B?NVRFVlNKOHZJRUhtdUIwZHFBQ0Z4RTdEQ3VUa0sxSERteVBvYTJONjlzWjdB?=
+ =?utf-8?B?MWRTbEZyR244WGxVZ0I2V1JZdHQ5aGpkVUN1elhUTmt3N1YxbzBuRE1UVEh4?=
+ =?utf-8?B?U1VLNlFWbTNUNVRBVW16ajVFL24ycnZveDZwY0RqRmZPUHFKNDlwMEhrb2Jn?=
+ =?utf-8?B?TFJiT1ptNW1YZnBnOXl2a0tEOUVTeXY4RXdaM2xQNUZHN0p2MS9wT2lCNFRO?=
+ =?utf-8?B?K0UxbUtoYUlSZnN4YnNkMUlBNktRSXV6ekk2dG9KVUNheWNBU2lHMjRUMXlO?=
+ =?utf-8?B?SUM3VUE5ZFY4VXNYYkxPR2xRNzRESkNZdTZXdm9wNytFRytiLzB5d1JxR2kx?=
+ =?utf-8?B?UXIxa1V5ajBqR081a25YRG9WK3JzRU5xcW9BNHBwUGlMU0VlbnhZUHJzWnBP?=
+ =?utf-8?B?OVNTYVVKNTg2eU9uZ1FvNHFHK2NpTE5OQWxqaVFBUHp5SDV5ZWg1eHpGNm5Y?=
+ =?utf-8?B?Y1FZdnhuV3h1SSt5T3dYMGxqRlh0ZWdxWmFOTE9FN1VoZWNzeDIxdi9yUmU4?=
+ =?utf-8?B?eW9uNXY2VnF6Vmh5Q2s1d1l3SURZZGcvMzdiZEhYbTFCNGYwOWxsa1F0Wk5C?=
+ =?utf-8?B?V2NaS010a25sbXFmZW9IeGduRmZNUlpnOFBVdUpFeEY4aFJvZW43RDJ1Yzhh?=
+ =?utf-8?B?OE9UaWxwcWVwdjRwczZ3Z0thS2ZzQ2pUczZER0JydExkRGRzSDRsVW5VM0ho?=
+ =?utf-8?B?ajBLVkNoOHloZWkyNVV4TDF1R0hPR2xBYU5MWlVCcjhKcUtGZTJjd0lLalBC?=
+ =?utf-8?B?M0Z5ZmxEc0YvdFVCdHFlZGI2SEVIVzRTMGwyQ3M4R253RUZRWDhXMzVZSmE3?=
+ =?utf-8?B?dTZMYzA4c0V6cFlEdytMTlBweGhhSHNlOS9PYVM1d2h6WS9MN1F4SHk3RXNm?=
+ =?utf-8?B?UGxtVVVsSDJMSEh1cHNBbkQzMGJwaE1Tcko2Nm0vWEhkNS91NWNmb2NEZUJF?=
+ =?utf-8?B?OGtydFAvc0wybHFrUEJqaXZGdXFENndhNDFQWWEweFBQbnora0tMT3FlVXF4?=
+ =?utf-8?B?OTAralYwYTN6aENOa3dHR1VPa0d5SjNGY0F4TkY2WWhjZlE3YXVpRTN0TElj?=
+ =?utf-8?B?VThtY0NuZGdTTmhLZmNMamt1RXkyeUZOT1hXUy9Nb01lYXY1WjRXS2VyZGEv?=
+ =?utf-8?B?NjFOanpWMDJtQzlTdUlqOTJKeGkrVGUvOEZIUDFOUlFKMW90RTFMS0RmdHBM?=
+ =?utf-8?B?NE9wNVUzWERIWkVuSTkxN2sxUFc2RXZCZndPTWh3M2FUUThLM2tucFdTekhy?=
+ =?utf-8?B?T3g0TjVPR1docGVGNWIwcCtWeEt3UXBqV0xVRi9mYjlxQ0FTMklHYkN6Uzk1?=
+ =?utf-8?B?eGUxVWhqYnBpZHk5YndHYmN3UXBMMFhuY1pRWHNOUExQRWxYTEM0RHBGd2xB?=
+ =?utf-8?B?WitGTWtsUkVWMTZxL1V5YVdFVWRMd2NGWnR2dWlXSVlaR1FtbkpTOUVKSGFa?=
+ =?utf-8?B?SThIVmh2VmRFOE1ud1ZTNGRHajREejNpMFQ2ZTVraitLUWI2WTlmendrakVC?=
+ =?utf-8?B?R0dNcFprb004MzJLRVMvdTI4bEVlemdDamNDeVhlUkttZGc4MUQvRUtlVWRZ?=
+ =?utf-8?B?WmJocTN3YmRXSzM0QUFPeVliWEJlWWFVb0xvZTZTQlc2eUFCNUlzUHk5cFJw?=
+ =?utf-8?B?bGx6WWVmQzhCb1ZWdTYwSWF5UVdUYWJyVnV1VUYzREpCT2Rwd2RsZ0tJVDhF?=
+ =?utf-8?B?dUc3TFJueUN3WThQN2RCdzNHKzVBPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9eda405-1768-4eef-2ee8-08dab5f4f5b4
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2022 19:21:32.8200
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GIZftkc2MK/wuknd1Zcbvg7g+WcRqmvfS/Ej157dkPHD3Ncy/QgsCbOrsGZAlz4S5dvHw41ChcYz9/R53L/DDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5067
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---KWZej2K6xFmsTmcs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 24/10/2022 12:31, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.0.4 release.
+> There are 20 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 26 Oct 2022 11:29:24 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.0.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.0.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-On Tue, Sep 20, 2022 at 11:11:55AM +0300, Mikko Perttunen wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
->=20
-> v3:
-> * Updated patch 3 based on comments
->=20
-> v2:
-> * Updated patches 1,3 based on comments
-> * Added Acked-by to patch 2
->=20
-> Original message:
->=20
-> Hi all,
->=20
-> this series adds support for the HW video decoder, NVDEC,
-> on Tegra234 (Orin). The main change is a switch from Falcon
-> to RISC-V for the internal microcontroller, which brings along
-> a change in how the engine is booted. Otherwise it is backwards
-> compatible with earlier versions.
->=20
-> In previous iterations, firmware was simply loaded from disk and
-> written into engine internal memory. Now, the engine has a
-> bootrom that loads the firmware from a carveout where it has been
-> loaded by the system bootloader; however, we still need to tell it
-> where that carveout is loaded and some offsets into it. For that,
-> the first patch adds a new memory controller API to query the
-> carveout address. The offsets are read from device tree -- the
-> expectation is that at flashing time (when the firmware is also
-> flashed), the flasher also delivers a device tree overlay with
-> values corresponding to the flashed firmware.
->=20
-> The currently available Linux for Tegra release doesn't yet
-> include this device tree overlay flashing, and the firmware version
-> it contains is incompatible with this series. The plan is to fix
-> that for the next Linux for Tegra release, but if necessary, we
-> can postpone merging of this series to once those changes are
-> available.
->=20
-> Thanks!
-> Mikko
->=20
-> Mikko Perttunen (8):
->   memory: tegra: Add API for retrieving carveout bounds
->   dt-bindings: Add headers for NVDEC on Tegra234
->   dt-bindings: Add bindings for Tegra234 NVDEC
->   arm64: tegra: Add NVDEC on Tegra234
->   gpu: host1x: Add stream ID register data for NVDEC on Tegra234
->   drm/tegra: nvdec: Support multiple clocks
->   drm/tegra: Add code for booting RISC-V based engines
->   drm/tegra: Add Tegra234 support to NVDEC driver
->=20
->  .../gpu/host1x/nvidia,tegra234-nvdec.yaml     | 156 ++++++++++++++++
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  27 +++
->  drivers/gpu/drm/tegra/Makefile                |   3 +-
->  drivers/gpu/drm/tegra/drm.c                   |   1 +
->  drivers/gpu/drm/tegra/nvdec.c                 | 171 +++++++++++++++---
->  drivers/gpu/drm/tegra/riscv.c                 | 106 +++++++++++
->  drivers/gpu/drm/tegra/riscv.h                 |  30 +++
->  drivers/gpu/host1x/dev.c                      |  12 ++
->  drivers/memory/tegra/mc.c                     |  25 +++
->  drivers/memory/tegra/tegra234.c               |   5 +
->  include/dt-bindings/clock/tegra234-clock.h    |   4 +
->  include/dt-bindings/memory/tegra234-mc.h      |   3 +
->  .../dt-bindings/power/tegra234-powergate.h    |   1 +
->  include/dt-bindings/reset/tegra234-reset.h    |   1 +
->  include/soc/tegra/mc.h                        |  11 ++
->  15 files changed, 530 insertions(+), 26 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,t=
-egra234-nvdec.yaml
->  create mode 100644 drivers/gpu/drm/tegra/riscv.c
->  create mode 100644 drivers/gpu/drm/tegra/riscv.h
 
-Applied, thanks.
+No new regressions for Tegra ...
 
-Thierry
+Test results for stable-v6.0:
+     11 builds:	11 pass, 0 fail
+     28 boots:	28 pass, 0 fail
+     130 tests:	128 pass, 2 fail
 
---KWZej2K6xFmsTmcs
-Content-Type: application/pgp-signature; name="signature.asc"
+Linux version:	6.0.4-rc1-gd4150c7b49be
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                 tegra20-ventana, tegra210-p2371-2180,
+                 tegra210-p3450-0000, tegra30-cardhu-a04
 
------BEGIN PGP SIGNATURE-----
+Test failures:	tegra194-p2972-0000: boot.py
+                 tegra210-p3450-0000: devices
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNWkAgACgkQ3SOs138+
-s6H1Ug/8CBt81YrUCMB0wW9UNf0O1bOW7hIhb1tgxsr2RMVYK3NwPeZ2ohL75GUw
-SQXTWEbbail1dIL/f1pV+GWn91fY9L9RblJ8s5YUe9j5kEsoxh4Ein1HB53vrahz
-ibKVTqNGxLQBXqtSUfARQ4HpLUnlWmL8ali2+bnOl18HmUqWIPvUCRq90Hyq1Ryt
-TKR4lMzVjoBn0ewUyD1bMkVwT8i+cux7my/HVUnkJtoVKptByyY+Gzi9wgo+isw2
-u8L/uk7xruuWQUl7pWYLK/NyaNA4mddZzav4Yrt5tdV385OP2S8L6pRsdpuHA5Mq
-TI3DItWcQWAGLQQJazBwigOPn5Ib1xBUgCjVmkjbfmE3bdWKO+4OVGxg+Xrw59v1
-lGBkgg1V0UdKS+3hQbm9UGRK2ukNgvLIhuuoLs5KIL5Cx/5U+gpheb4L/Th2ixRZ
-yBeUDQ4EAxd0DraYp7hWwDbab62B0wE/kbcxgPWO0TaIdWqNHYSbZ46YJz/3OlYB
-NBG3qPRS4gh8buxqQkDM6oOjBs99a/xfRM9dgKrFhP7WKParzC/rn+HFQUD5yohz
-+k2E3e16iiU3gqLvUndfhMBDUoIdWK+BI28gY3pK97fx6J4yUDMXfKKA52x/f+6C
-PBaVTY8ROfzhPEj4yQoGNqzjMZarclKrVQQtGj8tuUEG3lsWpE0=
-=vucY
------END PGP SIGNATURE-----
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
---KWZej2K6xFmsTmcs--
+Jon
+-- 
+nvpublic
