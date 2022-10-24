@@ -2,115 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A990C38A2D
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 08:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9954FC6183
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 11:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbiJXIqb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Oct 2022 04:46:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59536 "EHLO
+        id S230167AbiJXLUU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Oct 2022 07:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbiJXIq3 (ORCPT
+        with ESMTP id S230253AbiJXLUD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Oct 2022 04:46:29 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0459D67056;
-        Mon, 24 Oct 2022 01:46:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666601189; x=1698137189;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zr3WKsPxb7aaiIO0Wjz4+22fObmXP9eCkj8VHh8e+Zw=;
-  b=ivH+6Aiule3GXccJQb5bNmoDVy81GpkcZ4Q9RauKIkZsFODgkMs6cE8D
-   eFGKyNwTDiro+gbzfChUpsLiACAgyLA/UjPHvfoDhjRM1tfTncw8mSryk
-   AMWpg8pUSZiovFJseXClQKNSi6A3pmOv1u8iKJi+bE+/+X/ssl7lafhmq
-   AoPyfwkAvxgsnWTkGZQOPah2J+x8OHsBxqnZMjvtKn7WUvzKC9FMFlFwO
-   U6oIj/VvaULXWMi5uDK1WFA6Hg9WZpncT5wcNzJJTISMq29+c82SQSjpW
-   WrZJcxeKyTdy8nQtSeh29CBbJZFgPsyvwhDhshoyP3s+QOuIbMnfWFq9e
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10509"; a="304978464"
-X-IronPort-AV: E=Sophos;i="5.95,207,1661842800"; 
-   d="scan'208";a="304978464"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2022 01:46:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10509"; a="773746804"
-X-IronPort-AV: E=Sophos;i="5.95,207,1661842800"; 
-   d="scan'208";a="773746804"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmsmga001.fm.intel.com with SMTP; 24 Oct 2022 01:46:20 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 24 Oct 2022 11:46:20 +0300
-Date:   Mon, 24 Oct 2022 11:46:20 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Wayne Chang <waynec@nvidia.com>, gregkh@linuxfoundation.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        treding@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com,
-        ajayg@nvidia.com, kishon@ti.com, vkoul@kernel.org,
-        p.zabel@pengutronix.de, mathias.nyman@intel.com, jckuo@nvidia.com,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 06/11] usb: typec: ucsi_ccg: Replace ccgx to well-known
- regex
-Message-ID: <Y1ZQ3NyR7Suxdltu@kuha.fi.intel.com>
-References: <20221024074128.1113554-1-waynec@nvidia.com>
- <20221024074128.1113554-7-waynec@nvidia.com>
- <Y1ZGZ2H0/ug3se6j@kuha.fi.intel.com>
- <87czaheiag.fsf@balbi.sh>
+        Mon, 24 Oct 2022 07:20:03 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521F124F08;
+        Mon, 24 Oct 2022 04:20:00 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 144561FD87;
+        Mon, 24 Oct 2022 11:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1666610399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sHEv3PMrKNnInemYrMBOWuesS2nTAxE1RBtBG3/fya4=;
+        b=DU+FrXvCzuxXQKLji2130cdqJNDZWimFa17voIFRqiJi9YV6yEP/tBOuVsk/aXIYcCZ22y
+        dJiA417KPEM2/2KMkoVkU4zzdd8/7BAQ4EpaiKoLTwl80ROKkpi47TqcaKS1RcNYwv6d18
+        wgULj8VNsST/jnqrt41vfMG2qbcKw9k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1666610399;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sHEv3PMrKNnInemYrMBOWuesS2nTAxE1RBtBG3/fya4=;
+        b=DFl0JbhoaL2BQZ30SVNdzW5dYpDazf0fWLsyS8qsMNBMAzt7PPP4vh0I1oF+6Qg/vaPBp/
+        dCQW5hsUlPHLLpBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9654513A98;
+        Mon, 24 Oct 2022 11:19:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id kMjTI950VmOYMgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 24 Oct 2022 11:19:58 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
+        javierm@redhat.com, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2 01/21] drm/komeda: Don't set struct drm_driver.lastclose
+Date:   Mon, 24 Oct 2022 13:19:33 +0200
+Message-Id: <20221024111953.24307-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.38.0
+In-Reply-To: <20221024111953.24307-1-tzimmermann@suse.de>
+References: <20221024111953.24307-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87czaheiag.fsf@balbi.sh>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 24, 2022 at 11:29:27AM +0300, Felipe Balbi wrote:
-> Heikki Krogerus <heikki.krogerus@linux.intel.com> writes:
-> 
-> > On Mon, Oct 24, 2022 at 03:41:23PM +0800, Wayne Chang wrote:
-> >> ccgx is refer to the cypress cypd4226 typec controller.
-> >> Replace ccgx to well-known regex "cypress".
-> >> 
-> >> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> >> ---
-> >>  drivers/usb/typec/ucsi/ucsi_ccg.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> >> index 139707a2f3d6..5d3099e6eb77 100644
-> >> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-> >> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> >> @@ -1358,7 +1358,7 @@ static int ucsi_ccg_probe(struct i2c_client *client,
-> >>  	INIT_WORK(&uc->pm_work, ccg_pm_workaround_work);
-> >>  
-> >>  	/* Only fail FW flashing when FW build information is not provided */
-> >> -	status = device_property_read_u16(dev, "ccgx,firmware-build",
-> >> +	status = device_property_read_u16(dev, "cypress,firmware-build",
-> >>  					  &uc->fw_build);
-> >>  	if (status)
-> >>  		dev_err(uc->dev, "failed to get FW build information\n");
-> >
-> > This will break bisectability. You need to first add that
-> > "cyppress,firmware-build" identifier without removing the old
-> > "ccgx,firmware-build" identifier, and then introduce a separate
-> > clean-up patch where you remove it when it's safe to remove:
-> >
-> > 1. Add new - This patch.
-> > 2. Modify users - PATCH 7/11.
-> > 3. Remove old - *missing*.
-> 
-> will it ever be safe to remove? What about potential products in the
-> market with little to no upgrade path? There are likely to be products
-> with a DTB that will never be updated, no?
+Don't set struct drm_driver.lastclose. It's used to restore the
+fbdev console. But as komeda uses generic fbdev emulation, the
+console is being restored by the DRM client helpers already. See
+the call to drm_client_dev_restore() in drm_lastclose().
 
-Not the case here. OF support is only just added to this driver in
-this series. That old identifier has been used as a build-in property
-only.
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-thanks,
-
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+index 451746ebbe713..62dc64550793e 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+@@ -10,7 +10,6 @@
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_drv.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem_dma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_managed.h>
+@@ -59,7 +58,6 @@ static irqreturn_t komeda_kms_irq_handler(int irq, void *data)
+ 
+ static const struct drm_driver komeda_kms_driver = {
+ 	.driver_features = DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
+-	.lastclose			= drm_fb_helper_lastclose,
+ 	DRM_GEM_DMA_DRIVER_OPS_WITH_DUMB_CREATE(komeda_gem_dma_dumb_create),
+ 	.fops = &komeda_cma_fops,
+ 	.name = "komeda",
 -- 
-heikki
+2.38.0
+
