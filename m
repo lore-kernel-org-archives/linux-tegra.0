@@ -2,100 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8ECFA3741
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 17:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C6BECAAA1
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 17:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235240AbiJXRH0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Oct 2022 13:07:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54826 "EHLO
+        id S234469AbiJXRSe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Oct 2022 13:18:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233893AbiJXRHJ (ORCPT
+        with ESMTP id S229716AbiJXRSQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Oct 2022 13:07:09 -0400
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45852D4A3D;
-        Mon, 24 Oct 2022 08:41:50 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id i127so11420106ybc.11;
-        Mon, 24 Oct 2022 08:41:50 -0700 (PDT)
+        Mon, 24 Oct 2022 13:18:16 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00F7C2A25F;
+        Mon, 24 Oct 2022 08:53:09 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id m29-20020a05600c3b1d00b003c6bf423c71so10296287wms.0;
+        Mon, 24 Oct 2022 08:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PbDwJ7wvAUkhD1OcyTr/yjGyh92hqX3W/8ifm0JLlBU=;
+        b=JVyPXgCSH3tJQcxC6yJuJZDLmlQMpY9+7NvO2ibypMYpCzSEhz0PKaeict2Eem7RVq
+         6d4HEnbRMheXvVTm6Nz06d7i2wxAKqO8eqzMXINIWRGibI/qHsNtG4eLybGs/CyJ+K0J
+         lHPngM62fQOS+xMTJjaQ8xthvpx/of07x8qCMLitR5FNMOI0d+/XD2yCSa+7g9BentdN
+         Nl6hs4SFwd2SzyMtgEgYZFMvwhjEw1jnzw3cN8hpJXtIRF6fSHPimoMpDpcarPOv809S
+         zVA0KbYHvJME96+g5zXEAU6MTVH9a8AorP/rs6NFhKKuJCAhCVZ212zZL3+97ZI3+IGA
+         5uNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qVg+okVBVsVNqz1/oTqCye1j7oYLVkbnznHF/a3NqAY=;
-        b=5xCgqx5WQQWXYUZHUGbJvoyxaErx/ZXYtkV0+unq/iuGq2mfuzaOgT/y7u8no0dpuc
-         t1zlmiJyH+DAoKbmUaH4YC5/lT8zKupSg8vz+LJj248PZyqMkB+e78A3N2Kd5nQiBqSG
-         jcXChDAcwLc3V8vLrk6zlbluTMKAw5pRbAKPOIl6A6gzEusLaj8POiSFFxhnbvpS9HHp
-         HeEtYBSFHstLYh0OEB/LGjYN6Z7xy666HMlo+1xc2M5tqZOKB8rXALKI6axNuXV6L3su
-         SoOHFleWAZm/lieEpaXob2K/gODQNYNMpnnLG+HeGNuzUFbxvdY1fYUqn1goCrG4CoNP
-         Z6/g==
-X-Gm-Message-State: ACrzQf0gc+mOXSGvMUeW5OBxGyM0JCkBFJ7m4BPXHkjq8FPyx8RfFyNS
-        JFEFeJ7TO2ZwB+KGke5FtyqzRurczg==
-X-Google-Smtp-Source: AMsMyM4AQUZXFNB/vdlLThjKII2zhkC/sXhO+TloBWEatc44pTvPltXHFlhLlkEuJZKFRaMFbLyLtA==
-X-Received: by 2002:a05:6830:4120:b0:661:d839:cc63 with SMTP id w32-20020a056830412000b00661d839cc63mr16898634ott.51.1666618203612;
-        Mon, 24 Oct 2022 06:30:03 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id j31-20020a056870051f00b0012c21a64a76sm14191930oao.24.2022.10.24.06.30.02
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PbDwJ7wvAUkhD1OcyTr/yjGyh92hqX3W/8ifm0JLlBU=;
+        b=RW0yHlgUS1CCoJbk8DzrNR5yCIKQulQ7iMSRUZ5vwh2iSHuMOdEbr2SkNWWeJx3Q5o
+         cw/VxbYUrPhnnNfOtPnylFdJZrkbMaDQmMJkeilvwncMcxTGORBHfib8Iw5YDWv2iUjQ
+         kWOGN96pZkpFXGgzKmMcUZ1asFMTA6yUEuOU5Q1MEhZ0iWsi/3vwU54GDf6dDCQtjMw4
+         uDYnq7y9MDLoE7EE6jlhJlIGa8Im8jk/s1i2rWQf6RDNhgHFeuKl1Y3f9J/pvqw1ZR5L
+         mHlCrev7fueS55hir+m8yu8IOd5pueMT5hzbpdnQQMtXauCMIjFGxWu9joNH9BNaJ3GI
+         Odkg==
+X-Gm-Message-State: ACrzQf2t5q92t45IVs6jQK/pCpNAwGKsGjWb21g0NDIs1xRIiwmCBiNb
+        4e5mck0XHYgOybM40iibmyX1A7s91p0=
+X-Google-Smtp-Source: AMsMyM4ibbYeSmYuLZtdL2590VPkTSOLbiPc+BzORbth6dxnpg1pkgkpbVCoY44500sZAF1ZzSvWyw==
+X-Received: by 2002:a1c:f009:0:b0:3b4:9398:49c9 with SMTP id a9-20020a1cf009000000b003b4939849c9mr43310896wmb.174.1666620130862;
+        Mon, 24 Oct 2022 07:02:10 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id n9-20020a05600c3b8900b003b4ff30e566sm20189398wms.3.2022.10.24.07.02.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 06:30:03 -0700 (PDT)
-Received: (nullmailer pid 1686092 invoked by uid 1000);
-        Mon, 24 Oct 2022 13:30:04 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Wayne Chang <waynec@nvidia.com>
-Cc:     jonathanh@nvidia.com, linux-phy@lists.infradead.org,
-        robh+dt@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        vkoul@kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
-        linux-i2c@vger.kernel.org, mathias.nyman@intel.com,
-        heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
-        thierry.reding@gmail.com, devicetree@vger.kernel.org,
-        treding@nvidia.com, krzysztof.kozlowski+dt@linaro.org,
-        balbi@kernel.org, ajayg@nvidia.com, jckuo@nvidia.com,
-        p.zabel@pengutronix.de
-In-Reply-To: <20221024074128.1113554-3-waynec@nvidia.com>
-References: <20221024074128.1113554-1-waynec@nvidia.com> <20221024074128.1113554-3-waynec@nvidia.com>
-Message-Id: <166661789886.1678573.2345753570567106623.robh@kernel.org>
-Subject: Re: [PATCH 02/11] dt-bindings: usb: Add NVIDIA Tegra XUSB host controller binding
-Date:   Mon, 24 Oct 2022 08:30:04 -0500
+        Mon, 24 Oct 2022 07:02:09 -0700 (PDT)
+Date:   Mon, 24 Oct 2022 16:02:07 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
+        smangipudi@nvidia.com, Manish Bhardwaj <mbhardwaj@nvidia.com>
+Subject: Re: [PATCH] gpio: tegra186: Check PMC driver status before any
+ request
+Message-ID: <Y1aa3/oJA2ElSGp0@orome>
+References: <20220912133309.18506-1-pshete@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="WWUO7I5ImHJZcyZm"
+Content-Disposition: inline
+In-Reply-To: <20220912133309.18506-1-pshete@nvidia.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 24 Oct 2022 15:41:19 +0800, Wayne Chang wrote:
-> Add device-tree binding documentation for the XUSB host controller present
-> on Tegra194 and Tegra234 SoC. This controller supports the USB 3.1
-> specification.
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+
+--WWUO7I5ImHJZcyZm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 12, 2022 at 07:03:09PM +0530, Prathamesh Shete wrote:
+> This patch fixes the issue where even if pmc driver
+> status is disabled still we are invoking pmc driver
+> to process some request
+
+s/pmc/PMC/ twice above. Also, this is slightly misleading. We're not
+"invoking" the PMC driver, but rather we're trying to look up the IRQ
+domain that the PMC driver would've registered if it had been enabled.
+So perhaps reword this to more accurately reflect that.
+
+>=20
+> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 > ---
->  .../bindings/usb/nvidia,tegra-xhci.yaml       | 213 ++++++++++++++++++
->  1 file changed, 213 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xhci.yaml
-> 
+>  drivers/gpio/gpio-tegra186.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index 54d9fa7da9c1..efd508ba07a6 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -895,7 +895,7 @@ static int tegra186_gpio_probe(struct platform_device=
+ *pdev)
+>  		tegra186_gpio_init_route_mapping(gpio);
+> =20
+>  	np =3D of_find_matching_node(NULL, tegra186_pmc_of_match);
+> -	if (np) {
+> +	if (of_device_is_available(np)) {
+>  		irq->parent_domain =3D irq_find_host(np);
+>  		of_node_put(np);
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+This now leaks a reference to np if np is found but not available. So
+this should be something like:
 
-yamllint warnings/errors:
+	if (np) {
+		if (of_device_is_available(np)) {
+			irq->parent_domain =3D irq_find_host(np);
+			of_node_put(np);
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/usb/nvidia,tegra-xhci.example.dts:36.27-28 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:406: Documentation/devicetree/bindings/usb/nvidia,tegra-xhci.example.dtb] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1492: dt_binding_check] Error 2
+			if (!irq->parent_domain)
+				return -EPROBE_DEFER;
+		} else {
+			of_node_put(np);
+		}
+	}
 
-doc reference errors (make refcheckdocs):
+or:
 
-See https://patchwork.ozlabs.org/patch/
+	if (np) {
+		if (of_device_is_available(np))
+			irq->parent_domain =3D irq_find_host(np);
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+		of_node_put(np);
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+		if (of_device_is_available(np) && !irq->parent_domain)
+			return -EPROBE_DEFER;
+	}
 
-pip3 install dtschema --upgrade
+The former is a little nicer because it doesn't check availability
+twice.
 
-Please check and re-submit.
+Thierry
 
+--WWUO7I5ImHJZcyZm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNWmt8ACgkQ3SOs138+
+s6FgJRAAnKzSEP41yRfOaOvjtZaYVNHq7iZ+pMv4cuRTh9/5P46v0OcJyAFD6h4M
+HrRrOhhXvJO6gTwylItsVxq0JIhhxzatNRGfVnUt4JhbycWpn7gJ/hdGx9JljdIG
+E5Vd+2uD1y9ZQA+NSEJPQDJLwu6uqR9HuAnH5KB+JUvqDF4GI8W/xlOjrhOISdSH
+YYBPw1kbnZYPfjCdcu9NJR6z8gITIMmlY4WeCS29HmkFgNa2ak3gv9Nvvgx9Q+fQ
+WwGmSfT6G0QcBbVvDL9z7wugbXwKtlppomU0eGwJ61IAlMKCExoEbFEDqW1PoLYc
+a6MXMmH0bVoHvcdH13tDbLlw0T8C29WZs2ZQPpxEvNv+cVbYLJmRhQUsQrBh+6fC
+MeNsnJkoFZVf48sc9+RNi5ThjVHKCkkJ+nQJh+oXrva5gofwD+hPazbZv+Qz3pmz
+/QaGuhMFp2dM7cDcgyHYQLf+R1kujXfS/rUvUBnIOtm110VhH22RV8cBktFP5rzI
+smNqGx9UWoOKUQiSRYv2/r7mxwxUxJm9icexY02TxqVNCss0NPG7z4sGDggiJxhk
+Tg/02gPDOE9t6giIhurr/wvaR2fVcNXTkNUmVygYr/VMcW0O8Zq4AIwkgvAI1skb
+Ik0ZsL6p8LYIYdPy/tNaBPEGHaKR7JuHvxNYlEAPHhKiZtkeIC0=
+=6xUl
+-----END PGP SIGNATURE-----
+
+--WWUO7I5ImHJZcyZm--
