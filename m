@@ -2,139 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05E9FA3742
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 18:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DA3FA3743
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 19:50:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230322AbiJXSjn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Oct 2022 14:39:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43232 "EHLO
+        id S232110AbiJXTud (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Oct 2022 15:50:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232568AbiJXSjI (ORCPT
+        with ESMTP id S234204AbiJXTuC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Oct 2022 14:39:08 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on20624.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eab::624])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E23EA6AB;
-        Mon, 24 Oct 2022 10:21:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CdhQsm/h52akBcZzNCIgLjuYQ0OjH2wSU0YHZ3rCWfVFZGJWDa6EO12d057h2bIxlZzx9JmupXxNVrqnhKhsfo+A8BPZsA51R1J5tragLwnH2Bv+aF6lNIHiEbZtuYS92q6RDl23aKfmVmkoCMCrfFsY/IkQTjJsVUsv/0mNMuDPdFE23Fa4vPFXjUjDR5Xys+/FhCFeY0ab/pgLxVLFWNulkHz4o0xCj6yfDF9QO6H50frMCGBuMHzWsCwdi00kckiyQxP2lESLbKllWJZuf8azlN7fSvr2m/7jjgxJD03YMLLtLGxUrW9YaQyjzKqjfmhLW9sgP97Rab0E+BYrjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NfXaWm6/E464ziR89wa4ItnVBsjEuFIW/TxX0eiBfB4=;
- b=RCUvxNDJgwW+8F9jmvC7xV9uybzh/x4f6NLIfKCOu7TRHonOnRST6wAz0hM5JaQiiiPsSwi42MpFBJhMadKX4Sk2qz0DKyIxGrCnGwDg364itnsSz1iBmdLQNPrME7uTgo8QIaovxzCVU9h/+1OkhfLlcAqS0p+AuYCl6b5i7Vn1eqoJ+nT6DGlk6fl0hZEI796JjLPgCiO+xLU++SZBH+pAyVXW5/V1RCG7HyeEk91kGGnh0jOb7EkzsRaK/FjWMfd5b/wcpSoMyNC1Ochn0FJ1QljZjUHHOAFDavuPK0s4y3bRL9rcvM7+AEWh3cF0PFIVViljarH6pZUVwLiEhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NfXaWm6/E464ziR89wa4ItnVBsjEuFIW/TxX0eiBfB4=;
- b=rJve7CWxj+JsPoqbjehsOua4DvdaDPyf/Puo7Mfsqztr2BViLaJ5SBpOPJ545/ufZx1nmnkzgfN+Bi5Uxx1zSYsXPbHWYtdmGhhVCiywaM2TYQKkKSj5CzhC0L3cob+Flkrwo8tURxw4zc5O0ru0A348sLvNxUwozR9pD4rWzyBFhKgqVhnLxxWBkgU7pF/6ARAF6oBAv/5qsMnQNqhcc7GQ4dAMzb+ZQr0iahYjz8Z9tthedGH5LuIyZf002Ua0/JlQC64NQcYPFwyot8npAwqPR6sD6AZgFvX3k7ykf6Pzjc0El5VWf/XP0lgufMx0L1stLEZYJGbLkWyRlIyKsw==
-Received: from BN9PR03CA0576.namprd03.prod.outlook.com (2603:10b6:408:10d::11)
- by IA0PR12MB7578.namprd12.prod.outlook.com (2603:10b6:208:43d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.26; Mon, 24 Oct
- 2022 16:42:07 +0000
-Received: from BN8NAM11FT072.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:10d:cafe::f4) by BN9PR03CA0576.outlook.office365.com
- (2603:10b6:408:10d::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.28 via Frontend
- Transport; Mon, 24 Oct 2022 16:42:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT072.mail.protection.outlook.com (10.13.176.165) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5746.16 via Frontend Transport; Mon, 24 Oct 2022 16:42:07 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 24 Oct
- 2022 09:41:57 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 24 Oct
- 2022 09:41:57 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29 via Frontend
- Transport; Mon, 24 Oct 2022 09:41:56 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.9 000/159] 4.9.331-rc1 review
-In-Reply-To: <20221024112949.358278806@linuxfoundation.org>
-References: <20221024112949.358278806@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 24 Oct 2022 15:50:02 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C09618C94D;
+        Mon, 24 Oct 2022 11:15:56 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id a13so33043920edj.0;
+        Mon, 24 Oct 2022 11:15:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XX7YiiGevtISI0XSZZMb5osn/jTMBowrI9vJR9V/T7A=;
+        b=Ahsq7/pmrfp2KoGqVXZoy5NBZKbqm7VWN1fU1FMWrNnTBGWCdjNE/nO+W1BulZIcpJ
+         F7CG77QLQdmggVsasOP66jRulbVV2HWk5qelObkdurv0nYW86hJHJIUrDAWRHXNZCYdD
+         Wc/gKchScqlR0Eaj0tPz66EtFONYSHcw3iSfv5BXexdXgnpQ2BttKk+VvOX6xy1gBUDh
+         jZIwRBo1YgLKmh+AISNGxdczpCmjqUUitA1aixioGwyfIOu1DxG5MDcL19spcr9+Vr46
+         YHypK7hBgXXyUpMWtEb7TvRlIyxGfsgZT4yXHkXxSe1Y+cwfSfmyJAa9OSMPH3nV+aYi
+         NQYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XX7YiiGevtISI0XSZZMb5osn/jTMBowrI9vJR9V/T7A=;
+        b=PJWRdNNeIO4pilxKOvFxsMPSADxMtPazbPjR2kOnAewtigeuwkuaoQmtJ9LO4QHtwD
+         soVdBT7FxUA3Z1or7v9DP7C9qSxWxfD2DaJyloDMFqpUimuMWhpGV93aS3C+uer7t3Ef
+         fMoshdqOA2V4/IEVQKRc1KTJRultQ0GZl/w/4uvtWdnksQDUrt2G45ky75VUVsfegPTN
+         ZItDvXv2mtCJo+SboZQtcVE3Cx/Axprd8oPuA+oAgW+iGHnIKetIQV35X92lVIdlH+ss
+         bKCwi0Lv1+JtfxzBsEga1HE2pJeRDzMDLYMRp3n0hYtZAMr0ApS+9HL0/kkaovDUTCvh
+         Sd/Q==
+X-Gm-Message-State: ACrzQf0ssPJfq7Z2N3xxBlJb6AqZzWUqjvGeMVbrGKY2wDpSsdmtW6b+
+        o3VDBEwHEczO69ecC3CJ76QU0WYJjEM=
+X-Google-Smtp-Source: AMsMyM5cvHqhuapFX+2hHyIxLP375qizLYhAMFBowVkQdXgh5rljsTJ4VXgwPUAZtVjvYG/chFwEJg==
+X-Received: by 2002:a05:6402:2813:b0:461:e7bc:560a with SMTP id h19-20020a056402281300b00461e7bc560amr2301115ede.340.1666619119953;
+        Mon, 24 Oct 2022 06:45:19 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id k26-20020a17090632da00b0078082f95e5csm15506063ejk.204.2022.10.24.06.45.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Oct 2022 06:45:19 -0700 (PDT)
+Date:   Mon, 24 Oct 2022 15:45:17 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] arm64: tegra: Add SBSA UART for Tegra234
+Message-ID: <Y1aW7R/Yb440/fey@orome>
+References: <20221019144700.170361-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Message-ID: <e6329c38-4e27-4bd8-9b71-376762215788@rnnvmail204.nvidia.com>
-Date:   Mon, 24 Oct 2022 09:41:56 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT072:EE_|IA0PR12MB7578:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7b17707-008b-4a6f-9c4e-08dab5deb05d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4itytK4lRsKEbwh99wF0JtpnZgmX4evtxLvkQ59NwqqmcMNqlLHS5YMzZ7JFW62VbPsE2cR0tsMRvSiNN7gOiNyDbQIurAvLavkxWGVpQdqerDoSG74PU2CoFG8Cc84RHIJUuvcoL92bMPBXJeBD1gZ1EERbYpOpeVVV/sRrk96kraGiU4Rf+49Cde5IDsUXA2INaO9sbCPkcCjHiqOa39XGIitRHDTFV/ylo1EOjbRLZE9prkgLyGRFsps8kXiP2Ihzdtz1/BH7wp+I3yX1QkESI31xn7zswyxFOFztMMNaFeL1xG5UdG0airJIJLY5o5lPWVZMTmG15M6schNTw5RxU3jAUZnXz0tE6/PoeIDrFzSEDn879fagpZeAKP/MFmrPZ1JWdr28Gqt83kVdJpKdF9lLpRJUosIeQ0dTZ12lCnM6sayX55s5RfjnSQ31Iei23QWPjK4OueIRPSuac0OdOKrrlDyA6KFzVgttKwkM+7XkOnAkxU/OFuuCChU3zTzDQG/dnGLxpSn1f0JmTAc7/J5aLzuLC0msqrMZBJ+T21OkKGEU4dnZ3G0VOMxLlV+PTCSyx2ENw30QRegRqHIkrw+lXNc4cVORDUaC69ut/Z8MlqBWn/dzgN2GwNDGY5OoVqkeluW+y39UlHYzcgUYeTauyHXse42N0Ax+GYWVZFkKJqqSvx5gDkL/1AIhETOHX1WovKhcXn7odm7j3IOuDZ6C2xwE/1d1Kg6htEQKksm+V9sgKBjBY04veJYjyoBhAWfbqJJghPUsRY/Nq7Z29tMGUkJRWHaQbNvZ1QldhmO0Ie5w7lLLwmgJEw5A+1Sozb9vVTkw0iO4ofqSxjIy+SSrSV7jU8TVMsX2f/k=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(396003)(136003)(346002)(451199015)(40470700004)(46966006)(36840700001)(82310400005)(31686004)(82740400003)(7416002)(40480700001)(186003)(426003)(8936002)(4326008)(70206006)(70586007)(2906002)(31696002)(6916009)(8676002)(5660300002)(54906003)(41300700001)(86362001)(316002)(356005)(7636003)(40460700003)(26005)(47076005)(36860700001)(478600001)(336012)(966005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2022 16:42:07.0607
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7b17707-008b-4a6f-9c4e-08dab5deb05d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT072.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7578
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ZO0HNTfB+6/jabfj"
+Content-Disposition: inline
+In-Reply-To: <20221019144700.170361-1-jonathanh@nvidia.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 24 Oct 2022 13:29:14 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.331 release.
-> There are 159 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 26 Oct 2022 11:29:24 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.331-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+--ZO0HNTfB+6/jabfj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Test results for stable-v4.9:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+On Wed, Oct 19, 2022 at 03:47:00PM +0100, Jon Hunter wrote:
+> Populate the SBSA UART for Tegra234 and enable this UART for Jetson AGX
+> Orin.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts     | 5 +++++
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi                   | 7 +++++++
+>  2 files changed, 12 insertions(+)
 
-Linux version:	4.9.331-rc1-g5bb2c3c178f3
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+Applied, thanks. I noticed that the nodes have become a litte disordered
+after the P2U nodes were added in commit ec142c44b026 ("arm64: tegra:
+Add P2U and PCIe controller nodes to Tegra234 DT"), so I sorted the SBSA
+UART node correctly and then reordered the remaining nodes correctly.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+We should probably have a check for that. I'll see if I can come up with
+something quickly.
 
-Jon
+Thierry
+
+--ZO0HNTfB+6/jabfj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNWlusACgkQ3SOs138+
+s6E8lxAAnklCc6KaKmir/m+hgmJ334h/0FV65JsGKbVcBbJQ9rGEUBtsetO5XA5Q
+uxSdOmSFOwBlq3rohi+TCuPlad8iiOfykl4qZtlIu84/a6lJSIfg2u02rHrUjw18
+QW7Ywdpj2FTeQisA4c5oOx1+spp7DPdM/osLHDxTXi3Xx1QOmDx1X+kMPcU39pG8
+9PqNsmxX0o9jLzxXz9NMKhw1xs5aIDRVzpk4mcopPaNH+1LnaIfxx601w+rwAzY+
+q6Ws8bSmaI5HZnUyL9P1fknMJx/wXc4DM5JEE+10WtS03KX9eKtPwCQPVtEzy+P7
+1HO7lX8+tP1/NJuQ+rpVgxbpNzABLuV0nzuSuIJw58ZPCzOpLMcw+VCuG7FcoS1N
+gQMhTD5uI1NbLBn4vFhDsgbcej530blYInnVG35Q3X4CRbg7SsakMQIJTrHUgyKi
+KfCkqIGb8ElLZMOUHb0OVAH6ZBJL8JNBV3VwawRyShyCxt+1TghA/EZSDE50eRZp
+nj6Xt+HQdZ+fWIitzSMg9D3glp3X22wo69K2ta1iCAOte0Kqicz4++R6NFetxM0b
+gYPg/VWJopl4cCmyBn5CwSEZWGmmmDOQtppi8uV+MyfK/q14wMF+cIn0nTiQ0lBN
+bZ8OEaZ63OhaaNtKrx4rD4qIs4UeJVP0hV/ddMxPiJDdJIL0jjU=
+=9Fws
+-----END PGP SIGNATURE-----
+
+--ZO0HNTfB+6/jabfj--
