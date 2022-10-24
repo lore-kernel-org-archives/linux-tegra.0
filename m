@@ -2,234 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F012DC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Oct 2022 13:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF312C3A59D
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 07:41:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230022AbiJUNlP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Oct 2022 09:41:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48396 "EHLO
+        id S229792AbiJXHlo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Oct 2022 03:41:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230478AbiJUNlN (ORCPT
+        with ESMTP id S229738AbiJXHln (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Oct 2022 09:41:13 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2050.outbound.protection.outlook.com [40.107.237.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 117A4139C3D;
-        Fri, 21 Oct 2022 06:40:58 -0700 (PDT)
+        Mon, 24 Oct 2022 03:41:43 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2045.outbound.protection.outlook.com [40.107.93.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820124D805;
+        Mon, 24 Oct 2022 00:41:42 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RFwbeZH8iuCUFHkV1xU/9NpBcSiP9AjdvjgkoGWacGZq+kkLTOtItuNFwqhpnxKJSYXa/SkrBYarZIwsq4yQXtp91L9tJK/P2mv3PPFajy1ViyiKWC9m7eW42m7i73c1DY8Zdi/EpmSO5GZ9HlDEDIMFXrQ3NJS8aLItoOzTNwmyH44w0SpFM0LoGPxZrduh6iOkA+VRhO3w8EFTg2DsR9lZOjZiFxISzyGUA7nWk9YgrjEraDlkOtIuwHS3SqQLnTVnnemPWYFR+qGxrPT/ARPU3P7VzOWN9aTxFsfRhKc4xft2noGsFV6MxkRKx6FdgiUsXeKVYcCMgVFwTQM0Cg==
+ b=IC53nUnRHobLLVundS/YvwvxLqRn3uQCHXVeDP30Ym4aibK8c13huSx3qW0jwsChfyzc94S3qtMKmjpZJMUwNq4D/EQYwoJaG4c5ntm3P2tmyMxrQNCM+64OIbYAXQRk6O8c4PFg7PwFMvzmdlpCO600cVzwk2CMlzpMssK85i+xxMmG3GJ14uH48sDLTapv4Q9Gi0iXQ9NTXie69v65yHSPfLY0dSCdyz8xGa5ZwlXQs9w6xIn3ClXp9aBYFWdVGJ1VxIZNSO99pX5QrS62HZW+izEg/GKTZlkT28pPC5xW3ZaagpAQzAq/Q9VpKzP34RZjfqhrWl9Xo0AxmkvUpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CYlW8Jb1t7Os7gtdr2h9a7s+FPDqsABFk7XIhDaiN98=;
- b=HkfBAWrPsn/6WJmDDIc1X4+V+Jbua683B3icJABVi2k7EeR9QVGF6dh/X55BPjoUOdWhz1BQ/PxmxQxzKp/3sXoDcU95pGfxHkpyvZhTiwzA5vkI0NXSWDHOjMCoeMglSre4dpJ8b9QnXAChe79/u6XBe5dc7daM6OzyzX+vYI1d8/1JiiUIIOk8QsZBXcxcmE+tRfd9fsq1Nntu0Ts1s1JoxXR3wBTFRK6um9AVBLFYpJGgXglb31qXhhya5OVDUiHE+mx6xKp+gPep5C1Hv/5x9UZ23XxkxdGHiml0gI+HQNpP/6gj1TDytFLntldEp/oB4kJdkV0RaHo8wRmKxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=KUNP0AcMyTeq39esiGqV/aVu9mwMMJYQu5ctT9eXXug=;
+ b=Vwqyixrou8cMUov48XXNXBz4pgdMcU+raAjz9FHfMF9Udu0Uhs6ZWU+aBTrn1qsP3RKuqXht40pASMsCUrZwCP44Y8fNu0r9FWD/gflVcrsOtYsAbi0GvLCs+Tbgia+0X2cPHSR3qfc/3LrNqKYAUk9JXPrBUwuYvDc432mDcHkvpfpfwZjE87ZPFyeAy0dElWcFCTsnHpQkDXuT14WLJ7KEeaUwB5tTkHirVwnZ8i4+s+1FckzpoPGL35XFYTSvj7UNjaa5G0Upe2h7aox7BhZNqRk4mRplyO1YmN3hXKVc6rvI6RvhddP9p783cju+pY0zs6Wq0YOb4vzL+4lgPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CYlW8Jb1t7Os7gtdr2h9a7s+FPDqsABFk7XIhDaiN98=;
- b=ZvNsONIKzzOwc8LEnbV8h9KAx3mSX2S8suw466MDEJIO7QVMorBA/0t/m6C5BDZIr/zQk+1s/RXG4HeauugAwrQBBUajJRetRNzLRHFUIJfFs1Cs1jCRzmKQJLUXrKFxpuF9KKb7RmwZQNMA+h/R6Y+4ORiNcUEjp97ErDqLi6ZFxuMjbRk+ye4G3898ivEGuJQLU+kx/ANavvp7F9FOZFbDrxhMqaV7uSXuBV4SOxV6Tyd9YmZAyLiKcNn9gWq1ulz6O6YgyrougDnu9duQNhSJaSWab3cefYPTkcJnzvTZzr81uGcm6vE9NUHMcA7DgGMfeUik3pKppmb6tNn8bg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- MW4PR12MB5627.namprd12.prod.outlook.com (2603:10b6:303:16a::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5723.32; Fri, 21 Oct 2022 13:40:55 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::c0e5:f111:3e59:7c66]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::c0e5:f111:3e59:7c66%5]) with mapi id 15.20.5723.033; Fri, 21 Oct 2022
- 13:40:55 +0000
-Message-ID: <c7ff2627-881a-4d69-ad78-618ee4f4c62e@nvidia.com>
-Date:   Fri, 21 Oct 2022 14:40:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] phy: tegra: xusb: Remove usb3 supply
-Content-Language: en-US
-To:     Haotien Hsu <haotienh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-References: <20221005084031.2154251-1-haotienh@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20221005084031.2154251-1-haotienh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0317.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:197::16) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+ bh=KUNP0AcMyTeq39esiGqV/aVu9mwMMJYQu5ctT9eXXug=;
+ b=hShdwbOpNwL/m+sVowp2/xKpsJm4lWlSgDdukBVZtbB4IH0uqkf5KhLe/vYqyXTk8FLq2F6GhalIF+vTwptCcK40r9NZO+74vruf/Qq4cMFgTTURoa7o5IO2oA3MvXQQL3Wa0mwGitPpZFfTpqdoAZDyRvFfJYbukM2q+TImwvHoTqLgibnORco7LeFYk/LLN6KqFggYUxo2bWXSwz63LcJp76QaFhzyuIzkn32yBr9l+Vv2tHrX6MEUOo6IhnyKbansfbMuxKu66ySIge08SBPG5MWMh3AbjR6oML4F5u9FB3REqNJ681atYe4F+kNUZr4o35gH17iNtU4cDPRypg==
+Received: from BN8PR04CA0031.namprd04.prod.outlook.com (2603:10b6:408:70::44)
+ by SN7PR12MB6713.namprd12.prod.outlook.com (2603:10b6:806:273::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.21; Mon, 24 Oct
+ 2022 07:41:39 +0000
+Received: from BN8NAM11FT087.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:70:cafe::b6) by BN8PR04CA0031.outlook.office365.com
+ (2603:10b6:408:70::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.27 via Frontend
+ Transport; Mon, 24 Oct 2022 07:41:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN8NAM11FT087.mail.protection.outlook.com (10.13.177.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5746.16 via Frontend Transport; Mon, 24 Oct 2022 07:41:39 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 24 Oct
+ 2022 00:41:38 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Mon, 24 Oct 2022 00:41:37 -0700
+Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29
+ via Frontend Transport; Mon, 24 Oct 2022 00:41:34 -0700
+From:   Wayne Chang <waynec@nvidia.com>
+To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <treding@nvidia.com>,
+        <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
+        <heikki.krogerus@linux.intel.com>, <ajayg@nvidia.com>,
+        <kishon@ti.com>, <vkoul@kernel.org>, <p.zabel@pengutronix.de>,
+        <balbi@kernel.org>, <mathias.nyman@intel.com>, <jckuo@nvidia.com>
+CC:     <waynec@nvidia.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <singhanc@nvidia.com>, <linux-i2c@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH 00/11] Enable USB host and device functions on Jetson
+Date:   Mon, 24 Oct 2022 15:41:17 +0800
+Message-ID: <20221024074128.1113554-1-waynec@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MW4PR12MB5627:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d4e0597-c5ca-4c22-a20a-08dab369e0c2
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT087:EE_|SN7PR12MB6713:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64e5ebdd-2ad1-475a-59df-08dab5932fea
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9/F6u0EwcZSe4xKnsvvFTYKu1B+4UNgv6icmXy5ZCK19CpME21/O4xIDUB8j5ySXQ4R+jz8BzAyDA+qFJv81OyHYLPUKPEUcBMS/wQ/pzrX3Zm/163tAqDNj3B7hF59JOpxpq4bsbdKT8jhsEjqqOAK0GeGtyxZzaDwA9rW+qVPvl+j2YaVSMGBad0LsW1whEnt6Nmm4vFkqdhpX2py2Ub/d2FXONq/cC8EyfjVjjQEX+bgAWrsX8gCk7JUITba8nRQxPEDXSfPVZLpJeHNr1nngAFzJdTIW9OAbykf0vELQuwif3s0f7/gRTjOAWlB12YtHfugPGnbveFGC9/xJ/HqN+HWORlFLuU98JXf+/SuWYHQrPlS7dpdKY4pnYg/+2FB4erR8mn+yeFeqypuysSO8NQqhyUDrMBApXjYKjWhMjLHyEEr0e+rfX94FV/y2s0kvfKgrE6UN3nG4yUwOVRKg/YD+v54KCzDRLX04C+I40KGJTQ+BCGuhEQsPC77lkVl1XQHxwq7kiS0UVe2/1DVT7SAH46AjHWcZWdqGqAunNtnRkFCuf+DZK8ny0cCT/KF/sGwN/gAV2Drq0nE9QIfC4j+p6zZnxGyA+bMscIhwmdIShewY/eMYDB7pA8hk4VaSntWEIdgYAIFdycVIMp8CxL4Vj45M0u+rGqO6DndLivYpedj2v6waByzQdTEUJj2400ytALc69pZuyD7HFsVUgcx0nxbfrmFt0UJM4LmyeYMPCRmjHkUjBdNEnR7D5pYTTiCYTBnOONubWNQIzJ1m4qn9vudE1EeuVDB3WCY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(346002)(366004)(376002)(136003)(39860400002)(451199015)(31686004)(36756003)(107886003)(6506007)(6666004)(5660300002)(8936002)(4326008)(53546011)(6512007)(186003)(31696002)(41300700001)(86362001)(478600001)(2616005)(8676002)(66476007)(66946007)(83380400001)(66556008)(2906002)(38100700002)(6486002)(316002)(110136005)(54906003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dVNUZW5IY3V2NUREcExEQlR4dW0zSWJ0dHhwRnV3QzZHVkZSM1dqMVZFMXJa?=
- =?utf-8?B?VC9VQjBsSzAvRGsxblhReFdNK2dmOHU5azhGMGRqd1JnaXZaM0twOGt3dCtr?=
- =?utf-8?B?RTdneUNkTm1iM0RHd0NqWGNIV0pZTlVDNU01TlZQcjYzdkI3STNsRXZVanpt?=
- =?utf-8?B?VTZUelNnOGRFMlNzeDg5WWErL2lPdjZmYkFpMlVaZVJqY3VKbUxieXBLakor?=
- =?utf-8?B?Vk1jMnQzblVGT3ptRDNwY2szWDdSTTlnSU0rSWtVaUc3dU9ZQVh6OHh1RWhy?=
- =?utf-8?B?SXYwdU11SGo4NEp5Y1U1SWNhSWhtVUVWbTkxN3gyWWhuV3dLZGpndUlkUmw0?=
- =?utf-8?B?N0JrMUhITDNIK2NHZmpZa1R2Yjk3OTlQMTd6VkJnQms3cDJqYms4VlUwNlRF?=
- =?utf-8?B?b1JIYkxwWWttMkIxSFhBQXBJNDFSaEF5VW1xZi91ajROaWY1ZDMyUEJWOGVy?=
- =?utf-8?B?QVRyZEJQdGd2bkw2UGVGRGt2U0VPMEowMERQZitndFpVY2JwYUdTS2QzbUJK?=
- =?utf-8?B?L05MdmpVdndhbUJTQnUzNUJvQkREa1RHWTZaNStUdGlZcXM2VmN0SW9ja3dK?=
- =?utf-8?B?eGxObWVYVGdLN2xlY2wyM1c5Mmd3Z2ZxUW5DYVF1NHNqSXJTOC84SHY3T3R2?=
- =?utf-8?B?RXU2WlkxRjlHSWtDZSs3U3NOTXpyazl5N3VSRWxuRWtrZXlIeWZqWC9NZ2tO?=
- =?utf-8?B?VFkrUVM4U2JKWGplcVNURlA1cy9kV21nT05Xc1Q4SDB1MHkxYVF1OGMzSHkv?=
- =?utf-8?B?aEw4bHlmZjJHL2puTy80d0drVUZ0UVZiT1haOFo2bnZSc2tEOHhUMG1NRUFO?=
- =?utf-8?B?UGxneXo0dVZSS05ockM1Q2NaSDNBejJENWRhRGhhVUpKN2xBcGNsOFZIamtl?=
- =?utf-8?B?a3Zld2UwTCtnc2tGWGhCYlNHSHJ0dGRDVVdmTEZpdW1PekQ4akFSOWsydzhL?=
- =?utf-8?B?Yjd5eHgxdHNyTS9xUWtibTd5Z1N1RFJOOUpKNGZNbWg1U0dOWVBYMVBXZG13?=
- =?utf-8?B?MTE1ekJHQXpGMzZTQjdDaFBFdjFkNG1qN3VYU1ZrOVNGRjdGWldBUmJteG9y?=
- =?utf-8?B?YzZJSnBxLy82VVlhaElaKzNjSHlzSHhkNkREZGRnZGlEcGd4dWxmclM4VDhV?=
- =?utf-8?B?ZDZHQnpMWExiV0xJSFBUMER1Vjg0RXhRTkdWcnpzcUxHUDFqM1JnY1VFNm42?=
- =?utf-8?B?SG83amI5c2FjUjNFQUFZdEgvaVZSa3B3QUE3enAxakZsNFB6TWZkd2hPWkJy?=
- =?utf-8?B?WDMyWUJONDRNMDVjbGtnWHZFNCttZ3FzN2ZwUWoxUVpIZk9scmdXNjhoeUJ6?=
- =?utf-8?B?b3dRN1ppM0JicVEvcnhSTXVyMWsrWmQ5eDJ3VkJsS1RCN2kzZE9iTXd2ekVN?=
- =?utf-8?B?Ly9WK1ZYTEo5OFVpdDUwc21tVi9uVGZjejZGSWNqWmpDYWxySm94cEVQZTJ3?=
- =?utf-8?B?am9jQVVRODhYK1ZnNXFpSVhlUDlUakQvcVdFcTVNbVFCa1N2Nyt6dEo5ZHlo?=
- =?utf-8?B?R01sTzFaNTMxaG05QTE5ZXRjWUw2azJmQTNHRFlsVDRTTWlkcWd2elF4bGYx?=
- =?utf-8?B?Q2pXYis3b2lXQTc3c3crV1F6L1BscW8zMEdFUWkyYnM4d2Vid25QVkREbTJS?=
- =?utf-8?B?Nkd0U0o5cGxHL0dBNFVpMlZwUS9lT2N2b3A4UXFIekgrZzB5bU5zK0lleDk1?=
- =?utf-8?B?RHNwSktFTGVMSGNIa09kREtqYVRWdnR1Mi9yblE5UUg4VmFhSWZkRnMzaElV?=
- =?utf-8?B?RUkwMzJqbzFWaXpvMXhYQlA3QW5iUXppQ2lvZGlLcHhVckdOUFdDRTVzSWpj?=
- =?utf-8?B?K1prMjdIZnFwQ0FpUjZ3UnBLSVIvMWVYbDRqUGtnYnFqL2lmMFNwNFJGVklo?=
- =?utf-8?B?cTBzdkFzSlpaRklld0Q3d01DSkZQYjk2NkxXRlUvZDFxWFhGb0RIbk9XdkZW?=
- =?utf-8?B?dm93MTZRTCtpRUpZREVuYkU5QUZTaEEvb3hRMUdXeUlydmJxdFFiQWZ4MHRB?=
- =?utf-8?B?OHFMTmV2ZzBoaUZrK3M3Z1MwMUhrZ2hDdkNXVXN4SHlaSVBXMGQ4bXQwenJI?=
- =?utf-8?B?S2FWRXFSaFZoblpqeVovYTVvYlZ6WDJ0cWN1T2U5eFZxLzE1dkIyYi9kbHVn?=
- =?utf-8?B?QSs0VDZoTG9oclpkTU5CSUdyM20reCtmeFlzbWZFYTlwR3BRMm1McllCRE1Y?=
- =?utf-8?Q?0j9/Nn0O73aHYQ35uCpFPhrRwEqfbzhsdq1XM3gnhcQ3?=
+X-Microsoft-Antispam-Message-Info: cQWXOz7ouDF7O0gl5XcVQufBoF8kvX3meLAnHCfJolIXzsJkZYaPS62IStSnGhcCGaUUwMzlKodcWNxE3TDa5otTtBT6mS4pO9QiOrWu9UjfHeVO0l1CL7YTbBP+GR3gjR86Y2+/XdPGJy1yCUWyTgG7XNL1ruG9PlPSgnXUsYjaRTdNKFcRa2Efe/2e2Mqq+4hqYZpbwW7u+XT8vNclPuMuWNawkOC3jwc1A895LXOxJ/u2q7xkNu4aH89stzUHOOMoJpIjLVMsP7lW9v5HPLsoxvIyCI4mPQ/r5fngw1dCcBXCkEsQnOGMSH03MlmxZZ5W/Iv3j+QO6KRP2L8ZyOW+OGADDugDd4TqCVGU9ZSs7wyknQIvXrwfHJ1gJsmK0MJNM9mKEaxVEJTFgytQegJigTZBm/soU+vBs674jLAS07aeX8hsKhWl2NBmFGmDIc50aWaI1k5ysRUeIGHdrgtrazyCWKjd6mxVhNXWe6NSm8j+M/iQlReIJwfgFpKZOxtDUGxhM8+Qkt+NHdp2e805qjLoxQfdsDOm65XU/4zoXWXMUGiHJi8DQWv9EOqp2I2X0nK0rK5ivivHrXYp4S3o0YsVs6I+nkFL9yyacHHYHgRR9rHavdRdx2rByg5RpLRpkIa7ey3JXd6pLrPBpOqm/dMhaDCwZgCwO/kqs5dK5+Kq0j/L4K2i7wUmjrYdDWicl4p3kjG6/UjOpSao61tmhErzY3BRjhFK07OQmHaCuLP6LW8bjRdutE1GWLDCgz4zWSbxorqAkBgLanHTPmqv0N9VwEdoKuxdQ8gGDaIaxHs/0q+njJJF0lwN7lEYVO3nM+dXptkiOYJzuGRxCnJojUJIIvq25qrPyaVNUoaoIuNcCsx48B32pP5SugGO
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(39860400002)(376002)(136003)(396003)(451199015)(40470700004)(46966006)(36840700001)(54906003)(41300700001)(6636002)(4326008)(110136005)(8676002)(8936002)(70206006)(70586007)(5660300002)(7416002)(6666004)(40480700001)(86362001)(2906002)(26005)(966005)(478600001)(7696005)(36756003)(356005)(83380400001)(40460700003)(921005)(186003)(1076003)(7636003)(316002)(426003)(47076005)(82310400005)(336012)(2616005)(36860700001)(82740400003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d4e0597-c5ca-4c22-a20a-08dab369e0c2
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2022 13:40:55.3104
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2022 07:41:39.3179
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64e5ebdd-2ad1-475a-59df-08dab5932fea
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wcm3zdU7QZKsazXSI5UJuWx0Giw0RSAFFTihcVm3+elRNTXCbOiVCCzOsHrwzil5CNHp5L8Nt55vHL9YPDysyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5627
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT087.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6713
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+The patch series enable the USB host and devie functions on Jetson AGX Orin
+and depend on the following change
+https://lore.kernel.org/all/20221003125141.123759-1-jonathanh@nvidia.com/
 
-On 05/10/2022 09:40, Haotien Hsu wrote:
-> From: Wayne Chang <waynec@nvidia.com>
-> 
-> Remove redundant codes for getting the vbus supply of usb3 ports because
-> we get and control the vbus supply by the companion usb2 ports
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
-> ---
->   drivers/phy/tegra/xusb-tegra124.c |  1 -
->   drivers/phy/tegra/xusb-tegra186.c |  1 -
->   drivers/phy/tegra/xusb-tegra210.c |  1 -
->   drivers/phy/tegra/xusb.c          | 10 +---------
->   drivers/phy/tegra/xusb.h          |  2 --
->   5 files changed, 1 insertion(+), 14 deletions(-)
-> 
-> diff --git a/drivers/phy/tegra/xusb-tegra124.c b/drivers/phy/tegra/xusb-tegra124.c
-> index db56c7fbe60b..f4f75ea033b8 100644
-> --- a/drivers/phy/tegra/xusb-tegra124.c
-> +++ b/drivers/phy/tegra/xusb-tegra124.c
-> @@ -1652,7 +1652,6 @@ tegra124_usb3_port_map(struct tegra_xusb_port *port)
->   
->   static const struct tegra_xusb_port_ops tegra124_usb3_port_ops = {
->   	.release = tegra_xusb_usb3_port_release,
-> -	.remove = tegra_xusb_usb3_port_remove,
->   	.enable = tegra124_usb3_port_enable,
->   	.disable = tegra124_usb3_port_disable,
->   	.map = tegra124_usb3_port_map,
-> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-> index f6099609f154..25db49789f41 100644
-> --- a/drivers/phy/tegra/xusb-tegra186.c
-> +++ b/drivers/phy/tegra/xusb-tegra186.c
-> @@ -1213,7 +1213,6 @@ tegra186_usb3_port_map(struct tegra_xusb_port *port)
->   
->   static const struct tegra_xusb_port_ops tegra186_usb3_port_ops = {
->   	.release = tegra_xusb_usb3_port_release,
-> -	.remove = tegra_xusb_usb3_port_remove,
->   	.enable = tegra186_usb3_port_enable,
->   	.disable = tegra186_usb3_port_disable,
->   	.map = tegra186_usb3_port_map,
-> diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-> index eedfc7c2cc05..ebc8a7e21a31 100644
-> --- a/drivers/phy/tegra/xusb-tegra210.c
-> +++ b/drivers/phy/tegra/xusb-tegra210.c
-> @@ -3078,7 +3078,6 @@ tegra210_usb3_port_map(struct tegra_xusb_port *port)
->   
->   static const struct tegra_xusb_port_ops tegra210_usb3_port_ops = {
->   	.release = tegra_xusb_usb3_port_release,
-> -	.remove = tegra_xusb_usb3_port_remove,
->   	.enable = tegra210_usb3_port_enable,
->   	.disable = tegra210_usb3_port_disable,
->   	.map = tegra210_usb3_port_map,
-> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index 46661a8d5bbc..0eaab6d846bf 100644
-> --- a/drivers/phy/tegra/xusb.c
-> +++ b/drivers/phy/tegra/xusb.c
-> @@ -960,8 +960,7 @@ static int tegra_xusb_usb3_port_parse_dt(struct tegra_xusb_usb3_port *usb3)
->   			return -EINVAL;
->   	}
->   
-> -	usb3->supply = regulator_get(&port->dev, "vbus");
-> -	return PTR_ERR_OR_ZERO(usb3->supply);
-> +	return 0;
->   }
->   
->   static int tegra_xusb_add_usb3_port(struct tegra_xusb_padctl *padctl,
-> @@ -1018,13 +1017,6 @@ void tegra_xusb_usb3_port_release(struct tegra_xusb_port *port)
->   	kfree(usb3);
->   }
->   
-> -void tegra_xusb_usb3_port_remove(struct tegra_xusb_port *port)
-> -{
-> -	struct tegra_xusb_usb3_port *usb3 = to_usb3_port(port);
-> -
-> -	regulator_put(usb3->supply);
-> -}
-> -
->   static void __tegra_xusb_remove_ports(struct tegra_xusb_padctl *padctl)
->   {
->   	struct tegra_xusb_port *port, *tmp;
-> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-> index d66b22bfeaa7..1b6b780efeec 100644
-> --- a/drivers/phy/tegra/xusb.h
-> +++ b/drivers/phy/tegra/xusb.h
-> @@ -360,7 +360,6 @@ void tegra_xusb_hsic_port_release(struct tegra_xusb_port *port);
->   
->   struct tegra_xusb_usb3_port {
->   	struct tegra_xusb_port base;
-> -	struct regulator *supply;
->   	bool context_saved;
->   	unsigned int port;
->   	bool internal;
-> @@ -382,7 +381,6 @@ struct tegra_xusb_usb3_port *
->   tegra_xusb_find_usb3_port(struct tegra_xusb_padctl *padctl,
->   			  unsigned int index);
->   void tegra_xusb_usb3_port_release(struct tegra_xusb_port *port);
-> -void tegra_xusb_usb3_port_remove(struct tegra_xusb_port *port);
->   
->   struct tegra_xusb_port_ops {
->   	void (*release)(struct tegra_xusb_port *port);
+Sing-Han Chen (3):
+  phy: tegra: xusb: Add Tegra234 support
+  usb: host: xhci-tegra: Add Tegra234 XHCI support
+  usb: gadget: tegra-xudc: Add Tegra234 support
+
+Wayne Chang (8):
+  dt-bindings: usb: tegra-xudc: Add Tegra234 XUSB controller support
+  dt-bindings: usb: Add NVIDIA Tegra XUSB host controller binding
+  dt-bindings: usb: Add binding for Cypress cypd4226 I2C driver
+  arm64: tegra: Enable XUSB host and device on Jetson AGX Orin
+  usb: typec: ucsi_ccg: Add OF support
+  usb: typec: ucsi_ccg: Replace ccgx to well-known regex
+  i2c: nvidia-gpu: Replace ccgx to well-known regex
+  phy: tegra: xusb: Disable trk clk when not using
+
+ .../bindings/usb/cypress,cypd4226.yaml        |  86 ++++++
+ .../bindings/usb/nvidia,tegra-xhci.yaml       | 213 ++++++++++++++
+ .../bindings/usb/nvidia,tegra-xudc.yaml       |  24 +-
+ .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |  48 +++
+ .../nvidia/tegra234-p3737-0000+p3701-0000.dts | 184 ++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 170 +++++++++++
+ drivers/i2c/busses/i2c-nvidia-gpu.c           |   2 +-
+ drivers/phy/tegra/Makefile                    |   1 +
+ drivers/phy/tegra/xusb-tegra186.c             |  65 +++-
+ drivers/phy/tegra/xusb.c                      |   6 +
+ drivers/phy/tegra/xusb.h                      |  23 ++
+ drivers/usb/gadget/udc/tegra-xudc.c           |  17 ++
+ drivers/usb/host/xhci-tegra.c                 | 277 +++++++++++++++---
+ drivers/usb/typec/ucsi/ucsi_ccg.c             |  11 +-
+ 14 files changed, 1074 insertions(+), 53 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xhci.yaml
 
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks
-Jon
-
+base-commit: 247f34f7b80357943234f93f247a1ae6b6c3a740
 -- 
-nvpublic
+2.25.1
+
