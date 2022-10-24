@@ -2,134 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9EAECAAA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 14:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADCEECAAA1
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Oct 2022 14:42:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233488AbiJXOmD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Oct 2022 10:42:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47452 "EHLO
+        id S233336AbiJXOmU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Oct 2022 10:42:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233336AbiJXOlk (ORCPT
+        with ESMTP id S231863AbiJXOmD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Oct 2022 10:41:40 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38A18F01AB;
-        Mon, 24 Oct 2022 06:18:14 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id i21so10037259edj.10;
-        Mon, 24 Oct 2022 06:18:13 -0700 (PDT)
+        Mon, 24 Oct 2022 10:42:03 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 764A8F4180;
+        Mon, 24 Oct 2022 06:18:51 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id m16so30981495edc.4;
+        Mon, 24 Oct 2022 06:18:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WHhhh1m1Ank9pgC7SXLMOjGjiWt+7yExjFZnNqxa60k=;
-        b=iBQhkfqiP8vMNzFD1+pp3Nr5/vSgodxgarna9rmg6FXxz3Y06TDvL2s/BhVRP9Ec9H
-         MZ97tWHqLPNZ8gGbu52VdiFvWNdq2d/FV7eUitVqyA4uyXMwuEPUwif+bFFpsjxgRKgM
-         m5UX5n4J6mXGbrb44CvgBIulEKVdNCGzeux46pA4Xy8ACkoXJM2COLrKtOZP/DteMfag
-         XYwqXWYY90AccLVPNVmSbr656vLzz+EFXWeLx2h3s1jdEtAaWaaOfat+5KoLf2gNoh3p
-         CrqYLW+q1NzVT7BJmV0iTn6hArR3fhtKwSuZGiLEaE9JvKxrsRy8+5jFKUxjCzxZIOET
-         OU7A==
+        bh=3ICJRxZH0RUpiutp3YbkbCUI9oCvNwfygdd1JOaKdoo=;
+        b=hAbJ76RJsSVi9rOp9fShaB9sC0hbYZsP17LtWwyfIN9yERneelucqWPF06HZXS36JR
+         ap4N+rrjvE8r22XJWqMW2s3ZgJo98QNDV7Kr3LFYcXjWlehg5b91u6BpITic591ki3YQ
+         hGuyWVfFK/D/VO1oKk8iFVQ2BK/HxyMzw8Dy+36CkPKnlPHPv7fKlD9CvTOu+LZuBKI3
+         xMfYBmkyXeGiVMtmNlvR3U+QQQde1xV9krR4BCtTF6ngFSvispJKzJ9aVmktRhj8JF56
+         2EYkYeDWLHSJULcr96ZblNk6Qd0scq2vDhTIKLsOAnG9yEW6nZqx1/TFPEmnqO4XcY3r
+         WBeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WHhhh1m1Ank9pgC7SXLMOjGjiWt+7yExjFZnNqxa60k=;
-        b=QdJMbf3SZTAzjTK0xjn3QWM5G/tUVuzKB1yUHkikJTjQ0OaF5f/nWD2mLaUpn4buta
-         OOeq74/Mjm++OhvKFAJYaPbu8bC7zgsGqdjnL3Z5YXAkdsvLJy3iUMftHgnI97JKw7yj
-         3KtX0lE7FYkT7NS46//qv51Y9A+i353cdmXtlwIzT+FC6ewtgcHuVirZTAFhgXMCQXNa
-         mvIBCIguWIfxtNwgYwS44SWmW66f0iwIZAgP+iexdPW5QNnTWI1esCdk5YFDPQ3+blVQ
-         WSGEn4y4Xd5z6pUmjWgjvEUNiMGLP29N6MF3IEYXLPOzIkX5IB7yf+Pn7PwXLP3r7Kqn
-         2+tQ==
-X-Gm-Message-State: ACrzQf3nJj2aAhEuuVjkJQZp8KW3XpzOeZYBeCJRxypgbE09RxbGzZZt
-        14wvhfgqbapJGvQ0opgoEFI=
-X-Google-Smtp-Source: AMsMyM60AGGuzqAkSsx5ALiyT2hDq2SbX+gt5Hfevx9ogvvaQ6UuZajA3LN9fM+GSOuoNvI/zCGpYw==
-X-Received: by 2002:a17:907:3f90:b0:78d:afad:2a78 with SMTP id hr16-20020a1709073f9000b0078dafad2a78mr28190463ejc.68.1666617329498;
-        Mon, 24 Oct 2022 06:15:29 -0700 (PDT)
+        bh=3ICJRxZH0RUpiutp3YbkbCUI9oCvNwfygdd1JOaKdoo=;
+        b=PjfNkapiB+nxkOXPqqEEybB7/o25EBVTeON0W2BA+lUqdu9Rg2P83RyKI428KLzNBs
+         Sr9gvwNm9RwGqwLw6i1RyHgQW0Fmxxfblf//Isf7eTMO1ckXkMR4nZlDltgnFncZN8hP
+         vRJH9nX714uXGn2FPsx9Qr6qOeXvV1nv7cqO4J4tseg3opx2cbqn82J1SXDL3NOYGC4P
+         agF2HR+pwyH6+UL8oldFe2ZcOBPOOa1sx5rFrzRyk3uaVAnwgklKhd0mzrkNdKOhK1M8
+         WeGu+7YuedXD/zGtTV8h7L4nVTTcUrRidfSbkfmkeEYcvzOR54X5sBCbVyuMKZYbGXVw
+         IGKg==
+X-Gm-Message-State: ACrzQf3ZPV6qtf3UD7U2fGD/ayY9NpBvqOXTNjTJly1U1CVraJVcZ6Ai
+        I9pDbeYvJ7vPzAE66XjZQWoXuvFaqGY=
+X-Google-Smtp-Source: AMsMyM4XWRNqnZkkyZP0VHD6FJw7YrdgS2D2rBdncvPGiuQ2162GtUIlTAcu/v0nCQwUoXYr7Bb2JA==
+X-Received: by 2002:a17:906:5dce:b0:78d:e71a:6e0 with SMTP id p14-20020a1709065dce00b0078de71a06e0mr27112534ejv.360.1666617385459;
+        Mon, 24 Oct 2022 06:16:25 -0700 (PDT)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 4-20020a170906310400b00780ab5a9116sm15584053ejx.211.2022.10.24.06.15.27
+        by smtp.gmail.com with ESMTPSA id lf18-20020a170906ae5200b007aa239cf4d9sm765350ejb.89.2022.10.24.06.16.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 06:15:28 -0700 (PDT)
-Date:   Mon, 24 Oct 2022 15:15:26 +0200
+        Mon, 24 Oct 2022 06:16:24 -0700 (PDT)
+Date:   Mon, 24 Oct 2022 15:16:22 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] memory: tegra: Add API for retrieving carveout
- bounds
-Message-ID: <Y1aP7kDi8cJUTcGN@orome>
-References: <20220920081203.3237744-1-cyndis@kapsi.fi>
- <20220920081203.3237744-2-cyndis@kapsi.fi>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jonathanh@nvidia.com, mperttunen@nvidia.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V1] arm64: tegra: Fix Prefetchable aperture ranges of
+ Tegra234 PCIe controllers
+Message-ID: <Y1aQJvrpfpueeeLa@orome>
+References: <20220928062731.18032-1-vidyas@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+8zFj/rzOJcr5x3I"
+        protocol="application/pgp-signature"; boundary="fUB+8c/MuhUoy5ym"
 Content-Disposition: inline
-In-Reply-To: <20220920081203.3237744-2-cyndis@kapsi.fi>
+In-Reply-To: <20220928062731.18032-1-vidyas@nvidia.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---+8zFj/rzOJcr5x3I
+--fUB+8c/MuhUoy5ym
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 20, 2022 at 11:11:56AM +0300, Mikko Perttunen wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+On Wed, Sep 28, 2022 at 11:57:31AM +0530, Vidya Sagar wrote:
+> commit edf408b946d3 ("PCI: dwc: Validate iATU outbound mappings against
+> hardware constraints") exposes an issue with the existing partitioning of
+> the aperture space where the Prefetchable apertures of controllers
+> C5, C7 and C9 in Tegra234 cross the 32GB boundary hardware constraint.
+> This patch makes sure that the Prefetchable region doesn't spill over
+> the 32GB boundary.
 >=20
-> On Tegra234 NVDEC firmware is loaded from a secure carveout, where it
-> has been loaded by a bootloader. When booting NVDEC, we need to tell it
-> the address of this firmware, which we can determine by checking the
-> starting address of the carveout. As such, add an MC API to query the
-> bounds of carveouts, and add related information on Tegra234.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Fixes: ec142c44b026 ("arm64: tegra: Add P2U and PCIe controller nodes to =
+Tegra234 DT")
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
-> v2:
-> - Add check for 64-bit phys_addr_t. In practice phys_addr_t
->   is always 64 bits where this runs, but it avoids warnings in
->   compile test.
-> ---
->  drivers/memory/tegra/mc.c       | 25 +++++++++++++++++++++++++
->  drivers/memory/tegra/tegra234.c |  5 +++++
->  include/soc/tegra/mc.h          | 11 +++++++++++
->  3 files changed, 41 insertions(+)
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Krzysztof,
-
-I've applied this to the same tree as the patch that uses it for now.
-Let me know if you want me to put this on a separate stable branch for
-you to pull in.
+Applied, thanks.
 
 Thierry
 
---+8zFj/rzOJcr5x3I
+--fUB+8c/MuhUoy5ym
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNWj+4ACgkQ3SOs138+
-s6FY2Q//bQUj39dvu/5Swb+Y6wOhHV3XtEERAJsg3FDGGZR05duhgkto+Fqf+WYs
-kest5BIuQfrjuEg19XXUDMgrJ20PPfkl9PriRw0D3/yZomyS2bieEz9Tl00/7cup
-SVPIunSj9lPuCRD5R8x7xCe20CFCI9SnDDEpZAbRXK11xiLxRBsEPrSS2ltJ3cIv
-/6p9GT37fUtNfEOuFkGPUIW8hVhhM4aBOXv4PqyRnHzWg+MamLmNWyy6mOf/a5dt
-qUs7YLas5jxgOdGAm+dLjO1ao/F6Py7pDTtIBb/akd6maRHBHexpg/cqo9UqMaT1
-VE8Y4A+1nCQHIsrslIpmYg0FN+v80pIaMn20mh1OvAkwnL91ggeK5z55YgLbzm6O
-Lfy6tX0VcaB0mONVoDGQ9+1uMY/A7OaGDuBFUaQeFqH8dYVM6XnFVpl7LFUwkoqy
-UtcH7I0jxcmlxxuh8bYM1dsKksAtp0RsBgAyddgPReNoAyK7ZqlUbP6yyfjlWSvN
-MIP9xQlmec7Al97s5RzvW2HDYWVIWQ5FeY9vZfAoeTGzBzqXLjA1vQpbJa1Wj8FR
-NqCparCt6JlFKPDKHOSsja50h0605RKGJdGZS5426lNwh2hSQozsimta3ATvmfyk
-jm77BUlj33ECmgTCa1THNJG7qnLjI7rLk4Z+CDadDRHh/j6VYVc=
-=E8o3
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNWkCYACgkQ3SOs138+
+s6H7TBAAiv+ffzj8R37kH4ROZ5iKBTXm9qBUOe9FxkCm1S57aioqxeTL6fRlpjG3
+FKP6HSOWTjCSLxizOMns1R/qRVl5QLd/Ln5MbncagivcsxnyaEnM0jV7thAPocKI
+2e5HLrpvIMh6xNQN+BmXcNefURfNNirlY2Aj+KIsq2bhG8GDCYl4hQolnIouVGJ4
+ZQoraqc2Z35pQgmCZsr6tLwaLrxmjdvJ8u0wloUDfCwiaf+W0vBemhgGf/WnVg3E
+njKbd8vMP9hELuAJyKgN4DTzMFUS79MGDdXPN/S9/dxBS+6xBF39dMBo6KchTjqh
+wtKgC91LOSm/ZqsfH1JgudznS26OMR0hFdg42bNlQfypSotzwij2SId0Sdocm5dP
+lvZsdqv1Etb26iPtxL0FRHSEF/Dz9Zo0glvutWVdAIasaNzZYcVhjnwne7qlvBzu
++IVGNxUG33ASuI4SWOoo/hhvksLOAq7j789593nJTk+0a9t9yTwuxD1WjZBdla0s
+1DLIslLNrIGMMo4UoSMd0O0LZec6yeNdc/ImW9FXSlOLta+SoGsfGwU2m9R047yK
+QJiVDHtDzcvf+ierAaJvfXnm7yWziCp4WV7HuaXcv9iRnFMZ2dY3g9qqM9acyq1V
+in07La0upqk26/7Jb0+QFoLBLoqWJdiRHPFBc50AAZvnYpcSCFM=
+=QODt
 -----END PGP SIGNATURE-----
 
---+8zFj/rzOJcr5x3I--
+--fUB+8c/MuhUoy5ym--
