@@ -2,99 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C12FA3741
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Oct 2022 21:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCDAC38A2D
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Oct 2022 23:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231801AbiJYVFs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Oct 2022 17:05:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
+        id S231544AbiJYXYq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Oct 2022 19:24:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232169AbiJYVFq (ORCPT
+        with ESMTP id S229497AbiJYXYn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Oct 2022 17:05:46 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBD77E339;
-        Tue, 25 Oct 2022 14:05:42 -0700 (PDT)
-Received: (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 396DF20002;
-        Tue, 25 Oct 2022 21:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1666731941;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AuNweShXWaeC97qVfm6xoS1jF6hfC9NTAzy5bUMmmMM=;
-        b=fWGyOa7Tw0o5Qhw4WPi/wDNzNlVBhDJwbC3BHULtLEVLKk1XZuhRDel58Fy7iFoXJ069Zt
-        BlonTxfg6bnASdGS79Z822zYFFaHQMpsfzSIEd6E0W04QVgsleCcc0Wm2f1Z8gAQUe1xyL
-        3H+lyPQrlj2+9wMJKPFrujm4Fq5eHC865XftuIQKzI9O9BOwqZOTQuLXZLq1CiUzS/zMUf
-        rac13aDaqidRXccnNHDzA9bz0VybWXYkR30Qqe2oYVlmDR9i8fS1OtCaqhDHwgtmd5BGl+
-        suRyGuze0D3AcB///F8/GqZ7FF7JYjpxXXRYpy3pOTlP4c6KmxJ9vSHsDTJ4RA==
-Date:   Tue, 25 Oct 2022 23:05:34 +0200
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Tom Joseph <tjoseph@cadence.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Toan Le <toan@os.amperecomputing.com>,
-        Joyce Ooi <joyce.ooi@intel.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
-        Michal Simek <michal.simek@amd.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 3/4] PCI: mvebu: Include <linux/irqdomain.h>
- explicitly
-Message-ID: <20221025230534.290a5809@windsurf>
-In-Reply-To: <20221025185147.665365-4-helgaas@kernel.org>
-References: <20221025185147.665365-1-helgaas@kernel.org>
-        <20221025185147.665365-4-helgaas@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
+        Tue, 25 Oct 2022 19:24:43 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4096EBC3C;
+        Tue, 25 Oct 2022 16:24:40 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id u132so3411556oib.0;
+        Tue, 25 Oct 2022 16:24:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nFoJ65FSeRoha1pQ1K6lL6hQjEH1NFBZHC7qdvsbi9k=;
+        b=bwOYT8gKV3BXQRAjQz+EX3VrqeLmQbjSddYxD0jgM5rznOrmX1/Hp5jFyDxMT+qFTg
+         p28R7onyUu4oYOghJSKOeWChgr52uyROv0QL45ZLdE3ddYuneiXV8QxZ0+KP3J3YjHEa
+         3tOJDrFge8Cjk8FupsYKzHYfRlnf5fDv0/gtFy4EO5g+o7Nj56S7GvxoJsPqtyn4+8o1
+         SZFojWaO9wW+56H/3cyvLIuXgq0kxPrhzUrbndD0yhvBCl8RFIDGuMEDUZCq+APxw1Jl
+         FyxOQ60OFGXvqBIKCcchHpALiSPoAo8OYWTV9y+S5Y5xO7TDgiktbLPxOGZZ5bvzhpGd
+         S/Sg==
+X-Gm-Message-State: ACrzQf2PW7C+DJVwWYC3FSDgrNM8o015oqrjIpcPDSuwt7T3jmwgNhFv
+        rwemDTKc+Ls++fp2m1YMog==
+X-Google-Smtp-Source: AMsMyM7mAJ5G1LaKL+vJ2m0VrWl3wbGGik1naUdUeZ6GBAnBrys0Zfp+2Jly//XkJ/OFRb3N0fhkFQ==
+X-Received: by 2002:a05:6808:130f:b0:355:167f:c668 with SMTP id y15-20020a056808130f00b00355167fc668mr373366oiv.143.1666740279428;
+        Tue, 25 Oct 2022 16:24:39 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id 63-20020a9d0345000000b006391adb6034sm1545527otv.72.2022.10.25.16.24.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Oct 2022 16:24:38 -0700 (PDT)
+Received: (nullmailer pid 3438758 invoked by uid 1000);
+        Tue, 25 Oct 2022 23:24:40 -0000
+Date:   Tue, 25 Oct 2022 18:24:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Wayne Chang <waynec@nvidia.com>
+Cc:     gregkh@linuxfoundation.org, krzysztof.kozlowski+dt@linaro.org,
+        treding@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com,
+        heikki.krogerus@linux.intel.com, ajayg@nvidia.com, kishon@ti.com,
+        vkoul@kernel.org, p.zabel@pengutronix.de, balbi@kernel.org,
+        mathias.nyman@intel.com, jckuo@nvidia.com,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
+        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 01/11] dt-bindings: usb: tegra-xudc: Add Tegra234 XUSB
+ controller support
+Message-ID: <20221025232440.GA3430479-robh@kernel.org>
+References: <20221024074128.1113554-1-waynec@nvidia.com>
+ <20221024074128.1113554-2-waynec@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221024074128.1113554-2-waynec@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 25 Oct 2022 13:51:46 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
-
-> From: Bjorn Helgaas <bhelgaas@google.com>
+On Mon, Oct 24, 2022 at 03:41:18PM +0800, Wayne Chang wrote:
+> Extend the Tegra XUSB controller device tree binding with Tegra234
+> support.
 > 
-> pci-mvebu.c uses irq_domain_add_linear() and related interfaces but relies
-> on <linux/irqdomain.h> but doesn't include it directly; it relies on the
-> fact that <linux/of_irq.h> includes it.
-> 
-> Include <linux/irqdomain.h> directly to remove this implicit dependency.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
 > ---
->  drivers/pci/controller/pci-mvebu.c | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/usb/nvidia,tegra-xudc.yaml       | 24 ++++++++++++-------
+>  1 file changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+> index fd6e7c81426e..517fb692f199 100644
+> --- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+> @@ -22,6 +22,7 @@ properties:
+>            - nvidia,tegra210-xudc # For Tegra210
+>            - nvidia,tegra186-xudc # For Tegra186
+>            - nvidia,tegra194-xudc # For Tegra194
+> +          - nvidia,tegra234-xudc # For Tegra234
+>  
+>    reg:
+>      minItems: 2
+> @@ -90,21 +91,27 @@ properties:
+>  
+>    phys:
+>      minItems: 1
+> +    maxItems: 8
+>      description:
+>        Must contain an entry for each entry in phy-names.
+>        See ../phy/phy-bindings.txt for details.
+>  
+>    phy-names:
+>      minItems: 1
+> +    maxItems: 8
+>      items:
+> -      - const: usb2-0
+> -      - const: usb2-1
+> -      - const: usb2-2
+> -      - const: usb2-3
+> -      - const: usb3-0
+> -      - const: usb3-1
+> -      - const: usb3-2
+> -      - const: usb3-3
+> +      anyOf:
+> +        - const: usb2-0
+> +        - const: usb2-1
+> +        - const: usb2-2
+> +        - const: usb2-3
+> +        - const: usb3-0
+> +        - const: usb3-1
+> +        - const: usb3-2
+> +        - const: usb3-3
 
-Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+items:
+  pattern: '^usb[23]-[0-3]$'
 
-Thanks!
+And an explanation why you need any random order. If it is just 
+different for Tegra234, then you need an if/then schema for this.
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> +
+> +  dma-coherent:
+> +    type: boolean
+>  
+>    avddio-usb-supply:
+>      description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
+> @@ -153,6 +160,7 @@ allOf:
+>              enum:
+>                - nvidia,tegra186-xudc
+>                - nvidia,tegra194-xudc
+> +              - nvidia,tegra234-xudc
+>      then:
+>        properties:
+>          reg:
+> -- 
+> 2.25.1
+> 
+> 
