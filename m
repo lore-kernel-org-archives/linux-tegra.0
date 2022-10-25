@@ -2,166 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE53C04A95
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Oct 2022 15:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BC2FA3741
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Oct 2022 15:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233354AbiJYPjZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Oct 2022 11:39:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
+        id S233023AbiJYPlx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Oct 2022 11:41:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233296AbiJYPjX (ORCPT
+        with ESMTP id S232946AbiJYPlw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Oct 2022 11:39:23 -0400
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [IPv6:2001:690:2100:1::15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61B3C18C431;
-        Tue, 25 Oct 2022 08:39:18 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 1DD286008800;
-        Tue, 25 Oct 2022 16:39:17 +0100 (WEST)
-X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
-        tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
-        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
-        with LMTP id P3tti42Jko2u; Tue, 25 Oct 2022 16:39:13 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 827FD600880E;
-        Tue, 25 Oct 2022 16:39:13 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
-        s=mail; t=1666712353;
-        bh=TdKh3E/XenanfAlC8eRJ4MFy4v4lhEiS+bjmvYDecWA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=DFoFdXZQPGg7hCvqp70azEQUKhX8PjoLkb6XiAg/qm2l5UsYJ4y/k9MiKcF/DzzOx
-         VEGAKzABha6nonD1mZqOsX3V//4CDBkb6t3SurJFaz108Md388KQJbCFIFVhxNauA5
-         WyyforKeAErwW1zf0wWDehMstF1yecDV/Go0egPM=
-Received: from localhost.localdomain (unknown [89.207.171.77])
-        (Authenticated sender: ist187313)
-        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 1025636007E;
-        Tue, 25 Oct 2022 16:39:01 +0100 (WEST)
-From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
-        sam@ravnborg.org, airlied@linux.ie, daniel@ffwll.ch,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jonathanh@nvidia.com, arnd@arndb.de,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v2 4/4] arm64: dts: smaug: Add display panel node
-Date:   Tue, 25 Oct 2022 16:37:49 +0100
-Message-Id: <20221025153746.101278-5-diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221025153746.101278-1-diogo.ivo@tecnico.ulisboa.pt>
-References: <20221025153746.101278-1-diogo.ivo@tecnico.ulisboa.pt>
+        Tue, 25 Oct 2022 11:41:52 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2051.outbound.protection.outlook.com [40.107.220.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A1C4A117
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Oct 2022 08:41:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZNJga98uyBWY6y0djNDLbn41Sh8pBLIw9Nw5xVizF0g3izPkio7R3SuGRvDtz1BdztSvkEtxT/5CPQ9kvM169bRmhHLpNttUSb21QENuvZRTmVVA3VJm+/uHMhd7379oI2nD8hHHPHjpJlKn7SznOfC2q6r/R8dbfcJlmND2xV3fyrWJUM3kwMxRk+FEQTu7FtnxNCqT2eUw2pCavYm+Iuc/aNixOwWGPe4RNwOHX8GMbUNwp5jBnC9tnhwFaOQke/5ljQOqo9/hoFfnzajwvUPZnsoUm027BailhJe/A0e6A1lHeHBuM/ehuKiHKrPUnAaNFaqvr4MgoaYX9II8Yw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AmeHRL4IKfWkde/DC1MalL+pQlFS6qwpTCm04SuN6Lc=;
+ b=J7caNARz5bA0uvWl+O4q0gIo/dw+Gh2Z66fBbKilzeqfWLnbO5VBsR0u3ySvwM6ywwpiOtM4bQKmc76AsH6n7HJBc1GO1ss49DCLZqTqnX/E7+ekm8XtIJ4PeqrZtTCvB5RpC+xnfojymE5d4w63JnDoyfRfkzrOtfhijXEQagIVwKRW0M0EyU5Ptq7yx+MMECCJ19SXtVvVStrwPy1VXTCg37uMc78hvg4siKbXsjw3MSOy3F6kooIZJvEPPryPhq/7p2A86/rwHu/gRi0voMj7dfgYLrHustuKJUQuV7taKR94PQRr1cISldVIBeHYJfo2cmKNIv3nCCIc6FzSlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AmeHRL4IKfWkde/DC1MalL+pQlFS6qwpTCm04SuN6Lc=;
+ b=BgNqPmjCaICkxCWbNcFaKSjF0ZzmbAFG4PY63ZgLikWBaV2Eggxc5MZ6GjDgd4Jy87nJpmWR3G6eEHPhmhRLBxLqLxWHq7rr9yvIwr/qoDKDaEWEuBh1JYSaC6WdArOYnR4xjzW+cmK9GLXZpBQLuMQG1vfdnSsIy1auIuCTXMPmbWcfzn2O/JHRWPFA7VCRMErnNrquGQUJHUmhobUiO7fdkFyrSfNultLZgZtE6lsqvfyhDqqEc3EbYBHKnE1U/6BMAw6ucr6Dwfb30T5pH6PSQ7yj4rvu0LEw/yXO95h0vR9PbBvGssA+e6Bs/ui4Z+baWduPHLvT/vIQjsO+tA==
+Received: from MW4P223CA0024.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::29)
+ by DM4PR12MB6615.namprd12.prod.outlook.com (2603:10b6:8:8d::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5746.28; Tue, 25 Oct 2022 15:41:49 +0000
+Received: from CO1NAM11FT071.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:80:cafe::49) by MW4P223CA0024.outlook.office365.com
+ (2603:10b6:303:80::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.28 via Frontend
+ Transport; Tue, 25 Oct 2022 15:41:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1NAM11FT071.mail.protection.outlook.com (10.13.175.56) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5746.16 via Frontend Transport; Tue, 25 Oct 2022 15:41:49 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 25 Oct
+ 2022 08:41:34 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 25 Oct
+ 2022 08:41:33 -0700
+Received: from moonraker.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Tue, 25 Oct 2022 08:41:32 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] soc/tegra: Enable Tegra186 timer support
+Date:   Tue, 25 Oct 2022 16:41:31 +0100
+Message-ID: <20221025154131.43418-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT071:EE_|DM4PR12MB6615:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8347a707-c74f-43e4-f112-08dab69f6e6c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: c7BLjm5OLyC9wSuPlh6FsmQefXEcMYl86JSF83xHv7eKLx/OXtcKF7L0OCa64/sZ5bhQZiY+HinneyX4UpgoA8MUSpkA/FUsdRGMQoLcyTp4O+DfVFalAWNgk7w8PUV/u0ljizAzHslhuTFIkdl8pOZAoDcnVHoEVHl7v8HV0tTv3HGoyXFisPfxGSrajxRPtNa7yYIL/p+R9MqqUxySRWrGAB6jeoCXd12aGgE7ODowmbrkIh3tccmciW79+frL2oNcUDmvoK7UjelAzTdhRxGXLOnQgP/pCI3Hi1yNwX2pZwzwYu7Xc2zKgs+TVRyu71iC9tIgH/5YEFuPmPFanQhefJWfJsrTyA8RU0AH7fAVYO3+TnjqpKKeHOn8nmBqmIZHTVNyICgrnyWq99Tilpxw4+L528weMSXmJKqgDFBBbp4wFzOTktPgPx1y8fwnF/uhczPfJdPQyqWwNeWI8t93gy7h7rGPa61Ln1RiN0ckC4VpNAq0jnmcwvukcyWtiVXy5jRyVLZjv94BGcPeGb118X1ruzZO8ozaS9w9BT6cRdOHi7HW+fLhRv7uDWLAOOBC4nVsZHYo0dcew9i8OzaGZUgBt0vtbaBGwMkdOkPfn+/f9LasaEtXzoRxq5l+6qWujdG+XhU2XOTD4S4crRUxbKEUrJVC6LbZ3dwYiQbdpRx9XRu7Kg1PvboEoC/pcX2/yVakJtT7S6nEPGpGaU3hUs1dc2wCvHCdS3fcWvj+cgFUNsVn81JMJ3gHpwgELgyJBvkMKqnV1m5XRmGlfQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(346002)(39860400002)(376002)(451199015)(36840700001)(46966006)(40470700004)(70586007)(186003)(336012)(478600001)(70206006)(426003)(2616005)(41300700001)(356005)(1076003)(2906002)(4326008)(82310400005)(8676002)(7636003)(36860700001)(54906003)(6916009)(47076005)(86362001)(316002)(40480700001)(82740400003)(4744005)(8936002)(7696005)(107886003)(40460700003)(26005)(36756003)(5660300002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2022 15:41:49.3472
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8347a707-c74f-43e4-f112-08dab69f6e6c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT071.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6615
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Google Pixel C has a JDI LPM102A188A display panel. Add a
-DT node for it. Tested on Pixel C.
+Enable Tegra186 timer support for Tegra186, Tegra194 and Tegra234
+devices.
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
-Changes in v2:
- - renamed backlight node to a generic name
- - removed underscores
+ drivers/soc/tegra/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 84ec4d8b7f10..5db0b25c8d58 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -31,6 +31,37 @@ memory {
- 	};
- 
- 	host1x@50000000 {
-+		dc@54200000 {
-+			status = "okay";
-+		};
-+
-+		dsia: dsi@54300000 {
-+			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
-+			status = "okay";
-+
-+			link2: panel@0 {
-+				compatible = "jdi,lpm102a188a";
-+				reg = <0>;
-+			};
-+		};
-+
-+		dsib: dsi@54400000 {
-+			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
-+			nvidia,ganged-mode = <&dsia>;
-+			status = "okay";
-+
-+			link1: panel@0 {
-+				compatible = "jdi,lpm102a188a";
-+				reg = <0>;
-+				power-supply = <&pplcd_vdd>;
-+				ddi-supply = <&pp1800_lcdio>;
-+				enable-gpios = <&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_HIGH>;
-+				reset-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
-+				link2 = <&link2>;
-+				backlight = <&backlight>;
-+			};
-+		};
-+
- 		dpaux: dpaux@545c0000 {
- 			status = "okay";
- 		};
-@@ -1627,6 +1658,37 @@ nau8825@1a {
- 			status = "okay";
- 		};
- 
-+		backlight: backlight@2c {
-+			compatible = "ti,lp8557";
-+			reg = <0x2c>;
-+			power-supply = <&pplcd_vdd>;
-+			enable-supply = <&pp1800_lcdio>;
-+			bl-name = "lp8557-backlight";
-+			dev-ctrl = /bits/ 8 <0x01>;
-+			init-brt = /bits/ 8 <0x80>;
-+
-+			/* Full scale current, 20mA */
-+			rom-11h {
-+				rom-addr = /bits/ 8 <0x11>;
-+				rom-val = /bits/ 8 <0x05>;
-+			};
-+			/* Frequency = 4.9kHz, magic undocumented val */
-+			rom-12h {
-+				rom-addr = /bits/ 8 <0x12>;
-+				rom-val = /bits/ 8 <0x29>;
-+			};
-+			/* Boost freq = 1MHz, BComp option = 1 */
-+			rom-13h {
-+				rom-addr = /bits/ 8 <0x13>;
-+				rom-val = /bits/ 8 <0x03>;
-+			};
-+			/* 4V OV, 6 output LED string enabled */
-+			rom-14h {
-+				rom-addr = /bits/ 8 <0x14>;
-+				rom-val = /bits/ 8 <0xbf>;
-+			};
-+		};
-+
- 		audio-codec@2d {
- 			compatible = "realtek,rt5677";
- 			reg = <0x2d>;
-@@ -1908,4 +1970,12 @@ usbc_vbus: regulator-usbc-vbus {
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
- 	};
-+
-+	vdd_dsi_csi: regulator-vdd-dsi-csi {
-+		compatible = "regulator-fixed";
-+		regulator-name = "AVDD_DSI_CSI_1V2";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&pp1200_avdd>;
-+	};
- };
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 5f5324294636..e49409b85a39 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -99,6 +99,7 @@ config ARCH_TEGRA_186_SOC
+ 	select TEGRA_BPMP
+ 	select TEGRA_HSP_MBOX
+ 	select TEGRA_IVC
++	select TEGRA186_TIMER
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegar186 SoC. The Tegra186 features a
+@@ -115,6 +116,7 @@ config ARCH_TEGRA_194_SOC
+ 	select TEGRA_BPMP
+ 	select TEGRA_HSP_MBOX
+ 	select TEGRA_IVC
++	select TEGRA186_TIMER
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegra194 SoC.
+@@ -125,6 +127,7 @@ config ARCH_TEGRA_234_SOC
+ 	select TEGRA_BPMP
+ 	select TEGRA_HSP_MBOX
+ 	select TEGRA_IVC
++	select TEGRA186_TIMER
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegra234 SoC.
 -- 
-2.38.1
+2.25.1
 
