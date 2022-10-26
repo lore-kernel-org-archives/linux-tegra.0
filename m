@@ -2,139 +2,211 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A178C38A2D
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 07:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C571C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 07:14:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232906AbiJZHGj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Oct 2022 03:06:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
+        id S233076AbiJZHOL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Oct 2022 03:14:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229904AbiJZHGi (ORCPT
+        with ESMTP id S231937AbiJZHOK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Oct 2022 03:06:38 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12EC074BAC;
-        Wed, 26 Oct 2022 00:06:37 -0700 (PDT)
+        Wed, 26 Oct 2022 03:14:10 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C000BA905;
+        Wed, 26 Oct 2022 00:14:09 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TYZ3ApH6L/+BJvImPVbQbmujLCdBa+apGwZZ4/MfCRLNT1qQyOj2MgzvRq+K6jz5PwHDLeuRupYmU09xrSq7c4MbxsZ2JzK5QRoXyX2HChNrGUCpFU/VMyvYIjircqgbeF/KiLB+xSLdg2E9rmYbyqej2ocxvAqJG06n+duwXkW9UGhDkcSpDRnjEO1AmT3gyB5JEag8D8PvvcLYicqZwITVaJQzovPq8lgVJXanpQDPUWG+ZdE0RePRavdbFUfR6gsWkEWZDGnihudPtoqTmOA/parLcqtBjAxeLrXcmaaOsfl10RDmnnJhb4eCXyte0YWweMTiMiXtSbrsmDg/BQ==
+ b=bFPBgZvdSlvPs5mK8dHZkTf6iJV5BX5Lqueu3bk9eBQv4IRZh2UZ/W3oajJP3mIWbvJmVpKK3mH/OCpddJLDCZzM2gx6jsiHN0gypbiA1CkXaHZPGcoZCZTnbL+wyB3FoqGovWAX7pdEX+SII4ckxHZf/9ocf6I1fONwqLMI7p+V7y0eYXbtDHDaOW+MS9MuExTYGrdSQ+oDuRvoNEsd+bXAd68Zqx38rHXO3cPPAC9N7mJj0+sHq8jEQXd8M4K7VGnKFAQb0JSs4RthpetOf0cDyrJ7bvtgq7rG0R+Ly1qaiyFEXc+LddWwq8JOMUJRAjWsVscqbX4I0Nrt9D1MMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QoeFATyX+h5wykISW8rRPdJcJK8iYkyvfCTwyBC422k=;
- b=QKpbdwiY6qkcb+NuWBsJdeY0TpoleQz6BBj0deZN87opFr9AMUWTKEi9IHCPct9DQTxiU8v2KKNY2nVasaXyn50cgHpqDk4FiriuRqoVcgh9pxhUb7akQNd76Pgoj/0gPr9xwPFyAXV/mM1UIXlgzoB6+JO3a2cAqmf+0nIJzXWSbrtUY+PMPr0NLG18OTJ/vrA0PbPZr1iXS1OIqkGFdb6jGRMQb59KoelwxQ5uOVKQRBAV3fujUCvinu8meaORQET361+rS0qvj7M2JFoocrKRLYCGY+cq3xxSw8MKIDiPIwQnkID1FMsTPmEgKn36IIKMQMvjs8oPwReW6GDfFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=3bsa0b4nmGbMAwx3eSieZ7+X92IHcXdetaIs3jsV1TM=;
+ b=Em46svjgoZ+hPiqwnIFlzx/sO0Oup5J9D/MjYiqY9/buvqFANzpGWcQS5r9znxnC5yzxPhUNl5anq3UhuGfsliEE+vcMXyDHgBmqwkX3AMG2NVc/DpGSkRdzcss77AebfpG8OBCD9kSHBGoO89nKAogc5n2n79nMrWpPvgOYFCYzGClHiUoPo8MYW7mHr1SRIzYVYGe/gJc4PHibZXnDv7jfOaf2TgyE8JwQzJpj5qrWhu8a2EUZ/ZMvOu+nMiWv/H9RreiRbcEYuAw8mipn88RHBfS4CrgEiVGBzYKekOKnKZ2qS4EJjWWR6FlrVjX879hVYh6tgSVzCyDQ++rElg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QoeFATyX+h5wykISW8rRPdJcJK8iYkyvfCTwyBC422k=;
- b=tbvf0epf4YrDJacIkIOLfyEywYjJmhhAFIYCNWADhyZthw1I6vgausfU5ZxSgDZMYtg1k5JwkUh5mbQjz7S+tl+vXXHGXgnBsjQikt4WOJu00r4WZAeFmGz9sKA9M5EIAaN00qzSAmjXsWQFrUx648s7mXaEuhvWkHlBOg5A0NlKHESDuxdiz5/0xgiuMeNj3ZKoZYspppAeNgt3Ugkx+fT+Al+7j3kbNljVQ2URZJKxmtBP/5x20qCCyWUPVItjWwIPpnEkWAuprwIO3fXOBDJBpG0aJRYrElF5nv6XJ+UAIZEdL6u7N2UeSKP3qhwY0aOGLhkmhcGWHwk5uJBCDQ==
-Received: from DM6PR03CA0052.namprd03.prod.outlook.com (2603:10b6:5:100::29)
- by CH0PR12MB5041.namprd12.prod.outlook.com (2603:10b6:610:e0::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.28; Wed, 26 Oct
- 2022 07:06:35 +0000
-Received: from DM6NAM11FT066.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:100:cafe::2e) by DM6PR03CA0052.outlook.office365.com
- (2603:10b6:5:100::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.28 via Frontend
- Transport; Wed, 26 Oct 2022 07:06:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT066.mail.protection.outlook.com (10.13.173.179) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5746.16 via Frontend Transport; Wed, 26 Oct 2022 07:06:35 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 26 Oct
- 2022 00:06:24 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 26 Oct
- 2022 00:06:23 -0700
-Received: from pshete-ubuntu.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Wed, 26 Oct 2022 00:06:20 -0700
-From:   Prathamesh Shete <pshete@nvidia.com>
-To:     <thierry.reding@gmail.com>, <linus.walleij@linaro.org>,
-        <bgolaszewski@baylibre.com>, <jonathanh@nvidia.com>,
-        <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>,
-        <kyarlagadda@nvidia.com>, Manish Bhardwaj <mbhardwaj@nvidia.com>
-Subject: [PATCH v2] gpio: tegra186: Check PMC driver status before any request
-Date:   Wed, 26 Oct 2022 12:36:14 +0530
-Message-ID: <20221026070614.24446-1-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <Y1aa3/oJA2ElSGp0@orome>
-References: <Y1aa3/oJA2ElSGp0@orome>
+ bh=3bsa0b4nmGbMAwx3eSieZ7+X92IHcXdetaIs3jsV1TM=;
+ b=JbpdlpCMHtU5yS/UbVLqLh0qDFqUza2kExwjodcg/jdCHU4uloWBkqyGlW3/5Cjv5rhrxKK6rFyGO6q/7n0UvQMW+eFgGrsoUxaQezQ4W0ljsE+1lo1vu2Ky+l1rvydw61gYbWKNZ6hEmKtE25rigsYCbqGotvnQWglE1SzgKEAqpnYMW3s4f2KZwFnngsr/X0byZ89h7KdcPuu3sty6xm43ZmwW6aCKPSBhEXllu+91mbUy+uVOwOmzbv1igtBWNr5cjcoN+X7SFMWqquZPgAcNbncdFLvhMagi/Pb2ednpXJcKXUgToHqhuBjcoRoBCEszy2fVI/4oGj1EScmgKw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ MW3PR12MB4393.namprd12.prod.outlook.com (2603:10b6:303:2c::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5746.28; Wed, 26 Oct 2022 07:14:05 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::c0e5:f111:3e59:7c66]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::c0e5:f111:3e59:7c66%6]) with mapi id 15.20.5746.023; Wed, 26 Oct 2022
+ 07:14:05 +0000
+Message-ID: <f8eeeebc-e635-9c97-b97b-46df38f06002@nvidia.com>
+Date:   Wed, 26 Oct 2022 08:13:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 03/11] dt-bindings: usb: Add binding for Cypress cypd4226
+ I2C driver
+Content-Language: en-US
+To:     Wayne Chang <waynec@nvidia.com>, gregkh@linuxfoundation.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        treding@nvidia.com, thierry.reding@gmail.com,
+        heikki.krogerus@linux.intel.com, ajayg@nvidia.com, kishon@ti.com,
+        vkoul@kernel.org, p.zabel@pengutronix.de, balbi@kernel.org,
+        mathias.nyman@intel.com, jckuo@nvidia.com
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
+        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+References: <20221024074128.1113554-1-waynec@nvidia.com>
+ <20221024074128.1113554-4-waynec@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20221024074128.1113554-4-waynec@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0508.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13b::15) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT066:EE_|CH0PR12MB5041:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fafa4df-d1c0-42aa-0ec3-08dab7209ed0
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MW3PR12MB4393:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f1ca8b0-8c19-49d2-f96e-08dab721aad7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: dcRKXASe9blxy2SsGpgdhEEOu0ZD5T7sg0KvpuVkOXSyeR+XikN8Z3wi9JrK2NPh+MLLHURn8GX9yqinqsRmzyScbcSa/eZG9vnijtE7etr7PrVZq1QSPKfyOXkEyzzA077ZT/sRtbaiqJy2Zm8LUqsMoPMZ+pmVl1voGrchMJEW+Il5wiitNH6r1XgKFjfyA9A811I3Uy47gRBf8HCKpjoGIO6R27gx/shz9rYueJ2hPk/GOnhKG8aEwoGdbpAUV8muMCy5qiaiTKrkIxUiL9irEZ4FPXwSkzP02ikY/dG+MaeeWLc5jY1n9XkxyyZT77ogD+3u9pfbkBIqKN5EKlqgDxy4ywTdZ61jgrOUQN3aPfmond4D648goVHwdzUyCFRf+lb/BUpcU6B0awgmI4S5Qliul1CDQk51BTkvCkox8kkUpqIu+s/BF8+TRQJgDabK1G+fVDKepnQlx1om56wY6UBVIK7Y+9dRTyidgtOSserV6Whu538kdVd9fg5ia/ws64kbsbwQmiaaoKbmlG8EZ29wJJ86jYps1xHgH9aMUzijBK+58ZDtxt1FV0/nTmYQRetDwqzeG9zf082P3B+DhrghJ0qnAW9JP1kbMaMm82z88eITOVaW8Xx+mQ74IgOm0CvqSb02gLBPQhZlAcSx3Iy8knrIpgk/0iODgcAOrftEXnRbT/Qbub47uoGpDquooMVoBPWVSHTqDdJyvJjkN60vXfRFXSiJZUlg26KsibsbX6oc13lOfEPsZocXbPMb44TQKzdptBHZFHpuMA==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(346002)(136003)(376002)(451199015)(36840700001)(46966006)(40470700004)(6666004)(41300700001)(107886003)(7696005)(110136005)(82740400003)(36756003)(5660300002)(40460700003)(54906003)(8676002)(478600001)(356005)(40480700001)(7636003)(4326008)(8936002)(316002)(70586007)(70206006)(86362001)(83380400001)(2616005)(82310400005)(2906002)(26005)(47076005)(426003)(186003)(1076003)(336012)(36860700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 6xCnBtsYB51sACIlzwq7Oh1hsyVfuMuAdg971vKViVQdtdqf3EBa+vY7ETTXaFnsaoptoN3JaEs1/fwk23OIljhpVKKSezDHVeCAZ2rNNpLZnYxrWNCE5L8nrXy33BeJpLu4tHTF81A4Bg2YG8zLpK2MdDPjdwpOWp7u4NtTLK7moUbBFX6A9KT+dFAlC/Oyog920giDW5kDFRDXwnCMJc2afx2LOgNLasw6GGY50Z0Y+09ThL+VDO57ZKrSoiSx9mNgwURJoFbO2HU2fgo8gJyB8rnDv2hHS7yfus+ngGm5sLhbh1lWSDfNZ+iH/ngRYpMSbh7/qupx+FUGBARlD66vbyd33zhE2bZ5KW0XqEGWJEODSREdG8GEgh2IA0RUCLNWPLvi+gssrUcLGMDbH4Cc1jAKWkcyawkw/0PgAIA6tN/h0+gmIGSC9TqvQcO/5YY7a11EkTgW89h26SimlIdBzST+DHEf0M4b794/TvzMqRkLZW8NplpUXOWYXuPWyW+VWjpIioM1MkTM3V3AQRYqX1S9zCtyy/x48eV1ZK/ajS2ZsH0W3owC1ZDkmlVQq6z61ceJcIfV3EEXSCV03cX8XnzE8jisdrkovxXK61shxXcDENLGlkn3qwu2PFmVswZvAKN57ezgVx0X75DVKoYutVQxvGSheNZ2F9lgxaOHVyOAmk/MOOu32d3uiWrrlSLwfvPTMvHrZblAL+fF/+bcOMhEORHR95bbDYPkxYw6u5Zq/ILvMtqXXULLXSgso18c1DhXTXhe8jrplsG0/ZZq7gyE7j4pn4XQBQihqnigqNjC0/hWLHKaDop8VbdKvWHQ8kvpWAot6CcsLbmzah7XgQkZlnBhPE6SKO4HeIvuxprB2sGe0TsqiFB9TFmScvkht4eKIH3NejRkFl3kcQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(136003)(346002)(39860400002)(366004)(451199015)(6666004)(478600001)(966005)(6512007)(53546011)(36756003)(38100700002)(6506007)(8676002)(316002)(6636002)(86362001)(921005)(31696002)(83380400001)(2616005)(186003)(6486002)(41300700001)(31686004)(8936002)(2906002)(66899015)(4326008)(5660300002)(66556008)(66476007)(66946007)(7416002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N2VLNlBLWTE0d0JQSG5tbUpHQ05vVmpHYWNSUXA0aW5KZkpKVFVhOWhPaWpE?=
+ =?utf-8?B?dDZvSEVHVERMM2RvY3hTdzI0cWFHaDhpTWdJdHY3SUNxOGpnVnBLZzhUak1J?=
+ =?utf-8?B?a09jdTlFQmtEL3o1aGl1Yy9NT2s4TDFuNWcrMEJVenR5QzBlWlljTktEcllx?=
+ =?utf-8?B?MitmbkhCZTRvenBXNHNqRlZGNksrSDM5bVFtMmJLc0xEYmkyOTFlSFVWQk5V?=
+ =?utf-8?B?VnB2emkxRFRPZHJMYm5WWXg2NU5BWHBqV3dIVzhJTTljdS9oWG1QZzZPWkUx?=
+ =?utf-8?B?RVkvbjdQRVJpWGlHaXFyMkVkbG04eXFTUzlGK1RNZlprZ2FkT2ZadVZSdVY4?=
+ =?utf-8?B?WkxoVjNuV0hKSWc5aDYxTUNuV0Z0dVFnMk1aM2s3QWFRTXBZWnNJSGx3Z01S?=
+ =?utf-8?B?RnNMdWF4eGVqb285L0F2TEVlRDMwd0RMWk10SExGb0l2NUhaRkM5YUtkQ0Za?=
+ =?utf-8?B?OUVVZEJBVTNBazhOSTI2eEg0eFdER1RqWG1iY3psdmRVQWJvdzRZU3Z0b3RR?=
+ =?utf-8?B?dytmNXNOL01qY3dMVjdwZWg2VmRyL3N3d2c4YnBBL3JTV1J6V1hhK0FWQThi?=
+ =?utf-8?B?KzZJYWVKS2U0Sm10ekFKZS9aSXZvSmNSWVBEODdZOTVFQ1owL3ZNTGpLNDg5?=
+ =?utf-8?B?RFo4aDBKTmYyMHVTdUpnZ2UvYXdLWFl4ajFWZzNOYkJ1YXBZRGtCT3lBZE51?=
+ =?utf-8?B?SkNMYmVvaWdONUdVaGdaNVZCNWsxZFBrMXBKVUhSNEF5S2pxOEdrZG5TbGxk?=
+ =?utf-8?B?YVFlNmFlaTlmS0o5WGRnZU8rTjBJdEN0RW1MeUxobjdvM0ovczRIQVcxRk1t?=
+ =?utf-8?B?bFNYVk00eDFiQkRLL0dHeGlHajQrNkN1OGxzWkRHWC9KOXJzUWJjbGJwZ2M5?=
+ =?utf-8?B?dUtzL09VZkRtRVd4T3c3dDlsYVNnSXQyMGlGekpUNmw0UTBwNHBsN2U3bkpK?=
+ =?utf-8?B?TXVrUVpYeklrZTc0cXJsS09hSXE3NnhyYVZwQ09jRXBXUDU0Rm5wUVlKVzRI?=
+ =?utf-8?B?Wmt1eDl1dWRHVFNKM0U3UEYrSTZDSk9aT0xEUVdnbmdaN2hzbm5YbGVjT1JH?=
+ =?utf-8?B?dFlzRzFnMjFPVStWUFFkbWJ6WEUwUzZRTzFLdDhkUHlpbmFuZmlzejhmcnVS?=
+ =?utf-8?B?b3FvT2ZldGx6aUdDSHUvM1JQNUxpNlVqM3U1aXBIeGxzN3UxZm93U2Nwam5q?=
+ =?utf-8?B?bmk4ZFZ5VzNPQnJ4OFFLYVArSmZSalZJYVNtSXRYekZJZlB1ekMzU21sc1Fw?=
+ =?utf-8?B?dkpsQzNmVTkvSGhDdTlzMDNicm1LdGJxVG50VkdSaEI5Y2JCVEFhbnpXT3d0?=
+ =?utf-8?B?RjhxQkJ4SU1UR09uWUpiOGhnbndVSmRLNDlCNU9nWDRaaWVHbEkxTW5OcEo5?=
+ =?utf-8?B?cWpJVEE0YlpzZEVDbCtGOXhEWmNad2RNWW1tanFibWJIaHFQTExibkszeVdj?=
+ =?utf-8?B?d0NPM3BSVFZtMWVmdTlFMkJxYlJUMDhiWThwcS9wR1IvY2oyOXpWVDBmUnVB?=
+ =?utf-8?B?L0daV1JINFBuSE1zRndCcm0wMzZTdU9KdklVd0gwdVhqMlplZjkvcEZlV1Y1?=
+ =?utf-8?B?VWFtbEtEK0FscWYrb2V6dFR6QTVGcmxwZW54OFJZdU53c0dLcWphdEl3TU9v?=
+ =?utf-8?B?S0U5VWowaVgvenpIaGk0dGxYN1NCdDlIOUhrcDVVL2w1Z3JxdTN4QitnQSt1?=
+ =?utf-8?B?MG84bFMxOTZ5TVgwbVY0MlNpZ2xZcVFQaXVGK0FuSnZBL3ZTUWR2bC9QNjFR?=
+ =?utf-8?B?cld6V3ViT3IxQlVVRkY0OFovK1JwN3lhUTUzWm9XNmptbnVQa0R3cGd6aXZ5?=
+ =?utf-8?B?eHZ5dVlGZUlFK2tvaXIvRTFTb1lyMkF0SHF1Wi8ybkdKbzYwcUFtbzFnUjdK?=
+ =?utf-8?B?NVJYMS9kUml3M29JLzBpd2VJcnozS0NHLzZBMzV4UDBGc1YvTXp1Q3RXVnAv?=
+ =?utf-8?B?RzRLK29Nc1JjQTJJdU5WdjN1NzM0eWlZY1BkdXJXdHg2eEdSaWhqYWlsODgv?=
+ =?utf-8?B?MHlNaENlRjNkaWtLUm5XclhNbktQVUlVYTEwSXNDZk1lZVM5clYvc1lKNlhy?=
+ =?utf-8?B?Qkh6VlJDZ2pOM0YxQ3g3ZGZRR3VZWllFMlRFMGZpQmZaY2M1NENHVVF2Zkdi?=
+ =?utf-8?B?N3RrVTFtdWVuYjZXRDhhamduczk4cWlBeWpKY0o0QmlIOHF5VTFUaWlkZHJR?=
+ =?utf-8?Q?+6EE+7R6rHDv6QbiDBZS/6L5cp/q9v0pcvt8ldctrprM?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2022 07:06:35.6055
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f1ca8b0-8c19-49d2-f96e-08dab721aad7
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2022 07:14:05.7424
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fafa4df-d1c0-42aa-0ec3-08dab7209ed0
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT066.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5041
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UwbGT8N7Le+dP9x9z/LvodaE23WGvSbcUhvwVA7JzNPUdXZYgTteEEgSqqpTYHZQ54hlKuz+mD76/reKiOIwSA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4393
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch fixes the issue where even if PMC driver status is
-disabled still we are trying to look up for the IRQ domain
-that PMC driver would've registered if it had been enabled.
 
-Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
----
- drivers/gpio/gpio-tegra186.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+On 24/10/2022 08:41, Wayne Chang wrote:
+> add device-tree binding documentation for Cypress cypd4226 type-C
+> controller's I2C interface. It is a standard i2c slave with GPIO
+> input as IRQ interface.
+> 
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> ---
+>   .../bindings/usb/cypress,cypd4226.yaml        | 86 +++++++++++++++++++
+>   1 file changed, 86 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+> new file mode 100644
+> index 000000000000..5ac28ab4e7a1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+> @@ -0,0 +1,86 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/cypress,cypd4226.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Cypress cypd4226 UCSI I2C Type-C Controller
+> +
+> +maintainers:
+> +  - Wayne Chang <waynec@nvidia.com>
+> +
+> +description: |
+> +  The Cypress cypd4226 UCSI I2C type-C controller is a I2C interface type-C
+> +  controller.
+> +
+> +properties:
+> +  compatible:
+> +    const: cypress,cypd4226
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  reg:
+> +    const: 0x08
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  cypress,firmware-build:
+> +    enum:
+> +      - nv
+> +      - gn
+> +    description: |
+> +      the name of the CCGx firmware built for product series.
+> +      should be set one of following:
+> +      - "nv" for the RTX product series
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 54d9fa7da9c1..b99756037ed4 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -896,11 +896,15 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 
- 	np = of_find_matching_node(NULL, tegra186_pmc_of_match);
- 	if (np) {
--		irq->parent_domain = irq_find_host(np);
--		of_node_put(np);
--
--		if (!irq->parent_domain)
--			return -EPROBE_DEFER;
-+		if (of_device_is_available(np)) {
-+			irq->parent_domain = irq_find_host(np);
-+			of_node_put(np);
-+
-+			if (!irq->parent_domain)
-+				return -EPROBE_DEFER;
-+		} else {
-+			of_node_put(np);
-+		}
- 	}
- 
- 	irq->map = devm_kcalloc(&pdev->dev, gpio->gpio.ngpio,
+Please add 'NVIDIA' so that it is 'for the NVIDIA RTX product series'
+
+> +      - "gn" for the Jetson product series
+
+Same here please add 'NVIDIA' so that it is 'for the NVIDIA Jetson 
+product series'.
+
+Rob, any concerns about this property in general? Unfortunately, ACPI 
+choose a 16-bit type for this and used 'nv' for the RTX product. I don't 
+find 'gn' for Jetson very descriptive but we need a way to differentiate 
+from RTX.
+
+This is needed in the Cypress CCGX driver for the following ...
+
+https://lore.kernel.org/lkml/20220928150840.3804313-1-waynec@nvidia.com/
+
+Ideally, this should have been included in this series but was sent 
+before. We can always re-work/update the above patch even though it has 
+been queued up now.
+
+Jon
+
 -- 
-2.17.1
-
+nvpublic
