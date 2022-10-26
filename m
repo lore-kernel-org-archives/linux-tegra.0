@@ -2,238 +2,194 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF79C38A02
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 00:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 809D6C38A2D
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 01:07:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232226AbiJZAK2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Oct 2022 20:10:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47292 "EHLO
+        id S231838AbiJZBHN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Oct 2022 21:07:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232254AbiJZAK1 (ORCPT
+        with ESMTP id S230345AbiJZBHM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Oct 2022 20:10:27 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C92EA7AB7
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Oct 2022 17:10:25 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1onTzx-0007gK-Na; Wed, 26 Oct 2022 02:10:21 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1onTzw-000PHW-V4; Wed, 26 Oct 2022 02:10:20 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1onTzv-00Afau-Bc; Wed, 26 Oct 2022 02:10:19 +0200
-Date:   Wed, 26 Oct 2022 02:10:16 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-tegra@vger.kernel.org,
-        linux-pwm@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
-Message-ID: <20221026001016.4cm4kbhfzdsmb4rq@pengutronix.de>
-References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
- <a0b92a81-71f7-ea14-e887-4486a398b709@nvidia.com>
+        Tue, 25 Oct 2022 21:07:12 -0400
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E157B72EC2;
+        Tue, 25 Oct 2022 18:07:11 -0700 (PDT)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-12c8312131fso18187050fac.4;
+        Tue, 25 Oct 2022 18:07:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/fJTKt940eth1OpdSb2WO5kQsdZXgZfQJNIIFcYi3Hg=;
+        b=BmGbVSVUK9aDTMFJcMtBV0XUhBmVNvyJshwvcQ9oEaXJO8EZiio2vS36fMjs43UgF1
+         BcxwOepTj7zM+WCW9pa2pVyufCkOABMpKmxn3J9NCNSRBW5Z0KhZays8yzDfDJ0i+GzY
+         GtB7gEDZQAufR+lUCya0ZQikAE7QLnMLPtoEV9RENSoXM0v1Zbac/QyLdwfnG/sSYWPF
+         7jT3U9pMYaAUuqMCVkfu25giNehnI/RBIzVJRAlDvM2+osEeY5XxmAHV8gPtdDIepOt9
+         4+aC+6veP5H56NbvK85drsk4AmGUefHQq6wv1NRI/Odq5fWsQEcbtBz+l9zps7tZubyE
+         YQ3w==
+X-Gm-Message-State: ACrzQf2YdTzf93WtEswb0Lzwq85rOhhQ7Z1hW/AwMNnHGA1z0B0Sydg2
+        FSYozrBIE6/5rydpm+THEg==
+X-Google-Smtp-Source: AMsMyM4xjqa65NuztevNo6tGxHSfTJvxr9edT4ZFZekBByytP213dGKQEHdsVIKhYYUVG0yHCYQwLA==
+X-Received: by 2002:a05:6870:c58d:b0:136:7f6a:1e5a with SMTP id ba13-20020a056870c58d00b001367f6a1e5amr717425oab.24.1666746431099;
+        Tue, 25 Oct 2022 18:07:11 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id d63-20020a9d2945000000b006618bbede10sm1626853otb.53.2022.10.25.18.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Oct 2022 18:07:10 -0700 (PDT)
+Received: (nullmailer pid 3522397 invoked by uid 1000);
+        Wed, 26 Oct 2022 01:07:11 -0000
+Date:   Tue, 25 Oct 2022 20:07:11 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Wayne Chang <waynec@nvidia.com>
+Cc:     gregkh@linuxfoundation.org, krzysztof.kozlowski+dt@linaro.org,
+        treding@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com,
+        heikki.krogerus@linux.intel.com, ajayg@nvidia.com, kishon@ti.com,
+        vkoul@kernel.org, p.zabel@pengutronix.de, balbi@kernel.org,
+        mathias.nyman@intel.com, jckuo@nvidia.com,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
+        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 03/11] dt-bindings: usb: Add binding for Cypress cypd4226
+ I2C driver
+Message-ID: <20221026010711.GA3438928-robh@kernel.org>
+References: <20221024074128.1113554-1-waynec@nvidia.com>
+ <20221024074128.1113554-4-waynec@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y5mlvctuqwwfxfxd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a0b92a81-71f7-ea14-e887-4486a398b709@nvidia.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20221024074128.1113554-4-waynec@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Oct 24, 2022 at 03:41:20PM +0800, Wayne Chang wrote:
+> add device-tree binding documentation for Cypress cypd4226 type-C
+> controller's I2C interface. It is a standard i2c slave with GPIO
+> input as IRQ interface.
+> 
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> ---
+>  .../bindings/usb/cypress,cypd4226.yaml        | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+> new file mode 100644
+> index 000000000000..5ac28ab4e7a1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+> @@ -0,0 +1,86 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/cypress,cypd4226.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Cypress cypd4226 UCSI I2C Type-C Controller
+> +
+> +maintainers:
+> +  - Wayne Chang <waynec@nvidia.com>
+> +
+> +description: |
 
---y5mlvctuqwwfxfxd
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Don't need '|'.
 
-Hello Jon,
+> +  The Cypress cypd4226 UCSI I2C type-C controller is a I2C interface type-C
+> +  controller.
+> +
+> +properties:
+> +  compatible:
+> +    const: cypress,cypd4226
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  reg:
+> +    const: 0x08
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  cypress,firmware-build:
+> +    enum:
+> +      - nv
+> +      - gn
+> +    description: |
+> +      the name of the CCGx firmware built for product series.
+> +      should be set one of following:
+> +      - "nv" for the RTX product series
+> +      - "gn" for the Jetson product series
+> +
+> +patternProperties:
+> +  '^connector@[0-9a-f]+$':
 
-On Tue, Oct 25, 2022 at 03:22:18PM +0100, Jon Hunter wrote:
-> On 25/04/2022 14:22, Uwe Kleine-K=F6nig wrote:
-> > Dividing by the result of a division looses precision because the resul=
-t is
-> > rounded twice. E.g. with clk_rate =3D 48000000 and period =3D 32760033 =
-the
-> > following numbers result:
-> >=20
-> > 	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH =3D 187500
-> > 	hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) =3D 3052
-> > 	rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) =3D 6144
-> >=20
-> > The exact result would be 6142.5061875 and (apart from rounding) this is
-> > found by using a single division. As a side effect is also a tad
-> > cheaper to calculate.
-> >=20
-> > Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
-> > example clk_rate =3D 47999999 and period =3D 106667:
-> >=20
-> > 	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
-> > 			    NSEC_PER_SEC) =3D 19
-> >=20
-> > 	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-> > 			    NSEC_PER_SEC << PWM_DUTY_WIDTH) =3D 20
-> >=20
-> > (The exact result is 20.000062083332033.)
-> >=20
-> > With this optimizations also switch from round-closest to round-down for
-> > the period calculation. Given that the calculations were non-optimal for
-> > quite some time now with variations in both directions which nobody
-> > reported as a problem, this is the opportunity to align the driver's
-> > behavior to the requirements of new drivers. This has several upsides:
-> >=20
-> >   - Implementation is easier as there are no round-nearest variants of
-> >     mul_u64_u64_div_u64().
-> >   - Requests for too small periods are now consistently refused. This w=
-as
-> >     kind of arbitrary before, where period_ns < min_period_ns was
-> >     refused, but in some cases min_period_ns isn't actually implementab=
-le
-> >     and then values between min_period_ns and the actual minimum were
-> >     rounded up to the actual minimum.
-> >=20
-> > Note that the duty_cycle calculation isn't using the usual round-down
-> > approach yet.
-> >=20
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > ---
-> > Hello,
-> >=20
-> > changes since (implicit) v1: Updated changelog to explain why rate =3D 0
-> > is refused now.
-> >=20
-> > Best regards
-> > Uwe
-> >=20
-> >   drivers/pwm/pwm-tegra.c | 10 +++++-----
-> >   1 file changed, 5 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> > index e5a9ffef4a71..7fc03a9ec154 100644
-> > --- a/drivers/pwm/pwm-tegra.c
-> > +++ b/drivers/pwm/pwm-tegra.c
-> > @@ -99,7 +99,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, st=
-ruct pwm_device *pwm,
-> >   			    int duty_ns, int period_ns)
-> >   {
-> >   	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
-> > -	unsigned long long c =3D duty_ns, hz;
-> > +	unsigned long long c =3D duty_ns;
-> >   	unsigned long rate, required_clk_rate;
-> >   	u32 val =3D 0;
-> >   	int err;
-> > @@ -156,11 +156,9 @@ static int tegra_pwm_config(struct pwm_chip *chip,=
- struct pwm_device *pwm,
-> >   		pc->clk_rate =3D clk_get_rate(pc->clk);
-> >   	}
-> > -	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH;
-> > -
-> >   	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
-> > -	hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
-> > -	rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
-> > +	rate =3D mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-> > +				   (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH);
-> >   	/*
-> >   	 * Since the actual PWM divider is the register's frequency divider
-> > @@ -169,6 +167,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, =
-struct pwm_device *pwm,
-> >   	 */
-> >   	if (rate > 0)
-> >   		rate--;
-> > +	else
-> > +		return -EINVAL;
->=20
->=20
-> I am seeing more problems with this ...
->=20
-> 1. In the case where we call dev_pm_opp_set_rate() to set the PWM clock
->    rate, the requested rate is calculated as ...
->=20
->   required_clk_rate =3D (NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
->=20
->    For Tegra234, I have a case where the period is 45334 and so the
->    above yields a rate of 5646848Hz. In this case, mul_u64_u64_div_u64()
->=20
->    returns 0 because ...
->=20
->    (5646848 * 45334)/(NSEC_PER_SEC << PWM_DUTY_WIDTH) =3D 0.9999
->=20
->    We can fix this by ...
->=20
->   required_clk_rate =3D (NSEC_PER_SEC << PWM_DUTY_WIDTH) / period_ns;
->=20
->    The above produces a rate of 5646975 vs 5646848Hz.
+Looks like the part only has 2 PD controllers, so 2 connectors only, 
+right?
 
-You probably also want to round up that division such that you work with
-5646976.
+> +    $ref: /schemas/connector/usb-connector.yaml#
 
-> 2. Even after fixing issue #1, above, I then ran into another issue
->    where even if I request a clock rate of 5646975 I still get a lower
->    clock. This also causes  mul_u64_u64_div_u64() to return 0 and then I
->    see the -EINVAL returned. The simple solution here is to not return
->    -EINVAL for 0. After all 0, could be valid if the rate if we are
->    not dividing down the parent clock in the PWM. However, then there is
+       unevaluatedProperties: false
 
-As you have to subtract 1 from the result of the division, you need to
-write a -1 in the register which doesn't work. Writing a 0 results in a
-bigger period than requested which is the thing I intended to fix with
-the blamed commit.
+> +    properties:
+> +      reg:
+> +        maxItems: 1
 
-If clk_rate was 5646976 (don't know if that matches as nicely as it
-should? If dev_pm_opp_set_rate might set a lower rate you're out of luck
-again) we get:
+maximum: 1
 
-	rate =3D mul_u64_u64_div_u64(5646976, 45334, 1000000000 << 8)
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: true
 
-which is 1 and everything is fine.
+false
 
-Note that the math before my commit already had that problem. Before the
-driver was just more lax and didn't subtract 1 from rate and so
-configured a bigger period than requested/expected
+true is only for incomplete, common schemas.
 
-There are probably similar cases where the driver still configures a too
-big period (i.e. when the effect you described yields a rate that is too
-small but bigger than 0).
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/tegra194-gpio.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +      #interrupt-cells = <2>;
+> +
+> +      ucsi_ccg: ucsi_ccg@8 {
+> +        compatible = "cypress,cypd4226";
+> +        interrupt-parent = <&gpio_aon>;
+> +        interrupts = <TEGRA194_AON_GPIO(BB, 2) IRQ_TYPE_LEVEL_LOW>;
+> +        reg = <0x08>;
+> +        cypress,firmware-build = "gn";
+> +        status = "okay";
 
-So the optimal way to fix this is to adapt the calculation of
-required_clk_rate as you suggested + rounding up and to make sure that
-dev_pm_opp_set_rate doesn't configure a rate lower than requested. The
-latter might be complicated as the API (AFAIK) isn't specific about
-rounding directions and there isn't a dev_pm_opp_round_rate function.
+Don't need status in examples.
 
-As a short term work-around dropping the -EINVAL is probably best, I'd
-like to have it documented clearly however that continuing in that case
-is wrong and yields unexpected settings.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---y5mlvctuqwwfxfxd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNYeuUACgkQwfwUeK3K
-7AntMgf/eCVEaeeIgxHvQ3kUZWzUIhfnPpzhVwoYKBYVFbd73aFZ5uLbyw0OT1FB
-2iyxtIboRghcoLpY1wZnqeFLu6LxziDzqHnIIIZpUO7jVuJC5FGmwWhu4XAnxLRr
-5Co5WvRSlNihesabVjLwuh896/IkYc/qIWT5h+vGgdTPY99Mml6HnLzqEDs4JEa/
-VGPXm6AwMXDAofa5A26m03byJGFNraHffGez1KygbCq0z/WfifkjLlRqhWMXq/Ii
-DBKyBJawqoWxlaj3lLg2xtIchvx0WNWtKG8XMH4Ex3JBV1Llz/6R5aa1XBQSNnzc
-b3ASd1NBS0MlOSlHdtG1YkocWYR+Cg==
-=Kw6/
------END PGP SIGNATURE-----
-
---y5mlvctuqwwfxfxd--
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        ccg_typec_con0: connector@0 {
+> +          compatible = "usb-c-connector";
+> +          reg = <0>;
+> +          label = "USB-C";
+> +          data-role = "dual";
+> +          port {
+> +            ucsi_ccg_p0: endpoint {
+> +              remote-endpoint = <&usb_role_switch0>;
+> +            };
+> +          };
+> +        };
+> +      };
+> +    };
+> -- 
+> 2.25.1
+> 
+> 
