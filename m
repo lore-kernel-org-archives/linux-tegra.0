@@ -2,110 +2,121 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BA6C38A2D
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 12:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029D8C38A2D
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 14:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233502AbiJZMdn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Oct 2022 08:33:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36096 "EHLO
+        id S234073AbiJZOSR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Oct 2022 10:18:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233150AbiJZMdm (ORCPT
+        with ESMTP id S234252AbiJZOSC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Oct 2022 08:33:42 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9514073936;
-        Wed, 26 Oct 2022 05:33:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 56B00B8212F;
-        Wed, 26 Oct 2022 12:33:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D92C433C1;
-        Wed, 26 Oct 2022 12:33:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666787619;
-        bh=1oQIC/cEy+BOnB6qVZCAUuyMhZUjMaoO2CL7d79n42k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MkhUuZ4R24oHo5gcthD/4oPGb+VW8T8sm1LSjL0hHEzT9Bb/3OGFs7KrTYXf/o44O
-         WQnOxrRYa9CK5XmryT2epofDD3UX1XH5KcB8wyoWNN7HmP2wtvbjoPXrAE7K8dHAVp
-         IXEqBid+aksXgIJfJ7rUnq6QUw5JhIpuKj446uAPtnL1mktK9UognPJDBe9T7rkJ/A
-         ysQaowqW9Xh5YaqXgYdF3p7Dtm2AByLJaOhH5CtpmOyVeDW/mSoX0nmoPyE3isAGSp
-         dzEBGKMNiS0nNhIyLCw1uSSn36DodrC06ESR0XHRbydkqNFRsXLRRX6xqQFDUo4DwP
-         JcQolSq6ACWOQ==
-Date:   Wed, 26 Oct 2022 14:33:31 +0200
-From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+        Wed, 26 Oct 2022 10:18:02 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB5B4F682C
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Oct 2022 07:18:01 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1onhEE-000626-Ny; Wed, 26 Oct 2022 16:17:58 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1onhEE-000Wa8-9w; Wed, 26 Oct 2022 16:17:57 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1onhEC-00ApU3-Lz; Wed, 26 Oct 2022 16:17:56 +0200
+Date:   Wed, 26 Oct 2022 16:17:54 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Vidya Sagar <vidyas@nvidia.com>, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, robh@kernel.org, kw@linux.com,
-        bhelgaas@google.com, treding@nvidia.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH V1] PCI: dwc: Use dev_info for PCIe link down event
- logging
-Message-ID: <Y1kpG0l05uMueM9Y@lpieralisi>
-References: <20221018164329.GA3808783@bhelgaas>
- <8670e757-7275-57eb-3f5c-0a21ba354e37@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] pwm: tegra: Improve required rate calculation
+Message-ID: <20221026141754.22ohncsbb3efhuqb@pengutronix.de>
+References: <20221026101305.30670-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gdapvty5ap5jwdgd"
 Content-Disposition: inline
-In-Reply-To: <8670e757-7275-57eb-3f5c-0a21ba354e37@nvidia.com>
+In-Reply-To: <20221026101305.30670-1-jonathanh@nvidia.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Oct 26, 2022 at 12:39:13PM +0100, Jon Hunter wrote:
-> Hi Lorenzo,
-> 
-> On 18/10/2022 17:43, Bjorn Helgaas wrote:
-> > On Tue, Oct 18, 2022 at 07:21:54AM +0100, Jon Hunter wrote:
-> > > Hi Bjorn,
-> > > 
-> > > On 13/09/2022 11:12, Vidya Sagar wrote:
-> > > > Some of the platforms (like Tegra194 and Tegra234) have open slots and
-> > > > not having an endpoint connected to the slot is not an error.
-> > > > So, changing the macro from dev_err to dev_info to log the event.
-> > > > 
-> > > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > > > ---
-> > > >    drivers/pci/controller/dwc/pcie-designware.c | 2 +-
-> > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > > > index 650a7f22f9d0..25154555aa7a 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > > > @@ -456,7 +456,7 @@ int dw_pcie_wait_for_link(struct dw_pcie *pci)
-> > > >    	}
-> > > >    	if (retries >= LINK_WAIT_MAX_RETRIES) {
-> > > > -		dev_err(pci->dev, "Phy link never came up\n");
-> > > > +		dev_info(pci->dev, "Phy link never came up\n");
-> > > >    		return -ETIMEDOUT;
-> > > >    	}
-> > > 
-> > > 
-> > > Are you OK to take this change?
-> > 
-> > When this came up, Lorenzo was in the middle of a big move and I was
-> > covering for him while he was unavailable.  But he's back, and I'm
-> > sure he will resolve this soon.
-> > 
-> > Personally I'm OK either way.
-> > 
-> > Bjorn
-> 
-> 
-> Can we come to a conclusion on this?
-> 
-> We have tests that fail when errors/warning messages are reported. We can
-> choose to ignore these errors, but given that this is not an error in this
-> case, we were thinking it is better to make it informational.
 
-I understood.
+--gdapvty5ap5jwdgd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We are at v6.1-rc2, this patch is not a fix, we will handle it for the
-v6.2 merge window.
+Hello,
 
-Thanks,
-Lorenzo
+On Wed, Oct 26, 2022 at 11:13:04AM +0100, Jon Hunter wrote:
+> For the case where dev_pm_opp_set_rate() is called to set the PWM clock
+> rate, the requested rate is calculated as ...
+>=20
+>  required_clk_rate =3D (NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
+>=20
+> The above calculation may lead to rounding errors because the
+> NSEC_PER_SEC is divided by 'period_ns' before applying the
+> PWM_DUTY_WIDTH multiplication factor. For example, if the period is
+> 45334ns, the above calculation yields a rate of 5646848Hz instead of
+> 5646976Hz. Fix this by applying the multiplication factor before
+> dividing and using the DIV_ROUND_UP macro which yields the expected
+> result of 5646976Hz.
+>=20
+> Fixes: 1d7796bdb63a ("pwm: tegra: Support dynamic clock frequency configu=
+ration")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/pwm/pwm-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> index dad9978c9186..8a33c500f93b 100644
+> --- a/drivers/pwm/pwm-tegra.c
+> +++ b/drivers/pwm/pwm-tegra.c
+> @@ -145,8 +145,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, st=
+ruct pwm_device *pwm,
+>  		 * source clock rate as required_clk_rate, PWM controller will
+>  		 * be able to configure the requested period.
+>  		 */
+> -		required_clk_rate =3D
+> -			(NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
+> +		required_clk_rate =3D DIV_ROUND_UP_ULL((NSEC_PER_SEC << PWM_DUTY_WIDTH=
+),
+> +						     period_ns);
+
+This also has the nice side effect that required_clk_rate doesn't become
+zero any more for big period_ns values.
+
+Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--gdapvty5ap5jwdgd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNZQZAACgkQwfwUeK3K
+7AmBdQf/RVvG7wDygbuqFE4ng4UBWiPnjQJvydSiN7ZtQ8FdrZ2ZULdOT92CvFPR
+a6+iBToILM1aNWcURH8uhGLwy996SRUBTLe+PWt+5dbW5blSgDW5lSZIkqXGgrHU
+sJsy5mpK9mJzaQUJ/gqsZlk+L1Zl6qYmfwXR86MsDhh9DQYcgdKolPgKh9nexWkq
+BBjXhvRvB5xJt1ywShDv0/Eus/41v8FgFq0c1Coy/GoM6q/ew5wJW8XEylKz7teu
+DkFJRWEgdBr501JhKJ7pk3TukCO1LlzXfdCgb+qpt95ADmtErqmaD5aOeotnE/bg
+qp1dXbPwasXXFwopCU245NULol+AIg==
+=3R3k
+-----END PGP SIGNATURE-----
+
+--gdapvty5ap5jwdgd--
