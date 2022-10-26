@@ -2,142 +2,238 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCDAC38A2D
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Oct 2022 23:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF79C38A02
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 00:10:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231544AbiJYXYq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Oct 2022 19:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35778 "EHLO
+        id S232226AbiJZAK2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Oct 2022 20:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbiJYXYn (ORCPT
+        with ESMTP id S232254AbiJZAK1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Oct 2022 19:24:43 -0400
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4096EBC3C;
-        Tue, 25 Oct 2022 16:24:40 -0700 (PDT)
-Received: by mail-oi1-f170.google.com with SMTP id u132so3411556oib.0;
-        Tue, 25 Oct 2022 16:24:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nFoJ65FSeRoha1pQ1K6lL6hQjEH1NFBZHC7qdvsbi9k=;
-        b=bwOYT8gKV3BXQRAjQz+EX3VrqeLmQbjSddYxD0jgM5rznOrmX1/Hp5jFyDxMT+qFTg
-         p28R7onyUu4oYOghJSKOeWChgr52uyROv0QL45ZLdE3ddYuneiXV8QxZ0+KP3J3YjHEa
-         3tOJDrFge8Cjk8FupsYKzHYfRlnf5fDv0/gtFy4EO5g+o7Nj56S7GvxoJsPqtyn4+8o1
-         SZFojWaO9wW+56H/3cyvLIuXgq0kxPrhzUrbndD0yhvBCl8RFIDGuMEDUZCq+APxw1Jl
-         FyxOQ60OFGXvqBIKCcchHpALiSPoAo8OYWTV9y+S5Y5xO7TDgiktbLPxOGZZ5bvzhpGd
-         S/Sg==
-X-Gm-Message-State: ACrzQf2PW7C+DJVwWYC3FSDgrNM8o015oqrjIpcPDSuwt7T3jmwgNhFv
-        rwemDTKc+Ls++fp2m1YMog==
-X-Google-Smtp-Source: AMsMyM7mAJ5G1LaKL+vJ2m0VrWl3wbGGik1naUdUeZ6GBAnBrys0Zfp+2Jly//XkJ/OFRb3N0fhkFQ==
-X-Received: by 2002:a05:6808:130f:b0:355:167f:c668 with SMTP id y15-20020a056808130f00b00355167fc668mr373366oiv.143.1666740279428;
-        Tue, 25 Oct 2022 16:24:39 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 63-20020a9d0345000000b006391adb6034sm1545527otv.72.2022.10.25.16.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Oct 2022 16:24:38 -0700 (PDT)
-Received: (nullmailer pid 3438758 invoked by uid 1000);
-        Tue, 25 Oct 2022 23:24:40 -0000
-Date:   Tue, 25 Oct 2022 18:24:40 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Wayne Chang <waynec@nvidia.com>
-Cc:     gregkh@linuxfoundation.org, krzysztof.kozlowski+dt@linaro.org,
-        treding@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com,
-        heikki.krogerus@linux.intel.com, ajayg@nvidia.com, kishon@ti.com,
-        vkoul@kernel.org, p.zabel@pengutronix.de, balbi@kernel.org,
-        mathias.nyman@intel.com, jckuo@nvidia.com,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 01/11] dt-bindings: usb: tegra-xudc: Add Tegra234 XUSB
- controller support
-Message-ID: <20221025232440.GA3430479-robh@kernel.org>
-References: <20221024074128.1113554-1-waynec@nvidia.com>
- <20221024074128.1113554-2-waynec@nvidia.com>
+        Tue, 25 Oct 2022 20:10:27 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C92EA7AB7
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Oct 2022 17:10:25 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1onTzx-0007gK-Na; Wed, 26 Oct 2022 02:10:21 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1onTzw-000PHW-V4; Wed, 26 Oct 2022 02:10:20 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1onTzv-00Afau-Bc; Wed, 26 Oct 2022 02:10:19 +0200
+Date:   Wed, 26 Oct 2022 02:10:16 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-tegra@vger.kernel.org,
+        linux-pwm@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH v2] pwm: tegra: Optimize period calculation
+Message-ID: <20221026001016.4cm4kbhfzdsmb4rq@pengutronix.de>
+References: <20220425132244.48688-1-u.kleine-koenig@pengutronix.de>
+ <a0b92a81-71f7-ea14-e887-4486a398b709@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="y5mlvctuqwwfxfxd"
 Content-Disposition: inline
-In-Reply-To: <20221024074128.1113554-2-waynec@nvidia.com>
+In-Reply-To: <a0b92a81-71f7-ea14-e887-4486a398b709@nvidia.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 24, 2022 at 03:41:18PM +0800, Wayne Chang wrote:
-> Extend the Tegra XUSB controller device tree binding with Tegra234
-> support.
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> ---
->  .../bindings/usb/nvidia,tegra-xudc.yaml       | 24 ++++++++++++-------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-> index fd6e7c81426e..517fb692f199 100644
-> --- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-> @@ -22,6 +22,7 @@ properties:
->            - nvidia,tegra210-xudc # For Tegra210
->            - nvidia,tegra186-xudc # For Tegra186
->            - nvidia,tegra194-xudc # For Tegra194
-> +          - nvidia,tegra234-xudc # For Tegra234
->  
->    reg:
->      minItems: 2
-> @@ -90,21 +91,27 @@ properties:
->  
->    phys:
->      minItems: 1
-> +    maxItems: 8
->      description:
->        Must contain an entry for each entry in phy-names.
->        See ../phy/phy-bindings.txt for details.
->  
->    phy-names:
->      minItems: 1
-> +    maxItems: 8
->      items:
-> -      - const: usb2-0
-> -      - const: usb2-1
-> -      - const: usb2-2
-> -      - const: usb2-3
-> -      - const: usb3-0
-> -      - const: usb3-1
-> -      - const: usb3-2
-> -      - const: usb3-3
-> +      anyOf:
-> +        - const: usb2-0
-> +        - const: usb2-1
-> +        - const: usb2-2
-> +        - const: usb2-3
-> +        - const: usb3-0
-> +        - const: usb3-1
-> +        - const: usb3-2
-> +        - const: usb3-3
 
-items:
-  pattern: '^usb[23]-[0-3]$'
+--y5mlvctuqwwfxfxd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And an explanation why you need any random order. If it is just 
-different for Tegra234, then you need an if/then schema for this.
+Hello Jon,
 
-> +
-> +  dma-coherent:
-> +    type: boolean
->  
->    avddio-usb-supply:
->      description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
-> @@ -153,6 +160,7 @@ allOf:
->              enum:
->                - nvidia,tegra186-xudc
->                - nvidia,tegra194-xudc
-> +              - nvidia,tegra234-xudc
->      then:
->        properties:
->          reg:
-> -- 
-> 2.25.1
-> 
-> 
+On Tue, Oct 25, 2022 at 03:22:18PM +0100, Jon Hunter wrote:
+> On 25/04/2022 14:22, Uwe Kleine-K=F6nig wrote:
+> > Dividing by the result of a division looses precision because the resul=
+t is
+> > rounded twice. E.g. with clk_rate =3D 48000000 and period =3D 32760033 =
+the
+> > following numbers result:
+> >=20
+> > 	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH =3D 187500
+> > 	hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) =3D 3052
+> > 	rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) =3D 6144
+> >=20
+> > The exact result would be 6142.5061875 and (apart from rounding) this is
+> > found by using a single division. As a side effect is also a tad
+> > cheaper to calculate.
+> >=20
+> > Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
+> > example clk_rate =3D 47999999 and period =3D 106667:
+> >=20
+> > 	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
+> > 			    NSEC_PER_SEC) =3D 19
+> >=20
+> > 	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
+> > 			    NSEC_PER_SEC << PWM_DUTY_WIDTH) =3D 20
+> >=20
+> > (The exact result is 20.000062083332033.)
+> >=20
+> > With this optimizations also switch from round-closest to round-down for
+> > the period calculation. Given that the calculations were non-optimal for
+> > quite some time now with variations in both directions which nobody
+> > reported as a problem, this is the opportunity to align the driver's
+> > behavior to the requirements of new drivers. This has several upsides:
+> >=20
+> >   - Implementation is easier as there are no round-nearest variants of
+> >     mul_u64_u64_div_u64().
+> >   - Requests for too small periods are now consistently refused. This w=
+as
+> >     kind of arbitrary before, where period_ns < min_period_ns was
+> >     refused, but in some cases min_period_ns isn't actually implementab=
+le
+> >     and then values between min_period_ns and the actual minimum were
+> >     rounded up to the actual minimum.
+> >=20
+> > Note that the duty_cycle calculation isn't using the usual round-down
+> > approach yet.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > ---
+> > Hello,
+> >=20
+> > changes since (implicit) v1: Updated changelog to explain why rate =3D 0
+> > is refused now.
+> >=20
+> > Best regards
+> > Uwe
+> >=20
+> >   drivers/pwm/pwm-tegra.c | 10 +++++-----
+> >   1 file changed, 5 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> > index e5a9ffef4a71..7fc03a9ec154 100644
+> > --- a/drivers/pwm/pwm-tegra.c
+> > +++ b/drivers/pwm/pwm-tegra.c
+> > @@ -99,7 +99,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, st=
+ruct pwm_device *pwm,
+> >   			    int duty_ns, int period_ns)
+> >   {
+> >   	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
+> > -	unsigned long long c =3D duty_ns, hz;
+> > +	unsigned long long c =3D duty_ns;
+> >   	unsigned long rate, required_clk_rate;
+> >   	u32 val =3D 0;
+> >   	int err;
+> > @@ -156,11 +156,9 @@ static int tegra_pwm_config(struct pwm_chip *chip,=
+ struct pwm_device *pwm,
+> >   		pc->clk_rate =3D clk_get_rate(pc->clk);
+> >   	}
+> > -	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH;
+> > -
+> >   	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
+> > -	hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
+> > -	rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
+> > +	rate =3D mul_u64_u64_div_u64(pc->clk_rate, period_ns,
+> > +				   (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH);
+> >   	/*
+> >   	 * Since the actual PWM divider is the register's frequency divider
+> > @@ -169,6 +167,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, =
+struct pwm_device *pwm,
+> >   	 */
+> >   	if (rate > 0)
+> >   		rate--;
+> > +	else
+> > +		return -EINVAL;
+>=20
+>=20
+> I am seeing more problems with this ...
+>=20
+> 1. In the case where we call dev_pm_opp_set_rate() to set the PWM clock
+>    rate, the requested rate is calculated as ...
+>=20
+>   required_clk_rate =3D (NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
+>=20
+>    For Tegra234, I have a case where the period is 45334 and so the
+>    above yields a rate of 5646848Hz. In this case, mul_u64_u64_div_u64()
+>=20
+>    returns 0 because ...
+>=20
+>    (5646848 * 45334)/(NSEC_PER_SEC << PWM_DUTY_WIDTH) =3D 0.9999
+>=20
+>    We can fix this by ...
+>=20
+>   required_clk_rate =3D (NSEC_PER_SEC << PWM_DUTY_WIDTH) / period_ns;
+>=20
+>    The above produces a rate of 5646975 vs 5646848Hz.
+
+You probably also want to round up that division such that you work with
+5646976.
+
+> 2. Even after fixing issue #1, above, I then ran into another issue
+>    where even if I request a clock rate of 5646975 I still get a lower
+>    clock. This also causes  mul_u64_u64_div_u64() to return 0 and then I
+>    see the -EINVAL returned. The simple solution here is to not return
+>    -EINVAL for 0. After all 0, could be valid if the rate if we are
+>    not dividing down the parent clock in the PWM. However, then there is
+
+As you have to subtract 1 from the result of the division, you need to
+write a -1 in the register which doesn't work. Writing a 0 results in a
+bigger period than requested which is the thing I intended to fix with
+the blamed commit.
+
+If clk_rate was 5646976 (don't know if that matches as nicely as it
+should? If dev_pm_opp_set_rate might set a lower rate you're out of luck
+again) we get:
+
+	rate =3D mul_u64_u64_div_u64(5646976, 45334, 1000000000 << 8)
+
+which is 1 and everything is fine.
+
+Note that the math before my commit already had that problem. Before the
+driver was just more lax and didn't subtract 1 from rate and so
+configured a bigger period than requested/expected
+
+There are probably similar cases where the driver still configures a too
+big period (i.e. when the effect you described yields a rate that is too
+small but bigger than 0).
+
+So the optimal way to fix this is to adapt the calculation of
+required_clk_rate as you suggested + rounding up and to make sure that
+dev_pm_opp_set_rate doesn't configure a rate lower than requested. The
+latter might be complicated as the API (AFAIK) isn't specific about
+rounding directions and there isn't a dev_pm_opp_round_rate function.
+
+As a short term work-around dropping the -EINVAL is probably best, I'd
+like to have it documented clearly however that continuing in that case
+is wrong and yields unexpected settings.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--y5mlvctuqwwfxfxd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNYeuUACgkQwfwUeK3K
+7AntMgf/eCVEaeeIgxHvQ3kUZWzUIhfnPpzhVwoYKBYVFbd73aFZ5uLbyw0OT1FB
+2iyxtIboRghcoLpY1wZnqeFLu6LxziDzqHnIIIZpUO7jVuJC5FGmwWhu4XAnxLRr
+5Co5WvRSlNihesabVjLwuh896/IkYc/qIWT5h+vGgdTPY99Mml6HnLzqEDs4JEa/
+VGPXm6AwMXDAofa5A26m03byJGFNraHffGez1KygbCq0z/WfifkjLlRqhWMXq/Ii
+DBKyBJawqoWxlaj3lLg2xtIchvx0WNWtKG8XMH4Ex3JBV1Llz/6R5aa1XBQSNnzc
+b3ASd1NBS0MlOSlHdtG1YkocWYR+Cg==
+=Kw6/
+-----END PGP SIGNATURE-----
+
+--y5mlvctuqwwfxfxd--
