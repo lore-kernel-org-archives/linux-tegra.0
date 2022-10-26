@@ -2,126 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D03EC433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 14:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604A2FA373E
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Oct 2022 14:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234291AbiJZOYx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Oct 2022 10:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48670 "EHLO
+        id S234500AbiJZO5i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Oct 2022 10:57:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234323AbiJZOYv (ORCPT
+        with ESMTP id S234414AbiJZO5P (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Oct 2022 10:24:51 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D83C1758A
-        for <linux-tegra@vger.kernel.org>; Wed, 26 Oct 2022 07:24:48 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1onhKn-0006lr-5d; Wed, 26 Oct 2022 16:24:45 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1onhKn-000Wai-Bw; Wed, 26 Oct 2022 16:24:44 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1onhKl-00ApV5-My; Wed, 26 Oct 2022 16:24:43 +0200
-Date:   Wed, 26 Oct 2022 16:24:41 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] pwm: tegra: Improve required rate calculation
-Message-ID: <20221026142441.5yrqx76jnmvdbexq@pengutronix.de>
-References: <20221026101305.30670-1-jonathanh@nvidia.com>
- <20221026141754.22ohncsbb3efhuqb@pengutronix.de>
+        Wed, 26 Oct 2022 10:57:15 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B3DD120ECF
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Oct 2022 07:57:05 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id z17so8038838qkj.8
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Oct 2022 07:57:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H6Eev9tNY1EscvH33xpILTCRgvvIkcCo5fp9pBkfKp8=;
+        b=m5C802ytAi1yN6R+djCEaxTwKcotMupBTDIO274nqvY1eZdUdsqBOGHxfWnI8xbmHn
+         fGx+40jhXY2iZIhtqvCBILEfdu1/AIeEJZ9g+DOjzRFxUwOZCQXFzGJbDWN6yb2lQjZC
+         ATW9ABu1qGT8J6nB591VFxbFsPeQiWsYt+5WD8dK/aplCErYvYtoVNwEbIxzXxVhATGg
+         lZ58Z1Wo22DHv08xmeCe1VJYMZ+T/p5IpjASEBeih4myp5O4mtgwZZAvyt1+mV+lfN4f
+         7r2MP6uSLlpK8j9IpiiHr+2udJrY5F52fAvvd4JYMqTJE/CoW3XbOtKheMZfL0E/sslv
+         dQjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H6Eev9tNY1EscvH33xpILTCRgvvIkcCo5fp9pBkfKp8=;
+        b=NOVG5rCrWycovmJNvdWznQjSjkI5zxIwd1GW4i9dub4YWsg/0dz5ujoo9eD30jNGNt
+         kaKJvcxGbm2kt6G8Fae2eL4DMhgRAQC5xPlCckb77sZZr2RwD/jT3eT8zKUaUC6HJyQ+
+         +zWKxE3OYdVCYBLOcwq/QxNVnZRiD1zZNH7yBpP5Rtt9B5khCtM22BYSC4oqqEQ/yeQr
+         Lu4E2mPi09LvHIorzZg8z6NVyHNpg6YOLfhIIiER3hEx1L0oCxYSrjQyZPoGc1cAp6Vs
+         9aH5StNItHmWM3UgNZP2KGOr5rK2BQxRNwionBYO8x/7FB7qV/9covNUQWtPkb2aN132
+         3fnQ==
+X-Gm-Message-State: ACrzQf2T26SuKW1inXLlSnGVVDqJecdpXDxlL0Mlp9+sB5Dbvuq9i2PU
+        yxnsnOW+bOT1vz2pstyozhUFgQ==
+X-Google-Smtp-Source: AMsMyM6x/mkMzmJyWpbQqAZPzcgsywdXT8wCsrEckQU9qfFg2x7F6MjMaHwNDxr0UoDFRGeW1Tk1dw==
+X-Received: by 2002:a05:620a:c12:b0:6ee:d3d0:fe20 with SMTP id l18-20020a05620a0c1200b006eed3d0fe20mr30450314qki.470.1666796224582;
+        Wed, 26 Oct 2022 07:57:04 -0700 (PDT)
+Received: from [192.168.1.11] ([64.57.193.93])
+        by smtp.gmail.com with ESMTPSA id r11-20020a05620a298b00b006bba46e5eeasm4233394qkp.37.2022.10.26.07.57.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Oct 2022 07:57:03 -0700 (PDT)
+Message-ID: <ecd2a50a-5017-23bc-7da0-73a5f240e97a@linaro.org>
+Date:   Wed, 26 Oct 2022 10:57:02 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tjbecma5z4lfjutf"
-Content-Disposition: inline
-In-Reply-To: <20221026141754.22ohncsbb3efhuqb@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: Add bindings for JDI
+ LPM102A188A
+Content-Language: en-US
+To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
+        daniel@ffwll.ch, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
+        arnd@arndb.de, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20221025153746.101278-1-diogo.ivo@tecnico.ulisboa.pt>
+ <20221025153746.101278-2-diogo.ivo@tecnico.ulisboa.pt>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221025153746.101278-2-diogo.ivo@tecnico.ulisboa.pt>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 25/10/2022 11:37, Diogo Ivo wrote:
+> The LPM102A188A is a 10.2" 2560x1800 IPS panel found in
+> the Google Pixel C.
+> 
+> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> ---
 
---tjbecma5z4lfjutf
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On Wed, Oct 26, 2022 at 04:17:55PM +0200, Uwe Kleine-K=F6nig wrote:
-> On Wed, Oct 26, 2022 at 11:13:04AM +0100, Jon Hunter wrote:
-> > For the case where dev_pm_opp_set_rate() is called to set the PWM clock
-> > rate, the requested rate is calculated as ...
-> >=20
-> >  required_clk_rate =3D (NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
-> >=20
-> > The above calculation may lead to rounding errors because the
-> > NSEC_PER_SEC is divided by 'period_ns' before applying the
-> > PWM_DUTY_WIDTH multiplication factor. For example, if the period is
-> > 45334ns, the above calculation yields a rate of 5646848Hz instead of
-> > 5646976Hz. Fix this by applying the multiplication factor before
-> > dividing and using the DIV_ROUND_UP macro which yields the expected
-> > result of 5646976Hz.
-> >=20
-> > Fixes: 1d7796bdb63a ("pwm: tegra: Support dynamic clock frequency confi=
-guration")
-> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > ---
-> >  drivers/pwm/pwm-tegra.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> > index dad9978c9186..8a33c500f93b 100644
-> > --- a/drivers/pwm/pwm-tegra.c
-> > +++ b/drivers/pwm/pwm-tegra.c
-> > @@ -145,8 +145,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, =
-struct pwm_device *pwm,
-> >  		 * source clock rate as required_clk_rate, PWM controller will
-> >  		 * be able to configure the requested period.
-> >  		 */
-> > -		required_clk_rate =3D
-> > -			(NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
-> > +		required_clk_rate =3D DIV_ROUND_UP_ULL((NSEC_PER_SEC << PWM_DUTY_WID=
-TH),
-> > +						     period_ns);
->=20
-> This also has the nice side effect that required_clk_rate doesn't become
-> zero any more for big period_ns values.
->=20
-> Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Best regards,
+Krzysztof
 
-I just noticed you could drop a pair of parenthesis in the first parameter
-to DIV_ROUND_UP_ULL.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---tjbecma5z4lfjutf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNZQycACgkQwfwUeK3K
-7Akg6gf/RUeV5JAYYnnCe2QPjgD2FULW5iwkewMh79DiDNq1ahpKthSPG6CeRVc1
-HGE6PdvFLgN6fmIHuXq/BuppJKGriHieMueQtqOIk9jw2lUlWAxlVDdxHup6o+Mr
-kEqkOHgRSLkpEKOqqwG0Wv2kTCzJr2QhsbuM26WU+WWNZru2Ens6aGzb1EatOX8o
-LHppUnknX6qtWUxoFG6k5FFTG45WY+kDjyXSgpU9NUA/frgTv4KFnXukP5dOfJ38
-uudCvv2dwnSHSdlj0aJMJjnj9shvkuhvJYUAKA7WxRewyIMeNcOYfvD0hbdoMqp0
-7REg5OUzYVSwg982lQveNuN5HxmaZQ==
-=9K/K
------END PGP SIGNATURE-----
-
---tjbecma5z4lfjutf--
