@@ -2,51 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82910FA3741
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Oct 2022 14:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06645ECAAA1
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Oct 2022 15:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236321AbiJ0ORg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Oct 2022 10:17:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58654 "EHLO
+        id S236221AbiJ0PkQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Oct 2022 11:40:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236336AbiJ0ORg (ORCPT
+        with ESMTP id S236191AbiJ0PkP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Oct 2022 10:17:36 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2071.outbound.protection.outlook.com [40.107.243.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF4B3186780;
-        Thu, 27 Oct 2022 07:17:34 -0700 (PDT)
+        Thu, 27 Oct 2022 11:40:15 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2059.outbound.protection.outlook.com [40.107.237.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B5E77822B;
+        Thu, 27 Oct 2022 08:40:12 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GHD1yvrI+8yqkZDGT4NoUt4OJmMcL4k+14bDg+Z00kEs7fJ2J+NBtNaWQfwZgdoKOkxq1+AAcHRIa6uWkpVCCwdcC40gJdFOfkJelo7+eZ+pGfwvULnPLFA4oHBxMCGw9fJ/H7PS+a9w/gWkBlkrxo8nhR5rgH22tTV1Yf4+y1tuBaBGsPcA3At6BAZWSJPOeaGpP2X1BZXO//kBBP8hMpgyyUFbCVDG4QrdIoZv+uzNOTg3mz9mzjWEEdmAqHqvNA/TWMfxDnq6tpMtL8LQkqNWnQmBlXYNrN1ptulwYf3orYaD9aSsfwG4yHCSaFXpfO0AnD/OkFDAPoc5lUtsog==
+ b=exmI2uWutjEEW5jHKHQ+zklHQAf3C09trSi50AEJtxts/FwzByUmRGmHMKA+sIeeB+ynxA4q6GLTepvsxdTGwciQwF3Zt/YvCeBtuv3F38iSGKdyq6JWpsdNDHwTJZ3CZ0PARxvxqyErTfc9Otm+hhVkLiPngSX8QRR9/yyK1X2mZnf91anuUUPp5CTjlr4OQH0GJigN5qHjQ37Zr7p57MxWZcnUoQwqtKyTgDvh/0SQ2Vf2dIZ8R76P6N8GGK7nLukY4NHNpMFUMOtRc3DbU0WG0TuJAUnj/8E6vhVS1APyoX4CEwW02dM/MXQOvdjCw4JETnl4hd5LK2wCDIJbaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=68kjr2+7f9k44ruJC5/DSrNKz17Sjj0bevNKmJZNUPo=;
- b=ZtUn5qGjIj1+sHF5rwLJWsGtF+RNg5Wpbd4PW5w/Wsj1gYRVicH6voFb9t2XUWCXu1gC77nGTYyxk/amya1A1ts0UP554sF0QlJ2T7x1KGxP2M21zywANcLk1CsoE2QYxYkLVOV88JEG7Ei7Lr+Cuh1s7L8Hqh/l0VLfkK8UWREf3Ho4Wa0jGugVvdXn5dbzn6LHxnoMIC+DG1v5CrzPL7hLyDbkvXJzkqbC0vwgvg4/h0sVSdnpg+2kl8296uKtzjZNgg2J5KmTJVZQvPXF7d7UwWr474sWAdrmFj6fKtfq/c6vvYqB3NRVeW7EaYpyXIjGqR5GnP1wHBH3mOL7ow==
+ bh=zA59AafPWd7k57S+gg/8tAyMZ8DY6Q/HS4szcPXWNTM=;
+ b=OT6bQMHn7keJihaglVENnmsQT8q30tyO59H/IxZEtG1kypkyCDPSZS4RKxeHBdWUXlOmBHRbV8Ef68XDP0Saol6z8SGSP1G4okJA8RtaVDt8FMfz6sXrVbsXA9PodR1mo0pNbdTZcyDO8VOQ3fMe9A6UPL55kgqymLtt8MYyhihCbsipd8ePbwijWfaS1mfe+BOaIqUZ8koHyXXNcV/Wi4SjU/xb3K3Dd2/9mCrdcCxzPYgyqijGAH2r50QVpVw6qKpViQ93qEaqGwxCI10RcreCFJGiELoeM6I3GaAroJQBHwQ0hPj1eyktzeujrj7DcGVDFHGfpu+jJEk8aDIiEQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=68kjr2+7f9k44ruJC5/DSrNKz17Sjj0bevNKmJZNUPo=;
- b=NvpHj8vBU/XtwDnFSRucnCjlcra1H71k/voM3Zu95Z32ndfgiD1yeS++68HBdulUpM2syZmaT9ReAldmekfRi0miInCMBmPzWWhIvMZN/ymRjE7zU3JFnQsB7E3Pti/2gZy75mPHNR4pMVfUBp24T81j0OyZ63tnRn+F7icoDe0Gl5i6WHcHgxCLUibJn4BgPeWeSjjmJsJtR23ieNlvuO1CAYRRjL8Z0hF3a038t2ohVTL36+zYv+o+jHNM3KRNuZxD9sPZyMOevaQjPfZRD6x7FWGE34nallRPE+fIqLPKqvmni8aODiOHSdrK20xY5yxBhiliqUh0etKwLTVT5g==
+ bh=zA59AafPWd7k57S+gg/8tAyMZ8DY6Q/HS4szcPXWNTM=;
+ b=bweEC0p9ZZrgNaeODL/GwrWEvmG3LEx4qGBN0oEyrDbGpzMcqGkrSb8uFj0gfH62WhaMXNCi8ejkm5G9ODgeVsFjmI277y0yUZsAFLL0dKdGhu0vUQhaH8wrgLQbcJGzbnn9I9ALOrMB3/fOcI+1iOsPB0KlRGb+g8932lwE47l11Ftm0bNz3JsAWC+UcL6XwhC/7u3S8QxR44J6mHamimCd/YyVPqcxojuSF9jl2KLfwwXM683TJmABqYPPOEYm2Vd3w/v6y3xZWzhv8PUlXgfwUvQWjEfSuEcmQb+4kX+XxEhaf69mo+1E5Yzj46taV17w4zhizsrTWOw0p4A4Jw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- BL1PR12MB5850.namprd12.prod.outlook.com (2603:10b6:208:395::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5746.28; Thu, 27 Oct 2022 14:17:32 +0000
+ MN2PR12MB4317.namprd12.prod.outlook.com (2603:10b6:208:1d0::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.28; Thu, 27 Oct
+ 2022 15:40:11 +0000
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::c0e5:f111:3e59:7c66]) by CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::c0e5:f111:3e59:7c66%6]) with mapi id 15.20.5746.028; Thu, 27 Oct 2022
- 14:17:32 +0000
-Message-ID: <89260f9f-a54b-108c-6144-5bcb06d5dc83@nvidia.com>
-Date:   Thu, 27 Oct 2022 15:17:26 +0100
+ 15:40:11 +0000
+Message-ID: <04d2c7ea-cfb1-b8a3-c1ad-39449a6a1701@nvidia.com>
+Date:   Thu, 27 Oct 2022 16:40:04 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
 Subject: Re: [PATCH 2/2] pwm: tegra: Fix required rate when clock is lower
  than needed
 Content-Language: en-US
+From:   Jon Hunter <jonathanh@nvidia.com>
 To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -55,193 +57,140 @@ References: <20221026101305.30670-1-jonathanh@nvidia.com>
  <20221026142301.3cgwqozpafpuu34k@pengutronix.de>
  <5bb9e817-9e4d-dd02-9c04-443efcf58226@nvidia.com>
  <20221027064003.22hx7iftdpg7s5hi@pengutronix.de>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20221027064003.22hx7iftdpg7s5hi@pengutronix.de>
+ <89260f9f-a54b-108c-6144-5bcb06d5dc83@nvidia.com>
+In-Reply-To: <89260f9f-a54b-108c-6144-5bcb06d5dc83@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0250.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a7::21) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+X-ClientProxiedBy: LO2P123CA0038.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::26)
+ To CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|BL1PR12MB5850:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c3eba9e-8acf-4837-9890-08dab825fc9a
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MN2PR12MB4317:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a8e9036-7e7b-428e-9e7c-08dab8318864
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 81i8dr7MudYQq0oOvFSgwkRqWuAqDwbxL57iypaWGqvCKDd78li8ys6xILz7qsIXGcKTazTePkK4GuXzfHF4AFb8gT9xtUBExB1nv4i4zvnlD98+5WU/SFK0GELpn0fInA9BBe0MufL0F/XVUIh3ynE/45cld9LwAPFozc3WdhGcE8ZsWWjT2s8vWNWfLU91jYoAV6s1wB2hleQpbym2tr2UoBkv7JtAOaKqGQ63A+QCQ5M3m+z7iwKOclN6WPn4nDazmwzv71iCW2f8ekHnJM+FYjTGPjQZ+ghgHpjBeIckTuAsOj5c15eV8Pq/WSd4n4X/CnBZH2oOM8uoE5P0qKUkDIRb2+qb61nrpVy+jsld2jsB1UYf+F6OjbVHovniAIkGd4GPbDTLdlOMz6uBEHzUZViRqEt6+DBQ+sx8zAU+aYHqYXLJw7L3la1QuHme/l3w14HATrI4VhisvKd+oB03K/M45RC6eWd61Nygmvjg2WjJNuhlHqCiQcmt9fp26Bbhk6YNHFwm4IdrWU1gEX7m6+HOgvaBfDHb7t5JJ747u/4jzvM3vtMFz96xGtSGFIYZCFh3przEJHkHT94p0YYXkfq21avEOQyJNWZUPy99ouJ+HzZ7PHDYfNdvSluJDwQSuiOae3ZnRTzOblNJSPZdgULsBU1hlAsrd+9s2+HPpzlHkTJamuaFhzjWnU/+VDhg8WYvi848eXeTlM4pNKciEvEkMAmIOlSHi/MGTukQJ56UQUPFHEoGdYLQanHLc2E/DKE6CqMdEG7VR/Z1myUe2E38TAL5o1juH/CxkdJ9njDtXnLp9vAuVt9IiG7INEzwrd7DpVRzjEMsPUUyzQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(366004)(136003)(39860400002)(376002)(346002)(451199015)(2616005)(31686004)(6916009)(6486002)(316002)(38100700002)(36756003)(8936002)(86362001)(31696002)(186003)(53546011)(66574015)(6666004)(83380400001)(55236004)(6512007)(26005)(6506007)(4326008)(478600001)(66476007)(41300700001)(5660300002)(66946007)(66556008)(2906002)(8676002)(20673002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: p19VEQH46sr7epv0bMqrdbh1ZdJDbV0eQp9h5/Fj8wBx21azXMQ9RjH5cvNc6x2xtzXPO5IiLVYWQCcd9dWnAGiUTTS4ckW2fKONvkG6IPI2YMRVaxesCxqNcolSJvnCfBV1LWeTL+g/9xNAUqtnWAdijMiEVP4HkzPu2jG1/bb8KN7Ov3RJxQJuJt+rCoggCiHoVrQVQhOSjPngS8QfDs1PLBn5pD5mpF8WrtW1E+5KCUFzaQcQ+MeUwDONk9FPaD9fAOpx7+ZSqq6YYoaiGD1nodFfNr8NVLCKwojB7o4DmLYS3mFv4VGPncZdy6kRLXag20SqST5LRxtuviyVXtH6aONSWLLUyUsIzDc/wQCt/Nt6PZt7mG/EOVU4PK8hmp7lqpsJ08yZnjfVndxxuwAPYBA+uY0DCl1+Zp8ouRoZe0QkEEjPR9t4uiYOPoSFjIiZJAKHdwXrHcq0iM13kuQYvzTZ0ghoArDwMqcOzynKY908cW4gOw4xFLzDls3zD7u6X1TJDAQW/oKbT+tIcGQU1b0GbVoonq25SGdCQ93kig1K5gZDq0hwKfI4mBZhDFqVNwM23mk5tsWpVWu0vp6bkUYS77ER2LyXCNthh9LErkcckGzlYxx6IPD2i4KokLT6pZn75/PRNsmNn4GSUKsn0H7+fl8tXV9zDaM/zrd84BAWQO/4yv8CEZI1G51j/FOPpfXmRA6N1DEn4wtSTLKs2kEagvbDFaT8hhH+8xV0QiKc/KLBrJ1V34cdmJdgXSSv+q6w/edCzAjPnMmAyiYzZo9G7wDoaK1um/ZwyY/lI9FwoCUP1U9G8+I58czTWGibgoL/8MxUfTTvf5eCIQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(136003)(39860400002)(366004)(346002)(451199015)(8676002)(66556008)(478600001)(2616005)(41300700001)(186003)(66476007)(66946007)(4326008)(2906002)(38100700002)(83380400001)(316002)(31696002)(86362001)(6486002)(55236004)(6916009)(6512007)(31686004)(53546011)(6506007)(8936002)(6666004)(26005)(36756003)(5660300002)(20673002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eXZtelpUMGZ5QldvWG5jald2YlJ5cnRTRnNaaGFzMHJZekJUNGpvK0xBVXp3?=
- =?utf-8?B?c2Y2UWxQU2FidFBuWDhOWDRySFoyazVGdUQzdjFETlAzZzJ1dDc4aWt5ZkNl?=
- =?utf-8?B?QVgzRlIyeFU5K0gzdGRlNVZDelVjN1Uva2JNSjJqRHBOcGJweklqMldkc0JZ?=
- =?utf-8?B?OGVzVVYrK09GTVcrZG5XZ280ZlNBNDBROTBPb2FSMnNEYmlha3J1R2RPRU10?=
- =?utf-8?B?Y1N2ZGxSZUhiUFR5UThYdTVFSTlFRUh2REIvemJqQmN0UitLMTBtVmkwMGZC?=
- =?utf-8?B?Q2JRZStlWFVnWWlyNm8rdjA1UTRjSUtIQjUrTUhWbmNCbDBDajFFQXI5QVVD?=
- =?utf-8?B?WnZrelNWUFkrRmpBbkNlcXJUaUNNRTVpejZaclp6WGU3NjhOQWdtL3VBdzBL?=
- =?utf-8?B?VnQ2NW5rOXdudGsxZHZUQUtOOGhoT081ZDR4Tkx6SGMrSWh3V25sc1VtQXht?=
- =?utf-8?B?S2dYM2RGQ3lnZmQ5ZmJkTnIvZDduWVdIYzMwWURGdWp6bjhpSlkrL1hKeHNJ?=
- =?utf-8?B?anVKYzU3VE5iZFppSzdzSWxGSUFPMnlXMTdkRUdacjJLdFY2dTRaSHh1N1pO?=
- =?utf-8?B?TmxvZ0ZTVDVvK2tBTlBOWHloYld6SzBPOW1UMFB3YnovNEd2VDd0dFlKRUNo?=
- =?utf-8?B?RmdGVllEdWlEQVdjdG9SYkZqMjNQWTN5cGZIaUV4M3VQWnRpWldsSyttRENl?=
- =?utf-8?B?ZU5HM0JIYlljbjA4T0d6NEFudHZPZkJNMjVyeEFhWVRWRENaZElYYW53dVUr?=
- =?utf-8?B?S0pFSzBlaHZkajk0MWMzbDBHTGIwMnlxS1ZhdnlmWk42MkNXUW51REMvMGFQ?=
- =?utf-8?B?b3QveVdZTWRxVnU2dkhReTFiaEdDOWFCN2Y2NnZhOE1MTWtMcUhlK1ZGYVdn?=
- =?utf-8?B?QitMaDhIdGF2WFNRdlA5dlh3R0NrRGpkRmVnVUQ2Rkp2YUN4VUtUVnU2aHB1?=
- =?utf-8?B?eHA0czNHOVdGQkVkdkRnUlFBem9kNEN0RDdoWmZIWFFHSmZlbzgweHdWNkFU?=
- =?utf-8?B?YmJoUHFJK0N4U29WQU1BT2lEemUyeS9zV2FiWGs4bVA2QmZCU2VhcDVGeVFr?=
- =?utf-8?B?enF0TWdEK3dCQXVjUDd4b3I5ZzRxb2hPcm12RlFLZkhBNTZEaGE4akcveERo?=
- =?utf-8?B?N3E4VEg0Tk1iTDU1dWVDekJReWpHSndtZTBIRWdqUzRiRVpnU0pWOEluWlRH?=
- =?utf-8?B?WjY3UGY2MWJWUWk5bGRmQVFQSDUwb0pzaFkvd1RqV3MybWFVa2R0NU0xN2NG?=
- =?utf-8?B?dXJGSUVWaFlCV3crVnFXOEI4bzhrYm9FenNoZlRySjlVcXBDZ2ZXWmxXQXBS?=
- =?utf-8?B?aDVsS2l0YXZ5eTFWRFFSNFluUzFUZGdnbmhkdHZrdkVtWXpaY2NjWml1akZz?=
- =?utf-8?B?RERFQlM4NEZibjA3UmY4YzArN1ZtdGhZZmpWRW1nb0dMaFhwR2Vqa1U0R3Z1?=
- =?utf-8?B?WkR1WDFZWldaaTcyQUN6U0ttMTFpTzdNSm5BblBDbzRFMlJaTm40dnZJMUhX?=
- =?utf-8?B?ODlzMktHSzJaa2dQSGdVWHpQTDJQSHZOcURud2gzeHBWZk9xd2lUYkxSUUF5?=
- =?utf-8?B?K1hMZ2hzYWVyUTRZbVZ1aFQ2TlF3d3hOeXBBcVMxZW1XWkpQeWZWVkxHUE5U?=
- =?utf-8?B?Ym9RcW53RWNwd0RQUUF3Zm1GTkF6aXNPRW9yK2krUy9jZU10cnMzQlBRSko4?=
- =?utf-8?B?NWRtc0ZKTjRMaHpLNm9wbjljaVh3QlVSS25SL3RiQy9sdEtVc29qZFloQzly?=
- =?utf-8?B?SU84d1I3V09rQTZydDJmdFhwM2pGamV4eDB0UkN5TVZNZEhUeGhKMWlnSTdo?=
- =?utf-8?B?enZtZVJMYzRFdmlrczRKQjFYZmhYNW45UnpmL2tVbzkrUmRSbGRud3VoQ2pX?=
- =?utf-8?B?Yi8vTnVaZWhMK3BXQUxSclBYd3R5NmM2dzRVYTJNUmdjUEZqYTBISkNLL3dL?=
- =?utf-8?B?OXJNMzdqMENNRmdJS1NHeStQMGU1eS8yZDRIbXBhcVpRNHpjS2JpR1R6ZWV6?=
- =?utf-8?B?akhqTnJ5UmNNdVhPUHplRnhJbFFPbmEzN2NnL0lGWTJCMzVIOFlLdDdYYk0y?=
- =?utf-8?B?Qlk2TERZYU1GUzN2eXdVS2xvMHpFMzRCVldLOFFXT0hKSy9Ud3VET1o3eUxL?=
- =?utf-8?B?SUR2QjJvMVJmWW50bzZRbXpLSGFtTHI5cDZ5elIydDFhZGIxUndFVytvZy9H?=
- =?utf-8?B?a2c9PQ==?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QXAxeWhyQXdOZ1JoMitJcGthOWpyY0tCb3haWEswRkRvTjZ2ZVNHMUIzc2sz?=
+ =?utf-8?B?M1lSRnFON3F0S2NqaFVoak44UGMzYU5SZ1VKSE1HNnV3QXdab3lqVGJIbUxG?=
+ =?utf-8?B?MjZSZ0xZM1BvNEVacGxlaUNWQk1LdnRoZ2lsWEdlTnNSYzU1U2FoMjFOWHRl?=
+ =?utf-8?B?OHZ1ZFprSFROQmhIWE91dWJ0WWxDZUJMQW4ra0NOdW1JOW01eEFhSE5iaEdk?=
+ =?utf-8?B?WEszcGdpbjg5dlVIWUJ6WFpSai9PeEViMnd4Rzk5dHVtdFovMVErNitUUmFa?=
+ =?utf-8?B?UUpoanNBd0hrc0t4ZUowcmVTODBnVElSNHZjbTNlZkhrYmJXdEQ2SGxTd1BV?=
+ =?utf-8?B?amx4RmVJOHh1UWQvWDMyVi9TdnRZQ2ZBdnRGbjRLME9IMkZJMU9zYnE5czhQ?=
+ =?utf-8?B?UjR3cngyeW9wTjdZN25Bd1IxMkp3ZWNJaXdoMU5aQy9ucXZRMERSTm0weDBx?=
+ =?utf-8?B?K0E5dzBBcTdDaW1kNGc3ektxajkrQ3pXSnBqWndlUGdMaWM2Y3RnL0lPYXRs?=
+ =?utf-8?B?bk1QczNnTFV2RUxMNWZQSmMyZ1hiMUp4aklGUUNFVSt3RERoUlBtelJsdXEx?=
+ =?utf-8?B?NzBRcHkzdzhRWlB1SUl2QlpaZGZxK21XRURKMCtxV2ZZUWRoaUpTZGRJdFVs?=
+ =?utf-8?B?SHVLbXJwVkFEQXFGTjhwYjNqWWpjTXZSdjRiVVdjSy9neGZFeVR1UDZvdlg5?=
+ =?utf-8?B?NDh4NnhZZTFUVGNIbU9PR3d1SW1lbE8renB1WmJWTjVoZGdSNjBDSEF1aERQ?=
+ =?utf-8?B?S0FuVTlDQkxodjhRMUJYODNtaUd0UFZ2VGNqYmhRaFVsMUJ6ODVyZXYrc3B1?=
+ =?utf-8?B?VU9IQmpZOGZWSXBaT2t4UjVDRFBYV1I1UVJSem1KTlRqaFNsb0ZOQWJZUUlM?=
+ =?utf-8?B?dEZYb1hJZS96em9xOXNxOGRqc1E1djBiZllTN2FZYisrMjdISjYxay9PRmtx?=
+ =?utf-8?B?WVJMNkdTNFVNZFpCb2RYbktWdmhzRndWSWloam1aM2x2TUVQRXQweklUT2V5?=
+ =?utf-8?B?RXpkMVVRTjl3cnllRW81VlpaSGN3RjNoTXhTdW55c1hxZHY3UW55ZUlGaENH?=
+ =?utf-8?B?OGV6dWFPOHM5UFd0ZW0wMnJKdlNERWpOcERiRkwvWHVacVZNM290OXo0OE92?=
+ =?utf-8?B?UGZNeXV4VHBHT1JkbkJ1ZTNDTlQwc0lCc2lxYnZBZDhVREh4blVFUEVsZy9G?=
+ =?utf-8?B?VmlwZU0raE41a3hSUGpLdjhOby9lRXNIOVVsZU0xQTFOLzgzd1dRdkZvZW1D?=
+ =?utf-8?B?ckJnaytHYm9NdDc4bUh6elc0aHhvUVRCT0Z0aWV1aksrU3l4eFZjaVIvcERW?=
+ =?utf-8?B?OXd5KzQxU1hSamwyQWhZN0paM2FJUWZhSFg2NHRLQjEvMk10N01wODUxbFJs?=
+ =?utf-8?B?N0ZOOTB3N1hCd1hiWWgydkJFQkJ0VXF3Ymc4ZUpHQVJ2MEhwQ2VmQjgraXBQ?=
+ =?utf-8?B?WHNPL0VxQVdqYmRNR2R1bGptclk2ZmoyYUtBbE5JTEYxc3BhYktmZmEwdFMr?=
+ =?utf-8?B?TUk1VFlHU1hNb3pRRWdYZmJreEVzcTl2SFBWMXdBajV0QTlHMlk5RWt4VjAv?=
+ =?utf-8?B?VC95WUZMRFhlaE9JMWdnQ1dhNFBCQjlQMHYxaXdEY1hZNDAyaHhxbUFGSU1I?=
+ =?utf-8?B?c1l3MkFSWlJnQlpRWE1qK1VVTTBscXNldWcwQ0kvU0ZyNG4vY3hEa0d2eWtX?=
+ =?utf-8?B?Mll3bmJ0bVMwMGpVYW5qb3BVYmFUVFQ4TUMydysxTElRNHJ4TjFPdXhjaER3?=
+ =?utf-8?B?NmdWN2FXU1NhT1o3T2xMMGROVkUyMm1na2xJaHNJZ3IxSFBoL3cyalNyMENu?=
+ =?utf-8?B?MDFjTXVUeFVDczZpMHI0K0gxOVFMUW1lNVZVSlN1M3M1aHpZZ2tXcGhTdkRz?=
+ =?utf-8?B?NWZYU3FCQjNOVEs2dUFyTVcraElxZFVZb25sMkFuTERmMm1wWmlkR1lXQjN1?=
+ =?utf-8?B?VFN1L1czUitGU3d5cVRpVU1HbmNmU2RYb0c1TURGWWRLQ2pTeTVhOFJ5Mms0?=
+ =?utf-8?B?OXZFT0ZKWmRCN3JtNGRoL2VXcUhmUTJLOGp5bGVrZThkdTJqNVFVVlcvZjhi?=
+ =?utf-8?B?bmJtVUZlcUlUcktQbFBXZS9OOHhMdTMwd2NEclEwZFNWdDcyazgvQlBxeU0v?=
+ =?utf-8?B?ZytjQXNrb2FGdFJDdnpzV0hsYnUxL1RTc3FCUWdnMXMyajY0VU5tVEpwbjB4?=
+ =?utf-8?B?ckE9PQ==?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c3eba9e-8acf-4837-9890-08dab825fc9a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a8e9036-7e7b-428e-9e7c-08dab8318864
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2022 14:17:32.0448
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2022 15:40:10.8955
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aze7owLK/+RPZAmbZS9I6BWKvo7m2bbUlUq+veJa0EwKCevLXLIstJk1JMS4BuOtqMfZRkRcRXSzQHkLhyHtkQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5850
+X-MS-Exchange-CrossTenant-UserPrincipalName: Sh6sD/Rv9V5SUBpRuxoDCRKpoBf3B3l+uAC3eS2Qhx2nznovQxJ69Y3lC/BWquX3YYgT3ioFMdojDj9CcDveMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4317
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 27/10/2022 07:40, Uwe Kleine-König wrote:
-> Hello Jon,
+On 27/10/2022 15:17, Jon Hunter wrote:
+
+...
+
+> However, I see that I have been focused on the current issue in
+> front of me and this works. The alternative that I see would be to
+> stick with the maximum rate permitted ...
 > 
-> On Wed, Oct 26, 2022 at 09:17:08PM +0100, Jon Hunter wrote:
->> On 26/10/2022 15:23, Uwe Kleine-König wrote:
->>> On Wed, Oct 26, 2022 at 11:13:05AM +0100, Jon Hunter wrote:
->>>> If the 'required_clk_rate' is greater than the clock rate that can be
->>>> provided, then when mul_u64_u64_div_u64() is called to determine the
->>>> 'rate' for the PWM divider, 0 will be returned. If 'rate' is 0, then we
->>>> will return -EINVAL and fail to configure the PWM. Fix this by adding 1
->>>> to the PWM_DUTY_WIDTH when calculating the 'required_clk_rate' to ensure
->>>> that 'rate' is greater or equal to 1. This fixes an issue on Tegra234
->>>> where configuring the PWM fan fails.
->>>>
->>>> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>> ---
->>>>    drivers/pwm/pwm-tegra.c | 13 +++++++++++++
->>>>    1 file changed, 13 insertions(+)
->>>>
->>>> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
->>>> index 8a33c500f93b..973e2c1533ab 100644
->>>> --- a/drivers/pwm/pwm-tegra.c
->>>> +++ b/drivers/pwm/pwm-tegra.c
->>>> @@ -148,6 +148,19 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
->>>>   		required_clk_rate = DIV_ROUND_UP_ULL((NSEC_PER_SEC << PWM_DUTY_WIDTH),
->>>>   						     period_ns);
->>>> +		/*
->>>> +		 * If the 'required_clk_rate' is greater than the clock rate
->>>> +		 * that can be provided, then when mul_u64_u64_div_u64() is
->>>> +		 * called to determine the 'rate' for the PWM divider, 0 will
->>>> +		 * be returned. If 'rate' is 0, then we will return -EINVAL and
->>>> +		 * fail to configure the PWM. If this case, add 1 to the
->>>> +		 * PWM_DUTY_WIDTH when calculating the 'required_clk_rate' to
->>>> +		 * ensure that 'rate' is greater or equal to 1.
->>>> +		 */
->>>> +		if (required_clk_rate > clk_round_rate(pc->clk, required_clk_rate))
->>>> +			required_clk_rate = DIV_ROUND_UP_ULL((NSEC_PER_SEC << (PWM_DUTY_WIDTH + 1)),
->>>> +							     period_ns);
->>>> +
->>>
->>> It's implicit knowledge that (roughly) doubling the clk rate is the
->>> right value (i.e the minimal value to get a
->>> clk_rate >= (NSEC_PER_SEC << PWM_DUTY_WIDTH) / period_ns?
->>
->> Are you suggesting I drop the comment? Sorry not sure what you are trying to
->> say here and if you think something should be changed.
+> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> index 8a33c500f93b..2099ecca4237 100644
+> --- a/drivers/pwm/pwm-tegra.c
+> +++ b/drivers/pwm/pwm-tegra.c
+> @@ -148,12 +148,14 @@ static int tegra_pwm_config(struct pwm_chip *chip, 
+> struct pwm_device *pwm,
+>                  required_clk_rate = DIV_ROUND_UP_ULL((NSEC_PER_SEC << 
+> PWM_DUTY_WIDTH),
+>                                                       period_ns);
 > 
-> No, I just wondered about that +1 being the right thing to do. Consider
-> period_ns was 400003. Then you get required_clk_rate = 639996.
-> Now we want to prevent that calling dev_pm_opp_set_rate(..., 639996)
-> yields a rate less than 639996.
-> 
-> You're implicitly claiming that 1279991 will do. But without further
-> knowledge also that value might yield a rate less than 639996; or 959993
-> might yield a rate that better fits our needs (i.e.
-> 
-> 	639996 <= clk_round_rate(..., 959993) < clk_round_rate(..., 1279991)
-> 
-> ). So my question was about "why 1279991?" and if there is implicit
-> knowledge that makes 1279991 the right choice. Assuming there is such a
-> reasoning, I'd prefer a comment like:
-> 
-> 	/*
-> 	 * To achieve a period not bigger than the requested period we
-> 	 * must ensure that the input clock runs with at least
-> 	 * $required_clk_rate Hz. As consecutive possible rates differ
-> 	 * by a factor of two we double our request if
-> 	 * $required_clk_rate yields a too slow rate.
-> 	 */
-> 
-> I'm not entirely sure this would be a sound assumption but I think you
-> get the point?! (It might be necessary to double exactly the requested
-> value and then you still have to make some (reasonable) assumption about
-> clk_round_rate().)
+> -               err = dev_pm_opp_set_rate(pc->dev, required_clk_rate);
+> -               if (err < 0)
+> -                       return -EINVAL;
+> -
+> -               /* Store the new rate for further references */
+> -               pc->clk_rate = clk_get_rate(pc->clk);
+> +               if (required_clk_rate <= clk_round_rate(pc->clk, 
+> required_clk_rate)) {
+> +                       err = dev_pm_opp_set_rate(pc->dev, 
+> required_clk_rate);
+> +                       if (err < 0)
+> +                               return -EINVAL;
+> +
+> +                       /* Store the new rate for further references */
+> +                       pc->clk_rate = clk_get_rate(pc->clk);
+> +               }
+>          }
 
 
-So actually, I am not claiming that doubling the clock rate will do.
-All I am claiming is that we know that based upon the rate returned
-by clk_round_rate(), we can determine if the original
-required_clk_rate we calculated will work or not. If we determine
-that this does not work because it is less than we need, then the
-next logical step would be to try a higher rate.
-
-We already know that the period is greater than the minimum period
-that is allowed, because we check this earlier on. So if the period
-is greater than the min period, it would seem that doubling the
-clock rate might be sufficient. Worse case it is not and we still
-return -EINVAL and we are no better off.
-
-However, I see that I have been focused on the current issue in
-front of me and this works. The alternative that I see would be to
-stick with the maximum rate permitted ...
+Thinking about it some more, it is probably simpler and better to ...
 
 diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 8a33c500f93b..2099ecca4237 100644
+index 8a33c500f93b..16855f7686db 100644
 --- a/drivers/pwm/pwm-tegra.c
 +++ b/drivers/pwm/pwm-tegra.c
-@@ -148,12 +148,14 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+@@ -148,6 +148,17 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
                  required_clk_rate = DIV_ROUND_UP_ULL((NSEC_PER_SEC << PWM_DUTY_WIDTH),
                                                       period_ns);
   
--               err = dev_pm_opp_set_rate(pc->dev, required_clk_rate);
--               if (err < 0)
--                       return -EINVAL;
--
--               /* Store the new rate for further references */
--               pc->clk_rate = clk_get_rate(pc->clk);
-+               if (required_clk_rate <= clk_round_rate(pc->clk, required_clk_rate)) {
-+                       err = dev_pm_opp_set_rate(pc->dev, required_clk_rate);
-+                       if (err < 0)
-+                               return -EINVAL;
++               /*
++                * If the 'required_clk_rate' is greater than the clock rate
++                * that can be provided then we will fail to configure the PWM,
++                * because the 'rate' calculation below will return 0 and which
++                * will cause this function to return -EINVAL. To avoid this, if
++                * the 'required_clk_rate' is greater than the rate returned by
++                * clk_round_rate(), set the PWM clock to the max frequency.
++                */
++               if (required_clk_rate > clk_round_rate(pc->clk, required_clk_rate))
++                       required_clk_rate = ULONG_MAX;
 +
-+                       /* Store the new rate for further references */
-+                       pc->clk_rate = clk_get_rate(pc->clk);
-+               }
-         }
+                 err = dev_pm_opp_set_rate(pc->dev, required_clk_rate);
+                 if (err < 0)
+                         return -EINVAL;
+
+Setting the 'required_clk_rate' to ULONG_MAX will cause the PWM to run
+at the max clock. For Tegra234, this is 408MHz (assuming the PLLP is the
+parent).
 
 Jon
 
