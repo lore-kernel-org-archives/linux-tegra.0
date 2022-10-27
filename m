@@ -2,208 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD99FA3740
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Oct 2022 16:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8424DFA3743
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Oct 2022 21:19:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234372AbiJ0QJW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Oct 2022 12:09:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
+        id S235686AbiJ0VTJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Oct 2022 17:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233701AbiJ0QJV (ORCPT
+        with ESMTP id S236502AbiJ0VS7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Oct 2022 12:09:21 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A68EC1849AE
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Oct 2022 09:09:20 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oo5RU-0006Vd-H3; Thu, 27 Oct 2022 18:09:16 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oo5RT-000jfF-Cm; Thu, 27 Oct 2022 18:09:14 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oo5RR-00B9wF-QW; Thu, 27 Oct 2022 18:09:13 +0200
-Date:   Thu, 27 Oct 2022 18:09:13 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2] pwm: tegra: Fix required rate when clock is lower
- than needed
-Message-ID: <20221027160913.3wkz4ewmmh2z3xuk@pengutronix.de>
-References: <20221026101305.30670-1-jonathanh@nvidia.com>
- <20221026101305.30670-2-jonathanh@nvidia.com>
- <20221026142301.3cgwqozpafpuu34k@pengutronix.de>
- <5bb9e817-9e4d-dd02-9c04-443efcf58226@nvidia.com>
- <20221027064003.22hx7iftdpg7s5hi@pengutronix.de>
- <89260f9f-a54b-108c-6144-5bcb06d5dc83@nvidia.com>
- <04d2c7ea-cfb1-b8a3-c1ad-39449a6a1701@nvidia.com>
+        Thu, 27 Oct 2022 17:18:59 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E314F67D
+        for <linux-tegra@vger.kernel.org>; Thu, 27 Oct 2022 14:18:57 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id c23so2255420qtw.8
+        for <linux-tegra@vger.kernel.org>; Thu, 27 Oct 2022 14:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AyXBa6ykDLTrVOwX6VHEAyki/oYnov9OaiYlYqb8IuQ=;
+        b=pLbMqe+4UWVeCU6n0FJ9i9jlJOD+Bls99Si1E7DHDiqf8j6gvU35pTzDYLXp8xZdjh
+         3BNJIBTjmye5HlRMm7uIgkTr10aZXEA3bs0huAZsaaz0zEfSAojDNueGwBjEcNS73hqh
+         w5z8oSi0fbd6X9qnI2zf7lVucqm/pVOv31sSEDnnCDs7mrqfnpL9aBIscV1mK1DdhAU2
+         oWPkP/zMnYDP6gdWqD7zVIx8x10RrKXhv1jpMeVfMJO9Lw5A+97RRbgcqvEDZElleWkC
+         QZ15KeBuVnIi67gAneE/CfvS90cXMmZWVISethneoUojTxBQ9h0lipW1xl4B6IJIba50
+         0Q1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyXBa6ykDLTrVOwX6VHEAyki/oYnov9OaiYlYqb8IuQ=;
+        b=w3MIF2WA9/nNfYwJRNb/bN9gQ1M2gVtiF+BhIZ31s2fc1webpCjaTROtizym0hwLRd
+         PzuIWDOnbZPkRyAPR7h1DHDy/qXBDLvkeAvkLWwZ5x8RFtj5oA/dbCr1yoXOXKtn5UHA
+         hcQjzFBAM1bQTIyIO1oT83PeNAB0eUNoe0XYrnYv/cfyf8Im7x+ySY1673e/tCl5zela
+         1tcLvDK+WFvyWziuejGGJ4knx47SpZCcQzLTv8wpGlQ66R1Xt+TXRJWpBpQopn9Hvw9Z
+         wBpnmzEQFI5LSiqL9v0skxoEBU5eU9K69Oml0JWBnuV1C0T024mRv3ip8R58QOB/QRVr
+         9+kg==
+X-Gm-Message-State: ACrzQf0ND8MTQEO3uvDjU7HwwO5SsZUsiaR/YaxLYVjT5voZhg4Q3nFQ
+        NGweleceS68Ay0v3gosBF6diwg==
+X-Google-Smtp-Source: AMsMyM7qg/2i5QkK7AtijeQ9c5/J9SbLD38n65mxcQcdiryVkttLrlIpdZok1V/PQcQekw6KD8lc1g==
+X-Received: by 2002:ac8:5981:0:b0:39c:e03e:86ed with SMTP id e1-20020ac85981000000b0039ce03e86edmr43673054qte.503.1666905535643;
+        Thu, 27 Oct 2022 14:18:55 -0700 (PDT)
+Received: from [192.168.1.11] ([64.57.193.93])
+        by smtp.gmail.com with ESMTPSA id j8-20020a05620a288800b006fa00941e9dsm995562qkp.136.2022.10.27.14.18.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Oct 2022 14:18:55 -0700 (PDT)
+Message-ID: <4579404d-b3f7-8342-6704-2644f5cd489d@linaro.org>
+Date:   Thu, 27 Oct 2022 17:18:53 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="de3xodq7j52epw7e"
-Content-Disposition: inline
-In-Reply-To: <04d2c7ea-cfb1-b8a3-c1ad-39449a6a1701@nvidia.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH V1 1/2] dt-bindings: PCI: tegra234: Add ECAM support
+Content-Language: en-US
+To:     Vidya Sagar <vidyas@nvidia.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, mperttunen@nvidia.com
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+References: <20221027051214.22003-1-vidyas@nvidia.com>
+ <20221027051214.22003-2-vidyas@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221027051214.22003-2-vidyas@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 27/10/2022 01:12, Vidya Sagar wrote:
+> Add support for ECAM aperture for Tegra234.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  .../devicetree/bindings/pci/nvidia,tegra194-pcie.yaml  | 10 ++++++++--
+>  .../devicetree/bindings/pci/snps,dw-pcie.yaml          |  2 +-
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+> index 75da3e8eecb9..15cc2d2055bb 100644
+> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+> @@ -27,6 +27,7 @@ properties:
+>        - nvidia,tegra234-pcie
+>  
+>    reg:
+> +    minItems: 4
+>      items:
+>        - description: controller's application logic registers
+>        - description: configuration registers
+> @@ -35,13 +36,17 @@ properties:
+>            available for software access.
+>        - description: aperture where the Root Port's own configuration
+>            registers are available.
+> +      - description: aperture to access the configuration space through ECAM.
+> +          This is applicable only for Tegra234.
 
---de3xodq7j52epw7e
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Then restrict it per compatible in allOf
 
-On Thu, Oct 27, 2022 at 04:40:04PM +0100, Jon Hunter wrote:
->=20
-> On 27/10/2022 15:17, Jon Hunter wrote:
->=20
-> ...
->=20
-> > However, I see that I have been focused on the current issue in
-> > front of me and this works. The alternative that I see would be to
-> > stick with the maximum rate permitted ...
-> >=20
-> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> > index 8a33c500f93b..2099ecca4237 100644
-> > --- a/drivers/pwm/pwm-tegra.c
-> > +++ b/drivers/pwm/pwm-tegra.c
-> > @@ -148,12 +148,14 @@ static int tegra_pwm_config(struct pwm_chip *chip,
-> > struct pwm_device *pwm,
-> >  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 required_clk_rate =3D DI=
-V_ROUND_UP_ULL((NSEC_PER_SEC <<
-> > PWM_DUTY_WIDTH),
-> >  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0 period_ns);
-> >=20
-> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 err =3D dev_pm_opp_set_rate=
-(pc->dev, required_clk_rate);
-> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (err < 0)
-> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret=
-urn -EINVAL;
-> > -
-> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 /* Store the new rate for f=
-urther references */
-> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 pc->clk_rate =3D clk_get_ra=
-te(pc->clk);
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (required_clk_rate <=3D =
-clk_round_rate(pc->clk,
-> > required_clk_rate)) {
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 err=
- =3D dev_pm_opp_set_rate(pc->dev,
-> > required_clk_rate);
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if =
-(err < 0)
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0 return -EINVAL;
-> > +
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 /* =
-Store the new rate for further references */
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 pc-=
->clk_rate =3D clk_get_rate(pc->clk);
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 }
-> >  =A0=A0=A0=A0=A0=A0=A0 }
->=20
->=20
-> Thinking about it some more, it is probably simpler and better to ...
->=20
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index 8a33c500f93b..16855f7686db 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -148,6 +148,17 @@ static int tegra_pwm_config(struct pwm_chip *chip, s=
-truct pwm_device *pwm,
->                 required_clk_rate =3D DIV_ROUND_UP_ULL((NSEC_PER_SEC << P=
-WM_DUTY_WIDTH),
->                                                      period_ns);
-> +               /*
-> +                * If the 'required_clk_rate' is greater than the clock r=
-ate
-> +                * that can be provided then we will fail to configure th=
-e PWM,
+>  
 
-This is unclear. clk_round_rate(pc->clk, required_clk_rate) isn't the
-(maximal) rate that can be provided. It's just the rate you get when
-requesting required_clk_rate.
+Best regards,
+Krzysztof
 
-> +                * because the 'rate' calculation below will return 0 and=
- which
-> +                * will cause this function to return -EINVAL. To avoid t=
-his, if
-> +                * the 'required_clk_rate' is greater than the rate retur=
-ned by
-> +                * clk_round_rate(), set the PWM clock to the max frequen=
-cy.
-> +                */
-> +               if (required_clk_rate > clk_round_rate(pc->clk, required_=
-clk_rate))
-> +                       required_clk_rate =3D ULONG_MAX;
-> +
-
-That looks wrong. Assume the clk can implement either
-
-	51 MHz, 102 MHz, 204 MHz or 408 MHz
-
-Say you want at least 52 MHz and clk_round_rate(..., 52000000) =3D
-51000000. Then you want to pick 102 MHz, not 408 MHz, don't you?
-
->                 err =3D dev_pm_opp_set_rate(pc->dev, required_clk_rate);
->                 if (err < 0)
->                         return -EINVAL;
->=20
-> Setting the 'required_clk_rate' to ULONG_MAX will cause the PWM to run
-> at the max clock. For Tegra234, this is 408MHz (assuming the PLLP is the
-> parent).
-
-It's another implicit assumption that using ULONG_MAX configures the
-maximal possible rate ...
-
-I'd write:
-
-	if (required_clk_rate > clk_round_rate(pc->clk, required_clk_rate))
-		/*
-		 * required_clk_rate is a lower bound for the input
-		 * rate; for lower rates there is no value for PWM_SCALE
-		 * that yields a period less than or equal to the
-		 * requested period. So increase required_clk_rate.
-		 *
-		 * Some more talk about the properties of clk that
-		 * motivate that doubling (or whatever you pick) is a
-		 * sane strategy.
-		 */
-		required_clk_rate *=3D 2;
-
-I'd not explain the details about the calculation, someone interested in
-that will/should look at the code anyhow.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---de3xodq7j52epw7e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNarSYACgkQwfwUeK3K
-7AlEpQgAh2g9isTOAlc1ShrSHhrK3Q46nvkn0XZARW8pFXm8FEEKitSBT1FtvEqz
-FM2M2jwuuBFyAaq3/CTBH+QRJoqAEA6qUtBE9t3zeW2lpOdkpZw9kPWT26pBhk3D
-8ZYNToHYG1x3kKqmBbaDxJmRO3nBCSAZ/5JOBFUeKxXZfn78BdYrZ/fn20Ul/ih8
-RtoC2Q7cSzYh85Voehj4Vt9/jRxtgqHnJNzEXoHjibNNKT5d/FyHF34KNH5n5l7L
-aneWm7RcUhZ0m4XWc44PdiiqPMceafrOGlYv5Pdn5trQDIrl5M7qf3GbPXaTVybX
-dZo8Ij0NzgwgTDl3te3g90yJGkZz0Q==
-=Gy7z
------END PGP SIGNATURE-----
-
---de3xodq7j52epw7e--
