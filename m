@@ -2,164 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA55DECAAA1
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Oct 2022 06:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270CEECAAA1
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Oct 2022 07:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbiJ1GGQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Oct 2022 02:06:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44572 "EHLO
+        id S230076AbiJ1HtR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Oct 2022 03:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229636AbiJ1GGP (ORCPT
+        with ESMTP id S229962AbiJ1HtQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 Oct 2022 02:06:15 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31FD91905FA;
-        Thu, 27 Oct 2022 23:06:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EC57FB827D5;
-        Fri, 28 Oct 2022 06:06:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC548C433C1;
-        Fri, 28 Oct 2022 06:06:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1666937170;
-        bh=P/skQmDFlxUGT/JrFGFyc1uOd/GDc3c8F0PKdj3yR14=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KORVJYlSUzHCjf21S5JCPuZ/G/LLquDopKjG5pMXz8EQUsVmkIQMpUFeG9z/Gr/v7
-         rJNPDzYK0ro0QohQZYwYC7+R+DjVdGTAeDzukQSTGDXyg3gvesuPtYHVm7xkbljR9/
-         /j8tuqdbOosyadr7AVXVNTM8Ic5SJLbu1xxQgXC8=
-Date:   Fri, 28 Oct 2022 08:07:03 +0200
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Jim Lin <jilin@nvidia.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Fri, 28 Oct 2022 03:49:16 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E78419ABE7;
+        Fri, 28 Oct 2022 00:49:15 -0700 (PDT)
+Received: from booty.fritz.box (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id E92141C0002;
+        Fri, 28 Oct 2022 07:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1666943353;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=m0oOZ7l6RvS8VTaNyT1SmYC8MhtuXGooOBg79bTfEm4=;
+        b=mdVRAKjAmqXAEtpaIwhfCi/rf7DHOZx/gC3jDRriH1FZY0O/hDmwlu+bQux9smX7b6AUm+
+        gOrFrbQPsVr0f5uwEPDH7ic7XQfK1SOJENmxclMb3XRhSs4Ngtj1ekQxQWp1p+RgjmDZMF
+        t/5t7V9yhHbfKGUViZnGmgQ+WsDvoiUDTswTdvnMSneIY5A9QaKoqIzBCAP0ZMKMDtEI3E
+        Cc66hEsNGMEwu7UHh49EEGNrroWaynC2/B2f+eFiXUrG7rIlEPD8H7lhXILaL4gW52z7O0
+        DDH5V5UoXFxKM3+oR7hryFXUVczlWTBXYAAFX4IsOHyeJBpuvNyZobLh0ik1Vg==
+From:   luca.ceresoli@bootlin.com
+To:     linux-tegra@vger.kernel.org
+Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Petlozu Pravareshwar <petlozup@nvidia.com>,
-        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jui Chang Kuo <jckuo@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] xhci: tegra: USB2 pad power controls
-Message-ID: <Y1txh6keM4AQJDB3@kroah.com>
-References: <20221027133127.27592-1-jilin@nvidia.com>
- <20221027133127.27592-4-jilin@nvidia.com>
- <Y1qO8cN4+kJVk2f5@kroah.com>
- <2e26a4a16122ca9129f02e03600b088f3effae47.camel@nvidia.com>
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] clk: tegra: fix HOST1X clock divider on Tegra20 and Tegra30
+Date:   Fri, 28 Oct 2022 09:48:26 +0200
+Message-Id: <20221028074826.2317640-1-luca.ceresoli@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e26a4a16122ca9129f02e03600b088f3effae47.camel@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Oct 28, 2022 at 03:11:31AM +0000, Jim Lin wrote:
-> On Thu, 2022-10-27 at 16:00 +0200, Greg KH wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Thu, Oct 27, 2022 at 09:31:27PM +0800, Jim Lin wrote:
-> > > Program USB2 pad PD controls during port connect/disconnect, port
-> > > suspend/resume, and test mode, to reduce power consumption on
-> > > disconnect or suspend.
-> > > 
-> > > Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
-> > > Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> > > Signed-off-by: Jim Lin <jilin@nvidia.com>
-> > 
-> > Who is the author here?  These do not seem to be in the correct order
-> > if
-> > you are the author, right?
-> > > This is an old patch. Each time went with some small modification.
-> 
-> 
-> Petlozu is author for local Kernel 3.18
-> 
-> Then JC for local Kernel 4.4
-> Now my turn for Kernel 5.xx
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Then you all need to figure out how to proper document this (hint, read
-the documentation for how to do that...)
+On Tegra20 and Tegra30 the HOST1X clock is a fractional clock divider with
+7 integer bits + 1 decimal bit. This has been verified on both
+documentation and real hardware for Tegra20 an on the documentation I was
+able to find for Tegra30.
 
-> > > ---
-> > > v2: Fix issue that wrong tegra->phys[] may be accessed on tegra124
-> > > v3: No change on copyright
-> > > v4: Remove hcd_to_tegra_xusb() function which is used only once.
-> > > v5: Update .hub_control in tegra_xhci_overrides (xhci-tegra.c)
-> > >     Invoke xhci_hub_control() directly (xhci-tegra.c)
-> > > 
-> > >  drivers/usb/host/xhci-tegra.c | 131
-> > > +++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 130 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-
-> > > tegra.c
-> > > index c8af2cd2216d..f685bb7459ba 100644
-> > > --- a/drivers/usb/host/xhci-tegra.c
-> > > +++ b/drivers/usb/host/xhci-tegra.c
-> > > @@ -189,6 +189,13 @@ struct tegra_xusb_context_soc {
-> > >       } fpci;
-> > >  };
-> > > 
-> > > +enum tegra_xhci_phy_type {
-> > > +     USB3_PHY,
-> > > +     USB2_PHY,
-> > > +     HSIC_PHY,
-> > > +     MAX_PHY_TYPES,
-> > > +};
-> > > +
-> > >  struct tegra_xusb_soc {
-> > >       const char *firmware;
-> > >       const char * const *supply_names;
-> > > @@ -274,6 +281,7 @@ struct tegra_xusb {
-> > > 
-> > >       bool suspended;
-> > >       struct tegra_xusb_context context;
-> > > +     u32 enable_utmi_pad_after_lp0_exit;
-> > 
-> > This is a bitfield, how do we know it will fit in a u32?  What is the
-> > range you are putting in here?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> static void tegra_xhci_program_utmi_power_lp0_exit(struct tegra_xusb
-> *tegra)
-> {
-> 	unsigned int i;
-> 
-> 	for (i = 0; i < tegra->soc->phy_types[USB2_PHY].num; i++) {
-> 		if (!is_host_mode_phy(tegra, USB2_PHY, i))
-> 			continue;
-> 		/* USB2 */
-> 		if (tegra->enable_utmi_pad_after_lp0_exit & BIT(i))
-> :
-> How many bits to be used is based on tegra->soc-
-> >phy_types[USB2_PHY].num which is defined like
-> 
-> static const struct tegra_xusb_phy_type tegra210_phy_types[] = {
-> :
-> 	{ .name = "usb2", .num = 4, },
-> :
-> };
-> 
-> static const struct tegra_xusb_phy_type tegra194_phy_types[] = {
-> :
-> 	{ .name = "usb2", .num = 4, },
-> };
-> , so far at most 4.
-> 
-> Therefore u8 for enable_utmi_pad_after_lp0_exit is long enough.
+However in the kernel code this clock is declared as an integer divider. A
+consequence of this is that requesting 144 MHz for HOST1X which is fed by
+pll_p running at 216 MHz would result in 108 MHz (216 / 2) instead of 144
+MHz (216 / 1.5).
 
-I am sorry, I do not understand.  If you are needing to treat this as a
-bitfield, then properly define it that way so it is obvious what is
-happening.
+Fix by replacing the INT() macro with the MUX() macro which, despite the
+name, defines a fractional divider. The only difference between the two
+macros is the former does not have the TEGRA_DIVIDER_INT flag.
 
-As it is, this is very confusing and I do not understand what is going
-on at all.  What is the relationship to "num" and the bit being set?
-Why set a bit at all?
+Also move the line together with the other MUX*() ones to keep the existing
+file organization.
 
-thanks,
+Fixes: 76ebc134d45d ("clk: tegra: move periph clocks to common file")
+Cc: stable@vger.kernel.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 4dcf7f7cb8a0..806d835ca0d2 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -615,7 +615,6 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
+ 	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
+ 	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
+-	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+ 	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
+ 	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
+ 	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
+@@ -664,6 +663,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	MUX("owr", mux_pllp_pllc_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr_8),
+ 	MUX("nor", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_NOR, 42, 0, tegra_clk_nor),
+ 	MUX("mipi", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_MIPI, 50, TEGRA_PERIPH_ON_APB, tegra_clk_mipi),
++	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+ 	MUX("vi_sensor", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor),
+ 	MUX("vi_sensor", mux_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_9),
+ 	MUX("cilab", mux_pllp_pllc_clkm, CLK_SOURCE_CILAB, 144, 0, tegra_clk_cilab),
+-- 
+2.34.1
+
