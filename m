@@ -2,170 +2,183 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B32F6C38A02
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Oct 2022 14:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB15FA3741
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Oct 2022 14:24:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229531AbiJ1ORQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Oct 2022 10:17:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47272 "EHLO
+        id S229909AbiJ1OYP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Oct 2022 10:24:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbiJ1ORM (ORCPT
+        with ESMTP id S230404AbiJ1OYG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 Oct 2022 10:17:12 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0A01D73EA;
-        Fri, 28 Oct 2022 07:17:11 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id a67so8045455edf.12;
-        Fri, 28 Oct 2022 07:17:11 -0700 (PDT)
+        Fri, 28 Oct 2022 10:24:06 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E233D7F08E;
+        Fri, 28 Oct 2022 07:24:01 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id l11so6923768edb.4;
+        Fri, 28 Oct 2022 07:24:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m3/GkIErCyzssYh0dHI9LFVDVbU/HUlq9/DKH07MncQ=;
-        b=GbEhx6IFXg+Xf9x6uG0h5tHbOXDLTKOPMiGIsyp5BF5gNenpOhdy7F30UCgpdV2w7U
-         g1qQHlSPzF3VEkrTpzHswBGZ7XEofJsrPD+i/FZUior3HH+bLNbxcjIK13g/oD4HVOBI
-         rEvkq2lZPjQ8YTzjy9xleQwvYlJO4zfCItbxv5tYJSyHLJMY2efvyss+clw5AGHeVcr+
-         Y9L0d9gxEPS7z1mjUXLnb8/gM9P8JjMHSESTmJJRB70UVeR099MdfZGCqFnpQpFtQjUU
-         XBrgxA5B2iuD3KZlAGqkcckJ2N0ven6NjatRSuQkIye1L6R086ht7svBjVId3FtLfc6W
-         ddig==
+        bh=1WNx4yfmC2U2E4sOpj8fuWYGqScB4dVY74TwkvhFBpE=;
+        b=BdMcIjkGtdB6QHnO0UqPMIgIbwrcBaBsurYNtLQNWtQdjYYAk0QJ/qtkXsdk3KU4oc
+         D0rYoyX8uo2Hs2p28sgxsY22aOyR76J53s4uRgyYAGwUx9eNhFXRePS0rvuyHiK5vruP
+         X2ZpVWwq8gL4V22UiHsdY1V9f+pXT99i7DYkgtR4LdVwioc4ONSn3YDtKZmuMnjA5gTg
+         4F6qZ9TNIeBQY4uNhZZOQ+vRrAfHipnIMT3XBX/Hu6GqWdVcu00MawmARpPjgXki28lH
+         zDNbjH/hZr4B65wO/QGmTMG2oYd3Rrt56XEbKkicKKoq8QDnnOmiumXfCe1y6gHWNwYZ
+         Ltrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m3/GkIErCyzssYh0dHI9LFVDVbU/HUlq9/DKH07MncQ=;
-        b=kiaLZ2IKU18iKZXRDn1GwWdkl9Y7g2zggj2kJ1LH/7mRG4/WIe8Tw8z2qsdoBKjQnW
-         ZL4Etcd6Pu4tUYJI7/ziMt7IBPHdoGAckcpRuhZ9xaJfHQz0wITUvH8CERYtjmjDAvwV
-         BN8NFZ51fk6Y0aom/Zx3c07qkBnEbj+gLFCYO9fKE00FjLQED2C6KzQ10lDAXGNm4/M+
-         4lefJp7Btz84AmPwZZUkIxig/4OOgp8SbZkJMbA/qFjLI+BPGzeW5r5ZelnT3tBG/5ln
-         vC90Ul7eYKJ0YZ+qTyaEpPEJhDrQHst0mDt1SRU02T1Fz84W1F9A8uQXSDGF4j9x7ucv
-         TL6g==
-X-Gm-Message-State: ACrzQf04EidJRk5tZGEFbyQF2B4uMOZ+dJhS4KHFCT5QvT4AOTQSqr7X
-        7h/1COS2fZaNxYML6ScvQNM=
-X-Google-Smtp-Source: AMsMyM7lJm4/7PiwRFn+PDhbJ/FqhLMhs8uSBaHjk3EZyrns4NYIdWr0UlYQfxwVEHwMoaTkk2a5dg==
-X-Received: by 2002:a50:fe99:0:b0:45c:329a:40f6 with SMTP id d25-20020a50fe99000000b0045c329a40f6mr51286685edt.425.1666966629887;
-        Fri, 28 Oct 2022 07:17:09 -0700 (PDT)
+        bh=1WNx4yfmC2U2E4sOpj8fuWYGqScB4dVY74TwkvhFBpE=;
+        b=pPpW0+5SSVnt0kS6NRk1SwOPw20xh1yeBy8jZqtA8ZcMo6GgR06x0YvRHLYpSGB6pR
+         Hth6/SMK773fEGkwYHZK2QskKWHvPlLwXatvPtP0qP3lnNiPzrxB6YlYpHdIh8kUNo4F
+         OayXRMw5wXnRPC/ckr8lvjf4MzMRuI5bDcfxNUFjcCmX7/q5sNsGwT20u1rVZIwpm4KF
+         gsqTMx3vEPBFtEnAe1LDW2Ln5dcUrIIYLyjRsI/aRKJxwV2WO4Oi0qwwhV6lXpbkUDqK
+         +gxzWqgXd/XvfJPgxnmdM4E5yZBR/NWyvmqJr0aL40bzcc1e/PPgw9zCSXMjhFHUNEmm
+         zAfA==
+X-Gm-Message-State: ACrzQf2q4nKnirRNJQa289I2NUHOxXpNoi1s+4uXuS8tKjvqFF4TOKfb
+        KhTYmqbSr6SgHCWUHUiDgp8ycSnTx3Y=
+X-Google-Smtp-Source: AMsMyM4ik7rZcQCOXBPPYJ3o+aIYHG80fp5tiP5YBP+g26Vh2wZbIWjETpw9Q40LUbXywZdlf8pfLw==
+X-Received: by 2002:a05:6402:90b:b0:45c:16a0:ec1e with SMTP id g11-20020a056402090b00b0045c16a0ec1emr52558047edz.427.1666967040383;
+        Fri, 28 Oct 2022 07:24:00 -0700 (PDT)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id p20-20020a1709060dd400b0077077c62cadsm2225369eji.31.2022.10.28.07.17.08
+        by smtp.gmail.com with ESMTPSA id r19-20020aa7cfd3000000b004611c230bd0sm2794945edy.37.2022.10.28.07.23.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Oct 2022 07:17:09 -0700 (PDT)
-Date:   Fri, 28 Oct 2022 16:17:07 +0200
+        Fri, 28 Oct 2022 07:23:59 -0700 (PDT)
+Date:   Fri, 28 Oct 2022 16:23:57 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: Update console for Jetson Xavier and Orin
-Message-ID: <Y1vkYyuCPoLLCXDO@orome>
-References: <20221028123556.134435-1-jonathanh@nvidia.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 2/2] memory: tegra: Add DLA clients for Tegra234
+Message-ID: <Y1vl/cyDUVFWzz1z@orome>
+References: <20221028123741.134880-1-jonathanh@nvidia.com>
+ <20221028123741.134880-2-jonathanh@nvidia.com>
+ <ce3fdd20-248f-4fdd-fe83-2aa79fd297c5@linaro.org>
+ <073073ae-d921-e11f-8ff4-67f1a61760d0@nvidia.com>
+ <c1465ec3-a903-f1d1-621f-2cbe95ae53e7@linaro.org>
+ <1c22af7f-fa73-6f79-ad12-d460b7c534c8@nvidia.com>
+ <4a4c2b3d-79e5-1f34-a031-77d1d1941000@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fuEfujF2Fen1v13o"
+        protocol="application/pgp-signature"; boundary="SGWPt8G5BjvFgXNp"
 Content-Disposition: inline
-In-Reply-To: <20221028123556.134435-1-jonathanh@nvidia.com>
+In-Reply-To: <4a4c2b3d-79e5-1f34-a031-77d1d1941000@linaro.org>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---fuEfujF2Fen1v13o
+--SGWPt8G5BjvFgXNp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 28, 2022 at 01:35:56PM +0100, Jon Hunter wrote:
-> The Tegra Combined UART (TCU) is the default serial interface for Jetson
-> Xavier and Orin platforms and so update the bootargs for these platforms
-> to use the TCU.
+On Fri, Oct 28, 2022 at 09:07:28AM -0400, Krzysztof Kozlowski wrote:
+> On 28/10/2022 09:05, Jon Hunter wrote:
+> >=20
+> > On 28/10/2022 13:52, Krzysztof Kozlowski wrote:
+> >> On 28/10/2022 08:51, Jon Hunter wrote:
+> >>>
+> >>> On 28/10/2022 13:46, Krzysztof Kozlowski wrote:
+> >>>> On 28/10/2022 08:37, Jon Hunter wrote:
+> >>>>> Add the memory clients on Tegra234 which are needed for initialisin=
+g the
+> >>>>> SMMU for the Deep Learning Accelerator (DLA).
+> >>>>>
+> >>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >>>>> ---
+> >>>>>    drivers/memory/tegra/tegra234.c | 160 ++++++++++++++++++++++++++=
+++++++
+> >>>>>    1 file changed, 160 insertions(+)
+> >>>>>
+> >>>>> diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra=
+/tegra234.c
+> >>>>> index a9e8fd99730f..9bdaf8af8c97 100644
+> >>>>> --- a/drivers/memory/tegra/tegra234.c
+> >>>>> +++ b/drivers/memory/tegra/tegra234.c
+> >>>>> @@ -170,6 +170,166 @@ static const struct tegra_mc_client tegra234_=
+mc_clients[] =3D {
+> >>>>>    				.security =3D 0x504,
+> >>>>>    			},
+> >>>>>    		},
+> >>>>> +	}, {
+> >>>>> +		.id =3D TEGRA234_MEMORY_CLIENT_DLA0RDA,
+> >>>>> +		.name =3D "dla0rda",
+> >>>>> +		.sid =3D TEGRA234_SID_NVDLA0,
+> >>>>
+> >>>> This is now not applicable because you sent dependencies separate, m=
+ixed
+> >>>> with other subsystems... Split pieces based on subsystems.
+> >>>
+> >>> Sorry I don't understand. This patch is dependent upon the first. I h=
+ave
+> >>> not sent anything separate.
+> >>
+> >> You sent mixed between subsystems patches adding TEGRA234_SID_NVDLA0.
+> >> That one should have been sent separate so maintainers can pick it up.
+> >=20
+> > The original patch [0] I sent had no dependencies and so Thierry picked=
+=20
+> > this up. However, when adding patch 2/2 here, I noticed a typo in the=
+=20
+> > definition for TEGRA234_MEMORY_CLIENT_DLA0WRB so thought I would fix=20
+> > this up while I am at it.
+> >=20
+> >> Now, it's not possible for me to pick this patch.
+> >=20
+> > Yes now you cannot simply pick this up. We have had similar problems=20
+> > before. I am not sure if it is easiest for Thierry to pick these up.
+> >=20
 >=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi                | 2 +-
->  arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi                | 2 +-
->  arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+> And there is simple solution as I said - split the patches per
+> subsystem. Why the dependency was combining multiple subsystems into one?
 
-I'm a little confused now. You're certainly right that the TCU is the
-serial interface, but then why haven't we seen any fallout from this?
-That is, why does console=3DttyS0,115200n8 still work just fine?
+Splitting per subsystem doesn't really work in this case. The main
+problem is that the dt-bindings headers are used by multiple subsystems,
+and the content is not generated in a git-friendly way. So even if we
+were to split things up, at some point there would be conflicts between
+the various branches that these changes end up in.
 
-Looking a little more into stdout-path (which we already point to the
-TCU), that ends up adding TCU as the preferred console already. So I
-wonder if we really need to set the console here at all.
+The easiest solution for this is to simply take this through a single
+tree. Normally this wouldn't be a problem because the symbols defined in
+these headers are only used in device trees. However, for the memory
+clients it is slightly complicated by the fact that the memory
+controller driver also needs access to these symbols, so it creates an
+interdependency between the dt-bindings, DT and memory controller
+branches.
 
-Do you see any difference in behavior after this patch? Does it fix
-anything? Could you perhaps try to remove this option altogether and see
-if that makes a difference?
+One of the reasons why Jon originally sent the larger patch, adding all
+the missing IDs in one go, was precisely so we could avoid this hassle
+in the future.
 
 Thierry
 
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra194-p2888.dtsi
-> index 3837ebc67c8e..ccdb32c67861 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> @@ -23,7 +23,7 @@ aliases {
->  	};
-> =20
->  	chosen {
-> -		bootargs =3D "console=3DttyS0,115200n8";
-> +		bootargs =3D "console=3DttyTCU0,115200n8";
->  		stdout-path =3D "serial0:115200n8";
->  	};
-> =20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra194-p3668.dtsi
-> index 916ea3419ee5..f147324d72f3 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
-> @@ -20,7 +20,7 @@ aliases {
->  	};
-> =20
->  	chosen {
-> -		bootargs =3D "console=3DttyS0,115200n8";
-> +		bootargs =3D "console=3DttyTCU0,115200n8";
->  		stdout-path =3D "serial0:115200n8";
->  	};
-> =20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dt=
-s b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-> index df703fb0cfff..96aa2267b06d 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-> @@ -2025,7 +2025,7 @@ hda@3510000 {
->  	};
-> =20
->  	chosen {
-> -		bootargs =3D "console=3DttyS0,115200n8";
-> +		bootargs =3D "console=3DttyTCU0,115200n8";
->  		stdout-path =3D "serial0:115200n8";
->  	};
-> =20
-> --=20
-> 2.25.1
->=20
-
---fuEfujF2Fen1v13o
+--SGWPt8G5BjvFgXNp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNb5GMACgkQ3SOs138+
-s6FT8Q/9FRGiLl3za9jRfzpxJYQ0zfSvxZKi8+V24dlEff/iTGllZlIaSOJ60njE
-+sIbUMlSYWrsNdD7IItW2qwsfdePshtEWyXPvWCe3IsES5UEtXdNASXrbaK3aCq6
-DJcOx3AWptP3VgntdljEkcDNbEnyewtdwtVamXZ35leDPfOfor7aHZP/89LdROKf
-R8IXLsl2u7CvkrEVXKnh9zLVLTECWcPct50s6kGNXDKqhhGWaFXyAZfNtjHbVFee
-1IvhbRLCxr4x3TSpPiHAjqktMX4gj63r3BqmWQIZWe8ZlcuK/IpIi11nnwTEzfb0
-nsdYCAqCgiyaWE3XMnwc93NoSu+9JXifFX08o5iyiHiwR8ZyYkBeGDrmrsIva3Oy
-A9QiWX0J1trgl5rkY30sR5Omi84LqhvP4KmaDzLF+QTQzdovO8yG3OvsdMbCuowu
-sMLEjx2HDyHUpt0rLIk14VSzPXB3W98WyeM8RwUU71ash9aRMLwzHdnuE9dBFT9k
-DD68OqBI8Uu1R3YYZZgsntMGlkcz8ae35FnAaYv+o51bnEykmxXcyjynVFZ8bzOo
-wLFeImgiCsyI2KMd0GN+mMtvZ6SlkzbR5rQLEGV2zAUJFWwLUpxz4MOH2XFwXfqx
-KLGdwtoOO8pppkgAWDHLeP3yKbbq0jDH/6iN3o9Lx1Lpfska2Lo=
-=Szkj
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNb5f0ACgkQ3SOs138+
+s6F97Q//TI/SluqHTnhnTLlvEv5LTZ2qz+g4U/DR8qX2ixpoYjQohofq08SkRmAm
+MwWRXqFsr6aB/CKUFtW2XoMJEKnRQUkBQHHTapTCp9WsN7w8LjjVjbBNr/EbZ9wA
+p6ZZr4/i2JkjlLD0IdqIX3py9aWZcNO1ek7td56o+tONtKwQU5I5EoJ7hvuPaCTc
+UQ/jzVrmFYK+1jeaicrdKdd/GADap1+BVoG48WBmxFTYv/nSl3WQAzJdirCh8DBP
+bzHVaG5cDOf8QxvX7czdEjACVqfEY5v9k7wb6bHQckdDq2kNWSC33gcEps2FO3Ke
+9HTp1nuUPZRBttrXOo+RNS5ckRirBKUaaQnVplT/fL35ebTKR1CQ5cogbcc3as7t
+EyPkldde+Ic8nu8y15+d2OBjjy4VHga7o/vWHLmYUiVEck29wO4kyPYMH9ZsDW40
+yjNs3hDs9++ICpDKnbmK0Veu3LWuJSAgL/rZpaL6RQJvNd1Y/5RlljLqlO8blYzo
++6J2MS+yoai5XZwkjF1EVeZMDyMBb83UXnbHCAymgYGHUX6otzIhom1azZmW7tOg
+3JgPmt4SatRwb9dJHN+244fRggp/JL6Wga1o+TP7zGFBbBIXb3hNNL6UOVgOPe6a
+irlq6UIIS/Tk739d9KhvwR1FhNeBpsQIW5Ey0hfZ9J6sTCbyaC0=
+=SPDS
 -----END PGP SIGNATURE-----
 
---fuEfujF2Fen1v13o--
+--SGWPt8G5BjvFgXNp--
