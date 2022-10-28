@@ -2,49 +2,50 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270CEECAAA1
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Oct 2022 07:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A02FFA3743
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Oct 2022 08:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbiJ1HtR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Oct 2022 03:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
+        id S229885AbiJ1ITt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Oct 2022 04:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbiJ1HtQ (ORCPT
+        with ESMTP id S229456AbiJ1ITs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 Oct 2022 03:49:16 -0400
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E78419ABE7;
-        Fri, 28 Oct 2022 00:49:15 -0700 (PDT)
+        Fri, 28 Oct 2022 04:19:48 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF92E101EA;
+        Fri, 28 Oct 2022 01:19:45 -0700 (PDT)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id E92141C0002;
-        Fri, 28 Oct 2022 07:49:11 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 150001BF205;
+        Fri, 28 Oct 2022 08:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1666943353;
+        t=1666945183;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
-        bh=m0oOZ7l6RvS8VTaNyT1SmYC8MhtuXGooOBg79bTfEm4=;
-        b=mdVRAKjAmqXAEtpaIwhfCi/rf7DHOZx/gC3jDRriH1FZY0O/hDmwlu+bQux9smX7b6AUm+
-        gOrFrbQPsVr0f5uwEPDH7ic7XQfK1SOJENmxclMb3XRhSs4Ngtj1ekQxQWp1p+RgjmDZMF
-        t/5t7V9yhHbfKGUViZnGmgQ+WsDvoiUDTswTdvnMSneIY5A9QaKoqIzBCAP0ZMKMDtEI3E
-        Cc66hEsNGMEwu7UHh49EEGNrroWaynC2/B2f+eFiXUrG7rIlEPD8H7lhXILaL4gW52z7O0
-        DDH5V5UoXFxKM3+oR7hryFXUVczlWTBXYAAFX4IsOHyeJBpuvNyZobLh0ik1Vg==
+        bh=vqicJIpaIUCqnWaaaf6uDqbeDvMy142ZJ+vF7cMzObg=;
+        b=bkKIitouTwGX+kxNBk+gZ1C/8NirLVohgyvNA9v481ufDHZiyykNv8jQ58K6hcQ51bJvbY
+        3OHdlEBwpIcPRdjrBnyMJMUrQjx5M40EJ9MYv+pV0cnBQKEAOrsK64BDE+428sxZpcUIYQ
+        JPt2PgbhHuZSuCnbBtHSDotME8E0JtTBMWXCggE3M1kS4AL6cpMKmccV+F4hBRiHcFNhfC
+        /J89pj8ugT6GSoSmnRrA9QGyYcM76IbCMaMqngzExsY1UX4i0q0E0cgvQM+NYyQ2ssOxWR
+        FI3nHWQUgHDxi8bzHsvF834UmiDzMf5tZzlCDb0WXFmVqMw5mcHc1WQiTe6nJA==
 From:   luca.ceresoli@bootlin.com
-To:     linux-tegra@vger.kernel.org
-Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] clk: tegra: fix HOST1X clock divider on Tegra20 and Tegra30
-Date:   Fri, 28 Oct 2022 09:48:26 +0200
-Message-Id: <20221028074826.2317640-1-luca.ceresoli@bootlin.com>
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: media: tegra-video: fix device_node use after free
+Date:   Fri, 28 Oct 2022 10:19:26 +0200
+Message-Id: <20221028081926.2320663-1-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,51 +55,55 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-On Tegra20 and Tegra30 the HOST1X clock is a fractional clock divider with
-7 integer bits + 1 decimal bit. This has been verified on both
-documentation and real hardware for Tegra20 an on the documentation I was
-able to find for Tegra30.
+At probe time this code path is followed:
 
-However in the kernel code this clock is declared as an integer divider. A
-consequence of this is that requesting 144 MHz for HOST1X which is fed by
-pll_p running at 216 MHz would result in 108 MHz (216 / 2) instead of 144
-MHz (216 / 1.5).
+ * tegra_csi_init
+   * tegra_csi_channels_alloc
+     * for_each_child_of_node(node, channel) -- iterates over channels
+       * automatically gets 'channel'
+         * tegra_csi_channel_alloc()
+           * saves into chan->of_node a pointer to the channel OF node
+       * automatically gets and puts 'channel'
+       * now the node saved in chan->of_node has refcount 0, can disappear
+   * tegra_csi_channels_init
+     * iterates over channels
+       * tegra_csi_channel_init -- uses chan->of_node
 
-Fix by replacing the INT() macro with the MUX() macro which, despite the
-name, defines a fractional divider. The only difference between the two
-macros is the former does not have the TEGRA_DIVIDER_INT flag.
+After that, chan->of_node keeps storing the node until the device is
+removed.
 
-Also move the line together with the other MUX*() ones to keep the existing
-file organization.
+of_node_get() the node and of_node_put() it during teardown to avoid any
+risk.
 
-Fixes: 76ebc134d45d ("clk: tegra: move periph clocks to common file")
+Fixes: 1ebaeb09830f ("media: tegra-video: Add support for external sensor capture")
 Cc: stable@vger.kernel.org
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/tegra-video/csi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 4dcf7f7cb8a0..806d835ca0d2 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -615,7 +615,6 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
- 	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
- 	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
--	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
- 	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
- 	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
- 	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
-@@ -664,6 +663,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	MUX("owr", mux_pllp_pllc_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr_8),
- 	MUX("nor", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_NOR, 42, 0, tegra_clk_nor),
- 	MUX("mipi", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_MIPI, 50, TEGRA_PERIPH_ON_APB, tegra_clk_mipi),
-+	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
- 	MUX("vi_sensor", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor),
- 	MUX("vi_sensor", mux_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_9),
- 	MUX("cilab", mux_pllp_pllc_clkm, CLK_SOURCE_CILAB, 144, 0, tegra_clk_cilab),
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index b26e44adb2be..1b05f620b476 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -433,7 +433,7 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
+ 	for (i = 0; i < chan->numgangports; i++)
+ 		chan->csi_port_nums[i] = port_num + i * CSI_PORTS_PER_BRICK;
+ 
+-	chan->of_node = node;
++	chan->of_node = of_node_get(node);
+ 	chan->numpads = num_pads;
+ 	if (num_pads & 0x2) {
+ 		chan->pads[0].flags = MEDIA_PAD_FL_SINK;
+@@ -640,6 +640,7 @@ static void tegra_csi_channels_cleanup(struct tegra_csi *csi)
+ 			media_entity_cleanup(&subdev->entity);
+ 		}
+ 
++		of_node_put(chan->of_node);
+ 		list_del(&chan->list);
+ 		kfree(chan);
+ 	}
 -- 
 2.34.1
 
