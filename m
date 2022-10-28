@@ -2,109 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8424DFA3743
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Oct 2022 21:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADACECAAA1
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Oct 2022 01:06:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235686AbiJ0VTJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Oct 2022 17:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35124 "EHLO
+        id S235081AbiJ1BGi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Oct 2022 21:06:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236502AbiJ0VS7 (ORCPT
+        with ESMTP id S229902AbiJ1BGh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Oct 2022 17:18:59 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E314F67D
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Oct 2022 14:18:57 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id c23so2255420qtw.8
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Oct 2022 14:18:57 -0700 (PDT)
+        Thu, 27 Oct 2022 21:06:37 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C48372281;
+        Thu, 27 Oct 2022 18:06:36 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id b5so3456272pgb.6;
+        Thu, 27 Oct 2022 18:06:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AyXBa6ykDLTrVOwX6VHEAyki/oYnov9OaiYlYqb8IuQ=;
-        b=pLbMqe+4UWVeCU6n0FJ9i9jlJOD+Bls99Si1E7DHDiqf8j6gvU35pTzDYLXp8xZdjh
-         3BNJIBTjmye5HlRMm7uIgkTr10aZXEA3bs0huAZsaaz0zEfSAojDNueGwBjEcNS73hqh
-         w5z8oSi0fbd6X9qnI2zf7lVucqm/pVOv31sSEDnnCDs7mrqfnpL9aBIscV1mK1DdhAU2
-         oWPkP/zMnYDP6gdWqD7zVIx8x10RrKXhv1jpMeVfMJO9Lw5A+97RRbgcqvEDZElleWkC
-         QZ15KeBuVnIi67gAneE/CfvS90cXMmZWVISethneoUojTxBQ9h0lipW1xl4B6IJIba50
-         0Q1w==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eouvp87d3Uwj62ptbIwj2FltIDQrDKmm7rl+pdi32U0=;
+        b=nQ7weogHhMIC9v9rAl3TVZ1zfLs3IGvA3QKHPCFBZ+KojUNUj5TChT+OvOY12ityd8
+         VbE20EYGCMWZidXQ0mA4iREKWBtYaSnvAUNEf/MGSFONDmzlPI+MR4CrUM9ksmAsrDKt
+         cj+aWdebIPLIeH6IbKuwGrCytZHTwYkz2OUKYh4KijicqkVXtFp7vt0bi0LKmFm6i4xU
+         q4LDtjxwFqoNAonlD9dnY2gWjZ01CSB3ruJJV2hDr7cYI/uKy5RyQ+vTowUxUWeVa6zy
+         zJdma15Tr6xjC12xRbPs+cXXQMqUWSrtgiCQqqToh1CNrevC/C1rFj6Z+ww6/oTseywE
+         yduw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyXBa6ykDLTrVOwX6VHEAyki/oYnov9OaiYlYqb8IuQ=;
-        b=w3MIF2WA9/nNfYwJRNb/bN9gQ1M2gVtiF+BhIZ31s2fc1webpCjaTROtizym0hwLRd
-         PzuIWDOnbZPkRyAPR7h1DHDy/qXBDLvkeAvkLWwZ5x8RFtj5oA/dbCr1yoXOXKtn5UHA
-         hcQjzFBAM1bQTIyIO1oT83PeNAB0eUNoe0XYrnYv/cfyf8Im7x+ySY1673e/tCl5zela
-         1tcLvDK+WFvyWziuejGGJ4knx47SpZCcQzLTv8wpGlQ66R1Xt+TXRJWpBpQopn9Hvw9Z
-         wBpnmzEQFI5LSiqL9v0skxoEBU5eU9K69Oml0JWBnuV1C0T024mRv3ip8R58QOB/QRVr
-         9+kg==
-X-Gm-Message-State: ACrzQf0ND8MTQEO3uvDjU7HwwO5SsZUsiaR/YaxLYVjT5voZhg4Q3nFQ
-        NGweleceS68Ay0v3gosBF6diwg==
-X-Google-Smtp-Source: AMsMyM7qg/2i5QkK7AtijeQ9c5/J9SbLD38n65mxcQcdiryVkttLrlIpdZok1V/PQcQekw6KD8lc1g==
-X-Received: by 2002:ac8:5981:0:b0:39c:e03e:86ed with SMTP id e1-20020ac85981000000b0039ce03e86edmr43673054qte.503.1666905535643;
-        Thu, 27 Oct 2022 14:18:55 -0700 (PDT)
-Received: from [192.168.1.11] ([64.57.193.93])
-        by smtp.gmail.com with ESMTPSA id j8-20020a05620a288800b006fa00941e9dsm995562qkp.136.2022.10.27.14.18.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Oct 2022 14:18:55 -0700 (PDT)
-Message-ID: <4579404d-b3f7-8342-6704-2644f5cd489d@linaro.org>
-Date:   Thu, 27 Oct 2022 17:18:53 -0400
+        bh=eouvp87d3Uwj62ptbIwj2FltIDQrDKmm7rl+pdi32U0=;
+        b=YJCxjLtFm7y0sEMXbj1eKbX0QlUiXPUngQaAwdCZjhQIzdtbY3aP5QegzsWUN42Wkh
+         0ZEUC0kS0Pf3GYX7vsgB9mz+ayamk/3s5CCGUcDq2Sev3f1sO6Ypqj1ijns1k6DlXNIV
+         ZfGIOK0Bev2YqbHa0133Ags3wYn0jIy1w/wiN49AIqHjcFF34GRBKNt7UUwTArLtbxm7
+         PtqrLHy4fiYgwXTXsaJDA8IiyAqASOCnwOVJXOjhrF+qPgBN4KmEMenBemDCbS6zCUgk
+         tH1zG0cX9ysOHnTEGOyf0NJyr+FyYqV6hRpKYIkWvKPq2iPQ3B0kE5QMCY5xDc5MCiIR
+         RYVw==
+X-Gm-Message-State: ACrzQf2Q7nlWqBWzVMjsinkftkikMq/bES8E2NpaVSH1YUoVrLwSNvV0
+        AlOSiddJ6BFtUnfuW33d+OY=
+X-Google-Smtp-Source: AMsMyM71t2M2+k7329f4iPqjn+WDD27m67jwDQ968XupuMJUSxT0+/ISWLqKZwmQAQWuSE8GPvBuVA==
+X-Received: by 2002:a63:1917:0:b0:43c:1471:52b7 with SMTP id z23-20020a631917000000b0043c147152b7mr43836410pgl.522.1666919195743;
+        Thu, 27 Oct 2022 18:06:35 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:ea9a:801b:ed52:2db1])
+        by smtp.gmail.com with ESMTPSA id u19-20020a170902e21300b0017f57787a4asm1747996plb.229.2022.10.27.18.06.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Oct 2022 18:06:35 -0700 (PDT)
+Date:   Thu, 27 Oct 2022 18:06:30 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc:     Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: (subset) [PATCH v1 00/11] Get rid of
+ [devm_]gpiod_get_from_of_node() public APIs
+Message-ID: <Y1srFi6mJGl5/3gi@google.com>
+References: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
+ <166687787352.847482.10005684512699510391.b4-ty@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH V1 1/2] dt-bindings: PCI: tegra234: Add ECAM support
-Content-Language: en-US
-To:     Vidya Sagar <vidyas@nvidia.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, mperttunen@nvidia.com
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-References: <20221027051214.22003-1-vidyas@nvidia.com>
- <20221027051214.22003-2-vidyas@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221027051214.22003-2-vidyas@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <166687787352.847482.10005684512699510391.b4-ty@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27/10/2022 01:12, Vidya Sagar wrote:
-> Add support for ECAM aperture for Tegra234.
+Hi Lorenzo,
+
+On Thu, Oct 27, 2022 at 03:38:11PM +0200, Lorenzo Pieralisi wrote:
+> On Sun, 4 Sep 2022 23:30:52 -0700, Dmitry Torokhov wrote:
+> > I would like to stop exporting OF-specific [devm_]gpiod_get_from_of_node()
+> > so that gpiolib can be cleaned a bit. We can do that by switching drivers
+> > to use generic fwnode API ([devm_]fwnode_gpiod_get()). By doing so we open
+> > the door to augmenting device tree and ACPI information through secondary
+> > software properties (once we teach gpiolib how to handle those).
+> > 
+> > I hope that relevant maintainers will take patches through their trees and
+> > then we could merge the last one some time after -rc1.
+> > 
+> > [...]
 > 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
->  .../devicetree/bindings/pci/nvidia,tegra194-pcie.yaml  | 10 ++++++++--
->  .../devicetree/bindings/pci/snps,dw-pcie.yaml          |  2 +-
->  2 files changed, 9 insertions(+), 3 deletions(-)
+> Applied to pci/tegra, thanks!
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
-> index 75da3e8eecb9..15cc2d2055bb 100644
-> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
-> @@ -27,6 +27,7 @@ properties:
->        - nvidia,tegra234-pcie
->  
->    reg:
-> +    minItems: 4
->      items:
->        - description: controller's application logic registers
->        - description: configuration registers
-> @@ -35,13 +36,17 @@ properties:
->            available for software access.
->        - description: aperture where the Root Port's own configuration
->            registers are available.
-> +      - description: aperture to access the configuration space through ECAM.
-> +          This is applicable only for Tegra234.
+> [01/11] PCI: tegra: switch to using devm_fwnode_gpiod_get
+>         https://git.kernel.org/lpieralisi/pci/c/16e3f4077965
 
-Then restrict it per compatible in allOf
+Any chance you could also pick up
 
->  
+ [06/11] PCI: aardvark: switch to using devm_gpiod_get_optional()
+ (20220903-gpiod_get_from_of_node-remove-v1-6-b29adfb27a6c@gmail.com)
 
-Best regards,
-Krzysztof
+ - Pali Rohár has acked it.
 
+Thanks!
+
+-- 
+Dmitry
