@@ -2,139 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540BDC38A02
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Oct 2022 11:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9A7C38A02
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Oct 2022 12:00:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbiJaLFf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Oct 2022 07:05:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
+        id S230462AbiJaMAN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Oct 2022 08:00:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229929AbiJaLFd (ORCPT
+        with ESMTP id S230492AbiJaMAB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Oct 2022 07:05:33 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2064.outbound.protection.outlook.com [40.107.94.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E1762CF;
-        Mon, 31 Oct 2022 04:05:32 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cmmS8xHzA2ipVshtO73/h2o5RPrkrzFUz50fRJYSrhunOOLqoOcJKXMTuVmQl32VE6ec0NZOxF7Uc1MxNHufNDDP2bia+7pF1gyn95l62mybyQf42XlfdDSHARERYBa//q+3YGKjSWoUN6NF2dnvUnlatd5ObXtTUqdblqj7Rb66HIvStT5kPzEcU5wfRMIFs3wPPC7AleQMUUJhsuyyr85ZUirVpBAzeMiENN9eg5WmrjwHKZ/cBPSQy5cWPGWbq2Bd13moiyby4r3xx7l68NWTkB6i7E952QbOxjiev9xCvOIx1g18vEA9aplwIWglrQdcLK+b8nAUm+WJKgPw4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ro8BsbNfQVKLwD3jvInbu2ehLbRtODRKvo4jjYeqOuo=;
- b=jh3x/2hjbvR2HfGYhBp+pJNrNb+SkGrlOSZj3QIq3UzwnrahEcKCxdkAp3p/ZoqWvx6AaGRLi26a6hRg7XoOlHfoUIgws7cA286hP0Ap9DS2/z00oBJAWS1I6DFVgeUcbOxr6NTCFZvU/Va3gtfA/zGZRnMfEH8EMcE/O1MK86M3yMwzH11UINEf9peLMCufxxvjyR7d8wznRpZqXGiOSCoHR4O3/SfStHH2kEIeS3CI8VvL9ZHULNhoNxpvptJ9oya0v0iVbrub5BTZ2VzWfRxQl7xdiWi0iFmCxCK4va5mWUS1QmMvLzW0PJZkvp+hu5z6xpO3sFe8oUDf79/A/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ro8BsbNfQVKLwD3jvInbu2ehLbRtODRKvo4jjYeqOuo=;
- b=eRXWa6uIdYhMOk5xhTAb+dmvVLM5vXBXUfegy4N4IoekFO/e/+/304kRurhPGvPDBeppaYkGe3vo+ymldZuCpV2hgreWAI9f3Fz6e3lpM++nlLEqyvHEioflVWaAUYjif4OiWjAqFOSDG40u90SJXlW/41gl9NTWpLx6E0fWJpIJU3RLR0AnG1AvYB4909iKudnVfbZKKyCayI4ftqQWBgERIvg2c7YeZSlZkncyg+I8gsVSSiDDLnMPwCkNnOw/Ohn4wrsRbY3fQpiYuzr+n+XuL/IG4kmEXH4ECQTNBKSEHAr9lYDbVFKiSqEPf2CV7b99or303VB8pRdACHF/UA==
-Received: from BN0PR04CA0047.namprd04.prod.outlook.com (2603:10b6:408:e8::22)
- by DS0PR12MB7584.namprd12.prod.outlook.com (2603:10b6:8:13b::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.23; Mon, 31 Oct
- 2022 11:05:29 +0000
-Received: from BN8NAM11FT062.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e8:cafe::b0) by BN0PR04CA0047.outlook.office365.com
- (2603:10b6:408:e8::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.19 via Frontend
- Transport; Mon, 31 Oct 2022 11:05:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT062.mail.protection.outlook.com (10.13.177.34) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5769.14 via Frontend Transport; Mon, 31 Oct 2022 11:05:29 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 31 Oct
- 2022 04:05:20 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 31 Oct
- 2022 04:05:19 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29 via Frontend
- Transport; Mon, 31 Oct 2022 04:05:19 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.14 00/34] 4.14.297-rc1 review
-In-Reply-To: <20221031070140.108124105@linuxfoundation.org>
-References: <20221031070140.108124105@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 31 Oct 2022 08:00:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08AF21102
+        for <linux-tegra@vger.kernel.org>; Mon, 31 Oct 2022 04:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667217533;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NYUZwRg+lRYohe3+hrEekpmCQsb4LiBLuZ4BzJljYVc=;
+        b=fMoK+kHtzzY7KjOTM9AC/N3CzTwZETMX5FM/XwMkPqq9s6gvRElNeQi+gj+wilgENLP2t1
+        +drY1QYH/1fMmV1kxZOJlaa+tPjNk/bebIdnwv5CWbTanFRUL1jGraLSKdF410FWAesppt
+        7J6pL7+1IhzC1m/F70sk3IAfyCsYKa4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-313-hT2nui8uNdWLIa1qKnB-lg-1; Mon, 31 Oct 2022 07:58:52 -0400
+X-MC-Unique: hT2nui8uNdWLIa1qKnB-lg-1
+Received: by mail-wr1-f70.google.com with SMTP id u13-20020adfa18d000000b00236566b5b40so2974413wru.9
+        for <linux-tegra@vger.kernel.org>; Mon, 31 Oct 2022 04:58:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NYUZwRg+lRYohe3+hrEekpmCQsb4LiBLuZ4BzJljYVc=;
+        b=3jffYufpFxcViPTrc0J7QPv5fJa46l1RgMdQjTlaY6ioERvdS3txGYabNEZuY/x60b
+         Slas3uI2fhmcwXa/QLsofoO4fw51LZpMZtJiiolIurLjRnVAhDnwFKszFQFAao97rN2z
+         yn1z7V5Ery/gKi2G5Do5pU3LRmCOqecbwuJeK/jVqKqcYQJznEVeqdXzzK0wsTnt6cIY
+         dr83SgpWId88WTwOd4r888wEgZ7jBnJfQwZtuPDGA9UvlXHF6B6DT+Slb2bT0bfHYDMe
+         PEv2v/TW4biIHesUz0NNrEU0h/uCLkYVD9cWG+f9WsLOqQ0vjlL/5DFo9BPQrtafmM1i
+         yyDw==
+X-Gm-Message-State: ACrzQf2zPW1mdzNfJ+k/RJGKK0ilppwe2s8zuVvivLrsgli3aLFsMWNE
+        li9hWmJEt+r9Aqq4bfVYrEAhbX4Pggc95drA3IPDhkt8jkY6kIDULRkHp0op69Liiopp7pX03CC
+        bwEMAqVXBVg3kDa9HxTwp/mg=
+X-Received: by 2002:adf:ee46:0:b0:236:57e4:60d9 with SMTP id w6-20020adfee46000000b0023657e460d9mr7712410wro.208.1667217531292;
+        Mon, 31 Oct 2022 04:58:51 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM5NlG/EcNgth7sygR/Y2wmF3YkVg5o1INpxQYpcg5X49eIhA0omsq50HY00GhqtS98H3T4hUQ==
+X-Received: by 2002:adf:ee46:0:b0:236:57e4:60d9 with SMTP id w6-20020adfee46000000b0023657e460d9mr7712386wro.208.1667217531117;
+        Mon, 31 Oct 2022 04:58:51 -0700 (PDT)
+Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id cc14-20020a5d5c0e000000b00228d67db06esm7103664wrb.21.2022.10.31.04.58.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Oct 2022 04:58:50 -0700 (PDT)
+Message-ID: <365e1467-7dc2-42b4-b985-53323741dea8@redhat.com>
+Date:   Mon, 31 Oct 2022 12:58:48 +0100
 MIME-Version: 1.0
-Message-ID: <b410c84e-61dc-4d04-8a90-b522097517f4@rnnvmail204.nvidia.com>
-Date:   Mon, 31 Oct 2022 04:05:19 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT062:EE_|DS0PR12MB7584:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42eacc0e-f5ae-4128-cb29-08dabb2fd26b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IH9Ak9fBy/wk2DfLj2PMvRcteLDEI3rmCSSfZUAUoyMe33l7pCnDVmegrHhzpvJiHc3ZKi6LFfxqk3QkwBtCuPXz1rLDHgs2syN8ciRchbFiII/J/t/FKiLdeKN3/0uxIzRGCPyiIVLuaZ8QRG6od0Taz1j0vkCGtkVG+LtSuoMHZK5ZncGzHfPx4sg6GECk2Y+f14W5taT7Q1VdgLlLT7biEaweGmR9f4KXO93TeFRS/8zWoyyXFiGq/x0RAqlql+K21utykTE6nGoEacsqBKGY4Q9o4hBvVaQFqBce1XFshtuyJF46TVVhPX2xmaRb4zXVnA5cZTCkJf9arXKYuFzlQPWvcGUr5zvd73bATnaMS89wNpY8fMPwE1hVQiBI5XMlMUBqqmaWlaLN1+HJbEUc3QiUK+uD9glCiZy1nrzD50vTi0G3kCsC4qaUwB57sFiQb+hsaffhfbNG3NOb0p17clLOkePZ67JOfT9BsIUvg2NAi2FUROR5cnqmGpLx+zABR7sFGEM2WU3VCdz1fqHTW736FjVG5sKFP0FXbSG6XzCAtLXBOdiyEQYpLSt/47n/r4qbGH+1I6ZRMwRtOBmZYqWn8TZtxJzOwj/QNOdx+EQwPQWKt/jFVJ8vpcNDxzLLJRzI0BK8HDXxkR+Nw/ccqSe2DEpFfDntczTfLfbxVB1kpmMT2VKchqqVZ3ikBmupszh59wTSl6687JKeHXc7sH84DPy2nRFmubzsOTtay/O6OK72tnnPrVdWbqEB8mzWO/Whxr9NDREHsUetkVWl9oD3Nx+GG5PzprfVG4BlqR0mFvnmahBUADuGwzwe5rurTYbiNDs8z3c/d5Yl5PBgq2bhC72bTNhKkzwocCQ=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(136003)(346002)(376002)(396003)(451199015)(46966006)(40470700004)(36840700001)(7416002)(41300700001)(26005)(6916009)(8676002)(40480700001)(5660300002)(54906003)(8936002)(4326008)(336012)(40460700003)(356005)(82740400003)(316002)(186003)(7636003)(36860700001)(426003)(47076005)(70586007)(82310400005)(2906002)(70206006)(31686004)(31696002)(86362001)(966005)(478600001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2022 11:05:29.2452
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42eacc0e-f5ae-4128-cb29-08dabb2fd26b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT062.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7584
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH v2 01/21] drm/komeda: Don't set struct
+ drm_driver.lastclose
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20221024111953.24307-1-tzimmermann@suse.de>
+ <20221024111953.24307-2-tzimmermann@suse.de>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+In-Reply-To: <20221024111953.24307-2-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 31 Oct 2022 08:02:33 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.297 release.
-> There are 34 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 10/24/22 13:19, Thomas Zimmermann wrote:
+> Don't set struct drm_driver.lastclose. It's used to restore the
+> fbdev console. But as komeda uses generic fbdev emulation, the
+> console is being restored by the DRM client helpers already. See
+> the call to drm_client_dev_restore() in drm_lastclose().
 > 
-> Responses should be made by Wed, 02 Nov 2022 07:01:32 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.297-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
 
-All tests passing for Tegra ...
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+-- 
+Best regards,
 
-Linux version:	4.14.297-rc1-g822f96245cec
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
