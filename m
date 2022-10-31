@@ -2,266 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3536FA3743
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Oct 2022 15:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F1BECAAA1
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Oct 2022 16:33:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231968AbiJaPk2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Oct 2022 11:40:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46010 "EHLO
+        id S230502AbiJaQdR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Oct 2022 12:33:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231901AbiJaPkO (ORCPT
+        with ESMTP id S231775AbiJaQdQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Oct 2022 11:40:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF6F11A01;
-        Mon, 31 Oct 2022 08:40:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DA148B818F0;
-        Mon, 31 Oct 2022 15:40:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D751C433C1;
-        Mon, 31 Oct 2022 15:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667230809;
-        bh=E9tojarincoSMS24j3RHNxidQvPWn4XpnyUgXJA5+30=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qQqq4InZ/kYs4ThGgsePZUNLFgiadoZAmvKwXPjPZCqbAmSZ5ILQUOu04WkFWvYow
-         wdgjXat438oY8ksyzjLPYAbxiasKDpBSkttyteCNtBIN2jVkeZoJPvOMuSjthmWeo3
-         iWOzmqdrPGZNobCrFIlW3sVqtb8l6Qyjjd3sWPYSaPz2X+zt3oSkqeolEhSiLkrYo6
-         6R6SV9hICUKD71OBUs9qeQ++MWWETe5rSLqlyVRJFjw7K4Ek6YRD6GEhyBQRrcC3gx
-         7PbkF50iWH9mr8ZKrI2lCjD1AB53yrRGkDS1ywJQ/TBg93UDjSvqOb8061YMdfMCrG
-         iuZBwGEUBwDng==
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc:     Kishon Vijay Abraham I <kishon@kernel.org>,
-        Tom Joseph <tjoseph@cadence.com>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Toan Le <toan@os.amperecomputing.com>,
-        Joyce Ooi <joyce.ooi@intel.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
-        Michal Simek <michal.simek@amd.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v3 5/5] PCI: Remove unnecessary <linux/of_irq.h> includes
-Date:   Mon, 31 Oct 2022 10:39:54 -0500
-Message-Id: <20221031153954.1163623-6-helgaas@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221031153954.1163623-1-helgaas@kernel.org>
-References: <20221031153954.1163623-1-helgaas@kernel.org>
+        Mon, 31 Oct 2022 12:33:16 -0400
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9313112A9C;
+        Mon, 31 Oct 2022 09:33:15 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-13c569e5ff5so13621823fac.6;
+        Mon, 31 Oct 2022 09:33:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8/ek65kq7yHOaURSYRqzebh5SC1fg52rynZgdILWhX4=;
+        b=pcj5Jh9lvGYnV2OcRkswCR6hCFVQgc7Jf85ZChg3IXVG6TR5LZAxktqLG8/T5du7M+
+         o8bHytQXTCE899kHGIVglOcTZosEZX2Y3xlxnB7J7PtM9BAHhqCLPqu4okVSH3Ni5r5c
+         pDYHf5QFyf2sKaDhi8dAZhn+KMtwu9LsAQ9qgKYQx/KOfW2SZVYuL2Yq8vY5g3RayKHQ
+         4LAFKjOheEgi3O9A+qh+anzhcJRaefETAT5VJJ80dg0drqwvCyaif0zvLBlvt+F/CK7u
+         K9lWqHFXb+JYCkPOYdAuYiChBEe0cFgzgLZC/fHirnUxNCVSEFZ8RvC+cVnW+aGRWt72
+         HNhA==
+X-Gm-Message-State: ACrzQf01rY5N1wCeo03qcYBBuYE+tWy0eKt2hcPlWIym5FRc461im/JQ
+        ECJPYw2bhlaIT3spKrTKJw==
+X-Google-Smtp-Source: AMsMyM5n6ycmXWieT0+iQQXHvxoao0+Kzj4kL9UzGXba08k2+w2fKVvTiKB9k2bkjWX01BQO6gLn3A==
+X-Received: by 2002:a05:6870:15d4:b0:12b:8d8d:1001 with SMTP id k20-20020a05687015d400b0012b8d8d1001mr8166471oad.137.1667233994806;
+        Mon, 31 Oct 2022 09:33:14 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id f2-20020a4ad802000000b0047f72b6988fsm2503291oov.45.2022.10.31.09.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Oct 2022 09:33:14 -0700 (PDT)
+Received: (nullmailer pid 2978384 invoked by uid 1000);
+        Mon, 31 Oct 2022 16:33:16 -0000
+Date:   Mon, 31 Oct 2022 11:33:16 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, mperttunen@nvidia.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V1 1/2] dt-bindings: PCI: tegra234: Add ECAM support
+Message-ID: <20221031163316.GA2968837-robh@kernel.org>
+References: <20221027051214.22003-1-vidyas@nvidia.com>
+ <20221027051214.22003-2-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221027051214.22003-2-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Thu, Oct 27, 2022 at 10:42:13AM +0530, Vidya Sagar wrote:
+> Add support for ECAM aperture for Tegra234.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  .../devicetree/bindings/pci/nvidia,tegra194-pcie.yaml  | 10 ++++++++--
+>  .../devicetree/bindings/pci/snps,dw-pcie.yaml          |  2 +-
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+> index 75da3e8eecb9..15cc2d2055bb 100644
+> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+> @@ -27,6 +27,7 @@ properties:
+>        - nvidia,tegra234-pcie
+>  
+>    reg:
+> +    minItems: 4
+>      items:
+>        - description: controller's application logic registers
+>        - description: configuration registers
+> @@ -35,13 +36,17 @@ properties:
+>            available for software access.
+>        - description: aperture where the Root Port's own configuration
+>            registers are available.
+> +      - description: aperture to access the configuration space through ECAM.
+> +          This is applicable only for Tegra234.
 
-Many host controller drivers #include <linux/of_irq.h> even though they
-don't need it.  Remove the unnecessary #includes.
+Is it really only Tegra234 or that's all you've tested or care 
+about? For the former, I agree with Krzysztof.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/controller/cadence/pci-j721e.c   | 1 -
- drivers/pci/controller/dwc/pci-layerscape.c  | 1 -
- drivers/pci/controller/dwc/pcie-armada8k.c   | 1 -
- drivers/pci/controller/dwc/pcie-tegra194.c   | 1 -
- drivers/pci/controller/pci-v3-semi.c         | 1 -
- drivers/pci/controller/pci-xgene-msi.c       | 1 -
- drivers/pci/controller/pci-xgene.c           | 1 -
- drivers/pci/controller/pcie-altera-msi.c     | 1 -
- drivers/pci/controller/pcie-iproc-platform.c | 1 -
- drivers/pci/controller/pcie-iproc.c          | 1 -
- drivers/pci/controller/pcie-microchip-host.c | 1 -
- drivers/pci/controller/pcie-rockchip-host.c  | 1 -
- drivers/pci/controller/pcie-xilinx-cpm.c     | 1 -
- drivers/pci/controller/pcie-xilinx-nwl.c     | 1 -
- 14 files changed, 14 deletions(-)
-
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index a82f845cc4b5..cc83a8925ce0 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -15,7 +15,6 @@
- #include <linux/mfd/syscon.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/of_irq.h>
- #include <linux/pci.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
-index 879b8692f96a..ed5fb492fe08 100644
---- a/drivers/pci/controller/dwc/pci-layerscape.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape.c
-@@ -13,7 +13,6 @@
- #include <linux/init.h>
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
--#include <linux/of_irq.h>
- #include <linux/of_address.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
-index dc469ef8e99b..5c999e15c357 100644
---- a/drivers/pci/controller/dwc/pcie-armada8k.c
-+++ b/drivers/pci/controller/dwc/pcie-armada8k.c
-@@ -21,7 +21,6 @@
- #include <linux/platform_device.h>
- #include <linux/resource.h>
- #include <linux/of_pci.h>
--#include <linux/of_irq.h>
- 
- #include "pcie-designware.h"
- 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 1b6b437823d2..02d78a12b6e7 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -21,7 +21,6 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/of_gpio.h>
--#include <linux/of_irq.h>
- #include <linux/of_pci.h>
- #include <linux/pci.h>
- #include <linux/phy/phy.h>
-diff --git a/drivers/pci/controller/pci-v3-semi.c b/drivers/pci/controller/pci-v3-semi.c
-index 154a5398633c..784fcf35599c 100644
---- a/drivers/pci/controller/pci-v3-semi.c
-+++ b/drivers/pci/controller/pci-v3-semi.c
-@@ -22,7 +22,6 @@
- #include <linux/kernel.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
--#include <linux/of_irq.h>
- #include <linux/of_pci.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
-index bacb14e558ee..d7987b281f79 100644
---- a/drivers/pci/controller/pci-xgene-msi.c
-+++ b/drivers/pci/controller/pci-xgene-msi.c
-@@ -11,7 +11,6 @@
- #include <linux/irqdomain.h>
- #include <linux/module.h>
- #include <linux/msi.h>
--#include <linux/of_irq.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pci/controller/pci-xgene.c b/drivers/pci/controller/pci-xgene.c
-index 549d3bd6d1c2..887b4941ff32 100644
---- a/drivers/pci/controller/pci-xgene.c
-+++ b/drivers/pci/controller/pci-xgene.c
-@@ -14,7 +14,6 @@
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_irq.h>
- #include <linux/of_pci.h>
- #include <linux/pci.h>
- #include <linux/pci-acpi.h>
-diff --git a/drivers/pci/controller/pcie-altera-msi.c b/drivers/pci/controller/pcie-altera-msi.c
-index 4366e042e98b..65e8a20cc442 100644
---- a/drivers/pci/controller/pcie-altera-msi.c
-+++ b/drivers/pci/controller/pcie-altera-msi.c
-@@ -14,7 +14,6 @@
- #include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of_address.h>
--#include <linux/of_irq.h>
- #include <linux/of_pci.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pci/controller/pcie-iproc-platform.c b/drivers/pci/controller/pcie-iproc-platform.c
-index 538115246c79..4142a73e611d 100644
---- a/drivers/pci/controller/pcie-iproc-platform.c
-+++ b/drivers/pci/controller/pcie-iproc-platform.c
-@@ -12,7 +12,6 @@
- #include <linux/platform_device.h>
- #include <linux/of_address.h>
- #include <linux/of_pci.h>
--#include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/phy/phy.h>
- 
-diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
-index 2519201b0e51..83029bdfd884 100644
---- a/drivers/pci/controller/pcie-iproc.c
-+++ b/drivers/pci/controller/pcie-iproc.c
-@@ -18,7 +18,6 @@
- #include <linux/platform_device.h>
- #include <linux/of_address.h>
- #include <linux/of_pci.h>
--#include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/phy/phy.h>
- 
-diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
-index 57b2a62f52c8..0ebf7015e9af 100644
---- a/drivers/pci/controller/pcie-microchip-host.c
-+++ b/drivers/pci/controller/pcie-microchip-host.c
-@@ -13,7 +13,6 @@
- #include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of_address.h>
--#include <linux/of_irq.h>
- #include <linux/of_pci.h>
- #include <linux/pci-ecam.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
-index 7352b5ff8d35..c96c0f454570 100644
---- a/drivers/pci/controller/pcie-rockchip-host.c
-+++ b/drivers/pci/controller/pcie-rockchip-host.c
-@@ -28,7 +28,6 @@
- #include <linux/of_device.h>
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
--#include <linux/of_irq.h>
- #include <linux/pci.h>
- #include <linux/pci_ids.h>
- #include <linux/phy/phy.h>
-diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-index e4ab48041eb6..4a787a941674 100644
---- a/drivers/pci/controller/pcie-xilinx-cpm.c
-+++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-@@ -16,7 +16,6 @@
- #include <linux/of_address.h>
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
--#include <linux/of_irq.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/pci-ecam.h>
-diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
-index 40d070e54ad2..f0271b6c6f8d 100644
---- a/drivers/pci/controller/pcie-xilinx-nwl.c
-+++ b/drivers/pci/controller/pcie-xilinx-nwl.c
-@@ -17,7 +17,6 @@
- #include <linux/of_address.h>
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
--#include <linux/of_irq.h>
- #include <linux/pci.h>
- #include <linux/pci-ecam.h>
- #include <linux/platform_device.h>
--- 
-2.25.1
-
+Rob
