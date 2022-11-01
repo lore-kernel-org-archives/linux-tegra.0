@@ -2,162 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC572C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Nov 2022 12:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF692FA3743
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Nov 2022 12:38:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbiKAMM0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Nov 2022 08:12:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57152 "EHLO
+        id S230354AbiKAMiw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Nov 2022 08:38:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbiKAMMZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Nov 2022 08:12:25 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73905C29;
-        Tue,  1 Nov 2022 05:12:24 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id l11so20275381edb.4;
-        Tue, 01 Nov 2022 05:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TdGn5DARrLRsVLDknMy45jKtzxiEPMFN+GBY+Q0PPKc=;
-        b=kEURq0m0sP4jb5Ww/xNpN0LBnUbR7mwaI8CsStGywlWWOP/yjGRYyfX6ojOH6p8H8B
-         38u2HPzY2x9u/w2o3p6Ria3fJnNWJwh4TgcOc/45uoTowEatQu527QIntMOtQ821J+iK
-         QPbzJN6IbKQ3zguEgACL+0AKl8RyjOUM+MFIMzrAZi7gFCGNljjnfClhTukpxWAdNRN3
-         YCQx2bsFDCF4aprib7Ii6v9x47RLEQfwD3ned3xGqv/epXoHon0/ntr5sB/7u8eFGP9i
-         bP6uuCh546QwNX3vYG713SxZFs74x7UpK8ZFtv/0/mTnMtJkq5FKYyYi1Fsq5pjg79I2
-         TVfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TdGn5DARrLRsVLDknMy45jKtzxiEPMFN+GBY+Q0PPKc=;
-        b=44ETrAGy7Npz02T2S1LPnOnJkiOyGJqOf24O1lTnoxEaGJveXZ7xEv2ldVODAxRiWa
-         xxoT0dSn7oe99LlbVFp0EIGVLa1IDrm5cTkeXBDUna1wK6SC4GDW44RrelM/ImJiFe8P
-         ZXhKraOT4a976Z+MdpZsm1TkD2qHJ5FqTlak5tSESZkH3t1luL7Xk+pUcY27YzIIjTvO
-         lrL6ET0eXORvdTWjCDZIzM4fC+hSV2maYjBFNekc60apCBpdOwEjugl1Z2KaZkpJgzko
-         PLO6FNG7XWUYT3tLIwoJkd67sM35Yl59RD8YOf6yeyIe9RI4r0BbYCVzkEFXELUHEcEO
-         3Mgg==
-X-Gm-Message-State: ACrzQf2Xet7fLYHQv2e0O6ckmK7scIKj0z5DOsj8iKX5XWUAeuzpeHe1
-        Pqzl+gFaqUPBLlZ0nfEVvvo=
-X-Google-Smtp-Source: AMsMyM5ILQZvKfcVUfPDoqSULTwk0I7d6xSbzIUuexZmLef1dXUX3qNKgfXnuiPDd4dzdJVNfDKMAA==
-X-Received: by 2002:a05:6402:50cf:b0:462:352e:f4a7 with SMTP id h15-20020a05640250cf00b00462352ef4a7mr18314476edb.317.1667304742880;
-        Tue, 01 Nov 2022 05:12:22 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 2-20020a170906218200b0073dc5bb7c32sm4136099eju.64.2022.11.01.05.12.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Nov 2022 05:12:21 -0700 (PDT)
-Date:   Tue, 1 Nov 2022 13:12:20 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Bo Liu <liubo03@inspur.com>
-Cc:     krzysztof.kozlowski@linaro.org, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] memory: tegra20-emc: replace DEFINE_SIMPLE_ATTRIBUTE
- with DEFINE_DEBUGFS_ATTRIBUTE
-Message-ID: <Y2ENJJ1YiSg5oHiy@orome>
-References: <20221101081611.8179-1-liubo03@inspur.com>
- <Y2EIblbX0eDgpJ35@orome>
+        with ESMTP id S230047AbiKAMiq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Nov 2022 08:38:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DD226176;
+        Tue,  1 Nov 2022 05:38:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 27EF660FDD;
+        Tue,  1 Nov 2022 12:38:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6280C433D6;
+        Tue,  1 Nov 2022 12:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667306319;
+        bh=se6PG2xHeBPqFkNFsuNeXuULlCqeC7FXT+FfHXfg8Yo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pZklbzRQghCxF8BOSDSLxXgT4nKxCsMVDKxPUvO29Xf84wCYaQeDffMMv/4GwYVhB
+         IP4co8teD3c1us8wwuSDNHo+7yCQB290oe4aVQz/XLVM0IquG+5lMXlvAt7+YFzXpE
+         p0Jv9yTLFPIrU+ZkTRDQHBFhwXZikdRGwNybm4I85iwPqZOITh9UPSG6xTimtggtV3
+         ZqDsd5WAqSVN0iXG0HrOX0pSaswTf5uYUhcolVrme4BfBPvLvRvAcnSKoCNBWjs9/Q
+         AxxIHpRco4XINbqqi4MBlsqJ00PboIB6BjW7GxzFgCv8VVChRzbq6FdfoDCmlCiT0B
+         vaIZUJsnHVlvw==
+Date:   Tue, 1 Nov 2022 13:38:36 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH] i2c: tegra: Allocate DMA memory for DMA engine
+Message-ID: <Y2ETTIxyR3xaBWXT@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+References: <20221020143933.1951609-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cbnj+pts3jjFBeFs"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="C6Vxh2k7p66XcGxr"
 Content-Disposition: inline
-In-Reply-To: <Y2EIblbX0eDgpJ35@orome>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+In-Reply-To: <20221020143933.1951609-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---cbnj+pts3jjFBeFs
+--C6Vxh2k7p66XcGxr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 01, 2022 at 12:52:14PM +0100, Thierry Reding wrote:
-> On Tue, Nov 01, 2022 at 04:16:11AM -0400, Bo Liu wrote:
-> > Fix the following coccicheck warning:
-> >  drivers/memory/tegra/tegra20-emc.c:902:0-23: WARNING:
-> >   tegra_emc_debug_max_rate_fops should be defined with DEFINE_DEBUGFS_A=
-TTRIBUTE
-> >  drivers/memory/tegra/tegra20-emc.c:872:0-23: WARNING:
-> >   tegra_emc_debug_min_rate_fops should be defined with DEFINE_DEBUGFS_A=
-TTRIBUTE
-> >=20
-> > Signed-off-by: Bo Liu <liubo03@inspur.com>
-> > ---
-> >  drivers/memory/tegra/tegra20-emc.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, Oct 20, 2022 at 04:39:33PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> This seems incomplete: the rationale in that debugfs cocci script says
-> that DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe() is the
-> pattern to use vs. the less efficient DEFINE_SIMPLE_ATTRIBUTE +
-> debugfs_create_file(). So this patch should probably use the unsafe
-> function variant at the same time to take full advantage.
+> When the I2C controllers are running in DMA mode, it is the DMA engine
+> that performs the memory accesses rather than the I2C controller. Pass
+> the DMA engine's struct device pointer to the DMA API to make sure the
+> correct DMA operations are used.
+>=20
+> This fixes an issue where the DMA engine's SMMU stream ID needs to be
+> misleadingly set for the I2C controllers in device tree.
+>=20
+> Suggested-by: Robin Murphy <robin.murphy@arm.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-That said, I'm not even sure if these attributes would qualify for
-debugfs_create_file_unsafe() since there's really no protection against
-removal.
-
-Overall that cocci seems a bit misleading in that it makes these changes
-seem like trivial conversions. Only converting DEFINE_SIMPLE_ATTRIBUTE()
-to DEFINE_DEBUGFS_ATTRIBUTE() is basically a noop, except that debugfs
-has a little more overhead (for example debugfs_attr_read() wraps
-simple_attr_read()), so I'm not sure if that's worth doing on its own.
-
-Thierry
-
-> >=20
-> > diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/=
-tegra20-emc.c
-> > index bd4e37b6552d..c2b4caccfae9 100644
-> > --- a/drivers/memory/tegra/tegra20-emc.c
-> > +++ b/drivers/memory/tegra/tegra20-emc.c
-> > @@ -869,7 +869,7 @@ static int tegra_emc_debug_min_rate_set(void *data,=
- u64 rate)
-> >  	return 0;
-> >  }
-> > =20
-> > -DEFINE_SIMPLE_ATTRIBUTE(tegra_emc_debug_min_rate_fops,
-> > +DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_min_rate_fops,
-> >  			tegra_emc_debug_min_rate_get,
-> >  			tegra_emc_debug_min_rate_set, "%llu\n");
-> > =20
-> > @@ -899,7 +899,7 @@ static int tegra_emc_debug_max_rate_set(void *data,=
- u64 rate)
-> >  	return 0;
-> >  }
-> > =20
-> > -DEFINE_SIMPLE_ATTRIBUTE(tegra_emc_debug_max_rate_fops,
-> > +DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_max_rate_fops,
-> >  			tegra_emc_debug_max_rate_get,
-> >  			tegra_emc_debug_max_rate_set, "%llu\n");
-> > =20
-> > --=20
-> > 2.27.0
-> >=20
+Applied to for-current, so you can work on the next steps on top of this
+soon. Thanks!
 
 
-
---cbnj+pts3jjFBeFs
+--C6Vxh2k7p66XcGxr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNhDSEACgkQ3SOs138+
-s6FPPxAAgfApfg0sM4SKykyyRUQ93OWB+2k51KntFbXN5HIzeBiLMSJ/1Rrz1lDS
-DdAS6ZyLtZ36bFYiCtnQLDisuMMZ6epDiK7WqX9lAfz99uZHi2V7NSpQuBXyQdXV
-DGcaVpa49S1gQoX0gXHqLTGBmIFyMBwi1XbNf1pxIRItkMV/tXqDu4vPAM35574I
-2/R2FCt9Ehi40JhGyLLyi2sTgXHEa9A073qhCsuYDxif1dj4Mv7pweXMTQsOfyKv
-E1h/x/r0LrfcvbmVgLY3Z/tnwHu30nHxfPzBEJTEvRfY4MWABhYuV30TKPRnKzBY
-2ssIN1zO5PvEqVaDSADoNCNeWxlKbgwG2cgazCbEFGbnOafc33JAQW27KJWLYgZJ
-08O9UH6/QUHmuTLVl0JO671uv2HM3LX4k5vLaP3OBw6I22m6lFm9SevnuomUbER5
-2WvZXOWScqme8N5zRqFYG5X4kcbc7HLQxGj2+YAekeP5JCJ946aGJrZ+fG4VIui0
-3WXnMDowRnC+ZwnTCxkOpXjcGYRbLjaT3Llt3N2Qn1/2QDbztsW6XExSB0KFnDhS
-PDO6Zg1mlHCxdQ9A1MWjDR8Ec0ZnVLOY35SEtbO9oJALDlSL3IpbMDfQviqz8vYc
-K1twBzCOSkRlrByqvKB3jieLjv+N0ZG+CRABfVv3Y48a0pkoyZ4=
-=OGR6
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNhE0wACgkQFA3kzBSg
+KbYItQ/7B+AJktGvlKXEN7Sjst/MNWBTQuxkGjYUMtRw9HYV5kfzLaCYwzHuKDWw
+ZL9S3G2OWUvGGI0d5KqFjJ19nxZE1jHXvjfwbwkiDuBo4qh5l65aSNDcNGaQF6Ns
+wgxY9bjCtw64BE7zibkUG1BJKU9lCk+Xcl98Mw6AZIVoso2Xk61j+WdAKRu9vJgX
+gq0K8+VdaAfOZgWLnTGCriIRw/HkJ6YfcwjtiL0JdFprbvGz8aknFEN1GvHOeKLm
+3QlAcomwc206+F/fnPm7PKaY8DnhzLTi0n2buPfHgNruwGmKb0KKtS6lTEaWOLrK
+DYhj8wmi2LGj3UgjMXow9GQtkJu3NrlliTI/wt5CLcmkN1hZb2RX8W8bJnCQ2tk+
+Zd8RDISOuIa8bTKH6GjdA11TQurAj5HjDZkkOjCIuQYwJpObVOrCQHRHNlSz8JHc
+W3vuxZ2J0EfkDpUsQGqICdbKfor+SRWgP9Gv8oeqSa/r2pvF/KKOU23hD9+7g9ve
+LWdX1qnOlTFsXvcJMaIOIhUHFHKQqDkTHFtcIXkfd+hKup0GAtTFnoCRE23VNSCz
+LsKOGQRG0a5XCmkxfgBjCNJ+Ix6eTEgJTCb1hT7STbbDgAe0T4AAE3FuAhsaQGRy
+ysuMvXn9lng5tMmP04L7L+uc9DGbtDt0RwSgefbLD+ZiFhWYoGI=
+=r5Ua
 -----END PGP SIGNATURE-----
 
---cbnj+pts3jjFBeFs--
+--C6Vxh2k7p66XcGxr--
