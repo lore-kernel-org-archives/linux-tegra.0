@@ -2,154 +2,250 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2047EFA374F
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Nov 2022 08:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2486FA373D
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Nov 2022 11:48:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbiKAI2Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Nov 2022 04:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54770 "EHLO
+        id S231411AbiKALsH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Nov 2022 07:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230036AbiKAI2G (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Nov 2022 04:28:06 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on20624.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eab::624])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CC6186D4;
-        Tue,  1 Nov 2022 01:28:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y/gz9N6PoDX6slboLJRJlSs0ByozwRKQ1bUDLzttWxIObbhb3DzjYDoUGCNfrGz+GWAQoDgGf32nuec/eT60Dg3pEyhvJ7WuFNpiS7D0R60mBazm3oQSi8RUZXLGn3hbB3oNrq5MH1FIcewqGw9OL7zIeQ1a27cJtZYIG5vp1OSD7gYtSLBpva2H8s+7SOd+WPM5wSEgmmNo0Ej569T/VvMwcW4Fs3RNRsuvB3984XfT3UxtsR+DPFaSMRU1JqkAiS5QCOtExoA/YfPfCRlK3fUr+vM83WpIoDH8LS2sCvJp9lTUVgjxFHOqrFZPSBi1OUKSfSEoVHLOABELqDnAhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7+uHzrTUVcMR6/CrDAF+yR4q5TShfV+C6mvczLfbUVw=;
- b=Tjl0o216+z5kUh35zAyOvwE6ScNy7tJfs0WtKBfRCphrQGSZrvVP6hrEvZbIjnwZ0H/zOIvsDIz7vAzrgA3NN/izZW5XC+5SCDEDiKZ1OVynmJ5hKW7AbdImZ+cfMti/6SfP0CuvNn5Gy/xM6LVKGJgGnNy/dg2QKKAgCe+l6OxDOWIU9rnTrWLzhlCvVXzA4yTv1S+KP0CMV8e0gTeeR9z9n9djuIejwruH7MBtLXy+To3qeZ8Rzx/Cf2xY1NYD6k79gbGYTK6bgIogs578bFkc50L5GdDAsCwnFpHl+uAqFgHc0Z690Z5S3eOUYgtP7pvv00OyryHfjL3ppPVwjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7+uHzrTUVcMR6/CrDAF+yR4q5TShfV+C6mvczLfbUVw=;
- b=A+2q764zH8MzWQqJ3ifTUSgheBEV4lUs4YoRkS7S/O2qJV8GINk3P6CBKWd34L6kq11qsBLu3F3EKyewJgqI7Sr22REnu0EcjCCbfOlxiqIGGoDe2jX4hwM65T87aWnYMtFcQhTUtg960sxzPOa1i2X43AzK3D0T0ttiwD15a1zfL1uMR/mfTuTxNIqtGgrY06oVawj3AKPh0A0Msu0LUKLGHCXCLLzJDVfo+HMC4njKadn7a7+QBbxhvxicyYMi169C17/kEjh2JqTUFuhaaRf2ayedLhsJHzaQu1lV4lNa++GMF9k0LWZtxfSgI9pVtQfAixerzWBr/A28OIHC6g==
-Received: from MW4PR03CA0303.namprd03.prod.outlook.com (2603:10b6:303:dd::8)
- by SJ1PR12MB6171.namprd12.prod.outlook.com (2603:10b6:a03:45a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.19; Tue, 1 Nov
- 2022 08:28:03 +0000
-Received: from CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:dd:cafe::25) by MW4PR03CA0303.outlook.office365.com
- (2603:10b6:303:dd::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.15 via Frontend
- Transport; Tue, 1 Nov 2022 08:28:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT040.mail.protection.outlook.com (10.13.174.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5769.14 via Frontend Transport; Tue, 1 Nov 2022 08:28:03 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 1 Nov 2022
- 01:27:50 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 1 Nov 2022
- 01:27:50 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 1 Nov 2022 01:27:46 -0700
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <vkoul@kernel.org>,
-        <thierry.reding@gmail.com>, <p.zabel@pengutronix.de>,
-        <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <sfr@canb.auug.org.au>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v3 2/3] arm64: tegra: Add dma-channel-mask in GPCDMA node
-Date:   Tue, 1 Nov 2022 13:57:11 +0530
-Message-ID: <20221101082712.59263-3-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221101082712.59263-1-akhilrajeev@nvidia.com>
-References: <20221101082712.59263-1-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+        with ESMTP id S231278AbiKALry (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Nov 2022 07:47:54 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E85DEE4;
+        Tue,  1 Nov 2022 04:40:21 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id a13so21406977edj.0;
+        Tue, 01 Nov 2022 04:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GmDhui1fuCaXgbg430oH7yny2k6M/vj7S6F1BQ8jHzQ=;
+        b=kNZxCYHyKpEf/VhYMlbdCM0GXt8X1ZLFnwkyKicobyel30LMpeY6HItBS0lE+CZTWV
+         iAc+A7jKTPJhGj3ogsoozhxmFtURG7gshFOpQGRCWkPhBmehQ36p23sqQ6WeuFin82rQ
+         4tCefaKN/zuFW7/DsgLpFnRtk2q6lzTHTNTc+ja6/liRrmS0NENoTCIFw4In56kuAEXd
+         UbpNGdVb2Z2IN4ZJybhue2ClPgyLrmIuiZL7WqK3PFkDnGQVWRFnU15na3LPgRPyMDcw
+         rvc94TOb69cNPjpaFRXYQJOXJNoEWOFpod7tEg3zQ3uOTxrRSFUeh2bpoVZlYQYe18jx
+         n8NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GmDhui1fuCaXgbg430oH7yny2k6M/vj7S6F1BQ8jHzQ=;
+        b=pjYrCH+OWjCJ2yFPO95/fRQuFkKwpWMztYLA0915evz0+61MamJ3+Ks9eop2Td8cpR
+         6l7AY6L1l4QmPvfEhqlee7yfcqY5USL1xFgJ4q1DqBW9wg9DRb5IbbWBqF2QspmHKQo8
+         aXMLVM5r61nBBXGnpM99BzE6MtO1/R83fxU76pKM2iOuDnMv4e1pnrzGpEJe7rVkfUJr
+         hEJuqquZ/d5SIEmxRxhCBPEq1+qFXnY+7pueIGe/WgVLYBswDfv/y6IGQLhzGtQZIkjv
+         hPkzx+htKYUVO2EqGlOOPjdU945tSGgHk/dTaAOzcLrAOBgRAR7rO62/zX4wpwWahzZj
+         6CPg==
+X-Gm-Message-State: ACrzQf0ZR6MS3stOj/BO3+4ZhHea0oKKs/ge87S5keLKXg0UNrA2C/d5
+        cYJ5RUCUNu3yGImJTVFTYR4mzHJvyzE=
+X-Google-Smtp-Source: AMsMyM5AW45Zb4lvw6D/an20McEeD1S0voOspF4Vm3vpzNUWEMPSMeHLU/BYR/GoKjfQ3zkECFjipQ==
+X-Received: by 2002:a05:6402:114a:b0:454:85e4:2295 with SMTP id g10-20020a056402114a00b0045485e42295mr19204344edw.348.1667302819300;
+        Tue, 01 Nov 2022 04:40:19 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id y21-20020a1709060a9500b0078d76ee7543sm4077256ejf.222.2022.11.01.04.40.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Nov 2022 04:40:18 -0700 (PDT)
+Date:   Tue, 1 Nov 2022 12:40:16 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Akhil R <akhilrajeev@nvidia.com>, Rob Herring <robh@kernel.org>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+Subject: Re: [PATCH RESEND v2 3/3] dmaengine: tegra: Add support for
+ dma-channel-mask
+Message-ID: <Y2EFoG1H9YpfxRjs@orome>
+References: <20221020083322.36431-1-akhilrajeev@nvidia.com>
+ <20221020083322.36431-4-akhilrajeev@nvidia.com>
+ <20221021021604.GA2181729-robh@kernel.org>
+ <SJ1PR12MB63399B01D750CD4725A13A03C0309@SJ1PR12MB6339.namprd12.prod.outlook.com>
+ <76617e20-2a1d-baba-719d-bd8b32fa69be@nvidia.com>
+ <SJ1PR12MB6339F181734DA0A05B4862AFC0339@SJ1PR12MB6339.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT040:EE_|SJ1PR12MB6171:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b84d62a-61a8-457d-c9e0-08dabbe2fec1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: dOJSbOhvrv/Oi19Jd3bmYj+or6j6BI6g0/6cDGxu908sYHwsv1kWkz4ccp7F+vHzVd3TQjfx+d5c3MpSdgXgsTxVrh7fVrdcwc07LwegCFGQFenPQZpAiwYB/gsVS4+t+qxi0uYJN2Ge/4kljhPXYxeQTEjGhhwTog6h2vYic/hb2jaRekxEuDHLYrTnfy4JtaK28b/eQPXQdwR9nYIn42JXQE6U9KfhQ2g5uCpaz1fd9iRz+TW5DyTvQsMhVEwxG1SGKEBQOw05pyO81lsMfnWHLK42E77my2hjJ4aXSIhv9ejrIQ04kT6CTnGmdse30kwuxIJSPRZ8K6+TYofVK+MNRenjH94HY3UWSeF/SbBGICetzPMbiBRDvGqbwgZHBMOPdgUMqd7vddlfR+Q+LYt1OwIJFtDJFW+6eOfqRXnXaqkaYNMgdE5cR5/MO8KubrBAlBTBXapDwDHpdbxdfK3vhh0jLe/10d4pBQ6eBA5nqEMcy13uiF/Owi/Is3+uHZLS0JkP9RxETOkiBxwuPEowXkAbyU1yVRWegi7r0X+S7IdAnohj1dBOdGaUSNLnHgr5ZGEx+Kv3+EwqLWDAjuMPl8/5YzkUe1xkt+hDYkady871n8HXcxHWV9YG8Xn2GubbhsCu92xczZduip8rD9fWOo6c8QWDAB0iPMLcJlyJjIaw+1zQWS2xTE26unoNogFNs2+m7ANMjbVFW6IN56CZxC+AmkOTXRTuzJOQl6JGJwvXYe4HmKjPLJVJqaTyK5W7yFCb1XR4F1QEdXjV2zoO92qVmAOLjjpCzRxkGZU=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(396003)(376002)(136003)(451199015)(46966006)(36840700001)(40470700004)(82740400003)(8936002)(86362001)(5660300002)(36860700001)(478600001)(47076005)(356005)(83380400001)(921005)(2616005)(426003)(7636003)(82310400005)(110136005)(186003)(36756003)(2906002)(7416002)(336012)(6666004)(1076003)(107886003)(70206006)(8676002)(4326008)(70586007)(40480700001)(41300700001)(26005)(7696005)(316002)(40460700003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2022 08:28:03.5900
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b84d62a-61a8-457d-c9e0-08dabbe2fec1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6171
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oesM7UOI0DB+Ei+g"
+Content-Disposition: inline
+In-Reply-To: <SJ1PR12MB6339F181734DA0A05B4862AFC0339@SJ1PR12MB6339.namprd12.prod.outlook.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add dma-channel-mask property in Tegra GPCDMA device tree node.
 
-The property would help to specify the channels to be used in
-kernel and reserve few for the firmware. This was previously
-achieved by limiting the channel number to 31 in the driver.
+--oesM7UOI0DB+Ei+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 1 +
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 1 +
- 3 files changed, 3 insertions(+)
+On Thu, Oct 27, 2022 at 10:13:00AM +0000, Akhil R wrote:
+> > On 26/10/2022 05:44, Akhil R wrote:
+> > >> On Thu, Oct 20, 2022 at 02:03:22PM +0530, Akhil R wrote:
+> > >>> Add support for dma-channel-mask so that only the specified channels
+> > >>> are used. This helps to reserve some channels for the firmware.
+> > >>>
+> > >>> This was initially achieved by limiting the channel number to 31 in
+> > >>> the driver and adjusting the register address to skip channel0 which
+> > >>> was reserved for a firmware. Now, with this change, the driver can
+> > >>> align more to the actual hardware which has 32 channels.
+> > >>>
+> > >>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> > >>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> > >>> ---
+> > >>>   drivers/dma/tegra186-gpc-dma.c | 37 +++++++++++++++++++++++++++--=
+--
+> > ---
+> > >>>   1 file changed, 30 insertions(+), 7 deletions(-)
+> > >>>
+> > >>> diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-=
+gpc-
+> > >> dma.c
+> > >>> index fa9bda4a2bc6..1d1180db6d4e 100644
+> > >>> --- a/drivers/dma/tegra186-gpc-dma.c
+> > >>> +++ b/drivers/dma/tegra186-gpc-dma.c
+> > >>> @@ -161,7 +161,10 @@
+> > >>>   #define TEGRA_GPCDMA_BURST_COMPLETION_TIMEOUT        5000 /* 5
+> > >> msec */
+> > >>>
+> > >>>   /* Channel base address offset from GPCDMA base address */
+> > >>> -#define TEGRA_GPCDMA_CHANNEL_BASE_ADD_OFFSET 0x20000
+> > >>> +#define TEGRA_GPCDMA_CHANNEL_BASE_ADDR_OFFSET        0x10000
+> > >>> +
+> > >>> +/* Default channel mask reserving channel0 */
+> > >>> +#define TEGRA_GPCDMA_DEFAULT_CHANNEL_MASK    0xfffffffe
+> > >>>
+> > >>>   struct tegra_dma;
+> > >>>   struct tegra_dma_channel;
+> > >>> @@ -246,6 +249,7 @@ struct tegra_dma {
+> > >>>        const struct tegra_dma_chip_data *chip_data;
+> > >>>        unsigned long sid_m2d_reserved;
+> > >>>        unsigned long sid_d2m_reserved;
+> > >>> +     u32 chan_mask;
+> > >>>        void __iomem *base_addr;
+> > >>>        struct device *dev;
+> > >>>        struct dma_device dma_dev;
+> > >>> @@ -1288,7 +1292,7 @@ static struct dma_chan
+> > *tegra_dma_of_xlate(struct
+> > >> of_phandle_args *dma_spec,
+> > >>>   }
+> > >>>
+> > >>>   static const struct tegra_dma_chip_data tegra186_dma_chip_data =
+=3D {
+> > >>> -     .nr_channels =3D 31,
+> > >>> +     .nr_channels =3D 32,
+> > >>
+> > >> This is an ABI break. A new kernel with an old DTB will use 32 chann=
+els
+> > >> instead of 31. You should leave this and use the dma-channel-mask to
+> > >> enable all 32 channels.
+> > >>
+> > > Hi Rob,
+> > >
+> > > If using an old DTB, tdma->chan_mask will be default to 0xfffffffe si=
+nce it
+> > > would not have the dma-channel-mask property. The driver would still
+> > > use 31 channels even if it uses an old DTB. Shouldn't it prevent the
+> > > ABI break?
+> >=20
+> > Unfortunately no. Yes for an old DTB without the dma-channel-mask
+> > property, we set the channel mask to 0xfffffffe, but this is not correct
+> > because it only has 31 interrupts/channels and not 32. So I think we
+> > will need to use of_irq_count() here.
+> >
+>=20
+> Shall I put it in a way that only the used interrupts are mentioned in th=
+e DT?
+> With this I can revert the interrupt change in the DT and would not break
+> the ABI as well.
+>=20
+> The code would look something like this.
+>=20
+> int chan_count =3D 0;
+>=20
+> if (of_irq_count(pdev->dev.of_node) !=3D hweight_long(tdma->chan_mask)) {
+>         dev_err(&pdev->dev, "Interrupt count doesn't match with channels\=
+n");
+>         return -EINVAL;
+> }
+>=20
+> for (i =3D 0; i < cdata->nr_channels; i++) {
+>         struct tegra_dma_channel *tdc =3D &tdma->channels[i];
+>    =20
+>         /* Check for channel mask */
+>         if (!(tdma->chan_mask & BIT(i)))
+>             continue;
+>=20
+>         tdc->irq =3D platform_get_irq(pdev, chan_count);
+>         chan_count++;
+>         if (tdc->irq < 0)
+>             return tdc->irq;
+>     ...
+>     ...
+> }
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 6602fe421ee8..60a2277d7f6c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -112,6 +112,7 @@
- 		#dma-cells = <1>;
- 		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
- 		dma-coherent;
-+		dma-channel-mask = <0xfffffffe>;
- 		status = "okay";
- 	};
- 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 28740c014f1d..88f60442ab3a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -176,6 +176,7 @@
- 			#dma-cells = <1>;
- 			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
- 			dma-coherent;
-+			dma-channel-mask = <0xfffffffe>;
- 			status = "okay";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 5d7df32fd159..315539b01149 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -61,6 +61,7 @@
- 				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 			#dma-cells = <1>;
- 			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			dma-channel-mask = <0xfffffffe>;
- 			dma-coherent;
- 		};
- 
--- 
-2.17.1
+This is all getting quite complicated for what is essentially a bug fix.
+The root of this problem is that the original bindings were simply wrong
+and didn't accurately represent the hardware.
 
+The GPC DMA controller has 32 channels and each channel has one DMA
+interrupt. So the right way to describe this in DT is by listing all of
+the interrupts. If the firmware then ends up using one of those channels
+the right way is not to make it seem like the controller supports only
+31 channels, but rather to mark the used channels as reserved.
+
+So I think the bottom line here is that the original binding has a bug
+that we're trying to address. Any workaround for this is problematic,
+and I think breaking backwards-compatibility is the cleanest solution
+here.
+
+Now, GPC DMA was introduced on Tegra186 and the DT bindings were added
+in 5.19. Any products released with this IP were released with kernels
+prior to 5.19 and bindings that were never in-tree. Any of those
+products that are supported upstream we know have replaceable DTB images
+(i.e. by default they are flashed at the same time as the kernel image),
+so breaking DT ABI should be okay.
+
+In fact, there are slight incompatibilities between product and upstream
+DT bindings (we're in the process of removing those as part of the
+upstreaming process), so being able to reflash the DTB is a prerequisite
+for supporting upstream Linux on these devices.
+
+I think going forward we should be extra careful about these kinds of
+problems, so that we don't have to keep dealing with fallout like this.
+
+Rob, given the above, do you think it's okay to proceed with the ABI
+break?
+
+Thierry
+
+--oesM7UOI0DB+Ei+g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNhBZ0ACgkQ3SOs138+
+s6Eqwg/9EjmFdYeGMUhmTZiHZu7Ycw3dCkWi7Fg5GidVRzZ8fxWd6/GvFUDU73gg
+WTNvZkT+wS1eBZcYXsnybwZMtgP9Bxu2nHz7e0KCRD18ePrqBi7/qiDv1EldVcUb
+xX171nBNKoBdDY8BthVw45RJ8TbozkhRgQhUC9gyqBlw0y3/HrnNPKCVT770yOsJ
+t9EAUyc0IHKkuYkfCH7Zu1g64yEKLxvM8Dm9SN63BsYC7OXbFM95/XyZJ/7kvkis
++J1YQf17qoSfpxKTIWZcYgDTE3nST3NF4E4E5F9DftQk4U31bM5jiQMZk4bvvD7M
+zus4+vKbVdfyjmXsiKLFaULBf2Tia+j8Vel6oyflXkLd/S/wL7Ebc3v00uvBW+4e
+qYM+PjBdNH79iipFBTjV1y008UFz3GUKUf0JXW52RqCihc0DkM/bJliiLjlteGzY
+AEy+EKJssJgTSyqiAUCxjftAsEIr+m0GHX1v2ZOG4uno/hrgXxvgb9qfDnjmffcu
+gZgdZjLkvBULXQac5i8M7Em/WxmmPWUuLupB/TRfUE4brpnlnZEPx8Uo9NtnBh6y
+rOZ7PFHsY91g5EtcjM4Icn8bVQowmiwQulMB8cgdmSDFco/Q+mrXR9R8uc+Il5Ge
+7kSfGJ+x7p21VPsKPWyssL01r2y0smKQsoArnMa0HqDwwQysxHQ=
+=5cml
+-----END PGP SIGNATURE-----
+
+--oesM7UOI0DB+Ei+g--
