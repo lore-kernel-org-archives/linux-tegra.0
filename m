@@ -2,92 +2,187 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3344C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 09:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB54C43219
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 09:33:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229504AbiKBJbN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Nov 2022 05:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43098 "EHLO
+        id S229929AbiKBJdP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Nov 2022 05:33:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiKBJbM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Nov 2022 05:31:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3961210E2;
-        Wed,  2 Nov 2022 02:31:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CA3D9618C4;
-        Wed,  2 Nov 2022 09:31:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6ABC433C1;
-        Wed,  2 Nov 2022 09:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667381471;
-        bh=Gg/fPN5aJjIxWUU4f2lqbCwhG9+mABQUoLO1LEyugvA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VA9kqUgFzHW7TNNVFU0PUVwRSgugIQCwLDDSfTZD2GL2XxifBiQZCkHerKlJKxwKk
-         36kvIAXAXK1hOwjS1jaxYUKTxJQk7ngM4NiLMhq1NdjL2UMrAuQKeHvbnMLgppjteZ
-         AXvP/1y6CiiQv46HYtuDYqLXjU879ewH68iKsMWoFMZ+gnUcC2JQlDVZvfLS46/tKJ
-         0qtz+1tbUIw+rdzWFs19fqtGsOG/Rj/IR/O3Q3dHFyXpq0bVfeVaC66fWnbxCY4eHG
-         Q8fw64tP8w/G1HbUSZe3sn2sb7Q4kVUNmPgEKIZqQcazF5PPB2BFui3kIZUq7FGkS0
-         VAxKq7ffmvGrQ==
-Date:   Wed, 2 Nov 2022 10:31:03 +0100
-From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>, catalin.marinas@arm.com,
-        will@kernel.org
-Cc:     Besar Wicaksono <bwicaksono@nvidia.com>, rafael@kernel.org,
-        lenb@kernel.org, guohanjun@huawei.com, linux-tegra@vger.kernel.org,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT)
- initial support
-Message-ID: <Y2I411GOEkiqlCBg@lpieralisi>
-References: <20220929002834.32664-1-bwicaksono@nvidia.com>
- <20221014105938.fyy6jns5fsu5xd7q@bogus>
+        with ESMTP id S229637AbiKBJdO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Nov 2022 05:33:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5861311813
+        for <linux-tegra@vger.kernel.org>; Wed,  2 Nov 2022 02:32:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667381536;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qCDrX0xKXyu8erIDNjxDiJKuT0hxZZKKE3HXuUGBVDQ=;
+        b=g86kVOmVqcJ3jvx7QLkap7dOJqWx4Jkz4xwCyM5E3D5uU39i8xAefQvqxOKN5H5LoxvUsS
+        PIC72S+nNsAaw1AjBB0WT2jmkEDsxqvhrcNE9IXrbtcn7F5l8j3iSkrfnqjMOP901MtXZm
+        CJcXGUj8XU5QGMG0V3YLjmFRZQfk710=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-347-zAzrrslaPgiwJI--g0f7gQ-1; Wed, 02 Nov 2022 05:32:15 -0400
+X-MC-Unique: zAzrrslaPgiwJI--g0f7gQ-1
+Received: by mail-wm1-f70.google.com with SMTP id d13-20020a05600c34cd00b003ce1f62ac5aso832063wmq.4
+        for <linux-tegra@vger.kernel.org>; Wed, 02 Nov 2022 02:32:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qCDrX0xKXyu8erIDNjxDiJKuT0hxZZKKE3HXuUGBVDQ=;
+        b=JEw3aHjuWZamyqpZm4RGX16EJ2ImkOc5It56TcnzOFNVXGWtYH2YQJnSgwZ9ZDdPea
+         3PMYfvd0fYOVv8wanV8fHcMdCT/FvyA+9Dltc7NZRV6Y+bK2mjXZQEq1LXWEbw/yfcmf
+         1Oijc6Z1Nz6jcO3apdoMSl6QZ90CyP5Y/C/9GDbDvxKjgRJPYDTrbcVoz7fEI5socdnp
+         HwJWfXVcviZdhDnXY2AGoq1UfWPjqwfh9LvKMP7+Xiu+vyPSpGSio3Rgb64+2+HgIl8C
+         Icydx4p9oyQZu5lRJkw/PflgkG2vEEbZQGam4sA8x4ZmeoNFc6MHgmfI77pu7M3gtH8U
+         pXOA==
+X-Gm-Message-State: ACrzQf1dD26/ZfR/uxeG78VTzxH/Aa5jtrXpoa+TU7KQRdbJjbgU518G
+        nJnrlCSdn814SYPI6DssmHFI1QGUaZQhlkGOfDg95dfLys9U47NMrNBSDeYCmG6vr8YNonOUG9N
+        AQ9EsX3RqYiSvbtL3Pzhjosc=
+X-Received: by 2002:a05:600c:6023:b0:3cf:7dc1:e08e with SMTP id az35-20020a05600c602300b003cf7dc1e08emr5443604wmb.154.1667381534282;
+        Wed, 02 Nov 2022 02:32:14 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM7iks5yFnak5X2iZPcs6wSoPN4c8RmVdgyjVaQzUQOEwDY0j8GZM7MD/vLKrS0XyFefd22bEw==
+X-Received: by 2002:a05:600c:6023:b0:3cf:7dc1:e08e with SMTP id az35-20020a05600c602300b003cf7dc1e08emr5443583wmb.154.1667381533975;
+        Wed, 02 Nov 2022 02:32:13 -0700 (PDT)
+Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id x21-20020a1c7c15000000b003b492753826sm1361990wmc.43.2022.11.02.02.32.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Nov 2022 02:32:13 -0700 (PDT)
+Message-ID: <3ab32fc3-f2aa-1b42-fd87-557482ab56d5@redhat.com>
+Date:   Wed, 2 Nov 2022 10:32:11 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221014105938.fyy6jns5fsu5xd7q@bogus>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH v2 17/21] drm/fb-helper: Perform all fbdev I/O with the
+ same implementation
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20221024111953.24307-1-tzimmermann@suse.de>
+ <20221024111953.24307-18-tzimmermann@suse.de>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+In-Reply-To: <20221024111953.24307-18-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Oct 14, 2022 at 11:59:38AM +0100, Sudeep Holla wrote:
-> Hi Besar,
+On 10/24/22 13:19, Thomas Zimmermann wrote:
+> Implement the fbdev's read/write helpers with the same functions. Use
+> the generic fbdev's code as template. Convert all drivers.
 > 
-> On Wed, Sep 28, 2022 at 07:28:34PM -0500, Besar Wicaksono wrote:
-> > ARM Performance Monitoring Unit Table describes the properties of PMU
-> > support in ARM-based system. The APMT table contains a list of nodes,
-> > each represents a PMU in the system that conforms to ARM CoreSight PMU
-> > architecture. The properties of each node include information required
-> > to access the PMU (e.g. MMIO base address, interrupt number) and also
-> > identification. For more detailed information, please refer to the
-> > specification below:
-> >  * APMT: https://developer.arm.com/documentation/den0117/latest
-> >  * ARM Coresight PMU:
-> >         https://developer.arm.com/documentation/ihi0091/latest
-> > 
-> > The initial support adds the detection of APMT table and generic
-> > infrastructure to create platform devices for ARM CoreSight PMUs.
-> > Similar to IORT the root pointer of APMT is preserved during runtime
-> > and each PMU platform device is given a pointer to the corresponding
-> > APMT node.
-> > 
+> DRM's fb helpers must implement regular I/O functionality in struct
+> fb_ops and possibly perform a damage update. Handle all this in the
+> same functions and convert drivers. The functionality has been used
+> as part of the generic fbdev code for some time. The drivers don't
+> set struct drm_fb_helper.fb_dirty, so they will not be affected by
+> damage handling.
 > 
-> This looks good to me know.
+> For I/O memory, fb helpers now provide drm_fb_helper_cfb_read() and
+> drm_fb_helper_cfb_write(). Several drivers require these. Until now
+> tegra used I/O read and write, although the memory buffer appears to
+> be in system memory. So use _sys_ helpers now.
 > 
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> Hi Lorenzo,
-> 
-> Not sure if there are any other arm specific ACPI changes in the queue
-> for v6.2. Can you please add this too ?
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
 
-Hi Catalin, Will,
+[...]
 
-would you mind picking this patch up for v6.2 please ?
+> +static ssize_t __drm_fb_helper_write(struct fb_info *info, const char __user *buf, size_t count,
+> +				     loff_t *ppos, drm_fb_helper_write_screen write_screen)
+> +{
 
-Thank you very much.
+[...]
 
-Lorenzo
+> +	/*
+> +	 * Copy to framebuffer even if we already logged an error. Emulates
+> +	 * the behavior of the original fbdev implementation.
+> +	 */
+> +	ret = write_screen(info, buf, count, pos);
+> +	if (ret < 0)
+> +		return ret; /* return last error, if any */
+> +	else if (!ret)
+> +		return err; /* return previous error, if any */
+> +
+> +	*ppos += ret;
+> +
+
+Should *ppos be incremented even if the previous error is returned?
+
+The write_screen() succeeded anyways, even when the count written was
+smaller than what the caller asked for.
+
+>  /**
+> - * drm_fb_helper_sys_read - wrapper around fb_sys_read
+> + * drm_fb_helper_sys_read - Implements struct &fb_ops.fb_read for system memory
+>   * @info: fb_info struct pointer
+>   * @buf: userspace buffer to read from framebuffer memory
+>   * @count: number of bytes to read from framebuffer memory
+>   * @ppos: read offset within framebuffer memory
+>   *
+> - * A wrapper around fb_sys_read implemented by fbdev core
+> + * Returns:
+> + * The number of read bytes on success, or an error code otherwise.
+>   */
+
+This sentence sounds a little bit off to me. Shouldn't be "number of bytes read"
+instead? I'm not a native English speaker though, so feel free to just ignore me.
+
+[...]
+
+>  
+> +static ssize_t fb_read_screen_base(struct fb_info *info, char __user *buf, size_t count,
+> +				   loff_t pos)
+> +{
+> +	const char __iomem *src = info->screen_base + pos;
+> +	size_t alloc_size = min_t(size_t, count, PAGE_SIZE);
+> +	ssize_t ret = 0;
+> +	int err = 0;
+
+Do you really need these two? AFAIK ssize_t is a signed type
+so you can just use the ret variable to store and return the
+errno value.
+
+[...]
+
+> +static ssize_t fb_write_screen_base(struct fb_info *info, const char __user *buf, size_t count,
+> +				    loff_t pos)
+> +{
+> +	char __iomem *dst = info->screen_base + pos;
+> +	size_t alloc_size = min_t(size_t, count, PAGE_SIZE);
+> +	ssize_t ret = 0;
+> +	int err = 0;
+
+Same here.
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
