@@ -2,165 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6460C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 09:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA715C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 09:41:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbiKBJgG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Nov 2022 05:36:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48428 "EHLO
+        id S229547AbiKBJlT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Nov 2022 05:41:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbiKBJgE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Nov 2022 05:36:04 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 649C46589;
-        Wed,  2 Nov 2022 02:36:01 -0700 (PDT)
-Received: from booty (unknown [77.244.183.192])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id B6BC1240004;
-        Wed,  2 Nov 2022 09:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1667381759;
+        with ESMTP id S229704AbiKBJlR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Nov 2022 05:41:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2932182D
+        for <linux-tegra@vger.kernel.org>; Wed,  2 Nov 2022 02:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667381967;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Fxxn1EtGefbBmnWxZ8XrxEIUXbiJwyzDeE5y9WnF5dA=;
-        b=PtXD1S/+PYPuTw+0ABw0LDMREsiFR8UIk9Rt+urGLzui62MyUwWUmpQ0TGuc0oOJlrvEcR
-        HKCCoSQDA1vC2gq8eVHDUmrPtp6VIuEtEB/nLGQJqcAJ2LWxhc05PoyWr5wZF8gMmbHTM2
-        ADuYsLLkMSWr3yX/j/Z5v0yDa+Tp2q1cABNreOV+QTrHtOPP6SXc8Ske81OELMNWVvR613
-        /ahgljVxTG2akxnhZXa9Soj/ZlujC2ECgzl9Usa7qzJyJ3G5/be3YU0/4qSX7UPvAQ8Uxc
-        jnYoyijD3fep9LEncAlhn7lSZpKYbKljWydwwp1XQbXjlxduzu81XWZT/j+pFA==
-Date:   Wed, 2 Nov 2022 10:35:56 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: media: tegra-video: fix device_node use after
- free
-Message-ID: <20221102103556.4f556d6c@booty>
-In-Reply-To: <Y1wMGpthKxr2egtY@kadam>
-References: <20221028081926.2320663-1-luca.ceresoli@bootlin.com>
-        <Y1vMX/Zciz/XQ+4p@kadam>
-        <20221028185847.5454a98d@booty>
-        <Y1wMGpthKxr2egtY@kadam>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        bh=RgeOXsRJ+XKaYoOYvxoyhBylXQrWD/HUrGfmQUHOZZs=;
+        b=NUjdYV3rW79cPv/AK0PWPgFBCxIqQyzjJC7+TBixeJ+GrpLhAetFvre/jNHsDh3WHN9fkN
+        qIhEY98vXVKVZTpwUluv7G52Vnd8YgeNxFTFPzB3yb/3+/YOCi5unhZSaBadHvPIVkGGCS
+        Fqf/xQJxT9DKpbUnMs09sSYNx4qfjBQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-656-hMf9PKD3OmqlaLKdgv28aQ-1; Wed, 02 Nov 2022 05:39:25 -0400
+X-MC-Unique: hMf9PKD3OmqlaLKdgv28aQ-1
+Received: by mail-wm1-f71.google.com with SMTP id c130-20020a1c3588000000b003b56be513e1so7746160wma.0
+        for <linux-tegra@vger.kernel.org>; Wed, 02 Nov 2022 02:39:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RgeOXsRJ+XKaYoOYvxoyhBylXQrWD/HUrGfmQUHOZZs=;
+        b=JI3ve7Cne54Udz5bZCONaFq1kvxhbYTBJmIw4pAXwDhdXZ2VZPRJwzEi+gCY02y9Bn
+         CL8nM2jOqTT94U/A8dd0hJ9poup9xOJeE1L7qArmae8HTw3nqY6tX6EsoMNrDlpz4CZt
+         +UMstXodeI2lLNtpdGVWYiLSGVaA8waavVep9YZtpm1/hE8Xrv2o4IrZ/U5f+dF3n8HZ
+         bG3Wgl3ugbX18Z1d0XLPkDj93LdO825bbfaMGdkRlg4Y3lMcFwW8TzVB4XOOTZbU22Z6
+         SE5YBari5Q9PU9XGghBFduYYxTGagZyS4XSJFNf3ImNiWFchpATOWlsB50IpQYK4bPQ0
+         uwyw==
+X-Gm-Message-State: ACrzQf2fWYMq5bKDlTlBWYJB4jDSA/6eKmUSlf0B4sfJjvyxxNWPKfat
+        RFhHItgHrO6f++SLoziIB0tVIaHxE2I9n3T6tfvcn5AE27BrNCPHfSGTUidV88ukB4l0weFRkNp
+        kbmrOCG1d8CwCo3H8ZhEjVD0=
+X-Received: by 2002:a5d:40d1:0:b0:236:786d:611e with SMTP id b17-20020a5d40d1000000b00236786d611emr14871554wrq.355.1667381964724;
+        Wed, 02 Nov 2022 02:39:24 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4/k2KHrjikPXyIbTE3cWGjPi0EsRobUeOg55XAJjnO250x+w4Sp4JFFeS1nRK3GUJGY3QPnQ==
+X-Received: by 2002:a5d:40d1:0:b0:236:786d:611e with SMTP id b17-20020a5d40d1000000b00236786d611emr14871522wrq.355.1667381964509;
+        Wed, 02 Nov 2022 02:39:24 -0700 (PDT)
+Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id dn12-20020a05600c654c00b003cf537ec2efsm1653185wmb.36.2022.11.02.02.39.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Nov 2022 02:39:24 -0700 (PDT)
+Message-ID: <23b6c3ca-828a-5376-ae80-0b04202e190b@redhat.com>
+Date:   Wed, 2 Nov 2022 10:39:22 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH v2 18/21] drm/fb_helper: Minimize damage-helper overhead
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20221024111953.24307-1-tzimmermann@suse.de>
+ <20221024111953.24307-19-tzimmermann@suse.de>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+In-Reply-To: <20221024111953.24307-19-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Dan,
-
-On Fri, 28 Oct 2022 20:06:34 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> On Fri, Oct 28, 2022 at 06:58:47PM +0200, Luca Ceresoli wrote:
-> > Hello Dan,
-> > 
-> > On Fri, 28 Oct 2022 15:34:39 +0300
-> > Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >   
-> > > On Fri, Oct 28, 2022 at 10:19:26AM +0200, luca.ceresoli@bootlin.com wrote:  
-> > > > From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > > > 
-> > > > At probe time this code path is followed:
-> > > > 
-> > > >  * tegra_csi_init
-> > > >    * tegra_csi_channels_alloc
-> > > >      * for_each_child_of_node(node, channel) -- iterates over channels
-> > > >        * automatically gets 'channel'
-> > > >          * tegra_csi_channel_alloc()
-> > > >            * saves into chan->of_node a pointer to the channel OF node
-> > > >        * automatically gets and puts 'channel'
-> > > >        * now the node saved in chan->of_node has refcount 0, can disappear
-> > > >    * tegra_csi_channels_init
-> > > >      * iterates over channels
-> > > >        * tegra_csi_channel_init -- uses chan->of_node
-> > > > 
-> > > > After that, chan->of_node keeps storing the node until the device is
-> > > > removed.
-> > > > 
-> > > > of_node_get() the node and of_node_put() it during teardown to avoid any
-> > > > risk.
-> > > > 
-> > > > Fixes: 1ebaeb09830f ("media: tegra-video: Add support for external sensor capture")
-> > > > Cc: stable@vger.kernel.org
-> > > > Cc: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > > > ---
-> > > >  drivers/staging/media/tegra-video/csi.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-> > > > index b26e44adb2be..1b05f620b476 100644
-> > > > --- a/drivers/staging/media/tegra-video/csi.c
-> > > > +++ b/drivers/staging/media/tegra-video/csi.c
-> > > > @@ -433,7 +433,7 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
-> > > >  	for (i = 0; i < chan->numgangports; i++)
-> > > >  		chan->csi_port_nums[i] = port_num + i * CSI_PORTS_PER_BRICK;
-> > > >  
-> > > > -	chan->of_node = node;
-> > > > +	chan->of_node = of_node_get(node);
-> > > >  	chan->numpads = num_pads;
-> > > >  	if (num_pads & 0x2) {
-> > > >  		chan->pads[0].flags = MEDIA_PAD_FL_SINK;
-> > > > @@ -640,6 +640,7 @@ static void tegra_csi_channels_cleanup(struct tegra_csi *csi)
-> > > >  			media_entity_cleanup(&subdev->entity);
-> > > >  		}
-> > > >  
-> > > > +		of_node_put(chan->of_node);
-> > > >  		list_del(&chan->list);
-> > > >  		kfree(chan);    
-> > > 
-> > > Not related to your patch, but this kind of "one function cleans up
-> > > everything" style is always buggy.  For example, here it should be:
-> > > 
-> > > -		if (chan->mipi)
-> > > +		if (!IS_ERR_OR_NULL(chan->mipi))
-> > > 			tegra_mipi_free(chan->mipi);  
-> > 
-> > I sort of agree the code could be clearer here, but looking at the code
-> > in detail, this cannot happen. chan->mipi is set in one place only, and
-> > if it is an error the whole probe fails. So it can be either NULL or a
-> > valid pointer here.  
+On 10/24/22 13:19, Thomas Zimmermann wrote:
+> Pull the test for fb_dirty into the caller to avoid extra work
+> if no callback has been set. In this case no damage handling is
+> required and no damage area needs to be computed. Print a warning
+> if the damage worker runs without getting an fb_dirty callback.
 > 
-> I assumed that tegra_csi_channels_cleanup() would clean up if
-> tegra_csi_channel_alloc() fails.  Otherwise then that's several
-> different even worse bugs.
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+
+But I've a trivial comment below:
+
+>  drivers/gpu/drm/drm_fb_helper.c | 90 ++++++++++++++++++++++-----------
+>  1 file changed, 60 insertions(+), 30 deletions(-)
 > 
-> HINT: Let's all hope my initial analysis was correct.
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 836523aef6a27..fbc5c5445fdb0 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -449,12 +449,13 @@ static int drm_fb_helper_damage_blit(struct drm_fb_helper *fb_helper,
+>  static void drm_fb_helper_damage_work(struct work_struct *work)
+>  {
+>  	struct drm_fb_helper *helper = container_of(work, struct drm_fb_helper, damage_work);
+> +	struct drm_device *dev = helper->dev;
 
-Indeed you have a point. Apologies for having replied in a hurry and for
-the resulting noise.
-
-I'm going to send a patch to fix the chan->mipi mess. However I think
-the best way to do so would be a oneliner:
-
-@@ -491,6 +491,7 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
-        chan->mipi = tegra_mipi_request(csi->dev, node);
-        if (IS_ERR(chan->mipi)) {
-                ret = PTR_ERR(chan->mipi);
-+               chan->mipi = NULL;
-                dev_err(csi->dev, "failed to get mipi device: %d\n", ret);
-        }
-
-This would be a correct implementation of the initial intent as it can
-be inferred from the code, i.e. chan->mipi being either NULL or a valid
-pointer. This makes sense as chan->mipi is assigned in a single place.
+You removed this in patch #15, maybe just leaving it in that patch if you
+plan to use it again here?
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
