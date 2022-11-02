@@ -2,110 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4308AC43217
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 09:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3344C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 09:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231305AbiKBJIW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Nov 2022 05:08:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39472 "EHLO
+        id S229504AbiKBJbN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Nov 2022 05:31:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231223AbiKBJHq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Nov 2022 05:07:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E37512873B
-        for <linux-tegra@vger.kernel.org>; Wed,  2 Nov 2022 02:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667379907;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LpYqcUNkPgIA1fAPwB+EiO+Z9dq0ENSiM+RajxMrldI=;
-        b=gyuwcEyuDatDeHRSaakcsSF54xu9ubwrWfYGF4PMwX8uS0/8G4xXYXkDd6DIZLnYpVibi/
-        /QCWp2ofdI76vRLSQ5DrdnYwPEaxceEc23DN7Y7z1R9q9epQfKkLrQTBLiwdMpUUM4Iqun
-        cTW430qncx/KzWHGU/Tjz8jljhG57S8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-15-6w54yKGwNl-9aCEKg-JNVg-1; Wed, 02 Nov 2022 05:05:05 -0400
-X-MC-Unique: 6w54yKGwNl-9aCEKg-JNVg-1
-Received: by mail-wm1-f72.google.com with SMTP id f26-20020a7bcc1a000000b003c03db14864so244575wmh.6
-        for <linux-tegra@vger.kernel.org>; Wed, 02 Nov 2022 02:05:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LpYqcUNkPgIA1fAPwB+EiO+Z9dq0ENSiM+RajxMrldI=;
-        b=Uyyk4ZXwWzcTomQhyJhTjyCNU9OxNfU+hjhVxwZMxEquZztTGL3CcTHXrrDa547VoN
-         SfdeivlQCzpzj+sg8yTsi9Yxd3KDik/f/QWKh5vFh5zcbzXpGO4FHnAPAlNY90j01Q2D
-         0tBdBz6F2W/9nujwtFtc0cNC6GbvlgX5uB7AUuvfPDOSNTLIh0z9KL1C0QbEmqFC93zz
-         xSBq4iWB3eUfBhsxky4yyPeHnVhIyqgtvO0CBFrocGhtkzPmTMjevo5oRbfqJI/aKLBt
-         j56ur/IrhPRVRWAABJSRdWjciFEKqpQgAKZdgiOC1+Hpgp4BD2GVC0sMTjiKPZjZ+o5I
-         xdiA==
-X-Gm-Message-State: ACrzQf0KnmCtuf0W+/b+p8GAAEDYmF2q7Wg8bSisREIYJz6pzgEZAez0
-        tLNmtR7qs9J6fDah0G6Em6z9IVCbzq75avlwcRNIV5lRtuzPt1jOOtGBEtQCwFGqx7VLCSJClaX
-        BoV4ntx9ARgmCiLPSNtsYqsg=
-X-Received: by 2002:a5d:6488:0:b0:22b:3b0b:5e72 with SMTP id o8-20020a5d6488000000b0022b3b0b5e72mr14464155wri.138.1667379904740;
-        Wed, 02 Nov 2022 02:05:04 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6Ug/7BR+PMLuqwC0wiYVRKEgerXkzKho5yFNKIDT0bC26SnYKpkqpAn1quqQ9FNF9E1JGkLg==
-X-Received: by 2002:a5d:6488:0:b0:22b:3b0b:5e72 with SMTP id o8-20020a5d6488000000b0022b3b0b5e72mr14464139wri.138.1667379904487;
-        Wed, 02 Nov 2022 02:05:04 -0700 (PDT)
-Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id p2-20020a5d4582000000b00228d52b935asm12402687wrq.71.2022.11.02.02.05.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Nov 2022 02:05:04 -0700 (PDT)
-Message-ID: <a96d57d8-486d-5a48-a00a-39df6275cbb5@redhat.com>
-Date:   Wed, 2 Nov 2022 10:05:02 +0100
+        with ESMTP id S229468AbiKBJbM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Nov 2022 05:31:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3961210E2;
+        Wed,  2 Nov 2022 02:31:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CA3D9618C4;
+        Wed,  2 Nov 2022 09:31:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6ABC433C1;
+        Wed,  2 Nov 2022 09:31:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667381471;
+        bh=Gg/fPN5aJjIxWUU4f2lqbCwhG9+mABQUoLO1LEyugvA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VA9kqUgFzHW7TNNVFU0PUVwRSgugIQCwLDDSfTZD2GL2XxifBiQZCkHerKlJKxwKk
+         36kvIAXAXK1hOwjS1jaxYUKTxJQk7ngM4NiLMhq1NdjL2UMrAuQKeHvbnMLgppjteZ
+         AXvP/1y6CiiQv46HYtuDYqLXjU879ewH68iKsMWoFMZ+gnUcC2JQlDVZvfLS46/tKJ
+         0qtz+1tbUIw+rdzWFs19fqtGsOG/Rj/IR/O3Q3dHFyXpq0bVfeVaC66fWnbxCY4eHG
+         Q8fw64tP8w/G1HbUSZe3sn2sb7Q4kVUNmPgEKIZqQcazF5PPB2BFui3kIZUq7FGkS0
+         VAxKq7ffmvGrQ==
+Date:   Wed, 2 Nov 2022 10:31:03 +0100
+From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>, catalin.marinas@arm.com,
+        will@kernel.org
+Cc:     Besar Wicaksono <bwicaksono@nvidia.com>, rafael@kernel.org,
+        lenb@kernel.org, guohanjun@huawei.com, linux-tegra@vger.kernel.org,
+        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT)
+ initial support
+Message-ID: <Y2I411GOEkiqlCBg@lpieralisi>
+References: <20220929002834.32664-1-bwicaksono@nvidia.com>
+ <20221014105938.fyy6jns5fsu5xd7q@bogus>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v2 16/21] drm/fb-helper: Call fb_sync in I/O functions
-Content-Language: en-US
-To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
-        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20221024111953.24307-1-tzimmermann@suse.de>
- <20221024111953.24307-17-tzimmermann@suse.de>
-From:   Javier Martinez Canillas <javierm@redhat.com>
-In-Reply-To: <20221024111953.24307-17-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221014105938.fyy6jns5fsu5xd7q@bogus>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/24/22 13:19, Thomas Zimmermann wrote:
-> Call struct fb_ops.fb_sync in drm_fbdev_{read,write}() to mimic the
-> behavior of fbdev. Fbdev implementations of fb_read and fb_write in
-> struct fb_ops invoke fb_sync to synchronize with outstanding operations
-> before I/O. Doing the same in DRM implementations will allow us to use
-> them throughout DRM drivers.
+On Fri, Oct 14, 2022 at 11:59:38AM +0100, Sudeep Holla wrote:
+> Hi Besar,
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
+> On Wed, Sep 28, 2022 at 07:28:34PM -0500, Besar Wicaksono wrote:
+> > ARM Performance Monitoring Unit Table describes the properties of PMU
+> > support in ARM-based system. The APMT table contains a list of nodes,
+> > each represents a PMU in the system that conforms to ARM CoreSight PMU
+> > architecture. The properties of each node include information required
+> > to access the PMU (e.g. MMIO base address, interrupt number) and also
+> > identification. For more detailed information, please refer to the
+> > specification below:
+> >  * APMT: https://developer.arm.com/documentation/den0117/latest
+> >  * ARM Coresight PMU:
+> >         https://developer.arm.com/documentation/ihi0091/latest
+> > 
+> > The initial support adds the detection of APMT table and generic
+> > infrastructure to create platform devices for ARM CoreSight PMUs.
+> > Similar to IORT the root pointer of APMT is preserved during runtime
+> > and each PMU platform device is given a pointer to the corresponding
+> > APMT node.
+> > 
+> 
+> This looks good to me know.
+> 
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> 
+> Hi Lorenzo,
+> 
+> Not sure if there are any other arm specific ACPI changes in the queue
+> for v6.2. Can you please add this too ?
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+Hi Catalin, Will,
 
--- 
-Best regards,
+would you mind picking this patch up for v6.2 please ?
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+Thank you very much.
 
+Lorenzo
