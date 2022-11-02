@@ -2,149 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED62C43217
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 08:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA35C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 09:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230328AbiKBIdG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Nov 2022 04:33:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37144 "EHLO
+        id S231185AbiKBJHi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Nov 2022 05:07:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230376AbiKBIdD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Nov 2022 04:33:03 -0400
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE2C27932;
-        Wed,  2 Nov 2022 01:33:00 -0700 (PDT)
-Received: from booty (unknown [77.244.183.192])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 54E3840016;
-        Wed,  2 Nov 2022 08:32:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1667377978;
+        with ESMTP id S231217AbiKBJHA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Nov 2022 05:07:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB47286E2
+        for <linux-tegra@vger.kernel.org>; Wed,  2 Nov 2022 02:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667379845;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nDDyvRuP5YVwgQ4Sv51x8uHgPQuqZr7+R+y4amwnRCA=;
-        b=EaZG7r64T44bSau9BAfVyn1Rg9Www9852QY5f6ONdfxVuykC9ga2q4Y1sQ9fc6FeArOIxK
-        eIstuHfDtP8S4Q4XhXd9wvRvyimA9WVHMqMCf452HwFtFRVE+XzAaSUKoX28i0RgKsMy/1
-        DfMqm4ZProgyWDBYlL3Pq4bmENNAk/ZgAzIJcOJgnEU84Bguk7w59CxNNugES4I9GYDbFt
-        3b5SwaL1Ay/G3hMdLHdMMgSHrF6bFwD81bOERx85g3lQih31W20L2GbDJR5N/vJwBXv8y/
-        OORfRwu2ILWhslXyPimEcLADNgjFiKSEJe4jnE/0Hn/3ovwUThtPN78hD/ukOA==
-Date:   Wed, 2 Nov 2022 09:32:55 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     linux-tegra@vger.kernel.org,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: fix HOST1X clock divider on Tegra20 and
- Tegra30
-Message-ID: <20221102093255.0b5ba7d6@booty>
-In-Reply-To: <603a0227-7d25-b9da-6dc3-fa9fe1b951e7@collabora.com>
-References: <20221028074826.2317640-1-luca.ceresoli@bootlin.com>
-        <603a0227-7d25-b9da-6dc3-fa9fe1b951e7@collabora.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        bh=XBlp2DOijU5hXQ9AriUwp9vEVLgfxcCQxHX+sSZSvOs=;
+        b=OaN362jXxD0t4dOCZRX2dd3sbYT3c4rvUqGPjRzAoWlxVcQ3noz7A9mSZP0pqoPdGulVNu
+        x5p0M4I/g4cWA41Qp5IJJfhZ1Lps8hWIf1sKOQSCu8AkcSSrLk/VhEeuar6dESGemzLLzD
+        c1Om4CYhkuOD49/ikejseEpnQPzF5R8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-392-4ni4QRfeOtW-TSoD9aUxvw-1; Wed, 02 Nov 2022 05:04:01 -0400
+X-MC-Unique: 4ni4QRfeOtW-TSoD9aUxvw-1
+Received: by mail-wr1-f72.google.com with SMTP id u13-20020adfa18d000000b00236566b5b40so4589835wru.9
+        for <linux-tegra@vger.kernel.org>; Wed, 02 Nov 2022 02:04:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBlp2DOijU5hXQ9AriUwp9vEVLgfxcCQxHX+sSZSvOs=;
+        b=NRSidlQlD68bVH6Ut7ye2viGhDpISN7Ip68l3EO5TQ1nMfc+kLll3r8LTxKftKPuQP
+         6GW1dQ+Z8tAm7K+K4kTLJNonj1dbH7Ywvb1RHhCd7EUmq7gEPiNwmvLCh4+GBg06I1pS
+         9cbp4NBEE/ZHIYIY+5BY862pKoqqoSQvk5+MduPGhd/8rbm0VUFxrMSjl5ji6oRXRwiO
+         pz98RcBNyR6DK8YF01Djygambc0UGfxIfU3AGhez7qMJtij/HTQsfEFXRCVz6zXU7ZTL
+         8hwRMTxBhEBj7/mRNma2S4hLIU9k01+nMlRCK4wKFyveWSWVDMuSYO8dQuNP+D1kTMe7
+         PR/w==
+X-Gm-Message-State: ACrzQf2y+5txiwFKfql99HC03adxJeesW+N6IyFAjv6Kw+zQBZSh63ky
+        n+RzZQVdI4sw3W8d9sikfgK+wviNdSZgbvV7x9NoW7Gu83PhWDAeNDxflY0P2HXmVpL5Ml96LGa
+        Nb1OwZNpGrVOxh91tFFSGIDs=
+X-Received: by 2002:a7b:c409:0:b0:3cf:4c81:8936 with SMTP id k9-20020a7bc409000000b003cf4c818936mr24380816wmi.38.1667379840253;
+        Wed, 02 Nov 2022 02:04:00 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM72ckpdUoZR+NwXtu1sv2+7NmgS+YMIWWHB7QdeKnWTKduGDRl7tg4bkpenTZv0mX1kFf34kw==
+X-Received: by 2002:a7b:c409:0:b0:3cf:4c81:8936 with SMTP id k9-20020a7bc409000000b003cf4c818936mr24380784wmi.38.1667379840046;
+        Wed, 02 Nov 2022 02:04:00 -0700 (PDT)
+Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id b13-20020a5d550d000000b002366b17ca8bsm14083933wrv.108.2022.11.02.02.03.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Nov 2022 02:03:59 -0700 (PDT)
+Message-ID: <87284e5e-859e-3b1c-7142-28d4fa7a7939@redhat.com>
+Date:   Wed, 2 Nov 2022 10:03:57 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH v2 15/21] drm/fb-helper: Disconnect damage worker from
+ update logic
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20221024111953.24307-1-tzimmermann@suse.de>
+ <20221024111953.24307-16-tzimmermann@suse.de>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+In-Reply-To: <20221024111953.24307-16-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Dmitry,
-
-On Mon, 31 Oct 2022 03:34:07 +0300
-Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
-
-> On 10/28/22 10:48, luca.ceresoli@bootlin.com wrote:
-> > From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > 
-> > On Tegra20 and Tegra30 the HOST1X clock is a fractional clock divider with
-> > 7 integer bits + 1 decimal bit. This has been verified on both
-> > documentation and real hardware for Tegra20 an on the documentation I was
-> > able to find for Tegra30.
-> > 
-> > However in the kernel code this clock is declared as an integer divider. A
-> > consequence of this is that requesting 144 MHz for HOST1X which is fed by
-> > pll_p running at 216 MHz would result in 108 MHz (216 / 2) instead of 144
-> > MHz (216 / 1.5).
-> > 
-> > Fix by replacing the INT() macro with the MUX() macro which, despite the
-> > name, defines a fractional divider. The only difference between the two
-> > macros is the former does not have the TEGRA_DIVIDER_INT flag.
-> > 
-> > Also move the line together with the other MUX*() ones to keep the existing
-> > file organization.
-> > 
-> > Fixes: 76ebc134d45d ("clk: tegra: move periph clocks to common file")
-> > Cc: stable@vger.kernel.org
-> > Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> > index 4dcf7f7cb8a0..806d835ca0d2 100644
-> > --- a/drivers/clk/tegra/clk-tegra-periph.c
-> > +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> > @@ -615,7 +615,6 @@ static struct tegra_periph_init_data periph_clks[] = {
-> >  	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
-> >  	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
-> >  	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
-> > -	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
-> >  	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
-> >  	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
-> >  	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
-> > @@ -664,6 +663,7 @@ static struct tegra_periph_init_data periph_clks[] = {
-> >  	MUX("owr", mux_pllp_pllc_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr_8),
-> >  	MUX("nor", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_NOR, 42, 0, tegra_clk_nor),
-> >  	MUX("mipi", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_MIPI, 50, TEGRA_PERIPH_ON_APB, tegra_clk_mipi),
-> > +	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
-> >  	MUX("vi_sensor", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor),
-> >  	MUX("vi_sensor", mux_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_9),
-> >  	MUX("cilab", mux_pllp_pllc_clkm, CLK_SOURCE_CILAB, 144, 0, tegra_clk_cilab),  
+On 10/24/22 13:19, Thomas Zimmermann wrote:
+> The fbdev helpers implement a damage worker that forwards fbdev
+> updates to the DRM driver. The worker's update logic depends on
+> the generic fbdev emulation. Separate the two via function pointer.
 > 
-> This was attempted in the past
-> https://lore.kernel.org/all/20180723085010.GK1636@tbergstrom-lnx.Nvidia.com/
+> The generic fbdev emulation sets struct drm_fb_helper_funcs.fb_dirty,
+> a new callback that hides the update logic from the damage worker.
+> It's not possible to use the generic logic with other fbdev emulation,
+> because it contains additional code for the shadow buffering that
+> the generic emulation employs.
 > 
-> I assume here you're also porting the downstream patches to upstream.
-> This one is too questionable. The host1x clock shouldn't affect overall
-> performance to begin with. It doesn't make sense to use fractional clock
-> just for getting extra KHz.
+> DRM drivers with internal fbdev emulation can set fb_dirty to their
+> own implementation if they require damage handling; although no such
+> drivers currently exist.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
 
-Thank you for the review and for the pointer!
+[...]
 
-Indeed I'm not sure this patch brings an actual improvement to my use
-case, however I reached it by trying to replicate the configuration on
-a known-working kernel 3.1, which uses a 1.5 divider. This seems to be
-the same reason that led to the 2018 patch that also got rejected.
+>  static void drm_fb_helper_damage_work(struct work_struct *work)
+>  {
+> -	struct drm_fb_helper *helper = container_of(work, struct drm_fb_helper,
+> -						    damage_work);
+> -	struct drm_device *dev = helper->dev;
+> +	struct drm_fb_helper *helper = container_of(work, struct drm_fb_helper, damage_work);
 
-I'll be OK with dropping this patch after I have a 100% working setup
-with an integer divider, which is very likely given your reply. But it
-took time before I found the root cause of this issue, and I would like
-to avoid other people waste time in the future, so what about adding a
-comment there?
+This line is an unrelated code style change. But I guess it's OK.
 
-What about:
-
-  /*
-   * The host1x clock shouldn't affect overall performance. It doesn't
-   * make sense to use fractional clock just for getting extra KHz, so
-   * let's pretend it's an integer divider
-   */
-
-?
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
