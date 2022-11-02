@@ -2,115 +2,113 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D210C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Nov 2022 23:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D72FAC4332F
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Nov 2022 01:58:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbiKAXaH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Nov 2022 19:30:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55638 "EHLO
+        id S229954AbiKBB6o (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Nov 2022 21:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiKAXaG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Nov 2022 19:30:06 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 094211A807;
-        Tue,  1 Nov 2022 16:30:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 763D3CE1EEC;
-        Tue,  1 Nov 2022 23:30:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D5B8C433C1;
-        Tue,  1 Nov 2022 23:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667345401;
-        bh=0DH3p60Q9Sit9vQShKZA2cBhAhz9RfMBp8p21uqdgz0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KyZdUSyHT6bFnOPj4/XcwYG2ARzeGix+3LQcQjjRzIaFGWACveqhcsQzZUWI+gSLO
-         lUXRnQM5le7ha9tNuQnLuYVqWh11jutBB2kn++l/h/mdd6i1WS3sx2n04ZnwJ5b77/
-         306QavC+MYuPGjEAtIHJ1zNXHiGZhBQCJbxgRr2zA/Dd5pfGIFwaIMmyTOULlNmvZY
-         pbmYSOpHUUFCWTNLhMaEJXufBEtwbdyyPuRsSqg6edaGzfVpctnp1+NlgmLx4DJh8W
-         UUroMW+/ftahskSge+wviVjLyaCaAetNhtZ3lOlj+lFrj1gUcIdLNTxnfpOKYfSC3f
-         3m119lUTnZtLA==
-Received: by pali.im (Postfix)
-        id B785A7F8; Wed,  2 Nov 2022 00:29:58 +0100 (CET)
-Date:   Wed, 2 Nov 2022 00:29:58 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: tegra: Update comment about config space
-Message-ID: <20221101232958.5fxghwlligw26h65@pali>
-References: <20220911113216.14892-1-pali@kernel.org>
- <YzRcYwQYlawV10QS@orome>
- <20221005194336.gdnu4vfzkudedjw5@pali>
- <Yz7PEakeTyvmnxDh@orome>
+        with ESMTP id S229650AbiKBB6n (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Nov 2022 21:58:43 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E73013E0F
+        for <linux-tegra@vger.kernel.org>; Tue,  1 Nov 2022 18:58:42 -0700 (PDT)
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N290R2cK9zRnsS;
+        Wed,  2 Nov 2022 09:53:43 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 2 Nov 2022 09:58:40 +0800
+Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 2 Nov
+ 2022 09:58:39 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+CC:     <yangyingliang@huawei.com>, JC Kuo <jckuo@nvidia.com>,
+        "Kishon Vijay Abraham I" <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] phy: tegra: xusb: fix error handing in tegra_xusb_{pad|port}_init()
+Date:   Wed, 2 Nov 2022 09:57:32 +0800
+Message-ID: <20221102015732.1332099-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Yz7PEakeTyvmnxDh@orome>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thursday 06 October 2022 14:50:25 Thierry Reding wrote:
-> On Wed, Oct 05, 2022 at 09:43:36PM +0200, Pali Rohár wrote:
-> > On Wednesday 28 September 2022 16:38:27 Thierry Reding wrote:
-> > > On Sun, Sep 11, 2022 at 01:32:16PM +0200, Pali Rohár wrote:
-> > > > Like many other ARM PCIe controllers, it uses old PCI Configuration
-> > > > Mechanism #1 from PCI Local Bus for accessing PCI config space.
-> > > > It is not PCIe ECAM in any case.
-> > > > 
-> > > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > > ---
-> > > >  drivers/pci/controller/pci-tegra.c | 8 +++++---
-> > > >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > > 
-> > > Perhaps this should be rolled into the PCI_CONF1_EXT_ADDRESS patch?
-> > 
-> > Well, I split documentation change and PCI_CONF1_EXT_ADDRESS usage into
-> > two patches as those are two different / separate things. Documentation
-> > change is a fix (because documentation is wrong) and PCI_CONF1_EXT_ADDRESS
-> > is an improvement - code cleanup. And in case if there is a issue with
-> > "cleanup" patch it can be reverted without need to revert also "fix"
-> > part. This is just information how I looked at these changes and why I
-> > decided to split them.
-> > 
-> > > On
-> > > the other hand there's really no use in keeping this comment around
-> > > after that other patch because the documentation for the new macro lays
-> > > out the details already.
-> > > 
-> > > Thierry
-> > 
-> > Ok, whether documentation is needed or not - it is your maintainer
-> > decision. Maybe really obvious things do not have to be documented.
-> > Also another look at this problem can be that if somebody wrote wrong
-> > documentation for it, maybe it is not too obvious? I do not have opinion
-> > on this, so choose what is better :-)
-> 
-> I wrote that documentation back at the time and I fail to see what
-> exactly is wrong about it. Granted, it doesn't mention the Intel PCI
-> Configuration mechanism #1 from the PCI Local Bus Specification, but
-> that's just because I didn't know about it. Back when I wrote this I
-> was looking at the PCIe specifications (because, well, this supports
-> PCIe) and I noticed that it was similar to ECAM. And that's exactly
-> what the comment says and it points out what the differences are.
-> 
-> So just because the mapping is closer to PCI_CONF1_EXT_ADDRESS than
-> ECAM, it doesn't automatically make the comment wrong. The mapping also
-> isn't exactly PCI_CONF1_EXT_ADDRESS, so the new comment can be
-> considered equally wrong. The mapping is neither ECAM nor PCI_CONF1, so
-> describing it one way or the other doesn't make a difference.
+If device_add() is not called successful, it can not call
+device_unregister(), it will lead a kernel crash because
+of deleting not added device. Fix these by using put_device()
+instead.
 
-PCI_CONF1_EXT_ADDRESS express indirect register access. If you look at
-the address space of Intel PCI Configuration Mechanism #1 then it is
-really what this ARM PCIe controller implements (plus uses additional
-bits for larger 4kB space). This is really common what lot of non-ECAM
-ARM SoC implements. It is really bad to mix this mapping with ECAM.
+Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
+Cc: JC Kuo <jckuo@nvidia.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/phy/tegra/xusb.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 95091876c422..65e15dcde02f 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -165,16 +165,16 @@ int tegra_xusb_pad_init(struct tegra_xusb_pad *pad,
+ 
+ 	err = dev_set_name(&pad->dev, "%s", pad->soc->name);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_dev;
+ 
+ 	err = device_add(&pad->dev);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_dev;
+ 
+ 	return 0;
+ 
+-unregister:
+-	device_unregister(&pad->dev);
++put_dev:
++	put_device(&pad->dev);
+ 	return err;
+ }
+ 
+@@ -542,16 +542,16 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+ 
+ 	err = dev_set_name(&port->dev, "%s-%u", name, index);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_dev;
+ 
+ 	err = device_add(&port->dev);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_dev;
+ 
+ 	return 0;
+ 
+-unregister:
+-	device_unregister(&port->dev);
++put_dev:
++	put_device(&port->dev);
+ 	return err;
+ }
+ 
+-- 
+2.25.1
+
