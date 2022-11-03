@@ -2,114 +2,113 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CD4C4321E
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 11:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342D2C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 11:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231285AbiKCLuw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 07:50:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57132 "EHLO
+        id S230388AbiKCLyB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 07:54:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbiKCLuv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 07:50:51 -0400
+        with ESMTP id S229637AbiKCLyA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 07:54:00 -0400
 Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 722731261B;
-        Thu,  3 Nov 2022 04:50:50 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id bj12so4401279ejb.13;
-        Thu, 03 Nov 2022 04:50:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9A4DB3;
+        Thu,  3 Nov 2022 04:53:59 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id d26so4461131eje.10;
+        Thu, 03 Nov 2022 04:53:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=keJ5l0jb4yVbNlSnZAlwlDsuTe9ejUBhSqY4hGrZAt0=;
-        b=PQ4YP2wRUJxZdyyz6zZSZj+OjTKLdQbjnJkxjyIB0AC5p9wCBSenX4q6mmPCPucfLz
-         gDMwV3i1aFqKEh5YPlxigWY1bvKvPlUXkwPnhWHjwjjye79ZdICdVxB4Zftj9DJEytlN
-         q771MkVQ5MXnmIadjxvf8TbGbFXv8VQhRZ8edPRJDeMOyNH8tg6R2p1oCo9eABQy6QoU
-         GuOc+ZylXDYkX5N9L2qZ4YrABRwVE2lPD5u2XqB6c6dFDVgqLx6hIV5K3nyY6D5+4D+e
-         8VUcEhsp7ptRiQ4ShGElO1mjJ8Pk6zCV0A+EtDhi/6TUIGuafFpfUciZ1WTb7yraBE/2
-         s2zg==
+        bh=DcS1ogD5RMaT4vN4BugWaTdOyuYyorDCDxxuL0275yQ=;
+        b=iMVjGkJ1sZur7OAaUgFd+Sdtkj72KA/wRb1smYLytE+nhnh9GxNmdTXJmG2OipM2aA
+         YELlry3DCqHNnh6QNrN+YzH0L+1yMZL+Xt3g8N9NH42LcCd/prsDp1UpQwUwnK/OLQdO
+         dFFYELOHNpwv8MerRfdMIF5hdVBC2f+kOsWupT+w9EM8sXLumYOELTgS+FwNJdt5VJAV
+         B3dCFPqadysatetc9CrSZ6YL1NfWkMrRUVXQlLA/I7vx9lMnfgX3+vwAUiNU87L3TOZl
+         NYGYV8DZgIKdf54KDqmEfqK6zbTVcdcnGy5rI+djcMnnc55TCaAcI5nlAUt4MXuk2UGo
+         Ph7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=keJ5l0jb4yVbNlSnZAlwlDsuTe9ejUBhSqY4hGrZAt0=;
-        b=YJEo8tCrwnjUBgzVnKKLTnrEd5t27/6G1186HPE8erzDfve4wMqZB2yKu5x+roNlTA
-         qeZBGnzZXDGypLy4MHL16iWmq9yUvd0NhG6n6U8pDvqEHaH4GEvUgtNNFsNZgVhJOQfn
-         OjW5CJ5eMApB68MicKnjncPvOyh11NCnEFmNQv/1rW7rUOA9D7zvSGxKFwij16oZV3+l
-         U13E3L0/Ypj7nvY7vnMoe2sl4TKS0o7FXHZp9iyG4auHD6XCE8dgNHVgnZu74FV4a1Ci
-         B7hXvzuJYoakBNABSiF3zpcuCAb+1KoLducaLe14lULj+1p7Z5fO9k54Wf63DmZ0fJ5k
-         6uMQ==
-X-Gm-Message-State: ACrzQf2MR0Uzu9yA1smcc8KjSuHytRN0lMx1XcYCS8JBni54ols91701
-        GdnIa8c3YtaVTxqSr0yQqi0=
-X-Google-Smtp-Source: AMsMyM4Q2CWz7BX9ZdLC6MF66A9EF7pbiXpl8t0scbNUjX7cAVd2Z79MgxCmVq5bwXHVpkFCAbco8Q==
-X-Received: by 2002:a17:906:7119:b0:7ad:fc15:24be with SMTP id x25-20020a170906711900b007adfc1524bemr9395473ejj.199.1667476248950;
-        Thu, 03 Nov 2022 04:50:48 -0700 (PDT)
+        bh=DcS1ogD5RMaT4vN4BugWaTdOyuYyorDCDxxuL0275yQ=;
+        b=z3DLBgibsxzGB9tGwDf1IzkhRtAk6t2/TU/jEOPKiBD0uaotYfsBSlg9sGqodr6/+e
+         JAL+Whe4LlCzxqcYdlh+W9X7coFNeRszXjWf3E9Za/jKIO4uXZS9h3qpqdGbLdELqCpF
+         ruGY/jE/DLdi3M1ZI6Zn6SpVmoGVVyR7kBUKo2pl59FrSCBaQnEppsbE2WBIv4A9piTc
+         U6PIrfVNlzrYPNlUI7NsYIo36o61+zKFBS4ZCJV4pv2CSisvdcfQnzhqVdc8lERtU/ZC
+         ARvWeLuSYKMt7/Uxf3oeCTpETnqy4nd9rdnMtoLXUxJl7tK609hkBj/ZhGZ47l0qBvE3
+         pgJA==
+X-Gm-Message-State: ACrzQf0kDA88bYQzGdHQtNyMJ9nYQPG1tVEqCUxma0JVqy/0sq/t1SsQ
+        WiJEs/FMGscl1UKRa0EB4TIULZymb28=
+X-Google-Smtp-Source: AMsMyM55jgJRmDD3iSIiCOfs5zW12Rty87tKQ0QZgLPRpF8Dw1Dp9ExAtPixJiMGijfyVfyvPAz/rA==
+X-Received: by 2002:a17:907:6d8a:b0:7ad:d3a1:cbf6 with SMTP id sb10-20020a1709076d8a00b007add3a1cbf6mr18913968ejc.533.1667476438483;
+        Thu, 03 Nov 2022 04:53:58 -0700 (PDT)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b18-20020a1709063cb200b0078d4e39d87esm378334ejh.225.2022.11.03.04.50.47
+        by smtp.gmail.com with ESMTPSA id i6-20020a170906114600b0073dc4385d3bsm405883eja.105.2022.11.03.04.53.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 04:50:47 -0700 (PDT)
-Date:   Thu, 3 Nov 2022 12:50:46 +0100
+        Thu, 03 Nov 2022 04:53:57 -0700 (PDT)
+Date:   Thu, 3 Nov 2022 12:53:55 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Sandipan Patra <spatra@nvidia.com>
 Cc:     jonathanh@nvidia.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         bbasu@nvidia.com, kyarlagadda@nvidia.com
-Subject: Re: [PATCH v5 2/3] arm64: tegra: Add PWM controllers on Tegra234
-Message-ID: <Y2OrFj8sLbzaFCgE@orome>
+Subject: Re: [PATCH v5 3/3] arm64: tegra: Add user PWM support on Jetson Orin
+Message-ID: <Y2Or06mrvLmZZ5KT@orome>
 References: <20220919141455.31084-1-spatra@nvidia.com>
- <20220919141455.31084-2-spatra@nvidia.com>
+ <20220919141455.31084-3-spatra@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Aw3zPKjSVKby1eZq"
+        protocol="application/pgp-signature"; boundary="Y9DjAhgJL9OQknsI"
 Content-Disposition: inline
-In-Reply-To: <20220919141455.31084-2-spatra@nvidia.com>
+In-Reply-To: <20220919141455.31084-3-spatra@nvidia.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Aw3zPKjSVKby1eZq
+--Y9DjAhgJL9OQknsI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 19, 2022 at 07:44:54PM +0530, Sandipan Patra wrote:
-> Tegra234 has eight single-channel PWM controllers, one of them in the
-> AON block.
+On Mon, Sep 19, 2022 at 07:44:55PM +0530, Sandipan Patra wrote:
+> Enable in device tree and use it to drive the PWM controllers on
+> 40 pin header of Orin dev-kit.
 >=20
 > Signed-off-by: Sandipan Patra <spatra@nvidia.com>
 > ---
-> V4->V5: Update compatable with Tegra234 and fallback
+> V1->V2: Overriding by node label instead of node path.
 >=20
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 88 +++++++++++++++++++++++-
->  1 file changed, 86 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
-I've merged this with Jon's changes that also added these.
+Applied, thanks.
 
-Thanks,
 Thierry
 
---Aw3zPKjSVKby1eZq
+--Y9DjAhgJL9OQknsI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNjqxYACgkQ3SOs138+
-s6GV1xAAgnvX4bDU3E6GnC3hIepbicVjUN+ipYXeyeC2gAbc1KwfHoa4hoQkBo5f
-Lma1kyaPrh0gBNblea7DuwQNNqnHsWg5UY+FRLsWDifSCs3f488FXKQKOCbDgVDB
-zJR/zGIiLKuwS0Evmvsno9n4r8bBJ6qlmpGPtTcqsUkCG2jYvqEifePnCllk2Xcu
-jgHaqgSS2u1iZ40UFouOYj1XKjXcmAO0n9+OH3aYxdY9CU2KlSpJExtBFkHpDZGY
-XNoDyr/h+Y2Thp3lNmpIjS1U50drOU2CeY+KBPOUBj66sqbVWLPffwDXH1l6xsak
-po0WiyfLIuEo98qzyIt7L4haAGMKt9HnuRa47Jo3XkJq8ULoITDQKvmW1FteH0xx
-sm2J5SFJ9bglLbv55GZtgbwROl9GM2K6Z4v3KWBVzVtGljhPZiPpjLjqUrrGapii
-LdKqqFwjf6SjRuKJsX5MSjRLiPcvPttcCNEqnpAANKcC4RI73mPl31DF0YkTmz8W
-oawg3pc8OJzz9sDc2ZSuc18zkzNpfmdmya6V5dqh62a23sP+CIwbn4lbeYmwGElW
-28u8gJa5EO6TEVxvBwcAKGdICRYg9AVwpoSbwqiSkZ0/btQ6sINkf3ojT13CDKkC
-hJCrD+TrqVtBJnKJjrbjjtAXdJZzj33tQVnyVty2QO2GUNay1wU=
-=/9V0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNjq9MACgkQ3SOs138+
+s6FXJRAAmlcrdgBbQTazfj/BmblRxClv3Ph1v+NB5qkbNCgeKg4tkE5RYHqTyC60
+TaZb64oH6iPRLMxo/NFdMl90fPgXyut0tfMoyXZdk4PV/g1vjseyZZXAxrwEh4Yr
+g618kp2QVs4nds2hmm1bIND8x9nQyD4X74+OYMKzO8/Wu7h6XjrXKMuEF09kP19Q
+cJJilwQqmne0vyP+1yAz9iRDmNjy3Uz29NhSLQ8v3y210XBRYH7LOShaZValfIyn
+/BPI/AVSuvzgrLR35rvYG8ZzDq9YDuUXexdDzISXRYM3U3Eti8L23tQGlTm4mGcy
+opp8N8L+hyca/96ZJZlmPyyU6C0+5eQq9y2EuYwa1ScTOyVsSgo0aCZN4aps+YOe
+nEuD8vSKUms8JtGjJm8eaO2ISZAmEYCRxQcJvPjQEr2kVr2upjL6iycZRemBTb8s
+aTYI2qnu/Tqh2gw8Urr8ZDb+IyE0OH+N3vv+wJmMnLYYxMyj4NAdIZKHY6W8yKJt
+HCD87d55a1UVS+AA4OOCQNt5pDxpksiqhYgO23am5C+tAcLtqlwLuOccacYi/ZCO
+RfkCucpI8nQ5vKUJKz9tadFzV4FjtNkFGjj3agwuoEl2X+pd+iTQukEBxbAPQuJz
+i6UV6X4HeaJQKaJmqgIc2hRg+Kxmq+hOxDLDaX9EG/DT9kMRIY8=
+=3REq
 -----END PGP SIGNATURE-----
 
---Aw3zPKjSVKby1eZq--
+--Y9DjAhgJL9OQknsI--
