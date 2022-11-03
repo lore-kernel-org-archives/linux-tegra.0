@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EF4C43219
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE28C64EDA
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232230AbiKCPPJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 11:15:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55338 "EHLO
+        id S232137AbiKCPPK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 11:15:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232173AbiKCPPE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 11:15:04 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF44119C1B;
-        Thu,  3 Nov 2022 08:15:01 -0700 (PDT)
+        with ESMTP id S232190AbiKCPPF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 11:15:05 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 866511571F;
+        Thu,  3 Nov 2022 08:15:03 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 65D8E1F8F3;
-        Thu,  3 Nov 2022 15:15:00 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 426EA1F900;
+        Thu,  3 Nov 2022 15:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1667488500; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1667488502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wr52WabQn4KK+bwhCdJXRXC0GHxQRZf3tOH2OwXrlI4=;
-        b=2IHU9odfZVC/BEosd5kYe2nSLZ0DFNgEeVXJI5zLv+JKV2wN30OSjGQ+p+oRUTcnBI+aSY
-        pkhdYXovwCXBs4Bkt8vaHgMYWDzvbQSgHd0WfjuIdzacDrsUKfmLPmD7qtna79oEsJ6XuK
-        jJL/sse9X2zXCpuZbC6pTPqYFUYFoHo=
+        bh=HgxG97nmydzNCVipkHzgPf3aCI1grjy0cqRB+0/Ck74=;
+        b=kcgtu9PKiyMKUj8GxwYh+/ORcWz7+UhaRslLpGT/0EYXH4EiaVWbRO1rXX+RnuBF5OjTj2
+        Xec3+JBI90xwvAliyOtjTY3B94F0kq3muNjviJe52VZzz9N0Nd9Yc6Mfuv+xD0GBg/lfBm
+        F9ORYgDvXcxRapg5A3YBRJRoUxxeEtI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1667488500;
+        s=susede2_ed25519; t=1667488502;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wr52WabQn4KK+bwhCdJXRXC0GHxQRZf3tOH2OwXrlI4=;
-        b=3Zy/+KY1PXJuswjeMIT6ebHMi8zktn+cASefhirMXLxQQC/cH2yhbAYxRTqiOd8n2gteRF
-        me+3Ej2BR8ugj7AQ==
+        bh=HgxG97nmydzNCVipkHzgPf3aCI1grjy0cqRB+0/Ck74=;
+        b=BTICG+mmiOcUdGuFYoU4C0nyEBYhfhmngf4Ev9loTA8Jed/wbNJaxvDDbye+EQL4FS5m+K
+        t/wO99a1pUjQkKCQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DAEFB13AAF;
-        Thu,  3 Nov 2022 15:14:59 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B325D13AAF;
+        Thu,  3 Nov 2022 15:15:01 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id kA2nM/PaY2PBGgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 03 Nov 2022 15:14:59 +0000
+        id 8LVrKvXaY2PBGgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 03 Nov 2022 15:15:01 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
         javierm@redhat.com, mripard@kernel.org,
@@ -67,9 +67,9 @@ Cc:     "linux-hyperv@vger.kernel.orglinux-hyperv"@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 20/23] drm/fb-helper: Set flag in struct drm_fb_helper for leaking physical addresses
-Date:   Thu,  3 Nov 2022 16:14:43 +0100
-Message-Id: <20221103151446.2638-21-tzimmermann@suse.de>
+Subject: [PATCH v3 23/23] drm/fb-helper: Clarify use of last_close and output_poll_changed
+Date:   Thu,  3 Nov 2022 16:14:46 +0100
+Message-Id: <20221103151446.2638-24-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221103151446.2638-1-tzimmermann@suse.de>
 References: <20221103151446.2638-1-tzimmermann@suse.de>
@@ -79,72 +79,35 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Uncouple the parameter drm_leak_fbdev_smem from the implementation by
-setting a flag in struct drm_fb_helper. This will help to move the
-generic fbdev emulation into its own source file, while keeping the
-parameter in drm_fb_helper.c. No functional changes.
+Clarify documentation in the use of struct drm_driver.last_close and
+struct drm_mode_config_funcs.output_poll_changed. Those callbacks should
+not be said for fbdev implementations on top of struct drm_client_funcs.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/drm_fb_helper.c | 10 +++++++---
- include/drm/drm_fb_helper.h     |  2 ++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_fb_helper.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 95f389433c4a6..105d9c8fe3250 100644
+index 5eb2f0d4bf8d4..e0384f967c0b3 100644
 --- a/drivers/gpu/drm/drm_fb_helper.c
 +++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -74,7 +74,7 @@ MODULE_PARM_DESC(drm_fbdev_overalloc,
-  * considered as a broken and legacy behaviour from a modern fbdev device.
-  */
- #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
--static bool drm_leak_fbdev_smem = false;
-+static bool drm_leak_fbdev_smem;
- module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
- MODULE_PARM_DESC(drm_leak_fbdev_smem,
- 		 "Allow unsafe leaking fbdev physical smem address [default=false]");
-@@ -1968,6 +1968,10 @@ static int drm_fb_helper_single_fb_probe(struct drm_fb_helper *fb_helper,
- 		sizes.surface_height = config->max_height;
- 	}
- 
-+#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
-+	fb_helper->hint_leak_smem_start = drm_leak_fbdev_smem;
-+#endif
-+
- 	/* push down into drivers */
- 	ret = (*fb_helper->funcs->fb_probe)(fb_helper, &sizes);
- 	if (ret < 0)
-@@ -2165,7 +2169,7 @@ __drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper *fb_helper,
- 	info->var.pixclock = 0;
- 	/* Shamelessly allow physical address leaking to userspace */
- #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
--	if (!drm_leak_fbdev_smem)
-+	if (!fb_helper->hint_leak_smem_start)
- #endif
- 		/* don't leak any physical addresses to userspace */
- 		info->flags |= FBINFO_HIDE_SMEM_START;
-@@ -2564,7 +2568,7 @@ static int drm_fb_helper_generic_probe(struct drm_fb_helper *fb_helper,
- 		 * case.
- 		 */
- #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
--		if (drm_leak_fbdev_smem && fbi->fix.smem_start == 0 &&
-+		if (fb_helper->hint_leak_smem_start && fbi->fix.smem_start == 0 &&
- 		    !drm_WARN_ON_ONCE(dev, map.is_iomem))
- 			fbi->fix.smem_start =
- 				page_to_phys(virt_to_page(fbi->screen_buffer));
-diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-index 6581183618b89..3dfb5d1093871 100644
---- a/include/drm/drm_fb_helper.h
-+++ b/include/drm/drm_fb_helper.h
-@@ -199,6 +199,8 @@ struct drm_fb_helper {
- 	 * See also: @deferred_setup
- 	 */
- 	int preferred_bpp;
-+
-+	bool hint_leak_smem_start;
- };
- 
- static inline struct drm_fb_helper *
+@@ -89,11 +89,13 @@ static DEFINE_MUTEX(kernel_fb_helper_lock);
+  * It will automatically set up deferred I/O if the driver requires a shadow
+  * buffer.
+  *
+- * At runtime drivers should restore the fbdev console by using
++ * Existing fbdev implementations should restore the fbdev console by using
+  * drm_fb_helper_lastclose() as their &drm_driver.lastclose callback.
+  * They should also notify the fb helper code from updates to the output
+  * configuration by using drm_fb_helper_output_poll_changed() as their
+- * &drm_mode_config_funcs.output_poll_changed callback.
++ * &drm_mode_config_funcs.output_poll_changed callback. New implementations
++ * of fbdev should be build on top of struct &drm_client_funcs, which handles
++ * this automatically. Setting the old callbacks should be avoided.
+  *
+  * For suspend/resume consider using drm_mode_config_helper_suspend() and
+  * drm_mode_config_helper_resume() which takes care of fbdev as well.
 -- 
 2.38.0
 
