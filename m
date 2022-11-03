@@ -2,113 +2,316 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 342D2C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 11:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FE3C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 12:01:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbiKCLyB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 07:54:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58340 "EHLO
+        id S229964AbiKCMBm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 08:01:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbiKCLyA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 07:54:00 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9A4DB3;
-        Thu,  3 Nov 2022 04:53:59 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id d26so4461131eje.10;
-        Thu, 03 Nov 2022 04:53:59 -0700 (PDT)
+        with ESMTP id S229935AbiKCMBl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 08:01:41 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00826DF11;
+        Thu,  3 Nov 2022 05:01:39 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id f7so2621523edc.6;
+        Thu, 03 Nov 2022 05:01:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DcS1ogD5RMaT4vN4BugWaTdOyuYyorDCDxxuL0275yQ=;
-        b=iMVjGkJ1sZur7OAaUgFd+Sdtkj72KA/wRb1smYLytE+nhnh9GxNmdTXJmG2OipM2aA
-         YELlry3DCqHNnh6QNrN+YzH0L+1yMZL+Xt3g8N9NH42LcCd/prsDp1UpQwUwnK/OLQdO
-         dFFYELOHNpwv8MerRfdMIF5hdVBC2f+kOsWupT+w9EM8sXLumYOELTgS+FwNJdt5VJAV
-         B3dCFPqadysatetc9CrSZ6YL1NfWkMrRUVXQlLA/I7vx9lMnfgX3+vwAUiNU87L3TOZl
-         NYGYV8DZgIKdf54KDqmEfqK6zbTVcdcnGy5rI+djcMnnc55TCaAcI5nlAUt4MXuk2UGo
-         Ph7g==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4IQVmkJIfw+G4+zEwXF78WRi81YVym7RqqN9ditiGR8=;
+        b=TaNdyEtKa8K1l5TrTQk2XV0W1b3PzqvsN2Lk8J0y6odluB6ib+TZQvGS61ahyrCdPe
+         TgvYEf/idRaUC5aGbV4+Q8Sy7HksLdzJdwix+oPCRjjFk5W0Ygsv806WZAfnxLNKMNtC
+         Oj6DNwxhsfRRj1AJdktzoIgCy+2WlNaq7t2QHFtBWsHmlED9oy3BJVpZRHosrEyP4Xec
+         aWgjwBvWnA9KIvvCAK0JMAOFcAXkJz1gVL8O5HbIHVXA2CFIIUHaRbNra+E7zZRP75Mm
+         og00eEcGwLEJCJ31wB2VaRqrKzhhclgdNRyx4Um8JfG0SJIYRO7nE5kEWN9GuTNCG25R
+         ScGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DcS1ogD5RMaT4vN4BugWaTdOyuYyorDCDxxuL0275yQ=;
-        b=z3DLBgibsxzGB9tGwDf1IzkhRtAk6t2/TU/jEOPKiBD0uaotYfsBSlg9sGqodr6/+e
-         JAL+Whe4LlCzxqcYdlh+W9X7coFNeRszXjWf3E9Za/jKIO4uXZS9h3qpqdGbLdELqCpF
-         ruGY/jE/DLdi3M1ZI6Zn6SpVmoGVVyR7kBUKo2pl59FrSCBaQnEppsbE2WBIv4A9piTc
-         U6PIrfVNlzrYPNlUI7NsYIo36o61+zKFBS4ZCJV4pv2CSisvdcfQnzhqVdc8lERtU/ZC
-         ARvWeLuSYKMt7/Uxf3oeCTpETnqy4nd9rdnMtoLXUxJl7tK609hkBj/ZhGZ47l0qBvE3
-         pgJA==
-X-Gm-Message-State: ACrzQf0kDA88bYQzGdHQtNyMJ9nYQPG1tVEqCUxma0JVqy/0sq/t1SsQ
-        WiJEs/FMGscl1UKRa0EB4TIULZymb28=
-X-Google-Smtp-Source: AMsMyM55jgJRmDD3iSIiCOfs5zW12Rty87tKQ0QZgLPRpF8Dw1Dp9ExAtPixJiMGijfyVfyvPAz/rA==
-X-Received: by 2002:a17:907:6d8a:b0:7ad:d3a1:cbf6 with SMTP id sb10-20020a1709076d8a00b007add3a1cbf6mr18913968ejc.533.1667476438483;
-        Thu, 03 Nov 2022 04:53:58 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id i6-20020a170906114600b0073dc4385d3bsm405883eja.105.2022.11.03.04.53.57
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4IQVmkJIfw+G4+zEwXF78WRi81YVym7RqqN9ditiGR8=;
+        b=Tm9ihkPVQ7eEqAyYhwtZpoxA6zGEKhc5LR5GVEGrhxZieT+GTAEkeOYunLX/bPKKpr
+         968y3w7ktdBV7prbRpq5CMw22KWtyd/z90cnk+wUbxVF4T4OJz3d0DJNFEwh5CHJsT4M
+         HC0WDQyZptvi4fWrb+o0ccWQWRRw6c6jKG+jgcX8Rr7r5b+DSBLi3tDoDHD37YZ3M8Si
+         quzuYbCV5OqtMpwmJEjE5HUd77hXKLZSNtrUntMugCZjwYSWmYIiE+kJWAHJW5lprCMv
+         YlATeVfAX8bGIJwrD/v+1btabyCzk+JgzkvGhu3TMi74LhK9RKT0JHj41aBRC+HSHR8k
+         hn6w==
+X-Gm-Message-State: ACrzQf1LVv/ELOego7AKRqWtMRyPsOEMR6aLWEvcuxaG5VKGhLg3re6r
+        5DayzHyAAbEcKw/gMSYJeMM=
+X-Google-Smtp-Source: AMsMyM4wATwlk4RPzcgKvOZwf5w68fr1EQLtWQEbJimqtPpuKgIfUB7wEIzz5GV/vTRA5xxHcfZkdQ==
+X-Received: by 2002:aa7:d385:0:b0:461:8cd3:b38b with SMTP id x5-20020aa7d385000000b004618cd3b38bmr29914191edq.172.1667476898409;
+        Thu, 03 Nov 2022 05:01:38 -0700 (PDT)
+Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id qq18-20020a17090720d200b0077016f4c6d4sm423983ejb.55.2022.11.03.05.01.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 04:53:57 -0700 (PDT)
-Date:   Thu, 3 Nov 2022 12:53:55 +0100
+        Thu, 03 Nov 2022 05:01:37 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sandipan Patra <spatra@nvidia.com>
-Cc:     jonathanh@nvidia.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bbasu@nvidia.com, kyarlagadda@nvidia.com
-Subject: Re: [PATCH v5 3/3] arm64: tegra: Add user PWM support on Jetson Orin
-Message-ID: <Y2Or06mrvLmZZ5KT@orome>
-References: <20220919141455.31084-1-spatra@nvidia.com>
- <20220919141455.31084-3-spatra@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] dt-bindings: pwm: tegra: Convert to json-schema
+Date:   Thu,  3 Nov 2022 13:01:37 +0100
+Message-Id: <20221103120137.1467905-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Y9DjAhgJL9OQknsI"
-Content-Disposition: inline
-In-Reply-To: <20220919141455.31084-3-spatra@nvidia.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---Y9DjAhgJL9OQknsI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Convert the Tegra PWFM bindings from the free-form text format to
+json-schema.
 
-On Mon, Sep 19, 2022 at 07:44:55PM +0530, Sandipan Patra wrote:
-> Enable in device tree and use it to drive the PWM controllers on
-> 40 pin header of Orin dev-kit.
->=20
-> Signed-off-by: Sandipan Patra <spatra@nvidia.com>
-> ---
-> V1->V2: Overriding by node label instead of node path.
->=20
->  arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ .../bindings/pwm/nvidia,tegra20-pwm.txt       |  77 ----------
+ .../bindings/pwm/nvidia,tegra20-pwm.yaml      | 144 ++++++++++++++++++
+ 2 files changed, 144 insertions(+), 77 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
 
-Applied, thanks.
+diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+deleted file mode 100644
+index 74c41e34c3b6..000000000000
+--- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
++++ /dev/null
+@@ -1,77 +0,0 @@
+-Tegra SoC PWFM controller
+-
+-Required properties:
+-- compatible: Must be:
+-  - "nvidia,tegra20-pwm": for Tegra20
+-  - "nvidia,tegra30-pwm", "nvidia,tegra20-pwm": for Tegra30
+-  - "nvidia,tegra114-pwm", "nvidia,tegra20-pwm": for Tegra114
+-  - "nvidia,tegra124-pwm", "nvidia,tegra20-pwm": for Tegra124
+-  - "nvidia,tegra132-pwm", "nvidia,tegra20-pwm": for Tegra132
+-  - "nvidia,tegra210-pwm", "nvidia,tegra20-pwm": for Tegra210
+-  - "nvidia,tegra186-pwm": for Tegra186
+-  - "nvidia,tegra194-pwm": for Tegra194
+-- reg: physical base address and length of the controller's registers
+-- #pwm-cells: should be 2. See pwm.yaml in this directory for a description of
+-  the cells format.
+-- clocks: Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+-- resets: Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names: Must include the following entries:
+-  - pwm
+-
+-Optional properties:
+-============================
+-In some of the interface like PWM based regulator device, it is required
+-to configure the pins differently in different states, especially in suspend
+-state of the system. The configuration of pin is provided via the pinctrl
+-DT node as detailed in the pinctrl DT binding document
+-	Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+-
+-The PWM node will have following optional properties.
+-pinctrl-names:	Pin state names. Must be "default" and "sleep".
+-pinctrl-0:	phandle for the default/active state of pin configurations.
+-pinctrl-1:	phandle for the sleep state of pin configurations.
+-
+-Example:
+-
+-	pwm: pwm@7000a000 {
+-		compatible = "nvidia,tegra20-pwm";
+-		reg = <0x7000a000 0x100>;
+-		#pwm-cells = <2>;
+-		clocks = <&tegra_car 17>;
+-		resets = <&tegra_car 17>;
+-		reset-names = "pwm";
+-	};
+-
+-
+-Example with the pin configuration for suspend and resume:
+-=========================================================
+-Suppose pin PE7 (On Tegra210) interfaced with the regulator device and
+-it requires PWM output to be tristated when system enters suspend.
+-Following will be DT binding to achieve this:
+-
+-#include <dt-bindings/pinctrl/pinctrl-tegra.h>
+-
+-	pinmux@700008d4 {
+-		pwm_active_state: pwm_active_state {
+-                        pe7 {
+-                                nvidia,pins = "pe7";
+-                                nvidia,tristate = <TEGRA_PIN_DISABLE>;
+-			};
+-		};
+-
+-		pwm_sleep_state: pwm_sleep_state {
+-                        pe7 {
+-                                nvidia,pins = "pe7";
+-                                nvidia,tristate = <TEGRA_PIN_ENABLE>;
+-			};
+-		};
+-	};
+-
+-	pwm@7000a000 {
+-		/* Mandatory PWM properties */
+-		pinctrl-names = "default", "sleep";
+-		pinctrl-0 = <&pwm_active_state>;
+-		pinctrl-1 = <&pwm_sleep_state>;
+-	};
+diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
+new file mode 100644
+index 000000000000..9c73e78ff434
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
+@@ -0,0 +1,144 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pwm/nvidia,tegra20-pwm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra PWFM controller
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: nvidia,tegra20-pwm
++
++      - items:
++          - enum:
++              - nvidia,tegra30-pwm
++              - nvidia,tegra114-pwm
++              - nvidia,tegra124-pwm
++              - nvidia,tegra132-pwm
++              - nvidia,tegra210-pwm
++          - enum:
++              - nvidia,tegra20-pwm
++
++      - items:
++          - const: nvidia,tegra186-pwm
++
++      - items:
++          - const: nvidia,tegra194-pwm
++          - const: nvidia,tegra186-pwm
++
++      - items:
++          - const: nvidia,tegra234-pwm
++          - const: nvidia,tegra194-pwm
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: module clock
++
++  clock-names:
++    items:
++      - const: pwm
++
++  resets:
++    items:
++      - description: module reset
++
++  reset-names:
++    items:
++      - const: pwm
++
++  "#pwm-cells":
++    const: 2
++
++  pinctrl-names:
++    items:
++      - const: default
++      - const: sleep
++
++  pinctrl-0:
++    description: configuration for the default/active state
++
++  pinctrl-1:
++    description: configuration for the sleep state
++
++  operating-points-v2:
++    $ref: "/schemas/types.yaml#/definitions/phandle"
++
++  power-domains:
++    items:
++      - description: phandle to the core power domain
++
++allOf:
++  - $ref: pwm.yaml
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - resets
++  - reset-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra20-car.h>
++
++    pwm: pwm@7000a000 {
++        compatible = "nvidia,tegra20-pwm";
++        reg = <0x7000a000 0x100>;
++        #pwm-cells = <2>;
++        clocks = <&tegra_car TEGRA20_CLK_PWM>;
++        resets = <&tegra_car 17>;
++        reset-names = "pwm";
++    };
++
++  # Example with the pin configuration for suspend and resume:
++  # ==========================================================
++  # Suppose pin PE7 (On Tegra210) interfaced with the regulator device and it requires PWM output
++  # to be tristated when system enters suspend.
++  - |
++    #include <dt-bindings/clock/tegra210-car.h>
++    #include <dt-bindings/pinctrl/pinctrl-tegra.h>
++
++    pinmux@700008d4 {
++        compatible = "nvidia,tegra210-pinmux";
++        reg = <0x700008d4 0x29c>, /* Pad control registers */
++              <0x70003000 0x294>; /* Mux registers */
++
++        pwm_active_state: pwm_active_state {
++            pe7 {
++                nvidia,pins = "pe7";
++                nvidia,tristate = <TEGRA_PIN_DISABLE>;
++            };
++        };
++
++        pwm_sleep_state: pwm_sleep_state {
++            pe7 {
++                nvidia,pins = "pe7";
++                nvidia,tristate = <TEGRA_PIN_ENABLE>;
++            };
++        };
++    };
++
++    pwm@7000a000 {
++        compatible = "nvidia,tegra210-pwm", "nvidia,tegra20-pwm";
++        reg = <0x7000a000 0x100>;
++        clocks = <&tegra_car TEGRA210_CLK_PWM>;
++        clock-names = "pwm";
++        resets = <&tegra_car 17>;
++        reset-names = "pwm";
++        #pwm-cells = <2>;
++        pinctrl-names = "default", "sleep";
++        pinctrl-0 = <&pwm_active_state>;
++        pinctrl-1 = <&pwm_sleep_state>;
++    };
+-- 
+2.38.1
 
-Thierry
-
---Y9DjAhgJL9OQknsI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNjq9MACgkQ3SOs138+
-s6FXJRAAmlcrdgBbQTazfj/BmblRxClv3Ph1v+NB5qkbNCgeKg4tkE5RYHqTyC60
-TaZb64oH6iPRLMxo/NFdMl90fPgXyut0tfMoyXZdk4PV/g1vjseyZZXAxrwEh4Yr
-g618kp2QVs4nds2hmm1bIND8x9nQyD4X74+OYMKzO8/Wu7h6XjrXKMuEF09kP19Q
-cJJilwQqmne0vyP+1yAz9iRDmNjy3Uz29NhSLQ8v3y210XBRYH7LOShaZValfIyn
-/BPI/AVSuvzgrLR35rvYG8ZzDq9YDuUXexdDzISXRYM3U3Eti8L23tQGlTm4mGcy
-opp8N8L+hyca/96ZJZlmPyyU6C0+5eQq9y2EuYwa1ScTOyVsSgo0aCZN4aps+YOe
-nEuD8vSKUms8JtGjJm8eaO2ISZAmEYCRxQcJvPjQEr2kVr2upjL6iycZRemBTb8s
-aTYI2qnu/Tqh2gw8Urr8ZDb+IyE0OH+N3vv+wJmMnLYYxMyj4NAdIZKHY6W8yKJt
-HCD87d55a1UVS+AA4OOCQNt5pDxpksiqhYgO23am5C+tAcLtqlwLuOccacYi/ZCO
-RfkCucpI8nQ5vKUJKz9tadFzV4FjtNkFGjj3agwuoEl2X+pd+iTQukEBxbAPQuJz
-i6UV6X4HeaJQKaJmqgIc2hRg+Kxmq+hOxDLDaX9EG/DT9kMRIY8=
-=3REq
------END PGP SIGNATURE-----
-
---Y9DjAhgJL9OQknsI--
