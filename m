@@ -2,112 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A5BC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 14:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01517C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 14:56:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231920AbiKCOyF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 10:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
+        id S231836AbiKCO4X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 10:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231868AbiKCOxk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 10:53:40 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B9B21900A
-        for <linux-tegra@vger.kernel.org>; Thu,  3 Nov 2022 07:53:36 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id e15so1270850qvo.4
-        for <linux-tegra@vger.kernel.org>; Thu, 03 Nov 2022 07:53:36 -0700 (PDT)
+        with ESMTP id S231822AbiKCOzw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 10:55:52 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93F119C3C
+        for <linux-tegra@vger.kernel.org>; Thu,  3 Nov 2022 07:55:46 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id v4-20020a17090a088400b00212cb0ed97eso2017123pjc.5
+        for <linux-tegra@vger.kernel.org>; Thu, 03 Nov 2022 07:55:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jrYaAHvMcvAgON2HJIoIE2IBvbz54WPBWq/9VlMTUN8=;
-        b=xcBA91hGHInB4KTtVPZW2NQt5yB4tHUi+auIQ6aJYlat/DX9nRYEWLG9Ju6DkX7E2K
-         9K7S29pUk6u7a8H9r7lF/QBisDa55jpu6giSceDXlOJF/9E+QYs4tAUglvDUaot0WRCM
-         m/BmMgMBcveJe63QYdIu3qRKbj+vqqfT6C7c7iLuulV/Q4QCWSANGqOhqinFzqDXS82c
-         0pmIhZRPXfhk3x3v1x2Mc/6FM+5r8Y9gqyeoDYjkibFZgqJCl9ZCDNiN1LDyNZOoTqCn
-         06ISmv0xruPzl9gWKgb6/6yqcHJ7wcUsHRIR85oVIA20GiSO+hRapVkziB2ab/mNIOEi
-         NKbQ==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=t/NrioDw2KFq6mJ3bVbRI+ixY4f+9g6gFasJn7MZM6M=;
+        b=rJkZmYWpfntVKVk7RpeWnoFkGl5MYV9fqkQy+uhqSUZd8I5rQ9KEWF727GdBwyv3sk
+         Kgd8e3AX1tMsFIKugXIghb1NH07wTnvI/HIKMzZp0H5a0ElIZvT57CZWWxM8oYQCTzxl
+         tSVJ4uulQExyKTjJMY7Ch4mHvoDVilhLCKN/+eDjJo+ctTykGIrmowWIUCebVGeYUlP7
+         4qfNXDjfBN4AUK7ExEjXXSKGb9VyabyfwXsRpywXBpkT50Qiq4tUgSCkZQTT2eDYkPIK
+         xnynjuCDwE9FvQVKz8ZyGxaNAXZoAxOyvNS3pTdPtufKE0aUR/lFQmpC005iuIUkADAs
+         /Z7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jrYaAHvMcvAgON2HJIoIE2IBvbz54WPBWq/9VlMTUN8=;
-        b=b82lVCQHITqyyY6+oj/E5hdueeXA8Jel9wBkG3bhCWOkzYuvOVtMfcR/I4V8TthiOm
-         7WIiiZSk2NQyYe5+UEMVVlvf+4tSM71FJx53mJJ+kDq6yAaI8ge8JLfj2y4brqH3X353
-         JeKXw8Wq16gyerLsEVnRqHr+8bipHNJ5tU5TajJqaW7zeyyLHem8mB7y95ZUPoLqnJ2V
-         5vwpT7keOPCKp5tfbNmkTYjVtX3jyoR/T8cQIn9S9KRmAn/oxA2Hn+mzfb0cQeL2mxWJ
-         E/9LkLqk4LIpWNY+1bz9Jz+KeQszu8vh/6/C8RD68VlPNkrlUz/yMj5EObMl5tweDuO6
-         QKpw==
-X-Gm-Message-State: ACrzQf27naP16GKLmhgSeAfvNnUAIjtNaDQoV/ywv8tQc3PkKMo3BOaU
-        6Yca0HPPVr9qmnIfcU/XlhZRDQ==
-X-Google-Smtp-Source: AMsMyM4G+1DZEOjki9fpIe4QcPidcY8eOdH1TWlR9Lt+Oie2mvIlCmefsBFT1cU8J35Ccx3tvnphJw==
-X-Received: by 2002:a05:6214:258b:b0:4bc:246c:dd01 with SMTP id fq11-20020a056214258b00b004bc246cdd01mr7632303qvb.64.1667487215489;
-        Thu, 03 Nov 2022 07:53:35 -0700 (PDT)
-Received: from ?IPV6:2601:586:5000:570:a35d:9f85:e3f7:d9fb? ([2601:586:5000:570:a35d:9f85:e3f7:d9fb])
-        by smtp.gmail.com with ESMTPSA id y12-20020a37f60c000000b006cfaee39ccesm833591qkj.114.2022.11.03.07.53.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Nov 2022 07:53:34 -0700 (PDT)
-Message-ID: <26249f27-dbea-c30e-a2ea-df5cb4290b3e@linaro.org>
-Date:   Thu, 3 Nov 2022 10:53:33 -0400
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t/NrioDw2KFq6mJ3bVbRI+ixY4f+9g6gFasJn7MZM6M=;
+        b=aJ9k+XDyoifF1BVLaclBo5qmoEYnBZ+D+M7Q6w/qxrSl7VMxU1fK6H+Inn2MAZh2VB
+         ySaZByPKlaJMZGoMvfr8Tln+zG8Owm7gCh8xBVpj1HayUzWcvVLbm+vrRt4FsRAEnqEn
+         lW6LKPjnZqZf2rLc51wu0lxd7ZhFG6e94P/wuAr4LeJscex0BY8o3zcSdGsrkDunPeKN
+         0Xrb7047+2VlhH0+JLKeeNsrm0rhuapqX7nhZGF6LT8Wz0BSKuZ64XujcGEzKyMixfBI
+         8IeuUKs649d3AmR5oZRzx1zLPu1rQb6ttis2BA1w/NBFEz0bw3604x3/Fm+KbKCfU8v/
+         wbMA==
+X-Gm-Message-State: ACrzQf0fMemR+mCy4O+8NE2M5SqjeylRJbusdRr2gUjs53JXRxBginTK
+        JTSG2mlwZFyJpZ1LbxfQL1f28JydtMqb0bkVbpTttw==
+X-Google-Smtp-Source: AMsMyM4MUJeInSpCoBN6Nw7WgpaIGWe+Q/h4WSomAyuSBcWfpyVw2c5LyrS7bLPmw/14e0Rhj1R+GF4rkXdJxIeX0xI=
+X-Received: by 2002:a17:90b:1d90:b0:213:c798:86f6 with SMTP id
+ pf16-20020a17090b1d9000b00213c79886f6mr26575996pjb.84.1667487346285; Thu, 03
+ Nov 2022 07:55:46 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH] dt-bindings: pwm: tegra: Convert to json-schema
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20221103120137.1467905-1-thierry.reding@gmail.com>
- <18d66cce-64ae-aeaa-e9cf-9426c5d214f5@linaro.org> <Y2PSgwfqZ9BfXSFw@orome>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <Y2PSgwfqZ9BfXSFw@orome>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAPDyKFqJdiCDkAfrONfnBVKw1v8=jZ+hEJiKGK70EQ4o7BSxaQ@mail.gmail.com>
+ <20221103043852.24718-1-pshete@nvidia.com> <6be39bae-f325-12e0-374b-a27c9ee2ef2b@arm.com>
+ <Y2PJq27wkVwPg6rp@orome>
+In-Reply-To: <Y2PJq27wkVwPg6rp@orome>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 3 Nov 2022 15:55:09 +0100
+Message-ID: <CAPDyKFq8szzryFBNkw20wFoPTbAa8YDy0wJnb57yckZ-HFTAMw@mail.gmail.com>
+Subject: Re: [PATCH v10 1/4] iommu: Always define struct iommu_fwspec
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Prathamesh Shete <pshete@nvidia.com>, joro@8bytes.org,
+        adrian.hunter@intel.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        will@kernel.org, iommu@lists.linux.dev, anrao@nvidia.com,
+        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/11/2022 10:38, Thierry Reding wrote:
+On Thu, 3 Nov 2022 at 15:01, Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Thu, Nov 03, 2022 at 12:23:20PM +0000, Robin Murphy wrote:
+> > On 2022-11-03 04:38, Prathamesh Shete wrote:
+> > > In order to fully make use of the !IOMMU_API stub functions, make the
+> > > struct iommu_fwspec always available so that users of the stubs can keep
+> > > using the structure's internals without causing compile failures.
+> >
+> > I'm really in two minds about this... fwspecs are an internal detail of the
+> > IOMMU API that are meant to be private between individual drivers and
+> > firmware code, so anything poking at them arguably does and should depend on
+> > CONFIG_IOMMU_API. It looks like the stub for dev_iommu_fwspec_get() was only
+> > added for the sake of one driver that was misusing it where it really wanted
+> > device_iommu_mapped(), and has since been fixed, so if anything my
+> > preference would be to remove that stub :/
+>
+> Tegra has been using this type of weak dependency on IOMMU_API mainly in
+> order to allow building without the IOMMU support on some old platforms
+> where people may actually care about the kernel size (Tegra20 systems
+> were sometimes severely constrained and don't have anything that we'd
+> call an IOMMU today).
+>
+> We have similar stubs in place for most other major subsystems in order
+> to allow code to simply compile out if the subsystem is disabled, which
+> is quite convenient for sharing code between platforms that may want a
+> given feature and other platforms that may not want it, without causing
+> too much of a hassle with compile-testing.
 
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: pwm
->>
->> This wasn't in original binding and does not look needed. Mention
->> changes from pure conversion.
-> 
-> At some point (looks like with the switch to 64-bit ARM) we started
-> adding these for consistency because we were noticing that sometimes
-> either we were missing clock entries or newer SoC generations gained
-> additional clocks. Whenever that happened it would become somewhat
-> cumbersome to describe this in device tree bindings and/or driver
-> code, so consistently adding a clock-names property preventively
-> even if only a single clock was used in the first iteration seemed a
-> prudent thing to do.
+I agree with the above.
 
-Adding undocumented properties "preventively" is not the correct
-approach. Either you document them, or you do not add them.
+Moreover, the stubs make the code more portable/scalable and so it
+becomes easier to maintain.
 
-The property with one item and name matching the function is not really
-a good approach, not helpful. Drop it.
+>
+> > I don't technically have much objection to this patch in isolation, but what
+> > I don't like is the direction of travel it implies. I see the anti-pattern
+> > is only spread across Tegra drivers, making Tegra-specific assumptions, so
+> > in my view the best answer would be to abstract that fwpsec dependency into
+> > a single Tegra-specific helper, which would better represent the nature of
+> > what's really going on here.
+>
+> I don't see how this is an anti-pattern. It might not be common for
+> drivers to need to reach into iommu_fwspec, so that might indeed be
+> specific to Tegra (for whatever reason our IP seems to want extra
+> flexibility), but the general pattern of using stubs is wide-spread,
+> so I don't see why IOMMU_API would need to be special.
 
-> 
-> So these are not technically necessary, but many device tree files will
-> have these entries, so this is here for those to pass validation.
+Again, I agree.
 
-Drop it from DTS then.
+Moreover, a "git grep CONFIG_IOMMU_API" indicates that the problem
+isn't specific to Tegra. The "#ifdef CONFIG_IOMMU_API" seems to be
+sprinkled across the kernel. I think it would be nice if we could
+improve the situation. So far, using stubs along with what the
+$subject patch proposes, seems to me to be the best approach.
 
-> 
-> Note that the property doesn't show up along the "clocks" property in
-> "required:" below.
-> 
->>
-Best regards,
-Krzysztof
+[...]
 
+Kind regards
+Uffe
