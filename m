@@ -2,134 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC28EC4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 21:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD0FC43217
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 21:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231324AbiKCVgA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 17:36:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50090 "EHLO
+        id S231637AbiKCVoY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 17:44:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231535AbiKCVf5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 17:35:57 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A065B205F7
-        for <linux-tegra@vger.kernel.org>; Thu,  3 Nov 2022 14:35:56 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oqhsO-00029v-W0; Thu, 03 Nov 2022 22:35:53 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oqhsO-002948-RS; Thu, 03 Nov 2022 22:35:51 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oqhsN-00ED6u-7O; Thu, 03 Nov 2022 22:35:51 +0100
-Date:   Thu, 3 Nov 2022 22:35:51 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] pwm: tegra: Ensure the clock rate is not less
- than needed
-Message-ID: <20221103213551.vmzzthnrv5anbdqx@pengutronix.de>
-References: <20221028123356.133796-1-jonathanh@nvidia.com>
- <20221028123356.133796-2-jonathanh@nvidia.com>
+        with ESMTP id S229487AbiKCVoX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 17:44:23 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AB320187;
+        Thu,  3 Nov 2022 14:44:22 -0700 (PDT)
+Received: from [192.168.2.125] (unknown [109.252.117.140])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7D6846602962;
+        Thu,  3 Nov 2022 21:44:19 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1667511860;
+        bh=pPa/YSAVPL1N6jGFwvkkOusm5GGYIeJDDbcOgexGCEk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gfAzxu1Nz6i6XLCESRGtK2/omO1gKkqJpeReusnIZTkacUXJbT8AWmAW1zrBlZBbq
+         XsVuStpH7qS52LB7O+woOgODc/cDLFHtXMCVQ972MOz4s3K+HtVj2JB1iWeM5ni117
+         eisa1WIJ+MGtEJ4AN/LqS1lX+KXUTc13WIAvQv6z0WUadrQD0V4eATUBRnhlWkNUVA
+         4Cw8SzE0GqiZGYo0ZcDX+Q7zTXX0syCUhnu/TQKKCYNXGuuDmzLsNHZKlC+McxHYyf
+         ajSdKptZHXMKZwzLceUIvLl2ELT0nlq9R202ZysmvrqlxKfXESJBOCQVDHeR7yKA4e
+         pBS8bQ9N34QUw==
+Message-ID: <0e002130-868e-ca51-a1dd-091c269dba5d@collabora.com>
+Date:   Fri, 4 Nov 2022 00:44:16 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rxuvcnaa3ksdnfkz"
-Content-Disposition: inline
-In-Reply-To: <20221028123356.133796-2-jonathanh@nvidia.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH] clk: tegra: fix HOST1X clock divider on Tegra20 and
+ Tegra30
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     linux-tegra@vger.kernel.org,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>
+References: <20221028074826.2317640-1-luca.ceresoli@bootlin.com>
+ <603a0227-7d25-b9da-6dc3-fa9fe1b951e7@collabora.com>
+ <20221102093255.0b5ba7d6@booty>
+Content-Language: en-US
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20221102093255.0b5ba7d6@booty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 11/2/22 11:32, Luca Ceresoli wrote:
+> Hello Dmitry,
+> 
+> On Mon, 31 Oct 2022 03:34:07 +0300
+> Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
+> 
+>> On 10/28/22 10:48, luca.ceresoli@bootlin.com wrote:
+>>> From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>>>
+>>> On Tegra20 and Tegra30 the HOST1X clock is a fractional clock divider with
+>>> 7 integer bits + 1 decimal bit. This has been verified on both
+>>> documentation and real hardware for Tegra20 an on the documentation I was
+>>> able to find for Tegra30.
+>>>
+>>> However in the kernel code this clock is declared as an integer divider. A
+>>> consequence of this is that requesting 144 MHz for HOST1X which is fed by
+>>> pll_p running at 216 MHz would result in 108 MHz (216 / 2) instead of 144
+>>> MHz (216 / 1.5).
+>>>
+>>> Fix by replacing the INT() macro with the MUX() macro which, despite the
+>>> name, defines a fractional divider. The only difference between the two
+>>> macros is the former does not have the TEGRA_DIVIDER_INT flag.
+>>>
+>>> Also move the line together with the other MUX*() ones to keep the existing
+>>> file organization.
+>>>
+>>> Fixes: 76ebc134d45d ("clk: tegra: move periph clocks to common file")
+>>> Cc: stable@vger.kernel.org
+>>> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>>> ---
+>>>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+>>> index 4dcf7f7cb8a0..806d835ca0d2 100644
+>>> --- a/drivers/clk/tegra/clk-tegra-periph.c
+>>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+>>> @@ -615,7 +615,6 @@ static struct tegra_periph_init_data periph_clks[] = {
+>>>  	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
+>>>  	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
+>>>  	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
+>>> -	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+>>>  	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
+>>>  	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
+>>>  	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
+>>> @@ -664,6 +663,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+>>>  	MUX("owr", mux_pllp_pllc_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr_8),
+>>>  	MUX("nor", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_NOR, 42, 0, tegra_clk_nor),
+>>>  	MUX("mipi", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_MIPI, 50, TEGRA_PERIPH_ON_APB, tegra_clk_mipi),
+>>> +	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+>>>  	MUX("vi_sensor", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor),
+>>>  	MUX("vi_sensor", mux_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_9),
+>>>  	MUX("cilab", mux_pllp_pllc_clkm, CLK_SOURCE_CILAB, 144, 0, tegra_clk_cilab),  
+>>
+>> This was attempted in the past
+>> https://lore.kernel.org/all/20180723085010.GK1636@tbergstrom-lnx.Nvidia.com/
+>>
+>> I assume here you're also porting the downstream patches to upstream.
+>> This one is too questionable. The host1x clock shouldn't affect overall
+>> performance to begin with. It doesn't make sense to use fractional clock
+>> just for getting extra KHz.
+> 
+> Thank you for the review and for the pointer!
+> 
+> Indeed I'm not sure this patch brings an actual improvement to my use
+> case, however I reached it by trying to replicate the configuration on
+> a known-working kernel 3.1, which uses a 1.5 divider. This seems to be
+> the same reason that led to the 2018 patch that also got rejected.
+> 
+> I'll be OK with dropping this patch after I have a 100% working setup
+> with an integer divider, which is very likely given your reply. But it
+> took time before I found the root cause of this issue, and I would like
+> to avoid other people waste time in the future, so what about adding a
+> comment there?
+> 
+> What about:
+> 
+>   /*
+>    * The host1x clock shouldn't affect overall performance. It doesn't
+>    * make sense to use fractional clock just for getting extra KHz, so
+>    * let's pretend it's an integer divider
+>    */
 
---rxuvcnaa3ksdnfkz
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If host1x isn't the only clock like that, then comment shouldn't be
+directed to host1x. Have you checked other clocks?
 
-On Fri, Oct 28, 2022 at 01:33:56PM +0100, Jon Hunter wrote:
-> When dynamically scaling the PWM clock, the function
-> dev_pm_opp_set_rate() may set the PWM clock to a rate that is lower than
-> what is required. The clock rate requested when calling
-> dev_pm_opp_set_rate() is the minimum clock rate that is needed to drive
-> the PWM to achieve the required period. Hence, if the actual clock
-> rate is less than the requested clock rate, then the required period
-> cannot be achieved and configuring the PWM fails. Fix this by
-> calling clk_round_rate() to check if the clock rate that will be provided
-> is sufficient and if not, double the required clock rate to ensure the
-> required period can be attained.
->=20
-> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> Changes since V1:
-> - Multiplied the required_clk_rate by 2 instead of adding 1 to the
->   PWM_DUTY_WIDTH and recalculating the rate. Overall rate should be
->   similar.
-> - Updated comment based upon Uwe's feedback.
->=20
->  drivers/pwm/pwm-tegra.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index b05ea2e8accc..6fc4b69a3ba7 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -148,6 +148,17 @@ static int tegra_pwm_config(struct pwm_chip *chip, s=
-truct pwm_device *pwm,
->  		required_clk_rate =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC << PWM_DUTY_WIDTH,
->  						     period_ns);
-> =20
-> +		if (required_clk_rate > clk_round_rate(pc->clk, required_clk_rate))
-> +			/*
-> +			 * required_clk_rate is a lower bound for the input
-> +			 * rate; for lower rates there is no value for PWM_SCALE
-> +			 * that yields a period less than or equal to the
-> +			 * requested period. Hence, for lower rates, double the
-> +			 * required_clk_rate to get a clock rate that can meet
-> +			 * the requested period.
-> +			 */
-> +			required_clk_rate *=3D 2;
+I'm curious who made that change originally in your downstream, was it
+coming from NVIDIA?
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+-- 
+Best regards,
+Dmitry
 
-Thanks
-Uwe
-
-> +
->  		err =3D dev_pm_opp_set_rate(pc->dev, required_clk_rate);
->  		if (err < 0)
->  			return -EINVAL;
-> --=20
-> 2.25.1
->=20
->=20
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---rxuvcnaa3ksdnfkz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNkNDQACgkQwfwUeK3K
-7Akv+Qf/Y+YEicwDSPuhZRAp+fjlVppNhhHADYuoWNBiRauJZjhLeUouqCb0XENM
-63ehlTupXllb2xyZaZBKUzJT3EWoTDP93mO/Dv+Y16EmL2tWQeOdsF/idDTilP/p
-+AZazWMF60zUKgT4hHNsRB0//HgHE30PLOv5BOVyWaQtyPcfY7wtCNBhmam8BNyT
-t16l79KVzpJU/5kKDqN4YSM2X2c9BZN/sDDTrwxwZ/1j1hw+HDQo+fgLd24N/326
-Hgn1vRFNJnCDD4D8IFLK/ZvFfdt7RCtOixiDKAypw+Yrbi+M8PdCJj1kEmQls8xh
-A+d2pX6XE9icdmU/9S2ej8t5z9p1cw==
-=vEGo
------END PGP SIGNATURE-----
-
---rxuvcnaa3ksdnfkz--
