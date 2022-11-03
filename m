@@ -2,158 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF2CC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 17:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A5CC43217
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 17:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231396AbiKCRfe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 13:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49814 "EHLO
+        id S231304AbiKCRpr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 13:45:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231401AbiKCRfc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 13:35:32 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4EFDD13D1E;
-        Thu,  3 Nov 2022 10:35:29 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CEAB1FB;
-        Thu,  3 Nov 2022 10:35:35 -0700 (PDT)
-Received: from [10.57.36.87] (unknown [10.57.36.87])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B14143F5A1;
-        Thu,  3 Nov 2022 10:35:26 -0700 (PDT)
-Message-ID: <4cae5c8d-d6e9-79dc-670d-22ec9fda10a2@arm.com>
-Date:   Thu, 3 Nov 2022 17:35:19 +0000
+        with ESMTP id S230222AbiKCRpq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 13:45:46 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 017541A817;
+        Thu,  3 Nov 2022 10:45:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vy4g+5jQD52RGhcP+cd9PP2yDpS9UMWy9mGogwPDKmG1z7gaL4VCKHDDIPJ1cn0KGO0JU+sjW9V/g2wK3vh7W453r1exOU4DUHqc0SatM9P/Ao1eSv+qR2W8KC9MMLR4xjidv7rmk0wGo9k3w7GUrU12uM31w9DD+uzBN82W3nOrvo+cciHIR5iMVfBHju4tVW7WdPBzvgLSnLHrbFqA9q6rgjlULcL93zFHTvVdr4hpM4dnSaLYBbMTwDdQ+OKFA5lRQAvkFfEUbA/L7se3rKv3SKQJXalF8dNeHnNrqUoGaZNjmKsN5z6HbYT+NXOS7Euz3yRnCyetSVj+Qnoigg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rFMcM6zkYTuVUd1a/CBtfjvHFg7ShWtG0G/3juEsix8=;
+ b=NwrNIaByNgizwxwLMXPjPvPUAiSxcDWIzj9zHyr3SCOkeXHuIB9PJgPvrsTsqohRuwrUK5JaJUMoCk4v4IN9IJKb/hFEa9LYYTGTTMdYjEnZiZ5nP/E5byhZPi4eXG9wu8wC0NamMR68Uo1fFR//JrW+KJjjnRM1DPblbTMcd4mHUxo9hhOlvl9ewOlU6p6b4zVBtewXTDYQ6pDZMSNRA8w9Wp9xySOWMG3GyEsPM/3T7q5koiRYwXaqqYK/nM+RPW+FjjYIHnGqUg5dXgBkOy1mYjkvev2RIJ+UVy4MQ0q9UN2XY/HGSib95/EnppzGovyqjI2dID4t4xnpov4xEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rFMcM6zkYTuVUd1a/CBtfjvHFg7ShWtG0G/3juEsix8=;
+ b=rodWmkkDiWaWUsAJb1Nr5AkihPADgYNjPeehX0QxlzyVRIIm0r8lrALnfM2VjbmZ9CrjSdnFgrEZMBq3aYiUCRJ/tKoXNhQro5MYo+ZIOZ/IQVzx0rA0b0IL/p98dxPoIM1jzTEnQbvkptHsy2wBeV/jvlNZ59LrFFJ3hwohe11Gz4eijPtWBRaaUNN+8gAB706Rc7ji2+nmxphHu+LXB2y3FAKMSHu0lIVfS4nR9Q9zz8prBQoqlVM/RZ0lHsS6rR9N7budoXYGrmR0cwJwUK+82qhTkBY2cXF7YZ8+cHOIwKogQsD7jOlbJ/FCSfoWJDCC6Gsl6+VROPZz78w+6A==
+Received: from MW4PR04CA0077.namprd04.prod.outlook.com (2603:10b6:303:6b::22)
+ by CH0PR12MB5124.namprd12.prod.outlook.com (2603:10b6:610:bf::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.22; Thu, 3 Nov
+ 2022 17:45:44 +0000
+Received: from CO1NAM11FT106.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:6b:cafe::bd) by MW4PR04CA0077.outlook.office365.com
+ (2603:10b6:303:6b::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.21 via Frontend
+ Transport; Thu, 3 Nov 2022 17:45:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1NAM11FT106.mail.protection.outlook.com (10.13.175.44) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5791.20 via Frontend Transport; Thu, 3 Nov 2022 17:45:44 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Thu, 3 Nov 2022
+ 10:45:34 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Thu, 3 Nov 2022 10:45:34 -0700
+Received: from dipenp.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
+ Transport; Thu, 3 Nov 2022 10:45:34 -0700
+From:   Dipen Patel <dipenp@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <robh+dt@kernel.org>
+CC:     Dipen Patel <dipenp@nvidia.com>
+Subject: [PATCH 0/7] Add Tegra234 HTE support
+Date:   Thu, 3 Nov 2022 10:45:16 -0700
+Message-ID: <20221103174523.29592-1-dipenp@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH v10 1/4] iommu: Always define struct iommu_fwspec
-Content-Language: en-GB
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Prathamesh Shete <pshete@nvidia.com>, joro@8bytes.org,
-        adrian.hunter@intel.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        will@kernel.org, iommu@lists.linux.dev, anrao@nvidia.com,
-        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
-        Thierry Reding <treding@nvidia.com>
-References: <CAPDyKFqJdiCDkAfrONfnBVKw1v8=jZ+hEJiKGK70EQ4o7BSxaQ@mail.gmail.com>
- <20221103043852.24718-1-pshete@nvidia.com>
- <6be39bae-f325-12e0-374b-a27c9ee2ef2b@arm.com> <Y2PJq27wkVwPg6rp@orome>
- <CAPDyKFq8szzryFBNkw20wFoPTbAa8YDy0wJnb57yckZ-HFTAMw@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <CAPDyKFq8szzryFBNkw20wFoPTbAa8YDy0wJnb57yckZ-HFTAMw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT106:EE_|CH0PR12MB5124:EE_
+X-MS-Office365-Filtering-Correlation-Id: dd4c0e5f-e578-42ee-dc61-08dabdc33b9b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QOZdpGIH0CrxtvoBmgjG/MicHXnJyJMUZv6S9Vb5L/VN6ZZdZHIR0nOaT6aWSEDEJ/i2uxRQ1uEQdBg3oVzltwrkTHJrCb+TWuDO1UyjikFLCcAVQCDuYaoTbkLU3UvcvGp76ktJLJ1G+0ym8Mv/sntmp2uK4NQq9h9GZbiqZAeKoNV8JhTfp0+aHWER1YtkMSY4fsPkIBTtwHfp/TpsAQZmY6L+ci+qTW7c7jxR9uu+TyT/6OnDePJ3CoblfeOgRNjZCAu8/dJ2ZEfy/XoQayUgdcnQkaFRPbAB6jk56rf3iRMiJ95wt/BndiBWwTZtzGu4Rngb2fk/FZBNe6h5ZqfStxD1CJVXEDxX9bbo+U6FRHPRDw/IgnJvJp/aFUqgS8+fD6XYQIPB/qlAJmu3PFmBrevp5b+2cM7VPHF4cd0xMvHaytrAHp/eKX/UFxlvIjjuDFw11TC2o1yT17lfXmtSV1Jvw1v0CXRmtSGoFlVtwc5hNNehC3R6VoUbdqjliTqatRpx0mwUYEB+xXSUz15Fv/onPxe0rGqOmN2csiKa0EGTlUbwQw6GoMEpFvFM8hx0ZooRioQV50mDACCWsK7jucXyNZpocA5RLAaO2OAe5fkWhdI8PETT28VjUWfdGMj2rAi8zhtGeuWxvVrCXXf2jU0Y8MzjAmY/lX2kS0HE6d+Uxr7inviI4LR6SHAKLLOAIsIvUqIGqecAMBRKDmxYPuonTl2wUimLwWoqYdw0IgycWHiTdmluLje8601r/FJGcezQExC8gUj+ETlEj+7o8oqabSgNQBW4QvImHKI=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(136003)(39860400002)(396003)(451199015)(36840700001)(40470700004)(46966006)(36860700001)(40480700001)(82310400005)(36756003)(86362001)(356005)(7636003)(107886003)(82740400003)(8676002)(40460700003)(316002)(6666004)(70206006)(70586007)(7696005)(4326008)(110136005)(5660300002)(478600001)(2906002)(47076005)(426003)(8936002)(2616005)(186003)(336012)(1076003)(83380400001)(26005)(41300700001)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2022 17:45:44.1751
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd4c0e5f-e578-42ee-dc61-08dabdc33b9b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT106.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5124
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-11-03 14:55, Ulf Hansson wrote:
-> On Thu, 3 Nov 2022 at 15:01, Thierry Reding <thierry.reding@gmail.com> wrote:
->>
->> On Thu, Nov 03, 2022 at 12:23:20PM +0000, Robin Murphy wrote:
->>> On 2022-11-03 04:38, Prathamesh Shete wrote:
->>>> In order to fully make use of the !IOMMU_API stub functions, make the
->>>> struct iommu_fwspec always available so that users of the stubs can keep
->>>> using the structure's internals without causing compile failures.
->>>
->>> I'm really in two minds about this... fwspecs are an internal detail of the
->>> IOMMU API that are meant to be private between individual drivers and
->>> firmware code, so anything poking at them arguably does and should depend on
->>> CONFIG_IOMMU_API. It looks like the stub for dev_iommu_fwspec_get() was only
->>> added for the sake of one driver that was misusing it where it really wanted
->>> device_iommu_mapped(), and has since been fixed, so if anything my
->>> preference would be to remove that stub :/
->>
->> Tegra has been using this type of weak dependency on IOMMU_API mainly in
->> order to allow building without the IOMMU support on some old platforms
->> where people may actually care about the kernel size (Tegra20 systems
->> were sometimes severely constrained and don't have anything that we'd
->> call an IOMMU today).
->>
->> We have similar stubs in place for most other major subsystems in order
->> to allow code to simply compile out if the subsystem is disabled, which
->> is quite convenient for sharing code between platforms that may want a
->> given feature and other platforms that may not want it, without causing
->> too much of a hassle with compile-testing.
-> 
-> I agree with the above.
-> 
-> Moreover, the stubs make the code more portable/scalable and so it
-> becomes easier to maintain.
+The patch series:
+- Adds tegra Tegra234 HTE(timestamp) provider supports.
+- Updates MAINTAINERS file for git tree, mail list fields.
+- Updates devicetree and API documentations.
+- Enables HTE subsystem, Tegra194 and Tegra234 HTE providers
+by default in arm64 defconfig and dts files.
 
-Are you suggesting that having the same thing open-coded slightly 
-differently (with bugs) in 8 different places is somehow more 
-maintainable than abstracting it into a single centralised implementation?
+Dipen Patel (7):
+  MAINTAINERS: Add HTE/timestamp subsystem details
+  hte: Add Tegra234 provider
+  gpio: tegra186: Add Tegra234 hte support
+  dt-bindings: timestamp: Add Tegra234 support
+  hte: Re-phrase tegra API document
+  arm64: tegra: Enable GTE nodes
+  arm64: defconfig: Enable HTE config
 
-Is it "easier to maintain" when already seemingly every thing I try to 
-clean up or refactor in the IOMMU API at the moment is stymied by 
-finding Tegra drivers doing unexpected (and often questionable) things? 
-Is it "more scalable" to make it even easier for people to copy 
-questionable code without a second thought, leaving API maintainers to 
-play an ever-expanding game of whack-a-mole to clean it up? No. No it 
-chuffing well isn't :(
+ .../timestamp/nvidia,tegra194-hte.yaml        |  44 ++++++-
+ Documentation/driver-api/hte/tegra194-hte.rst |  33 +++--
+ MAINTAINERS                                   |   3 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  20 +++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  20 +++
+ arch/arm64/configs/defconfig                  |   3 +
+ drivers/gpio/gpio-tegra186.c                  |   1 +
+ drivers/hte/hte-tegra194-test.c               |   2 +-
+ drivers/hte/hte-tegra194.c                    | 124 +++++++++++++++++-
+ 9 files changed, 224 insertions(+), 26 deletions(-)
 
->>> I don't technically have much objection to this patch in isolation, but what
->>> I don't like is the direction of travel it implies. I see the anti-pattern
->>> is only spread across Tegra drivers, making Tegra-specific assumptions, so
->>> in my view the best answer would be to abstract that fwpsec dependency into
->>> a single Tegra-specific helper, which would better represent the nature of
->>> what's really going on here.
->>
->> I don't see how this is an anti-pattern. It might not be common for
->> drivers to need to reach into iommu_fwspec, so that might indeed be
->> specific to Tegra (for whatever reason our IP seems to want extra
->> flexibility), but the general pattern of using stubs is wide-spread,
->> so I don't see why IOMMU_API would need to be special.
-> 
-> Again, I agree.
 
-The anti-pattern is reaching into some other driver's private data 
-assuming a particular format, with zero indication of the huge degree of 
-assumption involved, and half the time not even checking that what's 
-being dereferenced is valid.
+base-commit: 9abf2313adc1ca1b6180c508c25f22f9395cc780
+-- 
+2.17.1
 
-> Moreover, a "git grep CONFIG_IOMMU_API" indicates that the problem
-> isn't specific to Tegra. The "#ifdef CONFIG_IOMMU_API" seems to be
-> sprinkled across the kernel. I think it would be nice if we could
-> improve the situation. So far, using stubs along with what the
-> $subject patch proposes, seems to me to be the best approach.
-
-Yes, there is plenty of code through the tree that is only relevant to 
-the IOMMU API and would be a complete waste of space without it, that is 
-not the point in question here. Grep for dev_iommu_fwspec_get; outside 
-drivers/iommu, the only users are IOMMU-API-specific parts of ACPI code, 
-as intended, plus 8 random Tegra drivers.
-
-Now, there does happen to be a tacit contract between the ACPI IORT code 
-and the Arm SMMU drivers for how SMMU StreamIDs are encoded in their 
-respective fwspecs, but it was never intended for wider consumption. If 
-Tegra drivers want to have a special relationship with arm-smmu then 
-fair enough, but they can do the same as MSM and formalise it somewhere 
-that the SMMU driver maintainers are at least aware of, rather than 
-holding the whole generic IOMMU API hostage.
-
-Since apparently it wasn't clear, what I was proposing is a driver 
-helper at least something like this:
-
-int tegra_arm_smmu_streamid(struct device *dev)
-{
-#ifdef CONFIG_IOMMU_API
-	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev)
-
-	if (fwspec && fwspec->num_ids == 1)
-		return fwspec->ids[0] & 0xffff;
-#endif
-	return -EINVAL;
-}
-
-Now THAT is scalable and maintainable; any number of random drivers can 
-call it without any preconditions, it's a lot clearer what's going on, 
-and I won't have to swear profusely while herding patches through half a 
-dozen different trees if, when my ops rework gets to the point of 
-refactoring iommu_fwspec with dev_iommu, it ends up changing anything 
-significant.
-
-Thanks,
-Robin.
