@@ -2,188 +2,134 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CF5C4708A
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 17:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC28EC4332F
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 21:36:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231796AbiKCRqR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 13:46:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
+        id S231324AbiKCVgA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 17:36:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231616AbiKCRp4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 13:45:56 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2041.outbound.protection.outlook.com [40.107.102.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F05F1AF22;
-        Thu,  3 Nov 2022 10:45:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eHP6M7NnR8lWAjzw4wN32kuoda64YH851ke5FqKyTMp7xZKMDHhlt9WrDmvdtg0mNIyjRnS+OWcen9V/fYLcyl8SWksWkljBjI8Cv2bQH7uGz6gnuzOWdav4jfJEsT3w5oJJ0W2RYRYrp62jX7j4E/kyRt0xaa48DfC3Hlcrx2Zlamcxep4k6rukSCHl7GISZKE8WqfCXPPL7cYHKx8ZWwEDcylXFzGwudpnATtad0+7G0fcjoZ8R/BIClAq07TVUlq5O98itrFz9E1SUaWSHaUxkxFrDD0gGYv1chzcfuqTT7l4MH0lroqEXV2Q3W0gsaUeFTOKV9P3AdIHvaXR/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Jcl42L3FloEax58T988/vqZBnqDNnqpkHemK2a54Yo=;
- b=dwcrdOaPsJPVM53nfAAgbYppVE6MFV18AUaUQmHs/DC3M84hnaEsb5N73I+m8ArEwLYfkMASx9gAIikDaq5B1xlDmcNbCr2zvq4OxYHUSp+7qZAjUyAn07YpSI/Q7ITjDGebURSFk3VZjhChMyJMJFmxP2ktHTrcgV+5tznVwe1/kB2C+MV3ra56ViaewBDqtGJBk1Py4eE36fwru6Hu6SVDikB0RiXgzgDrCmI+UZ/BcF89WzP3kiZBuIVPdo1DeJ9iZDPfHLF+2PsRCVyz9fYfaIoEvSl6wKRsHuKPBuPSUjMJYUlJrvNPUVB6S28En0VWDYnoNrCNNz1C2yX5dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Jcl42L3FloEax58T988/vqZBnqDNnqpkHemK2a54Yo=;
- b=ZjMlipZ1tFcjPC5o8C6QQp3aUVFDoRzn7GNjSqKPEAiO+oVKMpc1aI9NzTbXTHea9CK5mm3rOzALvHQhADIgQc7FMMbXooPuBVYnHL/qYqMyESd/2otW2ax5xxG3eCO42BuytJQx16mkReeSQPjJqp358kXD7dJ8sxlj5/9QyPHUIv63eRfZix6m78jh9VT/ePo3WH9941hEZyCTzLDFZDxN5fWq7RQXYU/oT7BpEAGrw1jZ4WB5086Syun6gGIumkdi1EUrWkth0k3BvE4zl0QqiOd1Zvq7sdbMAnJyJ82egFjAJ6tTO2LEXU/TMEydUoZHODgPpBCL24idyWvfZQ==
-Received: from BN8PR12CA0035.namprd12.prod.outlook.com (2603:10b6:408:60::48)
- by BL1PR12MB5994.namprd12.prod.outlook.com (2603:10b6:208:39a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.20; Thu, 3 Nov
- 2022 17:45:53 +0000
-Received: from BN8NAM11FT033.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:60:cafe::80) by BN8PR12CA0035.outlook.office365.com
- (2603:10b6:408:60::48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.22 via Frontend
- Transport; Thu, 3 Nov 2022 17:45:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BN8NAM11FT033.mail.protection.outlook.com (10.13.177.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5791.20 via Frontend Transport; Thu, 3 Nov 2022 17:45:53 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Thu, 3 Nov 2022
- 10:45:36 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Thu, 3 Nov 2022 10:45:36 -0700
-Received: from dipenp.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Thu, 3 Nov 2022 10:45:36 -0700
-From:   Dipen Patel <dipenp@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh+dt@kernel.org>
-CC:     Dipen Patel <dipenp@nvidia.com>
-Subject: [PATCH 6/7] arm64: tegra: Enable GTE nodes
-Date:   Thu, 3 Nov 2022 10:45:22 -0700
-Message-ID: <20221103174523.29592-7-dipenp@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221103174523.29592-1-dipenp@nvidia.com>
-References: <20221103174523.29592-1-dipenp@nvidia.com>
-X-NVConfidentiality: public
+        with ESMTP id S231535AbiKCVf5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 17:35:57 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A065B205F7
+        for <linux-tegra@vger.kernel.org>; Thu,  3 Nov 2022 14:35:56 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oqhsO-00029v-W0; Thu, 03 Nov 2022 22:35:53 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oqhsO-002948-RS; Thu, 03 Nov 2022 22:35:51 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oqhsN-00ED6u-7O; Thu, 03 Nov 2022 22:35:51 +0100
+Date:   Thu, 3 Nov 2022 22:35:51 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] pwm: tegra: Ensure the clock rate is not less
+ than needed
+Message-ID: <20221103213551.vmzzthnrv5anbdqx@pengutronix.de>
+References: <20221028123356.133796-1-jonathanh@nvidia.com>
+ <20221028123356.133796-2-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT033:EE_|BL1PR12MB5994:EE_
-X-MS-Office365-Filtering-Correlation-Id: e794a843-7ffd-477b-4937-08dabdc34101
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RXWrQ1P7mCNXg6SFGP0IecPmUmUPz7afCgT6tVNvuAYOUYFe6Z8zG4VTFMSXkxqx/x9HVjkqUFKpG/H+jpgl0kk0UzIRYnNivJNumlgEHgX931PGQrDPQ/NbdQ1uPGNaUbfwJS93WMWi3JtqMmniaUmhxDRNHIc/yz/ZRSZT2JIARVewmzyhXAWjJv7ZweATvr9TNQk4kH+MlpKubMRJBgeBK80X7HpPtyDfh50CSoa2EBxwjQfym/P7RJdvAvsLOHhDRjLctYwGA2pdIDBlebYmniuuDlLt/ysMTsteEZhlzMS1+LLlv7bwhh0owNsqJ9/2GVERbz3YCBn5gqT3IzSY/4wGlWvXKfjmtEEt7yefZdMj8Q5rfy9PWKsO9tk4oECBygSNiphUEsADhdsL5H1+hE7rQA/QCssj8q/AJF2EqQtPj9T+Hd2n4iQpGC3FnmJnzFzNyeMdxHzxshWsVyd6c3cOYlR5Yk+eo9HvilOaWzy+utDhEpqeqha1XaFir0b4ZaGQ4ow11hgbpLLLU8Z8Sx2/vX/rcH0E5+oFUp+mrBo+UmNM9Pmi3+1WMoFzd/59x2KBxIuQVNL1rYydlweJcXqyE3UctLHUaGDpo1D/jIdXvKF+q5Iw/VdV2J4O7LriIZU/Yiq88BJSqE0bIlcblbIQkIu++QWjmIQFOQqNSdO+AtPlWV4LEePXuw3VxckP12Ekfgsctd2uvuw95Ovt12WfUquBNd1aqDSFpkfknMhfcwhAG/ZHmcR/fCjpYaIthqWWjZ6pWULrLbt7dAOvxHfYBIp3ES5oUyO4Z5I=
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(346002)(39860400002)(396003)(451199015)(46966006)(40470700004)(36840700001)(6666004)(107886003)(316002)(110136005)(70206006)(7696005)(70586007)(8676002)(4326008)(478600001)(5660300002)(40460700003)(336012)(41300700001)(8936002)(426003)(36756003)(26005)(83380400001)(2616005)(36860700001)(186003)(82740400003)(47076005)(7636003)(356005)(82310400005)(1076003)(2906002)(40480700001)(86362001)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2022 17:45:53.1191
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e794a843-7ffd-477b-4937-08dabdc34101
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT033.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5994
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rxuvcnaa3ksdnfkz"
+Content-Disposition: inline
+In-Reply-To: <20221028123356.133796-2-jonathanh@nvidia.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add and enable AON and LIC GTE nodes by default.
 
-Signed-off-by: Dipen Patel <dipenp@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 20 ++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 20 ++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+--rxuvcnaa3ksdnfkz
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 41f3a7e188d0..67927d97956e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1366,6 +1366,16 @@
- 			status = "disabled";
- 		};
- 
-+                hte_lic: hardware-timestamp@3aa0000 {
-+                        compatible = "nvidia,tegra194-gte-lic";
-+                        reg = <0x3aa0000 0x10000>;
-+                        interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+                        nvidia,int-threshold = <1>;
-+                        nvidia,slices = <11>;
-+                        #timestamp-cells = <1>;
-+                        status = "okay";
-+                };
-+
- 		hsp_top0: hsp@3c00000 {
- 			compatible = "nvidia,tegra194-hsp";
- 			reg = <0x03c00000 0xa0000>;
-@@ -1579,6 +1589,16 @@
- 			#mbox-cells = <2>;
- 		};
- 
-+                hte_aon: hardware-timestamp@c1e0000 {
-+                        compatible = "nvidia,tegra194-gte-aon";
-+                        reg = <0xc1e0000 0x10000>;
-+                        interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+                        nvidia,int-threshold = <1>;
-+                        nvidia,slices = <3>;
-+                        #timestamp-cells = <1>;
-+                        status = "okay";
-+                };
-+
- 		gen2_i2c: i2c@c240000 {
- 			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x0c240000 0x10000>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 0170bfa8a467..fecf9ab1bf17 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -949,6 +949,16 @@
- 			clock-names = "fuse";
- 		};
- 
-+                hte_lic: hardware-timestamp@3aa0000 {
-+                        compatible = "nvidia,tegra234-gte-lic";
-+                        reg = <0x3aa0000 0x10000>;
-+                        interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+                        nvidia,int-threshold = <1>;
-+                        nvidia,slices = <17>;
-+                        #timestamp-cells = <1>;
-+                        status = "okay";
-+                };
-+
- 		hsp_top0: hsp@3c00000 {
- 			compatible = "nvidia,tegra234-hsp", "nvidia,tegra194-hsp";
- 			reg = <0x03c00000 0xa0000>;
-@@ -1466,6 +1476,16 @@
- 			#mbox-cells = <2>;
- 		};
- 
-+                hte_aon: hardware-timestamp@c1e0000 {
-+                        compatible = "nvidia,tegra234-gte-aon";
-+                        reg = <0xc1e0000 0x10000>;
-+                        interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+                        nvidia,int-threshold = <1>;
-+                        nvidia,slices = <3>;
-+                        #timestamp-cells = <1>;
-+                        status = "okay";
-+                };
-+
- 		gen2_i2c: i2c@c240000 {
- 			compatible = "nvidia,tegra194-i2c";
- 			reg = <0xc240000 0x100>;
--- 
-2.17.1
+On Fri, Oct 28, 2022 at 01:33:56PM +0100, Jon Hunter wrote:
+> When dynamically scaling the PWM clock, the function
+> dev_pm_opp_set_rate() may set the PWM clock to a rate that is lower than
+> what is required. The clock rate requested when calling
+> dev_pm_opp_set_rate() is the minimum clock rate that is needed to drive
+> the PWM to achieve the required period. Hence, if the actual clock
+> rate is less than the requested clock rate, then the required period
+> cannot be achieved and configuring the PWM fails. Fix this by
+> calling clk_round_rate() to check if the clock rate that will be provided
+> is sufficient and if not, double the required clock rate to ensure the
+> required period can be attained.
+>=20
+> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> Changes since V1:
+> - Multiplied the required_clk_rate by 2 instead of adding 1 to the
+>   PWM_DUTY_WIDTH and recalculating the rate. Overall rate should be
+>   similar.
+> - Updated comment based upon Uwe's feedback.
+>=20
+>  drivers/pwm/pwm-tegra.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>=20
+> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> index b05ea2e8accc..6fc4b69a3ba7 100644
+> --- a/drivers/pwm/pwm-tegra.c
+> +++ b/drivers/pwm/pwm-tegra.c
+> @@ -148,6 +148,17 @@ static int tegra_pwm_config(struct pwm_chip *chip, s=
+truct pwm_device *pwm,
+>  		required_clk_rate =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC << PWM_DUTY_WIDTH,
+>  						     period_ns);
+> =20
+> +		if (required_clk_rate > clk_round_rate(pc->clk, required_clk_rate))
+> +			/*
+> +			 * required_clk_rate is a lower bound for the input
+> +			 * rate; for lower rates there is no value for PWM_SCALE
+> +			 * that yields a period less than or equal to the
+> +			 * requested period. Hence, for lower rates, double the
+> +			 * required_clk_rate to get a clock rate that can meet
+> +			 * the requested period.
+> +			 */
+> +			required_clk_rate *=3D 2;
 
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Thanks
+Uwe
+
+> +
+>  		err =3D dev_pm_opp_set_rate(pc->dev, required_clk_rate);
+>  		if (err < 0)
+>  			return -EINVAL;
+> --=20
+> 2.25.1
+>=20
+>=20
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--rxuvcnaa3ksdnfkz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNkNDQACgkQwfwUeK3K
+7Akv+Qf/Y+YEicwDSPuhZRAp+fjlVppNhhHADYuoWNBiRauJZjhLeUouqCb0XENM
+63ehlTupXllb2xyZaZBKUzJT3EWoTDP93mO/Dv+Y16EmL2tWQeOdsF/idDTilP/p
++AZazWMF60zUKgT4hHNsRB0//HgHE30PLOv5BOVyWaQtyPcfY7wtCNBhmam8BNyT
+t16l79KVzpJU/5kKDqN4YSM2X2c9BZN/sDDTrwxwZ/1j1hw+HDQo+fgLd24N/326
+Hgn1vRFNJnCDD4D8IFLK/ZvFfdt7RCtOixiDKAypw+Yrbi+M8PdCJj1kEmQls8xh
+A+d2pX6XE9icdmU/9S2ej8t5z9p1cw==
+=vEGo
+-----END PGP SIGNATURE-----
+
+--rxuvcnaa3ksdnfkz--
