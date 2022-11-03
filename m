@@ -2,128 +2,125 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01517C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 14:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 253ABC4332F
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 15:13:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231836AbiKCO4X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 10:56:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39742 "EHLO
+        id S230377AbiKCPNR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 11:13:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231822AbiKCOzw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 10:55:52 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93F119C3C
-        for <linux-tegra@vger.kernel.org>; Thu,  3 Nov 2022 07:55:46 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id v4-20020a17090a088400b00212cb0ed97eso2017123pjc.5
-        for <linux-tegra@vger.kernel.org>; Thu, 03 Nov 2022 07:55:46 -0700 (PDT)
+        with ESMTP id S231835AbiKCPNF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 11:13:05 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A91101D5;
+        Thu,  3 Nov 2022 08:13:03 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id q9so6245452ejd.0;
+        Thu, 03 Nov 2022 08:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t/NrioDw2KFq6mJ3bVbRI+ixY4f+9g6gFasJn7MZM6M=;
-        b=rJkZmYWpfntVKVk7RpeWnoFkGl5MYV9fqkQy+uhqSUZd8I5rQ9KEWF727GdBwyv3sk
-         Kgd8e3AX1tMsFIKugXIghb1NH07wTnvI/HIKMzZp0H5a0ElIZvT57CZWWxM8oYQCTzxl
-         tSVJ4uulQExyKTjJMY7Ch4mHvoDVilhLCKN/+eDjJo+ctTykGIrmowWIUCebVGeYUlP7
-         4qfNXDjfBN4AUK7ExEjXXSKGb9VyabyfwXsRpywXBpkT50Qiq4tUgSCkZQTT2eDYkPIK
-         xnynjuCDwE9FvQVKz8ZyGxaNAXZoAxOyvNS3pTdPtufKE0aUR/lFQmpC005iuIUkADAs
-         /Z7w==
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KoaIlM8xIgahG5JFmkc83N9GLE7kxUB3z/5iN5C/P6U=;
+        b=i8gImPBsW4BoJnyy6VwgXLmzycc2IWmBB4zDz5bfkjEvYbWOcVOu1YvFRAZ61dPjMR
+         Z3qD1xv+QiyxIaFF5qweljJxJkd6/wtA1Ojy2kQEIckQFy0NRMdVLuOLMXFGKNCb/cSl
+         iahqWySyzTiStWYYH4cpwJe+7mlTXseEVdHXY/uzis+4tK6mK62W/fQvrT0OmhfmW6XP
+         Ryu84s9dDR3NxHthkp8qmt37kqZ/2hcly6UJNdwWhmeOvRjRkkXfsZlGz5f4MOww8AmV
+         XkxWOxCzisbwvCHU07pmIDe3+pjgvLfweCLDmJMYrNgPFA4iNYsUFuiyb0xH92XUysa1
+         1e8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t/NrioDw2KFq6mJ3bVbRI+ixY4f+9g6gFasJn7MZM6M=;
-        b=aJ9k+XDyoifF1BVLaclBo5qmoEYnBZ+D+M7Q6w/qxrSl7VMxU1fK6H+Inn2MAZh2VB
-         ySaZByPKlaJMZGoMvfr8Tln+zG8Owm7gCh8xBVpj1HayUzWcvVLbm+vrRt4FsRAEnqEn
-         lW6LKPjnZqZf2rLc51wu0lxd7ZhFG6e94P/wuAr4LeJscex0BY8o3zcSdGsrkDunPeKN
-         0Xrb7047+2VlhH0+JLKeeNsrm0rhuapqX7nhZGF6LT8Wz0BSKuZ64XujcGEzKyMixfBI
-         8IeuUKs649d3AmR5oZRzx1zLPu1rQb6ttis2BA1w/NBFEz0bw3604x3/Fm+KbKCfU8v/
-         wbMA==
-X-Gm-Message-State: ACrzQf0fMemR+mCy4O+8NE2M5SqjeylRJbusdRr2gUjs53JXRxBginTK
-        JTSG2mlwZFyJpZ1LbxfQL1f28JydtMqb0bkVbpTttw==
-X-Google-Smtp-Source: AMsMyM4MUJeInSpCoBN6Nw7WgpaIGWe+Q/h4WSomAyuSBcWfpyVw2c5LyrS7bLPmw/14e0Rhj1R+GF4rkXdJxIeX0xI=
-X-Received: by 2002:a17:90b:1d90:b0:213:c798:86f6 with SMTP id
- pf16-20020a17090b1d9000b00213c79886f6mr26575996pjb.84.1667487346285; Thu, 03
- Nov 2022 07:55:46 -0700 (PDT)
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KoaIlM8xIgahG5JFmkc83N9GLE7kxUB3z/5iN5C/P6U=;
+        b=jp5B1T/UiKQ/Syt2hiwbFAB0YkLBad26EjEQjSuhHv7PRD/EXb/RPFomxhAj53Y5K/
+         Hss8Z2qhrkdhc4S77tOrsj5jyhU+u615VXMi/DKOyvl7kDhHaAubZnDSDdUKKnvm9Ue1
+         CXld66O3LyBHA+w2eduvM9OGMNVTd9DHZR8C5OiS68r4GEMDtL7VZHLsO/I2gcng2BFF
+         Qka5JR4LJJFXZuQqMCW7JAfhlZ1K7Zo/0BBGp8a1hABAoAn1Ru/yY/xV8KCa40cIKGgl
+         V/fdsqDvfkNlrdW2gWgZ1txKhtILYCbU/Jxx0xDS04Re00GCdyfhlbDvX3nq4S3QcIIt
+         4GrQ==
+X-Gm-Message-State: ACrzQf2fNYz1HDRH+o3tvqh4RgdQXhnpK+q/TwFONKmYYmdKkTEzpCOh
+        5pR6AyS1dR2kfkyt9l8vVlQ=
+X-Google-Smtp-Source: AMsMyM5kWK8thE8eDyVT8fSVWJ2nskYfHq0/tz3aDMtwjzqRMgpWx0BsaQUJGLovv9kI86HKGJCitg==
+X-Received: by 2002:a17:907:9603:b0:742:9ed3:3af2 with SMTP id gb3-20020a170907960300b007429ed33af2mr29591779ejc.510.1667488382185;
+        Thu, 03 Nov 2022 08:13:02 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id bu24-20020a170906a15800b00722e50dab2csm605167ejb.109.2022.11.03.08.13.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Nov 2022 08:13:01 -0700 (PDT)
+Date:   Thu, 3 Nov 2022 16:12:59 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] pwm: tegra: Improve required rate calculation
+Message-ID: <Y2Pae2xvi+d/qhod@orome>
+References: <20221028123356.133796-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-References: <CAPDyKFqJdiCDkAfrONfnBVKw1v8=jZ+hEJiKGK70EQ4o7BSxaQ@mail.gmail.com>
- <20221103043852.24718-1-pshete@nvidia.com> <6be39bae-f325-12e0-374b-a27c9ee2ef2b@arm.com>
- <Y2PJq27wkVwPg6rp@orome>
-In-Reply-To: <Y2PJq27wkVwPg6rp@orome>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 3 Nov 2022 15:55:09 +0100
-Message-ID: <CAPDyKFq8szzryFBNkw20wFoPTbAa8YDy0wJnb57yckZ-HFTAMw@mail.gmail.com>
-Subject: Re: [PATCH v10 1/4] iommu: Always define struct iommu_fwspec
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Prathamesh Shete <pshete@nvidia.com>, joro@8bytes.org,
-        adrian.hunter@intel.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        will@kernel.org, iommu@lists.linux.dev, anrao@nvidia.com,
-        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
-        Thierry Reding <treding@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/Uw4l+j+ezP++LUf"
+Content-Disposition: inline
+In-Reply-To: <20221028123356.133796-1-jonathanh@nvidia.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 3 Nov 2022 at 15:01, Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Thu, Nov 03, 2022 at 12:23:20PM +0000, Robin Murphy wrote:
-> > On 2022-11-03 04:38, Prathamesh Shete wrote:
-> > > In order to fully make use of the !IOMMU_API stub functions, make the
-> > > struct iommu_fwspec always available so that users of the stubs can keep
-> > > using the structure's internals without causing compile failures.
-> >
-> > I'm really in two minds about this... fwspecs are an internal detail of the
-> > IOMMU API that are meant to be private between individual drivers and
-> > firmware code, so anything poking at them arguably does and should depend on
-> > CONFIG_IOMMU_API. It looks like the stub for dev_iommu_fwspec_get() was only
-> > added for the sake of one driver that was misusing it where it really wanted
-> > device_iommu_mapped(), and has since been fixed, so if anything my
-> > preference would be to remove that stub :/
->
-> Tegra has been using this type of weak dependency on IOMMU_API mainly in
-> order to allow building without the IOMMU support on some old platforms
-> where people may actually care about the kernel size (Tegra20 systems
-> were sometimes severely constrained and don't have anything that we'd
-> call an IOMMU today).
->
-> We have similar stubs in place for most other major subsystems in order
-> to allow code to simply compile out if the subsystem is disabled, which
-> is quite convenient for sharing code between platforms that may want a
-> given feature and other platforms that may not want it, without causing
-> too much of a hassle with compile-testing.
 
-I agree with the above.
+--/Uw4l+j+ezP++LUf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Moreover, the stubs make the code more portable/scalable and so it
-becomes easier to maintain.
+On Fri, Oct 28, 2022 at 01:33:55PM +0100, Jon Hunter wrote:
+> For the case where dev_pm_opp_set_rate() is called to set the PWM clock
+> rate, the requested rate is calculated as ...
+>=20
+>  required_clk_rate =3D (NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
+>=20
+> The above calculation may lead to rounding errors because the
+> NSEC_PER_SEC is divided by 'period_ns' before applying the
+> PWM_DUTY_WIDTH multiplication factor. For example, if the period is
+> 45334ns, the above calculation yields a rate of 5646848Hz instead of
+> 5646976Hz. Fix this by applying the multiplication factor before
+> dividing and using the DIV_ROUND_UP macro which yields the expected
+> result of 5646976Hz.
+>=20
+> Fixes: 1d7796bdb63a ("pwm: tegra: Support dynamic clock frequency configu=
+ration")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Reviewed-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
+> Changes since V1:
+> - Dropped extra parenthesis
+>=20
+>  drivers/pwm/pwm-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
->
-> > I don't technically have much objection to this patch in isolation, but what
-> > I don't like is the direction of travel it implies. I see the anti-pattern
-> > is only spread across Tegra drivers, making Tegra-specific assumptions, so
-> > in my view the best answer would be to abstract that fwpsec dependency into
-> > a single Tegra-specific helper, which would better represent the nature of
-> > what's really going on here.
->
-> I don't see how this is an anti-pattern. It might not be common for
-> drivers to need to reach into iommu_fwspec, so that might indeed be
-> specific to Tegra (for whatever reason our IP seems to want extra
-> flexibility), but the general pattern of using stubs is wide-spread,
-> so I don't see why IOMMU_API would need to be special.
+Applied, thanks.
 
-Again, I agree.
+Thierry
 
-Moreover, a "git grep CONFIG_IOMMU_API" indicates that the problem
-isn't specific to Tegra. The "#ifdef CONFIG_IOMMU_API" seems to be
-sprinkled across the kernel. I think it would be nice if we could
-improve the situation. So far, using stubs along with what the
-$subject patch proposes, seems to me to be the best approach.
+--/Uw4l+j+ezP++LUf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[...]
+-----BEGIN PGP SIGNATURE-----
 
-Kind regards
-Uffe
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNj2nkACgkQ3SOs138+
+s6HElQ//dP1kdJEc57w75eDrLaQgIhsYtdw38PTkmWvY5nDr32t91Ki12UVT8+Jg
+AZ0AgqZEg+dmWI+oC8M30W9SswaOpVb0YLWauW3S5Y1B0B01Y4lFBiBmyqt9urr+
+16iCBybU7hmeu5IlSCei4LDAEXDB5h2RmBN9XqvR6hwMRKAEH2Wt+DG0TqHkaiNX
+AGDmi95jgRu9uGP8wT3nyiN7i9y1Gs7sSRGiQdEVhbcTph51b2is8458ZrmeRebV
+9MvppuKEAQfzPaTN67LAqbmKZVAHFmMBCt9l3nb6IFZAPILyvV9im9fj7d/tqcLE
+bzJeo6GjFJGhLD4t8Jna5UprhKYni5kfe/l+Ha3a31dgzL0EDzQkhfUu6QA2+VGJ
+6ywDi2YIYD+iDQdv58CQvFv83un2HEqBK19EjZCBUqxiLM7PmrwfHDtp7FAyu07X
+n562dFob3yqegQA3yaRSNzRVHDhh2BEFSDV0wQuOdnwc7mTZ4uIViyaIUbdGujL1
+5LcZ+w9lPBS+K/VRvXLbe9B5l0CU+JHNbJrAWr2J0fS0SIsgXmOtEz7oM5kwQ7TN
+VHsvxSYYPZxSga12VsGTk1WyAUByPoKSJUgk22Orb+CsqRN2jinnqgxmgfsb1TSI
+LN1X77KJ43U1TIxFMARtgpFHdFTFrI+aoT9yqLCWi5xR3uzF0CI=
+=9BFL
+-----END PGP SIGNATURE-----
+
+--/Uw4l+j+ezP++LUf--
