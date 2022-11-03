@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A654C63706
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93796C65BA6
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232117AbiKCPPJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 11:15:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55200 "EHLO
+        id S232159AbiKCPPK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 11:15:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232153AbiKCPPD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 11:15:03 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 077FE178AF;
-        Thu,  3 Nov 2022 08:15:00 -0700 (PDT)
+        with ESMTP id S232027AbiKCPPF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 11:15:05 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00794F60;
+        Thu,  3 Nov 2022 08:15:02 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B695B21DEE;
-        Thu,  3 Nov 2022 15:14:58 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id ADBCA21E0F;
+        Thu,  3 Nov 2022 15:15:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1667488498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1667488501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SotlzbMIFRL9v0KTZHyxFRipdSEQQSPUMfNHR83x5EY=;
-        b=PDZXVu/i+LpGd/FOVJ4CtkS4GxIzhSOSRo1+zEaUTh5jGxEuVli6a4fqjug0o6eE3rbJI9
-        zH6Fw3zPCpkUNHl1YiK+gk+OPfWMCE0y1TDhTATbEmWQYks3Tz1gbsoRqqMgdj2qw6UgDd
-        MXCD64RK3yu6ZlG89myfxApCYJR3vFQ=
+        bh=tKKDgnAGRekThl+Kef4OIp3bhWwiXQhMBkwOIt4sJLE=;
+        b=qcoaEe5YDt/TSoDF9LlZD6Ng+7gD76PPx58VoLgyC2ai3047WiYzO6VG3UqAQIKy3YKHXg
+        REz70h7mZR412dIJJPtt6KeG1I2HUyUb1PBRsZuXjXfuKD9CPq7uVKM+mBw35lKrclD5/3
+        d/CmcLsUtt54A7ePpp2jBuYDLUuRSlM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1667488498;
+        s=susede2_ed25519; t=1667488501;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SotlzbMIFRL9v0KTZHyxFRipdSEQQSPUMfNHR83x5EY=;
-        b=1D2xNvf8vsnumL3E2WeVZuxoi+pkA0EJGU9PpFGu6iabSWDf05OU6gmWkluwzJaNx0b96E
-        R8aEb4AWWbbranCA==
+        bh=tKKDgnAGRekThl+Kef4OIp3bhWwiXQhMBkwOIt4sJLE=;
+        b=vNkdqKAyelvn3nPdMe6vc+09jji6Lk7jXBt2wG5SEJu98SaBJt2CYv2mNsp1sZeqm7L53F
+        HQNJ4nEa4KQxHwDA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1658D13AAF;
-        Thu,  3 Nov 2022 15:14:58 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2463D13ADB;
+        Thu,  3 Nov 2022 15:15:01 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id sBd/BPLaY2PBGgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 03 Nov 2022 15:14:58 +0000
+        id sNoICPXaY2PBGgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 03 Nov 2022 15:15:01 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
         javierm@redhat.com, mripard@kernel.org,
@@ -67,9 +67,9 @@ Cc:     "linux-hyperv@vger.kernel.orglinux-hyperv"@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 17/23] drm/fb-helper: Perform all fbdev I/O with the same implementation
-Date:   Thu,  3 Nov 2022 16:14:40 +0100
-Message-Id: <20221103151446.2638-18-tzimmermann@suse.de>
+Subject: [PATCH v3 22/23] drm/fb-helper: Remove unnecessary include statements
+Date:   Thu,  3 Nov 2022 16:14:45 +0100
+Message-Id: <20221103151446.2638-23-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221103151446.2638-1-tzimmermann@suse.de>
 References: <20221103151446.2638-1-tzimmermann@suse.de>
@@ -79,604 +79,460 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement the fbdev's read/write helpers with the same functions. Use
-the generic fbdev's code as template. Convert all drivers.
-
-DRM's fb helpers must implement regular I/O functionality in struct
-fb_ops and possibly perform a damage update. Handle all this in the
-same functions and convert drivers. The functionality has been used
-as part of the generic fbdev code for some time. The drivers don't
-set struct drm_fb_helper.fb_dirty, so they will not be affected by
-damage handling.
-
-For I/O memory, fb helpers now provide drm_fb_helper_cfb_read() and
-drm_fb_helper_cfb_write(). Several drivers require these. Until now
-tegra used I/O read and write, although the memory buffer appears to
-be in system memory. So use _sys_ helpers now.
+Remove include statements for <drm/drm_fb_helper.h> where it is not
+required (i.e., most of them). In a few places include other header
+files that are required by the source code.
 
 v3:
-	* fix docs (Javier)
-v2:
-	* rebase onto vmwgfx changes
+	* fix amdgpu include statements
+	* fix rockchip include statements
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 ---
- drivers/gpu/drm/armada/armada_fbdev.c      |   2 +
- drivers/gpu/drm/drm_fb_helper.c            | 383 ++++++++++++---------
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c  |   2 +
- drivers/gpu/drm/gma500/framebuffer.c       |   2 +
- drivers/gpu/drm/i915/display/intel_fbdev.c |   2 +
- drivers/gpu/drm/radeon/radeon_fb.c         |   2 +
- drivers/gpu/drm/tegra/fb.c                 |   2 +
- include/drm/drm_fb_helper.h                |  17 +
- 8 files changed, 254 insertions(+), 158 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c  | 1 -
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c      | 1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c     | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c         | 1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h        | 1 -
+ drivers/gpu/drm/amd/amdgpu/dce_v10_0.c          | 1 +
+ drivers/gpu/drm/amd/amdgpu/dce_v11_0.c          | 1 +
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c           | 1 +
+ drivers/gpu/drm/amd/amdgpu/dce_v8_0.c           | 1 +
+ drivers/gpu/drm/arm/hdlcd_crtc.c                | 1 -
+ drivers/gpu/drm/ast/ast_drv.h                   | 1 -
+ drivers/gpu/drm/bridge/tc358762.c               | 2 +-
+ drivers/gpu/drm/drm_crtc_helper.c               | 1 -
+ drivers/gpu/drm/drm_gem_framebuffer_helper.c    | 1 -
+ drivers/gpu/drm/drm_probe_helper.c              | 1 -
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h           | 3 ++-
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h | 1 -
+ drivers/gpu/drm/hyperv/hyperv_drm_modeset.c     | 1 -
+ drivers/gpu/drm/imx/imx-ldb.c                   | 2 +-
+ drivers/gpu/drm/imx/imx-tve.c                   | 1 -
+ drivers/gpu/drm/imx/parallel-display.c          | 2 +-
+ drivers/gpu/drm/kmb/kmb_plane.c                 | 1 -
+ drivers/gpu/drm/mgag200/mgag200_drv.h           | 1 -
+ drivers/gpu/drm/qxl/qxl_drv.h                   | 1 -
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h     | 2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c     | 1 +
+ drivers/gpu/drm/tidss/tidss_kms.c               | 1 -
+ drivers/gpu/drm/v3d/v3d_drv.c                   | 1 -
+ drivers/gpu/drm/vboxvideo/vbox_main.c           | 1 -
+ drivers/gpu/drm/virtio/virtgpu_drv.h            | 1 -
+ drivers/gpu/drm/xen/xen_drm_front_gem.c         | 1 -
+ 31 files changed, 14 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-index f02f6a5ba8320..584cee123bd8e 100644
---- a/drivers/gpu/drm/armada/armada_fbdev.c
-+++ b/drivers/gpu/drm/armada/armada_fbdev.c
-@@ -19,6 +19,8 @@
- static const struct fb_ops armada_fb_ops = {
- 	.owner		= THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
-+	.fb_read	= drm_fb_helper_cfb_read,
-+	.fb_write	= drm_fb_helper_cfb_write,
- 	.fb_fillrect	= drm_fb_helper_cfb_fillrect,
- 	.fb_copyarea	= drm_fb_helper_cfb_copyarea,
- 	.fb_imageblit	= drm_fb_helper_cfb_imageblit,
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 379e0d2f67198..c7c0c0a8532b4 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -747,30 +747,132 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
- }
- EXPORT_SYMBOL(drm_fb_helper_deferred_io);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+index 491d4846fc02c..e1320edfc5274 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+@@ -26,7 +26,6 @@
  
-+typedef ssize_t (*drm_fb_helper_read_screen)(struct fb_info *info, char __user *buf,
-+					     size_t count, loff_t pos);
-+
-+static ssize_t __drm_fb_helper_read(struct fb_info *info, char __user *buf, size_t count,
-+				    loff_t *ppos, drm_fb_helper_read_screen read_screen)
-+{
-+	loff_t pos = *ppos;
-+	size_t total_size;
-+	ssize_t ret;
-+
-+	if (info->screen_size)
-+		total_size = info->screen_size;
-+	else
-+		total_size = info->fix.smem_len;
-+
-+	if (pos >= total_size)
-+		return 0;
-+	if (count >= total_size)
-+		count = total_size;
-+	if (total_size - count < pos)
-+		count = total_size - pos;
-+
-+	if (info->fbops->fb_sync)
-+		info->fbops->fb_sync(info);
-+
-+	ret = read_screen(info, buf, count, pos);
-+	if (ret > 0)
-+		*ppos += ret;
-+
-+	return ret;
-+}
-+
-+typedef ssize_t (*drm_fb_helper_write_screen)(struct fb_info *info, const char __user *buf,
-+					      size_t count, loff_t pos);
-+
-+static ssize_t __drm_fb_helper_write(struct fb_info *info, const char __user *buf, size_t count,
-+				     loff_t *ppos, drm_fb_helper_write_screen write_screen)
-+{
-+	loff_t pos = *ppos;
-+	size_t total_size;
-+	ssize_t ret;
-+	int err = 0;
-+
-+	if (info->screen_size)
-+		total_size = info->screen_size;
-+	else
-+		total_size = info->fix.smem_len;
-+
-+	if (pos > total_size)
-+		return -EFBIG;
-+	if (count > total_size) {
-+		err = -EFBIG;
-+		count = total_size;
-+	}
-+	if (total_size - count < pos) {
-+		if (!err)
-+			err = -ENOSPC;
-+		count = total_size - pos;
-+	}
-+
-+	if (info->fbops->fb_sync)
-+		info->fbops->fb_sync(info);
-+
-+	/*
-+	 * Copy to framebuffer even if we already logged an error. Emulates
-+	 * the behavior of the original fbdev implementation.
-+	 */
-+	ret = write_screen(info, buf, count, pos);
-+	if (ret < 0)
-+		return ret; /* return last error, if any */
-+	else if (!ret)
-+		return err; /* return previous error, if any */
-+
-+	*ppos += ret;
-+
-+	return ret;
-+}
-+
-+static ssize_t drm_fb_helper_read_screen_buffer(struct fb_info *info, char __user *buf,
-+						size_t count, loff_t pos)
-+{
-+	const char *src = info->screen_buffer + pos;
-+
-+	if (copy_to_user(buf, src, count))
-+		return -EFAULT;
-+
-+	return count;
-+}
-+
- /**
-- * drm_fb_helper_sys_read - wrapper around fb_sys_read
-+ * drm_fb_helper_sys_read - Implements struct &fb_ops.fb_read for system memory
-  * @info: fb_info struct pointer
-  * @buf: userspace buffer to read from framebuffer memory
-  * @count: number of bytes to read from framebuffer memory
-  * @ppos: read offset within framebuffer memory
+ #include <drm/display/drm_dp_helper.h>
+ #include <drm/drm_edid.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/amdgpu_drm.h>
+ #include "amdgpu.h"
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index ddaecb2610c94..56a031a2e087e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -37,6 +37,7 @@
+ #include <linux/pci-p2pdma.h>
+ 
+ #include <drm/drm_atomic_helper.h>
++#include <drm/drm_fb_helper.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/amdgpu_drm.h>
+ #include <linux/vgaarb.h>
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index dd6f9ae6fbe9f..311a8ea6f0654 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -39,8 +39,8 @@
+ #include <linux/pm_runtime.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_edid.h>
+-#include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_fb_helper.h>
++#include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_vblank.h>
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+index bf1ff8f0e7120..e3a18f069ce5e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+@@ -29,6 +29,7 @@
+ #include "amdgpu.h"
+ #include <drm/amdgpu_drm.h>
+ #include <drm/drm_drv.h>
++#include <drm/drm_fb_helper.h>
+ #include "amdgpu_uvd.h"
+ #include "amdgpu_vce.h"
+ #include "atom.h"
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+index 37322550d7508..8a39300b1a845 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+@@ -36,7 +36,6 @@
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_fixed.h>
+ #include <drm/drm_crtc_helper.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_probe_helper.h>
+ #include <linux/i2c.h>
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+index 05051d5d2ec31..90f87b2d985b5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+@@ -21,6 +21,7 @@
   *
-- * A wrapper around fb_sys_read implemented by fbdev core
-+ * Returns:
-+ * The number of bytes read on success, or an error code otherwise.
   */
- ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
- 			       size_t count, loff_t *ppos)
- {
--	return fb_sys_read(info, buf, count, ppos);
-+	return __drm_fb_helper_read(info, buf, count, ppos, drm_fb_helper_read_screen_buffer);
- }
- EXPORT_SYMBOL(drm_fb_helper_sys_read);
  
-+static ssize_t drm_fb_helper_write_screen_buffer(struct fb_info *info, const char __user *buf,
-+						 size_t count, loff_t pos)
-+{
-+	char *dst = info->screen_buffer + pos;
-+
-+	if (copy_from_user(dst, buf, count))
-+		return -EFAULT;
-+
-+	return count;
-+}
-+
- /**
-- * drm_fb_helper_sys_write - wrapper around fb_sys_write
-+ * drm_fb_helper_sys_write - Implements struct &fb_ops.fb_write for system memory
-  * @info: fb_info struct pointer
-  * @buf: userspace buffer to write to framebuffer memory
-  * @count: number of bytes to write to framebuffer memory
-  * @ppos: write offset within framebuffer memory
++#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_vblank.h>
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+index c928bc9eb2026..0352de72c886a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+@@ -21,6 +21,7 @@
   *
-- * A wrapper around fb_sys_write implemented by fbdev core
-+ * Returns:
-+ * The number of bytes written on success, or an error code otherwise.
   */
- ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
- 				size_t count, loff_t *ppos)
-@@ -779,7 +881,7 @@ ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
- 	ssize_t ret;
- 	struct drm_rect damage_area;
  
--	ret = fb_sys_write(info, buf, count, ppos);
-+	ret = __drm_fb_helper_write(info, buf, count, ppos, drm_fb_helper_write_screen_buffer);
- 	if (ret <= 0)
- 		return ret;
++#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_vblank.h>
  
-@@ -837,6 +939,119 @@ void drm_fb_helper_sys_imageblit(struct fb_info *info,
- }
- EXPORT_SYMBOL(drm_fb_helper_sys_imageblit);
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+index 62315fd5a05f2..07bd16e820461 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+@@ -23,6 +23,7 @@
  
-+static ssize_t fb_read_screen_base(struct fb_info *info, char __user *buf, size_t count,
-+				   loff_t pos)
-+{
-+	const char __iomem *src = info->screen_base + pos;
-+	size_t alloc_size = min_t(size_t, count, PAGE_SIZE);
-+	ssize_t ret = 0;
-+	int err = 0;
-+	char *tmp;
-+
-+	tmp = kmalloc(alloc_size, GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	while (count) {
-+		size_t c = min_t(size_t, count, alloc_size);
-+
-+		memcpy_fromio(tmp, src, c);
-+		if (copy_to_user(buf, tmp, c)) {
-+			err = -EFAULT;
-+			break;
-+		}
-+
-+		src += c;
-+		buf += c;
-+		ret += c;
-+		count -= c;
-+	}
-+
-+	kfree(tmp);
-+
-+	return ret ? ret : err;
-+}
-+
-+/**
-+ * drm_fb_helper_cfb_read - Implements struct &fb_ops.fb_read for I/O memory
-+ * @info: fb_info struct pointer
-+ * @buf: userspace buffer to read from framebuffer memory
-+ * @count: number of bytes to read from framebuffer memory
-+ * @ppos: read offset within framebuffer memory
-+ *
-+ * Returns:
-+ * The number of bytes read on success, or an error code otherwise.
-+ */
-+ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
-+			       size_t count, loff_t *ppos)
-+{
-+	return __drm_fb_helper_read(info, buf, count, ppos, fb_read_screen_base);
-+}
-+EXPORT_SYMBOL(drm_fb_helper_cfb_read);
-+
-+static ssize_t fb_write_screen_base(struct fb_info *info, const char __user *buf, size_t count,
-+				    loff_t pos)
-+{
-+	char __iomem *dst = info->screen_base + pos;
-+	size_t alloc_size = min_t(size_t, count, PAGE_SIZE);
-+	ssize_t ret = 0;
-+	int err = 0;
-+	u8 *tmp;
-+
-+	tmp = kmalloc(alloc_size, GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	while (count) {
-+		size_t c = min_t(size_t, count, alloc_size);
-+
-+		if (copy_from_user(tmp, buf, c)) {
-+			err = -EFAULT;
-+			break;
-+		}
-+		memcpy_toio(dst, tmp, c);
-+
-+		dst += c;
-+		buf += c;
-+		ret += c;
-+		count -= c;
-+	}
-+
-+	kfree(tmp);
-+
-+	return ret ? ret : err;
-+}
-+
-+/**
-+ * drm_fb_helper_cfb_write - Implements struct &fb_ops.fb_write for I/O memory
-+ * @info: fb_info struct pointer
-+ * @buf: userspace buffer to write to framebuffer memory
-+ * @count: number of bytes to write to framebuffer memory
-+ * @ppos: write offset within framebuffer memory
-+ *
-+ * Returns:
-+ * The number of bytes written on success, or an error code otherwise.
-+ */
-+ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
-+				size_t count, loff_t *ppos)
-+{
-+	loff_t pos = *ppos;
-+	ssize_t ret;
-+	struct drm_rect damage_area;
-+
-+	ret = __drm_fb_helper_write(info, buf, count, ppos, fb_write_screen_base);
-+	if (ret <= 0)
-+		return ret;
-+
-+	drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
-+	drm_fb_helper_damage(info, damage_area.x1, damage_area.y1,
-+			     drm_rect_width(&damage_area),
-+			     drm_rect_height(&damage_area));
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(drm_fb_helper_cfb_write);
-+
- /**
-  * drm_fb_helper_cfb_fillrect - wrapper around cfb_fillrect
-  * @info: fbdev registered by the helper
-@@ -2183,176 +2398,28 @@ static bool drm_fbdev_use_iomem(struct fb_info *info)
- 	return !drm_fbdev_use_shadow_fb(fb_helper) && buffer->map.is_iomem;
- }
+ #include <linux/pci.h>
  
--static ssize_t fb_read_screen_base(struct fb_info *info, char __user *buf, size_t count,
--				   loff_t pos)
--{
--	const char __iomem *src = info->screen_base + pos;
--	size_t alloc_size = min_t(size_t, count, PAGE_SIZE);
--	ssize_t ret = 0;
--	int err = 0;
--	char *tmp;
--
--	tmp = kmalloc(alloc_size, GFP_KERNEL);
--	if (!tmp)
--		return -ENOMEM;
--
--	while (count) {
--		size_t c = min_t(size_t, count, alloc_size);
--
--		memcpy_fromio(tmp, src, c);
--		if (copy_to_user(buf, tmp, c)) {
--			err = -EFAULT;
--			break;
--		}
--
--		src += c;
--		buf += c;
--		ret += c;
--		count -= c;
--	}
--
--	kfree(tmp);
--
--	return ret ? ret : err;
--}
--
--static ssize_t fb_read_screen_buffer(struct fb_info *info, char __user *buf, size_t count,
--				     loff_t pos)
--{
--	const char *src = info->screen_buffer + pos;
--
--	if (copy_to_user(buf, src, count))
--		return -EFAULT;
--
--	return count;
--}
--
- static ssize_t drm_fbdev_fb_read(struct fb_info *info, char __user *buf,
- 				 size_t count, loff_t *ppos)
- {
--	loff_t pos = *ppos;
--	size_t total_size;
- 	ssize_t ret;
++#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_vblank.h>
  
--	if (info->screen_size)
--		total_size = info->screen_size;
--	else
--		total_size = info->fix.smem_len;
--
--	if (pos >= total_size)
--		return 0;
--	if (count >= total_size)
--		count = total_size;
--	if (total_size - count < pos)
--		count = total_size - pos;
--
--	if (info->fbops->fb_sync)
--		info->fbops->fb_sync(info);
--
- 	if (drm_fbdev_use_iomem(info))
--		ret = fb_read_screen_base(info, buf, count, pos);
-+		ret = drm_fb_helper_cfb_read(info, buf, count, ppos);
- 	else
--		ret = fb_read_screen_buffer(info, buf, count, pos);
--
--	if (ret > 0)
--		*ppos += ret;
-+		ret = drm_fb_helper_sys_read(info, buf, count, ppos);
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+index 87d5e4c21cb37..d73df100f2b3b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+@@ -21,6 +21,7 @@
+  *
+  */
  
- 	return ret;
- }
++#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_vblank.h>
  
--static ssize_t fb_write_screen_base(struct fb_info *info, const char __user *buf, size_t count,
--				    loff_t pos)
--{
--	char __iomem *dst = info->screen_base + pos;
--	size_t alloc_size = min_t(size_t, count, PAGE_SIZE);
--	ssize_t ret = 0;
--	int err = 0;
--	u8 *tmp;
--
--	tmp = kmalloc(alloc_size, GFP_KERNEL);
--	if (!tmp)
--		return -ENOMEM;
--
--	while (count) {
--		size_t c = min_t(size_t, count, alloc_size);
--
--		if (copy_from_user(tmp, buf, c)) {
--			err = -EFAULT;
--			break;
--		}
--		memcpy_toio(dst, tmp, c);
--
--		dst += c;
--		buf += c;
--		ret += c;
--		count -= c;
--	}
--
--	kfree(tmp);
--
--	return ret ? ret : err;
--}
--
--static ssize_t fb_write_screen_buffer(struct fb_info *info, const char __user *buf, size_t count,
--				      loff_t pos)
--{
--	char *dst = info->screen_buffer + pos;
--
--	if (copy_from_user(dst, buf, count))
--		return -EFAULT;
--
--	return count;
--}
--
- static ssize_t drm_fbdev_fb_write(struct fb_info *info, const char __user *buf,
- 				  size_t count, loff_t *ppos)
- {
--	loff_t pos = *ppos;
--	size_t total_size;
- 	ssize_t ret;
--	struct drm_rect damage_area;
--	int err = 0;
+diff --git a/drivers/gpu/drm/arm/hdlcd_crtc.c b/drivers/gpu/drm/arm/hdlcd_crtc.c
+index 7030339fa2323..ddbe1dd2d44ef 100644
+--- a/drivers/gpu/drm/arm/hdlcd_crtc.c
++++ b/drivers/gpu/drm/arm/hdlcd_crtc.c
+@@ -19,7 +19,6 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_fb_dma_helper.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_gem_dma_helper.h>
+ #include <drm/drm_of.h>
+diff --git a/drivers/gpu/drm/ast/ast_drv.h b/drivers/gpu/drm/ast/ast_drv.h
+index 74f41282444f6..d51b81fea9c80 100644
+--- a/drivers/gpu/drm/ast/ast_drv.h
++++ b/drivers/gpu/drm/ast/ast_drv.h
+@@ -38,7 +38,6 @@
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_mode.h>
+ #include <drm/drm_framebuffer.h>
+-#include <drm/drm_fb_helper.h>
  
--	if (info->screen_size)
--		total_size = info->screen_size;
--	else
--		total_size = info->fix.smem_len;
--
--	if (pos > total_size)
--		return -EFBIG;
--	if (count > total_size) {
--		err = -EFBIG;
--		count = total_size;
--	}
--	if (total_size - count < pos) {
--		if (!err)
--			err = -ENOSPC;
--		count = total_size - pos;
--	}
--
--	if (info->fbops->fb_sync)
--		info->fbops->fb_sync(info);
--
--	/*
--	 * Copy to framebuffer even if we already logged an error. Emulates
--	 * the behavior of the original fbdev implementation.
--	 */
- 	if (drm_fbdev_use_iomem(info))
--		ret = fb_write_screen_base(info, buf, count, pos);
-+		ret = drm_fb_helper_cfb_write(info, buf, count, ppos);
- 	else
--		ret = fb_write_screen_buffer(info, buf, count, pos);
--
--	if (ret < 0)
--		return ret; /* return last error, if any */
--	else if (!ret)
--		return err; /* return previous error, if any */
--
--	*ppos += ret;
--
--	drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
--	drm_fb_helper_damage(info, damage_area.x1, damage_area.y1,
--			     drm_rect_width(&damage_area),
--			     drm_rect_height(&damage_area));
-+		ret = drm_fb_helper_sys_write(info, buf, count, ppos);
+ #define DRIVER_AUTHOR		"Dave Airlie"
  
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 86c489d945849..55c92372fca04 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -49,6 +49,8 @@ static const struct fb_ops exynos_drm_fb_ops = {
- 	.owner		= THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_mmap        = exynos_drm_fb_mmap,
-+	.fb_read	= drm_fb_helper_cfb_read,
-+	.fb_write	= drm_fb_helper_cfb_write,
- 	.fb_fillrect	= drm_fb_helper_cfb_fillrect,
- 	.fb_copyarea	= drm_fb_helper_cfb_copyarea,
- 	.fb_imageblit	= drm_fb_helper_cfb_imageblit,
-diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-index 6098d936e44b6..8d5a37b8f1100 100644
---- a/drivers/gpu/drm/gma500/framebuffer.c
-+++ b/drivers/gpu/drm/gma500/framebuffer.c
-@@ -147,6 +147,8 @@ static const struct fb_ops psbfb_unaccel_ops = {
- 	.owner = THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_setcolreg = psbfb_setcolreg,
-+	.fb_read = drm_fb_helper_cfb_read,
-+	.fb_write = drm_fb_helper_cfb_write,
- 	.fb_fillrect = drm_fb_helper_cfb_fillrect,
- 	.fb_copyarea = drm_fb_helper_cfb_copyarea,
- 	.fb_imageblit = drm_fb_helper_cfb_imageblit,
-diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-index 1b576c859837b..5575d7abdc092 100644
---- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-@@ -124,6 +124,8 @@ static const struct fb_ops intelfb_ops = {
- 	.owner = THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_set_par = intel_fbdev_set_par,
-+	.fb_read = drm_fb_helper_cfb_read,
-+	.fb_write = drm_fb_helper_cfb_write,
- 	.fb_fillrect = drm_fb_helper_cfb_fillrect,
- 	.fb_copyarea = drm_fb_helper_cfb_copyarea,
- 	.fb_imageblit = drm_fb_helper_cfb_imageblit,
-diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
-index f06fed2030a89..c1710ed1cab83 100644
---- a/drivers/gpu/drm/radeon/radeon_fb.c
-+++ b/drivers/gpu/drm/radeon/radeon_fb.c
-@@ -80,6 +80,8 @@ static const struct fb_ops radeonfb_ops = {
- 	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_open = radeonfb_open,
- 	.fb_release = radeonfb_release,
-+	.fb_read = drm_fb_helper_cfb_read,
-+	.fb_write = drm_fb_helper_cfb_write,
- 	.fb_fillrect = drm_fb_helper_cfb_fillrect,
- 	.fb_copyarea = drm_fb_helper_cfb_copyarea,
- 	.fb_imageblit = drm_fb_helper_cfb_imageblit,
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 84b7f1dd9fb57..a900300ae5bdc 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -206,6 +206,8 @@ static int tegra_fb_mmap(struct fb_info *info, struct vm_area_struct *vma)
- static const struct fb_ops tegra_fb_ops = {
- 	.owner = THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
-+	.fb_read = drm_fb_helper_sys_read,
-+	.fb_write = drm_fb_helper_sys_write,
- 	.fb_fillrect = drm_fb_helper_sys_fillrect,
- 	.fb_copyarea = drm_fb_helper_sys_copyarea,
- 	.fb_imageblit = drm_fb_helper_sys_imageblit,
-diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-index 3d7a3d68dab8a..6581183618b89 100644
---- a/include/drm/drm_fb_helper.h
-+++ b/include/drm/drm_fb_helper.h
-@@ -257,6 +257,11 @@ void drm_fb_helper_sys_copyarea(struct fb_info *info,
- void drm_fb_helper_sys_imageblit(struct fb_info *info,
- 				 const struct fb_image *image);
+diff --git a/drivers/gpu/drm/bridge/tc358762.c b/drivers/gpu/drm/bridge/tc358762.c
+index 7f4fce1aa9988..0b6a284368859 100644
+--- a/drivers/gpu/drm/bridge/tc358762.c
++++ b/drivers/gpu/drm/bridge/tc358762.c
+@@ -11,6 +11,7 @@
+  */
  
-+ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
-+			       size_t count, loff_t *ppos);
-+ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
-+				size_t count, loff_t *ppos);
-+
- void drm_fb_helper_cfb_fillrect(struct fb_info *info,
- 				const struct fb_fillrect *rect);
- void drm_fb_helper_cfb_copyarea(struct fb_info *info,
-@@ -402,6 +407,18 @@ static inline void drm_fb_helper_sys_imageblit(struct fb_info *info,
- {
- }
+ #include <linux/delay.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/of_graph.h>
+ #include <linux/regulator/consumer.h>
+@@ -19,7 +20,6 @@
  
-+static inline ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
-+					     size_t count, loff_t *ppos)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
-+					      size_t count, loff_t *ppos)
-+{
-+	return -ENODEV;
-+}
-+
- static inline void drm_fb_helper_cfb_fillrect(struct fb_info *info,
- 					      const struct fb_fillrect *rect)
- {
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_mipi_dsi.h>
+ #include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+diff --git a/drivers/gpu/drm/drm_crtc_helper.c b/drivers/gpu/drm/drm_crtc_helper.c
+index f5fb22e0d0337..a209659a996c7 100644
+--- a/drivers/gpu/drm/drm_crtc_helper.c
++++ b/drivers/gpu/drm/drm_crtc_helper.c
+@@ -43,7 +43,6 @@
+ #include <drm/drm_drv.h>
+ #include <drm/drm_edid.h>
+ #include <drm/drm_encoder.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_print.h>
+diff --git a/drivers/gpu/drm/drm_gem_framebuffer_helper.c b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+index e35e224e6303a..e93533b86037f 100644
+--- a/drivers/gpu/drm/drm_gem_framebuffer_helper.c
++++ b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+@@ -9,7 +9,6 @@
+ #include <linux/module.h>
+ 
+ #include <drm/drm_damage_helper.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_gem.h>
+diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
+index 2fc21df709bcb..bcd9611dabfd9 100644
+--- a/drivers/gpu/drm/drm_probe_helper.c
++++ b/drivers/gpu/drm/drm_probe_helper.c
+@@ -36,7 +36,6 @@
+ #include <drm/drm_client.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_edid.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_modeset_helper_vtables.h>
+ #include <drm/drm_print.h>
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+index f32f4771dada7..2bb4c25565dcb 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+@@ -6,13 +6,14 @@
+ #ifndef __ETNAVIV_DRV_H__
+ #define __ETNAVIV_DRV_H__
+ 
++#include <linux/io.h>
+ #include <linux/list.h>
+ #include <linux/mm_types.h>
+ #include <linux/sizes.h>
+ #include <linux/time64.h>
+ #include <linux/types.h>
+ 
+-#include <drm/drm_fb_helper.h>
++#include <drm/drm_drv.h>
+ #include <drm/drm_gem.h>
+ #include <drm/etnaviv_drm.h>
+ #include <drm/gpu_scheduler.h>
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+index 4a0cd22c10e21..f957552c6c507 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+@@ -19,7 +19,6 @@
+ #include <linux/i2c.h>
+ 
+ #include <drm/drm_edid.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_framebuffer.h>
+ 
+ struct hibmc_connector {
+diff --git a/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c b/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
+index 28e732f94bf2f..6c6b572987973 100644
+--- a/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
++++ b/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
+@@ -8,7 +8,6 @@
+ #include <drm/drm_damage_helper.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_edid.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_format_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_framebuffer.h>
+diff --git a/drivers/gpu/drm/imx/imx-ldb.c b/drivers/gpu/drm/imx/imx-ldb.c
+index 41799011f73b6..c45fc8f4744d0 100644
+--- a/drivers/gpu/drm/imx/imx-ldb.c
++++ b/drivers/gpu/drm/imx/imx-ldb.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/component.h>
++#include <linux/i2c.h>
+ #include <linux/media-bus-format.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
+@@ -23,7 +24,6 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_edid.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_managed.h>
+ #include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+diff --git a/drivers/gpu/drm/imx/imx-tve.c b/drivers/gpu/drm/imx/imx-tve.c
+index 6b34fac3f73a0..d64ebd2cf15e8 100644
+--- a/drivers/gpu/drm/imx/imx-tve.c
++++ b/drivers/gpu/drm/imx/imx-tve.c
+@@ -19,7 +19,6 @@
+ 
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_edid.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_managed.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_simple_kms_helper.h>
+diff --git a/drivers/gpu/drm/imx/parallel-display.c b/drivers/gpu/drm/imx/parallel-display.c
+index 06723b2e9b847..0fa0b590830b6 100644
+--- a/drivers/gpu/drm/imx/parallel-display.c
++++ b/drivers/gpu/drm/imx/parallel-display.c
+@@ -8,6 +8,7 @@
+ #include <linux/component.h>
+ #include <linux/media-bus-format.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/videodev2.h>
+ 
+@@ -16,7 +17,6 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_edid.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_managed.h>
+ #include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+diff --git a/drivers/gpu/drm/kmb/kmb_plane.c b/drivers/gpu/drm/kmb/kmb_plane.c
+index a42f63f6f9573..d172a302f9024 100644
+--- a/drivers/gpu/drm/kmb/kmb_plane.c
++++ b/drivers/gpu/drm/kmb/kmb_plane.c
+@@ -9,7 +9,6 @@
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_dma_helper.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_gem_dma_helper.h>
+diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.h b/drivers/gpu/drm/mgag200/mgag200_drv.h
+index f0c2349404b46..9e604dbb8e448 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_drv.h
++++ b/drivers/gpu/drm/mgag200/mgag200_drv.h
+@@ -18,7 +18,6 @@
+ #include <drm/drm_connector.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_encoder.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem.h>
+ #include <drm/drm_gem_shmem_helper.h>
+ #include <drm/drm_plane.h>
+diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
+index 432758ad39a35..76f060810f634 100644
+--- a/drivers/gpu/drm/qxl/qxl_drv.h
++++ b/drivers/gpu/drm/qxl/qxl_drv.h
+@@ -38,7 +38,6 @@
+ 
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_encoder.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem_ttm_helper.h>
+ #include <drm/drm_ioctl.h>
+ #include <drm/drm_gem.h>
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+index 1641440837af5..aeb03a57240fd 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+@@ -9,10 +9,10 @@
+ #ifndef _ROCKCHIP_DRM_DRV_H
+ #define _ROCKCHIP_DRM_DRV_H
+ 
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_gem.h>
+ 
++#include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/component.h>
+ 
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index da8a69953706d..6edb7c52cb3dc 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -9,6 +9,7 @@
+ #include <linux/vmalloc.h>
+ 
+ #include <drm/drm.h>
++#include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem.h>
+ #include <drm/drm_gem_dma_helper.h>
+ #include <drm/drm_prime.h>
+diff --git a/drivers/gpu/drm/tidss/tidss_kms.c b/drivers/gpu/drm/tidss/tidss_kms.c
+index afb2879980c6c..345bcc3011e4f 100644
+--- a/drivers/gpu/drm/tidss/tidss_kms.c
++++ b/drivers/gpu/drm/tidss/tidss_kms.c
+@@ -10,7 +10,6 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_crtc_helper.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+index e8c975b815859..478f1f0f60dec 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.c
++++ b/drivers/gpu/drm/v3d/v3d_drv.c
+@@ -22,7 +22,6 @@
+ #include <linux/reset.h>
+ 
+ #include <drm/drm_drv.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_managed.h>
+ #include <uapi/drm/v3d_drm.h>
+ 
+diff --git a/drivers/gpu/drm/vboxvideo/vbox_main.c b/drivers/gpu/drm/vboxvideo/vbox_main.c
+index c9e8b3a63c621..3b83e550f4df5 100644
+--- a/drivers/gpu/drm/vboxvideo/vbox_main.c
++++ b/drivers/gpu/drm/vboxvideo/vbox_main.c
+@@ -11,7 +11,6 @@
+ #include <linux/pci.h>
+ #include <linux/vbox_err.h>
+ 
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_damage_helper.h>
+ 
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+index 9b98470593b06..b7a64c7dcc2c9 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -35,7 +35,6 @@
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_encoder.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_gem.h>
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+index e31554d7139f1..4c95ebcdcc2d3 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+@@ -12,7 +12,6 @@
+ #include <linux/scatterlist.h>
+ #include <linux/shmem_fs.h>
+ 
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem.h>
+ #include <drm/drm_prime.h>
+ #include <drm/drm_probe_helper.h>
 -- 
 2.38.0
 
