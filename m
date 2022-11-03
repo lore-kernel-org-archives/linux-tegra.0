@@ -2,112 +2,153 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF394C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 13:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3C4C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 14:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231574AbiKCNjR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 09:39:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40682 "EHLO
+        id S230513AbiKCOCd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 10:02:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231596AbiKCNjQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 09:39:16 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67B63B9F;
-        Thu,  3 Nov 2022 06:39:15 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id 13so5340719ejn.3;
-        Thu, 03 Nov 2022 06:39:15 -0700 (PDT)
+        with ESMTP id S231130AbiKCOCJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 10:02:09 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66B4515A01;
+        Thu,  3 Nov 2022 07:01:20 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id f5so5495607ejc.5;
+        Thu, 03 Nov 2022 07:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HuoiIm8f1+pLkMCMfNs8Z4K3LzZnaZWtse5hncoBXug=;
-        b=WOIOrTs5wDw45r6z1U4MpbhJq9ZryvRk3zOzSYUmYMec/MQxf3XmaBKYvPOrW9phMZ
-         UAswei6GmqvYKULPZKvu4EC06uAQ3oUPdBDaCRnvqBxURM5H8nk3rW7ZwO9vnG+KibgH
-         /kthT9vb9jS7RjOfaei8dc5/58TXTJsFwgDhJNGQ0fasmyfpK6C4NtDXrAgdEAvBNbKt
-         t2AvI09T0oeHAtBBYcRli8B7NjxKYYktBKvoMLPeardsdEa7xfCz/8ReTq4U8ouZmFP2
-         +CxXTIzPpF1A5apjqogM+4+goqbUNtpG4Jj2t8eAG/jProlkpbSvAbr+EnMfNxk+8l7p
-         DNIw==
+        bh=B8KBHFKCCV98EGQ0XNAh6f+GyuIELNYOs9+rs4Vjisk=;
+        b=PM3sDavtwmpBa9SzVwuAW8ocUuLOyw5n79S3/pdi6Ss0i09waaIpEaRLPCKx476mWk
+         jycWA5LjGory2a2IFrwpWs1mokSxWnq/icf6U733EkfykpxMP3vD/2MKn+vj5NaxCbL8
+         +vehfKEcSsL9bQm5gE3IsSj5Pyh+RDhDb5+n/dWmVdcxXxPpRL4u9Q/ibFB7OJdaWVv0
+         aLBIH4tqG/VxSvbh54Z1wMiXnv0zwo5g9baojtcukDUE2ANtVPDl9enFgNtcpAA7B26c
+         9hZM4cn3Z1Ppf3ngatHbl51+oH9nxo5u5wNYYu2NzeHt9Y3mqOwzDyxN7Ue41IxVqWyH
+         E6gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HuoiIm8f1+pLkMCMfNs8Z4K3LzZnaZWtse5hncoBXug=;
-        b=WTGcB4mfmuYgXsuMexgM7/gTyWIClX5IWrdBnx6nkqk3UEeOEiDdbG8deVeN/ednm5
-         SuX5z5at4zWAPf4pyGX658GIirxf9JocyzajrY0PnlL7WiuzLwpMkdXP4wuOOSzRGH/p
-         XuvGGuXXEoUHbWIVF9Q9aSnsy8kNBru65/pm2RBFp9WVHS58YR/paXaR/H/JsEMzrDRn
-         Re3YELRgV652MzCDXMyFV1LIZ9r5YV8/6pGO6J+HdQksZJR7GAv5b+xdZLOacubcZ1XF
-         GgqIrG1VPefQQXl3SasjeZ+7245zbk60SKNwq2VUjGJunZBZLMrrAg987PEZ4uUS+Ab7
-         kCqA==
-X-Gm-Message-State: ACrzQf3GkLbVF+op4d5q+PsvG7CAtaKbhzKSQGurYvIGw0kjubSGeB5p
-        2gdm9nctHtVFkrQMfCsg8bo=
-X-Google-Smtp-Source: AMsMyM515jSAgrgtrPv6W8cuyVKGjXoGniUUGUbH7rNavvWKdzFTbZakrYtH2QbWOm5oPcugOCAcuQ==
-X-Received: by 2002:a17:906:fe45:b0:788:15a5:7495 with SMTP id wz5-20020a170906fe4500b0078815a57495mr29363453ejb.633.1667482753890;
-        Thu, 03 Nov 2022 06:39:13 -0700 (PDT)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id x20-20020a1709064a9400b0074136cac2e7sm510618eju.81.2022.11.03.06.39.12
+        bh=B8KBHFKCCV98EGQ0XNAh6f+GyuIELNYOs9+rs4Vjisk=;
+        b=hKWtpzLd+2QenePLM4OOWR/s2W3TeodsPFw1f3dIW+VptHRkC9BQkX/bynbQBpTuH3
+         /CW9WYPNrvmp7yIPuh5d1Kh8ddu2AFmGegZ3Fji52LyZmh+NWg7Y7XSGMDS8DzBROB2q
+         q+7KiO9rOJ2dJ5haNol9OlIZVJZpknnWRHUGVqKWNKc9p/A6o5/kP9MBG1A5FimphOx6
+         S4+UNUV4OIfuOelgEsaKsHWjOutCx6ZFvj4rXqwV2ylhvK+9BPd1N4wqX8fZE67bPKLA
+         iNe6UMR8R/C8BlHOJRV306FZvL1HrRzDX5e3eh4X+SoweaT/hS9o7wb2r+7mutl69lp3
+         dH+g==
+X-Gm-Message-State: ACrzQf1kvix5k9QjTJ4OF4MocMf1rG50sOLBtg/Pa5GftUm5pO00PjgZ
+        pnRS7YDj++DgNF1KT6fTZtw=
+X-Google-Smtp-Source: AMsMyM7XJXH2PC/t6FNCsEX7I+z1C4W2HQEJ9aLW8fkd/ImJ/OKSmZBl8druoW65YOOMfmSOa1gqqg==
+X-Received: by 2002:a17:907:b07:b0:7a8:beb3:aa2a with SMTP id h7-20020a1709070b0700b007a8beb3aa2amr28968653ejl.459.1667484078436;
+        Thu, 03 Nov 2022 07:01:18 -0700 (PDT)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id bu24-20020a170906a15800b00722e50dab2csm534317ejb.109.2022.11.03.07.01.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 06:39:13 -0700 (PDT)
+        Thu, 03 Nov 2022 07:01:17 -0700 (PDT)
+Date:   Thu, 3 Nov 2022 15:01:15 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH v10 5/5] iommu: dma: Use of_iommu_get_resv_regions()
-Date:   Thu,  3 Nov 2022 14:39:00 +0100
-Message-Id: <20221103133900.1473855-6-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221103133900.1473855-1-thierry.reding@gmail.com>
-References: <20221103133900.1473855-1-thierry.reding@gmail.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Prathamesh Shete <pshete@nvidia.com>, joro@8bytes.org,
+        adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        jonathanh@nvidia.com, p.zabel@pengutronix.de,
+        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, will@kernel.org,
+        iommu@lists.linux.dev, anrao@nvidia.com, smangipudi@nvidia.com,
+        kyarlagadda@nvidia.com, Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v10 1/4] iommu: Always define struct iommu_fwspec
+Message-ID: <Y2PJq27wkVwPg6rp@orome>
+References: <CAPDyKFqJdiCDkAfrONfnBVKw1v8=jZ+hEJiKGK70EQ4o7BSxaQ@mail.gmail.com>
+ <20221103043852.24718-1-pshete@nvidia.com>
+ <6be39bae-f325-12e0-374b-a27c9ee2ef2b@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cJiVwhbrNzxCoobg"
+Content-Disposition: inline
+In-Reply-To: <6be39bae-f325-12e0-374b-a27c9ee2ef2b@arm.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-For device tree nodes, use the standard of_iommu_get_resv_regions()
-implementation to obtain the reserved memory regions associated with a
-device.
+--cJiVwhbrNzxCoobg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/iommu/dma-iommu.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Thu, Nov 03, 2022 at 12:23:20PM +0000, Robin Murphy wrote:
+> On 2022-11-03 04:38, Prathamesh Shete wrote:
+> > In order to fully make use of the !IOMMU_API stub functions, make the
+> > struct iommu_fwspec always available so that users of the stubs can keep
+> > using the structure's internals without causing compile failures.
+>=20
+> I'm really in two minds about this... fwspecs are an internal detail of t=
+he
+> IOMMU API that are meant to be private between individual drivers and
+> firmware code, so anything poking at them arguably does and should depend=
+ on
+> CONFIG_IOMMU_API. It looks like the stub for dev_iommu_fwspec_get() was o=
+nly
+> added for the sake of one driver that was misusing it where it really wan=
+ted
+> device_iommu_mapped(), and has since been fixed, so if anything my
+> preference would be to remove that stub :/
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 9297b741f5e8..709b05d3aad2 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -23,6 +23,7 @@
- #include <linux/memremap.h>
- #include <linux/mm.h>
- #include <linux/mutex.h>
-+#include <linux/of_iommu.h>
- #include <linux/pci.h>
- #include <linux/scatterlist.h>
- #include <linux/spinlock.h>
-@@ -391,6 +392,8 @@ void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
- 	if (!is_of_node(dev_iommu_fwspec_get(dev)->iommu_fwnode))
- 		iort_iommu_get_resv_regions(dev, list);
- 
-+	if (dev->of_node)
-+		of_iommu_get_resv_regions(dev, list);
- }
- EXPORT_SYMBOL(iommu_dma_get_resv_regions);
- 
--- 
-2.38.1
+Tegra has been using this type of weak dependency on IOMMU_API mainly in
+order to allow building without the IOMMU support on some old platforms
+where people may actually care about the kernel size (Tegra20 systems
+were sometimes severely constrained and don't have anything that we'd
+call an IOMMU today).
 
+We have similar stubs in place for most other major subsystems in order
+to allow code to simply compile out if the subsystem is disabled, which
+is quite convenient for sharing code between platforms that may want a
+given feature and other platforms that may not want it, without causing
+too much of a hassle with compile-testing.
+
+> I don't technically have much objection to this patch in isolation, but w=
+hat
+> I don't like is the direction of travel it implies. I see the anti-pattern
+> is only spread across Tegra drivers, making Tegra-specific assumptions, so
+> in my view the best answer would be to abstract that fwpsec dependency in=
+to
+> a single Tegra-specific helper, which would better represent the nature of
+> what's really going on here.
+
+I don't see how this is an anti-pattern. It might not be common for
+drivers to need to reach into iommu_fwspec, so that might indeed be
+specific to Tegra (for whatever reason our IP seems to want extra
+flexibility), but the general pattern of using stubs is wide-spread,
+so I don't see why IOMMU_API would need to be special.
+
+Of course we could get rid of the stubs and make these hard
+dependencies, but I suspect some people may then get mad that they can
+no longer disable the IOMMU dependency.
+
+Thierry
+
+--cJiVwhbrNzxCoobg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNjyagACgkQ3SOs138+
+s6HGYxAAh6pI7eahKNv7gYp1al3CnXjMWsTEFnZEfgGUoTtGAXTOdR4I7jLa2ZiH
+aywKvhMZ5Jn/C5uwx+ylsElQNkmsmwJAusICnt+iJaYxGndYyQWndaUaGJrOa2b6
+mFDi6xpxykGuJwLdz2Y0hvGprBZc5y5d9j6SiuUjWYGqGSddGAvXe2QzvLeZTwYf
+mmzO01+KdOshRJItVefZCEM1shmzUu1wfS8I+JT/iKSM4GL1vPtGsq6Z3H2vb5h3
+gnapMRTmZZKiPwJCjykuSOcZ8++HFjA+LA8EZ5peVtMkwaRaXicdhs0ymwettr/x
+PxlDnsuhPbMxxLz71RRoCaHqN+83ow9opGOKhdaiztyf4AKlXc8koGg1x1wBgn8c
+jKcff0GCs3D7QAHIoOqsHSIIMK6NfxBcNViOybyR5ffqRo3SY2NYWO8bp9h/dJiM
+SDobn0DUMOgYcLomqBDwTqQqc1Lcu+hvQexA6sBRP8pvIpJ19IWzfnPtH/NaExbV
+KfuTqtXscsX/8YG/oiCjVfa6fOS1tb7ftygdxWGgmRRZl3T/mswU67UbNMmiHhkC
+VY1e4tQx5IKdiP1BRk0wBe4rIguA2F2xtImJpakSRJnxCYoFInFrYXBhXSeEG3ys
+L3NiAeBplKi2ZGAPAnp/w0wsq9tjT9svzmIdjzWdeGmIU/Lx1qc=
+=WjKJ
+-----END PGP SIGNATURE-----
+
+--cJiVwhbrNzxCoobg--
