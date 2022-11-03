@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EC4C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BECD4C64ED4
 	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232126AbiKCPPG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 11:15:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55248 "EHLO
+        id S232222AbiKCPPH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 11:15:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232138AbiKCPPB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 11:15:01 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D31A165B6;
-        Thu,  3 Nov 2022 08:14:59 -0700 (PDT)
+        with ESMTP id S232169AbiKCPPD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 11:15:03 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F84193F5;
+        Thu,  3 Nov 2022 08:15:01 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0FB361F8ED;
-        Thu,  3 Nov 2022 15:14:58 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D1F3C21E06;
+        Thu,  3 Nov 2022 15:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1667488498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1667488499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5Rdbs1K7PrH8FqVsteDFsz2Pg6HAnz17D2gSGEJwptg=;
-        b=1QzEPzAu/XO9DJ7+I1Ls8u6iVJBqVfE0RfLcCGHCvzFb6nbQG7y/8DBvVDIcFJv1lnC+hZ
-        VFTTseMsIGFGbvg8BElx17Rw50wWqUakn6xd0cxmAnfTlDeZZ0lw1h6Wt06aRSUVnZwveH
-        he9C374VbO9S3fUtNy62s5HXA9q9xCo=
+        bh=UVBxH0SCO//07QUQ6EK/LfA90pQs6KDqJ9dD5J474xM=;
+        b=yvt0gOxB2lenOEStb/UiJX1DHn3g2kKsI7mtE4SGpNQSAhB7lYBWctzlz1reFVQJV5Q7Dr
+        9KtiNP07UesIRoJkQ20OBX+QffIA0guywKHcw8bFrTEd942EgwbZfJYBXbqYb3+CHu7FpM
+        9uqeHjGX+09FJKRvQbcgI46xl268Eu8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1667488498;
+        s=susede2_ed25519; t=1667488499;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5Rdbs1K7PrH8FqVsteDFsz2Pg6HAnz17D2gSGEJwptg=;
-        b=f8pZPqG9V3vdxDoWdtzuNcpX0gB4bZkuJ5Drjrd7WuBVLUdk/140+GTeZY398tPnBeuus7
-        WLY+csOh/CkEJuAA==
+        bh=UVBxH0SCO//07QUQ6EK/LfA90pQs6KDqJ9dD5J474xM=;
+        b=JgfauNgkk7JwnVqiJlezA/GaUozyirPiPZWwmsrpZSHazdzqxSROAFO3R1veLQkMRJ/Bf/
+        B6Qfs11b1jHuJuBQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6614913AAF;
-        Thu,  3 Nov 2022 15:14:57 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 55B7F13ADB;
+        Thu,  3 Nov 2022 15:14:59 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id GBP+F/HaY2PBGgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 03 Nov 2022 15:14:57 +0000
+        id OMwZFPPaY2PBGgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 03 Nov 2022 15:14:59 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
         javierm@redhat.com, mripard@kernel.org,
@@ -67,9 +67,9 @@ Cc:     "linux-hyperv@vger.kernel.orglinux-hyperv"@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 16/23] drm/fb-helper: Call fb_sync in I/O functions
-Date:   Thu,  3 Nov 2022 16:14:39 +0100
-Message-Id: <20221103151446.2638-17-tzimmermann@suse.de>
+Subject: [PATCH v3 19/23] drm/fb-helper: Always initialize generic fbdev emulation
+Date:   Thu,  3 Nov 2022 16:14:42 +0100
+Message-Id: <20221103151446.2638-20-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221103151446.2638-1-tzimmermann@suse.de>
 References: <20221103151446.2638-1-tzimmermann@suse.de>
@@ -79,42 +79,45 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Call struct fb_ops.fb_sync in drm_fbdev_{read,write}() to mimic the
-behavior of fbdev. Fbdev implementations of fb_read and fb_write in
-struct fb_ops invoke fb_sync to synchronize with outstanding operations
-before I/O. Doing the same in DRM implementations will allow us to use
-them throughout DRM drivers.
+Initialize the generic fbdev emulation even if it has been disabled
+on the kernel command line. The hotplug and mode initialization will
+fail accordingly.
+
+The kernel parameter can still be changed at runtime and the emulation
+will initialize after hotplugging the connector.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 ---
- drivers/gpu/drm/drm_fb_helper.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/drm_fb_helper.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index f6d22cc4cd876..379e0d2f67198 100644
+index 3dfda1e3830b3..95f389433c4a6 100644
 --- a/drivers/gpu/drm/drm_fb_helper.c
 +++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -2246,6 +2246,9 @@ static ssize_t drm_fbdev_fb_read(struct fb_info *info, char __user *buf,
- 	if (total_size - count < pos)
- 		count = total_size - pos;
+@@ -526,11 +526,6 @@ int drm_fb_helper_init(struct drm_device *dev,
+ {
+ 	int ret;
  
-+	if (info->fbops->fb_sync)
-+		info->fbops->fb_sync(info);
-+
- 	if (drm_fbdev_use_iomem(info))
- 		ret = fb_read_screen_base(info, buf, count, pos);
- 	else
-@@ -2327,6 +2330,9 @@ static ssize_t drm_fbdev_fb_write(struct fb_info *info, const char __user *buf,
- 		count = total_size - pos;
- 	}
- 
-+	if (info->fbops->fb_sync)
-+		info->fbops->fb_sync(info);
-+
+-	if (!drm_fbdev_emulation) {
+-		dev->fb_helper = fb_helper;
+-		return 0;
+-	}
+-
  	/*
- 	 * Copy to framebuffer even if we already logged an error. Emulates
- 	 * the behavior of the original fbdev implementation.
+ 	 * If this is not the generic fbdev client, initialize a drm_client
+ 	 * without callbacks so we can use the modesets.
+@@ -2716,9 +2711,6 @@ void drm_fbdev_generic_setup(struct drm_device *dev,
+ 	drm_WARN(dev, !dev->registered, "Device has not been registered.\n");
+ 	drm_WARN(dev, dev->fb_helper, "fb_helper is already set!\n");
+ 
+-	if (!drm_fbdev_emulation)
+-		return;
+-
+ 	fb_helper = kzalloc(sizeof(*fb_helper), GFP_KERNEL);
+ 	if (!fb_helper) {
+ 		drm_err(dev, "Failed to allocate fb_helper\n");
 -- 
 2.38.0
 
