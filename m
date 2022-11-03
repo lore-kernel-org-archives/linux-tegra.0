@@ -2,387 +2,1037 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0FCC4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 14:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8099C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Nov 2022 14:42:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbiKCOjF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Nov 2022 10:39:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56656 "EHLO
+        id S231588AbiKCOmG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Nov 2022 10:42:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbiKCOjE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 10:39:04 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DD21126;
-        Thu,  3 Nov 2022 07:39:03 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id ud5so5843257ejc.4;
-        Thu, 03 Nov 2022 07:39:03 -0700 (PDT)
+        with ESMTP id S229595AbiKCOmF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Nov 2022 10:42:05 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF9925E5;
+        Thu,  3 Nov 2022 07:42:03 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id 13so5876345ejn.3;
+        Thu, 03 Nov 2022 07:42:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qIyKCJxZIuG+RhhbIO3I6/NX9wqTTWIgzBI4Scnntow=;
-        b=X+PJ7NLjR55zsmdJrTwNlBoxEeIt65Gvw0z4ZrzHMsUtbyrFmPVo2wK84AAtdPS6+X
-         sJ4jYgcf6IbcXpUkRPDAlcyMb1bL66qi7qQ71JttX6zp3GWAL7sV1RE1sllI0czBTmUv
-         oamlh8/jLTEr2ijpyVmZwX+SezbQ29ccGGlb+pajytekdsJ+UkEn3jIoXOAH61YWm7ae
-         471118CGS7rvn+YsLYUuznxKxHK0iqcwl0IkLF9quvbGkory+k5n2vU20FdXoFr1k4Zf
-         0YnNAQctNZjWpiZ3tDVv3X8nnRGpqJfzSRgXKktWR6WheNRUwHYSC8SamGwAAt94fZuB
-         o+/Q==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsy+SZPWKk7IzSjLPzP/1bIdoH5ZhUyefYszhy8ECI4=;
+        b=eiNCsPyajmyESK7cLRlWmOTYIX53+5eEosY9Za8F3llLVFfp3uHgXgVC6lJI5ua7wU
+         s2Xah2G/2G2xYke0c1DRTdUtKYdm/QDWmHejS9QyXtmoI2xHlA4g1fcT7Dt7FPSXqAva
+         LgDD5rJqY8wntWHpXDwwWvwL+Dm0GuWOppQdjkmD6aAVabZQswem6JyZGSAqXdRshV7W
+         KpeVNzkMwqxcra90yoABL3i7Zh4Q9jAROSL1LkCIIssQJ7s/+c1VF2wwR44gzZIa3Hw9
+         k/AqF7yI0oajaInjyMcLI1q4gHg7Sa5MFSMj7dSySYflLsLKhpWCmoA4NtjLe9Nfbz6m
+         4tVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qIyKCJxZIuG+RhhbIO3I6/NX9wqTTWIgzBI4Scnntow=;
-        b=7Tmrtld6QYik04o9VCEYLjKc9gZ4xO34Jw2+bLjypVeaeiT2imXS9A+rkfh+YByQY1
-         dmBMzAdwDENrS3hi3+p/OEQhcZOmMIIDS3RLbaxsMOvAOlVNgSuOW0tItCsEPwsogoTT
-         XaKT4tja991/xyuPfBZ8KHMr1Je0Rp5cFxhuPriQnkI6mWuESEHgI/AWBmkDiv+eOOTz
-         7o2DIKTUI1HyGEPXFsQqjOyj3D96/lKymbwAhCyXebLM+a+QWecfktGhQAlPftE9Fz6Y
-         qHuaagyESYaYe0+9Lk7cWbTtDjtWpXEIlXgNF/EcMRkd5T/oQ+8KihtkOU5aWmcD4A/z
-         8Fuw==
-X-Gm-Message-State: ACrzQf2cQaIreGTeA3/WefiMV6lknmbWjhdoWDTsvvJOuh/LyVyT5n5+
-        CnWmAi1hcsvDXBAFpAZMpak=
-X-Google-Smtp-Source: AMsMyM4S+CzD5Jpllv9opC/WA5fBHIeN3TJT0BaCXQR1t4DW8DiiMB/zLHU/POLrWcuy5BmnuFm88g==
-X-Received: by 2002:a17:907:2bd7:b0:7ad:9ada:a6f3 with SMTP id gv23-20020a1709072bd700b007ad9adaa6f3mr28419195ejc.355.1667486341683;
-        Thu, 03 Nov 2022 07:39:01 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r13-20020aa7d58d000000b004616cce0a26sm598397edq.24.2022.11.03.07.39.00
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dsy+SZPWKk7IzSjLPzP/1bIdoH5ZhUyefYszhy8ECI4=;
+        b=lxcgqnsU7W3hv64vtdrXKNOa0XXWFTWnON3ET6f8Dm2fegximFjrMBq/V1zCQwDxxB
+         WqAnNi63Ko+rbqflYPYr7K0BOwZ1MIm1VuOOFmKv0Fyje600MAvH7xWy0DyUmF7Ay3GO
+         QeG0NATou5qO8Uvzbt1KfMrWxBOZbiNavMiCmNVRXG6tXKny/VsNEWbhPD0w0mIZsaY3
+         zEQX859jrk9eL2+N4RTgiQEWDk91WngoIB8sjJ9KnFv1/RAgjaNZG7N33cd87/h9pYen
+         yQUXIl3lioe2Tv48HOXNoJZGmUNBaiyoV4B9jxmG+/kAhTAK63yPvw2wFkcpGvO21mH+
+         0GXg==
+X-Gm-Message-State: ACrzQf0WEeGnphuNjDvDjwQORZQlzOky/qOy2WkpYG3FX/yy1ia52qe8
+        1CrsN3xvIaRpR1iFUmrzE7E=
+X-Google-Smtp-Source: AMsMyM4i7+y/ESpVOR5au9p7ulnpr2N4Lb7SJ8EroeYB08Ra359KG1q87DtzMCAqr/KOYNLVUOkMSw==
+X-Received: by 2002:a17:907:2c74:b0:7a1:d333:f214 with SMTP id ib20-20020a1709072c7400b007a1d333f214mr30087754ejc.14.1667486521563;
+        Thu, 03 Nov 2022 07:42:01 -0700 (PDT)
+Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id y14-20020a17090668ce00b0078b03d57fa7sm571638ejr.34.2022.11.03.07.42.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 07:39:00 -0700 (PDT)
-Date:   Thu, 3 Nov 2022 15:38:59 +0100
+        Thu, 03 Nov 2022 07:42:00 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pwm: tegra: Convert to json-schema
-Message-ID: <Y2PSgwfqZ9BfXSFw@orome>
-References: <20221103120137.1467905-1-thierry.reding@gmail.com>
- <18d66cce-64ae-aeaa-e9cf-9426c5d214f5@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Wayne Chang <waynec@nvidia.com>, devicetree@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: usb: tegra-xusb: Convert to json-schema
+Date:   Thu,  3 Nov 2022 15:42:00 +0100
+Message-Id: <20221103144200.1479640-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yaZ6CGl2KxtPFIjN"
-Content-Disposition: inline
-In-Reply-To: <18d66cce-64ae-aeaa-e9cf-9426c5d214f5@linaro.org>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---yaZ6CGl2KxtPFIjN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Convert the Tegra XUSB controller bindings from the free-form text
+format to json-schema.
 
-On Thu, Nov 03, 2022 at 10:14:04AM -0400, Krzysztof Kozlowski wrote:
-> On 03/11/2022 08:01, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Convert the Tegra PWFM bindings from the free-form text format to
-> > json-schema.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  .../bindings/pwm/nvidia,tegra20-pwm.txt       |  77 ----------
-> >  .../bindings/pwm/nvidia,tegra20-pwm.yaml      | 144 ++++++++++++++++++
-> >  2 files changed, 144 insertions(+), 77 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra2=
-0-pwm.txt
-> >  create mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra2=
-0-pwm.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.t=
-xt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> > deleted file mode 100644
-> > index 74c41e34c3b6..000000000000
-> > --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> > +++ /dev/null
-> > @@ -1,77 +0,0 @@
-> > -Tegra SoC PWFM controller
-> > -
-> > -Required properties:
-> > -- compatible: Must be:
-> > -  - "nvidia,tegra20-pwm": for Tegra20
-> > -  - "nvidia,tegra30-pwm", "nvidia,tegra20-pwm": for Tegra30
-> > -  - "nvidia,tegra114-pwm", "nvidia,tegra20-pwm": for Tegra114
-> > -  - "nvidia,tegra124-pwm", "nvidia,tegra20-pwm": for Tegra124
-> > -  - "nvidia,tegra132-pwm", "nvidia,tegra20-pwm": for Tegra132
-> > -  - "nvidia,tegra210-pwm", "nvidia,tegra20-pwm": for Tegra210
-> > -  - "nvidia,tegra186-pwm": for Tegra186
-> > -  - "nvidia,tegra194-pwm": for Tegra194
-> > -- reg: physical base address and length of the controller's registers
-> > -- #pwm-cells: should be 2. See pwm.yaml in this directory for a descri=
-ption of
-> > -  the cells format.
-> > -- clocks: Must contain one entry, for the module clock.
-> > -  See ../clocks/clock-bindings.txt for details.
-> > -- resets: Must contain an entry for each entry in reset-names.
-> > -  See ../reset/reset.txt for details.
-> > -- reset-names: Must include the following entries:
-> > -  - pwm
-> > -
-> > -Optional properties:
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > -In some of the interface like PWM based regulator device, it is requir=
-ed
-> > -to configure the pins differently in different states, especially in s=
-uspend
-> > -state of the system. The configuration of pin is provided via the pinc=
-trl
-> > -DT node as detailed in the pinctrl DT binding document
-> > -	Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > -
-> > -The PWM node will have following optional properties.
-> > -pinctrl-names:	Pin state names. Must be "default" and "sleep".
-> > -pinctrl-0:	phandle for the default/active state of pin configurations.
-> > -pinctrl-1:	phandle for the sleep state of pin configurations.
-> > -
-> > -Example:
-> > -
-> > -	pwm: pwm@7000a000 {
-> > -		compatible =3D "nvidia,tegra20-pwm";
-> > -		reg =3D <0x7000a000 0x100>;
-> > -		#pwm-cells =3D <2>;
-> > -		clocks =3D <&tegra_car 17>;
-> > -		resets =3D <&tegra_car 17>;
-> > -		reset-names =3D "pwm";
-> > -	};
-> > -
-> > -
-> > -Example with the pin configuration for suspend and resume:
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > -Suppose pin PE7 (On Tegra210) interfaced with the regulator device and
-> > -it requires PWM output to be tristated when system enters suspend.
-> > -Following will be DT binding to achieve this:
-> > -
-> > -#include <dt-bindings/pinctrl/pinctrl-tegra.h>
-> > -
-> > -	pinmux@700008d4 {
-> > -		pwm_active_state: pwm_active_state {
-> > -                        pe7 {
-> > -                                nvidia,pins =3D "pe7";
-> > -                                nvidia,tristate =3D <TEGRA_PIN_DISABLE=
->;
-> > -			};
-> > -		};
-> > -
-> > -		pwm_sleep_state: pwm_sleep_state {
-> > -                        pe7 {
-> > -                                nvidia,pins =3D "pe7";
-> > -                                nvidia,tristate =3D <TEGRA_PIN_ENABLE>;
-> > -			};
-> > -		};
-> > -	};
-> > -
-> > -	pwm@7000a000 {
-> > -		/* Mandatory PWM properties */
-> > -		pinctrl-names =3D "default", "sleep";
-> > -		pinctrl-0 =3D <&pwm_active_state>;
-> > -		pinctrl-1 =3D <&pwm_sleep_state>;
-> > -	};
-> > diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.y=
-aml b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
-> > new file mode 100644
-> > index 000000000000..9c73e78ff434
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
-> > @@ -0,0 +1,144 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pwm/nvidia,tegra20-pwm.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: NVIDIA Tegra PWFM controller
-> > +
-> > +maintainers:
-> > +  - Thierry Reding <thierry.reding@gmail.com>
-> > +  - Jon Hunter <jonathanh@nvidia.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - items:
-> > +          - const: nvidia,tegra20-pwm
-> > +
-> > +      - items:
-> > +          - enum:
-> > +              - nvidia,tegra30-pwm
-> > +              - nvidia,tegra114-pwm
-> > +              - nvidia,tegra124-pwm
-> > +              - nvidia,tegra132-pwm
-> > +              - nvidia,tegra210-pwm
-> > +          - enum:
-> > +              - nvidia,tegra20-pwm
-> > +
-> > +      - items:
-> > +          - const: nvidia,tegra186-pwm
->=20
-> I guess you wanted to keep some order between nvidia,tegra20-pwm and
-> nvidia,tegra186-pwm, but this creates impression you will have here more
-> items, which of course cannot happen. So either keep this one with
-> tegra20 as one enum or drop "items".
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Wayne, going forward it might make sense for you to pick this up into
+your Tegra234 series and add the Tegra234 bindings on top of this.
 
-Done.
+Changes in v2:
+- use minItems/maxItems/items instead of contains/anyOf for phy-names
+- add missing compatible string to USB device example
+- drop unneeded phys property description
+- drop unneeded USB bus properties
+- add reference to usb-xhci.yaml
 
->=20
-> > +
-> > +      - items:
-> > +          - const: nvidia,tegra194-pwm
-> > +          - const: nvidia,tegra186-pwm
-> > +
-> > +      - items:
-> > +          - const: nvidia,tegra234-pwm
-> > +          - const: nvidia,tegra194-pwm
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: module clock
->=20
-> Just maxItems: 1, because description is not really helping.
+ .../bindings/usb/nvidia,tegra124-xusb.txt     | 132 -----------
+ .../bindings/usb/nvidia,tegra124-xusb.yaml    | 202 +++++++++++++++++
+ .../bindings/usb/nvidia,tegra186-xusb.yaml    | 181 +++++++++++++++
+ .../bindings/usb/nvidia,tegra194-xusb.yaml    | 187 ++++++++++++++++
+ .../bindings/usb/nvidia,tegra210-xusb.yaml    | 207 ++++++++++++++++++
+ 5 files changed, 777 insertions(+), 132 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra186-xusb.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra194-xusb.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml
 
-Okay, seems fine.
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+deleted file mode 100644
+index 5bfcc0b4d6b9..000000000000
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
++++ /dev/null
+@@ -1,132 +0,0 @@
+-NVIDIA Tegra xHCI controller
+-============================
+-
+-The Tegra xHCI controller supports both USB2 and USB3 interfaces exposed by
+-the Tegra XUSB pad controller.
+-
+-Required properties:
+---------------------
+-- compatible: Must be:
+-  - Tegra124: "nvidia,tegra124-xusb"
+-  - Tegra132: "nvidia,tegra132-xusb", "nvidia,tegra124-xusb"
+-  - Tegra210: "nvidia,tegra210-xusb"
+-  - Tegra186: "nvidia,tegra186-xusb"
+-- reg: Must contain the base and length of the xHCI host registers, XUSB FPCI
+-  registers and XUSB IPFS registers.
+-- reg-names: Must contain the following entries:
+-  - "hcd"
+-  - "fpci"
+-  - "ipfs"
+-- interrupts: Must contain the xHCI host interrupt and the mailbox interrupt.
+-- clocks: Must contain an entry for each entry in clock-names.
+-  See ../clock/clock-bindings.txt for details.
+-- clock-names: Must include the following entries:
+-   - xusb_host
+-   - xusb_host_src
+-   - xusb_falcon_src
+-   - xusb_ss
+-   - xusb_ss_src
+-   - xusb_ss_div2
+-   - xusb_hs_src
+-   - xusb_fs_src
+-   - pll_u_480m
+-   - clk_m
+-   - pll_e
+-- resets: Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names: Must include the following entries:
+-  - xusb_host
+-  - xusb_ss
+-  - xusb_src
+-  Note that xusb_src is the shared reset for xusb_{ss,hs,fs,falcon,host}_src.
+-- nvidia,xusb-padctl: phandle to the XUSB pad controller that is used to
+-  configure the USB pads used by the XHCI controller
+-
+-For Tegra124 and Tegra132:
+-- avddio-pex-supply: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
+-- dvddio-pex-supply: PCIe/USB3 digital logic power supply. Must supply 1.05 V.
+-- avdd-usb-supply: USB controller power supply. Must supply 3.3 V.
+-- avdd-pll-utmip-supply: UTMI PLL power supply. Must supply 1.8 V.
+-- avdd-pll-erefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+-- avdd-usb-ss-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+-- hvdd-usb-ss-supply: High-voltage PCIe/USB3 power supply. Must supply 3.3 V.
+-- hvdd-usb-ss-pll-e-supply: High-voltage PLLE power supply. Must supply 3.3 V.
+-
+-For Tegra210:
+-- dvddio-pex-supply: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
+-- hvddio-pex-supply: High-voltage PCIe/USB3 power supply. Must supply 1.8 V.
+-- avdd-usb-supply: USB controller power supply. Must supply 3.3 V.
+-- avdd-pll-utmip-supply: UTMI PLL power supply. Must supply 1.8 V.
+-- avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+-- dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+-- hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
+-
+-For Tegra210 and Tegra186:
+-- power-domains: A list of PM domain specifiers that reference each power-domain
+-  used by the xHCI controller. This list must comprise of a specifier for the
+-  XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
+-  ../arm/tegra/nvidia,tegra20-pmc.txt for details.
+-- power-domain-names: A list of names that represent each of the specifiers in
+-  the 'power-domains' property. Must include 'xusb_ss' and 'xusb_host' which
+-  represent the power-domains XUSBA and XUSBC, respectively. See
+-  ../power/power_domain.txt for details.
+-
+-Optional properties:
+---------------------
+-- phys: Must contain an entry for each entry in phy-names.
+-  See ../phy/phy-bindings.txt for details.
+-- phy-names: Should include an entry for each PHY used by the controller. The
+-  following PHYs are available:
+-  - Tegra124: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
+-  - Tegra132: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
+-  - Tegra210: usb2-0, usb2-1, usb2-2, usb2-3, hsic-0, usb3-0, usb3-1, usb3-2,
+-              usb3-3
+-  - Tegra186: usb2-0, usb2-1, usb2-2, hsic-0, usb3-0, usb3-1, usb3-2
+-
+-Example:
+---------
+-
+-	usb@0,70090000 {
+-		compatible = "nvidia,tegra124-xusb";
+-		reg = <0x0 0x70090000 0x0 0x8000>,
+-		      <0x0 0x70098000 0x0 0x1000>,
+-		      <0x0 0x70099000 0x0 0x1000>;
+-		reg-names = "hcd", "fpci", "ipfs";
+-
+-		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+-
+-		clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_HOST_SRC>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_SS>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_SS_DIV2>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
+-			 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
+-			 <&tegra_car TEGRA124_CLK_CLK_M>,
+-			 <&tegra_car TEGRA124_CLK_PLL_E>;
+-		clock-names = "xusb_host", "xusb_host_src", "xusb_falcon_src",
+-			      "xusb_ss", "xusb_ss_div2", "xusb_ss_src",
+-			      "xusb_hs_src", "xusb_fs_src", "pll_u_480m",
+-			      "clk_m", "pll_e";
+-		resets = <&tegra_car 89>, <&tegra_car 156>, <&tegra_car 143>;
+-		reset-names = "xusb_host", "xusb_ss", "xusb_src";
+-
+-		nvidia,xusb-padctl = <&padctl>;
+-
+-		phys = <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-1}>, /* mini-PCIe USB */
+-		       <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-2}>, /* USB A */
+-		       <&{/padctl@0,7009f000/pads/pcie/lanes/pcie-0}>; /* USB A */
+-		phy-names = "usb2-1", "usb2-2", "usb3-0";
+-
+-		avddio-pex-supply = <&vdd_1v05_run>;
+-		dvddio-pex-supply = <&vdd_1v05_run>;
+-		avdd-usb-supply = <&vdd_3v3_lp0>;
+-		avdd-pll-utmip-supply = <&vddio_1v8>;
+-		avdd-pll-erefe-supply = <&avdd_1v05_run>;
+-		avdd-usb-ss-pll-supply = <&vdd_1v05_run>;
+-		hvdd-usb-ss-supply = <&vdd_3v3_lp0>;
+-		hvdd-usb-ss-pll-e-supply = <&vdd_3v3_lp0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.yaml
+new file mode 100644
+index 000000000000..4a6616bf9bab
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.yaml
+@@ -0,0 +1,202 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/nvidia,tegra124-xusb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra124 xHCI controller
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++description: The Tegra xHCI controller supports both USB2 and USB3 interfaces
++  exposed by the Tegra XUSB pad controller.
++
++properties:
++  # required
++  compatible:
++    oneOf:
++      - description: NVIDIA Tegra124
++        const: nvidia,tegra124-xusb
++
++      - description: NVIDIA Tegra132
++        items:
++          - const: nvidia,tegra132-xusb
++          - const: nvidia,tegra124-xusb
++
++  reg:
++    items:
++      - description: base and length of the xHCI host registers
++      - description: base and length of the XUSB FPCI registers
++      - description: base and length of the XUSB IPFS registers
++
++  reg-names:
++    items:
++      - const: hcd
++      - const: fpci
++      - const: ipfs
++
++  interrupts:
++    items:
++      - description: xHCI host interrupt
++      - description: mailbox interrupt
++
++  clocks:
++    items:
++      - description: XUSB host clock
++      - description: XUSB host source clock
++      - description: XUSB Falcon source clock
++      - description: XUSB SuperSpeed clock
++      - description: XUSB SuperSpeed clock divider
++      - description: XUSB SuperSpeed source clock
++      - description: XUSB HighSpeed clock source
++      - description: XUSB FullSpeed clock source
++      - description: USB PLL
++      - description: reference clock
++      - description: I/O PLL
++
++  clock-names:
++    items:
++      - const: xusb_host
++      - const: xusb_host_src
++      - const: xusb_falcon_src
++      - const: xusb_ss
++      - const: xusb_ss_div2
++      - const: xusb_ss_src
++      - const: xusb_hs_src
++      - const: xusb_fs_src
++      - const: pll_u_480m
++      - const: clk_m
++      - const: pll_e
++
++  resets:
++    items:
++      - description: reset for the XUSB host controller
++      - description: reset for the SuperSpeed logic
++      - description: shared reset for xusb_{ss,hs,fs,falcon,host}_src.
++
++  reset-names:
++    items:
++      - const: xusb_host
++      - const: xusb_ss
++      - const: xusb_src
++
++  nvidia,xusb-padctl:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: phandle to the XUSB pad controller that is used to configure
++      the USB pads used by the XHCI controller
++
++  # optional
++  phys:
++    minItems: 1
++    maxItems: 7
++
++  phy-names:
++    minItems: 1
++    maxItems: 7
++    items:
++      enum:
++        - usb2-0
++        - usb2-1
++        - usb2-2
++        - hsic-0
++        - hsic-1
++        - usb3-0
++        - usb3-1
++
++  avddio-pex-supply:
++    description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
++
++  dvddio-pex-supply:
++    description: PCIe/USB3 digital logic power supply. Must supply 1.05 V.
++
++  avdd-usb-supply:
++    description: USB controller power supply. Must supply 3.3 V.
++
++  avdd-pll-utmip-supply:
++    description: UTMI PLL power supply. Must supply 1.8 V.
++
++  avdd-pll-erefe-supply:
++    description: PLLE reference PLL power supply. Must supply 1.05 V.
++
++  avdd-usb-ss-pll-supply:
++    description: PCIe/USB3 PLL power supply. Must supply 1.05 V.
++
++  hvdd-usb-ss-supply:
++    description: High-voltage PCIe/USB3 power supply. Must supply 3.3 V.
++
++  hvdd-usb-ss-pll-e-supply:
++    description: High-voltage PLLE power supply. Must supply 3.3 V.
++
++allOf:
++  - $ref: usb-xhci.yaml
++
++unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - nvidia,xusb-padctl
++  - phys
++  - phy-names
++  - avddio-pex-supply
++  - dvddio-pex-supply
++  - avdd-usb-supply
++  - hvdd-usb-ss-supply
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra124-car.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    usb@70090000 {
++        compatible = "nvidia,tegra124-xusb";
++        reg = <0x70090000 0x8000>,
++              <0x70098000 0x1000>,
++              <0x70099000 0x1000>;
++        reg-names = "hcd", "fpci", "ipfs";
++
++        interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++
++        clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
++                 <&tegra_car TEGRA124_CLK_XUSB_HOST_SRC>,
++                 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
++                 <&tegra_car TEGRA124_CLK_XUSB_SS>,
++                 <&tegra_car TEGRA124_CLK_XUSB_SS_DIV2>,
++                 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
++                 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
++                 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
++                 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
++                 <&tegra_car TEGRA124_CLK_CLK_M>,
++                 <&tegra_car TEGRA124_CLK_PLL_E>;
++        clock-names = "xusb_host", "xusb_host_src", "xusb_falcon_src",
++                      "xusb_ss", "xusb_ss_div2", "xusb_ss_src",
++                      "xusb_hs_src", "xusb_fs_src", "pll_u_480m",
++                      "clk_m", "pll_e";
++        resets = <&tegra_car 89>, <&tegra_car 156>, <&tegra_car 143>;
++        reset-names = "xusb_host", "xusb_ss", "xusb_src";
++
++        nvidia,xusb-padctl = <&padctl>;
++
++        phys = <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-1}>, /* mini-PCIe USB */
++               <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-2}>, /* USB A */
++               <&{/padctl@0,7009f000/pads/pcie/lanes/pcie-0}>; /* USB A */
++        phy-names = "usb2-1", "usb2-2", "usb3-0";
++
++        avddio-pex-supply = <&vdd_1v05_run>;
++        dvddio-pex-supply = <&vdd_1v05_run>;
++        avdd-usb-supply = <&vdd_3v3_lp0>;
++        avdd-pll-utmip-supply = <&vddio_1v8>;
++        avdd-pll-erefe-supply = <&avdd_1v05_run>;
++        avdd-usb-ss-pll-supply = <&vdd_1v05_run>;
++        hvdd-usb-ss-supply = <&vdd_3v3_lp0>;
++        hvdd-usb-ss-pll-e-supply = <&vdd_3v3_lp0>;
++    };
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra186-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra186-xusb.yaml
+new file mode 100644
+index 000000000000..7126d137133a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra186-xusb.yaml
+@@ -0,0 +1,181 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/nvidia,tegra186-xusb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra186 xHCI controller
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++description: The Tegra xHCI controller supports both USB2 and USB3 interfaces
++  exposed by the Tegra XUSB pad controller.
++
++properties:
++  compatible:
++    const: nvidia,tegra186-xusb
++
++  reg:
++    items:
++      - description: base and length of the xHCI host registers
++      - description: base and length of the XUSB FPCI registers
++
++  reg-names:
++    items:
++      - const: hcd
++      - const: fpci
++
++  interrupts:
++    items:
++      - description: xHCI host interrupt
++      - description: mailbox interrupt
++
++  clocks:
++    items:
++      - description: XUSB host clock
++      - description: XUSB Falcon source clock
++      - description: XUSB SuperSpeed clock
++      - description: XUSB SuperSpeed source clock
++      - description: XUSB HighSpeed clock source
++      - description: XUSB FullSpeed clock source
++      - description: USB PLL
++      - description: reference clock
++      - description: I/O PLL
++
++  clock-names:
++    items:
++      - const: xusb_host
++      - const: xusb_falcon_src
++      - const: xusb_ss
++      - const: xusb_ss_src
++      - const: xusb_hs_src
++      - const: xusb_fs_src
++      - const: pll_u_480m
++      - const: clk_m
++      - const: pll_e
++
++  interconnects:
++    items:
++      - description: read client
++      - description: write client
++
++  interconnect-names:
++    items:
++      - const: dma-mem # read
++      - const: write
++
++  iommus:
++    maxItems: 1
++
++  nvidia,xusb-padctl:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: phandle to the XUSB pad controller that is used to configure
++      the USB pads used by the XHCI controller
++
++  phys:
++    minItems: 1
++    maxItems: 7
++
++  phy-names:
++    minItems: 1
++    maxItems: 7
++    items:
++      enum:
++        - usb2-0
++        - usb2-1
++        - usb2-2
++        - hsic-0
++        - usb3-0
++        - usb3-1
++        - usb3-2
++
++  power-domains:
++    description: A list of PM domain specifiers that reference each power-
++      domain used by the xHCI controller. This list must comprise of a
++      specifier for the XUSBA and XUSBC power-domains.
++
++      See ../power/power_domain.txt and ../arm/tegra/nvidia,tegra20-pmc.txt
++      for details.
++    items:
++      - description: XUSBC power domain
++      - description: XUSBA power domain
++
++  power-domain-names:
++    description: A list of names that represent each of the specifiers in the
++      'power-domains' property. See ../power/power_domain.txt for details.
++    items:
++      - const: xusb_host
++      - const: xusb_ss
++
++  dvddio-pex-supply:
++    description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
++
++  hvddio-pex-supply:
++    description: High-voltage PCIe/USB3 power supply. Must supply 1.8 V.
++
++  avdd-usb-supply:
++    description: USB controller power supply. Must supply 3.3 V.
++
++  avdd-pll-utmip-supply:
++    description: UTMI PLL power supply. Must supply 1.8 V.
++
++  avdd-pll-uerefe-supply:
++    description: PLLE reference PLL power supply. Must supply 1.05 V.
++
++  dvdd-usb-ss-pll-supply:
++    description: PCIe/USB3 PLL power supply. Must supply 1.05 V.
++
++  hvdd-usb-ss-pll-e-supply:
++    description: High-voltage PLLE power supply. Must supply 1.8 V.
++
++allOf:
++  - $ref: usb-xhci.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra186-clock.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/memory/tegra186-mc.h>
++    #include <dt-bindings/power/tegra186-powergate.h>
++    #include <dt-bindings/reset/tegra186-reset.h>
++
++    usb@3530000 {
++        compatible = "nvidia,tegra186-xusb";
++        reg = <0x03530000 0x8000>,
++              <0x03538000 0x1000>;
++        reg-names = "hcd", "fpci";
++        interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&bpmp TEGRA186_CLK_XUSB_HOST>,
++                 <&bpmp TEGRA186_CLK_XUSB_FALCON>,
++                 <&bpmp TEGRA186_CLK_XUSB_SS>,
++                 <&bpmp TEGRA186_CLK_XUSB_CORE_SS>,
++                 <&bpmp TEGRA186_CLK_CLK_M>,
++                 <&bpmp TEGRA186_CLK_XUSB_FS>,
++                 <&bpmp TEGRA186_CLK_PLLU>,
++                 <&bpmp TEGRA186_CLK_CLK_M>,
++                 <&bpmp TEGRA186_CLK_PLLE>;
++        clock-names = "xusb_host", "xusb_falcon_src", "xusb_ss",
++                      "xusb_ss_src", "xusb_hs_src", "xusb_fs_src",
++                      "pll_u_480m", "clk_m", "pll_e";
++        power-domains = <&bpmp TEGRA186_POWER_DOMAIN_XUSBC>,
++                        <&bpmp TEGRA186_POWER_DOMAIN_XUSBA>;
++        power-domain-names = "xusb_host", "xusb_ss";
++        interconnects = <&mc TEGRA186_MEMORY_CLIENT_XUSB_HOSTR &emc>,
++                        <&mc TEGRA186_MEMORY_CLIENT_XUSB_HOSTW &emc>;
++        interconnect-names = "dma-mem", "write";
++        iommus = <&smmu TEGRA186_SID_XUSB_HOST>;
++        nvidia,xusb-padctl = <&padctl>;
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        phys = <&{/padctl@3520000/pads/usb2/lanes/usb2-0}>,
++               <&{/padctl@3520000/pads/usb2/lanes/usb2-1}>,
++               <&{/padctl@3520000/pads/usb3/lanes/usb3-0}>;
++        phy-names = "usb2-0", "usb2-1", "usb3-0";
++    };
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra194-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra194-xusb.yaml
+new file mode 100644
+index 000000000000..7697a0dbae15
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra194-xusb.yaml
+@@ -0,0 +1,187 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/nvidia,tegra194-xusb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra194 xHCI controller
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++description: The Tegra xHCI controller supports both USB2 and USB3 interfaces
++  exposed by the Tegra XUSB pad controller.
++
++properties:
++  compatible:
++    const: nvidia,tegra194-xusb
++
++  reg:
++    items:
++      - description: base and length of the xHCI host registers
++      - description: base and length of the XUSB FPCI registers
++
++  reg-names:
++    items:
++      - const: hcd
++      - const: fpci
++
++  interrupts:
++    items:
++      - description: xHCI host interrupt
++      - description: mailbox interrupt
++
++  clocks:
++    items:
++      - description: XUSB host clock
++      - description: XUSB Falcon source clock
++      - description: XUSB SuperSpeed clock
++      - description: XUSB SuperSpeed source clock
++      - description: XUSB HighSpeed clock source
++      - description: XUSB FullSpeed clock source
++      - description: USB PLL
++      - description: reference clock
++      - description: I/O PLL
++
++  clock-names:
++    items:
++      - const: xusb_host
++      - const: xusb_falcon_src
++      - const: xusb_ss
++      - const: xusb_ss_src
++      - const: xusb_hs_src
++      - const: xusb_fs_src
++      - const: pll_u_480m
++      - const: clk_m
++      - const: pll_e
++
++  interconnects:
++    items:
++      - description: read client
++      - description: write client
++
++  interconnect-names:
++    items:
++      - const: dma-mem # read
++      - const: write
++
++  iommus:
++    maxItems: 1
++
++  nvidia,xusb-padctl:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: phandle to the XUSB pad controller that is used to configure
++      the USB pads used by the XHCI controller
++
++  phys:
++    minItems: 1
++    maxItems: 8
++
++  phy-names:
++    minItems: 1
++    maxItems: 8
++    items:
++      enum:
++        - usb2-0
++        - usb2-1
++        - usb2-2
++        - usb2-3
++        - usb3-0
++        - usb3-1
++        - usb3-2
++        - usb3-3
++
++  power-domains:
++    description: A list of PM domain specifiers that reference each power-
++      domain used by the xHCI controller. This list must comprise of a
++      specifier for the XUSBA and XUSBC power-domains.
++
++      See ../power/power_domain.txt and ../arm/tegra/nvidia,tegra20-pmc.txt
++      for details.
++    items:
++      - description: XUSBC power domain
++      - description: XUSBA power domain
++
++  power-domain-names:
++    description: A list of names that represent each of the specifiers in the
++      'power-domains' property. See ../power/power_domain.txt for details.
++    items:
++      - const: xusb_host
++      - const: xusb_ss
++
++  dvddio-pex-supply:
++    description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
++
++  hvddio-pex-supply:
++    description: High-voltage PCIe/USB3 power supply. Must supply 1.8 V.
++
++  avdd-usb-supply:
++    description: USB controller power supply. Must supply 3.3 V.
++
++  avdd-pll-utmip-supply:
++    description: UTMI PLL power supply. Must supply 1.8 V.
++
++  avdd-pll-uerefe-supply:
++    description: PLLE reference PLL power supply. Must supply 1.05 V.
++
++  dvdd-usb-ss-pll-supply:
++    description: PCIe/USB3 PLL power supply. Must supply 1.05 V.
++
++  hvdd-usb-ss-pll-e-supply:
++    description: High-voltage PLLE power supply. Must supply 1.8 V.
++
++allOf:
++  - $ref: usb-xhci.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra194-clock.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/memory/tegra194-mc.h>
++    #include <dt-bindings/power/tegra194-powergate.h>
++    #include <dt-bindings/reset/tegra194-reset.h>
++
++    usb@3610000 {
++        compatible = "nvidia,tegra194-xusb";
++        reg = <0x03610000 0x40000>,
++              <0x03600000 0x10000>;
++        reg-names = "hcd", "fpci";
++
++        interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++
++        clocks = <&bpmp TEGRA194_CLK_XUSB_CORE_HOST>,
++                 <&bpmp TEGRA194_CLK_XUSB_FALCON>,
++                 <&bpmp TEGRA194_CLK_XUSB_CORE_SS>,
++                 <&bpmp TEGRA194_CLK_XUSB_SS>,
++                 <&bpmp TEGRA194_CLK_CLK_M>,
++                 <&bpmp TEGRA194_CLK_XUSB_FS>,
++                 <&bpmp TEGRA194_CLK_UTMIPLL>,
++                 <&bpmp TEGRA194_CLK_CLK_M>,
++                 <&bpmp TEGRA194_CLK_PLLE>;
++        clock-names = "xusb_host", "xusb_falcon_src",
++                      "xusb_ss", "xusb_ss_src", "xusb_hs_src",
++                      "xusb_fs_src", "pll_u_480m", "clk_m",
++                      "pll_e";
++        interconnects = <&mc TEGRA194_MEMORY_CLIENT_XUSB_HOSTR &emc>,
++                        <&mc TEGRA194_MEMORY_CLIENT_XUSB_HOSTW &emc>;
++        interconnect-names = "dma-mem", "write";
++        iommus = <&smmu TEGRA194_SID_XUSB_HOST>;
++
++        power-domains = <&bpmp TEGRA194_POWER_DOMAIN_XUSBC>,
++                        <&bpmp TEGRA194_POWER_DOMAIN_XUSBA>;
++        power-domain-names = "xusb_host", "xusb_ss";
++
++        nvidia,xusb-padctl = <&xusb_padctl>;
++
++        phys = <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
++               <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
++               <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-3}>,
++               <&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-0}>,
++               <&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-2}>,
++               <&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-3}>;
++        phy-names = "usb2-0", "usb2-1", "usb2-3", "usb3-0", "usb3-2", "usb3-3";
++    };
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml
+new file mode 100644
+index 000000000000..5c8bef1f482b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml
+@@ -0,0 +1,207 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/nvidia,tegra210-xusb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra210 xHCI controller
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++description: The Tegra xHCI controller supports both USB2 and USB3 interfaces
++  exposed by the Tegra XUSB pad controller.
++
++properties:
++  compatible:
++    const: nvidia,tegra210-xusb
++
++  reg:
++    items:
++      - description: base and length of the xHCI host registers
++      - description: base and length of the XUSB FPCI registers
++      - description: base and length of the XUSB IPFS registers
++
++  reg-names:
++    items:
++      - const: hcd
++      - const: fpci
++      - const: ipfs
++
++  interrupts:
++    items:
++      - description: xHCI host interrupt
++      - description: mailbox interrupt
++
++  clocks:
++    items:
++      - description: XUSB host clock
++      - description: XUSB host source clock
++      - description: XUSB Falcon source clock
++      - description: XUSB SuperSpeed clock
++      - description: XUSB SuperSpeed clock divider
++      - description: XUSB SuperSpeed source clock
++      - description: XUSB HighSpeed clock source
++      - description: XUSB FullSpeed clock source
++      - description: USB PLL
++      - description: reference clock
++      - description: I/O PLL
++
++  clock-names:
++    items:
++      - const: xusb_host
++      - const: xusb_host_src
++      - const: xusb_falcon_src
++      - const: xusb_ss
++      - const: xusb_ss_div2
++      - const: xusb_ss_src
++      - const: xusb_hs_src
++      - const: xusb_fs_src
++      - const: pll_u_480m
++      - const: clk_m
++      - const: pll_e
++
++  resets:
++    items:
++      - description: reset for the XUSB host controller
++      - description: reset for the SuperSpeed logic
++      - description: shared reset for xusb_{ss,hs,fs,falcon,host}_src.
++
++  reset-names:
++    items:
++      - const: xusb_host
++      - const: xusb_ss
++      - const: xusb_src
++
++  nvidia,xusb-padctl:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: phandle to the XUSB pad controller that is used to configure
++      the USB pads used by the XHCI controller
++
++  phys:
++    minItems: 1
++    maxItems: 9
++
++  phy-names:
++    minItems: 1
++    maxItems: 9
++    items:
++      enum:
++        - usb2-0
++        - usb2-1
++        - usb2-2
++        - usb2-3
++        - hsic-0
++        - usb3-0
++        - usb3-1
++        - usb3-2
++        - usb3-3
++
++  power-domains:
++    description: A list of PM domain specifiers that reference each power-
++      domain used by the xHCI controller. This list must comprise of a
++      specifier for the XUSBA and XUSBC power-domains.
++
++      See ../power/power_domain.txt and ../arm/tegra/nvidia,tegra20-pmc.txt
++      for details.
++    items:
++      - description: XUSBC power domain
++      - description: XUSBA power domain
++
++  power-domain-names:
++    description: A list of names that represent each of the specifiers in the
++      'power-domains' property. See ../power/power_domain.txt for details.
++    items:
++      - const: xusb_host
++      - const: xusb_ss
++
++  dvddio-pex-supply:
++    description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
++
++  hvddio-pex-supply:
++    description: High-voltage PCIe/USB3 power supply. Must supply 1.8 V.
++
++  avdd-usb-supply:
++    description: USB controller power supply. Must supply 3.3 V.
++
++  avdd-pll-utmip-supply:
++    description: UTMI PLL power supply. Must supply 1.8 V.
++
++  avdd-pll-uerefe-supply:
++    description: PLLE reference PLL power supply. Must supply 1.05 V.
++
++  dvdd-usb-ss-pll-supply:
++    description: PCIe/USB3 PLL power supply. Must supply 1.05 V.
++
++  hvdd-usb-ss-pll-e-supply:
++    description: High-voltage PLLE power supply. Must supply 1.8 V.
++
++allOf:
++  - $ref: usb-xhci.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra210-car.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    usb@70090000 {
++        compatible = "nvidia,tegra210-xusb";
++        reg = <0x70090000 0x8000>,
++              <0x70098000 0x1000>,
++              <0x70099000 0x1000>;
++        reg-names = "hcd", "fpci", "ipfs";
++
++        interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++
++        clocks = <&tegra_car TEGRA210_CLK_XUSB_HOST>,
++                 <&tegra_car TEGRA210_CLK_XUSB_HOST_SRC>,
++                 <&tegra_car TEGRA210_CLK_XUSB_FALCON_SRC>,
++                 <&tegra_car TEGRA210_CLK_XUSB_SS>,
++                 <&tegra_car TEGRA210_CLK_XUSB_SS_DIV2>,
++                 <&tegra_car TEGRA210_CLK_XUSB_SS_SRC>,
++                 <&tegra_car TEGRA210_CLK_XUSB_HS_SRC>,
++                 <&tegra_car TEGRA210_CLK_XUSB_FS_SRC>,
++                 <&tegra_car TEGRA210_CLK_PLL_U_480M>,
++                 <&tegra_car TEGRA210_CLK_CLK_M>,
++                 <&tegra_car TEGRA210_CLK_PLL_E>;
++        clock-names = "xusb_host", "xusb_host_src",
++                      "xusb_falcon_src", "xusb_ss",
++                      "xusb_ss_div2", "xusb_ss_src",
++                      "xusb_hs_src", "xusb_fs_src",
++                      "pll_u_480m", "clk_m", "pll_e";
++        resets = <&tegra_car 89>, <&tegra_car 156>,
++                 <&tegra_car 143>;
++        reset-names = "xusb_host", "xusb_ss", "xusb_src";
++        power-domains = <&pd_xusbhost>, <&pd_xusbss>;
++        power-domain-names = "xusb_host", "xusb_ss";
++
++        nvidia,xusb-padctl = <&padctl>;
++
++        phys = <&{/padctl@7009f000/pads/usb2/lanes/usb2-0}>,
++               <&{/padctl@7009f000/pads/usb2/lanes/usb2-1}>,
++               <&{/padctl@7009f000/pads/usb2/lanes/usb2-2}>,
++               <&{/padctl@7009f000/pads/usb2/lanes/usb2-3}>,
++               <&{/padctl@7009f000/pads/pcie/lanes/pcie-6}>,
++               <&{/padctl@7009f000/pads/pcie/lanes/pcie-5}>;
++        phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3", "usb3-0",
++                    "usb3-1";
++        dvddio-pex-supply = <&vdd_pex_1v05>;
++        hvddio-pex-supply = <&vdd_1v8>;
++        avdd-usb-supply = <&vdd_3v3_sys>;
++        avdd-pll-utmip-supply = <&vdd_1v8>;
++        avdd-pll-uerefe-supply = <&vdd_pex_1v05>;
++        dvdd-usb-ss-pll-supply = <&vdd_pex_1v05>;
++        hvdd-usb-ss-pll-e-supply = <&vdd_1v8>;
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ethernet@1 {
++                compatible = "usb955,9ff";
++                reg = <1>;
++        };
++    };
+-- 
+2.38.1
 
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: pwm
->=20
-> This wasn't in original binding and does not look needed. Mention
-> changes from pure conversion.
-
-At some point (looks like with the switch to 64-bit ARM) we started
-adding these for consistency because we were noticing that sometimes
-either we were missing clock entries or newer SoC generations gained
-additional clocks. Whenever that happened it would become somewhat
-cumbersome to describe this in device tree bindings and/or driver
-code, so consistently adding a clock-names property preventively
-even if only a single clock was used in the first iteration seemed a
-prudent thing to do.
-
-So these are not technically necessary, but many device tree files will
-have these entries, so this is here for those to pass validation.
-
-Note that the property doesn't show up along the "clocks" property in
-"required:" below.
-
->=20
-> > +
-> > +  resets:
-> > +    items:
-> > +      - description: module reset
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: pwm
-> > +
-> > +  "#pwm-cells":
-> > +    const: 2
-> > +
-> > +  pinctrl-names:
-> > +    items:
-> > +      - const: default
-> > +      - const: sleep
-> > +
-> > +  pinctrl-0:
-> > +    description: configuration for the default/active state
-> > +
-> > +  pinctrl-1:
-> > +    description: configuration for the sleep state
-> > +
-> > +  operating-points-v2:
-> > +    $ref: "/schemas/types.yaml#/definitions/phandle"
->=20
-> Drop quotes. We should actually define it in some common schema.
-
-Yeah, good idea. I'll drop the quotes for now and see if I can find a
-good place to add this in dt-schema.
-
-> > +
-> > +  power-domains:
-> > +    items:
-> > +      - description: phandle to the core power domain
-> > +
-> > +allOf:
-> > +  - $ref: pwm.yaml
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - resets
-> > +  - reset-names
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/tegra20-car.h>
-> > +
-> > +    pwm: pwm@7000a000 {
-> > +        compatible =3D "nvidia,tegra20-pwm";
-> > +        reg =3D <0x7000a000 0x100>;
-> > +        #pwm-cells =3D <2>;
-> > +        clocks =3D <&tegra_car TEGRA20_CLK_PWM>;
-> > +        resets =3D <&tegra_car 17>;
-> > +        reset-names =3D "pwm";
-> > +    };
-> > +
-> > +  # Example with the pin configuration for suspend and resume:
-> > +  # =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +  # Suppose pin PE7 (On Tegra210) interfaced with the regulator device=
- and it requires PWM output
-> > +  # to be tristated when system enters suspend.
-> > +  - |
-> > +    #include <dt-bindings/clock/tegra210-car.h>
-> > +    #include <dt-bindings/pinctrl/pinctrl-tegra.h>
-> > +
-> > +    pinmux@700008d4 {
-> > +        compatible =3D "nvidia,tegra210-pinmux";
-> > +        reg =3D <0x700008d4 0x29c>, /* Pad control registers */
-> > +              <0x70003000 0x294>; /* Mux registers */
-> > +
-> > +        pwm_active_state: pwm_active_state {
->=20
-> No underscores in node names.
-
-I've dropped the entire example, but I may want to put it back once the
-pinmux conversion is done, in which case I'll make sure to replace the
-underscores.
-
-Thanks,
-Thierry
-
---yaZ6CGl2KxtPFIjN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNj0oAACgkQ3SOs138+
-s6FcoQ//ULkcBhhyh6sOEeam6JT70izc3ITIqW8iNAgcYaWVN4672F7M3bucUyIO
-sq/b4GYV+2G8KoRkk5+NIudEWxoSTaStDPKPWeSAG5gY+gSiU1kmsGRYy83yVNwf
-nyVUa0zUoQxL/wmsYM8D2VVHSFmTEwroA+XFrFHm1G3B7jlLxo2AELTe4TORA7MX
-Oeg4oMl1diJgDkVr33p629OMGmG36H30HC6+c6YvGysyCmfKJxsGBRQH2oycaufL
-4yz58M1ohNl9guYkgSRkhCH9+GbzCziSM9fQT5l+YvlY1X0KKcoNBLQ+i4L1hfrZ
-R4jZKylfB4Vn+ZsRQzx+1AIMGFv5MKdTD2UFaf0Q0gmza+/BvGIXst2px6yBQxhV
-x3OjvAXKggRoSu3U2iZKIzEhwPfA8ANZ+4N/SLilLoamVeiNxZ0mjXvDJ+LYP0Tu
-8MYCg4JHLEfCA13fC5u6mE6dK+cHLnriuTT+JjmIM+SVvTfGtx6pGk9xu/Kby2cP
-mqoJBrjGp4tBTpY4hN3Qq+spI2bE4g1nr0KonPcxPScPKJOaRv8kVSptGtBs3i0r
-9eGi8ZbOYqHajUPKMZlIbTWlGohtkio/YKur30cwBuQTsUqz0MH4BHuELQ1jlK0l
-gLYeb1fDAQ5X/wEv7ErHsru9q5o6UEYWE2e3V3pEuRVuQ5HfC2M=
-=PaY0
------END PGP SIGNATURE-----
-
---yaZ6CGl2KxtPFIjN--
