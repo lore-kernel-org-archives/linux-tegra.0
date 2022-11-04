@@ -2,43 +2,43 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F352DC4167E
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Nov 2022 16:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0A2C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Nov 2022 17:01:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232038AbiKDQwC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Nov 2022 12:52:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
+        id S231909AbiKDRBA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Nov 2022 13:01:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232093AbiKDQvl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Nov 2022 12:51:41 -0400
-X-Greylist: delayed 248 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 04 Nov 2022 09:49:49 PDT
+        with ESMTP id S231361AbiKDRBA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Nov 2022 13:01:00 -0400
 Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9374D42F46;
-        Fri,  4 Nov 2022 09:49:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A0C31FA6;
+        Fri,  4 Nov 2022 10:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/fSoTUtqLSMP2KfCqxLZIKji3GOepn9Xc93RPyjSVkg=; b=S05yN9/OkId9ymzRJ4dCjcPWLQ
-        7kS+7hwLHIGVXlHp7W14BxEpjdI4ntV02EjHSD7RVjfxzjyZZY+kvQZZx58NMhQA3G5XgkIRxucIi
-        1OotghPODhkcufNUd5I3CGkJL57YrmUvR1N06/jUXH2swC2CkuimIhdic8beAfGSReYdk0zY/yiuZ
-        yCoOy4drXYmkZQ1P6bLMxXp+heS5TEP3UnHMbT+naZWwnajVpJ4cAXNOiBZHJHsv1ZCK1dTFhnhcE
-        kQfJJLIU0/MUGSPFRmI/cJ4R007YPo4eHbdvB68luhk9bsDRd+9PwexE0o4g4q5uI6q1mQphZaEQ8
-        PyW6kaVA==;
-Received: from ip98-183-112-30.ok.ok.cox.net ([98.183.112.30]:33812 helo=[192.168.0.134])
+        bh=4AvnEeQeniDWkQBvG292xKcyqRcJZJN4ObwNBkkj5tk=; b=WdhahLUmGJpQ95hVL+3u1VjMxb
+        tUf7myaQndCk0qHzeKh1A+E2O/JcVf+aJ+IiQD/qFkAbTU535DJ2WAUD6UP1/EvQ/y4beijc5YALa
+        Q3fcMmim22RAxWP0Rh4RhjXR+GqdPYPNBO9KnnRYGmufKc5r2oNWcdiYm05562NzkHszBUsTfAWO7
+        JgFdZNqyyoguqSiEpMW173KJx1qkCjb5qv/86gVYx+OCVFDAJzuXuMvEgrqYPPENnQENv9FFS7mH/
+        qsMwcba1c5ad5x6Y1xKSIlEvINxjtsa56wEJ+F6ehiPRzOvf9PnvY6QcDHcSY53EeaOn9zO5Boa6z
+        wQg4vJPQ==;
+Received: from ip98-183-112-30.ok.ok.cox.net ([98.183.112.30]:58206 helo=[192.168.0.134])
         by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.95)
         (envelope-from <david@lechnology.com>)
-        id 1oqzsl-00Ciq9-V8;
-        Fri, 04 Nov 2022 12:49:41 -0400
-Message-ID: <6296d944-e03d-6f2b-48b1-3dad78e3c89d@lechnology.com>
-Date:   Fri, 4 Nov 2022 11:49:34 -0500
+        id 1oqzog-00Chgx-Is;
+        Fri, 04 Nov 2022 12:45:28 -0400
+Message-ID: <187e61cd-7d02-2453-acf1-30180559d42f@lechnology.com>
+Date:   Fri, 4 Nov 2022 11:45:17 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Subject: Re: [PATCH v2 54/65] clk: da8xx: clk48: Switch to determine_rate
+Subject: Re: [PATCH v2 21/65] clk: davinci: da8xx-cfgchip: Add a
+ determine_rate hook
 Content-Language: en-US
 To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
@@ -96,9 +96,9 @@ Cc:     linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org
 References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-54-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-21-f6736dec138e@cerno.tech>
 From:   David Lechner <david@lechnology.com>
-In-Reply-To: <20221018-clk-range-checks-fixes-v2-54-f6736dec138e@cerno.tech>
+In-Reply-To: <20221018-clk-range-checks-fixes-v2-21-f6736dec138e@cerno.tech>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -115,8 +115,8 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11/4/22 8:18 AM, Maxime Ripard wrote:
-> The TI DA8xx USB0 clk48 clocks implements a mux with a set_parent
+On 11/4/22 8:17 AM, Maxime Ripard wrote:
+> The Davinci DA8xxx cfgchip mux clock implements a mux with a set_parent
 > hook, but doesn't provide a determine_rate implementation.
 > 
 > This is a bit odd, since set_parent() is there to, as its name implies,
@@ -132,56 +132,50 @@ On 11/4/22 8:18 AM, Maxime Ripard wrote:
 > oversight. However, it could also be an explicit decision by the
 > original author to avoid any reparenting but through an explicit call to
 > clk_set_parent().
-> 
-> The driver does implement round_rate() though, which means that we can
-> change the rate of the clock, but we will never get to change the
-> parent.
-> 
-> However, It's hard to tell whether it's been done on purpose or not.
-> 
-> Since we'll start mandating a determine_rate() implementation, let's
-> convert the round_rate() implementation to a determine_rate(), which
-> will also make the current behavior explicit. And if it was an
-> oversight, the clock behaviour can be adjusted later on.
 
-I think this one should be the same as the clk:davinci changes and
-not allow re-parenting. Since this is a USB 48MHz PHY clock, a rate
-change will never be requested.
 
+The parent is defined in the device tree and is not expected to change
+at runtime, so if I am understanding the patch correctly, setting the
+CLK_SET_RATE_NO_REPARENT flag seems correct.
+
+> 
+> The latter case would be equivalent to setting the flag
+> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> implementation is provided, clk_round_rate() (through
+> clk_core_round_rate_nolock()) will call itself on the parent if
+> CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> CLK_SET_RATE_NO_REPARENT is set.
+> 
+> And if it was an oversight, then we are at least explicit about our
+> behavior now and it can be further refined down the line.
 > 
 > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > ---
->   drivers/clk/davinci/da8xx-cfgchip.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
+>   drivers/clk/davinci/da8xx-cfgchip.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-> index 4c1cc59bba53..f60c97091818 100644
+> index 4103d605e804..c04276bc4051 100644
 > --- a/drivers/clk/davinci/da8xx-cfgchip.c
 > +++ b/drivers/clk/davinci/da8xx-cfgchip.c
-> @@ -462,10 +462,12 @@ static unsigned long da8xx_usb0_clk48_recalc_rate(struct clk_hw *hw,
->   	return 48000000;
+> @@ -229,6 +229,7 @@ static u8 da8xx_cfgchip_mux_clk_get_parent(struct clk_hw *hw)
 >   }
 >   
-> -static long da8xx_usb0_clk48_round_rate(struct clk_hw *hw, unsigned long rate,
-> -					unsigned long *parent_rate)
-> +static int da8xx_usb0_clk48_determine_rate(struct clk_hw *hw,
-> +					   struct clk_rate_request *req)
->   {
-> -	return 48000000;
-> +	req->rate = 48000000;
-> +
-> +	return 0;
->   }
->   
->   static int da8xx_usb0_clk48_set_parent(struct clk_hw *hw, u8 index)
-> @@ -494,7 +496,7 @@ static const struct clk_ops da8xx_usb0_clk48_ops = {
->   	.disable	= da8xx_usb0_clk48_disable,
->   	.is_enabled	= da8xx_usb0_clk48_is_enabled,
->   	.recalc_rate	= da8xx_usb0_clk48_recalc_rate,
-> -	.round_rate	= da8xx_usb0_clk48_round_rate,
-> +	.determine_rate	= da8xx_usb0_clk48_determine_rate,
->   	.set_parent	= da8xx_usb0_clk48_set_parent,
->   	.get_parent	= da8xx_usb0_clk48_get_parent,
+>   static const struct clk_ops da8xx_cfgchip_mux_clk_ops = {
+> +	.determine_rate	= __clk_mux_determine_rate,
+>   	.set_parent	= da8xx_cfgchip_mux_clk_set_parent,
+>   	.get_parent	= da8xx_cfgchip_mux_clk_get_parent,
 >   };
+> @@ -251,7 +252,7 @@ da8xx_cfgchip_mux_clk_register(struct device *dev,
+>   	init.ops = &da8xx_cfgchip_mux_clk_ops;
+>   	init.parent_names = parent_names;
+>   	init.num_parents = 2;
+> -	init.flags = 0;
+> +	init.flags = CLK_SET_RATE_NO_REPARENT;
+>   
+>   	mux->hw.init = &init;
+>   	mux->regmap = regmap;
 > 
 
