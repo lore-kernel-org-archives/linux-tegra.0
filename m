@@ -2,215 +2,206 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2B8C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Nov 2022 14:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 783D9C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Nov 2022 14:38:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231786AbiKDOeo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Nov 2022 10:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46996 "EHLO
+        id S232263AbiKDOix (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Nov 2022 10:38:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231714AbiKDOe0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Nov 2022 10:34:26 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE3036548;
-        Fri,  4 Nov 2022 07:31:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1667572309; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yJcwJHHN5pttniHz+NbbkUJe8GLWXEpymY5u4z+2Tls=;
-        b=CpbNQdJ/BWVPt6aAZUIABOUDvKsIEPL9U91j803wkEpi9xnD/0w4adiBYeJcN8TJFfSWVl
-        x/lvi9fmHRkBC7J3u5FRclEUbJUWbDpV47bpFyqI8WWI72nrAKvHhlIMavR+GX46Lp5ZKT
-        4vVIrBF8TIdJDdEsSYvgVdovc3N1IRg=
-Date:   Fri, 04 Nov 2022 14:31:20 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?iso-8859-1?q?F=E4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Message-Id: <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
-In-Reply-To: <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
-        <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
+        with ESMTP id S232233AbiKDOiW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Nov 2022 10:38:22 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F6A531228
+        for <linux-tegra@vger.kernel.org>; Fri,  4 Nov 2022 07:36:09 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id y4so5062156plb.2
+        for <linux-tegra@vger.kernel.org>; Fri, 04 Nov 2022 07:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=loRh0+E+YP5IUjw67EiVC1xM3c3lURuZr1BkCmO2rb8=;
+        b=bVWPA/TeXpWGRKLZjpuhAt3T4C5ravFtY4SJ9XlpF1RX67esrvxks5FkOyc7PiTEQP
+         RDl1Vd/dlJcUaJ2s/eVsLfU//A5VlmDhUdkJmK/eYxmc9ZdAr1vTO8NEtYUicTZq7Vp1
+         4UmSh+DoKX1AM0higcXwFZdmmi3oFupqQIQZqX9dl+otnoOQFBzxwx7hRJKUsP3j2g8Z
+         PIjYj+iX57gd4+uwdypPSxnw2cq2vHzCTeKc6mquKs/86Xdjv4zS9FfKYKMjlid4ruYJ
+         yWRdh69yvnrwR7M+qI1E3KGIiOJCEgT3SphsAgoD3kd9/u6bauBLvZa8YUvA5+CQeGFL
+         AVTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=loRh0+E+YP5IUjw67EiVC1xM3c3lURuZr1BkCmO2rb8=;
+        b=fBrGf/q8kzntPEphy/bzOE/rpLuMb/emxyoIGvvlmCKO56pvmuA4aKXKrKomE7SiDG
+         dqQTJDYFwjL5F7FiV69ZdiGFCZTqU02Z0Gwkpn7iHIMu6R02O7/FCRR53NrxkCk7LD0k
+         sVBN8PJP4JULVL3+NKhdcX55KpfL8Re3yBkBEDzJJd4FR3muKTvsBU4HXgEFNiL7ucAM
+         GI+wEV302J1U5aSXM/Q1pKEO8RWevExRdxPbq8PXbCvNU57OFZ+W57pgRHnrDlFbFADN
+         +XUBXfhgFEvZIznVlDNIB73N1c+ct4mfEzBcqq+AWUaLS67B5/edcy8VxZ4pJdLYjVtU
+         gFPw==
+X-Gm-Message-State: ACrzQf07DU7QI7h2FYTo4/NhAnFrxZ7TT2t/vW++FYCjQAYcf8xfGnI+
+        uB6SkNSBge1Y8wldsKUy5hdAiM0YTlFgC6FrFzKwug==
+X-Google-Smtp-Source: AMsMyM7DtVj7G81QDwOoVnio3+A1j+s1IUj+g76gkNfyV4Aa/khvPFrX9iC0qYux39/eQOgKPSpEb2B9t0xwz19uVBU=
+X-Received: by 2002:a17:903:100c:b0:186:63a1:3b5d with SMTP id
+ a12-20020a170903100c00b0018663a13b5dmr36667384plb.148.1667572568803; Fri, 04
+ Nov 2022 07:36:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+References: <CAPDyKFqJdiCDkAfrONfnBVKw1v8=jZ+hEJiKGK70EQ4o7BSxaQ@mail.gmail.com>
+ <20221103043852.24718-1-pshete@nvidia.com> <6be39bae-f325-12e0-374b-a27c9ee2ef2b@arm.com>
+ <Y2PJq27wkVwPg6rp@orome> <CAPDyKFq8szzryFBNkw20wFoPTbAa8YDy0wJnb57yckZ-HFTAMw@mail.gmail.com>
+ <4cae5c8d-d6e9-79dc-670d-22ec9fda10a2@arm.com>
+In-Reply-To: <4cae5c8d-d6e9-79dc-670d-22ec9fda10a2@arm.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 4 Nov 2022 15:35:32 +0100
+Message-ID: <CAPDyKFqte70isq=x4afFO6Ys9=wXLkLwVRG6dhfOCunQeQ_DjQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/4] iommu: Always define struct iommu_fwspec
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Prathamesh Shete <pshete@nvidia.com>, joro@8bytes.org,
+        adrian.hunter@intel.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        will@kernel.org, iommu@lists.linux.dev, anrao@nvidia.com,
+        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Maxime,
+On Thu, 3 Nov 2022 at 18:35, Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> On 2022-11-03 14:55, Ulf Hansson wrote:
+> > On Thu, 3 Nov 2022 at 15:01, Thierry Reding <thierry.reding@gmail.com> wrote:
+> >>
+> >> On Thu, Nov 03, 2022 at 12:23:20PM +0000, Robin Murphy wrote:
+> >>> On 2022-11-03 04:38, Prathamesh Shete wrote:
+> >>>> In order to fully make use of the !IOMMU_API stub functions, make the
+> >>>> struct iommu_fwspec always available so that users of the stubs can keep
+> >>>> using the structure's internals without causing compile failures.
+> >>>
+> >>> I'm really in two minds about this... fwspecs are an internal detail of the
+> >>> IOMMU API that are meant to be private between individual drivers and
+> >>> firmware code, so anything poking at them arguably does and should depend on
+> >>> CONFIG_IOMMU_API. It looks like the stub for dev_iommu_fwspec_get() was only
+> >>> added for the sake of one driver that was misusing it where it really wanted
+> >>> device_iommu_mapped(), and has since been fixed, so if anything my
+> >>> preference would be to remove that stub :/
+> >>
+> >> Tegra has been using this type of weak dependency on IOMMU_API mainly in
+> >> order to allow building without the IOMMU support on some old platforms
+> >> where people may actually care about the kernel size (Tegra20 systems
+> >> were sometimes severely constrained and don't have anything that we'd
+> >> call an IOMMU today).
+> >>
+> >> We have similar stubs in place for most other major subsystems in order
+> >> to allow code to simply compile out if the subsystem is disabled, which
+> >> is quite convenient for sharing code between platforms that may want a
+> >> given feature and other platforms that may not want it, without causing
+> >> too much of a hassle with compile-testing.
+> >
+> > I agree with the above.
+> >
+> > Moreover, the stubs make the code more portable/scalable and so it
+> > becomes easier to maintain.
+>
+> Are you suggesting that having the same thing open-coded slightly
+> differently (with bugs) in 8 different places is somehow more
+> maintainable than abstracting it into a single centralised implementation?
+>
+> Is it "easier to maintain" when already seemingly every thing I try to
+> clean up or refactor in the IOMMU API at the moment is stymied by
+> finding Tegra drivers doing unexpected (and often questionable) things?
+> Is it "more scalable" to make it even easier for people to copy
+> questionable code without a second thought, leaving API maintainers to
+> play an ever-expanding game of whack-a-mole to clean it up? No. No it
+> chuffing well isn't :(
 
-Le ven. 4 nov. 2022 =E0 14:18:13 +0100, Maxime Ripard=20
-<maxime@cerno.tech> a =E9crit :
-> The Ingenic CGU clocks implements a mux with a set_parent hook, but
-> doesn't provide a determine_rate implementation.
->=20
-> This is a bit odd, since set_parent() is there to, as its name=20
-> implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
->=20
-> The other trigger would be a call to clk_set_parent(), but it's far=20
-> less
-> used, and it doesn't look like there's any obvious user for that=20
-> clock.
->=20
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call=20
-> to
-> clk_set_parent().
->=20
-> The driver does implement round_rate() though, which means that we can
-> change the rate of the clock, but we will never get to change the
-> parent.
->=20
-> However, It's hard to tell whether it's been done on purpose or not.
->=20
-> Since we'll start mandating a determine_rate() implementation, let's
-> convert the round_rate() implementation to a determine_rate(), which
-> will also make the current behavior explicit. And if it was an
-> oversight, the clock behaviour can be adjusted later on.
+Ohh, I wasn't aware of these kinds of issues for the IOMMU interface.
 
-So it's partly on purpose, partly because I didn't know about=20
-.determine_rate.
+Abusing interfaces is an orthogonal problem to what I was suggesting
+to solve here. The main problem I was trying to address was to prevent
+sprinkling subsystems/drivers with "#ifdefs" all over the place, as
+that doesn't scale.
 
-There's nothing odd about having a lonely .set_parent callback; in my=20
-case the clocks are parented from the device tree.
+>
+> >>> I don't technically have much objection to this patch in isolation, but what
+> >>> I don't like is the direction of travel it implies. I see the anti-pattern
+> >>> is only spread across Tegra drivers, making Tegra-specific assumptions, so
+> >>> in my view the best answer would be to abstract that fwpsec dependency into
+> >>> a single Tegra-specific helper, which would better represent the nature of
+> >>> what's really going on here.
+> >>
+> >> I don't see how this is an anti-pattern. It might not be common for
+> >> drivers to need to reach into iommu_fwspec, so that might indeed be
+> >> specific to Tegra (for whatever reason our IP seems to want extra
+> >> flexibility), but the general pattern of using stubs is wide-spread,
+> >> so I don't see why IOMMU_API would need to be special.
+> >
+> > Again, I agree.
+>
+> The anti-pattern is reaching into some other driver's private data
+> assuming a particular format, with zero indication of the huge degree of
+> assumption involved, and half the time not even checking that what's
+> being dereferenced is valid.
 
-Having the clocks driver trigger a parent change when requesting a rate=20
-change sounds very dangerous, IMHO. My MMC controller can be parented=20
-to the external 48 MHz oscillator, and if the card requests 50 MHz, it=20
-could switch to one of the PLLs. That works as long as the PLLs don't=20
-change rate, but if one is configured as driving the CPU clock, it=20
-becomes messy.
-The thing is, the clocks driver has no way to know whether or not it is=20
-"safe" to use a designated parent.
+I see.
 
-For that reason, in practice, I never actually want to have a clock=20
-re-parented - it's almost always a bad idea vs. sticking to the parent=20
-clock configured in the DTS.
+>
+> > Moreover, a "git grep CONFIG_IOMMU_API" indicates that the problem
+> > isn't specific to Tegra. The "#ifdef CONFIG_IOMMU_API" seems to be
+> > sprinkled across the kernel. I think it would be nice if we could
+> > improve the situation. So far, using stubs along with what the
+> > $subject patch proposes, seems to me to be the best approach.
+>
+> Yes, there is plenty of code through the tree that is only relevant to
+> the IOMMU API and would be a complete waste of space without it, that is
+> not the point in question here. Grep for dev_iommu_fwspec_get; outside
+> drivers/iommu, the only users are IOMMU-API-specific parts of ACPI code,
+> as intended, plus 8 random Tegra drivers.
+>
+> Now, there does happen to be a tacit contract between the ACPI IORT code
+> and the Arm SMMU drivers for how SMMU StreamIDs are encoded in their
+> respective fwspecs, but it was never intended for wider consumption. If
+> Tegra drivers want to have a special relationship with arm-smmu then
+> fair enough, but they can do the same as MSM and formalise it somewhere
+> that the SMMU driver maintainers are at least aware of, rather than
+> holding the whole generic IOMMU API hostage.
 
+Thanks for clarifying this. I certainly understand your concern better now.
 
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  drivers/clk/ingenic/cgu.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-> index 1f7ba30f5a1b..0c9c8344ad11 100644
-> --- a/drivers/clk/ingenic/cgu.c
-> +++ b/drivers/clk/ingenic/cgu.c
-> @@ -491,22 +491,23 @@ ingenic_clk_calc_div(struct clk_hw *hw,
->  	return div;
->  }
->=20
-> -static long
-> -ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
-> -		       unsigned long *parent_rate)
-> +static int ingenic_clk_determine_rate(struct clk_hw *hw,
-> +				      struct clk_rate_request *req)
->  {
->  	struct ingenic_clk *ingenic_clk =3D to_ingenic_clk(hw);
->  	const struct ingenic_cgu_clk_info *clk_info =3D=20
-> to_clk_info(ingenic_clk);
->  	unsigned int div =3D 1;
->=20
->  	if (clk_info->type & CGU_CLK_DIV)
-> -		div =3D ingenic_clk_calc_div(hw, clk_info, *parent_rate, req_rate);
-> +		div =3D ingenic_clk_calc_div(hw, clk_info, req->best_parent_rate,
-> +					   req->rate);
+>
+> Since apparently it wasn't clear, what I was proposing is a driver
+> helper at least something like this:
+>
+> int tegra_arm_smmu_streamid(struct device *dev)
+> {
+> #ifdef CONFIG_IOMMU_API
+>         struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev)
+>
+>         if (fwspec && fwspec->num_ids == 1)
+>                 return fwspec->ids[0] & 0xffff;
+> #endif
+>         return -EINVAL;
+> }
+>
+> Now THAT is scalable and maintainable; any number of random drivers can
+> call it without any preconditions, it's a lot clearer what's going on,
+> and I won't have to swear profusely while herding patches through half a
+> dozen different trees if, when my ops rework gets to the point of
+> refactoring iommu_fwspec with dev_iommu, it ends up changing anything
+> significant.
 
-Sorry but I'm not sure that this works.
+It sure sounds like we need another level of abstraction for iommus,
+to avoid the interface from being abused. Perhaps something along the
+lines of what we have for clocks (providers and consumers use
+different interfaces).
 
-You replace the "parent_rate" with the "best_parent_rate", and that=20
-means you only check the requested rate vs. the parent with the highest=20
-frequency, and not vs. the actual parent that will be used.
+Anyway, to simplify future potential rework in this direction, I can
+agree and understand your points.
 
-Cheers,
--Paul
+What you propose above, with one or a few Tegra specific helper
+functions, seems like the best we can do for now.
 
->  	else if (clk_info->type & CGU_CLK_FIXDIV)
->  		div =3D clk_info->fixdiv.div;
->  	else if (clk_hw_can_set_rate_parent(hw))
-> -		*parent_rate =3D req_rate;
-> +		req->best_parent_rate =3D req->rate;
->=20
-> -	return DIV_ROUND_UP(*parent_rate, div);
-> +	req->rate =3D DIV_ROUND_UP(req->best_parent_rate, div);
-> +	return 0;
->  }
->=20
->  static inline int ingenic_clk_check_stable(struct ingenic_cgu *cgu,
-> @@ -626,7 +627,7 @@ static const struct clk_ops ingenic_clk_ops =3D {
->  	.set_parent =3D ingenic_clk_set_parent,
->=20
->  	.recalc_rate =3D ingenic_clk_recalc_rate,
-> -	.round_rate =3D ingenic_clk_round_rate,
-> +	.determine_rate =3D ingenic_clk_determine_rate,
->  	.set_rate =3D ingenic_clk_set_rate,
->=20
->  	.enable =3D ingenic_clk_enable,
->=20
-> --
-> b4 0.11.0-dev-99e3a
-
-
+Kind regards
+Uffe
