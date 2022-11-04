@@ -2,270 +2,259 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0867FC43217
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Nov 2022 14:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92828C43219
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Nov 2022 15:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231864AbiKDOkv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Nov 2022 10:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
+        id S232335AbiKDPC3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Nov 2022 11:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231866AbiKDOkW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Nov 2022 10:40:22 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0EA63207E;
-        Fri,  4 Nov 2022 07:39:00 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id ud5so13836297ejc.4;
-        Fri, 04 Nov 2022 07:39:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HfeCae03hj8TJWurGJ2gV5aCuzV24EMjUZQG3ONIz6o=;
-        b=M4aevNjhkyVF1FJSXbNl80nza1VQFGO4HMGDIGfrpBYukavQT5/Z2kMEw1v4YJMeDY
-         z/ZT/00LagsQ2LN3VPx7LN11FgZt5ck5YfvODwErwFFaooc+1TKxS3CM9AJPFt8/tjt7
-         Pd2RpXpA9sYBAHYwwIjsr82Knnf0Br3tETh34ton9lLY84nHTgAY+/iW6RQinFwzVO+N
-         N3jq+fj93HG/LNpQ0MWI1rjHQcVoMSykjj5NFbK+rpWRrvSiDJoiXtVfUVGLozQzgS7k
-         LWrF2QV9dd7Io2y5abEh2lcCAvJDOQIg3mbBZ+gB16GWuhIc1j7WBqizu08NnR/97Htu
-         WzdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HfeCae03hj8TJWurGJ2gV5aCuzV24EMjUZQG3ONIz6o=;
-        b=wItIDUpb4GfIUMX1qLWQ2UAUmWBWnH2xUy/cLHmplyISwQaSrwO5mAQkVPy58HIdg1
-         e4n/Wpm9RL4TUvB54idY4V/08xy7q/OcEuRwJUvsQskayslLLjzr8teHY0DKFLZN6cbB
-         p0Mb684BZCnTk0hA/VfW8CLZkdpH5HAQ6eRVw4ARd13DNIq4i8xRM2OODS7rGPU7vwB0
-         h6QcfJu0uPXuxhZyU44mzvPwu66wHHxS0XDcFgXpGOxiI1EFN7UUBTdYiWedRGS1BSMp
-         wGIRwNBnagacruLIut3NRn+oOVuN9QjaofqJhYhJ1v7u21c0GeChmN1w1vB9tqjTdzy+
-         WFMA==
-X-Gm-Message-State: ACrzQf1QrZCLiMI04nTFZy8si17WR7b7VZtvdZ1iT6PWs7KhArtUBfN0
-        QdjBJmx3V1UhPYlUYUy4X54=
-X-Google-Smtp-Source: AMsMyM5N9H4yorV3UcHnqhcDYaujVlMTrcshptR+uhjEkRYhptI8/k2K5N9PODc8Bs9KcTPeMnDB5A==
-X-Received: by 2002:a17:906:fe46:b0:73d:939a:ec99 with SMTP id wz6-20020a170906fe4600b0073d939aec99mr35162288ejb.169.1667572739109;
-        Fri, 04 Nov 2022 07:38:59 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id d17-20020a170906305100b0073d7b876621sm1833348ejd.205.2022.11.04.07.38.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Nov 2022 07:38:58 -0700 (PDT)
-Date:   Fri, 4 Nov 2022 15:38:56 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Prathamesh Shete <pshete@nvidia.com>, joro@8bytes.org,
-        adrian.hunter@intel.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        will@kernel.org, iommu@lists.linux.dev, anrao@nvidia.com,
-        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v10 1/4] iommu: Always define struct iommu_fwspec
-Message-ID: <Y2UkAKfHefdYW59A@orome>
-References: <CAPDyKFqJdiCDkAfrONfnBVKw1v8=jZ+hEJiKGK70EQ4o7BSxaQ@mail.gmail.com>
- <20221103043852.24718-1-pshete@nvidia.com>
- <6be39bae-f325-12e0-374b-a27c9ee2ef2b@arm.com>
- <Y2PJq27wkVwPg6rp@orome>
- <CAPDyKFq8szzryFBNkw20wFoPTbAa8YDy0wJnb57yckZ-HFTAMw@mail.gmail.com>
- <4cae5c8d-d6e9-79dc-670d-22ec9fda10a2@arm.com>
+        with ESMTP id S232334AbiKDPCJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Nov 2022 11:02:09 -0400
+Received: from new1-smtp.messagingengine.com (new1-smtp.messagingengine.com [66.111.4.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E18532B9D;
+        Fri,  4 Nov 2022 07:59:51 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id EA41F58026B;
+        Fri,  4 Nov 2022 10:59:50 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 04 Nov 2022 10:59:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1667573990; x=1667581190; bh=Y5oKJivX8w
+        kahYNQyZEHeLWH6EQTo4IwcdhL358fYx8=; b=pBVbAwq1wh0urQYxWnM1cZvXiw
+        mvjZO+455nAE/nRxFcqzso7pQ/J60kCKGSeIBmskbHvQSi9PYRl1MN1qk4QMVnXO
+        O26I129jq9+yAZIkexYRp4WvrKiZfr4PFjBlnR6Nh+XMiiV9w0CdYiHl0idAaJKW
+        SHLPz7vGqcjauK0q4winqVKK9cMBHOK6DVXMDDGCJ2DBcg3NR9tuw2sjqesu0iC5
+        VW00jbu4GMIQ4H6yTjfIOwq2YTOMuSvVxQo1rCKHMe/hwvsSdfgZHZjFLM37jHkc
+        FwLM9N2SL9k0UfdS0EShXYbR+EyxaJVVEbjqGsA9/nE72YI5YDI0+va41kBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1667573990; x=1667581190; bh=Y5oKJivX8wkahYNQyZEHeLWH6EQT
+        o4IwcdhL358fYx8=; b=gZDDItvEezCWxgqad6gxjjfWfeOrA4CSVOD4X/tCyGR/
+        1zWJ5PDZMcJtl46J8cw6TZD8A3kvRySi5xhe4K3TaTEG7WSLs3rDubeqtmw/UcfG
+        soFvWcONBG4N1E/1fQXCWUlTeDAhL9uzsoy6Nj6u2sSjTeKMWRrHN7I4Tz6uHFnC
+        LXurihQPC91YGB99/gpiYWXFAnt9Xiw5lRUWdw/CBiJ4rg+29C3oMLtgZuLpAtK1
+        uqE7F8s0fbwdOdKsuxGDFdn2e17l+JnphDkcERDXrb/KIH6muNdhFpjnB3fJ2brt
+        RDCd01W2037fcjJzBEnocY/kYTqF1PbP9lh/+Mn7Gg==
+X-ME-Sender: <xms:5ShlY7FKvMdiI7MdYB8GPeH7sm8yEz0sE4pJ5CoQooBaFvUW75AoGg>
+    <xme:5ShlY4XvaNfgFPuKsbvtHa4_U0X6FVBAMhSvKhV3R6UFiRvXhpKJFh0-s4nI01b-x
+    jlyf7I2qKs61MkDHXI>
+X-ME-Received: <xmr:5ShlY9LR2xrGFIdsac3sg_xCouZpM4-aJJqKitqCh2RhgZbrJcPoS4waQ2RtRJ_kVlR9pyfi3ryzGNEBMMMCVOAhnjEpXSEw8aIKBgu3XZZdZg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrvddugdeilecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehgtderredttddunecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepieehffffvefgiedthfeiieeutdfgffekhfehgfehgfeiuddutdfftdekffeh
+    heevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
+    hh
+X-ME-Proxy: <xmx:5ShlY5FulryG6piRTq1Doh0CuBDYwOCeoCXIadUTWLSZ4ObNKGT5XA>
+    <xmx:5ShlYxUeU1vUGVeUlBlRWaIdtbyO6tDYisF3f47KqmHxCSKrHS6GNQ>
+    <xmx:5ShlY0NJrQGz6nbT46fijtydHCKy1E91zFdvxhw1jNtNOKb1d8H9Ig>
+    <xmx:5ihlY1egHKPdtgWfhXGl3pSh5GvaBqT4_jcol8t3pFd7EG_r7GifVw>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 4 Nov 2022 10:59:47 -0400 (EDT)
+Date:   Fri, 4 Nov 2022 15:59:46 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
+Message-ID: <20221104145946.orsyrhiqvypisl5j@houat>
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
+ <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TwEZgldODBz9znwY"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qzlwgqpxalgoto6y"
 Content-Disposition: inline
-In-Reply-To: <4cae5c8d-d6e9-79dc-670d-22ec9fda10a2@arm.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+In-Reply-To: <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---TwEZgldODBz9znwY
-Content-Type: text/plain; charset=us-ascii
+--qzlwgqpxalgoto6y
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 03, 2022 at 05:35:19PM +0000, Robin Murphy wrote:
-> On 2022-11-03 14:55, Ulf Hansson wrote:
-> > On Thu, 3 Nov 2022 at 15:01, Thierry Reding <thierry.reding@gmail.com> =
-wrote:
-> > >=20
-> > > On Thu, Nov 03, 2022 at 12:23:20PM +0000, Robin Murphy wrote:
-> > > > On 2022-11-03 04:38, Prathamesh Shete wrote:
-> > > > > In order to fully make use of the !IOMMU_API stub functions, make=
- the
-> > > > > struct iommu_fwspec always available so that users of the stubs c=
-an keep
-> > > > > using the structure's internals without causing compile failures.
-> > > >=20
-> > > > I'm really in two minds about this... fwspecs are an internal detai=
-l of the
-> > > > IOMMU API that are meant to be private between individual drivers a=
-nd
-> > > > firmware code, so anything poking at them arguably does and should =
-depend on
-> > > > CONFIG_IOMMU_API. It looks like the stub for dev_iommu_fwspec_get()=
- was only
-> > > > added for the sake of one driver that was misusing it where it real=
-ly wanted
-> > > > device_iommu_mapped(), and has since been fixed, so if anything my
-> > > > preference would be to remove that stub :/
-> > >=20
-> > > Tegra has been using this type of weak dependency on IOMMU_API mainly=
- in
-> > > order to allow building without the IOMMU support on some old platfor=
-ms
-> > > where people may actually care about the kernel size (Tegra20 systems
-> > > were sometimes severely constrained and don't have anything that we'd
-> > > call an IOMMU today).
-> > >=20
-> > > We have similar stubs in place for most other major subsystems in ord=
-er
-> > > to allow code to simply compile out if the subsystem is disabled, whi=
-ch
-> > > is quite convenient for sharing code between platforms that may want a
-> > > given feature and other platforms that may not want it, without causi=
-ng
-> > > too much of a hassle with compile-testing.
-> >=20
-> > I agree with the above.
-> >=20
-> > Moreover, the stubs make the code more portable/scalable and so it
-> > becomes easier to maintain.
->=20
-> Are you suggesting that having the same thing open-coded slightly
-> differently (with bugs) in 8 different places is somehow more maintainable
-> than abstracting it into a single centralised implementation?
->=20
-> Is it "easier to maintain" when already seemingly every thing I try to cl=
-ean
-> up or refactor in the IOMMU API at the moment is stymied by finding Tegra
-> drivers doing unexpected (and often questionable) things? Is it "more
-> scalable" to make it even easier for people to copy questionable code
-> without a second thought, leaving API maintainers to play an ever-expandi=
-ng
-> game of whack-a-mole to clean it up? No. No it chuffing well isn't :(
->=20
-> > > > I don't technically have much objection to this patch in isolation,=
- but what
-> > > > I don't like is the direction of travel it implies. I see the anti-=
-pattern
-> > > > is only spread across Tegra drivers, making Tegra-specific assumpti=
-ons, so
-> > > > in my view the best answer would be to abstract that fwpsec depende=
-ncy into
-> > > > a single Tegra-specific helper, which would better represent the na=
-ture of
-> > > > what's really going on here.
-> > >=20
-> > > I don't see how this is an anti-pattern. It might not be common for
-> > > drivers to need to reach into iommu_fwspec, so that might indeed be
-> > > specific to Tegra (for whatever reason our IP seems to want extra
-> > > flexibility), but the general pattern of using stubs is wide-spread,
-> > > so I don't see why IOMMU_API would need to be special.
-> >=20
-> > Again, I agree.
->=20
-> The anti-pattern is reaching into some other driver's private data assumi=
-ng
-> a particular format, with zero indication of the huge degree of assumption
-> involved, and half the time not even checking that what's being dereferen=
-ced
-> is valid.
+Hi Paul,
 
-If this is really driver private data that nobody else should be
-accessing, then this certainly is lacking documentation. And quite
-frankly, perhaps it should really be hidden from other drivers in
-that case.
-
-Remember the reason why we want to make this change is because we can
-already get access to all this data if we depend on IOMMU_API, while all
-the rest is also already available for !IOMMU_API configurations. This
-change removes that inconsistency.
-
-> > Moreover, a "git grep CONFIG_IOMMU_API" indicates that the problem
-> > isn't specific to Tegra. The "#ifdef CONFIG_IOMMU_API" seems to be
-> > sprinkled across the kernel. I think it would be nice if we could
-> > improve the situation. So far, using stubs along with what the
-> > $subject patch proposes, seems to me to be the best approach.
+On Fri, Nov 04, 2022 at 02:31:20PM +0000, Paul Cercueil wrote:
+> Le ven. 4 nov. 2022 =E0 14:18:13 +0100, Maxime Ripard <maxime@cerno.tech>=
+ a
+> =E9crit :
+> > The Ingenic CGU clocks implements a mux with a set_parent hook, but
+> > doesn't provide a determine_rate implementation.
+> >=20
+> > This is a bit odd, since set_parent() is there to, as its name implies,
+> > change the parent of a clock. However, the most likely candidate to
+> > trigger that parent change is a call to clk_set_rate(), with
+> > determine_rate() figuring out which parent is the best suited for a
+> > given rate.
+> >=20
+> > The other trigger would be a call to clk_set_parent(), but it's far less
+> > used, and it doesn't look like there's any obvious user for that clock.
+> >=20
+> > So, the set_parent hook is effectively unused, possibly because of an
+> > oversight. However, it could also be an explicit decision by the
+> > original author to avoid any reparenting but through an explicit call to
+> > clk_set_parent().
+> >=20
+> > The driver does implement round_rate() though, which means that we can
+> > change the rate of the clock, but we will never get to change the
+> > parent.
+> >=20
+> > However, It's hard to tell whether it's been done on purpose or not.
+> >=20
+> > Since we'll start mandating a determine_rate() implementation, let's
+> > convert the round_rate() implementation to a determine_rate(), which
+> > will also make the current behavior explicit. And if it was an
+> > oversight, the clock behaviour can be adjusted later on.
 >=20
-> Yes, there is plenty of code through the tree that is only relevant to the
-> IOMMU API and would be a complete waste of space without it, that is not =
+> So it's partly on purpose, partly because I didn't know about
+> .determine_rate.
+>=20
+> There's nothing odd about having a lonely .set_parent callback; in my case
+> the clocks are parented from the device tree.
+>=20
+> Having the clocks driver trigger a parent change when requesting a rate
+> change sounds very dangerous, IMHO. My MMC controller can be parented to =
 the
-> point in question here. Grep for dev_iommu_fwspec_get; outside
-> drivers/iommu, the only users are IOMMU-API-specific parts of ACPI code, =
-as
-> intended, plus 8 random Tegra drivers.
+> external 48 MHz oscillator, and if the card requests 50 MHz, it could swi=
+tch
+> to one of the PLLs. That works as long as the PLLs don't change rate, but=
+ if
+> one is configured as driving the CPU clock, it becomes messy.
+> The thing is, the clocks driver has no way to know whether or not it is
+> "safe" to use a designated parent.
 >=20
-> Now, there does happen to be a tacit contract between the ACPI IORT code =
-and
-> the Arm SMMU drivers for how SMMU StreamIDs are encoded in their respecti=
-ve
-> fwspecs, but it was never intended for wider consumption.
+> For that reason, in practice, I never actually want to have a clock
+> re-parented - it's almost always a bad idea vs. sticking to the parent cl=
+ock
+> configured in the DTS.
 
-Again, if iommu_fwspec and its accessors were somehow hidden, or if it
-was documented that this was not meant for wider consumption, then
-perhaps we wouldn't have started using it in the first place.
+Yeah, and this is totally fine. But we need to be explicit about it. The
+determine_rate implementation I did in all the patches is an exact
+equivalent to the round_rate one if there was one. We will never ask to
+change the parent.
 
->                                                           If Tegra drivers
-> want to have a special relationship with arm-smmu then fair enough, but t=
-hey
-> can do the same as MSM and formalise it somewhere that the SMMU driver
-> maintainers are at least aware of, rather than holding the whole generic
-> IOMMU API hostage.
+Given what you just said, I would suggest to set the
+CLK_SET_RATE_NO_REPARENT flag as well.
+
 >=20
-> Since apparently it wasn't clear, what I was proposing is a driver helper=
- at
-> least something like this:
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
+> >  drivers/clk/ingenic/cgu.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+> > index 1f7ba30f5a1b..0c9c8344ad11 100644
+> > --- a/drivers/clk/ingenic/cgu.c
+> > +++ b/drivers/clk/ingenic/cgu.c
+> > @@ -491,22 +491,23 @@ ingenic_clk_calc_div(struct clk_hw *hw,
+> >  	return div;
+> >  }
+> >=20
+> > -static long
+> > -ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
+> > -		       unsigned long *parent_rate)
+> > +static int ingenic_clk_determine_rate(struct clk_hw *hw,
+> > +				      struct clk_rate_request *req)
+> >  {
+> >  	struct ingenic_clk *ingenic_clk =3D to_ingenic_clk(hw);
+> >  	const struct ingenic_cgu_clk_info *clk_info =3D
+> > to_clk_info(ingenic_clk);
+> >  	unsigned int div =3D 1;
+> >=20
+> >  	if (clk_info->type & CGU_CLK_DIV)
+> > -		div =3D ingenic_clk_calc_div(hw, clk_info, *parent_rate, req_rate);
+> > +		div =3D ingenic_clk_calc_div(hw, clk_info, req->best_parent_rate,
+> > +					   req->rate);
 >=20
-> int tegra_arm_smmu_streamid(struct device *dev)
-> {
-> #ifdef CONFIG_IOMMU_API
-> 	struct iommu_fwspec *fwspec =3D dev_iommu_fwspec_get(dev)
+> Sorry but I'm not sure that this works.
 >=20
-> 	if (fwspec && fwspec->num_ids =3D=3D 1)
-> 		return fwspec->ids[0] & 0xffff;
-> #endif
-> 	return -EINVAL;
-> }
->=20
-> Now THAT is scalable and maintainable; any number of random drivers can c=
-all
-> it without any preconditions, it's a lot clearer what's going on, and I
-> won't have to swear profusely while herding patches through half a dozen
-> different trees if, when my ops rework gets to the point of refactoring
-> iommu_fwspec with dev_iommu, it ends up changing anything significant.
+> You replace the "parent_rate" with the "best_parent_rate", and that means
+> you only check the requested rate vs. the parent with the highest frequen=
+cy,
+> and not vs. the actual parent that will be used.
 
-I don't have any objection to making that change. It's not like we're
-doing all of this just for fun. We need to do this in order for the
-hardware to work correctly. If the above is an acceptable way to do this
-and preferable to using the more generic API then we can move ahead with
-that.
+best_parent_rate is initialized to the current parent rate, not the
+parent with the highest frequency:
+https://elixir.bootlin.com/linux/v6.1-rc3/source/drivers/clk/clk.c#L1471
 
-In order to keep things moving, do we want to merge the change as-is for
-now and then subsequently do a pass over all Tegra drivers and use a
-common function for stream ID access? Or do you want me to make that
-change prior to getting the SDHCI series merged?
+Maxime
 
-Thierry
-
---TwEZgldODBz9znwY
+--qzlwgqpxalgoto6y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNlI/4ACgkQ3SOs138+
-s6FaAw/+KoWc++Csbrpi0RdJRUx7lDY2tNWsxViwtFHNjz379KichZ/eQcVPBWQ4
-3Q4mFIe5tAKlJqbej5ibCsaXce5eyujLKkjpkUG/UxYrLMEG6CwyhxMydqR3aEPm
-bRTAlYeFVvyB3cukRsM36XiFAxULogyQfUDu2wL4j0WN+23C2PHgmiPc1+6QPS6+
-Rf1p5jmRg1OuvKpk6Ki4lIq5pOKQmk5Vp5MwRovZGBB7bzCYYFV7Gz05Dd8TCQLK
-xssVdJhOU59b3IpCJY8LKe4M/k7HNSNZSXbK0M1A4Eep9uF8n2HiR1b8qAUFAE+A
-RHv8Kt9ecSHeB3JOKeF0xiIqdWCMiRtRnymSSAlssz/eQB2zjlr8tLdozrR73TSi
-a4c3g/vvoSGkGu6UseY7UPzZA7QnyV4GYkKo48YIjO6JEci4WlJyjbsybOtf0Ah3
-/RdjBVU0QvfNrPkr9D+UNk5Cqj1RFduaRGJxTpgej210OJlXsJVOvwXOq5yzJkPl
-+88GBS/XH7tyoo+p6VlpjXXF5GIU2dp9pFwENqs5+BO+bhdoSsdbIgTTEP9IEBcY
-JwMG2w5vGEa1Vw3WvGN+dIxD/+5rPUSDDyEJEAAZN+7Okmy4mf8IDWMo9/4zPRFG
-o76zjBqiDAITA/IwAIkaKzx9lonoJ0LhGD/0K+hPU6SIOGnW8v8=
-=lumi
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCY2Uo4gAKCRDj7w1vZxhR
+xdiNAPwMWogS8hbvxJqI1oGt6bgt9c110SCyrRmWXmJGBnFUHAD/WYzk5xWPvpPl
+ZxQGNyyIgpdw3paEkkzKgvc0ede/vwU=
+=GVUt
 -----END PGP SIGNATURE-----
 
---TwEZgldODBz9znwY--
+--qzlwgqpxalgoto6y--
