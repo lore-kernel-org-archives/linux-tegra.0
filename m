@@ -2,169 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 160F8C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Nov 2022 08:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E4BC43219
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Nov 2022 10:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbiKDIO2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Nov 2022 04:14:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46126 "EHLO
+        id S231811AbiKDKir (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Nov 2022 06:38:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229950AbiKDIO2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Nov 2022 04:14:28 -0400
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95A326109;
-        Fri,  4 Nov 2022 01:14:25 -0700 (PDT)
-Received: from booty (unknown [77.244.183.192])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 0B06E10000A;
-        Fri,  4 Nov 2022 08:14:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1667549664;
+        with ESMTP id S231805AbiKDKi0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Nov 2022 06:38:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44E12B255
+        for <linux-tegra@vger.kernel.org>; Fri,  4 Nov 2022 03:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667558241;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+H2GO8v3XbY+N5PDhigFQzh8x3FCkd8eGdKQu4ziIlU=;
-        b=goh02MBw1xLMfvBjotjbiT1KklpqEqtRfEXdeDUE0vdwwwqc4WRzFT3kEkaMqPYUnOVnWq
-        UBYoXdiuVLCurH2PSTnaDu49UYyYCfWLRSBYvoEExn3ETJ0Jy7s0rDBCicK0Nl3av/EHVW
-        HfkD11MkStCAw+/OeisiTYf1UYg9Zn1cjkMQ+A2x3IQZyNsrSm5wvKAywFRKNGN5ZW28lD
-        O2YpRPZdWj/FrKZHb/gl5DhCGnmaDyDcM5xMhjP8j36u9YOfuOSUFB3Nx7HOxXgsvVsnsq
-        aMq92yeSLpi/OujBp1AuRA0U+/PKN+qdHrNf0/RIuPImgL2gNB72zZbmsde3OQ==
-Date:   Fri, 4 Nov 2022 09:14:20 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     linux-tegra@vger.kernel.org,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH] clk: tegra: fix HOST1X clock divider on Tegra20 and
- Tegra30
-Message-ID: <20221104091420.4b6d90cb@booty>
-In-Reply-To: <0e002130-868e-ca51-a1dd-091c269dba5d@collabora.com>
-References: <20221028074826.2317640-1-luca.ceresoli@bootlin.com>
-        <603a0227-7d25-b9da-6dc3-fa9fe1b951e7@collabora.com>
-        <20221102093255.0b5ba7d6@booty>
-        <0e002130-868e-ca51-a1dd-091c269dba5d@collabora.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        bh=FvcSXdbTIY6j0RtoeMW2Oyvbsf0knEKyh2vmjeJsi+Y=;
+        b=R2yQImMcAfIj5GEELIWTBsuK8hgSQmFxwHONeKVvbLNsoPnUuIooQaMHVa/KhRLCIH7r5a
+        SCaPWvfexiteqzwdGc6NcedILUoKqMLUZ0NXk2nAw9stXpgMK2U85P+Z3QKQx3TEQy8gHF
+        8m7WD5rw4DsgVTBWqQrCcuIJkg3C6Eo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-534-r8NwTcjRNieHLyWs9oWGdw-1; Fri, 04 Nov 2022 06:37:20 -0400
+X-MC-Unique: r8NwTcjRNieHLyWs9oWGdw-1
+Received: by mail-wm1-f71.google.com with SMTP id r187-20020a1c44c4000000b003c41e9ae97dso4041269wma.6
+        for <linux-tegra@vger.kernel.org>; Fri, 04 Nov 2022 03:37:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FvcSXdbTIY6j0RtoeMW2Oyvbsf0knEKyh2vmjeJsi+Y=;
+        b=CNXXBSOYdOfqPKonhR0spG0N2UumC9D24kHnX5CWwEDV+tvLAy7la1JORRq0WdIixo
+         F4U+W6I+FmBKUCxJ3VBxgH5xywpDkRoLmSaYVOx9SxG20ir64vXmgKtaJ2hZmPahH15u
+         QZVDvU1egbz/ZMaC1yb6l/cqcVTdowLvjNzQKDVsd3RvDVK6Up7xo+4zoEgghlRfWhV7
+         X5m6pT7wNu8dPgBdbzeopXl2s+WnuOqS8tOWA2gCJ7Zgm9swI1L/tU1RJ2rAHozlIipq
+         Q9GMEYMPxg0ZIreBI7Dft+bHUwYHgd6mUIDFlKLKKACTGD1VlOFPf+aT6cDaAWxJTn6g
+         F1bw==
+X-Gm-Message-State: ACrzQf3wtTNmdtltfHKq0+eEBVhsei9ZYPh5k1d3h7+b/3XdwOH+C4Jr
+        jaVOuGMMQB1Pga7gPPzGtqMxQFLOwFT7jfhF///NdU89GRBsj47GOzMjhFpcXnCTeHS7oYw0Ikg
+        7+knkkbM9FEd+cw0kUKxllH0=
+X-Received: by 2002:a05:600c:1e2a:b0:3c3:d770:1756 with SMTP id ay42-20020a05600c1e2a00b003c3d7701756mr23539586wmb.134.1667558239643;
+        Fri, 04 Nov 2022 03:37:19 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4LKXhwK5qh8ieFEkCSZgi7mblk9sJOfnr0awtpFbS+pIQGNE9IUSRaCOrs9CG3VpGFJY/xjQ==
+X-Received: by 2002:a05:600c:1e2a:b0:3c3:d770:1756 with SMTP id ay42-20020a05600c1e2a00b003c3d7701756mr23539569wmb.134.1667558239379;
+        Fri, 04 Nov 2022 03:37:19 -0700 (PDT)
+Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id f15-20020a5d50cf000000b0022e36c1113fsm3031008wrt.13.2022.11.04.03.37.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Nov 2022 03:37:18 -0700 (PDT)
+Message-ID: <ab8358a9-8450-0d49-627f-26afe7ba4f9d@redhat.com>
+Date:   Fri, 4 Nov 2022 11:37:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH v3 20/23] drm/fb-helper: Set flag in struct drm_fb_helper
+ for leaking physical addresses
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com
+Cc:     linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-samsung-soc@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
+        linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        spice-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org
+References: <20221103151446.2638-1-tzimmermann@suse.de>
+ <20221103151446.2638-21-tzimmermann@suse.de>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+In-Reply-To: <20221103151446.2638-21-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
-
-On Fri, 4 Nov 2022 00:44:16 +0300
-Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
-
-> On 11/2/22 11:32, Luca Ceresoli wrote:
-> > Hello Dmitry,
-> > 
-> > On Mon, 31 Oct 2022 03:34:07 +0300
-> > Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
-> >   
-> >> On 10/28/22 10:48, luca.ceresoli@bootlin.com wrote:  
-> >>> From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> >>>
-> >>> On Tegra20 and Tegra30 the HOST1X clock is a fractional clock divider with
-> >>> 7 integer bits + 1 decimal bit. This has been verified on both
-> >>> documentation and real hardware for Tegra20 an on the documentation I was
-> >>> able to find for Tegra30.
-> >>>
-> >>> However in the kernel code this clock is declared as an integer divider. A
-> >>> consequence of this is that requesting 144 MHz for HOST1X which is fed by
-> >>> pll_p running at 216 MHz would result in 108 MHz (216 / 2) instead of 144
-> >>> MHz (216 / 1.5).
-> >>>
-> >>> Fix by replacing the INT() macro with the MUX() macro which, despite the
-> >>> name, defines a fractional divider. The only difference between the two
-> >>> macros is the former does not have the TEGRA_DIVIDER_INT flag.
-> >>>
-> >>> Also move the line together with the other MUX*() ones to keep the existing
-> >>> file organization.
-> >>>
-> >>> Fixes: 76ebc134d45d ("clk: tegra: move periph clocks to common file")
-> >>> Cc: stable@vger.kernel.org
-> >>> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> >>> ---
-> >>>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> >>> index 4dcf7f7cb8a0..806d835ca0d2 100644
-> >>> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> >>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> >>> @@ -615,7 +615,6 @@ static struct tegra_periph_init_data periph_clks[] = {
-> >>>  	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
-> >>>  	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
-> >>>  	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
-> >>> -	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
-> >>>  	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
-> >>>  	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
-> >>>  	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
-> >>> @@ -664,6 +663,7 @@ static struct tegra_periph_init_data periph_clks[] = {
-> >>>  	MUX("owr", mux_pllp_pllc_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr_8),
-> >>>  	MUX("nor", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_NOR, 42, 0, tegra_clk_nor),
-> >>>  	MUX("mipi", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_MIPI, 50, TEGRA_PERIPH_ON_APB, tegra_clk_mipi),
-> >>> +	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
-> >>>  	MUX("vi_sensor", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor),
-> >>>  	MUX("vi_sensor", mux_pllc_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_9),
-> >>>  	MUX("cilab", mux_pllp_pllc_clkm, CLK_SOURCE_CILAB, 144, 0, tegra_clk_cilab),    
-> >>
-> >> This was attempted in the past
-> >> https://lore.kernel.org/all/20180723085010.GK1636@tbergstrom-lnx.Nvidia.com/
-> >>
-> >> I assume here you're also porting the downstream patches to upstream.
-> >> This one is too questionable. The host1x clock shouldn't affect overall
-> >> performance to begin with. It doesn't make sense to use fractional clock
-> >> just for getting extra KHz.  
-> > 
-> > Thank you for the review and for the pointer!
-> > 
-> > Indeed I'm not sure this patch brings an actual improvement to my use
-> > case, however I reached it by trying to replicate the configuration on
-> > a known-working kernel 3.1, which uses a 1.5 divider. This seems to be
-> > the same reason that led to the 2018 patch that also got rejected.
-> > 
-> > I'll be OK with dropping this patch after I have a 100% working setup
-> > with an integer divider, which is very likely given your reply. But it
-> > took time before I found the root cause of this issue, and I would like
-> > to avoid other people waste time in the future, so what about adding a
-> > comment there?
-> > 
-> > What about:
-> > 
-> >   /*
-> >    * The host1x clock shouldn't affect overall performance. It doesn't
-> >    * make sense to use fractional clock just for getting extra KHz, so
-> >    * let's pretend it's an integer divider
-> >    */  
+On 11/3/22 16:14, Thomas Zimmermann wrote:
+> Uncouple the parameter drm_leak_fbdev_smem from the implementation by
+> setting a flag in struct drm_fb_helper. This will help to move the
+> generic fbdev emulation into its own source file, while keeping the
+> parameter in drm_fb_helper.c. No functional changes.
 > 
-> If host1x isn't the only clock like that, then comment shouldn't be
-> directed to host1x. Have you checked other clocks?
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
 
-No, apologies, I don't know enough about this SoC to be able to put
-into a comment anything interesting other than what you wrote in your
-previous reply.
-
-> I'm curious who made that change originally in your downstream, was it
-> coming from NVIDIA?
-
-It is coming from our customer, not sure where they got it initially,
-but this is the commit where it was added, with a DIV_U71 flag:
-
-https://osdn.net/projects/android-x86/scm/git/kernel/commits/d861196163e30c07add471562b45dce38517c9b2
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
