@@ -2,256 +2,184 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498DEC4167D
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 16:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D04C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 17:11:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232374AbiKGQiT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:38:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35530 "EHLO
+        id S232110AbiKGRLL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Nov 2022 12:11:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231302AbiKGQiR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 11:38:17 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 244B9CDA;
-        Mon,  7 Nov 2022 08:38:16 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F14141FB;
-        Mon,  7 Nov 2022 08:38:21 -0800 (PST)
-Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C69D73F534;
-        Mon,  7 Nov 2022 08:38:00 -0800 (PST)
-From:   Pierre Gondois <pierre.gondois@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Pierre Gondois <pierre.gondois@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        with ESMTP id S231712AbiKGRLK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 12:11:10 -0500
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2078.outbound.protection.outlook.com [40.107.94.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86172140D5;
+        Mon,  7 Nov 2022 09:11:09 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QPfnv0X3iGTBU/kugiB9mjYXEBQSIKrUvow4Vq6sOTyTYc/MZhnt1lmqrq6jcLEuw/gWDLlUDXMEe/iKN5sE5KmIbTfd6ZFw9xOh7JOJTkpyhgXeMoNcV1jFdSxeGtzf8fzGPwgaXoibcLJSM207gTL+eVyYIgwJpdsuDam+a+UCVh60JIBCaaFyIpzN47h93exSpLIkjKpMQrWqifDs7LM4hjrpkBvWj4oyBR/p5SQyBeWAd7n3Zfo/r/1dUt4pVtFX3bOvJm0NVsJUlIPHH1CI3YC7hoMOTPU4F6I8ZqOe2VylK3DHgf8srDYGMfonKIqehrDzhWRaAo55F87c6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CcSYL2RWUfESwXURc2V9nje4ZLAlZ6ONqi7c6TWDCUA=;
+ b=gEoTrJsSWMMoUiAzXv+oD2XUzP2oDbDqTj0D3pAvrks/9XOliqSkp6maNINHJdMFqpGirS8RYRKzXgWeID1154nQXfWeXom/C3lHHolW8QiMppL+YvXRCTFxrkOOMRJr6tMF4rFJrwvWC6wOlT0gy6bRLy3IrvFpRRND+t67xjat80E0wQrtqr1MB3dSmPNam9iDnt5E69v6ckU3x0iij6UPgou2w5QkKy1NzOOzmTVRQsuL/bbK/f2DWpZiX29Qnv6BtYZxTTBJgpm5amC54sOhXycayvu5lFuOC5bmrI5bJnt++dKvyn/NfebehmmnFz2giMbSBMd329/XS/IxeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CcSYL2RWUfESwXURc2V9nje4ZLAlZ6ONqi7c6TWDCUA=;
+ b=TZxAFu6cRmJxBMePC2/Z6+OKzXzfUFa7IqiQ8Q0uRqP+Nouxp6KkmW2QduPJeuac2dgHuT2dhFPi/UeaapNQBEnu5lp6b+kREVpa5sXimpw6YeV4l7r05esfEO/7UORVe+dqPjtAW48fBFGPN/bZ/UyVcZ3B5AXLeUihne3R2mA0tdAUvNamY5q0u2Uad+zu+lAJyhJnzeaTKwLvkpUgJGXoThq5hHzGHnkFubDK9vYmgeqaRXTJRzVumqQToNmjyhV864Y0sw5AVmpc1wnQJtBO3omQOiITspzpUEKcI9TMeGTR3XFFhxZyXMugYUMdJlb0zAD8XMgrilZjcDRxrg==
+Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
+ by CY5PR12MB6130.namprd12.prod.outlook.com (2603:10b6:930:26::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.25; Mon, 7 Nov
+ 2022 17:11:07 +0000
+Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
+ ([fe80::46c4:5346:c449:9bd4]) by SJ0PR12MB5676.namprd12.prod.outlook.com
+ ([fe80::46c4:5346:c449:9bd4%3]) with mapi id 15.20.5791.022; Mon, 7 Nov 2022
+ 17:11:07 +0000
+From:   Besar Wicaksono <bwicaksono@nvidia.com>
+To:     Will Deacon <will@kernel.org>
+CC:     "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
+        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
+        Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Zhou Peng <eagle.zhou@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>, Li Jun <jun.li@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>, Wei Fang <wei.fang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Arjun K V <arjun.kv@samsung.com>, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 23/23] arm64: dts: Update cache properties for ti
-Date:   Mon,  7 Nov 2022 16:57:16 +0100
-Message-Id: <20221107155825.1644604-24-pierre.gondois@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
+        Vikram Sethi <vsethi@nvidia.com>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "mike.leach@linaro.org" <mike.leach@linaro.org>,
+        "leo.yan@linaro.org" <leo.yan@linaro.org>
+Subject: RE: [PATCH v6 0/2] perf: ARM CoreSight PMU support
+Thread-Topic: [PATCH v6 0/2] perf: ARM CoreSight PMU support
+Thread-Index: AQHY1HVBF/GLNzqT20exjr0smAT30q4z2SkAgAARs8A=
+Date:   Mon, 7 Nov 2022 17:11:07 +0000
+Message-ID: <SJ0PR12MB567614CC049F93584631DFBAA03C9@SJ0PR12MB5676.namprd12.prod.outlook.com>
+References: <20220930023443.9463-1-bwicaksono@nvidia.com>
+ <20221107155311.GD21157@willie-the-truck>
+In-Reply-To: <20221107155311.GD21157@willie-the-truck>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR12MB5676:EE_|CY5PR12MB6130:EE_
+x-ms-office365-filtering-correlation-id: a336fcb6-5ebb-4cff-84ba-08dac0e30f66
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: CvrO0pV7WCc5B6mYI7uecKhfs9EgosahyWQRH2WWuXxi0x1RBZjIPdRghSboMG4YBl5VHBTAkNCNTWV6P1mnuUdEDKZj38sSv2xc+X2MrO3gcw8AlFnKp4AzAfdbNcDhaW7Bl71skN+eWpFehZ5ijVuUDzEgIc10A8CI41IyHI4BIF7M92wmqXahS6PIVWQh0goGhPYRUu6po1usTrwqWuDvn1DlzCuWpJIvdUHXpsuAJh28+zrHGzEGcYKRAEZzUh6A/LSRYmKh+LgyU8IgrawAlPHmtk08CQaB51XmUR+HyYU2+px9USbTg/fSe4Lp0wWVK4RgeVJHSUyBrxhGklzAfdJ0dkSCQkEBRbj972IxMweIcBZiq008TNT/lajgz/46TkTjn5Ok3d+VrhoTPTCI2T92y+0+jXftL/g1L8WT1HR3UBCEEBfjTP4cVpxuZB89kPYSCeaotIf1pRgBvBudAhw3s3n3QAaO9YhxcooTcJm7L6xBytgi3fAf5Wb39eGSKRTy5CV+K8uVUZke1mCdszzQsSDfg9sJyDWM1xr3M4VKeT7AcFN6nt1x0Eud7aTHaTNBTMLNWU7sdTaFnhg++1uL4F0NdBBbzijgCRe92LtMWU4wgGRn+9OxHimSgb4MQiqjoxAUh49GS88DriAvEp6qRY7mC59hRIyYWY2PBohRzKnEz7pklkkaGytaRI4FiTN/mDNqquNVBtDLitCOjRlJ8L1uBJxC/vQ+PJEF7ttQumBQ1ai486/BrdqRN9jcNObhikEdVnjlE2V/uQ2d2OqdFCrV+xpTrTltG3A6qO7+jiHG6CMqyTWKsvm3jhpWR53xDMPse8ggxrJOEpRPspZTgaGAmqpjt0Zjb9c+G1lffrt8p40k+OXaRiFT
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(396003)(346002)(136003)(376002)(39860400002)(451199015)(41300700001)(4326008)(8676002)(8936002)(5660300002)(7416002)(52536014)(6916009)(54906003)(9686003)(316002)(7696005)(6506007)(478600001)(53546011)(26005)(38100700002)(186003)(2906002)(966005)(71200400001)(66556008)(66446008)(66476007)(66946007)(76116006)(64756008)(33656002)(122000001)(55016003)(38070700005)(86362001)(83380400001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?+Hez1GA/nQC0Kpnbe2TLSxMbt/LeRZV8E2MknxwUHMCU40Jt8x4inhcvfhlC?=
+ =?us-ascii?Q?4yNSK4f4BNtvcL+s/0S9UFvqHvUDXA4EkGI5Hp5qFeHw76pWUVXvbSfH+l/0?=
+ =?us-ascii?Q?lxCRlAlavoExqkpDwMGXgFaxZpUiQ3ytJxfhAd7lWzig+xq/bZCovMb/qSZ1?=
+ =?us-ascii?Q?+5SISyn4lyUDepe40fFuo309nJNrBCpHo2gBx3UBgS8NYutNGv6/4iz3zE3x?=
+ =?us-ascii?Q?+wfM2yw3O1KZNfdZKNBukZQoBQSh9lMeuXRzh5EfhFDEGTbzdlvVMM7jcA0M?=
+ =?us-ascii?Q?vII9npgTJUiKFdlQPMav/O67D1jRm2fXDQPjWUypnq0veMIvptLeEQYK2GHz?=
+ =?us-ascii?Q?cqwN2/7IQ1hvL10sLuYnEv5lt4mwFu6DX84Pu5KH37nwaGsEXXp0ScIhVxe4?=
+ =?us-ascii?Q?LOWobf2o8p7ZuJ647K4I529iLljWjQFHPyINaYtnWIwuuAncucLVR8wRcAhF?=
+ =?us-ascii?Q?dQazOkNq6Nj+cZ95yjCykkqw7t7wfq5uQKCLp16cLW0dZvmEHIYzg0vSTkPH?=
+ =?us-ascii?Q?FKGb8Vfm8sSop0tWkmZlTWtxyYrqgQFuKWtQgABaT36/FeMwSQ3YpLSwfQie?=
+ =?us-ascii?Q?5WoK453fZ2CteO6r7xbrlMSweJ10GrfZd1fT+AqFLi4Z/NUqVd3sq1aWJ/5X?=
+ =?us-ascii?Q?We3a8AiPzmK7FoJvJxzo/i74mr9LzocPfV/4866dAHfyyKyao3Pbripc9og7?=
+ =?us-ascii?Q?xfHZb0vc6X8r/1lS8mJs7lMdlQ6WRxVsn8Iwzcw3TsMO/NScWJtL5GVHLXEi?=
+ =?us-ascii?Q?ej0sI36lOrUU8qNNvAByMZ+CixAOHnP0j7qvm/RErLV9bL3seSvSaiyNkfXb?=
+ =?us-ascii?Q?3U48xTNceH0a9+GAtku1FuxQh9bmfUwDLcq+kP5WzuOJF/ct97MVDtl1vF2o?=
+ =?us-ascii?Q?D9Blvj9Gu/QvxOoU3pWhhPHyAklk/Fby6gJNALB7Wv+bDIps7Ci3sraYD4b2?=
+ =?us-ascii?Q?11lp56FmuPZ7bReXLiIGDWf1bZ1psDsvWVjqwlyPRT9xRTFUbMyUa2gKW6Jl?=
+ =?us-ascii?Q?ifDWdy4nWW4++3DUEJZXiHZk+fEn7va3an9FjbZVQaw5NnaKn868Dr5TkF4Z?=
+ =?us-ascii?Q?fxZo3XP74wMUcS44judFdTu8XP6OLrlTzMcsA+R7soBoJHi681g7lzvfiBIT?=
+ =?us-ascii?Q?cd7NaJVHxN94iCPgivX1ZHnWVuCeokdpfUeLHo8PzhZe2NXkEgShPbycizeZ?=
+ =?us-ascii?Q?w7T9LgDMHZlp58xkVoUjBBRIUucNdnLx2SQbmbPDj+9OnW1BbY34dwRPlTHi?=
+ =?us-ascii?Q?cjGyUxN08jsDZfltnFHSjLz+V9RBv7irPrFUED3C5OMuhb1t/seFAkDzzVEs?=
+ =?us-ascii?Q?mloMNeLBZ1u2xdAkSohbiNKOcZvd224LvW8X6GDuc4CbKjrZLTqAgrelBGy5?=
+ =?us-ascii?Q?XDRZQ4lZ91IPU0CSP/BaM9kb8L4raigt2M3U6QLl3bmFy93t0a4eJyqFZ/PF?=
+ =?us-ascii?Q?3ASGr3HJELGrgtehXYUaOFiYSUXRqFcLDreeCf7RTAPIAwbQ1mE0SnKsuyU9?=
+ =?us-ascii?Q?h9kU4eR/3AuEqdWe+FW1/OTYvi1LEdzPWzVm0MNew2VwypuwvRMkk+DE54Ac?=
+ =?us-ascii?Q?8kwKuPvpED77ig4QYIRhy0HGr03wY45ckAbjoyZV?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a336fcb6-5ebb-4cff-84ba-08dac0e30f66
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2022 17:11:07.4363
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5dKBQ+JqLAqD33DQU1zRgf9GFCviOIRZUcNGyRK/parUdqjqJVqLfTEd9W6ifazQ3B4aEl7sE/wsFqrvpw4M+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6130
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The DeviceTree Specification v0.3 specifies that the cache node
-'compatible' and 'cache-level' properties are 'required'. Cf.
-s3.8 Multi-level and Shared Cache Nodes
-The 'cache-unified' property should be present if one of the
-properties for unified cache is present ('cache-size', ...).
+Hi Will,
 
-Update the Device Trees accordingly.
+> -----Original Message-----
+> From: Will Deacon <will@kernel.org>
+> Sent: Monday, November 7, 2022 9:53 AM
+> To: Besar Wicaksono <bwicaksono@nvidia.com>
+> Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
+> catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+> tegra@vger.kernel.org; sudeep.holla@arm.com;
+> thanu.rangarajan@arm.com; Michael.Williams@arm.com; Thierry Reding
+> <treding@nvidia.com>; Jonathan Hunter <jonathanh@nvidia.com>; Vikram
+> Sethi <vsethi@nvidia.com>; mathieu.poirier@linaro.org;
+> mike.leach@linaro.org; leo.yan@linaro.org
+> Subject: Re: [PATCH v6 0/2] perf: ARM CoreSight PMU support
+>=20
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> On Thu, Sep 29, 2022 at 09:34:41PM -0500, Besar Wicaksono wrote:
+> > Add driver support for ARM CoreSight PMU device and event attributes fo=
+r
+> NVIDIA
+> > implementation. The code is based on ARM Coresight PMU architecture
+> and ACPI ARM
+> > Performance Monitoring Unit table (APMT) specification below:
+> >  * ARM Coresight PMU:
+> >         https://developer.arm.com/documentation/ihi0091/latest
+> >  * APMT: https://developer.arm.com/documentation/den0117/latest
+> >
+> > The patchset applies on top of
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> >   master next-20220524
+> >
+> > For APMT support, please see patchset:
+> https://lkml.org/lkml/2022/4/19/1395
+> >
+> > Changes from v5:
+> >  * Default get_event/format_attrs callback now returns copy of default
+> array.
+> > Thanks to suzuki.poulose@arm.com for the review comments.
+> > v5: https://lore.kernel.org/linux-arm-kernel/20220928201830.45637-1-
+> bwicaksono@nvidia.com/
+>=20
+> These patches no longer apply. Please can you rebase onto -rc4 and drop t=
+he
+> defconfig change from the first patch?
 
-Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
----
- arch/arm64/boot/dts/ti/k3-am625.dtsi  | 1 +
- arch/arm64/boot/dts/ti/k3-am62a7.dtsi | 1 +
- arch/arm64/boot/dts/ti/k3-am642.dtsi  | 1 +
- arch/arm64/boot/dts/ti/k3-am654.dtsi  | 2 ++
- arch/arm64/boot/dts/ti/k3-j7200.dtsi  | 1 +
- arch/arm64/boot/dts/ti/k3-j721e.dtsi  | 1 +
- arch/arm64/boot/dts/ti/k3-j721s2.dtsi | 1 +
- 7 files changed, 8 insertions(+)
+Why does the defconfig change need to be dropped ?
+And sure, I will rebase to 6.1 rc4.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am625.dtsi b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-index 887f31c23fef..7d7e5a1673a2 100644
---- a/arch/arm64/boot/dts/ti/k3-am625.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-@@ -95,6 +95,7 @@ cpu3: cpu@3 {
- 
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
-+		cache-unified;
- 		cache-level = <2>;
- 		cache-size = <0x40000>;
- 		cache-line-size = <64>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-index 331d89fda29d..9734549851c0 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-@@ -95,6 +95,7 @@ cpu3: cpu@3 {
- 
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
-+		cache-unified;
- 		cache-level = <2>;
- 		cache-size = <0x40000>;
- 		cache-line-size = <64>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am642.dtsi b/arch/arm64/boot/dts/ti/k3-am642.dtsi
-index 8a76f4821b11..7a6eedea3aae 100644
---- a/arch/arm64/boot/dts/ti/k3-am642.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am642.dtsi
-@@ -58,6 +58,7 @@ cpu1: cpu@1 {
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x40000>;
- 		cache-line-size = <64>;
- 		cache-sets = <256>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am654.dtsi b/arch/arm64/boot/dts/ti/k3-am654.dtsi
-index a89257900047..4cc329b271ac 100644
---- a/arch/arm64/boot/dts/ti/k3-am654.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am654.dtsi
-@@ -93,6 +93,7 @@ cpu3: cpu@101 {
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x80000>;
- 		cache-line-size = <64>;
- 		cache-sets = <512>;
-@@ -102,6 +103,7 @@ L2_0: l2-cache0 {
- 	L2_1: l2-cache1 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x80000>;
- 		cache-line-size = <64>;
- 		cache-sets = <512>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200.dtsi b/arch/arm64/boot/dts/ti/k3-j7200.dtsi
-index b6da0454cc5b..d74f86b0f622 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200.dtsi
-@@ -84,6 +84,7 @@ cpu1: cpu@1 {
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x100000>;
- 		cache-line-size = <64>;
- 		cache-sets = <1024>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e.dtsi b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-index 0e23886c9fd1..6975cae644d9 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-@@ -86,6 +86,7 @@ cpu1: cpu@1 {
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x100000>;
- 		cache-line-size = <64>;
- 		cache-sets = <1024>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2.dtsi
-index 7b930a85a29d..78295ee0fee5 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2.dtsi
-@@ -69,6 +69,7 @@ cpu1: cpu@1 {
- 
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
-+		cache-unified;
- 		cache-level = <2>;
- 		cache-size = <0x100000>;
- 		cache-line-size = <64>;
--- 
-2.25.1
+Thanks,
+Besar
 
+>=20
+> Thanks,
+>=20
+> Will
