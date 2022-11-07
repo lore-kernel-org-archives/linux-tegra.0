@@ -2,81 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E80C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 19:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 780C0C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 19:11:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232529AbiKGTIz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Nov 2022 14:08:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44810 "EHLO
+        id S231967AbiKGTLH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Nov 2022 14:11:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232456AbiKGTIt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 14:08:49 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B484B248F1;
-        Mon,  7 Nov 2022 11:08:47 -0800 (PST)
+        with ESMTP id S232483AbiKGTKp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 14:10:45 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABF914D25;
+        Mon,  7 Nov 2022 11:10:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 390B361298;
-        Mon,  7 Nov 2022 19:08:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB590C43470;
-        Mon,  7 Nov 2022 19:08:43 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2F58DB81670;
+        Mon,  7 Nov 2022 19:10:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52CA7C433D7;
+        Mon,  7 Nov 2022 19:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667848126;
-        bh=o+3qNZMSy/zjTLSUFqaqkQL+4XLaemV6mgyDOsuMDXM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rc1b+htgpHYfT6dlGDMFei0vuJ0NIO10FYuYWOt8anYSzNiOd+krAhQCEfCt5TosG
-         2gqeEclHFGBNoKSwrEadZQCSGSO9O6sF17+DzeFiczHGhfJTNB6g0YGY3Ebq4ejMPy
-         NUC2ZAKfxMu7InsMK6iba7F0M7pLzC1PfYJHOPUmGy9Ik9gxy9Kcsi4wAsQk1Psz5w
-         Fhar6BdNM5HxBi3PawcHSRCrXxLAUV0IZzTb2drgIgGZmvOr56mgijLDdbrThGZH2Y
-         O0DkNxHwcHIbxsH9vM2Dg9DC7bjdm4oM+0CQt5sdqzN/NS048bKN5XV4RaZiAxKjEp
-         IwbAaE05boa0Q==
+        s=k20201202; t=1667848241;
+        bh=sx18lClMexihvXvYPtPJeHIqpLhp8A2J1jWg0z5jVbg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gOyZI/DzlYTrvJq8IyKW9aN21QPXmyCHVsV2ItjZ8Y5xhYoHVWt3TMlgK/vHAK37e
+         jrd8qrAhs6/GrH8dw1DX7ur8DuM5BFmgUFeedrmtnZBG+5FPTWQ7kDWKgdsQ8RyRMy
+         rA/T5EwTx+FdSQ0QGkfqKLEUKIza3WMWgtQpn9mlGgLRV2yuySROYr3ves3RGkxcDO
+         b9cWfG4MakMGjLDqxE6fZpFWSe6uR/Aa/L5mT97Y5Pw40wxyI9rZQ/9cig+Cp/yDnk
+         T9lBTESD+FDxVvTfvapnBLFQftoiMU88yaTAxATJVMQ0h6T+UEcbwfQ820V8+VWcKW
+         t8G8hrz97jTfA==
+Date:   Mon, 7 Nov 2022 19:10:35 +0000
 From:   Will Deacon <will@kernel.org>
-To:     guohanjun@huawei.com, rafael@kernel.org, lenb@kernel.org,
-        catalin.marinas@arm.com, sudeep.holla@arm.com,
-        Besar Wicaksono <bwicaksono@nvidia.com>,
-        lorenzo.pieralisi@arm.com
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, vsethi@nvidia.com,
-        linux-acpi@vger.kernel.org, treding@nvidia.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT) initial support
-Date:   Mon,  7 Nov 2022 19:08:33 +0000
-Message-Id: <166782973154.23022.17026705500797647098.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220929002834.32664-1-bwicaksono@nvidia.com>
+To:     Besar Wicaksono <bwicaksono@nvidia.com>
+Cc:     rafael@kernel.org, lenb@kernel.org, catalin.marinas@arm.com,
+        lorenzo.pieralisi@arm.com, guohanjun@huawei.com,
+        sudeep.holla@arm.com, linux-tegra@vger.kernel.org,
+        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT)
+ initial support
+Message-ID: <20221107191034.GB21991@willie-the-truck>
 References: <20220929002834.32664-1-bwicaksono@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220929002834.32664-1-bwicaksono@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 28 Sep 2022 19:28:34 -0500, Besar Wicaksono wrote:
-> ARM Performance Monitoring Unit Table describes the properties of PMU
-> support in ARM-based system. The APMT table contains a list of nodes,
-> each represents a PMU in the system that conforms to ARM CoreSight PMU
-> architecture. The properties of each node include information required
-> to access the PMU (e.g. MMIO base address, interrupt number) and also
-> identification. For more detailed information, please refer to the
-> specification below:
->  * APMT: https://developer.arm.com/documentation/den0117/latest
->  * ARM Coresight PMU:
->         https://developer.arm.com/documentation/ihi0091/latest
-> 
-> [...]
+On Wed, Sep 28, 2022 at 07:28:34PM -0500, Besar Wicaksono wrote:
+> diff --git a/drivers/acpi/arm64/apmt.c b/drivers/acpi/arm64/apmt.c
+> new file mode 100644
+> index 000000000000..f55167ca51e7
+> --- /dev/null
+> +++ b/drivers/acpi/arm64/apmt.c
+> @@ -0,0 +1,177 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ARM APMT table support.
+> + * Design document number: ARM DEN0117.
+> + *
+> + * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
+> + *
+> + */
+> +
+> +#define pr_fmt(fmt)	"ACPI: APMT: " fmt
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/acpi_apmt.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define DEV_NAME "arm-cs-arch-pmu"
+> +
+> +/* There can be up to 3 resources: page 0 and 1 address, and interrupt. */
+> +#define DEV_MAX_RESOURCE_COUNT 3
+> +
+> +/* Root pointer to the mapped APMT table */
+> +static struct acpi_table_header *apmt_table;
+> +
+> +static int __init apmt_init_resources(struct resource *res,
+> +					      struct acpi_apmt_node *node)
+> +{
+> +	int irq, trigger;
+> +	int num_res = 0;
+> +
+> +	res[num_res].start = node->base_address0;
+> +	res[num_res].end = node->base_address0 + SZ_4K - 1;
+> +	res[num_res].flags = IORESOURCE_MEM;
+> +
+> +	num_res++;
+> +
+> +	res[num_res].start = node->base_address1;
+> +	res[num_res].end = node->base_address1 + SZ_4K - 1;
+> +	res[num_res].flags = IORESOURCE_MEM;
+> +
+> +	num_res++;
+> +
+> +	if (node->ovflw_irq != 0) {
+> +		trigger = (node->ovflw_irq_flags & ACPI_APMT_OVFLW_IRQ_FLAGS_MODE);
+> +		trigger = (trigger == ACPI_APMT_OVFLW_IRQ_FLAGS_MODE_LEVEL) ?
+> +			ACPI_LEVEL_SENSITIVE : ACPI_EDGE_SENSITIVE;
+> +		irq = acpi_register_gsi(NULL, node->ovflw_irq, trigger,
+> +						ACPI_ACTIVE_HIGH);
+> +
+> +		if (irq <= 0) {
+> +			pr_warn("APMT could not register gsi hwirq %d\n", irq);
+> +			return num_res;
+> +		}
+> +
+> +		res[num_res].start = irq;
+> +		res[num_res].end = irq;
+> +		res[num_res].flags = IORESOURCE_IRQ;
+> +
+> +		num_res++;
+> +	}
+> +
+> +	return num_res;
+> +}
+> +
+> +/**
+> + * apmt_add_platform_device() - Allocate a platform device for APMT node
+> + * @node: Pointer to device ACPI APMT node
+> + *
+> + * Returns: 0 on success, <0 failure
+> + */
+> +static int __init apmt_add_platform_device(struct acpi_apmt_node *node,
+> +							struct fwnode_handle *fwnode)
 
-Applied to arm64 (for-next/acpi), thanks!
+I queued this already, but my testing kicked up a nit that 'fwnode' is not
+described in the kerneldoc. Please can you send a follow-up fix for that,
+based on for-next/acpi? The indentation is also pretty weird with extra
+parameter.
 
-[1/1] ACPI: ARM Performance Monitoring Unit Table (APMT) initial support
-      https://git.kernel.org/arm64/c/6251d38059ae
-
-Cheers,
--- 
 Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
