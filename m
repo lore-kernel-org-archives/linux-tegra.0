@@ -2,80 +2,154 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1B1C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 15:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B94C4321E
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 16:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232453AbiKGPxV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Nov 2022 10:53:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49258 "EHLO
+        id S232369AbiKGQCs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Nov 2022 11:02:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232444AbiKGPxU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 10:53:20 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF86EB39;
-        Mon,  7 Nov 2022 07:53:19 -0800 (PST)
+        with ESMTP id S232273AbiKGQCq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 11:02:46 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854FE1FFBC;
+        Mon,  7 Nov 2022 08:02:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8663E60F4F;
-        Mon,  7 Nov 2022 15:53:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEB80C433C1;
-        Mon,  7 Nov 2022 15:53:15 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E4D81610E7;
+        Mon,  7 Nov 2022 16:02:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F88C433D6;
+        Mon,  7 Nov 2022 16:02:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667836398;
-        bh=zSri8bOYt/cciQZNAvfd+4Ix4mWsGf9Zn9QOVwBCLWc=;
+        s=k20201202; t=1667836963;
+        bh=Q/9M3qSa1bFKeX3VjOKXXNeZQ8B6sH7ewCOsQSJl+z0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=stK7yGqs2kBjcMyP0Xmt0GoeWtyDcWPCmTx/qzfCsr9tkTF4+rj9lby8wywxOV/IV
-         9wrizNHEAMcc7Ddv0H23dKQu9+8ZffHbhv/V6KAWhOSiaLYPdiY8aK5YC9otG9CtXT
-         7h+52DDvsRaLp9juGTiZYnDaJ5uQsINuyRbreqg9qOY000W0mjgRvf+KEf4VPdZRuN
-         vx9JbHoZ6QwDBK0ACJWn9b8TA86tRrvsb3y6gNAEd59sdInstT3Rw2pWG3PJwGcOjd
-         VAs9go51dEB/tTQ8gq20DSi74ntY6b2ptlPDcjGi9Y639uwuI/O74jzuTfpJCIjipx
-         NxeXvH5+oD6gw==
-Date:   Mon, 7 Nov 2022 15:53:12 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Besar Wicaksono <bwicaksono@nvidia.com>
-Cc:     suzuki.poulose@arm.com, robin.murphy@arm.com,
-        catalin.marinas@arm.com, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sudeep.holla@arm.com,
-        thanu.rangarajan@arm.com, Michael.Williams@arm.com,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-        mathieu.poirier@linaro.org, mike.leach@linaro.org,
-        leo.yan@linaro.org
-Subject: Re: [PATCH v6 0/2] perf: ARM CoreSight PMU support
-Message-ID: <20221107155311.GD21157@willie-the-truck>
-References: <20220930023443.9463-1-bwicaksono@nvidia.com>
+        b=XOmgvny4UUp7BZnQahaV6KsWUNhmwIhMxpmcOq3tw9+9teYm6GP3wrPKa3hZGoLnw
+         E8JjujtcqktG/KkrpbyyurTKPktTQdPK912YFUTtXWMPkM5Mc8ahGVOnmMw4Uhs9uI
+         cTBlpsSY6QMvq4ve9Z36ouACRIQs64gqbTRuCpXHF7tFc/7x4f8H/Qv0fo1LJXDNr9
+         JzeHD9nkKpifY1CmMZpd4sb8KMqk3fuEl3XqfTd7Ru1lKOsEk7X40/JP1ugM9/6yCX
+         WursSOfQ18hBTkSv25XwIi5vVUTkBzpxlLxQrxg8iYZ3853WT5wCALjP37Nihp0/J3
+         NEZKY1McJ+eyw==
+Date:   Mon, 7 Nov 2022 16:02:28 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 43/65] ASoC: tlv320aic32x4: Add a determine_rate hook
+Message-ID: <Y2ksFHGNIEVm1ldF@sirena.org.uk>
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-43-f6736dec138e@cerno.tech>
+ <Y2UzdYyjgahJsbHg@sirena.org.uk>
+ <20221104155123.qomguvthehnogkdd@houat>
+ <Y2U2+ePwRieYkNjv@sirena.org.uk>
+ <20221107084322.gk4j75r52zo5k7xk@houat>
+ <Y2j0r0wX1XtQBvqO@sirena.org.uk>
+ <20221107152603.57qimyzkinhifx5p@houat>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hTyRvcr/YAY3aApU"
 Content-Disposition: inline
-In-Reply-To: <20220930023443.9463-1-bwicaksono@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20221107152603.57qimyzkinhifx5p@houat>
+X-Cookie: Minimum charge for booths.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 09:34:41PM -0500, Besar Wicaksono wrote:
-> Add driver support for ARM CoreSight PMU device and event attributes for NVIDIA
-> implementation. The code is based on ARM Coresight PMU architecture and ACPI ARM
-> Performance Monitoring Unit table (APMT) specification below:
->  * ARM Coresight PMU:
->         https://developer.arm.com/documentation/ihi0091/latest
->  * APMT: https://developer.arm.com/documentation/den0117/latest
-> 
-> The patchset applies on top of
->   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   master next-20220524
-> 
-> For APMT support, please see patchset: https://lkml.org/lkml/2022/4/19/1395 
-> 
-> Changes from v5:
->  * Default get_event/format_attrs callback now returns copy of default array.
-> Thanks to suzuki.poulose@arm.com for the review comments.
-> v5: https://lore.kernel.org/linux-arm-kernel/20220928201830.45637-1-bwicaksono@nvidia.com/
 
-These patches no longer apply. Please can you rebase onto -rc4 and drop the
-defconfig change from the first patch?
+--hTyRvcr/YAY3aApU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
+On Mon, Nov 07, 2022 at 04:26:03PM +0100, Maxime Ripard wrote:
+> On Mon, Nov 07, 2022 at 12:06:07PM +0000, Mark Brown wrote:
+> > On Mon, Nov 07, 2022 at 09:43:22AM +0100, Maxime Ripard wrote:
 
-Will
+> > The series does fill in __clk_mux_determine_rate for everything though -
+> > if it was just assumed by default the only thing that'd be needed would
+> > be adding the flag.
+
+> The behavior assumed by default was equivalent to
+> __clk_mux_determine_rate + CLK_SET_RATE_NO_REPARENT. We could indeed set
+> both if determine_rate is missing in the core, but that's unprecedented
+> in the clock framework so I think we'll want Stephen to comment here :)
+
+> It's also replacing one implicit behavior by another. The point of this
+> series was to raise awareness on that particular point, so I'm not sure
+> it actually fixes things. We'll see what Stephen thinks about it.
+
+We could also just set the operation and still require the flag to be
+specified.  I'm a little surprised to learn that it's something you
+might want to override, never mind that the API didn't have a default -
+it feels like a bit of a landmine that this is the case and is probably
+why there's so many cases to fix up.
+
+--hTyRvcr/YAY3aApU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNpLBMACgkQJNaLcl1U
+h9BS0gf/chIMp6chtu1p8LwUn+lniQOfOjVm2GoGAQ06qSr9+3KsWgvPO3J4pFNa
+l036gwiNNFPM5gXlEj19YU0NgiAQIt2hoh9q92PY1kN8vmSQutr8U6QVxq27pphZ
+5T2AVdZG2/L1Za5fy+qtwzx6ji1EENFmdLOF/NRrtc1zJPm/bT9E14uqwH7vmK0f
+Jh1uBONY+x2wM44EMNgt3p4HTS/37ARwT9njBao9UUdt1uFWnUx05o0lerkyk4Xg
+QlkvyC2hU+mXML3s6FVEbx0TQImsJItRx7Fk4E0Pij30qxWDtd0uybSJOzuWo16R
+emQv+2HsLgl0L3qkctPVJREpPwCQuQ==
+=mfv5
+-----END PGP SIGNATURE-----
+
+--hTyRvcr/YAY3aApU--
