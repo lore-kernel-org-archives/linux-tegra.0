@@ -2,86 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0E9C43217
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 19:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 643FAC43219
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 20:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232396AbiKGT6h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Nov 2022 14:58:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42022 "EHLO
+        id S231586AbiKGUGB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Nov 2022 15:06:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231172AbiKGT6g (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 14:58:36 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2112DCA
-        for <linux-tegra@vger.kernel.org>; Mon,  7 Nov 2022 11:58:35 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1os8GI-0003Vc-Kv; Mon, 07 Nov 2022 20:58:26 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1os8GG-002uvq-HR; Mon, 07 Nov 2022 20:58:25 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1os8GG-00F2Sd-Oq; Mon, 07 Nov 2022 20:58:24 +0100
-Date:   Mon, 7 Nov 2022 20:58:23 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pwm: tegra: Convert to json-schema
-Message-ID: <20221107195823.bitmyx6uyjdwgln2@pengutronix.de>
-References: <20221103120137.1467905-1-thierry.reding@gmail.com>
+        with ESMTP id S231351AbiKGUGA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 15:06:00 -0500
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D922527CC3;
+        Mon,  7 Nov 2022 12:05:59 -0800 (PST)
+Received: by mail-ot1-f44.google.com with SMTP id cn2-20020a056830658200b0066c74617e3dso7204976otb.2;
+        Mon, 07 Nov 2022 12:05:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mzxwEFNUScRHad0GSitNuAPUAQgYGoYkKZUbn1eKG18=;
+        b=Pk7c3069xNX4M+ZFbRx1Kg4eokduxQiU4Ya7kmipQd6L8+/a6//TQfwWAvHhWxxTEv
+         /dQvBT0WD8rQzh5IPiIjLlaez7mffx5zbRRIcC/KqSaDIKsQmW0SBFh/vJGTwEhrcTYW
+         mPB8mC7OuvaGEP9j9ycemv+J6NPRuAbKJewyyrC5reKwPpEiu11JsVdKSRk+tYuJBAVu
+         aPLWgiQme7jCVt7a8Hqp49AUZAkC6xhi8Wa215qfSbluW3rHjw82SCTAcRU8FFrvUVKY
+         IoDi6O6HogkLk0QoW53xkl1RQMd2Uw7NNnVQ27JXIwFtW7UzztWkUmN7dGV0i8GTZMfZ
+         31gg==
+X-Gm-Message-State: ACrzQf0Asqv0GGV8K9RVMril0+v3ho0ydyRvzXeNVYndArt/QWUBm5C2
+        +RcLk1bfiAmkcrn7w49Bhb0jTW2nGA==
+X-Google-Smtp-Source: AMsMyM5F0ZUoojX9ufwQfzy1dN0QLHEBHTBy2a9TmPWOTk7MHOTPAWpdcmmZ5GfaQLGlHKVMLnBdiQ==
+X-Received: by 2002:a05:6830:410b:b0:66c:9a3a:53e with SMTP id w11-20020a056830410b00b0066c9a3a053emr8419415ott.225.1667851558934;
+        Mon, 07 Nov 2022 12:05:58 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m6-20020a4a9506000000b0049201e2b8f4sm2522674ooi.4.2022.11.07.12.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 12:05:58 -0800 (PST)
+Received: (nullmailer pid 1504075 invoked by uid 1000);
+        Mon, 07 Nov 2022 20:06:00 -0000
+Date:   Mon, 7 Nov 2022 14:06:00 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 4/7] dt-bindings: timestamp: Add Tegra234 support
+Message-ID: <20221107200600.GA1489762-robh@kernel.org>
+References: <20221103174523.29592-1-dipenp@nvidia.com>
+ <20221103174523.29592-5-dipenp@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ipqj7xouaflyhqta"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221103120137.1467905-1-thierry.reding@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20221103174523.29592-5-dipenp@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Nov 03, 2022 at 10:45:20AM -0700, Dipen Patel wrote:
+> Added timestamp provider support for the Tegra234 in devicetree
+> bindings.
+> 
+> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> ---
+>  .../timestamp/nvidia,tegra194-hte.yaml        | 44 +++++++++++++++++--
+>  1 file changed, 40 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> index c31e207d1652..158dbe58c49f 100644
+> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/timestamp/nvidia,tegra194-hte.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Tegra194 on chip generic hardware timestamping engine (HTE)
+> +title: Tegra on chip generic hardware timestamping engine (HTE) provider
+>  
+>  maintainers:
+>    - Dipen Patel <dipenp@nvidia.com>
+> @@ -23,6 +23,8 @@ properties:
+>      enum:
+>        - nvidia,tegra194-gte-aon
+>        - nvidia,tegra194-gte-lic
+> +      - nvidia,tegra234-gte-aon
+> +      - nvidia,tegra234-gte-lic
 
---ipqj7xouaflyhqta
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+How is the h/w in this chip different from the existing one? I'm 
+assuming it must be because you don't have a fallback compatible.
 
-On Thu, Nov 03, 2022 at 01:01:37PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> Convert the Tegra PWFM bindings from the free-form text format to
+>  
+>    reg:
+>      maxItems: 1
+> @@ -43,9 +45,8 @@ properties:
+>      description:
+>        HTE lines are arranged in 32 bit slice where each bit represents different
+>        line/signal that it can enable/configure for the timestamp. It is u32
+> -      property and depends on the HTE instance in the chip. The value 3 is for
+> -      GPIO GTE and 11 for IRQ GTE.
+> -    enum: [3, 11]
+> +      property and the value depends on the HTE instance in the chip.
 
-I hope I don't miss anything, but I think you want s/PWFM/PWM/.
+If this statement was true, then this property makes sense...
 
-Best regards
-Uwe
+> +    enum: [3, 11, 17]
+>  
+>    '#timestamp-cells':
+>      description:
+> @@ -55,6 +56,41 @@ properties:
+>        mentioned in the nvidia GPIO device tree binding document.
+>      const: 1
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nvidia,tegra194-gte-aon
+> +              - nvidia,tegra234-gte-aon
+> +    then:
+> +      properties:
+> +        nvidia,slices:
+> +          const: 3
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nvidia,tegra194-gte-lic
+> +    then:
+> +      properties:
+> +        nvidia,slices:
+> +          const: 11
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nvidia,tegra234-gte-lic
+> +    then:
+> +      properties:
+> +        nvidia,slices:
+> +          const: 17
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+However, if there is only one possible value for each compatible, then 
+being per instance can't really be true. I guess 'aon' or 'lic' define 
+the instance? That's not normal practice. Are there other differences?
 
---ipqj7xouaflyhqta
-Content-Type: application/pgp-signature; name="signature.asc"
+It seems like 'nvidia,slices' should be implied from the compatible 
+string.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNpY1wACgkQwfwUeK3K
-7Amutgf/dE+jw7sKcbbw6d03dy1UwqCQ8M6EsJFxVSo37tRtznR3TJhIwWVs9JOm
-OBcnIRILU2hCFVChIY3W+Eb5/Dx/BD9ZVXL526EezOKTNohM4mrG72E2w05p/E5L
-r8De1hGTyhSqKvMIeSDrRwPv9dytLpGIwb/VRc3Yju5ujClgTwFJI42W4A1ysDeU
-gd5JNXVAWgzGDZXOoBBCfrhtHNZRXS9c9S0t+GjOiQPtrf90Hr0OgUZ4C69ibuBu
-K6h7VilNew1I8nZ5PepOIokve7KN5m/a63Rg6arGxG5wpFQYUvCOxhXy4iHphbgm
-0BFoiN4EqZVpdjBf96XiGiKJjpmiVw==
-=02Tk
------END PGP SIGNATURE-----
-
---ipqj7xouaflyhqta--
+Rob
