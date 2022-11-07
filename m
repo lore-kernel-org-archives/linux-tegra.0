@@ -2,27 +2,27 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E788C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 17:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 319BCC433FE
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 17:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232024AbiKGRvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Nov 2022 12:51:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57732 "EHLO
+        id S232791AbiKGR4O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Nov 2022 12:56:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232258AbiKGRvt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 12:51:49 -0500
+        with ESMTP id S232788AbiKGRym (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 12:54:42 -0500
 Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDA1B23BCD;
-        Mon,  7 Nov 2022 09:51:48 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72FE924BE7;
+        Mon,  7 Nov 2022 09:54:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1667843476; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1667843594; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=klnnbpNcTKD/P5BEtITlZwIsXZ1Fq0oNl7HLfIen9u4=;
-        b=XNVJToum7O1ELLYtHELKa6DULsTzDus/PRW8z07zFik0Yu88BO8U7l2dptcwi44DFmKvCJ
-        sPuN3hW1dlmJjaokQ9uTtYs2cAzqgIy2DG9zjSZmHBdycVP9duTQ44DQD/VNBt3J5IXXKf
-        7TrK1+e02tHDPjCnGIVQYl8ybDPhN4w=
+        bh=q+3P3wqz1jwbsocGqfxEzObGi6ZWNcGmPZP0SRMAoFE=;
+        b=RZ2Gk2A4SHM9nHT+NSSNbHwothCRQAikLa9tCH/TS9p0P01+9U6+f6/OljI8wBhxuWBeB6
+        UI8/kRqHmWCaQdV3d+Ew5a3yh1JnSfC/7MS2yCu6HEhxKCLPesKbhwRafN3yoWdYtrhEKf
+        p6uyEDWMw333qBxCZyxEqWNtHP23fDM=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
@@ -34,20 +34,34 @@ Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 05/26] drm: tegra: Use the dev_pm_ops provided by modeset helper
-Date:   Mon,  7 Nov 2022 17:50:45 +0000
-Message-Id: <20221107175106.360578-6-paul@crapouillou.net>
-In-Reply-To: <20221107175106.360578-1-paul@crapouillou.net>
+Subject: [PATCH 20/26] drm: tegra: Remove #ifdef guards for PM related functions
+Date:   Mon,  7 Nov 2022 17:52:50 +0000
+Message-Id: <20221107175256.360839-10-paul@crapouillou.net>
+In-Reply-To: <20221107175256.360839-1-paul@crapouillou.net>
 References: <20221107175106.360578-1-paul@crapouillou.net>
+ <20221107175256.360839-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use the drm_mode_config_pm_ops structure exported by
-drm_modeset_helper.c, which provides the exact same PM callbacks.
+Use the RUNTIME_PM_OPS() and pm_ptr() macros to handle the
+.runtime_suspend/.runtime_resume callbacks.
+
+These macros allow the suspend and resume functions to be automatically
+dropped by the compiler when CONFIG_PM is disabled, without having
+to use #ifdef guards.
+
+This has the advantage of always compiling these functions in,
+independently of any Kconfig option. Thanks to that, bugs and other
+regressions are subsequently easier to catch.
+
+Note that this driver should probably use the
+DEFINE_RUNTIME_DEV_PM_OPS() macro instead, which will provide
+.suspend/.resume callbacks, pointing to pm_runtime_force_suspend() and
+pm_runtime_force_resume() respectively; unless those callbacks really
+aren't needed.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
@@ -55,48 +69,42 @@ Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-tegra@vger.kernel.org
 ---
- drivers/gpu/drm/tegra/drm.c | 21 +--------------------
- 1 file changed, 1 insertion(+), 20 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 6748ec1e0005..c9b6b3acb8c7 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1325,25 +1325,6 @@ static int host1x_drm_remove(struct host1x_device *dev)
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 7dc681e2ee90..3c84e73d5051 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -598,7 +598,6 @@ static int tegra_dpaux_remove(struct platform_device *pdev)
  	return 0;
  }
  
--#ifdef CONFIG_PM_SLEEP
--static int host1x_drm_suspend(struct device *dev)
--{
--	struct drm_device *drm = dev_get_drvdata(dev);
--
--	return drm_mode_config_helper_suspend(drm);
--}
--
--static int host1x_drm_resume(struct device *dev)
--{
--	struct drm_device *drm = dev_get_drvdata(dev);
--
--	return drm_mode_config_helper_resume(drm);
--}
+-#ifdef CONFIG_PM
+ static int tegra_dpaux_suspend(struct device *dev)
+ {
+ 	struct tegra_dpaux *dpaux = dev_get_drvdata(dev);
+@@ -657,10 +656,9 @@ static int tegra_dpaux_resume(struct device *dev)
+ 	clk_disable_unprepare(dpaux->clk);
+ 	return err;
+ }
 -#endif
--
--static SIMPLE_DEV_PM_OPS(host1x_drm_pm_ops, host1x_drm_suspend,
--			 host1x_drm_resume);
--
- static const struct of_device_id host1x_drm_subdevs[] = {
- 	{ .compatible = "nvidia,tegra20-dc", },
- 	{ .compatible = "nvidia,tegra20-hdmi", },
-@@ -1388,7 +1369,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
- static struct host1x_driver host1x_drm_driver = {
+ 
+ static const struct dev_pm_ops tegra_dpaux_pm_ops = {
+-	SET_RUNTIME_PM_OPS(tegra_dpaux_suspend, tegra_dpaux_resume, NULL)
++	RUNTIME_PM_OPS(tegra_dpaux_suspend, tegra_dpaux_resume, NULL)
+ };
+ 
+ static const struct tegra_dpaux_soc tegra124_dpaux_soc = {
+@@ -694,7 +692,7 @@ struct platform_driver tegra_dpaux_driver = {
  	.driver = {
- 		.name = "drm",
--		.pm = &host1x_drm_pm_ops,
-+		.pm = pm_sleep_ptr(&drm_mode_config_pm_ops),
+ 		.name = "tegra-dpaux",
+ 		.of_match_table = tegra_dpaux_of_match,
+-		.pm = &tegra_dpaux_pm_ops,
++		.pm = pm_ptr(&tegra_dpaux_pm_ops),
  	},
- 	.probe = host1x_drm_probe,
- 	.remove = host1x_drm_remove,
+ 	.probe = tegra_dpaux_probe,
+ 	.remove = tegra_dpaux_remove,
 -- 
 2.35.1
 
