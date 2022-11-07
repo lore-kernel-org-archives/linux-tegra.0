@@ -2,156 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 643FAC43219
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 20:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 938EDC43217
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Nov 2022 20:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbiKGUGB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Nov 2022 15:06:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45238 "EHLO
+        id S232582AbiKGUsu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Nov 2022 15:48:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231351AbiKGUGA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 15:06:00 -0500
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D922527CC3;
-        Mon,  7 Nov 2022 12:05:59 -0800 (PST)
-Received: by mail-ot1-f44.google.com with SMTP id cn2-20020a056830658200b0066c74617e3dso7204976otb.2;
-        Mon, 07 Nov 2022 12:05:59 -0800 (PST)
+        with ESMTP id S233017AbiKGUsn (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 15:48:43 -0500
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0121D339;
+        Mon,  7 Nov 2022 12:48:41 -0800 (PST)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-13be3ef361dso14037116fac.12;
+        Mon, 07 Nov 2022 12:48:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mzxwEFNUScRHad0GSitNuAPUAQgYGoYkKZUbn1eKG18=;
-        b=Pk7c3069xNX4M+ZFbRx1Kg4eokduxQiU4Ya7kmipQd6L8+/a6//TQfwWAvHhWxxTEv
-         /dQvBT0WD8rQzh5IPiIjLlaez7mffx5zbRRIcC/KqSaDIKsQmW0SBFh/vJGTwEhrcTYW
-         mPB8mC7OuvaGEP9j9ycemv+J6NPRuAbKJewyyrC5reKwPpEiu11JsVdKSRk+tYuJBAVu
-         aPLWgiQme7jCVt7a8Hqp49AUZAkC6xhi8Wa215qfSbluW3rHjw82SCTAcRU8FFrvUVKY
-         IoDi6O6HogkLk0QoW53xkl1RQMd2Uw7NNnVQ27JXIwFtW7UzztWkUmN7dGV0i8GTZMfZ
-         31gg==
-X-Gm-Message-State: ACrzQf0Asqv0GGV8K9RVMril0+v3ho0ydyRvzXeNVYndArt/QWUBm5C2
-        +RcLk1bfiAmkcrn7w49Bhb0jTW2nGA==
-X-Google-Smtp-Source: AMsMyM5F0ZUoojX9ufwQfzy1dN0QLHEBHTBy2a9TmPWOTk7MHOTPAWpdcmmZ5GfaQLGlHKVMLnBdiQ==
-X-Received: by 2002:a05:6830:410b:b0:66c:9a3a:53e with SMTP id w11-20020a056830410b00b0066c9a3a053emr8419415ott.225.1667851558934;
-        Mon, 07 Nov 2022 12:05:58 -0800 (PST)
+        bh=OP9uqgjVo6enR7hOZ597rbGfwfyI/yQnJGV/FYA5+1I=;
+        b=AjLxfb+CN1NtzNbgS9qKzLFxbJbk/Wn3/iYr19Vr878yaqjEyzCqN5QVpIIZNHP8eA
+         dPpI8463lBlfrPCIP2RH6zgWfFTFGJX01dQD/8urUVJ8P5pMjvgUHu795ZL3rLWlvl/p
+         mhjs/PWRGW8aq2wd31Y1KEGAHgi80Kclc80RR8NtnZQMDmtipgJbmb9JEM43maWIJrad
+         /3LuoT8VeazTCnZgToxRYRpHUU6+RYUjnITXpvCqY0jBxKU/CD62t9zxiaIl+c9Qzugf
+         l5hLbYpezB8DblYFHJx9cQnuQ1WgWdznHze+mx0qQ5zdcGhA7wi0vuQaKttnJQNSRXrc
+         DFbw==
+X-Gm-Message-State: ACrzQf0PtAF5bnpq5g7plgh8C38av5HIZ+LSxlgsj3BOZpU+IJFwFciH
+        fzfgC76fFlQudFfPD2gU+g==
+X-Google-Smtp-Source: AMsMyM5jNbS++rcRXHa+o4FntULPIyIZnDRzbRYVtPrUY0F5/ADZJS9RyB7D56J4jQQZTr3PXSIIqQ==
+X-Received: by 2002:a05:6870:5803:b0:12c:c3e0:99dc with SMTP id r3-20020a056870580300b0012cc3e099dcmr38722896oap.19.1667854120939;
+        Mon, 07 Nov 2022 12:48:40 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id m6-20020a4a9506000000b0049201e2b8f4sm2522674ooi.4.2022.11.07.12.05.57
+        by smtp.gmail.com with ESMTPSA id z10-20020a9d248a000000b00660e833baddsm3365246ota.29.2022.11.07.12.48.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 12:05:58 -0800 (PST)
-Received: (nullmailer pid 1504075 invoked by uid 1000);
-        Mon, 07 Nov 2022 20:06:00 -0000
-Date:   Mon, 7 Nov 2022 14:06:00 -0600
+        Mon, 07 Nov 2022 12:48:40 -0800 (PST)
+Received: (nullmailer pid 1607977 invoked by uid 1000);
+        Mon, 07 Nov 2022 20:48:42 -0000
+Date:   Mon, 7 Nov 2022 14:48:42 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 4/7] dt-bindings: timestamp: Add Tegra234 support
-Message-ID: <20221107200600.GA1489762-robh@kernel.org>
-References: <20221103174523.29592-1-dipenp@nvidia.com>
- <20221103174523.29592-5-dipenp@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: tegra: Convert to
+ json-schema
+Message-ID: <166785411929.1607862.9138980578446400859.robh@kernel.org>
+References: <20221104142345.1562750-1-thierry.reding@gmail.com>
+ <20221104142345.1562750-2-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221103174523.29592-5-dipenp@nvidia.com>
+In-Reply-To: <20221104142345.1562750-2-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Nov 03, 2022 at 10:45:20AM -0700, Dipen Patel wrote:
-> Added timestamp provider support for the Tegra234 in devicetree
-> bindings.
+
+On Fri, 04 Nov 2022 15:23:42 +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> Convert the NVIDIA Tegra pinmux controller bindings from the free-form
+> text format to json-schema.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  .../timestamp/nvidia,tegra194-hte.yaml        | 44 +++++++++++++++++--
->  1 file changed, 40 insertions(+), 4 deletions(-)
+> Changes in v3:
+> - add missing "type: object" to patternProperties definitions
+> - restructure common bindings according to Rob's comments
 > 
-> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> index c31e207d1652..158dbe58c49f 100644
-> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/timestamp/nvidia,tegra194-hte.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Tegra194 on chip generic hardware timestamping engine (HTE)
-> +title: Tegra on chip generic hardware timestamping engine (HTE) provider
->  
->  maintainers:
->    - Dipen Patel <dipenp@nvidia.com>
-> @@ -23,6 +23,8 @@ properties:
->      enum:
->        - nvidia,tegra194-gte-aon
->        - nvidia,tegra194-gte-lic
-> +      - nvidia,tegra234-gte-aon
-> +      - nvidia,tegra234-gte-lic
+> Changes in v2:
+> - wrap lines at 80 characters instead of the standard 100 characters in Linux
+> - use GPL-2.0-only instead of GPL-2.0+ license for DT bindings
+> - reorder additionalProperties for better readability
+> - move common definitions into a shared schema
+> - remove consumer snippets from examples
+> 
+>  .../bindings/clock/nvidia,tegra124-dfll.yaml  |   2 +-
+>  .../pinctrl/nvidia,tegra-pinmux-common.yaml   | 178 ++++++++++++++++++
+>  .../pinctrl/nvidia,tegra114-pinmux.txt        | 131 -------------
+>  .../pinctrl/nvidia,tegra114-pinmux.yaml       | 155 +++++++++++++++
+>  .../pinctrl/nvidia,tegra124-pinmux.txt        | 153 ---------------
+>  .../pinctrl/nvidia,tegra124-pinmux.yaml       | 176 +++++++++++++++++
+>  .../pinctrl/nvidia,tegra194-pinmux.txt        | 107 -----------
+>  .../pinctrl/nvidia,tegra194-pinmux.yaml       |  89 +++++++++
+>  .../pinctrl/nvidia,tegra20-pinmux.txt         | 143 --------------
+>  .../pinctrl/nvidia,tegra20-pinmux.yaml        | 112 +++++++++++
+>  .../pinctrl/nvidia,tegra210-pinmux.txt        | 166 ----------------
+>  .../pinctrl/nvidia,tegra210-pinmux.yaml       | 142 ++++++++++++++
+>  .../pinctrl/nvidia,tegra30-pinmux.txt         | 144 --------------
+>  .../pinctrl/nvidia,tegra30-pinmux.yaml        | 176 +++++++++++++++++
+>  14 files changed, 1029 insertions(+), 845 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-pinmux-common.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml
+> 
 
-How is the h/w in this chip different from the existing one? I'm 
-assuming it must be because you don't have a fallback compatible.
-
->  
->    reg:
->      maxItems: 1
-> @@ -43,9 +45,8 @@ properties:
->      description:
->        HTE lines are arranged in 32 bit slice where each bit represents different
->        line/signal that it can enable/configure for the timestamp. It is u32
-> -      property and depends on the HTE instance in the chip. The value 3 is for
-> -      GPIO GTE and 11 for IRQ GTE.
-> -    enum: [3, 11]
-> +      property and the value depends on the HTE instance in the chip.
-
-If this statement was true, then this property makes sense...
-
-> +    enum: [3, 11, 17]
->  
->    '#timestamp-cells':
->      description:
-> @@ -55,6 +56,41 @@ properties:
->        mentioned in the nvidia GPIO device tree binding document.
->      const: 1
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra194-gte-aon
-> +              - nvidia,tegra234-gte-aon
-> +    then:
-> +      properties:
-> +        nvidia,slices:
-> +          const: 3
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra194-gte-lic
-> +    then:
-> +      properties:
-> +        nvidia,slices:
-> +          const: 11
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra234-gte-lic
-> +    then:
-> +      properties:
-> +        nvidia,slices:
-> +          const: 17
-
-However, if there is only one possible value for each compatible, then 
-being per instance can't really be true. I guess 'aon' or 'lic' define 
-the instance? That's not normal practice. Are there other differences?
-
-It seems like 'nvidia,slices' should be implied from the compatible 
-string.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
