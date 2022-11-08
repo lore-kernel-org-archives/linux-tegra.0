@@ -2,126 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C9EC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 13:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F03FC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 14:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234602AbiKHNt0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Nov 2022 08:49:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49358 "EHLO
+        id S235215AbiKHOKZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Nov 2022 09:10:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234581AbiKHNt0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 08:49:26 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9688729E;
-        Tue,  8 Nov 2022 05:49:25 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id z18so22539416edb.9;
-        Tue, 08 Nov 2022 05:49:25 -0800 (PST)
+        with ESMTP id S235226AbiKHOKS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 09:10:18 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4EABE3E
+        for <linux-tegra@vger.kernel.org>; Tue,  8 Nov 2022 06:10:14 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id kt23so38870178ejc.7
+        for <linux-tegra@vger.kernel.org>; Tue, 08 Nov 2022 06:10:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c95ZPEtISLCedyNk9u0ebKNS7FQi7eh5TIwJUEhU6Oc=;
-        b=ClcXVYOQS1ir/Y+VkxmuB1/esNQOIkJwDDjukhhM/7weYeR0VMwWvmh6keVD4aPno3
-         jW5193E30tj5iyUwZ4pcQJMW4NOon3AEg602qAoTpq0kfll+QE3vBRItTug8j5+EOm8X
-         NqYv0z+cEzQ7ZpHZFWNG7SOOukAAw3FEibLt0Vgwnst1POuS63OWiIid8J1OmOmUG0fp
-         c3+VEzdr6oe6gGXFbsSUbAR+iT0LvMIEnMQ4LTypPUvE/yJe0zGzO3ybXRedNQrai1mN
-         fssOdYSwe+jxZxRPWv6wQE2sqh40soCZQOD5Gywqy7y4it+P/iXc2lMW8PGSWjqMEbLP
-         O4ug==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y2yiVoAjbKu5g1coXsCgJKSnFMV0KG9qA5Tyi32t7Ao=;
+        b=E+Y5suCr+yzSgsxf4CAfSwYU6qGOO0WXMEkeGneCrQ+Iyi9y6tbGvKL5nPmcDJfi8w
+         pBRCnFGKuoZyeBArf39VyK3ZZxF0UArrsfuYkFD99eV+vj2vPYwXvm32Lx51/J8aL6+E
+         EQ35C8r2LkqPXoFZDtyy8P8o7hr0NpodczxJikqJGsrEdN6sdeJKEMFL7cfdihbeXt1G
+         5i/M80miQtpmOEfIyLsVoVz3BidmwMt0TUuGW0HluWHy/O+zDKJuXDKTT76NtQNkElZ/
+         QzWnRmiaY41rENQ/b5cRhNoa0846ehVG/lRFOiEkHB3XMHIjedSLr389ryO3KI+mYe3j
+         ZcDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c95ZPEtISLCedyNk9u0ebKNS7FQi7eh5TIwJUEhU6Oc=;
-        b=pThRhZLoEUP341Pwewoar+v9he4K4u2rucv77zbqkXYXsRONdv1W9CRm85z5Y7h2X2
-         0I+dh635mU/XTqSPyww8/70nTiykFWWfSL6uitmFEJuuPPi7vGL5LToaMrUBZGg9Ochg
-         Ip46ZWV/Q+2SU5IiSUoSgUo7nww14vi3oQVb128gIOj9QRKb2GbEF95fnfNeZTEkaA2L
-         3ZupcoVhlN7pkK32PAtL0f17TGMlfv+V6xm/2xiahlgWt6DYWatdw599FKDr/Da/cBBO
-         2JD6a4cWm0M1jO2D5jQFi9CKo9OspO3PWuWvZ1CihBKh0PG1xAc3WxfGDD2fOVWbl/SS
-         S+SQ==
-X-Gm-Message-State: ACrzQf1ijzOu2o8HSJcZyF1+FioB6SqDPQip0X9uQ9G/pZXQr/aV+HM1
-        FJKs0G2TnarWqS1CNf9+jD8=
-X-Google-Smtp-Source: AMsMyM7xRtoHI5OxCUlmZ+L84S+cfrmfoFpZKzusxHqZ37V3TWVSmO364vEKkcMsewA1OdUNCmbSuA==
-X-Received: by 2002:a05:6402:35cb:b0:462:6545:5d99 with SMTP id z11-20020a05640235cb00b0046265455d99mr56353638edc.51.1667915363947;
-        Tue, 08 Nov 2022 05:49:23 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id du1-20020a17090772c100b00771cb506149sm4769765ejc.59.2022.11.08.05.49.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 05:49:22 -0800 (PST)
-Date:   Tue, 8 Nov 2022 14:49:21 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] pwm: tegra: Ensure the clock rate is not less
- than needed
-Message-ID: <Y2peYWX5jGUu8ARH@orome>
-References: <20221028123356.133796-1-jonathanh@nvidia.com>
- <20221028123356.133796-2-jonathanh@nvidia.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y2yiVoAjbKu5g1coXsCgJKSnFMV0KG9qA5Tyi32t7Ao=;
+        b=MuhuzqWg3wU25MLtwxQqtTYXzOsjpBFPbbsscISQoFCjfcfTpfJ1NXA1y1qPlNFTSJ
+         kXGtE5y35xdkKoRtPd3hu4WjwYZ+AwJZ5EZEND4AVpTIM8AJ8xn/Rib3uGDlGr88f3vR
+         oOdpjr91vY5PkP6l1P+6l+mH95MjSf9g5cLl3kivdEJ6Wya0bDm6u5QGuVmlSL4guEXU
+         lYCy/q2osGZBQQL9BL3u+Zh+scios2n642mfnCAK/Ig/m5805AjmIn4l/XNXZypOuzAl
+         K9IvJmYOTiODYLJz0Asmyu1XcGm73G+jXZMp2BHO7rGVywbJfVZG1cy7xvlwnfsRP54S
+         Gakg==
+X-Gm-Message-State: ACrzQf2uVoBnSNcd/2cGwIQkR2dN5CFQc1N0gn8P7AqFuVHMTdpLtDmC
+        mcQrb0GDzm4vIkFgjhTezyHig9zTMZIT4LKjCLnDhw==
+X-Google-Smtp-Source: AMsMyM4iXolXTKOej2MHua0HeSMKari1EAYAvBP6NBtB2bCwfNK4fQb+QUIw0XHsAzpw31HAyvjVJBRFlyND+fysAUk=
+X-Received: by 2002:a17:907:c1e:b0:7ae:31a0:571e with SMTP id
+ ga30-20020a1709070c1e00b007ae31a0571emr21317787ejc.690.1667916613344; Tue, 08
+ Nov 2022 06:10:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jax0Wr6ZptALUy+0"
-Content-Disposition: inline
-In-Reply-To: <20221028123356.133796-2-jonathanh@nvidia.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+References: <20221104142345.1562750-1-thierry.reding@gmail.com>
+In-Reply-To: <20221104142345.1562750-1-thierry.reding@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 8 Nov 2022 15:10:01 +0100
+Message-ID: <CACRpkdYT0X09bWYg9za8x+3YkcbVmBm8Prb0Fyk2nfi_eanDyw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] pinctrl: tegra: Separate Tegra194 instances
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, Nov 4, 2022 at 3:23 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 
---jax0Wr6ZptALUy+0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Thierry Reding <treding@nvidia.com>
+>
+> This patch series changes the pin controller DT description on Tegra194
+> in order to properly describe how the hardware works. Currently a
+> simplified description is used that merges two pin controller instances
+> (called AON and main) into a single DT node. This has some disadvantages
+> such as creating a complicated mapping between the pins in those pin
+> controllers and the corresponding GPIO controllers (which are already
+> separated).
+>
+> As a prerequisite, the first patch in this series converts the device
+> tree bindings to json-schema. A second patch then adds an additional
+> compatible string for the AON instance (along with more details about
+> each controller's pins) and finally patch 3 converts the driver to
+> cope with these changes. A fourth patch makes the corresponding
+> changes in the Tegra194 DTS file.
+>
+> Note that while this changes the DT node in an incompatible way, this
+> doesn't have any practical implications for backwards-compatibility. The
+> reason for this is that device trees have only reconfigured a very
+> narrow subset of pins of the main controller, so the new driver will
+> remain backwards-compatible with old device trees.
+>
+> Changes in v3:
+> - address more review comments by Rob Herring and make validation work
 
-On Fri, Oct 28, 2022 at 01:33:56PM +0100, Jon Hunter wrote:
-> When dynamically scaling the PWM clock, the function
-> dev_pm_opp_set_rate() may set the PWM clock to a rate that is lower than
-> what is required. The clock rate requested when calling
-> dev_pm_opp_set_rate() is the minimum clock rate that is needed to drive
-> the PWM to achieve the required period. Hence, if the actual clock
-> rate is less than the requested clock rate, then the required period
-> cannot be achieved and configuring the PWM fails. Fix this by
-> calling clk_round_rate() to check if the clock rate that will be provided
-> is sufficient and if not, double the required clock rate to ensure the
-> required period can be attained.
->=20
-> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> Changes since V1:
-> - Multiplied the required_clk_rate by 2 instead of adding 1 to the
->   PWM_DUTY_WIDTH and recalculating the rate. Overall rate should be
->   similar.
-> - Updated comment based upon Uwe's feedback.
->=20
->  drivers/pwm/pwm-tegra.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+This looks good to me!
 
-Applied, thanks.
+I tried to apply them to the pinctrl devel branch but this happens:
 
-Thierry
+$ git am --signoff
+./v3_20221104_thierry_reding_pinctrl_tegra_separate_tegra194_instances.mbx
+Applying: dt-bindings: pinctrl: tegra: Convert to json-schema
+error: Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml:
+does not exist in index
+Patch failed at 0001 dt-bindings: pinctrl: tegra: Convert to json-schema
 
---jax0Wr6ZptALUy+0
-Content-Type: application/pgp-signature; name="signature.asc"
+I guess there are some prerequisites?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNqXl4ACgkQ3SOs138+
-s6FrOxAAiiVAnUVLo3xwPSvAWZZ2hiLagafQESy4/z/+VyNbwdZdppycJzSIcvqV
-u4EgqSB0Jg7Y8FF06Cuo5pooyxz2W9BRBpgpUV6wC5Qbh7TSguZHo6AWws9FLO1a
-5ffFBcyaIU/fXoCcsUpiVV2eWoqdzO8q9CRGos2Bzx9wkOmRD25EfpKxxWhp5DYJ
-VagQFvfKEh7QhR/wrU6Vjkii+dFLKPdCzakXYNOCjZ4Yr3eGCMHyeZ6mZZR4GxtF
-PwdEdI3ivkSAzDZ0R3n6yqBLM3q4DmDQbog7I1sD40LB3NwhpmfDpqn6mSyT9aSB
-fkHQ18VBdDezimUSgzVNtCb5wb/v4a3ApdLRl7jWnu36Uh0/YWGASvDcDysKgV5i
-cK/HPINVSGQPXgsxCNUQLrK57JrlPIgY0qlcZQN4EZ9sgdZYEn2rP7RuThE31v0E
-+YUHZLoI2qUFgxKjf5pNvfWvPAiEJf2Q7qtMEnW52AY4583oHAA/Mf81iBwmxBrB
-bLGhM5kaln5gZIrEmXxJxZCK9Q9OJRzEenQx0dI4vNHaMbARO9JjRvBy4pGFZsmg
-XXl/79IaOHo+Te0ccAieDj+j9hK4Qa98egoz5DZn+TtixnNj6+6SfJHe0MnuZ0Ec
-/UPYGozxWwd443XJlJ2P/g4mrquFHGObPCcXlsTbcQ27xFXNv3s=
-=7MxQ
------END PGP SIGNATURE-----
-
---jax0Wr6ZptALUy+0--
+Yours,
+Linus Walleij
