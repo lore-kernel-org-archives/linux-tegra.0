@@ -2,86 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C695DC43217
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 14:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69A2C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 14:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235155AbiKHOMH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Nov 2022 09:12:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48126 "EHLO
+        id S234303AbiKHOYK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Nov 2022 09:24:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235267AbiKHOLp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 09:11:45 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3449D121254
-        for <linux-tegra@vger.kernel.org>; Tue,  8 Nov 2022 06:11:23 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id m22so1706082eji.10
-        for <linux-tegra@vger.kernel.org>; Tue, 08 Nov 2022 06:11:22 -0800 (PST)
+        with ESMTP id S234365AbiKHOXl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 09:23:41 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4211E5B86D;
+        Tue,  8 Nov 2022 06:23:02 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id f27so39048163eje.1;
+        Tue, 08 Nov 2022 06:23:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GL2VB6yiqlJd7PXl9jCnnQ5NQhRNVLQL22XW+04witg=;
-        b=Hhzk8FopA98HaJrgwoizCtMQjYbKieZLMyCwD4Px4prPzIh0xGexW33aaq/j+JippB
-         cqlKGLoDi1XLjx+IY/su4mqqiHWvQUn+7tIVIJpEfiMquxhwIgRmC6N5SNcWnRVbdNtM
-         YqocapQY/un37wC8kJ/7a0MLAYUePF1vbV8ex4L8Iifyb07W16xzVj2vo1LoYLVFUy8N
-         aqdEWC1LNRy/bl5J7tZLgNbI7e8kqA4LHWdgOgQvzCSwe24kskKnAt7bt3IM1TdsdXyO
-         zuAVijftra0VXnB2A5j20mQhvzZMmjKJrg1kYqt9t3FKqqZ2I58VGv1kCgZ2SCIAeVEg
-         lwaA==
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GZnCIJm+9B9Ff3S7OWyd9EMrH+oJEijKOQtTrhJPK+s=;
+        b=agAlO/bMjNZS419ehoNlmwo2Y3uNQo3ftrHa5OJ/v85dpmTW2ZHHGQiC/d2IInAH6Q
+         bXsfqUjpx6U4PYhKzxvNAGWYqVfyxrpZmgeCp4vXJXchbebK4Z8r9eRU2Lbyh7zP+9zB
+         OPgKlTmoMsW0FhFtUQX9eFr+L8Wutp/3Z6x4bOXxO41O/02ThSKw04jJZ9HxbXDgiiaw
+         f9LCjvKZ+1HEX5fU9JcsPdqZ1ue6P3KqOfqU4UEb9hhiXtw98Z5puryOztK7QlP/ievA
+         NQY3vq9hsbYWxf1oNyy4TwscGpGG4mOTgSH5IJnZxRGOHdRKEkValcr9dgsbQBJoH7SC
+         3dZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GL2VB6yiqlJd7PXl9jCnnQ5NQhRNVLQL22XW+04witg=;
-        b=In4epSalqktZtjmE9kWsvjBiTyCIavzPbbNDoWtYcuXAMDTc8plKZIsYSkQ8vci+VU
-         PvNJYisXHPa9+VHRNlBNUfVQ0/C8IZF4NqzcyXgqs1Xq4tleJw60d7teO7Ohg2Lh2npg
-         BL2qEg4v9br4aD96536KrAXb2UzfsaswpOU8c9BZO8ZTEqX1JLh2juLnv3CwfMaDTvm5
-         YkDLkXXwMEeXCPx/Xl5L/GuTxmn7bTSKd7hiFVw3rzlb+kwsXH7QE9mn69g2QzX89qiz
-         4dNIBHfSquXy2/PHS9VDc9d1rRgNsBbgQeFtVbRsTIuTIjGCLWUCo/1Yf3lH8HbIpDV+
-         l8Xg==
-X-Gm-Message-State: ACrzQf3GxWqTyYdzoYSxtjhlegnkueBfKbCEiNRxXlQKKqrEOKFmGIYp
-        8+G8mv7aYMsVd/5fldscwL7o7AWznmRzsUwd2XD8Eg==
-X-Google-Smtp-Source: AMsMyM7J3Sd4gnDvu8zGm0CMMNKR4LFB/CGFMpK5G/rfqAvubgf422+2XMl7L688bBueJ+zjJiz/yGcF4N7ozpUkS1c=
-X-Received: by 2002:a17:906:4c4b:b0:7ad:a197:b58e with SMTP id
- d11-20020a1709064c4b00b007ada197b58emr54232684ejw.203.1667916681564; Tue, 08
- Nov 2022 06:11:21 -0800 (PST)
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GZnCIJm+9B9Ff3S7OWyd9EMrH+oJEijKOQtTrhJPK+s=;
+        b=PO0T+aTsbCjYQ+a2Jg/iK2nES9Kr5IUp7mEhLYRZpyUwC6K4RibzJJqzlgdBkRHqHA
+         nAzX9+GJ9Q4CNC4U9VaeMu5PtqVmc50p1KxqRO/pkc56SXabQ26NnUel3nrqR8EuZMDI
+         VNQwGPEG/oCeU/9/vSy/HaBGmFN2hjhlWXGC371koCgIScatFze71pmWlXX5JYG+J3YN
+         JkH3FWFrWl44WgMjsK4nCDM02cvd4ot6lmlqqfYD1NeJnwY4jMCrzJEy7MvJTdzdKROd
+         RaJXkwB9nXAeP+WJhf2U3N9TLeA6IFOom0fATQKJvA1f1WmKQH7F7oH9u4KluFyGM+bA
+         pSrQ==
+X-Gm-Message-State: ACrzQf02z6gC8rI7aXJaG/mhwXHN0Y/QKsWma7ssSG6bGGV7+G2gjPaV
+        GQRAp220zXNtlWvigrq+rMA=
+X-Google-Smtp-Source: AMsMyM7a+rXh6egmJgCV4yYsRFUfXuNmozOuHYPfp6VM6AmrwLU5W5iyiq4aYfT7oDW/qdMpn2to/A==
+X-Received: by 2002:a17:907:a46:b0:782:1c1c:8141 with SMTP id be6-20020a1709070a4600b007821c1c8141mr54460080ejc.549.1667917380673;
+        Tue, 08 Nov 2022 06:23:00 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id q15-20020a17090676cf00b007ad94422cf6sm4635674ejn.198.2022.11.08.06.22.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Nov 2022 06:22:59 -0800 (PST)
+Date:   Tue, 8 Nov 2022 15:22:57 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tegra: Fix spelling mistake "fliter" -> "filter"
+Message-ID: <Y2pmQdxMIHl+vgIj@orome>
+References: <20221108111340.115387-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-References: <20221104142345.1562750-1-thierry.reding@gmail.com> <20221104142345.1562750-5-thierry.reding@gmail.com>
-In-Reply-To: <20221104142345.1562750-5-thierry.reding@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 8 Nov 2022 15:11:10 +0100
-Message-ID: <CACRpkdbegcxckaYA5h0VKQonK72srZWDZYynHhUKSTHngWGHWA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] arm64: tegra: Separate AON pinmux from main pinmux
- on Tegra194
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pDY6F3p4Kn966Zak"
+Content-Disposition: inline
+In-Reply-To: <20221108111340.115387-1-colin.i.king@gmail.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Nov 4, 2022 at 3:23 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> The registers for the AON pinmux reside in a partition different from
-> the registers for the main pinmux. Instead of treating them as one and
-> the same device, split them up so that they are each their own devices.
-> Also add gpio-ranges properties to the corresponding GPIO controllers
-> such that the pinmux and GPIO controllers can be paired up properly.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+--pDY6F3p4Kn966Zak
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is this one of those few cases where this patch should also be
-applied to the pin control tree to keep things coherent for e.g.
-git bisect?
+On Tue, Nov 08, 2022 at 11:13:40AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in struct member fliter_structure.
+> Fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  sound/soc/tegra/tegra210_mbdrc.c | 4 ++--
+>  sound/soc/tegra/tegra210_mbdrc.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
-Normally I would ask for this to be queued in the SoC tree separately.
+I sometimes wonder how these come to be since it's an obvious typo yet
+people manage to make them at least twice. Auto-completion I suspect
+might play a role. Anyway, good catch:
 
-Yours,
-Linus Walleij
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--pDY6F3p4Kn966Zak
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNqZj8ACgkQ3SOs138+
+s6FbTw/+L/QE+HdaK/OuuLEzlBM6VWk+gYNy4BeBG5uOqysNd6MzrfjIEG9WS5lE
+SKcmYwhnYhBHcXtfvuDM31AwDkfEFSr+p35hzIRnGbUa/MZLxj3ufZad17adgfng
+xgjH0L7b3zYsX3+z29syehbF524PKApyURWbnQZNnKfLTmC1vagfOvcEvu5Zq7kz
+B4rFKeDjiSkJGcf5JtDh0D1/oFCTkzOgoC03N59AFWt42lHpGHNenZMQghMnvlrw
+t4mF03BhREWdSzB2LWpywH237eqtaG1+Ro2gEik9UR32bEO8V4Yb1occYpwilAxm
+wKO1uVryVoSgh5DLmzcifM5sWh1IS4QrORdGBXXnC4p5CDuS85Or0NQaou+t/TEa
+2Iqyovc8k7+S2CkQXjX7rGROqaG64El59mGDP38IhOuNp3nMcxXLkftOEXxJaxkl
+VSdzPmXysgm4hbPvXd6pdmAI6DOmAVYjy7ZgEt6xjVaHwGbjf96vAqPwA/tZtk2h
+SFTpCQfgqPt6CRQh/aEC4pdJun9RUUkAWw8GSAz+dX5OBkEG2tRKFTOBDVTxoKM9
+0zdxlQfn960VhHeF7Uus6PIgE9rliiN9uPWIHc95UlMkfC8Kqzj2ymAGxbfA90sJ
+BheR4Zp0zo0CNTY3baq03zxEYC5/I1hufNFmUy3HhARuRKF/IIs=
+=bwz6
+-----END PGP SIGNATURE-----
+
+--pDY6F3p4Kn966Zak--
