@@ -2,165 +2,104 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF77C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 00:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C981CC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 04:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232414AbiKHAPH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Nov 2022 19:15:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46674 "EHLO
+        id S232862AbiKHElx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Nov 2022 23:41:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232283AbiKHAPF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 19:15:05 -0500
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2070.outbound.protection.outlook.com [40.107.101.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F27CE273C;
-        Mon,  7 Nov 2022 16:15:02 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K7T9m5eCCkMF1JiU8YIs+mgovLnWwzz88lLlR5R/SrCprXK/ZDh7sU2NFh4k9EWNfSMhRKnrnPaUkjUCnrmBCAz75rh4+6VE06R/KKBBnaEzDalLw+EXA7uX32MP3NTn7mPEHIiIINmD6x8ZxqUoTIu7Wdqtc+fdBX1h/jezzbxdZJs5QizU3IYVZ70qPJBzv3dj0H54hVi2/bcqAlS2hH9o+HRZRQnxORtt+jOFQEKvGzyfXVKL2jBWr76W1isgWgR8dDsd/KDW07RnfJC2+qs5vlMDJIHPzMCeYwNuUaSCYguzMMXsGO5W+2LgXJfpevnHd4OeKE4lmdwlWmnqqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=weGhFE/NPYqsu3+oQ3+Gc2/85Dt0v2jOoXlR66OrBHw=;
- b=kx7IfdEOtqt2KHzYWuGL3ZqCYAVthb7LZTE5D99w3Vp+06kf0rhjqFAJ0bX6ysKXuVJABprwelzRTRme8RuZwU2+bhNmMKnsXZ10EziheSNFzzwVLnv7hg1PPmnzx08Rx2clKBkNRUh0N21G84quHsnUqoY+OWHRBkbOOZXi8fT3HQ6j5mIxy9YfhblWPY0mZarwLeXbmS80YBCxCokxiNrtVi12ScyGk5EnmHZz92sjl/Ekeuh0Apy/nJGuoaIaKZTHQZSahc4ltOFzRyiocj3xK8myMkMyDojbIgmFSpwxWspWMAItLgTD0E+gause4qUbTnXphFJMAwIeHMFnzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=weGhFE/NPYqsu3+oQ3+Gc2/85Dt0v2jOoXlR66OrBHw=;
- b=Hm/1W6/aw4Wz3PVVK2TxDawAuSSC47ovyTL3RQ+Jvq7LvI8Wrc9bhEjkLVWdsqVb6g0LNQIjwYOgJo+S8btjUICCUnG/mjvX5B0eWz6TyGelAUJQzrr+zPGYM7eJA0VlVT8HaMKsz0o8Htkfg2fg1gQIQXcIa1yfxK5FUYITJFvLx6f6kt6Chi91JLmVmkP8SXrA4QbD5v+ULjcKOuvNUMJo+nFWUcmI0KbSszkcgciF1iUSD6u7npCYS+19Syl0GRYU6kSxa7chi4Qq2DYMfbIe0hDnIrbNlckMmMvkr1l7oHqtexEIjExBLdRQERKKDNHStvuNE3vxiXZgibuhVQ==
-Received: from MN2PR20CA0014.namprd20.prod.outlook.com (2603:10b6:208:e8::27)
- by SJ0PR12MB5424.namprd12.prod.outlook.com (2603:10b6:a03:300::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.26; Tue, 8 Nov
- 2022 00:15:00 +0000
-Received: from BL02EPF0000EE3C.namprd05.prod.outlook.com
- (2603:10b6:208:e8:cafe::f) by MN2PR20CA0014.outlook.office365.com
- (2603:10b6:208:e8::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.20 via Frontend
- Transport; Tue, 8 Nov 2022 00:14:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF0000EE3C.mail.protection.outlook.com (10.167.241.132) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5813.11 via Frontend Transport; Tue, 8 Nov 2022 00:14:59 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 7 Nov 2022
- 16:14:37 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 7 Nov 2022
- 16:14:36 -0800
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29 via Frontend
- Transport; Mon, 7 Nov 2022 16:14:34 -0800
-Date:   Mon, 7 Nov 2022 16:14:32 -0800
-From:   Nicolin Chen <nicolinc@nvidia.com>
-To:     Will Deacon <will@kernel.org>
-CC:     <joro@8bytes.org>, <robin.murphy@arm.com>, <jgg@nvidia.com>,
-        <kevin.tian@intel.com>, <quic_jjohnson@quicinc.com>,
-        <suravee.suthikulpanit@amd.com>, <robdclark@gmail.com>,
-        <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
-        <yong.wu@mediatek.com>, <matthias.bgg@gmail.com>,
-        <orsonzhai@gmail.com>, <baolin.wang@linux.alibaba.com>,
-        <zhang.lyra@gmail.com>, <thierry.reding@gmail.com>,
-        <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-        <jean-philippe@linaro.org>, <tglx@linutronix.de>,
-        <shameerali.kolothum.thodi@huawei.com>,
-        <christophe.jaillet@wanadoo.fr>, <yangyicong@hisilicon.com>,
-        <yangyingliang@huawei.com>, <quic_saipraka@quicinc.com>,
-        <jon@solid-run.com>, <iommu@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH v7 4/5] iommu: Use EINVAL for incompatible device/domain
- in ->attach_dev
-Message-ID: <Y2mfaG1/6hd1qykW@Asurada-Nvidia>
-References: <cover.1666042872.git.nicolinc@nvidia.com>
- <f52a07f7320da94afe575c9631340d0019a203a7.1666042873.git.nicolinc@nvidia.com>
- <20221107152645.GD21002@willie-the-truck>
+        with ESMTP id S232816AbiKHEls (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Nov 2022 23:41:48 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E87B5E0C5;
+        Mon,  7 Nov 2022 20:41:46 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id io19so13130496plb.8;
+        Mon, 07 Nov 2022 20:41:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1LhW8LVwSoxQQpyW4009bvl9o+iGdIJ8EYui4FeN5lI=;
+        b=JrLTnqEqQQX/olx97uyFYEYYUbQ36qk5VkyCuZyuuWn1R7J3wu+34ybKhjRzMLHpkK
+         SLYbJcs9eIRjjJmcIfRkwNgdkz/j98i7O1M2SL0VB8dHybCDB7FgWk32NbOPFCD3LOpf
+         xTbXcCVQ6J1hJ9CQgnf8YLZQlKaACiv/VX+iAnPD/iL/0nnjzqyM7jorrphS2C3j5rsV
+         W9ZWnrLfcasVe1qsmIqxMfUtyNb4e8wGiVo6tzHOE9t49CmEKZP3m4JR2CtX9tI6wkqo
+         WOqvpRjODd2B1RADPzMGK8q0DyHrNxzgd2RTkFe8W1rXXGhYEbv/UjzGnmNJClev36Qi
+         CDOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1LhW8LVwSoxQQpyW4009bvl9o+iGdIJ8EYui4FeN5lI=;
+        b=evA+SMW1RbiuujN1jMf5EK3kB3WJqnqX9w1vuFTYzJ3pUVdmTlSuF8EieSdTLNOIT0
+         Amg6F00wSufSkYG2iQtW8QYciwM9ps78uy/TzNN/bx63O2sUYdYC0XmXaORlxmhOk2y/
+         PKRPyjslC0eMi6Wr7QX7GcXZ2dZL0mLJyFRZlBP5gs/oRs3OKEK6+rAkzL5IbL7PejKi
+         mcYFYquPE0gjWUMHVVnnc7OAHwAbIf8bZBbRIlAbrmzwN8/b9XnFp+YDt1D2++Ur8Plq
+         GtSPSwzNuWLlnEmtAlBuZjdwDCQb1tizp5YlOU6eron9Os7DRf9rweeoyGN5TEZGokO5
+         7+lQ==
+X-Gm-Message-State: ACrzQf3+O5Z+dbIadr7Ys/aSigrAcxPj2WomMn6k4S+/m8h4jwUVk6zm
+        dRdr/dthPtZKcxCvbe8Iok5VesWd9N8=
+X-Google-Smtp-Source: AMsMyM7L1FtirDOVqJjIsUVZ7WCVdzk4jypU9W5LWPfUxEa7dwpdnbp8zexf2QhSOS+ruG6K0QT3zg==
+X-Received: by 2002:a17:90a:c7c7:b0:20a:db08:8a8a with SMTP id gf7-20020a17090ac7c700b0020adb088a8amr913509pjb.141.1667882506250;
+        Mon, 07 Nov 2022 20:41:46 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:fb10:b5b0:232e:4afb])
+        by smtp.gmail.com with ESMTPSA id y11-20020a1709029b8b00b00178b6ccc8a0sm5810357plp.51.2022.11.07.20.41.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 20:41:45 -0800 (PST)
+Date:   Mon, 7 Nov 2022 20:41:42 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] drm/tegra: switch to using devm_fwnode_gpiod_get()
+Message-ID: <Y2neBkfe6b+MzQGa@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221107152645.GD21002@willie-the-truck>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0000EE3C:EE_|SJ0PR12MB5424:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5808e1ce-f844-4895-f7a2-08dac11e4645
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0RU24JXB3AVpAykJgZNiyB3QHnmFS+aLLRoamB/d0r3zRn8a/2egcnaBTglj+4BNErN9mte5MVKMKM4Yxyxgwgz5sehyBUjHTrMEQeFFmxn7Btkl8XS1rklD3NNWVLTcMi5ayNeV1hWnIoqchFg65GgZqaubfP6eFAREAIzAOdGi5ryeiBukr5zfyzFpue5gZUxQqiKCuwt6/RNBzE8eH/u+xfAjXGF+gs/SHAgMwRncZF/iGKBwqeXVpC91hJWnhC830ozySpnTDs318VEVGkUZPSyK3sVs+39mNMiFiYtYAl3dLjyiKukH1j1+gnsXMB/b9DCq/scM56Uo2nPkyVowrQT9qKDHEIH4+OST988u/RuxNk4yUETdsd5nhds2NuO/A5DJEcDCU2zDrWUF7f//rzXfkniEOa02yik+5IP2WguwggJexPf3GjwYnYKwHrKZsEVbYEhW2eXxFz0Z6xzr0akkdSN/IxGuRuipblRntFU5KMzr981xONqiTjuecTCm1NpOb3hMmH9K+Vm3B5GQsjlCHOznfH6rj+TP5tI99FSbrXOH6+ftyVklI9Ja+P6896QvJ7unisz0fyzvtCHUVF5zoMZm1YATBq+4gIIDtT/1tYF+MPA0r7SBsE/anmABGSKRWch0wN960R0b/Paqb8j90kGfif4uAmSEl2598y8OvmqvMSST9n9cJckjYFxJwF3bqKTQdg9npOGBNrlaJpioZ6dSRPtCMmXrg3rnFC8MUBXBymSJrwTVWGDP9PDHJuI/vherWrVYPsufQpmP/Po6R3OjUS7y6uy3jPM=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(136003)(39860400002)(346002)(451199015)(40470700004)(46966006)(36840700001)(86362001)(356005)(7636003)(82740400003)(83380400001)(55016003)(40460700003)(40480700001)(2906002)(9686003)(26005)(186003)(336012)(47076005)(426003)(36860700001)(70206006)(8676002)(4326008)(7406005)(6916009)(316002)(478600001)(82310400005)(33716001)(7416002)(54906003)(70586007)(8936002)(5660300002)(41300700001)(473944003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2022 00:14:59.6329
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5808e1ce-f844-4895-f7a2-08dac11e4645
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0000EE3C.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5424
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 07, 2022 at 03:26:45PM +0000, Will Deacon wrote:
+devm_gpiod_get_from_of_node() is going away and GPIO consumers should
+use generic device/firmware node APIs to fetch GPIOs assigned to them.
+Switch the driver to use devm_fwnode_gpiod_get() instead.
 
-> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > index ba47c73f5b8c..01fd7df16cb9 100644
-> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > @@ -2430,23 +2430,14 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
-> >                       goto out_unlock;
-> >               }
-> >       } else if (smmu_domain->smmu != smmu) {
-> > -             dev_err(dev,
-> > -                     "cannot attach to SMMU %s (upstream of %s)\n",
-> > -                     dev_name(smmu_domain->smmu->dev),
-> > -                     dev_name(smmu->dev));
-> > -             ret = -ENXIO;
-> > +             ret = -EINVAL;
-> >               goto out_unlock;
-> >       } else if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1 &&
-> >                  master->ssid_bits != smmu_domain->s1_cfg.s1cdmax) {
-> > -             dev_err(dev,
-> > -                     "cannot attach to incompatible domain (%u SSID bits != %u)\n",
-> > -                     smmu_domain->s1_cfg.s1cdmax, master->ssid_bits);
-> >               ret = -EINVAL;
-> >               goto out_unlock;
-> >       } else if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1 &&
-> >                  smmu_domain->stall_enabled != master->stall_enabled) {
-> > -             dev_err(dev, "cannot attach to stall-%s domain\n",
-> > -                     smmu_domain->stall_enabled ? "enabled" : "disabled");
-> >               ret = -EINVAL;
-> >               goto out_unlock;
-> >       }
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-> I think it would be helpful to preserve these messages using
-> dev_err_ratelimited() so that attach failure can be diagnosed without
-> having to hack the messages back into the driver.
+Marked as "resend" since the contents of the patch are the same (however
+I did update the description a bit).
 
-Thank you for the review.
+ drivers/gpu/drm/tegra/output.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-The change is already picked up last week. Yet, I can add prints
-back with a followup patch, if no one has a problem with that.
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index 47d26b5d9945..a8925dcd7edd 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -133,11 +133,11 @@ int tegra_output_probe(struct tegra_output *output)
+ 		}
+ 	}
+ 
+-	output->hpd_gpio = devm_gpiod_get_from_of_node(output->dev,
+-						       output->of_node,
+-						       "nvidia,hpd-gpio", 0,
+-						       GPIOD_IN,
+-						       "HDMI hotplug detect");
++	output->hpd_gpio = devm_fwnode_gpiod_get(output->dev,
++					of_fwnode_handle(output->of_node),
++					"nvidia,hpd",
++					GPIOD_IN,
++					"HDMI hotplug detect");
+ 	if (IS_ERR(output->hpd_gpio)) {
+ 		if (PTR_ERR(output->hpd_gpio) != -ENOENT)
+ 			return PTR_ERR(output->hpd_gpio);
+-- 
+2.38.1.431.g37b22c650d-goog
 
-Also, I am not quite sure what the use case would be to have an
-error print. Perhaps dev_dbg() would be more fitting if it is
-just for diagnosis?
 
-Thanks
-Nic
+-- 
+Dmitry
