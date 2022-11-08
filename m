@@ -2,113 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBB5C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 13:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C9EC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 13:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233539AbiKHNaA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Nov 2022 08:30:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34766 "EHLO
+        id S234602AbiKHNt0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Nov 2022 08:49:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232891AbiKHN37 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 08:29:59 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B518417079;
-        Tue,  8 Nov 2022 05:29:58 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id f27so38632997eje.1;
-        Tue, 08 Nov 2022 05:29:58 -0800 (PST)
+        with ESMTP id S234581AbiKHNt0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 08:49:26 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9688729E;
+        Tue,  8 Nov 2022 05:49:25 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id z18so22539416edb.9;
+        Tue, 08 Nov 2022 05:49:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9xbk5KvaKCBFjDGxiFClGZRsCdkkDd8jtBj+grZQY+s=;
-        b=KLuigQkvkapDRRH4I9tHY1W2ZEN6W4n+frfXdxtwdesyp1CIpRv9kabCsU5zKSAsyR
-         zsDNZ6MYNE3g/v9to88a+1OZprC/ijTd1cMBQG9rBqjPxIkM2c4Xn/SvQyAPWySUIaND
-         D1DuvetuAPWO+8QPhS8GDkPWgTsnk5wgOOTAuCFlE5RfXqNGOJfg2a/+Oub7hdVHT94B
-         jUn1Sqm7n7p50CO2quoZIzHeKKiHcZBI1fT5GnhGpvJ4608fU0fUEjIqJJ7BjI+goWLQ
-         YSigRMjAWI3fXfFDKrvStLraFd3FEU1fd3MWHJmNAfakStUmLGVmnO95cdxOeRTb+tts
-         3NGg==
+        bh=c95ZPEtISLCedyNk9u0ebKNS7FQi7eh5TIwJUEhU6Oc=;
+        b=ClcXVYOQS1ir/Y+VkxmuB1/esNQOIkJwDDjukhhM/7weYeR0VMwWvmh6keVD4aPno3
+         jW5193E30tj5iyUwZ4pcQJMW4NOon3AEg602qAoTpq0kfll+QE3vBRItTug8j5+EOm8X
+         NqYv0z+cEzQ7ZpHZFWNG7SOOukAAw3FEibLt0Vgwnst1POuS63OWiIid8J1OmOmUG0fp
+         c3+VEzdr6oe6gGXFbsSUbAR+iT0LvMIEnMQ4LTypPUvE/yJe0zGzO3ybXRedNQrai1mN
+         fssOdYSwe+jxZxRPWv6wQE2sqh40soCZQOD5Gywqy7y4it+P/iXc2lMW8PGSWjqMEbLP
+         O4ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9xbk5KvaKCBFjDGxiFClGZRsCdkkDd8jtBj+grZQY+s=;
-        b=p76EC3YCbsBjZKJB+hMfTTtl3ZpF/nHBjqyAfjZNvTOz25fZLvfHRyHvLSEiBHbd7K
-         E+EIFyYDwFGYjKn/GmadFsib61MIpgyNBOJkObsvfuy8pd71DBimavSxC6v/jEg8NjG3
-         min78Spvfvo7vuOvLUZcEqWBeMxhAtdo77edfWjbKu7lOuHuP4c9sgIOS0Fzho5v+K6m
-         IQ6WqwhyZ0hITf9OL2Z+ZaDmLSv3L0jDO15QVywcDkiSrubUOOJ6kmhiQIUQzsYe/QL0
-         dAOS7gmwBeEZ/Vo7WeyO0R4jfHJG7lBusxGPKZur/nhYP3x3/atXYD9bzX6e/N+R6M6I
-         Td9g==
-X-Gm-Message-State: ACrzQf1krBUTIVfzKzgErL4/dvln61tE2yGbGS0kBLSubllEWonbbAcA
-        cpiK1TfvxIeb8bPFw6F7DE8=
-X-Google-Smtp-Source: AMsMyM5rCaudzBBEcGQPNwsYtFep8MhqHrkQlflyXUYz3K8Ismsbw3Qw4A9UWUYOKhbP7eaBSw64sg==
-X-Received: by 2002:a17:906:6a1c:b0:7ad:e132:bb86 with SMTP id qw28-20020a1709066a1c00b007ade132bb86mr42887065ejc.408.1667914197134;
-        Tue, 08 Nov 2022 05:29:57 -0800 (PST)
+        bh=c95ZPEtISLCedyNk9u0ebKNS7FQi7eh5TIwJUEhU6Oc=;
+        b=pThRhZLoEUP341Pwewoar+v9he4K4u2rucv77zbqkXYXsRONdv1W9CRm85z5Y7h2X2
+         0I+dh635mU/XTqSPyww8/70nTiykFWWfSL6uitmFEJuuPPi7vGL5LToaMrUBZGg9Ochg
+         Ip46ZWV/Q+2SU5IiSUoSgUo7nww14vi3oQVb128gIOj9QRKb2GbEF95fnfNeZTEkaA2L
+         3ZupcoVhlN7pkK32PAtL0f17TGMlfv+V6xm/2xiahlgWt6DYWatdw599FKDr/Da/cBBO
+         2JD6a4cWm0M1jO2D5jQFi9CKo9OspO3PWuWvZ1CihBKh0PG1xAc3WxfGDD2fOVWbl/SS
+         S+SQ==
+X-Gm-Message-State: ACrzQf1ijzOu2o8HSJcZyF1+FioB6SqDPQip0X9uQ9G/pZXQr/aV+HM1
+        FJKs0G2TnarWqS1CNf9+jD8=
+X-Google-Smtp-Source: AMsMyM7xRtoHI5OxCUlmZ+L84S+cfrmfoFpZKzusxHqZ37V3TWVSmO364vEKkcMsewA1OdUNCmbSuA==
+X-Received: by 2002:a05:6402:35cb:b0:462:6545:5d99 with SMTP id z11-20020a05640235cb00b0046265455d99mr56353638edc.51.1667915363947;
+        Tue, 08 Nov 2022 05:49:23 -0800 (PST)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id i24-20020aa7dd18000000b0046267f8150csm5515086edv.19.2022.11.08.05.29.55
+        by smtp.gmail.com with ESMTPSA id du1-20020a17090772c100b00771cb506149sm4769765ejc.59.2022.11.08.05.49.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 05:29:55 -0800 (PST)
-Date:   Tue, 8 Nov 2022 14:29:54 +0100
+        Tue, 08 Nov 2022 05:49:22 -0800 (PST)
+Date:   Tue, 8 Nov 2022 14:49:21 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
-        Manish Bhardwaj <mbhardwaj@nvidia.com>
-Subject: Re: [PATCH v2] gpio: tegra186: Check PMC driver status before any
- request
-Message-ID: <Y2pZ0kQ0ocG/0G8t@orome>
-References: <Y1aa3/oJA2ElSGp0@orome>
- <20221026070614.24446-1-pshete@nvidia.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] pwm: tegra: Ensure the clock rate is not less
+ than needed
+Message-ID: <Y2peYWX5jGUu8ARH@orome>
+References: <20221028123356.133796-1-jonathanh@nvidia.com>
+ <20221028123356.133796-2-jonathanh@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sBtpdFTNqM0kOPdh"
+        protocol="application/pgp-signature"; boundary="jax0Wr6ZptALUy+0"
 Content-Disposition: inline
-In-Reply-To: <20221026070614.24446-1-pshete@nvidia.com>
+In-Reply-To: <20221028123356.133796-2-jonathanh@nvidia.com>
 User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---sBtpdFTNqM0kOPdh
+--jax0Wr6ZptALUy+0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 26, 2022 at 12:36:14PM +0530, Prathamesh Shete wrote:
-> This patch fixes the issue where even if PMC driver status is
-> disabled still we are trying to look up for the IRQ domain
-> that PMC driver would've registered if it had been enabled.
+On Fri, Oct 28, 2022 at 01:33:56PM +0100, Jon Hunter wrote:
+> When dynamically scaling the PWM clock, the function
+> dev_pm_opp_set_rate() may set the PWM clock to a rate that is lower than
+> what is required. The clock rate requested when calling
+> dev_pm_opp_set_rate() is the minimum clock rate that is needed to drive
+> the PWM to achieve the required period. Hence, if the actual clock
+> rate is less than the requested clock rate, then the required period
+> cannot be achieved and configuring the PWM fails. Fix this by
+> calling clk_round_rate() to check if the clock rate that will be provided
+> is sufficient and if not, double the required clock rate to ensure the
+> required period can be attained.
 >=20
-> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Fixes: 8c193f4714df ("pwm: tegra: Optimize period calculation")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  drivers/gpio/gpio-tegra186.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+> Changes since V1:
+> - Multiplied the required_clk_rate by 2 instead of adding 1 to the
+>   PWM_DUTY_WIDTH and recalculating the rate. Overall rate should be
+>   similar.
+> - Updated comment based upon Uwe's feedback.
+>=20
+>  drivers/pwm/pwm-tegra.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Applied, thanks.
 
---sBtpdFTNqM0kOPdh
+Thierry
+
+--jax0Wr6ZptALUy+0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNqWdIACgkQ3SOs138+
-s6FrlA/+LCyj6wLVY4+sOLjWM9pZWC3q10z5N6lN2RtqulMr/Ojx9bIzRD4TUAHy
-jSBMthXJSLt21u+4V2SRZFVBDG3ZX2X6xCugB689zizVI7jMtjmJ4eifMMZ/aPuT
-/ZI33QJiYyDv9x8QxTqrZ0G4gjJUCqgECe9IukE8+hDN51aiR3Yh4PBOuoC+Yz7K
-pmlfQWt0NKydq1Le48tbZsh5RayRam42IGHhVbaKqzKsVhHR5AOlEcSoWvBlg4dF
-ss3ZjwUJaGBm0iNADfU3aKEjdrouTFxsZxp1UsZ+LRSj32nD1kEncKgEgHL5Yol+
-f3kSbbzIsAl+fbk6uk0+9yo6MyYtK88xyZl8Pxmp3ekKhjZsi5Gw9cy0xzFYWUcR
-CUb2gCiRkC235aifkJfvIlz/0msiQrOqpUqM9Q6Hut2PALk+DvAOuDl4W2Ui6f6c
-9m2EncKu9puv2CpUZKeFqIh1E/Q6KDcCtZ5YtTx1H+bqjTh4EtmRg+zjZejAF1n5
-0Wv6XBaiyjCuT+sTnDkJbRevnDkyN7GinhoToarZ+ivWwkhNqeUycHOVTJlLfBnj
-+J1flU3sIaIMgYpHnkZwQ/BRb6mkdYzR1cXaCsdPUPZdoaAmrP5oOpvsJNF+9/vM
-NzaLsenD9wHdyJGK9JLROvrd9YTSbVd6KR8Btd64+YqdHkaZTfc=
-=Vbbz
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNqXl4ACgkQ3SOs138+
+s6FrOxAAiiVAnUVLo3xwPSvAWZZ2hiLagafQESy4/z/+VyNbwdZdppycJzSIcvqV
+u4EgqSB0Jg7Y8FF06Cuo5pooyxz2W9BRBpgpUV6wC5Qbh7TSguZHo6AWws9FLO1a
+5ffFBcyaIU/fXoCcsUpiVV2eWoqdzO8q9CRGos2Bzx9wkOmRD25EfpKxxWhp5DYJ
+VagQFvfKEh7QhR/wrU6Vjkii+dFLKPdCzakXYNOCjZ4Yr3eGCMHyeZ6mZZR4GxtF
+PwdEdI3ivkSAzDZ0R3n6yqBLM3q4DmDQbog7I1sD40LB3NwhpmfDpqn6mSyT9aSB
+fkHQ18VBdDezimUSgzVNtCb5wb/v4a3ApdLRl7jWnu36Uh0/YWGASvDcDysKgV5i
+cK/HPINVSGQPXgsxCNUQLrK57JrlPIgY0qlcZQN4EZ9sgdZYEn2rP7RuThE31v0E
++YUHZLoI2qUFgxKjf5pNvfWvPAiEJf2Q7qtMEnW52AY4583oHAA/Mf81iBwmxBrB
+bLGhM5kaln5gZIrEmXxJxZCK9Q9OJRzEenQx0dI4vNHaMbARO9JjRvBy4pGFZsmg
+XXl/79IaOHo+Te0ccAieDj+j9hK4Qa98egoz5DZn+TtixnNj6+6SfJHe0MnuZ0Ec
+/UPYGozxWwd443XJlJ2P/g4mrquFHGObPCcXlsTbcQ27xFXNv3s=
+=7MxQ
 -----END PGP SIGNATURE-----
 
---sBtpdFTNqM0kOPdh--
+--jax0Wr6ZptALUy+0--
