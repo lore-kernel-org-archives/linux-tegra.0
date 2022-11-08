@@ -2,151 +2,113 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E109FC4167B
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 13:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBB5C4332F
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 13:30:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234418AbiKHN1V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Nov 2022 08:27:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32768 "EHLO
+        id S233539AbiKHNaA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Nov 2022 08:30:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234309AbiKHN1U (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 08:27:20 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F0F53EC9
-        for <linux-tegra@vger.kernel.org>; Tue,  8 Nov 2022 05:27:19 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id q9so38708313ejd.0
-        for <linux-tegra@vger.kernel.org>; Tue, 08 Nov 2022 05:27:19 -0800 (PST)
+        with ESMTP id S232891AbiKHN37 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 08:29:59 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B518417079;
+        Tue,  8 Nov 2022 05:29:58 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id f27so38632997eje.1;
+        Tue, 08 Nov 2022 05:29:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/2yj1vtV3WtEYwU3cNvgg/PVgtVCmwn3eJn8jo49wk=;
-        b=VMnat+U1KSonabFKRPuR13L5JqFFcM/AvvqPUwa+9VtqcDpyz6Op4uI9k8fhWWUfgj
-         OQMGyd7nBSVagfiyDveayuziCLNEcnxn2ErDoMUoLlpt3yo8/JHVhiTmfW1xUoXEQ8ch
-         5jJZRKNOXfrIQxouT0FZtywu8oBKzwLv6/7PIprEyWb5tHAmIqyiFvsPphy4dzO+D1O/
-         ByJEsT3p8EBbAPP+gKvFSCFRhufjqGSeVaHTdjl/xTUCo6crbpyBuirSVOUQflk15qBf
-         1q39gU7+oVdTRiJwpV9lCujVgxFVrOBGfRo6fbxcreewXR1hDWvKWjF1rSAwPNJVX2jh
-         IlsQ==
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9xbk5KvaKCBFjDGxiFClGZRsCdkkDd8jtBj+grZQY+s=;
+        b=KLuigQkvkapDRRH4I9tHY1W2ZEN6W4n+frfXdxtwdesyp1CIpRv9kabCsU5zKSAsyR
+         zsDNZ6MYNE3g/v9to88a+1OZprC/ijTd1cMBQG9rBqjPxIkM2c4Xn/SvQyAPWySUIaND
+         D1DuvetuAPWO+8QPhS8GDkPWgTsnk5wgOOTAuCFlE5RfXqNGOJfg2a/+Oub7hdVHT94B
+         jUn1Sqm7n7p50CO2quoZIzHeKKiHcZBI1fT5GnhGpvJ4608fU0fUEjIqJJ7BjI+goWLQ
+         YSigRMjAWI3fXfFDKrvStLraFd3FEU1fd3MWHJmNAfakStUmLGVmnO95cdxOeRTb+tts
+         3NGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N/2yj1vtV3WtEYwU3cNvgg/PVgtVCmwn3eJn8jo49wk=;
-        b=b0d0SJ6GAnP+40HjKvAQQFO3kaVb7+SHYc2mcksPz9n9pz2yd2V2+SkP4kuPyEcrkd
-         G5mz9fqL74Jlw+TXzWpr4WRAJii7ncqXjzFonXou9b+CM5UBRTxUQze82c1rf7jxbwGd
-         EBSxBtB6lzwZzSka8O5NgqRDefGKuLFTRqNWEQqGWj6sgaieoJ/rU1sn7LQO83PZKvEV
-         xcJDAwzuK+JCc9iHtirUMs00v9FOgPL1sKf1s5HOI4JzhVJFgtU+mGs7f1ZH61EdU9LB
-         0Ooaev1rUSCntsZPSVF17PEsTmgohtdsuuMCcLb+mdejniv/2za0CQg0NivcUA/g3CRp
-         lDPQ==
-X-Gm-Message-State: ACrzQf2bbtLMNPJHmLB/SpSehmS/Fih2SRnMBsusUjagBMvWfmW1brT2
-        EOh1M+XNTFwS7O1GqXPvvNWbKhrG7lbo41gVgMZtVw==
-X-Google-Smtp-Source: AMsMyM4SQlliAGfUpQoe5HVHzBogl+LIrkzKv8wyDOakcTA7xnKfY84HO6wUWBApVXLz+WmeEpt0AVEmstNop5fvJLQ=
-X-Received: by 2002:a17:906:4c4b:b0:7ad:a197:b58e with SMTP id
- d11-20020a1709064c4b00b007ada197b58emr54058070ejw.203.1667914037645; Tue, 08
- Nov 2022 05:27:17 -0800 (PST)
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9xbk5KvaKCBFjDGxiFClGZRsCdkkDd8jtBj+grZQY+s=;
+        b=p76EC3YCbsBjZKJB+hMfTTtl3ZpF/nHBjqyAfjZNvTOz25fZLvfHRyHvLSEiBHbd7K
+         E+EIFyYDwFGYjKn/GmadFsib61MIpgyNBOJkObsvfuy8pd71DBimavSxC6v/jEg8NjG3
+         min78Spvfvo7vuOvLUZcEqWBeMxhAtdo77edfWjbKu7lOuHuP4c9sgIOS0Fzho5v+K6m
+         IQ6WqwhyZ0hITf9OL2Z+ZaDmLSv3L0jDO15QVywcDkiSrubUOOJ6kmhiQIUQzsYe/QL0
+         dAOS7gmwBeEZ/Vo7WeyO0R4jfHJG7lBusxGPKZur/nhYP3x3/atXYD9bzX6e/N+R6M6I
+         Td9g==
+X-Gm-Message-State: ACrzQf1krBUTIVfzKzgErL4/dvln61tE2yGbGS0kBLSubllEWonbbAcA
+        cpiK1TfvxIeb8bPFw6F7DE8=
+X-Google-Smtp-Source: AMsMyM5rCaudzBBEcGQPNwsYtFep8MhqHrkQlflyXUYz3K8Ismsbw3Qw4A9UWUYOKhbP7eaBSw64sg==
+X-Received: by 2002:a17:906:6a1c:b0:7ad:e132:bb86 with SMTP id qw28-20020a1709066a1c00b007ade132bb86mr42887065ejc.408.1667914197134;
+        Tue, 08 Nov 2022 05:29:57 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id i24-20020aa7dd18000000b0046267f8150csm5515086edv.19.2022.11.08.05.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Nov 2022 05:29:55 -0800 (PST)
+Date:   Tue, 8 Nov 2022 14:29:54 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
+        Manish Bhardwaj <mbhardwaj@nvidia.com>
+Subject: Re: [PATCH v2] gpio: tegra186: Check PMC driver status before any
+ request
+Message-ID: <Y2pZ0kQ0ocG/0G8t@orome>
+References: <Y1aa3/oJA2ElSGp0@orome>
+ <20221026070614.24446-1-pshete@nvidia.com>
 MIME-Version: 1.0
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech> <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 8 Nov 2022 14:27:06 +0100
-Message-ID: <CACRpkdaOM=T1pRJNK6hdc76m5tQfrjvF9nVBp7ZDf3wOMNSwyg@mail.gmail.com>
-Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sBtpdFTNqM0kOPdh"
+Content-Disposition: inline
+In-Reply-To: <20221026070614.24446-1-pshete@nvidia.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Nov 4, 2022 at 2:32 PM Maxime Ripard <maxime@cerno.tech> wrote:
 
-> The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
-> hook, but doesn't provide a determine_rate implementation.
->
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
->
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
->
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
->
-> The latter case would be equivalent to setting the flag
-> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
-> to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> implementation is provided, clk_round_rate() (through
-> clk_core_round_rate_nolock()) will call itself on the parent if
-> CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> otherwise. __clk_mux_determine_rate() has the exact same behavior when
-> CLK_SET_RATE_NO_REPARENT is set.
->
-> And if it was an oversight, then we are at least explicit about our
-> behavior now and it can be further refined down the line.
->
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+--sBtpdFTNqM0kOPdh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On Wed, Oct 26, 2022 at 12:36:14PM +0530, Prathamesh Shete wrote:
+> This patch fixes the issue where even if PMC driver status is
+> disabled still we are trying to look up for the IRQ domain
+> that PMC driver would've registered if it had been enabled.
+>=20
+> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra186.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
 
-Yours,
-Linus Walleij
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--sBtpdFTNqM0kOPdh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNqWdIACgkQ3SOs138+
+s6FrlA/+LCyj6wLVY4+sOLjWM9pZWC3q10z5N6lN2RtqulMr/Ojx9bIzRD4TUAHy
+jSBMthXJSLt21u+4V2SRZFVBDG3ZX2X6xCugB689zizVI7jMtjmJ4eifMMZ/aPuT
+/ZI33QJiYyDv9x8QxTqrZ0G4gjJUCqgECe9IukE8+hDN51aiR3Yh4PBOuoC+Yz7K
+pmlfQWt0NKydq1Le48tbZsh5RayRam42IGHhVbaKqzKsVhHR5AOlEcSoWvBlg4dF
+ss3ZjwUJaGBm0iNADfU3aKEjdrouTFxsZxp1UsZ+LRSj32nD1kEncKgEgHL5Yol+
+f3kSbbzIsAl+fbk6uk0+9yo6MyYtK88xyZl8Pxmp3ekKhjZsi5Gw9cy0xzFYWUcR
+CUb2gCiRkC235aifkJfvIlz/0msiQrOqpUqM9Q6Hut2PALk+DvAOuDl4W2Ui6f6c
+9m2EncKu9puv2CpUZKeFqIh1E/Q6KDcCtZ5YtTx1H+bqjTh4EtmRg+zjZejAF1n5
+0Wv6XBaiyjCuT+sTnDkJbRevnDkyN7GinhoToarZ+ivWwkhNqeUycHOVTJlLfBnj
++J1flU3sIaIMgYpHnkZwQ/BRb6mkdYzR1cXaCsdPUPZdoaAmrP5oOpvsJNF+9/vM
+NzaLsenD9wHdyJGK9JLROvrd9YTSbVd6KR8Btd64+YqdHkaZTfc=
+=Vbbz
+-----END PGP SIGNATURE-----
+
+--sBtpdFTNqM0kOPdh--
