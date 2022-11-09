@@ -2,151 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD58C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 15:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F618C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 16:25:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbiKIPfs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Nov 2022 10:35:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33450 "EHLO
+        id S231462AbiKIQZp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Nov 2022 11:25:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230153AbiKIPfs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 10:35:48 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9590BFF7;
-        Wed,  9 Nov 2022 07:35:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F97E61B7A;
-        Wed,  9 Nov 2022 15:35:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD11C433D6;
-        Wed,  9 Nov 2022 15:35:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668008145;
-        bh=LhZ+WjU7cSTCcqle6TSdTZQmNC7lZrjyrwVVzROOAoE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b3fQ3ICluA9Zcx34dPXCyRlAAVIQNROlvfRQHOH0VmfSD/l3RwoPvXLq76a9KJUAX
-         wCfL829a2E3baedcfG6gzEkrlmvj0y/v1KNkXBLWVCaVvEdpbAMRsXvbry7besDYrv
-         tAqLavWVeFqSKr2A7JqiMCUSNeglwoH+pjXZVO6TlG42t8GA8OtOfnrlDYSsmRMVD8
-         2YHG783DGRAoaNBUCt8i923oPMSfGtW/a/fxMtmtQPw8vIS1xw9xi7MXoXueYuON5A
-         p9Xp6Fms/X0vo8TpFxQqfXTu3pmgHsZoy9vjV5J5KqslKXJ1O5oIKSyzMV+s/PQyMH
-         iGKr8VI8SkAsg==
-Date:   Wed, 9 Nov 2022 21:05:33 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, lpieralisi@kernel.org,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-        Jonathan Derrick <jonathan.derrick@linux.dev>,
-        Lukas Wunner <lukas@wunner.de>, bhelgaas@google.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        kw@linux.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        Sergey.Semin@baikalelectronics.ru, jszhang@kernel.org,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Subject: Re: [PATCH V1 0/4] GPIO based PCIe Hot-Plug support
-Message-ID: <20221109153533.GA46277@thinkpad>
-References: <2a465222-342a-418b-95af-9948f6ce9065@linux.dev>
- <20221003180949.GA2104321@bhelgaas>
- <20221003182147.jp5gn2jpnf4gucdl@pali>
- <364fc93d-a4b5-59cb-c62a-8e3b32507523@nvidia.com>
- <9210e81f-15ee-6c54-bfbb-1188da48dd68@nvidia.com>
- <38c1d688-1488-3ecb-422e-fbc47106c144@nvidia.com>
+        with ESMTP id S231384AbiKIQZo (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 11:25:44 -0500
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D5C1A048;
+        Wed,  9 Nov 2022 08:25:42 -0800 (PST)
+Received: from booty (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 05DEBC000B;
+        Wed,  9 Nov 2022 16:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1668011141;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=md+3BvVMOqhbT4Mg1/eofVo42NnM0QIADOtucHcIgg4=;
+        b=gF6sAue/cSpFVYdCzn6XaeoAMUvRAr/BsmC8fZpflEJ6rq4f51Dmw+AsyA3tEdtFLjGgrj
+        tPnOphPVGbtNot0izJb5ZAo1Sf1hW3VhIwbn2e/cZQKg79XWffb6+IGIaejZo/roXifsR2
+        Gjcp0vNbtMLQFSNeprS5gc5f0fD+0+RuzrqzJQn92RUAf30+elKjORYPND6L7fiZz8xNmE
+        iwEFgC5dbi+ZqX6ppxaEOT6gN6skuFspwDI90hy2rGq2TvbFBAOGIpwJ0IxDUIU8yj4WoX
+        U83Zl2D9Gv0tfnRoCaCjtAuSDgllp61yxa8WXAOTDfpRlVrHqOiPCR9CApmHPg==
+Date:   Wed, 9 Nov 2022 17:25:37 +0100
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>
+Subject: Re: [PATCH 23/23] staging: media: tegra-video: add tegra20 variant
+Message-ID: <20221109172537.0c48f66c@booty>
+In-Reply-To: <20221109141852.729246-24-luca.ceresoli@bootlin.com>
+References: <20221109141852.729246-1-luca.ceresoli@bootlin.com>
+        <20221109141852.729246-24-luca.ceresoli@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <38c1d688-1488-3ecb-422e-fbc47106c144@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Spam-Score: 400
+X-GND-Status: SPAM
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 08:16:06AM +0530, Vidya Sagar wrote:
-> 
-> 
-> On 10/10/2022 11:44 AM, Vidya Sagar wrote:
-> > 
-> > 
-> > On 10/4/2022 9:34 AM, Vidya Sagar wrote:
-> > > 
-> > > 
-> > > On 10/3/2022 11:51 PM, Pali Rohár wrote:
-> > > > External email: Use caution opening links or attachments
-> > > > 
-> > > > 
-> > > > On Monday 03 October 2022 13:09:49 Bjorn Helgaas wrote:
-> > > > > On Sat, Oct 01, 2022 at 05:50:07PM -0600, Jonathan Derrick wrote:
-> > > > > > On 10/1/2022 10:20 AM, Pali Rohár wrote:
-> > > > > > ...
-> > > > > 
-> > > > > > > Would not it better to rather synthesise PCIe Slot
-> > > > > > > Capabilities support
-> > > > > > > in your PCIe Root Port device (e.g. via
-> > > > > > > pci-bridge-emul.c) and then let
-> > > > > > > existing PCI hotplug code to take care for hotplugging? Because it
-> > > > > > > already implements all required stuff for
-> > > > > > > re-scanning, registering and
-> > > > > > > unregistering PCIe devices for Root Ports with Slot
-> > > > > > > Capabilities. And I
-> > > > > > > think that there is no need to have just another (GPIO based)
-> > > > > > > implementation of PCI hotplug.
-> > > > > > 
-> > > > > > I did that a few years ago (rejected), but can attest to
-> > > > > > the robustness of
-> > > > > > the pcie hotplug code on non-hotplug slots.
-> > > > > > https://lwn.net/Articles/811988/
-> > > > > 
-> > > > > I think the thread is here:
-> > > > > https://lore.kernel.org/linux-pci/1581120007-5280-1-git-send-email-jonathan.derrick@intel.com/
-> > > > > 
-> > > > > and I'm sorry that my response came across as "rejected".  I intended
-> > > > > it as "this is good ideas and good work and we should keep going".
-> > > > > 
-> > > > > Bjorn
-> > > > 
-> > > > Nice! So we have consensus that this is a good idea. Anyway, if you need
-> > > > help with designing something here, please let me know as I have good
-> > > > understanding of all (just two) consumers of pci-bridge-emul.c driver.
-> > > > 
-> > > 
-> > > Thanks all for your comments.
-> > > 
-> > > I would like to hear from Bjorn / Lorenzo if the design of the
-> > > current patch series is fine at a high level or I should explore
-> > > emulating the root port's configuration space to fake slot
-> > > config/control registers (which in turn depend on the hotplug GPIO
-> > > interrupt & state to update Presence Detect related bits in Slot
-> > > status register) and use the PCIe native Hot-plug framework itself
-> > > to carry out with enabling the Hot-plug functionality?
-> > 
-> > Bjorn / Lorenzo,
-> > Could you please take time to comment on the discussion happened here
-> > and the right approach to be followed?
-> 
-> I'm really sorry to bug you on this, but would like to hear your comments on
-> the approach to be taken. So, I would really like to hear your take on this.
-> 
+On Wed,  9 Nov 2022 15:18:52 +0100
+luca.ceresoli@bootlin.com wrote:
 
-Since Bjorn already expressed his good will about the approach, I think you
-can just proceed with the emulation layer. I don't think there will be any
-controversy.
+> +static int tegra20_vi_enable(struct tegra_vi *vi, bool on)
+> +{
+> +	/* from arch/arm/mach-tegra/iomap.h */
+> +	const phys_addr_t TEGRA_APB_MISC_BASE = 0x70000000;
+> +	const unsigned long reg_offset = 0x42c;
+> +	void __iomem *apb_misc;
+> +	u32 val;
+> +
+> +	apb_misc = ioremap(TEGRA_APB_MISC_BASE, PAGE_SIZE);
+> +	if (!apb_misc)
+> +		apb_misc = ERR_PTR(-ENOENT);
+> +	if (IS_ERR(apb_misc))
+> +		return dev_err_probe(vi->dev, PTR_ERR(apb_misc), "cannot access APB_MISC");
+> +
+> +	val = readl(apb_misc + reg_offset);
+> +	writel(val | (!!on), apb_misc + reg_offset);
 
-Thanks,
-Mani
-
-> Thanks,
-> Vidya Sagar
-> 
-> > 
-> > Thanks,
-> > Vidya Sagar
-> > 
-> > > 
-> > > Thanks,
-> > > Vidya Sagar
-> > > 
-> > > 
+Sorry, there is a mistake here, the bit should be set to 0 when
+on==false, but this code does not do that. This will be fixed in v2.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
