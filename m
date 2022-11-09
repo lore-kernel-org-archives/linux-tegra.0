@@ -2,33 +2,34 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F50C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 14:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 744CEC433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 14:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbiKIOTP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Nov 2022 09:19:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58046 "EHLO
+        id S231145AbiKIOTY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Nov 2022 09:19:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230484AbiKIOTO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 09:19:14 -0500
+        with ESMTP id S231143AbiKIOTX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 09:19:23 -0500
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CF3D1C105;
-        Wed,  9 Nov 2022 06:19:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 376611BEB4;
+        Wed,  9 Nov 2022 06:19:21 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 57288FF804;
-        Wed,  9 Nov 2022 14:19:07 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 97842FF808;
+        Wed,  9 Nov 2022 14:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1668003550;
+        t=1668003560;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=kDIfdqkfme+Jq0Kp8EdrxwE7slaIQ6UkG0ZphGZ60T8=;
-        b=B97F4uUYLSsNcszZDnXtr665xosAPvLqT0FxShMsGjpOMTv4meG8gmaxHfJwVzcUSYor2D
-        9UxKZtEfqc+Cg5UV3j86Df9I7OTFdESm5xRJI0vBtm1jQXyDvviojuopDqFl1ZOzrI+DLJ
-        0U8Ak+Mimled4Rbo4Q5KDCet9tvHHGWJgDpvEmEU32lr9p4ULvx8O80IkPy05x8FOnfF79
-        4dDVGdhx0D1vrUGa+Nx4GymEe41q81fhETeCtI6OqNorLJW0B5YIn20Bsn1iwQjRLDU5I9
-        +NLVNI3EkVDaEoxJNkezTzdtNoUlxqku+UXYwNG2p1zsPruGkpobV9VDSCUb4Q==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PbIcdoBUbNEn6Y5YPfAT65AjVDHZNeQtTTtmrwc4noQ=;
+        b=bP7tDi5cvmzh1tA7Rh7yplOM6iQqIn0Tra14zST5XG8da961HgUpkQ/uVNfg300UONuIv6
+        9WvuwyyeswR0y7w00r+1oBejYgk+XqEkkrtm+3oPsMNdJK2Ei9bll/64VpHcrkdbtNvPlG
+        Z1nwlOgsIDbH3GHpZYpF3eRnKSMQH5JfbelvkFtA5kOKfSzz9YN8aJSexDz44A9QLS6YCP
+        PFHrnZrEJs8V2A/gOm/pk11Fo34ortDU+9WDHFtO7w8cWyUS0O/MYBpocfCoGOGo8DuIdC
+        fFSvcVtEnAC7pLeHNScOSa+en+K8F3f6tKvlhMCrdv/ocvZll0Cinr107HKhSA==
 From:   luca.ceresoli@bootlin.com
 To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -46,10 +47,12 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH 00/23] Add Tegra20 parallel video input capture
-Date:   Wed,  9 Nov 2022 15:18:29 +0100
-Message-Id: <20221109141852.729246-1-luca.ceresoli@bootlin.com>
+Subject: [PATCH 02/23] dt-bindings: display: tegra: vi: add 'vip' property and example
+Date:   Wed,  9 Nov 2022 15:18:31 +0100
+Message-Id: <20221109141852.729246-3-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221109141852.729246-1-luca.ceresoli@bootlin.com>
+References: <20221109141852.729246-1-luca.ceresoli@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -58,120 +61,121 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Tegra20 and other Tegra SoCs have a video input (VI) peripheral that can
-receive from either MIPI CSI-2 or parallel video (called respectively "CSI"
-and "VIP" in the documentation). The kernel currently has a staging driver
-for Tegra210 CSI capture. This patch set adds support for Tegra20 VIP
-capture.
+The Tegra20 VI peripheral can receive parallel input from the VIP parallel
+input module. Add it to the allowed properties and augment the existing
+nvidia,tegra20-vi example to show a 'vip' property.
 
-Unfortunately I had no real documentation available to base this work on,
-and I started from a working downstream 3.1 kernel, that I have heavily
-reworked to fit into the existing tegra-video driver. The existing code
-appears written with the intent of being modular and allow adding new input
-mechanisms and new SoCs while keeping a unique VI core module. However its
-modularity and extensibility was not enough to add Tegra20 VIP support, so
-I added some hooks to turn hard-coded behaviour into per-SoC or per-bus
-customizable code. There are also some fixes, some generic cleanups and DT
-bindings.
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+ .../display/tegra/nvidia,tegra20-vi.yaml      | 68 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 69 insertions(+)
 
-Quick tour of the patches:
-
- * Device tree bindings and minor DTS improvements
-
-   01. dt-bindings: display: tegra: add bindings for Tegra20 VIP
-   02. dt-bindings: display: tegra: vi: add 'vip' property and example
-   03. ARM: dts: tegra20: add label to nvidia,tegra20-vi node
-   04. ARM: dts: tegra20-tamonten: add label to avdd_vdac regulator
-
- * A fix
-
-   05. staging: media: tegra-video: fix .vidioc_enum_fmt_vid_cap to return all formats
-
- * Minor improvements to logging, comments, cleanups
-
-   06. staging: media: tegra-video: improve documentation of tegra_video_format fields
-   07. staging: media: tegra-video: document tegra_channel_get_remote_source_subdev
-   08. staging: media: tegra-video: fix typos in comment
-   09. staging: media: tegra-video: improve error messages
-   10. staging: media: tegra-video: slightly simplify cleanup on errors
-   11. staging: media: tegra-video: move private struct declaration to C file
-   12. staging: media: tegra-video: remove unneeded include
-
- * Preparation to make the VI module generic enough to host Tegra20 and VIP
-
-   13. staging: media: tegra-video: Kconfig: allow TPG only on Tegra210
-   14. staging: media: tegra-video: move tegra_channel_fmt_align to a per-soc op
-   15. staging: media: tegra-video: move default format to soc-specific data
-   16. staging: media: tegra-video: move MIPI calibration calls from VI to CSI
-   17. staging: media: tegra-video: add a per-soc enable/disable op
-   18. staging: media: tegra-video: move syncpt init/free to a per-soc op
-   19. staging: media: tegra-video: add syncpts for Tegra20 to struct tegra_vi
-   20. staging: media: tegra-video: add hooks for planar YUV and H/V flip
-   21. staging: media: tegra-video: add H/V flip controls
-
- * Implementation of VIP and Tegra20
-
-   22. staging: media: tegra-video: add support for VIP (parallel video input)
-   23. staging: media: tegra-video: add tegra20 variant
-
-Enjoy!
-
-Luca
-
-Luca Ceresoli (23):
-  dt-bindings: display: tegra: add bindings for Tegra20 VIP
-  dt-bindings: display: tegra: vi: add 'vip' property and example
-  ARM: dts: tegra20: add label to nvidia,tegra20-vi node
-  ARM: dts: tegra20-tamonten: add label to avdd_vdac regulator
-  staging: media: tegra-video: fix .vidioc_enum_fmt_vid_cap to return
-    all formats
-  staging: media: tegra-video: improve documentation of
-    tegra_video_format fields
-  staging: media: tegra-video: document
-    tegra_channel_get_remote_source_subdev
-  staging: media: tegra-video: fix typos in comment
-  staging: media: tegra-video: improve error messages
-  staging: media: tegra-video: slightly simplify cleanup on errors
-  staging: media: tegra-video: move private struct declaration to C file
-  staging: media: tegra-video: remove unneeded include
-  staging: media: tegra-video: Kconfig: allow TPG only on Tegra210
-  staging: media: tegra-video: move tegra_channel_fmt_align to a per-soc
-    op
-  staging: media: tegra-video: move default format to soc-specific data
-  staging: media: tegra-video: move MIPI calibration calls from VI to
-    CSI
-  staging: media: tegra-video: add a per-soc enable/disable op
-  staging: media: tegra-video: move syncpt init/free to a per-soc op
-  staging: media: tegra-video: add syncpts for Tegra20 to struct
-    tegra_vi
-  staging: media: tegra-video: add hooks for planar YUV and H/V flip
-  staging: media: tegra-video: add H/V flip controls
-  staging: media: tegra-video: add support for VIP (parallel video
-    input)
-  staging: media: tegra-video: add tegra20 variant
-
- .../display/tegra/nvidia,tegra20-vi.yaml      |  68 ++
- .../display/tegra/nvidia,tegra20-vip.yaml     |  64 ++
- MAINTAINERS                                   |  10 +
- arch/arm/boot/dts/tegra20-tamonten.dtsi       |   2 +-
- arch/arm/boot/dts/tegra20.dtsi                |   2 +-
- drivers/staging/media/tegra-video/Kconfig     |   1 +
- drivers/staging/media/tegra-video/Makefile    |   2 +
- drivers/staging/media/tegra-video/csi.c       |  44 ++
- drivers/staging/media/tegra-video/tegra20.c   | 649 ++++++++++++++++++
- drivers/staging/media/tegra-video/tegra210.c  |  97 ++-
- drivers/staging/media/tegra-video/vi.c        | 321 ++-------
- drivers/staging/media/tegra-video/vi.h        |  76 +-
- drivers/staging/media/tegra-video/video.c     |   5 +
- drivers/staging/media/tegra-video/video.h     |   2 +-
- drivers/staging/media/tegra-video/vip.c       | 298 ++++++++
- drivers/staging/media/tegra-video/vip.h       |  72 ++
- 16 files changed, 1425 insertions(+), 288 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
- create mode 100644 drivers/staging/media/tegra-video/tegra20.c
- create mode 100644 drivers/staging/media/tegra-video/vip.c
- create mode 100644 drivers/staging/media/tegra-video/vip.h
-
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+index 782a4b10150a..aab795241dd6 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+@@ -74,6 +74,22 @@ properties:
+   avdd-dsi-csi-supply:
+     description: DSI/CSI power supply. Must supply 1.2 V.
+ 
++  vip:
++    $ref: /schemas/display/tegra/nvidia,tegra20-vip.yaml
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          Input from the VIP (parallel input capture) module
++
++        properties:
++          endpoint:
++            $ref: /schemas/graph.yaml#/properties/endpoint
++
+ patternProperties:
+   "^csi@[0-9a-f]+$":
+     type: object
+@@ -109,6 +125,22 @@ examples:
+     #include <dt-bindings/clock/tegra20-car.h>
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
++    i2c3 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        camera@48 {
++            compatible = "aptina,mt9v111";
++            reg = <0x48>;
++            clocks = <&camera_clk>;
++
++            port {
++                mt9v111_out: endpoint {
++                    remote-endpoint = <&vi_vip_in>;
++                };
++            };
++        };
++    };
++
+     vi@54080000 {
+         compatible = "nvidia,tegra20-vi";
+         reg = <0x54080000 0x00040000>;
+@@ -116,6 +148,42 @@ examples:
+         clocks = <&tegra_car TEGRA20_CLK_VI>;
+         resets = <&tegra_car 100>;
+         reset-names = "vi";
++
++        vip {
++            compatible = "nvidia,tegra20-vip";
++            #address-cells = <1>;
++            #size-cells = <0>;
++            channel@0 {
++                reg = <0>;
++                ports {
++                    #address-cells = <1>;
++                    #size-cells = <0>;
++                    port@0 {
++                        reg = <0>;
++                        vi_vip_in: endpoint {
++                            remote-endpoint = <&mt9v111_out>;
++                        };
++                    };
++                    port@1 {
++                        reg = <1>;
++                        vi_vip_out: endpoint {
++                            remote-endpoint = <&vi_in>;
++                        };
++                    };
++                };
++            };
++        };
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++            port@0 {
++                reg = <0>;
++                vi_in: endpoint {
++                    remote-endpoint = <&vi_vip_out>;
++                };
++            };
++        };
+     };
+ 
+   - |
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b43f6f4e8ccf..0a4f66a32e45 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20284,6 +20284,7 @@ M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
+ L:	linux-media@vger.kernel.org
+ L:	linux-tegra@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+ F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
+ 
+ TEGRA XUSB PADCTL DRIVER
 -- 
 2.34.1
 
