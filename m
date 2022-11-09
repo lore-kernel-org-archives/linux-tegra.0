@@ -2,257 +2,186 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7C1C4167B
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 11:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D0AC433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 13:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbiKILhT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Nov 2022 06:37:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53264 "EHLO
+        id S230334AbiKIN5r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Nov 2022 08:57:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229885AbiKILhJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 06:37:09 -0500
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 758A22A716;
-        Wed,  9 Nov 2022 03:37:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1667993821; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3HeCzuAd5DrGQl3yX0PoEWG+18EHx/4Mkssb32++3BI=;
-        b=WwCPTNJPOIDWtdzd5piGmEgZU4J4b1t9NVy+qRbY3+ISBvVQ6apE6t+8jx2p/zEgIxnja5
-        9nWJEIf1duGHYh5JmCtFyh2CbFVaBUveP5Si2RGhwuWsnzKNfsXmdpkN0q+yUABhtgFuRh
-        Y+C1HQZU871ihv7USL4Dk3I6J/l65gU=
-Date:   Wed, 09 Nov 2022 11:36:35 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?iso-8859-1?q?F=E4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Message-Id: <Z8W2LR.DTD355V5EAE02@crapouillou.net>
-In-Reply-To: <20221109105301.ueus7o3b75j5yeff@houat>
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
-        <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
-        <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
-        <20221104145946.orsyrhiqvypisl5j@houat>
-        <IOEVKR.TWFKJND2FJ473@crapouillou.net>
-        <20221109105301.ueus7o3b75j5yeff@houat>
+        with ESMTP id S230398AbiKIN5n (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 08:57:43 -0500
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2076.outbound.protection.outlook.com [40.107.212.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A2F1902F;
+        Wed,  9 Nov 2022 05:57:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N1PIthNnvRFk4zpXbFfuCdNfOLXVYH1cqLAI091gr/5Yk0JCY+PxmPvw23KWLoArQxoiBISTCexUzp9Sq9lInOCZJPx4pVb24lkKRJKFNz6gYBES3BZNfMZctL39+n2KyisVhYzspKiIpaaSs2iExPVGfkcN3bN3sOa+kPe3H5yQQ92VdZfgz1rWgoj/AoFlV6DZ1lnx7KoMt0IWh/O8peUw8ugj/WmXZFSkapTNu7j/utg7mfonClvC8Yq43viveRtVQ7FePDrvaFZix/zdttHyxeTU2s2E7e3iwSrg0F1BxtKWes0PNpJSnYO6vJs2IToDZ0mPZgwZYAPBbk+mow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P9RlA3tFg+blNCNHIlg+bLgQn+L/zJY2OAH8Chbcr1A=;
+ b=ZQvAPQIZ9vW8h7AcbfySOloSZWywdQu+Ai4C1zt1bB45tQx6i+A2+Jpw17DR/Y6d0ogLgCL2rShk/6QeFQoWHvMXjpFf4xNuQy1XwwgU3zMbPXnEQWeloKpQvwC4nQtz+DqHodflxI6jx9wH88sXWqrSmzvztcxaK6q3o4m3A4ajiICXQfqr/k2GX+u9VJVlKVcwyTFO/IgpdB3M1esRdp+v3u7j2bZwg98n45EcpyybPThajTS6uhnq62eIri5zVlTijkVs5A322Nk5AdYkU3352EIH//K/61QzQljvxRZxH3bUEP7Cjp10lU6EFS1VxjGZaz+utWIRy3fxCDYHPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P9RlA3tFg+blNCNHIlg+bLgQn+L/zJY2OAH8Chbcr1A=;
+ b=MTR8HSwCCHHb64yqUXvlUejjPpDyPUPZtnm2UqBHPrLQMGcJu1IZbRdPw7EidV818C09+Z0/0v6ERD8uHdiwZZOkPh6G7a89HE7jZbuNZzM47Z7aXl4mwR7G2dKl6nsv4QyCpJTCZPNv9c8DxguL0jqpg3Qevsv/WC9Prbsxt9Lq/lfz123/plyNygWpeP2t1eIsvL2zpLbz/aPzdVtr4dDcSbs69od+K/t4impxQ+g1jU+GoZRu9ElzzB+v1JgmVGfAdX2vJ98Kg7f2aOuYHUfT3U/gO9Lx43zdqBIIMlt1MORJ4E73xd6XN/MBOW/aGvDJPmz0GeFmbnWCHpKC+Q==
+Received: from MW2PR16CA0072.namprd16.prod.outlook.com (2603:10b6:907:1::49)
+ by DM4PR12MB7696.namprd12.prod.outlook.com (2603:10b6:8:100::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.26; Wed, 9 Nov
+ 2022 13:57:31 +0000
+Received: from CO1NAM11FT116.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:907:1:cafe::75) by MW2PR16CA0072.outlook.office365.com
+ (2603:10b6:907:1::49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.23 via Frontend
+ Transport; Wed, 9 Nov 2022 13:57:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1NAM11FT116.mail.protection.outlook.com (10.13.174.243) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5813.12 via Frontend Transport; Wed, 9 Nov 2022 13:57:31 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 9 Nov 2022
+ 05:57:23 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 9 Nov 2022 05:57:23 -0800
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Wed, 9 Nov 2022 05:57:21 -0800
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [Patch 1/4] soc/tegra: cbb: use correct master_id mask for cbb noc in Tegra194
+Date:   Wed, 9 Nov 2022 19:27:14 +0530
+Message-ID: <20221109135717.3809-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT116:EE_|DM4PR12MB7696:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a9c0f1c-2e88-45ba-d6d6-08dac25a589f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /VIR7ZfUk4+VlRzBZmV9ZpmK5vmpEX436+a5tHW7FeIPysXPRlx6qgbGHUkB3tunuu4C92XMxgIFrzK8pkdkrePpliJb8ccWhP6Bp+OZTb6DQnPVs1ihVKq/iE8FUJgi057lY5eSkPjvSDIH6nqGYa18aVZFIVPPPPdilho5ENfnLRD0mdC1wXhsrS72ORv3hPK4c+X+moiaBWeyr617URAyHs+9m7F/4rO4EMFABXpnZ8NZ60tV9aPv3OBKiU83qPwOm32HW15mNOuT8R3GBVSPQO83FzA694MWJv7Kp2L0QGKFbZsdYQtjokNZkdC8lDyKdmLgHySInCnHHZOB14BQsuIID/UH4W7gPQiXrKqoD55UnWQ1RVB2TarFR7JCcjFl/pT620mfZ/jYO++Ao3PWJsDdw8Uvw80O1ZvGCGSz26Q+95asOjQn/CnAJXWFKg2Mg3QmFJQPK5mxkkoCsBo5rrp6jIKFyeQpVo7vkbeqeIPtDH9WEhDFo/XgnFvqZwgbmhYdfjw381yy4TWq2+8y7qkOVa9hY90FdcxBB/R8ZxRjt4wmJLnZPG2Wt+F0Q3GKbUKBA5xtGDpxu75NjWWQpR6GH1ikNx0JKQXnCP+n5uHJlMrfxg4/LlaEHlf5wCGrrLnertlUdLi4gAu3FjM9yGHy0PqfoWq9MuEtgHaV5UjGngi9TtNq2Hk6IckT8ybSDPZlwgyfZX/faWIh+L62h+2/yE3BEPIS8aiSrqApJsE25/6wvo4DscrnnwSOQwCie8ndlhlyciLphmvpkg==
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(346002)(39860400002)(136003)(451199015)(36840700001)(46966006)(40470700004)(36756003)(82740400003)(7636003)(356005)(86362001)(40480700001)(83380400001)(336012)(40460700003)(2906002)(36860700001)(6666004)(47076005)(1076003)(426003)(107886003)(186003)(26005)(7696005)(70206006)(8676002)(4326008)(2616005)(316002)(450100002)(54906003)(110136005)(82310400005)(70586007)(8936002)(478600001)(5660300002)(41300700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2022 13:57:31.5124
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a9c0f1c-2e88-45ba-d6d6-08dac25a589f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT116.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7696
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Maxime,
+In Tegra194 SoC, master_id bit range is different between
+cluster NOC and CBB NOC. Currently same bit range is used
+which results in wrong master_id value. Due to this,
+illegal accesses from the CCPLEX master do not result in a
+crash as expected. Fix this by using the correct range for
+the CBB NOC.
+Finally, it is only necessary to extract the master_id when
+the erd_mask_inband_err flag is set because when this is not
+set, a crash is always triggered.
 
-Le mer. 9 nov. 2022 =E0 11:53:01 +0100, Maxime Ripard=20
-<maxime@cerno.tech> a =E9crit :
-> Hi Paul,
->=20
-> On Sat, Nov 05, 2022 at 10:33:54AM +0000, Paul Cercueil wrote:
->>  Hi Maxime,
->>=20
->>  Le ven. 4 nov. 2022 =E0 15:59:46 +0100, Maxime Ripard=20
->> <maxime@cerno.tech> a
->>  =E9crit :
->>  > Hi Paul,
->>  >
->>  > On Fri, Nov 04, 2022 at 02:31:20PM +0000, Paul Cercueil wrote:
->>  > >  Le ven. 4 nov. 2022 =E0 14:18:13 +0100, Maxime Ripard
->>  > > <maxime@cerno.tech> a
->>  > >  =E9crit :
->>  > >  > The Ingenic CGU clocks implements a mux with a set_parent=20
->> hook,
->>  > > but
->>  > >  > doesn't provide a determine_rate implementation.
->>  > >  >
->>  > >  > This is a bit odd, since set_parent() is there to, as its=20
->> name
->>  > > implies,
->>  > >  > change the parent of a clock. However, the most likely=20
->> candidate
->>  > > to
->>  > >  > trigger that parent change is a call to clk_set_rate(), with
->>  > >  > determine_rate() figuring out which parent is the best=20
->> suited for
->>  > > a
->>  > >  > given rate.
->>  > >  >
->>  > >  > The other trigger would be a call to clk_set_parent(), but=20
->> it's
->>  > > far less
->>  > >  > used, and it doesn't look like there's any obvious user for=20
->> that
->>  > > clock.
->>  > >  >
->>  > >  > So, the set_parent hook is effectively unused, possibly=20
->> because
->>  > > of an
->>  > >  > oversight. However, it could also be an explicit decision by=20
->> the
->>  > >  > original author to avoid any reparenting but through an=20
->> explicit
->>  > > call to
->>  > >  > clk_set_parent().
->>  > >  >
->>  > >  > The driver does implement round_rate() though, which means=20
->> that
->>  > > we can
->>  > >  > change the rate of the clock, but we will never get to=20
->> change the
->>  > >  > parent.
->>  > >  >
->>  > >  > However, It's hard to tell whether it's been done on purpose=20
->> or
->>  > > not.
->>  > >  >
->>  > >  > Since we'll start mandating a determine_rate()=20
->> implementation,
->>  > > let's
->>  > >  > convert the round_rate() implementation to a=20
->> determine_rate(),
->>  > > which
->>  > >  > will also make the current behavior explicit. And if it was=20
->> an
->>  > >  > oversight, the clock behaviour can be adjusted later on.
->>  > >
->>  > >  So it's partly on purpose, partly because I didn't know about
->>  > >  .determine_rate.
->>  > >
->>  > >  There's nothing odd about having a lonely .set_parent=20
->> callback; in
->>  > > my case
->>  > >  the clocks are parented from the device tree.
->>  > >
->>  > >  Having the clocks driver trigger a parent change when=20
->> requesting a
->>  > > rate
->>  > >  change sounds very dangerous, IMHO. My MMC controller can be
->>  > > parented to the
->>  > >  external 48 MHz oscillator, and if the card requests 50 MHz, it
->>  > > could switch
->>  > >  to one of the PLLs. That works as long as the PLLs don't change
->>  > > rate, but if
->>  > >  one is configured as driving the CPU clock, it becomes messy.
->>  > >  The thing is, the clocks driver has no way to know whether or=20
->> not
->>  > > it is
->>  > >  "safe" to use a designated parent.
->>  > >
->>  > >  For that reason, in practice, I never actually want to have a=20
->> clock
->>  > >  re-parented - it's almost always a bad idea vs. sticking to the
->>  > > parent clock
->>  > >  configured in the DTS.
->>  >
->>  > Yeah, and this is totally fine. But we need to be explicit about=20
->> it. The
->>  > determine_rate implementation I did in all the patches is an exact
->>  > equivalent to the round_rate one if there was one. We will never=20
->> ask to
->>  > change the parent.
->>  >
->>  > Given what you just said, I would suggest to set the
->>  > CLK_SET_RATE_NO_REPARENT flag as well.
->>=20
->>  But that would introduce policy into the driver...
->=20
-> I'm not sure why you're bringing policies into that discussion.=20
-> There's
-> plenty of policy in the driver already, and the current code doesn't=20
-> do
-> something that the old wasn't doing (implicitly).
+Fixes: b71344221466 ("soc/tegra: cbb: Add CBB 1.0 driver for Tegra194")
+Fixes: fc2f151d2314 ("soc/tegra: cbb: Add driver for Tegra234 CBB 2.0")
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ drivers/soc/tegra/cbb/tegra194-cbb.c | 14 +++++++-------
+ drivers/soc/tegra/cbb/tegra234-cbb.c | 13 ++++++-------
+ 2 files changed, 13 insertions(+), 14 deletions(-)
 
-Yes, I was just talking about the CLK_SET_RATE_NO_REPARENT flag adding=20
-policy. The fact that there's plenty of policy in the driver already is=20
-not an argument for adding some more.
-
-> And there's plenty of policies in drivers in general. Whether you=20
-> limit
-> the rate or not, whether you allow reparenting or not, even the
-> CLK_SET_RATE_NO_REPARENT flag mentioned above is a policy decision set
-> by drivers.
-
-Allowing reparenting and not limiting the rates is not a policy, it's=20
-just following what the hardware allows you to do. The absence of=20
-policy means that the driver allows you to configure the hardware in=20
-any way you might want to.
-
-Limiting rates, forbidding reparenting, that's policy, and it doesn't=20
-belong in a driver.
-
-You can argue that choosing not to reparent on rate change is a policy,=20
-and it is. That's why we need a way to enforce these policies outside=20
-the driver.
-
->>  The fact that I don't want the MMC parented to the PLLs, doesn't=20
->> mean
->>  that it's an invalid configuration per se.
->=20
-> Sure, and that's another policy :)
-
-A policy that is not enforced by the driver.
-
-Going back to the patch itself... I am fine with the change, although=20
-the patch description should probably be updated. We have .set_parent=20
-callbacks to configure clocks from DT, there's nothing more to it.
-
-Cheers,
--Paul
-
+diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+index 1ae0bd9a1ac1..2e952c6f7c9e 100644
+--- a/drivers/soc/tegra/cbb/tegra194-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+@@ -102,8 +102,6 @@
+ #define CLUSTER_NOC_VQC GENMASK(17, 16)
+ #define CLUSTER_NOC_MSTR_ID GENMASK(21, 18)
+ 
+-#define USRBITS_MSTR_ID GENMASK(21, 18)
+-
+ #define CBB_ERR_OPC GENMASK(4, 1)
+ #define CBB_ERR_ERRCODE GENMASK(10, 8)
+ #define CBB_ERR_LEN1 GENMASK(27, 16)
+@@ -2038,15 +2036,17 @@ static irqreturn_t tegra194_cbb_err_isr(int irq, void *data)
+ 					    smp_processor_id(), priv->noc->name, priv->res->start,
+ 					    irq);
+ 
+-			mstr_id =  FIELD_GET(USRBITS_MSTR_ID, priv->errlog5) - 1;
+ 			is_fatal = print_errlog(NULL, priv, status);
+ 
+ 			/*
+-			 * If illegal request is from CCPLEX(0x1)
+-			 * initiator then call BUG() to crash system.
++			 * If illegal request is from CCPLEX(0x1) initiator
++			 * and error is fatal then call BUG() to crash system.
+ 			 */
+-			if ((mstr_id == 0x1) && priv->noc->erd_mask_inband_err)
+-				is_inband_err = 1;
++			if (priv->noc->erd_mask_inband_err) {
++				mstr_id =  FIELD_GET(CBB_NOC_MSTR_ID, priv->errlog5);
++				if (mstr_id == 0x1)
++					is_inband_err = 1;
++			}
+ 		}
+ 	}
+ 
+diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
+index 3528f9e15d5c..654c3d164606 100644
+--- a/drivers/soc/tegra/cbb/tegra234-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
+@@ -92,7 +92,6 @@ struct tegra234_slave_lookup {
+ struct tegra234_cbb_fabric {
+ 	const char *name;
+ 	phys_addr_t off_mask_erd;
+-	bool erd_mask_inband_err;
+ 	const char * const *master_id;
+ 	unsigned int notifier_offset;
+ 	const struct tegra_cbb_error *errors;
+@@ -525,14 +524,14 @@ static irqreturn_t tegra234_cbb_isr(int irq, void *data)
+ 			if (err)
+ 				goto unlock;
+ 
+-			mstr_id =  FIELD_GET(USRBITS_MSTR_ID, priv->mn_user_bits);
+-
+ 			/*
+-			 * If illegal request is from CCPLEX(id:0x1) master then call BUG() to
+-			 * crash system.
++			 * If illegal request is from CCPLEX(id:0x1) master then call WARN()
+ 			 */
+-			if ((mstr_id == 0x1) && priv->fabric->off_mask_erd)
+-				is_inband_err = 1;
++			if (priv->fabric->off_mask_erd) {
++				mstr_id =  FIELD_GET(USRBITS_MSTR_ID, priv->mn_user_bits);
++				if (mstr_id == 0x1)
++					is_inband_err = 1;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.17.1
 
