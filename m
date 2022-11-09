@@ -2,157 +2,195 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F31C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Nov 2022 16:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA57C43219
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 02:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234650AbiKHQZh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Nov 2022 11:25:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55520 "EHLO
+        id S230115AbiKICol (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Nov 2022 21:44:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233814AbiKHQZd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 11:25:33 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB91205E2;
-        Tue,  8 Nov 2022 08:25:32 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DEC20B81BA9;
-        Tue,  8 Nov 2022 16:25:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85F3AC43470;
-        Tue,  8 Nov 2022 16:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667924729;
-        bh=G5C8vewa6rwRjTQumguODaoFHIR0XcRiyJloc2k0v58=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YDvCNfZAE++VSoSMXo4tFfRN+M7Squ9lo1fAKdJ6Sc3BofusKDvrVPwfNeRwrh3J1
-         xGcNsTn2HEF6arClGp4F2hDprqj2KyvNFQpk7mi+6axr/bbbAdBqh7tDSkk7y8uExr
-         R7SLLKeI5TarnucAc0XKQ4+WKbqDAmdCEB0YIkHGJVmcuVmQ9sqpGvtfiRpdmy3nbM
-         MFBFH4ZVi+v22MYHLfOZUFqvSswpasrp5DntthEkcjERWfAtFKMnjXRVX/WqTeEw8D
-         9quoVRVLvMJ77tchhcWNmbn/qhfNmwnk0202ZSjjXEkP5F3yb11dqm8Z0AhH1g4tgQ
-         Yco5taEowexqg==
-Received: by mail-lj1-f182.google.com with SMTP id c25so21876786ljr.8;
-        Tue, 08 Nov 2022 08:25:29 -0800 (PST)
-X-Gm-Message-State: ACrzQf3HZHw5hLttVa0EY9A5wFuro+V5qIQrON8XfUCRynBmA9+KeZpN
-        u7fnzvcZj/W59ohuiYQH88UVbwLs+3iYQG9bYg==
-X-Google-Smtp-Source: AMsMyM4iXpsQim/WrEqsQekIVlLAJVyM1LSjKUemsBwuFcfOC9oe0pnOfouA+Sw6MXCdIgQeUs5R9dLsb5ojWInStbo=
-X-Received: by 2002:a2e:9a85:0:b0:275:1343:df71 with SMTP id
- p5-20020a2e9a85000000b002751343df71mr7268096lji.215.1667924727546; Tue, 08
- Nov 2022 08:25:27 -0800 (PST)
+        with ESMTP id S230112AbiKICoc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Nov 2022 21:44:32 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B7E1F60E;
+        Tue,  8 Nov 2022 18:44:06 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 21so25315740edv.3;
+        Tue, 08 Nov 2022 18:44:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZSs9bG/LbFf1fIR0eapTeL6P50DjYrAFt1f1UPagmkc=;
+        b=fm3R7eHwEY7icgp5E36AR1x+G3iJ/B+gTC6qXXcb2VuX8T7PYbpIOMaEAEk+z5gP5C
+         C30KcgR4lm806IYQfNeeuFx0cfGof3DpzdH786/cCDzuWrdeUNc7jFOrL5vMwTo9Vbtm
+         dVxBVDI57pb7BVYvuH3eLaJ4JjrtQb9xL2MZ41TI7RBi2z65S87p9zWDePR0yCVz6VHw
+         JOVSi+JRNqY3PBDz9qa44qLlWzFaPdXGRa4GRcfXuEi5nSYmnCJ6Zyk7dG4zjutSYT5H
+         vN2MmXbmOeI+y4HkZpv6Bi0bN99D9Nar9mmN1KGg/88Sfc9R8fV6gzM/jPxbXATFIa/1
+         F+hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZSs9bG/LbFf1fIR0eapTeL6P50DjYrAFt1f1UPagmkc=;
+        b=5CtnRgA3dPVFuN08UuY4TnyRRqet4QvmPVkoFT1ld6lQ7isbyRj/jj7OqeiOBc8cgG
+         Yq0sinGdjulVP9Ais7n5GpWnw6k7KqBJt7sIINrGnEZgpjpRUAnuA9TZ0QMq00lGaK8b
+         5O3MPhaN0uMLR7qVPUQze1aykE5LVWuxi7Iy4RUnIcoTIlYPJVLuSnoE/Tx9oJRCD8PN
+         GAfaLJeQ0Dj+OFVYfbk1H+Z/KoXmb84nXnd8iGOiLblTTxGEtINzgFegojmAZkwT+nPO
+         JMUSLxyZ1oP4nWMFFtpGTNYu31248wl6Ps/cpfGWFA9HtUgpTtljtS08Ia/onAcxmmyZ
+         If2A==
+X-Gm-Message-State: ACrzQf2MjD4nOm7zkbG41ngjB1Bo0Sqi+qYAoEyx9iNfEE1OwnzFXaJ3
+        b9KQDrrkxJQku1SPPEbc6EnCmIfMM2ONCnxLLAs=
+X-Google-Smtp-Source: AMsMyM4o96Fp/fgGe8bWp9qyaCLc1d6jcauj7urZdaiQjIItG7q8RJuK4x04Dncd47Xu2Mogx93A97DsfgYY/BWPass=
+X-Received: by 2002:a05:6402:3806:b0:450:bad8:8cd5 with SMTP id
+ es6-20020a056402380600b00450bad88cd5mr59725933edb.305.1667961844484; Tue, 08
+ Nov 2022 18:44:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20221103133900.1473855-1-thierry.reding@gmail.com>
- <20221103133900.1473855-3-thierry.reding@gmail.com> <20221107193035.GA1394942-robh@kernel.org>
- <Y2popxNd2uIdXmlf@orome>
-In-Reply-To: <Y2popxNd2uIdXmlf@orome>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 8 Nov 2022 10:25:18 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ6XS7UZiEdjb2pyq_LmOLWBGcWHKsntTgjVFRi=4JMXw@mail.gmail.com>
-Message-ID: <CAL_JsqJ6XS7UZiEdjb2pyq_LmOLWBGcWHKsntTgjVFRi=4JMXw@mail.gmail.com>
-Subject: Re: [PATCH v10 2/5] of: Stop DMA translation at last DMA parent
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech> <20221018-clk-range-checks-fixes-v2-58-f6736dec138e@cerno.tech>
+In-Reply-To: <20221018-clk-range-checks-fixes-v2-58-f6736dec138e@cerno.tech>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Wed, 9 Nov 2022 10:43:26 +0800
+Message-ID: <CAAfSe-t96pttpdLjLYntof5JCNcVHg0fMckk6zC7YHRRceDw+A@mail.gmail.com>
+Subject: Re: [PATCH v2 58/65] clk: sprd: composite: Switch to determine_rate
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Nov 8, 2022 at 8:33 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+On Fri, 4 Nov 2022 at 21:33, Maxime Ripard <maxime@cerno.tech> wrote:
 >
-> On Mon, Nov 07, 2022 at 01:30:35PM -0600, Rob Herring wrote:
-> > On Thu, Nov 03, 2022 at 02:38:57PM +0100, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >
-> > > DMA parent devices can define separate DMA busses via the "dma-ranges"
-> > > and "#address-cells" and "#size-cells" properties. If the DMA bus has
-> > > different cell counts than its parent, this can cause the translation
-> > > of DMA address to fails (e.g. truncation from 2 to 1 address cells).
-> >
-> > My assumption in this case was that the parent cell sizes should be
-> > increased to 2 cells. That tends to be what people want to do anyways
-> > (64-bit everywhere on 64-bit CPUs).
-> >
-> > > Avoid this by stopping to search for DMA parents when a parent without
-> > > a "dma-ranges" property is encountered. Also, since it is the DMA parent
-> > > that defines the DMA bus, use the bus' cell counts instead of its parent
-> > > cell counts.
-> >
-> > We treat no 'dma-ranges' as equivalent to 'dma-ranges;'. IIRC, the spec
-> > even says that because I hit that case.
-> >
-> > Is this going to work for 'dma-device' with something like this?:
-> >
-> >   bus@0 {
-> >     dma-ranges = <...>;
-> >     child-bus@... {
-> >       dma-device@... {
-> >       };
-> >     };
-> >   };
-> >
-> > >
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > > Changes in v10:
-> > > - new patch to avoid address truncation when traversing a bus hierarchy
-> > >   with mismatching #address-cells properties
-> > >
-> > > Example from Tegra194 (redacted for clarity):
-> > >
-> > >     reserved-memory {
-> > >             #address-cells = <2>;
-> > >             #size-cells = <2>;
-> > >             ranges;
-> > >
-> > >             framebuffer@0,0 {
-> > >                     compatible = "framebuffer";
-> > >                     reg = <0x2 0x57320000 0x0 0x00800000>;
-> > >                     iommu-addresses = <&dc0 0x2 0x57320000 0x0 0x00800000>;
-> > >             };
-> > >     };
-> > >
-> > >     bus@0 {
-> > >             /* truncation happens here */
-> > >             #address-cells = <1>;
-> > >             #size-cells = <1>;
-> > >             ranges = <0x0 0x0 0x0 0x40000000>;
-> > >
-> > >             mc: memory-controller@2c00000 {
-> > >                     #address-cells = <2>;
-> > >                     #size-cells = <2>;
-> >
-> > I think this is wrong. The parent should have more or equal number of
-> > cells.
+> The Spreadtrum composite clocks implements a mux with a set_parent
+> hook, but doesn't provide a determine_rate implementation.
 >
-> I was half suspecting that. The reason why I hesitated is that I recall
-> having the opposite discussion a while ago when we were adding bus@0 to
-> 64-bit Tegra devices. We had at some point (probably around Tegra114 or
-> Tegra124, 32-bit ARM chips that support LPAE) started to set #address-
-> cells = <2> precisely because the CPU could address more than 32-bit
-> addresses. We then did the same thing transitioning to 64-bit ARM. When
-> we then started discussing bus@0, someone (might have been you) had
-> argued that all these peripherals could be addressed with a single cell
-> so there'd be no need for #address-cells = <2>, so then we went with
-> that.
-
-I may have not thinking about the DMA side of things.
-
-> Reverting back to #address-cells = <2> is now going to cause quite a bit
-> of churn, but I guess if it's the right thing, so be it.
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
 >
-> Another possible alternative would be to move the memory-controller node
-> from the bus@0 to the top-level. Not sure if that's any better.
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+>
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+>
+> The driver does implement round_rate() though, which means that we can
+> change the rate of the clock, but we will never get to change the
+> parent.
+>
+> However, It's hard to tell whether it's been done on purpose or not.
+>
+> Since we'll start mandating a determine_rate() implementation, let's
+> convert the round_rate() implementation to a determine_rate(), which
+> will also make the current behavior explicit. And if it was an
+> oversight, the clock behaviour can be adjusted later on.
+>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-I stumbled upon 'ibm,#dma-address-cells' and 'ibm,#dma-size-cells'
-while reviewing this. Those seem to be for the same purpose AFAICT. We
-could consider adding those (w/o 'ibm') to handle this situation.
+Acked-by: Chunyan Zhang <zhang.lyra@gmail.com>
 
-Rob
+Thanks,
+Chunyan
+
+> ---
+>  drivers/clk/sprd/composite.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
+> index ebb644820b1e..d3a852720c07 100644
+> --- a/drivers/clk/sprd/composite.c
+> +++ b/drivers/clk/sprd/composite.c
+> @@ -9,13 +9,19 @@
+>
+>  #include "composite.h"
+>
+> -static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
+> -                               unsigned long *parent_rate)
+> +static int sprd_comp_determine_rate(struct clk_hw *hw,
+> +                                   struct clk_rate_request *req)
+>  {
+>         struct sprd_comp *cc = hw_to_sprd_comp(hw);
+> +       unsigned long rate;
+>
+> -       return sprd_div_helper_round_rate(&cc->common, &cc->div,
+> -                                        rate, parent_rate);
+> +       rate = sprd_div_helper_round_rate(&cc->common, &cc->div,
+> +                                         req->rate, &req->best_parent_rate);
+> +       if (rate < 0)
+> +               return rate;
+> +
+> +       req->rate = rate;
+> +       return 0;
+>  }
+>
+>  static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
+> @@ -53,7 +59,7 @@ const struct clk_ops sprd_comp_ops = {
+>         .get_parent     = sprd_comp_get_parent,
+>         .set_parent     = sprd_comp_set_parent,
+>
+> -       .round_rate     = sprd_comp_round_rate,
+> +       .determine_rate = sprd_comp_determine_rate,
+>         .recalc_rate    = sprd_comp_recalc_rate,
+>         .set_rate       = sprd_comp_set_rate,
+>  };
+>
+> --
+> b4 0.11.0-dev-99e3a
