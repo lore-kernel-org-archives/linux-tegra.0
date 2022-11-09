@@ -2,205 +2,231 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD42FC4332F
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 14:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E463C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 14:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231298AbiKIOWk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Nov 2022 09:22:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58930 "EHLO
+        id S231238AbiKIO1Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Nov 2022 09:27:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231381AbiKIOWG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 09:22:06 -0500
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6455327924;
-        Wed,  9 Nov 2022 06:20:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=m4/FAnTsby+TKsm8zHfEbMNWSL612LBjafoC2+prys8Llcs73p3f+pcEoyjqW38WA5h/kuvUmiW2BYrCPhCGaP7UqxNM49i+sr5fq4rKAEYTL/7Lj6lVPxKksoY/p1HTONM+R+DAB98cWZ3/30s+tORXzVQs/9TcQ6/x/9tGeICsjPfN4cA/Wvj7HeZMtVQ+zYRD5KGKT7OJ2+KSrCXTBZrN1c0M3ljA/3skyvU0J101JD5D3PZlv88j1XDLQq/hfCHXSSLtCfYZtuzCtRcfFx0pccEK3mPXOwXf6dwwMSR2S6jqBv8MbIhRzkJ7QUr8dxlnkxf4Sw4M6xD267KchA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I/pwRwqFbdREWXUfvV27otWLxg1bps1dWM8OQ6j519M=;
- b=QKSc1EBCoiwNRwpk5EBG/N2b1pQjrdmw8pgk+cC4TLXQrg2IXIupqcXkdf85G0Oolh+i0bgxtKEgkr0rITLFE3zlKB5L4VgDCFa3KYuVUaORNRnepOiShwsgdOacMM1RcoQn7R2Lu6OQs2/jNCQjFdpID9urjufsIgcuFm3wM37ZFy2VcCypSirA3nZX+is1+BxOLCNMYpQ9UX0XL+dFBrQRpxaKUZsFGHAv/v8r7wBCPj6etlJCHFf11PEkSOP7NWxPXymZ/1Y3WfiAWLzSY79s8J05omA7QuBVD6EcijSnA6o30IEMVA3OeRFnov1cvSXSloP4Uiwe+FtCd5xAgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I/pwRwqFbdREWXUfvV27otWLxg1bps1dWM8OQ6j519M=;
- b=nNBOaH07mAxqYSPWhh6NWokfzqTiq5yiotaSzuwUtY1MuBRwKJSJNF4f0zIlqPEC9bCsD9rvW/IHWjyZyYAp7f7Jn6xXpi71T04HOCAmNvFCOHOr25kNUZsoV9Fpi8TCl5HKBWVFEVxjdnpclhVyqSVnoPQ2GxwGcjQYLSy1zE9lB/havs8/rdS0ih1GqlmWCVjf5LJV5Wv3ToR5EaQB82kTLm5GGL0ejMLHcW/BkYVFP2MlorAgH5d1ZwDefi0lSsqGeVxoPaoqQj0q7cQ3sMMfWY4Q9mZyuY4TD+jKIrtljmly25WQFZOsBUGL3+mOtne3t8Jm4OEWae8bPE8LMQ==
-Received: from DM5PR07CA0066.namprd07.prod.outlook.com (2603:10b6:4:ad::31) by
- DS7PR12MB6167.namprd12.prod.outlook.com (2603:10b6:8:98::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5791.25; Wed, 9 Nov 2022 14:20:39 +0000
-Received: from DM6NAM11FT101.eop-nam11.prod.protection.outlook.com
- (2603:10b6:4:ad:cafe::f) by DM5PR07CA0066.outlook.office365.com
- (2603:10b6:4:ad::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.15 via Frontend
- Transport; Wed, 9 Nov 2022 14:20:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT101.mail.protection.outlook.com (10.13.172.208) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5813.12 via Frontend Transport; Wed, 9 Nov 2022 14:20:38 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 9 Nov 2022
- 06:20:27 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 9 Nov 2022
- 06:20:27 -0800
-Received: from kkartik-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Wed, 9 Nov 2022 06:20:23 -0800
-From:   Kartik <kkartik@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <kkartik@nvidia.com>, <digetx@gmail.com>,
-        <ndesaulniers@google.com>, <ulf.hansson@linaro.org>,
-        <arnd@arndb.de>, <skamble@nvidia.com>, <windhl@126.com>,
-        <sumitg@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] soc/tegra: fuse: use platform info with soc revision
-Date:   Wed, 9 Nov 2022 19:50:22 +0530
-Message-ID: <1668003622-13706-1-git-send-email-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        with ESMTP id S231443AbiKIO0k (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 09:26:40 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A2942E9DD;
+        Wed,  9 Nov 2022 06:25:22 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id h9so26067628wrt.0;
+        Wed, 09 Nov 2022 06:25:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=inJ9kpO5aVpoQfdPx6WJGeQHjasVn/qUmKCu+lJ0PAM=;
+        b=GiHtZNe028AhOl3kA6R3t/WgYpDdVzjK/JruxF9RPT1md6J7Vq6eJpRFtuoal1VY9M
+         SLz/UQ9A674HOXhyKm509xySk+nQErIh57lNH11gis0QzCzxpvDNPCq1ljLId/53+CAC
+         8Ym7d5ZAtpzwpFMmgqfnU9H28owYwmhjOEbzr8tRzLEqem35DG7IVj2ADYvu8Ke2B6Ik
+         sSxP0lyt2y8lREJ0kLdVa2ihyo8toDRTZZW40nHoGdS8pOnHepqNJxLT3RV1RzldYqb+
+         X+cWZQLOYhBF/Ypjsbddkz3rVjyftlc4ZFj6hl8WzheKiQCfgm/Jl8rHPihu22PK7F0E
+         rV3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=inJ9kpO5aVpoQfdPx6WJGeQHjasVn/qUmKCu+lJ0PAM=;
+        b=FfqaoWv3dj5q8ynK9jK+O1eepsDTU9KSCf/C2b+V2mXE1n+wI/l0LforV8tAML0cUO
+         7TgkNi7/wi8NnR1oUoJu7GGLVJFIj1dg2jk5ENgweynXxCV+bPLGnh/Ux35jnguAG9HO
+         2x3RbHOH8qyKGhifz6LGx7l5ovnpR/yJdm3q2yMNQZ6+OUQK7Nq4CkQRz7N5M7gcQUZp
+         4Sh4k3m+nYVUOWzjt801e6xzK2tGvHFuJHxzlp59oNaS2yBCkcMEsx1u0z232NSbFHXb
+         JXJp+TYkP0pn9U1gyrPhkHWioyj5Dm2Mv+WTneYHHPU6THvs8KbUgTUOse30WXziBdbM
+         0LiQ==
+X-Gm-Message-State: ACrzQf1LjeEh826zfzEr6B5SoohY5W0BurOdlc0/ybfmI7Cot9nh329P
+        /ZEnZPLZVuNSYAmL/MCs/3I=
+X-Google-Smtp-Source: AMsMyM5/C39K7zIfNARGwgjtXklTl9NZrYRfWK/N3v0Fchy/Wkvs0JLJd4OUNMjoBpwO5Zu83RPWOg==
+X-Received: by 2002:a05:6000:408b:b0:238:238:513d with SMTP id da11-20020a056000408b00b002380238513dmr23705686wrb.536.1668003920482;
+        Wed, 09 Nov 2022 06:25:20 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id z3-20020adff1c3000000b00236e834f050sm12936189wro.35.2022.11.09.06.25.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Nov 2022 06:25:19 -0800 (PST)
+Date:   Wed, 9 Nov 2022 15:25:17 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Rob Herring <robh@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
+        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH v10 2/5] of: Stop DMA translation at last DMA parent
+Message-ID: <Y2u4TdwwL+o+sqhE@orome>
+References: <20221103133900.1473855-1-thierry.reding@gmail.com>
+ <20221103133900.1473855-3-thierry.reding@gmail.com>
+ <20221107193035.GA1394942-robh@kernel.org>
+ <Y2popxNd2uIdXmlf@orome>
+ <CAL_JsqJ6XS7UZiEdjb2pyq_LmOLWBGcWHKsntTgjVFRi=4JMXw@mail.gmail.com>
+ <c8bcec17571a896610f225498655025ffc4b092a.camel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT101:EE_|DS7PR12MB6167:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4af4b1f-92c6-4d27-9427-08dac25d93a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VJ9mjtfsi159f72SI5sWVgBgmL2SDaWx9qYBIvf3iVFrCak0lnXMpK2DsMLtotOdpWIXasLjL4yOeqRcYf5r0d715YyWUJM8WhOlAaAlfaE1MT2dUOwVICnZwPTqCEXT5kf8xG0nzM/iAovsdYU4GWORYChkfDryfkYR5gQjPeja8H3/VY3oop8+Jhfx5qh8KhwgO0c7QJIl9Uurhc9e/fvK6MvCq757wAdM5xAgEPTKEA5QbTfgSJRH8z3jJeTv00c+gHZ1Cbo7a61bwGrHLQ3f2Kgm/oPM4pKsMDBdZSX690oiMhgVls1P5xZH7k3tYY7PduYE54kKU/GW7kH76UP00+629594sc03Ll7T83tlkm7qAPLZkjkPe0zKWKi5GKLQd3zcVFLJ+RomMJCEC+eJ+HVy+3fUQVLIiJ1XEVTObZmYYPgywUd8WMOwvd06j5Z2Yvu3o310BZgh65Ik8nwjDVETFTvW3l+sWbs5vOqROkjX84MlOJWpcgWc7Vn0D2zf++ohVBOP2nmfpyY2F7eHikLoF4OfTnZp+0PYQCIkxEUC26KEmGugKr7VeUgyjDRI1zhZz1yaPzx94rBzE865cyiGQPCehldTivgY1VcNbkimdxhQpimT6D6WumksGXtIlj+7dk/H50hc8pC3dMU7Lu7WPBlRP/rpE+CkNAlFu/ozG+bHsnScjiKDuqo/Rlyp4vr89Vyok6VIF4KwAEG252ryU5rsaPDdSpOhLMaorsm0nu6Drv6PQZp84Vi14tjUy01j00NbnzDLFg4us4dxJ10idgNGPHZwUk5sGEo=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(376002)(346002)(136003)(451199015)(40470700004)(36840700001)(46966006)(82740400003)(36860700001)(86362001)(82310400005)(921005)(478600001)(8936002)(26005)(40460700003)(70206006)(110136005)(2906002)(316002)(83380400001)(5660300002)(186003)(336012)(70586007)(41300700001)(2616005)(8676002)(356005)(47076005)(7636003)(426003)(7696005)(36756003)(40480700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2022 14:20:38.9658
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4af4b1f-92c6-4d27-9427-08dac25d93a3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT101.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6167
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6pZZkBGyKsqUI+DW"
+Content-Disposition: inline
+In-Reply-To: <c8bcec17571a896610f225498655025ffc4b092a.camel@pengutronix.de>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra pre-silicon platforms do not have chip revisions. This makes the
-revision soc attribute meaningless on these platforms.
 
-Instead, populate the revision soc attribute with
-"platform name + chip revision" for Silicon. For pre-silicon platforms
-populate it with "platform name" instead.
+--6pZZkBGyKsqUI+DW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Kartik <kkartik@nvidia.com>
----
-v2->v3
- * Cosmetic Changes.
-v1->v2
- * Updated commit message.
+On Wed, Nov 09, 2022 at 11:07:02AM +0100, Lucas Stach wrote:
+> Am Dienstag, dem 08.11.2022 um 10:25 -0600 schrieb Rob Herring:
+> > On Tue, Nov 8, 2022 at 8:33 AM Thierry Reding <thierry.reding@gmail.com=
+> wrote:
+> > >=20
+> > > On Mon, Nov 07, 2022 at 01:30:35PM -0600, Rob Herring wrote:
+> > > > On Thu, Nov 03, 2022 at 02:38:57PM +0100, Thierry Reding wrote:
+> > > > > From: Thierry Reding <treding@nvidia.com>
+> > > > >=20
+> > > > > DMA parent devices can define separate DMA busses via the "dma-ra=
+nges"
+> > > > > and "#address-cells" and "#size-cells" properties. If the DMA bus=
+ has
+> > > > > different cell counts than its parent, this can cause the transla=
+tion
+> > > > > of DMA address to fails (e.g. truncation from 2 to 1 address cell=
+s).
+> > > >=20
+> > > > My assumption in this case was that the parent cell sizes should be
+> > > > increased to 2 cells. That tends to be what people want to do anywa=
+ys
+> > > > (64-bit everywhere on 64-bit CPUs).
+> > > >=20
+> > > > > Avoid this by stopping to search for DMA parents when a parent wi=
+thout
+> > > > > a "dma-ranges" property is encountered. Also, since it is the DMA=
+ parent
+> > > > > that defines the DMA bus, use the bus' cell counts instead of its=
+ parent
+> > > > > cell counts.
+> > > >=20
+> > > > We treat no 'dma-ranges' as equivalent to 'dma-ranges;'. IIRC, the =
+spec
+> > > > even says that because I hit that case.
+> > > >=20
+> > > > Is this going to work for 'dma-device' with something like this?:
+> > > >=20
+> > > >   bus@0 {
+> > > >     dma-ranges =3D <...>;
+> > > >     child-bus@... {
+> > > >       dma-device@... {
+> > > >       };
+> > > >     };
+> > > >   };
+> > > >=20
+> > > > >=20
+> > > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > > ---
+> > > > > Changes in v10:
+> > > > > - new patch to avoid address truncation when traversing a bus hie=
+rarchy
+> > > > >   with mismatching #address-cells properties
+> > > > >=20
+> > > > > Example from Tegra194 (redacted for clarity):
+> > > > >=20
+> > > > >     reserved-memory {
+> > > > >             #address-cells =3D <2>;
+> > > > >             #size-cells =3D <2>;
+> > > > >             ranges;
+> > > > >=20
+> > > > >             framebuffer@0,0 {
+> > > > >                     compatible =3D "framebuffer";
+> > > > >                     reg =3D <0x2 0x57320000 0x0 0x00800000>;
+> > > > >                     iommu-addresses =3D <&dc0 0x2 0x57320000 0x0 =
+0x00800000>;
+> > > > >             };
+> > > > >     };
+> > > > >=20
+> > > > >     bus@0 {
+> > > > >             /* truncation happens here */
+> > > > >             #address-cells =3D <1>;
+> > > > >             #size-cells =3D <1>;
+> > > > >             ranges =3D <0x0 0x0 0x0 0x40000000>;
+> > > > >=20
+> > > > >             mc: memory-controller@2c00000 {
+> > > > >                     #address-cells =3D <2>;
+> > > > >                     #size-cells =3D <2>;
+> > > >=20
+> > > > I think this is wrong. The parent should have more or equal number =
+of
+> > > > cells.
+> > >=20
+> > > I was half suspecting that. The reason why I hesitated is that I reca=
+ll
+> > > having the opposite discussion a while ago when we were adding bus@0 =
+to
+> > > 64-bit Tegra devices. We had at some point (probably around Tegra114 =
+or
+> > > Tegra124, 32-bit ARM chips that support LPAE) started to set #address-
+> > > cells =3D <2> precisely because the CPU could address more than 32-bit
+> > > addresses. We then did the same thing transitioning to 64-bit ARM. Wh=
+en
+> > > we then started discussing bus@0, someone (might have been you) had
+> > > argued that all these peripherals could be addressed with a single ce=
+ll
+> > > so there'd be no need for #address-cells =3D <2>, so then we went with
+> > > that.
+> >=20
+> > I may have not thinking about the DMA side of things.
+> >=20
+> > > Reverting back to #address-cells =3D <2> is now going to cause quite =
+a bit
+> > > of churn, but I guess if it's the right thing, so be it.
+> > >=20
+> > > Another possible alternative would be to move the memory-controller n=
+ode
+> > > from the bus@0 to the top-level. Not sure if that's any better.
+> >=20
+> > I stumbled upon 'ibm,#dma-address-cells' and 'ibm,#dma-size-cells'
+> > while reviewing this. Those seem to be for the same purpose AFAICT. We
+> > could consider adding those (w/o 'ibm') to handle this situation.
+>=20
+> I would appreciate this. We have the same situation on some of the NXP
+> i.MX8 SoCs right now: all the MMIO is addressable with 32bit, so all
+> the busses have a single address and size cell right now, but we would
+> need to extend the address-cells to 64bit just to properly describe the
+> DMA addressing capabilities of the devices.
 
- drivers/soc/tegra/fuse/fuse-tegra.c    | 22 ++++++++++++++++++++--
- drivers/soc/tegra/fuse/tegra-apbmisc.c |  1 +
- include/soc/tegra/fuse.h               | 15 +++++++++++++++
- 3 files changed, 36 insertions(+), 2 deletions(-)
+Alright, I'll see if I can come up with some code to deal with this.
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index ea25a1dcafc2..f02953f793e9 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -35,6 +35,19 @@ static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
- 	[TEGRA_REVISION_A04]     = "A04",
- };
- 
-+static const char *tegra_platform_name[TEGRA_PLATFORM_MAX] = {
-+	[TEGRA_PLATFORM_SILICON]			= "Silicon",
-+	[TEGRA_PLATFORM_QT]				= "QT",
-+	[TEGRA_PLATFORM_SYSTEM_FPGA]			= "System FPGA",
-+	[TEGRA_PLATFORM_UNIT_FPGA]			= "Unit FPGA",
-+	[TEGRA_PLATFORM_ASIM_QT]			= "Asim QT",
-+	[TEGRA_PLATFORM_ASIM_LINSIM]			= "Asim Linsim",
-+	[TEGRA_PLATFORM_DSIM_ASIM_LINSIM]		= "Dsim Asim Linsim",
-+	[TEGRA_PLATFORM_VERIFICATION_SIMULATION]	= "Verification Simulation",
-+	[TEGRA_PLATFORM_VDK]				= "VDK",
-+	[TEGRA_PLATFORM_VSP]				= "VSP",
-+};
-+
- static const struct of_device_id car_match[] __initconst = {
- 	{ .compatible = "nvidia,tegra20-car", },
- 	{ .compatible = "nvidia,tegra30-car", },
-@@ -370,8 +383,13 @@ struct device * __init tegra_soc_device_register(void)
- 		return NULL;
- 
- 	attr->family = kasprintf(GFP_KERNEL, "Tegra");
--	attr->revision = kasprintf(GFP_KERNEL, "%s",
--		tegra_revision_name[tegra_sku_info.revision]);
-+	if (tegra_is_silicon())
-+		attr->revision = kasprintf(GFP_KERNEL, "%s %s",
-+					   tegra_platform_name[tegra_sku_info.platform],
-+					   tegra_revision_name[tegra_sku_info.revision]);
-+	else
-+		attr->revision = kasprintf(GFP_KERNEL, "%s",
-+					   tegra_platform_name[tegra_sku_info.platform]);
- 	attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
- 	attr->custom_attr_group = fuse->soc->soc_attr_group;
- 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 3351bd872ab2..4591c5bcb690 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -156,6 +156,7 @@ void __init tegra_init_revision(void)
- 	}
- 
- 	tegra_sku_info.sku_id = tegra_fuse_read_early(FUSE_SKU_INFO);
-+	tegra_sku_info.platform = tegra_get_platform();
- }
- 
- void __init tegra_init_apbmisc(void)
-diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index 977c334136e9..a63de5da8124 100644
---- a/include/soc/tegra/fuse.h
-+++ b/include/soc/tegra/fuse.h
-@@ -34,6 +34,20 @@ enum tegra_revision {
- 	TEGRA_REVISION_MAX,
- };
- 
-+enum tegra_platform {
-+	TEGRA_PLATFORM_SILICON = 0,
-+	TEGRA_PLATFORM_QT,
-+	TEGRA_PLATFORM_SYSTEM_FPGA,
-+	TEGRA_PLATFORM_UNIT_FPGA,
-+	TEGRA_PLATFORM_ASIM_QT,
-+	TEGRA_PLATFORM_ASIM_LINSIM,
-+	TEGRA_PLATFORM_DSIM_ASIM_LINSIM,
-+	TEGRA_PLATFORM_VERIFICATION_SIMULATION,
-+	TEGRA_PLATFORM_VDK,
-+	TEGRA_PLATFORM_VSP,
-+	TEGRA_PLATFORM_MAX,
-+};
-+
- struct tegra_sku_info {
- 	int sku_id;
- 	int cpu_process_id;
-@@ -47,6 +61,7 @@ struct tegra_sku_info {
- 	int gpu_speedo_id;
- 	int gpu_speedo_value;
- 	enum tegra_revision revision;
-+	enum tegra_platform platform;
- };
- 
- #ifdef CONFIG_ARCH_TEGRA
--- 
-2.17.1
+Thierry
 
+--6pZZkBGyKsqUI+DW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNruEsACgkQ3SOs138+
+s6FSLg/8DPLKVp9Se36bVlxeWZHHKC7fX6fjWMji1JXJVTYZAaDqZeDhDT5RCGRS
+8/N1Yjg5ZCDV8c8kCvxS/sTq+wLT6l93secD17EwdG2AxaO2N84OW7zRP8Yw3QjJ
+b04qqpkXQuvBLP8bag5YAD6Iti7kGx6zTZ3IOpSJegasua8F/KnBGwmGfGv5chiv
+DLAYTWt6tWM5H97WMKEVhEjJpAL3yMO5ylJUpQadbu/oVQO+7iLR3cxo6IrmuOiI
+cbj9aUOhDnMYZQGJ2GaVZSigCf4gYs0oNUWRA9iQCA1a/1e4gXQQ7hed9tB14Bdh
+t/2moFuySC+dWfDtjHo8DFW2vXt7ba+HEkolgYP1fBjI2zZy1TDDwdDYip+3i9V4
+fQgeqlrioJH/sV90RXv6SvqKQAY9tyf1FRyeSoj6Z/ep+twz3JKEy5eTvPUgbtM9
+Y8CtmzRrYFg9phGFiPiGmfvBXy0SGWdoZmoldaWMSkWEnBfZttn8UfiZEHh3uxBu
+ZxI78aGf6BEfFWoxw/oK+9P70ysizFct14xyFrlayMHTxxW81Ek2Pc3eEFUmOfoy
+4ClNedrsYJMsgDZfNt/hNiXgkiADfjyl/2apSFSCR2MkZTPxaJUmQV+5146M3j0B
+YoNhr/uVplP75/h9m2zrNZv2ITVARwqCOiaNWI9w0Me2BdLkSWA=
+=IIig
+-----END PGP SIGNATURE-----
+
+--6pZZkBGyKsqUI+DW--
