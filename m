@@ -2,231 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E463C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 14:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD58C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Nov 2022 15:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231238AbiKIO1Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Nov 2022 09:27:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
+        id S229992AbiKIPfs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Nov 2022 10:35:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231443AbiKIO0k (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 09:26:40 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A2942E9DD;
-        Wed,  9 Nov 2022 06:25:22 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id h9so26067628wrt.0;
-        Wed, 09 Nov 2022 06:25:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=inJ9kpO5aVpoQfdPx6WJGeQHjasVn/qUmKCu+lJ0PAM=;
-        b=GiHtZNe028AhOl3kA6R3t/WgYpDdVzjK/JruxF9RPT1md6J7Vq6eJpRFtuoal1VY9M
-         SLz/UQ9A674HOXhyKm509xySk+nQErIh57lNH11gis0QzCzxpvDNPCq1ljLId/53+CAC
-         8Ym7d5ZAtpzwpFMmgqfnU9H28owYwmhjOEbzr8tRzLEqem35DG7IVj2ADYvu8Ke2B6Ik
-         sSxP0lyt2y8lREJ0kLdVa2ihyo8toDRTZZW40nHoGdS8pOnHepqNJxLT3RV1RzldYqb+
-         X+cWZQLOYhBF/Ypjsbddkz3rVjyftlc4ZFj6hl8WzheKiQCfgm/Jl8rHPihu22PK7F0E
-         rV3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=inJ9kpO5aVpoQfdPx6WJGeQHjasVn/qUmKCu+lJ0PAM=;
-        b=FfqaoWv3dj5q8ynK9jK+O1eepsDTU9KSCf/C2b+V2mXE1n+wI/l0LforV8tAML0cUO
-         7TgkNi7/wi8NnR1oUoJu7GGLVJFIj1dg2jk5ENgweynXxCV+bPLGnh/Ux35jnguAG9HO
-         2x3RbHOH8qyKGhifz6LGx7l5ovnpR/yJdm3q2yMNQZ6+OUQK7Nq4CkQRz7N5M7gcQUZp
-         4Sh4k3m+nYVUOWzjt801e6xzK2tGvHFuJHxzlp59oNaS2yBCkcMEsx1u0z232NSbFHXb
-         JXJp+TYkP0pn9U1gyrPhkHWioyj5Dm2Mv+WTneYHHPU6THvs8KbUgTUOse30WXziBdbM
-         0LiQ==
-X-Gm-Message-State: ACrzQf1LjeEh826zfzEr6B5SoohY5W0BurOdlc0/ybfmI7Cot9nh329P
-        /ZEnZPLZVuNSYAmL/MCs/3I=
-X-Google-Smtp-Source: AMsMyM5/C39K7zIfNARGwgjtXklTl9NZrYRfWK/N3v0Fchy/Wkvs0JLJd4OUNMjoBpwO5Zu83RPWOg==
-X-Received: by 2002:a05:6000:408b:b0:238:238:513d with SMTP id da11-20020a056000408b00b002380238513dmr23705686wrb.536.1668003920482;
-        Wed, 09 Nov 2022 06:25:20 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id z3-20020adff1c3000000b00236e834f050sm12936189wro.35.2022.11.09.06.25.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Nov 2022 06:25:19 -0800 (PST)
-Date:   Wed, 9 Nov 2022 15:25:17 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Rob Herring <robh@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH v10 2/5] of: Stop DMA translation at last DMA parent
-Message-ID: <Y2u4TdwwL+o+sqhE@orome>
-References: <20221103133900.1473855-1-thierry.reding@gmail.com>
- <20221103133900.1473855-3-thierry.reding@gmail.com>
- <20221107193035.GA1394942-robh@kernel.org>
- <Y2popxNd2uIdXmlf@orome>
- <CAL_JsqJ6XS7UZiEdjb2pyq_LmOLWBGcWHKsntTgjVFRi=4JMXw@mail.gmail.com>
- <c8bcec17571a896610f225498655025ffc4b092a.camel@pengutronix.de>
+        with ESMTP id S230153AbiKIPfs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 10:35:48 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9590BFF7;
+        Wed,  9 Nov 2022 07:35:46 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F97E61B7A;
+        Wed,  9 Nov 2022 15:35:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD11C433D6;
+        Wed,  9 Nov 2022 15:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668008145;
+        bh=LhZ+WjU7cSTCcqle6TSdTZQmNC7lZrjyrwVVzROOAoE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b3fQ3ICluA9Zcx34dPXCyRlAAVIQNROlvfRQHOH0VmfSD/l3RwoPvXLq76a9KJUAX
+         wCfL829a2E3baedcfG6gzEkrlmvj0y/v1KNkXBLWVCaVvEdpbAMRsXvbry7besDYrv
+         tAqLavWVeFqSKr2A7JqiMCUSNeglwoH+pjXZVO6TlG42t8GA8OtOfnrlDYSsmRMVD8
+         2YHG783DGRAoaNBUCt8i923oPMSfGtW/a/fxMtmtQPw8vIS1xw9xi7MXoXueYuON5A
+         p9Xp6Fms/X0vo8TpFxQqfXTu3pmgHsZoy9vjV5J5KqslKXJ1O5oIKSyzMV+s/PQyMH
+         iGKr8VI8SkAsg==
+Date:   Wed, 9 Nov 2022 21:05:33 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, lpieralisi@kernel.org,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+        Jonathan Derrick <jonathan.derrick@linux.dev>,
+        Lukas Wunner <lukas@wunner.de>, bhelgaas@google.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        kw@linux.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        Sergey.Semin@baikalelectronics.ru, jszhang@kernel.org,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
+        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Subject: Re: [PATCH V1 0/4] GPIO based PCIe Hot-Plug support
+Message-ID: <20221109153533.GA46277@thinkpad>
+References: <2a465222-342a-418b-95af-9948f6ce9065@linux.dev>
+ <20221003180949.GA2104321@bhelgaas>
+ <20221003182147.jp5gn2jpnf4gucdl@pali>
+ <364fc93d-a4b5-59cb-c62a-8e3b32507523@nvidia.com>
+ <9210e81f-15ee-6c54-bfbb-1188da48dd68@nvidia.com>
+ <38c1d688-1488-3ecb-422e-fbc47106c144@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6pZZkBGyKsqUI+DW"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c8bcec17571a896610f225498655025ffc4b092a.camel@pengutronix.de>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <38c1d688-1488-3ecb-422e-fbc47106c144@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Oct 17, 2022 at 08:16:06AM +0530, Vidya Sagar wrote:
+> 
+> 
+> On 10/10/2022 11:44 AM, Vidya Sagar wrote:
+> > 
+> > 
+> > On 10/4/2022 9:34 AM, Vidya Sagar wrote:
+> > > 
+> > > 
+> > > On 10/3/2022 11:51 PM, Pali Rohár wrote:
+> > > > External email: Use caution opening links or attachments
+> > > > 
+> > > > 
+> > > > On Monday 03 October 2022 13:09:49 Bjorn Helgaas wrote:
+> > > > > On Sat, Oct 01, 2022 at 05:50:07PM -0600, Jonathan Derrick wrote:
+> > > > > > On 10/1/2022 10:20 AM, Pali Rohár wrote:
+> > > > > > ...
+> > > > > 
+> > > > > > > Would not it better to rather synthesise PCIe Slot
+> > > > > > > Capabilities support
+> > > > > > > in your PCIe Root Port device (e.g. via
+> > > > > > > pci-bridge-emul.c) and then let
+> > > > > > > existing PCI hotplug code to take care for hotplugging? Because it
+> > > > > > > already implements all required stuff for
+> > > > > > > re-scanning, registering and
+> > > > > > > unregistering PCIe devices for Root Ports with Slot
+> > > > > > > Capabilities. And I
+> > > > > > > think that there is no need to have just another (GPIO based)
+> > > > > > > implementation of PCI hotplug.
+> > > > > > 
+> > > > > > I did that a few years ago (rejected), but can attest to
+> > > > > > the robustness of
+> > > > > > the pcie hotplug code on non-hotplug slots.
+> > > > > > https://lwn.net/Articles/811988/
+> > > > > 
+> > > > > I think the thread is here:
+> > > > > https://lore.kernel.org/linux-pci/1581120007-5280-1-git-send-email-jonathan.derrick@intel.com/
+> > > > > 
+> > > > > and I'm sorry that my response came across as "rejected".  I intended
+> > > > > it as "this is good ideas and good work and we should keep going".
+> > > > > 
+> > > > > Bjorn
+> > > > 
+> > > > Nice! So we have consensus that this is a good idea. Anyway, if you need
+> > > > help with designing something here, please let me know as I have good
+> > > > understanding of all (just two) consumers of pci-bridge-emul.c driver.
+> > > > 
+> > > 
+> > > Thanks all for your comments.
+> > > 
+> > > I would like to hear from Bjorn / Lorenzo if the design of the
+> > > current patch series is fine at a high level or I should explore
+> > > emulating the root port's configuration space to fake slot
+> > > config/control registers (which in turn depend on the hotplug GPIO
+> > > interrupt & state to update Presence Detect related bits in Slot
+> > > status register) and use the PCIe native Hot-plug framework itself
+> > > to carry out with enabling the Hot-plug functionality?
+> > 
+> > Bjorn / Lorenzo,
+> > Could you please take time to comment on the discussion happened here
+> > and the right approach to be followed?
+> 
+> I'm really sorry to bug you on this, but would like to hear your comments on
+> the approach to be taken. So, I would really like to hear your take on this.
+> 
 
---6pZZkBGyKsqUI+DW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Since Bjorn already expressed his good will about the approach, I think you
+can just proceed with the emulation layer. I don't think there will be any
+controversy.
 
-On Wed, Nov 09, 2022 at 11:07:02AM +0100, Lucas Stach wrote:
-> Am Dienstag, dem 08.11.2022 um 10:25 -0600 schrieb Rob Herring:
-> > On Tue, Nov 8, 2022 at 8:33 AM Thierry Reding <thierry.reding@gmail.com=
-> wrote:
-> > >=20
-> > > On Mon, Nov 07, 2022 at 01:30:35PM -0600, Rob Herring wrote:
-> > > > On Thu, Nov 03, 2022 at 02:38:57PM +0100, Thierry Reding wrote:
-> > > > > From: Thierry Reding <treding@nvidia.com>
-> > > > >=20
-> > > > > DMA parent devices can define separate DMA busses via the "dma-ra=
-nges"
-> > > > > and "#address-cells" and "#size-cells" properties. If the DMA bus=
- has
-> > > > > different cell counts than its parent, this can cause the transla=
-tion
-> > > > > of DMA address to fails (e.g. truncation from 2 to 1 address cell=
-s).
-> > > >=20
-> > > > My assumption in this case was that the parent cell sizes should be
-> > > > increased to 2 cells. That tends to be what people want to do anywa=
-ys
-> > > > (64-bit everywhere on 64-bit CPUs).
-> > > >=20
-> > > > > Avoid this by stopping to search for DMA parents when a parent wi=
-thout
-> > > > > a "dma-ranges" property is encountered. Also, since it is the DMA=
- parent
-> > > > > that defines the DMA bus, use the bus' cell counts instead of its=
- parent
-> > > > > cell counts.
-> > > >=20
-> > > > We treat no 'dma-ranges' as equivalent to 'dma-ranges;'. IIRC, the =
-spec
-> > > > even says that because I hit that case.
-> > > >=20
-> > > > Is this going to work for 'dma-device' with something like this?:
-> > > >=20
-> > > >   bus@0 {
-> > > >     dma-ranges =3D <...>;
-> > > >     child-bus@... {
-> > > >       dma-device@... {
-> > > >       };
-> > > >     };
-> > > >   };
-> > > >=20
-> > > > >=20
-> > > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > > > ---
-> > > > > Changes in v10:
-> > > > > - new patch to avoid address truncation when traversing a bus hie=
-rarchy
-> > > > >   with mismatching #address-cells properties
-> > > > >=20
-> > > > > Example from Tegra194 (redacted for clarity):
-> > > > >=20
-> > > > >     reserved-memory {
-> > > > >             #address-cells =3D <2>;
-> > > > >             #size-cells =3D <2>;
-> > > > >             ranges;
-> > > > >=20
-> > > > >             framebuffer@0,0 {
-> > > > >                     compatible =3D "framebuffer";
-> > > > >                     reg =3D <0x2 0x57320000 0x0 0x00800000>;
-> > > > >                     iommu-addresses =3D <&dc0 0x2 0x57320000 0x0 =
-0x00800000>;
-> > > > >             };
-> > > > >     };
-> > > > >=20
-> > > > >     bus@0 {
-> > > > >             /* truncation happens here */
-> > > > >             #address-cells =3D <1>;
-> > > > >             #size-cells =3D <1>;
-> > > > >             ranges =3D <0x0 0x0 0x0 0x40000000>;
-> > > > >=20
-> > > > >             mc: memory-controller@2c00000 {
-> > > > >                     #address-cells =3D <2>;
-> > > > >                     #size-cells =3D <2>;
-> > > >=20
-> > > > I think this is wrong. The parent should have more or equal number =
-of
-> > > > cells.
-> > >=20
-> > > I was half suspecting that. The reason why I hesitated is that I reca=
-ll
-> > > having the opposite discussion a while ago when we were adding bus@0 =
-to
-> > > 64-bit Tegra devices. We had at some point (probably around Tegra114 =
-or
-> > > Tegra124, 32-bit ARM chips that support LPAE) started to set #address-
-> > > cells =3D <2> precisely because the CPU could address more than 32-bit
-> > > addresses. We then did the same thing transitioning to 64-bit ARM. Wh=
-en
-> > > we then started discussing bus@0, someone (might have been you) had
-> > > argued that all these peripherals could be addressed with a single ce=
-ll
-> > > so there'd be no need for #address-cells =3D <2>, so then we went with
-> > > that.
-> >=20
-> > I may have not thinking about the DMA side of things.
-> >=20
-> > > Reverting back to #address-cells =3D <2> is now going to cause quite =
-a bit
-> > > of churn, but I guess if it's the right thing, so be it.
-> > >=20
-> > > Another possible alternative would be to move the memory-controller n=
-ode
-> > > from the bus@0 to the top-level. Not sure if that's any better.
-> >=20
-> > I stumbled upon 'ibm,#dma-address-cells' and 'ibm,#dma-size-cells'
-> > while reviewing this. Those seem to be for the same purpose AFAICT. We
-> > could consider adding those (w/o 'ibm') to handle this situation.
->=20
-> I would appreciate this. We have the same situation on some of the NXP
-> i.MX8 SoCs right now: all the MMIO is addressable with 32bit, so all
-> the busses have a single address and size cell right now, but we would
-> need to extend the address-cells to 64bit just to properly describe the
-> DMA addressing capabilities of the devices.
+Thanks,
+Mani
 
-Alright, I'll see if I can come up with some code to deal with this.
+> Thanks,
+> Vidya Sagar
+> 
+> > 
+> > Thanks,
+> > Vidya Sagar
+> > 
+> > > 
+> > > Thanks,
+> > > Vidya Sagar
+> > > 
+> > > 
 
-Thierry
-
---6pZZkBGyKsqUI+DW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNruEsACgkQ3SOs138+
-s6FSLg/8DPLKVp9Se36bVlxeWZHHKC7fX6fjWMji1JXJVTYZAaDqZeDhDT5RCGRS
-8/N1Yjg5ZCDV8c8kCvxS/sTq+wLT6l93secD17EwdG2AxaO2N84OW7zRP8Yw3QjJ
-b04qqpkXQuvBLP8bag5YAD6Iti7kGx6zTZ3IOpSJegasua8F/KnBGwmGfGv5chiv
-DLAYTWt6tWM5H97WMKEVhEjJpAL3yMO5ylJUpQadbu/oVQO+7iLR3cxo6IrmuOiI
-cbj9aUOhDnMYZQGJ2GaVZSigCf4gYs0oNUWRA9iQCA1a/1e4gXQQ7hed9tB14Bdh
-t/2moFuySC+dWfDtjHo8DFW2vXt7ba+HEkolgYP1fBjI2zZy1TDDwdDYip+3i9V4
-fQgeqlrioJH/sV90RXv6SvqKQAY9tyf1FRyeSoj6Z/ep+twz3JKEy5eTvPUgbtM9
-Y8CtmzRrYFg9phGFiPiGmfvBXy0SGWdoZmoldaWMSkWEnBfZttn8UfiZEHh3uxBu
-ZxI78aGf6BEfFWoxw/oK+9P70ysizFct14xyFrlayMHTxxW81Ek2Pc3eEFUmOfoy
-4ClNedrsYJMsgDZfNt/hNiXgkiADfjyl/2apSFSCR2MkZTPxaJUmQV+5146M3j0B
-YoNhr/uVplP75/h9m2zrNZv2ITVARwqCOiaNWI9w0Me2BdLkSWA=
-=IIig
------END PGP SIGNATURE-----
-
---6pZZkBGyKsqUI+DW--
+-- 
+மணிவண்ணன் சதாசிவம்
