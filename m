@@ -2,161 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C882C43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 13:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83780C43217
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 13:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230185AbiKJNF5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Nov 2022 08:05:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60386 "EHLO
+        id S230410AbiKJNTA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Nov 2022 08:19:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230156AbiKJNFz (ORCPT
+        with ESMTP id S230053AbiKJNSz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Nov 2022 08:05:55 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1288873758
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 05:05:54 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id y4so1365159plb.2
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 05:05:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lrV3scjxXBUgyRehk9/on/q8TxNDq8MdTdotV2WeMBQ=;
-        b=GVZ09h+ngHWOecbTC/uzghXW93HVi79Hc3aHUMBuHut0K+MRP4qjrmbxOsy9wAvyhh
-         CzAf4wAUsz2LX8ScnTSnBYBlU0zD4SfZXHjTGLx4odMNe2HTZmWoc8/O0MjERSTJDuKQ
-         9UeL9YNFV2iAuj4M769TxWHJzx0wEKM1UD/fL8Quarzgi8/jAHx03TmKPyEcNniVs1JP
-         E1bQ9YyT5yBnS4K6hTH0QDyjNMb9vjtJqKa6/m2IeBhMmf0jPp66hTlfQCyxBUHnorSo
-         4QxzB8BVVnzEGtFh63S81NhnvCx7MGrBaQEPEUdQo8KV1MCY/puvxsLONjSQ8GgFephe
-         xQuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lrV3scjxXBUgyRehk9/on/q8TxNDq8MdTdotV2WeMBQ=;
-        b=8FOlIaKrDrVy0lTwX5UzZWrSwrqvqqBuX1f7Vd+j0yAF5AOwv2gTpNEBeXRDhUBZSt
-         K1pnFjmJLtl1xdcGx11RZGT6idGUKibz94aOrtdnRXPhnc71XawuH47lUKutrILCtxNV
-         myvkoFvcOm3bJaFRG94Uso621wV8jif4TPhd48c2Tf7JhoSyZuSLRerJcwDsQSUDPYGo
-         rar8B63H+HEg20bORTB1idM5LquYFvPcsARSBI9CVM9qipJuVYxKkPuRLa54oqFI0iDH
-         jykR+5qCiqBL327Tr0c1AnVpqe/AL58s0qfr51nkK71aaptKBBWaOeX0toEX6YfAR5Zl
-         qV3Q==
-X-Gm-Message-State: ACrzQf0PXg9NH4qr8liwdSMNPMZNDxLkc+c+0L78u7vdt7BqKGhLDLS0
-        eX5nX5DXn2K7r5ge+uqwBdb61wFXzQTjxLuH1iCgRA==
-X-Google-Smtp-Source: AMsMyM4ntafpxKu1kZoVYdCyuwK4y2qgGm0PDcBHChl8r8c0pj7m0JmQ6SHmodBY/Un25AY0R73awNrQX1GtCyrtwGQ=
-X-Received: by 2002:a17:903:100c:b0:186:63a1:3b5d with SMTP id
- a12-20020a170903100c00b0018663a13b5dmr65965693plb.148.1668085553525; Thu, 10
- Nov 2022 05:05:53 -0800 (PST)
+        Thu, 10 Nov 2022 08:18:55 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2086.outbound.protection.outlook.com [40.107.237.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D28A4725FA;
+        Thu, 10 Nov 2022 05:18:39 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZEdXcX5r0G2Xd+V9CKDbLdWN3U9Y5XNTxDlLqqYsE4APkF9HWJHYJ7SSisud4JWHv5/w82IcB/hFxC8qlFVgGxaB+S5t65I82Pia0XyqSlJi0JFELKkwDZjoaOFx2OWG6WYtHObEzjJA7mdHv6xW3F9Mhj7pCnwG1RlORobwoNwhi0G2lWYB3M+H/HM483DKoxkFFBr2xq9oQILr/4PXxc2zbprKF8o7bskOEzLbWJDB3ys9ulEGcuUiTQ0X+lpOCWudcQAO+rHVgfa3qqG5L2RGN7anKD5x28zZAYnUgWBUHXF4lAl7KV2GJnmiSVgbiB7rjBJpjlmJltsTVQJ9Dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HROMns94G3VadlJuNC0TNQ92akbzPCZno526Cw7o2/Q=;
+ b=YoDuYce/zPr5P2a/9BWIkMxPYXgeKUFbAnlH8m7qfUHa7KoBN9CAnwYL8zPrvmrhJFRL9hUyT8R5jIWcZ7wMhzAnf+4i/CsrHpAyqzxHbAFBQBXDwHfO+DrAOF8sEDwJhKDTjFKPhqSVwpjb6PdHoITgTte+U/cnUDg1OPmhmxZqr6099kWEIdDFM1TWHCsDMYXjCBVjpEt7exPYmOTAWo4+gSVgd0it4CUyhWz2dkbIhWniNdcKe2pPeyU1rcCYQKVS5Z+khgHN9rOKLWpfMi2oyg+DUtTLfSDOuL1OS23EqoIhLzadI6E9E5Im2gRWxid0U0j97TMLC4FGDjlf3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HROMns94G3VadlJuNC0TNQ92akbzPCZno526Cw7o2/Q=;
+ b=Zas2blWq/+uDF8OlfW3gsvP4pwifbm4mxiTMAO0trRtj99teUWnwclLa9vbk4ierlKJ7XwrH5nu6FmZDIT3PzwPUcpoFK7LAuJEK4Uin4acfnIK/I79uIu9FBaY9I3yAWcXqfOllsa5n32PZd6xIfTcBOnauaLJ5Mz4xgFq+40BzLh9XPwgII+wx9yraiKEXcI8bRWZmu1ghSo2Hv8DJItDHsF22BNOQYdv6RPSZapXysW26U3D6/Mh0IL0MO79dGMLlr7zANLSx5BK1grA8K2hucEEQurVEU8frnECSOjzBe/0m1/rPgXN1z+WTmZts7LpWNT3a+XmR6sE856/T9g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ MW4PR12MB6828.namprd12.prod.outlook.com (2603:10b6:303:209::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.25; Thu, 10 Nov
+ 2022 13:18:37 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::1912:a3a8:1a8d:a960]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::1912:a3a8:1a8d:a960%5]) with mapi id 15.20.5791.026; Thu, 10 Nov 2022
+ 13:18:36 +0000
+Message-ID: <6b282110-c9dc-c4ae-9003-1e75c3a0ff98@nvidia.com>
+Date:   Thu, 10 Nov 2022 13:18:30 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH] pwm: tegra: Fix 32 bit build
+Content-Language: en-US
+To:     Steven Price <steven.price@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20221110114549.34121-1-steven.price@arm.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20221110114549.34121-1-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LNXP265CA0062.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5d::26) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
- <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com> <CACRpkdYOj8uozJZO4MV-_OAKeOsQHhoEM=PyynVuNY-JkpgTOw@mail.gmail.com>
-In-Reply-To: <CACRpkdYOj8uozJZO4MV-_OAKeOsQHhoEM=PyynVuNY-JkpgTOw@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 10 Nov 2022 14:05:16 +0100
-Message-ID: <CAPDyKFr6VeF3s47JfzJ9urtMsEem+GiBtHeU=_S8jNaz-D+qnw@mail.gmail.com>
-Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MW4PR12MB6828:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62516a3c-ea71-47ab-b3ed-08dac31e1346
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: szFXn3RPJpznAxdEDeEMyO3nnMfvmh8tn2Kea0KIInXSMl2BCS/11mthrgTN/QVYHpvjNWj11uatsbqjDE7ZxQtZSh5TJ6yq/9X1GWdtVJ5dED+3GrN8eNvPs72eZNoX369tK4pwUxLlf3sQOLcbMFYL824HCpZkhbNlo/jhO35etzibTqWOJQD3hgnRKmpBFavI2bhIPE6UQ4eX6XJUX+7+qiezmidXRb6XT/0VeEHOT1QDvIj/kgAuIQyd1HHTh2Hk0NIikBLn5zB/6IG13zsLcUfqEBNj9rD0nXzDsdxn99Id9xwwbo5IOrkhsRlBurX6UjLamHLPZXwjQkFBj4+59ZO1fHMIsQS8EK0pYiorU/ZGO9fyCnm97A44P0iAjBgTUDsn3H8thjUuw/y9/haLEJA52H6ju0ckfaBEXcnYkbC412gC72Cl6Lvgj92FbN+QlNd2TbcBbYdlztjc5FuW3neFJk/jjFzTsVqEe8aeQ4GqwWbxHyi8uMJyWx8eHrvkIhQgBKGCaYYyUWHiYUDI1tpiAacu7hmH3PpvoyYliKEAUyORR/ttwg9WCj55xpPpcqZ+El3JLjYaP87ec11QIcHK7DmId1MnGuQZY9n0yyXBWcT9fKq/dWHlJM2uipzyk5XKLnxDXadNRj953J+Cgqeo5qRVgB4TUCXutJ2kdysXL7H5ZbeeVgrvAsdX/n/RmP2g+Pu3KwljeLHOHm4rRWueIDE0AeqzpeEo8b8Hmjvj+CFERPiFn7zt4yD866ZW/haGCGJqE59w/IpXFEj9TU1DZ287Zs4jI9wM0N0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(366004)(346002)(376002)(136003)(451199015)(8676002)(110136005)(66476007)(316002)(4326008)(66946007)(83380400001)(5660300002)(2906002)(6486002)(31696002)(66556008)(38100700002)(6506007)(6666004)(8936002)(53546011)(86362001)(55236004)(26005)(6512007)(478600001)(2616005)(41300700001)(31686004)(186003)(36756003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YVhXZUt6K0hrNFZCaWJJakRNTkpIdVpTVVJQdjZEWU9Mc3dyVHFnblVSQU9m?=
+ =?utf-8?B?UFFtWHV1Ti81dDE5Qnc2WjhZQldmYzFsaExEcTF2S2hwL25kUHNTVXpaWTBw?=
+ =?utf-8?B?R09YTmdrWVNsckNCTWRtYlFMTEVIZkJTQ21EUHhpTFZMSVUxV3ZjV1pQMGhT?=
+ =?utf-8?B?aTJucDlqWnRjcjB3VjhqblUzNjdpbkZjR3RTUWMyeWRTTU1ZKzB2VTg2OFdX?=
+ =?utf-8?B?dzgxV3NncjZiRy9na1BVWGZwRUVyU1ZFMHBVaHdVVlFIUW1kaVNJWGNacDUv?=
+ =?utf-8?B?SVQyaytWNTlUbmVXdjZXdmdYRkEvUXNiNUtvL3VmUHkrbDVQNDJwQ0JuRkFw?=
+ =?utf-8?B?NGpuSlRhdVpIaHU4UXRVYnRVWlhNa2F0bGpKajNpVjFBK0s1aENmWmJTVnl4?=
+ =?utf-8?B?dXB2TzdqeWdadGNBUHpMdVpFRzczVE1UVWdENThnZ3ZpZEtCZGxqMnpVN2Nn?=
+ =?utf-8?B?Y0hzOFNnb0VoYmYwNjNpZHJjS2dkS2dIMEZaNCt5RHFiTzc3bkZydFR2UFhG?=
+ =?utf-8?B?N01ETXZ6dXo2ZGpOUUs1UEFxbE5ZYVhwOEE0ZnA1K0NzNWZzdkJ0WHpNa2VC?=
+ =?utf-8?B?bEFMK2J3bitUSXhyNlFhZTZkSW5jRVdnbzJsZzkxRmIxRjdvbXdJQVFtSXc3?=
+ =?utf-8?B?QkRoaHAwajlXa2tnWUNycENqMTQ4WXdtaEtWdlVBY1JrcmN2VHg3Tm8zdmtG?=
+ =?utf-8?B?RFZxczdQczFYczQ1ZUpORjJNMUlXOGN2d2JmTHMvOFpmUjFZR2l0K29VK0ZF?=
+ =?utf-8?B?Umo2TjBHR0g4K2pySmZiYlgvazJOdWpHMlIxVy80c0NmTUJjbWlveFpGUXor?=
+ =?utf-8?B?dk9wcGxIeWpWaUp6ZTFDOVZ1Q29TOVUxekNVeVI5VXBHOHZiL2FFOHZiMVhu?=
+ =?utf-8?B?eEtmQkNsZGRhcU9pR2xwSjY4SnZ5dTB2OTB0TGJGc1E1TjVnN2lRV2kzWFFh?=
+ =?utf-8?B?SFkyYndXM0JMWVNpWDRVWkQvNHMzZkJCbDRnLzZvT2pHUlY2ZWxQSS9SdGV0?=
+ =?utf-8?B?Q0VacENhYmdHb2d1MitSM3VHK21rcVUxcmwvY3BFdkptM0kyK3llckVUVFlZ?=
+ =?utf-8?B?VDFGUXpWL3hkbXQvRnY3djBFMVhUVGdGN2dEYTl2OEZ0TmNEalZGeW5Tcklk?=
+ =?utf-8?B?em9zMVFzTEtEN21WeXBUSTlCenVHRW92VjdmS3VSTlN1MzJKWGhNUU1MRi9G?=
+ =?utf-8?B?T3d0Q2NHRUFzVXZpcy9hN0liTlJDck5NQ2dRdnI5b0NWb2xhbWlFaDU1Vzha?=
+ =?utf-8?B?LzlQem9pc1U4ck8rUXFiRkoxWmRhTldaYzlxbWNWUE9jL3lvSytTMkxHQUhJ?=
+ =?utf-8?B?YnF1S05VRno2MHNjVFppcjZldExUSkpRTjZRaER3WXU0YllRSlFuY29TYnY1?=
+ =?utf-8?B?NWF0N29vRzN0cFdFWm1xTno3Y0pkeDEzWnZ0OWE4R1BQYmVFQ1JTYlJ0Yjc2?=
+ =?utf-8?B?aG1PbDVzc2NqUVdvSlRHd2RVL01zSThFbGxGWlpRa05IVm5xVzZxWFZkYmRE?=
+ =?utf-8?B?Y0Q3eUFidUwyVEdqdGRWNy9RUWhiV2QrUHlOSHdHYkV2QmQwbFVib3E1cU9T?=
+ =?utf-8?B?RmNjY3l2S3QyTzdRa3Zld1BvcENteER2eC8vZkd4OUNoK1Fqa1NwYStDUTBj?=
+ =?utf-8?B?SEFVOUdRaUJnbVRjbjg3NUQ0dmhRZHBHaGN1MWkvUGFzampOTHl4am5ONlVH?=
+ =?utf-8?B?NFpTRkhDZUFLRE1ESWRsSHAzNmdJYTRkaWJyQjVEMFd1WGZuVHhkeEpWcXo0?=
+ =?utf-8?B?RjlNSFZwYWtFZFNEclFMT01tY2J2ZG4vNjdBd3B2SElqYTZ1NndxNlR2RjY1?=
+ =?utf-8?B?TU9mSzEra1FpdkxuRVNDMkNCVG14TW1qaHZCQkNNbitTd0tmR1ZuUDZFVFVu?=
+ =?utf-8?B?cUtlaXhEVlRURDN2RkNBVHJIWFZRQ0Yxb0dHSE5ISzZHSWFpV0Fwd0l1anM3?=
+ =?utf-8?B?Mm9KdjhsbHpHaVRrN0grdUU4a0Z4WlVlcEtsS1NiWlpHV0daRnhnY3d5UjRp?=
+ =?utf-8?B?ZkJ3UG04VW5PSFVkQTRTNzNWNmVnQ2lDcVRodzFpSnN3Y3N2R3N6RU8zZEh4?=
+ =?utf-8?B?Y0pIaEo1cEJHSzFVU05LTEIxeTI5NTRNNjNYMG1aUVFuSW9NQWM1QmhFNHY4?=
+ =?utf-8?B?QmNQbHpKelg5bDZiUnpEeE1PcC9Mc3BRVU1qNXJLMnNoRVorUjByZ3ptdnNR?=
+ =?utf-8?B?U1E9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62516a3c-ea71-47ab-b3ed-08dac31e1346
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2022 13:18:36.8369
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7MfdqDHpL7wx1K1w4ihh6wbppqWWKlgV78tANbi0/5JmMDocfnGGDJgjclpCHtXqPyTt0FLjfwgG932K0s6Wxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6828
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 10 Nov 2022 at 12:39, Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Thu, Nov 10, 2022 at 12:29 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > On Fri, 4 Nov 2022 at 14:32, Maxime Ripard <maxime@cerno.tech> wrote:
-> > >
-> > > The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
-> > > hook, but doesn't provide a determine_rate implementation.
-> > >
-> > > This is a bit odd, since set_parent() is there to, as its name implies,
-> > > change the parent of a clock. However, the most likely candidate to
-> > > trigger that parent change is a call to clk_set_rate(), with
-> > > determine_rate() figuring out which parent is the best suited for a
-> > > given rate.
-> > >
-> > > The other trigger would be a call to clk_set_parent(), but it's far less
-> > > used, and it doesn't look like there's any obvious user for that clock.
-> >
-> > If I recall correctly, that is the use case we did target for these
-> > types of clocks. See sound/soc/ux500/ux500_ab85xx.c, for example.
->
-> Hm I am trying to get that driver to work ... from time to time.
-> It's just that ALSA SoC DT has changed to much that it turns out
-> into a complete rewrite :/
->
-> So in sound/soc/ux500/mop500_ab8500.c
-> I see this:
->
->         status = clk_set_parent(drvdata->clk_ptr_intclk, clk_ptr);
->         if (status)
-> (...)
->
-> and there is elaborate code to switch between "SYSCLK" and
-> "ULPCLK" (ulta-low power clock). Just like you say... however
-> a clock named SYSCLK or ULPCLK does not appear in the
-> code in drivers/clk/ux500 or any DT bindings so... it seems to
-> be non-working for the time being.
 
-It's definitely not working, but the corresponding clocks ("ulpclk",
-"intclk", "audioclk", etc) are being registered in ab8500_reg_clks().
+On 10/11/2022 11:45, Steven Price wrote:
+> The value of NSEC_PER_SEC << PWM_DUTY_WIDTH doesn't fix within a 32 bit
+> integer causing a build warning/error (and the value truncated):
+> 
+>    drivers/pwm/pwm-tegra.c: In function ‘tegra_pwm_config’:
+>    drivers/pwm/pwm-tegra.c:148:53: error: result of ‘1000000000 << 8’ requires 39 bits to represent, but ‘long int’ only has 32 bits [-Werror=shift-overflow=]
+>      148 |   required_clk_rate = DIV_ROUND_UP_ULL(NSEC_PER_SEC << PWM_DUTY_WIDTH,
+>          |                                                     ^~
+> 
+> Explicitly cast to a u64 to ensure the correct result.
+> 
+> Fixes: cfcb68817fb3 ("pwm: tegra: Improve required rate calculation")
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>   drivers/pwm/pwm-tegra.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> index 6fc4b69a3ba7..249dc0193297 100644
+> --- a/drivers/pwm/pwm-tegra.c
+> +++ b/drivers/pwm/pwm-tegra.c
+> @@ -145,7 +145,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>   		 * source clock rate as required_clk_rate, PWM controller will
+>   		 * be able to configure the requested period.
+>   		 */
+> -		required_clk_rate = DIV_ROUND_UP_ULL(NSEC_PER_SEC << PWM_DUTY_WIDTH,
+> +		required_clk_rate = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC << PWM_DUTY_WIDTH,
+>   						     period_ns);
+>   
+>   		if (required_clk_rate > clk_round_rate(pc->clk, required_clk_rate))
 
-What seems to be missing is a DT conversion for these clocks, so they
-can be consumed properly. Right?
 
-Kind regards
-Uffe
+Thanks!
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
+
+-- 
+nvpublic
