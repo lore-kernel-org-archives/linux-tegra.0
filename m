@@ -2,90 +2,201 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D55C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 10:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1316CC43219
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 11:29:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbiKJKU1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Nov 2022 05:20:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51540 "EHLO
+        id S230053AbiKJL3V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Nov 2022 06:29:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbiKJKU0 (ORCPT
+        with ESMTP id S229700AbiKJL3U (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Nov 2022 05:20:26 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26C539FE4
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 02:20:25 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id a67so2310712edf.12
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 02:20:25 -0800 (PST)
+        Thu, 10 Nov 2022 06:29:20 -0500
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2847311A1F
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 03:29:19 -0800 (PST)
+Received: by mail-pg1-x52a.google.com with SMTP id 130so1530648pgc.5
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 03:29:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WT1sp5IPFlqAEGyaQKXIUIsFWQxK+jocZJELwyh5E0w=;
-        b=pBqPySRnHpyjJKe+ZBXagkUziKZPW/TImdx+vl4OfGoT9HVFMB3g5FYzMChNCzMIQO
-         xdtitKR4yHXxwO653Swmltzv5EnaKy70V4153yGyy89JVmGY/7fXk8JhBdG+8sdWUy3U
-         UW7mZHQLmSi+AENdVeIF5Qj/sqd8q9pqtl2b4cDGbMoy1ykuNhiOi5eKUcviKfOTzmO/
-         5l0wn//FrUB0W1AV5VaVDRGug+fm+A74IYCk3CK37EFs8BEXwTiNmZQR9slMlwbUiixx
-         h3h3G6nhzerbiu9HruFtykqs2Mu8VJ1/xFoTYVrX/i/FukGpJFRReo24grB1RwGLoZa2
-         SBOg==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dZWp2kHBH7BxTK24vYMYaWuh8ES61v4HZQKkOxWH97c=;
+        b=nm5AzPUP/c5SxnOWRF0E8OOs8vIUdOgDjB6wYkEQYpfYDRuGKSxS+CBIeuds7UEokj
+         CAc3O4M3Lzp0CmH9uvJ+chSuCz2e7UtgkMxDMXFmH0EFBdC81NQcL56cIa/e5fTzyvWS
+         kSegvkcOyKB6FEauX3mSzkzzDIAUq5r5SATzN3WmVSBqg1jyg/gg0kYs06KdBSG3zxV/
+         fvTxGa1dt18Ruz+5BEtQasGBTHQrEp0wpReAHWWGdK+pWMVHzmdtTwn3mkonTWk309ZV
+         x5RN6EKVnoWzvPKijsEeJPqRTGi+5rLHTCBxYP1D5lgzLbOuhL8arV0ezTVKJRNayIhr
+         L9Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WT1sp5IPFlqAEGyaQKXIUIsFWQxK+jocZJELwyh5E0w=;
-        b=1AD//eHqUn8tDknLojNwReald58w8vwCztomOPzHZM9qaN2srNAYBrpD52gVpLbZ5X
-         rJ13LrjF3iu5T8mlNCD5h2JBWjfH7v5sbOCucQhoaHAEjU67uByr5PHEVjGWvfB91ULN
-         kYwZXA0qa3KAfnHEgedWR51rTiKBHGe8Ka/k+5bNqs0vs9P01WIZkyR/BN0RZnBPx/UE
-         c2SCKE6xH9yBH1Xn5LVEmSzi3kCpC6IUVDVmC/mN4atFn+RKJLmVMR3/JpOwh8xocDAq
-         y5CkG2jxRUtepdQ8ZMGjhB72tgrP4MBnpRNSXxDo3jZhbgIsa+Ia0yoKrpV911sip/xQ
-         A4yA==
-X-Gm-Message-State: ACrzQf3mMvMRYs8eEaNA8oc41yz0LOEhkeHUtM9Y4Wt+DBaAxUuHxHCY
-        X41IlbBLLW0a+idlLiz9AHsXDut8qFU=
-X-Google-Smtp-Source: AMsMyM7AM8HzOXBUhXvmNiVy48+7gon51CuVPmNToIk8pMMTZ49w9wO6yapdghVw78ZOaSpXDkqWUg==
-X-Received: by 2002:a05:6402:3512:b0:461:bcf0:86dc with SMTP id b18-20020a056402351200b00461bcf086dcmr2073597edd.368.1668075623499;
-        Thu, 10 Nov 2022 02:20:23 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id o17-20020a170906601100b0073d83f80b05sm7047991ejj.94.2022.11.10.02.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 02:20:22 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>, thierry.reding@gmail.com
-Cc:     linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        iommu@lists.linux.dev, Jon Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2] gpu: host1x: Avoid trying to use GART on Tegra20
-Date:   Thu, 10 Nov 2022 11:20:18 +0100
-Message-Id: <166807557587.2565903.17395326570545995355.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <39c44dce203112a8dfe279e8e2c4ad164e3cf5e5.1666275461.git.robin.murphy@arm.com>
-References: <39c44dce203112a8dfe279e8e2c4ad164e3cf5e5.1666275461.git.robin.murphy@arm.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dZWp2kHBH7BxTK24vYMYaWuh8ES61v4HZQKkOxWH97c=;
+        b=poQ4nrCzJq+14I85FhXYDcDNXMQEJEXoKpprOauKAv5Ct+q1tOGfEKeBSAOJYTmYc5
+         6tF8gWbgneB0+CLvkRkCCZegyqHEYkrSduLRaFLiC8vKeoz29eNntOk9bOrvfIDV4yXy
+         SgixCPr9g4/9N96mCsCUAePzovynIE4tnd0RFH21eV3LraCrfDsLgElOpqKnHSjfpfyz
+         HbiaL0E0Ze9g1kaBb6dA8QS/eYzyDyljiQqgpc2owZAaEaL8n4T01GbFLnEFWY1mviuO
+         q9BeunvVKdSiu0wCS204N2p6x0smS5Cat3odlWJ8tUBit3/Y/j2/O2HostYiwnFw2ooe
+         bX3w==
+X-Gm-Message-State: ACrzQf2y0x73UylXoZ4slwYWUfR2zBZ5lYIaiH+z06MAiVqGi08bwgZn
+        GaDygIbn9qATmmpS1r44PibKYMI3LYk6UogS44y+fw==
+X-Google-Smtp-Source: AMsMyM4cuzpOD/TX9hqFyYyupcC8P3vPeFAFlSRm0wZ2MgnRUbZnV+cRg9A/mVHt7wBrkUdmfz48YahbcXukazUMnzc=
+X-Received: by 2002:a63:4204:0:b0:442:ee11:4894 with SMTP id
+ p4-20020a634204000000b00442ee114894mr2372631pga.595.1668079758533; Thu, 10
+ Nov 2022 03:29:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech> <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
+In-Reply-To: <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 10 Nov 2022 12:28:41 +0100
+Message-ID: <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
+Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Fri, 4 Nov 2022 at 14:32, Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
+> hook, but doesn't provide a determine_rate implementation.
+>
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+>
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
 
-On Thu, 20 Oct 2022 15:23:40 +0100, Robin Murphy wrote:
-> Since commit c7e3ca515e78 ("iommu/tegra: gart: Do not register with
-> bus") quite some time ago, the GART driver has effectively disabled
-> itself to avoid issues with the GPU driver expecting it to work in ways
-> that it doesn't. As of commit 57365a04c921 ("iommu: Move bus setup to
-> IOMMU device registration") that bodge no longer works, but really the
-> GPU driver should be responsible for its own behaviour anyway. Make the
-> workaround explicit.
-> 
-> [...]
+If I recall correctly, that is the use case we did target for these
+types of clocks. See sound/soc/ux500/ux500_ab85xx.c, for example.
 
-Applied, thanks!
+Maybe there are some additional pieces missing from the old down
+stream kernel, I don't have full picture, sorry.
 
-[1/1] gpu: host1x: Avoid trying to use GART on Tegra20
-      commit: c8899b7129927d96d2a948a0d969ab13b9f1dad1
+Anyway, if I am not wrong, this was about supporting a low-power audio
+use case, which requires us to switch the parent clock (to avoid
+wasting energy).
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+>
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+
+Yes, this was the reason.
+
+As a matter of fact, I don't even recall that re-parenting was
+possible through clk_set_rate() when this clock driver was introduced.
+But, I might be wrong, it's quite a while ago.
+
+>
+> The latter case would be equivalent to setting the flag
+> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> implementation is provided, clk_round_rate() (through
+> clk_core_round_rate_nolock()) will call itself on the parent if
+> CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> CLK_SET_RATE_NO_REPARENT is set.
+>
+> And if it was an oversight, then we are at least explicit about our
+> behavior now and it can be further refined down the line.
+>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+
+Seems reasonable to me!
+
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
+
+> ---
+>  drivers/clk/ux500/clk-sysctrl.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
+> index 702f2f8b43fa..d36336665b6d 100644
+> --- a/drivers/clk/ux500/clk-sysctrl.c
+> +++ b/drivers/clk/ux500/clk-sysctrl.c
+> @@ -110,6 +110,7 @@ static const struct clk_ops clk_sysctrl_gate_fixed_rate_ops = {
+>  };
+>
+>  static const struct clk_ops clk_sysctrl_set_parent_ops = {
+> +       .determine_rate = __clk_mux_determine_rate,
+>         .set_parent = clk_sysctrl_set_parent,
+>         .get_parent = clk_sysctrl_get_parent,
+>  };
+> @@ -220,6 +221,7 @@ struct clk *clk_reg_sysctrl_set_parent(struct device *dev,
+>                                 unsigned long flags)
+>  {
+>         return clk_reg_sysctrl(dev, name, parent_names, num_parents,
+> -                       reg_sel, reg_mask, reg_bits, 0, 0, flags,
+> +                       reg_sel, reg_mask, reg_bits, 0, 0,
+> +                       flags | CLK_SET_RATE_NO_REPARENT,
+>                         &clk_sysctrl_set_parent_ops);
+>  }
+>
+> --
+> b4 0.11.0-dev-99e3a
