@@ -2,123 +2,76 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AB0C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 01:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B54C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 07:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230323AbiKJBkj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Nov 2022 20:40:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39672 "EHLO
+        id S232698AbiKJHKA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Nov 2022 02:10:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230243AbiKJBki (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Nov 2022 20:40:38 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29066643D;
-        Wed,  9 Nov 2022 17:40:38 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id fn7-20020a05600c688700b003b4fb113b86so247381wmb.0;
-        Wed, 09 Nov 2022 17:40:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vsRXxULf7WH/xl1mUfu+fpJdtkaXSivdXXajCmMxLvU=;
-        b=FNOuWwDb6Zsymll8tFpPyfGqRgdYSWOU4C5qgXqUvwvSE3PiTK7OmUb5lx9vsHgOLV
-         dILocjtv5ziPBDuU9eqo43jVRL9bM02JOD0mQhns6N6OeIATi7pnd1d7FKt6HKlDkskQ
-         vwf6aKJASb+IUmIc03jN35K+LnO3bBzGMVegYXIyWbIhLslwKCt/GB0ZIvKF5QT+yHXZ
-         lxAkdzE5ESAOJGbJBLExkrog4N5J/eJbupJYzByUxXjdyD17FE24EVskOwPVQuNm5N5u
-         P0NcGk6Xjnn6Tqz63nU3x6u6ZSG4j7X95sZ4N/n4o+f1krYfbS9TqAT0IvLkZEPn2Bv9
-         fMdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vsRXxULf7WH/xl1mUfu+fpJdtkaXSivdXXajCmMxLvU=;
-        b=7WxC/Xq/dkr2LtIRnhzacyj7QNtTerbLOYHKw51bJlEZPsJ65tvfWftV9n81mum9O2
-         SgzwSXYq4wykAuEqIBxdnVB2gfKJmkxpTovNT30nT2Vl7Z249viJNogHnXAK5jnL190E
-         koaX62TlVwNkq8H97jsDlB39SIhA1vwVwmUDuAenpzQxZxe6gtfykC/LH++GzKXyyPPp
-         oavNXFV1L6k3MXh78QLQyXBeWgxIM8ALs0yyVGx2o7qfpFDdCdE2DgByDu11TkiwcnVA
-         9gREjiNQn406Yw4Hcxy57p2KVT8xIRAjetWGkk4ydf0XhuBhrWqnLj/ZPidJTRuh4W4u
-         G7NA==
-X-Gm-Message-State: ACrzQf1GQTulTyPijLE+zNaP1o2JI1CzOhyxFgtbzSVpGE8DvUsHoJx4
-        0RX85fDyD1vUoHHaI7PfncVORHI8q18=
-X-Google-Smtp-Source: AMsMyM79nelurPIkMypnvhYXHKMiWzIllpkTFVJqzOxmImEzk0XFigxZp/n/3xaxchGOWxhRtBiYPw==
-X-Received: by 2002:a7b:cbc4:0:b0:3b4:fd67:d70d with SMTP id n4-20020a7bcbc4000000b003b4fd67d70dmr52246783wmi.98.1668044436487;
-        Wed, 09 Nov 2022 17:40:36 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id v16-20020a05600c4d9000b003a6a3595edasm3078915wmp.27.2022.11.09.17.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Nov 2022 17:40:35 -0800 (PST)
-Date:   Thu, 10 Nov 2022 02:40:33 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Petlozu Pravareshwar <petlozup@nvidia.com>
-Cc:     jonathanh@nvidia.com, p.zabel@pengutronix.de,
-        dmitry.osipenko@collabora.com, ulf.hansson@linaro.org,
-        kkartik@nvidia.com, cai.huoqing@linux.dev, spatra@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] soc/tegra: pmc: Add IO Pad table for tegra234
-Message-ID: <Y2xWkRcsDo7FdAo4@orome>
-References: <20220930160213.2447099-1-petlozup@nvidia.com>
+        with ESMTP id S232683AbiKJHJ7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 10 Nov 2022 02:09:59 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2476615A27
+        for <linux-tegra@vger.kernel.org>; Wed,  9 Nov 2022 23:09:59 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B52D061D70
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 07:09:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B7C2C433C1;
+        Thu, 10 Nov 2022 07:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668064198;
+        bh=V7yDfiL6FXOyL8hHuXJBRR5wnNHmetLnLRlaixlcqdY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uB2P9hwAMM01f/49Y+bDwuY972Gp1s7u4u1BdV8jGMGI8zTH+JzwMbYYEa3fm2BZp
+         1cEUzyxw5r1Y5vzynJE1GWyUBAkSpqrEBrTBABbMAVLercW1vxWupOlZ/73uzpTAIM
+         a+bEtk0SeFxqMv21Wdog3daUzIxjAHskpllCDbVhXHarKGn448kzjsmSs3YqNStuFs
+         o4vRTuNvCrsy6ufqdNlJCNra5XEBANI0ehfoDSh190ZhKqeVEI7/8RVOCUcUBYfTwd
+         k4K130bY3gh5HIr39CUy7d/4c/N1dBYnckna/61YMbsaGZlL3U6vfqcNGjUpSD8iY2
+         TrzTnBg/foQjQ==
+Date:   Thu, 10 Nov 2022 12:39:53 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Jim Lin <jilin@nvidia.com>
+Subject: Re: [PATCH] phy: tegra: xusb: Fix crash during pad power on/down
+Message-ID: <Y2yjwRUFYQcrOHNT@matsya>
+References: <20221010135132.30809-1-jonathanh@nvidia.com>
+ <Y0zqKh7B9BaOoREo@matsya>
+ <eaf26959-401c-1c82-e95b-9f8a07f189a0@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VqdMED4Jqe9W+ZGV"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220930160213.2447099-1-petlozup@nvidia.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+In-Reply-To: <eaf26959-401c-1c82-e95b-9f8a07f189a0@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 07-11-22, 21:27, Jon Hunter wrote:
+> Hi Vinod,
+> 
+> On 17/10/2022 06:37, Vinod Koul wrote:
+> > On 10-10-22, 14:51, Jon Hunter wrote:
+> > > Commit a88520bfc0ec ("usb: gadget: tegra: Reduce pad power") added calls
+> > > to tegra_phy_xusb_utmi_pad_power_on/down in the Tegra XUDC driver to
+> > > control the pad power. This change is causing a kernel panic when
+> > > powering down the pads on entering suspend with the Jetson TX2 platform.
+> > > The panic occurs because the 'xudc->curr_utmi_phy' is not configured on
+> > > this platform and we do not check to see if the pointer is valid before
+> > > attempting to deference the pointer. Fix this by checking to see if the
+> > > 'phy' pointer passed to tegra_phy_xusb_utmi_pad_power_on/down is valid.
+> > 
+> > Applied, thanks
+> > 
+> 
+> We need this fix for Linux v6.1. The crash is still seen as of v6.1-rc3.
 
---VqdMED4Jqe9W+ZGV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is in phy/fixes so should be in v6.1 or in linus's tree shortly
 
-On Fri, Sep 30, 2022 at 04:02:13PM +0000, Petlozu Pravareshwar wrote:
-> Add IO PAD table for tegra234 to allow configuring dpd mode
-> and switching the pins to 1.8V or 3.3V as needed.
->=20
-> In tegra234, DPD registers are reorganized such that there is
-> a DPD_REQ register and a DPD_STATUS register per pad group.
-> This change accordingly updates the PMC driver.
->=20
-> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
-> ---
-> v3->v4:
-> * Addressing the review comments from Thierry Reding.
-> v4->v5:
-> * Remove dpd request and status variables from "struct tegra_pmc_regs"
->   as they are no longer needed.
-> v5->v6:
-> * Fix compilation warning: unused variable.
-> ---
->  drivers/soc/tegra/pmc.c | 708 +++++++++++++++++++++++++---------------
->  1 file changed, 439 insertions(+), 269 deletions(-)
-
-Applied, with slight fixups to the commit message.
-
-Thanks,
-Thierry
-
---VqdMED4Jqe9W+ZGV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNsVo4ACgkQ3SOs138+
-s6GgSQ//cK+0K+RzpZtbjZce876wvnZDxuOxhdSqTj4u4qnmlTOP+Hta28ATqWBZ
-LXJvXMkKz8GtMjJXo+IyktB6KUtP1AckPYen5fKYXxPlyXhE7gv+BU+69wmFG007
-N9kONoY5eWjbAOJwtB0OB5Xjz3EJafFEfRxHGqXuKpkezpy6nwPFtbyf/7ElEnBR
-wz3a9OGhTKsR6HXVquPJPV+a7TME7Gr/ViOvVoMzBfcbFqFMh7hrq3nGBvdCtPJj
-qsSHwyNhrp/hw6iywgXvUGKPtmGgYvtFkod/WX00e9UNLIpLDme6biE3MLL0NGhw
-OBNqR3tWRN07Xcdc0mg0UReWXiGi66LyXtrrRlsLDh4Q5TDKfqUtwTV0Yjv2UtpT
-fgKX+XQWyyI4xaNkjL5f7r84Mxe+lMqA1aS15RrMQAAeXv0GpQuqEShQJwvdjHLO
-7DRoLJ4wOuwpjY1vPKikRmfBjbtKxd2qozGj9W1MSeDOKAIPxj0rSYAcoZHi9HWM
-5396zpyp+wzsARqHPMd7bxzKTnFrAqh3//1ZmoqZmG1SZKkp+0d+bUHzoGcJJCXF
-ejV7lTuXtTnKIE6b3056VZuv2/0ZldI3SnW+bqZnvOOi0GI5l73iaVxYY+Uvwfd7
-ret5vYAgfLpnHcZxvddsjTBfRjv51sEwVVluv+o6xgWyHJezXFQ=
-=OYYT
------END PGP SIGNATURE-----
-
---VqdMED4Jqe9W+ZGV--
+-- 
+~Vinod
