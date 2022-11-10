@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289EEC43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 20:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FEAC4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 20:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231585AbiKJUPI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Nov 2022 15:15:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57558 "EHLO
+        id S231685AbiKJUPN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Nov 2022 15:15:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231522AbiKJUO4 (ORCPT
+        with ESMTP id S231573AbiKJUPI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Nov 2022 15:14:56 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A0E50F1B;
-        Thu, 10 Nov 2022 12:14:56 -0800 (PST)
+        Thu, 10 Nov 2022 15:15:08 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D0A50F32;
+        Thu, 10 Nov 2022 12:15:00 -0800 (PST)
 Received: from dimapc.. (unknown [109.252.117.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 69D8C6602A41;
-        Thu, 10 Nov 2022 20:14:53 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7A6516602A42;
+        Thu, 10 Nov 2022 20:14:57 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1668111295;
-        bh=Y9B9YrrEmHlNO1aEObVWaFh4UvP89E0LA68VwtlK5tI=;
+        s=mail; t=1668111299;
+        bh=0zN59rGSaHbZbas6yjxA7nymGNsrifCHO9MjN64wknU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YvJFNfG0veek5/GRaGa5nRrI/zKHIbyJmgP5Wf0I7nWHz14yHRQEDHx4U91zB4+XD
-         DSZNDsmp1HtnE+QNOMSbxp9pUzx2JkuOF6lmfXmztWoOfbHEwP6SzHu/oMI5WkiuD4
-         oX6vaEzRzRW/siHAWBjRVqW6yjWzyJfTbPzG3MvfNQs8R1zP6AMq/0gU0aPQp1L80R
-         yXf2zI9i9HIIVNTDlvjA7BXetRNrmgqF/RdqwW+1JMdVFVILpoEaFunwkrayKHghVS
-         4ZSMpbMXyeTxhUhFrD0LReNJC90DC/wylSo3H1ulvMs/kenG8FCVxr2YPwqlzXVQM0
-         QMcmyw/jqO+gQ==
+        b=ZhXcr2Wesv4ltZzxDAV9yffX3x7Rlk6IoaAxCjlg4gWJ2Vpc26wAHHl3Rx7IXyMpm
+         oVoWvTIoaSxvrXpeuQB2+Crt+plNyIS9/OJs7xegIFje+wug48WV+dcMkXt+P/w8JR
+         lQGfLfJay+//UogKzaKofzdy8/4Gv62kQ3XlxulY5O9pSXd17poZ50IKH0JovLhKQf
+         Lk4H6BNbsqSXjFeGb9EZRdrhVUT/UtqVSp8FssWU5+xbik9WCiZx0iEQctBKRn0tTt
+         /z0eLj5HKexd2LpS1e16gQpf/E16O3xSLoDswwLZwE4oRNjmfBq7KUCKD2X4qYuXAT
+         gA/5/MHLsMEHg==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To:     Sumit Semwal <sumit.semwal@linaro.org>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -57,9 +57,9 @@ Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         kernel@collabora.com
-Subject: [PATCH v1 3/6] udmabuf: Assert held reservation lock for dma-buf mmapping
-Date:   Thu, 10 Nov 2022 23:13:46 +0300
-Message-Id: <20221110201349.351294-4-dmitry.osipenko@collabora.com>
+Subject: [PATCH v1 5/6] media: videobuf2: Assert held reservation lock for dma-buf mmapping
+Date:   Thu, 10 Nov 2022 23:13:48 +0300
+Message-Id: <20221110201349.351294-6-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221110201349.351294-1-dmitry.osipenko@collabora.com>
 References: <20221110201349.351294-1-dmitry.osipenko@collabora.com>
@@ -70,35 +70,79 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 When userspace mmaps dma-buf's fd, the dma-buf reservation lock must be
-held. Add locking sanity check to the dma-buf mmaping callback to ensure
-that the locking assumption won't regress in the future.
+held. Add locking sanity checks to the dma-buf mmaping callbacks to ensure
+that the locking assumptions won't regress in the future.
 
 Suggested-by: Daniel Vetter <daniel@ffwll.ch>
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/dma-buf/udmabuf.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/common/videobuf2/videobuf2-dma-contig.c | 3 +++
+ drivers/media/common/videobuf2/videobuf2-dma-sg.c     | 3 +++
+ drivers/media/common/videobuf2/videobuf2-vmalloc.c    | 3 +++
+ 3 files changed, 9 insertions(+)
 
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index 2bcdb935a3ac..283816fbd72f 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -2,6 +2,7 @@
- #include <linux/cred.h>
- #include <linux/device.h>
+diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+index 555bd40fa472..7f45a62969f2 100644
+--- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
++++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+@@ -11,6 +11,7 @@
+  */
+ 
  #include <linux/dma-buf.h>
 +#include <linux/dma-resv.h>
- #include <linux/highmem.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-@@ -49,6 +50,8 @@ static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct *vma)
+ #include <linux/module.h>
+ #include <linux/refcount.h>
+ #include <linux/scatterlist.h>
+@@ -455,6 +456,8 @@ static int vb2_dc_dmabuf_ops_vmap(struct dma_buf *dbuf, struct iosys_map *map)
+ static int vb2_dc_dmabuf_ops_mmap(struct dma_buf *dbuf,
+ 	struct vm_area_struct *vma)
  {
- 	struct udmabuf *ubuf = buf->priv;
- 
-+	dma_resv_assert_held(buf->resv);
++	dma_resv_assert_held(dbuf->resv);
 +
- 	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
- 		return -EINVAL;
+ 	return vb2_dc_mmap(dbuf->priv, vma);
+ }
+ 
+diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+index 36981a5b5c53..b7f39ee49ed8 100644
+--- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
++++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+@@ -10,6 +10,7 @@
+  * the Free Software Foundation.
+  */
+ 
++#include <linux/dma-resv.h>
+ #include <linux/module.h>
+ #include <linux/mm.h>
+ #include <linux/refcount.h>
+@@ -495,6 +496,8 @@ static int vb2_dma_sg_dmabuf_ops_vmap(struct dma_buf *dbuf,
+ static int vb2_dma_sg_dmabuf_ops_mmap(struct dma_buf *dbuf,
+ 	struct vm_area_struct *vma)
+ {
++	dma_resv_assert_held(dbuf->resv);
++
+ 	return vb2_dma_sg_mmap(dbuf->priv, vma);
+ }
+ 
+diff --git a/drivers/media/common/videobuf2/videobuf2-vmalloc.c b/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+index 41db707e43a4..f9b665366365 100644
+--- a/drivers/media/common/videobuf2/videobuf2-vmalloc.c
++++ b/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+@@ -10,6 +10,7 @@
+  * the Free Software Foundation.
+  */
+ 
++#include <linux/dma-resv.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/mm.h>
+@@ -316,6 +317,8 @@ static int vb2_vmalloc_dmabuf_ops_vmap(struct dma_buf *dbuf,
+ static int vb2_vmalloc_dmabuf_ops_mmap(struct dma_buf *dbuf,
+ 	struct vm_area_struct *vma)
+ {
++	dma_resv_assert_held(dbuf->resv);
++
+ 	return vb2_vmalloc_mmap(dbuf->priv, vma);
+ }
  
 -- 
 2.37.3
