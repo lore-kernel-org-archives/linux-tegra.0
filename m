@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC33C43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 20:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1E1C4167B
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 20:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231512AbiKJUO4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Nov 2022 15:14:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57498 "EHLO
+        id S231620AbiKJUPI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Nov 2022 15:15:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiKJUOz (ORCPT
+        with ESMTP id S230320AbiKJUPB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Nov 2022 15:14:55 -0500
+        Thu, 10 Nov 2022 15:15:01 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A64D49B65;
-        Thu, 10 Nov 2022 12:14:54 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703E04E431;
+        Thu, 10 Nov 2022 12:14:58 -0800 (PST)
 Received: from dimapc.. (unknown [109.252.117.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 504D16602A38;
-        Thu, 10 Nov 2022 20:14:51 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 76FB16602A52;
+        Thu, 10 Nov 2022 20:14:55 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1668111293;
-        bh=0G+VWzBJRZewI6CJdj0Q8Ky11O2aqS9atLUTpdObBfc=;
+        s=mail; t=1668111297;
+        bh=tFGVSeUWIaYJ9Ib1/vtuoKFGinbIYhiNCk2JIU4TCAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z3qMS6fbkoFYTShp/wAKU+h+Pybco7gCrFuaxBN0Hdql0Ieikfdb4pWDV2JRVWL1P
-         2HgO1lp8SeQLFvMEHfOsIodkJ8ALATaDTxPzo7dtAIFrMX16iqeXH/my9+HoQWv/mo
-         pQrLUk6FBLWewtnmKIR81HisCFLn9vymuYfGpPULCXa1Je9WMV2vA7zh6ZaTtZnhbV
-         lCtiK4JrhtFcaAHKbY1DTC7ecUHAG3IJ37XmKDSedObDeMLijEUwD0SOeH1DrZlcvx
-         klJQa/472frF0E5dmXAZf7xo8sB4QyNb8lKu1h42opeFniOc1VnVXrzJuxZT3AS95g
-         5xKZtfKBZ1rMQ==
+        b=WiW5lCgRnkdkfo5vaoZTlj8VvywC0gJ5C4YLWKTp1ofjQ0BBj8f7uw5QjMBvlfkHw
+         U6uiK9b4Eb3XC+zN7suX+FGdXFSRwZSf8FgLNCyB/F4QyMkABTGlj+mA975iKDaHfO
+         7QamiY70dGTRMjl2ygQNU3faI4aoycDXfRrLeyuRtV6KdJddWr17/u6yA3PQIE0r3w
+         BixEZwWJq95W2JJM7jSHqPgCZc4dw6s1eFBd3ltOhk53gqgRa2fBwVWDy/XhH/Yuvl
+         Xu/PbO9SEaWlFQa8cDg2uwSa2nXQzk1T8MYDscwlF4w/kGa25X3PWjFooAZUrY7lIj
+         7VRaF9B1tqf4A==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To:     Sumit Semwal <sumit.semwal@linaro.org>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -57,9 +57,9 @@ Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         kernel@collabora.com
-Subject: [PATCH v1 2/6] drm: Assert held reservation lock for dma-buf mmapping
-Date:   Thu, 10 Nov 2022 23:13:45 +0300
-Message-Id: <20221110201349.351294-3-dmitry.osipenko@collabora.com>
+Subject: [PATCH v1 4/6] dma-buf/heaps: Assert held reservation lock for dma-buf mmapping
+Date:   Thu, 10 Nov 2022 23:13:47 +0300
+Message-Id: <20221110201349.351294-5-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221110201349.351294-1-dmitry.osipenko@collabora.com>
 References: <20221110201349.351294-1-dmitry.osipenko@collabora.com>
@@ -70,70 +70,58 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 When userspace mmaps dma-buf's fd, the dma-buf reservation lock must be
-held. Add locking sanity checks to the dma-buf mmaping callbacks of DRM
-drivers to ensure that the locking assumptions won't regress in future.
+held. Add locking sanity checks to the dma-buf mmaping callbacks to ensure
+that the locking assumptions won't regress in the future.
 
 Suggested-by: Daniel Vetter <daniel@ffwll.ch>
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/gpu/drm/drm_prime.c                | 2 ++
- drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c | 2 ++
- drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c  | 2 ++
- drivers/gpu/drm/tegra/gem.c                | 2 ++
- 4 files changed, 8 insertions(+)
+ drivers/dma-buf/heaps/cma_heap.c    | 3 +++
+ drivers/dma-buf/heaps/system_heap.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index 20e109a802ae..f924b8b4ab6b 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -781,6 +781,8 @@ int drm_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *vma)
- 	struct drm_gem_object *obj = dma_buf->priv;
- 	struct drm_device *dev = obj->dev;
+diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
+index 28fb04eccdd0..1131fb943992 100644
+--- a/drivers/dma-buf/heaps/cma_heap.c
++++ b/drivers/dma-buf/heaps/cma_heap.c
+@@ -13,6 +13,7 @@
+ #include <linux/dma-buf.h>
+ #include <linux/dma-heap.h>
+ #include <linux/dma-map-ops.h>
++#include <linux/dma-resv.h>
+ #include <linux/err.h>
+ #include <linux/highmem.h>
+ #include <linux/io.h>
+@@ -182,6 +183,8 @@ static int cma_heap_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
+ {
+ 	struct cma_heap_buffer *buffer = dmabuf->priv;
  
-+	dma_resv_assert_held(dma_buf->resv);
++	dma_resv_assert_held(dmabuf->resv);
 +
- 	if (!dev->driver->gem_prime_mmap)
- 		return -ENOSYS;
- 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c b/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
-index ec6f7ae47783..9322ac29008b 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
-@@ -97,6 +97,8 @@ static int i915_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *
- 	struct drm_i915_private *i915 = to_i915(obj->base.dev);
- 	int ret;
- 
-+	dma_resv_assert_held(dma_buf->resv);
-+
- 	if (obj->base.size < vma->vm_end - vma->vm_start)
+ 	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
  		return -EINVAL;
  
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c b/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-index 8e194dbc9506..3abc47521b2c 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-@@ -66,6 +66,8 @@ static int omap_gem_dmabuf_mmap(struct dma_buf *buffer,
- 	struct drm_gem_object *obj = buffer->priv;
- 	int ret = 0;
+diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+index fcf836ba9c1f..e8bd10e60998 100644
+--- a/drivers/dma-buf/heaps/system_heap.c
++++ b/drivers/dma-buf/heaps/system_heap.c
+@@ -13,6 +13,7 @@
+ #include <linux/dma-buf.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dma-heap.h>
++#include <linux/dma-resv.h>
+ #include <linux/err.h>
+ #include <linux/highmem.h>
+ #include <linux/mm.h>
+@@ -201,6 +202,8 @@ static int system_heap_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
+ 	struct sg_page_iter piter;
+ 	int ret;
  
-+	dma_resv_assert_held(buffer->resv);
++	dma_resv_assert_held(dmabuf->resv);
 +
- 	ret = drm_gem_mmap_obj(obj, omap_gem_mmap_size(obj), vma);
- 	if (ret < 0)
- 		return ret;
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index b09b8ab40ae4..979e7bc902f6 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -694,6 +694,8 @@ static int tegra_gem_prime_mmap(struct dma_buf *buf, struct vm_area_struct *vma)
- 	struct drm_gem_object *gem = buf->priv;
- 	int err;
+ 	for_each_sgtable_page(table, &piter, vma->vm_pgoff) {
+ 		struct page *page = sg_page_iter_page(&piter);
  
-+	dma_resv_assert_held(buf->resv);
-+
- 	err = drm_gem_mmap_obj(gem, gem->size, vma);
- 	if (err < 0)
- 		return err;
 -- 
 2.37.3
 
