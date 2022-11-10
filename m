@@ -2,152 +2,72 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2C7C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 11:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334D9C43219
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Nov 2022 11:46:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbiKJLkF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Nov 2022 06:40:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45608 "EHLO
+        id S230285AbiKJLqW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Nov 2022 06:46:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230362AbiKJLkD (ORCPT
+        with ESMTP id S230280AbiKJLqV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Nov 2022 06:40:03 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E31571F01
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 03:39:59 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id r14so2639152edc.7
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Nov 2022 03:39:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ck1BFgYQUoxfjthSY0Z/ICMvhRDs51HkE0D/E51e4wU=;
-        b=cLoqN/9Hw4WN89uoDoxpq9Ce/Ps341RBpybWaA/Ttn7dX0XjEZSpQMeE/cLupilSy+
-         h9M/AwRJwi+wD3lcUZtgCbl5J3Y1/4+a+UG987xrzyBKVQSsdTGx1Fm9p56BVwQCgeqw
-         ImbNP+V0cuLG09qZBqDEVWEBH4JmnDYapBzy20rI0QOEnuyEvU41wtqwWtHQ/Ku+SIq6
-         z/iAwWeg98cPs684u3jM1bZkrHRFlxBeM553WE2HZydhyBqAswoiUSyHfbMc8MScHPVp
-         jTxj/0bSYX2PEajd6PNI/IV0ZBru+l7g17Wn1GCvWMrBI6s8qLNSd3U7dwQx3hiin+sp
-         LiYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ck1BFgYQUoxfjthSY0Z/ICMvhRDs51HkE0D/E51e4wU=;
-        b=COQcPvlEpbqCB7a67uu0esBxGhYc1ZoLJp5+ndnvcDbz4Z3M178sjlNR74TwCwKda/
-         LdrYSzPhMecbny8CIv9dEdrkzlpP7enww0QWRC0sYkUWh/Bgz4Xv7XRWlddONiAeWieC
-         pNAyZaUfayN4CkzFQGoSa6IjQ8NVhD1gBMQf+K07ogTfBeEY92MsuUooB/2CMy/XAbhT
-         mNFpzAtz2WHlCz6eS/nduxolks4/RwTmtb3BJoI3aDMME8LKZRXFZRiq+BamaGieRw4s
-         wCGadC4sQJnPqXlTaagTpIn6MvBbbJllTQxUH53OfvY2cxKI5QcFVzha070QFE0R/7Dx
-         DDjw==
-X-Gm-Message-State: ACrzQf3Bl2VnJGL0NGpv3AP76Bw0PfHOpF6dBXSfZ6Y1dUBU3Vmks1KT
-        Fq7o1hXkaK8yfGjFvGSA9Xg2kEFqfwEfPHuEN4fmXw==
-X-Google-Smtp-Source: AMsMyM6KPfAGNVILTJIJybxZbWNcNW1j294XPOEkghGZsATADMyuAh5FXMGRYiA9Y0UOLTHKSZCe9zdW3Mb4U369XWo=
-X-Received: by 2002:a05:6402:4002:b0:463:bc31:2604 with SMTP id
- d2-20020a056402400200b00463bc312604mr2100488eda.32.1668080397979; Thu, 10 Nov
- 2022 03:39:57 -0800 (PST)
+        Thu, 10 Nov 2022 06:46:21 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D0E541F2CE;
+        Thu, 10 Nov 2022 03:46:20 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C93011FB;
+        Thu, 10 Nov 2022 03:46:26 -0800 (PST)
+Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.30.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 958253F534;
+        Thu, 10 Nov 2022 03:46:19 -0800 (PST)
+From:   Steven Price <steven.price@arm.com>
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Steven Price <steven.price@arm.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] pwm: tegra: Fix 32 bit build
+Date:   Thu, 10 Nov 2022 11:45:48 +0000
+Message-Id: <20221110114549.34121-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech> <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
-In-Reply-To: <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 10 Nov 2022 12:39:46 +0100
-Message-ID: <CACRpkdYOj8uozJZO4MV-_OAKeOsQHhoEM=PyynVuNY-JkpgTOw@mail.gmail.com>
-Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Nov 10, 2022 at 12:29 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Fri, 4 Nov 2022 at 14:32, Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
-> > hook, but doesn't provide a determine_rate implementation.
-> >
-> > This is a bit odd, since set_parent() is there to, as its name implies,
-> > change the parent of a clock. However, the most likely candidate to
-> > trigger that parent change is a call to clk_set_rate(), with
-> > determine_rate() figuring out which parent is the best suited for a
-> > given rate.
-> >
-> > The other trigger would be a call to clk_set_parent(), but it's far less
-> > used, and it doesn't look like there's any obvious user for that clock.
->
-> If I recall correctly, that is the use case we did target for these
-> types of clocks. See sound/soc/ux500/ux500_ab85xx.c, for example.
+The value of NSEC_PER_SEC << PWM_DUTY_WIDTH doesn't fix within a 32 bit
+integer causing a build warning/error (and the value truncated):
 
-Hm I am trying to get that driver to work ... from time to time.
-It's just that ALSA SoC DT has changed to much that it turns out
-into a complete rewrite :/
+  drivers/pwm/pwm-tegra.c: In function ‘tegra_pwm_config’:
+  drivers/pwm/pwm-tegra.c:148:53: error: result of ‘1000000000 << 8’ requires 39 bits to represent, but ‘long int’ only has 32 bits [-Werror=shift-overflow=]
+    148 |   required_clk_rate = DIV_ROUND_UP_ULL(NSEC_PER_SEC << PWM_DUTY_WIDTH,
+        |                                                     ^~
 
-So in sound/soc/ux500/mop500_ab8500.c
-I see this:
+Explicitly cast to a u64 to ensure the correct result.
 
-        status = clk_set_parent(drvdata->clk_ptr_intclk, clk_ptr);
-        if (status)
-(...)
+Fixes: cfcb68817fb3 ("pwm: tegra: Improve required rate calculation")
+Signed-off-by: Steven Price <steven.price@arm.com>
+---
+ drivers/pwm/pwm-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-and there is elaborate code to switch between "SYSCLK" and
-"ULPCLK" (ulta-low power clock). Just like you say... however
-a clock named SYSCLK or ULPCLK does not appear in the
-code in drivers/clk/ux500 or any DT bindings so... it seems to
-be non-working for the time being.
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index 6fc4b69a3ba7..249dc0193297 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -145,7 +145,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		 * source clock rate as required_clk_rate, PWM controller will
+ 		 * be able to configure the requested period.
+ 		 */
+-		required_clk_rate = DIV_ROUND_UP_ULL(NSEC_PER_SEC << PWM_DUTY_WIDTH,
++		required_clk_rate = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC << PWM_DUTY_WIDTH,
+ 						     period_ns);
+ 
+ 		if (required_clk_rate > clk_round_rate(pc->clk, required_clk_rate))
+-- 
+2.34.1
 
-Yours,
-Linus Walleij
