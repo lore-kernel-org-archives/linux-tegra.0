@@ -2,106 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7484DC4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 13:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA8AC43219
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 14:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234025AbiKKNag (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Nov 2022 08:30:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46598 "EHLO
+        id S233424AbiKKOaR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Nov 2022 09:30:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233989AbiKKNa2 (ORCPT
+        with ESMTP id S233488AbiKKOaP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Nov 2022 08:30:28 -0500
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64E6D6035E;
-        Fri, 11 Nov 2022 05:30:27 -0800 (PST)
-Received: by mail-ot1-f49.google.com with SMTP id j25-20020a056830015900b0066ca2cd96daso2781936otp.10;
-        Fri, 11 Nov 2022 05:30:27 -0800 (PST)
+        Fri, 11 Nov 2022 09:30:15 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3639C14;
+        Fri, 11 Nov 2022 06:30:13 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id n12so12885564eja.11;
+        Fri, 11 Nov 2022 06:30:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Koh+dwqZBBf1jlPSzVX0j36YcM7HA7J6ZE4x6mmkVqY=;
+        b=BqyOLgVvW1T68MtJxqWJdNcg1P91Dx51CO+9dOyxUd2aYLDziwHjcO2zMnUIHCzqqX
+         rhPctuUTkk4xUHR7Lr8nmMfpRMtqHk+VcETg2WyDZNU4lWnwRohx08WPWch+lrYmMOEt
+         RVn+NQkQfeum4/VYuCk/CuAg5eIXiJOEX1xqBDxnxTksAuybAhl5IRvL9ie1VctDesqx
+         cJDY/AbX1mbhXLrnnPxMipHvqElcV0TGof19vuskFJ28QZDd0bWLOfCza96Q/qN3YkRC
+         adRHxDrWGd5HJu0SzieR1+WYe0IMhgMhyfGQwFpUzNt/V8IUWip+JYgJlJwspCDybWXW
+         QIHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+H4vFKcVhdT5utr9Kqit7Ee08fhFyoKnskQwRap40i4=;
-        b=t/njWBcXTa8Dr+fhkIyziRfPcs94khjPZeqZpD/0IwIOarofKfEBKVLV7kW1EBVIGR
-         Lu5zJ1tG+soMxGaMzNdDKQLWSFDkQM5lxg2tQ3crX2hEHWIgcl2QySh1k9htjAQeAWXp
-         Khv3h3tc0hwkHviXpkOXExXEIKzhWaH8HyTFpFISusGxcRlmTfhzmpHcgRWrPDbrAEMK
-         pwaVEn9HMaARs+g3xeYxb6WajXVtm5QmgRhffFpI+L6qbxn34kp82F8UyEDLY8/mae3i
-         /r524jTMvqXYh7kMSwnmXBjBD+sKvu1lozc16obcmdgxD8H8NLqmRGSTlt6aHVedmacq
-         42/g==
-X-Gm-Message-State: ANoB5pnGvFUVgRCQ+ATsmrC/WJyE/foJdaMseSdafI1UWtCbdRWU7Tp3
-        /EXn6aGLlYFSYOLd5+0joQ==
-X-Google-Smtp-Source: AA0mqf5Qj3/GbhqnO2Nl2v5FMmObS8qqaAWio4R7QoQud1x66XkXmTZ4UJUHtqj+lywkDe6kiB/IQA==
-X-Received: by 2002:a05:6830:4122:b0:66c:2b2c:e7aa with SMTP id w34-20020a056830412200b0066c2b2ce7aamr1162463ott.303.1668173426609;
-        Fri, 11 Nov 2022 05:30:26 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 124-20020a4a1582000000b0047f72b6988fsm766425oon.45.2022.11.11.05.30.25
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Koh+dwqZBBf1jlPSzVX0j36YcM7HA7J6ZE4x6mmkVqY=;
+        b=DYHWu+cVqbfKMVPknNW3kF0vG966yyblZ7FJi7dIjEy+jyB9YlTRImBYXJO6ESottx
+         XMlfUk8x0jDOpCYC8jh6pb8EcmaUx737EGIjWQ+uRS31Lc6i99kAhF4CAngbvFx0MUIF
+         QZS0Jl8eg4+jIpyctNrVTZfTHHMx+XXagDX5pFbUz6YRpt3ATjGqJpvzSUGWsjDH49AP
+         gsX9Lutiq37DpyiGrlQnYwKzrlSQaccCqE2rCrNQb75SBVO9M7Bl41EeICQfg+1rpBgo
+         AiwHqllTHLlCGoxobVAgdqF7ykvP+zuNNfkwwvWM98FHkfJ/fWje0+YZenoI9G16TunE
+         Iflg==
+X-Gm-Message-State: ANoB5pmuk9mFzL9V4UEyeHLZIpAf6YS6KRT3tAj1cgehWkX6zp8VzzPr
+        bcw5QKGfLO8lhUS6g51g1Vqnw75Qwlc=
+X-Google-Smtp-Source: AA0mqf76HHd4OS1zIfY7lGecxmJawgOec5QGdP+21KJZOhjP/mKmQxkvRVHF+NYHLxe1xLLHO2b1Qg==
+X-Received: by 2002:a17:906:5053:b0:7ad:f5a9:ece3 with SMTP id e19-20020a170906505300b007adf5a9ece3mr2005755ejk.635.1668177012323;
+        Fri, 11 Nov 2022 06:30:12 -0800 (PST)
+Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id hw20-20020a170907a0d400b00779cde476e4sm934157ejc.62.2022.11.11.06.30.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 05:30:26 -0800 (PST)
-Received: (nullmailer pid 3073768 invoked by uid 1000);
-        Fri, 11 Nov 2022 13:30:24 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        Fri, 11 Nov 2022 06:30:11 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Steven Price <steven.price@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] pwm: tegra: Fix 32 bit build
+Date:   Fri, 11 Nov 2022 15:30:10 +0100
+Message-Id: <166817672258.517436.2580485516581625175.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221110114549.34121-1-steven.price@arm.com>
+References: <20221110114549.34121-1-steven.price@arm.com>
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Wayne Chang <waynec@nvidia.com>
-Cc:     mathias.nyman@intel.com, p.zabel@pengutronix.de,
-        jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        linux-tegra@vger.kernel.org, singhanc@nvidia.com, balbi@kernel.org,
-        linux-phy@lists.infradead.org, vkoul@kernel.org,
-        thierry.reding@gmail.com, ajayg@nvidia.com,
-        heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
-        treding@nvidia.com, jckuo@nvidia.com, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org
-In-Reply-To: <20221111101509.999589-3-waynec@nvidia.com>
-References: <20221111101509.999589-1-waynec@nvidia.com>
- <20221111101509.999589-3-waynec@nvidia.com>
-Message-Id: <166817308790.3060162.14990231448404857914.robh@kernel.org>
-Subject: Re: [PATCH v2 02/13] dt-bindings: usb: Add NVIDIA Tegra234 XUSB host
- controller binding
-Date:   Fri, 11 Nov 2022 07:30:24 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On Fri, 11 Nov 2022 18:14:58 +0800, Wayne Chang wrote:
-> Add device-tree binding documentation for the XUSB host controller present
-> on Tegra234 SoC. This controller supports the USB 3.1 specification.
+On Thu, 10 Nov 2022 11:45:48 +0000, Steven Price wrote:
+> The value of NSEC_PER_SEC << PWM_DUTY_WIDTH doesn't fix within a 32 bit
+> integer causing a build warning/error (and the value truncated):
 > 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> ---
-> V1 -> V2: new change for adding nvidia,tegra234-xusb.yaml
->  .../bindings/usb/nvidia,tegra234-xusb.yaml    | 159 ++++++++++++++++++
->  1 file changed, 159 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+>   drivers/pwm/pwm-tegra.c: In function ‘tegra_pwm_config’:
+>   drivers/pwm/pwm-tegra.c:148:53: error: result of ‘1000000000 << 8’ requires 39 bits to represent, but ‘long int’ only has 32 bits [-Werror=shift-overflow=]
+>     148 |   required_clk_rate = DIV_ROUND_UP_ULL(NSEC_PER_SEC << PWM_DUTY_WIDTH,
+>         |                                                     ^~
 > 
+> [...]
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Applied, thanks!
 
-yamllint warnings/errors:
+[1/1] pwm: tegra: Fix 32 bit build
+      commit: dd1f1da4ada5d8ac774c2ebe97230637820b3323
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dts:36.27-28 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:406: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dtb] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1492: dt_binding_check] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Best regards,
+-- 
+Thierry Reding <thierry.reding@gmail.com>
