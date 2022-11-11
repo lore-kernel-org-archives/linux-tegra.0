@@ -2,114 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3942C43219
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 16:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC37C4321E
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 17:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234002AbiKKQSX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Nov 2022 11:18:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48982 "EHLO
+        id S232918AbiKKRci (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Nov 2022 12:32:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233998AbiKKQSW (ORCPT
+        with ESMTP id S233495AbiKKRch (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Nov 2022 11:18:22 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E4470185;
-        Fri, 11 Nov 2022 08:18:21 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id g12so7065893wrs.10;
-        Fri, 11 Nov 2022 08:18:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HuoiIm8f1+pLkMCMfNs8Z4K3LzZnaZWtse5hncoBXug=;
-        b=M52kVvCdx0HRD9z9mO1F8e0fzsb2XcgwgybCoobS1hQT8sGGISqPnVCB3+/jzIwjbM
-         IcmfSIghOi9oaXPVGtN4FLLVY6yX9AYrfidV5karpgA/1hVM5luKnWGH+vitU2uYCWd6
-         5eAIUc99r1DKRSyiUg31h5/pevHaGtpvNrjq4uXCccfWhFGyUeBMHxBg1wEaSS15kwtQ
-         Dzol1yom695mWpOamueMBlsyP2In7gaLsfsBFKiI/6d24mt+muHy8ezDFlmhwUnpWJCh
-         vswyh+nwYf/nr9Wmg27iqKW1iSuHN8yPfjtTNDldDE1hWCg4Kx68TrM+VQxAwiaLC08E
-         0MhA==
+        Fri, 11 Nov 2022 12:32:37 -0500
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EADB1A815;
+        Fri, 11 Nov 2022 09:32:36 -0800 (PST)
+Received: by mail-oo1-f46.google.com with SMTP id g15-20020a4a894f000000b0047f8e899623so742090ooi.5;
+        Fri, 11 Nov 2022 09:32:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HuoiIm8f1+pLkMCMfNs8Z4K3LzZnaZWtse5hncoBXug=;
-        b=TpRrrBXlTUCGv5dWrk6d4d7ahp8uBVppIGBI3IfuI27VvDDKjhZrUCiSrWEtJSjDpx
-         3AOOcV4Isr/bFK8zONnFE2MNRuUlVk979J39flfK7jFOiNx2jEJoFiPAyPO1d+6zX51j
-         HsT/ixKBtKcTrOa6Eq+39beSD3wryj36AvfE9hzegb0quOTQ9WXJBgbsZQSljT7BUVCi
-         oraotS443VUc4VzQTX1pO4PGFLvPsQMfWcljcJhkUTr+dqFOmgO/WnNKfStu8D+ntBXI
-         kieYN4a1Zzuo5aP1EYwmBTbvLMEMQ0e4Wr7v6SfYG2OMASRQcJzqMhI5nPr3MD6JPddW
-         sdaA==
-X-Gm-Message-State: ANoB5pkzyk6JNV//JHaouJjwWvpglaOPoqCVfixo8J9ylc0FnfOgYjEr
-        MP+uVLb0Z3qMmv0U1S0Q9MA=
-X-Google-Smtp-Source: AA0mqf66bmefffZKNUwzzvTsT6THe6UE9dqH+ghD/eURunUNMVYZYLIi7Xzlg12UKZcN7BG/l8mFVA==
-X-Received: by 2002:adf:f0c2:0:b0:236:7c38:147b with SMTP id x2-20020adff0c2000000b002367c38147bmr1621819wro.569.1668183499650;
-        Fri, 11 Nov 2022 08:18:19 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s13-20020adfea8d000000b00228d67db06esm2308030wrm.21.2022.11.11.08.18.18
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=po5PnrsJOrtibdnuIvtZD7NvBSBhlNi4tJ/oxCe6Y54=;
+        b=jmxR6IKM9dqcj9G9TrskMylPFv5RloIgAzl+OCCYtSun8kgucvQcU/F6q3xVBrj3KP
+         GXcYqaeFZYDsBNDtlXZYbSBefSOJdMtZllCtlriashRiT8MhgdYhhJgkmnwj1d+CooKb
+         FELCWilELDlAopGB4emihseZmOmhNL3HojMk0w90b7+BgT359zBiRi01pxLhIGutjCgS
+         BTFFlOOQiDcPwYeMeEr/pvbRDZzGgPkXpWic7X01zoKwHFAO0NENJdMcF/G9IjAUai2Y
+         v5QcJJetEle+LGgric1evzJsPqKe34zgzNXDGWRqsqjFVY3JfUxkwGKsva0A6GTEnSRl
+         A6Jg==
+X-Gm-Message-State: ANoB5pmcE1RgqcE7b2Ic3DueyyuLoiNloxnZSPm3UVWWBP8DdQmX1qDu
+        SkCQKZ4ergOH3EE5XmxLaw==
+X-Google-Smtp-Source: AA0mqf4Z94tBfrdLD8Dbj2VxNYqWTWzdRAPZ/PPQAwiuJKHfq3mYjcMCQnCCnCuCCJIqaSvKoTgpGg==
+X-Received: by 2002:a4a:a78b:0:b0:498:260c:d780 with SMTP id l11-20020a4aa78b000000b00498260cd780mr1380739oom.27.1668187955744;
+        Fri, 11 Nov 2022 09:32:35 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id i2-20020a4ac502000000b00480816a5b8csm999120ooq.18.2022.11.11.09.32.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 08:18:18 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH v11 5/5] iommu: dma: Use of_iommu_get_resv_regions()
-Date:   Fri, 11 Nov 2022 17:18:06 +0100
-Message-Id: <20221111161806.630527-6-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221111161806.630527-1-thierry.reding@gmail.com>
-References: <20221111161806.630527-1-thierry.reding@gmail.com>
+        Fri, 11 Nov 2022 09:32:35 -0800 (PST)
+Received: (nullmailer pid 3566720 invoked by uid 1000);
+        Fri, 11 Nov 2022 17:32:36 -0000
+Date:   Fri, 11 Nov 2022 11:32:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Wayne Chang <waynec@nvidia.com>, mathias.nyman@intel.com,
+        p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-tegra@vger.kernel.org,
+        singhanc@nvidia.com, balbi@kernel.org,
+        linux-phy@lists.infradead.org, vkoul@kernel.org,
+        thierry.reding@gmail.com, ajayg@nvidia.com,
+        heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
+        treding@nvidia.com, jckuo@nvidia.com, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v2 02/13] dt-bindings: usb: Add NVIDIA Tegra234 XUSB host
+ controller binding
+Message-ID: <20221111173236.GA3561612-robh@kernel.org>
+References: <20221111101509.999589-1-waynec@nvidia.com>
+ <20221111101509.999589-3-waynec@nvidia.com>
+ <166817308790.3060162.14990231448404857914.robh@kernel.org>
+ <5782d31a-9a0c-33da-ff84-20cae29f977e@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5782d31a-9a0c-33da-ff84-20cae29f977e@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Fri, Nov 11, 2022 at 02:38:21PM +0000, Jon Hunter wrote:
+> 
+> On 11/11/2022 13:30, Rob Herring wrote:
+> > 
+> > On Fri, 11 Nov 2022 18:14:58 +0800, Wayne Chang wrote:
+> > > Add device-tree binding documentation for the XUSB host controller present
+> > > on Tegra234 SoC. This controller supports the USB 3.1 specification.
+> > > 
+> > > Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> > > ---
+> > > V1 -> V2: new change for adding nvidia,tegra234-xusb.yaml
+> > >   .../bindings/usb/nvidia,tegra234-xusb.yaml    | 159 ++++++++++++++++++
+> > >   1 file changed, 159 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+> > > 
+> > 
+> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > Error: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dts:36.27-28 syntax error
+> > FATAL ERROR: Unable to parse input tree
+> > make[1]: *** [scripts/Makefile.lib:406: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dtb] Error 1
+> > make[1]: *** Waiting for unfinished jobs....
+> > make: *** [Makefile:1492: dt_binding_check] Error 2
+> 
+> This compiles fine on top of -next. We are just missing the change that
+> populates the required definitions.
 
-For device tree nodes, use the standard of_iommu_get_resv_regions()
-implementation to obtain the reserved memory regions associated with a
-device.
+Where exactly is that mentioned in the commit msg?
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/iommu/dma-iommu.c | 3 +++
- 1 file changed, 3 insertions(+)
+No maintainer can take patches which apply against linux-next, so not a 
+good dependency to mention either.
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 9297b741f5e8..709b05d3aad2 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -23,6 +23,7 @@
- #include <linux/memremap.h>
- #include <linux/mm.h>
- #include <linux/mutex.h>
-+#include <linux/of_iommu.h>
- #include <linux/pci.h>
- #include <linux/scatterlist.h>
- #include <linux/spinlock.h>
-@@ -391,6 +392,8 @@ void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
- 	if (!is_of_node(dev_iommu_fwspec_get(dev)->iommu_fwnode))
- 		iort_iommu_get_resv_regions(dev, list);
- 
-+	if (dev->of_node)
-+		of_iommu_get_resv_regions(dev, list);
- }
- EXPORT_SYMBOL(iommu_dma_get_resv_regions);
- 
--- 
-2.38.1
-
+Rob
