@@ -2,97 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82582C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 18:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC54C43219
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 20:59:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233940AbiKKSgB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Nov 2022 13:36:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
+        id S234145AbiKKU74 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Nov 2022 15:59:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234096AbiKKSfx (ORCPT
+        with ESMTP id S231300AbiKKU74 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Nov 2022 13:35:53 -0500
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B0E5833BB;
-        Fri, 11 Nov 2022 10:35:37 -0800 (PST)
-Received: by mail-ot1-f48.google.com with SMTP id br15-20020a056830390f00b0061c9d73b8bdso3261721otb.6;
-        Fri, 11 Nov 2022 10:35:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7tPZgreKLHqA+8JChabIylqFxb3MA62t4HFVqoO5PnA=;
-        b=tifDhfZ6J6gCT54gDoyA5ht+7wGAZ5RYqunBRpsKmid1ew/kS99OzaLtxYguBeC4rd
-         u2aID7dpb/d3vTcjE5BWxM8SG57S7QDcbj0ooRJPotPwhwKeUVrRfzi5RjbJiLpA9684
-         kpFikEzGmAG3eweQ8GHl9cQwzooGFBI9I1cJoqJyoHMvT1zmlSolMkhsmCKcZ5nYUqc/
-         OvLXcQJ1uIOp7l8Orbr/DZ47q7iUhoiQmC8TYOOWDxakG0Gm4+TLiflw2MyvZFmUkDoA
-         i+eXdRSiPoJZ+olyKLRabMYkPQDOHyiUdj28uHq28zfDoCBMspDHR8sJK2+BDVmEpOUo
-         Gfog==
-X-Gm-Message-State: ANoB5pkgjJKsYjtxgfbez6afu3tp0pAHkkGB3SZ31NS/kxkr/ps0fMoe
-        mY3e+sV8XzqgcEIp850b3SU6hMsZdA==
-X-Google-Smtp-Source: AA0mqf4L5Pg3bnyUHyrkiO2ViAuRilDzV5j/Od1eYmvDjSbcyUpGOIyHSzRjCLy27CNNWoYs/RNvLA==
-X-Received: by 2002:a05:6830:1e09:b0:66a:9b95:b23a with SMTP id s9-20020a0568301e0900b0066a9b95b23amr1823767otr.302.1668191736564;
-        Fri, 11 Nov 2022 10:35:36 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id j103-20020a9d17f0000000b0066c2d80c753sm1295055otj.22.2022.11.11.10.35.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 10:35:36 -0800 (PST)
-Received: (nullmailer pid 3660055 invoked by uid 1000);
-        Fri, 11 Nov 2022 18:35:37 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        Fri, 11 Nov 2022 15:59:56 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B7B77BE71;
+        Fri, 11 Nov 2022 12:59:55 -0800 (PST)
+Received: from [192.168.2.108] (unknown [109.252.117.140])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5CDA66602A68;
+        Fri, 11 Nov 2022 20:59:50 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1668200392;
+        bh=TrKdFBPru086RSsfc5wIzyFVxFZ3a1YCkJzhICjKkFM=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=kTzmPkaJO6D9W0IEssnpVYn8a0dml3ZRppn1qMWG4J42UsMw0cTQn/a79AsEqsy6X
+         QMrYQYyC8OxRUVB5zQFJrKCVAXk0bJ8lzcA/P1uBAGVtFYj/6P3E36H7NotZfUXQlA
+         m2J00IbXu60OvZGQx0RMmb7M4IIYhWVFKyaPRVOkHD/eqZ5Wfj3ySQg/WI6Ad+DAef
+         nPvkNldq/VIa3A2nmhJSI7PnY0IhPvdxhv49NeWamYwI+4Mfs5X4K69Hy0Kql9cqfk
+         7XBjipx8WNWslnDHQMpiUXQCpO0KfknfBszxAN5doYyGy+65O+6Y9l+KzgTo5o0jdg
+         3B3qBv+X+50cg==
+Message-ID: <b4dd0426-05fc-e33e-66b1-a2131c8c47dc@collabora.com>
+Date:   Fri, 11 Nov 2022 23:59:47 +0300
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org
-In-Reply-To: <20221111152843.627286-1-thierry.reding@gmail.com>
-References: <20221111152843.627286-1-thierry.reding@gmail.com>
-Message-Id: <166819171068.3659211.4965449596446863079.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: tegra124-dfll: Convert to json-schema
-Date:   Fri, 11 Nov 2022 12:35:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v1 0/6] Move dma_buf_mmap_internal() to dynamic locking
+ specification
+Content-Language: en-US
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To:     Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>
+Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        kernel@collabora.com
+References: <20221110201349.351294-1-dmitry.osipenko@collabora.com>
+In-Reply-To: <20221110201349.351294-1-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On Fri, 11 Nov 2022 16:28:42 +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 11/10/22 23:13, Dmitry Osipenko wrote:
+> Hello,
 > 
-> Convert the Tegra124 (and later) DFLL bindings from the free-form text
-> format to json-schema.
+> Recently, dma-buf got a common locking convention for importers and
+> exporters. All the dma-buf functions were moved to the new locking
+> convention, apart from the dma_buf_mmap_internal() that was missed out
+> by accident. This series moves dma_buf_mmap_internal() to the dynamic
+> locking specification and updates drivers that support mmaping of
+> dma-bufs to use the debug-assert of the lock.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../bindings/clock/nvidia,tegra124-dfll.txt   | 155 ----------
->  .../bindings/clock/nvidia,tegra124-dfll.yaml  | 277 ++++++++++++++++++
->  2 files changed, 277 insertions(+), 155 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+> Thanks to Daniel Vetter for spotting the missed function!
+> 
+> Dmitry Osipenko (6):
+>   dma-buf: Move dma_buf_mmap_internal() to dynamic locking specification
+>   drm: Assert held reservation lock for dma-buf mmapping
+>   udmabuf: Assert held reservation lock for dma-buf mmapping
+>   dma-buf/heaps: Assert held reservation lock for dma-buf mmapping
+>   media: videobuf2: Assert held reservation lock for dma-buf mmapping
+>   fastrpc: Assert held reservation lock for dma-buf mmapping
+> 
+>  drivers/dma-buf/dma-buf.c                             | 7 ++++++-
+>  drivers/dma-buf/heaps/cma_heap.c                      | 3 +++
+>  drivers/dma-buf/heaps/system_heap.c                   | 3 +++
+>  drivers/dma-buf/udmabuf.c                             | 3 +++
+>  drivers/gpu/drm/drm_prime.c                           | 2 ++
+>  drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c            | 2 ++
+>  drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c             | 2 ++
+>  drivers/gpu/drm/tegra/gem.c                           | 2 ++
+>  drivers/media/common/videobuf2/videobuf2-dma-contig.c | 3 +++
+>  drivers/media/common/videobuf2/videobuf2-dma-sg.c     | 3 +++
+>  drivers/media/common/videobuf2/videobuf2-vmalloc.c    | 3 +++
+>  drivers/misc/fastrpc.c                                | 3 +++
+>  12 files changed, 35 insertions(+), 1 deletion(-)
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Applied to drm-misc-next
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.example.dtb:0:0: /example-1/pinmux@700008d4: failed to match any schema with compatible: ['nvidia,tegra210-pinmux']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+-- 
+Best regards,
+Dmitry
 
