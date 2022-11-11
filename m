@@ -2,72 +2,69 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DE1C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 23:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FC5C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 23:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234575AbiKKXsV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Nov 2022 18:48:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33768 "EHLO
+        id S234614AbiKKXyR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Nov 2022 18:54:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234380AbiKKXsU (ORCPT
+        with ESMTP id S230105AbiKKXyQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Nov 2022 18:48:20 -0500
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E2EF836B0;
-        Fri, 11 Nov 2022 15:48:19 -0800 (PST)
+        Fri, 11 Nov 2022 18:54:16 -0500
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C7922BDB;
+        Fri, 11 Nov 2022 15:54:15 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bfm+a85gL8PxNfgCmYSor2TsTl0IFYR9W52D1uiZI17l6nZbIw1tWWWc0AMjQv0ejPvMpOpqsKjLEEcCzwMznZPbmsm4XHDgjXkTi8+HHxRIz3C6GjhBD9T+9bBs543ojAQfJILtjY26qXRuSqepCBCyLoo6D1jJSsqRqCdpSCKOf1GEH2HSS/5SSP6gpvIA8fQTrNkKo6QsKP/lfdyM3YFc3UkxH4lRqxBOQDOfGY8GBZ28snBtskELb680Ntb7QR5sspO+CI3KzrmdK+zZIUTdQBtv7IcddZLAV8lB2TKYpk8eBfS9BvBK0Fo+Bq5ccvikBznqqb/qgLfvBkNILQ==
+ b=hcIRTtekrRTEusTWBjBwkb7Nj8UHUQiYmgjbCe3mu0SwwqZwEwiDVjY5Ta8ZxdK9RO+lncauDZAiLhi/P+GxQC8doClNbIqcqZrfpkHUExHzCQb6z8FsqpKhs0gW14prasocCs54L/8ZgqHDdrYgkiGHxAdjPYqtfQV8LJcVf4I8/xQ7TsXZ7N+MNCP/jlHZ/9KQ8sJHBkdMcvkcL90dkVcff14roT4lQ0u2kP5vb4F7W7CcbFCdIWn0J84UoiyPIloTOCfWi0BjASdfRjvbDVVt1Nc6+Ly8rga6C6nIXBH6tEZUKbQHkOG4rzEfnS3b6CojtmbEyszJRFZ1OSAopQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sQqKxKqnD4HYkhDurFBNGnEc541UyQEshW4zctdhutU=;
- b=bX7oANoUbu65SoXuZgcc94cwQt/fOBWUT0qHXF1CkUY8Y/xq6Zpm694qTrS1mHLYctfPHwd3WoSoXiZLIDQ0t/2PSwUtY4HPCX2NpHGILUvD22sszTEpsra0ceYvdV3UD7Xa42Xw05im99paE7ChR4KB17kgep0c8r1VVzz43iEaSb8IgihIWl6M5OzY5e6/SHtcHPCShbWO+l/NefDx8F4b4gXzqz29LWBDNQbag9xhLKDBfU/2xphB252obumnU9IFzyrPd7hq7gXtJDB4TFHtj/JBBfVSPgvQbCPfa7keqxMn2zkO/pF6c1P3t/Rn3Pt+UH0cLliZh8KwpVI8fw==
+ bh=FCnPf3me1ThSTIqzekxX7BSQSu0EixhkGFkYEN25fSs=;
+ b=lF8HFih5vDEfV2vETJlnq84ke1hWdmX4+xvH3N4Ipvy+6+NbPDSaklsvUL6DM16zlxoNz0ETEvEBjNeb00XMom0+5l3FotQz0azkAA8UMH0Xnq8v3OLtV4oxKgeCGhJTHMKnfSU+0lUbTpXipdt/w9tjfdsbX9en7EOeLchVSQ97C6WJsj9UoozLCGRQkU08PLO3wOqmoM4VR1FDH30g21l3VR/W7Mxaajsq5Ok0uZxK4fcHg6UshlJ4Ri/35MxxC9QjPQ/6hzaQ3tfDnBF19VIuDUs0Lgd81zUZrhLW9xeD0o4Gui+pALumndg7CfnDocArMsF9vL2HOh8+KxETpA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sQqKxKqnD4HYkhDurFBNGnEc541UyQEshW4zctdhutU=;
- b=pvyYfeKZrFSFjH1b/Tacmli9oR3sYCF0rPD5QOtcQyM9xQY4sPzPQPcmcRaUFF3Kdd9pY98Q3BtYd0fJb44ZWcmlXWNOgK4fojogEpi8j9E6D42EQXKvgvUmiWsgp1fCXHCVM98C7mmIaz6NK3TcPEPjT/Nre63psU6akZ0J+oXBRZzSQb6eDTU/4DzqoYIShC7j+edi0bxQjjS6sFmRqjRq71XH10PCZz6Bcj+OTNAYI2DK5uOsvKSKHB2irNpqcah5edvxIRLJrFkX8eYMxvSLFlpacCbO+BkBjqj9C9laHPMQSHjdADRa/RhA6naHf16GavOR2DNImD7eqOCrVA==
+ bh=FCnPf3me1ThSTIqzekxX7BSQSu0EixhkGFkYEN25fSs=;
+ b=HBJRSB4Wxww5yrfWuzZtD7r5D5Xkf9xvbJarubX6Ce+q+S//W7/iB4L4U1TFFS+ApAP8DM6HSq1Tv/vV06XBG4GIDdOXaawm/LbbRkJpcciR9FLQWmHs+XJLpoqOpP0PfBo0wmE/76+u/SKsCv6vUbSnrKkjzFHwapPJ55mKykQXSZaoTVwZmZ2lkgZ8Qc4zd0/vXcbGa/EFGArszaIGDkbLZsrO5rWpSHKxmRfgaVmJhJ3Xrb12GB2wg152bv/Gv3j/E3z+dso1Hy68y3Gr2JRhntIWQCWOIJ+sVIuRY5q/huzJvYv+Mx5KTzqhKR14NzKgrBDVa4Ks5EPbKPAv1A==
 Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
  by CH0PR12MB5203.namprd12.prod.outlook.com (2603:10b6:610:ba::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.13; Fri, 11 Nov
- 2022 23:48:17 +0000
+ 2022 23:54:07 +0000
 Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
  ([fe80::46c4:5346:c449:9bd4]) by SJ0PR12MB5676.namprd12.prod.outlook.com
  ([fe80::46c4:5346:c449:9bd4%3]) with mapi id 15.20.5791.027; Fri, 11 Nov 2022
- 23:48:17 +0000
+ 23:54:07 +0000
 From:   Besar Wicaksono <bwicaksono@nvidia.com>
 To:     Will Deacon <will@kernel.org>
-CC:     "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+CC:     "rafael@kernel.org" <rafael@kernel.org>,
+        "lenb@kernel.org" <lenb@kernel.org>,
         "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "guohanjun@huawei.com" <guohanjun@huawei.com>,
         "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "thanu.rangarajan@arm.com" <thanu.rangarajan@arm.com>,
-        "Michael.Williams@arm.com" <Michael.Williams@arm.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Vikram Sethi <vsethi@nvidia.com>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "mike.leach@linaro.org" <mike.leach@linaro.org>,
-        "leo.yan@linaro.org" <leo.yan@linaro.org>
-Subject: RE: [PATCH v6 0/2] perf: ARM CoreSight PMU support
-Thread-Topic: [PATCH v6 0/2] perf: ARM CoreSight PMU support
-Thread-Index: AQHY1HVBF/GLNzqT20exjr0smAT30q4z2SkAgAARs8CAABIIgIAGqaxQ
-Date:   Fri, 11 Nov 2022 23:48:17 +0000
-Message-ID: <SJ0PR12MB56762D3DB3602D161456003FA0009@SJ0PR12MB5676.namprd12.prod.outlook.com>
-References: <20220930023443.9463-1-bwicaksono@nvidia.com>
- <20221107155311.GD21157@willie-the-truck>
- <SJ0PR12MB567614CC049F93584631DFBAA03C9@SJ0PR12MB5676.namprd12.prod.outlook.com>
- <20221107180104.GA21769@willie-the-truck>
-In-Reply-To: <20221107180104.GA21769@willie-the-truck>
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT)
+ initial support
+Thread-Topic: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table (APMT)
+ initial support
+Thread-Index: AQHY05p5Zh4pJFmZEk6UwzpU+Lc4ma40EgWAgAaXIeA=
+Date:   Fri, 11 Nov 2022 23:54:07 +0000
+Message-ID: <SJ0PR12MB5676DF8011687CFB0E124FC7A0009@SJ0PR12MB5676.namprd12.prod.outlook.com>
+References: <20220929002834.32664-1-bwicaksono@nvidia.com>
+ <20221107191034.GB21991@willie-the-truck>
+In-Reply-To: <20221107191034.GB21991@willie-the-truck>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -76,53 +73,53 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: SJ0PR12MB5676:EE_|CH0PR12MB5203:EE_
-x-ms-office365-filtering-correlation-id: b12fd5a9-54ef-4e55-c7d7-08dac43f34a3
+x-ms-office365-filtering-correlation-id: 4cf9d7ea-9945-46f6-44f4-08dac4400591
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3ExgkOUEZ0RN2lEZ5DWn0Oo64tenM+gnOuqnnaN/FCWb5A+K3eofJctOnvpY3NGBj+P4HlOyKfEp6GoQrWELRgJ4oqfe8PDJXrZhoMczaJYEm+RvfOehhD8YGQ0dk6Lzm/oRXajl5rosAzyUAXsRYBLnVwZMppVOG9RG/LtdknsGeUnntM9Y4/UgUq0v8J0DRFVGSRWjSUkP4AxzaRZobWuM0/wvwY4oE3M1HqcHNxep+KSf2iJ6snRhiL3hYbRRkNZniJAkE3pgymt4usp3R1cXSZurCSWdE4x0m126+9yA62Qjk3+F7Aokk9YqKuPzuaJTyWMBvP5s8blbOlxJQbU+FVshBpOW30doR8/sDM3KUjPUEpDql6WvSq0fZ7x+Tb5bpYInbckjI3LlZc+UsG7bGBGRRC9/La43z/ZfhFJ8bzuyYM8VxD+dFjX0to2vENJOgOBcmydOi6ndWuGs4KiIEFbo15SGOa11TgoV+KnlykltmD8v/GEvO1IPkZ9XA80VVuTuJU4ARSk/ZP1FHSxky/hDLfXaYRLJx+dl5MOzSXJOhX6uwxcVUqDEj4V70TY+7Z9gbiQ/W4nvoLjuXrKSIY5fpBt2418lBOm5/UMQUu5VNVPNK4p66AWi5o9mJBVPgF4C2hr2ZIDeQLJOGU62oRW4GvBGtzy8FApHpRK3ITqYLLZEdUPfFzCoSX1D/wuZ7DPMzA/UMYFHy4EjKuSDY2m84G37+yolQhvm2qBZTDWCwShmBmhM1w51b1R7vRAvakG5vpnIVk2o+YgusgcrIaaG663MTX17Sl1w5hNLuctiv2xW25Jb0q0w5WVux1apNz4xho3lYT5m9+sBYLBuehY9o46Flluj3fmkaHzKtRZWrxOSrxKEB340jsHZ
+x-microsoft-antispam-message-info: xZEg0PMipPGaV4m3/N3aamaA4IZF2ZnBkGQrFFs7S4meGSTdEiqkuZTkK7NqnudhGbedwI6QkdQiesblLAobvYrlYEpvQcq0sKx57uP+b9oZyVEEOwD00L/9L2loBD8PQMm+pCvHdJAE8h7xEmjIpkZNw24VauQCelFlEbKllc7nIYlECc0Yyuf3rosOEN2qGyfgv8j2D1HaULXODGTuvz49Q9x7k4JZHWGaRt47i6n6A7UAcsh6STIXVWwJ6OGtu4N1Zs22nIkTCi95b8xOh/BsiOdoo3zLH+1NH0IihgdDZ9NDnVpmVfhNDR1LieU8Edb1K6uH9dBxZnwPMWURSUhbyVQxTcfK6cqmFNc7W1s8CdFRGYfWeKL1JNjwcHnlVoeJ8/uK3EAzCsmdAxoV5p/YGie9haTc7z9MhQNIaHwVSSShqP5pv6IifyWuspgsrkTn/6fw/aPJ8md2my58zAzaxn9bYiX3Xn9G/PlTERJnRVQJluAURmtIwTHczu6W2miH/p28JesakFW8Zp99WB7MQIxGMCY9MbS6Kyv0+GdUzXleAzfjaUSKOSMXJijYPMNXAf1LAHA76Cfc3J9Qqxvoc+jQeY7Q1tCEF7Cgu19I6zYkm4F717rEUKX6AwzAjnUJX56cLeusBgbPsjqLzeMiKdhq5Le0Xw0Djn9JBCeliTMXAs26qcp8uaXJog40rakU14g10nWaW0E2SRNt+MUXJCf3c6028Jjt7d78J7DYSOLc6r2iBgQqaaMqtTvtb9T89nm5NQWhcKA9XTdRYfNx21H9fNly9z+bOcAF9mnwZdMaOR4eeleMekL3+368CuVxTIur6BGhWv/G3BBVA1Gzocv/rAPrSUWCkobNIjs=
 x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(376002)(366004)(136003)(346002)(451199015)(6916009)(316002)(54906003)(122000001)(86362001)(66946007)(66446008)(66476007)(76116006)(66556008)(186003)(64756008)(8676002)(38100700002)(4326008)(2906002)(7416002)(478600001)(9686003)(8936002)(52536014)(71200400001)(33656002)(41300700001)(38070700005)(83380400001)(26005)(5660300002)(55016003)(53546011)(7696005)(6506007)(966005);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?w7uXHIflBFqeDbjGc7wpzsq+x6te4zsVDfM9SqD5aMULvGGQPLqJhfAwXtGx?=
- =?us-ascii?Q?3pHckRHsm26KMFpp31kTRGJ/udiOmHRXbUQkxLJqkcJWvTc2WGdT1K9wFbFT?=
- =?us-ascii?Q?AWXJFT5JdN3StD2rsb750fjeGU/b+2rYRI16F5zPRZvbI7nYJ4Vn5d8Mday7?=
- =?us-ascii?Q?7QJYV+Uc4+SKWaB6azuWG2ab84VAtvhi0+T1v4+l5yuI+n8dYWs8FLZ6CnpM?=
- =?us-ascii?Q?6Q8Xzorce2dYemTONcsZzw3R09vl0M262YrpFyOnFDfQ1x33s3H1B0prQUtK?=
- =?us-ascii?Q?7oQP/SjTI5HyAlO2ZnEPtbOxzLy22AdOpT/fcBCfJZdIvRGuy591GCqN/RH3?=
- =?us-ascii?Q?4ljUl2OVnuRWWjdi0nkS5YLaUovPFgadplHzQV5OPDErwjMd1Vj/zWlCU+fV?=
- =?us-ascii?Q?NOgi63Pchc9R5Kbo3s6t127kFrGUWgmAaNY7OZkTq0NyYGhZ2Fn9C2ChEGRQ?=
- =?us-ascii?Q?nBnhOrpzvAzlO+TDfl3aJcGPYNtX14hOXoh+uyCffA932Hg76FzAiUAksPkv?=
- =?us-ascii?Q?4gbGJM3h9SSswGmPlk0S7dD/CVzFzszRrOQNTXVHy3bDBvGI2pBGpWlpaoN6?=
- =?us-ascii?Q?2ZkWc25Clk+V5iOW0xpwcpKwYl+nsHKtBWhFTc9ciASEDM+pfx93pT0zgnes?=
- =?us-ascii?Q?hjwc8Uh4VVYRZ5FCB/VsuC9M+SGI8A66uCemm9i4IzYa5jKaiid87QLrbChV?=
- =?us-ascii?Q?vMD+PPsq6Y3KCjbKoLJ4YBZikeHFx4675+hNelWff96hjezc7ZpwpbGrnYa5?=
- =?us-ascii?Q?bvtw8OMVISP6YmAtA8pRNyVKvbQSrAFacsDhplJNAb2BlGuwN7pDdV7THmSc?=
- =?us-ascii?Q?WJH1HxWjNjOxumB3zz0h0wfs2OJx+uI0dskVfQDUD6ArAnEEoaBVD8c4KnNQ?=
- =?us-ascii?Q?61WzUnSce2IwEryYejlSGZqKS+P+c6PnLlVTQZ0T2bulkt8XrUKd2GrA8wjD?=
- =?us-ascii?Q?JepT23WRuLG6/EPhX7NYX03oB9r4MxHkKABN+Nki20PY4CJe/Im4TR9E4Epq?=
- =?us-ascii?Q?NCpkhrSRZI2Qt9YTcackvzckjwa4Q9KWDqaQJtXf6x5t61WcHIEOgJDx0A5a?=
- =?us-ascii?Q?t366iTR+P0zFKoK6kri/t92bclArhY6BkvaKSgl4ObRdRgX6smtTCEEIIOq9?=
- =?us-ascii?Q?jfwxKRelM1v/ozNUZSm0iGsqVcKYXQHjy2hDpTMI16Wp8zrr1fZoZyapXP7F?=
- =?us-ascii?Q?dtV8JB/pGxdUSDRLpbBBMyDbOMYcj2O2BDUEM02vSb7MxsG9uHchaul/ju9v?=
- =?us-ascii?Q?V/ObhtZNZJIU+heL+gy8fsHXQKCDjk8yNMrmc/MW6MiCXNL4fuL2JUSLPXgM?=
- =?us-ascii?Q?S7PT9ZHlaMKTbsG5HZJXSVBO7MFbK5rK0DggojEnzekx9P+c3lMex+NoGuy6?=
- =?us-ascii?Q?D6rw4AhYrsX5cWBvjBoqqEnrYLZvUEwHatER9INu1ET+C+TuGkMD4i6LPyjl?=
- =?us-ascii?Q?ecmQmPaEGolrCcyeqD9wOByh7K4aKcM4QI0Mp6N/eAxTxF0DDHpAey/OiI4U?=
- =?us-ascii?Q?yhwT8D1Rk0HCywYzU1Z8BDge+XFaqqgvEtqs/lUevL+kRFMHFGgSKtVJpLHu?=
- =?us-ascii?Q?4C+Q5T6F3NynpYxHiFSk7GzqxlP/U82r/sVBL6tE?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?nT/5x8uOewOPBSiIVScWpxdnUGyatLJjXnRRZunv7f6iJx3ofxxUGYxuvZjG?=
+ =?us-ascii?Q?siBpSh26S4loBmljAZNEMrIH2xeKX3ujL2+Dr581sPJg2O7qUQbC0X34JYVh?=
+ =?us-ascii?Q?HkhCQo4D3XCEy24AHgXMg38iPbR5jxy/p2S8B4twBpcaXb+85tWiB+CbOCN3?=
+ =?us-ascii?Q?vfaF9Am80aVMEpNS5WRCIXXNVXEg1brAg0IFp/PnoPfIKKu/WPWCWcKhmIhw?=
+ =?us-ascii?Q?JZ/HHX59g3qDAB38Bu7EdkYml7At28R7PAg/jlihJI1HTB/HJy+dy+l0tf4Z?=
+ =?us-ascii?Q?weYcFTHX6Z74yUIT4Jsep57GltbqCbMESgmHNk1O1ULulvtdQIMcs/SyHT4V?=
+ =?us-ascii?Q?noGmlIzC8HCm+qU72yBXlPCaTeRmfN9J2U0SoW5H9P/A//2hGdtY+uHT4itj?=
+ =?us-ascii?Q?5QYXo7C0QlHA747i/2GnUKlW3mnPh4ZPhaXfjub6EttTNHNLuHK/V9EN/XQq?=
+ =?us-ascii?Q?1AFIMBv6I/9nR34/Y1m5KzTpeybHL2E3Zjkv+VbdVvvXSl6qiCu0ij4V62IN?=
+ =?us-ascii?Q?doaO6aNX3RNXAvvW1wg3iMbO9vBkV4zuZsHYPO/J9xwHcxDncMaGmsQIu0uT?=
+ =?us-ascii?Q?SJ4UMQS7CFL8wHxMF0dYzOz17OdUq23zJ6omZbb3L77/4vUC8L2WwozFg38M?=
+ =?us-ascii?Q?XCXPB8i/gTN/2PpCfOPzICHP7TM0FoWikEZlhbBI01qF0X9yzfdrTqzVI+7A?=
+ =?us-ascii?Q?ZjiSARU3nzyfNxSWLQkdcXyc4kebAv5I4/xvqaEwwelZD2hboluwwPbVtMU5?=
+ =?us-ascii?Q?877xrx02DGL4ePgVBwQpcDye3gT78ZbCzVreAZ3N75JD0Jclgh9B1T8FSpu7?=
+ =?us-ascii?Q?scxp0h4rboHJ6xBNi7B64Mlt6p81d9oSEk2KiaGN0ZYLvuXzYko/JSkhba5S?=
+ =?us-ascii?Q?vt2hMysSZg8vXnYpWWX++h0M3In0s+NDp27jqTO7Vb81nwrtE7u/MVgx9Tqs?=
+ =?us-ascii?Q?GdwiDYYS26q9XajYAS1gAN+k+jRGzlufm07bjWrMdWidPYwceJMjMhNea0IX?=
+ =?us-ascii?Q?Y4BpGrhJb78SdT0CCnyClWbejQ5zbvc67x2n5/MLqSUJK0jWagyoeIC7PZ0P?=
+ =?us-ascii?Q?hblbQgM3jZekJDL10MGLxPokzFXUbGp5JAW8DfR3lx4DKdWbvLaIK5vt6Mqv?=
+ =?us-ascii?Q?ZtFRiud1GEIBmDh99mL1oKGdkhwifD3fo/m98D9YAdBpQByb8SDRf8camlqo?=
+ =?us-ascii?Q?lbwLkMawcoa9QsVhKdfLPe2oDmtFfQIFI3M0CB+sb/LTIQYMak66zKq9iMeY?=
+ =?us-ascii?Q?YiqKDJ+nfI3AL0gGm/6t5o4zaxG0pYfjZXCGRs6+rF/FlJ7sndRcSfMSxLFD?=
+ =?us-ascii?Q?8BC/gaCZb3+bStnmqTMe+QeJb+rWgXNH/7SxDSHdJg6YvvlREpN+S9Rm9zZd?=
+ =?us-ascii?Q?jOk+P6zyHor45pB06Vh5W+yz3mn1o1wozRo5odxBMK1RcqD5OCcj9/8r9K7a?=
+ =?us-ascii?Q?gIk4zmCCKImSavGYr+42rR3HKhVhKhpsfvK9LxKRBmFP2JeGJ2UcqTvzRZAl?=
+ =?us-ascii?Q?8T2+wTp3QHCghK5jB2UN278sqsQuoqX/Zp+KGVTOQLRalnZ/CskrHPBth1/o?=
+ =?us-ascii?Q?ykBYfv22jwkQmhOBge7XcWbaRdhW9zW3MrGE85Pb?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b12fd5a9-54ef-4e55-c7d7-08dac43f34a3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2022 23:48:17.0855
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cf9d7ea-9945-46f6-44f4-08dac4400591
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2022 23:54:07.6079
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: h7UJan9q+27iC6CQA1lg/gALqZLI6Q2aY9KYTDRoELLEgJgAtA6HJcpKkUQ1fkR3wokapJXj6WqlvIZVBhPW1g==
+X-MS-Exchange-CrossTenant-userprincipalname: f3DrQh94E2/t1g3d1X2GuFGZQyZ84YL/jaGt1PLoMZWeQV6k/MKSr7IBFZZamFSUtAqv5YNNF5o5S5DcWq6exQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5203
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -130,88 +127,122 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 Hi Will,
 
+
 > -----Original Message-----
 > From: Will Deacon <will@kernel.org>
-> Sent: Monday, November 7, 2022 12:01 PM
+> Sent: Monday, November 7, 2022 1:11 PM
 > To: Besar Wicaksono <bwicaksono@nvidia.com>
-> Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
-> catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> tegra@vger.kernel.org; sudeep.holla@arm.com;
-> thanu.rangarajan@arm.com; Michael.Williams@arm.com; Thierry Reding
+> Cc: rafael@kernel.org; lenb@kernel.org; catalin.marinas@arm.com;
+> lorenzo.pieralisi@arm.com; guohanjun@huawei.com;
+> sudeep.holla@arm.com; linux-tegra@vger.kernel.org; Thierry Reding
 > <treding@nvidia.com>; Jonathan Hunter <jonathanh@nvidia.com>; Vikram
-> Sethi <vsethi@nvidia.com>; mathieu.poirier@linaro.org;
-> mike.leach@linaro.org; leo.yan@linaro.org
-> Subject: Re: [PATCH v6 0/2] perf: ARM CoreSight PMU support
+> Sethi <vsethi@nvidia.com>; linux-acpi@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH v2] ACPI: ARM Performance Monitoring Unit Table
+> (APMT) initial support
 >=20
 > External email: Use caution opening links or attachments
 >=20
 >=20
-> On Mon, Nov 07, 2022 at 05:11:07PM +0000, Besar Wicaksono wrote:
-> > Hi Will,
-> >
-> > > -----Original Message-----
-> > > From: Will Deacon <will@kernel.org>
-> > > Sent: Monday, November 7, 2022 9:53 AM
-> > > To: Besar Wicaksono <bwicaksono@nvidia.com>
-> > > Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
-> > > catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
-> > > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> > > tegra@vger.kernel.org; sudeep.holla@arm.com;
-> > > thanu.rangarajan@arm.com; Michael.Williams@arm.com; Thierry Reding
-> > > <treding@nvidia.com>; Jonathan Hunter <jonathanh@nvidia.com>;
-> Vikram
-> > > Sethi <vsethi@nvidia.com>; mathieu.poirier@linaro.org;
-> > > mike.leach@linaro.org; leo.yan@linaro.org
-> > > Subject: Re: [PATCH v6 0/2] perf: ARM CoreSight PMU support
-> > >
-> > > External email: Use caution opening links or attachments
-> > >
-> > >
-> > > On Thu, Sep 29, 2022 at 09:34:41PM -0500, Besar Wicaksono wrote:
-> > > > Add driver support for ARM CoreSight PMU device and event attribute=
-s
-> for
-> > > NVIDIA
-> > > > implementation. The code is based on ARM Coresight PMU architecture
-> > > and ACPI ARM
-> > > > Performance Monitoring Unit table (APMT) specification below:
-> > > >  * ARM Coresight PMU:
-> > > >         https://developer.arm.com/documentation/ihi0091/latest
-> > > >  * APMT: https://developer.arm.com/documentation/den0117/latest
-> > > >
-> > > > The patchset applies on top of
-> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.g=
-it
-> > > >   master next-20220524
-> > > >
-> > > > For APMT support, please see patchset:
-> > > https://lkml.org/lkml/2022/4/19/1395
-> > > >
-> > > > Changes from v5:
-> > > >  * Default get_event/format_attrs callback now returns copy of defa=
-ult
-> > > array.
-> > > > Thanks to suzuki.poulose@arm.com for the review comments.
-> > > > v5: https://lore.kernel.org/linux-arm-kernel/20220928201830.45637-1=
--
-> > > bwicaksono@nvidia.com/
-> > >
-> > > These patches no longer apply. Please can you rebase onto -rc4 and dr=
-op
-> the
-> > > defconfig change from the first patch?
-> >
-> > Why does the defconfig change need to be dropped ?
+> On Wed, Sep 28, 2022 at 07:28:34PM -0500, Besar Wicaksono wrote:
+> > diff --git a/drivers/acpi/arm64/apmt.c b/drivers/acpi/arm64/apmt.c
+> > new file mode 100644
+> > index 000000000000..f55167ca51e7
+> > --- /dev/null
+> > +++ b/drivers/acpi/arm64/apmt.c
+> > @@ -0,0 +1,177 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * ARM APMT table support.
+> > + * Design document number: ARM DEN0117.
+> > + *
+> > + * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES.
+> > + *
+> > + */
+> > +
+> > +#define pr_fmt(fmt)  "ACPI: APMT: " fmt
+> > +
+> > +#include <linux/acpi.h>
+> > +#include <linux/acpi_apmt.h>
+> > +#include <linux/init.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#define DEV_NAME "arm-cs-arch-pmu"
+> > +
+> > +/* There can be up to 3 resources: page 0 and 1 address, and interrupt=
+. */
+> > +#define DEV_MAX_RESOURCE_COUNT 3
+> > +
+> > +/* Root pointer to the mapped APMT table */
+> > +static struct acpi_table_header *apmt_table;
+> > +
+> > +static int __init apmt_init_resources(struct resource *res,
+> > +                                           struct acpi_apmt_node *node=
+)
+> > +{
+> > +     int irq, trigger;
+> > +     int num_res =3D 0;
+> > +
+> > +     res[num_res].start =3D node->base_address0;
+> > +     res[num_res].end =3D node->base_address0 + SZ_4K - 1;
+> > +     res[num_res].flags =3D IORESOURCE_MEM;
+> > +
+> > +     num_res++;
+> > +
+> > +     res[num_res].start =3D node->base_address1;
+> > +     res[num_res].end =3D node->base_address1 + SZ_4K - 1;
+> > +     res[num_res].flags =3D IORESOURCE_MEM;
+> > +
+> > +     num_res++;
+> > +
+> > +     if (node->ovflw_irq !=3D 0) {
+> > +             trigger =3D (node->ovflw_irq_flags &
+> ACPI_APMT_OVFLW_IRQ_FLAGS_MODE);
+> > +             trigger =3D (trigger =3D=3D
+> ACPI_APMT_OVFLW_IRQ_FLAGS_MODE_LEVEL) ?
+> > +                     ACPI_LEVEL_SENSITIVE : ACPI_EDGE_SENSITIVE;
+> > +             irq =3D acpi_register_gsi(NULL, node->ovflw_irq, trigger,
+> > +                                             ACPI_ACTIVE_HIGH);
+> > +
+> > +             if (irq <=3D 0) {
+> > +                     pr_warn("APMT could not register gsi hwirq %d\n",=
+ irq);
+> > +                     return num_res;
+> > +             }
+> > +
+> > +             res[num_res].start =3D irq;
+> > +             res[num_res].end =3D irq;
+> > +             res[num_res].flags =3D IORESOURCE_IRQ;
+> > +
+> > +             num_res++;
+> > +     }
+> > +
+> > +     return num_res;
+> > +}
+> > +
+> > +/**
+> > + * apmt_add_platform_device() - Allocate a platform device for APMT
+> node
+> > + * @node: Pointer to device ACPI APMT node
+> > + *
+> > + * Returns: 0 on success, <0 failure
+> > + */
+> > +static int __init apmt_add_platform_device(struct acpi_apmt_node
+> *node,
+> > +                                                     struct fwnode_han=
+dle *fwnode)
 >=20
-> Oh, just because that file is a big source of conflicts so I'd prefer to
-> keep defconfig changes separate from patches which add new functionality.
+> I queued this already, but my testing kicked up a nit that 'fwnode' is no=
+t
+> described in the kerneldoc. Please can you send a follow-up fix for that,
+> based on for-next/acpi? The indentation is also pretty weird with extra
+> parameter.
 >=20
 
-Sorry for the delay. I have sent v7 patchset with the rebase to 6.1-rc4.
-Link: https://lore.kernel.org/linux-arm-kernel/20221111222330.48602-1-bwica=
-ksono@nvidia.com/
-Could you please try again ?
+Thanks for getting this patch. I have sent the follow-up fix with:
+https://lore.kernel.org/linux-arm-kernel/20221111234323.16182-1-bwicaksono@=
+nvidia.com/
 
 Regards,
 Besar
