@@ -2,105 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC37C4321E
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 17:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08791C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 18:27:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232918AbiKKRci (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Nov 2022 12:32:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35356 "EHLO
+        id S233899AbiKKS1k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Nov 2022 13:27:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233495AbiKKRch (ORCPT
+        with ESMTP id S232004AbiKKS1j (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Nov 2022 12:32:37 -0500
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EADB1A815;
-        Fri, 11 Nov 2022 09:32:36 -0800 (PST)
-Received: by mail-oo1-f46.google.com with SMTP id g15-20020a4a894f000000b0047f8e899623so742090ooi.5;
-        Fri, 11 Nov 2022 09:32:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=po5PnrsJOrtibdnuIvtZD7NvBSBhlNi4tJ/oxCe6Y54=;
-        b=jmxR6IKM9dqcj9G9TrskMylPFv5RloIgAzl+OCCYtSun8kgucvQcU/F6q3xVBrj3KP
-         GXcYqaeFZYDsBNDtlXZYbSBefSOJdMtZllCtlriashRiT8MhgdYhhJgkmnwj1d+CooKb
-         FELCWilELDlAopGB4emihseZmOmhNL3HojMk0w90b7+BgT359zBiRi01pxLhIGutjCgS
-         BTFFlOOQiDcPwYeMeEr/pvbRDZzGgPkXpWic7X01zoKwHFAO0NENJdMcF/G9IjAUai2Y
-         v5QcJJetEle+LGgric1evzJsPqKe34zgzNXDGWRqsqjFVY3JfUxkwGKsva0A6GTEnSRl
-         A6Jg==
-X-Gm-Message-State: ANoB5pmcE1RgqcE7b2Ic3DueyyuLoiNloxnZSPm3UVWWBP8DdQmX1qDu
-        SkCQKZ4ergOH3EE5XmxLaw==
-X-Google-Smtp-Source: AA0mqf4Z94tBfrdLD8Dbj2VxNYqWTWzdRAPZ/PPQAwiuJKHfq3mYjcMCQnCCnCuCCJIqaSvKoTgpGg==
-X-Received: by 2002:a4a:a78b:0:b0:498:260c:d780 with SMTP id l11-20020a4aa78b000000b00498260cd780mr1380739oom.27.1668187955744;
-        Fri, 11 Nov 2022 09:32:35 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id i2-20020a4ac502000000b00480816a5b8csm999120ooq.18.2022.11.11.09.32.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 09:32:35 -0800 (PST)
-Received: (nullmailer pid 3566720 invoked by uid 1000);
-        Fri, 11 Nov 2022 17:32:36 -0000
-Date:   Fri, 11 Nov 2022 11:32:36 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Wayne Chang <waynec@nvidia.com>, mathias.nyman@intel.com,
-        p.zabel@pengutronix.de, devicetree@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-tegra@vger.kernel.org,
-        singhanc@nvidia.com, balbi@kernel.org,
-        linux-phy@lists.infradead.org, vkoul@kernel.org,
-        thierry.reding@gmail.com, ajayg@nvidia.com,
-        heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
-        treding@nvidia.com, jckuo@nvidia.com, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 02/13] dt-bindings: usb: Add NVIDIA Tegra234 XUSB host
- controller binding
-Message-ID: <20221111173236.GA3561612-robh@kernel.org>
-References: <20221111101509.999589-1-waynec@nvidia.com>
- <20221111101509.999589-3-waynec@nvidia.com>
- <166817308790.3060162.14990231448404857914.robh@kernel.org>
- <5782d31a-9a0c-33da-ff84-20cae29f977e@nvidia.com>
+        Fri, 11 Nov 2022 13:27:39 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF104D5CA;
+        Fri, 11 Nov 2022 10:27:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id B358BCE2923;
+        Fri, 11 Nov 2022 18:27:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B41C3C4347C;
+        Fri, 11 Nov 2022 18:27:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668191254;
+        bh=r2cI09RUXuELqRiuQS5kKQ79PQPgCuGaFw4FvQy4K9w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bn606Xi8F0jx27buuhj9XwSONaHLGZzzcIotUYXv4ZKWBQeeUDyfRoNmj2JFkndd/
+         4GIp4ngPAWf2LF184mjQo29YdjxybzAGlKmAO4UYd8tL6hDLuktD1SfEBXUvoUFaom
+         ltrxbltUqo5iJcClAQG4PnmPmYGhuBiQd3PlxoV8JF6GGnyBonr3LsB8B9jQ+RHbow
+         GorUBHsmsaLEKbMk5A0qMAvES5X7ifMVGSSjygOiqI42xDskcQbZXFBqY1HBZS7/ZZ
+         9j5W4TIP75bvJcf3j37BS1T0Ygffu/VOfPQs006iPYcfjPes/FIHeY1ih8kWlVkmPl
+         K0JJoVRcOFZgA==
+Received: by mail-lf1-f51.google.com with SMTP id r12so9521721lfp.1;
+        Fri, 11 Nov 2022 10:27:34 -0800 (PST)
+X-Gm-Message-State: ANoB5plbcoOMms5rkoVUQ5NJgeHnugrE0l0WbBEe/TyNN3DfF3zO2Y8f
+        unNZbyWo6Ttf9lo/zXSMAfoJOMNFJ6GSH2ft2g==
+X-Google-Smtp-Source: AA0mqf5AsfopZSW40P5z5SuakKi9gWyzraY7YgC+syc1XRIXJFwAM0ajx5uLiWLRMjx1lWptwFOAR2YFY1YIdK1z7HM=
+X-Received: by 2002:a05:6512:b1a:b0:4b0:3e46:2b75 with SMTP id
+ w26-20020a0565120b1a00b004b03e462b75mr1111916lfu.368.1668191252668; Fri, 11
+ Nov 2022 10:27:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5782d31a-9a0c-33da-ff84-20cae29f977e@nvidia.com>
+References: <20221031153954.1163623-1-helgaas@kernel.org>
+In-Reply-To: <20221031153954.1163623-1-helgaas@kernel.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 11 Nov 2022 12:27:23 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKt81KKopsGML7k3mvBqFCQ5VkKx31eCdjntpsHBkTMkw@mail.gmail.com>
+Message-ID: <CAL_JsqKt81KKopsGML7k3mvBqFCQ5VkKx31eCdjntpsHBkTMkw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] PCI: Remove unnecessary <linux/of_irq.h> includes
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Tom Joseph <tjoseph@cadence.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Toan Le <toan@os.amperecomputing.com>,
+        Joyce Ooi <joyce.ooi@intel.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+        Michal Simek <michal.simek@amd.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Nov 11, 2022 at 02:38:21PM +0000, Jon Hunter wrote:
-> 
-> On 11/11/2022 13:30, Rob Herring wrote:
-> > 
-> > On Fri, 11 Nov 2022 18:14:58 +0800, Wayne Chang wrote:
-> > > Add device-tree binding documentation for the XUSB host controller present
-> > > on Tegra234 SoC. This controller supports the USB 3.1 specification.
-> > > 
-> > > Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> > > ---
-> > > V1 -> V2: new change for adding nvidia,tegra234-xusb.yaml
-> > >   .../bindings/usb/nvidia,tegra234-xusb.yaml    | 159 ++++++++++++++++++
-> > >   1 file changed, 159 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-> > > 
-> > 
-> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> > 
-> > yamllint warnings/errors:
-> > 
-> > dtschema/dtc warnings/errors:
-> > Error: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dts:36.27-28 syntax error
-> > FATAL ERROR: Unable to parse input tree
-> > make[1]: *** [scripts/Makefile.lib:406: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dtb] Error 1
-> > make[1]: *** Waiting for unfinished jobs....
-> > make: *** [Makefile:1492: dt_binding_check] Error 2
-> 
-> This compiles fine on top of -next. We are just missing the change that
-> populates the required definitions.
+On Mon, Oct 31, 2022 at 10:40 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>
+> Many host controller drivers #include <linux/of_irq.h> even though they
+> don't need it.  Remove the unnecessary #includes.
 
-Where exactly is that mentioned in the commit msg?
+Note that the same is often true of the other of_*.h headers.
 
-No maintainer can take patches which apply against linux-next, so not a 
-good dependency to mention either.
+of_device.h and of_platform.h are tricky though as one includes the
+other (with a decade old comment to fix). I started down that rabbit
+hole once...
 
 Rob
