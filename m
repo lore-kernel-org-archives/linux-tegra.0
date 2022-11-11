@@ -2,115 +2,192 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC54C43219
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 20:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9DB9C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 22:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234145AbiKKU74 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Nov 2022 15:59:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43374 "EHLO
+        id S233742AbiKKWZF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Nov 2022 17:25:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231300AbiKKU74 (ORCPT
+        with ESMTP id S230303AbiKKWZE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Nov 2022 15:59:56 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B7B77BE71;
-        Fri, 11 Nov 2022 12:59:55 -0800 (PST)
-Received: from [192.168.2.108] (unknown [109.252.117.140])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5CDA66602A68;
-        Fri, 11 Nov 2022 20:59:50 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1668200392;
-        bh=TrKdFBPru086RSsfc5wIzyFVxFZ3a1YCkJzhICjKkFM=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=kTzmPkaJO6D9W0IEssnpVYn8a0dml3ZRppn1qMWG4J42UsMw0cTQn/a79AsEqsy6X
-         QMrYQYyC8OxRUVB5zQFJrKCVAXk0bJ8lzcA/P1uBAGVtFYj/6P3E36H7NotZfUXQlA
-         m2J00IbXu60OvZGQx0RMmb7M4IIYhWVFKyaPRVOkHD/eqZ5Wfj3ySQg/WI6Ad+DAef
-         nPvkNldq/VIa3A2nmhJSI7PnY0IhPvdxhv49NeWamYwI+4Mfs5X4K69Hy0Kql9cqfk
-         7XBjipx8WNWslnDHQMpiUXQCpO0KfknfBszxAN5doYyGy+65O+6Y9l+KzgTo5o0jdg
-         3B3qBv+X+50cg==
-Message-ID: <b4dd0426-05fc-e33e-66b1-a2131c8c47dc@collabora.com>
-Date:   Fri, 11 Nov 2022 23:59:47 +0300
+        Fri, 11 Nov 2022 17:25:04 -0500
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2082.outbound.protection.outlook.com [40.107.92.82])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78A0595;
+        Fri, 11 Nov 2022 14:25:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BChhebGhLCOb9OVo0LUBUI8Wm9rlkp4OdFIVCEnqSQMolivCEOVjRE8fWPQWGoDhaa1vjywvaYEWeG3nuZ5AXSTf1M7CjkMyc+b5KR+PZOp46wAXDEzoDAXaMWX6kXKHzqrToNKjTH4GYTExHBmJKGQhI93OUFBveLzswNQc3LxHZY36PODbnRCFUrAaHTNBaYw3RdJTeGBuYf0gvo/aUpY4/aGe6Uf7hk1i0z55QZR0qIYfv2LbXI6Ch3+xwVWccxRfusYEG5AL69nJunTpIHxNTgkrhl4PO3GsJrNTYWCygUe1ptlJ47pMynJPx3zvl0Bn5h35yE7GQKXY5Ge7AQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ziUj9LwUmyz3z5SiCKU7h367e0xQX6XhhZsYGBmKMzo=;
+ b=kCCzkK75OzdgY+7BDY4REvilMgxS0lIHYQicD5NV3SJZclwKlu+OfZZ6M4UE0+FruyNz6EpAcFVP5fR7odWSgKmXBtc+o6RPQKcL0+btgihPbHZqTBV5rr3gQZ8E0E55bmitl9rP/UcWTHM8noBBmQ87UTk2h/nMsH2anyyxtOv5ih05dSL2OUj6Yg2pZINQoZqtDMJfXW7NKtKVfsBGKFbop0WgD6whOXWLZqSuaDTBgES8CbcTsRGFrZW2VVSaEHeR1BZfqwrf2ajUbRB43/g7BxU1pPM12oIHaStOpQRjIgFt3Hv7Wo5h/rRTAJVbrHCgke4GGTeJbuIthnyEgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ziUj9LwUmyz3z5SiCKU7h367e0xQX6XhhZsYGBmKMzo=;
+ b=O5cpPuNeCbc/hVbO+fSe7q8/UTgvWEsKAsx0dMQIJU8/J1taeisuvsyvAxlA/iUd0y8AEXfku4M0OoUgP1wMNdwrzkpD2smw2rmPj8Ik6n0lRoTUfeQ2BCjnxGIC9EPe7y2dOF3d47bYgEWxSTa9fJ5Y4Li0wEt+MUOXGARyF79WYhC2gXgtzdncAk6pwXBhxsJL6lr++E4cFpthLvE/5qjAt2xIwzRdTEXweEd3kxZ/qQ8g5Qy+7SVn//sfVQPicT/+N/Kb6zVdoApbCDytNbXSZ8e6VX0w5LcA4i20m+fvP8gayRtKz5hQN7rgQaa7hQhKuYxemUx0aavpMcP5NA==
+Received: from DS7PR05CA0025.namprd05.prod.outlook.com (2603:10b6:5:3b9::30)
+ by SA0PR12MB4512.namprd12.prod.outlook.com (2603:10b6:806:71::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.13; Fri, 11 Nov
+ 2022 22:25:01 +0000
+Received: from DM6NAM11FT065.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b9:cafe::c2) by DS7PR05CA0025.outlook.office365.com
+ (2603:10b6:5:3b9::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.8 via Frontend
+ Transport; Fri, 11 Nov 2022 22:25:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DM6NAM11FT065.mail.protection.outlook.com (10.13.172.109) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5813.12 via Frontend Transport; Fri, 11 Nov 2022 22:25:01 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Fri, 11 Nov
+ 2022 14:25:00 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Fri, 11 Nov 2022 14:24:59 -0800
+Received: from msst-build.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Fri, 11 Nov 2022 14:24:59 -0800
+From:   Besar Wicaksono <bwicaksono@nvidia.com>
+To:     <suzuki.poulose@arm.com>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <robin.murphy@arm.com>, <sudeep.holla@arm.com>,
+        <thanu.rangarajan@arm.com>, <Michael.Williams@arm.com>,
+        <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+        <mathieu.poirier@linaro.org>, <mike.leach@linaro.org>,
+        <leo.yan@linaro.org>, Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: [PATCH v7 0/3] perf: ARM CoreSight PMU support
+Date:   Fri, 11 Nov 2022 16:23:27 -0600
+Message-ID: <20221111222330.48602-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v1 0/6] Move dma_buf_mmap_internal() to dynamic locking
- specification
-Content-Language: en-US
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To:     Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        kernel@collabora.com
-References: <20221110201349.351294-1-dmitry.osipenko@collabora.com>
-In-Reply-To: <20221110201349.351294-1-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT065:EE_|SA0PR12MB4512:EE_
+X-MS-Office365-Filtering-Correlation-Id: 83ce8798-dca1-431e-f20b-08dac43392d0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 6obsFlfMDYwC5SOOtPRDx7lZQs5h5i28yoDZX6xhjxsIwCeqYViSkQ1JvYzLJjAxUbCn5Ja83ctPwlyHRqsxBJnkRbVQpSgf7Tq8gA7/43CRDmMXtddx3QQ2+IJ7FlS094H3GrOjHj3EYE8Bn7JCcSzPop44niWBDeXwWZcirEx77V5eIAETBoAJdvutJ4+w+JiqB91Q6Q4WaXJ11uICCSWMEf6pd2qdq9r3k0IFwaQ5XyXI77Q9meRQTIw/x91evthLr/SEkcpOleT00R087x+SUIwUvj7G+uaC1BPNvzMOeflqpKVvY4FcIafWSkSzHu02lWgvL/RBCDd7XHzvTkar6uTrmta5FDnNWMg+gfXwJNa7sfOICl+vI9+jUnRc7PdnO6rgYeVZWmGSenY8ov2Haiq1nwpFU21GXsmMdjgr4TRAhCYbzYMUTqjQHgNjUOoKwcLOUWnZ4oevylEwKQaRh3hSj62fDIDDQ35Yw9srGZqBQVS005+zvC2q1MXwEA5pX/SEdcYVsq48el5WjjF1NJmJpmb+vDdAh5rOrYvFQvZOjIBbCU7tfCdFnK+OLauXrm0ZUcJZm+Zd87uxZX0nh8RUj9lB/5ABwGzqItQ/gSED6QZbBACDVogM380V3+RWWwcqB4xh6vYXKbIRzc+vZgsnuseHcNnETD0klAAJSZjUqiFGa4bSTHTuZdV1MhKNP71BOSOtSPk6FRzCmTUNAMp5jpBLxYF2caD8gIFPHpmlka1yvN/OMQZ1DRhqQtGYTPQzyeM83BZwjzXFk68rS1v1TQbKRMAmyEmnPPi0lYUVs0To6Qhxh+MiYynwwFLh8deXULH8Oib/7liR43VZNY68dh+XWkQIorAWJafowx9psJUeuZQgxuhj7+3DZlb+PwgAABKDzxNvyc6lgw==
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(346002)(39860400002)(396003)(451199015)(40470700004)(36840700001)(46966006)(7696005)(1076003)(107886003)(82310400005)(6666004)(186003)(26005)(2616005)(966005)(478600001)(40480700001)(40460700003)(82740400003)(356005)(7636003)(86362001)(36756003)(426003)(83380400001)(47076005)(336012)(36860700001)(8936002)(41300700001)(5660300002)(7416002)(110136005)(54906003)(316002)(4326008)(8676002)(70206006)(70586007)(2906002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2022 22:25:01.0327
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83ce8798-dca1-431e-f20b-08dac43392d0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT065.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4512
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11/10/22 23:13, Dmitry Osipenko wrote:
-> Hello,
-> 
-> Recently, dma-buf got a common locking convention for importers and
-> exporters. All the dma-buf functions were moved to the new locking
-> convention, apart from the dma_buf_mmap_internal() that was missed out
-> by accident. This series moves dma_buf_mmap_internal() to the dynamic
-> locking specification and updates drivers that support mmaping of
-> dma-bufs to use the debug-assert of the lock.
-> 
-> Thanks to Daniel Vetter for spotting the missed function!
-> 
-> Dmitry Osipenko (6):
->   dma-buf: Move dma_buf_mmap_internal() to dynamic locking specification
->   drm: Assert held reservation lock for dma-buf mmapping
->   udmabuf: Assert held reservation lock for dma-buf mmapping
->   dma-buf/heaps: Assert held reservation lock for dma-buf mmapping
->   media: videobuf2: Assert held reservation lock for dma-buf mmapping
->   fastrpc: Assert held reservation lock for dma-buf mmapping
-> 
->  drivers/dma-buf/dma-buf.c                             | 7 ++++++-
->  drivers/dma-buf/heaps/cma_heap.c                      | 3 +++
->  drivers/dma-buf/heaps/system_heap.c                   | 3 +++
->  drivers/dma-buf/udmabuf.c                             | 3 +++
->  drivers/gpu/drm/drm_prime.c                           | 2 ++
->  drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c            | 2 ++
->  drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c             | 2 ++
->  drivers/gpu/drm/tegra/gem.c                           | 2 ++
->  drivers/media/common/videobuf2/videobuf2-dma-contig.c | 3 +++
->  drivers/media/common/videobuf2/videobuf2-dma-sg.c     | 3 +++
->  drivers/media/common/videobuf2/videobuf2-vmalloc.c    | 3 +++
->  drivers/misc/fastrpc.c                                | 3 +++
->  12 files changed, 35 insertions(+), 1 deletion(-)
-> 
+Add driver support for ARM CoreSight PMU device and event attributes for NVIDIA
+implementation. The code is based on ARM Coresight PMU architecture and ACPI ARM
+Performance Monitoring Unit table (APMT) specification below:
+ * ARM Coresight PMU:
+        https://developer.arm.com/documentation/ihi0091/latest
+ * APMT: https://developer.arm.com/documentation/den0117/latest
 
-Applied to drm-misc-next
+The patchset applies on top of
+  git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v6.1-rc4
+  
+For APMT support, please see patchset: https://lkml.org/lkml/2022/4/19/1395 
 
+Changes from v6:
+ * Rebase to 6.1-rc4.
+ * Fix copyright lines on the new files.
+ * Separate the patch for defconfig change.
+v6: https://lore.kernel.org/linux-arm-kernel/20220930023443.9463-1-bwicaksono@nvidia.com/
+
+Changes from v5:
+ * Default get_event/format_attrs callback now returns copy of default array.
+Thanks to suzuki.poulose@arm.com for the review comments.
+v5: https://lore.kernel.org/linux-arm-kernel/20220928201830.45637-1-bwicaksono@nvidia.com/
+
+Changes from v4:
+ * Fix code formatting
+ * Add timeout to read register function with high-low-high sequence
+ * Add NO_INTERRUPT capability on PMU that does not have IRQ
+ * Fix the name of NVIDIA PMUs
+ * Drop filter attribute for NVLink-C2C PMUs
+ * Added Reviewed/Acked-by from Suzuki
+Thanks to suzuki.poulose@arm.com and will@kernel.org for the review comments.
+v4: https://lore.kernel.org/linux-arm-kernel/20220814182351.8861-1-bwicaksono@nvidia.com/
+
+Changes from v3:
+ * Driver is now probing "arm-cs-arch-pmu" device.
+ * The driver files, directory, functions are renamed with "arm_cspmu" prefix.
+ * Use Kconfig ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU.
+ * Add kernel doc for NVIDIA Uncore PMU.
+ * Use GENMASK and FIELD_GET macros everywhere.
+Thanks to suzuki.poulose@arm.com and will@kernel.org for the review comments.
+v3: https://lore.kernel.org/linux-arm-kernel/20220621055035.31766-1-bwicaksono@nvidia.com/
+
+Changes from v2:
+ * Driver is now probing "arm-system-pmu" device.
+ * Change default PMU naming to "arm_<APMT node type>_pmu".
+ * Add implementor ops to generate custom name.
+Thanks to suzuki.poulose@arm.com for the review comments.
+v2: https://lore.kernel.org/linux-arm-kernel/20220515163044.50055-1-bwicaksono@nvidia.com/
+
+Changes from v1:
+ * Remove CPU arch dependency.
+ * Remove 32-bit read/write helper function and just use read/writel.
+ * Add .is_visible into event attribute to filter out cycle counter event.
+ * Update pmiidr matching.
+ * Remove read-modify-write on PMCR since the driver only writes to PMCR.E.
+ * Assign default cycle event outside the 32-bit PMEVTYPER range.
+ * Rework the active event and used counter tracking.
+Thanks to robin.murphy@arm.com for the review comments.
+v1: https://lore.kernel.org/linux-arm-kernel/20220509002810.12412-1-bwicaksono@nvidia.com/
+
+Besar Wicaksono (3):
+  perf: arm_cspmu: Add support for ARM CoreSight PMU driver
+  perf: arm_cspmu: Add support for NVIDIA SCF and MCF attribute
+  arm64: defconfig: enable ARM CoreSight PMU driver
+
+ Documentation/admin-guide/perf/index.rst      |    1 +
+ Documentation/admin-guide/perf/nvidia-pmu.rst |  299 ++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/perf/Kconfig                          |    2 +
+ drivers/perf/Makefile                         |    1 +
+ drivers/perf/arm_cspmu/Kconfig                |   13 +
+ drivers/perf/arm_cspmu/Makefile               |    7 +
+ drivers/perf/arm_cspmu/arm_cspmu.c            | 1301 +++++++++++++++++
+ drivers/perf/arm_cspmu/arm_cspmu.h            |  151 ++
+ drivers/perf/arm_cspmu/nvidia_cspmu.c         |  398 +++++
+ drivers/perf/arm_cspmu/nvidia_cspmu.h         |   17 +
+ 11 files changed, 2191 insertions(+)
+ create mode 100644 Documentation/admin-guide/perf/nvidia-pmu.rst
+ create mode 100644 drivers/perf/arm_cspmu/Kconfig
+ create mode 100644 drivers/perf/arm_cspmu/Makefile
+ create mode 100644 drivers/perf/arm_cspmu/arm_cspmu.c
+ create mode 100644 drivers/perf/arm_cspmu/arm_cspmu.h
+ create mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.c
+ create mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
+
+
+base-commit: f0c4d9fc9cc9462659728d168387191387e903cc
 -- 
-Best regards,
-Dmitry
+2.17.1
 
