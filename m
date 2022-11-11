@@ -2,94 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08791C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 18:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82582C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Nov 2022 18:36:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233899AbiKKS1k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Nov 2022 13:27:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60708 "EHLO
+        id S233940AbiKKSgB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Nov 2022 13:36:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232004AbiKKS1j (ORCPT
+        with ESMTP id S234096AbiKKSfx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Nov 2022 13:27:39 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF104D5CA;
-        Fri, 11 Nov 2022 10:27:38 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id B358BCE2923;
-        Fri, 11 Nov 2022 18:27:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B41C3C4347C;
-        Fri, 11 Nov 2022 18:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668191254;
-        bh=r2cI09RUXuELqRiuQS5kKQ79PQPgCuGaFw4FvQy4K9w=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bn606Xi8F0jx27buuhj9XwSONaHLGZzzcIotUYXv4ZKWBQeeUDyfRoNmj2JFkndd/
-         4GIp4ngPAWf2LF184mjQo29YdjxybzAGlKmAO4UYd8tL6hDLuktD1SfEBXUvoUFaom
-         ltrxbltUqo5iJcClAQG4PnmPmYGhuBiQd3PlxoV8JF6GGnyBonr3LsB8B9jQ+RHbow
-         GorUBHsmsaLEKbMk5A0qMAvES5X7ifMVGSSjygOiqI42xDskcQbZXFBqY1HBZS7/ZZ
-         9j5W4TIP75bvJcf3j37BS1T0Ygffu/VOfPQs006iPYcfjPes/FIHeY1ih8kWlVkmPl
-         K0JJoVRcOFZgA==
-Received: by mail-lf1-f51.google.com with SMTP id r12so9521721lfp.1;
-        Fri, 11 Nov 2022 10:27:34 -0800 (PST)
-X-Gm-Message-State: ANoB5plbcoOMms5rkoVUQ5NJgeHnugrE0l0WbBEe/TyNN3DfF3zO2Y8f
-        unNZbyWo6Ttf9lo/zXSMAfoJOMNFJ6GSH2ft2g==
-X-Google-Smtp-Source: AA0mqf5AsfopZSW40P5z5SuakKi9gWyzraY7YgC+syc1XRIXJFwAM0ajx5uLiWLRMjx1lWptwFOAR2YFY1YIdK1z7HM=
-X-Received: by 2002:a05:6512:b1a:b0:4b0:3e46:2b75 with SMTP id
- w26-20020a0565120b1a00b004b03e462b75mr1111916lfu.368.1668191252668; Fri, 11
- Nov 2022 10:27:32 -0800 (PST)
+        Fri, 11 Nov 2022 13:35:53 -0500
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B0E5833BB;
+        Fri, 11 Nov 2022 10:35:37 -0800 (PST)
+Received: by mail-ot1-f48.google.com with SMTP id br15-20020a056830390f00b0061c9d73b8bdso3261721otb.6;
+        Fri, 11 Nov 2022 10:35:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7tPZgreKLHqA+8JChabIylqFxb3MA62t4HFVqoO5PnA=;
+        b=tifDhfZ6J6gCT54gDoyA5ht+7wGAZ5RYqunBRpsKmid1ew/kS99OzaLtxYguBeC4rd
+         u2aID7dpb/d3vTcjE5BWxM8SG57S7QDcbj0ooRJPotPwhwKeUVrRfzi5RjbJiLpA9684
+         kpFikEzGmAG3eweQ8GHl9cQwzooGFBI9I1cJoqJyoHMvT1zmlSolMkhsmCKcZ5nYUqc/
+         OvLXcQJ1uIOp7l8Orbr/DZ47q7iUhoiQmC8TYOOWDxakG0Gm4+TLiflw2MyvZFmUkDoA
+         i+eXdRSiPoJZ+olyKLRabMYkPQDOHyiUdj28uHq28zfDoCBMspDHR8sJK2+BDVmEpOUo
+         Gfog==
+X-Gm-Message-State: ANoB5pkgjJKsYjtxgfbez6afu3tp0pAHkkGB3SZ31NS/kxkr/ps0fMoe
+        mY3e+sV8XzqgcEIp850b3SU6hMsZdA==
+X-Google-Smtp-Source: AA0mqf4L5Pg3bnyUHyrkiO2ViAuRilDzV5j/Od1eYmvDjSbcyUpGOIyHSzRjCLy27CNNWoYs/RNvLA==
+X-Received: by 2002:a05:6830:1e09:b0:66a:9b95:b23a with SMTP id s9-20020a0568301e0900b0066a9b95b23amr1823767otr.302.1668191736564;
+        Fri, 11 Nov 2022 10:35:36 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id j103-20020a9d17f0000000b0066c2d80c753sm1295055otj.22.2022.11.11.10.35.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Nov 2022 10:35:36 -0800 (PST)
+Received: (nullmailer pid 3660055 invoked by uid 1000);
+        Fri, 11 Nov 2022 18:35:37 -0000
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20221031153954.1163623-1-helgaas@kernel.org>
-In-Reply-To: <20221031153954.1163623-1-helgaas@kernel.org>
 From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 11 Nov 2022 12:27:23 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKt81KKopsGML7k3mvBqFCQ5VkKx31eCdjntpsHBkTMkw@mail.gmail.com>
-Message-ID: <CAL_JsqKt81KKopsGML7k3mvBqFCQ5VkKx31eCdjntpsHBkTMkw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] PCI: Remove unnecessary <linux/of_irq.h> includes
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Tom Joseph <tjoseph@cadence.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Toan Le <toan@os.amperecomputing.com>,
-        Joyce Ooi <joyce.ooi@intel.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
-        Michal Simek <michal.simek@amd.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org
+In-Reply-To: <20221111152843.627286-1-thierry.reding@gmail.com>
+References: <20221111152843.627286-1-thierry.reding@gmail.com>
+Message-Id: <166819171068.3659211.4965449596446863079.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: tegra124-dfll: Convert to json-schema
+Date:   Fri, 11 Nov 2022 12:35:37 -0600
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 31, 2022 at 10:40 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> Many host controller drivers #include <linux/of_irq.h> even though they
-> don't need it.  Remove the unnecessary #includes.
 
-Note that the same is often true of the other of_*.h headers.
+On Fri, 11 Nov 2022 16:28:42 +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Convert the Tegra124 (and later) DFLL bindings from the free-form text
+> format to json-schema.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../bindings/clock/nvidia,tegra124-dfll.txt   | 155 ----------
+>  .../bindings/clock/nvidia,tegra124-dfll.yaml  | 277 ++++++++++++++++++
+>  2 files changed, 277 insertions(+), 155 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+> 
 
-of_device.h and of_platform.h are tricky though as one includes the
-other (with a decade old comment to fix). I started down that rabbit
-hole once...
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Rob
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.example.dtb:0:0: /example-1/pinmux@700008d4: failed to match any schema with compatible: ['nvidia,tegra210-pinmux']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
