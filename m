@@ -2,140 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DB3C41535
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Nov 2022 17:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEADC4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Nov 2022 19:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237706AbiKNRwi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Nov 2022 12:52:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50400 "EHLO
+        id S237133AbiKNTQc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Nov 2022 14:16:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237720AbiKNRwQ (ORCPT
+        with ESMTP id S237049AbiKNTQX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Nov 2022 12:52:16 -0500
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E85392611F;
-        Mon, 14 Nov 2022 09:52:14 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RzqE5UqWs+rwPB3YQZKCmgkTmhFHIr0S/KYC49Ct5yIpYMAl8+ocXO8zYJwi4A15n2PtVFhCP6jQL3+8ynDwg3F0/dnZa+87rh1hXnZU7IqkL74TEErvci8Mx1w8xlehWG/zf7tfwLDmltZWygk3SWjJCPBJtJKapHn6vfOvv/ECOKZAyz9HASSof3dbN5m7B+T40ez+XYK5OP14CzEwvyJ0oBO9A+vH6EnTNMecDTqdq+piBcCskDHFOkah9REws7nTxNv0AivnhT4wDxwrYefQ7Fsl7P3oexVsaWI1D6lUN1AIFEQcnqlKcKAypTMxcC2CKgerUqNYw5uZFDSeNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wX9EAr5WGBTYv9iW0x3FWT904oNdx/3aYQ9/Rr5sfo0=;
- b=fmozHD9un9ONkqfBtkRaxD7Rr0iK14Ubv00A32RSAxD45H6hRmWEX1LjN4WvpeSHEjw+eB2RzOojOWDhaf/OBp2Cfy+MDKgQ7wbk1UIH6tP5ZjBFgYyx4kAuD0ll/fe5xyiV7DXd28HMxYnhstxG0yYaDo1mYDKvDXgHljAlDD1HixBVPFnQDGd8VGlheKZaqyGO1rAxcb1Lb4ZO7g6eI8LYp8EeN94QB5uc8OTUqV60tYwgdMK+O/z3oLP8BGHQv+kpe3dyGoE6A0GpJOGlJu+xdrRO2z3rMF96JEz9KcFnuXkL5npiTc0TAmApFrV4rfVLLoKpIQFfLnoB2SHJLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wX9EAr5WGBTYv9iW0x3FWT904oNdx/3aYQ9/Rr5sfo0=;
- b=Z0BSi5k90jv+sKvudLKSbKLdI5RAc5ZRhfVGxJp0CxzW80EEMl/64ZcE87q4o1RljQRA6W70mAs3m2Lz5h1YkerUTYRF0yQh/zmqoLiNFSuu5ZveFt2xPRt0b6HMJOlfwT/MkT7aooOIiO9oYyZAgN5TpHJkf9KS6BHQ9INV6o58MR/r9fMCfcZOgKy++zCkL4TRlEPFvT5sGnROdEt0w5cOsavp4GjBOYaBi12EPJUGOvt029Ger/fWRA7Li2Wb5JrfWhd9GPILvH0HOKmMhDqM62LxO6kKKuKflX/qXnVRZe0ndv7OvmSRCM3u2h75z0BA/0CAuiYDFbCWTSfGFA==
-Received: from BN0PR08CA0013.namprd08.prod.outlook.com (2603:10b6:408:142::21)
- by DM4PR12MB6232.namprd12.prod.outlook.com (2603:10b6:8:a5::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5813.17; Mon, 14 Nov 2022 17:52:13 +0000
-Received: from BN8NAM11FT049.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:142:cafe::8b) by BN0PR08CA0013.outlook.office365.com
- (2603:10b6:408:142::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17 via Frontend
- Transport; Mon, 14 Nov 2022 17:52:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BN8NAM11FT049.mail.protection.outlook.com (10.13.177.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5813.12 via Frontend Transport; Mon, 14 Nov 2022 17:52:12 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 14 Nov
- 2022 09:52:07 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 14 Nov 2022 09:52:07 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
- Transport; Mon, 14 Nov 2022 09:52:07 -0800
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 6.0 000/190] 6.0.9-rc1 review
-In-Reply-To: <20221114124458.806324402@linuxfoundation.org>
-References: <20221114124458.806324402@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
+        Mon, 14 Nov 2022 14:16:23 -0500
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D77626559;
+        Mon, 14 Nov 2022 11:16:22 -0800 (PST)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-13bef14ea06so13609605fac.3;
+        Mon, 14 Nov 2022 11:16:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=I4+f1aO3gmprHFq9BhzibsrK6OYsmewgEJsEFY5Pjy0=;
+        b=HNLEQDwMR/YL7RM1g9H46ywTjLFuGKBC5ddGquiLWBQwV+kYpnnydDx+ugZlU8v6wb
+         kMLdl7e7XBK0/nt8nIRZOjmZtYh2VQqIw2Jz3RP4IOF+bzIhdjlC0wKYL4qbr4Lbo9Vb
+         3ZYquaO5SwXIgIEBCrOg+g6wBVNLom6GMq23Dt9auGVE99SUMH03nK7lw/D2UB9T1AJP
+         +kl1gzgm6QGVRqzi7IV2MmB+XQeYoRPJRkQC+GpVdiTE2f8pCqhe1X3Su6Y5jA8bsRNi
+         dxdg3mk0TssipkwLN93Mdhhqo+X76dGUsFpz/giO8EeKtBsTVaWN0tPF9kCmzDzTGfHJ
+         ApaQ==
+X-Gm-Message-State: ANoB5pnqufqCX7iEkDCeurfMauR0uYw8JKjDhe5/XzjyDIRjESVXoGp7
+        Ubvl+tBVjNMusTZV935tHg==
+X-Google-Smtp-Source: AA0mqf6j7s/VG/hdXgynB9cq6S6yLO1RAvuKf3dvEzuWl+k5KgAmesbYjYIGgadz69prHluNbWTfsQ==
+X-Received: by 2002:a05:6870:9a98:b0:132:a2bd:428b with SMTP id hp24-20020a0568709a9800b00132a2bd428bmr7782000oab.113.1668453381848;
+        Mon, 14 Nov 2022 11:16:21 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id eq23-20020a056870a91700b00132741e966asm5344907oab.51.2022.11.14.11.16.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Nov 2022 11:16:21 -0800 (PST)
+Received: (nullmailer pid 3190194 invoked by uid 1000);
+        Mon, 14 Nov 2022 19:16:23 -0000
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Message-ID: <1f0959de-76fd-4227-85f5-c1e7679838e9@drhqmail203.nvidia.com>
-Date:   Mon, 14 Nov 2022 09:52:07 -0800
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT049:EE_|DM4PR12MB6232:EE_
-X-MS-Office365-Filtering-Correlation-Id: 687fdb63-8090-4d39-e979-08dac668f5e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kMGjeDzgY5MZ0KmVlEfOoR6QxPHHvvveuqv4Xx7OIT4CqiLfQWB+v8G66z//ydPEpA8k/eNbFjG3EYD6+irrIihm5RZUo4VgSzMEAvEuTwF8m+T+xJysHOC1kdXRTLfBSED4yM4AuYVZpVa2IdEYRnPWXHr3tcG3iJtgTSgvWgri++cp1cA6ErPHELg6O5IKeFtZ1njbVc4eEXjPtD8cpEMt4AuqZhEK5RY02pOLNBKnyOAmSD9OqasaZgMQn8pFEp/0EaJLARjJTiGAk81pAno+SUljfcSrZ10t6IZNCuS9lbVmhuI30B9yIFD9YtVbtKr9mu5hspTWG+J/0n1A4iO902lxt2AqiPT12zu4zAbdVL1nTPVw8/S76emFhp5yTwUvArK4Kv49wYmQ07dkHURa/upchF+SOULk1673GMb4LTC0P2wQKlLUbPXbJsD9uSIUu8lwkCpl8ylYdpiW50+CXGZz/tyWcrvAQsEpsq/fcY21HZNx73VZKsxuHqwDXVhi20iwWvKjP3OEnTMh9AxlQIENP9VdKwS/E+2z4vUVseoDceetlCrxXHYdjjmxHewCd2jjF4EMre5CNcaTDljHeWmX7n2EEoQKw5L3Alv1VvYu9TIDSmd5WYibRqwZnDrlJRPHxlOa07IIe+CGf2OezNorWzxEDpLOVgWdCy0LCvTeiOg5u2W7OcJ8sO7Pyw15V+I1bVQckYTcNrSLnfPt2AXv1pj6ScyHUh7FOH1UZUP7ry8e1DA0jzT3lAf7PoXFQuyi4GwdjH49hGp8pArOsyyRkej2ydJhuPrZDLCkCWadVr4F+lp/d1ld58Oa9fjz87f/t5ME/qk26AO3QdblyREuv1dG2R0slrM4cHY=
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(346002)(136003)(39860400002)(451199015)(36840700001)(40470700004)(46966006)(31686004)(82740400003)(478600001)(40480700001)(356005)(7636003)(82310400005)(36860700001)(86362001)(31696002)(2906002)(7416002)(336012)(426003)(47076005)(40460700003)(966005)(4326008)(70586007)(8676002)(70206006)(8936002)(186003)(5660300002)(26005)(41300700001)(6916009)(316002)(54906003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2022 17:52:12.8568
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 687fdb63-8090-4d39-e979-08dac668f5e3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT049.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6232
+From:   Rob Herring <robh@kernel.org>
+To:     Wayne Chang <waynec@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, ajayg@nvidia.com,
+        singhanc@nvidia.com, devicetree@vger.kernel.org,
+        thierry.reding@gmail.com, treding@nvidia.com,
+        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-usb@vger.kernel.org, robh+dt@kernel.org, jckuo@nvidia.com,
+        heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
+        jonathanh@nvidia.com, vkoul@kernel.org, balbi@kernel.org,
+        p.zabel@pengutronix.de, mathias.nyman@intel.com
+In-Reply-To: <20221114124053.1873316-3-waynec@nvidia.com>
+References: <20221114124053.1873316-1-waynec@nvidia.com>
+ <20221114124053.1873316-3-waynec@nvidia.com>
+Message-Id: <166845336035.3185553.484885991952704522.robh@kernel.org>
+Subject: Re: [PATCH v3 02/13] dt-bindings: usb: Add NVIDIA Tegra234 XUSB host
+ controller binding
+Date:   Mon, 14 Nov 2022 13:16:23 -0600
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 14 Nov 2022 13:43:44 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.0.9 release.
-> There are 190 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+On Mon, 14 Nov 2022 20:40:42 +0800, Wayne Chang wrote:
+> Add device-tree binding documentation for the XUSB host controller present
+> on Tegra234 SoC. This controller supports the USB 3.1 specification.
 > 
-> Responses should be made by Wed, 16 Nov 2022 12:44:21 +0000.
-> Anything received after that time might be too late.
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> ---
+> depends on the following change
+> https://lore.kernel.org/all/20221003125141.123759-1-jonathanh@nvidia.com/
+> V2 -> V3:nothing has changed but added the dependency here
+> V1 -> V2:new change for adding nvidia,tegra234-xusb.yaml
+>  .../bindings/usb/nvidia,tegra234-xusb.yaml    | 159 ++++++++++++++++++
+>  1 file changed, 159 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.0.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.0.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Test results for stable-v6.0:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+yamllint warnings/errors:
 
-Linux version:	6.0.9-rc1-gf8896c3ebbcf
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dts:36.27-28 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:406: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dtb] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1492: dt_binding_check] Error 2
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+doc reference errors (make refcheckdocs):
 
-Jon
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
