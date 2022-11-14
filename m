@@ -2,26 +2,26 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4B7C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Nov 2022 12:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18940C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Nov 2022 12:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237219AbiKNMl0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Nov 2022 07:41:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58730 "EHLO
+        id S237165AbiKNMlm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Nov 2022 07:41:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237212AbiKNMlY (ORCPT
+        with ESMTP id S237225AbiKNMlh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Nov 2022 07:41:24 -0500
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8C29E0DA;
-        Mon, 14 Nov 2022 04:41:23 -0800 (PST)
+        Mon, 14 Nov 2022 07:41:37 -0500
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2063.outbound.protection.outlook.com [40.107.244.63])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF46E0DA;
+        Mon, 14 Nov 2022 04:41:29 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CsQXLvU0diBDA+agxqeSel4hUL2BVFli1FWwcAfkb5iooPkstEbYfRqPWAt+IiN5+CpUXIS6vSuCUwbg2B5W3YJGtMSwaJfWAZ2Kfxyw9c3VUkIU23K6HCqKiPk+8mt4Fj7aC3NOgjLGCqXAmyyhOTZd40vJesrYs3RU8jQgYOvrpbhRpNe9/bOrFVvntjc/wrldF/MNOCwUOQM4BBkFWc3+egK/hNq3QrnSNAKnex+tymcLi/9bFTYW37MPAm6nWD0BYYd2jkkaWB9FSD7Ky1yIW+64BFzO8BrorSOp3ORQ+EE93h8Taj2JMdXU8U6/tn43IwaSaMliglY+JU5ZBg==
+ b=QvUuM41t1NuGO5DRjSPZhExEoi9z3WBC6jAwqbqP+2U0yizsJZRKJHcC4arlz3Xjoi0bKHrAqqSNn0J10s4aYamHVYULBEsyYtrFtdCLk2pIpFurm/kQGYYScAfEwJ7Lu/0a5bEivw6YwPrDLB9CCxIxEekKIhyQkPugZfRVMzGL9sbAmci5dt/JWRr7bqxdITXtQYwZTMXcCGWNxy0Ln2nYs6mU7x6ycY85UpKwdn5cC5JuzvHguLYYVrs+kbyFEh0FdnQ8HgR2CiXsPoRGXurlWy1qrNh1qW7YqwBxT4LLVZmJOtd9YGMZNGM5NMyMg5P6UsrqCYS+2aSXRTdpog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i14052cemxdsNgWt/KEXP2FfebpooznZIeQjObVBvFc=;
- b=h+Ky+f6Je56U5gRzKHszmr+zdoIRU6SBogz1g2kOODeIl7WOuBRC7aewS2xmiAQoIxR4ReFyZxNsU7eTzUq6gpb/SJeSVsiNw1u0y+Z4ti2CCNntvNFASzEjj31zY6zj0lhzG/lkvQNCN83cXsdkIXDtV+erUDY/rPf2ytQnsxdI+vpcqysxBnW2bcvWv9+8qUhYARIKfF1FwCiSEzMJ80wb4RlSTS1pOUReCMZFS4aKKM5vKRFcqqncCnsj9fpjQ66aVhAG4VnG+F44fH/6poq3D54lcGER2TUUiUPvMjML1nxT/E3r+Y4WarCvwjY9xJuHLshF+BxluVJKwbCOWw==
+ bh=nMdjjkyZ2lB7ieL1w7mC7cKeuUb3L+LXejfMAZo4Fyk=;
+ b=j8cZBRn9PGP6OaN/IXIDOHPIMz8MLmg/iyC+yTj+wOLTRkSI7O1PEz6BD5qYIzR938SavpE3NKU4NkfrsmNW50lAXTR9QaDBQRWluzLxaR99Fe2Pu7+GMyYFkWHx/V4x5L1GgWG+IGlLg1j6Gexdw5yCF5vGbcUvADIHfHexc1feU602kmV7d3eHhvk4uZ76gkZav5qIQ2Rj6pl5OwmEymblV1Frl0oXHmvhEw+vEPTro00DVi4aGF+d3aHnrcuaYRNkeuXUh6GWWiKecu1S+P0MYoSvvH53ZzSVMfqDnFt0XhwMP2vnHXRPCTTlKExJQJs/G8nQBW6sgmHBaycnVA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
  smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
@@ -29,18 +29,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i14052cemxdsNgWt/KEXP2FfebpooznZIeQjObVBvFc=;
- b=e2WDxOrVrdTnTEtEoaHhk3YpI//qXVTlopbgXy5qNNYQXm0zFCTyyPVAvqWQ6QbWGWgzU1UsDCVrc1/AFEQIC79jLpuI0wUUyAZ22+wMT6awfEEutc4ipKwGsWZ7Iy94pQWwSJCdrmce868qrii+GwJgb9lRixRm7c7K7BMcdsjt47lbcdJt5QMjruUpo9vPLdCurS8laZavvcny3I64eab85YSKikuxDpPZSCAeiaslwTwYAOcTUzdcmkGziProwfBVKXOpz743u4SWgOcsXRSe04HnRUwA8AUZ6WkIScwVX5k+hqs/7cwepCZ+z8fAhKp2ILGKfIZ898Ybw+N2HQ==
-Received: from BN9P222CA0020.NAMP222.PROD.OUTLOOK.COM (2603:10b6:408:10c::25)
- by BL0PR12MB4898.namprd12.prod.outlook.com (2603:10b6:208:1c7::17) with
+ bh=nMdjjkyZ2lB7ieL1w7mC7cKeuUb3L+LXejfMAZo4Fyk=;
+ b=BYE5Xg+l7Hn9VtgfCXI2TQObElmeJIM57IU4r8hFCY11N6U8Y/0bXBj6F0gYVsL5ukhSPT93triajw3ypXDWIF5EXICqTEHQupolfGWCGl7bnHEi41pgsdOmFFw0FaeLCl/HwGKQvPoMNFo877TdQLgIeJZxHNOMR06Ch3zDq1y6SQoKSS/7dnrHPfugZtz3vWFFXig/gLX2L3b57JXjGI8aB7bRolVFgVPzc5JU7gO/DOE8ZZ/wAPRsCJj9DZDEmcllZsCQRmzvhaoIevcd71Y7lnh88WxXYYXoaemCrFh+dPG1Y20aIPVJ9Cr2bZXXMw1xbpRoG6n/Qx0Z8OMQ2w==
+Received: from BN9P222CA0009.NAMP222.PROD.OUTLOOK.COM (2603:10b6:408:10c::14)
+ by PH7PR12MB5877.namprd12.prod.outlook.com (2603:10b6:510:1d5::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.16; Mon, 14 Nov
- 2022 12:41:22 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17; Mon, 14 Nov
+ 2022 12:41:27 +0000
 Received: from BL02EPF0000EE3D.namprd05.prod.outlook.com
- (2603:10b6:408:10c:cafe::ff) by BN9P222CA0020.outlook.office365.com
- (2603:10b6:408:10c::25) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:10b6:408:10c:cafe::88) by BN9P222CA0009.outlook.office365.com
+ (2603:10b6:408:10c::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17 via Frontend
- Transport; Mon, 14 Nov 2022 12:41:22 +0000
+ Transport; Mon, 14 Nov 2022 12:41:27 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -50,18 +50,18 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
 Received: from mail.nvidia.com (216.228.117.160) by
  BL02EPF0000EE3D.mail.protection.outlook.com (10.167.241.134) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5813.11 via Frontend Transport; Mon, 14 Nov 2022 12:41:21 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ 15.20.5813.11 via Frontend Transport; Mon, 14 Nov 2022 12:41:27 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 14 Nov
- 2022 04:41:07 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ 2022 04:41:15 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 14 Nov
- 2022 04:41:07 -0800
+ 2022 04:41:15 -0800
 Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
  mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.986.36 via
- Frontend Transport; Mon, 14 Nov 2022 04:41:03 -0800
+ Frontend Transport; Mon, 14 Nov 2022 04:41:11 -0800
 From:   Wayne Chang <waynec@nvidia.com>
 To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <treding@nvidia.com>,
@@ -73,9 +73,9 @@ CC:     <waynec@nvidia.com>, <linux-usb@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <singhanc@nvidia.com>, <linux-i2c@vger.kernel.org>,
         <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH v3 02/13] dt-bindings: usb: Add NVIDIA Tegra234 XUSB host controller binding
-Date:   Mon, 14 Nov 2022 20:40:42 +0800
-Message-ID: <20221114124053.1873316-3-waynec@nvidia.com>
+Subject: [PATCH v3 04/13] arm64: tegra: Enable XUSB host and device on Jetson AGX Orin
+Date:   Mon, 14 Nov 2022 20:40:44 +0800
+Message-ID: <20221114124053.1873316-5-waynec@nvidia.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221114124053.1873316-1-waynec@nvidia.com>
 References: <20221114124053.1873316-1-waynec@nvidia.com>
@@ -85,205 +85,481 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0000EE3D:EE_|BL0PR12MB4898:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1e6182d-4c2f-425b-2017-08dac63d88f4
+X-MS-TrafficTypeDiagnostic: BL02EPF0000EE3D:EE_|PH7PR12MB5877:EE_
+X-MS-Office365-Filtering-Correlation-Id: 65f2d97a-21d0-45ff-eb85-08dac63d8c25
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XTBY/wz16qjyW3JpyjnYwpjJ1XkNcTQj05+ncnQ2HkAgu5k1nkcO/3TOUOKCPPgdNu1xyUl7Wuf0O3/RH9nN3dRj/HXRM1Goowa5mwamGdOV3esiqfGw46NiXv2RByswpmausZ9AKzlcuQElzQLKsjQQtoFuwLT1haRSH9PycREkaplAV6wLb0axG+8vrXiVf+KGs7RP/K4p7PvSQYSSgnRm0rQUP8PQvket0YWTyNY/gn0sfeYj011gp1ru2uVmaJnDg1EqpTrZz2wpSmtrfj8iEgd0nFwP+FMOFVgBG+VYqcz9Cj57CBvoYfG/PgTqcvxCsIYbLXez/fvSNB74qAWvu1gnNUQ8hoQWiJUrxUyz3Qh3Mvm/9Sd2uoccYcH4Pcu5CjI7mMGiLp9F3wH+/ETW1kN2jGGmjC2mLbebJ/S1nai1CwGC+SS7LUvDEf6MuQ3ul9a47Q+t2TBCQL1futSBY48nz7x1TTUaL9sFYOyAK5HFB5lmtkOwlpvUUPyX7HjWXlwbS7Z1ikbHc8qL5YXkKLtpvXAAU2v3me5Foh5w5cN6dh9/OYDVyc548eMPUXAWuP1r9fxLcKXJ7D0VQOV8C5Mo4IvMf74MrbVaEFIjDL+OTDmiQFr2+/e0YvJQ2LIsx5f4kjpVr85AlrYQenDC47VvZR470Y1i0iAHKMRxqAehhxv25NgifQvgk0f4yApAoHImC4L2TQxRy+XUC5FQAYUqNN/vnytN3lNJgTGXtZPj8uGSW6HoxlJbtBAz3x1RvLuxoD7G7cORTaPMuVcoi3W1Exs/8sUOWsBM/GkXQDuXu5KZ9/+09dmhAvTL+bOnn2xUXzWB4GRgOCYcuYciryqOvWdlPIZ+93ExX+GjdWslbJhSBJCba/rA09/y3IJIwWX0fZC1J1aByQFuymX+p2cezxPrvsp5ds02Xoc=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(136003)(396003)(376002)(451199015)(46966006)(40470700004)(36840700001)(966005)(478600001)(54906003)(110136005)(6636002)(426003)(316002)(336012)(186003)(2616005)(1076003)(6666004)(47076005)(7696005)(26005)(5660300002)(41300700001)(8936002)(4326008)(83380400001)(7416002)(8676002)(36860700001)(2906002)(70206006)(70586007)(82740400003)(36756003)(921005)(7636003)(356005)(82310400005)(40460700003)(86362001)(40480700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 1WcV0NcwdOWk/31owNUi0NlQLPNRHUh8KYjzSXUhmwJi/aDjlH8ujyusXMm4u7ErdEoVCelv2jIJVfxn4C/A1Bb3dedcYMpqaARZsvEVOFOJKrKxtN6FPRpUadzG56/y0LycOONdU7DqKLWqtEz22b/XpNAb1kV7cxYiS8S4uLLWvqshysxfVpnwIrS6ZtnTJzdTd/rBuK2gJ47h6eaWb4twFVyaVSrPBnB3j5qro3eHULRgPHGbwiHrX804Oh+hgA0aXntYmI/1WBp//FEqksLlz9f96RuC1JdN6HALLe4f01zdPt5NqNUk1LBBiPb15vrQLDuqFmqNao06E+kp3r7akI4rkGXX4gCcmLxdC4MIc4FIWMs6HXUW2MJvD6Abrgns7SrRPe0fJcCH7ceammVNHsSLPsuVmeZkgsKKFi8vd8kB1WGFWCNprk/ZOOIIfDMchcnbEradte1zu2IF2KSyo3NB2OuPpfBuGRZ2jpYndjLXESzq2ywVIVQIEMCDu7WqTn9GBzNCAjAvu9yX/RWRWqXlwTl6bOFVxvxitXU6fI+QDE1OE9KcVjvB0B+bUHY/a0jjq0aHzi8/JVY88k/feOTgrlhkbsN5uHH/ldI5fzR2OLLk1dhdXh2IVooPL5YxVv2VL2F6UV21MeX72uB3FHjjSV/SGR5hrmTnQN91T/QeAtnVm9Yq7OgXXY4kXp3JHhDxcwaBD/Ev9YyqvNb0I6yp/2OzSVfWr9DwGGtf40HoC2sTyZfWDJs6Z98KvLa7fOzwn2wQe2aLP1XiLdW8kk2QRcQ7scDNb+KmqcZyURiNtCDYxN5tjGaHgBFrHf0sDARPv3h38aRagdB02glM3ihWlQsVKdwZvaKsjlETZRykXAqkcWdR2qCTkH38
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(396003)(376002)(39860400002)(451199015)(46966006)(36840700001)(40470700004)(82740400003)(82310400005)(36860700001)(7636003)(921005)(356005)(86362001)(41300700001)(83380400001)(5660300002)(40480700001)(966005)(478600001)(7416002)(6666004)(8936002)(316002)(70206006)(70586007)(8676002)(4326008)(54906003)(6636002)(110136005)(336012)(1076003)(47076005)(186003)(2616005)(426003)(40460700003)(7696005)(2906002)(26005)(36756003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2022 12:41:21.7476
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2022 12:41:27.1070
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1e6182d-4c2f-425b-2017-08dac63d88f4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65f2d97a-21d0-45ff-eb85-08dac63d8c25
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0000EE3D.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4898
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5877
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device-tree binding documentation for the XUSB host controller present
-on Tegra234 SoC. This controller supports the USB 3.1 specification.
+This commit enables XUSB host, device, and pad controller on
+Jetson AGX Orin.
 
 Signed-off-by: Wayne Chang <waynec@nvidia.com>
 ---
 depends on the following change
 https://lore.kernel.org/all/20221003125141.123759-1-jonathanh@nvidia.com/
 V2 -> V3:nothing has changed but added the dependency here
-V1 -> V2:new change for adding nvidia,tegra234-xusb.yaml
- .../bindings/usb/nvidia,tegra234-xusb.yaml    | 159 ++++++++++++++++++
- 1 file changed, 159 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+V1 -> V2:removed the redundant cells and status in ucsi-ccg.
+Using dash instead of underscore in the ucsi-ccg node name.
+Using representive name in cypress,firmware-build property.
+ .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |  48 +++++
+ .../nvidia/tegra234-p3737-0000+p3701-0000.dts | 175 ++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 170 +++++++++++++++++
+ 3 files changed, 393 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-new file mode 100644
-index 000000000000..d78ee88ed208
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-@@ -0,0 +1,159 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/nvidia,tegra234-xusb.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
+index 9e4d72cfa69f..8acef87a5398 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
+@@ -61,6 +61,29 @@ mmc@3460000 {
+ 			non-removable;
+ 		};
+ 
++		padctl@3520000 {
++			vclamp-usb-supply = <&vdd_ao_1v8>;
++			avdd-usb-supply = <&vdd_ao_3v3>;
 +
-+title: NVIDIA Tegra234 xHCI controller
++			ports {
++				usb2-0 {
++					vbus-supply = <&vdd_5v0_sys>;
++				};
 +
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
++				usb2-1 {
++					vbus-supply = <&vdd_5v0_sys>;
++				};
 +
-+description: The Tegra xHCI controller supports both USB2 and USB3 interfaces
-+  exposed by the Tegra XUSB pad controller.
++				usb2-2 {
++					vbus-supply = <&vdd_5v0_sys>;
++				};
 +
-+properties:
-+  compatible:
-+    const: nvidia,tegra234-xusb
++				usb2-3 {
++					vbus-supply = <&vdd_5v0_sys>;
++				};
++			};
++		};
 +
-+  reg:
-+    items:
-+      - description: base and length of the xHCI host registers
-+      - description: base and length of the XUSB FPCI registers
-+      - description: base and length of the XUSB bar2 registers
+ 		rtc@c2a0000 {
+ 			status = "okay";
+ 		};
+@@ -69,4 +92,29 @@ pmc@c360000 {
+ 			nvidia,invert-interrupt;
+ 		};
+ 	};
 +
-+  reg-names:
-+    items:
-+      - const: hcd
-+      - const: fpci
-+      - const: bar2
++	vdd_5v0_sys: regulator@0 {
++		compatible = "regulator-fixed";
++		regulator-name = "VIN_SYS_5V0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
 +
-+  interrupts:
-+    items:
-+      - description: xHCI host interrupt
-+      - description: mailbox interrupt
++	vdd_ao_1v8: regulator@1 {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd-AO-1v8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
 +
-+  clocks:
-+    items:
-+      - description: XUSB host clock
-+      - description: XUSB Falcon source clock
-+      - description: XUSB SuperSpeed clock
-+      - description: XUSB SuperSpeed source clock
-+      - description: XUSB HighSpeed clock source
-+      - description: XUSB FullSpeed clock source
-+      - description: USB PLL
-+      - description: reference clock
-+      - description: I/O PLL
++	vdd_ao_3v3: regulator@2 {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd-AO-3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+index 57ab75328814..58baedbd0f93 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+@@ -2011,6 +2011,181 @@ hda@3510000 {
+ 			nvidia,model = "NVIDIA Jetson AGX Orin HDA";
+ 			status = "okay";
+ 		};
 +
-+  clock-names:
-+    items:
-+      - const: xusb_host
-+      - const: xusb_falcon_src
-+      - const: xusb_ss
-+      - const: xusb_ss_src
-+      - const: xusb_hs_src
-+      - const: xusb_fs_src
-+      - const: pll_u_480m
-+      - const: clk_m
-+      - const: pll_e
++		padctl@3520000 {
++			status = "okay";
 +
-+  interconnects:
-+    items:
-+      - description: read client
-+      - description: write client
++			pads {
++				usb2 {
++					lanes {
++						usb2-0 {
++							status = "okay";
++						};
 +
-+  interconnect-names:
-+    items:
-+      - const: dma-mem # read
-+      - const: write
++						usb2-1 {
++							status = "okay";
++						};
 +
-+  iommus:
-+    maxItems: 1
++						usb2-2 {
++							status = "okay";
++						};
 +
-+  nvidia,xusb-padctl:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: phandle to the XUSB pad controller that is used to configure
-+      the USB pads used by the XHCI controller
++						usb2-3 {
++							status = "okay";
++						};
++					};
++				};
 +
-+  phys:
-+    minItems: 1
-+    maxItems: 8
++				usb3 {
++					lanes {
++						usb3-0 {
++							status = "okay";
++						};
 +
-+  phy-names:
-+    minItems: 1
-+    maxItems: 8
-+    items:
-+      enum:
-+        - usb2-0
-+        - usb2-1
-+        - usb2-2
-+        - usb2-3
-+        - usb3-0
-+        - usb3-1
-+        - usb3-2
-+        - usb3-3
++						usb3-1 {
++							status = "okay";
++						};
 +
-+  power-domains:
-+    items:
-+      - description: XUSBC power domain
-+      - description: XUSBA power domain
++						usb3-2 {
++							status = "okay";
++						};
++					};
++				};
++			};
 +
-+  power-domain-names:
-+    items:
-+      - const: xusb_host
-+      - const: xusb_ss
++			ports {
++				usb2-0 {
++					mode = "otg";
++					usb-role-switch;
++					status = "okay";
++					port {
++						hs_typec_p1: endpoint {
++							remote-endpoint = <&hs_ucsi_ccg_p1>;
++						};
++					};
++				};
 +
-+  dma-coherent:
-+    type: boolean
++				usb2-1 {
++					mode = "host";
++					status = "okay";
++					port {
++						hs_typec_p0: endpoint {
++							remote-endpoint = <&hs_ucsi_ccg_p0>;
++						};
++					};
++				};
 +
-+allOf:
-+  - $ref: usb-xhci.yaml
++				usb2-2 {
++					mode = "host";
++					status = "okay";
++				};
 +
-+unevaluatedProperties: false
++				usb2-3 {
++					mode = "host";
++					status = "okay";
++				};
 +
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/tegra234-gpio.h>
-+    #include <dt-bindings/clock/tegra234-clock.h>
-+    #include <dt-bindings/memory/tegra234-mc.h>
-+    #include <dt-bindings/power/tegra234-powergate.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    usb@3610000 {
-+      compatible = "nvidia,tegra234-xusb";
-+      reg = <0x03610000 0x40000>,
-+            <0x03600000 0x10000>,
-+            <0x03650000 0x10000>;
-+      reg-names = "hcd", "fpci", "bar2";
++				usb3-0 {
++					nvidia,usb2-companion = <1>;
++					status = "okay";
++					port {
++						ss_typec_p0: endpoint {
++							remote-endpoint = <&ss_ucsi_ccg_p0>;
++						};
++					};
++				};
 +
-+      interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++				usb3-1 {
++					nvidia,usb2-companion = <0>;
++					status = "okay";
++					port {
++						ss_typec_p1: endpoint {
++							remote-endpoint = <&ss_ucsi_ccg_p1>;
++						};
++					};
++				};
 +
-+      clocks = <&bpmp TEGRA234_CLK_XUSB_CORE_HOST>,
-+         <&bpmp TEGRA234_CLK_XUSB_FALCON>,
-+         <&bpmp TEGRA234_CLK_XUSB_CORE_SS>,
-+         <&bpmp TEGRA234_CLK_XUSB_SS>,
-+         <&bpmp TEGRA234_CLK_CLK_M>,
-+         <&bpmp TEGRA234_CLK_XUSB_FS>,
-+         <&bpmp TEGRA234_CLK_UTMIP_PLL>,
-+         <&bpmp TEGRA234_CLK_CLK_M>,
-+         <&bpmp TEGRA234_CLK_PLLE>;
-+      clock-names = "xusb_host", "xusb_falcon_src",
-+              "xusb_ss", "xusb_ss_src", "xusb_hs_src",
-+              "xusb_fs_src", "pll_u_480m", "clk_m",
-+              "pll_e";
-+      interconnects = <&mc TEGRA234_MEMORY_CLIENT_XUSB_HOSTR &emc>,
-+          <&mc TEGRA234_MEMORY_CLIENT_XUSB_HOSTW &emc>;
-+      interconnect-names = "dma-mem", "write";
-+      iommus = <&smmu_niso1 TEGRA234_SID_XUSB_HOST>;
++				usb3-2 {
++					nvidia,usb2-companion = <3>;
++					status = "okay";
++				};
++			};
++		};
 +
-+      power-domains = <&bpmp TEGRA234_POWER_DOMAIN_XUSBC>,
-+          <&bpmp TEGRA234_POWER_DOMAIN_XUSBA>;
-+      power-domain-names = "xusb_host", "xusb_ss";
++		usb@3550000 {
++			status = "okay";
 +
-+      nvidia,xusb-padctl = <&xusb_padctl>;
++			phys = <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
++				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-1}>;
++			phy-names = "usb2-0", "usb3-1";
++		};
 +
-+      phys =  <&pad_lanes_usb2_0>;
-+      phy-names = "usb2-0";
++		usb@3610000 {
++			status = "okay";
 +
-+    };
++			phys =	<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
++				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
++				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-2}>,
++				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-3}>,
++				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-0}>,
++				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-1}>,
++				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-2}>;
++			phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3",
++				"usb3-0", "usb3-1", "usb3-2";
++		};
++
++		i2c@c240000 {
++			status = "okay";
++			ucsi-ccg@8 {
++				compatible = "cypress,cypd4226";
++				cypress,firmware-build = "nvidia,jetson-agx-xavier";
++				interrupt-parent = <&gpio>;
++				interrupts = <TEGRA234_MAIN_GPIO(Y, 4) IRQ_TYPE_LEVEL_LOW>;
++				reg = <0x08>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				ccg_typec_con0: connector@0 {
++					compatible = "usb-c-connector";
++					reg = <0>;
++					label = "USB-C";
++					data-role = "host";
++					#address-cells = <1>;
++					#size-cells = <0>;
++					port@0 {
++						reg = <0>;
++						hs_ucsi_ccg_p0: endpoint {
++							remote-endpoint = <&hs_typec_p0>;
++						};
++					};
++					port@1 {
++						reg = <1>;
++						ss_ucsi_ccg_p0: endpoint {
++							remote-endpoint = <&ss_typec_p0>;
++						};
++					};
++				};
++				ccg_typec_con1: connector@1 {
++					compatible = "usb-c-connector";
++					reg = <1>;
++					label = "USB-C";
++					data-role = "dual";
++					#address-cells = <1>;
++					#size-cells = <0>;
++					port@0 {
++						reg = <0>;
++						hs_ucsi_ccg_p1: endpoint {
++							remote-endpoint = <&hs_typec_p1>;
++						};
++					};
++					port@1 {
++						reg = <1>;
++						ss_ucsi_ccg_p1: endpoint {
++							remote-endpoint = <&ss_typec_p1>;
++						};
++					};
++				};
++			};
++		};
+ 	};
+ 
+ 	chosen {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 0170bfa8a467..27635d459e4c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -942,6 +942,174 @@ hda@3510000 {
+ 			status = "disabled";
+ 		};
+ 
++		xusb_padctl: padctl@3520000 {
++			compatible = "nvidia,tegra234-xusb-padctl";
++			reg = <0x03520000 0x20000>,
++			      <0x03540000 0x10000>;
++			reg-names = "padctl", "ao";
++			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++
++			resets = <&bpmp TEGRA234_RESET_XUSB_PADCTL>;
++			reset-names = "padctl";
++
++			status = "disabled";
++
++			pads {
++				usb2 {
++					clocks = <&bpmp TEGRA234_CLK_USB2_TRK>;
++					clock-names = "trk";
++
++					lanes {
++						usb2-0 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb2-1 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb2-2 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb2-3 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++					};
++				};
++
++				usb3 {
++					lanes {
++						usb3-0 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb3-1 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb3-2 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++
++						usb3-3 {
++							nvidia,function = "xusb";
++							status = "disabled";
++							#phy-cells = <0>;
++						};
++					};
++				};
++			};
++
++			ports {
++				usb2-0 {
++					status = "disabled";
++				};
++
++				usb2-1 {
++					status = "disabled";
++				};
++
++				usb2-2 {
++					status = "disabled";
++				};
++
++				usb2-3 {
++					status = "disabled";
++				};
++
++				usb3-0 {
++					status = "disabled";
++				};
++
++				usb3-1 {
++					status = "disabled";
++				};
++
++				usb3-2 {
++					status = "disabled";
++				};
++
++				usb3-3 {
++					status = "disabled";
++				};
++			};
++		};
++
++		usb@3550000 {
++			compatible = "nvidia,tegra234-xudc";
++			reg = <0x03550000 0x8000>,
++			      <0x03558000 0x8000>;
++			reg-names = "base", "fpci";
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&bpmp TEGRA234_CLK_XUSB_CORE_DEV>,
++				 <&bpmp TEGRA234_CLK_XUSB_CORE_SS>,
++				 <&bpmp TEGRA234_CLK_XUSB_SS>,
++				 <&bpmp TEGRA234_CLK_XUSB_FS>;
++			clock-names = "dev", "ss", "ss_src", "fs_src";
++			interconnects = <&mc TEGRA234_MEMORY_CLIENT_XUSB_DEVR &emc>,
++					<&mc TEGRA234_MEMORY_CLIENT_XUSB_DEVW &emc>;
++			interconnect-names = "dma-mem", "write";
++			iommus = <&smmu_niso1 TEGRA234_SID_XUSB_DEV>;
++			power-domains = <&bpmp TEGRA234_POWER_DOMAIN_XUSBB>,
++					<&bpmp TEGRA234_POWER_DOMAIN_XUSBA>;
++			power-domain-names = "dev", "ss";
++			nvidia,xusb-padctl = <&xusb_padctl>;
++			dma-coherent;
++			status = "disabled";
++		};
++
++		usb@3610000 {
++			compatible = "nvidia,tegra234-xusb";
++			reg = <0x03610000 0x40000>,
++			      <0x03600000 0x10000>,
++			      <0x03650000 0x10000>;
++			reg-names = "hcd", "fpci", "bar2";
++
++			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&bpmp TEGRA234_CLK_XUSB_CORE_HOST>,
++				 <&bpmp TEGRA234_CLK_XUSB_FALCON>,
++				 <&bpmp TEGRA234_CLK_XUSB_CORE_SS>,
++				 <&bpmp TEGRA234_CLK_XUSB_SS>,
++				 <&bpmp TEGRA234_CLK_CLK_M>,
++				 <&bpmp TEGRA234_CLK_XUSB_FS>,
++				 <&bpmp TEGRA234_CLK_UTMIP_PLL>,
++				 <&bpmp TEGRA234_CLK_CLK_M>,
++				 <&bpmp TEGRA234_CLK_PLLE>;
++			clock-names = "xusb_host", "xusb_falcon_src",
++				      "xusb_ss", "xusb_ss_src", "xusb_hs_src",
++				      "xusb_fs_src", "pll_u_480m", "clk_m",
++				      "pll_e";
++			interconnects = <&mc TEGRA234_MEMORY_CLIENT_XUSB_HOSTR &emc>,
++					<&mc TEGRA234_MEMORY_CLIENT_XUSB_HOSTW &emc>;
++			interconnect-names = "dma-mem", "write";
++			iommus = <&smmu_niso1 TEGRA234_SID_XUSB_HOST>;
++
++			power-domains = <&bpmp TEGRA234_POWER_DOMAIN_XUSBC>,
++					<&bpmp TEGRA234_POWER_DOMAIN_XUSBA>;
++			power-domain-names = "xusb_host", "xusb_ss";
++
++			nvidia,xusb-padctl = <&xusb_padctl>;
++			dma-coherent;
++			status = "disabled";
++		};
++
+ 		fuse@3810000 {
+ 			compatible = "nvidia,tegra234-efuse";
+ 			reg = <0x03810000 0x10000>;
+@@ -1470,6 +1638,8 @@ gen2_i2c: i2c@c240000 {
+ 			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0xc240000 0x100>;
+ 			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			status = "disabled";
+ 			clock-frequency = <100000>;
+ 			clocks = <&bpmp TEGRA234_CLK_I2C2
 -- 
 2.25.1
 
