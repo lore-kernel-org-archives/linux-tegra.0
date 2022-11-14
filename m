@@ -2,168 +2,79 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30886C43217
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Nov 2022 09:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5D7C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Nov 2022 09:48:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236846AbiKNJH1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Nov 2022 04:07:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47338 "EHLO
+        id S235946AbiKNJs2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Nov 2022 04:48:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237070AbiKNJHQ (ORCPT
+        with ESMTP id S236091AbiKNJs0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Nov 2022 04:07:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96EA7273C;
-        Mon, 14 Nov 2022 01:05:51 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0AC6260F51;
-        Mon, 14 Nov 2022 09:05:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA65C433C1;
-        Mon, 14 Nov 2022 09:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668416750;
-        bh=D7WS1/Iq9HsSGiJfZeeNpWeUbfN2wCTKHRwR1waF5b8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gu23KWX+hkd2VrW8L8cgRL+RvzQoNmHr4ZHYqyx7b9ggw62j+4gl+srj7mMWbYEWO
-         eMq9AeoWeTXuHN/JCWdPJOC4s9/SfymP7ivydCT3Rc5lzvj0XxUfCGvOXg+FUovve3
-         mBjFDbEU8fbv5pZjeBcZG4yoTG+UTWC2w0hMhrdGaf5jiuivlIjmg6M0icdu4BayDd
-         QORZ6I5Y6XZL3p7KDrZaQgns3WiyBQD5S5uJ7AJ3isJBuf/JmKGDVf410NdJ4z5Krb
-         lm/rhmS+2/v3szQ2Sg6geE8bZDNcFgYVQt+IzZj3PeuYYzaH8viYNnTeheDKRc95zq
-         VsYSZrpR3L72Q==
-Date:   Mon, 14 Nov 2022 09:05:34 +0000
-From:   Lee Jones <lee@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Mon, 14 Nov 2022 04:48:26 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B03DBB;
+        Mon, 14 Nov 2022 01:48:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668419304; x=1699955304;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tw0S/mrhgXEwhusCWL7HJKtSrqKRfg78N9jta7g7Sfg=;
+  b=miK59sJZoxFA4kVpIqgJNOLfMQTJNyJyaz5RTCgWU8z0UHGHgFLyX2Rl
+   SCRI43FooQ9Nw1AUaod3OBSvfU/HjArFYMlLSu7Mt2LaTt4kiaJNt5CpQ
+   ny51lDfG4V9eqMy6VPwVX+gbNsXdM5x/LmIahqx24E1OVN7toumij9935
+   p0orKKg1OV++3YzG6jzjU4yp+ptH9NKjEBfXtBx7Paj+osX7rU08kaE4p
+   AclCw4OghNwHUcW/n0rI83rFFauZY3qcmppvCky0fXcW0KsdNfl67FNDv
+   swpClCpf3GV1bNqFFZcGW2YbJVH9SxtZ8Y7mUpLb7bd6QGcSh3MbhXFS8
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10530"; a="311932188"
+X-IronPort-AV: E=Sophos;i="5.96,161,1665471600"; 
+   d="scan'208";a="311932188"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2022 01:48:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10530"; a="883475174"
+X-IronPort-AV: E=Sophos;i="5.96,161,1665471600"; 
+   d="scan'208";a="883475174"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga006.fm.intel.com with ESMTP; 14 Nov 2022 01:48:21 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ouW4h-00C6V5-2B;
+        Mon, 14 Nov 2022 11:48:19 +0200
+Date:   Mon, 14 Nov 2022 11:48:19 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 35/65] clk: ux500: sysctrl: Add a determine_rate hook
-Message-ID: <Y3IE3ta8hLLUcu7H@google.com>
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-35-f6736dec138e@cerno.tech>
- <CAPDyKFoycVedCJMy0=UK+q5SiPQHqje_8bSN-gdkpBa6KhFfkg@mail.gmail.com>
- <CACRpkdYOj8uozJZO4MV-_OAKeOsQHhoEM=PyynVuNY-JkpgTOw@mail.gmail.com>
- <CAPDyKFr6VeF3s47JfzJ9urtMsEem+GiBtHeU=_S8jNaz-D+qnw@mail.gmail.com>
- <CACRpkdb8uYfs6w99FVjD_t6nZgDhPUx=yB1j=CmpHTHAM2QGQw@mail.gmail.com>
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v1 1/1] staging: media: tegra-video: Replace custom
+ implementation of device_match_fwnode()
+Message-ID: <Y3IO4zVqex78+rTn@smile.fi.intel.com>
+References: <20220927173011.72571-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdb8uYfs6w99FVjD_t6nZgDhPUx=yB1j=CmpHTHAM2QGQw@mail.gmail.com>
+In-Reply-To: <20220927173011.72571-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 11 Nov 2022, Linus Walleij wrote:
+On Tue, Sep 27, 2022 at 08:30:11PM +0300, Andy Shevchenko wrote:
+> Replace custom implementation of the device_match_fwnode().
 
-> On Thu, Nov 10, 2022 at 2:05 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > On Thu, 10 Nov 2022 at 12:39, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > >
-> > > On Thu, Nov 10, 2022 at 12:29 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > On Fri, 4 Nov 2022 at 14:32, Maxime Ripard <maxime@cerno.tech> wrote:
-> > > > >
-> > > > > The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
-> > > > > hook, but doesn't provide a determine_rate implementation.
-> > > > >
-> > > > > This is a bit odd, since set_parent() is there to, as its name implies,
-> > > > > change the parent of a clock. However, the most likely candidate to
-> > > > > trigger that parent change is a call to clk_set_rate(), with
-> > > > > determine_rate() figuring out which parent is the best suited for a
-> > > > > given rate.
-> > > > >
-> > > > > The other trigger would be a call to clk_set_parent(), but it's far less
-> > > > > used, and it doesn't look like there's any obvious user for that clock.
-> > > >
-> > > > If I recall correctly, that is the use case we did target for these
-> > > > types of clocks. See sound/soc/ux500/ux500_ab85xx.c, for example.
-> > >
-> > > Hm I am trying to get that driver to work ... from time to time.
-> > > It's just that ALSA SoC DT has changed to much that it turns out
-> > > into a complete rewrite :/
-> > >
-> > > So in sound/soc/ux500/mop500_ab8500.c
-> > > I see this:
-> > >
-> > >         status = clk_set_parent(drvdata->clk_ptr_intclk, clk_ptr);
-> > >         if (status)
-> > > (...)
-> > >
-> > > and there is elaborate code to switch between "SYSCLK" and
-> > > "ULPCLK" (ulta-low power clock). Just like you say... however
-> > > a clock named SYSCLK or ULPCLK does not appear in the
-> > > code in drivers/clk/ux500 or any DT bindings so... it seems to
-> > > be non-working for the time being.
-> >
-> > It's definitely not working, but the corresponding clocks ("ulpclk",
-> > "intclk", "audioclk", etc) are being registered in ab8500_reg_clks().
-> >
-> > What seems to be missing is a DT conversion for these clocks, so they
-> > can be consumed properly. Right?
-> 
-> Yeps that and a few more things, I have a scratch rewrite here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git/log/?h=ux500-audio-rewrite
-> 
-> I remember Lee said he had audio working with the mainline kernel
-> on Snowball at one point, unfortunately I think that was before we
-> started with the DT conversions and then we probably broke it.
+Sakari, here you are in Cc list and I never have any response on this patch.
 
-That was also 100 years ago. :)
-
-But yes, it used to work at one point.
+Maybe something wrong with emails somewhere?
 
 -- 
-Lee Jones [李琼斯]
+With Best Regards,
+Andy Shevchenko
+
+
