@@ -2,84 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E34C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Nov 2022 18:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1684C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Nov 2022 20:53:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbiKOSdf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Nov 2022 13:33:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41606 "EHLO
+        id S238326AbiKOUxE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Nov 2022 15:53:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230426AbiKOSdV (ORCPT
+        with ESMTP id S231222AbiKOUw6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Nov 2022 13:33:21 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CEA5303C6;
-        Tue, 15 Nov 2022 10:33:12 -0800 (PST)
+        Tue, 15 Nov 2022 15:52:58 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD322A1B7;
+        Tue, 15 Nov 2022 12:52:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D65B1B818D1;
-        Tue, 15 Nov 2022 18:33:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45185C433D7;
-        Tue, 15 Nov 2022 18:33:06 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 3AF5ECE1930;
+        Tue, 15 Nov 2022 20:52:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8640C433C1;
+        Tue, 15 Nov 2022 20:52:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668537189;
-        bh=iFk2C5rMscwTCjr6mbJ3SLiT1nN1ydkf/s9Is0bqib4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tvSye5iaT5YDKDCyhxf7vx/QIgVomCFkqjLlYSxYPZsFed5kggUOEmMGA1Eru2n+u
-         vWXNmEpl18df15MLFC/oHRVu0WgDsaRRHVYTRyuVHiC0YK659SlBW3NiL6w2KGnx/9
-         1wxctLBfFEZjYMRw2LKVIk8Pu+jGVSMA2k/sqlUDfiJFYCaBKL9+mPadiMMSTEOc3Z
-         LSMYOZPuQaW6IGiLbK30Vi/T6CDmsrhELNxo7UtFQB10nzeirISuCS+Ol0Q8oCwR4M
-         SJVdr1i0A1KYvGQdIduhLOba45IuHhokoOghtD9uZYOaZ7G+cuRTbJooCFqRO5qawe
-         nKMeeuH4Uqjow==
-From:   Will Deacon <will@kernel.org>
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, catalin.marinas@arm.com,
-        suzuki.poulose@arm.com, mark.rutland@arm.com
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org,
-        mathieu.poirier@linaro.org, thanu.rangarajan@arm.com,
-        vsethi@nvidia.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, linux-tegra@vger.kernel.org,
-        treding@nvidia.com, mike.leach@linaro.org,
-        Michael.Williams@arm.com, sudeep.holla@arm.com, leo.yan@linaro.org
-Subject: Re: [PATCH v7 0/3] perf: ARM CoreSight PMU support
-Date:   Tue, 15 Nov 2022 18:32:53 +0000
-Message-Id: <166852008965.2033505.10501634922702345601.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20221111222330.48602-1-bwicaksono@nvidia.com>
-References: <20221111222330.48602-1-bwicaksono@nvidia.com>
+        s=k20201202; t=1668545574;
+        bh=gtMPyEkqYSiyJe2RYdzhMkumSicvTGNTRY9z5emGfTk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T2k58gdPz0TNoqraxpTv+OL5+TuuxkSRMk2m7GVUYSFCa1YbI3Kx0FibpXvtI/+f+
+         ZbPAplxikkhYRjfKHmNJCHCjJu3BQVDe5EEBKDvM8io3An4OdvkvG2z6SfIDS49I8C
+         QmFYzItwSEqGHGlgNvCkjugyqAt+O28ltdtZOBBlthAm9ZF5zbiY+SJ4cyXHm7yg00
+         8+N20O8Op7FWJm5BZDq/mZNcRSVQjmI5hogBAQmc7dnhexl76+ldGiKupnNLGVNcPD
+         wDDxHSGi2Mh4roWMGx5toX229luaPJxY7Z+3Y84Gdwnas8zgvqX8DbtrCWs0i8m/LG
+         P6lEUdifAK0RQ==
+Date:   Tue, 15 Nov 2022 21:52:51 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Wayne Chang <waynec@nvidia.com>
+Cc:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, treding@nvidia.com,
+        jonathanh@nvidia.com, thierry.reding@gmail.com,
+        heikki.krogerus@linux.intel.com, ajayg@nvidia.com,
+        vkoul@kernel.org, p.zabel@pengutronix.de, balbi@kernel.org,
+        mathias.nyman@intel.com, jckuo@nvidia.com,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
+        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 07/13] i2c: nvidia-gpu: Add cypress,firmware-build as
+ a well-known regex
+Message-ID: <Y3P8I9TrFYFmfTHY@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Wayne Chang <waynec@nvidia.com>, gregkh@linuxfoundation.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        treding@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com,
+        heikki.krogerus@linux.intel.com, ajayg@nvidia.com, vkoul@kernel.org,
+        p.zabel@pengutronix.de, balbi@kernel.org, mathias.nyman@intel.com,
+        jckuo@nvidia.com, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        singhanc@nvidia.com, linux-i2c@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org
+References: <20221114124053.1873316-1-waynec@nvidia.com>
+ <20221114124053.1873316-8-waynec@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GcWtn7TlKaEtNCAY"
+Content-Disposition: inline
+In-Reply-To: <20221114124053.1873316-8-waynec@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 11 Nov 2022 16:23:27 -0600, Besar Wicaksono wrote:
-> Add driver support for ARM CoreSight PMU device and event attributes for NVIDIA
-> implementation. The code is based on ARM Coresight PMU architecture and ACPI ARM
-> Performance Monitoring Unit table (APMT) specification below:
->  * ARM Coresight PMU:
->         https://developer.arm.com/documentation/ihi0091/latest
->  * APMT: https://developer.arm.com/documentation/den0117/latest
-> 
-> [...]
 
-Applied to will (for-next/perf), thanks!
+--GcWtn7TlKaEtNCAY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[1/3] perf: arm_cspmu: Add support for ARM CoreSight PMU driver
-      https://git.kernel.org/will/c/e37dfd65731d
-[2/3] perf: arm_cspmu: Add support for NVIDIA SCF and MCF attribute
-      https://git.kernel.org/will/c/84481be7167e
+On Mon, Nov 14, 2022 at 08:40:47PM +0800, Wayne Chang wrote:
+> ccgx is refer to the cypress cypd4226 typec controller.
+> add cypress,firmware-build as a well-known regex.
+>=20
+> 16-bit value is not sufficient for descriptiva names.
+> Using string instead of u16 to make it more descriptive.
+>=20
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
 
-Note that I had to add some MODULE_LICENSE() macros to the files so that
-modpost doesn't fail with an allmodconfig build. Please shout if that
-needs adjusting at all.
+I assume this series goes upstream as a whole via some tree. So, for the
+I2C changes:
 
-Cheers,
--- 
-Will
+Acked-by: Wolfram Sang <wsa@kernel.org>
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+
+--GcWtn7TlKaEtNCAY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmNz/CMACgkQFA3kzBSg
+KbarLBAAioFwGEaBlz4SL9lEkJdRJkgaa9HxYO8RHVbGnlt1NW6bEOfp1ISWF71s
+OjoMfvEJTCw0+rEGB7oyH0DC0j7R3Z0ofrTPoN69bWfmZSW4MRtJX1ZuKbQixzvJ
+8SpCFir567TfEuejruTihsmLPhx/cX+kxxdFxxV3MyyyV/TeIxbEKxFIFTezXTJz
+OB+xBF7+4lqf9IwJK/BlfQAi1BlSa+5wzZOGr9HlXhOvcJj9pFfbnEg0E26U83A6
+uE1D6Tj6CfbiACYViOVoeeSDS8jQe5qvkd6QPLJ93ifJ476yUiqvqQq7vCRTEitB
+wAnc4jJrap9m61f+Up0IbrN4KB+JW6qyXtcBQs8BoIoFVU0krkj56clZhX0oZXg+
+mQYmMR7e+ZCcE7zraHPGKtaylkXBKvyvvClBofbhN4DD/mpFsuS7Wcxrb0roKe61
+h1imRVZLdAB4LyS8h4MbOXdLvHQ+ctIH4bVX6akT13wER4cuTQT/cVLNupZU8wBa
+THnrohQkVSOsDwDEumN9Wd3uncCstaeCLKd4S1phaOVvJh1L7cu5IbLUcU+LEPHM
+D7BBLYF6J8AkU9stjB88NJlrUGjq7fuahIc8IhrWizacTvsDov7ml7vc0+0bu1HS
+RdJxdVre7m/lS95qUM08G4JPdAjk514OvpZB4wIQOhk/ffmjtIg=
+=0+Ea
+-----END PGP SIGNATURE-----
+
+--GcWtn7TlKaEtNCAY--
