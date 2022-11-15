@@ -2,109 +2,76 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEADC4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Nov 2022 19:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1970C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Nov 2022 01:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237133AbiKNTQc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Nov 2022 14:16:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56356 "EHLO
+        id S232166AbiKOBnm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Nov 2022 20:43:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237049AbiKNTQX (ORCPT
+        with ESMTP id S231379AbiKOBnl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Nov 2022 14:16:23 -0500
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D77626559;
-        Mon, 14 Nov 2022 11:16:22 -0800 (PST)
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-13bef14ea06so13609605fac.3;
-        Mon, 14 Nov 2022 11:16:22 -0800 (PST)
+        Mon, 14 Nov 2022 20:43:41 -0500
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FECC2BEF;
+        Mon, 14 Nov 2022 17:43:41 -0800 (PST)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-13be3ef361dso14547919fac.12;
+        Mon, 14 Nov 2022 17:43:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=I4+f1aO3gmprHFq9BhzibsrK6OYsmewgEJsEFY5Pjy0=;
-        b=HNLEQDwMR/YL7RM1g9H46ywTjLFuGKBC5ddGquiLWBQwV+kYpnnydDx+ugZlU8v6wb
-         kMLdl7e7XBK0/nt8nIRZOjmZtYh2VQqIw2Jz3RP4IOF+bzIhdjlC0wKYL4qbr4Lbo9Vb
-         3ZYquaO5SwXIgIEBCrOg+g6wBVNLom6GMq23Dt9auGVE99SUMH03nK7lw/D2UB9T1AJP
-         +kl1gzgm6QGVRqzi7IV2MmB+XQeYoRPJRkQC+GpVdiTE2f8pCqhe1X3Su6Y5jA8bsRNi
-         dxdg3mk0TssipkwLN93Mdhhqo+X76dGUsFpz/giO8EeKtBsTVaWN0tPF9kCmzDzTGfHJ
-         ApaQ==
-X-Gm-Message-State: ANoB5pnqufqCX7iEkDCeurfMauR0uYw8JKjDhe5/XzjyDIRjESVXoGp7
-        Ubvl+tBVjNMusTZV935tHg==
-X-Google-Smtp-Source: AA0mqf6j7s/VG/hdXgynB9cq6S6yLO1RAvuKf3dvEzuWl+k5KgAmesbYjYIGgadz69prHluNbWTfsQ==
-X-Received: by 2002:a05:6870:9a98:b0:132:a2bd:428b with SMTP id hp24-20020a0568709a9800b00132a2bd428bmr7782000oab.113.1668453381848;
-        Mon, 14 Nov 2022 11:16:21 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uPSN0bhl4Pvy0knVMeLhRbxCJPEwnyjEdlWvNKr01fk=;
+        b=PKm0PXzkoG4msZzu8ZGZ2yjTdMJPxEhcIH20EYcnKOgaUblCFg++bz21Kk+PK8Rhwr
+         7/g+2jSHjS2PZTVFgSd17XlJgOajWAllyNJf4h5YV5QPDr/GwJWfoE4eUjOSDsw02cAz
+         /R247h4j9NnK/mSs2NhtemYg8yG5VkD0NdaSMdUaVcBz3zhK/isFBOVdIaKxaR/mAG8k
+         ml19QsN/garHI/wpNzX8TOGzurrdeJmk0hcPVeNQoilfGWLkyDBPdgSyZERR3DcpWGiD
+         r7biFqxSCFAms1bx7wEQJL7D3AUVywZ+ThFj8MLTGetWyqkNuTUiiKaH8vYbO/NZlBup
+         JAoA==
+X-Gm-Message-State: ANoB5pmEHlP3pc/iQrPjv8P52psAJpsIO19Bgh7oSfPeBUiW5k2xvb++
+        s65+h1E9bFYUMqNHPYAcDJCi0V97Ng==
+X-Google-Smtp-Source: AA0mqf7CgjTcTXW/WqylmOYen0+RrraIHOdfcGL7wsb/4wUoM2FYXy1w0RIZv5UTRqE9f6/0K7YqMw==
+X-Received: by 2002:a05:6871:450d:b0:13c:39cd:5ad0 with SMTP id nj13-20020a056871450d00b0013c39cd5ad0mr7830718oab.143.1668476620372;
+        Mon, 14 Nov 2022 17:43:40 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id eq23-20020a056870a91700b00132741e966asm5344907oab.51.2022.11.14.11.16.20
+        by smtp.gmail.com with ESMTPSA id l9-20020a056870f14900b00127fbb7afffsm5842941oac.5.2022.11.14.17.43.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Nov 2022 11:16:21 -0800 (PST)
-Received: (nullmailer pid 3190194 invoked by uid 1000);
-        Mon, 14 Nov 2022 19:16:23 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
+        Mon, 14 Nov 2022 17:43:39 -0800 (PST)
+Received: (nullmailer pid 3959000 invoked by uid 1000);
+        Tue, 15 Nov 2022 01:43:41 -0000
+Date:   Mon, 14 Nov 2022 19:43:41 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Wayne Chang <waynec@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, ajayg@nvidia.com,
-        singhanc@nvidia.com, devicetree@vger.kernel.org,
-        thierry.reding@gmail.com, treding@nvidia.com,
-        linux-tegra@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-usb@vger.kernel.org, robh+dt@kernel.org, jckuo@nvidia.com,
-        heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
-        jonathanh@nvidia.com, vkoul@kernel.org, balbi@kernel.org,
-        p.zabel@pengutronix.de, mathias.nyman@intel.com
-In-Reply-To: <20221114124053.1873316-3-waynec@nvidia.com>
-References: <20221114124053.1873316-1-waynec@nvidia.com>
- <20221114124053.1873316-3-waynec@nvidia.com>
-Message-Id: <166845336035.3185553.484885991952704522.robh@kernel.org>
-Subject: Re: [PATCH v3 02/13] dt-bindings: usb: Add NVIDIA Tegra234 XUSB host
- controller binding
-Date:   Mon, 14 Nov 2022 13:16:23 -0600
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: tegra124-dfll: Convert to
+ json-schema
+Message-ID: <20221115014341.GA3956095-robh@kernel.org>
+References: <20221111152843.627286-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221111152843.627286-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On Mon, 14 Nov 2022 20:40:42 +0800, Wayne Chang wrote:
-> Add device-tree binding documentation for the XUSB host controller present
-> on Tegra234 SoC. This controller supports the USB 3.1 specification.
+On Fri, Nov 11, 2022 at 04:28:42PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> Convert the Tegra124 (and later) DFLL bindings from the free-form text
+> format to json-schema.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> depends on the following change
-> https://lore.kernel.org/all/20221003125141.123759-1-jonathanh@nvidia.com/
-> V2 -> V3:nothing has changed but added the dependency here
-> V1 -> V2:new change for adding nvidia,tegra234-xusb.yaml
->  .../bindings/usb/nvidia,tegra234-xusb.yaml    | 159 ++++++++++++++++++
->  1 file changed, 159 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-> 
+>  .../bindings/clock/nvidia,tegra124-dfll.txt   | 155 ----------
+>  .../bindings/clock/nvidia,tegra124-dfll.yaml  | 277 ++++++++++++++++++
+>  2 files changed, 277 insertions(+), 155 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Looks fine, but you either have to convert the pinctrl binding first or 
+drop it from the example.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dts:36.27-28 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:406: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dtb] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1492: dt_binding_check] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Rob
