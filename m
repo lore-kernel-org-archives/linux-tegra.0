@@ -2,26 +2,26 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C780C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Nov 2022 19:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7564C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Nov 2022 20:40:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234578AbiKPTFc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Nov 2022 14:05:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33788 "EHLO
+        id S231871AbiKPUkR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Nov 2022 15:40:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbiKPTF2 (ORCPT
+        with ESMTP id S229446AbiKPUkQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Nov 2022 14:05:28 -0500
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139DB58BCC;
-        Wed, 16 Nov 2022 11:05:28 -0800 (PST)
+        Wed, 16 Nov 2022 15:40:16 -0500
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2047.outbound.protection.outlook.com [40.107.220.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37E81D5A;
+        Wed, 16 Nov 2022 12:40:15 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lZVf28xhgxE3QJes6fC/xPGJKnhe/Ero0KmMprlLwMLYEbKyjh0A0e3rdqniyu37CtO93s2/bELe78SpahzNS0pwxre2p1uuOFIBydNA6Acg75IPx3vwRjzmgJg5Ct8p11QdXotcnB6dJKRpDwtsNXKE452UqwHJfnZTRDXgJ+p5qPaA3xAz5OIcjmycyeM6miawN5kJk99t1dUxQArq8RDV1+0rx58qNIGakM1NRc7kKe4ygjQ8vunJfMxeEooh+ATN7Hq1o3VYdM9nllXN9RnEOF+Re8/F9I0zSyLdletimAuneSxvKrjIQ9/dAsWVfshAgQlSH0hWlni4VSPIWQ==
+ b=G7IIgx9qAk72gmNoD5SvLZzHKsr+S31m7BCSugHu6plr1wjMNCqYIpzW5SZ3exPvDLjaYKQ1HG6f+3zup6jb0jpYbpHnrBAnLNZUKDCVGBDutDnPZm67GftG84n/HfR3Px/pb3Sr0kw6XeFqWGAcuDM4YjUUI2uc3In8U6Zc5gJFKJeCyu8qvNM2TQ03nRECP5Fw0HlFid07SzZav+eglIDQqH1QT8Df2ZR8/7DLP3Gzmuj6qG0ePIVVkQTXvIst4gBWIxHNGML1x3uxPrAi5juW44u92vemwMH0U6svVV4eGgekHJYk6LaHQsryd1wJ/Wt4piN8mwyfWhAy9SkBXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r+SV89ez17ISJdVQU7OeoYBfsdskAaJl2aofCLJnnjg=;
- b=ZQjQdm5CYoUXKzQsjhf+UcuzS8ipMjsojd949bEYCzXc9FD+nf1fwpOtyUn3fssxoCjMoz2qiC9nlf47JZrTPzRzfw4GeS44Ziau2MCSNveSB5/9Gdgbw2HxMj7qRxWlT502Vdj805GgaHUcwA1r5SyNi8B8nOn22d/lypBFsVR3F2IFIno2oyFmD7F4R87Ho6LFYyybZI7AsFPWHhzWuSB5O7PeMQyMkK+UXPvHTFY9MEMkQI7Y/PCV0Hsg9NnFxAyBdrG88cnUA+CjX8uhU2HyVZZTnej1PNFAPf5tA3vVy5ExN7jVxYClG/RmwKuLfLuLjCUhJnEVCf557PPoxQ==
+ bh=SMGVTYyvrrEvsXRay10Kp+Cpz1S2gcUI3N1EWYVcmR0=;
+ b=AyVJoWooyH3HnRSLqvIFInZL0HsWIR2yw/P6k+DfycySqMZ1tlMCuyKok+UUHgciQPXXtPdJ+E3hS8RxIIaKouOFMUn5ez/m6kfRtvh+fg5lK573KJ8zQeqW6iDETy2kWtWTPy30FHbhkjBa2A/O3KGk59W/riJ+2jMt7Ggab0X29eTP60m93XQFl964751yNbdvJ3btaGiBoQDU+qDdOIlVRqLbelMjomWVkQiQ8htSzWSScpKGKVkhVZcyFyLiUZ/lw0n61i5YHuNPQbf8rwUaDcpH0FDukx6RCEge9E4YuUlnoI+emKNIrqltHaAf5svwUL0FArF8GbYqITEijg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -29,18 +29,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r+SV89ez17ISJdVQU7OeoYBfsdskAaJl2aofCLJnnjg=;
- b=nGLr3ORXwk0Rg08NS9eF2CmFf1HXg7Fqbq62pJXcorkvg3wsD2bh4ja1PRFF0yHaAkSzNlcDOee1zzLX3u6HYHn/SCv+8Al1ZaJTR5F8AzxMDbwXJUeH9GkUFF4aubT5Xydw0M1+kazt1T+3O/Gkp854p6rB5YG8m7rz+1em/aYgfrgOWIsoFbAxOpLMu1zg1TXqLKOt1sCVmOQqs3ENaH711e1bRRRnmrRV1E/OxWrNWoM9LJdZA8ELJeKnK1b/p6iXHrwxIy9akQVf5y+RDph7eAkoNYJLQssaoaRwsdBu5SAvMrkRliKhRkx6UuieP8yvyDpWPUvRUMxjsWqqsg==
-Received: from BN9PR03CA0676.namprd03.prod.outlook.com (2603:10b6:408:10e::21)
- by PH0PR12MB5451.namprd12.prod.outlook.com (2603:10b6:510:ee::20) with
+ bh=SMGVTYyvrrEvsXRay10Kp+Cpz1S2gcUI3N1EWYVcmR0=;
+ b=oqvDHKXbC58fAJnDXeHnT0XHybFL3OlF6/Lo6Mu2N34vbQUOs3QIS1VETCkC4c3eYagYF1WB8H4ev0lckFxlOVqy3n/hrfiarCPSiyu82rGo003p0jUR+SIYecMolMwH3Gf9KAsdwYTgjukpckQu6szCz2nII+C23/BI8Oc9ZzZ1YY4mgV+BjHPShdAYkV313MH3g8aRQBowWkfpxZg12feEG/XsEWb/Wbjcbytvz75j1UxlIJS+2Rb1jwyoRHlVGBFpq9Wh5qPYCW0KLONdnNR0PGQMRelMEHhF8ezLPQSQ6PqLBgnorhr9FtWtvRPretEKWS7N50PcV7GYWiuOmQ==
+Received: from MW4PR03CA0046.namprd03.prod.outlook.com (2603:10b6:303:8e::21)
+ by BL0PR12MB4884.namprd12.prod.outlook.com (2603:10b6:208:1ca::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.19; Wed, 16 Nov
- 2022 19:05:25 +0000
-Received: from BN8NAM11FT062.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:10e:cafe::c9) by BN9PR03CA0676.outlook.office365.com
- (2603:10b6:408:10e::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17 via Frontend
- Transport; Wed, 16 Nov 2022 19:05:25 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18; Wed, 16 Nov
+ 2022 20:40:13 +0000
+Received: from CO1NAM11FT098.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8e:cafe::da) by MW4PR03CA0046.outlook.office365.com
+ (2603:10b6:303:8e::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18 via Frontend
+ Transport; Wed, 16 Nov 2022 20:40:12 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -48,82 +48,84 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- BN8NAM11FT062.mail.protection.outlook.com (10.13.177.34) with Microsoft SMTP
+ CO1NAM11FT098.mail.protection.outlook.com (10.13.174.207) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5834.8 via Frontend Transport; Wed, 16 Nov 2022 19:05:25 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ 15.20.5834.8 via Frontend Transport; Wed, 16 Nov 2022 20:40:12 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 16 Nov
- 2022 11:05:11 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ 2022 12:40:04 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 16 Nov
- 2022 11:05:11 -0800
+ 2022 12:40:04 -0800
 Received: from msst-build.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Wed, 16 Nov 2022 11:05:10 -0800
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Wed, 16 Nov 2022 12:40:03 -0800
 From:   Besar Wicaksono <bwicaksono@nvidia.com>
 To:     <suzuki.poulose@arm.com>, <catalin.marinas@arm.com>,
         <will@kernel.org>, <mark.rutland@arm.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <sfr@canb.auug.org.au>, <treding@nvidia.com>,
-        <jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ywan@nvidia.com>,
-        "Besar Wicaksono" <bwicaksono@nvidia.com>
-Subject: [PATCH] perf: arm_cspmu: Fix build failure on x86_64
-Date:   Wed, 16 Nov 2022 13:04:55 -0600
-Message-ID: <20221116190455.55651-1-bwicaksono@nvidia.com>
+        <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+        <ywan@nvidia.com>, Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: [PATCH] perf: arm_cspmu: Fix module cyclic dependency
+Date:   Wed, 16 Nov 2022 14:39:52 -0600
+Message-ID: <20221116203952.34168-1-bwicaksono@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT062:EE_|PH0PR12MB5451:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e34e7fb-ff6b-4065-36ff-08dac80584d6
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT098:EE_|BL0PR12MB4884:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9c15064-6698-4a9f-5a54-08dac812c288
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Ck91oTqE/EViz5W5MpD94lgGi8Iu5pdMTRnK+MtLG9U8ijn1m7YAWrTXdSrP2TWQNp1x/Dr8HcrLevtx7eMkHGMXwJmuNNgnr7hh/kT5v1xqVFHqTqtgVJ8RknIEqp/cDi+tOVo+pPjQPk5iAWg2gTuFu77b6q9k/5LEblweQi6y+6wrR/4BCBaZpIi5LPGTiPOo9cp1P9gImfW+uIBteo/8AMcWZflVYTgvW2CGAmTsJavW2mK5gC28L4ZLX1GPQN61prHYhIRQcX9WmYDk4vOu6N+HMlbZiToOJr0kqVUHMK6380rTpj/rhweIgc7Yt0KsdbFPyi5AtFqVianLo2nvaTPbuY2m6J6CX/YXA0OWovbRSproLJzfyxCsKotPnM7BP6JyC1Q0QStQdV3SgBaRMrzO6aiRG2Ft0VSEbCMs8Nz2V5tx4lWhpFeG8Cko+929pWCnZIWxQTdULR1mqfTrpQafiKIphM8hgBo128DnqDplAIU3+H2UO8lGiXTw1ICo3Vabtbl/WQpZ3qkDm9dsyB7EzEMF8fGVaQHnXRnQTn4ESs8MzK/rFWSNbYM3TFBKhnlf9ekT4QZ2Zokra6xeNEUsXCXGS4BFXQqr4xtAS7QrpMvdRrzSN3lAkJwXKG2DdKuMh2KOB4EXDFBwDGos5D6DyVlCRiipbaMH6npwWnXhyy3eZRT4ItDv1BS0uyq1DemdPL38T0+QvvdwZPhH9yStbkECyrmBGIpCddUZrClHH5qRmPod4yw7MJDTJa1hegSJCv0CLMgO2+fLSw==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(376002)(396003)(39860400002)(346002)(451199015)(40470700004)(36840700001)(46966006)(356005)(5660300002)(7636003)(2906002)(40480700001)(8936002)(4744005)(8676002)(70586007)(41300700001)(426003)(83380400001)(47076005)(107886003)(36756003)(6666004)(70206006)(7696005)(336012)(26005)(186003)(1076003)(36860700001)(82310400005)(86362001)(2616005)(478600001)(316002)(110136005)(40460700003)(82740400003)(54906003)(4326008);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 9XQXof5EIcs3FudnxXlwEHkjoA86e56217XVecNKLPn7Z4Qdkevj6uN/Pmlzznen3zuyhFd6/EGkCx2E7zBNxxN3vpzI++g91388zU27T9QMYPogXfiqVRObgIsnXlRTRQdZrU9D92l4ixrXgw/ChBU/le1MI3p68Guf/veRASO6of/ANW0NnPCzeyePiNd7nrp7c7Ik8wE+8bAwGS1ktMHJQoTNL+y/EzZrg+yy76zMk1MOnNH2LOY/yZlxdPGKgY5wb0UwZKaH/ulrqsfI3MEaVeEG56sZDEpX+MlSYYiHb+ihhNK/k5p7AzNX2paVSapikBqqzF8Drhnjqj0MV/rYPoRaD4knv59ZYn8fplfs5FCoKy5DmgSpPkGwDWfygbqi2OBOFv8I5kOvMax3cWMNha8rXgpZeCqbhXZuXS434qsnCWCMsNT9Pha6Bu1sSLR9wF9p294PH0Qzss8eFmgcJ1+pmDcwE2tnDklzy3ZkxMHAiqKOLBA65nl0lmtcHzhd3qLWwws+IBlEfqnENAJw2DmHV+EF8NpCCODZo/FE4ukDH3b5Dz9AD/95hn1i/A78ORSJj1An8mPBv8uxxP1ITdguy3yjVN/U8XDQCcNdWYWGlRi8iJRC1zCn56fbpPcAktsa12DuvXKyf4qRvJg/Fcq+zZkl9xh/0tqNkWw8jtFJJGyDsHj5AhUW6NZH0B7IA/HppcQKqtPHEPhNRYk1uegS49HY15kGCxMlX7L5zcia/JI46v7n3JZpwqN6wgEQ/kB3Kj3G3RXNQN8F+w==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(136003)(376002)(39860400002)(396003)(451199015)(40470700004)(36840700001)(46966006)(8676002)(4326008)(70586007)(70206006)(336012)(356005)(47076005)(7636003)(5660300002)(8936002)(426003)(26005)(7696005)(41300700001)(36756003)(36860700001)(82310400005)(478600001)(54906003)(2906002)(86362001)(83380400001)(40480700001)(316002)(110136005)(186003)(82740400003)(107886003)(1076003)(6666004)(40460700003)(2616005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2022 19:05:25.3338
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2022 20:40:12.4091
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e34e7fb-ff6b-4065-36ff-08dac80584d6
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9c15064-6698-4a9f-5a54-08dac812c288
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT062.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT098.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5451
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4884
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Building on x86_64 allmodconfig failed:
-  | drivers/perf/arm_cspmu/arm_cspmu.c:1114:29: error: implicit
-  |    declaration of function 'get_acpi_id_for_cpu'
+Build on arm64 allmodconfig failed with:
+  | depmod: ERROR: Cycle detected: arm_cspmu -> nvidia_cspmu -> arm_cspmu
+  | depmod: ERROR: Found 2 modules in dependency cycles!
 
-get_acpi_id_for_cpu is a helper function from ARM64.
-Fix by adding ARM64 dependency.
+The arm_cspmu.c provides standard functions to operate the PMU and the
+vendor code provides vendor specific attributes. Both need to be built as
+single kernel module.
+
+Update the makefile to compile sources under arm_cspmu into one module.
 
 Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 ---
- drivers/perf/arm_cspmu/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/perf/arm_cspmu/Makefile | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/perf/arm_cspmu/Kconfig b/drivers/perf/arm_cspmu/Kconfig
-index 058223bef661..0b316fe69a45 100644
---- a/drivers/perf/arm_cspmu/Kconfig
-+++ b/drivers/perf/arm_cspmu/Kconfig
-@@ -4,7 +4,7 @@
+diff --git a/drivers/perf/arm_cspmu/Makefile b/drivers/perf/arm_cspmu/Makefile
+index 641db85c018b..fedb17df982d 100644
+--- a/drivers/perf/arm_cspmu/Makefile
++++ b/drivers/perf/arm_cspmu/Makefile
+@@ -2,6 +2,5 @@
+ #
+ # SPDX-License-Identifier: GPL-2.0
  
- config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
- 	tristate "ARM Coresight Architecture PMU"
--	depends on ACPI
-+	depends on ARM64 && ACPI
- 	depends on ACPI_APMT || COMPILE_TEST
- 	help
- 	  Provides support for performance monitoring unit (PMU) devices
+-obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += \
+-	arm_cspmu.o \
+-	nvidia_cspmu.o
++obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu_module.o
++arm_cspmu_module-y := arm_cspmu.o nvidia_cspmu.o
 
 base-commit: 9500fc6e9e6077616c0dea0f7eb33138be94ed0c
 -- 
