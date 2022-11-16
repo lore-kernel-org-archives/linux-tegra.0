@@ -2,351 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F070FC43219
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Nov 2022 02:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC80C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Nov 2022 10:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231464AbiKPCRs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Nov 2022 21:17:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42702 "EHLO
+        id S230031AbiKPK3P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Nov 2022 05:29:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230175AbiKPCRq (ORCPT
+        with ESMTP id S230142AbiKPK21 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Nov 2022 21:17:46 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0468D12ACB;
-        Tue, 15 Nov 2022 18:17:44 -0800 (PST)
-Received: from kwepemi500011.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NBmnD0gTXzqSSy;
-        Wed, 16 Nov 2022 10:13:52 +0800 (CST)
-Received: from [10.67.103.39] (10.67.103.39) by kwepemi500011.china.huawei.com
- (7.221.188.124) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 16 Nov
- 2022 10:17:36 +0800
-Message-ID: <6374483F.3060604@hisilicon.com>
-Date:   Wed, 16 Nov 2022 10:17:35 +0800
-From:   Wei Xu <xuwei5@hisilicon.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
+        Wed, 16 Nov 2022 05:28:27 -0500
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2071.outbound.protection.outlook.com [40.107.94.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D9D2EF5C;
+        Wed, 16 Nov 2022 02:25:06 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=X979xd4Hq1mmkezi/El7l3RPsmzA7sjtdKvImeBIRDtD3G/HjmYC+M/0oJm0jn1SMf/HbL0BeL9aPlVbJ/rvBZXI+m618na0QTh3ejvyFP2gBAiNRom3NcuMAblHVkxvy+ScTyUy529o8p6EmV7+jH35Ft26/GagvOEakLunMrTTpxukS3U/e2hZyypY1L/nSi82sSDXB09gwvZKEinb3DWr8HoDpdYf45x2hdu8lLn03NdEsl+tJUjJyccrM41c/AI/OWnK2ijV/+TIcMMYuu+k66/ovtSMmweUygaaIQlPXsoGTicr1UBhM4fVW+BdcSBqilHaVPt7kSvR8nq2XQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F2MoIz5NJQ5KJbrkdYu0dE4oB0rnYISwErrJkRdV++I=;
+ b=MqUQc3duvPiwG83JAVOwwdJPN3ubo6EKcsmT3nk1ErfxWD5RhoiAA9Rq4lL4tImP96sbAM4c1QpuJZkILz7chFSpUDKwqN54tLJ4M2vWGf41QztHFypesQ/+AVGupU82kUwUHa3CquoQQpITldcI4NmTHTGg9NKyDWsBDEPt3KG7ON1gWezpyS3ylTE6cNpWcWnc1TTi8iuowkqKja/vBUGigMxLOsHGMihIehXkRFO0X9z7iwhRvoeN0L0ROTUqkk3EZHrR5vlqcxfk96vTKX97wPMPeJFqwp+iOecVnqPDyuVE0F4dCZsp1WphA74JJg+BPO6DhHSmJOQDDBrLKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F2MoIz5NJQ5KJbrkdYu0dE4oB0rnYISwErrJkRdV++I=;
+ b=tHyxfZXZSHKSEoECnSpXz3Nvm1k2adecBJTn45u1a/M4j689fQDQNpyxIx/c93KBtkoH3GcZOWyIz0pT0FvZ7bmSbz5gZXObi4R/sjcXuVa8luaraeltpZBvwpSXYOTRwAtgSPeL7WP1dq+/8zoNBU1um51gWy49WKJgaqkECpH25gHJ5ZTu9S0lAzYkciuzHy4AHKbQf7bpuhfMVCZCuKZItkhHE+2hQ6+vzY/IPf3zUP03nDSmZYNVwlEuWnVO3ip7UqdKDfOdqtvL50kXIY0+1EaljYMqs8LSocHlr/8U6pWPO4WogEF45UjTQvaA0JfabNUZ/EXG6MEDr4cHrw==
+Received: from DM6PR03CA0021.namprd03.prod.outlook.com (2603:10b6:5:40::34) by
+ DS0PR12MB6437.namprd12.prod.outlook.com (2603:10b6:8:cb::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5813.17; Wed, 16 Nov 2022 10:25:04 +0000
+Received: from DM6NAM11FT055.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:40:cafe::6b) by DM6PR03CA0021.outlook.office365.com
+ (2603:10b6:5:40::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.19 via Frontend
+ Transport; Wed, 16 Nov 2022 10:25:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT055.mail.protection.outlook.com (10.13.173.103) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5834.8 via Frontend Transport; Wed, 16 Nov 2022 10:25:04 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 16 Nov
+ 2022 02:24:56 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 16 Nov
+ 2022 02:24:55 -0800
+Received: from amhetre.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Wed, 16 Nov 2022 02:24:53 -0800
+From:   Ashish Mhetre <amhetre@nvidia.com>
+To:     <krzysztof.kozlowski@linaro.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <dmitry.osipenko@collabora.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+CC:     Ashish Mhetre <amhetre@nvidia.com>
+Subject: [PATCH] memory: tegra: Remove early boot SID override programming
+Date:   Wed, 16 Nov 2022 15:54:42 +0530
+Message-ID: <20221116102442.28194-1-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-To:     Pierre Gondois <pierre.gondois@arm.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Chanho Min <chanho.min@lge.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        <UNGLinuxDriver@microchip.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Ming Qian <ming.qian@nxp.com>,
-        Shijie Qin <shijie.qin@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Adam Ford <aford173@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Wei Fang <wei.fang@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Andi Shyti <andi@etezian.org>, <devicetree@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
-        <linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-realtek-soc@lists.infradead.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH v2 09/23] arm64: dts: Update cache properties for hisilicon
-References: <20221107155825.1644604-1-pierre.gondois@arm.com> <20221107155825.1644604-10-pierre.gondois@arm.com>
-In-Reply-To: <20221107155825.1644604-10-pierre.gondois@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.103.39]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi500011.china.huawei.com (7.221.188.124)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT055:EE_|DS0PR12MB6437:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3771bb14-eaa2-45ca-0ce6-08dac7bcd3b1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: cCUJvEPquQXNYuu3QKwcSu1ztDzv+M3I63jsKILduhGU8Q+L+jKQ786LeSvCxu1l/qMwINDOrhWOISY/RfkylLJWeAqkszMw4+jJFpWYw3prgTVw8gg7jvkDZHL0Mga97VYuclgWbfQUaVWF9Eqm1b8thbnIfX9d36jvOEzOMsr9RFgnn/MJQrWurxHcS6WJ9vr2UMLoNfg/6dGL4FbtQ2fQUVsjeM9pYbzX/qp65lciqWzT87L7UVzoJTCcKEBo1LTzCBAOc5hpPzd/eLHPJZTR0DFa+LbqrrA7TsxkBUCOaCVSW18gj8fzo3wjlSMUeWJ2p86qwVtsT/LKqkAnhunSZ963OHOnBbX4Qg0rcwbSONzXN6gixEkx42t61vptKqIbQ1BWyqMMWqdC7iN88Gs04yDdT50fMKMn6Q510UbD1cvGvE9puwLKYVKyYKjgAQWX/Vx08QPU+Owwuls2POglbmTdAasSEmWch0XmLDoKUWH4YqtbNzNj1Dq++qCw7EjF0ynbaaWNA4tzOyTvQgCNyxY39zbDZ/uDqcXO8ft0hXKvSyzywC6crxx9cs4NJXlW64WvbvYILt87RWeZDhNNSUh1gZjBRkzSajMwZsC1bGbTerQ7wbNk9+GGyaNFcUw80Rvy6Bfd4ZyCM64H3TXKe5aX3fb06Vz5oxYm3J59gXNor7+QiMlA/xmF10x1WPhWiUrC7sViVAhU6zfEPtcV2uRsM6M0OefNxULxT/AJ4RyYaDNBHDbJXT6KuLtK7lcPEjLhWaaRsUv/vXrv+g==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(136003)(396003)(39860400002)(451199015)(46966006)(40470700004)(36840700001)(36756003)(83380400001)(86362001)(7636003)(82740400003)(356005)(36860700001)(82310400005)(2906002)(336012)(47076005)(2616005)(40460700003)(7696005)(26005)(186003)(426003)(6666004)(478600001)(41300700001)(107886003)(5660300002)(8936002)(40480700001)(70586007)(70206006)(110136005)(8676002)(4326008)(1076003)(316002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2022 10:25:04.4315
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3771bb14-eaa2-45ca-0ce6-08dac7bcd3b1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT055.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6437
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Pierre,
+SID override is programmed on-demand during probe_finalize() call of
+IOMMU which is done in tegra186_mc_client_sid_override() in this same
+file. This function does it more correctly by checking if write is
+permitted on SID override register. It also checks if SID override
+register is already written with correct value and skips re-writing it
+in that case.
+Also, on newer Tegra releases SID override programming is done by
+bootloader.
+Hence, removing the early boot SID override programming of all clients.
 
-On 2022/11/7 23:57, Pierre Gondois wrote:
-> The DeviceTree Specification v0.3 specifies that the cache node
-> 'compatible' and 'cache-level' properties are 'required'. Cf.
-> s3.8 Multi-level and Shared Cache Nodes
-> The 'cache-unified' property should be present if one of the
-> properties for unified cache is present ('cache-size', ...).
-> 
-> Update the Device Trees accordingly.
-> 
-> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+Fixes: 393d66fd2cac ("memory: tegra: Implement SID override programming")
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+ drivers/memory/tegra/tegra186.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Applied to the HiSilicon arm64 dt tree.
-Thanks!
+diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+index 62477e592bf5..870273d343d6 100644
+--- a/drivers/memory/tegra/tegra186.c
++++ b/drivers/memory/tegra/tegra186.c
+@@ -85,8 +85,6 @@ static int tegra186_mc_probe(struct tegra_mc *mc)
+ 	if (err < 0)
+ 		return err;
+ 
+-	tegra186_mc_program_sid(mc);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
 
-Best Regards,
-Wei
-
-> ---
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi |  2 ++
->  arch/arm64/boot/dts/hisilicon/hi6220.dtsi |  2 ++
->  arch/arm64/boot/dts/hisilicon/hip05.dtsi  |  4 ++++
->  arch/arm64/boot/dts/hisilicon/hip06.dtsi  |  4 ++++
->  arch/arm64/boot/dts/hisilicon/hip07.dtsi  | 16 ++++++++++++++++
->  5 files changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> index 8343d0cedde3..a57f35eb5ef6 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> @@ -203,10 +203,12 @@ CLUSTER_SLEEP_1: cluster-sleep-1 {
->  
->  		A53_L2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		A73_L2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> index ae0a7cfeeb47..f6d3202b0d1a 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> @@ -186,10 +186,12 @@ cpu7: cpu@103 {
->  
->  		CLUSTER0_L2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		CLUSTER1_L2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip05.dtsi b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> index 7b2abd10d3d6..5b2b1bfd0d2a 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> @@ -211,18 +211,22 @@ cpu15: cpu@20303 {
->  
->  		cluster0_l2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster1_l2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster2_l2: l2-cache2 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster3_l2: l2-cache3 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip06.dtsi b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> index 2f8b03b0d365..291c2ee38288 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> @@ -211,18 +211,22 @@ cpu15: cpu@10303 {
->  
->  		cluster0_l2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster1_l2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster2_l2: l2-cache2 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster3_l2: l2-cache3 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip07.dtsi b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> index 1a16662f8867..b8746fb959b5 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> @@ -842,66 +842,82 @@ cpu63: cpu@70303 {
->  
->  		cluster0_l2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster1_l2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster2_l2: l2-cache2 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster3_l2: l2-cache3 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster4_l2: l2-cache4 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster5_l2: l2-cache5 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster6_l2: l2-cache6 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster7_l2: l2-cache7 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster8_l2: l2-cache8 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster9_l2: l2-cache9 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster10_l2: l2-cache10 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster11_l2: l2-cache11 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster12_l2: l2-cache12 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster13_l2: l2-cache13 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster14_l2: l2-cache14 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster15_l2: l2-cache15 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> 
