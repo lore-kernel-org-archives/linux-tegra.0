@@ -2,142 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077D3C4167D
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 18:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA3CC4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 18:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234931AbiKQS1l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Nov 2022 13:27:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33748 "EHLO
+        id S235070AbiKQSks (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Nov 2022 13:40:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240356AbiKQS1d (ORCPT
+        with ESMTP id S234461AbiKQSkr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Nov 2022 13:27:33 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786628517E;
-        Thu, 17 Nov 2022 10:27:32 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id t25so7185464ejb.8;
-        Thu, 17 Nov 2022 10:27:32 -0800 (PST)
+        Thu, 17 Nov 2022 13:40:47 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AF317DEC7;
+        Thu, 17 Nov 2022 10:40:46 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id n21so7270285ejb.9;
+        Thu, 17 Nov 2022 10:40:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gHvtmH6qGDFUgG9Xrttoa7AgeGSmg5n5XNiv/6s7gw=;
-        b=Er3109dKYZA7GnJLjMn74fmBltDWu4fU7J95oOgkYHBdH9QYpjjr0BerGeMINPkfgh
-         XttoomE7vlWCZ+BOq+rtelL/3nPG9qvv4dbltBuVvjwOhmkSk6V49Y3XMkz66IOL4R6Q
-         qiuDF8XpiCFYo3zmIozavb7Sy1rGfLO9i9yS9Jt49sSZ40rXbks2Lwu5XQM2wNfLj7id
-         fzOECDDCbw9oAGN/2ixUoL2TKRQhIPcvKe1c525ZhcH/3WqbfBs0F5q4q0m8pNuhM1Py
-         aslu2SnPWWEfdSOP48UaMTfqg5sU0OWBna+mYT0Ft/Yajcyryc/DDrtFNL+ig68YsXMd
-         Xf1Q==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SdWdBcRVnJGovle+6r9mHXM5s2nIjF4NnomafJZspdQ=;
+        b=iio25gbX1bMRRd0+9jwuh9Nw7EgfgTzEZN/DgMvKJiXXK8z//zor5Feye0llVP57vQ
+         w1faTtcLSy7KDZenpep2zUkgazGFrnWF4nBm++7NJGKCpEmqwYYmNFMN0xA0a36R2ES7
+         b+2mJFuaoxoVYl+k/H0Vgk/anwEEEXxgfOSEUPzjaCHR+Y2rEQFzxo2GZFoek2jnaf/f
+         GmYnKqeduc02g8Il3JNUN08FDhIQH+40i7+0deUB3KI/yfRS1p0Cu9oVLfj0rx89d0Nd
+         7nduTXAeySsazb5b6y1P6f2HAvipHIivb32LzGBN2zg8tOjyR4JNArJJtu+gBU6bF+8g
+         xWDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9gHvtmH6qGDFUgG9Xrttoa7AgeGSmg5n5XNiv/6s7gw=;
-        b=UxQStkurdk0+Ddb0vLXjB6p5+DOvzFqD87PZvkXDE28JZuWtjWoNdaBhV1s7gw5IA6
-         gkvhEuR7sYucczTxCQ4W8Z5G1Nuz91bZtYn22t5m7QOnAvoZ987qpBvDoDZHvi/LagB9
-         YCTuhoTZBX67EBK2GyUbeGMerRT1IxzOZk+GteiwyuSE+gBTogS8eLL6pmExR/Kuqcw1
-         aZ7xrroNNYvzWiwdK2Ok9KniOEzqhLHqzikJ5cztOZ+aD5fZpnhFIniLqAhQyCtEeogN
-         nv2FWhGfwxQbDpxrFzMCCBZ4AHBgyZcv+d8uPz8Iv841+G2QzpIKQ4mVNNmMzfkjQ3mm
-         Lmpw==
-X-Gm-Message-State: ANoB5pmc4JZW5Q4RkNZHyY07ma4s+3bFkYEvCzCmVi9v9l5EPkG3FIVS
-        4GqMyFND368vBzaIeqf1LgI=
-X-Google-Smtp-Source: AA0mqf4C/XcXI5n2CuuQwC6i/qjB120KD7Gvl7BFChzq0rU9n3k2h57zDx8DzAPXCaoGo/L0TRgPrA==
-X-Received: by 2002:a17:906:4d16:b0:78b:15dc:2355 with SMTP id r22-20020a1709064d1600b0078b15dc2355mr3145426eju.306.1668709650695;
-        Thu, 17 Nov 2022 10:27:30 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SdWdBcRVnJGovle+6r9mHXM5s2nIjF4NnomafJZspdQ=;
+        b=oVVq5/nxqIfgW6Q4TRG0HfgnDp/azYLtMYnUwGdPq6/rlPwLpNXLwyVcUb05lRer07
+         FEx7DU3ExOIRoIgOlCBFznhuq4NksMULUGPPEuVe7YQ1b3Shwrt7JW86MPXBl3BJCwNr
+         yAxfn65DKb+aXEZP4Y6wH3vIsszoLCj6C6j25pMQ04aULsWg9hQqc8rTHMx5Tce2akdA
+         I0f5GSY9RNfTzAu5cbehfzM1x4kIsrErvazL4s6Ff2CqCvYuPQk8bYmlsjgjG1gWGawp
+         M7sNQoPw1vIR1XDUufjQ+7KGm3690MEumfXRM5YQcn3US78gVNB1bu94OqiUTMqgKTsg
+         j6FQ==
+X-Gm-Message-State: ANoB5plmB+tpZTUtMAqtDVPbhafWG2Q77G34IZQYA63yfXOhkALTgRe0
+        vFcF00I4KDbGMiEQr1AIyoA=
+X-Google-Smtp-Source: AA0mqf6M80d2AVownwukK88YdOixGPgY0f7Vk8FqgKlgx+RHuHsk9ZiKkvkiaw1foLoV8PPUFHebNA==
+X-Received: by 2002:a17:907:98e3:b0:7af:883:ec72 with SMTP id ke3-20020a17090798e300b007af0883ec72mr3219830ejc.727.1668710444545;
+        Thu, 17 Nov 2022 10:40:44 -0800 (PST)
 Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r11-20020a056402034b00b004587f9d3ce8sm849384edw.56.2022.11.17.10.27.29
+        by smtp.gmail.com with ESMTPSA id l26-20020a056402231a00b004585eba4baesm867546eda.80.2022.11.17.10.40.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Nov 2022 10:27:30 -0800 (PST)
+        Thu, 17 Nov 2022 10:40:43 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        iommu@lists.linux-foundation.org, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v11 6/6] mmc: sdhci-tegra: Issue CMD and DAT resets together
-Date:   Thu, 17 Nov 2022 19:27:20 +0100
-Message-Id: <20221117182720.2290761-7-thierry.reding@gmail.com>
+To:     David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 0/8] drm/simpledrm: Support system memory framebuffers
+Date:   Thu, 17 Nov 2022 19:40:31 +0100
+Message-Id: <20221117184039.2291937-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221117182720.2290761-1-thierry.reding@gmail.com>
-References: <20221117182720.2290761-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Prathamesh Shete <pshete@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-In case of error condition to avoid system crash
-Tegra SDMMC controller requires CMD and DAT resets
-issued together. SDHCI controller FSM goes into
-bad state due to rapid SD card hot-plug event.
-Issuing reset on the CMD FSM before DATA FSM results
-in kernel panic, hence add support to issue CMD and
-DAT resets together.
-This is applicable to Tegra186 and later chips.
+Hi,
 
-Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 3 ++-
- drivers/mmc/host/sdhci.c       | 5 +++++
- drivers/mmc/host/sdhci.h       | 2 ++
- 3 files changed, 9 insertions(+), 1 deletion(-)
+this series of patches adds support for framebuffers residing in system
+memory to the simple-framebuffer DRM driver. To do this, the DT bindings
+are extended do accept the memory-region property in addition to the reg
+property for specifying the framebuffer memory. This is done because the
+framebuffer memory will typically also need to be marked as reserved so
+that the operating system will not reuse it and the memory-region
+property is the standard property to reference reserved memory regions.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 1cb7fd3afa7e..3384bfd3585c 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1533,7 +1533,8 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
- 	.ops  = &tegra186_sdhci_ops,
- };
- 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index fb6e9a81f198..ed59bb3247a1 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -270,6 +270,11 @@ enum sdhci_reset_reason {
- 
- static void sdhci_reset_for_reason(struct sdhci_host *host, enum sdhci_reset_reason reason)
- {
-+	if (host->quirks2 &
-+		SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER) {
-+		sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-+		return;
-+	}
- 	switch (reason) {
- 	case SDHCI_RESET_FOR_INIT:
- 		sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 908da47ac5ba..ca7ede721523 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -478,6 +478,8 @@ struct sdhci_host {
-  * block count.
-  */
- #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
-+/* Issue CMD and DATA reset together */
-+#define SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER	(1<<19)
- 
- 	int irq;		/* Device IRQ */
- 	void __iomem *ioaddr;	/* Mapped address */
+A new compatible string is documented to annotate the framebuffer memory
+regions and the simpledrm driver has code added to bind such annotated
+regions to the simple-framebuffer device.
+
+The second half of the series then adds support for the XB24 and AB24
+formats and ties it all together to provide a simple-framebuffer on
+Jetson Xavier NX. It should be noted, though, that the Jetson Xavier NX
+device tree nodes are placeholders only and it is expected that firmware
+or a bootloader will fill these in at runtime, due to the variable
+nature of the values that they contain.
+
+This example also uses (but doesn't depend on) the iommu-addresses
+property that has been proposed and which will hopefully be merged soon.
+
+Version 2 of these patches can be found here:
+
+	https://lore.kernel.org/all/20221007124946.406808-1-thierry.reding@gmail.com/
+
+Changes in v3:
+- add new formats into conv_from_xrgb8888[] array to make it work after
+  commit 6fdaed8c7988 ("drm/format-helper: Only advertise supported
+  formats for conversion")
+- extract iosys_map fix into a separate patch
+- fix bogus increments in struct iosys_map usage
+- simplify memory code
+
+Changes in v2:
+- DT fields are now cleared so that they can be filled in at runtime
+- add XB24 support and treat AB24 the same (alpha bits are unused)
+- consistently use struct iosys_map
+- fix issues with DT bindings
+
+I've tested these with a simple UEFI implementation that will fill in
+the placeholder values and set the simple-framebuffer's status property
+to "okay".
+
+Thierry
+
+Thierry Reding (8):
+  dt-bindings: display: simple-framebuffer: Support system memory
+    framebuffers
+  dt-bindings: display: simple-framebuffer: Document 32-bit BGR format
+  dt-bindings: reserved-memory: Support framebuffer reserved memory
+  drm/simpledrm: Use struct iosys_map consistently
+  drm/simpledrm: Add support for system memory framebuffers
+  drm/format-helper: Support the XB24 format
+  drm/simpledrm: Support the XB24/AB24 format
+  arm64: tegra: Add simple framebuffer on Jetson Xavier NX
+
+ .../bindings/display/simple-framebuffer.yaml  |   7 ++
+ .../bindings/reserved-memory/framebuffer.yaml |  52 ++++++++
+ .../nvidia/tegra194-p3509-0000+p3668-0001.dts |  43 +++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |   2 +-
+ drivers/gpu/drm/drm_format_helper.c           |  39 ++++++
+ drivers/gpu/drm/tiny/simpledrm.c              | 114 +++++++++++++-----
+ include/linux/platform_data/simplefb.h        |   1 +
+ 7 files changed, 227 insertions(+), 31 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+
 -- 
 2.38.1
 
