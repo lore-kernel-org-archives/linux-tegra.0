@@ -2,142 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B69C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 11:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0563EC4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 11:48:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239416AbiKQLRw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Nov 2022 06:17:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35216 "EHLO
+        id S239625AbiKQLsq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Nov 2022 06:48:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239281AbiKQLRw (ORCPT
+        with ESMTP id S239849AbiKQLsk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Nov 2022 06:17:52 -0500
-X-Greylist: delayed 136 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 17 Nov 2022 03:17:50 PST
-Received: from condef-05.nifty.com (condef-05.nifty.com [202.248.20.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C858CF78;
-        Thu, 17 Nov 2022 03:17:50 -0800 (PST)
-Received: from conssluserg-06.nifty.com ([10.126.8.85])by condef-05.nifty.com with ESMTP id 2AHB9cFS027160;
-        Thu, 17 Nov 2022 20:09:38 +0900
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id 2AHB9ICE016704;
-        Thu, 17 Nov 2022 20:09:18 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 2AHB9ICE016704
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1668683359;
-        bh=nRWOhJaZ5KAIeF0ENljN/lYw/5/QcrKlraNrZbKSTAM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XC2ya10TgEd1/8TzhF2Gr0PhHcLAntAWAqf3VAo1zqogYwrVf1xAC3tvJnrHRXzFh
-         sHjUgIADN21SHjC3AlekRf+Ox8MnfToRWl/lqFA1ACbVLm7ZJpIi6OnfrCK3pE8oU8
-         5l4cqD0kU2a7/vQR/icZ605LP0KceNLoT5PP9JI4Wohs1ENeYjSE0Ujm59k966Pbrt
-         ErwMQXOfdT3YtvF91V72VtQ7D/+jXPr2lO1GNZHej2Vn+9R2Y2RqDuTzOaz69kiYFl
-         fnx2jMDesvKTAolXZ3+In6CEeuDnwQASAamQRtGVvps4L0W/7BOeNjfP4VB2CUIPfy
-         5LMj2rvBqAqgw==
-X-Nifty-SrcIP: [209.85.210.45]
-Received: by mail-ot1-f45.google.com with SMTP id p27-20020a056830319b00b0066d7a348e20so812322ots.8;
-        Thu, 17 Nov 2022 03:09:18 -0800 (PST)
-X-Gm-Message-State: ANoB5plBe1FLaMkMcXlr2fMExyNIDzIEM56lNWUhWGi++CQp4q3l0ENz
-        TZwCUrSOfNU0Z6c/IQ19FoRNZ9BWlBG1FGgAPjk=
-X-Google-Smtp-Source: AA0mqf4CK4Q0N+foqWUEAX6p0/4zkzL1fEXSzY2ahsU2bwYk+QeoxrbOBFQOkegMzcI0htIHDXXHFjOXSHp5l74k9/Y=
-X-Received: by 2002:a9d:282:0:b0:66c:794e:f8c6 with SMTP id
- 2-20020a9d0282000000b0066c794ef8c6mr1077050otl.343.1668683357460; Thu, 17 Nov
- 2022 03:09:17 -0800 (PST)
+        Thu, 17 Nov 2022 06:48:40 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FB82DDF;
+        Thu, 17 Nov 2022 03:48:35 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0EE17B81FFF;
+        Thu, 17 Nov 2022 11:48:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FB3C433C1;
+        Thu, 17 Nov 2022 11:48:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668685712;
+        bh=g8/3G3XdboS8Kov6oVnhtxCrpiItGsbE4yX4Gt6DTwg=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=bHau+qISLSBSgiJlt1hDf9QIAQTF3TTJr3VbNYpCAu22kCrY4WUFj0RSsX1YKbGAo
+         BNr8eyaRbRIextwu/UeraOWb29Hwe3dhrIDtnQARR1kFzQIay4wplPoVZtQA82HjJf
+         A4VBFmX7NuIBATrDydmXRbPHMejAbwlnLoEl35EnhS0ZYHHMsvFNLeeriWmiDzg945
+         7VkPIFlTiTuJGLE5JLU79MN1XFQF6rrsH+mVr3yL1rVYkf+RW8HqCEsc2JP85GKXCh
+         Y9xuqLC1FsJJZ3DMQN5O/Mc3yGYjte7Qxxo7LHIfXbApLM8H9AkmWF0kDgEl+AHBuw
+         QYp9U4a+FH0Tg==
+From:   Mark Brown <broonie@kernel.org>
+To:     jonathanh@nvidia.com, Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org,
+        thierry.reding@gmail.com
+Cc:     ldewangan@nvidia.com, linux-kernel@vger.kernel.org,
+        skomatineni@nvidia.com
+In-Reply-To: <20221117070320.18720-1-kyarlagadda@nvidia.com>
+References: <20221117070320.18720-1-kyarlagadda@nvidia.com>
+Subject: Re: [PATCH] spi: tegra210-quad: Fix duplicate resource error
+Message-Id: <166868571080.694164.9085397886273331587.b4-ty@kernel.org>
+Date:   Thu, 17 Nov 2022 11:48:30 +0000
 MIME-Version: 1.0
-References: <20220828024003.28873-1-masahiroy@kernel.org> <20220828024003.28873-6-masahiroy@kernel.org>
- <e98d2048-57ef-4515-8290-ddf6596856f7@nvidia.com>
-In-Reply-To: <e98d2048-57ef-4515-8290-ddf6596856f7@nvidia.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Thu, 17 Nov 2022 20:08:39 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASBBiBQw5Cx=NHy7Fs_to6JcAaRrHdbj+prYddxDgb3Kg@mail.gmail.com>
-Message-ID: <CAK7LNASBBiBQw5Cx=NHy7Fs_to6JcAaRrHdbj+prYddxDgb3Kg@mail.gmail.com>
-Subject: Re: [PATCH 05/15] kbuild: build init/built-in.a just once
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-8af31
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 7:00 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> Hi Masahiro
->
-> On 28/08/2022 03:39, Masahiro Yamada wrote:
-> > Kbuild builds init/built-in.a twice; first during the ordinary
-> > directory descending, second from scripts/link-vmlinux.sh.
-> >
-> > We do this because UTS_VERSION contains the build version and the
-> > timestamp. We cannot update it during the normal directory traversal
-> > since we do not yet know if we need to update vmlinux. UTS_VERSION is
-> > temporarily calculated, but omitted from the update check. Otherwise,
-> > vmlinux would be rebuilt every time.
-> >
-> > When Kbuild results in running link-vmlinux.sh, it increments the
-> > version number in the .version file and takes the timestamp at that
-> > time to really fix UTS_VERSION.
-> >
-> > However, updating the same file twice is a footgun. To avoid nasty
-> > timestamp issues, all build artifacts that depend on init/built-in.a
-> > must be atomically generated in link-vmlinux.sh, where some of them
-> > do not need rebuilding.
-> >
-> > To fix this issue, this commit changes as follows:
-> >
-> > [1] Split UTS_VERSION out to include/generated/utsversion.h from
-> >      include/generated/compile.h
-> >
-> >      include/generated/utsversion.h is generated just before the
-> >      vmlinux link. It is generated under include/generated/ because
-> >      some decompressors (s390, x86) use UTS_VERSION.
-> >
-> > [2] Split init_uts_ns and linux_banner out to init/version-timestamp.c
-> >      from init/version.c
-> >
-> >      init_uts_ns and linux_banner contain UTS_VERSION. During the ordinary
-> >      directory descending, they are compiled with __weak and used to
-> >      determine if vmlinux needs relinking. Just before the vmlinux link,
-> >      they are compiled without __weak to embed the real version and
-> >      timestamp.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->
->
-> Since this change I have noticed that the kernel image (at least on ARM64) now contains two version strings ...
->
-> $ strings arch/arm64/boot/Image | grep "Linux version"
-> Linux version 6.0.0-rc7-00011-g2df8220cc511 (jonathanh@moonraker) (aarch64-linux-gnu-gcc (Linaro GCC 6.4-2017.08) 6.4.1 20170707, GNU ld (Linaro_Binutils-2017.08) 2.27.0.20161019) # SMP PREEMPT
-> Linux version 6.0.0-rc7-00011-g2df8220cc511 (jonathanh@moonraker) (aarch64-linux-gnu-gcc (Linaro GCC 6.4-2017.08) 6.4.1 20170707, GNU ld (Linaro_Binutils-2017.08) 2.27.0.20161019) #20 SMP PREEMPT Thu Nov 17 09:49:18 GMT 2022
->
-> Is this expected?
+On Thu, 17 Nov 2022 12:33:20 +0530, Krishna Yarlagadda wrote:
+> controller data alloc is done with client device data causing duplicate
+> resource error. Allocate memory using controller device when using devm
+> 
+> Fixes: f89d2cc3967a ("spi: tegra210-quad: use devm call for cdata memory")
+> 
+> 
 
+Applied to
 
-Yes.
+   broonie/spi.git for-next
 
-The first line is a weak (i.e. unused) symbol.
-The second one is a real one.
+Thanks!
 
+[1/1] spi: tegra210-quad: Fix duplicate resource error
+      commit: 2197aa6b0aa236b9896a09b9d08d6924d18b84f6
 
-2df8220cc511326508ec4da2f43ef69311bdd7b9 fixed up
-arch/powerpc/boot/wrapper because it grep's vmlinux.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-The weak symbols slightly increase the image size, but
-I do not know how to do this better.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-
-
-
-
-> Thanks!
-> Jon
->
-> --
-> nvpublic
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Mark
