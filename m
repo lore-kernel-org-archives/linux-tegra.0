@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A84DC43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 18:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A36C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 18:40:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234461AbiKQSkt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Nov 2022 13:40:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41924 "EHLO
+        id S240121AbiKQSkv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Nov 2022 13:40:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235064AbiKQSks (ORCPT
+        with ESMTP id S235064AbiKQSku (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Nov 2022 13:40:48 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E107F7FF1B;
-        Thu, 17 Nov 2022 10:40:47 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id n21so7270442ejb.9;
-        Thu, 17 Nov 2022 10:40:47 -0800 (PST)
+        Thu, 17 Nov 2022 13:40:50 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB6227FF33;
+        Thu, 17 Nov 2022 10:40:49 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id a5so3830607edb.11;
+        Thu, 17 Nov 2022 10:40:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C1Y534FPxsILKuYr941GBaBsx9fst1FUuLv6sIi19Vk=;
-        b=VkGk+0U6cBBKtd2N73D6xUj20mWTYj9z2tO2H7ULxskuzctUAZqtq+JcJL2RtdlPsC
-         lQ0ap0XqRcig/75B4gx/g7uWtUYLJbrMMa5+nJXa6AjOpVz1A1RDtSrEMRkKTP2KocYZ
-         qhxM1BlzZuIjImn045YYAj7aTqzJ2KnQuGyhMx8UZxzLEP33xjzJP6Y7E8Mh5093BEMN
-         dzYtBOd4EGkOgMofNN9JyHuBhAMVNgRJ523p57BbfezDEwibZxv7WvVc21VgMEFIXUyG
-         HJj9KrknPq/JG0NRRhbJgG8rRKu5lOyFP3GfGaKI0uHa1fdZQHdtaAin1901+luOjktW
-         4H2Q==
+        bh=kGgALic+DS30S9ojwPdceibK9s2MAtsj8xO33zz+Z+0=;
+        b=N7v2MmJAOX3Kmxwd0jdOood/vNl6v21crSGC2mYfyU1BFBOaMCdfIqjKeYPA3RE1+q
+         uPu3PDYPkhadmdoQuUDlVvIw1eOFBirFTHLq2MsfL0JjxvusJNCc2dvn2174kPre+Uqb
+         tJxUq9Ce0hqAR7fkDjEZGmUtfVLx3JUnzl8iI9PbDY7NcJ7dmtHlpmKXDjq0xcDvzENc
+         QOtOTMpPccGzZ6ScUnyNMLls09dACDKTSEJjifFV8x3MPx6CJOPx3BX8OBnZwZ1E8fp1
+         YWHcB97GAXh9WAAWNCTpKl513LQkRJzatUZ+VTf+kPwb28BnexS72xWZkFgmPG0K6Iax
+         tXBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C1Y534FPxsILKuYr941GBaBsx9fst1FUuLv6sIi19Vk=;
-        b=ZbHitENNlOmkIXof7e9a3oUQ0DwYMX1WPqDy3NfGQZrWCeeO2ZHYiH2EIx31aCoYFW
-         kKnS0W5UnnGGYQi9r2fBHMF5zkMae1TE4vZ4E5CP3oiDQ5Nu47dcB7SXZfxIlvMp+g25
-         aGb7VppJWvyapJCimHixg+N1B+M//vjXK0sO2GjUv7oFZeeiD/rMuHsGDMvPJQp9IED7
-         HVn6LmHAYxEjzM/k+kznQbyGxrAn1ZdoFt+kSA52nxTpGecoP8qrrY+wCZFxQIYAevvV
-         E46izSXCB6d4XHPGySRZu5DjpCJr73iogFAG9sRnsPhaKAqW6ZY6EkbzJgoEBpNnl7PK
-         lTKA==
-X-Gm-Message-State: ANoB5pm7XsqgGjLUT+v2zZe7zeyVne3lJDZXmno2m58nz9o46i6Iqekj
-        KSQvv4Ouf3p3WHnL0MWbbtQ=
-X-Google-Smtp-Source: AA0mqf4gUTPwjVT7ASJewg8oNP3zMRDM6ATE7vRgNDo94NVRs0c0OcvNjf3/6CDgJqmkO5mUA7OA2w==
-X-Received: by 2002:a17:907:98ea:b0:7ae:c1af:89af with SMTP id ke10-20020a17090798ea00b007aec1af89afmr3133088ejc.550.1668710446390;
-        Thu, 17 Nov 2022 10:40:46 -0800 (PST)
+        bh=kGgALic+DS30S9ojwPdceibK9s2MAtsj8xO33zz+Z+0=;
+        b=yk4nssyF9cY1f7FqeyU+XRhMfZq7HC8UbXvnLbG4plxdFdh5tkFlz9CaFQdEDWvmU3
+         MC7wYzqq0oEY4tvz4P3WWbb1IH3Q13pqaXH1KSDpuE7zD0aX3juK02sNLp2DY3Zq4cQT
+         z4cHWbLUE0dBeV+1VLEs8NXyhky2G2p2BkXGZp0fzMGLzMHC6wPbqh80cXisQdfhmnRg
+         Fr0DCJkHr+FpJ3/VnB7+y4Z4rGJ5uCY9oH5CN8YpHfF4JzSWAirEhrg0+d0ftcFZYIJq
+         3Lmq5kBi79G+WiS96Y1Q05iT7V0TnFcoGSp9OFsOH8SQZIESSbQzQiCJT6pVF+/D4g1z
+         DHAg==
+X-Gm-Message-State: ANoB5pkb/A4ec+V/cICvEvkAzTdYd7VbBVjHTtPJXQeWjpTHPf37ydEM
+        80Qs4YuYJUIrAn6EUB8YzbnWbUU4ANQ=
+X-Google-Smtp-Source: AA0mqf6T53dT7P1u6RpvE4BnHTqtPV7QDbZHfM/zbVoHXOKBSCvcYjV8zXOiBCE4ZTH8FiwEafnEBQ==
+X-Received: by 2002:a50:9fa7:0:b0:469:4e6:344f with SMTP id c36-20020a509fa7000000b0046904e6344fmr396962edf.226.1668710448409;
+        Thu, 17 Nov 2022 10:40:48 -0800 (PST)
 Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id p9-20020a170906604900b007b2a58e31dasm700772ejj.145.2022.11.17.10.40.45
+        by smtp.gmail.com with ESMTPSA id ew20-20020a170907951400b0073d84a321c8sm680132ejc.166.2022.11.17.10.40.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Nov 2022 10:40:45 -0800 (PST)
+        Thu, 17 Nov 2022 10:40:47 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
         Thomas Zimmermann <tzimmermann@suse.de>
@@ -57,9 +57,9 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Robin Murphy <robin.murphy@arm.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 1/8] dt-bindings: display: simple-framebuffer: Support system memory framebuffers
-Date:   Thu, 17 Nov 2022 19:40:32 +0100
-Message-Id: <20221117184039.2291937-2-thierry.reding@gmail.com>
+Subject: [PATCH v3 2/8] dt-bindings: display: simple-framebuffer: Document 32-bit BGR format
+Date:   Thu, 17 Nov 2022 19:40:33 +0100
+Message-Id: <20221117184039.2291937-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221117184039.2291937-1-thierry.reding@gmail.com>
 References: <20221117184039.2291937-1-thierry.reding@gmail.com>
@@ -71,32 +71,35 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-In order to support framebuffers residing in system memory, allow the
-memory-region property to override the framebuffer memory specification
-in the "reg" property.
+This is a variant of the 32-bit RGB format where the red and blue
+components are swapped.
 
 Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../devicetree/bindings/display/simple-framebuffer.yaml      | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../devicetree/bindings/display/simple-framebuffer.yaml         | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/display/simple-framebuffer.yaml b/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
-index dd64f70b5014..3e9857eb002e 100644
+index 3e9857eb002e..3c9f29e428a4 100644
 --- a/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
 +++ b/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
-@@ -63,6 +63,11 @@ properties:
-   reg:
-     description: Location and size of the framebuffer memory
+@@ -99,6 +99,7 @@ properties:
+         * `x1r5g5b5` - 16-bit pixels, d[14:10]=r, d[9:5]=g, d[4:0]=b
+         * `x2r10g10b10` - 32-bit pixels, d[29:20]=r, d[19:10]=g, d[9:0]=b
+         * `x8r8g8b8` - 32-bit pixels, d[23:16]=r, d[15:8]=g, d[7:0]=b
++        * `x8b8g8r8` - 32-bit pixels, d[23:16]=b, d[15:8]=g, d[7:0]=r
+     enum:
+       - a1r5g5b5
+       - a2r10g10b10
+@@ -110,6 +111,7 @@ properties:
+       - x1r5g5b5
+       - x2r10g10b10
+       - x8r8g8b8
++      - x8b8g8r8
  
-+  memory-region:
-+    maxItems: 1
-+    description: Phandle to a node describing the memory to be used for the
-+      framebuffer. If present, overrides the "reg" property (if one exists).
-+
-   clocks:
-     description: List of clocks used by the framebuffer.
- 
+   display:
+     $ref: /schemas/types.yaml#/definitions/phandle
 -- 
 2.38.1
 
