@@ -2,185 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B28C0C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Nov 2022 21:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2327C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 07:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234045AbiKPVOh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Nov 2022 16:14:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59264 "EHLO
+        id S234664AbiKQHDn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Nov 2022 02:03:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233836AbiKPVO2 (ORCPT
+        with ESMTP id S234442AbiKQHDl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Nov 2022 16:14:28 -0500
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED5CF4C240;
-        Wed, 16 Nov 2022 13:14:27 -0800 (PST)
-Received: by mail-ot1-f43.google.com with SMTP id 94-20020a9d0067000000b0066c8d13a33dso11216653ota.12;
-        Wed, 16 Nov 2022 13:14:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cV6uRSj5A0RfJrnNHT9JxaI5Eiomkz3u/uqtM/E+nQs=;
-        b=qWIazrZzLzHB5zQTycHemsuZxvlCBODJHgG+159Rsv+hkh4/2+Uw3zXcCnlflyTZCV
-         IyB36U5uUECVI56grLiuzu1wPKSWJhwHLrJLYEl1miZpShHu/+BpoVPZhxdBifcl2xSE
-         GwCXBByvFte4N8cJNdw8SZw7tqR9bnXjprntO2ndbycMsfgKFBXkZwY8FEj9c1GNtbfC
-         iKgwtHKylgPdltHbiPWS/808TIMDmgKmUJADCwhnrewRKFEdM7Popi8rWNhvjn3aPB9W
-         pAvPWnhp09nk/EAUy3jvsc2KkBXoSWJ4Jvxyb4luhz+ug/GQozpcFTqB/7nxLpzo8YEw
-         IzFg==
-X-Gm-Message-State: ANoB5pnAnYevMSGf0xwN3ATkWwLajjE1pwdA8oW7wIuT+JYzPAnPhfZO
-        bPzg6E56ueVTpiqgAR8dpA==
-X-Google-Smtp-Source: AA0mqf6cpJwbBEertTrRB0QkgjpFroc/t0HskBTyjwQPspYfyJWlf51lrnxI7AnVUgQrnmwEgAHRCw==
-X-Received: by 2002:a9d:19a2:0:b0:66c:4ed7:fea9 with SMTP id k31-20020a9d19a2000000b0066c4ed7fea9mr1409otk.57.1668633267157;
-        Wed, 16 Nov 2022 13:14:27 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r15-20020a4aad0f000000b004908a9542f8sm6441166oon.31.2022.11.16.13.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 13:14:26 -0800 (PST)
-Received: (nullmailer pid 953152 invoked by uid 1000);
-        Wed, 16 Nov 2022 21:14:28 -0000
-Date:   Wed, 16 Nov 2022 15:14:28 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Wayne Chang <waynec@nvidia.com>
-Cc:     gregkh@linuxfoundation.org, krzysztof.kozlowski+dt@linaro.org,
-        treding@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com,
-        heikki.krogerus@linux.intel.com, ajayg@nvidia.com,
-        vkoul@kernel.org, p.zabel@pengutronix.de, balbi@kernel.org,
-        mathias.nyman@intel.com, jckuo@nvidia.com,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 03/13] dt-bindings: usb: Add binding for Cypress
- cypd4226 I2C driver
-Message-ID: <20221116211428.GA884584-robh@kernel.org>
-References: <20221114124053.1873316-1-waynec@nvidia.com>
- <20221114124053.1873316-4-waynec@nvidia.com>
+        Thu, 17 Nov 2022 02:03:41 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2076.outbound.protection.outlook.com [40.107.237.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA09812A96;
+        Wed, 16 Nov 2022 23:03:40 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eMwzlzAo/yTuyEOFh/ziZdMHbki1uTYWRlP+hQb8fkPGk5PjKHwsWXH32tiq6fiRurQqB43DFC54ybFU/yJMVgkq6kS2IqS2rddJpYNRfW51jF8rImM+YmpdXLQRTPazts8MSNdctoKE+nQWQlrHIdWXi7geFn7F9kbGfGdnAZwqcsaarle49KZb+Pa3IxNoFAG+17tPhm00MGGlgr8O9KaExE9UbneHde/BFk0O9pC17wWoi3NndFBhBHDVWTzgcldIE5UtWKDqT/Gwl4t5o/xy1TejIeRhkcLv4FE4CG62Vx7Rxvohdr4LbyoVYNc2jegOuTYKQhhsbCr8QodwmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Op1e5kB+fSeUycWnw+irb1W1dDzkzNzHg0ECZPTy8gs=;
+ b=f7a+9qMfOVPic0RbJNHZdH7TqwrnLDWFqXPvPIfkL5/Fmo2rZLNmG8n+z04dGmj6wsa3CouQ6WI6IeANfk81f6tiR4HLz6eNprB6EJByIKV1gsmsgsFSTVykf2e1dXHAzDn8qR/d249B71lEEEmuhwHSrnqNyJmw+y5Ozn9q4grzNqTqX/Fe9M94Bap9NRc9dgWBGQf3kELT3VfB4we0NhAB96mZ8cwm+grO60m9MA4yrARJMfV0pwyVqLZGrc+Nmo5A7wdcnApMwI9UzZQWTgjGA51vytMeL0Z41wQJ0ateVsmbBJa0xxSD286RqXcttQ8XTcWMP+PTjOQsntM3CA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Op1e5kB+fSeUycWnw+irb1W1dDzkzNzHg0ECZPTy8gs=;
+ b=IThXvVx4HrVoAUX30ErYudiFjtP7PSEcvZAR1GlpjOppGDhs7YvL1DQ5O32VnH1Uq4Uc/siWO181Ip69RYxrYW3ihpa4Bp+P4n6xTNVwZehoHgUtoA2pZhI9JUfz0nmruQw56eVnvcFb+eGTFuVowbtMVGIfNkNdrd7jKXMo6ap9iQQLJchqHz+8ngoiKLAGFe8i1HOtQRiYhbhnSHK7g1kSJQgySXjrQQSyFXOmxAmxc+Xg46hZpNCLnpL0RtQfhvvbTrxWcVsIG7quI5gi5cEe+F5dtHd3hTw2KiZ0Ro4qES2s0NGKzLrz0j/bwLHRdA02qQJ8CqQS7w4iC6IS8A==
+Received: from MW4PR03CA0175.namprd03.prod.outlook.com (2603:10b6:303:8d::30)
+ by IA1PR12MB6092.namprd12.prod.outlook.com (2603:10b6:208:3ec::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18; Thu, 17 Nov
+ 2022 07:03:39 +0000
+Received: from CO1NAM11FT015.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8d:cafe::35) by MW4PR03CA0175.outlook.office365.com
+ (2603:10b6:303:8d::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.20 via Frontend
+ Transport; Thu, 17 Nov 2022 07:03:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT015.mail.protection.outlook.com (10.13.175.130) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5834.8 via Frontend Transport; Thu, 17 Nov 2022 07:03:38 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 16 Nov
+ 2022 23:03:28 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 16 Nov
+ 2022 23:03:28 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Wed, 16 Nov 2022 23:03:25 -0800
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     <broonie@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+CC:     <skomatineni@nvidia.com>, <ldewangan@nvidia.com>,
+        <linux-kernel@vger.kernel.org>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: [PATCH] spi: tegra210-quad: Fix duplicate resource error
+Date:   Thu, 17 Nov 2022 12:33:20 +0530
+Message-ID: <20221117070320.18720-1-kyarlagadda@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221114124053.1873316-4-waynec@nvidia.com>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT015:EE_|IA1PR12MB6092:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7145c5db-8645-4668-2e46-08dac869da6e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: qpTyD6qcebebGjSgJ+Q/cdV/jJmRP3nIbonf6/Z9KYq4zhbL2jjqmbKnTSAE8icY6iWvPrDvC9HruG1ScxcCReXpgu6JshahJWv7oQj7K5t28svJfFSAhDbZMhUzq0LzkmFpNvbCkkq+MBqVuoWnTbdaULRxNChsuZ9QCInsJ/QM1eygj9ulQbIVn0k/AlnT5KMfxkEvDajHDAYhoGb3ikVsE0f5Qr/SDsAurTEFG3Gl10QBZr70Sf+YxbjWsyNNgkHlaYluWqSX6TCgJfJqQ904/EyVC3yPzBBsLCb+cl6euPpqtH3o2rLxLdaIUcVLzxq0RaYSG7bfK0nR1xw8RsorWQL76rMarfnOXJwen7ig5qCK4m9qxx+ycZEZXA0nEok6BFPXNW/DOPCRqXmX++XVIv0T99135SMGQaa0OQJmjp6mYOaQvmPJKwBgTmZEF4rLu1/MgUFatAbaZFELQpfa+RWA4h4/hlduBS7lU1FYWfhY4s2CUNLpho8ce2Nft/aLoZLlrqFjFUXfi3aXGKJRglIHjjEVj204e9p+Iwm4BpEIcxLSSH69eEpIQlKLsrutbp/iduF1x8zi371+dGv7W7drDWnzpXKTlhYhqg7Lu8021hfEte89jj0hkPGzHRlvsBY6T8lgtmbs0ELgGQXWQxNG0kZ3C1ceTF6Xkul712MbuTR2plp6vhoskyx8xahCgrQVu9fMf3ZXRv330w==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(376002)(136003)(346002)(451199015)(40470700004)(46966006)(36840700001)(83380400001)(82310400005)(36860700001)(478600001)(5660300002)(86362001)(82740400003)(7636003)(40480700001)(7696005)(186003)(1076003)(107886003)(70586007)(4326008)(110136005)(6666004)(70206006)(41300700001)(54906003)(336012)(316002)(8936002)(47076005)(2616005)(8676002)(2906002)(26005)(356005)(40460700003)(426003)(36756003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2022 07:03:38.7027
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7145c5db-8645-4668-2e46-08dac869da6e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT015.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6092
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 08:40:43PM +0800, Wayne Chang wrote:
-> add device-tree binding documentation for Cypress cypd4226 type-C
-> controller's I2C interface. It is a standard I2C slave with GPIO
-> input as IRQ interface.
+controller data alloc is done with client device data causing duplicate
+resource error. Allocate memory using controller device when using devm
 
-For the subject:
+Fixes: f89d2cc3967a ("spi: tegra210-quad: use devm call for cdata memory")
 
-dt-bindings: usb: Add Cypress cypd4226 Type-C controller
+Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+---
+ drivers/spi/spi-tegra210-quad.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> ---
-> V2 -> V3:fix additionalProperties warning on new schema
-> V1 -> V2:based on the review comments. Fix some addressed issues on
-> description, interrupts, cypress,firmware-build, connector, and 
-> additionalProperties properties. And also remove the status in the example.
->  .../bindings/usb/cypress,cypd4226.yaml        | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
-> new file mode 100644
-> index 000000000000..854fe2f9181c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
-> @@ -0,0 +1,86 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/cypress,cypd4226.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Cypress cypd4226 UCSI I2C Type-C Controller
-> +
-> +maintainers:
-> +  - Wayne Chang <waynec@nvidia.com>
-> +
-> +description:
-> +  The Cypress cypd4226 UCSI I2C type-C controller is a I2C interface type-C
-> +  controller.
-> +
-> +properties:
-> +  compatible:
-> +    const: cypress,cypd4226
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  reg:
-> +    const: 0x08
-> +
-> +  interrupts:
-> +    items:
-> +      - description: cypd4226 I2C interrupt
-> +
-> +  cypress,firmware-build:
-> +    enum:
-> +      - nvidia,gpu
-> +      - nvidia,jetson-agx-xavier
-> +    description: |
-> +      the name of the CCGx firmware built for product series.
-> +      should be set one of following:
-> +      - "nvidia,gpu" for the NVIDIA RTX product series
-> +      - "nvidia,jetson-agx-xavier" for the NVIDIA Jetson product series
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index 10f0c5a6e0dc..9f356612ba7e 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -924,8 +924,9 @@ static int tegra_qspi_start_transfer_one(struct spi_device *spi,
+ static struct tegra_qspi_client_data *tegra_qspi_parse_cdata_dt(struct spi_device *spi)
+ {
+ 	struct tegra_qspi_client_data *cdata;
++	struct tegra_qspi *tqspi = spi_master_get_devdata(spi->master);
+ 
+-	cdata = devm_kzalloc(&spi->dev, sizeof(*cdata), GFP_KERNEL);
++	cdata = devm_kzalloc(tqspi->dev, sizeof(*cdata), GFP_KERNEL);
+ 	if (!cdata)
+ 		return NULL;
+ 
+-- 
+2.17.1
 
-Standard 'firmware-name' property doesn't work for you?
-
-> +
-> +patternProperties:
-> +  '^connector@[0-1]+$':
-> +    $ref: /schemas/connector/usb-connector.yaml#
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/tegra194-gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      #interrupt-cells = <2>;
-> +
-> +      ucsi-ccg@8 {
-> +        compatible = "cypress,cypd4226";
-> +        interrupt-parent = <&gpio_aon>;
-> +        interrupts = <TEGRA194_AON_GPIO(BB, 2) IRQ_TYPE_LEVEL_LOW>;
-> +        reg = <0x08>;
-> +        cypress,firmware-build = "nvidia,jetson-agx-xavier";
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        ccg_typec_con0: connector@0 {
-> +          compatible = "usb-c-connector";
-> +          reg = <0>;
-> +          label = "USB-C";
-> +          data-role = "dual";
-> +          port {
-> +            ucsi_ccg_p0: endpoint {
-> +              remote-endpoint = <&usb_role_switch0>;
-> +            };
-> +          };
-> +        };
-> +      };
-> +    };
-> -- 
-> 2.25.1
-> 
-> 
