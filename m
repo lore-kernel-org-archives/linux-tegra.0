@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8722CC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C283DC4167B
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 18:54:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235001AbiKQSyg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Nov 2022 13:54:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50952 "EHLO
+        id S239999AbiKQSyh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Nov 2022 13:54:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234957AbiKQSyd (ORCPT
+        with ESMTP id S239843AbiKQSyf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Nov 2022 13:54:33 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CC1186A55;
-        Thu, 17 Nov 2022 10:54:32 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id bj12so7308478ejb.13;
-        Thu, 17 Nov 2022 10:54:32 -0800 (PST)
+        Thu, 17 Nov 2022 13:54:35 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30EE886A6A;
+        Thu, 17 Nov 2022 10:54:34 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id n12so7342817eja.11;
+        Thu, 17 Nov 2022 10:54:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3GSsDEEAblvDk0BE3f5RNtUnRJvadWJGwufM6npt19s=;
-        b=l9Rg+JOntyygLlntbTUng7oY2DuAjpOOPzoFApjzl9DaNvM+N1+zkfu2gAkNPozWIO
-         ExQolxddYMbpDqqMbFdhJzgnaWuleFSUUdPRK0Df4JTiGycKuK1kNM5fRBjGzfbsHBJT
-         pYk0jdGmJ2gMbO/1CiTm4qCuuUHNnP6Xve2slzyzvtmuBBsazlLuUwx/GI7c96E7/M+O
-         MYYlqYkB/Ilk8WGaAVAHcVUdz+vq+aLoD0nQ/sIW72KqIrALbm3JNq/0k3LzD+AKNHBS
-         dWg63z1DuiEawkprq6AKzlFhb6kvyFf9FFujWnGOc+STde+ffwItRpj6OeS/q31cGoUm
-         Mw2g==
+        bh=KChe7s1PpwzRHFbrWjjtieMmmxAbXRPdqDfQRgAzhiY=;
+        b=A1HC15khtPAcxHJhwy2UmWcVpNOG+ih7nx6A3Q0mCPM1eQcfykAqjYPAkFrUAOZnCY
+         LA73eCi1IpLxZ5EF48GYsaHwADIGHTgsszEO7++6ez0xCrhQce+nNGHjeWeFD/VM1kZv
+         ViJQqcgcSa1rnWm95i/xVBEvx9dxW8JjSnsiSuTFOT9N2Rivo+g+etaotDgp/UdKUMl4
+         LWPP20nqvpd58/Y2QY59FEcmSbKdr5ImUz9WdFU1qIyT9vPJk7mjooR+uKqjPFqpl3Ky
+         kaeRawRrkXMPaB/808pHllE5j8UGGQZuiIJZXpUUKp0exnAW4i6SrLmbWxZawX/5WGL5
+         50jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3GSsDEEAblvDk0BE3f5RNtUnRJvadWJGwufM6npt19s=;
-        b=p+LiS4l+BLsn8o4Y6HHGKC6xPlyWwG+5q4bV3sbG55WZZ1y8EvNVF59oA0bXCb1t8/
-         2P4uQiZW28+4yQtGxzZYIqdNpwp+Tf7EptCKrcE6zhyiy0bVdh7x9LFKAdZHIvlE/Een
-         quOYzH/LIWxbnygruH1chnx251Or5x1mXSuffWPMFy47PBgIEjXehDOU1xnbdb1jgUe6
-         RznIQLq2kqFOo72rS5rYMj6lXrN4iDtWXPiWppV5nopQ1OOWxNj6n1VI5C0FSpulz52b
-         p1P5OolUuT4R3QjiLXkq12femy76Zlc71cfGVu+COGbRdQ21xqH4LkqZKMSMN/EnsUzP
-         Y4gA==
-X-Gm-Message-State: ANoB5pngg9gPzt3b3sQamI2Z/uizXMw7rSZyZL1FaklKAemqHaC/3jVz
-        M3QK1f0Ak5bWCC/J4gMS25Q=
-X-Google-Smtp-Source: AA0mqf7xBx0XwESlU6ITsaU6MsSC8tIPp7jQ6DRqgBcvnRHXWwmZQflJdXW1u3Oz1q7l94CPDRk3Vw==
-X-Received: by 2002:a17:906:95c3:b0:78e:975:5e8 with SMTP id n3-20020a17090695c300b0078e097505e8mr3282420ejy.82.1668711270991;
-        Thu, 17 Nov 2022 10:54:30 -0800 (PST)
+        bh=KChe7s1PpwzRHFbrWjjtieMmmxAbXRPdqDfQRgAzhiY=;
+        b=1L+xlrP0CaUVH0aTNykIusZCTXlWjL4SYcvVJgeyUxho09zTE1yGktifoNNdkV9Ah6
+         +WXWkP6VvkLYlQ35l5PLAygiCGX0ZqRuADRAMlMK8GtpdT9YfaU4yRshKO8R6HZ3JJ5Q
+         VYNBLw8cC/Dt/JRf+sOiQzB6FMMoy4/mhaAUyfeMH+JEjViJkUZU6xztZXRPt5et/qA4
+         1map9orZPhqoLzGmo41+rOS+ouf28VdThm3jAZCmYiqlP77aAkD/qp2+r5KeXu8HNfru
+         cxc/Zg6CVG5Rq9CB0uGOGYQ7vYgQkAh4HYtMjYpnWa+pCZbYhKK/EVgAWYKmNFlmOMJM
+         hKqQ==
+X-Gm-Message-State: ANoB5pkC+O/8xsfft8hfzVvtgg3uHgkH/sSdBc3NZj7ffEQJs8oXFuH5
+        P56toxI2odAyt0s5NyAROYY=
+X-Google-Smtp-Source: AA0mqf4n9LyHVM6Zo/xnYQV2hFBVpTg57ZXJ82wr3Azz3rXK9BYyWZbMwvdu4vhT9NijRAcmgHNfig==
+X-Received: by 2002:a17:907:11c5:b0:7b1:316c:38f7 with SMTP id va5-20020a17090711c500b007b1316c38f7mr3302794ejb.387.1668711272416;
+        Thu, 17 Nov 2022 10:54:32 -0800 (PST)
 Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id jp8-20020a170906f74800b007adaca75bd0sm712494ejb.179.2022.11.17.10.54.29
+        by smtp.gmail.com with ESMTPSA id s26-20020a056402165a00b0046800749670sm884987edx.53.2022.11.17.10.54.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Nov 2022 10:54:30 -0800 (PST)
+        Thu, 17 Nov 2022 10:54:31 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
 Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
@@ -61,10 +61,11 @@ Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
         Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
         Lucas Stach <l.stach@pengutronix.de>,
         devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
-Subject: [PATCH v12 1/4] of: Introduce of_translate_dma_region()
-Date:   Thu, 17 Nov 2022 19:54:21 +0100
-Message-Id: <20221117185424.2359687-2-thierry.reding@gmail.com>
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v12 2/4] dt-bindings: reserved-memory: Document iommu-addresses
+Date:   Thu, 17 Nov 2022 19:54:22 +0100
+Message-Id: <20221117185424.2359687-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221117185424.2359687-1-thierry.reding@gmail.com>
 References: <20221117185424.2359687-1-thierry.reding@gmail.com>
@@ -76,80 +77,163 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This function is similar to of_translate_dma_address() but also reads a
-length in addition to an address from a device tree property.
+This adds the "iommu-addresses" property to reserved-memory nodes, which
+allow describing the interaction of memory regions with IOMMUs. Two use-
+cases are supported:
 
+  1. Static mappings can be described by pairing the "iommu-addresses"
+     property with a "reg" property. This is mostly useful for adopting
+     firmware-allocated buffers via identity mappings. One common use-
+     case where this is required is if early firmware or bootloaders
+     have set up a bootsplash framebuffer that a display controller is
+     actively scanning out from during the operating system boot
+     process.
+
+  2. If an "iommu-addresses" property exists without a "reg" property,
+     the reserved-memory node describes an IOVA reservation. Such memory
+     regions are excluded from the IOVA space available to operating
+     system drivers and can be used for regions that must not be used to
+     map arbitrary buffers.
+
+Each mapping or reservation is tied to a specific device via a phandle
+to the device's device tree node. This allows a reserved-memory region
+to be reused across multiple devices.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/of/address.c       | 41 ++++++++++++++++++++++++++++++++++++++
- include/linux/of_address.h |  2 ++
- 2 files changed, 43 insertions(+)
+Changes in v12:
+- allow iommu-addresses to be specified when reg is present
 
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index c34ac33b7338..14f137a21b0c 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -626,6 +626,47 @@ u64 of_translate_dma_address(struct device_node *dev, const __be32 *in_addr)
- }
- EXPORT_SYMBOL(of_translate_dma_address);
+Changes in v10:
+- mark iommu-addresses as required in the absence of reg and size
+
+Changes in v9:
+- add Reviewed-by tags
+
+Changes in v8:
+- include validation warnings that had crept into an unrelated patch
+
+Changes in v7:
+- keep reserved-memory.txt to avoid broken references
+
+Changes in v6:
+- add device phandle to iommu-addresses property in examples
+- remove now unused dt-bindings/reserved-memory.h header
+
+ .../reserved-memory/reserved-memory.yaml      | 89 ++++++++++++++++++-
+ 1 file changed, 85 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+index 44f72bcf1782..010219138858 100644
+--- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
++++ b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+@@ -52,6 +52,30 @@ properties:
+       Address and Length pairs. Specifies regions of memory that are
+       acceptable to allocate from.
  
-+/**
-+ * of_translate_dma_region - Translate device tree address and size tuple
-+ * @dev: device tree node for which to translate
-+ * @prop: pointer into array of cells
-+ * @start: return value for the start of the DMA range
-+ * @length: return value for the length of the DMA range
-+ *
-+ * Returns a pointer to the cell immediately following the translated DMA region.
-+ */
-+const __be32 *of_translate_dma_region(struct device_node *dev, const __be32 *prop,
-+				      phys_addr_t *start, size_t *length)
-+{
-+	struct device_node *parent;
-+	u64 address, size;
-+	int na, ns;
++  iommu-addresses:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: >
++      A list of phandle and specifier pairs that describe static IO virtual
++      address space mappings and carveouts associated with a given reserved
++      memory region. The phandle in the first cell refers to the device for
++      which the mapping or carveout is to be created.
 +
-+	parent = __of_get_dma_parent(dev);
-+	if (!parent)
-+		return NULL;
++      The specifier consists of an address/size pair and denotes the IO
++      virtual address range of the region for the given device. The exact
++      format depends on the values of the "#address-cells" and "#size-cells"
++      properties of the device referenced via the phandle.
 +
-+	na = of_bus_n_addr_cells(parent);
-+	ns = of_bus_n_size_cells(parent);
++      When used in combination with a "reg" property, an IOVA mapping is to
++      be established for this memory region. One example where this can be
++      useful is to create an identity mapping for physical memory that the
++      firmware has configured some hardware to access (such as a bootsplash
++      framebuffer).
 +
-+	of_node_put(parent);
++      If no "reg" property is specified, the "iommu-addresses" property
++      defines carveout regions in the IOVA space for the given device. This
++      can be useful if a certain memory region should not be mapped through
++      the IOMMU.
 +
-+	address = of_translate_dma_address(dev, prop);
-+	if (address == OF_BAD_ADDR)
-+		return NULL;
-+
-+	size = of_read_number(prop + na, ns);
-+
-+	if (start)
-+		*start = address;
-+
-+	if (length)
-+		*length = size;
-+
-+	return prop + na + ns;
-+}
-+EXPORT_SYMBOL(of_translate_dma_region);
-+
- const __be32 *__of_get_address(struct device_node *dev, int index, int bar_no,
- 			       u64 *size, unsigned int *flags)
- {
-diff --git a/include/linux/of_address.h b/include/linux/of_address.h
-index 265f26eeaf6b..376671594746 100644
---- a/include/linux/of_address.h
-+++ b/include/linux/of_address.h
-@@ -38,6 +38,8 @@ struct of_pci_range {
- /* Translate a DMA address from device space to CPU space */
- extern u64 of_translate_dma_address(struct device_node *dev,
- 				    const __be32 *in_addr);
-+extern const __be32 *of_translate_dma_region(struct device_node *dev, const __be32 *addr,
-+					     phys_addr_t *start, size_t *length);
+   no-map:
+     type: boolean
+     description: >
+@@ -89,12 +113,69 @@ allOf:
+           - no-map
  
- #ifdef CONFIG_OF_ADDRESS
- extern u64 of_translate_address(struct device_node *np, const __be32 *addr);
+ oneOf:
+-  - required:
+-      - reg
++  - oneOf:
++      - required:
++          - reg
++
++      - required:
++          - size
++
++  - oneOf:
++      # IOMMU reservations
++      - required:
++          - iommu-addresses
+ 
+-  - required:
+-      - size
++      # IOMMU mappings
++      - required:
++          - reg
++          - iommu-addresses
+ 
+ additionalProperties: true
+ 
++examples:
++  - |
++    / {
++      compatible = "foo";
++      model = "foo";
++
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      reserved-memory {
++        #address-cells = <2>;
++        #size-cells = <2>;
++        ranges;
++
++        adsp_resv: reservation-adsp {
++          /*
++           * Restrict IOVA mappings for ADSP buffers to the 512 MiB region
++           * from 0x40000000 - 0x5fffffff. Anything outside is reserved by
++           * the ADSP for I/O memory and private memory allocations.
++           */
++          iommu-addresses = <&adsp 0x0 0x00000000 0x00 0x40000000>,
++                            <&adsp 0x0 0x60000000 0xff 0xa0000000>;
++        };
++
++        fb: framebuffer@90000000 {
++          reg = <0x0 0x90000000 0x0 0x00800000>;
++          iommu-addresses = <&dc0 0x0 0x90000000 0x0 0x00800000>;
++        };
++      };
++
++      bus@0 {
++        #address-cells = <1>;
++        #size-cells = <1>;
++        ranges = <0x0 0x0 0x0 0x40000000>;
++
++        adsp: adsp@2990000 {
++          reg = <0x2990000 0x2000>;
++          memory-region = <&adsp_resv>;
++        };
++
++        dc0: display@15200000 {
++          reg = <0x15200000 0x10000>;
++          memory-region = <&fb>;
++        };
++      };
++    };
+ ...
 -- 
 2.38.1
 
