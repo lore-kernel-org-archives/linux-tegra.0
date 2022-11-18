@@ -2,61 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028F7C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 08:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1682C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 08:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241365AbiKRICJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Nov 2022 03:02:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34592 "EHLO
+        id S241315AbiKRII6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Nov 2022 03:08:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241323AbiKRICD (ORCPT
+        with ESMTP id S241313AbiKRII4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Nov 2022 03:02:03 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FC48CF23
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 00:02:02 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id p21so3903638plr.7
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 00:02:02 -0800 (PST)
+        Fri, 18 Nov 2022 03:08:56 -0500
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5995DF91
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 00:08:55 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id f9so162629pgf.7
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 00:08:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bifffbLjthsyQVz7raaaU3RAzhugC6m3nHnZyQVgbWk=;
-        b=XAX8+PkGu+6HYW0syXQQeiMKXG9hnaZTlTJEpKHAe0/8zbt7bWVTzXPHLDXI9bihrr
-         hQtMcTnaxu1Q7XZudcR8KAEOJii+Q3RvgLFkgSMhkVvBxQ7HLy2WiV28VCBEWeJVz21a
-         NbHbJ8R7teVAhkIJn7c8ECw00V0+LleZIyjXgJ9ICxstt9dtynqxLt+Y2fPOHKwfTstF
-         Gt8KJj7CQFheeRST38mf6npWn0AgOW6Ty1/aTOcbaz5cwbjuLZfaBYNS2RMK5O9N750C
-         pGtpQM5THaBF/4cWP0YWEF4knpp8n8UgGoGVX93BBuTfW0SlgsT8Ysj5jim4NVUK4j52
-         b6cQ==
+        bh=HK+MyCShb+nHfuM6gVYf2CHmO8+y6qJHQoW3+GkzIAI=;
+        b=JcDmZL9df9+Ge3smp3NbdqOqmwGX1d6ySubYsFaYc2L1e+s9WIRvZuC54Z9uHc5kTD
+         CvXieTulujePESowDV3fWbjNQRyhf0Od/gBRL2RiSER9iN5k2I3Tu9biuRt/MRnitAkr
+         6zS5zMykDqUPbg2lfwM1AH2Izx5jA/1IAP9gdn7Pzww+I6bC5zlYzyoenGLDmyf+hPll
+         mDyPIemjFpPyj2kgJ05mgFCwG9bhK2R909+1ieSCanE8c4ywMlxRtpe2GLQdbU3RxUI1
+         Eo5IY67lW9kv7yAroSou5g4y/U31bTa3/u3RaUNAqadG2S87Ud9K9jhBz9B3dhVfQsA/
+         e6dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bifffbLjthsyQVz7raaaU3RAzhugC6m3nHnZyQVgbWk=;
-        b=LLQNAwrvdoY1IZIuPCfKF+cZzVHfBE8LzZoEPP2hn2wJPF//ZyZ48NB250JXtm5Tvx
-         5udu+3dGV/JppP8rNvU6zNh4TjBHVxZTWej9hsFC2GCHNwzgbjmaV788412MR3Ndbybz
-         1nxonLcGzDHlNNzv6ZQitNhMXLCr1rrARdCnIxZd5j9YmvsnKjrCRwwLUis8RtW2pxvV
-         X57gFa0wEXbkbBeYUV42TrYvfW0JqXWU1pABqWbXFV4RZmtMFu4fYjJj5yun2L+n+Npd
-         JtATSZOwcSNaLgQN0L7eipiL8OfGGw5BmIln3ngvWnjiTXK500ZHLsqKTTGZc/1B7I5Y
-         KAnA==
-X-Gm-Message-State: ANoB5plnfKXDyGGbSo/4bbISbsBO7rzr1wCkxQns6EAXn+FIXRJJWR7s
-        6cdqysb1he4E9Nify99ludOGgXPa+d6yfczSSNN1cA==
-X-Google-Smtp-Source: AA0mqf7uIxS1uD0aKZ0+PKLuC65tvNGec6Ak2rcHaY8X8Q5yIKNb+Vht2qiD72nu7B3QLiyaEGzexfyj1KQhqXgGFxQ=
-X-Received: by 2002:a17:90a:7804:b0:211:2d90:321 with SMTP id
- w4-20020a17090a780400b002112d900321mr12688080pjk.84.1668758522152; Fri, 18
- Nov 2022 00:02:02 -0800 (PST)
+        bh=HK+MyCShb+nHfuM6gVYf2CHmO8+y6qJHQoW3+GkzIAI=;
+        b=i1LKy7Yd+U3LNTI8WLcToNNdfW0DINO+Ax4cE1PaWng8hCEyVk30FfAtSsX23m7+TC
+         MaQe8dwNBxOEeBf/3x9cvC8u/nH93LGTXnRpMuCtLCx6C7hOsQS6W9v6iWXyWlFEGR2l
+         JaHO4VzwCqnZy1bjHYeKKtNHuCWdWmcif986nqo/EkTrLizQdQNtJnDiEfIGpMs6yKFL
+         EyeH+vBD8R0WNmVA8MKO3qFZTny3IF3aFRYYwXoxVnzePhU6zIoSUXGoREyi4ZAy8f71
+         6Ovv3uLc1ZldOHl5klbkd9J0S664g5LxSRrYq9l6UTDTPUr5lCkMQbowFbJGVZnUODFo
+         cSGg==
+X-Gm-Message-State: ANoB5pmvHaUQ+3yS8MxLkF43tM7Tp2UAiHzLtSLPre9lm5ikQlL/4dmN
+        qbADZEHku6t8S0IwfyAwx1aU9/LPbEl2ThZCSBdZrA==
+X-Google-Smtp-Source: AA0mqf5w4ScLyMXSluNz1fb5dK6/i0eWZxFkyYGlRvBVDM5jgeQuONmLttF72KlOEjxrzQWE6zC7mAku3prGjsYLV1I=
+X-Received: by 2002:a63:4285:0:b0:477:15c8:cd8a with SMTP id
+ p127-20020a634285000000b0047715c8cd8amr4250171pga.595.1668758935435; Fri, 18
+ Nov 2022 00:08:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20221117182720.2290761-1-thierry.reding@gmail.com>
- <20221117182720.2290761-4-thierry.reding@gmail.com> <11a4e08b-f176-a39a-365c-278b08fc1bdb@intel.com>
-In-Reply-To: <11a4e08b-f176-a39a-365c-278b08fc1bdb@intel.com>
+References: <20221117182720.2290761-1-thierry.reding@gmail.com> <20221117182720.2290761-3-thierry.reding@gmail.com>
+In-Reply-To: <20221117182720.2290761-3-thierry.reding@gmail.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 18 Nov 2022 09:01:23 +0100
-Message-ID: <CAPDyKFoOWuWFUq+yzm-K+9yZZjpky54VdB84ea-nzw5hSrOESQ@mail.gmail.com>
-Subject: Re: [PATCH v11 3/6] mmc: sdhci-tegra: Sort includes alphabetically
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
+Date:   Fri, 18 Nov 2022 09:08:17 +0100
+Message-ID: <CAPDyKFpGs4TvkV5FKnfpQH45qAiwhJfSiP60P2vMSX30GsMkQQ@mail.gmail.com>
+Subject: Re: [PATCH v11 2/6] iommu/tegra: Add tegra_dev_iommu_get_stream_id() helper
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Robin Murphy <robin.murphy@arm.com>,
         Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,32 +68,64 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 18 Nov 2022 at 08:33, Adrian Hunter <adrian.hunter@intel.com> wrote:
+On Thu, 17 Nov 2022 at 19:27, Thierry Reding <thierry.reding@gmail.com> wrote:
 >
-> On 17/11/22 20:27, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Sort includes alphabetically to make it easier to add new ones
-> > subsequently.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/mmc/host/sdhci-tegra.c | 23 ++++++++++++-----------
-> >  1 file changed, 12 insertions(+), 11 deletions(-)
+> From: Thierry Reding <treding@nvidia.com>
 >
-> 12 insertions and 11 deletions because linux/bitfield.h
-> was added.
+> Access to the internals of struct iommu_fwspec by non-IOMMU drivers is
+> discouraged. Many drivers for Tegra SoCs, however, need access to their
+> IOMMU stream IDs so that they can be programmed into various hardware
+> registers.
 >
-> I am not super enthusiastic about reordering includes.
-> I would advise people to text search to find an include
-> instead.
+> Formalize this access into a common helper to make it easier to audit
+> and maintain.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  include/linux/iommu.h | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index dc5e6f5c14fc..f0d72acad7db 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -1186,4 +1186,25 @@ static inline u32 iommu_sva_get_pasid(struct iommu_sva *handle)
+>  }
+>  #endif /* CONFIG_IOMMU_SVA */
+>
+> +/*
+> + * Newer generations of Tegra SoCs require devices' stream IDs to be directly programmed into
+> + * some registers. These are always paired with a Tegra SMMU or ARM SMMU, for which the contents
+> + * of the struct iommu_fwspec are known. Use this helper to formalize access to these internals.
+> + */
+> +#define TEGRA_STREAM_ID_BYPASS 0x7f
+> +
+> +static inline bool tegra_dev_iommu_get_stream_id(struct device *dev, u32 *stream_id)
+> +{
+> +#ifdef CONFIG_IOMMU_API
+> +       struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> +
+> +       if (fwspec && fwspec->num_ids == 1) {
+> +               *stream_id = fwspec->ids[0] & 0xffff;
+> +               return true;
+> +       }
+> +#endif
 
-Yes, I agree with you. I don't quite see the benefit.
+It's totally up to iommu maintainers to decide, but I personally would
+prefer to replace the below part with a stub function, defined when
+CONFIG_IOMMU_API is unset.
 
-On the other hand, I don't want to waste my time on discussing it (I
-just did!?), as it's (currently) not that such a big deal, I think.
+> +
+> +       return false;
+> +}
+> +
+>  #endif /* __LINUX_IOMMU_H */
+> --
+> 2.38.1
+>
 
-[...]
+Other than that, both patch1 and patch2 look good to me. I can pick up
+the series, after an ack from Robin or Joerg.
 
 Kind regards
 Uffe
