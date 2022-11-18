@@ -2,138 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DB6C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 17:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6966DC4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 18:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242359AbiKRRfE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Nov 2022 12:35:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35576 "EHLO
+        id S241673AbiKRSu6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Nov 2022 13:50:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242549AbiKRRef (ORCPT
+        with ESMTP id S235421AbiKRSu6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Nov 2022 12:34:35 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B08DEA
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 09:33:28 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id t25so14699133ejb.8
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 09:33:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WS9M7nkv2mKxuRQYxJibp6IkMyIes9Ra8OJxrBmXq2E=;
-        b=AG5X4Mx7ggQNxcG2GnNzp/jza2KW7WuKAt7WSV38XtpT6fZJsnFPOUZP07475Y0QH0
-         T9to1PK04EBx2IZbKLsD3Kipx5izeQRZAw7qKKQfYIAsKWpyuqKHm0flrHz9N6TZCayi
-         bYxjB4l3owYwisEArqQJYD8q0by/8ozKY1eDv16aZqXym6MJx1z08YFPnpHLCkPaV4f9
-         85/1XWfcTpZk+XpSGMxGvkv3jCQDoG6YFpEaNLGbBc93y0YZBr3VivcYBzPrbZGgFSsI
-         IT+N2Q2KcoZ0teAEO9BQMf4noqNZJqX3oTortle78ggVOlbx8t3BqkUR9pWeasGBvx37
-         XiNQ==
+        Fri, 18 Nov 2022 13:50:58 -0500
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6766A684;
+        Fri, 18 Nov 2022 10:50:53 -0800 (PST)
+Received: by mail-ot1-f44.google.com with SMTP id t19-20020a9d7753000000b0066d77a3d474so3602119otl.10;
+        Fri, 18 Nov 2022 10:50:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WS9M7nkv2mKxuRQYxJibp6IkMyIes9Ra8OJxrBmXq2E=;
-        b=H88QxupFDiprqCLzYnbf6Evu4abzpOzCLRT2uf/UGug+yNCUxGhsQQpz5Q0TJ3vvub
-         4zb1/2PIPhpKRxyiFoPauKLzVdvRlT6VKaONxLBKIUK0S7d3A+EwGCeacTLB377Vor5T
-         Zz2wJQ1rsqSIbgkpgFa+2P8HT5FnRD9Xd4GkSR+56X/qgSAy+dp7n+Bwqgsp6/Jjapv6
-         UWXKXaQSgwmSNppBHUszTSSLA58DYSSoqBvc687R87KYB+N3QN1XYnPZnlgaeYEx+0/c
-         NqJlSd+HfxPqmcMP6iFSm+JiCY8MSkb8VOwrOHdMQe+BWjmwvjfU9SgAMFiZslglRrX9
-         TARg==
-X-Gm-Message-State: ANoB5plhc4TjweTYHwd+KR6oW1QhX7ZcYCYzcy64p5Y6Y2ClE9SV7Mh7
-        /oTZa3soJewhVwhhCqkSmt4=
-X-Google-Smtp-Source: AA0mqf5ZKXHkqOO6dvbQohrlWrETz58kuWgCM+pm3YRZ2ZJ4I/0EP1TxQ3zyD/H5iI12/i0+KLjcrA==
-X-Received: by 2002:a17:906:c405:b0:7aa:4560:2dc7 with SMTP id u5-20020a170906c40500b007aa45602dc7mr7018337ejz.33.1668792806633;
-        Fri, 18 Nov 2022 09:33:26 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 1-20020a170906310100b0078df26efb7dsm1940498ejx.107.2022.11.18.09.33.26
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JOLYMjkXXvB/weWZsQxyRISw40hXb3p7LqGqtWVTDyk=;
+        b=sTF/mHtX5e0RWJM4kWUnBNqThzunWU5J/qo9/hkGcTQFwClaO9VetXNd8tg5XNR+Bm
+         d5FxSP9Uq3e3SqnBJPBBVBiJGk9P9YmYmEsZneg1rjBFTl8T3HxswfnkmZrHf0hSifWI
+         auhVf/39Nb9clnemKYo46dttBw75Y3yS7xLU0EljSg9EwwS1CdqmlucNVb4sjFcEB263
+         JlI4Waj6sFrHtkELi0sYN9VRV+pZwAYapXVRrIDLeHpieQgACbltPobQ4i+FedlMh2pV
+         uJm5afTPURkRkc25zszPjvN9GLXk2yQ8a+aUCuzSIgGQnZS+LtUpRPmHJTF8UBHveu46
+         0cMQ==
+X-Gm-Message-State: ANoB5pkpChfOo+TPhkgojzaK20crAZceZ6NrLlpbBqo5Y1qyEmnTlXyz
+        njUpllYXDsCm7EG3HtnnyA==
+X-Google-Smtp-Source: AA0mqf7tBcu9Tt0wpRksmHNxtPfG9uapvJ93nee4Ye90gw6t5D9ERUX1LfIp81dsHVG05A5sBN7PqQ==
+X-Received: by 2002:a9d:7e9a:0:b0:66c:6096:1878 with SMTP id m26-20020a9d7e9a000000b0066c60961878mr4549610otp.203.1668797452969;
+        Fri, 18 Nov 2022 10:50:52 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id r25-20020a056830135900b00661c0747545sm1889218otq.44.2022.11.18.10.50.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 09:33:26 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] drm/tegra: Changes for v6.2-rc1
-Date:   Fri, 18 Nov 2022 18:33:25 +0100
-Message-Id: <20221118173325.742647-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.38.1
-MIME-Version: 1.0
+        Fri, 18 Nov 2022 10:50:52 -0800 (PST)
+Received: (nullmailer pid 856954 invoked by uid 1000);
+        Fri, 18 Nov 2022 18:50:54 -0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Rob Herring <robh@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     krzysztof.kozlowski+dt@linaro.org, linux-tegra@vger.kernel.org,
+        treding@nvidia.com, linux-usb@vger.kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
+        waynec@nvidia.com, Mathias Nyman <mathias.nyman@intel.com>,
+        vkoul@kernel.org, gregkh@linuxfoundation.org
+In-Reply-To: <20221118154006.173082-2-jonathanh@nvidia.com>
+References: <20221118154006.173082-1-jonathanh@nvidia.com>
+ <20221118154006.173082-2-jonathanh@nvidia.com>
+Message-Id: <166879727106.849035.12126185559088998329.robh@kernel.org>
+Subject: Re: [PATCH V4 1/6] dt-bindings: usb: Add NVIDIA Tegra234 XUSB host
+ controller binding
+Date:   Fri, 18 Nov 2022 12:50:54 -0600
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dave, Daniel,
 
-The following changes since commit c2418f911a31a266af4fbaca998dc73d3676475a:
+On Fri, 18 Nov 2022 15:40:01 +0000, Jon Hunter wrote:
+> From: Wayne Chang <waynec@nvidia.com>
+> 
+> Add device-tree binding documentation for the XUSB host controller present
+> on Tegra234 SoC. This controller supports the USB 3.1 specification.
+> 
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> V3 -> V4: minor update to the power-domain description
+> V2 -> V3: nothing has changed
+> V1 -> V2: address the issue on phy-names property
+> 
+>  .../bindings/usb/nvidia,tegra234-xusb.yaml    | 158 ++++++++++++++++++
+>  1 file changed, 158 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+> 
 
-  gpu: host1x: Avoid trying to use GART on Tegra20 (2022-11-18 09:33:20 +0100)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-are available in the Git repository at:
+yamllint warnings/errors:
 
-  https://gitlab.freedesktop.org/drm/tegra.git tags/drm/tegra/for-6.2-rc1
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dts:36.29-30 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:406: Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.example.dtb] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1492: dt_binding_check] Error 2
 
-for you to fetch changes up to 1eb336ed12cda68cb207dbdb6918dc60b151ef6a:
+doc reference errors (make refcheckdocs):
 
-  gpu: host1x: Staticize host1x_syncpt_fence_ops (2022-11-18 09:33:31 +0100)
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221118154006.173082-2-jonathanh@nvidia.com
 
-Thanks,
-Thierry
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-----------------------------------------------------------------
-drm/tegra: Changes for v6.2-rc1
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-This contains a bunch of cleanups across the board as well as support
-for the NVDEC hardware found on the Tegra234 SoC.
+pip3 install dtschema --upgrade
 
-----------------------------------------------------------------
-Dmitry Torokhov (1):
-      drm/tegra: Switch to using devm_fwnode_gpiod_get()
+Please check and re-submit after running the above command.
 
-Jani Nikula (1):
-      drm/tegra: Convert to using is_hdmi from display info
-
-Liu Shixin (1):
-      gpu: host1x: Use DEFINE_SHOW_ATTRIBUTE to simplify debugfs code
-
-Mikko Perttunen (6):
-      gpu: host1x: Select context device based on attached IOMMU
-      memory: tegra: Add API for retrieving carveout bounds
-      gpu: host1x: Add stream ID register data for NVDEC on Tegra234
-      drm/tegra: nvdec: Support multiple clocks
-      drm/tegra: Add code for booting RISC-V based engines
-      drm/tegra: Add Tegra234 support to NVDEC driver
-
-Qing Wang (1):
-      drm/tegra: Switch over to vmemdup_user()
-
-Thierry Reding (2):
-      gpu: host1x: Update host1x_memory_context_alloc() !IOMMU_API stub
-      gpu: host1x: Staticize host1x_syncpt_fence_ops
-
-Zhang Zekun (1):
-      drm/tegra: Add missing clk_disable_unprepare() in tegra_dc_probe()
-
-ruanjinjie (1):
-      drm/tegra: Make gather_bo_ops static
-
- drivers/gpu/drm/tegra/Makefile  |   3 +-
- drivers/gpu/drm/tegra/dc.c      |   4 +-
- drivers/gpu/drm/tegra/drm.c     |   1 +
- drivers/gpu/drm/tegra/hdmi.c    |   9 +--
- drivers/gpu/drm/tegra/nvdec.c   | 171 ++++++++++++++++++++++++++++++++++------
- drivers/gpu/drm/tegra/output.c  |  10 +--
- drivers/gpu/drm/tegra/riscv.c   | 106 +++++++++++++++++++++++++
- drivers/gpu/drm/tegra/riscv.h   |  30 +++++++
- drivers/gpu/drm/tegra/submit.c  |  13 +--
- drivers/gpu/drm/tegra/uapi.c    |   2 +-
- drivers/gpu/host1x/context.c    |   4 +
- drivers/gpu/host1x/debug.c      |  28 +------
- drivers/gpu/host1x/dev.c        |  12 +++
- drivers/gpu/host1x/fence.c      |   2 +-
- drivers/memory/tegra/mc.c       |  25 ++++++
- drivers/memory/tegra/tegra234.c |   5 ++
- include/linux/host1x.h          |   2 +
- include/soc/tegra/mc.h          |  11 +++
- 18 files changed, 362 insertions(+), 76 deletions(-)
- create mode 100644 drivers/gpu/drm/tegra/riscv.c
- create mode 100644 drivers/gpu/drm/tegra/riscv.h
