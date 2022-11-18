@@ -2,199 +2,244 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CF2C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 16:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2B1C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 16:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240540AbiKRQKm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Nov 2022 11:10:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38360 "EHLO
+        id S241622AbiKRQ24 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Nov 2022 11:28:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235232AbiKRQKl (ORCPT
+        with ESMTP id S235357AbiKRQ2y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Nov 2022 11:10:41 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27CDBE027;
-        Fri, 18 Nov 2022 08:10:40 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D08B41FD09;
-        Fri, 18 Nov 2022 16:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1668787838; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7U/1Mi9nox8mJnkOVl/gHzJRLLVp3fDrIQVfSYDlOSk=;
-        b=Y0ZMSe4NSFyXZLlqG6uTnBbbqZQ+5up8cQU9/mO9lX9NoQ9QzyEXAGdTaPAQ1ZT2Q5uuwF
-        o9bkWSOWAcOmu2YZFJf2PVNgaHt2gpplxc8N0Ovp+Payy6MEChIlgmJcWRWcB771ygaCOC
-        QJlkHFrnpTFFwer/NuOtytVafSGwv80=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1668787838;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7U/1Mi9nox8mJnkOVl/gHzJRLLVp3fDrIQVfSYDlOSk=;
-        b=Dm4qO+o4PwY0DjSkEMJgZuHF+qUtj76l6vHJ6g7nJtx5QR1gdFhF3ssKdlug51A3U6AuWL
-        sH9Z2XDU47M+XQBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9D68D13A66;
-        Fri, 18 Nov 2022 16:10:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id v9N3JX6ud2PffQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Fri, 18 Nov 2022 16:10:38 +0000
-Message-ID: <dbfd2e78-3250-ba4b-b8e0-96df46ce33a5@suse.de>
-Date:   Fri, 18 Nov 2022 17:10:38 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v3 7/8] drm/simpledrm: Support the XB24/AB24 format
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        David Airlie <airlied@redhat.com>,
+        Fri, 18 Nov 2022 11:28:54 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7EA91D313;
+        Fri, 18 Nov 2022 08:28:52 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id n21so14256562ejb.9;
+        Fri, 18 Nov 2022 08:28:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o7I/f2EYSr3aJDY2Ej4kxRkx+eOd+B9qRwYtt2bgbF8=;
+        b=OPhkeX3iNWjD5Mtu/rObm8ROZEJODP95/EGbud4/PkX8qR3EJLFOIhUtSIFfOzssj4
+         Tb5yYyihdCuXfUXugmdCEO1MT8Cld6zGIEKpVGI8xD4Jikk2pQgG8SIyIPaFjMH+69J5
+         FaWgshB9eNDZDUWmhgWqSaYn10grz/qLmNhDST5BhfYZHuwfaTrweyQH8Jbug3m1bRPG
+         +9EalGb/X4zcsgNm9+948ZGPWWqCd60lmWQnPFy2G/gN0Ka7M+iTFD2MllsnJkpG5m1K
+         NZeLXFzDhQo9qEAljAr2moCIJPbxeOVPxggSr6o/Rs2BOFjO/cooKHU0Lwp3JQHzKb9q
+         /vVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o7I/f2EYSr3aJDY2Ej4kxRkx+eOd+B9qRwYtt2bgbF8=;
+        b=OjLgTEUx1+T+5/Q75f77ZvSqCDsgoyQakRj9X14+aXjVC3rbPUgq2XlMUFzHzIJLZj
+         ijIRn2X2Xks9RnWMJGPVGYczpEjyKoJ6nBZ66hFOHlBzDLCOUfs+t2HAcKxr4naY93ys
+         BG2FplRvLMaVmhDaysVbY/mYmxn4oFkhF8erWvLGMdIPfYObAVeOkOv+N5A3T26xOfpc
+         7TWTZfk3xQ166mRV8A1o9e5cOM5hb6VlQFbDjiD0E1UuhAGX/TcOanRYpFs8/6Sc0RDH
+         JqWt+VTgj+ojkWpzKpgTtr0AT05jOJJvhVBY2T/VJ7Bdglqv+YF+IZ6QBL+VLZn1nGLy
+         eQKQ==
+X-Gm-Message-State: ANoB5plRr1Kin5sG31eXgWxwM502C6B8aRJdDbYFC7qNZURhldCKgRZf
+        C9bXEAFDzcZeijof24aaIOs=
+X-Google-Smtp-Source: AA0mqf6Pmuli5f8rC5IpgUIcdVFB8XjOrpzL+LKn0ukItpVfKInpCgIuS6Sb3TU3CGdu0XIRCkSk1g==
+X-Received: by 2002:a17:906:28d5:b0:7ad:88f8:68fb with SMTP id p21-20020a17090628d500b007ad88f868fbmr6755968ejd.277.1668788931124;
+        Fri, 18 Nov 2022 08:28:51 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id l19-20020aa7cad3000000b0045bd257b307sm1978015edt.22.2022.11.18.08.28.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Nov 2022 08:28:50 -0800 (PST)
+Date:   Fri, 18 Nov 2022 17:28:48 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, David Airlie <airlied@redhat.com>,
         Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 5/8] drm/simpledrm: Add support for system memory
+ framebuffers
+Message-ID: <Y3eywMZMGOG8wx/f@orome>
 References: <20221117184039.2291937-1-thierry.reding@gmail.com>
- <20221117184039.2291937-8-thierry.reding@gmail.com>
- <7018f094-e1f8-d82d-f4b2-b1ae833d1c47@suse.de> <Y3eoeLLOxHaruPOV@orome>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <Y3eoeLLOxHaruPOV@orome>
+ <20221117184039.2291937-6-thierry.reding@gmail.com>
+ <053fbbc2-824d-648b-fdac-6f6c7c64181d@suse.de>
+ <Y3em7dwyJgQI1vZw@orome>
+ <9bf3dde1-dbbf-a03f-6659-68ecd4fce8cf@suse.de>
+MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------202Dtp8cf83Uuq0DcdWHeP0f"
+        protocol="application/pgp-signature"; boundary="CiIa2B9WdSpqtTa2"
+Content-Disposition: inline
+In-Reply-To: <9bf3dde1-dbbf-a03f-6659-68ecd4fce8cf@suse.de>
+User-Agent: Mutt/2.2.8 (2022-11-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------202Dtp8cf83Uuq0DcdWHeP0f
-Content-Type: multipart/mixed; boundary="------------5SGVimdwae6OkR82Ao27cYgy";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- David Airlie <airlied@redhat.com>, Robin Murphy <robin.murphy@arm.com>
-Message-ID: <dbfd2e78-3250-ba4b-b8e0-96df46ce33a5@suse.de>
-Subject: Re: [PATCH v3 7/8] drm/simpledrm: Support the XB24/AB24 format
-References: <20221117184039.2291937-1-thierry.reding@gmail.com>
- <20221117184039.2291937-8-thierry.reding@gmail.com>
- <7018f094-e1f8-d82d-f4b2-b1ae833d1c47@suse.de> <Y3eoeLLOxHaruPOV@orome>
-In-Reply-To: <Y3eoeLLOxHaruPOV@orome>
 
---------------5SGVimdwae6OkR82Ao27cYgy
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+--CiIa2B9WdSpqtTa2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-SGkNCg0KQW0gMTguMTEuMjIgdW0gMTY6NDQgc2NocmllYiBUaGllcnJ5IFJlZGluZzoNCj4g
-T24gRnJpLCBOb3YgMTgsIDIwMjIgYXQgMDQ6MDg6MjNQTSArMDEwMCwgVGhvbWFzIFppbW1l
-cm1hbm4gd3JvdGU6DQo+PiBIaQ0KPj4NCj4+IEFtIDE3LjExLjIyIHVtIDE5OjQwIHNjaHJp
-ZWIgVGhpZXJyeSBSZWRpbmc6DQo+Pj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdA
-bnZpZGlhLmNvbT4NCj4+Pg0KPj4+IEFkZCBYQjI0IGFuZCBBQjI0IHRvIHRoZSBsaXN0IG9m
-IHN1cHBvcnRlZCBmb3JtYXRzLiBUaGUgZm9ybWF0IGhlbHBlcnMNCj4+PiBzdXBwb3J0IGNv
-bnZlcnNpb24gdG8gdGhlc2UgZm9ybWF0cyBhbmQgdGhleSBhcmUgZG9jdW1lbnRlZCBpbiB0
-aGUNCj4+PiBzaW1wbGUtZnJhbWVidWZmZXIgZGV2aWNlIHRyZWUgYmluZGluZ3MuDQo+Pj4N
-Cj4+PiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29t
-Pg0KPj4+IC0tLQ0KPj4+IENoYW5nZXMgaW4gdjI6DQo+Pj4gLSB0cmVhdCBBQjI0IGFzIFhC
-MjQgYW5kIHN1cHBvcnQgYm90aCBhdCB0aGUgc2FtZSB0aW1lDQo+Pj4NCj4+PiAgICBkcml2
-ZXJzL2dwdS9kcm0vdGlueS9zaW1wbGVkcm0uYyAgICAgICB8IDIgKysNCj4+PiAgICBpbmNs
-dWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvc2ltcGxlZmIuaCB8IDEgKw0KPj4+ICAgIDIgZmls
-ZXMgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspDQo+Pj4NCj4+PiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL3Rpbnkvc2ltcGxlZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGlueS9z
-aW1wbGVkcm0uYw0KPj4+IGluZGV4IDdmMzliYzU4ZGE1Mi4uYmExYzIwNTdmYzY1IDEwMDY0
-NA0KPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90aW55L3NpbXBsZWRybS5jDQo+Pj4gKysr
-IGIvZHJpdmVycy9ncHUvZHJtL3Rpbnkvc2ltcGxlZHJtLmMNCj4+PiBAQCAtNDgzLDYgKzQ4
-Myw4IEBAIHN0YXRpYyBpbnQgc2ltcGxlZHJtX2RldmljZV9pbml0X3JlZ3VsYXRvcnMoc3Ry
-dWN0IHNpbXBsZWRybV9kZXZpY2UgKnNkZXYpDQo+Pj4gICAgc3RhdGljIGNvbnN0IHVpbnQz
-Ml90IHNpbXBsZWRybV9wcmltYXJ5X3BsYW5lX2Zvcm1hdHNbXSA9IHsNCj4+PiAgICAJRFJN
-X0ZPUk1BVF9YUkdCODg4OCwNCj4+PiAgICAJRFJNX0ZPUk1BVF9BUkdCODg4OCwNCj4+PiAr
-CURSTV9GT1JNQVRfWEJHUjg4ODgsDQo+Pj4gKwlEUk1fRk9STUFUX0FCR1I4ODg4LA0KPj4N
-Cj4+IERvZXMgdGhlIGhhcmR3YXJlICpyZWFsbHkqIHN1cHBvcnQgQUI0MiBvbiBpdHMgcHJp
-bWFyeSBwbGFuZT8NCj4gDQo+IFllcywgVGVncmEgZGlzcGxheSBoYXJkd2FyZSBzdXBwb3J0
-cyB0aGlzIGZvcm1hdCBvbiB0aGUgcHJpbWFyeSBwbGFuZS4NCj4gDQo+PiBXZSByZWNlbnRs
-eSBoYWQgYSBkaXNjdXNzaW9uIGFib3V0IHRoZSBleHBvcnRlZCBmb3JtYXRzIGFuZCB0aGUg
-Y29uc2Vuc3VzIGlzDQo+PiB0aGF0IHdlIG9ubHkgd2FudCB0aGUgaGFyZHdhcmUncyBuYXRp
-dmUgZm9ybWF0cyBwbHVzIFhSR0I4ODguIFRoYXQncyBub3QNCj4+IGltcGxlbWVudGVkIHll
-dCBpbiBzaW1wbGVkcm0sIGJ1dCB0aGlzIGZvcm1hdCBsaXN0IHdpbGwgc29vbiBzZWUgYSBs
-YXJnZXINCj4+IGNsZWFudXAuDQo+Pg0KPj4gU28gSSB0aGluayBBUkdCODg4OCBsaWtlbHkg
-c2hvdWxkbid0IGJlIG9uIHRoZSBsaXN0IGhlcmUuDQo+IA0KPiBUaGlzIGlzIGZvciBjb25z
-aXN0ZW5jeSB3aXRoIHRoZSBsaXN0IGJlbG93LiBJZiBhIGRldmljZSB0cmVlIGNsYWltcw0K
-PiB0aGF0IHRoZSBmcmFtZWJ1ZmZlciBpcyBBQkdSODg4OCB1c2luZyB0aGUgImE4YjhnOHI4
-IiBzdHJpbmcsIHRoZW4NCj4gc2hvdWxkbid0IHdlIHN1cHBvcnQgaXQ/DQoNClRoZSBzaXR1
-YXRpb24gaXMgY29tcGxpY2F0ZWQuIFNldmVyYWwgRFRzIGNsYWltIHRoYXQgdGhlaXIgZnJh
-bWVidWZmZXJzIA0Kc3VwcG9ydCBBbHBoYStSR0Igd2hlbiB0aGV5IGFjdHVhbGx5IG1lYW4g
-WCtSR0IuIEJ1dCBmb3IgY29tcGF0aWJpbGl0eSwgDQp3ZSBjYW5ub3QgY2hhbmdlIHRoaXMg
-bm93IEFGQUlVLiBTbyB3ZSdyZSBzdHVjayB3aXRoIFgrUkdCIGZyYW1lYnVmZmVycyANCnRo
-YXQgY2xhaW0gdGhhdCB0aGV5IGhhdmUgYW4gYWxwaGEgY2hhbm5lbC4gT1RPSCwgb3RoZXIg
-aGFyZHdhcmUgbWlnaHQgDQphY3R1YWxseSBzdXBwb3J0IHRoZSBhbm5vdW5jZWQgYWxwaGEg
-Y2hhbm5lbC4gVHJ5aW5nIHRvIHJlbmRlciBpbnRvIGFuIA0KYWxwaGEgY2hhbm5lbCB3b3Vs
-ZCB0aGVyZWZvcmUgcHJvZHVjZSB1bmRlZmluZWQgb3V0cHV0Lg0KDQpUaGUgY29uc2Vuc3Vz
-IGlzIHRoYXQgd2Ugb25seSB3YW50IHRvIGFubm91bmNlIFhSR0I4ODg4IHBsdXMgdGhlIG5h
-dGl2ZSANCmZvcm1hdCB0byB1c2Vyc3BhY2UuIEJ1dCBpZiB0aGUgbmF0aXZlIGZvcm1hdCBo
-YXMgYW4gYWxwaGEgY2hhbm5lbCwgd2UnZCANCmFubm91bmNlIHRoZSBub24tYWxwaGEgZm9y
-bWF0IGluc3RlYWQuIE91ciBmb3JtYXQtY29udmVyc2lvbiBoZWxwZXJzIA0Kd291bGQgdGhl
-biBmaWxsIHRoZSBhbHBoYSBjaGFubmVsIGF1dG9tYXRpY2FsbHkgd2l0aCAweGZmIGR1cmlu
-ZyB0aGUgDQpwYWdlZmxpcC4NCg0KKFRoaXMgaGFzbid0IHlldCBiZWVuIGZ1bGx5IGltcGxl
-bWVudGVkIGJlY2F1c2Ugd2UgZmlyc3QgbmVlZCB0byBmaXggYSANCmZldyB0aGluZ3MgaW4g
-ZmJkZXYgZW11bGF0aW9uIHRvIG1ha2UgaXQgd29yay4pDQoNClRoZXJlZm9yZSBBQkdSODg4
-OCBzaG91bGRuJ3QgYmUgb24gdGhlIGxpc3QuIE5vdGUgdGhhdCBhIG5hdGl2ZSBEUk0gDQpk
-cml2ZXIgZm9yIHlvdXIgZGlzcGxheSBoYXJkd2FyZSB3b3VsZCBiZSBmcmVlIHRvIGV4cG9y
-dCBBQkdSODg4OC4gV2UgDQpvbmx5IGhhdmUgdGhpcyBydWxlIGZvciB0aGUgaGFyZHdhcmUt
-YWdub3N0aWMgZHJpdmVycy4NCg0KQmVzdCByZWdhcmRzDQpUaG9tYXMNCg0KPiANCj4gVGhp
-ZXJyeQ0KPiANCj4+DQo+PiBCZXN0IHJlZ2FyZHMNCj4+IFRob21hcw0KPj4NCj4+PiAgICAJ
-RFJNX0ZPUk1BVF9SR0I1NjUsDQo+Pj4gICAgCS8vRFJNX0ZPUk1BVF9YUkdCMTU1NSwNCj4+
-PiAgICAJLy9EUk1fRk9STUFUX0FSR0IxNTU1LA0KPj4+IGRpZmYgLS1naXQgYS9pbmNsdWRl
-L2xpbnV4L3BsYXRmb3JtX2RhdGEvc2ltcGxlZmIuaCBiL2luY2x1ZGUvbGludXgvcGxhdGZv
-cm1fZGF0YS9zaW1wbGVmYi5oDQo+Pj4gaW5kZXggMjdlYTk5YWY2ZTFkLi40Zjk0ZDUyYWM5
-OWYgMTAwNjQ0DQo+Pj4gLS0tIGEvaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL3NpbXBs
-ZWZiLmgNCj4+PiArKysgYi9pbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvc2ltcGxlZmIu
-aA0KPj4+IEBAIC0yMiw2ICsyMiw3IEBADQo+Pj4gICAgCXsgInI4ZzhiOCIsIDI0LCB7MTYs
-IDh9LCB7OCwgOH0sIHswLCA4fSwgezAsIDB9LCBEUk1fRk9STUFUX1JHQjg4OCB9LCBcDQo+
-Pj4gICAgCXsgIng4cjhnOGI4IiwgMzIsIHsxNiwgOH0sIHs4LCA4fSwgezAsIDh9LCB7MCwg
-MH0sIERSTV9GT1JNQVRfWFJHQjg4ODggfSwgXA0KPj4+ICAgIAl7ICJhOHI4ZzhiOCIsIDMy
-LCB7MTYsIDh9LCB7OCwgOH0sIHswLCA4fSwgezI0LCA4fSwgRFJNX0ZPUk1BVF9BUkdCODg4
-OCB9LCBcDQo+Pj4gKwl7ICJ4OGI4ZzhyOCIsIDMyLCB7MCwgOH0sIHs4LCA4fSwgezE2LCA4
-fSwgezAsIDB9LCBEUk1fRk9STUFUX1hCR1I4ODg4IH0sIFwNCj4+PiAgICAJeyAiYThiOGc4
-cjgiLCAzMiwgezAsIDh9LCB7OCwgOH0sIHsxNiwgOH0sIHsyNCwgOH0sIERSTV9GT1JNQVRf
-QUJHUjg4ODggfSwgXA0KPj4+ICAgIAl7ICJ4MnIxMGcxMGIxMCIsIDMyLCB7MjAsIDEwfSwg
-ezEwLCAxMH0sIHswLCAxMH0sIHswLCAwfSwgRFJNX0ZPUk1BVF9YUkdCMjEwMTAxMCB9LCBc
-DQo+Pj4gICAgCXsgImEycjEwZzEwYjEwIiwgMzIsIHsyMCwgMTB9LCB7MTAsIDEwfSwgezAs
-IDEwfSwgezMwLCAyfSwgRFJNX0ZPUk1BVF9BUkdCMjEwMTAxMCB9LCBcDQo+Pg0KPj4gLS0g
-DQo+PiBUaG9tYXMgWmltbWVybWFubg0KPj4gR3JhcGhpY3MgRHJpdmVyIERldmVsb3Blcg0K
-Pj4gU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQo+PiBNYXhmZWxkc3Ry
-LiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkNCj4+IChIUkIgMzY4MDksIEFHIE7DvHJu
-YmVyZykNCj4+IEdlc2Now6RmdHNmw7xocmVyOiBJdm8gVG90ZXYNCj4gDQo+IA0KPiANCg0K
-LS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERldmVsb3Blcg0KU1VT
-RSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpNYXhmZWxkc3RyLiA1LCA5MDQw
-OSBOw7xybmJlcmcsIEdlcm1hbnkNCihIUkIgMzY4MDksIEFHIE7DvHJuYmVyZykNCkdlc2No
-w6RmdHNmw7xocmVyOiBJdm8gVG90ZXYNCg==
+On Fri, Nov 18, 2022 at 04:54:31PM +0100, Thomas Zimmermann wrote:
+> Hi
+>=20
+> Am 18.11.22 um 16:38 schrieb Thierry Reding:
+> > On Fri, Nov 18, 2022 at 03:21:14PM +0100, Thomas Zimmermann wrote:
+> > > Hi
+> > >=20
+> > > Am 17.11.22 um 19:40 schrieb Thierry Reding:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >=20
+> > > > Simple framebuffers can be set up in system memory, which cannot be
+> > > > requested and/or I/O remapped using the I/O resource helpers. Add a
+> > > > separate code path that obtains system memory framebuffers from the
+> > > > reserved memory region referenced in the memory-region property.
+> > > >=20
+> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > ---
+> > > > Changes in v3:
+> > > > - simplify memory code and move back to simpledrm_device_create()
+> > > > - extract screen_base iosys_map fix into separate patch
+> > > >=20
+> > > > Changes in v2:
+> > > > - make screen base a struct iosys_map to avoid sparse warnings
+> > > >=20
+> > > >    drivers/gpu/drm/tiny/simpledrm.c | 99 ++++++++++++++++++++++++--=
+------
+> > > >    1 file changed, 75 insertions(+), 24 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tin=
+y/simpledrm.c
+> > > > index 3673a42e4bf4..7f39bc58da52 100644
+> > > > --- a/drivers/gpu/drm/tiny/simpledrm.c
+> > > > +++ b/drivers/gpu/drm/tiny/simpledrm.c
+> > > > @@ -3,6 +3,7 @@
+> > > >    #include <linux/clk.h>
+> > > >    #include <linux/of_clk.h>
+> > > >    #include <linux/minmax.h>
+> > > > +#include <linux/of_address.h>
+> > > >    #include <linux/platform_data/simplefb.h>
+> > > >    #include <linux/platform_device.h>
+> > > >    #include <linux/regulator/consumer.h>
+> > > > @@ -184,6 +185,31 @@ simplefb_get_format_of(struct drm_device *dev,=
+ struct device_node *of_node)
+> > > >    	return simplefb_get_validated_format(dev, format);
+> > > >    }
+> > > > +static struct resource *
+> > > > +simplefb_get_memory_of(struct drm_device *dev, struct device_node =
+*of_node)
+> > > > +{
+> > > > +	struct device_node *np;
+> > > > +	struct resource *res;
+> > > > +	int err;
+> > > > +
+> > > > +	np =3D of_parse_phandle(of_node, "memory-region", 0);
+> > > > +	if (!np)
+> > > > +		return NULL;
+> > > > +
+> > > > +	res =3D devm_kzalloc(dev->dev, sizeof(*res), GFP_KERNEL);
+> > > > +	if (!res)
+> > > > +		return ERR_PTR(-ENOMEM);
+> > > > +
+> > > > +	err =3D of_address_to_resource(np, 0, res);
+> > > > +	if (err)
+> > > > +		return ERR_PTR(err);
+> > > > +
+> > > > +	if (of_get_property(of_node, "reg", NULL))
+> > > > +		drm_warn(dev, "preferring \"memory-region\" over \"reg\" propert=
+y\n");
+> > >=20
+> > > The reg property is converted to a device resource when we create the=
+ device
+> > > at [1].
+> > >=20
+> > > I have another question, which I was discussing with Javier recently.=
+ Is it
+> > > possible to handle memory-region there automatically? If, for exmaple=
+, it
+> > > would create a resource with IORESOURCE_CACHEABLE, simpledrm would ha=
+ndle it
+> > > as memory region. Without the CACHEABLE flag, it would be a regular r=
+esource
+> > > as before.
+> >=20
+> > memory-region properties are not typically converted into a standard
+> > resource automatically. One reason may be that they can have additional
+> > properties associated with them and so something like a CACHEABLE type
+> > may not apply.
+> >=20
+> > It's also standard to convert "reg" properties into struct resource and
+> > that's what many drivers will expect. I don't know if all drivers will
+> > gracefully handle being passed a struct resource that was created in
+> > this way from a memory-region property. If at all I think this would
+> > need to be special-cased for simple-framebuffer, in which case I'm not
+> > convinced that putting the special case into the core OF code is any
+> > better than putting it into the simpledrm driver.
+> >=20
+> > Also, even if we did so, what would it really change? We may be able to
+> > avoid the explicit DT lookup, but the bulk of the memory-region code is
+> > actually mapping it, etc. That part we won't be able to automatically
+> > handle, I think.
+> >=20
+> > Ultimately this is up to Rob, not sure if he'll want to extend the
+> > simple-framebuffer node creation code any further.
+>=20
+> Thanks for explaining. It was simply something we wondered about.
+>=20
+> The simpledrm device driver hands over device ownership to the hardware's
+> native driver during the boot process. To make this work in all cases, the
+> OF code needs to be involved. So at some point, we'll need to move some of
+> the memory-region code into the OF code. But how exactly this has to be d=
+one
+> can be discussed later.
 
---------------5SGVimdwae6OkR82Ao27cYgy--
+Currently the simpledrm driver will be removed when the native driver is
+loaded (on Tegra at least) and then the Tegra DRM driver will set itself
+up from scratch and anything that simpledrm had set up will be discarded
+after that.
 
---------------202Dtp8cf83Uuq0DcdWHeP0f
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+The tentative plan for Tegra is to eventually take over the memory from
+simpledrm (basically via the same memory-region mechanism) and copy it
+into a native buffer and also adopt the display configuration so that
+the transition can happen seamlessly. I'm not sure to what degree the OF
+core needs to get involved. Once we have the reserved-memory region, we
+don't really need OF anymore.
+
+One thing I'm not sure about yet is what to do with the reserved-memory
+region. Ideally I think we would want to return the memory to the buddy
+allocator so that it can be reused. I'm not sure if that's possible or
+how to do it, since most of the low-level memblock code that is
+responsible for cleaning things up has already run at this point. We'd
+probably need to manually return the buffer somehow (perhaps with
+something like generic_online_page()). Alternatively we may also hang
+onto the memory and reuse it in the native driver, though that could be
+a bit messy since it can't be transparently handled like any other
+buffer.
+
+I could find a few drivers that use memory-region, but none of them seem
+to return that region to the buddy allocator.
+
+Thierry
+
+--CiIa2B9WdSpqtTa2
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmN3rn4FAwAAAAAACgkQlh/E3EQov+BJ
-1A/+PjFnQqRuhc1J85sO09JaXAT1ytgZ2ZjzbS9vIeDukW0qnXijB3YYZWOEvH/7Od29NU7zGu31
-3WD3fou/yS1AJ8JYh3wOMCGT8YdYe56DLuPPvfpa5MlNmUlYLPqYduC2/uyuwhGijXwWtanu2qPh
-llhMIy0CMZw3Ek8dlv0xfrrOGAhqU39DISP1GckmGwyYhuj1yILM67OYTg6Cxst0D/BVrYDFd+Wi
-gubKvOpGxD3UIbr1V+tgFqW0tiYam7z28xujTn8+gK4mDG9rd1Y+91l0K/uYLwtr7n5hB3cw2zgZ
-31+5vRqI0XR47cdoi4/7BKErPW9Qu6sVbzylHTP3xOejMIStY4f1VRtiL7tF24/Avr/ELpR1LKpR
-UMP1zLCXWbc3E5iEKTF5xasGKDj7RX1IsjpbksFBRNa5XCXW33dwnNv0zNW9dqn6UPSeR+cLB230
-nRCtBQJimLvvcCvkpbjxMx3gU7K08njL+nbkW2s1kj5wTS5xy/L4ipKMWQWDdcDaKkcrYL+vorXh
-H4JayGVttU5zucCK0p6VVRvBcLklVwZEEovhRn2lbrThh9FyINCHK+LEOkOj/+IytTwFeQ+5qUMa
-+uNPHu4e+fhy+GtAmPzAkuk/N7mx77pmqA8V9mWOdYgE7YBDdcFxwCngzSTFiG6g1ob6TzQcQ1uz
-rjw=
-=WuIS
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmN3sr4ACgkQ3SOs138+
+s6HCyxAAoS0QANMnQU8hIzcsWsXsCYTbA+B8t/1SwCuIVztwWZIygJN57VSJuk+u
+oLkjRoXaNKfKWvVWOV/ty2LcWz9GzBVkwLupQsiMHNtcXq8J7cZcKb7GKI89zJwn
+WG7VYqleK+URd1Vy5hUFEc6HtuIxZrBb1VLSiXDmgZufrQXnHTav6PXbwRjP14P0
+xL/l2VpS9gi9kd8smqNYBylI5tE6vaCtpLyWAePHQShILQ4W1YTdZsRkbh/5gQhu
+6N+Rvbpg6kB5PlM57gAP2CJlrAxwJaP+34Imgj73H791wjnGmkufzHVcZIkCq3ip
+ltQsuNPuvPvdevDySQgVKxQWXcNMNvunW0wFsCGFd9GoH2QX9h39R6qMBwPqIN3u
+Ikwb+FC4liC2AzqrWN/vRJ3/fT2aTSL0+7ZRgMZRz+s3tq83CiIHMusa7Lx5rM1B
+CydQd8LiEZQgsufxmEu0fPYPwDi/CjOjqmKWE77LWpZgvpidNHTgUOi0mqwBXzB/
+/kLXli877Uqjnf8IKlf6oxD3ypcfeHE8rx8LSM6fQ8dF5nTlrxniEwXUNRIRFyHN
+U8Hp1vptrlEmtPosRHGnIR8YMJ19+fZQxnULhmdIQKIslfUqZxZbnIumrH7uei2V
+lzZO7eeIZSRB4qDVLZUIV+yGHk3oLATomNARtKR07442W3V5rfg=
+=Znn0
 -----END PGP SIGNATURE-----
 
---------------202Dtp8cf83Uuq0DcdWHeP0f--
+--CiIa2B9WdSpqtTa2--
