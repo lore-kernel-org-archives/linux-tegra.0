@@ -2,100 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DF8C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 13:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6793C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 13:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240766AbiKRNCX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Nov 2022 08:02:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34300 "EHLO
+        id S241487AbiKRNMA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Nov 2022 08:12:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235142AbiKRNCW (ORCPT
+        with ESMTP id S241312AbiKRNLv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Nov 2022 08:02:22 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9819240901;
-        Fri, 18 Nov 2022 05:02:21 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id n12so12801629eja.11;
-        Fri, 18 Nov 2022 05:02:21 -0800 (PST)
+        Fri, 18 Nov 2022 08:11:51 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625CD8B13C
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 05:11:50 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id t10so6785258ljj.0
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 05:11:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XzTo46uc4vhLZRVTEAEFDaUD0kf6qcsqkjSrRfoIbA=;
-        b=TwUVsbnt2xEhjYCMoUsf7S77iuxtaQ1yAaJ5cnUsytNJjRfs9nenmdtUGK2PRxYbIU
-         y5ZOTgota4xqzrgRvkZUcEccCNqKgPLg+H3E3gpEUpjFLg6Bc2y/hzAQuapKgnR4q8EJ
-         Bmcw9D8J6P5ILzIuIRrQjjO+7YjRENJ/xnD4SNTs3u6AJGcZAcnFFDE8IZW3/PGsSju7
-         SE3Njs8q2FEareNEdVA2Wl1x8Jo/Fa4dgSx52c78WwULo54Dp4KhgQYFmB0aKnOqGR8t
-         lzZuAYn39eJt9mPrJDP3uQN6LMz/9vrIXIF3nuRs1jJsmOYW/bsjJF0Z5/XXkjPjklgN
-         uUVw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gWNSpfNgmKIkoqMVV5tmWYlIFYhEHax9TrvGPimvErs=;
+        b=v4nFmk80qIBizuw3D1YMYQGM+vnSIvdnLk9TyHIG0in5TwlQhnPkUxZ9S2wEGIO7+5
+         NloDoVXNp29Tv+V2Ab46XHQlVhufLDrh990FfdE+BCoIabs2Kjsu5+aPGZVZoHtgLY4E
+         Asv3aahR7nX4q3ptImiN2N8+/PiZfDlpXIUl1AV2LXskiukPE0YGDHopQfy42JWo9qrt
+         RjcBxuxPFUEZJvL+xxHGOm3mC4odbJeVAynBHG5r5Luy+JASyjK9R5dMYXHe5TtcRUSw
+         Bjx+cNlKFLPOsmFRX4yckjQy25Tw2A/rEuh0/jCHDai5aJj3brf0FiV2KlBCDADvWndd
+         BnKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0XzTo46uc4vhLZRVTEAEFDaUD0kf6qcsqkjSrRfoIbA=;
-        b=1yjcKlsPLVvUff8VsjyfcEdrn4MxfF9E03EdiWIFsgPpS6kdmZWgM+QD+CYH5AXZJz
-         IuVMpHMs8VKNaWBz1ADla7m5Wewg9NNvP5TIx4+RJpAjx3Poi1t11WR8G++p2Vld6ilO
-         F+ux7cNjMR/IRt5pyKNYx0trHq5P8mXlH39Del2ctZH3xARFRWUa3YxwM8Jre29zNev+
-         1eAVT94ysZ/v6PEriRHR+45PfQzzHWJW2P2w+o4/iS7YPJtoFDAoPkCqTumpFfek+oSi
-         3J9IeWFooAiUjMx9lJreuBMbR2/NJ9f7EI+/iNVYVDu4RIE0HZeASgWCZJZ0KAwaBVDa
-         Rqew==
-X-Gm-Message-State: ANoB5pnf5bMv2FrUnxohNf09SLchXu2wqkSIxVH/71h6+FUpug/Z/Vj1
-        0r2WtqM5fAplAW6zpJxP+BM=
-X-Google-Smtp-Source: AA0mqf46l2o1aD0Gl2qBpTraygRLL1r+eFNuy2Ucoq9pie91oPS7S5d3f0mwDMevnI45UhA2MqfOMw==
-X-Received: by 2002:a17:906:ce55:b0:7ad:b45c:dd7a with SMTP id se21-20020a170906ce5500b007adb45cdd7amr5994589ejb.292.1668776539756;
-        Fri, 18 Nov 2022 05:02:19 -0800 (PST)
-Received: from skbuf ([188.27.185.168])
-        by smtp.gmail.com with ESMTPSA id o2-20020a170906768200b0077077c62cadsm1672805ejm.31.2022.11.18.05.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 05:02:19 -0800 (PST)
-Date:   Fri, 18 Nov 2022 15:02:16 +0200
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Bhadram Varka <vbhadram@nvidia.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Revanth Kumar Uppala <ruppala@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next v4 RESEND] stmmac: tegra: Add MGBE support
-Message-ID: <20221118130216.hxes7yucdl6hn2kl@skbuf>
-References: <20220923114922.864552-1-thierry.reding@gmail.com>
- <1b50703c-9de0-3331-0517-2691b7005489@gmail.com>
- <LV2PR12MB5727354F4A1EDE7B08FBC5A5AF229@LV2PR12MB5727.namprd12.prod.outlook.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gWNSpfNgmKIkoqMVV5tmWYlIFYhEHax9TrvGPimvErs=;
+        b=61E/Mys58dB8REc/G9iqVDykqVhNpDmTGscQl18hAWe6WvUG7it3iQDyjalbXJ/IEQ
+         J0V5M6f3zlLgiKVI0cAQQE1g+oAIOHdRU4NwG0Bt1M2opKODYXX7Uc+fZpIP3fpS0zPT
+         q2AwPkJYTILEkl3Wt6lboIIg2JaVMs1iUHqG6F/jXRG+AZOTpB/3o8Z23pJu7MOjHY+D
+         VoQNB2ZisyBXfTJyHoEfysKOr2Nt+Q7J2ZiSHqiOCxgCfgbCmN61P4+/cs5xELE0ERkF
+         qdN8kY/6vrJM3VfKN/SyJCpyvnjkY7AECvapwHvmBJfHvHUVGvt4NjdzFq+yeeOIOhye
+         AJzQ==
+X-Gm-Message-State: ANoB5pmCgpL53aEWTdHXSFZU7iQMsyQTwHyoQNvbYzPfuXRgGsEkawpc
+        O/sJSigXufN1X+WnZ08KaVkvpw==
+X-Google-Smtp-Source: AA0mqf5PKOpsepLXZQM4MZvGilr6TDpkzUoFgDlnpUqKg2bm3LymDyhlqEiF6bM8W2n4RIlehziIUw==
+X-Received: by 2002:a05:651c:178d:b0:278:a59c:390c with SMTP id bn13-20020a05651c178d00b00278a59c390cmr2455317ljb.512.1668777108719;
+        Fri, 18 Nov 2022 05:11:48 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id n4-20020a195504000000b00492ce573726sm661503lfe.47.2022.11.18.05.11.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Nov 2022 05:11:48 -0800 (PST)
+Message-ID: <5292cc1b-c951-c5c5-b2ef-c154baf6d7fd@linaro.org>
+Date:   Fri, 18 Nov 2022 14:11:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <LV2PR12MB5727354F4A1EDE7B08FBC5A5AF229@LV2PR12MB5727.namprd12.prod.outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 01/23] dt-bindings: display: tegra: add bindings for
+ Tegra20 VIP
+Content-Language: en-US
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+References: <20221109141852.729246-1-luca.ceresoli@bootlin.com>
+ <20221109141852.729246-2-luca.ceresoli@bootlin.com>
+ <ca5f3b54-25bd-4dd5-799f-c7bda08cdef6@linaro.org>
+ <20221118100800.4950aec0@booty>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221118100800.4950aec0@booty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Bhadram,
-
-On Wed, Oct 12, 2022 at 04:56:52AM +0000, Bhadram Varka wrote:
-> > You should be modeling this as a proper PCS driver and have a 'pcs-handle'
-> > property pointing to it in your Device Tree.
-> > 
-> > The configuration you are doing here is probably working the first time you
-> > bring-up the network device but I doubt it works across system
-> > suspend/resume states where power to the GMAC and PCS is lost, it also
-> > begs the question of which mediums this was tested with and whether
-> > dynamic switching of speeds and so on is working?
-> > --
+On 18/11/2022 10:08, Luca Ceresoli wrote:
+>   description: parallel video capture interface for the VI
 > 
-> For Tegra234, there is UPHY lanes control logic inside XPCS IP which is memory-mapped IP (not part of the MAC IP).
-> mgbe_uphy_lane_bringup performs UPHY lane bring up here. Here MGBE/XPCS works in XFI mode.
+>>> +    type: object  
+>>
+>> Do you expect it to grow to more channels?
 > 
-> Agree that lane bring down logic is not present interface down/suspend paths. Will update the changes accordingly.
-> One more thing is that UPHY lane bring should happen only after the line side link is up. This also will make the changes.
-> Please let me know if I miss anything here.
+> Not on Tegra20, it has one input only, but for other SoCs it's likely.
+> Definitely some (including Tegra20 itself) have multiple CSI-2 inputs,
+> and it's reasonable that this can apply to parallel input too.
+> 
+> Is this enough motivation to make room for more channels, or should I
+> remove it since I have no plans to introduce support for other Tegra
+> chips?
 
-What about the non-UPHY part of the XPCS IP, how does the dwmac-tegra.c
-driver control it/see the status it reports?
+The best would be to add some more Tegra SoCs here, so that this @0
+makes sense.
+
+But I guess the block can be re-used in future, so it could also stay
+like this.
+
+> 
+>>> +
+>>> +    properties:
+>>> +      reg: true  
+>>
+>> const: 0
+>>
+>>> +
+>>> +      ports:
+>>> +        $ref: /schemas/graph.yaml#/properties/ports
+>>> +
+>>> +        properties:
+>>> +          port@0:
+>>> +            $ref: /schemas/graph.yaml#/properties/port
+>>> +            description:
+>>> +              Port receiving the video stream from the sensor
+>>> +
+>>> +          port@1:
+>>> +            $ref: /schemas/graph.yaml#/properties/port
+>>> +            description:
+>>> +              Port sending the video stream to the VI
+>>> +
+>>> +        required:
+>>> +          - port@0
+>>> +          - port@1
+>>> +
+>>> +    additionalProperties: false
+>>> +
+>>> +    required:
+>>> +      - reg
+>>> +      - ports
+>>> +
+>>> +unevaluatedProperties: false
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - "#address-cells"
+>>> +  - "#size-cells"
+>>> +  - channel@0
+>>> +
+>>> +# see nvidia,tegra20-vi.yaml for an example  
+>>
+>> That file does not have this compatible. At least not on next-20221109.
+> 
+> It's added in patch 2. It's a chicken-egg problem, should I add a third
+> patch that adds this line only?
+> 
+> ACK for all other comments you wrote.
+
+It's ok.
+
+Best regards,
+Krzysztof
+
