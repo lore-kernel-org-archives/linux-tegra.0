@@ -2,130 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1682C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 08:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FB8C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 08:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241315AbiKRII6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Nov 2022 03:08:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37244 "EHLO
+        id S240941AbiKRIOm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Nov 2022 03:14:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241313AbiKRII4 (ORCPT
+        with ESMTP id S234080AbiKRIOi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Nov 2022 03:08:56 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5995DF91
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 00:08:55 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id f9so162629pgf.7
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 00:08:55 -0800 (PST)
+        Fri, 18 Nov 2022 03:14:38 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87FD885A36
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 00:14:35 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id j4so7075520lfk.0
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Nov 2022 00:14:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HK+MyCShb+nHfuM6gVYf2CHmO8+y6qJHQoW3+GkzIAI=;
-        b=JcDmZL9df9+Ge3smp3NbdqOqmwGX1d6ySubYsFaYc2L1e+s9WIRvZuC54Z9uHc5kTD
-         CvXieTulujePESowDV3fWbjNQRyhf0Od/gBRL2RiSER9iN5k2I3Tu9biuRt/MRnitAkr
-         6zS5zMykDqUPbg2lfwM1AH2Izx5jA/1IAP9gdn7Pzww+I6bC5zlYzyoenGLDmyf+hPll
-         mDyPIemjFpPyj2kgJ05mgFCwG9bhK2R909+1ieSCanE8c4ywMlxRtpe2GLQdbU3RxUI1
-         Eo5IY67lW9kv7yAroSou5g4y/U31bTa3/u3RaUNAqadG2S87Ud9K9jhBz9B3dhVfQsA/
-         e6dQ==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GVIAqFFv0kCN0rRPM8hMtsvdD/yxisYOHhG5SG0ehK4=;
+        b=Mk0CQRJ0wstXRfmXaM+uKrViqR3HLGAVqBsF+5knhoK/Rhb8L6MNVbvNXJtYEgo8VU
+         okSFlODxefKP/IKr2yxfC4Fo/xl+z747+u0bwxOsBszrmSRl2ZBWreHgT0uNCHZ/cKTd
+         FsupcamkRL9kdmC8qEEA5inciWCVO2Wj9hg+oVldTg49ALo66x8gEtjWgZw1917Bg8Vy
+         4D0hXgkgD2gtawaVCtj8d11XzG+xdbaCPC21eTtOx/1YthY+7oTqKI1DZCY42Aceijxp
+         M0fAEpWWkcogbcwtqWkY2pVboqIML8/b2ZaPIjwwoJqtePbt6HP2rtpeOjUGK/NthPhB
+         3cDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HK+MyCShb+nHfuM6gVYf2CHmO8+y6qJHQoW3+GkzIAI=;
-        b=i1LKy7Yd+U3LNTI8WLcToNNdfW0DINO+Ax4cE1PaWng8hCEyVk30FfAtSsX23m7+TC
-         MaQe8dwNBxOEeBf/3x9cvC8u/nH93LGTXnRpMuCtLCx6C7hOsQS6W9v6iWXyWlFEGR2l
-         JaHO4VzwCqnZy1bjHYeKKtNHuCWdWmcif986nqo/EkTrLizQdQNtJnDiEfIGpMs6yKFL
-         EyeH+vBD8R0WNmVA8MKO3qFZTny3IF3aFRYYwXoxVnzePhU6zIoSUXGoREyi4ZAy8f71
-         6Ovv3uLc1ZldOHl5klbkd9J0S664g5LxSRrYq9l6UTDTPUr5lCkMQbowFbJGVZnUODFo
-         cSGg==
-X-Gm-Message-State: ANoB5pmvHaUQ+3yS8MxLkF43tM7Tp2UAiHzLtSLPre9lm5ikQlL/4dmN
-        qbADZEHku6t8S0IwfyAwx1aU9/LPbEl2ThZCSBdZrA==
-X-Google-Smtp-Source: AA0mqf5w4ScLyMXSluNz1fb5dK6/i0eWZxFkyYGlRvBVDM5jgeQuONmLttF72KlOEjxrzQWE6zC7mAku3prGjsYLV1I=
-X-Received: by 2002:a63:4285:0:b0:477:15c8:cd8a with SMTP id
- p127-20020a634285000000b0047715c8cd8amr4250171pga.595.1668758935435; Fri, 18
- Nov 2022 00:08:55 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GVIAqFFv0kCN0rRPM8hMtsvdD/yxisYOHhG5SG0ehK4=;
+        b=mH/x1i98pjp1hGsQBxrXd1bnsSSO/wMGF7SyKKTLY8JDMR6QvGy5Mb3UF/mdzjZrwM
+         61Cd5uUpoBaIaydCG0Awjn3CAa4MQwu71heMCtpfnmq439b5rCqKNDAZdgOILMK6fVla
+         hr8D0KbzHzQOtnfmuPs6ZILzOkoM3dN5wEyRa+ZK+LC+VKEVV3fEkpouYwo0r7GY+osJ
+         C0GyOZiz8WSlYkNDQBTsaZSIDZXmWkhrKHW7dWZL6a/8CQ2b+5ry3I15+y34xPEuRcYg
+         ffoVQDtUKM1egNWOCGvjDhLaa2U6mEc/QtzD64wvTGRMOFzrw/F3CdEgH+5THuy3Kmsr
+         LvCQ==
+X-Gm-Message-State: ANoB5pmG47gVOBTUbCynVu2c2475nNFO4/pduq/DjqArqHzJbAW2WVvo
+        Ne39qN1Olo9PI8vwBBlMlfef1dqESr354hZx
+X-Google-Smtp-Source: AA0mqf47bbPmux3j4f5zi+7tIrEZKMMqsFnA4CfXLKsMV3od5nhmKn6TPJ+Dxa8RSdLaglEdR/cvtg==
+X-Received: by 2002:a05:6512:3d10:b0:4b4:1177:a64c with SMTP id d16-20020a0565123d1000b004b41177a64cmr2329003lfv.647.1668759273847;
+        Fri, 18 Nov 2022 00:14:33 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id j7-20020ac253a7000000b004acb2adfa21sm557212lfh.297.2022.11.18.00.14.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Nov 2022 00:14:33 -0800 (PST)
+Message-ID: <d5bf5d7b-097e-a48c-4cc8-9be87f2aaa13@linaro.org>
+Date:   Fri, 18 Nov 2022 09:14:32 +0100
 MIME-Version: 1.0
-References: <20221117182720.2290761-1-thierry.reding@gmail.com> <20221117182720.2290761-3-thierry.reding@gmail.com>
-In-Reply-To: <20221117182720.2290761-3-thierry.reding@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 18 Nov 2022 09:08:17 +0100
-Message-ID: <CAPDyKFpGs4TvkV5FKnfpQH45qAiwhJfSiP60P2vMSX30GsMkQQ@mail.gmail.com>
-Subject: Re: [PATCH v11 2/6] iommu/tegra: Add tegra_dev_iommu_get_stream_id() helper
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        iommu@lists.linux-foundation.org, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v2] dt-bindings: pwm: tegra: Convert to json-schema
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20221117214248.2365983-1-thierry.reding@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221117214248.2365983-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 17 Nov 2022 at 19:27, Thierry Reding <thierry.reding@gmail.com> wrote:
->
+On 17/11/2022 22:42, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
->
-> Access to the internals of struct iommu_fwspec by non-IOMMU drivers is
-> discouraged. Many drivers for Tegra SoCs, however, need access to their
-> IOMMU stream IDs so that they can be programmed into various hardware
-> registers.
->
-> Formalize this access into a common helper to make it easier to audit
-> and maintain.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  include/linux/iommu.h | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index dc5e6f5c14fc..f0d72acad7db 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -1186,4 +1186,25 @@ static inline u32 iommu_sva_get_pasid(struct iommu_sva *handle)
->  }
->  #endif /* CONFIG_IOMMU_SVA */
->
-> +/*
-> + * Newer generations of Tegra SoCs require devices' stream IDs to be directly programmed into
-> + * some registers. These are always paired with a Tegra SMMU or ARM SMMU, for which the contents
-> + * of the struct iommu_fwspec are known. Use this helper to formalize access to these internals.
-> + */
-> +#define TEGRA_STREAM_ID_BYPASS 0x7f
-> +
-> +static inline bool tegra_dev_iommu_get_stream_id(struct device *dev, u32 *stream_id)
-> +{
-> +#ifdef CONFIG_IOMMU_API
-> +       struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-> +
-> +       if (fwspec && fwspec->num_ids == 1) {
-> +               *stream_id = fwspec->ids[0] & 0xffff;
-> +               return true;
-> +       }
-> +#endif
+> 
+> Convert the Tegra PWFM bindings from the free-form text format to
+> json-schema.
 
-It's totally up to iommu maintainers to decide, but I personally would
-prefer to replace the below part with a stub function, defined when
-CONFIG_IOMMU_API is unset.
 
-> +
-> +       return false;
-> +}
-> +
->  #endif /* __LINUX_IOMMU_H */
-> --
-> 2.38.1
->
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Other than that, both patch1 and patch2 look good to me. I can pick up
-the series, after an ack from Robin or Joerg.
+Best regards,
+Krzysztof
 
-Kind regards
-Uffe
