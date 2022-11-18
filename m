@@ -2,93 +2,137 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EE3C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Nov 2022 22:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4B7C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 07:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233679AbiKQWoS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Nov 2022 17:44:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45642 "EHLO
+        id S232532AbiKRHdI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Nov 2022 02:33:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231274AbiKQWoR (ORCPT
+        with ESMTP id S239887AbiKRHdH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Nov 2022 17:44:17 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C34D1759F
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Nov 2022 14:44:16 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id k2so8850297ejr.2
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Nov 2022 14:44:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7quD5Hy3ZWcPrpDWeaqeNjMDNzDYEXAy9NXdrwbcOnU=;
-        b=q5WrBnSlx8pHrOHphw4/YZQmXS5GKpMW+DHOD9fthYRsK3Au0XWJoNEYppEhTj9KPB
-         yQyzs5oJt8v9rPvjIwj+bYhfl1thHAfjSRrkf3BLVkF7CQv+F1l18LJbk1ozk9cb4/Sb
-         HjvozOA78Aj52/Dvy9NmNdlUYYubAP73NvB3jKp33EHlWHXIDEbTsN5Zgjw7I+i0oeYN
-         cuiQkqeVlzW+25nA8lmazGRvWdc1A/sVBYB7hg+kIhj2FJ75zpaG8dSsBuv7oPcR79gu
-         3O1iIc6am6YVyI/SeuLalHuoirB0YNpQrbtg4ofD8IPhIGAaE0S/uHG+PyStlFXk4+rs
-         8Iug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7quD5Hy3ZWcPrpDWeaqeNjMDNzDYEXAy9NXdrwbcOnU=;
-        b=cgKV9jR3Zfev5MT1LgGKLvtdRqKFWS0uVU/pQkT8ES/crzwaqm/f9Kkcp1NaksAxfm
-         OkDCObb5H7GCI9oimTBlxyxTnpp2bf0y773Q22Sqf+lwMx+FVGDgPpqPto1uAxqAAlhx
-         lM2YEi7I7oSV9YoWwXpGJnKpzPtpJrWf5kELgHd8917Id2C7XiWZCt3w1tg8vvRuG9Oe
-         aErB9V1iCOK49qwcycpmAB/fiNBDvpQ7nId0K+m8Zr6cTbIMC4c+nMlk2KvrjuNtcvLX
-         kmhUEpkNBDVNynDXCleY31YV4rJdufgtcaxXLmvvbcxlwO6WjiZR5egk8PR41i28w+h8
-         dp/w==
-X-Gm-Message-State: ANoB5pkDnrMSVU1vZR5S7x0Ck7hbg7ybkPZgErGVdNutP3kNlhHByxzS
-        X2aU4o994k5+QjwvlHSeLzg=
-X-Google-Smtp-Source: AA0mqf7E8OF8jcneLd9IXB70pKLdrySUW/wxBnItA+wIiC3LDnosCm8PfPWWL4m3U3hrUroVHfT49Q==
-X-Received: by 2002:a17:906:19d7:b0:7b2:b782:e1df with SMTP id h23-20020a17090619d700b007b2b782e1dfmr130068ejd.308.1668725055059;
-        Thu, 17 Nov 2022 14:44:15 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id eo14-20020a056402530e00b004588ef795easm1060882edb.34.2022.11.17.14.44.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Nov 2022 14:44:14 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] drm/tegra: Fixes for v6.1-rc6
-Date:   Thu, 17 Nov 2022 23:44:14 +0100
-Message-Id: <20221117224414.2374127-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Fri, 18 Nov 2022 02:33:07 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3C8C7DEDD;
+        Thu, 17 Nov 2022 23:33:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668756786; x=1700292786;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wqq6p7emkxt5LAd+YfGgGUaluBoYtkiltPBGxPE3TbY=;
+  b=anwjS0+dVzt7K1CQ9HWE58hA8C68kSnku+wygnFzE2LWSvIjEXmqHCiB
+   Srd9cjfsP5bnY0Idb2HKWMgE19vLJecOVKS17WyJ08dDglKY+T0ltN2zO
+   f9OaN9tkBn6ANjI1xk1Dce1ja6LH9eOzSls0ovLqa6wtj2RsHOgGgbGL5
+   mntiUVACLrtIK9xir/fjF86qqGF171lHWyoBoePzbdszIUr+eHswHWhlC
+   dmIPAnY2VzciYMf6TL3WqgQorlymfdk3c7OtS04iHXVbYpxfO9fCi9tP6
+   YINkaokOO4++8Z+FLA5oLuhTD7dJH7HCDbBRsULfTQ7JZbzvaEgP6Mn23
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="296440958"
+X-IronPort-AV: E=Sophos;i="5.96,173,1665471600"; 
+   d="scan'208";a="296440958"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2022 23:33:06 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="703646901"
+X-IronPort-AV: E=Sophos;i="5.96,173,1665471600"; 
+   d="scan'208";a="703646901"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.252.61.138])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2022 23:33:03 -0800
+Message-ID: <11a4e08b-f176-a39a-365c-278b08fc1bdb@intel.com>
+Date:   Fri, 18 Nov 2022 09:32:58 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.5.0
+Subject: Re: [PATCH v11 3/6] mmc: sdhci-tegra: Sort includes alphabetically
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20221117182720.2290761-1-thierry.reding@gmail.com>
+ <20221117182720.2290761-4-thierry.reding@gmail.com>
+Content-Language: en-US
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20221117182720.2290761-4-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dave, Daniel,
+On 17/11/22 20:27, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Sort includes alphabetically to make it easier to add new ones
+> subsequently.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
 
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+12 insertions and 11 deletions because linux/bitfield.h
+was added.
 
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+I am not super enthusiastic about reordering includes.
+I would advise people to text search to find an include
+instead.
 
-are available in the Git repository at:
+Nevertheless:
 
-  https://gitlab.freedesktop.org/drm/tegra.git tags/drm/tegra/for-6.1-rc6
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-for you to fetch changes up to ce071fc9ceafd339b74631d4907d77f2e9ef1b0c:
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index c71000a07656..e2a8488d4fa9 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -3,28 +3,29 @@
+>   * Copyright (C) 2010 Google, Inc.
+>   */
+>  
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+>  #include <linux/delay.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+> -#include <linux/module.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/init.h>
+> -#include <linux/iopoll.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/clk.h>
+>  #include <linux/io.h>
+> -#include <linux/of.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/ktime.h>
+> +#include <linux/mmc/card.h>
+> +#include <linux/mmc/host.h>
+> +#include <linux/mmc/mmc.h>
+> +#include <linux/mmc/slot-gpio.h>
+> +#include <linux/module.h>
+>  #include <linux/of_device.h>
+> +#include <linux/of.h>
+>  #include <linux/pinctrl/consumer.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/pm_opp.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/reset.h>
+> -#include <linux/mmc/card.h>
+> -#include <linux/mmc/host.h>
+> -#include <linux/mmc/mmc.h>
+> -#include <linux/mmc/slot-gpio.h>
+> -#include <linux/gpio/consumer.h>
+> -#include <linux/ktime.h>
+>  
+>  #include <soc/tegra/common.h>
+>  
 
-  gpu: host1x: Avoid trying to use GART on Tegra20 (2022-11-10 11:21:18 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-drm/tegra: Fixes for v6.1-rc6
-
-This contains a single fix that avoids using the GART on Tegra20 because
-it doesn't work well with the way the Tegra DRM driver tries to use it.
-
-----------------------------------------------------------------
-Robin Murphy (1):
-      gpu: host1x: Avoid trying to use GART on Tegra20
-
- drivers/gpu/drm/tegra/drm.c | 4 ++++
- drivers/gpu/host1x/dev.c    | 4 ++++
- 2 files changed, 8 insertions(+)
