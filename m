@@ -2,332 +2,143 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1F4C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 15:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222D9C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 15:40:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241712AbiKRPi2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Nov 2022 10:38:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53110 "EHLO
+        id S242071AbiKRPkp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Nov 2022 10:40:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241460AbiKRPi1 (ORCPT
+        with ESMTP id S235243AbiKRPko (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Nov 2022 10:38:27 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EBC3BAB;
-        Fri, 18 Nov 2022 07:38:26 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id 5so3878830wmo.1;
-        Fri, 18 Nov 2022 07:38:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KfWcGzupuPCfI0d9QCtthkzC7LWdIhJQjIcNMy6mgbk=;
-        b=qfWkkKicKCcJpuZyFOQaZfqYgFTv2ShQUBr/2Xh4Km8qPrN8NjEsxvNcrhBTvoGX4z
-         RyRBMeEyHepf3JwZS+6a97Xmlpz7h0ejQ4KiecpqL/7z8z09eshU9JWKlhRcXacp68oQ
-         wRo/rzxo04TwG7DdLZrbsSm48+w1W+Qq3qWi0D4Gtagw4sliob8hbNS3vt8h8Bj4Am3K
-         /n8ho7zX4fQj8VokjwxFZzXpzqHYcH5MHAKLxqqettqfBw/3fsUqJXaU6xLyrNSLG8WP
-         kPpyuraYU7J8ROX+1Nceym15i4/Xyy+uWFdyGt9opIAndfVnNB4aEbsYOcOf3WGju4Gn
-         lE/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KfWcGzupuPCfI0d9QCtthkzC7LWdIhJQjIcNMy6mgbk=;
-        b=1sPCBnHjPob4/dKAFVi49aj247QRPPKJSgzGWyl8RIOlJPfL+ODIILlWd0vT8DSahZ
-         Rqo3UgXJJCi7tk9bgzOY9nZiL2FDWe5LzxLh/el2Iu1NLexdg2lCI9R52o8yVuouFGqw
-         XuC7FP2790G/3HqclXR5eB4KwTD5ghDOWYaDJv/PSkQKTdkJnueoID2BaSP/gRhPN+jW
-         MIWim/YdXrhRxBQL5YLvB5ppCtXhPjEX/s9+auyPPAoA4g01XuuwcUdZRpua4sW3z34J
-         9VGUfiZSHP/la3COoQ0AKOJqXwkSPKK0tUB2rK9qwQecZfB7vhvuBnn3s1YVOCKXxP6u
-         uDxA==
-X-Gm-Message-State: ANoB5pm7e6JXd43KyQnYITOP3WFyl7l19CLXp4kKPuoZxIipYjvoNqTS
-        JBK99kzfU40QWyyLWSyGQx8=
-X-Google-Smtp-Source: AA0mqf7BFOcCa81hDIMM+Nv+ugMUGcNH4ANSTYJ4RklrfzwrmLDd3PsJLWiQrMOVDu5tAFFpVTsUBw==
-X-Received: by 2002:a05:600c:a4a:b0:3cf:e138:cd80 with SMTP id c10-20020a05600c0a4a00b003cfe138cd80mr8970643wmq.78.1668785904307;
-        Fri, 18 Nov 2022 07:38:24 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id c16-20020a5d4f10000000b0023677081f3asm3811885wru.42.2022.11.18.07.38.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 07:38:23 -0800 (PST)
-Date:   Fri, 18 Nov 2022 16:38:21 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh@kernel.org>
-Cc:     David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 5/8] drm/simpledrm: Add support for system memory
- framebuffers
-Message-ID: <Y3em7dwyJgQI1vZw@orome>
-References: <20221117184039.2291937-1-thierry.reding@gmail.com>
- <20221117184039.2291937-6-thierry.reding@gmail.com>
- <053fbbc2-824d-648b-fdac-6f6c7c64181d@suse.de>
+        Fri, 18 Nov 2022 10:40:44 -0500
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F0415A21;
+        Fri, 18 Nov 2022 07:40:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KlF2eaDmWk3RwpyI+4R7wi1IimEAZr+yo5/nsPLMy2kXVOGv8UA4unnhZAtHYBr5o5bPsAkZXy1A/l6LhrMeL0Gg6SYZ/rmX0D0XxMbGqY6nGkRrnrif8XlKMzyZojcXDo/QfBdQHoRTlj+fhJk9aJWLzfo6GECwr6ar3cGMCNlN4mL8Do99xtuHYG9py3FJ/2dgF8fNbLxmbUaI4yjScr8R9E5nnv/D+4oPz/OjZhcBHlqkahpqsKPS0a524JDi5a2crqct/b16UCJNkG9RtT0INOGh+oxQJi0/353hlxFda3BImrjPQ7VrGQno+KvW59mJId7ti9GWeOnUVnwDhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CLlAUj43sDHosmiX7lM+XcAZ2jKgS0s7C15Ml+CMrRA=;
+ b=ladz2wMcneqTe6FdyY+VZZ6PwyoFpnEiStDLnJmZelwF4scZEmjHVV/5EOLAJ98FiYqhwZ2LotonHjiEF7/QcvGkcD2UQ9YQSL2BGq49kC19M/D9RRD5wV9NAoJyZhddUj7/MnErJPTpigW/qLM7ROXD1qLItm5B4WRzDsi0RIJqVecOpmJCCx4o8UVjAksFs6aVCSaxkeB26FJAYTF/LMZWnibR1xwHuBLpEM+bi4iSDWh6dnFoa7D9xncmrjzIx/d1gW2yt7I0eJVogRnYvfTZn5g7wUWU4/K3j/43O8MMevobpeYtxqYx37qLMiMhBQtD060l9BQE8Sb8ynvRkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CLlAUj43sDHosmiX7lM+XcAZ2jKgS0s7C15Ml+CMrRA=;
+ b=SYamclB07F2h77eh3xRQZ2S8XCQa3CQJuPVm2kyuER0aWt3rI6KDIREtSG4en69PMZw6ODmnQrLB+QxY/EhD+hjjZ5or65hL9CTkFMJQ23ZmeuvUQOXluCsq7WNqHHWANUnYMDH0RKUIA4RglprqKCmyvBIIaJD4dfzd72UUMYpL7u86WE4zZV+U9ozjkAxFAwSoVVxqwgBiPpJt1F/iCcmPuFaIdlfmCKRzSBk7HEjXgAy1wtzBW2ldNAdFhw1mRGj0K8+iiW19lp35+grcQtmfpo3LdDbk2Q1KR17WpBjZ8gSd29cZGSn1Lak75gzBmgMN7XcrhoGDIMzhZmgBkA==
+Received: from BN9PR03CA0155.namprd03.prod.outlook.com (2603:10b6:408:f4::10)
+ by DM4PR12MB6278.namprd12.prod.outlook.com (2603:10b6:8:a4::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5834.9; Fri, 18 Nov
+ 2022 15:40:37 +0000
+Received: from BN8NAM11FT024.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f4:cafe::88) by BN9PR03CA0155.outlook.office365.com
+ (2603:10b6:408:f4::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.20 via Frontend
+ Transport; Fri, 18 Nov 2022 15:40:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN8NAM11FT024.mail.protection.outlook.com (10.13.177.38) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5834.8 via Frontend Transport; Fri, 18 Nov 2022 15:40:36 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 18 Nov
+ 2022 07:40:24 -0800
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 18 Nov
+ 2022 07:40:23 -0800
+Received: from moonraker.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Fri, 18 Nov 2022 07:40:21 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        <gregkh@linuxfoundation.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <robh+dt@kernel.org>, <vkoul@kernel.org>, <treding@nvidia.com>
+CC:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+        <waynec@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V4 0/6] Enable USB host on Jetson AGX Orin
+Date:   Fri, 18 Nov 2022 15:40:00 +0000
+Message-ID: <20221118154006.173082-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rD4xpyu/Zx8vn3+R"
-Content-Disposition: inline
-In-Reply-To: <053fbbc2-824d-648b-fdac-6f6c7c64181d@suse.de>
-User-Agent: Mutt/2.2.8 (2022-11-05)
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT024:EE_|DM4PR12MB6278:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88f9d61d-9770-4b8e-a6a1-08dac97b3cb4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: atnS9OTYXIq4x6OcxNppAgtBDcDGFCNacDeHravBBYd27VV+XGPUCXejT7J8vparB/OGNiKczobBCNsN86hU5SzxgMXtBh19j1b56IacXelDVMNVmvryM+YOrWpX/U0DyxO6r1IhG5NiAtW+lz9L3eODBjCJUIPgT2b71Mrb3NEAdpbWQCIexjR6kz8/f4z3ak7VbmrzF5NGgMUTZbXRpiQ9D0y6dtjyLjnkp5MFdGivbZC/2HMgboL7Dfhq6qB+ei3zNnSF9r7baOwfdgDieSLsTyeVJ5rk34mJJOSF5D3lWCeIbKq75DE61rHsegBESSHz5UD0ioaKFsE8ARdf/JUE+vqehluqKAUmuoW+zB14pBh/A9HDeTU2AYl91mzTUJpjRlSjQcu7TmyBDzSOHBzIoU1kdsbAYtM+NaEJ/Xio7H+PvNlKAlcrAScoWdF2J47N4wpJMYtzMrG5hbeIo3lRsphsOHxj7b1lxzIxbx3ITCGIv7hO9iC+XME7QgS2whMtAo8KYroCpFhQgQEhPj+XDwNAgzM/O89jtIT53DEmsWs+r5PVwomjMgH0d/ccCBUi6viWUSeR6sSaG3nWU11FUxKnXW/IJbb9KMG6T2y0w/m1rtVAF3EhoCRs4OYpcFJ6ZsHCckxtkKr3s0v6suTuZnD4RrCPA13qAtkRuW3arbYrsN8uQXmtnd4f9t8ONfdrWna5ymqm0N2DAakYAF41fbRbBH4trsWa/LuhqOgIXNZL4iHS9i/C8+OGnu0cum/4SGiiqK4cD19vJUj3e2/Ivhf9y0DoKHmbpGf8kRLk5Dv07cmQPgMd9FUR5si7lwe4wPPwCy4/wuLCkKcz0w==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(346002)(39860400002)(396003)(451199015)(46966006)(36840700001)(40470700004)(107886003)(478600001)(6666004)(336012)(5660300002)(316002)(6636002)(966005)(41300700001)(8676002)(4326008)(70586007)(70206006)(8936002)(1076003)(186003)(2616005)(26005)(2906002)(426003)(83380400001)(47076005)(36756003)(36860700001)(82310400005)(40480700001)(7636003)(356005)(54906003)(40460700003)(110136005)(86362001)(7696005)(82740400003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2022 15:40:36.0947
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88f9d61d-9770-4b8e-a6a1-08dac97b3cb4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT024.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6278
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Enable support for USB host on the Tegra234 Jetson AGX Orin platform.
+This series is based upon the previous series [0] to enable USB host and
+device for this platform, however, for now we have dropped USB device
+support and support for the type-c connector while we resolve review
+comments for these changes.
 
---rD4xpyu/Zx8vn3+R
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Note that this series is dependent upon the patch that adds more
+defintions for Tegra234 [1] and the patch that converts the Tegra XUSB PHY
+binding doc to yaml [2].
 
-On Fri, Nov 18, 2022 at 03:21:14PM +0100, Thomas Zimmermann wrote:
-> Hi
->=20
-> Am 17.11.22 um 19:40 schrieb Thierry Reding:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Simple framebuffers can be set up in system memory, which cannot be
-> > requested and/or I/O remapped using the I/O resource helpers. Add a
-> > separate code path that obtains system memory framebuffers from the
-> > reserved memory region referenced in the memory-region property.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Changes in v3:
-> > - simplify memory code and move back to simpledrm_device_create()
-> > - extract screen_base iosys_map fix into separate patch
-> >=20
-> > Changes in v2:
-> > - make screen base a struct iosys_map to avoid sparse warnings
-> >=20
-> >   drivers/gpu/drm/tiny/simpledrm.c | 99 ++++++++++++++++++++++++--------
-> >   1 file changed, 75 insertions(+), 24 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/si=
-mpledrm.c
-> > index 3673a42e4bf4..7f39bc58da52 100644
-> > --- a/drivers/gpu/drm/tiny/simpledrm.c
-> > +++ b/drivers/gpu/drm/tiny/simpledrm.c
-> > @@ -3,6 +3,7 @@
-> >   #include <linux/clk.h>
-> >   #include <linux/of_clk.h>
-> >   #include <linux/minmax.h>
-> > +#include <linux/of_address.h>
-> >   #include <linux/platform_data/simplefb.h>
-> >   #include <linux/platform_device.h>
-> >   #include <linux/regulator/consumer.h>
-> > @@ -184,6 +185,31 @@ simplefb_get_format_of(struct drm_device *dev, str=
-uct device_node *of_node)
-> >   	return simplefb_get_validated_format(dev, format);
-> >   }
-> > +static struct resource *
-> > +simplefb_get_memory_of(struct drm_device *dev, struct device_node *of_=
-node)
-> > +{
-> > +	struct device_node *np;
-> > +	struct resource *res;
-> > +	int err;
-> > +
-> > +	np =3D of_parse_phandle(of_node, "memory-region", 0);
-> > +	if (!np)
-> > +		return NULL;
-> > +
-> > +	res =3D devm_kzalloc(dev->dev, sizeof(*res), GFP_KERNEL);
-> > +	if (!res)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	err =3D of_address_to_resource(np, 0, res);
-> > +	if (err)
-> > +		return ERR_PTR(err);
-> > +
-> > +	if (of_get_property(of_node, "reg", NULL))
-> > +		drm_warn(dev, "preferring \"memory-region\" over \"reg\" property\n"=
-);
->=20
-> The reg property is converted to a device resource when we create the dev=
-ice
-> at [1].
->=20
-> I have another question, which I was discussing with Javier recently. Is =
-it
-> possible to handle memory-region there automatically? If, for exmaple, it
-> would create a resource with IORESOURCE_CACHEABLE, simpledrm would handle=
- it
-> as memory region. Without the CACHEABLE flag, it would be a regular resou=
-rce
-> as before.
+[0] https://lore.kernel.org/linux-tegra/20221114124053.1873316-1-waynec@nvidia.com/
+[1] https://lore.kernel.org/all/20221003125141.123759-1-jonathanh@nvidia.com/
+[2] https://lore.kernel.org/linux-tegra/20221118144015.3650774-1-thierry.reding@gmail.com/
 
-memory-region properties are not typically converted into a standard
-resource automatically. One reason may be that they can have additional
-properties associated with them and so something like a CACHEABLE type
-may not apply.
+Jon Hunter (1):
+  dt-bindings: phy: tegra-xusb: Add support for Tegra234
 
-It's also standard to convert "reg" properties into struct resource and
-that's what many drivers will expect. I don't know if all drivers will
-gracefully handle being passed a struct resource that was created in
-this way from a memory-region property. If at all I think this would
-need to be special-cased for simple-framebuffer, in which case I'm not
-convinced that putting the special case into the core OF code is any
-better than putting it into the simpledrm driver.
+Sing-Han Chen (2):
+  phy: tegra: xusb: Add Tegra234 support
+  usb: host: xhci-tegra: Add Tegra234 XHCI support
 
-Also, even if we did so, what would it really change? We may be able to
-avoid the explicit DT lookup, but the bulk of the memory-region code is
-actually mapping it, etc. That part we won't be able to automatically
-handle, I think.
+Wayne Chang (3):
+  dt-bindings: usb: Add NVIDIA Tegra234 XUSB host controller binding
+  arm64: tegra: Enable XUSB host function on Jetson AGX Orin
+  phy: tegra: xusb: Disable trk clk when not in use
 
-Ultimately this is up to Rob, not sure if he'll want to extend the
-simple-framebuffer node creation code any further.
+ .../phy/nvidia,tegra194-xusb-padctl.yaml      |   4 +-
+ .../bindings/usb/nvidia,tegra234-xusb.yaml    | 158 +++++++++++
+ .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |  48 ++++
+ .../nvidia/tegra234-p3737-0000+p3701-0000.dts |  93 ++++++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 145 ++++++++++
+ drivers/phy/tegra/Makefile                    |   1 +
+ drivers/phy/tegra/xusb-tegra186.c             |  64 ++++-
+ drivers/phy/tegra/xusb.c                      |   6 +
+ drivers/phy/tegra/xusb.h                      |  23 ++
+ drivers/usb/host/xhci-tegra.c                 | 267 +++++++++++++++---
+ 10 files changed, 767 insertions(+), 42 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
 
-Thierry
+-- 
+2.25.1
 
->=20
-> Best regards
-> Thomas
->=20
-> [1]
-> https://elixir.bootlin.com/linux/v6.0.9/source/drivers/of/platform.c#L586
->=20
-> > +
-> > +	return res;
-> > +}
-> > +
-> >   /*
-> >    * Simple Framebuffer device
-> >    */
-> > @@ -623,8 +649,7 @@ static struct simpledrm_device *simpledrm_device_cr=
-eate(struct drm_driver *drv,
-> >   	struct drm_device *dev;
-> >   	int width, height, stride;
-> >   	const struct drm_format_info *format;
-> > -	struct resource *res, *mem;
-> > -	void __iomem *screen_base;
-> > +	struct resource *res, *mem =3D NULL;
-> >   	struct drm_plane *primary_plane;
-> >   	struct drm_crtc *crtc;
-> >   	struct drm_encoder *encoder;
-> > @@ -676,6 +701,9 @@ static struct simpledrm_device *simpledrm_device_cr=
-eate(struct drm_driver *drv,
-> >   		format =3D simplefb_get_format_of(dev, of_node);
-> >   		if (IS_ERR(format))
-> >   			return ERR_CAST(format);
-> > +		mem =3D simplefb_get_memory_of(dev, of_node);
-> > +		if (IS_ERR(mem))
-> > +			return ERR_CAST(mem);
-> >   	} else {
-> >   		drm_err(dev, "no simplefb configuration found\n");
-> >   		return ERR_PTR(-ENODEV);
-> > @@ -698,32 +726,55 @@ static struct simpledrm_device *simpledrm_device_=
-create(struct drm_driver *drv,
-> >   	 * Memory management
-> >   	 */
-> > -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -	if (!res)
-> > -		return ERR_PTR(-EINVAL);
-> > +	if (mem) {
-> > +		void *screen_base;
-> > -	ret =3D devm_aperture_acquire_from_firmware(dev, res->start, resource=
-_size(res));
-> > -	if (ret) {
-> > -		drm_err(dev, "could not acquire memory range %pr: error %d\n", res, =
-ret);
-> > -		return ERR_PTR(ret);
-> > -	}
-> > +		ret =3D devm_aperture_acquire_from_firmware(dev, mem->start, resourc=
-e_size(mem));
-> > +		if (ret) {
-> > +			drm_err(dev, "could not acquire memory range %pr: %d\n", mem, ret);
-> > +			return ERR_PTR(ret);
-> > +		}
-> > -	mem =3D devm_request_mem_region(&pdev->dev, res->start, resource_size=
-(res), drv->name);
-> > -	if (!mem) {
-> > -		/*
-> > -		 * We cannot make this fatal. Sometimes this comes from magic
-> > -		 * spaces our resource handlers simply don't know about. Use
-> > -		 * the I/O-memory resource as-is and try to map that instead.
-> > -		 */
-> > -		drm_warn(dev, "could not acquire memory region %pr\n", res);
-> > -		mem =3D res;
-> > -	}
-> > +		drm_info(dev, "using system memory framebuffer at %pr\n", mem);
-> > -	screen_base =3D devm_ioremap_wc(&pdev->dev, mem->start, resource_size=
-(mem));
-> > -	if (!screen_base)
-> > -		return ERR_PTR(-ENOMEM);
-> > +		screen_base =3D devm_memremap(dev->dev, mem->start, resource_size(me=
-m), MEMREMAP_WB);
-> > +		if (!screen_base)
-> > +			return ERR_PTR(-ENOMEM);
-> > +
-> > +		iosys_map_set_vaddr(&sdev->screen_base, screen_base);
-> > +	} else {
-> > +		void __iomem *screen_base;
-> > +
-> > +		res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +		if (!res)
-> > +			return ERR_PTR(-EINVAL);
-> > -	iosys_map_set_vaddr_iomem(&sdev->screen_base, screen_base);
-> > +		ret =3D devm_aperture_acquire_from_firmware(dev, res->start, resourc=
-e_size(res));
-> > +		if (ret) {
-> > +			drm_err(dev, "could not acquire memory range %pr: %d\n", &res, ret);
-> > +			return ERR_PTR(ret);
-> > +		}
-> > +
-> > +		drm_info(dev, "using I/O memory framebuffer at %pr\n", res);
-> > +
-> > +		mem =3D devm_request_mem_region(&pdev->dev, res->start, resource_siz=
-e(res),
-> > +					      drv->name);
-> > +		if (!mem) {
-> > +			/*
-> > +			 * We cannot make this fatal. Sometimes this comes from magic
-> > +			 * spaces our resource handlers simply don't know about. Use
-> > +			 * the I/O-memory resource as-is and try to map that instead.
-> > +			 */
-> > +			drm_warn(dev, "could not acquire memory region %pr\n", res);
-> > +			mem =3D res;
-> > +		}
-> > +
-> > +		screen_base =3D devm_ioremap_wc(&pdev->dev, mem->start, resource_siz=
-e(mem));
-> > +		if (!screen_base)
-> > +			return ERR_PTR(-ENOMEM);
-> > +
-> > +		iosys_map_set_vaddr_iomem(&sdev->screen_base, screen_base);
-> > +	}
-> >   	/*
-> >   	 * Modesetting
->=20
-> --=20
-> Thomas Zimmermann
-> Graphics Driver Developer
-> SUSE Software Solutions Germany GmbH
-> Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-> (HRB 36809, AG N=C3=BCrnberg)
-> Gesch=C3=A4ftsf=C3=BChrer: Ivo Totev
-
-
-
-
---rD4xpyu/Zx8vn3+R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmN3puoACgkQ3SOs138+
-s6G8fQ/8CgzZ0V42DX96UOjOAFLzd2OgVmN8a3FwEYd3v6YRink/LSZBeV+Hpyg2
-4X7fAqpIkHO4yEAlhCfrZZr5TuIUlVA6HQRBXm2TYYe2WmldKGjU1gKX04jPQGts
-/DI2oI+J8fq44NX2f2aOR3nawYy51lmLGL7m9rZcY2ifskRwnJFQrQZWL50h7qt0
-ji9CWhElxqFMV6fJyHy/14bfyv8u3NsjpT76JabbqnrWEX00S67THux+FPXmIeuc
-N874WtgdqC6HkZtYgJGlxz0yxf0dDO3w1bIyA7rv+4JyRj98fsKQHK6iDZMEoFBh
-vhhy524nv2zK49l+bQKjmWZ/bUazhm9OA6Bu0uVqgiSFwzgOC1oxb9xcs9SNLc+4
-0MEyb+orjb2+U+SBVJxafWJKdBp8jR4hiqgRyb7XGfNiG185XDDKMtnz6vrszIPh
-GByYGuuqyZmlV5VivhyPZP/EBGK+XFbk82Cy69lKSr/Y6M/ntzWt/VlHUm4me3Pl
-xveQdHqGYMgnMmhoGY2NiDxCQYb+o5Sh2rNhwqcXnOoKSuL2qKwZOw2lni0fj8sS
-0zauRTMkME82OENZovQb9h4i2ShtaIPFrPSJ8oqm5RbIbhrkoRoc+KdkBR8cjoTg
-6jRFQYH2cFfu8dXyohrT0QpUlIUD4Btg58jFTjyDmLYondSC9wg=
-=+bd7
------END PGP SIGNATURE-----
-
---rD4xpyu/Zx8vn3+R--
