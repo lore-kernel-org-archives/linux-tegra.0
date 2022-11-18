@@ -2,143 +2,189 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B2AC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 15:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B0FC4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Nov 2022 15:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242016AbiKRPo0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Nov 2022 10:44:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56314 "EHLO
+        id S242071AbiKRPpC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Nov 2022 10:45:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241712AbiKRPoZ (ORCPT
+        with ESMTP id S241407AbiKRPpB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Nov 2022 10:44:25 -0500
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 710D47D509;
-        Fri, 18 Nov 2022 07:44:24 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=enOgP1kDR8cR/WqgZJ5ptOLKg3NW6gMoxzO0+57yA/KgYFONEqbkzb7F95E28Krcx/tmGj+OZLkYxa6++Ytwln++TjVDTnXcMd5saSzYYZjuWuF+17wEMuNnfas7FcfQikxVvKMQfsRad5y7dxACmg1muhL39xasrAb7F/TLya83i9G40zPLSWOzqOUhXa9OfXV40A1N3b8+/JXIMDUdUBApBedGCZ9nEPyIwR2A5++FMKeqmAXsCfO3zskdprxuVCfI26uiMN+qlFsX2PCPIov4jmv8i4Gx9u53Lxf9E+6vDLWkTqj6O9zdo+jlJh50b+Y/OnLDdGLAP9PldwEQVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wq76mKmYLbJBvcI1O3AsXWa8+TkjPSimB+++i2ejPGQ=;
- b=HSsTJrFHGDuX+PNe+1GH/edDW0YncNcC0NZoLzDbchcXl+VO/zE0Oa5iGcKD972ZdNRpixBvwpuSthpyCyHIQk+bAyGHXX8dQ9SOrVTYGJCKZ1H2bCVeM/x75wfYeASSWAHtNQ+XxOX+kq7V0JobdhuHnLHGj6U3LdECtV5gqYEP6ybo848EfYJpi3HYkOQKdr/4XUi8gml9xBuvsIZLLOmIpSy9peFxYLfyn4ryxPVNSHeDBRGQZuEHXPvM15itSvxF2mu0CQ3rrKBZSBiaHFKOJJyyNBJmg/r9tqLlSINBEnKqMJq3EAc5aNIYOgwBR5mseEn6lsnBL+SAA2UKWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wq76mKmYLbJBvcI1O3AsXWa8+TkjPSimB+++i2ejPGQ=;
- b=KWvwGDzvrgEbeGU6ALWNJzZkFHxSFDLWdyTGqY9jf7iaL5HQg/v3f8PvBqegLNL/qSM1WDwLBQjXGmTX57IJP24CcxFY28vsBLdaorCPu6WPU9qN/rrNnB2jovbkq6ja5SYyYHXQfjR8sdImMu9fMUQoP7iMiYUi/3fSc3IRkp7RHjw9a10BLZQxq5EKhcQ5plNrFYkprXEKVFS0Ld8n9d8M5blqqt30ZFlmwwCWkc7AX4lmtgCt3yWTByxarv1DVt72Vd0s9czBpGGiRXwNvqYybNDh+//Uz5bUvHr0YMCOTmGfprI09vJ1LY3HVzB8qTVhc6p7ibtb6wvQo1cdRQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- BY5PR12MB4275.namprd12.prod.outlook.com (2603:10b6:a03:20a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5834.9; Fri, 18 Nov
- 2022 15:44:22 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::8edd:6269:6f31:779e]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::8edd:6269:6f31:779e%5]) with mapi id 15.20.5813.020; Fri, 18 Nov 2022
- 15:44:22 +0000
-Message-ID: <51806f6c-5378-9a4b-9323-f8bc2529de0c@nvidia.com>
-Date:   Fri, 18 Nov 2022 15:44:13 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v3 00/13] Enable USB host and device functions on Jetson
-Content-Language: en-US
-To:     Wayne Chang <waynec@nvidia.com>, gregkh@linuxfoundation.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        treding@nvidia.com, thierry.reding@gmail.com,
-        heikki.krogerus@linux.intel.com, ajayg@nvidia.com,
-        vkoul@kernel.org, p.zabel@pengutronix.de, balbi@kernel.org,
-        mathias.nyman@intel.com, jckuo@nvidia.com
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, singhanc@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-References: <20221114124053.1873316-1-waynec@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20221114124053.1873316-1-waynec@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0012.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:150::17) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        Fri, 18 Nov 2022 10:45:01 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6347D508;
+        Fri, 18 Nov 2022 07:45:00 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id gv23so14018014ejb.3;
+        Fri, 18 Nov 2022 07:45:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o6L5mgU+JKnbKwI6y15nMhU3sJXrsWXfh8EhGsXVHEM=;
+        b=FtAxkKH1luQM/BxQ7Z67dVxHUCYHZG5WMV5xWEsTi6BHG/mLSSrnCm1V1TFXLPn+V3
+         vuMo7fu6Sa/VGTf73YwH/GDKR0IG0qSxhXTd8sO8rVdh1aBQNzBR7JR0D0XdjIrj3eKy
+         eCTck4ERuXvkffONQsY6Ppb1N/UKi72SQaXjB3vF1hziagGGpiG0t59hc6uJq3stxTCm
+         GXMPkdesN7YEEliMWa1bDDHoHxmxFPygYB6yToMa2Ya0wTPur3IUwWfjvX82ng1I8oCf
+         ZtuU+30muLMICSic2Bx6/1z/GiBcDVfswhkGTz4O4Poy/0bNY95FewuExwf7AgDjz7S5
+         Ol1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o6L5mgU+JKnbKwI6y15nMhU3sJXrsWXfh8EhGsXVHEM=;
+        b=h5YMP92F7zr6utrJxQhRqOxtFdwIQKiFy/4+K8g2+b9E0E8MCUfE88xB7U0cLFs9Fs
+         9yGtPBBrq/LCXtOCSiCqp75/HFm/fG4WEN53GAQeZQadTeRXZIMnvJ+U07Y4Jw7yGxzh
+         tZZEyG0LoHywFfCeSVNa15WAUYXGw32TaNxAMDyOB4yEkOVF9DO1al7OP/RJSHZTyEOh
+         eAwj+gEWR7LxQZfp7XcB0sXZMwQqqZuAoZZAvGpVSR1/Nn1yd8gzUVWoYvcIfOuikO8l
+         dvunIKNxdKhabM4zEv5Fary30XB1yeN0WOrbsCdZOqd/MLTozJ7yv292454PIpUjc+tT
+         dA5A==
+X-Gm-Message-State: ANoB5pm9Qy2JR//ZWomFBVdAQAemVQUECZEDJ6ufJCXWw7KMbQTTk6lc
+        2qJT78siucFh6aNP+WNeC5g=
+X-Google-Smtp-Source: AA0mqf6a7mxrvxb7UFmpnOkrs2KK4TZdU/yC+2D6DmftlrmiOzdJ4WYvQpr1TnQ2XJ8nibIu/iSLcg==
+X-Received: by 2002:a17:906:9457:b0:7ac:db40:7e1 with SMTP id z23-20020a170906945700b007acdb4007e1mr6593275ejx.204.1668786299018;
+        Fri, 18 Nov 2022 07:44:59 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id d23-20020a056402001700b00461aca1c7b6sm1957753edu.6.2022.11.18.07.44.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Nov 2022 07:44:58 -0800 (PST)
+Date:   Fri, 18 Nov 2022 16:44:56 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 7/8] drm/simpledrm: Support the XB24/AB24 format
+Message-ID: <Y3eoeLLOxHaruPOV@orome>
+References: <20221117184039.2291937-1-thierry.reding@gmail.com>
+ <20221117184039.2291937-8-thierry.reding@gmail.com>
+ <7018f094-e1f8-d82d-f4b2-b1ae833d1c47@suse.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|BY5PR12MB4275:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3dd55210-8e5f-433f-1bc4-08dac97bc2f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mH+gpAZHWiBGm8PUXDq1aUzJF7Vd4F1D9yA00KciwyQ4VfEl7ptm8YjquhdNoRPy8RSOb8Elk7q5po33mMciS4/HSxYlxqC6GIvEMJRkb3xpS8Z8TsqSEyesuvmQqT/o8T/3VS4iwA9BtLOzo6rBFU89t77eA5tl3gJ5+RFAJ3TGIMTy6IwxruQErhoKfWSExT+jS560maL+FJj6F3SAS4bo5rOCaSe4/rCU1SEiWPIFtvIYet0+saBhN3OJboRX4w7l40SJ4iqdvgv2tSZWyzp25GQN1YCdNpJLp6MExjAEZgPbj3vDs1ScCFTTotn9msBuY5PEscienMJsxHal2hgW0yUn4AnFY8H2aWEsg7kXNBP5uFZBQR7IyEaGs3KXL4geXAH/i60r0Ol0C3fcfT7PhICxHlnvUFYrpvavB7Xv1n688AGQTeJ3zElLrQUyIL7jbJFrQyNKBWae0v5bzeOCfjlVksbnuLvIT4VvlK/rvvOyR9oQ5z8q0T2QLpjMybaas1fZg2veQR6TM5xdaQp+QqYcutVV7NGMQkh+erXZ1oq0c5DzUmmIrRZTDKlUT5JSReJP8T1HZa6Lbncwj3eJl7aKpEuFgpfWWUeDIDEBvG+MWFQtEB2XQ8IDu9rBcT1PleawGdXhQ+62SEFILzFANeU8PS3zTE5QAyQjlsVf8BI3qDEuysx0Lo6LhSy/fz5SJj8a4qp3AH1R1u8sfgs2whhZe5lAPuKfYt9CACGXwqLeh2Hf5ESuZwegt/1qb7mhfc33ryiH04XXpDGYRNRRN6fH7UHfode0cZ6q2r/3Pe9eEKeXI6zXODR2oc4tAkPdxTF3cvxGEgODlcsolw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(366004)(39860400002)(136003)(396003)(451199015)(86362001)(966005)(478600001)(38100700002)(6486002)(31686004)(6666004)(6506007)(316002)(186003)(2616005)(36756003)(8936002)(2906002)(6636002)(53546011)(41300700001)(921005)(31696002)(4744005)(7416002)(6512007)(8676002)(66946007)(66476007)(5660300002)(4326008)(66556008)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dHhWMmUraHErZmd1cXd2di95WmhwUGI0SWJOVFY5dG5WOTU0dHJBNERHc0Nt?=
- =?utf-8?B?T0Q1MVBTM3NsbTl4YzZyeG0zdjh4aThzdXJmVWpTTnZ2bDdyQmgvYXAwUkdP?=
- =?utf-8?B?MW1TQlV2YTZkOFd1eHBlQnFZdHNqdThXNXJ1cnpVL01vcUFnVTNxYVVoQVlF?=
- =?utf-8?B?d3prV2FRUWFzSWw4cDhoSHRxQTJhMDZWL2VtNzZFY01PQndqRDRidUdvdnRu?=
- =?utf-8?B?U2p0K1UzR2VsVm1McVR4QnNiTEltcVQ0ZklDaUZhbFpJcnk0RTYvVjBiWmpm?=
- =?utf-8?B?akUvek02WjBySld2elN6K282WjhVU1BIeHpFSWxVN1Zna1pDRUJHY3BFUlcz?=
- =?utf-8?B?ZVR5aW54Zzdoejk4bXN1TWJ2MWtmSlowaGltV1ZFakZHUkhGNWRzb2NVQmYr?=
- =?utf-8?B?TU5Ya2NJS0dXQkxWSTZhN3N5MmV0TzNBaHJzQlM4MUdCN0lvUHJsM0pKaElU?=
- =?utf-8?B?N3F6TXNqSy9NYzdoZEwrMmdsVzhGdEZkY1lDcE9YR1dWVlFHWThCcTdkSlBs?=
- =?utf-8?B?eTJLRU81OXl3OTVpdGtlRWM0azhYMi85S0RGVVZ0b0o0dmxmTS9SdTlzZHB3?=
- =?utf-8?B?RllVdzQ1TkNEc1ltMFpGVkFPWC82cVc2WmluaWVVTlZXY1BkUFNGK094eGZa?=
- =?utf-8?B?OVpqZUdMQmIwR3ltOENwWEtqS3dXYVBHVHRTaGNHWlVXMzVhRTg5OTZVSnY2?=
- =?utf-8?B?T2dpVmVWQ3hKVFIyVTd0d2ExYUR4S3hTT3FIRW5GcXBiSTUvTUlNVmszV1hz?=
- =?utf-8?B?SXArN3lkdWhrZlN6UW1JcWlaSUhGTVFiWnF4emtGalVRVjQ3T2MrMEtUVWdR?=
- =?utf-8?B?MDFZZE96SnJ0Y25xdEU2cEcvd0NIeXZTTGZiWkE3MEIwc2RMWElVbC83TGgz?=
- =?utf-8?B?QlMyaXdMbTM4S2UwVTRiS2N0NXNWL1l5ODMyeE9RL25NTFFDb2pLTjdSMG5H?=
- =?utf-8?B?UGY0S3NmaW93ejRMazJXVGFxVlZOWDFKRXQ3a05BM2tiWnROOFhObnNuZkJD?=
- =?utf-8?B?cEFjSXF1Y2FFUXYzZWpoR09VMHcyVGd3WDdRWVdhV0Zpa3lCeXpvL05zejRM?=
- =?utf-8?B?YWh4czlmSHhVYkxIYlR0bWZ4Tk9aZkZMQkU2RkQ0K2w5ZDEzMFFyYUlpdUdE?=
- =?utf-8?B?S0QvaDBwN3Q2TDl0NHZKa2F1RWtuNXlLTHlhK1BuT1pySWcwenFJdGZlY1N6?=
- =?utf-8?B?TUsxYnN1MUZRVWJBRkNGZWdJTUJnTVQrbTN4RERoUjdVZC8yYUJlK2UrcVFT?=
- =?utf-8?B?Rjg5RmRkMncxVmdlRi9SZWhUdjVOMU4yd2ZVNzdDOVpzSE9XU2tFQWdyNlN4?=
- =?utf-8?B?eU9CNUNCZzRyeGZwVUxDaHdMYlZ0MEZOZW5aSlFEelYxY1M4MktidGdsdUR1?=
- =?utf-8?B?U1k3NENtRnh2TXhhYTJPbGZRK3MzeFR2SVZqei9SZHlNbXo5Ymt0NXluQWVk?=
- =?utf-8?B?UE8yYVJ5RnVXaE5xcDRubjJzMzljeUVHdUkxZlBNaHYrSEZCWHNVc3k4alZL?=
- =?utf-8?B?WnhxM3VHdlYyZjRWQVJpczFaMmdSa2dnYTM2SjFtYmtybURha3p5VDJudmRR?=
- =?utf-8?B?aFFiQlk1R3ZsSndYZ0pGcWt3TUd4V3R2bllJTkVNRHB3cjArWm9KUThtNlNH?=
- =?utf-8?B?ZWNLZTdMUmlBNTl3U0NBRENzTnBvVmxlM0lUdTdob2FEOU14c1IxMzBjTkxB?=
- =?utf-8?B?VXNEc2RqOEVJRTNEbmoyNnB3QlVjMnJCaGFab0ZjeGZnWHQzQ2Vvd0VYYWgz?=
- =?utf-8?B?RkYycEkwZVIrckNXL3J6Y0M1SGR1K2RpRmRKSGJXTzBMMkhVNGlIZUhJM2Ft?=
- =?utf-8?B?YkZYYmNHcmorRlhlbk0wNWs3Y3IwalFiZkEvRDdCYWFhRTk2U29CdVNSMS9w?=
- =?utf-8?B?SC9HM1VpOU5wQ3EyRXNzMm92T0VCRDBGREFaWkNFb0lRMU04RnY5Unc4V1JH?=
- =?utf-8?B?YUhDcXIyQTdMNzB0aEpkUExzbk5uQ0VEVWk1eDJNWXFYQmMrcENxVEZVYUZm?=
- =?utf-8?B?MHkvOGJmSTkzTHFkTCt0OVp1Qk5LYXZtWHZxbDl1NW9ocVJzb2gzVUlJRUN5?=
- =?utf-8?B?V3BtZ0N4RkcwNXJYc0swWmpTNXk1Q282aEY4MC8rZ3JsYnhQVnlqbzZBL2hJ?=
- =?utf-8?B?TEhwazljWkdqcUZvQVJ1UXJLVGI4enNPOFpDRllqTE5KeC9KUzF1UjQ3Y3ls?=
- =?utf-8?Q?Zoy831vxYY6aFtaTqjqQ0n3P4PO65N9Od3gp1+nJqY7N?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dd55210-8e5f-433f-1bc4-08dac97bc2f7
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2022 15:44:22.0167
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Yu7Vk+KiyEcg7on93baDGgr+mm9CNv8jpnywSqiZUCwAzf/9UCioyV2r2jriKQIDhhozRsVTVY30akPyN2gE/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4275
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vNq/aMDFmk2Q3leG"
+Content-Disposition: inline
+In-Reply-To: <7018f094-e1f8-d82d-f4b2-b1ae833d1c47@suse.de>
+User-Agent: Mutt/2.2.8 (2022-11-05)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 14/11/2022 12:40, Wayne Chang wrote:
-> The patch series enable the USB host and devie functions on Jetson AGX Orin
-> and depend on the following change
-> https://lore.kernel.org/all/20221003125141.123759-1-jonathanh@nvidia.com/
+--vNq/aMDFmk2Q3leG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have been talking to Wayne about this series and for now we want to 
-see if we can get the USB host support merged. Then we will work on the 
-USB device support next. I have sent out the USB host patches on Wayne's 
-behalf.
+On Fri, Nov 18, 2022 at 04:08:23PM +0100, Thomas Zimmermann wrote:
+> Hi
+>=20
+> Am 17.11.22 um 19:40 schrieb Thierry Reding:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Add XB24 and AB24 to the list of supported formats. The format helpers
+> > support conversion to these formats and they are documented in the
+> > simple-framebuffer device tree bindings.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> > Changes in v2:
+> > - treat AB24 as XB24 and support both at the same time
+> >=20
+> >   drivers/gpu/drm/tiny/simpledrm.c       | 2 ++
+> >   include/linux/platform_data/simplefb.h | 1 +
+> >   2 files changed, 3 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/si=
+mpledrm.c
+> > index 7f39bc58da52..ba1c2057fc65 100644
+> > --- a/drivers/gpu/drm/tiny/simpledrm.c
+> > +++ b/drivers/gpu/drm/tiny/simpledrm.c
+> > @@ -483,6 +483,8 @@ static int simpledrm_device_init_regulators(struct =
+simpledrm_device *sdev)
+> >   static const uint32_t simpledrm_primary_plane_formats[] =3D {
+> >   	DRM_FORMAT_XRGB8888,
+> >   	DRM_FORMAT_ARGB8888,
+> > +	DRM_FORMAT_XBGR8888,
+> > +	DRM_FORMAT_ABGR8888,
+>=20
+> Does the hardware *really* support AB42 on its primary plane?
 
-Jon
+Yes, Tegra display hardware supports this format on the primary plane.
 
--- 
-nvpublic
+> We recently had a discussion about the exported formats and the consensus=
+ is
+> that we only want the hardware's native formats plus XRGB888. That's not
+> implemented yet in simpledrm, but this format list will soon see a larger
+> cleanup.
+>=20
+> So I think ARGB8888 likely shouldn't be on the list here.
+
+This is for consistency with the list below. If a device tree claims
+that the framebuffer is ABGR8888 using the "a8b8g8r8" string, then
+shouldn't we support it?
+
+Thierry
+
+>=20
+> Best regards
+> Thomas
+>=20
+> >   	DRM_FORMAT_RGB565,
+> >   	//DRM_FORMAT_XRGB1555,
+> >   	//DRM_FORMAT_ARGB1555,
+> > diff --git a/include/linux/platform_data/simplefb.h b/include/linux/pla=
+tform_data/simplefb.h
+> > index 27ea99af6e1d..4f94d52ac99f 100644
+> > --- a/include/linux/platform_data/simplefb.h
+> > +++ b/include/linux/platform_data/simplefb.h
+> > @@ -22,6 +22,7 @@
+> >   	{ "r8g8b8", 24, {16, 8}, {8, 8}, {0, 8}, {0, 0}, DRM_FORMAT_RGB888 }=
+, \
+> >   	{ "x8r8g8b8", 32, {16, 8}, {8, 8}, {0, 8}, {0, 0}, DRM_FORMAT_XRGB88=
+88 }, \
+> >   	{ "a8r8g8b8", 32, {16, 8}, {8, 8}, {0, 8}, {24, 8}, DRM_FORMAT_ARGB8=
+888 }, \
+> > +	{ "x8b8g8r8", 32, {0, 8}, {8, 8}, {16, 8}, {0, 0}, DRM_FORMAT_XBGR888=
+8 }, \
+> >   	{ "a8b8g8r8", 32, {0, 8}, {8, 8}, {16, 8}, {24, 8}, DRM_FORMAT_ABGR8=
+888 }, \
+> >   	{ "x2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {0, 0}, DRM_FORMAT=
+_XRGB2101010 }, \
+> >   	{ "a2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {30, 2}, DRM_FORMA=
+T_ARGB2101010 }, \
+>=20
+> --=20
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+> (HRB 36809, AG N=C3=BCrnberg)
+> Gesch=C3=A4ftsf=C3=BChrer: Ivo Totev
+
+
+
+
+--vNq/aMDFmk2Q3leG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmN3qHgACgkQ3SOs138+
+s6Exkw/+Jt5RZlDy44ERgWiTBxt37qAeKtj5ZY8t5BLUo2Y4Z315h5xpUv3roXJa
+Jz2KB75PxNwp+KdWZQT5HkR3qxDL+Jh2YcX7RDsO/pTfDgfGgz0akwdnpXdpyarM
+MooVEAggH+xP+ASFA38CdwWt3PLqkVM0MWjtcv1bk9d4NXe3MYdgK54To/4FztNF
+162CfjUvVfX/bFpBwsJsS9fY2GQwaGtwd10mP6tS6q5GJapnRffZK0aW5m8d04Ek
+aaaRC2Qf6YrR8CSqjsBRRrVpQ4l0tVRuhAzMPCdr7Py7Hz5tzv/OKxd9Si5HEhhu
+pU8KVa7KGq+6DA07j7y+SJPF9xGK7WpSDlAz3q4Js0Jsr6fYXzk4CVuqEycjai1W
+wbColg/L7GnywWxxEmV7/owzUtPn7fcMJAC8w6hRaTgTEyUa+ZF8rjnObfRYWAhe
+EZo14G+bFhBr28sb26h3Ey8TFddfPSg1t0kPiTn+qk6nDkxse14alwnsO+elOqMH
+3LuByjGsUXeHvN7+o5Qoprm7rxt/0UltuizOjb2BymvqFyTtympwq86tzyYudEU5
+pGm6yMTX/95AkSpPs6nZ7E+JyxM+5e3MLC6UCYdHmRNnvY5qVF2QAy4ia+2p7FLn
+QdYh9Rh53QcdjHJJCeU1zqW7idMWO9NT40Xx0xjPbVw3qwqoY+c=
+=zV7L
+-----END PGP SIGNATURE-----
+
+--vNq/aMDFmk2Q3leG--
