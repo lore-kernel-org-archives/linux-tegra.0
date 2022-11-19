@@ -2,109 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47EEC4167D
-	for <linux-tegra@archiver.kernel.org>; Sat, 19 Nov 2022 06:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3BEC433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Nov 2022 09:39:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231598AbiKSGiB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 19 Nov 2022 01:38:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35250 "EHLO
+        id S233728AbiKSJjO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 19 Nov 2022 04:39:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiKSGh6 (ORCPT
+        with ESMTP id S233638AbiKSJjN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 19 Nov 2022 01:37:58 -0500
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F560B4F1C;
-        Fri, 18 Nov 2022 22:37:56 -0800 (PST)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-142612a5454so7803925fac.2;
-        Fri, 18 Nov 2022 22:37:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLYrlsSUJ/3iV70MlNgEm3O6sI1BB8dOzm7Fo6KqsgM=;
-        b=cNFOo+VqMgo+mnOiJFXxMwMeFQLoitwcWJzIOOFWlhDZn66wiP2M4eBUI7NktrM1uC
-         yaoxkbPYDfgg1iDxd9fZ4xi9O867toY85OU0FO1wgrIcYtErgNqSkIaDFS1yLEWy06Ze
-         Nw1/AIkSKmJKMc018JElW0dxYRL+GkqGyoV263phPIjoXOrycZ0f4UAzEZVysgHM2sCC
-         u3DTAZg7k0XUYqkROhzjmjl20OPHdLpF2N4VWXL/gTSjK7lRgBotEJdsiOLa4wIH6cX7
-         RdwHdpMT7MwsU0JqQ6wxuSX6BvrKyH1TcIs0CmWyKM61aIq78ZXPr1jlmFDGDcT3Hvct
-         8DkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cLYrlsSUJ/3iV70MlNgEm3O6sI1BB8dOzm7Fo6KqsgM=;
-        b=JNHys+KzBdTEcO+lu28uAqacEaqwIcH0i2GzKSxcghntUK/4R7o/SeDGb1I0oPJaSv
-         NzPtsfL3SkUm8js6oLcoQs1/j97FJjIET5w0pWacBv44whuB3KozQQdDdXKFYhKMiVO/
-         0VB1nKwlNgZLdRrAb/AQUHKEZIAUE7WyCpEj7/3NkDMDGktUBB535ET3umx2HWa346YC
-         brAwTW67rpiC0RKIgsQLVgnGDh5AoApOXhNO5yKx1Idmh3TbE8g4SoaZJoxzLKcmI6tb
-         rQ3S/vh84woLhkahSqJbZilb9S/j/RoYzgpV1U1/gHmqjMbI+NfIKvnCRMvzisGcEyjc
-         91MA==
-X-Gm-Message-State: ANoB5pkTMheAmDzaX7Zo7GdTJ5Px/iv+4+rRAv5RbpNS0zwCEuYcw1vj
-        AA+t9Qr68koZ7h6vo1/JFzP7w4KsyilzC19Vfxw=
-X-Google-Smtp-Source: AA0mqf4YHBgpQyRnlsR8IJwpaWfoiK6RVHKjHFNz8PNwpwXg9+N4cVuAs+273DwuP7yKjh9Nyq4wN2dl85vztU/s7dM=
-X-Received: by 2002:a05:6870:9591:b0:13a:eee0:b499 with SMTP id
- k17-20020a056870959100b0013aeee0b499mr378364oao.83.1668839875548; Fri, 18 Nov
- 2022 22:37:55 -0800 (PST)
+        Sat, 19 Nov 2022 04:39:13 -0500
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A87AC7DED9;
+        Sat, 19 Nov 2022 01:39:11 -0800 (PST)
+Received: from 8bytes.org (p200300c27724780086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7724:7800:86ad:4f9d:2505:dd0d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id 826D92A02E9;
+        Sat, 19 Nov 2022 10:39:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1668850749;
+        bh=zWtga/KvubHoJ0zb/2PRxtdqk3xpMDxLeLBasVYUrwA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FZlZRDuyN+NhX9mRTLX2JPwfJ4uclm5XvIJkjNAJU79wu4Hq/3IY1TeLmylQqT7ah
+         cc5SxAv5E+AYqJiH2VrFx1xb7hFWa0MM0V7sQHACey0ecJWflrSbR9DMqBiNeOPv0i
+         NW61iVgiEYyI0jAUCE5gmS3HknUqctA9UxX+Qx6QNH+N1qdF2PFoVHjz7crH4Huz1c
+         8XJuozPRQomKeTf62eMAuF2oa46Qxm8NpdoahKo6zPquj9GtDIyvQUtZ6bYU40g8u8
+         OBIv/7DQDTQhu5Cx6FbVW9Sdsagh8DIGw3JOEA/uA9xwcvDEAhaIpwl7eRS1M1P6gD
+         E6dwp675GQlWw==
+Date:   Sat, 19 Nov 2022 10:39:08 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH v11 0/5] iommu: Support mappings/reservations in
+ reserved-memory regions
+Message-ID: <Y3ikPBFYrSCWB10K@8bytes.org>
+References: <20221111161806.630527-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-References: <20221118223728.1721589-1-robh@kernel.org>
-In-Reply-To: <20221118223728.1721589-1-robh@kernel.org>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Sat, 19 Nov 2022 07:37:43 +0100
-Message-ID: <CAMhs-H99X9aV7cdotCPar6g50KXL+qNS+jM16Tveq9nxfUY4Rg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Add missing start and/or end of line regex anchors
-To:     Rob Herring <robh@kernel.org>
-Cc:     Ilia Lin <ilia.lin@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Yangtao Li <tiny.windzz@gmail.com>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Daniel Mack <zonque@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-pci@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221111161806.630527-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Nov 18, 2022 at 11:38 PM Rob Herring <robh@kernel.org> wrote:
->
-> json-schema patterns by default will match anywhere in a string, so
-> typically we want at least the start or end anchored. Fix the obvious
-> cases where the anchors were forgotten.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/pci/mediatek,mt7621-pcie.yaml         | 2 +-
+On Fri, Nov 11, 2022 at 05:18:01PM +0100, Thierry Reding wrote:
+> Thierry Reding (5):
+>   of: Introduce support for #dma-{address,size}-cells
+>   of: Introduce of_translate_dma_region()
+>   dt-bindings: reserved-memory: Document iommu-addresses
+>   iommu: Implement of_iommu_get_resv_regions()
+>   iommu: dma: Use of_iommu_get_resv_regions()
+> 
+>  .../reserved-memory/reserved-memory.yaml      | 73 ++++++++++++++
+>  drivers/iommu/dma-iommu.c                     |  3 +
+>  drivers/iommu/of_iommu.c                      | 94 +++++++++++++++++++
+>  drivers/of/address.c                          | 84 +++++++++++++----
+>  drivers/of/base.c                             | 70 +++++++++++---
+>  drivers/of/of_private.h                       | 14 ++-
+>  include/linux/of.h                            | 17 +++-
+>  include/linux/of_address.h                    |  4 +-
+>  include/linux/of_iommu.h                      |  8 ++
+>  9 files changed, 329 insertions(+), 38 deletions(-)
 
-Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Despite this lacking some essential reviews, what is the plan with this
+code? Should it go through the IOMMU or DT tree?
 
-Thanks,
-    Sergio Paracuellos
+Regards,
+
+	Joerg
