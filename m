@@ -2,105 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2B5C43217
-	for <linux-tegra@archiver.kernel.org>; Sat, 19 Nov 2022 02:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E47EEC4167D
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Nov 2022 06:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230398AbiKSCLt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Nov 2022 21:11:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44562 "EHLO
+        id S231598AbiKSGiB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 19 Nov 2022 01:38:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231491AbiKSCLk (ORCPT
+        with ESMTP id S229470AbiKSGh6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Nov 2022 21:11:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8167E2FC25;
-        Fri, 18 Nov 2022 18:11:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1ADC6B82677;
-        Sat, 19 Nov 2022 02:11:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C227AC43147;
-        Sat, 19 Nov 2022 02:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668823892;
-        bh=TOLqu0LbFYDS5QL1E942g7sbSUH5VdBr7xnwJtZrtr8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UNNmdzh1RaIpb+JTkTVrV2qTmJHAvSjp5yzhHD4YB0eir8AvnDXa8NMyd+EAC/lOr
-         tYJ11cPPAK2AnFUsX4l5jgz6aYwksm4d+6fTa0XFM8sAheCYCO9L3Je67fIXraV75a
-         s4aX9a5bTApezcJnxYcqkCMBUEIhR1wX70WPTnBXflz4996eCi8QT1gTKXuWte0lpH
-         u4rPt63HsfBe/p/ebzRUEYBTTdbdWutBoPHTwD5uvU0veF+HizYvRT7c9q0MyGm/zB
-         LgQYCJP4kE6E0aG3d4sGDMH5957g2OF8kv9LN3EGf3GGN7W4K2o9ahWm2Q6I8cPtfc
-         hbUphI5iSxBuQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
-        skomatineni@nvidia.com, ldewangan@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.0 04/44] spi: tegra210-quad: Don't initialise DMA if not supported
-Date:   Fri, 18 Nov 2022 21:10:44 -0500
-Message-Id: <20221119021124.1773699-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221119021124.1773699-1-sashal@kernel.org>
-References: <20221119021124.1773699-1-sashal@kernel.org>
+        Sat, 19 Nov 2022 01:37:58 -0500
+Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F560B4F1C;
+        Fri, 18 Nov 2022 22:37:56 -0800 (PST)
+Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-142612a5454so7803925fac.2;
+        Fri, 18 Nov 2022 22:37:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cLYrlsSUJ/3iV70MlNgEm3O6sI1BB8dOzm7Fo6KqsgM=;
+        b=cNFOo+VqMgo+mnOiJFXxMwMeFQLoitwcWJzIOOFWlhDZn66wiP2M4eBUI7NktrM1uC
+         yaoxkbPYDfgg1iDxd9fZ4xi9O867toY85OU0FO1wgrIcYtErgNqSkIaDFS1yLEWy06Ze
+         Nw1/AIkSKmJKMc018JElW0dxYRL+GkqGyoV263phPIjoXOrycZ0f4UAzEZVysgHM2sCC
+         u3DTAZg7k0XUYqkROhzjmjl20OPHdLpF2N4VWXL/gTSjK7lRgBotEJdsiOLa4wIH6cX7
+         RdwHdpMT7MwsU0JqQ6wxuSX6BvrKyH1TcIs0CmWyKM61aIq78ZXPr1jlmFDGDcT3Hvct
+         8DkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cLYrlsSUJ/3iV70MlNgEm3O6sI1BB8dOzm7Fo6KqsgM=;
+        b=JNHys+KzBdTEcO+lu28uAqacEaqwIcH0i2GzKSxcghntUK/4R7o/SeDGb1I0oPJaSv
+         NzPtsfL3SkUm8js6oLcoQs1/j97FJjIET5w0pWacBv44whuB3KozQQdDdXKFYhKMiVO/
+         0VB1nKwlNgZLdRrAb/AQUHKEZIAUE7WyCpEj7/3NkDMDGktUBB535ET3umx2HWa346YC
+         brAwTW67rpiC0RKIgsQLVgnGDh5AoApOXhNO5yKx1Idmh3TbE8g4SoaZJoxzLKcmI6tb
+         rQ3S/vh84woLhkahSqJbZilb9S/j/RoYzgpV1U1/gHmqjMbI+NfIKvnCRMvzisGcEyjc
+         91MA==
+X-Gm-Message-State: ANoB5pkTMheAmDzaX7Zo7GdTJ5Px/iv+4+rRAv5RbpNS0zwCEuYcw1vj
+        AA+t9Qr68koZ7h6vo1/JFzP7w4KsyilzC19Vfxw=
+X-Google-Smtp-Source: AA0mqf4YHBgpQyRnlsR8IJwpaWfoiK6RVHKjHFNz8PNwpwXg9+N4cVuAs+273DwuP7yKjh9Nyq4wN2dl85vztU/s7dM=
+X-Received: by 2002:a05:6870:9591:b0:13a:eee0:b499 with SMTP id
+ k17-20020a056870959100b0013aeee0b499mr378364oao.83.1668839875548; Fri, 18 Nov
+ 2022 22:37:55 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20221118223728.1721589-1-robh@kernel.org>
+In-Reply-To: <20221118223728.1721589-1-robh@kernel.org>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Sat, 19 Nov 2022 07:37:43 +0100
+Message-ID: <CAMhs-H99X9aV7cdotCPar6g50KXL+qNS+jM16Tveq9nxfUY4Rg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Add missing start and/or end of line regex anchors
+To:     Rob Herring <robh@kernel.org>
+Cc:     Ilia Lin <ilia.lin@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Yangtao Li <tiny.windzz@gmail.com>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Jianjun Wang <jianjun.wang@mediatek.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Daniel Mack <zonque@gmail.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-pci@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
+On Fri, Nov 18, 2022 at 11:38 PM Rob Herring <robh@kernel.org> wrote:
+>
+> json-schema patterns by default will match anywhere in a string, so
+> typically we want at least the start or end anchored. Fix the obvious
+> cases where the anchors were forgotten.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/pci/mediatek,mt7621-pcie.yaml         | 2 +-
 
-[ Upstream commit ae4b3c1252f0fd0951d2f072a02ba46cac8d6c92 ]
+Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-The following error messages are observed on boot for Tegra234 ...
-
- ERR KERN tegra-qspi 3270000.spi: cannot use DMA: -19
- ERR KERN tegra-qspi 3270000.spi: falling back to PIO
-
-Tegra234 does not support DMA for the QSPI and so initialising the DMA
-is expected to fail. The above error messages are misleading for devices
-that don't support DMA and so fix this by skipping the DMA
-initialisation for devices that don't support DMA.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Link: https://lore.kernel.org/r/20221026155633.141792-1-jonathanh@nvidia.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/spi/spi-tegra210-quad.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index c89592b21ffc..d66ef7fa592b 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -720,6 +720,9 @@ static int tegra_qspi_start_cpu_based_transfer(struct tegra_qspi *qspi, struct s
- 
- static void tegra_qspi_deinit_dma(struct tegra_qspi *tqspi)
- {
-+	if (!tqspi->soc_data->has_dma)
-+		return;
-+
- 	if (tqspi->tx_dma_buf) {
- 		dma_free_coherent(tqspi->dev, tqspi->dma_buf_size,
- 				  tqspi->tx_dma_buf, tqspi->tx_dma_phys);
-@@ -750,6 +753,9 @@ static int tegra_qspi_init_dma(struct tegra_qspi *tqspi)
- 	u32 *dma_buf;
- 	int err;
- 
-+	if (!tqspi->soc_data->has_dma)
-+		return 0;
-+
- 	dma_chan = dma_request_chan(tqspi->dev, "rx");
- 	if (IS_ERR(dma_chan)) {
- 		err = PTR_ERR(dma_chan);
--- 
-2.35.1
-
+Thanks,
+    Sergio Paracuellos
