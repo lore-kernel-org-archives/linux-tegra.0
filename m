@@ -2,62 +2,62 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B3BC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Nov 2022 17:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 643D2C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Nov 2022 17:14:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbiKUROb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Nov 2022 12:14:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35170 "EHLO
+        id S231440AbiKUROe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Nov 2022 12:14:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231129AbiKURNz (ORCPT
+        with ESMTP id S230522AbiKURN5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Nov 2022 12:13:55 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703F1CFA59
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Nov 2022 09:12:50 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id v8so6162606edi.3
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Nov 2022 09:12:50 -0800 (PST)
+        Mon, 21 Nov 2022 12:13:57 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9B48D14F5
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Nov 2022 09:12:49 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id m22so29998946eji.10
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Nov 2022 09:12:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TUQHKz1alORL7sfDMVM2m4TT1Si68UWSxELASufCTEg=;
-        b=jDe0GlBQCqXx48AQfvwf5q26h5NtpNsCBzzLcKRCGgHSljK6wAadeFKUazmRlJKbRB
-         Shat/awnyFmPGGEUGwU22UqT/hyhF5N1LxMcLUxhQCeUpydoj1MIoFUcdmDFBb5tbvuY
-         +ihDIit3AHshnKfXaschAvnK8WHyIa6ppatFWNqpAqVKPC7mUn4mMwNzVac6k+T6XXrp
-         DPJWk4xgISVgeNVhkPDto3ULhjcjpguuzTfb5F3W/QBtX77RwKyiOGqpVHfx+kha9cez
-         FvBYpjuozwWkWkw3cFGNYHZNESllugMWI3UmRQjsmnVoJLtRDHMW0PkF1O+ALPMbnXVv
-         FoEQ==
+        bh=/I/hLJg7MJV1bbkW493eGQbSidaKR60YPeJkn7lTWxA=;
+        b=nIHs6uEOvd7f5zoJ/R87pVZth0gXsB7ILmkvMmacJfaAUVc5N8SgC/SlkavakiyKZD
+         xGJptgWdBt+Z2g8a9p6nBheyfoSHPuELey76LK+xxYaH2SFkCCueBErlQpOSREBrHwYP
+         ddqjjJr7gx/poxH2aFHrjPb2lo04E1VnJNIVOX27PpZjh3GwKrjTg+J2zgq+0vs982mT
+         b57b+5W4sLMW9uUepW8LTrhdw5F0NkaMT4NlXaTf2Fi374CKtn0dvZZ32oQJFXgp1TTQ
+         PGcsE+fjxgD9ojKcjjqanrK1yF0I3AsOCrt8x+4etRl/tEPe2XjYWzg+nY8K9LxJ+awj
+         /wtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TUQHKz1alORL7sfDMVM2m4TT1Si68UWSxELASufCTEg=;
-        b=kzER1LDHLaCIY7WnkVcbuiZ6mcHULEnFRW18wsg75SpB+Ziu8hz4Y4hi+NjNr+vaJP
-         PrT3lOHV4/xCaHw+wDtCUtoSz8s8lgw7H8dxIM/qVL0Sb8A1z0hVl2tp3go3HY457BKN
-         aCeWeNZkRAbq0YU2KFvUp+y8gJcvp83yMioVNmZgKuf5PSr5ccPrB81yE4Ir4+0i0Wes
-         EX5O65vjL4I8zU4bQ5jRvGGdlUbWVUxZt9gBoZvEAAcNzXSL/ZQLptkCAa1JvJNb1ZGA
-         Wa4fMq1hGd2nk5/rF5Y8iHloVvgY8hNoAvaUTWo+sTBMVkFG4I/frRqW0OXhSd5Lz0Mk
-         praw==
-X-Gm-Message-State: ANoB5pmefqGbD43zck96zi8els6UOesx1neKBzzVdqePDDG3A9k3W7GD
-        1/nxSmyZhmqihth3QxtnQZU=
-X-Google-Smtp-Source: AA0mqf6agvnlQmh/JfbkQRR6OpngWpcxkMJOi45gpkORNvqtqg88JDel89/jxP/SmIqURSV1irDGCg==
-X-Received: by 2002:a05:6402:60b:b0:461:9193:7278 with SMTP id n11-20020a056402060b00b0046191937278mr17563799edv.220.1669050768911;
-        Mon, 21 Nov 2022 09:12:48 -0800 (PST)
+        bh=/I/hLJg7MJV1bbkW493eGQbSidaKR60YPeJkn7lTWxA=;
+        b=J+rBCySzZauMavPvbnniGTgpImKiBQMhIViyAV6Dyzbw3U7A1raAcb9qN0ZY/Qz07N
+         c1UfbVOcPVlDd28hfnvY4gKO23o+G+NguC9QoQliB3n1qGBP+iVrLTKWOIj4t7dmzA6N
+         yIU6ybWacWFt4ZbyvPajT7+p4fNESSaEVT4KZ+6EGnweC6CQ7UOvp7QO7DOlIzo0zt99
+         LfHVlBeEYZ0dJPHAojiZh77pXn8jM6acp9lmgAHRJpQ9YNxLcnI0LKG/8GdCjF7SQ4pl
+         1sy1WQQZ/2R7SE9tpM00F7nK2SX3cfiU2qfhhyDTEywFG5odV6YO4SRoueI0lCgS8mNQ
+         eKRg==
+X-Gm-Message-State: ANoB5plvXA6KROByzt8LaaW4q9+rSYCY0Qu5smpj/93kjIGYAzYBgbNB
+        sUspnbpv8dDBB/CdXTTtutk=
+X-Google-Smtp-Source: AA0mqf6HMYgi3IGidZEidg91nwrgrNnZLuWMZJvTXyr05gfMwwYYCVXlUSm6yayBL2u+IVsE5gfb+g==
+X-Received: by 2002:a17:907:d60c:b0:7ae:e592:6d83 with SMTP id wd12-20020a170907d60c00b007aee5926d83mr15462529ejc.699.1669050767943;
+        Mon, 21 Nov 2022 09:12:47 -0800 (PST)
 Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id e10-20020a170906648a00b007adade0e9easm5152202ejm.85.2022.11.21.09.12.48
+        by smtp.gmail.com with ESMTPSA id w18-20020a056402129200b00467c3cbab6fsm1354462edv.77.2022.11.21.09.12.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 09:12:48 -0800 (PST)
+        Mon, 21 Nov 2022 09:12:47 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL v2 6/7] ARM: tegra: Device tree changes for v6.2-rc1
-Date:   Mon, 21 Nov 2022 18:12:38 +0100
-Message-Id: <20221121171239.2041835-6-thierry.reding@gmail.com>
+Subject: [GIT PULL v2 5/7] memory: tegra: Changes for v6.2-rc1
+Date:   Mon, 21 Nov 2022 18:12:37 +0100
+Message-Id: <20221121171239.2041835-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221121171239.2041835-1-thierry.reding@gmail.com>
 References: <20221121171239.2041835-1-thierry.reding@gmail.com>
@@ -76,39 +76,45 @@ The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.2-arm-dt-v2
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.2-memory-v2
 
-for you to fetch changes up to e4185804e191bdaeb10ebe00b1b4aa9e2f147a56:
+for you to fetch changes up to 5cd24ca0985f2dfb5628354fb63ede67b1dd993d:
 
-  ARM: tegra: Remove duplicate pin entry in pinmux (2022-11-18 00:22:02 +0100)
+  memory: tegra: Add DLA clients for Tegra234 (2022-11-21 13:29:02 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v6.2-rc1
+memory: tegra: Changes for v6.2-rc1
 
-This fixes various minor issues in device trees that are flagged by the
-DT validation tools.
+Some cleanups replace open-coded debugfs attributes and memory client
+IDs are added for the DLA IP found on Tegra234 SoCs.
 
 ----------------------------------------------------------------
-Thierry Reding (6):
-      ARM: tegra: Use correct compatible string for ASUS TF101 panel
-      ARM: tegra: Fixup pinmux node names
-      ARM: tegra: Add missing power-supply for panels
-      ARM: tegra: Fix nvidia,io-reset properties
-      ARM: tegra: Remove unused interrupt-parent properties
-      ARM: tegra: Remove duplicate pin entry in pinmux
+Jon Hunter (2):
+      dt-bindings: tegra: Update headers for Tegra234
+      memory: tegra: Add DLA clients for Tegra234
 
- arch/arm/boot/dts/tegra114-asus-tf701t.dts         | 24 +++++++++++-----------
- arch/arm/boot/dts/tegra124-nyan-big.dts            |  3 ++-
- arch/arm/boot/dts/tegra124-nyan-blaze.dts          |  3 ++-
- arch/arm/boot/dts/tegra124-venice2.dts             |  3 ++-
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts    |  6 +++---
- arch/arm/boot/dts/tegra20-asus-tf101.dts           |  8 ++++----
- arch/arm/boot/dts/tegra20-seaboard.dts             |  6 +++---
- arch/arm/boot/dts/tegra20-tamonten.dtsi            |  6 +++---
- arch/arm/boot/dts/tegra20-ventana.dts              |  6 +++---
- .../boot/dts/tegra30-asus-transformer-common.dtsi  | 10 ++++-----
- arch/arm/boot/dts/tegra30-pegatron-chagall.dts     | 11 ++++------
- 11 files changed, 42 insertions(+), 44 deletions(-)
+Liu Shixin (4):
+      memory: tegra20-emc: Use DEFINE_SHOW_ATTRIBUTE to simplify code
+      memory: tegra30-emc: Use DEFINE_SHOW_ATTRIBUTE to simplify code
+      memory: tegra210-emc: Use DEFINE_SHOW_ATTRIBUTE to simplify code
+      memory: tegra186-emc: Use DEFINE_SHOW_ATTRIBUTE to simplify code
+
+Mikko Perttunen (1):
+      dt-bindings: Add headers for NVDEC on Tegra234
+
+Thierry Reding (1):
+      Merge branch for-6.2/dt-bindings into for-6.2/memory
+
+ drivers/memory/tegra/tegra186-emc.c            |  15 +-
+ drivers/memory/tegra/tegra20-emc.c             |  15 +-
+ drivers/memory/tegra/tegra210-emc-core.c       |  15 +-
+ drivers/memory/tegra/tegra234.c                | 160 +++++++
+ drivers/memory/tegra/tegra30-emc.c             |  15 +-
+ include/dt-bindings/clock/tegra234-clock.h     | 639 ++++++++++++++++++++++++-
+ include/dt-bindings/memory/tegra234-mc.h       | 440 ++++++++++++++++-
+ include/dt-bindings/power/tegra234-powergate.h |  15 +
+ include/dt-bindings/reset/tegra234-reset.h     | 111 ++++-
+ 9 files changed, 1339 insertions(+), 86 deletions(-)
