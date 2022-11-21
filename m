@@ -2,50 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0684C47088
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Nov 2022 00:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3996C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Nov 2022 05:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbiKUA0A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 20 Nov 2022 19:26:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56554 "EHLO
+        id S229678AbiKUFI4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Nov 2022 00:08:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbiKUAZ5 (ORCPT
+        with ESMTP id S229498AbiKUFIx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 20 Nov 2022 19:25:57 -0500
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2120.outbound.protection.outlook.com [40.107.114.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08E720F47;
-        Sun, 20 Nov 2022 16:25:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bZpJFgqe8VBIqpZBjYZZBiu70M0e872u259g5I7Y7YuKHdJ50q3D1/9j7a5KFjR6swqUvXCPrAKiwn8+DaVOMTZLGMcgJIpBNMeK/ofhQloHfhYlZGR8vKv96Kg2NmTBSWUOL+gcaNwUS7WHFmA3YWwZscF5ES/y2CATsxlOZyFexBex8r/klb+2ykgZcvogoT7mxo4vCLSKdKM0Nkk3+UPR5iOxaHrXrc/MXNMneyvkNHzq504n2yOZxeBMbTYdoAEHQRnImWpSqOI1gCSjJ2XTZFWZdidouKUsQmw0Ln3JRcYuTbi1jbrRvsnsUJdEKeMkaecm4VSxo34b3vzw8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YqJlfBDTfAAeQn0nYl5/qpcSiOchA+pQ+TQI6hJnY/E=;
- b=NE4d3udQSuTEM425g2Z37/xLGXHK/SXqUOFuGwDIY1MQ5TnHwz+5ekS4i2iCfgZCLOCML45n7xJhA7v2MlW4HshM38aYgyMKgVOR4ziiWEE5J9qHbjoqsH1cgNiqrCiGtdnCxk7vP0M61DAlS1AIKms5aVxnNaT4Tuy+qIMGhTHRhEQFWmAIAcSJqguWy91YQd6VhhulvCMr9zxiemIegkWCoK6X3PNJ3ZqMSjOI4Io8T0jfYJGLUS3i/rMYIRd+GChANCZhRoJwmOHcj7gi4L0HhOlX5IgPSilCVjS8qPYPAZkrxDh9FVye3I8uxXMynIufCZEcCy5CUgeGBPWOpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YqJlfBDTfAAeQn0nYl5/qpcSiOchA+pQ+TQI6hJnY/E=;
- b=da/RP4YH6OcstbDPr+ECwt2Rtt5FQYu1T06hwEoPJ98UfygNRElPSNyi8yRgaC6Aecb9OWTjkGDQ3cU1WccErxvpAPW4PlHQTzSD1dq9nvGEedBRkk1eQ/BN17mAGVkpif0EqOwssbqB+8SR2xKkE/19ZOUa4zIVQUeNMZ20DHk=
-Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
- (2603:1096:404:8028::13) by TYWPR01MB9407.jpnprd01.prod.outlook.com
- (2603:1096:400:1a2::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5834.15; Mon, 21 Nov
- 2022 00:25:52 +0000
-Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
- ([fe80::cd89:4a4b:161e:b78d]) by TYBPR01MB5341.jpnprd01.prod.outlook.com
- ([fe80::cd89:4a4b:161e:b78d%9]) with mapi id 15.20.5834.015; Mon, 21 Nov 2022
- 00:25:52 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Rob Herring <robh@kernel.org>, Ilia Lin <ilia.lin@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+        Mon, 21 Nov 2022 00:08:53 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14782BB19
+        for <linux-tegra@vger.kernel.org>; Sun, 20 Nov 2022 21:08:49 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id b1-20020a17090a7ac100b00213fde52d49so10266962pjl.3
+        for <linux-tegra@vger.kernel.org>; Sun, 20 Nov 2022 21:08:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oM4t9dSTJRNYdl1z0tkjCktIi2YLG2NdBqaOTxJOnfw=;
+        b=LWtOZYu4jsTpQIJaiOHNEV7J1U5Hekz/2o745TGAHoP4cneloLCtSQcf2+7QCorM2v
+         /xUrXy8tc3AyizxEql9WLY1OdpX3pQbIVxJtcFYql5RA3M4NDSaLMbPVj5dbObnT+KSU
+         mczGTwZmAOwUux/wZ8ifvi0F01VtKfJ2/n71J43DQXUfTPipabpUdKiLGhjOMu1er+fR
+         qpGgEsviAEicpqjzPwJSF+kZar5OCuUon7HJXQSuacsEE6kvxwtPpgVtTm/A/sLEJVHN
+         qxeu2eQb8ByOQLwRwijUs3sPFsoh7Q/NUQWZepaz/G6oM8gj5IAM41nqgSYfzxRnFHnj
+         8Fkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oM4t9dSTJRNYdl1z0tkjCktIi2YLG2NdBqaOTxJOnfw=;
+        b=Z+izDMznbu1wIxNOhSILPW1C5sGE1fMSZvrQdnpnn/g4UQQk/bHLg6afj4Wow7JueM
+         1wb0qP3WhVPDzn9V2sz5gzSUQcdv6bbsVzNSjszounEacdVS/PoedqTKw++HjNj82f31
+         F0IbhUVS2hWO7xAlrwTPIDCAYLIZn+0w2as9YaishET5KogXpjK581EY04spOJ+FxG6X
+         tK9hY3n4MLlQotZCtpCnKlqun0WG1VHVHVBAczaE/knbKeMy6rDZur4F/l0/dPxBzcVx
+         0knEiZRJGUehT/e2iMDhw2A4DVESvQsxFWF+Esu9YdNkEDbrJQzqvlzlc3s9tScyMqmX
+         OHGg==
+X-Gm-Message-State: ANoB5plhskEkY/S2ugbszv94CeI5nZmayBDkVaZ3MO0nOztZQkeEqGr1
+        HcdAAkAxgVNvxnirNR4QsKHQsw==
+X-Google-Smtp-Source: AA0mqf7JM7TMYC6I8OTgp5yVOi9dOvfTXAD2akuhU7ByBbq+4L3OQY/x8/g9Bql+etELz/ggxI+lHw==
+X-Received: by 2002:a17:90a:b706:b0:212:e75b:1602 with SMTP id l6-20020a17090ab70600b00212e75b1602mr18701960pjr.139.1669007329319;
+        Sun, 20 Nov 2022 21:08:49 -0800 (PST)
+Received: from localhost ([122.172.85.60])
+        by smtp.gmail.com with ESMTPSA id z7-20020aa79f87000000b005625d5ae760sm7895356pfr.11.2022.11.20.21.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Nov 2022 21:08:48 -0800 (PST)
+Date:   Mon, 21 Nov 2022 10:38:46 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Ilia Lin <ilia.lin@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Jean Delvare <jdelvare@suse.com>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -59,6 +69,7 @@ To:     Rob Herring <robh@kernel.org>, Ilia Lin <ilia.lin@kernel.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Javier Martinez Canillas <javier@dowhile0.org>,
@@ -67,103 +78,32 @@ To:     Rob Herring <robh@kernel.org>, Ilia Lin <ilia.lin@kernel.org>,
         Maxime Ripard <mripard@kernel.org>,
         Daniel Mack <zonque@gmail.com>,
         Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: RE: [PATCH] dt-bindings: Add missing start and/or end of line regex
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-pci@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Add missing start and/or end of line regex
  anchors
-Thread-Topic: [PATCH] dt-bindings: Add missing start and/or end of line regex
- anchors
-Thread-Index: AQHY+55sqHJJZXHHEUGv/qPttLIYU65Ih+IA
-Date:   Mon, 21 Nov 2022 00:25:52 +0000
-Message-ID: <TYBPR01MB5341D75C3C139DEAFAA599EDD80A9@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+Message-ID: <20221121050846.m7w52iygltb5xivt@vireshk-i7>
 References: <20221118223728.1721589-1-robh@kernel.org>
-In-Reply-To: <20221118223728.1721589-1-robh@kernel.org>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYBPR01MB5341:EE_|TYWPR01MB9407:EE_
-x-ms-office365-filtering-correlation-id: ce582612-997f-4390-e5f5-08dacb56f29e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: xiULpy+xv0GaeT+uC/cVHMJdfDztyRubeh/MOVrfkimUNsovV8NZYpnFb6B+IjWw5EnqJrLykjeo2C4L7rPsuZfVMOYBAc9ZMMQE2+bS/SX+hvx1tcqO9k8ngk7Wyi51tGHmQZof7sNzcoIbfwHXBnGf20Tm5SkwJu40EFlrCkB5tjEKf3TbdYO+ZsoRLYYDRc8/Ah/sqQcsxRvR4W4mozD1KJX6e3gN7X7lOb243jQH3zmpCNz4S2PA+CWbGeldYflqT57M/o2dRe3Z6LlgQEk1CIHnkmjDb2Ek2BJRGt1nmZttnhJ62ir78aLP1PNbGKbXd+Mx0ZRFqcCIszZKVBOTeswfirsrLM4vWR7+otQwN33Ln1OHtlKQItKRPeZy/C/9ygaXbCOCqbYBCmX00Zkj3KV/0Vbm6J+LItOeihTUMVJdKLKO03h/KnkEbr2pZQxEmyIxtoRHIhV2ATi1g2L8nOZ35b7bJknGK6BnpY+OLPysXox2o4zae395rkIhfDc7j09qrPlFgjAhAwxq/T6nU8bzugqnxCnbGfWqj9G6E1oPjPzLf4nFpYBHpJXDqBrWGcLw+B1q0m9JrjIOsh+fLA2t1EvsjvNJWRkWvusJg/Yp9065Ja8cBwt7+XHypKBA6KEZ8x2eiqw77PQDjCEjkd27AIASwKLZLe4Ji6ctJQc0qdpE0qFJq69DqmHNq1sGN6ODINIv4iA+oVQYzCWmBKc+8TItDIP5pBTB/Jw=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5341.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(346002)(39860400002)(366004)(396003)(451199015)(6506007)(38070700005)(110136005)(921005)(2906002)(71200400001)(478600001)(86362001)(55016003)(38100700002)(122000001)(7696005)(9686003)(33656002)(186003)(4744005)(52536014)(7406005)(8936002)(7416002)(41300700001)(66446008)(4326008)(8676002)(66476007)(76116006)(66946007)(66556008)(5660300002)(316002)(64756008)(54906003)(6636002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Lo9iqX0dXJcYY1aDnJE359K66hPEIQHEwjljLdFufIxr3skSSZ5ZfospLQqi?=
- =?us-ascii?Q?RJHhIaqMmaKXPTkLJfK8SuCP7+pqqhrqU5UH1B/5I3xRQVbBqiNY60FKzeUd?=
- =?us-ascii?Q?KIf6fKLG9kV004OjV/uqHQvARjZJ4eeBn9uuWHXBFtrfzY8C/e+e/DibtLyY?=
- =?us-ascii?Q?j5khT/rX8s7uJSFP52Nnvcec6cYVldukO4pGCDAJrb/m0uHUZZ/pmCEBFHW4?=
- =?us-ascii?Q?lVsQAtFhkef5g1a8KtJw7xMOwbXKIWlSbZQJEYEJ6wPvf8XiofpZdFXYkiou?=
- =?us-ascii?Q?dnpKMkN5nm4B76LSBrvEUxBzsGQxFjJW+dqkx6T3Wgq41RX93mw2aZfBc4DQ?=
- =?us-ascii?Q?g2eS8/eFkCZZKLVB3RAjdZCMk7RbCzJs7Oe5CHYzrGxIdrKm/CWVC/cnu+er?=
- =?us-ascii?Q?tvjmuQ0hgFr9CvwCfrwKSad+V10uZ0dWii+AsoSbDWZiuQfi4mt69pZ++dGt?=
- =?us-ascii?Q?H/wqwVu9ZVoLZt6NWlWdCJvK++wXVRWy6ud6JfidpEOO7mawgfY2OBarvBrR?=
- =?us-ascii?Q?DP9s/Qtas+Rpya98atXl4p1KnsDPoTEUjNHHoAKm7OJKsTYdxnHJ3Vymyh8d?=
- =?us-ascii?Q?oSgilU1Tw23Jt3f4Vt5mDaBqNWnppB+nv8X5msi3ay3DzTg85Di3arC8GQ0D?=
- =?us-ascii?Q?quQfsA0/Zn6/cpUb4jm61TatOnhxgHFgUNbO22dL3I43FVwFQkCVAq/g/CuN?=
- =?us-ascii?Q?llhhpr9bsrJEccKVioKwF/DAkRyg86cRJudds8i2mblVb+DOx5cVxDjS1aH3?=
- =?us-ascii?Q?tmN+MZswAgqFje4BN57Lj0+taogSRFw1VxcHbtqpxw3IYv1uP6P0CkzICyge?=
- =?us-ascii?Q?cFh2URokZY2p5u18o28ViuaM6EZr8VXyhwTbigYID6TEa6i0IGt/e33GOr0m?=
- =?us-ascii?Q?FfmskgF4sS7zDqlMiPSDeRBrc/mKyfmXQ8CRAsRqDuFp9YLIErF0vYpQz+Ix?=
- =?us-ascii?Q?qTXQM0aMZP1ksXGLcJPzrKvDDOuYzfYNYLbvzxYLTxehRfWiKrvlrSlgM/pX?=
- =?us-ascii?Q?al6OrRXNf/7151STn7Y1O7rDKLR2ip7dGP0NjTrHNtsG68iSF1at61Hnllil?=
- =?us-ascii?Q?+FUYcePCLRLTSNTCXglaqOs5VEp15RUWhXTlr+Rr/gpfGdWDXZTX30ptLOgf?=
- =?us-ascii?Q?qb1iVFR5uvZgjISY6y2CBeBcz52ZFGW9yKeNBw5rS7oGuhSLSzhW7WKy7ziK?=
- =?us-ascii?Q?bpB4WYqcKXQVPgHT0l8XnZgvL1CAQXK4iYl5qtndCQcYbSwN9/nCCDNkY7MR?=
- =?us-ascii?Q?mZPcbkqzJ0OQDLV0IMDBo3sAuXAK541oWYQLWdOnV3K8XgkkgntsQvluB8Qg?=
- =?us-ascii?Q?vdrXGu8b84hSHn+TonWh1/Lr4BuIIupp5MdEepGLg1eXuWc33AK0hr5fJHu2?=
- =?us-ascii?Q?JZc6iReLz8FdI4wZGn+00vBi0Ww4krfHOkZo+LTsHbEXhe2b454vhWndnrXM?=
- =?us-ascii?Q?sVWsh2j1z2cqt5SmVjPM256CG1hMYSCAaxFus/5TUbO3OKYHpSpq6SpmzGDj?=
- =?us-ascii?Q?Gvzhqe/J7O5owekDI7OdNFWXr7g/yE4XUT4P8BIEwvn3IBJFzoWlvuz+tsN9?=
- =?us-ascii?Q?7myrAw/ioUUAjn9U5JJi6T/8kbiiXlf/cxRgzjxdtLQJdZoj25W9NRVAUSdt?=
- =?us-ascii?Q?aWKegdS3U6Hc+HjujpeVk6YMj3NJ76fZECQZEpvnJhk4l6UfgRv7ilqaTg7E?=
- =?us-ascii?Q?MaTMhQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5341.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce582612-997f-4390-e5f5-08dacb56f29e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2022 00:25:52.3847
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5MOsZdQW+2Yww1wsWAMJmrRrUwSCHQ7U8dNi5IielUC0CPYtj/QzZfXJDpFoC7SGVjqEbtT0JIWm5v94gIyVxFPhyGazBxAyrG7cnz8pMPqrkRfAOqONf/Q0PbT3kzKu
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9407
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221118223728.1721589-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Rob,
-
-> From: Rob Herring, Sent: Saturday, November 19, 2022 7:37 AM
->=20
+On 18-11-22, 16:37, Rob Herring wrote:
 > json-schema patterns by default will match anywhere in a string, so
 > typically we want at least the start or end anchored. Fix the obvious
 > cases where the anchors were forgotten.
->=20
+> 
 > Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
 >  .../devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml       | 2 +-
@@ -171,11 +111,52 @@ Hi Rob,
 >  .../bindings/opp/allwinner,sun50i-h6-operating-points.yaml    | 4 ++--
 >  .../devicetree/bindings/pci/mediatek,mt7621-pcie.yaml         | 2 +-
 >  .../devicetree/bindings/pci/renesas,pci-rcar-gen2.yaml        | 2 +-
+>  Documentation/devicetree/bindings/regulator/max8660.yaml      | 2 +-
+>  .../devicetree/bindings/regulator/maxim,max77802.yaml         | 2 +-
+>  Documentation/devicetree/bindings/regulator/regulator.yaml    | 2 +-
+>  .../devicetree/bindings/regulator/rohm,bd9576-regulator.yaml  | 2 +-
+>  Documentation/devicetree/bindings/sound/renesas,rsnd.yaml     | 2 +-
+>  .../devicetree/bindings/spi/nvidia,tegra210-quad.yaml         | 2 +-
+>  11 files changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml b/Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml
+> index a11e1b867379..3c00ad09eeaa 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml
+> +++ b/Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml
+> @@ -38,7 +38,7 @@ properties:
+>      type: object
+>  
+>      patternProperties:
+> -      'cpu@[0-9a-f]+':
+> +      '^cpu@[0-9a-f]+$':
+>          type: object
+>  
+>          properties:
 
-Thank you for the patch! For R-Car PCI,
+> diff --git a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+> index 385b0692261c..51f62c3ae194 100644
+> --- a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+> +++ b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+> @@ -41,7 +41,7 @@ required:
+>    - nvmem-cells
+>  
+>  patternProperties:
+> -  "opp-[0-9]+":
+> +  "^opp-[0-9]+$":
+>      type: object
+>  
+>      properties:
+> @@ -49,7 +49,7 @@ patternProperties:
+>        clock-latency-ns: true
+>  
+>      patternProperties:
+> -      "opp-microvolt-.*": true
+> +      "^opp-microvolt-speed[0-9]$": true
+>  
+>      required:
+>        - opp-hz
 
-Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Best regards,
-Yoshihiro Shimoda
-
+-- 
+viresh
