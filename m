@@ -2,60 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3996C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Nov 2022 05:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39225C46467
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Nov 2022 08:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbiKUFI4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Nov 2022 00:08:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33556 "EHLO
+        id S230136AbiKUIiN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Nov 2022 03:38:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbiKUFIx (ORCPT
+        with ESMTP id S229848AbiKUIiI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Nov 2022 00:08:53 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14782BB19
-        for <linux-tegra@vger.kernel.org>; Sun, 20 Nov 2022 21:08:49 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id b1-20020a17090a7ac100b00213fde52d49so10266962pjl.3
-        for <linux-tegra@vger.kernel.org>; Sun, 20 Nov 2022 21:08:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oM4t9dSTJRNYdl1z0tkjCktIi2YLG2NdBqaOTxJOnfw=;
-        b=LWtOZYu4jsTpQIJaiOHNEV7J1U5Hekz/2o745TGAHoP4cneloLCtSQcf2+7QCorM2v
-         /xUrXy8tc3AyizxEql9WLY1OdpX3pQbIVxJtcFYql5RA3M4NDSaLMbPVj5dbObnT+KSU
-         mczGTwZmAOwUux/wZ8ifvi0F01VtKfJ2/n71J43DQXUfTPipabpUdKiLGhjOMu1er+fR
-         qpGgEsviAEicpqjzPwJSF+kZar5OCuUon7HJXQSuacsEE6kvxwtPpgVtTm/A/sLEJVHN
-         qxeu2eQb8ByOQLwRwijUs3sPFsoh7Q/NUQWZepaz/G6oM8gj5IAM41nqgSYfzxRnFHnj
-         8Fkg==
+        Mon, 21 Nov 2022 03:38:08 -0500
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23701D336;
+        Mon, 21 Nov 2022 00:38:05 -0800 (PST)
+Received: by mail-qk1-f175.google.com with SMTP id z17so7536025qki.11;
+        Mon, 21 Nov 2022 00:38:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oM4t9dSTJRNYdl1z0tkjCktIi2YLG2NdBqaOTxJOnfw=;
-        b=Z+izDMznbu1wIxNOhSILPW1C5sGE1fMSZvrQdnpnn/g4UQQk/bHLg6afj4Wow7JueM
-         1wb0qP3WhVPDzn9V2sz5gzSUQcdv6bbsVzNSjszounEacdVS/PoedqTKw++HjNj82f31
-         F0IbhUVS2hWO7xAlrwTPIDCAYLIZn+0w2as9YaishET5KogXpjK581EY04spOJ+FxG6X
-         tK9hY3n4MLlQotZCtpCnKlqun0WG1VHVHVBAczaE/knbKeMy6rDZur4F/l0/dPxBzcVx
-         0knEiZRJGUehT/e2iMDhw2A4DVESvQsxFWF+Esu9YdNkEDbrJQzqvlzlc3s9tScyMqmX
-         OHGg==
-X-Gm-Message-State: ANoB5plhskEkY/S2ugbszv94CeI5nZmayBDkVaZ3MO0nOztZQkeEqGr1
-        HcdAAkAxgVNvxnirNR4QsKHQsw==
-X-Google-Smtp-Source: AA0mqf7JM7TMYC6I8OTgp5yVOi9dOvfTXAD2akuhU7ByBbq+4L3OQY/x8/g9Bql+etELz/ggxI+lHw==
-X-Received: by 2002:a17:90a:b706:b0:212:e75b:1602 with SMTP id l6-20020a17090ab70600b00212e75b1602mr18701960pjr.139.1669007329319;
-        Sun, 20 Nov 2022 21:08:49 -0800 (PST)
-Received: from localhost ([122.172.85.60])
-        by smtp.gmail.com with ESMTPSA id z7-20020aa79f87000000b005625d5ae760sm7895356pfr.11.2022.11.20.21.08.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Nov 2022 21:08:48 -0800 (PST)
-Date:   Mon, 21 Nov 2022 10:38:46 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=majJ1avGrA5sKHgff1+tjzzyZx4Q8F2N6bTI30UoVN0=;
+        b=XYtG3qcXZlf52gle7v15TTQkORhvT49sba3oM7PqdMTxAKDHBjfdF1pljGp/7X1gnS
+         xjGAet8iSokRhVpc2ofwrYWcPTGQeGBid6PFyiAUTUoBtSjbnJuRKNsBj7Ss/iaSOQrf
+         dfTwjabUpY/bcLe0pbr/J9LqtVmKHzW6RFzfgw29ZDmqfF+BZ5ev4EcLStk+zpot8jYU
+         5V/MTRlqcwvLu7kduSo9EkSz+8OvDzBzk5MeMo3HWuxbi18FCa+MJ/PM58UrjBdmiyX2
+         YUKMYA3qCaWEwdpa2NcmhDwJNfdyhyhlmIMsz7VC3zITWwx91En5TE/hT8iwkAUVq8qK
+         hNKw==
+X-Gm-Message-State: ANoB5pkkyMAWWQby9+ws2v6gKkhCq0xfy7ksRLDzTdlM/ksbkm1M1rzf
+        we6Lr5O/g9g3WmExoZKeAxxgPW9ZX0Qa0A==
+X-Google-Smtp-Source: AA0mqf42m6RtQH9n3FrT6ck1TJ8JYf+DL91aVh89zndnYg5xcI3fw3Cqh+f19rdsFfPeepAOEMNnfw==
+X-Received: by 2002:a05:620a:150c:b0:6f8:aafe:27e7 with SMTP id i12-20020a05620a150c00b006f8aafe27e7mr15094781qkk.590.1669019884806;
+        Mon, 21 Nov 2022 00:38:04 -0800 (PST)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id v18-20020a05620a0f1200b006fa32a26433sm7838132qkl.38.2022.11.21.00.38.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Nov 2022 00:38:03 -0800 (PST)
+Received: by mail-yb1-f169.google.com with SMTP id k84so12771887ybk.3;
+        Mon, 21 Nov 2022 00:38:02 -0800 (PST)
+X-Received: by 2002:a5b:24b:0:b0:6ca:3b11:8d76 with SMTP id
+ g11-20020a5b024b000000b006ca3b118d76mr16184146ybp.202.1669019882500; Mon, 21
+ Nov 2022 00:38:02 -0800 (PST)
+MIME-Version: 1.0
+References: <20221118223728.1721589-1-robh@kernel.org>
+In-Reply-To: <20221118223728.1721589-1-robh@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 21 Nov 2022 09:37:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXevKD5uq9k+gWygy0rZ_AVjxBW1vrE_Gzzu8=mJu1vjQ@mail.gmail.com>
+Message-ID: <CAMuHMdXevKD5uq9k+gWygy0rZ_AVjxBW1vrE_Gzzu8=mJu1vjQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Add missing start and/or end of line regex anchors
 To:     Rob Herring <robh@kernel.org>
 Cc:     Ilia Lin <ilia.lin@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Jean Delvare <jdelvare@suse.com>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -87,76 +88,30 @@ Cc:     Ilia Lin <ilia.lin@kernel.org>, Andy Gross <agross@kernel.org>,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Add missing start and/or end of line regex
- anchors
-Message-ID: <20221121050846.m7w52iygltb5xivt@vireshk-i7>
-References: <20221118223728.1721589-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221118223728.1721589-1-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18-11-22, 16:37, Rob Herring wrote:
+On Fri, Nov 18, 2022 at 11:43 PM Rob Herring <robh@kernel.org> wrote:
 > json-schema patterns by default will match anywhere in a string, so
 > typically we want at least the start or end anchored. Fix the obvious
 > cases where the anchors were forgotten.
-> 
+>
 > Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml       | 2 +-
->  Documentation/devicetree/bindings/hwmon/adt7475.yaml          | 4 ++--
->  .../bindings/opp/allwinner,sun50i-h6-operating-points.yaml    | 4 ++--
->  .../devicetree/bindings/pci/mediatek,mt7621-pcie.yaml         | 2 +-
+
 >  .../devicetree/bindings/pci/renesas,pci-rcar-gen2.yaml        | 2 +-
->  Documentation/devicetree/bindings/regulator/max8660.yaml      | 2 +-
->  .../devicetree/bindings/regulator/maxim,max77802.yaml         | 2 +-
->  Documentation/devicetree/bindings/regulator/regulator.yaml    | 2 +-
->  .../devicetree/bindings/regulator/rohm,bd9576-regulator.yaml  | 2 +-
 >  Documentation/devicetree/bindings/sound/renesas,rsnd.yaml     | 2 +-
->  .../devicetree/bindings/spi/nvidia,tegra210-quad.yaml         | 2 +-
->  11 files changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml b/Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml
-> index a11e1b867379..3c00ad09eeaa 100644
-> --- a/Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml
-> +++ b/Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml
-> @@ -38,7 +38,7 @@ properties:
->      type: object
->  
->      patternProperties:
-> -      'cpu@[0-9a-f]+':
-> +      '^cpu@[0-9a-f]+$':
->          type: object
->  
->          properties:
 
-> diff --git a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> index 385b0692261c..51f62c3ae194 100644
-> --- a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> +++ b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> @@ -41,7 +41,7 @@ required:
->    - nvmem-cells
->  
->  patternProperties:
-> -  "opp-[0-9]+":
-> +  "^opp-[0-9]+$":
->      type: object
->  
->      properties:
-> @@ -49,7 +49,7 @@ patternProperties:
->        clock-latency-ns: true
->  
->      patternProperties:
-> -      "opp-microvolt-.*": true
-> +      "^opp-microvolt-speed[0-9]$": true
->  
->      required:
->        - opp-hz
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Gr{oetje,eeting}s,
 
--- 
-viresh
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
