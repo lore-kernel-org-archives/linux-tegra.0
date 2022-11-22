@@ -2,164 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55939C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Nov 2022 10:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA583C4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Nov 2022 10:17:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232419AbiKVKAK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Nov 2022 05:00:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58226 "EHLO
+        id S233473AbiKVKRt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Nov 2022 05:17:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232158AbiKVKAH (ORCPT
+        with ESMTP id S233540AbiKVKRL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Nov 2022 05:00:07 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 522A72B608
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Nov 2022 01:59:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669111145;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+n97TWPMmTpOHxpEDX+bK+QZWALEwPXfVhrMNtePxVw=;
-        b=G+F5M4+eCLF1aprCMOUnheFsATz6rysNMZYSxpqmDUV3JA/RBRO2GoTZuJTl5F4mMX8pkE
-        H1wI5EIHKykHCePafWgQOqPqgqP3Lz+Waaq64K/YFj09OkVN7T+bCFm3APJwTxQ3DNKbN0
-        9AbaZ0gWcPvLh+s23A3pG74oPdyaEu8=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-528-c4Go81j8OMaXewor0apPfw-1; Tue, 22 Nov 2022 04:59:04 -0500
-X-MC-Unique: c4Go81j8OMaXewor0apPfw-1
-Received: by mail-qt1-f198.google.com with SMTP id n12-20020ac85a0c000000b003a5849497f9so14330571qta.20
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Nov 2022 01:59:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+n97TWPMmTpOHxpEDX+bK+QZWALEwPXfVhrMNtePxVw=;
-        b=r2t5e0//ofE2Zdh8DdI6sDnpfKq6uyaCKW9TxWBtyyFnsQDycYSEBXnbOfAEyffJ+T
-         H3mNhpNbT/TZQgcmD1tMcFDUdVlsvUu2YfXi991hyZxhrYMzu6Uwb2b8KzgrkZsiggO2
-         s0jP0m7vFBLHxA+TQ3fXxtobZ+zhQ6iqI/bSDsBEHLqu40hC+OQXP5XjGHIjx5gapB8n
-         tSLk5GI5uRRZi/1JueE2zsYDyleOz5pvHQeOVBeH17pkXX6lTgRgE/2+ejg0aV7lLtj7
-         5gfnoNsVoMOteKslmKFUfKL77/RMPowF+NsLmzUzSoB85HgHbtF9BQAEt9AiuRO0QnvK
-         jwdg==
-X-Gm-Message-State: ANoB5pmT83FEuD3Xd5LPGBj860ikru0RY2pDD+GNkysTvWES3jrsQxwh
-        Ph9bfEWAqB4PZBRP/4Uowxttpip6LkGikO0nx0+R7OemQt5zLRKLARrreC2aS9dODnl8/QGjxWF
-        ckFRia/lAYErkrAqFc6YTqns=
-X-Received: by 2002:ae9:ee07:0:b0:6fa:77c0:ea01 with SMTP id i7-20020ae9ee07000000b006fa77c0ea01mr3960529qkg.537.1669111143909;
-        Tue, 22 Nov 2022 01:59:03 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf67RIyRfhtCfrG5gOk0IZav/Pfo+93799eU5K3Fx7SVa60dtAwRShZMpWIwhasEPG2xtZDWsA==
-X-Received: by 2002:ae9:ee07:0:b0:6fa:77c0:ea01 with SMTP id i7-20020ae9ee07000000b006fa77c0ea01mr3960518qkg.537.1669111143662;
-        Tue, 22 Nov 2022 01:59:03 -0800 (PST)
-Received: from gerbillo.redhat.com (146-241-120-203.dyn.eolo.it. [146.241.120.203])
-        by smtp.gmail.com with ESMTPSA id s21-20020a05620a29d500b006ed30a8fb21sm9911641qkp.76.2022.11.22.01.59.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Nov 2022 01:59:03 -0800 (PST)
-Message-ID: <ebd282a59fa5d8db5a2deb1232dfad3807f06970.camel@redhat.com>
-Subject: Re: [PATCH 2/2] net: stmmac: tegra: Add MGBE support
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Revanth Kumar Uppala <ruppala@nvidia.com>, f.fainelli@gmail.com
-Cc:     andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
-        jonathanh@nvidia.com, kuba@kernel.org, linux-tegra@vger.kernel.org,
-        linux@armlinux.org.uk, netdev@vger.kernel.org, olteanv@gmail.com,
-        thierry.reding@gmail.com, vbhadram@nvidia.com,
-        Thierry Reding <treding@nvidia.com>
-Date:   Tue, 22 Nov 2022 10:58:58 +0100
-In-Reply-To: <20221118075744.49442-2-ruppala@nvidia.com>
-References: <20221118075744.49442-1-ruppala@nvidia.com>
-         <20221118075744.49442-2-ruppala@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
-MIME-Version: 1.0
+        Tue, 22 Nov 2022 05:17:11 -0500
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2079.outbound.protection.outlook.com [40.107.220.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751415655D;
+        Tue, 22 Nov 2022 02:17:10 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UXysmEMsYO6xVoW8Z1GDm/3qyHpeHBAw8zWOXXRE5KlqssW7iUFdL+YSQviSf35pskuph/C3Pa31oR0UoOAV1Qk6tK7oOGBw56VN8JoUZBIHggCfuvw6vq2WtSi9lplMXtslUZgxHJxfhx4+xZkmQFaUdlo8WRh/dqMQdnd18cOLlMC4tumaVfOPpRXMUTVywLZ7nYJg2lrhaoQKlqWhZxBGxuvjK1N6/hcfZAsI+avmU4eqXs6KTC1IrCkQug+iIavFMEPfybji45t8XyplTE/DO2slJxhgDc49L2+gjc9PcL/2rgJJGMradUeAdpxDHISYaHzPq1nyW9ZYG5sW/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zjk3UZt/f26aKIQISvMCx76NAq7g7FRRbLCRwGNer+g=;
+ b=OC+n1fbVzBf6emj1QPNcxzyNMgfYEircammGrg3sShUPMsau2OkLuD2dCw4i0NtwwHBQmZXQI5N8eQgXE/IN7QwCgn11qof6X8f7M/F18buBb6hmjU+ubLCTPkkJpP3aNmZejxys5DDBmNGapMKKGcGY1HtKKdT3Y0cmuWxub+KXKr+kOc3biTsJ/S2ebTPOVRmxsb0MQRH0HcDeMjo0xORzQSJrD04N5YW9tiZ+tSEKW1cBKB81vE3jrztaNfwHckfeMDjmWTLNgmtYAkFwZg7Ikb0CIT109/VN1AOyR4L83uXF/d7Hm9e1kROk3cqFXe5dGnw37ujfj8A8URNWlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zjk3UZt/f26aKIQISvMCx76NAq7g7FRRbLCRwGNer+g=;
+ b=BgeYzyDm7r0huptisBvIsY9LN3vOova+wnSC0qXHXyc1T0XxjECfsz4/ku6Ct6mWzgw/omOPDWOpqwAivBCuAMGZWdvDAqthICPel+kVnzUO4mSsTi5hP0rqxLluoz88mhSxKcgBSeFyfyRM56DiOasZOETcUC4muO8CsO4nQ3zvr6B9QtH5XP+mxOShukNipEH2wFryYlpdAtgCsFSZH5mjm2Hv71HXMabjcUK+lJHB3RwFg/458sw3YWyvmgRDwJdzv4nniWIqXK9Bu6FTB7m4kuu2eK5D/M9OgRk80n7CUhvJOU8FzmJsJetW+B4d2yogvQOOhBDr3PApWyB0LQ==
+Received: from BN9PR03CA0176.namprd03.prod.outlook.com (2603:10b6:408:f4::31)
+ by MW4PR12MB5665.namprd12.prod.outlook.com (2603:10b6:303:187::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5834.15; Tue, 22 Nov
+ 2022 10:17:09 +0000
+Received: from BN8NAM11FT064.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f4:cafe::42) by BN9PR03CA0176.outlook.office365.com
+ (2603:10b6:408:f4::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5834.15 via Frontend
+ Transport; Tue, 22 Nov 2022 10:17:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN8NAM11FT064.mail.protection.outlook.com (10.13.176.160) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5834.8 via Frontend Transport; Tue, 22 Nov 2022 10:17:08 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 22 Nov
+ 2022 02:16:59 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 22 Nov
+ 2022 02:16:59 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Tue, 22 Nov 2022 02:16:59 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/34] 4.19.266-rc1 review
+In-Reply-To: <20221121124150.886779344@linuxfoundation.org>
+References: <20221121124150.886779344@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Message-ID: <8d2fd268-6b41-4328-a3f0-e8bf5cb32ea7@rnnvmail205.nvidia.com>
+Date:   Tue, 22 Nov 2022 02:16:59 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT064:EE_|MW4PR12MB5665:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69801933-aefc-4621-7f46-08dacc72b65e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NeltFn11JiWo19260gbtPYfnT4kQe30F9e6JWFofSs+CfjU1hHHnlPMAkHDAj75MPBJeIpxlmR/SWxpHMUF294lgvaJZF5ycp7fb3iw6SkRk/i/Ze6tx2F1t4eAjeKKSnKQsaMgPZtLc/uJKVBEuY9ogqDEOFpGCX/nJg2xrhqqjjY7h7srTyMw+x7yQx5n98C4aE6e1Pxk+f3MX2eV62woCFaBrA9ka+yb89GFNy5O/LYiLGTdSRO1L+bMewVxrVgX2MnYFhbYOcPKcsHX9pDdq6iJzSqBnAr5C0U5YH9ctHflTjJBoMnhRNdTwceNz0q2FaBfiLN4onyGmvas8uzPLzKUhilvcMpaTWnT0ukELcSK/tpS2qUr0Wc4HJjjJ8x3OoWELn8sFCwtwqZQRBK+aqhR5KfQVWbqdey68WimkxV2DZv35ZrkjnGmG4OHr2XUIo5ZYjCLmur+MbABOW+oTJtEF2/f7RJKMwDN8Q3hHajcccVLx00n27lTjla/fUvz5YnXfMIcS/ExCDHkDwZPB8ZuaodEq/6tzZ/ayMNLBavRNxsNRPpNsB9lM0ep7TdxDH/liJViOozwY9vkUdfR+O6QiY4/vXiBXX3hulRhq+ITy0few2YgHeXwiXRsfo1akHwWAf171HFyg8dSSzaLgDCx3ivwycprVB105T6hsrKoJ0O8vFuPX8Q4q1NtnncD3Gb+JyPEGBKxN7XmzJT93D5U7avRJ5NzV5zBvKl5ROQ9i/B4YAsrA+/5Vfk9gJzAAg+FobrYYL0DMFZ6ltOido9NsybHX2u1Fg6RNxlA=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(376002)(39860400002)(396003)(451199015)(46966006)(40470700004)(36840700001)(36860700001)(86362001)(82740400003)(47076005)(426003)(41300700001)(7636003)(31696002)(2906002)(7416002)(82310400005)(40480700001)(5660300002)(478600001)(8936002)(6916009)(40460700003)(4326008)(336012)(8676002)(316002)(54906003)(966005)(26005)(356005)(186003)(70206006)(70586007)(31686004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2022 10:17:08.2299
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69801933-aefc-4621-7f46-08dacc72b65e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT064.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5665
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+On Mon, 21 Nov 2022 13:43:22 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.266 release.
+> There are 34 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 23 Nov 2022 12:41:40 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.266-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-On Fri, 2022-11-18 at 13:27 +0530, Revanth Kumar Uppala wrote:
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> index 31ff35174034..e9f61bdaf7c4 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> @@ -235,6 +235,12 @@ config DWMAC_INTEL_PLAT
->  	  the stmmac device driver. This driver is used for the Intel Keem Bay
->  	  SoC.
->  
-> +config DWMAC_TEGRA
-> +	tristate "NVIDIA Tegra MGBE support"
-> +	depends on ARCH_TEGRA || COMPILE_TEST
-> +	help
-> +	  Support for the MGBE controller found on Tegra SoCs.
+All tests passing for Tegra ...
 
-Minor nit: checkpatch is complaining for a more descriptive config
-option text.
+Test results for stable-v4.19:
+    10 builds:	10 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    40 tests:	40 pass, 0 fail
 
-> +static int tegra_mgbe_probe(struct platform_device *pdev)
-> +{
-> +	struct plat_stmmacenet_data *plat;
-> +	struct stmmac_resources res;
-> +	struct tegra_mgbe *mgbe;
-> +	int irq, err, i;
-> +	u32 value;
-> +
-> +	mgbe = devm_kzalloc(&pdev->dev, sizeof(*mgbe), GFP_KERNEL);
-> +	if (!mgbe)
-> +		return -ENOMEM;
-> +
-> +	mgbe->dev = &pdev->dev;
-> +
-> +	memset(&res, 0, sizeof(res));
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
-> +
-> +	mgbe->hv = devm_platform_ioremap_resource_byname(pdev, "hypervisor");
-> +	if (IS_ERR(mgbe->hv))
-> +		return PTR_ERR(mgbe->hv);
-> +
-> +	mgbe->regs = devm_platform_ioremap_resource_byname(pdev, "mac");
-> +	if (IS_ERR(mgbe->regs))
-> +		return PTR_ERR(mgbe->regs);
-> +
-> +	mgbe->xpcs = devm_platform_ioremap_resource_byname(pdev, "xpcs");
-> +	if (IS_ERR(mgbe->xpcs))
-> +		return PTR_ERR(mgbe->xpcs);
-> +
-> +	res.addr = mgbe->regs;
-> +	res.irq = irq;
-> +
-> +	mgbe->clks = devm_kzalloc(&pdev->dev, sizeof(*mgbe->clks), GFP_KERNEL);
-> +	if (!mgbe->clks)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i <  ARRAY_SIZE(mgbe_clks); i++)
-> +		mgbe->clks[i].id = mgbe_clks[i];
-> +
-> +	err = devm_clk_bulk_get(mgbe->dev, ARRAY_SIZE(mgbe_clks), mgbe->clks);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	err = clk_bulk_prepare_enable(ARRAY_SIZE(mgbe_clks), mgbe->clks);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	/* Perform MAC reset */
-> +	mgbe->rst_mac = devm_reset_control_get(&pdev->dev, "mac");
-> +	if (IS_ERR(mgbe->rst_mac)) {
-> +		err = PTR_ERR(mgbe->rst_mac);
+Linux version:	4.19.266-rc1-g002bfba64dfd
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-This triggers a clang warning:
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-../drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c:283:6: warning: variable 'plat' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-
-I guess you have to init plat to NULL and explcitly check for NULL
-values under the 'remove' label.
-
-Cheers,
-
-Paolo
-
+Jon
