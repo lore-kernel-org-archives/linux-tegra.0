@@ -2,108 +2,314 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BF7C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Nov 2022 13:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71203C43219
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Nov 2022 16:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231825AbiKVN0g (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Nov 2022 08:26:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55836 "EHLO
+        id S234163AbiKVQFO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Nov 2022 11:05:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232373AbiKVN0f (ORCPT
+        with ESMTP id S234113AbiKVQFN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Nov 2022 08:26:35 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F39517594;
-        Tue, 22 Nov 2022 05:26:33 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id vv4so26481729ejc.2;
-        Tue, 22 Nov 2022 05:26:33 -0800 (PST)
+        Tue, 22 Nov 2022 11:05:13 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BE41181D
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Nov 2022 08:05:10 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id q9so14778666pfg.5
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Nov 2022 08:05:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H5Nb0LMRwCQV7tWs/EMWvOMza7Rw/W2mk9hxaUL4wRo=;
-        b=c5sXKAtWFIEDXqT+WUOKhya4fg/LMtnbnST1odWDNP9OU+kDXeGDiKqBERk+4R47C2
-         Z5kPVeo0lGXhAJA+HMUoSD6QLU8bgjARomjX4A0glIojTdFf7dA4oUOYBP+eGAuZkWun
-         fcnk6pmIR8Z2uhThe5yfrrzOcaibpQJcE21ovUEIgRPe1tTs1cEHvWTZh+un0nToHxHr
-         a45LendJsM84BJjYm6cbKY2jDZVrk/KqD9EZyzEzSKzWzcEVSOvkapMHIjvrO23oye7I
-         yGWMuSUxNG2LLIVafLCfZ+AJas/clOBJVZ7BXgW2/1R5EWklzDNgqpkthulsiCeNufMa
-         9Cdw==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mKqixJN/8zapPMiYOY0ZA2E36N6vIQg16uLiOxlikFI=;
+        b=Sxgb7NdwQ/FjyYXzMQLr2Ufh8inWhewppyg2kEhKfSMa5+4xLhcDZFgBkLe+YVojYR
+         b1j/8R8eepdhz2QNEoN59UWxI0C8HtPNMN2hfsnJ2VXdsyzTbL+tlNksQKPnsWg/NtBp
+         chCgU4N95aPK2lbuS5RzKtW5ffOhO3rTLhquzizFSUU3p/ux1MbE2BMO0btBQyCrWeJK
+         WXzMJ1H0fbnItfONfrC7qjjeZVQUnHu7QZDLXM8ZsS1OkeorqU4Yt3+bnHeBb63EIVUM
+         ARM0B0wTMD/PlD/5zjrBQjmOnBQvgdxEwxF1FwYHEN8lHlbB5RkK/8WK1b4hFP6jFplD
+         FuDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H5Nb0LMRwCQV7tWs/EMWvOMza7Rw/W2mk9hxaUL4wRo=;
-        b=qPaHvYqWxsqDs6ljh+PRrtZAtxUUDnkFgwmzbpC9YaqF0Sz084mGi/CmasqJ+gqsp+
-         ougLTEZMQLsHuhmjBXr3eiGls5ExCf6r5uEE4Dha20eNobEY0Kzb19HcLGnchDfeLKjV
-         kH6WHAOLxNGbXhWwqA9LmEuaSf7l38fjCddBCtzVsV86eJ1WgYu4tKVk1X50ihevFmSK
-         +3RlM0yNM+7WX7AOA795uMxLwi0SKwQOuA7tJ3JEdmjKae1k44g0Oq/l1SzujU45HlU0
-         yrK15mIDqibSsj/Y7yrqasjwP1hYF2c6AvLsQkVeTXM7fQr9V9luM0hyNFSSjpKMXyKa
-         yR8Q==
-X-Gm-Message-State: ANoB5pmMU/ktcbMaM0di9BExoGGPisn73bLlSYQYr6fkVGiuBDAEr+NG
-        A5JOxEiXLAsFueP4BFkDIZE=
-X-Google-Smtp-Source: AA0mqf7OFzNf3x/5sCMdCKR0UQLfwSzRCZ8I4dVNJrs4AioHINFN1LegI239oExsJpxl0K7s+hUeOA==
-X-Received: by 2002:a17:907:2a08:b0:7ae:76a4:e393 with SMTP id fd8-20020a1709072a0800b007ae76a4e393mr20351488ejc.743.1669123591930;
-        Tue, 22 Nov 2022 05:26:31 -0800 (PST)
-Received: from skbuf ([188.26.57.184])
-        by smtp.gmail.com with ESMTPSA id jp8-20020a170906f74800b007adaca75bd0sm6119204ejb.179.2022.11.22.05.26.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Nov 2022 05:26:30 -0800 (PST)
-Date:   Tue, 22 Nov 2022 15:26:28 +0200
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Bhadram Varka <vbhadram@nvidia.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Revanth Kumar Uppala <ruppala@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next v4 RESEND] stmmac: tegra: Add MGBE support
-Message-ID: <20221122132628.y2mprca4o6hnvtq4@skbuf>
-References: <20220923114922.864552-1-thierry.reding@gmail.com>
- <1b50703c-9de0-3331-0517-2691b7005489@gmail.com>
- <LV2PR12MB5727354F4A1EDE7B08FBC5A5AF229@LV2PR12MB5727.namprd12.prod.outlook.com>
- <20221118130216.hxes7yucdl6hn2kl@skbuf>
- <LV2PR12MB57272349F55FC1E971DA64EEAF0D9@LV2PR12MB5727.namprd12.prod.outlook.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mKqixJN/8zapPMiYOY0ZA2E36N6vIQg16uLiOxlikFI=;
+        b=g0qj+xxU7CKL6uOMr763DHSnY6zsDvxSuqXdxv3yTXTWpvyT5EP0BHMc8tnWyFtUgL
+         7KOjoLLkDWVvcZIXz82VO2pMBuzk0AV9e9c6jrhbk2XwBZ5hTNu1nu7CP05N7NhZYeyL
+         FiJpWrm2eHSeO6EQpBNZJ+Sh7/y/uunioI28sZiPQA44fkGJBmnifaej+fa9i8Ko/+UB
+         sduOumbR+0N86dDcrMRzlVzKXejTs891p1atGyNxghv9BaeLIRgbDkTkLkg9BcK0l9wg
+         RDLXYaPYszoP2zP+vPmU1KuQk5ea8JilZr/KH5dezf1NInyqOBwc+Sr3ff/O5r1gDHo3
+         h3dQ==
+X-Gm-Message-State: ANoB5plDpI8jdP1Ci7wvzMD0XRYYk1vb+DVtXptJPUPGXd1onAXysUf8
+        +jhrB5TcLPpyzgaUUQd4Z9kL8rXDrXWZmiEZkD6QBQ==
+X-Google-Smtp-Source: AA0mqf6JSvaqlcRgOCqphXQ3MBWuxLvJ9cnb0DNFGeizoGOcIFvJAwjnOuz3SuqXXwFDZ3Z3O+rn4vXVPvsxTfgKOLE=
+X-Received: by 2002:a63:501c:0:b0:477:650a:c29a with SMTP id
+ e28-20020a63501c000000b00477650ac29amr3900068pgb.541.1669133109958; Tue, 22
+ Nov 2022 08:05:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <LV2PR12MB57272349F55FC1E971DA64EEAF0D9@LV2PR12MB5727.namprd12.prod.outlook.com>
+References: <20220919095939.761690562@infradead.org> <20220919101521.139727471@infradead.org>
+ <CAPDyKFqTWd4W5Ofk76CtC4X43dxBTNHtmY9YzN355-vpviLsPw@mail.gmail.com> <Y3UBwYNY15ETUKy9@hirez.programming.kicks-ass.net>
+In-Reply-To: <Y3UBwYNY15ETUKy9@hirez.programming.kicks-ass.net>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 22 Nov 2022 17:04:33 +0100
+Message-ID: <CAPDyKFqzmJdVVrcuJ6Hmr5nNgtpd9Oke_exmUKuTGZEb=PjvjQ@mail.gmail.com>
+Subject: Re: [PATCH v2 12/44] cpuidle,dt: Push RCU-idle into driver
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     juri.lelli@redhat.com, rafael@kernel.org, catalin.marinas@arm.com,
+        linus.walleij@linaro.org, bsegall@google.com, guoren@kernel.org,
+        pavel@ucw.cz, agordeev@linux.ibm.com, linux-arch@vger.kernel.org,
+        vincent.guittot@linaro.org, mpe@ellerman.id.au,
+        chenhuacai@kernel.org, christophe.leroy@csgroup.eu,
+        linux-acpi@vger.kernel.org, agross@kernel.org,
+        geert@linux-m68k.org, linux-imx@nxp.com, vgupta@kernel.org,
+        mattst88@gmail.com, mturquette@baylibre.com, sammy@sammy.net,
+        pmladek@suse.com, linux-pm@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-um@lists.infradead.org, npiggin@gmail.com,
+        tglx@linutronix.de, linux-omap@vger.kernel.org,
+        dietmar.eggemann@arm.com, andreyknvl@gmail.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, senozhatsky@chromium.org,
+        svens@linux.ibm.com, jolsa@kernel.org, tj@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        mark.rutland@arm.com, linux-ia64@vger.kernel.org,
+        dave.hansen@linux.intel.com,
+        virtualization@lists.linux-foundation.org,
+        James.Bottomley@hansenpartnership.com, jcmvbkbc@gmail.com,
+        thierry.reding@gmail.com, kernel@xen0n.name, cl@linux.com,
+        linux-s390@vger.kernel.org, vschneid@redhat.com,
+        john.ogness@linutronix.de, ysato@users.sourceforge.jp,
+        linux-sh@vger.kernel.org, festevam@gmail.com, deller@gmx.de,
+        daniel.lezcano@linaro.org, jonathanh@nvidia.com, dennis@kernel.org,
+        lenb@kernel.org, linux-xtensa@linux-xtensa.org,
+        kernel@pengutronix.de, gor@linux.ibm.com,
+        linux-arm-msm@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, loongarch@lists.linux.dev,
+        shorne@gmail.com, chris@zankel.net, sboyd@kernel.org,
+        dinguyen@kernel.org, bristot@redhat.com,
+        alexander.shishkin@linux.intel.com, fweisbec@gmail.com,
+        lpieralisi@kernel.org, atishp@atishpatra.org,
+        linux@rasmusvillemoes.dk, kasan-dev@googlegroups.com,
+        will@kernel.org, boris.ostrovsky@oracle.com, khilman@kernel.org,
+        linux-csky@vger.kernel.org, pv-drivers@vmware.com,
+        linux-snps-arc@lists.infradead.org, mgorman@suse.de,
+        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        ulli.kroll@googlemail.com, linux-clk@vger.kernel.org,
+        rostedt@goodmis.org, ink@jurassic.park.msu.ru, bcain@quicinc.com,
+        tsbogend@alpha.franken.de, linux-parisc@vger.kernel.org,
+        ryabinin.a.a@gmail.com, sudeep.holla@arm.com, shawnguo@kernel.org,
+        davem@davemloft.net, dalias@libc.org, tony@atomide.com,
+        amakhalov@vmware.com, konrad.dybcio@somainline.org,
+        bjorn.andersson@linaro.org, glider@google.com, hpa@zytor.com,
+        sparclinux@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-riscv@lists.infradead.org, vincenzo.frascino@arm.com,
+        anton.ivanov@cambridgegreys.com, jonas@southpole.se,
+        yury.norov@gmail.com, richard@nod.at, x86@kernel.org,
+        linux@armlinux.org.uk, mingo@redhat.com, aou@eecs.berkeley.edu,
+        hca@linux.ibm.com, richard.henderson@linaro.org,
+        stefan.kristiansson@saunalahti.fi, openrisc@lists.librecores.org,
+        acme@kernel.org, paul.walmsley@sifive.com,
+        linux-tegra@vger.kernel.org, namhyung@kernel.org,
+        andriy.shevchenko@linux.intel.com, jpoimboe@kernel.org,
+        dvyukov@google.com, jgross@suse.com, monstr@monstr.eu,
+        linux-mips@vger.kernel.org, palmer@dabbelt.com,
+        anup@brainfault.org, bp@alien8.de, johannes@sipsolutions.net,
+        linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 07:05:22AM +0000, Bhadram Varka wrote:
-> Reset values of XPCS IP take care of configuring the IP in 10G mode.
-> No need for extra register programming is required from the driver
-> side. The only status that the driver expects from XPCS IP is RLU to
-> be up which will be done by serdes_up in recent posted changes. Please
-> let me know if any other queries on recent changes [0]
-> 
-> Thank You!
-> 
-> [0]: https://patchwork.ozlabs.org/project/linux-tegra/patch/20221118075744.49442-2-ruppala@nvidia.com/
+On Wed, 16 Nov 2022 at 16:29, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+>
+> Sorry; things keep getting in the way of finishing this :/
+>
+> As such, I need a bit of time to get on-track again..
+>
+> On Tue, Oct 04, 2022 at 01:03:57PM +0200, Ulf Hansson wrote:
+>
+> > > --- a/drivers/acpi/processor_idle.c
+> > > +++ b/drivers/acpi/processor_idle.c
+> > > @@ -1200,6 +1200,8 @@ static int acpi_processor_setup_lpi_stat
+> > >                 state->target_residency = lpi->min_residency;
+> > >                 if (lpi->arch_flags)
+> > >                         state->flags |= CPUIDLE_FLAG_TIMER_STOP;
+> > > +               if (lpi->entry_method == ACPI_CSTATE_FFH)
+> > > +                       state->flags |= CPUIDLE_FLAG_RCU_IDLE;
+> >
+> > I assume the state index here will never be 0?
+> >
+> > If not, it may lead to that acpi_processor_ffh_lpi_enter() may trigger
+> > CPU_PM_CPU_IDLE_ENTER_PARAM() to call ct_cpuidle_enter|exit() for an
+> > idle-state that doesn't have the CPUIDLE_FLAG_RCU_IDLE bit set.
+>
+> I'm not quite sure I see how. AFAICT this condition above implies
+> acpi_processor_ffh_lpi_enter() gets called, no?
+>
+> Which in turn is an unconditional __CPU_PM_CPU_IDLE_ENTER() user, so
+> even if idx==0, it ends up in ct_idle_{enter,exit}().
 
-What about link status reporting, if the XPCS is connected to an SFP cage?
+Seems like I was overlooking something here, you are right, this
+shouldn't really be a problem.
 
-What I'm trying to get at is that maybe it would be useful to consider
-the pcs-xpcs.c phylink pcs driver, even if your XPCS IP is memory mapped,
-that is not a problem. Using mdiobus_register(), you can create your own
-"MDIO" controller with custom bus read() and write() operations which
-translate C45 accesses as seen by the xpcs driver into proper MMIO
-accesses at the right address.
+>
+> >
+> > >                 state->enter = acpi_idle_lpi_enter;
+> > >                 drv->safe_state_index = i;
+> > >         }
+> > > --- a/drivers/cpuidle/cpuidle-arm.c
+> > > +++ b/drivers/cpuidle/cpuidle-arm.c
+> > > @@ -53,6 +53,7 @@ static struct cpuidle_driver arm_idle_dr
+> > >          * handler for idle state index 0.
+> > >          */
+> > >         .states[0] = {
+> > > +               .flags                  = CPUIDLE_FLAG_RCU_IDLE,
+> >
+> > Comparing arm64 and arm32 idle-states/idle-drivers, the $subject
+> > series ends up setting the CPUIDLE_FLAG_RCU_IDLE for the ARM WFI idle
+> > state (state zero), but only for the arm64 and psci cases (mostly
+> > arm64). For arm32 we would need to update the ARM_CPUIDLE_WFI_STATE
+> > too, as that is what most arm32 idle-drivers are using. My point is,
+> > the code becomes a bit inconsistent.
+>
+> True.
+>
+> > Perhaps it's easier to avoid setting the CPUIDLE_FLAG_RCU_IDLE bit for
+> > all of the ARM WFI idle states, for both arm64 and arm32?
+>
+> As per the below?
+>
+> >
+> > >                 .enter                  = arm_enter_idle_state,
+> > >                 .exit_latency           = 1,
+> > >                 .target_residency       = 1,
+>
+> > > --- a/include/linux/cpuidle.h
+> > > +++ b/include/linux/cpuidle.h
+> > > @@ -282,14 +282,18 @@ extern s64 cpuidle_governor_latency_req(
+> > >         int __ret = 0;                                                  \
+> > >                                                                         \
+> > >         if (!idx) {                                                     \
+> > > +               ct_idle_enter();                                        \
+> >
+> > According to my comment above, we should then drop these calls to
+> > ct_idle_enter and ct_idle_exit() here. Right?
+>
+> Yes, if we ensure idx==0 never has RCU_IDLE set then these must be
+> removed.
+>
+> > >                 cpu_do_idle();                                          \
+> > > +               ct_idle_exit();                                         \
+> > >                 return idx;                                             \
+> > >         }                                                               \
+> > >                                                                         \
+> > >         if (!is_retention)                                              \
+> > >                 __ret =  cpu_pm_enter();                                \
+> > >         if (!__ret) {                                                   \
+> > > +               ct_idle_enter();                                        \
+> > >                 __ret = low_level_idle_enter(state);                    \
+> > > +               ct_idle_exit();                                         \
+> > >                 if (!is_retention)                                      \
+> > >                         cpu_pm_exit();                                  \
+> > >         }                                                               \
+> > >
+>
+> So the basic premise is that everything that needs RCU inside the idle
+> callback must set CPUIDLE_FLAG_RCU_IDLE and by doing that promise to
+> call ct_idle_{enter,exit}() themselves.
+>
+> Setting RCU_IDLE is required when there is RCU usage, however even if
+> there is no RCU usage, setting RCU_IDLE is fine, as long as
+> ct_idle_{enter,exit}() then get called.
 
-If I understand the hardware model right, the XPCS MDIO bus could be
-exported by a common, top-level SERDES driver. In addition to the XPCS
-MDIO bus, it would also model the lanes as generic PHY devices, on which
-you could call phy_set_mode_ext(serdes, PHY_MODE_ETHERNET, phy_mode),
-and phy_power_on()/phy_power_off().
+Right, I was thinking that it could make sense to shrink the window
+for users getting this wrong. In other words, we shouldn't set the
+CPUIDLE_FLAG_RCU_IDLE unless we really need to.
 
-Can your SERDES lanes also operate in PCIe mode? If yes, how is the
-selection between PCIe and Ethernet/XPCS done?
+And as I said, consistent behaviour is also nice to have.
+
+>
+>
+> So does the below (delta) look better to you?
+
+Yes, it does!
+
+Although, one minor comment below.
+
+>
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -1218,7 +1218,7 @@ static int acpi_processor_setup_lpi_stat
+>                 state->target_residency = lpi->min_residency;
+>                 if (lpi->arch_flags)
+>                         state->flags |= CPUIDLE_FLAG_TIMER_STOP;
+> -               if (lpi->entry_method == ACPI_CSTATE_FFH)
+> +               if (i != 0 && lpi->entry_method == ACPI_CSTATE_FFH)
+>                         state->flags |= CPUIDLE_FLAG_RCU_IDLE;
+>                 state->enter = acpi_idle_lpi_enter;
+>                 drv->safe_state_index = i;
+> --- a/drivers/cpuidle/cpuidle-arm.c
+> +++ b/drivers/cpuidle/cpuidle-arm.c
+> @@ -53,7 +53,7 @@ static struct cpuidle_driver arm_idle_dr
+>          * handler for idle state index 0.
+>          */
+>         .states[0] = {
+> -               .flags                  = CPUIDLE_FLAG_RCU_IDLE,
+> +               .flags                  = 0,
+
+Nitpick: I don't think we need to explicitly clear the flag, as it
+should already be zeroed by the compiler from its static declaration.
+Right?
+
+>                 .enter                  = arm_enter_idle_state,
+>                 .exit_latency           = 1,
+>                 .target_residency       = 1,
+> --- a/drivers/cpuidle/cpuidle-psci.c
+> +++ b/drivers/cpuidle/cpuidle-psci.c
+> @@ -357,7 +357,7 @@ static int psci_idle_init_cpu(struct dev
+>          * PSCI idle states relies on architectural WFI to be represented as
+>          * state index 0.
+>          */
+> -       drv->states[0].flags = CPUIDLE_FLAG_RCU_IDLE;
+> +       drv->states[0].flags = 0;
+>         drv->states[0].enter = psci_enter_idle_state;
+>         drv->states[0].exit_latency = 1;
+>         drv->states[0].target_residency = 1;
+> --- a/drivers/cpuidle/cpuidle-qcom-spm.c
+> +++ b/drivers/cpuidle/cpuidle-qcom-spm.c
+> @@ -72,7 +72,7 @@ static struct cpuidle_driver qcom_spm_id
+>         .owner = THIS_MODULE,
+>         .states[0] = {
+>                 .enter                  = spm_enter_idle_state,
+> -               .flags                  = CPUIDLE_FLAG_RCU_IDLE,
+> +               .flags                  = 0,
+>                 .exit_latency           = 1,
+>                 .target_residency       = 1,
+>                 .power_usage            = UINT_MAX,
+> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> @@ -337,7 +337,7 @@ static int sbi_cpuidle_init_cpu(struct d
+>         drv->cpumask = (struct cpumask *)cpumask_of(cpu);
+>
+>         /* RISC-V architectural WFI to be represented as state index 0. */
+> -       drv->states[0].flags = CPUIDLE_FLAG_RCU_IDLE;
+> +       drv->states[0].flags = 0;
+>         drv->states[0].enter = sbi_cpuidle_enter_state;
+>         drv->states[0].exit_latency = 1;
+>         drv->states[0].target_residency = 1;
+> --- a/include/linux/cpuidle.h
+> +++ b/include/linux/cpuidle.h
+> @@ -282,9 +282,7 @@ extern s64 cpuidle_governor_latency_req(
+>         int __ret = 0;                                                  \
+>                                                                         \
+>         if (!idx) {                                                     \
+> -               ct_idle_enter();                                        \
+>                 cpu_do_idle();                                          \
+> -               ct_idle_exit();                                         \
+>                 return idx;                                             \
+>         }                                                               \
+>                                                                         \
+
+Kind regards
+Uffe
