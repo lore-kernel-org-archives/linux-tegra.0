@@ -2,88 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F64C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Nov 2022 12:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BF7C4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Nov 2022 13:26:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233653AbiKVMMA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Nov 2022 07:12:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56822 "EHLO
+        id S231825AbiKVN0g (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Nov 2022 08:26:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233638AbiKVML6 (ORCPT
+        with ESMTP id S232373AbiKVN0f (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Nov 2022 07:11:58 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2FD34909A;
-        Tue, 22 Nov 2022 04:11:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 927CFB81A2B;
-        Tue, 22 Nov 2022 12:11:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C0CAC433D6;
-        Tue, 22 Nov 2022 12:11:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669119115;
-        bh=/z2qc1uI3NebpB+3mdpORi9OgnUkruCxcihYdbzhGfo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LCSLPsPV1TsmwjswLnlBTU41wJkwd41DU8kdtiaYBnVJv634uH9MOk0NoA76eC+oi
-         U+46gP8aiYGvbh662QqZpD3JKN5vslPYicfa2JdHCc/Xe8+8i1xExPBi4+D5PL+Qgg
-         r/aatccaQB9XqeQ7zIcWRIifspD1wk2xkDbdia71FlCG5GB2F6tAQwnvATm/Wqp6Ix
-         Uju7+L5Ei4rvBK0k4elikJeTwLpDrPNV96uxJnkKYuDLgh6f+UDLNLivieY6GYG+7W
-         +MmQylF8N2Rhbhm8KAeOcBCyqtzNcKtvF4XX56z0p7ktYsk67LO1Y3uyJZG7Z8uAFI
-         PCCM3MfhUGTjQ==
-Date:   Tue, 22 Nov 2022 12:11:49 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Tue, 22 Nov 2022 08:26:35 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F39517594;
+        Tue, 22 Nov 2022 05:26:33 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id vv4so26481729ejc.2;
+        Tue, 22 Nov 2022 05:26:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H5Nb0LMRwCQV7tWs/EMWvOMza7Rw/W2mk9hxaUL4wRo=;
+        b=c5sXKAtWFIEDXqT+WUOKhya4fg/LMtnbnST1odWDNP9OU+kDXeGDiKqBERk+4R47C2
+         Z5kPVeo0lGXhAJA+HMUoSD6QLU8bgjARomjX4A0glIojTdFf7dA4oUOYBP+eGAuZkWun
+         fcnk6pmIR8Z2uhThe5yfrrzOcaibpQJcE21ovUEIgRPe1tTs1cEHvWTZh+un0nToHxHr
+         a45LendJsM84BJjYm6cbKY2jDZVrk/KqD9EZyzEzSKzWzcEVSOvkapMHIjvrO23oye7I
+         yGWMuSUxNG2LLIVafLCfZ+AJas/clOBJVZ7BXgW2/1R5EWklzDNgqpkthulsiCeNufMa
+         9Cdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H5Nb0LMRwCQV7tWs/EMWvOMza7Rw/W2mk9hxaUL4wRo=;
+        b=qPaHvYqWxsqDs6ljh+PRrtZAtxUUDnkFgwmzbpC9YaqF0Sz084mGi/CmasqJ+gqsp+
+         ougLTEZMQLsHuhmjBXr3eiGls5ExCf6r5uEE4Dha20eNobEY0Kzb19HcLGnchDfeLKjV
+         kH6WHAOLxNGbXhWwqA9LmEuaSf7l38fjCddBCtzVsV86eJ1WgYu4tKVk1X50ihevFmSK
+         +3RlM0yNM+7WX7AOA795uMxLwi0SKwQOuA7tJ3JEdmjKae1k44g0Oq/l1SzujU45HlU0
+         yrK15mIDqibSsj/Y7yrqasjwP1hYF2c6AvLsQkVeTXM7fQr9V9luM0hyNFSSjpKMXyKa
+         yR8Q==
+X-Gm-Message-State: ANoB5pmMU/ktcbMaM0di9BExoGGPisn73bLlSYQYr6fkVGiuBDAEr+NG
+        A5JOxEiXLAsFueP4BFkDIZE=
+X-Google-Smtp-Source: AA0mqf7OFzNf3x/5sCMdCKR0UQLfwSzRCZ8I4dVNJrs4AioHINFN1LegI239oExsJpxl0K7s+hUeOA==
+X-Received: by 2002:a17:907:2a08:b0:7ae:76a4:e393 with SMTP id fd8-20020a1709072a0800b007ae76a4e393mr20351488ejc.743.1669123591930;
+        Tue, 22 Nov 2022 05:26:31 -0800 (PST)
+Received: from skbuf ([188.26.57.184])
+        by smtp.gmail.com with ESMTPSA id jp8-20020a170906f74800b007adaca75bd0sm6119204ejb.179.2022.11.22.05.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Nov 2022 05:26:30 -0800 (PST)
+Date:   Tue, 22 Nov 2022 15:26:28 +0200
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Bhadram Varka <vbhadram@nvidia.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Revanth Kumar Uppala <ruppala@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jerome Neanne <jerome.neanne@baylibre.com>,
-        Andrew Davis <afd@ti.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH] dt-bindings: Move fixed string node names under
- 'properties'
-Message-ID: <Y3y8hTosK8UNTL7K@sirena.org.uk>
-References: <20221118223708.1721134-1-robh@kernel.org>
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v4 RESEND] stmmac: tegra: Add MGBE support
+Message-ID: <20221122132628.y2mprca4o6hnvtq4@skbuf>
+References: <20220923114922.864552-1-thierry.reding@gmail.com>
+ <1b50703c-9de0-3331-0517-2691b7005489@gmail.com>
+ <LV2PR12MB5727354F4A1EDE7B08FBC5A5AF229@LV2PR12MB5727.namprd12.prod.outlook.com>
+ <20221118130216.hxes7yucdl6hn2kl@skbuf>
+ <LV2PR12MB57272349F55FC1E971DA64EEAF0D9@LV2PR12MB5727.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lDjTxj1SUPsxEEKH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221118223708.1721134-1-robh@kernel.org>
-X-Cookie: That's what she said.
+In-Reply-To: <LV2PR12MB57272349F55FC1E971DA64EEAF0D9@LV2PR12MB5727.namprd12.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Tue, Nov 22, 2022 at 07:05:22AM +0000, Bhadram Varka wrote:
+> Reset values of XPCS IP take care of configuring the IP in 10G mode.
+> No need for extra register programming is required from the driver
+> side. The only status that the driver expects from XPCS IP is RLU to
+> be up which will be done by serdes_up in recent posted changes. Please
+> let me know if any other queries on recent changes [0]
+> 
+> Thank You!
+> 
+> [0]: https://patchwork.ozlabs.org/project/linux-tegra/patch/20221118075744.49442-2-ruppala@nvidia.com/
 
---lDjTxj1SUPsxEEKH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+What about link status reporting, if the XPCS is connected to an SFP cage?
 
-On Fri, Nov 18, 2022 at 04:37:07PM -0600, Rob Herring wrote:
-> Fixed string node names should be under 'properties' rather than
-> 'patternProperties'. Additionally, without beginning and end of line
-> anchors, any prefix or suffix is allowed on the specified node name.
-> These cases don't appear to want a prefix or suffix, so move them under
-> 'properties'.
+What I'm trying to get at is that maybe it would be useful to consider
+the pcs-xpcs.c phylink pcs driver, even if your XPCS IP is memory mapped,
+that is not a problem. Using mdiobus_register(), you can create your own
+"MDIO" controller with custom bus read() and write() operations which
+translate C45 accesses as seen by the xpcs driver into proper MMIO
+accesses at the right address.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+If I understand the hardware model right, the XPCS MDIO bus could be
+exported by a common, top-level SERDES driver. In addition to the XPCS
+MDIO bus, it would also model the lanes as generic PHY devices, on which
+you could call phy_set_mode_ext(serdes, PHY_MODE_ETHERNET, phy_mode),
+and phy_power_on()/phy_power_off().
 
---lDjTxj1SUPsxEEKH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmN8vIQACgkQJNaLcl1U
-h9Ae0Qf/emE9/oA+dPnGHlis/IeySfRJD4RM1Am+LSJBAqwrpx85Z6Q2H2bURwJQ
-ZWw+Q234RANSgC5arbh8/luVB0Z0UYs21FfnyBefSZvA5FlW1JHt+jpHcM6f9fdS
-vB8r+afbJpNRpfQG3OUg9uIcugKdi3uie/TGzzILDNa9OvJ+FHZG6m5RrPO31xMQ
-S4CYuu/MJFRq92V7Ra2SOxHjAn+p3kjXzCizHBdcia0DQRdRGORVZPzBqVpSGxhb
-QEaiE7P+yYW9oQy8sVIb/ChjUMjY4w3SJr/+IAIhrpxV4DtueO7Gc+rP47PsHDoA
-I13D2nJht2ZuzW11fCfbkTnuYTY0HA==
-=4gKN
------END PGP SIGNATURE-----
-
---lDjTxj1SUPsxEEKH--
+Can your SERDES lanes also operate in PCIe mode? If yes, how is the
+selection between PCIe and Ethernet/XPCS done?
