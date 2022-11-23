@@ -2,182 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F9DC4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 14:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D59AC433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 15:25:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237667AbiKWOt6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Nov 2022 09:49:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49398 "EHLO
+        id S235513AbiKWPZ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Nov 2022 10:25:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236447AbiKWOt5 (ORCPT
+        with ESMTP id S236514AbiKWPZ2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Nov 2022 09:49:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B369E6DCD3
-        for <linux-tegra@vger.kernel.org>; Wed, 23 Nov 2022 06:48:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669214934;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XVwsHMkeuOJlctKFKAb4Da/8dTubU4VpbLh+0BeUA34=;
-        b=FcbaxfVQVqJoOpicOKyp54gnb/3i+azM0W899eKg5QifLg8nI4emC/wLhhMEh+R+he4Q/F
-        zc/SjSjq3xNjgXVcrsLevPIrs5dLVE+4ZG0iimfgg9N017BpyQiA334EOnM4vqepnKv9jc
-        RIk1G6RaZnpqbVXGGEcufJAgJfDO8jg=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-657-U_UAKLMjP0uWUxjV8rVGog-1; Wed, 23 Nov 2022 09:48:51 -0500
-X-MC-Unique: U_UAKLMjP0uWUxjV8rVGog-1
-Received: by mail-il1-f199.google.com with SMTP id s4-20020a056e02216400b003021b648144so13141515ilv.19
-        for <linux-tegra@vger.kernel.org>; Wed, 23 Nov 2022 06:48:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XVwsHMkeuOJlctKFKAb4Da/8dTubU4VpbLh+0BeUA34=;
-        b=qHsIOT9ie9Uq9A7d8DW28uwG9HEdngRUzgSCRZ80UzkW/OV+6tKmwtO+Lk1p/UnTPg
-         mupD/EpnKjDtUIvsA7y/JFwuX93MpBTlT5Ua2bzxRmAmQce6bAvm1qrg20qQfMw7jL5J
-         EtmSt3AQkyMrCxdj/Dq4/akMhCxXZvKoeaLzmSTWI0P8AjRFDD750WazqT3kSF7sNu5K
-         RybkV2aerMkWnIhGgAyx6l7/SVSsEmVdddrTzLxXWoTxgWphjsMC0bP0+SrppCUp/iTb
-         rQ4IsnshSLNXYsVJyCCmZNi9XhseFL8zNSXwuI6WvZzNZn3ZycCIy4Nd/P2gfxJfW84H
-         64gw==
-X-Gm-Message-State: ANoB5plI3ovnpIVw0/G2/Ny8QexVutJpWD9rY+0DDA1g+QPzVxOzqYhF
-        nT+fEvgN9obN1CljA25fRpoj2rda+hlSFusuFujIYnVNi+lLsF0Ybj0L2XZxRaUjM/3mtufMM/b
-        6/KO5qgnj5Hb9nOiS0Vde5fO3P/i+8v8WPNQYJBg=
-X-Received: by 2002:a92:c691:0:b0:302:75c9:5d55 with SMTP id o17-20020a92c691000000b0030275c95d55mr4126281ilg.34.1669214931053;
-        Wed, 23 Nov 2022 06:48:51 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7t6tBPN8sYXy8dh8uHxD1HawZPKG6isYlau3hUqFJFGOIk/LhU7kZ8leId0LJjjgLzaxuDzjr+0sIG2p/qtrU=
-X-Received: by 2002:a92:c691:0:b0:302:75c9:5d55 with SMTP id
- o17-20020a92c691000000b0030275c95d55mr4126263ilg.34.1669214930760; Wed, 23
- Nov 2022 06:48:50 -0800 (PST)
+        Wed, 23 Nov 2022 10:25:28 -0500
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E9B3655F;
+        Wed, 23 Nov 2022 07:25:27 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZfNKRL1YZ0eAnvfVTf0CaJk3fkOHICEPYLcXlw7K3GIT2BuRp8Kcl5QU48emc29viTdHAjhtlgtVVN5947O49C7niEfKiaQewHR1KtATiQzfHaS890fR38gLWxeJ9q4utTC3CzdO3X6j71VK5Jq1nxqVWDTJgzZjxDEV4qmCDSLxhugHPz7jzYdR3+tdbn5Er5CNwRMYLdRV2gEDSrsGXihsywmBIXhzBy5gnZS/moA05X5I8Y2Tm8XIoMss7OnP8hjsGi42AXlprMeUH2fiqs3ENCZPTT4gRAhuv+AV7hF1GIXC2vrS3vtaDsiOmXdFnqg6C0kyLCE2pAZd2h/hEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jQ8D/dyFEIetMFyHlTio+YsLsQWNimeodssFh/YpUPw=;
+ b=JNhGAvcpQG0XqabkLd+XAYSNmRPTnbRNyj5vpztEUGALCizMaMdxCUGgx01KAcgId+dZE0svkOmhk6Zts22yd/9XyuEoFIRBHaZF5zCAWoNKRStEHYygLtthxGoKI0BffIIu2LxRlCVR7sJxaQhw7U/cJVgZRrInkzljCTKwvkMjd1gpYScedrfQ4xXMfuD4hzzhogn2/jN6qadh7VzqGoxc7gcN62dsNG0IVncJ6sIpm6xYgKVNQBiZuVRFVIPklOzMu/cEOJvJSmaIfiDbFKmugcv79KtxGCV9Rv7QwRbV+07ghpKXi2DpPxOXwxdmusaRQX6r3K/U/mcBGO4shw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jQ8D/dyFEIetMFyHlTio+YsLsQWNimeodssFh/YpUPw=;
+ b=p13483hnuCDrvh8YCz40fGZW2yEM2mz6MnIU2WMJNqWI23NChNnUK4GBTql/ozgrJxjdgloKgVaugY7AHwUcRBxSZq0z32SpXnyOq+I9pXzzeQJMDj2Myx6ER3sIlqwUpY8TBofvBcDApRIIq0BbiGUO27blvHwbhMED6WN43IzlVjA3XgFGprbLKjG34DXR0ghDEjzUEvd0xJ6Sc2kcmAxGNFyUL+AA5na1G195uoIwqAZe8w/8uqSTbIK38GAqRZJRK1PN7sPyLT88s3rA7dj6xSbGuY7fP1Jkv/NavLyQ6zU6suFqIOWsUvzCo5FtbfCVrEQIsSAgiufjPdfehQ==
+Received: from DM6PR02CA0078.namprd02.prod.outlook.com (2603:10b6:5:1f4::19)
+ by BL1PR12MB5062.namprd12.prod.outlook.com (2603:10b6:208:313::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5834.15; Wed, 23 Nov
+ 2022 15:25:26 +0000
+Received: from DM6NAM11FT073.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:1f4:cafe::2d) by DM6PR02CA0078.outlook.office365.com
+ (2603:10b6:5:1f4::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.17 via Frontend
+ Transport; Wed, 23 Nov 2022 15:25:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DM6NAM11FT073.mail.protection.outlook.com (10.13.173.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5857.18 via Frontend Transport; Wed, 23 Nov 2022 15:25:25 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 23 Nov
+ 2022 07:25:14 -0800
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 23 Nov
+ 2022 07:25:14 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Wed, 23 Nov 2022 07:25:13 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/88] 4.14.300-rc1 review
+In-Reply-To: <20221123084548.535439312@linuxfoundation.org>
+References: <20221123084548.535439312@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20221103155756.687789-1-benjamin.tissoires@redhat.com>
- <20221103155756.687789-4-benjamin.tissoires@redhat.com> <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
-In-Reply-To: <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Wed, 23 Nov 2022 15:48:39 +0100
-Message-ID: <CAO-hwJJZxgeTT8mLwFrYynSVASva=o7qL9Kr4xOywV3KDUu2GA@mail.gmail.com>
-Subject: Re: [PATCH hid v12 03/15] HID: initial BPF implementation
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Tero Kristo <tero.kristo@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <e6d93047-172c-44a7-a9ef-f56bb55c6edc@rnnvmail204.nvidia.com>
+Date:   Wed, 23 Nov 2022 07:25:13 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT073:EE_|BL1PR12MB5062:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d2685c0-719a-4ac1-237a-08dacd66f223
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DftbF4hZgUZdGv0Ium+tXqYCUTbTD7EkoYPH/iS+uHN6D5T+JUGidu4Klt2f4T5rJg8uNeue7WQg8P6IiCpE1irI/Qp1hND4STuM5Y5r07g+XSSFgNy7qVKe3iG62Xj/mOwOHcegwF6iGEj3kLHcuOQVAWrh8nnJbtc5UwqwBl3X3puazaZE4Gmf3/izFFzoegF828POIcp/qcvsnCM2NPxNKXM0RZEwr2ufi8N9kq8U8joV/ZqaaYAlgkFMtoFgrpvO4LOFuzWFAgyQUNUu0W5jM7qS64tQUjE1ZYwkCbNhTQ/RG9Dx8jbcRX/RcyEQpDXATUU70TAo4ebvozlzlNlBvUa1CqLT3rKUVQdidojfmGrU3oyqF5b2YB26mgIeLOgihfxKNrh/SPFnwVGVFd2LuNkoQMRCZokWdL9GJ2zMYfvtKsucv6vHiZO0Da2L/G6Zts33Fu9w9sRdQm0jCT6MgPuQIfmWxrzWRJi3TRETat0GKhQoav8Hi7tGux7Eo+11FRaqcASe1a4CygsCp5q4XuRQswcTT17uybFFPm2DiNHAMUli9yNfvP8GP1Xq9gAaAoa9Yvu10jwFbomo9c0cwDhenM6zia/NT2p5fa4EUDQ/na0RwpVdT8W/SsQLEHGzMnL7Xkz6duvrC8BJesqcPZGsJZwSVMnjrUp6kfU1W8SO1iSX2s6mze6WG2Sxacj54ti7Rqp4sh7frDRALM44HC86II3VdcDpEMTZAQ+PZMttr+nlIU6jySOB5+rSwajws+cEOXdB5F4g5PAj5FA7QlUWdC+tUjfgajHrIiQ=
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(376002)(396003)(136003)(451199015)(36840700001)(46966006)(40470700004)(36860700001)(31686004)(31696002)(86362001)(47076005)(82740400003)(7416002)(26005)(5660300002)(336012)(40480700001)(2906002)(186003)(426003)(7636003)(40460700003)(356005)(6916009)(82310400005)(966005)(70586007)(4326008)(70206006)(41300700001)(54906003)(8936002)(8676002)(316002)(478600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2022 15:25:25.7531
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d2685c0-719a-4ac1-237a-08dacd66f223
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT073.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5062
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jon,
+On Wed, 23 Nov 2022 09:49:57 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.300 release.
+> There are 88 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 25 Nov 2022 08:45:20 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.300-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-On Wed, Nov 23, 2022 at 2:25 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 03/11/2022 15:57, Benjamin Tissoires wrote:
-> > Declare an entry point that can use fmod_ret BPF programs, and
-> > also an API to access and change the incoming data.
-> >
-> > A simpler implementation would consist in just calling
-> > hid_bpf_device_event() for any incoming event and let users deal
-> > with the fact that they will be called for any event of any device.
-> >
-> > The goal of HID-BPF is to partially replace drivers, so this situation
-> > can be problematic because we might have programs which will step on
-> > each other toes.
-> >
-> > For that, we add a new API hid_bpf_attach_prog() that can be called
-> > from a syscall and we manually deal with a jump table in hid-bpf.
-> >
-> > Whenever we add a program to the jump table (in other words, when we
-> > attach a program to a HID device), we keep the number of time we added
-> > this program in the jump table so we can release it whenever there are
-> > no other users.
-> >
-> > HID devices have an RCU protected list of available programs in the
-> > jump table, and those programs are called one after the other thanks
-> > to bpf_tail_call().
-> >
-> > To achieve the detection of users losing their fds on the programs we
-> > attached, we add 2 tracing facilities on bpf_prog_release() (for when
-> > a fd is closed) and bpf_free_inode() (for when a pinned program gets
-> > unpinned).
-> >
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
->
-> ...
->
-> > +static int __init hid_bpf_init(void)
-> > +{
-> > +     int err;
-> > +
-> > +     /* Note: if we exit with an error any time here, we would entirely break HID, which
-> > +      * is probably not something we want. So we log an error and return success.
-> > +      *
-> > +      * This is not a big deal: the syscall allowing to attach a BPF program to a HID device
-> > +      * will not be available, so nobody will be able to use the functionality.
-> > +      */
-> > +
-> > +     err = register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &hid_bpf_kfunc_set);
-> > +     if (err) {
-> > +             pr_warn("error while setting HID BPF tracing kfuncs: %d", err);
-> > +             return 0;
-> > +     }
-> > +
-> > +     err = hid_bpf_preload_skel();
-> > +     if (err) {
-> > +             pr_warn("error while preloading HID BPF dispatcher: %d", err);
-> > +             return 0;
-> > +     }
-> > +
-> > +     /* register syscalls after we are sure we can load our preloaded bpf program */
-> > +     err = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &hid_bpf_syscall_kfunc_set);
-> > +     if (err) {
-> > +             pr_warn("error while setting HID BPF syscall kfuncs: %d", err);
-> > +             return 0;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
->
->
-> We have a kernel test that checks for new warning and error messages on
-> boot and with this change I am now seeing the following error message on
-> our Tegra platforms ...
->
->   WARNING KERN hid_bpf: error while preloading HID BPF dispatcher: -13
->
-> I have a quick look at the code, but I can't say I am familiar with
-> this. So I wanted to ask if a way to fix this or avoid this? I see the
-> code returns 0, so one option would be to make this an informational or
-> debug print.
+All tests passing for Tegra ...
 
-I am not in favor of debug in that case, because I suspect it'll hide
-too much when getting a bug report. Informational could do, yes.
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-However, before that, I'd like to dig a little bit more on why it is
-failing. I thought arm64 now has support of tracing bpf programs, so I
-would not expect this to fail.
+Linux version:	4.14.300-rc1-g7e961be09da0
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Would you mind sending me your .config so I can check in it if you are
-missing anything? I am thinking that maybe I need to also depend on
-BPF_JIT.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Cheers,
-Benjamin
-
->
-> Thanks
-> Jon
->
-> --
-> nvpublic
->
-
+Jon
