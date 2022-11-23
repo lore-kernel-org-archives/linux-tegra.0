@@ -2,112 +2,159 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 171D5C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 12:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08A5C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 13:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238096AbiKWMxe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Nov 2022 07:53:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34572 "EHLO
+        id S238875AbiKWNg2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Nov 2022 08:36:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238149AbiKWMvn (ORCPT
+        with ESMTP id S238874AbiKWNgJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Nov 2022 07:51:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BE885A07;
-        Wed, 23 Nov 2022 04:44:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A572CB81F73;
-        Wed, 23 Nov 2022 12:44:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C20C433D6;
-        Wed, 23 Nov 2022 12:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669207462;
-        bh=32JwF+5T8eFUXcCsM12zv8TYnKDw38lIf0unECxX/LA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JcTQY8GRguawQLauYB9pih2v+S72nKrd7BuNdi6QVaNj/F1kpxeGG3XJhRlsxKjdl
-         dBeDmVIjKGx+xTWGgT4xdoP+02H5lnPjqYJXZ1/bC6XfOhwQFyTJrOR8+nTCHP19EU
-         GYsSV7Ua9BbW57EbyzuwSVoUxQHHtwkJdxY4v86ZBVH1rEjB/XWz6Fk++QMRixdHB4
-         WeUS5BYlyWBX5oZM7SAqTgFZRbfY9zfCQY/OL6XUnq2V8079cDOg7C35HESytiJCQF
-         qjojaLifFzSOwBenNG4LRUnEkHJ9I7k2utKZSAqC1rCXCUsQN4Nm1CcgUf5Gyh4+C2
-         BeixVopdkNKYQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
-        airlied@gmail.com, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 20/22] gpu: host1x: Avoid trying to use GART on Tegra20
-Date:   Wed, 23 Nov 2022 07:43:35 -0500
-Message-Id: <20221123124339.265912-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221123124339.265912-1-sashal@kernel.org>
-References: <20221123124339.265912-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        Wed, 23 Nov 2022 08:36:09 -0500
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CAC827167
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Nov 2022 05:23:59 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 03B545C0233;
+        Wed, 23 Nov 2022 08:23:57 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute3.internal (MEProxy); Wed, 23 Nov 2022 08:23:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1669209836; x=1669296236; bh=RSKaBZBxM1
+        0svzHkao5gL7deuhByJ/mt9VuVrlgcelA=; b=KqJXA3OzBt/hBIpwY7YNOfOsiq
+        MLQy0rZ4TCLnIYaRrn8GV5SI9x/1KKmBwlhLo7cz8w74E0+uQJdATRAUB6K9MhLu
+        2Qyc1tyQndUoCeh3f/jV6qbjMA4Yr07gZ1Ivs8dfm9fwS0+UrRuN94CfqJ1akAMK
+        X98gWffidQd9kyxR28FA0f/L6Qn1O7FYY18IQGIcyYOJ762w9rvPhUchkpgHNVcH
+        fUK3Eol79C+HPQL3hnZ4UUCOv+RCUgGB9UWnCDl9Utivg1+UCMcr0opOTbQBfITN
+        eKBbdfJ0JUXsf1e1jApRRAAbUG6//od0HtDFJDdgenuEt572E7v9ufKjUOBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1669209836; x=1669296236; bh=RSKaBZBxM10svzHkao5gL7deuhBy
+        J/mt9VuVrlgcelA=; b=prNv1WOVPXJ38MvC/6RPHwGlL47c5Gi5FrLx75swA4RE
+        jxPH3Mjg67V9jZKAOiNG0fSizGFIyj9KaYrYIfZUdGEkD8qw0eZg9gpAzess2BqK
+        PPkZkoil8tLg2EBZVnMdhStoprFOV26y+/rv87LmeussinnY76DnqOTEeanAB5zv
+        3/LovZ/oPS7w2ijF/MHaAxMGE7XmfoiobfOUy8gWFgs0VvyfB8rI3WghEw8w1SnD
+        JPba82b2rJ7MsOVy/nXG33r4QmcAz7X8eArJ1WLiojyNsgoDNenb+dNfV+ZkDmbv
+        EJHyLU4F6lmUnDudT7KaOtdmmH0eX6cnmEka2DnUdQ==
+X-ME-Sender: <xms:7B5-Y6F7BsIp0Wf8wbOGoEok_S5pzVEZ3WXzX0YUM0oHVgkY1txZ1g>
+    <xme:7B5-Y7VlN06wbGjAnxB1HZN80ibnn5JvOCAnfN5DUAP5toh0_5Nfdr3X2pKPMI-qp
+    VL27LAq0W5Pvz0godY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedriedugdegkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
+    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:7B5-Y0JEM8Me7EIr2rFzatCKmlLIMqmK2mAGA4-j2E1EW10ZWdsd3A>
+    <xmx:7B5-Y0HI4pkinssRhV5kZpt3TsLAH_k_UFJ-RiMMhtyeopZdFM9_GA>
+    <xmx:7B5-YwVuqXtbMQyeyEkduW3eM7PFaV-lpkVNFYNhwRdgeY7Y-LuFQA>
+    <xmx:7B5-Y3QTOskXti6o3yyaT5JDl50t_htk0LFM3TagT4WS4piiLdXVQg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id C303CB60086; Wed, 23 Nov 2022 08:23:56 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1115-g8b801eadce-fm-20221102.001-g8b801ead
+Mime-Version: 1.0
+Message-Id: <6476b823-b47c-461c-b948-752e2671015f@app.fastmail.com>
+In-Reply-To: <Y34FCQ3xTmcjqKRT@orome>
+References: <20221121171239.2041835-1-thierry.reding@gmail.com>
+ <20221121171239.2041835-2-thierry.reding@gmail.com>
+ <374ae4ef-2f57-4737-95af-b1bdfdb03740@app.fastmail.com>
+ <Y34FCQ3xTmcjqKRT@orome>
+Date:   Wed, 23 Nov 2022 14:23:36 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Thierry Reding" <thierry.reding@gmail.com>
+Cc:     arm@kernel.org, soc@kernel.org,
+        "Jon Hunter" <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL v2 2/7] firmware: tegra: Changes for v6.2-rc1
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Robin Murphy <robin.murphy@arm.com>
+On Wed, Nov 23, 2022, at 12:33, Thierry Reding wrote:
+> On Tue, Nov 22, 2022 at 10:25:50PM +0100, Arnd Bergmann wrote:
+>> On Mon, Nov 21, 2022, at 18:12, Thierry Reding wrote:
+>> >       firmware: tegra: bpmp: Do not support big-endian
+>> 
+>> I pulled the branch, but I think this patch is inconsistent with
+>> our normal approach: Since all ARMv7 and ARMv8 processors can
+>> run with both big-endian and little-endian kernels, we normally
+>> try to keep drivers portable between both ways, even though we
+>> don't expect anyone to actually want a big-endian kernel any
+>> more. Changing portable code to nonportable code doesn't seem
+>> helpful here.
+>
+> The only reason I dropped this is because the driver is in itself
+> inconsistent. Parts of it use byte-swapping for 32-bit values and other
+> parts don't. I was originally going to fix big-endian support but it
+> would've required changes to the BPMP ABI header to avoid sparse
+> warnings in lots of places, then these ABI changes would've needed to
+> trickle up to the canonical source, etc. All of that didn't seem worth
+> the effort if we couldn't even test this in any way. So the easiest fix
+> was to stop pretending and drop the partial support.
 
-[ Upstream commit c2418f911a31a266af4fbaca998dc73d3676475a ]
+Right
 
-Since commit c7e3ca515e78 ("iommu/tegra: gart: Do not register with
-bus") quite some time ago, the GART driver has effectively disabled
-itself to avoid issues with the GPU driver expecting it to work in ways
-that it doesn't. As of commit 57365a04c921 ("iommu: Move bus setup to
-IOMMU device registration") that bodge no longer works, but really the
-GPU driver should be responsible for its own behaviour anyway. Make the
-workaround explicit.
+>> On the other hand, there are already examples of important
+>> drivers that are fundamentally incompatible with big-endian
+>> mode, notably drivers/efi/, which is required on a lot of
+>> machines.
+>> 
+>> You don't have to revert this patch, but it would be helpful
+>> to mark code that is explicitly unportable with a 'depends
+>> on !CPU_BIG_ENDIAN' line in Kconfig. If you agree, I can
+>> add that.
+>
+> Yes, feel free to add that.
 
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Suggested-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/tegra/drm.c | 4 ++++
- drivers/gpu/host1x/dev.c    | 4 ++++
- 2 files changed, 8 insertions(+)
+Added this commit to the soc/drivers branch now:
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 2c6ebc328b24..318692ad9680 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1042,6 +1042,10 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
- 	struct host1x *host1x = dev_get_drvdata(dev->dev.parent);
- 	struct iommu_domain *domain;
- 
-+	/* Our IOMMU usage policy doesn't currently play well with GART */
-+	if (of_machine_is_compatible("nvidia,tegra20"))
-+		return false;
-+
- 	/*
- 	 * If the Tegra DRM clients are backed by an IOMMU, push buffers are
- 	 * likely to be allocated beyond the 32-bit boundary if sufficient
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 8659558b518d..9f674a8d5009 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -198,6 +198,10 @@ static void host1x_setup_sid_table(struct host1x *host)
- 
- static bool host1x_wants_iommu(struct host1x *host1x)
- {
-+	/* Our IOMMU usage policy doesn't currently play well with GART */
-+	if (of_machine_is_compatible("nvidia,tegra20"))
-+		return false;
-+
- 	/*
- 	 * If we support addressing a maximum of 32 bits of physical memory
- 	 * and if the host1x firewall is enabled, there's no need to enable
--- 
-2.35.1
+commit 4ddb1bf1a83783cebdb174b0efaf62f63ad64e0b
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Wed Nov 23 14:21:16 2022 +0100
 
+    tegra: mark BPMP driver as little-endian only
+    
+    The BPMP firmware driver never worked on big-endian kernels, and
+    cannot easily be made portable. Add a dependency to make this clear
+    in case anyone ever wants to try a big-endian kernel on this hardware.
+    
+    Link: https://lore.kernel.org/linux-arm-kernel/Y34FCQ3xTmcjqKRT@orome/
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
+index 1c8ba1f47c7c..cde1ab8bd9d1 100644
+--- a/drivers/firmware/tegra/Kconfig
++++ b/drivers/firmware/tegra/Kconfig
+@@ -14,6 +14,7 @@ config TEGRA_IVC
+ config TEGRA_BPMP
+ 	bool "Tegra BPMP driver"
+ 	depends on ARCH_TEGRA && TEGRA_HSP_MBOX && TEGRA_IVC
++	depends on !CPU_BIG_ENDIAN
+ 	help
+ 	  BPMP (Boot and Power Management Processor) is designed to off-loading
+ 	  the PM functions which include clock/DVFS/thermal/power from the CPU.
+
+
+
+>> Do you know of other tegra drivers that only work on
+>> little-endian?
+>
+> I'm not aware of any that explicitly wouldn't work with big endian, but
+> it's not something we've ever tested. I know that people have in the
+> past done experiments with running emulated Tegra on QEMU in big endian
+> mode, but it's probably not something that's very common.
+
+Ok, thanks!
+
+     Arnd
