@@ -2,159 +2,211 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08A5C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 13:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F9FC47089
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 13:37:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238875AbiKWNg2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Nov 2022 08:36:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48766 "EHLO
+        id S238716AbiKWNhZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Nov 2022 08:37:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238874AbiKWNgJ (ORCPT
+        with ESMTP id S238970AbiKWNhI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Nov 2022 08:36:09 -0500
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CAC827167
-        for <linux-tegra@vger.kernel.org>; Wed, 23 Nov 2022 05:23:59 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 03B545C0233;
-        Wed, 23 Nov 2022 08:23:57 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute3.internal (MEProxy); Wed, 23 Nov 2022 08:23:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1669209836; x=1669296236; bh=RSKaBZBxM1
-        0svzHkao5gL7deuhByJ/mt9VuVrlgcelA=; b=KqJXA3OzBt/hBIpwY7YNOfOsiq
-        MLQy0rZ4TCLnIYaRrn8GV5SI9x/1KKmBwlhLo7cz8w74E0+uQJdATRAUB6K9MhLu
-        2Qyc1tyQndUoCeh3f/jV6qbjMA4Yr07gZ1Ivs8dfm9fwS0+UrRuN94CfqJ1akAMK
-        X98gWffidQd9kyxR28FA0f/L6Qn1O7FYY18IQGIcyYOJ762w9rvPhUchkpgHNVcH
-        fUK3Eol79C+HPQL3hnZ4UUCOv+RCUgGB9UWnCDl9Utivg1+UCMcr0opOTbQBfITN
-        eKBbdfJ0JUXsf1e1jApRRAAbUG6//od0HtDFJDdgenuEt572E7v9ufKjUOBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1669209836; x=1669296236; bh=RSKaBZBxM10svzHkao5gL7deuhBy
-        J/mt9VuVrlgcelA=; b=prNv1WOVPXJ38MvC/6RPHwGlL47c5Gi5FrLx75swA4RE
-        jxPH3Mjg67V9jZKAOiNG0fSizGFIyj9KaYrYIfZUdGEkD8qw0eZg9gpAzess2BqK
-        PPkZkoil8tLg2EBZVnMdhStoprFOV26y+/rv87LmeussinnY76DnqOTEeanAB5zv
-        3/LovZ/oPS7w2ijF/MHaAxMGE7XmfoiobfOUy8gWFgs0VvyfB8rI3WghEw8w1SnD
-        JPba82b2rJ7MsOVy/nXG33r4QmcAz7X8eArJ1WLiojyNsgoDNenb+dNfV+ZkDmbv
-        EJHyLU4F6lmUnDudT7KaOtdmmH0eX6cnmEka2DnUdQ==
-X-ME-Sender: <xms:7B5-Y6F7BsIp0Wf8wbOGoEok_S5pzVEZ3WXzX0YUM0oHVgkY1txZ1g>
-    <xme:7B5-Y7VlN06wbGjAnxB1HZN80ibnn5JvOCAnfN5DUAP5toh0_5Nfdr3X2pKPMI-qp
-    VL27LAq0W5Pvz0godY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedriedugdegkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
-    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:7B5-Y0JEM8Me7EIr2rFzatCKmlLIMqmK2mAGA4-j2E1EW10ZWdsd3A>
-    <xmx:7B5-Y0HI4pkinssRhV5kZpt3TsLAH_k_UFJ-RiMMhtyeopZdFM9_GA>
-    <xmx:7B5-YwVuqXtbMQyeyEkduW3eM7PFaV-lpkVNFYNhwRdgeY7Y-LuFQA>
-    <xmx:7B5-Y3QTOskXti6o3yyaT5JDl50t_htk0LFM3TagT4WS4piiLdXVQg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id C303CB60086; Wed, 23 Nov 2022 08:23:56 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-1115-g8b801eadce-fm-20221102.001-g8b801ead
-Mime-Version: 1.0
-Message-Id: <6476b823-b47c-461c-b948-752e2671015f@app.fastmail.com>
-In-Reply-To: <Y34FCQ3xTmcjqKRT@orome>
-References: <20221121171239.2041835-1-thierry.reding@gmail.com>
- <20221121171239.2041835-2-thierry.reding@gmail.com>
- <374ae4ef-2f57-4737-95af-b1bdfdb03740@app.fastmail.com>
- <Y34FCQ3xTmcjqKRT@orome>
-Date:   Wed, 23 Nov 2022 14:23:36 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Thierry Reding" <thierry.reding@gmail.com>
-Cc:     arm@kernel.org, soc@kernel.org,
-        "Jon Hunter" <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL v2 2/7] firmware: tegra: Changes for v6.2-rc1
-Content-Type: text/plain
+        Wed, 23 Nov 2022 08:37:08 -0500
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2088.outbound.protection.outlook.com [40.107.223.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8CC270A13;
+        Wed, 23 Nov 2022 05:25:12 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dDJbICxQ8w8BzgKCSrv072ecorp7bTH6fBfbQ05/UHIQmX59Aapzh8jDBCaS7VZdeylJL+i/hvMHXVHp8Bw18m+iXgj5wW+uT769cH6waVGpj4rVyb1+IaSVk5Gc8jkG+jn4G0IKUheAeAjsE+r11mZMi5KNPlxxbx5RqUzZvH5HdV83PnZVvidmpLfoEY53XWMLR+baaho1jWJ5lMKXQX4Njs2/7YBAph/Rxy+h5hZ6kdtSV81K5wXvWspJfQy/Se18oo3cihDOkAHSDnmPno68WTXlIdtsrcC1Ag3lgAHb0TwrA1+9md7XVyrpil3ln0mJVN+Uhb0/GJlMTCd6IA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tGYTjg0iV6GcZu0muAsvUY3GwRcH250ChKEIu4CmGsc=;
+ b=fV7otKsWxlcDwtnka+46zGl06U+MY4siKMXvgzxFnAutj14gjWI45FCt9BU4vhL6miLd17JDB2IVSHwDVhUWezlgCra8sM5FaxbcrrZ7ilNBVa1L0oHM2uK88MdO4Z4u1QtgyQB2+LjT2EAx9RGnDR9DufeVub5KTwzIAb4NESF3sxSYl7+yZBvtuwPJyq0wz5BrLRC03nyOZC27MFEOWo6QW17OyjAT05IusIo62nbhoEBtpVnMB7+kb08N7TOiPDdEH228ZELxDayqPeqWslzUo1J69f4VpbCXuLlLnvwAPCrQsAakl52MR2wdyn4znuu3ArHDhGw3DxPvoTVABQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tGYTjg0iV6GcZu0muAsvUY3GwRcH250ChKEIu4CmGsc=;
+ b=I5ggdLnzpJE+qiPgHTFCDDhWxp3AgMXE15Q7luQP3SWn9plDwxXQxXhRU98XEmCwZ/fsVEIGMbJX6ZMewOphMdJMsNBqaHg5yuUAQ3+IgQIQEOKUFe1ENdyY19cGK5Oeu5FXkyX0Evw0pVoAcXKzllg9ImB99HaV6fRbqG6VyftFlE1U2IkM/sDzEq5aGXm69FGD0IkP+0sjoRzsL/YTbw6Inx8vmrWGhgAIX025Z5X2dpuJWjnC/cpsL6WUxi7XKhZ21Nd1RUTVLxHdsMD600+eV+0YG5Vjyrj27tEAYIdJ7UKrEEQOXM7fOtVsvc8faoVwf1XDsFamB4TRsY01bg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY8PR12MB7243.namprd12.prod.outlook.com (2603:10b6:930:58::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5834.15; Wed, 23 Nov 2022 13:25:11 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::8edd:6269:6f31:779e]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::8edd:6269:6f31:779e%6]) with mapi id 15.20.5834.015; Wed, 23 Nov 2022
+ 13:25:11 +0000
+Message-ID: <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
+Date:   Wed, 23 Nov 2022 13:25:04 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH hid v12 03/15] HID: initial BPF implementation
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
+Cc:     Tero Kristo <tero.kristo@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20221103155756.687789-1-benjamin.tissoires@redhat.com>
+ <20221103155756.687789-4-benjamin.tissoires@redhat.com>
+Content-Language: en-US
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20221103155756.687789-4-benjamin.tissoires@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0073.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8::13) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|CY8PR12MB7243:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9f2c350-e92f-47ea-9d67-08dacd5625e2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: zS1NqGZQvGFP4YKyYrg2PariLmcZLwS73fc7FM0GXHBPuFgfgw2Dh7xj0dwJ4Ru+cjtapO/TmEpPTbafo6V0jV+fqi6T8I1uCUkIMR2tVCq/jHHXHFRJVIZZLkNXi0YedQ55+pCm2SETJV+CUX9m4+q3SUsL0rma+iPQWsYxfno85nc5iTpFGZcCTVDpJ/smDR0rosUOmwNESRIFkjKB1E5PjbECG2bArqOr5gF8Cor6nw9foAusBo/xKMWu7aziL78rYZbRDcWANcPR9ypg2izg9Hdq43DIcAp9vpytI+FJEIHqrQCf4v9oLSzw0VErTmjRXYpblJef4/OvJnpE8S9YFvC2xBo8JGzV6fuqMCd6CmnwYDJaFLxL2SWFf0Tdx+jL4I536zTS+g5MuF73eg7mX0r7queOU55iyW9V1voxFPAWjcJ2MAmvbI2VuiDMpGTvXV/SoRqtSTa29ufIcQP5hJXK8njUSA0er+ekbVbAWwSVmWNBUrZiYrvtIeBo1NYAActXsZN7lPuW3VPUU4g8y/erPtPpbX1YDqZorijzfisofE1lbsRYdePWTTC7pqRLWkgDolUO93zFBmdVPh+++g7fs0L8uofarFMXBMWL+1Fo3iSXVaWFYp2vZwv9nzPcsSKj6oQCgNIZ2HUrMmH9xPWGhuhf0hAqHbqkXL1Bh9ITZdxyC4Yr79QfR/4yeWSzJc4l8viab8USSnmuvsetYju58D4rh16HRW9yekI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(136003)(366004)(346002)(39860400002)(451199015)(66899015)(2906002)(38100700002)(31686004)(5660300002)(83380400001)(8676002)(41300700001)(86362001)(31696002)(66476007)(8936002)(66946007)(66556008)(7416002)(4326008)(36756003)(53546011)(316002)(54906003)(2616005)(110136005)(6486002)(26005)(478600001)(6506007)(55236004)(186003)(6666004)(6512007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?b3IvZlR4bWVpTm1UQ1NJSFhHNWd3OFoyK3VYL25jeUVsb0R6VFFJWEpaSFF1?=
+ =?utf-8?B?QmtaQUt0Rk1sb3NzV20rZ2xVOUNCWDZBMldCSXIwWlYzYUNNTXkvcW1rMlFy?=
+ =?utf-8?B?c1pTVmN4cEJtbUtZaW9oM0xlQlpHM2MwQ0dzck1RMy9oQ0o0R2IzQ2hFTkJD?=
+ =?utf-8?B?MWM2VHpWRGtzRUsyMEpDdE9mQUpJS0swbjZFVXpVT1RFeXJaSWRqWUtpTytQ?=
+ =?utf-8?B?ZzQ5OWN3RSt1YnNRWGRxSEo5STVMZWNhS1BWTVFFOHJFK05tTjMra3pFenBD?=
+ =?utf-8?B?NjhHZlgwRE5DYjlsVllGRnc3ZFZjSk9CZFBWaDU2ZTJ5RjROUU9oNTFTdW1m?=
+ =?utf-8?B?SmJTZnR4RmlQR1AzYlMyYnd4T2cvODdFM2NFT1JHVGIxSHFNZkZVUkd0bnF1?=
+ =?utf-8?B?cWdVWGNoQ05LSlRjc3B3R0FpTTdDbittTm9zcUFaZ29mb3JPeDduNXpBYUJ2?=
+ =?utf-8?B?OGpjc2lBL0RDMzNrWGpVUDNoOVErZ0taUTdUdkV4VUlwa3FabjJKdVNteDJH?=
+ =?utf-8?B?QVorbk5JeFdRRHo5WS8xdnUrSEp2ZkpESmJVU1k0bkdZUVVGbXRqZ3F2eTBx?=
+ =?utf-8?B?SDhZdkJqNnBDMjhsM3JCaUtFdndYQlh3bDVNeUMzTnBlV05vWVlVcHRheGFP?=
+ =?utf-8?B?bFk1RmtUVC9mK2kxcHIvSXZSbC9lbmFYTnpiVnNZOU1rdTZhUlhJT2lFZnRk?=
+ =?utf-8?B?Um0zS2hnSWdSSHRqY1F6bXZxMzF0bWRORkhqck9ld09ldExuWlMzRXREdzVp?=
+ =?utf-8?B?UkRBVzVmT2RqUGZVWEhVYUlENzdoVUs2OU1XSlNPUUw0clFqWitpTHZMYUQ2?=
+ =?utf-8?B?cTEvQU5kaWtDbXVLZC9BenZaTHBFd1QxcVYvOTg4WmtZMno2R1FwaFdmcERL?=
+ =?utf-8?B?WEd4VHo5VnEwSHFGcGJCZkFJRG16Y2xJYXNwcWdtZUd1dUJINmM0SnUwZnlB?=
+ =?utf-8?B?bFJtRFJ3MExQK0RuS0h1MERWY1NHWGJiYXZqMG4raGtJWmRmRGM4QWtGQ1hJ?=
+ =?utf-8?B?cnBHd09pUGd5SlVyWk1za0VtQ09RbEE0RjRRVkJ0VUtDbk9EL20way9sTXZJ?=
+ =?utf-8?B?MENFQXVwZ0FFeDhVWEFVVVZmaXJqTFFGUEtCcVlOODY2TS8rN1MxZHRQMGtB?=
+ =?utf-8?B?Si9jNkhIZitnSk9MaGxTdVU4bllRcWxvR0poc0J3OWZXSFRiN2J5cVUrZXRK?=
+ =?utf-8?B?R3hOS0orVitrditDdXdQb1pCSUE2Q21jMVF4dE0zRUpORHFpendwTkxnam1t?=
+ =?utf-8?B?TVBiK0dhMVFzQ0p3dUd4VmY3aEgzakdmakc5dHQreUpIbzNDMHhLODVsN09P?=
+ =?utf-8?B?QVpjbncxMDJtZHE1SnhaZXdPalZKMGVRM1haNUh6ZE5oL1BqeFR1anpwcnI1?=
+ =?utf-8?B?QUdiU2VmTENsQnE1K29TMElXd0w5Sy9lalRlUHBCU0xpS3FXN3VRMncvcDVi?=
+ =?utf-8?B?SVM1Rmg2c2oydVBuUkViUTlUUDlBbi9Vb1EwT0g0R2Qvb2ZwZGR1RmJVbFIy?=
+ =?utf-8?B?WDFIWEt5N2gwTS9xMVFIcTBaOUJ4MjlyZC96ZnhOcEpKZWJLcWpIOE1WZlA5?=
+ =?utf-8?B?Tm1nejRLUHhtNUtEeGhWclJIUEpoM1A4dUl5RWkxVXFaaXpZYm1JQ1NRcEZj?=
+ =?utf-8?B?eHRnc1M1VHppZGtLVFVMZVg5OFQ3ak9uNnc4T1ljdGprMW9ielBuTTg0K2VK?=
+ =?utf-8?B?VEhTTlM3aG1LVlh2QzdUTFJRR2NhbGRWeHBORFY1ejhJQ2YrUGl5aytTQWNz?=
+ =?utf-8?B?NFFXR3R2ek5oRy9XR0xZWHo5RGFNSGY4K2NmZlFveldESWdIb0d2cGZ4eFgv?=
+ =?utf-8?B?WTlKUy93TmJPWDJpRFdkY2h4MExjWmI1cGVobVJ3enkrN3o0eUZlSWdDRkFm?=
+ =?utf-8?B?NTNmWnFQWmN5enNSMGwwUWZGMVY5cjJuNXoxeTBLM0ovaUFBYUY3RGxoTDk0?=
+ =?utf-8?B?ZGExN21lMC9KZFpVY25hVyt6QVZTZnVlbXd4VElCc3JyblkrVWxVZFUrbERI?=
+ =?utf-8?B?OC8raWNMdExWSGxwRGJwejVvSHBFVmJJUHMrWTYzRVVJSEF6eHZkL1lpRWcr?=
+ =?utf-8?B?Q1RkN2VOb1lzazY5SitMeWlCamIyMWxyM1BYZmxkT2xFbGJsK1NoeDcwdG9R?=
+ =?utf-8?Q?FW3ZVwX5+bRmjKTlNiT0n46lP?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9f2c350-e92f-47ea-9d67-08dacd5625e2
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2022 13:25:11.4711
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g+5yDZ0QzH6rtJgL5gkgHWrxi8RrTJ89ioa1QPSFoiB6MulrtO6QNKfCIEnHB/FWavFagQxn/LCdu2nb8eswOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7243
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 23, 2022, at 12:33, Thierry Reding wrote:
-> On Tue, Nov 22, 2022 at 10:25:50PM +0100, Arnd Bergmann wrote:
->> On Mon, Nov 21, 2022, at 18:12, Thierry Reding wrote:
->> >       firmware: tegra: bpmp: Do not support big-endian
->> 
->> I pulled the branch, but I think this patch is inconsistent with
->> our normal approach: Since all ARMv7 and ARMv8 processors can
->> run with both big-endian and little-endian kernels, we normally
->> try to keep drivers portable between both ways, even though we
->> don't expect anyone to actually want a big-endian kernel any
->> more. Changing portable code to nonportable code doesn't seem
->> helpful here.
->
-> The only reason I dropped this is because the driver is in itself
-> inconsistent. Parts of it use byte-swapping for 32-bit values and other
-> parts don't. I was originally going to fix big-endian support but it
-> would've required changes to the BPMP ABI header to avoid sparse
-> warnings in lots of places, then these ABI changes would've needed to
-> trickle up to the canonical source, etc. All of that didn't seem worth
-> the effort if we couldn't even test this in any way. So the easiest fix
-> was to stop pretending and drop the partial support.
 
-Right
+On 03/11/2022 15:57, Benjamin Tissoires wrote:
+> Declare an entry point that can use fmod_ret BPF programs, and
+> also an API to access and change the incoming data.
+> 
+> A simpler implementation would consist in just calling
+> hid_bpf_device_event() for any incoming event and let users deal
+> with the fact that they will be called for any event of any device.
+> 
+> The goal of HID-BPF is to partially replace drivers, so this situation
+> can be problematic because we might have programs which will step on
+> each other toes.
+> 
+> For that, we add a new API hid_bpf_attach_prog() that can be called
+> from a syscall and we manually deal with a jump table in hid-bpf.
+> 
+> Whenever we add a program to the jump table (in other words, when we
+> attach a program to a HID device), we keep the number of time we added
+> this program in the jump table so we can release it whenever there are
+> no other users.
+> 
+> HID devices have an RCU protected list of available programs in the
+> jump table, and those programs are called one after the other thanks
+> to bpf_tail_call().
+> 
+> To achieve the detection of users losing their fds on the programs we
+> attached, we add 2 tracing facilities on bpf_prog_release() (for when
+> a fd is closed) and bpf_free_inode() (for when a pinned program gets
+> unpinned).
+> 
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
->> On the other hand, there are already examples of important
->> drivers that are fundamentally incompatible with big-endian
->> mode, notably drivers/efi/, which is required on a lot of
->> machines.
->> 
->> You don't have to revert this patch, but it would be helpful
->> to mark code that is explicitly unportable with a 'depends
->> on !CPU_BIG_ENDIAN' line in Kconfig. If you agree, I can
->> add that.
->
-> Yes, feel free to add that.
+...
 
-Added this commit to the soc/drivers branch now:
-
-commit 4ddb1bf1a83783cebdb174b0efaf62f63ad64e0b
-Author: Arnd Bergmann <arnd@arndb.de>
-Date:   Wed Nov 23 14:21:16 2022 +0100
-
-    tegra: mark BPMP driver as little-endian only
-    
-    The BPMP firmware driver never worked on big-endian kernels, and
-    cannot easily be made portable. Add a dependency to make this clear
-    in case anyone ever wants to try a big-endian kernel on this hardware.
-    
-    Link: https://lore.kernel.org/linux-arm-kernel/Y34FCQ3xTmcjqKRT@orome/
-    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
-index 1c8ba1f47c7c..cde1ab8bd9d1 100644
---- a/drivers/firmware/tegra/Kconfig
-+++ b/drivers/firmware/tegra/Kconfig
-@@ -14,6 +14,7 @@ config TEGRA_IVC
- config TEGRA_BPMP
- 	bool "Tegra BPMP driver"
- 	depends on ARCH_TEGRA && TEGRA_HSP_MBOX && TEGRA_IVC
-+	depends on !CPU_BIG_ENDIAN
- 	help
- 	  BPMP (Boot and Power Management Processor) is designed to off-loading
- 	  the PM functions which include clock/DVFS/thermal/power from the CPU.
+> +static int __init hid_bpf_init(void)
+> +{
+> +	int err;
+> +
+> +	/* Note: if we exit with an error any time here, we would entirely break HID, which
+> +	 * is probably not something we want. So we log an error and return success.
+> +	 *
+> +	 * This is not a big deal: the syscall allowing to attach a BPF program to a HID device
+> +	 * will not be available, so nobody will be able to use the functionality.
+> +	 */
+> +
+> +	err = register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &hid_bpf_kfunc_set);
+> +	if (err) {
+> +		pr_warn("error while setting HID BPF tracing kfuncs: %d", err);
+> +		return 0;
+> +	}
+> +
+> +	err = hid_bpf_preload_skel();
+> +	if (err) {
+> +		pr_warn("error while preloading HID BPF dispatcher: %d", err);
+> +		return 0;
+> +	}
+> +
+> +	/* register syscalls after we are sure we can load our preloaded bpf program */
+> +	err = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &hid_bpf_syscall_kfunc_set);
+> +	if (err) {
+> +		pr_warn("error while setting HID BPF syscall kfuncs: %d", err);
+> +		return 0;
+> +	}
+> +
+> +	return 0;
+> +}
 
 
+We have a kernel test that checks for new warning and error messages on 
+boot and with this change I am now seeing the following error message on 
+our Tegra platforms ...
 
->> Do you know of other tegra drivers that only work on
->> little-endian?
->
-> I'm not aware of any that explicitly wouldn't work with big endian, but
-> it's not something we've ever tested. I know that people have in the
-> past done experiments with running emulated Tegra on QEMU in big endian
-> mode, but it's probably not something that's very common.
+  WARNING KERN hid_bpf: error while preloading HID BPF dispatcher: -13
 
-Ok, thanks!
+I have a quick look at the code, but I can't say I am familiar with 
+this. So I wanted to ask if a way to fix this or avoid this? I see the 
+code returns 0, so one option would be to make this an informational or 
+debug print.
 
-     Arnd
+Thanks
+Jon
+
+-- 
+nvpublic
