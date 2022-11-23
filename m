@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F1BC46467
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 12:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA70C4167D
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 12:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237740AbiKWMpx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Nov 2022 07:45:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47618 "EHLO
+        id S238003AbiKWMtZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Nov 2022 07:49:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237540AbiKWMpF (ORCPT
+        with ESMTP id S238034AbiKWMsd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Nov 2022 07:45:05 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C475FEE;
-        Wed, 23 Nov 2022 04:42:32 -0800 (PST)
+        Wed, 23 Nov 2022 07:48:33 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6552769E8;
+        Wed, 23 Nov 2022 04:43:35 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 06E55B81F3E;
-        Wed, 23 Nov 2022 12:42:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7477FC433D7;
-        Wed, 23 Nov 2022 12:42:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C429061C64;
+        Wed, 23 Nov 2022 12:43:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE1CC433D7;
+        Wed, 23 Nov 2022 12:43:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669207349;
-        bh=aCp8+W1vq+4bqUwPUMzZWAq6fNpuSN7uJOHHHGArPH8=;
+        s=k20201202; t=1669207414;
+        bh=GcXlIGsa+nuE2ry+v6H1EZ8MlBMsb6KWVkWdNb6emWI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j6/BsI4qa9OusF1c6NxM5QASGzPfB1JM1zL7H7FobsWj4iSwwX7IF7sz+4LnePkgi
-         08SwHRZAitGaqfBBaTfkt/q4v9yxE8SKjblqfhK8J6m+cYM80uaPHsl6I8E8nhjUfF
-         7VaV4+UZEmCoCOk0jl4ZcYzoYo/PUKDipwVaxSA+T8oEAuinBNa6Qld/LnFNcMc1Nq
-         c1XGBqwNIM4QZkOLFLhDIQCEjR5/hrMF025lRyH8tcGfWrqKBx110GvZEahhF5Wewd
-         Qytm6i/wFUep/kZoUYhBP5R7Cdy6zVjk7rKbt9b/cvxjOeuy92a8auiF/2fklyR5Rg
-         1Shg1vVADECxw==
+        b=f4617rzHZlXGfkQSMrTOlMi3pWAqmYxcIDTuT45ufhspAhfs+rUC9dZgYuA8bj5L/
+         4Uf3x00dxvJyxBgQwhVZdtvb2iSRLEbqyz8GlpiR3XrAO/ROzu7OmmnbEADfpNXMcP
+         KSE8offssPWUR7CQTttxQ2QpgT6QC/khr/H4xB6IJCbCmPwg/ooHoJdyBhCo9E7ZsG
+         CEesTB3DDnwKbavRy5REqpVTu2OHUyDRD7i+CKcnSXqg7quIBwkx88T7Dv6kZFcNO6
+         YPERSpdtrw0OUgj8KAeYEQte/OqV9YJf3xmaTyJuJy1+y6GXtgrnrKxWrYjAcZJSVo
+         FUP+6Pe7yW61g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Robin Murphy <robin.murphy@arm.com>,
@@ -41,12 +41,12 @@ Cc:     Robin Murphy <robin.murphy@arm.com>,
         Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
         airlied@gmail.com, daniel@ffwll.ch,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.0 42/44] gpu: host1x: Avoid trying to use GART on Tegra20
-Date:   Wed, 23 Nov 2022 07:40:51 -0500
-Message-Id: <20221123124057.264822-42-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 29/31] gpu: host1x: Avoid trying to use GART on Tegra20
+Date:   Wed, 23 Nov 2022 07:42:30 -0500
+Message-Id: <20221123124234.265396-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221123124057.264822-1-sashal@kernel.org>
-References: <20221123124057.264822-1-sashal@kernel.org>
+In-Reply-To: <20221123124234.265396-1-sashal@kernel.org>
+References: <20221123124234.265396-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -79,10 +79,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 8 insertions(+)
 
 diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 6748ec1e0005..a1f909dac89a 100644
+index 611cd8dad46e..4f5affdc6080 100644
 --- a/drivers/gpu/drm/tegra/drm.c
 +++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1093,6 +1093,10 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
+@@ -1083,6 +1083,10 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
  	struct host1x *host1x = dev_get_drvdata(dev->dev.parent);
  	struct iommu_domain *domain;
  
@@ -94,10 +94,10 @@ index 6748ec1e0005..a1f909dac89a 100644
  	 * If the Tegra DRM clients are backed by an IOMMU, push buffers are
  	 * likely to be allocated beyond the 32-bit boundary if sufficient
 diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 0cd3f97e7e49..f60ea24db0ec 100644
+index fc9f54282f7d..c2a4bf2aae61 100644
 --- a/drivers/gpu/host1x/dev.c
 +++ b/drivers/gpu/host1x/dev.c
-@@ -292,6 +292,10 @@ static void host1x_setup_virtualization_tables(struct host1x *host)
+@@ -204,6 +204,10 @@ static void host1x_setup_sid_table(struct host1x *host)
  
  static bool host1x_wants_iommu(struct host1x *host1x)
  {
