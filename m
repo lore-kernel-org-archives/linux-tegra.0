@@ -2,150 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7A2C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Nov 2022 08:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D138C43219
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Nov 2022 10:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbiKXIpY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Nov 2022 03:45:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47044 "EHLO
+        id S229683AbiKXKVD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Nov 2022 05:21:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbiKXIpY (ORCPT
+        with ESMTP id S229711AbiKXKVB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Nov 2022 03:45:24 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0AD8FDD84
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Nov 2022 00:45:22 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id d3so1245641ljl.1
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Nov 2022 00:45:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o+bou2Eqve5CvNCEe8A4y27WMBYElKaquLsQIo7P2JQ=;
-        b=Eqfk1RGF9j3RdprJYIXx7HGeIq9xPFflC0DBHFZv84z8rXJQ5/vglbRa3wWOGKWGIQ
-         gLftpjDA8F2d9p131D/taQD+L1ualWywLsR9jmFpVeUEmOyx3skcNVLbLGmxUv01Ccs1
-         h8hoaQCg3vx1YFG8Tv7hav6GCcfU3oehhr9h4Za3ef5AV/vCOoMBq1g36K8bi4XB0fMz
-         v5tqdMn4k68ROH2+hh2ygTIlS1j0bf0Y31Iv9IyMpkN5hK6rGEl5kftjMe56NRobUhlc
-         CY3p8z8pvDn+c0fA/4z7p97JFRmkc4RMljDdiyIZ86cIR8ax3Xoh4vis9omLr9B5CBQ9
-         KUSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o+bou2Eqve5CvNCEe8A4y27WMBYElKaquLsQIo7P2JQ=;
-        b=g7DBWgKJJfKKAbBNpQsMzt/G3VnRN2iXrQsXMVhpV+CZreE5dAWYUjiWXQet3XU/nV
-         tnwnZhD7jCIR9BiJpi50Cx22xgNOAZjM2lEpINIOG1d3wJB743ojsctGLoDtaIRVJ3nP
-         CBTCJDlVxjhL/1fvaZLEyNFptSZIhSbyQAL/oDV8psUP2ZkCyYv80zDrxJEGoev3Syla
-         jLaaPKwC72a6AuosNjXUi9DUmc5gEuLVM9yuIMsmrd380zHrtyOSGVstV0kd75bUAqlQ
-         fS4W7PJ1M/96Cq/Z9s+F62s2VjdIhPlgDGNTN4Rx7VGlSJee3zWlVKoWW85IX9pmUGkc
-         s05g==
-X-Gm-Message-State: ANoB5pm93pQ0j0WBiUZa1QCWTaQZFL/W28Gpqg3HW5j9VudCn05gosSA
-        iO/Bf8U2llMw3VATl5R6d8RWVA==
-X-Google-Smtp-Source: AA0mqf6Z3tWCtGpuP577dWMuvzhmVrpzGUmuDSeOU43vilip13LGn5V10NAdwcMHcLQV3aLfRXGe8Q==
-X-Received: by 2002:a05:651c:c89:b0:26f:bd61:ac4f with SMTP id bz9-20020a05651c0c8900b0026fbd61ac4fmr5219103ljb.396.1669279520992;
-        Thu, 24 Nov 2022 00:45:20 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id z8-20020a2e8848000000b0026b2094f6fcsm48669ljj.73.2022.11.24.00.45.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Nov 2022 00:45:20 -0800 (PST)
-Message-ID: <0b203c11-851c-fd6c-faeb-e283b158f1c8@linaro.org>
-Date:   Thu, 24 Nov 2022 09:45:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH 1/3] dt-bindings: PHY: P2U: Add PCIe lane margining
- support
-To:     Manikanta Maddireddy <mmaddireddy@nvidia.com>, vkoul@kernel.org,
-        kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, vidyas@nvidia.com
-Cc:     linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, bhelgaas@google.com,
-        lpieralisi@kernel.org, nkristam@nvidia.com
-References: <20221124083510.3008139-1-mmaddireddy@nvidia.com>
- <20221124083510.3008139-2-mmaddireddy@nvidia.com>
+        Thu, 24 Nov 2022 05:21:01 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on20604.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe5b::604])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87A21146FB0;
+        Thu, 24 Nov 2022 02:21:00 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZMpVjjKzBvI4rEM5tVqknMDUOQHiALciZNGBUt3K4UhvzZXCLluFtt2Ah1KaF8fG3Hkqk6mQ+6h44qS4+nEF9sxaB9Lf4q7s22l9SGogIRp7vnNsdZK4hkaMtv+5wqbCM7SzimXjryoM9hEedcrS6Ebt+kJVNwhCIZ7ShE++AstRJF5XTLknCdLhxizdKCRlNTsULAHkxI2CToGnWjONallaS7A+l7/D5/ffwKIZYWc4XypKCkHrpZrX6KBmbamRo4ZxvMHV6u15zrAiEq8xFSMBqq7pybhP+zJwFQx8viyR0geVC68BE98GnjiQNAZViT6vAJtqBfYw6gWq43jNrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nXvmhOF7J9qNGdktURHXcsiHx2jfaLu1JzD7N9YoFeE=;
+ b=UZuyAq/rSU4ZpnhhITkCxKeN7W24XZF9eifkwbuH24lZ5zwsLSOfXL2zoxZvRYUmm1hG1rzUu5db4KMxZ4VENpAA7ZFWlDFtw0rD++crZ8m0meXUEg/4l+SMo5wmYgB54KgW27IvHc365Zr4luHsj0vNBNLA7ytXi18a0/ObKxAK8Bm4EFCd3zHhdeliW0zTBOczf7ZJMs560s7UhkTWBcnqh4e43RjioQABoqeDRC2tc91qxDvVwFKVsubg+t7DEOjL1vtWv3T8wtCZjmMN/+30O7Jq8BRO9c14j6ayTL4KuvOfl1NkOdtzkrVKZPgefp02ZDm+Bm0i1GyMnMCHGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nXvmhOF7J9qNGdktURHXcsiHx2jfaLu1JzD7N9YoFeE=;
+ b=HaoYrl5xp80tk1snQ56feR/foiSppchZxLMBX5Zo5DjWjUFZ50yPcOltwJoTSGEXsYCiaxTrJ2/gU6NlpEebNtj6FS6LvveJbZCMf4CK/ZbxZMcGNUZRitWpmNvdz/sLQWI1cv6aVAKnh0OyQo93lwOENw+KGxBxMJy4oNv8y14YuM9m51IBT2iWa2NLVK9oHd76JSPnNVxKiQ0tXxjWgOIyEUJZAPAXfFboewXjfupiuhUmI50rFHQQBPZUorzJ18lVbkPTeU5ndvvcwtxsmOONZd95QJ1rQc69xNQ8T4o2nD2pF4wVdHaEWirJeTSrbCSxloVjJboueOOU5XA2qg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21)
+ by SN7PR12MB7451.namprd12.prod.outlook.com (2603:10b6:806:29b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.18; Thu, 24 Nov
+ 2022 10:20:58 +0000
+Received: from SA0PR12MB4349.namprd12.prod.outlook.com
+ ([fe80::e62f:b3d6:965d:36e4]) by SA0PR12MB4349.namprd12.prod.outlook.com
+ ([fe80::e62f:b3d6:965d:36e4%7]) with mapi id 15.20.5857.019; Thu, 24 Nov 2022
+ 10:20:58 +0000
+Message-ID: <df879efe-cbae-603a-1d1c-1ac63ac9c12a@nvidia.com>
+Date:   Thu, 24 Nov 2022 15:50:47 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0
+Subject: Re: [Patch V2] memory: tegra: Remove clients SID override programming
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221124083510.3008139-2-mmaddireddy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        dmitry.osipenko@collabora.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20221122053103.17895-1-amhetre@nvidia.com>
+ <cf5422a7-351a-6780-ff7f-e20bc81f94c7@linaro.org>
+From:   Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <cf5422a7-351a-6780-ff7f-e20bc81f94c7@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MAXPR01CA0097.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:5d::15) To SA0PR12MB4349.namprd12.prod.outlook.com
+ (2603:10b6:806:98::21)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA0PR12MB4349:EE_|SN7PR12MB7451:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce42fc66-662f-42b0-ca85-08dace0593e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jn/Us3ebAqPfKpunkZKlcnxzRNsmtDFZ8fGCLfeshWirZB0cVYwDOhkHgXh/16XaHM+6of1iALqT2MKAAmJYEYBfF5zOeC9cQ4AUzUfsdL/YsQz/q8qGsqmTcNDc07aRo4x5mAatRiccdIm4zsjznVKzzCMsV6FQPndENbYHRfSCVJRFmzNzdSvs5LMCMyuhUIt0tav9gYxL6Yz0qIf+ul527IZnRPRQUWyP8A4tdfb65LQRQC7nflvSOdWxCTeuiRYX/k7fV/WUXAcmH3x3IYzhtj1w7TusTNCFC/BPHkFAVJlAyGQLMMtZn0mjE6eOfbhVpzi45YO8UaOPqfDkyAHya3gwr9NU5xAA6fmObGWEXGWgBd6u3Ckv6TwVoXfyA440vCK28888++yyuQsWmsUWF/lCYWgDvYs6YeHe+P2ia0js69x6MABOnL0z3CtboGBdTO68n7nr0Ko15vVZ9JXfOvPeCufnt1yLlkwRdr1LlhP2t8jvrugYcBPYaX+oVbWnZRvj41MX2m+cizeBWnjwLRWoXh/IJyK3E4W9kQ1La+nD0W1ZISYgmLMNuKeg4bqQ6Vx0PiEtT5K9R8315EK0wAZNQ3r1RieC+K2FurNNE5/bqK9LtFgi6UPPV41f7eN2+fQ7eDeXDgd3wj/OHf7bajBtNxFyMwyOsKcbtrOsg1mtZi0Vs+c4dpnX+whJcbycZ3T4cUtHBDv2BvOiOgT6sCY7R4eSInR50XhtiUw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(376002)(396003)(136003)(346002)(39860400002)(451199015)(6666004)(31686004)(478600001)(53546011)(6486002)(6506007)(26005)(8676002)(86362001)(31696002)(83380400001)(316002)(38100700002)(41300700001)(66476007)(66946007)(2906002)(66556008)(36756003)(2616005)(5660300002)(186003)(6512007)(8936002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NDBlaW5XNnZkUEY4KzF3cXZwRVhhdm80VkhBY0VvZWhoS1FrNnRBSWh3SDJi?=
+ =?utf-8?B?YTdvVGx2QjVGTEFld2xNUHE4R2pUOHBzRm41TE5nam9hVCtjUk5uRlhLVExm?=
+ =?utf-8?B?amtjT2VpNHlwZThERDY2bDk1QWZxYVhLamhOZXBqbHlrN1Ivc2Q0ejd5Um5v?=
+ =?utf-8?B?ZmV5ekNtMGdBLzBDZDZQQ2szV2dsMmNrc3lWWkRrV01YZGhaSHVnL05Tb2M0?=
+ =?utf-8?B?a0VOdVZsTTM3OFNiSDdXT3dabnc1dG1xRTU2MC9FVVJydFZjZTFjWHNja2FN?=
+ =?utf-8?B?Ti9DOHJsU2lTdDU4NTFQRWFRWkM2QTBLb1NiRDN6Z2hxZlpKWkJmeTVqQWpt?=
+ =?utf-8?B?S1o5LzF1bE41TmNhU3cwNkRJd3Y4ZGR5MmlYdG5QUnpMeTlDdlZoMkR0aWFx?=
+ =?utf-8?B?TTk4dXJBa1dVU1p5MFI2KzNsZTQrVVIzVkFzSUNONWMvYjZ0bmlsMHB3QnVC?=
+ =?utf-8?B?U1Qvdk1wVE9MZi93Z3hWWngxQXFIK1ViVG10V29ISHJoVVk2ZHFYSEMyL3ZK?=
+ =?utf-8?B?aXVzVngrMmJkTHRnWGJQQU5YelJ4WlEya1Njako5VXFPY1pmaFB5TWE3MkRm?=
+ =?utf-8?B?aVNQU1J0NDZiNWtzYzNobFZwQktCV0FQZEZ6RzkwU1VQR2NYN3BLVHpWQWor?=
+ =?utf-8?B?N1plWTdiNGh6VTZqTEJwL0hWUURuMDFDeTV3Mkl6SXI3ODlsdHRMWUlYaFVO?=
+ =?utf-8?B?cHhxWjFxZk5NNldFckpJYzFycGxhcHlPR2d5SXRXdGpoRVFzQVpyWDVwMHhD?=
+ =?utf-8?B?VlB4emFkOWYvVFdHSDV6WElyWjNjdGZCelEyQndOd0FRZ0w5NjdEUjBwRU8z?=
+ =?utf-8?B?cU5YQnIrRlQ4T0lIR1l1QThpb1JRS2UxKzAvNXhlSTZwOEJSamQ2WS95ZHJ0?=
+ =?utf-8?B?eHlTSzNBTkFDdmFueU01N1h0YUtYaHpoUG9LZjRNcUtYa1Bkc3k5a1F4L2s3?=
+ =?utf-8?B?TGN0dmVSSExyM3NuV0dXVE14VnpWN0dUc2kwYXYyWXlxSVBKL3VFV2ozcCtQ?=
+ =?utf-8?B?TXN6OVZEZ1NyMy9QV2dVMlVUMHhHRWtPVXJKL3l3TDNLaFZybENYcVdkZzBa?=
+ =?utf-8?B?TXgrQ1VhWVpqb0lzWkFEYVJKTWhPWXcxV3psVzkvWmtoNUxlNXNmV3hVM1Z0?=
+ =?utf-8?B?YnRtUnRjcEsyT2ZUbitiTW80c0YvV0VDQlZ3amJMTkhsdzJzU1lIbmxFbFVJ?=
+ =?utf-8?B?OXRuZlRzK2NPcnpUd3BnQWZta0ZDcTAzY0NtSmRJUHhQMDZCK2NyZTNGR0hF?=
+ =?utf-8?B?NXFNVWI1Ryt0bEVSRFRWRU1TM21rSkljOFNsR1NGQTlWdG5lQ2JIL09UR0JI?=
+ =?utf-8?B?NlZhTGxndlR1MXNkWEcySHlXWEl3SG5LOTh4VmxtdGRBOWFSWllHMGd0MXp4?=
+ =?utf-8?B?eHJodzJaNCtqNFJETEEvR1d1MUNDRFhqY2l1dm52QmYrVW4vZi9yYmJNNjZi?=
+ =?utf-8?B?OFVvNVIwMG9rSkcwODNObTVuN0ljcVNEWmEwN2p0clRVdFRJd0VZazF5VE1W?=
+ =?utf-8?B?cEhiaVBWS3lJUCtjTEdkbWhlREVtVllrYWExMjJqUTM5S3NGSlVsTVhiSXFt?=
+ =?utf-8?B?QlBIZ1U0QTZtZG14TWRteXdSdURvNjMvQkhtejNMRlMvMEVxbCtRZmNob2Js?=
+ =?utf-8?B?QjZmYWY4T0V2dFhodDZUcVV2Ny85cDVCbHBuSWpacU93enVxWmhXL01mbVZl?=
+ =?utf-8?B?MVVYVDlsT2p0Y2VjYktxUUNIQWxTdUI5cUFLU3BlTkNZTGtNZXU5S1MrT0hG?=
+ =?utf-8?B?UUFMMStsQ1A1Q3dkYnNSRWJobTNxQjI0ZWh3akc1THVZZGRpVHhkNDFNc25O?=
+ =?utf-8?B?OUh2K0RibWowY0Z5Y3ArcGFIUkh3dUhFWHBHeDk1TzEvY1NkeU02MXl2Zk1S?=
+ =?utf-8?B?VUhkUEZyZkVha0dIV25WdnI4ZGVOMTdPaUZ5cnNXUXFqRkxMd2FLVzdnOVlv?=
+ =?utf-8?B?SFZqN3Q4ZzRPVnNjNEdZRHErN1dTMzhDd2E0VkhOQ0p0RFAxUDNuQXhtMTFJ?=
+ =?utf-8?B?L1paQXo4dUNKSHowUHR2c3A5MmJIaTdtSzNzNFhxTW1ielNRcjlLYWtmeVdT?=
+ =?utf-8?B?Tzlzb3BOTUZzOU42NDVtT3BrdkJaNW4zZkpEQno0TUhSamtIMzlKNStKMGpS?=
+ =?utf-8?Q?mrvZDMSDVa2dNhiYC8+XOQ/08?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce42fc66-662f-42b0-ca85-08dace0593e3
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4349.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2022 10:20:58.1134
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1z4r33Z0Um0Up6a8IAQpPFETK40cAoCCvH3ThzwIXsJIu8DQdGIdQsqXkTxKqimSNVtF/q0SmfZrn1yPKNDrpA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7451
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 24/11/2022 09:35, Manikanta Maddireddy wrote:
-> Tegra234 supports PCIe lane margining. P2U HW acts as a relay to exchange
 
-typo: merging?
+On 11/22/2022 4:44 PM, Krzysztof Kozlowski wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On 22/11/2022 06:31, Ashish Mhetre wrote:
+>> On newer Tegra releases, early boot SID override programming and SID
+>> override programming during resume is handled by bootloader.
+>> Also, SID override is programmed on-demand during probe_finalize() call
+>> of IOMMU which is done in tegra186_mc_client_sid_override() in this same
+>> file. This function does it more correctly by checking if write is
+>> permitted on SID override register. It also checks if SID override
+>> register is already written with correct value and skips re-writing it
+>> in that case.
+>> Hence, removing the SID override programming of all clients.
+>>
+>> Fixes: 393d66fd2cac ("memory: tegra: Implement SID override programming")
+> I could not get from commit msg what is the bug being fixed. You just
+> said "more correctly", but usually things are either correct or not.
+> What are visible effects of the bug?
+>
+> Otherwise it sounds more like optimization or a bit better approach, but
+> not a bugfix.
+>
+> Best regards,
+> Krzysztof
 
-> margin control data and margin status between PCIe controller and UPHY.
+Thanks for the review. In the function tegra186_mc_program_sid() which is
+getting removed, SID override register of all clients is written without
+checking if secure firmware has allowed write on it or not. If write is
+disabled by secure firmware then it can lead to errors coming from secure
+firmware and hang in kernel boot. So, that's a possible bug.
+Also, it's an optimization over current approach because it saves time by
+removing re-writing of these SID override registers as in new Tegra releases
+SID override of all clients is programmed by bootloader. So, MC driver don't
+need to program them again.
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC.  It might happen, that command when run on an older
-kernel, gives you outdated entries.  Therefore please be sure you base
-your patches on recent Linux kernel.
-
-
-> 
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> ---
->  .../bindings/phy/phy-tegra194-p2u.yaml        | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
-> index 4dc5205d893b..0ba3f6a0b474 100644
-> --- a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
-> +++ b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
-> @@ -40,6 +40,51 @@ properties:
->    '#phy-cells':
->      const: 0
->  
-> +  interrupts:
-> +    items:
-> +      description: P2U interrupt for Gen4 lane margining functionality.
-
-typo: merging?
-
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: intr
-
-Drop entire property, not really useful.
-
-> +
-> +  nvidia,bpmp:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: Must contain a pair of phandles to BPMP controller node followed by P2U ID.
-> +    items:
-> +      - items:
-> +          - description: phandle to BPMP controller node
-> +          - description: P2U instance ID
-> +            maximum: 24
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra194-p2u
-> +    then:
-> +      required:
-> +        - reg
-> +        - reg-names
-> +        - '#phy-cells'
-
-That's not how it should be done. You have only two variants here, so
-add a "required:" block with above and only one if:then: clause for
-interrupts and nvidia,bpmp.
-
-Requiring reg/reg-names/phy-cells should be in separate patch with its
-own reasoning.
-
-
-Best regards,
-Krzysztof
+Thanks,
+Ashish Mhetre
 
