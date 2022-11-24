@@ -2,174 +2,153 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0587C3A59F
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Nov 2022 20:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F63C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Nov 2022 02:25:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237244AbiKWUOE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Nov 2022 15:14:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35152 "EHLO
+        id S229514AbiKXCZk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Nov 2022 21:25:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235486AbiKWUOC (ORCPT
+        with ESMTP id S229475AbiKXCZj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Nov 2022 15:14:02 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF09BCAB;
-        Wed, 23 Nov 2022 12:14:00 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id ha10so8884260ejb.3;
-        Wed, 23 Nov 2022 12:14:00 -0800 (PST)
+        Wed, 23 Nov 2022 21:25:39 -0500
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C240CE1232
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Nov 2022 18:25:38 -0800 (PST)
+Received: by mail-qk1-x72b.google.com with SMTP id v8so236748qkg.12
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Nov 2022 18:25:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1UyFy5Drye4uBDXMkB6oFaPbJiRKFehIbLKezTRaZmo=;
-        b=YI9BrK5aA2o9y1J1/iG3EG/zL3T4BSwOkjW6ukianRmlbfo5q2KxX4JjrPoB2lGwl9
-         LDJ+tfuSRb5TkXE6GtBss6dczu8GwJW6SL2cGRgt3jCacyMnEkAFGj2MF7pmG/LsPOhD
-         9oQh6Vmr8MEKECg8EkbXP4ruUgzilW04RmyFPp5ZZu6eWQ/DDXG9ocqHvmD8UXfVhoGE
-         FKzf3UPvLfX93hdtFVb7mz50/aAdT1urRA6RVyfMFMbfRSVuhGRt4nldKUIgsbKxE9+G
-         enWGg+o4A1D6GblcUaik6+DZrB83Wos6McYxFqiiyQ9BWVC27qtfZCIGk6R8zQQARuAY
-         CIpw==
+        bh=9JRDJG3kkMfcl/gD5TRWtpYPwOoW5DCLW4ntAO7cRrE=;
+        b=Szx0/BlKCR0tMcAbbHx2qqQsg+8v3Gi8WdQ7rsnN5ZDwP1MLfYeSqZaOXYy+Mvz9L6
+         VYoRMqSw+P+dChRFn6TcMzE52jg4xuDB/TahoWufVQtp1YmQTvxSSUss4ur1VZ9QO9R9
+         8WFIarMXo5KmGQ7f73ol+7gVe9d1nN3YIEMp0fu8ZUMpV4+YrzzrEznprWtA9+Gkeqak
+         Uw9qswseR1h9MHf8HlaH2Bkf9D0FxUkonaziN1E+l/4uqXoAngBW+UwXywFOlHsGTxy+
+         nZ9KWDqJdEF924EhNXHtPOa/QD6z3dRJ2hBIYLLlffHsyyLpYEOvVAoFg2aey3GAQR5u
+         H2VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1UyFy5Drye4uBDXMkB6oFaPbJiRKFehIbLKezTRaZmo=;
-        b=bgNlZz0xqKTpCAw8MYaI2G1oMK4b0AFmGJwK6KaiknLnaZ1JNaQumoqzN+ki5LsIso
-         8rpYvH5iseRsZXCxLoQgUpv/+EXfsaa4QQ+3Cgd9kxZLSxVlbkLV8IUtcvO/SBwKUZkM
-         nCyY49qb/Odx3BU5U5txbnWZSg0bLrIIWB65gW/6jXPCmggPUzLWQ+aYTpg4Gy03rDEh
-         yybZ+KkmxXyCPJJlbB5U4j6Ia3cnVVkFTe17C0Ovau59eU/PIzup8qpXo1xUkU/z9AfJ
-         O+31LJipMGy1cnvMxHio9mPpGBNy2kn2PCtNyOcGOvhq8aBXe+FYq7ASAtIK/lthdmmq
-         LvDg==
-X-Gm-Message-State: ANoB5plZHVEmlyM9plw4CAIfbQp0Ul/U1OCvhZFh83lX9YeHcluzEac+
-        xDZideSwyNNwZOk7nQ8QmBBPkRlz8tmKmgARzOk=
-X-Google-Smtp-Source: AA0mqf5F17GGSffbGy3BvG2UOX3tDyNGk+5NF7l+Uw4Yk21/CigF6vqJPyNaUknoNsP+323hIcxGpEu2k2WMxgoPnGA=
-X-Received: by 2002:a17:906:34d0:b0:78d:c16e:dfc9 with SMTP id
- h16-20020a17090634d000b0078dc16edfc9mr25447270ejb.327.1669234438938; Wed, 23
- Nov 2022 12:13:58 -0800 (PST)
+        bh=9JRDJG3kkMfcl/gD5TRWtpYPwOoW5DCLW4ntAO7cRrE=;
+        b=l9WR7RgG2zj46ReT+OrelD4nC+TIrNfVw/ljRQrfcO6kzzJRbasiP1X4gza8b4hdjU
+         BIcz82bQQ88J4CzNMdn8CZ4v0E+AiB/81zHAytU7RLUqUXQwMLi8pyqCcNB6M7WVztyG
+         eCHQTmN8shVFokmYlVje0xvD5vaxu4iVKhuhiOAk2yAF1RY4duPuHfT1rXVSAltlSAI1
+         XgJbblB7gepDKBrGzGOYGWisv1wBpGdzrrp9azf/mf7a8/gpregleVHHShiAXMznGEdp
+         Kg3oM3BdIKR0QsT1ayOa4IAG0WIx6Qwf11R7jpJQVQtiAkP7tt3u2AEKB+1Ez8PqHpiV
+         pX2Q==
+X-Gm-Message-State: ANoB5pkcDlgnXaklOOoCvUX6/+4EhnZLrremPHAqUin4C4Nv+Q2HZ5Ug
+        luupTjIXteYipcj1+i+V+7Njix6a+FlDMEQ4EiY=
+X-Google-Smtp-Source: AA0mqf6lOiZ95JJBSFNkRQSwsHQEUARBguX3xVeCCrxNiUA/CZ5lO1Qh7wcmEzCROvoRuO+xEh2yqzH9A/R7C2VuA6U=
+X-Received: by 2002:a05:620a:219c:b0:6fa:cbd7:6103 with SMTP id
+ g28-20020a05620a219c00b006facbd76103mr19129902qka.235.1669256737795; Wed, 23
+ Nov 2022 18:25:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20221103155756.687789-1-benjamin.tissoires@redhat.com>
- <20221103155756.687789-4-benjamin.tissoires@redhat.com> <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
- <CAO-hwJJZxgeTT8mLwFrYynSVASva=o7qL9Kr4xOywV3KDUu2GA@mail.gmail.com>
-In-Reply-To: <CAO-hwJJZxgeTT8mLwFrYynSVASva=o7qL9Kr4xOywV3KDUu2GA@mail.gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Wed, 23 Nov 2022 12:13:47 -0800
-Message-ID: <CAADnVQ+kE+EJ9LAfwge9ksC0LR8r+ShQNYi5g-MDajufXq8Yxw@mail.gmail.com>
-Subject: Re: [PATCH hid v12 03/15] HID: initial BPF implementation
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Florent Revest <revest@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        KP Singh <kpsingh@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Tero Kristo <tero.kristo@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20221118173325.742647-1-thierry.reding@gmail.com>
+In-Reply-To: <20221118173325.742647-1-thierry.reding@gmail.com>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Thu, 24 Nov 2022 12:25:26 +1000
+Message-ID: <CAPM=9twJj_7BmZznj9NKTFS_Ka+eHDJqhHHLiOAy38x68Xj47Q@mail.gmail.com>
+Subject: Re: [GIT PULL] drm/tegra: Changes for v6.2-rc1
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 23, 2022 at 6:53 AM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> Hi Jon,
->
-> On Wed, Nov 23, 2022 at 2:25 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> >
-> >
-> > On 03/11/2022 15:57, Benjamin Tissoires wrote:
-> > > Declare an entry point that can use fmod_ret BPF programs, and
-> > > also an API to access and change the incoming data.
-> > >
-> > > A simpler implementation would consist in just calling
-> > > hid_bpf_device_event() for any incoming event and let users deal
-> > > with the fact that they will be called for any event of any device.
-> > >
-> > > The goal of HID-BPF is to partially replace drivers, so this situation
-> > > can be problematic because we might have programs which will step on
-> > > each other toes.
-> > >
-> > > For that, we add a new API hid_bpf_attach_prog() that can be called
-> > > from a syscall and we manually deal with a jump table in hid-bpf.
-> > >
-> > > Whenever we add a program to the jump table (in other words, when we
-> > > attach a program to a HID device), we keep the number of time we added
-> > > this program in the jump table so we can release it whenever there are
-> > > no other users.
-> > >
-> > > HID devices have an RCU protected list of available programs in the
-> > > jump table, and those programs are called one after the other thanks
-> > > to bpf_tail_call().
-> > >
-> > > To achieve the detection of users losing their fds on the programs we
-> > > attached, we add 2 tracing facilities on bpf_prog_release() (for when
-> > > a fd is closed) and bpf_free_inode() (for when a pinned program gets
-> > > unpinned).
-> > >
-> > > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> >
-> > ...
-> >
-> > > +static int __init hid_bpf_init(void)
-> > > +{
-> > > +     int err;
-> > > +
-> > > +     /* Note: if we exit with an error any time here, we would entirely break HID, which
-> > > +      * is probably not something we want. So we log an error and return success.
-> > > +      *
-> > > +      * This is not a big deal: the syscall allowing to attach a BPF program to a HID device
-> > > +      * will not be available, so nobody will be able to use the functionality.
-> > > +      */
-> > > +
-> > > +     err = register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &hid_bpf_kfunc_set);
-> > > +     if (err) {
-> > > +             pr_warn("error while setting HID BPF tracing kfuncs: %d", err);
-> > > +             return 0;
-> > > +     }
-> > > +
-> > > +     err = hid_bpf_preload_skel();
-> > > +     if (err) {
-> > > +             pr_warn("error while preloading HID BPF dispatcher: %d", err);
-> > > +             return 0;
-> > > +     }
-> > > +
-> > > +     /* register syscalls after we are sure we can load our preloaded bpf program */
-> > > +     err = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &hid_bpf_syscall_kfunc_set);
-> > > +     if (err) {
-> > > +             pr_warn("error while setting HID BPF syscall kfuncs: %d", err);
-> > > +             return 0;
-> > > +     }
-> > > +
-> > > +     return 0;
-> > > +}
-> >
-> >
-> > We have a kernel test that checks for new warning and error messages on
-> > boot and with this change I am now seeing the following error message on
-> > our Tegra platforms ...
-> >
-> >   WARNING KERN hid_bpf: error while preloading HID BPF dispatcher: -13
-> >
-> > I have a quick look at the code, but I can't say I am familiar with
-> > this. So I wanted to ask if a way to fix this or avoid this? I see the
-> > code returns 0, so one option would be to make this an informational or
-> > debug print.
->
-> I am not in favor of debug in that case, because I suspect it'll hide
-> too much when getting a bug report. Informational could do, yes.
->
-> However, before that, I'd like to dig a little bit more on why it is
-> failing. I thought arm64 now has support of tracing bpf programs, so I
-> would not expect this to fail.
+Hi Thierry,
 
-Unfortunately the patches to add support for such tracing bpf progs got stuck.
-Florent/Mark can probably share the latest status.
+looks like a rebase bug
+
+dim: aad2a7d9d375 ("gpu: host1x: Update host1x_memory_context_alloc()
+!IOMMU_API stub"): SHA1 in fixes line not found:
+dim:     1508aa73ea38 ("gpu: host1x: Select context device based on
+attached IOMMU")
+dim: ERROR: issues in commits detected, aborting
+
+Please fix the commit msg and resend.
+
+Dave.
+
+On Sat, 19 Nov 2022 at 03:33, Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> Hi Dave, Daniel,
+>
+> The following changes since commit c2418f911a31a266af4fbaca998dc73d3676475a:
+>
+>   gpu: host1x: Avoid trying to use GART on Tegra20 (2022-11-18 09:33:20 +0100)
+>
+> are available in the Git repository at:
+>
+>   https://gitlab.freedesktop.org/drm/tegra.git tags/drm/tegra/for-6.2-rc1
+>
+> for you to fetch changes up to 1eb336ed12cda68cb207dbdb6918dc60b151ef6a:
+>
+>   gpu: host1x: Staticize host1x_syncpt_fence_ops (2022-11-18 09:33:31 +0100)
+>
+> Thanks,
+> Thierry
+>
+> ----------------------------------------------------------------
+> drm/tegra: Changes for v6.2-rc1
+>
+> This contains a bunch of cleanups across the board as well as support
+> for the NVDEC hardware found on the Tegra234 SoC.
+>
+> ----------------------------------------------------------------
+> Dmitry Torokhov (1):
+>       drm/tegra: Switch to using devm_fwnode_gpiod_get()
+>
+> Jani Nikula (1):
+>       drm/tegra: Convert to using is_hdmi from display info
+>
+> Liu Shixin (1):
+>       gpu: host1x: Use DEFINE_SHOW_ATTRIBUTE to simplify debugfs code
+>
+> Mikko Perttunen (6):
+>       gpu: host1x: Select context device based on attached IOMMU
+>       memory: tegra: Add API for retrieving carveout bounds
+>       gpu: host1x: Add stream ID register data for NVDEC on Tegra234
+>       drm/tegra: nvdec: Support multiple clocks
+>       drm/tegra: Add code for booting RISC-V based engines
+>       drm/tegra: Add Tegra234 support to NVDEC driver
+>
+> Qing Wang (1):
+>       drm/tegra: Switch over to vmemdup_user()
+>
+> Thierry Reding (2):
+>       gpu: host1x: Update host1x_memory_context_alloc() !IOMMU_API stub
+>       gpu: host1x: Staticize host1x_syncpt_fence_ops
+>
+> Zhang Zekun (1):
+>       drm/tegra: Add missing clk_disable_unprepare() in tegra_dc_probe()
+>
+> ruanjinjie (1):
+>       drm/tegra: Make gather_bo_ops static
+>
+>  drivers/gpu/drm/tegra/Makefile  |   3 +-
+>  drivers/gpu/drm/tegra/dc.c      |   4 +-
+>  drivers/gpu/drm/tegra/drm.c     |   1 +
+>  drivers/gpu/drm/tegra/hdmi.c    |   9 +--
+>  drivers/gpu/drm/tegra/nvdec.c   | 171 ++++++++++++++++++++++++++++++++++------
+>  drivers/gpu/drm/tegra/output.c  |  10 +--
+>  drivers/gpu/drm/tegra/riscv.c   | 106 +++++++++++++++++++++++++
+>  drivers/gpu/drm/tegra/riscv.h   |  30 +++++++
+>  drivers/gpu/drm/tegra/submit.c  |  13 +--
+>  drivers/gpu/drm/tegra/uapi.c    |   2 +-
+>  drivers/gpu/host1x/context.c    |   4 +
+>  drivers/gpu/host1x/debug.c      |  28 +------
+>  drivers/gpu/host1x/dev.c        |  12 +++
+>  drivers/gpu/host1x/fence.c      |   2 +-
+>  drivers/memory/tegra/mc.c       |  25 ++++++
+>  drivers/memory/tegra/tegra234.c |   5 ++
+>  include/linux/host1x.h          |   2 +
+>  include/soc/tegra/mc.h          |  11 +++
+>  18 files changed, 362 insertions(+), 76 deletions(-)
+>  create mode 100644 drivers/gpu/drm/tegra/riscv.c
+>  create mode 100644 drivers/gpu/drm/tegra/riscv.h
