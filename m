@@ -2,104 +2,191 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B80C43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Nov 2022 14:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3560BC4321E
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Nov 2022 15:51:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbiKXO5D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Nov 2022 09:57:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38022 "EHLO
+        id S229798AbiKXPvT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Nov 2022 10:51:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229757AbiKXO4t (ORCPT
+        with ESMTP id S229670AbiKXPvS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Nov 2022 09:56:49 -0500
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC002C11A;
-        Thu, 24 Nov 2022 06:56:44 -0800 (PST)
-Received: from booty (unknown [77.244.183.192])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 4B58820004;
-        Thu, 24 Nov 2022 14:56:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1669301802;
+        Thu, 24 Nov 2022 10:51:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E41E13411C
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Nov 2022 07:50:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669305023;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DHCQJ7ZAuuzC6UG49hSRfKeMxjBT7Ylpk7GBcGZRErE=;
-        b=CVo66w0Atcxwn8aG3nTnKq12p3m+IrxlyisSdyRW1FupbUNbjU0oG74obbqTQhTSaY9oFS
-        iusK80KUYBZbwkvG3b5V4NSZv5Z5qjNZL9KgPbPzL9ugR6BcqtooqsvBolXaTAoMIW9Ef8
-        PJrRd+Vymz7xOEXFd/lNJf83UfaQCe/bVy6et+JqxjuQbJws4xdSlLetXfiNps6PKdEW9b
-        PHOGdohwZGk43SIc+ERg4RIbHYp9cvbJLZCaqOzUyIRnqY22ZT7TpHGZiQLxaQ13PJxb4Q
-        D9X5YL3d6O82VAVCsAIT6fyLe1ZDm76d0E0y9SCTFy8xjvRmbCdhJc4AQYg/hw==
-Date:   Thu, 24 Nov 2022 15:56:34 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>
-Subject: Re: [PATCH 00/23] Add Tegra20 parallel video input capture
-Message-ID: <20221124155634.5bc2a423@booty>
-In-Reply-To: <3ecd7c3d-b013-18b8-ea12-ca3c673de22c@xs4all.nl>
-References: <20221109141852.729246-1-luca.ceresoli@bootlin.com>
-        <3ecd7c3d-b013-18b8-ea12-ca3c673de22c@xs4all.nl>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        bh=RY55+mI/DdVynf6mJobax2x0nouP9gB/94T/eEnCQ84=;
+        b=JhC5IsXvX2RUOh60Vb+22q02Kc/unNt7IEGDy/tw9Q5mNNFqSzrP20w/3NGXXnSWx3ek/0
+        AHWiJ7sLFy6miJ7CsBI4SzL8+kQjcQWYeeSrTw4IYvqs7PylO3g3tfsJ+h43MEwSmW3vQf
+        hhMFMwndpX5olYvtIsRFFUDDKHp3C2A=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-215-eSoOxVDQO1CGUDnaHpyK1Q-1; Thu, 24 Nov 2022 10:50:22 -0500
+X-MC-Unique: eSoOxVDQO1CGUDnaHpyK1Q-1
+Received: by mail-io1-f70.google.com with SMTP id be26-20020a056602379a00b006dd80a0ba1cso1003668iob.11
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Nov 2022 07:50:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RY55+mI/DdVynf6mJobax2x0nouP9gB/94T/eEnCQ84=;
+        b=bK521Uc5XI12j0YQ2w8ZlGAUu3+HF/wtn12ALDm/UfjVLR1YMDMorbHeaLgaJOXGPT
+         r2DQ+Dc2vyeoCu5qtDqkQf/JCsuZVv9zCwOHgXlhXGbZuf1Ith55Op1ZCFlXvWajYJvr
+         ThQIdha1Ov/JcYvcFl4GJiljpVQf0x9TJe7M92lWn0AzUGKPRKDArQdj2f+YOlsqVOgZ
+         aUbq5kgk8MoxkS4eYAMwCd+yyxd3gogjxYfdmAGY3hHmPe9wLRZzNBL8OsMifkBtc++C
+         Jzb7gdFBPyJnB2K60tznGp3lxWKgb6GuF8LNpDlYjJc4uCVDJnLv1uKJ5wP478dUtmr8
+         wm/w==
+X-Gm-Message-State: ANoB5pkSzxfGiBfC9Ub+UmoebbZFu8aFR1d+d65Etn0O+n/4frMoZXFd
+        0zVw4ieeu6+4lXx33Sp7mAGqzPgOO0d2qcZGZ9HR9DGkOWrmi4XDKe8g/ePnskShriyTDmVpEhL
+        +a47LFXaN+xbq7GMkFDxoV0DXs73zZTz7XI4xFyg=
+X-Received: by 2002:a05:6e02:12c2:b0:302:e38e:761b with SMTP id i2-20020a056e0212c200b00302e38e761bmr2982579ilm.61.1669305021741;
+        Thu, 24 Nov 2022 07:50:21 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf50DvoaFAAKrDAN6ynBtlfajIpvDYjTyVfoAXhh1Q93IuTagRMPKBRzK4dRjX385fP/AwgqliXF5ra1BppOhJk=
+X-Received: by 2002:a05:6e02:12c2:b0:302:e38e:761b with SMTP id
+ i2-20020a056e0212c200b00302e38e761bmr2982569ilm.61.1669305021479; Thu, 24 Nov
+ 2022 07:50:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20221103155756.687789-1-benjamin.tissoires@redhat.com>
+ <20221103155756.687789-4-benjamin.tissoires@redhat.com> <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
+ <CAO-hwJJZxgeTT8mLwFrYynSVASva=o7qL9Kr4xOywV3KDUu2GA@mail.gmail.com> <CAADnVQ+kE+EJ9LAfwge9ksC0LR8r+ShQNYi5g-MDajufXq8Yxw@mail.gmail.com>
+In-Reply-To: <CAADnVQ+kE+EJ9LAfwge9ksC0LR8r+ShQNYi5g-MDajufXq8Yxw@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 24 Nov 2022 16:50:10 +0100
+Message-ID: <CAO-hwJJGxvrLRGSt7g0T1rYiuCCigVzQ-L6yKLM1-44EpYqmsQ@mail.gmail.com>
+Subject: Re: [PATCH hid v12 03/15] HID: initial BPF implementation
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Florent Revest <revest@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <shuah@kernel.org>,
+        Tero Kristo <tero.kristo@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-HI Hans,
+On Wed, Nov 23, 2022 at 9:14 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Nov 23, 2022 at 6:53 AM Benjamin Tissoires
+> <benjamin.tissoires@redhat.com> wrote:
+> >
+> > Hi Jon,
+> >
+> > On Wed, Nov 23, 2022 at 2:25 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > >
+> > >
+> > > On 03/11/2022 15:57, Benjamin Tissoires wrote:
+> > > > Declare an entry point that can use fmod_ret BPF programs, and
+> > > > also an API to access and change the incoming data.
+> > > >
+> > > > A simpler implementation would consist in just calling
+> > > > hid_bpf_device_event() for any incoming event and let users deal
+> > > > with the fact that they will be called for any event of any device.
+> > > >
+> > > > The goal of HID-BPF is to partially replace drivers, so this situation
+> > > > can be problematic because we might have programs which will step on
+> > > > each other toes.
+> > > >
+> > > > For that, we add a new API hid_bpf_attach_prog() that can be called
+> > > > from a syscall and we manually deal with a jump table in hid-bpf.
+> > > >
+> > > > Whenever we add a program to the jump table (in other words, when we
+> > > > attach a program to a HID device), we keep the number of time we added
+> > > > this program in the jump table so we can release it whenever there are
+> > > > no other users.
+> > > >
+> > > > HID devices have an RCU protected list of available programs in the
+> > > > jump table, and those programs are called one after the other thanks
+> > > > to bpf_tail_call().
+> > > >
+> > > > To achieve the detection of users losing their fds on the programs we
+> > > > attached, we add 2 tracing facilities on bpf_prog_release() (for when
+> > > > a fd is closed) and bpf_free_inode() (for when a pinned program gets
+> > > > unpinned).
+> > > >
+> > > > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> > >
+> > > ...
+> > >
+> > > > +static int __init hid_bpf_init(void)
+> > > > +{
+> > > > +     int err;
+> > > > +
+> > > > +     /* Note: if we exit with an error any time here, we would entirely break HID, which
+> > > > +      * is probably not something we want. So we log an error and return success.
+> > > > +      *
+> > > > +      * This is not a big deal: the syscall allowing to attach a BPF program to a HID device
+> > > > +      * will not be available, so nobody will be able to use the functionality.
+> > > > +      */
+> > > > +
+> > > > +     err = register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &hid_bpf_kfunc_set);
+> > > > +     if (err) {
+> > > > +             pr_warn("error while setting HID BPF tracing kfuncs: %d", err);
+> > > > +             return 0;
+> > > > +     }
+> > > > +
+> > > > +     err = hid_bpf_preload_skel();
+> > > > +     if (err) {
+> > > > +             pr_warn("error while preloading HID BPF dispatcher: %d", err);
+> > > > +             return 0;
+> > > > +     }
+> > > > +
+> > > > +     /* register syscalls after we are sure we can load our preloaded bpf program */
+> > > > +     err = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &hid_bpf_syscall_kfunc_set);
+> > > > +     if (err) {
+> > > > +             pr_warn("error while setting HID BPF syscall kfuncs: %d", err);
+> > > > +             return 0;
+> > > > +     }
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > >
+> > >
+> > > We have a kernel test that checks for new warning and error messages on
+> > > boot and with this change I am now seeing the following error message on
+> > > our Tegra platforms ...
+> > >
+> > >   WARNING KERN hid_bpf: error while preloading HID BPF dispatcher: -13
+> > >
+> > > I have a quick look at the code, but I can't say I am familiar with
+> > > this. So I wanted to ask if a way to fix this or avoid this? I see the
+> > > code returns 0, so one option would be to make this an informational or
+> > > debug print.
+> >
+> > I am not in favor of debug in that case, because I suspect it'll hide
+> > too much when getting a bug report. Informational could do, yes.
+> >
+> > However, before that, I'd like to dig a little bit more on why it is
+> > failing. I thought arm64 now has support of tracing bpf programs, so I
+> > would not expect this to fail.
+>
+> Unfortunately the patches to add support for such tracing bpf progs got stuck.
+> Florent/Mark can probably share the latest status.
+>
 
-On Thu, 24 Nov 2022 09:36:14 +0100
-Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+Oh... I noticed Jon's config was lacking CONFIG_FTRACE. So should I
+also add a depends on CONFIG_FTRACE to enable HID-BPF?
 
-> Hi Luca,
-> 
-> On 09/11/2022 15:18, luca.ceresoli@bootlin.com wrote:
-> > From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > 
-> > Tegra20 and other Tegra SoCs have a video input (VI) peripheral that can
-> > receive from either MIPI CSI-2 or parallel video (called respectively "CSI"
-> > and "VIP" in the documentation). The kernel currently has a staging driver
-> > for Tegra210 CSI capture. This patch set adds support for Tegra20 VIP
-> > capture.
-> > 
-> > Unfortunately I had no real documentation available to base this work on,
-> > and I started from a working downstream 3.1 kernel, that I have heavily
-> > reworked to fit into the existing tegra-video driver. The existing code
-> > appears written with the intent of being modular and allow adding new input
-> > mechanisms and new SoCs while keeping a unique VI core module. However its
-> > modularity and extensibility was not enough to add Tegra20 VIP support, so
-> > I added some hooks to turn hard-coded behaviour into per-SoC or per-bus
-> > customizable code. There are also some fixes, some generic cleanups and DT
-> > bindings.  
-> 
-> I plan on testing this series (esp. making sure it keeps working on non-tegra210
-> hardware), but I have to find time for that. This is on my TODO list, so I will
-> get to it, but it might time.
+Cheers,
+Benjamin
 
-Thanks for letting me know!
-
-Indeed, with respect to what you wrote, even testing on tegra210
-hardware would be useful in case you have any, as all the hardware I
-can access is tegra20.
-
-Kind regards.
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
