@@ -2,150 +2,72 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB07EC4321E
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Nov 2022 04:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5233C4332F
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Nov 2022 07:31:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230134AbiKZEul (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Nov 2022 23:50:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51442 "EHLO
+        id S229551AbiKZHbs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 26 Nov 2022 02:31:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230114AbiKZEuk (ORCPT
+        with ESMTP id S229543AbiKZHbr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Nov 2022 23:50:40 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AAD424F11
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Nov 2022 20:50:38 -0800 (PST)
-Received: from dggpemm500022.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NJzmm1Vs1zmWDd;
-        Sat, 26 Nov 2022 12:50:00 +0800 (CST)
+        Sat, 26 Nov 2022 02:31:47 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 346931BEA2
+        for <linux-tegra@vger.kernel.org>; Fri, 25 Nov 2022 23:31:45 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NK3Lh0trpzRpWM;
+        Sat, 26 Nov 2022 15:31:08 +0800 (CST)
 Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500022.china.huawei.com (7.185.36.162) with Microsoft SMTP Server
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sat, 26 Nov 2022 12:50:35 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Sat, 26 Nov
- 2022 12:50:34 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
+ 15.1.2375.31; Sat, 26 Nov 2022 15:31:42 +0800
+Received: from [10.174.178.174] (10.174.178.174) by
+ dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 26 Nov 2022 15:31:41 +0800
+Subject: Re: [PATCH v2 0/2] gpu: host1x: possible double free and memory leak
 To:     <linux-tegra@vger.kernel.org>, <thierry.reding@gmail.com>,
         <airlied@gmail.com>, <daniel@ffwll.ch>, <mperttunen@nvidia.com>,
-        <cyndis@kapsi.fi>
-CC:     <yangyingliang@huawei.com>
-Subject: [PATCH v2 2/2] gpu: host1x: fix memory leak of device names
-Date:   Sat, 26 Nov 2022 12:48:22 +0800
-Message-ID: <20221126044822.141269-3-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221126044822.141269-1-yangyingliang@huawei.com>
+        <cyndis@kapsi.fi>, <yangyingliang@huawei.com>
 References: <20221126044822.141269-1-yangyingliang@huawei.com>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <745a7d39-9c39-71aa-ad63-82f396d2b5d0@huawei.com>
+Date:   Sat, 26 Nov 2022 15:31:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+In-Reply-To: <20221126044822.141269-1-yangyingliang@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.174.178.174]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  dggpemm500007.china.huawei.com (7.185.36.183)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The device names allocated by dev_set_name() need be freed
-before module unloading, but they can not be freed because
-the kobject's refcount which was set in device_initialize()
-has not be decreased to 0.
+Please ignore this patchset, I forget commit my latest code to my tree, 
+and sent old version patches.
 
-As comment of device_add() says, if it fails, use only
-put_device() drop the refcount, then the name will be
-freed in kobejct_cleanup().
-
-device_del() and put_device() can be replaced with
-device_unregister(), so call it to unregister the added
-successfully devices, and just call put_device() to the
-not added device.
-
-Add a release() function to device to avoid null release()
-function WARNING in device_release(), it's empty, because
-the context devices are freed together in
-host1x_memory_context_list_free().
-
-Fixes: 8aa5bcb61612 ("gpu: host1x: Add context device management code")
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/gpu/host1x/context.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/host1x/context.c b/drivers/gpu/host1x/context.c
-index 291f34562e2e..4ea86d225a38 100644
---- a/drivers/gpu/host1x/context.c
-+++ b/drivers/gpu/host1x/context.c
-@@ -13,6 +13,11 @@
- #include "context.h"
- #include "dev.h"
- 
-+static void host1x_memory_context_release(struct device *dev)
-+{
-+	/* context device is freed in host1x_memory_context_list_free() */
-+}
-+
- int host1x_memory_context_list_init(struct host1x *host1x)
- {
- 	struct host1x_memory_context_list *cdl = &host1x->context_list;
-@@ -53,28 +58,30 @@ int host1x_memory_context_list_init(struct host1x *host1x)
- 		dev_set_name(&ctx->dev, "host1x-ctx.%d", i);
- 		ctx->dev.bus = &host1x_context_device_bus_type;
- 		ctx->dev.parent = host1x->dev;
-+		ctx->dev.release = host1x_memory_context_release;
- 
- 		dma_set_max_seg_size(&ctx->dev, UINT_MAX);
- 
- 		err = device_add(&ctx->dev);
- 		if (err) {
- 			dev_err(host1x->dev, "could not add context device %d: %d\n", i, err);
--			goto del_devices;
-+			put_device(&ctx->dev);
-+			goto unreg_devices;
- 		}
- 
- 		err = of_dma_configure_id(&ctx->dev, node, true, &i);
- 		if (err) {
- 			dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
- 				i, err);
--			device_del(&ctx->dev);
--			goto del_devices;
-+			device_unregister(&ctx->dev)
-+			goto unreg_devices;
- 		}
- 
- 		fwspec = dev_iommu_fwspec_get(&ctx->dev);
- 		if (!fwspec || !device_iommu_mapped(&ctx->dev)) {
- 			dev_err(host1x->dev, "Context device %d has no IOMMU!\n", i);
--			device_del(&ctx->dev);
--			goto del_devices;
-+			device_unregister(&ctx->dev)
-+			goto unreg_devices;
- 		}
- 
- 		ctx->stream_id = fwspec->ids[0] & 0xffff;
-@@ -82,9 +89,9 @@ int host1x_memory_context_list_init(struct host1x *host1x)
- 
- 	return 0;
- 
--del_devices:
-+unreg_devices:
- 	while (i--)
--		device_del(&cdl->devs[i].dev);
-+		device_unregister(&cdl->devs[i].dev);
- 
- 	kfree(cdl->devs);
- 	cdl->devs = NULL;
-@@ -98,7 +105,7 @@ void host1x_memory_context_list_free(struct host1x_memory_context_list *cdl)
- 	unsigned int i;
- 
- 	for (i = 0; i < cdl->len; i++)
--		device_del(&cdl->devs[i].dev);
-+		device_unregister(&cdl->devs[i].dev);
- 
- 	kfree(cdl->devs);
- 	cdl->len = 0;
--- 
-2.25.1
-
+On 2022/11/26 12:48, Yang Yingliang wrote:
+> This patchset fix two possible problems in the error path in
+> host1x_memory_context_list_init().
+>
+> v1 -> v2:
+>    patch #1 don't return error code, if IOMMU is disabled.
+>    patch #2 make error handling code more clean.
+>
+>    Put the two patches in one patchset.
+>    http://patchwork.ozlabs.org/project/linux-tegra/patch/20221028130300.1133520-1-yangyingliang@huawei.com/
+>    http://patchwork.ozlabs.org/project/linux-tegra/patch/20221124080559.3592650-1-yangyingliang@huawei.com/
+>
+> Yang Yingliang (2):
+>    gpu: host1x: fix potential double free if IOMMU is disabled
+>    gpu: host1x: fix memory leak of device names
+>
+>   drivers/gpu/host1x/context.c | 24 ++++++++++++++++--------
+>   1 file changed, 16 insertions(+), 8 deletions(-)
+>
