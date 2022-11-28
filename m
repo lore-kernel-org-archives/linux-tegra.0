@@ -2,264 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BB0C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Nov 2022 08:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C46DC43217
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Nov 2022 09:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbiK1Iup (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Nov 2022 03:50:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58042 "EHLO
+        id S230026AbiK1JhB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Nov 2022 04:37:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbiK1Iuo (ORCPT
+        with ESMTP id S229776AbiK1Jg7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Nov 2022 03:50:44 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4AED17A94
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Nov 2022 00:50:43 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ozZqW-0001D3-5W; Mon, 28 Nov 2022 09:50:36 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ozZqU-000mS0-76; Mon, 28 Nov 2022 09:50:35 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ozZqU-000sRP-4A; Mon, 28 Nov 2022 09:50:34 +0100
-Date:   Mon, 28 Nov 2022 09:50:34 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: pwm: tegra: Convert to json-schema
-Message-ID: <20221128085034.gurlqns5kgjitcxo@pengutronix.de>
-References: <20221117214248.2365983-1-thierry.reding@gmail.com>
+        Mon, 28 Nov 2022 04:36:59 -0500
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F4B12AA9;
+        Mon, 28 Nov 2022 01:36:58 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Yi8rY+L2pqa920HzlSAB5pK35RgfdJq+ui9utCqmmt4dxhbh7zev30dUaUO36PGGxPObc49P9jJH5Fo7Gjrc6l+sZUmQVpl/Qe7BTwnjVGC/Iihztg2rycOWI9nvzgAaCLIQVey9whP4scPpyChHdu7qNJ1Vpfxj6PyWpd/ki/guM4fyGZFZsnsYiqlIkYzyuBBGwDbQQf5aQ+Q1QWMCYYQ6SHk1EfJoRzFLN9Y9tKuufU3v4LYmj7exCWc8Ysd2tfQG68uuqZu70zZWbhrk17IHI7flTMSRjGuoAroKFYotIGDN8yFKbQ9AH0aOAnwLIGGg6/q97YsiObS4EDdl7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U+3nff5AGsEXoJVAb1Gkjsqc6oiGpUZ+i/xbPc+iEqc=;
+ b=anobaWnlKzoW4y9IsrRHt+eD/OM8zZIpzRZGNrRLeyLIAqBJMSqBXJ34nJacWOcEnSgxCYWjDMLyapwWRN9ol2JKKkHSTkSg7wEMhzux11mF1gxkn8PV2OXkEcXU/1hH3orcWexdlLGeVa5NWZWLNMDaGQd75BjzK1gGeOjMHHQGYrPNjRUVYy4UwGDjWtCtJpc70EPYPIPfeV6WHrLCGezLwhpTBRCL7jhpGhZkoShw43dq+cFLX/GxjxFvSPrugIFo/P8GB6OGd8q3j2PXBvwCNcTos50+iLau+gnNOT/fhyqS6Ft8pVsFT7HZAHh3BRjpV+PAwlEbqv7iDjeKMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U+3nff5AGsEXoJVAb1Gkjsqc6oiGpUZ+i/xbPc+iEqc=;
+ b=YsAfH94PuI10qe4AEspAf90+AGz/+z1h+n9UHYUB80L1H94L40d84mxxbmNFID+QxAZ8nmteXI9bTenQMyKXPiU2+Vbad6MI22Z7nAPUKf7xzCeQ7t7pVQtwzpyjVTidBEfbqaFjmaH8KM6v+kpiSILPFUYxBB9i0IinU1BtzoAUw5rIOD7EqIJ5iuFHYJmeT7VzL2RIL7xd4P22hS6DrOkAW/u0+bs0m9N24MvWHxw7ObdzhOi6wV65Ei4FDTtrJdLbTAgfVavDRNTtEzSaue2gQTru9KrY78yfUwPXunWlL6qqffMQJHvK02LGr0X03ehT2YmZdMz66/mowO7A6A==
+Received: from DM6PR03CA0097.namprd03.prod.outlook.com (2603:10b6:5:333::30)
+ by SA0PR12MB4496.namprd12.prod.outlook.com (2603:10b6:806:9b::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23; Mon, 28 Nov
+ 2022 09:36:56 +0000
+Received: from DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:333:cafe::b) by DM6PR03CA0097.outlook.office365.com
+ (2603:10b6:5:333::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23 via Frontend
+ Transport; Mon, 28 Nov 2022 09:36:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT041.mail.protection.outlook.com (10.13.172.98) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5834.8 via Frontend Transport; Mon, 28 Nov 2022 09:36:55 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 28 Nov
+ 2022 01:36:49 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 28 Nov
+ 2022 01:36:49 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Mon, 28 Nov 2022 01:36:48 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 6.0 000/313] 6.0.10-rc2 review
+In-Reply-To: <20221125075804.064161337@linuxfoundation.org>
+References: <20221125075804.064161337@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oyfmrxm2pqndumzl"
-Content-Disposition: inline
-In-Reply-To: <20221117214248.2365983-1-thierry.reding@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Message-ID: <49e84476-b19d-48f5-932f-4f2393a7a4c9@rnnvmail205.nvidia.com>
+Date:   Mon, 28 Nov 2022 01:36:48 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT041:EE_|SA0PR12MB4496:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b2c0ca9-f34b-403c-4d1f-08dad12416d0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DXEyUmlvFv1xJNL1Wdl/EKalKCzVvkt0YMfyIKr03tbxXoN9DEWUKJFXOBNsfAGnA2+pLtl2mOTYb2SdS/3F3EV6ontnVUaB/vjRIGVUnjzcVmKiCy/Q2Z+bKd3Bi5qIGp2kxy6+8Xe7U0ArMTNZg6NHwG28lxRaWXGCIJER3ZeGPRKV2AcCu8lHxBwzrrSIyxkV5wLz8bvz7pmFVXmpDUxRtIYi2Ul0ND7dW1spd/+IamYWs5h46jAbDPpR9ewfODHzKu39pvjCe1kv++zSQ3O8zwc7564QsrbHtENUvt1xdtzfC7aUnNfJtZPBgmRvpbwuFtGEnRK4yeY6nNy2U8LyiNnqvpdc1As9OAQ6k+sT6D84bMHygeyec8CDf4pmrfKtD+2bT8Q4Qk4gje+SJGMoWtL4MumyEAClGeras2BFCB+wDSV6JqiqDulxsubpS+KY1aftjcnXzPpKQINjnoxEWqTNZWOj5/VaHIN6yGVIs5FaVkHq4wnd2+vDMPWS5eZHki9XwDDYAQcSS4whevj2YVOqG4238BB0ZDWzaaiiO7sLMIAJTOukMDIphtNYHFjsJc5xM+PI0UWR4hU0BKPJPtEZrT1AFrS7Qxepm6S9F5KXlXb/RTowO+MgeZCUgdLPcEw70lcO8H/xkskuAdXg0v8wpOeLdVzvgG4lV/jhGqepFwSmjiJNl+pFcSQ1fDg3yHMCTLklAfQKQ6PGaQlAju5ly83pziocM7HiQ2METneIhKuvPoLlGRdUgqKXE7tU5bmq7igXh/6/Xh2vRN3uqDSPvrJ4OjvdA3x5bRM=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(39860400002)(136003)(346002)(451199015)(46966006)(36840700001)(40470700004)(70206006)(478600001)(70586007)(316002)(2906002)(54906003)(6916009)(966005)(40460700003)(7636003)(356005)(426003)(47076005)(82310400005)(36860700001)(82740400003)(40480700001)(26005)(86362001)(31696002)(336012)(186003)(5660300002)(7416002)(8936002)(41300700001)(31686004)(4326008)(8676002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2022 09:36:55.6561
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b2c0ca9-f34b-403c-4d1f-08dad12416d0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4496
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, 25 Nov 2022 08:58:38 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.0.10 release.
+> There are 313 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 27 Nov 2022 07:57:07 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.0.10-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.0.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---oyfmrxm2pqndumzl
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+All tests passing for Tegra ...
 
-On Thu, Nov 17, 2022 at 10:42:48PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> Convert the Tegra PWFM bindings from the free-form text format to
-> json-schema.
->=20
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v2:
-> - drop Tegra210 example so that validation doesn't fail due to missing
->   pinmux json-schema conversion
-> - combine Tegra20 and Tegra186 compatible strings
-> - drop useless description of the single clock
-> - remove clock-names property
-> - remove unnecessary quotes
->=20
->  .../bindings/pwm/nvidia,tegra20-pwm.txt       | 78 ---------------
->  .../bindings/pwm/nvidia,tegra20-pwm.yaml      | 96 +++++++++++++++++++
->  2 files changed, 96 insertions(+), 78 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra20-=
-pwm.txt
->  create mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra20-=
-pwm.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt=
- b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> deleted file mode 100644
-> index 47f1abf20118..000000000000
-> --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> +++ /dev/null
-> @@ -1,78 +0,0 @@
-> -Tegra SoC PWFM controller
-> -
-> -Required properties:
-> -- compatible: Must be:
-> -  - "nvidia,tegra20-pwm": for Tegra20
-> -  - "nvidia,tegra30-pwm", "nvidia,tegra20-pwm": for Tegra30
-> -  - "nvidia,tegra114-pwm", "nvidia,tegra20-pwm": for Tegra114
-> -  - "nvidia,tegra124-pwm", "nvidia,tegra20-pwm": for Tegra124
-> -  - "nvidia,tegra132-pwm", "nvidia,tegra20-pwm": for Tegra132
-> -  - "nvidia,tegra210-pwm", "nvidia,tegra20-pwm": for Tegra210
-> -  - "nvidia,tegra186-pwm": for Tegra186
-> -  - "nvidia,tegra194-pwm": for Tegra194
-> -  - "nvidia,tegra234-pwm", "nvidia,tegra194-pwm": for Tegra234
-> -- reg: physical base address and length of the controller's registers
-> -- #pwm-cells: should be 2. See pwm.yaml in this directory for a descript=
-ion of
-> -  the cells format.
-> -- clocks: Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
-> -- resets: Must contain an entry for each entry in reset-names.
-> -  See ../reset/reset.txt for details.
-> -- reset-names: Must include the following entries:
-> -  - pwm
-> -
-> -Optional properties:
-> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> -In some of the interface like PWM based regulator device, it is required
-> -to configure the pins differently in different states, especially in sus=
-pend
-> -state of the system. The configuration of pin is provided via the pinctrl
-> -DT node as detailed in the pinctrl DT binding document
-> -	Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> -
-> -The PWM node will have following optional properties.
-> -pinctrl-names:	Pin state names. Must be "default" and "sleep".
-> -pinctrl-0:	phandle for the default/active state of pin configurations.
-> -pinctrl-1:	phandle for the sleep state of pin configurations.
-> -
-> -Example:
-> -
-> -	pwm: pwm@7000a000 {
-> -		compatible =3D "nvidia,tegra20-pwm";
-> -		reg =3D <0x7000a000 0x100>;
-> -		#pwm-cells =3D <2>;
-> -		clocks =3D <&tegra_car 17>;
-> -		resets =3D <&tegra_car 17>;
-> -		reset-names =3D "pwm";
-> -	};
-> -
-> -
-> -Example with the pin configuration for suspend and resume:
-> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-> -Suppose pin PE7 (On Tegra210) interfaced with the regulator device and
-> -it requires PWM output to be tristated when system enters suspend.
-> -Following will be DT binding to achieve this:
-> -
-> -#include <dt-bindings/pinctrl/pinctrl-tegra.h>
-> -
-> -	pinmux@700008d4 {
-> -		pwm_active_state: pwm_active_state {
-> -                        pe7 {
-> -                                nvidia,pins =3D "pe7";
-> -                                nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
-> -			};
-> -		};
-> -
-> -		pwm_sleep_state: pwm_sleep_state {
-> -                        pe7 {
-> -                                nvidia,pins =3D "pe7";
-> -                                nvidia,tristate =3D <TEGRA_PIN_ENABLE>;
-> -			};
-> -		};
-> -	};
-> -
-> -	pwm@7000a000 {
-> -		/* Mandatory PWM properties */
-> -		pinctrl-names =3D "default", "sleep";
-> -		pinctrl-0 =3D <&pwm_active_state>;
-> -		pinctrl-1 =3D <&pwm_sleep_state>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yam=
-l b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
-> new file mode 100644
-> index 000000000000..739d3155dd32
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/nvidia,tegra20-pwm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra PWFM controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra20-pwm
-> +          - nvidia,tegra186-pwm
-> +
-> +      - items:
-> +          - enum:
-> +              - nvidia,tegra30-pwm
-> +              - nvidia,tegra114-pwm
-> +              - nvidia,tegra124-pwm
-> +              - nvidia,tegra132-pwm
-> +              - nvidia,tegra210-pwm
-> +          - enum:
-> +              - nvidia,tegra20-pwm
-> +
-> +      - items:
-> +          - const: nvidia,tegra194-pwm
-> +          - const: nvidia,tegra186-pwm
-> +
-> +      - items:
-> +          - const: nvidia,tegra234-pwm
-> +          - const: nvidia,tegra194-pwm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    items:
-> +      - description: module reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: pwm
-> +
-> +  "#pwm-cells":
-> +    const: 2
+Test results for stable-v6.0:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    130 tests:	130 pass, 0 fail
 
-While the driver supports #pwm-cells =3D <3> it makes little sense to
-allow it as it only supports one polarity. Still I wonder if we should
-allow 3 here for consistency with other drivers/bindings.
+Linux version:	6.0.10-rc2-ge0b681e38dd4
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-But as 2 is fine, I don't care deeply and allowing 3 would be out of
-scope for a conversion from txt to yaml:
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---oyfmrxm2pqndumzl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmOEdlUACgkQwfwUeK3K
-7AlgfQgAiMLZY+TwMRvKksahgqvWzti0r13Ko/K4vipsLv906G3FEL8whsQi04rz
-MGnwSTqYFrbV13ebzpJhmYdNhA+sJ/65+fBgUyNndTb0iWutVlFWz7UtoL5FxsXz
-BjHtSGbZThU9YmkMLdlyelsLb6IBatNP9DBnSnhceHULhMpaYdR/NnVdkLeHsZAT
-qU/YV+3uhbuiLMjhysok1kvJj9EwVQUFBKe8tXSL/2rMH908qG/+SUyca1PqJD+C
-KB+kCVJ4TAg2xtIn6fMeh91I8qvvQg2jd5hgazrlC7wmM4+9xsw/plZEF/hLDUeF
-uA6GFiOrCun2mTDU4O4cSNtZt7Nptg==
-=Vb3t
------END PGP SIGNATURE-----
-
---oyfmrxm2pqndumzl--
+Jon
