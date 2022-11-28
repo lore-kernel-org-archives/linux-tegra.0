@@ -2,94 +2,264 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1230CC43217
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Nov 2022 16:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BB0C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Nov 2022 08:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbiK0QiZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 27 Nov 2022 11:38:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38454 "EHLO
+        id S230070AbiK1Iup (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Nov 2022 03:50:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiK0QiY (ORCPT
+        with ESMTP id S230161AbiK1Iuo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 27 Nov 2022 11:38:24 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC34064CF;
-        Sun, 27 Nov 2022 08:38:23 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6D14CB80B0D;
-        Sun, 27 Nov 2022 16:38:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17A7CC43470;
-        Sun, 27 Nov 2022 16:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669567101;
-        bh=aUiblZFngrd+gBIPDt/vCbIylr1oZa/GSw6AYX3RVbw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eTj7Ok9CQqWMTFD/7pssddZcKU+xUwEVXO90AkeNRBh2YP9D6PFP4dWDK0emyw6P5
-         /ozmFn6zxCUwlKKKkZd64evIDUv8tfqyfNH4DZujPGKnACs463ox8NDIhzDqtUt8Cr
-         61M6d1qLexZSdurJICOcXzYP0gG+hGtgOhoOpq1T0ctDJFNLnFAz4A+DCn4F5lVMZ2
-         IBai6wBlGMroTwZHLdfZZrNHFGAOTKxDSRERJCAKX9HiBlKpRfr9FlWAeq0O6ouLu4
-         phRlLxMKKpNbOpoO147gJkKgOJifjGKPgwTGHy7gBYFB1YDYbva7akvpZDQXOlle8y
-         XxfBzigo6l92w==
-Received: by mail-vs1-f46.google.com with SMTP id i2so8478288vsc.1;
-        Sun, 27 Nov 2022 08:38:21 -0800 (PST)
-X-Gm-Message-State: ANoB5pkic/SpT3oTCGWQOuEdRHrOHY2FyUqMJjTgFN6D4Rco/dmwwvjg
-        q624It66+aYbGPRJBh3UwlmM+SyE3wwGXB2kEA==
-X-Google-Smtp-Source: AA0mqf4MGoQj/+4GW+LQKzNWq6+l6Xft7suUyGnNAJc5TDGy9BVJhuB+l87sLN0REo0fDjjlMAI4J8sY/+GnK7H/Ip8=
-X-Received: by 2002:a05:6102:3003:b0:3aa:2ac7:5956 with SMTP id
- s3-20020a056102300300b003aa2ac75956mr18431419vsa.6.1669567099999; Sun, 27 Nov
- 2022 08:38:19 -0800 (PST)
-MIME-Version: 1.0
-References: <20221103144200.1479640-1-thierry.reding@gmail.com>
- <Y4C4Cp1D+QEKWiaf@wendy> <Y4C8JvSQuNZiDmJb@wendy>
-In-Reply-To: <Y4C8JvSQuNZiDmJb@wendy>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Sun, 27 Nov 2022 10:38:12 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKFS5nKRihLL60zfqtNujrYGaxN7sp7SbYA_ajC4w2rpQ@mail.gmail.com>
-Message-ID: <CAL_JsqKFS5nKRihLL60zfqtNujrYGaxN7sp7SbYA_ajC4w2rpQ@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: usb: tegra-xusb: Convert to json-schema
-To:     Conor Dooley <conor.dooley@microchip.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Mon, 28 Nov 2022 03:50:44 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4AED17A94
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Nov 2022 00:50:43 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ozZqW-0001D3-5W; Mon, 28 Nov 2022 09:50:36 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ozZqU-000mS0-76; Mon, 28 Nov 2022 09:50:35 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ozZqU-000sRP-4A; Mon, 28 Nov 2022 09:50:34 +0100
+Date:   Mon, 28 Nov 2022 09:50:34 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Wayne Chang <waynec@nvidia.com>, devicetree@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: pwm: tegra: Convert to json-schema
+Message-ID: <20221128085034.gurlqns5kgjitcxo@pengutronix.de>
+References: <20221117214248.2365983-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oyfmrxm2pqndumzl"
+Content-Disposition: inline
+In-Reply-To: <20221117214248.2365983-1-thierry.reding@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Nov 25, 2022 at 6:59 AM Conor Dooley <conor.dooley@microchip.com> wrote:
->
-> On Fri, Nov 25, 2022 at 12:41:46PM +0000, Conor Dooley wrote:
-> > Hi Thierry,
-> >
-> > On Thu, Nov 03, 2022 at 03:42:00PM +0100, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >
-> > > Convert the Tegra XUSB controller bindings from the free-form text
-> > > format to json-schema.
-> > >
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> >
-> > > +        phys = <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-1}>, /* mini-PCIe USB */
-> > > +               <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-2}>, /* USB A */
-> > > +               <&{/padctl@0,7009f000/pads/pcie/lanes/pcie-0}>; /* USB A */
-> >
-> > This seems to be breaking dt_binding_check in today's linux-next:
-> > FATAL ERROR: Can't generate fixup for reference to path &{/padctl@0,7009f000/pads/usb2/lanes/usb2-1}
-> >
-> > Am I missing something? My dt-schema is today's main.
->
-> Apologies for the noise, it appears to have broken several days ago and
-> is not caused by this patch.
->
-> I'll go bisect :)
 
-Yes, the above unresolvable paths need to be fixed (to labels). The
-examples are built as overlays so that unresolved labels are allowed,
-but dtc now checks for unresolved paths.
+--oyfmrxm2pqndumzl
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Rob
+On Thu, Nov 17, 2022 at 10:42:48PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Convert the Tegra PWFM bindings from the free-form text format to
+> json-schema.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v2:
+> - drop Tegra210 example so that validation doesn't fail due to missing
+>   pinmux json-schema conversion
+> - combine Tegra20 and Tegra186 compatible strings
+> - drop useless description of the single clock
+> - remove clock-names property
+> - remove unnecessary quotes
+>=20
+>  .../bindings/pwm/nvidia,tegra20-pwm.txt       | 78 ---------------
+>  .../bindings/pwm/nvidia,tegra20-pwm.yaml      | 96 +++++++++++++++++++
+>  2 files changed, 96 insertions(+), 78 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra20-=
+pwm.txt
+>  create mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra20-=
+pwm.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt=
+ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+> deleted file mode 100644
+> index 47f1abf20118..000000000000
+> --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+> +++ /dev/null
+> @@ -1,78 +0,0 @@
+> -Tegra SoC PWFM controller
+> -
+> -Required properties:
+> -- compatible: Must be:
+> -  - "nvidia,tegra20-pwm": for Tegra20
+> -  - "nvidia,tegra30-pwm", "nvidia,tegra20-pwm": for Tegra30
+> -  - "nvidia,tegra114-pwm", "nvidia,tegra20-pwm": for Tegra114
+> -  - "nvidia,tegra124-pwm", "nvidia,tegra20-pwm": for Tegra124
+> -  - "nvidia,tegra132-pwm", "nvidia,tegra20-pwm": for Tegra132
+> -  - "nvidia,tegra210-pwm", "nvidia,tegra20-pwm": for Tegra210
+> -  - "nvidia,tegra186-pwm": for Tegra186
+> -  - "nvidia,tegra194-pwm": for Tegra194
+> -  - "nvidia,tegra234-pwm", "nvidia,tegra194-pwm": for Tegra234
+> -- reg: physical base address and length of the controller's registers
+> -- #pwm-cells: should be 2. See pwm.yaml in this directory for a descript=
+ion of
+> -  the cells format.
+> -- clocks: Must contain one entry, for the module clock.
+> -  See ../clocks/clock-bindings.txt for details.
+> -- resets: Must contain an entry for each entry in reset-names.
+> -  See ../reset/reset.txt for details.
+> -- reset-names: Must include the following entries:
+> -  - pwm
+> -
+> -Optional properties:
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> -In some of the interface like PWM based regulator device, it is required
+> -to configure the pins differently in different states, especially in sus=
+pend
+> -state of the system. The configuration of pin is provided via the pinctrl
+> -DT node as detailed in the pinctrl DT binding document
+> -	Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> -
+> -The PWM node will have following optional properties.
+> -pinctrl-names:	Pin state names. Must be "default" and "sleep".
+> -pinctrl-0:	phandle for the default/active state of pin configurations.
+> -pinctrl-1:	phandle for the sleep state of pin configurations.
+> -
+> -Example:
+> -
+> -	pwm: pwm@7000a000 {
+> -		compatible =3D "nvidia,tegra20-pwm";
+> -		reg =3D <0x7000a000 0x100>;
+> -		#pwm-cells =3D <2>;
+> -		clocks =3D <&tegra_car 17>;
+> -		resets =3D <&tegra_car 17>;
+> -		reset-names =3D "pwm";
+> -	};
+> -
+> -
+> -Example with the pin configuration for suspend and resume:
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> -Suppose pin PE7 (On Tegra210) interfaced with the regulator device and
+> -it requires PWM output to be tristated when system enters suspend.
+> -Following will be DT binding to achieve this:
+> -
+> -#include <dt-bindings/pinctrl/pinctrl-tegra.h>
+> -
+> -	pinmux@700008d4 {
+> -		pwm_active_state: pwm_active_state {
+> -                        pe7 {
+> -                                nvidia,pins =3D "pe7";
+> -                                nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> -			};
+> -		};
+> -
+> -		pwm_sleep_state: pwm_sleep_state {
+> -                        pe7 {
+> -                                nvidia,pins =3D "pe7";
+> -                                nvidia,tristate =3D <TEGRA_PIN_ENABLE>;
+> -			};
+> -		};
+> -	};
+> -
+> -	pwm@7000a000 {
+> -		/* Mandatory PWM properties */
+> -		pinctrl-names =3D "default", "sleep";
+> -		pinctrl-0 =3D <&pwm_active_state>;
+> -		pinctrl-1 =3D <&pwm_sleep_state>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yam=
+l b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
+> new file mode 100644
+> index 000000000000..739d3155dd32
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
+> @@ -0,0 +1,96 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/nvidia,tegra20-pwm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra PWFM controller
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nvidia,tegra20-pwm
+> +          - nvidia,tegra186-pwm
+> +
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra30-pwm
+> +              - nvidia,tegra114-pwm
+> +              - nvidia,tegra124-pwm
+> +              - nvidia,tegra132-pwm
+> +              - nvidia,tegra210-pwm
+> +          - enum:
+> +              - nvidia,tegra20-pwm
+> +
+> +      - items:
+> +          - const: nvidia,tegra194-pwm
+> +          - const: nvidia,tegra186-pwm
+> +
+> +      - items:
+> +          - const: nvidia,tegra234-pwm
+> +          - const: nvidia,tegra194-pwm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    items:
+> +      - description: module reset
+> +
+> +  reset-names:
+> +    items:
+> +      - const: pwm
+> +
+> +  "#pwm-cells":
+> +    const: 2
+
+While the driver supports #pwm-cells =3D <3> it makes little sense to
+allow it as it only supports one polarity. Still I wonder if we should
+allow 3 here for consistency with other drivers/bindings.
+
+But as 2 is fine, I don't care deeply and allowing 3 would be out of
+scope for a conversion from txt to yaml:
+
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--oyfmrxm2pqndumzl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmOEdlUACgkQwfwUeK3K
+7AlgfQgAiMLZY+TwMRvKksahgqvWzti0r13Ko/K4vipsLv906G3FEL8whsQi04rz
+MGnwSTqYFrbV13ebzpJhmYdNhA+sJ/65+fBgUyNndTb0iWutVlFWz7UtoL5FxsXz
+BjHtSGbZThU9YmkMLdlyelsLb6IBatNP9DBnSnhceHULhMpaYdR/NnVdkLeHsZAT
+qU/YV+3uhbuiLMjhysok1kvJj9EwVQUFBKe8tXSL/2rMH908qG/+SUyca1PqJD+C
+KB+kCVJ4TAg2xtIn6fMeh91I8qvvQg2jd5hgazrlC7wmM4+9xsw/plZEF/hLDUeF
+uA6GFiOrCun2mTDU4O4cSNtZt7Nptg==
+=Vb3t
+-----END PGP SIGNATURE-----
+
+--oyfmrxm2pqndumzl--
