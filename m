@@ -2,159 +2,177 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 363EDC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Nov 2022 09:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFBDC4321E
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Nov 2022 15:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbiK1JxZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Nov 2022 04:53:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37620 "EHLO
+        id S231995AbiK1PYh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Nov 2022 10:24:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbiK1JxX (ORCPT
+        with ESMTP id S231834AbiK1PY1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Nov 2022 04:53:23 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD02272
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Nov 2022 01:53:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rAkUAYIiy25AhriTqbTtb10nmHBigaaPDVvZI4DDOhI=; b=Dn6P3HoKFtLuGebafEHocFlvBo
-        fSG5S/9K10/hGZJgRC3hR9OaTKIA5SDMC2N9d30xrVRtW423gC3JsQL3ZXFiXyFgagfDe6Dh/udD8
-        aeaWS7bp1WLkqr6CZCa/qgQlTvn7LRhCsvMmEef9KIWEYHrIqzSezCNCPn3FMO/NFWCBtXdhRulif
-        x7XlybvoEiCXH4nBKAt7VNILkKq/2u8qPGoM2fEr8CWsrBZRQwB+RYvbc66AUQn0zd4nWwSJm0KU/
-        3rdMVidj9vmoDVPvy5yOHekHZIbSEANMYTEtp1LTR6z2/ZOgDLWgIfw/jR410wbAujg1wPMDOIT/R
-        TzyJ+qkg==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1ozapC-007AE2-2j; Mon, 28 Nov 2022 11:53:18 +0200
-Message-ID: <97b3d50e-fa13-ae55-f7d1-a5082c2ed274@kapsi.fi>
-Date:   Mon, 28 Nov 2022 11:53:17 +0200
+        Mon, 28 Nov 2022 10:24:27 -0500
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8303BFACE;
+        Mon, 28 Nov 2022 07:23:53 -0800 (PST)
+Received: from booty.fritz.box (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id DEEED100012;
+        Mon, 28 Nov 2022 15:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1669649031;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=7HL0ISbsVkEIWmbEKG1N78X+sG+6Ylnu1Jo+z3jhzaE=;
+        b=kAC1/FyAqtbv9hVp8wVbDuQMlFbCzMnb+xVN6ZO512uB8K2axp+jpOuDDI8AzyZeBBQzCQ
+        VVARyMYmrS577kp/zHni2g6BjK5In3kHaoWifpqr8u2oJmiyuVr4u7oDdhCpQ6np3HRcNK
+        EN8icA/QitD3kDNc0knv7uM1DD6CYLuGsgODdxipToeal6H18aJzHuiA3OzjZzIVYIRJNi
+        UoQEwu7jCbbWI0/zcg9K4veZPnNfRpfWbxpFOIvzeSsGHxm99yEIdQRA3N+WPfF9dSdfVA
+        fx1yGfUSKb1TS/WfWRzODHjvsrNpO7Hqnqvt/45Iroz8vQGYwEA/ixY8V2Gu5Q==
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>
+Subject: [PATCH v2 00/21] Add Tegra20 parallel video input capture
+Date:   Mon, 28 Nov 2022 16:23:15 +0100
+Message-Id: <20221128152336.133953-1-luca.ceresoli@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v2 resend 2/2] gpu: host1x: fix memory leak of device
- names
-Content-Language: en-US
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-tegra@vger.kernel.org, thierry.reding@gmail.com,
-        airlied@gmail.com, daniel@ffwll.ch, mperttunen@nvidia.com
-References: <20221126073315.365567-1-yangyingliang@huawei.com>
- <20221126073315.365567-3-yangyingliang@huawei.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <20221126073315.365567-3-yangyingliang@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11/26/22 09:33, Yang Yingliang wrote:
-> The device names allocated by dev_set_name() need be freed
-> before module unloading, but they can not be freed because
-> the kobject's refcount which was set in device_initialize()
-> has not be decreased to 0.
-> 
-> As comment of device_add() says, if it fails, use only
-> put_device() drop the refcount, then the name will be
-> freed in kobejct_cleanup().
-> 
-> device_del() and put_device() can be replaced with
-> device_unregister(), so call it to unregister the added
-> successfully devices, and just call put_device() to the
-> not added device.
-> 
-> Add a release() function to device to avoid null release()
-> function WARNING in device_release(), it's empty, because
-> the context devices are freed together in
-> host1x_memory_context_list_free().
-> 
-> Fixes: 8aa5bcb61612 ("gpu: host1x: Add context device management code")
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
->   drivers/gpu/host1x/context.c | 23 +++++++++++++++--------
->   1 file changed, 15 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/host1x/context.c b/drivers/gpu/host1x/context.c
-> index 291f34562e2e..047696432eb2 100644
-> --- a/drivers/gpu/host1x/context.c
-> +++ b/drivers/gpu/host1x/context.c
-> @@ -13,6 +13,11 @@
->   #include "context.h"
->   #include "dev.h"
->   
-> +static void host1x_memory_context_release(struct device *dev)
-> +{
-> +	/* context device is freed in host1x_memory_context_list_free() */
-> +}
-> +
->   int host1x_memory_context_list_init(struct host1x *host1x)
->   {
->   	struct host1x_memory_context_list *cdl = &host1x->context_list;
-> @@ -53,28 +58,30 @@ int host1x_memory_context_list_init(struct host1x *host1x)
->   		dev_set_name(&ctx->dev, "host1x-ctx.%d", i);
->   		ctx->dev.bus = &host1x_context_device_bus_type;
->   		ctx->dev.parent = host1x->dev;
-> +		ctx->dev.release = host1x_memory_context_release;
->   
->   		dma_set_max_seg_size(&ctx->dev, UINT_MAX);
->   
->   		err = device_add(&ctx->dev);
->   		if (err) {
->   			dev_err(host1x->dev, "could not add context device %d: %d\n", i, err);
-> -			goto del_devices;
-> +			put_device(&ctx->dev);
-> +			goto unreg_devices;
->   		}
->   
->   		err = of_dma_configure_id(&ctx->dev, node, true, &i);
->   		if (err) {
->   			dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
->   				i, err);
-> -			device_del(&ctx->dev);
-> -			goto del_devices;
-> +			device_unregister(&ctx->dev);
-> +			goto unreg_devices;
->   		}
->   
->   		fwspec = dev_iommu_fwspec_get(&ctx->dev);
->   		if (!fwspec || !device_iommu_mapped(&ctx->dev)) {
->   			dev_err(host1x->dev, "Context device %d has no IOMMU!\n", i);
-> -			device_del(&ctx->dev);
-> -			goto del_devices;
-> +			device_unregister(&ctx->dev);
-> +			goto unreg_devices;
->   		}
->   
->   		ctx->stream_id = fwspec->ids[0] & 0xffff;
-> @@ -82,9 +89,9 @@ int host1x_memory_context_list_init(struct host1x *host1x)
->   
->   	return 0;
->   
-> -del_devices:
-> +unreg_devices:
->   	while (i--)
-> -		device_del(&cdl->devs[i].dev);
-> +		device_unregister(&cdl->devs[i].dev);
->   
->   	kfree(cdl->devs);
->   	cdl->devs = NULL;
-> @@ -98,7 +105,7 @@ void host1x_memory_context_list_free(struct host1x_memory_context_list *cdl)
->   	unsigned int i;
->   
->   	for (i = 0; i < cdl->len; i++)
-> -		device_del(&cdl->devs[i].dev);
-> +		device_unregister(&cdl->devs[i].dev);
->   
->   	kfree(cdl->devs);
->   	cdl->len = 0;
+Tegra20 and other Tegra SoCs have a video input (VI) peripheral that can
+receive from either MIPI CSI-2 or parallel video (called respectively "CSI"
+and "VIP" in the documentation). The kernel currently has a staging driver
+for Tegra210 CSI capture. This patch set adds support for Tegra20 VIP
+capture.
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Unfortunately I had no real documentation available to base this work on.
+I only had a working downstream 3.1 kernel, so I started with the driver
+found there and heavily reworked it to fit into the mainline tegra-video
+driver structure. The existing code appears written with the intent of
+being modular and allow adding new input mechanisms and new SoCs while
+keeping a unique VI core module. However its modularity and extensibility
+was not enough to add Tegra20 VIP support, so I added some hooks to turn
+hard-coded behaviour into per-SoC or per-bus customizable code. There are
+also a fix, some generic cleanups and DT bindings.
+
+Quick tour of the patches:
+
+ * Device tree bindings and minor DTS improvements
+
+   01. dt-bindings: display: tegra: add Tegra20 VIP
+   02. dt-bindings: display: tegra: vi: add 'vip' property and example
+
+ * A fix
+
+   03. staging: media: tegra-video: fix .vidioc_enum_fmt_vid_cap to return all formats
+
+ * Minor improvements to logging, comments, cleanups
+
+   04. staging: media: tegra-video: improve documentation of tegra_video_format fields
+   05. staging: media: tegra-video: document tegra_channel_get_remote_source_subdev
+   06. staging: media: tegra-video: fix typos in comment
+   07. staging: media: tegra-video: improve error messages
+   08. staging: media: tegra-video: slightly simplify cleanup on errors
+   09. staging: media: tegra-video: move private struct declaration to C file
+   10. staging: media: tegra-video: remove unneeded include
+
+ * Preparation to make the VI module generic enough to host Tegra20 and VIP
+
+   11. staging: media: tegra-video: Kconfig: allow TPG only on Tegra210
+   12. staging: media: tegra-video: move tegra_channel_fmt_align to a per-soc op
+   13. staging: media: tegra-video: move default format to soc-specific data
+   14. staging: media: tegra-video: move MIPI calibration calls from VI to CSI
+   15. staging: media: tegra-video: add a per-soc enable/disable op
+   16. staging: media: tegra-video: move syncpt init/free to a per-soc op
+   17. staging: media: tegra-video: add syncpts for Tegra20 to struct tegra_vi
+   18. staging: media: tegra-video: add hooks for planar YUV and H/V flip
+   19. staging: media: tegra-video: add H/V flip controls
+
+ * Implementation of VIP and Tegra20
+
+   20. staging: media: tegra-video: add support for VIP (parallel video input)
+   21. staging: media: tegra-video: add tegra20 variant
+
+Enjoy!
+
+Changed in v2:
+- improved dt-bindings patches based on reviews
+- removed patches 3 and 4 adding DT labels without a mainline user
+- two small fixes to the last patch
+
+[v1] https://lore.kernel.org/linux-tegra/20221124155634.5bc2a423@booty/T/#t
+
+Luca
+
+Luca Ceresoli (21):
+  dt-bindings: display: tegra: add Tegra20 VIP
+  dt-bindings: display: tegra: vi: add 'vip' property and example
+  staging: media: tegra-video: fix .vidioc_enum_fmt_vid_cap to return
+    all formats
+  staging: media: tegra-video: improve documentation of
+    tegra_video_format fields
+  staging: media: tegra-video: document
+    tegra_channel_get_remote_source_subdev
+  staging: media: tegra-video: fix typos in comment
+  staging: media: tegra-video: improve error messages
+  staging: media: tegra-video: slightly simplify cleanup on errors
+  staging: media: tegra-video: move private struct declaration to C file
+  staging: media: tegra-video: remove unneeded include
+  staging: media: tegra-video: Kconfig: allow TPG only on Tegra210
+  staging: media: tegra-video: move tegra_channel_fmt_align to a per-soc
+    op
+  staging: media: tegra-video: move default format to soc-specific data
+  staging: media: tegra-video: move MIPI calibration calls from VI to
+    CSI
+  staging: media: tegra-video: add a per-soc enable/disable op
+  staging: media: tegra-video: move syncpt init/free to a per-soc op
+  staging: media: tegra-video: add syncpts for Tegra20 to struct
+    tegra_vi
+  staging: media: tegra-video: add hooks for planar YUV and H/V flip
+  staging: media: tegra-video: add H/V flip controls
+  staging: media: tegra-video: add support for VIP (parallel video
+    input)
+  staging: media: tegra-video: add tegra20 variant
+
+ .../display/tegra/nvidia,tegra20-vi.yaml      |  68 ++
+ .../display/tegra/nvidia,tegra20-vip.yaml     |  63 ++
+ MAINTAINERS                                   |  10 +
+ drivers/staging/media/tegra-video/Kconfig     |   1 +
+ drivers/staging/media/tegra-video/Makefile    |   2 +
+ drivers/staging/media/tegra-video/csi.c       |  44 ++
+ drivers/staging/media/tegra-video/tegra20.c   | 661 ++++++++++++++++++
+ drivers/staging/media/tegra-video/tegra210.c  |  97 ++-
+ drivers/staging/media/tegra-video/vi.c        | 321 ++-------
+ drivers/staging/media/tegra-video/vi.h        |  76 +-
+ drivers/staging/media/tegra-video/video.c     |   5 +
+ drivers/staging/media/tegra-video/video.h     |   2 +-
+ drivers/staging/media/tegra-video/vip.c       | 298 ++++++++
+ drivers/staging/media/tegra-video/vip.h       |  72 ++
+ 14 files changed, 1434 insertions(+), 286 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
+ create mode 100644 drivers/staging/media/tegra-video/tegra20.c
+ create mode 100644 drivers/staging/media/tegra-video/vip.c
+ create mode 100644 drivers/staging/media/tegra-video/vip.h
+
+-- 
+2.34.1
 
