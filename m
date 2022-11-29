@@ -2,155 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EE0C47088
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Nov 2022 16:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E04C4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Nov 2022 17:16:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235900AbiK2QX2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Nov 2022 11:23:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52314 "EHLO
+        id S230217AbiK2RQ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Nov 2022 12:16:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235766AbiK2QX0 (ORCPT
+        with ESMTP id S236441AbiK2RQ1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Nov 2022 11:23:26 -0500
-X-Greylist: delayed 2623 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Nov 2022 08:23:24 PST
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E0A729818;
-        Tue, 29 Nov 2022 08:23:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=38ZO5dcQL7vEBOSehjzd4koG7jc6NaxBkgnbwvWmh2Y=; b=xlk1fVSDvS2IHfd8DdjH/YnlDh
-        o/+tEzgh7v2gBMCj862rB3kWujZyesuCtaiypcv0V9Lb1JWEUqFHSIDa/Gm1WrcujHNHiFRlKZyMH
-        meq9x6mbCVn8oxAfX9K4OaezgSfwcF1JsYakeak3EW1H8yad0nb3jhaQ3/iMP0rwc1u4kyFYu8f8M
-        jEGAENuEeJr3crC9DMwPB+7AYYBMa07v4wyUemABf4FNE7v6aaYn4EbnPtXFQNJXvQpfSG3Gr2BWU
-        MjHt+tDyp2gyOSEOtPbchQhQ1mswqXMJvhCl9X8wW0hCGL/loGnY31gEOt9r0o4XsxjQdPfDm02HR
-        AQn90mMQ==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1p02hb-00DfaO-Mo; Tue, 29 Nov 2022 17:39:19 +0200
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] thermal: tegra-bpmp: Check if BPMP supports trip points
-Date:   Tue, 29 Nov 2022 17:39:14 +0200
-Message-Id: <20221129153914.2699041-1-cyndis@kapsi.fi>
-X-Mailer: git-send-email 2.37.0
+        Tue, 29 Nov 2022 12:16:27 -0500
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CDA663F0
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 09:16:25 -0800 (PST)
+Received: by mail-oi1-f177.google.com with SMTP id e205so15911647oif.11
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 09:16:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=THotrQ+HKot/E2rMLzTFR9eqJ1xQO8AkKJR+hbvGfOE=;
+        b=J3KH8u2ULsWjZtG+3SPzk9zuzzLzeaihOVyXLiAe+m0qzO1t2mxcT5pSM8YhKyqtyT
+         SFoFSJ0Je/NMfHILBotrXK/mEJ3fNYF81FWResHHiem4H5IjwqgPU+M5xbNtQuRjw//d
+         BOp+ZLp00+8SxcwYBDOq4jYskMAIcwqkXgxRZDfpiio8zkLB6T4w91cQI1NtBOFto98n
+         wM5BuU8w4q4nRmMtZmAHhmBWN5mloyt/nfoyKSsQGGjnU1sLmQp/T/F/rLhjH9Iax+NP
+         4lu8vUYB0idM/Pj0AUSDaCz68YzZBnANIP0Wcz3HiTRcs+OwdOtYWTrGLx2rnGc/j7QO
+         I2eQ==
+X-Gm-Message-State: ANoB5pmA27gn0U4Kbqw7bjXdUfZGSwxJDbG9ywpjkIzTebwaBdc/a7oX
+        OgPEi6W91TAGRYXPAAP+9QOAM2BwQQ==
+X-Google-Smtp-Source: AA0mqf6WUU4MwYNWgHsrvAQF0xaTM/RleksXvP6Rlc9Wt/p3oMlZ3xm/Zz0dzwlQ3U14bxAtyAb1ww==
+X-Received: by 2002:a05:6808:21a4:b0:354:b8bc:ce96 with SMTP id be36-20020a05680821a400b00354b8bcce96mr18575003oib.169.1669742184709;
+        Tue, 29 Nov 2022 09:16:24 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id 45-20020a9d02b0000000b0066ac42bc8a4sm6149007otl.33.2022.11.29.09.16.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Nov 2022 09:16:23 -0800 (PST)
+Received: (nullmailer pid 3847321 invoked by uid 1000);
+        Tue, 29 Nov 2022 17:16:23 -0000
+Date:   Tue, 29 Nov 2022 11:16:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     arm@kernel.org, soc@kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL v2 4/7] dt-bindings: Changes for v6.2-rc1
+Message-ID: <20221129171623.GA3838985-robh@kernel.org>
+References: <20221121171239.2041835-1-thierry.reding@gmail.com>
+ <20221121171239.2041835-4-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221121171239.2041835-4-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+On Mon, Nov 21, 2022 at 06:12:36PM +0100, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
+> 
+> The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+> 
+>   Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.2-dt-bindings-v2
+> 
+> for you to fetch changes up to 97351cd8bea8e284cf62b4b7f35fa12059b47d7f:
+> 
+>   dt-bindings: usb: tegra-xusb: Convert to json-schema (2022-11-21 13:27:30 +0100)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> dt-bindings: Changes for v6.2-rc1
+> 
+> New memory client IDs and IOMMU stream IDs, as well as new compatible
+> strings are introduced to support more hardware on Tegra234. Some device
+> tree bindings are converted to json-schema to allow formal validation.
+> 
+> ----------------------------------------------------------------
+> Jon Hunter (1):
+>       dt-bindings: tegra: Update headers for Tegra234
+> 
+> Mikko Perttunen (2):
+>       dt-bindings: Add headers for NVDEC on Tegra234
+>       dt-bindings: Add bindings for Tegra234 NVDEC
+> 
+> Sandipan Patra (1):
+>       dt-bindings: pwm: tegra: Document Tegra234 PWM
+> 
+> Thierry Reding (4):
+>       dt-bindings: pinctrl: tegra: Convert to json-schema
+>       dt-bindings: pinctrl: tegra194: Separate instances
+>       dt-bindings: pwm: tegra: Convert to json-schema
+>       dt-bindings: usb: tegra-xusb: Convert to json-schema
 
-Check if BPMP supports thermal trip points, and if not,
-do not expose the .set_trips callback to the thermal core
-framework. This can happen in virtualized environments
-where asynchronous communication with VM BPMP drivers is not
-available.
+This one has warnings due to upstream dtc changes. Details here[1].
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/thermal/tegra/tegra-bpmp-thermal.c | 52 +++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 1 deletion(-)
+Rob
 
-diff --git a/drivers/thermal/tegra/tegra-bpmp-thermal.c b/drivers/thermal/tegra/tegra-bpmp-thermal.c
-index 0b7a1a1948cb..c76e1ea62c8a 100644
---- a/drivers/thermal/tegra/tegra-bpmp-thermal.c
-+++ b/drivers/thermal/tegra/tegra-bpmp-thermal.c
-@@ -163,19 +163,69 @@ static int tegra_bpmp_thermal_get_num_zones(struct tegra_bpmp *bpmp,
- 	return 0;
- }
- 
-+static int tegra_bpmp_thermal_trips_supported(struct tegra_bpmp *bpmp, bool *supported)
-+{
-+	struct mrq_thermal_host_to_bpmp_request req;
-+	union mrq_thermal_bpmp_to_host_response reply;
-+	struct tegra_bpmp_message msg;
-+	int err;
-+
-+	memset(&req, 0, sizeof(req));
-+	req.type = CMD_THERMAL_QUERY_ABI;
-+	req.query_abi.type = CMD_THERMAL_SET_TRIP;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	msg.mrq = MRQ_THERMAL;
-+	msg.tx.data = &req;
-+	msg.tx.size = sizeof(req);
-+	msg.rx.data = &reply;
-+	msg.rx.size = sizeof(reply);
-+
-+	err = tegra_bpmp_transfer(bpmp, &msg);
-+	if (err)
-+		return err;
-+
-+	if (msg.rx.ret == 0) {
-+		*supported = true;
-+		return 0;
-+	} else if (msg.rx.ret == -BPMP_ENODEV) {
-+		*supported = false;
-+		return 0;
-+	} else {
-+		return -EINVAL;
-+	}
-+}
-+
- static const struct thermal_zone_device_ops tegra_bpmp_of_thermal_ops = {
- 	.get_temp = tegra_bpmp_thermal_get_temp,
- 	.set_trips = tegra_bpmp_thermal_set_trips,
- };
- 
-+static const struct thermal_zone_device_ops tegra_bpmp_of_thermal_ops_notrips = {
-+	.get_temp = tegra_bpmp_thermal_get_temp,
-+};
-+
- static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
- {
- 	struct tegra_bpmp *bpmp = dev_get_drvdata(pdev->dev.parent);
-+	const struct thermal_zone_device_ops *thermal_ops;
- 	struct tegra_bpmp_thermal *tegra;
- 	struct thermal_zone_device *tzd;
- 	unsigned int i, max_num_zones;
-+	bool supported;
- 	int err;
- 
-+	err = tegra_bpmp_thermal_trips_supported(bpmp, &supported);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to determine if trip points are supported\n");
-+		return err;
-+	}
-+
-+	if (supported)
-+		thermal_ops = &tegra_bpmp_of_thermal_ops;
-+	else
-+		thermal_ops = &tegra_bpmp_of_thermal_ops_notrips;
-+
- 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
- 	if (!tegra)
- 		return -ENOMEM;
-@@ -213,7 +263,7 @@ static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
- 		}
- 
- 		tzd = devm_thermal_of_zone_register(
--			&pdev->dev, i, zone, &tegra_bpmp_of_thermal_ops);
-+			&pdev->dev, i, zone, thermal_ops);
- 		if (IS_ERR(tzd)) {
- 			if (PTR_ERR(tzd) == -EPROBE_DEFER)
- 				return -EPROBE_DEFER;
--- 
-2.37.0
-
+[1] https://lore.kernel.org/all/CAL_JsqKFS5nKRihLL60zfqtNujrYGaxN7sp7SbYA_ajC4w2rpQ@mail.gmail.com/
