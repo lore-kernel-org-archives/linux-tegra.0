@@ -2,105 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E04C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Nov 2022 17:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128F0C4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Nov 2022 18:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230217AbiK2RQ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Nov 2022 12:16:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49000 "EHLO
+        id S236297AbiK2SAt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Nov 2022 13:00:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236441AbiK2RQ1 (ORCPT
+        with ESMTP id S236149AbiK2SAs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Nov 2022 12:16:27 -0500
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CDA663F0
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 09:16:25 -0800 (PST)
-Received: by mail-oi1-f177.google.com with SMTP id e205so15911647oif.11
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 09:16:25 -0800 (PST)
+        Tue, 29 Nov 2022 13:00:48 -0500
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BDF6B389
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 10:00:46 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id 82so6273648pgc.0
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 10:00:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TSI5hG4OpJqGbtaBgdMep1PH+0f8Fx62v+X9xZ1Fl94=;
+        b=PVqG6QzEOT3S84aLFS3ebN/+dcswywiw+Tx6QqHnhwexLip1a+xdTIutTPQLHGODOE
+         HUMJxl4i7tyn0wbyWEwmwvBAV5fXYIPCYh+PZ86ivuFF+Z2Evwdp8at1oPYfaqoo67JH
+         DfFuCRaP2xlxa/ergCj0mErkRDRutP8j+PmWU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=THotrQ+HKot/E2rMLzTFR9eqJ1xQO8AkKJR+hbvGfOE=;
-        b=J3KH8u2ULsWjZtG+3SPzk9zuzzLzeaihOVyXLiAe+m0qzO1t2mxcT5pSM8YhKyqtyT
-         SFoFSJ0Je/NMfHILBotrXK/mEJ3fNYF81FWResHHiem4H5IjwqgPU+M5xbNtQuRjw//d
-         BOp+ZLp00+8SxcwYBDOq4jYskMAIcwqkXgxRZDfpiio8zkLB6T4w91cQI1NtBOFto98n
-         wM5BuU8w4q4nRmMtZmAHhmBWN5mloyt/nfoyKSsQGGjnU1sLmQp/T/F/rLhjH9Iax+NP
-         4lu8vUYB0idM/Pj0AUSDaCz68YzZBnANIP0Wcz3HiTRcs+OwdOtYWTrGLx2rnGc/j7QO
-         I2eQ==
-X-Gm-Message-State: ANoB5pmA27gn0U4Kbqw7bjXdUfZGSwxJDbG9ywpjkIzTebwaBdc/a7oX
-        OgPEi6W91TAGRYXPAAP+9QOAM2BwQQ==
-X-Google-Smtp-Source: AA0mqf6WUU4MwYNWgHsrvAQF0xaTM/RleksXvP6Rlc9Wt/p3oMlZ3xm/Zz0dzwlQ3U14bxAtyAb1ww==
-X-Received: by 2002:a05:6808:21a4:b0:354:b8bc:ce96 with SMTP id be36-20020a05680821a400b00354b8bcce96mr18575003oib.169.1669742184709;
-        Tue, 29 Nov 2022 09:16:24 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 45-20020a9d02b0000000b0066ac42bc8a4sm6149007otl.33.2022.11.29.09.16.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Nov 2022 09:16:23 -0800 (PST)
-Received: (nullmailer pid 3847321 invoked by uid 1000);
-        Tue, 29 Nov 2022 17:16:23 -0000
-Date:   Tue, 29 Nov 2022 11:16:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     arm@kernel.org, soc@kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL v2 4/7] dt-bindings: Changes for v6.2-rc1
-Message-ID: <20221129171623.GA3838985-robh@kernel.org>
-References: <20221121171239.2041835-1-thierry.reding@gmail.com>
- <20221121171239.2041835-4-thierry.reding@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TSI5hG4OpJqGbtaBgdMep1PH+0f8Fx62v+X9xZ1Fl94=;
+        b=Qz7cKREUyOfXEHiwDMzR1d2zGNPhuTYCvi6Dp+Ezkw05wVxmsaAhFHD7eohWrVJfNq
+         MoqzHFZgUQjG6g4WSbPi8JpZp6VRVMem4q4oa4zPnMb24AXQhrYwKEAptidLOHgr6WmK
+         fWpkuDarrCj14J2oWibLCmK22MPXvepcOdDS7dvuNsdUJtycauA7NW+A5yQCQEPTkrJI
+         4/OgWGSNhaPdJtfKkptPmq1WrUpyFs7Jz+NSY3y56FxqRS4/EDQoWM4fC4ncayBJe5P4
+         zdw6Br3eNbcUdbWobL5nzHp8ueGQFEW0Svuez0kGMkaRBXW/GFR6aQJ2DdCj3iPSVxIz
+         Bd4w==
+X-Gm-Message-State: ANoB5plz3UuZwvMKQq9f9I/JP4L2pUijDkKehcxjbIxa78zU59UmE2q/
+        MtEZAiuzjpA3ZvsAJ7BRDxOxYo0/UkVCgIJG4gLyvQ==
+X-Google-Smtp-Source: AA0mqf7u65cBqunX27gIoaEd70af4bgJCUl4C12pXRT79B5hou0hUEMAqHi1rrceJLd5hJK9hxM6ue6EB8yz9NAAWV8=
+X-Received: by 2002:a63:180a:0:b0:470:63e5:5c59 with SMTP id
+ y10-20020a63180a000000b0047063e55c59mr32417999pgl.172.1669744846086; Tue, 29
+ Nov 2022 10:00:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221121171239.2041835-4-thierry.reding@gmail.com>
+References: <20221103155756.687789-1-benjamin.tissoires@redhat.com>
+ <20221103155756.687789-4-benjamin.tissoires@redhat.com> <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
+ <CAO-hwJJZxgeTT8mLwFrYynSVASva=o7qL9Kr4xOywV3KDUu2GA@mail.gmail.com>
+ <CAADnVQ+kE+EJ9LAfwge9ksC0LR8r+ShQNYi5g-MDajufXq8Yxw@mail.gmail.com> <CAO-hwJJGxvrLRGSt7g0T1rYiuCCigVzQ-L6yKLM1-44EpYqmsQ@mail.gmail.com>
+In-Reply-To: <CAO-hwJJGxvrLRGSt7g0T1rYiuCCigVzQ-L6yKLM1-44EpYqmsQ@mail.gmail.com>
+From:   Florent Revest <revest@chromium.org>
+Date:   Tue, 29 Nov 2022 19:00:35 +0100
+Message-ID: <CABRcYmKyRchQhabi1Vd9RcMQFCcb=EtWyEbFDFRTc-L-U8WhgA@mail.gmail.com>
+Subject: Re: [PATCH hid v12 03/15] HID: initial BPF implementation
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <shuah@kernel.org>,
+        Tero Kristo <tero.kristo@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 21, 2022 at 06:12:36PM +0100, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
-> 
-> The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
-> 
->   Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.2-dt-bindings-v2
-> 
-> for you to fetch changes up to 97351cd8bea8e284cf62b4b7f35fa12059b47d7f:
-> 
->   dt-bindings: usb: tegra-xusb: Convert to json-schema (2022-11-21 13:27:30 +0100)
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> dt-bindings: Changes for v6.2-rc1
-> 
-> New memory client IDs and IOMMU stream IDs, as well as new compatible
-> strings are introduced to support more hardware on Tegra234. Some device
-> tree bindings are converted to json-schema to allow formal validation.
-> 
-> ----------------------------------------------------------------
-> Jon Hunter (1):
->       dt-bindings: tegra: Update headers for Tegra234
-> 
-> Mikko Perttunen (2):
->       dt-bindings: Add headers for NVDEC on Tegra234
->       dt-bindings: Add bindings for Tegra234 NVDEC
-> 
-> Sandipan Patra (1):
->       dt-bindings: pwm: tegra: Document Tegra234 PWM
-> 
-> Thierry Reding (4):
->       dt-bindings: pinctrl: tegra: Convert to json-schema
->       dt-bindings: pinctrl: tegra194: Separate instances
->       dt-bindings: pwm: tegra: Convert to json-schema
->       dt-bindings: usb: tegra-xusb: Convert to json-schema
+On Thu, Nov 24, 2022 at 4:50 PM Benjamin Tissoires
+<benjamin.tissoires@redhat.com> wrote:
+>
+> On Wed, Nov 23, 2022 at 9:14 PM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > On Wed, Nov 23, 2022 at 6:53 AM Benjamin Tissoires
+> > <benjamin.tissoires@redhat.com> wrote:
+> > >
+> > > Hi Jon,
+> > >
+> > > On Wed, Nov 23, 2022 at 2:25 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > > >
+> > > > We have a kernel test that checks for new warning and error messages on
+> > > > boot and with this change I am now seeing the following error message on
+> > > > our Tegra platforms ...
+> > > >
+> > > >   WARNING KERN hid_bpf: error while preloading HID BPF dispatcher: -13
+> > > >
+> > > > I have a quick look at the code, but I can't say I am familiar with
+> > > > this. So I wanted to ask if a way to fix this or avoid this? I see the
+> > > > code returns 0, so one option would be to make this an informational or
+> > > > debug print.
+> > >
+> > > I am not in favor of debug in that case, because I suspect it'll hide
+> > > too much when getting a bug report. Informational could do, yes.
+> > >
+> > > However, before that, I'd like to dig a little bit more on why it is
+> > > failing. I thought arm64 now has support of tracing bpf programs, so I
+> > > would not expect this to fail.
 
-This one has warnings due to upstream dtc changes. Details here[1].
+We have BPF trampolines on arm64 already but no ftrace direct calls
+right now. (so trampolines get jitted but don't get called eheh :)) So
+indeed BPF tracing programs (fentry/fexit/fmod_ret) do not work on
+arm64 at the moment.
 
-Rob
+> > Unfortunately the patches to add support for such tracing bpf progs got stuck.
+> > Florent/Mark can probably share the latest status.
 
-[1] https://lore.kernel.org/all/CAL_JsqKFS5nKRihLL60zfqtNujrYGaxN7sp7SbYA_ajC4w2rpQ@mail.gmail.com/
+We are working on an implementation of ftrace direct calls that would
+fit within the constraints of arm64 and play nice with the other users
+of the ftrace call site. Hopefully we have a patch to share in the
+next couple of weeks I'd say!
+
+> Oh... I noticed Jon's config was lacking CONFIG_FTRACE. So should I
+> also add a depends on CONFIG_FTRACE to enable HID-BPF?
+
+If HID-BPF fundamentally depends on a fmod_ret program being attached
+to function, it seems to me that it should depend on both:
+    CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS (CONFIG_FTRACE or even
+CONFIG_DYNAMIC_FTRACE aren't enough, there can be architectures that
+do not support direct calls. here you noticed it on arm64 which
+luckily should get fixed someday soon but there could be other
+architectures with that issue too)
+and
+    CONFIG_FUNCTION_ERROR_INJECTION (since [1] error injection needs
+to be explicitly opted-in, it's easy to miss it and fail to attach
+fmod_ret programs in mysterious ways)
+
+I'm thinking that maybe encoding these two dependencies in the
+CONFIG_HID_BPF is leaking too much of the bpf tracing abstraction to
+the user. Maybe the BPF Kconfig could provide "proxy" configs like
+HAVE_BPF_FENTRY_FEXIT, HAVE_BPF_FMOD_RET (naming is hard) to expose
+these dependencies better ?
+
+1: https://lore.kernel.org/lkml/20221121104403.1545f9b5@gandalf.local.home/
