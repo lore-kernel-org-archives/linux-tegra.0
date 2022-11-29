@@ -2,142 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 128F0C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Nov 2022 18:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FA7C4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Nov 2022 19:19:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236297AbiK2SAt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Nov 2022 13:00:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56340 "EHLO
+        id S236297AbiK2TTK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Nov 2022 14:19:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236149AbiK2SAs (ORCPT
+        with ESMTP id S236732AbiK2TTC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Nov 2022 13:00:48 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BDF6B389
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 10:00:46 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id 82so6273648pgc.0
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 10:00:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TSI5hG4OpJqGbtaBgdMep1PH+0f8Fx62v+X9xZ1Fl94=;
-        b=PVqG6QzEOT3S84aLFS3ebN/+dcswywiw+Tx6QqHnhwexLip1a+xdTIutTPQLHGODOE
-         HUMJxl4i7tyn0wbyWEwmwvBAV5fXYIPCYh+PZ86ivuFF+Z2Evwdp8at1oPYfaqoo67JH
-         DfFuCRaP2xlxa/ergCj0mErkRDRutP8j+PmWU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TSI5hG4OpJqGbtaBgdMep1PH+0f8Fx62v+X9xZ1Fl94=;
-        b=Qz7cKREUyOfXEHiwDMzR1d2zGNPhuTYCvi6Dp+Ezkw05wVxmsaAhFHD7eohWrVJfNq
-         MoqzHFZgUQjG6g4WSbPi8JpZp6VRVMem4q4oa4zPnMb24AXQhrYwKEAptidLOHgr6WmK
-         fWpkuDarrCj14J2oWibLCmK22MPXvepcOdDS7dvuNsdUJtycauA7NW+A5yQCQEPTkrJI
-         4/OgWGSNhaPdJtfKkptPmq1WrUpyFs7Jz+NSY3y56FxqRS4/EDQoWM4fC4ncayBJe5P4
-         zdw6Br3eNbcUdbWobL5nzHp8ueGQFEW0Svuez0kGMkaRBXW/GFR6aQJ2DdCj3iPSVxIz
-         Bd4w==
-X-Gm-Message-State: ANoB5plz3UuZwvMKQq9f9I/JP4L2pUijDkKehcxjbIxa78zU59UmE2q/
-        MtEZAiuzjpA3ZvsAJ7BRDxOxYo0/UkVCgIJG4gLyvQ==
-X-Google-Smtp-Source: AA0mqf7u65cBqunX27gIoaEd70af4bgJCUl4C12pXRT79B5hou0hUEMAqHi1rrceJLd5hJK9hxM6ue6EB8yz9NAAWV8=
-X-Received: by 2002:a63:180a:0:b0:470:63e5:5c59 with SMTP id
- y10-20020a63180a000000b0047063e55c59mr32417999pgl.172.1669744846086; Tue, 29
- Nov 2022 10:00:46 -0800 (PST)
+        Tue, 29 Nov 2022 14:19:02 -0500
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144965B851;
+        Tue, 29 Nov 2022 11:18:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1669749478; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=V3kGaBl+P4U1/h949YafFHG5seRrZ54TXepde/Fhij8=;
+        b=kwEYPgxoRUvmgmDZgDfr7K/4Nn5SbezOwCc0k/h3X080oKq9a9Xj70tanEW+KEEOVuPxpJ
+        rL45gmZBqARfV7xGUCwObl2/Edrqr2czan00pClSefHDumeRA65jH//CWM7h5mxiEOgXIR
+        ggmTDVYzhX+bVVSx1kFWhbvczDnvX6o=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v2 05/26] drm: tegra: Define and use generic PM ops
+Date:   Tue, 29 Nov 2022 19:17:12 +0000
+Message-Id: <20221129191733.137897-6-paul@crapouillou.net>
+In-Reply-To: <20221129191733.137897-1-paul@crapouillou.net>
+References: <20221129191733.137897-1-paul@crapouillou.net>
 MIME-Version: 1.0
-References: <20221103155756.687789-1-benjamin.tissoires@redhat.com>
- <20221103155756.687789-4-benjamin.tissoires@redhat.com> <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
- <CAO-hwJJZxgeTT8mLwFrYynSVASva=o7qL9Kr4xOywV3KDUu2GA@mail.gmail.com>
- <CAADnVQ+kE+EJ9LAfwge9ksC0LR8r+ShQNYi5g-MDajufXq8Yxw@mail.gmail.com> <CAO-hwJJGxvrLRGSt7g0T1rYiuCCigVzQ-L6yKLM1-44EpYqmsQ@mail.gmail.com>
-In-Reply-To: <CAO-hwJJGxvrLRGSt7g0T1rYiuCCigVzQ-L6yKLM1-44EpYqmsQ@mail.gmail.com>
-From:   Florent Revest <revest@chromium.org>
-Date:   Tue, 29 Nov 2022 19:00:35 +0100
-Message-ID: <CABRcYmKyRchQhabi1Vd9RcMQFCcb=EtWyEbFDFRTc-L-U8WhgA@mail.gmail.com>
-Subject: Re: [PATCH hid v12 03/15] HID: initial BPF implementation
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Tero Kristo <tero.kristo@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Nov 24, 2022 at 4:50 PM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> On Wed, Nov 23, 2022 at 9:14 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Wed, Nov 23, 2022 at 6:53 AM Benjamin Tissoires
-> > <benjamin.tissoires@redhat.com> wrote:
-> > >
-> > > Hi Jon,
-> > >
-> > > On Wed, Nov 23, 2022 at 2:25 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> > > >
-> > > > We have a kernel test that checks for new warning and error messages on
-> > > > boot and with this change I am now seeing the following error message on
-> > > > our Tegra platforms ...
-> > > >
-> > > >   WARNING KERN hid_bpf: error while preloading HID BPF dispatcher: -13
-> > > >
-> > > > I have a quick look at the code, but I can't say I am familiar with
-> > > > this. So I wanted to ask if a way to fix this or avoid this? I see the
-> > > > code returns 0, so one option would be to make this an informational or
-> > > > debug print.
-> > >
-> > > I am not in favor of debug in that case, because I suspect it'll hide
-> > > too much when getting a bug report. Informational could do, yes.
-> > >
-> > > However, before that, I'd like to dig a little bit more on why it is
-> > > failing. I thought arm64 now has support of tracing bpf programs, so I
-> > > would not expect this to fail.
+Use the new DEFINE_DRM_MODE_CONFIG_HELPER_PM_OPS() macro to create a
+"struct dev_pm_ops" that can be used by this driver, instead of using
+custom PM callbacks with the same behaviour.
 
-We have BPF trampolines on arm64 already but no ftrace direct calls
-right now. (so trampolines get jitted but don't get called eheh :)) So
-indeed BPF tracing programs (fentry/fexit/fmod_ret) do not work on
-arm64 at the moment.
+v2: Use the DEFINE_DRM_MODE_CONFIG_HELPER_PM_OPS() macro instead of an
+    exported dev_pm_ops.
 
-> > Unfortunately the patches to add support for such tracing bpf progs got stuck.
-> > Florent/Mark can probably share the latest status.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
+---
+ drivers/gpu/drm/tegra/drm.c | 23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
-We are working on an implementation of ftrace direct calls that would
-fit within the constraints of arm64 and play nice with the other users
-of the ftrace call site. Hopefully we have a patch to share in the
-next couple of weeks I'd say!
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index a1f909dac89a..c844444ff522 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1329,25 +1329,6 @@ static int host1x_drm_remove(struct host1x_device *dev)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static int host1x_drm_suspend(struct device *dev)
+-{
+-	struct drm_device *drm = dev_get_drvdata(dev);
+-
+-	return drm_mode_config_helper_suspend(drm);
+-}
+-
+-static int host1x_drm_resume(struct device *dev)
+-{
+-	struct drm_device *drm = dev_get_drvdata(dev);
+-
+-	return drm_mode_config_helper_resume(drm);
+-}
+-#endif
+-
+-static SIMPLE_DEV_PM_OPS(host1x_drm_pm_ops, host1x_drm_suspend,
+-			 host1x_drm_resume);
+-
+ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ .compatible = "nvidia,tegra20-dc", },
+ 	{ .compatible = "nvidia,tegra20-hdmi", },
+@@ -1389,10 +1370,12 @@ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++DEFINE_DRM_MODE_CONFIG_HELPER_PM_OPS(tegra_pm_ops);
++
+ static struct host1x_driver host1x_drm_driver = {
+ 	.driver = {
+ 		.name = "drm",
+-		.pm = &host1x_drm_pm_ops,
++		.pm = pm_sleep_ptr(&tegra_pm_ops),
+ 	},
+ 	.probe = host1x_drm_probe,
+ 	.remove = host1x_drm_remove,
+-- 
+2.35.1
 
-> Oh... I noticed Jon's config was lacking CONFIG_FTRACE. So should I
-> also add a depends on CONFIG_FTRACE to enable HID-BPF?
-
-If HID-BPF fundamentally depends on a fmod_ret program being attached
-to function, it seems to me that it should depend on both:
-    CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS (CONFIG_FTRACE or even
-CONFIG_DYNAMIC_FTRACE aren't enough, there can be architectures that
-do not support direct calls. here you noticed it on arm64 which
-luckily should get fixed someday soon but there could be other
-architectures with that issue too)
-and
-    CONFIG_FUNCTION_ERROR_INJECTION (since [1] error injection needs
-to be explicitly opted-in, it's easy to miss it and fail to attach
-fmod_ret programs in mysterious ways)
-
-I'm thinking that maybe encoding these two dependencies in the
-CONFIG_HID_BPF is leaking too much of the bpf tracing abstraction to
-the user. Maybe the BPF Kconfig could provide "proxy" configs like
-HAVE_BPF_FENTRY_FEXIT, HAVE_BPF_FMOD_RET (naming is hard) to expose
-these dependencies better ?
-
-1: https://lore.kernel.org/lkml/20221121104403.1545f9b5@gandalf.local.home/
