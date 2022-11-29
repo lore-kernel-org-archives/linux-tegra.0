@@ -2,57 +2,96 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DEBC46467
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Nov 2022 08:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD6FC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Nov 2022 09:46:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbiK2Irq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Nov 2022 03:47:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57060 "EHLO
+        id S230476AbiK2JqB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Nov 2022 04:46:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbiK2Iro (ORCPT
+        with ESMTP id S229601AbiK2JqA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Nov 2022 03:47:44 -0500
-X-Greylist: delayed 358 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Nov 2022 00:47:43 PST
-Received: from mail.lucidfour.pl (mail.lucidfour.pl [217.61.97.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C3C2728
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 00:47:43 -0800 (PST)
-Received: by mail.lucidfour.pl (Postfix, from userid 1001)
-        id 972CB819E7; Tue, 29 Nov 2022 08:41:53 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucidfour.pl; s=mail;
-        t=1669711313; bh=CSKXLMgcdpWkXuTgJn5+jsCVobtU9JEF4vCnS5z6McM=;
-        h=Date:From:To:Subject:From;
-        b=BjmgHpMdm6LCoAWPpOqtKP4t47o0nOQLBtEPNrvlzbWtEt82k9nz7WnXC0jyCsD3Z
-         fHM9IZcx0sbm5ONS/UcbHDy1W7NV0x3sXLT1cLj02yIp13xQo4ScqHA2od2q93Z7Jl
-         GWcaGgKzttbxmEUTCnPb5TLotujIOWXQ4cj2wZaGl52PY6WJFIEKj+hD/zFxt6WlOB
-         VxGKIAv5198vLM0li15PtHdcIHkXPr0Ma0ba64ro9vu4NQ/k8vhrrPne2N/3Pi2e5F
-         higJUlkAJcswZUsmXLWP4cqF0xoc0BwSFQyVcrlsfYUb+xeqT2lXhABtDaJaN/N6sP
-         wHR4TcaPTt6bA==
-Received: by mail.lucidfour.pl for <linux-tegra@vger.kernel.org>; Tue, 29 Nov 2022 08:40:05 GMT
-Message-ID: <20221129074501-0.1.e.1f26.0.mk8dr4qaxl@lucidfour.pl>
-Date:   Tue, 29 Nov 2022 08:40:05 GMT
-From:   "Wiktor Nurek" <wiktor.nurek@lucidfour.pl>
-To:     <linux-tegra@vger.kernel.org>
-Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
-X-Mailer: mail.lucidfour.pl
+        Tue, 29 Nov 2022 04:46:00 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C9E5476B;
+        Tue, 29 Nov 2022 01:45:59 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id t11-20020a17090a024b00b0021932afece4so5857155pje.5;
+        Tue, 29 Nov 2022 01:45:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ko+qbf+b0Yv7gj3x+dmqgXT2t4VmwkOjBb0uMWb0qeo=;
+        b=QMTGc8dATSuNa3qa2tdoi28432ZIGdXhepGsvXVGCtpTOLz41a16mSV6pjjVIeEsO9
+         PJrhktRoFkYYeAO5E8N+9SXNKvsJBnpVmZY0oDEWaVJ4nC37dthNqFz+2bX0NyoPb7ji
+         D3/HxVLjkt5GkrZw/CysGVyK3EGEpKo/THJR8Y4wpL092B6BWaFSmqNMjXwB4mWqoEUN
+         jR4GhjSo6zgxjIkYcZt9OQr8ijnL/KwAbKvTjac/uMZE1ZFsFmqlIY33esnYdKCmgngv
+         BTvsjNSh5Vp/JawszvH9dXG0Y2xfdA0UHyun1wvwR0r5/DDXMLHnOiXxFgnUwonl+OPZ
+         ecjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ko+qbf+b0Yv7gj3x+dmqgXT2t4VmwkOjBb0uMWb0qeo=;
+        b=sMfwjkG+8tGwzJTMYHxnqGcGONkJaGWEuXBZ02CpuFicd/Ju+kH2vnDqd7vUp52FUr
+         mGx/FenaZ5uTBGC3mUnAROFZhj9a4fwlZ8kRzGS+lz1wBlatEUN1Hm/kCEET6QG1ZJoL
+         LsznlsNITwOyumMOhhmffLCYHgpyqLT+KbVblKwCldvgwhvsaSU/Nsv2ADrqJd07wU3X
+         9OF7BDrvgrBLSENbhvpwoR51f6nxaOCaJ+yVLggeBvJaqTmXjvwQf9m2lQfcd5vEhB6g
+         pdV+Dn4ra/FOtMdycTCnhopPG8fLiIyD6iHBPen3QHGscwRJORtHu6HeBSBNUfyhhJCN
+         oJmA==
+X-Gm-Message-State: ANoB5pmVolh0qfD/Wh6I3sRzj7VDFq6hstb92eXbW/K5iNGRZgTZl7WN
+        KYeeXPRaQkAFW4p4cVewDQo=
+X-Google-Smtp-Source: AA0mqf4Ne7K6UCo3LviuEHHi1Ldd3jeDKdUSANZrcIYdiQ5jgjAkHiE15SlUMXjD5rBe+tGAb5h5og==
+X-Received: by 2002:a17:90a:4302:b0:20a:e469:dc7d with SMTP id q2-20020a17090a430200b0020ae469dc7dmr56845748pjg.97.1669715158916;
+        Tue, 29 Nov 2022 01:45:58 -0800 (PST)
+Received: from localhost.localdomain ([43.132.141.9])
+        by smtp.gmail.com with ESMTPSA id h7-20020a170902680700b001895b2d48a1sm8259266plk.253.2022.11.29.01.45.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Nov 2022 01:45:58 -0800 (PST)
+From:   zys.zljxml@gmail.com
+To:     thierry.reding@gmail.com, airlied@gmail.com, daniel@ffwll.ch,
+        jonathanh@nvidia.com, sumit.semwal@linaro.org,
+        christian.koenig@amd.com
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org,
+        Yushan Zhou <katrinzhou@tencent.com>
+Subject: [PATCH] drm/tegra: Remove redundant null checks before kfree
+Date:   Tue, 29 Nov 2022 17:45:46 +0800
+Message-Id: <20221129094546.197424-1-zys.zljxml@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+From: Yushan Zhou <katrinzhou@tencent.com>
 
-chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
-skania nowych zlece=C5=84 ze strony www.
+Fix the following coccicheck warning:
+./drivers/gpu/drm/tegra/submit.c:689:2-7: WARNING:
+NULL check before some freeing functions is not needed.
 
-Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
-, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
-=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
-jonowania strony w Google.
+Signed-off-by: Yushan Zhou <katrinzhou@tencent.com>
+---
+ drivers/gpu/drm/tegra/submit.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
+diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+index b24738bdf3df..df34c5daa400 100644
+--- a/drivers/gpu/drm/tegra/submit.c
++++ b/drivers/gpu/drm/tegra/submit.c
+@@ -685,8 +685,7 @@ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+ 		kfree(job_data->used_mappings);
+ 	}
+ 
+-	if (job_data)
+-		kfree(job_data);
++	kfree(job_data);
+ put_bo:
+ 	gather_bo_put(&bo->base);
+ unlock:
+-- 
+2.27.0
 
-
-Pozdrawiam serdecznie,
-Wiktor Nurek
