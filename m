@@ -2,185 +2,186 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 285C9C352A1
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Nov 2022 08:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A173C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Nov 2022 13:57:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234098AbiK3Iu0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Nov 2022 03:50:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55166 "EHLO
+        id S229814AbiK3N5X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Nov 2022 08:57:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232674AbiK3IuZ (ORCPT
+        with ESMTP id S229521AbiK3N5V (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Nov 2022 03:50:25 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78692CCA6
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Nov 2022 00:49:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669798169;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xANXvbQ7iywMEyVlB4xJE5gylEi2EmdID1HL+8vvXPE=;
-        b=PxZyN/eC3+mCkrwvSLGUbQ8yNBTLufUh1mglHN4SGUmv1OWG4g4LQt8p+FSPRvgAqMZpvm
-        2R0jUc1dIPgCCgmuWw/DdpPQuCIXowQpYrvqtbjcd9zeb4eTH1pSXoGpWcBL7cOEuPypBL
-        tsW1zz0bJ7r1+0Gfnuqwcbgu6xwUa9Y=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-159-OHfra8jIOPCdQ2ut58ebZg-1; Wed, 30 Nov 2022 03:49:28 -0500
-X-MC-Unique: OHfra8jIOPCdQ2ut58ebZg-1
-Received: by mail-il1-f197.google.com with SMTP id n10-20020a056e02140a00b00302aa23f73fso14804883ilo.20
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Nov 2022 00:49:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xANXvbQ7iywMEyVlB4xJE5gylEi2EmdID1HL+8vvXPE=;
-        b=SQx/X2qeoFz7dBPoDHUcFEHoXbjnzOd9WhvfohcxV3fFIWyZ+3i1cPgti6B53ECF8Q
-         ptYf9SIzG9rIgCnSQHvLvypj41TeSp359/c/VTXdhP+WvJV2CsEqtlWXnIa1MJ4kxyP3
-         tA+OElKzPHxifvsbnxI/RcjkWogUtyg37b4/TG42eaPt2+1hLL+8TyQfMj8YGXY662gP
-         3NkjRYksghLmForIiNhB/2AvBkX7bh6YnVm/jDp0gWaIk2ghn5bOlm+8rWjKafi70s7R
-         bn/OGRlJ+AB9JVls8ezU1jLKIplGpUHNfRDZI5ccP4nUis3q4BictZjhmlhxLAWX8AG8
-         4bAA==
-X-Gm-Message-State: ANoB5pnbWTgMwiLfoFOAD4nAxRUi2q7fSI6JTpw5fCUYidPz2f1sGJOh
-        aNnNqN7bv5HKNk5nS+FH9MQ9azpDZIeFdl5MDxF3zAfmlCn6YUbm0mGqMJ0FvOZUcW3XlG2x4/6
-        2lfW93FH0c4rgI3K/1NrI/J1mkfsdvQu7DBsmdBQ=
-X-Received: by 2002:a02:c737:0:b0:375:1c5f:3127 with SMTP id h23-20020a02c737000000b003751c5f3127mr19645309jao.251.1669798167863;
-        Wed, 30 Nov 2022 00:49:27 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7SN6S5FthjsMHHZOOe/zeRLlQAj+dr+Vd7yWgLU3oWLPsaRFF+jtmM/MiCe0/FyZMhWdA7awXCX70M14aatZE=
-X-Received: by 2002:a02:c737:0:b0:375:1c5f:3127 with SMTP id
- h23-20020a02c737000000b003751c5f3127mr19645276jao.251.1669798167237; Wed, 30
- Nov 2022 00:49:27 -0800 (PST)
+        Wed, 30 Nov 2022 08:57:21 -0500
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2102.outbound.protection.outlook.com [40.107.220.102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D19E4A5BA;
+        Wed, 30 Nov 2022 05:57:17 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I3S5uh52fQlyYgQrStqd0f+ziA8XpdRZA5fwyM08mdQD40idNV1meypd27xPJ20PFn9kxfNeaVyedckkAbo2Zof1+PAipxEZH5drYmI6tBwfFPr83jhV4jKTzPJ5JLjd2YNkmIB5CmB9kPt9PzuWNSYH96BiBmXAKdlj/VX8dqO0No48cM8cNcF+kxyPbGxcGwb0oo6eiUMeB6Sh0D9VYFDkzbxnTr5M/CzHmUyBkneuvDhuSGM9FLdTFXGh4x8BMWvsT7MEKMU3qj5AKn83yCWYACa2JxJEwf669n8hQsuY/X4VCV3oJGaVUtSBNSbtBtWewG8IixksdHVQxoDNuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SimhOmgQ4eIVzie6zAStncGw/jX2asNiOELttGYvsvs=;
+ b=kDnqJAlMIkiRmX4ie0JvIFTc4JCsJNJrynZa8ezI9KPweCo07mgC+RHEfjZ/rKYMvs41qQvouchpI1PHEOU31Tbjfg4F89FZ91oI4ZSgZV4T18kr8oiRe6zkQtJlolTzzFOKPjweDQhyKyewTfLiu/R1HU+xmINhkWRDDQ9gYfjpNvX5yYAMMxMt4dFoJdZHZU4JqHadBf1DXp/a/rS2icEbTdc6QAn2jEVeqK2ZyeTLWN7uZn2ah2endMZ8g68IYJdrDox/Lfm8hoyB8nU0Flw2q5wVeOJkXQT7uTkvvjsfoNIsbpiF6ZaLh6mFpC/8vVL/HMph3k1GZKdd9xHTIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SimhOmgQ4eIVzie6zAStncGw/jX2asNiOELttGYvsvs=;
+ b=ky6TOZbdTGgeTf8FsmcuU3Xhr905YLUpM2A3SO38PNdjw2on0KlXz4wf2NA5IqENTnpYAaxrlXcqTed9Z7/6XoNFjjLSKYYP52fN/NV/gB+JW4xdXdXHCWmmbC0bmF2fMGolNBg5DPDB6yyBrHRBS9iSsJu2aunutLPXdWjUeOo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by MW4PR13MB5483.namprd13.prod.outlook.com (2603:10b6:303:181::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23; Wed, 30 Nov
+ 2022 13:57:13 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::483b:9e84:fadc:da30]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::483b:9e84:fadc:da30%7]) with mapi id 15.20.5857.023; Wed, 30 Nov 2022
+ 13:57:13 +0000
+Date:   Wed, 30 Nov 2022 14:57:06 +0100
+From:   Simon Horman <simon.horman@corigine.com>
+To:     zys.zljxml@gmail.com
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yushan Zhou <katrinzhou@tencent.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] net: tun: Remove redundant null checks before kfree
+Message-ID: <Y4dhMhPswo5Y7DuU@corigine.com>
+References: <20221129084329.92345-1-zys.zljxml@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221129084329.92345-1-zys.zljxml@gmail.com>
+X-ClientProxiedBy: AS4P190CA0017.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d0::7) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
 MIME-Version: 1.0
-References: <20221103155756.687789-1-benjamin.tissoires@redhat.com>
- <20221103155756.687789-4-benjamin.tissoires@redhat.com> <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
- <CAO-hwJJZxgeTT8mLwFrYynSVASva=o7qL9Kr4xOywV3KDUu2GA@mail.gmail.com>
- <CAADnVQ+kE+EJ9LAfwge9ksC0LR8r+ShQNYi5g-MDajufXq8Yxw@mail.gmail.com>
- <CAO-hwJJGxvrLRGSt7g0T1rYiuCCigVzQ-L6yKLM1-44EpYqmsQ@mail.gmail.com> <CABRcYmKyRchQhabi1Vd9RcMQFCcb=EtWyEbFDFRTc-L-U8WhgA@mail.gmail.com>
-In-Reply-To: <CABRcYmKyRchQhabi1Vd9RcMQFCcb=EtWyEbFDFRTc-L-U8WhgA@mail.gmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Wed, 30 Nov 2022 09:49:16 +0100
-Message-ID: <CAO-hwJJz8KpWYbnbK6eJQDzwcY2zsBzEyACnEQ3GzEbMZSiA7g@mail.gmail.com>
-Subject: Re: [PATCH hid v12 03/15] HID: initial BPF implementation
-To:     Florent Revest <revest@chromium.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Tero Kristo <tero.kristo@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|MW4PR13MB5483:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63301554-6244-4050-0c21-08dad2dac826
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YgNUaki81BR9xd/WTGFojZ/lSkMg2zRcifDVEn7FKZWXvlFhQgUQe6+HTWXnbEBSN4qtzUQLw0+MJyt2ykbjbwfqL6fPhAxmRy0PwV/lUG3hwIzRgGJ8iHpM2VBwSiIkMXWhBjzXi+6H+PPUMj2qcdibDWqzaWYGISDcNUnJ05Y5Uuil02/FCFv69SQbqzEFSQEG3PfIB1YTHvodTMBbfKALVIQRPkK7kH6qYDQGsaSLO3SBhtBD/OcXa/3niNp28T6OuDtbJLQCV89f2CbRioTOjNYnRMG7rXIre1pTKK7iPIF2xDB23ukLH26+Y0cU6qC6nEjSLdBILkYWVArl9GA8fi7iF6WXKvm8NeiEYffbL7sCLevXCHAIw8VFgevlpD3jsmtGcqUxR2AvKM0jUfvM4Pf7Q4Mgf1XXkwhaWDeRIGEB5OEoMv6FDc4MjxubJsqreibFG7CUxWGMgISE+4gvSxIPKojHkYb0NZE7ull7Fih2tjya9efIl0wY2GIUxiyog4f/l4S5xUJrq1c1P36Jj1ks869uu1EQNda1sLS/gro1ax1F3kNVSnU2bLoZ64Kphmhl6ej0T3olXwsq+JyNkKWq94EtsnFrEpB85GzqEmdGFEw9oArmA6JIx3ZJQErO21zPr3fN+YRXVExDjIANZRe42grg5sZ3bn6VAKAg1+05S87H0Y4ZvTfelFUV1ibP4b2F6DLNOdr8HOWXDPHIxp3h8RV51Pr7PiUV2vg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(39840400004)(396003)(346002)(376002)(136003)(451199015)(86362001)(316002)(966005)(6486002)(478600001)(6916009)(54906003)(38100700002)(36756003)(6506007)(6512007)(186003)(83380400001)(2616005)(6666004)(66574015)(2906002)(44832011)(5660300002)(66946007)(7416002)(8936002)(4326008)(8676002)(66476007)(41300700001)(66556008)(357404004);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dHpQcXoyWDhIQVVKQllOTU8zRVlqSFFFNDlOeXFvNDlNM0RraDFldmhrdExJ?=
+ =?utf-8?B?ZGkxT3JVc3BxWDlIcTJhb25XRDVkQ1h1eXA5YTRkOGNxVlp6NVQ0a2FNZnFK?=
+ =?utf-8?B?aWEwWURiRFN0bjJLMFd6MGZldFNLdGc4aUdQSFRhU0xzamcxVEVMZXJKUkVq?=
+ =?utf-8?B?N1Z4cS9uSlZacmxGUkQxSkxKaWp1Wng2MFo3N3NxTUVFOXQzOWxXd3VGQTdK?=
+ =?utf-8?B?MTFyeGZHa0J1emd4K3R4UFhvY293Z0ZqWk1KU0c0M2JnMXIwa0VrYWFPckEy?=
+ =?utf-8?B?VWRXNzlPZWJ5Y0NEaTZmcmpnUXRpUkdvQW5BUlRLaFRlV1cyUXNNRFM1bkNi?=
+ =?utf-8?B?eElkV3BXSGNtVWZ5RDdlZm51bmk4L0RJYlVhVGM2cUlvSy81Yk5VYzh2ak9M?=
+ =?utf-8?B?NnRxOG9PK1dDSmVEVUZ4VFhpYlZnaVRjZFF1OG4zK1JBVGhvejUrdGYweUsw?=
+ =?utf-8?B?anBqSHloMU41L2lFNnQvNHIzREt1S3Qyem13cWZ5RVlqVEYwdHpPV3RrVU5s?=
+ =?utf-8?B?N3VDWE9lLzByVFBBc0lyRzZzY1hPank0WEhVVGtJaEJIamMwYXgwU2VBNytS?=
+ =?utf-8?B?TkV0eTdvMm5Ga1k1ZndhSytDaC9YSjFBOGlBTDd0S0R0SDdOUitpeDZVVG1t?=
+ =?utf-8?B?SlJHY2xybEg5NHV6QUpIYkdBamZwWDRDR2tWMzNENkRsYy8yMllhaEI0QmtG?=
+ =?utf-8?B?UGpvMWdJWllJajZEL0t5SmhCN3AxdWMzWjB3YUdRdm1XaWNSNGhLeWRKZmlI?=
+ =?utf-8?B?S01tS2JUblBhMFgzV0hIc1dCZTJUUno5eXFlWlQ5NnFuZTZXT2xYdnJHdXdp?=
+ =?utf-8?B?U2lQR25rNzd0aERNc1ljRWtZUURGQ2hUOGg5OUNmSlIxaUtFVmZGVjJ0Tk05?=
+ =?utf-8?B?NGpjK1prb2pXYjF1SUoyMmZlcUxsS2ZUdzludnhnbU1LV0hxcmRvMG1YNGhq?=
+ =?utf-8?B?NUo1NTVBcGRRa1VHL2lHZ1U0a2VHUzZzc28xdk92MzNoaGlTNk1iZ0VsQzND?=
+ =?utf-8?B?ODRMb3M4bFRTNUNHeWlheHloT1duY2x3WktLdHlhQWxhL09jaTg3eHMxYmRn?=
+ =?utf-8?B?c1dVYU9XQ3VZQ1BCRzRyeTM1a0RsdjBoY2haL3g2WXRCbTVuUEgvSjVZM1do?=
+ =?utf-8?B?dTNxL0ZHUHd1eFByWUU5VzhTRXdoQUJuS2VRMEkrVW5iaXNPZG10VVJqOUM5?=
+ =?utf-8?B?UzRiVUZSU0Yrbm1CTDBpOGVrMEdzNUNmODZoWFcrRm1BdXRjTmw5NzBLelVX?=
+ =?utf-8?B?UE1qMlcvTHdKeTV2cUhwdnhRZGQ2amhGTkJsWkdKR1FmQ0xQSXFwZnBtcTNB?=
+ =?utf-8?B?MWJrdkVES3pYRGxsblBOSTN2T3p3aGdCczFucTVxN1RDejlMNWliT3RtMWE4?=
+ =?utf-8?B?cWFBWVl4NEdrRE45dUUzWVJQUjdtK0w5dFlqSGJxRFlna2lUcFdRNlBZeWh1?=
+ =?utf-8?B?dW8zdWFxSytsZkJYY3BnYWJGcHRFOEl3WWlJWWY1TGduamh4eGdmQzVEblpU?=
+ =?utf-8?B?MUQrem5OeGVGeUpuVHg0OHo1NnE3Z0Jabm1ETlh3c0Q4ZUNZemh4TWlleDZW?=
+ =?utf-8?B?eDdQNmhxQW9KdmpRejdaZk5ZM203QkV4N2gyS0lLeDg2SExOUEdqK3F1WEZW?=
+ =?utf-8?B?VUxtZm1iOE1EOVZaeFpvM20yV3hNcWxvWXIyMmhGbmF1d2Rud3hXU2pyZVV4?=
+ =?utf-8?B?emNvb0V4VWZ3bUwrTWxBOWI0c1FqSW5UNldlR1JodEZINnFxQkpSNmNrb3RF?=
+ =?utf-8?B?Mkp0WXoxWWlXN0FKWDNqbGhUYzBWSnR2UlZEZlBSNGh5aThwOXJYc3cvZFJG?=
+ =?utf-8?B?cDJldnlWV3pyRVlNbU81Y3RKMjFhSWFkYk4zUVpEZW4yNGhwYVI1ajRNd08w?=
+ =?utf-8?B?SkE1SmlXWWpZNzdPR2kya0hLN1hOeG9URFVBNDBONzU4QWVXeWNiN2lhaG9E?=
+ =?utf-8?B?NCtNUngrM3lnV1ZJaXAxckdCVUtzZWdGaEF2ZXNYQjhUYjRCcXQ3VWhGNnFR?=
+ =?utf-8?B?VWRSbGlUWFM3K1dsaHZrY0k1OGFtTG91eGwrZjJaQWVyV0JMSnBkRVpqU3Rr?=
+ =?utf-8?B?MDZpZ1FwN0tuVXY1MTdObmJvQVlBaHYzaCtnd21QbERTanNzcllkNFJYK3Ra?=
+ =?utf-8?B?UUo4WWU0UU8rZXkzNlNQeGQxU3VHY1RiOFRzcEowSGNnUWlEVDRRLzFqTm1O?=
+ =?utf-8?B?UmpLaVU1TjY4Nk1yNlVqenR4aGp1c0pPbEF6MUN4ZEFZc3JJdWRacENPcFhU?=
+ =?utf-8?B?VVRHRHpabzRtN2NjcEpNdk8rNGFBPT0=?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63301554-6244-4050-0c21-08dad2dac826
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2022 13:57:13.0873
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: leSMybdwpiAfB9AddVZiKEVUu4aIczNI+GUjGiVZ+lMxiXuNyXhtnQcYusprXF68Lq3HasZDwzaWBYN2X1RR9yiP2zZ5pvw/4EMsSZScbBI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR13MB5483
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Nov 29, 2022 at 7:00 PM Florent Revest <revest@chromium.org> wrote:
->
-> On Thu, Nov 24, 2022 at 4:50 PM Benjamin Tissoires
-> <benjamin.tissoires@redhat.com> wrote:
-> >
-> > On Wed, Nov 23, 2022 at 9:14 PM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Wed, Nov 23, 2022 at 6:53 AM Benjamin Tissoires
-> > > <benjamin.tissoires@redhat.com> wrote:
-> > > >
-> > > > Hi Jon,
-> > > >
-> > > > On Wed, Nov 23, 2022 at 2:25 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> > > > >
-> > > > > We have a kernel test that checks for new warning and error messages on
-> > > > > boot and with this change I am now seeing the following error message on
-> > > > > our Tegra platforms ...
-> > > > >
-> > > > >   WARNING KERN hid_bpf: error while preloading HID BPF dispatcher: -13
-> > > > >
-> > > > > I have a quick look at the code, but I can't say I am familiar with
-> > > > > this. So I wanted to ask if a way to fix this or avoid this? I see the
-> > > > > code returns 0, so one option would be to make this an informational or
-> > > > > debug print.
-> > > >
-> > > > I am not in favor of debug in that case, because I suspect it'll hide
-> > > > too much when getting a bug report. Informational could do, yes.
-> > > >
-> > > > However, before that, I'd like to dig a little bit more on why it is
-> > > > failing. I thought arm64 now has support of tracing bpf programs, so I
-> > > > would not expect this to fail.
->
-> We have BPF trampolines on arm64 already but no ftrace direct calls
-> right now. (so trampolines get jitted but don't get called eheh :)) So
-> indeed BPF tracing programs (fentry/fexit/fmod_ret) do not work on
-> arm64 at the moment.
++ Thierry Reding, linux-tegra, dri-devel
 
-Oh, OK. Thanks for the explanation.
+On Tue, Nov 29, 2022 at 04:43:29PM +0800, zys.zljxml@gmail.com wrote:
+> From: Yushan Zhou <katrinzhou@tencent.com>
+> 
+> Fix the following coccicheck warning:
+> ./drivers/gpu/host1x/fence.c:97:2-7: WARNING:
+> NULL check before some freeing functions is not needed.
+> 
+> Signed-off-by: Yushan Zhou <katrinzhou@tencent.com>
 
->
-> > > Unfortunately the patches to add support for such tracing bpf progs got stuck.
-> > > Florent/Mark can probably share the latest status.
->
-> We are working on an implementation of ftrace direct calls that would
-> fit within the constraints of arm64 and play nice with the other users
-> of the ftrace call site. Hopefully we have a patch to share in the
-> next couple of weeks I'd say!
+Hi,
 
-yay!
+the change in the patch looks good to me.
+However, it does not appear to be a networking patch,
+so I think you have sent it to the wrong place.
 
->
-> > Oh... I noticed Jon's config was lacking CONFIG_FTRACE. So should I
-> > also add a depends on CONFIG_FTRACE to enable HID-BPF?
->
-> If HID-BPF fundamentally depends on a fmod_ret program being attached
-> to function, it seems to me that it should depend on both:
->     CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS (CONFIG_FTRACE or even
-> CONFIG_DYNAMIC_FTRACE aren't enough, there can be architectures that
-> do not support direct calls. here you noticed it on arm64 which
-> luckily should get fixed someday soon but there could be other
-> architectures with that issue too)
-> and
+With reference to:
 
-OK
+$ ./scripts/get_maintainer.pl drivers/gpu/host1x/fence.c
+Thierry Reding <thierry.reding@gmail.com> (supporter:DRM DRIVERS FOR NVIDIA TEGRA)
+David Airlie <airlied@gmail.com> (maintainer:DRM DRIVERS)
+Daniel Vetter <daniel@ffwll.ch> (maintainer:DRM DRIVERS)
+Sumit Semwal <sumit.semwal@linaro.org> (maintainer:DMA BUFFER SHARING FRAMEWORK)
+"Christian König" <christian.koenig@amd.com> (maintainer:DMA BUFFER SHARING FRAMEWORK)
+dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR NVIDIA TEGRA)
+linux-tegra@vger.kernel.org (open list:DRM DRIVERS FOR NVIDIA TEGRA)
+linux-kernel@vger.kernel.org (open list)
+linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK)
+linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK)
 
->     CONFIG_FUNCTION_ERROR_INJECTION (since [1] error injection needs
-> to be explicitly opted-in, it's easy to miss it and fail to attach
-> fmod_ret programs in mysterious ways)
+And https://lore.kernel.org/dri-devel/39c44dce203112a8dfe279e8e2c4ad164e3cf5e5.1666275461.git.robin.murphy@arm.com/
 
-Ok as well.
+I would suggest that the patch subject should be:
 
->
-> I'm thinking that maybe encoding these two dependencies in the
-> CONFIG_HID_BPF is leaking too much of the bpf tracing abstraction to
-> the user. Maybe the BPF Kconfig could provide "proxy" configs like
-> HAVE_BPF_FENTRY_FEXIT, HAVE_BPF_FMOD_RET (naming is hard) to expose
-> these dependencies better ?
+ [PATCH] gpu: host1x: Remove redundant null check before kfree
 
-That would be nice, but requires some sort of synchronization between
-our 2 trees, so I'll take the 2 configs in the HID tree, and try to
-submit a patch for the bpf tree with the macro. Then I can reattach to
-that macro when it hits Linus'.
+And you should send it:
 
->
-> 1: https://lore.kernel.org/lkml/20221121104403.1545f9b5@gandalf.local.home/
->
+  To: Thierry Reding <thierry.reding@gmail.com>
+  Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-That thread is a little bit worrying to me. HID-BPF relies on
-CONFIG_FUNCTION_ERROR_INJECTION, and I would definitely like to see
-HID-BPF in production kernels. I don't really care about cloud
-servers, but chromebooks are something I'd like to have enabled. We'll
-see how this thread goes I guess.
-
-Anyway, thanks a lot for the deep explanation and understanding of my code :)
-
-Cheers,
-Benjamin
-
+> ---
+>  drivers/gpu/host1x/fence.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
+> index ecab72882192..05b36bfc8b74 100644
+> --- a/drivers/gpu/host1x/fence.c
+> +++ b/drivers/gpu/host1x/fence.c
+> @@ -93,8 +93,7 @@ static void host1x_syncpt_fence_release(struct dma_fence *f)
+>  {
+>         struct host1x_syncpt_fence *sf = to_host1x_fence(f);
+> 
+> -       if (sf->waiter)
+> -               kfree(sf->waiter);
+> +       kfree(sf->waiter);
+> 
+>         dma_fence_free(f);
+>  }
+> --
+> 2.27.0
+> 
