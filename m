@@ -2,139 +2,185 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71479C47088
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Nov 2022 03:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285C9C352A1
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Nov 2022 08:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233407AbiK3DpR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Nov 2022 22:45:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59090 "EHLO
+        id S234098AbiK3Iu0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Nov 2022 03:50:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233223AbiK3DoV (ORCPT
+        with ESMTP id S232674AbiK3IuZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Nov 2022 22:44:21 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FBEAE0C8;
-        Tue, 29 Nov 2022 19:43:54 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id jn7so15405299plb.13;
-        Tue, 29 Nov 2022 19:43:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2iyrgtYDuQKt/kE7+C53HCWQJvUcvpFAzkZEkz/5Fk=;
-        b=arIafAEMNCqxxUJ6A8NnFQ1SoS9OnNxJfCm0VwcbDkv2lL2Clx8ewRYqQsEHNp6a+o
-         CWy6BkJol8zZo2XRRAyqSsvf5qmIeI/AYSnXJhIjd2RNSR8SuUJ1FIqXt39e0SQUeyO+
-         RT5BZkQDKd+UFdqHgmSCYtLUsznQf7QB2LtRgvf7qDNiUFraKaCt6M411grsfG0EzdkZ
-         L+c7FpPe/3jlZGh9TFsb6lzm5b4IUNm0T4z6mNmVIu4JSZ/wI8HTn0X7MI89GIQNxtf8
-         xUjGICCQmMJToDxY9Fyym4SGqZIQjjf0hhCq6OdC1olzrhM4MI6P5gCO7PILN3o/2htV
-         6UZw==
+        Wed, 30 Nov 2022 03:50:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78692CCA6
+        for <linux-tegra@vger.kernel.org>; Wed, 30 Nov 2022 00:49:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669798169;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xANXvbQ7iywMEyVlB4xJE5gylEi2EmdID1HL+8vvXPE=;
+        b=PxZyN/eC3+mCkrwvSLGUbQ8yNBTLufUh1mglHN4SGUmv1OWG4g4LQt8p+FSPRvgAqMZpvm
+        2R0jUc1dIPgCCgmuWw/DdpPQuCIXowQpYrvqtbjcd9zeb4eTH1pSXoGpWcBL7cOEuPypBL
+        tsW1zz0bJ7r1+0Gfnuqwcbgu6xwUa9Y=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-159-OHfra8jIOPCdQ2ut58ebZg-1; Wed, 30 Nov 2022 03:49:28 -0500
+X-MC-Unique: OHfra8jIOPCdQ2ut58ebZg-1
+Received: by mail-il1-f197.google.com with SMTP id n10-20020a056e02140a00b00302aa23f73fso14804883ilo.20
+        for <linux-tegra@vger.kernel.org>; Wed, 30 Nov 2022 00:49:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2iyrgtYDuQKt/kE7+C53HCWQJvUcvpFAzkZEkz/5Fk=;
-        b=xOq02Mtm4j5v7wMPrxn7Tf3Tvm+Y7COYMSVJ6i2lrGtp8t0eKuNNCH7Y/8vb4/SII8
-         jRY6q0rxwSv0/k8NpvZUI/ItopFL+DMDWdk/qcsVWa5vIL9ocKEBnOcUwfgbYQixhjjZ
-         Yzwtopdvpaw/4AKioJ9Kb/np51Dnm3Zl4qpg25/Nn8ma+ZZ7RA9WuZ2IspjCCxILtofu
-         hl+19FCoTMu18Gxh0KP1laMm6arH6iMyRvvR+SZPH/l9zWKiNieqkQEtJS/PLp0QghtD
-         HYsQveWsUu6BzJwG9frZv302Zjz+c2rXbGrymfGBcU/eFozNi8aZrfD/OY3h4Pelzxmc
-         paqQ==
-X-Gm-Message-State: ANoB5pk40imTSb3zXJk+XOaGfRsovPdDl2u8yo0RTaC+CFSUHTmuEZND
-        XX1WrzRziuKd+7p0ihrTPuE=
-X-Google-Smtp-Source: AA0mqf6RgG4UbvdUAsdQcRV2TiZBLISWyGOQCPavRvxQ949guJf0YWnsneE94lxtpEV8RpHBZcMBHQ==
-X-Received: by 2002:a17:902:7d89:b0:188:4ba9:79ee with SMTP id a9-20020a1709027d8900b001884ba979eemr40717697plm.83.1669779833723;
-        Tue, 29 Nov 2022 19:43:53 -0800 (PST)
-Received: from [192.168.43.80] (subs32-116-206-28-61.three.co.id. [116.206.28.61])
-        by smtp.gmail.com with ESMTPSA id j6-20020a170903028600b00189758e2babsm88850plr.125.2022.11.29.19.43.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Nov 2022 19:43:53 -0800 (PST)
-Message-ID: <d6f53bbc-34b9-dcef-b37f-d4babb8b7a4d@gmail.com>
-Date:   Wed, 30 Nov 2022 10:43:47 +0700
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xANXvbQ7iywMEyVlB4xJE5gylEi2EmdID1HL+8vvXPE=;
+        b=SQx/X2qeoFz7dBPoDHUcFEHoXbjnzOd9WhvfohcxV3fFIWyZ+3i1cPgti6B53ECF8Q
+         ptYf9SIzG9rIgCnSQHvLvypj41TeSp359/c/VTXdhP+WvJV2CsEqtlWXnIa1MJ4kxyP3
+         tA+OElKzPHxifvsbnxI/RcjkWogUtyg37b4/TG42eaPt2+1hLL+8TyQfMj8YGXY662gP
+         3NkjRYksghLmForIiNhB/2AvBkX7bh6YnVm/jDp0gWaIk2ghn5bOlm+8rWjKafi70s7R
+         bn/OGRlJ+AB9JVls8ezU1jLKIplGpUHNfRDZI5ccP4nUis3q4BictZjhmlhxLAWX8AG8
+         4bAA==
+X-Gm-Message-State: ANoB5pnbWTgMwiLfoFOAD4nAxRUi2q7fSI6JTpw5fCUYidPz2f1sGJOh
+        aNnNqN7bv5HKNk5nS+FH9MQ9azpDZIeFdl5MDxF3zAfmlCn6YUbm0mGqMJ0FvOZUcW3XlG2x4/6
+        2lfW93FH0c4rgI3K/1NrI/J1mkfsdvQu7DBsmdBQ=
+X-Received: by 2002:a02:c737:0:b0:375:1c5f:3127 with SMTP id h23-20020a02c737000000b003751c5f3127mr19645309jao.251.1669798167863;
+        Wed, 30 Nov 2022 00:49:27 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7SN6S5FthjsMHHZOOe/zeRLlQAj+dr+Vd7yWgLU3oWLPsaRFF+jtmM/MiCe0/FyZMhWdA7awXCX70M14aatZE=
+X-Received: by 2002:a02:c737:0:b0:375:1c5f:3127 with SMTP id
+ h23-20020a02c737000000b003751c5f3127mr19645276jao.251.1669798167237; Wed, 30
+ Nov 2022 00:49:27 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH 5/7] hte: Re-phrase tegra API document
-Content-Language: en-US
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        robh+dt@kernel.org, timestamp@lists.linux.dev
-References: <20221103174523.29592-1-dipenp@nvidia.com>
- <20221103174523.29592-6-dipenp@nvidia.com> <Y2XZj4j/NQH2igvJ@debian.me>
- <5145d9d3-d3ae-e95a-6583-803f31d6d9b7@nvidia.com>
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <5145d9d3-d3ae-e95a-6583-803f31d6d9b7@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20221103155756.687789-1-benjamin.tissoires@redhat.com>
+ <20221103155756.687789-4-benjamin.tissoires@redhat.com> <ff1a0b34-71f2-cebe-a6ef-675936b276eb@nvidia.com>
+ <CAO-hwJJZxgeTT8mLwFrYynSVASva=o7qL9Kr4xOywV3KDUu2GA@mail.gmail.com>
+ <CAADnVQ+kE+EJ9LAfwge9ksC0LR8r+ShQNYi5g-MDajufXq8Yxw@mail.gmail.com>
+ <CAO-hwJJGxvrLRGSt7g0T1rYiuCCigVzQ-L6yKLM1-44EpYqmsQ@mail.gmail.com> <CABRcYmKyRchQhabi1Vd9RcMQFCcb=EtWyEbFDFRTc-L-U8WhgA@mail.gmail.com>
+In-Reply-To: <CABRcYmKyRchQhabi1Vd9RcMQFCcb=EtWyEbFDFRTc-L-U8WhgA@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Wed, 30 Nov 2022 09:49:16 +0100
+Message-ID: <CAO-hwJJz8KpWYbnbK6eJQDzwcY2zsBzEyACnEQ3GzEbMZSiA7g@mail.gmail.com>
+Subject: Re: [PATCH hid v12 03/15] HID: initial BPF implementation
+To:     Florent Revest <revest@chromium.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <shuah@kernel.org>,
+        Tero Kristo <tero.kristo@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11/30/22 10:34, Dipen Patel wrote:
->> I think the wording can be better:
-> I do  not understand, can you please elaborate?
+On Tue, Nov 29, 2022 at 7:00 PM Florent Revest <revest@chromium.org> wrote:
+>
+> On Thu, Nov 24, 2022 at 4:50 PM Benjamin Tissoires
+> <benjamin.tissoires@redhat.com> wrote:
+> >
+> > On Wed, Nov 23, 2022 at 9:14 PM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Wed, Nov 23, 2022 at 6:53 AM Benjamin Tissoires
+> > > <benjamin.tissoires@redhat.com> wrote:
+> > > >
+> > > > Hi Jon,
+> > > >
+> > > > On Wed, Nov 23, 2022 at 2:25 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > > > >
+> > > > > We have a kernel test that checks for new warning and error messages on
+> > > > > boot and with this change I am now seeing the following error message on
+> > > > > our Tegra platforms ...
+> > > > >
+> > > > >   WARNING KERN hid_bpf: error while preloading HID BPF dispatcher: -13
+> > > > >
+> > > > > I have a quick look at the code, but I can't say I am familiar with
+> > > > > this. So I wanted to ask if a way to fix this or avoid this? I see the
+> > > > > code returns 0, so one option would be to make this an informational or
+> > > > > debug print.
+> > > >
+> > > > I am not in favor of debug in that case, because I suspect it'll hide
+> > > > too much when getting a bug report. Informational could do, yes.
+> > > >
+> > > > However, before that, I'd like to dig a little bit more on why it is
+> > > > failing. I thought arm64 now has support of tracing bpf programs, so I
+> > > > would not expect this to fail.
+>
+> We have BPF trampolines on arm64 already but no ftrace direct calls
+> right now. (so trampolines get jitted but don't get called eheh :)) So
+> indeed BPF tracing programs (fentry/fexit/fmod_ret) do not work on
+> arm64 at the moment.
 
-Exactly where? Please quote appropriate hunks from below where do you not
-understand.
+Oh, OK. Thanks for the explanation.
 
->>
->> ---- >8 ----
->>
->> diff --git a/Documentation/driver-api/hte/tegra194-hte.rst b/Documentation/driver-api/hte/tegra194-hte.rst
->> index 85e654772782c1..13c45bfc03a75e 100644
->> --- a/Documentation/driver-api/hte/tegra194-hte.rst
->> +++ b/Documentation/driver-api/hte/tegra194-hte.rst
->> @@ -5,11 +5,11 @@ HTE Kernel provider driver
->>  
->>  Description
->>  -----------
->> -The Nvidia tegra HTE provider also known as GTE (Generic Timestamping Engine)
->> -driver implements two GTE instances: 1) GPIO GTE and 2) LIC
->> -(Legacy Interrupt Controller) IRQ GTE. Both GTE instances get the timestamp
->> -from the system counter TSC which has 31.25MHz clock rate, and the driver
->> -converts clock tick rate to nanoseconds before storing it as timestamp value.
->> +The Nvidia tegra HTE provider, also known as GTE (Generic Timestamping Engine)
->> +driver implements two GTE instances: GPIO GTE and LIC (Legacy Interrupt
->> +Controller) IRQ GTE. Both GTE instances get the timestamp from system counter
->> +TSC which has 31.25MHz clock rate, and the driver converts clock tick rate to
->> +nanoseconds before storing it as timestamp value.
->>  
->>  GPIO GTE
->>  --------
->> @@ -19,17 +19,17 @@ needs to be configured as input. Only the always on (AON) GPIO controller
->>  instance supports timestamping GPIOs in real time as it is tightly coupled with
->>  the GPIO GTE. To support this, GPIOLIB adds two optional APIs as mentioned
->>  below. The GPIO GTE code supports both kernel and userspace consumers. The
->> -kernel space consumers can directly talk to HTE subsystem while userspace
->> -consumers timestamp requests go through GPIOLIB CDEV framework to HTE
->> -subsystem. The hte devicetree binding described at
->> -``Documentation/devicetree/bindings/timestamp`` provides an example of how a
->> -consumer can request an GPIO line.
->> +kernel space consumers can directly talk to HTE subsystem while requests from
->> +userspace consumers go through GPIOLIB CDEV framework to HTE subsystem. The hte
->> +devicetree binding described at ``Documentation/devicetree/bindings/timestamp``
->> +provides an example of how a consumer can request an GPIO line.
->>  
->> -See gpiod_enable_hw_timestamp_ns() and gpiod_disable_hw_timestamp_ns().
->> +To toggle hardware timestamp, use gpiod_enable_hw_timestamp_ns() and
->> +gpiod_disable_hw_timestamp_ns().
->>  
->>  For userspace consumers, GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE flag must be
->> -specified during IOCTL calls. Refer to ``tools/gpio/gpio-event-mon.c``, which
->> -returns the timestamp in nanoseconds.
->> +specified during IOCTL calls. Refer to ``tools/gpio/gpio-event-mon.c`` for
->> +example.
->>  
->>  LIC (Legacy Interrupt Controller) IRQ GTE
->>  -----------------------------------------
->>
+>
+> > > Unfortunately the patches to add support for such tracing bpf progs got stuck.
+> > > Florent/Mark can probably share the latest status.
+>
+> We are working on an implementation of ftrace direct calls that would
+> fit within the constraints of arm64 and play nice with the other users
+> of the ftrace call site. Hopefully we have a patch to share in the
+> next couple of weeks I'd say!
 
-Thanks anyway.
+yay!
 
--- 
-An old man doll... just what I always wanted! - Clara
+>
+> > Oh... I noticed Jon's config was lacking CONFIG_FTRACE. So should I
+> > also add a depends on CONFIG_FTRACE to enable HID-BPF?
+>
+> If HID-BPF fundamentally depends on a fmod_ret program being attached
+> to function, it seems to me that it should depend on both:
+>     CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS (CONFIG_FTRACE or even
+> CONFIG_DYNAMIC_FTRACE aren't enough, there can be architectures that
+> do not support direct calls. here you noticed it on arm64 which
+> luckily should get fixed someday soon but there could be other
+> architectures with that issue too)
+> and
+
+OK
+
+>     CONFIG_FUNCTION_ERROR_INJECTION (since [1] error injection needs
+> to be explicitly opted-in, it's easy to miss it and fail to attach
+> fmod_ret programs in mysterious ways)
+
+Ok as well.
+
+>
+> I'm thinking that maybe encoding these two dependencies in the
+> CONFIG_HID_BPF is leaking too much of the bpf tracing abstraction to
+> the user. Maybe the BPF Kconfig could provide "proxy" configs like
+> HAVE_BPF_FENTRY_FEXIT, HAVE_BPF_FMOD_RET (naming is hard) to expose
+> these dependencies better ?
+
+That would be nice, but requires some sort of synchronization between
+our 2 trees, so I'll take the 2 configs in the HID tree, and try to
+submit a patch for the bpf tree with the macro. Then I can reattach to
+that macro when it hits Linus'.
+
+>
+> 1: https://lore.kernel.org/lkml/20221121104403.1545f9b5@gandalf.local.home/
+>
+
+That thread is a little bit worrying to me. HID-BPF relies on
+CONFIG_FUNCTION_ERROR_INJECTION, and I would definitely like to see
+HID-BPF in production kernels. I don't really care about cloud
+servers, but chromebooks are something I'd like to have enabled. We'll
+see how this thread goes I guess.
+
+Anyway, thanks a lot for the deep explanation and understanding of my code :)
+
+Cheers,
+Benjamin
 
