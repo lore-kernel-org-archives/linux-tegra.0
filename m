@@ -2,317 +2,222 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B28DC4167B
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Nov 2022 03:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAE9C4167B
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Nov 2022 03:34:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232637AbiK3DAR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Nov 2022 22:00:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35134 "EHLO
+        id S229918AbiK3Deo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Nov 2022 22:34:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230093AbiK3DAQ (ORCPT
+        with ESMTP id S229448AbiK3Den (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Nov 2022 22:00:16 -0500
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2043.outbound.protection.outlook.com [40.107.92.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 038E56DFEA;
-        Tue, 29 Nov 2022 19:00:12 -0800 (PST)
+        Tue, 29 Nov 2022 22:34:43 -0500
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D01565E75;
+        Tue, 29 Nov 2022 19:34:42 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DIaAHQJQFxuBn+k6Pg1Cf5x8MChNXRdyiS6C0bw0VZA5Vd0xwOY1ysmpHqoLzRv7wWpUkIOQyF5UYiIfMsoBuaHB96Hnge8l0Wu17MAry7YtF+QdyOT9eC+wta1k/9i7wiiLWCEe0nJLoXmxlz7DWnYrkvv4iUh8YD8pwq0F4JAbLgkTRVmJbCFnL19Y4uqGwDzUfEYlzurXVhFc8MO9J+5OgPLclKXZZhIxVIkKfb8rDH8t+y8NYWKDyoLmH4UxlxjkRJzs5Xxm9IpnmRuU7cAxA6ihfGtzvfnekg/5yP3KuAWjMgxLHebulD2W5qd09uMZLA9yeVEyXV4N+aL4XA==
+ b=cXfCzLS9fiKpTjD3b5cBSafE9Yiz7D+/9ZbcW3yqellZPus+xQeQjPlG9W+Wfqae0/v6OVInk+WtrPMyke5lu1gOXcURTWGvvC3J8kDVebsf1Th9TS/d1+OMD23wjLVrius0dprVkD27JBFb3VAiCViybkQjWfz4+j75qxN/8enUkLdDUbRij+FMEaQRbTdvaJ863iO9YpP/R/PXhC5lPdHbN7/Hjk4n6Yw4nZ3vl/3Tkyaqr3XJmnqGoBjS1dYKclXJBZhE/WYDXXJzpb4ShMv8/3Ech0hmc72aYYJP/ApR16Q6tXEwXcUCoQZm59RFce/m7Zp1ePl8HR/oJ3l8DQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ujkNxDo/Ieh2Nuu451Zp9QdWFitGOCnAnM54D7l7wGg=;
- b=AlPEl4sJp0cVLzl09EjFCAechcTDvswmq5Koci14btJnw+YDAElcBv5eK2N+CY+mSQzmTUGCTDbR3Wy3ks4RoCH03T97XReOro9r9zLJ2KVg8luIe4J71JIZvnZPp0r5EcI3J3v3pCWX++yhwX47wtOoK0HdmqnTim1UTv0veGzvGbY8E1jwCM6UAhTkgNl1zjq+wlT1hAzorC9aIpXu+Ki+bF7aKhhJ/S23ko6PofqKCw4Ev5Hvfz99yFcnLdDXLz0g83cMdWOelPXRh1qdjKM2qqn4rqcUbnM+COWdLxv89pk02gnA/SnPYMg2KOW7K2ZgiN8qcX5VjV28b3f3+Q==
+ bh=GyRgP0HoF2QXuGR5aYpnpMmSFjwqsM7Gqc9MgphN6QU=;
+ b=RN5TW8f57NEfTR/9QIGwmPdM537+Nkbyxujv7/DmCHKsmpaMgxixN4h5ACKIfaD/oEXQTZ7oG5F1KVGYbjEmKv5QaQ5RBeYaS/5M+Vrz3beDx+jUhf8AS2Ji8vZAtTP71kCGz5m3Xkei9lW+Mwj6K1LuORmQW+gqA9dYDL35sScLIFMFrshBp68+LGFzNLn1/045WeWcug6y9DEZHQnHxSoJzPPA+6nR9S4pbPiV0CkmIhgV/Kf34CID6j98rpT19PPY9wSNaFBzZHSqIhTPH3fDCLlvTQo/yLJdMpVaWjv/MX2VxfY79CykwLGE1I3pp3SKMmOLEZhV5NKoXP+sSQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ujkNxDo/Ieh2Nuu451Zp9QdWFitGOCnAnM54D7l7wGg=;
- b=UrQQ8BmN+zlMJ2023Jdk5nMpl99xT6E04YvrcCjTH8Wh7d4yB6eB1hl0icgi4c7vQsBnB0eKPYPfp9sCRIotH10Yepnu19dB8IjhESrgD8EzOz9JG9jxVhw2T9RCU4KpHFUfzFV6eysqF2XWZXMJjIY/J3Rjb1QoMyQon8MblkDEP3AwVdpyDiMGZaAEn9fflaDYgBPF0PQOJsJ30U7ERkN9ItYKzBQV7lNDSI/HnNTpfS2PVo9ldB0ccMvpf/eCFD+so34Gh9B39THWRMRbLb2yk6pvq5Jf6/mT8tV6xGR9qoF2kXo5ojztFBH67mQnZznanNkeEjlPVSszgNxzfA==
+ bh=GyRgP0HoF2QXuGR5aYpnpMmSFjwqsM7Gqc9MgphN6QU=;
+ b=j+jwi2Ky384ZqalNzq1a4SfK4iovXWREiMGAwlX4BwGWYO1geMdSKk9vWkpluo9msKUVOAAEHT7iRavUNiGMBAjNQcCApHl6X9ncN6YcnYJno0DLXvfbVWPY10hm+vNaLvndsEBrMKq6NjyKy4KOuE8S6DGEVmwkFkzIVtWZYOCnMgD6x72RPcb46AJhi1PvFtZprxOqQH0NljgikyaJ+HTjho2egH2eBqukXTnFVUnNeKsMLyxQlsLTtPLI3XnpdtMIDkMsHhoQF3MHdOvQj2hkMrXovNHk17f8VmJY6cS/LzbuoynVCZSgnhKTz/SxFctQYE6t810J9u22I+MPSA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from IA1PR12MB6604.namprd12.prod.outlook.com (2603:10b6:208:3a0::7)
- by CH2PR12MB4245.namprd12.prod.outlook.com (2603:10b6:610:af::15) with
+ by SJ0PR12MB5453.namprd12.prod.outlook.com (2603:10b6:a03:37f::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23; Wed, 30 Nov
- 2022 03:00:10 +0000
+ 2022 03:34:39 +0000
 Received: from IA1PR12MB6604.namprd12.prod.outlook.com
  ([fe80::2349:ec6b:2442:8c52]) by IA1PR12MB6604.namprd12.prod.outlook.com
  ([fe80::2349:ec6b:2442:8c52%3]) with mapi id 15.20.5857.023; Wed, 30 Nov 2022
- 03:00:10 +0000
-Message-ID: <1a186be2-498a-a63b-a383-c165a9f8e732@nvidia.com>
-Date:   Tue, 29 Nov 2022 19:00:04 -0800
+ 03:34:33 +0000
+Message-ID: <5145d9d3-d3ae-e95a-6583-803f31d6d9b7@nvidia.com>
+Date:   Tue, 29 Nov 2022 19:34:29 -0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.5.0
-Subject: Re: [PATCH 2/7] hte: Add Tegra234 provider
+Subject: Re: [PATCH 5/7] hte: Re-phrase tegra API document
 Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org,
-        timestamp@lists.linux.dev
+To:     Bagas Sanjaya <bagasdotme@gmail.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        robh+dt@kernel.org, timestamp@lists.linux.dev
 References: <20221103174523.29592-1-dipenp@nvidia.com>
- <20221103174523.29592-3-dipenp@nvidia.com> <Y25x9gc4tpF1f022@orome>
+ <20221103174523.29592-6-dipenp@nvidia.com> <Y2XZj4j/NQH2igvJ@debian.me>
 X-Nvconfidentiality: public
 From:   Dipen Patel <dipenp@nvidia.com>
-In-Reply-To: <Y25x9gc4tpF1f022@orome>
+In-Reply-To: <Y2XZj4j/NQH2igvJ@debian.me>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0050.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::25) To IA1PR12MB6604.namprd12.prod.outlook.com
+X-ClientProxiedBy: SJ0PR03CA0170.namprd03.prod.outlook.com
+ (2603:10b6:a03:338::25) To IA1PR12MB6604.namprd12.prod.outlook.com
  (2603:10b6:208:3a0::7)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6604:EE_|CH2PR12MB4245:EE_
-X-MS-Office365-Filtering-Correlation-Id: e37bdec9-6320-460b-8b6e-08dad27efd57
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6604:EE_|SJ0PR12MB5453:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d3cc439-73ad-4aec-a6c9-08dad283cc4e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UOHUYY0RW9BNGdNxV7TFG81+/mIV8Kv+Lk6627ZEF0Wkjqdf8g6wm8/rDAHY8XU8MZkCebYp3Q2JT5EmvP2oBhFioFecyBjzjDX7k9MqKaTIdgS56G4hky5dNOwEJWTyieLIIblGFMR9qRlTKR0Zx1b+pxUxXWpNZynsNRjxrPKYXJkHsrrl9BTh+C/l+oeR/MmSMiitbTQmxAN1l7uLm+A7FWRNqQr4v71Cchc9wlc4Eg/Gtn4HKTBs/FrOEhHlMQHm7Bi2bSR3/C7Qo1XhJuORH6ep/JMcrVZ7H0gYuh4DLs1wMzBb718stcuwgjo7bsm/2AVoSHGG7vmZ1r92Pjr0RgYWQm7Ww8Jb8fKvF109q8eF/LEsjMs6ex1yNvwQA+c5nzZODX6Cjg27BPt7hwjcEsIxX0zmxSmnFXCFpO79s6GWyK0fTuws1qAHdVnf+cZcp0627ugkKr0AilS1LZkHWKdpjGy2dNd2cZFSDlSum8r3sTJm5AtDaWdV2Cf4LjiyYgrbCRmWv/aWK+wfKL5GhEAo80GnjQGqSUTmqQWIbE4ubrWew3ytkSbHAxEw3uZnHMxbQ2FREnmt7IwTkD0Pya5HMKVCHg6MWx6EiuMdWRAtfcnOic5LpLTCjcvEjhu2h9SW7ndH783IR2hUZ0rs8nIulRCIuuN/6LlQu2K1fqKDnCeXM+Xk1ZVpxSBEH25/2s/cLb752NarlK4mNENlGkaMuqiheww0p05pAVc=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(396003)(346002)(39860400002)(376002)(136003)(451199015)(26005)(31696002)(31686004)(86362001)(6666004)(4326008)(66946007)(41300700001)(66556008)(8676002)(2616005)(316002)(6512007)(8936002)(6486002)(6916009)(6506007)(38100700002)(83380400001)(2906002)(5660300002)(53546011)(478600001)(186003)(66476007)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: U550BkoAEdML41U2wiN0uP3ar/BrNpBLlcRKc+a+tCnRQRFN5nB4DdmjIiUfSuA55OfI1bIxk+Hsru7el7Oy9atPFhcTblwB/sE41bcaG8htaZb900QnyO+4N8Fln5ByeyShU/IZEi1qhqrN1r29pM/PQZ6aSw+uMCHK1KSMt+gB4X5BxVtujGkWvCYF7FB6XShIYed9VgOjR2XoVTsxvN9Iy9mq37C0L50LmVhSbg/iUeCHOZBg7aZP6vJbVxl7gHD5QTAtmA/urSgTvuVOY/3/p5bWM4bmbElYga05nHeuOnJ5vqRSQgRlx+SJq5hXW1P1k3PBHfQjMJC8VLS1D+Nvv9JI32VCm0s3q9PfPJ4Li6ThSxXBuilE6Id8u97WUJ87Vw+bjV0rtIRRzftwsqZBi78WD6conn3EyKrK1fccjfmYIZXteQiKRlXaHOOKtXXDP7KfnL9fBZK3O5/LTqgKVIzm1UAYqw/GGh9zrGJq4dqfITPySgvuxsDJXP3i+Th5SLzld74UQMVPymuu+MAs3jRqqfIBbpXSnryp/glxmnKF6x0Z/iT8lt+UjhfMr2XsWwrDLgaabxm+I9JW9gTL5+rpm8Pc+35XdLVsK1XC3Qs6pOZc5mwFKE8nuwUZy0y3RQSS9DQ+ZYLAF/Qb17cABXvh8D7l/AN5tVXj/Q15d01dCdV4kHWnT9ns62lLhnUnNCo/dgwCjiTv/l7uMtNTB9CfinFM/091HHMF24E=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(39860400002)(376002)(366004)(396003)(136003)(451199015)(66556008)(6486002)(53546011)(36756003)(26005)(6506007)(6666004)(6512007)(38100700002)(8676002)(41300700001)(66946007)(478600001)(66476007)(86362001)(31696002)(4326008)(316002)(6916009)(7416002)(5660300002)(8936002)(186003)(2616005)(31686004)(83380400001)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NytHMmpjTVdlSE0vZnA3WnR0VnA4UzJVRFdOcDZpYys2K2lDZllrQnBHMmFI?=
- =?utf-8?B?V0ppWkJPVjdOeG4xdTFndU9zOVJWUTB6ZS9ualh2ajdrdm9XOEhxalZmR054?=
- =?utf-8?B?aDZTUTRUT3BNV3h0aFIwM29RR1N0K1JRaWRKWWFlMTVhQ2ltcWMxcVZzOTNm?=
- =?utf-8?B?bGRFZ1U0MnhqVDZSWUtKRkxsSEV3S24zNjdaZVdpcGRaZ2F1OGdPRnE5Vmk3?=
- =?utf-8?B?ai9WbUVsTTl6d21yREgra1pqMlBEOGtQM0p5TkpqMTZWODhCNytXNmtudDQ2?=
- =?utf-8?B?cGpLMTNFdHIvVnduVWZ2S1RzREtiY3BhcTlxaHdESDJ3YWhDQ3FYMUYyT0hV?=
- =?utf-8?B?YXJCNG9YVXlVTDl5dGcvL3ZkcWhtajI1WUlNaGV5K2FSTk5qNE1VeUxYRXp3?=
- =?utf-8?B?cTRNUm9Ua01sTHJ6OCt5Kzg1TnZuUzJlcUxWZWtVcW1aUHJ4RmQwOFpyTGpX?=
- =?utf-8?B?UmFRNE5SaUswRGZ1UDBCcDlubkN1OE1MR1NQMW9SLytFQ0xqSVdtbzJvdzBu?=
- =?utf-8?B?eDM1cTFoYi8vcEpEMUpXQlJWdXR3YUR1STQ4bUxhSEpaZEdjL0RaTTBBS2Js?=
- =?utf-8?B?MmU5ZFNPcGFNSmV3eGtCYm5DSEs3Y21zN3Z3ZjlZMzBIMnpGdUhTZWhQdHAr?=
- =?utf-8?B?TUJoLzBFYUNVdUpOYkVSUGRDOFlrZ3pMU0RuT2RSTVpVTVNpejdrSFpPV3Vx?=
- =?utf-8?B?V1N4V2MvQTNxNGRSTjROakY2akJva1lvU3lYdm94cjdhZ2R3R3Vpa0IrSm5i?=
- =?utf-8?B?eENYQkd5cGpHa0twQ1d3MzJQKytWdWFrZkNEdFpCd1dIRzFVemdGTk5HYjMy?=
- =?utf-8?B?QTVvTHBteFA2a01pbHU0bU8wcWwwYWtlZFB4U1lZWGxzS00xZGdJbTRJaWwy?=
- =?utf-8?B?VDJ6RWhtU3ZySmdBbVd3azE1QlhEZVE4Z3VEQ1BsSy9Vajk2MldpRXdkYXUx?=
- =?utf-8?B?eitxZ1BURG93Um9YdDYyYkJGNWxPakpEUW1uY3NvSE1oUFgxbDdtWGdlUUNr?=
- =?utf-8?B?SzR2NWJqb2JJWWRCQklSa1BjRWJqU21BaDZEdy9tV3dlWTlIQUI3a3drYzly?=
- =?utf-8?B?c2doUTBPbEdhZ2hDc0VITnBuRS8rdXkzMWY3RWhDb1lZMXRDTDg4V1FxVE1q?=
- =?utf-8?B?UFZOSzQ0N1gxTFNYc2ZyODN1QTJEZndmZ2FUYzR5RGFZa2F1Z0Z0Wi9rdmxM?=
- =?utf-8?B?SzdFay9zaXYyc2pTVnF5UVgxUHFETVJEWU8wUGRrWTNSUE1RTzVLdWJzVTky?=
- =?utf-8?B?eGU3TURpZGEyK25JN3NBd1AxdGkvalovSC9mc28zZFJGQ3dZTVN1c0x2QVNX?=
- =?utf-8?B?eHVEa3dqL3Z4NGdINzZIb2t1cmIrV1BiM1lBWlRuWnRxZnBhcUxqVFV0ZSs2?=
- =?utf-8?B?VldtYlZQMHIrbExsK2hPeGdhS0RmSHFsT25DcXErd2NVY21rY1J5ZTFwakhR?=
- =?utf-8?B?S1ZhaFdLSWJkTFpOWTl5UnJQM204U2pXeXpDNU5CVmI0ZGhuVVlQSmtDWUhr?=
- =?utf-8?B?aE9neXZZbS9CeFZ6VkVsSnZwNHQ3OWpDN2xvRWw1NFdIOWdubC84WGoxVEtk?=
- =?utf-8?B?L2huWWFtU05CUVNWQ0t5WDlzR1NsQkh0L1hiU0hJVVZ1Y1RvdVp1TG1CUjdr?=
- =?utf-8?B?RDhXMTAxVUE5OEZDNDRhTFFYdjJhQ2FwYlRKSjg1N0NDa0J3S3l3UFRqMDhW?=
- =?utf-8?B?NDlCOU4rN29GRFdIUVkwS001OVBjZS9tRnhTc3V3ZU8wdHJxZUp3K01hN09m?=
- =?utf-8?B?K1VHWktpTjBEaFN4V2RxRGpSa0tOMERuSzRtMldibUozdmJlMXl2Nyt3TUh2?=
- =?utf-8?B?Y1hINTJYUWhqZGVVSEhoM016NGVleExEcStFNkV5MGVmenRuSnI0V0YrNjBW?=
- =?utf-8?B?ZlNady9GbUh1OE50dDdqei8vMTd6SkJzY3FTSkhMSkhFYlBuTTI1dnM1K2dl?=
- =?utf-8?B?bk1ISVJaRlY3Sk9IcEpPOWE2NG1Pek5LTG4raWp6eDlhN3RKUkZBNTA4cVBP?=
- =?utf-8?B?WHpaa1lPQ3dGUHJRTUlnVlg1WCtscndUUjNwcEdwTUlwNlBCVHp2YXAyLzZP?=
- =?utf-8?B?RWZUd1dIUW1SNUZVWHpQaGFzd3A1Ym0vV2QyU3JYS2crWHhTVUI3MFF5OHZE?=
- =?utf-8?Q?RygXLWrcxZwLzZITgG1Qj0lid?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OXlyQStoS2tPNGdXanFPVXJpY09JTk91cHFYQVcyOUpZS3NNcTkwK25sUFFZ?=
+ =?utf-8?B?RjJRZ3RsSm81L09zVW8vZnNudUQvY3J0L0xEUTJJUkRkdEE3VVNnUkFHQmla?=
+ =?utf-8?B?Y1k1TWc2UnlLWjlRVFRzWXRTSFhvRFpETlFlamlFNUpoZDBvSGpaT2loMU9u?=
+ =?utf-8?B?NUhZblZWUytKaFQxemIxaW9sc2NmREhrbHdVMWNYT3BKeTgvYWlHY2crcy9G?=
+ =?utf-8?B?MDZjYkNzWW9MNGh3ZjVDclZQQkFmdUZEL1RiVDlaWnpkczY3M044NTNOTHFm?=
+ =?utf-8?B?dkdNNG1mZTM0WHgyU0RYTGg1M2kyR1QyVDlZdjRhanlBZlNCajNndXZvZVNF?=
+ =?utf-8?B?T3Y2VjZEdERIRmh5QnB2MllnL1BrdjhIZHMyV3BENUFOSTlsckREQmNzS09P?=
+ =?utf-8?B?RXRNaDR0ZWgvdzFwTVM5TDQ2dXBpWVkrNlBvd21RWE45MU9MNFhqRlFyQzN1?=
+ =?utf-8?B?dnhjcW5sZytNemZyY1ZEYnhtUnRYQmxGU1Y2aVlzNWZ5aXJUQjhVSzhOWWk5?=
+ =?utf-8?B?Q2pkSjQrZlh0TUtKcUtSdFc3QXh4NkdZbHRsbVRJazVkS3BtY2lnY3NYcGx4?=
+ =?utf-8?B?RFgwMGZQMUpJMFEvamZYQzQvaVNxVVBHZjlibmtqYk5TKys0ZGZEZm1NZ0Yx?=
+ =?utf-8?B?cThVeFJRM0FEWHJUeTMwVVBtNzl4eTYwY0NyOVdBMXFaRGFzYThveGlrcmtV?=
+ =?utf-8?B?UDhvdjFKcHN0NFZ4TStBSjJPVWo1QmVaSGc4L2JRRjNYL2svUDVnTVI0cnRt?=
+ =?utf-8?B?c1Zab2NNOVkrWHVhaUwzNmt6NTBUSE5IM09mRURHd2tqQngyUDA2NWRWSTJk?=
+ =?utf-8?B?QlIxQklGWlc2Zkw0NEZiWjBtSlpWT3RxYlo3WWFRdUtQL2VTQ2NxbGlHVXNr?=
+ =?utf-8?B?R0gwSnhRL2YzSmIvbEkwbklrTHZLbUJjV2FKcGNMbFNNVHdmaVVwcEVIV3pu?=
+ =?utf-8?B?SlVWTUZwb1JKbzVDTGRDMWhLdk5McUMycHNoQ1Q4aWVScG9nbSs4WDluaitx?=
+ =?utf-8?B?TTk0M1NMVFN3N1o2Mk8vRUZaZVA2bmxEV1JYNVlCcnBXSU1jZ0kxaWhNeXc5?=
+ =?utf-8?B?ZVZGWUZNMWlJZ1phOU1BSTBlWm9xekR6UEVqNXhkMXRvazhIb2ROUjM5eFNW?=
+ =?utf-8?B?Z1hqdkc2S1Rlcy9nTVhNY2tyM0lBZkdidTJGOVV2SnpXbHlvTkpqVlNLbi90?=
+ =?utf-8?B?ZWM2cGRsczBZZldURDhvd1lWYlJ1bU9YdFBYUHBpNGFjRnk2NDdvMzh3dHZk?=
+ =?utf-8?B?SElhTy9XOWF3V3VZSzErYkphR2NxQmZkTU01NSt2QVFpWVFMRFdLcUt3MXVI?=
+ =?utf-8?B?dk4yWXBJTjRueXlTN1lrOEJXU1g0cFBzRk5uSHFUa2Z2U3J3cHc5Qm03TzJv?=
+ =?utf-8?B?VU1VQS9FRGtpbGlVdVF1Q3FVSXZKYU54a0xYdVp6N2h0UUIrTEtJeU9wb0hl?=
+ =?utf-8?B?Q3gvcUtvMGxBTFZzdXNPYWkyZFovZGlaQjU0eHkvY044RVI2M09GL0JGeG0x?=
+ =?utf-8?B?aVlWQzNKTWNJbGcwL3Fjd3FERmRFSm1iaXBqR0VJUmpjNTN0UXJOclFoU0d3?=
+ =?utf-8?B?TkgvMDdCa3BoMnRsRzRQSVl2R3p0MGhsSWkzdU1RclltZDJCOEtXVTUzdkVW?=
+ =?utf-8?B?VWhtaGtUb0J5eDlNaklsZjM3WThVYnh1V2UxaU5OYWw0UjFjZjJkN3Z5VnFU?=
+ =?utf-8?B?OTJoMkhrY0xRdzk1RS9mbDVlKzVGc3BRSnEvZHBhYUJQU0ZENkd6TVVnQkh1?=
+ =?utf-8?B?T3FzRzhvZUYvbEhhTXBOY3JOK0hyQ1ladm9Rc0ZFakRCSC9KaFQrTm5aWGg4?=
+ =?utf-8?B?UFpHdmE5L3dmcENoclpwVEFRUmplZE1OZmk2R280VjBIK1ROazVxNG11d1lq?=
+ =?utf-8?B?YkltWmlQbklQNUpiZWZIVSttVWpoek1ENDYxYklrb21JLzJMSThyUktkUUpo?=
+ =?utf-8?B?L1ZHMUVVU1BXaEJBU1JDeDhyYUVjV0FQSmszd0dhd1M0ZGVoSFlFZkFVSE5u?=
+ =?utf-8?B?S3BESzRneG9ISitGd05sK3BPeHZQRjhyQ3cra2hiY3pWN1BHRm5hekZnVVUw?=
+ =?utf-8?B?dlMyVFJ1U0JGMTYvbktMM2VpeHhYVkNiNnVuSGI1UXJzK2gyU25qS0VaOXIx?=
+ =?utf-8?Q?KHvjo9hmNr8/HpC+gYoMuIslY?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e37bdec9-6320-460b-8b6e-08dad27efd57
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d3cc439-73ad-4aec-a6c9-08dad283cc4e
 X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6604.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2022 03:00:10.0378
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2022 03:34:33.8788
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nd3BQOzmyJ94Lv/Tx6Hcj+FGwecccVHpIHPHuDBIAd+on+zxJTenDekpCLff+U4Nold6gkjGHatTt9iyHEuiOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4245
+X-MS-Exchange-CrossTenant-UserPrincipalName: slFyX1b2XMbJGdhoobxi+1leX5hMHEOFCFKEi3e+aKVTFCU/xuOmTXSlpYJD5oACszAVFwZFmBQHZcqUAndR5Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5453
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11/11/22 8:01 AM, Thierry Reding wrote:
-> On Thu, Nov 03, 2022 at 10:45:18AM -0700, Dipen Patel wrote:
->> The Tegra234 AON GPIO instance and LIC IRQ support HTE. For the GPIO
->> HTE support, it requires to add mapping between GPIO and HTE framework.
->>
->> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
->> ---
->>  drivers/hte/hte-tegra194-test.c |   2 +-
->>  drivers/hte/hte-tegra194.c      | 124 ++++++++++++++++++++++++++++++--
->>  2 files changed, 121 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
->> index 5d776a185bd6..d79c28a80517 100644
->> --- a/drivers/hte/hte-tegra194-test.c
->> +++ b/drivers/hte/hte-tegra194-test.c
->> @@ -16,7 +16,7 @@
->>  #include <linux/hte.h>
+On 11/4/22 8:33 PM, Bagas Sanjaya wrote:
+> On Thu, Nov 03, 2022 at 10:45:21AM -0700, Dipen Patel wrote:
+>>  Description
+>>  -----------
+>> -The Nvidia tegra194 HTE provider driver implements two GTE
+>> -(Generic Timestamping Engine) instances: 1) GPIO GTE and 2) LIC
+>> -(Legacy Interrupt Controller) IRQ GTE. Both GTE instances get the
+>> -timestamp from the system counter TSC which has 31.25MHz clock rate, and the
+>> -driver converts clock tick rate to nanoseconds before storing it as timestamp
+>> -value.
+>> +The Nvidia tegra HTE provider also known as GTE (Generic Timestamping Engine)
+>> +driver implements two GTE instances: 1) GPIO GTE and 2) LIC
+>> +(Legacy Interrupt Controller) IRQ GTE. Both GTE instances get the timestamp
+>> +from the system counter TSC which has 31.25MHz clock rate, and the driver
+>> +converts clock tick rate to nanoseconds before storing it as timestamp value.
 >>  
->>  /*
->> - * This sample HTE GPIO test driver demonstrates HTE API usage by enabling
->> + * This sample HTE test driver demonstrates HTE API usage by enabling
->>   * hardware timestamp on gpio_in and specified LIC IRQ lines.
->>   *
->>   * Note: gpio_out and gpio_in need to be shorted externally in order for this
->> diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
->> index 49a27af22742..5d1f947db0f6 100644
->> --- a/drivers/hte/hte-tegra194.c
->> +++ b/drivers/hte/hte-tegra194.c
->> @@ -62,6 +62,10 @@
->>  #define NV_AON_HTE_SLICE2_IRQ_GPIO_25	25
->>  #define NV_AON_HTE_SLICE2_IRQ_GPIO_26	26
->>  #define NV_AON_HTE_SLICE2_IRQ_GPIO_27	27
->> +#define NV_AON_HTE_SLICE2_IRQ_GPIO_28	28
->> +#define NV_AON_HTE_SLICE2_IRQ_GPIO_29	29
->> +#define NV_AON_HTE_SLICE2_IRQ_GPIO_30	30
->> +#define NV_AON_HTE_SLICE2_IRQ_GPIO_31	31
+>>  GPIO GTE
+>>  --------
 >>  
->>  #define HTE_TECTRL		0x0
->>  #define HTE_TETSCH		0x4
->> @@ -220,7 +224,100 @@ static const struct tegra_hte_line_mapped tegra194_aon_gpio_sec_map[] = {
->>  	[39] = {NV_AON_SLICE_INVALID, 0},
->>  };
+>>  This GTE instance timestamps GPIO in real time. For that to happen GPIO
+>> -needs to be configured as input. The always on (AON) GPIO controller instance
+>> -supports timestamping GPIOs in real time and it has 39 GPIO lines. The GPIO GTE
+>> -and AON GPIO controller are tightly coupled as it requires very specific bits
+>> -to be set in GPIO config register before GPIO GTE can be used, for that GPIOLIB
+>> -adds two optional APIs as below. The GPIO GTE code supports both kernel
+>> -and userspace consumers. The kernel space consumers can directly talk to HTE
+>> -subsystem while userspace consumers timestamp requests go through GPIOLIB CDEV
+>> -framework to HTE subsystem.
+>> +needs to be configured as input. Only the always on (AON) GPIO controller
+>> +instance supports timestamping GPIOs in real time as it is tightly coupled with
+>> +the GPIO GTE. To support this, GPIOLIB adds two optional APIs as mentioned
+>> +below. The GPIO GTE code supports both kernel and userspace consumers. The
+>> +kernel space consumers can directly talk to HTE subsystem while userspace
+>> +consumers timestamp requests go through GPIOLIB CDEV framework to HTE
+>> +subsystem. The hte devicetree binding described at
+>> +``Documentation/devicetree/bindings/timestamp`` provides an example of how a
+>> +consumer can request an GPIO line.
 >>  
->> -static const struct tegra_hte_data aon_hte = {
->> +static const struct tegra_hte_line_mapped tegra234_aon_gpio_map[] = {
->> +	/* gpio, slice, bit_index */
->> +	/* AA port */
->> +	[0]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_11},
->> +	[1]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_10},
->> +	[2]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_9},
->> +	[3]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_8},
->> +	[4]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_7},
->> +	[5]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_6},
->> +	[6]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_5},
->> +	[7]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_4},
->> +	/* BB port */
->> +	[8]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_3},
->> +	[9]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_2},
->> +	[10] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_1},
->> +	[11] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_0},
->> +	/* CC port */
->> +	[12] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_22},
->> +	[13] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_21},
->> +	[14] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_20},
->> +	[15] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_19},
->> +	[16] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_18},
->> +	[17] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_17},
->> +	[18] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_16},
->> +	[19] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_15},
->> +	/* DD port */
->> +	[20] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_14},
->> +	[21] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_13},
->> +	[22] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_12},
->> +	/* EE port */
->> +	[23] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_31},
->> +	[24] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_30},
->> +	[25] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_29},
->> +	[26] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_28},
->> +	[27] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_27},
->> +	[28] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_26},
->> +	[29] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_25},
->> +	[30] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_24},
->> +	/* GG port */
->> +	[31] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_23},
->> +};
->> +
->> +static const struct tegra_hte_line_mapped tegra234_aon_gpio_sec_map[] = {
->> +	/* gpio, slice, bit_index */
->> +	/* AA port */
->> +	[0]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_11},
->> +	[1]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_10},
->> +	[2]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_9},
->> +	[3]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_8},
->> +	[4]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_7},
->> +	[5]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_6},
->> +	[6]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_5},
->> +	[7]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_4},
->> +	/* BB port */
->> +	[8]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_3},
->> +	[9]  = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_2},
->> +	[10] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_1},
->> +	[11] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_0},
->> +	[12] = {NV_AON_SLICE_INVALID, 0},
->> +	[13] = {NV_AON_SLICE_INVALID, 0},
->> +	[14] = {NV_AON_SLICE_INVALID, 0},
->> +	[15] = {NV_AON_SLICE_INVALID, 0},
->> +	/* CC port */
->> +	[16] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_22},
->> +	[17] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_21},
->> +	[18] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_20},
->> +	[19] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_19},
->> +	[20] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_18},
->> +	[21] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_17},
->> +	[22] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_16},
->> +	[23] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_15},
->> +	/* DD port */
->> +	[24] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_14},
->> +	[25] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_13},
->> +	[26] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_12},
->> +	[27] = {NV_AON_SLICE_INVALID, 0},
->> +	[28] = {NV_AON_SLICE_INVALID, 0},
->> +	[29] = {NV_AON_SLICE_INVALID, 0},
->> +	[30] = {NV_AON_SLICE_INVALID, 0},
->> +	[31] = {NV_AON_SLICE_INVALID, 0},
->> +	/* EE port */
->> +	[32] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_31},
->> +	[33] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_30},
->> +	[34] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_29},
->> +	[35] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_28},
->> +	[36] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_27},
->> +	[37] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_26},
->> +	[38] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_25},
->> +	[39] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_24},
->> +	/* GG port */
->> +	[40] = {2, NV_AON_HTE_SLICE2_IRQ_GPIO_23},
->> +};
->> +
->> +static const struct tegra_hte_data t194_aon_hte = {
->>  	.map_sz = ARRAY_SIZE(tegra194_aon_gpio_map),
->>  	.map = tegra194_aon_gpio_map,
->>  	.sec_map_sz = ARRAY_SIZE(tegra194_aon_gpio_sec_map),
->> @@ -228,6 +325,14 @@ static const struct tegra_hte_data aon_hte = {
->>  	.type = HTE_TEGRA_TYPE_GPIO,
->>  };
+>>  See gpiod_enable_hw_timestamp_ns() and gpiod_disable_hw_timestamp_ns().
 >>  
->> +static const struct tegra_hte_data t234_aon_hte = {
->> +	.map_sz = ARRAY_SIZE(tegra234_aon_gpio_map),
->> +	.map = tegra234_aon_gpio_map,
->> +	.sec_map_sz = ARRAY_SIZE(tegra234_aon_gpio_sec_map),
->> +	.sec_map = tegra234_aon_gpio_sec_map,
->> +	.type = HTE_TEGRA_TYPE_GPIO,
->> +};
->> +
->>  static const struct tegra_hte_data lic_hte = {
->>  	.map_sz = 0,
->>  	.map = NULL,
->> @@ -535,7 +640,9 @@ static bool tegra_hte_match_from_linedata(const struct hte_chip *chip,
->>  
->>  static const struct of_device_id tegra_hte_of_match[] = {
->>  	{ .compatible = "nvidia,tegra194-gte-lic", .data = &lic_hte},
->> -	{ .compatible = "nvidia,tegra194-gte-aon", .data = &aon_hte},
->> +	{ .compatible = "nvidia,tegra194-gte-aon", .data = &t194_aon_hte},
->> +	{ .compatible = "nvidia,tegra234-gte-lic", .data = &lic_hte},
->> +	{ .compatible = "nvidia,tegra234-gte-aon", .data = &t234_aon_hte},
->>  	{ }
->>  };
->>  MODULE_DEVICE_TABLE(of, tegra_hte_of_match);
->> @@ -635,8 +742,17 @@ static int tegra_hte_probe(struct platform_device *pdev)
->>  
->>  		gc->match_from_linedata = tegra_hte_match_from_linedata;
->>  
->> -		hte_dev->c = gpiochip_find("tegra194-gpio-aon",
->> -					   tegra_get_gpiochip_from_name);
->> +		if (of_device_is_compatible(dev->of_node,
->> +					    "nvidia,tegra194-gte-aon"))
->> +			hte_dev->c = gpiochip_find("tegra194-gpio-aon",
->> +						tegra_get_gpiochip_from_name);
->> +		else if (of_device_is_compatible(dev->of_node,
->> +						 "nvidia,tegra234-gte-aon"))
->> +			hte_dev->c = gpiochip_find("tegra234-gpio-aon",
->> +						tegra_get_gpiochip_from_name);
->> +		else
->> +			return -ENODEV;
 > 
-> I'm wondering: instead of doing this cumbersome lookup, perhaps it would
-> be easier to create a direct link to the right GPIO controller with a
-> phandle?
-Possible, need to see if gpiod framework has API exposed to get the gpiochip from
-the phandle.
+> I think the wording can be better:
+I do  not understand, can you please elaborate?
 > 
-> Thierry
+> ---- >8 ----
+> 
+> diff --git a/Documentation/driver-api/hte/tegra194-hte.rst b/Documentation/driver-api/hte/tegra194-hte.rst
+> index 85e654772782c1..13c45bfc03a75e 100644
+> --- a/Documentation/driver-api/hte/tegra194-hte.rst
+> +++ b/Documentation/driver-api/hte/tegra194-hte.rst
+> @@ -5,11 +5,11 @@ HTE Kernel provider driver
+>  
+>  Description
+>  -----------
+> -The Nvidia tegra HTE provider also known as GTE (Generic Timestamping Engine)
+> -driver implements two GTE instances: 1) GPIO GTE and 2) LIC
+> -(Legacy Interrupt Controller) IRQ GTE. Both GTE instances get the timestamp
+> -from the system counter TSC which has 31.25MHz clock rate, and the driver
+> -converts clock tick rate to nanoseconds before storing it as timestamp value.
+> +The Nvidia tegra HTE provider, also known as GTE (Generic Timestamping Engine)
+> +driver implements two GTE instances: GPIO GTE and LIC (Legacy Interrupt
+> +Controller) IRQ GTE. Both GTE instances get the timestamp from system counter
+> +TSC which has 31.25MHz clock rate, and the driver converts clock tick rate to
+> +nanoseconds before storing it as timestamp value.
+>  
+>  GPIO GTE
+>  --------
+> @@ -19,17 +19,17 @@ needs to be configured as input. Only the always on (AON) GPIO controller
+>  instance supports timestamping GPIOs in real time as it is tightly coupled with
+>  the GPIO GTE. To support this, GPIOLIB adds two optional APIs as mentioned
+>  below. The GPIO GTE code supports both kernel and userspace consumers. The
+> -kernel space consumers can directly talk to HTE subsystem while userspace
+> -consumers timestamp requests go through GPIOLIB CDEV framework to HTE
+> -subsystem. The hte devicetree binding described at
+> -``Documentation/devicetree/bindings/timestamp`` provides an example of how a
+> -consumer can request an GPIO line.
+> +kernel space consumers can directly talk to HTE subsystem while requests from
+> +userspace consumers go through GPIOLIB CDEV framework to HTE subsystem. The hte
+> +devicetree binding described at ``Documentation/devicetree/bindings/timestamp``
+> +provides an example of how a consumer can request an GPIO line.
+>  
+> -See gpiod_enable_hw_timestamp_ns() and gpiod_disable_hw_timestamp_ns().
+> +To toggle hardware timestamp, use gpiod_enable_hw_timestamp_ns() and
+> +gpiod_disable_hw_timestamp_ns().
+>  
+>  For userspace consumers, GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE flag must be
+> -specified during IOCTL calls. Refer to ``tools/gpio/gpio-event-mon.c``, which
+> -returns the timestamp in nanoseconds.
+> +specified during IOCTL calls. Refer to ``tools/gpio/gpio-event-mon.c`` for
+> +example.
+>  
+>  LIC (Legacy Interrupt Controller) IRQ GTE
+>  -----------------------------------------
+> 
+> Thanks.
+> 
 
