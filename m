@@ -2,92 +2,76 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D48C46467
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Nov 2022 17:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E98C4321E
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Nov 2022 20:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbiK3RMR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Nov 2022 12:12:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39638 "EHLO
+        id S229720AbiK3UsQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Nov 2022 15:48:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231153AbiK3RLy (ORCPT
+        with ESMTP id S229625AbiK3UsO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Nov 2022 12:11:54 -0500
+        Wed, 30 Nov 2022 15:48:14 -0500
 Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BA070630;
-        Wed, 30 Nov 2022 09:07:12 -0800 (PST)
-Received: by mail-ot1-f49.google.com with SMTP id 94-20020a9d0067000000b0066c8d13a33dso11601554ota.12;
-        Wed, 30 Nov 2022 09:07:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2221127901;
+        Wed, 30 Nov 2022 12:48:14 -0800 (PST)
+Received: by mail-ot1-f49.google.com with SMTP id s9-20020a05683004c900b0066e7414466bso164951otd.12;
+        Wed, 30 Nov 2022 12:48:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+yCvE4xL7PcYhApAjLTDVKWvyzIVUevfInfC0cACAe0=;
-        b=pvOxLDA+xUMpuZOGXe9n8s6Kn+p9I4guT8SNR8rccoRuh/L5DRxsdfRglDGfq9DWY1
-         RdupRJaxGbUEmFmo/nOpc+XsyOrgHITFphwu+lfTH7qEIt5U+wP7Y0GAV4dKWYFfQxyV
-         d8KAha8LvOP+rYFRo7I9Gz3+bzb3txyjcmliAn/nict91hwpnB3UCIJZ6YZWRIRJ4k1b
-         RRq7Qz1jgEXttfr2WqlSzVHCdfIMRLCEbg+ddLkjdJDLZI5nMEnL9cERmVLoOeRRtmlk
-         G8Rw/JdoZ6UTXP096GgqZLkWEVMIXQiXiJ3gWfg55/X8YTH4/lP8KAeGkhgSoCH/7TnE
-         fYJQ==
-X-Gm-Message-State: ANoB5plN+Gw8CMuWyw2EYxcYtPaXiK8Jm4GfRLDpaqRp4VT30N0GNYuF
-        /s0lIKUCinMOFcGGtQsPik10XCMvSA==
-X-Google-Smtp-Source: AA0mqf5G3ILqf43J74PC7Uy/K6RqK5iaFw5vp7nG4FRXL6eWEQbc8SiS1NqktAkhS98cdBFbxbK0GQ==
-X-Received: by 2002:a05:6830:412a:b0:66e:69f8:93ba with SMTP id w42-20020a056830412a00b0066e69f893bamr1651849ott.334.1669828031398;
-        Wed, 30 Nov 2022 09:07:11 -0800 (PST)
+        bh=+10mQQnKL+RpcNRHyz4kOrwroAQV9Weo7s9+KyGrg3k=;
+        b=7odvETaaIZ7AqIMzmGuafhu1mctt3Ok2bjptRkXMzBbXaGqnzbTrFTgA7ZvDb3vhFQ
+         0MNMaPAGCXSNaLuVQ9Iq3xBQrVR6pnDEWGNfkv/zwi2uEgh4/AIUvUdLAf7+U1R8lRB3
+         GwgSMqdv7FU/52SqOizv/IXI2Bw8KlhpnDhiL1sdD7PFoClkk7SGzX1NeOeI8nlLhMvM
+         7xduO+BEA3+49ufzA9TvBW94ZuOstPCz867+H3PTOWlMlXTuC2Dgr43GdUIQjJpe8/qB
+         FWwEHw43r40SG6A4x5iOdjmvwAWMsMNp88+uzst99JpHkqrqEGP4PBYntnIEc8Bk/tUr
+         +mPA==
+X-Gm-Message-State: ANoB5plRaolTgxfe2rvgHtzCri+I6+Xjr93BxlZTrE50fWd6yGeRd0fk
+        Uejjg0zkBLXf0Mfsen2nUDXM9FJYPA==
+X-Google-Smtp-Source: AA0mqf79JfTWhTiipndMzsy0NFp6T1qtjxfyE04byDZPhAlC0Jp6nd53snsnlNnQhCY0V5QrUy0EYg==
+X-Received: by 2002:a9d:4812:0:b0:66d:1e19:684b with SMTP id c18-20020a9d4812000000b0066d1e19684bmr32141795otf.44.1669841293372;
+        Wed, 30 Nov 2022 12:48:13 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id h17-20020a056870171100b00136c20b1c59sm1393711oae.43.2022.11.30.09.07.09
+        by smtp.gmail.com with ESMTPSA id u9-20020a056870f28900b0011bde9f5745sm1734558oap.23.2022.11.30.12.48.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 09:07:10 -0800 (PST)
-Received: (nullmailer pid 2456583 invoked by uid 1000);
-        Wed, 30 Nov 2022 17:07:09 -0000
-Date:   Wed, 30 Nov 2022 11:07:09 -0600
+        Wed, 30 Nov 2022 12:48:12 -0800 (PST)
+Received: (nullmailer pid 2900413 invoked by uid 1000);
+        Wed, 30 Nov 2022 20:48:12 -0000
+Date:   Wed, 30 Nov 2022 14:48:12 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        gregkh@linuxfoundation.org, krzysztof.kozlowski+dt@linaro.org,
-        vkoul@kernel.org, treding@nvidia.com, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-tegra@vger.kernel.org, waynec@nvidia.com
-Subject: Re: [PATCH V4 6/6] dt-bindings: phy: tegra-xusb: Add support for
- Tegra234
-Message-ID: <20221130170709.GA2454510-robh@kernel.org>
-References: <20221118154006.173082-1-jonathanh@nvidia.com>
- <20221118154006.173082-7-jonathanh@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH] dt-bindings: usb: tegra-xusb: Remove path references
+Message-ID: <20221130204812.GA2899835-robh@kernel.org>
+References: <20221130154111.1655603-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221118154006.173082-7-jonathanh@nvidia.com>
+In-Reply-To: <20221130154111.1655603-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Nov 18, 2022 at 03:40:06PM +0000, Jon Hunter wrote:
-> Add the compatible string for the Tegra234 XUSB PHY.
+On Wed, Nov 30, 2022 at 04:41:11PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Unresolved path references are now flagged as errors when checking the
+> device tree binding examples, so convert them into label references.
+> 
+> Reported-by: Conor Dooley <conor.dooley@microchip.com>
+> Suggested-by: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> This is a new patch in this version of the series. This patch is
-> dependent upon the following patch.
-> 
-> https://lore.kernel.org/linux-tegra/20221118144015.3650774-1-thierry.reding@gmail.com/
-> 
->  .../devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml  | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml b/Documentation/devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml
-> index 1c570ff65eb4..5302fdb0949c 100644
-> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml
-> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml
-> @@ -42,7 +42,9 @@ description:
->  
->  properties:
->    compatible:
-> -    const: nvidia,tegra194-xusb-padctl
-> +    enum:
-> +      - nvidia,tegra194-xusb-padctl
-> +      - nvidia,tegra194-xusb-padctl
+>  .../devicetree/bindings/usb/nvidia,tegra124-xusb.yaml     | 4 +---
+>  .../devicetree/bindings/usb/nvidia,tegra186-xusb.yaml     | 4 +---
+>  .../devicetree/bindings/usb/nvidia,tegra194-xusb.yaml     | 8 ++------
+>  .../devicetree/bindings/usb/nvidia,tegra210-xusb.yaml     | 8 ++------
+>  4 files changed, 6 insertions(+), 18 deletions(-)
 
-Did you test this because I'm pretty sure you would get an error. The 
-bot didn't test because of the dependency.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
