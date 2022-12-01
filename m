@@ -2,89 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F796C43217
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Dec 2022 08:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DEAC43217
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Dec 2022 09:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbiLAI5p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Dec 2022 03:57:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57700 "EHLO
+        id S229734AbiLAJUR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Dec 2022 04:20:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229863AbiLAI5l (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Dec 2022 03:57:41 -0500
-X-Greylist: delayed 1716 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 01 Dec 2022 00:57:32 PST
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F00E7;
-        Thu,  1 Dec 2022 00:57:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=INyxVWTl5V40Q4m8iuk6nyPL6/SVXAaVTfMABtgODPU=; b=rtDaLkzT4z+MKduPKz0zQkPZRM
-        HOkXBiv54Lmek4TrfuSnFPduUbrMCNuJNwDJ8/7X7LU+wOJPdb7E0HO7aZLxVidAol4uUyRmShkdP
-        SwkR6K6VlwZ5ycDUR/4GyXuTFoE5tV6wICR67XkwHzvIhziWbmFxavkSE0NwGl/cXmPAeDGIHqtSY
-        JcinySJ3nzMlxkD1Z2GY/S5bTNxIfF47mPMFivIdDn2VCPtfbHd8faQb8hGO1uozAvPYaYd1FgFnk
-        R+m5se88hCaAEWpt5S2JalLCq7gkPom9hti4YVk27Mt99bpGk3ceHxXUk9jb6EF3BTdJeOZ9JP25q
-        iEKRznkQ==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1p0eIv-0044k7-K5; Thu, 01 Dec 2022 09:48:21 +0200
-Message-ID: <e46598e5-d680-5ae3-3e4a-ec6e5be5090b@kapsi.fi>
-Date:   Thu, 1 Dec 2022 09:48:20 +0200
+        with ESMTP id S229674AbiLAJUP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Dec 2022 04:20:15 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 651CF73424
+        for <linux-tegra@vger.kernel.org>; Thu,  1 Dec 2022 01:20:11 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id s196so1157745pgs.3
+        for <linux-tegra@vger.kernel.org>; Thu, 01 Dec 2022 01:20:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5COQrmAFX80Rt9/QM8jDMmpKU72o7nnxyNe4BluLOMQ=;
+        b=rXzzzyCGtE2MiaqDV3YOQFFJnBtfFZXPm412NZoX9eFQsYO6V1LQGMt0V9dsZbk7D7
+         uZlD6U4sAjq1JhJYXGHx3DlPXxnnkQYtnxQ9jvlSQfrPNNCYc/u7/w6mUksCvDsEY7j/
+         nC1N/Bx/O9tH2YDxsvfrnubO4aSaSkJ3ks80it9KxIiq/JFTWPzrbOmNd/Sh7DxW0hEe
+         LvIanTk+/EGREAdtBb6n2i48zATDKGypwryeccQsd8odzySVMUzd7q8RAuzMLAq4bGrF
+         3iGhKyUFo40Gi/iVZyzqv14i4ngqRXfhS8GJ3Kf9xv7PSmsMrEljIX4S2y2n9nWVPwhZ
+         m39g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5COQrmAFX80Rt9/QM8jDMmpKU72o7nnxyNe4BluLOMQ=;
+        b=cmA8bKPkGnwGS9Ah9pTLaFN4NZLwiPqtRR4SNi2yaSQRrOptiB4Exh+/a57u7FLpIe
+         s8+p7Y4H+Rj9rWpqHHEYzdzFfWxpCcXR3/nQGw/bcf9vgd+gAQzj4G4sjE4bofaRt+Ek
+         MBOoc4XAcMWcBhKCEOpulRA5D807h0qOnp/oRHcVjVLnKjgsFgcEKg1L9j88Z3yy8GZl
+         3SJ+Dor3RP070fkzmFs4qD1D30RmVemXzWRZOE63a2dU/I3b2YmgRZlXlEoNnI5ajZtQ
+         uvo75MG3q22oFORczNoWYu1V2ya2sYxB0XLGMkKK8Egh/3xTlGmVXWd2jgpjGBQRJX6+
+         JPPA==
+X-Gm-Message-State: ANoB5pn0gwaGKVHkHm1LwoPe2Ivak04rpZj1Su41wU5zodtA2ffRvZhi
+        /b0N9Y9B4I7m7nMtQjR1WZGeTQ==
+X-Google-Smtp-Source: AA0mqf6XZ6BIBIaTNJzI3h5545GwZMXPWSEEOR6kemnJDSWPfoZxJpIHr12pfUHNGP8pI05+jEUT+A==
+X-Received: by 2002:a63:e444:0:b0:477:6a3a:e614 with SMTP id i4-20020a63e444000000b004776a3ae614mr40676499pgk.81.1669886410907;
+        Thu, 01 Dec 2022 01:20:10 -0800 (PST)
+Received: from localhost ([122.172.87.149])
+        by smtp.gmail.com with ESMTPSA id i190-20020a6287c7000000b0056c704abca7sm2714966pfe.220.2022.12.01.01.20.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Dec 2022 01:20:10 -0800 (PST)
+Date:   Thu, 1 Dec 2022 14:50:08 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: tegra186: Use flexible array to simplify memory
+ allocation
+Message-ID: <20221201092008.2nainxhjpxnsptin@vireshk-i7>
+References: <e39752476d02605b2be46cab7115f71255ce13a8.1668949256.git.christophe.jaillet@wanadoo.fr>
+ <f6b75a33df6f5fd94da3cfecb1e9e7590bf8cd37.1668963937.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH] gpu: host1x: Remove redundant null checks before kfree
-Content-Language: en-US
-To:     zys.zljxml@gmail.com, thierry.reding@gmail.com, airlied@gmail.com,
-        daniel@ffwll.ch, sumit.semwal@linaro.org, christian.koenig@amd.com
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org,
-        Yushan Zhou <katrinzhou@tencent.com>
-References: <20221201015522.38163-1-zys.zljxml@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <20221201015522.38163-1-zys.zljxml@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6b75a33df6f5fd94da3cfecb1e9e7590bf8cd37.1668963937.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 12/1/22 03:55, zys.zljxml@gmail.com wrote:
-> From: Yushan Zhou <katrinzhou@tencent.com>
+On 20-11-22, 18:19, Christophe JAILLET wrote:
+> Use flexible array to simplify memory allocation.
+> It saves some memory, avoids an indirection when reading the 'clusters'
+> array and removes some LoC.
 > 
-> Fix the following coccicheck warning:
-> ./drivers/gpu/host1x/fence.c:97:2-7: WARNING:
-> NULL check before some freeing functions is not needed.
 > 
-> Signed-off-by: Yushan Zhou <katrinzhou@tencent.com>
+> Detailed explanation:
+> ====================
+> Knowing that:
+>   - each devm_ allocation over-allocates 40 bytes for internal needs
+>   - Some rounding is done by the memory allocator on 8, 16, 32, 64, 96,
+>     128, 192, 256, 512, 1024, 2048, 4096, 8192 boundaries
+> 
+> and that:
+>   - sizeof(struct tegra186_cpufreq_data) = 24
+>   - sizeof(struct tegra186_cpufreq_cluster) = 16
+> 
+> Memory allocations in tegra186_cpufreq_probe() are:
+>   data:           (24 + 40) = 64 		      => 64 bytes
+>   data->clusters: (2 * 16 + 40) = 72     => 96 bytes
+> So a total of 160 bytes are allocated.
+> 56 for the real need, 80 for internal uses and 24 are wasted.
+> 
+> 
+> If 'struct tegra186_cpufreq_data' is reordered so that 'clusters' is a
+> flexible array:
+>   - it saves one pointer in the structure
+>   - only one allocation is needed
+> 
+> So, only 96 bytes are allocated:
+>   16 + 2 * 16 + 40 = 88  => 96 bytes
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   drivers/gpu/host1x/fence.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
-> index ecab72882192..05b36bfc8b74 100644
-> --- a/drivers/gpu/host1x/fence.c
-> +++ b/drivers/gpu/host1x/fence.c
-> @@ -93,8 +93,7 @@ static void host1x_syncpt_fence_release(struct dma_fence *f)
->   {
->   	struct host1x_syncpt_fence *sf = to_host1x_fence(f);
->   
-> -	if (sf->waiter)
-> -		kfree(sf->waiter);
-> +	kfree(sf->waiter);
->   
->   	dma_fence_free(f);
->   }
 
-I disagree with this coccinelle rule; I think it obfuscates from the 
-reader the fact that the pointer could be NULL.
+Applied. Thanks.
 
-Mikko
+-- 
+viresh
