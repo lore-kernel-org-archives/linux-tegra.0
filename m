@@ -2,95 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A153C47088
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Dec 2022 01:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F796C43217
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Dec 2022 08:57:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbiLABzy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Nov 2022 20:55:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60028 "EHLO
+        id S229861AbiLAI5p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Dec 2022 03:57:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbiLABzh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Nov 2022 20:55:37 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4F3E16;
-        Wed, 30 Nov 2022 17:55:36 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id 140so509392pfz.6;
-        Wed, 30 Nov 2022 17:55:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C8hpJ+dhKLwcq6yGKXl9JYCXBoLbIiY9R+toMXs7xSY=;
-        b=PXW7kMdCN3ai+CI0xhP8dUH6+O2YzxU2IhSV5eUBFDR4EwrNFfWs9iu7/OUr82Un6v
-         Xf2FxRIXxOn71D8Csqze226LrlxI2ZYZgVWHq8dAdMV0Yr3bRyOZ3UbFb7rA0qIdsFHi
-         SKiZSi5nqW4qutJZNdS9mLQZykYBw+dVCuW3lFaN4P+n8nvRhHBnAo5t7BnJeMlX0P7p
-         vNxhz5gBRw/Qwhol3ns2Y4F1VMvh6Qg7GefnnMVokuX+Lo3UTT72XDF/yqHTLJogFzSl
-         VRzU5lLsVhFSl0PojqcwKhDkrjQEXpRdONrkgc+bD27rsP26wYC2DJxHIn7jC7CiOUE9
-         iD5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C8hpJ+dhKLwcq6yGKXl9JYCXBoLbIiY9R+toMXs7xSY=;
-        b=tW42Axpamc9EBmBe98OZI4lEypyZMzFWQQW0wlN3ghWYXKS1mzsubZjO/GIt4MRTkf
-         xxTBOhY2smBjc7QFOJuhI8jiR/BcuUD1EIAwATE8X3csRnH3dFJ45RCtNzBwDKma9+7D
-         qgo0EGxoLj+0282dh0RvXu8zj+iSBb8Ga0vSwo9t4Z3ApACSen5l93FaNMKdKOinbD9c
-         dzn7DXh5VQTSTbzl+QytJnWBHfZTG3FiMEgkYPvvXibX6wwa8KSLSoZhk1c5wiElTFQR
-         74E+UBBIYVCnNsDjO2DYgcfYWpv8vuU+RbIRWBTz/SQ9keCEYUMkr5yzPGBbRE4cMKhV
-         wnUw==
-X-Gm-Message-State: ANoB5pkc++zu8nYLxEWIUuX6au3irgAv/MyAe+JlbGjYPrRV1odYmm5y
-        gfAtKBViO2TCAvmW/G7SnKg=
-X-Google-Smtp-Source: AA0mqf7W++ZGlAQng+eeRI1JZVWPEnuY6Xb3IZoLdPXSTzOLfDjzAs7B0Z6Sl0DCk+ll7W7tSZa5qA==
-X-Received: by 2002:a62:8446:0:b0:574:8c08:6c15 with SMTP id k67-20020a628446000000b005748c086c15mr34168668pfd.82.1669859736108;
-        Wed, 30 Nov 2022 17:55:36 -0800 (PST)
-Received: from localhost.localdomain ([43.132.141.8])
-        by smtp.gmail.com with ESMTPSA id x9-20020aa79a49000000b0056e0ff577edsm2013079pfj.43.2022.11.30.17.55.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 17:55:35 -0800 (PST)
-From:   zys.zljxml@gmail.com
-To:     thierry.reding@gmail.com, airlied@gmail.com, daniel@ffwll.ch,
-        sumit.semwal@linaro.org, christian.koenig@amd.com
+        with ESMTP id S229863AbiLAI5l (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Dec 2022 03:57:41 -0500
+X-Greylist: delayed 1716 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 01 Dec 2022 00:57:32 PST
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F00E7;
+        Thu,  1 Dec 2022 00:57:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=INyxVWTl5V40Q4m8iuk6nyPL6/SVXAaVTfMABtgODPU=; b=rtDaLkzT4z+MKduPKz0zQkPZRM
+        HOkXBiv54Lmek4TrfuSnFPduUbrMCNuJNwDJ8/7X7LU+wOJPdb7E0HO7aZLxVidAol4uUyRmShkdP
+        SwkR6K6VlwZ5ycDUR/4GyXuTFoE5tV6wICR67XkwHzvIhziWbmFxavkSE0NwGl/cXmPAeDGIHqtSY
+        JcinySJ3nzMlxkD1Z2GY/S5bTNxIfF47mPMFivIdDn2VCPtfbHd8faQb8hGO1uozAvPYaYd1FgFnk
+        R+m5se88hCaAEWpt5S2JalLCq7gkPom9hti4YVk27Mt99bpGk3ceHxXUk9jb6EF3BTdJeOZ9JP25q
+        iEKRznkQ==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1p0eIv-0044k7-K5; Thu, 01 Dec 2022 09:48:21 +0200
+Message-ID: <e46598e5-d680-5ae3-3e4a-ec6e5be5090b@kapsi.fi>
+Date:   Thu, 1 Dec 2022 09:48:20 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH] gpu: host1x: Remove redundant null checks before kfree
+Content-Language: en-US
+To:     zys.zljxml@gmail.com, thierry.reding@gmail.com, airlied@gmail.com,
+        daniel@ffwll.ch, sumit.semwal@linaro.org, christian.koenig@amd.com
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
         linaro-mm-sig@lists.linaro.org,
         Yushan Zhou <katrinzhou@tencent.com>
-Subject: [PATCH] gpu: host1x: Remove redundant null checks before kfree
-Date:   Thu,  1 Dec 2022 09:55:21 +0800
-Message-Id: <20221201015522.38163-1-zys.zljxml@gmail.com>
-X-Mailer: git-send-email 2.27.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221201015522.38163-1-zys.zljxml@gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <20221201015522.38163-1-zys.zljxml@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Yushan Zhou <katrinzhou@tencent.com>
+On 12/1/22 03:55, zys.zljxml@gmail.com wrote:
+> From: Yushan Zhou <katrinzhou@tencent.com>
+> 
+> Fix the following coccicheck warning:
+> ./drivers/gpu/host1x/fence.c:97:2-7: WARNING:
+> NULL check before some freeing functions is not needed.
+> 
+> Signed-off-by: Yushan Zhou <katrinzhou@tencent.com>
+> ---
+>   drivers/gpu/host1x/fence.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
+> index ecab72882192..05b36bfc8b74 100644
+> --- a/drivers/gpu/host1x/fence.c
+> +++ b/drivers/gpu/host1x/fence.c
+> @@ -93,8 +93,7 @@ static void host1x_syncpt_fence_release(struct dma_fence *f)
+>   {
+>   	struct host1x_syncpt_fence *sf = to_host1x_fence(f);
+>   
+> -	if (sf->waiter)
+> -		kfree(sf->waiter);
+> +	kfree(sf->waiter);
+>   
+>   	dma_fence_free(f);
+>   }
 
-Fix the following coccicheck warning:
-./drivers/gpu/host1x/fence.c:97:2-7: WARNING:
-NULL check before some freeing functions is not needed.
+I disagree with this coccinelle rule; I think it obfuscates from the 
+reader the fact that the pointer could be NULL.
 
-Signed-off-by: Yushan Zhou <katrinzhou@tencent.com>
----
- drivers/gpu/host1x/fence.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
-index ecab72882192..05b36bfc8b74 100644
---- a/drivers/gpu/host1x/fence.c
-+++ b/drivers/gpu/host1x/fence.c
-@@ -93,8 +93,7 @@ static void host1x_syncpt_fence_release(struct dma_fence *f)
- {
- 	struct host1x_syncpt_fence *sf = to_host1x_fence(f);
- 
--	if (sf->waiter)
--		kfree(sf->waiter);
-+	kfree(sf->waiter);
- 
- 	dma_fence_free(f);
- }
--- 
-2.27.0
-
+Mikko
