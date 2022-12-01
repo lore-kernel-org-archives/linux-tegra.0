@@ -2,95 +2,203 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB17BC4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Dec 2022 23:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CB5C47088
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Dec 2022 23:16:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230309AbiLAXDQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Dec 2022 18:03:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32836 "EHLO
+        id S231288AbiLAXQn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Dec 2022 18:16:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230348AbiLAXDM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Dec 2022 18:03:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A019A3AC1A;
-        Thu,  1 Dec 2022 15:03:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1783A62183;
-        Thu,  1 Dec 2022 23:03:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2753AC433D6;
-        Thu,  1 Dec 2022 23:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669935786;
-        bh=7KgA1NLXzNMM/GfnjUZZi8hCGEVUPfHsJHxSIxSHTbI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uBSERu1hBwR5RPX93IOyg7kMwy0GxZtHF9t1N3ZZBFq6PDXtZOogFvPMCuDu0WDf5
-         mqGvI22FTJaSlnCLFBfNwJSxmLCaX/+O/EU66AtbAlsKF6331IfmDPhAXo7G4avn1r
-         mUomg71tjGoJpLSLVsf7G82sgMJ/vwoKsoBXo9ujouOIQQKc9EAJri9u/KuSnxJRMz
-         JIlzdyFlU1t1li7DMy9l2PRLkHmxtG3TcJDAXnhYGS4Q0EzzTKsI2BsSJvFwGGGtoz
-         pH0FmuZzYHsB8SCpQe6t5sfFPX3RMS2g9dJi5/rt7mQ6jZ6X1o1r6927sDFmWZREWf
-         iS9nh3zRS/y4Q==
-Date:   Fri, 2 Dec 2022 00:03:03 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     christian.koenig@amd.com, digetx@gmail.com, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        sumit.semwal@linaro.org, thierry.reding@gmail.com,
-        Zubair Waheed <zwaheed@nvidia.com>
-Subject: Re: [PATCH] i2c: tegra: Set ACPI node as primary fwnode
-Message-ID: <Y4kypxegWQVXW0aQ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Akhil R <akhilrajeev@nvidia.com>, christian.koenig@amd.com,
-        digetx@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sumit.semwal@linaro.org,
-        thierry.reding@gmail.com, Zubair Waheed <zwaheed@nvidia.com>
-References: <20221117100415.20457-1-akhilrajeev@nvidia.com>
+        with ESMTP id S230484AbiLAXQn (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Dec 2022 18:16:43 -0500
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DFA12CA;
+        Thu,  1 Dec 2022 15:16:38 -0800 (PST)
+Received: by mail-oi1-f178.google.com with SMTP id v82so3691569oib.4;
+        Thu, 01 Dec 2022 15:16:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gNRL/xeucB6+OrmUshP7jeXkdDiSosMVb1WPEhPiXKc=;
+        b=wu1HlRi0mGGvPd31M/Z/AfE05TseZpE/ipIOV6mvdjrUzv7dLT2fgcxPZb9nCyt+sB
+         WBwnqFDwECg1s2uSpo4Z6zzAAJxjL3bJ5ssqW3w3+fmL5+YNgG84YYHICqAmPnyFEL7P
+         qAXPOHR90H73UdwEbi2BLBb4q+rUsgIYkfIRULQzbRX7FDtX86OddzCUmbXXqBRicT4i
+         900PiQauHfJygXTV29QlAV9Mz8H5nLMUPfqgr9ZzeUVIJmTf5Lk2jbnMXma58Xn9qXCK
+         ItVCaDHM9FchE335cWZkKCE58UcMaraacBvCvzSJVWbfz/LPkTDTKWI9ukhj8TuAmvAR
+         aUcw==
+X-Gm-Message-State: ANoB5pkWxCAX3gYY2gWBWQtsq6Pbym1bw9QugZyiZg7RJ3NJ24FhgHxg
+        gw3M/1lX0BReVH/NnskEhg==
+X-Google-Smtp-Source: AA0mqf6muhWWfnkoFwIXqCBePQ/MBBdAE6jdhns/DS7Zug2GZHo7VgeRSyRh9WVHfv7OuXgP60TIFQ==
+X-Received: by 2002:a05:6808:648:b0:35a:1139:37fb with SMTP id z8-20020a056808064800b0035a113937fbmr25391098oih.158.1669936597744;
+        Thu, 01 Dec 2022 15:16:37 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id a7-20020a9d4707000000b0066e7e4b2f76sm430735otf.17.2022.12.01.15.16.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Dec 2022 15:16:37 -0800 (PST)
+Received: (nullmailer pid 1663520 invoked by uid 1000);
+        Thu, 01 Dec 2022 23:16:36 -0000
+Date:   Thu, 1 Dec 2022 17:16:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 02/21] dt-bindings: display: tegra: vi: add 'vip'
+ property and example
+Message-ID: <20221201231636.GA1660613-robh@kernel.org>
+References: <20221128152336.133953-1-luca.ceresoli@bootlin.com>
+ <20221128152336.133953-3-luca.ceresoli@bootlin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Aw7De+0seDuzblOk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221117100415.20457-1-akhilrajeev@nvidia.com>
+In-Reply-To: <20221128152336.133953-3-luca.ceresoli@bootlin.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Nov 28, 2022 at 04:23:17PM +0100, Luca Ceresoli wrote:
+> The Tegra20 VI peripheral can receive parallel input from the VIP parallel
+> input module. Add it to the allowed properties and augment the existing
+> nvidia,tegra20-vi example to show a 'vip' property.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> 
+> ---
+> 
+> Changed in v2 (suggested by Krzysztof Kozlowski):
+> - rename "i2c3" -> "ic2"
+> - add review tag
+> ---
+>  .../display/tegra/nvidia,tegra20-vi.yaml      | 68 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 69 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+> index 782a4b10150a..5b5583c2b562 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+> @@ -74,6 +74,22 @@ properties:
+>    avdd-dsi-csi-supply:
+>      description: DSI/CSI power supply. Must supply 1.2 V.
+>  
+> +  vip:
+> +    $ref: /schemas/display/tegra/nvidia,tegra20-vip.yaml
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          Input from the VIP (parallel input capture) module
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: /schemas/graph.yaml#/properties/endpoint
 
---Aw7De+0seDuzblOk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You can drop 'endpoint'. You only need port nodes if there's no extra 
+properties in the endpoints.
 
-On Thu, Nov 17, 2022 at 03:34:15PM +0530, Akhil R wrote:
-> Set ACPI node as the primary fwnode of I2C adapter to allow
-> enumeration of child devices from the ACPI table
->=20
-> Signed-off-by: Zubair Waheed <zwaheed@nvidia.com>
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-
-Applied to for-next, thanks!
-
-
---Aw7De+0seDuzblOk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmOJMqcACgkQFA3kzBSg
-Kbb5jQ//QiuIXH9cEYMtDfFKwh2KY7XFmNzJ2ysXSmelbG0UvgO0Bvwv87hqNdLL
-X5vPuT9TEbCNdXzMqRZVNBa4mvFwQXh44rePjgxUC6SAVuwbE8A+mS0YyC5gVL5p
-yRokFNHCZBsfGZLIzKAA56h1AiJJWM80+lCeLvplfbqhH7SGXY2VkNx1B1/CwX7x
-MCRUwsuH8SArDtyYsjN+u12bH6aTIbw+sT5dd2jX3w2UVLecwfZhBtVfOmYH/dhE
-77N4fuqnGiryAdkUmUTBivWnh+ha1V5AYCdpzgqsJjRJN+ePhDPGtJu17U2r7e+y
-mOUeYT3HdhT4LvwmO+zAdFxF6zVXz1e32ahK8YKsNmnfjhavNKgmqQqUWOY/X76M
-urzxGYX2kp4WkSE5TJMn1O845aiiTQj4MvfQJ5F+s6x40DQosS5ORD5iodHDC1SP
-iO765ONPcsa1DVjR7urKmQ80CApFrw6kl8po/KQoRxolKjlhskcDwm7gS7mlAlZ9
-xc9cipqXWOxNfrGR4BOFM3pWg1Xr0Rwp8HmmzNTQ6Rmzkj8WfiYG8tmX2dllCD0o
-DecYOw47DVMJANsZmfVde9VRX/bBXBQgniA9soR4hosRu7KFM6XIDaP4cVH2zSKf
-CaqyB9vPoSAKZtL/vrUEabrHarh1N+DsvF6UCXhXYmZ64k+jOvA=
-=vjKv
------END PGP SIGNATURE-----
-
---Aw7De+0seDuzblOk--
+> +
+>  patternProperties:
+>    "^csi@[0-9a-f]+$":
+>      type: object
+> @@ -109,6 +125,22 @@ examples:
+>      #include <dt-bindings/clock/tegra20-car.h>
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        camera@48 {
+> +            compatible = "aptina,mt9v111";
+> +            reg = <0x48>;
+> +            clocks = <&camera_clk>;
+> +
+> +            port {
+> +                mt9v111_out: endpoint {
+> +                    remote-endpoint = <&vi_vip_in>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+>      vi@54080000 {
+>          compatible = "nvidia,tegra20-vi";
+>          reg = <0x54080000 0x00040000>;
+> @@ -116,6 +148,42 @@ examples:
+>          clocks = <&tegra_car TEGRA20_CLK_VI>;
+>          resets = <&tegra_car 100>;
+>          reset-names = "vi";
+> +
+> +        vip {
+> +            compatible = "nvidia,tegra20-vip";
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            channel@0 {
+> +                reg = <0>;
+> +                ports {
+> +                    #address-cells = <1>;
+> +                    #size-cells = <0>;
+> +                    port@0 {
+> +                        reg = <0>;
+> +                        vi_vip_in: endpoint {
+> +                            remote-endpoint = <&mt9v111_out>;
+> +                        };
+> +                    };
+> +                    port@1 {
+> +                        reg = <1>;
+> +                        vi_vip_out: endpoint {
+> +                            remote-endpoint = <&vi_in>;
+> +                        };
+> +                    };
+> +                };
+> +            };
+> +        };
+> +
+> +        ports {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            port@0 {
+> +                reg = <0>;
+> +                vi_in: endpoint {
+> +                    remote-endpoint = <&vi_vip_out>;
+> +                };
+> +            };
+> +        };
+>      };
+>  
+>    - |
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 92c762f85f17..0c97ce22735d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20320,6 +20320,7 @@ M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
+>  L:	linux-media@vger.kernel.org
+>  L:	linux-tegra@vger.kernel.org
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+>  F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
+>  
+>  TEGRA XUSB PADCTL DRIVER
+> -- 
+> 2.34.1
+> 
+> 
