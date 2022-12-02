@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBA7C47090
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61281C47088
 	for <linux-tegra@archiver.kernel.org>; Fri,  2 Dec 2022 15:27:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233613AbiLBP1F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 2 Dec 2022 10:27:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59896 "EHLO
+        id S233586AbiLBP1G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 2 Dec 2022 10:27:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233466AbiLBP04 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 2 Dec 2022 10:26:56 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 735A5D03A9;
-        Fri,  2 Dec 2022 07:26:55 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id v8so6950737edi.3;
-        Fri, 02 Dec 2022 07:26:55 -0800 (PST)
+        with ESMTP id S233635AbiLBP07 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 2 Dec 2022 10:26:59 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B13D0390;
+        Fri,  2 Dec 2022 07:26:57 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id fc4so5378237ejc.12;
+        Fri, 02 Dec 2022 07:26:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mCJXfYzTI2dyLGbCy2BhHsRfkj/QAMNTLWYIlL2SJZ0=;
-        b=hSRF5F3oUfAiQnRWAfNrjCkA2x0vFkvX3Xh8Xo+larZW6oE0taUlK1CsKplyHMUqvp
-         0W8ksnnKDt6WQ4QEmCxSI7Ndx4rwXjpKpJyX99Qlv8nMV9WVuOwoZWRYvyN7J5d07o1/
-         /GLNQHGeCUdCgrsY+5fwuJ5ocfyZrSwKDaJGJSEZc4sLB/7OKUeWODwerIXmXNexgnnu
-         T67JP1TywcNmjJa3JWfjmMA2c7xqdjwyqhMD2jYZalCrdyK3JOl+uJpexc9zSdhRhHup
-         venRjrPshSEPRlOWYuE+g/FOB9R/Sxjo1kzyUQXVP7ysMcOWRhZU9Ni2xBYMUGyR+70c
-         K96Q==
+        bh=1yABTotUF1aHfY2MvDhzL0Nasx3orq8o9ESsBCAmUe4=;
+        b=LQOtUd70pxQF/PYBI+E7Ast5RY8z/1CQLkbm0kM3GR6fjttSEg9vUcgH9JB9/fCQrF
+         SMVbuN1a364G1jwA2a9nzy8MVHfY3vPAe9D9sO+xJxGNQg1lk2mBI4b0jlK8wKW+2wVe
+         t/QB9Uh96vYG9zrPGwE53IG/zdhGnQfFuVvNCQiRfJ1OhahG5VUY3QoHK0Op6amzmA1T
+         4o9BK0OK18W33uPmC8qw1i2z23CtdFTh8x35RwMHetjTdZxmfyneFr0kGoEk22jweqrw
+         Ql8xIJlowkCw2viJBvSyYE/ofgB9wec0mcXXhGiglHBAhF3bYYawjwCh6aONR6cVD8kk
+         +kbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mCJXfYzTI2dyLGbCy2BhHsRfkj/QAMNTLWYIlL2SJZ0=;
-        b=d0towj+2aByh5gPg82mBOkFztV3aJ6brXToqTcaOQ6yQzqQOYnLPyJ5HfINYVrXYNf
-         r/EbsvdtxR+oFT0Crc63QHQ8f7nWBRDq/DQewxr7JFrCxukG1ad0MOysG2DBeIT75bxr
-         JamSXsBSdhau5cCoYp7s3aYdcrgxWYm9eJLO0S8rkMdgfVSQUg7KCiFtCUxC1BPjPLdK
-         KXGXhG61v+R0tsTnHYLls+L5iPFp5Rr7WFtTUx+i/3SmKr+hg4QHmLlu1jgjZye96NyD
-         gPIDi5NOMxFaG0cs2mOOYdT6M5hryoL9dKNbPE7JtXobSrd/yT1iQ+Ja8FT28rPgr9iR
-         zxRA==
-X-Gm-Message-State: ANoB5pktzjKJ63iU68CtysmezY64TNL8ywYiftrDaqJKwZQGly6Fnhkp
-        ECfFwaWQQr+eOSHpEeSwgfg=
-X-Google-Smtp-Source: AA0mqf6fGwGlYMveTxFx5oIgPKUlZyWXB66dY7F1HfxGeQpDVnjRaFtUuebSZkAkbRc4dY2dNZBh4w==
-X-Received: by 2002:a50:fc10:0:b0:464:2afe:ae18 with SMTP id i16-20020a50fc10000000b004642afeae18mr66132715edr.183.1669994813911;
-        Fri, 02 Dec 2022 07:26:53 -0800 (PST)
+        bh=1yABTotUF1aHfY2MvDhzL0Nasx3orq8o9ESsBCAmUe4=;
+        b=WNbeMkN68O6LIpalJRifYwYVE9bgwNJT1r36x9S25hP6LI+cNCrG0FzIiOYTc5Zqhj
+         RhAaPNh5k/c2dYi8pE9zWWX/1rNhDBnKYFcl6FpxqdnIOrXuUXMNTjbGexwk7lXX9jT5
+         6T6PfATOQhzMEC4O4UKROOnYdQICKXYZH3SiJo6g7h5346VbE0opr16V9YT8rJBFPzPw
+         7zp/iBpNanO37EExm2NDLPvtLvZSDqf90dk/MU1g8ECSTs7Iel48tFov/B3BQpuSOJWf
+         fG2E1/zUKJ6b4lotuLirZNuyLL/DNs4Vqir74pzOaeTfCk6uXVmGceajr3q6yTnnzusH
+         2/tA==
+X-Gm-Message-State: ANoB5pkD6G69QJ+eQJJtrqKD1g/U9FBzJvBtFI4Q3ulznORSt86agTXp
+        FuHyhavZhumxujiUAqGKr1A=
+X-Google-Smtp-Source: AA0mqf7fF9YbsaKeHpA/1+LF6sgvUbDCFvfeZvxpbLCimbL4kRbRCVmTwTsIy6UffpRKqhriTPD8DA==
+X-Received: by 2002:a17:907:3f8a:b0:7bf:4ae6:c36 with SMTP id hr10-20020a1709073f8a00b007bf4ae60c36mr23176828ejc.674.1669994816065;
+        Fri, 02 Dec 2022 07:26:56 -0800 (PST)
 Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id q2-20020a17090676c200b00770812e2394sm3104389ejn.160.2022.12.02.07.26.53
+        by smtp.gmail.com with ESMTPSA id d18-20020a05640208d200b0046150ee13besm3001605edz.65.2022.12.02.07.26.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 07:26:53 -0800 (PST)
+        Fri, 02 Dec 2022 07:26:55 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
@@ -59,9 +59,9 @@ Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Will Deacon <will@kernel.org>,
         iommu@lists.linux-foundation.org, linux-mmc@vger.kernel.org,
         linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v12 4/6] mmc: sdhci-tegra: Separate Tegra194 and Tegra234 SoC data
-Date:   Fri,  2 Dec 2022 16:26:42 +0100
-Message-Id: <20221202152644.29450-5-thierry.reding@gmail.com>
+Subject: [PATCH v12 6/6] mmc: sdhci-tegra: Issue CMD and DAT resets together
+Date:   Fri,  2 Dec 2022 16:26:44 +0100
+Message-Id: <20221202152644.29450-7-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221202152644.29450-1-thierry.reding@gmail.com>
 References: <20221202152644.29450-1-thierry.reding@gmail.com>
@@ -73,45 +73,68 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Prathamesh Shete <pshete@nvidia.com>
 
-Create new SoC data structure for Tegra234 platforms. Additional
-features, tap value configurations are added/updated for Tegra234
-platform hence separate Tegra194 and Tegra234 SoC data.
+In case of error condition to avoid system crash Tegra SDMMC controller
+requires CMD and DAT resets issued together. SDHCI controller FSM goes
+into bad state due to rapid SD card hot-plug event. Issuing reset on the
+CMD FSM before DATA FSM results in kernel panic, hence add support to
+issue CMD and DAT resets together.
 
-Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
+This is applicable to Tegra186 and later chips.
+
+Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
 Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/mmc/host/sdhci-tegra.c | 3 ++-
+ drivers/mmc/host/sdhci.c       | 5 +++++
+ drivers/mmc/host/sdhci.h       | 2 ++
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index afa9cbf9cb6f..f3f5a4abcafb 100644
+index c17700fa9899..49f60e292551 100644
 --- a/drivers/mmc/host/sdhci-tegra.c
 +++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1553,7 +1553,21 @@ static const struct sdhci_tegra_soc_data soc_data_tegra194 = {
- 	.max_tap_delay = 139,
+@@ -1528,7 +1528,8 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+-	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
++	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
++		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
+ 	.ops  = &tegra186_sdhci_ops,
  };
  
-+static const struct sdhci_tegra_soc_data soc_data_tegra234 = {
-+	.pdata = &sdhci_tegra186_pdata,
-+	.dma_mask = DMA_BIT_MASK(39),
-+	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
-+		    NVQUIRK_HAS_PADCALIB |
-+		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
-+		    NVQUIRK_ENABLE_SDR50 |
-+		    NVQUIRK_ENABLE_SDR104 |
-+		    NVQUIRK_HAS_TMCLK,
-+	.min_tap_delay = 95,
-+	.max_tap_delay = 111,
-+};
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index df1c1d10a338..81f4fed11629 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -270,6 +270,11 @@ enum sdhci_reset_reason {
+ 
+ static void sdhci_reset_for_reason(struct sdhci_host *host, enum sdhci_reset_reason reason)
+ {
++	if (host->quirks2 & SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER) {
++		sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
++		return;
++	}
 +
- static const struct of_device_id sdhci_tegra_dt_match[] = {
-+	{ .compatible = "nvidia,tegra234-sdhci", .data = &soc_data_tegra234 },
- 	{ .compatible = "nvidia,tegra194-sdhci", .data = &soc_data_tegra194 },
- 	{ .compatible = "nvidia,tegra186-sdhci", .data = &soc_data_tegra186 },
- 	{ .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
+ 	switch (reason) {
+ 	case SDHCI_RESET_FOR_INIT:
+ 		sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index b6f31a7d6152..605eaee805f7 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -478,6 +478,8 @@ struct sdhci_host {
+  * block count.
+  */
+ #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
++/* Issue CMD and DATA reset together */
++#define SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER	(1<<19)
+ 
+ 	int irq;		/* Device IRQ */
+ 	void __iomem *ioaddr;	/* Mapped address */
 -- 
 2.38.1
 
