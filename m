@@ -2,139 +2,494 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61281C47088
-	for <linux-tegra@archiver.kernel.org>; Fri,  2 Dec 2022 15:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE197C47090
+	for <linux-tegra@archiver.kernel.org>; Sat,  3 Dec 2022 16:05:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233586AbiLBP1G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 2 Dec 2022 10:27:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59944 "EHLO
+        id S229756AbiLCQFC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 3 Dec 2022 11:05:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233635AbiLBP07 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 2 Dec 2022 10:26:59 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B13D0390;
-        Fri,  2 Dec 2022 07:26:57 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id fc4so5378237ejc.12;
-        Fri, 02 Dec 2022 07:26:57 -0800 (PST)
+        with ESMTP id S229631AbiLCQFB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Dec 2022 11:05:01 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 857DB1EAFB
+        for <linux-tegra@vger.kernel.org>; Sat,  3 Dec 2022 08:04:58 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id x11so8647760ljh.7
+        for <linux-tegra@vger.kernel.org>; Sat, 03 Dec 2022 08:04:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1yABTotUF1aHfY2MvDhzL0Nasx3orq8o9ESsBCAmUe4=;
-        b=LQOtUd70pxQF/PYBI+E7Ast5RY8z/1CQLkbm0kM3GR6fjttSEg9vUcgH9JB9/fCQrF
-         SMVbuN1a364G1jwA2a9nzy8MVHfY3vPAe9D9sO+xJxGNQg1lk2mBI4b0jlK8wKW+2wVe
-         t/QB9Uh96vYG9zrPGwE53IG/zdhGnQfFuVvNCQiRfJ1OhahG5VUY3QoHK0Op6amzmA1T
-         4o9BK0OK18W33uPmC8qw1i2z23CtdFTh8x35RwMHetjTdZxmfyneFr0kGoEk22jweqrw
-         Ql8xIJlowkCw2viJBvSyYE/ofgB9wec0mcXXhGiglHBAhF3bYYawjwCh6aONR6cVD8kk
-         +kbQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p8s/BzOwhxQIlxHUBYJ4oHPfR09CSoSGvGG+JpoNTu0=;
+        b=eYIi4hgooxDpD1NV+FF5vfQnUmip7fWcTWuPt0CGhwIp8KwLS7xeamBNDwWwgN03vr
+         5wgdGYEHoboyRIn6Q/MD4DWaFkqNdjiGEXIxe8QWen38kp/9aWEOXf7ntp+ccDma818H
+         Y8JBT5raTEYbfbY8M8973YIvB+7cnSk/+zVt+x5KrZuOrOXlWxF0FlAxB/Wj23NJnVx4
+         OMRCV5AZ5jvZhNwxl9fCpj87LlJnHV6+YkjA2BbZIG1fPfypXiHIaUCDed1LCpA4+IwU
+         ejnTcI9E/mMSDFmRH5fCGyvt21ERzet1j4+J5VW9NOajXMmv7hvv/eOz1tOR+cgE+sbm
+         WYgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1yABTotUF1aHfY2MvDhzL0Nasx3orq8o9ESsBCAmUe4=;
-        b=WNbeMkN68O6LIpalJRifYwYVE9bgwNJT1r36x9S25hP6LI+cNCrG0FzIiOYTc5Zqhj
-         RhAaPNh5k/c2dYi8pE9zWWX/1rNhDBnKYFcl6FpxqdnIOrXuUXMNTjbGexwk7lXX9jT5
-         6T6PfATOQhzMEC4O4UKROOnYdQICKXYZH3SiJo6g7h5346VbE0opr16V9YT8rJBFPzPw
-         7zp/iBpNanO37EExm2NDLPvtLvZSDqf90dk/MU1g8ECSTs7Iel48tFov/B3BQpuSOJWf
-         fG2E1/zUKJ6b4lotuLirZNuyLL/DNs4Vqir74pzOaeTfCk6uXVmGceajr3q6yTnnzusH
-         2/tA==
-X-Gm-Message-State: ANoB5pkD6G69QJ+eQJJtrqKD1g/U9FBzJvBtFI4Q3ulznORSt86agTXp
-        FuHyhavZhumxujiUAqGKr1A=
-X-Google-Smtp-Source: AA0mqf7fF9YbsaKeHpA/1+LF6sgvUbDCFvfeZvxpbLCimbL4kRbRCVmTwTsIy6UffpRKqhriTPD8DA==
-X-Received: by 2002:a17:907:3f8a:b0:7bf:4ae6:c36 with SMTP id hr10-20020a1709073f8a00b007bf4ae60c36mr23176828ejc.674.1669994816065;
-        Fri, 02 Dec 2022 07:26:56 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id d18-20020a05640208d200b0046150ee13besm3001605edz.65.2022.12.02.07.26.55
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p8s/BzOwhxQIlxHUBYJ4oHPfR09CSoSGvGG+JpoNTu0=;
+        b=o5MDtVbSbGTvcXsYtJGnNrfBRpPnD72rH9qMgG6rQbej/vbSCCy8FVg0vrAtQTZ7Lz
+         o1I03yrllMpzCg8c3lkaM0moPm1pQD/6GA0yyzWFQCUZQFKNwB/sUxErcfj7/omcNJue
+         3PyBU9+AcUxFKMo47yVzsB/Ute/+z0mWTmaWDEt4FwndNo8b6JQY6WPnYV1fc/Y0YtL4
+         GyXE12K/RuMc5LcqPKB0hpW83gaE0lZMmVrgK9CSchWoDT6ezntmW0AT3R976Gq6byEq
+         ecn6TSncQPyez7lu04eaGVkIkeUz1lxYLy32oqpzfcEyowCN8wsS/r28j2rxSkynYwop
+         EdkQ==
+X-Gm-Message-State: ANoB5plNBTRLNI3fG4nr1XTGj0MgrLJmuBs9pNcTrgKxQFt45FS4dkLH
+        /ZDzcbSmP8SNewkUd4UJdicbGA==
+X-Google-Smtp-Source: AA0mqf58/79Rqg4yRCVG1xawZLwuCnaSB+HmPh+D7DumMA2xgZArvwb0/P7UWd6mDLsK8wlUOJjcvw==
+X-Received: by 2002:a05:651c:1788:b0:277:4e4:d21a with SMTP id bn8-20020a05651c178800b0027704e4d21amr17825924ljb.196.1670083496599;
+        Sat, 03 Dec 2022 08:04:56 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id d11-20020ac2544b000000b004946bb30469sm1441320lfn.82.2022.12.03.08.04.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 07:26:55 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Sat, 03 Dec 2022 08:04:51 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Ban Tao <fengzheng923@gmail.com>,
+        =?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>,
+        James Schulman <james.schulman@cirrus.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Lucas Tanure <tanureal@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        Tzung-Bi Shih <tzungbi@kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        iommu@lists.linux-foundation.org, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v12 6/6] mmc: sdhci-tegra: Issue CMD and DAT resets together
-Date:   Fri,  2 Dec 2022 16:26:44 +0100
-Message-Id: <20221202152644.29450-7-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221202152644.29450-1-thierry.reding@gmail.com>
-References: <20221202152644.29450-1-thierry.reding@gmail.com>
+        Stephan Gerhold <stephan@gerhold.net>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami <bgoswami@quicinc.com>,
+        Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.om>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Bogdan Togorean <bogdan.togorean@analog.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+        Vincent Knecht <vincent.knecht@mailoo.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>,
+        - <patches@opensource.cirrus.com>,
+        Jayesh Choudhary <j-choudhary@ti.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Jee Heng <jee.heng.sia@intel.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Mohan Kumar <mkumard@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Derek Fang <derek.fang@realtek.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        ChiYuan Huang <cy_huang@richtek.com>,
+        Jose Abreu <joabreu@synopsys.com>, Andrew Davis <afd@ti.com>,
+        Shi Fu <shifu0704@thundersoft.com>,
+        Shenghao Ding <shenghao-ding@ti.com>,
+        Matt Flax <flatmax@flatmax.com>,
+        Ricard Wanderlof <ricardw@axis.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, dri-devel@lists.freedesktop.org,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-sunxi@lists.linux.dev,
+        asahi@lists.linux.dev, chrome-platform@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] ASoC: dt-bindings: Extend name-prefix.yaml into common DAI properties
+Date:   Sat,  3 Dec 2022 17:04:40 +0100
+Message-Id: <20221203160442.69594-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Prathamesh Shete <pshete@nvidia.com>
+Rename name-prefix.yaml into common DAI schema and document
+'#sound-dai-cells' for completeness.  The '#sound-dai-cells' cannot be
+really constrained, as there are users with value of 0, 1 and 2, but at
+least it brings definition to one common place.
 
-In case of error condition to avoid system crash Tegra SDMMC controller
-requires CMD and DAT resets issued together. SDHCI controller FSM goes
-into bad state due to rapid SD card hot-plug event. Issuing reset on the
-CMD FSM before DATA FSM results in kernel panic, hence add support to
-issue CMD and DAT resets together.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-This is applicable to Tegra186 and later chips.
-
-Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 3 ++-
- drivers/mmc/host/sdhci.c       | 5 +++++
- drivers/mmc/host/sdhci.h       | 2 ++
- 3 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index c17700fa9899..49f60e292551 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1528,7 +1528,8 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
- 	.ops  = &tegra186_sdhci_ops,
- };
+This is an output of discussion here:
+https://lore.kernel.org/all/Y255C+TGNVJ9fs8A@sirena.org.uk/
+---
+ .../devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml  | 2 +-
+ Documentation/devicetree/bindings/sound/amlogic,aiu.yaml    | 2 +-
+ .../devicetree/bindings/sound/amlogic,g12a-toacodec.yaml    | 2 +-
+ Documentation/devicetree/bindings/sound/amlogic,t9015.yaml  | 2 +-
+ Documentation/devicetree/bindings/sound/awinic,aw8738.yaml  | 2 +-
+ .../bindings/sound/{name-prefix.yaml => dai-common.yaml}    | 6 ++++--
+ Documentation/devicetree/bindings/sound/dmic-codec.yaml     | 2 +-
+ .../devicetree/bindings/sound/linux,spdif-dit.yaml          | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra186-asrc.yaml     | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra186-dspk.yaml     | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra210-adx.yaml      | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra210-amx.yaml      | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra210-dmic.yaml     | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra210-i2s.yaml      | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra210-mixer.yaml    | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra210-mvc.yaml      | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra210-ope.yaml      | 2 +-
+ .../devicetree/bindings/sound/nvidia,tegra210-sfc.yaml      | 2 +-
+ Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml    | 2 +-
+ Documentation/devicetree/bindings/sound/rt5659.txt          | 2 +-
+ .../devicetree/bindings/sound/simple-audio-amplifier.yaml   | 2 +-
+ .../devicetree/bindings/sound/simple-audio-mux.yaml         | 2 +-
+ Documentation/devicetree/bindings/sound/ti,src4xxx.yaml     | 2 +-
+ 23 files changed, 26 insertions(+), 24 deletions(-)
+ rename Documentation/devicetree/bindings/sound/{name-prefix.yaml => dai-common.yaml} (81%)
+
+diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml b/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
+index 7cdffdb131ac..74cefdf1b843 100644
+--- a/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
+@@ -11,7 +11,7 @@ maintainers:
+   - Neil Armstrong <neil.armstrong@linaro.org>
  
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index df1c1d10a338..81f4fed11629 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -270,6 +270,11 @@ enum sdhci_reset_reason {
+ allOf:
+-  - $ref: /schemas/sound/name-prefix.yaml#
++  - $ref: /schemas/sound/dai-common.yaml#
  
- static void sdhci_reset_for_reason(struct sdhci_host *host, enum sdhci_reset_reason reason)
- {
-+	if (host->quirks2 & SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER) {
-+		sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-+		return;
-+	}
+ description: |
+   The Amlogic Meson Synopsys Designware Integration is composed of
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml b/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
+index 0705f91199a0..6350dfc0a926 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Jerome Brunet <jbrunet@baylibre.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+index 77469a45bb7a..23f82bb89750 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Jerome Brunet <jbrunet@baylibre.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml b/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
+index 580a3d040abc..5f5cccdbeb34 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Jerome Brunet <jbrunet@baylibre.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/awinic,aw8738.yaml b/Documentation/devicetree/bindings/sound/awinic,aw8738.yaml
+index dce86dafe382..bc6c6b172238 100644
+--- a/Documentation/devicetree/bindings/sound/awinic,aw8738.yaml
++++ b/Documentation/devicetree/bindings/sound/awinic,aw8738.yaml
+@@ -15,7 +15,7 @@ description:
+   function (primarily the power limit for the amplifier).
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/sound/name-prefix.yaml b/Documentation/devicetree/bindings/sound/dai-common.yaml
+similarity index 81%
+rename from Documentation/devicetree/bindings/sound/name-prefix.yaml
+rename to Documentation/devicetree/bindings/sound/dai-common.yaml
+index 2fe57f87ac52..d858eea73ed7 100644
+--- a/Documentation/devicetree/bindings/sound/name-prefix.yaml
++++ b/Documentation/devicetree/bindings/sound/dai-common.yaml
+@@ -1,10 +1,10 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/sound/name-prefix.yaml#
++$id: http://devicetree.org/schemas/sound/dai-common.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Component sound name prefix
++title: Digital Audio Interface Common Properties
+ 
+ maintainers:
+   - Jerome Brunet <jbrunet@baylibre.com>
+@@ -18,4 +18,6 @@ properties:
+       sink/source names may use this property to prepend the name of their
+       sinks/sources with the provided string.
+ 
++  '#sound-dai-cells': true
 +
- 	switch (reason) {
- 	case SDHCI_RESET_FOR_INIT:
- 		sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index b6f31a7d6152..605eaee805f7 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -478,6 +478,8 @@ struct sdhci_host {
-  * block count.
-  */
- #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
-+/* Issue CMD and DATA reset together */
-+#define SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER	(1<<19)
+ additionalProperties: true
+diff --git a/Documentation/devicetree/bindings/sound/dmic-codec.yaml b/Documentation/devicetree/bindings/sound/dmic-codec.yaml
+index bba27c985996..59ef0cf6b6e5 100644
+--- a/Documentation/devicetree/bindings/sound/dmic-codec.yaml
++++ b/Documentation/devicetree/bindings/sound/dmic-codec.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
  
- 	int irq;		/* Device IRQ */
- 	void __iomem *ioaddr;	/* Mapped address */
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml b/Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml
+index 808f6d2736c7..fe5f0756af2f 100644
+--- a/Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml
++++ b/Documentation/devicetree/bindings/sound/linux,spdif-dit.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Mark Brown <broonie@kernel.org>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
+index d82415c21271..e15f387c4c29 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
+@@ -23,7 +23,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+index 3d538df878ea..e1362c77472b 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+@@ -18,7 +18,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
+index ea0dc0ece1bc..e4c871797fa6 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
+@@ -19,7 +19,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
+index 1aff61f072bb..021b72546ba4 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
+@@ -18,7 +18,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+index 0f9d2b461e02..bff551c35da7 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+@@ -17,7 +17,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+index 12cd17eede99..a82f11fb6c9a 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+@@ -17,7 +17,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
+index 570b03282aeb..049898f02e85 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
+@@ -17,7 +17,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
+index 4aecbc847b98..d0280d8aa3af 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
+@@ -20,7 +20,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
+index 9dc9ba590fa3..5fc03b8771b1 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml
+@@ -17,7 +17,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
+index 694f890d6305..185ca0be4f02 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
+@@ -17,7 +17,7 @@ maintainers:
+   - Sameer Pujar <spujar@nvidia.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml b/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+index 7f2e68ff6d34..fd2415e231eb 100644
+--- a/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
++++ b/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Stephan Gerhold <stephan@gerhold.net>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/sound/rt5659.txt b/Documentation/devicetree/bindings/sound/rt5659.txt
+index 013f534fa059..8f3f62c0226a 100644
+--- a/Documentation/devicetree/bindings/sound/rt5659.txt
++++ b/Documentation/devicetree/bindings/sound/rt5659.txt
+@@ -42,7 +42,7 @@ Optional properties:
+ - realtek,ldo1-en-gpios : The GPIO that controls the CODEC's LDO1_EN pin.
+ - realtek,reset-gpios : The GPIO that controls the CODEC's RESET pin.
+ 
+-- sound-name-prefix: Please refer to name-prefix.yaml
++- sound-name-prefix: Please refer to dai-common.yaml
+ 
+ - ports: A Codec may have a single or multiple I2S interfaces. These
+   interfaces on Codec side can be described under 'ports' or 'port'.
+diff --git a/Documentation/devicetree/bindings/sound/simple-audio-amplifier.yaml b/Documentation/devicetree/bindings/sound/simple-audio-amplifier.yaml
+index 5428ba9e23a6..5db1f989d050 100644
+--- a/Documentation/devicetree/bindings/sound/simple-audio-amplifier.yaml
++++ b/Documentation/devicetree/bindings/sound/simple-audio-amplifier.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Jerome Brunet <jbrunet@baylibre.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml b/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
+index b5fc35ee9b65..9f319caf3db7 100644
+--- a/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
++++ b/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
+@@ -14,7 +14,7 @@ description: |
+   their input line is connected to the output line.
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/sound/ti,src4xxx.yaml b/Documentation/devicetree/bindings/sound/ti,src4xxx.yaml
+index 9681b72b4918..988ce8d8028f 100644
+--- a/Documentation/devicetree/bindings/sound/ti,src4xxx.yaml
++++ b/Documentation/devicetree/bindings/sound/ti,src4xxx.yaml
+@@ -14,7 +14,7 @@ maintainers:
+   - Matt Flax <flatmax@flatmax.com>
+ 
+ allOf:
+-  - $ref: name-prefix.yaml#
++  - $ref: dai-common.yaml#
+ 
+ properties:
+   compatible:
 -- 
-2.38.1
+2.34.1
 
