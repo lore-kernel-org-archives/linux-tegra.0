@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 751BCC3A5A7
-	for <linux-tegra@archiver.kernel.org>; Sun,  4 Dec 2022 18:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F72DC4321E
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Dec 2022 18:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbiLDS3k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 4 Dec 2022 13:29:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37456 "EHLO
+        id S230143AbiLDS3v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 4 Dec 2022 13:29:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230448AbiLDS3b (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Dec 2022 13:29:31 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9685713CF4
-        for <linux-tegra@vger.kernel.org>; Sun,  4 Dec 2022 10:29:27 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id 1so1732560lfz.4
-        for <linux-tegra@vger.kernel.org>; Sun, 04 Dec 2022 10:29:27 -0800 (PST)
+        with ESMTP id S230465AbiLDS3c (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Dec 2022 13:29:32 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3673D13CFF
+        for <linux-tegra@vger.kernel.org>; Sun,  4 Dec 2022 10:29:30 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id n1so11185109ljg.3
+        for <linux-tegra@vger.kernel.org>; Sun, 04 Dec 2022 10:29:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cfEljQl4EQnYkf8QlT89AMte2GMs3c8lv3oMt/y+GaM=;
-        b=RzOP2wIm9bCZ5ESuvwDuHywgx5HU0X8Hi4roafacV4qFdB0j4u+7UHp7eXTTV85PrX
-         o71gYyStglO3NPs9SY/YW81rvDwchWHXgOc1Ss3OtNNQv2ThPsNTKb+FBcX71juysNau
-         ky9X+Q24/xKE+usvEYdonDkgwwQvLfOG9WWdZIXnxuJGzDTcXRUMo8u16Un7RNGIwVxC
-         FDrvFudqI6fNoFolPuNKd2rGIotUDucKkwyCjJ1AW2k9SzaLcYUaRlB5g3xZMLvbNRoU
-         1LgHBn9No1SLUBXq8MgMGy4sTZwavgfWvH2ii7i9OjISMt/UVXkrsxkxoxUr3R+akxoM
-         8yEg==
+        bh=y8C4yM6JfnWx+5c88oEZ/S1AWqRyQREMQSAfJIbG/3I=;
+        b=tPr2OkoerVnmmuJLJeMOIqxvFCUhWxS09ZTSbuWN5MsRcNRMPdkV1xT8YAf5pzvxgz
+         17DlGft1khgQo+qM2doi/jk03v4D1jjU53wvJW0rRBhwG8rCo2mvmSCPH8H+4MSzQ3Yh
+         Vdh7S7JngzP1RAvaGls/aDG/ibwJSi5v4fq1WBVi9/Q4RoFzHHtaRBoY/6tBLDZGihmw
+         tUoS0inrQc2CPP0ge1uXDfd0kMYZhMaCpA22YQnmJjNePpLezGbXjTjMb6gIjcs+Qk8M
+         /bNVEK0Tslz4DwipoPzYJcY5tvtNWVuywJD/Jn1kqtYOHu2lyKMMHa5ihMx6IWoAY+0s
+         vrkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cfEljQl4EQnYkf8QlT89AMte2GMs3c8lv3oMt/y+GaM=;
-        b=YJ3XgR/I3HKf9rZwAdFDe7Oftit0PDZFgqthkpejGNEqGb/UIfONjctpEYpo/OSWlG
-         I1yBWkY8ajDpAQzA1ROMIeDM4nO7oal8K3MdIP3Irq/JseVlof7Ugvr4ptos3Im2pM/x
-         BUqJ5zjsEkOav1qSL6h5GkLdx2pPakz9lJPq9jyu6kQVyZk5xKbJUHrnCTfvrCPY9aMx
-         15fDNSwtNmRtACnarLawfNgBv6Id3ZipI266xRkUlCZDcsmF6tMw/j3xbf4MMwT1qqTJ
-         KB1jImGNIsxpX4A09BjTIswFiRFqKMcG/4/64EKmFrhBKwuoUKMj4crpUaOLV2wrd6wG
-         0mAw==
-X-Gm-Message-State: ANoB5pkjUX9MBt06lleZRDqxzyHcO+Frp2RIm9As3lXHb4shFJgwxcOA
-        CRUnAcpZq2melR3R5FycRbt3KQ==
-X-Google-Smtp-Source: AA0mqf6EB/f2PuewaiyadZR8vlg31H/jIll4F9UXujfurMGL7HWkJBitZjA8igFxRkKDNKACaLAVow==
-X-Received: by 2002:a19:4901:0:b0:4b4:e3b8:c6af with SMTP id w1-20020a194901000000b004b4e3b8c6afmr21611090lfa.291.1670178567147;
-        Sun, 04 Dec 2022 10:29:27 -0800 (PST)
+        bh=y8C4yM6JfnWx+5c88oEZ/S1AWqRyQREMQSAfJIbG/3I=;
+        b=PVwtN5FplZAOonZtAQT0zjha5IPNLcLI9tUoRyAYzjDYeez9DFxS9ASSd4tNegrgb3
+         TqwbJj9F1RgFBrtPilmzHvJoXxCmpm0ufE4vyjBaMT1tAC4cIDsNYRX47RED2b/gCpIL
+         mx1YsAd3SzuETqwOiJYopxpAlJbdahl6HHJQZJs/qRGZ4Markr1QWr+TfDiK69nC54A5
+         W/cEbZ1iUkqO5Bql1GpxvcbEag/REVyarD8x6DbRL162ft8Dq0sB4V2kQ9sTVTCfks4x
+         xhAbiIJZZQht8mKlFb4+aVs5RMywsRIhe3906m+VH5JJKOvwLCRMQcD0PVYSBUtVY5NE
+         ZNZQ==
+X-Gm-Message-State: ANoB5pnc3FrWUKvBQkZTGyqs95zTaRgcZX23QHQQAcJmA/rDkhQCZh7m
+        4x2xXSuH/u9MzHiMPSJve0cNWQ==
+X-Google-Smtp-Source: AA0mqf60Aq3IxvaAxHTeIBYUQDsQGUBZtlBfGiTOlFu5VSPKTafkz2xHBYrn9vQuBe5Xlm6FpOpqWw==
+X-Received: by 2002:a2e:a274:0:b0:278:eef5:8d07 with SMTP id k20-20020a2ea274000000b00278eef58d07mr23643995ljm.61.1670178568547;
+        Sun, 04 Dec 2022 10:29:28 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id i15-20020a056512340f00b004b3b2a9f506sm1838996lfr.4.2022.12.04.10.29.25
+        by smtp.gmail.com with ESMTPSA id i15-20020a056512340f00b004b3b2a9f506sm1838996lfr.4.2022.12.04.10.29.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Dec 2022 10:29:26 -0800 (PST)
+        Sun, 04 Dec 2022 10:29:28 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -72,9 +72,9 @@ To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 7/9] media: dt-bindings: cec-gpio: convert to DT schema
-Date:   Sun,  4 Dec 2022 19:29:06 +0100
-Message-Id: <20221204182908.138910-7-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 8/9] media: dt-bindings: nvidia,tegra-cec: convert to DT schema
+Date:   Sun,  4 Dec 2022 19:29:07 +0100
+Message-Id: <20221204182908.138910-8-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221204182908.138910-1-krzysztof.kozlowski@linaro.org>
 References: <20221204182908.138910-1-krzysztof.kozlowski@linaro.org>
@@ -84,157 +84,127 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Convert HDMI CEC GPIO bindings to DT schema.
+Convert Nvidia Tegra HDMI CEC bindings to DT schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/media/cec-gpio.txt    | 42 -----------
- .../bindings/media/cec/cec-gpio.yaml          | 73 +++++++++++++++++++
+ .../bindings/media/cec/nvidia,tegra-cec.yaml  | 58 +++++++++++++++++++
+ .../devicetree/bindings/media/tegra-cec.txt   | 27 ---------
  MAINTAINERS                                   |  2 +-
- 3 files changed, 74 insertions(+), 43 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/cec-gpio.txt
- create mode 100644 Documentation/devicetree/bindings/media/cec/cec-gpio.yaml
+ 3 files changed, 59 insertions(+), 28 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/tegra-cec.txt
 
-diff --git a/Documentation/devicetree/bindings/media/cec-gpio.txt b/Documentation/devicetree/bindings/media/cec-gpio.txt
-deleted file mode 100644
-index 47e8d73d32a3..000000000000
---- a/Documentation/devicetree/bindings/media/cec-gpio.txt
-+++ /dev/null
-@@ -1,42 +0,0 @@
--* HDMI CEC GPIO driver
--
--The HDMI CEC GPIO module supports CEC implementations where the CEC line
--is hooked up to a pull-up GPIO line and - optionally - the HPD line is
--hooked up to another GPIO line.
--
--Please note: the maximum voltage for the CEC line is 3.63V, for the HPD and
--5V lines it is 5.3V. So you may need some sort of level conversion circuitry
--when connecting them to a GPIO line.
--
--Required properties:
--  - compatible: value must be "cec-gpio".
--  - cec-gpios: gpio that the CEC line is connected to. The line should be
--    tagged as open drain.
--
--If the CEC line is associated with an HDMI receiver/transmitter, then the
--following property is also required:
--
--  - hdmi-phandle - phandle to the HDMI controller, see also cec.txt.
--
--If the CEC line is not associated with an HDMI receiver/transmitter, then
--the following property is optional and can be used for debugging HPD changes:
--
--  - hpd-gpios: gpio that the HPD line is connected to.
--
--This property is optional and can be used for debugging changes on the 5V line:
--
--  - v5-gpios: gpio that the 5V line is connected to.
--
--Example for the Raspberry Pi 3 where the CEC line is connected to
--pin 26 aka BCM7 aka CE1 on the GPIO pin header, the HPD line is
--connected to pin 11 aka BCM17 and the 5V line is connected to pin
--15 aka BCM22 (some level shifter is needed for the HPD and 5V lines!):
--
--#include <dt-bindings/gpio/gpio.h>
--
--cec-gpio {
--	compatible = "cec-gpio";
--	cec-gpios = <&gpio 7 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
--	hpd-gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
--	v5-gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
--};
-diff --git a/Documentation/devicetree/bindings/media/cec/cec-gpio.yaml b/Documentation/devicetree/bindings/media/cec/cec-gpio.yaml
+diff --git a/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml b/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
 new file mode 100644
-index 000000000000..19169d58316a
+index 000000000000..9a4025ff7fad
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/cec/cec-gpio.yaml
-@@ -0,0 +1,73 @@
++++ b/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/media/cec/cec-gpio.yaml#
++$id: http://devicetree.org/schemas/media/cec/nvidia,tegra-cec.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: HDMI CEC GPIO
++title: Nvidia Tegra HDMI CEC
 +
 +maintainers:
 +  - Hans Verkuil <hverkuil-cisco@xs4all.nl>
 +
-+description: |
-+  The HDMI CEC GPIO module supports CEC implementations where the CEC line is
-+  hooked up to a pull-up GPIO line and - optionally - the HPD line is hooked up
-+  to another GPIO line.
-+
-+  Please note:: the maximum voltage for the CEC line is 3.63V, for the HPD and
-+  5V lines it is 5.3V. So you may need some sort of level conversion
-+  circuitry when connecting them to a GPIO line.
++allOf:
++  - $ref: cec-common.yaml#
 +
 +properties:
 +  compatible:
-+    const: cec-gpio
++    enum:
++      - nvidia,tegra114-cec
++      - nvidia,tegra124-cec
++      - nvidia,tegra210-cec
 +
-+  cec-gpios:
++  clocks:
 +    maxItems: 1
-+    description:
-+      GPIO that the CEC line is connected to. The line should be tagged as open
-+      drain.
 +
-+  hpd-gpios:
-+    maxItems: 1
-+    description:
-+      GPIO that the HPD line is connected to.  Used for debugging HPD changes
-+      when the CEC line is not associated with an HDMI receiver/transmitter.
++  clock-names:
++    items:
++      - const: cec
 +
-+  v5-gpios:
++  interrupts:
 +    maxItems: 1
-+    description:
-+      GPIO that the 5V line is connected to.  Used for debugging changes on the
-+      5V line.
++
++  reg:
++    maxItems: 1
 +
 +required:
 +  - compatible
-+  - cec-gpios
-+
-+allOf:
-+  - $ref: cec-common.yaml#
-+  - if:
-+      required:
-+        - hdmi-phandle
-+    then:
-+      properties:
-+        hpd-gpios: false
-+
-+  - if:
-+      required:
-+        - hpd-gpios
-+    then:
-+      properties:
-+        hdmi-phandle: false
++  - clocks
++  - clock-names
++  - hdmi-phandle
++  - interrupts
++  - reg
 +
 +unevaluatedProperties: false
 +
 +examples:
 +  - |
-+    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/clock/tegra124-car.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+    cec {
-+        compatible = "cec-gpio";
-+        cec-gpios = <&gpio 7 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-+        hpd-gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
-+        v5-gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
++    cec@70015000 {
++        compatible = "nvidia,tegra124-cec";
++        reg = <0x70015000 0x00001000>;
++        interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&tegra_car TEGRA124_CLK_CEC>;
++        clock-names = "cec";
++        status = "disabled";
++        hdmi-phandle = <&hdmi>;
 +    };
+diff --git a/Documentation/devicetree/bindings/media/tegra-cec.txt b/Documentation/devicetree/bindings/media/tegra-cec.txt
+deleted file mode 100644
+index c503f06f3b84..000000000000
+--- a/Documentation/devicetree/bindings/media/tegra-cec.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-* Tegra HDMI CEC hardware
+-
+-The HDMI CEC module is present in Tegra SoCs and its purpose is to
+-handle communication between HDMI connected devices over the CEC bus.
+-
+-Required properties:
+-  - compatible : value should be one of the following:
+-	"nvidia,tegra114-cec"
+-	"nvidia,tegra124-cec"
+-	"nvidia,tegra210-cec"
+-  - reg : Physical base address of the IP registers and length of memory
+-	  mapped region.
+-  - interrupts : HDMI CEC interrupt number to the CPU.
+-  - clocks : from common clock binding: handle to HDMI CEC clock.
+-  - clock-names : from common clock binding: must contain "cec",
+-		  corresponding to the entry in the clocks property.
+-  - hdmi-phandle : phandle to the HDMI controller, see also cec.txt.
+-
+-Example:
+-
+-cec@70015000 {
+-	compatible = "nvidia,tegra124-cec";
+-	reg = <0x0 0x70015000 0x0 0x00001000>;
+-	interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+-	clocks = <&tegra_car TEGRA124_CLK_CEC>;
+-	clock-names = "cec";
+-};
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 05acbaecef52..197351d3bb57 100644
+index 197351d3bb57..dee3f776be32 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -4848,7 +4848,7 @@ L:	linux-media@vger.kernel.org
- S:	Supported
- W:	http://linuxtv.org
- T:	git git://linuxtv.org/media_tree.git
--F:	Documentation/devicetree/bindings/media/cec-gpio.txt
-+F:	Documentation/devicetree/bindings/media/cec/cec-gpio.yaml
- F:	drivers/media/cec/platform/cec-gpio/
+@@ -2999,7 +2999,7 @@ M:	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+ L:	linux-tegra@vger.kernel.org
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/media/tegra-cec.txt
++F:	Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
+ F:	drivers/media/cec/platform/tegra/
  
- CELL BROADBAND ENGINE ARCHITECTURE
+ ARM/TESLA FSD SoC SUPPORT
 -- 
 2.34.1
 
