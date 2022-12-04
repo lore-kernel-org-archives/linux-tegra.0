@@ -2,55 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1534C4321E
-	for <linux-tegra@archiver.kernel.org>; Sun,  4 Dec 2022 16:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92123C4321E
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Dec 2022 16:47:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiLDQJs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 4 Dec 2022 11:09:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37636 "EHLO
+        id S230208AbiLDQrN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 4 Dec 2022 11:47:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbiLDQJr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Dec 2022 11:09:47 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B94813FB4;
-        Sun,  4 Dec 2022 08:09:46 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id q7so15245405wrr.8;
-        Sun, 04 Dec 2022 08:09:46 -0800 (PST)
+        with ESMTP id S230181AbiLDQrM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Dec 2022 11:47:12 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1DAA15707
+        for <linux-tegra@vger.kernel.org>; Sun,  4 Dec 2022 08:47:10 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id q7so10987118ljp.9
+        for <linux-tegra@vger.kernel.org>; Sun, 04 Dec 2022 08:47:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mSY/soRdbw3l7VfX1MPIQXbuFJkETcDbjbzdvzg9U1E=;
-        b=nmnnLHjQQPJyJNBEfVfdOPXpOYw99+Ew34YDKQSA7EUqQ1wRE7HB99k+5HnDEsFXs6
-         s/Wti8lfe/gDF0GC8HfFWK6SarmOEHUEk9+mOcTopjhIelQOQdkwrwTaJ2Nuha5VsgW2
-         2H6F26qSiuyp8Kq/ZSHMfpgdbHvQFcFP1JzgfnxoezYYiNxdqBEBTLKe4Lp5bAtojZvR
-         8CRQD22BJyoRVHfXHYamci85e1A3cN4zPEaRD05DJf6yKSFDZhxfON8l9cCNMXaL7xNB
-         p3PM7GEe2pPEVM3wrIgGfBatgwqg3XW8DZRAw5uxGi7GSWYN8djxxtisjrQ0JrQ2Emxp
-         xjmw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IBSaaBdFn+BP+xzbg2xAiyjV0AjU3IsjmFiKfeCqqvI=;
+        b=wJTrVXJOn+oqKMcWQtvULX7ulDXWLrtPzSQaCY4aUPic6EJRnTU8lpjcSCs4NXujGa
+         5B/GwS81kHr5ShQHFdRjt18fi0NXOrNAxrT32DzlDZqRkiOO5QiTijH3HjRfEmwPz/hA
+         1XRsGbRqG4MCscTzmETpOCXB8HlJc04gBwdTPqQUbctpbJDffiaNKZ5OjZmS+oaGNOEw
+         k4gP18xu7u1DfYB80LqsTWgMRMj2XnMS8u/wnDxGaqKvhZQc4/fOU45+Lhn+N04UZVc6
+         IJlhricGMUAFHmurSmdMVqg9SwBN3M2FwtGiSoFgVVS5Ly1wTyC/jXRj8agENVJkzVw+
+         KPiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mSY/soRdbw3l7VfX1MPIQXbuFJkETcDbjbzdvzg9U1E=;
-        b=RqvsXhzMye5aCimwaKP+JrOXsOO+yZLAsyQo7uX016T1qd24csE+t+E/TRDtfIbf6E
-         XiFgO1iDt3Wd5PDgisNH99BEz0U4LoBdXUq66VGUxpnltATnvoIZ90j+fOXaLqdMy0Hk
-         riSfaxAZXSYVrA/u/oaG72eqTY7ectR8COpJkqsh5e1j/rd+Lio4tSgtnB31RxOQWy/5
-         FlBH3ZGN24Kd/g3772078XY5EuQmG5tOh57jxb7JiRBG3dddOfIYcc2Mx4R08MqeXRvv
-         7WZRmTuv7QopQctASW/01MiyXl1a6HVlrSMaFWEmyuPNNuwVyWL4ixiEDz/qTIyzibMr
-         G65Q==
-X-Gm-Message-State: ANoB5plnaG/2dtE4tpiOpoARK0YqaSZgxAUv9POwwMqXau4/qvd6U4Q6
-        wAYrOyNvcgsWaMfzx3nfXJk=
-X-Google-Smtp-Source: AA0mqf5OXVS1lM5QoKtCTGOYBnrpmscrGHlaSSO7Jq8/Dc8cy0PB5VfXUZBhR9OrsdWfWopJ4DW8pw==
-X-Received: by 2002:a5d:6dd1:0:b0:236:75a8:58d with SMTP id d17-20020a5d6dd1000000b0023675a8058dmr49641323wrz.295.1670170184810;
-        Sun, 04 Dec 2022 08:09:44 -0800 (PST)
-Received: from archbook.localnet (84-72-105-84.dclient.hispeed.ch. [84.72.105.84])
-        by smtp.gmail.com with ESMTPSA id j13-20020a056000124d00b002421db5f279sm11847154wrx.78.2022.12.04.08.09.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Dec 2022 08:09:44 -0800 (PST)
-From:   Nicolas Frattaroli <frattaroli.nicolas@gmail.com>
-To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IBSaaBdFn+BP+xzbg2xAiyjV0AjU3IsjmFiKfeCqqvI=;
+        b=IPgjXMEoKj1VNV861Krjd6iEhNOdjnifHpTY1OpryXSFfH9cDNF/8pLCHBNEtXD59I
+         jY3KnQgKcTUlPLQnU8PwDHqDtGpRNOZ0fGqWM1x/3jwC8kS34KV7VEqTdvyifpVVKDPz
+         lltMs+sdAMYCcuLY02acV33kHDeuNXj7cHb8Z40/NFIVKoG6jTQeFoTpoPxc/JvL1aom
+         G9/m1CVIANR7LiQTFicz+jGYzxS4onrRBWe+zBX3FBKjQQPcpqxp9u7v9RfR9pRp1y04
+         uR1ICB8+/GlLyvmtKEtvbYpIJrAtrmBHlYomD37tJGPDXr/XuQqm2k0I1aHaxTzUUzgE
+         EUAg==
+X-Gm-Message-State: ANoB5pmJlWEP8IAFy5aiSqWIqMA1b4Q0JPIPT3CUuszCq82Q35aOPN/Y
+        asAL63T0M68xeCuE68blyVXiGA==
+X-Google-Smtp-Source: AA0mqf4kBdTo6SDQ4Um37LTIlSLql9Lw0iLy1FQ9H6KpXZOkmUBpkamfuV9PNogA/0JeVQ7HB2Tjjw==
+X-Received: by 2002:a05:651c:1510:b0:277:75fb:1fc5 with SMTP id e16-20020a05651c151000b0027775fb1fc5mr24664380ljf.405.1670172429042;
+        Sun, 04 Dec 2022 08:47:09 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id b13-20020a0565120b8d00b004b373f61a60sm1828538lfv.96.2022.12.04.08.47.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Dec 2022 08:47:08 -0800 (PST)
+Message-ID: <7c258f71-23d0-36bd-8abf-b227d2522267@linaro.org>
+Date:   Sun, 4 Dec 2022 17:47:05 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH 2/3] ASoC: dt-bindings: Reference common DAI properties
+To:     Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
         David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,7 +69,7 @@ To:     Neil Armstrong <neil.armstrong@linaro.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
         Ban Tao <fengzheng923@gmail.com>,
-        =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
+        =?UTF-8?Q?Martin_Povi=c5=a1er?= <povik+lin@cutebit.org>,
         James Schulman <james.schulman@cirrus.com>,
         David Rhodes <david.rhodes@cirrus.com>,
         Lucas Tanure <tanureal@opensource.cirrus.com>,
@@ -94,7 +100,7 @@ To:     Neil Armstrong <neil.armstrong@linaro.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.om>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Bogdan Togorean <bogdan.togorean@analog.com>,
-        =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>,
+        =?UTF-8?Q?Nuno_S=c3=a1?= <nuno.sa@analog.com>,
         Vincent Knecht <vincent.knecht@mailoo.org>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Maxime Ripard <mripard@kernel.org>,
@@ -127,67 +133,45 @@ To:     Neil Armstrong <neil.armstrong@linaro.org>,
         asahi@lists.linux.dev, chrome-platform@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 2/3] ASoC: dt-bindings: Reference common DAI properties
-Date:   Sun, 04 Dec 2022 17:09:41 +0100
-Message-ID: <2251607.XGVbBG2WQu@archbook>
-In-Reply-To: <20221203160442.69594-2-krzysztof.kozlowski@linaro.org>
-References: <20221203160442.69594-1-krzysztof.kozlowski@linaro.org> <20221203160442.69594-2-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        linux-stm32@st-md-mailman.stormreply.com
+References: <20221203160442.69594-1-krzysztof.kozlowski@linaro.org>
+ <20221203160442.69594-2-krzysztof.kozlowski@linaro.org>
+ <2251607.XGVbBG2WQu@archbook>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <2251607.XGVbBG2WQu@archbook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Samstag, 3. Dezember 2022 17:04:41 CET Krzysztof Kozlowski wrote:
-> Reference in all sound components which have '#sound-dai-cells' the
-> dai-common.yaml schema, which allows to use 'sound-name-prefix'
-> property.
+On 04/12/2022 17:09, Nicolas Frattaroli wrote:
+> On Samstag, 3. Dezember 2022 17:04:41 CET Krzysztof Kozlowski wrote:
+>> Reference in all sound components which have '#sound-dai-cells' the
+>> dai-common.yaml schema, which allows to use 'sound-name-prefix'
+>> property.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> ---
+>>
+>> This is an output of discussion here:
+>> https://lore.kernel.org/all/Y255C+TGNVJ9fs8A@sirena.org.uk/
+>>
+>> This patch supersedes previous WSA883x one.
+>> ---
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Hello,
 > 
-> ---
+> for rockchip,i2s-tdm, we get some (new?) warnings with W=1:
 > 
-> This is an output of discussion here:
-> https://lore.kernel.org/all/Y255C+TGNVJ9fs8A@sirena.org.uk/
-> 
-> This patch supersedes previous WSA883x one.
-> ---
+>     /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-pinenote-v1.1.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
+>             From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
 
-Hello,
-
-for rockchip,i2s-tdm, we get some (new?) warnings with W=1:
-
-    /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-pinenote-v1.1.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
-            From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
-    DTC_CHK arch/arm64/boot/dts/rockchip/rk3566-soquartz-cm4.dtb
-    /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-pinenote-v1.2.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
-            From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
-    DTC_CHK arch/arm64/boot/dts/rockchip/rk3566-soquartz-model-a.dtb
-    /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
-            From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
-    /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
-            From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
-    /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
-            From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
-    DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-bpi-r2-pro.dtb
-    /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-soquartz-blade.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
-            From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
-    DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dtb
-    /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-soquartz-cm4.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
-            From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
-    /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-soquartz-model-a.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
-            From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
-
-Apparently we don't have separate resets for tx/rx on i2s2 on this
-hardware. Should we add 'm' to the allowed reset-names for this
-case?
-
-Cheers,
-Nicolas Frattaroli
+I did not touch reset names, so are you sure these are not old warnings?
 
 
+Best regards,
+Krzysztof
 
