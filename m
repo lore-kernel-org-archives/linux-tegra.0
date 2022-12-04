@@ -2,176 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92123C4321E
-	for <linux-tegra@archiver.kernel.org>; Sun,  4 Dec 2022 16:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19627C4708D
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Dec 2022 18:29:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbiLDQrN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 4 Dec 2022 11:47:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59036 "EHLO
+        id S230390AbiLDS32 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 4 Dec 2022 13:29:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiLDQrM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Dec 2022 11:47:12 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1DAA15707
-        for <linux-tegra@vger.kernel.org>; Sun,  4 Dec 2022 08:47:10 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id q7so10987118ljp.9
-        for <linux-tegra@vger.kernel.org>; Sun, 04 Dec 2022 08:47:10 -0800 (PST)
+        with ESMTP id S230311AbiLDS3W (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Dec 2022 13:29:22 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C6FA12AF1
+        for <linux-tegra@vger.kernel.org>; Sun,  4 Dec 2022 10:29:20 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id 1so1732216lfz.4
+        for <linux-tegra@vger.kernel.org>; Sun, 04 Dec 2022 10:29:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IBSaaBdFn+BP+xzbg2xAiyjV0AjU3IsjmFiKfeCqqvI=;
-        b=wJTrVXJOn+oqKMcWQtvULX7ulDXWLrtPzSQaCY4aUPic6EJRnTU8lpjcSCs4NXujGa
-         5B/GwS81kHr5ShQHFdRjt18fi0NXOrNAxrT32DzlDZqRkiOO5QiTijH3HjRfEmwPz/hA
-         1XRsGbRqG4MCscTzmETpOCXB8HlJc04gBwdTPqQUbctpbJDffiaNKZ5OjZmS+oaGNOEw
-         k4gP18xu7u1DfYB80LqsTWgMRMj2XnMS8u/wnDxGaqKvhZQc4/fOU45+Lhn+N04UZVc6
-         IJlhricGMUAFHmurSmdMVqg9SwBN3M2FwtGiSoFgVVS5Ly1wTyC/jXRj8agENVJkzVw+
-         KPiQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w4/E18WmIhglr3OIlvmjkp6vFsJUZQRrJVlXhfNxPYU=;
+        b=y/MaX5ZO0cE3OPHHfY0RQC5DkkHWNuMMXBloy+HhZpTftpttNLVdUyeJCINV3JvSkm
+         IdODTo8/NmOen8XdIXzlS0GtqzXABocwgPL3d+RjX5sR47e8NTLJ/k1dbZHCN+qlHVxd
+         OC9V/4qHfEOsdWeD9/qOd18cdKxMNCIVXF1Dz7govCRYD+x19nqUWDnfosZQJVaZYTxM
+         /fyJR7+ngzf8VaQQm00Zmu8g/HCSbRQuNSxSm8BeJcJvvnkeJQXfZFPx+DNGQTANvzrE
+         G6c0LoOryyUOWlWAxf7Nz3mRqCfY6YcwQWEoF75Tsvv6wR1PG8xatDFL9W22KjKaUZdy
+         HYfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IBSaaBdFn+BP+xzbg2xAiyjV0AjU3IsjmFiKfeCqqvI=;
-        b=IPgjXMEoKj1VNV861Krjd6iEhNOdjnifHpTY1OpryXSFfH9cDNF/8pLCHBNEtXD59I
-         jY3KnQgKcTUlPLQnU8PwDHqDtGpRNOZ0fGqWM1x/3jwC8kS34KV7VEqTdvyifpVVKDPz
-         lltMs+sdAMYCcuLY02acV33kHDeuNXj7cHb8Z40/NFIVKoG6jTQeFoTpoPxc/JvL1aom
-         G9/m1CVIANR7LiQTFicz+jGYzxS4onrRBWe+zBX3FBKjQQPcpqxp9u7v9RfR9pRp1y04
-         uR1ICB8+/GlLyvmtKEtvbYpIJrAtrmBHlYomD37tJGPDXr/XuQqm2k0I1aHaxTzUUzgE
-         EUAg==
-X-Gm-Message-State: ANoB5pmJlWEP8IAFy5aiSqWIqMA1b4Q0JPIPT3CUuszCq82Q35aOPN/Y
-        asAL63T0M68xeCuE68blyVXiGA==
-X-Google-Smtp-Source: AA0mqf4kBdTo6SDQ4Um37LTIlSLql9Lw0iLy1FQ9H6KpXZOkmUBpkamfuV9PNogA/0JeVQ7HB2Tjjw==
-X-Received: by 2002:a05:651c:1510:b0:277:75fb:1fc5 with SMTP id e16-20020a05651c151000b0027775fb1fc5mr24664380ljf.405.1670172429042;
-        Sun, 04 Dec 2022 08:47:09 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id b13-20020a0565120b8d00b004b373f61a60sm1828538lfv.96.2022.12.04.08.47.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Dec 2022 08:47:08 -0800 (PST)
-Message-ID: <7c258f71-23d0-36bd-8abf-b227d2522267@linaro.org>
-Date:   Sun, 4 Dec 2022 17:47:05 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH 2/3] ASoC: dt-bindings: Reference common DAI properties
-To:     Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w4/E18WmIhglr3OIlvmjkp6vFsJUZQRrJVlXhfNxPYU=;
+        b=DC4867Vn0HP7WMV81yOgHw0PkuqATikiEaG4HOE5TkUIGC7glDZIu4gcNwp0zV0+Nm
+         geeJieJlzMkVbTbo3FxMZd47XFemefHzg5TcDLeZdnvqefA9bGASRLErDwVgcz+yuGh5
+         Aq2n4zJCpjU62N6CuhqjzBfA5FKij4FksQnhhJZNrYSNUHTlvWWNXKg/Ss+Gb95kZyAh
+         dy94uSNHhr9II1TkdSM5goC2V/xsv6rId/O65q9OOx+N9tOW9oNKECPkK4777HbQOSbU
+         7Ro75XBuYm9JhsEgQn9Szdm9MJP7ZyzdI0HJoY3Z66STRPIbX+M8wtKwYg0tnHvErYRb
+         YA5g==
+X-Gm-Message-State: ANoB5pkH1Ufi6MzP2D1j0F2ZH/NqqclU34h1BwzYaVuk/RWshaC8aIV8
+        leuyCM1Lr3hMdeCQIi0DkDhzlg==
+X-Google-Smtp-Source: AA0mqf6WLTN3NKvWlgv+itL2kG62uh3gZCbmqZYxman9U/9BXTDFucax3P9rqr2IYUaQ3fk0bdiMVQ==
+X-Received: by 2002:a19:3817:0:b0:4b4:e61f:16c8 with SMTP id f23-20020a193817000000b004b4e61f16c8mr21126378lfa.377.1670178558338;
+        Sun, 04 Dec 2022 10:29:18 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id i15-20020a056512340f00b004b3b2a9f506sm1838996lfr.4.2022.12.04.10.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Dec 2022 10:29:17 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Ban Tao <fengzheng923@gmail.com>,
-        =?UTF-8?Q?Martin_Povi=c5=a1er?= <povik+lin@cutebit.org>,
-        James Schulman <james.schulman@cirrus.com>,
-        David Rhodes <david.rhodes@cirrus.com>,
-        Lucas Tanure <tanureal@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Tzung-Bi Shih <tzungbi@kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Alain Volmat <alain.volmat@foss.st.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.om>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Bogdan Togorean <bogdan.togorean@analog.com>,
-        =?UTF-8?Q?Nuno_S=c3=a1?= <nuno.sa@analog.com>,
-        Vincent Knecht <vincent.knecht@mailoo.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>,
-        - <patches@opensource.cirrus.com>,
-        Jayesh Choudhary <j-choudhary@ti.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Jee Heng <jee.heng.sia@intel.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Mohan Kumar <mkumard@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Derek Fang <derek.fang@realtek.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        ChiYuan Huang <cy_huang@richtek.com>,
-        Jose Abreu <joabreu@synopsys.com>, Andrew Davis <afd@ti.com>,
-        Shi Fu <shifu0704@thundersoft.com>,
-        Shenghao Ding <shenghao-ding@ti.com>,
-        Matt Flax <flatmax@flatmax.com>,
-        Ricard Wanderlof <ricardw@axis.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, dri-devel@lists.freedesktop.org,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-sunxi@lists.linux.dev,
-        asahi@lists.linux.dev, chrome-platform@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
+        Joe Tessler <jrt@google.com>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Jeff Chase <jnchase@google.com>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com
-References: <20221203160442.69594-1-krzysztof.kozlowski@linaro.org>
- <20221203160442.69594-2-krzysztof.kozlowski@linaro.org>
- <2251607.XGVbBG2WQu@archbook>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <2251607.XGVbBG2WQu@archbook>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/9] media: dt-bindings: amlogic,meson-gx-ao-cec: move to cec subfolder
+Date:   Sun,  4 Dec 2022 19:29:00 +0100
+Message-Id: <20221204182908.138910-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04/12/2022 17:09, Nicolas Frattaroli wrote:
-> On Samstag, 3. Dezember 2022 17:04:41 CET Krzysztof Kozlowski wrote:
->> Reference in all sound components which have '#sound-dai-cells' the
->> dai-common.yaml schema, which allows to use 'sound-name-prefix'
->> property.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> ---
->>
->> This is an output of discussion here:
->> https://lore.kernel.org/all/Y255C+TGNVJ9fs8A@sirena.org.uk/
->>
->> This patch supersedes previous WSA883x one.
->> ---
-> 
-> Hello,
-> 
-> for rockchip,i2s-tdm, we get some (new?) warnings with W=1:
-> 
->     /home/fratti/Projekte/linux/arch/arm64/boot/dts/rockchip/rk3566-pinenote-v1.1.dtb: i2s@fe420000: reset-names:0: 'm' is not one of ['tx-m', 'rx-m']
->             From schema: /home/fratti/Projekte/linux/Documentation/devicetree/bindings/sound/rockchip,i2s-tdm.yaml
+Move amlogic,meson-gx-ao-cec.yaml bindings to cec subfolder and drop
+unneeded quotes.
 
-I did not touch reset names, so are you sure these are not old warnings?
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/media/{ => cec}/amlogic,meson-gx-ao-cec.yaml     | 4 ++--
+ MAINTAINERS                                                   | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+ rename Documentation/devicetree/bindings/media/{ => cec}/amlogic,meson-gx-ao-cec.yaml (93%)
 
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml b/Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
+similarity index 93%
+rename from Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+rename to Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
+index 8d844f4312d1..f65c9681a9f7 100644
+--- a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
++++ b/Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 BayLibre, SAS
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/media/amlogic,meson-gx-ao-cec.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/media/cec/amlogic,meson-gx-ao-cec.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Amlogic Meson AO-CEC Controller
+ 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e3f3c3e53f77..07cb85cac4c3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13553,7 +13553,7 @@ L:	linux-amlogic@lists.infradead.org
+ S:	Supported
+ W:	http://linux-meson.com/
+ T:	git git://linuxtv.org/media_tree.git
+-F:	Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
++F:	Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
+ F:	drivers/media/cec/platform/meson/ao-cec-g12a.c
+ F:	drivers/media/cec/platform/meson/ao-cec.c
+ 
+-- 
+2.34.1
 
