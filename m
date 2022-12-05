@@ -2,89 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10424C4708D
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 18:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EFBC4332F
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 19:03:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233247AbiLESkz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Dec 2022 13:40:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57788 "EHLO
+        id S233069AbiLETDb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Dec 2022 14:03:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232831AbiLESkP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 13:40:15 -0500
+        with ESMTP id S233593AbiLETDZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 14:03:25 -0500
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5ECDE2608;
-        Mon,  5 Dec 2022 10:37:38 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DEE582BD1;
+        Mon,  5 Dec 2022 11:03:21 -0800 (PST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFA2D23A;
-        Mon,  5 Dec 2022 10:37:44 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E809BD6E;
+        Mon,  5 Dec 2022 11:03:24 -0800 (PST)
 Received: from [10.57.71.118] (unknown [10.57.71.118])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9AE63F73B;
-        Mon,  5 Dec 2022 10:37:35 -0800 (PST)
-Message-ID: <0da1d3d0-6543-b352-7561-de0a483f2c22@arm.com>
-Date:   Mon, 5 Dec 2022 18:37:34 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 592FA3F71A;
+        Mon,  5 Dec 2022 11:03:14 -0800 (PST)
+Message-ID: <0df4bfa7-4e76-b6b2-c8cf-a0776ec0fbfa@arm.com>
+Date:   Mon, 5 Dec 2022 19:03:09 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
  Thunderbird/102.5.0
-Subject: Re: [PATCH v12 4/4] iommu: dma: Use of_iommu_get_resv_regions()
+Subject: Re: [PATCH v12 2/6] iommu/tegra: Add tegra_dev_iommu_get_stream_id()
+ helper
 Content-Language: en-GB
 To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev,
-        Frank Rowand <frowand.list@gmail.com>
-References: <20221117185424.2359687-1-thierry.reding@gmail.com>
- <20221117185424.2359687-5-thierry.reding@gmail.com>
+        Joerg Roedel <joro@8bytes.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20221202152644.29450-1-thierry.reding@gmail.com>
+ <20221202152644.29450-3-thierry.reding@gmail.com>
 From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20221117185424.2359687-5-thierry.reding@gmail.com>
+In-Reply-To: <20221202152644.29450-3-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-11-17 18:54, Thierry Reding wrote:
+On 2022-12-02 15:26, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> For device tree nodes, use the standard of_iommu_get_resv_regions()
-> implementation to obtain the reserved memory regions associated with a
-> device.
+> Access to the internals of struct iommu_fwspec by non-IOMMU drivers is
+> discouraged. Many drivers for Tegra SoCs, however, need access to their
+> IOMMU stream IDs so that they can be programmed into various hardware
+> registers.
+> 
+> Formalize this access into a common helper to make it easier to audit
+> and maintain.
+
+In many ways I'd be happier if this could go somewhere in 
+include/soc/tegra/ rather than the generic IOMMU API header, but I see 
+the argument for keeping fwspec usage close to home as well, so no 
+overwhelming preference one way or the other. Mostly I'd just like to 
+get something landed so that all those other drivers can be cleaned up 
+as well, and I reckon this counts as good enough.
+
+Unless Joerg has a stronger opinion,
 
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: devicetree@vger.kernel.org
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->   drivers/iommu/dma-iommu.c | 3 +++
->   1 file changed, 3 insertions(+)
+>   include/linux/iommu.h | 21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
 > 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index 9297b741f5e8..709b05d3aad2 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -23,6 +23,7 @@
->   #include <linux/memremap.h>
->   #include <linux/mm.h>
->   #include <linux/mutex.h>
-> +#include <linux/of_iommu.h>
->   #include <linux/pci.h>
->   #include <linux/scatterlist.h>
->   #include <linux/spinlock.h>
-> @@ -391,6 +392,8 @@ void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
->   	if (!is_of_node(dev_iommu_fwspec_get(dev)->iommu_fwnode))
->   		iort_iommu_get_resv_regions(dev, list);
->   
-> +	if (dev->of_node)
-> +		of_iommu_get_resv_regions(dev, list);
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index dc5e6f5c14fc..f0d72acad7db 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -1186,4 +1186,25 @@ static inline u32 iommu_sva_get_pasid(struct iommu_sva *handle)
 >   }
->   EXPORT_SYMBOL(iommu_dma_get_resv_regions);
+>   #endif /* CONFIG_IOMMU_SVA */
 >   
+> +/*
+> + * Newer generations of Tegra SoCs require devices' stream IDs to be directly programmed into
+> + * some registers. These are always paired with a Tegra SMMU or ARM SMMU, for which the contents
+> + * of the struct iommu_fwspec are known. Use this helper to formalize access to these internals.
+> + */
+> +#define TEGRA_STREAM_ID_BYPASS 0x7f
+> +
+> +static inline bool tegra_dev_iommu_get_stream_id(struct device *dev, u32 *stream_id)
+> +{
+> +#ifdef CONFIG_IOMMU_API
+> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> +
+> +	if (fwspec && fwspec->num_ids == 1) {
+> +		*stream_id = fwspec->ids[0] & 0xffff;
+> +		return true;
+> +	}
+> +#endif
+> +
+> +	return false;
+> +}
+> +
+>   #endif /* __LINUX_IOMMU_H */
