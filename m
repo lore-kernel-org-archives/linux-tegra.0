@@ -2,82 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B679C4708E
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 09:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E48CC47088
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 15:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230402AbiLEJuV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Dec 2022 04:50:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34304 "EHLO
+        id S232482AbiLEPIU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Dec 2022 10:08:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbiLEJuU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 04:50:20 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C687F5A6;
-        Mon,  5 Dec 2022 01:50:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 32491B80E07;
-        Mon,  5 Dec 2022 09:50:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C6B35C43470;
-        Mon,  5 Dec 2022 09:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670233816;
-        bh=kDQr1OEC5GArHftEOzi2seMnpzvIkuvodzBTdXWHJ8w=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=eRPW3IVVR8ctR28s+HYaBGeW7Ig5Lna643sE0bgOaNu5ucitPo1ard+l1W+G4K7QP
-         jctBb8egkiT3Cr4hl8fBqX0OyuiEzpJ4XcBxRz61mraGZGG4OLr4+dOogm1KllycBc
-         dBAIj6+BC4bs79S1SQVJFWfya7Z1OVROsHBYXeY5ddUUR+QEc6Q6n7ZLnXfqCO8s8m
-         NqGT13YJFHWZqb9n99hmZfA6az4GmHYJsFT1zZzYRPesmmJdJcc86WBxBmllIzANBp
-         ZnhgVGKYaJs0+w51xMBh+B2HFg0jV3wVj+hBfAYzSeWhdXUcpjTkiyBvJPRbYMF17x
-         a/3ROEMu/ZCKQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AF6DAC5C7C6;
-        Mon,  5 Dec 2022 09:50:16 +0000 (UTC)
+        with ESMTP id S232160AbiLEPIE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 10:08:04 -0500
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 986F81D0EC;
+        Mon,  5 Dec 2022 07:07:52 -0800 (PST)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-1442977d77dso12628994fac.6;
+        Mon, 05 Dec 2022 07:07:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=un2tfy4ahNo9zjbkY7O4xE/RSkvkF3i02AWzGP/4rig=;
+        b=c32sEX4J51LjwbpWvqQmgfrylQBJbDFBd7LEAK6d4r6Ogq5C91Q09bCAO+qBw/zp5b
+         y5xBq4WWyA7H1AOPEIwLnvHarse0nW7C3fmZnHBP9jbc27qmn6eL3dgj5xNC3pnG8aG5
+         Z4bdCM+Nfd7I5fq8Z7kdWTUzd36h5ZmXAenzzvFZxLpUjt3QkSo6nf9AdxDSeVy+rTj5
+         ib+1k6408KivxnckKxsZwQYA26+MHQpOOPq/c43XyNDtCYseybnKJatK8pL1qWvMKyp+
+         wNifi1TyVFeAx5sGTpCzUclTpycxeIl6xnzwUBfkBV/yHMd2QRZ6s4pTPsUADUQ3usTi
+         o6Pg==
+X-Gm-Message-State: ANoB5pmFCmjrsQIAQG9yA2F4tfRwnWSTXwY5IuHr/vxX0VA2hnpPC+VF
+        oJUbG45rml0MBbVdfdb/gw==
+X-Google-Smtp-Source: AA0mqf4u4kzZ1ZBWoQtzp872W52LKIVRXUvm43N91ZDjaWGZJYwEgFGMaehPuBK+w9wgO1cB9V4ooA==
+X-Received: by 2002:a05:6870:ee16:b0:144:a24c:e1cb with SMTP id ga22-20020a056870ee1600b00144a24ce1cbmr2227077oab.164.1670252870872;
+        Mon, 05 Dec 2022 07:07:50 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id y30-20020a9d22a1000000b0066ea9650da8sm3195971ota.20.2022.12.05.07.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Dec 2022 07:07:50 -0800 (PST)
+Received: (nullmailer pid 1794161 invoked by uid 1000);
+        Mon, 05 Dec 2022 15:07:49 -0000
 Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V6 1/2] net: stmmac: Power up SERDES after the PHY link
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167023381671.8030.2390834995208845499.git-patchwork-notify@kernel.org>
-Date:   Mon, 05 Dec 2022 09:50:16 +0000
-References: <20221201155844.43217-1-jonathanh@nvidia.com>
-In-Reply-To: <20221201155844.43217-1-jonathanh@nvidia.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, mcoquelin.stm32@gmail.com, f.fainelli@gmail.com,
-        olteanv@gmail.com, peppe.cavallaro@st.com,
-        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
-        ruppala@nvidia.com
+MIME-Version: 1.0
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-arm-kernel@lists.infradead.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-amlogic@lists.infradead.org, Joe Tessler <jrt@google.com>,
+        Jeff Chase <jnchase@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20221204182908.138910-5-krzysztof.kozlowski@linaro.org>
+References: <20221204182908.138910-1-krzysztof.kozlowski@linaro.org>
+ <20221204182908.138910-5-krzysztof.kozlowski@linaro.org>
+Message-Id: <167025248440.1785019.8058849269946787324.robh@kernel.org>
+Subject: Re: [PATCH 5/9] media: dt-bindings: chrontel,ch7322: reference common
+ CEC properties
+Date:   Mon, 05 Dec 2022 09:07:49 -0600
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello:
 
-This series was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Thu, 1 Dec 2022 15:58:43 +0000 you wrote:
-> From: Revanth Kumar Uppala <ruppala@nvidia.com>
+On Sun, 04 Dec 2022 19:29:04 +0100, Krzysztof Kozlowski wrote:
+> Reference common HDMI CEC adapter properties to simplify the binding and
+> have only one place of definition for common properties.
 > 
-> The Tegra MGBE ethernet controller requires that the SERDES link is
-> powered-up after the PHY link is up, otherwise the link fails to
-> become ready following a resume from suspend. Add a variable to indicate
-> that the SERDES link must be powered-up after the PHY link.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/media/i2c/chrontel,ch7322.yaml   | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> [...]
 
-Here is the summary with links:
-  - [V6,1/2] net: stmmac: Power up SERDES after the PHY link
-    https://git.kernel.org/netdev/net-next/c/a46e90101242
-  - [V6,2/2] net: stmmac: tegra: Add MGBE support
-    https://git.kernel.org/netdev/net-next/c/d8ca113724e7
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+yamllint warnings/errors:
 
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.example.dtb: ch7322@75: $nodename:0: 'ch7322@75' does not match '^cec(@[0-9a-f]+|-[0-9]+)?$'
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.example.dtb: ch7322@75: Unevaluated properties are not allowed ('hdmi-phandle' was unexpected)
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221204182908.138910-5-krzysztof.kozlowski@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
