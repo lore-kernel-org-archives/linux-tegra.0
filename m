@@ -2,217 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F56EC4321E
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 15:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B24AC4332F
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 17:00:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232140AbiLEPTx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Dec 2022 10:19:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51778 "EHLO
+        id S230154AbiLERAO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Dec 2022 12:00:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232148AbiLEPTG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 10:19:06 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E5FF1D328
-        for <linux-tegra@vger.kernel.org>; Mon,  5 Dec 2022 07:19:02 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id x28so1751147lfn.6
-        for <linux-tegra@vger.kernel.org>; Mon, 05 Dec 2022 07:19:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9aazsYiCUK+hhkaN7DSb9BXLEifN4Vj66BPeUPEEPTM=;
-        b=ckoG7YLE4dTbKyEPRu6WUdAh9sc6sQyo5v4/rMvhZOfAIgvcJ5/MVrGBrf/DiDf8x4
-         XHYc5us7TZZOzmFOtgLsqPXSqWfxoE6zcD1artGeDOn81+0Jq8a689uNAvPey+6H7HLq
-         w6h/zkl/RjjKWAOa17u7skBBEoJrnXn2wkeA3766gnNbR6kaxqMxWqR21ZN7LsYOxdWL
-         k6JrlVLjcZZF41LwGnOXc2nKZjOSbPVgxRutjviPUIJaqB3kt4FMkHZAwIYKtENCwFc7
-         FOaJPmARm0f6wHeHMj4aj0Z0QQgIlBAF+xFgSaQA7TSFS9vAScvCXifGNieQ4oP0ASxm
-         yOTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9aazsYiCUK+hhkaN7DSb9BXLEifN4Vj66BPeUPEEPTM=;
-        b=U5QubpFG0N03mFbJkInUtIe5M+WqG/XjX+ofvnm3by6BOZ3oX45pgQDX3+Uqlm9tdg
-         DfmyJJcTFBRNHbDqIN/xPgvkw5hJEZFTom7tKrfplPzLYOpnUvc/Cdg6IvmsWugaoIJ5
-         VzWS5ujYpUj4PTlGFVgIlm1x898pxUcTdrb2skl5KPJJjvu7OZ2WD0qwNOEyRNBfQjF8
-         u6mcozlBNtPbpcKYK3GYNz81tXhwSsWAEhOz4Scch1quwBVXQrZJJvZsZZlHJZydiO/z
-         G16Rw3lHFz34qr+cg7RbpyG2cWb8CS+kYOTK0kGdVfQ89GWBnkXQfvfDDiaq6iyYWtx6
-         XUsg==
-X-Gm-Message-State: ANoB5placAWf0edySvE6pPWPpsvrd3SpP13LFO9/LnMRwKEt5R3+jE1R
-        fpiYDdtj+nwnXVd1zJ9ZOtc4AQ==
-X-Google-Smtp-Source: AA0mqf5etfZUUwBnmi2OzAxBRb101NGrpAQYXEdDklkcv44ujx+sqOk4y4+zled7jnxr64dMaIx3NA==
-X-Received: by 2002:ac2:5fcc:0:b0:4b0:2675:110d with SMTP id q12-20020ac25fcc000000b004b02675110dmr24041887lfg.295.1670253541635;
-        Mon, 05 Dec 2022 07:19:01 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id w26-20020a05651204da00b004b55f60c65asm1012470lfq.284.2022.12.05.07.19.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 07:19:01 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Joe Tessler <jrt@google.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Jeff Chase <jnchase@google.com>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 9/9] media: dt-bindings: st,stih-cec: convert to DT schema
-Date:   Mon,  5 Dec 2022 16:18:45 +0100
-Message-Id: <20221205151845.21618-10-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221205151845.21618-1-krzysztof.kozlowski@linaro.org>
-References: <20221205151845.21618-1-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S231839AbiLERAK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 12:00:10 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C25DF60;
+        Mon,  5 Dec 2022 09:00:07 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0E302611E2;
+        Mon,  5 Dec 2022 17:00:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7A6C43149;
+        Mon,  5 Dec 2022 17:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670259606;
+        bh=n1tNuBxJl22jRV6QaxMEbZMS84zoN2ML70kUJauH5W8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cYrpcAW6X7bZJmUk4REzq31fe5g1ks4ZXnxngkPmCgWzb81XUjyBfR9YhvK4ado9S
+         9eEVOIHBt53gNS5aC1CZKBLtdkHgIRPz4tPxibk1wS5Tq0q9rCLokr42tqH+QUnyLU
+         DCrtmFM1QUmRfUQeq1n/u/GCYvEke1OHTrwXIbr4znzrx9Swoybys2neS3dAU/Rds4
+         7VoJQQW1B6K2qndyYWRk/MzA/wc4emCdOVnFW/GOF/cWlr9kCkVPJkeQQ+NUoQeXiv
+         DLTjH2GqCc44zMXzdWWYXxWBMrQ+IojnQjTxqrkeJpP+e9PWofCZLpxEdvd/DLkiVs
+         GaEz1d9v3J/gg==
+Received: by mail-vk1-f172.google.com with SMTP id bi15so5590005vkb.11;
+        Mon, 05 Dec 2022 09:00:06 -0800 (PST)
+X-Gm-Message-State: ANoB5pl6TqmQAzgY6KYvMbTpxX0vGENmJ3yRlrC4nq4Pce0PlJVk0AqF
+        VHvuQM974HKVhVOJgyXtgHiPo8YAJRTCf0/AYA==
+X-Google-Smtp-Source: AA0mqf7cT6MONVFTUtdo3Q9sJ7pbfQxVT3ByTs0BM06UEq5l9z+p6SfDRPcgGT9jaeApv/S7UUb/fu3WDMvBdZQxS3I=
+X-Received: by 2002:a1f:9110:0:b0:3bc:fc56:597 with SMTP id
+ t16-20020a1f9110000000b003bcfc560597mr15575139vkd.14.1670259605174; Mon, 05
+ Dec 2022 09:00:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221117185424.2359687-1-thierry.reding@gmail.com> <Y4oOg5nSBPBieArv@orome>
+In-Reply-To: <Y4oOg5nSBPBieArv@orome>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 5 Dec 2022 10:59:53 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLLz5hRVrNw0QaQiv2Xyq4ueFkMLZnxncF6JkbCgZWhNA@mail.gmail.com>
+Message-ID: <CAL_JsqLLz5hRVrNw0QaQiv2Xyq4ueFkMLZnxncF6JkbCgZWhNA@mail.gmail.com>
+Subject: Re: [PATCH v12 0/4] iommu: Support mappings/reservations in
+ reserved-memory regions
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Convert ST STIH4xx HDMI CEC bindings to DT schema.
+On Fri, Dec 2, 2022 at 8:41 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Thu, Nov 17, 2022 at 07:54:20PM +0100, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Hi,
+> >
+> > This version is a minor update to the previous v11, which can be found
+> > here:
+> >
+> >   https://lore.kernel.org/all/20221111161806.630527-1-thierry.reding@gmail.com/
+> >
+> > The only change here is that the #dma-{address,size}-cells is dropped.
+> > It turns out to be much simpler to just update #{address,size}-cells to
+> > what they should be rather than add extra complexity for the DMA work-
+> > around. There's a minor update to the DT binding so that it can now
+> > properly validate cases where we have both reg and iommu-addresses
+> > properties.
+> >
+> > An example is included in the DT bindings, but here is an extract of
+> > what I've used to test this:
+> >
+> >         reserved-memory {
+> >                 #address-cells = <2>;
+> >                 #size-cells = <2>;
+> >                 ranges;
+> >
+> >                 /*
+> >                  * Creates an identity mapping for the framebuffer that
+> >                  * the firmware has setup to scan out a bootsplash from.
+> >                  */
+> >                 fb: framebuffer@92cb2000 {
+> >                         reg = <0x0 0x92cb2000 0x0 0x00800000>;
+> >                         iommu-addresses = <&dc0 0x0 0x92cb2000 0x0 0x00800000>;
+> >                 };
+> >
+> >                 /*
+> >                  * Creates a reservation in the IOVA space to prevent
+> >                  * any buffers from being mapped to that region. Note
+> >                  * that on Tegra the range is actually quite different
+> >                  * from this, but it would conflict with the display
+> >                  * driver that I tested this against, so this is just
+> >                  * a dummy region for testing.
+> >                  */
+> >                 adsp: reservation-adsp {
+> >                         iommu-addresses = <&dc0 0x0 0x90000000 0x0 0x00010000>;
+> >                 };
+> >         };
+> >
+> >         host1x@50000000 {
+> >                 dc@54200000 {
+> >                         memory-region = <&fb>, <&adsp>;
+> >                 };
+> >         };
+> >
+> > This is abbreviated a little to focus on the essentials. Note also that
+> > the ADSP reservation is not actually used on this device and the driver
+> > for this doesn't exist yet, but I wanted to include this variant for
+> > testing, because we'll want to use these bindings for the reservation
+> > use-case as well at some point.
+> >
+> > I've also been able to make use of this binding and the IOMMU code in
+> > conjunction with the simple-framebuffer driver to hand over a display
+> > configuration set up by UEFI to the Linux kernel.
+> >
+> > Janne has confirmed[0] this to be suitable for indirect mappings as
+> > well, though these patches don't implement that feature yet. Potential
+> > extensions to this have been discussed but are not yet included at this
+> > time to not further complicate things.
+> >
+> > Thierry
+> >
+> > [0]: https://lore.kernel.org/all/20220909144504.GA4024@jannau.net/
+> >
+> > Thierry Reding (4):
+> >   of: Introduce of_translate_dma_region()
+> >   dt-bindings: reserved-memory: Document iommu-addresses
+> >   iommu: Implement of_iommu_get_resv_regions()
+> >   iommu: dma: Use of_iommu_get_resv_regions()
+> >
+> >  .../reserved-memory/reserved-memory.yaml      | 89 +++++++++++++++++-
+> >  drivers/iommu/dma-iommu.c                     |  3 +
+> >  drivers/iommu/of_iommu.c                      | 94 +++++++++++++++++++
+> >  drivers/of/address.c                          | 41 ++++++++
+> >  include/linux/of_address.h                    |  2 +
+> >  include/linux/of_iommu.h                      |  8 ++
+> >  6 files changed, 233 insertions(+), 4 deletions(-)
+>
+> Joerg, Rob,
+>
+> Is there anything left to do on the series? It'd be great to get some
+> feedback from Robin on patch 3 since he had some concerns about how the
+> reservation type was getting determined. All those should now be
+> addressed and I think overall this is ready to go.
+>
+> Rob, you've given a Reviewed-by on all the DT-related parts, does that
+> mean you're okay with this going through Joerg's tree?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/media/cec/st,stih-cec.yaml       | 66 +++++++++++++++++++
- .../devicetree/bindings/media/stih-cec.txt    | 27 --------
- MAINTAINERS                                   |  2 +-
- 3 files changed, 67 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/cec/st,stih-cec.yaml
- delete mode 100644 Documentation/devicetree/bindings/media/stih-cec.txt
+Yes. Okay with and what I'm expecting.
 
-diff --git a/Documentation/devicetree/bindings/media/cec/st,stih-cec.yaml b/Documentation/devicetree/bindings/media/cec/st,stih-cec.yaml
-new file mode 100644
-index 000000000000..aeddf16ed339
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/cec/st,stih-cec.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/cec/st,stih-cec.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STMicroelectronics STIH4xx HDMI CEC
-+
-+maintainers:
-+  - Alain Volmat <alain.volmat@foss.st.com>
-+
-+allOf:
-+  - $ref: cec-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: st,stih-cec
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: cec-clk
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    items:
-+      - const: cec-irq
-+
-+  resets:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - hdmi-phandle
-+  - interrupts
-+  - resets
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/reset/stih407-resets.h>
-+
-+    cec@94a087c {
-+        compatible = "st,stih-cec";
-+        reg = <0x94a087c 0x64>;
-+
-+        clocks = <&clk_sysin>;
-+        clock-names = "cec-clk";
-+        hdmi-phandle = <&sti_hdmi>;
-+        interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "cec-irq";
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&pinctrl_cec0_default>;
-+        resets = <&softreset STIH407_LPM_SOFTRESET>;
-+    };
-diff --git a/Documentation/devicetree/bindings/media/stih-cec.txt b/Documentation/devicetree/bindings/media/stih-cec.txt
-deleted file mode 100644
-index ece0832fdeaf..000000000000
---- a/Documentation/devicetree/bindings/media/stih-cec.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--STMicroelectronics STIH4xx HDMI CEC driver
--
--Required properties:
-- - compatible : value should be "st,stih-cec"
-- - reg : Physical base address of the IP registers and length of memory
--	 mapped region.
-- - clocks : from common clock binding: handle to HDMI CEC clock
-- - interrupts : HDMI CEC interrupt number to the CPU.
-- - pinctrl-names: Contains only one value - "default"
-- - pinctrl-0: Specifies the pin control groups used for CEC hardware.
-- - resets: Reference to a reset controller
-- - hdmi-phandle: Phandle to the HDMI controller, see also cec.txt.
--
--Example for STIH407:
--
--sti-cec@94a087c {
--	compatible = "st,stih-cec";
--	reg = <0x94a087c 0x64>;
--	clocks = <&clk_sysin>;
--	clock-names = "cec-clk";
--	interrupts = <GIC_SPI 140 IRQ_TYPE_NONE>;
--	interrupt-names = "cec-irq";
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_cec0_default>;
--	resets = <&softreset STIH407_LPM_SOFTRESET>;
--	hdmi-phandle = <&hdmi>;
--};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dee3f776be32..5bf8879b4a59 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19924,7 +19924,7 @@ F:	sound/soc/sti/
- STI CEC DRIVER
- M:	Alain Volmat <alain.volmat@foss.st.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/media/stih-cec.txt
-+F:	Documentation/devicetree/bindings/media/cec/st,stih-cec.yaml
- F:	drivers/media/cec/platform/sti/
- 
- STK1160 USB VIDEO CAPTURE DRIVER
--- 
-2.34.1
-
+Rob
