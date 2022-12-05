@@ -2,105 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EFBC4332F
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 19:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3709C4708C
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 23:42:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233069AbiLETDb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Dec 2022 14:03:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53454 "EHLO
+        id S230352AbiLEXmN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Dec 2022 18:42:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233593AbiLETDZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 14:03:25 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DEE582BD1;
-        Mon,  5 Dec 2022 11:03:21 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E809BD6E;
-        Mon,  5 Dec 2022 11:03:24 -0800 (PST)
-Received: from [10.57.71.118] (unknown [10.57.71.118])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 592FA3F71A;
-        Mon,  5 Dec 2022 11:03:14 -0800 (PST)
-Message-ID: <0df4bfa7-4e76-b6b2-c8cf-a0776ec0fbfa@arm.com>
-Date:   Mon, 5 Dec 2022 19:03:09 +0000
+        with ESMTP id S230280AbiLEXmM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 18:42:12 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF631FCC5;
+        Mon,  5 Dec 2022 15:42:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2014CB815C9;
+        Mon,  5 Dec 2022 23:42:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AFFC433D6;
+        Mon,  5 Dec 2022 23:42:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670283727;
+        bh=4wJabThFZ4VUXjAcvXIT97D1YyfJXyrel4+YB/Ab+gk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZobKRLT5ZAge7Mfr+9Ip+dxbQpBkCk2RTtEPH47l4VyLYW/DFp9y9lCOVM+13yuWZ
+         fllnOwfZ79glqC/04eGRrZQXiGq45ZaHctcQak9QyU0/Rb2O9O4Z82roEN2n2fq41j
+         KhCv33+LONiVSItlj/XlkeRrghNVtvj1StcxVtYxrL5NcmXUIFKcfYfEdVhatTB01t
+         lmU8URLZPu8mJmvRX1fk3gTbtlZ/wETFq4mdjBk69QVyhuf2ekVz/0kMn6hgN+irfb
+         Z6i0UmSd9ZzjN8eBqwo1DH6uCwoWPBxrZiBqHd4AdUStpbhc+gwEX+bAiMpLQpweJy
+         l3ah6Xu5mC+Dg==
+Received: by mail-vs1-f54.google.com with SMTP id c184so12679246vsc.3;
+        Mon, 05 Dec 2022 15:42:07 -0800 (PST)
+X-Gm-Message-State: ANoB5plwsgCiwfBWuug66O6CSXBgiSE1jpilM5W40J2pDh9T4PZ8C4+b
+        wdN0OjTbqOwgnsLOxBrczGGVg4IvqH5jiycOwQ==
+X-Google-Smtp-Source: AA0mqf52qMjSmyIkwFrSYPkLIs/sPSoB5CM3A/eqb99puUmDiOUo5CG5r5eXPIEw7a2BH2dvI7oXrkkI0RUmvAZQWgU=
+X-Received: by 2002:a05:6102:2381:b0:3b0:c6ec:cc6a with SMTP id
+ v1-20020a056102238100b003b0c6eccc6amr16733521vsr.0.1670283726721; Mon, 05 Dec
+ 2022 15:42:06 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v12 2/6] iommu/tegra: Add tegra_dev_iommu_get_stream_id()
- helper
-Content-Language: en-GB
+References: <20221114155333.234496-1-jonathanh@nvidia.com> <20221114155333.234496-2-jonathanh@nvidia.com>
+ <Y3ap1o2SbNvFw8Vd@orome>
+In-Reply-To: <Y3ap1o2SbNvFw8Vd@orome>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 5 Dec 2022 17:41:55 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKpyn=mWXv4tuS4U8AahNPkL6hpNQCfyRdf9bDY1EqSJg@mail.gmail.com>
+Message-ID: <CAL_JsqKpyn=mWXv4tuS4U8AahNPkL6hpNQCfyRdf9bDY1EqSJg@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: PCI: tegra234: Add ECAM support
 To:     Thierry Reding <thierry.reding@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        iommu@lists.linux-foundation.org, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20221202152644.29450-1-thierry.reding@gmail.com>
- <20221202152644.29450-3-thierry.reding@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20221202152644.29450-3-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Sergey Semin <Sergey.Semin@baikalelectronics.ru>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, vidyas@nvidia.com,
+        mmaddireddy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-12-02 15:26, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Access to the internals of struct iommu_fwspec by non-IOMMU drivers is
-> discouraged. Many drivers for Tegra SoCs, however, need access to their
-> IOMMU stream IDs so that they can be programmed into various hardware
-> registers.
-> 
-> Formalize this access into a common helper to make it easier to audit
-> and maintain.
+On Thu, Nov 17, 2022 at 3:38 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Mon, Nov 14, 2022 at 03:53:32PM +0000, Jon Hunter wrote:
+> > From: Vidya Sagar <vidyas@nvidia.com>
+> >
+> > Add support for ECAM aperture that is only supported for Tegra234
+> > devices.
+> >
+> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > Co-developed-by: Jon Hunter <jonathanh@nvidia.com>
+> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > ---
+> > Changes since V2:
+> > - Avoid duplication of reg items and reg-names
+> > Changes since V1:
+> > - Restricted the ECAM aperture to only Tegra234 devices that support it.
+> >
+> >  .../bindings/pci/nvidia,tegra194-pcie.yaml    | 34 +++++++++++++++++--
+> >  .../devicetree/bindings/pci/snps,dw-pcie.yaml |  2 +-
+> >  2 files changed, 33 insertions(+), 3 deletions(-)
+>
+> Both patches applied now.
 
-In many ways I'd be happier if this could go somewhere in 
-include/soc/tegra/ rather than the generic IOMMU API header, but I see 
-the argument for keeping fwspec usage close to home as well, so no 
-overwhelming preference one way or the other. Mostly I'd just like to 
-get something landed so that all those other drivers can be cleaned up 
-as well, and I reckon this counts as good enough.
+linux-next now fails with this. I suspect it is due to Sergey's
+changes to the DWC schema.
 
-Unless Joerg has a stronger opinion,
-
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->   include/linux/iommu.h | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
-> 
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index dc5e6f5c14fc..f0d72acad7db 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -1186,4 +1186,25 @@ static inline u32 iommu_sva_get_pasid(struct iommu_sva *handle)
->   }
->   #endif /* CONFIG_IOMMU_SVA */
->   
-> +/*
-> + * Newer generations of Tegra SoCs require devices' stream IDs to be directly programmed into
-> + * some registers. These are always paired with a Tegra SMMU or ARM SMMU, for which the contents
-> + * of the struct iommu_fwspec are known. Use this helper to formalize access to these internals.
-> + */
-> +#define TEGRA_STREAM_ID_BYPASS 0x7f
-> +
-> +static inline bool tegra_dev_iommu_get_stream_id(struct device *dev, u32 *stream_id)
-> +{
-> +#ifdef CONFIG_IOMMU_API
-> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-> +
-> +	if (fwspec && fwspec->num_ids == 1) {
-> +		*stream_id = fwspec->ids[0] & 0xffff;
-> +		return true;
-> +	}
-> +#endif
-> +
-> +	return false;
-> +}
-> +
->   #endif /* __LINUX_IOMMU_H */
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.example.dtb:
+pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
+fixed:
+        'dbi' was expected
+        'dbi2' was expected
+        'ecam' is not one of ['elbi', 'app']
+        'atu' was expected
+        'dma' was expected
+        'phy' was expected
+        'config' was expected
+        /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.example.dtb:
+pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
+fixed:
+                'ecam' is not one of ['apb', 'mgmt', 'link', 'ulreg', 'appl']
+                'ecam' is not one of ['atu_dma']
+                'ecam' is not one of ['smu', 'mpu']
+        From schema:
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
