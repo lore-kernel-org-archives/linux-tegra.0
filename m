@@ -2,158 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E43C3A5A7
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Dec 2022 16:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3411AC4708C
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Dec 2022 16:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235553AbiLFQiR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Dec 2022 11:38:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
+        id S234768AbiLFQo5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Dec 2022 11:44:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235582AbiLFQhd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Dec 2022 11:37:33 -0500
+        with ESMTP id S230093AbiLFQo4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Dec 2022 11:44:56 -0500
 Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAC1CE8;
-        Tue,  6 Dec 2022 08:36:47 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id z92so21127146ede.1;
-        Tue, 06 Dec 2022 08:36:47 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35ED8BB0;
+        Tue,  6 Dec 2022 08:44:55 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id d14so16159505edj.11;
+        Tue, 06 Dec 2022 08:44:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Cu4l7c7T/KB912u2Bgs9LaIHGYUGD4KvKD2RT7SocLI=;
-        b=PMIsbCZcJUnwlcb85e4se4Lhmnkg5/p3CZ/cDZsAukZ3f3i3tmY4g5sANJgykCYirK
-         mlvGaIPbXgCyzpAmH06sYNk8vCmaADFoE6zZqQHb8hGg4x0/WHv6Z8hYJ0LBIWS+LTtc
-         u+Elv8Ugh2Cba3MU9nJxstXdxBM91J+/NK6gRkjIOK3iiQ+uH5og/9UApeMWkOKnd9cj
-         1HfW0ZgVT20uEcispZUyLDadLhenYxpl6mq5JxMXKgftr+gVs0wv+tsc+y54FBjZx7F/
-         u//HOUZNxymJ9GIObTMD8FDbnCFX9F/nCVNnq/jzUgW6MoBC+f52FSuv+e3PAFbJwBdU
-         tGnQ==
+        bh=S6yIH7MQsLl6LEDg45qMcCaM1O7Ac9+38QvTCM2uDf8=;
+        b=L74YGzYG9EA12cBG2uOSAnIn2gta3+EYRxNkg7R+CzBtJREqTJ/6Awi8Lo4rx3t5Pp
+         FUXsta1vcPSBAvBK/kbKa+hOumJEd6n/L4xKzr1nl/RQLiO5rydYyKvMxRH3KlJqOprF
+         9gK0sViZiNHfhwbGezlrz7CPLSSzrtu3X+xGDL1tgKUpPCfOPONpPvCvXnH14VRmXQkk
+         44xeG3Endhoemy76dTqgm8iVCvCavdmf95ccOjeu9qjStHg8UIRTb1TUuI8/9rIDt9rJ
+         Sq6bJx2gLuR6cgyCA5vsw4B2Rsxhgfw8l+zeXHdvAR3cB410lblGzFPIANFGXV6wRwIt
+         Umug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Cu4l7c7T/KB912u2Bgs9LaIHGYUGD4KvKD2RT7SocLI=;
-        b=QqgvWJFuBx4Dlbq3c2K4BFr3EmtAo1gXs7Sd9pixTs2mMVmgJm5rpnyKyOuk0VBvhx
-         v35X45QzmJLTsm0tTIJ6vLUPqkhCRoPQmPETpEzIwCzHW3vh11ExPn9wJvDbhJ9TazUl
-         6jD/L14lToXbia9j4D0IlzI69fJpDBqjz/izRfhtPed2g2Zn0qpUhA2kDS28X8CXArqW
-         XgivAtJTMLQs4ByUQ5PSubW39xwPDmwq4WpmBw6+UP8hRlgs653/LQq1IKsBjXpXx+s4
-         TTRRWFltKV8RtmMICfxgcGPBB5NMqnSTkgXtzV+58CqJKJN6cSxv9cP6ax1ZM6GI4M6g
-         KTXA==
-X-Gm-Message-State: ANoB5pntnd1xbY5FVipUuD9fid1wW1UiXIMmnOThvcw8AGmdAM44wGBs
-        QzY2jSR9CrnpEqENlvtSdK0=
-X-Google-Smtp-Source: AA0mqf73SzGZEjm/ohEPWqbfiYGIO3rXn2gObtryTw0s7vUBeNfZ9CzBOpFc3oS8A3V5nkWXr1+saw==
-X-Received: by 2002:aa7:d1c5:0:b0:46b:a536:e8d0 with SMTP id g5-20020aa7d1c5000000b0046ba536e8d0mr26626675edp.261.1670344606270;
-        Tue, 06 Dec 2022 08:36:46 -0800 (PST)
+        bh=S6yIH7MQsLl6LEDg45qMcCaM1O7Ac9+38QvTCM2uDf8=;
+        b=fzIjg8+YIAxvfllVNchHmdHaMR7h1hPidA7NZDhjXeJT+LUfltRzKBPiMNN4diREcg
+         LoNUs12YD6ZF3dYtNj0CUdk7g5FKgrEwHTcd6i8NwCSOcpxxfh8zzTXEv/oK9Mr4E297
+         uaZgYXGf0AiA5nb8kcKL4iwt3/e8lp2QQ3DV83g5+Eq/WPCMYninEmlJlXGtO/zryc/T
+         hUXw+5TJq9liufoqY+WZ3qDbRY/J59pS5wRvjd6KmoXwZWAaQxz96dj97NEejr+gmrQR
+         xLUcP5ykQ4VtX/dF2swXK8QY406w6baxfVtf/zk0pfhtVBpkl9T2ChadAddGuq5iOBlO
+         zGpQ==
+X-Gm-Message-State: ANoB5pkqBwPjFW9UBd7qymF/+ZVBM179mp1u4dR90Ot4GbtuHNGM9XgN
+        XDRm5N2sl6xeRuRFy2uHrQw=
+X-Google-Smtp-Source: AA0mqf4d5IQSOBJ9Ni0MEoRNMSWD+64Rc76CRZsIYhnAvwhxPMDlcM2aP0chtpUg5uAQlMVvSiY1gg==
+X-Received: by 2002:a05:6402:4497:b0:46c:cff8:207d with SMTP id er23-20020a056402449700b0046ccff8207dmr6948354edb.370.1670345093607;
+        Tue, 06 Dec 2022 08:44:53 -0800 (PST)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id y20-20020a50eb94000000b004589da5e5cesm1168852edr.41.2022.12.06.08.36.45
+        by smtp.gmail.com with ESMTPSA id h9-20020aa7cdc9000000b0046b471596e6sm1175775edw.57.2022.12.06.08.44.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 08:36:45 -0800 (PST)
-Date:   Tue, 6 Dec 2022 17:36:43 +0100
+        Tue, 06 Dec 2022 08:44:53 -0800 (PST)
+Date:   Tue, 6 Dec 2022 17:44:51 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Sergey Semin <Sergey.Semin@baikalelectronics.ru>,
+        Jon Hunter <jonathanh@nvidia.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Joe Tessler <jrt@google.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Jeff Chase <jnchase@google.com>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 8/9] media: dt-bindings: nvidia,tegra-cec: convert to
- DT schema
-Message-ID: <Y49vm34cwgilAA33@orome>
-References: <20221205151845.21618-1-krzysztof.kozlowski@linaro.org>
- <20221205151845.21618-9-krzysztof.kozlowski@linaro.org>
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, vidyas@nvidia.com,
+        mmaddireddy@nvidia.com
+Subject: Re: [PATCH V3 1/2] dt-bindings: PCI: tegra234: Add ECAM support
+Message-ID: <Y49xg7wptRweHd4I@orome>
+References: <20221114155333.234496-1-jonathanh@nvidia.com>
+ <20221114155333.234496-2-jonathanh@nvidia.com>
+ <Y3ap1o2SbNvFw8Vd@orome>
+ <CAL_JsqKpyn=mWXv4tuS4U8AahNPkL6hpNQCfyRdf9bDY1EqSJg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Go2Ynh+Vu1nkhJ/W"
+        protocol="application/pgp-signature"; boundary="goj6zW39Iopsic0N"
 Content-Disposition: inline
-In-Reply-To: <20221205151845.21618-9-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAL_JsqKpyn=mWXv4tuS4U8AahNPkL6hpNQCfyRdf9bDY1EqSJg@mail.gmail.com>
 User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Go2Ynh+Vu1nkhJ/W
+--goj6zW39Iopsic0N
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 05, 2022 at 04:18:44PM +0100, Krzysztof Kozlowski wrote:
-> Convert Nvidia Tegra HDMI CEC bindings to DT schema.
+On Mon, Dec 05, 2022 at 05:41:55PM -0600, Rob Herring wrote:
+> On Thu, Nov 17, 2022 at 3:38 PM Thierry Reding <thierry.reding@gmail.com>=
+ wrote:
+> >
+> > On Mon, Nov 14, 2022 at 03:53:32PM +0000, Jon Hunter wrote:
+> > > From: Vidya Sagar <vidyas@nvidia.com>
+> > >
+> > > Add support for ECAM aperture that is only supported for Tegra234
+> > > devices.
+> > >
+> > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > > Co-developed-by: Jon Hunter <jonathanh@nvidia.com>
+> > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > > ---
+> > > Changes since V2:
+> > > - Avoid duplication of reg items and reg-names
+> > > Changes since V1:
+> > > - Restricted the ECAM aperture to only Tegra234 devices that support =
+it.
+> > >
+> > >  .../bindings/pci/nvidia,tegra194-pcie.yaml    | 34 +++++++++++++++++=
+--
+> > >  .../devicetree/bindings/pci/snps,dw-pcie.yaml |  2 +-
+> > >  2 files changed, 33 insertions(+), 3 deletions(-)
+> >
+> > Both patches applied now.
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> ---
->  .../bindings/media/cec/nvidia,tegra-cec.yaml  | 58 +++++++++++++++++++
->  .../devicetree/bindings/media/tegra-cec.txt   | 27 ---------
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 59 insertions(+), 28 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/cec/nvidia,te=
-gra-cec.yaml
->  delete mode 100644 Documentation/devicetree/bindings/media/tegra-cec.txt
+> linux-next now fails with this. I suspect it is due to Sergey's
+> changes to the DWC schema.
 >=20
-> diff --git a/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec=
-=2Eyaml b/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
-> new file mode 100644
-> index 000000000000..9a4025ff7fad
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
+> /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,=
+tegra194-pcie.example.dtb:
+> pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
+> fixed:
+>         'dbi' was expected
+>         'dbi2' was expected
+>         'ecam' is not one of ['elbi', 'app']
+>         'atu' was expected
+>         'dma' was expected
+>         'phy' was expected
+>         'config' was expected
+>         /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci=
+/nvidia,tegra194-pcie.example.dtb:
+> pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
+> fixed:
+>                 'ecam' is not one of ['apb', 'mgmt', 'link', 'ulreg', 'ap=
+pl']
+>                 'ecam' is not one of ['atu_dma']
+>                 'ecam' is not one of ['smu', 'mpu']
+>         From schema:
+> /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,=
+tegra194-pcie.yaml
 
-For consistency with other DT bindings on Tegra, it'd be good to name
-this nvidia,tegra114-cec.yaml since that's the first generation where
-this IP was added. Not a big deal, though.
+Stephen reported the other day that he wasn't able to resolve this
+conflict in linux-next, so he dropped the ECAM bits. The ECAM patch has
+now propagated to ARM SoC so it can't be easily backed out, but I guess
+we could revert on that tree and instead apply the patch to the DT tree
+and resolve the conflict there.
 
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/cec/nvidia,tegra-cec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nvidia Tegra HDMI CEC
+I guess the better alternative would be to try and resolve the merge
+properly and let Stephen (and Linus) know.
 
-Again, for consistency with other bindings, NVIDIA is the preferred
-spelling. It's not a big deal and could be fixed up in a subsequent
-patch, there are a few other cases where the alternative spelling has
-been used.
+Thierry
 
-The rest looks okay, so either way:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---Go2Ynh+Vu1nkhJ/W
+--goj6zW39Iopsic0N
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmOPb5sACgkQ3SOs138+
-s6GLkQ/+JBbjUjYZFvRHaZqueKhqQcvpNxzAo/fyN5BnZRl/Dr6r9OkfSNoSVuEm
-io5uqdiYDfXXvkApiv7BbHeNaXH8BX0PxRZ9J+hsE41zpGVHRHE+dmRlcE+rhY54
-/TpkHx0VCMROkD6C1KQShCE4n9CQGRixLL2sHdhIWxmkaC2fLR609+duNNQ4t8Up
-ASXC4hJuo1TaO31lGydUoB6S7SeU+iSO71B68Pc0HZ2cFib1ZnsdLPgK1gMJyO9q
-ooyvj+IZsPX+YMfId0bMq9owxQRdqZhxSx58LOELQPR/5Ac8Cyfll70L9eZ9uw/8
-5PKT6Eb5ilJnjfCDzF/ef8BGMBL1Ko5qoZBAdqE2Pgk01joFuRIclgZBHcujEaMl
-ymMSnEla9I8thLrJ+8grukft6H6FcuKDnqsn4jhCoIm8b7tID+jyKCbmaBxb0AmC
-VBn13BuYlSv6czihQawg9cfUyjnam/f6t/KksETr1Ne6HzC0qN7ZrxXNjcqFVB48
-mrmKcUbT1adE4eq5czWTEExxckY91LIGSBxZVO6JFRp+13qv4HUV6ZfC8bHM+0x+
-g8WACmp+9HsfNHLR53X2ASF7UIzPicMXNMw2SHK2Zx8y2/WF1MdWRkYIj9NpfkhD
-eIbGX2q9nIG7nsmqzH66uQO59Wqdv40FseT6dQM5KPpNNz9Z8eI=
-=2Wsf
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmOPcYMACgkQ3SOs138+
+s6GSZxAAqiSCEN4r5z2mlNa1HQ5oRefamRktZeZ/5G/9jm+QEkzo0EGf25gDuDpK
+wZtdV9hIVozGV9NIFUGo8STYFvxRmLRqKqP3kDwQHSU1IIalE2eXUFabG1x/l53/
+8KKeT+/YbQt+mU2+7/Pzb64TmQfgjeKUmgU7kTKiv9qj71BXqXf2ol4cV5nZeDob
+EcZEc87/s26bMjLnCZXAgig6F1glrP1JQaiE22ZUMZ252LZlRCJ+yViawBefOPCs
+OPx/n1RIHyUCQrgTtANMCWnbMmAwp87mJEd4W58b/0si979zqBPjHhpDZpjA/3TB
+WWcYeRQyh+THN1+joqZNRXCn5RkQxteyR9KOKkGmHbYCKe1z06WVd9IUJjErvlEL
+u8rlb8ytz3gsiit7eRbOm6+3aqntU6APwlT1nWVnT+X7US898sFf5fox8vSfGXao
+dBwQyN0tpCUVezvQjYv057XkfVCYLj5d2qrJoB+V4PTxWvH/OsZgSQ3AXeXN3c1i
+xViWc7DiUNOBUzhyK4aOY6/IexiMW6E0Qn+vch2YNPFByjPsEikDyiXoN2o1BLmZ
+r05xl+8Yb4mG91y1k7MpXoBZoc9Cgy0kEnct0nMo8QUU+Byp8Kv9Rlhbontw8iJL
+y78KEbQYkfbKJHlvr6hPKU3l2LgKb8Ebohi/J9Pe1B3JYsSD+DY=
+=81y3
 -----END PGP SIGNATURE-----
 
---Go2Ynh+Vu1nkhJ/W--
+--goj6zW39Iopsic0N--
