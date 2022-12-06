@@ -2,139 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D17C4708C
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Dec 2022 16:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 930D6C3A5A7
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Dec 2022 21:15:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235423AbiLFQ76 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Dec 2022 11:59:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39818 "EHLO
+        id S229691AbiLFVPW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Dec 2022 16:15:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235392AbiLFQ74 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Dec 2022 11:59:56 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB5042A416;
-        Tue,  6 Dec 2022 08:59:55 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id gh17so7713430ejb.6;
-        Tue, 06 Dec 2022 08:59:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z+x7sVgmVUy0nFilA/xgoX4WHBeOpUbanqvIivo4H6c=;
-        b=LGz7Kzq8lENoaan4SBI6zDEXk8fp9vwOKrepzBGWOBETMkQNMcbeliyf3aCuhx9p6k
-         d5ixVo3Kjh65WEYHDN9R05qzpMWqiQ9k4TlCMhwjC20RvJXmA6JZyL2zXq+n5ETdmf1x
-         dM0usmfqkIzDWmSCGeQBu81Hgee++KhBtgkvdQyIKjC2eN3Pmv6BVnWRagR/qbjiCd+e
-         RLyi6Ikxen0K7AKtBMc9VpuaeOVF9qNDshqv4PBe5ar/tNCALH8dW+Dd9nePCaLy9Taq
-         JTXL8p9Y4sQYXKe9M5aYc44FZTKeFluq+qHe5I6nQ6OSsFKIATnNftnM7NUKBPv/OjLi
-         Ex2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z+x7sVgmVUy0nFilA/xgoX4WHBeOpUbanqvIivo4H6c=;
-        b=burfE1oWXu7S9jcZIqYwSFEAKPGtV7TdfS10GpFxj0odNbeFkrc9/DBC+K0syNgJp1
-         T9yV7gDuwrPnuNHZQ8UqSiomI4xy1LHNusWFAWnUnr++EynsyWg34v+Pd6wwLu3ODEjR
-         brhAtR1tVYe4sa6X9gUinNEuH5lCoOmfqHhhq5zbeGHqxmtqdcRp/i8PvMdSVlTG2UrK
-         02a3myxrItkMOaRCwdemFgcai3mIbbCiQijR/v88qNtmDuaDcmN/V6a7PtEDJMSednSj
-         zIkhLOzxgCAXQkfX2pyF0KX+MhxvkE3eQAayJTWFuZT0kuNSkiT2rMH2V7acEXQYQtlf
-         VQFw==
-X-Gm-Message-State: ANoB5pmcyP/Ty3OYmcUu/Kfz9/Q7nwWSDz6cPycv8bJ51hluyvf43Ic+
-        6c00vU5eVm8fGc+Oki4ZyTG1mCT/UOg=
-X-Google-Smtp-Source: AA0mqf5QmHP1nzFD7AQZdcqYoVCmZXCASRpkvt5zy3F/Y/FgJAMYj9rWZiXewQseLfanbILzQI5sPA==
-X-Received: by 2002:a17:906:e244:b0:7c0:f9ec:1dff with SMTP id gq4-20020a170906e24400b007c0f9ec1dffmr7426748ejb.283.1670345994319;
-        Tue, 06 Dec 2022 08:59:54 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s26-20020a170906285a00b007af0f0d2249sm7611273ejc.52.2022.12.06.08.59.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 08:59:54 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        iommu@lists.linux-foundation.org, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v13 6/6] mmc: sdhci-tegra: Issue CMD and DAT resets together
-Date:   Tue,  6 Dec 2022 17:59:45 +0100
-Message-Id: <20221206165945.3551774-7-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221206165945.3551774-1-thierry.reding@gmail.com>
-References: <20221206165945.3551774-1-thierry.reding@gmail.com>
+        with ESMTP id S229629AbiLFVPQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Dec 2022 16:15:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F9345A05;
+        Tue,  6 Dec 2022 13:15:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4EC9E61903;
+        Tue,  6 Dec 2022 21:15:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE07C433D7;
+        Tue,  6 Dec 2022 21:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670361311;
+        bh=QsrwkULmCSGGL3KXp7LQHjj62qmPxZ7cMQGjNXHrytU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gVaZuDyChfMqolC3EMzITcIahCmdOBYBYPsE+ouM8MK4tCUYFjpf9W9QSB1BVZnzQ
+         GslUmtDAufGU+Te3jRDKayDNrCYoKnGWsRtQra9dLdCC7gtPp+jUHd1hHOxpmchi9Y
+         tp6BA8AcuzffPr+TJmJASoYgcmaaUzJm4wldcZaLN3ILU+35lKPpjZcr0ko2k2cFyA
+         EIT3OpZcWkysj2q9Vvac5+LGd4m4U4ICXl9aKqk1GS9NU8t597k9LskbfQ2caEjzlJ
+         9HKEa2GjE6748ekYIBuH5YTQfDAf6V0SKdARlrJlzmqR7T1Xb62vOGXgY9/xgzLXoo
+         oPVCXVlQ5ON/g==
+Received: by mail-vs1-f42.google.com with SMTP id c184so15464788vsc.3;
+        Tue, 06 Dec 2022 13:15:11 -0800 (PST)
+X-Gm-Message-State: ANoB5pk+efxzJl7ngY/kjoV0kDwC8XQ9cQw2gMMfdMOyAFIodS5VauRV
+        QQ2i+FfUcTVhixZZWMvpeMkfbX9NKbVuE7R0Ng==
+X-Google-Smtp-Source: AA0mqf7o4y8r4F6Icn2YZm1TOiWT+1+sXM/NS1oROlDRjJLLjahgyIBX9VHa2gcsSR+5hapr3z1zvf63AHIsOw4RHuY=
+X-Received: by 2002:a67:c40e:0:b0:3b1:4b76:5b44 with SMTP id
+ c14-20020a67c40e000000b003b14b765b44mr4681883vsk.53.1670361310470; Tue, 06
+ Dec 2022 13:15:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221114155333.234496-1-jonathanh@nvidia.com> <20221114155333.234496-2-jonathanh@nvidia.com>
+ <Y3ap1o2SbNvFw8Vd@orome> <CAL_JsqKpyn=mWXv4tuS4U8AahNPkL6hpNQCfyRdf9bDY1EqSJg@mail.gmail.com>
+ <Y49xg7wptRweHd4I@orome>
+In-Reply-To: <Y49xg7wptRweHd4I@orome>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 6 Dec 2022 15:14:58 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK+BxHB8__aN=84R4xpoJtf4_7xHeTkbgPakdNqzywJWw@mail.gmail.com>
+Message-ID: <CAL_JsqK+BxHB8__aN=84R4xpoJtf4_7xHeTkbgPakdNqzywJWw@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: PCI: tegra234: Add ECAM support
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Sergey Semin <Sergey.Semin@baikalelectronics.ru>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, vidyas@nvidia.com,
+        mmaddireddy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Prathamesh Shete <pshete@nvidia.com>
+On Tue, Dec 6, 2022 at 10:44 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Mon, Dec 05, 2022 at 05:41:55PM -0600, Rob Herring wrote:
+> > On Thu, Nov 17, 2022 at 3:38 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+> > >
+> > > On Mon, Nov 14, 2022 at 03:53:32PM +0000, Jon Hunter wrote:
+> > > > From: Vidya Sagar <vidyas@nvidia.com>
+> > > >
+> > > > Add support for ECAM aperture that is only supported for Tegra234
+> > > > devices.
+> > > >
+> > > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > > > Co-developed-by: Jon Hunter <jonathanh@nvidia.com>
+> > > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > > > ---
+> > > > Changes since V2:
+> > > > - Avoid duplication of reg items and reg-names
+> > > > Changes since V1:
+> > > > - Restricted the ECAM aperture to only Tegra234 devices that support it.
+> > > >
+> > > >  .../bindings/pci/nvidia,tegra194-pcie.yaml    | 34 +++++++++++++++++--
+> > > >  .../devicetree/bindings/pci/snps,dw-pcie.yaml |  2 +-
+> > > >  2 files changed, 33 insertions(+), 3 deletions(-)
+> > >
+> > > Both patches applied now.
+> >
+> > linux-next now fails with this. I suspect it is due to Sergey's
+> > changes to the DWC schema.
+> >
+> > /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.example.dtb:
+> > pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
+> > fixed:
+> >         'dbi' was expected
+> >         'dbi2' was expected
+> >         'ecam' is not one of ['elbi', 'app']
+> >         'atu' was expected
+> >         'dma' was expected
+> >         'phy' was expected
+> >         'config' was expected
+> >         /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.example.dtb:
+> > pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
+> > fixed:
+> >                 'ecam' is not one of ['apb', 'mgmt', 'link', 'ulreg', 'appl']
+> >                 'ecam' is not one of ['atu_dma']
+> >                 'ecam' is not one of ['smu', 'mpu']
+> >         From schema:
+> > /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+>
+> Stephen reported the other day that he wasn't able to resolve this
+> conflict in linux-next, so he dropped the ECAM bits. The ECAM patch has
+> now propagated to ARM SoC so it can't be easily backed out, but I guess
+> we could revert on that tree and instead apply the patch to the DT tree
+> and resolve the conflict there.
+>
+> I guess the better alternative would be to try and resolve the merge
+> properly and let Stephen (and Linus) know.
 
-In case of error condition to avoid system crash Tegra SDMMC controller
-requires CMD and DAT resets issued together. SDHCI controller FSM goes
-into bad state due to rapid SD card hot-plug event. Issuing reset on the
-CMD FSM before DATA FSM results in kernel panic, hence add support to
-issue CMD and DAT resets together.
+Instead, can you prepare a patch on top of Sergey's adding a 'oneOf'
+entry with 'ecam'. As this is a new thing, it should have its own
+entry. Then when merging, we just throw out the change from your side.
 
-This is applicable to Tegra186 and later chips.
+I'd really prefer that bindings don't go thru the soc tree unless
+there's some strong reason. The default is to go via the subsystem
+trees. Beyond 'we are running the dtschema checks on all our dts files
+and can't have the warnings', I don't know what that would be. I wish
+everyone was doing that, but I'm pretty sure most are not.
 
-Signed-off-by: Aniruddha TVS Rao <anrao@nvidia.com>
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 3 ++-
- drivers/mmc/host/sdhci.c       | 5 +++++
- drivers/mmc/host/sdhci.h       | 2 ++
- 3 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index fb3823c87cb8..4c2563b27ed6 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1528,7 +1528,8 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
- 	.ops  = &tegra186_sdhci_ops,
- };
- 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index df1c1d10a338..81f4fed11629 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -270,6 +270,11 @@ enum sdhci_reset_reason {
- 
- static void sdhci_reset_for_reason(struct sdhci_host *host, enum sdhci_reset_reason reason)
- {
-+	if (host->quirks2 & SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER) {
-+		sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-+		return;
-+	}
-+
- 	switch (reason) {
- 	case SDHCI_RESET_FOR_INIT:
- 		sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index b6f31a7d6152..605eaee805f7 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -478,6 +478,8 @@ struct sdhci_host {
-  * block count.
-  */
- #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
-+/* Issue CMD and DATA reset together */
-+#define SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER	(1<<19)
- 
- 	int irq;		/* Device IRQ */
- 	void __iomem *ioaddr;	/* Mapped address */
--- 
-2.38.1
-
+Rob
