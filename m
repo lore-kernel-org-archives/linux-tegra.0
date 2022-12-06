@@ -2,106 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3709C4708C
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Dec 2022 23:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B81FCC352A1
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Dec 2022 13:02:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230352AbiLEXmN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Dec 2022 18:42:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57550 "EHLO
+        id S234799AbiLFNCV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Dec 2022 08:02:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230280AbiLEXmM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Dec 2022 18:42:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF631FCC5;
-        Mon,  5 Dec 2022 15:42:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2014CB815C9;
-        Mon,  5 Dec 2022 23:42:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AFFC433D6;
-        Mon,  5 Dec 2022 23:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670283727;
-        bh=4wJabThFZ4VUXjAcvXIT97D1YyfJXyrel4+YB/Ab+gk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZobKRLT5ZAge7Mfr+9Ip+dxbQpBkCk2RTtEPH47l4VyLYW/DFp9y9lCOVM+13yuWZ
-         fllnOwfZ79glqC/04eGRrZQXiGq45ZaHctcQak9QyU0/Rb2O9O4Z82roEN2n2fq41j
-         KhCv33+LONiVSItlj/XlkeRrghNVtvj1StcxVtYxrL5NcmXUIFKcfYfEdVhatTB01t
-         lmU8URLZPu8mJmvRX1fk3gTbtlZ/wETFq4mdjBk69QVyhuf2ekVz/0kMn6hgN+irfb
-         Z6i0UmSd9ZzjN8eBqwo1DH6uCwoWPBxrZiBqHd4AdUStpbhc+gwEX+bAiMpLQpweJy
-         l3ah6Xu5mC+Dg==
-Received: by mail-vs1-f54.google.com with SMTP id c184so12679246vsc.3;
-        Mon, 05 Dec 2022 15:42:07 -0800 (PST)
-X-Gm-Message-State: ANoB5plwsgCiwfBWuug66O6CSXBgiSE1jpilM5W40J2pDh9T4PZ8C4+b
-        wdN0OjTbqOwgnsLOxBrczGGVg4IvqH5jiycOwQ==
-X-Google-Smtp-Source: AA0mqf52qMjSmyIkwFrSYPkLIs/sPSoB5CM3A/eqb99puUmDiOUo5CG5r5eXPIEw7a2BH2dvI7oXrkkI0RUmvAZQWgU=
-X-Received: by 2002:a05:6102:2381:b0:3b0:c6ec:cc6a with SMTP id
- v1-20020a056102238100b003b0c6eccc6amr16733521vsr.0.1670283726721; Mon, 05 Dec
- 2022 15:42:06 -0800 (PST)
-MIME-Version: 1.0
-References: <20221114155333.234496-1-jonathanh@nvidia.com> <20221114155333.234496-2-jonathanh@nvidia.com>
- <Y3ap1o2SbNvFw8Vd@orome>
-In-Reply-To: <Y3ap1o2SbNvFw8Vd@orome>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 5 Dec 2022 17:41:55 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKpyn=mWXv4tuS4U8AahNPkL6hpNQCfyRdf9bDY1EqSJg@mail.gmail.com>
-Message-ID: <CAL_JsqKpyn=mWXv4tuS4U8AahNPkL6hpNQCfyRdf9bDY1EqSJg@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] dt-bindings: PCI: tegra234: Add ECAM support
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Sergey Semin <Sergey.Semin@baikalelectronics.ru>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        with ESMTP id S235279AbiLFNB5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Dec 2022 08:01:57 -0500
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80650D2E3;
+        Tue,  6 Dec 2022 05:01:40 -0800 (PST)
+Received: by mail-ot1-f43.google.com with SMTP id a7-20020a056830008700b0066c82848060so9199336oto.4;
+        Tue, 06 Dec 2022 05:01:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u7Hbffxdj76xYFdF4l0QY3Nbhb00ty2h6F92vl5ePeM=;
+        b=6kAyYs1M2ThjzIkzDnoEyHEa38QderaRNDg/PbER3jZ9GFwE9+4drloPukSGJgX0sN
+         +WjfTsm42efZ2Ar5eJnjuDj5dNz8nPadSMDqI/M8vd5fK6QQFUA5RqSlaUfZ++e7Qm2w
+         JJ4KmKnrCHwdVD0WL8TgfD1+PtYOJn0yv9mdg6ImUrGohwGn7+Rr+mbMpfw7jFz8zrFg
+         afscIx/iDljDbJdQKIfE3bWOfE6kWYcNJqsm4gh3PeFx2vBtOVn+9wXqemUejp+bZMH/
+         ZxOiXJKUJ+SN2FTzYLVpNxkvzehgWjevbrDF8yCd6+BuC77s2HKarEKakyeZ5HZeMWH/
+         IBJQ==
+X-Gm-Message-State: ANoB5pnxSqk7QbHDymHL5MWhwJRCS+b9GI7Zk46Mofo4HsSOkBAljhTh
+        mlj5Yf4UwoHHyY3xO5iPEL3gdOss6w==
+X-Google-Smtp-Source: AA0mqf4k5ByXOavEm8wTJJndBCnqCb7kXMspArChR3P/1CC6EiJONndeKfl7Me39LQ6wRjgZBQUqlg==
+X-Received: by 2002:a05:6830:110e:b0:661:c5ac:7324 with SMTP id w14-20020a056830110e00b00661c5ac7324mr44543682otq.179.1670331699671;
+        Tue, 06 Dec 2022 05:01:39 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id g33-20020a9d2da4000000b00661af2f9a1asm9201988otb.49.2022.12.06.05.01.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Dec 2022 05:01:38 -0800 (PST)
+Received: (nullmailer pid 224048 invoked by uid 1000);
+        Tue, 06 Dec 2022 13:01:37 -0000
+Date:   Tue, 6 Dec 2022 07:01:37 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Joe Tessler <jrt@google.com>, linux-media@vger.kernel.org,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        linux-amlogic@lists.infradead.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jeff Chase <jnchase@google.com>, linux-tegra@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, vidyas@nvidia.com,
-        mmaddireddy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v2 1/9] media: dt-bindings: amlogic,meson-gx-ao-cec: move
+ to cec subfolder
+Message-ID: <167033169684.223985.8563268980146610337.robh@kernel.org>
+References: <20221205151845.21618-1-krzysztof.kozlowski@linaro.org>
+ <20221205151845.21618-2-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221205151845.21618-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 3:38 PM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Mon, Nov 14, 2022 at 03:53:32PM +0000, Jon Hunter wrote:
-> > From: Vidya Sagar <vidyas@nvidia.com>
-> >
-> > Add support for ECAM aperture that is only supported for Tegra234
-> > devices.
-> >
-> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > Co-developed-by: Jon Hunter <jonathanh@nvidia.com>
-> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > ---
-> > Changes since V2:
-> > - Avoid duplication of reg items and reg-names
-> > Changes since V1:
-> > - Restricted the ECAM aperture to only Tegra234 devices that support it.
-> >
-> >  .../bindings/pci/nvidia,tegra194-pcie.yaml    | 34 +++++++++++++++++--
-> >  .../devicetree/bindings/pci/snps,dw-pcie.yaml |  2 +-
-> >  2 files changed, 33 insertions(+), 3 deletions(-)
->
-> Both patches applied now.
 
-linux-next now fails with this. I suspect it is due to Sergey's
-changes to the DWC schema.
+On Mon, 05 Dec 2022 16:18:37 +0100, Krzysztof Kozlowski wrote:
+> Move amlogic,meson-gx-ao-cec.yaml bindings to cec subfolder and drop
+> unneeded quotes.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../bindings/media/{ => cec}/amlogic,meson-gx-ao-cec.yaml     | 4 ++--
+>  MAINTAINERS                                                   | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>  rename Documentation/devicetree/bindings/media/{ => cec}/amlogic,meson-gx-ao-cec.yaml (93%)
+> 
 
-/builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.example.dtb:
-pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
-fixed:
-        'dbi' was expected
-        'dbi2' was expected
-        'ecam' is not one of ['elbi', 'app']
-        'atu' was expected
-        'dma' was expected
-        'phy' was expected
-        'config' was expected
-        /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.example.dtb:
-pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
-fixed:
-                'ecam' is not one of ['apb', 'mgmt', 'link', 'ulreg', 'appl']
-                'ecam' is not one of ['atu_dma']
-                'ecam' is not one of ['smu', 'mpu']
-        From schema:
-/builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.yaml
+Acked-by: Rob Herring <robh@kernel.org>
