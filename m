@@ -2,193 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55233C352A1
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Dec 2022 10:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C3CC63706
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Dec 2022 10:23:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbiLGKVS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Dec 2022 05:21:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48970 "EHLO
+        id S230404AbiLGKXF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Dec 2022 05:23:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbiLGKVR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Dec 2022 05:21:17 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 320B92A418;
-        Wed,  7 Dec 2022 02:21:16 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id fc4so12771553ejc.12;
-        Wed, 07 Dec 2022 02:21:16 -0800 (PST)
+        with ESMTP id S230359AbiLGKXC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Dec 2022 05:23:02 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B0D115FF6
+        for <linux-tegra@vger.kernel.org>; Wed,  7 Dec 2022 02:23:00 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id x11so20358486ljh.7
+        for <linux-tegra@vger.kernel.org>; Wed, 07 Dec 2022 02:22:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p54kr6XUM0LRLqIjTVn0CPDFtPyqLbkkQUh9q3552DI=;
-        b=S2BFtZ+3NPCaUBNKF22a46YMW7aMP5lZx8tZGvY6X+Rf+wD0HhOj+/9SzIsB7HcXbd
-         5zBMR/Vxrj4613kVGfvS4KZj0JO2NVGHuJTiROPOkyFj2hwy/BSJ6/KW0oA4SgPmd7vN
-         7jVckzQpzAlF7+tIRA2mbfW3F/U9VZIkgc18/34f6ZntTAMlXmONQ+dG3OUdBOVOZIDw
-         2R3ftysSJ4WYcMBIptJn78ekaCFaCTHWWQMWYFTyaEjJ1LC9WU5in/M64/DUZ8VvSnvg
-         oS2odjnPEY4Rts0LSK8c1wv0R1cbzIU381jsbvPqxI71UQCibDMiIguL120pfZmQnzSy
-         JV/g==
+        bh=/AxgtdSHYHP1YbbzJqlPfT18aEYuRk09InbeSd0JHNg=;
+        b=tOruhaPzNOR3bQD/ouWBj+2tp/tUN/H/5pGNgjSe2ABiV3vA61PRSLsVlqeAvI3Oro
+         vHe3xvQC6FSO988F88LJTaSEr7beyBCC0Xr5mjSQNDZchgwGX/zzIK/HzVUFQm9VSFme
+         1SwIrYDkMGRN9sZr262zvK3Rqvw0K0UZRe3qgHO2FEKAoLEeQbmgdeRgDgkeB2V1Z9KU
+         ymxi4wc9pFKvlNmuXwlViGvq4nf0puoGFSzB+NSl2FGkbWnZ1skK7Dng2cwxys79bQBL
+         B2o3FQDAN5bNXMdZu277dHREbYgTFCPcottzQGS2KMyJNymjfRP+abAi8h8GpG1+lETO
+         jymg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=p54kr6XUM0LRLqIjTVn0CPDFtPyqLbkkQUh9q3552DI=;
-        b=CwGjQk3yOWzuPqdVqw1L6rlevAAJqPdoZv2ErzdmmPA7Oc51Q1dNH4yu3/dg7MdK98
-         bBNpG+Gx/KNChaWcYvljZr2k/J5WkmXPPVm+m0VmHYxooClx9bvmkyy9oW0pnCNd2QkL
-         qnuGleYmXitRhvDi0mv1a6oGphmHsGwWUIDMMuFTfC5XWAtYzA4QV+r/gIYjvQFhB4DI
-         KPbMs4Io9tQjuzHpcPIjM5d9O2To+m0pjZcuRuqW/KWyP6Wgk4qkXQTmE3HRlfpDvr7C
-         oxX2q2jcSBehywTS4fr86qwUI4X05nMIi2AnZp5uprgmjBf+saAumhsGAfV3G0YQnl1D
-         IfsQ==
-X-Gm-Message-State: ANoB5pnkhoUtNoLoyoUgeKdKesNtrbe14zJ3UEN/jMNQXMvlyJjVjuMT
-        hAkjvL3nWUfNU0++RV2gFVeNe3GMyt4=
-X-Google-Smtp-Source: AA0mqf5+dEXoo7ludv6+++sopFs8nmWAS7QKTjnEBCH1nZTV99BqOy9xsK0DaWABnme2mn/v0DUXPg==
-X-Received: by 2002:a17:906:3b11:b0:7c0:cb36:d6eb with SMTP id g17-20020a1709063b1100b007c0cb36d6ebmr17121707ejf.736.1670408474491;
-        Wed, 07 Dec 2022 02:21:14 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id p10-20020a170906838a00b007c0dacbe00bsm4723394ejx.115.2022.12.07.02.21.13
+        bh=/AxgtdSHYHP1YbbzJqlPfT18aEYuRk09InbeSd0JHNg=;
+        b=vC0aPiTv914Dd0jA74k12LtFvhEVhNIDTsZWZwOR7y+ZsmbpLJP8aIlxMCq9maoVnD
+         ClEU3xZiILMkzTYN6fvC1hZqgM9+bj9+PHVy6PD9xeLsVKJyvkJvUnODsDlS2O7BK2Bm
+         6+p0QBOYH5zSyBJlx4fM9aAoRIG9NlIdZhDmUqLN1AoEzYJLcPqSYGNBIOADHL/9FdGw
+         /cRh3j9WqQ0+Qw43JXlW2vLlLnr158g85uBKxgPMQqq/Ovj3MGmoXTEycqS9wIq44NQC
+         eyApHqC0/4bzZ0m4NLficLpO5qzfy1yp14XGiRkdWIzLXvRcjQkYy+cS+293nnBWcrex
+         eF8A==
+X-Gm-Message-State: ANoB5pkh9mcF/E6TQCV4HyQiCAPhzQ8xorLhnv7d25SZg3Npf3hL8e1H
+        PPRDSkkTNxuPCNPZa5+3WGA3Zg==
+X-Google-Smtp-Source: AA0mqf77/+pUWb1Bn4v6zLGZhuX5q4wF2Fzv0XKIu9nI2Iw4J7TFxfO02J2gesAVCe0NSJikkfILHA==
+X-Received: by 2002:a2e:87d5:0:b0:27a:1ce7:bbcb with SMTP id v21-20020a2e87d5000000b0027a1ce7bbcbmr369003ljj.420.1670408578398;
+        Wed, 07 Dec 2022 02:22:58 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id bu31-20020a056512169f00b00499b27a329esm1953183lfb.300.2022.12.07.02.22.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 02:21:13 -0800 (PST)
-Date:   Wed, 7 Dec 2022 11:21:12 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Sergey Semin <Sergey.Semin@baikalelectronics.ru>,
-        Jon Hunter <jonathanh@nvidia.com>,
+        Wed, 07 Dec 2022 02:22:58 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, vidyas@nvidia.com,
-        mmaddireddy@nvidia.com
-Subject: Re: [PATCH V3 1/2] dt-bindings: PCI: tegra234: Add ECAM support
-Message-ID: <Y5BpGMS+D8T94Uha@orome>
-References: <20221114155333.234496-1-jonathanh@nvidia.com>
- <20221114155333.234496-2-jonathanh@nvidia.com>
- <Y3ap1o2SbNvFw8Vd@orome>
- <CAL_JsqKpyn=mWXv4tuS4U8AahNPkL6hpNQCfyRdf9bDY1EqSJg@mail.gmail.com>
- <Y49xg7wptRweHd4I@orome>
- <CAL_JsqK+BxHB8__aN=84R4xpoJtf4_7xHeTkbgPakdNqzywJWw@mail.gmail.com>
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Joe Tessler <jrt@google.com>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Jeff Chase <jnchase@google.com>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v3 1/9] media: dt-bindings: amlogic,meson-gx-ao-cec: move to cec subfolder
+Date:   Wed,  7 Dec 2022 11:22:45 +0100
+Message-Id: <20221207102253.26663-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221207102253.26663-1-krzysztof.kozlowski@linaro.org>
+References: <20221207102253.26663-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="23iUAqCOz/Oa7AeD"
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqK+BxHB8__aN=84R4xpoJtf4_7xHeTkbgPakdNqzywJWw@mail.gmail.com>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Move amlogic,meson-gx-ao-cec.yaml bindings to cec subfolder and drop
+unneeded quotes.
 
---23iUAqCOz/Oa7AeD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/media/{ => cec}/amlogic,meson-gx-ao-cec.yaml     | 4 ++--
+ MAINTAINERS                                                   | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+ rename Documentation/devicetree/bindings/media/{ => cec}/amlogic,meson-gx-ao-cec.yaml (93%)
 
-On Tue, Dec 06, 2022 at 03:14:58PM -0600, Rob Herring wrote:
-> On Tue, Dec 6, 2022 at 10:44 AM Thierry Reding <thierry.reding@gmail.com>=
- wrote:
-> >
-> > On Mon, Dec 05, 2022 at 05:41:55PM -0600, Rob Herring wrote:
-> > > On Thu, Nov 17, 2022 at 3:38 PM Thierry Reding <thierry.reding@gmail.=
-com> wrote:
-> > > >
-> > > > On Mon, Nov 14, 2022 at 03:53:32PM +0000, Jon Hunter wrote:
-> > > > > From: Vidya Sagar <vidyas@nvidia.com>
-> > > > >
-> > > > > Add support for ECAM aperture that is only supported for Tegra234
-> > > > > devices.
-> > > > >
-> > > > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > > > > Co-developed-by: Jon Hunter <jonathanh@nvidia.com>
-> > > > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > > > > ---
-> > > > > Changes since V2:
-> > > > > - Avoid duplication of reg items and reg-names
-> > > > > Changes since V1:
-> > > > > - Restricted the ECAM aperture to only Tegra234 devices that supp=
-ort it.
-> > > > >
-> > > > >  .../bindings/pci/nvidia,tegra194-pcie.yaml    | 34 +++++++++++++=
-++++--
-> > > > >  .../devicetree/bindings/pci/snps,dw-pcie.yaml |  2 +-
-> > > > >  2 files changed, 33 insertions(+), 3 deletions(-)
-> > > >
-> > > > Both patches applied now.
-> > >
-> > > linux-next now fails with this. I suspect it is due to Sergey's
-> > > changes to the DWC schema.
-> > >
-> > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvi=
-dia,tegra194-pcie.example.dtb:
-> > > pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
-> > > fixed:
-> > >         'dbi' was expected
-> > >         'dbi2' was expected
-> > >         'ecam' is not one of ['elbi', 'app']
-> > >         'atu' was expected
-> > >         'dma' was expected
-> > >         'phy' was expected
-> > >         'config' was expected
-> > >         /builds/robherring/linux-dt/Documentation/devicetree/bindings=
-/pci/nvidia,tegra194-pcie.example.dtb:
-> > > pcie@14160000: reg-names:4: 'oneOf' conditional failed, one must be
-> > > fixed:
-> > >                 'ecam' is not one of ['apb', 'mgmt', 'link', 'ulreg',=
- 'appl']
-> > >                 'ecam' is not one of ['atu_dma']
-> > >                 'ecam' is not one of ['smu', 'mpu']
-> > >         From schema:
-> > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/pci/nvi=
-dia,tegra194-pcie.yaml
-> >
-> > Stephen reported the other day that he wasn't able to resolve this
-> > conflict in linux-next, so he dropped the ECAM bits. The ECAM patch has
-> > now propagated to ARM SoC so it can't be easily backed out, but I guess
-> > we could revert on that tree and instead apply the patch to the DT tree
-> > and resolve the conflict there.
-> >
-> > I guess the better alternative would be to try and resolve the merge
-> > properly and let Stephen (and Linus) know.
->=20
-> Instead, can you prepare a patch on top of Sergey's adding a 'oneOf'
-> entry with 'ecam'. As this is a new thing, it should have its own
-> entry. Then when merging, we just throw out the change from your side.
->=20
-> I'd really prefer that bindings don't go thru the soc tree unless
-> there's some strong reason. The default is to go via the subsystem
-> trees. Beyond 'we are running the dtschema checks on all our dts files
-> and can't have the warnings', I don't know what that would be. I wish
-> everyone was doing that, but I'm pretty sure most are not.
+diff --git a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml b/Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
+similarity index 93%
+rename from Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+rename to Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
+index 8d844f4312d1..f65c9681a9f7 100644
+--- a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
++++ b/Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 BayLibre, SAS
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/media/amlogic,meson-gx-ao-cec.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/media/cec/amlogic,meson-gx-ao-cec.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Amlogic Meson AO-CEC Controller
+ 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e3f3c3e53f77..07cb85cac4c3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13553,7 +13553,7 @@ L:	linux-amlogic@lists.infradead.org
+ S:	Supported
+ W:	http://linux-meson.com/
+ T:	git git://linuxtv.org/media_tree.git
+-F:	Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
++F:	Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
+ F:	drivers/media/cec/platform/meson/ao-cec-g12a.c
+ F:	drivers/media/cec/platform/meson/ao-cec.c
+ 
+-- 
+2.34.1
 
-That's actually the reason why I wanted this to go through ARM SoC, so
-that the validation tools wouldn't accumulate even more errors. For some
-time now I've been working on getting at least Tegra to validate
-properly and on 64-bit ARM I have a local tree on top of linux-next that
-has no warnings left, though I do need to flush out quite a few bindings
-conversions.
-
-Until those are all upstream, that argument is a little moot and don't
-feel strongly about where the DT bindings ultimately end up.
-
-Thierry
-
---23iUAqCOz/Oa7AeD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmOQaRUACgkQ3SOs138+
-s6GGVw/9FLMaA71ADVuIEGZDxPrS0U2XPAreBd4q8Iqmh4NSo5OSqo845l8MExFt
-76b7J5cSkyWagKiIZHTxHJ+NwG+q+viUNuhYwMDK9eR74r7EpT7tpBHCW1uU28rq
-G+dHbM570lJxQZVjwcYiKfTglfwSFx/wYGPep5BdQcttKMeG/QeOAdCcqSEDmXGa
-eKkCpUCnz45g2yvJ6T0iBlacuUA1xOAnZrwSnWvANGz8hc7u4d5flF9rcugw1i4V
-IyIDU8w+J0A2I5SMto/lOoSAZ4S40FLQL1HVR1AhmziGqMZ7E4K6E3uwKr6JfGnI
-FuES7aCmcjc7pwKbJbVUjfXNqg9YCDpiBaTTD20xwlJ5iSW1/LFGMt8q2L5mEI6L
-KAJPSOh+VPkGpkpqXBenZnGMVJDhlW7oRkbtoGOsaOabTyhfJrIGBUN/9W/PxYoW
-oDeqMu104qb2sBwaCs8Dd1YoHQVl8I5F2OUdskPdPhIMFWh7+9eYix1t/hVXAKP+
-jxy5+/BMXXPfX1ctD1FhsHDKCtaGzjqYnOsocdhILCQBa857qEi2W85pfmNQHpzy
-OChHGdLPZp56Ih5Gnrmk0ZRvEW1RqYdEr/17sUX/BuNtP+eJCtZcuIIErdh04mpR
-c8ecjtvtIwuJAX9hHhW5mOac+9XF9xMW1dDvV3k5+aDmtWGpvOA=
-=fiac
------END PGP SIGNATURE-----
-
---23iUAqCOz/Oa7AeD--
