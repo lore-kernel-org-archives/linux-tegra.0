@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0851C6370B
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Dec 2022 10:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF8CC63706
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Dec 2022 10:23:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230054AbiLGKXO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Dec 2022 05:23:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49962 "EHLO
+        id S230456AbiLGKXV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Dec 2022 05:23:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230359AbiLGKXH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Dec 2022 05:23:07 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 608A216488
-        for <linux-tegra@vger.kernel.org>; Wed,  7 Dec 2022 02:23:06 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id bp15so27910327lfb.13
-        for <linux-tegra@vger.kernel.org>; Wed, 07 Dec 2022 02:23:06 -0800 (PST)
+        with ESMTP id S230433AbiLGKXL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Dec 2022 05:23:11 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FFB178BD
+        for <linux-tegra@vger.kernel.org>; Wed,  7 Dec 2022 02:23:08 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id b3so27951073lfv.2
+        for <linux-tegra@vger.kernel.org>; Wed, 07 Dec 2022 02:23:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d5ptnyM8tU9KK9vuHrqJhLp9kBHzmtP8NOjNL98W6O0=;
-        b=kwnECpHYYs2dljETpxBP82ebzWcB8+wP08KcpTW0mTbgigX6RffI70K/KhpLO/YDC2
-         6DwfcxArNz6QB+WP8rHiDiRyFxCJlWR4KIL0b5P82ylwXg++5M3rZhjXdHiiXenylfhh
-         WHGDlw16wENi7DG/Sin7l0bUZZT73PHBprW595DmdPO4nQRLmk9Hzom9bLKpofnmbhu1
-         7eeohVs98jGdxiVle7XGMFdI+y4jxV+npBwZjmRSfJFJNx67uycw7h98J5ThbGjBDaJg
-         KFTspp95uosj6pXTZxb2sC4/FEUjUWOCO/8FUs5ZSXmYLlNvJY4ndBIiWMWqIYdxGArH
-         cL5Q==
+        bh=4WOjKBqSX/bJNurWawr9UIxOhCwY9AfTE5WBw0ZvK0s=;
+        b=DeQM6xRnfiSdaMP8oukCCK2af0Cj+1aL66olpRw8WNrvnr0qDTHiaN9sD05CbnnvJR
+         DWKW0p8T3Lf38kXzN6/v4hUNzHDYTxaXvj9wJQlyHIB6q+jMiJzSHl2iIPlbE3TB/eld
+         dVJVqPJ6XRMS7IzUwKlr51M7MTPa4n79Z4TQrW0brbGYHb/b4ennlqJDTkZGHsDI4+he
+         3flAQDjvbd+7JJ8Ye1WBAhVN45mV9Pnlk5A0JIEuwvsvkLWZvw6pRv1RRZo34RqnYGDw
+         U+Kj70Ga0SIjTKWelk3/apw7gWxk6XBhJKov3cwZzCzAhS/hhtSjjo1UOBAhzPZzKDJO
+         TCeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d5ptnyM8tU9KK9vuHrqJhLp9kBHzmtP8NOjNL98W6O0=;
-        b=oUsHTe7n67NFcrLJjTscoK9d9MmSrHkOqkO8dNt0CU/E3XLeSMQWKzPgPkWjAnBKko
-         5l7ZgDaoG/GEdubbsg6GZRaN+lWEYgoZlgbK7BH6jQrYVx5IfvRrPgz9gsg/jNWcnmAd
-         raFCxMMu6hT9kPgg7IJYB4D/FIZtgRRGlMHIH3Cs6OYcv2FGQ0sF5osD1RZhYGhFfoal
-         qT2vSwZ0uP4ZjkyxMpCU7e5e82GtsfDGjtqV6kyd5l/3RY3MH7UuMItqjFumBpKUXKXf
-         Hf8hLQkzgGcz2gXcxSySkurT2RauVtBxQoJ4WYXOeMHFb5FP06Z9zaT5pkHvesmaSuPF
-         iZag==
-X-Gm-Message-State: ANoB5pmCLwODBD+LgzOYohRXj/A1jh5cnLIGPfgPwHda6nzC/dnTtPJf
-        3+uxIh1+oXa/Qi1Bva0HzxQl5g==
-X-Google-Smtp-Source: AA0mqf4r7f2xeXn7yaYoPkPuO7SMWpWfTPrwG1RH+SDYe9rX4EhYS8TzE8+PgGnMNg3pkiB3apXW2A==
-X-Received: by 2002:ac2:5e8e:0:b0:4b5:9370:d084 with SMTP id b14-20020ac25e8e000000b004b59370d084mr573180lfq.527.1670408584717;
-        Wed, 07 Dec 2022 02:23:04 -0800 (PST)
+        bh=4WOjKBqSX/bJNurWawr9UIxOhCwY9AfTE5WBw0ZvK0s=;
+        b=WLokeLXBR8lQ6pd/5tXVhBhfpNuiskreMUWLPwB29l0i6RH0WOErdlFAK4JPLv04dA
+         tSied8WVB1JGnvh9VBhS4Vmzg8ELJUiErjh9lhM1YYgNMFDVhlFeXGmU9qoWr7nJLpiW
+         OHHTI+hbXPpsAFQXuSlCRGBYMCDvpNyTynzSQvxj8Je5iBhnmuir20xxtXC9kLBsz6o1
+         vz6yqKiggkoUwtnCEHEhmTs8gFkDmAaEvrWc/2tj0NBPfqdhGQpHfGruv4aDOwEIDd6p
+         1Z3qp0WQ5LCh8BHfanQuTlyEkuqnxPp7Bfu78C+ZaPBu1zWYqzdsVCLm2rScNdlVg2RP
+         LTMg==
+X-Gm-Message-State: ANoB5pl0/0FQFazMXQ8Af3Ce3XY6y20P1gEkG+MorbYvwLuL3ywRKgwI
+        RGLrTCuaQuEFgCBa0R9ZahWQAw==
+X-Google-Smtp-Source: AA0mqf4J0zL0WrlS4LLGj+qa03tSO2qLooF7xgibIAe/OWddv4WibIXv6pH+N3JWoeV4VeyeojNpyg==
+X-Received: by 2002:a19:ca15:0:b0:4b5:9845:c89f with SMTP id a21-20020a19ca15000000b004b59845c89fmr182758lfg.127.1670408587036;
+        Wed, 07 Dec 2022 02:23:07 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id bu31-20020a056512169f00b00499b27a329esm1953183lfb.300.2022.12.07.02.23.03
+        by smtp.gmail.com with ESMTPSA id bu31-20020a056512169f00b00499b27a329esm1953183lfb.300.2022.12.07.02.23.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 02:23:04 -0800 (PST)
+        Wed, 07 Dec 2022 02:23:05 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -73,9 +73,9 @@ To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 5/9] media: dt-bindings: chrontel,ch7322: reference common CEC properties
-Date:   Wed,  7 Dec 2022 11:22:49 +0100
-Message-Id: <20221207102253.26663-6-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 6/9] media: dt-bindings: samsung,s5p-cec: convert to DT schema
+Date:   Wed,  7 Dec 2022 11:22:50 +0100
+Message-Id: <20221207102253.26663-7-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221207102253.26663-1-krzysztof.kozlowski@linaro.org>
 References: <20221207102253.26663-1-krzysztof.kozlowski@linaro.org>
@@ -85,62 +85,145 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Reference common HDMI CEC adapter properties to simplify the binding and
-have only one place of definition for common properties.  The common CEC
-binding expects also node name to be 'cec'.
+Convert Samsung S5P HDMI CEC adapter bindings to DT schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
-
 ---
+ .../bindings/media/cec/samsung,s5p-cec.yaml   | 66 +++++++++++++++++++
+ .../devicetree/bindings/media/s5p-cec.txt     | 36 ----------
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 67 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/cec/samsung,s5p-cec.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/s5p-cec.txt
 
-Changes since v1:
-1. Fix node name to cec.
----
- .../bindings/media/i2c/chrontel,ch7322.yaml           | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml b/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
-index 63e5b89d2e0b..af8ada55b3f2 100644
---- a/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
-@@ -13,6 +13,9 @@ description:
-   The Chrontel CH7322 is a discrete HDMI-CEC controller. It is
-   programmable through I2C and drives a single CEC line.
- 
-+allOf:
-+  - $ref: /schemas/media/cec/cec-common.yaml#
+diff --git a/Documentation/devicetree/bindings/media/cec/samsung,s5p-cec.yaml b/Documentation/devicetree/bindings/media/cec/samsung,s5p-cec.yaml
+new file mode 100644
+index 000000000000..016c8a77c1a6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/cec/samsung,s5p-cec.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/cec/samsung,s5p-cec.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- properties:
-   compatible:
-     const: chrontel,ch7322
-@@ -40,16 +43,12 @@ properties:
-       if in auto mode.
-     maxItems: 1
- 
--  # see ../cec.txt
--  hdmi-phandle:
--    description: phandle to the HDMI controller
--
- required:
-   - compatible
-   - reg
-   - interrupts
- 
--additionalProperties: false
++title: Samsung S5PV210 and Exynos HDMI CEC
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Marek Szyprowski <m.szyprowski@samsung.com>
++
++allOf:
++  - $ref: cec-common.yaml#
++
++properties:
++  compatible:
++    const: samsung,s5p-cec
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: hdmicec
++
++  interrupts:
++    maxItems: 1
++
++  samsung,syscon-phandle:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to PMU system controller interface
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - hdmi-phandle
++  - interrupts
++  - samsung,syscon-phandle
++  - reg
++
 +unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos5420.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    cec@101b0000 {
++        compatible = "samsung,s5p-cec";
++        reg = <0x101B0000 0x200>;
++
++        clocks = <&clock CLK_HDMI_CEC>;
++        clock-names = "hdmicec";
++        interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
++        hdmi-phandle = <&hdmi>;
++        needs-hpd;
++        pinctrl-names = "default";
++        pinctrl-0 = <&hdmi_cec>;
++        samsung,syscon-phandle = <&pmu_system_controller>;
++    };
+diff --git a/Documentation/devicetree/bindings/media/s5p-cec.txt b/Documentation/devicetree/bindings/media/s5p-cec.txt
+deleted file mode 100644
+index e847291d4aff..000000000000
+--- a/Documentation/devicetree/bindings/media/s5p-cec.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-* Samsung HDMI CEC driver
+-
+-The HDMI CEC module is present is Samsung SoCs and its purpose is to
+-handle communication between HDMI connected devices over the CEC bus.
+-
+-Required properties:
+-  - compatible : value should be following
+-	"samsung,s5p-cec"
+-
+-  - reg : Physical base address of the IP registers and length of memory
+-	  mapped region.
+-
+-  - interrupts : HDMI CEC interrupt number to the CPU.
+-  - clocks : from common clock binding: handle to HDMI CEC clock.
+-  - clock-names : from common clock binding: must contain "hdmicec",
+-		  corresponding to entry in the clocks property.
+-  - samsung,syscon-phandle - phandle to the PMU system controller
+-  - hdmi-phandle - phandle to the HDMI controller, see also cec.txt.
+-
+-Optional:
+-  - needs-hpd : if present the CEC support is only available when the HPD
+-		is high. See cec.txt for more details.
+-
+-Example:
+-
+-hdmicec: cec@100b0000 {
+-	compatible = "samsung,s5p-cec";
+-	reg = <0x100B0000 0x200>;
+-	interrupts = <0 114 0>;
+-	clocks = <&clock CLK_HDMI_CEC>;
+-	clock-names = "hdmicec";
+-	samsung,syscon-phandle = <&pmu_system_controller>;
+-	hdmi-phandle = <&hdmi>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&hdmi_cec>;
+-};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 45402e03cda5..05acbaecef52 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2866,7 +2866,7 @@ M:	Marek Szyprowski <m.szyprowski@samsung.com>
+ L:	linux-samsung-soc@vger.kernel.org
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/media/s5p-cec.txt
++F:	Documentation/devicetree/bindings/media/cec/samsung,s5p-cec.yaml
+ F:	drivers/media/cec/platform/s5p/
  
- examples:
-   - |
-@@ -58,7 +57,7 @@ examples:
-     i2c {
-       #address-cells = <1>;
-       #size-cells = <0>;
--      ch7322@75 {
-+      cec@75 {
-         compatible = "chrontel,ch7322";
-         reg = <0x75>;
-         interrupts = <47 IRQ_TYPE_EDGE_RISING>;
+ ARM/SAMSUNG S5P SERIES JPEG CODEC SUPPORT
 -- 
 2.34.1
 
