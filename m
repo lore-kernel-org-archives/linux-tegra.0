@@ -2,62 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3E0C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Dec 2022 16:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE4FC4167B
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Dec 2022 19:17:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234415AbiLUQzL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Dec 2022 11:55:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44808 "EHLO
+        id S233283AbiLUTRV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Dec 2022 14:17:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234296AbiLUQzJ (ORCPT
+        with ESMTP id S232786AbiLUTRU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Dec 2022 11:55:09 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD542240B8;
-        Wed, 21 Dec 2022 08:55:07 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id 1so24385890lfz.4;
-        Wed, 21 Dec 2022 08:55:07 -0800 (PST)
+        Wed, 21 Dec 2022 14:17:20 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FBF32611E;
+        Wed, 21 Dec 2022 11:17:19 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id z26so24926103lfu.8;
+        Wed, 21 Dec 2022 11:17:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pKpFopFM+2p/s1rCGdP6Z1nsO+BxLqf3LvQx/9wlFY0=;
-        b=ChA+yVv3lB6Fzz5kJ1UE+vuKF2qz6h08hFftpVh0TotNethlWSKylrQR5xIP+QxAk6
-         sSzxD+z9NTp84P+QTcNTScu5QrEzHEDr9pcDPoxlVTX9bm0guls39R0GyjTkcK/ymMFs
-         aL1oFCKZymTRxAjCchuiA9b5LvonHJDYrjfYaTjZD0gqs6cEmyC2Erna5KxDaKkEB1Ek
-         RLJ8QXCE7ovCElVoHQcBtcSCxeiY70Z3RUxDa/uA8BLvsyQ2BlcFthcUsEF0eDpqrXeF
-         58zYI9hq2x7FvMhGJ0ojI89z7iu/ysDBQZOjKuobznqo36Wo6QGSdkA5SAn0HYjAGwjI
-         ecpw==
+        bh=+uxVp29zK1U9xqn1zesUpsJ7wtKfj/klzX/8Mo0DipY=;
+        b=k9n/vLc1Ln9JuOJ9y6I7pgOBKKJBGQu4c1HrIUkkH8HWULQuVFdqoLCXX+VXaLlv2s
+         o2y5QNtz4jDOzOatLmoleU5m2pb/pbATmCTX7iZKvF+DiUWlLhYOepu5YqNSEcrc81v0
+         dnczF5Lqg1XrqFZKxgU9vaS+194bsFvM3sXdeqrZsuVGyzv4cmB9LHWFsDf/SfaR0BL+
+         2arV2TKoXqtA/kaWSbF3d7kU4QsxXt8G7rb4qEVV7fc1mpkfl5eeF9phFvJ/BvIXwGY/
+         OKz1F1RDDxuogy5D3eBW7HgTSPAtKLzu6JjYJ+jBOtOjYWFLlko1L0AG5PXzqO5PUIZo
+         2GYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pKpFopFM+2p/s1rCGdP6Z1nsO+BxLqf3LvQx/9wlFY0=;
-        b=S1aYCp5x6ejABxDsnGGvswv78vbV+7sK/snLO7UPmqWgGOI/Wwv+pqd8VrzLT51oxC
-         681NJI+cdYbmeF6EBrucfwFThsv916tgFx0Ee09CnQ2fstgJoHQX9VyjjBiyipdRRffp
-         M/htQvw11F0ZV7bx2TINuE08FON5CyTOET189glVauLApN5uCW1DEbG61M39jt8CGfHJ
-         10tt36QeHAfLJ6aWdheNaVM85L5y4Fw3ne765AJA8gQ5Wqajkw9y6jHm0wDgmtPNRQvR
-         rcnIH1hHBcrG/4r+hqWfGBr9wAImnYOEescizvnB0DBtF4BAKhreFBoPZuKdTCvT7/C+
-         Dd7w==
-X-Gm-Message-State: AFqh2kptMjmtjaOn8bgDAThsoJytyoWHCZ+nCwJcidVlsPjUGYadnIE1
-        Z1HkW4nVBqGOnCIhZ7nP7dE=
-X-Google-Smtp-Source: AMrXdXsE0hc14q00/Ji4tJF2zXxYjgrpZbqAN7yU8tEF5zJcQPgy7AKxaPcyNetQ1YqvfdfczeZc2Q==
-X-Received: by 2002:ac2:5b12:0:b0:4b5:6fa3:5d63 with SMTP id v18-20020ac25b12000000b004b56fa35d63mr2192589lfn.13.1671641706009;
-        Wed, 21 Dec 2022 08:55:06 -0800 (PST)
+        bh=+uxVp29zK1U9xqn1zesUpsJ7wtKfj/klzX/8Mo0DipY=;
+        b=MvzmzcPuSAeUfH9Ve2+UHQJQqVNMDTH8pjazyFGV77l08irpkjUGnWtZy9SqA7qBo0
+         ixXtDryCPTSKBgz4Tvh8nm+pF8saMPZMgt0CwozABaefNJg8frySyK/P9+gUVPLAc3ez
+         h7OZDMfkWy3Yf9Q47kM7MNlF0CZ+otfbzuRMjKGUGG7FTRlpSESmm+dLlSiNETV6k1re
+         dAxbbg0m6N6GWqZ7spjtoAQP3Pj69nkqaxoHBnXX18fRYP5OfExnfariwR2hI4mABbd4
+         lYqDUj3R8tD85YeUbo4tIKXPxO6uwhiy0wKvNeguZIWHzkGMAaAdnzKWgi1GEDacszUY
+         mztg==
+X-Gm-Message-State: AFqh2kpJ4USMyZo/hOjUgaIJ6A0kakDn18yrUmkuRmQ32RxRrtGwmfJC
+        6STczZ107yctc9Xs7KLhJZ1xlCdDWFM=
+X-Google-Smtp-Source: AMrXdXthbVDOO69Gmd6f89kU7JTCY7m46ohAqAUosDAVrcLMSE6ki2WmoGXSrSGZAR4wooeOElE2ow==
+X-Received: by 2002:a05:6512:25ac:b0:4b5:8053:5bcc with SMTP id bf44-20020a05651225ac00b004b580535bccmr858751lfb.47.1671650237875;
+        Wed, 21 Dec 2022 11:17:17 -0800 (PST)
 Received: from [192.168.2.145] (109-252-113-89.nat.spd-mgts.ru. [109.252.113.89])
-        by smtp.googlemail.com with ESMTPSA id bi26-20020a05651c231a00b0027a2a26a655sm1395056ljb.8.2022.12.21.08.55.05
+        by smtp.googlemail.com with ESMTPSA id o3-20020ac24e83000000b004c7d0ed9619sm1155581lfr.123.2022.12.21.11.17.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Dec 2022 08:55:05 -0800 (PST)
-Message-ID: <8641fad2-7170-4c0c-fbd6-6e2e784b3106@gmail.com>
-Date:   Wed, 21 Dec 2022 19:54:58 +0300
+        Wed, 21 Dec 2022 11:17:17 -0800 (PST)
+Message-ID: <ccebb92b-01ce-31cf-14b1-dee09d064c6c@gmail.com>
+Date:   Wed, 21 Dec 2022 22:17:09 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
 Subject: Re: [Patch v1 01/10] memory: tegra: add interconnect support for DRAM
  scaling in Tegra234
-Content-Language: en-US
 To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
         krzysztof.kozlowski@linaro.org, dmitry.osipenko@collabora.com,
         viresh.kumar@linaro.org, rafael@kernel.org, jonathanh@nvidia.com,
@@ -68,6 +67,7 @@ Cc:     sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
         bbasu@nvidia.com
 References: <20221220160240.27494-1-sumitg@nvidia.com>
  <20221220160240.27494-2-sumitg@nvidia.com>
+Content-Language: en-US
 From:   Dmitry Osipenko <digetx@gmail.com>
 In-Reply-To: <20221220160240.27494-2-sumitg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
@@ -77,42 +77,15 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 20.12.2022 19:02, Sumit Gupta пишет:
->  static int tegra186_emc_probe(struct platform_device *pdev)
->  {
->  	struct mrq_emc_dvfs_latency_response response;
->  	struct tegra_bpmp_message msg;
->  	struct tegra186_emc *emc;
-> +	struct tegra_mc *mc;
->  	unsigned int i;
->  	int err;
->  
-> @@ -158,6 +307,9 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->  	if (!emc)
->  		return -ENOMEM;
->  
-> +	platform_set_drvdata(pdev, emc);
-> +	emc->dev = &pdev->dev;
-> +
->  	emc->bpmp = tegra_bpmp_get(&pdev->dev);
->  	if (IS_ERR(emc->bpmp))
->  		return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp), "failed to get BPMP\n");
-> @@ -236,6 +388,19 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->  	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
->  			    emc, &tegra186_emc_debug_max_rate_fops);
->  
-> +	mc = dev_get_drvdata(emc->dev->parent);
-> +	if (mc && mc->soc->icc_ops) {
-> +		if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_BWMGR_INT)) {
-> +			err = tegra_emc_interconnect_init(emc);
-> +			if (!err)
-> +				return err;
-> +			dev_err(&pdev->dev, "tegra_emc_interconnect_init failed:%d\n", err);
-> +			goto put_bpmp;
-> +		} else {
-> +			dev_info(&pdev->dev, "MRQ_BWMGR_INT not present\n");
-> +		}
+> +static int tegra_emc_icc_set_bw(struct icc_node *src, struct icc_node *dst)
+> +{
+> +	struct tegra186_emc *emc = to_tegra186_emc(dst->provider);
+> +	struct tegra_mc *mc = dev_get_drvdata(emc->dev->parent);
+> +	struct mrq_bwmgr_int_request bwmgr_req = { 0 };
+> +	struct mrq_bwmgr_int_response bwmgr_resp = { 0 };
+> +	struct tegra_icc_node *tnode = mc->curr_tnode;
+> +	struct tegra_bpmp_message msg;
+> +	int ret = 0;
 
-If there is no MRQ_BWMGR_INT, then device drivers using ICC won't probe.
-This is either a error condition, or ICC should inited and then ICC
-changes should be skipped.
+Nit: unnecessarily initialized var, the same for the rest of the code
 
