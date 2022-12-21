@@ -2,108 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 722C0C4167B
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Dec 2022 21:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D64C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Dec 2022 00:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233969AbiLTVkd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Dec 2022 16:40:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
+        id S234102AbiLUAzN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Dec 2022 19:55:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229727AbiLTVkc (ORCPT
+        with ESMTP id S234073AbiLUAzM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Dec 2022 16:40:32 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0153113CEF;
-        Tue, 20 Dec 2022 13:40:31 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id j4so20691558lfk.0;
-        Tue, 20 Dec 2022 13:40:30 -0800 (PST)
+        Tue, 20 Dec 2022 19:55:12 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2091E1D674;
+        Tue, 20 Dec 2022 16:55:11 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id p36so21142755lfa.12;
+        Tue, 20 Dec 2022 16:55:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=i0QJJAJHs8AlHPv1GFzIrByGID5+G91GQ7RiYN+XzJE=;
-        b=AGyI0rZkXfrzcC3mDk9Ocmgo5FfL5qYohqfDty0IGt1mIpDzR+ADBd/5jdkkEIYucf
-         fdivCrsy66dXu745ocmIYzzv726M4VbxrH+iIX98exDpvwE0xg0fP4LZOwEN0HUN1RQB
-         P1pknZ7u3+ZZ47CmR+Fbci/fvn882uWfnawSIfdeRnSUef2f1hCQ0NToip4Q74f6wx1G
-         Aqq+XY15pMIbZZjJhBKOtQ+ZQSKrEhTvriuEkJTg+IeY6KQgvKgW/Pqfm/+SoxkLNBaw
-         KuwrecRR7kMH8ZwKcLOUWdX+L+1jY78K9zgg50J94by/ZZt0CXnKc12dTO49GFIgErx0
-         h34A==
+        bh=icuNmbOQEcEju3olzJkHaa9PEaxwgAWvjH8njEvfihY=;
+        b=ZFBPm6lJ3tsBQUPRXB3f0P+DBAmFNVufbu5wxwlKeKEJqbppQjbOZKFAg5uLLXzTEY
+         K76Fq6EAVlx4iQ/rcQqts3GtYbvKdG3v+NHl8OOBJLRwMvgLMcIQEdUE3vFUOTIFRPkB
+         kldRWbXcqSMYjCc1AEA2YGVWJrrKLJKcygePkKFPSsrKJuv8AFmhuHDf0Xae4Cv6UPlh
+         sR4DO8a/Un8TwJIsuyUiD2jLHkI4Ie/KTe7M8ydws2tC01cr+A/SJgcj985RoCwgV5f0
+         pd6gRJ0MhHE+oNZf6nFlhKcgG+TjACyG0IbqCr8I8RL4GiG1QJL2AcJ3ilJNMyAQmRK9
+         CnHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i0QJJAJHs8AlHPv1GFzIrByGID5+G91GQ7RiYN+XzJE=;
-        b=ZKNtiRg1Wkj7gRkP17+AIzhebiQfIgVuViR1nVIMM0r1BKd50oKutbO7A6lBWtb8Uv
-         klDrxRYWfuoWHfw8PoaWQ1h+LzI6rFc8qo+2jpfRcHF1xdKVn0i7nrW7m6gIRJuJ1zp/
-         0Din3UGuo90iSXr3lksEN/c+ePQpzWssQdNTh+9x+7jXvkQ0ROSHkTae+qjzI4kDj4KS
-         crJEyQQOWD4Nu0Of5ShX18HUzrn8rH8D6XCLRZzM8/OnZZrrbtUcRx+a067APJhXamCU
-         xJc+gbpk6MVxEQz6KX+HupKbXy3eCJ9opop2OU5agUj4Wwty5GTzrN5/lV/o+LppmpFQ
-         wxyw==
-X-Gm-Message-State: ANoB5pmWemCm5X2v20hJzrmNzjebZCYZY8MPUuy3xvacYiHTMgzkRBBD
-        tR3KnWgi5kATFiQZadu5M4c=
-X-Google-Smtp-Source: AA0mqf7UCX9LfU9mAdsWfz+Q/qhvUuQxl0BkWSutbWvnPYHqlJ49tXMn0MPeBrgSGHjYxfib5jXyig==
-X-Received: by 2002:a05:6512:682:b0:4a4:68b8:f4db with SMTP id t2-20020a056512068200b004a468b8f4dbmr19035562lfe.33.1671572429262;
-        Tue, 20 Dec 2022 13:40:29 -0800 (PST)
-Received: from [192.168.2.145] (109-252-113-89.nat.spd-mgts.ru. [109.252.113.89])
-        by smtp.googlemail.com with ESMTPSA id v24-20020ac25618000000b004b549ad99adsm1598785lfd.304.2022.12.20.13.40.27
+        bh=icuNmbOQEcEju3olzJkHaa9PEaxwgAWvjH8njEvfihY=;
+        b=AfEkB1zLkPgxG9msZ/iGyBLChaIba4uzuvxILr2RZNF23onJ2h1ui7nqB6g6klC42n
+         CBEz59m/GVyPyt4qEYp9HpUB6bbWZ261xZPS/ss28k20TPPJroJ0IvFDBhRvFIXM65V+
+         KInG6CojgQxeCRWdA1cxKhWk9ECaACcKf9el1/Gop5NcgqyRZWvkNBX+7YHHMev92UXz
+         X7D/32SQt+dPSl6XCijiPDY5eT7rWvGC9l0akeCe5vCXK6U+UqNN18ur9HV4/xibM0Yg
+         FwrhPjAkFu+6+c4xutsUgogZQp/4XbevMNzm+xQrOlwGPcrYApBzxy0lmJVqllMIRe3/
+         /wlQ==
+X-Gm-Message-State: AFqh2konJp9YZMVqzB7lODsvIRFkn1lkWER1xjmwd3F+Fp8Gys5eREKP
+        l0lCqnccZOEkxl/B66jPIhyu52Wo84Y=
+X-Google-Smtp-Source: AMrXdXs+kPJH1dzn+Ceh0GTObDrnXwFJR17iWf2HYTst51ayKoBNREF3K0CIRkgtd70abjNZ6AsSSw==
+X-Received: by 2002:ac2:4bd3:0:b0:4b4:a460:c995 with SMTP id o19-20020ac24bd3000000b004b4a460c995mr55748lfq.5.1671584109361;
+        Tue, 20 Dec 2022 16:55:09 -0800 (PST)
+Received: from [192.168.2.145] ([109.252.113.89])
+        by smtp.googlemail.com with ESMTPSA id s17-20020a056512315100b004b4b0a68f67sm1632770lfi.185.2022.12.20.16.55.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Dec 2022 13:40:28 -0800 (PST)
-Message-ID: <30e6b040-aa82-f6a3-1ff6-baa2c0dcb0e2@gmail.com>
-Date:   Wed, 21 Dec 2022 00:40:20 +0300
+        Tue, 20 Dec 2022 16:55:08 -0800 (PST)
+Message-ID: <0fe5ac44-9467-1dbb-3a69-5ab5839d251e@gmail.com>
+Date:   Wed, 21 Dec 2022 03:55:01 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH v2 21/21] staging: media: tegra-video: add tegra20 variant
+Subject: Re: [Patch v1 01/10] memory: tegra: add interconnect support for DRAM
+ scaling in Tegra234
 Content-Language: en-US
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>
-References: <20221128152336.133953-1-luca.ceresoli@bootlin.com>
- <20221128152336.133953-22-luca.ceresoli@bootlin.com>
+To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
+        krzysztof.kozlowski@linaro.org, dmitry.osipenko@collabora.com,
+        viresh.kumar@linaro.org, rafael@kernel.org, jonathanh@nvidia.com,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
+        bbasu@nvidia.com
+References: <20221220160240.27494-1-sumitg@nvidia.com>
+ <20221220160240.27494-2-sumitg@nvidia.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20221128152336.133953-22-luca.ceresoli@bootlin.com>
+In-Reply-To: <20221220160240.27494-2-sumitg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.11.2022 18:23, Luca Ceresoli пишет:
-> +static int tegra20_channel_capture_frame(struct tegra_vi_channel *chan,
-> +					 struct tegra_channel_buffer *buf)
+20.12.2022 19:02, Sumit Gupta пишет:
+> +static int tegra234_mc_icc_set(struct icc_node *src, struct icc_node *dst)
 > +{
-> +	u32 value;
-> +	int err;
+> +	struct tegra_mc *mc = icc_provider_to_tegra_mc(dst->provider);
+> +	struct tegra_icc_node *tnode = src->data;
 > +
-> +	chan->next_out_sp_idx++;
+> +	/*
+> +	 * Same Src and Dst node will happen during boot from icc_node_add().
+> +	 * This can be used to pre-initialize and set bandwidth for all clients
+> +	 * before their drivers are loaded. We are skipping this case as for us,
+> +	 * the pre-initialization already happened in Bootloader(MB2) and BPMP-FW.
+> +	 */
+> +	if (src->id == dst->id)
+> +		return 0;
 > +
-> +	tegra20_channel_vi_buffer_setup(chan, buf);
-> +
-> +	tegra20_vi_write(chan, TEGRA_VI_CAMERA_CONTROL, VI_CAMERA_CONTROL_VIP_ENABLE);
-> +
-> +	/* Wait for syncpt counter to reach frame start event threshold */
-> +	err = host1x_syncpt_wait(chan->out_sp, chan->next_out_sp_idx,
-> +				 TEGRA_VI_SYNCPT_WAIT_TIMEOUT, &value);
+> +	if (tnode->node)
+> +		mc->curr_tnode = tnode;
+> +	else
+> +		pr_err("%s, tegra_icc_node is null\n", __func__);
 
-You're not using the "value" variable, it should be NULL.
-
-The "chan->out_sp" looks redundant, it duplicates the chan->mw_ack_sp.
-AFAICS from the doc, T20 has two VI channels, and thus, two mw_ack_sp,
-like T210.
-
+The tnode->node can't be NULL.
