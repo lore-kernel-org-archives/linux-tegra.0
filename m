@@ -2,98 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D64C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Dec 2022 00:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC01C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Dec 2022 05:01:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234102AbiLUAzN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Dec 2022 19:55:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37518 "EHLO
+        id S229436AbiLUFBc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Dec 2022 00:01:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234073AbiLUAzM (ORCPT
+        with ESMTP id S229679AbiLUFB3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Dec 2022 19:55:12 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2091E1D674;
-        Tue, 20 Dec 2022 16:55:11 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id p36so21142755lfa.12;
-        Tue, 20 Dec 2022 16:55:11 -0800 (PST)
+        Wed, 21 Dec 2022 00:01:29 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974C11FCE2
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Dec 2022 21:01:28 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id t11-20020a17090a024b00b0021932afece4so990903pje.5
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Dec 2022 21:01:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=icuNmbOQEcEju3olzJkHaa9PEaxwgAWvjH8njEvfihY=;
-        b=ZFBPm6lJ3tsBQUPRXB3f0P+DBAmFNVufbu5wxwlKeKEJqbppQjbOZKFAg5uLLXzTEY
-         K76Fq6EAVlx4iQ/rcQqts3GtYbvKdG3v+NHl8OOBJLRwMvgLMcIQEdUE3vFUOTIFRPkB
-         kldRWbXcqSMYjCc1AEA2YGVWJrrKLJKcygePkKFPSsrKJuv8AFmhuHDf0Xae4Cv6UPlh
-         sR4DO8a/Un8TwJIsuyUiD2jLHkI4Ie/KTe7M8ydws2tC01cr+A/SJgcj985RoCwgV5f0
-         pd6gRJ0MhHE+oNZf6nFlhKcgG+TjACyG0IbqCr8I8RL4GiG1QJL2AcJ3ilJNMyAQmRK9
-         CnHA==
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9uDeIpR3gZlQEuN6OZGowsBPkz2+a3TKumaK+E7tV7M=;
+        b=SsaaBuO7tn3RAhdIkQeSVAHRMaPr9U3H2EyE9I8Rm4FTXFxB17JUFK2dq/IEM8WTOT
+         fLzO2iTdrQlpwSeeeABdgkfgpBM0YeQ09TP20po29jbzYIc37v1+4X4BQOo9yfzwA3Ia
+         tkXeov9L85T2o/dDHUmK2bCHPfETevmFLvBIHujttqWV7zD3vtc88nZA1DeiEGt5xSbB
+         N5W7alf081O26lalJshSupqtLACVSops8UtxQuLhKGLDnL82P1UgN1Vvpd5PquPf8HGY
+         U94N46N+vuUgBLEPFw1/gt8zUkbhGNtCf9nV7gxxAMzkwM6QOzGabFi4Vmlzaym5b9pS
+         KaoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=icuNmbOQEcEju3olzJkHaa9PEaxwgAWvjH8njEvfihY=;
-        b=AfEkB1zLkPgxG9msZ/iGyBLChaIba4uzuvxILr2RZNF23onJ2h1ui7nqB6g6klC42n
-         CBEz59m/GVyPyt4qEYp9HpUB6bbWZ261xZPS/ss28k20TPPJroJ0IvFDBhRvFIXM65V+
-         KInG6CojgQxeCRWdA1cxKhWk9ECaACcKf9el1/Gop5NcgqyRZWvkNBX+7YHHMev92UXz
-         X7D/32SQt+dPSl6XCijiPDY5eT7rWvGC9l0akeCe5vCXK6U+UqNN18ur9HV4/xibM0Yg
-         FwrhPjAkFu+6+c4xutsUgogZQp/4XbevMNzm+xQrOlwGPcrYApBzxy0lmJVqllMIRe3/
-         /wlQ==
-X-Gm-Message-State: AFqh2konJp9YZMVqzB7lODsvIRFkn1lkWER1xjmwd3F+Fp8Gys5eREKP
-        l0lCqnccZOEkxl/B66jPIhyu52Wo84Y=
-X-Google-Smtp-Source: AMrXdXs+kPJH1dzn+Ceh0GTObDrnXwFJR17iWf2HYTst51ayKoBNREF3K0CIRkgtd70abjNZ6AsSSw==
-X-Received: by 2002:ac2:4bd3:0:b0:4b4:a460:c995 with SMTP id o19-20020ac24bd3000000b004b4a460c995mr55748lfq.5.1671584109361;
-        Tue, 20 Dec 2022 16:55:09 -0800 (PST)
-Received: from [192.168.2.145] ([109.252.113.89])
-        by smtp.googlemail.com with ESMTPSA id s17-20020a056512315100b004b4b0a68f67sm1632770lfi.185.2022.12.20.16.55.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Dec 2022 16:55:08 -0800 (PST)
-Message-ID: <0fe5ac44-9467-1dbb-3a69-5ab5839d251e@gmail.com>
-Date:   Wed, 21 Dec 2022 03:55:01 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [Patch v1 01/10] memory: tegra: add interconnect support for DRAM
- scaling in Tegra234
-Content-Language: en-US
-To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
-        krzysztof.kozlowski@linaro.org, dmitry.osipenko@collabora.com,
-        viresh.kumar@linaro.org, rafael@kernel.org, jonathanh@nvidia.com,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9uDeIpR3gZlQEuN6OZGowsBPkz2+a3TKumaK+E7tV7M=;
+        b=fUdODyxJAKH/CUTg9i6B/+gOcO05Ocex15bl5AE8lB46vGW05XKE6H9Hnfb/YRwsAS
+         tT9NVj2ygihO7fROK/leNx0ETwG1rmCfptv6IboCLWA9TiSQohaSxQAKJ11lKMuJt8fO
+         /U+bRCg2D+ainfXmpMRjz+pfCfJhCPm+quTUtfqCOTl4Xsfbh+YTCfyz1Q/30q3MftxA
+         2BDD4ZKR8r2ow0JARSrcjs0DA8cK4KoH8OykQStgEViDlTG6eqMrmU8bO6WcKGvO58pN
+         d0ypGVkxykAe2uF29HuNIZW9uI4kfVkyFlqWpkOwJCtU8Rf6EPh+4q6WkZh9PhFbMyIs
+         GLEw==
+X-Gm-Message-State: AFqh2koMrnhtBrl1O+cHdwDRzCTHPIfl4TwC+JG9pYdpSNQfd4bakRvy
+        +q7ypNC3ysQPrlgSzBhnomiM2A==
+X-Google-Smtp-Source: AMrXdXsAXXw8HbLxnwnKo/sDyx1mzhJbIJ9xlHX7fXi7HmSiLp/ONLWoanQN7QCsvyqJFciiunVQ/A==
+X-Received: by 2002:a05:6300:8181:b0:a5:6ed:669f with SMTP id bt1-20020a056300818100b000a506ed669fmr17419316pzc.2.1671598888114;
+        Tue, 20 Dec 2022 21:01:28 -0800 (PST)
+Received: from localhost ([122.172.82.107])
+        by smtp.gmail.com with ESMTPSA id u62-20020a637941000000b004790eb3fee1sm8923780pgc.90.2022.12.20.21.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Dec 2022 21:01:27 -0800 (PST)
+Date:   Wed, 21 Dec 2022 10:31:25 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
+        dmitry.osipenko@collabora.com, rafael@kernel.org,
+        jonathanh@nvidia.com, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
         bbasu@nvidia.com
+Subject: Re: [Patch v1 07/10] cpufreq: Add Tegra234 to cpufreq-dt-platdev
+ blocklist
+Message-ID: <20221221050125.6gndqorox5ez2gkb@vireshk-i7>
 References: <20221220160240.27494-1-sumitg@nvidia.com>
- <20221220160240.27494-2-sumitg@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20221220160240.27494-2-sumitg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <20221220160240.27494-8-sumitg@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221220160240.27494-8-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-20.12.2022 19:02, Sumit Gupta пишет:
-> +static int tegra234_mc_icc_set(struct icc_node *src, struct icc_node *dst)
-> +{
-> +	struct tegra_mc *mc = icc_provider_to_tegra_mc(dst->provider);
-> +	struct tegra_icc_node *tnode = src->data;
-> +
-> +	/*
-> +	 * Same Src and Dst node will happen during boot from icc_node_add().
-> +	 * This can be used to pre-initialize and set bandwidth for all clients
-> +	 * before their drivers are loaded. We are skipping this case as for us,
-> +	 * the pre-initialization already happened in Bootloader(MB2) and BPMP-FW.
-> +	 */
-> +	if (src->id == dst->id)
-> +		return 0;
-> +
-> +	if (tnode->node)
-> +		mc->curr_tnode = tnode;
-> +	else
-> +		pr_err("%s, tegra_icc_node is null\n", __func__);
+On 20-12-22, 21:32, Sumit Gupta wrote:
+> Tegra234 platform uses the tegra194-cpufreq driver, so add it
+> to the blocklist in cpufreq-dt-platdev driver to avoid the cpufreq
+> driver registration from there.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index 8ab672883043..e329d29d1f9d 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -137,6 +137,7 @@ static const struct of_device_id blocklist[] __initconst = {
+>  	{ .compatible = "nvidia,tegra30", },
+>  	{ .compatible = "nvidia,tegra124", },
+>  	{ .compatible = "nvidia,tegra210", },
+> +	{ .compatible = "nvidia,tegra234", },
+>  
+>  	{ .compatible = "qcom,apq8096", },
+>  	{ .compatible = "qcom,msm8996", },
 
-The tnode->node can't be NULL.
+Applied. Thanks.
+
+-- 
+viresh
