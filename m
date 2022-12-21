@@ -2,56 +2,56 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605EDC4167B
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Dec 2022 19:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9DDC4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Dec 2022 19:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234687AbiLUTUa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Dec 2022 14:20:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34398 "EHLO
+        id S234763AbiLUToD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Dec 2022 14:44:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbiLUTU3 (ORCPT
+        with ESMTP id S229578AbiLUToC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Dec 2022 14:20:29 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4670C252A4;
-        Wed, 21 Dec 2022 11:20:27 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id bf43so24948146lfb.6;
-        Wed, 21 Dec 2022 11:20:27 -0800 (PST)
+        Wed, 21 Dec 2022 14:44:02 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC08726483;
+        Wed, 21 Dec 2022 11:43:59 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id x11so1222176lfn.0;
+        Wed, 21 Dec 2022 11:43:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=rFdn33bs7BmDd8WaWCi9E6exzjuQGIF80TAJQSNIHgk=;
-        b=DXQ7snjR47yMDBO73trIfi2AmY8Ob2eMD7cZ3ogeZ4jyg3hIaJklDHDBbmdbBk08+T
-         tghZPtKh/BmM4QVR0/WOu8EBljuea0PxVfUkrk1DW3ii00mDs5kV4E+EnJTTrkUcMgm3
-         rKY80aqcktCuhbZTYnSOfh1P7fsPTcYIH2YyhRL/Xu50hlDF5sH62wpkCDQ/UdIl0vK/
-         uaxNHgRxEl+5Dan+kNJb+kTASiG1qUeTbytrGU8RoDcGiMBGA2Zki3q5bdgKgqpsOFw1
-         XLt8lRxzSSSRIlUKH6A1xCjJq8w5tBcBDrON/i4vX4ijrhw28f0MYTZs3v8Ecakl6Bsn
-         GAbg==
+        bh=5yhX4t62CgBOAzk9oajDp2zi20+XuGUD+OQN8cgrarE=;
+        b=e3soypW6T1YaXIhKWFqwwC6bg4Hmx4hukwse2r3jzMy1L6/a6JBaRI6r1veTli4qCR
+         y0oBGu+fot/if3at3qL6Vba9iXiohMlcK2qrOC47F1Q0tri0Ub1XbcwX4mgqQq3iMrto
+         6GATAFPwSzcmqCvWgT0W0ZdmXjzjHoKgeqPOkpRwy5sPANabM8nXejBNkaM80Fx9xojE
+         xLks/yg9WPDYXNdXS81dpk0cpu15BtGfAL/KwzPURNjS1DH68+TxcdsoN8Ln7t9IE8SH
+         e62/anQTdKfAwaHUFJYT/Uzb0SeENFKLoBo8Mpe2YlHfp/TtqtN+tYs9Swlw7fJ7KbFP
+         2+vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFdn33bs7BmDd8WaWCi9E6exzjuQGIF80TAJQSNIHgk=;
-        b=0UjCGQsx5UtLt3igaw06+GFtQS+PBzFjx+IwMeGWncEuFQAQ1wO1y0kiY0WrMmzPNV
-         aUzhTLfjO85BzIfZkVbVEvhK5zCh/BidKYfP+7YL5t+xSxfhEOPAdGJ9lk5AQuRqSguw
-         QaTACRWyzoEmJmxtbV0Tt7IuhMQn20aAfez1W+DMEKmAnczCe8n+ShqV9Az7mDDEb+1e
-         aKFzlcCo+VOzrkoQhQC/QgUB2fxOEZIm76GkElF+P/Epk22EIF965LTdnVonENkF5t4z
-         TbJCqBEjnkfiuMcK5gZu5SDEI4lnW0P69jNIXa4PO1exiENo0Y1rzCxEl8g1bStkZavQ
-         rltA==
-X-Gm-Message-State: AFqh2krITitks7jXIwWSVmagQ7HXfis312AdYSiTwUcxs+rEtLe2kBMT
-        iJKmSu8g9o3uta5aiCVqS9M=
-X-Google-Smtp-Source: AMrXdXvcO7vQrnQ2fi6XfM/8UfOEa8uSL/zz4u74fiEksqTQC7I8CFIx5yJJp2zE5mb1P2OGkVcrhQ==
-X-Received: by 2002:a19:7606:0:b0:4b5:32ec:7eb6 with SMTP id c6-20020a197606000000b004b532ec7eb6mr904247lff.0.1671650425709;
-        Wed, 21 Dec 2022 11:20:25 -0800 (PST)
+        bh=5yhX4t62CgBOAzk9oajDp2zi20+XuGUD+OQN8cgrarE=;
+        b=sVJrYmoPDjAGzSOZUU9d0Mn84II0Mxwdq+aXAblTfxx+807gTWbtZhnmAB0MCavJMQ
+         SRf3mza6gVaCp9osswmq6flLWGeWK1ZoHTJPK1tAx9i9LBD2jlDZxusDhtEKkMAZ+yDN
+         oyYt/NdpiJTGfQ44w4EkSNFSr8gK7eANYqrdMEr1BE74Hju7ceSVaK9FtzAodbT0sEzr
+         mEtVov1UAX1EET3E/1xiG9TrVnHAEPdWgSKmAQGAWAvyoZkKb59+vFxEvUTGcqzqnKvp
+         EZQXsqJZR/HsOPL6S9nyBPnrp285UxaCfXDneae0LI6TtK5Z7qwueWD6rYHqRpzYseq5
+         3euQ==
+X-Gm-Message-State: AFqh2kpIhFCzmO7XZt+N+tNWFJwkTwrEW85bIuaJfmM3zGvd9sRaJ9Bc
+        EhWhYJ5ybFTkWGo2QRReBX4=
+X-Google-Smtp-Source: AMrXdXsV/ij7KNcpK3vKFU9CRNwV/i+T2IsbPudEraBj3KtTY7B4owbjphjmrJMlkjb/mwunYc1QQw==
+X-Received: by 2002:a05:6512:2527:b0:4b5:8504:7072 with SMTP id be39-20020a056512252700b004b585047072mr893881lfb.14.1671651838124;
+        Wed, 21 Dec 2022 11:43:58 -0800 (PST)
 Received: from [192.168.2.145] (109-252-113-89.nat.spd-mgts.ru. [109.252.113.89])
-        by smtp.googlemail.com with ESMTPSA id x14-20020a056512078e00b004a1e104b269sm1925752lfr.34.2022.12.21.11.20.24
+        by smtp.googlemail.com with ESMTPSA id a12-20020a056512200c00b004b580a526c3sm1935467lfb.295.2022.12.21.11.43.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Dec 2022 11:20:25 -0800 (PST)
-Message-ID: <62fc4a96-bab8-4d43-5278-3375e34431e7@gmail.com>
-Date:   Wed, 21 Dec 2022 22:20:17 +0300
+        Wed, 21 Dec 2022 11:43:57 -0800 (PST)
+Message-ID: <a1c8c353-3f27-ddb2-6058-d6bea57480d1@gmail.com>
+Date:   Wed, 21 Dec 2022 22:43:50 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
@@ -77,26 +77,33 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 20.12.2022 19:02, Sumit Gupta пишет:
-> +static int tegra_emc_icc_set_bw(struct icc_node *src, struct icc_node *dst)
-> +{
-> +	struct tegra186_emc *emc = to_tegra186_emc(dst->provider);
-> +	struct tegra_mc *mc = dev_get_drvdata(emc->dev->parent);
-> +	struct mrq_bwmgr_int_request bwmgr_req = { 0 };
-> +	struct mrq_bwmgr_int_response bwmgr_resp = { 0 };
-> +	struct tegra_icc_node *tnode = mc->curr_tnode;
-> +	struct tegra_bpmp_message msg;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * Same Src and Dst node will happen during boot from icc_node_add().
-> +	 * This can be used to pre-initialize and set bandwidth for all clients
-> +	 * before their drivers are loaded. We are skipping this case as for us,
-> +	 * the pre-initialization already happened in Bootloader(MB2) and BPMP-FW.
-> +	 */
-> +	if (src->id == dst->id)
-> +		return 0;
-> +
-> +	if (mc->curr_tnode->type == TEGRA_ICC_NISO)
+>  static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>  {
+> +	struct tegra_icc_node *tnode;
+>  	struct icc_node *node;
+>  	unsigned int i;
+>  	int err;
+> @@ -792,7 +794,11 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>  	mc->provider.data = &mc->provider;
+>  	mc->provider.set = mc->soc->icc_ops->set;
+>  	mc->provider.aggregate = mc->soc->icc_ops->aggregate;
+> -	mc->provider.xlate_extended = mc->soc->icc_ops->xlate_extended;
+> +	mc->provider.get_bw = mc->soc->icc_ops->get_bw;
+> +	if (mc->soc->icc_ops->xlate)
+> +		mc->provider.xlate = mc->soc->icc_ops->xlate;
+> +	if (mc->soc->icc_ops->xlate_extended)
+> +		mc->provider.xlate_extended = mc->soc->icc_ops->xlate_extended;
+>  
+>  	err = icc_provider_add(&mc->provider);
+>  	if (err)
+> @@ -814,6 +820,10 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>  		goto remove_nodes;
+>  
+>  	for (i = 0; i < mc->soc->num_clients; i++) {
+> +		tnode = kzalloc(sizeof(*tnode), GFP_KERNEL);
 
-The mc->curr_tnode usage looks suspicious, why you can't use src node?
+devm_kzalloc
+
+On the other hand, the tnode is unnecessary at all. Use struct
+tegra_mc_client for sw clients.
 
