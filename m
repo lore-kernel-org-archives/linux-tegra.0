@@ -2,117 +2,70 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3283C41535
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Dec 2022 09:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0847AC4167B
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Dec 2022 09:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235217AbiLVJEC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Dec 2022 04:04:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37476 "EHLO
+        id S235191AbiLVJmj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Dec 2022 04:42:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235212AbiLVJD5 (ORCPT
+        with ESMTP id S235100AbiLVJmi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Dec 2022 04:03:57 -0500
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F00205D5;
-        Thu, 22 Dec 2022 01:03:50 -0800 (PST)
-Received: from booty (unknown [77.244.183.192])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 098A8240006;
-        Thu, 22 Dec 2022 09:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1671699829;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gktEAWN3JB8j4tgK6e174eAxgB6KpzGMlNNM9C0jpTQ=;
-        b=hkeMahLxr95J8jRRBnHvUsJYopZH+NMQb36c/kMWeoRhxAs9R0Nsx8Kqm4U4LWysvOU4rF
-        NOIWJ4Zdl2Q5dDwUN/9g+0FVXa2wXZXOsk7HTAxAy0vDhJzSm3+xBN79nR+exWUshQho0n
-        TtXXf4UQwrpswjA0RHE4dVmNNSZqJrhzz3Npot2ARR9J9w3hzGj1YuIKyMSJsiJPG42RrC
-        hed3gv6cFfcUIZtqDTYk0dIwQUY5zfKceYc9cFExuKYtMcklW7NUXc94FiHaP5kEglHpvS
-        jA0pmJ5r/t1D76kP/f+IqMwWqd69m16O/ZRCLR4rCWJLZ5XFm1xIAyAQsSY4LQ==
-Date:   Thu, 22 Dec 2022 10:03:41 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>
-Subject: Re: [PATCH v2 21/21] staging: media: tegra-video: add tegra20
- variant
-Message-ID: <20221222100341.5882c19c@booty>
-In-Reply-To: <30e6b040-aa82-f6a3-1ff6-baa2c0dcb0e2@gmail.com>
-References: <20221128152336.133953-1-luca.ceresoli@bootlin.com>
- <20221128152336.133953-22-luca.ceresoli@bootlin.com>
- <30e6b040-aa82-f6a3-1ff6-baa2c0dcb0e2@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Thu, 22 Dec 2022 04:42:38 -0500
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [IPv6:2001:690:2100:1::15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C19E63F7;
+        Thu, 22 Dec 2022 01:42:37 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 02E88600877F;
+        Thu, 22 Dec 2022 09:42:34 +0000 (WET)
+X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
+        tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
+        with LMTP id iG2wuaXYaeqi; Thu, 22 Dec 2022 09:42:31 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id C6A30600877B;
+        Thu, 22 Dec 2022 09:42:30 +0000 (WET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
+        s=mail; t=1671702151;
+        bh=+NcjhbdWRVou5QHBVIRCejY4JUQXV0259TVu5+bQdmI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=gEHd8R4sXKnYFMG3qPhYTD0fCmkVgGjcaWhVUDD3x8IQ7HhwlyVXFFZ1R8MC0VivV
+         qNg1AF5KKMwtq8Ru0Hj5orRDRNoBoh0731XnT2ixgopXovdnCVpDTLQNldaDxPbBeP
+         Geczbrft6q7D2tXXoKnANTtdpB6eKQ442wdagJJk=
+Received: from wslaptop (unknown [IPv6:2001:8a0:fbe7:6700:65be:d034:d2ec:60ff])
+        (Authenticated sender: ist187313)
+        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 56B5B360083;
+        Thu, 22 Dec 2022 09:42:29 +0000 (WET)
+Date:   Thu, 22 Dec 2022 09:41:08 +0000
+From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To:     diogo.ivo@tecnico.ulisboa.pt
+Cc:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
+        daniel@ffwll.ch, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
+        arnd@arndb.de, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 RESEND 0/4] Add JDI LPM102A188A display panel support
+Message-ID: <20221222094108.vfpyi4jrleuq6yqc@wslaptop>
+References: <20221128162851.110611-1-diogo.ivo@tecnico.ulisboa.pt>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221128162851.110611-1-diogo.ivo@tecnico.ulisboa.pt>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Dmitry,
+On Mon, Nov 28, 2022 at 04:28:48PM +0000, Diogo Ivo wrote:
+> Hello,
+> 
+> These patches add support for the JDI LPM102A188A display panel,
+> found in the Google Pixel C.
 
-On Wed, 21 Dec 2022 00:40:20 +0300
-Dmitry Osipenko <digetx@gmail.com> wrote:
+Hello,
 
-> 28.11.2022 18:23, Luca Ceresoli =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > +static int tegra20_channel_capture_frame(struct tegra_vi_channel *chan,
-> > +					 struct tegra_channel_buffer *buf)
-> > +{
-> > +	u32 value;
-> > +	int err;
-> > +
-> > +	chan->next_out_sp_idx++;
-> > +
-> > +	tegra20_channel_vi_buffer_setup(chan, buf);
-> > +
-> > +	tegra20_vi_write(chan, TEGRA_VI_CAMERA_CONTROL, VI_CAMERA_CONTROL_VIP=
-_ENABLE);
-> > +
-> > +	/* Wait for syncpt counter to reach frame start event threshold */
-> > +	err =3D host1x_syncpt_wait(chan->out_sp, chan->next_out_sp_idx,
-> > +				 TEGRA_VI_SYNCPT_WAIT_TIMEOUT, &value); =20
->=20
-> You're not using the "value" variable, it should be NULL.
+Gentle ping on this series.
 
-Ah, sure, good catch.
+Thank you,
 
-> The "chan->out_sp" looks redundant, it duplicates the chan->mw_ack_sp.
-
-I agree it is redundant and can be improved.
-
-> AFAICS from the doc, T20 has two VI channels, and thus, two mw_ack_sp,
-> like T210.
-
-I'm confused by this. In the current driver, each VI channel has an
-array of 2 mw_ack_sp, the second of which is only used the ganged
-CSI ports. I have no docs mentioning ganged ports so I don't know
-exactly how they work and whether T20 might need more than 1 syncpt per
-channel or not for CSI. Definitely when using VIP only one such syncpt
-per each VI (or per each VIP, as per your reply to patch 1) is needed.
-
-Bottom line: I think I can simply remove the out_sp and in the VIP code
-always use chan->mw_ack_sp[0], and document that it's what is called OUT
-in VIP terms.
-
-Does this plan seem good?
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Diogo Ivo
