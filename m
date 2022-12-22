@@ -2,72 +2,124 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6F4C4167B
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Dec 2022 07:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB9AC3DA79
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Dec 2022 09:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231146AbiLVHOj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Dec 2022 02:14:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38388 "EHLO
+        id S230014AbiLVJDj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Dec 2022 04:03:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229687AbiLVHOi (ORCPT
+        with ESMTP id S229567AbiLVJDh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Dec 2022 02:14:38 -0500
-X-Greylist: delayed 413 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 21 Dec 2022 23:14:36 PST
-Received: from out-222.mta0.migadu.com (out-222.mta0.migadu.com [91.218.175.222])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D23F21ADA5
-        for <linux-tegra@vger.kernel.org>; Wed, 21 Dec 2022 23:14:36 -0800 (PST)
-Date:   Thu, 22 Dec 2022 08:07:06 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1671692859;
+        Thu, 22 Dec 2022 04:03:37 -0500
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1531FCF7;
+        Thu, 22 Dec 2022 01:03:34 -0800 (PST)
+Received: from booty (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 7B92DE000A;
+        Thu, 22 Dec 2022 09:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1671699813;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=GA27Msw6p/zB5NqRtzleiY7vvKaWzvXonvXCWKB28rM=;
-        b=hzihvZGRnTZFLZqzjUQZtDqhdxaKsk8cVLfHnl2DAc6HFg9mjgAXm27nCfxnTMAMdAz8tv
-        AlUmg+XrccFrPItVs1suMKmKZdwKGkk+fFkK5ugHUxZSDCSOewqbPmtpVHIJ3QhrvH/7qV
-        b3xJYDmw45+WjvUPB0PhyhCwAkNC8NY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Richard Leitner <richard.leitner@linux.dev>
-To:     "David R. Piegdon" <david@p23q.org>
-Cc:     Randolph =?utf-8?Q?Maa=C3=9Fen?= <randolph.maassen@indurad.com>,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
+        bh=T4gOPWGjEg88chOoWuaav23pjpL5Y5e5uaZVe/EqBqE=;
+        b=QeGD5dLYPEuaEGCcki0adCUzRqSKZ/zV31K71rU2ze+Figq+pEPdRZgrSchKyv0X9dVVLd
+        E4Zgew6xIafwewAasolBVx4tkU7epbCps3/37BBPtagS1o2eBEWyQ90dPbzFI7SmayUXpC
+        /4irqMiMWzfHCCQpB45qqr1f03QVKbIlNhe7wzVxa8ZhbEsjSdhDOKmCu7oVyMzSDc/ko7
+        LY/2AlLiBGZPqUD1hUAnJngvTe6kAqNaSI7PQQK/fmEopXzCbseH5gG118ncWstV8uhhyI
+        oRv3L5QCAPiw/qPFMO7puyrSsxEEng2gkOHvWI5S2TDyya9Dy+mYxZI/dgNJ3Q==
+Date:   Thu, 22 Dec 2022 10:03:28 +0100
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial8250 on tegra hsuart: recover from spurious
- interrupts due to tegra2 silicon bug
-Message-ID: <Y6QCGuXXavQwnR/7@g0hl1n.net>
-References: <4676ea34-69ce-5422-1ded-94218b89f7d9@p23q.org>
- <Y3tUWPCVnauLeuG2@skidata.com>
- <73C64EC3-3F03-426F-833B-CC9FBA9205D8@p23q.org>
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>
+Subject: Re: [PATCH v2 00/21] Add Tegra20 parallel video input capture
+Message-ID: <20221222100328.6e341874@booty>
+In-Reply-To: <a99fa7e5-31bc-4286-17e5-6ba6e4932bcf@gmail.com>
+References: <20221128152336.133953-1-luca.ceresoli@bootlin.com>
+ <a99fa7e5-31bc-4286-17e5-6ba6e4932bcf@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <73C64EC3-3F03-426F-833B-CC9FBA9205D8@p23q.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+Hello Dmitry,
 
-On Tue, Nov 22, 2022 at 06:47:39PM +0100, David R. Piegdon wrote:
-> Hallo Richard,
-> it's great to hear that the patch was helpful for someone other than us.
-> However, I no longer work on that project, or that company. I have added my old coworker Randolph to the recipients, who, I think, still maintains that platform (based on colibri t20 from toradex). Maybe he can be of help. If you come up with technical questions, I might still have a memory or two.
+thanks for your review.
 
-Thanks for the feedback.
+On Tue, 20 Dec 2022 23:21:49 +0300
+Dmitry Osipenko <digetx@gmail.com> wrote:
 
-As I'd love to see this mainline: Does one of you (David, Randolph) have
-interest/time to try to bring this mainline? If not I can try, altough
-I'm not into the Tegra UARTs details that deep...
+> 28.11.2022 18:23, Luca Ceresoli =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Tegra20 and other Tegra SoCs have a video input (VI) peripheral that can
+> > receive from either MIPI CSI-2 or parallel video (called respectively "=
+CSI"
+> > and "VIP" in the documentation). The kernel currently has a staging dri=
+ver
+> > for Tegra210 CSI capture. This patch set adds support for Tegra20 VIP
+> > capture.
+> >=20
+> > Unfortunately I had no real documentation available to base this work o=
+n.
+> > I only had a working downstream 3.1 kernel, so I started with the driver
+> > found there and heavily reworked it to fit into the mainline tegra-video
+> > driver structure. The existing code appears written with the intent of
+> > being modular and allow adding new input mechanisms and new SoCs while
+> > keeping a unique VI core module. However its modularity and extensibili=
+ty
+> > was not enough to add Tegra20 VIP support, so I added some hooks to turn
+> > hard-coded behaviour into per-SoC or per-bus customizable code. There a=
+re
+> > also a fix, some generic cleanups and DT bindings.
+> >=20
+> > Quick tour of the patches:
+> >=20
+> >  * Device tree bindings and minor DTS improvements
+> >=20
+> >    01. dt-bindings: display: tegra: add Tegra20 VIP
+> >    02. dt-bindings: display: tegra: vi: add 'vip' property and example =
+=20
+>=20
+> This series adds the new DT node, but there are no board DTs in upstream
+> that will use VIP? Will we see the board patches?
 
-regards;rl
+I'm afraid I have no such plan. I don't have any public hardware with
+Tegra20, with or without a parallel sensor. I have a custom board.
 
-> @Randolph: Cheers & I hope everything is going well!
-> 
-> Yours,
-> David
-> 
+> In any case, given that you're likely the only one here who has access
+> to hardware with VIP,=20
+
+Likely indeed.
+
+> you should promote yourself to the tegra-video
+> driver maintainers and confirm that you will be able to maintain and
+> test this code for years to come.
+
+I can definitely add myself as a maintainer of this driver and join the
+maintenance effort, I'm adding that in v3. I also have a board that I
+can permanently use for testing.
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
