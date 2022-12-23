@@ -2,108 +2,141 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38730C001B2
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Dec 2022 15:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F268FC4167B
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Dec 2022 12:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiLVP4d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Dec 2022 10:56:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57520 "EHLO
+        id S235020AbiLWMPj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Dec 2022 07:15:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229904AbiLVP4c (ORCPT
+        with ESMTP id S229585AbiLWMPh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Dec 2022 10:56:32 -0500
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85CC56595;
-        Thu, 22 Dec 2022 07:56:31 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id y4so2312054ljc.9;
-        Thu, 22 Dec 2022 07:56:31 -0800 (PST)
+        Fri, 23 Dec 2022 07:15:37 -0500
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71A7923D;
+        Fri, 23 Dec 2022 04:15:33 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id v11so4800636ljk.12;
+        Fri, 23 Dec 2022 04:15:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=F96RJDidpidVjpAMCz7zq3Z+CFLpO9DsBw3nyLpGt2Q=;
-        b=B3lncGg4Dzq95xAkmu+C1az6ltl+mDL3a+i60Jh2B+NSMLwvb+eRP22S4QGAzjAXuG
-         x+Goml3Jq8yGzrTC9f91NmmeeJwrU/PuCfGOxuAce6GaA9NPhJ/bW0eng0H+zWav4ceC
-         qDuUjdKcG4Y4zS/bieYoh85HQP5W7ihYiCePGrKNjcTjCYAeMMrzD8oQYewhhGgn83Jf
-         pTjtxGXOLt29oHy9VXoM8y7Y8tH9MqZW+iwZeLS3ZoLxsG9MfQLS+HnhiYqqvge+o7wS
-         y90aeqfYXcrK5lvm0jb6p8RGVwalIqpWlDzvykizVNsLhzPQMGeI/QL+Isef9682g2p2
-         Wysw==
+        bh=U5kHe4kFKe8GciyEd0D6yxSAat+6tJA2KlX+zERnbZM=;
+        b=JbCzdsM2tjp/t+U1y9Uc7NbFga0zKTuD7/qYbtgv8UBf1o7AMtZuB19gvXSDXg3q7G
+         4kyl/01zusivdIf07cOAv+wObyjy9K4zkdQYcg9CZihmigK8pRkaGG87jt7qb0HzQLny
+         1eAYThtFX6/mpvIZPoXNff+Ln8Th0BRsQ2KoSm5GODsoE8upEMYAZzoGoKh/IkVw2HfZ
+         DfX/Cs4+GcX/KSemC4ZQO3mZuK4mVVEGwb3MqSYsZ8nu9vFg+awCSPxGXgNSBE9apFya
+         +oekj3bvQAraJvqbbRIHrccZt3U9jdAf1s4DULioWPxser1gDcA8kLIvg+t4EHiIyAAF
+         ZYHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F96RJDidpidVjpAMCz7zq3Z+CFLpO9DsBw3nyLpGt2Q=;
-        b=YxF1ySqahyzOHjr5bQVTGId+8hykf+GApkrvQyAANmOiT8FhCzYOvkYDORW/bWRZrW
-         kGgfuZxQq4jeZGw46Wc5oPcfa4bq5qPq8/rk6heG+ec3HPPyA58IaMGS2kVqU10VhY6Q
-         WPrM5RqYqXH71Et92g+NK1fylrIN4WPX0Cn1X/vYimTnWubkwcNb3877icDTo1PakkwF
-         q6RtqiJRDDGHlgu/K8D0ddO8uYsqsFsjshtT72YzRehO2RE9HfDj9/R5Hijc6oZupdp/
-         VWdbv7fAmp9k3Y4Y5HYTVYp0S96rS3lAnsI+9VBvxFqtdXlIVaijV8dBdNiVMyj1Plbi
-         VFaQ==
-X-Gm-Message-State: AFqh2krD2YX4kx38igRBBecFvoio7a9XEzbIxvKSm1QMInXWJZBf5JjA
-        PljjSyYIRwJPb4dHXw7Hzg/HI9yfcXc=
-X-Google-Smtp-Source: AMrXdXvdgoKtg5dMQONAK6q/GptxY+yvMH4riZfYIewdvX0/oOdpo1YTdRkyuS0V/ffonFuPTuBYtw==
-X-Received: by 2002:a2e:9588:0:b0:277:413:7da3 with SMTP id w8-20020a2e9588000000b0027704137da3mr2155659ljh.49.1671724589747;
-        Thu, 22 Dec 2022 07:56:29 -0800 (PST)
-Received: from [192.168.2.145] (109-252-113-89.nat.spd-mgts.ru. [109.252.113.89])
-        by smtp.googlemail.com with ESMTPSA id z13-20020a2e350d000000b0027eb5903568sm83550ljz.72.2022.12.22.07.56.28
+        bh=U5kHe4kFKe8GciyEd0D6yxSAat+6tJA2KlX+zERnbZM=;
+        b=gWh6gsdUljjir4zSBlQpyADpMgtOnDhAFyt9J32cvGa2qdU1QK2El/4f2ZFeepl4GD
+         Df3OUTahG2912ATO8biYR0j1iNINbuiJj9TJMRzfiVK+67l30X5iR0vQDUaEXCN4/9PB
+         SLeFXhqaDIqstABJmzGdcwycRpqZdpJz9pdt4VPboamqiNr/SwVrCzbGe70sy1Ok50x+
+         hMdvGjdZyjFwv1p/CZAbfeRQJ3pusp+iQlnYO+ELDtv+DvHJRVrTCs8svuqNV4nuY5wI
+         LxDdsVIbH0YKKbDYzkgJwbRMV15XEYzRDFBLxZtgj640E3c24zJTU7jJyVCV6px1N0yL
+         3FXg==
+X-Gm-Message-State: AFqh2kr6cXmsm8xv5hE+sR18+e+xBNg+ucogrf0NhOIApj2YiqRXD1gT
+        CZr7bAUfkChjkmq0C9woirc=
+X-Google-Smtp-Source: AMrXdXuFncqdpV7MwxrbpwS9opnJzxQzZgiu2wJohaBy5psBQl9VkPk8qgO3HzlJODeOzfBeXB4TDA==
+X-Received: by 2002:a2e:3a15:0:b0:27b:4a50:b85b with SMTP id h21-20020a2e3a15000000b0027b4a50b85bmr2309038lja.29.1671797731691;
+        Fri, 23 Dec 2022 04:15:31 -0800 (PST)
+Received: from [192.168.2.145] ([109.252.113.89])
+        by smtp.googlemail.com with ESMTPSA id u12-20020a2e2e0c000000b0025ebaef9570sm400766lju.40.2022.12.23.04.15.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Dec 2022 07:56:29 -0800 (PST)
-Message-ID: <791f5e52-6035-2501-7bc2-2795e43ae1c1@gmail.com>
-Date:   Thu, 22 Dec 2022 18:56:27 +0300
+        Fri, 23 Dec 2022 04:15:30 -0800 (PST)
+Message-ID: <a64e2aea-2e06-a72e-5ced-a86de4458c61@gmail.com>
+Date:   Fri, 23 Dec 2022 15:15:29 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [Patch v1 01/10] memory: tegra: add interconnect support for DRAM
- scaling in Tegra234
+Subject: Re: [PATCH v2 21/21] staging: media: tegra-video: add tegra20 variant
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>
+References: <20221128152336.133953-1-luca.ceresoli@bootlin.com>
+ <20221128152336.133953-22-luca.ceresoli@bootlin.com>
+ <30e6b040-aa82-f6a3-1ff6-baa2c0dcb0e2@gmail.com>
+ <20221222100341.5882c19c@booty>
 Content-Language: en-US
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
-        krzysztof.kozlowski@linaro.org, dmitry.osipenko@collabora.com,
-        viresh.kumar@linaro.org, rafael@kernel.org, jonathanh@nvidia.com,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
-        bbasu@nvidia.com
-References: <20221220160240.27494-1-sumitg@nvidia.com>
- <20221220160240.27494-2-sumitg@nvidia.com>
- <62fc4a96-bab8-4d43-5278-3375e34431e7@gmail.com>
-In-Reply-To: <62fc4a96-bab8-4d43-5278-3375e34431e7@gmail.com>
+In-Reply-To: <20221222100341.5882c19c@booty>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-21.12.2022 22:20, Dmitry Osipenko пишет:
-> 20.12.2022 19:02, Sumit Gupta пишет:
->> +static int tegra_emc_icc_set_bw(struct icc_node *src, struct icc_node *dst)
->> +{
->> +	struct tegra186_emc *emc = to_tegra186_emc(dst->provider);
->> +	struct tegra_mc *mc = dev_get_drvdata(emc->dev->parent);
->> +	struct mrq_bwmgr_int_request bwmgr_req = { 0 };
->> +	struct mrq_bwmgr_int_response bwmgr_resp = { 0 };
->> +	struct tegra_icc_node *tnode = mc->curr_tnode;
->> +	struct tegra_bpmp_message msg;
->> +	int ret = 0;
->> +
->> +	/*
->> +	 * Same Src and Dst node will happen during boot from icc_node_add().
->> +	 * This can be used to pre-initialize and set bandwidth for all clients
->> +	 * before their drivers are loaded. We are skipping this case as for us,
->> +	 * the pre-initialization already happened in Bootloader(MB2) and BPMP-FW.
->> +	 */
->> +	if (src->id == dst->id)
->> +		return 0;
->> +
->> +	if (mc->curr_tnode->type == TEGRA_ICC_NISO)
+22.12.2022 12:03, Luca Ceresoli пишет:
+> Hello Dmitry,
 > 
-> The mc->curr_tnode usage looks suspicious, why you can't use src node?
+> On Wed, 21 Dec 2022 00:40:20 +0300
+> Dmitry Osipenko <digetx@gmail.com> wrote:
 > 
+>> 28.11.2022 18:23, Luca Ceresoli пишет:
+>>> +static int tegra20_channel_capture_frame(struct tegra_vi_channel *chan,
+>>> +					 struct tegra_channel_buffer *buf)
+>>> +{
+>>> +	u32 value;
+>>> +	int err;
+>>> +
+>>> +	chan->next_out_sp_idx++;
+>>> +
+>>> +	tegra20_channel_vi_buffer_setup(chan, buf);
+>>> +
+>>> +	tegra20_vi_write(chan, TEGRA_VI_CAMERA_CONTROL, VI_CAMERA_CONTROL_VIP_ENABLE);
+>>> +
+>>> +	/* Wait for syncpt counter to reach frame start event threshold */
+>>> +	err = host1x_syncpt_wait(chan->out_sp, chan->next_out_sp_idx,
+>>> +				 TEGRA_VI_SYNCPT_WAIT_TIMEOUT, &value);  
+>>
+>> You're not using the "value" variable, it should be NULL.
+> 
+> Ah, sure, good catch.
+> 
+>> The "chan->out_sp" looks redundant, it duplicates the chan->mw_ack_sp.
+> 
+> I agree it is redundant and can be improved.
+> 
+>> AFAICS from the doc, T20 has two VI channels, and thus, two mw_ack_sp,
+>> like T210.
+> 
+> I'm confused by this. In the current driver, each VI channel has an
+> array of 2 mw_ack_sp, the second of which is only used the ganged
+> CSI ports. I have no docs mentioning ganged ports so I don't know
+> exactly how they work and whether T20 might need more than 1 syncpt per
+> channel or not for CSI. Definitely when using VIP only one such syncpt
+> per each VI (or per each VIP, as per your reply to patch 1) is needed.
+> 
+> Bottom line: I think I can simply remove the out_sp and in the VIP code
+> always use chan->mw_ack_sp[0], and document that it's what is called OUT
+> in VIP terms.
+> 
+> Does this plan seem good?
 
-This function sets memory BW for a memory client and not for EMC.
-Apparently, you should move the BW setting to tegra234_mc_icc_set() and
-then tegra_emc_icc_set_bw() will be a noop.
+Older Tegra VI doesn't have ganged ports, but two memory/CSI channels.
+It feels to me that Tegra VI can capture both channels independently,
+though downstream driver stack used only one of the channels, IIRC.
 
+There is a VI header file from nvddk in downstream kernel, which is
+pretty much the doc by itself.
+
+https://nv-tegra.nvidia.com/r/gitweb?p=linux-2.6.git;a=blob;f=arch/arm/mach-tegra/include/ap20/arvi.h;h=6ce52e8e9a7213e33466d34a71cf3af2b6944b8a;
