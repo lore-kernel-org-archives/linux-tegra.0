@@ -2,119 +2,127 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC13CC4708E
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Dec 2022 03:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965A1C3DA79
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Dec 2022 06:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbiLZDlg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 25 Dec 2022 22:41:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48154 "EHLO
+        id S230059AbiLZGwY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Dec 2022 01:52:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231516AbiLZDlf (ORCPT
+        with ESMTP id S229595AbiLZGwV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 25 Dec 2022 22:41:35 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F936DE6;
-        Sun, 25 Dec 2022 19:41:33 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B0107B80BA0;
-        Mon, 26 Dec 2022 03:41:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 72628C433F1;
-        Mon, 26 Dec 2022 03:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672026091;
-        bh=zmtqhXQv7hiPZDJGmROKlujPmTGm2oRNxnDcUz2K1XA=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=aFP63n6aR/0rsvyekq2AImCT+Ltsl9Jl7dPzbNYHhoyZYHDH6lK2bZrhlcgunmhld
-         RgMVPID00zacoRWh6/2WcYeqqfuXii7bfwtJk5lxNcH9sYhs6uYZ65sHxjCjvHVJGC
-         jU2sooTMKGRe+SFmEQSyRrM2Z5Ebr4Jv8ipoN7FtPVN5x7rUbCF4ahlzEUcQHuzwgS
-         dPZnfjIrxijvQKXa4OnPsL5xX8faKU1LhwAeeoNrFyIvTCF3+ednhZDVur/h1/X3jD
-         E41cCnOUXtPEk1kFVfqyh2f9D9ufm9IlqPIid1pjLmSc0vc0NcK4CEzAwGC3ktCoTG
-         JD3TuvTuDV3ew==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4CBF2E50D66;
-        Mon, 26 Dec 2022 03:41:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 26 Dec 2022 01:52:21 -0500
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2045.outbound.protection.outlook.com [40.107.96.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 989C510DA;
+        Sun, 25 Dec 2022 22:52:19 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Bsqjzg8zh51mbnzzncVArilLaaqye5tG2DFJyxbSyHaXEHK8SMt+if+XKriabJmWfL5FBHr97fsHxoQiTylH4L4GWMD2wN4Io9hx8XsX1tMZgQYMNz3/nF4Volkbmi8z+4YRYA7ytefsKfu9/2Se49I5jTGui+uU0QQC3qQsPL7Ck7LSOujyeV/2X3MILqJY056O+qBDd20LDABchr6OWE/4CeqSiYfWVJvzDZ4ybThz9hUyiQnJdp9TpsRAK62xay2krfzwhwX3pW+A/IXT4PVitT0xUmNXNSheN7eMnU1HJaJyAZ9YsomTKg2mkKbqNe5zdTIHpxoYkX4HcUFrHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fd7T+mqnPRrhTZ7DvPkEYrArLtV+CdFkbxNcE/iBysM=;
+ b=Kab0m+IWBFHReKEQsNwZyRj2f9kzlCOZd5yooNYHk+UjW9QB1utUMVwFYfpWK8pBtLq9C1pMxCjAciOMIEkPOF89M1rY5QxmYJaKk6WfSa3Rc3bOH+oLPWPqnpQYefB+o+akWz7yEmV7ClpN0Hmrsfeh7Bw+PCbFKgEgScwJ+KhexqsPZBeou4k7jlk4tpANwpFycTedZrwZ9CznpM/bqUFuR8VEQzUfHz8Cap5cEdOwfvrpb2CPOg8HZ1e7myWzn7IvAoh0HwBnA+j451opYsZGvUd2XJpkqNaGtUp7j+IzJ64krc58/4mI5i6XdvM0CR3TW3+ZN9ZJRpfcXIH+gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fd7T+mqnPRrhTZ7DvPkEYrArLtV+CdFkbxNcE/iBysM=;
+ b=LilMSUKgJWZja5xtUb+ZLTBc1qWJkpcDm+0GhMI6CHBaary8Y4SUJLHuavg/IOVNTX2jW/N6YZ92n3qASrRWKXYVOMZtyQym6ZQ8abg1s/iv2K/bLdfdaRh6GJCjbSiG9uug/kESwC4oqfWHoTDY/xCnhfNFepRwLSwq94d5k74dcmtxhivAhcJ7sqKebwr65ZuBmxH6vFcoekHd4zkOx2jyViwG81lV2C/dhEeYJU0E0eGoLdD95GiUCJSBPYHyIqA4DWVKbHBwK9v9KvIy/5wp18Sc6YJ1XOV6nfgDVQlhc1AsbuJzUBnf652rD7gOKNYXxE5jT914+Hh4qz1gDA==
+Received: from BN8PR03CA0015.namprd03.prod.outlook.com (2603:10b6:408:94::28)
+ by SA1PR12MB6728.namprd12.prod.outlook.com (2603:10b6:806:257::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.16; Mon, 26 Dec
+ 2022 06:52:17 +0000
+Received: from BN8NAM11FT063.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:94:cafe::a5) by BN8PR03CA0015.outlook.office365.com
+ (2603:10b6:408:94::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.16 via Frontend
+ Transport; Mon, 26 Dec 2022 06:52:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN8NAM11FT063.mail.protection.outlook.com (10.13.177.110) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5944.16 via Frontend Transport; Mon, 26 Dec 2022 06:52:16 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Sun, 25 Dec
+ 2022 22:52:01 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Sun, 25 Dec
+ 2022 22:52:00 -0800
+Received: from mkumard.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Sun, 25 Dec 2022 22:51:58 -0800
+From:   Mohan Kumar <mkumard@nvidia.com>
+To:     <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <vkoul@kernel.org>,
+        <thierry.reding@gmail.com>
+CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable-commits@vger.kernel.org>,
+        Mohan Kumar <mkumard@nvidia.com>
+Subject: [PATCH] dmaengine: tegra210-adma: fix global intr clear
+Date:   Mon, 26 Dec 2022 12:21:53 +0530
+Message-ID: <20221226065153.5558-1-mkumard@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/3] ASoC: dt-bindings: Extend name-prefix.yaml into common
- DAI properties
-From:   patchwork-bot+chrome-platform@kernel.org
-Message-Id: <167202609130.9518.10337988666912704066.git-patchwork-notify@kernel.org>
-Date:   Mon, 26 Dec 2022 03:41:31 +0000
-References: <20221203160442.69594-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221203160442.69594-1-krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     neil.armstrong@linaro.org, airlied@gmail.com, daniel@ffwll.ch,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        khilman@baylibre.com, jbrunet@baylibre.com,
-        martin.blumenstingl@googlemail.com, lgirdwood@gmail.com,
-        broonie@kernel.org, wens@csie.org, jernej.skrabec@gmail.com,
-        samuel@sholland.org, fengzheng923@gmail.com, povik+lin@cutebit.org,
-        james.schulman@cirrus.com, david.rhodes@cirrus.com,
-        tanureal@opensource.cirrus.com, rf@opensource.cirrus.com,
-        ckeepax@opensource.cirrus.com, peter.ujfalusi@gmail.com,
-        cychiang@chromium.org, tzungbi@kernel.org, groeck@chromium.org,
-        bleung@chromium.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, stephan@gerhold.net, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        srinivas.kandagatla@linaro.org, bgoswami@quicinc.com,
-        frattaroli.nicolas@gmail.com, heiko@sntech.de,
-        s.nawrocki@samsung.com, festevam@gmail.com,
-        hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
-        olivier.moysan@foss.st.com, arnaud.pouliquen@foss.st.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        alexandre.belloni@bootlin.om, lars@metafoo.de,
-        bogdan.togorean@analog.com, nuno.sa@analog.com,
-        vincent.knecht@mailoo.org, kuninori.morimoto.gx@renesas.com,
-        mripard@kernel.org, rriveram@opensource.cirrus.com,
-        patches@opensource.cirrus.com, j-choudhary@ti.com,
-        drake@endlessm.com, katsuhiro@katsuster.net, shengjiu.wang@nxp.com,
-        paul@crapouillou.net, jee.heng.sia@intel.com, lkundrak@v3.sk,
-        codrin.ciubotariu@microchip.com, mkumard@nvidia.com,
-        spujar@nvidia.com, rohitkr@codeaurora.org, derek.fang@realtek.com,
-        biju.das.jz@bp.renesas.com, cy_huang@richtek.com,
-        joabreu@synopsys.com, afd@ti.com, shifu0704@thundersoft.com,
-        shenghao-ding@ti.com, flatmax@flatmax.com, ricardw@axis.com,
-        perex@perex.cz, tiwai@suse.com, dri-devel@lists.freedesktop.org,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-sunxi@lists.linux.dev,
-        asahi@lists.linux.dev, chrome-platform@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT063:EE_|SA1PR12MB6728:EE_
+X-MS-Office365-Filtering-Correlation-Id: efef74a9-76e3-4dc0-b871-08dae70db9d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: udVEwpHvG+FrhepBOwsJb/zl8A6Skc8Tokchp8NWfpk0rvyBFKnD2hlCDZNHKHU/rcAzi52FN3U8Q7gae6VCTV7rQ4t5P+HKnDXpn2w2dqODDPHaqYtpzAytQXKRlWBaa2Ii42qLQP2fRg0TH5taHQceY0tjtTDQrclOcb3GtTB0Y2h27Ib5CLgSe8D844cBa3YGf72E7g1aKL+gqPfDsE4WjAmoPmmjg5bY4kkJhyH2e7lpXVJJ7BmsKmTpMHfUMFAhz/+9hidbzfmpfi/nIN6Z6+6oN08Wz23ffQWtCZUPK05I05axlUJ11G7JDzS/6Iop3A3xbPLZLC3idVmpKkucpE1gqdvZbWzwNQCVI22re4uuBXXrVqbjCNIlejhW0/yH9w7KupbJXxyPdD6TWGa6IDQdCv2VJryqFkmVC+U52PV4KYlzplmfkz9+CZRpiXF7U3VlEWUCYPTkkU0jUTfHP1GTkIJQU3njWzTSZFf6VRmEnGfh757Hio1iOwW5V6jlwWdebw/xZv7MKzZwxXN5XwIplv6Y/TsdLrdWcr6eguXbhO5OvkN6smuBDwfroI3cnoATnQ8SfdvZPz1vpZ+1P6e9niB8h9vo96Pz7bl7gDVJVUZ6rxBI6u6diiAKHPgjXb0SNNSq47cHxyDlnJyFfodN2/0eu3SirIOrqK3T53CX8qodaoDgPG+mvUWsC9sUGwZONKeWKWOYyNREbA==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(136003)(396003)(39860400002)(451199015)(40470700004)(36840700001)(46966006)(2906002)(8936002)(8676002)(70586007)(70206006)(41300700001)(4326008)(316002)(54906003)(110136005)(186003)(26005)(107886003)(6666004)(478600001)(82310400005)(356005)(7696005)(40480700001)(2616005)(47076005)(1076003)(426003)(336012)(36756003)(83380400001)(7636003)(4744005)(5660300002)(82740400003)(40460700003)(86362001)(36860700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Dec 2022 06:52:16.2565
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: efef74a9-76e3-4dc0-b871-08dae70db9d3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT063.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6728
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello:
+The current global interrupt clear programming register offset
+was not correct. Fix the programming with right offset
 
-This series was applied to chrome-platform/linux.git (for-next)
-by Mark Brown <broonie@kernel.org>:
+fixes: 'commit ded1f3db4cd6
+	("dmaengine: tegra210-adma: prepare for supporting newer Tegra chips")'
 
-On Sat,  3 Dec 2022 17:04:40 +0100 you wrote:
-> Rename name-prefix.yaml into common DAI schema and document
-> '#sound-dai-cells' for completeness.  The '#sound-dai-cells' cannot be
-> really constrained, as there are users with value of 0, 1 and 2, but at
-> least it brings definition to one common place.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> [...]
+Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+---
+ drivers/dma/tegra210-adma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [1/3] ASoC: dt-bindings: Extend name-prefix.yaml into common DAI properties
-    https://git.kernel.org/chrome-platform/c/3fda85324b8d
-  - [2/3] ASoC: dt-bindings: Reference common DAI properties
-    https://git.kernel.org/chrome-platform/c/58ae9a2aca6f
-  - [3/3] ASoC: dt-bindings: maxim,max98357a: Convert to DT schema
-    https://git.kernel.org/chrome-platform/c/8a5a05583a04
-
-You are awesome, thank you!
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index ae39b52012b2..487f8fb411b5 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -221,7 +221,9 @@ static int tegra_adma_init(struct tegra_adma *tdma)
+ 	int ret;
+ 
+ 	/* Clear any interrupts */
+-	tdma_write(tdma, tdma->cdata->global_int_clear, 0x1);
++	tdma_write(tdma,
++		   tdma->cdata->ch_base_offset + tdma->cdata->global_int_clear,
++		   0x1);
+ 
+ 	/* Assert soft reset */
+ 	tdma_write(tdma, ADMA_GLOBAL_SOFT_RESET, 0x1);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.17.1
 
