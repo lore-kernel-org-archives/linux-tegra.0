@@ -2,108 +2,142 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6800C4167B
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Dec 2022 14:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7B7C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Dec 2022 07:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229785AbiL1OS4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Dec 2022 09:18:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56582 "EHLO
+        id S231249AbiL2HgW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Dec 2022 02:36:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbiL1OSx (ORCPT
+        with ESMTP id S229992AbiL2HgV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Dec 2022 09:18:53 -0500
-Received: from msg-1.mailo.com (msg-1.mailo.com [213.182.54.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03BB1114F;
-        Wed, 28 Dec 2022 06:18:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailo.com; s=mailo;
-        t=1672237121; bh=yANQEkK1IO/bYghgRYS3kQ3PM89nXCz+xH6GDv5bpnk=;
-        h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
-         MIME-Version:Content-Type:In-Reply-To;
-        b=TVX79ohedRv394INpOimrtaFaCSzjWLUYEKH+JoyWWXAxJ3kSiaAjuW1NqHVqWSca
-         +WUZJ+4ULokcaiM3ksJLcIca/34mpZXftrCulvQi4/iWahyyZ3kLEosMykZvF/evxs
-         VqRxd60VWOX5w/JIbc8zuPZRClyUfiSFevzsEwk4=
-Received: by b-3.in.mailobj.net [192.168.90.13] with ESMTP
-        via ip-206.mailobj.net [213.182.55.206]
-        Wed, 28 Dec 2022 15:18:41 +0100 (CET)
-X-EA-Auth: WOFZZK0BvzIyYCS/gLWIjuUMTenxQtvi5fn8DqO7riw4RfvcJhr+nYdWb5QT5rtXzf4tEZ+gdO6yrD4WH0zEhJBsxytgHyse
-Date:   Wed, 28 Dec 2022 19:48:35 +0530
-From:   Deepak R Varma <drv@mailo.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Saurabh Singh Sengar <ssengar@microsoft.com>,
-        Praveen Kumar <kumarpraveen@linux.microsoft.com>,
-        Deepak R Varma <drv@mailo.com>
-Subject: Re: [PATCH] drm/tegra: submit: No need for Null pointer check before
- kfree
-Message-ID: <Y6xQO+w/P+m8w6ke@qemulion>
-References: <Y6sn7XptKyk5cbrA@qemulion>
- <864f2fdd-4289-a178-bbf1-c2a6a579c58c@kapsi.fi>
- <Y6w/4IzoMFsVnCmu@qemulion>
- <280170a7-de12-f362-cda3-11208ead0a88@kapsi.fi>
- <Y6xF6q6qj+ggEdgN@qemulion>
- <1453f93b-f6ad-04d8-c493-6c8d2a3678bd@kapsi.fi>
+        Thu, 29 Dec 2022 02:36:21 -0500
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2081.outbound.protection.outlook.com [40.107.101.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53B5EA46C;
+        Wed, 28 Dec 2022 23:36:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NRbKImvxw4kKmLqoG494Zzn0sEemKLsGZPsp/yN03neSXKk/P/iT1uyeleZ4NiK1pffLyZoZ52tpjCNqdq5pDATuuD8HXw8Qv4H7VKrdzU7t7hyWgH60jBqARj6Hp9XRz4YfWH6NeeqBe+DXe7PwKTtxwNPGbfH5QVOKZu9UpqEQ4Te9VD6LeS1CjQ2USjNVEcxDZzPABjTjjulcDwMwp5Ila0flcYYr0Qoccz9uGLXiDdBZ4WIV7jN9PBj86EcR1TDqPfdbxDz04R85uIwnBmOlfi3NeeNpY2Z+XV7iZNbl3R9kKxPSwWqUfwx6wMq6wNHIFsMjfZaB8TLtwD7WUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HShoMvEBtnfqSL+jtkU7x0f8yJWWxyO3v5XYzh7Mr+U=;
+ b=hqblRLzrx3B0dAHMNE9XzldYIjBfaVf0antigHs9dsxTL+pT+p4TrC6kg1iEevJFkM/kCUz/JIv0xmcb4qR4AOmPkVmiI9IhiT7Ugvq3F6qwVwwS2+Fp9xQjilYEmOIASVnBm8+UqqtJhFYSnKL/e9ygFsvh0RPOfRhe1wPrfwajsJVWnMQ0k/RGdA6vlXFao8j5rtVsUmu7KdUhs3AO0ShSUaIpVTz4kdKlUfBJn2xk9X6gpY576OC4soBcJ+HuvzQP0g4VjluaQRWw1Xw3Dtoe0wbppEIgMGMWloOGdx8u5zIuAHv4G/2vr3pdgie94vMMULBTxQwuZwalgz4txw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HShoMvEBtnfqSL+jtkU7x0f8yJWWxyO3v5XYzh7Mr+U=;
+ b=LFy0ff9QaPsrtPTBJi0Gh348NJl3xjwUwg7JYFtmDK0tcehx6YaBLRfI+qMaZ7vdYmPGHTl8WuNg/Dz984grJ7UyE14FKPU9k9RwOHEVJhm2zA5HyYzCj/zr6aTEPCD47Qb1I+PPs6sJq3SSc7B+EJK2H9EN9aMetFvnGX6wpzLuZQ+RFgJpvoYX4qX9/aYENkVZIpf1RR7eVOhHlS2f5Z38j/xh5O1IqsDcgXkr2L7JQWb97IaFcf+E0NIrnwUHOB0viq4Qvc6AsvwV5iSRSwpL79nVM0jlAYMgT6Ajh3D5y8Y1EXCLuwwdHJEn4RXsG3LU8k0AI++x7dPCCBxv9A==
+Received: from MW4P220CA0013.NAMP220.PROD.OUTLOOK.COM (2603:10b6:303:115::18)
+ by BL1PR12MB5174.namprd12.prod.outlook.com (2603:10b6:208:31c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.16; Thu, 29 Dec
+ 2022 07:36:16 +0000
+Received: from CO1NAM11FT104.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:115:cafe::4d) by MW4P220CA0013.outlook.office365.com
+ (2603:10b6:303:115::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.17 via Frontend
+ Transport; Thu, 29 Dec 2022 07:36:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1NAM11FT104.mail.protection.outlook.com (10.13.174.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5944.17 via Frontend Transport; Thu, 29 Dec 2022 07:36:15 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 28 Dec
+ 2022 23:36:04 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 28 Dec 2022 23:36:04 -0800
+Received: from orome.fritz.box (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Wed, 28 Dec 2022 23:36:00 -0800
+From:   Thierry Reding <treding@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 6.1 00/25] 6.1.1-rc1 review
+In-Reply-To: <20221219182943.395169070@linuxfoundation.org>
+References: <20221219182943.395169070@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1453f93b-f6ad-04d8-c493-6c8d2a3678bd@kapsi.fi>
+Message-ID: <7906b589-d73d-4b0a-935e-7a15a1bcbe9a@drhqmail201.nvidia.com>
+Date:   Wed, 28 Dec 2022 23:36:00 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT104:EE_|BL1PR12MB5174:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3d49088-edca-4069-28c6-08dae96f5e2e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: p7RfBrNg1qX/d5bUWc+kLAKRzRE3c6GtfCKQ46lBpTgraJqoOIM0mrXg1jm4GVaA3+JUgtCE78h+37C76wriccxncPyOEFXAJKJx0ZoxC4UULiKv8oskAmnsjXmVP+zGyVvtgIJMLczUCUx/3o2la0OWfGdcbXwHtfb3d6QLrSDFaOUL2gsB8NYdsHT+LgIjsRGrirgKgVjlPLRmRv3+zXO+Ivyczri0U034KxjjVfoCRlmpW2lZVCMEvVAF06bddDMCw8aDgqjfqclGWa4ETww2Y7CoVGM3DWdoNRrdUBTzTJbzcHYpQPM2H09K6Kf4rvnugbESdN5p9JI5HNEkufXBbvIaoIce8XIKxtwlvI+P6KCijjkwFKGUGAeme8AukATpf+2ruSY+2VdDX2mJgUNjVDsxy/6sCmTnhA59RxpBANv/KhriGM7UOi+QJUjjcAVGj2WGcX7OAKMT8CgkqElCZN/45my3ihVnJB0NXLIdjUs1JV+GMewLNJpw0w05Wpa5YQPMgokKXcm1tskWpGv/AuZq9dVz9iEATi5ntweCajYkixzJfgnh6yIgcZZ1FKUgtQxB4ZyxsdbFFdp17aVdH/jahNJ8GW/IlYvPG7ZQzs3MW6BKYuzr4vZtFvc3On04j0aXvdxJoF6ON3MEClr1uOkwKMYMNv3Ep6VHXu/YCZXerGvTLb79ZKce/taQ5ndl3LEBRgfws8VzhvSicp+M0vSrWhelpV4owaGAxcFkkYSXZ96lZJRzY5N4J0p6/BH1loAcZLt+swXFj0oq+toyxt0OO+BYuejAVUB0DI0=
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(136003)(396003)(346002)(451199015)(40470700004)(46966006)(36840700001)(6916009)(40460700003)(54906003)(7416002)(316002)(2906002)(82740400003)(478600001)(356005)(186003)(26005)(82310400005)(47076005)(966005)(336012)(7636003)(426003)(40480700001)(4326008)(8676002)(70586007)(70206006)(31696002)(41300700001)(86362001)(31686004)(8936002)(5660300002)(36860700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Dec 2022 07:36:15.6134
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3d49088-edca-4069-28c6-08dae96f5e2e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT104.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5174
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Dec 28, 2022 at 03:48:05PM +0200, Mikko Perttunen wrote:
-> On 12/28/22 15:34, Deepak R Varma wrote:
-> > On Wed, Dec 28, 2022 at 03:17:59PM +0200, Mikko Perttunen wrote:
-> > > On 12/28/22 15:08, Deepak R Varma wrote:
-> > >
-> > > Hi,
-> > >
-> > > it gets rid of visual hints on code paths indicating the possible liveness
-> > > of pointer variables. I.e., after the change, whether the pointer can be
-> > > NULL or not is more difficult to reason about locally, instead requiring
-> > > more global reasoning which is mentally more taxing.
-> > >
-> > > Since C's type system doesn't help with tracking these kinds of things, I
-> > > believe it is important to have these kinds of local contextual cues to help
-> > > the programmer.
-> >
-> > Hello Mikko,
-> > That really helps. Thank you for the detailed explanation. I do have an extended
-> > question though. In this context, when we are ready to release the memory, how
-> > is it useful to know if it is NULL or not this late in the flow when the scope
-> > is about to end?
->
-> In the current code it doesn't matter, but if someone went to change this
-> code (for example to add another release step), and we just had
-> 'kfree(job_data)', they would have to remember that kfree works with NULL
-> pointers, and would have to go looking elsewhere in the code to see if it is
-> in fact possible to assume that job_data cannot be NULL here, or not. If
-> they forget about kfree working with NULL pointers, which wouldn't be that
-> surprising since it is almost always only called with non-NULL pointers,
-> they might instead introduce a bug.
->
-> In this particular instance it's probably not that bad since immediately
-> above we have another 'if' block that checks if job_data is NULL, which
-> serves as a hint to the programmer; however, as a general principle it
-> stands that having the NULL check here makes it obvious to any reading
-> programmer that they any changes they make have to consider if the pointer
-> is NULL or not.
+On Mon, 19 Dec 2022 20:22:39 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.1 release.
+> There are 25 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Wed, 21 Dec 2022 18:29:31 +0000.
+> Anything received after that time might be too late.
+>=20
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.1-rc1=
+.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git l=
+inux-6.1.y
+> and the diffstat can be found below.
+>=20
+> thanks,
+>=20
+> greg k-h
 
-Sounds good. Thanks again. Would like to see if other experts have any further
-guidance on this patch.
+All tests passing for Tegra ...
 
-Regards,
-./drv
+Test results for stable-v6.1:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    130 tests:	130 pass, 0 fail
 
->
-> >
-> > > Mikko
-> >
-> >
->
+Linux version:	6.1.1-rc1-g4478ff938eb5
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
+Tested-by: Thierry Reding <treding@nvidia.com>
 
