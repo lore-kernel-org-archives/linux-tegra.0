@@ -2,131 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6415C3DA7D
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Dec 2022 16:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B61C4167B
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Dec 2022 17:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235195AbiL3Qer (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Dec 2022 11:34:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45832 "EHLO
+        id S231406AbiL3RBh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Dec 2022 12:01:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbiL3Qej (ORCPT
+        with ESMTP id S230468AbiL3RBg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Dec 2022 11:34:39 -0500
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF521C40D;
-        Fri, 30 Dec 2022 08:34:39 -0800 (PST)
-Received: by mail-il1-f180.google.com with SMTP id o8so11532037ilq.6;
-        Fri, 30 Dec 2022 08:34:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YUQ13UNlMnnU+RdBOzrUXm3dMsngq/6hNGyj9q9MZiw=;
-        b=MqngqLelLySO6dK/awJ4Fg4u4I58fNcQgs1TdoBAMkIZM/UI7BjLCewQz7dYyyu6hN
-         BAkHjNKtIeBR5DU/ASGzb2Fsu3j23HvcsJvtQc3eDhWFSNFBm/XwRXN68eUMEAw93tUV
-         WipdaFKc1RzGc9jkWdZKIQhdDcEOo6e5wGAk+s8zL9oxncMBq3umTBgBCIyHmEIQXpYf
-         DYwXOoX5zKTiqnqtNt8xR+2Q0hE3b+STWSdPtXw1EFVMJQjawYP9TPx66T07M1lsHVxk
-         t3sceYR3P4KowyXnXXK84/pWlkgk2r3f+0hA3mh3bjneFJ1Hfk8xWkfa8znf3l+75eK/
-         XhmQ==
-X-Gm-Message-State: AFqh2koimuh/PKl58p3gUe/WS1nXhlZknBizOB5j5pdTyKfYeGbD2srF
-        r2Jq4ln92oRN23xZ7D9Kxg==
-X-Google-Smtp-Source: AMrXdXuqzf/p/KUX/Q6NKkpnki1GkGA1OTlRSftkvhspmWMJCquaB27tfx1TAffdn4xlh0Cred4a0g==
-X-Received: by 2002:a92:504:0:b0:30c:323c:f7d1 with SMTP id q4-20020a920504000000b0030c323cf7d1mr1707763ile.15.1672418078764;
-        Fri, 30 Dec 2022 08:34:38 -0800 (PST)
-Received: from robh_at_kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id o3-20020a92c683000000b00302f7654187sm6670218ilg.72.2022.12.30.08.34.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Dec 2022 08:34:38 -0800 (PST)
-Received: (nullmailer pid 1935053 invoked by uid 1000);
-        Fri, 30 Dec 2022 16:34:28 -0000
+        Fri, 30 Dec 2022 12:01:36 -0500
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2073.outbound.protection.outlook.com [40.107.96.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20990647D;
+        Fri, 30 Dec 2022 09:01:35 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z2BN5C94dj3s0X4VRSg1nmt4qDs/5KjfuETaOJ/kOE420XFIE5UhW53p2mkVXVuEy7HYv5d6C6KZ24Bx45nDuyfK//muEB2AEi3QS26ZVNDVqsieUemRKCB6Gv6iuM2Di60ufJGb9eImBQ/DGBsw1sGfa7WeXAAMXX7NbkvxYG272bxe6Z2Abiv/8WpAzbPy7q+vLQ3wXuMCxePodvfQ5KaLvS4xNDoUVoFA1ueLuDJU3++4BEN5gn3791EwZnVPv7fPZJJLcMbTGP4dryl7d7KKsVk4UJOKBc34DCyb1p2xMD1s2YecTsicycu4zh5dKXXxt3iwdCxe0XxWx0Do4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NSDljnpU14brkfm81cLAac3jJvyyqi2h7yVEIhvdunI=;
+ b=TnZbvkY7OFZgZ7SXp+SsA56FJ/g/rC6Q9RclgkXI8oHEJLJkpWS9ai6CYX7GlBmT25Hwh8AU5+rc3VHTwJ0LnLXu4p+tY6stwuW6QLudAfygWb4xqJcKadJhxpyKUNGww4fxrH+SX1Ok1SMNFammylJ8B0Bt5nFVVxZFRBVVELqKd6GW4LWCOQlrKP9av/XCs/y46nwXcK+L0pckkgHroINNLZp0tFNVhPc5rOiBCd4PA31kmojSgD1ywR+LP1rhH0CaQ2dVpSTFHJHT5SA9NSpEUTnKfk9GJXrMNDKvmSRxpJf1UAcTAmidzeGq5bQe9YeyLl+0uZnhEU21wrEEiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NSDljnpU14brkfm81cLAac3jJvyyqi2h7yVEIhvdunI=;
+ b=YrsWp3afDYEY5B8j9ZCY19Pf2X7ncPyAm5jrm+4bz+uIkasxXwOehEgzhSRNYaLG9Gfhh3FoGRxhZf7+jr5wNI27zZ3GsuA9esGAJNP1pzYm20Nc0KlQAU6fuYBPzroPrznCLHrYESFzhIbZj1rEEwOG85x4bpyVnbvD5/qUM4C0gR+wCQZ7CIU0AngAInRa25w64UaZ/U6IXtuN+Ei+Cs+GAC0MFrrPICcYjK5myy5gbd3595dCu4Ju/j5d+CqegHkNGfyhVBcajpOV+q7B7qSJJ6EjwTC/IK+fbDgvCX0cM7Mfp98LNm/9+R6dqPHaygDJ1/SnidtjdbAP7eOWNw==
+Received: from CY5P221CA0028.NAMP221.PROD.OUTLOOK.COM (2603:10b6:930:b::43) by
+ PH7PR12MB6833.namprd12.prod.outlook.com (2603:10b6:510:1af::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.18; Fri, 30 Dec
+ 2022 17:01:32 +0000
+Received: from CY4PEPF0000C97D.namprd02.prod.outlook.com
+ (2603:10b6:930:b:cafe::23) by CY5P221CA0028.outlook.office365.com
+ (2603:10b6:930:b::43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5966.18 via Frontend
+ Transport; Fri, 30 Dec 2022 17:01:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000C97D.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5944.8 via Frontend Transport; Fri, 30 Dec 2022 17:01:32 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 30 Dec
+ 2022 09:01:25 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 30 Dec
+ 2022 09:01:25 -0800
+Received: from orome.fritz.box (10.127.8.9) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Fri, 30 Dec 2022 09:01:21 -0800
+From:   Thierry Reding <treding@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 6.1 0000/1140] 6.1.2-rc2 review
+In-Reply-To: <20221230094107.317705320@linuxfoundation.org>
+References: <20221230094107.317705320@linuxfoundation.org>
+X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Airlie <airlied@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-staging@lists.linux.dev, Daniel Vetter <daniel@ffwll.ch>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20221229133205.981397-3-luca.ceresoli@bootlin.com>
-References: <20221229133205.981397-1-luca.ceresoli@bootlin.com>
- <20221229133205.981397-3-luca.ceresoli@bootlin.com>
-Message-Id: <167241769230.1925726.8527129486424295727.robh@kernel.org>
-Subject: Re: [PATCH v3 02/21] dt-bindings: display: tegra: vi: add 'vip'
- property and example
-Date:   Fri, 30 Dec 2022 10:34:28 -0600
+Message-ID: <c040b325-150d-4c57-8075-46c6bd6c5b83@rnnvmail202.nvidia.com>
+Date:   Fri, 30 Dec 2022 09:01:21 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000C97D:EE_|PH7PR12MB6833:EE_
+X-MS-Office365-Filtering-Correlation-Id: bfb83e1c-2964-4cd4-c57d-08daea878079
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GPIouBo8RwNQvSN4yphr6YJnDmb5C7ehN3DnG228dCnBSLMMVvQfxu/pZKSFB/sYYEBf2QV6XHu78docNKSrJ396qjKQnogh9AhrASE0Z3thzQIuE2oIccWGidzPIslAW2iFVIajgu42PbAq/tqe1KEnPIvVeb4OXLQt3RD1T/rsMglNgAI3wbq1t7QUiijNChAgZu3rqBVE7R/dZCouvv0xqAzxsCCSvpfp5+/VkRbW+pQiTAIS473DBml5aHYSsTbYLkRGFJgFSjrlPmWHDmhu5gmdzOvZRIlz5IZ0StOjbzWfESI3XVZUV9lV/h13uTCqe5N6rFo8BdLBYFbNk+HMsJtZbxo/7/K/ysjId8Wce9VGJYIDUYLKDtdDdTtbpIM461516EuJCJiREgIl0SOcfv+XbR4ZfxzGGKGyr4muKOF8OFov7jQF2MnNQ39Vp4vvJ390URBr97JquIWoOLa6UA2njfQVJhv0wCOJ5SZ+BHqI5VXplpSap1C1OJ5nlMRCERoNlUyeS4lh7jXuBAXDr6pi8w42tFnTOAuHblsnBWZLp6dyI8mBCwu55xFuQH6c0ErnFQ3v4voFPVV7WvEqiR4i2YRoK8Nm6WXQrAmM9f5LMMOFmQgUCdU8Y44uStabEESAT5bI/h0CGjOM9XD9+D0qkN3kCKeTVMQLUdxc1NLWgIC1sObsA/kJvDac68+gQ5QMj5r9K7RCdvJHdhV360laii068G6Y9/1A5OXYGfcIP8qZ2HMXgBQC2sWqymMXguWhSJy0GI1zuSmA85Daqvq/zSAysCvkbRFJky8=
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(346002)(376002)(136003)(39860400002)(451199015)(40470700004)(46966006)(36840700001)(7636003)(2906002)(356005)(82740400003)(8936002)(5660300002)(7416002)(41300700001)(31696002)(36860700001)(426003)(86362001)(47076005)(966005)(70586007)(70206006)(54906003)(110136005)(31686004)(478600001)(82310400005)(40460700003)(40480700001)(4326008)(316002)(8676002)(26005)(186003)(336012);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Dec 2022 17:01:32.1732
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfb83e1c-2964-4cd4-c57d-08daea878079
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000C97D.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6833
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, 30 Dec 2022 10:49:32 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.2 release.
+> There are 1140 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Sun, 01 Jan 2023 09:38:41 +0000.
+> Anything received after that time might be too late.
+>=20
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.2-rc2=
+.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git l=
+inux-6.1.y
+> and the diffstat can be found below.
+>=20
+> thanks,
+>=20
+> greg k-h
 
-On Thu, 29 Dec 2022 14:31:46 +0100, Luca Ceresoli wrote:
-> The Tegra20 VI peripheral can receive parallel input from the VIP parallel
-> input module. Add it to the allowed properties and augment the existing
-> nvidia,tegra20-vi example to show a 'vip' property.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> 
-> ---
-> 
-> Changed in v3 (suggested by Rob Herring):
->  - drop 'endpoint', unneeded as there's no extra properties in the
->    endpoints
-> 
-> Changed in v2 (suggested by Krzysztof Kozlowski):
->  - rename "i2c3" -> "ic2"
->  - add review tag
-> ---
->  .../display/tegra/nvidia,tegra20-vi.yaml      | 64 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 65 insertions(+)
-> 
+All tests passing for Tegra ...
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Test results for stable-v6.1:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    130 tests:	130 pass, 0 fail
 
-yamllint warnings/errors:
+Linux version:	6.1.2-rc2-g9c94d2e408ab
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.example.dtb: vi@54080000: vip: Unevaluated properties are not allowed ('channel@0' was unexpected)
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.example.dtb: vi@54080000: vip: 'ports' is a required property
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.example.dtb: vip: Unevaluated properties are not allowed ('channel@0' was unexpected)
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.example.dtb: vip: 'ports' is a required property
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221229133205.981397-3-luca.ceresoli@bootlin.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Tested-by: Thierry Reding <treding@nvidia.com>
 
