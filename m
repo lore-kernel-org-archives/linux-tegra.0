@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A81C3DA7C
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Dec 2022 09:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D614C3DA7C
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Dec 2022 10:01:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234427AbiL3JPI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Dec 2022 04:15:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56508 "EHLO
+        id S234733AbiL3KBi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Dec 2022 05:01:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234534AbiL3JPH (ORCPT
+        with ESMTP id S234745AbiL3KBg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Dec 2022 04:15:07 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29001A201;
-        Fri, 30 Dec 2022 01:15:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1672391705; x=1703927705;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b92LBjMTMS+znGkFff7B1W97g2wA+n9hRk1ugdqBn5s=;
-  b=MkAmmB916hyyS3Y9RROqFhZeoS6iKydI/IOqjJs2+aE74xmxVgWZyQZd
-   M9sxD/gnCvnCoUgVgSYNtIkJDc0FkcnUyCnYvDkoR9WSa5ZNEf4sS5QKB
-   FNDrsJZGHVDiZXHxVOG5hCp8XU3ALx7fyCLBXXj0EWHxHLGiRW65yvjvs
-   LM49UjH/g5O1fsgEjFN4Rvt/E3+0g9CElqADw23yfQCv/f4FgziFcX9kP
-   wvjx93s0qWG9ZnIY7e1eKhNXnTLk58le7o2jTqqxfDTGBEqvuDutYGvuy
-   M9ROqDMVxJeAlH3FPwxcOIndFhXhRHMHMtUT+lB3zhpaGw8F9RExNMo47
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10575"; a="308943792"
-X-IronPort-AV: E=Sophos;i="5.96,286,1665471600"; 
-   d="scan'208";a="308943792"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2022 01:15:05 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10575"; a="631489114"
-X-IronPort-AV: E=Sophos;i="5.96,287,1665471600"; 
-   d="scan'208";a="631489114"
-Received: from joe-255.igk.intel.com (HELO localhost) ([172.22.229.67])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2022 01:15:03 -0800
-Date:   Fri, 30 Dec 2022 10:15:01 +0100
-From:   Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
+        Fri, 30 Dec 2022 05:01:36 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9939519C32;
+        Fri, 30 Dec 2022 02:01:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=/XXcsqpwwhzC7dXBuKnRV/g66zh19Xq0hf1OrfkeqS8=; b=UMpUouaYbyb6lFYmh/OQDwAWoM
+        z/4Kej+eMAG6ox29+YT0uvZDThoK9B8F99YFJ+n2HNmAZKuL9DjKA9jQKHkRXs0tG/n1/yU/ud2zI
+        q0xfsvK//rj6alYEdenP3OWbjVcTQverVSA1oLylSuExwD2GUiQgvEeRHqzL21bHCNMX28zkR2H54
+        Fn/Lj9I7d08086BNegBI2vqxhButaW9+XoTwmV8Ez9bg/WWQ/bgwQ8F8UuMDp3QT3ZcFKDiVLHNVh
+        cA62BwI7m5UF67tlE+z1pWKD4gpcEN3ikiaqcaufGkPosrY9+5o9G56c6+VbnVgJebp6I3u/97RQ8
+        dZuyc4KA==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1pBCCa-00Gqsu-51; Fri, 30 Dec 2022 12:01:24 +0200
+Message-ID: <65468c84-fc40-e4e1-0adb-ddfc23ec4fb9@kapsi.fi>
+Date:   Fri, 30 Dec 2022 12:01:23 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH] drm/tegra: submit: No need for Null pointer check before
+ kfree
+Content-Language: en-US
+To:     Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
 Cc:     Deepak R Varma <drv@mailo.com>,
         Praveen Kumar <kumarpraveen@linux.microsoft.com>,
         Saurabh Singh Sengar <ssengar@microsoft.com>,
@@ -48,88 +48,112 @@ Cc:     Deepak R Varma <drv@mailo.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: submit: No need for Null pointer check before
- kfree
-Message-ID: <20221230091501.GA1285371@linux.intel.com>
 References: <Y6sn7XptKyk5cbrA@qemulion>
- <864f2fdd-4289-a178-bbf1-c2a6a579c58c@kapsi.fi>
- <Y6w/4IzoMFsVnCmu@qemulion>
+ <864f2fdd-4289-a178-bbf1-c2a6a579c58c@kapsi.fi> <Y6w/4IzoMFsVnCmu@qemulion>
  <280170a7-de12-f362-cda3-11208ead0a88@kapsi.fi>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <280170a7-de12-f362-cda3-11208ead0a88@kapsi.fi>
+ <20221230091501.GA1285371@linux.intel.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <20221230091501.GA1285371@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Dec 28, 2022 at 03:17:59PM +0200, Mikko Perttunen wrote:
-> On 12/28/22 15:08, Deepak R Varma wrote:
-> > On Wed, Dec 28, 2022 at 02:28:54PM +0200, Mikko Perttunen wrote:
-> > > On 12/27/22 19:14, Deepak R Varma wrote:
-> > > > kfree() & vfree() internally perform NULL check on the pointer handed
-> > > > to it and take no action if it indeed is NULL. Hence there is no need
-> > > > for a pre-check of the memory pointer before handing it to
-> > > > kfree()/vfree().
-> > > > 
-> > > > Issue reported by ifnullfree.cocci Coccinelle semantic patch script.
-> > > > 
-> > > > Signed-off-by: Deepak R Varma <drv@mailo.com>
-> > > > ---
-> > > >    drivers/gpu/drm/tegra/submit.c | 4 ++--
-> > > >    1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
-> > > > index 066f88564169..06f836db99d0 100644
-> > > > --- a/drivers/gpu/drm/tegra/submit.c
-> > > > +++ b/drivers/gpu/drm/tegra/submit.c
-> > > > @@ -680,8 +680,8 @@ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
-> > > >    		kfree(job_data->used_mappings);
-> > > >    	}
-> > > > 
-> > > > -	if (job_data)
-> > > > -		kfree(job_data);
-> > > > +	kfree(job_data);
-> > > > +
-> > > >    put_bo:
-> > > >    	gather_bo_put(&bo->base);
-> > > >    unlock:
-> > > > --
-> > > > 2.34.1
-> > > > 
-> > > > 
-> > > > 
-> > > 
-> > > It continues to be the case that I think this transform is bad. Same applies
-> > > to the host1x patch.
-> > 
-> > Hello Mikko,
-> > Thank you for responding to the patch proposal. Could you please explain why is
-> > this bad?
-> > 
-> > Regards,
-> > ./drv
-> > 
-> > > 
-> > > Mikko
-> > 
-> > 
+On 12/30/22 11:15, Stanislaw Gruszka wrote:
+> On Wed, Dec 28, 2022 at 03:17:59PM +0200, Mikko Perttunen wrote:
+>> On 12/28/22 15:08, Deepak R Varma wrote:
+>>> On Wed, Dec 28, 2022 at 02:28:54PM +0200, Mikko Perttunen wrote:
+>>>> On 12/27/22 19:14, Deepak R Varma wrote:
+>>>>> kfree() & vfree() internally perform NULL check on the pointer handed
+>>>>> to it and take no action if it indeed is NULL. Hence there is no need
+>>>>> for a pre-check of the memory pointer before handing it to
+>>>>> kfree()/vfree().
+>>>>>
+>>>>> Issue reported by ifnullfree.cocci Coccinelle semantic patch script.
+>>>>>
+>>>>> Signed-off-by: Deepak R Varma <drv@mailo.com>
+>>>>> ---
+>>>>>     drivers/gpu/drm/tegra/submit.c | 4 ++--
+>>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+>>>>> index 066f88564169..06f836db99d0 100644
+>>>>> --- a/drivers/gpu/drm/tegra/submit.c
+>>>>> +++ b/drivers/gpu/drm/tegra/submit.c
+>>>>> @@ -680,8 +680,8 @@ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+>>>>>     		kfree(job_data->used_mappings);
+>>>>>     	}
+>>>>>
+>>>>> -	if (job_data)
+>>>>> -		kfree(job_data);
+>>>>> +	kfree(job_data);
+>>>>> +
+>>>>>     put_bo:
+>>>>>     	gather_bo_put(&bo->base);
+>>>>>     unlock:
+>>>>> --
+>>>>> 2.34.1
+>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>> It continues to be the case that I think this transform is bad. Same applies
+>>>> to the host1x patch.
+>>>
+>>> Hello Mikko,
+>>> Thank you for responding to the patch proposal. Could you please explain why is
+>>> this bad?
+>>>
+>>> Regards,
+>>> ./drv
+>>>
+>>>>
+>>>> Mikko
+>>>
+>>>
+>>
+>> Hi,
+>>
+>> it gets rid of visual hints on code paths indicating the possible liveness
+>> of pointer variables. I.e., after the change, whether the pointer can be
+>> NULL or not is more difficult to reason about locally, instead requiring
+>> more global reasoning which is mentally more taxing.
+>>
+>> Since C's type system doesn't help with tracking these kinds of things, I
+>> believe it is important to have these kinds of local contextual cues to help
+>> the programmer.
 > 
-> Hi,
+> I agree with your point of view. But regarding this particular patch,
+> at least on code base I can see, after free_job_data label job_done
+> can not be NULL. So patch seems to be ok, but maybe changelog need to
+> be different
 > 
-> it gets rid of visual hints on code paths indicating the possible liveness
-> of pointer variables. I.e., after the change, whether the pointer can be
-> NULL or not is more difficult to reason about locally, instead requiring
-> more global reasoning which is mentally more taxing.
-> 
-> Since C's type system doesn't help with tracking these kinds of things, I
-> believe it is important to have these kinds of local contextual cues to help
-> the programmer.
+> Regards
+> Stanislaw
 
-I agree with your point of view. But regarding this particular patch,
-at least on code base I can see, after free_job_data label job_done
-can not be NULL. So patch seems to be ok, but maybe changelog need to
-be different
+It can be NULL; see:
 
-Regards
-Stanislaw
+         job->user_data = job_data;
+         job->release = release_job;
+         job->timeout = 10000;
+
+         /*
+          * job_data is now part of job reference counting, so don't release
+          * it from here.
+          */
+         job_data = NULL;
+
+If we go into free_job_data after this code (which happens if there is 
+no error, or if host1x_job_submit fails), job_data will be NULL.
+
+The memory is instead released in the 'put_job' label; host1x_job_put 
+ends up calling release_job, which does the kfree.
+
+(Yes, it is rather complicated..)
+
+Thanks,
+Mikko
