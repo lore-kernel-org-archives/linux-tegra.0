@@ -2,100 +2,175 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90970C46467
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Jan 2023 09:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAA8C3DA7A
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Jan 2023 18:21:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231809AbjABJm1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Jan 2023 04:42:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44878 "EHLO
+        id S231454AbjABSVL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 2 Jan 2023 13:21:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230258AbjABJmZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Jan 2023 04:42:25 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C6C2F4D
-        for <linux-tegra@vger.kernel.org>; Mon,  2 Jan 2023 01:42:24 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id bn6so18711613ljb.13
-        for <linux-tegra@vger.kernel.org>; Mon, 02 Jan 2023 01:42:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xcvUq9UmyoEcHCIHRWfiFIf8dqA/idA+5+kkBDP3Jwc=;
-        b=Enze+qE85rszC5l162+SsytKiZVRn651c+AptSbBqDeg5CshqP5D9I9DLhQLomlsQU
-         aoWaxQ/Uv11McO77pbu15jV+qcjG4Most/S51gDs235PYfDMs/F1gHmF/0kjUb8mZtl7
-         yROT4X7bKUc42ZAGuX/MRlZ9Us47NvpEc8KRLl/s1Dag3/VgRa0SnC+M9Lzr2xjqgoCg
-         EGwe8Qu+93rEU+1hrm7AG5h6KxX45djw0vW46Zy5hFclNWHL2MoaMF4godTuiTbKcR5u
-         4FUkEmM/9agUvzErz8wWtO1qmrOoZ8li66OIEY27EhvCk3UQbBEavCz6KbA+hYtdWWAT
-         4nJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xcvUq9UmyoEcHCIHRWfiFIf8dqA/idA+5+kkBDP3Jwc=;
-        b=IvcdNp8pqhALRXWpENE06EaTjD9TvgTHB6lFiAEDYfnkaZ9FXAEy4i6qRdoxPBMvax
-         c2wUGqIwSLuRKnQrGuksYfTRGHcYugNEBnTag5iDEfwwJ8YiUULz5MrBKDFu0IRXYrbu
-         EzBthQS4CKwpXfZiPMLZFQdwoed1FSLEj1EghBIGiiNasZSH59GhxxqJxmWIVzWXoSwE
-         XyYGtZ5NkdGHHSFgyplKkOdz/mz32B9a/CSKHhgpI4SV7onKPOwrZeiZxlTO7b3lAcb8
-         ugZ8m4fSWlhdEAdt+LU9gjqGjsqwAN74FZHFQNIL+/lUseNW7DdQ3BpkSCtyAhpIQVbm
-         QgOw==
-X-Gm-Message-State: AFqh2krXAbVu1FZjrb5ntrL1HIaBV2x04O0DSspWos5BKFjeQoym5Qhc
-        8MFtyOohl9Fwxeb8awztNmT1mg==
-X-Google-Smtp-Source: AMrXdXvIOdKJ5XgKS4KvY6aM9o/FsDhmwNFMqN1FOzgDaixGx2p6xYkl2sb5r+OmNajN9s+2sMoAgw==
-X-Received: by 2002:a2e:720f:0:b0:27a:991:4d11 with SMTP id n15-20020a2e720f000000b0027a09914d11mr9304108ljc.30.1672652542942;
-        Mon, 02 Jan 2023 01:42:22 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id z14-20020ac24f8e000000b004b55cebdbd7sm4433673lfs.120.2023.01.02.01.42.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jan 2023 01:42:22 -0800 (PST)
-Message-ID: <0de2354a-d140-364d-1a7c-380bb899c3e5@linaro.org>
-Date:   Mon, 2 Jan 2023 10:42:20 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v3 01/21] dt-bindings: display: tegra: add Tegra20 VIP
-Content-Language: en-US
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        with ESMTP id S234610AbjABSVI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Jan 2023 13:21:08 -0500
+Received: from msg-4.mailo.com (msg-4.mailo.com [213.182.54.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8044192;
+        Mon,  2 Jan 2023 10:21:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailo.com; s=mailo;
+        t=1672683643; bh=l5eFdlgx+VAP0BeHLUtw9bf3seXl0g8MDnD92C6hEZg=;
+        h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To;
+        b=EkJJlYSDym9aBoHWX0MTXz78y/KcdI/3h045DudkCBTy6QMvvqUeAiYCkfWEtuD4L
+         12y7r2L2U5FGHCGDGt4Es4XnbMvPTCH015b3/BCHNT7+ucyfRNZJr4e3/D97jAL8/8
+         vY/Bw3bGB5Uk0eqi5OOzHT765Ep4Ng5ZHJQ3Zm14=
+Received: by b-2.in.mailobj.net [192.168.90.12] with ESMTP
+        via ip-206.mailobj.net [213.182.55.206]
+        Mon,  2 Jan 2023 19:20:42 +0100 (CET)
+X-EA-Auth: 1TipYpPawqPMVWURTIUa3Q9huT/sskdTH3CKY3E5NqMDlZcXzmSa7O60tFZSxlW4XUJP6QN1+lF3/JSXJcYtR/S2WkmYVfuP
+Date:   Mon, 2 Jan 2023 23:50:36 +0530
+From:   Deepak R Varma <drv@mailo.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        Praveen Kumar <kumarpraveen@linux.microsoft.com>,
+        Saurabh Singh Sengar <ssengar@microsoft.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>
-References: <20221229133205.981397-1-luca.ceresoli@bootlin.com>
- <20221229133205.981397-2-luca.ceresoli@bootlin.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221229133205.981397-2-luca.ceresoli@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org, drv@mailo.com
+Subject: Re: [PATCH] drm/tegra: submit: No need for Null pointer check before
+ kfree
+Message-ID: <Y7MgdKD14kLwOo0S@qemulion>
+References: <Y6sn7XptKyk5cbrA@qemulion>
+ <864f2fdd-4289-a178-bbf1-c2a6a579c58c@kapsi.fi>
+ <Y6w/4IzoMFsVnCmu@qemulion>
+ <280170a7-de12-f362-cda3-11208ead0a88@kapsi.fi>
+ <20221230091501.GA1285371@linux.intel.com>
+ <65468c84-fc40-e4e1-0adb-ddfc23ec4fb9@kapsi.fi>
+ <a815b74d-c158-73b6-cfc8-583826277b5c@kapsi.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a815b74d-c158-73b6-cfc8-583826277b5c@kapsi.fi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 29/12/2022 14:31, Luca Ceresoli wrote:
-> VIP is the parallel video capture component within the video input
-> subsystem of Tegra20 (and other Tegra chips, apparently).
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> 
-> ---
-> 
+On Fri, Dec 30, 2022 at 12:03:25PM +0200, Mikko Perttunen wrote:
+> On 12/30/22 12:01, Mikko Perttunen wrote:
+> > On 12/30/22 11:15, Stanislaw Gruszka wrote:
+> > > On Wed, Dec 28, 2022 at 03:17:59PM +0200, Mikko Perttunen wrote:
+> > > > On 12/28/22 15:08, Deepak R Varma wrote:
+> > > > > On Wed, Dec 28, 2022 at 02:28:54PM +0200, Mikko Perttunen wrote:
+> > > > > > On 12/27/22 19:14, Deepak R Varma wrote:
+> > > > > > > kfree() & vfree() internally perform NULL check on the pointer handed
+> > > > > > > to it and take no action if it indeed is NULL. Hence there is no need
+> > > > > > > for a pre-check of the memory pointer before handing it to
+> > > > > > > kfree()/vfree().
+> > > > > > >
+> > > > > > > Issue reported by ifnullfree.cocci Coccinelle semantic patch script.
+> > > > > > >
+> > > > > > > Signed-off-by: Deepak R Varma <drv@mailo.com>
+> > > > > > > ---
+> > > > > > >     drivers/gpu/drm/tegra/submit.c | 4 ++--
+> > > > > > >     1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/gpu/drm/tegra/submit.c
+> > > > > > > b/drivers/gpu/drm/tegra/submit.c
+> > > > > > > index 066f88564169..06f836db99d0 100644
+> > > > > > > --- a/drivers/gpu/drm/tegra/submit.c
+> > > > > > > +++ b/drivers/gpu/drm/tegra/submit.c
+> > > > > > > @@ -680,8 +680,8 @@ int
+> > > > > > > tegra_drm_ioctl_channel_submit(struct drm_device
+> > > > > > > *drm, void *data,
+> > > > > > >             kfree(job_data->used_mappings);
+> > > > > > >         }
+> > > > > > >
+> > > > > > > -    if (job_data)
+> > > > > > > -        kfree(job_data);
+> > > > > > > +    kfree(job_data);
+> > > > > > > +
+> > > > > > >     put_bo:
+> > > > > > >         gather_bo_put(&bo->base);
+> > > > > > >     unlock:
+> > > > > > > --
+> > > > > > > 2.34.1
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > >
+> > > > > > It continues to be the case that I think this transform
+> > > > > > is bad. Same applies
+> > > > > > to the host1x patch.
+> > > > >
+> > > > > Hello Mikko,
+> > > > > Thank you for responding to the patch proposal. Could you
+> > > > > please explain why is
+> > > > > this bad?
+> > > > >
+> > > > > Regards,
+> > > > > ./drv
+> > > > >
+> > > > > >
+> > > > > > Mikko
+> > > > >
+> > > > >
+> > > >
+> > > > Hi,
+> > > >
+> > > > it gets rid of visual hints on code paths indicating the
+> > > > possible liveness
+> > > > of pointer variables. I.e., after the change, whether the pointer can be
+> > > > NULL or not is more difficult to reason about locally, instead requiring
+> > > > more global reasoning which is mentally more taxing.
+> > > >
+> > > > Since C's type system doesn't help with tracking these kinds of
+> > > > things, I
+> > > > believe it is important to have these kinds of local contextual
+> > > > cues to help
+> > > > the programmer.
+> > >
+> > > I agree with your point of view. But regarding this particular patch,
+> > > at least on code base I can see, after free_job_data label job_done
+> > > can not be NULL. So patch seems to be ok, but maybe changelog need to
+> > > be different
+> > >
+> > > Regards
+> > > Stanislaw
+> >
+> > It can be NULL; see:
+> >
+> >          job->user_data = job_data;
+> >          job->release = release_job;
+> >          job->timeout = 10000;
+> >
+> >          /*
+> >           * job_data is now part of job reference counting, so don't
+> > release
+> >           * it from here.
+> >           */
+> >          job_data = NULL;
+> >
+> > If we go into free_job_data after this code (which happens if there is
+> > no error, or if host1x_job_submit fails), job_data will be NULL.
+> >
+> > The memory is instead released in the 'put_job' label; host1x_job_put
+> > ends up calling release_job, which does the kfree.
+>
+> Well, the refcount is dropped -- it's not necessarily freed immediately, if
+> the job is in execution.
 
+Thanks Mikko. I Agree. Hence I think there is no change for the program at
+runtime. The proposed change looks safe to me.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+./drv
 
-Best regards,
-Krzysztof
+>
+> Mikko
+>
+> >
+> > (Yes, it is rather complicated..)
+> >
+> > Thanks,
+> > Mikko
+>
+
 
