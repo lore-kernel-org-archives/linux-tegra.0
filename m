@@ -2,65 +2,65 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7656DC61DB3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49FDC4708D
 	for <linux-tegra@archiver.kernel.org>; Fri,  6 Jan 2023 15:30:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235518AbjAFPaU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 Jan 2023 10:30:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43730 "EHLO
+        id S235521AbjAFPaW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 Jan 2023 10:30:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235486AbjAFP3j (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Jan 2023 10:29:39 -0500
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2081.outbound.protection.outlook.com [40.107.237.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15B98CD10;
-        Fri,  6 Jan 2023 07:29:37 -0800 (PST)
+        with ESMTP id S235686AbjAFP34 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Jan 2023 10:29:56 -0500
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 195A58CD1C;
+        Fri,  6 Jan 2023 07:29:41 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VzlNRBz6nQ9UDGDsJbAeAUj1BtXKyC077cv5ZIpanThL2AZ3wT5f0XC/sKL8Mgl9NAUo0S9fEvGXL4DrJxwJSwmViFwvbRKAx1iM7AK8tLGS5nLzStMiAY9hj9MN3QkVXSmchlTswuN/IQ/QpSZqIinWqvIeymw6z0LTkmYNZsGR59XuL1aSe1wIRHsayo6dKOui97UjEoooC0Uo1rULMCdpmX4Gf+bKYiN3I3QalvJ4klaL1BzNZIy3Sp0h1GBHtu7rMAKa7tLNrkxoQBZ5Q0/7404ecjCVd3UywGHsexUC9wd+YFvxWvB2tJI9x45i9Gu4oLPP+adw+sCMQWodjA==
+ b=Sxn/Hufzxj18l3GKdTbXsezucMCwUtnTb0h3ACqNvu3HKmqMVwCAGApK8w4UkxPrJJm0V3L/4sWSF53gCa4jRvGy/TCw0QLIfZaf3UO0+fIravxFNGsxsyxTPDuBr9p9TxwMINYoCj13MmcTU+SKqN2feM0ZiFhPAjvE6voxqaw8ZzSelpUA4lYcY/mRLpDrz45Dw0gmyuHvSbZAs0ofTK+z1+7AseA+siPrUhU41hROjJZExMvIxFeJhD5KRAUOyhqw7xbvxylJtB55Sj30XC7g+7cu96fO1OGvbkSOQSn64tOlS9PHoplvqX/ZRWV6oLEk0WyuKepl6rEZbLtXrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eM6KUc/IqbulPoLcB75niZTNeCw5/ogKpuZKNi+N4kI=;
- b=FxOgORJo9KHi26aytRbu5jDZZLr5vHaUc4TZbuBETw4aZZIeR3lF/Mu4rmTDaIfy402Lh598X1itbIEjIUcxZB0mCAbgizIODpa9MHamr4cUdHm0s3r8sRSJ8CgGUY/GmJpkmui1bHV+5eNYDINHJMK3P9z74PsAAgunxjpslt+oFdQW+3N5TY9jvYfopqNFOArSXrwTUlVgsWFcz8FjjEwY/8/p3xkxrIh6G2tSzXtvsJLv8LwQsRu/dKvsjfcPWDcI8bgrVjeUGV9oSe8XlK0CZSPV/zZXjJubE5/8Rn1bcwuvwvdadUr6X1AMUW10KmBzDF5AWzni+SDjSLj4mQ==
+ bh=RyBczbMf+mnkU/n6HE+1ZJC0mTMjiA8gyCii6O7Va7k=;
+ b=Jw4gZBEug08BxjF1eTcMaT4oEbaQLRx/QsoJz31CeN9l8nO32paMagX7/sdoSg31Tm5eBcplEClINK83z6yAQi0xYFnBAjE4qmvDWOjxmDfboW5Ul70Tz1OxRLeWVAHP/h/6ZlxTBoAd1RRKhlIb2NayY36MMYRrz0Ue/eHo04gxCaUE+LVEpODoif+Z3Td8Awmou37et8MjqzUXi2tXgDWoPBMkUcWYjaEa7JjKIkIvvNuI5vtuuZztcRtiPrYHT3giBRcu9kzIe02eoGnaNwkbaujzf5lM9nOLkAQdRZbapdu8H9vhOlinSA18RzgctzanEdR6oj8LxnJFLM+wCQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
  smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
  header.from=nvidia.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eM6KUc/IqbulPoLcB75niZTNeCw5/ogKpuZKNi+N4kI=;
- b=RJirIii77vUd4hmpLAEM7/TP+5Cz9/QzI1CQo1eHeprRbLzNUA4F1bc2xu6+KL9h/h0B3pKSc2QosDSgZ+INJjxyqxUaXF0tKDPueI2FHEaXqwPBCPUPA8ZsduTU1qXh2W7qMQU4wrg+dR83Mg3KoYfDUddoAiVgb60Px8pacB/QagJIcwj8zlZeghHgijAvOnSLEG2cgQ0UFF1sNf/KUKGPZb1/+iJP6metFLGnmeyE13vBEW4/A/pJN75m+NZfk0RrKJmTkYs6VmEr8pseTsX8W9DzOIPvy+4RZ8r+QKb0rG9Z/VFJxk1kWs4HYM7LZvof+anmiUMq62bxGSuu2Q==
-Received: from BN9P220CA0014.NAMP220.PROD.OUTLOOK.COM (2603:10b6:408:13e::19)
- by DS7PR12MB5792.namprd12.prod.outlook.com (2603:10b6:8:77::22) with
+ bh=RyBczbMf+mnkU/n6HE+1ZJC0mTMjiA8gyCii6O7Va7k=;
+ b=i8mK2jFOxGAUhVKxckU3d/r1U0PI1ZrPIwLhWOvUuaZKLnO8XsIU9nhYWOFFnra5hDGD9LZ63CvCimjH2GDuG46DOL4zEv+LjEU37UBIo731+7TN1es/zOiWuj0m5qqnUa/t1cNFhdNOAo01ck0IHWp4LxOA9SLhafbwNCMxv1jhmFC7zzbUjY1PB1xKg/Sji9Y0LTa3QKMc++VqqpKRTBIOKsRFdReTFsxNx2wpllqL0wJDJXft9gbB0W52HaPHJruQFwtaCfcBxSxnsbA4aw7+h09NP8FW1PQEJtMoLBIltSycxTGbbDgwrGyDbiAd4hRHGsXRsA0Zihj9vfKszg==
+Received: from MW4PR03CA0044.namprd03.prod.outlook.com (2603:10b6:303:8e::19)
+ by CY8PR12MB8316.namprd12.prod.outlook.com (2603:10b6:930:7a::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.19; Fri, 6 Jan
- 2023 15:29:34 +0000
-Received: from BN8NAM11FT081.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:13e:cafe::89) by BN9P220CA0014.outlook.office365.com
- (2603:10b6:408:13e::19) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 15:29:39 +0000
+Received: from CO1NAM11FT066.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8e:cafe::39) by MW4PR03CA0044.outlook.office365.com
+ (2603:10b6:303:8e::19) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.15 via Frontend
- Transport; Fri, 6 Jan 2023 15:29:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ Transport; Fri, 6 Jan 2023 15:29:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT081.mail.protection.outlook.com (10.13.177.233) with Microsoft SMTP
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT066.mail.protection.outlook.com (10.13.175.18) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5944.17 via Frontend Transport; Fri, 6 Jan 2023 15:29:33 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.5966.17 via Frontend Transport; Fri, 6 Jan 2023 15:29:38 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 6 Jan 2023
- 07:29:20 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 07:29:29 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 6 Jan 2023
- 07:29:19 -0800
+ 07:29:28 -0800
 Received: from moonraker.nvidia.com (10.127.8.13) by mail.nvidia.com
  (10.129.68.9) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Fri, 6 Jan 2023 07:29:17 -0800
+ Transport; Fri, 6 Jan 2023 07:29:26 -0800
 From:   Jon Hunter <jonathanh@nvidia.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -69,11 +69,11 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Vinod Koul <vkoul@kernel.org>
 CC:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <waynec@nvidia.com>, Thierry Reding <treding@nvidia.com>,
+        <waynec@nvidia.com>, Sing-Han Chen <singhanc@nvidia.com>,
         Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V5 3/6] arm64: tegra: Enable XUSB host function on Jetson AGX Orin
-Date:   Fri, 6 Jan 2023 15:28:55 +0000
-Message-ID: <20230106152858.49574-4-jonathanh@nvidia.com>
+Subject: [PATCH V5 6/6] usb: host: xhci-tegra: Add Tegra234 XHCI support
+Date:   Fri, 6 Jan 2023 15:28:58 +0000
+Message-ID: <20230106152858.49574-7-jonathanh@nvidia.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230106152858.49574-1-jonathanh@nvidia.com>
 References: <20230106152858.49574-1-jonathanh@nvidia.com>
@@ -83,369 +83,594 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT081:EE_|DS7PR12MB5792:EE_
-X-MS-Office365-Filtering-Correlation-Id: fcb10b6f-bc85-4527-e714-08daeffad01a
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT066:EE_|CY8PR12MB8316:EE_
+X-MS-Office365-Filtering-Correlation-Id: b9b8d791-2f60-49aa-afc8-08daeffad323
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1zjI1se6pcjrgaJSztQX9bHFrO/AsRZwAYacs8kVmLBXgWXO53TkaM4Iv3YEOcfLv8zRQLfDE3r5pyerzNag8b7VkBqZ19Lserhu7viktBrAIj6L4St9rjaK6fXfUhJcyinyVWmDd90k4+7WgnlCijgekEpsR4S3sOdgdbwOmvXQW9KfnG2nliO6TFr2SERVxdobhGFWOWlWH+xB4fotu13wyeunouptNJxASlKMsBoHUh7PEwgpNr9xxhlONFXtu7lt1H14IHYpOqTHyx6ypkgS+bIcrprhKVi0g7nrH0+dmnejWJ2gYPOTdNkHLL91lqUt7pPjoNf97uxeq3ya4q+/ExsM3HfZ+ZXzDpz51/V1PyCc9QnqQy/Mk7fswxe7nHyVyv168a1vd/EVc8QK5MmoUhuvKbkT6hu1cB9Izxhh/9j5YdUspfK4L7V8bTy3FjTemhUu+dx0zfwmfn7rN/gDEB5IyvuANdT/qTGmGQeyZP22E4gur32Q07BvQpE7h8UaNqvHp5TzrYA/B8CuzZgqjq9cgj+hbWd3rylnkIT2pHY7ZuDI7aVbLEnYBaP666sG3P+I8U158LMGMQ1WJvBtt5wf8QJ0WnTIScSgPde0HZUEkSsPKA7eexLZbhAi3V4K8n5eI40lLRjuSNmDA4xUfXZ+eABtki3dNDw8c1Q5M+BSpnAtk7s+UX2Lgf+p2EShiP8+IokfQkPBEw88Ew==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(376002)(346002)(39860400002)(451199015)(40470700004)(46966006)(36840700001)(82740400003)(7636003)(356005)(40480700001)(82310400005)(86362001)(316002)(40460700003)(54906003)(36756003)(1076003)(2616005)(7696005)(110136005)(478600001)(107886003)(6666004)(26005)(186003)(5660300002)(2906002)(83380400001)(36860700001)(70586007)(8676002)(70206006)(4326008)(41300700001)(336012)(8936002)(47076005)(426003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: DyRnuW7Mn3cPyHaZ78uvTy/L7Da6NrHADugmN54h2eAo0+FC1V784iJlt0HeCu80TCmfxgUWV+kQ9Dvk2PpwoyHZjTk4WKkgtH/ZhtoZjp11COKGNMfoA5lP1PFnSACAkJimy7MWui12nOZfX5tf0o0Pfq522doGWSxTOfX+qHf/k44D6e+gQG0r+87ApMmlxKhbqgr9J5lhnfzC+eNiU+qEF+FkVcWy9csOtXqHa8iW0uDAb24iHxg774iT5lkJvQ7ImOVI/JcJoaVyPT7QWZmnuCIev+x7Sb0q2lLKhWxGMpql/c+rYcTaQx2eC5G2UMiqzyAgv8m0ODsXF23gHpsPjnHqr7B3Z6WAiaqW4b+Pc+398z6mH4i/T+ukqEDIiqwIBFpFdX5Pe16xDUbXQap0K70CXMR6pIzORioRNwzX1oiraskXJqeIo69LCbm3tgl/JmGNST/AIM5c8opxJHxvzfLbgVU+FLuMSc8Cc4h+TQRVfAma4kG8pmKxVLT/4HZ9MLLdWjuYlTn3HkWJG3sinSQim2uHzz0Gg1vbvKLvL0gbtWiNxc/OKVcfXQszMiiFZSx3i0FMSYj33z0uSoZzOSViBhb8iN97AheC6mpJYUT7RI7mysoZ2ars6UxgTnxbiD3fvMtZAgIyxwkYl81TT+x2F87LoBbtgPaGIHnLQULLPGzRlKwOmz+mSNiWKKsJvg/OZIerrY5nF0h7vA==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(376002)(346002)(39860400002)(451199015)(40470700004)(46966006)(36840700001)(5660300002)(8676002)(4326008)(316002)(41300700001)(70586007)(8936002)(54906003)(110136005)(2906002)(6666004)(7696005)(70206006)(26005)(107886003)(478600001)(186003)(40480700001)(86362001)(83380400001)(36860700001)(1076003)(336012)(2616005)(47076005)(426003)(82740400003)(36756003)(356005)(40460700003)(82310400005)(30864003)(7636003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2023 15:29:33.6601
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2023 15:29:38.8446
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcb10b6f-bc85-4527-e714-08daeffad01a
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9b8d791-2f60-49aa-afc8-08daeffad323
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT081.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT066.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5792
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8316
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Wayne Chang <waynec@nvidia.com>
+From: Sing-Han Chen <singhanc@nvidia.com>
 
-This commit enables XUSB host and pad controller on Jetson AGX Orin.
+This change adds Tegra234 XUSB host mode controller support.
 
+In Tegra234, some of the registers have moved to bar2 space.
+The new soc variable has_bar2 indicates the chip with bar2
+area. This patch adds new reg helper to let the driver reuse
+the same code for those chips with bar2 support.
+
+Signed-off-by: Sing-Han Chen <singhanc@nvidia.com>
+Co-developed-by: Wayne Chang <waynec@nvidia.com>
 Signed-off-by: Wayne Chang <waynec@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
-V4 -> V5: No changes
-V3 -> V4: dropped support for the USB device and type-c connector
-V2 -> V3: nothing has changed but added the dependency here
-V1 -> V2: removed the redundant cells and status in ucsi-cc
+V4 -> V5: no changes
+V3 -> V4: fixed checkpatch warnings
+V2 -> V3: nothing has changed
+V1 -> V2: fix some issues on coding style
 
- .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |  48 ++++++
- .../nvidia/tegra234-p3737-0000+p3701-0000.dts |  93 +++++++++++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 145 ++++++++++++++++++
- 3 files changed, 286 insertions(+)
+ drivers/usb/host/xhci-tegra.c | 267 +++++++++++++++++++++++++++++-----
+ 1 file changed, 228 insertions(+), 39 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-index 8b86ea9cb50c..4fae2547e90e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-@@ -67,6 +67,29 @@ mmc@3460000 {
- 			non-removable;
- 		};
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 41fb33833890..1ff22f675930 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -44,6 +44,9 @@
+ #define XUSB_CFG_4				0x010
+ #define  XUSB_BASE_ADDR_SHIFT			15
+ #define  XUSB_BASE_ADDR_MASK			0x1ffff
++#define XUSB_CFG_7				0x01c
++#define  XUSB_BASE2_ADDR_SHIFT			16
++#define  XUSB_BASE2_ADDR_MASK			0xffff
+ #define XUSB_CFG_16				0x040
+ #define XUSB_CFG_24				0x060
+ #define XUSB_CFG_AXI_CFG			0x0f8
+@@ -75,6 +78,20 @@
+ #define  MBOX_SMI_INTR_FW_HANG			BIT(1)
+ #define  MBOX_SMI_INTR_EN			BIT(3)
  
-+		padctl@3520000 {
-+			vclamp-usb-supply = <&vdd_ao_1v8>;
-+			avdd-usb-supply = <&vdd_ao_3v3>;
++/* BAR2 registers */
++#define XUSB_BAR2_ARU_MBOX_CMD			0x004
++#define XUSB_BAR2_ARU_MBOX_DATA_IN		0x008
++#define XUSB_BAR2_ARU_MBOX_DATA_OUT		0x00c
++#define XUSB_BAR2_ARU_MBOX_OWNER		0x010
++#define XUSB_BAR2_ARU_SMI_INTR			0x014
++#define XUSB_BAR2_ARU_SMI_ARU_FW_SCRATCH_DATA0	0x01c
++#define XUSB_BAR2_ARU_IFRDMA_CFG0		0x0e0
++#define XUSB_BAR2_ARU_IFRDMA_CFG1		0x0e4
++#define XUSB_BAR2_ARU_IFRDMA_STREAMID_FIELD	0x0e8
++#define XUSB_BAR2_ARU_C11_CSBRANGE		0x9c
++#define XUSB_BAR2_ARU_FW_SCRATCH		0x1000
++#define XUSB_BAR2_CSB_BASE_ADDR			0x2000
 +
-+			ports {
-+				usb2-0 {
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
+ /* IPFS registers */
+ #define IPFS_XUSB_HOST_MSI_BAR_SZ_0		0x0c0
+ #define IPFS_XUSB_HOST_MSI_AXI_BAR_ST_0		0x0c4
+@@ -111,6 +128,9 @@
+ #define  IMFILLRNG1_TAG_HI_SHIFT		16
+ #define XUSB_FALC_IMFILLCTL			0x158
+ 
++/* CSB ARU registers */
++#define XUSB_CSB_ARU_SCRATCH0			0x100100
 +
-+				usb2-1 {
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
+ /* MP CSB registers */
+ #define XUSB_CSB_MP_ILOAD_ATTR			0x101a00
+ #define XUSB_CSB_MP_ILOAD_BASE_LO		0x101a04
+@@ -131,6 +151,9 @@
+ 
+ #define IMEM_BLOCK_SIZE				256
+ 
++#define FW_IOCTL_TYPE_SHIFT			24
++#define FW_IOCTL_CFGTBL_READ		17
 +
-+				usb2-2 {
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+
-+				usb2-3 {
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+			};
-+		};
-+
- 		rtc@c2a0000 {
- 			status = "okay";
- 		};
-@@ -75,4 +98,29 @@ pmc@c360000 {
- 			nvidia,invert-interrupt;
- 		};
- 	};
-+
-+	vdd_5v0_sys: regulator-vdd-5v0-sys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VIN_SYS_5V0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vdd_ao_1v8: regulator-vdd-1v8-ao {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd-AO-1v8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_ao_3v3: regulator-vdd-3v3-ao {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd-AO-3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
+ struct tegra_xusb_fw_header {
+ 	__le32 boot_loadaddr_in_imem;
+ 	__le32 boot_codedfi_offset;
+@@ -175,6 +198,7 @@ struct tegra_xusb_mbox_regs {
+ 	u16 data_in;
+ 	u16 data_out;
+ 	u16 owner;
++	u16 smi_intr;
  };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-index 96aa2267b06d..32c58aa00035 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-@@ -2022,6 +2022,99 @@ hda@3510000 {
- 			nvidia,model = "NVIDIA Jetson AGX Orin HDA";
- 			status = "okay";
- 		};
-+
-+		padctl@3520000 {
-+			status = "okay";
-+
-+			pads {
-+				usb2 {
-+					lanes {
-+						usb2-0 {
-+							status = "okay";
-+						};
-+
-+						usb2-1 {
-+							status = "okay";
-+						};
-+
-+						usb2-2 {
-+							status = "okay";
-+						};
-+
-+						usb2-3 {
-+							status = "okay";
-+						};
-+					};
-+				};
-+
-+				usb3 {
-+					lanes {
-+						usb3-0 {
-+							status = "okay";
-+						};
-+
-+						usb3-1 {
-+							status = "okay";
-+						};
-+
-+						usb3-2 {
-+							status = "okay";
-+						};
-+					};
-+				};
-+			};
-+
-+			ports {
-+				usb2-0 {
-+					mode = "host";
-+					status = "okay";
-+				};
-+
-+				usb2-1 {
-+					mode = "host";
-+					status = "okay";
-+				};
-+
-+				usb2-2 {
-+					mode = "host";
-+					status = "okay";
-+				};
-+
-+				usb2-3 {
-+					mode = "host";
-+					status = "okay";
-+				};
-+
-+				usb3-0 {
-+					nvidia,usb2-companion = <1>;
-+					status = "okay";
-+				};
-+
-+				usb3-1 {
-+					nvidia,usb2-companion = <0>;
-+					status = "okay";
-+				};
-+
-+				usb3-2 {
-+					nvidia,usb2-companion = <3>;
-+					status = "okay";
-+				};
-+			};
-+		};
-+
-+		usb@3610000 {
-+			status = "okay";
-+
-+			phys =	<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
-+				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
-+				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-2}>,
-+				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-3}>,
-+				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-0}>,
-+				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-1}>,
-+				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-2}>;
-+			phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3",
-+				"usb3-0", "usb3-1", "usb3-2";
-+		};
- 	};
  
- 	chosen {
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index ec8a28a9d380..d71b0b5b931c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -1079,6 +1079,151 @@ hda@3510000 {
- 			status = "disabled";
- 		};
+ struct tegra_xusb_context_soc {
+@@ -189,6 +213,14 @@ struct tegra_xusb_context_soc {
+ 	} fpci;
+ };
  
-+		xusb_padctl: padctl@3520000 {
-+			compatible = "nvidia,tegra234-xusb-padctl";
-+			reg = <0x03520000 0x20000>,
-+			      <0x03540000 0x10000>;
-+			reg-names = "padctl", "ao";
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++struct tegra_xusb;
++struct tegra_xusb_soc_ops {
++	u32 (*mbox_reg_readl)(struct tegra_xusb *tegra, unsigned int offset);
++	void (*mbox_reg_writel)(struct tegra_xusb *tegra, u32 value, unsigned int offset);
++	u32 (*csb_reg_readl)(struct tegra_xusb *tegra, unsigned int offset);
++	void (*csb_reg_writel)(struct tegra_xusb *tegra, u32 value, unsigned int offset);
++};
 +
-+			resets = <&bpmp TEGRA234_RESET_XUSB_PADCTL>;
-+			reset-names = "padctl";
+ struct tegra_xusb_soc {
+ 	const char *firmware;
+ 	const char * const *supply_names;
+@@ -205,11 +237,14 @@ struct tegra_xusb_soc {
+ 	} ports;
+ 
+ 	struct tegra_xusb_mbox_regs mbox;
++	const struct tegra_xusb_soc_ops *ops;
+ 
+ 	bool scale_ss_clock;
+ 	bool has_ipfs;
+ 	bool lpm_support;
+ 	bool otg_reset_sspi;
 +
-+			status = "disabled";
++	bool has_bar2;
+ };
+ 
+ struct tegra_xusb_context {
+@@ -230,6 +265,8 @@ struct tegra_xusb {
+ 
+ 	void __iomem *ipfs_base;
+ 	void __iomem *fpci_base;
++	void __iomem *bar2_base;
++	struct resource *bar2;
+ 
+ 	const struct tegra_xusb_soc *soc;
+ 
+@@ -301,7 +338,33 @@ static inline void ipfs_writel(struct tegra_xusb *tegra, u32 value,
+ 	writel(value, tegra->ipfs_base + offset);
+ }
+ 
++static inline u32 bar2_readl(struct tegra_xusb *tegra, unsigned int offset)
++{
++	return readl(tegra->bar2_base + offset);
++}
 +
-+			pads {
-+				usb2 {
-+					clocks = <&bpmp TEGRA234_CLK_USB2_TRK>;
-+					clock-names = "trk";
++static inline void bar2_writel(struct tegra_xusb *tegra, u32 value,
++			       unsigned int offset)
++{
++	writel(value, tegra->bar2_base + offset);
++}
 +
-+					lanes {
-+						usb2-0 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
+ static u32 csb_readl(struct tegra_xusb *tegra, unsigned int offset)
++{
++	const struct tegra_xusb_soc_ops *ops = tegra->soc->ops;
 +
-+						usb2-1 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
++	return ops->csb_reg_readl(tegra, offset);
++}
 +
-+						usb2-2 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
++static void csb_writel(struct tegra_xusb *tegra, u32 value,
++		       unsigned int offset)
++{
++	const struct tegra_xusb_soc_ops *ops = tegra->soc->ops;
 +
-+						usb2-3 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+					};
-+				};
++	ops->csb_reg_writel(tegra, value, offset);
++}
 +
-+				usb3 {
-+					lanes {
-+						usb3-0 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
++static u32 fpci_csb_readl(struct tegra_xusb *tegra, unsigned int offset)
+ {
+ 	u32 page = CSB_PAGE_SELECT(offset);
+ 	u32 ofs = CSB_PAGE_OFFSET(offset);
+@@ -311,8 +374,8 @@ static u32 csb_readl(struct tegra_xusb *tegra, unsigned int offset)
+ 	return fpci_readl(tegra, XUSB_CFG_CSB_BASE_ADDR + ofs);
+ }
+ 
+-static void csb_writel(struct tegra_xusb *tegra, u32 value,
+-		       unsigned int offset)
++static void fpci_csb_writel(struct tegra_xusb *tegra, u32 value,
++			    unsigned int offset)
+ {
+ 	u32 page = CSB_PAGE_SELECT(offset);
+ 	u32 ofs = CSB_PAGE_OFFSET(offset);
+@@ -321,6 +384,26 @@ static void csb_writel(struct tegra_xusb *tegra, u32 value,
+ 	fpci_writel(tegra, value, XUSB_CFG_CSB_BASE_ADDR + ofs);
+ }
+ 
++static u32 bar2_csb_readl(struct tegra_xusb *tegra, unsigned int offset)
++{
++	u32 page = CSB_PAGE_SELECT(offset);
++	u32 ofs = CSB_PAGE_OFFSET(offset);
 +
-+						usb3-1 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
++	bar2_writel(tegra, page, XUSB_BAR2_ARU_C11_CSBRANGE);
 +
-+						usb3-2 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
++	return bar2_readl(tegra, XUSB_BAR2_CSB_BASE_ADDR + ofs);
++}
 +
-+						usb3-3 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+					};
-+				};
-+			};
++static void bar2_csb_writel(struct tegra_xusb *tegra, u32 value,
++			    unsigned int offset)
++{
++	u32 page = CSB_PAGE_SELECT(offset);
++	u32 ofs = CSB_PAGE_OFFSET(offset);
 +
-+			ports {
-+				usb2-0 {
-+					status = "disabled";
-+				};
++	bar2_writel(tegra, page, XUSB_BAR2_ARU_C11_CSBRANGE);
++	bar2_writel(tegra, value, XUSB_BAR2_CSB_BASE_ADDR + ofs);
++}
 +
-+				usb2-1 {
-+					status = "disabled";
-+				};
+ static int tegra_xusb_set_ss_clk(struct tegra_xusb *tegra,
+ 				 unsigned long rate)
+ {
+@@ -452,6 +535,7 @@ static bool tegra_xusb_mbox_cmd_requires_ack(enum tegra_xusb_mbox_cmd cmd)
+ static int tegra_xusb_mbox_send(struct tegra_xusb *tegra,
+ 				const struct tegra_xusb_mbox_msg *msg)
+ {
++	const struct tegra_xusb_soc_ops *ops = tegra->soc->ops;
+ 	bool wait_for_idle = false;
+ 	u32 value;
+ 
+@@ -460,15 +544,15 @@ static int tegra_xusb_mbox_send(struct tegra_xusb *tegra,
+ 	 * ACK/NAK messages.
+ 	 */
+ 	if (!(msg->cmd == MBOX_CMD_ACK || msg->cmd == MBOX_CMD_NAK)) {
+-		value = fpci_readl(tegra, tegra->soc->mbox.owner);
++		value = ops->mbox_reg_readl(tegra, tegra->soc->mbox.owner);
+ 		if (value != MBOX_OWNER_NONE) {
+ 			dev_err(tegra->dev, "mailbox is busy\n");
+ 			return -EBUSY;
+ 		}
+ 
+-		fpci_writel(tegra, MBOX_OWNER_SW, tegra->soc->mbox.owner);
++		ops->mbox_reg_writel(tegra, MBOX_OWNER_SW, tegra->soc->mbox.owner);
+ 
+-		value = fpci_readl(tegra, tegra->soc->mbox.owner);
++		value = ops->mbox_reg_readl(tegra, tegra->soc->mbox.owner);
+ 		if (value != MBOX_OWNER_SW) {
+ 			dev_err(tegra->dev, "failed to acquire mailbox\n");
+ 			return -EBUSY;
+@@ -478,17 +562,17 @@ static int tegra_xusb_mbox_send(struct tegra_xusb *tegra,
+ 	}
+ 
+ 	value = tegra_xusb_mbox_pack(msg);
+-	fpci_writel(tegra, value, tegra->soc->mbox.data_in);
++	ops->mbox_reg_writel(tegra, value, tegra->soc->mbox.data_in);
+ 
+-	value = fpci_readl(tegra, tegra->soc->mbox.cmd);
++	value = ops->mbox_reg_readl(tegra, tegra->soc->mbox.cmd);
+ 	value |= MBOX_INT_EN | MBOX_DEST_FALC;
+-	fpci_writel(tegra, value, tegra->soc->mbox.cmd);
++	ops->mbox_reg_writel(tegra, value, tegra->soc->mbox.cmd);
+ 
+ 	if (wait_for_idle) {
+ 		unsigned long timeout = jiffies + msecs_to_jiffies(250);
+ 
+ 		while (time_before(jiffies, timeout)) {
+-			value = fpci_readl(tegra, tegra->soc->mbox.owner);
++			value = ops->mbox_reg_readl(tegra, tegra->soc->mbox.owner);
+ 			if (value == MBOX_OWNER_NONE)
+ 				break;
+ 
+@@ -496,7 +580,7 @@ static int tegra_xusb_mbox_send(struct tegra_xusb *tegra,
+ 		}
+ 
+ 		if (time_after(jiffies, timeout))
+-			value = fpci_readl(tegra, tegra->soc->mbox.owner);
++			value = ops->mbox_reg_readl(tegra, tegra->soc->mbox.owner);
+ 
+ 		if (value != MBOX_OWNER_NONE)
+ 			return -ETIMEDOUT;
+@@ -508,11 +592,12 @@ static int tegra_xusb_mbox_send(struct tegra_xusb *tegra,
+ static irqreturn_t tegra_xusb_mbox_irq(int irq, void *data)
+ {
+ 	struct tegra_xusb *tegra = data;
++	const struct tegra_xusb_soc_ops *ops = tegra->soc->ops;
+ 	u32 value;
+ 
+ 	/* clear mailbox interrupts */
+-	value = fpci_readl(tegra, XUSB_CFG_ARU_SMI_INTR);
+-	fpci_writel(tegra, value, XUSB_CFG_ARU_SMI_INTR);
++	value = ops->mbox_reg_readl(tegra, tegra->soc->mbox.smi_intr);
++	ops->mbox_reg_writel(tegra, value, tegra->soc->mbox.smi_intr);
+ 
+ 	if (value & MBOX_SMI_INTR_FW_HANG)
+ 		dev_err(tegra->dev, "controller firmware hang\n");
+@@ -665,6 +750,7 @@ static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
+ static irqreturn_t tegra_xusb_mbox_thread(int irq, void *data)
+ {
+ 	struct tegra_xusb *tegra = data;
++	const struct tegra_xusb_soc_ops *ops = tegra->soc->ops;
+ 	struct tegra_xusb_mbox_msg msg;
+ 	u32 value;
+ 
+@@ -673,16 +759,16 @@ static irqreturn_t tegra_xusb_mbox_thread(int irq, void *data)
+ 	if (pm_runtime_suspended(tegra->dev) || tegra->suspended)
+ 		goto out;
+ 
+-	value = fpci_readl(tegra, tegra->soc->mbox.data_out);
++	value = ops->mbox_reg_readl(tegra, tegra->soc->mbox.data_out);
+ 	tegra_xusb_mbox_unpack(&msg, value);
+ 
+-	value = fpci_readl(tegra, tegra->soc->mbox.cmd);
++	value = ops->mbox_reg_readl(tegra, tegra->soc->mbox.cmd);
+ 	value &= ~MBOX_DEST_SMI;
+-	fpci_writel(tegra, value, tegra->soc->mbox.cmd);
++	ops->mbox_reg_writel(tegra, value, tegra->soc->mbox.cmd);
+ 
+ 	/* clear mailbox owner if no ACK/NAK is required */
+ 	if (!tegra_xusb_mbox_cmd_requires_ack(msg.cmd))
+-		fpci_writel(tegra, MBOX_OWNER_NONE, tegra->soc->mbox.owner);
++		ops->mbox_reg_writel(tegra, MBOX_OWNER_NONE, tegra->soc->mbox.owner);
+ 
+ 	tegra_xusb_mbox_handle(tegra, &msg);
+ 
+@@ -710,6 +796,15 @@ static void tegra_xusb_config(struct tegra_xusb *tegra)
+ 	value |= regs & (XUSB_BASE_ADDR_MASK << XUSB_BASE_ADDR_SHIFT);
+ 	fpci_writel(tegra, value, XUSB_CFG_4);
+ 
++	/* Program BAR2 space */
++	if (tegra->bar2) {
++		value = fpci_readl(tegra, XUSB_CFG_7);
++		value &= ~(XUSB_BASE2_ADDR_MASK << XUSB_BASE2_ADDR_SHIFT);
++		value |= tegra->bar2->start &
++			(XUSB_BASE2_ADDR_MASK << XUSB_BASE2_ADDR_SHIFT);
++		fpci_writel(tegra, value, XUSB_CFG_7);
++	}
 +
-+				usb2-2 {
-+					status = "disabled";
-+				};
+ 	usleep_range(100, 200);
+ 
+ 	/* Enable bus master */
+@@ -882,21 +977,36 @@ static int tegra_xusb_request_firmware(struct tegra_xusb *tegra)
+ 	return 0;
+ }
+ 
+-static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
++static int tegra_xusb_wait_for_falcon(struct tegra_xusb *tegra)
++{
++	struct xhci_cap_regs __iomem *cap_regs;
++	struct xhci_op_regs __iomem *op_regs;
++	int ret;
++	u32 value;
 +
-+				usb2-3 {
-+					status = "disabled";
-+				};
++	cap_regs = tegra->regs;
++	op_regs = tegra->regs + HC_LENGTH(readl(&cap_regs->hc_capbase));
 +
-+				usb3-0 {
-+					status = "disabled";
-+				};
++	ret = readl_poll_timeout(&op_regs->status, value, !(value & STS_CNR), 1000, 200000);
 +
-+				usb3-1 {
-+					status = "disabled";
-+				};
++	if (ret)
++		dev_err(tegra->dev, "XHCI Controller not ready. Falcon state: 0x%x\n",
++			csb_readl(tegra, XUSB_FALC_CPUCTL));
 +
-+				usb3-2 {
-+					status = "disabled";
-+				};
++	return ret;
++}
 +
-+				usb3-3 {
-+					status = "disabled";
-+				};
-+			};
-+		};
++static int tegra_xusb_load_firmware_rom(struct tegra_xusb *tegra)
+ {
+ 	unsigned int code_tag_blocks, code_size_blocks, code_blocks;
+-	struct xhci_cap_regs __iomem *cap = tegra->regs;
+ 	struct tegra_xusb_fw_header *header;
+ 	struct device *dev = tegra->dev;
+-	struct xhci_op_regs __iomem *op;
+-	unsigned long timeout;
+ 	time64_t timestamp;
+ 	u64 address;
+ 	u32 value;
+ 	int err;
+ 
+ 	header = (struct tegra_xusb_fw_header *)tegra->fw.virt;
+-	op = tegra->regs + HC_LENGTH(readl(&cap->hc_capbase));
+ 
+ 	if (csb_readl(tegra, XUSB_CSB_MP_ILOAD_BASE_LO) != 0) {
+ 		dev_info(dev, "Firmware already loaded, Falcon state %#x\n",
+@@ -969,30 +1079,54 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
+ 	/* Boot Falcon CPU and wait for USBSTS_CNR to get cleared. */
+ 	csb_writel(tegra, CPUCTL_STARTCPU, XUSB_FALC_CPUCTL);
+ 
+-	timeout = jiffies + msecs_to_jiffies(200);
++	if (tegra_xusb_wait_for_falcon(tegra))
++		return -EIO;
 +
-+		usb@3610000 {
-+			compatible = "nvidia,tegra234-xusb";
-+			reg = <0x03610000 0x40000>,
-+			      <0x03600000 0x10000>,
-+			      <0x03650000 0x10000>;
-+			reg-names = "hcd", "fpci", "bar2";
++	timestamp = le32_to_cpu(header->fwimg_created_time);
+ 
+-	do {
+-		value = readl(&op->status);
+-		if ((value & STS_CNR) == 0)
+-			break;
++	dev_info(dev, "Firmware timestamp: %ptTs UTC\n", &timestamp);
 +
-+			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++	return 0;
++}
 +
-+			clocks = <&bpmp TEGRA234_CLK_XUSB_CORE_HOST>,
-+				 <&bpmp TEGRA234_CLK_XUSB_FALCON>,
-+				 <&bpmp TEGRA234_CLK_XUSB_CORE_SS>,
-+				 <&bpmp TEGRA234_CLK_XUSB_SS>,
-+				 <&bpmp TEGRA234_CLK_CLK_M>,
-+				 <&bpmp TEGRA234_CLK_XUSB_FS>,
-+				 <&bpmp TEGRA234_CLK_UTMIP_PLL>,
-+				 <&bpmp TEGRA234_CLK_CLK_M>,
-+				 <&bpmp TEGRA234_CLK_PLLE>;
-+			clock-names = "xusb_host", "xusb_falcon_src",
-+				      "xusb_ss", "xusb_ss_src", "xusb_hs_src",
-+				      "xusb_fs_src", "pll_u_480m", "clk_m",
-+				      "pll_e";
-+			interconnects = <&mc TEGRA234_MEMORY_CLIENT_XUSB_HOSTR &emc>,
-+					<&mc TEGRA234_MEMORY_CLIENT_XUSB_HOSTW &emc>;
-+			interconnect-names = "dma-mem", "write";
-+			iommus = <&smmu_niso1 TEGRA234_SID_XUSB_HOST>;
++static u32 tegra_xusb_read_firmware_header(struct tegra_xusb *tegra, u32 offset)
++{
++	/*
++	 * We only accept reading the firmware config table
++	 * The offset should not exceed the fw header structure
++	 */
++	if (offset >= sizeof(struct tegra_xusb_fw_header))
++		return 0;
+ 
+-		usleep_range(1000, 2000);
+-	} while (time_is_after_jiffies(timeout));
++	bar2_writel(tegra, (FW_IOCTL_CFGTBL_READ << FW_IOCTL_TYPE_SHIFT) | offset,
++		    XUSB_BAR2_ARU_FW_SCRATCH);
++	return bar2_readl(tegra, XUSB_BAR2_ARU_SMI_ARU_FW_SCRATCH_DATA0);
++}
 +
-+			power-domains = <&bpmp TEGRA234_POWER_DOMAIN_XUSBC>,
-+					<&bpmp TEGRA234_POWER_DOMAIN_XUSBA>;
-+			power-domain-names = "xusb_host", "xusb_ss";
++static int tegra_xusb_init_ifr_firmware(struct tegra_xusb *tegra)
++{
++	time64_t timestamp;
+ 
+-	value = readl(&op->status);
+-	if (value & STS_CNR) {
+-		value = csb_readl(tegra, XUSB_FALC_CPUCTL);
+-		dev_err(dev, "XHCI controller not read: %#010x\n", value);
++	if (tegra_xusb_wait_for_falcon(tegra))
+ 		return -EIO;
+-	}
+ 
+-	timestamp = le32_to_cpu(header->fwimg_created_time);
++#define offsetof_32(X, Y) ((u8)(offsetof(X, Y) / sizeof(__le32)))
++	timestamp = tegra_xusb_read_firmware_header(tegra, offsetof_32(struct tegra_xusb_fw_header,
++								       fwimg_created_time) << 2);
+ 
+-	dev_info(dev, "Firmware timestamp: %ptTs UTC\n", &timestamp);
++	dev_info(tegra->dev, "Firmware timestamp: %ptTs UTC\n", &timestamp);
+ 
+ 	return 0;
+ }
+ 
++static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
++{
++	if (!tegra->soc->firmware)
++		return tegra_xusb_init_ifr_firmware(tegra);
++	else
++		return tegra_xusb_load_firmware_rom(tegra);
++}
 +
-+			nvidia,xusb-padctl = <&xusb_padctl>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
+ static void tegra_xusb_powerdomain_remove(struct device *dev,
+ 					  struct tegra_xusb *tegra)
+ {
+@@ -1436,6 +1570,10 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		tegra->ipfs_base = devm_platform_ioremap_resource(pdev, 2);
+ 		if (IS_ERR(tegra->ipfs_base))
+ 			return PTR_ERR(tegra->ipfs_base);
++	} else if (tegra->soc->has_bar2) {
++		tegra->bar2_base = devm_platform_get_and_ioremap_resource(pdev, 2, &tegra->bar2);
++		if (IS_ERR(tegra->bar2_base))
++			return PTR_ERR(tegra->bar2_base);
+ 	}
+ 
+ 	tegra->xhci_irq = platform_get_irq(pdev, 0);
+@@ -1652,10 +1790,13 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		goto disable_phy;
+ 	}
+ 
+-	err = tegra_xusb_request_firmware(tegra);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to request firmware: %d\n", err);
+-		goto disable_phy;
++	if (tegra->soc->firmware) {
++		err = tegra_xusb_request_firmware(tegra);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"failed to request firmware: %d\n", err);
++			goto disable_phy;
++		}
+ 	}
+ 
+ 	err = tegra_xusb_unpowergate_partitions(tegra);
+@@ -2320,6 +2461,13 @@ static const struct tegra_xusb_context_soc tegra124_xusb_context = {
+ 	},
+ };
+ 
++static const struct tegra_xusb_soc_ops tegra124_ops = {
++	.mbox_reg_readl = &fpci_readl,
++	.mbox_reg_writel = &fpci_writel,
++	.csb_reg_readl = &fpci_csb_readl,
++	.csb_reg_writel = &fpci_csb_writel,
++};
 +
- 		fuse@3810000 {
- 			compatible = "nvidia,tegra234-efuse";
- 			reg = <0x03810000 0x10000>;
+ static const struct tegra_xusb_soc tegra124_soc = {
+ 	.firmware = "nvidia/tegra124/xusb.bin",
+ 	.supply_names = tegra124_supply_names,
+@@ -2335,11 +2483,13 @@ static const struct tegra_xusb_soc tegra124_soc = {
+ 	.scale_ss_clock = true,
+ 	.has_ipfs = true,
+ 	.otg_reset_sspi = false,
++	.ops = &tegra124_ops,
+ 	.mbox = {
+ 		.cmd = 0xe4,
+ 		.data_in = 0xe8,
+ 		.data_out = 0xec,
+ 		.owner = 0xf0,
++		.smi_intr = XUSB_CFG_ARU_SMI_INTR,
+ 	},
+ };
+ MODULE_FIRMWARE("nvidia/tegra124/xusb.bin");
+@@ -2371,11 +2521,13 @@ static const struct tegra_xusb_soc tegra210_soc = {
+ 	.scale_ss_clock = false,
+ 	.has_ipfs = true,
+ 	.otg_reset_sspi = true,
++	.ops = &tegra124_ops,
+ 	.mbox = {
+ 		.cmd = 0xe4,
+ 		.data_in = 0xe8,
+ 		.data_out = 0xec,
+ 		.owner = 0xf0,
++		.smi_intr = XUSB_CFG_ARU_SMI_INTR,
+ 	},
+ };
+ MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
+@@ -2412,11 +2564,13 @@ static const struct tegra_xusb_soc tegra186_soc = {
+ 	.scale_ss_clock = false,
+ 	.has_ipfs = false,
+ 	.otg_reset_sspi = false,
++	.ops = &tegra124_ops,
+ 	.mbox = {
+ 		.cmd = 0xe4,
+ 		.data_in = 0xe8,
+ 		.data_out = 0xec,
+ 		.owner = 0xf0,
++		.smi_intr = XUSB_CFG_ARU_SMI_INTR,
+ 	},
+ 	.lpm_support = true,
+ };
+@@ -2443,21 +2597,56 @@ static const struct tegra_xusb_soc tegra194_soc = {
+ 	.scale_ss_clock = false,
+ 	.has_ipfs = false,
+ 	.otg_reset_sspi = false,
++	.ops = &tegra124_ops,
+ 	.mbox = {
+ 		.cmd = 0x68,
+ 		.data_in = 0x6c,
+ 		.data_out = 0x70,
+ 		.owner = 0x74,
++		.smi_intr = XUSB_CFG_ARU_SMI_INTR,
+ 	},
+ 	.lpm_support = true,
+ };
+ MODULE_FIRMWARE("nvidia/tegra194/xusb.bin");
+ 
++static const struct tegra_xusb_soc_ops tegra234_ops = {
++	.mbox_reg_readl = &bar2_readl,
++	.mbox_reg_writel = &bar2_writel,
++	.csb_reg_readl = &bar2_csb_readl,
++	.csb_reg_writel = &bar2_csb_writel,
++};
++
++static const struct tegra_xusb_soc tegra234_soc = {
++	.supply_names = tegra194_supply_names,
++	.num_supplies = ARRAY_SIZE(tegra194_supply_names),
++	.phy_types = tegra194_phy_types,
++	.num_types = ARRAY_SIZE(tegra194_phy_types),
++	.context = &tegra186_xusb_context,
++	.ports = {
++		.usb3 = { .offset = 0, .count = 4, },
++		.usb2 = { .offset = 4, .count = 4, },
++	},
++	.scale_ss_clock = false,
++	.has_ipfs = false,
++	.otg_reset_sspi = false,
++	.ops = &tegra234_ops,
++	.mbox = {
++		.cmd = XUSB_BAR2_ARU_MBOX_CMD,
++		.data_in = XUSB_BAR2_ARU_MBOX_DATA_IN,
++		.data_out = XUSB_BAR2_ARU_MBOX_DATA_OUT,
++		.owner = XUSB_BAR2_ARU_MBOX_OWNER,
++		.smi_intr = XUSB_BAR2_ARU_SMI_INTR,
++	},
++	.lpm_support = true,
++	.has_bar2 = true,
++};
++
+ static const struct of_device_id tegra_xusb_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-xusb", .data = &tegra124_soc },
+ 	{ .compatible = "nvidia,tegra210-xusb", .data = &tegra210_soc },
+ 	{ .compatible = "nvidia,tegra186-xusb", .data = &tegra186_soc },
+ 	{ .compatible = "nvidia,tegra194-xusb", .data = &tegra194_soc },
++	{ .compatible = "nvidia,tegra234-xusb", .data = &tegra234_soc },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
 -- 
 2.25.1
 
