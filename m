@@ -2,145 +2,131 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BB9C5479D
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Jan 2023 11:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5A5C46467
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Jan 2023 11:24:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231661AbjAKLSW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Jan 2023 06:18:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50160 "EHLO
+        id S232762AbjAKLYz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Jan 2023 06:24:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231499AbjAKLSH (ORCPT
+        with ESMTP id S231947AbjAKLYW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Jan 2023 06:18:07 -0500
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2052.outbound.protection.outlook.com [40.107.223.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DDBED2C2;
-        Wed, 11 Jan 2023 03:18:05 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fnElb/yeigB894jCwr1cEJuhuKTlWVDeU7TzLcC0Lr8zaRuM/XLMgyhzZpdzVoTbzlPrr3sAT0AZfPi3WshZLMvektD+YIpkK3zIVVSsc7GUCsY/bjK064U95Xf2bwhSK4281sbDSyFmu0SKKC79TR6KqVbJpZSs7KXQHzyIDn+D4ylORqZeqR6lrm1JTq7OM4UXemsWegiMfIldVxdNUozXp/Ar/7a/h1atCLN7h6JuCfCNfsgugq2GVlvmiFbCyq0s6QC4nQUm+9gkpKFe5nQxYN6oXZzfWcNQXir+PxdrfM+uU84vYu7GLZ9qDRuK+vmzl0vg7hXG4FMXr6l/1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kuDOSvfS9Cth5Xq+4GE1yqvNKZlN1ZxoBbki7Kox7A0=;
- b=ZVQEavEvPMWRCfRcPfTcv8Os6y/p/cX+3KqxfPu5gTYHSQNgKlr72j8TjwxHkUPH5K7757OnrqjefeMgPNosMhuK8Yg4NxdB9GCdjqdGcbUP4Z1fB/rCNdf5WrbWGDY5Bb2C+R+535EAc4JCnVK450IysqLnonFTPTR9yHfqpdi81fYEvK4CJUEuKmW8uUJ1ulhVAxBC6OvQgxx82LQ+MlVBqR1Vtk4Aa+YlZHj6FzAzkvZ1uQmVD6oB32gGQoGP0hypczroptBiPCG7O2RXmh36/pEEE5gPzK+cCUQg2nk/EdXIM+RuZI+f6pUJwszY3fBenW/QzyjW9u13evq4UQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kuDOSvfS9Cth5Xq+4GE1yqvNKZlN1ZxoBbki7Kox7A0=;
- b=lkLhYypoFm8mYp6O05qQZZqyBQF0nKjluNryQTl4Ns0l6+A3iIMFh7L96Zl7USQ5otNs0xfMPqo40r1RRke2y7LGcQgkTIMOgaXkzoM41Nb6NCJV92h0CiKsnTIeFz7NnQ4FELh87sm93fPt4GMrcLXBVY11T7ZF9PI/hE/CTzi64a7Cwe7n48EGiLyG1i6ATYi4zc7w5WeHQ96Hxxt8uMGzciiK7SqHcKGba98BqkW99vWJpsGEiNiTZy2aBcaY9ZaM5uWVLjpxGHFCMOtvhVIN6urEzMNeBX4gY64rGl77Wj9/xbTrGTgPKv8w2GBNalGKKdmI2qpMH+AE58kyIA==
-Received: from MN2PR14CA0022.namprd14.prod.outlook.com (2603:10b6:208:23e::27)
- by DS0PR12MB7557.namprd12.prod.outlook.com (2603:10b6:8:133::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Wed, 11 Jan
- 2023 11:18:02 +0000
-Received: from BL02EPF000108E8.namprd05.prod.outlook.com
- (2603:10b6:208:23e:cafe::d2) by MN2PR14CA0022.outlook.office365.com
- (2603:10b6:208:23e::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13 via Frontend
- Transport; Wed, 11 Jan 2023 11:18:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF000108E8.mail.protection.outlook.com (10.167.241.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6002.11 via Frontend Transport; Wed, 11 Jan 2023 11:18:02 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 11 Jan
- 2023 03:17:45 -0800
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 11 Jan
- 2023 03:17:45 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
- Transport; Wed, 11 Jan 2023 03:17:45 -0800
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 6.0 000/148] 6.0.19-rc1 review
-In-Reply-To: <20230110180017.145591678@linuxfoundation.org>
-References: <20230110180017.145591678@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Wed, 11 Jan 2023 06:24:22 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B58C178B8;
+        Wed, 11 Jan 2023 03:24:19 -0800 (PST)
+Received: from [192.168.0.192] (unknown [194.146.248.75])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: andrzej.p)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E9B476602D94;
+        Wed, 11 Jan 2023 11:24:17 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1673436258;
+        bh=9716wfRPFGOMs2DfirAMEiT8iDV6vFXibBOCO8LljYQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=VLXPwvkFWpaY5B8KiMxxfHYdCj4qvsGayFP32SHSuMUrmiTrr5Lgpw2+ixur1a0dc
+         JinECQxCjip9zpnIDZhog2Xy5Jn0ocW2mnVfaohx9+zVIx8+BPtvKiFWC5A0Am+m3O
+         HqEfYorBrEsILwWVkuS6WplZJ/VhUloUtExalSLTUzB+NlnPOvcs37V7qN8h/+QFfP
+         7j5+jvgHMPmUeawX0DCWdoPZ68pSHeU0Sh7YipKHGoGuxeuGYOQmYdHcUOiDmBeBbw
+         TRpbPy6mGUW1JtW3Xr0UmpaYjnd2+s2FGjBQ24CUaJ68bnqC9YFMSaA/f7JAlB8rWn
+         TIHJ0hUA0ok8A==
+Message-ID: <d3a71fe5-d631-9390-1bc2-7aaad834bec8@collabora.com>
+Date:   Wed, 11 Jan 2023 12:24:14 +0100
 MIME-Version: 1.0
-Message-ID: <46a17533-142f-4952-b9f4-760b7ea4642d@rnnvmail205.nvidia.com>
-Date:   Wed, 11 Jan 2023 03:17:45 -0800
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF000108E8:EE_|DS0PR12MB7557:EE_
-X-MS-Office365-Filtering-Correlation-Id: 714150d3-38c4-4835-bd34-08daf3c58136
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +Hoy1dfRCNTtgKqgFipfjg1i+qFNOX8DZBvWCF2YU92+PxCO9Jj9cRvI701xucAqtPrKQZQk0ynXbOvIdoYlrJVAyuXsebyf/btQUuNCy83DW/YH/EPN+5I889Ka4qDMFn+g+HyPYy0maU/Aj/S6UAZbEaT7wVeP48D6ngoGWjxgCLPdQGAHdTn5Q0XBSbSZdmSf0JH1wTd+tJ+gqpkU4QzTPG7Tn5z1OjRAJXoWYq8R8Rqv+zEMBXJpIFAO5uYDQnSdDc6jC7M9fEBEMrMhJp9aSYvuToaKbNSAshtbDdPeqqKtpinv8ado7iZmpm5fI++scxbWD6gBaUJfz/fe9LHQ5eVv/ikL4BkSxcqygtw8+KPoDIEzQbDUsE+Xae65OyOg9ZO+f/LEynRwiXBcwM3Jw0FuZlDrCkoSxDMHVSOSA47gLwQuUc9faiVyrhCDNyuMK6fqmLvQdM4umd35LVhYtU/zbMWZUW9jIly8i0kNsjL29p/PZ3vCpO9gZoyjZVVvqcnXu0bWU/sGN0GhH4Q/nPlH1ZJYN3R34MwOV8uOFv6PdnQGhUxGnTtrVFVxofh7H+rP+CgB4eur5GbRdrWa2na3WggNgNOIo9+hJTQE/BK/hKROL5xnQHsIPEhbmA/CUV0Te9XPBgTBMv0mHyvroPFYmaxeDUYjWkp7aTRknit2wp8wDafX0luiar5aerDWPRQVqBgWCoz1/QKf2hdXPkVBbDVkLNwzpwC7W8/4GfnY694pSP2vRlROaOCScX6LCABVoMlqdR7wH9h1bJWJwOClzqYfamUIaArD/Vs=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(346002)(376002)(39860400002)(451199015)(40470700004)(46966006)(36840700001)(186003)(40480700001)(316002)(5660300002)(26005)(966005)(7416002)(478600001)(40460700003)(47076005)(4326008)(336012)(6916009)(54906003)(8676002)(41300700001)(70206006)(70586007)(82310400005)(8936002)(31696002)(86362001)(426003)(31686004)(36860700001)(82740400003)(356005)(2906002)(7636003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jan 2023 11:18:02.6270
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 714150d3-38c4-4835-bd34-08daf3c58136
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000108E8.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7557
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] usb: gadget: u_ether: Don't warn in
+ gether_setup_name_default()
+Content-Language: en-US
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20230106161759.66019-1-jonathanh@nvidia.com>
+ <87cab5a1-a122-2b10-43b4-7a5819ff55ef@collabora.com>
+ <e1a29bfd-7553-ec43-431e-0828191d2127@nvidia.com>
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+In-Reply-To: <e1a29bfd-7553-ec43-431e-0828191d2127@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 10 Jan 2023 19:01:44 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.0.19 release.
-> There are 148 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> NOTE, this will probably be the LAST 6.0.y release.  If there is
-> anything preventing you from moving to 6.1.y right now, please let me
-> know.
-> 
-> Responses should be made by Thu, 12 Jan 2023 17:59:42 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.0.19-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.0.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi,
 
-All tests passing for Tegra ...
+W dniu 11.01.2023 o 11:35, Jon Hunter pisze:
+> 
+> On 10/01/2023 16:31, Andrzej Pietrasiewicz wrote:
+>> Hi,
+>>
+>> Hasn't there been a similar patch already?
+> 
+> There could be, but I was not aware. Do you happen to have a link to it?
 
-Test results for stable-v6.0:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+Nope, I only rely on my memory, which can obviously be faulty.
 
-Linux version:	6.0.19-rc1-ga7ffaeeaf9bb
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+> 
+>> W dniu 6.01.2023 o 17:17, Jon Hunter pisze:
+>>> The function gether_setup_name_default() is called by various USB
+>>> ethernet gadget drivers. This function always generates the MAC address
+>>> for the ethernet gadget device and always prints a warning when
+>>> generating the MAC address. Given that these messages are expected, make
+>>> these prints informational instead of warnings.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>> ---
+>>>   drivers/usb/gadget/function/u_ether.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/usb/gadget/function/u_ether.c 
+>>> b/drivers/usb/gadget/function/u_ether.c
+>>> index 8f12f3f8f6ee..c19d66cd1446 100644
+>>> --- a/drivers/usb/gadget/function/u_ether.c
+>>> +++ b/drivers/usb/gadget/function/u_ether.c
+>>> @@ -845,13 +845,13 @@ struct net_device *gether_setup_name_default(const char 
+>>> *netname)
+>>>       snprintf(net->name, sizeof(net->name), "%s%%d", netname);
+>>>       eth_random_addr(dev->dev_mac);
+>>> -    pr_warn("using random %s ethernet address\n", "self");
+>>> +    pr_info("using random %s ethernet address\n", "self");
+>>
+>> As far as I can tell this function is called by all Ethernet gadgets,
+>> and using random Ethernet addresses is the default behavior for all of them,
+>> including legacy gadgets. Why to inform about the default situation happening?
+>> So in fact maybe it would be better to eliminate the pr_warn() altogether,
+>> instead of replacing it with pr_info()? If the user does not care to
+>> explicitly set some non-default address(es), why would she care to know
+>> that a randomly selected address has been chosen? Note that learning
+>> _what_ specific address has been chosen is perfectly doable without
+>> these pr_info() calls.
+> 
+> 
+> That would be fine with me. This print has been there for a long time and so I 
+> figured people wanted some sort of message. I would be happy to remove.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+It has. Maybe it's been a mistake?
 
-Jon
+A properly working driver should be silent. In case of Ethernet gadgets
+using random MAC addresses is a proper (and default) behavior.
+
+I think it's worth trying to just remove pr_warn(). Or, at least,
+change to pr_debug(), because these messages look more like
+debugging messages no regular user should be interested in.
+
+There's also the maintainer who can have his say.
+
+@Greg?
+
+As a side note, there's quite a lot of cleanup needed in gadgets' messaging.
+
+Regards,
+
+Andrzej
+
+> 
+> Jon
+> 
+
