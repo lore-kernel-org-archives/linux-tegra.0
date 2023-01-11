@@ -2,106 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782A5C46467
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Jan 2023 16:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B779C6379F
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Jan 2023 08:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238664AbjAJQbr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Jan 2023 11:31:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
+        id S231659AbjAKI2O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Jan 2023 03:28:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238529AbjAJQbj (ORCPT
+        with ESMTP id S232017AbjAKI1s (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Jan 2023 11:31:39 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84FB681D4C;
-        Tue, 10 Jan 2023 08:31:35 -0800 (PST)
-Received: from [192.168.0.192] (unknown [194.146.248.75])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: andrzej.p)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id DFF4A6602D7B;
-        Tue, 10 Jan 2023 16:31:33 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1673368294;
-        bh=gf2SVFXGu/ip2hmdsTFFak6Bv478mdC5jsczhYIQnc0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=iUaDRdgBA8r/cNb9FciggE1Y3/3iPFlNHrF7NrKHEtcSjhWtr4oQU46S7K7at0/Bp
-         /8M5AjmVxNACscme3WknZVAZSVmSfCm7nqf95tcfEAhZiX38Uty/SU9akvcK/eKSGS
-         09XYRrXl7xhCthCNcz62eo75WS0VfnAI5sbIxFLzUlG/rmvqsO4RdjeTTEDPTE28xQ
-         l7IIvoR/f5FIAU7uK3p/DU44l5tRjBqpzf8v1/ZjdJoJucglA48C0OGFzRuvZAGuQc
-         uMY7eGHoBFNdhzSZVBs3IFFdob+NSRbhC6XijK9sipTFA5sgIK8LAmUmIXwHGVSBR6
-         BnjoskOtgypOg==
-Message-ID: <87cab5a1-a122-2b10-43b4-7a5819ff55ef@collabora.com>
-Date:   Tue, 10 Jan 2023 17:31:30 +0100
+        Wed, 11 Jan 2023 03:27:48 -0500
+Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B96FC6583
+        for <linux-tegra@vger.kernel.org>; Wed, 11 Jan 2023 00:27:47 -0800 (PST)
+Received: by mail-vk1-xa31.google.com with SMTP id j18so5107916vkn.10
+        for <linux-tegra@vger.kernel.org>; Wed, 11 Jan 2023 00:27:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sitzt3qDu3UerD4XtTRxHC+kbzZTJZUZxdebSgKMqe0=;
+        b=i8f7jG0hpzMhKbLF1oT6qJrEThMov7KHe7n4FR3k6uC1mUoqzOoXimj1BzRYlozvr1
+         WX54ek5XB/dUQjlFwC+cSLRwCdL8A2LZka+RBgVFwguNkdz70lNAAuKeoOOMlmPwsiOG
+         6ulzYWO7yqZ+UchPGzPyrsgfXx9LzdJeghLUrwEbT4bC1tLBs3FOtVMPBrPuM2jRTPRS
+         gXzDx+vdomJZDof3lXt7JnTtVIgF+WIJCwi2dbze+FI11NtXpqJPPNF+kZUrL251aB7G
+         FNJo92LrKruEf+ltzeqV1GLQOCFHiyXlOobMaIIT/yqtes0s/Wjkz7PQpn3km6+MEnMu
+         q/Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sitzt3qDu3UerD4XtTRxHC+kbzZTJZUZxdebSgKMqe0=;
+        b=JbpKk/BDsu9G1UkMaVR5IX0GdpDgF85bLqSAKpBZTNDZlC9QC656QVHhqp61IBFKrq
+         2Y7De1z8J3JPElLOYCnI4w1ove1K5PGRDrkw+WpgL810tJg7vIqcjXzWPpY0R2i+5p3j
+         m8pxTkzsNw+VBV8Xd3cEHaaSn2KT5nPGRGRn6vOauHLE+uAHZEsboDOYW1qzsZo9nW8v
+         Fc+jNKLy8uJo++9bIV4V7CMLmWtLEh1SY0ZY1epk37ifMvypqs4Ymjd8CnLEBdEXm0zF
+         Ccvhnv58qEuy+ZJ/Wt1JhD1zxJOkisuEfp8MKAFFu3vS1MT8BwLSHsdwUI2Z8NzpFbwh
+         u3vw==
+X-Gm-Message-State: AFqh2kqgEiFdY04byve6nGyWwpDRQnAH2gaU/7swa+6vOzW3SjlTuTRd
+        2Lm22DEdXMltKJUgavYUKkzAFcAZwP2YpfbeRxR+4A==
+X-Google-Smtp-Source: AMrXdXtHcZ3rG3XrP62JWB3S9n3i34dZkVMnLHxnoTdTXjzpge6D/tj/IwktwxqPXplNQ2vVb4IB0ihhxoDjAYLyby4=
+X-Received: by 2002:a05:6122:d18:b0:3bc:c8fa:a0b6 with SMTP id
+ az24-20020a0561220d1800b003bcc8faa0b6mr9075784vkb.10.1673425666776; Wed, 11
+ Jan 2023 00:27:46 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] usb: gadget: u_ether: Don't warn in
- gether_setup_name_default()
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20230106161759.66019-1-jonathanh@nvidia.com>
-Content-Language: en-US
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-In-Reply-To: <20230106161759.66019-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <Yhe0pCpfeCpyfPWg@orome> <20220816102725.14708-1-pshete@nvidia.com>
+ <CACRpkdbMnRNTLcCtqNjKpxWxMbAXLssnuBEuNqAfgDfj3XVfXQ@mail.gmail.com>
+ <14dbbfdf-c096-439e-41c9-71e083138560@nvidia.com> <CACRpkdaBY31f6R3TTD-5iRDdKV46tY5GK-Xvd=exwZ4HeCTYAw@mail.gmail.com>
+In-Reply-To: <CACRpkdaBY31f6R3TTD-5iRDdKV46tY5GK-Xvd=exwZ4HeCTYAw@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 11 Jan 2023 09:27:35 +0100
+Message-ID: <CAMRc=MefrQsyQYK3SwPFTQBkX47fkf2mdz3Dy+o+Gc-WNwJSTw@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: tegra186: add Tegra234 PMC compatible in GPIO driver
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
+        smangipudi@nvidia.com, Manish Bhardwaj <mbhardwaj@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+On Tue, Jan 10, 2023 at 9:24 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Mon, Jan 9, 2023 at 9:37 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > On 08/09/2022 14:21, Linus Walleij wrote:
+> > > On Tue, Aug 16, 2022 at 12:27 PM Prathamesh Shete <pshete@nvidia.com> wrote:
+> > >
+> > >> Using this patch we are adding PMC compatible string for
+> > >> Tegra234 in GPIO driver so the IRQ hierarchy can be set.
+> > >>
+> > >> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+> > >> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> > >
+> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > >
+> > > It also has Thierry's ACK from v1.
+> > >
+> > > Yours,
+> > > Linus Walleij
+> >
+> >
+> > I don't see this one in -next. Are you able to pick this up?
+> >
+> > Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> > Tested-by: Jon Hunter <jonathanh@nvidia.com>
+>
+> Bartosz is queueing GPIO patches right now, but the mail has the
+> wrong address for him.
+>
+> I put the new mail address in To, so he can pick it up.
+>
 
-Hasn't there been a similar patch already?
+Come on, my address changed 18 months ago, re-run get_maintainers.pl
+from time to time. :)
 
-W dniu 6.01.2023 o 17:17, Jon Hunter pisze:
-> The function gether_setup_name_default() is called by various USB
-> ethernet gadget drivers. This function always generates the MAC address
-> for the ethernet gadget device and always prints a warning when
-> generating the MAC address. Given that these messages are expected, make
-> these prints informational instead of warnings.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->   drivers/usb/gadget/function/u_ether.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-> index 8f12f3f8f6ee..c19d66cd1446 100644
-> --- a/drivers/usb/gadget/function/u_ether.c
-> +++ b/drivers/usb/gadget/function/u_ether.c
-> @@ -845,13 +845,13 @@ struct net_device *gether_setup_name_default(const char *netname)
->   	snprintf(net->name, sizeof(net->name), "%s%%d", netname);
->   
->   	eth_random_addr(dev->dev_mac);
-> -	pr_warn("using random %s ethernet address\n", "self");
-> +	pr_info("using random %s ethernet address\n", "self");
+Now applied, thanks!
 
-As far as I can tell this function is called by all Ethernet gadgets,
-and using random Ethernet addresses is the default behavior for all of them,
-including legacy gadgets. Why to inform about the default situation happening?
-So in fact maybe it would be better to eliminate the pr_warn() altogether,
-instead of replacing it with pr_info()? If the user does not care to
-explicitly set some non-default address(es), why would she care to know
-that a randomly selected address has been chosen? Note that learning
-_what_ specific address has been chosen is perfectly doable without
-these pr_info() calls.
-
-Regards,
-
-Andrzej
-
->   
->   	/* by default we always have a random MAC address */
->   	net->addr_assign_type = NET_ADDR_RANDOM;
->   
->   	eth_random_addr(dev->host_mac);
-> -	pr_warn("using random %s ethernet address\n", "host");
-> +	pr_info("using random %s ethernet address\n", "host");
->   
->   	net->netdev_ops = &eth_netdev_ops;
->   
-
+Bart
