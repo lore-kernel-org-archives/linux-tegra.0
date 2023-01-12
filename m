@@ -2,43 +2,43 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1569AC7113D
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Jan 2023 20:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A05EC678D4
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Jan 2023 20:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241995AbjALUFf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Jan 2023 15:05:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44164 "EHLO
+        id S241972AbjALUMd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Jan 2023 15:12:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232192AbjALT6b (ORCPT
+        with ESMTP id S232397AbjALT7N (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Jan 2023 14:58:31 -0500
+        Thu, 12 Jan 2023 14:59:13 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A7F2E4;
-        Thu, 12 Jan 2023 11:58:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9970BCDF;
+        Thu, 12 Jan 2023 11:58:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=57ZArFmnIQzaVihzbRCoRwr2LaVbKaf8OfuJB2z1dTg=; b=MtUDAduugAyCbC0x+GybWDrpg6
-        nvFGvIRZYvWlQOex2R/1t/2v/rActZJrR7vwvuJlXKveemU/iz4++d4GotlAkvaPASxt/V69sv0IW
-        ri/Ll4jnWKlySnMYN9/0CSP41DFCufPsa7lcX0Y1q6jOn11nHz/zwBf2W3f6x84qUVyueoCSvSKRR
-        DDk6HyQ9GyyQiRgH8jh5MXflBjo3tYUtlSuDlBNuXxdzteU1sUfcP1XhD97BszaVYQzTxHQKcA/vV
-        NNxIPT51Nkp1qj3KnJg7Rf8w5flxOjT2ZXNdvpP1EgMJE26QJPdlDIpe57D//TgbDdRbWno0lBcoI
-        JmIhzKag==;
+        bh=Un035BTYhsjREpZ4dpy/MHkkoifcKtLiH3nYidAuKL8=; b=P5c8UU2jghR82uJHaUsCbEyZY2
+        1BjYkq3jeF5ewbeuBixxGQ1MFHR9TCeHAHBjDMgt+hkRsw0FFt2ppNujpZmDy3BclS1Ums/sHfSGF
+        DsoLRzOAcjZb0YeI2dan/xzDO4bLczNXAS9bGqKX112iGbxaDbC1pmZnnUukuGv1RP3YOO+mA12eY
+        yRYq2ks+V6tltY12SJ/UDL++Q4qZeEYg7ljBwFyVCutcyQJ/H9pzwWVke2dKUZwwKrXgIGXwZmcPJ
+        pPt48ptlxwCsahE0v4HXTBqWzoIi9klWddYcc0T3lFrQ7of2NxwaFmInlnyrFVz5DKbqBazXyVs9+
+        ZpRfznRA==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pG3ha-005Odr-Km; Thu, 12 Jan 2023 19:57:30 +0000
+        id 1pG3hu-005P7i-Rf; Thu, 12 Jan 2023 19:57:50 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6226E303427;
-        Thu, 12 Jan 2023 20:57:13 +0100 (CET)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4EAB5303484;
+        Thu, 12 Jan 2023 20:57:14 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id F0FCD2CCF1F7D; Thu, 12 Jan 2023 20:57:07 +0100 (CET)
-Message-ID: <20230112195540.556912863@infradead.org>
+        id 7C19A2CD066F8; Thu, 12 Jan 2023 20:57:08 +0100 (CET)
+Message-ID: <20230112195542.397238052@infradead.org>
 User-Agent: quilt/0.66
-Date:   Thu, 12 Jan 2023 20:43:34 +0100
+Date:   Thu, 12 Jan 2023 20:44:04 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     peterz@infradead.org
 Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
@@ -102,10 +102,8 @@ Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 20/51] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IBRS
+        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: [PATCH v3 50/51] cpuidle: Comments about noinstr/__cpuidle
 References: <20230112194314.845371875@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -113,46 +111,53 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-vmlinux.o: warning: objtool: intel_idle_ibrs+0x17: call to spec_ctrl_current() leaves .noinstr.text section
-vmlinux.o: warning: objtool: intel_idle_ibrs+0x27: call to wrmsrl.constprop.0() leaves .noinstr.text section
+Add a few words on noinstr / __cpuidle usage.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
- drivers/idle/intel_idle.c  |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/cpuidle/cpuidle.c      |   12 ++++++++++++
+ include/linux/compiler_types.h |   10 ++++++++++
+ 2 files changed, 22 insertions(+)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -79,7 +79,7 @@ void write_spec_ctrl_current(u64 val, bo
- 		wrmsrl(MSR_IA32_SPEC_CTRL, val);
- }
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -252,6 +252,18 @@ noinstr int cpuidle_enter_state(struct c
+ 		instrumentation_begin();
+ 	}
  
--u64 spec_ctrl_current(void)
-+noinstr u64 spec_ctrl_current(void)
- {
- 	return this_cpu_read(x86_spec_ctrl_current);
- }
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -181,12 +181,12 @@ static __cpuidle int intel_idle_ibrs(str
- 	int ret;
++	/*
++	 * NOTE!!
++	 *
++	 * For cpuidle_state::enter() methods that do *NOT* set
++	 * CPUIDLE_FLAG_RCU_IDLE RCU will be disabled here and these functions
++	 * must be marked either noinstr or __cpuidle.
++	 *
++	 * For cpuidle_state::enter() methods that *DO* set
++	 * CPUIDLE_FLAG_RCU_IDLE this isn't required, but they must mark the
++	 * function calling ct_cpuidle_enter() as noinstr/__cpuidle and all
++	 * functions called within the RCU-idle region.
++	 */
+ 	entered_state = target_state->enter(dev, drv, index);
  
- 	if (smt_active)
--		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
+ 	if (WARN_ONCE(!irqs_disabled(), "%ps leaked IRQ state", target_state->enter))
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -233,6 +233,16 @@ struct ftrace_likely_data {
  
- 	ret = __intel_idle(dev, drv, index);
+ #define noinstr __noinstr_section(".noinstr.text")
  
- 	if (smt_active)
--		wrmsrl(MSR_IA32_SPEC_CTRL, spec_ctrl);
-+		native_wrmsrl(MSR_IA32_SPEC_CTRL, spec_ctrl);
++/*
++ * The __cpuidle section is used twofold:
++ *
++ *  1) the original use -- identifying if a CPU is 'stuck' in idle state based
++ *     on it's instruction pointer. See cpu_in_idle().
++ *
++ *  2) supressing instrumentation around where cpuidle disables RCU; where the
++ *     function isn't strictly required for #1, this is interchangeable with
++ *     noinstr.
++ */
+ #define __cpuidle __noinstr_section(".cpuidle.text")
  
- 	return ret;
- }
+ #endif /* __KERNEL__ */
 
 
