@@ -2,43 +2,43 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A44C71131
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Jan 2023 20:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCD3C7113D
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Jan 2023 20:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241761AbjALUEz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Jan 2023 15:04:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44234 "EHLO
+        id S241774AbjALUE5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Jan 2023 15:04:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232194AbjALT7T (ORCPT
+        with ESMTP id S229643AbjALT7R (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Jan 2023 14:59:19 -0500
+        Thu, 12 Jan 2023 14:59:17 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A3522623;
-        Thu, 12 Jan 2023 11:58:08 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6CFE21B1;
+        Thu, 12 Jan 2023 11:58:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=xUXFMmNjQb3UrGtSZK0a2nhjQSuKqnZvrBUrV/kGZ/M=; b=azd0lEFhtyA7/aLM4gfZG1Cdp3
-        7NU3r969okzjxqcSyuA1vE+R2WnLvkbW43aMYTQl8A+OMQs4BGyVUe/mdDDkYK4sq5GuqaMDdK3nQ
-        mF4/8WjcxS6GyrdwizZfZHi98CgxEnfqDyYYUuh6dsDEfNM6pZY3bv79cj1EUtiafbAvbGi3Zoodv
-        q3oyyOIbvVtD0Z25JQmgF9Yy3twtU782/WTN1SiAuh8rW47DB3F8jKxk6GeMuzzcUytvUZ3k5qQN2
-        xwJHT13n8NNxGibRxm8fKw3yFq3ZFyd8yvfAHp0jp7adZU6B9GTx3x5QVwVeGWFHBoGHyIY8F3WG5
-        EkCNyHWg==;
+        bh=grsvYP38q4MnN8oBsFSgy8h24Veck5RfPmpq2ugRYPM=; b=sAS+cVfJZnxSjVZ+cWnQizLCZi
+        uzGVUsOf3anafnENfDcz5DBxNwmF2u/05pvc6A0c+OdcaX2m7Qx3mQCWD2r8+RXAQmr6AABwQQUqG
+        Xnn1+diWHWxMGA10WHWQkPrlviiLNwKR8l/igNBPuc/Urss/XPLwrgEzGEkTLbJF2i3zM2wEUdQId
+        iXvs8/Thb5QmoGtDr5BpPsofdym80GCpPly/+P1kmFfpKKXI1eKi4k9Kt5ZS1McOXBTe8WNh0qvx1
+        Mira4VG3zNGY/eh9MdDKDjG1vDtIkJ7jl+e56WDxEl8scNd8fDZtJTeB77Tp7XyQzYbmD4z6YExxk
+        sfEhC80A==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pG3hg-005OjH-AW; Thu, 12 Jan 2023 19:57:36 +0000
+        id 1pG3hs-005P5E-9Z; Thu, 12 Jan 2023 19:57:48 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id EDBC9303462;
-        Thu, 12 Jan 2023 20:57:13 +0100 (CET)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 360EB30347C;
+        Thu, 12 Jan 2023 20:57:14 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 49A802CD0121F; Thu, 12 Jan 2023 20:57:08 +0100 (CET)
-Message-ID: <20230112195541.721697850@infradead.org>
+        id 6E8FA2CD066EC; Thu, 12 Jan 2023 20:57:08 +0100 (CET)
+Message-ID: <20230112195542.212914195@infradead.org>
 User-Agent: quilt/0.66
-Date:   Thu, 12 Jan 2023 20:43:53 +0100
+Date:   Thu, 12 Jan 2023 20:44:01 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     peterz@infradead.org
 Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
@@ -102,10 +102,8 @@ Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 39/51] arm,omap2: Use WFI for omap2_pm_idle()
+        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: [PATCH v3 47/51] cpuidle: Ensure ct_cpuidle_enter() is always called from noinstr/__cpuidle
 References: <20230112194314.845371875@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -113,97 +111,117 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-arch_cpu_idle() is a very simple idle interface and exposes only a
-single idle state and is expected to not require RCU and not do any
-tracing/instrumentation.
+Tracing (kprobes included) and other compiler instrumentation relies
+on a normal kernel runtime. Therefore all functions that disable RCU
+should be noinstr, as should all functions that are called while RCU
+is disabled.
 
-As such, omap2_pm_idle() is not a valid implementation. Replace it
-with a simple (shallow) omap2_do_wfi() call.
-
-Omap2 doesn't have a cpuidle driver; but adding one would be the
-recourse to (re)gain the other idle states.
-
-Suggested-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/arm/mach-omap2/pm24xx.c |   51 +------------------------------------------
- 1 file changed, 2 insertions(+), 49 deletions(-)
+ drivers/cpuidle/cpuidle.c |   37 ++++++++++++++++++++++++++++---------
+ 1 file changed, 28 insertions(+), 9 deletions(-)
 
---- a/arch/arm/mach-omap2/pm24xx.c
-+++ b/arch/arm/mach-omap2/pm24xx.c
-@@ -116,50 +116,12 @@ static int omap2_enter_full_retention(vo
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -137,11 +137,13 @@ int cpuidle_find_deepest_state(struct cp
+ }
  
- static int sti_console_enabled;
- 
--static int omap2_allow_mpu_retention(void)
--{
--	if (!omap2xxx_cm_mpu_retention_allowed())
--		return 0;
--	if (sti_console_enabled)
--		return 0;
--
--	return 1;
--}
--
--static void omap2_enter_mpu_retention(void)
-+static void omap2_do_wfi(void)
+ #ifdef CONFIG_SUSPEND
+-static void enter_s2idle_proper(struct cpuidle_driver *drv,
+-				struct cpuidle_device *dev, int index)
++static noinstr void enter_s2idle_proper(struct cpuidle_driver *drv,
++					 struct cpuidle_device *dev, int index)
  {
- 	const int zero = 0;
+-	ktime_t time_start, time_end;
+ 	struct cpuidle_state *target_state = &drv->states[index];
++	ktime_t time_start, time_end;
++
++	instrumentation_begin();
  
--	/* The peripherals seem not to be able to wake up the MPU when
--	 * it is in retention mode. */
--	if (omap2_allow_mpu_retention()) {
--		/* REVISIT: These write to reserved bits? */
--		omap_prm_clear_mod_irqs(CORE_MOD, PM_WKST1, ~0);
--		omap_prm_clear_mod_irqs(CORE_MOD, OMAP24XX_PM_WKST2, ~0);
--		omap_prm_clear_mod_irqs(WKUP_MOD, PM_WKST, ~0);
--
--		/* Try to enter MPU retention */
--		pwrdm_set_next_pwrst(mpu_pwrdm, PWRDM_POWER_RET);
--
--	} else {
--		/* Block MPU retention */
--		pwrdm_set_next_pwrst(mpu_pwrdm, PWRDM_POWER_ON);
--	}
--
- 	/* WFI */
- 	asm("mcr p15, 0, %0, c7, c0, 4" : : "r" (zero) : "memory", "cc");
--
--	pwrdm_set_next_pwrst(mpu_pwrdm, PWRDM_POWER_ON);
--}
--
--static int omap2_can_sleep(void)
--{
--	if (omap2xxx_cm_fclks_active())
--		return 0;
--	if (__clk_is_enabled(osc_ck))
--		return 0;
--
--	return 1;
+ 	time_start = ns_to_ktime(local_clock());
+ 
+@@ -152,13 +154,18 @@ static void enter_s2idle_proper(struct c
+ 	 * suspended is generally unsafe.
+ 	 */
+ 	stop_critical_timings();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
+ 		ct_cpuidle_enter();
++		/* Annotate away the indirect call */
++		instrumentation_begin();
++	}
+ 	target_state->enter_s2idle(dev, drv, index);
+ 	if (WARN_ON_ONCE(!irqs_disabled()))
+ 		raw_local_irq_disable();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
++		instrumentation_end();
+ 		ct_cpuidle_exit();
++	}
+ 	tick_unfreeze();
+ 	start_critical_timings();
+ 
+@@ -166,6 +173,7 @@ static void enter_s2idle_proper(struct c
+ 
+ 	dev->states_usage[index].s2idle_time += ktime_us_delta(time_end, time_start);
+ 	dev->states_usage[index].s2idle_usage++;
++	instrumentation_end();
  }
  
- static void omap2_pm_idle(void)
-@@ -169,16 +131,7 @@ static void omap2_pm_idle(void)
- 	if (omap_irq_pending())
- 		return;
+ /**
+@@ -200,8 +208,9 @@ int cpuidle_enter_s2idle(struct cpuidle_
+  * @drv: cpuidle driver for this cpu
+  * @index: index into the states table in @drv of the state to enter
+  */
+-int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
+-			int index)
++noinstr int cpuidle_enter_state(struct cpuidle_device *dev,
++				 struct cpuidle_driver *drv,
++				 int index)
+ {
+ 	int entered_state;
  
--	error = cpu_cluster_pm_enter();
--	if (error || !omap2_can_sleep()) {
--		omap2_enter_mpu_retention();
--		goto out_cpu_cluster_pm;
--	}
--
--	omap2_enter_full_retention();
--
--out_cpu_cluster_pm:
--	cpu_cluster_pm_exit();
-+	omap2_do_wfi();
+@@ -209,6 +218,8 @@ int cpuidle_enter_state(struct cpuidle_d
+ 	bool broadcast = !!(target_state->flags & CPUIDLE_FLAG_TIMER_STOP);
+ 	ktime_t time_start, time_end;
+ 
++	instrumentation_begin();
++
+ 	/*
+ 	 * Tell the time framework to switch to a broadcast timer because our
+ 	 * local timer will be shut down.  If a local timer is used from another
+@@ -235,15 +246,21 @@ int cpuidle_enter_state(struct cpuidle_d
+ 	time_start = ns_to_ktime(local_clock());
+ 
+ 	stop_critical_timings();
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
+ 		ct_cpuidle_enter();
++		/* Annotate away the indirect call */
++		instrumentation_begin();
++	}
+ 
+ 	entered_state = target_state->enter(dev, drv, index);
++
+ 	if (WARN_ONCE(!irqs_disabled(), "%ps leaked IRQ state", target_state->enter))
+ 		raw_local_irq_disable();
+ 
+-	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
++	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE)) {
++		instrumentation_end();
+ 		ct_cpuidle_exit();
++	}
+ 	start_critical_timings();
+ 
+ 	sched_clock_idle_wakeup_event();
+@@ -306,6 +323,8 @@ int cpuidle_enter_state(struct cpuidle_d
+ 		dev->states_usage[index].rejected++;
+ 	}
+ 
++	instrumentation_end();
++
+ 	return entered_state;
  }
  
- static void __init prcm_setup_regs(void)
 
 
