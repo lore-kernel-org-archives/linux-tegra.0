@@ -2,175 +2,89 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C76C61DB3
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Jan 2023 20:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCF1C54EBE
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Jan 2023 22:07:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241999AbjALUMh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Jan 2023 15:12:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44250 "EHLO
+        id S232791AbjALWHQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Jan 2023 17:07:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232870AbjALT7O (ORCPT
+        with ESMTP id S239924AbjALWG3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Jan 2023 14:59:14 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14201096;
-        Thu, 12 Jan 2023 11:58:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To;
-        bh=g+drg6uUsP6YHX5z1pA/AishyJbSIL0Ic60jCQj0FKI=; b=XXUxTtqveFREVYw6+8AB4LdIHp
-        9tBm0Q52XhYpYgwoQcxYxigKngYLFaZ8/xRzmgS4y7qry48gTKg92kcIokiFxq+nXoKsi5V3iEcmw
-        NeSgEYUEAODvsFoe2txTC5A5gjX0FAnKp0Q7yNwBfU6uT1Hqnm5jLS+saV0kDtwrCF///MGUsgvx3
-        1g//CQX4WQUM0ZQk+SvRZnfyPsXRlrLLGN0jK1Pr/WSOQeRzqpxuvUJOC9vpE8dJ7PLwl8i1xnS/H
-        mXWibGn68OUz5LWtcUOt2vHPDy+rJq08dxPxP49gKc05n2AW5cl/Kj6GS1nr66GMTGwMFZlC6eScr
-        aO0GBkaA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pG3hv-005P8h-Bo; Thu, 12 Jan 2023 19:57:51 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5842F300C22;
-        Thu, 12 Jan 2023 20:57:14 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 810012CD066F0; Thu, 12 Jan 2023 20:57:08 +0100 (CET)
-Message-ID: <20230112195542.458034262@infradead.org>
-User-Agent: quilt/0.66
-Date:   Thu, 12 Jan 2023 20:44:05 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     peterz@infradead.org
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
-        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        richard@nod.at, anton.ivanov@cambridgegreys.com,
-        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
-        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        dennis@kernel.org, tj@kernel.org, cl@linux.com,
-        rostedt@goodmis.org, mhiramat@kernel.org, frederic@kernel.org,
-        paulmck@kernel.org, pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
-        andreyknvl@gmail.com, dvyukov@google.com,
-        vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: [PATCH v3 51/51] context_tracking: Fix noinstr vs KASAN
-References: <20230112194314.845371875@infradead.org>
+        Thu, 12 Jan 2023 17:06:29 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3824E3C3B1
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Jan 2023 13:55:15 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pG5XV-0005Zm-5Q; Thu, 12 Jan 2023 22:55:13 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pG5XU-005cqG-81; Thu, 12 Jan 2023 22:55:12 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pG5XT-00CN2u-D8; Thu, 12 Jan 2023 22:55:11 +0100
+Date:   Thu, 12 Jan 2023 22:55:11 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 3/3] soc: tegra: cbb: Drop empty platform remove function
+Message-ID: <20230112215511.gjmplw4kcq55g6zy@pengutronix.de>
+References: <20221212222549.3779846-1-u.kleine-koenig@pengutronix.de>
+ <20221212222549.3779846-4-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ehjeverzqerdm3oz"
+Content-Disposition: inline
+In-Reply-To: <20221212222549.3779846-4-u.kleine-koenig@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-vmlinux.o: warning: objtool: __ct_user_enter+0x72: call to __kasan_check_write() leaves .noinstr.text section
-vmlinux.o: warning: objtool: __ct_user_exit+0x47: call to __kasan_check_write() leaves .noinstr.text section
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/context_tracking.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+--ehjeverzqerdm3oz
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---- a/kernel/context_tracking.c
-+++ b/kernel/context_tracking.c
-@@ -510,7 +510,7 @@ void noinstr __ct_user_enter(enum ctx_st
- 			 * In this we case we don't care about any concurrency/ordering.
- 			 */
- 			if (!IS_ENABLED(CONFIG_CONTEXT_TRACKING_IDLE))
--				atomic_set(&ct->state, state);
-+				arch_atomic_set(&ct->state, state);
- 		} else {
- 			/*
- 			 * Even if context tracking is disabled on this CPU, because it's outside
-@@ -527,7 +527,7 @@ void noinstr __ct_user_enter(enum ctx_st
- 			 */
- 			if (!IS_ENABLED(CONFIG_CONTEXT_TRACKING_IDLE)) {
- 				/* Tracking for vtime only, no concurrent RCU EQS accounting */
--				atomic_set(&ct->state, state);
-+				arch_atomic_set(&ct->state, state);
- 			} else {
- 				/*
- 				 * Tracking for vtime and RCU EQS. Make sure we don't race
-@@ -535,7 +535,7 @@ void noinstr __ct_user_enter(enum ctx_st
- 				 * RCU only requires RCU_DYNTICKS_IDX increments to be fully
- 				 * ordered.
- 				 */
--				atomic_add(state, &ct->state);
-+				arch_atomic_add(state, &ct->state);
- 			}
- 		}
- 	}
-@@ -630,12 +630,12 @@ void noinstr __ct_user_exit(enum ctx_sta
- 			 * In this we case we don't care about any concurrency/ordering.
- 			 */
- 			if (!IS_ENABLED(CONFIG_CONTEXT_TRACKING_IDLE))
--				atomic_set(&ct->state, CONTEXT_KERNEL);
-+				arch_atomic_set(&ct->state, CONTEXT_KERNEL);
- 
- 		} else {
- 			if (!IS_ENABLED(CONFIG_CONTEXT_TRACKING_IDLE)) {
- 				/* Tracking for vtime only, no concurrent RCU EQS accounting */
--				atomic_set(&ct->state, CONTEXT_KERNEL);
-+				arch_atomic_set(&ct->state, CONTEXT_KERNEL);
- 			} else {
- 				/*
- 				 * Tracking for vtime and RCU EQS. Make sure we don't race
-@@ -643,7 +643,7 @@ void noinstr __ct_user_exit(enum ctx_sta
- 				 * RCU only requires RCU_DYNTICKS_IDX increments to be fully
- 				 * ordered.
- 				 */
--				atomic_sub(state, &ct->state);
-+				arch_atomic_sub(state, &ct->state);
- 			}
- 		}
- 	}
+Hello,
 
+On Mon, Dec 12, 2022 at 11:25:49PM +0100, Uwe Kleine-K=F6nig wrote:
+> A remove callback just returning 0 is equivalent to no remove callback
+> at all. So drop the useless function.
 
+the other two patches in this series were applied individually to their
+matching trees. For this one I didn't get feedback yet.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--ehjeverzqerdm3oz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmPAgbwACgkQwfwUeK3K
+7Amyewf9FgKfvBDPvMGtUFCt3uF8BhdWXQ3azJZiwvT/ijx2xjP82Y1l/aabxIsF
+CEFUMq11W2UWFp3vf7uAbDJwupsWyF8QZPpkkOKNYFkw19Ivp2SNu32gkF6dOqxK
+7xmCKWTNpaKnhSp3da6jiEkxnddjzBzaPN9Cp96JaJcGmLRZYVo5dPs9hh8G+g2M
+BIXqgDfgkHuu0/GILCoJWheQkGOHWQzpCUHxFZYUQJFfYzXYfrrSwY+uYvuxFvf4
+l3nV2KFsnagpSzdvanPsUNuVVSsBvJWC1u6obi88Gu7E8Tvmrv2LJJRVHWOL0g78
+BajKKuOohSncE0t3MRnzsFRHs08bJw==
+=SuTw
+-----END PGP SIGNATURE-----
+
+--ehjeverzqerdm3oz--
