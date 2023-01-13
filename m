@@ -2,87 +2,89 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03566C678D4
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Jan 2023 17:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFD4C678D9
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Jan 2023 17:24:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbjAMRMW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Jan 2023 12:12:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
+        id S230405AbjAMRY3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Jan 2023 12:24:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbjAMRMV (ORCPT
+        with ESMTP id S231225AbjAMRXx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Jan 2023 12:12:21 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC1888A3E
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Jan 2023 09:11:13 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id vm8so53770594ejc.2
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Jan 2023 09:11:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qXnH9+h8kjSG0D+e/tnKkzeho/i7l+Lx3wm/Pwk9hac=;
-        b=ROG+cpPA7tl0aCgfJI9jL9DcMqmLVplApi4g3Ilww+0nQVJDXEJz5+pkSOj+WKlc9Y
-         9It0rNCOMWqs31gTquAT75MIhflWofQmAXN4YdlkMYxgUCIuNIclhhP3VR88v95TkFMN
-         s04wUBBiDuUs1Jm2zak+zs9h9W1gvDzqDH6K8AWRD5z3kMv9nnfG9oOF5jnD0AvkAlxY
-         PatMIuorIACUKx9viOAX4ZERgZEWGNparDSsu7QU1A3cd7NCa5CdyGqe2xe9S/8QEs2W
-         bWIGSV3PSwTogUk10787nrTXyWN1aSFtwzHq125GxfuEEImWgrPCd+hleRHEwJ1RpftP
-         eBjg==
+        Fri, 13 Jan 2023 12:23:53 -0500
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6ED6A41EC;
+        Fri, 13 Jan 2023 09:14:42 -0800 (PST)
+Received: by mail-oo1-f51.google.com with SMTP id d2-20020a4ab202000000b004ae3035538bso5700589ooo.12;
+        Fri, 13 Jan 2023 09:14:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qXnH9+h8kjSG0D+e/tnKkzeho/i7l+Lx3wm/Pwk9hac=;
-        b=kwXzI2VGUW1P59YwK8IF+YqqsfxT2jzjNimCnB12KuEU9bwW3cKaPClvxMJYTpbF/N
-         9ZZOrLvjcG/8AWSRdNRT3H4bXJQ6lnTchr0zFOmtE9Bvvuc617rwjOeTvMLzCAb8DjPH
-         0uJxHj/EiKXwBzwCx69BQPyk3w7sK1ATpstcFDUzUnGhmnUxOZZDyuv7z7jrASJsu+XV
-         JvVVZ87HZClQbtIIs7+mH2d4xH/1Se1tY8ZU0tMz3dSr9TCr8Jf/m8dGW/tRfHhVMUnb
-         aW/OygW90ZACdHM62Fkn22sNLDCPToKvfkc0q/SNK7qbqBdj6nuoWGh+1EZdB12qmK5f
-         0V2w==
-X-Gm-Message-State: AFqh2kqx7IKJWmsoSXNMcc7gm84dZyV/brUJdRX3/YIvSzCeZ/s0DwLm
-        CaKc/CKbzLVGXzw9vmYfWLYnBw==
-X-Google-Smtp-Source: AMrXdXv6SPsf041fEDD4/yrRnbbzKtP8ij8KanGx5OYsJX5jdeqd/G+Y7NuRCChlBMCjb6SDeiiNZg==
-X-Received: by 2002:a17:906:b00c:b0:7c4:fa17:7202 with SMTP id v12-20020a170906b00c00b007c4fa177202mr68173183ejy.33.1673629871904;
-        Fri, 13 Jan 2023 09:11:11 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id og5-20020a1709071dc500b0084d420503a3sm6994015ejc.178.2023.01.13.09.11.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jan 2023 09:11:11 -0800 (PST)
-Message-ID: <6bd2d336-e8e8-245c-292c-1e74b4988d89@linaro.org>
-Date:   Fri, 13 Jan 2023 18:11:08 +0100
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JHq6/tYDyN/pAINWJ5Rbv3uWB7irgrVWcq37RauemwE=;
+        b=j2mPM8sTJjuu6P3xurfGnLCsy8Ha+Vu3qCxYoUqRlkXLsrRI/TRvv9+ZujAnnIlndX
+         cborXBF2i1T10RcQpVXt9+d+5cFhzPR3Qte7jMPXCC7AaSP/movDKhgtMCocvFk45u9g
+         +KrN0kVC50hYfVqSmsvcpE27muFm+Cr4ygiVv9jC86IgA+4brIADqeoPlSJxxsoeKVsd
+         aWIKt5C9rM6NYIMK15N6tpeU+D93HHV0pVkf5wPiSostWYQl2tZ7LuMI4dv7767PburN
+         L5BQzg+4Yp3nWro7JW9OPw1Zpf0u1JoNqwvOvnPOi8x1F+cus4soQLe24aHau4rKcSih
+         6xOw==
+X-Gm-Message-State: AFqh2kr+0bhb4fmmSXruE68IiGGUwrlrzAga8cYLyKgd+reU3qcIf4u3
+        XkAmtHXETR7fv5QhV31jfg==
+X-Google-Smtp-Source: AMrXdXsAciTa3kC0ArhVzqoF/QaPDMxYBCzM8+8GnXbEi1RBXZ9lPOjUcyLSpQZP71oTATHGYnWQ0w==
+X-Received: by 2002:a4a:3c16:0:b0:4f2:cf1:c3db with SMTP id d22-20020a4a3c16000000b004f20cf1c3dbmr7004450ooa.1.1673630080384;
+        Fri, 13 Jan 2023 09:14:40 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m48-20020a4a9533000000b0049fcedf1899sm10127278ooi.3.2023.01.13.09.14.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jan 2023 09:14:37 -0800 (PST)
+Received: (nullmailer pid 2505066 invoked by uid 1000);
+        Fri, 13 Jan 2023 17:14:37 -0000
+Date:   Fri, 13 Jan 2023 11:14:37 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        waynec@nvidia.com, Thierry Reding <treding@nvidia.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V6 1/6] dt-bindings: usb: Add NVIDIA Tegra234 XUSB host
+ controller binding
+Message-ID: <167363007663.2505014.5823592035658449614.robh@kernel.org>
+References: <20230111110450.24617-1-jonathanh@nvidia.com>
+ <20230111110450.24617-2-jonathanh@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [Patch v1 05/10] dt-bindings: tegra: add icc ids for dummy MC
- clients
-To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
-        bbasu@nvidia.com
-References: <20221220160240.27494-1-sumitg@nvidia.com>
- <20221220160240.27494-6-sumitg@nvidia.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221220160240.27494-6-sumitg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230111110450.24617-2-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 20/12/2022 17:02, Sumit Gupta wrote:
-> Adding ICC id's for dummy software clients representing CCPLEX clusters.
+
+On Wed, 11 Jan 2023 11:04:45 +0000, Jon Hunter wrote:
+> From: Wayne Chang <waynec@nvidia.com>
 > 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> Add device-tree binding documentation for the XUSB host controller present
+> on Tegra234 SoC. This controller supports the USB 3.1 specification.
+> 
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
+> V5 -> V6: Updated main description and register description.
+>           Corrected 'dma-coherent'.
+> V4 -> V5: No changes
+> V3 -> V4: minor update to the power-domain description
+> V2 -> V3: nothing has changed
+> V1 -> V2: address the issue on phy-names property
+> 
+>  .../bindings/usb/nvidia,tegra234-xusb.yaml    | 159 ++++++++++++++++++
+>  1 file changed, 159 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+> 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Rob Herring <robh@kernel.org>
