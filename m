@@ -2,132 +2,87 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F14BC54EBE
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Jan 2023 15:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03566C678D4
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Jan 2023 17:12:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbjAMPkU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Jan 2023 10:40:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59450 "EHLO
+        id S229632AbjAMRMW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Jan 2023 12:12:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbjAMPjy (ORCPT
+        with ESMTP id S229618AbjAMRMV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Jan 2023 10:39:54 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C2B81439;
-        Fri, 13 Jan 2023 07:31:38 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B1133B82176;
-        Fri, 13 Jan 2023 15:31:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1CC1C433D2;
-        Fri, 13 Jan 2023 15:31:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673623895;
-        bh=ld/JC3MDX643nDYZTH91vPHFhEqhIDAmDfqRY+zkWLQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m7OJf/XvFInmNZK2gZ7Ja7rD+MD1VA5g35Kf/Zl0h02zAVvvvgGTCKWTj30NF0Uqo
-         yJfqXP6cE/mA4ddrrJpSh+Ybyu+rJKgxmlio1nLh4tz45UMWFoHuE0Adp/BxdMEHh4
-         J1mktqIXkRgd78zMQ3UsxrwZn8IyAi31/GO1JWb21MTEijPkUTEdF+Bvvp3tcji5OV
-         5BE8BYyVe/Pxgl5gEDwm3LlApp7Y6Ey78zzB5uX5tRpHIJ3beiZ7I39yPnf3k481Gp
-         vv+yrZpr/y8hqFVyOtTUoTRVWL8DCdplz83nQFSq09Dbmyt3JzSEnxxhSRr0njBkFh
-         9XBTT+gRWNwDA==
-Date:   Fri, 13 Jan 2023 16:31:26 +0100
-From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     robh@kernel.org, kw@linux.com, bhelgaas@google.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
-        vkoul@kernel.org, mani@kernel.org,
-        Sergey.Semin@baikalelectronics.ru, ffclaire1224@gmail.com,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V3 17/21] PCI: tegra194: Reduce AXI slave timeout value
-Message-ID: <Y8F5TmgRwItQrRLW@lpieralisi>
-References: <20221013183854.21087-1-vidyas@nvidia.com>
- <20221013183854.21087-18-vidyas@nvidia.com>
+        Fri, 13 Jan 2023 12:12:21 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC1888A3E
+        for <linux-tegra@vger.kernel.org>; Fri, 13 Jan 2023 09:11:13 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id vm8so53770594ejc.2
+        for <linux-tegra@vger.kernel.org>; Fri, 13 Jan 2023 09:11:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qXnH9+h8kjSG0D+e/tnKkzeho/i7l+Lx3wm/Pwk9hac=;
+        b=ROG+cpPA7tl0aCgfJI9jL9DcMqmLVplApi4g3Ilww+0nQVJDXEJz5+pkSOj+WKlc9Y
+         9It0rNCOMWqs31gTquAT75MIhflWofQmAXN4YdlkMYxgUCIuNIclhhP3VR88v95TkFMN
+         s04wUBBiDuUs1Jm2zak+zs9h9W1gvDzqDH6K8AWRD5z3kMv9nnfG9oOF5jnD0AvkAlxY
+         PatMIuorIACUKx9viOAX4ZERgZEWGNparDSsu7QU1A3cd7NCa5CdyGqe2xe9S/8QEs2W
+         bWIGSV3PSwTogUk10787nrTXyWN1aSFtwzHq125GxfuEEImWgrPCd+hleRHEwJ1RpftP
+         eBjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qXnH9+h8kjSG0D+e/tnKkzeho/i7l+Lx3wm/Pwk9hac=;
+        b=kwXzI2VGUW1P59YwK8IF+YqqsfxT2jzjNimCnB12KuEU9bwW3cKaPClvxMJYTpbF/N
+         9ZZOrLvjcG/8AWSRdNRT3H4bXJQ6lnTchr0zFOmtE9Bvvuc617rwjOeTvMLzCAb8DjPH
+         0uJxHj/EiKXwBzwCx69BQPyk3w7sK1ATpstcFDUzUnGhmnUxOZZDyuv7z7jrASJsu+XV
+         JvVVZ87HZClQbtIIs7+mH2d4xH/1Se1tY8ZU0tMz3dSr9TCr8Jf/m8dGW/tRfHhVMUnb
+         aW/OygW90ZACdHM62Fkn22sNLDCPToKvfkc0q/SNK7qbqBdj6nuoWGh+1EZdB12qmK5f
+         0V2w==
+X-Gm-Message-State: AFqh2kqx7IKJWmsoSXNMcc7gm84dZyV/brUJdRX3/YIvSzCeZ/s0DwLm
+        CaKc/CKbzLVGXzw9vmYfWLYnBw==
+X-Google-Smtp-Source: AMrXdXv6SPsf041fEDD4/yrRnbbzKtP8ij8KanGx5OYsJX5jdeqd/G+Y7NuRCChlBMCjb6SDeiiNZg==
+X-Received: by 2002:a17:906:b00c:b0:7c4:fa17:7202 with SMTP id v12-20020a170906b00c00b007c4fa177202mr68173183ejy.33.1673629871904;
+        Fri, 13 Jan 2023 09:11:11 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id og5-20020a1709071dc500b0084d420503a3sm6994015ejc.178.2023.01.13.09.11.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jan 2023 09:11:11 -0800 (PST)
+Message-ID: <6bd2d336-e8e8-245c-292c-1e74b4988d89@linaro.org>
+Date:   Fri, 13 Jan 2023 18:11:08 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221013183854.21087-18-vidyas@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [Patch v1 05/10] dt-bindings: tegra: add icc ids for dummy MC
+ clients
+To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
+        bbasu@nvidia.com
+References: <20221220160240.27494-1-sumitg@nvidia.com>
+ <20221220160240.27494-6-sumitg@nvidia.com>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221220160240.27494-6-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Oct 14, 2022 at 12:08:50AM +0530, Vidya Sagar wrote:
-> Reduce the AXI slave timeout value to 7ms to be in line with the CBB
-
-It would be good to understand where this 7ms delay comes from.
-
-Please spell out what CBB is.
-
-> logic's timeout value and to avoid CBB reporting errors because of no
-> response from the PCIe IPs AXI slave logic for configuration space accesses
-> through ECAM when the PCIe link is down. Also, set the Completion Timeout
-> value to Range-A: 1ms~10ms to be inline with the AXI timeout value.
+On 20/12/2022 17:02, Sumit Gupta wrote:
+> Adding ICC id's for dummy software clients representing CCPLEX clusters.
 > 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
-> V3:
-> * This is a new patch in this series
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 23ca97401339..7890e0c0c0d2 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -198,6 +198,12 @@
->  #define AMBA_ERROR_RESPONSE_CRS_OKAY_FFFFFFFF	1
->  #define AMBA_ERROR_RESPONSE_CRS_OKAY_FFFF0001	2
->  
-> +#define PORT_LOGIC_AMBA_LINK_TIMEOUT		0x8D4
-> +#define AMBA_LINK_TIMEOUT_PERIOD_MASK		GENMASK(7, 0)
-> +#define AMBA_LINK_TIMEOUT_PERIOD_VAL		0x7
-> +
-> +#define PCI_EXP_DEVCTL2_CPL_TO_VAL		0x2 /* Range-A: 1ms to 10ms */
-> +
->  #define MSIX_ADDR_MATCH_LOW_OFF			0x940
->  #define MSIX_ADDR_MATCH_LOW_OFF_EN		BIT(0)
->  #define MSIX_ADDR_MATCH_LOW_OFF_MASK		GENMASK(31, 2)
-> @@ -922,6 +928,18 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
->  		AMBA_ERROR_RESPONSE_CRS_SHIFT);
->  	dw_pcie_writel_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT, val);
->  
-> +	/* Reduce the AXI slave Timeout value to 7ms */
-> +	val  = dw_pcie_readl_dbi(pci, PORT_LOGIC_AMBA_LINK_TIMEOUT);
-> +	val &= ~AMBA_LINK_TIMEOUT_PERIOD_MASK;
-> +	val |= AMBA_LINK_TIMEOUT_PERIOD_VAL;
-> +	dw_pcie_writel_dbi(pci, PORT_LOGIC_AMBA_LINK_TIMEOUT, val);
-> +
-> +	/* Set the Completion Timeout value in 1ms~10ms range */
-> +	val_16  = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL2);
-> +	val_16 &= ~PCI_EXP_DEVCTL2_COMP_TIMEOUT;
-> +	val_16 |= PCI_EXP_DEVCTL2_CPL_TO_VAL;
-> +	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL2, val_16);
-> +
->  	/* Configure Max lane width from DT */
->  	val = dw_pcie_readl_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP);
->  	val &= ~PCI_EXP_LNKCAP_MLW;
-> @@ -1988,6 +2006,12 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
->  	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
->  	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
->  
-> +	/* Set the Completion Timeout value in 1ms~10ms range */
-> +	val_16  = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL2);
-> +	val_16 &= ~PCI_EXP_DEVCTL2_COMP_TIMEOUT;
-> +	val_16 |= PCI_EXP_DEVCTL2_CPL_TO_VAL;
-> +	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL2, val_16);
-> +
->  	/* Clear Slot Clock Configuration bit if SRNS configuration */
->  	if (pcie->enable_srns) {
->  		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
-> -- 
-> 2.17.1
-> 
-> 
-> -- 
-> linux-phy mailing list
-> linux-phy@lists.infradead.org
-> https://lists.infradead.org/mailman/listinfo/linux-phy
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
