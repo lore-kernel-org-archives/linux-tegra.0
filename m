@@ -2,297 +2,128 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8B9C678DD
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Jan 2023 18:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B0EC46467
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Jan 2023 10:19:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231222AbjAMSQV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Jan 2023 13:16:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54708 "EHLO
+        id S230134AbjAPKTb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Jan 2023 05:19:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230088AbjAMSPi (ORCPT
+        with ESMTP id S229947AbjAPKTZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Jan 2023 13:15:38 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D0E6DB8A;
-        Fri, 13 Jan 2023 10:06:41 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 555DACE2122;
-        Fri, 13 Jan 2023 18:06:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD93C433F1;
-        Fri, 13 Jan 2023 18:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673633197;
-        bh=9JM2l3wQvAeTEYaZAWr5I3gZoNrgDAq2iaamsrQXne0=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=d/TyPrfu3TMN3RDQxpqP5fajACgLxUzrO1o0lviquPae0CCREqyfMhbNaFpmIDnAD
-         gc9rcn8tXi7SZ4Sa6feTIN2Ae1ZeCBFbV5dmTzybf+txFmSo/tzOIYxAQ5C/w8Dqvn
-         lUFscWLbHB7PxSvBS0qnt6QQanZXshhTtjgmZdd4dd7UYrIROlbOAFQjGgiw28eaXg
-         ZWAP2DT2ukYPCwIGpUnzoCfZFD2NIBDmWoE7vSQ2LoozWiuoZLz82Zhhis8k4Jr+Bj
-         yNgUqYimkNr/a2hjrvrPsnsWtLyOCrg7bz13Vy3HC3zIgb+UrU6VBUs4Zs2yFiDWYy
-         hI2RWs0YaghDg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id D78905C06D0; Fri, 13 Jan 2023 10:06:36 -0800 (PST)
-Date:   Fri, 13 Jan 2023 10:06:36 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
-        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        richard@nod.at, anton.ivanov@cambridgegreys.com,
-        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
-        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        dennis@kernel.org, tj@kernel.org, cl@linux.com,
-        rostedt@goodmis.org, mhiramat@kernel.org, frederic@kernel.org,
-        pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
-        andreyknvl@gmail.com, dvyukov@google.com,
-        vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v3 00/51] cpuidle,rcu: Clean up the mess
-Message-ID: <20230113180636.GA4028633@paulmck-ThinkPad-P17-Gen-1>
-Reply-To: paulmck@kernel.org
-References: <20230112194314.845371875@infradead.org>
+        Mon, 16 Jan 2023 05:19:25 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E200B18AAB;
+        Mon, 16 Jan 2023 02:19:23 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fQcLsjNwx6/hCv2N5/ENyhX4KmTz+A2E+Enes+6/R2ymOegQC6m6vP4bQQ1O/YlgAj6su2/EnLYLWMpsF7ZL11sqU0E10/ilEj5RHOWmcPsn/h+yKeYW4ra0mxI/1rc1VLkWrbhMqXnvzsgHRw8wffIm6jsGaxLRR2bmCVwuxjh0jiZnh3UdyZLUF3D7AUsJRH1nDxAjfM/q+2RG5uO4iMwDjr0AZpba5xl8MUq7M0tRQNPbv1cBgu/IGreLFPnXAJLAQlrAdybZI8w7GEKNPhZJCbklUXsKlZQy+8xZakgnpzcZruwcYrd3hkN0saxhJP1b6Nwka1LHeZh0sNYAvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+/9pcMkfpajz9Q8TDICXii2eL6jbq34iW7HgssDX2Gk=;
+ b=mB+PaN6XNBFAhxrWZEMXyAslSzIGSJ5XrZT4goEnLtF153pt6zQa4wuqDMlevageg/B6t/yffqouuSptizTXV17N04MDGNYeDJ+3tpbAKxGjNuHADdV9VUawL6nGGd/ugs1f/Yhhhyuwbd3bZliRYwouB24E4LgVhh+XhNrThTWrFsnxmJGPiKwhiWZaE/24kV39WDiwG/KV6ybdY5/a8IY7H0RfWiK5ZMv7WKx7R6QCVSmiU6ignOW2QgJ2fyDsOHjdSk1V1JSd9zs8JF8ZKdpV7cFYahi5CFTkAEw1g8agMgLVYStqh6+yTfy9+wb2KNWGwybHrBFxR7XE65w1iw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+/9pcMkfpajz9Q8TDICXii2eL6jbq34iW7HgssDX2Gk=;
+ b=pFYiPvagtfYKfk0+IGgNmwJdtNvX7KT4YCJ0hTFdi1kD34r/bww1YrirsLiZH+zzl0fVLzPrgQ9GwNfhDlzPvuUXGWz0esYgOT0gWR9JgV9r3fUoSbKxjJB24mx9GG/wdzL4uk6Zohk7h3MxF/hvZKXKOrlNfZvyVJYP2cyF+5qr5S5Rl5zJRqxM+pmHVy7eREB65HbO+H3d/6qwAO8VqRKcchZ6xZDlqC1GstI7BWNeQ+wwO/mq/Up/+U/wRSxvaVu4epz99vK1k57gY8B8vyArOW+KFAwrmrDUcWTF8shhl/1DMzAsbGYsq6LgMGlm8u8f+rqkts7u9dnQ1qf5TA==
+Received: from MW4PR04CA0115.namprd04.prod.outlook.com (2603:10b6:303:83::30)
+ by MN0PR12MB5860.namprd12.prod.outlook.com (2603:10b6:208:37b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Mon, 16 Jan
+ 2023 10:19:22 +0000
+Received: from CO1NAM11FT103.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:83:cafe::c) by MW4PR04CA0115.outlook.office365.com
+ (2603:10b6:303:83::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.19 via Frontend
+ Transport; Mon, 16 Jan 2023 10:19:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1NAM11FT103.mail.protection.outlook.com (10.13.174.252) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6002.13 via Frontend Transport; Mon, 16 Jan 2023 10:19:21 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 16 Jan
+ 2023 02:19:18 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Mon, 16 Jan 2023 02:19:17 -0800
+Received: from ubu1604-desktop.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Mon, 16 Jan 2023 02:19:15 -0800
+From:   Sushil Singh <sushilkumars@nvidia.com>
+To:     <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <vbhadram@nvidia.com>,
+        Sushil Singh <sushilkumars@nvidia.com>
+Subject: [PATCH] soc:tegra:pmc: Add wake source interrupt for mgbe.
+Date:   Mon, 16 Jan 2023 15:49:12 +0530
+Message-ID: <1673864352-17212-1-git-send-email-sushilkumars@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230112194314.845371875@infradead.org>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT103:EE_|MN0PR12MB5860:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95390b1e-d596-42c4-22d5-08daf7ab22a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /4FEqVOD4Ncc9XJ0dO6zl1vV2dyOzOCPCC6aIiwbXXEK6W6+oeKvP5f9yhrxzJ1wmGW6AqQ+6+3rehSq1wVM58aNBjTPtTEQaBwvr/IZ56wW4lclhuU30LhRbG0B3xHIhVwTJeKgvnRWRZLSYW8TdjSc39geJHaR4Pmr3E17JAZE2jpXlq26OoSGWwmpH47Gbm9ZvSDFm4N9mIZetflSE8CTTdZmyG2fCHnuws2Vg8J6+12wAj1jXa+wJl+/2A1vgSHqXC2kx7ZE9e7FHL1SG6xkdXbe3UCvQ4J8ke24gMY+l1xPpjD2+5OVPUBJ5pUIYTYmquSAZ9frXVXVjYM+ZbZsQPFyzmKt2nn9fQCnsrSovNwL2Hx5y1zaP5SvF8Mqu4n02VvlU/88zpwjtlA1PaYYAYZGgDhs9tfl7ePTpB+W9o2FBaJwJIfr1DJLVRbHK7WjAGU03uL0g/vzYOk4kefK0hs5YJ7RTLFCBDg7SqbbqgFNCchDcWmV4jgN6ofyyC6iG8cjpbU45k10YV3vhXvt/6587k4eJ5e94mxHIStjg5ba76UcaSVv+Ho7DBWkWBH+QIeI7vyXX2m3In4LxGkDCDpVGjpcnkklNJBcgtpc4NyyO4DVEwH9umz2OwbFJbHzYZP5rJzsVr93R6mKZJWzcrQqeb+2RKZQkQlqX/QrpQi2hDn30i9hio7gKkbOPaMNzD+bTNW9Do1kc+T7mg==
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(39860400002)(136003)(396003)(451199015)(46966006)(36840700001)(40470700004)(82740400003)(107886003)(36860700001)(7636003)(2906002)(6666004)(356005)(2616005)(40480700001)(4744005)(7696005)(26005)(478600001)(316002)(5660300002)(186003)(82310400005)(83380400001)(86362001)(36756003)(8936002)(426003)(41300700001)(47076005)(70586007)(336012)(8676002)(40460700003)(70206006)(54906003)(4326008)(6916009);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2023 10:19:21.8346
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95390b1e-d596-42c4-22d5-08daf7ab22a6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT103.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5860
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jan 12, 2023 at 08:43:14PM +0100, Peter Zijlstra wrote:
-> Hi All!
-> 
-> The (hopefully) final respin of cpuidle vs rcu cleanup patches. Barring any
-> objections I'll be queueing these patches in tip/sched/core in the next few
-> days.
-> 
-> v2: https://lkml.kernel.org/r/20220919095939.761690562@infradead.org
-> 
-> These here patches clean up the mess that is cpuidle vs rcuidle.
-> 
-> At the end of the ride there's only on RCU_NONIDLE user left:
-> 
->   arch/arm64/kernel/suspend.c:            RCU_NONIDLE(__cpu_suspend_exit());
-> 
-> And I know Mark has been prodding that with something sharp.
-> 
-> The last version was tested by a number of people and I'm hoping to not have
-> broken anything in the meantime ;-)
-> 
-> 
-> Changes since v2:
+Add mgbe ethernet GPIO wake interrupt
 
-150 rcutorture hours on each of the default scenarios passed.  This
-is qemu/KVM on x86:
+Signed-off-by: Sushil Singh <sushilkumars@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index cf4cfbf..f4abc7f 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -3,7 +3,7 @@
+  * drivers/soc/tegra/pmc.c
+  *
+  * Copyright (c) 2010 Google, Inc
+- * Copyright (c) 2018-2022, NVIDIA CORPORATION. All rights reserved.
++ * Copyright (c) 2018-2023, NVIDIA CORPORATION. All rights reserved.
+  *
+  * Author:
+  *	Colin Cross <ccross@google.com>
+@@ -4227,6 +4227,7 @@ static const char * const tegra234_reset_sources[] = {
+ static const struct tegra_wake_event tegra234_wake_events[] = {
+ 	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA234_AON_GPIO(EE, 4)),
+ 	TEGRA_WAKE_IRQ("rtc", 73, 10),
++	TEGRA_WAKE_GPIO("mgbe_wake", 56, 0, TEGRA234_MAIN_GPIO(Y, 3)),
+ };
+ 
+ static const struct tegra_pmc_soc tegra234_pmc_soc = {
+-- 
+2.7.4
 
->  - rebased to v6.2-rc3; as available at:
->      git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/idle
-> 
->  - folded: https://lkml.kernel.org/r/Y3UBwYNY15ETUKy9@hirez.programming.kicks-ass.net
->    which makes the ARM cpuidle index 0 consistently not use
->    CPUIDLE_FLAG_RCU_IDLE, as requested by Ulf.
-> 
->  - added a few more __always_inline to empty stub functions as found by the
->    robot.
-> 
->  - Used _RET_IP_ instead of _THIS_IP_ in a few placed because of:
->    https://github.com/ClangBuiltLinux/linux/issues/263
-> 
->  - Added new patches to address various robot reports:
-> 
->      #35:  trace,hardirq: No moar _rcuidle() tracing
->      #47:  cpuidle: Ensure ct_cpuidle_enter() is always called from noinstr/__cpuidle
->      #48:  cpuidle,arch: Mark all ct_cpuidle_enter() callers __cpuidle
->      #49:  cpuidle,arch: Mark all regular cpuidle_state::enter methods __cpuidle
->      #50:  cpuidle: Comments about noinstr/__cpuidle
->      #51:  context_tracking: Fix noinstr vs KASAN
-> 
-> 
-> ---
->  arch/alpha/kernel/process.c               |  1 -
->  arch/alpha/kernel/vmlinux.lds.S           |  1 -
->  arch/arc/kernel/process.c                 |  3 ++
->  arch/arc/kernel/vmlinux.lds.S             |  1 -
->  arch/arm/include/asm/vmlinux.lds.h        |  1 -
->  arch/arm/kernel/cpuidle.c                 |  4 +-
->  arch/arm/kernel/process.c                 |  1 -
->  arch/arm/kernel/smp.c                     |  6 +--
->  arch/arm/mach-davinci/cpuidle.c           |  4 +-
->  arch/arm/mach-gemini/board-dt.c           |  3 +-
->  arch/arm/mach-imx/cpuidle-imx5.c          |  4 +-
->  arch/arm/mach-imx/cpuidle-imx6q.c         |  8 ++--
->  arch/arm/mach-imx/cpuidle-imx6sl.c        |  4 +-
->  arch/arm/mach-imx/cpuidle-imx6sx.c        |  9 ++--
->  arch/arm/mach-imx/cpuidle-imx7ulp.c       |  4 +-
->  arch/arm/mach-omap2/common.h              |  6 ++-
->  arch/arm/mach-omap2/cpuidle34xx.c         | 16 ++++++-
->  arch/arm/mach-omap2/cpuidle44xx.c         | 29 +++++++------
->  arch/arm/mach-omap2/omap-mpuss-lowpower.c | 12 +++++-
->  arch/arm/mach-omap2/pm.h                  |  2 +-
->  arch/arm/mach-omap2/pm24xx.c              | 51 +---------------------
->  arch/arm/mach-omap2/pm34xx.c              | 14 +++++--
->  arch/arm/mach-omap2/pm44xx.c              |  2 +-
->  arch/arm/mach-omap2/powerdomain.c         | 10 ++---
->  arch/arm/mach-s3c/cpuidle-s3c64xx.c       |  5 +--
->  arch/arm64/kernel/cpuidle.c               |  2 +-
->  arch/arm64/kernel/idle.c                  |  1 -
->  arch/arm64/kernel/smp.c                   |  4 +-
->  arch/arm64/kernel/vmlinux.lds.S           |  1 -
->  arch/csky/kernel/process.c                |  1 -
->  arch/csky/kernel/smp.c                    |  2 +-
->  arch/csky/kernel/vmlinux.lds.S            |  1 -
->  arch/hexagon/kernel/process.c             |  1 -
->  arch/hexagon/kernel/vmlinux.lds.S         |  1 -
->  arch/ia64/kernel/process.c                |  1 +
->  arch/ia64/kernel/vmlinux.lds.S            |  1 -
->  arch/loongarch/kernel/idle.c              |  1 +
->  arch/loongarch/kernel/vmlinux.lds.S       |  1 -
->  arch/m68k/kernel/vmlinux-nommu.lds        |  1 -
->  arch/m68k/kernel/vmlinux-std.lds          |  1 -
->  arch/m68k/kernel/vmlinux-sun3.lds         |  1 -
->  arch/microblaze/kernel/process.c          |  1 -
->  arch/microblaze/kernel/vmlinux.lds.S      |  1 -
->  arch/mips/kernel/idle.c                   | 14 +++----
->  arch/mips/kernel/vmlinux.lds.S            |  1 -
->  arch/nios2/kernel/process.c               |  1 -
->  arch/nios2/kernel/vmlinux.lds.S           |  1 -
->  arch/openrisc/kernel/process.c            |  1 +
->  arch/openrisc/kernel/vmlinux.lds.S        |  1 -
->  arch/parisc/kernel/process.c              |  2 -
->  arch/parisc/kernel/vmlinux.lds.S          |  1 -
->  arch/powerpc/kernel/idle.c                |  5 +--
->  arch/powerpc/kernel/vmlinux.lds.S         |  1 -
->  arch/riscv/kernel/process.c               |  1 -
->  arch/riscv/kernel/vmlinux-xip.lds.S       |  1 -
->  arch/riscv/kernel/vmlinux.lds.S           |  1 -
->  arch/s390/kernel/idle.c                   |  1 -
->  arch/s390/kernel/vmlinux.lds.S            |  1 -
->  arch/sh/kernel/idle.c                     |  1 +
->  arch/sh/kernel/vmlinux.lds.S              |  1 -
->  arch/sparc/kernel/leon_pmc.c              |  4 ++
->  arch/sparc/kernel/process_32.c            |  1 -
->  arch/sparc/kernel/process_64.c            |  3 +-
->  arch/sparc/kernel/vmlinux.lds.S           |  1 -
->  arch/um/kernel/dyn.lds.S                  |  1 -
->  arch/um/kernel/process.c                  |  1 -
->  arch/um/kernel/uml.lds.S                  |  1 -
->  arch/x86/boot/compressed/vmlinux.lds.S    |  1 +
->  arch/x86/coco/tdx/tdcall.S                | 15 +------
->  arch/x86/coco/tdx/tdx.c                   | 25 ++++-------
->  arch/x86/events/amd/brs.c                 | 13 +++---
->  arch/x86/include/asm/fpu/xcr.h            |  4 +-
->  arch/x86/include/asm/irqflags.h           | 11 ++---
->  arch/x86/include/asm/mwait.h              | 14 +++----
->  arch/x86/include/asm/nospec-branch.h      |  2 +-
->  arch/x86/include/asm/paravirt.h           |  6 ++-
->  arch/x86/include/asm/perf_event.h         |  2 +-
->  arch/x86/include/asm/shared/io.h          |  4 +-
->  arch/x86/include/asm/shared/tdx.h         |  1 -
->  arch/x86/include/asm/special_insns.h      |  8 ++--
->  arch/x86/include/asm/xen/hypercall.h      |  2 +-
->  arch/x86/kernel/cpu/bugs.c                |  2 +-
->  arch/x86/kernel/fpu/core.c                |  4 +-
->  arch/x86/kernel/paravirt.c                | 14 ++++++-
->  arch/x86/kernel/process.c                 | 65 ++++++++++++++--------------
->  arch/x86/kernel/vmlinux.lds.S             |  1 -
->  arch/x86/lib/memcpy_64.S                  |  5 +--
->  arch/x86/lib/memmove_64.S                 |  4 +-
->  arch/x86/lib/memset_64.S                  |  4 +-
->  arch/x86/xen/enlighten_pv.c               |  2 +-
->  arch/x86/xen/irq.c                        |  2 +-
->  arch/xtensa/kernel/process.c              |  1 +
->  arch/xtensa/kernel/vmlinux.lds.S          |  1 -
->  drivers/acpi/processor_idle.c             | 28 ++++++++-----
->  drivers/base/power/runtime.c              | 24 +++++------
->  drivers/clk/clk.c                         |  8 ++--
->  drivers/cpuidle/cpuidle-arm.c             |  4 +-
->  drivers/cpuidle/cpuidle-big_little.c      | 12 ++++--
->  drivers/cpuidle/cpuidle-mvebu-v7.c        | 13 ++++--
->  drivers/cpuidle/cpuidle-psci.c            | 26 +++++-------
->  drivers/cpuidle/cpuidle-qcom-spm.c        |  4 +-
->  drivers/cpuidle/cpuidle-riscv-sbi.c       | 19 +++++----
->  drivers/cpuidle/cpuidle-tegra.c           | 31 +++++++++-----
->  drivers/cpuidle/cpuidle.c                 | 70 ++++++++++++++++++++++---------
->  drivers/cpuidle/dt_idle_states.c          |  2 +-
->  drivers/cpuidle/poll_state.c              | 10 ++++-
->  drivers/idle/intel_idle.c                 | 19 ++++-----
->  drivers/perf/arm_pmu.c                    | 11 +----
->  drivers/perf/riscv_pmu_sbi.c              |  8 +---
->  include/asm-generic/vmlinux.lds.h         |  9 ++--
->  include/linux/clockchips.h                |  4 +-
->  include/linux/compiler_types.h            | 18 +++++++-
->  include/linux/cpu.h                       |  3 --
->  include/linux/cpuidle.h                   | 32 ++++++++++++++
->  include/linux/cpumask.h                   |  4 +-
->  include/linux/percpu-defs.h               |  2 +-
->  include/linux/sched/idle.h                | 40 +++++++++++++-----
->  include/linux/thread_info.h               | 18 +++++++-
->  include/linux/tracepoint.h                | 15 ++++++-
->  kernel/context_tracking.c                 | 12 +++---
->  kernel/cpu_pm.c                           |  9 ----
->  kernel/printk/printk.c                    |  2 +-
->  kernel/sched/idle.c                       | 47 ++++++---------------
->  kernel/time/tick-broadcast-hrtimer.c      | 29 ++++++-------
->  kernel/time/tick-broadcast.c              |  6 ++-
->  kernel/trace/trace.c                      |  3 ++
->  kernel/trace/trace_preemptirq.c           | 50 ++++++----------------
->  lib/ubsan.c                               |  5 ++-
->  mm/kasan/kasan.h                          |  4 ++
->  mm/kasan/shadow.c                         | 38 +++++++++++++++++
->  tools/objtool/check.c                     | 17 ++++++++
->  131 files changed, 617 insertions(+), 523 deletions(-)
-> 
