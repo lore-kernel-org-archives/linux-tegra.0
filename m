@@ -2,128 +2,179 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B0EC46467
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Jan 2023 10:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACAAC46467
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Jan 2023 11:54:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230134AbjAPKTb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Jan 2023 05:19:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36960 "EHLO
+        id S230117AbjAPLyy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Jan 2023 06:54:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbjAPKTZ (ORCPT
+        with ESMTP id S230114AbjAPLyw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Jan 2023 05:19:25 -0500
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E200B18AAB;
-        Mon, 16 Jan 2023 02:19:23 -0800 (PST)
+        Mon, 16 Jan 2023 06:54:52 -0500
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD6021ABED;
+        Mon, 16 Jan 2023 03:54:50 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fQcLsjNwx6/hCv2N5/ENyhX4KmTz+A2E+Enes+6/R2ymOegQC6m6vP4bQQ1O/YlgAj6su2/EnLYLWMpsF7ZL11sqU0E10/ilEj5RHOWmcPsn/h+yKeYW4ra0mxI/1rc1VLkWrbhMqXnvzsgHRw8wffIm6jsGaxLRR2bmCVwuxjh0jiZnh3UdyZLUF3D7AUsJRH1nDxAjfM/q+2RG5uO4iMwDjr0AZpba5xl8MUq7M0tRQNPbv1cBgu/IGreLFPnXAJLAQlrAdybZI8w7GEKNPhZJCbklUXsKlZQy+8xZakgnpzcZruwcYrd3hkN0saxhJP1b6Nwka1LHeZh0sNYAvg==
+ b=OYCWkio9PmaMAY7cORJDfDnyCrC0IHPnv4Pm4Qc60u3GoGry0GhSSjVp7L4HHHhUxQkcj0nmvidSitPfhiBxp/uGSorJZkTbZMUhVMJkDx+L3WhydUdDD8T7V2iJQcp40BdR06VuWsCgbS4YIUOhQ8veF+cLU73LVW5a7vWDvL7Tjd8iMKpkY5z/BZZcmJfPvqcD+437HuZCOD9ufo19+jMR3D0B9nnkwJE4lBSCQp3OxEO8T52c3HgUZ9F1q03PSQavBn4nlay53RiknYaPzyzM8+I8n5aQqQuc/IyR78p3+scNZA32KyWfaKudrNHqFYDnh2tH2NvszXSOXnLP+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+/9pcMkfpajz9Q8TDICXii2eL6jbq34iW7HgssDX2Gk=;
- b=mB+PaN6XNBFAhxrWZEMXyAslSzIGSJ5XrZT4goEnLtF153pt6zQa4wuqDMlevageg/B6t/yffqouuSptizTXV17N04MDGNYeDJ+3tpbAKxGjNuHADdV9VUawL6nGGd/ugs1f/Yhhhyuwbd3bZliRYwouB24E4LgVhh+XhNrThTWrFsnxmJGPiKwhiWZaE/24kV39WDiwG/KV6ybdY5/a8IY7H0RfWiK5ZMv7WKx7R6QCVSmiU6ignOW2QgJ2fyDsOHjdSk1V1JSd9zs8JF8ZKdpV7cFYahi5CFTkAEw1g8agMgLVYStqh6+yTfy9+wb2KNWGwybHrBFxR7XE65w1iw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=VI5y2fKyeFHwDhDpYd2woiAw7pftg0YFrjur0YInKbA=;
+ b=HojsFEZnC3LzTPvL2vGjB3YxFu0Gv7wlbOCUz06R/p6uM+mu9Hnv6r+7fIVMsU+XuoSSaWtNry4+3h//VKagtXl78K2eiltq6ZKSxTUwRtP1YFCNkph8fWbCGe7Ok+iCZvg5SNYC+VwEDDGrgh2tU1NrF+/dIWYaLgYAvveIdxmvh4jBvaUufyb8FOL2suOCElCvp9IuLuJbiKIGLmX9GreWFsJMf0fdMjdQOo7B/ijM4t1PgnkkMK4adp/HQ+EI/hotp9NzreLCM771BNMBUUth8akr96ZMnfBK3iF2zGD1E5hB4kywzV+1MJATvuCfjCq30CLOXdXTMvXAVFEQfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+/9pcMkfpajz9Q8TDICXii2eL6jbq34iW7HgssDX2Gk=;
- b=pFYiPvagtfYKfk0+IGgNmwJdtNvX7KT4YCJ0hTFdi1kD34r/bww1YrirsLiZH+zzl0fVLzPrgQ9GwNfhDlzPvuUXGWz0esYgOT0gWR9JgV9r3fUoSbKxjJB24mx9GG/wdzL4uk6Zohk7h3MxF/hvZKXKOrlNfZvyVJYP2cyF+5qr5S5Rl5zJRqxM+pmHVy7eREB65HbO+H3d/6qwAO8VqRKcchZ6xZDlqC1GstI7BWNeQ+wwO/mq/Up/+U/wRSxvaVu4epz99vK1k57gY8B8vyArOW+KFAwrmrDUcWTF8shhl/1DMzAsbGYsq6LgMGlm8u8f+rqkts7u9dnQ1qf5TA==
-Received: from MW4PR04CA0115.namprd04.prod.outlook.com (2603:10b6:303:83::30)
- by MN0PR12MB5860.namprd12.prod.outlook.com (2603:10b6:208:37b::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Mon, 16 Jan
- 2023 10:19:22 +0000
-Received: from CO1NAM11FT103.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:83:cafe::c) by MW4PR04CA0115.outlook.office365.com
- (2603:10b6:303:83::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.19 via Frontend
- Transport; Mon, 16 Jan 2023 10:19:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CO1NAM11FT103.mail.protection.outlook.com (10.13.174.252) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6002.13 via Frontend Transport; Mon, 16 Jan 2023 10:19:21 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 16 Jan
- 2023 02:19:18 -0800
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 16 Jan 2023 02:19:17 -0800
-Received: from ubu1604-desktop.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Mon, 16 Jan 2023 02:19:15 -0800
-From:   Sushil Singh <sushilkumars@nvidia.com>
-To:     <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <vbhadram@nvidia.com>,
-        Sushil Singh <sushilkumars@nvidia.com>
-Subject: [PATCH] soc:tegra:pmc: Add wake source interrupt for mgbe.
-Date:   Mon, 16 Jan 2023 15:49:12 +0530
-Message-ID: <1673864352-17212-1-git-send-email-sushilkumars@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+ bh=VI5y2fKyeFHwDhDpYd2woiAw7pftg0YFrjur0YInKbA=;
+ b=h4CEevB9xuVzNowkrMym4RK79KjAzye1njYf34u4l7jGsQrLXbZpUOnch9lS1llwHlLBWmGs9uewtVrd+a+NrDmd2ZMdUIzI4Hvq8zlW4Rc4CpoHLOfOSRNcinW+pg6MytZbpk2IIu7yg4PZlhZxAOVU6LeLCvoGq+ISKGC84JqOSbqo+eosU+WcgYAdezgZAl9X2X00DQVdPvPu0mj6u4KHcookCfw0RUY95A2V5SII/w9oeYMSqgt2VROmGhEveA8S0WMsiuvq0R4NtqrE0ltunz8OvzpakmgwXwnFymtl5jN6HIBVhGSjmQe5M8AZ6+BBEmyVkI4OpX67m2BCwQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ MW3PR12MB4348.namprd12.prod.outlook.com (2603:10b6:303:5f::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5986.23; Mon, 16 Jan 2023 11:54:47 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::f1be:5d:f297:e2f]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::f1be:5d:f297:e2f%7]) with mapi id 15.20.6002.013; Mon, 16 Jan 2023
+ 11:54:47 +0000
+Message-ID: <acf995cc-f3c2-c410-dc6b-b5d3b5cd0970@nvidia.com>
+Date:   Mon, 16 Jan 2023 11:50:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v7 0/3] xhci: tegra: USB2 pad power controls
+Content-Language: en-US
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Jim Lin <jilin@nvidia.com>, thierry.reding@gmail.com,
+        mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20221111101813.32482-1-jilin@nvidia.com>
+ <f2dbfe41-7164-dffa-8e9c-2d5b0f8fcae6@nvidia.com>
+ <Y7g9g0CbCc6b+3EN@kroah.com>
+ <30fefd03-0ead-8980-ff5f-5e8a95e74c8a@linux.intel.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <30fefd03-0ead-8980-ff5f-5e8a95e74c8a@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0085.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:190::18) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT103:EE_|MN0PR12MB5860:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95390b1e-d596-42c4-22d5-08daf7ab22a6
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MW3PR12MB4348:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8b6ddcc-bb9d-4bd7-4d71-08daf7b87767
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /4FEqVOD4Ncc9XJ0dO6zl1vV2dyOzOCPCC6aIiwbXXEK6W6+oeKvP5f9yhrxzJ1wmGW6AqQ+6+3rehSq1wVM58aNBjTPtTEQaBwvr/IZ56wW4lclhuU30LhRbG0B3xHIhVwTJeKgvnRWRZLSYW8TdjSc39geJHaR4Pmr3E17JAZE2jpXlq26OoSGWwmpH47Gbm9ZvSDFm4N9mIZetflSE8CTTdZmyG2fCHnuws2Vg8J6+12wAj1jXa+wJl+/2A1vgSHqXC2kx7ZE9e7FHL1SG6xkdXbe3UCvQ4J8ke24gMY+l1xPpjD2+5OVPUBJ5pUIYTYmquSAZ9frXVXVjYM+ZbZsQPFyzmKt2nn9fQCnsrSovNwL2Hx5y1zaP5SvF8Mqu4n02VvlU/88zpwjtlA1PaYYAYZGgDhs9tfl7ePTpB+W9o2FBaJwJIfr1DJLVRbHK7WjAGU03uL0g/vzYOk4kefK0hs5YJ7RTLFCBDg7SqbbqgFNCchDcWmV4jgN6ofyyC6iG8cjpbU45k10YV3vhXvt/6587k4eJ5e94mxHIStjg5ba76UcaSVv+Ho7DBWkWBH+QIeI7vyXX2m3In4LxGkDCDpVGjpcnkklNJBcgtpc4NyyO4DVEwH9umz2OwbFJbHzYZP5rJzsVr93R6mKZJWzcrQqeb+2RKZQkQlqX/QrpQi2hDn30i9hio7gKkbOPaMNzD+bTNW9Do1kc+T7mg==
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(39860400002)(136003)(396003)(451199015)(46966006)(36840700001)(40470700004)(82740400003)(107886003)(36860700001)(7636003)(2906002)(6666004)(356005)(2616005)(40480700001)(4744005)(7696005)(26005)(478600001)(316002)(5660300002)(186003)(82310400005)(83380400001)(86362001)(36756003)(8936002)(426003)(41300700001)(47076005)(70586007)(336012)(8676002)(40460700003)(70206006)(54906003)(4326008)(6916009);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: JN38rNp6lm81wahA5Bo7PHvPYgqN/9yWrHSv6AZLd+jkIE+OnbC+ytlppPuRMle9ripboFIO789AL8ThtcKM6dnKmHr6lLJIfPKNMO8CRUANSm5WRKFcSp+Zy8w0FsqF+H9zjH53wp11cK/LRvkC0hShnaeTZamUWKXkGTzLQQKaURBPvX8uLLdUrn+HVqFRUHMbaz4UycoGgtZLD4jC/1bxqk6HbzuYOIGcdg5ATQYV7K1Th9O94pltwCQBXuoerM1MAhC7RLTm7UAULRhHsZZcG5RpObU69ZRj21nAkifvBOEtH0soTRovMLeiE2L1BNS56URjaYy1ID0VvmDKhZRjhCTDthSU0ErPokrygKihgNB9nM4a3S4873IyQKQprDPau8vGzUXuoP0UdnxMVMTgwXbtc/EHWXASzj3MdZgNYOHWjJf5ql2ZUZSgHCFaXHGAFAySyiQrYy0Jdnx4PUp6mxpfTV5Lax9k/9Qa8oJMOlI6tKBjXuJjt7cVF7j9AVeZDQNz98B2qJHyQGBun1b8hdLbV8oIEboxemXSQOJU4IY8ruRPFWY49dYCmRtIWPonXi+/17D0S+pLHO20HsXepL11QSVkeOKnsJKmQnQyBBAoJx+uAOE8F7pEVcl2fZbG5kgMcZTbyhvkRw/jJfMG3x+8u+/o7Jkfcia165JNZBs7+/+IVOaBDujDqDlwERvRp27/EctGib2e7TQAjtJrnzQES/R6o+8lilYyOE0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(346002)(376002)(366004)(39860400002)(451199015)(36756003)(31696002)(86362001)(83380400001)(53546011)(186003)(6512007)(26005)(4326008)(55236004)(8676002)(66556008)(66946007)(2616005)(66476007)(41300700001)(316002)(6506007)(6666004)(110136005)(6486002)(478600001)(38100700002)(2906002)(5660300002)(8936002)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UjhkZ1U4VGIrZjcvUm10RmtkMUdYR0hiRFBpbStmcTVGUW1xaW50NzZZcHRa?=
+ =?utf-8?B?Qk9XSEU1aTJ3WWhLQndtRno4L0xiZ0dCTUpvQnRoUm1GZUZsQ084SnNTOHNw?=
+ =?utf-8?B?TUR3dnE1TmFtWUE3dGI4d3g3T3drejFKdGZ4dTVXZTlXU3c1azRPeXM3dzVr?=
+ =?utf-8?B?UFdXOElXK0swZTRTalVUK0ZISm4rZTFQdVF2QWdmQzF0MmRnMWRjQzViVVlE?=
+ =?utf-8?B?Ykt5dnBiRCtTMjVUVU54U0lkelRlaC9iY0pyUTRWNkxxQmVCa0dlUFJWOWtt?=
+ =?utf-8?B?cC9waEFNUndzZVk4T3BadldEYjUwRHBFbS8zbDFjc3BsRmMvU0VEOE9GSjR0?=
+ =?utf-8?B?VTNzcmtNRTJzamw3S1ppTjRma0tuWi9UYitZSHNydGxHSTBYdC9pTWRrbUJR?=
+ =?utf-8?B?amxoK0hvNTBBdVBodlRnWWR4Y0VJUkpOSlE0bytLS0o0MnpZM2RwQmw5Z2Nn?=
+ =?utf-8?B?S0hnYjdCUjBDaVhiS2g2SVlIYWYzQUVWb09JWitwMUIyWUpjWVl5TmFvQ1FY?=
+ =?utf-8?B?SjNzMnFVSWtXRExCbHl0WlhwemdobndEdXZuQTFrbEF3WmQ4YzhYQjVnYzl2?=
+ =?utf-8?B?ZzB0MGJBV3ZmcmdodlIwWGVkemZ6ZTZ1VWNoUkUvelNVU05YYXRtMzMwZUlr?=
+ =?utf-8?B?NFpNTDJIdlVEQUk2UURFRjVFMEc1K0JwUnYvZFp3U1pybDlZcmxiOWZPbURL?=
+ =?utf-8?B?NGoyZmw2dGp3WTJJOStmaGtMeXpTaE5wamZ4N1lBZFB3WGh5eCt3SEdhTlRJ?=
+ =?utf-8?B?RGxUeGVhcHI1alVtRDRrWmJPMVhnb05CQTl1L0c5YklTdDVUNWNKZ1NHcGhp?=
+ =?utf-8?B?Vy9nbHdNOElxaU1vc0FnQTlrYXUvNGFlZXhUQkpTa3dnOEluN2h6T2doT05C?=
+ =?utf-8?B?ZjgxQWszS1dzTUl6Nm0zY2hDN05pay9QUEtYU2FZUG5pZUpyS0t5eEhDUnNk?=
+ =?utf-8?B?UW1xR2ZlYWxENTByLzBWMnNUaVFpUUdzU3FwejE2dHRjUGt6cEVvbXdxYjdE?=
+ =?utf-8?B?dmEyMW5SUVJhOEd0bnpFOFhBd3k0REVXdGt5UW1mWG9abklrWnpqUFJKYU5o?=
+ =?utf-8?B?VHFERDM4dk5WeGJ4Q1llU0NmeXFkNi9NUEZ1UGFNY1VZcnFxNUk3eUhoSG9i?=
+ =?utf-8?B?WTNyVkhFSGFtRnh5Tm9oWldiR0RFQXgrRldsRTVrQTdhTTUrV2gyZFVBVFdt?=
+ =?utf-8?B?WGdiOHZqOGFROEMxREJRV3ZoaU9DWHdsc3FVODJGVnZGSFZFc2ZUZHF1QTQy?=
+ =?utf-8?B?UTNUaGlmYjRQTndrYVNkcmJMNjdFcUZrK3JNemJFOTZIVW5aclMxMXg5WVlK?=
+ =?utf-8?B?MzlaaS9oOWErai9TUkVaVURkZ2hBdWl1Zis2NUtWM21ud2JFVEw4ZDJaN0lM?=
+ =?utf-8?B?L3BHN2xIbjVaODl1TUNVQXVxRW5OaWFVM2s5WnFCd3Y2VGJENjh5YStCbFRy?=
+ =?utf-8?B?cGVMeW1pTHJUd21Wem90aFFrZm5FVWFFam9tZUUvdytSLzBUY0N6QkF2OUcr?=
+ =?utf-8?B?enc2YnZpUVl6R3k4b1BsTXcrRFFJKzJYSjJNU3pRVDlGVlNSY1dmcjlBNlFH?=
+ =?utf-8?B?NXpFZnZqdE5WaFNQTjBwMjRiNHQyTDFZOXNGVjFKQ0ZOc3g1NG9qdnpWdTgw?=
+ =?utf-8?B?UFhYK0wxWFBFdEhrZTdEaVRvMjhzcGxXelhRbDNIYUNxdW8rSnpqMDl4RjNq?=
+ =?utf-8?B?blpDbmxJQi9IS0t4bW1YemNKK3NzSm4xNGNVWnlSVDB1Sk96ZjNCem9BV2k3?=
+ =?utf-8?B?L3VpQlAxQ0t2bCtMV3hxSzMwNWdzVXNSbmE4c2RKU0dFTVQzMFl2MHV3czFM?=
+ =?utf-8?B?bXFSLzYzUWxtdy9XRGFsK0x5RDkrdTFTbyswWHJRdDBqNGlmWlgwUFRPdWNY?=
+ =?utf-8?B?VjVEdnlmSUpwOVhzaWJoUm1YcDJqWEtxTndDL2Zod1RFZkk1NjBvMG9pTExq?=
+ =?utf-8?B?NWFwSFp6YUl5T2cyeU9oN3J0WkdMM0RQbGpwMEx0d1p2aWFrMnNydUNVcSt6?=
+ =?utf-8?B?Yk8zQVJkNkZKM1ZjZENJUVA2REJ1QmpqSXFRS2NMTVZhUGQ4T1g0eDF4N2xH?=
+ =?utf-8?B?SThFY21Qb2xIUzZFdjl5cityd29iNDNDVGxqU0hTY09WMThJQTNpR3J5SVJM?=
+ =?utf-8?B?Ujc1cVZ0bmxXZ1dBbEUrRTUxSHZEZ09YS05zOEVsTXNzVm9uY1BSelVKcXVM?=
+ =?utf-8?B?Smc9PQ==?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2023 10:19:21.8346
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8b6ddcc-bb9d-4bd7-4d71-08daf7b87767
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2023 11:54:47.7054
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95390b1e-d596-42c4-22d5-08daf7ab22a6
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT103.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5860
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /2LQjcN+U1TguarLAuSQUpqTrHWpNr0ujamFbQl0fehwjp1i1Q74UtSLUYhkvRVzf+v2uWDSWlIJlNrQKzF+xQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4348
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add mgbe ethernet GPIO wake interrupt
 
-Signed-off-by: Sushil Singh <sushilkumars@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 09/01/2023 08:28, Mathias Nyman wrote:
+> On 6.1.2023 17.25, Greg KH wrote:
+>> On Fri, Jan 06, 2023 at 02:56:51PM +0000, Jon Hunter wrote:
+>>> Hi Greg,
+>>>
+>>> On 11/11/2022 10:18, Jim Lin wrote:
+>>>> 1. Export symbol on xhci_hub_control
+>>>> 2. Add hub_control to xhci_driver_overrides
+>>>> 3. Program USB2 pad PD controls during port connect/disconnect, port
+>>>> suspend/resume, and test mode, to reduce power consumption on
+>>>> disconnect or suspend.
+>>>>
+>>>> Patch
+>>>> xhci: tegra: USB2 pad power controls
+>>>> depends on
+>>>> xhci: hub: export symbol on xhci_hub_control
+>>>> xhci: Add hub_control to xhci_driver_overrides
+>>>>
+>>>> Jim Lin (3):
+>>>>     xhci: Add hub_control to xhci_driver_overrides
+>>>>     xhci: hub: export symbol on xhci_hub_control
+>>>>     xhci: tegra: USB2 pad power controls
+>>>>
+>>>>    drivers/usb/host/xhci-hub.c   |   1 +
+>>>>    drivers/usb/host/xhci-tegra.c | 125 
+>>>> ++++++++++++++++++++++++++++++++++
+>>>>    drivers/usb/host/xhci.c       |   2 +
+>>>>    drivers/usb/host/xhci.h       |   2 +
+>>>>    4 files changed, 130 insertions(+)
+>>>>
+>>>
+>>>
+>>> I have verified that this still applies cleanly on top of -next. 
+>>> Please let
+>>> us know if this can be queued up for Linux v6.3?
+>>
+>> Normally for xhci stuff I want it to go through Mathias for things that
+>> are outside of just xhci-tegra.c.
+> 
+> Looks good to me, can be picked up directly
+> Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> 
+> Or I can add this to the series going to usb-next if that is preferred.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index cf4cfbf..f4abc7f 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -3,7 +3,7 @@
-  * drivers/soc/tegra/pmc.c
-  *
-  * Copyright (c) 2010 Google, Inc
-- * Copyright (c) 2018-2022, NVIDIA CORPORATION. All rights reserved.
-+ * Copyright (c) 2018-2023, NVIDIA CORPORATION. All rights reserved.
-  *
-  * Author:
-  *	Colin Cross <ccross@google.com>
-@@ -4227,6 +4227,7 @@ static const char * const tegra234_reset_sources[] = {
- static const struct tegra_wake_event tegra234_wake_events[] = {
- 	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA234_AON_GPIO(EE, 4)),
- 	TEGRA_WAKE_IRQ("rtc", 73, 10),
-+	TEGRA_WAKE_GPIO("mgbe_wake", 56, 0, TEGRA234_MAIN_GPIO(Y, 3)),
- };
- 
- static const struct tegra_pmc_soc tegra234_pmc_soc = {
+
+I did not see this in -next yet.
+
+Mathias, are you able to pick this up?
+
+Thanks Jon
+
 -- 
-2.7.4
-
+nvpublic
