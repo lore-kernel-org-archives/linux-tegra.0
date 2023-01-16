@@ -2,136 +2,106 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1045C677F1
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Jan 2023 12:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48836C46467
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Jan 2023 12:23:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbjAPMRD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Jan 2023 07:17:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48948 "EHLO
+        id S230045AbjAPMXL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Jan 2023 07:23:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbjAPMQ5 (ORCPT
+        with ESMTP id S229881AbjAPMXK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Jan 2023 07:16:57 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDA951E288;
-        Mon, 16 Jan 2023 04:16:53 -0800 (PST)
-Received: from [192.168.2.131] (unknown [109.252.117.89])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Mon, 16 Jan 2023 07:23:10 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C95401C311;
+        Mon, 16 Jan 2023 04:23:09 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 877BE6601ACF;
-        Mon, 16 Jan 2023 12:16:51 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1673871412;
-        bh=DBPrqVIX0FkXdk29cXAhbSyKQJoqHM21fjclrZVPmYg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=O+iauYzlKCNj7yGhonfleUevaKod2TXyW+fN0XihMUOHtRjAjiAlIzdaGmo164C2B
-         /McP217ZQdZM+KKzy1H0bAeV15tIwXuwN1c9zI4uNGCv6+CkhaKbz688gdlmKxigFq
-         kIfadDHUAS/lg0RG99oe7D+b94XEXsrCMmJrtctXmjBZh8zN+tB5naC5798Sm3nAUs
-         ItNS+fEM6uYUWYZicGMjpPgdvTqqHfAf9uBteSD1SYiSvlaYjG7Aai0ohx2D49jZ2y
-         +fKdl6Af7Q6We8+FroExhZCEeg0CbzUWWfMb8n95b426PAGNqyoF+n59AMg4gMFADc
-         5NUSD6n0ebTuA==
-Message-ID: <8bd5cf36-e1fb-305c-08c5-3bbc80204866@collabora.com>
-Date:   Mon, 16 Jan 2023 15:16:48 +0300
+        by sin.source.kernel.org (Postfix) with ESMTPS id D0076CE0E92;
+        Mon, 16 Jan 2023 12:23:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE94C433D2;
+        Mon, 16 Jan 2023 12:23:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1673871786;
+        bh=JD4Qw+kGTk0vftDI4C/ZwHu7LD0az0ArFsgdGux842c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UDV2BYgRj4F1t3bjP3wvuSd0FfjtPMH92dqO+GS82leFLJzFff3c9x8cLPiCMHZbi
+         t8Ve7YnuYNa0r/rplQK2iDeHGPeajwP3u6yrJcWS660c20lJJSu5uemMwAaVieyHY5
+         ZV2otSM4QnGHnlLpdtTsri7enP6Jt1ZuN4Yd9DLU=
+Date:   Mon, 16 Jan 2023 13:23:03 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Jim Lin <jilin@nvidia.com>, thierry.reding@gmail.com,
+        mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v7 0/3] xhci: tegra: USB2 pad power controls
+Message-ID: <Y8VBpxoI88ASPCaV@kroah.com>
+References: <20221111101813.32482-1-jilin@nvidia.com>
+ <f2dbfe41-7164-dffa-8e9c-2d5b0f8fcae6@nvidia.com>
+ <Y7g9g0CbCc6b+3EN@kroah.com>
+ <30fefd03-0ead-8980-ff5f-5e8a95e74c8a@linux.intel.com>
+ <acf995cc-f3c2-c410-dc6b-b5d3b5cd0970@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [Patch v1 08/10] cpufreq: tegra194: add OPP support and set
- bandwidth
-To:     Sumit Gupta <sumitg@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>, treding@nvidia.com,
-        krzysztof.kozlowski@linaro.org, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
-        bbasu@nvidia.com, Rajkumar Kasirajan <rkasirajan@nvidia.com>
-References: <20221220160240.27494-1-sumitg@nvidia.com>
- <20221220160240.27494-9-sumitg@nvidia.com>
- <4e3e4485-ba22-eb47-fb95-e8d626160bc6@gmail.com>
- <8e6d7dd3-1bdc-ee4b-0c1e-1ae9cd8e4f29@nvidia.com>
-Content-Language: en-US
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <8e6d7dd3-1bdc-ee4b-0c1e-1ae9cd8e4f29@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <acf995cc-f3c2-c410-dc6b-b5d3b5cd0970@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 1/13/23 16:50, Sumit Gupta wrote:
+On Mon, Jan 16, 2023 at 11:50:19AM +0000, Jon Hunter wrote:
+> 
+> On 09/01/2023 08:28, Mathias Nyman wrote:
+> > On 6.1.2023 17.25, Greg KH wrote:
+> > > On Fri, Jan 06, 2023 at 02:56:51PM +0000, Jon Hunter wrote:
+> > > > Hi Greg,
+> > > > 
+> > > > On 11/11/2022 10:18, Jim Lin wrote:
+> > > > > 1. Export symbol on xhci_hub_control
+> > > > > 2. Add hub_control to xhci_driver_overrides
+> > > > > 3. Program USB2 pad PD controls during port connect/disconnect, port
+> > > > > suspend/resume, and test mode, to reduce power consumption on
+> > > > > disconnect or suspend.
+> > > > > 
+> > > > > Patch
+> > > > > xhci: tegra: USB2 pad power controls
+> > > > > depends on
+> > > > > xhci: hub: export symbol on xhci_hub_control
+> > > > > xhci: Add hub_control to xhci_driver_overrides
+> > > > > 
+> > > > > Jim Lin (3):
+> > > > >     xhci: Add hub_control to xhci_driver_overrides
+> > > > >     xhci: hub: export symbol on xhci_hub_control
+> > > > >     xhci: tegra: USB2 pad power controls
+> > > > > 
+> > > > >    drivers/usb/host/xhci-hub.c   |   1 +
+> > > > >    drivers/usb/host/xhci-tegra.c | 125
+> > > > > ++++++++++++++++++++++++++++++++++
+> > > > >    drivers/usb/host/xhci.c       |   2 +
+> > > > >    drivers/usb/host/xhci.h       |   2 +
+> > > > >    4 files changed, 130 insertions(+)
+> > > > > 
+> > > > 
+> > > > 
+> > > > I have verified that this still applies cleanly on top of -next.
+> > > > Please let
+> > > > us know if this can be queued up for Linux v6.3?
+> > > 
+> > > Normally for xhci stuff I want it to go through Mathias for things that
+> > > are outside of just xhci-tegra.c.
+> > 
+> > Looks good to me, can be picked up directly
+> > Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> > 
+> > Or I can add this to the series going to usb-next if that is preferred.
 > 
 > 
-> On 22/12/22 21:16, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 20.12.2022 19:02, Sumit Gupta Ð¿Ð¸ÑˆÐµÑ‚:
->>> Add support to use OPP table from DT in Tegra194 cpufreq driver.
->>> Tegra SoC's receive the frequency lookup table (LUT) from BPMP-FW.
->>> Cross check the OPP's present in DT against the LUT from BPMP-FW
->>> and enable only those DT OPP's which are present in LUT also.
->>>
->>> The OPP table in DT has CPU Frequency to bandwidth mapping where
->>> the bandwidth value is per MC channel. DRAM bandwidth depends on the
->>> number of MC channels which can vary as per the boot configuration.
->>> This per channel bandwidth from OPP table will be later converted by
->>> MC driver to final bandwidth value by multiplying with number of
->>> channels before sending the request to BPMP-FW.
->>>
->>> If OPP table is not present in DT, then use the LUT from BPMP-FW directy
->>> as the frequency table and not do the DRAM frequency scaling which is
->>> same as the current behavior.
->>>
->>> Now, as the CPU Frequency table is being controlling through OPP table
->>> in DT. Keeping fewer entries in the table will create less frequency
->>> steps and scale fast to high frequencies if required.
->>
->> It's not exactly clear what you're doing here. Are you going to scale
->> memory BW based on CPU freq? If yes, then this is wrong because CPU freq
->> is independent from the memory subsystem.
->>
->> All Tegra30+ SoCs have ACTMON hardware unit that monitors CPU memory
->> activity and CPU memory BW should be scaled based on CPU memory events
->> counter. We have ACTMON devfreq driver for older SoCs. I have no clue
->> how ACTMON can be accessed on T186+, perhaps there should be a BPMP FW
->> API for that.
->>
+> I did not see this in -next yet.
 > 
-> Yes, scaling the memory BW based on CPU freq.
-> Referred below patch set for previous generation of Tegra Soc's which
-> you mentioned and tried to trace the history.
-> 
-> https://patchwork.ozlabs.org/project/linux-tegra/patch/1418719298-25314-3-git-send-email-tomeu.vizoso@collabora.com/
-> 
-> In new Tegra Soc's, actmon counter control and usage has been moved to
-> BPMP-FW where only 'MCALL' counter is used and 'MCCPU is not being used.
-> Using the actmon counter was a reactive way to scale the frequency which
-> is less effective due to averaging over a time period.
-> We are now using the proactive way where clients tell their bandwidth
-> needs to help achieve better performance.
+> Mathias, are you able to pick this up?
 
-You don't know what bandwidth CPU needs, you trying to guess it.
-
-It should be a bad decision to use cpufreq for memory bandwidth scaling.
-You'll be wasting memory power 90% of time because cpufreq doesn't have
-relation to the DRAM, your heuristics will be wrong and won't do
-anything good compared to using ACTMON. The L2 CPU cache + memory
-prefetching hides memory from CPU. And cpufreq should be less reactive
-than ACTMON in general.
-
-Scaling memory freq based on cpufreq is what downstream NV kernel did
-10+ years ago for the oldest Tegra generations. Today upstream has all
-the necessary infrastructure for doing memory bandwidth scaling properly
-and we even using h/w memory counters on T20. It's strange that you want
-to bring the downstream archaity to the modern upstream for the latest
-Tegra generations.
-
-If you can skip the BPMP-FW and use ACTMON directly from kernel, then
-that's what I suggest to do.
-
--- 
-Best regards,
-Dmitry
-
+I will when I catch up with linux-usb patches this week, sorry for the
+delay, too many fires this early in the year...
