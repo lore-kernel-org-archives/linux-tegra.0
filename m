@@ -2,247 +2,170 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DE5C54E76
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 19:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8605C00A5A
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 00:19:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232643AbjAQT5s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Jan 2023 14:57:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41036 "EHLO
+        id S229543AbjARATG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Jan 2023 19:19:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235219AbjAQTzm (ORCPT
+        with ESMTP id S229447AbjARASX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Jan 2023 14:55:42 -0500
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36D6E392AE;
-        Tue, 17 Jan 2023 10:49:36 -0800 (PST)
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-1322d768ba7so32937993fac.5;
-        Tue, 17 Jan 2023 10:49:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dt+JVILd4L3+1ltru4R7Q2ivakcvcUmpRc9Jx8O+hgc=;
-        b=dBMlgFlIO/VMkstapdTzufhYbSLS03sQpd7hqo/enG7gRwyXPXwxNERSwyuc64b4tR
-         PzAcR2pqqvv9I2VNyuM4YwgQlH6Zn5znIrb+EgPV1Vd9W7V9RemHVqiU/kxLtwuerism
-         HlcH3Tvgevc6jthaRTAW1qUnXkHsRecXS86bv3bYZmNU8E5WLsOqUZP6vvuy6i2QlQi4
-         ssD+GL8uTL8ECl/iCt6CMhatxVbMzIe7BY2BYFdxRh2NqS5YZokJjbuw80DZa2tfPkOg
-         YUT8VtLw1J5LDUv+AWTOYPYD91eNJ+9FoZAzYf1wV7W+i/NmchH/GvQuXh9RGdMkIMia
-         Qgxw==
-X-Gm-Message-State: AFqh2kpOCxgJxpwCgK31SaH1wqSaIYf1p5Rk/gaa719sUVXpcadOA2EB
-        qqFPNA/OmDGi7FA1xlx4d/FZ3r3xrA==
-X-Google-Smtp-Source: AMrXdXvFTgrwmcyihMrqnmdsU7P0JAEegOcRFwjVHBZxPEZd8kcDnA+SdeCcchrujcRs3CfN2ur8rg==
-X-Received: by 2002:a05:6870:7997:b0:15b:9fb0:864c with SMTP id he23-20020a056870799700b0015b9fb0864cmr2551641oab.19.1673981372533;
-        Tue, 17 Jan 2023 10:49:32 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id f96-20020a9d03e9000000b00684e4d974e6sm5092762otf.24.2023.01.17.10.49.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 10:49:32 -0800 (PST)
-Received: (nullmailer pid 3445817 invoked by uid 1000);
-        Tue, 17 Jan 2023 18:49:31 -0000
-Date:   Tue, 17 Jan 2023 12:49:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Tue, 17 Jan 2023 19:18:23 -0500
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF4DF51C66;
+        Tue, 17 Jan 2023 15:34:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JFKyNuxUiA0mHeyyYutx8HOwU9M72tuERrc9aQS/2E0XdZMXJnVDHYuJfTDUQkl+x8uLNFARGuFVEF4cIjM8nBTUGARGElHHGpzV7/3uNgjA7thxQ+OXCUetSgvkF46yh/hOHO2VXNwjzLot7sblfuteW/okablS8LZReJ+Nn9LpD/fJnLI14fwWIT0/K2C4UUvIH7M2QmR9+vOgjD4Y8zhf1kggKBiRFgTd7mOcjk9hKc55Cf1seujQqXDKttqWAF7rHAJYYqEaAnII8rHgIQ2MML32D5D3R6ZQJCmPSdYA7PgP5QeJP6XxKfNlxQ42yfrdddWv98nms9BaQIZGmA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7XDiE9IBvTjFZ9k1oUx1mwJGbcXOCri6vz4KGXjYYMo=;
+ b=ArR5Ruyu84h0yPbD/b6uGw9+YkYh5SljfjhOv52r9Af1oSpHvJ5R8qgX8rIphF+kOjnTIs60B9cxsJaDgcWzxmRnqV5T3hUCR9Okk4eeRWmd0vzmbNAPiw/nG6vVLej95p1IL7RG78elvRrB23eKkVhruFaCRCkj9J0svtq/oalmzbp64d1dkftnqqGR9kDvwtuMptDPsVrOH/MBM8DVX8tW7FzYghj76+yWnYxW1gcyoMe1St8tN6ze46GaW7bXn4UwXRb8LD3ZEW9fS9H9xs0ulro+Ja+pCyGjmUgFuzEN7XCMXgfywAw/PbpJe4rDv7n7tjZnEc4dBwKMe8WCtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7XDiE9IBvTjFZ9k1oUx1mwJGbcXOCri6vz4KGXjYYMo=;
+ b=ZL9t8gZ0AsgKuSuqqWG6FAtnMWmCdXbIcOBoSz/ysrZEGrBFj9zt/S2sPSLruUV/ukD0EWuAWqPUzkEbq/ZclMHQgVbBNm8feQt6Q2CXKB4YzfdMOEnQjJ3Ksq0OuZ9g062ZtqAy/eZi21XNO44piCpi6ntSAGezRTa6WqlSqMK/AHntSRArrKGAzo/2WY4NpGTS9tkEK+p5UktU6J2Whx2hh9mL1HiQRuayeJMsJiQHLV8JHtp5c/f4CCX2MdtlcwXB8LHJm9GLfjsrjmBlYb3cvSeROwaDEdnctKzR7iZBMVs0nzyya5v00S0KZJWFiv+BDVhBXuMl1SS64hQzYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ MN6PR12MB8513.namprd12.prod.outlook.com (2603:10b6:208:472::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Tue, 17 Jan
+ 2023 23:33:53 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::f1be:5d:f297:e2f]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::f1be:5d:f297:e2f%7]) with mapi id 15.20.6002.013; Tue, 17 Jan 2023
+ 23:33:53 +0000
+Message-ID: <11349701-f82f-3a7f-61ef-11f1585958c3@nvidia.com>
+Date:   Tue, 17 Jan 2023 23:29:25 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH V4 3/5] usb: typec: ucsi_ccg: Replace ccgx to well-known
+ regex
+Content-Language: en-US
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: phy: tegra-xusb: Convert to json-schema
-Message-ID: <20230117184931.GA3431713-robh@kernel.org>
-References: <20230113150804.1272555-1-thierry.reding@gmail.com>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Wayne Chang <waynec@nvidia.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20230116155045.100780-1-jonathanh@nvidia.com>
+ <20230116155045.100780-4-jonathanh@nvidia.com>
+ <Y8aOaH+ALBvjm/rH@kuha.fi.intel.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <Y8aOaH+ALBvjm/rH@kuha.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0487.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13a::12) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230113150804.1272555-1-thierry.reding@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MN6PR12MB8513:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15a126cb-d6fb-425d-a56f-08daf8e34b4a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: bgfag+tkQ2Lu+JM6IvOuO6GN0vvWe0QDQIS9S6Z4Mb+cZCZK9SRuVZr5xTUOyX85IEPHRbtsNglwxxjZLQ6QklchA9drSF4EcNCoIvqO3+GlGynBEeHJo/uLywnsPSurTRepYVZo5uabWQAoxtJWkZLRXiAdYCIAMQ/PLXtA4auHYOrFt+thk4jB8/X6KcEE9mzWDV84MYRtawFoYYVZCTm0tb7AlELVx/C84m5GCZQxi/PVnkvdFxYGMwLJuLsMe/nzUHL0Yunu3x6nNgLdAJREOsPTy8Rz1w9TJNHvHhm33H2SSarbNevL09a5TtONErtmIe8lgO/GyvClBqNsQV601778142EalwU5lyc3xm3W0k4/V9V0+/Eo9jURkQPqnNZxG4FLnE0xpRn40xM1r0UJTGrwGn4Fti+u/7/Ceo67610m+A8W7EAt2nCNfPCtK7pRlZeRPRzUHCACFKsKyBefGM+WiPzuaZd8g5+x1tTbAkQrdNHxfOFDmvu0VnANEOPZPz1QGj0f8uk0PxFe04halpcRWjacejt28JpSNuwp4uJ/LQ2ng9RgvGiGLScFLWG4mXSaGAqTM3Fi4stJ76OEAjim1O44E2xFP4rhCtmGmIkL3SDX6/cvZQSIQapwFnEinAz/5+leSQaVYTkH/U9jQj2nPUuCfwqtYPYripsomcsEpeFSbbJBxrr/uCsfPTiuvBTaG7DrON+62MqJNGWA3d7EuUySYKPHGGaBH4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(376002)(39860400002)(396003)(136003)(346002)(451199015)(53546011)(2906002)(6506007)(6486002)(6666004)(26005)(6512007)(478600001)(186003)(55236004)(31686004)(6916009)(36756003)(316002)(66946007)(66476007)(8676002)(2616005)(66556008)(41300700001)(4326008)(8936002)(83380400001)(38100700002)(54906003)(5660300002)(86362001)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?blllVElIL2lpRHBLK0JPa0cvUVFvdjZsY1oyMkE0LzlOaHp5VjFCQVlUVndG?=
+ =?utf-8?B?dFpLRVZiOUU2Z0hKMUUxTG51K0g2SkEzOEZ0L0hKZ1J4R1hjL0xNb24xMm5p?=
+ =?utf-8?B?SUdldktzSFFPUU8wRWo2aXEwL0VEQ21lcXdndDZlR213L2FtSUQrRTkwWm9I?=
+ =?utf-8?B?eWhHWiszMFFKS0FJcWVqVlRSVlo4WW5SczBtcFFkbkJTNWdWTWdpU3VKLzdn?=
+ =?utf-8?B?dVhYZXN1UXU0bjExck9NTmJOSXRQWnNVV1ZJQmxkYkFWUXZtWUkxM3lGS0VU?=
+ =?utf-8?B?VEN3eHRyN1lFalBEMUN5eWM5Wi9hdzNsL1l3M21HT0pma01UcjJZQVVJU3hu?=
+ =?utf-8?B?cTBXbVBDYXdJYkkyc0pkR1ZiamRFa2dEUWdKNnExQ1BIYlJyQWxBZ281QVg4?=
+ =?utf-8?B?Q3Jua3JicmdyemlzOEM4djZhV1NMK2NpZStjak1neGg3eXhUNklTQjhiYU5B?=
+ =?utf-8?B?cjlKbFp2N3pCdVpyVWxIL3Q2a0ZvZkJmUEZyTDVVbXNWbjNKTlZ1a0RaOGlT?=
+ =?utf-8?B?WDNKN2NUTml1N0V2d3hUSW9pTzBVOWs5ZUp6blQzbGRKRFRqTS9XL1FEOGlM?=
+ =?utf-8?B?WDFETU1yTEtReS9samF6bjMxbE03MVk0dXRXZW9MazBKa0xSOEU3RU1CbVNS?=
+ =?utf-8?B?NXVCMDJQVHZKTkNpRURHSlFTVjB4WjNvaE03UXZDR1ZhdDkraGN5L2M2UUJW?=
+ =?utf-8?B?MHNqRkp3N1FPMkpzU2F6OGg4dnl2b1BXb1ZhdWhESEIrOWIrazVlN2phekcv?=
+ =?utf-8?B?NnNqbFJtME93OEYzMGRqVnlnUE1jWEtKbWVtQUFjV3FjWmRyTXdFYi9HVlpx?=
+ =?utf-8?B?NDdoTXluUWZCS3hKOXFaL0s4QmhQckEwSXlaMjRaUC9jUFJhaGpPQnNnL2Vl?=
+ =?utf-8?B?MXhzMElTcXpRUEViUjYrVi82bkZxUDJiZVFYY2twUWNCUU1ZTkI5Sjd4aG9v?=
+ =?utf-8?B?MmtaUEFvSDI2SmhXbStVN1I5VWMrcmhMMkV2SjF1aFdNRTRwNnIxbTlUV1pq?=
+ =?utf-8?B?bk9jcTZBLytNKzIySHptdGxHN2VzRGdlQWJQM29IcWRWd25LbG1DMCtIb3c0?=
+ =?utf-8?B?d1ZCR2oxbG9VVzFKUEhrelEyaTc4VFhhc0l3QmJkckVqTittOGxIdlM3Q201?=
+ =?utf-8?B?SU1pdnM4L0doSjEyTnhDUWtBN2k0WHpyc1RkK1pCT0c0UzlUUUlSYng5UTBJ?=
+ =?utf-8?B?dFk1ekpKUVpkSm1IdU5KSmdYSkxBdG9tSDNxNlEwRmlhbDVOSVRuQjZRYVU2?=
+ =?utf-8?B?ZUhmMklXK3FpU2Y5ZXZod3htM0Z0SENZc3JCOWJ0Y2xMVW55M1R6bFdZWm1z?=
+ =?utf-8?B?b2ZJTWUxNHo3NkY5UlIxL3k2c3d1QWtVU01lY3ViSTRDRjdGdldXLytrbDlx?=
+ =?utf-8?B?MHNQMFZHczFWcFZaMTEyWXFxZEZhUEEwZTArU3pUZzV6R2tOZGlPeklSbitw?=
+ =?utf-8?B?Y2ZpMExtTXhIR3doTm1wd0NzV1A0QU9INnM3enRBT1dBSXBxNysvNmtsa250?=
+ =?utf-8?B?M3ErbGpvNzBZa3p0T09PdHNtUEFXM0xlUjBPOWhqdFFaZkFRT3ZuMUxkYVVm?=
+ =?utf-8?B?MC9VOE8xZG1pU0lPZnhVTmM1Z0xpRHVIb2l4cGJMWnpTOFBIdEg1OG52Wm1h?=
+ =?utf-8?B?bXpWcHNRb01BSXUwenVpWU9hUmpvQ2p2SVdyZFN6WWczUGxJTjY5a3YzQnNt?=
+ =?utf-8?B?WkJ2bEVWOGVXVENmaHI1ZXQvWmRmdGtXbEl0UitUOTFjNXZvVmdKMWNQZjZD?=
+ =?utf-8?B?Z0lwQ3FzajRQcm16bVRFRFFOWnprNXEwRzAwRGFueG5Lcm10SVRyL0NBRDJo?=
+ =?utf-8?B?SURvSldCYmpZREVQOE5rMU5QNUVab2hsdEhMTjUvU1JGQXorU3VPTTcxQVZE?=
+ =?utf-8?B?NGt4WTViWXJEV2VlUzVXRi9jY1pjbVpWcEFoNnlYc3g4OThvRWUvQms2ZXJQ?=
+ =?utf-8?B?VFlPZFMrSEZVUEowazhaeG1UaEJGQjNhYmY5KzQ3NTFpZkNuTUZKa2hSSjFt?=
+ =?utf-8?B?dkJGR2NpN3QvTEtHdjAvb0RTMHJ2VVdMbXZKY2lSajNRb2hqTFJRcUNMUHF6?=
+ =?utf-8?B?KytkNG9NeWV5bFpWalZpRWhacitVZmhiTUdDVk44aXo5K21qTm9pbU9Jb3Vy?=
+ =?utf-8?Q?hFtB6G+M/00+TAJFcrRN+77xR?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15a126cb-d6fb-425d-a56f-08daf8e34b4a
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2023 23:33:53.6430
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: spoFi1bm+UHEOIqCigiiIk74DEKb7Yo+zr8GQ1EYemzhL1s3lM7BYunxMSL8DIceX+OJxJtHCgvucj3oejeLIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8513
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jan 13, 2023 at 04:08:04PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Convert the Tegra XUSB pad controller bindings from free-form text
-> format to json-schema.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v3:
-> - use | to keep paragraphs in multi-paragraph descriptions
-> - move additionalProperties to improve readability
-> - clarify that "status" can also be absent
-> - drop phandle and status properties
-> - remove quotes around references
-> - use dual licensing
-> 
-> Changes in v2:
-> - split up into multiple schemas
-> 
->  .../phy/nvidia,tegra124-xusb-padctl.txt       | 779 -----------------
->  .../phy/nvidia,tegra124-xusb-padctl.yaml      | 654 +++++++++++++++
->  .../phy/nvidia,tegra186-xusb-padctl.yaml      | 544 ++++++++++++
->  .../phy/nvidia,tegra194-xusb-padctl.yaml      | 630 ++++++++++++++
->  .../phy/nvidia,tegra210-xusb-padctl.yaml      | 786 ++++++++++++++++++
->  5 files changed, 2614 insertions(+), 779 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.yaml
->  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra186-xusb-padctl.yaml
->  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml
->  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml
-> 
 
-> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.yaml b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.yaml
-> new file mode 100644
-> index 000000000000..33b41b6b2fd5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.yaml
-> @@ -0,0 +1,654 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/nvidia,tegra124-xusb-padctl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra124 XUSB pad controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +description: |
-> +  The Tegra XUSB pad controller manages a set of I/O lanes (with differential
-> +  signals) which connect directly to pins/pads on the SoC package. Each lane
-> +  is controlled by a HW block referred to as a "pad" in the Tegra hardware
-> +  documentation. Each such "pad" may control either one or multiple lanes,
-> +  and thus contains any logic common to all its lanes. Each lane can be
-> +  separately configured and powered up.
-> +
-> +  Some of the lanes are high-speed lanes, which can be used for PCIe, SATA or
-> +  super-speed USB. Other lanes are for various types of low-speed, full-speed
-> +  or high-speed USB (such as UTMI, ULPI and HSIC). The XUSB pad controller
-> +  contains a software-configurable mux that sits between the I/O controller
-> +  ports (e.g. PCIe) and the lanes.
-> +
-> +  In addition to per-lane configuration, USB 3.0 ports may require additional
-> +  settings on a per-board basis.
-> +
-> +  Pads will be represented as children of the top-level XUSB pad controller
-> +  device tree node. Each lane exposed by the pad will be represented by its
-> +  own subnode and can be referenced by users of the lane using the standard
-> +  PHY bindings, as described by the phy-bindings.txt file in this directory.
-> +
-> +  The Tegra hardware documentation refers to the connection between the XUSB
-> +  pad controller and the XUSB controller as "ports". This is confusing since
-> +  "port" is typically used to denote the physical USB receptacle. The device
-> +  tree binding in this document uses the term "port" to refer to the logical
-> +  abstraction of the signals that are routed to a USB receptacle (i.e. a PHY
-> +  for the USB signal, the VBUS power supply, the USB 2.0 companion port for
-> +  USB 3.0 receptacles, ...).
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra124-xusb-padctl
-> +
-> +      - items:
-> +          - const: nvidia,tegra132-xusb-padctl
-> +          - const: nvidia,tegra124-xusb-padctl
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    items:
-> +      - description: XUSB pad controller interrupt
-> +
-> +  resets:
-> +    items:
-> +      - description: pad controller reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: padctl
-> +
-> +  avdd-pll-utmip-supply:
-> +    description: UTMI PLL power supply. Must supply 1.8 V.
-> +
-> +  avdd-pll-erefe-supply:
-> +    description: PLLE reference PLL power supply. Must supply 1.05 V.
-> +
-> +  avdd-pex-pll-supply:
-> +    description: PCIe/USB3 PLL power supply. Must supply 1.05 V.
-> +
-> +  hvdd-pex-pll-e-supply:
-> +    description: High-voltage PLLE power supply. Must supply 3.3 V.
-> +
-> +  pads:
-> +    description: A required child node named "pads" contains a list of
-> +      subnodes, one for each of the pads exposed by the XUSB pad controller.
-> +      Each pad may need additional resources that can be referenced in its
-> +      pad node.
-> +
-> +      The "status" property is used to enable or disable the use of a pad.
-> +      If set to "disabled", the pad will not be used on the given board. In
-> +      order to use the pad and any of its lanes, this property must be set
-> +      to "okay" or be absent.
-> +    type: object
-> +    additionalProperties: false
-> +    properties:
-> +      usb2:
-> +        type: object
-> +        additionalProperties: false
-> +        properties:
-> +          clocks:
-> +            items:
-> +              - description: USB2 tracking clock
-> +
-> +          clock-names:
-> +            items:
-> +              - const: trk
-> +
-> +          lanes:
-> +            type: object
-> +            additionalProperties: false
-> +            properties:
-> +              usb2-0:
+On 17/01/2023 12:02, Heikki Krogerus wrote:
+> On Mon, Jan 16, 2023 at 03:50:43PM +0000, Jon Hunter wrote:
+>> From: Wayne Chang <waynec@nvidia.com>
+>>
+>> ccgx is refer to the cypress cypd4226 typec controller.
+>> Replace ccgx to well-known regex "cypress".
+>>
+>> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>> V2 -> V4: nothing has changed
+>> V1 -> V2: new change added for adding cypress,firmware-build
+>>
+>>   drivers/usb/typec/ucsi/ucsi_ccg.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+>> index 4bc31ed8e5bc..d6114fb8d5a9 100644
+>> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+>> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+>> @@ -1357,7 +1357,7 @@ static int ucsi_ccg_probe(struct i2c_client *client)
+>>   	INIT_WORK(&uc->pm_work, ccg_pm_workaround_work);
+>>   
+>>   	/* Only fail FW flashing when FW build information is not provided */
+>> -	status = device_property_read_u16(dev, "ccgx,firmware-build",
+>> +	status = device_property_read_u16(dev, "cypress,firmware-build",
+>>   					  &uc->fw_build);
+> 
+> You need to first add that property to
+> drivers/i2c/busses/i2c-nvidia-gpu.c.
 
-Any reason to not make this a pattern? '^usb2-[0-2]$'
 
-Same question in several other cases.
+Looking at this some more, I wonder if we need to keep 
+'ccgx,firmware-build' as a fallback for AMD? It is not clear to me if 
+they implement this property or not. Let me know what you think. I will 
+still update the i2c-nvidia-gpu driver. 	
 
-> +                type: object
-> +                additionalProperties: false
-> +                properties:
-> +                  "#phy-cells":
-> +                    const: 0
-> +
-> +                  nvidia,function:
-> +                    description: Function selection for this lane.
-> +                    $ref: /schemas/types.yaml#/definitions/string
-> +                    enum: [ snps, xusb, uart ]
-> +
-> +              usb2-1:
-> +                type: object
-> +                additionalProperties: false
-> +                properties:
-> +                  "#phy-cells":
-> +                    const: 0
-> +
-> +                  nvidia,function:
-> +                    description: Function selection for this lane.
-> +                    $ref: /schemas/types.yaml#/definitions/string
-> +                    enum: [ snps, xusb, uart ]
-> +
-> +              usb2-2:
-> +                type: object
-> +                additionalProperties: false
-> +                properties:
-> +                  "#phy-cells":
-> +                    const: 0
-> +
-> +                  nvidia,function:
-> +                    description: Function selection for this lane.
-> +                    $ref: /schemas/types.yaml#/definitions/string
-> +                    enum: [ snps, xusb, uart ]
+Thanks
+Jon
+
+-- 
+nvpublic
