@@ -2,88 +2,100 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5856C3DA78
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 11:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38E7C677F1
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 12:03:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236834AbjAQLPR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Jan 2023 06:15:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37588 "EHLO
+        id S236903AbjAQMDS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Jan 2023 07:03:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236839AbjAQLO1 (ORCPT
+        with ESMTP id S236872AbjAQMDJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Jan 2023 06:14:27 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 071E13346F
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Jan 2023 03:14:24 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id r9so7411006wrw.4
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Jan 2023 03:14:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bFlBtUA9NIzJ+Xj5+nFksMtQglLnDQLd6VLPQ/Pooa0=;
-        b=snpHESDxX1Vxaw5PQT1Y/Jbqk9pnB6CBgGsF04oMFvYrDY/b9ZcOz4zonAnfVeJZuT
-         4RJnfQ/RLIhEkhsqkIWy25q/oHBjq1cWnNG+/VCS833NNymCMnIrZepUHhoI+4fH3Slg
-         D61XfzM30fGnEYEZNp2HY/8BaXGaAFv9MUKGAZG4prnVt0jxrsLCHjQerPZmNg6WQmsP
-         AmhfGLPHH6+DBEtxk8t1FYX53RKgPbIcbjpYFawc7EMUhw6f3NV76HwMSY3F8R8UYDJ3
-         F/1T/IE/bWvdLoWQpx1bHRu4VPPO1n6sv+/dYSWX7i6lMn1i4ByXym89VREh5vfJZmVq
-         Eukw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bFlBtUA9NIzJ+Xj5+nFksMtQglLnDQLd6VLPQ/Pooa0=;
-        b=0nMPZkD7+/j1ZPzJUD3MvWJ7LkyNBUBMWP6JhX3L6NtiiPCZuMq0ug2PlEq+deugJj
-         QJMTE1ZuQwH7VecbJYLssAWt/i8aQMxeqLBGByCxeMcDwhmsgm1AdAEKcCRBdYsKffo4
-         zs7L3gIbCJ6xq1JC5lx2NWXZoyXSubKpCsbG8TqHv4JPAWnmSLrgyGQgr6SmECX3jV5n
-         7y5RiJwCTSSmzU8qpqKI/ZzJrSeUyOq9trDF22JLeUG6VWnpYzsAKIolHbLFGLV/qHGA
-         +1VcZlbbwjV8F56nJNFwYS7bRjBj/wYG2z+6sqgVwy5xvW4B3kWpH+1DjIkvmfN24/8X
-         EYlw==
-X-Gm-Message-State: AFqh2kpe3yHv86vCOMICArUyi78jfRRU1uEOlJaCAp1ohOHtluF9ruPw
-        fL0rHQeNpUenBNkYmuWIATM3hg==
-X-Google-Smtp-Source: AMrXdXsmG4bl6joXx+CVOeEvwnUHC/f2bfOz0R/qWQZo3huwHefkZB5ncWzhOURdhZimrBa9haFXNg==
-X-Received: by 2002:adf:d4cc:0:b0:2bb:ebc4:2f62 with SMTP id w12-20020adfd4cc000000b002bbebc42f62mr2614967wrk.52.1673954062742;
-        Tue, 17 Jan 2023 03:14:22 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id q17-20020adff511000000b002366553eca7sm5980643wro.83.2023.01.17.03.14.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jan 2023 03:14:22 -0800 (PST)
-Message-ID: <73ac4da5-0fec-40de-cc4a-55fc403d62e5@linaro.org>
-Date:   Tue, 17 Jan 2023 12:14:20 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [RESEND PATCH V4 3/5] dt-bindings: usb: tegra-xudc: Add Tegra234
- XUDC support
-Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 17 Jan 2023 07:03:09 -0500
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEEAA38663;
+        Tue, 17 Jan 2023 04:02:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1673956973; x=1705492973;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OuQzpNaSFrQ7C7fN+vQ5fDXpH/q5UyXVPz+fXyzB23g=;
+  b=RjoTfzC1GKWV5yjyy4IbNxUD0oyza46f1BqPqDfobKmz3LSg0sCWSjpk
+   QlGSrUz6WO5S5Z6HaHJBQUnuAbtojH32rnXGjEbwNGNAn/EV1CkbBQPJX
+   c0jMpf8KIheMiznPcb229om+HEDllXShEOMJq3fchxEJaiuY8gBzxAwt+
+   J5B/jeexMFhV1HhSL1L9xjv+sVsl5zno6YWvuF8jeUWFE9jFjB471dKbS
+   CmqDj4Yo9xuIdV9mZvtOlTE4oypHeh8bJdSOSkXRcqPkN4qwfAGDhmxzW
+   IrndlKoqGa1uU0LC1AyH2K5ipMmXW5dDth0oPWNDkyZTBquWUZ7kpXXzT
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="387028107"
+X-IronPort-AV: E=Sophos;i="5.97,222,1669104000"; 
+   d="scan'208";a="387028107"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2023 04:02:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="801722381"
+X-IronPort-AV: E=Sophos;i="5.97,222,1669104000"; 
+   d="scan'208";a="801722381"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga001.fm.intel.com with SMTP; 17 Jan 2023 04:02:48 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 17 Jan 2023 14:02:48 +0200
+Date:   Tue, 17 Jan 2023 14:02:48 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-References: <20230116151917.94193-1-jonathanh@nvidia.com>
- <20230116151917.94193-4-jonathanh@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230116151917.94193-4-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Wayne Chang <waynec@nvidia.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V4 3/5] usb: typec: ucsi_ccg: Replace ccgx to well-known
+ regex
+Message-ID: <Y8aOaH+ALBvjm/rH@kuha.fi.intel.com>
+References: <20230116155045.100780-1-jonathanh@nvidia.com>
+ <20230116155045.100780-4-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230116155045.100780-4-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16/01/2023 16:19, Jon Hunter wrote:
+On Mon, Jan 16, 2023 at 03:50:43PM +0000, Jon Hunter wrote:
 > From: Wayne Chang <waynec@nvidia.com>
 > 
-> Extend the Tegra XUSB controller device (XUDC) tree binding with
-> Tegra234 support.
+> ccgx is refer to the cypress cypd4226 typec controller.
+> Replace ccgx to well-known regex "cypress".
 > 
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> V2 -> V4: nothing has changed
+> V1 -> V2: new change added for adding cypress,firmware-build
+> 
+>  drivers/usb/typec/ucsi/ucsi_ccg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> index 4bc31ed8e5bc..d6114fb8d5a9 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> @@ -1357,7 +1357,7 @@ static int ucsi_ccg_probe(struct i2c_client *client)
+>  	INIT_WORK(&uc->pm_work, ccg_pm_workaround_work);
+>  
+>  	/* Only fail FW flashing when FW build information is not provided */
+> -	status = device_property_read_u16(dev, "ccgx,firmware-build",
+> +	status = device_property_read_u16(dev, "cypress,firmware-build",
+>  					  &uc->fw_build);
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+You need to first add that property to
+drivers/i2c/busses/i2c-nvidia-gpu.c.
 
-Best regards,
-Krzysztof
+>  	if (status)
+>  		dev_err(uc->dev, "failed to get FW build information\n");
+> -- 
+> 2.25.1
 
+-- 
+heikki
