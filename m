@@ -2,131 +2,109 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F3BC3DA78
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 08:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35819C63797
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 08:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236093AbjAQIb2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Jan 2023 03:31:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42678 "EHLO
+        id S235898AbjAQIhI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Jan 2023 03:37:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233489AbjAQIb0 (ORCPT
+        with ESMTP id S236220AbjAQIgO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Jan 2023 03:31:26 -0500
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916CB1C32C;
-        Tue, 17 Jan 2023 00:31:21 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F3Jl43/ihs/qgO3JB0ibO8HbJQ+HmjSVF1oyQ/9Oj/dJ+/AMcEABcIV7Rh1Vt7ZQtXtNclA/enHofmLvJd2RNc/fD1A4waeeQgyN9hop4z49REHfntidDoUDMeAxWakrr50RrAoEuAkIn1irQEVQQNur8nZrOAg8V78plJgC/WcXTQ/EbgLheZQTFNX8xnZ2BTooWKa4JpV89DG3iS/bItGDaHvMz6bDVrPP/+TUiCc9aSFeloVUXUR0XwfLXG2PZadgbQfJ0Kj3tC/Xf6a6C9SeIDEzRxJ7lA7ThAwiuqnTqLVNslRTC0BeinKnVtT96NCHFWSN/CjflP/ys771aA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0c2mxoWhofvb5zp0UnbhOk6V22PLIuT0os+sudJ+q58=;
- b=FuoDCV5NROFo6LTr/gOWDN3UJUwVFrafOORaPeeKDXDi7RinGH4e/4iJpsP6XR9Mn0pmCODkYL3sY4p3HnDMj6LTvp6cJnW/RKGbQdALD1BHAjEDZ+CRt7ks6SKAy0HZgzkLutgw2bxWjffWMAY98IGmkxDCi1zSOT5V3w1G0ZhV6wdKw0xTpUjF3p4Ddwhl+OoKTl5VhNl6WEPbnt8H7oqZAR49dMJtSuwNrgSVU1PIftv5xWPNLuQiZQuA5OkbO/DGonGDD6qoQQ4Y3SEvdjunPblurPiN+qN7Hc/mxUv+OllqwBTWJAWDhLY+iczO2iZdqbBX7jnf0Hy6cQamvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0c2mxoWhofvb5zp0UnbhOk6V22PLIuT0os+sudJ+q58=;
- b=l5vYzVw+N8r0LagUSRQspU27I0RvT9YCD9FzdUmCAtrnZXXZp4D9lSqqzAcGh2LR5fO6WbwWHrko+Z7uaa/+5PF+JG+wM+P0suQpyTLljH7wSNlECh/L0UxhJlOKg2Nw3DCjEopWpwVZTMt9ZSzIW7iOFmKCengtiuD2H0sq+pd0cPIFfXX+ZVCyk00T4P8HnZ/EBzqnrjCV3aZwCoupzNc08+Ohdcx/o5wYHjCUPJKWzdC9kipcI6Sm8zaai51hw7ZjPB0kYCWWn2/fQnAckx7MH64w9DUTu0D3RxDU8k3wQXeWWPl5xS3AAgXNR+RjOUZBFf001ujQ81KzZQOykQ==
-Received: from MW4PR03CA0183.namprd03.prod.outlook.com (2603:10b6:303:b8::8)
- by IA1PR12MB6411.namprd12.prod.outlook.com (2603:10b6:208:388::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.23; Tue, 17 Jan
- 2023 08:31:20 +0000
-Received: from CO1NAM11FT046.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b8:cafe::68) by MW4PR03CA0183.outlook.office365.com
- (2603:10b6:303:b8::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.19 via Frontend
- Transport; Tue, 17 Jan 2023 08:31:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT046.mail.protection.outlook.com (10.13.174.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6002.13 via Frontend Transport; Tue, 17 Jan 2023 08:31:19 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 17 Jan
- 2023 00:31:00 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 17 Jan
- 2023 00:31:00 -0800
-Received: from kkartik-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Tue, 17 Jan 2023 00:30:56 -0800
-From:   Kartik <kkartik@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <kkartik@nvidia.com>, <pshete@nvidia.com>, <arnd@arndb.de>,
-        <skamble@nvidia.com>, <windhl@126.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] soc/tegra: fuse: Remove nvmem root only access
-Date:   Tue, 17 Jan 2023 14:00:55 +0530
-Message-ID: <1673944255-8041-1-git-send-email-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 17 Jan 2023 03:36:14 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C13C27488;
+        Tue, 17 Jan 2023 00:36:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1673944567; x=1705480567;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+/sep6cg202vL4sr/HrqlldWJYwNCPz0Civ/zJRrPiM=;
+  b=kC944rsttNMM+kTKzgf2E/C+rzjwxmZRrkJVXgzZ3EiDmtz6Rw40MWbC
+   5UEHD4aWdxRx1XjE2T0TxTgPNmZW4mgstfaKJ1TiE2tqdQoXQV/I1Vruw
+   OmJougsFpSQY1CGfNOek7e8WxJ/dko6ceEu1BDK7Sr1lJ94Ero8exXZ4i
+   N1kZQ9oiW6Svwt2hLBk7ruV4FdOWgbeMKQLoEKaP0XZbWofYBFkIQhD6i
+   ls74gTBUo3uw+C9XyVghHutEPDYX2MkNJnMtn5xg2bq+lUwBJruN2OwX7
+   FmOWdhSb7y5Mt/72NB/NfMjejUuvzSKs3mZKm7E6h1hTW2HRqvRsygxyo
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="324696291"
+X-IronPort-AV: E=Sophos;i="5.97,222,1669104000"; 
+   d="scan'208";a="324696291"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2023 00:36:06 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="783168240"
+X-IronPort-AV: E=Sophos;i="5.97,222,1669104000"; 
+   d="scan'208";a="783168240"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.252.187.178]) ([10.252.187.178])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2023 00:35:59 -0800
+Message-ID: <c742969d-d692-1580-d22c-0f8f3d897201@linux.intel.com>
+Date:   Tue, 17 Jan 2023 16:35:56 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT046:EE_|IA1PR12MB6411:EE_
-X-MS-Office365-Filtering-Correlation-Id: aee484da-eea0-46a8-4869-08daf8653529
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: PIoqAmmDEs+/i1P4wXXZSKtikk1Bz6vyJIKa81+SNkkXFgBx+xSzOC4DrpFvJ6nhvGL68g2jEMzq5cE5ZxA+SX/IDhXg2MYP3XSaA2F4C3nzlWGUDf5Y5l5NfGb0tX1ySLCooI91UtvCC3nKh1sGWgfXkYXbIaZSlztHQqqY/HO2g2v+sb6GzV536E2bwWX5TK63rGkzyw15vsybZW9ETWcr1xocUBoJF1+kiprW3ZNCrJ5kzGh4PIRnFpjDznCvz0CvHEcq9p3T6DDgP0gbTuY5iP2Dcn10mrP3vyV8dmvIednro7WUzvamXIpneMxP/R8+rNFSnNZOMZHtJSIAMvrk6G+ejURAAuuoekTDJOq/vBhC3oeCwGvNZxyr7jCSkkkLhN3wlVEKMpmmxhUWYDWoycjGajJtC/7vNu/oxkDJ6Ju+p0KnnWZCYa/peQvX8oavKaV5LKB5EthHBKDO5MdNjzfPorNvCGhiXIPQpszhiletXBje/ixO2Nhsxt8o2sA8unwsWxI1EdBCv+h/rLIq8WjUOXTQdz075Kx5hIEvMO4EmqCBYjaD0fVseqwOQh7xM57i5VvQ3FjnovPgbeL6k4TJQwBGOU9IS4x3iWhU1f8UvFRn+/mBsOxuSvZZjbsbqPt0ysY/Y1StZ31wIjAAgTCRGn9qtoR0laTk9KssHtBzsxzIgj+G03lzlCfA5DQblZt6ex7o/86fLzfmSg==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(396003)(376002)(39860400002)(346002)(451199015)(46966006)(40470700004)(36840700001)(36756003)(82310400005)(70206006)(70586007)(2616005)(47076005)(426003)(41300700001)(186003)(8676002)(26005)(86362001)(83380400001)(36860700001)(5660300002)(8936002)(110136005)(478600001)(7696005)(336012)(40480700001)(82740400003)(316002)(7636003)(2906002)(356005)(40460700003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2023 08:31:19.2067
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aee484da-eea0-46a8-4869-08daf8653529
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT046.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6411
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Cc:     baolu.lu@linux.intel.com,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "ath10k@lists.infradead.org" <ath10k@lists.infradead.org>,
+        "ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH 7/8] iommu/intel: Support the gfp argument to the
+ map_pages op
+Content-Language: en-US
+To:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <0-v1-6e8b3997c46d+89e-iommu_map_gfp_jgg@nvidia.com>
+ <7-v1-6e8b3997c46d+89e-iommu_map_gfp_jgg@nvidia.com>
+ <BN9PR11MB52765EE38CA21BA27EEA06548CC69@BN9PR11MB5276.namprd11.prod.outlook.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB52765EE38CA21BA27EEA06548CC69@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-To read fuse values, various "non-root" userspace applications require
-access to nvmem binary interface.
+On 2023/1/17 11:38, Tian, Kevin wrote:
+>> From: Jason Gunthorpe<jgg@nvidia.com>
+>> Sent: Saturday, January 7, 2023 12:43 AM
+>>
+>> @@ -2368,7 +2372,7 @@ static int iommu_domain_identity_map(struct
+>> dmar_domain *domain,
+>>
+>>   	return __domain_mapping(domain, first_vpfn,
+>>   				first_vpfn, last_vpfn - first_vpfn + 1,
+>> -				DMA_PTE_READ|DMA_PTE_WRITE);
+>> +				DMA_PTE_READ|DMA_PTE_WRITE,
+>> GFP_KERNEL);
+>>   }
+> Baolu, can you help confirm whether switching from GFP_ATOMIC to
+> GFP_KERNEL is OK in this path? it looks fine to me in a quick glance
+> but want to be conservative here.
 
-Remove root only access for nvmem userspace binary interface.
+This is also good for me. The memory notifier callback runs in a process
+context and allowed to block.
 
-Signed-off-by: Kartik <kkartik@nvidia.com>
----
- drivers/soc/tegra/fuse/fuse-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index f02953f793e9..d7a37f5d4527 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2013-2022, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2013-2023, NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #include <linux/clk.h>
-@@ -166,7 +166,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 	nvmem.nkeepout = fuse->soc->num_keepouts;
- 	nvmem.type = NVMEM_TYPE_OTP;
- 	nvmem.read_only = true;
--	nvmem.root_only = true;
-+	nvmem.root_only = false;
- 	nvmem.reg_read = tegra_fuse_read;
- 	nvmem.size = fuse->soc->info->size;
- 	nvmem.word_size = 4;
--- 
-2.34.1
-
+Best regards,
+baolu
