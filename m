@@ -2,162 +2,247 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80285C54E76
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 17:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DE5C54E76
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 19:57:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbjAQRyi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Jan 2023 12:54:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37994 "EHLO
+        id S232643AbjAQT5s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Jan 2023 14:57:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231233AbjAQRvW (ORCPT
+        with ESMTP id S235219AbjAQTzm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Jan 2023 12:51:22 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6A514E516
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Jan 2023 09:40:55 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id q8so11082004wmo.5
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Jan 2023 09:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jqO/4CUlcaKUI+N6KnEcGa9fUpEwBq1b3sCSTWRwANE=;
-        b=CCYflS9OWadCGythNwcsIH095kmmg1EaF7VVyr3LZSCyaKTDrrlj3ybj6DQ7bVEyBS
-         7/51F6N85JybrK21y0Wn6GBmbFycAEKJpXjgBybirdVkomE/i6NdK3r6lBBPei9lK9Rr
-         aE69iCuPNVk3BAvctOxIkjOuuiqSjebXYJviPfKBjfkRdLpCTnyzPaBqVW+Jh2Tf2mth
-         Wx+W2tjF4NIutdq4kqC6VHISOCWHkvgjscW01EI+7EeNrbx9Sl7ridat1QkfYx4o4zFd
-         lmLfbi6DK7GjWwyG+j250ygKeqSJfTedbBrAXpvRuZzuB3eMGZE2Tof1GHrN1H3g9A2A
-         JQmA==
+        Tue, 17 Jan 2023 14:55:42 -0500
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36D6E392AE;
+        Tue, 17 Jan 2023 10:49:36 -0800 (PST)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-1322d768ba7so32937993fac.5;
+        Tue, 17 Jan 2023 10:49:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jqO/4CUlcaKUI+N6KnEcGa9fUpEwBq1b3sCSTWRwANE=;
-        b=U6FhN8gBEeY5bpBzk2cD7eFC9OqktYbp0lKRmJS0zRonPpkh/Di0uYmqiV60jAdWCI
-         dQhar2sOzDVk6n/S2Ef/QlwKPBpJf0xkfRQnz6rlmsuZtzZYrkhenYUg3lRu7kZXAxI4
-         CpMwr70CRUqku3tM63Dm9Tum6e5JXzlgbfY0VQ2DCXM2rAPCftETbIja9BNU6ERZBPff
-         njfYC5eNL9lqy0aBKrUk1tL+aaIVFDTODmFjK1G4u/IgNgpSM6VM6eMxWvINT+QARTVd
-         1ED5hVRoSAfcl4nUHKy04j7cboxAp5DFxsBlWbxNcWi+M9vEbZkwHpRYjyHCb3y6rBBz
-         FCxw==
-X-Gm-Message-State: AFqh2kqXX5mjONzZa+OQDLuYDH5ajzw50YHH3HXdQeIS6XxJSWsGRxa+
-        hCzSAQCv904Z1ibjxlHW3DOEBQ==
-X-Google-Smtp-Source: AMrXdXtPJ0H4IQzPRAtiAcVDL7dHFldlWsjygqlFx59R1RpfJof8pcsnd2i8Yi932s8YHd3dxkXsEA==
-X-Received: by 2002:a05:600c:3acd:b0:3cf:5583:8b3f with SMTP id d13-20020a05600c3acd00b003cf55838b3fmr3867429wms.20.1673977254391;
-        Tue, 17 Jan 2023 09:40:54 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r7-20020a05600c458700b003d974076f13sm40187828wmo.3.2023.01.17.09.40.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jan 2023 09:40:53 -0800 (PST)
-Message-ID: <00d0e406-034f-d634-4475-a6c84a4928ac@linaro.org>
-Date:   Tue, 17 Jan 2023 18:40:52 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH V4 1/5] dt-bindings: usb: Add binding for Cypress cypd4226
- I2C driver
-Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dt+JVILd4L3+1ltru4R7Q2ivakcvcUmpRc9Jx8O+hgc=;
+        b=dBMlgFlIO/VMkstapdTzufhYbSLS03sQpd7hqo/enG7gRwyXPXwxNERSwyuc64b4tR
+         PzAcR2pqqvv9I2VNyuM4YwgQlH6Zn5znIrb+EgPV1Vd9W7V9RemHVqiU/kxLtwuerism
+         HlcH3Tvgevc6jthaRTAW1qUnXkHsRecXS86bv3bYZmNU8E5WLsOqUZP6vvuy6i2QlQi4
+         ssD+GL8uTL8ECl/iCt6CMhatxVbMzIe7BY2BYFdxRh2NqS5YZokJjbuw80DZa2tfPkOg
+         YUT8VtLw1J5LDUv+AWTOYPYD91eNJ+9FoZAzYf1wV7W+i/NmchH/GvQuXh9RGdMkIMia
+         Qgxw==
+X-Gm-Message-State: AFqh2kpOCxgJxpwCgK31SaH1wqSaIYf1p5Rk/gaa719sUVXpcadOA2EB
+        qqFPNA/OmDGi7FA1xlx4d/FZ3r3xrA==
+X-Google-Smtp-Source: AMrXdXvFTgrwmcyihMrqnmdsU7P0JAEegOcRFwjVHBZxPEZd8kcDnA+SdeCcchrujcRs3CfN2ur8rg==
+X-Received: by 2002:a05:6870:7997:b0:15b:9fb0:864c with SMTP id he23-20020a056870799700b0015b9fb0864cmr2551641oab.19.1673981372533;
+        Tue, 17 Jan 2023 10:49:32 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id f96-20020a9d03e9000000b00684e4d974e6sm5092762otf.24.2023.01.17.10.49.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jan 2023 10:49:32 -0800 (PST)
+Received: (nullmailer pid 3445817 invoked by uid 1000);
+        Tue, 17 Jan 2023 18:49:31 -0000
+Date:   Tue, 17 Jan 2023 12:49:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Wayne Chang <waynec@nvidia.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20230116155045.100780-1-jonathanh@nvidia.com>
- <20230116155045.100780-2-jonathanh@nvidia.com>
- <de5cb562-e45e-aed4-508f-2d23f114a01e@linaro.org>
- <dbb0cc82-4b15-b99c-bfbe-0f6af8f2e8dc@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <dbb0cc82-4b15-b99c-bfbe-0f6af8f2e8dc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jon Hunter <jonathanh@nvidia.com>,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: phy: tegra-xusb: Convert to json-schema
+Message-ID: <20230117184931.GA3431713-robh@kernel.org>
+References: <20230113150804.1272555-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230113150804.1272555-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17/01/2023 18:16, Jon Hunter wrote:
+On Fri, Jan 13, 2023 at 04:08:04PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> On 16/01/2023 19:03, Krzysztof Kozlowski wrote:
->> On 16/01/2023 16:50, Jon Hunter wrote:
->>> From: Wayne Chang <waynec@nvidia.com>
->>>
->>> add device-tree binding documentation for Cypress cypd4226 type-C
->>> controller's I2C interface. It is a standard i2c slave with GPIO
->>> input as IRQ interface.
->>>
->>> Signed-off-by: Wayne Chang <waynec@nvidia.com>
->>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>> ---
->>> V3 -> V4: no changes
->>> V2 -> V3: fix additionalProperties warning on new schema
->>> V1 -> V2: based on the review comments. Fix some addressed issues on
->>>
->>>   .../bindings/usb/cypress,cypd4226.yaml        | 86 +++++++++++++++++++
->>>   1 file changed, 86 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
->>> new file mode 100644
->>> index 000000000000..5ac28ab4e7a1
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
->>> @@ -0,0 +1,86 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/usb/cypress,cypd4226.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Cypress cypd4226 UCSI I2C Type-C Controller
->>> +
->>> +maintainers:
->>> +  - Wayne Chang <waynec@nvidia.com>
->>> +
->>> +description: |
->>> +  The Cypress cypd4226 UCSI I2C type-C controller is a I2C interface type-C
->>> +  controller.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: cypress,cypd4226
->>> +
->>> +  '#address-cells':
->>> +    const: 1
->>> +
->>> +  '#size-cells':
->>> +    const: 0
->>> +
->>> +  reg:
->>> +    const: 0x08
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  cypress,firmware-build:
->>> +    enum:
->>> +      - nv
->>> +      - gn
->>> +    description: |
->>> +      the name of the CCGx firmware built for product series.
->>> +      should be set one of following:
->>> +      - "nv" for the RTX product series
->>> +      - "gn" for the Jetson product series
->>
->> This is a friendly reminder during the review process.
->>
->> It seems my previous comments were not fully addressed. Maybe my
->> feedback got lost between the quotes, maybe you just forgot to apply it.
->> Please go back to the previous discussion and either implement all
->> requested changes or keep discussing them.
+> Convert the Tegra XUSB pad controller bindings from free-form text
+> format to json-schema.
 > 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v3:
+> - use | to keep paragraphs in multi-paragraph descriptions
+> - move additionalProperties to improve readability
+> - clarify that "status" can also be absent
+> - drop phandle and status properties
+> - remove quotes around references
+> - use dual licensing
 > 
-> Thanks. Apologies for this. I will sort this out in the next revision.
+> Changes in v2:
+> - split up into multiple schemas
+> 
+>  .../phy/nvidia,tegra124-xusb-padctl.txt       | 779 -----------------
+>  .../phy/nvidia,tegra124-xusb-padctl.yaml      | 654 +++++++++++++++
+>  .../phy/nvidia,tegra186-xusb-padctl.yaml      | 544 ++++++++++++
+>  .../phy/nvidia,tegra194-xusb-padctl.yaml      | 630 ++++++++++++++
+>  .../phy/nvidia,tegra210-xusb-padctl.yaml      | 786 ++++++++++++++++++
+>  5 files changed, 2614 insertions(+), 779 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+>  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra186-xusb-padctl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml
+> 
 
-These could have been comments from Rob about this property.
+> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.yaml b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.yaml
+> new file mode 100644
+> index 000000000000..33b41b6b2fd5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.yaml
+> @@ -0,0 +1,654 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/nvidia,tegra124-xusb-padctl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra124 XUSB pad controller
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +description: |
+> +  The Tegra XUSB pad controller manages a set of I/O lanes (with differential
+> +  signals) which connect directly to pins/pads on the SoC package. Each lane
+> +  is controlled by a HW block referred to as a "pad" in the Tegra hardware
+> +  documentation. Each such "pad" may control either one or multiple lanes,
+> +  and thus contains any logic common to all its lanes. Each lane can be
+> +  separately configured and powered up.
+> +
+> +  Some of the lanes are high-speed lanes, which can be used for PCIe, SATA or
+> +  super-speed USB. Other lanes are for various types of low-speed, full-speed
+> +  or high-speed USB (such as UTMI, ULPI and HSIC). The XUSB pad controller
+> +  contains a software-configurable mux that sits between the I/O controller
+> +  ports (e.g. PCIe) and the lanes.
+> +
+> +  In addition to per-lane configuration, USB 3.0 ports may require additional
+> +  settings on a per-board basis.
+> +
+> +  Pads will be represented as children of the top-level XUSB pad controller
+> +  device tree node. Each lane exposed by the pad will be represented by its
+> +  own subnode and can be referenced by users of the lane using the standard
+> +  PHY bindings, as described by the phy-bindings.txt file in this directory.
+> +
+> +  The Tegra hardware documentation refers to the connection between the XUSB
+> +  pad controller and the XUSB controller as "ports". This is confusing since
+> +  "port" is typically used to denote the physical USB receptacle. The device
+> +  tree binding in this document uses the term "port" to refer to the logical
+> +  abstraction of the signals that are routed to a USB receptacle (i.e. a PHY
+> +  for the USB signal, the VBUS power supply, the USB 2.0 companion port for
+> +  USB 3.0 receptacles, ...).
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nvidia,tegra124-xusb-padctl
+> +
+> +      - items:
+> +          - const: nvidia,tegra132-xusb-padctl
+> +          - const: nvidia,tegra124-xusb-padctl
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: XUSB pad controller interrupt
+> +
+> +  resets:
+> +    items:
+> +      - description: pad controller reset
+> +
+> +  reset-names:
+> +    items:
+> +      - const: padctl
+> +
+> +  avdd-pll-utmip-supply:
+> +    description: UTMI PLL power supply. Must supply 1.8 V.
+> +
+> +  avdd-pll-erefe-supply:
+> +    description: PLLE reference PLL power supply. Must supply 1.05 V.
+> +
+> +  avdd-pex-pll-supply:
+> +    description: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+> +
+> +  hvdd-pex-pll-e-supply:
+> +    description: High-voltage PLLE power supply. Must supply 3.3 V.
+> +
+> +  pads:
+> +    description: A required child node named "pads" contains a list of
+> +      subnodes, one for each of the pads exposed by the XUSB pad controller.
+> +      Each pad may need additional resources that can be referenced in its
+> +      pad node.
+> +
+> +      The "status" property is used to enable or disable the use of a pad.
+> +      If set to "disabled", the pad will not be used on the given board. In
+> +      order to use the pad and any of its lanes, this property must be set
+> +      to "okay" or be absent.
+> +    type: object
+> +    additionalProperties: false
+> +    properties:
+> +      usb2:
+> +        type: object
+> +        additionalProperties: false
+> +        properties:
+> +          clocks:
+> +            items:
+> +              - description: USB2 tracking clock
+> +
+> +          clock-names:
+> +            items:
+> +              - const: trk
+> +
+> +          lanes:
+> +            type: object
+> +            additionalProperties: false
+> +            properties:
+> +              usb2-0:
 
-Best regards,
-Krzysztof
+Any reason to not make this a pattern? '^usb2-[0-2]$'
 
+Same question in several other cases.
+
+> +                type: object
+> +                additionalProperties: false
+> +                properties:
+> +                  "#phy-cells":
+> +                    const: 0
+> +
+> +                  nvidia,function:
+> +                    description: Function selection for this lane.
+> +                    $ref: /schemas/types.yaml#/definitions/string
+> +                    enum: [ snps, xusb, uart ]
+> +
+> +              usb2-1:
+> +                type: object
+> +                additionalProperties: false
+> +                properties:
+> +                  "#phy-cells":
+> +                    const: 0
+> +
+> +                  nvidia,function:
+> +                    description: Function selection for this lane.
+> +                    $ref: /schemas/types.yaml#/definitions/string
+> +                    enum: [ snps, xusb, uart ]
+> +
+> +              usb2-2:
+> +                type: object
+> +                additionalProperties: false
+> +                properties:
+> +                  "#phy-cells":
+> +                    const: 0
+> +
+> +                  nvidia,function:
+> +                    description: Function selection for this lane.
+> +                    $ref: /schemas/types.yaml#/definitions/string
+> +                    enum: [ snps, xusb, uart ]
