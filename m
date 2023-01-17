@@ -2,119 +2,179 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF60C63797
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 14:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E02C3DA78
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 14:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232139AbjAQOix (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Jan 2023 09:38:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58038 "EHLO
+        id S229667AbjAQOzZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Jan 2023 09:55:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232030AbjAQOib (ORCPT
+        with ESMTP id S230219AbjAQOzY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Jan 2023 09:38:31 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E33E7ED4;
-        Tue, 17 Jan 2023 06:38:30 -0800 (PST)
-Received: from [192.168.0.192] (unknown [194.146.248.75])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Tue, 17 Jan 2023 09:55:24 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A41793CE05;
+        Tue, 17 Jan 2023 06:55:23 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        (Authenticated sender: andrzej.p)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BF2E16602DAC;
-        Tue, 17 Jan 2023 14:38:28 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1673966309;
-        bh=U1cq0bP5JsCDIk97Em9SgXM5KQV/SCClBx5b7O26txs=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=MMPd0vtyDb0eRexb3459kmrFfAJLRHTImJPdAbCDHb6Xt3ii+TtPheLzthHXXjAc2
-         chAGQPGd2mbgZKBs0JqP7rDhZ0btn5uDImXr0kxtyIZ0eaOE4YcknI3ME6uuJJVp7/
-         sSd1z/pQNkuOEsaxHKKfGkLWvK0B1xvRIPEq0Z1Sa0YA7vh0Z09trrR/kRNuZbu+CO
-         PAiogXOd1fSTKt89m4RzarARXWaY/EGp4jkgDuu4FdhpwCk4F/7UC1Lzeda6nTKEWo
-         zXmdlcAOLc+B4tVVVUeCsKYiXdN8XBqPbAF27XRq8n3+XmDo3ODeeOtkQ1lsLA7kAR
-         Ft+41n4nBg3bg==
-Message-ID: <20549051-a468-45c4-316e-c1671a9a0034@collabora.com>
-Date:   Tue, 17 Jan 2023 15:38:26 +0100
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 643981FF3B;
+        Tue, 17 Jan 2023 14:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1673967322; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7zn+qbPC9I/AxsnszqwMEG/nee6e1k7IdY2WL8XPEkE=;
+        b=Ac7lxLdRIZz8VvRyMe7Pur7EIetFqX8gasSKI3fnp2JauUYCr3XROmw6Etg5GbZ53C3taq
+        aKANSNEVI2VM3sZUe97tXvDz2rVUjmHO+nm+HTJwewWKV5lp5UM2fqIf/pjVto72W5HHtH
+        7vYIy8av189lvJniHskekfRCBh5lX0U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1673967322;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7zn+qbPC9I/AxsnszqwMEG/nee6e1k7IdY2WL8XPEkE=;
+        b=hwm8dx7nsGQpvezCrPvur7s28NvbH1dqZWIb1SzORDYemMo2ka06G1oC1/6tzfTPN6nnG0
+        wZsRiqjm1ZlYesAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 356011390C;
+        Tue, 17 Jan 2023 14:55:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id GqX8C9q2xmPtOQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Tue, 17 Jan 2023 14:55:22 +0000
+Message-ID: <12cff1b1-b8dc-7fb4-2228-8af4b30c09c5@suse.de>
+Date:   Tue, 17 Jan 2023 15:55:21 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH V2 2/2] usb: gadget: u_ether: Don't warn in
- gether_setup_name_default()
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v3 8/8] arm64: tegra: Add simple framebuffer on Jetson
+ Xavier NX
 Content-Language: en-US
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20230116155545.101391-1-jonathanh@nvidia.com>
- <20230116155545.101391-2-jonathanh@nvidia.com>
- <4553efe5-6c8a-4421-b125-ffa97d51b88e@collabora.com>
-In-Reply-To: <4553efe5-6c8a-4421-b125-ffa97d51b88e@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20221117184039.2291937-1-thierry.reding@gmail.com>
+ <20221117184039.2291937-9-thierry.reding@gmail.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <20221117184039.2291937-9-thierry.reding@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------JdpoF82CkkDZeNdPqNF054Kw"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi again,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------JdpoF82CkkDZeNdPqNF054Kw
+Content-Type: multipart/mixed; boundary="------------7ToGNKb16hhOGsfc7HUcQvvk";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Robin Murphy <robin.murphy@arm.com>,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org
+Message-ID: <12cff1b1-b8dc-7fb4-2228-8af4b30c09c5@suse.de>
+Subject: Re: [PATCH v3 8/8] arm64: tegra: Add simple framebuffer on Jetson
+ Xavier NX
+References: <20221117184039.2291937-1-thierry.reding@gmail.com>
+ <20221117184039.2291937-9-thierry.reding@gmail.com>
+In-Reply-To: <20221117184039.2291937-9-thierry.reding@gmail.com>
 
-W dniu 17.01.2023 o 15:13, Andrzej Pietrasiewicz pisze:
-> Hi,
-> 
-> W dniu 16.01.2023 o 16:55, Jon Hunter pisze:
->> The function gether_setup_name_default() is called by various USB
->> ethernet gadget drivers. This function always generates the MAC address
->> for the ethernet gadget device and always prints a warning when
->> generating the MAC address. Given that these messages are expected, make
->> these debug prints instead of warnings.
+--------------7ToGNKb16hhOGsfc7HUcQvvk
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Actually, I have second thoughts about this commit message.
-If the messages were expected, why would you change them?
+SGkNCg0KQW0gMTcuMTEuMjIgdW0gMTk6NDAgc2NocmllYiBUaGllcnJ5IFJlZGluZzoNCj4g
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4gDQo+IEFkZCB0
+aGUgZnJhbWVidWZmZXIgY2FydmVvdXQgcmVzZXJ2ZWQgbWVtb3J5IG5vZGUgYXMgd2VsbCBh
+cyBhIHNpbXBsZS0NCj4gZnJhbWVidWZmZXIgbm9kZSB0aGF0IGlzIHVzZWQgdG8gYmluZCB0
+byB0aGUgZnJhbWVidWZmZXIgdGhhdCB0aGUNCj4gYm9vdGxvYWRlciBoYXMgc2V0IHVwLg0K
+DQpJIGRvbid0IGtub3cgYWJvdXQgdGhlIGN1cnJlbnQgc3RhdHVzIG9mIHRoaXMgcGF0Y2hz
+ZXQsIGJ1dCBmZWVsIGZyZWUgdG8gDQpzZW5kIHdoYXRldmVyIHVwZGF0ZSB5b3UgaGF2ZS4N
+Cg0KQmVzdCByZWdhcmRzDQpUaG9tYXMNCg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4gLS0tDQo+IENoYW5nZXMgaW4gdjI6
+DQo+IC0gY2xlYXIgb3V0IGR5bmFtaWMgZmllbGRzIGFuZCBsZWF2ZSBpdCB1cCB0byBmaXJt
+d2FyZSB0byBmaWxsIHRoZW0gaW4NCj4gLSBtYXJrIHNpbXBsZS1mcmFtZWJ1ZmZlciBub2Rl
+IGFzIGRpc2FibGVkIGJ5IGRlZmF1bHQNCj4gDQo+ICAgLi4uL252aWRpYS90ZWdyYTE5NC1w
+MzUwOS0wMDAwK3AzNjY4LTAwMDEuZHRzIHwgNDMgKysrKysrKysrKysrKysrKysrKw0KPiAg
+IGFyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTk0LmR0c2kgICAgICB8ICAyICst
+DQo+ICAgMiBmaWxlcyBjaGFuZ2VkLCA0NCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEx
+OTQtcDM1MDktMDAwMCtwMzY2OC0wMDAxLmR0cyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZp
+ZGlhL3RlZ3JhMTk0LXAzNTA5LTAwMDArcDM2NjgtMDAwMS5kdHMNCj4gaW5kZXggMjM4ZmQ5
+OGU4ZTQ1Li44NWI0YWFhMmFkNGUgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9k
+dHMvbnZpZGlhL3RlZ3JhMTk0LXAzNTA5LTAwMDArcDM2NjgtMDAwMS5kdHMNCj4gKysrIGIv
+YXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmExOTQtcDM1MDktMDAwMCtwMzY2OC0w
+MDAxLmR0cw0KPiBAQCAtNyw0ICs3LDQ3IEBADQo+ICAgLyB7DQo+ICAgCW1vZGVsID0gIk5W
+SURJQSBKZXRzb24gWGF2aWVyIE5YIERldmVsb3BlciBLaXQgKGVNTUMpIjsNCj4gICAJY29t
+cGF0aWJsZSA9ICJudmlkaWEscDM1MDktMDAwMCtwMzY2OC0wMDAxIiwgIm52aWRpYSx0ZWdy
+YTE5NCI7DQo+ICsNCj4gKwljaG9zZW4gew0KPiArCQlmcmFtZWJ1ZmZlciB7DQo+ICsJCQlj
+b21wYXRpYmxlID0gInNpbXBsZS1mcmFtZWJ1ZmZlciI7DQo+ICsJCQlzdGF0dXMgPSAiZGlz
+YWJsZWQiOw0KPiArCQkJbWVtb3J5LXJlZ2lvbiA9IDwmZmI+Ow0KPiArCQkJcG93ZXItZG9t
+YWlucyA9IDwmYnBtcCBURUdSQTE5NF9QT1dFUl9ET01BSU5fRElTUD47DQo+ICsJCQljbG9j
+a3MgPSA8JmJwbXAgVEVHUkExOTRfQ0xLX1NPUjFfUkVGPiwNCj4gKwkJCQkgPCZicG1wIFRF
+R1JBMTk0X0NMS19TT1IxX09VVD4sDQo+ICsJCQkJIDwmYnBtcCBURUdSQTE5NF9DTEtfU09S
+MV9QQURfQ0xLT1VUPiwNCj4gKwkJCQkgPCZicG1wIFRFR1JBMTk0X0NMS19QTExEMj4sDQo+
+ICsJCQkJIDwmYnBtcCBURUdSQTE5NF9DTEtfUExMRFA+LA0KPiArCQkJCSA8JmJwbXAgVEVH
+UkExOTRfQ0xLX05WRElTUExBWV9ESVNQPiwNCj4gKwkJCQkgPCZicG1wIFRFR1JBMTk0X0NM
+S19OVkRJU1BMQVlIVUI+LA0KPiArCQkJCSA8JmJwbXAgVEVHUkExOTRfQ0xLX05WRElTUExB
+WV9QMD47DQo+ICsJCQl3aWR0aCA9IDwwPjsNCj4gKwkJCWhlaWdodCA9IDwwPjsNCj4gKwkJ
+CXN0cmlkZSA9IDwwPjsNCj4gKwkJCWZvcm1hdCA9ICJ4OGI4ZzhyOCI7DQo+ICsJCX07DQo+
+ICsJfTsNCj4gKw0KPiArCXJlc2VydmVkLW1lbW9yeSB7DQo+ICsJCSNhZGRyZXNzLWNlbGxz
+ID0gPDI+Ow0KPiArCQkjc2l6ZS1jZWxscyA9IDwyPjsNCj4gKwkJcmFuZ2VzOw0KPiArDQo+
+ICsJCWZiOiBmcmFtZWJ1ZmZlckAwLDAgew0KPiArCQkJY29tcGF0aWJsZSA9ICJmcmFtZWJ1
+ZmZlciI7DQo+ICsJCQlyZWcgPSA8MHgwIDB4MCAweDAgMHgwPjsNCj4gKwkJCWlvbW11LWFk
+ZHJlc3NlcyA9IDwmZGMwIDB4MCAweDAgMHgwIDB4MD47DQo+ICsJCX07DQo+ICsJfTsNCj4g
+Kw0KPiArCWJ1c0AwIHsNCj4gKwkJaG9zdDF4QDEzZTAwMDAwIHsNCj4gKwkJCWRpc3BsYXkt
+aHViQDE1MjAwMDAwIHsNCj4gKwkJCQlkaXNwbGF5QDE1MjAwMDAwIHsNCj4gKwkJCQkJbWVt
+b3J5LXJlZ2lvbiA9IDwmZmI+Ow0KPiArCQkJCX07DQo+ICsJCQl9Ow0KPiArCQl9Ow0KPiAr
+CX07DQo+ICAgfTsNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlh
+L3RlZ3JhMTk0LmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTE5NC5k
+dHNpDQo+IGluZGV4IGQwZGJmYWZiYzkzMC4uZWMzMThiOWU3MDBjIDEwMDY0NA0KPiAtLS0g
+YS9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTE5NC5kdHNpDQo+ICsrKyBiL2Fy
+Y2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMTk0LmR0c2kNCj4gQEAgLTE5NzIsNyAr
+MTk3Miw3IEBAIGRpc3BsYXktaHViQDE1MjAwMDAwIHsNCj4gICANCj4gICAJCQkJcmFuZ2Vz
+ID0gPDB4MTUyMDAwMDAgMHgxNTIwMDAwMCAweDQwMDAwPjsNCj4gICANCj4gLQkJCQlkaXNw
+bGF5QDE1MjAwMDAwIHsNCj4gKwkJCQlkYzA6IGRpc3BsYXlAMTUyMDAwMDAgew0KPiAgIAkJ
+CQkJY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmExOTQtZGMiOw0KPiAgIAkJCQkJcmVnID0g
+PDB4MTUyMDAwMDAgMHgxMDAwMD47DQo+ICAgCQkJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkg
+MTUzIElSUV9UWVBFX0xFVkVMX0hJR0g+Ow0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpH
+cmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJt
+YW55IEdtYkgNCk1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQ0KKEhS
+QiAzNjgwOSwgQUcgTsO8cm5iZXJnKQ0KR2VzY2jDpGZ0c2bDvGhyZXI6IEl2byBUb3Rldg0K
 
-I think that just as in PATCH V2 1/1, there's an implicit context required
-to understand your commit message: it answers the question "why don't we
-just remove these messages altogether?" Answer: "because they might be expected
-by some guys, so let's keep them".
 
-IMO, what _is_ expected is random selection of addresses. So, something on
-the lines of this would look better to me:
+--------------7ToGNKb16hhOGsfc7HUcQvvk--
 
-"Randomly selecting host and device MAC addresses is a proper and expected
-default behavior. A properly working driver should be silent, so don't warn
-the user about default MAC addresses selection happening and convert the
-warnings into debug messages."
+--------------JdpoF82CkkDZeNdPqNF054Kw
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> 
-> Reviewed-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+-----BEGIN PGP SIGNATURE-----
 
-With the above taken into account I uphold my R-b tag.
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmPGttkFAwAAAAAACgkQlh/E3EQov+An
+Gw//clp/pBn5J+tUISX27Ps3E8yNcZZELXgDzZIq1YZNZ1+S+tA6dMwZ4yJRqtV/Sts9NCZCgtxc
+JfbR63EN0rEpVOa3avBdktxxhLJRE1bvdnOo6KpPc8HQ31UKw35fRekrHKqa4QleIxdHgyf0nXvw
+4PxG1Ozi6fm7gCU+XlfPnyU4QsAWWGFvm/wv6NCOmUWX/XRikg91VMOOeA080C7xNTk/uez/kY5Z
+vBkgHXmcx1LFhuBffdQFFAMn4wSrJb505S+9VlnuLzNfuuCvyce2vCwSj0vEZUEu/zlCboHgdP67
+kFm3RYK1lrFFPqPfNJTw1g4r2uP59Mmc/0c/HMl1Y2fQkiQa5SXuQs5ZUHHYjaGRN8viGLGeuM21
+8MI//hxWm/JHaK4FSUqgAhUBU8HaRiopBip5pG4DQMq+N7CE++0phBxh/IJNfaoo4FcwgED3cLNp
+vHCxFlyfEneHHoTKymRXk+9uuFRHKiXFmvmYUnw2T00gQgmYhVDW1bKQjTfmFr3DeJoTgM/kQmzZ
+9i1vtYxFeIhgCBECNEnpKfrohF39jBH72jnio42mrzXLqcv9roe/a9m9Gh83hV1zwyKw207Av/LK
+D8TLhezEABE6g+6fr3G6TbpIlCto/yB7BbHQISvLm++2iqudMF3FVz1G6HB4XI0ESkH2RDg5lHPW
+stc=
+=Fbk7
+-----END PGP SIGNATURE-----
 
-Andrzej
-
-> 
->> ---
->> V1 -> V2: Changed print to debug instead of info.
->>
->>   drivers/usb/gadget/function/u_ether.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/gadget/function/u_ether.c 
->> b/drivers/usb/gadget/function/u_ether.c
->> index be8e7b448933..8feb40e38137 100644
->> --- a/drivers/usb/gadget/function/u_ether.c
->> +++ b/drivers/usb/gadget/function/u_ether.c
->> @@ -845,13 +845,13 @@ struct net_device *gether_setup_name_default(const char 
->> *netname)
->>       snprintf(net->name, sizeof(net->name), "%s%%d", netname);
->>       eth_random_addr(dev->dev_mac);
->> -    pr_warn("using random self ethernet address %pM\n", dev->dev_mac);
->> +    pr_debug("using random self ethernet address %pM\n", dev->dev_mac);
->>       /* by default we always have a random MAC address */
->>       net->addr_assign_type = NET_ADDR_RANDOM;
->>       eth_random_addr(dev->host_mac);
->> -    pr_warn("using random host ethernet address %pM\n", dev->host_mac);
->> +    pr_debug("using random host ethernet address %pM\n", dev->host_mac);
->>       net->netdev_ops = &eth_netdev_ops;
-> 
-
+--------------JdpoF82CkkDZeNdPqNF054Kw--
