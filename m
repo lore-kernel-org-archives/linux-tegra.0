@@ -2,141 +2,142 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007F5C63797
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 12:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4715C3DA78
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Jan 2023 12:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236932AbjAQMSZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Jan 2023 07:18:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48936 "EHLO
+        id S236729AbjAQMjz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Jan 2023 07:39:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236702AbjAQMSS (ORCPT
+        with ESMTP id S235897AbjAQMjv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Jan 2023 07:18:18 -0500
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2070.outbound.protection.outlook.com [40.107.223.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 285A435279;
-        Tue, 17 Jan 2023 04:18:17 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DPXwsB9fKmhQIJnXwa/yX/u46lckWeRM/rQ/VwW2NaWHwmEGs2sSmJJLPxId5puV2w0Icgt6xqAMpkKXog3rDkPkA7fgLti+rJHT3/OGRFwCtHrRx1cLfiIRHfq3rgFTrMU4TNGMrnc4gfwzVf0O0Mf6vW53mVR7/t47yTSn3fwDk5LDSY0ZCjCD58ZOWDPEdKtu2TAj7Vaib6TtfG2EMcz0FhM+e99lZuYcqpcS9L5q6g7H8q7BWudKXdCXr+EIcdJtSZ1qp9kFi9+pOOMIVMbR3acgfHTvL0cGzuoK6myoNsLo9zpvaLcRf5jpX+L4ByKMiXpE4uOBYxpXymv07w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/EU6rmAaSNTPVYl/91CGi1/LHhQSlJ0V6VIWEdcioRE=;
- b=GOjsIiKE4vZyOGQa2TRQk1+FoUuUIg0ybl1JYyeclO8JBY7MTA6zCSsTz0QOyjKR5z679xFcWtMq879Z2kTLIdHscJumSPcm/i+t8z+S/30UUYQPuIifNnnxzB+3ikwNwT8A6FvZrr8YG06YepSWP/X/OVKvcTAA2bOqKcqHns0yuFPjqBnOKARagJ9pUDmxAoB85TpYLnBjcrbA7AXavlr6Fz22tNB4VKFG+k5LoYsQG1m3UU4kLClw0nKOQtvQmIYH5tcUgXxCOTNZgqbwVoVUirJbX0umtCl/kJ8XrpLuivjJgz2cAXOebjZsSR/jaeUfExyZZ6zdvIDAUaJUQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/EU6rmAaSNTPVYl/91CGi1/LHhQSlJ0V6VIWEdcioRE=;
- b=D0MYSoRzJ4PBtB5hgyUt4z8Afpnkl0lokOLr5t2GrvdbNWbT9qGYhF2ZVmBway2N9kmzFlK20rZD1Y/iagHEjrkqIrbvKXqMWaO2JfKQL1lboqLcYcug1IXCubIr6wfDDEF3axlGzMuii8MjbdfOvSS5GFzEEmRfzVIGdJAvADNj5+nyVklCJzBbwxjB1J7lTk4LTXsQhitmbrSqCpCDLnbxV57g55mTvz2Stxko7Rcnz7cLx4huHgrCBnOzoRBnU5O7Yyl3eub4qJbRItjxtDyK+5UACYW12c8P+IzQDuzapW1bkHUYO4YmpCMRG15ZSRzRD+VPvBfx6YdYp/YvKQ==
-Received: from CY5PR19CA0084.namprd19.prod.outlook.com (2603:10b6:930:69::20)
- by SA1PR12MB7293.namprd12.prod.outlook.com (2603:10b6:806:2b9::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.23; Tue, 17 Jan
- 2023 12:18:15 +0000
-Received: from CY4PEPF0000C980.namprd02.prod.outlook.com
- (2603:10b6:930:69:cafe::3a) by CY5PR19CA0084.outlook.office365.com
- (2603:10b6:930:69::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.19 via Frontend
- Transport; Tue, 17 Jan 2023 12:18:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000C980.mail.protection.outlook.com (10.167.241.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6002.11 via Frontend Transport; Tue, 17 Jan 2023 12:18:15 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 17 Jan
- 2023 04:18:03 -0800
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 17 Jan
- 2023 04:18:03 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
- Transport; Tue, 17 Jan 2023 04:18:02 -0800
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/183] 6.1.7-rc1 review
-In-Reply-To: <20230116154803.321528435@linuxfoundation.org>
-References: <20230116154803.321528435@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jan 2023 07:39:51 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3A5EC36B38;
+        Tue, 17 Jan 2023 04:39:50 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D469C143D;
+        Tue, 17 Jan 2023 04:40:31 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F6B53F67D;
+        Tue, 17 Jan 2023 04:39:33 -0800 (PST)
+Date:   Tue, 17 Jan 2023 12:39:31 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, richard.henderson@linaro.org,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
+        linux@armlinux.org.uk, nsekhar@ti.com, brgl@bgdev.pl,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        catalin.marinas@arm.com, will@kernel.org, guoren@kernel.org,
+        bcain@quicinc.com, chenhuacai@kernel.org, kernel@xen0n.name,
+        geert@linux-m68k.org, sammy@sammy.net, monstr@monstr.eu,
+        tsbogend@alpha.franken.de, dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, namhyung@kernel.org, jgross@suse.com,
+        srivatsa@csail.mit.edu, amakhalov@vmware.com,
+        pv-drivers@vmware.com, boris.ostrovsky@oracle.com,
+        chris@zankel.net, jcmvbkbc@gmail.com, rafael@kernel.org,
+        lenb@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        anup@brainfault.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com,
+        atishp@atishpatra.org, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, dennis@kernel.org, tj@kernel.org,
+        cl@linux.com, rostedt@goodmis.org, mhiramat@kernel.org,
+        frederic@kernel.org, paulmck@kernel.org, pmladek@suse.com,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, ryabinin.a.a@gmail.com,
+        glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
+        vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v3 00/51] cpuidle,rcu: Clean up the mess
+Message-ID: <20230117123931.3ocl3ckkf72kusbz@bogus>
+References: <20230112194314.845371875@infradead.org>
+ <Y8WCWAuQSHN651dA@FVFF77S0Q05N.cambridge.arm.com>
+ <Y8Z31UbzG3LJgAXE@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Message-ID: <c19f8283-d2ea-46bb-a00e-132cc938d07e@rnnvmail204.nvidia.com>
-Date:   Tue, 17 Jan 2023 04:18:02 -0800
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000C980:EE_|SA1PR12MB7293:EE_
-X-MS-Office365-Filtering-Correlation-Id: 950246a1-3fe1-4226-2659-08daf884e8e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NHYAbJQxRdTbcjpXN1tb3HUDIr+Uig0jDki2OGcW9LS9JpxUJrZzwbgPI84csSouY8qEySXRyxgr5nJKxnFMrgnSmEz0pZJOQwd5tSkiZkHRQ6iq4aPjfnubny612i+86k+2YF6vJY5PMQixFjwA73CDrDmkBPb6vE4vNznfKwIAmPrYo5xzpG0pM4sYpqueDw32Rg+XU3iuGQY+t3TyXrfeKvjU/ZxJ/+/XdyJaLkpFBqEkS83DGLXB7/l5r08DaEDKRLMf7cnvrg3dwHmD/TOp33jpN1dEsoFu8zxJqZIXpjveH8UlTLm6ypFwABcLMt/OajG5fhkK1xMklmdppm/91sxpOQ/RKvoe+Ugb24icjzjD63O1SMQ2o3eWmyUMMt6bKHQbSsW/Lb0ZBpaczH3AGeudkCv2HnZKcTjGiwlQn+L3wrqn2g5+lwSUxH/3v+/BrWi4cLue5ClsYSOsyGgvrXelryXCPGIh1OIbS3sYRZY3pRCLbVu+GzdCIaMWmWV2lUTM1UXMoqaT6/D+J/fCShk2a2KvtUtiv5/C/P2HCnRdP2xts+yQ5iPeGC7P2hpRk6G8HLIbKx82uopac6ftJrDAzImMO1Zgvo4Hti5/2PLcdQebTROwcuiaOIA3jXjgWOBolEBm3JH+S+zS00tumITmCorD9/C/tI0c3NGWGKlIxVvDaSkEROh9kMPy1G0ZBi4NAvSz2hyMdNyAp7YCtG9rHek1aVFtRK142sBWWFks3FqLiAsiZYW1qudB73oBQ3TqcRA3zXa4RlcrnXQZMfGyHhq0H4UGOJYWavk=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(136003)(376002)(396003)(39860400002)(451199015)(46966006)(36840700001)(40470700004)(36860700001)(7636003)(356005)(4326008)(70206006)(31696002)(7416002)(2906002)(5660300002)(8676002)(6916009)(8936002)(70586007)(82310400005)(41300700001)(40480700001)(82740400003)(26005)(186003)(47076005)(336012)(316002)(426003)(40460700003)(966005)(54906003)(86362001)(478600001)(31686004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2023 12:18:15.1627
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 950246a1-3fe1-4226-2659-08daf884e8e0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000C980.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7293
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y8Z31UbzG3LJgAXE@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 16 Jan 2023 16:48:43 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.7 release.
-> There are 183 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Jan 17, 2023 at 11:26:29AM +0100, Peter Zijlstra wrote:
+> On Mon, Jan 16, 2023 at 04:59:04PM +0000, Mark Rutland wrote:
 > 
-> Responses should be made by Wed, 18 Jan 2023 15:47:28 +0000.
-> Anything received after that time might be too late.
+> > I'm sorry to have to bear some bad news on that front. :(
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+> Moo, something had to give..
 > 
-> thanks,
 > 
-> greg k-h
+> > IIUC what's happenign here is the PSCI cpuidle driver has entered idle and RCU
+> > is no longer watching when arm64's cpu_suspend() manipulates DAIF. Our
+> > local_daif_*() helpers poke lockdep and tracing, hence the call to
+> > trace_hardirqs_off() and the RCU usage.
+> 
+> Right, strictly speaking not needed at this point, IRQs should have been
+> traced off a long time ago.
+> 
+> > I think we need RCU to be watching all the way down to cpu_suspend(), and it's
+> > cpu_suspend() that should actually enter/exit idle context. That and we need to
+> > make cpu_suspend() and the low-level PSCI invocation noinstr.
+> > 
+> > I'm not sure whether 32-bit will have a similar issue or not.
+> 
+> I'm not seeing 32bit or Risc-V have similar issues here, but who knows,
+> maybe I missed somsething.
+> 
+> In any case, the below ought to cure the ARM64 case and remove that last
+> known RCU_NONIDLE() user as a bonus.
+>
 
-All tests passing for Tegra ...
+Thanks for the fix. I tested the series and did observe the same splat
+with both DT and ACPI boot(they enter idle in different code paths). Thanks
+to Mark for reminding me about ACPI. With this fix, I see the splat is
+gone in both DT(cpuidle-psci.c) and ACPI(acpi_processor_idle.c).
 
-Test results for stable-v6.1:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+You can add:
 
-Linux version:	6.1.7-rc1-gffb1fddbd4d0
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+--
+Regards,
+Sudeep
