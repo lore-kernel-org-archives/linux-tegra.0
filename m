@@ -2,185 +2,146 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D54E2C38159
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 18:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B3CC46467
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 18:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231319AbjARSEa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Jan 2023 13:04:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58580 "EHLO
+        id S230043AbjARS3A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Jan 2023 13:29:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjARSEO (ORCPT
+        with ESMTP id S229758AbjARS24 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Jan 2023 13:04:14 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2157E5D13C
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Jan 2023 10:02:02 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id q10so15472090wrs.2
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Jan 2023 10:02:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zp84JUX2wPLB6FAIMuryYBX4UoBq5satkVPoiHfbwC8=;
-        b=SuzsQHg+VL7NqkwjrA63pCX0Wh/ri6IncPBZXyPuINUTQvvp788mh5J4vJJxBa9Mc/
-         y/ttCKrX0uNIm+tw6/vqD5JFPoJIAH/m1xJd12MANZgmNBGvfqVoslitJaDVlpYG6Gcg
-         ljT6biT3+fWn72zFSlQeveqfkUxSwqcVzuAg0RUZL3rklTY4sVg1jBK14OM92QHKLI48
-         rjYxW/75SOrTLmszDt2eq00ibyhe+I+UMNVBKLJKKppm//AV5dM89TEYBDgLS70RCG60
-         7ZznQt3ixUsuMaRIYB+5yX51Oph7bYwjr0NIzHepDaw7N5dDr9M05cbdJmoCBItHwWrH
-         SkwQ==
+        Wed, 18 Jan 2023 13:28:56 -0500
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FA7113E3;
+        Wed, 18 Jan 2023 10:28:55 -0800 (PST)
+Received: by mail-qt1-f177.google.com with SMTP id jr10so23232933qtb.7;
+        Wed, 18 Jan 2023 10:28:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zp84JUX2wPLB6FAIMuryYBX4UoBq5satkVPoiHfbwC8=;
-        b=bX9NOwWZmI9njHaBCD2SmJE8cVfD+AukB1rpp1H3+weKHLBwJPRqLWN7l6XtBrIx3P
-         Cl8P1dGzJp7d0tBXZ/CEMOX/L8kaw0JuI1lNVlkOgSfvX5RAFE68TVKMKl3X+cRjkl+X
-         rDii2ctmAwE6UyRQlpgVy+urOgLSk882MKEe4lpYv8zumleCLIa0f+UKf0YBjMWI0Pr3
-         SuqDimVAHMG2Se+clN5eyO6bRlsGmrrCb1YsvY+2NsDnrICoNsbE4EXv/sj5vP/0rfZk
-         m+EpvyeEOTGvTwWFJqGqy6RCUeEhafDz7fL53YDG2/HB3ISCgt+4KHAknZqExhjTSQls
-         Mcfw==
-X-Gm-Message-State: AFqh2kqbFLcA/PZ7OH9Q0eZcZxbvdQJUbkxNASAJQNNWofPw/J90f6gl
-        /DH0xvN1vwYzrCFIADA0TmCnUQ==
-X-Google-Smtp-Source: AMrXdXv3mSWZmyjShmt7WtX7nY6Hcxtp9KvdQ4XjWZI2xRezvrvP5e54ZFq9WAbXPQXpGcFKgypXlQ==
-X-Received: by 2002:adf:efc8:0:b0:29d:f817:42d4 with SMTP id i8-20020adfefc8000000b0029df81742d4mr16973520wrp.19.1674064912700;
-        Wed, 18 Jan 2023 10:01:52 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id w4-20020a5d4b44000000b002366dd0e030sm31657450wrs.68.2023.01.18.10.01.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jan 2023 10:01:52 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Olivier Dautricourt <olivierdautricourt@gmail.com>,
-        Stefan Roese <sr@denx.de>, Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Green Wan <green.wan@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        =?UTF-8?q?=A1er?= <povik+lin@cutebit.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        - <chuanhua.lei@intel.com>, Long Cheng <long.cheng@mediatek.com>,
-        Rajesh Gumasta <rgumasta@nvidia.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Palmer Debbelt <palmer@sifive.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Amelie Delaunay <amelie.delaunay@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] dt-bindings: dma: cleanup examples - indentation, lowercase hex
-Date:   Wed, 18 Jan 2023 19:01:44 +0100
-Message-Id: <20230118180144.364756-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
-References: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m6+hopJKlcYVjWue00VkVDFjPrjXwNY80RsgV+H7s3k=;
+        b=3UCJo9oDRK+zvaNyNHHNbXjKGSAgrfcfUj/Uz4yPm56IaIlgxQv5el0QKqc4SGtvOv
+         zzFLhzYYI9sGROEKG40rOBDkF4MnisI1A2z1m+38/AaD9lJH7Ku2b1/zYCabCJUpnNNu
+         KuYIjCkU9+YqG6/k5a4+fT+DYd/JLD9YO3v+o5BE+RXtdViIR0o8SGzz7nLIeaXrjTWz
+         QXfyMea8bzTPQ6K+zrYNDNTTmWUx9AgVrpaGu0/prCtwkp8nFYJe6NOGSiXCr6DfGkjW
+         HYGd2YVo07u6dcqTTWIT9qHhIh3IAdFH7USLPwNrobdlv3PaVNFfoStoBFJiyFAkKLCr
+         OcsA==
+X-Gm-Message-State: AFqh2krIAzMz/4sIWdZPCboBDANEuWUVTgsNymi2JqAG8FKZzPfI6hAR
+        D9qLGTIpmff1ScqRZrxaA619TuZyj1WTKLUk
+X-Google-Smtp-Source: AMrXdXsTWIPihbbkeIVwRFkH1BG2PkiVfAKrtt5W2CMXq+ymezGSNRY6XyPDsA3E49/dpN5CuDoPbA==
+X-Received: by 2002:ac8:738a:0:b0:3b6:4615:6d0e with SMTP id t10-20020ac8738a000000b003b646156d0emr6622972qtp.3.1674066534312;
+        Wed, 18 Jan 2023 10:28:54 -0800 (PST)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id w25-20020ac86b19000000b003b63c08a888sm2977623qts.4.2023.01.18.10.28.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jan 2023 10:28:53 -0800 (PST)
+Received: by mail-yb1-f179.google.com with SMTP id 20so20137890ybl.0;
+        Wed, 18 Jan 2023 10:28:53 -0800 (PST)
+X-Received: by 2002:a25:d88c:0:b0:77a:b5f3:d0ac with SMTP id
+ p134-20020a25d88c000000b0077ab5f3d0acmr833623ybg.202.1674066532773; Wed, 18
+ Jan 2023 10:28:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1674036164.git.geert+renesas@glider.be> <cd685d8e4d6754c384acfc1796065d539a2c3ea8.1674036164.git.geert+renesas@glider.be>
+ <CAL_JsqJS2JTZ1BxMbG_2zgzu5xtxMFPqjxc_vUjuZp3k1xUmaQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqJS2JTZ1BxMbG_2zgzu5xtxMFPqjxc_vUjuZp3k1xUmaQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 18 Jan 2023 19:28:40 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXGsmNjYy-ofmuHLkr8yaDEzy+SGnhtbmc_2ezbEKAMjw@mail.gmail.com>
+Message-ID: <CAMuHMdXGsmNjYy-ofmuHLkr8yaDEzy+SGnhtbmc_2ezbEKAMjw@mail.gmail.com>
+Subject: Re: [PATCH 7/7] usb: host: ohci-exynos: Convert to devm_of_phy_optional_get()
+To:     Rob Herring <robh@kernel.org>
+Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Cleanup examples:
- - use 4-space indentation (for cases when it is neither 4 not 2 space),
- - use lowercase hex.
+Hi Rob,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/dma/snps,dw-axi-dmac.yaml        | 36 +++++++++----------
- .../bindings/dma/stericsson,dma40.yaml        |  4 +--
- 2 files changed, 20 insertions(+), 20 deletions(-)
+On Wed, Jan 18, 2023 at 6:30 PM Rob Herring <robh@kernel.org> wrote:
+> On Wed, Jan 18, 2023 at 4:15 AM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > Use the new devm_of_phy_optional_get() helper instead of open-coding the
+> > same operation.
+> >
+> > This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
+> > handle NULL parameters fine.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  drivers/usb/host/ohci-exynos.c | 24 +++++++-----------------
+> >  1 file changed, 7 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> > index 8d7977fd5d3bd502..8dd9c3b2411c383f 100644
+> > --- a/drivers/usb/host/ohci-exynos.c
+> > +++ b/drivers/usb/host/ohci-exynos.c
+> > @@ -69,19 +69,12 @@ static int exynos_ohci_get_phy(struct device *dev,
+> >                         return -EINVAL;
+> >                 }
+> >
+> > -               phy = devm_of_phy_get(dev, child, NULL);
+> > +               phy = devm_of_phy_optional_get(dev, child, NULL);
+> >                 exynos_ohci->phy[phy_number] = phy;
+> >                 if (IS_ERR(phy)) {
+> > -                       ret = PTR_ERR(phy);
+> > -                       if (ret == -EPROBE_DEFER) {
+> > -                               of_node_put(child);
+> > -                               return ret;
+> > -                       } else if (ret != -ENOSYS && ret != -ENODEV) {
+> > -                               dev_err(dev,
+> > -                                       "Error retrieving usb2 phy: %d\n", ret);
+> > -                               of_node_put(child);
+> > -                               return ret;
+> > -                       }
+> > +                       of_node_put(child);
+> > +                       return dev_err_probe(dev, PTR_ERR(phy),
+> > +                                            "Error retrieving usb2 phy\n");
+>
+> Optional is really the only reason for the caller to decide whether to
+> print an error message or not. If we have both flavors of 'get', then
+> really the 'get' functions should print an error message.
 
-diff --git a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-index 2bedab1f74e0..d34d0fa62ab5 100644
---- a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-+++ b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-@@ -113,21 +113,21 @@ additionalProperties: false
- 
- examples:
-   - |
--     #include <dt-bindings/interrupt-controller/arm-gic.h>
--     #include <dt-bindings/interrupt-controller/irq.h>
--     /* example with snps,dw-axi-dmac */
--     dmac: dma-controller@80000 {
--         compatible = "snps,axi-dma-1.01a";
--         reg = <0x80000 0x400>;
--         clocks = <&core_clk>, <&cfgr_clk>;
--         clock-names = "core-clk", "cfgr-clk";
--         interrupt-parent = <&intc>;
--         interrupts = <27>;
--         #dma-cells = <1>;
--         dma-channels = <4>;
--         snps,dma-masters = <2>;
--         snps,data-width = <3>;
--         snps,block-size = <4096 4096 4096 4096>;
--         snps,priority = <0 1 2 3>;
--         snps,axi-max-burst-len = <16>;
--     };
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    /* example with snps,dw-axi-dmac */
-+    dmac: dma-controller@80000 {
-+        compatible = "snps,axi-dma-1.01a";
-+        reg = <0x80000 0x400>;
-+        clocks = <&core_clk>, <&cfgr_clk>;
-+        clock-names = "core-clk", "cfgr-clk";
-+        interrupt-parent = <&intc>;
-+        interrupts = <27>;
-+        #dma-cells = <1>;
-+        dma-channels = <4>;
-+        snps,dma-masters = <2>;
-+        snps,data-width = <3>;
-+        snps,block-size = <4096 4096 4096 4096>;
-+        snps,priority = <0 1 2 3>;
-+        snps,axi-max-burst-len = <16>;
-+    };
-diff --git a/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml b/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
-index 664ee61a00d8..57395a810719 100644
---- a/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
-+++ b/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
-@@ -147,9 +147,9 @@ examples:
-     #include <dt-bindings/interrupt-controller/irq.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     #include <dt-bindings/mfd/dbx500-prcmu.h>
--    dma-controller@801C0000 {
-+    dma-controller@801c0000 {
-       compatible = "stericsson,db8500-dma40", "stericsson,dma40";
--      reg = <0x801C0000 0x1000>, <0x40010000 0x800>;
-+      reg = <0x801c0000 0x1000>, <0x40010000 0x800>;
-       reg-names = "base", "lcpa";
-       interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-       #dma-cells = <3>;
--- 
-2.34.1
+In case of a real error, both should print an error message, right?
 
+Anyway, I understand that's a three step operation:
+  1. Introduce and convert to the _optional variant,
+  2. Add error printing to callees.
+  3. Remove error printing from callers.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
