@@ -2,63 +2,137 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30842C38147
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 16:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BBFC38159
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 16:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbjARQsz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Jan 2023 11:48:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53952 "EHLO
+        id S230016AbjARQuT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Jan 2023 11:50:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbjARQsv (ORCPT
+        with ESMTP id S229881AbjARQuR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Jan 2023 11:48:51 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 739225587;
-        Wed, 18 Jan 2023 08:48:51 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0E68561157;
-        Wed, 18 Jan 2023 16:48:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B81C433EF;
-        Wed, 18 Jan 2023 16:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674060530;
-        bh=/RbbN2yNZ5vrt37ezendcfzEpHoDc80MyVLJKX/27mU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aXqEdyVURePjmJ17P1TS/ISnyHnGP5GwMmWKt6d6mSTTqfhNJqEO7Er2HRx7/k7De
-         AKO+O+D+1DWLnioTpL8V3gmMKyIfW2PLsHI7J0n6W8JIJYKV6baG7lqginZmnjQntd
-         UdEvvFfAbIyFCuSUpOhZwRpXKVPe3Xtx4T8t7NZS2g851KMKs33BogbMNOJ2SkAvAO
-         0eQ+tNT+PijEiplKBh6IJD3Y3Mxk3oy3RhXjAL395BafNtaU+IbG1AjegJOlSt2EqI
-         u8w+UJqQWlgCJzBt2CHlqkSG00DibliveMFUxa7xoHsTHJ5aprufzG/8thyO9wOgFT
-         oT4lMtWyDBn3w==
-Date:   Wed, 18 Jan 2023 22:18:45 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     ldewangan@nvidia.com, jonathanh@nvidia.com,
-        thierry.reding@gmail.com, p.zabel@pengutronix.de,
-        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: tegra: Fix memory leak in terminate_all()
-Message-ID: <Y8gi7YsuIy4wSTfZ@matsya>
-References: <20230118115801.15210-1-akhilrajeev@nvidia.com>
+        Wed, 18 Jan 2023 11:50:17 -0500
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FCB18AA5;
+        Wed, 18 Jan 2023 08:50:15 -0800 (PST)
+Received: by mail-qt1-f177.google.com with SMTP id q15so6419692qtn.0;
+        Wed, 18 Jan 2023 08:50:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5eGZCXxPoQAmJ0txjytBJor7KBRzIjhRUq2JtcYKMyc=;
+        b=zxXsA3PsAxNJlc/vHhsKADw+uOEVJ4Z11N/IrFWwKilJ3I33eNLfcHMo1END6YvOzX
+         qYCQlz/B8QNTQvidg0T2BU6tDfUDm2D3CSk5K6w02sydoY03xZky0BJYvlgCyDY4txOC
+         wKZLZzDListilZxOjSeUl1plHYnj3/pwWyJDkAUYlPvL09sr3S8jKKmkOZseBIUN0UxR
+         45SjFw4NGnsCU0LhQ/OpicVOVf4N7nz5W/hoAcO72HfPRJIKHngiPrnAdfnf+oZWMP9x
+         0TF3Rrofd3gcdCh/khFyh/zjeZwNwmOkZ1tjb1sKv/9nV1Pbohx/oiWbzH76kOjMN2YF
+         Zh9g==
+X-Gm-Message-State: AFqh2kqO5dBTXvKoebKOULBzgzHuiPQuDO6/E8hPt7DW8esiINDECMEF
+        FQ5moY6X62NtsMv1ZysxraZLsBn0Hd9+BisU
+X-Google-Smtp-Source: AMrXdXuQBIESpTUtyLs9kMzi3ikAcnU2clAWT40BpCtEkbtpDFvVXAxAbVSkyeAPwHxSUJviIHDMbw==
+X-Received: by 2002:ac8:51ce:0:b0:3b6:3b81:9a99 with SMTP id d14-20020ac851ce000000b003b63b819a99mr9820213qtn.14.1674060614519;
+        Wed, 18 Jan 2023 08:50:14 -0800 (PST)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id r3-20020ac87943000000b003a82562c90fsm3657280qtt.62.2023.01.18.08.50.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jan 2023 08:50:13 -0800 (PST)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-4e4a6af2d99so157036367b3.4;
+        Wed, 18 Jan 2023 08:50:13 -0800 (PST)
+X-Received: by 2002:a81:6e46:0:b0:37e:6806:a5f9 with SMTP id
+ j67-20020a816e46000000b0037e6806a5f9mr952154ywc.47.1674060612772; Wed, 18 Jan
+ 2023 08:50:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230118115801.15210-1-akhilrajeev@nvidia.com>
+References: <cover.1674036164.git.geert+renesas@glider.be> <cd685d8e4d6754c384acfc1796065d539a2c3ea8.1674036164.git.geert+renesas@glider.be>
+ <Y8gb8l18XzYOPhoD@rowland.harvard.edu>
+In-Reply-To: <Y8gb8l18XzYOPhoD@rowland.harvard.edu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 18 Jan 2023 17:50:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUsULA0PM26Y8WL2bGiBHGAGADS6eYLUp0CDVgm4N5kow@mail.gmail.com>
+Message-ID: <CAMuHMdUsULA0PM26Y8WL2bGiBHGAGADS6eYLUp0CDVgm4N5kow@mail.gmail.com>
+Subject: Re: [PATCH 7/7] usb: host: ohci-exynos: Convert to devm_of_phy_optional_get()
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18-01-23, 17:28, Akhil R wrote:
-> Terminate vdesc when terminating an ongoing transfer.
-> This will ensure that the vdesc is present in the desc_terminated list
-> The descriptor will be freed later in desc_free_list().
-> 
-> This fixes the memory leaks which can happen when terminating an
-> ongoing transfer.
+Hi Alan,
 
-Applied, thanks
+On Wed, Jan 18, 2023 at 5:26 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Wed, Jan 18, 2023 at 11:15:20AM +0100, Geert Uytterhoeven wrote:
+> > Use the new devm_of_phy_optional_get() helper instead of open-coding the
+> > same operation.
+> >
+> > This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
+> > handle NULL parameters fine.
+>
+> The patch ignores a possible -ENOSYS error return.  Is it known that
+> this will never happen?
 
--- 
-~Vinod
+While some phy_*() dummies in include/linux/phy/phy.h do return -ENOSYS
+if CONFIG_GENERIC_PHY is not enabled, devm_of_phy_optional_get()
+returns NULL in that case, so I think this cannot happen.
+
+> > --- a/drivers/usb/host/ohci-exynos.c
+> > +++ b/drivers/usb/host/ohci-exynos.c
+> > @@ -69,19 +69,12 @@ static int exynos_ohci_get_phy(struct device *dev,
+> >                       return -EINVAL;
+> >               }
+> >
+> > -             phy = devm_of_phy_get(dev, child, NULL);
+> > +             phy = devm_of_phy_optional_get(dev, child, NULL);
+> >               exynos_ohci->phy[phy_number] = phy;
+> >               if (IS_ERR(phy)) {
+> > -                     ret = PTR_ERR(phy);
+> > -                     if (ret == -EPROBE_DEFER) {
+> > -                             of_node_put(child);
+> > -                             return ret;
+> > -                     } else if (ret != -ENOSYS && ret != -ENODEV) {
+> > -                             dev_err(dev,
+> > -                                     "Error retrieving usb2 phy: %d\n", ret);
+> > -                             of_node_put(child);
+> > -                             return ret;
+> > -                     }
+> > +                     of_node_put(child);
+> > +                     return dev_err_probe(dev, PTR_ERR(phy),
+> > +                                          "Error retrieving usb2 phy\n");
+> >               }
+> >       }
+> >
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
