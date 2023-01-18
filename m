@@ -2,83 +2,63 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7FEC46467
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 17:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488FDC46467
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 17:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbjARRBW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Jan 2023 12:01:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35444 "EHLO
+        id S229989AbjARR0d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Jan 2023 12:26:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229773AbjARRBQ (ORCPT
+        with ESMTP id S230265AbjARR02 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Jan 2023 12:01:16 -0500
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id E240D4A206
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Jan 2023 09:01:14 -0800 (PST)
-Received: (qmail 214419 invoked by uid 1000); 18 Jan 2023 12:01:13 -0500
-Date:   Wed, 18 Jan 2023 12:01:13 -0500
-From:   Alan Stern <stern@rowland.harvard.edu>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 7/7] usb: host: ohci-exynos: Convert to
- devm_of_phy_optional_get()
-Message-ID: <Y8gl2bLxqWwXPMfS@rowland.harvard.edu>
-References: <cover.1674036164.git.geert+renesas@glider.be>
- <cd685d8e4d6754c384acfc1796065d539a2c3ea8.1674036164.git.geert+renesas@glider.be>
- <Y8gb8l18XzYOPhoD@rowland.harvard.edu>
- <CAMuHMdUsULA0PM26Y8WL2bGiBHGAGADS6eYLUp0CDVgm4N5kow@mail.gmail.com>
+        Wed, 18 Jan 2023 12:26:28 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D7759565;
+        Wed, 18 Jan 2023 09:26:25 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8AFAC61903;
+        Wed, 18 Jan 2023 17:26:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F421C433EF;
+        Wed, 18 Jan 2023 17:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674062785;
+        bh=Ie8gYGGf5+xcu1uU0rnQr9KYWVko0DdTHmrDJiqVhVs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N9YJdpRKAsc+RIFHGEI11cQ1FSgRNsehYucyNBBuGzvp7wwHeweHsBroVChj3fvkD
+         c5mar+fT5cKko4SLHwkJKlIUzSPbjMYCfFG6jPgeRHIXOruzZbuCn/aWRNLSQNuHJ4
+         /j1aFJg+y5NP1EsPUCpzVPZLtxjTy3TJ4jC4s+GkZ87S5HTZkeys8qZsUajydGcFSc
+         0BpwHuUT1ETF7jW3sYdq3R5tzjkt5ri4aIYs2Qwa0VeunCAiF+yY3CHPS2POWT8/W+
+         k/j6mEXj+FSUgH20NjJzOKoIXOl9q4QkQudKzfaD5bn0T/I2p23X0KsCsZuSZT+yYm
+         d8KeHVHGVXnjw==
+Date:   Wed, 18 Jan 2023 22:56:21 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: phy: tegra-xusb: Convert to json-schema
+Message-ID: <Y8grvSQa7raCn8q5@matsya>
+References: <20230113150804.1272555-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUsULA0PM26Y8WL2bGiBHGAGADS6eYLUp0CDVgm4N5kow@mail.gmail.com>
+In-Reply-To: <20230113150804.1272555-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 05:50:00PM +0100, Geert Uytterhoeven wrote:
-> Hi Alan,
+On 13-01-23, 16:08, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> On Wed, Jan 18, 2023 at 5:26 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > On Wed, Jan 18, 2023 at 11:15:20AM +0100, Geert Uytterhoeven wrote:
-> > > Use the new devm_of_phy_optional_get() helper instead of open-coding the
-> > > same operation.
-> > >
-> > > This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
-> > > handle NULL parameters fine.
-> >
-> > The patch ignores a possible -ENOSYS error return.  Is it known that
-> > this will never happen?
-> 
-> While some phy_*() dummies in include/linux/phy/phy.h do return -ENOSYS
-> if CONFIG_GENERIC_PHY is not enabled, devm_of_phy_optional_get()
-> returns NULL in that case, so I think this cannot happen.
+> Convert the Tegra XUSB pad controller bindings from free-form text
+> format to json-schema.
 
-You could mention that in the patch description.  Apart from this one 
-issue:
+Applied, thanks
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-
-Alan Stern
+-- 
+~Vinod
