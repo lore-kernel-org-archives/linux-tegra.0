@@ -2,30 +2,30 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAF2C38147
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 11:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18863C678DC
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 11:09:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229987AbjARLJS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Jan 2023 06:09:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
+        id S230228AbjARLJZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Jan 2023 06:09:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbjARLIs (ORCPT
+        with ESMTP id S230222AbjARLIw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Jan 2023 06:08:48 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E44E4951A9
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Jan 2023 02:15:45 -0800 (PST)
+        Wed, 18 Jan 2023 06:08:52 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18EA39574C
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Jan 2023 02:15:48 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:4745:2e6d:e3a6:3327])
-        by michel.telenet-ops.be with bizsmtp
-        id AAFN2900D2zf9gW06AFNza; Wed, 18 Jan 2023 11:15:43 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id AAFN290052zf9gW06AFN2a; Wed, 18 Jan 2023 11:15:46 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pI5TQ-005aIk-Q7;
+        id 1pI5TQ-005aIZ-Ni;
         Wed, 18 Jan 2023 11:15:22 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pI5TW-001JWA-4U;
+        id 1pI5TW-001JVv-27;
         Wed, 18 Jan 2023 11:15:22 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Madalin Bucur <madalin.bucur@nxp.com>,
@@ -54,9 +54,9 @@ Cc:     netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/7] usb: host: ohci-exynos: Convert to devm_of_phy_optional_get()
-Date:   Wed, 18 Jan 2023 11:15:20 +0100
-Message-Id: <cd685d8e4d6754c384acfc1796065d539a2c3ea8.1674036164.git.geert+renesas@glider.be>
+Subject: [PATCH 4/7] net: ethernet: ti: am65-cpsw: Convert to devm_of_phy_optional_get()
+Date:   Wed, 18 Jan 2023 11:15:17 +0100
+Message-Id: <63433d4641e4dd21b12232a6d72427cb62f3e987.1674036164.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1674036164.git.geert+renesas@glider.be>
 References: <cover.1674036164.git.geert+renesas@glider.be>
@@ -69,67 +69,30 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 Use the new devm_of_phy_optional_get() helper instead of open-coding the
 same operation.
 
-This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
-handle NULL parameters fine.
+While at it, fix handling of other error codes (e.g. -EPROBE_DEFER).
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/usb/host/ohci-exynos.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 8d7977fd5d3bd502..8dd9c3b2411c383f 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -69,19 +69,12 @@ static int exynos_ohci_get_phy(struct device *dev,
- 			return -EINVAL;
- 		}
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index 5cac982841845369..794f228c8d632f7a 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -1460,9 +1460,9 @@ static int am65_cpsw_init_serdes_phy(struct device *dev, struct device_node *por
+ 	struct phy *phy;
+ 	int ret;
  
--		phy = devm_of_phy_get(dev, child, NULL);
-+		phy = devm_of_phy_optional_get(dev, child, NULL);
- 		exynos_ohci->phy[phy_number] = phy;
- 		if (IS_ERR(phy)) {
--			ret = PTR_ERR(phy);
--			if (ret == -EPROBE_DEFER) {
--				of_node_put(child);
--				return ret;
--			} else if (ret != -ENOSYS && ret != -ENODEV) {
--				dev_err(dev,
--					"Error retrieving usb2 phy: %d\n", ret);
--				of_node_put(child);
--				return ret;
--			}
-+			of_node_put(child);
-+			return dev_err_probe(dev, PTR_ERR(phy),
-+					     "Error retrieving usb2 phy\n");
- 		}
- 	}
+-	phy = devm_of_phy_get(dev, port_np, name);
+-	if (PTR_ERR(phy) == -ENODEV)
+-		return 0;
++	phy = devm_of_phy_optional_get(dev, port_np, name);
++	if (IS_ERR_OR_NULL(phy))
++		return PTR_ERR_OR_ZERO(phy);
  
-@@ -97,12 +90,10 @@ static int exynos_ohci_phy_enable(struct device *dev)
- 	int ret = 0;
- 
- 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ohci->phy[i]))
--			ret = phy_power_on(exynos_ohci->phy[i]);
-+		ret = phy_power_on(exynos_ohci->phy[i]);
- 	if (ret)
- 		for (i--; i >= 0; i--)
--			if (!IS_ERR(exynos_ohci->phy[i]))
--				phy_power_off(exynos_ohci->phy[i]);
-+			phy_power_off(exynos_ohci->phy[i]);
- 
- 	return ret;
- }
-@@ -114,8 +105,7 @@ static void exynos_ohci_phy_disable(struct device *dev)
- 	int i;
- 
- 	for (i = 0; i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ohci->phy[i]))
--			phy_power_off(exynos_ohci->phy[i]);
-+		phy_power_off(exynos_ohci->phy[i]);
- }
- 
- static int exynos_ohci_probe(struct platform_device *pdev)
+ 	/* Serdes PHY exists. Store it. */
+ 	port->slave.serdes_phy = phy;
 -- 
 2.34.1
 
