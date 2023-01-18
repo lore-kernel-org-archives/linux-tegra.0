@@ -2,74 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB263C6379F
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 09:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8923EC32793
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 10:08:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbjARJYh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Jan 2023 04:24:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45546 "EHLO
+        id S230126AbjARKIc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Jan 2023 05:08:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbjARJVP (ORCPT
+        with ESMTP id S230121AbjARKHx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Jan 2023 04:21:15 -0500
-Received: from mail.bostmarktrun.com (mail.bostmarktrun.com [135.125.238.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A1225D12E
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Jan 2023 00:45:50 -0800 (PST)
-Received: by mail.bostmarktrun.com (Postfix, from userid 1002)
-        id BA844A287F; Wed, 18 Jan 2023 08:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bostmarktrun.com;
-        s=mail; t=1674031548;
-        bh=gfWmJwOZk+B/IN1TMPg7emKhIvoExrJdUiyEL8yd2Jk=;
-        h=Date:From:To:Subject:From;
-        b=mnob1FGXsuxP7gSYGZzh19ztUtPTNTiFTS+0Q+z8CHcEErJmhLtHtWLo/tb3lOXfO
-         /i74p1t0ijLlQopp71Z01v9KeUTKDkok0hRatM3BIfwJGeK43b3jmgqx2fwP3Aa2/3
-         rS+/NLd9+DQvZBp+pHUp98dw/BlyCuDWDrynugGU+8SzxrmFqxis26f6JXJY50Udjj
-         QZcQ/lbsOdQC/n/mOw1Tzmhk019Wx6uTtws6SgH1nxQhRovTct9SMjJnAGkQUrPH6K
-         O3RzWXV5j3C3W3DpICtmYi01deym/KwlyWA/seYj00/rLGdlDxZa8FGHxPLjL09rd4
-         Qzj3Mvo3zOVMQ==
-Received: by mail.bostmarktrun.com for <linux-tegra@vger.kernel.org>; Wed, 18 Jan 2023 08:45:33 GMT
-Message-ID: <20230118074500-0.1.4p.wraf.0.9h8ehifugb@bostmarktrun.com>
-Date:   Wed, 18 Jan 2023 08:45:33 GMT
-From:   "Corey Webb" <corey.webb@bostmarktrun.com>
-To:     <linux-tegra@vger.kernel.org>
-Subject: Custom Software Development
-X-Mailer: mail.bostmarktrun.com
+        Wed, 18 Jan 2023 05:07:53 -0500
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E4DB656D6;
+        Wed, 18 Jan 2023 01:13:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674033202; x=1705569202;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HX0zyAQncS5vJj7zoni+iRi+Vpv7/c6EyhwOr9hb9OE=;
+  b=MPZHkIZlGcw0OOrVn+FQkQRobP1KWdDYpsM9L9qdwfl32KvNq8PMvJmA
+   mdlHIPjN5lteovrxhoEKtYtihe+f/vWo0w0KddIuGgJ8l8mJ3ddv5gr39
+   JVnpVphulAqSzK1XwGHZxqDQS+WIxgY/0YO/ljCsrENuI9Kkdn2MHEWXb
+   vwmonFDJsd0ZxETizRVIpczO8dPG93T1F/2vDiIxElWMfDyfK1f9+NO5l
+   yT2qDev08KIjmTKed7m/vb2rEv09T2NhXFktAn6aEppEk68n+mOsHsfsP
+   2sR0LgRWMj/XVOL36NVbuvWtey0JnixotngqGJRDR/tOCD73aqPj8kVi3
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10593"; a="304619727"
+X-IronPort-AV: E=Sophos;i="5.97,224,1669104000"; 
+   d="scan'208";a="304619727"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2023 01:13:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10593"; a="802108498"
+X-IronPort-AV: E=Sophos;i="5.97,224,1669104000"; 
+   d="scan'208";a="802108498"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga001.fm.intel.com with SMTP; 18 Jan 2023 01:13:14 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 18 Jan 2023 11:13:13 +0200
+Date:   Wed, 18 Jan 2023 11:13:13 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Sanket Goswami <Sanket.Goswami@amd.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Wayne Chang <waynec@nvidia.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V4 3/5] usb: typec: ucsi_ccg: Replace ccgx to well-known
+ regex
+Message-ID: <Y8e4KXMh+bi6Gj7r@kuha.fi.intel.com>
+References: <20230116155045.100780-1-jonathanh@nvidia.com>
+ <20230116155045.100780-4-jonathanh@nvidia.com>
+ <Y8aOaH+ALBvjm/rH@kuha.fi.intel.com>
+ <11349701-f82f-3a7f-61ef-11f1585958c3@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11349701-f82f-3a7f-61ef-11f1585958c3@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,=20
+On Tue, Jan 17, 2023 at 11:29:25PM +0000, Jon Hunter wrote:
+> 
+> On 17/01/2023 12:02, Heikki Krogerus wrote:
+> > On Mon, Jan 16, 2023 at 03:50:43PM +0000, Jon Hunter wrote:
+> > > From: Wayne Chang <waynec@nvidia.com>
+> > > 
+> > > ccgx is refer to the cypress cypd4226 typec controller.
+> > > Replace ccgx to well-known regex "cypress".
+> > > 
+> > > Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > > ---
+> > > V2 -> V4: nothing has changed
+> > > V1 -> V2: new change added for adding cypress,firmware-build
+> > > 
+> > >   drivers/usb/typec/ucsi/ucsi_ccg.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> > > index 4bc31ed8e5bc..d6114fb8d5a9 100644
+> > > --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> > > +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> > > @@ -1357,7 +1357,7 @@ static int ucsi_ccg_probe(struct i2c_client *client)
+> > >   	INIT_WORK(&uc->pm_work, ccg_pm_workaround_work);
+> > >   	/* Only fail FW flashing when FW build information is not provided */
+> > > -	status = device_property_read_u16(dev, "ccgx,firmware-build",
+> > > +	status = device_property_read_u16(dev, "cypress,firmware-build",
+> > >   					  &uc->fw_build);
+> > 
+> > You need to first add that property to
+> > drivers/i2c/busses/i2c-nvidia-gpu.c.
+> 
+> 
+> Looking at this some more, I wonder if we need to keep 'ccgx,firmware-build'
+> as a fallback for AMD? It is not clear to me if they implement this property
+> or not. Let me know what you think. I will still update the i2c-nvidia-gpu
+> driver. 	
 
-I would like to reach the person responsible for the implementation of yo=
-ur company's goals, vision and mission or the decision-maker in the devel=
-opment of your technology strategy.
+AMD needs to answer to that one. Sanket, do you have that device
+property ("ccgx,firmware-build") in your ACPI tables (as _DSD device
+property) for this device?
 
-I represent provider of lucrative IT solutions that remove the barriers t=
-o process development resulting from limited access to appropriate IT res=
-ources.
+thanks,
 
-We guarantee you access to the knowledge and experience of outstanding 3,=
-000 software developers from Poland and 500 professional consultants and =
-senior developers in the United States and other Western countries. =20
-
-We respond to a variety of needs, ranging from expanding your project tea=
-m with specialists with specific skills to supporting project managers, e=
-xperienced innovation teams to creating a Minimum Viable Project (MVP).
-
-The comprehensiveness of our services guarantees you dynamic software dev=
-elopment including creation, testing and implementation systems that are =
-the backbone of effective management of the entire organization.
-
-A partnership that lasts for years is the best proof that our clients mee=
-t their unique requirements within a specific timeframe, introduce new op=
-portunities and grow their business while we solve their problems.
-
-Are you available for a brief call? I will be looking forward to hearing =
-from you.
-
-
-Best regards
-Corey Webb
+-- 
+heikki
