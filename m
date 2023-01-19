@@ -2,182 +2,162 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE2CC38142
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 04:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A76AC678D6
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 05:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229593AbjASEzD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Jan 2023 23:55:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38930 "EHLO
+        id S230016AbjASFAV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Jan 2023 00:00:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbjASEyT (ORCPT
+        with ESMTP id S230121AbjASE7v (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Jan 2023 23:54:19 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE0E71F11
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Jan 2023 20:46:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674103578; x=1705639578;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=iP16CB1AoPa/amGjgaMwrJLdfCWmRZcupLesCNLmLQQ=;
-  b=jCJhopm3Lwsd2nn/YiDIou1QUrIcgYQDZaVSHBsaqXjSAKwORI1jOSfh
-   pBZJePXpChJPDPA2AxHIZGMU/8V91pSLfifGkNAxS/T3fRpZuEAIO5XOm
-   3Gs8KKF/EGlqAMPT3LmF/TJFE5g8At2kFHYe1VgzBtJ9kl1I4hMXHM/Oq
-   Uq2nI5x8ectj2wFKwu2pxll6DQ0Nut2WxiZjNmLWJkZtx1BvHfmIY8Z6Z
-   EOZimqUt/HgZfhRSqLdec/OgmSNoZvPu2lfEnMNf0fqo6ttmBo9R/xCue
-   be/DIsA9qxRkhA/D0BB4mHnLGIY6c9rKOcwjgCqOSXjNG61mrK0SAUqxZ
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="352436331"
-X-IronPort-AV: E=Sophos;i="5.97,226,1669104000"; 
-   d="scan'208";a="352436331"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2023 19:45:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="783912491"
-X-IronPort-AV: E=Sophos;i="5.97,226,1669104000"; 
-   d="scan'208";a="783912491"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orsmga004.jf.intel.com with ESMTP; 18 Jan 2023 19:45:58 -0800
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Wed, 18 Jan 2023 19:45:58 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Wed, 18 Jan 2023 19:45:58 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16 via Frontend Transport; Wed, 18 Jan 2023 19:45:58 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.102)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.16; Wed, 18 Jan 2023 19:45:57 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ElMBhAW/xisGIujSs+YYCSJWEw1zDaQrMTJtMvpXsEHFknOJJ0lC/deGZUCSxCZN37Lo+sySjah5mStlMgl6hx2MllYG/6aIy0C0fPwwT0zdW/yLeti0NS6MWlROMTNCAvQ7VP+1UbpJ4DeaanTOBrLijGWtoZwZ3DDWN8PYKp13I1VA8yXFuCpUvRkm3XSSY6QxB7CIjQ4Gxluz6jAGdKypaU0kdsUb51DKJ+UMU1G8lvwlBs/0EtDvH+heKDUHRZF7P9vjc4cBAV6Vn7exiPrEUlizfFEtEBxBbxJvei/BcfOz3K6Vmb3OxnRIqnou4waSZ46h8859vud2Cv0yng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iP16CB1AoPa/amGjgaMwrJLdfCWmRZcupLesCNLmLQQ=;
- b=j5Qp7qB1ApWmtn4RN6/1gDLFTVcUa+MQ13zFILVdD8DGjvCA1rGem1W0r2vNUydeBLZMvjOvWLcfiPjbnEgYdvgmBUG/9MAkBfE3KohsoIS2i2P3qEEIKU0jBATl5eVn/NEeYzSSUaBgXXgaQ5HCruMXipcQdT5keA9Dw9zVnjgLB2ixs/hu4K/71QBQqLb7T4gqA4SEmt0hRwjE68PFXhcDa4+h+EheTyFDCbMcH+7QZbAtqolAkEQjjqa2X6wcMzGpEKmOZwqC/rcbA9O5Sd4eN1s8KCKE9WQ+DK/ERGmquy8RH/0q/8I7MxwD21wGHcrFXf7cSCkET+3mPGfBww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by DM4PR11MB7374.namprd11.prod.outlook.com (2603:10b6:8:102::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.23; Thu, 19 Jan
- 2023 03:45:56 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::6a8d:b95:e1b5:d79d]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::6a8d:b95:e1b5:d79d%9]) with mapi id 15.20.6002.025; Thu, 19 Jan 2023
- 03:45:56 +0000
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-CC:     Alex Williamson <alex.williamson@redhat.com>,
-        "ath10k@lists.infradead.org" <ath10k@lists.infradead.org>,
-        "ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>
-Subject: RE: [PATCH v2 02/10] iommu: Remove iommu_map_atomic()
-Thread-Topic: [PATCH v2 02/10] iommu: Remove iommu_map_atomic()
-Thread-Index: AQHZK2bagr0H4LUfwUaLMUvC3iPvl66lGiyQ
-Date:   Thu, 19 Jan 2023 03:45:56 +0000
-Message-ID: <BN9PR11MB5276D2679877D03DFEDAC4A38CC49@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <0-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
- <2-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
-In-Reply-To: <2-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DM4PR11MB7374:EE_
-x-ms-office365-filtering-correlation-id: 98720938-f417-4476-b299-08daf9cfabe7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: QwzOHquxNnyS4yHDQyJxZsACYqDJwHMg/aJvSviYcuGmaYVJpWnuZEBw/I5/1u86H4iflseMM4ie9vuOGCaw3czHHWMgSLJgNzGueyZs7qerbMGzg05eirL8AZgVvN7fMCXIbSFWYVKYZYkaOuyvJPazkQV8+CuGcwsfVE5M87LWajsbP+jYZKsctOxS5NebS2HWWoR7mSnX5DxupKvgp58ysLNdd2nT5A5XNxzKhc5mGWdHevCuFJuxYl4MFX/ZAKU7UKhtj4+QO8KYx8k3JxNdGLcnbUjXQ7wyRCoCfrbn33tu4q5OdsN5jLqmPgLwcfFYsFKs8/JjPeAio0SKP5DVghSvQWEQMjLT7sbRiFqyMhIP07mANaY8Vi9EqO6lw778cSUlrFdR3oVmr2S+TQPqy6oru9ZMnDcaFc6QNtOklAJidhcALee43XVhUljoXWvPe3tcN+a9+yvj19x1TlxrnbavElkxoXoQFLjv6kK+liLHgdISt0Q8m7ZpmPi/jEIIiphlbTlYarNCYOcrBol4TXCdGhgYrIhiIhhJx9qTPKJTQ/i/P9iKO1EMhyjHb6i+birAC9zg+prnqnzcVlB6zdhvssRR+EngyE9Zm3Or2BhEfgHufb6OsOtFVPms75ZpXH/VXNkDQDwfwjdyq5JrSOEu+QN0/yUPurDpKeOAJ7EpjZ5o6wg6FTMZ7/fncBk5RzuIM58KUiMxIr1s7g==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(39860400002)(366004)(346002)(136003)(396003)(451199015)(4326008)(38070700005)(64756008)(76116006)(8936002)(316002)(66446008)(66946007)(52536014)(66476007)(7416002)(8676002)(5660300002)(66556008)(55016003)(2906002)(38100700002)(82960400001)(41300700001)(122000001)(33656002)(558084003)(7696005)(54906003)(110136005)(478600001)(71200400001)(86362001)(6506007)(186003)(26005)(9686003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ThpNQeaK4wl+gsWw8YfMrsFJIZlF8p/qRiHxe9te8SFDJyR7/7FrwFKON2h1?=
- =?us-ascii?Q?93D9IPe+UdAJ/M4md2xQHq+KbZEEG3Z9vcbuuFcG4THlGToce6brScNaXqHm?=
- =?us-ascii?Q?bNOALzvG+ur5DGZ1keYjo46R8CPdNP7yQOQFBLFtOPZyzBoWjZsTpQFnrJDp?=
- =?us-ascii?Q?VZvtEV0gxUvEZZJuQ4GX5fF82ZJ7QlMJT3NQ7q2ocItufXaAKLZ8Yh331sdQ?=
- =?us-ascii?Q?bJdm9RpwkgGQpY1EkaRtNyKsw7LYnzT4Edmw1eLgu2WXdcoGOdXeTyPtv+z4?=
- =?us-ascii?Q?7VBYn7WiA8awL9FF8eKnoqYg2HXPxgQ5Qwt19js8qYi4lCLjCHO417YNbCem?=
- =?us-ascii?Q?fn38YQPLy76ZNegmlMv7Aq2uW2jNCVVIGWGADKuL71T+UWKOWjdpEZhqekcC?=
- =?us-ascii?Q?n+1zbhNg9j1uwcjulppgdkffvsL8zBb/LE+2nmYxO6exN6ZbcW2+H49vaJDy?=
- =?us-ascii?Q?dBZVXihHKtf1Dt3kC8d35WUdOoMhbBfzBKqejaSqlbOACDubcjO3pThicPUH?=
- =?us-ascii?Q?RAKsCIpkFKJ+liXVvZCrb7WProtOIvwvcXrrYE9vQmofg9dIj8bY7Xx4eIlM?=
- =?us-ascii?Q?zChi8ueio5TlEbIehhK1aNXDfdbXhk54FXPJjBCg0A5V8MPzGR6FR9JkEUvZ?=
- =?us-ascii?Q?H9Na7Xajffg6FfCWZNhrsUA+gQg8SvBCEPwb3i7ICPTXunQaM3icpFGKPdA9?=
- =?us-ascii?Q?vAF7A4A5OSUeY8SDBvLtzbtxMQ4pYk4oqGnFEFhvpjZIZ2WwFBfIy8ahGfbS?=
- =?us-ascii?Q?XGWUD0Rf3PurAdbxehOb0CqJM0X2RtU0JFSm30iR0fOt24nP6u+uXdD6FMan?=
- =?us-ascii?Q?6E3FCIdqZIEP4i2JOKpix9pmcwi0cik1sy6EB7uJUoiLwjlRkhgRp+7xsqju?=
- =?us-ascii?Q?QG3wq6xkvy0RYn6Gm/mYEh3+qrobVAbto8aidJ2XMKpP5yGyBO+6qBTWbL/7?=
- =?us-ascii?Q?N25utE5TOGxpa3KpvCT9PSd9tqrF76ggSIwOOEB2oD2cQqMEr/dyVG8LGO83?=
- =?us-ascii?Q?bxtN5HbEVx9xqh7RHABhsFCiTcFn30Sc2LZ0IetKxzD6HPi7Ig43ydmZkb3o?=
- =?us-ascii?Q?K1ArHGseNCR9xAQRxS2ecE+l91AvMVIGFonr6OoXsXcnaApNPwFC0iFBoNvw?=
- =?us-ascii?Q?WzqvoWfuY4pMXer9+BQOR9YGIvS3L57St5HSQBfxKr+Qcw1Rm+XRROGqD1r/?=
- =?us-ascii?Q?JdDlWRMQcEc3K07z5/XnUyZOateiRK82hS/Muop7Lg6oDXL7S6dzVkZjls6R?=
- =?us-ascii?Q?hy2WswL8UgUiec9b7UpRHsLg5ejXe7pu/VdsYxJsclvG+tMiB8zX4aOQaSpL?=
- =?us-ascii?Q?rxHFprzp2sL7nZqj0HywXCKDLVz0xUuqyE0PazJAVMGHGXLFxWLFFIPy8X4B?=
- =?us-ascii?Q?3Iijq8CJ7shbbMAc7Y9EYNQmq+W51x2gCYOO+Q2moSG0MufyMd0J7SFEXQrM?=
- =?us-ascii?Q?p4mjshuIf0VMk6TxlbBjk5gg0gCp1hWOrGi1A/g7jorfb+/o2gl7NcYlENCW?=
- =?us-ascii?Q?aTOoWGjsL9/AeLQMIep0Uw4hOO/gzInHyS2XIZEg1/byLJ/9IkNcV8LCqtO+?=
- =?us-ascii?Q?MEJ+QDYcNaJo4PDk+U8eOOTKE1vzxxznQfkGc/Z4?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98720938-f417-4476-b299-08daf9cfabe7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2023 03:45:56.3825
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: eDqGFVQ6SbX/s9UNUI7iwUJhOxWCnVfxnuMRV11zIRh3DFPX/kixCqh/8F8VyKuQ6bZri8l8YpajUzPILn2Sug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7374
-X-OriginatorOrg: intel.com
+        Wed, 18 Jan 2023 23:59:51 -0500
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8271E252BB;
+        Wed, 18 Jan 2023 20:54:16 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id 4732E3200933;
+        Wed, 18 Jan 2023 23:54:14 -0500 (EST)
+Received: from imap50 ([10.202.2.100])
+  by compute6.internal (MEProxy); Wed, 18 Jan 2023 23:54:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=cc
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1674104053; x=1674190453; bh=Jp0nEIifZi
+        HOJSvV20z7BP6fpn/Kau5COB1QREBO070=; b=MUTjYaga/VCVR8wOIxvTD1adQB
+        bVcsOamVjgMrs5qSWExP21qadvS9tslA8kaK8PAv1FY/Ij+tKRK4qMo/AkgwDK4u
+        +Egl+gmfZqsMV7bp+XfiZybdaBEKaPRO9xomqyOIi0rZrUMLuUT7Lz9xr3OMMRvr
+        WOcmHZVaDGAsYPVTh8VH/DEv8EmBtdKXnrgdt141UDjJIqFZZWJh/8WvaCFM6Rw3
+        K8rrIgzZFIWll7Q8TjYbSjpzmNJKqqeklTpZAL57RjU+vYBHXNx+zq25vqpvFXG8
+        mxFDlhr4IDsFMYzYFVBfOU38Ro7U3V/XGqGnnF4EBHvMktipbUfTiY73XyGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1674104053; x=1674190453; bh=Jp0nEIifZiHOJSvV20z7BP6fpn/K
+        au5COB1QREBO070=; b=Q52GecV34my9RM50i4VjcIWg/PrSmrWYotOymHrXZiyQ
+        VHgeG2VvTiQD5hf6H8K2Ug2TVQhUQdbMzfGPs2WDeOUbjjUtk7ZC3FU7g6U7pm10
+        sOQt57lRcqImb454oTPbUCyqG6QweAJfGVw/Ms0iczG7rylZwDkQbv28kEu8fw2x
+        CN+pqnWIa895VWyzaiyb+CfEGWBJIYtduX9QiuhkaRVL32fme9CmuuKWRM4A0X93
+        hMBgFKlQsCaJ1HHV8X7MS0eH1iqmThckugzVf1mD9aajNyFnJUljp9iYDAD1/Cyd
+        EfQN5wgL9dF3KyR3Z1iXLxbPMR+91z+iar22sJH7Bg==
+X-ME-Sender: <xms:9czIY6kWaYeYw_FKjA7Nl7poJpuOj4scvZKNgvQWSRcttVOaIlC0GQ>
+    <xme:9czIYx2Y3Msp27EujWGe4TaFxUvoTP9gxq-_jT6sfZOTDYijUAZUD-tlvYYzE9tqB
+    IHD23qA3o33QjBZWA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedruddtledgjeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecuggftrf
+    grthhtvghrnhephefhfeekgfekudevheffheeihedujeefjeevjeefudfgfeeutdeuvdeh
+    hfevueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghnughrvgifsegrjhdrihgurdgruh
+X-ME-Proxy: <xmx:9czIY4oqs1Uo2gRCmXk67fJ8llPsqDtXBwE7XqNCwaNyPfo-DgNM4Q>
+    <xmx:9czIY-mEnJ0P4Vqa60Ko5f3Hofzf5pgIN3gYWvf368x1UkzE1KD3Yw>
+    <xmx:9czIY42xHYz1PSscl1louZ3dhQXg6D_yYEuGVx7UM6aJ5wr_7QE2kQ>
+    <xmx:9czIY2m5I1IcHq89PeACGhMtafkHrE2oynuAdpnu6dTpWzSUSMEe4Q>
+Feedback-ID: idfb84289:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 183811700089; Wed, 18 Jan 2023 23:54:12 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-85-gd6d859e0cf-fm-20230116.001-gd6d859e0
+Mime-Version: 1.0
+Message-Id: <47290046-59a2-4bf0-8af0-3a7b4304deb3@app.fastmail.com>
+In-Reply-To: <20230118173932.358153-1-krzysztof.kozlowski@linaro.org>
+References: <20230118173932.358153-1-krzysztof.kozlowski@linaro.org>
+Date:   Thu, 19 Jan 2023 15:23:52 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        "Mark Brown" <broonie@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        "Chen-Yu Tsai" <wens@csie.org>,
+        "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+        "Samuel Holland" <samuel@sholland.org>,
+        "Neil Armstrong" <neil.armstrong@linaro.org>,
+        "Kevin Hilman" <khilman@baylibre.com>,
+        "Jerome Brunet" <jbrunet@baylibre.com>,
+        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        "Chin-Ting Kuo" <chin-ting_kuo@aspeedtech.com>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
+        "Joel Stanley" <joel@jms.id.au>,
+        "Kamal Dasu" <kdasu.kdev@gmail.com>,
+        "Broadcom internal kernel review list" 
+        <bcm-kernel-feedback-list@broadcom.com>, "Han Xu" <han.xu@nxp.com>,
+        "Shawn Guo" <shawnguo@kernel.org>,
+        "Sascha Hauer" <s.hauer@pengutronix.de>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        "Fabio Estevam" <festevam@gmail.com>,
+        "NXP Linux Team" <linux-imx@nxp.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>,
+        "Andy Gross" <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        "Serge Semin" <fancer.lancer@gmail.com>,
+        "Haibo Chen" <haibo.chen@nxp.com>,
+        "Yogesh Gaur" <yogeshgaur.83@gmail.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Heiko Stuebner" <heiko@sntech.de>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
+        "Li-hao Kuo" <lhjeff911@gmail.com>,
+        "Michal Simek" <michal.simek@xilinx.com>,
+        "Orson Zhai" <orsonzhai@gmail.com>,
+        "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+        "Chunyan Zhang" <zhang.lyra@gmail.com>,
+        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
+        "Maxime Ripard" <mripard@kernel.org>,
+        =?UTF-8?Q?=EF=BF=BDecki?= <rafal@milecki.pl>,
+        "Vaishnav Achath" <vaishnav.a@ti.com>,
+        "Parshuram Thombare" <pthombar@cadence.com>,
+        "Leilk Liu" <leilk.liu@mediatek.com>,
+        "Gabor Juhos" <juhosg@openwrt.org>,
+        "Bert Vermeulen" <bert@biot.com>,
+        "Miquel Raynal" <miquel.raynal@bootlin.com>,
+        "Marek Vasut" <marex@denx.de>,
+        "Birger Koblitz" <mail@birger-koblitz.de>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Anson Huang" <Anson.Huang@nxp.com>,
+        "Chris Packham" <chris.packham@alliedtelesis.co.nz>,
+        "Kuldeep Singh" <singh.kuldeep87k@gmail.com>,
+        "Pragnesh Patel" <pragnesh.patel@sifive.com>,
+        "Christophe Kerello" <christophe.kerello@foss.st.com>,
+        "Patrice Chotard" <patrice.chotard@foss.st.com>,
+        "Erwan Leray" <erwan.leray@foss.st.com>,
+        "Fabrice Gasnier" <fabrice.gasnier@foss.st.com>,
+        "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 1/2] spi: dt-bindings: drop unneeded quotes
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> From: Jason Gunthorpe <jgg@nvidia.com>
-> Sent: Thursday, January 19, 2023 2:01 AM
->=20
-> There is only one call site and it can now just pass the GFP_ATOMIC to th=
-e
-> normal iommu_map().
->=20
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+
+On Thu, 19 Jan 2023, at 04:09, Krzysztof Kozlowski wrote:
+> Cleanup by removing unneeded quotes from refs and redundant blank lines.
+> No functional impact except adjusting to preferred coding style.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/spi/allwinner,sun4i-a10-spi.yaml  |  2 +-
+>  .../bindings/spi/allwinner,sun6i-a31-spi.yaml  |  2 +-
+>  .../bindings/spi/amlogic,meson-gx-spicc.yaml   |  6 +++---
+>  .../bindings/spi/amlogic,meson6-spifc.yaml     |  6 +++---
+>  .../bindings/spi/aspeed,ast2600-fmc.yaml       |  2 +-
+
+For the Aspeed change:
+
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
