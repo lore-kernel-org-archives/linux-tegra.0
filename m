@@ -2,143 +2,190 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF193C46467
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Jan 2023 19:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D66FC38159
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 00:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229767AbjARTt3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Jan 2023 14:49:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38942 "EHLO
+        id S229544AbjASAU0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Jan 2023 19:20:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbjARTt2 (ORCPT
+        with ESMTP id S229468AbjASAUZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Jan 2023 14:49:28 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE74B589BB;
-        Wed, 18 Jan 2023 11:49:26 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ABD34B81EC4;
-        Wed, 18 Jan 2023 19:49:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2EBC433D2;
-        Wed, 18 Jan 2023 19:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674071363;
-        bh=K9VHfqO8vnfOpGdnzgN383P6tlz0U6lpjZAgw4IA3to=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kbOI3g4szAhkbjyPLWIrMcmWNNwFJ0g35IV5pexIYtnRQzmpc6XLoxO3dWPHZa4Zb
-         E48U15W3+cSWmi6hg+WMzMljLBW7pwCAM04xaJPDceliuUTfFeXfsH9kUAunhCoTr9
-         +bdAEvIjTYB5y73gnxe836ayYwyUeU0B9WLrC5DjWSOtRdEns4yK3vTsZsp21SF0fX
-         2iPX55g9IADXlVGJEdA7Nm5f9y2+aEySxxq6wHzFKSixbrz3GmCUld00KyFRtbxBoD
-         kJrh7tYKMgulqDnN16gxiBmgJ8CzlRWgSm2T9aZnl0F9TDvvA0gmph2XCY4gE57Ekc
-         oAjAYQ8ACtIwA==
-Received: by mail-vs1-f50.google.com with SMTP id v127so32559692vsb.12;
-        Wed, 18 Jan 2023 11:49:23 -0800 (PST)
-X-Gm-Message-State: AFqh2kpjgBNw8ErnbvvYa1+I7SvCa03undQ6MZqzl+88BYMV02iyCvYI
-        xAuTWGtVidgTyAVz8VzLuVOQtFRWjD+KwyfOkg==
-X-Google-Smtp-Source: AMrXdXuCIq0Ww65rdCS464DY9dHcawHDeCICiNnnkYP7sB4H6h1MeXyWffA52VxKBtwikHq5ZggppMVlMdvTHaeZRZE=
-X-Received: by 2002:a67:ef8a:0:b0:3d0:b955:e0af with SMTP id
- r10-20020a67ef8a000000b003d0b955e0afmr1201488vsp.26.1674071362247; Wed, 18
- Jan 2023 11:49:22 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1674036164.git.geert+renesas@glider.be> <cd685d8e4d6754c384acfc1796065d539a2c3ea8.1674036164.git.geert+renesas@glider.be>
- <CAL_JsqJS2JTZ1BxMbG_2zgzu5xtxMFPqjxc_vUjuZp3k1xUmaQ@mail.gmail.com> <CAMuHMdXGsmNjYy-ofmuHLkr8yaDEzy+SGnhtbmc_2ezbEKAMjw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXGsmNjYy-ofmuHLkr8yaDEzy+SGnhtbmc_2ezbEKAMjw@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 18 Jan 2023 13:49:10 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJWEzb_hxi0_sSj-5F0q4A9UcJEhwcSArWT6eAffpeqHA@mail.gmail.com>
-Message-ID: <CAL_JsqJWEzb_hxi0_sSj-5F0q4A9UcJEhwcSArWT6eAffpeqHA@mail.gmail.com>
-Subject: Re: [PATCH 7/7] usb: host: ohci-exynos: Convert to devm_of_phy_optional_get()
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        UNGLinuxDriver@microchip.com,
+        Wed, 18 Jan 2023 19:20:25 -0500
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2112.outbound.protection.outlook.com [40.107.113.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5CAE2F790;
+        Wed, 18 Jan 2023 16:20:23 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a0GHS5ln3gEz6Dy5bCmkYvEq3kTp7m6OGDeI8hhqXt4ISgYqVhe5ZOXqg18u04iETt+sV9yRH2pWhdFhG2+zrVPKWCFRZCJTdm7HLZljn1gsGXZa2gXtZalWAdEPabJHM3tmEiEkbvUtvZ1lsLHNKNpIZukdx9100UjbWLGxYjtXj3RrBk46BnhPJb1ZSYxyCDe6FDW0LCiv92EDcFfIkQ6CUfflx39zkUfHb0bNGD+4kumpa3UohetqOM5vbDUR736bh/T7HNKKBtxSoRd9w24tp0hAYOSoG+B5C/0wK/mewDcafgj9p6Yq3qRWeZjFb2HEJE2lIhREs44/sQZ+Rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X8+zoBjPTpSQAOfnoP8CjHTvnKrNbnV9iCVv4Y3NZLM=;
+ b=IdJCWR/sNpJq26xFCb0RrUvqfuLM0mHm4KdIT5YXL191epgWqAIJ/uF5EyIJNdM8DaN1Z2HaqjUP/Qj1E+bhlXiLOx9dk4/4aG4TSssZgr2k3qcx8Ik41whHlSa3mFcB6dtvW97lJTYpUmIPG8XG/g716Ummd/FIxOueyPC83w7OtHfFxf+WUbJzRJVdJrtkFFdvEK/E1d1TrciV9E4OFzUmb3ZoPQJVx18gtdrjW+cNnpLzgXY47LkD/FGrEoeGRnCelwyLyh6Cql/zoifeXh2vY6/ZGE6y3apX1z+sSDsFTzdiKbWgdfDuCSJZseJzejSjtGgWeby97l1O2Kyg9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X8+zoBjPTpSQAOfnoP8CjHTvnKrNbnV9iCVv4Y3NZLM=;
+ b=ErazuAj1mnl3EbI0+5+Wststrm7fKg5amUFeJyJVTVhpvBU0gsGRmHEYjUgvapAWGiTuv9rnZIt61PYhcv2InPYfTgT+/wP7EdDLYU3sxJ0uvqbcv8baYB6+O/CHvF65w1Yj/nOZqsyC5Bm23w7NzxM5VaYzH4Y/McxHvZ0mODY=
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ (2603:1096:404:8028::13) by TYCPR01MB9416.jpnprd01.prod.outlook.com
+ (2603:1096:400:195::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.12; Thu, 19 Jan
+ 2023 00:20:19 +0000
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::3e61:3792:227e:5f18]) by TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::3e61:3792:227e:5f18%9]) with mapi id 15.20.6002.024; Thu, 19 Jan 2023
+ 00:20:19 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Olivier Dautricourt <olivierdautricourt@gmail.com>,
+        Stefan Roese <sr@denx.de>, Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Green Wan <green.wan@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        =?utf-8?B?77+9ZXI=?= <povik+lin@cutebit.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        "chuanhua.lei@intel.com" <chuanhua.lei@intel.com>,
+        Long Cheng <long.cheng@mediatek.com>,
+        Rajesh Gumasta <rgumasta@nvidia.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Palmer Debbelt <palmer@sifive.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-actions@lists.infradead.org" 
+        <linux-actions@lists.infradead.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>
+Subject: RE: [PATCH 1/2] dt-bindings: dma: drop unneeded quotes
+Thread-Topic: [PATCH 1/2] dt-bindings: dma: drop unneeded quotes
+Thread-Index: AQHZK2bx+wbgQBZnFUOyXLlmQqTCV66k359Q
+Date:   Thu, 19 Jan 2023 00:20:19 +0000
+Message-ID: <TYBPR01MB53419CC109B1EF98CE9D63D8D8C49@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+References: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYBPR01MB5341:EE_|TYCPR01MB9416:EE_
+x-ms-office365-filtering-correlation-id: 6eb5d05e-6c4d-48c9-a636-08daf9b2f2b7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jrk2AcTusQsg9+Szbk0shh9Fw/0Gq/M6rXFXcKPl64OK10OzNRU4a1Dz+v0fqWxxBGgJ9czI2UfScFhMxSsg4vcM8Y+Fdvb9ku8TlD/6Ab7EtTR7+j321BpFfpnAyLUP8KPeRAluQCkoG05dni+ak4kZH1gVGkggH8m4bSWJLOqRVIzVyJb3WIb1flanRHAEgpteShosIb4k+Cx0klEz/6IV5Gk44rIyPW13WG/aLf1ApIbUsGmBimdZhg/aPHH3y6T6JXCTBcCTgUWovn2DeRt+CVdDp/V9hrz+FMVxmx7xrW0yZWD634GcC5DOEF5M2taW4J/DkfogQqNDsVLqSDvOwSby3welGHi3QTMR+9AocL74+QPEizgeXp8/lMN6vqlxNneTpUwwiufC3NhgEBZtMLwf0btlH/3NN0B9ZDOCVT/1rE3NsKUcbebqzOega76xeHup7EePAl8S6MIUYP4CBPTRLwSkywHbLbO2PTjb9jRUjSc/hHn0TR0ziC/GcAX9ia1rCbdWU7mCVGWAADGvtmcIAHcXaDUvJ0TJZYczb6KoQxRAGTKo+QDJEUedLcfpuJ4SOS7L8sgNeyWc82kVHBLIRi/isI46ODggRLObMCKpGXJcRocRUEG/dYu33IqWt16+k8xJnxHvGYMpfX34DDIuPSymAcmJF7lJ+FRRwCYl3p1zghOLSm4XmkrVqFkohA2DTKeID28yJVlYEQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5341.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(39860400002)(376002)(346002)(396003)(136003)(451199015)(9686003)(6506007)(478600001)(186003)(7696005)(71200400001)(33656002)(122000001)(7416002)(316002)(64756008)(4326008)(6916009)(66446008)(8676002)(54906003)(8936002)(41300700001)(52536014)(2906002)(76116006)(55016003)(66476007)(4744005)(66946007)(66556008)(7406005)(7366002)(38070700005)(86362001)(5660300002)(38100700002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OTFFdEp3TXZQQW1OQTdXQnRPS2s0YXdxZTFIZWQrY05Idmtlc1lTR3dYQm9V?=
+ =?utf-8?B?Wk16NmNTMkg5TE1STzdLN2NsM3g2UVliSTZ2Tm1PNkxac1hLM2QzSlcrV1Zq?=
+ =?utf-8?B?Y0ZiTEc3Y0ZveFd6ekFjZEMrZ3QwSnM2dXZ2THZWT1d5ZktWcXJmRkxTUG8x?=
+ =?utf-8?B?UU9YTzdGUThxdTNlR2hZWjN6UkpXZm5vVWY4clVEK1V6WExnUTI4L3Q0N2xl?=
+ =?utf-8?B?bWdQQW9rVnZKT1c1cWxYQ0pCZndUbmN5VU9iMTd1Y3dncmFkSW43Qmxwb3NC?=
+ =?utf-8?B?ZExuQ3lJRmtFWHd5VW9YVlpmV0NUUlFaK2k3VXVDeFBHTTVtMUZQWEIzVm1S?=
+ =?utf-8?B?S3BCSDBrcjhNZGswM0szbWV2LzFzWCsxbGgrYUZ5bGdjKzdhRkdBcWkxUU9T?=
+ =?utf-8?B?K0NROERIQTkzN1djSHdFd0dUeHJKNWVmZFMxUUd4YnZHbDNlTkIrSmhic2FS?=
+ =?utf-8?B?VVpxNE5mSm5SUnpkQkx5MzRsNGRyR21QK0k0b3NCWDBXamcwVy9CUXk0YjEv?=
+ =?utf-8?B?QTlqV3ByMlBnazU4MjVFbStUbUFuMWw2aWl1WDNhalNIdWtMZkNxRUdXZmNj?=
+ =?utf-8?B?U05WakdncGlTT3Jka2JJaGpoeW1RR2ZCS2VXR2tiem5sbjZ4WmJocUh3MGp4?=
+ =?utf-8?B?WjFrMkgyY1B6OG9qcWZxWmg4Y2dISEJ3d3RlT3ZZU280akJSQmQwQkxacFFp?=
+ =?utf-8?B?a3ZjNWd6SERPQ1B1cDV3aE1wQkFJLzZTb1dMd0dFN0JJaW83ZzZpZ1g0VE9B?=
+ =?utf-8?B?TS9KSlllbkZ1VEtmL0ZSTWM4TnpJMWFDa2IyOWRPSUNMSmJrME81L1BBb1pS?=
+ =?utf-8?B?N24rMzRoZU5yTjl2R1dPWEVMVTluMDg2ZEVHVDM1bnNMY3NZdksrZm9RZlQ3?=
+ =?utf-8?B?WTl5OG1LS0VNZlhjaUJwTVJGN0I5dDZVcVdIcHRJSjJFcEV3REcyMEFBZ2Jq?=
+ =?utf-8?B?RXM0bTY0dkozYXgzMUhDemVYZTJWb1NWRXZSV0d2bW50QmVnbTV0cE9rcEJR?=
+ =?utf-8?B?aS9yc2xkRkhLa29aZXo0bEcyOFEwYm9HaVdWdWxDWTYrNW53Q2pDcE9uTzBn?=
+ =?utf-8?B?bEV2blpKb2ZsRHh0V1haUG05YkZZZFQzUnNMVGJQclFacDBSVnpKMXVpT1dn?=
+ =?utf-8?B?TzFYY0t3U2VjdklvMFY3Z1J2cEZpd0pWbHhGQzZwcW9jQk5WTk5xNHdSOVNG?=
+ =?utf-8?B?NEhwNm95MVUwNlFod2FGSFJJa0JLQUFoQVdPSG5BNmZKeXRPVGNObE1oRkUw?=
+ =?utf-8?B?YktiZUZnRmVJUDdoRks5L0NybzFmam54dWcwUHpLTzZPRzVIZnZqZ1pUYzBl?=
+ =?utf-8?B?U2YrN1VaSndGVHpEWHBtNTBkRlpQKzg3RDNMemN2TnFpbjFQdjRlZS9UdDVY?=
+ =?utf-8?B?d01TTTNyalJwc3ROcmQwbHBNR2tnaHNQMzIxRVJLd3JNdGErMVlkekhrRVQ3?=
+ =?utf-8?B?WHQwYTJCYmE5RGwvKzBROWIvdmV3d1NaaXNZckpVaHBYMVNsRDFKb2Nhc0xW?=
+ =?utf-8?B?WEJyRDhBVjBwRHFNNWw5L0tXYm5zUldnMHp1SUhqYzFFNnNMTEppclhTYTEx?=
+ =?utf-8?B?SmJsaWpHbVhVdnNNeGZIN3Y1VW5meTM3RWhDek1xNTgvTXlnSzJoOElOOU1l?=
+ =?utf-8?B?M240RU5DTUdNdG9JNlB0V3NQV3V1dUxDOHNZSURxUHJmYXdLUitZVWpySUkr?=
+ =?utf-8?B?cjNiOFFSTjUvL0dlN0x4WUR0UmkxazlwcmIzMTJDc005UUxOMzhEOHVOU01h?=
+ =?utf-8?B?L1lvNnZialIvQmRJM2FlNG43TUxRWmVHWDNCbEllZ3NFejgvekJUZkg5c2Ez?=
+ =?utf-8?B?N0tGbWdXc3ZHaHlGMTBvMVpPcitzUzNDdlFwME9KbW1VemRBNVd4aXFNWnNT?=
+ =?utf-8?B?TGxaWW1NbDdUSWw2dTFZZFVzb1dtVHhsOWtKVjlnTmdDY1V6UXVOSHBNSHor?=
+ =?utf-8?B?NHdtRnJRU0hoZnA3MzdvTTB4SFI2MWxVMy90dG1xeDFrcDBCQ1dlczFMaGN5?=
+ =?utf-8?B?VnZhOTVtbnU5VlQ5ZE9sWk9OQTBiTmFyeVQ0WVlpY29KWFdQSWZGWi9mTTdm?=
+ =?utf-8?B?MkFuaEVGYVpSWS9Nell1NlhTUXFOV1dtcTVBNnNOOG5ybkdZWnN4ZkI0ZEtq?=
+ =?utf-8?B?R1h0UzA2MVpZTlg0WVNMeWY4MC8xMjNxM3pheHJJTnA1WWd2YXJVa3NCVC9J?=
+ =?utf-8?B?U3BpaVAvSy9MREYxMlluRVc5N09zRldBVnNIazBPQ1oxY0EraEc2M3EzRk8z?=
+ =?utf-8?B?RzVGVjc1MlNGcWRZY0lEVU5OTWhBPT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5341.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6eb5d05e-6c4d-48c9-a636-08daf9b2f2b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2023 00:20:19.7494
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fuGkk5WkX4mL1sJRML/EYGsUikCHH0/qpH4ndjU1J3n2orNEPpFEdhAtaVa/LVqnJA60jK2EnnjB+bzw4MA2ec5vrS6agdgfI5WgU/PT1NUOsQuoAbDuWFpZplR2sk0j
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9416
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 12:28 PM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Rob,
->
-> On Wed, Jan 18, 2023 at 6:30 PM Rob Herring <robh@kernel.org> wrote:
-> > On Wed, Jan 18, 2023 at 4:15 AM Geert Uytterhoeven
-> > <geert+renesas@glider.be> wrote:
-> > > Use the new devm_of_phy_optional_get() helper instead of open-coding the
-> > > same operation.
-> > >
-> > > This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
-> > > handle NULL parameters fine.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > ---
-> > >  drivers/usb/host/ohci-exynos.c | 24 +++++++-----------------
-> > >  1 file changed, 7 insertions(+), 17 deletions(-)
-> > >
-> > > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> > > index 8d7977fd5d3bd502..8dd9c3b2411c383f 100644
-> > > --- a/drivers/usb/host/ohci-exynos.c
-> > > +++ b/drivers/usb/host/ohci-exynos.c
-> > > @@ -69,19 +69,12 @@ static int exynos_ohci_get_phy(struct device *dev,
-> > >                         return -EINVAL;
-> > >                 }
-> > >
-> > > -               phy = devm_of_phy_get(dev, child, NULL);
-> > > +               phy = devm_of_phy_optional_get(dev, child, NULL);
-> > >                 exynos_ohci->phy[phy_number] = phy;
-> > >                 if (IS_ERR(phy)) {
-> > > -                       ret = PTR_ERR(phy);
-> > > -                       if (ret == -EPROBE_DEFER) {
-> > > -                               of_node_put(child);
-> > > -                               return ret;
-> > > -                       } else if (ret != -ENOSYS && ret != -ENODEV) {
-> > > -                               dev_err(dev,
-> > > -                                       "Error retrieving usb2 phy: %d\n", ret);
-> > > -                               of_node_put(child);
-> > > -                               return ret;
-> > > -                       }
-> > > +                       of_node_put(child);
-> > > +                       return dev_err_probe(dev, PTR_ERR(phy),
-> > > +                                            "Error retrieving usb2 phy\n");
-> >
-> > Optional is really the only reason for the caller to decide whether to
-> > print an error message or not. If we have both flavors of 'get', then
-> > really the 'get' functions should print an error message.
->
-> In case of a real error, both should print an error message, right?
->
-> Anyway, I understand that's a three step operation:
->   1. Introduce and convert to the _optional variant,
->   2. Add error printing to callees.
->   3. Remove error printing from callers.
-
-I think you only need 2 out of 3 steps depending on the situation. In
-this case, you can add error printing in the _optional variant when
-you introduce it and then convert callers to it.
-
-Where we already have an optional variant, then you need steps 2 and 3.
-
-Rob
+PiBGcm9tOiBLcnp5c3p0b2YgS296bG93c2tpLCBTZW50OiBUaHVyc2RheSwgSmFudWFyeSAxOSwg
+MjAyMyAzOjAyIEFNDQo+IA0KPiBDbGVhbnVwIGJ5IHJlbW92aW5nIHVubmVlZGVkIHF1b3RlcyBm
+cm9tIHJlZnMgYW5kIHJlZHVuZGFudCBibGFuayBsaW5lcy4NCj4gTm8gZnVuY3Rpb25hbCBpbXBh
+Y3QgZXhjZXB0IGFkanVzdGluZyB0byBwcmVmZXJyZWQgY29kaW5nIHN0eWxlLg0KPiANCj4gU2ln
+bmVkLW9mZi1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6eXN6dG9mLmtvemxvd3NraUBsaW5h
+cm8ub3JnPg0KPiAtLS0NCi4uLg0KPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2RtYS9yZW5lc2FzLHJjYXItZG1hYy55YW1sICAgIHwgMiArLQ0KPiAgRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2RtYS9yZW5lc2FzLHJ6LWRtYWMueWFtbCAgICAgIHwgMiArLQ0K
+PiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2RtYS9yZW5lc2FzLHJ6bjEtZG1h
+bXV4LnlhbWwgIHwgMiArLQ0KPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rt
+YS9yZW5lc2FzLHVzYi1kbWFjLnlhbWwgICAgIHwgMiArLQ0KDQpBYm91dCByZW5lc2FzIHJlbGF0
+ZWQgZmlsZXM6DQoNClJldmlld2VkLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNo
+aW1vZGEudWhAcmVuZXNhcy5jb20+DQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2Rh
+DQoNCg==
