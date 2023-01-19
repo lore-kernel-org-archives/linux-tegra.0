@@ -2,166 +2,179 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9FEC678D4
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 04:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEA5C38142
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 04:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbjASEvt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Jan 2023 23:51:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37694 "EHLO
+        id S229723AbjASEwU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Jan 2023 23:52:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbjASEvP (ORCPT
+        with ESMTP id S229685AbjASEvk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Jan 2023 23:51:15 -0500
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF727C868;
-        Wed, 18 Jan 2023 20:45:00 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.west.internal (Postfix) with ESMTP id 2E52F32002D8;
-        Wed, 18 Jan 2023 23:44:58 -0500 (EST)
-Received: from imap50 ([10.202.2.100])
-  by compute6.internal (MEProxy); Wed, 18 Jan 2023 23:45:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=cc
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1674103497; x=1674189897; bh=RA62djbRjH
-        AtR5eYDGCg3s9PgydQzyaEPXFw3P5ADCE=; b=bQ1Lex1biSOsg9sZ0oCG32YJjg
-        ymUiX5FA89IlkUP0WnP4Mqbfg3cRGRfDMd/Q9HMHxZyPeveH/z8DNzb9Y2JyciS9
-        PbR458V7YzwoRUwih89rXDzIQeadvmjl4laV/9igg04WSdFxrnnOafzF1oehvDhV
-        0XayKr4JLT10lkAZu7NShyxFpzhNgRANVRnvZBuZpCszrKLwIWYebsJyx6jGy5lr
-        zkVjlgVd103/d/Z3i2laAkK2x0leJjXwsw5Wf+dzjJ3jK4CiVCz+0qPuE158uMq7
-        cWkgoFDu0cNjnseoQ+eeu9L4IPa6Le4Uc5xvVu8zdwPvQ9mUCD0aB3zHWiQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; t=1674103497; x=1674189897; bh=RA62djbRjHAtR5eYDGCg3s9PgydQ
-        zyaEPXFw3P5ADCE=; b=gH4TLQKqQ3ouj/hKJKXkuCBSaYp1Utvr1tqT5JHO8dAS
-        LqMSLpW0Q1IiOhP11OGXZnGtFt6/CNcATiaWIEajheAAQqh/+sVZC1mKFZyV6Gfr
-        1zJShEs48+Id9p6LgF4Hv78ghevwRh/72pA3tZGN3pq9BF2LRG/kyuF1A+LofmL4
-        7oTrKkLV9/3vOJdY6eCabQcLB3OyzxsRmSreTHRKUCYT7vOqzXzafdg15xpCH/x3
-        0/+9NGh8xLdxaLeVwGSCyyqZKgHswU9a/IVf4B2mLGdH3fp2uWzroVajfJ8toLIG
-        XD+wjySvyoz7fvaZ5PVyU+V9eszLfmriVqQKpz7i2g==
-X-ME-Sender: <xms:yMrIY7pCyXxUMOvaDKg2BAcTqICUraG38J-Nrpj3Jqt5QjSlu4Tu_w>
-    <xme:yMrIY1qhEgvdxItp5fbsmCTEN1D2vbWb98Gg8GxGhXwrFWABp7HZHQV3cPqpLhGPC
-    OvL8Qv3UAAvNOjnZQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedruddtledgjeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecuggftrf
-    grthhtvghrnhephefhfeekgfekudevheffheeihedujeefjeevjeefudfgfeeutdeuvdeh
-    hfevueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghnughrvgifsegrjhdrihgurdgruh
-X-ME-Proxy: <xmx:yMrIY4PnPTa0pI2mk7ylIXFS6WM5xsFnHxvupr09IJ7xciQy9a-poQ>
-    <xmx:yMrIY-6wAgKJPmeYq1fdu5mkCyeb74PoPwTI_8bMlCnagMBn9b8N2A>
-    <xmx:yMrIY67txgF_3CsmtcEk9pWkopnv4Fg3GzuNDnu2P2ykVK1LxhHxAg>
-    <xmx:ycrIY_pByLB2jT-LFgxAD3ro1NLEN5i3aZT12bkvkjM1hHQvuvnyIw>
-Feedback-ID: idfb84289:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id A40C61700089; Wed, 18 Jan 2023 23:44:56 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-85-gd6d859e0cf-fm-20230116.001-gd6d859e0
-Mime-Version: 1.0
-Message-Id: <9a82d30a-c8ca-47fb-a976-f7f4d99cefec@app.fastmail.com>
-In-Reply-To: <20230118173932.358153-2-krzysztof.kozlowski@linaro.org>
-References: <20230118173932.358153-1-krzysztof.kozlowski@linaro.org>
- <20230118173932.358153-2-krzysztof.kozlowski@linaro.org>
-Date:   Thu, 19 Jan 2023 15:14:36 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        "Mark Brown" <broonie@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        "Chen-Yu Tsai" <wens@csie.org>,
-        "Jernej Skrabec" <jernej.skrabec@gmail.com>,
-        "Samuel Holland" <samuel@sholland.org>,
-        "Neil Armstrong" <neil.armstrong@linaro.org>,
-        "Kevin Hilman" <khilman@baylibre.com>,
-        "Jerome Brunet" <jbrunet@baylibre.com>,
-        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
-        "Chin-Ting Kuo" <chin-ting_kuo@aspeedtech.com>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        "Joel Stanley" <joel@jms.id.au>,
-        "Kamal Dasu" <kdasu.kdev@gmail.com>,
-        "Broadcom internal kernel review list" 
-        <bcm-kernel-feedback-list@broadcom.com>, "Han Xu" <han.xu@nxp.com>,
-        "Shawn Guo" <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        "Fabio Estevam" <festevam@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        "Jonathan Hunter" <jonathanh@nvidia.com>,
-        "Andy Gross" <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        "Serge Semin" <fancer.lancer@gmail.com>,
-        "Haibo Chen" <haibo.chen@nxp.com>,
-        "Yogesh Gaur" <yogeshgaur.83@gmail.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Heiko Stuebner" <heiko@sntech.de>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>,
-        "Paul Walmsley" <paul.walmsley@sifive.com>,
-        "Li-hao Kuo" <lhjeff911@gmail.com>,
-        "Michal Simek" <michal.simek@xilinx.com>,
-        "Orson Zhai" <orsonzhai@gmail.com>,
-        "Baolin Wang" <baolin.wang@linux.alibaba.com>,
-        "Chunyan Zhang" <zhang.lyra@gmail.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
-        "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
-        "Maxime Ripard" <mripard@kernel.org>,
-        =?UTF-8?Q?=EF=BF=BDecki?= <rafal@milecki.pl>,
-        "Vaishnav Achath" <vaishnav.a@ti.com>,
-        "Parshuram Thombare" <pthombar@cadence.com>,
-        "Leilk Liu" <leilk.liu@mediatek.com>,
-        "Gabor Juhos" <juhosg@openwrt.org>,
-        "Bert Vermeulen" <bert@biot.com>,
-        "Miquel Raynal" <miquel.raynal@bootlin.com>,
-        "Marek Vasut" <marex@denx.de>,
-        "Birger Koblitz" <mail@birger-koblitz.de>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        "Anson Huang" <Anson.Huang@nxp.com>,
-        "Chris Packham" <chris.packham@alliedtelesis.co.nz>,
-        "Kuldeep Singh" <singh.kuldeep87k@gmail.com>,
-        "Pragnesh Patel" <pragnesh.patel@sifive.com>,
-        "Christophe Kerello" <christophe.kerello@foss.st.com>,
-        "Patrice Chotard" <patrice.chotard@foss.st.com>,
-        "Erwan Leray" <erwan.leray@foss.st.com>,
-        "Fabrice Gasnier" <fabrice.gasnier@foss.st.com>,
-        "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 2/2] spi: dt-bindings: cleanup examples - indentation, lowercase
- hex
-Content-Type: text/plain
+        Wed, 18 Jan 2023 23:51:40 -0500
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5606728877;
+        Wed, 18 Jan 2023 20:45:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674103509; x=1705639509;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PX5YusB5CUnpwsxhfAyGefrEASU4/LgvBcy/ibB8iZ4=;
+  b=lRV8LayxH5eSExIt9coSIU+qsX3p7yfImUMx5VPam5ji5a2+0xNAhzho
+   DtYgGSDEHhKKyccRQCy6qAID78MEARYkg8WTQkWvoBhfqdyPWs0O+JCWv
+   xofbjELcCoh/pa1hH6WmxM8um6L2rLFUu7wRCSBi8HIR/coUAQ5bVXx/P
+   z4lrwR2TrKwQySy79QSjwhf+7X+rG7ogjSfTQ19XCuQO+foELpHe8zhq/
+   Q8ONXVPv/5PpnEjhsB8zV3xZpcwzvwl5Rf/wNfl99oJJ9Ghlk0/WpOjD/
+   ZT5mWGeOClM1pj5dXzSqziiafsxK10hZN5D/o2WEtc8qVwLg/yjgNXTeY
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="304868710"
+X-IronPort-AV: E=Sophos;i="5.97,226,1669104000"; 
+   d="scan'208";a="304868710"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2023 19:46:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="609920673"
+X-IronPort-AV: E=Sophos;i="5.97,226,1669104000"; 
+   d="scan'208";a="609920673"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orsmga003.jf.intel.com with ESMTP; 18 Jan 2023 19:46:50 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Wed, 18 Jan 2023 19:46:49 -0800
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16 via Frontend Transport; Wed, 18 Jan 2023 19:46:49 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.104)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.16; Wed, 18 Jan 2023 19:46:49 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hKrTAbxmTGqobylkaEBRmjbbyKiXzhbQinqyRFhVviGHEN4ZlOxaB79ftaYVRQ9kwCX8zpzhNGFmVb6iems/EPengcePQ07zFjvg3fMotm5Nq6agiWZIeOGwasUw4qbuj15iQmfIL4QVxvJYQBUdzFkWmmaQglVHaDpkFo+hTuWaaBPDOP4146dSuaSNjEhCmo2pJun8MkRMWGSa72IPYCTRJX+R0OQjLrOxt+ZAZ5wDYKeIEfuw46fmUjus2PdZXfmWH0kSESrVuqgesv0SoLmKf31214veyS0Z3oV4D7Hhc6ey64YtcVs8776OZaKGudagZxWKOEnRAfIjgnOiZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PX5YusB5CUnpwsxhfAyGefrEASU4/LgvBcy/ibB8iZ4=;
+ b=B01gl4Hu1eopbY3bCZEPaKgdMPqcRJ5L4udfkWDM3raM2RKCJE8dM/BN4jBQkKrOrl2ebIEBTg/TYXcldX0N9+ngox+41RpQZZ5F2MjimOy9C9LhRb6AdwpYeQgRC/Lm/x36I/NGyJggZvVCy3RBgGg8TVbcU+Y1Yt04GQ63numyQ843BKPdd1DUakeXI+d2IZ4dba6OoDIHmJohjrDW/5SpJN9Bi5c4I7G5Z3X0sXSTNxuukLbAV1fGTBF3km+qM2qRBeuOyUPkf0S8h7FYgo06RJljDQu6FmBV095KxYebNkuunL443BMCSvKkMWhsZs98hfOIprxy9evvb8Pejw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by DM4PR11MB7374.namprd11.prod.outlook.com (2603:10b6:8:102::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.23; Thu, 19 Jan
+ 2023 03:46:43 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::6a8d:b95:e1b5:d79d]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::6a8d:b95:e1b5:d79d%9]) with mapi id 15.20.6002.025; Thu, 19 Jan 2023
+ 03:46:43 +0000
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+CC:     Alex Williamson <alex.williamson@redhat.com>,
+        "ath10k@lists.infradead.org" <ath10k@lists.infradead.org>,
+        "ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>
+Subject: RE: [PATCH v2 03/10] iommu: Add a gfp parameter to iommu_map_sg()
+Thread-Topic: [PATCH v2 03/10] iommu: Add a gfp parameter to iommu_map_sg()
+Thread-Index: AQHZK2bf8Telb241lUmleVh9GYhoP66lGmBQ
+Date:   Thu, 19 Jan 2023 03:46:43 +0000
+Message-ID: <BN9PR11MB52764620E4975A91878F1C868CC49@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <0-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
+ <3-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
+In-Reply-To: <3-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DM4PR11MB7374:EE_
+x-ms-office365-filtering-correlation-id: 696e30bf-d6c4-441d-8423-08daf9cfc7c3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: NT2PVJ67+O0Wpv3XIEW69IoSdgN/SgZtE2Kny/tWRFrDm66zG7fkk9nIibI3MRcTGiubNeA+8J/P/ZmBeHaMJ32QP/ojdjbLTJGs48AR6TkJMsC8s1E2t+cVTEEjBC+PScGq9aKHjaBklT+gTNC69iyFSCRMbE+Un4+1t9GqgGgA8IAB1nScvnEzbdrT3PxM+mjtnTUGjy4oBDEkhI7U3fl76wxiS9lQ/Pvz5nxoV7XSCsSDgalFXDQdM6o4U60tff3kM2F2qbOabo6kIrTCiWp5c1rbV+hysXNRPnVjkBaOHbK96pfLVSIYxK+7Ks621nUIsFHXRMbb+Cszu9fEHLcb6Fq/R+vbzIZU7UTrn8PKey6Sb4fyUYwAK4r8nRlQz3FvW7Ue4iCaiMUWNfnjWCVeCBB8MopIA413+d1lTzH+1ndQIZigH3rVnQGkjVpD8xsjQOkLqlt8snESbsGLRmMlJit3Mj6CQq92nM1EMmj7WhC7ugAQ1n+pTNVnPbYx5ND6UpG869ABvXV2MA0c2HqIio44uj4eipGmLkRH38oZYh2NQlAOfKw+5KJ4tA3fVEavpL2lVD5DjWkCr4eVqUbZ8n78wFrY++kt7QXdPZP6QEI+c69Q3qy+FtJ1HWb8hK3HgWCAr6xXHTacfrTK1EtkfYbraWNrPcwJdQf4g+VN7b1T8vsHck71z2GlRqeVCU8Z4BjqpGhV5Zmpmxh7Wg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(39860400002)(366004)(346002)(136003)(396003)(451199015)(4326008)(38070700005)(64756008)(76116006)(8936002)(316002)(66446008)(66946007)(52536014)(66476007)(7416002)(8676002)(5660300002)(66556008)(4744005)(55016003)(2906002)(38100700002)(82960400001)(41300700001)(122000001)(33656002)(7696005)(54906003)(110136005)(478600001)(71200400001)(86362001)(6506007)(186003)(26005)(9686003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?hI0Ir2dDOIWlZ3Vno0mxDgfm//JPCX9b0qWit2Dy1M9MN2PFb3qP1o6hLrFL?=
+ =?us-ascii?Q?CehUeLxRo88+hVH6X5F2+RUgnkCKiuLE0pBHl67aaFWiUYKJSH6XiH7ptfbg?=
+ =?us-ascii?Q?qRKGawOsmrpuH5vGifIKf5nS8am8O0GMwrX1tXYhLHVj/vVi/z4cZ+ZH8QeN?=
+ =?us-ascii?Q?gY/JZ9VzPS8+ZukJoMV0q0CpOwnoYxfDldiemKsRnVBrvNX3m8kYmLp1287A?=
+ =?us-ascii?Q?3Yefb3xF1tS1zu9pCGzmKChczQnMUvBY4OUZrpQ+rqJKrapBB5/IoIM2WGYi?=
+ =?us-ascii?Q?WVU2wqUwzzSf7B7Nb182ZLUBoGaKeFV5grZeHRUDKsrEOm9N8VJUWt/N6Qus?=
+ =?us-ascii?Q?vfJ8wEa04WIVYAPeHd9VhZ7n0xcz+GS+lf7DpeChEsLrnVojm5drDFr4eYyo?=
+ =?us-ascii?Q?QZQ35a8nG3nB1uGWuVh984+Qw0dTIkxNBBucRuqTWkt0kZiKNIsmgtRT/qmY?=
+ =?us-ascii?Q?nZnxMP/L9RBTqub5NhbvDCkk3EZDXDwr0sbXc9qEi680qoEe8NCJyC5jPXYC?=
+ =?us-ascii?Q?DEQi4Z5B31LFxfEf3Oc1qZB+DMiJtxqCj2MWdMVs61gUFkkrudX1rj4zf5v4?=
+ =?us-ascii?Q?YTvYixcs4L2FulCqgL6kudcQ1xl7gAwho3jGJN7bXvzgsmBLaOnsbgiM4+sA?=
+ =?us-ascii?Q?sMd/E5b2YOmfLY59n3BvDhuVzRbmYqJWi/nuLkj+6dejv+WsNFGsSsjo7sKX?=
+ =?us-ascii?Q?w6z+4Q4COrP2sUIIh+A3TnleFNRaej7AoCiVMmUOzBFN4dtkMbMn3wtNzrTg?=
+ =?us-ascii?Q?CdM8uFkLDvWflrY9c50G4autwQ1oEex0yWo67U4+KhWVPOmgQFKUL8punYXV?=
+ =?us-ascii?Q?mIeUUTLb/F0EIjvzpFAMAtHH8Jw+iyRLilyJzMQHp/PBoGTjShYZEQ6cF+Wm?=
+ =?us-ascii?Q?+7gqKNZL7F/3fq8WZKsVtgAF7tcX9sfEwQH/9EQfvS5sQFkwLQrI+qx70h3f?=
+ =?us-ascii?Q?EOrUGBO15VbXX+gQuRtaJfU14GXzcS9+KpTVb7jq93OC6yJ7FyjnNaTmlP9+?=
+ =?us-ascii?Q?Xhc5Gf2nTrvmHB4C9tw25RlLCg+ErsK3nZim8067jQir7vdTfKS6+4bqs0PE?=
+ =?us-ascii?Q?J1VBiuLfd+m3Yrl2zxlZCnMS3n2hIwhBe9aRJd8YWnT2zNui+jon53vuMz/f?=
+ =?us-ascii?Q?CPHZ+GvnTDkiC1OsCQ0pTVBb/AMJEiWyjhYQihIDlmfxmCLjh0yrewKRwXij?=
+ =?us-ascii?Q?eXmm1ikAL3D5Ac841SVCQWkLPuuVUXgj2viDGANKcUtYdj9Py7nO7wc7vG9j?=
+ =?us-ascii?Q?ICOKbGyLed596c4tjP/3TLzBPv6eoMxpd/LEFG0iVmMzTxQ2x0viqO5r2Mcc?=
+ =?us-ascii?Q?4LhdPwtRtGZEBV7ek1JjAzVR1c3cJi6odipEpDb2Me93hft1+YQwIdVwdsIz?=
+ =?us-ascii?Q?MJTjV+MuXBFwfhCg31vb0cc5AHY4QsJ2xHkqmRNKdQ+xMRW/8QifNuUFqyi2?=
+ =?us-ascii?Q?4AwHslQnhyKCavpgYHDH7rXGa8bHmidtdNnCcVDaykrEiTS5mqVB7suYGfNS?=
+ =?us-ascii?Q?6p4shXllOzDJIr3HIbm9WdBy14eQC0x7Dvj5eeHQwmV5NVdGf8ZDHBToeAX2?=
+ =?us-ascii?Q?Azg+3C2w0MV/CEsyvwS3jnhP/ZHk1eCODYBoMj+9?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 696e30bf-d6c4-441d-8423-08daf9cfc7c3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2023 03:46:43.1060
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cB5mjgBOVVODY2HVODsV4/VquAWmxS1Xa+Zedbg+cdpUU2OqGbTgdy6iWDD69k6XhI9GpUxhcWDhYwdSbLVVfA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7374
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+> From: Jason Gunthorpe <jgg@nvidia.com>
+> Sent: Thursday, January 19, 2023 2:01 AM
+>=20
+> Follow the pattern for iommu_map() and remove iommu_map_sg_atomic().
+>=20
+> This allows __iommu_dma_alloc_noncontiguous() to use a GFP_KERNEL
+> allocation here, based on the provided gfp flags.
+>=20
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 
-
-On Thu, 19 Jan 2023, at 04:09, Krzysztof Kozlowski wrote:
-> Cleanup examples:
->  - use 4-space indentation (for cases when it is neither 4 not 2 space),
->  - drop redundant blank lines,
->  - use lowercase hex.
->
-> No functional impact except adjusting to preferred coding style.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/spi/amlogic,meson-gx-spicc.yaml  |  26 +--
->  .../bindings/spi/amlogic,meson6-spifc.yaml    |  22 +--
->  .../bindings/spi/aspeed,ast2600-fmc.yaml      |  24 +--
-
-For the Aspeed change:
-
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
