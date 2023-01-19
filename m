@@ -2,129 +2,151 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC51FC6379F
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 12:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8166BC00A5A
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 13:02:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbjASMcS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Jan 2023 07:32:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49312 "EHLO
+        id S230231AbjASNCn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Jan 2023 08:02:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbjASMaN (ORCPT
+        with ESMTP id S230348AbjASNCH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Jan 2023 07:30:13 -0500
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D57A798D0;
-        Thu, 19 Jan 2023 04:28:41 -0800 (PST)
-Received: from wf0783.dip.tu-dresden.de ([141.76.183.15] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1pIU0w-0002qB-4T; Thu, 19 Jan 2023 13:27:30 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, Han Xu <han.xu@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Yogesh Gaur <yogeshgaur.83@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Li-hao Kuo <lhjeff911@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        =?utf-8?B?77+9ZWNraQ==?= <rafal@milecki.pl>,
-        Vaishnav Achath <vaishnav.a@ti.com>,
-        Parshuram Thombare <pthombar@cadence.com>,
-        Leilk Liu <leilk.liu@mediatek.com>,
-        Gabor Juhos <juhosg@openwrt.org>,
-        Bert Vermeulen <bert@biot.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Marek Vasut <marex@denx.de>,
-        Birger Koblitz <mail@birger-koblitz.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Kuldeep Singh <singh.kuldeep87k@gmail.com>,
-        Pragnesh Patel <pragnesh.patel@sifive.com>,
-        Christophe Kerello <christophe.kerello@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Erwan Leray <erwan.leray@foss.st.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] spi: dt-bindings: drop unneeded quotes
-Date:   Thu, 19 Jan 2023 13:27:26 +0100
-Message-ID: <4772603.GXAFRqVoOG@phil>
-In-Reply-To: <20230118173932.358153-1-krzysztof.kozlowski@linaro.org>
-References: <20230118173932.358153-1-krzysztof.kozlowski@linaro.org>
+        Thu, 19 Jan 2023 08:02:07 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FC27929F;
+        Thu, 19 Jan 2023 05:01:40 -0800 (PST)
+Received: from [192.168.2.218] (109-252-117-89.nat.spd-mgts.ru [109.252.117.89])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 98A3D6600869;
+        Thu, 19 Jan 2023 13:01:37 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1674133298;
+        bh=fjUaht6DPGtzehSfi1kenXnsEEFgFtJ1Jb/3qy0Vx2U=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=azaiCvD3FzN4KWRBkluCI07EtjI1o7ek8bp69iHSYLlcgS/TGcLrqOYkaq74ETHRI
+         gXqbe6Tu7hOU70g/PHJGzrxpDTq6p8ADIr69y8cy1C0AVGZZmcnLKA3P2A4SyhSmsn
+         uH1aTmAkaZ7zmu8gynVBhNshnRBWfwK4LDiL/aSL4YNoOGN12dgpGY5639ti+EzW8Y
+         apNLjR7j3/FhMNWJ5OzCDP+Nqd00yTnCcoRjKi53fB4xZRZPn3T3EnNrXeeDakF/xl
+         Ulka15dWFSGGKU2Zi5XtDuNlGbRt5VxH6w2/YYf1faHldEWvkxyKjH0G6bzn3VFoDg
+         eyaPjV+yZS6gQ==
+Message-ID: <65e596c9-a472-d0b8-ec2f-6935d647ddb2@collabora.com>
+Date:   Thu, 19 Jan 2023 16:01:34 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [Patch v1 08/10] cpufreq: tegra194: add OPP support and set
+ bandwidth
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sumit Gupta <sumitg@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>, treding@nvidia.com,
+        krzysztof.kozlowski@linaro.org, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
+        bbasu@nvidia.com, Rajkumar Kasirajan <rkasirajan@nvidia.com>
+References: <20221220160240.27494-1-sumitg@nvidia.com>
+ <20221220160240.27494-9-sumitg@nvidia.com>
+ <4e3e4485-ba22-eb47-fb95-e8d626160bc6@gmail.com>
+ <8e6d7dd3-1bdc-ee4b-0c1e-1ae9cd8e4f29@nvidia.com>
+ <8bd5cf36-e1fb-305c-08c5-3bbc80204866@collabora.com> <Y8kay0/AmjqhU2jO@orome>
+Content-Language: en-US
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <Y8kay0/AmjqhU2jO@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Am Mittwoch, 18. Januar 2023, 18:39:31 CET schrieb Krzysztof Kozlowski:
-> Cleanup by removing unneeded quotes from refs and redundant blank lines.
-> No functional impact except adjusting to preferred coding style.
+On 1/19/23 13:26, Thierry Reding wrote:
+> On Mon, Jan 16, 2023 at 03:16:48PM +0300, Dmitry Osipenko wrote:
+>> On 1/13/23 16:50, Sumit Gupta wrote:
+>>>
+>>>
+>>> On 22/12/22 21:16, Dmitry Osipenko wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> 20.12.2022 19:02, Sumit Gupta пишет:
+>>>>> Add support to use OPP table from DT in Tegra194 cpufreq driver.
+>>>>> Tegra SoC's receive the frequency lookup table (LUT) from BPMP-FW.
+>>>>> Cross check the OPP's present in DT against the LUT from BPMP-FW
+>>>>> and enable only those DT OPP's which are present in LUT also.
+>>>>>
+>>>>> The OPP table in DT has CPU Frequency to bandwidth mapping where
+>>>>> the bandwidth value is per MC channel. DRAM bandwidth depends on the
+>>>>> number of MC channels which can vary as per the boot configuration.
+>>>>> This per channel bandwidth from OPP table will be later converted by
+>>>>> MC driver to final bandwidth value by multiplying with number of
+>>>>> channels before sending the request to BPMP-FW.
+>>>>>
+>>>>> If OPP table is not present in DT, then use the LUT from BPMP-FW directy
+>>>>> as the frequency table and not do the DRAM frequency scaling which is
+>>>>> same as the current behavior.
+>>>>>
+>>>>> Now, as the CPU Frequency table is being controlling through OPP table
+>>>>> in DT. Keeping fewer entries in the table will create less frequency
+>>>>> steps and scale fast to high frequencies if required.
+>>>>
+>>>> It's not exactly clear what you're doing here. Are you going to scale
+>>>> memory BW based on CPU freq? If yes, then this is wrong because CPU freq
+>>>> is independent from the memory subsystem.
+>>>>
+>>>> All Tegra30+ SoCs have ACTMON hardware unit that monitors CPU memory
+>>>> activity and CPU memory BW should be scaled based on CPU memory events
+>>>> counter. We have ACTMON devfreq driver for older SoCs. I have no clue
+>>>> how ACTMON can be accessed on T186+, perhaps there should be a BPMP FW
+>>>> API for that.
+>>>>
+>>>
+>>> Yes, scaling the memory BW based on CPU freq.
+>>> Referred below patch set for previous generation of Tegra Soc's which
+>>> you mentioned and tried to trace the history.
+>>>
+>>> https://patchwork.ozlabs.org/project/linux-tegra/patch/1418719298-25314-3-git-send-email-tomeu.vizoso@collabora.com/
+>>>
+>>> In new Tegra Soc's, actmon counter control and usage has been moved to
+>>> BPMP-FW where only 'MCALL' counter is used and 'MCCPU is not being used.
+>>> Using the actmon counter was a reactive way to scale the frequency which
+>>> is less effective due to averaging over a time period.
+>>> We are now using the proactive way where clients tell their bandwidth
+>>> needs to help achieve better performance.
+>>
+>> You don't know what bandwidth CPU needs, you trying to guess it.
+>>
+>> It should be a bad decision to use cpufreq for memory bandwidth scaling.
+>> You'll be wasting memory power 90% of time because cpufreq doesn't have
+>> relation to the DRAM, your heuristics will be wrong and won't do
+>> anything good compared to using ACTMON. The L2 CPU cache + memory
+>> prefetching hides memory from CPU. And cpufreq should be less reactive
+>> than ACTMON in general.
+>>
+>> Scaling memory freq based on cpufreq is what downstream NV kernel did
+>> 10+ years ago for the oldest Tegra generations. Today upstream has all
+>> the necessary infrastructure for doing memory bandwidth scaling properly
+>> and we even using h/w memory counters on T20. It's strange that you want
+>> to bring the downstream archaity to the modern upstream for the latest
+>> Tegra generations.
+>>
+>> If you can skip the BPMP-FW and use ACTMON directly from kernel, then
+>> that's what I suggest to do.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> After talking to a few people, it turns out that BPMP is already using
+> ACTMON internally to do the actual scaling of the EMC frequency (or the
+> CPUs contribution to that). So BPMP will use ACTMON counters to monitor
+> the effective memory load of the CPU and adjust the EMC frequency. The
+> bandwidth request that we generate from the cpufreq driver is more of a
+> guideline for the maximum bandwidth we might consume.
 
-[...]
+Our kernel ACTMON driver uses cpufreq for guiding the EMC freq. Driving
+EMC rate solely based on cpufreq would be a not good decision. So does
+it mean you're now going to extend the ACTMON driver with the BPMP support?
 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-rockchip.yaml b/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-> index 66e49947b703..e4941e9212d1 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-> @@ -11,7 +11,7 @@ description:
->    as flash and display controllers using the SPI communication interface.
->  
->  allOf:
-> -  - $ref: "spi-controller.yaml#"
-> +  - $ref: spi-controller.yaml#
->  
->  maintainers:
->    - Heiko Stuebner <heiko@sntech.de>
-
-For Rockchip:
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
+-- 
+Best regards,
+Dmitry
 
