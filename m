@@ -2,167 +2,191 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40947C004D4
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 10:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD83C46467
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 10:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbjASKTf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Jan 2023 05:19:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49776 "EHLO
+        id S230362AbjASK0n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Jan 2023 05:26:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbjASKTa (ORCPT
+        with ESMTP id S230341AbjASK00 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Jan 2023 05:19:30 -0500
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on20630.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8a::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173436EBE;
-        Thu, 19 Jan 2023 02:19:29 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e4pq2s9i29SGMReYkq7dbZ4wxxrFnjXbXmlCZIsbBGKRKxH2inyZRrYlNwVPWWzNhRuj0DMBNTquwGgS5MMeGEhLuqpxpICQOS9ZJYBzUs0UFYudbdvqzDAwnfqLMS6kbG7SBXh1wH5ekb8I3SwQmkaM05aRcqOwZZPH1E5r22CzKMMf6GRBtNcOKD96JVm13V3OVs9P4EgcLnRkbHIsg2WaPsS6i9OAGEZNBeAd2AqqXceUyR/AQkcjuP80WRzpmtrcPHUczr8or9sK7gsj30sixZcdq5g6M6+GUMmK9mVHTCKn+Fq5XiTazkL/elPGauZPNuTmjQlhkJV89mrApw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IDdwzCgv0NmFt8P17TSXgyt7x72kRk4qA3+IRxkW/9o=;
- b=MgPy/qf2J4ds6iQVGRafCkTyPu/lg7HgojGovqJbW4vVdcQO/SVlahg6c6YIQ9xExnlpbb8c5sqVN/jivSIyBWXgCdcIgzBXuOSCgJIGo6wqH7HMybkmVtmJk9DJqiYkCaGDWHabg9/Ry7EQ6UfJWBkrtrgqQ3AYKXrizhRJzzMA9JZB9PS+3eBAJ2BSllH5B7oG+Nc6LEdhYgbDq71mCVJFSDCGoSCX3zbEpoTQn6EGUrzcV4U7fCfocJ5JivdBkTCvfJRbk1LqGAihr0RaLuZHFCqEVr51T4aJv2jVCb6OLcPeqxEpM/7PjIkj+P9BqAcmQsFOI7z9ZEqqMmOFTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IDdwzCgv0NmFt8P17TSXgyt7x72kRk4qA3+IRxkW/9o=;
- b=CAM+K/9VH0btV9Jipe6+x8OR8OpFYT5al4ibzDXmJ3P7DbXMh2/Jq3o7DibOQd/EDviDTp7yIpLz0NRvMq9w5njjUm+dTng/hekkMmJ0xYTeOClK5ZFemegwGiggh/IoP7SXSALn/MtRkPAtBFrk9YGwIx17/RvcGNFL3nQC6QAwOSOtLzjwXRtwLDvjeBLiugrFp0ArbMAP6pFZ98T9lAb/95e5EIIh5dK6HhYUyrdwHE6HwKRD0FkVAoFtoi3aH4ZyUKF4nEw1z+E0y6j1IM5m8CyR72KK+nUCH0U+sz02NjUjXmFedk3+FgT1Y1Acuk1avuq8+jWy82l+CJ/7Bg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- IA1PR12MB8406.namprd12.prod.outlook.com (2603:10b6:208:3da::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.23; Thu, 19 Jan
- 2023 10:19:26 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::f1be:5d:f297:e2f]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::f1be:5d:f297:e2f%7]) with mapi id 15.20.6002.013; Thu, 19 Jan 2023
- 10:19:26 +0000
-Message-ID: <344ab84a-ab31-33cb-0222-9b75fbd981b2@nvidia.com>
-Date:   Thu, 19 Jan 2023 10:14:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH V2 1/2] usb: gadget: u_ether: Improve print in
- gether_setup_name_default()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-References: <20230116155545.101391-1-jonathanh@nvidia.com>
- <Y8a45WrjLUdCEHH+@kroah.com>
-Content-Language: en-US
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <Y8a45WrjLUdCEHH+@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0664.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:316::8) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        Thu, 19 Jan 2023 05:26:26 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777E2521DE;
+        Thu, 19 Jan 2023 02:26:24 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id rl14so1083462ejb.2;
+        Thu, 19 Jan 2023 02:26:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=clRCjHfA7rKJ2oTt1B+97caDociqEL0Rl6BA3x8VTP0=;
+        b=hS975poE2XDyTtRXqaSp3RNPHLKWlnWoBUnMSaE+kUZiL3hg4no7WvjdggldCJ3H8Z
+         7GY4set0sB24oy2yCIPP+ywNqXfoejuJFzZAJ0lZny/yYuiHzwUXJ19RhwvgsLxd/CbI
+         le0vQvjW0byRPCLW/9vLZj7/K0/beC3jzIPdPOafEt0B6QraEuBIU+8aDJ7iW9Q9MR2g
+         wvCzm8406/+hILoyADBZgUh9YwIKrL/iEHilNOt0exSb3lr6Gdgz9seiPDOOfjVJwidz
+         NgyGLIkGkshORF0yWKDOyd2jk9UtmoTomzt1iKL4zT96WmikSjKGkpwXQUjCy7QTqCC3
+         xVqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=clRCjHfA7rKJ2oTt1B+97caDociqEL0Rl6BA3x8VTP0=;
+        b=699DYf3fRRATauzi2Ge5KyzX/9DTzqYAdfLpTGBngmvJtHWWECbWNPmvtdfIy2iAss
+         ZEpxMLqQ1gFRVG+Q3MLp2YQrXjoILrbD8Nz5crpUacY/HX1l+LZfN6D9lkYerFHXASyO
+         VARLzaiZrb5MMzqxrS/e9bLbtA8rzyubnEikTOSU/+gk6GpQg0TKIBvLPjVTRW0dq4C5
+         fGc+dKHSV9AiecNfWHBIJiZXNt3LG/vQIKrzSHzfmNeFcytr6vDIBIJqJcfNED6K6OsG
+         f1qz4gLAx8Np97bzzCH1U5X2YM8TGx0pBNWvy/UW/SYovL5A7IukqQ9lT3E796fYDdja
+         RKxg==
+X-Gm-Message-State: AFqh2kqTZM4vXui/+l++C610IhFkgJkRj8kswCPZ/w3xMN5OdYxESlJC
+        r5L4Tx6p7skEIKhrdaucKkLir/kmV8o=
+X-Google-Smtp-Source: AMrXdXtqcH/8Sf/CngK7xv/mWLSKmba4Glnzkg/+gCZisxT3aEJJ6tNONigLWslMq7fmyrz1h41VNg==
+X-Received: by 2002:a17:906:5906:b0:870:2f70:c624 with SMTP id h6-20020a170906590600b008702f70c624mr10657240ejq.3.1674123982603;
+        Thu, 19 Jan 2023 02:26:22 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id b1-20020a1709063ca100b007af0f0d2249sm16057107ejh.52.2023.01.19.02.26.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jan 2023 02:26:21 -0800 (PST)
+Date:   Thu, 19 Jan 2023 11:26:19 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     Sumit Gupta <sumitg@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>, treding@nvidia.com,
+        krzysztof.kozlowski@linaro.org, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
+        bbasu@nvidia.com, Rajkumar Kasirajan <rkasirajan@nvidia.com>
+Subject: Re: [Patch v1 08/10] cpufreq: tegra194: add OPP support and set
+ bandwidth
+Message-ID: <Y8kay0/AmjqhU2jO@orome>
+References: <20221220160240.27494-1-sumitg@nvidia.com>
+ <20221220160240.27494-9-sumitg@nvidia.com>
+ <4e3e4485-ba22-eb47-fb95-e8d626160bc6@gmail.com>
+ <8e6d7dd3-1bdc-ee4b-0c1e-1ae9cd8e4f29@nvidia.com>
+ <8bd5cf36-e1fb-305c-08c5-3bbc80204866@collabora.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|IA1PR12MB8406:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71cfe622-21f1-46e2-6f3b-08dafa06a45b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0UAebsl8oggMW6LP+6WlPWBBqLrPyzt9nYCocCQnYuMu3YvPGXJP4juDR44VG5kvl69UunVQ+QdROOOVZK8BiBIFBQWetWx/2B55zJrw+qKsG8X2axdfUbZ0v6IcmyeLH3bctyYhbR7RYLi9RL7DF/Pa9NTCBE1s3ZRaxFtMI/H+yBb9Fnaj5Cu0GPFdxA6JvIdvGYF13odD1hYcaBVpp0YqhHtJV5TIoV1u306q+xMENeCxpvNMKEKe6EteetLhSeNGA1FgK1CH8NgNOaMNavOC2i4rNEsEEdWPDrkqHjoYh5679EbhH1ClrX2FeewCDr/F8O+mdZ8syaZu985yDw4lmGAR3SDkqDv3vkauLQk3PZXPE+bglIat6TMhXMCqMlafmmoUBK87jgi3DamhynVGHQvJ2hFE9QkndGxMygvgtCChnLPlJqp2bwOMc5ZNH8KI2dDlQu7gcvWoQCW0GkzYC5g4E5DfvihRK+0mKc3JfgWp58HmMntX4WePQVeA0Q8bQrwspax5xKOXaqsq8RisGxisDtfuI8ULHhcgTSu/B3oEpZQ3BYdrCaQ2CGl/zkfxvmQdKvjEEl90FY75MAfGRKDkZ9hXZHd7RUNgFwnL7wWpKZVowgVwrlXJyEheQNqRA799dWvrrROY1EhDZWzuTqewq9x6PWawT2CSQgqW5nRgsPXt2DEEXl/G/YsS5aiEkTQWGF9/1RZIsx2/V3Lb14M3XsQYzckF4h2U4Nk=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(396003)(366004)(39860400002)(376002)(136003)(451199015)(83380400001)(38100700002)(5660300002)(6916009)(2906002)(86362001)(8676002)(66476007)(4326008)(66946007)(66556008)(8936002)(31696002)(478600001)(2616005)(6506007)(53546011)(26005)(186003)(6512007)(55236004)(316002)(6486002)(41300700001)(6666004)(31686004)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bjAxV3NVaVhBRnZRK01Vd2dheGxRS1EyVURuaVlaeDRrNTV6Vk0zK2xlWThR?=
- =?utf-8?B?SjNlUVFwdElmd1FsZEVtSXhDVHZnRkJySjQ2UEpoWlo5MDUvdXptMVhIOU8z?=
- =?utf-8?B?NmdrT1lSOVI0VGZlZnlzTmFHbXgxcGRjamNDZnNHaTY3ZVRBYXc3YVRJRnZJ?=
- =?utf-8?B?R0ZIbGpEck5ZSzNJdU5QMjQrZ051SFJZS291ZVI1WnJuL2lKUEEzK09jSjNQ?=
- =?utf-8?B?WE5TK3Z3dlJyUkJiZEloOXB5c2ZNVVdndVY1TEtwUHI0bnJEYXlBYXQ2TEMv?=
- =?utf-8?B?YmNPSnJyWUlwMjJyM3Y0SGNXbEwyb1c0LzVyNkp1bG9kZmRESldUVENvbXdM?=
- =?utf-8?B?OUhNWk9nZC9CbU53eFMzc1JVdm5JN1VaV3lKNDVDTy9POWxjWjloVE9QRHVS?=
- =?utf-8?B?N0Vrbzg1OXlSYmtXb2NRZ0k2cWFBY3JuN015N1kzT2V1N1Jub2Jkd0VXeWUv?=
- =?utf-8?B?aUdpSUdLOXI0Mkd1dlltZU81OXVwc2R3cUU3Z3pOeUhKZ09mcDBGYzFSbndI?=
- =?utf-8?B?R0NvR2M4bThrWm1ESXRHYzlyTzVMeXpycDdEWFdPK3ZtL001SXFYWVBTaUNw?=
- =?utf-8?B?Uk5wYVBQL3dtVHE3QlVjc3hHczVKYitlRGNab1ZvVEVVcXkxMGw4OGRqK0o0?=
- =?utf-8?B?KzJzZVpja0hWa25nTDdZaEpIWFlHckkrK1dyWWY3aDdnTlhBdzkya0g2UFZX?=
- =?utf-8?B?L3l6SEJXcDhOQXlpZmxla3h3QnlvOWJCOXJmRURpZExZOS9XYlR0TnlBSFBS?=
- =?utf-8?B?elRkNkRSZE1lNnArdFc3WVFabllDREVoNEp5VVVGcThndWpKRnBTT01UdVo3?=
- =?utf-8?B?OWlBb0x2VDcxNVcxSFZvWWN1a2pRZHB0eGhPRnNqbmtYNFlwQ3pDRHpHejFG?=
- =?utf-8?B?WXo2MWo5VGM4VmxicTJnZk5WaTBHOWVmR3lJR0oxVCtITTNBc3gzWnJUdzhK?=
- =?utf-8?B?emNjMVpyWDEvKy9ZUVBqYXVYanRjL1k5L0NEcGQxN2Y2MUIvYkhycjZwRWVH?=
- =?utf-8?B?ZUJNQm42U0hSMC9tcUVMOXdneTQyRGFhSE8zY1ZNcTIraW9seEF1Z1BsY002?=
- =?utf-8?B?aWZDZFdyVlVBRVFNekxEUzBKRTNpeFNGZHNEblFuU0c3ZUdGaHFHcGxhN2R1?=
- =?utf-8?B?Q1Fwb2ttRy9xTnRvSm85eEhpRUZwZHo1RnhsSitmNjUvMXdDRXV1YXA1a0ty?=
- =?utf-8?B?QkRudUhOcGg5dzVLY1A3dFJyU05KTmorRDhxdERhZ1EyNXBNRUJCWlNnRXRV?=
- =?utf-8?B?SWxWQXE5cGV5QTJ0NUZjeC8xRHZkVEE2WVg5SzdCNTVEY0lScllSU1VNTjZz?=
- =?utf-8?B?bE4vSGcvN0NjNFNFTkJPajBoYzJEM0JBbEJuajlNZm1NVnVBKzRsU0RyQXZj?=
- =?utf-8?B?TjV4NXlnUzJ2alA2REhxY29MbjdkOE5DRHpFb1ZRQkNuWEg5YmR5V2Y1aEts?=
- =?utf-8?B?QnE0TmFnY3ZlYm1nejBiMG4raFFvQ2dSaDROa0QwYitkblJzcG02M29kRnhm?=
- =?utf-8?B?NytSMGNIT2QyWmJMVjlPWDdiOGpmSWFna3lOcWVEeWhubHNIZEFFeUMyN3Bx?=
- =?utf-8?B?UHBCU2VjUmpJWGZoMkNXcXUzbW1OMUhsU1FRZXp4bS9XRThoNTRPR1AzdGlw?=
- =?utf-8?B?VDFLdm83VDA5TlBTbWlIcUhLalBRdnh0eUN4ZWlQbkp4eHRmc000MnppUldD?=
- =?utf-8?B?RzNKYU9Wb2Y4dnpKNlVENVhuOEpjOU1Gejc2ZkNqbCtiNFF6S29mQmlSRnBp?=
- =?utf-8?B?NzhUQ1RWNzZUMVhlZDVNcDdPNzZUSWw0OUlVS1VmVHh2b085VzRDUFJDSnVV?=
- =?utf-8?B?VENQbysyeWhhWjRNVVVJMEdsZkd4R010bHI1WUNvOGNzcGRRZlpNTjM0azRG?=
- =?utf-8?B?MkQvM09McVljejZub1AvaE5pTm1BNUZzcE1aV0pHQzBoYlVYZ25pUktBSzBr?=
- =?utf-8?B?NG1ubEdObERaNmxYS0FjYXhrR012bXEzWXZSN2hYZGlQTHk4bnhkVTdDU2Fs?=
- =?utf-8?B?STBYdWpJb0swNlUyNXYvdS83NWhTaG9PeFlaRjdVaXl4eDUxMFNqTlRtT0RZ?=
- =?utf-8?B?S0wxbVBtVmZmNWRmcVdvSENkS0h0Nnprd1Y4bGUyUTRldituRDRQQ01Wa2dr?=
- =?utf-8?Q?mub7n30fm5KUZpd6V26BSG+VV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71cfe622-21f1-46e2-6f3b-08dafa06a45b
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2023 10:19:26.3362
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4YI+mCo5Mw0n4vz1k1+8/fUneFFRJr9dVdQCH1Y6ijmUQVkreO1rlVYs+HIOI8Rr3zyej4bVdgzmz/Oo4sQbZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8406
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wXgEOUGcow8GwYyA"
+Content-Disposition: inline
+In-Reply-To: <8bd5cf36-e1fb-305c-08c5-3bbc80204866@collabora.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 17/01/2023 15:04, Greg Kroah-Hartman wrote:
-> On Mon, Jan 16, 2023 at 03:55:44PM +0000, Jon Hunter wrote:
->> The print in in gether_setup_name_default() does not provide any useful
->> information because a random MAC address will always be generated when
->> calling this function. Rather than removing the print, update the print
->> to show MAC address that is generated which is similar to other ethernet
->> drivers.
->>
->> Finally, given that the strings 'self' and 'host' are static we do not
->> need to pass these strings as an arguments.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->> V1 -> V2: Added this patch
->>
->>   drivers/usb/gadget/function/u_ether.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
->> index 8f12f3f8f6ee..be8e7b448933 100644
->> --- a/drivers/usb/gadget/function/u_ether.c
->> +++ b/drivers/usb/gadget/function/u_ether.c
->> @@ -845,13 +845,13 @@ struct net_device *gether_setup_name_default(const char *netname)
->>   	snprintf(net->name, sizeof(net->name), "%s%%d", netname);
->>   
->>   	eth_random_addr(dev->dev_mac);
->> -	pr_warn("using random %s ethernet address\n", "self");
->> +	pr_warn("using random self ethernet address %pM\n", dev->dev_mac);
-> 
-> If you are going to fix these up, please use dev_warn() and friends,
-> don't use "raw" pr_* calls in a driver.
+--wXgEOUGcow8GwYyA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jan 16, 2023 at 03:16:48PM +0300, Dmitry Osipenko wrote:
+> On 1/13/23 16:50, Sumit Gupta wrote:
+> >=20
+> >=20
+> > On 22/12/22 21:16, Dmitry Osipenko wrote:
+> >> External email: Use caution opening links or attachments
+> >>
+> >>
+> >> 20.12.2022 19:02, Sumit Gupta =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> Add support to use OPP table from DT in Tegra194 cpufreq driver.
+> >>> Tegra SoC's receive the frequency lookup table (LUT) from BPMP-FW.
+> >>> Cross check the OPP's present in DT against the LUT from BPMP-FW
+> >>> and enable only those DT OPP's which are present in LUT also.
+> >>>
+> >>> The OPP table in DT has CPU Frequency to bandwidth mapping where
+> >>> the bandwidth value is per MC channel. DRAM bandwidth depends on the
+> >>> number of MC channels which can vary as per the boot configuration.
+> >>> This per channel bandwidth from OPP table will be later converted by
+> >>> MC driver to final bandwidth value by multiplying with number of
+> >>> channels before sending the request to BPMP-FW.
+> >>>
+> >>> If OPP table is not present in DT, then use the LUT from BPMP-FW dire=
+cty
+> >>> as the frequency table and not do the DRAM frequency scaling which is
+> >>> same as the current behavior.
+> >>>
+> >>> Now, as the CPU Frequency table is being controlling through OPP table
+> >>> in DT. Keeping fewer entries in the table will create less frequency
+> >>> steps and scale fast to high frequencies if required.
+> >>
+> >> It's not exactly clear what you're doing here. Are you going to scale
+> >> memory BW based on CPU freq? If yes, then this is wrong because CPU fr=
+eq
+> >> is independent from the memory subsystem.
+> >>
+> >> All Tegra30+ SoCs have ACTMON hardware unit that monitors CPU memory
+> >> activity and CPU memory BW should be scaled based on CPU memory events
+> >> counter. We have ACTMON devfreq driver for older SoCs. I have no clue
+> >> how ACTMON can be accessed on T186+, perhaps there should be a BPMP FW
+> >> API for that.
+> >>
+> >=20
+> > Yes, scaling the memory BW based on CPU freq.
+> > Referred below patch set for previous generation of Tegra Soc's which
+> > you mentioned and tried to trace the history.
+> >=20
+> > https://patchwork.ozlabs.org/project/linux-tegra/patch/1418719298-25314=
+-3-git-send-email-tomeu.vizoso@collabora.com/
+> >=20
+> > In new Tegra Soc's, actmon counter control and usage has been moved to
+> > BPMP-FW where only 'MCALL' counter is used and 'MCCPU is not being used.
+> > Using the actmon counter was a reactive way to scale the frequency which
+> > is less effective due to averaging over a time period.
+> > We are now using the proactive way where clients tell their bandwidth
+> > needs to help achieve better performance.
+>=20
+> You don't know what bandwidth CPU needs, you trying to guess it.
+>=20
+> It should be a bad decision to use cpufreq for memory bandwidth scaling.
+> You'll be wasting memory power 90% of time because cpufreq doesn't have
+> relation to the DRAM, your heuristics will be wrong and won't do
+> anything good compared to using ACTMON. The L2 CPU cache + memory
+> prefetching hides memory from CPU. And cpufreq should be less reactive
+> than ACTMON in general.
+>=20
+> Scaling memory freq based on cpufreq is what downstream NV kernel did
+> 10+ years ago for the oldest Tegra generations. Today upstream has all
+> the necessary infrastructure for doing memory bandwidth scaling properly
+> and we even using h/w memory counters on T20. It's strange that you want
+> to bring the downstream archaity to the modern upstream for the latest
+> Tegra generations.
+>=20
+> If you can skip the BPMP-FW and use ACTMON directly from kernel, then
+> that's what I suggest to do.
 
-I had a look at that, but I don't think we can in this case. The 'dev' 
-structure you see above is of type 'struct eth_dev' and not 'struct 
-device'. In other places in the driver where dev_warn is used the device 
-structure comes from the 'struct usb_gadget' but FWICT this is not 
-initialised in the above function.
+After talking to a few people, it turns out that BPMP is already using
+ACTMON internally to do the actual scaling of the EMC frequency (or the
+CPUs contribution to that). So BPMP will use ACTMON counters to monitor
+the effective memory load of the CPU and adjust the EMC frequency. The
+bandwidth request that we generate from the cpufreq driver is more of a
+guideline for the maximum bandwidth we might consume.
 
-Jon
+Thierry
 
--- 
-nvpublic
+--wXgEOUGcow8GwYyA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPJGssACgkQ3SOs138+
+s6FLcQ//SDuIXbEmFWNwO/6zyR0Uu1oyte3hbT72Pg/1mj0FdHlo44tkuI2iGsJo
+XslkLfJSE8FQ4kygY2mqyKBsZP0Eqlmh2hwWfofm4n1+EX6NE1u1zOOw8YbVrG+2
+PYiFHf2JxQUTvEg1GgaU58OXm6aLT9jKS6zFl6R7OLnsSUKtJzzJUIgwdGfnH6qV
+yvyo7mG30Nk+7s7Yn7LA85CaD18/agj+DHvFQ8UD7Ysn3+SvyVbcq2u4+JdOlSeN
+oYGIJ8S3OMSXSt3M35p4Q+5+9xEPzPN5sZ9Xov9A5xS0jdVHoFzTGj4FhMRKAJq9
+VQYmR97bYQlIAwZYiI1Lh6n/YMNtfBtqfKA7qvVSTK7Z7QnbVD4JuIBq3AbatPuK
+DWykzPs/8xOf0fbLS7e9KwdahWaYdjbsfDvKV81JbA8xRaEO47+x7lBsa5RT/mHg
+ala4a4Ia0TLEjQ6eHmg16qxrP9HRvGqezInLHO/2/RgJOaxps1kcljyotMkZspnb
+fHK7VFMvtDI0vLlDya2NJu1XWQnPlP1j3virK8zBTlRbQmwXbp4OfXumP8hHa9et
+CeccsM+oIXovEm4Zkc23V5aRDnKG9o6iQ6YIbj0Kl/VMo+boffDb+sltcgJDAcZT
+OSx6CdbmLW2OoZhC6x926chQZXo1APxTdYdUegNrUQsJRjyHnY4=
+=tF8B
+-----END PGP SIGNATURE-----
+
+--wXgEOUGcow8GwYyA--
