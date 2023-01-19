@@ -2,122 +2,153 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AF8C6379F
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 15:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3978C6379F
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 16:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjASPKT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Jan 2023 10:10:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50832 "EHLO
+        id S230217AbjASQX5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Jan 2023 11:23:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230148AbjASPKR (ORCPT
+        with ESMTP id S230188AbjASQXx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Jan 2023 10:10:17 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2347A71795;
-        Thu, 19 Jan 2023 07:10:11 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id v5so3244704edc.3;
-        Thu, 19 Jan 2023 07:10:11 -0800 (PST)
+        Thu, 19 Jan 2023 11:23:53 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B3A8B309;
+        Thu, 19 Jan 2023 08:23:46 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id b7so2396718wrt.3;
+        Thu, 19 Jan 2023 08:23:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b3hWPa5eaE1VlRQVh/vMNXzrQxeXSBHyXqQOtX9y708=;
-        b=e0fz5LvLSsENChDm0SAC0yL0oNM0POBFQiCdbDweehEDuMJIEONyAGgtdUPGFCiqqR
-         Id/h6C/GazpqSxZamu9mjDNvex5dlA4fvF0jc+PtHw3gABqKvJPtUMEVkOcXcj8J1AAR
-         PLnRLIaYYudfxKXoyTbYwC728sbH/Vp/SYtuqM2fpiS+nF//YyLm6+ZVhWrxrT4Q0hRY
-         a0hOqlk1Pq1a/Ske4YxV88ZkoibTzl5/lm2iQWzGROYUNhTFj+PXvZ5oyDZul+1npUtc
-         /aWgddo2LOXbI2ntusjEDbihUUDWi123jkrB+cgnn/akq4wL7jLWwAljnm3yAd/mP764
-         vDEA==
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+PcC7y3FS+HA6LTR16Kak4eGsTRhnH7QRvBCszT9C5U=;
+        b=OWsZGZ11elP4SzbvFuPicIoLtQvQgdqjQHT0EUCq9YSbAvdwb9nvSo63kZNE5WYSMb
+         m3bYZzWWZkK2BFpF7AI1la1QPxmBW5+32EJ6oMNgNGbtLQuhMW2srvFFT4yNQKmcCT+a
+         1WKMbYW2N3hrUWZfoPBhHCUW/l0AHVY5YVa28nF+GHGTFYlx286xt3wzPq6YYUtC0cM/
+         thGP4Mgb8c19/HobPxN1HeBnO3RDu+oLrGGCnPhlkj2DXA9O2wa49uO8sf/45240GSof
+         YBXM7bXnJndVD1ceuTWCkL1u5eAbfyMuhx2ZmZwlxs9cfmodBlu1zkyJnGZU1iqX3jmw
+         ctqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b3hWPa5eaE1VlRQVh/vMNXzrQxeXSBHyXqQOtX9y708=;
-        b=IGSTwekJcpUxLLTe01WpSCQQrqWaq/qaz5N9rRK79cSR5YRAO57hhk7k2qnhuxHKlz
-         pqybxq4UsydcnrSEWCXHtqOJBwuKwr23/jmulf61N2higJWt9DG8tMQ8xGvHoG/jDYu/
-         5LKh10v2UfhVxrj9Zdua+7ZYIc7xe1vM+9jTOy+AhePvcyDeK+2uftOQbGK8N66lSm2+
-         t5xXzrnxWi9hF3IJNtYmU53aBsz1eADyMBIF5uGrfJYfsaL2pfpzd9Ij6GkpC6Es/7hD
-         GX0LqUpQpK15xIMfHe6F4arKinjABmo+tvLujQsFSH/VRPnvpPD1oxHWHkqpt7ZMbgRO
-         exTw==
-X-Gm-Message-State: AFqh2kpI7Vw7IbhzcFH+XSSls+n75qYoMHnutYtlSAsbBxrL/afv43/D
-        ezYpIdRtu7GBUCJPMVfa7GE=
-X-Google-Smtp-Source: AMrXdXsTwyv07suDfVAoeVH9mB1DXCTlXvaAj3SNIzmRc1ujB0XCruBScq2XQFPO2DZi0mB2a8FvoA==
-X-Received: by 2002:aa7:c994:0:b0:499:bf81:be6 with SMTP id c20-20020aa7c994000000b00499bf810be6mr12264790edt.37.1674141009481;
-        Thu, 19 Jan 2023 07:10:09 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id d9-20020a1709063ec900b007c0d6b34d54sm16278717ejj.129.2023.01.19.07.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 07:10:08 -0800 (PST)
-Date:   Thu, 19 Jan 2023 16:10:07 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] arm64: tegra: Add simple framebuffer on Jetson
- Xavier NX
-Message-ID: <Y8ldT2CdwFpNAZoB@orome>
-References: <20221117184039.2291937-1-thierry.reding@gmail.com>
- <20221117184039.2291937-9-thierry.reding@gmail.com>
- <12cff1b1-b8dc-7fb4-2228-8af4b30c09c5@suse.de>
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+PcC7y3FS+HA6LTR16Kak4eGsTRhnH7QRvBCszT9C5U=;
+        b=K3CNF6YUjMymMrz01qDl1+zLCMkDChZP5I9/KY8m384NSgeyULWzrBhwzc3vyaZx5Q
+         Bv7bvHFxEUldRg9zSRQ+0YU5X7HYp017SlyTmEWaiiszTLD8sjjguqFxEac+SaIeTxN5
+         zrV7ZyD3ICtMmBoAvhRGQNBMOFIpC/bNtMD4cnOOuhk4Nw0nZ/sTZ+BRbIKNDGFEehxT
+         ufKk54FL4WQYh5uKLZYouSQMgAJ+SB5zu1mLfSPzg0YSqvSFpjFlSkqyVrJt+1ObMbwe
+         C23VdC2/UJ8xurRLBi3lnxsCKvgRO8gw2pVWjBszWowhjeq0PvIn+Ed4WckCCKklQrrS
+         hIow==
+X-Gm-Message-State: AFqh2koC7WkF6E66sCduh91bUA2LpDTupjWmdGMXrtKw15RenrsLA9ha
+        q8i6xSMxaZZ39YBzV5SKJHE=
+X-Google-Smtp-Source: AMrXdXtIzYjj/CzYqkow+WPiYOG8ccH53zjNKZrQ2FyPIsv67Z3n3uwh+vn0p8V5ULjrCdWWyoakDg==
+X-Received: by 2002:adf:f18e:0:b0:2bd:e8bd:79ce with SMTP id h14-20020adff18e000000b002bde8bd79cemr9683654wro.20.1674145424906;
+        Thu, 19 Jan 2023 08:23:44 -0800 (PST)
+Received: from [192.168.2.177] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id b10-20020adfe64a000000b00287da7ee033sm34552910wrn.46.2023.01.19.08.23.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jan 2023 08:23:44 -0800 (PST)
+Message-ID: <b9f20fce-9091-27ab-11c3-0670835ce0e7@gmail.com>
+Date:   Thu, 19 Jan 2023 17:23:39 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bQw0EXWTigETpFy5"
-Content-Disposition: inline
-In-Reply-To: <12cff1b1-b8dc-7fb4-2228-8af4b30c09c5@suse.de>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH 1/2] dt-bindings: dma: drop unneeded quotes
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Olivier Dautricourt <olivierdautricourt@gmail.com>,
+        Stefan Roese <sr@denx.de>, Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Green Wan <green.wan@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        =?UTF-8?B?77+9ZXI=?= <povik+lin@cutebit.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        - <chuanhua.lei@intel.com>, Long Cheng <long.cheng@mediatek.com>,
+        Rajesh Gumasta <rgumasta@nvidia.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Palmer Debbelt <palmer@sifive.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org
+References: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---bQw0EXWTigETpFy5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 17, 2023 at 03:55:21PM +0100, Thomas Zimmermann wrote:
-> Hi
->=20
-> Am 17.11.22 um 19:40 schrieb Thierry Reding:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Add the framebuffer carveout reserved memory node as well as a simple-
-> > framebuffer node that is used to bind to the framebuffer that the
-> > bootloader has set up.
->=20
-> I don't know about the current status of this patchset, but feel free to
-> send whatever update you have.
+On 18/01/2023 19:01, Krzysztof Kozlowski wrote:
+> Cleanup by removing unneeded quotes from refs and redundant blank lines.
+> No functional impact except adjusting to preferred coding style.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   .../devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml        | 2 +-
+>   .../devicetree/bindings/dma/allwinner,sun50i-a64-dma.yaml       | 2 +-
+>   .../devicetree/bindings/dma/allwinner,sun6i-a31-dma.yaml        | 2 +-
+>   Documentation/devicetree/bindings/dma/altr,msgdma.yaml          | 2 +-
+>   Documentation/devicetree/bindings/dma/apple,admac.yaml          | 2 +-
+>   Documentation/devicetree/bindings/dma/arm-pl08x.yaml            | 2 +-
+>   Documentation/devicetree/bindings/dma/dma-controller.yaml       | 2 +-
+>   Documentation/devicetree/bindings/dma/dma-router.yaml           | 2 +-
+>   Documentation/devicetree/bindings/dma/fsl,edma.yaml             | 2 +-
+>   Documentation/devicetree/bindings/dma/ingenic,dma.yaml          | 2 +-
+>   Documentation/devicetree/bindings/dma/intel,ldma.yaml           | 2 +-
+>   Documentation/devicetree/bindings/dma/mediatek,uart-dma.yaml    | 2 +-
 
-Sorry, got side-tracked a few times during the last few weeks. I've had
-to rework some parts of this for the recent changes to the format
-helpers, but nothing major. I'll send out the updated version shortly
-once I've tested all cases.
+[...]
 
-Thierry
+> diff --git a/Documentation/devicetree/bindings/dma/mediatek,uart-dma.yaml b/Documentation/devicetree/bindings/dma/mediatek,uart-dma.yaml
+> index 9ab4d81ead35..dab468a88942 100644
+> --- a/Documentation/devicetree/bindings/dma/mediatek,uart-dma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/mediatek,uart-dma.yaml
+> @@ -14,7 +14,7 @@ description: |
+>     for the UART peripheral bus.
+>   
+>   allOf:
+> -  - $ref: "dma-controller.yaml#"
+> +  - $ref: dma-controller.yaml#
+>   
+>   properties:
+>     compatible:
 
---bQw0EXWTigETpFy5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPJXU4ACgkQ3SOs138+
-s6Hlww/+IzPc1AX147Ir+grpgjfk1Xmbl2ycd89CjRpRo6yWlN4RZ8Yuc9D8nWjI
-oed/TJUnvyih1nZwL6OrqR2m1H9yo2fE10w9bRCTO4dde/4p0H+8oKJbOSyLnzFk
-y7e7QaJXGqZWOj9wl6g1ba1aqnRPsucDfpwXQcf8xHuhcHuZZtBAJCAJ6sV6aC97
-+2IGqM6ExaLhEw8CIB6EFpl2r/SA0ig/qrEQhZ/YqqZNw/TShUlNs++C1HH9CN3X
-hVMBe4IoK28yuAfg+P95ESHdF3V9sqi4j9bUtc7cpTFu2+7HwRBzeePA0bEtsMIm
-AKknYPEM+fKfT0K2MrcAm9VNzGLaFhuAaq20O5VK/cm1SCCBCMEgpyw38w51pOBh
-P6i+zZHDub/lRsPP/mOfM1yKD9HvbKLMH4jsKnhivD1o3eMOY3XWC6mpCXjyXlaV
-4kB+EdmcLB/a9rFU4YClFIASgeruC6oQOyfcKgAXpFer9FarKzyxLGjNNUnz4eHw
-QTucGI0Lwzubyws7HfhFgbexIRHQrI0U3iSJ7j9dc9iiC6V8Nu9pkvQQuBfLU62B
-D0VyuqOp/Y7sVFQL7fLIqXVrJ9wr/IrmDRVo3ylbQX8Xs4AoqtGyQwUTd/59Jsb7
-MoYbuKJPP+qQBesE2cY2hhS+LfpIIP5RdP2VUe6knqEA8ercDRI=
-=c2qP
------END PGP SIGNATURE-----
-
---bQw0EXWTigETpFy5--
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
